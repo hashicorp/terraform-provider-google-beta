@@ -89,7 +89,7 @@ func resourceContainerAnalysisNoteCreate(d *schema.ResourceData, meta interface{
 		obj["attestationAuthority"] = attestationAuthorityProp
 	}
 
-	url, err := replaceVars(d, config, "https://containeranalysis.googleapis.com/v1alpha1/projects/{{project}}/notes?noteId={{name}}")
+	url, err := replaceVars(d, config, "https://containeranalysis.googleapis.com/v1beta1/projects/{{project}}/notes?noteId={{name}}")
 	if err != nil {
 		return err
 	}
@@ -115,7 +115,7 @@ func resourceContainerAnalysisNoteCreate(d *schema.ResourceData, meta interface{
 func resourceContainerAnalysisNoteRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	url, err := replaceVars(d, config, "https://containeranalysis.googleapis.com/v1alpha1/projects/{{project}}/notes/{{name}}")
+	url, err := replaceVars(d, config, "https://containeranalysis.googleapis.com/v1beta1/projects/{{project}}/notes/{{name}}")
 	if err != nil {
 		return err
 	}
@@ -159,7 +159,7 @@ func resourceContainerAnalysisNoteUpdate(d *schema.ResourceData, meta interface{
 		obj["attestationAuthority"] = attestationAuthorityProp
 	}
 
-	url, err := replaceVars(d, config, "https://containeranalysis.googleapis.com/v1alpha1/projects/{{project}}/notes/{{name}}")
+	url, err := replaceVars(d, config, "https://containeranalysis.googleapis.com/v1beta1/projects/{{project}}/notes/{{name}}")
 	if err != nil {
 		return err
 	}
@@ -187,7 +187,7 @@ func resourceContainerAnalysisNoteUpdate(d *schema.ResourceData, meta interface{
 func resourceContainerAnalysisNoteDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	url, err := replaceVars(d, config, "https://containeranalysis.googleapis.com/v1alpha1/projects/{{project}}/notes/{{name}}")
+	url, err := replaceVars(d, config, "https://containeranalysis.googleapis.com/v1beta1/projects/{{project}}/notes/{{name}}")
 	if err != nil {
 		return err
 	}
@@ -264,8 +264,10 @@ func expandContainerAnalysisNoteAttestationAuthority(v interface{}, d *schema.Re
 	transformedHint, err := expandContainerAnalysisNoteAttestationAuthorityHint(original["hint"], d, config)
 	if err != nil {
 		return nil, err
+	} else if val := reflect.ValueOf(transformedHint); val.IsValid() && !isEmptyValue(val) {
+		transformed["hint"] = transformedHint
 	}
-	transformed["hint"] = transformedHint
+
 	return transformed, nil
 }
 
@@ -281,8 +283,10 @@ func expandContainerAnalysisNoteAttestationAuthorityHint(v interface{}, d *schem
 	transformedHumanReadableName, err := expandContainerAnalysisNoteAttestationAuthorityHintHumanReadableName(original["human_readable_name"], d, config)
 	if err != nil {
 		return nil, err
+	} else if val := reflect.ValueOf(transformedHumanReadableName); val.IsValid() && !isEmptyValue(val) {
+		transformed["humanReadableName"] = transformedHumanReadableName
 	}
-	transformed["humanReadableName"] = transformedHumanReadableName
+
 	return transformed, nil
 }
 

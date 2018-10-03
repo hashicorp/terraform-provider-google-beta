@@ -501,10 +501,6 @@ func flattenFilestoreInstanceEtag(v interface{}) interface{} {
 	return v
 }
 
-func flattenFilestoreInstanceZone(v interface{}) interface{} {
-	return v
-}
-
 func expandFilestoreInstanceDescription(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
@@ -534,13 +530,17 @@ func expandFilestoreInstanceFileShares(v interface{}, d *schema.ResourceData, co
 		transformedName, err := expandFilestoreInstanceFileSharesName(original["name"], d, config)
 		if err != nil {
 			return nil, err
+		} else if val := reflect.ValueOf(transformedName); val.IsValid() && !isEmptyValue(val) {
+			transformed["name"] = transformedName
 		}
-		transformed["name"] = transformedName
+
 		transformedCapacityGb, err := expandFilestoreInstanceFileSharesCapacityGb(original["capacity_gb"], d, config)
 		if err != nil {
 			return nil, err
+		} else if val := reflect.ValueOf(transformedCapacityGb); val.IsValid() && !isEmptyValue(val) {
+			transformed["capacityGb"] = transformedCapacityGb
 		}
-		transformed["capacityGb"] = transformedCapacityGb
+
 		req = append(req, transformed)
 	}
 	return req, nil
@@ -564,23 +564,31 @@ func expandFilestoreInstanceNetworks(v interface{}, d *schema.ResourceData, conf
 		transformedNetwork, err := expandFilestoreInstanceNetworksNetwork(original["network"], d, config)
 		if err != nil {
 			return nil, err
+		} else if val := reflect.ValueOf(transformedNetwork); val.IsValid() && !isEmptyValue(val) {
+			transformed["network"] = transformedNetwork
 		}
-		transformed["network"] = transformedNetwork
+
 		transformedModes, err := expandFilestoreInstanceNetworksModes(original["modes"], d, config)
 		if err != nil {
 			return nil, err
+		} else if val := reflect.ValueOf(transformedModes); val.IsValid() && !isEmptyValue(val) {
+			transformed["modes"] = transformedModes
 		}
-		transformed["modes"] = transformedModes
+
 		transformedReservedIpRange, err := expandFilestoreInstanceNetworksReservedIpRange(original["reserved_ip_range"], d, config)
 		if err != nil {
 			return nil, err
+		} else if val := reflect.ValueOf(transformedReservedIpRange); val.IsValid() && !isEmptyValue(val) {
+			transformed["reservedIpRange"] = transformedReservedIpRange
 		}
-		transformed["reservedIpRange"] = transformedReservedIpRange
+
 		transformedIpAddresses, err := expandFilestoreInstanceNetworksIpAddresses(original["ip_addresses"], d, config)
 		if err != nil {
 			return nil, err
+		} else if val := reflect.ValueOf(transformedIpAddresses); val.IsValid() && !isEmptyValue(val) {
+			transformed["ipAddresses"] = transformedIpAddresses
 		}
-		transformed["ipAddresses"] = transformedIpAddresses
+
 		req = append(req, transformed)
 	}
 	return req, nil
