@@ -169,7 +169,7 @@ func resourceComputeRouterCreate(d *schema.ResourceData, meta interface{}) error
 	mutexKV.Lock(lockName)
 	defer mutexKV.Unlock(lockName)
 
-	url, err := replaceVars(d, config, "https://www.googleapis.com/compute/v1/projects/{{project}}/regions/{{region}}/routers")
+	url, err := replaceVars(d, config, "https://www.googleapis.com/compute/beta/projects/{{project}}/regions/{{region}}/routers")
 	if err != nil {
 		return err
 	}
@@ -215,7 +215,7 @@ func resourceComputeRouterCreate(d *schema.ResourceData, meta interface{}) error
 func resourceComputeRouterRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	url, err := replaceVars(d, config, "https://www.googleapis.com/compute/v1/projects/{{project}}/regions/{{region}}/routers/{{name}}")
+	url, err := replaceVars(d, config, "https://www.googleapis.com/compute/beta/projects/{{project}}/regions/{{region}}/routers/{{name}}")
 	if err != nil {
 		return err
 	}
@@ -299,7 +299,7 @@ func resourceComputeRouterUpdate(d *schema.ResourceData, meta interface{}) error
 	mutexKV.Lock(lockName)
 	defer mutexKV.Unlock(lockName)
 
-	url, err := replaceVars(d, config, "https://www.googleapis.com/compute/v1/projects/{{project}}/regions/{{region}}/routers/{{name}}")
+	url, err := replaceVars(d, config, "https://www.googleapis.com/compute/beta/projects/{{project}}/regions/{{region}}/routers/{{name}}")
 	if err != nil {
 		return err
 	}
@@ -342,7 +342,7 @@ func resourceComputeRouterDelete(d *schema.ResourceData, meta interface{}) error
 	mutexKV.Lock(lockName)
 	defer mutexKV.Unlock(lockName)
 
-	url, err := replaceVars(d, config, "https://www.googleapis.com/compute/v1/projects/{{project}}/regions/{{region}}/routers/{{name}}")
+	url, err := replaceVars(d, config, "https://www.googleapis.com/compute/beta/projects/{{project}}/regions/{{region}}/routers/{{name}}")
 	if err != nil {
 		return err
 	}
@@ -501,23 +501,31 @@ func expandComputeRouterBgp(v interface{}, d *schema.ResourceData, config *Confi
 	transformedAsn, err := expandComputeRouterBgpAsn(original["asn"], d, config)
 	if err != nil {
 		return nil, err
+	} else if val := reflect.ValueOf(transformedAsn); val.IsValid() && !isEmptyValue(val) {
+		transformed["asn"] = transformedAsn
 	}
-	transformed["asn"] = transformedAsn
+
 	transformedAdvertiseMode, err := expandComputeRouterBgpAdvertiseMode(original["advertise_mode"], d, config)
 	if err != nil {
 		return nil, err
+	} else if val := reflect.ValueOf(transformedAdvertiseMode); val.IsValid() && !isEmptyValue(val) {
+		transformed["advertiseMode"] = transformedAdvertiseMode
 	}
-	transformed["advertiseMode"] = transformedAdvertiseMode
+
 	transformedAdvertisedGroups, err := expandComputeRouterBgpAdvertisedGroups(original["advertised_groups"], d, config)
 	if err != nil {
 		return nil, err
+	} else if val := reflect.ValueOf(transformedAdvertisedGroups); val.IsValid() && !isEmptyValue(val) {
+		transformed["advertisedGroups"] = transformedAdvertisedGroups
 	}
-	transformed["advertisedGroups"] = transformedAdvertisedGroups
+
 	transformedAdvertisedIpRanges, err := expandComputeRouterBgpAdvertisedIpRanges(original["advertised_ip_ranges"], d, config)
 	if err != nil {
 		return nil, err
+	} else if val := reflect.ValueOf(transformedAdvertisedIpRanges); val.IsValid() && !isEmptyValue(val) {
+		transformed["advertisedIpRanges"] = transformedAdvertisedIpRanges
 	}
-	transformed["advertisedIpRanges"] = transformedAdvertisedIpRanges
+
 	return transformed, nil
 }
 
@@ -543,13 +551,17 @@ func expandComputeRouterBgpAdvertisedIpRanges(v interface{}, d *schema.ResourceD
 		transformedRange, err := expandComputeRouterBgpAdvertisedIpRangesRange(original["range"], d, config)
 		if err != nil {
 			return nil, err
+		} else if val := reflect.ValueOf(transformedRange); val.IsValid() && !isEmptyValue(val) {
+			transformed["range"] = transformedRange
 		}
-		transformed["range"] = transformedRange
+
 		transformedDescription, err := expandComputeRouterBgpAdvertisedIpRangesDescription(original["description"], d, config)
 		if err != nil {
 			return nil, err
+		} else if val := reflect.ValueOf(transformedDescription); val.IsValid() && !isEmptyValue(val) {
+			transformed["description"] = transformedDescription
 		}
-		transformed["description"] = transformedDescription
+
 		req = append(req, transformed)
 	}
 	return req, nil
