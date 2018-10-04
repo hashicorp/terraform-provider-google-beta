@@ -24,17 +24,17 @@ Requirements
 Building The Provider
 ---------------------
 
-Clone repository to: `$GOPATH/src/github.com/terraform-providers/terraform-provider-google`
+Clone repository to: `$GOPATH/src/github.com/terraform-providers/terraform-provider-google-beta`
 
 ```sh
 $ mkdir -p $GOPATH/src/github.com/terraform-providers; cd $GOPATH/src/github.com/terraform-providers
-$ git clone git@github.com:terraform-providers/terraform-provider-google
+$ git clone git@github.com:terraform-providers/terraform-provider-google-beta
 ```
 
 Enter the provider directory and build the provider
 
 ```sh
-$ cd $GOPATH/src/github.com/terraform-providers/terraform-provider-google
+$ cd $GOPATH/src/github.com/terraform-providers/terraform-provider-google-beta
 $ make build
 ```
 
@@ -58,8 +58,8 @@ To compile the provider, run `make build`. This will build the provider and put 
 ```sh
 $ make build
 ...
-$ $GOPATH/bin/terraform-provider-google
+$ $GOPATH/bin/terraform-provider-google-beta
 ...
 ```
 
-For guidance on common development practices such as testing changes or vendoring libraries, see the [contribution guidelines](https://github.com/terraform-providers/terraform-provider-google/blob/master/.github/CONTRIBUTING.md). If you have other development questions we don't cover, please file an issue!
+For guidance on common development practices such as testing changes or vendoring libraries, see the [contribution guidelines](https://github.com/terraform-providers/terraform-provider-google-beta/blob/master/.github/CONTRIBUTING.md). If you have other development questions we don't cover, please file an issue!
