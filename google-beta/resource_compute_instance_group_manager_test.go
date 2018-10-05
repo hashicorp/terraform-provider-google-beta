@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"testing"
 
-	computeBeta "google.golang.org/api/compute/v0.beta"
-
 	"github.com/hashicorp/terraform/helper/acctest"
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/terraform"
@@ -13,8 +11,6 @@ import (
 
 func TestAccInstanceGroupManager_basic(t *testing.T) {
 	t.Parallel()
-
-	var manager computeBeta.InstanceGroupManager
 
 	template := fmt.Sprintf("igm-test-%s", acctest.RandString(10))
 	target := fmt.Sprintf("igm-test-%s", acctest.RandString(10))
@@ -28,12 +24,6 @@ func TestAccInstanceGroupManager_basic(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testAccInstanceGroupManager_basic(template, target, igm1, igm2),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckInstanceGroupManagerExists(
-						"google_compute_instance_group_manager.igm-basic", &manager),
-					testAccCheckInstanceGroupManagerExists(
-						"google_compute_instance_group_manager.igm-no-tp", &manager),
-				),
 			},
 			{
 				ResourceName:      "google_compute_instance_group_manager.igm-basic",
@@ -52,8 +42,6 @@ func TestAccInstanceGroupManager_basic(t *testing.T) {
 func TestAccInstanceGroupManager_targetSizeZero(t *testing.T) {
 	t.Parallel()
 
-	var manager computeBeta.InstanceGroupManager
-
 	templateName := fmt.Sprintf("igm-test-%s", acctest.RandString(10))
 	igmName := fmt.Sprintf("igm-test-%s", acctest.RandString(10))
 
@@ -64,10 +52,6 @@ func TestAccInstanceGroupManager_targetSizeZero(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testAccInstanceGroupManager_targetSizeZero(templateName, igmName),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckInstanceGroupManagerExists(
-						"google_compute_instance_group_manager.igm-basic", &manager),
-				),
 			},
 			{
 				ResourceName:      "google_compute_instance_group_manager.igm-basic",
@@ -80,8 +64,6 @@ func TestAccInstanceGroupManager_targetSizeZero(t *testing.T) {
 
 func TestAccInstanceGroupManager_update(t *testing.T) {
 	t.Parallel()
-
-	var manager computeBeta.InstanceGroupManager
 
 	template1 := fmt.Sprintf("igm-test-%s", acctest.RandString(10))
 	target1 := fmt.Sprintf("igm-test-%s", acctest.RandString(10))
@@ -96,10 +78,6 @@ func TestAccInstanceGroupManager_update(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testAccInstanceGroupManager_update(template1, target1, igm),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckInstanceGroupManagerExists(
-						"google_compute_instance_group_manager.igm-update", &manager),
-				),
 			},
 			{
 				ResourceName:      "google_compute_instance_group_manager.igm-update",
@@ -108,10 +86,6 @@ func TestAccInstanceGroupManager_update(t *testing.T) {
 			},
 			{
 				Config: testAccInstanceGroupManager_update2(template1, target1, target2, template2, igm),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckInstanceGroupManagerExists(
-						"google_compute_instance_group_manager.igm-update", &manager),
-				),
 			},
 			{
 				ResourceName:      "google_compute_instance_group_manager.igm-update",
@@ -125,8 +99,6 @@ func TestAccInstanceGroupManager_update(t *testing.T) {
 func TestAccInstanceGroupManager_updateLifecycle(t *testing.T) {
 	t.Parallel()
 
-	var manager computeBeta.InstanceGroupManager
-
 	tag1 := "tag1"
 	tag2 := "tag2"
 	igm := fmt.Sprintf("igm-test-%s", acctest.RandString(10))
@@ -138,10 +110,6 @@ func TestAccInstanceGroupManager_updateLifecycle(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testAccInstanceGroupManager_updateLifecycle(tag1, igm),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckInstanceGroupManagerExists(
-						"google_compute_instance_group_manager.igm-update", &manager),
-				),
 			},
 			{
 				ResourceName:      "google_compute_instance_group_manager.igm-update",
@@ -150,10 +118,6 @@ func TestAccInstanceGroupManager_updateLifecycle(t *testing.T) {
 			},
 			{
 				Config: testAccInstanceGroupManager_updateLifecycle(tag2, igm),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckInstanceGroupManagerExists(
-						"google_compute_instance_group_manager.igm-update", &manager),
-				),
 			},
 			{
 				ResourceName:      "google_compute_instance_group_manager.igm-update",
@@ -167,8 +131,6 @@ func TestAccInstanceGroupManager_updateLifecycle(t *testing.T) {
 func TestAccInstanceGroupManager_rollingUpdatePolicy(t *testing.T) {
 	t.Parallel()
 
-	var manager computeBeta.InstanceGroupManager
-
 	igm := fmt.Sprintf("igm-test-%s", acctest.RandString(10))
 
 	resource.Test(t, resource.TestCase{
@@ -178,10 +140,6 @@ func TestAccInstanceGroupManager_rollingUpdatePolicy(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testAccInstanceGroupManager_rollingUpdatePolicy(igm),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckInstanceGroupManagerExists(
-						"google_compute_instance_group_manager.igm-rolling-update-policy", &manager),
-				),
 			},
 			{
 				ResourceName:      "google_compute_instance_group_manager.igm-rolling-update-policy",
@@ -190,10 +148,6 @@ func TestAccInstanceGroupManager_rollingUpdatePolicy(t *testing.T) {
 			},
 			{
 				Config: testAccInstanceGroupManager_rollingUpdatePolicy2(igm),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckInstanceGroupManagerExists(
-						"google_compute_instance_group_manager.igm-rolling-update-policy", &manager),
-				),
 			},
 			{
 				ResourceName:      "google_compute_instance_group_manager.igm-rolling-update-policy",
@@ -202,10 +156,6 @@ func TestAccInstanceGroupManager_rollingUpdatePolicy(t *testing.T) {
 			},
 			{
 				Config: testAccInstanceGroupManager_rollingUpdatePolicy3(igm),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckInstanceGroupManagerExists(
-						"google_compute_instance_group_manager.igm-rolling-update-policy", &manager),
-				),
 			},
 			{
 				ResourceName:      "google_compute_instance_group_manager.igm-rolling-update-policy",
@@ -214,10 +164,6 @@ func TestAccInstanceGroupManager_rollingUpdatePolicy(t *testing.T) {
 			},
 			{
 				Config: testAccInstanceGroupManager_rollingUpdatePolicy4(igm),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckInstanceGroupManagerExists(
-						"google_compute_instance_group_manager.igm-rolling-update-policy", &manager),
-				),
 			},
 			{
 				ResourceName:      "google_compute_instance_group_manager.igm-rolling-update-policy",
@@ -231,8 +177,6 @@ func TestAccInstanceGroupManager_rollingUpdatePolicy(t *testing.T) {
 func TestAccInstanceGroupManager_separateRegions(t *testing.T) {
 	t.Parallel()
 
-	var manager computeBeta.InstanceGroupManager
-
 	igm1 := fmt.Sprintf("igm-test-%s", acctest.RandString(10))
 	igm2 := fmt.Sprintf("igm-test-%s", acctest.RandString(10))
 
@@ -243,12 +187,6 @@ func TestAccInstanceGroupManager_separateRegions(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testAccInstanceGroupManager_separateRegions(igm1, igm2),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckInstanceGroupManagerExists(
-						"google_compute_instance_group_manager.igm-basic", &manager),
-					testAccCheckInstanceGroupManagerExists(
-						"google_compute_instance_group_manager.igm-basic-2", &manager),
-				),
 			},
 			{
 				ResourceName:      "google_compute_instance_group_manager.igm-basic",
@@ -267,8 +205,6 @@ func TestAccInstanceGroupManager_separateRegions(t *testing.T) {
 func TestAccInstanceGroupManager_versions(t *testing.T) {
 	t.Parallel()
 
-	var manager computeBeta.InstanceGroupManager
-
 	primaryTemplate := fmt.Sprintf("igm-test-%s", acctest.RandString(10))
 	canaryTemplate := fmt.Sprintf("igm-test-%s", acctest.RandString(10))
 	igm := fmt.Sprintf("igm-test-%s", acctest.RandString(10))
@@ -280,9 +216,6 @@ func TestAccInstanceGroupManager_versions(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testAccInstanceGroupManager_versions(primaryTemplate, canaryTemplate, igm),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckInstanceGroupManagerExists("google_compute_instance_group_manager.igm-basic", &manager),
-				),
 			},
 			{
 				ResourceName:      "google_compute_instance_group_manager.igm-basic",
@@ -296,8 +229,6 @@ func TestAccInstanceGroupManager_versions(t *testing.T) {
 func TestAccInstanceGroupManager_autoHealingPolicies(t *testing.T) {
 	t.Parallel()
 
-	var manager computeBeta.InstanceGroupManager
-
 	template := fmt.Sprintf("igm-test-%s", acctest.RandString(10))
 	target := fmt.Sprintf("igm-test-%s", acctest.RandString(10))
 	igm := fmt.Sprintf("igm-test-%s", acctest.RandString(10))
@@ -310,10 +241,6 @@ func TestAccInstanceGroupManager_autoHealingPolicies(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testAccInstanceGroupManager_autoHealingPolicies(template, target, igm, hck),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckInstanceGroupManagerExists(
-						"google_compute_instance_group_manager.igm-basic", &manager),
-				),
 			},
 			{
 				ResourceName:      "google_compute_instance_group_manager.igm-basic",
@@ -331,8 +258,6 @@ func TestAccInstanceGroupManager_autoHealingPolicies(t *testing.T) {
 func TestAccInstanceGroupManager_selfLinkStability(t *testing.T) {
 	t.Parallel()
 
-	var manager computeBeta.InstanceGroupManager
-
 	template := fmt.Sprintf("igm-test-%s", acctest.RandString(10))
 	target := fmt.Sprintf("igm-test-%s", acctest.RandString(10))
 	igm := fmt.Sprintf("igm-test-%s", acctest.RandString(10))
@@ -346,8 +271,6 @@ func TestAccInstanceGroupManager_selfLinkStability(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testAccInstanceGroupManager_selfLinkStability(template, target, igm, hck, autoscaler),
-				Check: testAccCheckInstanceGroupManagerExists(
-					"google_compute_instance_group_manager.igm-basic", &manager),
 			},
 			{
 				ResourceName:      "google_compute_instance_group_manager.igm-basic",
@@ -383,48 +306,6 @@ func testAccCheckInstanceGroupManagerDestroy(s *terraform.State) error {
 	}
 
 	return nil
-}
-
-func testAccCheckInstanceGroupManagerExists(n string, manager *computeBeta.InstanceGroupManager) resource.TestCheckFunc {
-	return func(s *terraform.State) error {
-		rs, ok := s.RootModule().Resources[n]
-		if !ok {
-			return fmt.Errorf("Not found: %s", n)
-		}
-
-		if rs.Primary.ID == "" {
-			return fmt.Errorf("No ID is set")
-		}
-
-		config := testAccProvider.Meta().(*Config)
-
-		id, err := parseInstanceGroupManagerId(rs.Primary.ID)
-		if err != nil {
-			return err
-		}
-
-		if id.Zone == "" {
-			id.Zone = rs.Primary.Attributes["zone"]
-		}
-
-		if id.Project == "" {
-			id.Project = config.Project
-		}
-
-		found, err := config.clientComputeBeta.InstanceGroupManagers.Get(
-			id.Project, id.Zone, id.Name).Do()
-		if err != nil {
-			return err
-		}
-
-		if found.Name != id.Name {
-			return fmt.Errorf("InstanceGroupManager not found")
-		}
-
-		*manager = *found
-
-		return nil
-	}
 }
 
 func testAccInstanceGroupManager_basic(template, target, igm1, igm2 string) string {
