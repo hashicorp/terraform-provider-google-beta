@@ -83,10 +83,7 @@ func resourceComputeForwardingRule() *schema.Resource {
 			"labels": {
 				Type:     schema.TypeMap,
 				Optional: true,
-				Deprecated: `This field is in beta and will be removed from this provider.
-Use the terraform-provider-google-beta provider to continue using it.
-See https://terraform.io/docs/provider/google/provider_versions.html for more details on beta fields.`,
-				Elem: &schema.Schema{Type: schema.TypeString},
+				Elem:     &schema.Schema{Type: schema.TypeString},
 			},
 			"load_balancing_scheme": {
 				Type:         schema.TypeString,
@@ -133,12 +130,9 @@ See https://terraform.io/docs/provider/google/provider_versions.html for more de
 				DiffSuppressFunc: compareSelfLinkOrResourceName,
 			},
 			"service_label": {
-				Type:     schema.TypeString,
-				Optional: true,
-				ForceNew: true,
-				Deprecated: `This field is in beta and will be removed from this provider.
-Use the terraform-provider-google-beta provider to continue using it.
-See https://terraform.io/docs/provider/google/provider_versions.html for more details on beta fields.`,
+				Type:         schema.TypeString,
+				Optional:     true,
+				ForceNew:     true,
 				ValidateFunc: validateGCPName,
 			},
 			"subnetwork": {
@@ -164,9 +158,6 @@ See https://terraform.io/docs/provider/google/provider_versions.html for more de
 			"service_name": {
 				Type:     schema.TypeString,
 				Computed: true,
-				Deprecated: `This field is in beta and will be removed from this provider.
-Use the terraform-provider-google-beta provider to continue using it.
-See https://terraform.io/docs/provider/google/provider_versions.html for more details on beta fields.`,
 			},
 			"project": {
 				Type:     schema.TypeString,

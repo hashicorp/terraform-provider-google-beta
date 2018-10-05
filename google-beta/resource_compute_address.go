@@ -70,10 +70,7 @@ func resourceComputeAddress() *schema.Resource {
 			"labels": {
 				Type:     schema.TypeMap,
 				Optional: true,
-				Deprecated: `This field is in beta and will be removed from this provider.
-Use the terraform-provider-google-beta provider to continue using it.
-See https://terraform.io/docs/provider/google/provider_versions.html for more details on beta fields.`,
-				Elem: &schema.Schema{Type: schema.TypeString},
+				Elem:     &schema.Schema{Type: schema.TypeString},
 			},
 			"network_tier": {
 				Type:         schema.TypeString,
@@ -103,9 +100,6 @@ See https://terraform.io/docs/provider/google/provider_versions.html for more de
 			"label_fingerprint": {
 				Type:     schema.TypeString,
 				Computed: true,
-				Deprecated: `This field is in beta and will be removed from this provider.
-Use the terraform-provider-google-beta provider to continue using it.
-See https://terraform.io/docs/provider/google/provider_versions.html for more details on beta fields.`,
 			},
 			"users": {
 				Type:     schema.TypeList,
