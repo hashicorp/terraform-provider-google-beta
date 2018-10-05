@@ -232,6 +232,14 @@ func TestAccRegionInstanceGroupManager_autoHealingPolicies(t *testing.T) {
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
+			{
+				Config: testAccRegionInstanceGroupManager_autoHealingPoliciesRemoved(template, target, igm, hck),
+			},
+			{
+				ResourceName:      "google_compute_region_instance_group_manager.igm-basic",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
 		},
 	})
 }
@@ -712,6 +720,63 @@ resource "google_compute_http_health_check" "zero" {
 }
 	`, template, target, igm, hck)
 }
+
+func testAccRegionInstanceGroupManager_autoHealingPoliciesRemoved(template, target, igm, hck string) string {
+	return fmt.Sprintf(`
+data "google_compute_image" "my_image" {
+	family  = "debian-9"
+	project = "debian-cloud"
+}
+
+resource "google_compute_instance_template" "igm-basic" {
+	name = "%s"
+	machine_type = "n1-standard-1"
+	can_ip_forward = false
+	tags = ["foo", "bar"]
+	disk {
+		source_image = "${data.google_compute_image.my_image.self_link}"
+		auto_delete = true
+		boot = true
+	}
+	network_interface {
+		network = "default"
+	}
+	metadata {
+		foo = "bar"
+	}
+	service_account {
+		scopes = ["userinfo-email", "compute-ro", "storage-ro"]
+	}
+}
+
+resource "google_compute_target_pool" "igm-basic" {
+	description = "Resource created for Terraform acceptance testing"
+	name = "%s"
+	session_affinity = "CLIENT_IP_PROTO"
+}
+
+resource "google_compute_region_instance_group_manager" "igm-basic" {
+	description = "Terraform test instance group manager"
+	name = "%s"
+	version {
+		instance_template = "${google_compute_instance_template.igm-basic.self_link}"
+		name = "primary"
+	}
+	target_pools = ["${google_compute_target_pool.igm-basic.self_link}"]
+	base_instance_name = "igm-basic"
+	region = "us-central1"
+	target_size = 2
+}
+
+resource "google_compute_http_health_check" "zero" {
+	name               = "%s"
+	request_path       = "/"
+	check_interval_sec = 1
+	timeout_sec        = 1
+}
+	`, template, target, igm, hck)
+}
+
 func testAccRegionInstanceGroupManager_versions(primaryTemplate string, canaryTemplate string, igm string) string {
 	return fmt.Sprintf(`
 data "google_compute_image" "my_image" {

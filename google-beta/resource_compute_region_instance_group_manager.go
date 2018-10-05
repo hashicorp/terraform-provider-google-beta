@@ -437,10 +437,9 @@ func resourceComputeRegionInstanceGroupManagerUpdate(d *schema.ResourceData, met
 	}
 
 	if d.HasChange("auto_healing_policies") {
-		if v, ok := d.GetOk("auto_healing_policies"); ok {
-			updatedManager.AutoHealingPolicies = expandAutoHealingPolicies(v.([]interface{}))
-			change = true
-		}
+		updatedManager.AutoHealingPolicies = expandAutoHealingPolicies(d.Get("auto_healing_policies").([]interface{}))
+		updatedManager.ForceSendFields = append(updatedManager.ForceSendFields, "AutoHealingPolicies")
+		change = true
 	}
 
 	if d.HasChange("version") {
