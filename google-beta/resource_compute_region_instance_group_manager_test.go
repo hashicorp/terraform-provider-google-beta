@@ -5,8 +5,6 @@ import (
 	"strings"
 	"testing"
 
-	computeBeta "google.golang.org/api/compute/v0.beta"
-
 	"github.com/hashicorp/terraform/helper/acctest"
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/terraform"
@@ -14,8 +12,6 @@ import (
 
 func TestAccRegionInstanceGroupManager_basic(t *testing.T) {
 	t.Parallel()
-
-	var manager computeBeta.InstanceGroupManager
 
 	template := fmt.Sprintf("igm-test-%s", acctest.RandString(10))
 	target := fmt.Sprintf("igm-test-%s", acctest.RandString(10))
@@ -29,12 +25,6 @@ func TestAccRegionInstanceGroupManager_basic(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testAccRegionInstanceGroupManager_basic(template, target, igm1, igm2),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckRegionInstanceGroupManagerExists(
-						"google_compute_region_instance_group_manager.igm-basic", &manager),
-					testAccCheckRegionInstanceGroupManagerExists(
-						"google_compute_region_instance_group_manager.igm-no-tp", &manager),
-				),
 			},
 			{
 				ResourceName:      "google_compute_region_instance_group_manager.igm-basic",
@@ -53,8 +43,6 @@ func TestAccRegionInstanceGroupManager_basic(t *testing.T) {
 func TestAccRegionInstanceGroupManager_targetSizeZero(t *testing.T) {
 	t.Parallel()
 
-	var manager computeBeta.InstanceGroupManager
-
 	templateName := fmt.Sprintf("igm-test-%s", acctest.RandString(10))
 	igmName := fmt.Sprintf("igm-test-%s", acctest.RandString(10))
 
@@ -65,10 +53,6 @@ func TestAccRegionInstanceGroupManager_targetSizeZero(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testAccRegionInstanceGroupManager_targetSizeZero(templateName, igmName),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckRegionInstanceGroupManagerExists(
-						"google_compute_region_instance_group_manager.igm-basic", &manager),
-				),
 			},
 			{
 				ResourceName:      "google_compute_region_instance_group_manager.igm-basic",
@@ -81,8 +65,6 @@ func TestAccRegionInstanceGroupManager_targetSizeZero(t *testing.T) {
 
 func TestAccRegionInstanceGroupManager_update(t *testing.T) {
 	t.Parallel()
-
-	var manager computeBeta.InstanceGroupManager
 
 	template1 := fmt.Sprintf("igm-test-%s", acctest.RandString(10))
 	target1 := fmt.Sprintf("igm-test-%s", acctest.RandString(10))
@@ -97,10 +79,6 @@ func TestAccRegionInstanceGroupManager_update(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testAccRegionInstanceGroupManager_update(template1, target1, igm),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckRegionInstanceGroupManagerExists(
-						"google_compute_region_instance_group_manager.igm-update", &manager),
-				),
 			},
 			{
 				ResourceName:      "google_compute_region_instance_group_manager.igm-update",
@@ -109,10 +87,6 @@ func TestAccRegionInstanceGroupManager_update(t *testing.T) {
 			},
 			{
 				Config: testAccRegionInstanceGroupManager_update2(template1, target1, target2, template2, igm),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckRegionInstanceGroupManagerExists(
-						"google_compute_region_instance_group_manager.igm-update", &manager),
-				),
 			},
 			{
 				ResourceName:      "google_compute_region_instance_group_manager.igm-update",
@@ -126,8 +100,6 @@ func TestAccRegionInstanceGroupManager_update(t *testing.T) {
 func TestAccRegionInstanceGroupManager_updateLifecycle(t *testing.T) {
 	t.Parallel()
 
-	var manager computeBeta.InstanceGroupManager
-
 	tag1 := "tag1"
 	tag2 := "tag2"
 	igm := fmt.Sprintf("igm-test-%s", acctest.RandString(10))
@@ -139,10 +111,6 @@ func TestAccRegionInstanceGroupManager_updateLifecycle(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testAccRegionInstanceGroupManager_updateLifecycle(tag1, igm),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckRegionInstanceGroupManagerExists(
-						"google_compute_region_instance_group_manager.igm-update", &manager),
-				),
 			},
 			{
 				ResourceName:      "google_compute_region_instance_group_manager.igm-update",
@@ -151,10 +119,6 @@ func TestAccRegionInstanceGroupManager_updateLifecycle(t *testing.T) {
 			},
 			{
 				Config: testAccRegionInstanceGroupManager_updateLifecycle(tag2, igm),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckRegionInstanceGroupManagerExists(
-						"google_compute_region_instance_group_manager.igm-update", &manager),
-				),
 			},
 			{
 				ResourceName:      "google_compute_region_instance_group_manager.igm-update",
@@ -168,8 +132,6 @@ func TestAccRegionInstanceGroupManager_updateLifecycle(t *testing.T) {
 func TestAccRegionInstanceGroupManager_updatePolicy(t *testing.T) {
 	t.Parallel()
 
-	var manager computeBeta.InstanceGroupManager
-
 	igm := fmt.Sprintf("igm-test-%s", acctest.RandString(10))
 
 	resource.Test(t, resource.TestCase{
@@ -179,10 +141,6 @@ func TestAccRegionInstanceGroupManager_updatePolicy(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testAccRegionInstanceGroupManager_updatePolicy(igm),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckRegionInstanceGroupManagerExists(
-						"google_compute_region_instance_group_manager.igm-rolling-update-policy", &manager),
-				),
 			},
 			{
 				ResourceName:      "google_compute_region_instance_group_manager.igm-rolling-update-policy",
@@ -191,10 +149,6 @@ func TestAccRegionInstanceGroupManager_updatePolicy(t *testing.T) {
 			},
 			{
 				Config: testAccRegionInstanceGroupManager_updatePolicy2(igm),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckRegionInstanceGroupManagerExists(
-						"google_compute_region_instance_group_manager.igm-rolling-update-policy", &manager),
-				),
 			},
 			{
 				ResourceName:      "google_compute_region_instance_group_manager.igm-rolling-update-policy",
@@ -208,8 +162,6 @@ func TestAccRegionInstanceGroupManager_updatePolicy(t *testing.T) {
 func TestAccRegionInstanceGroupManager_separateRegions(t *testing.T) {
 	t.Parallel()
 
-	var manager computeBeta.InstanceGroupManager
-
 	igm1 := fmt.Sprintf("igm-test-%s", acctest.RandString(10))
 	igm2 := fmt.Sprintf("igm-test-%s", acctest.RandString(10))
 
@@ -220,12 +172,6 @@ func TestAccRegionInstanceGroupManager_separateRegions(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testAccRegionInstanceGroupManager_separateRegions(igm1, igm2),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckRegionInstanceGroupManagerExists(
-						"google_compute_region_instance_group_manager.igm-basic", &manager),
-					testAccCheckRegionInstanceGroupManagerExists(
-						"google_compute_region_instance_group_manager.igm-basic-2", &manager),
-				),
 			},
 			{
 				ResourceName:      "google_compute_region_instance_group_manager.igm-basic",
@@ -244,8 +190,6 @@ func TestAccRegionInstanceGroupManager_separateRegions(t *testing.T) {
 func TestAccRegionInstanceGroupManager_versions(t *testing.T) {
 	t.Parallel()
 
-	var manager computeBeta.InstanceGroupManager
-
 	primaryTemplate := fmt.Sprintf("igm-test-%s", acctest.RandString(10))
 	canaryTemplate := fmt.Sprintf("igm-test-%s", acctest.RandString(10))
 	igm := fmt.Sprintf("igm-test-%s", acctest.RandString(10))
@@ -257,9 +201,6 @@ func TestAccRegionInstanceGroupManager_versions(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testAccRegionInstanceGroupManager_versions(primaryTemplate, canaryTemplate, igm),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckRegionInstanceGroupManagerExists("google_compute_region_instance_group_manager.igm-basic", &manager),
-				),
 			},
 			{
 				ResourceName:      "google_compute_region_instance_group_manager.igm-basic",
@@ -273,8 +214,6 @@ func TestAccRegionInstanceGroupManager_versions(t *testing.T) {
 func TestAccRegionInstanceGroupManager_autoHealingPolicies(t *testing.T) {
 	t.Parallel()
 
-	var manager computeBeta.InstanceGroupManager
-
 	template := fmt.Sprintf("igm-test-%s", acctest.RandString(10))
 	target := fmt.Sprintf("igm-test-%s", acctest.RandString(10))
 	igm := fmt.Sprintf("igm-test-%s", acctest.RandString(10))
@@ -287,10 +226,6 @@ func TestAccRegionInstanceGroupManager_autoHealingPolicies(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testAccRegionInstanceGroupManager_autoHealingPolicies(template, target, igm, hck),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckRegionInstanceGroupManagerExists(
-						"google_compute_region_instance_group_manager.igm-basic", &manager),
-				),
 			},
 			{
 				ResourceName:      "google_compute_region_instance_group_manager.igm-basic",
@@ -304,8 +239,6 @@ func TestAccRegionInstanceGroupManager_autoHealingPolicies(t *testing.T) {
 func TestAccRegionInstanceGroupManager_distributionPolicy(t *testing.T) {
 	t.Parallel()
 
-	var manager computeBeta.InstanceGroupManager
-
 	template := fmt.Sprintf("igm-test-%s", acctest.RandString(10))
 	igm := fmt.Sprintf("igm-test-%s", acctest.RandString(10))
 	zones := []string{"us-central1-a", "us-central1-b"}
@@ -317,10 +250,6 @@ func TestAccRegionInstanceGroupManager_distributionPolicy(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testAccRegionInstanceGroupManager_distributionPolicy(template, igm, zones),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckRegionInstanceGroupManagerExists(
-						"google_compute_region_instance_group_manager.igm-basic", &manager),
-				),
 			},
 			{
 				ResourceName:      "google_compute_region_instance_group_manager.igm-basic",
@@ -356,46 +285,6 @@ func testAccCheckRegionInstanceGroupManagerDestroy(s *terraform.State) error {
 	}
 
 	return nil
-}
-
-func testAccCheckRegionInstanceGroupManagerExists(n string, manager *computeBeta.InstanceGroupManager) resource.TestCheckFunc {
-	return func(s *terraform.State) error {
-		rs, ok := s.RootModule().Resources[n]
-		if !ok {
-			return fmt.Errorf("Not found: %s", n)
-		}
-
-		if rs.Primary.ID == "" {
-			return fmt.Errorf("No ID is set")
-		}
-
-		config := testAccProvider.Meta().(*Config)
-
-		id, err := parseRegionInstanceGroupManagerId(rs.Primary.ID)
-		if err != nil {
-			return err
-		}
-		if id.Project == "" {
-			id.Project = config.Project
-		}
-		if id.Region == "" {
-			id.Region = rs.Primary.Attributes["region"]
-		}
-
-		found, err := config.clientComputeBeta.RegionInstanceGroupManagers.Get(
-			id.Project, id.Region, id.Name).Do()
-		if err != nil {
-			return err
-		}
-
-		if found.Name != id.Name {
-			return fmt.Errorf("RegionInstanceGroupManager not found")
-		}
-
-		*manager = *found
-
-		return nil
-	}
 }
 
 func testAccRegionInstanceGroupManager_basic(template, target, igm1, igm2 string) string {

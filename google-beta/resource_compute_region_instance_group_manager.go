@@ -303,28 +303,28 @@ type getInstanceManagerFunc func(*schema.ResourceData, interface{}) (*computeBet
 func getRegionalManager(d *schema.ResourceData, meta interface{}) (*computeBeta.InstanceGroupManager, error) {
 	config := meta.(*Config)
 
-	id, err := parseRegionInstanceGroupManagerId(d.Id())
+	regionalID, err := parseRegionInstanceGroupManagerId(d.Id())
 	if err != nil {
 		return nil, err
 	}
 
-	if id.Project == "" {
-		id.Project, err = getProject(d, config)
+	if regionalID.Project == "" {
+		regionalID.Project, err = getProject(d, config)
 		if err != nil {
 			return nil, err
 		}
 	}
 
-	if id.Region == "" {
-		id.Region, err = getRegion(d, config)
+	if regionalID.Region == "" {
+		regionalID.Region, err = getRegion(d, config)
 		if err != nil {
 			return nil, err
 		}
 	}
 
-	manager, err := config.clientComputeBeta.RegionInstanceGroupManagers.Get(id.Project, id.Region, id.Name).Do()
+	manager, err := config.clientComputeBeta.RegionInstanceGroupManagers.Get(regionalID.Project, regionalID.Region, regionalID.Name).Do()
 	if err != nil {
-		return nil, handleNotFoundError(err, d, fmt.Sprintf("Region Instance Manager %q", id.Name))
+		return nil, handleNotFoundError(err, d, fmt.Sprintf("Region Instance Manager %q", regionalID.Name))
 	}
 
 	return manager, nil
@@ -358,12 +358,12 @@ func resourceComputeRegionInstanceGroupManagerRead(d *schema.ResourceData, meta 
 		return nil
 	}
 
-	id, err := parseRegionInstanceGroupManagerId(d.Id())
+	regionalID, err := parseRegionInstanceGroupManagerId(d.Id())
 	if err != nil {
 		return err
 	}
-	if id.Project == "" {
-		id.Project, err = getProject(d, config)
+	if regionalID.Project == "" {
+		regionalID.Project, err = getProject(d, config)
 		if err != nil {
 			return err
 		}
@@ -376,7 +376,7 @@ func resourceComputeRegionInstanceGroupManagerRead(d *schema.ResourceData, meta 
 	d.Set("name", manager.Name)
 	d.Set("region", GetResourceNameFromSelfLink(manager.Region))
 	d.Set("description", manager.Description)
-	d.Set("project", id.Project)
+	d.Set("project", regionalID.Project)
 	d.Set("target_size", manager.TargetSize)
 	if err := d.Set("target_pools", manager.TargetPools); err != nil {
 		return err
@@ -449,36 +449,8 @@ func resourceComputeRegionInstanceGroupManagerUpdate(d *schema.ResourceData, met
 	}
 
 	if d.HasChange("update_policy") {
-		oldFixed, _ := d.GetChange("update_policy.0.max_surge_fixed")
-		oldPercent, newPercent := d.GetChange("update_policy.0.max_surge_percent")
-		// if we're going from fixed to percent or percent to fixed, we need to use update, not patch
-		// fixed can be set to 0, so to detect percent to fixed, we check if percent was set before and isn't now
-		if (oldFixed.(int) != 0 && newPercent.(int) != 0) || (oldPercent.(int) != 0 && newPercent.(int) == 0) {
-			updatedManager.Name = d.Get("name").(string)
-			updatedManager.Description = d.Get("description").(string)
-			updatedManager.BaseInstanceName = d.Get("base_instance_name").(string)
-			updatedManager.TargetSize = int64(d.Get("target_size").(int))
-			updatedManager.NamedPorts = getNamedPortsBeta(d.Get("named_port").(*schema.Set).List())
-			updatedManager.TargetPools = convertStringSet(d.Get("target_pools").(*schema.Set))
-			if v, ok := d.GetOk("auto_healing_policies"); ok {
-				updatedManager.AutoHealingPolicies = expandAutoHealingPolicies(v.([]interface{}))
-			}
-			updatedManager.Versions = expandVersions(d.Get("version").([]interface{}))
-			updatedManager.UpdatePolicy = expandUpdatePolicy(d.Get("update_policy").([]interface{}))
-			updatedManager.DistributionPolicy = expandDistributionPolicy(d.Get("distribution_policy_zones").(*schema.Set))
-			change = false
-			op, err := config.clientComputeBeta.RegionInstanceGroupManagers.Update(project, region, d.Get("name").(string), updatedManager).Do()
-			if err != nil {
-				return fmt.Errorf("Error updating region managed group instance: %s", err)
-			}
-			err = computeSharedOperationWait(config.clientCompute, op, project, "Updating region managed group instances")
-			if err != nil {
-				return err
-			}
-		} else {
-			updatedManager.UpdatePolicy = expandUpdatePolicy(d.Get("update_policy").([]interface{}))
-			change = true
-		}
+		updatedManager.UpdatePolicy = expandUpdatePolicy(d.Get("update_policy").([]interface{}))
+		change = true
 	}
 
 	if change {
@@ -491,42 +463,42 @@ func resourceComputeRegionInstanceGroupManagerUpdate(d *schema.ResourceData, met
 		if err != nil {
 			return err
 		}
+	}
 
-		// named ports can't be updated through PATCH
-		// so we call the update method on the region instance group, instead of the rigm
-		if d.HasChange("named_port") {
-			namedPorts := getNamedPortsBeta(d.Get("named_port").(*schema.Set).List())
-			setNamedPorts := &computeBeta.RegionInstanceGroupsSetNamedPortsRequest{
-				NamedPorts: namedPorts,
-			}
-
-			op, err := config.clientComputeBeta.RegionInstanceGroups.SetNamedPorts(
-				project, region, d.Get("name").(string), setNamedPorts).Do()
-
-			if err != nil {
-				return fmt.Errorf("Error updating RegionInstanceGroupManager: %s", err)
-			}
-
-			err = computeSharedOperationWait(config.clientCompute, op, project, "Updating RegionInstanceGroupManager")
-			if err != nil {
-				return err
-			}
+	// named ports can't be updated through PATCH
+	// so we call the update method on the region instance group, instead of the rigm
+	if d.HasChange("named_port") {
+		namedPorts := getNamedPortsBeta(d.Get("named_port").(*schema.Set).List())
+		setNamedPorts := &computeBeta.RegionInstanceGroupsSetNamedPortsRequest{
+			NamedPorts: namedPorts,
 		}
 
-		// target size should use resize
-		if d.HasChange("target_size") {
-			targetSize := int64(d.Get("target_size").(int))
-			op, err := config.clientComputeBeta.RegionInstanceGroupManagers.Resize(
-				project, region, d.Get("name").(string), targetSize).Do()
+		op, err := config.clientComputeBeta.RegionInstanceGroups.SetNamedPorts(
+			project, region, d.Get("name").(string), setNamedPorts).Do()
 
-			if err != nil {
-				return fmt.Errorf("Error resizing RegionInstanceGroupManager: %s", err)
-			}
+		if err != nil {
+			return fmt.Errorf("Error updating RegionInstanceGroupManager: %s", err)
+		}
 
-			err = computeSharedOperationWait(config.clientCompute, op, project, "Resizing RegionInstanceGroupManager")
-			if err != nil {
-				return err
-			}
+		err = computeSharedOperationWait(config.clientCompute, op, project, "Updating RegionInstanceGroupManager")
+		if err != nil {
+			return err
+		}
+	}
+
+	// target size should use resize
+	if d.HasChange("target_size") {
+		targetSize := int64(d.Get("target_size").(int))
+		op, err := config.clientComputeBeta.RegionInstanceGroupManagers.Resize(
+			project, region, d.Get("name").(string), targetSize).Do()
+
+		if err != nil {
+			return fmt.Errorf("Error resizing RegionInstanceGroupManager: %s", err)
+		}
+
+		err = computeSharedOperationWait(config.clientCompute, op, project, "Resizing RegionInstanceGroupManager")
+		if err != nil {
+			return err
 		}
 	}
 
@@ -536,33 +508,33 @@ func resourceComputeRegionInstanceGroupManagerUpdate(d *schema.ResourceData, met
 func resourceComputeRegionInstanceGroupManagerDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	id, err := parseRegionInstanceGroupManagerId(d.Id())
+	regionalID, err := parseRegionInstanceGroupManagerId(d.Id())
 	if err != nil {
 		return err
 	}
 
-	if id.Project == "" {
-		id.Project, err = getProject(d, config)
+	if regionalID.Project == "" {
+		regionalID.Project, err = getProject(d, config)
 		if err != nil {
 			return err
 		}
 	}
 
-	if id.Region == "" {
-		id.Region, err = getRegion(d, config)
+	if regionalID.Region == "" {
+		regionalID.Region, err = getRegion(d, config)
 		if err != nil {
 			return err
 		}
 	}
 
-	op, err := config.clientComputeBeta.RegionInstanceGroupManagers.Delete(id.Project, id.Region, id.Name).Do()
+	op, err := config.clientComputeBeta.RegionInstanceGroupManagers.Delete(regionalID.Project, regionalID.Region, regionalID.Name).Do()
 
 	if err != nil {
 		return fmt.Errorf("Error deleting region instance group manager: %s", err)
 	}
 
 	// Wait for the operation to complete
-	err = computeSharedOperationWaitTime(config.clientCompute, op, id.Project, int(d.Timeout(schema.TimeoutDelete).Minutes()), "Deleting RegionInstanceGroupManager")
+	err = computeSharedOperationWaitTime(config.clientCompute, op, regionalID.Project, int(d.Timeout(schema.TimeoutDelete).Minutes()), "Deleting RegionInstanceGroupManager")
 
 	d.SetId("")
 	return nil
@@ -606,6 +578,13 @@ func hashZoneFromSelfLinkOrResourceName(value interface{}) int {
 
 func resourceRegionInstanceGroupManagerStateImporter(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	d.Set("wait_for_instances", false)
+	regionalID, err := parseRegionInstanceGroupManagerId(d.Id())
+	if err != nil {
+		return nil, err
+	}
+	d.Set("project", regionalID.Project)
+	d.Set("region", regionalID.Region)
+	d.Set("name", regionalID.Name)
 	return []*schema.ResourceData{d}, nil
 }
 
