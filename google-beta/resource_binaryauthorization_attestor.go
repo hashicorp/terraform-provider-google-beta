@@ -33,9 +33,6 @@ func resourceBinaryAuthorizationAttestor() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			State: resourceBinaryAuthorizationAttestorImport,
 		},
-		DeprecationMessage: `This resource is in beta and will be removed from this provider.
-Use the BinaryAuthorizationAttestor resource in the terraform-provider-google-beta provider to continue using it.
-See https://terraform.io/docs/provider/google/provider_versions.html for more details on beta resources.`,
 
 		Schema: map[string]*schema.Schema{
 			"attestation_authority_note": {
@@ -284,8 +281,8 @@ func flattenBinaryAuthorizationAttestorAttestationAuthorityNotePublicKeys(v inte
 	for _, raw := range l {
 		original := raw.(map[string]interface{})
 		transformed = append(transformed, map[string]interface{}{
-			"comment":                      flattenBinaryAuthorizationAttestorAttestationAuthorityNotePublicKeysComment(original["comment"]),
-			"id":                           flattenBinaryAuthorizationAttestorAttestationAuthorityNotePublicKeysId(original["id"]),
+			"comment": flattenBinaryAuthorizationAttestorAttestationAuthorityNotePublicKeysComment(original["comment"]),
+			"id":      flattenBinaryAuthorizationAttestorAttestationAuthorityNotePublicKeysId(original["id"]),
 			"ascii_armored_pgp_public_key": flattenBinaryAuthorizationAttestorAttestationAuthorityNotePublicKeysAsciiArmoredPgpPublicKey(original["asciiArmoredPgpPublicKey"]),
 		})
 	}
