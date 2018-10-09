@@ -27,7 +27,6 @@ Represents a TargetTcpProxy resource, which is used by one or more
 global forwarding rule to route incoming TCP requests to a Backend
 service.
 
-
 To get more information about TargetTcpProxy, see:
 
 * [API documentation](https://cloud.google.com/compute/docs/reference/latest/targetTcpProxies)
@@ -38,21 +37,20 @@ To get more information about TargetTcpProxy, see:
 
 ```hcl
 resource "google_compute_target_tcp_proxy" "default" {
-  name = "test"
-  description = "test"
+  name            = "test-proxy"
   backend_service = "${google_compute_backend_service.default.self_link}"
 }
 
 resource "google_compute_backend_service" "default" {
-  name        = "default-backend"
-  protocol    = "TCP"
-  timeout_sec = 10
+  name          = "backend-service"
+  protocol      = "TCP"
+  timeout_sec   = 10
 
   health_checks = ["${google_compute_health_check.default.self_link}"]
 }
 
 resource "google_compute_health_check" "default" {
-  name = "default"
+  name               = "health-check"
   timeout_sec        = 1
   check_interval_sec = 1
 

@@ -24,7 +24,6 @@ description: |-
 Represents a Global Address resource. Global addresses are used for
 HTTP(S) load balancing.
 
-
 To get more information about GlobalAddress, see:
 
 * [API documentation](https://cloud.google.com/compute/docs/reference/latest/globalAddresses)
@@ -65,8 +64,7 @@ The following arguments are supported:
 
 * `labels` -
   (Optional)
-  Labels to apply to this address.  A list of key->value pairs.  This property is in beta, and should be used with the terraform-provider-google-beta provider.
-  See [Provider Versions](https://terraform.io/docs/provider/google/provider_versions.html) for more details on beta fields.
+  Labels to apply to this address.  A list of key->value pairs.
 
 * `ip_version` -
   (Optional)
@@ -77,8 +75,7 @@ The following arguments are supported:
   (Optional)
   The prefix length of the IP range. If not present, it means the
   address field is a single IP address.
-  This field is not applicable to addresses with addressType=EXTERNAL.  This property is in beta, and should be used with the terraform-provider-google-beta provider.
-  See [Provider Versions](https://terraform.io/docs/provider/google/provider_versions.html) for more details on beta fields.
+  This field is not applicable to addresses with addressType=EXTERNAL.
 
 * `address_type` -
   (Optional)
@@ -90,16 +87,14 @@ The following arguments are supported:
   (Optional)
   The purpose of the resource. For global internal addresses it can be
   * VPC_PEERING - for peer networks
-  This should only be set when using an Internal address.  This property is in beta, and should be used with the terraform-provider-google-beta provider.
-  See [Provider Versions](https://terraform.io/docs/provider/google/provider_versions.html) for more details on beta fields.
+  This should only be set when using an Internal address.
 
 * `network` -
   (Optional)
   The URL of the network in which to reserve the IP range. The IP range
   must be in RFC1918 space. The network cannot be deleted if there are
   any reserved IP ranges referring to it.
-  This should only be set when using an Internal address.  This property is in beta, and should be used with the terraform-provider-google-beta provider.
-  See [Provider Versions](https://terraform.io/docs/provider/google/provider_versions.html) for more details on beta fields.
+  This should only be set when using an Internal address.
 * `project` - (Optional) The ID of the project in which the resource belongs.
     If it is not provided, the provider project is used.
 
