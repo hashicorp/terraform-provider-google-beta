@@ -35,7 +35,6 @@ the instance is assigned a new internal IP address, either by Compute
 Engine or by you. External IP addresses can be either ephemeral or
 static.
 
-
 To get more information about Address, see:
 
 * [API documentation](https://cloud.google.com/compute/docs/reference/beta/addresses)
@@ -68,6 +67,35 @@ resource "google_compute_address" "internal_with_subnet_and_address" {
   address_type = "INTERNAL"
   address      = "10.0.42.42"
   region       = "us-central1"
+}
+```
+```hcl
+resource "google_compute_address" "static" {
+  name = "ipv4-address"
+}
+
+data "google_compute_image" "debian_image" {
+	family  = "debian-9"
+	project = "debian-cloud"
+}
+
+resource "google_compute_instance" "instance_with_ip" {
+	name         = "vm-instance"
+	machine_type = "f1-micro"
+	zone         = "us-central1-a"
+
+	boot_disk {
+		initialize_params{
+			image = "${data.google_compute_image.debian_image.self_link}"
+		}
+	}
+
+	network_interface {
+		network = "default"
+		access_config {
+			nat_ip = "${google_compute_address.static.address}"
+		}
+	}
 }
 ```
 
@@ -120,8 +148,7 @@ The following arguments are supported:
 
 * `labels` -
   (Optional)
-  Labels to apply to this address.  A list of key->value pairs.  This property is in beta, and should be used with the terraform-provider-google-beta provider.
-  See [Provider Versions](https://terraform.io/docs/provider/google/provider_versions.html) for more details on beta fields.
+  Labels to apply to this address.  A list of key->value pairs.
 
 * `region` -
   (Optional)
@@ -144,8 +171,7 @@ In addition to the arguments listed above, the following computed attributes are
 
 * `label_fingerprint` -
   The fingerprint used for optimistic locking of this resource.  Used
-  internally during updates.  This property is in beta, and should be used with the terraform-provider-google-beta provider.
-  See [Provider Versions](https://terraform.io/docs/provider/google/provider_versions.html) for more details on beta fields.
+  internally during updates.
 * `self_link` - The URI of the created resource.
 
 
