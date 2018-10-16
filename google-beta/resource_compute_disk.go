@@ -232,26 +232,6 @@ func suppressWindowsFamilyDiff(imageName, familyName string) bool {
 	return false
 }
 
-func diskEncryptionKeyDiffSuppress(k, old, new string, d *schema.ResourceData) bool {
-	if strings.HasSuffix(k, "#") {
-		if old == "1" && new == "0" {
-			// If we have a disk_encryption_key_raw, we can trust that the diff will be handled there
-			// and we don't need to worry about it here.
-			return d.Get("disk_encryption_key_raw").(string) != ""
-		} else if new == "1" && old == "0" {
-			// This will be handled by diffing the 'raw_key' attribute.
-			return true
-		}
-	} else if strings.HasSuffix(k, "raw_key") {
-		disk_key := d.Get("disk_encryption_key_raw").(string)
-		return disk_key == old && old != "" && new == ""
-	} else if k == "disk_encryption_key_raw" {
-		disk_key := d.Get("disk_encryption_key.0.raw_key").(string)
-		return disk_key == old && old != "" && new == ""
-	}
-	return false
-}
-
 func resourceComputeDisk() *schema.Resource {
 	return &schema.Resource{
 		Create: resourceComputeDiskCreate,
@@ -283,13 +263,18 @@ func resourceComputeDisk() *schema.Resource {
 				ForceNew: true,
 			},
 			"disk_encryption_key": {
-				Type:             schema.TypeList,
-				Optional:         true,
-				ForceNew:         true,
-				DiffSuppressFunc: diskEncryptionKeyDiffSuppress,
-				MaxItems:         1,
+				Type:     schema.TypeList,
+				Optional: true,
+				ForceNew: true,
+				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
+						"kms_key_self_link": {
+							Type:             schema.TypeString,
+							Optional:         true,
+							ForceNew:         true,
+							DiffSuppressFunc: compareSelfLinkRelativePaths,
+						},
 						"raw_key": {
 							Type:     schema.TypeString,
 							Optional: true,
@@ -331,6 +316,12 @@ func resourceComputeDisk() *schema.Resource {
 				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
+						"kms_key_self_link": {
+							Type:             schema.TypeString,
+							Optional:         true,
+							ForceNew:         true,
+							DiffSuppressFunc: compareSelfLinkRelativePaths,
+						},
 						"raw_key": {
 							Type:     schema.TypeString,
 							Optional: true,
@@ -350,6 +341,12 @@ func resourceComputeDisk() *schema.Resource {
 				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
+						"kms_key_self_link": {
+							Type:             schema.TypeString,
+							Optional:         true,
+							ForceNew:         true,
+							DiffSuppressFunc: compareSelfLinkRelativePaths,
+						},
 						"raw_key": {
 							Type:     schema.TypeString,
 							Optional: true,
@@ -409,18 +406,17 @@ func resourceComputeDisk() *schema.Resource {
 				},
 			},
 			"disk_encryption_key_raw": &schema.Schema{
-				Type:             schema.TypeString,
-				Optional:         true,
-				ForceNew:         true,
-				Sensitive:        true,
-				DiffSuppressFunc: diskEncryptionKeyDiffSuppress,
-				Deprecated:       "Use disk_encryption_key.raw_key instead.",
+				Type:      schema.TypeString,
+				Optional:  true,
+				ForceNew:  true,
+				Sensitive: true,
+				Removed:   "Use disk_encryption_key.raw_key instead.",
 			},
 
 			"disk_encryption_key_sha256": &schema.Schema{
-				Type:       schema.TypeString,
-				Computed:   true,
-				Deprecated: "Use disk_encryption_key.sha256 instead.",
+				Type:     schema.TypeString,
+				Computed: true,
+				Removed:  "Use disk_encryption_key.sha256 instead.",
 			},
 			"project": {
 				Type:     schema.TypeString,
@@ -440,6 +436,12 @@ func resourceComputeDiskCreate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
 	obj := make(map[string]interface{})
+	labelFingerprintProp, err := expandComputeDiskLabelFingerprint(d.Get("label_fingerprint"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("label_fingerprint"); !isEmptyValue(reflect.ValueOf(labelFingerprintProp)) && (ok || !reflect.DeepEqual(v, labelFingerprintProp)) {
+		obj["labelFingerprint"] = labelFingerprintProp
+	}
 	descriptionProp, err := expandComputeDiskDescription(d.Get("description"), d, config)
 	if err != nil {
 		return err
@@ -512,7 +514,7 @@ func resourceComputeDiskCreate(d *schema.ResourceData, meta interface{}) error {
 		return err
 	}
 
-	url, err := replaceVars(d, config, "https://www.googleapis.com/compute/v1/projects/{{project}}/zones/{{zone}}/disks")
+	url, err := replaceVars(d, config, "https://www.googleapis.com/compute/beta/projects/{{project}}/zones/{{zone}}/disks")
 	if err != nil {
 		return err
 	}
@@ -558,7 +560,7 @@ func resourceComputeDiskCreate(d *schema.ResourceData, meta interface{}) error {
 func resourceComputeDiskRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	url, err := replaceVars(d, config, "https://www.googleapis.com/compute/v1/projects/{{project}}/zones/{{zone}}/disks/{{name}}")
+	url, err := replaceVars(d, config, "https://www.googleapis.com/compute/beta/projects/{{project}}/zones/{{zone}}/disks/{{name}}")
 	if err != nil {
 		return err
 	}
@@ -648,8 +650,12 @@ func resourceComputeDiskUpdate(d *schema.ResourceData, meta interface{}) error {
 
 	if d.HasChange("label_fingerprint") || d.HasChange("labels") {
 		obj := make(map[string]interface{})
-		labelFingerprintProp := d.Get("label_fingerprint")
-		obj["labelFingerprint"] = labelFingerprintProp
+		labelFingerprintProp, err := expandComputeDiskLabelFingerprint(d.Get("label_fingerprint"), d, config)
+		if err != nil {
+			return err
+		} else if v, ok := d.GetOkExists("label_fingerprint"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, labelFingerprintProp)) {
+			obj["labelFingerprint"] = labelFingerprintProp
+		}
 		labelsProp, err := expandComputeDiskLabels(d.Get("labels"), d, config)
 		if err != nil {
 			return err
@@ -657,7 +663,7 @@ func resourceComputeDiskUpdate(d *schema.ResourceData, meta interface{}) error {
 			obj["labels"] = labelsProp
 		}
 
-		url, err := replaceVars(d, config, "https://www.googleapis.com/compute/v1/projects/{{project}}/zones/{{zone}}/disks/{{name}}/setLabels")
+		url, err := replaceVars(d, config, "https://www.googleapis.com/compute/beta/projects/{{project}}/zones/{{zone}}/disks/{{name}}/setLabels")
 		if err != nil {
 			return err
 		}
@@ -696,7 +702,7 @@ func resourceComputeDiskUpdate(d *schema.ResourceData, meta interface{}) error {
 			obj["sizeGb"] = sizeGbProp
 		}
 
-		url, err := replaceVars(d, config, "https://www.googleapis.com/compute/v1/projects/{{project}}/zones/{{zone}}/disks/{{name}}/resize")
+		url, err := replaceVars(d, config, "https://www.googleapis.com/compute/beta/projects/{{project}}/zones/{{zone}}/disks/{{name}}/resize")
 		if err != nil {
 			return err
 		}
@@ -734,7 +740,7 @@ func resourceComputeDiskUpdate(d *schema.ResourceData, meta interface{}) error {
 func resourceComputeDiskDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	url, err := replaceVars(d, config, "https://www.googleapis.com/compute/v1/projects/{{project}}/zones/{{zone}}/disks/{{name}}")
+	url, err := replaceVars(d, config, "https://www.googleapis.com/compute/beta/projects/{{project}}/zones/{{zone}}/disks/{{name}}")
 	if err != nil {
 		return err
 	}
@@ -930,6 +936,8 @@ func flattenComputeDiskSourceImageEncryptionKey(v interface{}) interface{} {
 		flattenComputeDiskSourceImageEncryptionKeyRawKey(original["rawKey"])
 	transformed["sha256"] =
 		flattenComputeDiskSourceImageEncryptionKeySha256(original["sha256"])
+	transformed["kms_key_self_link"] =
+		flattenComputeDiskSourceImageEncryptionKeyKms_key_self_link(original["kmsKeyName"])
 	return []interface{}{transformed}
 }
 func flattenComputeDiskSourceImageEncryptionKeyRawKey(v interface{}) interface{} {
@@ -937,6 +945,10 @@ func flattenComputeDiskSourceImageEncryptionKeyRawKey(v interface{}) interface{}
 }
 
 func flattenComputeDiskSourceImageEncryptionKeySha256(v interface{}) interface{} {
+	return v
+}
+
+func flattenComputeDiskSourceImageEncryptionKeyKms_key_self_link(v interface{}) interface{} {
 	return v
 }
 
@@ -954,6 +966,8 @@ func flattenComputeDiskDiskEncryptionKey(v interface{}) interface{} {
 		flattenComputeDiskDiskEncryptionKeyRawKey(original["rawKey"])
 	transformed["sha256"] =
 		flattenComputeDiskDiskEncryptionKeySha256(original["sha256"])
+	transformed["kms_key_self_link"] =
+		flattenComputeDiskDiskEncryptionKeyKms_key_self_link(original["kmsKeyName"])
 	return []interface{}{transformed}
 }
 func flattenComputeDiskDiskEncryptionKeyRawKey(v interface{}) interface{} {
@@ -961,6 +975,10 @@ func flattenComputeDiskDiskEncryptionKeyRawKey(v interface{}) interface{} {
 }
 
 func flattenComputeDiskDiskEncryptionKeySha256(v interface{}) interface{} {
+	return v
+}
+
+func flattenComputeDiskDiskEncryptionKeyKms_key_self_link(v interface{}) interface{} {
 	return v
 }
 
@@ -979,11 +997,17 @@ func flattenComputeDiskSourceSnapshotEncryptionKey(v interface{}) interface{} {
 	transformed := make(map[string]interface{})
 	transformed["raw_key"] =
 		flattenComputeDiskSourceSnapshotEncryptionKeyRawKey(original["rawKey"])
+	transformed["kms_key_self_link"] =
+		flattenComputeDiskSourceSnapshotEncryptionKeyKms_key_self_link(original["kmsKeyName"])
 	transformed["sha256"] =
 		flattenComputeDiskSourceSnapshotEncryptionKeySha256(original["sha256"])
 	return []interface{}{transformed}
 }
 func flattenComputeDiskSourceSnapshotEncryptionKeyRawKey(v interface{}) interface{} {
+	return v
+}
+
+func flattenComputeDiskSourceSnapshotEncryptionKeyKms_key_self_link(v interface{}) interface{} {
 	return v
 }
 
@@ -993,6 +1017,10 @@ func flattenComputeDiskSourceSnapshotEncryptionKeySha256(v interface{}) interfac
 
 func flattenComputeDiskSourceSnapshotId(v interface{}) interface{} {
 	return v
+}
+
+func expandComputeDiskLabelFingerprint(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
+	return v, nil
 }
 
 func expandComputeDiskDescription(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
@@ -1040,7 +1068,7 @@ func expandComputeDiskZone(v interface{}, d *schema.ResourceData, config *Config
 
 func expandComputeDiskSourceImageEncryptionKey(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
 	l := v.([]interface{})
-	if len(l) == 0 {
+	if len(l) == 0 || l[0] == nil {
 		return nil, nil
 	}
 	raw := l[0]
@@ -1061,6 +1089,13 @@ func expandComputeDiskSourceImageEncryptionKey(v interface{}, d *schema.Resource
 		transformed["sha256"] = transformedSha256
 	}
 
+	transformedKms_key_self_link, err := expandComputeDiskSourceImageEncryptionKeyKms_key_self_link(original["kms_key_self_link"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedKms_key_self_link); val.IsValid() && !isEmptyValue(val) {
+		transformed["kmsKeyName"] = transformedKms_key_self_link
+	}
+
 	return transformed, nil
 }
 
@@ -1072,23 +1107,53 @@ func expandComputeDiskSourceImageEncryptionKeySha256(v interface{}, d *schema.Re
 	return v, nil
 }
 
+func expandComputeDiskSourceImageEncryptionKeyKms_key_self_link(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
 func expandComputeDiskDiskEncryptionKey(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
 	l := v.([]interface{})
-	req := make([]interface{}, 0, 1)
-	if len(l) == 1 {
-		// There is a value
-		outMap := make(map[string]interface{})
-		outMap["rawKey"] = l[0].(map[string]interface{})["raw_key"]
-		req = append(req, outMap)
-	} else {
-		// Check alternative setting?
-		if altV, ok := d.GetOk("disk_encryption_key_raw"); ok && altV != "" {
-			outMap := make(map[string]interface{})
-			outMap["rawKey"] = altV
-			req = append(req, outMap)
-		}
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
 	}
-	return req, nil
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedRawKey, err := expandComputeDiskDiskEncryptionKeyRawKey(original["raw_key"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedRawKey); val.IsValid() && !isEmptyValue(val) {
+		transformed["rawKey"] = transformedRawKey
+	}
+
+	transformedSha256, err := expandComputeDiskDiskEncryptionKeySha256(original["sha256"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedSha256); val.IsValid() && !isEmptyValue(val) {
+		transformed["sha256"] = transformedSha256
+	}
+
+	transformedKms_key_self_link, err := expandComputeDiskDiskEncryptionKeyKms_key_self_link(original["kms_key_self_link"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedKms_key_self_link); val.IsValid() && !isEmptyValue(val) {
+		transformed["kmsKeyName"] = transformedKms_key_self_link
+	}
+
+	return transformed, nil
+}
+
+func expandComputeDiskDiskEncryptionKeyRawKey(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeDiskDiskEncryptionKeySha256(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeDiskDiskEncryptionKeyKms_key_self_link(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
+	return v, nil
 }
 
 func expandComputeDiskSnapshot(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
@@ -1101,7 +1166,7 @@ func expandComputeDiskSnapshot(v interface{}, d *schema.ResourceData, config *Co
 
 func expandComputeDiskSourceSnapshotEncryptionKey(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
 	l := v.([]interface{})
-	if len(l) == 0 {
+	if len(l) == 0 || l[0] == nil {
 		return nil, nil
 	}
 	raw := l[0]
@@ -1115,6 +1180,13 @@ func expandComputeDiskSourceSnapshotEncryptionKey(v interface{}, d *schema.Resou
 		transformed["rawKey"] = transformedRawKey
 	}
 
+	transformedKms_key_self_link, err := expandComputeDiskSourceSnapshotEncryptionKeyKms_key_self_link(original["kms_key_self_link"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedKms_key_self_link); val.IsValid() && !isEmptyValue(val) {
+		transformed["kmsKeyName"] = transformedKms_key_self_link
+	}
+
 	transformedSha256, err := expandComputeDiskSourceSnapshotEncryptionKeySha256(original["sha256"], d, config)
 	if err != nil {
 		return nil, err
@@ -1126,6 +1198,10 @@ func expandComputeDiskSourceSnapshotEncryptionKey(v interface{}, d *schema.Resou
 }
 
 func expandComputeDiskSourceSnapshotEncryptionKeyRawKey(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeDiskSourceSnapshotEncryptionKeyKms_key_self_link(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
@@ -1198,16 +1274,17 @@ func resourceComputeDiskEncoder(d *schema.ResourceData, meta interface{}, obj ma
 }
 
 func resourceComputeDiskDecoder(d *schema.ResourceData, meta interface{}, res map[string]interface{}) (map[string]interface{}, error) {
+	// The response for crypto keys often includes the version of the key which needs to be removed
+	// format: projects/<project>/locations/<region>/keyRings/<keyring>/cryptoKeys/<key>/cryptoKeyVersions/1
+	reg := regexp.MustCompile("/cryptoKeyVersions")
+
 	if v, ok := res["diskEncryptionKey"]; ok {
 		original := v.(map[string]interface{})
 		transformed := make(map[string]interface{})
 		// The raw key won't be returned, so we need to use the original.
 		transformed["rawKey"] = d.Get("disk_encryption_key.0.raw_key")
 		transformed["sha256"] = original["sha256"]
-		if v, ok := d.GetOk("disk_encryption_key_raw"); ok {
-			transformed["rawKey"] = v
-		}
-		d.Set("disk_encryption_key_sha256", original["sha256"])
+		transformed["kmsKeyName"] = reg.Split(original["kmsKeyName"].(string), 2)[0]
 		res["diskEncryptionKey"] = transformed
 	}
 
@@ -1217,6 +1294,7 @@ func resourceComputeDiskDecoder(d *schema.ResourceData, meta interface{}, res ma
 		// The raw key won't be returned, so we need to use the original.
 		transformed["rawKey"] = d.Get("source_image_encryption_key.0.raw_key")
 		transformed["sha256"] = original["sha256"]
+		transformed["kmsKeyName"] = reg.Split(original["kmsKeyName"].(string), 2)[0]
 		res["sourceImageEncryptionKey"] = transformed
 	}
 
@@ -1226,6 +1304,7 @@ func resourceComputeDiskDecoder(d *schema.ResourceData, meta interface{}, res ma
 		// The raw key won't be returned, so we need to use the original.
 		transformed["rawKey"] = d.Get("source_snapshot_encryption_key.0.raw_key")
 		transformed["sha256"] = original["sha256"]
+		transformed["kmsKeyName"] = reg.Split(original["kmsKeyName"].(string), 2)[0]
 		res["sourceSnapshotEncryptionKey"] = transformed
 	}
 
