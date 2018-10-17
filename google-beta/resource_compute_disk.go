@@ -937,7 +937,7 @@ func flattenComputeDiskSourceImageEncryptionKey(v interface{}) interface{} {
 	transformed["sha256"] =
 		flattenComputeDiskSourceImageEncryptionKeySha256(original["sha256"])
 	transformed["kms_key_self_link"] =
-		flattenComputeDiskSourceImageEncryptionKeyKms_key_self_link(original["kmsKeyName"])
+		flattenComputeDiskSourceImageEncryptionKeyKmsKeySelfLink(original["kmsKeyName"])
 	return []interface{}{transformed}
 }
 func flattenComputeDiskSourceImageEncryptionKeyRawKey(v interface{}) interface{} {
@@ -948,7 +948,7 @@ func flattenComputeDiskSourceImageEncryptionKeySha256(v interface{}) interface{}
 	return v
 }
 
-func flattenComputeDiskSourceImageEncryptionKeyKms_key_self_link(v interface{}) interface{} {
+func flattenComputeDiskSourceImageEncryptionKeyKmsKeySelfLink(v interface{}) interface{} {
 	return v
 }
 
@@ -967,7 +967,7 @@ func flattenComputeDiskDiskEncryptionKey(v interface{}) interface{} {
 	transformed["sha256"] =
 		flattenComputeDiskDiskEncryptionKeySha256(original["sha256"])
 	transformed["kms_key_self_link"] =
-		flattenComputeDiskDiskEncryptionKeyKms_key_self_link(original["kmsKeyName"])
+		flattenComputeDiskDiskEncryptionKeyKmsKeySelfLink(original["kmsKeyName"])
 	return []interface{}{transformed}
 }
 func flattenComputeDiskDiskEncryptionKeyRawKey(v interface{}) interface{} {
@@ -978,7 +978,7 @@ func flattenComputeDiskDiskEncryptionKeySha256(v interface{}) interface{} {
 	return v
 }
 
-func flattenComputeDiskDiskEncryptionKeyKms_key_self_link(v interface{}) interface{} {
+func flattenComputeDiskDiskEncryptionKeyKmsKeySelfLink(v interface{}) interface{} {
 	return v
 }
 
@@ -998,7 +998,7 @@ func flattenComputeDiskSourceSnapshotEncryptionKey(v interface{}) interface{} {
 	transformed["raw_key"] =
 		flattenComputeDiskSourceSnapshotEncryptionKeyRawKey(original["rawKey"])
 	transformed["kms_key_self_link"] =
-		flattenComputeDiskSourceSnapshotEncryptionKeyKms_key_self_link(original["kmsKeyName"])
+		flattenComputeDiskSourceSnapshotEncryptionKeyKmsKeySelfLink(original["kmsKeyName"])
 	transformed["sha256"] =
 		flattenComputeDiskSourceSnapshotEncryptionKeySha256(original["sha256"])
 	return []interface{}{transformed}
@@ -1007,7 +1007,7 @@ func flattenComputeDiskSourceSnapshotEncryptionKeyRawKey(v interface{}) interfac
 	return v
 }
 
-func flattenComputeDiskSourceSnapshotEncryptionKeyKms_key_self_link(v interface{}) interface{} {
+func flattenComputeDiskSourceSnapshotEncryptionKeyKmsKeySelfLink(v interface{}) interface{} {
 	return v
 }
 
@@ -1089,11 +1089,11 @@ func expandComputeDiskSourceImageEncryptionKey(v interface{}, d *schema.Resource
 		transformed["sha256"] = transformedSha256
 	}
 
-	transformedKms_key_self_link, err := expandComputeDiskSourceImageEncryptionKeyKms_key_self_link(original["kms_key_self_link"], d, config)
+	transformedKmsKeySelfLink, err := expandComputeDiskSourceImageEncryptionKeyKmsKeySelfLink(original["kms_key_self_link"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedKms_key_self_link); val.IsValid() && !isEmptyValue(val) {
-		transformed["kmsKeyName"] = transformedKms_key_self_link
+	} else if val := reflect.ValueOf(transformedKmsKeySelfLink); val.IsValid() && !isEmptyValue(val) {
+		transformed["kmsKeyName"] = transformedKmsKeySelfLink
 	}
 
 	return transformed, nil
@@ -1107,7 +1107,7 @@ func expandComputeDiskSourceImageEncryptionKeySha256(v interface{}, d *schema.Re
 	return v, nil
 }
 
-func expandComputeDiskSourceImageEncryptionKeyKms_key_self_link(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
+func expandComputeDiskSourceImageEncryptionKeyKmsKeySelfLink(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
@@ -1134,11 +1134,11 @@ func expandComputeDiskDiskEncryptionKey(v interface{}, d *schema.ResourceData, c
 		transformed["sha256"] = transformedSha256
 	}
 
-	transformedKms_key_self_link, err := expandComputeDiskDiskEncryptionKeyKms_key_self_link(original["kms_key_self_link"], d, config)
+	transformedKmsKeySelfLink, err := expandComputeDiskDiskEncryptionKeyKmsKeySelfLink(original["kms_key_self_link"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedKms_key_self_link); val.IsValid() && !isEmptyValue(val) {
-		transformed["kmsKeyName"] = transformedKms_key_self_link
+	} else if val := reflect.ValueOf(transformedKmsKeySelfLink); val.IsValid() && !isEmptyValue(val) {
+		transformed["kmsKeyName"] = transformedKmsKeySelfLink
 	}
 
 	return transformed, nil
@@ -1152,7 +1152,7 @@ func expandComputeDiskDiskEncryptionKeySha256(v interface{}, d *schema.ResourceD
 	return v, nil
 }
 
-func expandComputeDiskDiskEncryptionKeyKms_key_self_link(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
+func expandComputeDiskDiskEncryptionKeyKmsKeySelfLink(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
@@ -1180,11 +1180,11 @@ func expandComputeDiskSourceSnapshotEncryptionKey(v interface{}, d *schema.Resou
 		transformed["rawKey"] = transformedRawKey
 	}
 
-	transformedKms_key_self_link, err := expandComputeDiskSourceSnapshotEncryptionKeyKms_key_self_link(original["kms_key_self_link"], d, config)
+	transformedKmsKeySelfLink, err := expandComputeDiskSourceSnapshotEncryptionKeyKmsKeySelfLink(original["kms_key_self_link"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedKms_key_self_link); val.IsValid() && !isEmptyValue(val) {
-		transformed["kmsKeyName"] = transformedKms_key_self_link
+	} else if val := reflect.ValueOf(transformedKmsKeySelfLink); val.IsValid() && !isEmptyValue(val) {
+		transformed["kmsKeyName"] = transformedKmsKeySelfLink
 	}
 
 	transformedSha256, err := expandComputeDiskSourceSnapshotEncryptionKeySha256(original["sha256"], d, config)
@@ -1201,7 +1201,7 @@ func expandComputeDiskSourceSnapshotEncryptionKeyRawKey(v interface{}, d *schema
 	return v, nil
 }
 
-func expandComputeDiskSourceSnapshotEncryptionKeyKms_key_self_link(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
+func expandComputeDiskSourceSnapshotEncryptionKeyKmsKeySelfLink(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
@@ -1274,17 +1274,15 @@ func resourceComputeDiskEncoder(d *schema.ResourceData, meta interface{}, obj ma
 }
 
 func resourceComputeDiskDecoder(d *schema.ResourceData, meta interface{}, res map[string]interface{}) (map[string]interface{}, error) {
-	// The response for crypto keys often includes the version of the key which needs to be removed
-	// format: projects/<project>/locations/<region>/keyRings/<keyring>/cryptoKeys/<key>/cryptoKeyVersions/1
-	reg := regexp.MustCompile("/cryptoKeyVersions")
-
 	if v, ok := res["diskEncryptionKey"]; ok {
 		original := v.(map[string]interface{})
 		transformed := make(map[string]interface{})
 		// The raw key won't be returned, so we need to use the original.
 		transformed["rawKey"] = d.Get("disk_encryption_key.0.raw_key")
 		transformed["sha256"] = original["sha256"]
-		transformed["kmsKeyName"] = reg.Split(original["kmsKeyName"].(string), 2)[0]
+		// The response for crypto keys often includes the version of the key which needs to be removed
+		// format: projects/<project>/locations/<region>/keyRings/<keyring>/cryptoKeys/<key>/cryptoKeyVersions/1
+		transformed["kmsKeyName"] = strings.Split(original["kmsKeyName"].(string), "/cryptoKeyVersions")[0]
 		res["diskEncryptionKey"] = transformed
 	}
 
@@ -1294,7 +1292,9 @@ func resourceComputeDiskDecoder(d *schema.ResourceData, meta interface{}, res ma
 		// The raw key won't be returned, so we need to use the original.
 		transformed["rawKey"] = d.Get("source_image_encryption_key.0.raw_key")
 		transformed["sha256"] = original["sha256"]
-		transformed["kmsKeyName"] = reg.Split(original["kmsKeyName"].(string), 2)[0]
+		// The response for crypto keys often includes the version of the key which needs to be removed
+		// format: projects/<project>/locations/<region>/keyRings/<keyring>/cryptoKeys/<key>/cryptoKeyVersions/1
+		transformed["kmsKeyName"] = strings.Split(original["kmsKeyName"].(string), "/cryptoKeyVersions")[0]
 		res["sourceImageEncryptionKey"] = transformed
 	}
 
@@ -1304,7 +1304,9 @@ func resourceComputeDiskDecoder(d *schema.ResourceData, meta interface{}, res ma
 		// The raw key won't be returned, so we need to use the original.
 		transformed["rawKey"] = d.Get("source_snapshot_encryption_key.0.raw_key")
 		transformed["sha256"] = original["sha256"]
-		transformed["kmsKeyName"] = reg.Split(original["kmsKeyName"].(string), 2)[0]
+		// The response for crypto keys often includes the version of the key which needs to be removed
+		// format: projects/<project>/locations/<region>/keyRings/<keyring>/cryptoKeys/<key>/cryptoKeyVersions/1
+		transformed["kmsKeyName"] = strings.Split(original["kmsKeyName"].(string), "/cryptoKeyVersions")[0]
 		res["sourceSnapshotEncryptionKey"] = transformed
 	}
 

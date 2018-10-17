@@ -220,7 +220,7 @@ func TestAccComputeDisk_basic(t *testing.T) {
 				Config: testAccComputeDisk_basic(diskName),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckComputeDiskExists(
-						"google_compute_disk.foobar", &disk),
+						"google_compute_disk.foobar", getTestProjectFromEnv(), &disk),
 					testAccCheckComputeDiskHasLabel(&disk, "my-label", "my-label-value"),
 					testAccCheckComputeDiskHasLabelFingerprint(&disk, "google_compute_disk.foobar"),
 				),
@@ -264,7 +264,7 @@ func TestAccComputeDisk_update(t *testing.T) {
 				Config: testAccComputeDisk_basic(diskName),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckComputeDiskExists(
-						"google_compute_disk.foobar", &disk),
+						"google_compute_disk.foobar", getTestProjectFromEnv(), &disk),
 					resource.TestCheckResourceAttr("google_compute_disk.foobar", "size", "50"),
 					testAccCheckComputeDiskHasLabel(&disk, "my-label", "my-label-value"),
 					testAccCheckComputeDiskHasLabelFingerprint(&disk, "google_compute_disk.foobar"),
@@ -274,7 +274,7 @@ func TestAccComputeDisk_update(t *testing.T) {
 				Config: testAccComputeDisk_updated(diskName),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckComputeDiskExists(
-						"google_compute_disk.foobar", &disk),
+						"google_compute_disk.foobar", getTestProjectFromEnv(), &disk),
 					resource.TestCheckResourceAttr("google_compute_disk.foobar", "size", "100"),
 					testAccCheckComputeDiskHasLabel(&disk, "my-label", "my-updated-label-value"),
 					testAccCheckComputeDiskHasLabel(&disk, "a-new-label", "a-new-label-value"),
@@ -304,14 +304,14 @@ func TestAccComputeDisk_fromSnapshot(t *testing.T) {
 				Config: testAccComputeDisk_fromSnapshot(projectName, firstDiskName, snapshotName, diskName, "self_link"),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckComputeDiskExists(
-						"google_compute_disk.seconddisk", &disk),
+						"google_compute_disk.seconddisk", getTestProjectFromEnv(), &disk),
 				),
 			},
 			resource.TestStep{
 				Config: testAccComputeDisk_fromSnapshot(projectName, firstDiskName, snapshotName, diskName, "name"),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckComputeDiskExists(
-						"google_compute_disk.seconddisk", &disk),
+						"google_compute_disk.seconddisk", getTestProjectFromEnv(), &disk),
 				),
 			},
 		},
@@ -333,27 +333,7 @@ func TestAccComputeDisk_encryption(t *testing.T) {
 				Config: testAccComputeDisk_encryption(diskName),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckComputeDiskExists(
-						"google_compute_disk.foobar", &disk),
-					testAccCheckEncryptionKey(
-						"google_compute_disk.foobar", &disk),
-				),
-			},
-			// Update from top-level attribute to nested.
-			resource.TestStep{
-				Config: testAccComputeDisk_encryptionMigrate(diskName),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckComputeDiskExists(
-						"google_compute_disk.foobar", &disk),
-					testAccCheckEncryptionKey(
-						"google_compute_disk.foobar", &disk),
-				),
-			},
-			// Update from nested attribute back to top-level.
-			resource.TestStep{
-				Config: testAccComputeDisk_encryption(diskName),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckComputeDiskExists(
-						"google_compute_disk.foobar", &disk),
+						"google_compute_disk.foobar", getTestProjectFromEnv(), &disk),
 					testAccCheckEncryptionKey(
 						"google_compute_disk.foobar", &disk),
 				),
@@ -363,14 +343,19 @@ func TestAccComputeDisk_encryption(t *testing.T) {
 }
 
 func TestAccComputeDisk_encryptionKMS(t *testing.T) {
-	skipIfEnvNotSet(t, "GOOGLE_PROJECT_NUMBER")
 	t.Parallel()
 
-	serviceAgent := fmt.Sprintf("service-%s@compute-system.iam.gserviceaccount.com", os.Getenv("GOOGLE_PROJECT_NUMBER"))
+	org := getTestOrgFromEnv(t)
+	pid := "tf-test-" + acctest.RandString(10)
+	billingAccount := getTestBillingAccountFromEnv(t)
 	diskName := fmt.Sprintf("tf-test-%s", acctest.RandString(10))
 	keyRingName := fmt.Sprintf("tf-test-%s", acctest.RandString(10))
 	keyName := fmt.Sprintf("tf-test-%s", acctest.RandString(10))
+	importID := fmt.Sprintf("%s/%s/%s", pid, "us-central1-a", diskName)
 	var disk compute.Disk
+
+	fmt.Println("ZOMGZOMG")
+	fmt.Println(testAccComputeDisk_encryptionKMS(pid, pname, org, billingAccount, diskName, keyRingName, keyName))
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -378,16 +363,17 @@ func TestAccComputeDisk_encryptionKMS(t *testing.T) {
 		CheckDestroy: testAccCheckComputeDiskDestroy,
 		Steps: []resource.TestStep{
 			resource.TestStep{
-				Config: testAccComputeDisk_encryptionKMS(serviceAgent, getTestProjectFromEnv(), diskName, keyRingName, keyName),
+				Config: testAccComputeDisk_encryptionKMS(pid, pname, org, billingAccount, diskName, keyRingName, keyName),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckComputeDiskExists(
-						"google_compute_disk.foobar", &disk),
+						"google_compute_disk.foobar", pid, &disk),
 					testAccCheckEncryptionKey(
 						"google_compute_disk.foobar", &disk),
 				),
 			},
 			resource.TestStep{
 				ResourceName:      "google_compute_disk.foobar",
+				ImportStateId:     importID,
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
@@ -411,7 +397,7 @@ func TestAccComputeDisk_deleteDetach(t *testing.T) {
 				Config: testAccComputeDisk_deleteDetach(instanceName, diskName),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckComputeDiskExists(
-						"google_compute_disk.foo", &disk),
+						"google_compute_disk.foo", getTestProjectFromEnv(), &disk),
 				),
 			},
 			// this needs to be a second step so we refresh and see the instance
@@ -422,7 +408,7 @@ func TestAccComputeDisk_deleteDetach(t *testing.T) {
 				Config: testAccComputeDisk_deleteDetach(instanceName, diskName),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckComputeDiskExists(
-						"google_compute_disk.foo", &disk),
+						"google_compute_disk.foo", getTestProjectFromEnv(), &disk),
 					testAccCheckComputeDiskInstances(
 						"google_compute_disk.foo", &disk),
 				),
@@ -448,7 +434,7 @@ func TestAccComputeDisk_deleteDetachIGM(t *testing.T) {
 				Config: testAccComputeDisk_deleteDetachIGM(diskName, mgrName),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckComputeDiskExists(
-						"google_compute_disk.foo", &disk),
+						"google_compute_disk.foo", getTestProjectFromEnv(), &disk),
 				),
 			},
 			// this needs to be a second step so we refresh and see the instance
@@ -459,7 +445,7 @@ func TestAccComputeDisk_deleteDetachIGM(t *testing.T) {
 				Config: testAccComputeDisk_deleteDetachIGM(diskName, mgrName),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckComputeDiskExists(
-						"google_compute_disk.foo", &disk),
+						"google_compute_disk.foo", getTestProjectFromEnv(), &disk),
 					testAccCheckComputeDiskInstances(
 						"google_compute_disk.foo", &disk),
 				),
@@ -469,7 +455,7 @@ func TestAccComputeDisk_deleteDetachIGM(t *testing.T) {
 				Config: testAccComputeDisk_deleteDetachIGM(diskName2, mgrName),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckComputeDiskExists(
-						"google_compute_disk.foo", &disk),
+						"google_compute_disk.foo", getTestProjectFromEnv(), &disk),
 				),
 			},
 			// Add the extra step like before
@@ -477,7 +463,7 @@ func TestAccComputeDisk_deleteDetachIGM(t *testing.T) {
 				Config: testAccComputeDisk_deleteDetachIGM(diskName2, mgrName),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckComputeDiskExists(
-						"google_compute_disk.foo", &disk),
+						"google_compute_disk.foo", getTestProjectFromEnv(), &disk),
 					testAccCheckComputeDiskInstances(
 						"google_compute_disk.foo", &disk),
 				),
@@ -536,9 +522,8 @@ func testAccCheckComputeDiskDestroy(s *terraform.State) error {
 	return nil
 }
 
-func testAccCheckComputeDiskExists(n string, disk *compute.Disk) resource.TestCheckFunc {
+func testAccCheckComputeDiskExists(n, p string, disk *compute.Disk) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		p := getTestProjectFromEnv()
 		rs, ok := s.RootModule().Resources[n]
 		if !ok {
 			return fmt.Errorf("Not found: %s", n)
@@ -604,7 +589,7 @@ func testAccCheckEncryptionKey(n string, disk *compute.Disk) resource.TestCheckF
 			return fmt.Errorf("Not found: %s", n)
 		}
 
-		attr := rs.Primary.Attributes["disk_encryption_key_sha256"]
+		attr := rs.Primary.Attributes["disk_encryption_key.0.sha256"]
 		if disk.DiskEncryptionKey == nil {
 			return fmt.Errorf("Disk %s has mismatched encryption key.\nTF State: %+v\nGCP State: <empty>", n, attr)
 		} else if attr != disk.DiskEncryptionKey.Sha256 {
@@ -740,40 +725,43 @@ resource "google_compute_disk" "foobar" {
 	size = 50
 	type = "pd-ssd"
 	zone = "us-central1-a"
-	disk_encryption_key_raw = "SGVsbG8gZnJvbSBHb29nbGUgQ2xvdWQgUGxhdGZvcm0="
-}`, diskName)
-}
-
-func testAccComputeDisk_encryptionMigrate(diskName string) string {
-	return fmt.Sprintf(`
-data "google_compute_image" "my_image" {
-	family  = "debian-9"
-	project = "debian-cloud"
-}
-
-resource "google_compute_disk" "foobar" {
-	name = "%s"
-	image = "${data.google_compute_image.my_image.self_link}"
-	size = 50
-	type = "pd-ssd"
-	zone = "us-central1-a"
 	disk_encryption_key {
 		raw_key = "SGVsbG8gZnJvbSBHb29nbGUgQ2xvdWQgUGxhdGZvcm0="
 	}
 }`, diskName)
 }
 
-func testAccComputeDisk_encryptionKMS(serviceAgent, project, diskName, keyRingName, keyName string) string {
+// TODO chrisst - exclude this test from the non-beta provider
+func testAccComputeDisk_encryptionKMS(pid, pname, org, billing, diskName, keyRingName, keyName string) string {
 	return fmt.Sprintf(`
+resource "google_project" "project" {
+  project_id      = "%s"
+  name            = "%s"
+	org_id          = "%s"
+	billing_account = "%s"
+}
+
 data "google_compute_image" "my_image" {
 	family  = "debian-9"
 	project = "debian-cloud"
 }
 
+resource "google_project_services" "apis" {
+  project = "${google_project.project.project_id}"
+  services = [
+		"oslogin.googleapis.com",
+    "compute.googleapis.com",
+    "cloudkms.googleapis.com",
+		"appengine.googleapis.com"
+  ]
+}
+
 resource "google_project_iam_member" "kms-project-binding" {
-  project = "%s"
+  project = "${google_project.project.project_id}"
   role    = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
-  member  = "serviceAccount:%s"
+	member  = "serviceAccount:service-${google_project.project.number}@compute-system.iam.gserviceaccount.com"
+	
+	depends_on = ["google_project_services.apis"]
 }
 
 resource "google_kms_crypto_key_iam_binding" "kms-key-binding" {
@@ -781,13 +769,18 @@ resource "google_kms_crypto_key_iam_binding" "kms-key-binding" {
   role          = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
 
   members = [
-    "serviceAccount:%s",
-  ]
+    "serviceAccount:service-${google_project.project.number}@compute-system.iam.gserviceaccount.com",
+	]
+
+	depends_on = ["google_project_services.apis"]
 }
 
 resource "google_kms_key_ring" "my_key_ring" {
-  name     = "%s"
-  location = "us-central1"
+	name     = "%s"
+	project  = "${google_project.project.project_id}"
+	location = "us-central1"
+	
+	depends_on = ["google_project_services.apis"]
 }
 
 resource "google_kms_crypto_key" "my_crypto_key" {
@@ -801,11 +794,17 @@ resource "google_compute_disk" "foobar" {
 	size = 10
 	type = "pd-ssd"
 	zone = "us-central1-a"
+	project  = "${google_project.project.project_id}"
 
 	disk_encryption_key {
     kms_key_self_link = "${google_kms_crypto_key.my_crypto_key.self_link}"
-  }
-}`, project, serviceAgent, serviceAgent, keyRingName, keyName, diskName)
+	}
+	
+	depends_on = [
+		"google_kms_crypto_key_iam_binding.kms-key-binding",
+		"google_project_iam_member.kms-project-binding"
+	]
+}`, pid, pname, org, billing, keyRingName, keyName, diskName)
 }
 
 func testAccComputeDisk_deleteDetach(instanceName, diskName string) string {
@@ -880,15 +879,7 @@ resource "google_compute_instance_template" "template" {
 resource "google_compute_instance_group_manager" "manager" {
   name               = "%s"
   base_instance_name = "disk-igm"
-  version {
-    instance_template  = "${google_compute_instance_template.template.self_link}"
-    name               = "primary"
-  }
-  update_policy {
-    minimal_action        = "RESTART"
-    type                  = "PROACTIVE"
-    max_unavailable_fixed = 1
-  }
+  instance_template  = "${google_compute_instance_template.template.self_link}"
   zone               = "us-central1-a"
   target_size        = 1
 }`, diskName, mgrName)
