@@ -129,8 +129,7 @@ The following arguments are supported:
   (Optional)
   This field denotes whether to enable logging for a particular
   firewall rule. If logging is enabled, logs will be exported to
-  Stackdriver.  This property is in beta, and should be used with the terraform-provider-google-beta provider.
-  See [Provider Versions](https://terraform.io/docs/provider/google/provider_versions.html) for more details on beta fields.
+  Stackdriver.
 
 * `priority` -
   (Optional)

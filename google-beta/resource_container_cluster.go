@@ -501,12 +501,12 @@ func resourceContainerCluster() *schema.Resource {
 			},
 
 			"private_cluster": {
+				Deprecated:    "Use private_cluster_config.enable_private_nodes instead.",
+				ConflictsWith: []string{"private_cluster_config"},
+				Computed:      true,
 				Type:          schema.TypeBool,
 				Optional:      true,
 				ForceNew:      true,
-				Computed:      true,
-				Deprecated:    "Use private_cluster_config.enable_private_nodes instead.",
-				ConflictsWith: []string{"private_cluster_config"},
 			},
 
 			"private_cluster_config": {
@@ -547,12 +547,12 @@ func resourceContainerCluster() *schema.Resource {
 
 			"master_ipv4_cidr_block": {
 				Deprecated:    "Use private_cluster_config.master_ipv4_cidr_block instead.",
+				ConflictsWith: []string{"private_cluster_config"},
+				Computed:      true,
 				Type:          schema.TypeString,
 				Optional:      true,
 				ForceNew:      true,
-				Computed:      true,
 				ValidateFunc:  validation.CIDRNetwork(28, 28),
-				ConflictsWith: []string{"private_cluster_config"},
 			},
 
 			"resource_labels": {
@@ -685,6 +685,7 @@ func resourceContainerClusterCreate(d *schema.ResourceData, meta interface{}) er
 			}
 		}
 	}
+
 	if v, ok := d.GetOk("private_cluster_config"); ok {
 		cluster.PrivateClusterConfig = expandPrivateClusterConfig(v)
 	}
@@ -810,6 +811,7 @@ func resourceContainerClusterRead(d *schema.ResourceData, meta interface{}) erro
 	if err := d.Set("ip_allocation_policy", flattenIPAllocationPolicy(cluster.IpAllocationPolicy)); err != nil {
 		return err
 	}
+
 	if err := d.Set("private_cluster_config", flattenPrivateClusterConfig(cluster.PrivateClusterConfig)); err != nil {
 		return err
 	}
@@ -1404,9 +1406,10 @@ func getInstanceGroupUrlsFromManagerUrls(config *Config, igmUrls []string) ([]st
 
 func expandClusterAddonsConfig(configured interface{}) *containerBeta.AddonsConfig {
 	l := configured.([]interface{})
-	if len(l) == 0 {
+	if len(l) == 0 || l[0] == nil {
 		return nil
 	}
+
 	config := l[0].(map[string]interface{})
 	ac := &containerBeta.AddonsConfig{}
 
@@ -1447,9 +1450,10 @@ func expandClusterAddonsConfig(configured interface{}) *containerBeta.AddonsConf
 
 func expandIPAllocationPolicy(configured interface{}) *containerBeta.IPAllocationPolicy {
 	l := configured.([]interface{})
-	if len(l) == 0 {
+	if len(l) == 0 || l[0] == nil {
 		return nil
 	}
+
 	config := l[0].(map[string]interface{})
 
 	return &containerBeta.IPAllocationPolicy{
@@ -1468,9 +1472,10 @@ func expandIPAllocationPolicy(configured interface{}) *containerBeta.IPAllocatio
 
 func expandMaintenancePolicy(configured interface{}) *containerBeta.MaintenancePolicy {
 	l := configured.([]interface{})
-	if len(l) == 0 {
+	if len(l) == 0 || l[0] == nil {
 		return nil
 	}
+
 	maintenancePolicy := l[0].(map[string]interface{})
 	dailyMaintenanceWindow := maintenancePolicy["daily_maintenance_window"].([]interface{})[0].(map[string]interface{})
 	startTime := dailyMaintenanceWindow["start_time"].(string)
@@ -1485,9 +1490,10 @@ func expandMaintenancePolicy(configured interface{}) *containerBeta.MaintenanceP
 
 func expandMasterAuth(configured interface{}) *containerBeta.MasterAuth {
 	l := configured.([]interface{})
-	if len(l) == 0 {
+	if len(l) == 0 || l[0] == nil {
 		return nil
 	}
+
 	masterAuth := l[0].(map[string]interface{})
 	result := &containerBeta.MasterAuth{
 		Username: masterAuth["username"].(string),
@@ -1562,9 +1568,10 @@ func expandPrivateClusterConfig(configured interface{}) *containerBeta.PrivateCl
 
 func expandPodSecurityPolicyConfig(configured interface{}) *containerBeta.PodSecurityPolicyConfig {
 	l := configured.([]interface{})
-	if len(l) == 0 {
+	if len(l) == 0 || l[0] == nil {
 		return nil
 	}
+
 	config := l[0].(map[string]interface{})
 	return &containerBeta.PodSecurityPolicyConfig{
 		Enabled:         config["enabled"].(bool),
