@@ -33,6 +33,9 @@ func resourceBinaryAuthorizationAttestor() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			State: resourceBinaryAuthorizationAttestorImport,
 		},
+		DeprecationMessage: `This resource is in beta and will be removed from this provider.
+Use the BinaryAuthorizationAttestor resource in the terraform-provider-google-beta provider to continue using it.
+See https://terraform.io/docs/providers/google/provider_versions.html for more details on beta resources.`,
 
 		Schema: map[string]*schema.Schema{
 			"attestation_authority_note": {
@@ -314,7 +317,7 @@ func expandBinaryAuthorizationAttestorDescription(v interface{}, d *schema.Resou
 
 func expandBinaryAuthorizationAttestorAttestationAuthorityNote(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
 	l := v.([]interface{})
-	if len(l) == 0 {
+	if len(l) == 0 || l[0] == nil {
 		return nil, nil
 	}
 	raw := l[0]

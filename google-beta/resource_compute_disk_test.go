@@ -338,26 +338,6 @@ func TestAccComputeDisk_encryption(t *testing.T) {
 						"google_compute_disk.foobar", &disk),
 				),
 			},
-			// Update from top-level attribute to nested.
-			resource.TestStep{
-				Config: testAccComputeDisk_encryptionMigrate(diskName),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckComputeDiskExists(
-						"google_compute_disk.foobar", &disk),
-					testAccCheckEncryptionKey(
-						"google_compute_disk.foobar", &disk),
-				),
-			},
-			// Update from nested attribute back to top-level.
-			resource.TestStep{
-				Config: testAccComputeDisk_encryption(diskName),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckComputeDiskExists(
-						"google_compute_disk.foobar", &disk),
-					testAccCheckEncryptionKey(
-						"google_compute_disk.foobar", &disk),
-				),
-			},
 		},
 	})
 }
@@ -571,7 +551,7 @@ func testAccCheckEncryptionKey(n string, disk *compute.Disk) resource.TestCheckF
 			return fmt.Errorf("Not found: %s", n)
 		}
 
-		attr := rs.Primary.Attributes["disk_encryption_key_sha256"]
+		attr := rs.Primary.Attributes["disk_encryption_key.0.sha256"]
 		if disk.DiskEncryptionKey == nil {
 			return fmt.Errorf("Disk %s has mismatched encryption key.\nTF State: %+v\nGCP State: <empty>", n, attr)
 		} else if attr != disk.DiskEncryptionKey.Sha256 {
@@ -707,23 +687,6 @@ resource "google_compute_disk" "foobar" {
 	size = 50
 	type = "pd-ssd"
 	zone = "us-central1-a"
-	disk_encryption_key_raw = "SGVsbG8gZnJvbSBHb29nbGUgQ2xvdWQgUGxhdGZvcm0="
-}`, diskName)
-}
-
-func testAccComputeDisk_encryptionMigrate(diskName string) string {
-	return fmt.Sprintf(`
-data "google_compute_image" "my_image" {
-	family  = "debian-9"
-	project = "debian-cloud"
-}
-
-resource "google_compute_disk" "foobar" {
-	name = "%s"
-	image = "${data.google_compute_image.my_image.self_link}"
-	size = 50
-	type = "pd-ssd"
-	zone = "us-central1-a"
 	disk_encryption_key {
 		raw_key = "SGVsbG8gZnJvbSBHb29nbGUgQ2xvdWQgUGxhdGZvcm0="
 	}
@@ -802,15 +765,7 @@ resource "google_compute_instance_template" "template" {
 resource "google_compute_instance_group_manager" "manager" {
   name               = "%s"
   base_instance_name = "disk-igm"
-  version {
-    instance_template  = "${google_compute_instance_template.template.self_link}"
-    name               = "primary"
-  }
-  update_policy {
-    minimal_action        = "RESTART"
-    type                  = "PROACTIVE"
-    max_unavailable_fixed = 1
-  }
+  instance_template  = "${google_compute_instance_template.template.self_link}"
   zone               = "us-central1-a"
   target_size        = 1
 }`, diskName, mgrName)
