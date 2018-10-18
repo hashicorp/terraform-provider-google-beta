@@ -259,7 +259,7 @@ func resourceComputeSubnetworkCreate(d *schema.ResourceData, meta interface{}) e
 		obj["region"] = regionProp
 	}
 
-	url, err := replaceVars(d, config, "https://www.googleapis.com/compute/v1/projects/{{project}}/regions/{{region}}/subnetworks")
+	url, err := replaceVars(d, config, "https://www.googleapis.com/compute/beta/projects/{{project}}/regions/{{region}}/subnetworks")
 	if err != nil {
 		return err
 	}
@@ -305,7 +305,7 @@ func resourceComputeSubnetworkCreate(d *schema.ResourceData, meta interface{}) e
 func resourceComputeSubnetworkRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	url, err := replaceVars(d, config, "https://www.googleapis.com/compute/v1/projects/{{project}}/regions/{{region}}/subnetworks/{{name}}")
+	url, err := replaceVars(d, config, "https://www.googleapis.com/compute/beta/projects/{{project}}/regions/{{region}}/subnetworks/{{name}}")
 	if err != nil {
 		return err
 	}
@@ -376,7 +376,7 @@ func resourceComputeSubnetworkUpdate(d *schema.ResourceData, meta interface{}) e
 			obj["ipCidrRange"] = ipCidrRangeProp
 		}
 
-		url, err := replaceVars(d, config, "https://www.googleapis.com/compute/v1/projects/{{project}}/regions/{{region}}/subnetworks/{{name}}/expandIpCidrRange")
+		url, err := replaceVars(d, config, "https://www.googleapis.com/compute/beta/projects/{{project}}/regions/{{region}}/subnetworks/{{name}}/expandIpCidrRange")
 		if err != nil {
 			return err
 		}
@@ -426,7 +426,7 @@ func resourceComputeSubnetworkUpdate(d *schema.ResourceData, meta interface{}) e
 			obj["secondaryIpRanges"] = secondaryIpRangesProp
 		}
 
-		url, err := replaceVars(d, config, "https://www.googleapis.com/compute/v1/projects/{{project}}/regions/{{region}}/subnetworks/{{name}}")
+		url, err := replaceVars(d, config, "https://www.googleapis.com/compute/beta/projects/{{project}}/regions/{{region}}/subnetworks/{{name}}")
 		if err != nil {
 			return err
 		}
@@ -466,7 +466,7 @@ func resourceComputeSubnetworkUpdate(d *schema.ResourceData, meta interface{}) e
 			obj["privateIpGoogleAccess"] = privateIpGoogleAccessProp
 		}
 
-		url, err := replaceVars(d, config, "https://www.googleapis.com/compute/v1/projects/{{project}}/regions/{{region}}/subnetworks/{{name}}/setPrivateIpGoogleAccess")
+		url, err := replaceVars(d, config, "https://www.googleapis.com/compute/beta/projects/{{project}}/regions/{{region}}/subnetworks/{{name}}/setPrivateIpGoogleAccess")
 		if err != nil {
 			return err
 		}
@@ -504,7 +504,7 @@ func resourceComputeSubnetworkUpdate(d *schema.ResourceData, meta interface{}) e
 func resourceComputeSubnetworkDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	url, err := replaceVars(d, config, "https://www.googleapis.com/compute/v1/projects/{{project}}/regions/{{region}}/subnetworks/{{name}}")
+	url, err := replaceVars(d, config, "https://www.googleapis.com/compute/beta/projects/{{project}}/regions/{{region}}/subnetworks/{{name}}")
 	if err != nil {
 		return err
 	}

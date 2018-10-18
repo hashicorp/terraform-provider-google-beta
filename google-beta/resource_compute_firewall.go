@@ -145,6 +145,10 @@ func resourceComputeFirewall() *schema.Resource {
 				Type:     schema.TypeBool,
 				Optional: true,
 			},
+			"enable_logging": {
+				Type:     schema.TypeBool,
+				Optional: true,
+			},
 			"priority": {
 				Type:         schema.TypeInt,
 				Optional:     true,
@@ -254,6 +258,12 @@ func resourceComputeFirewallCreate(d *schema.ResourceData, meta interface{}) err
 	} else if v, ok := d.GetOkExists("disabled"); ok || !reflect.DeepEqual(v, disabledProp) {
 		obj["disabled"] = disabledProp
 	}
+	enableLoggingProp, err := expandComputeFirewallEnableLogging(d.Get("enable_logging"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("enable_logging"); ok || !reflect.DeepEqual(v, enableLoggingProp) {
+		obj["enableLogging"] = enableLoggingProp
+	}
 	nameProp, err := expandComputeFirewallName(d.Get("name"), d, config)
 	if err != nil {
 		return err
@@ -303,7 +313,7 @@ func resourceComputeFirewallCreate(d *schema.ResourceData, meta interface{}) err
 		obj["targetTags"] = targetTagsProp
 	}
 
-	url, err := replaceVars(d, config, "https://www.googleapis.com/compute/v1/projects/{{project}}/global/firewalls")
+	url, err := replaceVars(d, config, "https://www.googleapis.com/compute/beta/projects/{{project}}/global/firewalls")
 	if err != nil {
 		return err
 	}
@@ -349,7 +359,7 @@ func resourceComputeFirewallCreate(d *schema.ResourceData, meta interface{}) err
 func resourceComputeFirewallRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	url, err := replaceVars(d, config, "https://www.googleapis.com/compute/v1/projects/{{project}}/global/firewalls/{{name}}")
+	url, err := replaceVars(d, config, "https://www.googleapis.com/compute/beta/projects/{{project}}/global/firewalls/{{name}}")
 	if err != nil {
 		return err
 	}
@@ -378,6 +388,9 @@ func resourceComputeFirewallRead(d *schema.ResourceData, meta interface{}) error
 		return fmt.Errorf("Error reading Firewall: %s", err)
 	}
 	if err := d.Set("disabled", flattenComputeFirewallDisabled(res["disabled"])); err != nil {
+		return fmt.Errorf("Error reading Firewall: %s", err)
+	}
+	if err := d.Set("enable_logging", flattenComputeFirewallEnableLogging(res["enableLogging"])); err != nil {
 		return fmt.Errorf("Error reading Firewall: %s", err)
 	}
 	if err := d.Set("name", flattenComputeFirewallName(res["name"])); err != nil {
@@ -458,6 +471,12 @@ func resourceComputeFirewallUpdate(d *schema.ResourceData, meta interface{}) err
 	} else if v, ok := d.GetOkExists("disabled"); ok || !reflect.DeepEqual(v, disabledProp) {
 		obj["disabled"] = disabledProp
 	}
+	enableLoggingProp, err := expandComputeFirewallEnableLogging(d.Get("enable_logging"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("enable_logging"); ok || !reflect.DeepEqual(v, enableLoggingProp) {
+		obj["enableLogging"] = enableLoggingProp
+	}
 	nameProp, err := expandComputeFirewallName(d.Get("name"), d, config)
 	if err != nil {
 		return err
@@ -507,7 +526,7 @@ func resourceComputeFirewallUpdate(d *schema.ResourceData, meta interface{}) err
 		obj["targetTags"] = targetTagsProp
 	}
 
-	url, err := replaceVars(d, config, "https://www.googleapis.com/compute/v1/projects/{{project}}/global/firewalls/{{name}}")
+	url, err := replaceVars(d, config, "https://www.googleapis.com/compute/beta/projects/{{project}}/global/firewalls/{{name}}")
 	if err != nil {
 		return err
 	}
@@ -543,7 +562,7 @@ func resourceComputeFirewallUpdate(d *schema.ResourceData, meta interface{}) err
 func resourceComputeFirewallDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	url, err := replaceVars(d, config, "https://www.googleapis.com/compute/v1/projects/{{project}}/global/firewalls/{{name}}")
+	url, err := replaceVars(d, config, "https://www.googleapis.com/compute/beta/projects/{{project}}/global/firewalls/{{name}}")
 	if err != nil {
 		return err
 	}
@@ -657,6 +676,10 @@ func flattenComputeFirewallDirection(v interface{}) interface{} {
 }
 
 func flattenComputeFirewallDisabled(v interface{}) interface{} {
+	return v
+}
+
+func flattenComputeFirewallEnableLogging(v interface{}) interface{} {
 	return v
 }
 
@@ -806,6 +829,10 @@ func expandComputeFirewallDirection(v interface{}, d *schema.ResourceData, confi
 }
 
 func expandComputeFirewallDisabled(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeFirewallEnableLogging(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 

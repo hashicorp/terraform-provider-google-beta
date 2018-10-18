@@ -222,7 +222,7 @@ func resourceComputeUrlMapCreate(d *schema.ResourceData, meta interface{}) error
 		obj["tests"] = testsProp
 	}
 
-	url, err := replaceVars(d, config, "https://www.googleapis.com/compute/v1/projects/{{project}}/global/urlMaps")
+	url, err := replaceVars(d, config, "https://www.googleapis.com/compute/beta/projects/{{project}}/global/urlMaps")
 	if err != nil {
 		return err
 	}
@@ -268,7 +268,7 @@ func resourceComputeUrlMapCreate(d *schema.ResourceData, meta interface{}) error
 func resourceComputeUrlMapRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	url, err := replaceVars(d, config, "https://www.googleapis.com/compute/v1/projects/{{project}}/global/urlMaps/{{name}}")
+	url, err := replaceVars(d, config, "https://www.googleapis.com/compute/beta/projects/{{project}}/global/urlMaps/{{name}}")
 	if err != nil {
 		return err
 	}
@@ -366,7 +366,7 @@ func resourceComputeUrlMapUpdate(d *schema.ResourceData, meta interface{}) error
 		obj["tests"] = testsProp
 	}
 
-	url, err := replaceVars(d, config, "https://www.googleapis.com/compute/v1/projects/{{project}}/global/urlMaps/{{name}}")
+	url, err := replaceVars(d, config, "https://www.googleapis.com/compute/beta/projects/{{project}}/global/urlMaps/{{name}}")
 	if err != nil {
 		return err
 	}
@@ -402,7 +402,7 @@ func resourceComputeUrlMapUpdate(d *schema.ResourceData, meta interface{}) error
 func resourceComputeUrlMapDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	url, err := replaceVars(d, config, "https://www.googleapis.com/compute/v1/projects/{{project}}/global/urlMaps/{{name}}")
+	url, err := replaceVars(d, config, "https://www.googleapis.com/compute/beta/projects/{{project}}/global/urlMaps/{{name}}")
 	if err != nil {
 		return err
 	}
