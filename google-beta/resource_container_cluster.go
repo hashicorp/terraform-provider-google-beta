@@ -97,7 +97,6 @@ func resourceContainerCluster() *schema.Resource {
 			},
 
 			"region": {
-				Deprecated:    "This field is in beta and will be removed from this provider. Use it in the the google-beta provider instead. See https://terraform.io/docs/providers/google/provider_versions.html for more details.",
 				Type:          schema.TypeString,
 				Optional:      true,
 				Computed:      true,
@@ -202,10 +201,9 @@ func resourceContainerCluster() *schema.Resource {
 			},
 
 			"enable_binary_authorization": {
-				Deprecated: "This field is in beta and will be removed from this provider. Use it in the the google-beta provider instead. See https://terraform.io/docs/providers/google/provider_versions.html for more details.",
-				Type:       schema.TypeBool,
-				Optional:   true,
-				Default:    false,
+				Type:     schema.TypeBool,
+				Optional: true,
+				Default:  false,
 			},
 
 			"enable_kubernetes_alpha": {
@@ -216,11 +214,10 @@ func resourceContainerCluster() *schema.Resource {
 			},
 
 			"enable_tpu": {
-				Deprecated: "This field is in beta and will be removed from this provider. Use it in the the google-beta provider instead. See https://terraform.io/docs/providers/google/provider_versions.html for more details.",
-				Type:       schema.TypeBool,
-				Optional:   true,
-				ForceNew:   true,
-				Default:    false,
+				Type:     schema.TypeBool,
+				Optional: true,
+				ForceNew: true,
+				Default:  false,
 			},
 
 			"enable_legacy_abac": {
@@ -395,10 +392,9 @@ func resourceContainerCluster() *schema.Resource {
 			},
 
 			"pod_security_policy_config": {
-				Deprecated: "This field is in beta and will be removed from this provider. Use it in the the google-beta provider instead. See https://terraform.io/docs/providers/google/provider_versions.html for more details.",
-				Type:       schema.TypeList,
-				Optional:   true,
-				MaxItems:   1,
+				Type:     schema.TypeList,
+				Optional: true,
+				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"enabled": {
@@ -505,19 +501,58 @@ func resourceContainerCluster() *schema.Resource {
 			},
 
 			"private_cluster": {
-				Deprecated: "This field is in beta and will be removed from this provider. Use it in the the google-beta provider instead. See https://terraform.io/docs/providers/google/provider_versions.html for more details.",
-				Type:       schema.TypeBool,
-				Optional:   true,
-				ForceNew:   true,
-				Default:    false,
+				Type:          schema.TypeBool,
+				Optional:      true,
+				ForceNew:      true,
+				Computed:      true,
+				Deprecated:    "Use private_cluster_config.enable_private_nodes instead.",
+				ConflictsWith: []string{"private_cluster_config"},
+			},
+
+			"private_cluster_config": {
+				Type:          schema.TypeList,
+				Optional:      true,
+				MaxItems:      1,
+				Computed:      true,
+				ConflictsWith: []string{"private_cluster", "master_ipv4_cidr_block"},
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"enable_private_endpoint": {
+							Type:     schema.TypeBool,
+							Optional: true,
+							ForceNew: true,
+						},
+						"enable_private_nodes": {
+							Type:     schema.TypeBool,
+							Optional: true,
+							ForceNew: true,
+						},
+						"master_ipv4_cidr_block": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							ForceNew:     true,
+							ValidateFunc: validation.CIDRNetwork(28, 28),
+						},
+						"private_endpoint": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+						"public_endpoint": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+					},
+				},
 			},
 
 			"master_ipv4_cidr_block": {
-				Deprecated:   "This field is in beta and will be removed from this provider. Use it in the the google-beta provider instead. See https://terraform.io/docs/providers/google/provider_versions.html for more details.",
-				Type:         schema.TypeString,
-				Optional:     true,
-				ForceNew:     true,
-				ValidateFunc: validation.CIDRNetwork(28, 28),
+				Deprecated:    "Use private_cluster_config.master_ipv4_cidr_block instead.",
+				Type:          schema.TypeString,
+				Optional:      true,
+				ForceNew:      true,
+				Computed:      true,
+				ValidateFunc:  validation.CIDRNetwork(28, 28),
+				ConflictsWith: []string{"private_cluster_config"},
 			},
 
 			"resource_labels": {
@@ -650,6 +685,9 @@ func resourceContainerClusterCreate(d *schema.ResourceData, meta interface{}) er
 			}
 		}
 	}
+	if v, ok := d.GetOk("private_cluster_config"); ok {
+		cluster.PrivateClusterConfig = expandPrivateClusterConfig(v)
+	}
 
 	req := &containerBeta.CreateClusterRequest{
 		Cluster: cluster,
@@ -770,6 +808,9 @@ func resourceContainerClusterRead(d *schema.ResourceData, meta interface{}) erro
 	}
 
 	if err := d.Set("ip_allocation_policy", flattenIPAllocationPolicy(cluster.IpAllocationPolicy)); err != nil {
+		return err
+	}
+	if err := d.Set("private_cluster_config", flattenPrivateClusterConfig(cluster.PrivateClusterConfig)); err != nil {
 		return err
 	}
 
@@ -1363,9 +1404,10 @@ func getInstanceGroupUrlsFromManagerUrls(config *Config, igmUrls []string) ([]st
 
 func expandClusterAddonsConfig(configured interface{}) *containerBeta.AddonsConfig {
 	l := configured.([]interface{})
-	if len(l) == 0 {
+	if len(l) == 0 || l[0] == nil {
 		return nil
 	}
+
 	config := l[0].(map[string]interface{})
 	ac := &containerBeta.AddonsConfig{}
 
@@ -1406,9 +1448,10 @@ func expandClusterAddonsConfig(configured interface{}) *containerBeta.AddonsConf
 
 func expandIPAllocationPolicy(configured interface{}) *containerBeta.IPAllocationPolicy {
 	l := configured.([]interface{})
-	if len(l) == 0 {
+	if len(l) == 0 || l[0] == nil {
 		return nil
 	}
+
 	config := l[0].(map[string]interface{})
 
 	return &containerBeta.IPAllocationPolicy{
@@ -1427,9 +1470,10 @@ func expandIPAllocationPolicy(configured interface{}) *containerBeta.IPAllocatio
 
 func expandMaintenancePolicy(configured interface{}) *containerBeta.MaintenancePolicy {
 	l := configured.([]interface{})
-	if len(l) == 0 {
+	if len(l) == 0 || l[0] == nil {
 		return nil
 	}
+
 	maintenancePolicy := l[0].(map[string]interface{})
 	dailyMaintenanceWindow := maintenancePolicy["daily_maintenance_window"].([]interface{})[0].(map[string]interface{})
 	startTime := dailyMaintenanceWindow["start_time"].(string)
@@ -1444,9 +1488,10 @@ func expandMaintenancePolicy(configured interface{}) *containerBeta.MaintenanceP
 
 func expandMasterAuth(configured interface{}) *containerBeta.MasterAuth {
 	l := configured.([]interface{})
-	if len(l) == 0 {
+	if len(l) == 0 || l[0] == nil {
 		return nil
 	}
+
 	masterAuth := l[0].(map[string]interface{})
 	result := &containerBeta.MasterAuth{
 		Username: masterAuth["username"].(string),
@@ -1505,11 +1550,26 @@ func expandNetworkPolicy(configured interface{}) *containerBeta.NetworkPolicy {
 	return result
 }
 
-func expandPodSecurityPolicyConfig(configured interface{}) *containerBeta.PodSecurityPolicyConfig {
+func expandPrivateClusterConfig(configured interface{}) *containerBeta.PrivateClusterConfig {
 	l := configured.([]interface{})
 	if len(l) == 0 {
 		return nil
 	}
+	config := l[0].(map[string]interface{})
+	return &containerBeta.PrivateClusterConfig{
+		EnablePrivateEndpoint: config["enable_private_endpoint"].(bool),
+		EnablePrivateNodes:    config["enable_private_nodes"].(bool),
+		MasterIpv4CidrBlock:   config["master_ipv4_cidr_block"].(string),
+		ForceSendFields:       []string{"EnablePrivateEndpoint", "EnablePrivateNodes", "MasterIpv4CidrBlock"},
+	}
+}
+
+func expandPodSecurityPolicyConfig(configured interface{}) *containerBeta.PodSecurityPolicyConfig {
+	l := configured.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil
+	}
+
 	config := l[0].(map[string]interface{})
 	return &containerBeta.PodSecurityPolicyConfig{
 		Enabled:         config["enabled"].(bool),
@@ -1583,6 +1643,21 @@ func flattenClusterNodePools(d *schema.ResourceData, config *Config, c []*contai
 	}
 
 	return nodePools, nil
+}
+
+func flattenPrivateClusterConfig(c *containerBeta.PrivateClusterConfig) []map[string]interface{} {
+	if c == nil {
+		return nil
+	}
+	return []map[string]interface{}{
+		{
+			"enable_private_endpoint": c.EnablePrivateEndpoint,
+			"enable_private_nodes":    c.EnablePrivateNodes,
+			"master_ipv4_cidr_block":  c.MasterIpv4CidrBlock,
+			"private_endpoint":        c.PrivateEndpoint,
+			"public_endpoint":         c.PublicEndpoint,
+		},
+	}
 }
 
 func flattenIPAllocationPolicy(c *containerBeta.IPAllocationPolicy) []map[string]interface{} {

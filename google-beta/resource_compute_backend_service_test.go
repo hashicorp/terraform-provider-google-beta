@@ -699,7 +699,10 @@ resource "google_compute_backend_service" "lipsum" {
 
 resource "google_compute_instance_group_manager" "foobar" {
   name               = "%s"
-  instance_template  = "${google_compute_instance_template.foobar.self_link}"
+  version {
+    instance_template  = "${google_compute_instance_template.foobar.self_link}"
+    name               = "primary"
+  }
   base_instance_name = "foobar"
   zone               = "us-central1-f"
   target_size        = 1
@@ -762,7 +765,10 @@ resource "google_compute_backend_service" "lipsum" {
 
 resource "google_compute_instance_group_manager" "foobar" {
   name               = "%s"
-  instance_template  = "${google_compute_instance_template.foobar.self_link}"
+  version {
+    instance_template  = "${google_compute_instance_template.foobar.self_link}"
+    name               = "primary"
+  }
   base_instance_name = "foobar"
   zone               = "us-central1-f"
   target_size        = 1
@@ -915,7 +921,10 @@ resource "google_compute_backend_service" "lipsum" {
 
 resource "google_compute_instance_group_manager" "foobar" {
   name               = "%s"
-  instance_template  = "${google_compute_instance_template.foobar.self_link}"
+  version {
+    instance_template  = "${google_compute_instance_template.foobar.self_link}"
+    name               = "primary"
+  }
   base_instance_name = "foobar"
   zone               = "us-central1-f"
   target_size        = 1
@@ -973,7 +982,10 @@ resource "google_compute_backend_service" "lipsum" {
 
 resource "google_compute_instance_group_manager" "foobar" {
   name               = "%s"
-  instance_template  = "${google_compute_instance_template.foobar.self_link}"
+  version {
+    instance_template  = "${google_compute_instance_template.foobar.self_link}"
+    name               = "primary"
+  }
   base_instance_name = "foobar"
   zone               = "us-central1-f"
   target_size        = 1

@@ -229,9 +229,28 @@ func resourceMonitoringAlertPolicy() *schema.Resource {
 				Type:     schema.TypeString,
 				Required: true,
 			},
+			"documentation": {
+				Type:     schema.TypeList,
+				Optional: true,
+				MaxItems: 1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"content": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"mime_type": {
+							Type:     schema.TypeString,
+							Optional: true,
+							Default:  "text/markdown",
+						},
+					},
+				},
+			},
 			"enabled": {
 				Type:     schema.TypeBool,
-				Required: true,
+				Optional: true,
+				Default:  true,
 			},
 			"labels": {
 				Type:     schema.TypeList,
@@ -318,6 +337,12 @@ func resourceMonitoringAlertPolicyCreate(d *schema.ResourceData, meta interface{
 	} else if v, ok := d.GetOkExists("labels"); !isEmptyValue(reflect.ValueOf(labelsProp)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
 		obj["labels"] = labelsProp
 	}
+	documentationProp, err := expandMonitoringAlertPolicyDocumentation(d.Get("documentation"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("documentation"); !isEmptyValue(reflect.ValueOf(documentationProp)) && (ok || !reflect.DeepEqual(v, documentationProp)) {
+		obj["documentation"] = documentationProp
+	}
 
 	lockName, err := replaceVars(d, config, "alertPolicy/{{project}}")
 	if err != nil {
@@ -394,6 +419,9 @@ func resourceMonitoringAlertPolicyRead(d *schema.ResourceData, meta interface{})
 	if err := d.Set("labels", flattenMonitoringAlertPolicyLabels(res["labels"])); err != nil {
 		return fmt.Errorf("Error reading AlertPolicy: %s", err)
 	}
+	if err := d.Set("documentation", flattenMonitoringAlertPolicyDocumentation(res["documentation"])); err != nil {
+		return fmt.Errorf("Error reading AlertPolicy: %s", err)
+	}
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
@@ -444,6 +472,12 @@ func resourceMonitoringAlertPolicyUpdate(d *schema.ResourceData, meta interface{
 		return err
 	} else if v, ok := d.GetOkExists("labels"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
 		obj["labels"] = labelsProp
+	}
+	documentationProp, err := expandMonitoringAlertPolicyDocumentation(d.Get("documentation"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("documentation"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, documentationProp)) {
+		obj["documentation"] = documentationProp
 	}
 
 	lockName, err := replaceVars(d, config, "alertPolicy/{{project}}")
@@ -792,6 +826,26 @@ func flattenMonitoringAlertPolicyLabels(v interface{}) interface{} {
 	return v
 }
 
+func flattenMonitoringAlertPolicyDocumentation(v interface{}) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	transformed := make(map[string]interface{})
+	transformed["content"] =
+		flattenMonitoringAlertPolicyDocumentationContent(original["content"])
+	transformed["mime_type"] =
+		flattenMonitoringAlertPolicyDocumentationMimeType(original["mimeType"])
+	return []interface{}{transformed}
+}
+func flattenMonitoringAlertPolicyDocumentationContent(v interface{}) interface{} {
+	return v
+}
+
+func flattenMonitoringAlertPolicyDocumentationMimeType(v interface{}) interface{} {
+	return v
+}
+
 func expandMonitoringAlertPolicyDisplayName(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
@@ -849,7 +903,7 @@ func expandMonitoringAlertPolicyConditions(v interface{}, d *schema.ResourceData
 
 func expandMonitoringAlertPolicyConditionsConditionAbsent(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
 	l := v.([]interface{})
-	if len(l) == 0 {
+	if len(l) == 0 || l[0] == nil {
 		return nil, nil
 	}
 	raw := l[0]
@@ -948,7 +1002,7 @@ func expandMonitoringAlertPolicyConditionsConditionAbsentAggregationsCrossSeries
 
 func expandMonitoringAlertPolicyConditionsConditionAbsentTrigger(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
 	l := v.([]interface{})
-	if len(l) == 0 {
+	if len(l) == 0 || l[0] == nil {
 		return nil, nil
 	}
 	raw := l[0]
@@ -994,7 +1048,7 @@ func expandMonitoringAlertPolicyConditionsName(v interface{}, d *schema.Resource
 
 func expandMonitoringAlertPolicyConditionsConditionThreshold(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
 	l := v.([]interface{})
-	if len(l) == 0 {
+	if len(l) == 0 || l[0] == nil {
 		return nil, nil
 	}
 	raw := l[0]
@@ -1137,7 +1191,7 @@ func expandMonitoringAlertPolicyConditionsConditionThresholdComparison(v interfa
 
 func expandMonitoringAlertPolicyConditionsConditionThresholdTrigger(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
 	l := v.([]interface{})
-	if len(l) == 0 {
+	if len(l) == 0 || l[0] == nil {
 		return nil, nil
 	}
 	raw := l[0]
@@ -1241,5 +1295,39 @@ func expandMonitoringAlertPolicyNotificationChannels(v interface{}, d *schema.Re
 }
 
 func expandMonitoringAlertPolicyLabels(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandMonitoringAlertPolicyDocumentation(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedContent, err := expandMonitoringAlertPolicyDocumentationContent(original["content"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedContent); val.IsValid() && !isEmptyValue(val) {
+		transformed["content"] = transformedContent
+	}
+
+	transformedMimeType, err := expandMonitoringAlertPolicyDocumentationMimeType(original["mime_type"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedMimeType); val.IsValid() && !isEmptyValue(val) {
+		transformed["mimeType"] = transformedMimeType
+	}
+
+	return transformed, nil
+}
+
+func expandMonitoringAlertPolicyDocumentationContent(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandMonitoringAlertPolicyDocumentationMimeType(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }

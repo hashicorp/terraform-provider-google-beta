@@ -72,35 +72,23 @@ func resourceComputeGlobalAddress() *schema.Resource {
 			"labels": {
 				Type:     schema.TypeMap,
 				Optional: true,
-				Deprecated: `This field is in beta and will be removed from this provider.
-Use the terraform-provider-google-beta provider to continue using it.
-See https://terraform.io/docs/provider/google/provider_versions.html for more details on beta fields.`,
-				Elem: &schema.Schema{Type: schema.TypeString},
+				Elem:     &schema.Schema{Type: schema.TypeString},
 			},
 			"network": {
-				Type:     schema.TypeString,
-				Optional: true,
-				ForceNew: true,
-				Deprecated: `This field is in beta and will be removed from this provider.
-Use the terraform-provider-google-beta provider to continue using it.
-See https://terraform.io/docs/provider/google/provider_versions.html for more details on beta fields.`,
+				Type:             schema.TypeString,
+				Optional:         true,
+				ForceNew:         true,
 				DiffSuppressFunc: compareSelfLinkOrResourceName,
 			},
 			"prefix_length": {
 				Type:     schema.TypeInt,
 				Optional: true,
 				ForceNew: true,
-				Deprecated: `This field is in beta and will be removed from this provider.
-Use the terraform-provider-google-beta provider to continue using it.
-See https://terraform.io/docs/provider/google/provider_versions.html for more details on beta fields.`,
 			},
 			"purpose": {
-				Type:     schema.TypeString,
-				Optional: true,
-				ForceNew: true,
-				Deprecated: `This field is in beta and will be removed from this provider.
-Use the terraform-provider-google-beta provider to continue using it.
-See https://terraform.io/docs/provider/google/provider_versions.html for more details on beta fields.`,
+				Type:         schema.TypeString,
+				Optional:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.StringInSlice([]string{"VPC_PEERING", ""}, false),
 			},
 			"address": {
@@ -150,6 +138,12 @@ func resourceComputeGlobalAddressCreate(d *schema.ResourceData, meta interface{}
 		return err
 	} else if v, ok := d.GetOkExists("labels"); !isEmptyValue(reflect.ValueOf(labelsProp)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
 		obj["labels"] = labelsProp
+	}
+	labelFingerprintProp, err := expandComputeGlobalAddressLabelFingerprint(d.Get("label_fingerprint"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("label_fingerprint"); !isEmptyValue(reflect.ValueOf(labelFingerprintProp)) && (ok || !reflect.DeepEqual(v, labelFingerprintProp)) {
+		obj["labelFingerprint"] = labelFingerprintProp
 	}
 	ipVersionProp, err := expandComputeGlobalAddressIpVersion(d.Get("ip_version"), d, config)
 	if err != nil {
@@ -336,8 +330,12 @@ func resourceComputeGlobalAddressUpdate(d *schema.ResourceData, meta interface{}
 		} else if v, ok := d.GetOkExists("labels"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
 			obj["labels"] = labelsProp
 		}
-		labelFingerprintProp := d.Get("label_fingerprint")
-		obj["labelFingerprint"] = labelFingerprintProp
+		labelFingerprintProp, err := expandComputeGlobalAddressLabelFingerprint(d.Get("label_fingerprint"), d, config)
+		if err != nil {
+			return err
+		} else if v, ok := d.GetOkExists("label_fingerprint"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, labelFingerprintProp)) {
+			obj["labelFingerprint"] = labelFingerprintProp
+		}
 
 		url, err := replaceVars(d, config, "https://www.googleapis.com/compute/beta/projects/{{project}}/global/addresses/{{name}}/setLabels")
 		if err != nil {
@@ -496,6 +494,10 @@ func expandComputeGlobalAddressLabels(v interface{}, d *schema.ResourceData, con
 		m[k] = val.(string)
 	}
 	return m, nil
+}
+
+func expandComputeGlobalAddressLabelFingerprint(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
+	return v, nil
 }
 
 func expandComputeGlobalAddressIpVersion(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
