@@ -159,10 +159,11 @@ func resourceComputeBackendService() *schema.Resource {
 			},
 
 			"custom_request_headers": &schema.Schema{
-				Type:     schema.TypeSet,
-				Optional: true,
-				Elem:     &schema.Schema{Type: schema.TypeString},
-				Set:      schema.HashString,
+				Deprecated: "This field is in beta and will be removed from this provider. Use it in the the google-beta provider instead. See https://terraform.io/docs/providers/google/provider_versions.html for more details.",
+				Type:       schema.TypeSet,
+				Optional:   true,
+				Elem:       &schema.Schema{Type: schema.TypeString},
+				Set:        schema.HashString,
 			},
 
 			"description": &schema.Schema{
@@ -398,19 +399,17 @@ func resourceComputeBackendServiceDelete(d *schema.ResourceData, meta interface{
 }
 
 func expandIap(configured []interface{}) *computeBeta.BackendServiceIAP {
-	if len(configured) == 0 {
+	if len(configured) == 0 || configured[0] == nil {
 		return nil
 	}
-	if data, ok := configured[0].(map[string]interface{}); ok {
-		return &computeBeta.BackendServiceIAP{
-			Enabled:            true,
-			Oauth2ClientId:     data["oauth2_client_id"].(string),
-			Oauth2ClientSecret: data["oauth2_client_secret"].(string),
-			ForceSendFields:    []string{"Enabled", "Oauth2ClientId", "Oauth2ClientSecret"},
-		}
-	}
 
-	return nil
+	data := configured[0].(map[string]interface{})
+	return &computeBeta.BackendServiceIAP{
+		Enabled:            true,
+		Oauth2ClientId:     data["oauth2_client_id"].(string),
+		Oauth2ClientSecret: data["oauth2_client_secret"].(string),
+		ForceSendFields:    []string{"Enabled", "Oauth2ClientId", "Oauth2ClientSecret"},
+	}
 }
 
 func flattenIap(iap *computeBeta.BackendServiceIAP) []map[string]interface{} {
@@ -590,11 +589,11 @@ func expandBackendService(d *schema.ResourceData) (*computeBeta.BackendService, 
 }
 
 func expandCdnPolicy(configured []interface{}) *computeBeta.BackendServiceCdnPolicy {
-	if len(configured) == 0 {
+	if len(configured) == 0 || configured[0] == nil {
 		return nil
 	}
-	data := configured[0].(map[string]interface{})
 
+	data := configured[0].(map[string]interface{})
 	ckp := data["cache_key_policy"].([]interface{})
 	if len(ckp) == 0 {
 		return nil
