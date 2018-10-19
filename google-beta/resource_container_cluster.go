@@ -501,12 +501,12 @@ func resourceContainerCluster() *schema.Resource {
 			},
 
 			"private_cluster": {
+				Deprecated:    "Use private_cluster_config.enable_private_nodes instead.",
+				ConflictsWith: []string{"private_cluster_config"},
+				Computed:      true,
 				Type:          schema.TypeBool,
 				Optional:      true,
 				ForceNew:      true,
-				Computed:      true,
-				Deprecated:    "Use private_cluster_config.enable_private_nodes instead.",
-				ConflictsWith: []string{"private_cluster_config"},
 			},
 
 			"private_cluster_config": {
@@ -547,12 +547,12 @@ func resourceContainerCluster() *schema.Resource {
 
 			"master_ipv4_cidr_block": {
 				Deprecated:    "Use private_cluster_config.master_ipv4_cidr_block instead.",
+				ConflictsWith: []string{"private_cluster_config"},
+				Computed:      true,
 				Type:          schema.TypeString,
 				Optional:      true,
 				ForceNew:      true,
-				Computed:      true,
 				ValidateFunc:  validation.CIDRNetwork(28, 28),
-				ConflictsWith: []string{"private_cluster_config"},
 			},
 
 			"resource_labels": {
@@ -685,6 +685,7 @@ func resourceContainerClusterCreate(d *schema.ResourceData, meta interface{}) er
 			}
 		}
 	}
+
 	if v, ok := d.GetOk("private_cluster_config"); ok {
 		cluster.PrivateClusterConfig = expandPrivateClusterConfig(v)
 	}
@@ -810,6 +811,7 @@ func resourceContainerClusterRead(d *schema.ResourceData, meta interface{}) erro
 	if err := d.Set("ip_allocation_policy", flattenIPAllocationPolicy(cluster.IpAllocationPolicy)); err != nil {
 		return err
 	}
+
 	if err := d.Set("private_cluster_config", flattenPrivateClusterConfig(cluster.PrivateClusterConfig)); err != nil {
 		return err
 	}
