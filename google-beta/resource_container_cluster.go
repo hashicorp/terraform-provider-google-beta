@@ -97,7 +97,6 @@ func resourceContainerCluster() *schema.Resource {
 			},
 
 			"region": {
-				Deprecated:    "This field is in beta and will be removed from this provider. Use it in the the google-beta provider instead. See https://terraform.io/docs/providers/google/provider_versions.html for more details.",
 				Type:          schema.TypeString,
 				Optional:      true,
 				Computed:      true,
@@ -202,10 +201,9 @@ func resourceContainerCluster() *schema.Resource {
 			},
 
 			"enable_binary_authorization": {
-				Deprecated: "This field is in beta and will be removed from this provider. Use it in the the google-beta provider instead. See https://terraform.io/docs/providers/google/provider_versions.html for more details.",
-				Type:       schema.TypeBool,
-				Optional:   true,
-				Default:    false,
+				Type:     schema.TypeBool,
+				Optional: true,
+				Default:  false,
 			},
 
 			"enable_kubernetes_alpha": {
@@ -216,11 +214,10 @@ func resourceContainerCluster() *schema.Resource {
 			},
 
 			"enable_tpu": {
-				Deprecated: "This field is in beta and will be removed from this provider. Use it in the the google-beta provider instead. See https://terraform.io/docs/providers/google/provider_versions.html for more details.",
-				Type:       schema.TypeBool,
-				Optional:   true,
-				ForceNew:   true,
-				Default:    false,
+				Type:     schema.TypeBool,
+				Optional: true,
+				ForceNew: true,
+				Default:  false,
 			},
 
 			"enable_legacy_abac": {
@@ -395,10 +392,9 @@ func resourceContainerCluster() *schema.Resource {
 			},
 
 			"pod_security_policy_config": {
-				Deprecated: "This field is in beta and will be removed from this provider. Use it in the the google-beta provider instead. See https://terraform.io/docs/providers/google/provider_versions.html for more details.",
-				Type:       schema.TypeList,
-				Optional:   true,
-				MaxItems:   1,
+				Type:     schema.TypeList,
+				Optional: true,
+				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"enabled": {
@@ -505,12 +501,12 @@ func resourceContainerCluster() *schema.Resource {
 			},
 
 			"private_cluster": {
+				Deprecated:    "Use private_cluster_config.enable_private_nodes instead.",
+				ConflictsWith: []string{"private_cluster_config"},
+				Computed:      true,
 				Type:          schema.TypeBool,
 				Optional:      true,
 				ForceNew:      true,
-				Computed:      true,
-				Deprecated:    "Use private_cluster_config.enable_private_nodes instead.",
-				ConflictsWith: []string{"private_cluster_config"},
 			},
 
 			"private_cluster_config": {
@@ -551,12 +547,12 @@ func resourceContainerCluster() *schema.Resource {
 
 			"master_ipv4_cidr_block": {
 				Deprecated:    "Use private_cluster_config.master_ipv4_cidr_block instead.",
+				ConflictsWith: []string{"private_cluster_config"},
+				Computed:      true,
 				Type:          schema.TypeString,
 				Optional:      true,
 				ForceNew:      true,
-				Computed:      true,
 				ValidateFunc:  validation.CIDRNetwork(28, 28),
-				ConflictsWith: []string{"private_cluster_config"},
 			},
 
 			"resource_labels": {
@@ -689,6 +685,7 @@ func resourceContainerClusterCreate(d *schema.ResourceData, meta interface{}) er
 			}
 		}
 	}
+
 	if v, ok := d.GetOk("private_cluster_config"); ok {
 		cluster.PrivateClusterConfig = expandPrivateClusterConfig(v)
 	}
@@ -814,6 +811,7 @@ func resourceContainerClusterRead(d *schema.ResourceData, meta interface{}) erro
 	if err := d.Set("ip_allocation_policy", flattenIPAllocationPolicy(cluster.IpAllocationPolicy)); err != nil {
 		return err
 	}
+
 	if err := d.Set("private_cluster_config", flattenPrivateClusterConfig(cluster.PrivateClusterConfig)); err != nil {
 		return err
 	}

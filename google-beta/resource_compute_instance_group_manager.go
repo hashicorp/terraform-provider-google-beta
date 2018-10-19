@@ -12,7 +12,7 @@ import (
 	"github.com/hashicorp/terraform/helper/validation"
 
 	computeBeta "google.golang.org/api/compute/v0.beta"
-	compute "google.golang.org/api/compute/v1"
+	"google.golang.org/api/compute/v1"
 )
 
 var (
@@ -285,7 +285,6 @@ func resourceComputeInstanceGroupManagerCreate(d *schema.ResourceData, meta inte
 		AutoHealingPolicies: expandAutoHealingPolicies(d.Get("auto_healing_policies").([]interface{})),
 		Versions:            expandVersions(d.Get("version").([]interface{})),
 		UpdatePolicy:        expandUpdatePolicy(d.Get("update_policy").([]interface{})),
-
 		// Force send TargetSize to allow a value of 0.
 		ForceSendFields: []string{"TargetSize"},
 	}
@@ -349,7 +348,6 @@ func flattenFixedOrPercent(fixedOrPercent *computeBeta.FixedOrPercent) []map[str
 
 func getManager(d *schema.ResourceData, meta interface{}) (*computeBeta.InstanceGroupManager, error) {
 	config := meta.(*Config)
-
 	zonalID, err := parseInstanceGroupManagerId(d.Id())
 	if err != nil {
 		return nil, err
@@ -410,8 +408,13 @@ func resourceComputeInstanceGroupManagerRead(d *schema.ResourceData, meta interf
 	}
 
 	manager, err := getManager(d, meta)
-	if err != nil || manager == nil {
+	if err != nil {
 		return err
+	}
+	if manager == nil {
+		log.Printf("[WARN] Instance Group Manager %q not found, removing from state.", d.Id())
+		d.SetId("")
+		return nil
 	}
 
 	d.Set("base_instance_name", manager.BaseInstanceName)
@@ -432,11 +435,12 @@ func resourceComputeInstanceGroupManagerRead(d *schema.ResourceData, meta interf
 	d.Set("fingerprint", manager.Fingerprint)
 	d.Set("instance_group", ConvertSelfLinkToV1(manager.InstanceGroup))
 	d.Set("self_link", ConvertSelfLinkToV1(manager.SelfLink))
-	if err = d.Set("auto_healing_policies", flattenAutoHealingPolicies(manager.AutoHealingPolicies)); err != nil {
-		return fmt.Errorf("Error setting auto_healing_policies in state: %s", err.Error())
-	}
+
 	if err = d.Set("update_policy", flattenUpdatePolicy(manager.UpdatePolicy)); err != nil {
 		return fmt.Errorf("Error setting update_policy in state: %s", err.Error())
+	}
+	if err = d.Set("auto_healing_policies", flattenAutoHealingPolicies(manager.AutoHealingPolicies)); err != nil {
+		return fmt.Errorf("Error setting auto_healing_policies in state: %s", err.Error())
 	}
 
 	if d.Get("wait_for_instances").(bool) {
