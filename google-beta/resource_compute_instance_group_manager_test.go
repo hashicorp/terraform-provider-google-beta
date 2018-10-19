@@ -737,27 +737,22 @@ data "google_compute_image" "my_image" {
 	family  = "debian-9"
 	project = "debian-cloud"
 }
-
 resource "google_compute_instance_template" "igm-rolling-update-policy" {
 	machine_type = "n1-standard-1"
 	can_ip_forward = false
 	tags = ["terraform-testing"]
-
 	disk {
 		source_image = "${data.google_compute_image.my_image.self_link}"
 		auto_delete = true
 		boot = true
 	}
-
 	network_interface {
 		network = "default"
 	}
-
 	lifecycle {
 		create_before_destroy = true
 	}
 }
-
 resource "google_compute_instance_group_manager" "igm-rolling-update-policy" {
 	description = "Terraform test instance group manager"
 	name = "%s"
@@ -788,27 +783,22 @@ data "google_compute_image" "my_image" {
 	family  = "debian-9"
 	project = "debian-cloud"
 }
-
 resource "google_compute_instance_template" "igm-rolling-update-policy" {
 	machine_type = "n1-standard-1"
 	can_ip_forward = false
 	tags = ["terraform-testing"]
-
 	disk {
 		source_image = "${data.google_compute_image.my_image.self_link}"
 		auto_delete = true
 		boot = true
 	}
-
 	network_interface {
 		network = "default"
 	}
-
 	lifecycle {
 		create_before_destroy = true
 	}
 }
-
 resource "google_compute_instance_group_manager" "igm-rolling-update-policy" {
 	description = "Terraform test instance group manager"
 	name = "%s"
@@ -956,7 +946,6 @@ data "google_compute_image" "my_image" {
 	family  = "debian-9"
 	project = "debian-cloud"
 }
-
 resource "google_compute_instance_template" "igm-basic" {
 	name = "%s"
 	machine_type = "n1-standard-1"
@@ -977,13 +966,11 @@ resource "google_compute_instance_template" "igm-basic" {
 		scopes = ["userinfo-email", "compute-ro", "storage-ro"]
 	}
 }
-
 resource "google_compute_target_pool" "igm-basic" {
 	description = "Resource created for Terraform acceptance testing"
 	name = "%s"
 	session_affinity = "CLIENT_IP_PROTO"
 }
-
 resource "google_compute_instance_group_manager" "igm-basic" {
 	description = "Terraform test instance group manager"
 	name = "%s"
@@ -996,7 +983,6 @@ resource "google_compute_instance_group_manager" "igm-basic" {
 	zone = "us-central1-c"
 	target_size = 2
 }
-
 resource "google_compute_http_health_check" "zero" {
 	name               = "%s"
 	request_path       = "/"
