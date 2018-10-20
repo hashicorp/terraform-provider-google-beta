@@ -296,6 +296,9 @@ In addition to the arguments listed above, the following computed attributes are
   The Cloud Composer portion of the version is a semantic version. 
   The portion of the image version following 'airflow-' is an official Apache Airflow repository release name.
 
+* `config.software_config.python_version` -
+  The major version of Python used to run the Apache Airflow scheduler, worker, and webserver processes. Can be set to "2" or "3".
+
 ## Timeouts
 
 This resource provides the following
