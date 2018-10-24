@@ -511,7 +511,6 @@ func TestAccContainerCluster_withPrivateCluster(t *testing.T) {
 		},
 	})
 }
-
 func TestAccContainerCluster_withPrivateClusterConfig(t *testing.T) {
 	t.Parallel()
 
@@ -534,7 +533,6 @@ func TestAccContainerCluster_withPrivateClusterConfig(t *testing.T) {
 		},
 	})
 }
-
 func TestAccContainerCluster_withLegacyAbac(t *testing.T) {
 	t.Parallel()
 
@@ -2500,7 +2498,6 @@ resource "google_container_cluster" "with_private_cluster" {
 	}
 }`, clusterName, clusterName)
 }
-
 func testAccContainerCluster_withPrivateClusterConfig(clusterName string) string {
 	return fmt.Sprintf(`
 resource "google_compute_network" "container_network" {
@@ -2546,7 +2543,6 @@ resource "google_container_cluster" "with_private_cluster" {
 	}
 }`, clusterName, clusterName)
 }
-
 func testAccContainerCluster_sharedVpc(org, billingId, projectName, name string) string {
 	return fmt.Sprintf(`
 resource "google_project" "host_project" {
