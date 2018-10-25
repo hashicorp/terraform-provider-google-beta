@@ -108,6 +108,10 @@ func resourceComputeRegionAutoscaler() *schema.Resource {
 										Required:     true,
 										ValidateFunc: validation.StringInSlice([]string{"GAUGE", "DELTA_PER_SECOND", "DELTA_PER_MINUTE"}, false),
 									},
+									"filter": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
 								},
 							},
 						},
@@ -483,6 +487,7 @@ func flattenComputeRegionAutoscalerAutoscalingPolicyMetric(v interface{}) interf
 			"name":   flattenComputeRegionAutoscalerAutoscalingPolicyMetricName(original["metric"]),
 			"target": flattenComputeRegionAutoscalerAutoscalingPolicyMetricTarget(original["utilizationTarget"]),
 			"type":   flattenComputeRegionAutoscalerAutoscalingPolicyMetricType(original["utilizationTargetType"]),
+			"filter": flattenComputeRegionAutoscalerAutoscalingPolicyMetricFilter(original["filter"]),
 		})
 	}
 	return transformed
@@ -496,6 +501,10 @@ func flattenComputeRegionAutoscalerAutoscalingPolicyMetricTarget(v interface{}) 
 }
 
 func flattenComputeRegionAutoscalerAutoscalingPolicyMetricType(v interface{}) interface{} {
+	return v
+}
+
+func flattenComputeRegionAutoscalerAutoscalingPolicyMetricFilter(v interface{}) interface{} {
 	return v
 }
 
@@ -652,6 +661,13 @@ func expandComputeRegionAutoscalerAutoscalingPolicyMetric(v interface{}, d *sche
 			transformed["utilizationTargetType"] = transformedType
 		}
 
+		transformedFilter, err := expandComputeRegionAutoscalerAutoscalingPolicyMetricFilter(original["filter"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedFilter); val.IsValid() && !isEmptyValue(val) {
+			transformed["filter"] = transformedFilter
+		}
+
 		req = append(req, transformed)
 	}
 	return req, nil
@@ -666,6 +682,10 @@ func expandComputeRegionAutoscalerAutoscalingPolicyMetricTarget(v interface{}, d
 }
 
 func expandComputeRegionAutoscalerAutoscalingPolicyMetricType(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeRegionAutoscalerAutoscalingPolicyMetricFilter(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 

@@ -108,6 +108,10 @@ func resourceComputeAutoscaler() *schema.Resource {
 										Required:     true,
 										ValidateFunc: validation.StringInSlice([]string{"GAUGE", "DELTA_PER_SECOND", "DELTA_PER_MINUTE"}, false),
 									},
+									"filter": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
 								},
 							},
 						},
@@ -484,6 +488,7 @@ func flattenComputeAutoscalerAutoscalingPolicyMetric(v interface{}) interface{} 
 			"name":   flattenComputeAutoscalerAutoscalingPolicyMetricName(original["metric"]),
 			"target": flattenComputeAutoscalerAutoscalingPolicyMetricTarget(original["utilizationTarget"]),
 			"type":   flattenComputeAutoscalerAutoscalingPolicyMetricType(original["utilizationTargetType"]),
+			"filter": flattenComputeAutoscalerAutoscalingPolicyMetricFilter(original["filter"]),
 		})
 	}
 	return transformed
@@ -497,6 +502,10 @@ func flattenComputeAutoscalerAutoscalingPolicyMetricTarget(v interface{}) interf
 }
 
 func flattenComputeAutoscalerAutoscalingPolicyMetricType(v interface{}) interface{} {
+	return v
+}
+
+func flattenComputeAutoscalerAutoscalingPolicyMetricFilter(v interface{}) interface{} {
 	return v
 }
 
@@ -656,6 +665,13 @@ func expandComputeAutoscalerAutoscalingPolicyMetric(v interface{}, d *schema.Res
 			transformed["utilizationTargetType"] = transformedType
 		}
 
+		transformedFilter, err := expandComputeAutoscalerAutoscalingPolicyMetricFilter(original["filter"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedFilter); val.IsValid() && !isEmptyValue(val) {
+			transformed["filter"] = transformedFilter
+		}
+
 		req = append(req, transformed)
 	}
 	return req, nil
@@ -670,6 +686,10 @@ func expandComputeAutoscalerAutoscalingPolicyMetricTarget(v interface{}, d *sche
 }
 
 func expandComputeAutoscalerAutoscalingPolicyMetricType(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeAutoscalerAutoscalingPolicyMetricFilter(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
