@@ -3,7 +3,7 @@
   <div class="docs-sidebar hidden-print affix-top" role="complementary">
   <ul class="nav docs-sidenav">
     <li<%= sidebar_current("docs-home") %>>
-    <a href="/docs/providers/index.html">All Providers</a>
+    <a class="back" href="/docs/providers/index.html">All Providers</a>
     </li>
 
     <li<%= sidebar_current("docs-google-provider") %>>
@@ -184,6 +184,15 @@
       <a href="/docs/providers/google/r/cloudbuild_trigger.html">google_cloudbuild_trigger</a>
       </li>
     </ul>
+    </li>
+
+    <li<%= sidebar_current("docs-google-composer") %>>
+      <a href="#">Google Cloud Composer Resources</a>
+      <ul class="nav nav-visible">
+        <li<%= sidebar_current("docs-google-composer-environment") %>>
+          <a href="/docs/providers/google/r/composer_environment.html">google_composer_environment</a>
+        </li>
+      </ul>
     </li>
 
     <li<%= sidebar_current("docs-google-cloudfunctions") %>>
