@@ -1429,10 +1429,10 @@
 			"revisionTime": "2018-08-29T00:05:35Z"
 		},
 		{
-			"checksumSHA1": "CwrGQTNNqG13g6GYqARaADUagAs=",
+			"checksumSHA1": "JICMlS/fctxDilxJN0lzDrOWu/w=",
 			"path": "google.golang.org/api/compute/v0.beta",
-			"revision": "087779f1d2c96357d4c45bd04c4d10d7b5f22736",
-			"revisionTime": "2018-08-29T00:05:35Z"
+			"revision": "31fc25cd84cd7812131ff616db6bf91ae0f6cb98",
+			"revisionTime": "2018-10-24T23:56:32Z"
 		},
 		{
 			"checksumSHA1": "/spb8Vj4ltYhU0h7Ab8ilLHQ+cs=",
@@ -1923,5 +1923,5 @@
 			"versionExact": "v1.6.1"
 		}
 	],
-	"rootPath": "github.com/terraform-providers/terraform-provider-google"
+	"rootPath": "github.com/terraform-providers/terraform-provider-google-beta"
 }
