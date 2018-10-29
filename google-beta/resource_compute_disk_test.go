@@ -786,7 +786,6 @@ resource "google_compute_disk" "foobar" {
 }
 `, pid, pname, org, billing, keyRingName, keyName, diskName)
 }
-
 func testAccComputeDisk_deleteDetach(instanceName, diskName string) string {
 	return fmt.Sprintf(`
 data "google_compute_image" "my_image" {
