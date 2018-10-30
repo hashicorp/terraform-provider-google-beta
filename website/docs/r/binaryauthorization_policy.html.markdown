@@ -23,8 +23,6 @@ description: |-
 
 A policy for container image binary authorization.
 
-~> **Warning:** This resource is in beta, and should be used with the terraform-provider-google-beta provider.
-See [Provider Versions](https://terraform.io/docs/providers/google/provider_versions.html) for more details on beta resources.
 
 To get more information about Policy, see:
 
@@ -32,7 +30,8 @@ To get more information about Policy, see:
 * How-to Guides
     * [Official Documentation](https://cloud.google.com/binary-authorization/)
 
-## Example Usage
+## Example Usage - Binary Authorization Policy Basic
+
 
 ```hcl
 resource "google_binary_authorization_policy" "policy" {

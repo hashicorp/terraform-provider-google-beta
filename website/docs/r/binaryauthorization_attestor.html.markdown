@@ -23,8 +23,6 @@ description: |-
 
 An attestor that attests to container image artifacts.
 
-~> **Warning:** This resource is in beta, and should be used with the terraform-provider-google-beta provider.
-See [Provider Versions](https://terraform.io/docs/providers/google/provider_versions.html) for more details on beta resources.
 
 To get more information about Attestor, see:
 
@@ -32,7 +30,8 @@ To get more information about Attestor, see:
 * How-to Guides
     * [Official Documentation](https://cloud.google.com/binary-authorization/)
 
-## Example Usage
+## Example Usage - Binary Authorization Attestor Basic
+
 
 ```hcl
 resource "google_binary_authorization_attestor" "attestor" {
