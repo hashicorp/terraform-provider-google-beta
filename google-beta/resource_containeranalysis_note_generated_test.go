@@ -20,9 +20,10 @@ import (
 
 	"github.com/hashicorp/terraform/helper/acctest"
 	"github.com/hashicorp/terraform/helper/resource"
+	"github.com/hashicorp/terraform/terraform"
 )
 
-func TestAccContainerAnalysisNote_containerAnalysisNoteBasicExample(t *testing.T) {
+func TestAccContainerAnalysisNote_ContainerAnalysisNoteBasicExample(t *testing.T) {
 	t.Parallel()
 
 	resource.Test(t, resource.TestCase{
@@ -31,7 +32,7 @@ func TestAccContainerAnalysisNote_containerAnalysisNoteBasicExample(t *testing.T
 		CheckDestroy: testAccCheckContainerAnalysisNoteDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccContainerAnalysisNote_containerAnalysisNoteBasicExample(acctest.RandString(10)),
+				Config: testAccContainerAnalysisNote_ContainerAnalysisNoteBasicExample(acctest.RandString(10)),
 			},
 			{
 				ResourceName:      "google_container_analysis_note.note",
@@ -42,7 +43,7 @@ func TestAccContainerAnalysisNote_containerAnalysisNoteBasicExample(t *testing.T
 	})
 }
 
-func testAccContainerAnalysisNote_containerAnalysisNoteBasicExample(val string) string {
+func testAccContainerAnalysisNote_ContainerAnalysisNoteBasicExample(val string) string {
 	return fmt.Sprintf(`
 resource "google_container_analysis_note" "note" {
   name = "test-attestor-note-%s"
@@ -54,4 +55,26 @@ resource "google_container_analysis_note" "note" {
 }
 `, val,
 	)
+}
+
+func testAccCheckContainerAnalysisNoteDestroy(s *terraform.State) error {
+	for _, rs := range s.RootModule().Resources {
+		if rs.Type != "google_container_analysis_note" {
+			continue
+		}
+
+		config := testAccProvider.Meta().(*Config)
+
+		url, err := replaceVarsForTest(rs, "https://containeranalysis.googleapis.com/v1beta1/projects/{{project}}/notes/{{name}}")
+		if err != nil {
+			return err
+		}
+
+		_, err = sendRequest(config, "GET", url, nil)
+		if err == nil {
+			return fmt.Errorf("ContainerAnalysisNote still exists at %s", url)
+		}
+	}
+
+	return nil
 }
