@@ -321,8 +321,8 @@ func resourceComputeBackendServiceRead(d *schema.ResourceData, meta interface{})
 		return err
 	}
 	d.Set("security_policy", service.SecurityPolicy)
-	d.Set("custom_request_headers", service.CustomRequestHeaders)
 
+	d.Set("custom_request_headers", service.CustomRequestHeaders)
 	return nil
 }
 
