@@ -276,12 +276,6 @@ func resourceFilestoreInstanceUpdate(d *schema.ResourceData, meta interface{}) e
 	} else if v, ok := d.GetOkExists("description"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, descriptionProp)) {
 		obj["description"] = descriptionProp
 	}
-	tierProp, err := expandFilestoreInstanceTier(d.Get("tier"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("tier"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, tierProp)) {
-		obj["tier"] = tierProp
-	}
 	labelsProp, err := expandFilestoreInstanceLabels(d.Get("labels"), d, config)
 	if err != nil {
 		return err
@@ -293,12 +287,6 @@ func resourceFilestoreInstanceUpdate(d *schema.ResourceData, meta interface{}) e
 		return err
 	} else if v, ok := d.GetOkExists("file_shares"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, fileSharesProp)) {
 		obj["fileShares"] = fileSharesProp
-	}
-	networksProp, err := expandFilestoreInstanceNetworks(d.Get("networks"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("networks"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, networksProp)) {
-		obj["networks"] = networksProp
 	}
 
 	url, err := replaceVars(d, config, "https://file.googleapis.com/v1beta1/projects/{{project}}/locations/{{zone}}/instances/{{name}}")
@@ -313,20 +301,12 @@ func resourceFilestoreInstanceUpdate(d *schema.ResourceData, meta interface{}) e
 		updateMask = append(updateMask, "description")
 	}
 
-	if d.HasChange("tier") {
-		updateMask = append(updateMask, "tier")
-	}
-
 	if d.HasChange("labels") {
 		updateMask = append(updateMask, "labels")
 	}
 
 	if d.HasChange("file_shares") {
 		updateMask = append(updateMask, "fileShares")
-	}
-
-	if d.HasChange("networks") {
-		updateMask = append(updateMask, "networks")
 	}
 	// updateMask is a URL parameter but not present in the schema, so replaceVars
 	// won't set it

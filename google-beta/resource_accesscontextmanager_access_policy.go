@@ -179,12 +179,6 @@ func resourceAccessContextManagerAccessPolicyUpdate(d *schema.ResourceData, meta
 	config := meta.(*Config)
 
 	obj := make(map[string]interface{})
-	parentProp, err := expandAccessContextManagerAccessPolicyParent(d.Get("parent"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("parent"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, parentProp)) {
-		obj["parent"] = parentProp
-	}
 	titleProp, err := expandAccessContextManagerAccessPolicyTitle(d.Get("title"), d, config)
 	if err != nil {
 		return err
@@ -199,10 +193,6 @@ func resourceAccessContextManagerAccessPolicyUpdate(d *schema.ResourceData, meta
 
 	log.Printf("[DEBUG] Updating AccessPolicy %q: %#v", d.Id(), obj)
 	updateMask := []string{}
-
-	if d.HasChange("parent") {
-		updateMask = append(updateMask, "parent")
-	}
 
 	if d.HasChange("title") {
 		updateMask = append(updateMask, "title")
