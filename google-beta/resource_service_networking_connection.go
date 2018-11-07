@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/url"
+	"regexp"
 	"strings"
 
 	"github.com/hashicorp/terraform/helper/schema"
@@ -22,17 +23,21 @@ func resourceServiceNetworkingConnection() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"network": &schema.Schema{
-				Type:     schema.TypeString,
-				Required: true,
+				Type:             schema.TypeString,
+				Required:         true,
+				ForceNew:         true,
+				DiffSuppressFunc: compareSelfLinkOrResourceName,
 			},
-			// NOTE(craigatgoogle): This field is weird, it's required to make the Insert/List calls, however it's defined
-			// in the API as an output field called "peering", which uses "-" as a delimeter instead of ".". To alleviate user
-			// confusion I've opted to model the gcloud CLI's approach, calling the field "service" and accepting the same
-			// format as the CLI with the "." delimiter.
+			// NOTE(craigatgoogle): This field is weird, it's required to make the Insert/List calls as a parameter
+			// named "parent", however it's also defined in the response as an output field called "peering", which
+			// uses "-" as a delimeter instead of ".". To alleviate user confusion I've opted to model the gcloud
+			// CLI's approach, calling the field "service" and accepting the same format as the CLI with the "."
+			// delimiter.
 			// See: https://cloud.google.com/vpc/docs/configure-private-services-access#creating-connection
 			"service": &schema.Schema{
 				Type:     schema.TypeString,
 				Required: true,
+				ForceNew: true,
 			},
 			"reserved_peering_ranges": &schema.Schema{
 				Type:     schema.TypeList,
@@ -47,20 +52,15 @@ func resourceServiceNetworkingConnectionCreate(d *schema.ResourceData, meta inte
 	config := meta.(*Config)
 
 	network := d.Get("network").(string)
-	serviceNetworkingNetworkName, err := retrieveServiceNetworkingNetworkName(config, network)
+	serviceNetworkingNetworkName, err := retrieveServiceNetworkingNetworkName(d, config, network)
 	if err != nil {
 		return fmt.Errorf("Failed to find Service Networking Connection, err: %s", err)
 	}
 
 	connection := &servicenetworking.Connection{
-		Network: serviceNetworkingNetworkName,
+		Network:               serviceNetworkingNetworkName,
+		ReservedPeeringRanges: convertStringArr(d.Get("reserved_peering_ranges").([]interface{})),
 	}
-
-	var reservedPeeringRanges []string
-	for _, reservedPeeringRange := range d.Get("reserved_peering_ranges").([]interface{}) {
-		reservedPeeringRanges = append(reservedPeeringRanges, reservedPeeringRange.(string))
-	}
-	connection.ReservedPeeringRanges = reservedPeeringRanges
 
 	parentService := formatParentService(d.Get("service").(string))
 	op, err := config.clientServiceNetworking.Services.Connections.Create(parentService, connection).Do()
@@ -78,13 +78,7 @@ func resourceServiceNetworkingConnectionCreate(d *schema.ResourceData, meta inte
 	}
 
 	d.SetId(connectionId.Id())
-
-	if err := resourceServiceNetworkingConnectionRead(d, meta); err != nil {
-		d.SetId("")
-		return err
-	}
-
-	return nil
+	return resourceServiceNetworkingConnectionRead(d, meta)
 }
 
 func resourceServiceNetworkingConnectionRead(d *schema.ResourceData, meta interface{}) error {
@@ -95,7 +89,7 @@ func resourceServiceNetworkingConnectionRead(d *schema.ResourceData, meta interf
 		return fmt.Errorf("Failed to find Service Networking Connection, err: %s", err)
 	}
 
-	serviceNetworkingNetworkName, err := retrieveServiceNetworkingNetworkName(config, connectionId.Network)
+	serviceNetworkingNetworkName, err := retrieveServiceNetworkingNetworkName(d, config, connectionId.Network)
 	if err != nil {
 		return fmt.Errorf("Failed to find Service Networking Connection, err: %s", err)
 	}
@@ -201,8 +195,13 @@ func parseConnectionId(id string) (*connectionId, error) {
 // NOTE(craigatgoogle): An out of band aspect of this API is that it uses a unique formatting of network
 // different from the standard self_link URI. It requires a call to the resource manager to get the project
 // number for the current project.
-func retrieveServiceNetworkingNetworkName(config *Config, network string) (string, error) {
-	pid := config.Project
+func retrieveServiceNetworkingNetworkName(d *schema.ResourceData, config *Config, network string) (string, error) {
+	networkFieldValue, err := ParseNetworkFieldValue(network, d, config)
+	if err != nil {
+		return "", fmt.Errorf("Failed to retrieve network field value, err: %s", err)
+	}
+
+	pid := networkFieldValue.Project
 	if pid == "" {
 		return "", fmt.Errorf("Could not determine project")
 	}
@@ -212,21 +211,25 @@ func retrieveServiceNetworkingNetworkName(config *Config, network string) (strin
 		return "", fmt.Errorf("Failed to retrieve project, pid: %s, err: %s", pid, err)
 	}
 
-	// This bit of logic is to support both network.self_link and network.name
-	// being specified in the config.
-	networkTokens := strings.Split(network, "/")
-	if len(networkTokens) == 0 {
+	networkName := networkFieldValue.Name
+	if networkName == "" {
 		return "", fmt.Errorf("Failed to parse network")
 	}
-	networkName := networkTokens[len(networkTokens)-1]
 
 	// return the network name formatting unique to this API
 	return fmt.Sprintf("projects/%v/global/networks/%v", project.ProjectNumber, networkName), nil
 
 }
 
+const parentServicePattern = "^services/.+$"
+
 // NOTE(craigatgoogle): An out of band aspect of this API is that it requires the service name to be
 // formatted as "services/<serviceName>"
 func formatParentService(service string) string {
-	return fmt.Sprintf("services/%s", service)
+	r := regexp.MustCompile(parentServicePattern)
+	if !r.MatchString(service) {
+		return fmt.Sprintf("services/%s", service)
+	} else {
+		return service
+	}
 }

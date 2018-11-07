@@ -17,7 +17,6 @@ type ServiceNetworkingOperationWaiter struct {
 
 func (w *ServiceNetworkingOperationWaiter) RefreshFunc() resource.StateRefreshFunc {
 	return func() (interface{}, string, error) {
-		log.Printf("[DEBUG] self_link: %s", w.Op.Name)
 		op, err := w.Service.Operations.Get(w.Op.Name).Do()
 
 		if e, ok := err.(*googleapi.Error); ok && (e.Code == 429 || e.Code == 503) {

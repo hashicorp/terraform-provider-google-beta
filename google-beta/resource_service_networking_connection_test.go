@@ -85,8 +85,8 @@ resource "google_compute_global_address" "foobar" {
 
 resource "google_service_networking_connection" "foobar" {
 	network       = "${google_compute_network.foobar.self_link}"
-        service       = "%s"
-        reserved_peering_ranges = ["${google_compute_global_address.foobar.name}"]
+	service       = "%s"
+	reserved_peering_ranges = ["${google_compute_global_address.foobar.name}"]
 }
 `, networkName, addressRangeName, serviceName)
 }
