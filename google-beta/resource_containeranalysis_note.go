@@ -146,12 +146,6 @@ func resourceContainerAnalysisNoteUpdate(d *schema.ResourceData, meta interface{
 	config := meta.(*Config)
 
 	obj := make(map[string]interface{})
-	nameProp, err := expandContainerAnalysisNoteName(d.Get("name"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("name"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, nameProp)) {
-		obj["name"] = nameProp
-	}
 	attestationAuthorityProp, err := expandContainerAnalysisNoteAttestationAuthority(d.Get("attestation_authority"), d, config)
 	if err != nil {
 		return err
