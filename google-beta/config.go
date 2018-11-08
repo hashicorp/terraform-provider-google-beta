@@ -41,7 +41,6 @@ import (
 	"google.golang.org/api/redis/v1beta1"
 	"google.golang.org/api/runtimeconfig/v1beta1"
 	"google.golang.org/api/servicemanagement/v1"
-	"google.golang.org/api/servicenetworking/v1beta"
 	"google.golang.org/api/serviceusage/v1beta1"
 	"google.golang.org/api/sourcerepo/v1"
 	"google.golang.org/api/spanner/v1"
@@ -93,7 +92,6 @@ type Config struct {
 	clientCloudFunctions         *cloudfunctions.Service
 	clientCloudIoT               *cloudiot.Service
 	clientAppEngine              *appengine.APIService
-	clientServiceNetworking      *servicenetworking.APIService
 
 	bigtableClientFactory *BigtableClientFactory
 }
@@ -387,13 +385,6 @@ func (c *Config) loadAndValidate() error {
 		return err
 	}
 	c.clientComposer.UserAgent = userAgent
-
-	log.Printf("[INFO] Instantiating Service Networking Client...")
-	c.clientServiceNetworking, err = servicenetworking.New(client)
-	if err != nil {
-		return err
-	}
-	c.clientServiceNetworking.UserAgent = userAgent
 
 	return nil
 }
