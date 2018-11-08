@@ -200,7 +200,6 @@ func Provider() terraform.ResourceProvider {
 				"google_spanner_database_iam_binding":          ResourceIamBindingWithImport(IamSpannerDatabaseSchema, NewSpannerDatabaseIamUpdater, SpannerDatabaseIdParseFunc),
 				"google_spanner_database_iam_member":           ResourceIamMemberWithImport(IamSpannerDatabaseSchema, NewSpannerDatabaseIamUpdater, SpannerDatabaseIdParseFunc),
 				"google_spanner_database_iam_policy":           ResourceIamPolicyWithImport(IamSpannerDatabaseSchema, NewSpannerDatabaseIamUpdater, SpannerDatabaseIdParseFunc),
-				"google_service_networking_connection":         resourceServiceNetworkingConnection(),
 				"google_sql_database":                          resourceSqlDatabase(),
 				"google_sql_database_instance":                 resourceSqlDatabaseInstance(),
 				"google_sql_user":                              resourceSqlUser(),
