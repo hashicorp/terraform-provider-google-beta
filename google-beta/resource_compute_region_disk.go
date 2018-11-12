@@ -18,8 +18,8 @@ import (
 	"fmt"
 	"log"
 	"reflect"
-	"regexp"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/hashicorp/terraform/helper/customdiff"
@@ -76,6 +76,11 @@ func resourceComputeRegionDisk() *schema.Resource {
 				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
+						"kms_key_name": {
+							Type:     schema.TypeString,
+							Optional: true,
+							ForceNew: true,
+						},
 						"raw_key": {
 							Type:     schema.TypeString,
 							Optional: true,
@@ -118,6 +123,11 @@ func resourceComputeRegionDisk() *schema.Resource {
 				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
+						"kms_key_name": {
+							Type:     schema.TypeString,
+							Optional: true,
+							ForceNew: true,
+						},
 						"raw_key": {
 							Type:     schema.TypeString,
 							Optional: true,
@@ -183,6 +193,12 @@ func resourceComputeRegionDiskCreate(d *schema.ResourceData, meta interface{}) e
 	config := meta.(*Config)
 
 	obj := make(map[string]interface{})
+	labelFingerprintProp, err := expandComputeRegionDiskLabelFingerprint(d.Get("label_fingerprint"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("label_fingerprint"); !isEmptyValue(reflect.ValueOf(labelFingerprintProp)) && (ok || !reflect.DeepEqual(v, labelFingerprintProp)) {
+		obj["labelFingerprint"] = labelFingerprintProp
+	}
 	descriptionProp, err := expandComputeRegionDiskDescription(d.Get("description"), d, config)
 	if err != nil {
 		return err
@@ -379,8 +395,12 @@ func resourceComputeRegionDiskUpdate(d *schema.ResourceData, meta interface{}) e
 
 	if d.HasChange("label_fingerprint") || d.HasChange("labels") {
 		obj := make(map[string]interface{})
-		labelFingerprintProp := d.Get("label_fingerprint")
-		obj["labelFingerprint"] = labelFingerprintProp
+		labelFingerprintProp, err := expandComputeRegionDiskLabelFingerprint(d.Get("label_fingerprint"), d, config)
+		if err != nil {
+			return err
+		} else if v, ok := d.GetOkExists("label_fingerprint"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, labelFingerprintProp)) {
+			obj["labelFingerprint"] = labelFingerprintProp
+		}
 		labelsProp, err := expandComputeRegionDiskLabels(d.Get("labels"), d, config)
 		if err != nil {
 			return err
@@ -638,6 +658,8 @@ func flattenComputeRegionDiskDiskEncryptionKey(v interface{}) interface{} {
 		flattenComputeRegionDiskDiskEncryptionKeyRawKey(original["rawKey"])
 	transformed["sha256"] =
 		flattenComputeRegionDiskDiskEncryptionKeySha256(original["sha256"])
+	transformed["kms_key_name"] =
+		flattenComputeRegionDiskDiskEncryptionKeyKmsKeyName(original["kmsKeyName"])
 	return []interface{}{transformed}
 }
 func flattenComputeRegionDiskDiskEncryptionKeyRawKey(v interface{}) interface{} {
@@ -645,6 +667,10 @@ func flattenComputeRegionDiskDiskEncryptionKeyRawKey(v interface{}) interface{} 
 }
 
 func flattenComputeRegionDiskDiskEncryptionKeySha256(v interface{}) interface{} {
+	return v
+}
+
+func flattenComputeRegionDiskDiskEncryptionKeyKmsKeyName(v interface{}) interface{} {
 	return v
 }
 
@@ -663,11 +689,17 @@ func flattenComputeRegionDiskSourceSnapshotEncryptionKey(v interface{}) interfac
 	transformed := make(map[string]interface{})
 	transformed["raw_key"] =
 		flattenComputeRegionDiskSourceSnapshotEncryptionKeyRawKey(original["rawKey"])
+	transformed["kms_key_name"] =
+		flattenComputeRegionDiskSourceSnapshotEncryptionKeyKmsKeyName(original["kmsKeyName"])
 	transformed["sha256"] =
 		flattenComputeRegionDiskSourceSnapshotEncryptionKeySha256(original["sha256"])
 	return []interface{}{transformed}
 }
 func flattenComputeRegionDiskSourceSnapshotEncryptionKeyRawKey(v interface{}) interface{} {
+	return v
+}
+
+func flattenComputeRegionDiskSourceSnapshotEncryptionKeyKmsKeyName(v interface{}) interface{} {
 	return v
 }
 
@@ -677,6 +709,10 @@ func flattenComputeRegionDiskSourceSnapshotEncryptionKeySha256(v interface{}) in
 
 func flattenComputeRegionDiskSourceSnapshotId(v interface{}) interface{} {
 	return v
+}
+
+func expandComputeRegionDiskLabelFingerprint(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
+	return v, nil
 }
 
 func expandComputeRegionDiskDescription(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
@@ -754,6 +790,13 @@ func expandComputeRegionDiskDiskEncryptionKey(v interface{}, d *schema.ResourceD
 		transformed["sha256"] = transformedSha256
 	}
 
+	transformedKmsKeyName, err := expandComputeRegionDiskDiskEncryptionKeyKmsKeyName(original["kms_key_name"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedKmsKeyName); val.IsValid() && !isEmptyValue(val) {
+		transformed["kmsKeyName"] = transformedKmsKeyName
+	}
+
 	return transformed, nil
 }
 
@@ -762,6 +805,10 @@ func expandComputeRegionDiskDiskEncryptionKeyRawKey(v interface{}, d *schema.Res
 }
 
 func expandComputeRegionDiskDiskEncryptionKeySha256(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeRegionDiskDiskEncryptionKeyKmsKeyName(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
@@ -789,6 +836,13 @@ func expandComputeRegionDiskSourceSnapshotEncryptionKey(v interface{}, d *schema
 		transformed["rawKey"] = transformedRawKey
 	}
 
+	transformedKmsKeyName, err := expandComputeRegionDiskSourceSnapshotEncryptionKeyKmsKeyName(original["kms_key_name"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedKmsKeyName); val.IsValid() && !isEmptyValue(val) {
+		transformed["kmsKeyName"] = transformedKmsKeyName
+	}
+
 	transformedSha256, err := expandComputeRegionDiskSourceSnapshotEncryptionKeySha256(original["sha256"], d, config)
 	if err != nil {
 		return nil, err
@@ -800,6 +854,10 @@ func expandComputeRegionDiskSourceSnapshotEncryptionKey(v interface{}, d *schema
 }
 
 func expandComputeRegionDiskSourceSnapshotEncryptionKeyRawKey(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeRegionDiskSourceSnapshotEncryptionKeyKmsKeyName(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
@@ -849,25 +907,6 @@ func resourceComputeRegionDiskEncoder(d *schema.ResourceData, meta interface{}, 
 		log.Printf("[DEBUG] Image name resolved to: %s", imageUrl)
 	}
 
-	if v, ok := d.GetOk("snapshot"); ok {
-		snapshotName := v.(string)
-		match, _ := regexp.MatchString("^https://www.googleapis.com/compute", snapshotName)
-		if match {
-			obj["sourceSnapshot"] = snapshotName
-		} else {
-			log.Printf("[DEBUG] Loading snapshot: %s", snapshotName)
-			snapshotData, err := config.clientCompute.Snapshots.Get(
-				project, snapshotName).Do()
-
-			if err != nil {
-				return nil, fmt.Errorf(
-					"Error loading snapshot '%s': %s",
-					snapshotName, err)
-			}
-			obj["sourceSnapshot"] = snapshotData.SelfLink
-		}
-	}
-
 	return obj, nil
 }
 
@@ -878,6 +917,13 @@ func resourceComputeRegionDiskDecoder(d *schema.ResourceData, meta interface{}, 
 		// The raw key won't be returned, so we need to use the original.
 		transformed["rawKey"] = d.Get("disk_encryption_key.0.raw_key")
 		transformed["sha256"] = original["sha256"]
+
+		if kmsKeyName, ok := original["kmsKeyName"]; ok {
+			// The response for crypto keys often includes the version of the key which needs to be removed
+			// format: projects/<project>/locations/<region>/keyRings/<keyring>/cryptoKeys/<key>/cryptoKeyVersions/1
+			transformed["kmsKeyName"] = strings.Split(kmsKeyName.(string), "/cryptoKeyVersions")[0]
+		}
+
 		res["diskEncryptionKey"] = transformed
 	}
 
@@ -887,6 +933,13 @@ func resourceComputeRegionDiskDecoder(d *schema.ResourceData, meta interface{}, 
 		// The raw key won't be returned, so we need to use the original.
 		transformed["rawKey"] = d.Get("source_image_encryption_key.0.raw_key")
 		transformed["sha256"] = original["sha256"]
+
+		if kmsKeyName, ok := original["kmsKeyName"]; ok {
+			// The response for crypto keys often includes the version of the key which needs to be removed
+			// format: projects/<project>/locations/<region>/keyRings/<keyring>/cryptoKeys/<key>/cryptoKeyVersions/1
+			transformed["kmsKeyName"] = strings.Split(kmsKeyName.(string), "/cryptoKeyVersions")[0]
+		}
+
 		res["sourceImageEncryptionKey"] = transformed
 	}
 
@@ -896,6 +949,13 @@ func resourceComputeRegionDiskDecoder(d *schema.ResourceData, meta interface{}, 
 		// The raw key won't be returned, so we need to use the original.
 		transformed["rawKey"] = d.Get("source_snapshot_encryption_key.0.raw_key")
 		transformed["sha256"] = original["sha256"]
+
+		if kmsKeyName, ok := original["kmsKeyName"]; ok {
+			// The response for crypto keys often includes the version of the key which needs to be removed
+			// format: projects/<project>/locations/<region>/keyRings/<keyring>/cryptoKeys/<key>/cryptoKeyVersions/1
+			transformed["kmsKeyName"] = strings.Split(kmsKeyName.(string), "/cryptoKeyVersions")[0]
+		}
+
 		res["sourceSnapshotEncryptionKey"] = transformed
 	}
 
