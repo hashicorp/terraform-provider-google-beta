@@ -70,7 +70,7 @@ The following arguments are supported:
   Provide this property when you create the resource.
 
 * `labels` -
-  (Optional)
+  (Optional, [Beta](https://terraform.io/docs/providers/google/provider_versions.html))
   Labels to apply to this address.  A list of key->value pairs.
 
 * `ip_version` -
@@ -79,7 +79,7 @@ The following arguments are supported:
   IPV4 or IPV6. The default value is IPV4.
 
 * `prefix_length` -
-  (Optional)
+  (Optional, [Beta](https://terraform.io/docs/providers/google/provider_versions.html))
   The prefix length of the IP range. If not present, it means the
   address field is a single IP address.
   This field is not applicable to addresses with addressType=EXTERNAL.
@@ -91,13 +91,13 @@ The following arguments are supported:
   * INTERNAL indicates internal IP ranges belonging to some network.
 
 * `purpose` -
-  (Optional)
+  (Optional, [Beta](https://terraform.io/docs/providers/google/provider_versions.html))
   The purpose of the resource. For global internal addresses it can be
   * VPC_PEERING - for peer networks
   This should only be set when using an Internal address.
 
 * `network` -
-  (Optional)
+  (Optional, [Beta](https://terraform.io/docs/providers/google/provider_versions.html))
   The URL of the network in which to reserve the IP range. The IP range
   must be in RFC1918 space. The network cannot be deleted if there are
   any reserved IP ranges referring to it.

@@ -187,7 +187,7 @@ The following arguments are supported:
   This field is not used for internal load balancing.
 
 * `labels` -
-  (Optional)
+  (Optional, [Beta](https://terraform.io/docs/providers/google/provider_versions.html))
   Labels to apply to this forwarding rule.  A list of key->value pairs.
 
 * `network_tier` -
@@ -197,7 +197,7 @@ The following arguments are supported:
   specified, it is assumed to be PREMIUM.
 
 * `service_label` -
-  (Optional)
+  (Optional, [Beta](https://terraform.io/docs/providers/google/provider_versions.html))
   An optional prefix to the service name for this Forwarding Rule.
   If specified, will be the first label of the fully qualified service
   name.
