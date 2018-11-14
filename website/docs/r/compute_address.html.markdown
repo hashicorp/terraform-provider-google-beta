@@ -170,7 +170,7 @@ The following arguments are supported:
   GCE_ENDPOINT/DNS_RESOLVER purposes.
 
 * `labels` -
-  (Optional)
+  (Optional, [Beta](https://terraform.io/docs/providers/google/provider_versions.html))
   Labels to apply to this address.  A list of key->value pairs.
 
 * `region` -

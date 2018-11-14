@@ -29,6 +29,8 @@ regions of services able to freely pass data within a perimeter). An
 access policy is globally visible within an organization, and the
 restrictions it specifies apply to all projects within an organization.
 
+~> **Warning:** This resource is in beta, and should be used with the terraform-provider-google-beta provider.
+See [Provider Versions](https://terraform.io/docs/providers/google/provider_versions.html) for more details on beta resources.
 
 To get more information about AccessPolicy, see:
 

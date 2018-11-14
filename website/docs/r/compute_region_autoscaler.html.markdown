@@ -218,7 +218,7 @@ The `metric` block supports:
   or DELTA_PER_MINUTE.
 
 * `filter` -
-  (Optional)
+  (Optional, [Beta](https://terraform.io/docs/providers/google/provider_versions.html))
   A filter string to be used as the filter string for
   a Stackdriver Monitoring TimeSeries.list API call.
   This filter is used to select a specific TimeSeries for

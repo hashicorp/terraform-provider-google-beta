@@ -23,6 +23,8 @@ description: |-
 
 Provides a detailed description of a Note.
 
+~> **Warning:** This resource is in beta, and should be used with the terraform-provider-google-beta provider.
+See [Provider Versions](https://terraform.io/docs/providers/google/provider_versions.html) for more details on beta resources.
 
 To get more information about Note, see:
 
