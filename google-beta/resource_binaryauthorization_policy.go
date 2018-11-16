@@ -332,6 +332,10 @@ func flattenBinaryAuthorizationPolicyAdmissionWhitelistPatterns(v interface{}) i
 	transformed := make([]interface{}, 0, len(l))
 	for _, raw := range l {
 		original := raw.(map[string]interface{})
+		if len(original) < 1 {
+			// Do not include empty json objects coming back from the api
+			continue
+		}
 		transformed = append(transformed, map[string]interface{}{
 			"name_pattern": flattenBinaryAuthorizationPolicyAdmissionWhitelistPatternsNamePattern(original["namePattern"]),
 		})
@@ -379,6 +383,9 @@ func flattenBinaryAuthorizationPolicyDefaultAdmissionRule(v interface{}) interfa
 		return nil
 	}
 	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
 	transformed := make(map[string]interface{})
 	transformed["evaluation_mode"] =
 		flattenBinaryAuthorizationPolicyDefaultAdmissionRuleEvaluationMode(original["evaluationMode"])
