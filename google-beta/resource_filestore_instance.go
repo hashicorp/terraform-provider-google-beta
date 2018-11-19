@@ -423,6 +423,10 @@ func flattenFilestoreInstanceFileShares(v interface{}) interface{} {
 	transformed := make([]interface{}, 0, len(l))
 	for _, raw := range l {
 		original := raw.(map[string]interface{})
+		if len(original) < 1 {
+			// Do not include empty json objects coming back from the api
+			continue
+		}
 		transformed = append(transformed, map[string]interface{}{
 			"name":        flattenFilestoreInstanceFileSharesName(original["name"]),
 			"capacity_gb": flattenFilestoreInstanceFileSharesCapacityGb(original["capacityGb"]),
@@ -452,6 +456,10 @@ func flattenFilestoreInstanceNetworks(v interface{}) interface{} {
 	transformed := make([]interface{}, 0, len(l))
 	for _, raw := range l {
 		original := raw.(map[string]interface{})
+		if len(original) < 1 {
+			// Do not include empty json objects coming back from the api
+			continue
+		}
 		transformed = append(transformed, map[string]interface{}{
 			"network":           flattenFilestoreInstanceNetworksNetwork(original["network"]),
 			"modes":             flattenFilestoreInstanceNetworksModes(original["modes"]),

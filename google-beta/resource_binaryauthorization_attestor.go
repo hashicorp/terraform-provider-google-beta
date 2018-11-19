@@ -259,6 +259,9 @@ func flattenBinaryAuthorizationAttestorAttestationAuthorityNote(v interface{}) i
 		return nil
 	}
 	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
 	transformed := make(map[string]interface{})
 	transformed["note_reference"] =
 		flattenBinaryAuthorizationAttestorAttestationAuthorityNoteNoteReference(original["noteReference"])
@@ -280,6 +283,10 @@ func flattenBinaryAuthorizationAttestorAttestationAuthorityNotePublicKeys(v inte
 	transformed := make([]interface{}, 0, len(l))
 	for _, raw := range l {
 		original := raw.(map[string]interface{})
+		if len(original) < 1 {
+			// Do not include empty json objects coming back from the api
+			continue
+		}
 		transformed = append(transformed, map[string]interface{}{
 			"comment":                      flattenBinaryAuthorizationAttestorAttestationAuthorityNotePublicKeysComment(original["comment"]),
 			"id":                           flattenBinaryAuthorizationAttestorAttestationAuthorityNotePublicKeysId(original["id"]),

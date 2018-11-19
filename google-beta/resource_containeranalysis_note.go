@@ -223,6 +223,9 @@ func flattenContainerAnalysisNoteAttestationAuthority(v interface{}) interface{}
 		return nil
 	}
 	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
 	transformed := make(map[string]interface{})
 	transformed["hint"] =
 		flattenContainerAnalysisNoteAttestationAuthorityHint(original["hint"])
@@ -233,6 +236,9 @@ func flattenContainerAnalysisNoteAttestationAuthorityHint(v interface{}) interfa
 		return nil
 	}
 	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
 	transformed := make(map[string]interface{})
 	transformed["human_readable_name"] =
 		flattenContainerAnalysisNoteAttestationAuthorityHintHumanReadableName(original["humanReadableName"])
