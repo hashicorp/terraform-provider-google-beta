@@ -231,6 +231,14 @@ func resourceFilestoreInstanceRead(d *schema.ResourceData, meta interface{}) err
 		return handleNotFoundError(err, d, fmt.Sprintf("FilestoreInstance %q", d.Id()))
 	}
 
+	project, err := getProject(d, config)
+	if err != nil {
+		return err
+	}
+	if err := d.Set("project", project); err != nil {
+		return fmt.Errorf("Error reading Instance: %s", err)
+	}
+
 	if err := d.Set("name", flattenFilestoreInstanceName(res["name"])); err != nil {
 		return fmt.Errorf("Error reading Instance: %s", err)
 	}
@@ -253,13 +261,6 @@ func resourceFilestoreInstanceRead(d *schema.ResourceData, meta interface{}) err
 		return fmt.Errorf("Error reading Instance: %s", err)
 	}
 	if err := d.Set("etag", flattenFilestoreInstanceEtag(res["etag"])); err != nil {
-		return fmt.Errorf("Error reading Instance: %s", err)
-	}
-	project, err := getProject(d, config)
-	if err != nil {
-		return err
-	}
-	if err := d.Set("project", project); err != nil {
 		return fmt.Errorf("Error reading Instance: %s", err)
 	}
 

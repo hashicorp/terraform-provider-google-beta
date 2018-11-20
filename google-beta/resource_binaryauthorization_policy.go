@@ -219,6 +219,14 @@ func resourceBinaryAuthorizationPolicyRead(d *schema.ResourceData, meta interfac
 		return handleNotFoundError(err, d, fmt.Sprintf("BinaryAuthorizationPolicy %q", d.Id()))
 	}
 
+	project, err := getProject(d, config)
+	if err != nil {
+		return err
+	}
+	if err := d.Set("project", project); err != nil {
+		return fmt.Errorf("Error reading Policy: %s", err)
+	}
+
 	if err := d.Set("description", flattenBinaryAuthorizationPolicyDescription(res["description"])); err != nil {
 		return fmt.Errorf("Error reading Policy: %s", err)
 	}
@@ -229,13 +237,6 @@ func resourceBinaryAuthorizationPolicyRead(d *schema.ResourceData, meta interfac
 		return fmt.Errorf("Error reading Policy: %s", err)
 	}
 	if err := d.Set("default_admission_rule", flattenBinaryAuthorizationPolicyDefaultAdmissionRule(res["defaultAdmissionRule"])); err != nil {
-		return fmt.Errorf("Error reading Policy: %s", err)
-	}
-	project, err := getProject(d, config)
-	if err != nil {
-		return err
-	}
-	if err := d.Set("project", project); err != nil {
 		return fmt.Errorf("Error reading Policy: %s", err)
 	}
 
