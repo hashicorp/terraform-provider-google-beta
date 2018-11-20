@@ -249,6 +249,14 @@ func resourceComputeAutoscalerRead(d *schema.ResourceData, meta interface{}) err
 		return handleNotFoundError(err, d, fmt.Sprintf("ComputeAutoscaler %q", d.Id()))
 	}
 
+	project, err := getProject(d, config)
+	if err != nil {
+		return err
+	}
+	if err := d.Set("project", project); err != nil {
+		return fmt.Errorf("Error reading Autoscaler: %s", err)
+	}
+
 	if err := d.Set("creation_timestamp", flattenComputeAutoscalerCreationTimestamp(res["creationTimestamp"])); err != nil {
 		return fmt.Errorf("Error reading Autoscaler: %s", err)
 	}
@@ -268,13 +276,6 @@ func resourceComputeAutoscalerRead(d *schema.ResourceData, meta interface{}) err
 		return fmt.Errorf("Error reading Autoscaler: %s", err)
 	}
 	if err := d.Set("self_link", ConvertSelfLinkToV1(res["selfLink"].(string))); err != nil {
-		return fmt.Errorf("Error reading Autoscaler: %s", err)
-	}
-	project, err := getProject(d, config)
-	if err != nil {
-		return err
-	}
-	if err := d.Set("project", project); err != nil {
 		return fmt.Errorf("Error reading Autoscaler: %s", err)
 	}
 

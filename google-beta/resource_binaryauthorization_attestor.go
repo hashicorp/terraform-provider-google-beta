@@ -152,6 +152,14 @@ func resourceBinaryAuthorizationAttestorRead(d *schema.ResourceData, meta interf
 		return handleNotFoundError(err, d, fmt.Sprintf("BinaryAuthorizationAttestor %q", d.Id()))
 	}
 
+	project, err := getProject(d, config)
+	if err != nil {
+		return err
+	}
+	if err := d.Set("project", project); err != nil {
+		return fmt.Errorf("Error reading Attestor: %s", err)
+	}
+
 	if err := d.Set("name", flattenBinaryAuthorizationAttestorName(res["name"])); err != nil {
 		return fmt.Errorf("Error reading Attestor: %s", err)
 	}
@@ -159,13 +167,6 @@ func resourceBinaryAuthorizationAttestorRead(d *schema.ResourceData, meta interf
 		return fmt.Errorf("Error reading Attestor: %s", err)
 	}
 	if err := d.Set("attestation_authority_note", flattenBinaryAuthorizationAttestorAttestationAuthorityNote(res["userOwnedDrydockNote"])); err != nil {
-		return fmt.Errorf("Error reading Attestor: %s", err)
-	}
-	project, err := getProject(d, config)
-	if err != nil {
-		return err
-	}
-	if err := d.Set("project", project); err != nil {
 		return fmt.Errorf("Error reading Attestor: %s", err)
 	}
 

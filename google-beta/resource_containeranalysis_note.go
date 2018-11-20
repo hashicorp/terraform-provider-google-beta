@@ -125,17 +125,18 @@ func resourceContainerAnalysisNoteRead(d *schema.ResourceData, meta interface{})
 		return handleNotFoundError(err, d, fmt.Sprintf("ContainerAnalysisNote %q", d.Id()))
 	}
 
-	if err := d.Set("name", flattenContainerAnalysisNoteName(res["name"])); err != nil {
-		return fmt.Errorf("Error reading Note: %s", err)
-	}
-	if err := d.Set("attestation_authority", flattenContainerAnalysisNoteAttestationAuthority(res["attestationAuthority"])); err != nil {
-		return fmt.Errorf("Error reading Note: %s", err)
-	}
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
 	if err := d.Set("project", project); err != nil {
+		return fmt.Errorf("Error reading Note: %s", err)
+	}
+
+	if err := d.Set("name", flattenContainerAnalysisNoteName(res["name"])); err != nil {
+		return fmt.Errorf("Error reading Note: %s", err)
+	}
+	if err := d.Set("attestation_authority", flattenContainerAnalysisNoteAttestationAuthority(res["attestationAuthority"])); err != nil {
 		return fmt.Errorf("Error reading Note: %s", err)
 	}
 
