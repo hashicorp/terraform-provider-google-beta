@@ -158,6 +158,7 @@ func TestAccRegionInstanceGroupManager_rollingUpdatePolicy(t *testing.T) {
 		},
 	})
 }
+
 func TestAccRegionInstanceGroupManager_separateRegions(t *testing.T) {
 	t.Parallel()
 
@@ -980,7 +981,6 @@ resource "google_compute_region_instance_group_manager" "igm-rolling-update-poli
 	region                     = "us-central1"
 	distribution_policy_zones  = ["us-central1-a", "us-central1-f"]
 	target_size                = 3
-
 	update_policy {
 		type                  = "PROACTIVE"
 		minimal_action        = "REPLACE"

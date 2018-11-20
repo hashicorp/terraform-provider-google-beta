@@ -172,6 +172,7 @@ func resourceComputeInstanceGroupManager() *schema.Resource {
 			},
 
 			"update_policy": &schema.Schema{
+				Computed: true,
 				Type:     schema.TypeList,
 				Optional: true,
 				MaxItems: 1,
@@ -418,9 +419,6 @@ func resourceComputeInstanceGroupManagerRead(d *schema.ResourceData, meta interf
 	}
 
 	d.Set("base_instance_name", manager.BaseInstanceName)
-	if err := d.Set("version", flattenVersions(manager.Versions)); err != nil {
-		return err
-	}
 	d.Set("name", manager.Name)
 	d.Set("zone", GetResourceNameFromSelfLink(manager.Zone))
 	d.Set("description", manager.Description)
@@ -436,11 +434,14 @@ func resourceComputeInstanceGroupManagerRead(d *schema.ResourceData, meta interf
 	d.Set("instance_group", ConvertSelfLinkToV1(manager.InstanceGroup))
 	d.Set("self_link", ConvertSelfLinkToV1(manager.SelfLink))
 
-	if err = d.Set("update_policy", flattenUpdatePolicy(manager.UpdatePolicy)); err != nil {
-		return fmt.Errorf("Error setting update_policy in state: %s", err.Error())
-	}
 	if err = d.Set("auto_healing_policies", flattenAutoHealingPolicies(manager.AutoHealingPolicies)); err != nil {
 		return fmt.Errorf("Error setting auto_healing_policies in state: %s", err.Error())
+	}
+	if err := d.Set("version", flattenVersions(manager.Versions)); err != nil {
+		return err
+	}
+	if err = d.Set("update_policy", flattenUpdatePolicy(manager.UpdatePolicy)); err != nil {
+		return fmt.Errorf("Error setting update_policy in state: %s", err.Error())
 	}
 
 	if d.Get("wait_for_instances").(bool) {
