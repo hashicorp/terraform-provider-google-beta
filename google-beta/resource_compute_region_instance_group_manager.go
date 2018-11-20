@@ -369,9 +369,7 @@ func resourceComputeRegionInstanceGroupManagerRead(d *schema.ResourceData, meta 
 	}
 
 	d.Set("base_instance_name", manager.BaseInstanceName)
-	if err := d.Set("version", flattenVersions(manager.Versions)); err != nil {
-		return err
-	}
+
 	d.Set("name", manager.Name)
 	d.Set("region", GetResourceNameFromSelfLink(manager.Region))
 	d.Set("description", manager.Description)
@@ -385,13 +383,16 @@ func resourceComputeRegionInstanceGroupManagerRead(d *schema.ResourceData, meta 
 	}
 	d.Set("fingerprint", manager.Fingerprint)
 	d.Set("instance_group", ConvertSelfLinkToV1(manager.InstanceGroup))
-	if err := d.Set("auto_healing_policies", flattenAutoHealingPolicies(manager.AutoHealingPolicies)); err != nil {
-		return fmt.Errorf("Error setting auto_healing_policies in state: %s", err.Error())
-	}
 	if err := d.Set("distribution_policy_zones", flattenDistributionPolicy(manager.DistributionPolicy)); err != nil {
 		return err
 	}
 	d.Set("self_link", ConvertSelfLinkToV1(manager.SelfLink))
+	if err := d.Set("auto_healing_policies", flattenAutoHealingPolicies(manager.AutoHealingPolicies)); err != nil {
+		return fmt.Errorf("Error setting auto_healing_policies in state: %s", err.Error())
+	}
+	if err := d.Set("version", flattenVersions(manager.Versions)); err != nil {
+		return err
+	}
 	if err := d.Set("update_policy", flattenUpdatePolicy(manager.UpdatePolicy)); err != nil {
 		return fmt.Errorf("Error setting update_policy in state: %s", err.Error())
 	}
