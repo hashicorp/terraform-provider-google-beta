@@ -160,13 +160,13 @@ func resourceBinaryAuthorizationAttestorRead(d *schema.ResourceData, meta interf
 		return fmt.Errorf("Error reading Attestor: %s", err)
 	}
 
-	if err := d.Set("name", flattenBinaryAuthorizationAttestorName(res["name"])); err != nil {
+	if err := d.Set("name", flattenBinaryAuthorizationAttestorName(res["name"], d)); err != nil {
 		return fmt.Errorf("Error reading Attestor: %s", err)
 	}
-	if err := d.Set("description", flattenBinaryAuthorizationAttestorDescription(res["description"])); err != nil {
+	if err := d.Set("description", flattenBinaryAuthorizationAttestorDescription(res["description"], d)); err != nil {
 		return fmt.Errorf("Error reading Attestor: %s", err)
 	}
-	if err := d.Set("attestation_authority_note", flattenBinaryAuthorizationAttestorAttestationAuthorityNote(res["userOwnedDrydockNote"])); err != nil {
+	if err := d.Set("attestation_authority_note", flattenBinaryAuthorizationAttestorAttestationAuthorityNote(res["userOwnedDrydockNote"], d)); err != nil {
 		return fmt.Errorf("Error reading Attestor: %s", err)
 	}
 
@@ -244,18 +244,18 @@ func resourceBinaryAuthorizationAttestorImport(d *schema.ResourceData, meta inte
 	return []*schema.ResourceData{d}, nil
 }
 
-func flattenBinaryAuthorizationAttestorName(v interface{}) interface{} {
+func flattenBinaryAuthorizationAttestorName(v interface{}, d *schema.ResourceData) interface{} {
 	if v == nil {
 		return v
 	}
 	return NameFromSelfLinkStateFunc(v)
 }
 
-func flattenBinaryAuthorizationAttestorDescription(v interface{}) interface{} {
+func flattenBinaryAuthorizationAttestorDescription(v interface{}, d *schema.ResourceData) interface{} {
 	return v
 }
 
-func flattenBinaryAuthorizationAttestorAttestationAuthorityNote(v interface{}) interface{} {
+func flattenBinaryAuthorizationAttestorAttestationAuthorityNote(v interface{}, d *schema.ResourceData) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -265,18 +265,18 @@ func flattenBinaryAuthorizationAttestorAttestationAuthorityNote(v interface{}) i
 	}
 	transformed := make(map[string]interface{})
 	transformed["note_reference"] =
-		flattenBinaryAuthorizationAttestorAttestationAuthorityNoteNoteReference(original["noteReference"])
+		flattenBinaryAuthorizationAttestorAttestationAuthorityNoteNoteReference(original["noteReference"], d)
 	transformed["public_keys"] =
-		flattenBinaryAuthorizationAttestorAttestationAuthorityNotePublicKeys(original["publicKeys"])
+		flattenBinaryAuthorizationAttestorAttestationAuthorityNotePublicKeys(original["publicKeys"], d)
 	transformed["delegation_service_account_email"] =
-		flattenBinaryAuthorizationAttestorAttestationAuthorityNoteDelegationServiceAccountEmail(original["delegationServiceAccountEmail"])
+		flattenBinaryAuthorizationAttestorAttestationAuthorityNoteDelegationServiceAccountEmail(original["delegationServiceAccountEmail"], d)
 	return []interface{}{transformed}
 }
-func flattenBinaryAuthorizationAttestorAttestationAuthorityNoteNoteReference(v interface{}) interface{} {
+func flattenBinaryAuthorizationAttestorAttestationAuthorityNoteNoteReference(v interface{}, d *schema.ResourceData) interface{} {
 	return v
 }
 
-func flattenBinaryAuthorizationAttestorAttestationAuthorityNotePublicKeys(v interface{}) interface{} {
+func flattenBinaryAuthorizationAttestorAttestationAuthorityNotePublicKeys(v interface{}, d *schema.ResourceData) interface{} {
 	if v == nil {
 		return v
 	}
@@ -289,26 +289,26 @@ func flattenBinaryAuthorizationAttestorAttestationAuthorityNotePublicKeys(v inte
 			continue
 		}
 		transformed = append(transformed, map[string]interface{}{
-			"comment":                      flattenBinaryAuthorizationAttestorAttestationAuthorityNotePublicKeysComment(original["comment"]),
-			"id":                           flattenBinaryAuthorizationAttestorAttestationAuthorityNotePublicKeysId(original["id"]),
-			"ascii_armored_pgp_public_key": flattenBinaryAuthorizationAttestorAttestationAuthorityNotePublicKeysAsciiArmoredPgpPublicKey(original["asciiArmoredPgpPublicKey"]),
+			"comment":                      flattenBinaryAuthorizationAttestorAttestationAuthorityNotePublicKeysComment(original["comment"], d),
+			"id":                           flattenBinaryAuthorizationAttestorAttestationAuthorityNotePublicKeysId(original["id"], d),
+			"ascii_armored_pgp_public_key": flattenBinaryAuthorizationAttestorAttestationAuthorityNotePublicKeysAsciiArmoredPgpPublicKey(original["asciiArmoredPgpPublicKey"], d),
 		})
 	}
 	return transformed
 }
-func flattenBinaryAuthorizationAttestorAttestationAuthorityNotePublicKeysComment(v interface{}) interface{} {
+func flattenBinaryAuthorizationAttestorAttestationAuthorityNotePublicKeysComment(v interface{}, d *schema.ResourceData) interface{} {
 	return v
 }
 
-func flattenBinaryAuthorizationAttestorAttestationAuthorityNotePublicKeysId(v interface{}) interface{} {
+func flattenBinaryAuthorizationAttestorAttestationAuthorityNotePublicKeysId(v interface{}, d *schema.ResourceData) interface{} {
 	return v
 }
 
-func flattenBinaryAuthorizationAttestorAttestationAuthorityNotePublicKeysAsciiArmoredPgpPublicKey(v interface{}) interface{} {
+func flattenBinaryAuthorizationAttestorAttestationAuthorityNotePublicKeysAsciiArmoredPgpPublicKey(v interface{}, d *schema.ResourceData) interface{} {
 	return v
 }
 
-func flattenBinaryAuthorizationAttestorAttestationAuthorityNoteDelegationServiceAccountEmail(v interface{}) interface{} {
+func flattenBinaryAuthorizationAttestorAttestationAuthorityNoteDelegationServiceAccountEmail(v interface{}, d *schema.ResourceData) interface{} {
 	return v
 }
 

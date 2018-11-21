@@ -133,10 +133,10 @@ func resourceContainerAnalysisNoteRead(d *schema.ResourceData, meta interface{})
 		return fmt.Errorf("Error reading Note: %s", err)
 	}
 
-	if err := d.Set("name", flattenContainerAnalysisNoteName(res["name"])); err != nil {
+	if err := d.Set("name", flattenContainerAnalysisNoteName(res["name"], d)); err != nil {
 		return fmt.Errorf("Error reading Note: %s", err)
 	}
-	if err := d.Set("attestation_authority", flattenContainerAnalysisNoteAttestationAuthority(res["attestationAuthority"])); err != nil {
+	if err := d.Set("attestation_authority", flattenContainerAnalysisNoteAttestationAuthority(res["attestationAuthority"], d)); err != nil {
 		return fmt.Errorf("Error reading Note: %s", err)
 	}
 
@@ -212,14 +212,14 @@ func resourceContainerAnalysisNoteImport(d *schema.ResourceData, meta interface{
 	return []*schema.ResourceData{d}, nil
 }
 
-func flattenContainerAnalysisNoteName(v interface{}) interface{} {
+func flattenContainerAnalysisNoteName(v interface{}, d *schema.ResourceData) interface{} {
 	if v == nil {
 		return v
 	}
 	return NameFromSelfLinkStateFunc(v)
 }
 
-func flattenContainerAnalysisNoteAttestationAuthority(v interface{}) interface{} {
+func flattenContainerAnalysisNoteAttestationAuthority(v interface{}, d *schema.ResourceData) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -229,10 +229,10 @@ func flattenContainerAnalysisNoteAttestationAuthority(v interface{}) interface{}
 	}
 	transformed := make(map[string]interface{})
 	transformed["hint"] =
-		flattenContainerAnalysisNoteAttestationAuthorityHint(original["hint"])
+		flattenContainerAnalysisNoteAttestationAuthorityHint(original["hint"], d)
 	return []interface{}{transformed}
 }
-func flattenContainerAnalysisNoteAttestationAuthorityHint(v interface{}) interface{} {
+func flattenContainerAnalysisNoteAttestationAuthorityHint(v interface{}, d *schema.ResourceData) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -242,10 +242,10 @@ func flattenContainerAnalysisNoteAttestationAuthorityHint(v interface{}) interfa
 	}
 	transformed := make(map[string]interface{})
 	transformed["human_readable_name"] =
-		flattenContainerAnalysisNoteAttestationAuthorityHintHumanReadableName(original["humanReadableName"])
+		flattenContainerAnalysisNoteAttestationAuthorityHintHumanReadableName(original["humanReadableName"], d)
 	return []interface{}{transformed}
 }
-func flattenContainerAnalysisNoteAttestationAuthorityHintHumanReadableName(v interface{}) interface{} {
+func flattenContainerAnalysisNoteAttestationAuthorityHintHumanReadableName(v interface{}, d *schema.ResourceData) interface{} {
 	return v
 }
 
