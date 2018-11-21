@@ -156,19 +156,19 @@ func resourceAccessContextManagerAccessPolicyRead(d *schema.ResourceData, meta i
 		return handleNotFoundError(err, d, fmt.Sprintf("AccessContextManagerAccessPolicy %q", d.Id()))
 	}
 
-	if err := d.Set("name", flattenAccessContextManagerAccessPolicyName(res["name"])); err != nil {
+	if err := d.Set("name", flattenAccessContextManagerAccessPolicyName(res["name"], d)); err != nil {
 		return fmt.Errorf("Error reading AccessPolicy: %s", err)
 	}
-	if err := d.Set("create_time", flattenAccessContextManagerAccessPolicyCreateTime(res["createTime"])); err != nil {
+	if err := d.Set("create_time", flattenAccessContextManagerAccessPolicyCreateTime(res["createTime"], d)); err != nil {
 		return fmt.Errorf("Error reading AccessPolicy: %s", err)
 	}
-	if err := d.Set("update_time", flattenAccessContextManagerAccessPolicyUpdateTime(res["updateTime"])); err != nil {
+	if err := d.Set("update_time", flattenAccessContextManagerAccessPolicyUpdateTime(res["updateTime"], d)); err != nil {
 		return fmt.Errorf("Error reading AccessPolicy: %s", err)
 	}
-	if err := d.Set("parent", flattenAccessContextManagerAccessPolicyParent(res["parent"])); err != nil {
+	if err := d.Set("parent", flattenAccessContextManagerAccessPolicyParent(res["parent"], d)); err != nil {
 		return fmt.Errorf("Error reading AccessPolicy: %s", err)
 	}
-	if err := d.Set("title", flattenAccessContextManagerAccessPolicyTitle(res["title"])); err != nil {
+	if err := d.Set("title", flattenAccessContextManagerAccessPolicyTitle(res["title"], d)); err != nil {
 		return fmt.Errorf("Error reading AccessPolicy: %s", err)
 	}
 
@@ -273,26 +273,26 @@ func resourceAccessContextManagerAccessPolicyImport(d *schema.ResourceData, meta
 	return []*schema.ResourceData{d}, nil
 }
 
-func flattenAccessContextManagerAccessPolicyName(v interface{}) interface{} {
+func flattenAccessContextManagerAccessPolicyName(v interface{}, d *schema.ResourceData) interface{} {
 	if v == nil {
 		return v
 	}
 	return NameFromSelfLinkStateFunc(v)
 }
 
-func flattenAccessContextManagerAccessPolicyCreateTime(v interface{}) interface{} {
+func flattenAccessContextManagerAccessPolicyCreateTime(v interface{}, d *schema.ResourceData) interface{} {
 	return v
 }
 
-func flattenAccessContextManagerAccessPolicyUpdateTime(v interface{}) interface{} {
+func flattenAccessContextManagerAccessPolicyUpdateTime(v interface{}, d *schema.ResourceData) interface{} {
 	return v
 }
 
-func flattenAccessContextManagerAccessPolicyParent(v interface{}) interface{} {
+func flattenAccessContextManagerAccessPolicyParent(v interface{}, d *schema.ResourceData) interface{} {
 	return v
 }
 
-func flattenAccessContextManagerAccessPolicyTitle(v interface{}) interface{} {
+func flattenAccessContextManagerAccessPolicyTitle(v interface{}, d *schema.ResourceData) interface{} {
 	return v
 }
 
