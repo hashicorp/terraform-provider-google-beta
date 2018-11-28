@@ -18,4 +18,5 @@ import "github.com/hashicorp/terraform/helper/schema"
 
 var GeneratedAccessContextManagerResourcesMap = map[string]*schema.Resource{
 	"google_access_context_manager_access_policy": resourceAccessContextManagerAccessPolicy(),
+	"google_access_context_manager_access_level":  resourceAccessContextManagerAccessLevel(),
 }
