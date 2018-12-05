@@ -9,7 +9,7 @@ import (
 
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/validation"
-	"google.golang.org/api/composer/v1"
+	"google.golang.org/api/composer/v1beta1"
 )
 
 const (
@@ -179,6 +179,14 @@ func resourceComposerEnvironment() *schema.Resource {
 									"image_version": {
 										Type:     schema.TypeString,
 										Computed: true,
+										Optional: true,
+										ForceNew: true,
+									},
+									"python_version": {
+										Type:     schema.TypeString,
+										Optional: true,
+										Computed: true,
+										ForceNew: true,
 									},
 								},
 							},
@@ -540,6 +548,7 @@ func flattenComposerEnvironmentConfigSoftwareConfig(softwareCfg *composer.Softwa
 	}
 	transformed := make(map[string]interface{})
 	transformed["image_version"] = softwareCfg.ImageVersion
+	transformed["python_version"] = softwareCfg.PythonVersion
 	transformed["airflow_config_overrides"] = softwareCfg.AirflowConfigOverrides
 	transformed["pypi_packages"] = softwareCfg.PypiPackages
 	transformed["env_variables"] = softwareCfg.EnvVariables
@@ -742,6 +751,7 @@ func expandComposerEnvironmentConfigSoftwareConfig(v interface{}, d *schema.Reso
 	transformed := &composer.SoftwareConfig{}
 
 	transformed.ImageVersion = original["image_version"].(string)
+	transformed.PythonVersion = original["python_version"].(string)
 	transformed.AirflowConfigOverrides = expandComposerEnvironmentConfigSoftwareConfigStringMap(original, "airflow_config_overrides")
 	transformed.PypiPackages = expandComposerEnvironmentConfigSoftwareConfigStringMap(original, "pypi_packages")
 	transformed.EnvVariables = expandComposerEnvironmentConfigSoftwareConfigStringMap(original, "env_variables")
