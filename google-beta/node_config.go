@@ -280,7 +280,6 @@ func expandNodeConfig(v interface{}) *containerBeta.NodeConfig {
 	if v, ok := nodeConfig["min_cpu_platform"]; ok {
 		nc.MinCpuPlatform = v.(string)
 	}
-
 	if v, ok := nodeConfig["taint"]; ok && len(v.([]interface{})) > 0 {
 		taints := v.([]interface{})
 		nodeTaints := make([]*containerBeta.NodeTaint, 0, len(taints))
