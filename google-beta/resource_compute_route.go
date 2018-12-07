@@ -81,9 +81,10 @@ func resourceComputeRoute() *schema.Resource {
 				ForceNew: true,
 			},
 			"next_hop_vpn_tunnel": {
-				Type:     schema.TypeString,
-				Optional: true,
-				ForceNew: true,
+				Type:             schema.TypeString,
+				Optional:         true,
+				ForceNew:         true,
+				DiffSuppressFunc: compareSelfLinkOrResourceName,
 			},
 			"priority": {
 				Type:     schema.TypeInt,
@@ -105,9 +106,10 @@ func resourceComputeRoute() *schema.Resource {
 				Computed: true,
 			},
 			"next_hop_instance_zone": &schema.Schema{
-				Type:     schema.TypeString,
-				Optional: true,
-				ForceNew: true,
+				Type:             schema.TypeString,
+				Optional:         true,
+				ForceNew:         true,
+				DiffSuppressFunc: compareSelfLinkOrResourceName,
 			},
 			"project": {
 				Type:     schema.TypeString,
