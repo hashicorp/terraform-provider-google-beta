@@ -23,7 +23,9 @@ import (
 	"strings"
 	"time"
 
+	"github.com/hashicorp/errwrap"
 	"github.com/hashicorp/terraform/helper/customdiff"
+	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/helper/schema"
 	compute "google.golang.org/api/compute/v1"
 	"google.golang.org/api/googleapi"
@@ -810,20 +812,29 @@ func resourceComputeDiskDelete(d *schema.ResourceData, meta interface{}) error {
 			}
 		}
 		for _, call := range detachCalls {
-			op, err := config.clientCompute.Instances.DetachDisk(call.project, call.zone, call.instance, call.deviceName).Do()
-			if err != nil {
-				return fmt.Errorf("Error detaching disk %s from instance %s/%s/%s: %s", call.deviceName, call.project,
-					call.zone, call.instance, err.Error())
-			}
-			err = computeOperationWait(config.clientCompute, op, call.project,
-				fmt.Sprintf("Detaching disk from %s/%s/%s", call.project, call.zone, call.instance))
-			if err != nil {
-				if opErr, ok := err.(ComputeOperationError); ok && len(opErr.Errors) == 1 && opErr.Errors[0].Code == "RESOURCE_NOT_FOUND" {
-					log.Printf("[WARN] instance %q was deleted while awaiting detach", call.instance)
-					continue
+			err = resource.Retry(time.Duration(5)*time.Minute, func() *resource.RetryError {
+				op, err := config.clientCompute.Instances.DetachDisk(call.project, call.zone, call.instance, call.deviceName).Do()
+				if err != nil {
+					for _, e := range errwrap.GetAllType(err, &googleapi.Error{}) {
+						if gerr, ok := e.(*googleapi.Error); ok && gerr.Code == 400 && gerr.Message == "Invalid resource usage: 'To detach the boot disk, the instance must be in TERMINATED state.'." {
+							// It could be still in the process of being deleted!
+							return resource.RetryableError(gerr)
+						}
+					}
+					return resource.NonRetryableError(fmt.Errorf("Error detaching disk %s from instance %s/%s/%s: %s", call.deviceName, call.project,
+						call.zone, call.instance, err.Error()))
 				}
-				return err
-			}
+				err = computeOperationWait(config.clientCompute, op, call.project,
+					fmt.Sprintf("Detaching disk from %s/%s/%s", call.project, call.zone, call.instance))
+				if err != nil {
+					if opErr, ok := err.(ComputeOperationError); ok && len(opErr.Errors) == 1 && opErr.Errors[0].Code == "RESOURCE_NOT_FOUND" {
+						log.Printf("[WARN] instance %q was deleted while awaiting detach", call.instance)
+						return nil
+					}
+					return resource.NonRetryableError(err)
+				}
+				return nil
+			})
 		}
 	}
 	log.Printf("[DEBUG] Deleting Disk %q", d.Id())
