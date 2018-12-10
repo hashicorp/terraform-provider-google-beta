@@ -49,6 +49,12 @@ func resourceComputeGlobalAddress() *schema.Resource {
 				Required: true,
 				ForceNew: true,
 			},
+			"address": {
+				Type:     schema.TypeString,
+				Computed: true,
+				Optional: true,
+				ForceNew: true,
+			},
 			"address_type": {
 				Type:             schema.TypeString,
 				Optional:         true,
@@ -91,10 +97,6 @@ func resourceComputeGlobalAddress() *schema.Resource {
 				ForceNew:     true,
 				ValidateFunc: validation.StringInSlice([]string{"VPC_PEERING", ""}, false),
 			},
-			"address": {
-				Type:     schema.TypeString,
-				Computed: true,
-			},
 			"creation_timestamp": {
 				Type:     schema.TypeString,
 				Computed: true,
@@ -121,6 +123,12 @@ func resourceComputeGlobalAddressCreate(d *schema.ResourceData, meta interface{}
 	config := meta.(*Config)
 
 	obj := make(map[string]interface{})
+	addressProp, err := expandComputeGlobalAddressAddress(d.Get("address"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("address"); !isEmptyValue(reflect.ValueOf(addressProp)) && (ok || !reflect.DeepEqual(v, addressProp)) {
+		obj["address"] = addressProp
+	}
 	descriptionProp, err := expandComputeGlobalAddressDescription(d.Get("description"), d, config)
 	if err != nil {
 		return err
@@ -476,6 +484,10 @@ func flattenComputeGlobalAddressNetwork(v interface{}, d *schema.ResourceData) i
 		return v
 	}
 	return ConvertSelfLinkToV1(v.(string))
+}
+
+func expandComputeGlobalAddressAddress(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
+	return v, nil
 }
 
 func expandComputeGlobalAddressDescription(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
