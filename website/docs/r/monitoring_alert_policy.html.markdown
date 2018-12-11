@@ -77,6 +77,10 @@ The following arguments are supported:
   How to combine the results of multiple conditions to
   determine if an incident should be opened.
 
+* `enabled` -
+  (Output-only)
+  Whether or not the policy is enabled.
+
 * `conditions` -
   (Required)
   A list of conditions for the policy. The conditions are combined by
@@ -568,10 +572,6 @@ The `aggregations` block supports:
 
 - - -
 
-
-* `enabled` -
-  (Optional)
-  Whether or not the policy is enabled. The default is true.
 
 * `notification_channels` -
   (Optional)

@@ -25,7 +25,6 @@ Represents an InterconnectAttachment (VLAN attachment) resource. For more
 information, see Creating VLAN Attachments.
 
 
-
 ## Example Usage
 
 ```hcl
