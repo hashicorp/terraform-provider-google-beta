@@ -812,7 +812,9 @@ func resourceComputeDiskDelete(d *schema.ResourceData, meta interface{}) error {
 			}
 		}
 		for _, call := range detachCalls {
-			err = resource.Retry(time.Duration(5)*time.Minute, func() *resource.RetryError {
+
+			timeout_minutes := int(d.Timeout(schema.TimeoutDelete).Minutes())
+			err = resource.Retry(time.Duration(timeout_minutes)*time.Minute, func() *resource.RetryError {
 				op, err := config.clientCompute.Instances.DetachDisk(call.project, call.zone, call.instance, call.deviceName).Do()
 				if err != nil {
 					for _, e := range errwrap.GetAllType(err, &googleapi.Error{}) {
