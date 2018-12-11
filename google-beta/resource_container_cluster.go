@@ -591,6 +591,11 @@ func resourceContainerCluster() *schema.Resource {
 				Optional: true,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 			},
+
+			"tpu_ipv4_cidr_block": {
+				Computed: true,
+				Type:     schema.TypeString,
+			},
 		},
 	}
 }
@@ -817,6 +822,7 @@ func resourceContainerClusterRead(d *schema.ResourceData, meta interface{}) erro
 	d.Set("subnetwork", cluster.NetworkConfig.Subnetwork)
 	d.Set("enable_binary_authorization", cluster.BinaryAuthorization != nil && cluster.BinaryAuthorization.Enabled)
 	d.Set("enable_tpu", cluster.EnableTpu)
+	d.Set("tpu_ipv4_cidr_block", cluster.TpuIpv4CidrBlock)
 	if err := d.Set("cluster_autoscaling", flattenClusterAutoscaling(cluster.Autoscaling)); err != nil {
 		return err
 	}
