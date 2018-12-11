@@ -19,7 +19,6 @@ import (
 	"log"
 	"reflect"
 	"strconv"
-	"strings"
 	"time"
 
 	"github.com/hashicorp/terraform/helper/customdiff"
@@ -76,11 +75,6 @@ func resourceComputeRegionDisk() *schema.Resource {
 				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"kms_key_name": {
-							Type:     schema.TypeString,
-							Optional: true,
-							ForceNew: true,
-						},
 						"raw_key": {
 							Type:     schema.TypeString,
 							Optional: true,
@@ -123,11 +117,6 @@ func resourceComputeRegionDisk() *schema.Resource {
 				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"kms_key_name": {
-							Type:     schema.TypeString,
-							Optional: true,
-							ForceNew: true,
-						},
 						"raw_key": {
 							Type:     schema.TypeString,
 							Optional: true,
@@ -658,8 +647,6 @@ func flattenComputeRegionDiskDiskEncryptionKey(v interface{}) interface{} {
 		flattenComputeRegionDiskDiskEncryptionKeyRawKey(original["rawKey"])
 	transformed["sha256"] =
 		flattenComputeRegionDiskDiskEncryptionKeySha256(original["sha256"])
-	transformed["kms_key_name"] =
-		flattenComputeRegionDiskDiskEncryptionKeyKmsKeyName(original["kmsKeyName"])
 	return []interface{}{transformed}
 }
 func flattenComputeRegionDiskDiskEncryptionKeyRawKey(v interface{}) interface{} {
@@ -667,10 +654,6 @@ func flattenComputeRegionDiskDiskEncryptionKeyRawKey(v interface{}) interface{} 
 }
 
 func flattenComputeRegionDiskDiskEncryptionKeySha256(v interface{}) interface{} {
-	return v
-}
-
-func flattenComputeRegionDiskDiskEncryptionKeyKmsKeyName(v interface{}) interface{} {
 	return v
 }
 
@@ -689,17 +672,11 @@ func flattenComputeRegionDiskSourceSnapshotEncryptionKey(v interface{}) interfac
 	transformed := make(map[string]interface{})
 	transformed["raw_key"] =
 		flattenComputeRegionDiskSourceSnapshotEncryptionKeyRawKey(original["rawKey"])
-	transformed["kms_key_name"] =
-		flattenComputeRegionDiskSourceSnapshotEncryptionKeyKmsKeyName(original["kmsKeyName"])
 	transformed["sha256"] =
 		flattenComputeRegionDiskSourceSnapshotEncryptionKeySha256(original["sha256"])
 	return []interface{}{transformed}
 }
 func flattenComputeRegionDiskSourceSnapshotEncryptionKeyRawKey(v interface{}) interface{} {
-	return v
-}
-
-func flattenComputeRegionDiskSourceSnapshotEncryptionKeyKmsKeyName(v interface{}) interface{} {
 	return v
 }
 
@@ -790,13 +767,6 @@ func expandComputeRegionDiskDiskEncryptionKey(v interface{}, d *schema.ResourceD
 		transformed["sha256"] = transformedSha256
 	}
 
-	transformedKmsKeyName, err := expandComputeRegionDiskDiskEncryptionKeyKmsKeyName(original["kms_key_name"], d, config)
-	if err != nil {
-		return nil, err
-	} else if val := reflect.ValueOf(transformedKmsKeyName); val.IsValid() && !isEmptyValue(val) {
-		transformed["kmsKeyName"] = transformedKmsKeyName
-	}
-
 	return transformed, nil
 }
 
@@ -805,10 +775,6 @@ func expandComputeRegionDiskDiskEncryptionKeyRawKey(v interface{}, d *schema.Res
 }
 
 func expandComputeRegionDiskDiskEncryptionKeySha256(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
-	return v, nil
-}
-
-func expandComputeRegionDiskDiskEncryptionKeyKmsKeyName(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
@@ -836,13 +802,6 @@ func expandComputeRegionDiskSourceSnapshotEncryptionKey(v interface{}, d *schema
 		transformed["rawKey"] = transformedRawKey
 	}
 
-	transformedKmsKeyName, err := expandComputeRegionDiskSourceSnapshotEncryptionKeyKmsKeyName(original["kms_key_name"], d, config)
-	if err != nil {
-		return nil, err
-	} else if val := reflect.ValueOf(transformedKmsKeyName); val.IsValid() && !isEmptyValue(val) {
-		transformed["kmsKeyName"] = transformedKmsKeyName
-	}
-
 	transformedSha256, err := expandComputeRegionDiskSourceSnapshotEncryptionKeySha256(original["sha256"], d, config)
 	if err != nil {
 		return nil, err
@@ -854,10 +813,6 @@ func expandComputeRegionDiskSourceSnapshotEncryptionKey(v interface{}, d *schema
 }
 
 func expandComputeRegionDiskSourceSnapshotEncryptionKeyRawKey(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
-	return v, nil
-}
-
-func expandComputeRegionDiskSourceSnapshotEncryptionKeyKmsKeyName(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
@@ -917,13 +872,6 @@ func resourceComputeRegionDiskDecoder(d *schema.ResourceData, meta interface{}, 
 		// The raw key won't be returned, so we need to use the original.
 		transformed["rawKey"] = d.Get("disk_encryption_key.0.raw_key")
 		transformed["sha256"] = original["sha256"]
-
-		if kmsKeyName, ok := original["kmsKeyName"]; ok {
-			// The response for crypto keys often includes the version of the key which needs to be removed
-			// format: projects/<project>/locations/<region>/keyRings/<keyring>/cryptoKeys/<key>/cryptoKeyVersions/1
-			transformed["kmsKeyName"] = strings.Split(kmsKeyName.(string), "/cryptoKeyVersions")[0]
-		}
-
 		res["diskEncryptionKey"] = transformed
 	}
 
@@ -933,13 +881,6 @@ func resourceComputeRegionDiskDecoder(d *schema.ResourceData, meta interface{}, 
 		// The raw key won't be returned, so we need to use the original.
 		transformed["rawKey"] = d.Get("source_image_encryption_key.0.raw_key")
 		transformed["sha256"] = original["sha256"]
-
-		if kmsKeyName, ok := original["kmsKeyName"]; ok {
-			// The response for crypto keys often includes the version of the key which needs to be removed
-			// format: projects/<project>/locations/<region>/keyRings/<keyring>/cryptoKeys/<key>/cryptoKeyVersions/1
-			transformed["kmsKeyName"] = strings.Split(kmsKeyName.(string), "/cryptoKeyVersions")[0]
-		}
-
 		res["sourceImageEncryptionKey"] = transformed
 	}
 
@@ -949,13 +890,6 @@ func resourceComputeRegionDiskDecoder(d *schema.ResourceData, meta interface{}, 
 		// The raw key won't be returned, so we need to use the original.
 		transformed["rawKey"] = d.Get("source_snapshot_encryption_key.0.raw_key")
 		transformed["sha256"] = original["sha256"]
-
-		if kmsKeyName, ok := original["kmsKeyName"]; ok {
-			// The response for crypto keys often includes the version of the key which needs to be removed
-			// format: projects/<project>/locations/<region>/keyRings/<keyring>/cryptoKeys/<key>/cryptoKeyVersions/1
-			transformed["kmsKeyName"] = strings.Split(kmsKeyName.(string), "/cryptoKeyVersions")[0]
-		}
-
 		res["sourceSnapshotEncryptionKey"] = transformed
 	}
 
