@@ -32,7 +32,13 @@ To get more information about ForwardingRule, see:
 * How-to Guides
     * [Official Documentation](https://cloud.google.com/compute/docs/load-balancing/network/forwarding-rules)
 
-## Example Usage
+<div class = "oics-button" style="float: right; margin: 0 0 -15px">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=forwarding_rule_basic&cloudshell_image=gcr.io%2Fgraphite-cloud-shell-images%2Fterraform%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+    <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
+  </a>
+</div>
+## Example Usage - Forwarding Rule Basic
+
 
 ```hcl
 resource "google_compute_forwarding_rule" "default" {
@@ -182,7 +188,8 @@ The following arguments are supported:
 
 * `labels` -
   (Optional)
-  Labels to apply to this forwarding rule.  A list of key->value pairs.
+  Labels to apply to this forwarding rule.  A list of key->value pairs.  This property is in beta, and should be used with the terraform-provider-google-beta provider.
+  See [Provider Versions](https://terraform.io/docs/providers/google/provider_versions.html) for more details on beta fields.
 
 * `network_tier` -
   (Optional)
@@ -201,7 +208,8 @@ The following arguments are supported:
   character must be a lowercase letter, and all following characters
   must be a dash, lowercase letter, or digit, except the last
   character, which cannot be a dash.
-  This field is only used for internal load balancing.
+  This field is only used for internal load balancing.  This property is in beta, and should be used with the terraform-provider-google-beta provider.
+  See [Provider Versions](https://terraform.io/docs/providers/google/provider_versions.html) for more details on beta fields.
 
 * `region` -
   (Optional)
@@ -225,7 +233,8 @@ In addition to the arguments listed above, the following computed attributes are
 
 * `service_name` -
   The internal fully qualified service name for this Forwarding Rule.
-  This field is only used for internal load balancing.
+  This field is only used for internal load balancing.  This property is in beta, and should be used with the terraform-provider-google-beta provider.
+  See [Provider Versions](https://terraform.io/docs/providers/google/provider_versions.html) for more details on beta fields.
 * `self_link` - The URI of the created resource.
 
 

@@ -109,148 +109,78 @@ resource "google_storage_bucket" "static" {
 
 The following arguments are supported:
 
+* `default_service` - (Required) The backend service or backend bucket to use when none of the given rules match.
 
-* `default_service` -
-  (Required)
-  The backend service or backend bucket to use when none of the given rules match.
-
-* `name` -
-  (Required)
-  Name of the resource. Provided by the client when the resource is
-  created. The name must be 1-63 characters long, and comply with
-  RFC1035. Specifically, the name must be 1-63 characters long and match
-  the regular expression `[a-z]([-a-z0-9]*[a-z0-9])?` which means the
-  first character must be a lowercase letter, and all following
-  characters must be a dash, lowercase letter, or digit, except the last
-  character, which cannot be a dash.
-
+* `name` - (Required) A unique name for the resource, required by GCE.
+    Changing this forces a new resource to be created.
 
 - - -
 
+* `description` - (Optional) A brief description of this resource.
 
-* `description` -
-  (Optional)
-  An optional description of this resource. Provide this property when
-  you create the resource.
+* `host_rule` - (Optional) A list of host rules. Multiple blocks of this type are permitted. Structure is documented below.
 
-* `host_rule` -
-  (Optional)
-  The list of HostRules to use against the URL.  Structure is documented below.
+* `path_matcher` - (Optional) A list of paths to match. Structure is documented below.
 
-* `path_matcher` -
-  (Optional)
-  The list of named PathMatchers to use against the URL.  Structure is documented below.
+* `project` - (Optional) The ID of the project in which the resource belongs. If it
+    is not provided, the provider project is used.
 
-* `test` -
-  (Optional)
-  The list of expected URL mappings. Requests to update this UrlMap will
-  succeed only if all of the test cases pass.  Structure is documented below.
-* `project` - (Optional) The ID of the project in which the resource belongs.
-    If it is not provided, the provider project is used.
-
+* `test` - (Optional) The test to perform.  Multiple blocks of this type are permitted. Structure is documented below.
 
 The `host_rule` block supports:
 
-* `description` -
-  (Optional)
-  An optional description of this HostRule. Provide this property
-  when you create the resource.
+* `hosts` (Required) - The list of [host patterns](https://cloud.google.com/compute/docs/reference/latest/urlMaps#hostRules.hosts)
+ to match.
 
-* `hosts` -
-  (Required)
-  The list of host patterns to match. They must be valid
-  hostnames, except * will match any string of ([a-z0-9-.]*). In
-  that case, * must be the first character and must be followed in
-  the pattern by either - or ..
+* `description` - (Optional) An optional description of the host rule.
 
-* `path_matcher` -
-  (Required)
-  The name of the PathMatcher to use to match the path portion of
-  the URL if the hostRule matches the URL's host portion.
+* `path_matcher` - (Required) The name of the `path_matcher` to apply this host rule to.
 
 The `path_matcher` block supports:
 
-* `default_service` -
-  (Required)
-  The backend service or backend bucket to use when none of the given paths match.
+* `name` - (Required) The name of the `path_matcher` resource.
 
-* `description` -
-  (Optional)
-  An optional description of this resource.
+* `default_service` - (Required) The backend service or backend bucket to use if none of the given paths match.
 
-* `name` -
-  (Required)
-  The name to which this PathMatcher is referred by the HostRule.
+* `description` - (Optional) An optional description of the host rule.
 
-* `path_rule` -
-  (Optional)
-  The list of path rules.  Structure is documented below.
-
+* `path_rule` - (Optional)  A list of path rules. Multiple blocks of this type are permitted. Structure is documented below.
 
 The `path_rule` block supports:
 
-* `paths` -
-  (Required)
-  The list of path patterns to match. Each must start with /
-  and the only place a * is allowed is at the end following
-  a /. The string fed to the path matcher does not include
-  any text after the first ? or #, and those chars are not
-  allowed here.
+* `paths` - (Required) The list of [paths](https://cloud.google.com/compute/docs/reference/latest/urlMaps#pathMatchers.pathRules.paths)
+    to match against.
 
-* `service` -
-  (Required)
-  The backend service or backend bucket to use if any of the given paths match.
+* `service` - (Required) The backend service or backend bucket to use if any of the given paths match.
 
 The `test` block supports:
 
-* `description` -
-  (Optional)
-  Description of this test case.
+* `service` - (Required) The backend service or backend bucket link that should be matched by this test.
 
-* `host` -
-  (Required)
-  Host portion of the URL.
+* `host` - (Required) The host component of the URL being tested.
 
-* `path` -
-  (Required)
-  Path portion of the URL.
+* `path` - (Required) The path component of the URL being tested.
 
-* `service` -
-  (Required)
-  The backend service or backend bucket link that should be matched by this test.
+* `description` - (Optional) An optional description of this test.
 
 ## Attributes Reference
 
-In addition to the arguments listed above, the following computed attributes are exported:
+In addition to the arguments listed above, the following computed attributes are
+exported:
 
+* `fingerprint` - The unique fingerprint for this resource.
 
-* `creation_timestamp` -
-  Creation timestamp in RFC3339 text format.
+* `map_id` - The GCE assigned ID of the resource.
 
-* `map_id` -
-  The unique identifier for the resource.
-
-* `fingerprint` -
-  Fingerprint of this resource. This field is used internally during
-  updates of this resource.
 * `self_link` - The URI of the created resource.
-
-
-## Timeouts
-
-This resource provides the following
-[Timeouts](/docs/configuration/resources.html#timeouts) configuration options:
-
-- `create` - Default is 4 minutes.
-- `update` - Default is 4 minutes.
-- `delete` - Default is 4 minutes.
 
 ## Import
 
-UrlMap can be imported using any of these accepted formats:
+URL Map can be imported using the `name`, e.g.
 
 ```
-$ terraform import google_compute_url_map.default projects/{{project}}/global/urlMaps/{{name}}
-$ terraform import google_compute_url_map.default {{project}}/{{name}}
-$ terraform import google_compute_url_map.default {{name}}
+$ terraform import google_compute_url_map.html.foobar foobar
 ```
+
+
+Currently `host_rule`, `path_matcher` and `test` importing is not yet supported.
