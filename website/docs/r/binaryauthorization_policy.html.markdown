@@ -164,6 +164,14 @@ The `cluster_admission_rules` block supports:
   The action when a pod creation is denied by the admission rule.
 
 
+## Timeouts
+
+This resource provides the following
+[Timeouts](/docs/configuration/resources.html#timeouts) configuration options:
+
+- `create` - Default is 4 minutes.
+- `update` - Default is 4 minutes.
+- `delete` - Default is 4 minutes.
 
 ## Import
 
