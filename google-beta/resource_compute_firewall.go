@@ -168,7 +168,6 @@ func resourceComputeFirewall() *schema.Resource {
 			"source_service_accounts": {
 				Type:     schema.TypeSet,
 				Optional: true,
-				MaxItems: 1,
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
@@ -187,7 +186,6 @@ func resourceComputeFirewall() *schema.Resource {
 			"target_service_accounts": {
 				Type:     schema.TypeSet,
 				Optional: true,
-				MaxItems: 1,
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
