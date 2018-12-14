@@ -1,3 +1,28 @@
+## 1.20.0 (Unreleased)
+
+DEPRECATIONS:
+- Deprecate `google_project_iam_custom_role.deleted`. (2ded10144f4ce0caff1f97be8a5652889b11cab0)
+- Deprecate top-level encryption fields in `google_compute_disk` (98c12256c2c067e8147d7a1a4350604664ba1098).
+
+NEW RESOURCES:
+- Add `data_source_iam_role` (2acfdb09cb5fbfe7c60bf716fd1e8c2f8b8d13ac)
+- Add `google_billing_account_iam_binding` / `_member` / `_policy` (b53fc067881c54930b6756661206f6f811b52cae)
+- Add `google_monitoring_group` (8d8607a614bddad916b851cbb32c784fe3fbda02)
+- Add `google_monitoring_notification_channel` (8d8607a614bddad916b851cbb32c784fe3fbda02)
+- Add `google_monitoring_uptime_check_config` (9e84ac12a6000ea32dc08f814dffa6d0464657fe)
+- Add `google_storage_default_object_access_control` (e918b003c551b516c3ca966dcb51d40bc9614aa1)
+- Add `runtime` to CloudFunctions functions. (0b361318a900ae09a0a843c5f217a2200e5893ae)
+- Add `google_compute_health_check.*.response`. (5bcd9188d30389150a3dd35d18965d549c2b9513)
+- Add `google_instance_template.disk_encryption_key` (5d55c214e48691e3a18198d97dbc411bf3f215b8)
+- Add `google_container_cluster.cluster_autoscaling`. (fa7334a75d9bdb3a9eb61db515d7bcc259617c25)
+- Add `google_sql_ssl_cert`. (9e91d1ad7bf31a36e106234aaec6bfed77a2b9ca)
+- Add `python_version` to Cloud Composer (f0c4b89c303d35976a6b2bec522eb3c16d8ef2c5)
+- Add `google_compute_router_nat` (c194470e9b9b65bdb49e1457661cb81d3d6f2381)
+- Add `private_network` to Cloud SQL (6f399386993265f6638db7a98d9985a9063f5b3b)
+
+ENHANCEMENTS:
+- Fix `google_compute_disk` encryption (robustify it) and robustify detachments. (44324a1897c9078fac4ba779842dc6d290b82bef and 93f34356abbfe5afb53bd0a54ad7779a7dce016c)
+
 ## 1.19.0 (October 05, 2018)
 
 BACKWARDS INCOMPATIBILITIES:
