@@ -2,7 +2,7 @@
 
 DEPRECATIONS:
 * Deprecate `google_project_iam_custom_role.deleted` [GH-187].
-* Deprecate top-level encryption fields in `google_compute_disk`  [GH-2572].
+* Deprecate top-level encryption fields in `google_compute_disk`  [GH-173].
 
 FEATURES:
 * **New Resource**: `data_source_iam_role` [GH-142].
