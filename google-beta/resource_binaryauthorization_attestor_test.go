@@ -60,7 +60,7 @@ func TestAccBinaryAuthorizationAttestor_update(t *testing.T) {
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckBinaryAuthorizationAttestorDestroy,
 		Steps: []resource.TestStep{
-			resource.TestStep{
+			{
 				Config: testAccBinaryAuthorizationAttestorBasic(name),
 			},
 			{

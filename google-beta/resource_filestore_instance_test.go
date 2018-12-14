@@ -18,10 +18,10 @@ func TestAccFilestoreInstance_basic(t *testing.T) {
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckFilestoreInstanceDestroy,
 		Steps: []resource.TestStep{
-			resource.TestStep{
+			{
 				Config: testAccFilestoreInstance_basic(name),
 			},
-			resource.TestStep{
+			{
 				ResourceName:      "google_filestore_instance.instance",
 				ImportState:       true,
 				ImportStateVerify: true,
@@ -40,18 +40,18 @@ func TestAccFilestoreInstance_update(t *testing.T) {
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckFilestoreInstanceDestroy,
 		Steps: []resource.TestStep{
-			resource.TestStep{
+			{
 				Config: testAccFilestoreInstance_update(name),
 			},
-			resource.TestStep{
+			{
 				ResourceName:      "google_filestore_instance.instance",
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
-			resource.TestStep{
+			{
 				Config: testAccFilestoreInstance_update2(name),
 			},
-			resource.TestStep{
+			{
 				ResourceName:      "google_filestore_instance.instance",
 				ImportState:       true,
 				ImportStateVerify: true,

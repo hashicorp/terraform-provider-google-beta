@@ -20,10 +20,10 @@ func TestAccContainerNodePool_basic(t *testing.T) {
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckContainerNodePoolDestroy,
 		Steps: []resource.TestStep{
-			resource.TestStep{
+			{
 				Config: testAccContainerNodePool_basic(cluster, np),
 			},
-			resource.TestStep{
+			{
 				ResourceName:      "google_container_node_pool.np",
 				ImportState:       true,
 				ImportStateVerify: true,
@@ -43,10 +43,10 @@ func TestAccContainerNodePool_maxPodsPerNode(t *testing.T) {
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckContainerNodePoolDestroy,
 		Steps: []resource.TestStep{
-			resource.TestStep{
+			{
 				Config: testAccContainerNodePool_maxPodsPerNode(cluster, np),
 			},
-			resource.TestStep{
+			{
 				ResourceName:      "google_container_node_pool.np",
 				ImportState:       true,
 				ImportStateVerify: true,
@@ -65,10 +65,10 @@ func TestAccContainerNodePool_noName(t *testing.T) {
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckContainerNodePoolDestroy,
 		Steps: []resource.TestStep{
-			resource.TestStep{
+			{
 				Config: testAccContainerNodePool_noName(cluster),
 			},
-			resource.TestStep{
+			{
 				ResourceName:      "google_container_node_pool.np",
 				ImportState:       true,
 				ImportStateVerify: true,
@@ -88,10 +88,10 @@ func TestAccContainerNodePool_withNodeConfig(t *testing.T) {
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckContainerNodePoolDestroy,
 		Steps: []resource.TestStep{
-			resource.TestStep{
+			{
 				Config: testAccContainerNodePool_withNodeConfig(cluster, nodePool),
 			},
-			resource.TestStep{
+			{
 				ResourceName:      "google_container_node_pool.np_with_node_config",
 				ImportState:       true,
 				ImportStateVerify: true,
@@ -99,10 +99,10 @@ func TestAccContainerNodePool_withNodeConfig(t *testing.T) {
 				// but will still cause an import diff
 				ImportStateVerifyIgnore: []string{"autoscaling.#"},
 			},
-			resource.TestStep{
+			{
 				Config: testAccContainerNodePool_withNodeConfigUpdate(cluster, nodePool),
 			},
-			resource.TestStep{
+			{
 				ResourceName:      "google_container_node_pool.np_with_node_config",
 				ImportState:       true,
 				ImportStateVerify: true,
@@ -122,7 +122,7 @@ func TestAccContainerNodePool_withNodeConfigTaints(t *testing.T) {
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckContainerNodePoolDestroy,
 		Steps: []resource.TestStep{
-			resource.TestStep{
+			{
 				Config: testAccContainerNodePool_withNodeConfigTaints(),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("google_container_node_pool.np_with_node_config", "node_config.0.taint.#", "2"),
@@ -178,10 +178,10 @@ func TestAccContainerNodePool_withGPU(t *testing.T) {
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckContainerNodePoolDestroy,
 		Steps: []resource.TestStep{
-			resource.TestStep{
+			{
 				Config: testAccContainerNodePool_withGPU(),
 			},
-			resource.TestStep{
+			{
 				ResourceName:      "google_container_node_pool.np_with_gpu",
 				ImportState:       true,
 				ImportStateVerify: true,
@@ -206,7 +206,7 @@ func TestAccContainerNodePool_withManagement(t *testing.T) {
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckContainerNodePoolDestroy,
 		Steps: []resource.TestStep{
-			resource.TestStep{
+			{
 				Config: testAccContainerNodePool_withManagement(cluster, nodePool, ""),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(
@@ -217,12 +217,12 @@ func TestAccContainerNodePool_withManagement(t *testing.T) {
 						"google_container_node_pool.np_with_management", "management.0.auto_repair", "false"),
 				),
 			},
-			resource.TestStep{
+			{
 				ResourceName:      "google_container_node_pool.np_with_management",
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
-			resource.TestStep{
+			{
 				Config: testAccContainerNodePool_withManagement(cluster, nodePool, management),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(
@@ -233,7 +233,7 @@ func TestAccContainerNodePool_withManagement(t *testing.T) {
 						"google_container_node_pool.np_with_management", "management.0.auto_repair", "true"),
 				),
 			},
-			resource.TestStep{
+			{
 				ResourceName:      "google_container_node_pool.np_with_management",
 				ImportState:       true,
 				ImportStateVerify: true,
@@ -250,10 +250,10 @@ func TestAccContainerNodePool_withNodeConfigScopeAlias(t *testing.T) {
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckContainerNodePoolDestroy,
 		Steps: []resource.TestStep{
-			resource.TestStep{
+			{
 				Config: testAccContainerNodePool_withNodeConfigScopeAlias(),
 			},
-			resource.TestStep{
+			{
 				ResourceName:      "google_container_node_pool.np_with_node_config_scope_alias",
 				ImportState:       true,
 				ImportStateVerify: true,
@@ -274,38 +274,38 @@ func TestAccContainerNodePool_regionalAutoscaling(t *testing.T) {
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckContainerNodePoolDestroy,
 		Steps: []resource.TestStep{
-			resource.TestStep{
+			{
 				Config: testAccContainerNodePool_regionalAutoscaling(cluster, np),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("google_container_node_pool.np", "autoscaling.0.min_node_count", "1"),
 					resource.TestCheckResourceAttr("google_container_node_pool.np", "autoscaling.0.max_node_count", "3"),
 				),
 			},
-			resource.TestStep{
+			{
 				ResourceName:      "google_container_node_pool.np",
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
-			resource.TestStep{
+			{
 				Config: testAccContainerNodePool_updateAutoscaling(cluster, np),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("google_container_node_pool.np", "autoscaling.0.min_node_count", "0"),
 					resource.TestCheckResourceAttr("google_container_node_pool.np", "autoscaling.0.max_node_count", "5"),
 				),
 			},
-			resource.TestStep{
+			{
 				ResourceName:      "google_container_node_pool.np",
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
-			resource.TestStep{
+			{
 				Config: testAccContainerNodePool_basic(cluster, np),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckNoResourceAttr("google_container_node_pool.np", "autoscaling.0.min_node_count"),
 					resource.TestCheckNoResourceAttr("google_container_node_pool.np", "autoscaling.0.max_node_count"),
 				),
 			},
-			resource.TestStep{
+			{
 				ResourceName:      "google_container_node_pool.np",
 				ImportState:       true,
 				ImportStateVerify: true,
@@ -328,38 +328,38 @@ func TestAccContainerNodePool_autoscaling(t *testing.T) {
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckContainerNodePoolDestroy,
 		Steps: []resource.TestStep{
-			resource.TestStep{
+			{
 				Config: testAccContainerNodePool_autoscaling(cluster, np),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("google_container_node_pool.np", "autoscaling.0.min_node_count", "1"),
 					resource.TestCheckResourceAttr("google_container_node_pool.np", "autoscaling.0.max_node_count", "3"),
 				),
 			},
-			resource.TestStep{
+			{
 				ResourceName:      "google_container_node_pool.np",
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
-			resource.TestStep{
+			{
 				Config: testAccContainerNodePool_updateAutoscaling(cluster, np),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("google_container_node_pool.np", "autoscaling.0.min_node_count", "0"),
 					resource.TestCheckResourceAttr("google_container_node_pool.np", "autoscaling.0.max_node_count", "5"),
 				),
 			},
-			resource.TestStep{
+			{
 				ResourceName:      "google_container_node_pool.np",
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
-			resource.TestStep{
+			{
 				Config: testAccContainerNodePool_basic(cluster, np),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckNoResourceAttr("google_container_node_pool.np", "autoscaling.0.min_node_count"),
 					resource.TestCheckNoResourceAttr("google_container_node_pool.np", "autoscaling.0.max_node_count"),
 				),
 			},
-			resource.TestStep{
+			{
 				ResourceName:      "google_container_node_pool.np",
 				ImportState:       true,
 				ImportStateVerify: true,
@@ -492,10 +492,10 @@ func TestAccContainerNodePool_regionalClusters(t *testing.T) {
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckContainerNodePoolDestroy,
 		Steps: []resource.TestStep{
-			resource.TestStep{
+			{
 				Config: testAccContainerNodePool_regionalClusters(cluster, np),
 			},
-			resource.TestStep{
+			{
 				ResourceName:      "google_container_node_pool.np",
 				ImportState:       true,
 				ImportStateVerify: true,
