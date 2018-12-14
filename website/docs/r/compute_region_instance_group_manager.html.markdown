@@ -99,8 +99,6 @@ The following arguments are supported:
     exactly one version must not specify a target size. It means that versions with
     a target size will respect the setting, and the one without target size will
     be applied to all remaining Instances (top level target_size - each version target_size).
-    This property is in beta, and should be used with the terraform-provider-google-beta provider.
-    See [Provider Versions](https://terraform.io/docs/providers/google/provider_versions.html) for more details on beta fields.
 
 * `name` - (Required) The name of the instance group manager. Must be 1-63
     characters long and comply with
@@ -123,10 +121,8 @@ The following arguments are supported:
 * `update_strategy` - (Optional, Default `"NONE"`) If the `instance_template`
     resource is modified, a value of `"NONE"` will prevent any of the managed
     instances from being restarted by Terraform. A value of `"ROLLING_UPDATE"`
-    is supported as a beta feature. A value of `"ROLLING_UPDATE"` requires
-    `rolling_update_policy` block to be set. This field is deprecated as in
-    `2.0.0` it has no functionality anymore. It will be removed then. This field
-    is only present in the `google` provider.
+    is supported as [Beta feature]. A value of `"ROLLING_UPDATE"` requires
+    `rolling_update_policy` block to be set
 
 * `target_size` - (Optional) The target number of running instances for this managed
     instance group. This value should always be explicitly set unless this resource is attached to
@@ -142,18 +138,12 @@ The following arguments are supported:
 
 ---
 
-* `auto_healing_policies` - (Optional) The autohealing policies for this managed instance
+* `auto_healing_policies` - (Optional, [Beta](/docs/providers/google/index.html#beta-features)) The autohealing policies for this managed instance
 group. You can specify only one value. Structure is documented below. For more information, see the [official documentation](https://cloud.google.com/compute/docs/instance-groups/creating-groups-of-managed-instances#monitoring_groups).
-This property is in beta, and should be used with the terraform-provider-google-beta provider.
-See [Provider Versions](https://terraform.io/docs/providers/google/provider_versions.html) for more details on beta fields.
 
+* `rolling_update_policy` - (Optional, [Beta](/docs/providers/google/index.html#beta-features)) The update policy for this managed instance group. Structure is documented below. For more information, see the [official documentation](https://cloud.google.com/compute/docs/instance-groups/updating-managed-instance-groups) and [API](https://cloud.google.com/compute/docs/reference/rest/beta/regionInstanceGroupManagers/patch)
 
-* `rolling_update_policy` - (Optional) The update policy for this managed instance group. Structure is documented below. For more information, see the [official documentation](https://cloud.google.com/compute/docs/instance-groups/updating-managed-instance-groups) and [API](https://cloud.google.com/compute/docs/reference/rest/beta/regionInstanceGroupManagers/patch)
-This property is in beta, and should be used with the terraform-provider-google-beta provider.
-See [Provider Versions](https://terraform.io/docs/providers/google/provider_versions.html) for more details on beta fields.
-
-
-* `distribution_policy_zones` - (Optional) The distribution policy for this managed instance
+* `distribution_policy_zones` - (Optional, [Beta](/docs/providers/google/index.html#beta-features)) The distribution policy for this managed instance
 group. You can specify one or more values. For more information, see the [official documentation](https://cloud.google.com/compute/docs/instance-groups/distributing-instances-with-regional-instance-groups#selectingzones).
 - - -
 

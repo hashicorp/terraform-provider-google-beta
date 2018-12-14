@@ -10,8 +10,7 @@ import (
 
 	"github.com/hashicorp/terraform/helper/logging"
 	"github.com/hashicorp/terraform/helper/pathorcontents"
-	"github.com/hashicorp/terraform/httpclient"
-	"github.com/terraform-providers/terraform-provider-google-beta/version"
+	"github.com/hashicorp/terraform/version"
 
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
@@ -25,7 +24,7 @@ import (
 	"google.golang.org/api/cloudkms/v1"
 	"google.golang.org/api/cloudresourcemanager/v1"
 	resourceManagerV2Beta1 "google.golang.org/api/cloudresourcemanager/v2beta1"
-	"google.golang.org/api/composer/v1beta1"
+	"google.golang.org/api/composer/v1"
 	computeBeta "google.golang.org/api/compute/v0.beta"
 	"google.golang.org/api/compute/v1"
 	"google.golang.org/api/container/v1"
@@ -41,7 +40,6 @@ import (
 	"google.golang.org/api/redis/v1beta1"
 	"google.golang.org/api/runtimeconfig/v1beta1"
 	"google.golang.org/api/servicemanagement/v1"
-	"google.golang.org/api/servicenetworking/v1beta"
 	"google.golang.org/api/serviceusage/v1beta1"
 	"google.golang.org/api/sourcerepo/v1"
 	"google.golang.org/api/spanner/v1"
@@ -92,7 +90,6 @@ type Config struct {
 	clientCloudFunctions         *cloudfunctions.Service
 	clientCloudIoT               *cloudiot.Service
 	clientAppEngine              *appengine.APIService
-	clientServiceNetworking      *servicenetworking.APIService
 
 	bigtableClientFactory *BigtableClientFactory
 }
@@ -157,10 +154,9 @@ func (c *Config) loadAndValidate() error {
 
 	client.Transport = logging.NewTransport("Google", client.Transport)
 
-	terraformVersion := httpclient.UserAgentString()
-	providerVersion := fmt.Sprintf("terraform-provider-google-beta/%s", version.ProviderVersion)
-	terraformWebsite := "(+https://www.terraform.io)"
-	userAgent := fmt.Sprintf("%s %s %s", terraformVersion, terraformWebsite, providerVersion)
+	projectURL := "https://www.terraform.io"
+	userAgent := fmt.Sprintf("Terraform/%s (+%s)",
+		version.String(), projectURL)
 
 	c.client = client
 	c.userAgent = userAgent
@@ -380,13 +376,6 @@ func (c *Config) loadAndValidate() error {
 		return err
 	}
 	c.clientComposer.UserAgent = userAgent
-
-	log.Printf("[INFO] Instantiating Service Networking Client...")
-	c.clientServiceNetworking, err = servicenetworking.New(client)
-	if err != nil {
-		return err
-	}
-	c.clientServiceNetworking.UserAgent = userAgent
 
 	return nil
 }

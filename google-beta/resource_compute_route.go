@@ -81,10 +81,9 @@ func resourceComputeRoute() *schema.Resource {
 				ForceNew: true,
 			},
 			"next_hop_vpn_tunnel": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				ForceNew:         true,
-				DiffSuppressFunc: compareSelfLinkOrResourceName,
+				Type:     schema.TypeString,
+				Optional: true,
+				ForceNew: true,
 			},
 			"priority": {
 				Type:     schema.TypeInt,
@@ -106,10 +105,9 @@ func resourceComputeRoute() *schema.Resource {
 				Computed: true,
 			},
 			"next_hop_instance_zone": &schema.Schema{
-				Type:             schema.TypeString,
-				Optional:         true,
-				ForceNew:         true,
-				DiffSuppressFunc: compareSelfLinkOrResourceName,
+				Type:     schema.TypeString,
+				Optional: true,
+				ForceNew: true,
 			},
 			"project": {
 				Type:     schema.TypeString,
@@ -190,7 +188,7 @@ func resourceComputeRouteCreate(d *schema.ResourceData, meta interface{}) error 
 		obj["nextHopVpnTunnel"] = nextHopVpnTunnelProp
 	}
 
-	url, err := replaceVars(d, config, "https://www.googleapis.com/compute/beta/projects/{{project}}/global/routes")
+	url, err := replaceVars(d, config, "https://www.googleapis.com/compute/v1/projects/{{project}}/global/routes")
 	if err != nil {
 		return err
 	}
@@ -236,7 +234,7 @@ func resourceComputeRouteCreate(d *schema.ResourceData, meta interface{}) error 
 func resourceComputeRouteRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	url, err := replaceVars(d, config, "https://www.googleapis.com/compute/beta/projects/{{project}}/global/routes/{{name}}")
+	url, err := replaceVars(d, config, "https://www.googleapis.com/compute/v1/projects/{{project}}/global/routes/{{name}}")
 	if err != nil {
 		return err
 	}
@@ -301,7 +299,7 @@ func resourceComputeRouteRead(d *schema.ResourceData, meta interface{}) error {
 func resourceComputeRouteDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	url, err := replaceVars(d, config, "https://www.googleapis.com/compute/beta/projects/{{project}}/global/routes/{{name}}")
+	url, err := replaceVars(d, config, "https://www.googleapis.com/compute/v1/projects/{{project}}/global/routes/{{name}}")
 	if err != nil {
 		return err
 	}

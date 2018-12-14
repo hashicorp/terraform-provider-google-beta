@@ -500,7 +500,7 @@ func expandBinaryAuthorizationPolicyClusterAdmissionRulesEnforcementMode(v inter
 
 func expandBinaryAuthorizationPolicyDefaultAdmissionRule(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
 	l := v.([]interface{})
-	if len(l) == 0 || l[0] == nil {
+	if len(l) == 0 {
 		return nil, nil
 	}
 	raw := l[0]

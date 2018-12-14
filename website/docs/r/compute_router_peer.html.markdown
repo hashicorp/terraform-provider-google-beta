@@ -6,7 +6,7 @@ description: |-
   Manages a Cloud Router BGP peer.
 ---
 
-# google\_compute\_router\_peer
+# google\_compute\_router
 
 Manages a Cloud Router BGP peer. For more information see
 [the official documentation](https://cloud.google.com/compute/docs/cloudrouter)

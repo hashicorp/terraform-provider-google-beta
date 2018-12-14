@@ -224,13 +224,6 @@ func testAccCheckGoogleProjectOrganizationListPolicyDeniedValues(n string, value
 		if err != nil {
 			return err
 		}
-		if policy.ListPolicy == nil {
-			if len(values) > 0 {
-				return fmt.Errorf("Expected the list policy to deny '%s', but list policy did not exist.", values)
-			} else {
-				return nil
-			}
-		}
 
 		sort.Strings(policy.ListPolicy.DeniedValues)
 		sort.Strings(values)

@@ -81,7 +81,7 @@ output "cluster_ca_certificate" {
     In a Regional Cluster, the number of nodes specified in `initial_node_count` is 
     created in three zones of the region (this can be changed by setting `additional_zones`).
     This property is in beta, and should be used with the terraform-provider-google-beta provider.
-    See [Provider Versions](https://terraform.io/docs/providers/google/provider_versions.html) for more details on beta fields.
+    See [Provider Versions](https://terraform.io/docs/provider/google/provider_versions.html) for more details on beta fields.
 
 * `additional_zones` - (Optional) The list of additional Google Compute Engine
     locations in which the cluster's nodes should be located. If additional zones are
@@ -94,17 +94,12 @@ output "cluster_ca_certificate" {
 * `cluster_ipv4_cidr` - (Optional) The IP address range of the kubernetes pods in
     this cluster. Default is an automatically assigned CIDR.
 
-* `cluster_autoscaling` - (Optional, [Beta](https://terraform.io/docs/providers/google/provider_versions.html))
-    Configuration for cluster autoscaling (also called autoprovisioning), as described in
-    [the docs](https://cloud.google.com/kubernetes-engine/docs/how-to/node-auto-provisioning).
-    Structure is documented below.
-
 * `description` - (Optional) Description of the cluster.
 
 * `enable_binary_authorization` - (Optional) Enable Binary Authorization for this cluster.
     If enabled, all container images will be validated by Google Binary Authorization.
     This property is in beta, and should be used with the terraform-provider-google-beta provider.
-    See [Provider Versions](https://terraform.io/docs/providers/google/provider_versions.html) for more details on beta fields.
+    See [Provider Versions](https://terraform.io/docs/provider/google/provider_versions.html) for more details on beta fields.
 
 * `enable_kubernetes_alpha` - (Optional) Whether to enable Kubernetes Alpha features for
     this cluster. Note that when this option is enabled, the cluster cannot be upgraded
@@ -113,7 +108,7 @@ output "cluster_ca_certificate" {
 * `enable_tpu` - (Optional) Whether to enable Cloud TPU resources in this cluster.
     See the [official documentation](https://cloud.google.com/tpu/docs/kubernetes-engine-setup).
     This property is in beta, and should be used with the terraform-provider-google-beta provider.
-    See [Provider Versions](https://terraform.io/docs/providers/google/provider_versions.html) for more details on beta fields.
+    See [Provider Versions](https://terraform.io/docs/provider/google/provider_versions.html) for more details on beta fields.
 
 * `enable_legacy_abac` - (Optional) Whether the ABAC authorizer is enabled for this cluster.
     When enabled, identities in the system, including service accounts, nodes, and controllers,
@@ -141,12 +136,11 @@ output "cluster_ca_certificate" {
     for master authorized networks. Omit the nested `cidr_blocks` attribute to disallow
     external access (except the cluster node IPs, which GKE automatically whitelists).
 
-* `master_ipv4_cidr_block` - (Optional, Deprecated) Specifies a private
+* `master_ipv4_cidr_block` - (Optional, [Beta](/docs/providers/google/index.html#beta-features)) Specifies a private
     [RFC1918](https://tools.ietf.org/html/rfc1918) block for the master's VPC. The master range must not overlap with any subnet in your cluster's VPC.
     The master and your cluster use VPC peering. Must be specified in CIDR notation and must be `/28` subnet.
     This property is in beta, and should be used with the terraform-provider-google-beta provider.
-    See [Provider Versions](https://terraform.io/docs/providers/google/provider_versions.html) for more details on beta fields.
-    This field is deprecated, use `private_cluster_config.master_ipv4_cidr_block` instead.
+    See [Provider Versions](https://terraform.io/docs/provider/google/provider_versions.html) for more details on beta fields.
 
 * `min_master_version` - (Optional) The minimum version of the master. GKE
     will auto-update the master to new versions, so this does not guarantee the
@@ -175,33 +169,23 @@ output "cluster_ca_certificate" {
 
 * `node_pool` - (Optional) List of node pools associated with this cluster.
     See [google_container_node_pool](container_node_pool.html) for schema.
-    **Warning:** node pools defined inside a cluster can't be changed (or added/removed) after
-    cluster creation without deleting and recreating the entire cluster. Unless you absolutely need the ability
-    to say "these are the _only_ node pools associated with this cluster", use the
-    [google_container_node_pool](container_node_pool.html) resource instead of this property.
 
 * `node_version` - (Optional) The Kubernetes version on the nodes. Must either be unset
     or set to the same value as `min_master_version` on create. Defaults to the default
     version set by GKE which is not necessarily the latest version.
 
-* `pod_security_policy_config` - (Optional) Configuration for the
+* `pod_security_policy_config` - (Optional, [Beta](/docs/providers/google/index.html#beta-features)) Configuration for the
     [PodSecurityPolicy](https://cloud.google.com/kubernetes-engine/docs/how-to/pod-security-policies) feature.
     Structure is documented below.
     This property is in beta, and should be used with the terraform-provider-google-beta provider.
-    See [Provider Versions](https://terraform.io/docs/providers/google/provider_versions.html) for more details on beta fields.
+    See [Provider Versions](https://terraform.io/docs/provider/google/provider_versions.html) for more details on beta fields.
 
-* `private_cluster_config` - (Optional) A set of options for creating
-    a private cluster. Structure is documented below.
-    This property is in beta, and should be used with the terraform-provider-google-beta provider.
-    See [Provider Versions](https://terraform.io/docs/providers/google/provider_versions.html) for more details on beta fields.
-
-* `private_cluster` - (Optional, Deprecated) If true, a
+* `private_cluster` - (Optional, [Beta](/docs/providers/google/index.html#beta-features)) If true, a
     [private cluster](https://cloud.google.com/kubernetes-engine/docs/how-to/private-clusters) will be created, meaning
     nodes do not get public IP addresses. It is mandatory to specify `master_ipv4_cidr_block` and 
     `ip_allocation_policy` with this option.
     This property is in beta, and should be used with the terraform-provider-google-beta provider.
-    See [Provider Versions](https://terraform.io/docs/providers/google/provider_versions.html) for more details on beta fields.
-    This field is deprecated, use `private_cluster_config.enable_private_nodes` instead.
+    See [Provider Versions](https://terraform.io/docs/provider/google/provider_versions.html) for more details on beta fields.
 
 * `project` - (Optional) The ID of the project in which the resource belongs. If it
     is not provided, the provider project is used.
@@ -244,21 +228,6 @@ addons_config {
   }
 }
 ```
-
-The `cluster_autoscaling` block supports:
-* `enabled` - (Required) Whether cluster autoscaling (also called autoprovisioning) is
-    enabled.  To set this to true, make sure your config meets the rest of the
-    requirements.  Notably, you'll need `min_master_version` of at least `1.11.2`.
-* `resource_limits` - (Optional) A list of limits on the autoprovisioning.
-    See [the docs](https://cloud.google.com/kubernetes-engine/docs/how-to/node-auto-provisioning)
-    for an explanation of what options are available.  If enabling autoprovisioning, make
-    sure to set at least `cpu` and `memory`.  Structure is documented below.
-
-The `resource_limits` block supports:
-* `resource_type` - (Required) See [the docs](https://cloud.google.com/kubernetes-engine/docs/how-to/node-auto-provisioning)
-    for a list of permitted types - `cpu`, `memory`, and others.
-* `minimum` - (Optional) The minimum value for the resource type specified.
-* `maximum` - (Optional) The maximum value for the resource type specified.
 
 The `maintenance_policy` block supports:
 
@@ -392,24 +361,19 @@ The `node_config` block supports:
 
 * `service_account` - (Optional) The service account to be used by the Node VMs.
     If not specified, the "default" service account is used.
-    In order to use the configured `oauth_scopes` for logging and monitoring, the service account being used needs the
-    [roles/logging.logWriter](https://cloud.google.com/iam/docs/understanding-roles#stackdriver_logging_roles) and
-    [roles/monitoring.metricWriter](https://cloud.google.com/iam/docs/understanding-roles#stackdriver_monitoring_roles) roles.
-
-     -> Projects that enable the [Cloud Compute Engine API](https://cloud.google.com/compute/) with Terraform may need these roles added manually to the service account. Projects that enable the API in the Cloud Console should have them added automatically.
 
 * `tags` - (Optional) The list of instance tags applied to all nodes. Tags are used to identify
     valid sources or targets for network firewalls.
 
-* `taint` - (Optional) List of
+* `taint` - (Optional, [Beta](/docs/providers/google/index.html#beta-features)) List of
     [kubernetes taints](https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/)
     to apply to each node. Structure is documented below. This property is in beta, and should be
-    used with the terraform-provider-google-beta provider. See [Provider Versions](https://terraform.io/docs/providers/google/provider_versions.html)
+    used with the terraform-provider-google-beta provider. See [Provider Versions](https://terraform.io/docs/provider/google/provider_versions.html)
     for more details on beta fields.
 
 * `workload_metadata_config` - (Optional) Metadata configuration to expose to workloads on the node pool.
     Structure is documented below. This property is in beta, and should be used with the terraform-provider-google-beta provider.
-    See [Provider Versions](https://terraform.io/docs/providers/google/provider_versions.html) for more details on beta fields.
+    See [Provider Versions](https://terraform.io/docs/provider/google/provider_versions.html) for more details on beta fields.
 
 The `guest_accelerator` block supports:
 
@@ -421,23 +385,6 @@ The `pod_security_policy_config` block supports:
 
 * `enabled` (Required) - Enable the PodSecurityPolicy controller for this cluster.
     If enabled, pods must be valid under a PodSecurityPolicy to be created.
-
-The `private_cluster_config` block supports:
-
-* `enable_private_endpoint` (Optional) - Whether the master's internal IP address is used as the cluster endpoint.
-
-* `enable_private_nodes` (Optional) - Whether nodes have internal IP addresses only. If enabled, all nodes are given only RFC 1918 private
-    addresses and communicate with the master via private networking.
-
-* `master_ipv4_cidr_block` (Optional) - The IP range in CIDR notation to use for the hosted master network. This range will be used for
-    assigning internal IP addresses to the master or set of masters, as well as the ILB VIP. This range must not overlap with any other ranges
-    in use within the cluster's network.
-
-In addition, the `private_cluster_config` allows access to the following read-only fields:
-
-* `private_endpoint` - The internal IP address of this cluster's master endpoint.
-
-* `public_endpoint` - The external IP address of this cluster's master endpoint.
 
 The `taint` block supports:
 

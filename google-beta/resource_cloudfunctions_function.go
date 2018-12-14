@@ -170,12 +170,6 @@ func resourceCloudFunctionsFunction() *schema.Resource {
 				Optional: true,
 			},
 
-			"runtime": {
-				Type:     schema.TypeString,
-				Optional: true,
-				Computed: true,
-			},
-
 			"environment_variables": {
 				Type:     schema.TypeMap,
 				Optional: true,
@@ -322,7 +316,6 @@ func resourceCloudFunctionsCreate(d *schema.ResourceData, meta interface{}) erro
 
 	function := &cloudfunctions.CloudFunction{
 		Name:            cloudFuncId.cloudFunctionId(),
-		Runtime:         d.Get("runtime").(string),
 		ForceSendFields: []string{},
 	}
 
@@ -433,7 +426,6 @@ func resourceCloudFunctionsRead(d *schema.ResourceData, meta interface{}) error 
 	}
 	d.Set("timeout", timeout)
 	d.Set("labels", function.Labels)
-	d.Set("runtime", function.Runtime)
 	d.Set("environment_variables", function.EnvironmentVariables)
 	if function.SourceArchiveUrl != "" {
 		// sourceArchiveUrl should always be a Google Cloud Storage URL (e.g. gs://bucket/object)
@@ -527,11 +519,6 @@ func resourceCloudFunctionsUpdate(d *schema.ResourceData, meta interface{}) erro
 		updateMaskArr = append(updateMaskArr, "labels")
 	}
 
-	if d.HasChange("runtime") {
-		function.Runtime = d.Get("runtime").(string)
-		updateMaskArr = append(updateMaskArr, "runtime")
-	}
-
 	if d.HasChange("environment_variables") {
 		function.EnvironmentVariables = expandEnvironmentVariables(d)
 		updateMaskArr = append(updateMaskArr, "environment_variables")
@@ -599,30 +586,28 @@ func resourceCloudFunctionsDestroy(d *schema.ResourceData, meta interface{}) err
 }
 
 func expandEventTrigger(configured []interface{}, project string) *cloudfunctions.EventTrigger {
-	if len(configured) == 0 || configured[0] == nil {
+	if len(configured) == 0 {
 		return nil
 	}
 
-	data := configured[0].(map[string]interface{})
-	eventType := data["event_type"].(string)
-	shape := ""
-	switch {
-	case strings.HasPrefix(eventType, "google.storage.object."):
-		shape = "projects/%s/buckets/%s"
-	case strings.HasPrefix(eventType, "google.pubsub.topic."):
-		shape = "projects/%s/topics/%s"
-	// Legacy style triggers
-	case strings.HasPrefix(eventType, "providers/cloud.storage/eventTypes/"):
-		shape = "projects/%s/buckets/%s"
-	case strings.HasPrefix(eventType, "providers/cloud.pubsub/eventTypes/"):
-		shape = "projects/%s/topics/%s"
+	if data, ok := configured[0].(map[string]interface{}); ok {
+		eventType := data["event_type"].(string)
+		shape := ""
+		switch {
+		case strings.HasPrefix(eventType, "providers/cloud.storage/eventTypes/"):
+			shape = "projects/%s/buckets/%s"
+		case strings.HasPrefix(eventType, "providers/cloud.pubsub/eventTypes/"):
+			shape = "projects/%s/topics/%s"
+		}
+
+		return &cloudfunctions.EventTrigger{
+			EventType:     eventType,
+			Resource:      fmt.Sprintf(shape, project, data["resource"].(string)),
+			FailurePolicy: expandFailurePolicy(data["failure_policy"].([]interface{})),
+		}
 	}
 
-	return &cloudfunctions.EventTrigger{
-		EventType:     eventType,
-		Resource:      fmt.Sprintf(shape, project, data["resource"].(string)),
-		FailurePolicy: expandFailurePolicy(data["failure_policy"].([]interface{})),
-	}
+	return nil
 }
 
 func flattenEventTrigger(eventTrigger *cloudfunctions.EventTrigger) []map[string]interface{} {
@@ -641,11 +626,11 @@ func flattenEventTrigger(eventTrigger *cloudfunctions.EventTrigger) []map[string
 }
 
 func expandFailurePolicy(configured []interface{}) *cloudfunctions.FailurePolicy {
-	if len(configured) == 0 || configured[0] == nil {
+	if len(configured) == 0 {
 		return &cloudfunctions.FailurePolicy{}
 	}
 
-	if data := configured[0].(map[string]interface{}); data["retry"].(bool) {
+	if data, ok := configured[0].(map[string]interface{}); ok && data["retry"].(bool) {
 		return &cloudfunctions.FailurePolicy{
 			Retry: &cloudfunctions.Retry{},
 		}

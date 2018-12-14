@@ -78,7 +78,7 @@ The following arguments are supported:
   determine if an incident should be opened.
 
 * `enabled` -
-  (Output-only)
+  (Required)
   Whether or not the policy is enabled.
 
 * `conditions` -
@@ -586,30 +586,9 @@ The `aggregations` block supports:
 * `labels` -
   (Optional)
   User-supplied key/value data to be used for organizing AlertPolicy objects.
-
-* `documentation` -
-  (Optional)
-  A short name or phrase used to identify the policy in dashboards,
-  notifications, and incidents. To avoid confusion, don't use the same
-  display name for multiple policies in the same project. The name is
-  limited to 512 Unicode characters.  Structure is documented below.
 * `project` - (Optional) The ID of the project in which the resource belongs.
     If it is not provided, the provider project is used.
 
-
-The `documentation` block supports:
-
-* `content` -
-  (Optional)
-  The text of the documentation, interpreted according to mimeType.
-  The content may not exceed 8,192 Unicode characters and may not
-  exceed more than 10,240 bytes when encoded in UTF-8 format,
-  whichever is smaller.
-
-* `mime_type` -
-  (Optional)
-  The format of the content field. Presently, only the value
-  "text/markdown" is supported.
 
 ## Attributes Reference
 
