@@ -15,14 +15,14 @@ func TestAccServiceNetworkingConnectionCreate(t *testing.T) {
 		PreCheck:  func() { testAccPreCheck(t) },
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
-			resource.TestStep{
+			{
 				Config: testAccServiceNetworkingConnection(
 					fmt.Sprintf("tf-test-%s", acctest.RandString(10)),
 					fmt.Sprintf("tf-test-%s", acctest.RandString(10)),
 					"servicenetworking.googleapis.com",
 				),
 			},
-			resource.TestStep{
+			{
 				ResourceName:      "google_service_networking_connection.foobar",
 				ImportState:       true,
 				ImportStateVerify: true,
@@ -40,26 +40,26 @@ func TestAccServiceNetworkingConnectionUpdate(t *testing.T) {
 		PreCheck:  func() { testAccPreCheck(t) },
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
-			resource.TestStep{
+			{
 				Config: testAccServiceNetworkingConnection(
 					network,
 					fmt.Sprintf("tf-test-%s", acctest.RandString(10)),
 					"servicenetworking.googleapis.com",
 				),
 			},
-			resource.TestStep{
+			{
 				ResourceName:      "google_service_networking_connection.foobar",
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
-			resource.TestStep{
+			{
 				Config: testAccServiceNetworkingConnection(
 					network,
 					fmt.Sprintf("tf-test-%s", acctest.RandString(10)),
 					"servicenetworking.googleapis.com",
 				),
 			},
-			resource.TestStep{
+			{
 				ResourceName:      "google_service_networking_connection.foobar",
 				ImportState:       true,
 				ImportStateVerify: true,
