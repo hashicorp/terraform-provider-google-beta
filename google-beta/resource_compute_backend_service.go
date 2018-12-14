@@ -398,17 +398,19 @@ func resourceComputeBackendServiceDelete(d *schema.ResourceData, meta interface{
 }
 
 func expandIap(configured []interface{}) *computeBeta.BackendServiceIAP {
-	if len(configured) == 0 || configured[0] == nil {
+	if len(configured) == 0 {
 		return nil
 	}
-
-	data := configured[0].(map[string]interface{})
-	return &computeBeta.BackendServiceIAP{
-		Enabled:            true,
-		Oauth2ClientId:     data["oauth2_client_id"].(string),
-		Oauth2ClientSecret: data["oauth2_client_secret"].(string),
-		ForceSendFields:    []string{"Enabled", "Oauth2ClientId", "Oauth2ClientSecret"},
+	if data, ok := configured[0].(map[string]interface{}); ok {
+		return &computeBeta.BackendServiceIAP{
+			Enabled:            true,
+			Oauth2ClientId:     data["oauth2_client_id"].(string),
+			Oauth2ClientSecret: data["oauth2_client_secret"].(string),
+			ForceSendFields:    []string{"Enabled", "Oauth2ClientId", "Oauth2ClientSecret"},
+		}
 	}
+
+	return nil
 }
 
 func flattenIap(iap *computeBeta.BackendServiceIAP) []map[string]interface{} {
@@ -588,11 +590,11 @@ func expandBackendService(d *schema.ResourceData) (*computeBeta.BackendService, 
 }
 
 func expandCdnPolicy(configured []interface{}) *computeBeta.BackendServiceCdnPolicy {
-	if len(configured) == 0 || configured[0] == nil {
+	if len(configured) == 0 {
 		return nil
 	}
-
 	data := configured[0].(map[string]interface{})
+
 	ckp := data["cache_key_policy"].([]interface{})
 	if len(ckp) == 0 {
 		return nil

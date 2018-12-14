@@ -23,9 +23,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/hashicorp/errwrap"
 	"github.com/hashicorp/terraform/helper/customdiff"
-	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/helper/schema"
 	compute "google.golang.org/api/compute/v1"
 	"google.golang.org/api/googleapi"
@@ -46,63 +44,6 @@ func isDiskShrinkage(old, new, _ interface{}) bool {
 		return false
 	}
 	return new.(int) < old.(int)
-}
-
-func customDiffComputeDiskDiskEncryptionKeys(diff *schema.ResourceDiff, meta interface{}) error {
-	oldConvenience, newConvenience := diff.GetChange("disk_encryption_key_raw")
-	oldNewField, newNewField := diff.GetChange("disk_encryption_key.0.raw_key")
-
-	// Either field has a value and then has another value
-	// We need to handle _EVERY_ ForceNew case in this diff
-	if oldConvenience != "" && newConvenience != "" && oldConvenience != newConvenience {
-		return diff.ForceNew("disk_encryption_key_raw")
-	}
-
-	if oldNewField != "" && newNewField != "" && oldNewField != newNewField {
-		return diff.ForceNew("disk_encryption_key.0.raw_key")
-	}
-
-	// Our resource isn't using either field, then uses one;
-	// ForceNew on whichever one is now using it.
-	if (oldConvenience == "" && oldNewField == "" && newConvenience != "") || (oldConvenience == "" && oldNewField == "" && newNewField != "") {
-		if oldConvenience == "" && newConvenience != "" {
-			return diff.ForceNew("disk_encryption_key_raw")
-		} else {
-			return diff.ForceNew("disk_encryption_key.0.raw_key")
-		}
-	}
-
-	// convenience no longer used
-	if oldConvenience != "" && newConvenience == "" {
-		if newNewField == "" {
-			// convenience is being nulled, and the new field is empty as well
-			// we've stopped using the field altogether
-			return diff.ForceNew("disk_encryption_key_raw")
-		} else if oldConvenience != newNewField {
-			// convenience is being nulled, and the new field has a new value
-			// so we ForceNew on either field
-			return diff.ForceNew("disk_encryption_key_raw")
-		} else {
-			// If we reach it here, we're using the same value in the new field as we had in the convenience field
-		}
-	}
-
-	// new no longer used
-	if oldNewField != "" && newNewField == "" {
-		if newConvenience == "" {
-			// new field is being nulled, and the convenience field is empty as well
-			// we've stopped using the field altogether
-			return diff.ForceNew("disk_encryption_key.0.raw_key")
-		} else if newConvenience != oldNewField {
-			// new is being nulled, and the convenience field has a new value
-			// so we ForceNew on either field
-			return diff.ForceNew("disk_encryption_key.0.raw_key")
-		} else {
-			// If we reach it here, we're using the same value in the convenience field as we had in the new field
-		}
-	}
-
-	return nil
 }
 
 // We cannot suppress the diff for the case when family name is not part of the image name since we can't
@@ -291,6 +232,26 @@ func suppressWindowsFamilyDiff(imageName, familyName string) bool {
 	return false
 }
 
+func diskEncryptionKeyDiffSuppress(k, old, new string, d *schema.ResourceData) bool {
+	if strings.HasSuffix(k, "#") {
+		if old == "1" && new == "0" {
+			// If we have a disk_encryption_key_raw, we can trust that the diff will be handled there
+			// and we don't need to worry about it here.
+			return d.Get("disk_encryption_key_raw").(string) != ""
+		} else if new == "1" && old == "0" {
+			// This will be handled by diffing the 'raw_key' attribute.
+			return true
+		}
+	} else if strings.HasSuffix(k, "raw_key") {
+		disk_key := d.Get("disk_encryption_key_raw").(string)
+		return disk_key == old && old != "" && new == ""
+	} else if k == "disk_encryption_key_raw" {
+		disk_key := d.Get("disk_encryption_key.0.raw_key").(string)
+		return disk_key == old && old != "" && new == ""
+	}
+	return false
+}
+
 func resourceComputeDisk() *schema.Resource {
 	return &schema.Resource{
 		Create: resourceComputeDiskCreate,
@@ -308,9 +269,7 @@ func resourceComputeDisk() *schema.Resource {
 			Delete: schema.DefaultTimeout(240 * time.Second),
 		},
 		CustomizeDiff: customdiff.All(
-			customdiff.ForceNewIfChange("size", isDiskShrinkage),
-			customDiffComputeDiskDiskEncryptionKeys,
-		),
+			customdiff.ForceNewIfChange("size", isDiskShrinkage)),
 
 		Schema: map[string]*schema.Schema{
 			"name": {
@@ -324,11 +283,11 @@ func resourceComputeDisk() *schema.Resource {
 				ForceNew: true,
 			},
 			"disk_encryption_key": {
-				Type:     schema.TypeList,
-				Optional: true,
-				ForceNew: true,
-				Computed: true,
-				MaxItems: 1,
+				Type:             schema.TypeList,
+				Optional:         true,
+				ForceNew:         true,
+				DiffSuppressFunc: diskEncryptionKeyDiffSuppress,
+				MaxItems:         1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"raw_key": {
@@ -450,10 +409,12 @@ func resourceComputeDisk() *schema.Resource {
 				},
 			},
 			"disk_encryption_key_raw": &schema.Schema{
-				Type:       schema.TypeString,
-				Optional:   true,
-				Sensitive:  true,
-				Deprecated: "Use disk_encryption_key.raw_key instead.",
+				Type:             schema.TypeString,
+				Optional:         true,
+				ForceNew:         true,
+				Sensitive:        true,
+				DiffSuppressFunc: diskEncryptionKeyDiffSuppress,
+				Deprecated:       "Use disk_encryption_key.raw_key instead.",
 			},
 
 			"disk_encryption_key_sha256": &schema.Schema{
@@ -551,7 +512,7 @@ func resourceComputeDiskCreate(d *schema.ResourceData, meta interface{}) error {
 		return err
 	}
 
-	url, err := replaceVars(d, config, "https://www.googleapis.com/compute/beta/projects/{{project}}/zones/{{zone}}/disks")
+	url, err := replaceVars(d, config, "https://www.googleapis.com/compute/v1/projects/{{project}}/zones/{{zone}}/disks")
 	if err != nil {
 		return err
 	}
@@ -597,7 +558,7 @@ func resourceComputeDiskCreate(d *schema.ResourceData, meta interface{}) error {
 func resourceComputeDiskRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	url, err := replaceVars(d, config, "https://www.googleapis.com/compute/beta/projects/{{project}}/zones/{{zone}}/disks/{{name}}")
+	url, err := replaceVars(d, config, "https://www.googleapis.com/compute/v1/projects/{{project}}/zones/{{zone}}/disks/{{name}}")
 	if err != nil {
 		return err
 	}
@@ -696,7 +657,7 @@ func resourceComputeDiskUpdate(d *schema.ResourceData, meta interface{}) error {
 			obj["labels"] = labelsProp
 		}
 
-		url, err := replaceVars(d, config, "https://www.googleapis.com/compute/beta/projects/{{project}}/zones/{{zone}}/disks/{{name}}/setLabels")
+		url, err := replaceVars(d, config, "https://www.googleapis.com/compute/v1/projects/{{project}}/zones/{{zone}}/disks/{{name}}/setLabels")
 		if err != nil {
 			return err
 		}
@@ -735,7 +696,7 @@ func resourceComputeDiskUpdate(d *schema.ResourceData, meta interface{}) error {
 			obj["sizeGb"] = sizeGbProp
 		}
 
-		url, err := replaceVars(d, config, "https://www.googleapis.com/compute/beta/projects/{{project}}/zones/{{zone}}/disks/{{name}}/resize")
+		url, err := replaceVars(d, config, "https://www.googleapis.com/compute/v1/projects/{{project}}/zones/{{zone}}/disks/{{name}}/resize")
 		if err != nil {
 			return err
 		}
@@ -773,7 +734,7 @@ func resourceComputeDiskUpdate(d *schema.ResourceData, meta interface{}) error {
 func resourceComputeDiskDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	url, err := replaceVars(d, config, "https://www.googleapis.com/compute/beta/projects/{{project}}/zones/{{zone}}/disks/{{name}}")
+	url, err := replaceVars(d, config, "https://www.googleapis.com/compute/v1/projects/{{project}}/zones/{{zone}}/disks/{{name}}")
 	if err != nil {
 		return err
 	}
@@ -812,31 +773,20 @@ func resourceComputeDiskDelete(d *schema.ResourceData, meta interface{}) error {
 			}
 		}
 		for _, call := range detachCalls {
-
-			timeout_minutes := int(d.Timeout(schema.TimeoutDelete).Minutes())
-			err = resource.Retry(time.Duration(timeout_minutes)*time.Minute, func() *resource.RetryError {
-				op, err := config.clientCompute.Instances.DetachDisk(call.project, call.zone, call.instance, call.deviceName).Do()
-				if err != nil {
-					for _, e := range errwrap.GetAllType(err, &googleapi.Error{}) {
-						if gerr, ok := e.(*googleapi.Error); ok && gerr.Code == 400 && gerr.Message == "Invalid resource usage: 'To detach the boot disk, the instance must be in TERMINATED state.'." {
-							// It could be still in the process of being deleted!
-							return resource.RetryableError(gerr)
-						}
-					}
-					return resource.NonRetryableError(fmt.Errorf("Error detaching disk %s from instance %s/%s/%s: %s", call.deviceName, call.project,
-						call.zone, call.instance, err.Error()))
+			op, err := config.clientCompute.Instances.DetachDisk(call.project, call.zone, call.instance, call.deviceName).Do()
+			if err != nil {
+				return fmt.Errorf("Error detaching disk %s from instance %s/%s/%s: %s", call.deviceName, call.project,
+					call.zone, call.instance, err.Error())
+			}
+			err = computeOperationWait(config.clientCompute, op, call.project,
+				fmt.Sprintf("Detaching disk from %s/%s/%s", call.project, call.zone, call.instance))
+			if err != nil {
+				if opErr, ok := err.(ComputeOperationError); ok && len(opErr.Errors) == 1 && opErr.Errors[0].Code == "RESOURCE_NOT_FOUND" {
+					log.Printf("[WARN] instance %q was deleted while awaiting detach", call.instance)
+					continue
 				}
-				err = computeOperationWait(config.clientCompute, op, call.project,
-					fmt.Sprintf("Detaching disk from %s/%s/%s", call.project, call.zone, call.instance))
-				if err != nil {
-					if opErr, ok := err.(ComputeOperationError); ok && len(opErr.Errors) == 1 && opErr.Errors[0].Code == "RESOURCE_NOT_FOUND" {
-						log.Printf("[WARN] instance %q was deleted while awaiting detach", call.instance)
-						return nil
-					}
-					return resource.NonRetryableError(err)
-				}
-				return nil
-			})
+				return err
+			}
 		}
 	}
 	log.Printf("[DEBUG] Deleting Disk %q", d.Id())
@@ -1090,7 +1040,7 @@ func expandComputeDiskZone(v interface{}, d *schema.ResourceData, config *Config
 
 func expandComputeDiskSourceImageEncryptionKey(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
 	l := v.([]interface{})
-	if len(l) == 0 || l[0] == nil {
+	if len(l) == 0 {
 		return nil, nil
 	}
 	raw := l[0]
@@ -1151,7 +1101,7 @@ func expandComputeDiskSnapshot(v interface{}, d *schema.ResourceData, config *Co
 
 func expandComputeDiskSourceSnapshotEncryptionKey(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
 	l := v.([]interface{})
-	if len(l) == 0 || l[0] == nil {
+	if len(l) == 0 {
 		return nil, nil
 	}
 	raw := l[0]
@@ -1223,6 +1173,25 @@ func resourceComputeDiskEncoder(d *schema.ResourceData, meta interface{}, obj ma
 
 		obj["sourceImage"] = imageUrl
 		log.Printf("[DEBUG] Image name resolved to: %s", imageUrl)
+	}
+
+	if v, ok := d.GetOk("snapshot"); ok {
+		snapshotName := v.(string)
+		match, _ := regexp.MatchString("^https://www.googleapis.com/compute", snapshotName)
+		if match {
+			obj["sourceSnapshot"] = snapshotName
+		} else {
+			log.Printf("[DEBUG] Loading snapshot: %s", snapshotName)
+			snapshotData, err := config.clientCompute.Snapshots.Get(
+				project, snapshotName).Do()
+
+			if err != nil {
+				return nil, fmt.Errorf(
+					"Error loading snapshot '%s': %s",
+					snapshotName, err)
+			}
+			obj["sourceSnapshot"] = snapshotData.SelfLink
+		}
 	}
 
 	return obj, nil

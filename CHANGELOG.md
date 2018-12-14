@@ -1,4 +1,3 @@
-## 1.20.1 (Unreleased)
 ## 1.20.0 (December 14, 2018)
 
 DEPRECATIONS:
@@ -34,7 +33,6 @@ BACKWARDS INCOMPATIBILITIES:
 * compute: `google_compute_instance_group_manager` and `google_compute_region_instance_group_manager` have had their `instance_template` field removed. Use `versions.instance_template` instead. ([#1](https://github.com/terraform-providers/terraform-provider-google/issues/1))
 * container: `google_container_cluster`'s `private_cluster` field is now deprecated in favor of `private_cluster_config`. ([#3](https://github.com/terraform-providers/terraform-provider-google/issues/3))
 * project: `google_project`'s `app_engine` sub-block has been deprecated. Please use the `google_app_engine_app` resource instead. Changing between the two should not force project re-creation. (#2147)[https://github.com/terraform-providers/terraform-provider-google/pull/2147]
-* project: `google_project_iam_policy`'s `restore_policy` field is now deprecated ([#2186](https://github.com/terraform-providers/terraform-provider-google/issues/2186))
 
 FEATURES: 
 * **New Datasource**: `google_compute_instance` ([#1906](https://github.com/terraform-providers/terraform-provider-google/issues/1906))

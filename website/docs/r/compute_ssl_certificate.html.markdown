@@ -32,13 +32,7 @@ To get more information about SslCertificate, see:
 * How-to Guides
     * [Official Documentation](https://cloud.google.com/load-balancing/docs/ssl-certificates)
 
-<div class = "oics-button" style="float: right; margin: 0 0 -15px">
-  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=ssl_certificate_basic&cloudshell_image=gcr.io%2Fgraphite-cloud-shell-images%2Fterraform%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
-    <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
-  </a>
-</div>
-## Example Usage - Ssl Certificate Basic
-
+## Example Usage
 
 ```hcl
 resource "google_compute_ssl_certificate" "default" {
@@ -51,28 +45,8 @@ resource "google_compute_ssl_certificate" "default" {
     create_before_destroy = true
   }
 }
-```
-<div class = "oics-button" style="float: right; margin: 0 0 -15px">
-  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=ssl_certificate_random_provider&cloudshell_image=gcr.io%2Fgraphite-cloud-shell-images%2Fterraform%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
-    <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
-  </a>
-</div>
-## Example Usage - Ssl Certificate Random Provider
 
-
-```hcl
 # You may also want to control name generation explicitly:
-resource "google_compute_ssl_certificate" "default" {
-  # The name will contain 8 random hex digits,
-  # e.g. "my-certificate-48ab27cd2a"
-  name        = "${random_id.certificate.hex}"
-  private_key = "${file("path/to/private.key")}"
-  certificate = "${file("path/to/certificate.crt")}"
-
-  lifecycle {
-    create_before_destroy = true
-  }
-}
 
 resource "random_id" "certificate" {
   byte_length = 4
@@ -84,15 +58,19 @@ resource "random_id" "certificate" {
     certificate = "${base64sha256(file("path/to/certificate.crt"))}"
   }
 }
+
+resource "google_compute_ssl_certificate" "default" {
+  # The name will contain 8 random hex digits,
+  # e.g. "my-certificate-48ab27cd2a"
+  name        = "${random_id.certificate.hex}"
+  private_key = "${file("path/to/private.key")}"
+  certificate = "${file("path/to/certificate.crt")}"
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
 ```
-<div class = "oics-button" style="float: right; margin: 0 0 -15px">
-  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=ssl_certificate_target_https_proxies&cloudshell_image=gcr.io%2Fgraphite-cloud-shell-images%2Fterraform%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
-    <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
-  </a>
-</div>
-## Example Usage - Ssl Certificate Target Https Proxies
-
-
 ```hcl
 // Using with Target HTTPS Proxies
 //
@@ -106,6 +84,7 @@ resource "random_id" "certificate" {
 
 resource "google_compute_ssl_certificate" "default" {
   name_prefix = "my-certificate-"
+  description = "a description"
   private_key = "${file("path/to/private.key")}"
   certificate = "${file("path/to/certificate.crt")}"
 
@@ -114,48 +93,10 @@ resource "google_compute_ssl_certificate" "default" {
   }
 }
 
-resource "google_compute_target_https_proxy" "default" {
-  name             = "test-proxy"
-  url_map          = "${google_compute_url_map.default.self_link}"
+resource "google_compute_target_https_proxy" "my_proxy" {
+  name             = "public-proxy"
+  url_map          = # ...
   ssl_certificates = ["${google_compute_ssl_certificate.default.self_link}"]
-}
-
-resource "google_compute_url_map" "default" {
-  name        = "url-map"
-  description = "a description"
-
-  default_service = "${google_compute_backend_service.default.self_link}"
-
-  host_rule {
-    hosts        = ["mysite.com"]
-    path_matcher = "allpaths"
-  }
-
-  path_matcher {
-    name            = "allpaths"
-    default_service = "${google_compute_backend_service.default.self_link}"
-
-    path_rule {
-      paths   = ["/*"]
-      service = "${google_compute_backend_service.default.self_link}"
-    }
-  }
-}
-
-resource "google_compute_backend_service" "default" {
-  name        = "backend-service"
-  port_name   = "http"
-  protocol    = "HTTP"
-  timeout_sec = 10
-
-  health_checks = ["${google_compute_http_health_check.default.self_link}"]
-}
-
-resource "google_compute_http_health_check" "default" {
-  name               = "http-health-check"
-  request_path       = "/"
-  check_interval_sec = 1
-  timeout_sec        = 1
 }
 ```
 

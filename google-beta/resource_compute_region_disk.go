@@ -18,6 +18,7 @@ import (
 	"fmt"
 	"log"
 	"reflect"
+	"regexp"
 	"strconv"
 	"time"
 
@@ -182,12 +183,6 @@ func resourceComputeRegionDiskCreate(d *schema.ResourceData, meta interface{}) e
 	config := meta.(*Config)
 
 	obj := make(map[string]interface{})
-	labelFingerprintProp, err := expandComputeRegionDiskLabelFingerprint(d.Get("label_fingerprint"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("label_fingerprint"); !isEmptyValue(reflect.ValueOf(labelFingerprintProp)) && (ok || !reflect.DeepEqual(v, labelFingerprintProp)) {
-		obj["labelFingerprint"] = labelFingerprintProp
-	}
 	descriptionProp, err := expandComputeRegionDiskDescription(d.Get("description"), d, config)
 	if err != nil {
 		return err
@@ -384,12 +379,8 @@ func resourceComputeRegionDiskUpdate(d *schema.ResourceData, meta interface{}) e
 
 	if d.HasChange("label_fingerprint") || d.HasChange("labels") {
 		obj := make(map[string]interface{})
-		labelFingerprintProp, err := expandComputeRegionDiskLabelFingerprint(d.Get("label_fingerprint"), d, config)
-		if err != nil {
-			return err
-		} else if v, ok := d.GetOkExists("label_fingerprint"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, labelFingerprintProp)) {
-			obj["labelFingerprint"] = labelFingerprintProp
-		}
+		labelFingerprintProp := d.Get("label_fingerprint")
+		obj["labelFingerprint"] = labelFingerprintProp
 		labelsProp, err := expandComputeRegionDiskLabels(d.Get("labels"), d, config)
 		if err != nil {
 			return err
@@ -688,10 +679,6 @@ func flattenComputeRegionDiskSourceSnapshotId(v interface{}) interface{} {
 	return v
 }
 
-func expandComputeRegionDiskLabelFingerprint(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
-	return v, nil
-}
-
 func expandComputeRegionDiskDescription(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
@@ -746,7 +733,7 @@ func expandComputeRegionDiskRegion(v interface{}, d *schema.ResourceData, config
 
 func expandComputeRegionDiskDiskEncryptionKey(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
 	l := v.([]interface{})
-	if len(l) == 0 || l[0] == nil {
+	if len(l) == 0 {
 		return nil, nil
 	}
 	raw := l[0]
@@ -788,7 +775,7 @@ func expandComputeRegionDiskSnapshot(v interface{}, d *schema.ResourceData, conf
 
 func expandComputeRegionDiskSourceSnapshotEncryptionKey(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
 	l := v.([]interface{})
-	if len(l) == 0 || l[0] == nil {
+	if len(l) == 0 {
 		return nil, nil
 	}
 	raw := l[0]
@@ -860,6 +847,25 @@ func resourceComputeRegionDiskEncoder(d *schema.ResourceData, meta interface{}, 
 
 		obj["sourceImage"] = imageUrl
 		log.Printf("[DEBUG] Image name resolved to: %s", imageUrl)
+	}
+
+	if v, ok := d.GetOk("snapshot"); ok {
+		snapshotName := v.(string)
+		match, _ := regexp.MatchString("^https://www.googleapis.com/compute", snapshotName)
+		if match {
+			obj["sourceSnapshot"] = snapshotName
+		} else {
+			log.Printf("[DEBUG] Loading snapshot: %s", snapshotName)
+			snapshotData, err := config.clientCompute.Snapshots.Get(
+				project, snapshotName).Do()
+
+			if err != nil {
+				return nil, fmt.Errorf(
+					"Error loading snapshot '%s': %s",
+					snapshotName, err)
+			}
+			obj["sourceSnapshot"] = snapshotData.SelfLink
+		}
 	}
 
 	return obj, nil
