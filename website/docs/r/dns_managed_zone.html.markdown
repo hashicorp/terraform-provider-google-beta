@@ -55,6 +55,41 @@ resource "random_id" "rnd" {
   byte_length = 4
 }
 ```
+## Example Usage - Dns Managed Zone Private
+
+
+```hcl
+resource "google_dns_managed_zone" "private-zone" {
+  name = "private-zone"
+  dns_name = "private.example.com."
+  description = "Example private DNS zone"
+  labels = {
+    foo = "bar"
+  }
+
+  visibility = "private"
+
+  private_visibility_config {
+    networks {
+      network_url =  "${google_compute_network.network-1.self_link}"
+    }
+    networks {
+      network_url =  "${google_compute_network.network-2.self_link}"
+    }
+  }
+
+}
+
+resource "google_compute_network" "network-1" {
+  name = "network-1"
+  auto_create_subnetworks = false
+}
+
+resource "google_compute_network" "network-2" {
+  name = "network-2"
+  auto_create_subnetworks = false
+}
+```
 
 ## Argument Reference
 
@@ -81,9 +116,33 @@ The following arguments are supported:
 * `labels` -
   (Optional)
   A set of key/value label pairs to assign to this ManagedZone.
+
+* `visibility` -
+  (Optional, [Beta](https://terraform.io/docs/providers/google/provider_versions.html))
+  Visibility of the zone. Public zones are visible to the public
+  internet. Private zones are only visible in your internal networks
+  denoted by the `networks` argument. Must be one of: `public`,
+  `private`.
+
+* `private_visibility_config` -
+  (Optional, [Beta](https://terraform.io/docs/providers/google/provider_versions.html))
+  Visibility config for private zones.  Structure is documented below.
 * `project` - (Optional) The ID of the project in which the resource belongs.
     If it is not provided, the provider project is used.
 
+
+The `private_visibility_config` block supports:
+
+* `networks` -
+  (Optional)
+  List of networks.  Structure is documented below.
+
+
+The `networks` block supports:
+
+* `network_url` -
+  (Optional)
+  URL of the network resource.
 
 ## Attributes Reference
 
