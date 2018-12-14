@@ -30,7 +30,7 @@ lint:
 
 tools:
 	@echo "==> installing required tooling..."
-	GO111MODULE=off go get -u github.com/alecthomas/gometalinter
+	go get -u github.com/alecthomas/gometalinter
 	gometalinter --install
 
 test-compile:

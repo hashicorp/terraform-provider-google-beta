@@ -20,7 +20,7 @@ script:
 - make website-test
 
 env:
-  - GO111MODULE=on
+  - GO111MODULE=off
 
 branches:
   only:
