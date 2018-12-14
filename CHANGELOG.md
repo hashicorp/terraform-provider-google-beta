@@ -1,27 +1,27 @@
 ## 1.20.0 (Unreleased)
 
 DEPRECATIONS:
-- Deprecate `google_project_iam_custom_role.deleted` [GH-187].
-- Deprecate top-level encryption fields in `google_compute_disk`  [GH-2572].
+* Deprecate `google_project_iam_custom_role.deleted` [GH-187].
+* Deprecate top-level encryption fields in `google_compute_disk`  [GH-2572].
 
-NEW RESOURCES:
-- Add `data_source_iam_role` [GH-142].
-- Add `google_billing_account_iam_binding` / `_member` / `_policy` [GH-92].
-- Add `google_monitoring_group` [GH-121].
-- Add `google_monitoring_notification_channel` [GH-121].
-- Add `google_monitoring_uptime_check_config` [GH-146].
-- Add `google_storage_default_object_access_control` [GH-58].
-- Add `runtime` to CloudFunctions functions [GH-91].
-- Add `google_compute_health_check.*.response` [GH-164].
-- Add `google_instance_template.disk_encryption_key` [GH-45].
-- Add `google_container_cluster.cluster_autoscaling` [GH-93].
-- Add `google_sql_ssl_cert`. [GH-134].
-- Add `python_version` to Cloud Composer [GH-174].
-- Add `google_compute_router_nat` [GH-161].
-- Add `private_network` to Cloud SQL [GH-145].
+FEATURES:
+* **New Resource**: `data_source_iam_role` [GH-142].
+* **New Resource**: `google_billing_account_iam_binding` / `_member` / `_policy` [GH-92].
+* **New Resource**: `google_monitoring_group` [GH-121].
+* **New Resource**: `google_monitoring_notification_channel` [GH-121].
+* **New Resource**: `google_monitoring_uptime_check_config` [GH-146].
+* **New Resource**: `google_storage_default_object_access_control` [GH-58].
+* **New Resource**: `google_compute_health_check.*.response` [GH-164].
+* **New Resource**: `google_instance_template.disk_encryption_key` [GH-45].
+* **New Resource**: `google_container_cluster.cluster_autoscaling` [GH-93].
+* **New Resource**: `google_sql_ssl_cert`. [GH-134].
+* **New Resource**: `google_compute_router_nat` [GH-161].
+* Add `private_network` to Cloud SQL [GH-145].
+* Add `runtime` to CloudFunctions functions [GH-91].
+* Add `python_version` to Cloud Composer [GH-174].
 
 ENHANCEMENTS:
-- Fix `google_compute_disk` encryption (robustify it) and robustify detachments [GH-187].
+* Fix `google_compute_disk` encryption (robustify it) and robustify detachments [GH-187].
 
 ## 1.19.0 (October 05, 2018)
 
