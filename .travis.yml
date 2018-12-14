@@ -20,6 +20,9 @@ script:
 - make vendor-status
 - make website-test
 
+env:
+  - GO111MODULE=on
+
 branches:
   only:
   - master
