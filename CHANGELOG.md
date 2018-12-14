@@ -1,27 +1,27 @@
-## 1.20.0 (Unreleased)
+## 1.20.0 (December 14, 2018)
 
 DEPRECATIONS:
-* Deprecate `google_project_iam_custom_role.deleted` [GH-187].
-* Deprecate top-level encryption fields in `google_compute_disk`  [GH-173].
+* Deprecate `google_project_iam_custom_role.deleted` [[#187](https://github.com/terraform-providers/terraform-provider-google/issues/187)].
+* Deprecate top-level encryption fields in `google_compute_disk`  [[#173](https://github.com/terraform-providers/terraform-provider-google/issues/173)].
 
 FEATURES:
-* **New Resource**: `data_source_iam_role` [GH-142].
-* **New Resource**: `google_billing_account_iam_binding` / `_member` / `_policy` [GH-92].
-* **New Resource**: `google_monitoring_group` [GH-121].
-* **New Resource**: `google_monitoring_notification_channel` [GH-121].
-* **New Resource**: `google_monitoring_uptime_check_config` [GH-146].
-* **New Resource**: `google_storage_default_object_access_control` [GH-58].
-* **New Resource**: `google_sql_ssl_cert`. [GH-134].
-* **New Resource**: `google_compute_router_nat` [GH-161].
-* Add `google_compute_health_check.*.response` [GH-164].
-* Add `google_instance_template.disk_encryption_key` [GH-45].
-* Add `google_container_cluster.cluster_autoscaling` [GH-93].
-* Add `private_network` to Cloud SQL [GH-145].
-* Add `runtime` to CloudFunctions functions [GH-91].
-* Add `python_version` to Cloud Composer [GH-174].
+* **New Resource**: `data_source_iam_role` [[#142](https://github.com/terraform-providers/terraform-provider-google/issues/142)].
+* **New Resource**: `google_billing_account_iam_binding` / `_member` / `_policy` [[#92](https://github.com/terraform-providers/terraform-provider-google/issues/92)].
+* **New Resource**: `google_monitoring_group` [[#121](https://github.com/terraform-providers/terraform-provider-google/issues/121)].
+* **New Resource**: `google_monitoring_notification_channel` [[#121](https://github.com/terraform-providers/terraform-provider-google/issues/121)].
+* **New Resource**: `google_monitoring_uptime_check_config` [[#146](https://github.com/terraform-providers/terraform-provider-google/issues/146)].
+* **New Resource**: `google_storage_default_object_access_control` [[#58](https://github.com/terraform-providers/terraform-provider-google/issues/58)].
+* **New Resource**: `google_sql_ssl_cert`. [[#134](https://github.com/terraform-providers/terraform-provider-google/issues/134)].
+* **New Resource**: `google_compute_router_nat` [[#161](https://github.com/terraform-providers/terraform-provider-google/issues/161)].
+* Add `google_compute_health_check.*.response` [[#164](https://github.com/terraform-providers/terraform-provider-google/issues/164)].
+* Add `google_instance_template.disk_encryption_key` [[#45](https://github.com/terraform-providers/terraform-provider-google/issues/45)].
+* Add `google_container_cluster.cluster_autoscaling` [[#93](https://github.com/terraform-providers/terraform-provider-google/issues/93)].
+* Add `private_network` to Cloud SQL [[#145](https://github.com/terraform-providers/terraform-provider-google/issues/145)].
+* Add `runtime` to CloudFunctions functions [[#91](https://github.com/terraform-providers/terraform-provider-google/issues/91)].
+* Add `python_version` to Cloud Composer [[#174](https://github.com/terraform-providers/terraform-provider-google/issues/174)].
 
 ENHANCEMENTS:
-* Fix `google_compute_disk` encryption (robustify it) and robustify detachments [GH-187].
+* Fix `google_compute_disk` encryption (robustify it) and robustify detachments [[#187](https://github.com/terraform-providers/terraform-provider-google/issues/187)].
 
 ## 1.19.0 (October 05, 2018)
 
