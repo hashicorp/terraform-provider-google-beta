@@ -129,7 +129,7 @@ func TestAccRegionInstanceGroupManager_updateLifecycle(t *testing.T) {
 	})
 }
 
-func TestAccRegionInstanceGroupManager_updatePolicy(t *testing.T) {
+func TestAccRegionInstanceGroupManager_rollingUpdatePolicy(t *testing.T) {
 	t.Parallel()
 
 	igm := fmt.Sprintf("igm-test-%s", acctest.RandString(10))
@@ -140,7 +140,7 @@ func TestAccRegionInstanceGroupManager_updatePolicy(t *testing.T) {
 		CheckDestroy: testAccCheckInstanceGroupManagerDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccRegionInstanceGroupManager_updatePolicy(igm),
+				Config: testAccRegionInstanceGroupManager_rollingUpdatePolicy(igm),
 			},
 			{
 				ResourceName:      "google_compute_region_instance_group_manager.igm-rolling-update-policy",
@@ -148,7 +148,7 @@ func TestAccRegionInstanceGroupManager_updatePolicy(t *testing.T) {
 				ImportStateVerify: true,
 			},
 			{
-				Config: testAccRegionInstanceGroupManager_updatePolicy2(igm),
+				Config: testAccRegionInstanceGroupManager_rollingUpdatePolicy2(igm),
 			},
 			{
 				ResourceName:      "google_compute_region_instance_group_manager.igm-rolling-update-policy",
@@ -727,7 +727,6 @@ data "google_compute_image" "my_image" {
 	family  = "debian-9"
 	project = "debian-cloud"
 }
-
 resource "google_compute_instance_template" "igm-basic" {
 	name = "%s"
 	machine_type = "n1-standard-1"
@@ -748,13 +747,11 @@ resource "google_compute_instance_template" "igm-basic" {
 		scopes = ["userinfo-email", "compute-ro", "storage-ro"]
 	}
 }
-
 resource "google_compute_target_pool" "igm-basic" {
 	description = "Resource created for Terraform acceptance testing"
 	name = "%s"
 	session_affinity = "CLIENT_IP_PROTO"
 }
-
 resource "google_compute_region_instance_group_manager" "igm-basic" {
 	description = "Terraform test instance group manager"
 	name = "%s"
@@ -767,7 +764,6 @@ resource "google_compute_region_instance_group_manager" "igm-basic" {
 	region = "us-central1"
 	target_size = 2
 }
-
 resource "google_compute_http_health_check" "zero" {
 	name               = "%s"
 	request_path       = "/"
@@ -889,7 +885,7 @@ resource "google_compute_region_instance_group_manager" "igm-basic" {
 	`, template, igm, strings.Join(zones, "\",\""))
 }
 
-func testAccRegionInstanceGroupManager_updatePolicy(igm string) string {
+func testAccRegionInstanceGroupManager_rollingUpdatePolicy(igm string) string {
 	return fmt.Sprintf(`
 data "google_compute_image" "my_image" {
 	family  = "debian-9"
@@ -947,7 +943,7 @@ resource "google_compute_region_instance_group_manager" "igm-rolling-update-poli
 }`, igm)
 }
 
-func testAccRegionInstanceGroupManager_updatePolicy2(igm string) string {
+func testAccRegionInstanceGroupManager_rollingUpdatePolicy2(igm string) string {
 	return fmt.Sprintf(`
 data "google_compute_image" "my_image" {
 	family  = "debian-9"
@@ -985,7 +981,6 @@ resource "google_compute_region_instance_group_manager" "igm-rolling-update-poli
 	region                     = "us-central1"
 	distribution_policy_zones  = ["us-central1-a", "us-central1-f"]
 	target_size                = 3
-
 	update_policy {
 		type                  = "PROACTIVE"
 		minimal_action        = "REPLACE"

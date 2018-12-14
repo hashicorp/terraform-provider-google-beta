@@ -291,6 +291,19 @@ func expandEnvironmentVariables(d *schema.ResourceData) map[string]string {
 	return expandStringMap(d, "environment_variables")
 }
 
+// expandStringSlice pulls the value of key out of schema.ResourceData as a []string
+func expandStringSlice(d *schema.ResourceData, key string) []string {
+	var strings []string
+
+	if interfaceStrings, ok := d.GetOk(key); ok {
+		for _, str := range interfaceStrings.([]interface{}) {
+			strings = append(strings, str.(string))
+		}
+	}
+
+	return strings
+}
+
 // expandStringMap pulls the value of key out of a schema.ResourceData as a map[string]string.
 func expandStringMap(d *schema.ResourceData, key string) map[string]string {
 	v, ok := d.GetOk(key)
@@ -341,6 +354,15 @@ func convertStringSet(set *schema.Set) []string {
 	return s
 }
 
+func golangSetFromStringSlice(strings []string) map[string]struct{} {
+	set := map[string]struct{}{}
+	for _, v := range strings {
+		set[v] = struct{}{}
+	}
+
+	return set
+}
+
 func mergeSchemas(a, b map[string]*schema.Schema) map[string]*schema.Schema {
 	merged := make(map[string]*schema.Schema)
 
@@ -382,7 +404,7 @@ func retryTimeDuration(retryFunc func() error, duration time.Duration) error {
 			return nil
 		}
 		for _, e := range errwrap.GetAllType(err, &googleapi.Error{}) {
-			if gerr, ok := e.(*googleapi.Error); ok && (gerr.Code == 429 || gerr.Code == 500 || gerr.Code == 502 || gerr.Code == 503) {
+			if gerr, ok := e.(*googleapi.Error); ok && (gerr.Code == 429 || gerr.Code == 500 || gerr.Code == 502 || gerr.Code == 503 || gerr.Code == 409) {
 				return resource.RetryableError(gerr)
 			}
 		}

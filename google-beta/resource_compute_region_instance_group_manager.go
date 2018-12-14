@@ -196,10 +196,10 @@ func resourceComputeRegionInstanceGroupManager() *schema.Resource {
 			},
 
 			"update_policy": &schema.Schema{
+				Computed: true,
 				Type:     schema.TypeList,
 				Optional: true,
 				MaxItems: 1,
-				Computed: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"minimal_action": &schema.Schema{
@@ -283,6 +283,7 @@ func resourceComputeRegionInstanceGroupManagerCreate(d *schema.ResourceData, met
 	}
 
 	op, err := config.clientComputeBeta.RegionInstanceGroupManagers.Insert(project, region, manager).Do()
+
 	if err != nil {
 		return fmt.Errorf("Error creating RegionInstanceGroupManager: %s", err)
 	}
@@ -350,7 +351,6 @@ func resourceComputeRegionInstanceGroupManagerRead(d *schema.ResourceData, meta 
 	if err != nil {
 		return err
 	}
-
 	if manager == nil {
 		log.Printf("[WARN] Region Instance Group Manager %q not found, removing from state.", d.Id())
 		d.SetId("")
@@ -369,32 +369,33 @@ func resourceComputeRegionInstanceGroupManagerRead(d *schema.ResourceData, meta 
 	}
 
 	d.Set("base_instance_name", manager.BaseInstanceName)
-	if err := d.Set("version", flattenVersions(manager.Versions)); err != nil {
-		return err
-	}
+
 	d.Set("name", manager.Name)
 	d.Set("region", GetResourceNameFromSelfLink(manager.Region))
 	d.Set("description", manager.Description)
 	d.Set("project", regionalID.Project)
 	d.Set("target_size", manager.TargetSize)
 	if err := d.Set("target_pools", manager.TargetPools); err != nil {
-		return err
+		return fmt.Errorf("Error setting target_pools in state: %s", err.Error())
 	}
 	if err := d.Set("named_port", flattenNamedPortsBeta(manager.NamedPorts)); err != nil {
-		return err
+		return fmt.Errorf("Error setting named_port in state: %s", err.Error())
 	}
 	d.Set("fingerprint", manager.Fingerprint)
 	d.Set("instance_group", ConvertSelfLinkToV1(manager.InstanceGroup))
-	if err := d.Set("auto_healing_policies", flattenAutoHealingPolicies(manager.AutoHealingPolicies)); err != nil {
-		return err
-	}
-	if err = d.Set("update_policy", flattenUpdatePolicy(manager.UpdatePolicy)); err != nil {
-		return fmt.Errorf("Error setting update_policy in state: %s", err.Error())
-	}
 	if err := d.Set("distribution_policy_zones", flattenDistributionPolicy(manager.DistributionPolicy)); err != nil {
 		return err
 	}
 	d.Set("self_link", ConvertSelfLinkToV1(manager.SelfLink))
+	if err := d.Set("auto_healing_policies", flattenAutoHealingPolicies(manager.AutoHealingPolicies)); err != nil {
+		return fmt.Errorf("Error setting auto_healing_policies in state: %s", err.Error())
+	}
+	if err := d.Set("version", flattenVersions(manager.Versions)); err != nil {
+		return err
+	}
+	if err := d.Set("update_policy", flattenUpdatePolicy(manager.UpdatePolicy)); err != nil {
+		return fmt.Errorf("Error setting update_policy in state: %s", err.Error())
+	}
 
 	if d.Get("wait_for_instances").(bool) {
 		conf := resource.StateChangeConf{

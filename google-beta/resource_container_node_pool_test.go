@@ -55,29 +55,6 @@ func TestAccContainerNodePool_maxPodsPerNode(t *testing.T) {
 	})
 }
 
-func TestAccContainerNodePool_namePrefix(t *testing.T) {
-	t.Parallel()
-
-	cluster := fmt.Sprintf("tf-nodepool-test-%s", acctest.RandString(10))
-
-	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckContainerNodePoolDestroy,
-		Steps: []resource.TestStep{
-			resource.TestStep{
-				Config: testAccContainerNodePool_namePrefix(cluster, "tf-np-"),
-			},
-			resource.TestStep{
-				ResourceName:            "google_container_node_pool.np",
-				ImportState:             true,
-				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"name_prefix"},
-			},
-		},
-	})
-}
-
 func TestAccContainerNodePool_noName(t *testing.T) {
 	t.Parallel()
 
@@ -151,7 +128,14 @@ func TestAccContainerNodePool_withNodeConfigTaints(t *testing.T) {
 					resource.TestCheckResourceAttr("google_container_node_pool.np_with_node_config", "node_config.0.taint.#", "2"),
 				),
 			},
-			// Don't include an import step because beta features can't yet be imported.
+			{
+				ResourceName:      "google_container_node_pool.np_with_node_config",
+				ImportState:       true,
+				ImportStateVerify: true,
+				// autoscaling.# = 0 is equivalent to no autoscaling at all,
+				// but will still cause an import diff
+				ImportStateVerifyIgnore: []string{"autoscaling.#"},
+			},
 			// Once taints are in GA, consider merging this test with the _withNodeConfig test.
 		},
 	})
@@ -600,22 +584,6 @@ resource "google_container_node_pool" "np" {
 	name = "%s"
 	cluster = "${google_container_cluster.cluster.name}"
 	region = "us-central1"
-	initial_node_count = 2
-}`, cluster, np)
-}
-
-func testAccContainerNodePool_namePrefix(cluster, np string) string {
-	return fmt.Sprintf(`
-resource "google_container_cluster" "cluster" {
-	name = "%s"
-	zone = "us-central1-a"
-	initial_node_count = 3
-}
-
-resource "google_container_node_pool" "np" {
-	name_prefix = "%s"
-	zone = "us-central1-a"
-	cluster = "${google_container_cluster.cluster.name}"
 	initial_node_count = 2
 }`, cluster, np)
 }

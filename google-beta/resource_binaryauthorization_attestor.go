@@ -19,6 +19,7 @@ import (
 	"log"
 	"reflect"
 	"regexp"
+	"time"
 
 	"github.com/hashicorp/terraform/helper/schema"
 )
@@ -32,6 +33,12 @@ func resourceBinaryAuthorizationAttestor() *schema.Resource {
 
 		Importer: &schema.ResourceImporter{
 			State: resourceBinaryAuthorizationAttestorImport,
+		},
+
+		Timeouts: &schema.ResourceTimeout{
+			Create: schema.DefaultTimeout(240 * time.Second),
+			Update: schema.DefaultTimeout(240 * time.Second),
+			Delete: schema.DefaultTimeout(240 * time.Second),
 		},
 
 		Schema: map[string]*schema.Schema{
@@ -122,7 +129,7 @@ func resourceBinaryAuthorizationAttestorCreate(d *schema.ResourceData, meta inte
 	}
 
 	log.Printf("[DEBUG] Creating new Attestor: %#v", obj)
-	res, err := sendRequest(config, "POST", url, obj)
+	res, err := sendRequestWithTimeout(config, "POST", url, obj, d.Timeout(schema.TimeoutCreate))
 	if err != nil {
 		return fmt.Errorf("Error creating Attestor: %s", err)
 	}
@@ -152,20 +159,21 @@ func resourceBinaryAuthorizationAttestorRead(d *schema.ResourceData, meta interf
 		return handleNotFoundError(err, d, fmt.Sprintf("BinaryAuthorizationAttestor %q", d.Id()))
 	}
 
-	if err := d.Set("name", flattenBinaryAuthorizationAttestorName(res["name"])); err != nil {
-		return fmt.Errorf("Error reading Attestor: %s", err)
-	}
-	if err := d.Set("description", flattenBinaryAuthorizationAttestorDescription(res["description"])); err != nil {
-		return fmt.Errorf("Error reading Attestor: %s", err)
-	}
-	if err := d.Set("attestation_authority_note", flattenBinaryAuthorizationAttestorAttestationAuthorityNote(res["userOwnedDrydockNote"])); err != nil {
-		return fmt.Errorf("Error reading Attestor: %s", err)
-	}
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
 	if err := d.Set("project", project); err != nil {
+		return fmt.Errorf("Error reading Attestor: %s", err)
+	}
+
+	if err := d.Set("name", flattenBinaryAuthorizationAttestorName(res["name"], d)); err != nil {
+		return fmt.Errorf("Error reading Attestor: %s", err)
+	}
+	if err := d.Set("description", flattenBinaryAuthorizationAttestorDescription(res["description"], d)); err != nil {
+		return fmt.Errorf("Error reading Attestor: %s", err)
+	}
+	if err := d.Set("attestation_authority_note", flattenBinaryAuthorizationAttestorAttestationAuthorityNote(res["userOwnedDrydockNote"], d)); err != nil {
 		return fmt.Errorf("Error reading Attestor: %s", err)
 	}
 
@@ -201,7 +209,7 @@ func resourceBinaryAuthorizationAttestorUpdate(d *schema.ResourceData, meta inte
 	}
 
 	log.Printf("[DEBUG] Updating Attestor %q: %#v", d.Id(), obj)
-	_, err = sendRequest(config, "PUT", url, obj)
+	_, err = sendRequestWithTimeout(config, "PUT", url, obj, d.Timeout(schema.TimeoutUpdate))
 
 	if err != nil {
 		return fmt.Errorf("Error updating Attestor %q: %s", d.Id(), err)
@@ -220,7 +228,7 @@ func resourceBinaryAuthorizationAttestorDelete(d *schema.ResourceData, meta inte
 
 	var obj map[string]interface{}
 	log.Printf("[DEBUG] Deleting Attestor %q", d.Id())
-	res, err := sendRequest(config, "DELETE", url, obj)
+	res, err := sendRequestWithTimeout(config, "DELETE", url, obj, d.Timeout(schema.TimeoutDelete))
 	if err != nil {
 		return handleNotFoundError(err, d, "Attestor")
 	}
@@ -243,36 +251,39 @@ func resourceBinaryAuthorizationAttestorImport(d *schema.ResourceData, meta inte
 	return []*schema.ResourceData{d}, nil
 }
 
-func flattenBinaryAuthorizationAttestorName(v interface{}) interface{} {
+func flattenBinaryAuthorizationAttestorName(v interface{}, d *schema.ResourceData) interface{} {
 	if v == nil {
 		return v
 	}
 	return NameFromSelfLinkStateFunc(v)
 }
 
-func flattenBinaryAuthorizationAttestorDescription(v interface{}) interface{} {
+func flattenBinaryAuthorizationAttestorDescription(v interface{}, d *schema.ResourceData) interface{} {
 	return v
 }
 
-func flattenBinaryAuthorizationAttestorAttestationAuthorityNote(v interface{}) interface{} {
+func flattenBinaryAuthorizationAttestorAttestationAuthorityNote(v interface{}, d *schema.ResourceData) interface{} {
 	if v == nil {
 		return nil
 	}
 	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
 	transformed := make(map[string]interface{})
 	transformed["note_reference"] =
-		flattenBinaryAuthorizationAttestorAttestationAuthorityNoteNoteReference(original["noteReference"])
+		flattenBinaryAuthorizationAttestorAttestationAuthorityNoteNoteReference(original["noteReference"], d)
 	transformed["public_keys"] =
-		flattenBinaryAuthorizationAttestorAttestationAuthorityNotePublicKeys(original["publicKeys"])
+		flattenBinaryAuthorizationAttestorAttestationAuthorityNotePublicKeys(original["publicKeys"], d)
 	transformed["delegation_service_account_email"] =
-		flattenBinaryAuthorizationAttestorAttestationAuthorityNoteDelegationServiceAccountEmail(original["delegationServiceAccountEmail"])
+		flattenBinaryAuthorizationAttestorAttestationAuthorityNoteDelegationServiceAccountEmail(original["delegationServiceAccountEmail"], d)
 	return []interface{}{transformed}
 }
-func flattenBinaryAuthorizationAttestorAttestationAuthorityNoteNoteReference(v interface{}) interface{} {
+func flattenBinaryAuthorizationAttestorAttestationAuthorityNoteNoteReference(v interface{}, d *schema.ResourceData) interface{} {
 	return v
 }
 
-func flattenBinaryAuthorizationAttestorAttestationAuthorityNotePublicKeys(v interface{}) interface{} {
+func flattenBinaryAuthorizationAttestorAttestationAuthorityNotePublicKeys(v interface{}, d *schema.ResourceData) interface{} {
 	if v == nil {
 		return v
 	}
@@ -280,27 +291,31 @@ func flattenBinaryAuthorizationAttestorAttestationAuthorityNotePublicKeys(v inte
 	transformed := make([]interface{}, 0, len(l))
 	for _, raw := range l {
 		original := raw.(map[string]interface{})
+		if len(original) < 1 {
+			// Do not include empty json objects coming back from the api
+			continue
+		}
 		transformed = append(transformed, map[string]interface{}{
-			"comment":                      flattenBinaryAuthorizationAttestorAttestationAuthorityNotePublicKeysComment(original["comment"]),
-			"id":                           flattenBinaryAuthorizationAttestorAttestationAuthorityNotePublicKeysId(original["id"]),
-			"ascii_armored_pgp_public_key": flattenBinaryAuthorizationAttestorAttestationAuthorityNotePublicKeysAsciiArmoredPgpPublicKey(original["asciiArmoredPgpPublicKey"]),
+			"comment":                      flattenBinaryAuthorizationAttestorAttestationAuthorityNotePublicKeysComment(original["comment"], d),
+			"id":                           flattenBinaryAuthorizationAttestorAttestationAuthorityNotePublicKeysId(original["id"], d),
+			"ascii_armored_pgp_public_key": flattenBinaryAuthorizationAttestorAttestationAuthorityNotePublicKeysAsciiArmoredPgpPublicKey(original["asciiArmoredPgpPublicKey"], d),
 		})
 	}
 	return transformed
 }
-func flattenBinaryAuthorizationAttestorAttestationAuthorityNotePublicKeysComment(v interface{}) interface{} {
+func flattenBinaryAuthorizationAttestorAttestationAuthorityNotePublicKeysComment(v interface{}, d *schema.ResourceData) interface{} {
 	return v
 }
 
-func flattenBinaryAuthorizationAttestorAttestationAuthorityNotePublicKeysId(v interface{}) interface{} {
+func flattenBinaryAuthorizationAttestorAttestationAuthorityNotePublicKeysId(v interface{}, d *schema.ResourceData) interface{} {
 	return v
 }
 
-func flattenBinaryAuthorizationAttestorAttestationAuthorityNotePublicKeysAsciiArmoredPgpPublicKey(v interface{}) interface{} {
+func flattenBinaryAuthorizationAttestorAttestationAuthorityNotePublicKeysAsciiArmoredPgpPublicKey(v interface{}, d *schema.ResourceData) interface{} {
 	return v
 }
 
-func flattenBinaryAuthorizationAttestorAttestationAuthorityNoteDelegationServiceAccountEmail(v interface{}) interface{} {
+func flattenBinaryAuthorizationAttestorAttestationAuthorityNoteDelegationServiceAccountEmail(v interface{}, d *schema.ResourceData) interface{} {
 	return v
 }
 
@@ -314,7 +329,7 @@ func expandBinaryAuthorizationAttestorDescription(v interface{}, d *schema.Resou
 
 func expandBinaryAuthorizationAttestorAttestationAuthorityNote(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
 	l := v.([]interface{})
-	if len(l) == 0 {
+	if len(l) == 0 || l[0] == nil {
 		return nil, nil
 	}
 	raw := l[0]

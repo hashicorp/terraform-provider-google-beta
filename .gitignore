@@ -7,6 +7,7 @@ terraform.tfplan
 terraform.tfstate
 bin/
 terraform-provider-google
+terraform-provider-google-beta
 modules-dev/
 /pkg/
 website/.vagrant

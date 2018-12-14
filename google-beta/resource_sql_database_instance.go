@@ -16,6 +16,8 @@ import (
 	"google.golang.org/api/sqladmin/v1beta4"
 )
 
+const privateNetworkLinkRegex = "projects/(" + ProjectRegex + ")/global/networks/((?:[a-z](?:[-a-z0-9]*[a-z0-9])?))$"
+
 var sqlDatabaseAuthorizedNetWorkSchemaElem *schema.Resource = &schema.Resource{
 	Schema: map[string]*schema.Schema{
 		"expiration_time": &schema.Schema{
@@ -56,6 +58,7 @@ func resourceSqlDatabaseInstance() *schema.Resource {
 			"region": &schema.Schema{
 				Type:     schema.TypeString,
 				Optional: true,
+				Computed: true,
 				ForceNew: true,
 			},
 
@@ -180,6 +183,12 @@ func resourceSqlDatabaseInstance() *schema.Resource {
 										Type:     schema.TypeBool,
 										Optional: true,
 									},
+									"private_network": &schema.Schema{
+										Type:             schema.TypeString,
+										Optional:         true,
+										ValidateFunc:     validateRegexp(privateNetworkLinkRegex),
+										DiffSuppressFunc: compareSelfLinkRelativePaths,
+									},
 								},
 							},
 						},
@@ -262,6 +271,10 @@ func resourceSqlDatabaseInstance() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"ip_address": &schema.Schema{
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+						"type": &schema.Schema{
 							Type:     schema.TypeString,
 							Computed: true,
 						},
@@ -522,12 +535,14 @@ func resourceSqlDatabaseInstanceCreate(d *schema.ResourceData, meta interface{})
 }
 
 func expandSqlDatabaseInstanceSettings(configured []interface{}, secondGen bool) *sqladmin.Settings {
-	if len(configured) == 0 {
+	if len(configured) == 0 || configured[0] == nil {
 		return nil
 	}
 
 	_settings := configured[0].(map[string]interface{})
 	settings := &sqladmin.Settings{
+		// Version is unset in Create but is set during update
+		SettingsVersion:             int64(_settings["version"].(int)),
 		Tier:                        _settings["tier"].(string),
 		ForceSendFields:             []string{"StorageAutoResize"},
 		ActivationPolicy:            _settings["activation_policy"].(string),
@@ -556,7 +571,7 @@ func expandSqlDatabaseInstanceSettings(configured []interface{}, secondGen bool)
 }
 
 func expandReplicaConfiguration(configured []interface{}) *sqladmin.ReplicaConfiguration {
-	if len(configured) == 0 {
+	if len(configured) == 0 || configured[0] == nil {
 		return nil
 	}
 
@@ -582,20 +597,21 @@ func expandReplicaConfiguration(configured []interface{}) *sqladmin.ReplicaConfi
 }
 
 func expandMaintenanceWindow(configured []interface{}) *sqladmin.MaintenanceWindow {
-	if len(configured) == 0 {
+	if len(configured) == 0 || configured[0] == nil {
 		return nil
 	}
 
 	window := configured[0].(map[string]interface{})
 	return &sqladmin.MaintenanceWindow{
-		Day:         int64(window["day"].(int)),
-		Hour:        int64(window["hour"].(int)),
-		UpdateTrack: window["update_track"].(string),
+		Day:             int64(window["day"].(int)),
+		Hour:            int64(window["hour"].(int)),
+		UpdateTrack:     window["update_track"].(string),
+		ForceSendFields: []string{"Hour"},
 	}
 }
 
 func expandLocationPreference(configured []interface{}) *sqladmin.LocationPreference {
-	if len(configured) == 0 {
+	if len(configured) == 0 || configured[0] == nil {
 		return nil
 	}
 
@@ -607,15 +623,18 @@ func expandLocationPreference(configured []interface{}) *sqladmin.LocationPrefer
 }
 
 func expandIpConfiguration(configured []interface{}) *sqladmin.IpConfiguration {
-	if len(configured) == 0 {
+	if len(configured) == 0 || configured[0] == nil {
 		return nil
 	}
 
 	_ipConfiguration := configured[0].(map[string]interface{})
+
 	return &sqladmin.IpConfiguration{
 		Ipv4Enabled:        _ipConfiguration["ipv4_enabled"].(bool),
 		RequireSsl:         _ipConfiguration["require_ssl"].(bool),
+		PrivateNetwork:     _ipConfiguration["private_network"].(string),
 		AuthorizedNetworks: expandAuthorizedNetworks(_ipConfiguration["authorized_networks"].(*schema.Set).List()),
+		ForceSendFields:    []string{"Ipv4Enabled", "RequireSsl"},
 	}
 }
 func expandAuthorizedNetworks(configured []interface{}) []*sqladmin.AclEntry {
@@ -654,7 +673,7 @@ func expandDatabaseFlags(configured []interface{}) []*sqladmin.DatabaseFlags {
 }
 
 func expandBackupConfiguration(configured []interface{}) *sqladmin.BackupConfiguration {
-	if len(configured) == 0 {
+	if len(configured) == 0 || configured[0] == nil {
 		return nil
 	}
 
@@ -694,17 +713,13 @@ func resourceSqlDatabaseInstanceRead(d *schema.ResourceData, meta interface{}) e
 	if err := d.Set("replica_configuration", flattenReplicaConfiguration(instance.ReplicaConfiguration, d)); err != nil {
 		log.Printf("[WARN] Failed to set SQL Database Instance Replica Configuration")
 	}
-
 	ipAddresses := flattenIpAddresses(instance.IpAddresses)
 	if err := d.Set("ip_address", ipAddresses); err != nil {
 		log.Printf("[WARN] Failed to set SQL Database Instance IP Addresses")
 	}
 
 	if len(ipAddresses) > 0 {
-		firstIpAddress := ipAddresses[0]["ip_address"]
-		if err := d.Set("first_ip_address", firstIpAddress); err != nil {
-			log.Printf("[WARN] Failed to set SQL Database Instance First IP Address")
-		}
+		d.Set("first_ip_address", ipAddresses[0]["ip_address"])
 	}
 
 	if err := d.Set("server_ca_cert", flattenServerCaCert(instance.ServerCaCert)); err != nil {
@@ -727,260 +742,10 @@ func resourceSqlDatabaseInstanceUpdate(d *schema.ResourceData, meta interface{})
 		return err
 	}
 
-	d.Partial(true)
-
-	instance, err := config.clientSqlAdmin.Instances.Get(project,
-		d.Get("name").(string)).Do()
-
-	if err != nil {
-		return fmt.Errorf("Error retrieving instance %s: %s",
-			d.Get("name").(string), err)
+	// Update only updates the settings, so they are all we need to set.
+	instance := &sqladmin.DatabaseInstance{
+		Settings: expandSqlDatabaseInstanceSettings(d.Get("settings").([]interface{}), !isFirstGen(d)),
 	}
-
-	if d.HasChange("settings") {
-		_oListCast, _settingsListCast := d.GetChange("settings")
-		_oList := _oListCast.([]interface{})
-		_o := _oList[0].(map[string]interface{})
-		_settingsList := _settingsListCast.([]interface{})
-
-		_settings := _settingsList[0].(map[string]interface{})
-
-		settings := &sqladmin.Settings{
-			Tier:            _settings["tier"].(string),
-			SettingsVersion: instance.Settings.SettingsVersion,
-			ForceSendFields: []string{"StorageAutoResize"},
-		}
-
-		if !isFirstGen(d) {
-			autoResize := _settings["disk_autoresize"].(bool)
-			settings.StorageAutoResize = &autoResize
-		}
-
-		if v, ok := _settings["activation_policy"]; ok {
-			settings.ActivationPolicy = v.(string)
-		}
-
-		if v, ok := _settings["authorized_gae_applications"]; ok {
-			settings.AuthorizedGaeApplications = make([]string, 0)
-			for _, app := range v.([]interface{}) {
-				settings.AuthorizedGaeApplications = append(settings.AuthorizedGaeApplications,
-					app.(string))
-			}
-		}
-
-		if v, ok := _settings["availability_type"]; ok {
-			settings.AvailabilityType = v.(string)
-		}
-
-		if v, ok := _settings["backup_configuration"]; ok {
-			_backupConfigurationList := v.([]interface{})
-
-			settings.BackupConfiguration = &sqladmin.BackupConfiguration{}
-			if len(_backupConfigurationList) == 1 && _backupConfigurationList[0] != nil {
-				_backupConfiguration := _backupConfigurationList[0].(map[string]interface{})
-
-				if vp, okp := _backupConfiguration["binary_log_enabled"]; okp {
-					settings.BackupConfiguration.BinaryLogEnabled = vp.(bool)
-				}
-
-				if vp, okp := _backupConfiguration["enabled"]; okp {
-					settings.BackupConfiguration.Enabled = vp.(bool)
-				}
-
-				if vp, okp := _backupConfiguration["start_time"]; okp {
-					settings.BackupConfiguration.StartTime = vp.(string)
-				}
-			}
-		}
-
-		if v, ok := _settings["crash_safe_replication"]; ok {
-			settings.CrashSafeReplicationEnabled = v.(bool)
-		}
-
-		if v, ok := _settings["disk_size"]; ok {
-			if v.(int) > 0 && int64(v.(int)) > instance.Settings.DataDiskSizeGb {
-				settings.DataDiskSizeGb = int64(v.(int))
-			}
-		}
-
-		if v, ok := _settings["disk_type"]; ok && len(v.(string)) > 0 {
-			settings.DataDiskType = v.(string)
-		}
-
-		_oldDatabaseFlags := make([]interface{}, 0)
-		if ov, ook := _o["database_flags"]; ook {
-			_oldDatabaseFlags = ov.([]interface{})
-		}
-
-		if v, ok := _settings["database_flags"]; ok || len(_oldDatabaseFlags) > 0 {
-			oldDatabaseFlags := settings.DatabaseFlags
-			settings.DatabaseFlags = make([]*sqladmin.DatabaseFlags, 0)
-			_databaseFlagsList := make([]interface{}, 0)
-			if v != nil {
-				_databaseFlagsList = v.([]interface{})
-			}
-
-			_odbf_map := make(map[string]interface{})
-			for _, _dbf := range _oldDatabaseFlags {
-				_entry := _dbf.(map[string]interface{})
-				_odbf_map[_entry["name"].(string)] = true
-			}
-
-			// First read the flags from the server, and reinsert those that
-			// were not previously defined
-			for _, entry := range oldDatabaseFlags {
-				_, ok_old := _odbf_map[entry.Name]
-				if !ok_old {
-					settings.DatabaseFlags = append(
-						settings.DatabaseFlags, entry)
-				}
-			}
-			// finally, insert only those that were previously defined
-			// and are still defined.
-			for _, _flag := range _databaseFlagsList {
-				_entry := _flag.(map[string]interface{})
-				flag := &sqladmin.DatabaseFlags{}
-				if vp, okp := _entry["name"]; okp {
-					flag.Name = vp.(string)
-				}
-
-				if vp, okp := _entry["value"]; okp {
-					flag.Value = vp.(string)
-				}
-
-				settings.DatabaseFlags = append(settings.DatabaseFlags, flag)
-			}
-		}
-
-		if v, ok := _settings["ip_configuration"]; ok {
-			_ipConfigurationList := v.([]interface{})
-
-			settings.IpConfiguration = &sqladmin.IpConfiguration{}
-			if len(_ipConfigurationList) == 1 && _ipConfigurationList[0] != nil {
-				_ipConfiguration := _ipConfigurationList[0].(map[string]interface{})
-
-				if vp, okp := _ipConfiguration["ipv4_enabled"]; okp {
-					settings.IpConfiguration.Ipv4Enabled = vp.(bool)
-				}
-
-				if vp, okp := _ipConfiguration["require_ssl"]; okp {
-					settings.IpConfiguration.RequireSsl = vp.(bool)
-				}
-
-				_oldAuthorizedNetworkList := make([]interface{}, 0)
-				if ov, ook := _o["ip_configuration"]; ook {
-					_oldIpConfList := ov.([]interface{})
-					if len(_oldIpConfList) > 0 {
-						_oldIpConf := _oldIpConfList[0].(map[string]interface{})
-						if ovp, ookp := _oldIpConf["authorized_networks"]; ookp {
-							_oldAuthorizedNetworkList = ovp.(*schema.Set).List()
-						}
-					}
-				}
-
-				if vp, okp := _ipConfiguration["authorized_networks"]; okp || len(_oldAuthorizedNetworkList) > 0 {
-					oldAuthorizedNetworks := instance.Settings.IpConfiguration.AuthorizedNetworks
-					settings.IpConfiguration.AuthorizedNetworks = make([]*sqladmin.AclEntry, 0)
-
-					_authorizedNetworksList := make([]interface{}, 0)
-					if vp != nil {
-						_authorizedNetworksList = vp.(*schema.Set).List()
-					}
-					_oipc_map := make(map[string]interface{})
-					for _, _ipc := range _oldAuthorizedNetworkList {
-						_entry := _ipc.(map[string]interface{})
-						_oipc_map[_entry["value"].(string)] = true
-					}
-					// Next read the network tuples from the server, and reinsert those that
-					// were not previously defined
-					for _, entry := range oldAuthorizedNetworks {
-						_, ok_old := _oipc_map[entry.Value]
-						if !ok_old {
-							settings.IpConfiguration.AuthorizedNetworks = append(
-								settings.IpConfiguration.AuthorizedNetworks, entry)
-						}
-					}
-					// finally, update old entries and insert new ones
-					// and are still defined.
-					for _, _ipc := range _authorizedNetworksList {
-						_entry := _ipc.(map[string]interface{})
-						entry := &sqladmin.AclEntry{}
-
-						if vpp, okpp := _entry["expiration_time"]; okpp {
-							entry.ExpirationTime = vpp.(string)
-						}
-
-						if vpp, okpp := _entry["name"]; okpp {
-							entry.Name = vpp.(string)
-						}
-
-						if vpp, okpp := _entry["value"]; okpp {
-							entry.Value = vpp.(string)
-						}
-
-						settings.IpConfiguration.AuthorizedNetworks = append(
-							settings.IpConfiguration.AuthorizedNetworks, entry)
-					}
-				}
-			}
-		}
-
-		if v, ok := _settings["location_preference"]; ok {
-			_locationPreferenceList := v.([]interface{})
-
-			settings.LocationPreference = &sqladmin.LocationPreference{}
-			if len(_locationPreferenceList) == 1 && _locationPreferenceList[0] != nil {
-				_locationPreference := _locationPreferenceList[0].(map[string]interface{})
-
-				if vp, okp := _locationPreference["follow_gae_application"]; okp {
-					settings.LocationPreference.FollowGaeApplication = vp.(string)
-				}
-
-				if vp, okp := _locationPreference["zone"]; okp {
-					settings.LocationPreference.Zone = vp.(string)
-				}
-			}
-		}
-
-		if v, ok := _settings["maintenance_window"]; ok && len(v.([]interface{})) > 0 {
-			_maintenanceWindowList := v.([]interface{})
-
-			settings.MaintenanceWindow = &sqladmin.MaintenanceWindow{}
-			if len(_maintenanceWindowList) == 1 && _maintenanceWindowList[0] != nil {
-				_maintenanceWindow := _maintenanceWindowList[0].(map[string]interface{})
-
-				if vp, okp := _maintenanceWindow["day"]; okp {
-					settings.MaintenanceWindow.Day = int64(vp.(int))
-				}
-
-				if vp, okp := _maintenanceWindow["hour"]; okp {
-					settings.MaintenanceWindow.Hour = int64(vp.(int))
-				}
-
-				if vp, ok := _maintenanceWindow["update_track"]; ok {
-					if len(vp.(string)) > 0 {
-						settings.MaintenanceWindow.UpdateTrack = vp.(string)
-					}
-				}
-			}
-		}
-
-		if v, ok := _settings["pricing_plan"]; ok {
-			settings.PricingPlan = v.(string)
-		}
-
-		if v, ok := _settings["replication_type"]; ok {
-			settings.ReplicationType = v.(string)
-		}
-
-		if v, ok := _settings["user_labels"]; ok {
-			settings.UserLabels = convertStringMap(v.(map[string]interface{}))
-		}
-
-		instance.Settings = settings
-	}
-
-	d.Partial(false)
 
 	// Lock on the master_instance_name just in case updating any replica
 	// settings causes operations on the master.
@@ -989,9 +754,9 @@ func resourceSqlDatabaseInstanceUpdate(d *schema.ResourceData, meta interface{})
 		defer mutexKV.Unlock(instanceMutexKey(project, v.(string)))
 	}
 
-	op, err := config.clientSqlAdmin.Instances.Update(project, instance.Name, instance).Do()
+	op, err := config.clientSqlAdmin.Instances.Update(project, d.Get("name").(string), instance).Do()
 	if err != nil {
-		return fmt.Errorf("Error, failed to update instance %s: %s", instance.Name, err)
+		return fmt.Errorf("Error, failed to update instance settings for %s: %s", instance.Name, err)
 	}
 
 	err = sqladminOperationWaitTime(config, op, project, "Update Instance", int(d.Timeout(schema.TimeoutUpdate).Minutes()))
@@ -1016,8 +781,11 @@ func resourceSqlDatabaseInstanceDelete(d *schema.ResourceData, meta interface{})
 		mutexKV.Lock(instanceMutexKey(project, v.(string)))
 		defer mutexKV.Unlock(instanceMutexKey(project, v.(string)))
 	}
-
-	op, err := config.clientSqlAdmin.Instances.Delete(project, d.Get("name").(string)).Do()
+	var op *sqladmin.Operation
+	err = retryTime(func() error {
+		op, err = config.clientSqlAdmin.Instances.Delete(project, d.Get("name").(string)).Do()
+		return err
+	}, 5)
 
 	if err != nil {
 		return fmt.Errorf("Error, failed to delete instance %s: %s", d.Get("name").(string), err)
@@ -1121,8 +889,9 @@ func flattenDatabaseFlags(databaseFlags []*sqladmin.DatabaseFlags) []map[string]
 
 func flattenIpConfiguration(ipConfiguration *sqladmin.IpConfiguration) interface{} {
 	data := map[string]interface{}{
-		"ipv4_enabled": ipConfiguration.Ipv4Enabled,
-		"require_ssl":  ipConfiguration.RequireSsl,
+		"ipv4_enabled":    ipConfiguration.Ipv4Enabled,
+		"private_network": ipConfiguration.PrivateNetwork,
+		"require_ssl":     ipConfiguration.RequireSsl,
 	}
 
 	if ipConfiguration.AuthorizedNetworks != nil {
@@ -1201,6 +970,7 @@ func flattenIpAddresses(ipAddresses []*sqladmin.IpMapping) []map[string]interfac
 	for _, ip := range ipAddresses {
 		data := map[string]interface{}{
 			"ip_address":     ip.IpAddress,
+			"type":           ip.Type,
 			"time_to_retire": ip.TimeToRetire,
 		}
 

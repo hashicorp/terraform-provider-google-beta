@@ -253,7 +253,6 @@ func testAccCheckComputeBetaGlobalForwardingRuleIpVersion(n, version string) res
 		return nil
 	}
 }
-
 func testAccCheckComputeBetaGlobalForwardingRuleHasLabel(frule *computeBeta.ForwardingRule, key, value string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		val, ok := frule.Labels[key]

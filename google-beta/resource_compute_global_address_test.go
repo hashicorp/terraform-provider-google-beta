@@ -87,24 +87,6 @@ func TestAccComputeGlobalAddress_internal(t *testing.T) {
 	})
 }
 
-func testAccCheckComputeGlobalAddressDestroy(s *terraform.State) error {
-	config := testAccProvider.Meta().(*Config)
-
-	for _, rs := range s.RootModule().Resources {
-		if rs.Type != "google_compute_global_address" {
-			continue
-		}
-
-		_, err := config.clientCompute.GlobalAddresses.Get(
-			config.Project, rs.Primary.ID).Do()
-		if err == nil {
-			return fmt.Errorf("Address still exists")
-		}
-	}
-
-	return nil
-}
-
 func testAccCheckComputeGlobalAddressExists(n string, addr *compute.Address) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[n]
@@ -189,6 +171,7 @@ resource "google_compute_global_address" "foobar" {
   address_type = "INTERNAL"
   purpose = "VPC_PEERING"
   prefix_length = 24
+	address = "172.20.181.0"
   network = "${google_compute_network.foobar.self_link}"
 }`, acctest.RandString(10), acctest.RandString(10))
 }

@@ -167,14 +167,6 @@ func resourceComputeInstance() *schema.Resource {
 							Computed: true,
 						},
 
-						"address": &schema.Schema{
-							Type:       schema.TypeString,
-							Optional:   true,
-							ForceNew:   true,
-							Computed:   true,
-							Deprecated: "Please use network_ip",
-						},
-
 						"network_ip": &schema.Schema{
 							Type:     schema.TypeString,
 							Optional: true,
@@ -200,13 +192,10 @@ func resourceComputeInstance() *schema.Resource {
 										ValidateFunc: validation.StringInSlice([]string{"PREMIUM", "STANDARD"}, false),
 									},
 
-									// It's unclear why this field exists, as
-									// nat_ip can be both optional and computed.
-									// Consider deprecating it.
 									"assigned_nat_ip": &schema.Schema{
-										Type:       schema.TypeString,
-										Computed:   true,
-										Deprecated: "Use network_interface.access_config.nat_ip instead.",
+										Type:     schema.TypeString,
+										Computed: true,
+										Removed:  "Use network_interface.access_config.nat_ip instead.",
 									},
 
 									"public_ptr_domain_name": &schema.Schema{
@@ -233,6 +222,14 @@ func resourceComputeInstance() *schema.Resource {
 									},
 								},
 							},
+						},
+
+						"address": &schema.Schema{
+							Type:     schema.TypeString,
+							Optional: true,
+							ForceNew: true,
+							Computed: true,
+							Removed:  "Please use network_ip",
 						},
 					},
 				},
@@ -289,10 +286,9 @@ func resourceComputeInstance() *schema.Resource {
 			},
 
 			"create_timeout": &schema.Schema{
-				Type:       schema.TypeInt,
-				Optional:   true,
-				Default:    4,
-				Deprecated: "Use timeouts block instead.",
+				Type:     schema.TypeInt,
+				Optional: true,
+				Removed:  "Use timeouts block instead.",
 			},
 
 			"description": &schema.Schema{
@@ -417,43 +413,6 @@ func resourceComputeInstance() *schema.Resource {
 			"min_cpu_platform": &schema.Schema{
 				Type:     schema.TypeString,
 				Optional: true,
-			},
-
-			"network": &schema.Schema{
-				Type:     schema.TypeList,
-				Optional: true,
-				ForceNew: true,
-				Removed:  "Please use network_interface",
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"source": &schema.Schema{
-							Type:     schema.TypeString,
-							Required: true,
-							ForceNew: true,
-						},
-
-						"address": &schema.Schema{
-							Type:     schema.TypeString,
-							Optional: true,
-							ForceNew: true,
-						},
-
-						"name": &schema.Schema{
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-
-						"internal_address": &schema.Schema{
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-
-						"external_address": &schema.Schema{
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-					},
-				},
 			},
 
 			"project": &schema.Schema{
@@ -666,12 +625,22 @@ func expandComputeInstance(project string, zone *compute.Zone, d *schema.Resourc
 		disks = append(disks, disk)
 	}
 
-	prefix := "scheduling.0"
-	scheduling := &computeBeta.Scheduling{
-		AutomaticRestart:  googleapi.Bool(d.Get(prefix + ".automatic_restart").(bool)),
-		Preemptible:       d.Get(prefix + ".preemptible").(bool),
-		OnHostMaintenance: d.Get(prefix + ".on_host_maintenance").(string),
-		ForceSendFields:   []string{"AutomaticRestart", "Preemptible"},
+	sch := d.Get("scheduling").([]interface{})
+	var scheduling *computeBeta.Scheduling
+	if len(sch) == 0 {
+		// TF doesn't do anything about defaults inside of nested objects, so if
+		// scheduling hasn't been set, then send it with its default values.
+		scheduling = &computeBeta.Scheduling{
+			AutomaticRestart: googleapi.Bool(true),
+		}
+	} else {
+		prefix := "scheduling.0"
+		scheduling = &computeBeta.Scheduling{
+			AutomaticRestart:  googleapi.Bool(d.Get(prefix + ".automatic_restart").(bool)),
+			Preemptible:       d.Get(prefix + ".preemptible").(bool),
+			OnHostMaintenance: d.Get(prefix + ".on_host_maintenance").(string),
+			ForceSendFields:   []string{"AutomaticRestart", "Preemptible"},
+		}
 	}
 
 	metadata, err := resourceInstanceMetadata(d)
@@ -735,11 +704,7 @@ func resourceComputeInstanceCreate(d *schema.ResourceData, meta interface{}) err
 	}
 
 	// Read create timeout
-	// Until "create_timeout" is removed, use that timeout if set.
 	createTimeout := int(d.Timeout(schema.TimeoutCreate).Minutes())
-	if v, ok := d.GetOk("create_timeout"); ok && v != 4 {
-		createTimeout = v.(int)
-	}
 
 	log.Printf("[INFO] Requesting instance creation")
 	op, err := config.clientComputeBeta.Instances.Insert(project, zone.Name, instance).Do()
@@ -789,17 +754,11 @@ func resourceComputeInstanceRead(d *schema.ResourceData, meta interface{}) error
 		delete(md, "startup-script")
 	}
 
-	// Delete any keys not explicitly set in our config file
-	for k := range md {
-		if _, ok := existingMetadata[k]; !ok {
-			delete(md, k)
-		}
-	}
-
 	if err = d.Set("metadata", md); err != nil {
 		return fmt.Errorf("Error setting metadata: %s", err)
 	}
 
+	d.Set("metadata_fingerprint", instance.Metadata.Fingerprint)
 	d.Set("can_ip_forward", instance.CanIpForward)
 	d.Set("machine_type", GetResourceNameFromSelfLink(instance.MachineType))
 
@@ -826,11 +785,6 @@ func resourceComputeInstanceRead(d *schema.ResourceData, meta interface{}) error
 		"type": "ssh",
 		"host": sshIP,
 	})
-
-	// Set the metadata fingerprint if there is one.
-	if instance.Metadata != nil {
-		d.Set("metadata_fingerprint", instance.Metadata.Fingerprint)
-	}
 
 	// Set the tags fingerprint if there is one.
 	if instance.Tags != nil {
@@ -966,59 +920,28 @@ func resourceComputeInstanceUpdate(d *schema.ResourceData, meta interface{}) err
 	// Enable partial mode for the resource since it is possible
 	d.Partial(true)
 
-	// If the Metadata has changed, then update that.
 	if d.HasChange("metadata") {
-		o, n := d.GetChange("metadata")
-		if script, scriptExists := d.GetOk("metadata_startup_script"); scriptExists && script != "" {
-			if _, ok := n.(map[string]interface{})["startup-script"]; ok {
-				return fmt.Errorf("Only one of metadata.startup-script and metadata_startup_script may be defined")
-			}
-
-			if err = d.Set("metadata", n); err != nil {
-				return err
-			}
-			n.(map[string]interface{})["startup-script"] = script
+		metadata, err := resourceInstanceMetadata(d)
+		if err != nil {
+			return fmt.Errorf("Error parsing metadata: %s", err)
 		}
 
-		updateMD := func() error {
-			// Reload the instance in the case of a fingerprint mismatch
-			instance, err = getInstance(config, d)
-			if err != nil {
-				return err
-			}
-
-			md := instance.Metadata
-
-			BetaMetadataUpdate(o.(map[string]interface{}), n.(map[string]interface{}), md)
-
-			if err != nil {
-				return fmt.Errorf("Error updating metadata: %s", err)
-			}
-
-			mdV1 := &compute.Metadata{}
-			err = Convert(md, mdV1)
-			if err != nil {
-				return err
-			}
-
-			op, err := config.clientCompute.Instances.SetMetadata(
-				project, zone, d.Id(), mdV1).Do()
-			if err != nil {
-				return fmt.Errorf("Error updating metadata: %s", err)
-			}
-
-			opErr := computeOperationWaitTime(config.clientCompute, op, project, "metadata to update", int(d.Timeout(schema.TimeoutUpdate).Minutes()))
-			if opErr != nil {
-				return opErr
-			}
-
-			d.SetPartial("metadata")
-
-			return nil
+		metadataV1 := &compute.Metadata{}
+		if err := Convert(metadata, metadataV1); err != nil {
+			return err
 		}
 
-		MetadataRetryWrapper(updateMD)
+		op, err := config.clientCompute.Instances.SetMetadata(project, zone, d.Id(), metadataV1).Do()
+		if err != nil {
+			return fmt.Errorf("Error updating metadata: %s", err)
+		}
 
+		opErr := computeOperationWaitTime(config.clientCompute, op, project, "metadata to update", int(d.Timeout(schema.TimeoutUpdate).Minutes()))
+		if opErr != nil {
+			return opErr
+		}
+
+		d.SetPartial("metadata")
 	}
 
 	if d.HasChange("tags") {
