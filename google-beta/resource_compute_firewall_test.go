@@ -444,18 +444,6 @@ func testAccCheckComputeFirewallServiceAccounts(sourceSa, targetSa string, firew
 	}
 }
 
-func testAccCheckComputeFirewallBetaApiVersion(firewall *computeBeta.Firewall) resource.TestCheckFunc {
-	return func(s *terraform.State) error {
-		// The self-link of the network field is used to determine which API was used when fetching
-		// the state from the API.
-		if !strings.Contains(firewall.Network, "compute/beta") {
-			return fmt.Errorf("firewall beta API was not used")
-		}
-
-		return nil
-	}
-}
-
 func testAccCheckComputeFirewallApiVersion(firewall *compute.Firewall) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		// The self-link of the network field is used to determine which API was used when fetching
