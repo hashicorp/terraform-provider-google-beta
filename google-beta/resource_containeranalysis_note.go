@@ -19,6 +19,7 @@ import (
 	"log"
 	"reflect"
 	"strings"
+	"time"
 
 	"github.com/hashicorp/terraform/helper/schema"
 )
@@ -32,6 +33,12 @@ func resourceContainerAnalysisNote() *schema.Resource {
 
 		Importer: &schema.ResourceImporter{
 			State: resourceContainerAnalysisNoteImport,
+		},
+
+		Timeouts: &schema.ResourceTimeout{
+			Create: schema.DefaultTimeout(240 * time.Second),
+			Update: schema.DefaultTimeout(240 * time.Second),
+			Delete: schema.DefaultTimeout(240 * time.Second),
 		},
 
 		Schema: map[string]*schema.Schema{
@@ -95,7 +102,7 @@ func resourceContainerAnalysisNoteCreate(d *schema.ResourceData, meta interface{
 	}
 
 	log.Printf("[DEBUG] Creating new Note: %#v", obj)
-	res, err := sendRequest(config, "POST", url, obj)
+	res, err := sendRequestWithTimeout(config, "POST", url, obj, d.Timeout(schema.TimeoutCreate))
 	if err != nil {
 		return fmt.Errorf("Error creating Note: %s", err)
 	}
@@ -125,17 +132,18 @@ func resourceContainerAnalysisNoteRead(d *schema.ResourceData, meta interface{})
 		return handleNotFoundError(err, d, fmt.Sprintf("ContainerAnalysisNote %q", d.Id()))
 	}
 
-	if err := d.Set("name", flattenContainerAnalysisNoteName(res["name"])); err != nil {
-		return fmt.Errorf("Error reading Note: %s", err)
-	}
-	if err := d.Set("attestation_authority", flattenContainerAnalysisNoteAttestationAuthority(res["attestationAuthority"])); err != nil {
-		return fmt.Errorf("Error reading Note: %s", err)
-	}
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
 	if err := d.Set("project", project); err != nil {
+		return fmt.Errorf("Error reading Note: %s", err)
+	}
+
+	if err := d.Set("name", flattenContainerAnalysisNoteName(res["name"], d)); err != nil {
+		return fmt.Errorf("Error reading Note: %s", err)
+	}
+	if err := d.Set("attestation_authority", flattenContainerAnalysisNoteAttestationAuthority(res["attestationAuthority"], d)); err != nil {
 		return fmt.Errorf("Error reading Note: %s", err)
 	}
 
@@ -146,12 +154,6 @@ func resourceContainerAnalysisNoteUpdate(d *schema.ResourceData, meta interface{
 	config := meta.(*Config)
 
 	obj := make(map[string]interface{})
-	nameProp, err := expandContainerAnalysisNoteName(d.Get("name"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("name"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, nameProp)) {
-		obj["name"] = nameProp
-	}
 	attestationAuthorityProp, err := expandContainerAnalysisNoteAttestationAuthority(d.Get("attestation_authority"), d, config)
 	if err != nil {
 		return err
@@ -175,7 +177,7 @@ func resourceContainerAnalysisNoteUpdate(d *schema.ResourceData, meta interface{
 	if err != nil {
 		return err
 	}
-	_, err = sendRequest(config, "PATCH", url, obj)
+	_, err = sendRequestWithTimeout(config, "PATCH", url, obj, d.Timeout(schema.TimeoutUpdate))
 
 	if err != nil {
 		return fmt.Errorf("Error updating Note %q: %s", d.Id(), err)
@@ -194,7 +196,7 @@ func resourceContainerAnalysisNoteDelete(d *schema.ResourceData, meta interface{
 
 	var obj map[string]interface{}
 	log.Printf("[DEBUG] Deleting Note %q", d.Id())
-	res, err := sendRequest(config, "DELETE", url, obj)
+	res, err := sendRequestWithTimeout(config, "DELETE", url, obj, d.Timeout(schema.TimeoutDelete))
 	if err != nil {
 		return handleNotFoundError(err, d, "Note")
 	}
@@ -217,34 +219,40 @@ func resourceContainerAnalysisNoteImport(d *schema.ResourceData, meta interface{
 	return []*schema.ResourceData{d}, nil
 }
 
-func flattenContainerAnalysisNoteName(v interface{}) interface{} {
+func flattenContainerAnalysisNoteName(v interface{}, d *schema.ResourceData) interface{} {
 	if v == nil {
 		return v
 	}
 	return NameFromSelfLinkStateFunc(v)
 }
 
-func flattenContainerAnalysisNoteAttestationAuthority(v interface{}) interface{} {
+func flattenContainerAnalysisNoteAttestationAuthority(v interface{}, d *schema.ResourceData) interface{} {
 	if v == nil {
 		return nil
 	}
 	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
 	transformed := make(map[string]interface{})
 	transformed["hint"] =
-		flattenContainerAnalysisNoteAttestationAuthorityHint(original["hint"])
+		flattenContainerAnalysisNoteAttestationAuthorityHint(original["hint"], d)
 	return []interface{}{transformed}
 }
-func flattenContainerAnalysisNoteAttestationAuthorityHint(v interface{}) interface{} {
+func flattenContainerAnalysisNoteAttestationAuthorityHint(v interface{}, d *schema.ResourceData) interface{} {
 	if v == nil {
 		return nil
 	}
 	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
 	transformed := make(map[string]interface{})
 	transformed["human_readable_name"] =
-		flattenContainerAnalysisNoteAttestationAuthorityHintHumanReadableName(original["humanReadableName"])
+		flattenContainerAnalysisNoteAttestationAuthorityHintHumanReadableName(original["humanReadableName"], d)
 	return []interface{}{transformed}
 }
-func flattenContainerAnalysisNoteAttestationAuthorityHintHumanReadableName(v interface{}) interface{} {
+func flattenContainerAnalysisNoteAttestationAuthorityHintHumanReadableName(v interface{}, d *schema.ResourceData) interface{} {
 	return v
 }
 
@@ -254,7 +262,7 @@ func expandContainerAnalysisNoteName(v interface{}, d *schema.ResourceData, conf
 
 func expandContainerAnalysisNoteAttestationAuthority(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
 	l := v.([]interface{})
-	if len(l) == 0 {
+	if len(l) == 0 || l[0] == nil {
 		return nil, nil
 	}
 	raw := l[0]
@@ -273,7 +281,7 @@ func expandContainerAnalysisNoteAttestationAuthority(v interface{}, d *schema.Re
 
 func expandContainerAnalysisNoteAttestationAuthorityHint(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
 	l := v.([]interface{})
-	if len(l) == 0 {
+	if len(l) == 0 || l[0] == nil {
 		return nil, nil
 	}
 	raw := l[0]

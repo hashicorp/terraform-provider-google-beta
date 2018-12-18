@@ -4,15 +4,16 @@ import (
 	"fmt"
 	"testing"
 
+	"log"
+	"strings"
+	"time"
+
 	"github.com/hashicorp/go-multierror"
 	"github.com/hashicorp/terraform/helper/acctest"
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/terraform"
-	"google.golang.org/api/composer/v1"
+	"google.golang.org/api/composer/v1beta1"
 	"google.golang.org/api/storage/v1"
-	"log"
-	"strings"
-	"time"
 )
 
 const testComposerEnvironmentPrefix = "tf-cc-testenv"
@@ -126,6 +127,28 @@ func TestAccComposerEnvironment_withNodeConfig(t *testing.T) {
 				ExpectNonEmptyPlan: false,
 				Config:             testAccComposerEnvironment_nodeCfg(envName, network, subnetwork, serviceAccount),
 				Check:              testAccCheckClearComposerEnvironmentFirewalls(network),
+			},
+		},
+	})
+}
+
+func TestAccComposerEnvironment_withSoftwareConfig(t *testing.T) {
+	t.Parallel()
+	envName := acctest.RandomWithPrefix(testComposerEnvironmentPrefix)
+	var env composer.Environment
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccComposerEnvironmentDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComposerEnvironment_softwareCfg(envName),
+				Check:  testAccCheckComposerEnvironmentExists("google_composer_environment.test", &env),
+			},
+			{
+				ResourceName:      "google_composer_environment.test",
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -274,6 +297,7 @@ resource "google_composer_environment" "test" {
 		node_config {
 			network = "${google_compute_network.test.self_link}"
 			subnetwork =  "${google_compute_subnetwork.test.self_link}"
+			zone = "us-central1-a"
 
 			service_account = "${google_service_account.test.name}"
 		}
@@ -304,6 +328,21 @@ resource "google_project_iam_member" "composer-worker" {
   member  = "serviceAccount:${google_service_account.test.email}"
 }
 `, environment, network, subnetwork, serviceAccount)
+}
+
+func testAccComposerEnvironment_softwareCfg(name string) string {
+	return fmt.Sprintf(`
+resource "google_composer_environment" "test" {
+  name           = "%s"
+  region         = "us-central1"
+	config {
+		software_config {
+			image_version = "composer-latest-airflow-1.10"
+			python_version = "3"
+		}
+	}
+}
+`, name)
 }
 
 func testAccComposerEnvironment_updateOnlyFields(name string) string {

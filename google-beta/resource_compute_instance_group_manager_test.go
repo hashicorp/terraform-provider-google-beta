@@ -128,7 +128,7 @@ func TestAccInstanceGroupManager_updateLifecycle(t *testing.T) {
 	})
 }
 
-func TestAccInstanceGroupManager_rollingUpdatePolicy(t *testing.T) {
+func TestAccInstanceGroupManager_updatePolicy(t *testing.T) {
 	t.Parallel()
 
 	igm := fmt.Sprintf("igm-test-%s", acctest.RandString(10))
@@ -149,6 +149,7 @@ func TestAccInstanceGroupManager_rollingUpdatePolicy(t *testing.T) {
 			{
 				Config: testAccInstanceGroupManager_rollingUpdatePolicy2(igm),
 			},
+
 			{
 				ResourceName:      "google_compute_instance_group_manager.igm-rolling-update-policy",
 				ImportState:       true,
@@ -249,36 +250,6 @@ func TestAccInstanceGroupManager_autoHealingPolicies(t *testing.T) {
 			},
 			{
 				Config: testAccInstanceGroupManager_autoHealingPoliciesRemoved(template, target, igm, hck),
-			},
-			{
-				ResourceName:      "google_compute_instance_group_manager.igm-basic",
-				ImportState:       true,
-				ImportStateVerify: true,
-			},
-		},
-	})
-}
-
-// This test is to make sure that a single version resource can link to a versioned resource
-// without perpetual diffs because the self links mismatch.
-// Once auto_healing_policies is no longer beta, we will need to use a new field or resource
-// with Beta fields.
-func TestAccInstanceGroupManager_selfLinkStability(t *testing.T) {
-	t.Parallel()
-
-	template := fmt.Sprintf("igm-test-%s", acctest.RandString(10))
-	target := fmt.Sprintf("igm-test-%s", acctest.RandString(10))
-	igm := fmt.Sprintf("igm-test-%s", acctest.RandString(10))
-	hck := fmt.Sprintf("igm-test-%s", acctest.RandString(10))
-	autoscaler := fmt.Sprintf("igm-test-%s", acctest.RandString(10))
-
-	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckInstanceGroupManagerDestroy,
-		Steps: []resource.TestStep{
-			{
-				Config: testAccInstanceGroupManager_selfLinkStability(template, target, igm, hck, autoscaler),
 			},
 			{
 				ResourceName:      "google_compute_instance_group_manager.igm-basic",
@@ -737,27 +708,22 @@ data "google_compute_image" "my_image" {
 	family  = "debian-9"
 	project = "debian-cloud"
 }
-
 resource "google_compute_instance_template" "igm-rolling-update-policy" {
 	machine_type = "n1-standard-1"
 	can_ip_forward = false
 	tags = ["terraform-testing"]
-
 	disk {
 		source_image = "${data.google_compute_image.my_image.self_link}"
 		auto_delete = true
 		boot = true
 	}
-
 	network_interface {
 		network = "default"
 	}
-
 	lifecycle {
 		create_before_destroy = true
 	}
 }
-
 resource "google_compute_instance_group_manager" "igm-rolling-update-policy" {
 	description = "Terraform test instance group manager"
 	name = "%s"
@@ -788,27 +754,22 @@ data "google_compute_image" "my_image" {
 	family  = "debian-9"
 	project = "debian-cloud"
 }
-
 resource "google_compute_instance_template" "igm-rolling-update-policy" {
 	machine_type = "n1-standard-1"
 	can_ip_forward = false
 	tags = ["terraform-testing"]
-
 	disk {
 		source_image = "${data.google_compute_image.my_image.self_link}"
 		auto_delete = true
 		boot = true
 	}
-
 	network_interface {
 		network = "default"
 	}
-
 	lifecycle {
 		create_before_destroy = true
 	}
 }
-
 resource "google_compute_instance_group_manager" "igm-rolling-update-policy" {
 	description = "Terraform test instance group manager"
 	name = "%s"
@@ -956,7 +917,6 @@ data "google_compute_image" "my_image" {
 	family  = "debian-9"
 	project = "debian-cloud"
 }
-
 resource "google_compute_instance_template" "igm-basic" {
 	name = "%s"
 	machine_type = "n1-standard-1"
@@ -977,13 +937,11 @@ resource "google_compute_instance_template" "igm-basic" {
 		scopes = ["userinfo-email", "compute-ro", "storage-ro"]
 	}
 }
-
 resource "google_compute_target_pool" "igm-basic" {
 	description = "Resource created for Terraform acceptance testing"
 	name = "%s"
 	session_affinity = "CLIENT_IP_PROTO"
 }
-
 resource "google_compute_instance_group_manager" "igm-basic" {
 	description = "Terraform test instance group manager"
 	name = "%s"
@@ -996,7 +954,6 @@ resource "google_compute_instance_group_manager" "igm-basic" {
 	zone = "us-central1-c"
 	target_size = 2
 }
-
 resource "google_compute_http_health_check" "zero" {
 	name               = "%s"
 	request_path       = "/"
@@ -1076,82 +1033,4 @@ resource "google_compute_instance_group_manager" "igm-basic" {
 	}
 }
 	`, primaryTemplate, canaryTemplate, igm)
-}
-
-// This test is to make sure that a single version resource can link to a versioned resource
-// without perpetual diffs because the self links mismatch.
-// Once auto_healing_policies is no longer beta, we will need to use a new field or resource
-// with Beta fields.
-func testAccInstanceGroupManager_selfLinkStability(template, target, igm, hck, autoscaler string) string {
-	return fmt.Sprintf(`
-data "google_compute_image" "my_image" {
-	family  = "debian-9"
-	project = "debian-cloud"
-}
-
-resource "google_compute_instance_template" "igm-basic" {
-	name = "%s"
-	machine_type = "n1-standard-1"
-	can_ip_forward = false
-	tags = ["foo", "bar"]
-	disk {
-		source_image = "${data.google_compute_image.my_image.self_link}"
-		auto_delete = true
-		boot = true
-	}
-	network_interface {
-		network = "default"
-	}
-	metadata {
-		foo = "bar"
-	}
-	service_account {
-		scopes = ["userinfo-email", "compute-ro", "storage-ro"]
-	}
-}
-
-resource "google_compute_target_pool" "igm-basic" {
-	description = "Resource created for Terraform acceptance testing"
-	name = "%s"
-	session_affinity = "CLIENT_IP_PROTO"
-}
-
-resource "google_compute_instance_group_manager" "igm-basic" {
-	description = "Terraform test instance group manager"
-	name = "%s"
-	version {
-		instance_template = "${google_compute_instance_template.igm-basic.self_link}"
-		name = "primary"
-	}
-	target_pools = ["${google_compute_target_pool.igm-basic.self_link}"]
-	base_instance_name = "igm-basic"
-	zone = "us-central1-c"
-	target_size = 2
-	auto_healing_policies {
-		health_check = "${google_compute_http_health_check.zero.self_link}"
-		initial_delay_sec = "10"
-	}
-}
-
-resource "google_compute_http_health_check" "zero" {
-	name               = "%s"
-	request_path       = "/"
-	check_interval_sec = 1
-	timeout_sec        = 1
-}
-
-resource "google_compute_autoscaler" "foobar" {
-	name = "%s"
-	zone = "us-central1-c"
-	target = "${google_compute_instance_group_manager.igm-basic.self_link}"
-	autoscaling_policy = {
-		max_replicas = 10
-		min_replicas = 1
-		cooldown_period = 60
-		cpu_utilization = {
-			target = 0.5
-		}
-	}
-}
-`, template, target, igm, hck, autoscaler)
 }
