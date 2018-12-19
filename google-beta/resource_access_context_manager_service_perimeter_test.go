@@ -8,8 +8,9 @@ import (
 	"github.com/hashicorp/terraform/terraform"
 )
 
-// Access Context Manager tests need to run serially
-func TestAccAccessContextManagerServicePerimeter_basic(t *testing.T) {
+// Since each test here is acting on the same organization and only one AccessPolicy
+// can exist, they need to be ran serially. See AccessPolicy for the test runner.
+func testAccAccessContextManagerServicePerimeter_basicTest(t *testing.T) {
 	org := getTestOrgFromEnv(t)
 
 	resource.Test(t, resource.TestCase{
@@ -29,7 +30,7 @@ func TestAccAccessContextManagerServicePerimeter_basic(t *testing.T) {
 	})
 }
 
-func TestAccAccessContextManagerServicePerimeter_update(t *testing.T) {
+func testAccAccessContextManagerServicePerimeter_updateTest(t *testing.T) {
 	org := getTestOrgFromEnv(t)
 
 	resource.Test(t, resource.TestCase{
