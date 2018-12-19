@@ -26,13 +26,17 @@ import (
 func TestAccContainerAnalysisNote_containerAnalysisNoteBasicExample(t *testing.T) {
 	t.Parallel()
 
+	context := map[string]interface{}{
+		"random": acctest.RandString(10),
+	}
+
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckContainerAnalysisNoteDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccContainerAnalysisNote_containerAnalysisNoteBasicExample(acctest.RandString(10)),
+				Config: testAccContainerAnalysisNote_containerAnalysisNoteBasicExample(context),
 			},
 			{
 				ResourceName:      "google_container_analysis_note.note",
@@ -43,18 +47,17 @@ func TestAccContainerAnalysisNote_containerAnalysisNoteBasicExample(t *testing.T
 	})
 }
 
-func testAccContainerAnalysisNote_containerAnalysisNoteBasicExample(val string) string {
-	return fmt.Sprintf(`
+func testAccContainerAnalysisNote_containerAnalysisNoteBasicExample(context map[string]interface{}) string {
+	return Nprintf(`
 resource "google_container_analysis_note" "note" {
-  name = "test-attestor-note-%s"
+  name = "test-attestor-note-%{random}"
   attestation_authority {
     hint {
       human_readable_name = "Attestor Note"
     }
   }
 }
-`, val,
-	)
+`, context)
 }
 
 func testAccCheckContainerAnalysisNoteDestroy(s *terraform.State) error {

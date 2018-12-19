@@ -26,13 +26,17 @@ import (
 func TestAccFilestoreInstance_filestoreInstanceBasicExample(t *testing.T) {
 	t.Parallel()
 
+	context := map[string]interface{}{
+		"random": acctest.RandString(10),
+	}
+
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckFilestoreInstanceDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccFilestoreInstance_filestoreInstanceBasicExample(acctest.RandString(10)),
+				Config: testAccFilestoreInstance_filestoreInstanceBasicExample(context),
 			},
 			{
 				ResourceName:            "google_filestore_instance.instance",
@@ -44,10 +48,10 @@ func TestAccFilestoreInstance_filestoreInstanceBasicExample(t *testing.T) {
 	})
 }
 
-func testAccFilestoreInstance_filestoreInstanceBasicExample(val string) string {
-	return fmt.Sprintf(`
+func testAccFilestoreInstance_filestoreInstanceBasicExample(context map[string]interface{}) string {
+	return Nprintf(`
 resource "google_filestore_instance" "instance" {
-  name = "test-instance-%s"
+  name = "test-instance-%{random}"
   zone = "us-central1-b"
   tier = "PREMIUM"
 
@@ -61,8 +65,7 @@ resource "google_filestore_instance" "instance" {
     modes   = ["MODE_IPV4"]
   }
 }
-`, val,
-	)
+`, context)
 }
 
 func testAccCheckFilestoreInstanceDestroy(s *terraform.State) error {
