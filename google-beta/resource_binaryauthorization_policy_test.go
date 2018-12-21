@@ -14,7 +14,7 @@ func TestAccBinaryAuthorizationPolicy_basic(t *testing.T) {
 	t.Parallel()
 
 	org := getTestOrgFromEnv(t)
-	pid := "tf-test-" + acctest.RandString(10)
+	pid := "tf-acctest-" + acctest.RandString(10)
 	resource.Test(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
 		Providers: testAccProviders,
@@ -41,7 +41,7 @@ func TestAccBinaryAuthorizationPolicy_full(t *testing.T) {
 	t.Parallel()
 
 	org := getTestOrgFromEnv(t)
-	pid := "tf-test-" + acctest.RandString(10)
+	pid := "tf-acctest-" + acctest.RandString(10)
 	note := acctest.RandString(10)
 	attestor := acctest.RandString(10)
 	resource.Test(t, resource.TestCase{
@@ -70,7 +70,7 @@ func TestAccBinaryAuthorizationPolicy_update(t *testing.T) {
 	t.Parallel()
 
 	org := getTestOrgFromEnv(t)
-	pid := "tf-test-" + acctest.RandString(10)
+	pid := "tf-acctest-" + acctest.RandString(10)
 	note := acctest.RandString(10)
 	attestor := acctest.RandString(10)
 	resource.Test(t, resource.TestCase{

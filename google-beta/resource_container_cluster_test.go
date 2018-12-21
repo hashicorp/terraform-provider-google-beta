@@ -1288,7 +1288,7 @@ func TestAccContainerCluster_sharedVpc(t *testing.T) {
 	clusterName := fmt.Sprintf("cluster-test-%s", acctest.RandString(10))
 	org := getTestOrgFromEnv(t)
 	billingId := getTestBillingAccountFromEnv(t)
-	projectName := fmt.Sprintf("tf-xpntest-%s", acctest.RandString(10))
+	projectId := acctest.RandomWithPrefix("tf-acctest")
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -1296,11 +1296,11 @@ func TestAccContainerCluster_sharedVpc(t *testing.T) {
 		CheckDestroy: testAccCheckContainerClusterDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccContainerCluster_sharedVpc(org, billingId, projectName, clusterName),
+				Config: testAccContainerCluster_sharedVpc(org, billingId, projectId, clusterName),
 			},
 			{
 				ResourceName:        "google_container_cluster.shared_vpc_cluster",
-				ImportStateIdPrefix: fmt.Sprintf("%s-service/us-central1-a/", projectName),
+				ImportStateIdPrefix: fmt.Sprintf("%s-service/us-central1-a/", projectId),
 				ImportState:         true,
 				ImportStateVerify:   true,
 			},
@@ -2524,10 +2524,10 @@ resource "google_container_cluster" "with_private_cluster" {
 	}
 }`, clusterName, clusterName)
 }
-func testAccContainerCluster_sharedVpc(org, billingId, projectName, name string) string {
+func testAccContainerCluster_sharedVpc(org, billingId, projectId, name string) string {
 	return fmt.Sprintf(`
 resource "google_project" "host_project" {
-	name            = "Test Project XPN Host"
+	name            = "%s"
 	project_id      = "%s-host"
 	org_id          = "%s"
 	billing_account = "%s"
@@ -2543,7 +2543,7 @@ resource "google_compute_shared_vpc_host_project" "host_project" {
 }
 
 resource "google_project" "service_project" {
-	name            = "Test Project XPN Service"
+	name            = "%s"
 	project_id      = "%s-service"
 	org_id          = "%s"
 	billing_account = "%s"
@@ -2625,7 +2625,7 @@ resource "google_container_cluster" "shared_vpc_cluster" {
 		"google_compute_subnetwork_iam_member.service_network_cloud_services",
 		"google_compute_subnetwork_iam_member.service_network_gke_user"
 	]
-}`, projectName, org, billingId, projectName, org, billingId, acctest.RandString(10), acctest.RandString(10), name)
+}`, pname, projectId, org, billingId, pname, projectId, org, billingId, acctest.RandString(10), acctest.RandString(10), name)
 }
 
 func testAccContainerCluster_withoutResourceLabels(clusterName string) string {
