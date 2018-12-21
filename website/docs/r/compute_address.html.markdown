@@ -170,9 +170,8 @@ The following arguments are supported:
   GCE_ENDPOINT/DNS_RESOLVER purposes.
 
 * `labels` -
-  (Optional)
-  Labels to apply to this address.  A list of key->value pairs.  This property is in beta, and should be used with the terraform-provider-google-beta provider.
-  See [Provider Versions](https://terraform.io/docs/providers/google/provider_versions.html) for more details on beta fields.
+  (Optional, [Beta](https://terraform.io/docs/providers/google/provider_versions.html))
+  Labels to apply to this address.  A list of key->value pairs.
 
 * `region` -
   (Optional)
@@ -195,8 +194,7 @@ In addition to the arguments listed above, the following computed attributes are
 
 * `label_fingerprint` -
   The fingerprint used for optimistic locking of this resource.  Used
-  internally during updates.  This property is in beta, and should be used with the terraform-provider-google-beta provider.
-  See [Provider Versions](https://terraform.io/docs/providers/google/provider_versions.html) for more details on beta fields.
+  internally during updates.
 * `self_link` - The URI of the created resource.
 
 
@@ -220,3 +218,6 @@ $ terraform import google_compute_address.default projects/{{project}}/regions/{
 $ terraform import google_compute_address.default {{project}}/{{region}}/{{name}}
 $ terraform import google_compute_address.default {{name}}
 ```
+
+-> If you're importing a resource with beta features, make sure to include `-provider=google-beta`
+as an argument so that Terraform uses the correct provider to import your resource.

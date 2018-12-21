@@ -77,10 +77,6 @@ The following arguments are supported:
   How to combine the results of multiple conditions to
   determine if an incident should be opened.
 
-* `enabled` -
-  (Output-only)
-  Whether or not the policy is enabled.
-
 * `conditions` -
   (Required)
   A list of conditions for the policy. The conditions are combined by
@@ -573,6 +569,10 @@ The `aggregations` block supports:
 - - -
 
 
+* `enabled` -
+  (Optional)
+  Whether or not the policy is enabled. The default is true.
+
 * `notification_channels` -
   (Optional)
   Identifies the notification channels to which notifications should be
@@ -634,6 +634,14 @@ The `creation_record` block contains:
 * `mutated_by` -
   The email address of the user making the change.
 
+## Timeouts
+
+This resource provides the following
+[Timeouts](/docs/configuration/resources.html#timeouts) configuration options:
+
+- `create` - Default is 4 minutes.
+- `update` - Default is 4 minutes.
+- `delete` - Default is 4 minutes.
 
 ## Import
 
@@ -642,3 +650,6 @@ AlertPolicy can be imported using any of these accepted formats:
 ```
 $ terraform import google_monitoring_alert_policy.default {{name}}
 ```
+
+-> If you're importing a resource with beta features, make sure to include `-provider=google-beta`
+as an argument so that Terraform uses the correct provider to import your resource.

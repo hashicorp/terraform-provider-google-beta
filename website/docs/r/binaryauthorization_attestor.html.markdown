@@ -32,7 +32,8 @@ To get more information about Attestor, see:
 * How-to Guides
     * [Official Documentation](https://cloud.google.com/binary-authorization/)
 
-## Example Usage
+## Example Usage - Binary Authorization Attestor Basic
+
 
 ```hcl
 resource "google_binary_authorization_attestor" "attestor" {
@@ -149,13 +150,24 @@ The `public_keys` block supports:
 
 
 
+## Timeouts
+
+This resource provides the following
+[Timeouts](/docs/configuration/resources.html#timeouts) configuration options:
+
+- `create` - Default is 4 minutes.
+- `update` - Default is 4 minutes.
+- `delete` - Default is 4 minutes.
 
 ## Import
 
 Attestor can be imported using any of these accepted formats:
 
 ```
-$ terraform import google_binary_authorization_attestor.default projects/{{project}}/attestors/{{name}}
-$ terraform import google_binary_authorization_attestor.default {{project}}/{{name}}
-$ terraform import google_binary_authorization_attestor.default {{name}}
+$ terraform import -provider=google-beta google_binary_authorization_attestor.default projects/{{project}}/attestors/{{name}}
+$ terraform import -provider=google-beta google_binary_authorization_attestor.default {{project}}/{{name}}
+$ terraform import -provider=google-beta google_binary_authorization_attestor.default {{name}}
 ```
+
+-> If you're importing a resource with beta features, make sure to include `-provider=google-beta`
+as an argument so that Terraform uses the correct provider to import your resource.

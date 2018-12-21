@@ -2,12 +2,10 @@ package google
 
 import (
 	"fmt"
-	"strings"
 	"testing"
 
 	"github.com/hashicorp/terraform/helper/acctest"
 	"github.com/hashicorp/terraform/helper/resource"
-	"github.com/hashicorp/terraform/terraform"
 )
 
 func TestAccFilestoreInstance_basic(t *testing.T) {
@@ -20,10 +18,10 @@ func TestAccFilestoreInstance_basic(t *testing.T) {
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckFilestoreInstanceDestroy,
 		Steps: []resource.TestStep{
-			resource.TestStep{
+			{
 				Config: testAccFilestoreInstance_basic(name),
 			},
-			resource.TestStep{
+			{
 				ResourceName:      "google_filestore_instance.instance",
 				ImportState:       true,
 				ImportStateVerify: true,
@@ -42,49 +40,24 @@ func TestAccFilestoreInstance_update(t *testing.T) {
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckFilestoreInstanceDestroy,
 		Steps: []resource.TestStep{
-			resource.TestStep{
+			{
 				Config: testAccFilestoreInstance_update(name),
 			},
-			resource.TestStep{
+			{
 				ResourceName:      "google_filestore_instance.instance",
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
-			resource.TestStep{
+			{
 				Config: testAccFilestoreInstance_update2(name),
 			},
-			resource.TestStep{
+			{
 				ResourceName:      "google_filestore_instance.instance",
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
 		},
 	})
-}
-
-func testAccCheckFilestoreInstanceDestroy(s *terraform.State) error {
-	config := testAccProvider.Meta().(*Config)
-
-	for _, rs := range s.RootModule().Resources {
-		if rs.Type != "google_filestore_instance" {
-			continue
-		}
-
-		redisIdParts := strings.Split(rs.Primary.ID, "/")
-		if len(redisIdParts) != 3 {
-			return fmt.Errorf("Unexpected resource ID %s, expected {project}/{region}/{name}", rs.Primary.ID)
-		}
-
-		project, region, inst := redisIdParts[0], redisIdParts[1], redisIdParts[2]
-
-		name := fmt.Sprintf("projects/%s/locations/%s/instances/%s", project, region, inst)
-		_, err := config.clientFilestore.Projects.Locations.Get(name).Do()
-		if err == nil {
-			return fmt.Errorf("Filestore instance still exists")
-		}
-	}
-
-	return nil
 }
 
 func testAccFilestoreInstance_basic(name string) string {

@@ -175,6 +175,13 @@ The `source_image_encryption_key` block supports:
   The RFC 4648 base64 encoded SHA-256 hash of the customer-supplied
   encryption key that protects this resource.
 
+* `kms_key_self_link` -
+  (Optional, [Beta](https://terraform.io/docs/providers/google/provider_versions.html))
+  The self link of the encryption key used to encrypt the disk. Also called KmsKeyName
+  in the cloud console. In order to use this additional
+  IAM permissions need to be set on the Compute Engine Service Agent. See
+  https://cloud.google.com/compute/docs/disks/customer-managed-encryption#encrypt_a_new_persistent_disk_with_your_own_keys
+
 The `disk_encryption_key` block supports:
 
 * `raw_key` -
@@ -186,6 +193,13 @@ The `disk_encryption_key` block supports:
   The RFC 4648 base64 encoded SHA-256 hash of the customer-supplied
   encryption key that protects this resource.
 
+* `kms_key_self_link` -
+  (Optional, [Beta](https://terraform.io/docs/providers/google/provider_versions.html))
+  The self link of the encryption key used to encrypt the disk. Also called KmsKeyName
+  in the cloud console. In order to use this additional
+  IAM permissions need to be set on the Compute Engine Service Agent. See
+  https://cloud.google.com/compute/docs/disks/customer-managed-encryption#encrypt_a_new_persistent_disk_with_your_own_keys
+
 The `source_snapshot_encryption_key` block supports:
 
 * `raw_key` -
@@ -193,14 +207,16 @@ The `source_snapshot_encryption_key` block supports:
   Specifies a 256-bit customer-supplied encryption key, encoded in
   RFC 4648 base64 to either encrypt or decrypt this resource.
 
+* `kms_key_self_link` -
+  (Optional, [Beta](https://terraform.io/docs/providers/google/provider_versions.html))
+  The self link of the encryption key used to encrypt the disk. Also called KmsKeyName
+  in the cloud console. In order to use this additional
+  IAM permissions need to be set on the Compute Engine Service Agent. See
+  https://cloud.google.com/compute/docs/disks/customer-managed-encryption#encrypt_a_new_persistent_disk_with_your_own_keys
+
 * `sha256` -
   The RFC 4648 base64 encoded SHA-256 hash of the customer-supplied
   encryption key that protects this resource.
-
-* (Deprecated) `disk_encryption_key_raw`:  This is an alias for
-  `disk_encryption_key.raw_key`.  It is deprecated to enhance
-  consistency with `source_image_encryption_key` and
-  `source_snapshot_encryption_key`.
 
 ## Attributes Reference
 
@@ -241,11 +257,6 @@ In addition to the arguments listed above, the following computed attributes are
 * `self_link` - The URI of the created resource.
 
 
-* (Deprecated) `disk_encryption_key_sha256`: This is an alias for
-  `disk_encryption_key.sha256`.  It is deprecated to enhance
-  consistency with `source_image_encryption_key` and
-  `source_snapshot_encryption_key`.
-
 ## Timeouts
 
 This resource provides the following
@@ -264,3 +275,6 @@ $ terraform import google_compute_disk.default projects/{{project}}/zones/{{zone
 $ terraform import google_compute_disk.default {{project}}/{{zone}}/{{name}}
 $ terraform import google_compute_disk.default {{name}}
 ```
+
+-> If you're importing a resource with beta features, make sure to include `-provider=google-beta`
+as an argument so that Terraform uses the correct provider to import your resource.

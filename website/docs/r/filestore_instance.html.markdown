@@ -150,16 +150,19 @@ In addition to the arguments listed above, the following computed attributes are
 This resource provides the following
 [Timeouts](/docs/configuration/resources.html#timeouts) configuration options:
 
-- `create` - Default is 5 minutes.
-- `update` - Default is 4 minutes.
-- `delete` - Default is 4 minutes.
+- `create` - Default is 6 minutes.
+- `update` - Default is 6 minutes.
+- `delete` - Default is 6 minutes.
 
 ## Import
 
 Instance can be imported using any of these accepted formats:
 
 ```
-$ terraform import google_filestore_instance.default projects/{{project}}/locations/{{zone}}/instances/{{name}}
-$ terraform import google_filestore_instance.default {{project}}/{{zone}}/{{name}}
-$ terraform import google_filestore_instance.default {{name}}
+$ terraform import -provider=google-beta google_filestore_instance.default projects/{{project}}/locations/{{zone}}/instances/{{name}}
+$ terraform import -provider=google-beta google_filestore_instance.default {{project}}/{{zone}}/{{name}}
+$ terraform import -provider=google-beta google_filestore_instance.default {{name}}
 ```
+
+-> If you're importing a resource with beta features, make sure to include `-provider=google-beta`
+as an argument so that Terraform uses the correct provider to import your resource.

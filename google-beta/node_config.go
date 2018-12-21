@@ -43,19 +43,19 @@ var schemaNodeConfig = &schema.Schema{
 				ValidateFunc: validation.StringInSlice([]string{"pd-standard", "pd-ssd"}, false),
 			},
 
-			"guest_accelerator": &schema.Schema{
+			"guest_accelerator": {
 				Type:     schema.TypeList,
 				Optional: true,
 				Computed: true,
 				ForceNew: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"count": &schema.Schema{
+						"count": {
 							Type:     schema.TypeInt,
 							Required: true,
 							ForceNew: true,
 						},
-						"type": &schema.Schema{
+						"type": {
 							Type:             schema.TypeString,
 							Required:         true,
 							ForceNew:         true,
@@ -280,7 +280,6 @@ func expandNodeConfig(v interface{}) *containerBeta.NodeConfig {
 	if v, ok := nodeConfig["min_cpu_platform"]; ok {
 		nc.MinCpuPlatform = v.(string)
 	}
-
 	if v, ok := nodeConfig["taint"]; ok && len(v.([]interface{})) > 0 {
 		taints := v.([]interface{})
 		nodeTaints := make([]*containerBeta.NodeTaint, 0, len(taints))

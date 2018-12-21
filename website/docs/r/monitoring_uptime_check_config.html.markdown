@@ -28,7 +28,7 @@ To get more information about UptimeCheckConfig, see:
 
 * [API documentation](https://cloud.google.com/monitoring/api/ref_v3/rest/v3/projects.uptimeCheckConfigs)
 * How-to Guides
-    * [Official Documentation](https://cloud.google.com/monitoring/api/v3/)
+    * [Official Documentation](https://cloud.google.com/monitoring/uptime-checks/)
 
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
   <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=uptime_check_config_http&cloudshell_image=gcr.io%2Fgraphite-cloud-shell-images%2Fterraform%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
@@ -165,7 +165,7 @@ The `internal_checkers` block supports:
 
 * `name` -
   (Optional)
-  A unique resource name for this InternalChecker. The format is:projects/[PROJECT_ID]/internalCheckers/[INTERNAL_CHECKER_ID].PROJECT_ID is the stackdriver workspace project for the uptime check config associated with the internal checker.
+  A unique resource name for this InternalChecker. The format is projects/[PROJECT_ID]/internalCheckers/[INTERNAL_CHECKER_ID]. PROJECT_ID is the stackdriver workspace project for the uptime check config associated with the internal checker.
 
 * `network` -
   (Optional)
@@ -244,9 +244,17 @@ In addition to the arguments listed above, the following computed attributes are
 
 
 * `name` -
-  A unique resource name for this UptimeCheckConfig. The format is:projects/[PROJECT_ID]/uptimeCheckConfigs/[UPTIME_CHECK_ID]. on create the resource name is assigned by the server and included in the response.
+  A unique resource name for this UptimeCheckConfig. The format is projects/[PROJECT_ID]/uptimeCheckConfigs/[UPTIME_CHECK_ID].
 
 
+## Timeouts
+
+This resource provides the following
+[Timeouts](/docs/configuration/resources.html#timeouts) configuration options:
+
+- `create` - Default is 4 minutes.
+- `update` - Default is 4 minutes.
+- `delete` - Default is 4 minutes.
 
 ## Import
 
@@ -255,3 +263,6 @@ UptimeCheckConfig can be imported using any of these accepted formats:
 ```
 $ terraform import google_monitoring_uptime_check_config.default {{name}}
 ```
+
+-> If you're importing a resource with beta features, make sure to include `-provider=google-beta`
+as an argument so that Terraform uses the correct provider to import your resource.

@@ -20,6 +20,7 @@ import (
 
 	"github.com/hashicorp/terraform/helper/acctest"
 	"github.com/hashicorp/terraform/helper/resource"
+	"github.com/hashicorp/terraform/terraform"
 )
 
 func TestAccFilestoreInstance_filestoreInstanceBasicExample(t *testing.T) {
@@ -62,4 +63,26 @@ resource "google_filestore_instance" "instance" {
 }
 `, val,
 	)
+}
+
+func testAccCheckFilestoreInstanceDestroy(s *terraform.State) error {
+	for _, rs := range s.RootModule().Resources {
+		if rs.Type != "google_filestore_instance" {
+			continue
+		}
+
+		config := testAccProvider.Meta().(*Config)
+
+		url, err := replaceVarsForTest(rs, "https://file.googleapis.com/v1beta1/projects/{{project}}/locations/{{zone}}/instances/{{name}}")
+		if err != nil {
+			return err
+		}
+
+		_, err = sendRequest(config, "GET", url, nil)
+		if err == nil {
+			return fmt.Errorf("FilestoreInstance still exists at %s", url)
+		}
+	}
+
+	return nil
 }

@@ -187,9 +187,8 @@ The following arguments are supported:
   This field is not used for internal load balancing.
 
 * `labels` -
-  (Optional)
-  Labels to apply to this forwarding rule.  A list of key->value pairs.  This property is in beta, and should be used with the terraform-provider-google-beta provider.
-  See [Provider Versions](https://terraform.io/docs/providers/google/provider_versions.html) for more details on beta fields.
+  (Optional, [Beta](https://terraform.io/docs/providers/google/provider_versions.html))
+  Labels to apply to this forwarding rule.  A list of key->value pairs.
 
 * `network_tier` -
   (Optional)
@@ -198,7 +197,7 @@ The following arguments are supported:
   specified, it is assumed to be PREMIUM.
 
 * `service_label` -
-  (Optional)
+  (Optional, [Beta](https://terraform.io/docs/providers/google/provider_versions.html))
   An optional prefix to the service name for this Forwarding Rule.
   If specified, will be the first label of the fully qualified service
   name.
@@ -208,8 +207,7 @@ The following arguments are supported:
   character must be a lowercase letter, and all following characters
   must be a dash, lowercase letter, or digit, except the last
   character, which cannot be a dash.
-  This field is only used for internal load balancing.  This property is in beta, and should be used with the terraform-provider-google-beta provider.
-  See [Provider Versions](https://terraform.io/docs/providers/google/provider_versions.html) for more details on beta fields.
+  This field is only used for internal load balancing.
 
 * `region` -
   (Optional)
@@ -233,8 +231,7 @@ In addition to the arguments listed above, the following computed attributes are
 
 * `service_name` -
   The internal fully qualified service name for this Forwarding Rule.
-  This field is only used for internal load balancing.  This property is in beta, and should be used with the terraform-provider-google-beta provider.
-  See [Provider Versions](https://terraform.io/docs/providers/google/provider_versions.html) for more details on beta fields.
+  This field is only used for internal load balancing.
 * `self_link` - The URI of the created resource.
 
 
@@ -256,3 +253,6 @@ $ terraform import google_compute_forwarding_rule.default projects/{{project}}/r
 $ terraform import google_compute_forwarding_rule.default {{project}}/{{region}}/{{name}}
 $ terraform import google_compute_forwarding_rule.default {{name}}
 ```
+
+-> If you're importing a resource with beta features, make sure to include `-provider=google-beta`
+as an argument so that Terraform uses the correct provider to import your resource.

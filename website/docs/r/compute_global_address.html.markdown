@@ -64,15 +64,18 @@ The following arguments are supported:
 - - -
 
 
+* `address` -
+  (Optional)
+  The static external IP address represented by this resource.
+
 * `description` -
   (Optional)
   An optional description of this resource.
   Provide this property when you create the resource.
 
 * `labels` -
-  (Optional)
-  Labels to apply to this address.  A list of key->value pairs.  This property is in beta, and should be used with the terraform-provider-google-beta provider.
-  See [Provider Versions](https://terraform.io/docs/providers/google/provider_versions.html) for more details on beta fields.
+  (Optional, [Beta](https://terraform.io/docs/providers/google/provider_versions.html))
+  Labels to apply to this address.  A list of key->value pairs.
 
 * `ip_version` -
   (Optional)
@@ -80,11 +83,10 @@ The following arguments are supported:
   IPV4 or IPV6. The default value is IPV4.
 
 * `prefix_length` -
-  (Optional)
+  (Optional, [Beta](https://terraform.io/docs/providers/google/provider_versions.html))
   The prefix length of the IP range. If not present, it means the
   address field is a single IP address.
-  This field is not applicable to addresses with addressType=EXTERNAL.  This property is in beta, and should be used with the terraform-provider-google-beta provider.
-  See [Provider Versions](https://terraform.io/docs/providers/google/provider_versions.html) for more details on beta fields.
+  This field is not applicable to addresses with addressType=EXTERNAL.
 
 * `address_type` -
   (Optional)
@@ -93,19 +95,17 @@ The following arguments are supported:
   * INTERNAL indicates internal IP ranges belonging to some network.
 
 * `purpose` -
-  (Optional)
+  (Optional, [Beta](https://terraform.io/docs/providers/google/provider_versions.html))
   The purpose of the resource. For global internal addresses it can be
   * VPC_PEERING - for peer networks
-  This should only be set when using an Internal address.  This property is in beta, and should be used with the terraform-provider-google-beta provider.
-  See [Provider Versions](https://terraform.io/docs/providers/google/provider_versions.html) for more details on beta fields.
+  This should only be set when using an Internal address.
 
 * `network` -
-  (Optional)
+  (Optional, [Beta](https://terraform.io/docs/providers/google/provider_versions.html))
   The URL of the network in which to reserve the IP range. The IP range
   must be in RFC1918 space. The network cannot be deleted if there are
   any reserved IP ranges referring to it.
-  This should only be set when using an Internal address.  This property is in beta, and should be used with the terraform-provider-google-beta provider.
-  See [Provider Versions](https://terraform.io/docs/providers/google/provider_versions.html) for more details on beta fields.
+  This should only be set when using an Internal address.
 * `project` - (Optional) The ID of the project in which the resource belongs.
     If it is not provided, the provider project is used.
 
@@ -114,9 +114,6 @@ The following arguments are supported:
 
 In addition to the arguments listed above, the following computed attributes are exported:
 
-
-* `address` -
-  The static external IP address represented by this resource.
 
 * `creation_timestamp` -
   Creation timestamp in RFC3339 text format.
@@ -145,3 +142,6 @@ $ terraform import google_compute_global_address.default projects/{{project}}/gl
 $ terraform import google_compute_global_address.default {{project}}/{{name}}
 $ terraform import google_compute_global_address.default {{name}}
 ```
+
+-> If you're importing a resource with beta features, make sure to include `-provider=google-beta`
+as an argument so that Terraform uses the correct provider to import your resource.

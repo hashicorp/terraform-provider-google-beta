@@ -3,7 +3,7 @@
   <div class="docs-sidebar hidden-print affix-top" role="complementary">
   <ul class="nav docs-sidenav">
     <li<%= sidebar_current("docs-home") %>>
-    <a href="/docs/providers/index.html">All Providers</a>
+    <a class="back" href="/docs/providers/index.html">All Providers</a>
     </li>
 
     <li<%= sidebar_current("docs-google-provider") %>>
@@ -20,6 +20,9 @@
         </li>
         <li<%= sidebar_current("docs-google-provider-versions") %>>
           <a href="/docs/providers/google/provider_versions.html">Google Provider Versions</a>
+        </li>
+        <li<%= sidebar_current("docs-google-provider-version-2-upgrade") %>>
+          <a href="/docs/providers/google/version_2_upgrade.html">Version 2.0.0 Upgrade Guide</a>
         </li>
       </ul>
     </li>
@@ -137,6 +140,9 @@
       </li>
       <li<%= sidebar_current("docs-google-datasource-storage-project-service-account") %>>
         <a href="/docs/providers/google/d/google_storage_project_service_account.html">google_storage_project_service_account</a>
+      </li>
+      <li<%= sidebar_current("docs-google-datasource-storage-transfer-project-service-account") %>>
+        <a href="/docs/providers/google/d/google_storage_transfer_project_service_account.html">google_storage_transfer_project_service_account</a>
       </li>
     </ul>
     </li>
@@ -751,6 +757,15 @@
       <li<%= sidebar_current("docs-google-monitoring-alert-policy") %>>
       <a href="/docs/providers/google/r/monitoring_alert_policy.html">google_monitoring_alert_policy</a>
       </li>
+      <li<%= sidebar_current("docs-google-monitoring-group") %>>
+      <a href="/docs/providers/google/r/monitoring_group.html">google_monitoring_group</a>
+      </li>
+      <li<%= sidebar_current("docs-google-monitoring-notification-channel") %>>
+      <a href="/docs/providers/google/r/monitoring_notification_channel.html">google_monitoring_notification_channel</a>
+      </li>
+      <li<%= sidebar_current("docs-google-monitoring-uptime-check-config") %>>
+      <a href="/docs/providers/google/r/monitoring_uptime_check_config.html">google_monitoring_uptime_check_config</a>
+      </li>
 
     </ul>
     </li>
@@ -796,6 +811,15 @@
 
       <li<%= sidebar_current("docs-google-storage-object-acl") %>>
       <a href="/docs/providers/google/r/storage_object_acl.html">google_storage_object_acl</a>
+      </li>
+    </ul>
+    </li>
+
+    <li<%= sidebar_current("docs-google-storage-transfer") %>>
+    <a href="#">Google Storage Transfer Resources</a>
+    <ul class="nav nav-visible">
+      <li<%= sidebar_current("docs-google-storage-transfer-job-x") %>>
+      <a href="/docs/providers/google/r/storage_transfer_job.html">google_storage_transfer_job</a>
       </li>
     </ul>
     </li>

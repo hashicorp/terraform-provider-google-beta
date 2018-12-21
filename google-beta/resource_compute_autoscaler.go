@@ -108,6 +108,10 @@ func resourceComputeAutoscaler() *schema.Resource {
 										Required:     true,
 										ValidateFunc: validation.StringInSlice([]string{"GAUGE", "DELTA_PER_SECOND", "DELTA_PER_MINUTE"}, false),
 									},
+									"filter": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
 								},
 							},
 						},
@@ -195,7 +199,7 @@ func resourceComputeAutoscalerCreate(d *schema.ResourceData, meta interface{}) e
 	}
 
 	log.Printf("[DEBUG] Creating new Autoscaler: %#v", obj)
-	res, err := sendRequest(config, "POST", url, obj)
+	res, err := sendRequestWithTimeout(config, "POST", url, obj, d.Timeout(schema.TimeoutCreate))
 	if err != nil {
 		return fmt.Errorf("Error creating Autoscaler: %s", err)
 	}
@@ -245,32 +249,33 @@ func resourceComputeAutoscalerRead(d *schema.ResourceData, meta interface{}) err
 		return handleNotFoundError(err, d, fmt.Sprintf("ComputeAutoscaler %q", d.Id()))
 	}
 
-	if err := d.Set("creation_timestamp", flattenComputeAutoscalerCreationTimestamp(res["creationTimestamp"])); err != nil {
-		return fmt.Errorf("Error reading Autoscaler: %s", err)
-	}
-	if err := d.Set("name", flattenComputeAutoscalerName(res["name"])); err != nil {
-		return fmt.Errorf("Error reading Autoscaler: %s", err)
-	}
-	if err := d.Set("description", flattenComputeAutoscalerDescription(res["description"])); err != nil {
-		return fmt.Errorf("Error reading Autoscaler: %s", err)
-	}
-	if err := d.Set("autoscaling_policy", flattenComputeAutoscalerAutoscalingPolicy(res["autoscalingPolicy"])); err != nil {
-		return fmt.Errorf("Error reading Autoscaler: %s", err)
-	}
-	if err := d.Set("target", flattenComputeAutoscalerTarget(res["target"])); err != nil {
-		return fmt.Errorf("Error reading Autoscaler: %s", err)
-	}
-	if err := d.Set("zone", flattenComputeAutoscalerZone(res["zone"])); err != nil {
-		return fmt.Errorf("Error reading Autoscaler: %s", err)
-	}
-	if err := d.Set("self_link", ConvertSelfLinkToV1(res["selfLink"].(string))); err != nil {
-		return fmt.Errorf("Error reading Autoscaler: %s", err)
-	}
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
 	if err := d.Set("project", project); err != nil {
+		return fmt.Errorf("Error reading Autoscaler: %s", err)
+	}
+
+	if err := d.Set("creation_timestamp", flattenComputeAutoscalerCreationTimestamp(res["creationTimestamp"], d)); err != nil {
+		return fmt.Errorf("Error reading Autoscaler: %s", err)
+	}
+	if err := d.Set("name", flattenComputeAutoscalerName(res["name"], d)); err != nil {
+		return fmt.Errorf("Error reading Autoscaler: %s", err)
+	}
+	if err := d.Set("description", flattenComputeAutoscalerDescription(res["description"], d)); err != nil {
+		return fmt.Errorf("Error reading Autoscaler: %s", err)
+	}
+	if err := d.Set("autoscaling_policy", flattenComputeAutoscalerAutoscalingPolicy(res["autoscalingPolicy"], d)); err != nil {
+		return fmt.Errorf("Error reading Autoscaler: %s", err)
+	}
+	if err := d.Set("target", flattenComputeAutoscalerTarget(res["target"], d)); err != nil {
+		return fmt.Errorf("Error reading Autoscaler: %s", err)
+	}
+	if err := d.Set("zone", flattenComputeAutoscalerZone(res["zone"], d)); err != nil {
+		return fmt.Errorf("Error reading Autoscaler: %s", err)
+	}
+	if err := d.Set("self_link", ConvertSelfLinkToV1(res["selfLink"].(string))); err != nil {
 		return fmt.Errorf("Error reading Autoscaler: %s", err)
 	}
 
@@ -318,7 +323,7 @@ func resourceComputeAutoscalerUpdate(d *schema.ResourceData, meta interface{}) e
 	}
 
 	log.Printf("[DEBUG] Updating Autoscaler %q: %#v", d.Id(), obj)
-	res, err := sendRequest(config, "PUT", url, obj)
+	res, err := sendRequestWithTimeout(config, "PUT", url, obj, d.Timeout(schema.TimeoutUpdate))
 
 	if err != nil {
 		return fmt.Errorf("Error updating Autoscaler %q: %s", d.Id(), err)
@@ -355,7 +360,7 @@ func resourceComputeAutoscalerDelete(d *schema.ResourceData, meta interface{}) e
 
 	var obj map[string]interface{}
 	log.Printf("[DEBUG] Deleting Autoscaler %q", d.Id())
-	res, err := sendRequest(config, "DELETE", url, obj)
+	res, err := sendRequestWithTimeout(config, "DELETE", url, obj, d.Timeout(schema.TimeoutDelete))
 	if err != nil {
 		return handleNotFoundError(err, d, "Autoscaler")
 	}
@@ -396,39 +401,42 @@ func resourceComputeAutoscalerImport(d *schema.ResourceData, meta interface{}) (
 	return []*schema.ResourceData{d}, nil
 }
 
-func flattenComputeAutoscalerCreationTimestamp(v interface{}) interface{} {
+func flattenComputeAutoscalerCreationTimestamp(v interface{}, d *schema.ResourceData) interface{} {
 	return v
 }
 
-func flattenComputeAutoscalerName(v interface{}) interface{} {
+func flattenComputeAutoscalerName(v interface{}, d *schema.ResourceData) interface{} {
 	return v
 }
 
-func flattenComputeAutoscalerDescription(v interface{}) interface{} {
+func flattenComputeAutoscalerDescription(v interface{}, d *schema.ResourceData) interface{} {
 	return v
 }
 
-func flattenComputeAutoscalerAutoscalingPolicy(v interface{}) interface{} {
+func flattenComputeAutoscalerAutoscalingPolicy(v interface{}, d *schema.ResourceData) interface{} {
 	if v == nil {
 		return nil
 	}
 	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
 	transformed := make(map[string]interface{})
 	transformed["min_replicas"] =
-		flattenComputeAutoscalerAutoscalingPolicyMinReplicas(original["minNumReplicas"])
+		flattenComputeAutoscalerAutoscalingPolicyMinReplicas(original["minNumReplicas"], d)
 	transformed["max_replicas"] =
-		flattenComputeAutoscalerAutoscalingPolicyMaxReplicas(original["maxNumReplicas"])
+		flattenComputeAutoscalerAutoscalingPolicyMaxReplicas(original["maxNumReplicas"], d)
 	transformed["cooldown_period"] =
-		flattenComputeAutoscalerAutoscalingPolicyCooldownPeriod(original["coolDownPeriodSec"])
+		flattenComputeAutoscalerAutoscalingPolicyCooldownPeriod(original["coolDownPeriodSec"], d)
 	transformed["cpu_utilization"] =
-		flattenComputeAutoscalerAutoscalingPolicyCpuUtilization(original["cpuUtilization"])
+		flattenComputeAutoscalerAutoscalingPolicyCpuUtilization(original["cpuUtilization"], d)
 	transformed["metric"] =
-		flattenComputeAutoscalerAutoscalingPolicyMetric(original["customMetricUtilizations"])
+		flattenComputeAutoscalerAutoscalingPolicyMetric(original["customMetricUtilizations"], d)
 	transformed["load_balancing_utilization"] =
-		flattenComputeAutoscalerAutoscalingPolicyLoadBalancingUtilization(original["loadBalancingUtilization"])
+		flattenComputeAutoscalerAutoscalingPolicyLoadBalancingUtilization(original["loadBalancingUtilization"], d)
 	return []interface{}{transformed}
 }
-func flattenComputeAutoscalerAutoscalingPolicyMinReplicas(v interface{}) interface{} {
+func flattenComputeAutoscalerAutoscalingPolicyMinReplicas(v interface{}, d *schema.ResourceData) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
@@ -438,7 +446,7 @@ func flattenComputeAutoscalerAutoscalingPolicyMinReplicas(v interface{}) interfa
 	return v
 }
 
-func flattenComputeAutoscalerAutoscalingPolicyMaxReplicas(v interface{}) interface{} {
+func flattenComputeAutoscalerAutoscalingPolicyMaxReplicas(v interface{}, d *schema.ResourceData) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
@@ -448,7 +456,7 @@ func flattenComputeAutoscalerAutoscalingPolicyMaxReplicas(v interface{}) interfa
 	return v
 }
 
-func flattenComputeAutoscalerAutoscalingPolicyCooldownPeriod(v interface{}) interface{} {
+func flattenComputeAutoscalerAutoscalingPolicyCooldownPeriod(v interface{}, d *schema.ResourceData) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
@@ -458,21 +466,24 @@ func flattenComputeAutoscalerAutoscalingPolicyCooldownPeriod(v interface{}) inte
 	return v
 }
 
-func flattenComputeAutoscalerAutoscalingPolicyCpuUtilization(v interface{}) interface{} {
+func flattenComputeAutoscalerAutoscalingPolicyCpuUtilization(v interface{}, d *schema.ResourceData) interface{} {
 	if v == nil {
 		return nil
 	}
 	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
 	transformed := make(map[string]interface{})
 	transformed["target"] =
-		flattenComputeAutoscalerAutoscalingPolicyCpuUtilizationTarget(original["utilizationTarget"])
+		flattenComputeAutoscalerAutoscalingPolicyCpuUtilizationTarget(original["utilizationTarget"], d)
 	return []interface{}{transformed}
 }
-func flattenComputeAutoscalerAutoscalingPolicyCpuUtilizationTarget(v interface{}) interface{} {
+func flattenComputeAutoscalerAutoscalingPolicyCpuUtilizationTarget(v interface{}, d *schema.ResourceData) interface{} {
 	return v
 }
 
-func flattenComputeAutoscalerAutoscalingPolicyMetric(v interface{}) interface{} {
+func flattenComputeAutoscalerAutoscalingPolicyMetric(v interface{}, d *schema.ResourceData) interface{} {
 	if v == nil {
 		return v
 	}
@@ -480,48 +491,60 @@ func flattenComputeAutoscalerAutoscalingPolicyMetric(v interface{}) interface{} 
 	transformed := make([]interface{}, 0, len(l))
 	for _, raw := range l {
 		original := raw.(map[string]interface{})
+		if len(original) < 1 {
+			// Do not include empty json objects coming back from the api
+			continue
+		}
 		transformed = append(transformed, map[string]interface{}{
-			"name":   flattenComputeAutoscalerAutoscalingPolicyMetricName(original["metric"]),
-			"target": flattenComputeAutoscalerAutoscalingPolicyMetricTarget(original["utilizationTarget"]),
-			"type":   flattenComputeAutoscalerAutoscalingPolicyMetricType(original["utilizationTargetType"]),
+			"name":   flattenComputeAutoscalerAutoscalingPolicyMetricName(original["metric"], d),
+			"target": flattenComputeAutoscalerAutoscalingPolicyMetricTarget(original["utilizationTarget"], d),
+			"type":   flattenComputeAutoscalerAutoscalingPolicyMetricType(original["utilizationTargetType"], d),
+			"filter": flattenComputeAutoscalerAutoscalingPolicyMetricFilter(original["filter"], d),
 		})
 	}
 	return transformed
 }
-func flattenComputeAutoscalerAutoscalingPolicyMetricName(v interface{}) interface{} {
+func flattenComputeAutoscalerAutoscalingPolicyMetricName(v interface{}, d *schema.ResourceData) interface{} {
 	return v
 }
 
-func flattenComputeAutoscalerAutoscalingPolicyMetricTarget(v interface{}) interface{} {
+func flattenComputeAutoscalerAutoscalingPolicyMetricTarget(v interface{}, d *schema.ResourceData) interface{} {
 	return v
 }
 
-func flattenComputeAutoscalerAutoscalingPolicyMetricType(v interface{}) interface{} {
+func flattenComputeAutoscalerAutoscalingPolicyMetricType(v interface{}, d *schema.ResourceData) interface{} {
 	return v
 }
 
-func flattenComputeAutoscalerAutoscalingPolicyLoadBalancingUtilization(v interface{}) interface{} {
+func flattenComputeAutoscalerAutoscalingPolicyMetricFilter(v interface{}, d *schema.ResourceData) interface{} {
+	return v
+}
+
+func flattenComputeAutoscalerAutoscalingPolicyLoadBalancingUtilization(v interface{}, d *schema.ResourceData) interface{} {
 	if v == nil {
 		return nil
 	}
 	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
 	transformed := make(map[string]interface{})
 	transformed["target"] =
-		flattenComputeAutoscalerAutoscalingPolicyLoadBalancingUtilizationTarget(original["utilizationTarget"])
+		flattenComputeAutoscalerAutoscalingPolicyLoadBalancingUtilizationTarget(original["utilizationTarget"], d)
 	return []interface{}{transformed}
 }
-func flattenComputeAutoscalerAutoscalingPolicyLoadBalancingUtilizationTarget(v interface{}) interface{} {
+func flattenComputeAutoscalerAutoscalingPolicyLoadBalancingUtilizationTarget(v interface{}, d *schema.ResourceData) interface{} {
 	return v
 }
 
-func flattenComputeAutoscalerTarget(v interface{}) interface{} {
+func flattenComputeAutoscalerTarget(v interface{}, d *schema.ResourceData) interface{} {
 	if v == nil {
 		return v
 	}
 	return ConvertSelfLinkToV1(v.(string))
 }
 
-func flattenComputeAutoscalerZone(v interface{}) interface{} {
+func flattenComputeAutoscalerZone(v interface{}, d *schema.ResourceData) interface{} {
 	if v == nil {
 		return v
 	}
@@ -656,6 +679,13 @@ func expandComputeAutoscalerAutoscalingPolicyMetric(v interface{}, d *schema.Res
 			transformed["utilizationTargetType"] = transformedType
 		}
 
+		transformedFilter, err := expandComputeAutoscalerAutoscalingPolicyMetricFilter(original["filter"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedFilter); val.IsValid() && !isEmptyValue(val) {
+			transformed["filter"] = transformedFilter
+		}
+
 		req = append(req, transformed)
 	}
 	return req, nil
@@ -670,6 +700,10 @@ func expandComputeAutoscalerAutoscalingPolicyMetricTarget(v interface{}, d *sche
 }
 
 func expandComputeAutoscalerAutoscalingPolicyMetricType(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeAutoscalerAutoscalingPolicyMetricFilter(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 

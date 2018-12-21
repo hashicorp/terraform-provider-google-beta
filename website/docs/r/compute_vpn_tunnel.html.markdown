@@ -171,7 +171,7 @@ The following arguments are supported:
 
 * `region` -
   (Optional)
-  The region where the tunnel is located.
+  The region where the tunnel is located. If unset, is set to the region of `target_vpn_gateway`.
 * `project` - (Optional) The ID of the project in which the resource belongs.
     If it is not provided, the provider project is used.
 
@@ -214,3 +214,6 @@ $ terraform import google_compute_vpn_tunnel.default projects/{{project}}/region
 $ terraform import google_compute_vpn_tunnel.default {{project}}/{{region}}/{{name}}
 $ terraform import google_compute_vpn_tunnel.default {{name}}
 ```
+
+-> If you're importing a resource with beta features, make sure to include `-provider=google-beta`
+as an argument so that Terraform uses the correct provider to import your resource.

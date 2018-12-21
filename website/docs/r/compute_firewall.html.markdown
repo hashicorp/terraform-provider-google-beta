@@ -132,11 +132,10 @@ The following arguments are supported:
   is unspecified, the firewall rule will be enabled.
 
 * `enable_logging` -
-  (Optional)
+  (Optional, [Beta](https://terraform.io/docs/providers/google/provider_versions.html))
   This field denotes whether to enable logging for a particular
   firewall rule. If logging is enabled, logs will be exported to
-  Stackdriver.  This property is in beta, and should be used with the terraform-provider-google-beta provider.
-  See [Provider Versions](https://terraform.io/docs/providers/google/provider_versions.html) for more details on beta fields.
+  Stackdriver.
 
 * `priority` -
   (Optional)
@@ -267,3 +266,6 @@ $ terraform import google_compute_firewall.default projects/{{project}}/global/f
 $ terraform import google_compute_firewall.default {{project}}/{{name}}
 $ terraform import google_compute_firewall.default {{name}}
 ```
+
+-> If you're importing a resource with beta features, make sure to include `-provider=google-beta`
+as an argument so that Terraform uses the correct provider to import your resource.

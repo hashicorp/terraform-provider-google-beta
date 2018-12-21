@@ -32,7 +32,8 @@ To get more information about Policy, see:
 * How-to Guides
     * [Official Documentation](https://cloud.google.com/binary-authorization/)
 
-## Example Usage
+## Example Usage - Binary Authorization Policy Basic
+
 
 ```hcl
 resource "google_binary_authorization_policy" "policy" {
@@ -163,12 +164,23 @@ The `cluster_admission_rules` block supports:
   The action when a pod creation is denied by the admission rule.
 
 
+## Timeouts
+
+This resource provides the following
+[Timeouts](/docs/configuration/resources.html#timeouts) configuration options:
+
+- `create` - Default is 4 minutes.
+- `update` - Default is 4 minutes.
+- `delete` - Default is 4 minutes.
 
 ## Import
 
 Policy can be imported using any of these accepted formats:
 
 ```
-$ terraform import google_binary_authorization_policy.default projects/{{project}}
-$ terraform import google_binary_authorization_policy.default {{project}}
+$ terraform import -provider=google-beta google_binary_authorization_policy.default projects/{{project}}
+$ terraform import -provider=google-beta google_binary_authorization_policy.default {{project}}
 ```
+
+-> If you're importing a resource with beta features, make sure to include `-provider=google-beta`
+as an argument so that Terraform uses the correct provider to import your resource.

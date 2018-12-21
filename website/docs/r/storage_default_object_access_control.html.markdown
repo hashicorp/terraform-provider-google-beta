@@ -129,6 +129,14 @@ The `project_team` block contains:
   (Optional)
   The team.
 
+## Timeouts
+
+This resource provides the following
+[Timeouts](/docs/configuration/resources.html#timeouts) configuration options:
+
+- `create` - Default is 4 minutes.
+- `update` - Default is 4 minutes.
+- `delete` - Default is 4 minutes.
 
 ## Import
 
@@ -137,3 +145,6 @@ DefaultObjectAccessControl can be imported using any of these accepted formats:
 ```
 $ terraform import google_storage_default_object_access_control.default {{bucket}}/{{entity}}
 ```
+
+-> If you're importing a resource with beta features, make sure to include `-provider=google-beta`
+as an argument so that Terraform uses the correct provider to import your resource.

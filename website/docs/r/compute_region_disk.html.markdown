@@ -175,12 +175,20 @@ The `disk_encryption_key` block supports:
   The RFC 4648 base64 encoded SHA-256 hash of the customer-supplied
   encryption key that protects this resource.
 
+* `kms_key_name` -
+  (Optional, [Beta](https://terraform.io/docs/providers/google/provider_versions.html))
+  The name of the encryption key that is stored in Google Cloud KMS.
+
 The `source_snapshot_encryption_key` block supports:
 
 * `raw_key` -
   (Optional)
   Specifies a 256-bit customer-supplied encryption key, encoded in
   RFC 4648 base64 to either encrypt or decrypt this resource.
+
+* `kms_key_name` -
+  (Optional, [Beta](https://terraform.io/docs/providers/google/provider_versions.html))
+  The name of the encryption key that is stored in Google Cloud KMS.
 
 * `sha256` -
   The RFC 4648 base64 encoded SHA-256 hash of the customer-supplied
@@ -236,3 +244,6 @@ $ terraform import google_compute_region_disk.default projects/{{project}}/regio
 $ terraform import google_compute_region_disk.default {{project}}/{{region}}/{{name}}
 $ terraform import google_compute_region_disk.default {{name}}
 ```
+
+-> If you're importing a resource with beta features, make sure to include `-provider=google-beta`
+as an argument so that Terraform uses the correct provider to import your resource.

@@ -236,9 +236,9 @@ func resourceContainerCluster() *schema.Resource {
 			},
 
 			"enable_binary_authorization": {
+				Default:  false,
 				Type:     schema.TypeBool,
 				Optional: true,
-				Default:  false,
 			},
 
 			"enable_kubernetes_alpha": {
@@ -312,13 +312,13 @@ func resourceContainerCluster() *schema.Resource {
 					Schema: map[string]*schema.Schema{
 						"password": {
 							Type:      schema.TypeString,
-							Required:  true,
+							Optional:  true,
 							Sensitive: true,
 						},
 
 						"username": {
 							Type:     schema.TypeString,
-							Required: true,
+							Optional: true,
 						},
 
 						"client_certificate_config": {
@@ -427,9 +427,10 @@ func resourceContainerCluster() *schema.Resource {
 			},
 
 			"pod_security_policy_config": {
-				Type:     schema.TypeList,
-				Optional: true,
-				MaxItems: 1,
+				DiffSuppressFunc: podSecurityPolicyCfgSuppress,
+				Type:             schema.TypeList,
+				Optional:         true,
+				MaxItems:         1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"enabled": {
@@ -438,7 +439,6 @@ func resourceContainerCluster() *schema.Resource {
 						},
 					},
 				},
-				DiffSuppressFunc: podSecurityPolicyCfgSuppress,
 			},
 
 			"project": {
@@ -536,12 +536,11 @@ func resourceContainerCluster() *schema.Resource {
 			},
 
 			"private_cluster": {
-				Deprecated:    "Use private_cluster_config.enable_private_nodes instead.",
-				ConflictsWith: []string{"private_cluster_config"},
-				Computed:      true,
-				Type:          schema.TypeBool,
-				Optional:      true,
-				ForceNew:      true,
+				Removed:  "Use private_cluster_config.enable_private_nodes instead.",
+				Computed: true,
+				Type:     schema.TypeBool,
+				Optional: true,
+				ForceNew: true,
 			},
 
 			"private_cluster_config": {
@@ -581,19 +580,21 @@ func resourceContainerCluster() *schema.Resource {
 			},
 
 			"master_ipv4_cidr_block": {
-				Deprecated:    "Use private_cluster_config.master_ipv4_cidr_block instead.",
-				ConflictsWith: []string{"private_cluster_config"},
-				Computed:      true,
-				Type:          schema.TypeString,
-				Optional:      true,
-				ForceNew:      true,
-				ValidateFunc:  validation.CIDRNetwork(28, 28),
+				Removed:  "Use private_cluster_config.master_ipv4_cidr_block instead.",
+				Computed: true,
+				Type:     schema.TypeString,
+				Optional: true,
 			},
 
 			"resource_labels": {
 				Type:     schema.TypeMap,
 				Optional: true,
 				Elem:     &schema.Schema{Type: schema.TypeString},
+			},
+
+			"tpu_ipv4_cidr_block": {
+				Computed: true,
+				Type:     schema.TypeString,
 			},
 		},
 	}
@@ -636,10 +637,9 @@ func resourceContainerClusterCreate(d *schema.ResourceData, meta interface{}) er
 		NetworkPolicy:           expandNetworkPolicy(d.Get("network_policy")),
 		AddonsConfig:            expandClusterAddonsConfig(d.Get("addons_config")),
 		EnableKubernetesAlpha:   d.Get("enable_kubernetes_alpha").(bool),
-		EnableTpu:               d.Get("enable_tpu").(bool),
 		IpAllocationPolicy:      expandIPAllocationPolicy(d.Get("ip_allocation_policy")),
 		PodSecurityPolicyConfig: expandPodSecurityPolicyConfig(d.Get("pod_security_policy_config")),
-		MasterIpv4CidrBlock:     d.Get("master_ipv4_cidr_block").(string),
+		EnableTpu:               d.Get("enable_tpu").(bool),
 		BinaryAuthorization: &containerBeta.BinaryAuthorization{
 			Enabled:         d.Get("enable_binary_authorization").(bool),
 			ForceSendFields: []string{"Enabled"},
@@ -709,17 +709,6 @@ func resourceContainerClusterCreate(d *schema.ResourceData, meta interface{}) er
 
 	if v, ok := d.GetOk("node_config"); ok {
 		cluster.NodeConfig = expandNodeConfig(v)
-	}
-
-	if v, ok := d.GetOk("private_cluster"); ok {
-		if cluster.PrivateCluster = v.(bool); cluster.PrivateCluster {
-			if cluster.MasterIpv4CidrBlock == "" {
-				return fmt.Errorf("master_ipv4_cidr_block is mandatory when private_cluster=true")
-			}
-			if cluster.IpAllocationPolicy == nil {
-				return fmt.Errorf("ip_allocation_policy is mandatory when private_cluster=true")
-			}
-		}
 	}
 
 	if v, ok := d.GetOk("private_cluster_config"); ok {
@@ -826,13 +815,14 @@ func resourceContainerClusterRead(d *schema.ResourceData, meta interface{}) erro
 	d.Set("cluster_ipv4_cidr", cluster.ClusterIpv4Cidr)
 	d.Set("description", cluster.Description)
 	d.Set("enable_kubernetes_alpha", cluster.EnableKubernetesAlpha)
-	d.Set("enable_tpu", cluster.EnableTpu)
 	d.Set("enable_legacy_abac", cluster.LegacyAbac.Enabled)
 	d.Set("logging_service", cluster.LoggingService)
 	d.Set("monitoring_service", cluster.MonitoringService)
 	d.Set("network", cluster.NetworkConfig.Network)
 	d.Set("subnetwork", cluster.NetworkConfig.Subnetwork)
 	d.Set("enable_binary_authorization", cluster.BinaryAuthorization != nil && cluster.BinaryAuthorization.Enabled)
+	d.Set("enable_tpu", cluster.EnableTpu)
+	d.Set("tpu_ipv4_cidr_block", cluster.TpuIpv4CidrBlock)
 	if err := d.Set("cluster_autoscaling", flattenClusterAutoscaling(cluster.Autoscaling)); err != nil {
 		return err
 	}
@@ -871,10 +861,7 @@ func resourceContainerClusterRead(d *schema.ResourceData, meta interface{}) erro
 		return err
 	}
 
-	d.Set("private_cluster", cluster.PrivateCluster)
-	d.Set("master_ipv4_cidr_block", cluster.MasterIpv4CidrBlock)
 	d.Set("resource_labels", cluster.ResourceLabels)
-
 	return nil
 }
 
@@ -999,7 +986,6 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 			d.SetPartial("addons_config")
 		}
 	}
-
 	if d.HasChange("enable_binary_authorization") {
 		enabled := d.Get("enable_binary_authorization").(bool)
 		req := &containerBeta.UpdateClusterRequest{
@@ -1153,23 +1139,34 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 		d.SetPartial("enable_legacy_abac")
 	}
 
-	if d.HasChange("monitoring_service") {
-		desiredMonitoringService := d.Get("monitoring_service").(string)
+	if d.HasChange("monitoring_service") || d.HasChange("logging_service") {
+		logging := d.Get("logging_service").(string)
+		monitoring := d.Get("monitoring_service").(string)
 
-		req := &containerBeta.UpdateClusterRequest{
-			Update: &containerBeta.ClusterUpdate{
-				DesiredMonitoringService: desiredMonitoringService,
-			},
+		updateF := func() error {
+			name := containerClusterFullName(project, location, clusterName)
+			req := &containerBeta.UpdateClusterRequest{
+				Update: &containerBeta.ClusterUpdate{
+					DesiredMonitoringService: monitoring,
+					DesiredLoggingService:    logging,
+				},
+			}
+			op, err := config.clientContainerBeta.Projects.Locations.Clusters.Update(name, req).Do()
+			if err != nil {
+				return err
+			}
+
+			// Wait until it's updated
+			return containerSharedOperationWait(config, op, project, location, "updating GKE logging+monitoring service", timeoutInMinutes, 2)
 		}
 
-		updateF := updateFunc(req, "updating GKE cluster monitoring service")
 		// Call update serially.
 		if err := lockedCall(lockKey, updateF); err != nil {
 			return err
 		}
-		log.Printf("[INFO] Monitoring service for GKE cluster %s has been updated to %s", d.Id(),
-			desiredMonitoringService)
 
+		log.Printf("[INFO] GKE cluster %s: logging service has been updated to %s, monitoring service has been updated to %s", d.Id(), logging, monitoring)
+		d.SetPartial("logging_service")
 		d.SetPartial("monitoring_service")
 	}
 
@@ -1216,33 +1213,6 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 			}
 		}
 		d.SetPartial("node_pool")
-	}
-
-	if d.HasChange("logging_service") {
-		logging := d.Get("logging_service").(string)
-
-		req := &containerBeta.SetLoggingServiceRequest{
-			LoggingService: logging,
-		}
-		updateF := func() error {
-			name := containerClusterFullName(project, location, clusterName)
-			op, err := config.clientContainerBeta.Projects.Locations.Clusters.SetLogging(name, req).Do()
-			if err != nil {
-				return err
-			}
-
-			// Wait until it's updated
-			return containerSharedOperationWait(config, op, project, location, "updating GKE logging service", timeoutInMinutes, 2)
-		}
-
-		// Call update serially.
-		if err := lockedCall(lockKey, updateF); err != nil {
-			return err
-		}
-
-		log.Printf("[INFO] GKE cluster %s: logging service has been updated to %s", d.Id(),
-			logging)
-		d.SetPartial("logging_service")
 	}
 
 	if d.HasChange("node_config") {

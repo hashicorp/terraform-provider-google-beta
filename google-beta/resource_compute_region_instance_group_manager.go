@@ -36,40 +36,40 @@ func resourceComputeRegionInstanceGroupManager() *schema.Resource {
 		},
 
 		Schema: map[string]*schema.Schema{
-			"base_instance_name": &schema.Schema{
+			"base_instance_name": {
 				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: true,
 			},
 
-			"version": &schema.Schema{
+			"version": {
 				Type:     schema.TypeList,
 				Required: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"name": &schema.Schema{
+						"name": {
 							Type:     schema.TypeString,
 							Required: true,
 						},
 
-						"instance_template": &schema.Schema{
+						"instance_template": {
 							Type:             schema.TypeString,
 							Required:         true,
 							DiffSuppressFunc: compareSelfLinkRelativePaths,
 						},
 
-						"target_size": &schema.Schema{
+						"target_size": {
 							Type:     schema.TypeList,
 							Optional: true,
 							MaxItems: 1,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
-									"fixed": &schema.Schema{
+									"fixed": {
 										Type:     schema.TypeInt,
 										Optional: true,
 									},
 
-									"percent": &schema.Schema{
+									"percent": {
 										Type:         schema.TypeInt,
 										Optional:     true,
 										ValidateFunc: validation.IntBetween(0, 100),
@@ -81,45 +81,45 @@ func resourceComputeRegionInstanceGroupManager() *schema.Resource {
 				},
 			},
 
-			"name": &schema.Schema{
+			"name": {
 				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: true,
 			},
 
-			"region": &schema.Schema{
+			"region": {
 				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: true,
 			},
 
-			"description": &schema.Schema{
+			"description": {
 				Type:     schema.TypeString,
 				Optional: true,
 				ForceNew: true,
 			},
 
-			"fingerprint": &schema.Schema{
+			"fingerprint": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
 
-			"instance_group": &schema.Schema{
+			"instance_group": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
 
-			"named_port": &schema.Schema{
+			"named_port": {
 				Type:     schema.TypeSet,
 				Optional: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"name": &schema.Schema{
+						"name": {
 							Type:     schema.TypeString,
 							Required: true,
 						},
 
-						"port": &schema.Schema{
+						"port": {
 							Type:     schema.TypeInt,
 							Required: true,
 						},
@@ -127,19 +127,19 @@ func resourceComputeRegionInstanceGroupManager() *schema.Resource {
 				},
 			},
 
-			"project": &schema.Schema{
+			"project": {
 				Type:     schema.TypeString,
 				Optional: true,
 				ForceNew: true,
 				Computed: true,
 			},
 
-			"self_link": &schema.Schema{
+			"self_link": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
 
-			"target_pools": &schema.Schema{
+			"target_pools": {
 				Type:     schema.TypeSet,
 				Optional: true,
 				Elem: &schema.Schema{
@@ -147,7 +147,7 @@ func resourceComputeRegionInstanceGroupManager() *schema.Resource {
 				},
 				Set: selfLinkRelativePathHash,
 			},
-			"target_size": &schema.Schema{
+			"target_size": {
 				Type:     schema.TypeInt,
 				Computed: true,
 				Optional: true,
@@ -156,25 +156,25 @@ func resourceComputeRegionInstanceGroupManager() *schema.Resource {
 			// If true, the resource will report ready only after no instances are being created.
 			// This will not block future reads if instances are being recreated, and it respects
 			// the "createNoRetry" parameter that's available for this resource.
-			"wait_for_instances": &schema.Schema{
+			"wait_for_instances": {
 				Type:     schema.TypeBool,
 				Optional: true,
 				Default:  false,
 			},
 
-			"auto_healing_policies": &schema.Schema{
+			"auto_healing_policies": {
 				Type:     schema.TypeList,
 				Optional: true,
 				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"health_check": &schema.Schema{
+						"health_check": {
 							Type:             schema.TypeString,
 							Required:         true,
 							DiffSuppressFunc: compareSelfLinkRelativePaths,
 						},
 
-						"initial_delay_sec": &schema.Schema{
+						"initial_delay_sec": {
 							Type:         schema.TypeInt,
 							Required:     true,
 							ValidateFunc: validation.IntBetween(0, 3600),
@@ -183,7 +183,7 @@ func resourceComputeRegionInstanceGroupManager() *schema.Resource {
 				},
 			},
 
-			"distribution_policy_zones": &schema.Schema{
+			"distribution_policy_zones": {
 				Type:     schema.TypeSet,
 				Optional: true,
 				ForceNew: true,
@@ -195,54 +195,54 @@ func resourceComputeRegionInstanceGroupManager() *schema.Resource {
 				},
 			},
 
-			"update_policy": &schema.Schema{
+			"update_policy": {
 				Computed: true,
 				Type:     schema.TypeList,
 				Optional: true,
 				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"minimal_action": &schema.Schema{
+						"minimal_action": {
 							Type:         schema.TypeString,
 							Required:     true,
 							ValidateFunc: validation.StringInSlice([]string{"RESTART", "REPLACE"}, false),
 						},
 
-						"type": &schema.Schema{
+						"type": {
 							Type:         schema.TypeString,
 							Required:     true,
 							ValidateFunc: validation.StringInSlice([]string{"OPPORTUNISTIC", "PROACTIVE"}, false),
 						},
 
-						"max_surge_fixed": &schema.Schema{
+						"max_surge_fixed": {
 							Type:          schema.TypeInt,
 							Optional:      true,
 							Computed:      true,
 							ConflictsWith: []string{"update_policy.0.max_surge_percent"},
 						},
 
-						"max_surge_percent": &schema.Schema{
+						"max_surge_percent": {
 							Type:          schema.TypeInt,
 							Optional:      true,
 							ConflictsWith: []string{"update_policy.0.max_surge_fixed"},
 							ValidateFunc:  validation.IntBetween(0, 100),
 						},
 
-						"max_unavailable_fixed": &schema.Schema{
+						"max_unavailable_fixed": {
 							Type:          schema.TypeInt,
 							Optional:      true,
 							Computed:      true,
 							ConflictsWith: []string{"update_policy.0.max_unavailable_percent"},
 						},
 
-						"max_unavailable_percent": &schema.Schema{
+						"max_unavailable_percent": {
 							Type:          schema.TypeInt,
 							Optional:      true,
 							ConflictsWith: []string{"update_policy.0.max_unavailable_fixed"},
 							ValidateFunc:  validation.IntBetween(0, 100),
 						},
 
-						"min_ready_sec": &schema.Schema{
+						"min_ready_sec": {
 							Type:         schema.TypeInt,
 							Optional:     true,
 							ValidateFunc: validation.IntBetween(0, 3600),
@@ -369,9 +369,7 @@ func resourceComputeRegionInstanceGroupManagerRead(d *schema.ResourceData, meta 
 	}
 
 	d.Set("base_instance_name", manager.BaseInstanceName)
-	if err := d.Set("version", flattenVersions(manager.Versions)); err != nil {
-		return err
-	}
+
 	d.Set("name", manager.Name)
 	d.Set("region", GetResourceNameFromSelfLink(manager.Region))
 	d.Set("description", manager.Description)
@@ -385,13 +383,16 @@ func resourceComputeRegionInstanceGroupManagerRead(d *schema.ResourceData, meta 
 	}
 	d.Set("fingerprint", manager.Fingerprint)
 	d.Set("instance_group", ConvertSelfLinkToV1(manager.InstanceGroup))
-	if err := d.Set("auto_healing_policies", flattenAutoHealingPolicies(manager.AutoHealingPolicies)); err != nil {
-		return fmt.Errorf("Error setting auto_healing_policies in state: %s", err.Error())
-	}
 	if err := d.Set("distribution_policy_zones", flattenDistributionPolicy(manager.DistributionPolicy)); err != nil {
 		return err
 	}
 	d.Set("self_link", ConvertSelfLinkToV1(manager.SelfLink))
+	if err := d.Set("auto_healing_policies", flattenAutoHealingPolicies(manager.AutoHealingPolicies)); err != nil {
+		return fmt.Errorf("Error setting auto_healing_policies in state: %s", err.Error())
+	}
+	if err := d.Set("version", flattenVersions(manager.Versions)); err != nil {
+		return err
+	}
 	if err := d.Set("update_policy", flattenUpdatePolicy(manager.UpdatePolicy)); err != nil {
 		return fmt.Errorf("Error setting update_policy in state: %s", err.Error())
 	}
