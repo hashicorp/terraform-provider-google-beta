@@ -1,3 +1,8 @@
+## 2.0.0 (Unreleased)
+
+ENHANCEMENTS:
+* The `google_iam_policy` data source now supports Audit Configs [GH-243]
+
 ## 1.20.0 (December 14, 2018)
 
 DEPRECATIONS:
