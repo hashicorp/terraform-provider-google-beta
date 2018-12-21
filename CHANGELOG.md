@@ -1,5 +1,8 @@
 ## 2.0.0 (Unreleased)
 
+FEATURES:
+* **New Resource**: `google_project_iam_audit_config` [GH-265]
+
 ENHANCEMENTS:
 * project: The `google_iam_policy` data source now supports Audit Configs [GH-243]
 
