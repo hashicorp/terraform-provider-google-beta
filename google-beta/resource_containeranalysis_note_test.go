@@ -6,7 +6,6 @@ import (
 
 	"github.com/hashicorp/terraform/helper/acctest"
 	"github.com/hashicorp/terraform/helper/resource"
-	"github.com/hashicorp/terraform/terraform"
 )
 
 func TestAccContainerAnalysisNote_basic(t *testing.T) {
@@ -60,32 +59,6 @@ func TestAccContainerAnalysisNote_update(t *testing.T) {
 			},
 		},
 	})
-}
-
-func testAccCheckContainerAnalysisNoteDestroy(s *terraform.State) error {
-	config := testAccProvider.Meta().(*Config)
-
-	for _, rs := range s.RootModule().Resources {
-		if rs.Type != "google_container_analysis_note" {
-			continue
-		}
-
-		project, err := getTestProject(rs.Primary, config)
-		if err != nil {
-			return err
-		}
-
-		name := rs.Primary.Attributes["name"]
-
-		url := fmt.Sprintf("https://containeranalysis.googleapis.com/v1alpha1/projects/%s/notes/%s", project, name)
-		_, err = sendRequest(config, "GET", url, nil)
-
-		if err == nil {
-			return fmt.Errorf("Error, container analysis note %s still exists", name)
-		}
-	}
-
-	return nil
 }
 
 func testAccContainerAnalysisNoteBasic(name, readableName string) string {

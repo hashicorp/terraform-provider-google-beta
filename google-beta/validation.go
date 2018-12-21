@@ -6,6 +6,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/validation"
@@ -183,6 +184,45 @@ func validateProjectName() schema.SchemaValidateFunc {
 			errors = append(errors, fmt.Errorf(
 				"%q name must be 4 to 30 characters with lowercase and uppercase letters, numbers, hyphen, single-quote, double-quote, space, and exclamation point.", value))
 		}
+		return
+	}
+}
+
+func validateDuration() schema.SchemaValidateFunc {
+	return func(i interface{}, k string) (s []string, es []error) {
+		v, ok := i.(string)
+		if !ok {
+			es = append(es, fmt.Errorf("expected type of %s to be string", k))
+			return
+		}
+
+		if _, err := time.ParseDuration(v); err != nil {
+			es = append(es, fmt.Errorf("expected %s to be a duration, but parsing gave an error: %s", k, err.Error()))
+			return
+		}
+
+		return
+	}
+}
+
+// StringNotInSlice returns a SchemaValidateFunc which tests if the provided value
+// is of type string and that it matches none of the element in the invalid slice.
+// if ignorecase is true, case is ignored.
+func StringNotInSlice(invalid []string, ignoreCase bool) schema.SchemaValidateFunc {
+	return func(i interface{}, k string) (s []string, es []error) {
+		v, ok := i.(string)
+		if !ok {
+			es = append(es, fmt.Errorf("expected type of %s to be string", k))
+			return
+		}
+
+		for _, str := range invalid {
+			if v == str || (ignoreCase && strings.ToLower(v) == strings.ToLower(str)) {
+				es = append(es, fmt.Errorf("expected %s to not match any of %v, got %s", k, invalid, v))
+				return
+			}
+		}
+
 		return
 	}
 }

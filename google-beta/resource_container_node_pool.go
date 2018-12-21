@@ -36,24 +36,24 @@ func resourceContainerNodePool() *schema.Resource {
 		Schema: mergeSchemas(
 			schemaNodePool,
 			map[string]*schema.Schema{
-				"project": &schema.Schema{
+				"project": {
 					Type:     schema.TypeString,
 					Optional: true,
 					Computed: true,
 					ForceNew: true,
 				},
-				"zone": &schema.Schema{
+				"zone": {
 					Type:     schema.TypeString,
 					Optional: true,
 					Computed: true,
 					ForceNew: true,
 				},
-				"cluster": &schema.Schema{
+				"cluster": {
 					Type:     schema.TypeString,
 					Required: true,
 					ForceNew: true,
 				},
-				"region": &schema.Schema{
+				"region": {
 					Type:     schema.TypeString,
 					Optional: true,
 					ForceNew: true,
@@ -63,19 +63,19 @@ func resourceContainerNodePool() *schema.Resource {
 }
 
 var schemaNodePool = map[string]*schema.Schema{
-	"autoscaling": &schema.Schema{
+	"autoscaling": {
 		Type:     schema.TypeList,
 		Optional: true,
 		MaxItems: 1,
 		Elem: &schema.Resource{
 			Schema: map[string]*schema.Schema{
-				"min_node_count": &schema.Schema{
+				"min_node_count": {
 					Type:         schema.TypeInt,
 					Required:     true,
 					ValidateFunc: validation.IntAtLeast(0),
 				},
 
-				"max_node_count": &schema.Schema{
+				"max_node_count": {
 					Type:         schema.TypeInt,
 					Required:     true,
 					ValidateFunc: validation.IntAtLeast(1),
@@ -84,14 +84,14 @@ var schemaNodePool = map[string]*schema.Schema{
 		},
 	},
 
-	"max_pods_per_node": &schema.Schema{
+	"max_pods_per_node": {
 		Type:     schema.TypeInt,
 		Optional: true,
 		ForceNew: true,
 		Computed: true,
 	},
 
-	"initial_node_count": &schema.Schema{
+	"initial_node_count": {
 		Type:     schema.TypeInt,
 		Optional: true,
 		ForceNew: true,
@@ -126,19 +126,19 @@ var schemaNodePool = map[string]*schema.Schema{
 		},
 	},
 
-	"name": &schema.Schema{
+	"name": {
 		Type:     schema.TypeString,
 		Optional: true,
 		Computed: true,
 		ForceNew: true,
 	},
 
-	"name_prefix": &schema.Schema{
+	"name_prefix": {
 		Type:     schema.TypeString,
 		Optional: true,
 		Computed: true,
 		ForceNew: true,
-		Deprecated: "Use the random provider instead. See migration instructions at " +
+		Removed: "Use the random provider instead. See migration instructions at " +
 			"https://github.com/terraform-providers/terraform-provider-google/issues/1054#issuecomment-377390209",
 	},
 
@@ -440,12 +440,7 @@ func resourceContainerNodePoolStateImporter(d *schema.ResourceData, meta interfa
 func expandNodePool(d *schema.ResourceData, prefix string) (*containerBeta.NodePool, error) {
 	var name string
 	if v, ok := d.GetOk(prefix + "name"); ok {
-		if _, ok := d.GetOk(prefix + "name_prefix"); ok {
-			return nil, fmt.Errorf("Cannot specify both name and name_prefix for a node_pool")
-		}
 		name = v.(string)
-	} else if v, ok := d.GetOk(prefix + "name_prefix"); ok {
-		name = resource.PrefixedUniqueId(v.(string))
 	} else {
 		name = resource.UniqueId()
 	}
@@ -519,7 +514,6 @@ func flattenNodePool(d *schema.ResourceData, config *Config, np *containerBeta.N
 	}
 	nodePool := map[string]interface{}{
 		"name":                np.Name,
-		"name_prefix":         d.Get(prefix + "name_prefix"),
 		"initial_node_count":  np.InitialNodeCount,
 		"node_count":          size / len(np.InstanceGroupUrls),
 		"node_config":         flattenNodeConfig(np.Config),
@@ -529,7 +523,7 @@ func flattenNodePool(d *schema.ResourceData, config *Config, np *containerBeta.N
 
 	if np.Autoscaling != nil && np.Autoscaling.Enabled {
 		nodePool["autoscaling"] = []map[string]interface{}{
-			map[string]interface{}{
+			{
 				"min_node_count": np.Autoscaling.MinNodeCount,
 				"max_node_count": np.Autoscaling.MaxNodeCount,
 			},
@@ -743,6 +737,5 @@ func nodePoolUpdate(d *schema.ResourceData, meta interface{}, nodePoolInfo *Node
 }
 
 func getNodePoolName(id string) string {
-	// name can be specified with name, name_prefix, or neither, so read it from the id.
 	return strings.Split(id, "/")[2]
 }

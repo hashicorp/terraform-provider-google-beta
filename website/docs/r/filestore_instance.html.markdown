@@ -24,7 +24,7 @@ description: |-
 A Google Cloud Filestore instance.
 
 ~> **Warning:** This resource is in beta, and should be used with the terraform-provider-google-beta provider.
-See [Provider Versions](https://terraform.io/docs/provider/google/provider_versions.html) for more details on beta resources.
+See [Provider Versions](https://terraform.io/docs/providers/google/provider_versions.html) for more details on beta resources.
 
 To get more information about Instance, see:
 
@@ -34,23 +34,30 @@ To get more information about Instance, see:
     * [Use with Kubernetes](https://cloud.google.com/filestore/docs/accessing-fileshares)
     * [Copying Data In/Out](https://cloud.google.com/filestore/docs/copying-data)
 
-## Example Usage
+<div class = "oics-button" style="float: right; margin: 0 0 -15px">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=filestore_instance_basic&cloudshell_image=gcr.io%2Fgraphite-cloud-shell-images%2Fterraform%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+    <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
+  </a>
+</div>
+## Example Usage - Filestore Instance Basic
 
-### Basic Usage
+
 ```hcl
-  resource "google_file_instance" "instance" {
-    name = "test-instance"
-    zone = "us-central1-b"
-    file_shares {
-      capacity_gb = 2660
-      name = "share1"
-    }
-    networks {
-      network = "default"
-      modes = ["MODE_IPV4"]
-    }
-    tier = "PREMIUM"
+resource "google_filestore_instance" "instance" {
+  name = "test-instance"
+  zone = "us-central1-b"
+  tier = "PREMIUM"
+
+  file_shares {
+    capacity_gb = 2660
+    name        = "share1"
   }
+
+  networks {
+    network = "default"
+    modes   = ["MODE_IPV4"]
+  }
+}
 ```
 
 ## Argument Reference
@@ -143,16 +150,19 @@ In addition to the arguments listed above, the following computed attributes are
 This resource provides the following
 [Timeouts](/docs/configuration/resources.html#timeouts) configuration options:
 
-- `create` - Default is 5 minutes.
-- `update` - Default is 4 minutes.
-- `delete` - Default is 4 minutes.
+- `create` - Default is 6 minutes.
+- `update` - Default is 6 minutes.
+- `delete` - Default is 6 minutes.
 
 ## Import
 
 Instance can be imported using any of these accepted formats:
 
 ```
-$ terraform import google_filestore_instance.default projects/{{project}}/locations/{{zone}}/instances/{{name}}
-$ terraform import google_filestore_instance.default {{project}}/{{zone}}/{{name}}
-$ terraform import google_filestore_instance.default {{name}}
+$ terraform import -provider=google-beta google_filestore_instance.default projects/{{project}}/locations/{{zone}}/instances/{{name}}
+$ terraform import -provider=google-beta google_filestore_instance.default {{project}}/{{zone}}/{{name}}
+$ terraform import -provider=google-beta google_filestore_instance.default {{name}}
 ```
+
+-> If you're importing a resource with beta features, make sure to include `-provider=google-beta`
+as an argument so that Terraform uses the correct provider to import your resource.

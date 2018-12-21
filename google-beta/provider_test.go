@@ -35,6 +35,12 @@ var regionEnvVars = []string{
 	"CLOUDSDK_COMPUTE_REGION",
 }
 
+var zoneEnvVars = []string{
+	"GOOGLE_ZONE",
+	"GCLOUD_ZONE",
+	"CLOUDSDK_COMPUTE_ZONE",
+}
+
 var orgEnvVars = []string{
 	"GOOGLE_ORG",
 }
@@ -70,6 +76,13 @@ func TestProvider_impl(t *testing.T) {
 	var _ terraform.ResourceProvider = Provider()
 }
 
+func TestProvider_noDuplicatesInResourceMap(t *testing.T) {
+	_, err := ResourceMapWithErrors()
+	if err != nil {
+		t.Error(err)
+	}
+}
+
 func testAccPreCheck(t *testing.T) {
 	if v := os.Getenv("GOOGLE_CREDENTIALS_FILE"); v != "" {
 		creds, err := ioutil.ReadFile(v)
@@ -89,6 +102,10 @@ func testAccPreCheck(t *testing.T) {
 
 	if v := multiEnvSearch(regionEnvVars); v != "us-central1" {
 		t.Fatalf("One of %s must be set to us-central1 for acceptance tests", strings.Join(regionEnvVars, ", "))
+	}
+
+	if v := multiEnvSearch(zoneEnvVars); v != "us-central1-a" {
+		t.Fatalf("One of %s must be set to us-central1-a for acceptance tests", strings.Join(zoneEnvVars, ", "))
 	}
 }
 

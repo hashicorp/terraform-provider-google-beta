@@ -25,6 +25,7 @@ Represents an InterconnectAttachment (VLAN attachment) resource. For more
 information, see Creating VLAN Attachments.
 
 
+
 ## Example Usage
 
 ```hcl
@@ -130,3 +131,6 @@ $ terraform import google_compute_interconnect_attachment.default projects/{{pro
 $ terraform import google_compute_interconnect_attachment.default {{project}}/{{region}}/{{name}}
 $ terraform import google_compute_interconnect_attachment.default {{name}}
 ```
+
+-> If you're importing a resource with beta features, make sure to include `-provider=google-beta`
+as an argument so that Terraform uses the correct provider to import your resource.

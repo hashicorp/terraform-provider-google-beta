@@ -25,23 +25,20 @@ A Lien represents an encumbrance on the actions that can be performed on a resou
 
 
 
-## Example Usage
+## Example Usage - Resource Manager Lien
+
 
 ```hcl
-resource "random_id" "r" {
-  byte_length = 8
-}
-
-resource "google_project" "project" {
-  project_id = "project-${random_id.r.hex}"
-  name = "A very important project!"
-}
-
 resource "google_resource_manager_lien" "lien" {
   parent = "projects/${google_project.project.number}"
   restrictions = ["resourcemanager.projects.delete"]
   origin = "machine-readable-explanation"
-  reason = "This project is very important to me!"
+  reason = "This project is an important environment"
+}
+
+resource "google_project" "project" {
+  project_id = "staging-project"
+  name = "A very important project!"
 }
 ```
 
@@ -93,6 +90,13 @@ In addition to the arguments listed above, the following computed attributes are
   Time of creation
 
 
+## Timeouts
+
+This resource provides the following
+[Timeouts](/docs/configuration/resources.html#timeouts) configuration options:
+
+- `create` - Default is 4 minutes.
+- `delete` - Default is 4 minutes.
 
 ## Import
 
@@ -101,3 +105,6 @@ Lien can be imported using any of these accepted formats:
 ```
 $ terraform import google_resource_manager_lien.default {{parent}}/{{name}}
 ```
+
+-> If you're importing a resource with beta features, make sure to include `-provider=google-beta`
+as an argument so that Terraform uses the correct provider to import your resource.
