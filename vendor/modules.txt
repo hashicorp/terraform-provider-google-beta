@@ -236,10 +236,10 @@ golang.org/x/crypto/ed25519/internal/edwards25519
 golang.org/x/crypto/internal/subtle
 # golang.org/x/net v0.0.0-20180826012351-8a410e7b638d
 golang.org/x/net/context
-golang.org/x/net/context/ctxhttp
 golang.org/x/net/html
 golang.org/x/net/http2
 golang.org/x/net/trace
+golang.org/x/net/context/ctxhttp
 golang.org/x/net/html/atom
 golang.org/x/net/http/httpguts
 golang.org/x/net/http2/hpack
@@ -258,7 +258,7 @@ golang.org/x/text/unicode/norm
 golang.org/x/text/transform
 golang.org/x/text/secure/bidirule
 golang.org/x/text/unicode/bidi
-# google.golang.org/api v0.0.0-20181102150758-04bb50b6b83d
+# google.golang.org/api v0.0.0-20181221000618-65a46cafb132
 google.golang.org/api/accesscontextmanager/v1beta
 google.golang.org/api/appengine/v1
 google.golang.org/api/bigquery/v2
