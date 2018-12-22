@@ -121,6 +121,7 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 		GeneratedFilestoreResourcesMap,
 		GeneratedAccessContextManagerResourcesMap,
 		// end beta-only products
+		GeneratedAppengineResourcesMap,
 		GeneratedComputeResourcesMap,
 		GeneratedDnsResourcesMap,
 		GeneratedRedisResourcesMap,
