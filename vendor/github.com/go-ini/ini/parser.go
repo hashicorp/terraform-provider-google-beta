@@ -318,14 +318,11 @@ func (f *File) parse(reader io.Reader) (err error) {
 		if err != nil {
 			// Treat as boolean key when desired, and whole line is key name.
 			if IsErrDelimiterNotFound(err) && f.options.AllowBooleanKeys {
-				kname, err := p.readValue(line, f.options.IgnoreContinuation)
+				key, err := section.NewKey(string(line), "true")
 				if err != nil {
 					return err
 				}
-				key, err := section.NewBooleanKey(kname)
-				if err != nil {
-					return err
-				}
+				key.isBooleanType = true
 				key.Comment = strings.TrimSpace(p.comment.String())
 				p.comment.Reset()
 				continue
@@ -341,16 +338,17 @@ func (f *File) parse(reader io.Reader) (err error) {
 			p.count++
 		}
 
-		value, err := p.readValue(line[offset:], f.options.IgnoreContinuation)
-		if err != nil {
-			return err
-		}
-
-		key, err := section.NewKey(kname, value)
+		key, err := section.NewKey(kname, "")
 		if err != nil {
 			return err
 		}
 		key.isAutoIncrement = isAutoIncr
+
+		value, err := p.readValue(line[offset:], f.options.IgnoreContinuation)
+		if err != nil {
+			return err
+		}
+		key.SetValue(value)
 		key.Comment = strings.TrimSpace(p.comment.String())
 		p.comment.Reset()
 	}

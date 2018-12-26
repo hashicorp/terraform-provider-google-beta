@@ -79,9 +79,8 @@ type Waiter struct {
 	MaxAttempts int
 	Delay       WaiterDelay
 
-	RequestOptions   []Option
-	NewRequest       func([]Option) (*Request, error)
-	SleepWithContext func(aws.Context, time.Duration) error
+	RequestOptions []Option
+	NewRequest     func([]Option) (*Request, error)
 }
 
 // ApplyOptions updates the waiter with the list of waiter options provided.
@@ -196,15 +195,8 @@ func (w Waiter) WaitWithContext(ctx aws.Context) error {
 		if sleepFn := req.Config.SleepDelay; sleepFn != nil {
 			// Support SleepDelay for backwards compatibility and testing
 			sleepFn(delay)
-		} else {
-			sleepCtxFn := w.SleepWithContext
-			if sleepCtxFn == nil {
-				sleepCtxFn = aws.SleepWithContext
-			}
-
-			if err := sleepCtxFn(ctx, delay); err != nil {
-				return awserr.New(CanceledErrorCode, "waiter context canceled", err)
-			}
+		} else if err := aws.SleepWithContext(ctx, delay); err != nil {
+			return awserr.New(CanceledErrorCode, "waiter context canceled", err)
 		}
 	}
 

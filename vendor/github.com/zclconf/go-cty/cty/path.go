@@ -15,10 +15,6 @@ import (
 // but callers can also feel free to just produce a slice of PathStep manually
 // and convert to this type, which may be more appropriate in environments
 // where memory pressure is a concern.
-//
-// Although a Path is technically mutable, by convention callers should not
-// mutate a path once it has been built and passed to some other subsystem.
-// Instead, use Copy and then mutate the copy before using it.
 type Path []PathStep
 
 // PathStep represents a single step down into a data structure, as part
@@ -160,10 +156,6 @@ func (s IndexStep) Apply(val Value) (Value, error) {
 	return val.Index(s.Key), nil
 }
 
-func (s IndexStep) GoString() string {
-	return fmt.Sprintf("cty.IndexStep{Key:%#v}", s.Key)
-}
-
 // GetAttrStep is a Step implementation representing retrieving an attribute
 // from a value, which must be of an object type.
 type GetAttrStep struct {
@@ -183,8 +175,4 @@ func (s GetAttrStep) Apply(val Value) (Value, error) {
 	}
 
 	return val.GetAttr(s.Name), nil
-}
-
-func (s GetAttrStep) GoString() string {
-	return fmt.Sprintf("cty.GetAttrStep{Name:%q}", s.Name)
 }

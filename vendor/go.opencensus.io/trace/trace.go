@@ -25,7 +25,6 @@ import (
 	"time"
 
 	"go.opencensus.io/internal"
-	"go.opencensus.io/trace/tracestate"
 )
 
 // Span represents a span of a trace.  It has an associated SpanContext, and
@@ -89,7 +88,6 @@ type SpanContext struct {
 	TraceID      TraceID
 	SpanID       SpanID
 	TraceOptions TraceOptions
-	Tracestate   *tracestate.Tracestate
 }
 
 type contextKey struct{}

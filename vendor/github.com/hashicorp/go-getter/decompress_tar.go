@@ -13,7 +13,6 @@ import (
 func untar(input io.Reader, dst, src string, dir bool) error {
 	tarR := tar.NewReader(input)
 	done := false
-	dirHdrs := []*tar.Header{}
 	for {
 		hdr, err := tarR.Next()
 		if err == io.EOF {
@@ -22,7 +21,7 @@ func untar(input io.Reader, dst, src string, dir bool) error {
 				return fmt.Errorf("empty archive: %s", src)
 			}
 
-			break
+			return nil
 		}
 		if err != nil {
 			return err
@@ -35,11 +34,6 @@ func untar(input io.Reader, dst, src string, dir bool) error {
 
 		path := dst
 		if dir {
-			// Disallow parent traversal
-			if containsDotDot(hdr.Name) {
-				return fmt.Errorf("entry contains '..': %s", hdr.Name)
-			}
-
 			path = filepath.Join(path, hdr.Name)
 		}
 
@@ -52,10 +46,6 @@ func untar(input io.Reader, dst, src string, dir bool) error {
 			if err := os.MkdirAll(path, 0755); err != nil {
 				return err
 			}
-
-			// Record the directory information so that we may set its attributes
-			// after all files have been extracted
-			dirHdrs = append(dirHdrs, hdr)
 
 			continue
 		} else {
@@ -94,23 +84,7 @@ func untar(input io.Reader, dst, src string, dir bool) error {
 		if err := os.Chmod(path, hdr.FileInfo().Mode()); err != nil {
 			return err
 		}
-
-		// Set the access and modification time
-		if err := os.Chtimes(path, hdr.AccessTime, hdr.ModTime); err != nil {
-			return err
-		}
 	}
-
-	// Adding a file or subdirectory changes the mtime of a directory
-	// We therefore wait until we've extracted everything and then set the mtime and atime attributes
-	for _, dirHdr := range dirHdrs {
-		path := filepath.Join(dst, dirHdr.Name)
-		if err := os.Chtimes(path, dirHdr.AccessTime, dirHdr.ModTime); err != nil {
-			return err
-		}
-	}
-
-	return nil
 }
 
 // tarDecompressor is an implementation of Decompressor that can
