@@ -20,7 +20,6 @@
 package metadata // import "cloud.google.com/go/compute/metadata"
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -32,6 +31,9 @@ import (
 	"strings"
 	"sync"
 	"time"
+
+	"golang.org/x/net/context"
+	"golang.org/x/net/context/ctxhttp"
 )
 
 const (
@@ -141,7 +143,7 @@ func testOnGCE() bool {
 	go func() {
 		req, _ := http.NewRequest("GET", "http://"+metadataIP, nil)
 		req.Header.Set("User-Agent", userAgent)
-		res, err := defaultClient.hc.Do(req.WithContext(ctx))
+		res, err := ctxhttp.Do(ctx, defaultClient.hc, req)
 		if err != nil {
 			resc <- false
 			return

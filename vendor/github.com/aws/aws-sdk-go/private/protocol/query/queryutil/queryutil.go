@@ -121,10 +121,6 @@ func (q *queryParser) parseList(v url.Values, value reflect.Value, prefix string
 		return nil
 	}
 
-	if _, ok := value.Interface().([]byte); ok {
-		return q.parseScalar(v, value, prefix, tag)
-	}
-
 	// check for unflattened list member
 	if !q.isEC2 && tag.Get("flattened") == "" {
 		if listName := tag.Get("locationNameList"); listName == "" {
@@ -233,12 +229,7 @@ func (q *queryParser) parseScalar(v url.Values, r reflect.Value, name string, ta
 		v.Set(name, strconv.FormatFloat(float64(value), 'f', -1, 32))
 	case time.Time:
 		const ISO8601UTC = "2006-01-02T15:04:05Z"
-		format := tag.Get("timestampFormat")
-		if len(format) == 0 {
-			format = protocol.ISO8601TimeFormatName
-		}
-
-		v.Set(name, protocol.FormatTime(format, value))
+		v.Set(name, value.UTC().Format(ISO8601UTC))
 	default:
 		return fmt.Errorf("unsupported value for param %s: %v (%s)", name, r.Interface(), r.Type().Name())
 	}

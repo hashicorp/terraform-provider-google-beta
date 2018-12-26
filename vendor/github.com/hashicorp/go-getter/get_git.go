@@ -11,7 +11,6 @@ import (
 	"strings"
 
 	urlhelper "github.com/hashicorp/go-getter/helper/url"
-	"github.com/hashicorp/go-safetemp"
 	"github.com/hashicorp/go-version"
 )
 
@@ -106,11 +105,13 @@ func (g *GitGetter) Get(dst string, u *url.URL) error {
 // GetFile for Git doesn't support updating at this time. It will download
 // the file every time.
 func (g *GitGetter) GetFile(dst string, u *url.URL) error {
-	td, tdcloser, err := safetemp.Dir("", "getter")
+	td, err := ioutil.TempDir("", "getter-git")
 	if err != nil {
 		return err
 	}
-	defer tdcloser.Close()
+	if err := os.RemoveAll(td); err != nil {
+		return err
+	}
 
 	// Get the filename, and strip the filename from the URL so we can
 	// just get the repository directly.
