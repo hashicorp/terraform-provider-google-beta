@@ -1,17 +1,16 @@
-
-package hclsyntax
+package zclsyntax
 
 import (
     "bytes"
 
-    "github.com/hashicorp/hcl2/hcl"
+    "github.com/zclconf/go-zcl/zcl"
 )
 
 // This file is generated from scan_tokens.rl. DO NOT EDIT.
 %%{
   # (except you are actually in scan_tokens.rl here, so edit away!)
 
-  machine hcltok;
+  machine zcltok;
   write data;
 }%%
 
@@ -36,10 +35,10 @@ func scanTokens(data []byte, filename string, start hcl.Pos, mode scanMode) []To
 
         NumberLitContinue = (digit|'.'|('e'|'E') ('+'|'-')? digit);
         NumberLit = digit ("" | (NumberLitContinue - '.') | (NumberLitContinue* (NumberLitContinue - '.')));
-        Ident = (ID_Start | '_') (ID_Continue | '-')*;
+        Ident = ID_Start (ID_Continue | '-')*;
 
         # Symbols that just represent themselves are handled as a single rule.
-        SelfToken = "[" | "]" | "(" | ")" | "." | "," | "*" | "/" | "%" | "+" | "-" | "=" | "<" | ">" | "!" | "?" | ":" | "\n" | "&" | "|" | "~" | "^" | ";" | "`";
+        SelfToken = "[" | "]" | "(" | ")" | "." | "," | "*" | "/" | "+" | "-" | "=" | "<" | ">" | "!" | "?" | ":" | "\n" | "&" | "|" | "~" | "^" | ";" | "`";
 
         EqualOp = "==";
         NotEqual = "!=";
@@ -60,16 +59,18 @@ func scanTokens(data []byte, filename string, start hcl.Pos, mode scanMode) []To
         Comment = (
             ("#" (any - EndOfLine)* EndOfLine) |
             ("//" (any - EndOfLine)* EndOfLine) |
-            ("/*" any* :>> "*/")
+            ("/*" any* "*/")
         );
 
-        # Note: hclwrite assumes that only ASCII spaces appear between tokens,
+        # Tabs are not valid, but we accept them in the scanner and mark them
+        # as tokens so that we can produce diagnostics advising the user to
+        # use spaces instead.
+        Tabs = 0x09+;
+
+        # Note: zclwrite assumes that only ASCII spaces appear between tokens,
         # and uses this assumption to recreate the spaces between tokens by
-        # looking at byte offset differences. This means it will produce
-        # incorrect results in the presence of tabs, but that's acceptable
-        # because the canonical style (which hclwrite itself can impose
-        # automatically is to never use tabs).
-        Spaces = (' ' | 0x09)+;
+        # looking at byte offset differences.
+        Spaces = ' '+;
 
         action beginStringTemplate {
             token(TokenOQuote);
@@ -112,25 +113,7 @@ func scanTokens(data []byte, filename string, start hcl.Pos, mode scanMode) []To
             if topdoc.StartOfLine {
                 maybeMarker := bytes.TrimSpace(data[ts:te])
                 if bytes.Equal(maybeMarker, topdoc.Marker) {
-                    // We actually emit two tokens here: the end-of-heredoc
-                    // marker first, and then separately the newline that
-                    // follows it. This then avoids issues with the closing
-                    // marker consuming a newline that would normally be used
-                    // to mark the end of an attribute definition.
-                    // We might have either a \n sequence or an \r\n sequence
-                    // here, so we must handle both.
-                    nls := te-1
-                    nle := te
-                    te--
-                    if data[te-1] == '\r' {
-                        // back up one more byte
-                        nls--
-                        te--
-                    }
                     token(TokenCHeredoc);
-                    ts = nls
-                    te = nle
-                    token(TokenNewline);
                     heredocs = heredocs[:len(heredocs)-1]
                     fret;
                 }
@@ -215,14 +198,14 @@ func scanTokens(data []byte, filename string, start hcl.Pos, mode scanMode) []To
         EndStringTmpl = '"';
         StringLiteralChars = (AnyUTF8 - ("\r"|"\n"));
         TemplateStringLiteral = (
-            ('$' ^'{' %{ fhold; }) |
-            ('%' ^'{' %{ fhold; }) |
+            ('$' ^'{') |
+            ('%' ^'{') |
             ('\\' StringLiteralChars) |
             (StringLiteralChars - ("$" | '%' | '"'))
         )+;
         HeredocStringLiteral = (
-            ('$' ^'{' %{ fhold; }) |
-            ('%' ^'{' %{ fhold; }) |
+            ('$' ^'{') |
+            ('%' ^'{') |
             (StringLiteralChars - ("$" | '%'))
         )*;
         BareStringLiteral = (
@@ -255,12 +238,6 @@ func scanTokens(data []byte, filename string, start hcl.Pos, mode scanMode) []To
             BrokenUTF8            => { token(TokenBadUTF8); };
         *|;
 
-        identOnly := |*
-            Ident            => { token(TokenIdent) };
-            BrokenUTF8       => { token(TokenBadUTF8) };
-            AnyUTF8          => { token(TokenInvalid) };
-        *|;
-
         main := |*
             Spaces           => {};
             NumberLit        => { token(TokenNumberLit) };
@@ -287,6 +264,7 @@ func scanTokens(data []byte, filename string, start hcl.Pos, mode scanMode) []To
             BeginStringTmpl  => beginStringTemplate;
             BeginHeredocTmpl => beginHeredocTemplate;
 
+            Tabs             => { token(TokenTabs) };
             BrokenUTF8       => { token(TokenBadUTF8) };
             AnyUTF8          => { token(TokenInvalid) };
         *|;
@@ -306,11 +284,9 @@ func scanTokens(data []byte, filename string, start hcl.Pos, mode scanMode) []To
     var cs int // current state
     switch mode {
     case scanNormal:
-        cs = hcltok_en_main
+        cs = zcltok_en_main
     case scanTemplate:
-        cs = hcltok_en_bareTemplate
-    case scanIdentOnly:
-        cs = hcltok_en_identOnly
+        cs = zcltok_en_bareTemplate
     default:
         panic("invalid scanMode")
     }
@@ -354,18 +330,8 @@ func scanTokens(data []byte, filename string, start hcl.Pos, mode scanMode) []To
     // If we fall out here without being in a final state then we've
     // encountered something that the scanner can't match, which we'll
     // deal with as an invalid.
-    if cs < hcltok_first_final {
-        if mode == scanTemplate && len(stack) == 0 {
-            // If we're scanning a bare template then any straggling
-            // top-level stuff is actually literal string, rather than
-            // invalid. This handles the case where the template ends
-            // with a single "$" or "%", which trips us up because we
-            // want to see another character to decide if it's a sequence
-            // or an escape.
-            f.emitToken(TokenStringLit, ts, len(data))
-        } else {
-            f.emitToken(TokenInvalid, ts, len(data))
-        }
+    if cs < zcltok_first_final {
+        f.emitToken(TokenInvalid, p, len(data))
     }
 
     // We always emit a synthetic EOF token at the end, since it gives the

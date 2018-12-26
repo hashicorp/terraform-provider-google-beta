@@ -17,7 +17,6 @@ import (
 	"strings"
 
 	urlhelper "github.com/hashicorp/go-getter/helper/url"
-	"github.com/hashicorp/go-safetemp"
 )
 
 // Client is a client for downloading things.
@@ -101,14 +100,17 @@ func (c *Client) Get() error {
 	dst := c.Dst
 	src, subDir := SourceDirSubdir(src)
 	if subDir != "" {
-		td, tdcloser, err := safetemp.Dir("", "getter")
+		tmpDir, err := ioutil.TempDir("", "tf")
 		if err != nil {
 			return err
 		}
-		defer tdcloser.Close()
+		if err := os.RemoveAll(tmpDir); err != nil {
+			return err
+		}
+		defer os.RemoveAll(tmpDir)
 
 		realDst = dst
-		dst = td
+		dst = tmpDir
 	}
 
 	u, err := urlhelper.Parse(src)

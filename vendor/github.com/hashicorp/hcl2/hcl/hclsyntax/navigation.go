@@ -3,15 +3,13 @@ package hclsyntax
 import (
 	"bytes"
 	"fmt"
-
-	"github.com/hashicorp/hcl2/hcl"
 )
 
 type navigation struct {
 	root *Body
 }
 
-// Implementation of hcled.ContextString
+// Implementation of zcled.ContextString
 func (n navigation) ContextString(offset int) string {
 	// We will walk our top-level blocks until we find one that contains
 	// the given offset, and then construct a representation of the header
@@ -40,20 +38,4 @@ func (n navigation) ContextString(offset int) string {
 		fmt.Fprintf(buf, " %q", label)
 	}
 	return buf.String()
-}
-
-func (n navigation) ContextDefRange(offset int) hcl.Range {
-	var block *Block
-	for _, candidate := range n.root.Blocks {
-		if candidate.Range().ContainsOffset(offset) {
-			block = candidate
-			break
-		}
-	}
-
-	if block == nil {
-		return hcl.Range{}
-	}
-
-	return block.DefRange()
 }
