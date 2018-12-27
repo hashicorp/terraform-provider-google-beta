@@ -318,10 +318,6 @@ func testAccRegionInstanceGroupManager_basic(template, target, igm1, igm2 string
 			network = "default"
 		}
 
-		metadata {
-			foo = "bar"
-		}
-
 		service_account {
 			scopes = ["userinfo-email", "compute-ro", "storage-ro"]
 		}
@@ -383,10 +379,6 @@ func testAccRegionInstanceGroupManager_targetSizeZero(template, igm string) stri
 			network = "default"
 		}
 
-		metadata {
-			foo = "bar"
-		}
-
 		service_account {
 			scopes = ["userinfo-email", "compute-ro", "storage-ro"]
 		}
@@ -426,10 +418,6 @@ func testAccRegionInstanceGroupManager_update(template, target, igm string) stri
 
 		network_interface {
 			network = "default"
-		}
-
-		metadata {
-			foo = "bar"
 		}
 
 		service_account {
@@ -485,10 +473,6 @@ func testAccRegionInstanceGroupManager_update2(template1, target1, target2, temp
 			network = "default"
 		}
 
-		metadata {
-			foo = "bar"
-		}
-
 		service_account {
 			scopes = ["userinfo-email", "compute-ro", "storage-ro"]
 		}
@@ -520,10 +504,6 @@ func testAccRegionInstanceGroupManager_update2(template1, target1, target2, temp
 
 		network_interface {
 			network = "default"
-		}
-
-		metadata {
-			foo = "bar"
 		}
 
 		service_account {
@@ -626,10 +606,6 @@ func testAccRegionInstanceGroupManager_separateRegions(igm1, igm2 string) string
 			network = "default"
 		}
 
-		metadata {
-			foo = "bar"
-		}
-
 		service_account {
 			scopes = ["userinfo-email", "compute-ro", "storage-ro"]
 		}
@@ -681,9 +657,7 @@ resource "google_compute_instance_template" "igm-basic" {
 	network_interface {
 		network = "default"
 	}
-	metadata {
-		foo = "bar"
-	}
+
 	service_account {
 		scopes = ["userinfo-email", "compute-ro", "storage-ro"]
 	}
@@ -740,9 +714,7 @@ resource "google_compute_instance_template" "igm-basic" {
 	network_interface {
 		network = "default"
 	}
-	metadata {
-		foo = "bar"
-	}
+
 	service_account {
 		scopes = ["userinfo-email", "compute-ro", "storage-ro"]
 	}
@@ -793,9 +765,7 @@ resource "google_compute_instance_template" "igm-primary" {
 	network_interface {
 		network = "default"
 	}
-	metadata {
-		foo = "bar"
-	}
+
 	service_account {
 		scopes = ["userinfo-email", "compute-ro", "storage-ro"]
 	}
@@ -814,9 +784,7 @@ resource "google_compute_instance_template" "igm-canary" {
 	network_interface {
 		network = "default"
 	}
-	metadata {
-		foo = "bar"
-	}
+
 	service_account {
 		scopes = ["userinfo-email", "compute-ro", "storage-ro"]
 	}
@@ -864,9 +832,6 @@ resource "google_compute_instance_template" "igm-basic" {
 	}
 	network_interface {
 		network = "default"
-	}
-	metadata {
-		foo = "bar"
 	}
 }
 

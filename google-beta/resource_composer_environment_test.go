@@ -266,21 +266,21 @@ resource "google_composer_environment" "test" {
 		node_count = 4
 
 		software_config {
-			airflow_config_overrides {
+			airflow_config_overrides = {
 			  core-load_example = "True"
 			}
 
-			pypi_packages {
+			pypi_packages = {
 			  numpy = ""
 			}
 
-			env_variables {
+			env_variables = {
 			   FOO = "bar"
 			}
 		}
  	}
 
-	labels {
+	labels = {
  		foo = "bar"
 		anotherlabel = "boo"
  	}
@@ -352,7 +352,7 @@ resource "google_composer_environment" "test" {
 	region = "us-central1"
 	config {
 		software_config {
-			pypi_packages {
+			pypi_packages = {
 			  scipy = "==1.1.0"
 			}
 		}

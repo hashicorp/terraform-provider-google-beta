@@ -73,7 +73,7 @@ resource "google_filestore_instance" "instance" {
     network = "default"
     modes = ["MODE_IPV4"]
   }
-	labels {
+	labels = {
 		foo = "bar"
 	}
   tier = "PREMIUM"
@@ -94,7 +94,7 @@ resource "google_filestore_instance" "instance" {
     network = "default"
     modes = ["MODE_IPV4"]
   }
-	labels {
+	labels = {
 		baz = "qux"
 	}
   tier = "PREMIUM"
