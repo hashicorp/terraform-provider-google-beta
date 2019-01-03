@@ -126,6 +126,7 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 		GeneratedDnsResourcesMap,
 		GeneratedRedisResourcesMap,
 		GeneratedResourceManagerResourcesMap,
+		GeneratedSourcerepoResourcesMap,
 		GeneratedStorageResourcesMap,
 		GeneratedMonitoringResourcesMap,
 		map[string]*schema.Resource{
@@ -193,7 +194,6 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_kms_crypto_key_iam_binding":            ResourceIamBindingWithImport(IamKmsCryptoKeySchema, NewKmsCryptoKeyIamUpdater, CryptoIdParseFunc),
 			"google_kms_crypto_key_iam_member":             ResourceIamMemberWithImport(IamKmsCryptoKeySchema, NewKmsCryptoKeyIamUpdater, CryptoIdParseFunc),
 			"google_service_networking_connection":         resourceServiceNetworkingConnection(),
-			"google_sourcerepo_repository":                 resourceSourceRepoRepository(),
 			"google_spanner_instance":                      resourceSpannerInstance(),
 			"google_spanner_instance_iam_binding":          ResourceIamBindingWithImport(IamSpannerInstanceSchema, NewSpannerInstanceIamUpdater, SpannerInstanceIdParseFunc),
 			"google_spanner_instance_iam_member":           ResourceIamMemberWithImport(IamSpannerInstanceSchema, NewSpannerInstanceIamUpdater, SpannerInstanceIdParseFunc),
