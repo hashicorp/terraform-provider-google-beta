@@ -24,44 +24,43 @@ import (
 	"github.com/hashicorp/terraform/terraform"
 )
 
-func TestAccComputeDisk_diskBasicExample(t *testing.T) {
+func TestAccComputeImage_imageBasicExample(t *testing.T) {
 	t.Parallel()
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckComputeDiskDestroy,
+		CheckDestroy: testAccCheckComputeImageDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccComputeDisk_diskBasicExample(acctest.RandString(10)),
+				Config: testAccComputeImage_imageBasicExample(acctest.RandString(10)),
 			},
 			{
-				ResourceName:      "google_compute_disk.default",
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            "google_compute_image.example",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"raw_disk"},
 			},
 		},
 	})
 }
 
-func testAccComputeDisk_diskBasicExample(val string) string {
+func testAccComputeImage_imageBasicExample(val string) string {
 	return fmt.Sprintf(`
-resource "google_compute_disk" "default" {
-  name  = "test-disk-%s"
-  type  = "pd-ssd"
-  zone  = "us-central1-a"
-  image = "debian-8-jessie-v20170523"
-  labels = {
-    environment = "dev"
+resource "google_compute_image" "example" {
+  name = "example-image-%s"
+
+  raw_disk {
+    source = "https://storage.googleapis.com/bosh-cpi-artifacts/bosh-stemcell-3262.4-google-kvm-ubuntu-trusty-go_agent-raw.tar.gz"
   }
 }
 `, val,
 	)
 }
 
-func testAccCheckComputeDiskDestroy(s *terraform.State) error {
+func testAccCheckComputeImageDestroy(s *terraform.State) error {
 	for name, rs := range s.RootModule().Resources {
-		if rs.Type != "google_compute_disk" {
+		if rs.Type != "google_compute_image" {
 			continue
 		}
 		if strings.HasPrefix(name, "data.") {
@@ -70,14 +69,14 @@ func testAccCheckComputeDiskDestroy(s *terraform.State) error {
 
 		config := testAccProvider.Meta().(*Config)
 
-		url, err := replaceVarsForTest(rs, "https://www.googleapis.com/compute/beta/projects/{{project}}/zones/{{zone}}/disks/{{name}}")
+		url, err := replaceVarsForTest(rs, "https://www.googleapis.com/compute/beta/projects/{{project}}/global/images/{{name}}")
 		if err != nil {
 			return err
 		}
 
 		_, err = sendRequest(config, "GET", url, nil)
 		if err == nil {
-			return fmt.Errorf("ComputeDisk still exists at %s", url)
+			return fmt.Errorf("ComputeImage still exists at %s", url)
 		}
 	}
 
