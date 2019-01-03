@@ -16,7 +16,6 @@ package google
 
 import (
 	"fmt"
-	"strings"
 	"testing"
 
 	"github.com/hashicorp/terraform/helper/acctest"
@@ -24,23 +23,24 @@ import (
 	"github.com/hashicorp/terraform/terraform"
 )
 
-func TestAccComputeForwardingRule_forwardingRuleBasicExample(t *testing.T) {
+func TestAccAppengineFirewallRule_appengineFirewallRuleBasicExample(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
+		"org_id":        getTestOrgFromEnv(t),
 		"random_suffix": acctest.RandString(10),
 	}
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckComputeForwardingRuleDestroy,
+		CheckDestroy: testAccCheckAppengineFirewallRuleDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccComputeForwardingRule_forwardingRuleBasicExample(context),
+				Config: testAccAppengineFirewallRule_appengineFirewallRuleBasicExample(context),
 			},
 			{
-				ResourceName:      "google_compute_forwarding_rule.default",
+				ResourceName:      "google_appengine_firewall_rule.rule",
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
@@ -48,39 +48,44 @@ func TestAccComputeForwardingRule_forwardingRuleBasicExample(t *testing.T) {
 	})
 }
 
-func testAccComputeForwardingRule_forwardingRuleBasicExample(context map[string]interface{}) string {
+func testAccAppengineFirewallRule_appengineFirewallRuleBasicExample(context map[string]interface{}) string {
 	return Nprintf(`
-resource "google_compute_forwarding_rule" "default" {
-  name       = "website-forwarding-rule-%{random_suffix}"
-  target     = "${google_compute_target_pool.default.self_link}"
-  port_range = "80"
+resource "google_project" "my_project" {
+  name       = "tf-test-project"
+  project_id = "test-project-%{random_suffix}"
+  org_id     = "%{org_id}"
 }
 
-resource "google_compute_target_pool" "default" {
-  name = "website-target-pool-%{random_suffix}"
+resource "google_app_engine_application" "app" {
+  project     = "${google_project.my_project.project_id}"
+  location_id = "us-central"
+}
+
+resource "google_appengine_firewall_rule" "rule" {
+  project = "${google_app_engine_application.app.project}"
+  priority = 1000
+  action = "ALLOW"
+  source_range = "*"
 }
 `, context)
 }
 
-func testAccCheckComputeForwardingRuleDestroy(s *terraform.State) error {
-	for name, rs := range s.RootModule().Resources {
-		if rs.Type != "google_compute_forwarding_rule" {
-			continue
-		}
-		if strings.HasPrefix(name, "data.") {
+func testAccCheckAppengineFirewallRuleDestroy(s *terraform.State) error {
+	for _, rs := range s.RootModule().Resources {
+		if rs.Type != "google_appengine_firewall_rule" {
 			continue
 		}
 
 		config := testAccProvider.Meta().(*Config)
 
-		url, err := replaceVarsForTest(rs, "https://www.googleapis.com/compute/beta/projects/{{project}}/regions/{{region}}/forwardingRules/{{name}}")
+		url, err := replaceVarsForTest(rs, "https://appengine.googleapis.com/v1/apps/{{project}}/firewall/ingressRules/{{priority}}")
 		if err != nil {
 			return err
 		}
 
 		_, err = sendRequest(config, "GET", url, nil)
 		if err == nil {
-			return fmt.Errorf("ComputeForwardingRule still exists at %s", url)
+			return fmt.Errorf("AppengineFirewallRule still exists at %s", url)
 		}
 	}
 
