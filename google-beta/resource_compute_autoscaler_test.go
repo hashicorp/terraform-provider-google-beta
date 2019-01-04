@@ -259,7 +259,7 @@ resource "google_compute_autoscaler" "foobar" {
 		max_replicas = 5
 		min_replicas = 1
 		cooldown_period = 60
-		cpu_utilization {
+		cpu_utilization = {
 			target = 0.5
 		}
 	}
@@ -279,7 +279,7 @@ resource "google_compute_autoscaler" "foobar" {
 		max_replicas = 10
 		min_replicas = 1
 		cooldown_period = 60
-		cpu_utilization {
+		cpu_utilization = {
 			target = 0.5
 		}
 	}
@@ -299,10 +299,10 @@ resource "google_compute_autoscaler" "foobar" {
 		max_replicas = 10
 		min_replicas = 1
 		cooldown_period = 60
-		cpu_utilization {
+		cpu_utilization = {
 			target = 0.5
 		}
-		load_balancing_utilization {
+		load_balancing_utilization = {
 			target = 0.5
 		}
 		metric {
