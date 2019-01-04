@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/hashicorp/go-version"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/validation"
 	"google.golang.org/api/composer/v1beta1"
@@ -15,6 +16,7 @@ import (
 const (
 	composerEnvironmentEnvVariablesRegexp          = "[a-zA-Z_][a-zA-Z0-9_]*."
 	composerEnvironmentReservedAirflowEnvVarRegexp = "AIRFLOW__[A-Z0-9_]+__[A-Z0-9_]+"
+	composerEnvironmentVersionRegexp               = `composer-([0-9]+\.[0-9]+\.[0-9]+|latest)-airflow-([0-9]+\.[0-9]+(\.[0-9]+.*)?)`
 )
 
 var composerEnvironmentReservedEnvVar = map[string]struct{}{
@@ -177,10 +179,12 @@ func resourceComposerEnvironment() *schema.Resource {
 										ValidateFunc: validateComposerEnvironmentEnvVariables,
 									},
 									"image_version": {
-										Type:     schema.TypeString,
-										Computed: true,
-										Optional: true,
-										ForceNew: true,
+										Type:             schema.TypeString,
+										Computed:         true,
+										Optional:         true,
+										ForceNew:         true,
+										ValidateFunc:     validateRegexp(composerEnvironmentVersionRegexp),
+										DiffSuppressFunc: composerImageVersionDiffSuppress,
 									},
 									"python_version": {
 										Type:     schema.TypeString,
@@ -915,4 +919,60 @@ func validateServiceAccountRelativeNameOrEmail(v interface{}, k string) (ws []st
 	}
 
 	return
+}
+
+func composerImageVersionDiffSuppress(_, old, new string, _ *schema.ResourceData) bool {
+	versionRe := regexp.MustCompile(composerEnvironmentVersionRegexp)
+	oldVersions := versionRe.FindStringSubmatch(old)
+	newVersions := versionRe.FindStringSubmatch(new)
+	if oldVersions == nil || len(oldVersions) < 3 {
+		// Somehow one of the versions didn't match the regexp or didn't
+		// have values in the capturing groups. In that case, fall back to
+		// an equality check.
+		log.Printf("[WARN] Composer version didn't match regexp: %s", old)
+		return old == new
+	}
+	if newVersions == nil || len(newVersions) < 3 {
+		// Somehow one of the versions didn't match the regexp or didn't
+		// have values in the capturing groups. In that case, fall back to
+		// an equality check.
+		log.Printf("[WARN] Composer version didn't match regexp: %s", new)
+		return old == new
+	}
+
+	// Check airflow version using the version package to account for
+	// diffs like 1.10 and 1.10.0
+	eq, err := versionsEqual(oldVersions[2], newVersions[2])
+	if err != nil {
+		log.Printf("[WARN] Could not parse airflow version, %s", err)
+	}
+	if !eq {
+		return false
+	}
+
+	// Check composer version. Assume that "latest" means we should
+	// suppress the diff, because we don't have any other way of
+	// knowing what the latest version actually is.
+	if oldVersions[1] == "latest" || newVersions[1] == "latest" {
+		return true
+	}
+	// If neither version is "latest", check them using the version
+	// package like we did for airflow.
+	eq, err = versionsEqual(oldVersions[1], newVersions[1])
+	if err != nil {
+		log.Printf("[WARN] Could not parse composer version, %s", err)
+	}
+	return eq
+}
+
+func versionsEqual(old, new string) (bool, error) {
+	o, err := version.NewVersion(old)
+	if err != nil {
+		return false, err
+	}
+	n, err := version.NewVersion(new)
+	if err != nil {
+		return false, err
+	}
+	return o.Equal(n), nil
 }
