@@ -6,6 +6,9 @@ FEATURES:
 ENHANCEMENTS:
 * project: The `google_iam_policy` data source now supports Audit Configs [GH-243]
 
+BUG FIXES:
+* compute: fix `google_compute_route` issue where some interpolations were not idempotent [GH-315]
+
 ## 1.20.0 (December 14, 2018)
 
 DEPRECATIONS:
