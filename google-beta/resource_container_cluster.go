@@ -632,6 +632,13 @@ func resourceContainerCluster() *schema.Resource {
 				Computed: true,
 				Type:     schema.TypeString,
 			},
+
+			"default_max_pods_per_node": {
+				Type:     schema.TypeInt,
+				Optional: true,
+				ForceNew: true,
+				Computed: true,
+			},
 		},
 	}
 }
@@ -683,6 +690,10 @@ func resourceContainerClusterCreate(d *schema.ResourceData, meta interface{}) er
 		Autoscaling:    expandClusterAutoscaling(d.Get("cluster_autoscaling"), d),
 		MasterAuth:     expandMasterAuth(d.Get("master_auth")),
 		ResourceLabels: expandStringMap(d, "resource_labels"),
+	}
+
+	if v, ok := d.GetOk("default_max_pods_per_node"); ok {
+		cluster.DefaultMaxPodsConstraint = expandDefaultMaxPodsConstraint(v)
 	}
 
 	// Only allow setting node_version on create if it's set to the equivalent master version,
@@ -861,6 +872,9 @@ func resourceContainerClusterRead(d *schema.ResourceData, meta interface{}) erro
 	d.Set("tpu_ipv4_cidr_block", cluster.TpuIpv4CidrBlock)
 	if err := d.Set("cluster_autoscaling", flattenClusterAutoscaling(cluster.Autoscaling)); err != nil {
 		return err
+	}
+	if cluster.DefaultMaxPodsConstraint != nil {
+		d.Set("default_max_pods_per_node", cluster.DefaultMaxPodsConstraint.MaxPodsPerNode)
 	}
 	if err := d.Set("node_config", flattenNodeConfig(cluster.NodeConfig)); err != nil {
 		return err
@@ -1716,6 +1730,16 @@ func expandPodSecurityPolicyConfig(configured interface{}) *containerBeta.PodSec
 	return &containerBeta.PodSecurityPolicyConfig{
 		Enabled:         config["enabled"].(bool),
 		ForceSendFields: []string{"Enabled"},
+	}
+}
+
+func expandDefaultMaxPodsConstraint(v interface{}) *containerBeta.MaxPodsConstraint {
+	if v == nil {
+		return nil
+	}
+
+	return &containerBeta.MaxPodsConstraint{
+		MaxPodsPerNode: int64(v.(int)),
 	}
 }
 
