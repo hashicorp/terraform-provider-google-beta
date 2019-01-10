@@ -3,6 +3,7 @@ BACKWARDS INCOMPATIBILITIES:
 * cloudbuild: `google_cloudbuild_trigger.build.step.args` is now a list instead of space separated strings. [GH-308]
 
 FEATURES:
+* **New Resource**: `google_app_engine_firewall_rule` [GH-271][GH-336]
 * **New Resource**: `google_project_iam_audit_config` [GH-265]
 
 ENHANCEMENTS:
