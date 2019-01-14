@@ -1,7 +1,7 @@
 package google
 
 import (
-	"google.golang.org/api/accesscontextmanager/v1beta"
+	accesscontextmanager "google.golang.org/api/accesscontextmanager/v1beta"
 )
 
 type AccessContextManagerOperationWaiter struct {

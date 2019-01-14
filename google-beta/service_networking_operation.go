@@ -1,7 +1,7 @@
 package google
 
 import (
-	"google.golang.org/api/servicenetworking/v1beta"
+	servicenetworking "google.golang.org/api/servicenetworking/v1beta"
 )
 
 type ServiceNetworkingOperationWaiter struct {
