@@ -15,6 +15,7 @@ ENHANCEMENTS:
 
 BUG FIXES:
 * compute: fix `google_compute_route` issue where some interpolations were not idempotent [GH-315]
+* compute: The `google_compute_instance` datasource can now be addressed by `self_link`. [GH-351]
 
 ## 1.20.0 (December 14, 2018)
 
