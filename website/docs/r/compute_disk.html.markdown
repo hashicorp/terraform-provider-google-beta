@@ -176,7 +176,7 @@ The `source_image_encryption_key` block supports:
   encryption key that protects this resource.
 
 * `kms_key_self_link` -
-  (Optional, [Beta](https://terraform.io/docs/providers/google/provider_versions.html))
+  (Optional)
   The self link of the encryption key used to encrypt the disk. Also called KmsKeyName
   in the cloud console. In order to use this additional
   IAM permissions need to be set on the Compute Engine Service Agent. See
@@ -194,7 +194,7 @@ The `disk_encryption_key` block supports:
   encryption key that protects this resource.
 
 * `kms_key_self_link` -
-  (Optional, [Beta](https://terraform.io/docs/providers/google/provider_versions.html))
+  (Optional)
   The self link of the encryption key used to encrypt the disk. Also called KmsKeyName
   in the cloud console. In order to use this additional
   IAM permissions need to be set on the Compute Engine Service Agent. See
@@ -208,7 +208,7 @@ The `source_snapshot_encryption_key` block supports:
   RFC 4648 base64 to either encrypt or decrypt this resource.
 
 * `kms_key_self_link` -
-  (Optional, [Beta](https://terraform.io/docs/providers/google/provider_versions.html))
+  (Optional)
   The self link of the encryption key used to encrypt the disk. Also called KmsKeyName
   in the cloud console. In order to use this additional
   IAM permissions need to be set on the Compute Engine Service Agent. See
