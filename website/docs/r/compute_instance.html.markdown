@@ -97,6 +97,8 @@ The following arguments are supported:
 * `guest_accelerator` - (Optional) List of the type and count of accelerator cards attached to the instance. Structure documented below.
     **Note:** GPU accelerators can only be used with [`on_host_maintenance`](#on_host_maintenance) option set to TERMINATE.
 
+* `hostname` - (Optional) Custom hostname (fully-qualified DNS name). This feature is only available with the google-beta provider.
+
 * `labels` - (Optional) A set of key/value label pairs to assign to the instance.
 
 * `metadata` - (Optional) Metadata key/value pairs to make available from
