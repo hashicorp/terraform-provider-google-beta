@@ -1,46 +1,152 @@
 ## 2.0.0 (Unreleased)
+
 BACKWARDS INCOMPATIBILITIES:
+* bigtable: `google_bigtable_instance` `zone` field is no longer inferred from the provider.
+* bigtable: `google_bigtable_table` now reads `family` from the table's column family in Cloud Bigtable instead of creating a new column family [GH-70]
+* bigtable: `google_bigtable_instance.cluster.num_nodes` will fail at plan time if `DEVELOPMENT` instances have `num_nodes = "0"` set explicitly. If it has been set, unset the field. [GH-82]
 * cloudbuild: `google_cloudbuild_trigger.build.step.args` is now a list instead of space separated strings. [GH-308]
+* cloudfunctions: `google_cloudfunctions_function.retry_on_failure` has been removed. Use `event_trigger.failure_policy.retry` instead. [GH-75]
+* cloudfunctions: `google_cloudfunctions_function.trigger_bucket` and `google_cloudfunctions_function.trigger_topic` have been removed. Use `event trigger` instead. [GH-30]
+* compute: `google_compute_instance`, `google_compute_instance_from_template` `metadata` field is now authoritative and will remove values not explicitly set in config. [GH-2208](https://github.com/terraform-providers/terraform-provider-google/pull/2208)
+* compute: `google_compute_region_instance_group_manager` field `update_strategy` is now deprecated in the beta provider only. It will only function in the `google` provider, [GH-76]
+* compute: `google_compute_global_forwarding_rule` field `labels` is now removed [GH-81]
+* compute: `google_compute_project_metadata` resource is now authoritative and will remove values not explicitly set in config. [GH-2205](https://github.com/terraform-providers/terraform-provider-google/pull/2205)
+* compute: `google_compute_url_map` resource is now authoritative and will remove values not explicitly set in config. [GH-2245](https://github.com/terraform-providers/terraform-provider-google/pull/2245)
+* compute: `google_compute_snapshot.snapshot_encryption_key_raw`, `google_compute_snapshot.snapshot_encryption_key_sha256`, `google_compute_snapshot.source_disk_encryption_key_raw`, `google_compute_snapshot.source_disk_encryption_key_sha256` fields are now removed. Use `google_compute_snapshot.snapshot_encryption_key.0.raw_key`, `google_compute_snapshot.snapshot_encryption_key.0.sha256`, `google_compute_snapshot.source_disk_encryption_key.0.raw_key`, `google_compute_snapshot.source_disk_encryption_key.0.sha256` instead. [GH-202]
+* compute: `google_compute_instance_group_manager` is no longer imported by the provider-level region. Set the appropriate provider-level zone instead. [GH-248]
+* compute: `google_compute_region_instance_group_manager.update_strategy` in the `google-beta` provider has been removed. [GH-189]
+* compute: `google_compute_instance`, `google_compute_instance_template`, `google_compute_instance_from_template` have had the `network_interface.address` field removed. [GH-190]
+* compute: `google_compute_instance` has had the `network_interface.access_config.assigned_nat_ip` field removed [GH-48]
+* compute: `google_compute_disk` is no longer imported by the provider-level region. Set the appropriate provider-level zone instead. [GH-249]
+* compute: `google_compute_router_nat.subnetwork.source_ip_ranges_to_nat` is now Required inside `subnetwork` blocks. [GH-281]
+* container: `google_container_cluster` fields (`private_cluster`, `master_ipv4_cidr_block`) are removed. Use `private_cluster_config` and `private_cluster_config.master_ipv4_cidr_block` instead. [GH-78]
+* container: `google_container_node_pool` has had the `name_prefix` field removed  [GH-56]
+* sql: `google_sql_database_instance` resource is now authoritative and will remove values not explicitly set in config. [GH-2203](https://github.com/terraform-providers/terraform-provider-google/pull/2203)
+* endpoints: `google_endpoints_service.protoc_output` was removed. Use `google_endpoints_service.protoc_output_base64` instead. [GH-79]
+* resourcemanager: `google_project_iam_policy` is now authoritative and will remove values not explicitly set in config. Several fields were removed that made it authoritative: `authoritative`, `restore_policy`, and `disable_project`. This resource is very dangerous! Ensure you are not using the removed fields (`authoritative`, `restore_policy`, `disable_project`). [GH-25]
+* resourcemanager: Datasource `google_service_account_key.service_account_id` has been removed. Use the `name` field instead. [GH-80]
+* resourcemanager: `google_project.app_engine` has been removed. Use the `google_app_engine_application` resource instead. [GH-74]
+* resourcemanager: `google_organization_custom_role.deleted` is now an output-only attribute. Use `terraform destroy`, or remove the resource from your config instead. [GH-191]
+* resourcemanager: `google_project_custom_role.deleted` is now an output-only attribute. Use `terraform destroy`, or remove the resource from your config instead. [GH-199]
+* storage: `google_storage_object_acl.role_entity` is now authoritative and will remove values not explicitly set in config. Use `google_storage_object_access_control` for fine-grained management. [GH-26]
+* storage: `google_storage_default_object_acl.role_entity` is now authoritative and will remove values not explicitly set in config. [GH-47]
+* iam: `google_*_iam_binding` Change all IAM bindings to be authoritative [GH-291]
 
 FEATURES:
+* **New Resource**: `google_access_context_manager_access_policy` for managing the container for an organization's access levels. [GH-96]
+* **New Resource**: `google_access_context_manager_access_level` for managing an organization's access levels. [GH-149]
+* **New Resource**: `google_access_context_manager_service_perimeter` for managing service perimeters in an access policy. [GH-246]
 * **New Resource**: `google_app_engine_firewall_rule` [GH-271][GH-336]
+* **New Resource**: `google_monitoring_group` [GH-120]
 * **New Resource**: `google_project_iam_audit_config` [GH-265]
+* **New Resource**: `google_storage_transfer_job` for managing recurring storage transfers with Google Cloud Storage. [GH-256]
+* **New Datasource**: `google_storage_bucket_object` [GH-223]
+* **New Datasource**: `google_storage_transfer_project_service_account` data source for retrieving the Storage Transfer service account for a project [GH-247]
+* **New Datasource**: `google_kms_crypto_key` [GH-359]
+* **New Datasource**: `google_kms_key_ring` [GH-359]
 
 ENHANCEMENTS:
-* provider: Add `access_token` config option to allow Terraform to authenticate using short-lived Google OAuth 2.0 access token [GH-2838]
+* provider: Add `access_token` config option to allow Terraform to authenticate using short-lived Google OAuth 2.0 access token [GH-330]
+* bigquery: Add new locations `europe-west2` and `australia-southeast1` to valid location set for `google_bigquery_dataset` [GH-41]
+* bigquery: Add `default_partition_expiration_ms` field to `google_bigquery_dataset` resource. [GH-127]
 * bigquery: Add `time_partitioning.require_partition_filter` to `google_bigquery_table` resource. [GH-324]
-* cloudbuild: `google_cloudbuild_trigger` is now autogenerated, adding more configurable timeouts, import support, and the `disabled` field. `ignored_files`, `included_files` are now updatable. [GH-308] [GH-349]
-* container: Add flexible pod CIDR field `default_max_pods_per_node` to `google_container_cluster` [GH-2809]
-* project: The `google_iam_policy` data source now supports Audit Configs [GH-243]
+* bigquery: Allow more BigQuery regions [GH-269]
+* bigtable: Add `column_family` at create time to `google_bigtable_table`. [GH-2228](https://github.com/terraform-providers/terraform-provider-google/pull/2228)
+* bigtable: Add multi-zone (inside one region) replication to `google_bigtable_instance`. [GH-23] [GH-2289](https://github.com/terraform-providers/terraform-provider-google/pull/2289)
+* cloudbuild: `google_cloudbuild_trigger` now supports update and is autogenerated, adding more configurable timeouts, import support, and the `disabled` field. `ignored_files`, `included_files` are now updatable. [GH-124][GH-308] [GH-349]
+* cloudfunctions: Add support for runtime to `google_cloudfunctions_function` [GH-44]
+* cloudfunctions: Support Firestore triggers for `google_cloudfunctions_functions` [GH-144]
+* cloudfunctions: add souce repo support [GH-217]
+* compute: Added KMS key encryption (`kms_key_name`) fields to `google_compute_disk`, `google_compute_region_disk` [GH-19]
+* compute: Add `filter` to `google_compute_autoscaler` [GH-15]
+* compute: Add import support for `google_compute_project_metadata` [GH-99]
+* compute: `google_compute_instance_group_manager.attached_disk` now supports region disks [GH-185]
+* compute: `google_compute_global_address.address` is no longer computed-only and can be set [GH-198]
+* compute: `google_compute_forwarding_rule` supports specifying `all_ports` for internal load balancing. [GH-297]
+* compute: `google_compute_image` is now autogenerated and supports multiple import formats, and `size_gb` attribute. [GH-294]
+* compute: `google_compute_url_map` resource is now autogenerated and supports multiple import formats.  [GH-2245](https://github.com/terraform-providers/terraform-provider-google/pull/2245)
+* compute: Add `affinity_cookie_ttl_sec` to `google_compute_backend_service` [GH-274]
+* compute: Add `name`, `unique_id`, and `display_name` properties to `data.google_compute_default_service_account` [GH-298]
+* compute: `google_compute_disk` Add support for KMS encryption to compute disk [GH-357]
+* container: `username` and `password` are now optional for `google_container_cluster` to enable more restrictive authentication methods in GKE [GH-116]
+* container: Add `tpu_ipv4_cidr_block` to `google_container_cluster` [GH-201]
+* container: Add `istio_config` and `cloudrun_config` to `google_container_cluster` [GH-280]
+* container: Add flexible pod CIDR field `default_max_pods_per_node` to `google_container_cluster` [GH-320]
+* container: Increase timeout for updating `google_container_cluster`[GH-342]
+* dataproc: Add `accelerators` support to `google_dataproc_cluster` to allow using GPU accelerators. [GH-90]
+* dataproc: Added `image_uri` to `google_dataproc_cluster` to enable custom images [GH-163]
+* dataproc: Add `num_local_ssds`, `boot_disk_type` to `google_dataproc_cluster` [GH-251]
+* dataproc: `google_dataproc_cluster` Add support for KMS encryption to dataproc cluster [GH-331]
+* project: The google_iam_policy data source now supports Audit Configs [GH-243]
+* kms: Add support for `protection_level` to `google_kms_crypto_key` [GH-283]
+* resourcemanager: add `inherit_from_parent` to all org policy resources [GH-219]
+* serviceusage: Explicitly deny specific APIs during validation of `google_project_services`, as these GCP services cannot be enabled via the Service Usage API. [GH-130]
+* sourcerepo: `google_sourcerepo_repository` is now autogenerated, adding configurable timeouts. [GH-311]
+* storage: `google_storage_object_acl` can more easily swap between `role_entity` and `predefined_acl` ACL definitions. [GH-26]
+* storage: `google_storage_bucket` has support for `requester_pays` [GH-179]
+* spanner: `google_spanner_database` is autogenerated and supports timeouts. [GH-323]
 
 BUG FIXES:
+* bigquery: `google_bigquery_dataset.access` is now a set [GH-89]
+* bigtable: Fix errors for hashed attribute names on update of `google_bigtable_instance` [GH-180]
+* cloudbuild: allow `google_cloudbuild_trigger.trigger_template.project` to not be set [GH-221]
+* cloudbuild: fix update so it doesn't error every time [GH-276]
+* cloudfunctions: No longer over-validate project ids in `google_cloudfunctions_function` [GH-300]
+* compute: Convert `google_compute_instance_group.instances` into a set [GH-72]
+* compute: Fix read for `google_compute_disk.snapshot` [GH-119]
+* compute: Fix `source_disk_link` read for `resource_compute_snapshot` [GH-188]
+* compute: extract vpn tunnel region/project from vpn gateway [GH-211]
+* compute: send instance scheduling block with automaticrestart true if there is none in cfg [GH-210]
+* compute: Remove limit on `google_compute_firewall` service accounts [GH-222]
+* compute: fix disk behavior in compute_instance_from_template [GH-250]
+* compute: add diffsuppress for region_autoscaler.target so it can be used with both versions of the provider [GH-295]
 * compute: fix `google_compute_route` issue where some interpolations were not idempotent [GH-315]
+* compute: fix ID for inferring project for old compute_project_metadata states [GH-332]
 * compute: The `google_compute_instance` datasource can now be addressed by `self_link`. [GH-351]
+* container: Update `loggine_service` and `monitoring_service` through beta API for `google_container_cluster` [GH-205]
+* container: fix failure when updating node versions [GH-350]
+* dataproc: Make sure created but failed `google_dataproc_cluster` is still added to state to allow destruction [GH-157]
+* dataproc: Convert `dataproc_cluster.cluster_config.gce_cluster_config.tags` into a set [GH-207]
+* iam: fix permadiff when stage is ALPHA [GH-66]
+* iam: add another retry if iam read returns nil [GH-203]
+* monitoring: Make `google_monitoring_uptime_check_config.period` ForceNew since it can't be updated. [GH-301]
+* monitoring: `google_monitoring_uptime_check_config` can now be updated and won't error when changing duration. [GH-305]
+* monitoring: `google_monitoring_uptime_check_config.port` now uses API default to allow for SSL defaults, instead of explicitly setting a default of `80` [GH-343]
+* monitoring: Fix permadiff from API partially obfuscating labels in `google_monitoring_notification_channel` [GH-352]
+* pubsub: Make sure created `google_pubsub_topic` are refreshed right after creation [GH-131]
+* runtimeconfig: allow more characters in runtimeconfig name [GH-213]
+* spanner: Fix validation and add more import formats for `google_spanner_database` [GH-28]
+* spanner: Fix import ID format of Spanner database for  `google_spanner_database_iam_*` [GH-197]
+* sql: send maintenance_window.hour even if it's zero, since that's a valid value [GH-204]
+* sql: allow cross-project imports for sql user [GH-206]
+* sql: mark region as computed in sql db instance since we use getregion [GH-209]
+* sql: `google_sql_database_instance` Stop SQL instances from reporting failing to destroy [GH-321]
+* storage: Fix panic on empty string value in `google_storage_bucket.website` [GH-155]
 
 ## 1.20.0 (December 14, 2018)
 
 DEPRECATIONS:
-* Deprecate `google_project_iam_custom_role.deleted` [[#187](https://github.com/terraform-providers/terraform-provider-google/issues/187)].
-* Deprecate top-level encryption fields in `google_compute_disk`  [[#173](https://github.com/terraform-providers/terraform-provider-google/issues/173)].
+* Deprecate `google_project_iam_custom_role.deleted` [GH-187]
+* Deprecate top-level encryption fields in `google_compute_disk`  [GH-173]
 
 FEATURES:
-* **New Resource**: `data_source_iam_role` [[#142](https://github.com/terraform-providers/terraform-provider-google/issues/142)].
-* **New Resource**: `google_billing_account_iam_binding` / `_member` / `_policy` [[#92](https://github.com/terraform-providers/terraform-provider-google/issues/92)].
-* **New Resource**: `google_monitoring_group` [[#121](https://github.com/terraform-providers/terraform-provider-google/issues/121)].
-* **New Resource**: `google_monitoring_notification_channel` [[#121](https://github.com/terraform-providers/terraform-provider-google/issues/121)].
-* **New Resource**: `google_monitoring_uptime_check_config` [[#146](https://github.com/terraform-providers/terraform-provider-google/issues/146)].
-* **New Resource**: `google_storage_default_object_access_control` [[#58](https://github.com/terraform-providers/terraform-provider-google/issues/58)].
-* **New Resource**: `google_sql_ssl_cert`. [[#134](https://github.com/terraform-providers/terraform-provider-google/issues/134)].
-* **New Resource**: `google_compute_router_nat` [[#161](https://github.com/terraform-providers/terraform-provider-google/issues/161)].
-* Add `google_compute_health_check.*.response` [[#164](https://github.com/terraform-providers/terraform-provider-google/issues/164)].
-* Add `google_instance_template.disk_encryption_key` [[#45](https://github.com/terraform-providers/terraform-provider-google/issues/45)].
-* Add `google_container_cluster.cluster_autoscaling` [[#93](https://github.com/terraform-providers/terraform-provider-google/issues/93)].
-* Add `private_network` to Cloud SQL [[#145](https://github.com/terraform-providers/terraform-provider-google/issues/145)].
-* Add `runtime` to CloudFunctions functions [[#91](https://github.com/terraform-providers/terraform-provider-google/issues/91)].
-* Add `python_version` to Cloud Composer [[#174](https://github.com/terraform-providers/terraform-provider-google/issues/174)].
+* **New Resource**: `data_source_iam_role` [GH-142]
+* **New Resource**: `google_billing_account_iam_binding` / `_member` / `_policy` [GH-92]
+* **New Resource**: `google_monitoring_group` [GH-121]
+* **New Resource**: `google_monitoring_notification_channel` [GH-121]
+* **New Resource**: `google_monitoring_uptime_check_config` [GH-146]
+* **New Resource**: `google_storage_default_object_access_control` [GH-58]
+* **New Resource**: `google_sql_ssl_cert`. [GH-134]
+* **New Resource**: `google_compute_router_nat` [GH-161]
+* Add `google_compute_health_check.*.response` [GH-164]
+* Add `google_instance_template.disk_encryption_key` [GH-45]
+* Add `google_container_cluster.cluster_autoscaling` [GH-93]
+* Add `private_network` to Cloud SQL [GH-145]
+* Add `runtime` to CloudFunctions functions [GH-91]
+* Add `python_version` to Cloud Composer [GH-174]
 
 ENHANCEMENTS:
-* Fix `google_compute_disk` encryption (robustify it) and robustify detachments [[#187](https://github.com/terraform-providers/terraform-provider-google/issues/187)].
+* Fix `google_compute_disk` encryption (robustify it) and robustify detachments [GH-187]
 
 ## 1.19.0 (October 05, 2018)
 
