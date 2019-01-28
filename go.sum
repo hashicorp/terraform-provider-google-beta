@@ -22,6 +22,10 @@ github.com/davecgh/go-spew v1.1.0 h1:ZDRjVQ15GmhC3fiQ8ni8+OwkZQO4DARzQgrnXU1Liz8
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/dustinkirkland/golang-petname v0.0.0-20170921220637-d3c2ba80e75e h1:bRcq7ruHMqCVB/ugLbBylx+LrccNACFDEaqAD/aZ80Q=
 github.com/dustinkirkland/golang-petname v0.0.0-20170921220637-d3c2ba80e75e/go.mod h1:V+Qd57rJe8gd4eiGzZyg4h54VLHmYVVw54iMnlAMrF8=
+github.com/gammazero/deque v0.0.0-20180920172122-f6adf94963e4 h1:R+19WKQClnfMXS60cP5BmMe1wjZ4u0evY2p2Ar0ZTXo=
+github.com/gammazero/deque v0.0.0-20180920172122-f6adf94963e4/go.mod h1:GeIq9qoE43YdGnDXURnmKTnGg15pQz4mYkXSTChbneI=
+github.com/gammazero/workerpool v0.0.0-20181230203049-86a96b5d5d92 h1:EipXK6U05IQ2wtuFRn4k3h0+2lXypzItoXGVyf4r9Io=
+github.com/gammazero/workerpool v0.0.0-20181230203049-86a96b5d5d92/go.mod h1:w9RqFVO2BM3xwWEcAB8Fwp0OviTBBEiRmSBDfbXnd3w=
 github.com/go-ini/ini v1.23.1 h1:amNPHl+tCb4BolL2NAIQaKLY+ZiL1Ju7OqZ9Fx6PTBQ=
 github.com/go-ini/ini v1.23.1/go.mod h1:ByCAeIL28uOIIG0E3PJtZPDL8WnHpFKFOtgjp+3Ies8=
 github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b/go.mod h1:SBH7ygxi8pfUlaOkMMuAQtPIUF8ecWP5IEl/CR7VP2Q=
