@@ -93,8 +93,7 @@ func resourceComposerEnvironment() *schema.Resource {
 								Schema: map[string]*schema.Schema{
 									"zone": {
 										Type:             schema.TypeString,
-										Computed:         true,
-										Optional:         true,
+										Required:         true,
 										ForceNew:         true,
 										DiffSuppressFunc: compareSelfLinkOrResourceName,
 									},
