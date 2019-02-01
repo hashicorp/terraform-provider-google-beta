@@ -108,6 +108,7 @@ BUG FIXES:
 * compute: fix `google_compute_route` issue where some interpolations were not idempotent [GH-315]
 * compute: fix ID for inferring project for old compute_project_metadata states [GH-332]
 * compute: The `google_compute_instance` datasource can now be addressed by `self_link`. [GH-351]
+* compute: `google_compute_backend_service` will send the correct `iap` block values during updates [GH-401]
 * container: Update `loggine_service` and `monitoring_service` through beta API for `google_container_cluster` [GH-205]
 * container: fix failure when updating node versions [GH-350]
 * dataproc: Make sure created but failed `google_dataproc_cluster` is still added to state to allow destruction [GH-157]
