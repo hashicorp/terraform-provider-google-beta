@@ -7,6 +7,7 @@ BACKWARDS INCOMPATIBILITIES:
 * cloudbuild: `google_cloudbuild_trigger.build.step.args` is now a list instead of space separated strings. [GH-308]
 * cloudfunctions: `google_cloudfunctions_function.retry_on_failure` has been removed. Use `event_trigger.failure_policy.retry` instead. [GH-75]
 * cloudfunctions: `google_cloudfunctions_function.trigger_bucket` and `google_cloudfunctions_function.trigger_topic` have been removed. Use `event trigger` instead. [GH-30]
+* composer: `google_composer_environment.node_config.zone` is now `Required`. [GH-396]
 * compute: `google_compute_instance`, `google_compute_instance_from_template` `metadata` field is now authoritative and will remove values not explicitly set in config. [GH-2208](https://github.com/terraform-providers/terraform-provider-google/pull/2208)
 * compute: `google_compute_region_instance_group_manager` field `update_strategy` is now deprecated in the beta provider only. It will only function in the `google` provider, [GH-76]
 * compute: `google_compute_global_forwarding_rule` field `labels` is now removed [GH-81]
