@@ -20,6 +20,7 @@ BACKWARDS INCOMPATIBILITIES:
 * compute: `google_compute_instance` has had the `network_interface.access_config.assigned_nat_ip` field removed [GH-48]
 * compute: `google_compute_disk` is no longer imported by the provider-level region. Set the appropriate provider-level zone instead. [GH-249]
 * compute: `google_compute_router_nat.subnetwork.source_ip_ranges_to_nat` is now Required inside `subnetwork` blocks. [GH-281]
+* compute: `google_compute_ssl_certificate`'s `private_key` field is no longer stored in state in cleartext; it is now SHA256 encoded. [GH-400]
 * container: `google_container_cluster` fields (`private_cluster`, `master_ipv4_cidr_block`) are removed. Use `private_cluster_config` and `private_cluster_config.master_ipv4_cidr_block` instead. [GH-78]
 * container: `google_container_node_pool` has had the `name_prefix` field removed  [GH-56]
 * sql: `google_sql_database_instance` resource is now authoritative and will remove values not explicitly set in config. [GH-2203](https://github.com/terraform-providers/terraform-provider-google/pull/2203)
