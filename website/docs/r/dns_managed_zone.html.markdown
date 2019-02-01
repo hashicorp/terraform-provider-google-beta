@@ -55,6 +55,50 @@ resource "random_id" "rnd" {
   byte_length = 4
 }
 ```
+## Example Usage - Dns Managed Zone Private
+
+
+```hcl
+resource "google_dns_managed_zone" "private-zone" {
+  name = "private-zone"
+  dns_name = "private.example.com."
+  description = "Example private DNS zone"
+  labels = {
+    foo = "bar"
+  }
+
+  visibility = "private"
+
+  private_visibility_config {
+    networks {
+      network_url =  "${google_compute_network.network-1.self_link}"
+    }
+    networks {
+      network_url =  "${google_compute_network.network-2.self_link}"
+    }
+  }
+
+  forwarding_config {
+    target_name_servers {
+      ipv4_address = "172.16.1.10"
+    }
+    target_name_servers {
+      ipv4_address = "172.16.1.20"
+    }
+  }
+
+}
+
+resource "google_compute_network" "network-1" {
+  name = "network-1"
+  auto_create_subnetworks = false
+}
+
+resource "google_compute_network" "network-2" {
+  name = "network-2"
+  auto_create_subnetworks = false
+}
+```
 
 ## Argument Reference
 
@@ -81,9 +125,56 @@ The following arguments are supported:
 * `labels` -
   (Optional)
   A set of key/value label pairs to assign to this ManagedZone.
+
+* `visibility` -
+  (Optional, [Beta](https://terraform.io/docs/providers/google/provider_versions.html))
+  The zone's visibility: public zones are exposed to the Internet,
+  while private zones are visible only to Virtual Private Cloud resources.
+  Must be one of: `public`, `private`.
+
+* `private_visibility_config` -
+  (Optional, [Beta](https://terraform.io/docs/providers/google/provider_versions.html))
+  For privately visible zones, the set of Virtual Private Cloud
+  resources that the zone is visible from.  Structure is documented below.
+
+* `forwarding_config` -
+  (Optional, [Beta](https://terraform.io/docs/providers/google/provider_versions.html))
+  The presence for this field indicates that outbound forwarding is enabled
+  for this zone. The value of this field contains the set of destinations
+  to forward to.  Structure is documented below.
 * `project` - (Optional) The ID of the project in which the resource belongs.
     If it is not provided, the provider project is used.
 
+
+The `private_visibility_config` block supports:
+
+* `networks` -
+  (Optional)
+  The list of VPC networks that can see this zone.  Structure is documented below.
+
+
+The `networks` block supports:
+
+* `network_url` -
+  (Optional)
+  The fully qualified URL of the VPC network to bind to.
+  This should be formatted like
+  https://www.googleapis.com/compute/v1/projects/{project}/global/networks/{network}
+
+The `forwarding_config` block supports:
+
+* `target_name_servers` -
+  (Optional)
+  List of target name servers to forward to. Cloud DNS will
+  select the best available name server if more than
+  one target is given.  Structure is documented below.
+
+
+The `target_name_servers` block supports:
+
+* `ipv4_address` -
+  (Optional)
+  IPv4 address of a target name server.
 
 ## Attributes Reference
 
