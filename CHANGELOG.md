@@ -61,6 +61,7 @@ ENHANCEMENTS:
 * cloudfunctions: Support Firestore triggers for `google_cloudfunctions_functions` [GH-144]
 * cloudfunctions: `google_cloudfunctions_function` now has source repo support [GH-217]
 * cloudfunctions: `google_cloudfunctions_function` now supports `service_account_email` for self-provided service accounts. [GH-390]
+* compute: Add support for partner interconnects. [GH-394]
 * compute: Added KMS key encryption (`kms_key_name`) fields to `google_compute_disk`, `google_compute_region_disk` [GH-19]
 * compute: Add `filter` to `google_compute_autoscaler` [GH-15]
 * compute: Add import support for `google_compute_project_metadata` [GH-99]
