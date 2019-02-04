@@ -43,6 +43,7 @@ FEATURES:
 * **New Resource**: `google_monitoring_group` [GH-120]
 * **New Resource**: `google_project_iam_audit_config` [GH-265]
 * **New Resource**: `google_storage_transfer_job` for managing recurring storage transfers with Google Cloud Storage. [GH-256]
+* **New Resource**: `google_cloud_scheduler_job` for managing the cron job scheduling service with Google Cloud Scheduler. [GH-378]
 * **New Datasource**: `google_storage_bucket_object` [GH-223]
 * **New Datasource**: `google_storage_transfer_project_service_account` data source for retrieving the Storage Transfer service account for a project [GH-247]
 * **New Datasource**: `google_kms_crypto_key` [GH-359]
