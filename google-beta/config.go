@@ -11,6 +11,7 @@ import (
 	"github.com/hashicorp/terraform/httpclient"
 	"github.com/terraform-providers/terraform-provider-google-beta/version"
 
+	cloudkms "cloud.google.com/go/kms/apiv1"
 	"golang.org/x/oauth2"
 	googleoauth "golang.org/x/oauth2/google"
 	accesscontextmanager "google.golang.org/api/accesscontextmanager/v1beta"
@@ -20,7 +21,6 @@ import (
 	"google.golang.org/api/cloudbuild/v1"
 	"google.golang.org/api/cloudfunctions/v1"
 	"google.golang.org/api/cloudiot/v1"
-	"google.golang.org/api/cloudkms/v1"
 	"google.golang.org/api/cloudresourcemanager/v1"
 	resourceManagerV2Beta1 "google.golang.org/api/cloudresourcemanager/v2beta1"
 	composer "google.golang.org/api/composer/v1beta1"
@@ -35,6 +35,7 @@ import (
 	file "google.golang.org/api/file/v1beta1"
 	"google.golang.org/api/iam/v1"
 	cloudlogging "google.golang.org/api/logging/v2"
+	"google.golang.org/api/option"
 	"google.golang.org/api/pubsub/v1"
 	redis "google.golang.org/api/redis/v1beta1"
 	runtimeconfig "google.golang.org/api/runtimeconfig/v1beta1"
@@ -76,7 +77,7 @@ type Config struct {
 	clientDns                    *dns.Service
 	clientDnsBeta                *dnsBeta.Service
 	clientFilestore              *file.Service
-	clientKms                    *cloudkms.Service
+	clientKms                    *cloudkms.KeyManagementClient
 	clientLogging                *cloudlogging.Service
 	clientPubsub                 *pubsub.Service
 	clientRedis                  *redis.Service
@@ -172,11 +173,13 @@ func (c *Config) loadAndValidate() error {
 	c.clientDnsBeta.UserAgent = userAgent
 
 	log.Printf("[INFO] Instantiating Google Cloud KMS Client...")
-	c.clientKms, err = cloudkms.New(client)
+	c.clientKms, err = cloudkms.NewKeyManagementClient(context.Background(),
+		option.WithUserAgent(userAgent),
+		option.WithTokenSource(tokenSource),
+	)
 	if err != nil {
 		return err
 	}
-	c.clientKms.UserAgent = userAgent
 
 	log.Printf("[INFO] Instantiating Google Stackdriver Logging client...")
 	c.clientLogging, err = cloudlogging.New(client)
