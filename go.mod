@@ -16,6 +16,7 @@ require (
 	github.com/gammazero/workerpool v0.0.0-20181230203049-86a96b5d5d92
 	github.com/go-ini/ini v1.23.1 // indirect
 	github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b // indirect
+	github.com/golang/protobuf v1.2.0
 	github.com/golang/snappy v0.0.0-20180518054509-2e65f85255db // indirect
 	github.com/google/btree v0.0.0-20180813153112-4030bb1f1f0c // indirect
 	github.com/google/go-cmp v0.2.0 // indirect
@@ -65,4 +66,6 @@ require (
 	golang.org/x/sys v0.0.0-20180830151530-49385e6e1522 // indirect
 	google.golang.org/api v0.0.0-20181221000618-65a46cafb132
 	google.golang.org/appengine v0.0.0-20180827170113-03cac3b07182 // indirect
+	google.golang.org/genproto v0.0.0-20180817151627-c66870c02cf8
+	google.golang.org/grpc v1.14.0
 )
