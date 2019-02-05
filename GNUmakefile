@@ -3,6 +3,9 @@ WEBSITE_REPO=github.com/hashicorp/terraform-website
 PKG_NAME=google
 DIR_NAME=google-beta
 
+GO111MODULE=on
+GOFLAGS=-mod=vendor
+
 default: build
 
 build: fmtcheck
