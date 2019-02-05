@@ -27,7 +27,7 @@ fmtcheck:
 
 lint:
 	@echo "==> Checking source code against linters..."
-	@bash -c "GO111MODULE=off gometalinter -d ./... 2> >(egrep '(^DEBUG.*linter took|^DEBUG.*total elapsed|^[^D])' >&2)"
+	@bash -c "gometalinter -d ./... 2> >(egrep '(^DEBUG.*linter took|^DEBUG.*total elapsed|^[^D])' >&2)"
 
 tools:
 	@echo "==> installing required tooling..."
