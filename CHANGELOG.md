@@ -114,6 +114,8 @@ BUG FIXES:
 * compute: fix ID for inferring project for old compute_project_metadata states [GH-332]
 * compute: The `google_compute_instance` datasource can now be addressed by `self_link`. [GH-351]
 * compute: `google_compute_backend_service` will send the correct `iap` block values during updates [GH-401]
+* compute: `google_compute_image.licenses` elements properly allow partial URIs / versioned self links. [GH-420]
+* compute: `google_compute_project_metadata` can now be imported from a project other than the one specified in your config. [GH-420]
 * container: Update `loggine_service` and `monitoring_service` through beta API for `google_container_cluster` [GH-205]
 * container: fix failure when updating node versions [GH-350]
 * dataproc: Make sure created but failed `google_dataproc_cluster` is still added to state to allow destruction [GH-157]
