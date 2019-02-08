@@ -1998,15 +1998,17 @@ resource "google_container_cluster" "with_kubernetes_alpha" {
 func testAccContainerCluster_withTpu(clusterName string) string {
 	return fmt.Sprintf(`
 resource "google_compute_network" "container_network" {
-	name = "container-net-%s"
+	name                    = "container-net-%s"
 	auto_create_subnetworks = false
 }
 
 resource "google_compute_subnetwork" "container_subnetwork" {
-	name                     = "${google_compute_network.container_network.name}"
-	network                  = "${google_compute_network.container_network.name}"
+	name    = "${google_compute_network.container_network.name}"
+	network = "${google_compute_network.container_network.name}"
+	region  = "us-central1"
+
 	ip_cidr_range            = "10.0.35.0/24"
-	region                   = "us-central1"
+	private_ip_google_access = true
 
 	secondary_ip_range {
 		range_name    = "pod"
@@ -2020,8 +2022,8 @@ resource "google_compute_subnetwork" "container_subnetwork" {
 }
 
 resource "google_container_cluster" "with_tpu" {
-	name = "cluster-test-%s"
-	zone = "us-central1-b"
+	name               = "cluster-test-%s"
+	zone               = "us-central1-b"
 	initial_node_count = 1
 
 	enable_tpu = true
@@ -2691,16 +2693,23 @@ resource "google_container_cluster" "with_ip_allocation_policy" {
 
 func testAccContainerCluster_withIPAllocationPolicy_specificIPRanges(cluster string) string {
 	return fmt.Sprintf(`
+resource "google_compute_network" "container_network" {
+	name = "container-net-%s"
+	auto_create_subnetworks = false
+}
+
 resource "google_container_cluster" "with_ip_allocation_policy" {
-	name = "%s"
-	zone = "us-central1-a"
+	name    = "%s"
+	zone    = "us-central1-a"
+	network = "${google_compute_network.container_network.name}"
 
 	initial_node_count = 1
 	ip_allocation_policy {
-		cluster_ipv4_cidr_block = "10.90.0.0/19"
+		cluster_ipv4_cidr_block  = "10.90.0.0/19"
 		services_ipv4_cidr_block = "10.40.0.0/19"
+		create_subnetwork        = true
 	}
-}`, cluster)
+}`, cluster, cluster)
 }
 
 func testAccContainerCluster_withIPAllocationPolicy_specificSizes(cluster string) string {
