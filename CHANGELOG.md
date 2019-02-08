@@ -53,6 +53,7 @@ ENHANCEMENTS:
 * provider: Add `access_token` config option to allow Terraform to authenticate using short-lived Google OAuth 2.0 access token [GH-330]
 * bigquery: Add new locations `europe-west2` and `australia-southeast1` to valid location set for `google_bigquery_dataset` [GH-41]
 * bigquery: Add `default_partition_expiration_ms` field to `google_bigquery_dataset` resource. [GH-127]
+* bigquery: Add `delete_contents_on_destroy` field to `google_bigquery_dataset` resource. [GH-413]
 * bigquery: Add `time_partitioning.require_partition_filter` to `google_bigquery_table` resource. [GH-324]
 * bigquery: Allow more BigQuery regions [GH-269]
 * bigtable: Add `column_family` at create time to `google_bigtable_table`. [GH-2228](https://github.com/terraform-providers/terraform-provider-google/pull/2228)
