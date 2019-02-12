@@ -17,7 +17,7 @@ install:
 - make tools
 
 script:
-- make lint
+- ( cd google-beta && go test -run TestConfigLoadAndValidate_defaultScopes )
 - make test
 - make website-test
 
