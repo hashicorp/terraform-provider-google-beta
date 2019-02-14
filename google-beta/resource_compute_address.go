@@ -231,6 +231,9 @@ func resourceComputeAddressCreate(d *schema.ResourceData, meta interface{}) erro
 		obj := make(map[string]interface{})
 		// d.Get("labels") will have been overridden by the Read call.
 		labelsProp, err := expandComputeAddressLabels(v, d, config)
+		if err != nil {
+			return err
+		}
 		obj["labels"] = labelsProp
 		labelFingerprintProp := d.Get("label_fingerprint")
 		obj["labelFingerprint"] = labelFingerprintProp
