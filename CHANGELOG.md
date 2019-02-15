@@ -2,6 +2,7 @@
 
 ENHANCEMENTS:
 * compute: `data.google_compute_subnetwork` can now be addressed by `self_link` as an alternative to the existing `name`/`region`/`project` fields. [GH-429]
+* dns: Support for privately visible zones is added to `google_dns_managed_zone`. [GH-268]
 
 ## 2.0.0 (February 12, 2019)
 
