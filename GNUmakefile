@@ -27,17 +27,17 @@ fmtcheck:
 
 lint:
 	@echo "==> Checking source code against linters..."
-	@bash -c "GO111MODULE=off gometalinter -d ./... 2> >(egrep '(^DEBUG.*linter took|^DEBUG.*total elapsed|^[^D])' >&2)"
+	@golangci-lint run ./$(DIR_NAME)
 
 tools:
 	@echo "==> installing required tooling..."
-	GO111MODULE=off go get -u github.com/alecthomas/gometalinter
-	GO111MODULE=off gometalinter --install
+	GO111MODULE=off go get -u github.com/client9/misspell/cmd/misspell
+	GO111MODULE=off go get -u github.com/golangci/golangci-lint/cmd/golangci-lint
 
 test-compile:
 	@if [ "$(TEST)" = "./..." ]; then \
 		echo "ERROR: Set TEST to a specific package. For example,"; \
-		echo "  make test-compile TEST=./$(PKG_NAME)"; \
+		echo "  make test-compile TEST=./$(DIR_NAME)"; \
 		exit 1; \
 	fi
 	go test -c $(TEST) $(TESTARGS)
