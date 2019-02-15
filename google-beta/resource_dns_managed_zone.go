@@ -15,12 +15,15 @@
 package google
 
 import (
+	"bytes"
 	"fmt"
 	"log"
 	"reflect"
 	"time"
 
+	"github.com/hashicorp/terraform/helper/hashcode"
 	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform/helper/validation"
 )
 
 func resourceDnsManagedZone() *schema.Resource {
@@ -56,10 +59,63 @@ func resourceDnsManagedZone() *schema.Resource {
 				Optional: true,
 				Default:  "Managed by Terraform",
 			},
+			"forwarding_config": {
+				Type:     schema.TypeList,
+				Optional: true,
+				MaxItems: 1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"target_name_servers": {
+							Type:     schema.TypeSet,
+							Optional: true,
+							Elem:     dnsManagedZoneForwardingConfigTargetNameServersSchema(),
+							Set: func(v interface{}) int {
+								raw := v.(map[string]interface{})
+								if address, ok := raw["ipv4_address"]; ok {
+									hashcode.String(address.(string))
+								}
+								var buf bytes.Buffer
+								schema.SerializeResourceForHash(&buf, raw, dnsManagedZoneForwardingConfigTargetNameServersSchema())
+								return hashcode.String(buf.String())
+							},
+						},
+					},
+				},
+			},
 			"labels": {
 				Type:     schema.TypeMap,
 				Optional: true,
 				Elem:     &schema.Schema{Type: schema.TypeString},
+			},
+			"private_visibility_config": {
+				Type:     schema.TypeList,
+				Optional: true,
+				MaxItems: 1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"networks": {
+							Type:     schema.TypeSet,
+							Optional: true,
+							Elem:     dnsManagedZonePrivateVisibilityConfigNetworksSchema(),
+							Set: func(v interface{}) int {
+								raw := v.(map[string]interface{})
+								if url, ok := raw["network_url"]; ok {
+									return selfLinkNameHash(url)
+								}
+								var buf bytes.Buffer
+								schema.SerializeResourceForHash(&buf, raw, dnsManagedZonePrivateVisibilityConfigNetworksSchema())
+								return hashcode.String(buf.String())
+							},
+						},
+					},
+				},
+			},
+			"visibility": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ForceNew:     true,
+				ValidateFunc: validation.StringInSlice([]string{"private", "public", ""}, false),
+				Default:      "public",
 			},
 			"name_servers": {
 				Type:     schema.TypeList,
@@ -73,6 +129,29 @@ func resourceDnsManagedZone() *schema.Resource {
 				Optional: true,
 				Computed: true,
 				ForceNew: true,
+			},
+		},
+	}
+}
+
+func dnsManagedZonePrivateVisibilityConfigNetworksSchema() *schema.Resource {
+	return &schema.Resource{
+		Schema: map[string]*schema.Schema{
+			"network_url": {
+				Type:             schema.TypeString,
+				Optional:         true,
+				DiffSuppressFunc: compareSelfLinkOrResourceName,
+			},
+		},
+	}
+}
+
+func dnsManagedZoneForwardingConfigTargetNameServersSchema() *schema.Resource {
+	return &schema.Resource{
+		Schema: map[string]*schema.Schema{
+			"ipv4_address": {
+				Type:     schema.TypeString,
+				Optional: true,
 			},
 		},
 	}
@@ -106,8 +185,26 @@ func resourceDnsManagedZoneCreate(d *schema.ResourceData, meta interface{}) erro
 	} else if v, ok := d.GetOkExists("labels"); !isEmptyValue(reflect.ValueOf(labelsProp)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
 		obj["labels"] = labelsProp
 	}
+	visibilityProp, err := expandDnsManagedZoneVisibility(d.Get("visibility"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("visibility"); !isEmptyValue(reflect.ValueOf(visibilityProp)) && (ok || !reflect.DeepEqual(v, visibilityProp)) {
+		obj["visibility"] = visibilityProp
+	}
+	privateVisibilityConfigProp, err := expandDnsManagedZonePrivateVisibilityConfig(d.Get("private_visibility_config"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("private_visibility_config"); !isEmptyValue(reflect.ValueOf(privateVisibilityConfigProp)) && (ok || !reflect.DeepEqual(v, privateVisibilityConfigProp)) {
+		obj["privateVisibilityConfig"] = privateVisibilityConfigProp
+	}
+	forwardingConfigProp, err := expandDnsManagedZoneForwardingConfig(d.Get("forwarding_config"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("forwarding_config"); !isEmptyValue(reflect.ValueOf(forwardingConfigProp)) && (ok || !reflect.DeepEqual(v, forwardingConfigProp)) {
+		obj["forwardingConfig"] = forwardingConfigProp
+	}
 
-	url, err := replaceVars(d, config, "https://www.googleapis.com/dns/v1/projects/{{project}}/managedZones")
+	url, err := replaceVars(d, config, "https://www.googleapis.com/dns/v1beta2/projects/{{project}}/managedZones")
 	if err != nil {
 		return err
 	}
@@ -133,7 +230,7 @@ func resourceDnsManagedZoneCreate(d *schema.ResourceData, meta interface{}) erro
 func resourceDnsManagedZoneRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	url, err := replaceVars(d, config, "https://www.googleapis.com/dns/v1/projects/{{project}}/managedZones/{{name}}")
+	url, err := replaceVars(d, config, "https://www.googleapis.com/dns/v1beta2/projects/{{project}}/managedZones/{{name}}")
 	if err != nil {
 		return err
 	}
@@ -166,6 +263,15 @@ func resourceDnsManagedZoneRead(d *schema.ResourceData, meta interface{}) error 
 	if err := d.Set("labels", flattenDnsManagedZoneLabels(res["labels"], d)); err != nil {
 		return fmt.Errorf("Error reading ManagedZone: %s", err)
 	}
+	if err := d.Set("visibility", flattenDnsManagedZoneVisibility(res["visibility"], d)); err != nil {
+		return fmt.Errorf("Error reading ManagedZone: %s", err)
+	}
+	if err := d.Set("private_visibility_config", flattenDnsManagedZonePrivateVisibilityConfig(res["privateVisibilityConfig"], d)); err != nil {
+		return fmt.Errorf("Error reading ManagedZone: %s", err)
+	}
+	if err := d.Set("forwarding_config", flattenDnsManagedZoneForwardingConfig(res["forwardingConfig"], d)); err != nil {
+		return fmt.Errorf("Error reading ManagedZone: %s", err)
+	}
 
 	return nil
 }
@@ -175,7 +281,7 @@ func resourceDnsManagedZoneUpdate(d *schema.ResourceData, meta interface{}) erro
 
 	d.Partial(true)
 
-	if d.HasChange("description") || d.HasChange("labels") {
+	if d.HasChange("description") || d.HasChange("labels") || d.HasChange("private_visibility_config") || d.HasChange("forwarding_config") {
 		obj := make(map[string]interface{})
 		descriptionProp, err := expandDnsManagedZoneDescription(d.Get("description"), d, config)
 		if err != nil {
@@ -189,8 +295,20 @@ func resourceDnsManagedZoneUpdate(d *schema.ResourceData, meta interface{}) erro
 		} else if v, ok := d.GetOkExists("labels"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
 			obj["labels"] = labelsProp
 		}
+		privateVisibilityConfigProp, err := expandDnsManagedZonePrivateVisibilityConfig(d.Get("private_visibility_config"), d, config)
+		if err != nil {
+			return err
+		} else if v, ok := d.GetOkExists("private_visibility_config"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, privateVisibilityConfigProp)) {
+			obj["privateVisibilityConfig"] = privateVisibilityConfigProp
+		}
+		forwardingConfigProp, err := expandDnsManagedZoneForwardingConfig(d.Get("forwarding_config"), d, config)
+		if err != nil {
+			return err
+		} else if v, ok := d.GetOkExists("forwarding_config"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, forwardingConfigProp)) {
+			obj["forwardingConfig"] = forwardingConfigProp
+		}
 
-		url, err := replaceVars(d, config, "https://www.googleapis.com/dns/v1/projects/{{project}}/managedZones/{{name}}")
+		url, err := replaceVars(d, config, "https://www.googleapis.com/dns/v1beta2/projects/{{project}}/managedZones/{{name}}")
 		if err != nil {
 			return err
 		}
@@ -201,6 +319,8 @@ func resourceDnsManagedZoneUpdate(d *schema.ResourceData, meta interface{}) erro
 
 		d.SetPartial("description")
 		d.SetPartial("labels")
+		d.SetPartial("private_visibility_config")
+		d.SetPartial("forwarding_config")
 	}
 
 	d.Partial(false)
@@ -211,7 +331,7 @@ func resourceDnsManagedZoneUpdate(d *schema.ResourceData, meta interface{}) erro
 func resourceDnsManagedZoneDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	url, err := replaceVars(d, config, "https://www.googleapis.com/dns/v1/projects/{{project}}/managedZones/{{name}}")
+	url, err := replaceVars(d, config, "https://www.googleapis.com/dns/v1beta2/projects/{{project}}/managedZones/{{name}}")
 	if err != nil {
 		return err
 	}
@@ -263,6 +383,96 @@ func flattenDnsManagedZoneLabels(v interface{}, d *schema.ResourceData) interfac
 	return v
 }
 
+func flattenDnsManagedZoneVisibility(v interface{}, d *schema.ResourceData) interface{} {
+	return v
+}
+
+func flattenDnsManagedZonePrivateVisibilityConfig(v interface{}, d *schema.ResourceData) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["networks"] =
+		flattenDnsManagedZonePrivateVisibilityConfigNetworks(original["networks"], d)
+	return []interface{}{transformed}
+}
+func flattenDnsManagedZonePrivateVisibilityConfigNetworks(v interface{}, d *schema.ResourceData) interface{} {
+	if v == nil {
+		return v
+	}
+	l := v.([]interface{})
+	transformed := schema.NewSet(func(v interface{}) int {
+		raw := v.(map[string]interface{})
+		if url, ok := raw["network_url"]; ok {
+			return selfLinkNameHash(url)
+		}
+		var buf bytes.Buffer
+		schema.SerializeResourceForHash(&buf, raw, dnsManagedZonePrivateVisibilityConfigNetworksSchema())
+		return hashcode.String(buf.String())
+	}, []interface{}{})
+	for _, raw := range l {
+		original := raw.(map[string]interface{})
+		if len(original) < 1 {
+			// Do not include empty json objects coming back from the api
+			continue
+		}
+		transformed.Add(map[string]interface{}{
+			"network_url": flattenDnsManagedZonePrivateVisibilityConfigNetworksNetworkUrl(original["networkUrl"], d),
+		})
+	}
+	return transformed
+}
+func flattenDnsManagedZonePrivateVisibilityConfigNetworksNetworkUrl(v interface{}, d *schema.ResourceData) interface{} {
+	return v
+}
+
+func flattenDnsManagedZoneForwardingConfig(v interface{}, d *schema.ResourceData) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["target_name_servers"] =
+		flattenDnsManagedZoneForwardingConfigTargetNameServers(original["targetNameServers"], d)
+	return []interface{}{transformed}
+}
+func flattenDnsManagedZoneForwardingConfigTargetNameServers(v interface{}, d *schema.ResourceData) interface{} {
+	if v == nil {
+		return v
+	}
+	l := v.([]interface{})
+	transformed := schema.NewSet(func(v interface{}) int {
+		raw := v.(map[string]interface{})
+		if address, ok := raw["ipv4_address"]; ok {
+			hashcode.String(address.(string))
+		}
+		var buf bytes.Buffer
+		schema.SerializeResourceForHash(&buf, raw, dnsManagedZoneForwardingConfigTargetNameServersSchema())
+		return hashcode.String(buf.String())
+	}, []interface{}{})
+	for _, raw := range l {
+		original := raw.(map[string]interface{})
+		if len(original) < 1 {
+			// Do not include empty json objects coming back from the api
+			continue
+		}
+		transformed.Add(map[string]interface{}{
+			"ipv4_address": flattenDnsManagedZoneForwardingConfigTargetNameServersIpv4Address(original["ipv4Address"], d),
+		})
+	}
+	return transformed
+}
+func flattenDnsManagedZoneForwardingConfigTargetNameServersIpv4Address(v interface{}, d *schema.ResourceData) interface{} {
+	return v
+}
+
 func expandDnsManagedZoneDescription(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
@@ -284,4 +494,100 @@ func expandDnsManagedZoneLabels(v interface{}, d *schema.ResourceData, config *C
 		m[k] = val.(string)
 	}
 	return m, nil
+}
+
+func expandDnsManagedZoneVisibility(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandDnsManagedZonePrivateVisibilityConfig(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedNetworks, err := expandDnsManagedZonePrivateVisibilityConfigNetworks(original["networks"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedNetworks); val.IsValid() && !isEmptyValue(val) {
+		transformed["networks"] = transformedNetworks
+	}
+
+	return transformed, nil
+}
+
+func expandDnsManagedZonePrivateVisibilityConfigNetworks(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
+	v = v.(*schema.Set).List()
+	l := v.([]interface{})
+	req := make([]interface{}, 0, len(l))
+	for _, raw := range l {
+		if raw == nil {
+			continue
+		}
+		original := raw.(map[string]interface{})
+		transformed := make(map[string]interface{})
+
+		transformedNetworkUrl, err := expandDnsManagedZonePrivateVisibilityConfigNetworksNetworkUrl(original["network_url"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedNetworkUrl); val.IsValid() && !isEmptyValue(val) {
+			transformed["networkUrl"] = transformedNetworkUrl
+		}
+
+		req = append(req, transformed)
+	}
+	return req, nil
+}
+
+func expandDnsManagedZonePrivateVisibilityConfigNetworksNetworkUrl(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandDnsManagedZoneForwardingConfig(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedTargetNameServers, err := expandDnsManagedZoneForwardingConfigTargetNameServers(original["target_name_servers"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedTargetNameServers); val.IsValid() && !isEmptyValue(val) {
+		transformed["targetNameServers"] = transformedTargetNameServers
+	}
+
+	return transformed, nil
+}
+
+func expandDnsManagedZoneForwardingConfigTargetNameServers(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
+	v = v.(*schema.Set).List()
+	l := v.([]interface{})
+	req := make([]interface{}, 0, len(l))
+	for _, raw := range l {
+		if raw == nil {
+			continue
+		}
+		original := raw.(map[string]interface{})
+		transformed := make(map[string]interface{})
+
+		transformedIpv4Address, err := expandDnsManagedZoneForwardingConfigTargetNameServersIpv4Address(original["ipv4_address"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedIpv4Address); val.IsValid() && !isEmptyValue(val) {
+			transformed["ipv4Address"] = transformedIpv4Address
+		}
+
+		req = append(req, transformed)
+	}
+	return req, nil
+}
+
+func expandDnsManagedZoneForwardingConfigTargetNameServersIpv4Address(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
+	return v, nil
 }
