@@ -32,10 +32,6 @@ func (w *RedisOperationWaiter) QueryOp() (interface{}, error) {
 }
 
 func redisOperationWaitTime(config *Config, op map[string]interface{}, project, activity string, timeoutMinutes int) error {
-	if val, ok := op["name"]; !ok || val == "" {
-		// This was a synchronous call - there is no operation to wait for.
-		return nil
-	}
 	w := &RedisOperationWaiter{
 		Config: config,
 	}
