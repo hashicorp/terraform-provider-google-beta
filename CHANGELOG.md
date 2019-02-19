@@ -3,6 +3,8 @@
 ENHANCEMENTS:
 * compute: `data.google_compute_subnetwork` can now be addressed by `self_link` as an alternative to the existing `name`/`region`/`project` fields. [GH-429]
 * dns: Support for privately visible zones is added to `google_dns_managed_zone`. [GH-268]
+* pubsub: `google_pubsub_topic` is now generated using Magic Modules, adding Open in Cloud Shell examples, configurable timeouts, and the `labels` field. [GH-432]
+* pubsub: `google_pubsub_subscription` is now generated using Magic Modules, adding Open in Cloud Shell examples, configurable timeouts, update support, and the `labels` field. [GH-432]
 
 ## 2.0.0 (February 12, 2019)
 
