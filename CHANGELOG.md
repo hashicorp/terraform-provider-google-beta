@@ -5,6 +5,11 @@ ENHANCEMENTS:
 * dns: Support for privately visible zones is added to `google_dns_managed_zone`. [GH-268]
 * pubsub: `google_pubsub_topic` is now generated using Magic Modules, adding Open in Cloud Shell examples, configurable timeouts, and the `labels` field. [GH-432]
 * pubsub: `google_pubsub_subscription` is now generated using Magic Modules, adding Open in Cloud Shell examples, configurable timeouts, update support, and the `labels` field. [GH-432]
+* sql: `google_sql_database_instance` now provides `public_ip_address` and `private_ip_address` outputs of the first public and private IP of the instance respectively. [GH-454]
+
+
+BUG FIXES:
+* sql: `google_sql_database_instance` allows the empty string to be set for `private_network`. [GH-454]
 
 ## 2.0.0 (February 12, 2019)
 
