@@ -1,4 +1,4 @@
-# cloud.google.com/go v0.34.0
+# cloud.google.com/go v0.36.0
 cloud.google.com/go/bigtable
 cloud.google.com/go/bigtable/internal/gax
 cloud.google.com/go/bigtable/internal/option
@@ -7,7 +7,7 @@ cloud.google.com/go/internal/optional
 cloud.google.com/go/longrunning
 cloud.google.com/go/longrunning/autogen
 cloud.google.com/go/compute/metadata
-# github.com/agext/levenshtein v1.2.1
+# github.com/agext/levenshtein v1.2.2
 github.com/agext/levenshtein
 # github.com/apparentlymart/go-cidr v1.0.0
 github.com/apparentlymart/go-cidr/cidr
@@ -15,7 +15,7 @@ github.com/apparentlymart/go-cidr/cidr
 github.com/apparentlymart/go-textseg/textseg
 # github.com/armon/go-radix v1.0.0
 github.com/armon/go-radix
-# github.com/aws/aws-sdk-go v1.16.26
+# github.com/aws/aws-sdk-go v1.17.0
 github.com/aws/aws-sdk-go/aws
 github.com/aws/aws-sdk-go/aws/credentials
 github.com/aws/aws-sdk-go/aws/credentials/ec2rolecreds
@@ -60,6 +60,8 @@ github.com/blang/semver
 github.com/davecgh/go-spew/spew
 # github.com/dustinkirkland/golang-petname v0.0.0-20170921220637-d3c2ba80e75e
 github.com/dustinkirkland/golang-petname
+# github.com/fatih/color v1.7.0
+github.com/fatih/color
 # github.com/gammazero/deque v0.0.0-20180920172122-f6adf94963e4
 github.com/gammazero/deque
 # github.com/gammazero/workerpool v0.0.0-20181230203049-86a96b5d5d92
@@ -80,27 +82,27 @@ github.com/google/go-cmp/cmp
 github.com/google/go-cmp/cmp/internal/diff
 github.com/google/go-cmp/cmp/internal/function
 github.com/google/go-cmp/cmp/internal/value
-# github.com/googleapis/gax-go v0.0.0-20180702194919-1ef592c90f47
-github.com/googleapis/gax-go
+# github.com/googleapis/gax-go/v2 v2.0.3
+github.com/googleapis/gax-go/v2
 # github.com/hashicorp/errwrap v1.0.0
 github.com/hashicorp/errwrap
 # github.com/hashicorp/go-cleanhttp v0.5.0
 github.com/hashicorp/go-cleanhttp
-# github.com/hashicorp/go-getter v0.0.0-20180327010114-90bb99a48d86
+# github.com/hashicorp/go-getter v1.1.0
 github.com/hashicorp/go-getter
 github.com/hashicorp/go-getter/helper/url
 # github.com/hashicorp/go-hclog v0.0.0-20181001195459-61d530d6c27f
 github.com/hashicorp/go-hclog
 # github.com/hashicorp/go-multierror v1.0.0
 github.com/hashicorp/go-multierror
-# github.com/hashicorp/go-plugin v0.0.0-20190212232519-b838ffee39ce
+# github.com/hashicorp/go-plugin v0.0.0-20190220160451-3f118e8ee104
 github.com/hashicorp/go-plugin
 github.com/hashicorp/go-plugin/internal/plugin
 # github.com/hashicorp/go-safetemp v1.0.0
 github.com/hashicorp/go-safetemp
 # github.com/hashicorp/go-uuid v1.0.0
 github.com/hashicorp/go-uuid
-# github.com/hashicorp/go-version v1.0.0
+# github.com/hashicorp/go-version v1.1.0
 github.com/hashicorp/go-version
 # github.com/hashicorp/hcl v0.0.0-20170504190234-a4b07c25de5f
 github.com/hashicorp/hcl
@@ -130,7 +132,7 @@ github.com/hashicorp/hil/parser
 github.com/hashicorp/hil/scanner
 # github.com/hashicorp/logutils v1.0.0
 github.com/hashicorp/logutils
-# github.com/hashicorp/terraform v0.12.0-alpha4.0.20190214185235-e1df4110c30e
+# github.com/hashicorp/terraform v0.12.0-alpha4.0.20190226230829-c2f653cf1a35
 github.com/hashicorp/terraform/plugin
 github.com/hashicorp/terraform/helper/customdiff
 github.com/hashicorp/terraform/helper/encryption
@@ -206,17 +208,19 @@ github.com/keybase/go-crypto/ed25519
 github.com/keybase/go-crypto/openpgp/ecdh
 github.com/keybase/go-crypto/openpgp/elgamal
 github.com/keybase/go-crypto/ed25519/internal/edwards25519
-# github.com/mattn/go-isatty v0.0.4
+# github.com/mattn/go-colorable v0.1.1
+github.com/mattn/go-colorable
+# github.com/mattn/go-isatty v0.0.5
 github.com/mattn/go-isatty
-# github.com/mitchellh/cli v0.0.0-20171129193617-33edc47170b5
+# github.com/mitchellh/cli v1.0.0
 github.com/mitchellh/cli
-# github.com/mitchellh/colorstring v0.0.0-20150917214807-8631ce90f286
+# github.com/mitchellh/colorstring v0.0.0-20190213212951-d06e56a500db
 github.com/mitchellh/colorstring
 # github.com/mitchellh/copystructure v1.0.0
 github.com/mitchellh/copystructure
 # github.com/mitchellh/go-homedir v1.0.0
 github.com/mitchellh/go-homedir
-# github.com/mitchellh/go-testing-interface v0.0.0-20171004221916-a61a99592b77
+# github.com/mitchellh/go-testing-interface v1.0.0
 github.com/mitchellh/go-testing-interface
 # github.com/mitchellh/go-wordwrap v1.0.0
 github.com/mitchellh/go-wordwrap
@@ -228,19 +232,19 @@ github.com/mitchellh/mapstructure
 github.com/mitchellh/reflectwalk
 # github.com/oklog/run v1.0.0
 github.com/oklog/run
-# github.com/posener/complete v0.0.0-20171219111128-6bee943216c8
+# github.com/posener/complete v1.2.1
 github.com/posener/complete
 github.com/posener/complete/cmd/install
 github.com/posener/complete/cmd
 github.com/posener/complete/match
-# github.com/spf13/afero v1.0.2
+# github.com/spf13/afero v1.2.1
 github.com/spf13/afero
 github.com/spf13/afero/mem
 # github.com/stoewer/go-strcase v1.0.1
 github.com/stoewer/go-strcase
 # github.com/terraform-providers/terraform-provider-random v0.0.0-20180820145304-a3da7a23d7f9
 github.com/terraform-providers/terraform-provider-random/random
-# github.com/ulikunitz/xz v0.5.4
+# github.com/ulikunitz/xz v0.5.5
 github.com/ulikunitz/xz
 github.com/ulikunitz/xz/internal/xlog
 github.com/ulikunitz/xz/lzma
@@ -251,14 +255,15 @@ github.com/vmihailenco/msgpack/codes
 # github.com/zclconf/go-cty v0.0.0-20190201220620-4ca19710f056
 github.com/zclconf/go-cty/cty
 github.com/zclconf/go-cty/cty/msgpack
-github.com/zclconf/go-cty/cty/json
 github.com/zclconf/go-cty/cty/convert
+github.com/zclconf/go-cty/cty/json
 github.com/zclconf/go-cty/cty/gocty
 github.com/zclconf/go-cty/cty/set
 github.com/zclconf/go-cty/cty/function
 github.com/zclconf/go-cty/cty/function/stdlib
-# go.opencensus.io v0.17.0
+# go.opencensus.io v0.18.0
 go.opencensus.io/trace
+go.opencensus.io/exemplar
 go.opencensus.io/internal
 go.opencensus.io/trace/internal
 go.opencensus.io/trace/tracestate
@@ -272,7 +277,7 @@ go.opencensus.io/plugin/ochttp
 go.opencensus.io/stats/internal
 go.opencensus.io/internal/tagencoding
 go.opencensus.io/plugin/ochttp/propagation/b3
-# golang.org/x/crypto v0.0.0-20181127143415-eb0de9b17e85
+# golang.org/x/crypto v0.0.0-20190222235706-ffb98f73852f
 golang.org/x/crypto/openpgp
 golang.org/x/crypto/bcrypt
 golang.org/x/crypto/ssh
@@ -289,29 +294,29 @@ golang.org/x/crypto/cast5
 golang.org/x/crypto/openpgp/elgamal
 golang.org/x/crypto/ed25519/internal/edwards25519
 golang.org/x/crypto/internal/subtle
-# golang.org/x/net v0.0.0-20181129055619-fae4c4e3ad76
+# golang.org/x/net v0.0.0-20190213061140-3a22650c66bd
 golang.org/x/net/context
-golang.org/x/net/http2
 golang.org/x/net/trace
 golang.org/x/net/context/ctxhttp
-golang.org/x/net/http/httpguts
+golang.org/x/net/internal/timeseries
+golang.org/x/net/http2
 golang.org/x/net/http2/hpack
 golang.org/x/net/idna
-golang.org/x/net/internal/timeseries
-# golang.org/x/oauth2 v0.0.0-20181003184128-c57b0facaced
+golang.org/x/net/http/httpguts
+# golang.org/x/oauth2 v0.0.0-20190220154721-9b3c75971fc9
 golang.org/x/oauth2
 golang.org/x/oauth2/google
 golang.org/x/oauth2/jwt
 golang.org/x/oauth2/internal
 golang.org/x/oauth2/jws
-# golang.org/x/sys v0.0.0-20190129075346-302c3dd5f1cc
+# golang.org/x/sys v0.0.0-20190222072716-a9d3bda3a223
 golang.org/x/sys/unix
-# golang.org/x/text v0.3.0
+# golang.org/x/text v0.3.1-0.20180807135948-17ff2d5776d2
 golang.org/x/text/unicode/norm
 golang.org/x/text/transform
 golang.org/x/text/secure/bidirule
 golang.org/x/text/unicode/bidi
-# google.golang.org/api v0.0.0-20181221000618-65a46cafb132
+# google.golang.org/api v0.1.0
 google.golang.org/api/accesscontextmanager/v1beta
 google.golang.org/api/appengine/v1
 google.golang.org/api/bigquery/v2
@@ -355,7 +360,7 @@ google.golang.org/api/transport
 google.golang.org/api/transport/http
 google.golang.org/api/googleapi/transport
 google.golang.org/api/transport/http/internal/propagation
-# google.golang.org/appengine v1.3.0
+# google.golang.org/appengine v1.4.0
 google.golang.org/appengine
 google.golang.org/appengine/socket
 google.golang.org/appengine/urlfetch
@@ -369,7 +374,7 @@ google.golang.org/appengine/internal/base
 google.golang.org/appengine/internal/datastore
 google.golang.org/appengine/internal/log
 google.golang.org/appengine/internal/remote_api
-# google.golang.org/genproto v0.0.0-20180831171423-11092d34479b
+# google.golang.org/genproto v0.0.0-20190201180003-4b09977fb922
 google.golang.org/genproto/googleapis/bigtable/admin/v2
 google.golang.org/genproto/googleapis/bigtable/v2
 google.golang.org/genproto/protobuf/field_mask
@@ -377,7 +382,7 @@ google.golang.org/genproto/googleapis/iam/v1
 google.golang.org/genproto/googleapis/longrunning
 google.golang.org/genproto/googleapis/api/annotations
 google.golang.org/genproto/googleapis/rpc/status
-# google.golang.org/grpc v1.14.0
+# google.golang.org/grpc v1.18.0
 google.golang.org/grpc
 google.golang.org/grpc/codes
 google.golang.org/grpc/metadata
@@ -394,9 +399,11 @@ google.golang.org/grpc/encoding/proto
 google.golang.org/grpc/grpclog
 google.golang.org/grpc/internal
 google.golang.org/grpc/internal/backoff
+google.golang.org/grpc/internal/binarylog
 google.golang.org/grpc/internal/channelz
 google.golang.org/grpc/internal/envconfig
 google.golang.org/grpc/internal/grpcrand
+google.golang.org/grpc/internal/grpcsync
 google.golang.org/grpc/internal/transport
 google.golang.org/grpc/keepalive
 google.golang.org/grpc/naming
@@ -407,4 +414,7 @@ google.golang.org/grpc/resolver/passthrough
 google.golang.org/grpc/stats
 google.golang.org/grpc/tap
 google.golang.org/grpc/credentials/oauth
+google.golang.org/grpc/credentials/internal
 google.golang.org/grpc/balancer/base
+google.golang.org/grpc/binarylog/grpc_binarylog_v1
+google.golang.org/grpc/internal/syscall
