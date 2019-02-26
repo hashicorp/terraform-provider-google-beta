@@ -1,7 +1,7 @@
 module github.com/terraform-providers/terraform-provider-google-beta
 
 require (
-	cloud.google.com/go v0.15.0
+	cloud.google.com/go v0.34.0
 	github.com/apparentlymart/go-cidr v1.0.0
 	github.com/davecgh/go-spew v1.1.1
 	github.com/dustinkirkland/golang-petname v0.0.0-20170921220637-d3c2ba80e75e // indirect
