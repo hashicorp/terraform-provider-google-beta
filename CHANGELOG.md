@@ -1,10 +1,10 @@
 ## 2.1.0 (Unreleased)
 
 FEATURES:
+* **New Resource**: Add support for `google_compute_managed_ssl_certificate`.  [GH-458]
 * **New Datasource**: `google_client_openid_userinfo` for retrieving the `email` used to authenticate with GCP. [GH-459]
 
 ENHANCEMENTS:
-* compute: Add support for `google_compute_managed_ssl_certificate`.  [GH-458]
 * compute: `data.google_compute_subnetwork` can now be addressed by `self_link` as an alternative to the existing `name`/`region`/`project` fields. [GH-429]
 * dns: Support for privately visible zones is added to `google_dns_managed_zone`. [GH-268]
 * pubsub: `google_pubsub_topic` is now generated using Magic Modules, adding Open in Cloud Shell examples, configurable timeouts, and the `labels` field. [GH-432]
