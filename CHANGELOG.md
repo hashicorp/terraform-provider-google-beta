@@ -1,19 +1,20 @@
-## 2.1.0 (Unreleased)
+## 2.2.0 (Unreleased)
+## 2.1.0 (February 26, 2019)
 
 FEATURES:
-* **New Resource**: Add support for `google_compute_managed_ssl_certificate`.  [GH-458]
-* **New Datasource**: `google_client_openid_userinfo` for retrieving the `email` used to authenticate with GCP. [GH-459]
+* **New Resource**: Add support for `google_compute_managed_ssl_certificate`.  ([#458](https://github.com/terraform-providers/terraform-provider-google-beta/issues/458))
+* **New Datasource**: `google_client_openid_userinfo` for retrieving the `email` used to authenticate with GCP. ([#459](https://github.com/terraform-providers/terraform-provider-google-beta/issues/459))
 
 ENHANCEMENTS:
-* compute: `data.google_compute_subnetwork` can now be addressed by `self_link` as an alternative to the existing `name`/`region`/`project` fields. [GH-429]
-* dns: Support for privately visible zones is added to `google_dns_managed_zone`. [GH-268]
-* pubsub: `google_pubsub_topic` is now generated using Magic Modules, adding Open in Cloud Shell examples, configurable timeouts, and the `labels` field. [GH-432]
-* pubsub: `google_pubsub_subscription` is now generated using Magic Modules, adding Open in Cloud Shell examples, configurable timeouts, update support, and the `labels` field. [GH-432]
-* sql: `google_sql_database_instance` now provides `public_ip_address` and `private_ip_address` outputs of the first public and private IP of the instance respectively. [GH-454]
+* compute: `data.google_compute_subnetwork` can now be addressed by `self_link` as an alternative to the existing `name`/`region`/`project` fields. ([#429](https://github.com/terraform-providers/terraform-provider-google-beta/issues/429))
+* dns: Support for privately visible zones is added to `google_dns_managed_zone`. ([#268](https://github.com/terraform-providers/terraform-provider-google-beta/issues/268))
+* pubsub: `google_pubsub_topic` is now generated using Magic Modules, adding Open in Cloud Shell examples, configurable timeouts, and the `labels` field. ([#432](https://github.com/terraform-providers/terraform-provider-google-beta/issues/432))
+* pubsub: `google_pubsub_subscription` is now generated using Magic Modules, adding Open in Cloud Shell examples, configurable timeouts, update support, and the `labels` field. ([#432](https://github.com/terraform-providers/terraform-provider-google-beta/issues/432))
+* sql: `google_sql_database_instance` now provides `public_ip_address` and `private_ip_address` outputs of the first public and private IP of the instance respectively. ([#454](https://github.com/terraform-providers/terraform-provider-google-beta/issues/454))
 
 
 BUG FIXES:
-* sql: `google_sql_database_instance` allows the empty string to be set for `private_network`. [GH-454]
+* sql: `google_sql_database_instance` allows the empty string to be set for `private_network`. ([#454](https://github.com/terraform-providers/terraform-provider-google-beta/issues/454))
 
 ## 2.0.0 (February 12, 2019)
 
