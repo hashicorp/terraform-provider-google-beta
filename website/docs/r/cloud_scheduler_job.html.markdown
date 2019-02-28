@@ -34,6 +34,80 @@ To get more information about Job, see:
 * How-to Guides
     * [Official Documentation](https://cloud.google.com/scheduler/)
 
+<div class = "oics-button" style="float: right; margin: 0 0 -15px">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=scheduler_job_pubsub&cloudshell_image=gcr.io%2Fgraphite-cloud-shell-images%2Fterraform%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+    <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
+  </a>
+</div>
+## Example Usage - Scheduler Job Pubsub
+
+
+```hcl
+resource "google_pubsub_topic" "topic" {
+  name = "job-topic"
+}
+
+resource "google_cloud_scheduler_job" "job" {
+  name     = "test-job"
+  description = "test job"
+  schedule = "*/2 * * * *"
+
+  pubsub_target {
+    topic_name = "${google_pubsub_topic.topic.id}"
+    data = "${base64encode("test")}"
+  }
+}
+```
+<div class = "oics-button" style="float: right; margin: 0 0 -15px">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=scheduler_job_http&cloudshell_image=gcr.io%2Fgraphite-cloud-shell-images%2Fterraform%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+    <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
+  </a>
+</div>
+## Example Usage - Scheduler Job Http
+
+
+```hcl
+resource "google_cloud_scheduler_job" "job" {
+  name     = "test-job"
+  description = "test http job"
+  schedule = "*/8 * * * *"
+  time_zone = "America/New_York"
+
+  http_target {
+    http_method = "POST"
+    uri = "https://example.com/ping"
+  }
+}
+```
+<div class = "oics-button" style="float: right; margin: 0 0 -15px">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=scheduler_job_app_engine&cloudshell_image=gcr.io%2Fgraphite-cloud-shell-images%2Fterraform%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+    <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
+  </a>
+</div>
+## Example Usage - Scheduler Job App Engine
+
+
+```hcl
+resource "google_cloud_scheduler_job" "job" {
+  name     = "test-job"
+  schedule = "*/4 * * * *"
+  description = "test app engine job"
+  time_zone = "Europe/London"
+
+  app_engine_http_target {
+    http_method = "POST"
+
+    app_engine_routing {
+      service = "web"
+      version = "prod"
+      instance = "my-instance-001"
+    }
+
+    relative_uri = "/ping"
+  }
+}
+```
+
 ## Argument Reference
 
 The following arguments are supported:
@@ -42,6 +116,10 @@ The following arguments are supported:
 * `name` -
   (Required)
   The name of the job.
+
+* `region` -
+  (Required)
+  Region where the scheduler job resides
 
 
 - - -
@@ -60,10 +138,6 @@ The following arguments are supported:
   (Optional)
   Specifies the time zone to be used in interpreting schedule.
   The value of this field must be a time zone name from the tz database.
-
-* `region` -
-  (Optional)
-  Region where the schedule job resides.
 
 * `retry_config` -
   (Optional)
