@@ -168,25 +168,25 @@ func resourceBinaryAuthorizationPolicyCreate(d *schema.ResourceData, meta interf
 	descriptionProp, err := expandBinaryAuthorizationPolicyDescription(d.Get("description"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("description"); !isEmptyValue(reflect.ValueOf(descriptionProp)) && (ok || !reflect.DeepEqual(v, descriptionProp)) {
+	} else if !isEmptyValue(reflect.ValueOf(descriptionProp)) {
 		obj["description"] = descriptionProp
 	}
 	admissionWhitelistPatternsProp, err := expandBinaryAuthorizationPolicyAdmissionWhitelistPatterns(d.Get("admission_whitelist_patterns"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("admission_whitelist_patterns"); !isEmptyValue(reflect.ValueOf(admissionWhitelistPatternsProp)) && (ok || !reflect.DeepEqual(v, admissionWhitelistPatternsProp)) {
+	} else if !isEmptyValue(reflect.ValueOf(admissionWhitelistPatternsProp)) {
 		obj["admissionWhitelistPatterns"] = admissionWhitelistPatternsProp
 	}
 	clusterAdmissionRulesProp, err := expandBinaryAuthorizationPolicyClusterAdmissionRules(d.Get("cluster_admission_rules"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("cluster_admission_rules"); !isEmptyValue(reflect.ValueOf(clusterAdmissionRulesProp)) && (ok || !reflect.DeepEqual(v, clusterAdmissionRulesProp)) {
+	} else if !isEmptyValue(reflect.ValueOf(clusterAdmissionRulesProp)) {
 		obj["clusterAdmissionRules"] = clusterAdmissionRulesProp
 	}
 	defaultAdmissionRuleProp, err := expandBinaryAuthorizationPolicyDefaultAdmissionRule(d.Get("default_admission_rule"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("default_admission_rule"); !isEmptyValue(reflect.ValueOf(defaultAdmissionRuleProp)) && (ok || !reflect.DeepEqual(v, defaultAdmissionRuleProp)) {
+	} else if !isEmptyValue(reflect.ValueOf(defaultAdmissionRuleProp)) {
 		obj["defaultAdmissionRule"] = defaultAdmissionRuleProp
 	}
 
@@ -257,25 +257,25 @@ func resourceBinaryAuthorizationPolicyUpdate(d *schema.ResourceData, meta interf
 	descriptionProp, err := expandBinaryAuthorizationPolicyDescription(d.Get("description"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("description"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, descriptionProp)) {
+	} else if !isEmptyValue(reflect.ValueOf(descriptionProp)) {
 		obj["description"] = descriptionProp
 	}
 	admissionWhitelistPatternsProp, err := expandBinaryAuthorizationPolicyAdmissionWhitelistPatterns(d.Get("admission_whitelist_patterns"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("admission_whitelist_patterns"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, admissionWhitelistPatternsProp)) {
+	} else if !isEmptyValue(reflect.ValueOf(admissionWhitelistPatternsProp)) {
 		obj["admissionWhitelistPatterns"] = admissionWhitelistPatternsProp
 	}
 	clusterAdmissionRulesProp, err := expandBinaryAuthorizationPolicyClusterAdmissionRules(d.Get("cluster_admission_rules"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("cluster_admission_rules"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, clusterAdmissionRulesProp)) {
+	} else if !isEmptyValue(reflect.ValueOf(clusterAdmissionRulesProp)) {
 		obj["clusterAdmissionRules"] = clusterAdmissionRulesProp
 	}
 	defaultAdmissionRuleProp, err := expandBinaryAuthorizationPolicyDefaultAdmissionRule(d.Get("default_admission_rule"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("default_admission_rule"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, defaultAdmissionRuleProp)) {
+	} else if !isEmptyValue(reflect.ValueOf(defaultAdmissionRuleProp)) {
 		obj["defaultAdmissionRule"] = defaultAdmissionRuleProp
 	}
 

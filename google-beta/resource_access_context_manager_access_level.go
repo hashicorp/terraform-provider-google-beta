@@ -166,31 +166,31 @@ func resourceAccessContextManagerAccessLevelCreate(d *schema.ResourceData, meta 
 	titleProp, err := expandAccessContextManagerAccessLevelTitle(d.Get("title"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("title"); !isEmptyValue(reflect.ValueOf(titleProp)) && (ok || !reflect.DeepEqual(v, titleProp)) {
+	} else if !isEmptyValue(reflect.ValueOf(titleProp)) {
 		obj["title"] = titleProp
 	}
 	descriptionProp, err := expandAccessContextManagerAccessLevelDescription(d.Get("description"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("description"); !isEmptyValue(reflect.ValueOf(descriptionProp)) && (ok || !reflect.DeepEqual(v, descriptionProp)) {
+	} else if !isEmptyValue(reflect.ValueOf(descriptionProp)) {
 		obj["description"] = descriptionProp
 	}
 	basicProp, err := expandAccessContextManagerAccessLevelBasic(d.Get("basic"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("basic"); !isEmptyValue(reflect.ValueOf(basicProp)) && (ok || !reflect.DeepEqual(v, basicProp)) {
+	} else if !isEmptyValue(reflect.ValueOf(basicProp)) {
 		obj["basic"] = basicProp
 	}
 	parentProp, err := expandAccessContextManagerAccessLevelParent(d.Get("parent"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("parent"); !isEmptyValue(reflect.ValueOf(parentProp)) && (ok || !reflect.DeepEqual(v, parentProp)) {
+	} else if !isEmptyValue(reflect.ValueOf(parentProp)) {
 		obj["parent"] = parentProp
 	}
 	nameProp, err := expandAccessContextManagerAccessLevelName(d.Get("name"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("name"); !isEmptyValue(reflect.ValueOf(nameProp)) && (ok || !reflect.DeepEqual(v, nameProp)) {
+	} else if !isEmptyValue(reflect.ValueOf(nameProp)) {
 		obj["name"] = nameProp
 	}
 
@@ -274,19 +274,19 @@ func resourceAccessContextManagerAccessLevelUpdate(d *schema.ResourceData, meta 
 	titleProp, err := expandAccessContextManagerAccessLevelTitle(d.Get("title"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("title"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, titleProp)) {
+	} else if !isEmptyValue(reflect.ValueOf(titleProp)) {
 		obj["title"] = titleProp
 	}
 	descriptionProp, err := expandAccessContextManagerAccessLevelDescription(d.Get("description"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("description"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, descriptionProp)) {
+	} else if !isEmptyValue(reflect.ValueOf(descriptionProp)) {
 		obj["description"] = descriptionProp
 	}
 	basicProp, err := expandAccessContextManagerAccessLevelBasic(d.Get("basic"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("basic"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, basicProp)) {
+	} else if !isEmptyValue(reflect.ValueOf(basicProp)) {
 		obj["basic"] = basicProp
 	}
 

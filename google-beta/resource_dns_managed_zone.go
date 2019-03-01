@@ -164,43 +164,43 @@ func resourceDnsManagedZoneCreate(d *schema.ResourceData, meta interface{}) erro
 	descriptionProp, err := expandDnsManagedZoneDescription(d.Get("description"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("description"); !isEmptyValue(reflect.ValueOf(descriptionProp)) && (ok || !reflect.DeepEqual(v, descriptionProp)) {
+	} else if !isEmptyValue(reflect.ValueOf(descriptionProp)) {
 		obj["description"] = descriptionProp
 	}
 	dnsNameProp, err := expandDnsManagedZoneDnsName(d.Get("dns_name"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("dns_name"); !isEmptyValue(reflect.ValueOf(dnsNameProp)) && (ok || !reflect.DeepEqual(v, dnsNameProp)) {
+	} else if !isEmptyValue(reflect.ValueOf(dnsNameProp)) {
 		obj["dnsName"] = dnsNameProp
 	}
 	nameProp, err := expandDnsManagedZoneName(d.Get("name"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("name"); !isEmptyValue(reflect.ValueOf(nameProp)) && (ok || !reflect.DeepEqual(v, nameProp)) {
+	} else if !isEmptyValue(reflect.ValueOf(nameProp)) {
 		obj["name"] = nameProp
 	}
 	labelsProp, err := expandDnsManagedZoneLabels(d.Get("labels"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("labels"); !isEmptyValue(reflect.ValueOf(labelsProp)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
+	} else if !isEmptyValue(reflect.ValueOf(labelsProp)) {
 		obj["labels"] = labelsProp
 	}
 	visibilityProp, err := expandDnsManagedZoneVisibility(d.Get("visibility"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("visibility"); !isEmptyValue(reflect.ValueOf(visibilityProp)) && (ok || !reflect.DeepEqual(v, visibilityProp)) {
+	} else if !isEmptyValue(reflect.ValueOf(visibilityProp)) {
 		obj["visibility"] = visibilityProp
 	}
 	privateVisibilityConfigProp, err := expandDnsManagedZonePrivateVisibilityConfig(d.Get("private_visibility_config"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("private_visibility_config"); !isEmptyValue(reflect.ValueOf(privateVisibilityConfigProp)) && (ok || !reflect.DeepEqual(v, privateVisibilityConfigProp)) {
+	} else if !isEmptyValue(reflect.ValueOf(privateVisibilityConfigProp)) {
 		obj["privateVisibilityConfig"] = privateVisibilityConfigProp
 	}
 	forwardingConfigProp, err := expandDnsManagedZoneForwardingConfig(d.Get("forwarding_config"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("forwarding_config"); !isEmptyValue(reflect.ValueOf(forwardingConfigProp)) && (ok || !reflect.DeepEqual(v, forwardingConfigProp)) {
+	} else if !isEmptyValue(reflect.ValueOf(forwardingConfigProp)) {
 		obj["forwardingConfig"] = forwardingConfigProp
 	}
 
@@ -286,25 +286,25 @@ func resourceDnsManagedZoneUpdate(d *schema.ResourceData, meta interface{}) erro
 		descriptionProp, err := expandDnsManagedZoneDescription(d.Get("description"), d, config)
 		if err != nil {
 			return err
-		} else if v, ok := d.GetOkExists("description"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, descriptionProp)) {
+		} else if !isEmptyValue(reflect.ValueOf(descriptionProp)) {
 			obj["description"] = descriptionProp
 		}
 		labelsProp, err := expandDnsManagedZoneLabels(d.Get("labels"), d, config)
 		if err != nil {
 			return err
-		} else if v, ok := d.GetOkExists("labels"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
+		} else if !isEmptyValue(reflect.ValueOf(labelsProp)) {
 			obj["labels"] = labelsProp
 		}
 		privateVisibilityConfigProp, err := expandDnsManagedZonePrivateVisibilityConfig(d.Get("private_visibility_config"), d, config)
 		if err != nil {
 			return err
-		} else if v, ok := d.GetOkExists("private_visibility_config"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, privateVisibilityConfigProp)) {
+		} else if !isEmptyValue(reflect.ValueOf(privateVisibilityConfigProp)) {
 			obj["privateVisibilityConfig"] = privateVisibilityConfigProp
 		}
 		forwardingConfigProp, err := expandDnsManagedZoneForwardingConfig(d.Get("forwarding_config"), d, config)
 		if err != nil {
 			return err
-		} else if v, ok := d.GetOkExists("forwarding_config"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, forwardingConfigProp)) {
+		} else if !isEmptyValue(reflect.ValueOf(forwardingConfigProp)) {
 			obj["forwardingConfig"] = forwardingConfigProp
 		}
 

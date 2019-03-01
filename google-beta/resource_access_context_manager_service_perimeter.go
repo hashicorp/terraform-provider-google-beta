@@ -125,37 +125,37 @@ func resourceAccessContextManagerServicePerimeterCreate(d *schema.ResourceData, 
 	titleProp, err := expandAccessContextManagerServicePerimeterTitle(d.Get("title"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("title"); !isEmptyValue(reflect.ValueOf(titleProp)) && (ok || !reflect.DeepEqual(v, titleProp)) {
+	} else if !isEmptyValue(reflect.ValueOf(titleProp)) {
 		obj["title"] = titleProp
 	}
 	descriptionProp, err := expandAccessContextManagerServicePerimeterDescription(d.Get("description"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("description"); !isEmptyValue(reflect.ValueOf(descriptionProp)) && (ok || !reflect.DeepEqual(v, descriptionProp)) {
+	} else if !isEmptyValue(reflect.ValueOf(descriptionProp)) {
 		obj["description"] = descriptionProp
 	}
 	perimeterTypeProp, err := expandAccessContextManagerServicePerimeterPerimeterType(d.Get("perimeter_type"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("perimeter_type"); !isEmptyValue(reflect.ValueOf(perimeterTypeProp)) && (ok || !reflect.DeepEqual(v, perimeterTypeProp)) {
+	} else if !isEmptyValue(reflect.ValueOf(perimeterTypeProp)) {
 		obj["perimeterType"] = perimeterTypeProp
 	}
 	statusProp, err := expandAccessContextManagerServicePerimeterStatus(d.Get("status"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("status"); !isEmptyValue(reflect.ValueOf(statusProp)) && (ok || !reflect.DeepEqual(v, statusProp)) {
+	} else if !isEmptyValue(reflect.ValueOf(statusProp)) {
 		obj["status"] = statusProp
 	}
 	parentProp, err := expandAccessContextManagerServicePerimeterParent(d.Get("parent"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("parent"); !isEmptyValue(reflect.ValueOf(parentProp)) && (ok || !reflect.DeepEqual(v, parentProp)) {
+	} else if !isEmptyValue(reflect.ValueOf(parentProp)) {
 		obj["parent"] = parentProp
 	}
 	nameProp, err := expandAccessContextManagerServicePerimeterName(d.Get("name"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("name"); !isEmptyValue(reflect.ValueOf(nameProp)) && (ok || !reflect.DeepEqual(v, nameProp)) {
+	} else if !isEmptyValue(reflect.ValueOf(nameProp)) {
 		obj["name"] = nameProp
 	}
 
@@ -248,19 +248,19 @@ func resourceAccessContextManagerServicePerimeterUpdate(d *schema.ResourceData, 
 	titleProp, err := expandAccessContextManagerServicePerimeterTitle(d.Get("title"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("title"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, titleProp)) {
+	} else if !isEmptyValue(reflect.ValueOf(titleProp)) {
 		obj["title"] = titleProp
 	}
 	descriptionProp, err := expandAccessContextManagerServicePerimeterDescription(d.Get("description"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("description"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, descriptionProp)) {
+	} else if !isEmptyValue(reflect.ValueOf(descriptionProp)) {
 		obj["description"] = descriptionProp
 	}
 	statusProp, err := expandAccessContextManagerServicePerimeterStatus(d.Get("status"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("status"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, statusProp)) {
+	} else if !isEmptyValue(reflect.ValueOf(statusProp)) {
 		obj["status"] = statusProp
 	}
 

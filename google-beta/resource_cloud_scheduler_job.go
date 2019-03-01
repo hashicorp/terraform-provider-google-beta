@@ -239,49 +239,49 @@ func resourceCloudSchedulerJobCreate(d *schema.ResourceData, meta interface{}) e
 	nameProp, err := expandCloudSchedulerJobName(d.Get("name"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("name"); !isEmptyValue(reflect.ValueOf(nameProp)) && (ok || !reflect.DeepEqual(v, nameProp)) {
+	} else if !isEmptyValue(reflect.ValueOf(nameProp)) {
 		obj["name"] = nameProp
 	}
 	descriptionProp, err := expandCloudSchedulerJobDescription(d.Get("description"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("description"); !isEmptyValue(reflect.ValueOf(descriptionProp)) && (ok || !reflect.DeepEqual(v, descriptionProp)) {
+	} else if !isEmptyValue(reflect.ValueOf(descriptionProp)) {
 		obj["description"] = descriptionProp
 	}
 	scheduleProp, err := expandCloudSchedulerJobSchedule(d.Get("schedule"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("schedule"); !isEmptyValue(reflect.ValueOf(scheduleProp)) && (ok || !reflect.DeepEqual(v, scheduleProp)) {
+	} else if !isEmptyValue(reflect.ValueOf(scheduleProp)) {
 		obj["schedule"] = scheduleProp
 	}
 	timeZoneProp, err := expandCloudSchedulerJobTimeZone(d.Get("time_zone"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("time_zone"); !isEmptyValue(reflect.ValueOf(timeZoneProp)) && (ok || !reflect.DeepEqual(v, timeZoneProp)) {
+	} else if !isEmptyValue(reflect.ValueOf(timeZoneProp)) {
 		obj["timeZone"] = timeZoneProp
 	}
 	retryConfigProp, err := expandCloudSchedulerJobRetryConfig(d.Get("retry_config"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("retry_config"); !isEmptyValue(reflect.ValueOf(retryConfigProp)) && (ok || !reflect.DeepEqual(v, retryConfigProp)) {
+	} else if !isEmptyValue(reflect.ValueOf(retryConfigProp)) {
 		obj["retryConfig"] = retryConfigProp
 	}
 	pubsubTargetProp, err := expandCloudSchedulerJobPubsubTarget(d.Get("pubsub_target"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("pubsub_target"); !isEmptyValue(reflect.ValueOf(pubsubTargetProp)) && (ok || !reflect.DeepEqual(v, pubsubTargetProp)) {
+	} else if !isEmptyValue(reflect.ValueOf(pubsubTargetProp)) {
 		obj["pubsubTarget"] = pubsubTargetProp
 	}
 	appEngineHttpTargetProp, err := expandCloudSchedulerJobAppEngineHttpTarget(d.Get("app_engine_http_target"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("app_engine_http_target"); !isEmptyValue(reflect.ValueOf(appEngineHttpTargetProp)) && (ok || !reflect.DeepEqual(v, appEngineHttpTargetProp)) {
+	} else if !isEmptyValue(reflect.ValueOf(appEngineHttpTargetProp)) {
 		obj["appEngineHttpTarget"] = appEngineHttpTargetProp
 	}
 	httpTargetProp, err := expandCloudSchedulerJobHttpTarget(d.Get("http_target"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("http_target"); !isEmptyValue(reflect.ValueOf(httpTargetProp)) && (ok || !reflect.DeepEqual(v, httpTargetProp)) {
+	} else if !isEmptyValue(reflect.ValueOf(httpTargetProp)) {
 		obj["httpTarget"] = httpTargetProp
 	}
 

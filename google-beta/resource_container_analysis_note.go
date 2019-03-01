@@ -86,13 +86,13 @@ func resourceContainerAnalysisNoteCreate(d *schema.ResourceData, meta interface{
 	nameProp, err := expandContainerAnalysisNoteName(d.Get("name"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("name"); !isEmptyValue(reflect.ValueOf(nameProp)) && (ok || !reflect.DeepEqual(v, nameProp)) {
+	} else if !isEmptyValue(reflect.ValueOf(nameProp)) {
 		obj["name"] = nameProp
 	}
 	attestationAuthorityProp, err := expandContainerAnalysisNoteAttestationAuthority(d.Get("attestation_authority"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("attestation_authority"); !isEmptyValue(reflect.ValueOf(attestationAuthorityProp)) && (ok || !reflect.DeepEqual(v, attestationAuthorityProp)) {
+	} else if !isEmptyValue(reflect.ValueOf(attestationAuthorityProp)) {
 		obj["attestationAuthority"] = attestationAuthorityProp
 	}
 
@@ -157,7 +157,7 @@ func resourceContainerAnalysisNoteUpdate(d *schema.ResourceData, meta interface{
 	attestationAuthorityProp, err := expandContainerAnalysisNoteAttestationAuthority(d.Get("attestation_authority"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("attestation_authority"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, attestationAuthorityProp)) {
+	} else if !isEmptyValue(reflect.ValueOf(attestationAuthorityProp)) {
 		obj["attestationAuthority"] = attestationAuthorityProp
 	}
 

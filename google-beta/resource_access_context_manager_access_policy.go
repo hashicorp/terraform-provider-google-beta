@@ -76,13 +76,13 @@ func resourceAccessContextManagerAccessPolicyCreate(d *schema.ResourceData, meta
 	parentProp, err := expandAccessContextManagerAccessPolicyParent(d.Get("parent"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("parent"); !isEmptyValue(reflect.ValueOf(parentProp)) && (ok || !reflect.DeepEqual(v, parentProp)) {
+	} else if !isEmptyValue(reflect.ValueOf(parentProp)) {
 		obj["parent"] = parentProp
 	}
 	titleProp, err := expandAccessContextManagerAccessPolicyTitle(d.Get("title"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("title"); !isEmptyValue(reflect.ValueOf(titleProp)) && (ok || !reflect.DeepEqual(v, titleProp)) {
+	} else if !isEmptyValue(reflect.ValueOf(titleProp)) {
 		obj["title"] = titleProp
 	}
 
@@ -182,7 +182,7 @@ func resourceAccessContextManagerAccessPolicyUpdate(d *schema.ResourceData, meta
 	titleProp, err := expandAccessContextManagerAccessPolicyTitle(d.Get("title"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("title"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, titleProp)) {
+	} else if !isEmptyValue(reflect.ValueOf(titleProp)) {
 		obj["title"] = titleProp
 	}
 
