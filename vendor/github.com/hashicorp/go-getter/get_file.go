@@ -8,11 +8,7 @@ import (
 // FileGetter is a Getter implementation that will download a module from
 // a file scheme.
 type FileGetter struct {
-	getter
-
-	// Copy, if set to true, will copy data instead of using a symlink. If
-	// false, attempts to symlink to speed up the operation and to lower the
-	// disk space usage. If the symlink fails, may attempt to copy on windows.
+	// Copy, if set to true, will copy data instead of using a symlink
 	Copy bool
 }
 

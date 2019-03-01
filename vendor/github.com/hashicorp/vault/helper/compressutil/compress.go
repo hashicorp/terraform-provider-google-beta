@@ -8,7 +8,6 @@ import (
 	"io"
 
 	"github.com/golang/snappy"
-	"github.com/hashicorp/errwrap"
 )
 
 const (
@@ -34,7 +33,7 @@ const (
 )
 
 // SnappyReadCloser embeds the snappy reader which implements the io.Reader
-// interface. The decompress procedure in this utility expects an
+// interface. The decompress procedure in this utility expectes an
 // io.ReadCloser. This type implements the io.Closer interface to retain the
 // generic way of decompression.
 type SnappyReadCloser struct {
@@ -108,7 +107,7 @@ func Compress(data []byte, config *CompressionConfig) ([]byte, error) {
 	}
 
 	if err != nil {
-		return nil, errwrap.Wrapf("failed to create a compression writer: {{err}}", err)
+		return nil, fmt.Errorf("failed to create a compression writer; err: %v", err)
 	}
 
 	if writer == nil {
@@ -118,7 +117,7 @@ func Compress(data []byte, config *CompressionConfig) ([]byte, error) {
 	// Compress the input and place it in the same buffer containing the
 	// canary byte.
 	if _, err = writer.Write(data); err != nil {
-		return nil, errwrap.Wrapf("failed to compress input data: err: {{err}}", err)
+		return nil, fmt.Errorf("failed to compress input data; err: %v", err)
 	}
 
 	// Close the io.WriteCloser
@@ -173,7 +172,7 @@ func Decompress(data []byte) ([]byte, bool, error) {
 		return nil, true, nil
 	}
 	if err != nil {
-		return nil, false, errwrap.Wrapf("failed to create a compression reader: {{err}}", err)
+		return nil, false, fmt.Errorf("failed to create a compression reader; err: %v", err)
 	}
 	if reader == nil {
 		return nil, false, fmt.Errorf("failed to create a compression reader")

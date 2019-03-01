@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/hashicorp/errwrap"
 	"github.com/hashicorp/vault/helper/compressutil"
 )
 
@@ -65,7 +64,7 @@ func DecodeJSON(data []byte, out interface{}) error {
 	// Decompress the data if it was compressed in the first place
 	decompressedBytes, uncompressed, err := compressutil.Decompress(data)
 	if err != nil {
-		return errwrap.Wrapf("failed to decompress JSON: {{err}}", err)
+		return fmt.Errorf("failed to decompress JSON: err: %v", err)
 	}
 	if !uncompressed && (decompressedBytes == nil || len(decompressedBytes) == 0) {
 		return fmt.Errorf("decompressed data being decoded is invalid")
@@ -92,7 +91,7 @@ func DecodeJSONFromReader(r io.Reader, out interface{}) error {
 
 	dec := json.NewDecoder(r)
 
-	// While decoding JSON values, interpret the integer values as `json.Number`s instead of `float64`.
+	// While decoding JSON values, intepret the integer values as `json.Number`s instead of `float64`.
 	dec.UseNumber()
 
 	// Since 'out' is an interface representing a pointer, pass it to the decoder without an '&'

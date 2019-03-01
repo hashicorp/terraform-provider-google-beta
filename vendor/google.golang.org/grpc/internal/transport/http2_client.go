@@ -19,8 +19,6 @@
 package transport
 
 import (
-	"context"
-	"fmt"
 	"io"
 	"math"
 	"net"
@@ -30,13 +28,13 @@ import (
 	"sync/atomic"
 	"time"
 
+	"golang.org/x/net/context"
 	"golang.org/x/net/http2"
 	"golang.org/x/net/http2/hpack"
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/internal/channelz"
-	"google.golang.org/grpc/internal/syscall"
 	"google.golang.org/grpc/keepalive"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/peer"
@@ -75,7 +73,7 @@ type http2Client struct {
 
 	isSecure bool
 
-	perRPCCreds []credentials.PerRPCCredentials
+	creds []credentials.PerRPCCredentials
 
 	// Boolean to keep track of reading activity on transport.
 	// 1 is true and 0 is false.
@@ -91,10 +89,10 @@ type http2Client struct {
 	maxSendHeaderListSize *uint32
 
 	bdpEst *bdpEstimator
-	// onPrefaceReceipt is a callback that client transport calls upon
+	// onSuccess is a callback that client transport calls upon
 	// receiving server preface to signal that a succefull HTTP2
 	// connection was established.
-	onPrefaceReceipt func()
+	onSuccess func()
 
 	maxConcurrentStreams  uint32
 	streamQuota           int64
@@ -113,17 +111,26 @@ type http2Client struct {
 
 	// Fields below are for channelz metric collection.
 	channelzID int64 // channelz unique identification number
-	czData     *channelzData
-
-	onGoAway func(GoAwayReason)
-	onClose  func()
+	czmu       sync.RWMutex
+	kpCount    int64
+	// The number of streams that have started, including already finished ones.
+	streamsStarted int64
+	// The number of streams that have ended successfully by receiving EoS bit set
+	// frame from server.
+	streamsSucceeded  int64
+	streamsFailed     int64
+	lastStreamCreated time.Time
+	msgSent           int64
+	msgRecv           int64
+	lastMsgSent       time.Time
+	lastMsgRecv       time.Time
 }
 
 func dial(ctx context.Context, fn func(context.Context, string) (net.Conn, error), addr string) (net.Conn, error) {
 	if fn != nil {
 		return fn(ctx, addr)
 	}
-	return (&net.Dialer{}).DialContext(ctx, "tcp", addr)
+	return dialContext(ctx, "tcp", addr)
 }
 
 func isTemporary(err error) bool {
@@ -145,7 +152,7 @@ func isTemporary(err error) bool {
 // newHTTP2Client constructs a connected ClientTransport to addr based on HTTP2
 // and starts to receive messages on it. Non-nil error returns if construction
 // fails.
-func newHTTP2Client(connectCtx, ctx context.Context, addr TargetInfo, opts ConnectOptions, onPrefaceReceipt func(), onGoAway func(GoAwayReason), onClose func()) (_ *http2Client, err error) {
+func newHTTP2Client(connectCtx, ctx context.Context, addr TargetInfo, opts ConnectOptions, onSuccess func()) (_ *http2Client, err error) {
 	scheme := "http"
 	ctx, cancel := context.WithCancel(ctx)
 	defer func() {
@@ -167,6 +174,18 @@ func newHTTP2Client(connectCtx, ctx context.Context, addr TargetInfo, opts Conne
 			conn.Close()
 		}
 	}(conn)
+	var (
+		isSecure bool
+		authInfo credentials.AuthInfo
+	)
+	if creds := opts.TransportCredentials; creds != nil {
+		scheme = "https"
+		conn, authInfo, err = creds.ClientHandshake(connectCtx, addr.Authority, conn)
+		if err != nil {
+			return nil, connectionErrorf(isTemporary(err), err, "transport: authentication handshake failed: %v", err)
+		}
+		isSecure = true
+	}
 	kp := opts.KeepaliveParams
 	// Validate keepalive parameters.
 	if kp.Time == 0 {
@@ -174,36 +193,6 @@ func newHTTP2Client(connectCtx, ctx context.Context, addr TargetInfo, opts Conne
 	}
 	if kp.Timeout == 0 {
 		kp.Timeout = defaultClientKeepaliveTimeout
-	}
-	keepaliveEnabled := false
-	if kp.Time != infinity {
-		if err = syscall.SetTCPUserTimeout(conn, kp.Timeout); err != nil {
-			return nil, connectionErrorf(false, err, "transport: failed to set TCP_USER_TIMEOUT: %v", err)
-		}
-		keepaliveEnabled = true
-	}
-	var (
-		isSecure bool
-		authInfo credentials.AuthInfo
-	)
-	transportCreds := opts.TransportCredentials
-	perRPCCreds := opts.PerRPCCredentials
-
-	if b := opts.CredsBundle; b != nil {
-		if t := b.TransportCredentials(); t != nil {
-			transportCreds = t
-		}
-		if t := b.PerRPCCredentials(); t != nil {
-			perRPCCreds = append(perRPCCreds, t)
-		}
-	}
-	if transportCreds != nil {
-		scheme = "https"
-		conn, authInfo, err = transportCreds.ClientHandshake(connectCtx, addr.Authority, conn)
-		if err != nil {
-			return nil, connectionErrorf(isTemporary(err), err, "transport: authentication handshake failed: %v", err)
-		}
-		isSecure = true
 	}
 	dynamicWindow := true
 	icwz := int32(initialWindowSize)
@@ -236,19 +225,15 @@ func newHTTP2Client(connectCtx, ctx context.Context, addr TargetInfo, opts Conne
 		scheme:                scheme,
 		activeStreams:         make(map[uint32]*Stream),
 		isSecure:              isSecure,
-		perRPCCreds:           perRPCCreds,
+		creds:                 opts.PerRPCCredentials,
 		kp:                    kp,
 		statsHandler:          opts.StatsHandler,
 		initialWindowSize:     initialWindowSize,
-		onPrefaceReceipt:      onPrefaceReceipt,
+		onSuccess:             onSuccess,
 		nextID:                1,
 		maxConcurrentStreams:  defaultMaxStreamsClient,
 		streamQuota:           defaultMaxStreamsClient,
 		streamsQuotaAvailable: make(chan struct{}, 1),
-		czData:                new(channelzData),
-		onGoAway:              onGoAway,
-		onClose:               onClose,
-		keepaliveEnabled:      keepaliveEnabled,
 	}
 	t.controlBuf = newControlBuffer(t.ctxDone)
 	if opts.InitialWindowSize >= defaultWindowSize {
@@ -275,16 +260,16 @@ func newHTTP2Client(connectCtx, ctx context.Context, addr TargetInfo, opts Conne
 		t.statsHandler.HandleConn(t.ctx, connBegin)
 	}
 	if channelz.IsOn() {
-		t.channelzID = channelz.RegisterNormalSocket(t, opts.ChannelzParentID, fmt.Sprintf("%s -> %s", t.localAddr, t.remoteAddr))
+		t.channelzID = channelz.RegisterNormalSocket(t, opts.ChannelzParentID, "")
 	}
-	if t.keepaliveEnabled {
+	if t.kp.Time != infinity {
+		t.keepaliveEnabled = true
 		go t.keepalive()
 	}
 	// Start the reader goroutine for incoming message. Each transport has
 	// a dedicated goroutine which reads HTTP2 frame from network. Then it
 	// dispatches the frame to the corresponding stream entity.
 	go t.reader()
-
 	// Send connection preface to server.
 	n, err := t.conn.Write(clientPreface)
 	if err != nil {
@@ -321,7 +306,6 @@ func newHTTP2Client(connectCtx, ctx context.Context, addr TargetInfo, opts Conne
 			return nil, connectionErrorf(true, err, "transport: failed to write window update: %v", err)
 		}
 	}
-
 	t.framer.writer.Flush()
 	go func() {
 		t.loopy = newLoopyWriter(clientSide, t.framer, t.controlBuf, t.bdpEst)
@@ -362,9 +346,6 @@ func (t *http2Client) newStream(ctx context.Context, callHdr *CallHdr) *Stream {
 			ctx:     s.ctx,
 			ctxDone: s.ctx.Done(),
 			recv:    s.buf,
-			closeStream: func(err error) {
-				t.CloseStream(s, err)
-			},
 		},
 		windowHandler: func(n int) {
 			t.updateWindow(s, uint32(n))
@@ -473,7 +454,7 @@ func (t *http2Client) createHeaderFields(ctx context.Context, callHdr *CallHdr) 
 
 func (t *http2Client) createAudience(callHdr *CallHdr) string {
 	// Create an audience string only if needed.
-	if len(t.perRPCCreds) == 0 && callHdr.Creds == nil {
+	if len(t.creds) == 0 && callHdr.Creds == nil {
 		return ""
 	}
 	// Construct URI required to get auth request metadata.
@@ -488,7 +469,7 @@ func (t *http2Client) createAudience(callHdr *CallHdr) string {
 
 func (t *http2Client) getTrAuthData(ctx context.Context, audience string) (map[string]string, error) {
 	authData := map[string]string{}
-	for _, c := range t.perRPCCreds {
+	for _, c := range t.creds {
 		data, err := c.GetRequestMetadata(ctx, audience)
 		if err != nil {
 			if _, ok := status.FromError(err); ok {
@@ -569,8 +550,10 @@ func (t *http2Client) NewStream(ctx context.Context, callHdr *CallHdr) (_ *Strea
 			}
 			t.activeStreams[id] = s
 			if channelz.IsOn() {
-				atomic.AddInt64(&t.czData.streamsStarted, 1)
-				atomic.StoreInt64(&t.czData.lastStreamCreatedTime, time.Now().UnixNano())
+				t.czmu.Lock()
+				t.streamsStarted++
+				t.lastStreamCreated = time.Now()
+				t.czmu.Unlock()
 			}
 			var sendPing bool
 			// If the number of active streams change from 0 to 1, then check if keepalive
@@ -694,9 +677,7 @@ func (t *http2Client) CloseStream(s *Stream, err error) {
 func (t *http2Client) closeStream(s *Stream, err error, rst bool, rstCode http2.ErrCode, st *status.Status, mdata map[string][]string, eosReceived bool) {
 	// Set stream status to done.
 	if s.swapState(streamDone) == streamDone {
-		// If it was already done, return.  If multiple closeStream calls
-		// happen simultaneously, wait for the first to finish.
-		<-s.done
+		// If it was already done, return.
 		return
 	}
 	// status and trailers can be updated here without any synchronization because the stream goroutine will
@@ -710,6 +691,8 @@ func (t *http2Client) closeStream(s *Stream, err error, rst bool, rstCode http2.
 		// This will unblock reads eventually.
 		s.write(recvMsg{err: err})
 	}
+	// This will unblock write.
+	close(s.done)
 	// If headerChan isn't closed, then close it.
 	if atomic.SwapUint32(&s.headerDone, 1) == 0 {
 		s.noHeaders = true
@@ -724,11 +707,13 @@ func (t *http2Client) closeStream(s *Stream, err error, rst bool, rstCode http2.
 			}
 			t.mu.Unlock()
 			if channelz.IsOn() {
+				t.czmu.Lock()
 				if eosReceived {
-					atomic.AddInt64(&t.czData.streamsSucceeded, 1)
+					t.streamsSucceeded++
 				} else {
-					atomic.AddInt64(&t.czData.streamsFailed, 1)
+					t.streamsFailed++
 				}
+				t.czmu.Unlock()
 			}
 		},
 		rst:     rst,
@@ -745,17 +730,11 @@ func (t *http2Client) closeStream(s *Stream, err error, rst bool, rstCode http2.
 		return true
 	}
 	t.controlBuf.executeAndPut(addBackStreamQuota, cleanup)
-	// This will unblock write.
-	close(s.done)
 }
 
 // Close kicks off the shutdown process of the transport. This should be called
 // only once on a transport. Once it is called, the transport should not be
 // accessed any more.
-//
-// This method blocks until the addrConn that initiated this transport is
-// re-connected. This happens because t.onClose() begins reconnect logic at the
-// addrConn level and blocks until the addrConn is successfully connected.
 func (t *http2Client) Close() error {
 	t.mu.Lock()
 	// Make sure we only Close once.
@@ -783,7 +762,6 @@ func (t *http2Client) Close() error {
 		}
 		t.statsHandler.HandleConn(t.ctx, connEnd)
 	}
-	t.onClose()
 	return err
 }
 
@@ -1080,9 +1058,6 @@ func (t *http2Client) handleGoAway(f *http2.GoAwayFrame) {
 		close(t.goAway)
 		t.state = draining
 		t.controlBuf.put(&incomingGoAway{})
-
-		// This has to be a new goroutine because we're still using the current goroutine to read in the transport.
-		t.onGoAway(t.goAwayReason)
 	}
 	// All streams with IDs greater than the GoAwayId
 	// and smaller than the previous GoAway ID should be killed.
@@ -1185,9 +1160,7 @@ func (t *http2Client) operateHeaders(frame *http2.MetaHeadersFrame) {
 	if !endStream {
 		return
 	}
-	// if client received END_STREAM from server while stream was still active, send RST_STREAM
-	rst := s.getState() == streamActive
-	t.closeStream(s, io.EOF, rst, http2.ErrCodeNo, state.status(), state.mdata, true)
+	t.closeStream(s, io.EOF, false, http2.ErrCodeNo, state.status(), state.mdata, true)
 }
 
 // reader runs as a separate goroutine in charge of reading data from network
@@ -1201,19 +1174,18 @@ func (t *http2Client) reader() {
 	// Check the validity of server preface.
 	frame, err := t.framer.fr.ReadFrame()
 	if err != nil {
-		t.Close() // this kicks off resetTransport, so must be last before return
+		t.Close()
 		return
 	}
-	t.conn.SetReadDeadline(time.Time{}) // reset deadline once we get the settings frame (we didn't time out, yay!)
 	if t.keepaliveEnabled {
 		atomic.CompareAndSwapUint32(&t.activity, 0, 1)
 	}
 	sf, ok := frame.(*http2.SettingsFrame)
 	if !ok {
-		t.Close() // this kicks off resetTransport, so must be last before return
+		t.Close()
 		return
 	}
-	t.onPrefaceReceipt()
+	t.onSuccess()
 	t.handleSettings(sf, true)
 
 	// loop to keep reading incoming messages on this transport.
@@ -1291,7 +1263,9 @@ func (t *http2Client) keepalive() {
 			} else {
 				t.mu.Unlock()
 				if channelz.IsOn() {
-					atomic.AddInt64(&t.czData.kpCount, 1)
+					t.czmu.Lock()
+					t.kpCount++
+					t.czmu.Unlock()
 				}
 				// Send ping.
 				t.controlBuf.put(p)
@@ -1331,16 +1305,17 @@ func (t *http2Client) GoAway() <-chan struct{} {
 }
 
 func (t *http2Client) ChannelzMetric() *channelz.SocketInternalMetric {
+	t.czmu.RLock()
 	s := channelz.SocketInternalMetric{
-		StreamsStarted:                  atomic.LoadInt64(&t.czData.streamsStarted),
-		StreamsSucceeded:                atomic.LoadInt64(&t.czData.streamsSucceeded),
-		StreamsFailed:                   atomic.LoadInt64(&t.czData.streamsFailed),
-		MessagesSent:                    atomic.LoadInt64(&t.czData.msgSent),
-		MessagesReceived:                atomic.LoadInt64(&t.czData.msgRecv),
-		KeepAlivesSent:                  atomic.LoadInt64(&t.czData.kpCount),
-		LastLocalStreamCreatedTimestamp: time.Unix(0, atomic.LoadInt64(&t.czData.lastStreamCreatedTime)),
-		LastMessageSentTimestamp:        time.Unix(0, atomic.LoadInt64(&t.czData.lastMsgSentTime)),
-		LastMessageReceivedTimestamp:    time.Unix(0, atomic.LoadInt64(&t.czData.lastMsgRecvTime)),
+		StreamsStarted:                  t.streamsStarted,
+		StreamsSucceeded:                t.streamsSucceeded,
+		StreamsFailed:                   t.streamsFailed,
+		MessagesSent:                    t.msgSent,
+		MessagesReceived:                t.msgRecv,
+		KeepAlivesSent:                  t.kpCount,
+		LastLocalStreamCreatedTimestamp: t.lastStreamCreated,
+		LastMessageSentTimestamp:        t.lastMsgSent,
+		LastMessageReceivedTimestamp:    t.lastMsgRecv,
 		LocalFlowControlWindow:          int64(t.fc.getSize()),
 		SocketOptions:                   channelz.GetSocketOption(t.conn),
 		LocalAddr:                       t.localAddr,
@@ -1350,18 +1325,23 @@ func (t *http2Client) ChannelzMetric() *channelz.SocketInternalMetric {
 	if au, ok := t.authInfo.(credentials.ChannelzSecurityInfo); ok {
 		s.Security = au.GetSecurityValue()
 	}
+	t.czmu.RUnlock()
 	s.RemoteFlowControlWindow = t.getOutFlowWindow()
 	return &s
 }
 
 func (t *http2Client) IncrMsgSent() {
-	atomic.AddInt64(&t.czData.msgSent, 1)
-	atomic.StoreInt64(&t.czData.lastMsgSentTime, time.Now().UnixNano())
+	t.czmu.Lock()
+	t.msgSent++
+	t.lastMsgSent = time.Now()
+	t.czmu.Unlock()
 }
 
 func (t *http2Client) IncrMsgRecv() {
-	atomic.AddInt64(&t.czData.msgRecv, 1)
-	atomic.StoreInt64(&t.czData.lastMsgRecvTime, time.Now().UnixNano())
+	t.czmu.Lock()
+	t.msgRecv++
+	t.lastMsgRecv = time.Now()
+	t.czmu.Unlock()
 }
 
 func (t *http2Client) getOutFlowWindow() int64 {

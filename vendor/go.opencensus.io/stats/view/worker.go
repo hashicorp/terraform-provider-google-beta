@@ -107,23 +107,17 @@ func RetrieveData(viewName string) ([]*Row, error) {
 	return resp.rows, resp.err
 }
 
-func record(tags *tag.Map, ms interface{}, attachments map[string]string) {
+func record(tags *tag.Map, ms interface{}) {
 	req := &recordReq{
-		tm:          tags,
-		ms:          ms.([]stats.Measurement),
-		attachments: attachments,
-		t:           time.Now(),
+		tm: tags,
+		ms: ms.([]stats.Measurement),
 	}
 	defaultWorker.c <- req
 }
 
 // SetReportingPeriod sets the interval between reporting aggregated views in
-// the program. If duration is less than or equal to zero, it enables the
-// default behavior.
-//
-// Note: each exporter makes different promises about what the lowest supported
-// duration is. For example, the Stackdriver exporter recommends a value no
-// lower than 1 minute. Consult each exporter per your needs.
+// the program. If duration is less than or
+// equal to zero, it enables the default behavior.
 func SetReportingPeriod(d time.Duration) {
 	// TODO(acetechnologist): ensure that the duration d is more than a certain
 	// value. e.g. 1s

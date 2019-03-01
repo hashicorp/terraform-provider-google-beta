@@ -1,8 +1,8 @@
 package getter
 
 import (
-	"context"
 	"fmt"
+	"io"
 	"net/url"
 	"os"
 	"path/filepath"
@@ -18,9 +18,7 @@ import (
 
 // S3Getter is a Getter implementation that will download a module from
 // a S3 bucket.
-type S3Getter struct {
-	getter
-}
+type S3Getter struct{}
 
 func (g *S3Getter) ClientMode(u *url.URL) (ClientMode, error) {
 	// Parse URL
@@ -62,8 +60,6 @@ func (g *S3Getter) ClientMode(u *url.URL) (ClientMode, error) {
 }
 
 func (g *S3Getter) Get(dst string, u *url.URL) error {
-	ctx := g.Context()
-
 	// Parse URL
 	region, bucket, path, _, creds, err := g.parseUrl(u)
 	if err != nil {
@@ -128,7 +124,7 @@ func (g *S3Getter) Get(dst string, u *url.URL) error {
 			}
 			objDst = filepath.Join(dst, objDst)
 
-			if err := g.getObject(ctx, client, objDst, bucket, objPath, ""); err != nil {
+			if err := g.getObject(client, objDst, bucket, objPath, ""); err != nil {
 				return err
 			}
 		}
@@ -138,7 +134,6 @@ func (g *S3Getter) Get(dst string, u *url.URL) error {
 }
 
 func (g *S3Getter) GetFile(dst string, u *url.URL) error {
-	ctx := g.Context()
 	region, bucket, path, version, creds, err := g.parseUrl(u)
 	if err != nil {
 		return err
@@ -147,10 +142,10 @@ func (g *S3Getter) GetFile(dst string, u *url.URL) error {
 	config := g.getAWSConfig(region, u, creds)
 	sess := session.New(config)
 	client := s3.New(sess)
-	return g.getObject(ctx, client, dst, bucket, path, version)
+	return g.getObject(client, dst, bucket, path, version)
 }
 
-func (g *S3Getter) getObject(ctx context.Context, client *s3.S3, dst, bucket, key, version string) error {
+func (g *S3Getter) getObject(client *s3.S3, dst, bucket, key, version string) error {
 	req := &s3.GetObjectInput{
 		Bucket: aws.String(bucket),
 		Key:    aws.String(key),
@@ -175,7 +170,7 @@ func (g *S3Getter) getObject(ctx context.Context, client *s3.S3, dst, bucket, ke
 	}
 	defer f.Close()
 
-	_, err = Copy(ctx, f, resp.Body)
+	_, err = io.Copy(f, resp.Body)
 	return err
 }
 

@@ -19,11 +19,11 @@
 package grpc
 
 import (
-	"context"
 	"fmt"
 	"net"
 	"time"
 
+	"golang.org/x/net/context"
 	"google.golang.org/grpc/balancer"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/internal"
@@ -55,12 +55,10 @@ type dialOptions struct {
 	balancerBuilder balancer.Builder
 	// This is to support grpclb.
 	resolverBuilder      resolver.Builder
-	reqHandshake         envconfig.RequireHandshakeSetting
+	waitForHandshake     bool
 	channelzParentID     int64
 	disableServiceConfig bool
 	disableRetry         bool
-	disableHealthCheck   bool
-	healthCheckFunc      internal.HealthChecker
 }
 
 // DialOption configures how we set up the connection.
@@ -93,13 +91,10 @@ func newFuncDialOption(f func(*dialOptions)) *funcDialOption {
 }
 
 // WithWaitForHandshake blocks until the initial settings frame is received from
-// the server before assigning RPCs to the connection.
-//
-// Deprecated: this is the default behavior, and this option will be removed
-// after the 1.18 release.
+// the server before assigning RPCs to the connection. Experimental API.
 func WithWaitForHandshake() DialOption {
 	return newFuncDialOption(func(o *dialOptions) {
-		o.reqHandshake = envconfig.RequireHandshakeOn
+		o.waitForHandshake = true
 	})
 }
 
@@ -291,8 +286,7 @@ func WithInsecure() DialOption {
 }
 
 // WithTransportCredentials returns a DialOption which configures a connection
-// level security credentials (e.g., TLS/SSL). This should not be used together
-// with WithCredentialsBundle.
+// level security credentials (e.g., TLS/SSL).
 func WithTransportCredentials(creds credentials.TransportCredentials) DialOption {
 	return newFuncDialOption(func(o *dialOptions) {
 		o.copts.TransportCredentials = creds
@@ -304,17 +298,6 @@ func WithTransportCredentials(creds credentials.TransportCredentials) DialOption
 func WithPerRPCCredentials(creds credentials.PerRPCCredentials) DialOption {
 	return newFuncDialOption(func(o *dialOptions) {
 		o.copts.PerRPCCredentials = append(o.copts.PerRPCCredentials, creds)
-	})
-}
-
-// WithCredentialsBundle returns a DialOption to set a credentials bundle for
-// the ClientConn.WithCreds. This should not be used together with
-// WithTransportCredentials.
-//
-// This API is experimental.
-func WithCredentialsBundle(b credentials.Bundle) DialOption {
-	return newFuncDialOption(func(o *dialOptions) {
-		o.copts.CredsBundle = b
 	})
 }
 
@@ -337,7 +320,6 @@ func withContextDialer(f func(context.Context, string) (net.Conn, error)) DialOp
 func init() {
 	internal.WithContextDialer = withContextDialer
 	internal.WithResolverBuilder = withResolverBuilder
-	internal.WithHealthCheckFunc = withHealthCheckFunc
 }
 
 // WithDialer returns a DialOption that specifies a function to use for dialing
@@ -366,9 +348,6 @@ func WithStatsHandler(h stats.Handler) DialOption {
 // non-temporary dial errors. If f is true, and dialer returns a non-temporary
 // error, gRPC will fail the connection to the network address and won't try to
 // reconnect. The default value of FailOnNonTempDialError is false.
-//
-// FailOnNonTempDialError only affects the initial dial, and does not do
-// anything useful unless you are also using WithBlock().
 //
 // This is an EXPERIMENTAL API.
 func FailOnNonTempDialError(f bool) DialOption {
@@ -460,30 +439,9 @@ func WithMaxHeaderListSize(s uint32) DialOption {
 	})
 }
 
-// WithDisableHealthCheck disables the LB channel health checking for all SubConns of this ClientConn.
-//
-// This API is EXPERIMENTAL.
-func WithDisableHealthCheck() DialOption {
-	return newFuncDialOption(func(o *dialOptions) {
-		o.disableHealthCheck = true
-	})
-}
-
-// withHealthCheckFunc replaces the default health check function with the provided one. It makes
-// tests easier to change the health check function.
-//
-// For testing purpose only.
-func withHealthCheckFunc(f internal.HealthChecker) DialOption {
-	return newFuncDialOption(func(o *dialOptions) {
-		o.healthCheckFunc = f
-	})
-}
-
 func defaultDialOptions() dialOptions {
 	return dialOptions{
-		disableRetry:    !envconfig.Retry,
-		reqHandshake:    envconfig.RequireHandshake,
-		healthCheckFunc: internal.HealthCheckFunc,
+		disableRetry: !envconfig.Retry,
 		copts: transport.ConnectOptions{
 			WriteBufferSize: defaultWriteBufSize,
 			ReadBufferSize:  defaultReadBufSize,
