@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/hashicorp/errwrap"
 	"github.com/hashicorp/go-cleanhttp"
 	"github.com/hashicorp/vault/helper/jsonutil"
 	"github.com/keybase/go-crypto/openpgp"
@@ -50,25 +49,25 @@ func FetchKeybasePubkeys(input []string) (map[string]string, error) {
 	}
 	defer resp.Body.Close()
 
-	type PublicKeys struct {
+	type publicKeys struct {
 		Primary struct {
 			Bundle string
 		}
 	}
 
-	type LThem struct {
-		PublicKeys `json:"public_keys"`
+	type them struct {
+		publicKeys `json:"public_keys"`
 	}
 
-	type KbResp struct {
+	type kbResp struct {
 		Status struct {
 			Name string
 		}
-		Them []LThem
+		Them []them
 	}
 
-	out := &KbResp{
-		Them: []LThem{},
+	out := &kbResp{
+		Them: []them{},
 	}
 
 	if err := jsonutil.DecodeJSONFromReader(resp.Body, out); err != nil {
@@ -76,7 +75,7 @@ func FetchKeybasePubkeys(input []string) (map[string]string, error) {
 	}
 
 	if out.Status.Name != "OK" {
-		return nil, fmt.Errorf("got non-OK response: %q", out.Status.Name)
+		return nil, fmt.Errorf("got non-OK response: %s", out.Status.Name)
 	}
 
 	missingNames := make([]string, 0, len(usernames))
@@ -93,16 +92,16 @@ func FetchKeybasePubkeys(input []string) (map[string]string, error) {
 			return nil, err
 		}
 		if len(entityList) != 1 {
-			return nil, fmt.Errorf("primary key could not be parsed for user %q", usernames[i])
+			return nil, fmt.Errorf("primary key could not be parsed for user %s", usernames[i])
 		}
 		if entityList[0] == nil {
-			return nil, fmt.Errorf("primary key was nil for user %q", usernames[i])
+			return nil, fmt.Errorf("primary key was nil for user %s", usernames[i])
 		}
 
 		serializedEntity.Reset()
 		err = entityList[0].Serialize(serializedEntity)
 		if err != nil {
-			return nil, errwrap.Wrapf(fmt.Sprintf("error serializing entity for user %q: {{err}}", usernames[i]), err)
+			return nil, fmt.Errorf("error serializing entity for user %s: %s", usernames[i], err)
 		}
 
 		// The API returns values in the same ordering requested, so this should properly match
@@ -110,7 +109,7 @@ func FetchKeybasePubkeys(input []string) (map[string]string, error) {
 	}
 
 	if len(missingNames) > 0 {
-		return nil, fmt.Errorf("unable to fetch keys for user(s) %q from keybase", strings.Join(missingNames, ","))
+		return nil, fmt.Errorf("unable to fetch keys for user(s) %s from keybase", strings.Join(missingNames, ","))
 	}
 
 	return ret, nil

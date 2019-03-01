@@ -4,6 +4,7 @@ package getter
 
 import (
 	"fmt"
+	"io"
 	"net/url"
 	"os"
 	"path/filepath"
@@ -49,7 +50,6 @@ func (g *FileGetter) Get(dst string, u *url.URL) error {
 }
 
 func (g *FileGetter) GetFile(dst string, u *url.URL) error {
-	ctx := g.Context()
 	path := u.Path
 	if u.RawPath != "" {
 		path = u.RawPath
@@ -98,6 +98,6 @@ func (g *FileGetter) GetFile(dst string, u *url.URL) error {
 	}
 	defer dstF.Close()
 
-	_, err = Copy(ctx, dstF, srcF)
+	_, err = io.Copy(dstF, srcF)
 	return err
 }

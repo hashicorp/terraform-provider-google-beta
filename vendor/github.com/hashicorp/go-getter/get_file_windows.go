@@ -4,16 +4,15 @@ package getter
 
 import (
 	"fmt"
+	"io"
 	"net/url"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
-	"syscall"
 )
 
 func (g *FileGetter) Get(dst string, u *url.URL) error {
-	ctx := g.Context()
 	path := u.Path
 	if u.RawPath != "" {
 		path = u.RawPath
@@ -52,7 +51,7 @@ func (g *FileGetter) Get(dst string, u *url.URL) error {
 	sourcePath := toBackslash(path)
 
 	// Use mklink to create a junction point
-	output, err := exec.CommandContext(ctx, "cmd", "/c", "mklink", "/J", dst, sourcePath).CombinedOutput()
+	output, err := exec.Command("cmd", "/c", "mklink", "/J", dst, sourcePath).CombinedOutput()
 	if err != nil {
 		return fmt.Errorf("failed to run mklink %v %v: %v %q", dst, sourcePath, err, output)
 	}
@@ -61,7 +60,6 @@ func (g *FileGetter) Get(dst string, u *url.URL) error {
 }
 
 func (g *FileGetter) GetFile(dst string, u *url.URL) error {
-	ctx := g.Context()
 	path := u.Path
 	if u.RawPath != "" {
 		path = u.RawPath
@@ -94,21 +92,7 @@ func (g *FileGetter) GetFile(dst string, u *url.URL) error {
 
 	// If we're not copying, just symlink and we're done
 	if !g.Copy {
-		if err = os.Symlink(path, dst); err == nil {
-			return err
-		}
-		lerr, ok := err.(*os.LinkError)
-		if !ok {
-			return err
-		}
-		switch lerr.Err {
-		case syscall.ERROR_PRIVILEGE_NOT_HELD:
-			// no symlink privilege, let's
-			// fallback to a copy to avoid an error.
-			break
-		default:
-			return err
-		}
+		return os.Symlink(path, dst)
 	}
 
 	// Copy
@@ -124,7 +108,7 @@ func (g *FileGetter) GetFile(dst string, u *url.URL) error {
 	}
 	defer dstF.Close()
 
-	_, err = Copy(ctx, dstF, srcF)
+	_, err = io.Copy(dstF, srcF)
 	return err
 }
 

@@ -5,7 +5,6 @@ import (
 	"encoding/base64"
 	"fmt"
 
-	"github.com/hashicorp/errwrap"
 	"github.com/keybase/go-crypto/openpgp"
 	"github.com/keybase/go-crypto/openpgp/packet"
 )
@@ -18,7 +17,7 @@ import (
 // thoroughly tested in the init and rekey command unit tests
 func EncryptShares(input [][]byte, pgpKeys []string) ([]string, [][]byte, error) {
 	if len(input) != len(pgpKeys) {
-		return nil, nil, fmt.Errorf("mismatch between number items to encrypt and number of PGP keys")
+		return nil, nil, fmt.Errorf("Mismatch between number items to encrypt and number of PGP keys")
 	}
 	encryptedShares := make([][]byte, 0, len(pgpKeys))
 	entities, err := GetEntities(pgpKeys)
@@ -29,11 +28,11 @@ func EncryptShares(input [][]byte, pgpKeys []string) ([]string, [][]byte, error)
 		ctBuf := bytes.NewBuffer(nil)
 		pt, err := openpgp.Encrypt(ctBuf, []*openpgp.Entity{entity}, nil, nil, nil)
 		if err != nil {
-			return nil, nil, errwrap.Wrapf("error setting up encryption for PGP message: {{err}}", err)
+			return nil, nil, fmt.Errorf("Error setting up encryption for PGP message: %s", err)
 		}
 		_, err = pt.Write(input[i])
 		if err != nil {
-			return nil, nil, errwrap.Wrapf("error encrypting PGP message: {{err}}", err)
+			return nil, nil, fmt.Errorf("Error encrypting PGP message: %s", err)
 		}
 		pt.Close()
 		encryptedShares = append(encryptedShares, ctBuf.Bytes())
@@ -73,11 +72,11 @@ func GetEntities(pgpKeys []string) ([]*openpgp.Entity, error) {
 	for _, keystring := range pgpKeys {
 		data, err := base64.StdEncoding.DecodeString(keystring)
 		if err != nil {
-			return nil, errwrap.Wrapf("error decoding given PGP key: {{err}}", err)
+			return nil, fmt.Errorf("Error decoding given PGP key: %s", err)
 		}
 		entity, err := openpgp.ReadEntity(packet.NewReader(bytes.NewBuffer(data)))
 		if err != nil {
-			return nil, errwrap.Wrapf("error parsing given PGP key: {{err}}", err)
+			return nil, fmt.Errorf("Error parsing given PGP key: %s", err)
 		}
 		ret = append(ret, entity)
 	}
@@ -92,23 +91,23 @@ func GetEntities(pgpKeys []string) ([]*openpgp.Entity, error) {
 func DecryptBytes(encodedCrypt, privKey string) (*bytes.Buffer, error) {
 	privKeyBytes, err := base64.StdEncoding.DecodeString(privKey)
 	if err != nil {
-		return nil, errwrap.Wrapf("error decoding base64 private key: {{err}}", err)
+		return nil, fmt.Errorf("Error decoding base64 private key: %s", err)
 	}
 
 	cryptBytes, err := base64.StdEncoding.DecodeString(encodedCrypt)
 	if err != nil {
-		return nil, errwrap.Wrapf("error decoding base64 crypted bytes: {{err}}", err)
+		return nil, fmt.Errorf("Error decoding base64 crypted bytes: %s", err)
 	}
 
 	entity, err := openpgp.ReadEntity(packet.NewReader(bytes.NewBuffer(privKeyBytes)))
 	if err != nil {
-		return nil, errwrap.Wrapf("error parsing private key: {{err}}", err)
+		return nil, fmt.Errorf("Error parsing private key: %s", err)
 	}
 
 	entityList := &openpgp.EntityList{entity}
 	md, err := openpgp.ReadMessage(bytes.NewBuffer(cryptBytes), entityList, nil, nil)
 	if err != nil {
-		return nil, errwrap.Wrapf("error decrypting the messages: {{err}}", err)
+		return nil, fmt.Errorf("Error decrypting the messages: %s", err)
 	}
 
 	ptBuf := bytes.NewBuffer(nil)

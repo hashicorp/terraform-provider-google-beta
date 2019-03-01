@@ -47,10 +47,6 @@ type Transport struct {
 	// for spans started by this transport.
 	StartOptions trace.StartOptions
 
-	// GetStartOptions allows to set start options per request. If set,
-	// StartOptions is going to be ignored.
-	GetStartOptions func(*http.Request) trace.StartOptions
-
 	// NameFromRequest holds the function to use for generating the span name
 	// from the information found in the outgoing HTTP Request. By default the
 	// name equals the URL Path.
@@ -79,17 +75,11 @@ func (t *Transport) RoundTrip(req *http.Request) (*http.Response, error) {
 	if spanNameFormatter == nil {
 		spanNameFormatter = spanNameFromURL
 	}
-
-	startOpts := t.StartOptions
-	if t.GetStartOptions != nil {
-		startOpts = t.GetStartOptions(req)
-	}
-
 	rt = &traceTransport{
 		base:   rt,
 		format: format,
 		startOptions: trace.StartOptions{
-			Sampler:  startOpts.Sampler,
+			Sampler:  t.StartOptions.Sampler,
 			SpanKind: trace.SpanKindClient,
 		},
 		formatSpanName: spanNameFormatter,

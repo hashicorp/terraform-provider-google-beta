@@ -34,11 +34,8 @@ type statsTransport struct {
 // RoundTrip implements http.RoundTripper, delegating to Base and recording stats for the request.
 func (t statsTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 	ctx, _ := tag.New(req.Context(),
-		tag.Upsert(KeyClientHost, req.URL.Host),
 		tag.Upsert(Host, req.URL.Host),
-		tag.Upsert(KeyClientPath, req.URL.Path),
 		tag.Upsert(Path, req.URL.Path),
-		tag.Upsert(KeyClientMethod, req.Method),
 		tag.Upsert(Method, req.Method))
 	req = req.WithContext(ctx)
 	track := &tracker{
@@ -95,22 +92,15 @@ var _ io.ReadCloser = (*tracker)(nil)
 
 func (t *tracker) end() {
 	t.endOnce.Do(func() {
-		latencyMs := float64(time.Since(t.start)) / float64(time.Millisecond)
 		m := []stats.Measurement{
-			ClientSentBytes.M(t.reqSize),
-			ClientReceivedBytes.M(t.respSize),
-			ClientRoundtripLatency.M(latencyMs),
-			ClientLatency.M(latencyMs),
+			ClientLatency.M(float64(time.Since(t.start)) / float64(time.Millisecond)),
 			ClientResponseBytes.M(t.respSize),
 		}
 		if t.reqSize >= 0 {
 			m = append(m, ClientRequestBytes.M(t.reqSize))
 		}
-
-		stats.RecordWithTags(t.ctx, []tag.Mutator{
-			tag.Upsert(StatusCode, strconv.Itoa(t.statusCode)),
-			tag.Upsert(KeyClientStatus, strconv.Itoa(t.statusCode)),
-		}, m...)
+		ctx, _ := tag.New(t.ctx, tag.Upsert(StatusCode, strconv.Itoa(t.statusCode)))
+		stats.Record(ctx, m...)
 	})
 }
 

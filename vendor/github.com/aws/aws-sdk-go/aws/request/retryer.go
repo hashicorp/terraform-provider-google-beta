@@ -8,7 +8,7 @@ import (
 )
 
 // Retryer is an interface to control retry logic for a given service.
-// The default implementation used by most services is the client.DefaultRetryer
+// The default implementation used by most services is the service.DefaultRetryer
 // structure, which contains basic retry logic using exponential backoff.
 type Retryer interface {
 	RetryRules(*Request) time.Duration
@@ -40,7 +40,6 @@ var throttleCodes = map[string]struct{}{
 	"RequestThrottled":                       {},
 	"TooManyRequestsException":               {}, // Lambda functions
 	"PriorRequestNotComplete":                {}, // Route53
-	"TransactionInProgressException":         {},
 }
 
 // credsExpiredCodes is a collection of error codes which signify the credentials
@@ -71,8 +70,8 @@ func isCodeExpiredCreds(code string) bool {
 }
 
 var validParentCodes = map[string]struct{}{
-	ErrCodeSerialization: {},
-	ErrCodeRead:          {},
+	ErrCodeSerialization: struct{}{},
+	ErrCodeRead:          struct{}{},
 }
 
 type temporaryError interface {
@@ -98,7 +97,7 @@ func isNestedErrorRetryable(parentErr awserr.Error) bool {
 	}
 
 	if t, ok := err.(temporaryError); ok {
-		return t.Temporary() || isErrConnectionReset(err)
+		return t.Temporary()
 	}
 
 	return isErrConnectionReset(err)

@@ -25,7 +25,6 @@ import (
 	"time"
 
 	"go.opencensus.io/internal"
-	"go.opencensus.io/trace/tracestate"
 )
 
 // Span represents a span of a trace.  It has an associated SpanContext, and
@@ -89,7 +88,6 @@ type SpanContext struct {
 	TraceID      TraceID
 	SpanID       SpanID
 	TraceOptions TraceOptions
-	Tracestate   *tracestate.Tracestate
 }
 
 type contextKey struct{}
@@ -243,16 +241,13 @@ func startSpanInternal(name string, hasParent bool, parent SpanContext, remotePa
 
 // End ends the span.
 func (s *Span) End() {
-	if s == nil {
-		return
-	}
-	if s.executionTracerTaskEnd != nil {
-		s.executionTracerTaskEnd()
-	}
 	if !s.IsRecordingEvents() {
 		return
 	}
 	s.endOnce.Do(func() {
+		if s.executionTracerTaskEnd != nil {
+			s.executionTracerTaskEnd()
+		}
 		exp, _ := exporters.Load().(exportersMap)
 		mustExport := s.spanContext.IsSampled() && len(exp) > 0
 		if s.spanStore != nil || mustExport {
