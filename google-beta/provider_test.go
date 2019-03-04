@@ -13,7 +13,6 @@ import (
 )
 
 var testAccProviders map[string]terraform.ResourceProvider
-var testAccProvidersOiCS map[string]terraform.ResourceProvider
 var testAccProvider *schema.Provider
 var testAccRandomProvider *schema.Provider
 
@@ -64,14 +63,6 @@ func init() {
 	testAccProviders = map[string]terraform.ResourceProvider{
 		"google": testAccProvider,
 		"random": testAccRandomProvider,
-	}
-
-	// The OiCS provider map is used to ensure that OiCS examples use `google-beta`
-	// if the example is versioned as beta; normal beta tests should continue to
-	// use the standard provider map.
-	testAccProvidersOiCS = map[string]terraform.ResourceProvider{
-		"google-beta": testAccProvider,
-		"random":      testAccRandomProvider,
 	}
 }
 
