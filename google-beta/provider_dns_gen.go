@@ -18,4 +18,5 @@ import "github.com/hashicorp/terraform/helper/schema"
 
 var GeneratedDnsResourcesMap = map[string]*schema.Resource{
 	"google_dns_managed_zone": resourceDnsManagedZone(),
+	"google_dns_policy":       resourceDnsPolicy(),
 }
