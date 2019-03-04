@@ -44,8 +44,6 @@ To get more information about Instance, see:
 
 ```hcl
 resource "google_filestore_instance" "instance" {
-  provider = "google-beta"
-
   name = "test-instance"
   zone = "us-central1-b"
   tier = "PREMIUM"
@@ -59,11 +57,6 @@ resource "google_filestore_instance" "instance" {
     network = "default"
     modes   = ["MODE_IPV4"]
   }
-}
-
-provider "google-beta"{
-  region = "us-central1"
-  zone   = "us-central1-a"
 }
 ```
 
