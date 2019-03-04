@@ -411,7 +411,7 @@ func flattenDnsPolicyNetworksNetworkUrl(v interface{}, d *schema.ResourceData) i
 	return v
 }
 
-func expandDnsPolicyAlternativeNameServerConfig(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
+func expandDnsPolicyAlternativeNameServerConfig(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -430,7 +430,7 @@ func expandDnsPolicyAlternativeNameServerConfig(v interface{}, d *schema.Resourc
 	return transformed, nil
 }
 
-func expandDnsPolicyAlternativeNameServerConfigTargetNameServers(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
+func expandDnsPolicyAlternativeNameServerConfigTargetNameServers(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	v = v.(*schema.Set).List()
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
@@ -453,23 +453,23 @@ func expandDnsPolicyAlternativeNameServerConfigTargetNameServers(v interface{}, 
 	return req, nil
 }
 
-func expandDnsPolicyAlternativeNameServerConfigTargetNameServersIpv4Address(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
+func expandDnsPolicyAlternativeNameServerConfigTargetNameServersIpv4Address(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandDnsPolicyDescription(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
+func expandDnsPolicyDescription(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandDnsPolicyEnableInboundForwarding(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
+func expandDnsPolicyEnableInboundForwarding(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandDnsPolicyName(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
+func expandDnsPolicyName(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandDnsPolicyNetworks(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
+func expandDnsPolicyNetworks(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	v = v.(*schema.Set).List()
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
@@ -492,6 +492,6 @@ func expandDnsPolicyNetworks(v interface{}, d *schema.ResourceData, config *Conf
 	return req, nil
 }
 
-func expandDnsPolicyNetworksNetworkUrl(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
+func expandDnsPolicyNetworksNetworkUrl(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
