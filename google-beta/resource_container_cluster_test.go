@@ -1722,6 +1722,10 @@ resource "google_container_cluster" "primary" {
 	zone = "us-central1-a"
 	initial_node_count = 3
 
+	ip_allocation_policy {
+    use_ip_aliases = false
+	}
+
 	timeouts {
 		create = "30m"
 		delete = "30m"
@@ -2733,7 +2737,8 @@ resource "google_container_cluster" "with_ip_allocation_policy" {
 
 	initial_node_count = 1
 	ip_allocation_policy {
-		cluster_secondary_range_name = "pods"
+		use_ip_aliases                = true
+		cluster_secondary_range_name  = "pods"
 		services_secondary_range_name = "services"
 	}
 }`, cluster, cluster)
@@ -2761,9 +2766,10 @@ resource "google_container_cluster" "with_ip_allocation_policy" {
 
 	initial_node_count = 1
 	ip_allocation_policy {
+		use_ip_aliases           = true
 		cluster_ipv4_cidr_block  = "10.0.0.0/16"
 		services_ipv4_cidr_block = "10.1.0.0/16"
-		node_ipv4_cidr_block = "10.2.0.0/16"
+		node_ipv4_cidr_block     = "10.2.0.0/16"
 	}
 }`, cluster, cluster)
 }
@@ -2790,11 +2796,12 @@ resource "google_container_cluster" "with_ip_allocation_policy" {
 
 	initial_node_count = 1
 	ip_allocation_policy {
-		create_subnetwork = true
-		subnetwork_name = "tf-test-%s"
-		cluster_ipv4_cidr_block = "/16"
+		use_ip_aliases           = true
+		create_subnetwork        = true
+		subnetwork_name          = "tf-test-%s"
+		cluster_ipv4_cidr_block  = "/16"
 		services_ipv4_cidr_block = "/22"
-		node_ipv4_cidr_block = "/22"
+		node_ipv4_cidr_block     = "/22"
 	}
 }`, cluster, cluster, cluster)
 }
@@ -2807,6 +2814,7 @@ resource "google_container_cluster" "with_ip_allocation_policy" {
 
 	initial_node_count = 1
 	ip_allocation_policy {
+		use_ip_aliases    = true
 		create_subnetwork = true
 	}
 }`, cluster)
