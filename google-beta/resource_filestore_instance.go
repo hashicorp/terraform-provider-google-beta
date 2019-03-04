@@ -492,15 +492,15 @@ func flattenFilestoreInstanceEtag(v interface{}, d *schema.ResourceData) interfa
 	return v
 }
 
-func expandFilestoreInstanceDescription(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
+func expandFilestoreInstanceDescription(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandFilestoreInstanceTier(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
+func expandFilestoreInstanceTier(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandFilestoreInstanceLabels(v interface{}, d *schema.ResourceData, config *Config) (map[string]string, error) {
+func expandFilestoreInstanceLabels(v interface{}, d TerraformResourceData, config *Config) (map[string]string, error) {
 	if v == nil {
 		return map[string]string{}, nil
 	}
@@ -511,7 +511,7 @@ func expandFilestoreInstanceLabels(v interface{}, d *schema.ResourceData, config
 	return m, nil
 }
 
-func expandFilestoreInstanceFileShares(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
+func expandFilestoreInstanceFileShares(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
 	for _, raw := range l {
@@ -540,15 +540,15 @@ func expandFilestoreInstanceFileShares(v interface{}, d *schema.ResourceData, co
 	return req, nil
 }
 
-func expandFilestoreInstanceFileSharesName(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
+func expandFilestoreInstanceFileSharesName(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandFilestoreInstanceFileSharesCapacityGb(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
+func expandFilestoreInstanceFileSharesCapacityGb(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandFilestoreInstanceNetworks(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
+func expandFilestoreInstanceNetworks(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
 	for _, raw := range l {
@@ -591,18 +591,18 @@ func expandFilestoreInstanceNetworks(v interface{}, d *schema.ResourceData, conf
 	return req, nil
 }
 
-func expandFilestoreInstanceNetworksNetwork(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
+func expandFilestoreInstanceNetworksNetwork(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandFilestoreInstanceNetworksModes(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
+func expandFilestoreInstanceNetworksModes(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandFilestoreInstanceNetworksReservedIpRange(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
+func expandFilestoreInstanceNetworksReservedIpRange(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandFilestoreInstanceNetworksIpAddresses(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
+func expandFilestoreInstanceNetworksIpAddresses(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }

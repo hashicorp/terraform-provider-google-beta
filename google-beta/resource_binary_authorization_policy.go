@@ -420,11 +420,11 @@ func flattenBinaryAuthorizationPolicyDefaultAdmissionRuleEnforcementMode(v inter
 	return v
 }
 
-func expandBinaryAuthorizationPolicyDescription(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
+func expandBinaryAuthorizationPolicyDescription(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandBinaryAuthorizationPolicyAdmissionWhitelistPatterns(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
+func expandBinaryAuthorizationPolicyAdmissionWhitelistPatterns(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
 	for _, raw := range l {
@@ -446,11 +446,11 @@ func expandBinaryAuthorizationPolicyAdmissionWhitelistPatterns(v interface{}, d 
 	return req, nil
 }
 
-func expandBinaryAuthorizationPolicyAdmissionWhitelistPatternsNamePattern(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
+func expandBinaryAuthorizationPolicyAdmissionWhitelistPatternsNamePattern(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandBinaryAuthorizationPolicyClusterAdmissionRules(v interface{}, d *schema.ResourceData, config *Config) (map[string]interface{}, error) {
+func expandBinaryAuthorizationPolicyClusterAdmissionRules(v interface{}, d TerraformResourceData, config *Config) (map[string]interface{}, error) {
 	if v == nil {
 		return map[string]interface{}{}, nil
 	}
@@ -480,11 +480,11 @@ func expandBinaryAuthorizationPolicyClusterAdmissionRules(v interface{}, d *sche
 	return m, nil
 }
 
-func expandBinaryAuthorizationPolicyClusterAdmissionRulesEvaluationMode(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
+func expandBinaryAuthorizationPolicyClusterAdmissionRulesEvaluationMode(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandBinaryAuthorizationPolicyClusterAdmissionRulesRequireAttestationsBy(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
+func expandBinaryAuthorizationPolicyClusterAdmissionRulesRequireAttestationsBy(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	r := regexp.MustCompile("projects/(.+)/attestors/(.+)")
 
 	// It's possible that all entries in the list will specify a project, in
@@ -511,11 +511,11 @@ func expandBinaryAuthorizationPolicyClusterAdmissionRulesRequireAttestationsBy(v
 	}), nil
 }
 
-func expandBinaryAuthorizationPolicyClusterAdmissionRulesEnforcementMode(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
+func expandBinaryAuthorizationPolicyClusterAdmissionRulesEnforcementMode(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandBinaryAuthorizationPolicyDefaultAdmissionRule(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
+func expandBinaryAuthorizationPolicyDefaultAdmissionRule(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -548,11 +548,11 @@ func expandBinaryAuthorizationPolicyDefaultAdmissionRule(v interface{}, d *schem
 	return transformed, nil
 }
 
-func expandBinaryAuthorizationPolicyDefaultAdmissionRuleEvaluationMode(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
+func expandBinaryAuthorizationPolicyDefaultAdmissionRuleEvaluationMode(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandBinaryAuthorizationPolicyDefaultAdmissionRuleRequireAttestationsBy(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
+func expandBinaryAuthorizationPolicyDefaultAdmissionRuleRequireAttestationsBy(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	r := regexp.MustCompile("projects/(.+)/attestors/(.+)")
 
 	// It's possible that all entries in the list will specify a project, in
@@ -579,6 +579,6 @@ func expandBinaryAuthorizationPolicyDefaultAdmissionRuleRequireAttestationsBy(v 
 	}), nil
 }
 
-func expandBinaryAuthorizationPolicyDefaultAdmissionRuleEnforcementMode(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
+func expandBinaryAuthorizationPolicyDefaultAdmissionRuleEnforcementMode(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }

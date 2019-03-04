@@ -258,11 +258,11 @@ func flattenContainerAnalysisNoteAttestationAuthorityHintHumanReadableName(v int
 	return v
 }
 
-func expandContainerAnalysisNoteName(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
+func expandContainerAnalysisNoteName(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandContainerAnalysisNoteAttestationAuthority(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
+func expandContainerAnalysisNoteAttestationAuthority(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -281,7 +281,7 @@ func expandContainerAnalysisNoteAttestationAuthority(v interface{}, d *schema.Re
 	return transformed, nil
 }
 
-func expandContainerAnalysisNoteAttestationAuthorityHint(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
+func expandContainerAnalysisNoteAttestationAuthorityHint(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -300,6 +300,6 @@ func expandContainerAnalysisNoteAttestationAuthorityHint(v interface{}, d *schem
 	return transformed, nil
 }
 
-func expandContainerAnalysisNoteAttestationAuthorityHintHumanReadableName(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
+func expandContainerAnalysisNoteAttestationAuthorityHintHumanReadableName(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
