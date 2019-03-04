@@ -298,10 +298,10 @@ func flattenAccessContextManagerAccessPolicyTitle(v interface{}, d *schema.Resou
 	return v
 }
 
-func expandAccessContextManagerAccessPolicyParent(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
+func expandAccessContextManagerAccessPolicyParent(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandAccessContextManagerAccessPolicyTitle(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
+func expandAccessContextManagerAccessPolicyTitle(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }

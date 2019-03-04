@@ -473,19 +473,19 @@ func flattenDnsManagedZoneForwardingConfigTargetNameServersIpv4Address(v interfa
 	return v
 }
 
-func expandDnsManagedZoneDescription(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
+func expandDnsManagedZoneDescription(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandDnsManagedZoneDnsName(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
+func expandDnsManagedZoneDnsName(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandDnsManagedZoneName(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
+func expandDnsManagedZoneName(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandDnsManagedZoneLabels(v interface{}, d *schema.ResourceData, config *Config) (map[string]string, error) {
+func expandDnsManagedZoneLabels(v interface{}, d TerraformResourceData, config *Config) (map[string]string, error) {
 	if v == nil {
 		return map[string]string{}, nil
 	}
@@ -496,11 +496,11 @@ func expandDnsManagedZoneLabels(v interface{}, d *schema.ResourceData, config *C
 	return m, nil
 }
 
-func expandDnsManagedZoneVisibility(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
+func expandDnsManagedZoneVisibility(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandDnsManagedZonePrivateVisibilityConfig(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
+func expandDnsManagedZonePrivateVisibilityConfig(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -519,7 +519,7 @@ func expandDnsManagedZonePrivateVisibilityConfig(v interface{}, d *schema.Resour
 	return transformed, nil
 }
 
-func expandDnsManagedZonePrivateVisibilityConfigNetworks(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
+func expandDnsManagedZonePrivateVisibilityConfigNetworks(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	v = v.(*schema.Set).List()
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
@@ -542,11 +542,11 @@ func expandDnsManagedZonePrivateVisibilityConfigNetworks(v interface{}, d *schem
 	return req, nil
 }
 
-func expandDnsManagedZonePrivateVisibilityConfigNetworksNetworkUrl(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
+func expandDnsManagedZonePrivateVisibilityConfigNetworksNetworkUrl(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandDnsManagedZoneForwardingConfig(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
+func expandDnsManagedZoneForwardingConfig(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -565,7 +565,7 @@ func expandDnsManagedZoneForwardingConfig(v interface{}, d *schema.ResourceData,
 	return transformed, nil
 }
 
-func expandDnsManagedZoneForwardingConfigTargetNameServers(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
+func expandDnsManagedZoneForwardingConfigTargetNameServers(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	v = v.(*schema.Set).List()
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
@@ -588,6 +588,6 @@ func expandDnsManagedZoneForwardingConfigTargetNameServers(v interface{}, d *sch
 	return req, nil
 }
 
-func expandDnsManagedZoneForwardingConfigTargetNameServersIpv4Address(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
+func expandDnsManagedZoneForwardingConfigTargetNameServersIpv4Address(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }

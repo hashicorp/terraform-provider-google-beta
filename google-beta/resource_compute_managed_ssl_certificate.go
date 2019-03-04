@@ -340,15 +340,15 @@ func flattenComputeManagedSslCertificateExpireTime(v interface{}, d *schema.Reso
 	return v
 }
 
-func expandComputeManagedSslCertificateDescription(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
+func expandComputeManagedSslCertificateDescription(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandComputeManagedSslCertificateName(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
+func expandComputeManagedSslCertificateName(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandComputeManagedSslCertificateManaged(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
+func expandComputeManagedSslCertificateManaged(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -367,10 +367,10 @@ func expandComputeManagedSslCertificateManaged(v interface{}, d *schema.Resource
 	return transformed, nil
 }
 
-func expandComputeManagedSslCertificateManagedDomains(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
+func expandComputeManagedSslCertificateManagedDomains(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandComputeManagedSslCertificateType(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
+func expandComputeManagedSslCertificateType(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }

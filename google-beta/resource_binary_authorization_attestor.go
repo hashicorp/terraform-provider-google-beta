@@ -321,15 +321,15 @@ func flattenBinaryAuthorizationAttestorAttestationAuthorityNoteDelegationService
 	return v
 }
 
-func expandBinaryAuthorizationAttestorName(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
+func expandBinaryAuthorizationAttestorName(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandBinaryAuthorizationAttestorDescription(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
+func expandBinaryAuthorizationAttestorDescription(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandBinaryAuthorizationAttestorAttestationAuthorityNote(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
+func expandBinaryAuthorizationAttestorAttestationAuthorityNote(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -362,7 +362,7 @@ func expandBinaryAuthorizationAttestorAttestationAuthorityNote(v interface{}, d 
 	return transformed, nil
 }
 
-func expandBinaryAuthorizationAttestorAttestationAuthorityNoteNoteReference(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
+func expandBinaryAuthorizationAttestorAttestationAuthorityNoteNoteReference(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	r := regexp.MustCompile("projects/(.+)/notes/(.+)")
 	if r.MatchString(v.(string)) {
 		return v.(string), nil
@@ -376,7 +376,7 @@ func expandBinaryAuthorizationAttestorAttestationAuthorityNoteNoteReference(v in
 	return fmt.Sprintf("projects/%s/notes/%s", project, v.(string)), nil
 }
 
-func expandBinaryAuthorizationAttestorAttestationAuthorityNotePublicKeys(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
+func expandBinaryAuthorizationAttestorAttestationAuthorityNotePublicKeys(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
 	for _, raw := range l {
@@ -412,18 +412,18 @@ func expandBinaryAuthorizationAttestorAttestationAuthorityNotePublicKeys(v inter
 	return req, nil
 }
 
-func expandBinaryAuthorizationAttestorAttestationAuthorityNotePublicKeysComment(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
+func expandBinaryAuthorizationAttestorAttestationAuthorityNotePublicKeysComment(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandBinaryAuthorizationAttestorAttestationAuthorityNotePublicKeysId(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
+func expandBinaryAuthorizationAttestorAttestationAuthorityNotePublicKeysId(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandBinaryAuthorizationAttestorAttestationAuthorityNotePublicKeysAsciiArmoredPgpPublicKey(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
+func expandBinaryAuthorizationAttestorAttestationAuthorityNotePublicKeysAsciiArmoredPgpPublicKey(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandBinaryAuthorizationAttestorAttestationAuthorityNoteDelegationServiceAccountEmail(v interface{}, d *schema.ResourceData, config *Config) (interface{}, error) {
+func expandBinaryAuthorizationAttestorAttestationAuthorityNoteDelegationServiceAccountEmail(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
