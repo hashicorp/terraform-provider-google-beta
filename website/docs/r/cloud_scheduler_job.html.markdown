@@ -25,8 +25,6 @@ description: |-
 A scheduled job that can publish a pubsub message or a http request
 every X interval of time, using crontab format string
 
-~> **Warning:** This resource is in beta, and should be used with the terraform-provider-google-beta provider.
-See [Provider Versions](https://terraform.io/docs/providers/google/provider_versions.html) for more details on beta resources.
 
 To get more information about Job, see:
 
@@ -44,14 +42,10 @@ To get more information about Job, see:
 
 ```hcl
 resource "google_pubsub_topic" "topic" {
-  provider = "google-beta"
-
   name = "job-topic"
 }
 
 resource "google_cloud_scheduler_job" "job" {
-  provider = "google-beta"
-
   name     = "test-job"
   description = "test job"
   schedule = "*/2 * * * *"
@@ -60,11 +54,6 @@ resource "google_cloud_scheduler_job" "job" {
     topic_name = "${google_pubsub_topic.topic.id}"
     data = "${base64encode("test")}"
   }
-}
-
-provider "google-beta"{
-  region = "us-central1"
-  zone   = "us-central1-a"
 }
 ```
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
@@ -77,8 +66,6 @@ provider "google-beta"{
 
 ```hcl
 resource "google_cloud_scheduler_job" "job" {
-  provider = "google-beta"
-
   name     = "test-job"
   description = "test http job"
   schedule = "*/8 * * * *"
@@ -88,11 +75,6 @@ resource "google_cloud_scheduler_job" "job" {
     http_method = "POST"
     uri = "https://example.com/ping"
   }
-}
-
-provider "google-beta"{
-  region = "us-central1"
-  zone   = "us-central1-a"
 }
 ```
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
@@ -105,8 +87,6 @@ provider "google-beta"{
 
 ```hcl
 resource "google_cloud_scheduler_job" "job" {
-  provider = "google-beta"
-
   name     = "test-job"
   schedule = "*/4 * * * *"
   description = "test app engine job"
@@ -123,11 +103,6 @@ resource "google_cloud_scheduler_job" "job" {
 
     relative_uri = "/ping"
   }
-}
-
-provider "google-beta"{
-  region = "us-central1"
-  zone   = "us-central1-a"
 }
 ```
 
@@ -321,9 +296,9 @@ This resource provides the following
 Job can be imported using any of these accepted formats:
 
 ```
-$ terraform import -provider=google-beta google_cloud_scheduler_job.default projects/{{project}}/locations/{{region}}/jobs/{{name}}
-$ terraform import -provider=google-beta google_cloud_scheduler_job.default {{project}}/{{region}}/{{name}}
-$ terraform import -provider=google-beta google_cloud_scheduler_job.default {{name}}
+$ terraform import google_cloud_scheduler_job.default projects/{{project}}/locations/{{region}}/jobs/{{name}}
+$ terraform import google_cloud_scheduler_job.default {{project}}/{{region}}/{{name}}
+$ terraform import google_cloud_scheduler_job.default {{name}}
 ```
 
 -> If you're importing a resource with beta features, make sure to include `-provider=google-beta`
