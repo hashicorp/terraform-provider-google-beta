@@ -44,10 +44,14 @@ To get more information about Job, see:
 
 ```hcl
 resource "google_pubsub_topic" "topic" {
+  provider = "google-beta"
+
   name = "job-topic"
 }
 
 resource "google_cloud_scheduler_job" "job" {
+  provider = "google-beta"
+
   name     = "test-job"
   description = "test job"
   schedule = "*/2 * * * *"
@@ -56,6 +60,11 @@ resource "google_cloud_scheduler_job" "job" {
     topic_name = "${google_pubsub_topic.topic.id}"
     data = "${base64encode("test")}"
   }
+}
+
+provider "google-beta"{
+  region = "us-central1"
+  zone   = "us-central1-a"
 }
 ```
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
@@ -68,6 +77,8 @@ resource "google_cloud_scheduler_job" "job" {
 
 ```hcl
 resource "google_cloud_scheduler_job" "job" {
+  provider = "google-beta"
+
   name     = "test-job"
   description = "test http job"
   schedule = "*/8 * * * *"
@@ -77,6 +88,11 @@ resource "google_cloud_scheduler_job" "job" {
     http_method = "POST"
     uri = "https://example.com/ping"
   }
+}
+
+provider "google-beta"{
+  region = "us-central1"
+  zone   = "us-central1-a"
 }
 ```
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
@@ -89,6 +105,8 @@ resource "google_cloud_scheduler_job" "job" {
 
 ```hcl
 resource "google_cloud_scheduler_job" "job" {
+  provider = "google-beta"
+
   name     = "test-job"
   schedule = "*/4 * * * *"
   description = "test app engine job"
@@ -105,6 +123,11 @@ resource "google_cloud_scheduler_job" "job" {
 
     relative_uri = "/ping"
   }
+}
+
+provider "google-beta"{
+  region = "us-central1"
+  zone   = "us-central1-a"
 }
 ```
 

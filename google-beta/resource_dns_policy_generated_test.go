@@ -33,16 +33,11 @@ func TestAccDnsPolicy_dnsPolicyBasicExample(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
+		Providers:    testAccProvidersOiCS,
 		CheckDestroy: testAccCheckDnsPolicyDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccDnsPolicy_dnsPolicyBasicExample(context),
-			},
-			{
-				ResourceName:      "google_dns_policy.example-policy",
-				ImportState:       true,
-				ImportStateVerify: true,
 			},
 		},
 	})

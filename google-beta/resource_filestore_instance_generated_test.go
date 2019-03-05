@@ -33,17 +33,11 @@ func TestAccFilestoreInstance_filestoreInstanceBasicExample(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
+		Providers:    testAccProvidersOiCS,
 		CheckDestroy: testAccCheckFilestoreInstanceDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccFilestoreInstance_filestoreInstanceBasicExample(context),
-			},
-			{
-				ResourceName:            "google_filestore_instance.instance",
-				ImportState:             true,
-				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"zone"},
 			},
 		},
 	})
@@ -52,6 +46,8 @@ func TestAccFilestoreInstance_filestoreInstanceBasicExample(t *testing.T) {
 func testAccFilestoreInstance_filestoreInstanceBasicExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_filestore_instance" "instance" {
+  provider = "google-beta"
+
   name = "test-instance-%{random_suffix}"
   zone = "us-central1-b"
   tier = "PREMIUM"
@@ -65,6 +61,11 @@ resource "google_filestore_instance" "instance" {
     network = "default"
     modes   = ["MODE_IPV4"]
   }
+}
+
+provider "google-beta"{
+  region = "us-central1"
+  zone   = "us-central1-a"
 }
 `, context)
 }
