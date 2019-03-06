@@ -9,8 +9,9 @@ ENHANCEMENTS:
 * container: `google_container_cluster` can now disable VPC Native clusters with `ip_allocation_policy.use_ip_aliases` [GH-489]
 
 BUG FIXES:
+* app_engine: `google_app_engine_application` correctly outputs `gcr_domain`.  [GH-479]
 * compute: `data.google_compute_subnetwork` outputs the `self_link` field again. [GH-481]
-* compute: `google_app_engine_application` correctly outputs `gcr_domain`.  [GH-479]
+* compute: `google_compute_attached_disk` is now removed from state if the instance was removed. [GH-497]
 * container: `google_container_cluster` private_cluster_config now has a diff suppress to prevent a permadiff for and allows for empty `master_ipv4_cidr_block`  [GH-460]
 * container: `google_container_cluster` import behavior fixed/documented for TF-state-only fields (`remove_default_node_pool`, `min_master_version`) [GH-476][GH-487][GH-495]
 
