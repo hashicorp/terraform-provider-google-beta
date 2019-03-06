@@ -33,17 +33,11 @@ func TestAccCloudSchedulerJob_schedulerJobPubsubExample(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
+		Providers:    testAccProvidersOiCS,
 		CheckDestroy: testAccCheckCloudSchedulerJobDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudSchedulerJob_schedulerJobPubsubExample(context),
-			},
-			{
-				ResourceName:            "google_cloud_scheduler_job.job",
-				ImportState:             true,
-				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"region"},
 			},
 		},
 	})
@@ -52,10 +46,14 @@ func TestAccCloudSchedulerJob_schedulerJobPubsubExample(t *testing.T) {
 func testAccCloudSchedulerJob_schedulerJobPubsubExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_pubsub_topic" "topic" {
+  provider = "google-beta"
+
   name = "job-topic-%{random_suffix}"
 }
 
 resource "google_cloud_scheduler_job" "job" {
+  provider = "google-beta"
+
   name     = "test-job-%{random_suffix}"
   description = "test job"
   schedule = "*/2 * * * *"
@@ -64,6 +62,11 @@ resource "google_cloud_scheduler_job" "job" {
     topic_name = "${google_pubsub_topic.topic.id}"
     data = "${base64encode("test")}"
   }
+}
+
+provider "google-beta"{
+  region = "us-central1"
+  zone   = "us-central1-a"
 }
 `, context)
 }
@@ -77,17 +80,11 @@ func TestAccCloudSchedulerJob_schedulerJobHttpExample(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
+		Providers:    testAccProvidersOiCS,
 		CheckDestroy: testAccCheckCloudSchedulerJobDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudSchedulerJob_schedulerJobHttpExample(context),
-			},
-			{
-				ResourceName:            "google_cloud_scheduler_job.job",
-				ImportState:             true,
-				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"region"},
 			},
 		},
 	})
@@ -96,6 +93,8 @@ func TestAccCloudSchedulerJob_schedulerJobHttpExample(t *testing.T) {
 func testAccCloudSchedulerJob_schedulerJobHttpExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_cloud_scheduler_job" "job" {
+  provider = "google-beta"
+
   name     = "test-job-%{random_suffix}"
   description = "test http job"
   schedule = "*/8 * * * *"
@@ -105,6 +104,11 @@ resource "google_cloud_scheduler_job" "job" {
     http_method = "POST"
     uri = "https://example.com/ping"
   }
+}
+
+provider "google-beta"{
+  region = "us-central1"
+  zone   = "us-central1-a"
 }
 `, context)
 }
@@ -118,17 +122,11 @@ func TestAccCloudSchedulerJob_schedulerJobAppEngineExample(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
+		Providers:    testAccProvidersOiCS,
 		CheckDestroy: testAccCheckCloudSchedulerJobDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudSchedulerJob_schedulerJobAppEngineExample(context),
-			},
-			{
-				ResourceName:            "google_cloud_scheduler_job.job",
-				ImportState:             true,
-				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"region"},
 			},
 		},
 	})
@@ -137,6 +135,8 @@ func TestAccCloudSchedulerJob_schedulerJobAppEngineExample(t *testing.T) {
 func testAccCloudSchedulerJob_schedulerJobAppEngineExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_cloud_scheduler_job" "job" {
+  provider = "google-beta"
+
   name     = "test-job-%{random_suffix}"
   schedule = "*/4 * * * *"
   description = "test app engine job"
@@ -153,6 +153,11 @@ resource "google_cloud_scheduler_job" "job" {
 
     relative_uri = "/ping"
   }
+}
+
+provider "google-beta"{
+  region = "us-central1"
+  zone   = "us-central1-a"
 }
 `, context)
 }
