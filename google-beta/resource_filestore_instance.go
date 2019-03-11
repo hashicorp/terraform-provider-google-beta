@@ -24,7 +24,6 @@ import (
 
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/validation"
-	filestore "google.golang.org/api/file/v1beta1"
 )
 
 func resourceFilestoreInstance() *schema.Resource {
@@ -197,14 +196,8 @@ func resourceFilestoreInstanceCreate(d *schema.ResourceData, meta interface{}) e
 	if err != nil {
 		return err
 	}
-	op := &filestore.Operation{}
-	err = Convert(res, op)
-	if err != nil {
-		return err
-	}
-
 	waitErr := filestoreOperationWaitTime(
-		config.clientFilestore, op, project, "Creating Instance",
+		config, res, project, "Creating Instance",
 		int(d.Timeout(schema.TimeoutCreate).Minutes()))
 
 	if waitErr != nil {
@@ -325,14 +318,9 @@ func resourceFilestoreInstanceUpdate(d *schema.ResourceData, meta interface{}) e
 	if err != nil {
 		return err
 	}
-	op := &filestore.Operation{}
-	err = Convert(res, op)
-	if err != nil {
-		return err
-	}
 
 	err = filestoreOperationWaitTime(
-		config.clientFilestore, op, project, "Updating Instance",
+		config, res, project, "Updating Instance",
 		int(d.Timeout(schema.TimeoutUpdate).Minutes()))
 
 	if err != nil {
@@ -361,14 +349,9 @@ func resourceFilestoreInstanceDelete(d *schema.ResourceData, meta interface{}) e
 	if err != nil {
 		return err
 	}
-	op := &filestore.Operation{}
-	err = Convert(res, op)
-	if err != nil {
-		return err
-	}
 
 	err = filestoreOperationWaitTime(
-		config.clientFilestore, op, project, "Deleting Instance",
+		config, res, project, "Deleting Instance",
 		int(d.Timeout(schema.TimeoutDelete).Minutes()))
 
 	if err != nil {
