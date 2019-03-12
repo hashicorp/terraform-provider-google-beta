@@ -184,8 +184,8 @@ The following arguments are supported:
 
 * `type` -
   (Optional)
-  Specifies the type of SSL certificate, either `SELF_MANAGED` or `MANAGED`.
-  If not specified, the certificate is self-managed.
+  Enum field whose value is always `MANAGED` - used to signal to the API
+  which type this is.
 * `project` - (Optional) The ID of the project in which the resource belongs.
     If it is not provided, the provider project is used.
 
