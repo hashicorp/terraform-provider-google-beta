@@ -12,6 +12,7 @@ ENHANCEMENTS:
 * container: `google_container_node_pool` adds a unified `location` field for regions and zones. [GH-461]
 * container: `data.google_container_cluster` adds a unified `location` field for regions and zones. [GH-461]
 * container: `google_container_engine_versions` adds a unified `location` field for regions and zones. [GH-461]
+* dataflow: `google_dataflow_job` has support for custom service accounts with `service_account_email`. [GH-527]
 
 BUG FIXES:
 * container: `google_container_cluster`, `google_container_node_pool` properly suppress new GKE `1.12` `metadata` values. [GH-522]
