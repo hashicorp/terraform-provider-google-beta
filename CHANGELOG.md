@@ -22,6 +22,7 @@ BUG FIXES:
 FEATURES:
 * **New Datasource**: `data.google_projects` for retrieving a list of projects based on a filter. ([#493](https://github.com/terraform-providers/terraform-provider-google-beta/issues/493))
 * **New Resource**: `google_tpu_node` for Cloud TPU Nodes ([#494](https://github.com/terraform-providers/terraform-provider-google-beta/issues/494))
+* **New Resource**: `google_dns_policy` for Cloud DNS policies. ([#488](https://github.com/terraform-providers/terraform-provider-google-beta/pull/488))
 
 ENHANCEMENTS:
 * compute: `google_compute_disk` and `google_compute_region_disk` will now detach themselves from a more up to date set of users at delete time. ([#480](https://github.com/terraform-providers/terraform-provider-google-beta/issues/480))
