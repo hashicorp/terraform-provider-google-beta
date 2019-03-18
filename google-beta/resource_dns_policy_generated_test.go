@@ -46,6 +46,8 @@ func TestAccDnsPolicy_dnsPolicyBasicExample(t *testing.T) {
 func testAccDnsPolicy_dnsPolicyBasicExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_dns_policy" "example-policy" {
+  provider = "google-beta"
+
   name = "example-policy-%{random_suffix}"
   enable_inbound_forwarding = true
 
@@ -67,13 +69,22 @@ resource "google_dns_policy" "example-policy" {
 }
 
 resource "google_compute_network" "network-1" {
+  provider = "google-beta"
+
   name = "network-1-%{random_suffix}"
   auto_create_subnetworks = false
 }
 
 resource "google_compute_network" "network-2" {
+  provider = "google-beta"
+
   name = "network-2-%{random_suffix}"
   auto_create_subnetworks = false
+}
+
+provider "google-beta"{
+  region = "us-central1"
+  zone   = "us-central1-a"
 }
 `, context)
 }
