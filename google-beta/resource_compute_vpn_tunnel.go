@@ -371,6 +371,47 @@ func resourceComputeVpnTunnelCreate(d *schema.ResourceData, meta interface{}) er
 
 	log.Printf("[DEBUG] Finished creating VpnTunnel %q: %#v", d.Id(), res)
 
+	if v, ok := d.GetOkExists("labels"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
+		// Labels cannot be set in a create.  We'll have to set them here.
+		err = resourceComputeVpnTunnelRead(d, meta)
+		if err != nil {
+			return err
+		}
+
+		obj := make(map[string]interface{})
+		// d.Get("labels") will have been overridden by the Read call.
+		labelsProp, err := expandComputeVpnTunnelLabels(v, d, config)
+		if err != nil {
+			return err
+		}
+		obj["labels"] = labelsProp
+		labelFingerprintProp := d.Get("label_fingerprint")
+		obj["labelFingerprint"] = labelFingerprintProp
+
+		url, err = replaceVars(d, config, "https://www.googleapis.com/compute/beta/projects/{{project}}/regions/{{region}}/vpnTunnels/{{name}}/setLabels")
+		if err != nil {
+			return err
+		}
+		res, err = sendRequest(config, "POST", url, obj)
+		if err != nil {
+			return fmt.Errorf("Error adding labels to ComputeVpnTunnel %q: %s", d.Id(), err)
+		}
+
+		err = Convert(res, op)
+		if err != nil {
+			return err
+		}
+
+		err = computeOperationWaitTime(
+			config.clientCompute, op, project, "Updating ComputeVpnTunnel Labels",
+			int(d.Timeout(schema.TimeoutUpdate).Minutes()))
+
+		if err != nil {
+			return err
+		}
+
+	}
+
 	return resourceComputeVpnTunnelRead(d, meta)
 }
 
