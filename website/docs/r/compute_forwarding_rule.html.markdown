@@ -191,7 +191,7 @@ The following arguments are supported:
   Labels to apply to this forwarding rule.  A list of key->value pairs.
 
 * `all_ports` -
-  (Optional, [Beta](https://terraform.io/docs/providers/google/provider_versions.html))
+  (Optional)
   When the load balancing scheme is INTERNAL and protocol is TCP/UDP, omit
   `port`/`port_range` and specify this field as `true` to allow packets addressed
   to any ports to be forwarded to the backends configured with this forwarding rule.
