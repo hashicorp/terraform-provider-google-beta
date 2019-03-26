@@ -576,6 +576,7 @@ func resourceContainerCluster() *schema.Resource {
 						"node_ipv4_cidr_block": {
 							Type:             schema.TypeString,
 							Optional:         true,
+							Computed:         true,
 							ForceNew:         true,
 							ConflictsWith:    ipAllocationRangeFields,
 							DiffSuppressFunc: cidrOrSizeDiffSuppress,
