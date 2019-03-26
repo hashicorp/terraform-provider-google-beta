@@ -61,6 +61,9 @@ type Config struct {
 	client    *http.Client
 	userAgent string
 
+	ComputeCustomEndpoint     string
+	ComputeBetaCustomEndpoint string
+
 	tokenSource oauth2.TokenSource
 
 	clientAccessContextManager   *accesscontextmanager.Service
@@ -138,6 +141,7 @@ func (c *Config) LoadAndValidate() error {
 		return err
 	}
 	c.clientCompute.UserAgent = userAgent
+	c.clientCompute.BasePath = c.ComputeCustomEndpoint
 
 	log.Printf("[INFO] Instantiating GCE Beta client...")
 	c.clientComputeBeta, err = computeBeta.New(client)
@@ -145,6 +149,7 @@ func (c *Config) LoadAndValidate() error {
 		return err
 	}
 	c.clientComputeBeta.UserAgent = userAgent
+	c.clientComputeBeta.BasePath = c.ComputeBetaCustomEndpoint
 
 	log.Printf("[INFO] Instantiating GKE client...")
 	c.clientContainer, err = container.New(client)
