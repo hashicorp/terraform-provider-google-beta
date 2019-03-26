@@ -21,7 +21,7 @@ ENHANCEMENTS:
 * resourcemanager: `google_*_organization_policy` Add import support for folder and project organization_policies [GH-512]
 * sql: `google_sql_ssl_cert` Allow project to be specified at resource level [GH-524]
 * storage: `google_storage_bucket` avoids calls to the compute api during import [GH-529]
-* storage: `google_storage_bucket
+* storage: `google_storage_bucket.storage_class` supports updating. [GH-548]
 * various: Some import formats that previously failed will now work as documented. [GH-542]
 
 BUG FIXES:
