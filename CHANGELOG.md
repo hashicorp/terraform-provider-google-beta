@@ -1,33 +1,33 @@
-## 2.3.0 (Unreleased)
+## 2.3.0 (March 26, 2019)
 
 DEPRECATIONS:
-* container: `google_container_cluster` `zone` and `region` fields are deprecated in favour of `location`, `additional_zones` in favour of `node_locations`. [GH-461]
-* container: `google_container_node_pool` `zone` and `region` fields are deprecated in favour of `location`. [GH-461]
-* container: `data.google_container_cluster` `zone` and `region` fields are deprecated in favour of `location`. [GH-461]
-* container: `google_container_engine_versions` `zone` and `region` fields are deprecated in favour of `location`. [GH-461]
+* container: `google_container_cluster` `zone` and `region` fields are deprecated in favour of `location`, `additional_zones` in favour of `node_locations`. ([#461](https://github.com/terraform-providers/terraform-provider-google-beta/issues/461))
+* container: `google_container_node_pool` `zone` and `region` fields are deprecated in favour of `location`. ([#461](https://github.com/terraform-providers/terraform-provider-google-beta/issues/461))
+* container: `data.google_container_cluster` `zone` and `region` fields are deprecated in favour of `location`. ([#461](https://github.com/terraform-providers/terraform-provider-google-beta/issues/461))
+* container: `google_container_engine_versions` `zone` and `region` fields are deprecated in favour of `location`. ([#461](https://github.com/terraform-providers/terraform-provider-google-beta/issues/461))
 
 FEATURES:
-* **New Datasource**: `google_*_organization_policy` Adding datasources for folder and project org policy [GH-468]
+* **New Datasource**: `google_*_organization_policy` Adding datasources for folder and project org policy ([#468](https://github.com/terraform-providers/terraform-provider-google-beta/issues/468))
 
 ENHANCEMENTS:
-* compute: `google_compute_disk`, `google_compute_region_disk` now support `physical_block_size_bytes` [GH-526]
-* compute: `google_compute_vpn_tunnel will properly apply labels. [GH-541]
-* container: `google_container_cluster` adds a unified `location` field for regions and zones, `node_locations` to manage extra zones for multi-zonal clusters and specific zones for regional clusters. [GH-461]
-* container: `google_container_node_pool` adds a unified `location` field for regions and zones. [GH-461]
-* container: `data.google_container_cluster` adds a unified `location` field for regions and zones. [GH-461]
-* container: `google_container_engine_versions` adds a unified `location` field for regions and zones. [GH-461]
-* dataflow: `google_dataflow_job` has support for custom service accounts with `service_account_email`. [GH-527]
-* monitoring: `google_monitoring_uptime_check` will properly recreate to perform updates. [GH-485]
-* resourcemanager: `google_*_organization_policy` Add import support for folder and project organization_policies [GH-512]
-* sql: `google_sql_ssl_cert` Allow project to be specified at resource level [GH-524]
-* storage: `google_storage_bucket` avoids calls to the compute api during import [GH-529]
-* storage: `google_storage_bucket.storage_class` supports updating. [GH-548]
-* various: Some import formats that previously failed will now work as documented. [GH-542]
+* compute: `google_compute_disk`, `google_compute_region_disk` now support `physical_block_size_bytes` ([#526](https://github.com/terraform-providers/terraform-provider-google-beta/issues/526))
+* compute: `google_compute_vpn_tunnel will properly apply labels. ([#541](https://github.com/terraform-providers/terraform-provider-google-beta/issues/541))
+* container: `google_container_cluster` adds a unified `location` field for regions and zones, `node_locations` to manage extra zones for multi-zonal clusters and specific zones for regional clusters. ([#461](https://github.com/terraform-providers/terraform-provider-google-beta/issues/461))
+* container: `google_container_node_pool` adds a unified `location` field for regions and zones. ([#461](https://github.com/terraform-providers/terraform-provider-google-beta/issues/461))
+* container: `data.google_container_cluster` adds a unified `location` field for regions and zones. ([#461](https://github.com/terraform-providers/terraform-provider-google-beta/issues/461))
+* container: `google_container_engine_versions` adds a unified `location` field for regions and zones. ([#461](https://github.com/terraform-providers/terraform-provider-google-beta/issues/461))
+* dataflow: `google_dataflow_job` has support for custom service accounts with `service_account_email`. ([#527](https://github.com/terraform-providers/terraform-provider-google-beta/issues/527))
+* monitoring: `google_monitoring_uptime_check` will properly recreate to perform updates. ([#485](https://github.com/terraform-providers/terraform-provider-google-beta/issues/485))
+* resourcemanager: `google_*_organization_policy` Add import support for folder and project organization_policies ([#512](https://github.com/terraform-providers/terraform-provider-google-beta/issues/512))
+* sql: `google_sql_ssl_cert` Allow project to be specified at resource level ([#524](https://github.com/terraform-providers/terraform-provider-google-beta/issues/524))
+* storage: `google_storage_bucket` avoids calls to the compute api during import ([#529](https://github.com/terraform-providers/terraform-provider-google-beta/issues/529))
+* storage: `google_storage_bucket.storage_class` supports updating. ([#548](https://github.com/terraform-providers/terraform-provider-google-beta/issues/548))
+* various: Some import formats that previously failed will now work as documented. ([#542](https://github.com/terraform-providers/terraform-provider-google-beta/issues/542))
 
 BUG FIXES:
-* compute: `google_compute_disk` will properly detach instances again. [GH-538]
-* container: `google_container_cluster`, `google_container_node_pool` properly suppress new GKE `1.12` `metadata` values. [GH-522]
-* various: Only 409 concurrent operation errors will be retried, and naming conflicts will not. [GH-544]
+* compute: `google_compute_disk` will properly detach instances again. ([#538](https://github.com/terraform-providers/terraform-provider-google-beta/issues/538))
+* container: `google_container_cluster`, `google_container_node_pool` properly suppress new GKE `1.12` `metadata` values. ([#522](https://github.com/terraform-providers/terraform-provider-google-beta/issues/522))
+* various: Only 409 concurrent operation errors will be retried, and naming conflicts will not. ([#544](https://github.com/terraform-providers/terraform-provider-google-beta/issues/544))
 
 ## 2.2.0 (March 12, 2019)
 
