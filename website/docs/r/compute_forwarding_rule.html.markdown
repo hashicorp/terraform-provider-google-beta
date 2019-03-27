@@ -203,7 +203,7 @@ The following arguments are supported:
   specified, it is assumed to be PREMIUM.
 
 * `service_label` -
-  (Optional, [Beta](https://terraform.io/docs/providers/google/provider_versions.html))
+  (Optional)
   An optional prefix to the service name for this Forwarding Rule.
   If specified, will be the first label of the fully qualified service
   name.
