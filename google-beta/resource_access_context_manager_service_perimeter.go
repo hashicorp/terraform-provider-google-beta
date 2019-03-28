@@ -23,7 +23,6 @@ import (
 
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/validation"
-	accesscontextmanager "google.golang.org/api/accesscontextmanager/v1beta"
 )
 
 func resourceAccessContextManagerServicePerimeter() *schema.Resource {
@@ -38,9 +37,9 @@ func resourceAccessContextManagerServicePerimeter() *schema.Resource {
 		},
 
 		Timeouts: &schema.ResourceTimeout{
-			Create: schema.DefaultTimeout(240 * time.Second),
-			Update: schema.DefaultTimeout(240 * time.Second),
-			Delete: schema.DefaultTimeout(240 * time.Second),
+			Create: schema.DefaultTimeout(360 * time.Second),
+			Update: schema.DefaultTimeout(360 * time.Second),
+			Delete: schema.DefaultTimeout(360 * time.Second),
 		},
 
 		Schema: map[string]*schema.Schema{
@@ -182,14 +181,8 @@ func resourceAccessContextManagerServicePerimeterCreate(d *schema.ResourceData, 
 	}
 	d.SetId(id)
 
-	op := &accesscontextmanager.Operation{}
-	err = Convert(res, op)
-	if err != nil {
-		return err
-	}
-
 	waitErr := accessContextManagerOperationWaitTime(
-		config.clientAccessContextManager, op, "Creating ServicePerimeter",
+		config, res, "Creating ServicePerimeter",
 		int(d.Timeout(schema.TimeoutCreate).Minutes()))
 
 	if waitErr != nil {
@@ -300,14 +293,8 @@ func resourceAccessContextManagerServicePerimeterUpdate(d *schema.ResourceData, 
 		return fmt.Errorf("Error updating ServicePerimeter %q: %s", d.Id(), err)
 	}
 
-	op := &accesscontextmanager.Operation{}
-	err = Convert(res, op)
-	if err != nil {
-		return err
-	}
-
 	err = accessContextManagerOperationWaitTime(
-		config.clientAccessContextManager, op, "Updating ServicePerimeter",
+		config, res, "Updating ServicePerimeter",
 		int(d.Timeout(schema.TimeoutUpdate).Minutes()))
 
 	if err != nil {
@@ -332,14 +319,8 @@ func resourceAccessContextManagerServicePerimeterDelete(d *schema.ResourceData, 
 		return handleNotFoundError(err, d, "ServicePerimeter")
 	}
 
-	op := &accesscontextmanager.Operation{}
-	err = Convert(res, op)
-	if err != nil {
-		return err
-	}
-
 	err = accessContextManagerOperationWaitTime(
-		config.clientAccessContextManager, op, "Deleting ServicePerimeter",
+		config, res, "Deleting ServicePerimeter",
 		int(d.Timeout(schema.TimeoutDelete).Minutes()))
 
 	if err != nil {

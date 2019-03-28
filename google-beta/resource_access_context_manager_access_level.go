@@ -23,7 +23,6 @@ import (
 
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/validation"
-	accesscontextmanager "google.golang.org/api/accesscontextmanager/v1beta"
 )
 
 func resourceAccessContextManagerAccessLevel() *schema.Resource {
@@ -38,9 +37,9 @@ func resourceAccessContextManagerAccessLevel() *schema.Resource {
 		},
 
 		Timeouts: &schema.ResourceTimeout{
-			Create: schema.DefaultTimeout(240 * time.Second),
-			Update: schema.DefaultTimeout(240 * time.Second),
-			Delete: schema.DefaultTimeout(240 * time.Second),
+			Create: schema.DefaultTimeout(360 * time.Second),
+			Update: schema.DefaultTimeout(360 * time.Second),
+			Delete: schema.DefaultTimeout(360 * time.Second),
 		},
 
 		Schema: map[string]*schema.Schema{
@@ -217,14 +216,8 @@ func resourceAccessContextManagerAccessLevelCreate(d *schema.ResourceData, meta 
 	}
 	d.SetId(id)
 
-	op := &accesscontextmanager.Operation{}
-	err = Convert(res, op)
-	if err != nil {
-		return err
-	}
-
 	waitErr := accessContextManagerOperationWaitTime(
-		config.clientAccessContextManager, op, "Creating AccessLevel",
+		config, res, "Creating AccessLevel",
 		int(d.Timeout(schema.TimeoutCreate).Minutes()))
 
 	if waitErr != nil {
@@ -326,14 +319,8 @@ func resourceAccessContextManagerAccessLevelUpdate(d *schema.ResourceData, meta 
 		return fmt.Errorf("Error updating AccessLevel %q: %s", d.Id(), err)
 	}
 
-	op := &accesscontextmanager.Operation{}
-	err = Convert(res, op)
-	if err != nil {
-		return err
-	}
-
 	err = accessContextManagerOperationWaitTime(
-		config.clientAccessContextManager, op, "Updating AccessLevel",
+		config, res, "Updating AccessLevel",
 		int(d.Timeout(schema.TimeoutUpdate).Minutes()))
 
 	if err != nil {
@@ -358,14 +345,8 @@ func resourceAccessContextManagerAccessLevelDelete(d *schema.ResourceData, meta 
 		return handleNotFoundError(err, d, "AccessLevel")
 	}
 
-	op := &accesscontextmanager.Operation{}
-	err = Convert(res, op)
-	if err != nil {
-		return err
-	}
-
 	err = accessContextManagerOperationWaitTime(
-		config.clientAccessContextManager, op, "Deleting AccessLevel",
+		config, res, "Deleting AccessLevel",
 		int(d.Timeout(schema.TimeoutDelete).Minutes()))
 
 	if err != nil {
