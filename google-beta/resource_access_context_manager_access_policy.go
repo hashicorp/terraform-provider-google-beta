@@ -15,7 +15,6 @@
 package google
 
 import (
-	"encoding/json"
 	"fmt"
 	"log"
 	"reflect"
@@ -23,7 +22,6 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform/helper/schema"
-	accesscontextmanager "google.golang.org/api/accesscontextmanager/v1beta"
 )
 
 func resourceAccessContextManagerAccessPolicy() *schema.Resource {
@@ -38,9 +36,9 @@ func resourceAccessContextManagerAccessPolicy() *schema.Resource {
 		},
 
 		Timeouts: &schema.ResourceTimeout{
-			Create: schema.DefaultTimeout(240 * time.Second),
-			Update: schema.DefaultTimeout(240 * time.Second),
-			Delete: schema.DefaultTimeout(240 * time.Second),
+			Create: schema.DefaultTimeout(360 * time.Second),
+			Update: schema.DefaultTimeout(360 * time.Second),
+			Delete: schema.DefaultTimeout(360 * time.Second),
 		},
 
 		Schema: map[string]*schema.Schema{
@@ -104,14 +102,8 @@ func resourceAccessContextManagerAccessPolicyCreate(d *schema.ResourceData, meta
 	}
 	d.SetId(id)
 
-	op := &accesscontextmanager.Operation{}
-	err = Convert(res, op)
-	if err != nil {
-		return err
-	}
-
 	waitErr := accessContextManagerOperationWaitTime(
-		config.clientAccessContextManager, op, "Creating AccessPolicy",
+		config, res, "Creating AccessPolicy",
 		int(d.Timeout(schema.TimeoutCreate).Minutes()))
 
 	if waitErr != nil {
@@ -125,17 +117,9 @@ func resourceAccessContextManagerAccessPolicyCreate(d *schema.ResourceData, meta
 	// The operation for this resource contains the generated name that we need
 	// in order to perform a READ. We need to access the object inside of it as
 	// a map[string]interface, so let's do that.
-	bytes, err := op.Response.MarshalJSON()
-	if err != nil {
-		return err
-	}
 
-	var data map[string]interface{}
-	if err := json.Unmarshal(bytes, &data); err != nil {
-		return err
-	}
-
-	name := GetResourceNameFromSelfLink(data["name"].(string))
+	resp := res["response"].(map[string]interface{})
+	name := GetResourceNameFromSelfLink(resp["name"].(string))
 	log.Printf("[DEBUG] Setting AccessPolicy name, id to %s", name)
 	d.Set("name", name)
 	d.SetId(name)
@@ -209,14 +193,8 @@ func resourceAccessContextManagerAccessPolicyUpdate(d *schema.ResourceData, meta
 		return fmt.Errorf("Error updating AccessPolicy %q: %s", d.Id(), err)
 	}
 
-	op := &accesscontextmanager.Operation{}
-	err = Convert(res, op)
-	if err != nil {
-		return err
-	}
-
 	err = accessContextManagerOperationWaitTime(
-		config.clientAccessContextManager, op, "Updating AccessPolicy",
+		config, res, "Updating AccessPolicy",
 		int(d.Timeout(schema.TimeoutUpdate).Minutes()))
 
 	if err != nil {
@@ -241,14 +219,8 @@ func resourceAccessContextManagerAccessPolicyDelete(d *schema.ResourceData, meta
 		return handleNotFoundError(err, d, "AccessPolicy")
 	}
 
-	op := &accesscontextmanager.Operation{}
-	err = Convert(res, op)
-	if err != nil {
-		return err
-	}
-
 	err = accessContextManagerOperationWaitTime(
-		config.clientAccessContextManager, op, "Deleting AccessPolicy",
+		config, res, "Deleting AccessPolicy",
 		int(d.Timeout(schema.TimeoutDelete).Minutes()))
 
 	if err != nil {
