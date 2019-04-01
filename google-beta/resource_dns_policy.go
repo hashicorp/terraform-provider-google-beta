@@ -80,6 +80,10 @@ func resourceDnsPolicy() *schema.Resource {
 				Type:     schema.TypeBool,
 				Optional: true,
 			},
+			"enable_logging": {
+				Type:     schema.TypeBool,
+				Optional: true,
+			},
 			"networks": {
 				Type:     schema.TypeSet,
 				Optional: true,
@@ -148,6 +152,12 @@ func resourceDnsPolicyCreate(d *schema.ResourceData, meta interface{}) error {
 	} else if v, ok := d.GetOkExists("enable_inbound_forwarding"); ok || !reflect.DeepEqual(v, enableInboundForwardingProp) {
 		obj["enableInboundForwarding"] = enableInboundForwardingProp
 	}
+	enableLoggingProp, err := expandDnsPolicyEnableLogging(d.Get("enable_logging"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("enable_logging"); ok || !reflect.DeepEqual(v, enableLoggingProp) {
+		obj["enableLogging"] = enableLoggingProp
+	}
 	nameProp, err := expandDnsPolicyName(d.Get("name"), d, config)
 	if err != nil {
 		return err
@@ -214,6 +224,9 @@ func resourceDnsPolicyRead(d *schema.ResourceData, meta interface{}) error {
 	if err := d.Set("enable_inbound_forwarding", flattenDnsPolicyEnableInboundForwarding(res["enableInboundForwarding"], d)); err != nil {
 		return fmt.Errorf("Error reading Policy: %s", err)
 	}
+	if err := d.Set("enable_logging", flattenDnsPolicyEnableLogging(res["enableLogging"], d)); err != nil {
+		return fmt.Errorf("Error reading Policy: %s", err)
+	}
 	if err := d.Set("name", flattenDnsPolicyName(res["name"], d)); err != nil {
 		return fmt.Errorf("Error reading Policy: %s", err)
 	}
@@ -229,7 +242,7 @@ func resourceDnsPolicyUpdate(d *schema.ResourceData, meta interface{}) error {
 
 	d.Partial(true)
 
-	if d.HasChange("alternative_name_server_config") || d.HasChange("description") || d.HasChange("enable_inbound_forwarding") || d.HasChange("networks") {
+	if d.HasChange("alternative_name_server_config") || d.HasChange("description") || d.HasChange("enable_inbound_forwarding") || d.HasChange("enable_logging") || d.HasChange("networks") {
 		obj := make(map[string]interface{})
 		alternativeNameServerConfigProp, err := expandDnsPolicyAlternativeNameServerConfig(d.Get("alternative_name_server_config"), d, config)
 		if err != nil {
@@ -248,6 +261,12 @@ func resourceDnsPolicyUpdate(d *schema.ResourceData, meta interface{}) error {
 			return err
 		} else if v, ok := d.GetOkExists("enable_inbound_forwarding"); ok || !reflect.DeepEqual(v, enableInboundForwardingProp) {
 			obj["enableInboundForwarding"] = enableInboundForwardingProp
+		}
+		enableLoggingProp, err := expandDnsPolicyEnableLogging(d.Get("enable_logging"), d, config)
+		if err != nil {
+			return err
+		} else if v, ok := d.GetOkExists("enable_logging"); ok || !reflect.DeepEqual(v, enableLoggingProp) {
+			obj["enableLogging"] = enableLoggingProp
 		}
 		networksProp, err := expandDnsPolicyNetworks(d.Get("networks"), d, config)
 		if err != nil {
@@ -268,6 +287,7 @@ func resourceDnsPolicyUpdate(d *schema.ResourceData, meta interface{}) error {
 		d.SetPartial("alternative_name_server_config")
 		d.SetPartial("description")
 		d.SetPartial("enable_inbound_forwarding")
+		d.SetPartial("enable_logging")
 		d.SetPartial("networks")
 	}
 
@@ -377,6 +397,10 @@ func flattenDnsPolicyEnableInboundForwarding(v interface{}, d *schema.ResourceDa
 	return v
 }
 
+func flattenDnsPolicyEnableLogging(v interface{}, d *schema.ResourceData) interface{} {
+	return v
+}
+
 func flattenDnsPolicyName(v interface{}, d *schema.ResourceData) interface{} {
 	return v
 }
@@ -462,6 +486,10 @@ func expandDnsPolicyDescription(v interface{}, d TerraformResourceData, config *
 }
 
 func expandDnsPolicyEnableInboundForwarding(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandDnsPolicyEnableLogging(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
