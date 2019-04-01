@@ -135,7 +135,7 @@ resource "google_access_context_manager_service_perimeter" "test-access" {
   title          = "%s"
   perimeter_type = "PERIMETER_TYPE_REGULAR"
   status {
-    restricted_services = ["*"]
+    restricted_services = ["storage.googleapis.com"]
   }
 }
 `, org, policyTitle, levelTitleName, levelTitleName, perimeterTitleName, perimeterTitleName)
@@ -166,9 +166,6 @@ resource "google_access_context_manager_service_perimeter" "test-access" {
   name           = "accessPolicies/${google_access_context_manager_access_policy.test-access.name}/servicePerimeters/%s"
   title          = "%s"
   perimeter_type = "PERIMETER_TYPE_REGULAR"
-  status {
-    unrestricted_services = ["*"]
-  }
 }
 `, org, policyTitle, levelTitleName, levelTitleName, perimeterTitleName, perimeterTitleName)
 }

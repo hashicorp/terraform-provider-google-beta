@@ -33,14 +33,12 @@ GCP project can only belong to a single regular Service Perimeter. Service
 Perimeter Bridges can contain only GCP projects as members, a single GCP
 project may belong to multiple Service Perimeter Bridges.
 
-~> **Warning:** This resource is in beta, and should be used with the terraform-provider-google-beta provider.
-See [Provider Versions](https://terraform.io/docs/providers/google/provider_versions.html) for more details on beta resources.
 
 To get more information about ServicePerimeter, see:
 
-* [API documentation](https://cloud.google.com/access-context-manager/docs/reference/rest/v1beta/accessPolicies.servicePerimeters)
+* [API documentation](https://cloud.google.com/access-context-manager/docs/reference/rest/v1/accessPolicies.servicePerimeters)
 * How-to Guides
-    * [Access Policy Quickstart](https://cloud.google.com/access-context-manager/docs/quickstart)
+    * [Service Perimeter Quickstart](https://cloud.google.com/vpc-service-controls/docs/quickstart)
 
 ## Example Usage - Access Context Manager Service Perimeter Basic
 
@@ -51,20 +49,20 @@ resource "google_access_context_manager_service_perimeter" "service-perimeter" {
   name        = "accessPolicies/${google_access_context_manager_access_policy.test-access.name}/servicePerimeters/restrict_all"
   title       = "restrict_all"
   status {
-    restricted_services = ["*"]
+    restricted_services = ["storage.googleapis.com"]
   }
 }
 
 resource "google_access_context_manager_access_level" "access-level" {
   parent      = "accessPolicies/${google_access_context_manager_access_policy.test-access.name}"
-  name        = "accessPolicies/${google_access_context_manager_access_policy.test-access.name}/accessLevels/ios_no_lock"
-  title       = "ios_no_lock"
+  name        = "accessPolicies/${google_access_context_manager_access_policy.test-access.name}/accessLevels/chromeos_no_lock"
+  title       = "chromeos_no_lock"
   basic {
     conditions {
       device_policy {
         require_screen_lock = false
         os_constraints {
-          os_type = "IOS"
+          os_type = "DESKTOP_CHROME_OS"
         }
       }
     }
@@ -110,7 +108,7 @@ The following arguments are supported:
   (Optional)
   Specifies the type of the Perimeter. There are two types: regular and
   bridge. Regular Service Perimeter contains resources, access levels,
-  and restricted/unrestricted services. Every resource can be in at most
+  and restricted services. Every resource can be in at most
   ONE regular Service Perimeter.
   In addition to being in a regular service perimeter, a resource can also
   be in zero or more perimeter bridges. A perimeter bridge only contains
@@ -126,7 +124,7 @@ The following arguments are supported:
 * `status` -
   (Optional)
   ServicePerimeter configuration. Specifies sets of resources,
-  restricted/unrestricted services and access levels that determine
+  restricted services and access levels that determine
   perimeter content and boundaries.  Structure is documented below.
 
 
@@ -150,36 +148,13 @@ The `status` block supports:
   be empty.
   Format: accessPolicies/{policy_id}/accessLevels/{access_level_name}
 
-* `unrestricted_services` -
-  (Optional)
-  GCP services that are not subject to the Service Perimeter
-  restrictions. May contain a list of services or a single wildcard
-  "*". For example, if logging.googleapis.com is unrestricted, users
-  can access logs inside the perimeter as if the perimeter doesn't
-  exist, and it also means VMs inside the perimeter can access logs
-  outside the perimeter.
-  The wildcard means that unless explicitly specified by
-  "restrictedServices" list, any service is treated as unrestricted.
-  One of the fields "restrictedServices", "unrestrictedServices"
-  must contain a wildcard "*", otherwise the Service Perimeter
-  specification is invalid. It also means that both field being
-  empty is invalid as well. "unrestrictedServices" can be empty if
-  and only if "restrictedServices" list contains a "*" wildcard.
-
 * `restricted_services` -
   (Optional)
   GCP services that are subject to the Service Perimeter
-  restrictions. May contain a list of services or a single wildcard
-  "*". For example, if storage.googleapis.com is specified, access
-  to the storage buckets inside the perimeter must meet the
-  perimeter's access restrictions.
-  Wildcard means that unless explicitly specified by
-  "unrestrictedServices" list, any service is treated as restricted.
-  One of the fields "restrictedServices", "unrestrictedServices"
-  must contain a wildcard "*", otherwise the Service Perimeter
-  specification is invalid. It also means that both field being
-  empty is invalid as well. "restrictedServices" can be empty if and
-  only if "unrestrictedServices" list contains a "*" wildcard.
+  restrictions. Must contain a list of services. For example, if
+  `storage.googleapis.com` is specified, access to the storage
+  buckets inside the perimeter must meet the perimeter's access
+  restrictions.
 
 ## Attributes Reference
 
@@ -207,7 +182,7 @@ This resource provides the following
 ServicePerimeter can be imported using any of these accepted formats:
 
 ```
-$ terraform import -provider=google-beta google_access_context_manager_service_perimeter.default {{name}}
+$ terraform import google_access_context_manager_service_perimeter.default {{name}}
 ```
 
 -> If you're importing a resource with beta features, make sure to include `-provider=google-beta`
