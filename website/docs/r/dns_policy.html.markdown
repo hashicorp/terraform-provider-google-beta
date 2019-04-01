@@ -49,6 +49,8 @@ resource "google_dns_policy" "example-policy" {
   name = "example-policy"
   enable_inbound_forwarding = true
 
+  enable_logging = true
+
   alternative_name_server_config {
     target_name_servers {
       ipv4_address = "172.16.1.10"
@@ -115,6 +117,11 @@ The following arguments are supported:
   by VMs or applications over VPN connections. When enabled, a
   virtual IP address will be allocated from each of the sub-networks
   that are bound to this policy.
+
+* `enable_logging` -
+  (Optional)
+  Controls whether logging is enabled for the networks bound to this policy.
+  Defaults to no logging if not set.
 
 * `networks` -
   (Optional)

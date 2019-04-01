@@ -51,6 +51,8 @@ resource "google_dns_policy" "example-policy" {
   name = "example-policy-%{random_suffix}"
   enable_inbound_forwarding = true
 
+  enable_logging = true
+
   alternative_name_server_config {
     target_name_servers {
       ipv4_address = "172.16.1.10"
