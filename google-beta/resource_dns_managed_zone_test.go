@@ -49,7 +49,7 @@ func TestAccDnsManagedZone_privateUpdate(t *testing.T) {
 		CheckDestroy: testAccCheckDnsManagedZoneDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccDnsManagedZone_privateUpdate(zoneSuffix, "network-1", "network-2", "172.16.1.10", "172.16.1.20"),
+				Config: testAccDnsManagedZone_privateUpdate(zoneSuffix, "network-1", "network-2"),
 			},
 			{
 				ResourceName:      "google_dns_managed_zone.private",
@@ -57,7 +57,36 @@ func TestAccDnsManagedZone_privateUpdate(t *testing.T) {
 				ImportStateVerify: true,
 			},
 			{
-				Config: testAccDnsManagedZone_privateUpdate(zoneSuffix, "network-2", "network-3", "172.16.1.10", "192.168.1.1"),
+				Config: testAccDnsManagedZone_privateUpdate(zoneSuffix, "network-2", "network-3"),
+			},
+			{
+				ResourceName:      "google_dns_managed_zone.private",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+func TestAccDnsManagedZone_privateForwardingUpdate(t *testing.T) {
+	t.Parallel()
+
+	zoneSuffix := acctest.RandString(10)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckDnsManagedZoneDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccDnsManagedZone_privateForwardingUpdate(zoneSuffix, "172.16.1.10", "172.16.1.20"),
+			},
+			{
+				ResourceName:      "google_dns_managed_zone.private",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+			{
+				Config: testAccDnsManagedZone_privateForwardingUpdate(zoneSuffix, "172.16.1.10", "192.168.1.1"),
 			},
 			{
 				ResourceName:      "google_dns_managed_zone.private",
@@ -80,7 +109,7 @@ resource "google_dns_managed_zone" "foobar" {
 }`, suffix, suffix, description)
 }
 
-func testAccDnsManagedZone_privateUpdate(suffix, first_network, second_network, first_nameserver, second_nameserver string) string {
+func testAccDnsManagedZone_privateUpdate(suffix, first_network, second_network string) string {
 	return fmt.Sprintf(`
 resource "google_dns_managed_zone" "private" {
   name = "private-zone-%s"
@@ -93,15 +122,6 @@ resource "google_dns_managed_zone" "private" {
     }
     networks {
       network_url = "${google_compute_network.%s.self_link}"
-    }
-  }
-
-  forwarding_config {
-    target_name_servers {
-      ipv4_address = "%s"
-    }
-    target_name_servers {
-      ipv4_address = "%s"
     }
   }
 }
@@ -119,7 +139,36 @@ resource "google_compute_network" "network-2" {
 resource "google_compute_network" "network-3" {
   name = "network-3-%s"
   auto_create_subnetworks = false
-}`, suffix, first_network, second_network, first_nameserver, second_nameserver, suffix, suffix, suffix)
+}`, suffix, first_network, second_network, suffix, suffix, suffix)
+}
+
+func testAccDnsManagedZone_privateForwardingUpdate(suffix, first_nameserver, second_nameserver string) string {
+	return fmt.Sprintf(`
+resource "google_dns_managed_zone" "private" {
+  name = "private-zone-%s"
+  dns_name = "private.example.com."
+  description = "Example private DNS zone"
+  visibility = "private"
+  private_visibility_config {
+    networks {
+      network_url = "${google_compute_network.network-1.self_link}"
+    }
+  }
+
+  forwarding_config {
+    target_name_servers {
+      ipv4_address = "%s"
+    }
+    target_name_servers {
+      ipv4_address = "%s"
+    }
+  }
+}
+
+resource "google_compute_network" "network-1" {
+  name = "network-1-%s"
+  auto_create_subnetworks = false
+}`, suffix, first_nameserver, second_nameserver, suffix)
 }
 
 func TestDnsManagedZoneImport_parseImportId(t *testing.T) {
