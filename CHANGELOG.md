@@ -4,6 +4,7 @@ BACKWARDS INCOMPATIBILITIES:
 * accesscontextmanager: `google_access_context_manager_service_perimeter` `unrestricted_services` field was removed based on a removal in the underlying API. [GH-576]
 
 ENHANCEMENTS:
+* compute: `google_compute_backend_service` is now generated with Magic Modules, adding configurable timeouts, multiple import formats, `creation_timestamp` output. [GH-569]
 * dns: `google_dns_policy` now supports `enable_logging`. [GH-573]
 
 BUG FIXES:
