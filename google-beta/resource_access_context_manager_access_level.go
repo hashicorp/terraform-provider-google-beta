@@ -101,7 +101,7 @@ func resourceAccessContextManagerAccessLevel() *schema.Resource {
 															"os_type": {
 																Type:         schema.TypeString,
 																Optional:     true,
-																ValidateFunc: validation.StringInSlice([]string{"OS_UNSPECIFIED", "DESKTOP_MAC", "DESKTOP_WINDOWS", "DESKTOP_LINUX", "DESKTOP_CHROME_OS", "ANDROID", "IOS", ""}, false),
+																ValidateFunc: validation.StringInSlice([]string{"OS_UNSPECIFIED", "DESKTOP_MAC", "DESKTOP_WINDOWS", "DESKTOP_LINUX", "DESKTOP_CHROME_OS", ""}, false),
 															},
 														},
 													},
@@ -198,7 +198,7 @@ func resourceAccessContextManagerAccessLevelCreate(d *schema.ResourceData, meta 
 		return err
 	}
 
-	url, err := replaceVars(d, config, "https://accesscontextmanager.googleapis.com/v1beta/{{parent}}/accessLevels")
+	url, err := replaceVars(d, config, "https://accesscontextmanager.googleapis.com/v1/{{parent}}/accessLevels")
 	if err != nil {
 		return err
 	}
@@ -234,7 +234,7 @@ func resourceAccessContextManagerAccessLevelCreate(d *schema.ResourceData, meta 
 func resourceAccessContextManagerAccessLevelRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	url, err := replaceVars(d, config, "https://accesscontextmanager.googleapis.com/v1beta/{{name}}")
+	url, err := replaceVars(d, config, "https://accesscontextmanager.googleapis.com/v1/{{name}}")
 	if err != nil {
 		return err
 	}
@@ -288,7 +288,7 @@ func resourceAccessContextManagerAccessLevelUpdate(d *schema.ResourceData, meta 
 		return err
 	}
 
-	url, err := replaceVars(d, config, "https://accesscontextmanager.googleapis.com/v1beta/{{name}}")
+	url, err := replaceVars(d, config, "https://accesscontextmanager.googleapis.com/v1/{{name}}")
 	if err != nil {
 		return err
 	}
@@ -333,7 +333,7 @@ func resourceAccessContextManagerAccessLevelUpdate(d *schema.ResourceData, meta 
 func resourceAccessContextManagerAccessLevelDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	url, err := replaceVars(d, config, "https://accesscontextmanager.googleapis.com/v1beta/{{name}}")
+	url, err := replaceVars(d, config, "https://accesscontextmanager.googleapis.com/v1/{{name}}")
 	if err != nil {
 		return err
 	}

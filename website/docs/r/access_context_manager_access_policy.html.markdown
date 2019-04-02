@@ -29,12 +29,10 @@ regions of services able to freely pass data within a perimeter). An
 access policy is globally visible within an organization, and the
 restrictions it specifies apply to all projects within an organization.
 
-~> **Warning:** This resource is in beta, and should be used with the terraform-provider-google-beta provider.
-See [Provider Versions](https://terraform.io/docs/providers/google/provider_versions.html) for more details on beta resources.
 
 To get more information about AccessPolicy, see:
 
-* [API documentation](https://cloud.google.com/access-context-manager/docs/reference/rest/v1beta/accessPolicies)
+* [API documentation](https://cloud.google.com/access-context-manager/docs/reference/rest/v1/accessPolicies)
 * How-to Guides
     * [Access Policy Quickstart](https://cloud.google.com/access-context-manager/docs/quickstart)
 
@@ -96,7 +94,7 @@ This resource provides the following
 AccessPolicy can be imported using any of these accepted formats:
 
 ```
-$ terraform import -provider=google-beta google_access_context_manager_access_policy.default {{name}}
+$ terraform import google_access_context_manager_access_policy.default {{name}}
 ```
 
 -> If you're importing a resource with beta features, make sure to include `-provider=google-beta`

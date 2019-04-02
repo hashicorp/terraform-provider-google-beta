@@ -25,12 +25,10 @@ description: |-
 An AccessLevel is a label that can be applied to requests to GCP services,
 along with a list of requirements necessary for the label to be applied.
 
-~> **Warning:** This resource is in beta, and should be used with the terraform-provider-google-beta provider.
-See [Provider Versions](https://terraform.io/docs/providers/google/provider_versions.html) for more details on beta resources.
 
 To get more information about AccessLevel, see:
 
-* [API documentation](https://cloud.google.com/access-context-manager/docs/reference/rest/v1beta/accessPolicies.accessLevels)
+* [API documentation](https://cloud.google.com/access-context-manager/docs/reference/rest/v1/accessPolicies.accessLevels)
 * How-to Guides
     * [Access Policy Quickstart](https://cloud.google.com/access-context-manager/docs/quickstart)
 
@@ -40,14 +38,14 @@ To get more information about AccessLevel, see:
 ```hcl
 resource "google_access_context_manager_access_level" "access-level" {
   parent      = "accessPolicies/${google_access_context_manager_access_policy.test-access.name}"
-  name        = "accessPolicies/${google_access_context_manager_access_policy.test-access.name}/accessLevels/ios_no_lock"
-  title       = "ios_no_lock"
+  name        = "accessPolicies/${google_access_context_manager_access_policy.test-access.name}/accessLevels/chromeos_no_lock"
+  title       = "chromeos_no_lock"
   basic {
     conditions {
       device_policy {
         require_screen_lock = false
         os_constraints {
-          os_type = "IOS"
+          os_type = "DESKTOP_CHROME_OS"
         }
       }
     }
@@ -203,7 +201,7 @@ This resource provides the following
 AccessLevel can be imported using any of these accepted formats:
 
 ```
-$ terraform import -provider=google-beta google_access_context_manager_access_level.default {{name}}
+$ terraform import google_access_context_manager_access_level.default {{name}}
 ```
 
 -> If you're importing a resource with beta features, make sure to include `-provider=google-beta`
