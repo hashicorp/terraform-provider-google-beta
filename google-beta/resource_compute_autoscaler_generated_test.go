@@ -24,7 +24,7 @@ import (
 	"github.com/hashicorp/terraform/terraform"
 )
 
-func TestAccComputeAutoscaler_autoscalerBetaExample(t *testing.T) {
+func TestAccComputeAutoscaler_autoscalerSingleInstanceExample(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
@@ -37,33 +37,35 @@ func TestAccComputeAutoscaler_autoscalerBetaExample(t *testing.T) {
 		CheckDestroy: testAccCheckComputeAutoscalerDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccComputeAutoscaler_autoscalerBetaExample(context),
+				Config: testAccComputeAutoscaler_autoscalerSingleInstanceExample(context),
 			},
 		},
 	})
 }
 
-func testAccComputeAutoscaler_autoscalerBetaExample(context map[string]interface{}) string {
+func testAccComputeAutoscaler_autoscalerSingleInstanceExample(context map[string]interface{}) string {
 	return Nprintf(`
-resource "google_compute_autoscaler" "foobar" {
+resource "google_compute_autoscaler" "default" {
   provider = "google-beta"
 
   name   = "my-autoscaler-%{random_suffix}"
   zone   = "us-central1-f"
-  target = "${google_compute_instance_group_manager.foobar.self_link}"
+  target = "${google_compute_instance_group_manager.default.self_link}"
 
   autoscaling_policy {
     max_replicas    = 5
     min_replicas    = 1
     cooldown_period = 60
 
-    cpu_utilization {
-      target = 0.5
+    metric {
+      name                       = "pubsub.googleapis.com/subscription/num_undelivered_messages"
+      filter                     = "resource.type = pubsub_subscription AND resource.label.subscription_id = our-subscription"
+      single_instance_assignment = 65535
     }
   }
 }
 
-resource "google_compute_instance_template" "foobar" {
+resource "google_compute_instance_template" "default" {
   provider = "google-beta"
 
   name           = "my-instance-template-%{random_suffix}"
@@ -89,32 +91,32 @@ resource "google_compute_instance_template" "foobar" {
   }
 }
 
-resource "google_compute_target_pool" "foobar" {
+resource "google_compute_target_pool" "default" {
   provider = "google-beta"
 
   name = "my-target-pool-%{random_suffix}"
 }
 
-resource "google_compute_instance_group_manager" "foobar" {
+resource "google_compute_instance_group_manager" "default" {
   provider = "google-beta"
 
   name = "my-igm-%{random_suffix}"
   zone = "us-central1-f"
 
   version {
-    instance_template  = "${google_compute_instance_template.foobar.self_link}"
+    instance_template  = "${google_compute_instance_template.default.self_link}"
     name               = "primary"
   }
 
-  target_pools       = ["${google_compute_target_pool.foobar.self_link}"]
-  base_instance_name = "foobar"
+  target_pools       = ["${google_compute_target_pool.default.self_link}"]
+  base_instance_name = "autoscaler-sample"
 }
 
 data "google_compute_image" "debian_9" {
   provider = "google-beta"
 
-	family  = "debian-9"
-	project = "debian-cloud"
+  family  = "debian-9"
+  project = "debian-cloud"
 }
 
 provider "google-beta"{

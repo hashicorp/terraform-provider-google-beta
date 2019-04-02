@@ -35,33 +35,35 @@ To get more information about Autoscaler, see:
     * [Autoscaling Groups of Instances](https://cloud.google.com/compute/docs/autoscaler/)
 
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
-  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=autoscaler_beta&cloudshell_image=gcr.io%2Fgraphite-cloud-shell-images%2Fterraform%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=autoscaler_single_instance&cloudshell_image=gcr.io%2Fgraphite-cloud-shell-images%2Fterraform%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
     <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
   </a>
 </div>
-## Example Usage - Autoscaler Beta
+## Example Usage - Autoscaler Single Instance
 
 
 ```hcl
-resource "google_compute_autoscaler" "foobar" {
+resource "google_compute_autoscaler" "default" {
   provider = "google-beta"
 
   name   = "my-autoscaler"
   zone   = "us-central1-f"
-  target = "${google_compute_instance_group_manager.foobar.self_link}"
+  target = "${google_compute_instance_group_manager.default.self_link}"
 
   autoscaling_policy {
     max_replicas    = 5
     min_replicas    = 1
     cooldown_period = 60
 
-    cpu_utilization {
-      target = 0.5
+    metric {
+      name                       = "pubsub.googleapis.com/subscription/num_undelivered_messages"
+      filter                     = "resource.type = pubsub_subscription AND resource.label.subscription_id = our-subscription"
+      single_instance_assignment = 65535
     }
   }
 }
 
-resource "google_compute_instance_template" "foobar" {
+resource "google_compute_instance_template" "default" {
   provider = "google-beta"
 
   name           = "my-instance-template"
@@ -87,32 +89,32 @@ resource "google_compute_instance_template" "foobar" {
   }
 }
 
-resource "google_compute_target_pool" "foobar" {
+resource "google_compute_target_pool" "default" {
   provider = "google-beta"
 
   name = "my-target-pool"
 }
 
-resource "google_compute_instance_group_manager" "foobar" {
+resource "google_compute_instance_group_manager" "default" {
   provider = "google-beta"
 
   name = "my-igm"
   zone = "us-central1-f"
 
   version {
-    instance_template  = "${google_compute_instance_template.foobar.self_link}"
+    instance_template  = "${google_compute_instance_template.default.self_link}"
     name               = "primary"
   }
 
-  target_pools       = ["${google_compute_target_pool.foobar.self_link}"]
-  base_instance_name = "foobar"
+  target_pools       = ["${google_compute_target_pool.default.self_link}"]
+  base_instance_name = "autoscaler-sample"
 }
 
 data "google_compute_image" "debian_9" {
   provider = "google-beta"
 
-	family  = "debian-9"
-	project = "debian-cloud"
+  family  = "debian-9"
+  project = "debian-cloud"
 }
 
 provider "google-beta"{
@@ -284,8 +286,25 @@ The `metric` block supports:
   The metric cannot have negative values.
   The metric must have a value type of INT64 or DOUBLE.
 
+* `single_instance_assignment` -
+  (Optional, [Beta](https://terraform.io/docs/providers/google/provider_versions.html))
+  If scaling is based on a per-group metric value that represents the
+  total amount of work to be done or resource usage, set this value to
+  an amount assigned for a single instance of the scaled group.
+  The autoscaler will keep the number of instances proportional to the
+  value of this metric, the metric itself should not change value due
+  to group resizing.
+  For example, a good metric to use with the target is
+  `pubsub.googleapis.com/subscription/num_undelivered_messages`
+  or a custom metric exporting the total number of requests coming to
+  your instances.
+  A bad example would be a metric exporting an average or median
+  latency, since this value can't include a chunk assignable to a
+  single instance, it could be better used with utilization_target
+  instead.
+
 * `target` -
-  (Required)
+  (Optional)
   The target value of the metric that autoscaler should
   maintain. This must be a positive value. A utilization
   metric scales number of virtual machines handling requests
@@ -296,7 +315,7 @@ The `metric` block supports:
   of the instances.
 
 * `type` -
-  (Required)
+  (Optional)
   Defines how target utilization value is expressed for a
   Stackdriver Monitoring metric. Either GAUGE, DELTA_PER_SECOND,
   or DELTA_PER_MINUTE.
