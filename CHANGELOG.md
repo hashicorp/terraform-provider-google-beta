@@ -1,5 +1,8 @@
 ## 2.4.0 (Unreleased)
 
+BACKWARDS INCOMPATIBILITIES:
+* accesscontextmanager: `google_access_context_manager_service_perimeter` `unrestricted_services` field was removed based on a removal in the underlying API.
+
 ENHANCEMENTS:
 * dns: `google_dns_policy` now supports `enable_logging`. [GH-573]
 
