@@ -9,6 +9,7 @@ FEATURES:
 ENHANCEMENTS:
 * compute: `google_compute_backend_service` is now generated with Magic Modules, adding configurable timeouts, multiple import formats, `creation_timestamp` output. [GH-569]
 * dns: `google_dns_policy` now supports `enable_logging`. [GH-573]
+* dns: `google_dns_managed_zone` now supports `peering_config` to enable DNS Peering. [GH-572]
 
 BUG FIXES:
 * container: `google_container_cluster` will ignore out of band changes on `node_ipv4_cidr_block`. [GH-558]
