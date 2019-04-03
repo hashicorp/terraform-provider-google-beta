@@ -12,6 +12,7 @@ ENHANCEMENTS:
 
 BUG FIXES:
 * container: `google_container_cluster` will ignore out of band changes on `node_ipv4_cidr_block`. [GH-558]
+* sql: `google_sql_database_instance` will retry reads during Terraform refreshes if it hits a rate limit. [GH-579]
 
 ## 2.3.0 (March 26, 2019)
 
