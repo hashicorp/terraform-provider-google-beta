@@ -139,6 +139,56 @@ resource "google_compute_network" "network-2" {
   auto_create_subnetworks = false
 }
 ```
+<div class = "oics-button" style="float: right; margin: 0 0 -15px">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=dns_managed_zone_private_peering&cloudshell_image=gcr.io%2Fgraphite-cloud-shell-images%2Fterraform%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+    <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
+  </a>
+</div>
+## Example Usage - Dns Managed Zone Private Peering
+
+
+```hcl
+resource "google_dns_managed_zone" "peering-zone" {
+  provider = "google-beta"
+
+  name = "peering-zone"
+  dns_name = "peering.example.com."
+  description = "Example private DNS peering zone"
+
+  visibility = "private"
+
+  private_visibility_config {
+    networks {
+      network_url =  "${google_compute_network.network-source.self_link}"
+    }
+  }
+
+  peering_config {
+    target_network {
+      network_url = "${google_compute_network.network-target.self_link}"
+    }
+  }
+}
+
+resource "google_compute_network" "network-source" {
+  provider = "google-beta"
+
+  name = "network-source"
+  auto_create_subnetworks = false
+}
+
+resource "google_compute_network" "network-target" {
+  provider = "google-beta"
+
+  name = "network-target"
+  auto_create_subnetworks = false
+}
+
+provider "google-beta" {
+  region = "us-central1"
+  zone   = "us-central1-a"
+}
+```
 
 ## Argument Reference
 
@@ -182,6 +232,11 @@ The following arguments are supported:
   The presence for this field indicates that outbound forwarding is enabled
   for this zone. The value of this field contains the set of destinations
   to forward to.  Structure is documented below.
+
+* `peering_config` -
+  (Optional, [Beta](https://terraform.io/docs/providers/google/provider_versions.html))
+  The presence of this field indicates that DNS Peering is enabled for this
+  zone. The value of this field contains the network to peer with.  Structure is documented below.
 * `project` - (Optional) The ID of the project in which the resource belongs.
     If it is not provided, the provider project is used.
 
@@ -219,6 +274,21 @@ The `target_name_servers` block supports:
 * `ipv4_address` -
   (Optional)
   IPv4 address of a target name server.
+
+The `peering_config` block supports:
+
+* `target_network` -
+  (Optional)
+  The network with which to peer.  Structure is documented below.
+
+
+The `target_network` block supports:
+
+* `network_url` -
+  (Optional)
+  The fully qualified URL of the VPC network to forward queries to.
+  This should be formatted like
+  `https://www.googleapis.com/compute/v1/projects/{project}/global/networks/{network}`
 
 ## Attributes Reference
 
