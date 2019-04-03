@@ -87,6 +87,28 @@ func resourceDnsManagedZone() *schema.Resource {
 				Optional: true,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 			},
+			"peering_config": {
+				Type:     schema.TypeList,
+				Optional: true,
+				MaxItems: 1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"target_network": {
+							Type:     schema.TypeList,
+							Optional: true,
+							MaxItems: 1,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"network_url": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+								},
+							},
+						},
+					},
+				},
+			},
 			"private_visibility_config": {
 				Type:     schema.TypeList,
 				Optional: true,
@@ -111,11 +133,12 @@ func resourceDnsManagedZone() *schema.Resource {
 				},
 			},
 			"visibility": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				ForceNew:     true,
-				ValidateFunc: validation.StringInSlice([]string{"private", "public", ""}, false),
-				Default:      "public",
+				Type:             schema.TypeString,
+				Optional:         true,
+				ForceNew:         true,
+				ValidateFunc:     validation.StringInSlice([]string{"private", "public", ""}, false),
+				DiffSuppressFunc: caseDiffSuppress,
+				Default:          "public",
 			},
 			"name_servers": {
 				Type:     schema.TypeList,
@@ -203,6 +226,12 @@ func resourceDnsManagedZoneCreate(d *schema.ResourceData, meta interface{}) erro
 	} else if v, ok := d.GetOkExists("forwarding_config"); !isEmptyValue(reflect.ValueOf(forwardingConfigProp)) && (ok || !reflect.DeepEqual(v, forwardingConfigProp)) {
 		obj["forwardingConfig"] = forwardingConfigProp
 	}
+	peeringConfigProp, err := expandDnsManagedZonePeeringConfig(d.Get("peering_config"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("peering_config"); !isEmptyValue(reflect.ValueOf(peeringConfigProp)) && (ok || !reflect.DeepEqual(v, peeringConfigProp)) {
+		obj["peeringConfig"] = peeringConfigProp
+	}
 
 	url, err := replaceVars(d, config, "https://www.googleapis.com/dns/v1beta2/projects/{{project}}/managedZones")
 	if err != nil {
@@ -272,6 +301,9 @@ func resourceDnsManagedZoneRead(d *schema.ResourceData, meta interface{}) error 
 	if err := d.Set("forwarding_config", flattenDnsManagedZoneForwardingConfig(res["forwardingConfig"], d)); err != nil {
 		return fmt.Errorf("Error reading ManagedZone: %s", err)
 	}
+	if err := d.Set("peering_config", flattenDnsManagedZonePeeringConfig(res["peeringConfig"], d)); err != nil {
+		return fmt.Errorf("Error reading ManagedZone: %s", err)
+	}
 
 	return nil
 }
@@ -281,7 +313,7 @@ func resourceDnsManagedZoneUpdate(d *schema.ResourceData, meta interface{}) erro
 
 	d.Partial(true)
 
-	if d.HasChange("description") || d.HasChange("labels") || d.HasChange("private_visibility_config") || d.HasChange("forwarding_config") {
+	if d.HasChange("description") || d.HasChange("labels") || d.HasChange("private_visibility_config") || d.HasChange("forwarding_config") || d.HasChange("peering_config") {
 		obj := make(map[string]interface{})
 		descriptionProp, err := expandDnsManagedZoneDescription(d.Get("description"), d, config)
 		if err != nil {
@@ -307,6 +339,12 @@ func resourceDnsManagedZoneUpdate(d *schema.ResourceData, meta interface{}) erro
 		} else if v, ok := d.GetOkExists("forwarding_config"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, forwardingConfigProp)) {
 			obj["forwardingConfig"] = forwardingConfigProp
 		}
+		peeringConfigProp, err := expandDnsManagedZonePeeringConfig(d.Get("peering_config"), d, config)
+		if err != nil {
+			return err
+		} else if v, ok := d.GetOkExists("peering_config"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, peeringConfigProp)) {
+			obj["peeringConfig"] = peeringConfigProp
+		}
 
 		url, err := replaceVars(d, config, "https://www.googleapis.com/dns/v1beta2/projects/{{project}}/managedZones/{{name}}")
 		if err != nil {
@@ -321,6 +359,7 @@ func resourceDnsManagedZoneUpdate(d *schema.ResourceData, meta interface{}) erro
 		d.SetPartial("labels")
 		d.SetPartial("private_visibility_config")
 		d.SetPartial("forwarding_config")
+		d.SetPartial("peering_config")
 	}
 
 	d.Partial(false)
@@ -473,6 +512,36 @@ func flattenDnsManagedZoneForwardingConfigTargetNameServersIpv4Address(v interfa
 	return v
 }
 
+func flattenDnsManagedZonePeeringConfig(v interface{}, d *schema.ResourceData) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["target_network"] =
+		flattenDnsManagedZonePeeringConfigTargetNetwork(original["targetNetwork"], d)
+	return []interface{}{transformed}
+}
+func flattenDnsManagedZonePeeringConfigTargetNetwork(v interface{}, d *schema.ResourceData) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["network_url"] =
+		flattenDnsManagedZonePeeringConfigTargetNetworkNetworkUrl(original["networkUrl"], d)
+	return []interface{}{transformed}
+}
+func flattenDnsManagedZonePeeringConfigTargetNetworkNetworkUrl(v interface{}, d *schema.ResourceData) interface{} {
+	return v
+}
+
 func expandDnsManagedZoneDescription(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
@@ -589,5 +658,47 @@ func expandDnsManagedZoneForwardingConfigTargetNameServers(v interface{}, d Terr
 }
 
 func expandDnsManagedZoneForwardingConfigTargetNameServersIpv4Address(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandDnsManagedZonePeeringConfig(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedTargetNetwork, err := expandDnsManagedZonePeeringConfigTargetNetwork(original["target_network"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedTargetNetwork); val.IsValid() && !isEmptyValue(val) {
+		transformed["targetNetwork"] = transformedTargetNetwork
+	}
+
+	return transformed, nil
+}
+
+func expandDnsManagedZonePeeringConfigTargetNetwork(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedNetworkUrl, err := expandDnsManagedZonePeeringConfigTargetNetworkNetworkUrl(original["network_url"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedNetworkUrl); val.IsValid() && !isEmptyValue(val) {
+		transformed["networkUrl"] = transformedNetworkUrl
+	}
+
+	return transformed, nil
+}
+
+func expandDnsManagedZonePeeringConfigTargetNetworkNetworkUrl(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
