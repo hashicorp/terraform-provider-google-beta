@@ -99,18 +99,22 @@ func resourceComputeRegionAutoscaler() *schema.Resource {
 										Type:     schema.TypeString,
 										Required: true,
 									},
-									"target": {
-										Type:     schema.TypeFloat,
-										Required: true,
-									},
-									"type": {
-										Type:         schema.TypeString,
-										Required:     true,
-										ValidateFunc: validation.StringInSlice([]string{"GAUGE", "DELTA_PER_SECOND", "DELTA_PER_MINUTE"}, false),
-									},
 									"filter": {
 										Type:     schema.TypeString,
 										Optional: true,
+									},
+									"single_instance_assignment": {
+										Type:     schema.TypeFloat,
+										Optional: true,
+									},
+									"target": {
+										Type:     schema.TypeFloat,
+										Optional: true,
+									},
+									"type": {
+										Type:         schema.TypeString,
+										Optional:     true,
+										ValidateFunc: validation.StringInSlice([]string{"GAUGE", "DELTA_PER_SECOND", "DELTA_PER_MINUTE", ""}, false),
 									},
 								},
 							},
@@ -498,15 +502,20 @@ func flattenComputeRegionAutoscalerAutoscalingPolicyMetric(v interface{}, d *sch
 			continue
 		}
 		transformed = append(transformed, map[string]interface{}{
-			"name":   flattenComputeRegionAutoscalerAutoscalingPolicyMetricName(original["metric"], d),
-			"target": flattenComputeRegionAutoscalerAutoscalingPolicyMetricTarget(original["utilizationTarget"], d),
-			"type":   flattenComputeRegionAutoscalerAutoscalingPolicyMetricType(original["utilizationTargetType"], d),
-			"filter": flattenComputeRegionAutoscalerAutoscalingPolicyMetricFilter(original["filter"], d),
+			"name":                       flattenComputeRegionAutoscalerAutoscalingPolicyMetricName(original["metric"], d),
+			"single_instance_assignment": flattenComputeRegionAutoscalerAutoscalingPolicyMetricSingleInstanceAssignment(original["singleInstanceAssignment"], d),
+			"target":                     flattenComputeRegionAutoscalerAutoscalingPolicyMetricTarget(original["utilizationTarget"], d),
+			"type":                       flattenComputeRegionAutoscalerAutoscalingPolicyMetricType(original["utilizationTargetType"], d),
+			"filter":                     flattenComputeRegionAutoscalerAutoscalingPolicyMetricFilter(original["filter"], d),
 		})
 	}
 	return transformed
 }
 func flattenComputeRegionAutoscalerAutoscalingPolicyMetricName(v interface{}, d *schema.ResourceData) interface{} {
+	return v
+}
+
+func flattenComputeRegionAutoscalerAutoscalingPolicyMetricSingleInstanceAssignment(v interface{}, d *schema.ResourceData) interface{} {
 	return v
 }
 
@@ -664,6 +673,13 @@ func expandComputeRegionAutoscalerAutoscalingPolicyMetric(v interface{}, d Terra
 			transformed["metric"] = transformedName
 		}
 
+		transformedSingleInstanceAssignment, err := expandComputeRegionAutoscalerAutoscalingPolicyMetricSingleInstanceAssignment(original["single_instance_assignment"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedSingleInstanceAssignment); val.IsValid() && !isEmptyValue(val) {
+			transformed["singleInstanceAssignment"] = transformedSingleInstanceAssignment
+		}
+
 		transformedTarget, err := expandComputeRegionAutoscalerAutoscalingPolicyMetricTarget(original["target"], d, config)
 		if err != nil {
 			return nil, err
@@ -691,6 +707,10 @@ func expandComputeRegionAutoscalerAutoscalingPolicyMetric(v interface{}, d Terra
 }
 
 func expandComputeRegionAutoscalerAutoscalingPolicyMetricName(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeRegionAutoscalerAutoscalingPolicyMetricSingleInstanceAssignment(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
