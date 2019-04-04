@@ -8,6 +8,7 @@ FEATURES:
 
 ENHANCEMENTS:
 * compute: `google_compute_backend_service` is now generated with Magic Modules, adding configurable timeouts, multiple import formats, `creation_timestamp` output. [GH-569]
+* compute: `google_compute_backend_service` now supports `load_balancing_scheme` and `cdn_policy.signed_url_cache_max_age_sec`. [GH-584]
 * compute: `google_compute_autoscaler` now supports `metric.single_instance_assignment` [GH-580]
 * dns: `google_dns_policy` now supports `enable_logging`. [GH-573]
 * dns: `google_dns_managed_zone` now supports `peering_config` to enable DNS Peering. [GH-572]
