@@ -1,25 +1,25 @@
-## 2.4.0 (Unreleased)
+## 2.4.0 (April 15, 2019)
 
 BACKWARDS INCOMPATIBILITIES:
-* accesscontextmanager: `google_access_context_manager_service_perimeter` `unrestricted_services` field was removed based on a removal in the underlying API. [GH-576]
+* accesscontextmanager: `google_access_context_manager_service_perimeter` `unrestricted_services` field was removed based on a removal in the underlying API. ([#576](https://github.com/terraform-providers/terraform-provider-google-beta/issues/576))
 
 FEATURES: 
-* **New Datasource**: `google_service_account_access_token` is now available. [GH-575]
+* **New Datasource**: `google_service_account_access_token` is now available. ([#575](https://github.com/terraform-providers/terraform-provider-google-beta/issues/575))
 
 ENHANCEMENTS:
-* compute: `google_compute_backend_service` is now generated with Magic Modules, adding configurable timeouts, multiple import formats, `creation_timestamp` output. [GH-569]
-* compute: `google_compute_backend_service` now supports `load_balancing_scheme` and `cdn_policy.signed_url_cache_max_age_sec`. [GH-584]
-* compute: `google_compute_network` now supports `delete_default_routes_on_create` to delete pre-created routes at network creation time. [GH-592]
-* compute: `google_compute_autoscaler` now supports `metric.single_instance_assignment` [GH-580]
-* dns: `google_dns_policy` now supports `enable_logging`. [GH-573]
-* dns: `google_dns_managed_zone` now supports `peering_config` to enable DNS Peering. [GH-572]
+* compute: `google_compute_backend_service` is now generated with Magic Modules, adding configurable timeouts, multiple import formats, `creation_timestamp` output. ([#569](https://github.com/terraform-providers/terraform-provider-google-beta/issues/569))
+* compute: `google_compute_backend_service` now supports `load_balancing_scheme` and `cdn_policy.signed_url_cache_max_age_sec`. ([#584](https://github.com/terraform-providers/terraform-provider-google-beta/issues/584))
+* compute: `google_compute_network` now supports `delete_default_routes_on_create` to delete pre-created routes at network creation time. ([#592](https://github.com/terraform-providers/terraform-provider-google-beta/issues/592))
+* compute: `google_compute_autoscaler` now supports `metric.single_instance_assignment` ([#580](https://github.com/terraform-providers/terraform-provider-google-beta/issues/580))
+* dns: `google_dns_policy` now supports `enable_logging`. ([#573](https://github.com/terraform-providers/terraform-provider-google-beta/issues/573))
+* dns: `google_dns_managed_zone` now supports `peering_config` to enable DNS Peering. ([#572](https://github.com/terraform-providers/terraform-provider-google-beta/issues/572))
 
 BUG FIXES:
-* container: `google_container_cluster` will ignore out of band changes on `node_ipv4_cidr_block`. [GH-558]
-* container: `google_container_cluster` will now reject config with both `node_pool` and `remove_default_node_pool` defined [GH-600]
-* container: `google_container_cluster` will allow >20 `cidr_blocks` in `master_authorized_networks_config`. [GH-594]
-* netblock: `data.google_netblock_ip_ranges.cidr_blocks` will better handle ipv6 input. [GH-590]
-* sql: `google_sql_database_instance` will retry reads during Terraform refreshes if it hits a rate limit. [GH-579]
+* container: `google_container_cluster` will ignore out of band changes on `node_ipv4_cidr_block`. ([#558](https://github.com/terraform-providers/terraform-provider-google-beta/issues/558))
+* container: `google_container_cluster` will now reject config with both `node_pool` and `remove_default_node_pool` defined ([#600](https://github.com/terraform-providers/terraform-provider-google-beta/issues/600))
+* container: `google_container_cluster` will allow >20 `cidr_blocks` in `master_authorized_networks_config`. ([#594](https://github.com/terraform-providers/terraform-provider-google-beta/issues/594))
+* netblock: `data.google_netblock_ip_ranges.cidr_blocks` will better handle ipv6 input. ([#590](https://github.com/terraform-providers/terraform-provider-google-beta/issues/590))
+* sql: `google_sql_database_instance` will retry reads during Terraform refreshes if it hits a rate limit. ([#579](https://github.com/terraform-providers/terraform-provider-google-beta/issues/579))
 
 ## 2.3.0 (March 26, 2019)
 
