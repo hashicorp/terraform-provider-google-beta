@@ -587,7 +587,6 @@ resource "google_container_cluster" "cluster" {
 	}
 
 	master_authorized_networks_config {
-		cidr_blocks = []
 	}
 }
 
