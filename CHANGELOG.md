@@ -1,7 +1,20 @@
 ## 2.5.2 (Unreleased)
+
+FEATURES: 
+* **New Datasource**: `google_compute_node_types` for sole-tenant node types is now available. ([#614](https://github.com/terraform-providers/terraform-provider-google-beta/pull/614))
+* **New Resource**: `google_compute_node_template` for sole-tenant node templates is now available. ([#614](https://github.com/terraform-providers/terraform-provider-google-beta/pull/614))
+
+ENHANCEMENTS:
+
+
+BUG FIXES:
+
 ## 2.5.1 (April 22, 2019)
 
 BUG FIXES:
+* kms: `google_kms_crypto_key.rotation_period` now can be an empty string to allow for unset behavior in modules ([#627](https://github.com/terraform-providers/terraform-provider-google-beta/pull/627))
+* google_projects: Datasource `google_projects` now handles paginated results from listing projects ([#626](https://github.com/terraform-providers/terraform-provider-google-beta/pull/626))
+* google_project_iam: `google_project_iam_policy/member/binding` now attempts to retry for read-only operations as well as retrying read-write operations
 * compute: `google_compute_backend_service` handles empty/nil `iap` block created by previous providers properly. ([#622](https://github.com/terraform-providers/terraform-provider-google-beta/issues/622))
 * compute: `google_compute_backend_service` allows multiple instance types in `backends.group` again. ([#625](https://github.com/terraform-providers/terraform-provider-google-beta/issues/625))
 * dns: `google_dns_managed_zone` does not permadiff when visiblity is set to default and returned as empty from API ([#624](https://github.com/terraform-providers/terraform-provider-google-beta/issues/624))
