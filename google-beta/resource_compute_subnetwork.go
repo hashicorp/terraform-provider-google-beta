@@ -25,6 +25,7 @@ import (
 	"github.com/apparentlymart/go-cidr/cidr"
 	"github.com/hashicorp/terraform/helper/customdiff"
 	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform/helper/validation"
 	"google.golang.org/api/compute/v1"
 )
 
@@ -103,6 +104,37 @@ func resourceComputeSubnetwork() *schema.Resource {
 			"enable_flow_logs": {
 				Type:     schema.TypeBool,
 				Optional: true,
+			},
+			"log_config": {
+				Type:     schema.TypeList,
+				Computed: true,
+				Optional: true,
+				ForceNew: true,
+				MaxItems: 1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"aggregation_interval": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							ForceNew:     true,
+							ValidateFunc: validation.StringInSlice([]string{"INTERVAL_5_SEC", "INTERVAL_30_SEC", "INTERVAL_1_MIN", "INTERVAL_5_MIN", "INTERVAL_10_MIN", "INTERVAL_15_MIN", ""}, false),
+							Default:      "INTERVAL_5_SEC",
+						},
+						"flow_sampling": {
+							Type:     schema.TypeFloat,
+							Optional: true,
+							ForceNew: true,
+							Default:  0.5,
+						},
+						"metadata": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							ForceNew:     true,
+							ValidateFunc: validation.StringInSlice([]string{"EXCLUDE_ALL_METADATA", "INCLUDE_ALL_METADATA", ""}, false),
+							Default:      "INCLUDE_ALL_METADATA",
+						},
+					},
+				},
 			},
 			"private_ip_google_access": {
 				Type:     schema.TypeBool,
@@ -259,6 +291,12 @@ func resourceComputeSubnetworkCreate(d *schema.ResourceData, meta interface{}) e
 	} else if v, ok := d.GetOkExists("region"); !isEmptyValue(reflect.ValueOf(regionProp)) && (ok || !reflect.DeepEqual(v, regionProp)) {
 		obj["region"] = regionProp
 	}
+	logConfigProp, err := expandComputeSubnetworkLogConfig(d.Get("log_config"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("log_config"); !isEmptyValue(reflect.ValueOf(logConfigProp)) && (ok || !reflect.DeepEqual(v, logConfigProp)) {
+		obj["logConfig"] = logConfigProp
+	}
 
 	url, err := replaceVars(d, config, "https://www.googleapis.com/compute/beta/projects/{{project}}/regions/{{region}}/subnetworks")
 	if err != nil {
@@ -355,6 +393,9 @@ func resourceComputeSubnetworkRead(d *schema.ResourceData, meta interface{}) err
 		return fmt.Errorf("Error reading Subnetwork: %s", err)
 	}
 	if err := d.Set("region", flattenComputeSubnetworkRegion(res["region"], d)); err != nil {
+		return fmt.Errorf("Error reading Subnetwork: %s", err)
+	}
+	if err := d.Set("log_config", flattenComputeSubnetworkLogConfig(res["logConfig"], d)); err != nil {
 		return fmt.Errorf("Error reading Subnetwork: %s", err)
 	}
 	if err := d.Set("self_link", ConvertSelfLinkToV1(res["selfLink"].(string))); err != nil {
@@ -629,6 +670,35 @@ func flattenComputeSubnetworkRegion(v interface{}, d *schema.ResourceData) inter
 	return NameFromSelfLinkStateFunc(v)
 }
 
+func flattenComputeSubnetworkLogConfig(v interface{}, d *schema.ResourceData) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["aggregation_interval"] =
+		flattenComputeSubnetworkLogConfigAggregationInterval(original["aggregationInterval"], d)
+	transformed["flow_sampling"] =
+		flattenComputeSubnetworkLogConfigFlowSampling(original["flowSampling"], d)
+	transformed["metadata"] =
+		flattenComputeSubnetworkLogConfigMetadata(original["metadata"], d)
+	return []interface{}{transformed}
+}
+func flattenComputeSubnetworkLogConfigAggregationInterval(v interface{}, d *schema.ResourceData) interface{} {
+	return v
+}
+
+func flattenComputeSubnetworkLogConfigFlowSampling(v interface{}, d *schema.ResourceData) interface{} {
+	return v
+}
+
+func flattenComputeSubnetworkLogConfigMetadata(v interface{}, d *schema.ResourceData) interface{} {
+	return v
+}
+
 func expandComputeSubnetworkDescription(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
@@ -704,4 +774,49 @@ func expandComputeSubnetworkRegion(v interface{}, d TerraformResourceData, confi
 		return nil, fmt.Errorf("Invalid value for region: %s", err)
 	}
 	return f.RelativeLink(), nil
+}
+
+func expandComputeSubnetworkLogConfig(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedAggregationInterval, err := expandComputeSubnetworkLogConfigAggregationInterval(original["aggregation_interval"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedAggregationInterval); val.IsValid() && !isEmptyValue(val) {
+		transformed["aggregationInterval"] = transformedAggregationInterval
+	}
+
+	transformedFlowSampling, err := expandComputeSubnetworkLogConfigFlowSampling(original["flow_sampling"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedFlowSampling); val.IsValid() && !isEmptyValue(val) {
+		transformed["flowSampling"] = transformedFlowSampling
+	}
+
+	transformedMetadata, err := expandComputeSubnetworkLogConfigMetadata(original["metadata"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedMetadata); val.IsValid() && !isEmptyValue(val) {
+		transformed["metadata"] = transformedMetadata
+	}
+
+	return transformed, nil
+}
+
+func expandComputeSubnetworkLogConfigAggregationInterval(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeSubnetworkLogConfigFlowSampling(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeSubnetworkLogConfigMetadata(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
 }
