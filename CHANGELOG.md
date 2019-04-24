@@ -8,6 +8,7 @@ ENHANCEMENTS:
 * compute: `google_compute_subnetwork` now supports `log_config` to configure flow logs' logging behaviour. [GH-619]
 
 BUG FIXES:
+* compute: `google_compute_instance` now retries updating metadata when fingerprints are mismatched. [GH-583]
 
 ## 2.5.1 (April 22, 2019)
 
