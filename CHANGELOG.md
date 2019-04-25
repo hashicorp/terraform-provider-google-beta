@@ -1,5 +1,9 @@
 ## 2.6.0 (Unreleased)
 
+
+DEPRECATIONS:
+* monitoring: `google_monitoring_alert_policy` `labels` was deprecated, as the field was never used and it was typed incorrectly. [GH-635]
+
 FEATURES: 
 * **New Datasource**: `google_compute_node_types` for sole-tenant node types is now available. ([#614](https://github.com/terraform-providers/terraform-provider-google-beta/pull/614))
 * **New Resource**: `google_compute_node_template` for sole-tenant node templates is now available. ([#614](https://github.com/terraform-providers/terraform-provider-google-beta/pull/614))
@@ -8,6 +12,7 @@ FEATURES:
 ENHANCEMENTS:
 * compute: `google_compute_subnetwork` now supports `log_config` to configure flow logs' logging behaviour. [GH-619]
 * dataflow: `google_dataflow_job`'s `network` and `subnetwork` can be configured. [GH-631]
+* monitoring: `google_monitoring_alert_policy` `user_labels` support was added. [GH-635]
 
 BUG FIXES:
 * compute: `google_compute_instance` now retries updating metadata when fingerprints are mismatched. [GH-583]
