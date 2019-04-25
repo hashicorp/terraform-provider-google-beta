@@ -3,6 +3,7 @@
 FEATURES: 
 * **New Datasource**: `google_compute_node_types` for sole-tenant node types is now available. ([#614](https://github.com/terraform-providers/terraform-provider-google-beta/pull/614))
 * **New Resource**: `google_compute_node_template` for sole-tenant node templates is now available. ([#614](https://github.com/terraform-providers/terraform-provider-google-beta/pull/614))
+* **New Resource**: `google_firestore_index` is now available to configure composite indexes on Firestore. [GH-632]
 
 ENHANCEMENTS:
 * compute: `google_compute_subnetwork` now supports `log_config` to configure flow logs' logging behaviour. [GH-619]
