@@ -6,6 +6,7 @@ FEATURES:
 
 ENHANCEMENTS:
 * compute: `google_compute_subnetwork` now supports `log_config` to configure flow logs' logging behaviour. [GH-619]
+* dataflow: `google_dataflow_job`'s `network` and `subnetwork` can be configured. [GH-631]
 
 BUG FIXES:
 * compute: `google_compute_instance` now retries updating metadata when fingerprints are mismatched. [GH-583]
