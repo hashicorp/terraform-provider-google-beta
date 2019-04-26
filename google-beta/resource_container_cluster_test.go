@@ -1750,6 +1750,9 @@ resource "google_container_cluster" "primary" {
 	name               = "%s"
 	location           = "us-central1-a"
 	initial_node_count = 3
+
+	network    = "default"
+	subnetwork = "default"
 }`, name)
 }
 
