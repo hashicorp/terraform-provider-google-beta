@@ -16,6 +16,7 @@ ENHANCEMENTS:
 
 BUG FIXES:
 * compute: `google_compute_instance` now retries updating metadata when fingerprints are mismatched. [GH-583]
+* container: `google_container_cluster` setting networks / subnetworks by name works with `location`. [GH-634]
 
 ## 2.5.1 (April 22, 2019)
 
