@@ -304,7 +304,8 @@ func resourceComputeBackendService() *schema.Resource {
 			"load_balancing_scheme": {
 				Type:         schema.TypeString,
 				Optional:     true,
-				ValidateFunc: validation.StringInSlice([]string{"INTERNAL", "EXTERNAL", ""}, false),
+				ForceNew:     true,
+				ValidateFunc: validation.StringInSlice([]string{"EXTERNAL", ""}, false),
 				Default:      "EXTERNAL",
 			},
 			"port_name": {
@@ -327,7 +328,7 @@ func resourceComputeBackendService() *schema.Resource {
 				Type:         schema.TypeString,
 				Computed:     true,
 				Optional:     true,
-				ValidateFunc: validation.StringInSlice([]string{"NONE", "CLIENT_IP", "GENERATED_COOKIE", "CLIENT_IP_PROTO", "CLIENT_IP_PORT_PROTO", ""}, false),
+				ValidateFunc: validation.StringInSlice([]string{"NONE", "CLIENT_IP", "GENERATED_COOKIE", ""}, false),
 			},
 			"timeout_sec": {
 				Type:     schema.TypeInt,
