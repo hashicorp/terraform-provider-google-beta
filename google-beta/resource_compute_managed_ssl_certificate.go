@@ -55,10 +55,11 @@ func resourceComputeManagedSslCertificate() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"domains": {
-							Type:     schema.TypeList,
-							Required: true,
-							ForceNew: true,
-							MaxItems: 1,
+							Type:             schema.TypeList,
+							Required:         true,
+							ForceNew:         true,
+							DiffSuppressFunc: absoluteDomainSuppress,
+							MaxItems:         1,
 							Elem: &schema.Schema{
 								Type: schema.TypeString,
 							},
