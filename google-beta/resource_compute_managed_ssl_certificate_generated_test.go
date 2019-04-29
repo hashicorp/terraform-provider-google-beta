@@ -51,7 +51,7 @@ resource "google_compute_managed_ssl_certificate" "default" {
   name = "test-cert-%{random_suffix}"
 
   managed {
-    domains = ["sslcert.tf-test.club"]
+    domains = ["sslcert.tf-test.club."]
   }
 }
 
