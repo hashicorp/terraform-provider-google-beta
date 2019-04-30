@@ -23,8 +23,6 @@ description: |-
 
 A Google Cloud Filestore instance.
 
-~> **Warning:** This resource is in beta, and should be used with the terraform-provider-google-beta provider.
-See [Provider Versions](https://terraform.io/docs/providers/google/provider_versions.html) for more details on beta resources.
 
 To get more information about Instance, see:
 
@@ -44,8 +42,6 @@ To get more information about Instance, see:
 
 ```hcl
 resource "google_filestore_instance" "instance" {
-  provider = "google-beta"
-
   name = "test-instance"
   zone = "us-central1-b"
   tier = "PREMIUM"
@@ -59,11 +55,6 @@ resource "google_filestore_instance" "instance" {
     network = "default"
     modes   = ["MODE_IPV4"]
   }
-}
-
-provider "google-beta"{
-  region = "us-central1"
-  zone   = "us-central1-a"
 }
 ```
 
@@ -166,9 +157,9 @@ This resource provides the following
 Instance can be imported using any of these accepted formats:
 
 ```
-$ terraform import -provider=google-beta google_filestore_instance.default projects/{{project}}/locations/{{zone}}/instances/{{name}}
-$ terraform import -provider=google-beta google_filestore_instance.default {{project}}/{{zone}}/{{name}}
-$ terraform import -provider=google-beta google_filestore_instance.default {{name}}
+$ terraform import google_filestore_instance.default projects/{{project}}/locations/{{zone}}/instances/{{name}}
+$ terraform import google_filestore_instance.default {{project}}/{{zone}}/{{name}}
+$ terraform import google_filestore_instance.default {{name}}
 ```
 
 -> If you're importing a resource with beta features, make sure to include `-provider=google-beta`
