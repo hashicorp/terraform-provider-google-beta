@@ -470,7 +470,6 @@ func resourceContainerCluster() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: schemaNodePool,
 				},
-				ConflictsWith: []string{"remove_default_node_pool"},
 			},
 
 			"node_version": {
@@ -602,9 +601,8 @@ func resourceContainerCluster() *schema.Resource {
 			},
 
 			"remove_default_node_pool": {
-				Type:          schema.TypeBool,
-				Optional:      true,
-				ConflictsWith: []string{"node_pool"},
+				Type:     schema.TypeBool,
+				Optional: true,
 			},
 
 			"private_cluster_config": {
