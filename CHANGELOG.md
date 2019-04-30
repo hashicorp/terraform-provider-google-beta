@@ -18,6 +18,7 @@ BUG FIXES:
 * compute: `google_compute_instance` now retries updating metadata when fingerprints are mismatched. [GH-583]
 * compute: `google_compute_managed_ssl_certificate` will no longer diff when using an absolute FQDN. [GH-591]
 * compute: `google_compute_disk` resources using `google-beta` will properly detach users at deletion instead of failing. [GH-640]
+* compute: `google_compute_subnetwork.secondary_ip_ranges` doesn't cause a diff on out of band changes, allows updating to empty list of ranges. [GH-3496]
 * container: `google_container_cluster` setting networks / subnetworks by name works with `location`. [GH-634]
 * container: `google_container_cluster` removed an overly restrictive validation restricting `node_pool` and `remove_default_node_pool` being specified at the same time. [GH-637]
 
