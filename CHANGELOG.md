@@ -1,10 +1,10 @@
-## 2.4.1 (Unreleased)
+## 2.4.1 (April 30, 2019)
 
 NOTES: This 2.4.1 release is a bugfix release for 2.4.0. It backports the fixes applied in the 2.5.1 release to the 2.4.0 series.
 
 BUG FIXES:
 * compute: `google_compute_backend_service` handles empty/nil `iap` block created by previous providers properly. ([#622](https://github.com/terraform-providers/terraform-provider-google-beta/issues/622))
-* compute: `google_compute_backend_service` allows multiple instance types in `backends.group` again. [GH-625]
+* compute: `google_compute_backend_service` allows multiple instance types in `backends.group` again. ([#625](https://github.com/terraform-providers/terraform-provider-google-beta/issues/625))
 * dns: `google_dns_managed_zone` does not permadiff when visiblity is set to default and returned as empty from API ([#624](https://github.com/terraform-providers/terraform-provider-google-beta/issues/624))
 
 ## 2.4.0 (April 15, 2019)
