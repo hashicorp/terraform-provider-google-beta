@@ -1,4 +1,4 @@
-// Copyright 2018 Google Inc. All rights reserved.
+// Copyright 2019 Google LLC.
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
@@ -6,13 +6,39 @@
 
 // Package servicenetworking provides access to the Service Networking API.
 //
-// See https://cloud.google.com/service-infrastructure/docs/service-networking/getting-started
+// For product documentation, see: https://cloud.google.com/service-infrastructure/docs/service-networking/getting-started
+//
+// Creating a client
 //
 // Usage example:
 //
 //   import "google.golang.org/api/servicenetworking/v1beta"
 //   ...
-//   servicenetworkingService, err := servicenetworking.New(oauthHttpClient)
+//   ctx := context.Background()
+//   servicenetworkingService, err := servicenetworking.NewService(ctx)
+//
+// In this example, Google Application Default Credentials are used for authentication.
+//
+// For information on how to create and obtain Application Default Credentials, see https://developers.google.com/identity/protocols/application-default-credentials.
+//
+// Other authentication options
+//
+// By default, all available scopes (see "Constants") are used to authenticate. To restrict scopes, use option.WithScopes:
+//
+//   servicenetworkingService, err := servicenetworking.NewService(ctx, option.WithScopes(servicenetworking.ServiceManagementScope))
+//
+// To use an API key for authentication (note: some APIs do not support API keys), use option.WithAPIKey:
+//
+//   servicenetworkingService, err := servicenetworking.NewService(ctx, option.WithAPIKey("AIza..."))
+//
+// To use an OAuth token (e.g., a user token obtained via a three-legged OAuth flow), use option.WithTokenSource:
+//
+//   config := &oauth2.Config{...}
+//   // ...
+//   token, err := config.Exchange(ctx, ...)
+//   servicenetworkingService, err := servicenetworking.NewService(ctx, option.WithTokenSource(config.TokenSource(ctx, token)))
+//
+// See https://godoc.org/google.golang.org/api/option/ for details on options.
 package servicenetworking // import "google.golang.org/api/servicenetworking/v1beta"
 
 import (
@@ -29,6 +55,8 @@ import (
 
 	gensupport "google.golang.org/api/gensupport"
 	googleapi "google.golang.org/api/googleapi"
+	option "google.golang.org/api/option"
+	htransport "google.golang.org/api/transport/http"
 )
 
 // Always reference these packages, just in case the auto-generated code
@@ -59,6 +87,33 @@ const (
 	ServiceManagementScope = "https://www.googleapis.com/auth/service.management"
 )
 
+// NewService creates a new APIService.
+func NewService(ctx context.Context, opts ...option.ClientOption) (*APIService, error) {
+	scopesOption := option.WithScopes(
+		"https://www.googleapis.com/auth/cloud-platform",
+		"https://www.googleapis.com/auth/service.management",
+	)
+	// NOTE: prepend, so we don't override user-specified scopes.
+	opts = append([]option.ClientOption{scopesOption}, opts...)
+	client, endpoint, err := htransport.NewClient(ctx, opts...)
+	if err != nil {
+		return nil, err
+	}
+	s, err := New(client)
+	if err != nil {
+		return nil, err
+	}
+	if endpoint != "" {
+		s.BasePath = endpoint
+	}
+	return s, nil
+}
+
+// New creates a new APIService. It uses the provided http.Client for requests.
+//
+// Deprecated: please use NewService instead.
+// To provide a custom HTTP client, use option.WithHTTPClient.
+// If you are using google.golang.org/api/googleapis/transport.APIKey, use option.WithAPIKey with NewService instead.
 func New(client *http.Client) (*APIService, error) {
 	if client == nil {
 		return nil, errors.New("client is nil")
@@ -300,11 +355,12 @@ func (s *Api) MarshalJSON() ([]byte, error) {
 	return gensupport.MarshalJSON(raw, s.ForceSendFields, s.NullFields)
 }
 
-// AuthProvider: Configuration for an anthentication provider, including
+// AuthProvider: Configuration for an authentication provider, including
 // support for
-// [JSON Web Token
-// (JWT)](https://tools.ietf.org/html/draft-ietf-oauth-json-web-token-32)
-// .
+// [JSON Web
+// Token
+// (JWT)](https://tools.ietf.org/html/draft-ietf-oauth-json-web-tok
+// en-32).
 type AuthProvider struct {
 	// Audiences: The list of
 	// JWT
@@ -351,18 +407,21 @@ type AuthProvider struct {
 	Issuer string `json:"issuer,omitempty"`
 
 	// JwksUri: URL of the provider's public key set to validate signature
-	// of the JWT. See
+	// of the JWT.
+	// See
 	// [OpenID
-	// Discovery](https://openid.net/specs/openid-connect-discovery-1_0.html#
-	// ProviderMetadata).
+	// Discovery](https://openid.net/specs/openid-connect-discove
+	// ry-1_0.html#ProviderMetadata).
 	// Optional if the key set document:
 	//  - can be retrieved from
 	//    [OpenID
-	// Discovery](https://openid.net/specs/openid-connect-discovery-1_0.html
 	//
-	//    of the issuer.
-	//  - can be inferred from the email domain of the issuer (e.g. a Google
-	// service account).
+	// Discovery](https://openid.net/specs/openid-connect-discovery-1_0.html
+	// of
+	//    the issuer.
+	//  - can be inferred from the email domain of the issuer (e.g. a
+	// Google
+	//  service account).
 	//
 	// Example: https://www.googleapis.com/oauth2/v1/certs
 	JwksUri string `json:"jwksUri,omitempty"`
@@ -392,9 +451,10 @@ func (s *AuthProvider) MarshalJSON() ([]byte, error) {
 
 // AuthRequirement: User-defined authentication requirements, including
 // support for
-// [JSON Web Token
-// (JWT)](https://tools.ietf.org/html/draft-ietf-oauth-json-web-token-32)
-// .
+// [JSON Web
+// Token
+// (JWT)](https://tools.ietf.org/html/draft-ietf-oauth-json-web-tok
+// en-32).
 type AuthRequirement struct {
 	// Audiences: NOTE: This will be deprecated soon, once
 	// AuthProvider.audiences is
@@ -640,6 +700,10 @@ type BackendRule struct {
 	// seconds.
 	Deadline float64 `json:"deadline,omitempty"`
 
+	// JwtAudience: The JWT audience is used when generating a JWT id token
+	// for the backend.
+	JwtAudience string `json:"jwtAudience,omitempty"`
+
 	// MinDeadline: Minimum deadline in seconds needed for this method.
 	// Calls having deadline
 	// value lower than this will be rejected.
@@ -649,6 +713,64 @@ type BackendRule struct {
 	// of a long running
 	// operation. The default is no deadline.
 	OperationDeadline float64 `json:"operationDeadline,omitempty"`
+
+	// Possible values:
+	//   "PATH_TRANSLATION_UNSPECIFIED"
+	//   "CONSTANT_ADDRESS" - Use the backend address as-is, with no
+	// modification to the path. If the
+	// URL pattern contains variables, the variable names and values will
+	// be
+	// appended to the query string. If a query string parameter and a
+	// URL
+	// pattern variable have the same name, this may result in duplicate
+	// keys in
+	// the query string.
+	//
+	// # Examples
+	//
+	// Given the following operation config:
+	//
+	//     Method path:        /api/company/{cid}/user/{uid}
+	//     Backend address:
+	// https://example.cloudfunctions.net/getUser
+	//
+	// Requests to the following request paths will call the backend at
+	// the
+	// translated path:
+	//
+	//     Request path: /api/company/widgetworks/user/johndoe
+	//     Translated:
+	//
+	// https://example.cloudfunctions.net/getUser?cid=widgetworks&uid=johndoe
+	//
+	//     Request path: /api/company/widgetworks/user/johndoe?timezone=EST
+	//     Translated:
+	//
+	// https://example.cloudfunctions.net/getUser?timezone=EST&cid=widgetworks&uid=johndoe
+	//   "APPEND_PATH_TO_ADDRESS" - The request path will be appended to the
+	// backend address.
+	//
+	// # Examples
+	//
+	// Given the following operation config:
+	//
+	//     Method path:        /api/company/{cid}/user/{uid}
+	//     Backend address:    https://example.appspot.com
+	//
+	// Requests to the following request paths will call the backend at
+	// the
+	// translated path:
+	//
+	//     Request path: /api/company/widgetworks/user/johndoe
+	//     Translated:
+	//
+	// https://example.appspot.com/api/company/widgetworks/user/johndoe
+	//
+	//     Request path: /api/company/widgetworks/user/johndoe?timezone=EST
+	//     Translated:
+	//
+	// https://example.appspot.com/api/company/widgetworks/user/johndoe?timezone=EST
+	PathTranslation string `json:"pathTranslation,omitempty"`
 
 	// Selector: Selects the methods to which this rule applies.
 	//
@@ -1260,8 +1382,8 @@ func (s *Documentation) MarshalJSON() ([]byte, error) {
 // individual API elements.
 type DocumentationRule struct {
 	// DeprecationDescription: Deprecation description of the selected
-	// element(s). It can be provided if an
-	// element is marked as `deprecated`.
+	// element(s). It can be provided if
+	// an element is marked as `deprecated`.
 	DeprecationDescription string `json:"deprecationDescription,omitempty"`
 
 	// Description: Description of the selected API(s).
@@ -1274,10 +1396,10 @@ type DocumentationRule struct {
 	// Wildcards are only allowed at the end and for a whole component of
 	// the
 	// qualified name, i.e. "foo.*" is ok, but not "foo.b*" or "foo.*.bar".
-	// To
-	// specify a default for all applicable elements, the whole pattern
-	// "*"
-	// is used.
+	// A
+	// wildcard will match one or more components. To specify a default for
+	// all
+	// applicable elements, the whole pattern "*" is used.
 	Selector string `json:"selector,omitempty"`
 
 	// ForceSendFields is a list of field names (e.g.
@@ -1357,11 +1479,13 @@ type Endpoint struct {
 
 	// Target: The specification of an Internet routable address of API
 	// frontend that will
-	// handle requests to this [API
-	// Endpoint](https://cloud.google.com/apis/design/glossary).
-	// It should be either a valid IPv4 address or a fully-qualified domain
-	// name.
-	// For example, "8.8.8.8" or "myservice.appspot.com".
+	// handle requests to this
+	// [API
+	// Endpoint](https://cloud.google.com/apis/design/glossary). It should
+	// be
+	// either a valid IPv4 address or a fully-qualified domain name. For
+	// example,
+	// "8.8.8.8" or "myservice.appspot.com".
 	Target string `json:"target,omitempty"`
 
 	// ForceSendFields is a list of field names (e.g. "Aliases") to
@@ -1584,12 +1708,58 @@ func (s *Field) MarshalJSON() ([]byte, error) {
 	return gensupport.MarshalJSON(raw, s.ForceSendFields, s.NullFields)
 }
 
+// GoogleCloudServicenetworkingV1betaSubnetwork: Represents a subnet
+// that was created or discovered by a private access
+// management service.
+type GoogleCloudServicenetworkingV1betaSubnetwork struct {
+	// IpCidrRange: Subnetwork CIDR range in `10.x.x.x/y` format.
+	IpCidrRange string `json:"ipCidrRange,omitempty"`
+
+	// Name: Subnetwork name.
+	// See https://cloud.google.com/compute/docs/vpc/
+	Name string `json:"name,omitempty"`
+
+	// Network: In the Shared VPC host project, the VPC network that's
+	// peered with the
+	// consumer network. For
+	// example:
+	// `projects/1234321/global/networks/host-network`
+	Network string `json:"network,omitempty"`
+
+	// OutsideAllocation: This is a discovered subnet that is not within the
+	// current consumer
+	// allocated ranges.
+	OutsideAllocation bool `json:"outsideAllocation,omitempty"`
+
+	// ForceSendFields is a list of field names (e.g. "IpCidrRange") to
+	// unconditionally include in API requests. By default, fields with
+	// empty values are omitted from API requests. However, any non-pointer,
+	// non-interface field appearing in ForceSendFields will be sent to the
+	// server regardless of whether the field is empty or not. This may be
+	// used to include empty fields in Patch requests.
+	ForceSendFields []string `json:"-"`
+
+	// NullFields is a list of field names (e.g. "IpCidrRange") to include
+	// in API requests with the JSON null value. By default, fields with
+	// empty values are omitted from API requests. However, any field with
+	// an empty value appearing in NullFields will be sent to the server as
+	// null. It is an error if a field in this list has a non-empty value.
+	// This may be used to include null fields in Patch requests.
+	NullFields []string `json:"-"`
+}
+
+func (s *GoogleCloudServicenetworkingV1betaSubnetwork) MarshalJSON() ([]byte, error) {
+	type NoMethod GoogleCloudServicenetworkingV1betaSubnetwork
+	raw := NoMethod(*s)
+	return gensupport.MarshalJSON(raw, s.ForceSendFields, s.NullFields)
+}
+
 // Http: Defines the HTTP configuration for an API service. It contains
 // a list of
 // HttpRule, each specifying the mapping of an RPC method
 // to one or more HTTP REST API methods.
 type Http struct {
-	// FullyDecodeReservedExpansion: When set to true, URL path parmeters
+	// FullyDecodeReservedExpansion: When set to true, URL path parameters
 	// will be fully URI-decoded except in
 	// cases of single segment matches in reserved expansion, where "%2F"
 	// will be
@@ -1720,9 +1890,11 @@ func (s *Http) MarshalJSON() ([]byte, error) {
 //
 // HTTP | gRPC
 // -----|-----
-// `GET /v1/messages/123456?revision=2&sub.subfield=foo` |
+// `GET /v1/messages/123456?revision=2&sub.subfield=foo`
+// |
 // `GetMessage(message_id: "123456" revision: 2 sub:
-// SubMessage(subfield: "foo"))`
+// SubMessage(subfield:
+// "foo"))`
 //
 // Note that fields which are mapped to URL query parameters must have
 // a
@@ -1763,7 +1935,8 @@ func (s *Http) MarshalJSON() ([]byte, error) {
 // HTTP | gRPC
 // -----|-----
 // `PATCH /v1/messages/123456 { "text": "Hi!" }` |
-// `UpdateMessage(message_id: "123456" message { text: "Hi!" })`
+// `UpdateMessage(message_id:
+// "123456" message { text: "Hi!" })`
 //
 // The special name `*` can be used in the body mapping to define
 // that
@@ -1792,7 +1965,8 @@ func (s *Http) MarshalJSON() ([]byte, error) {
 // HTTP | gRPC
 // -----|-----
 // `PATCH /v1/messages/123456 { "text": "Hi!" }` |
-// `UpdateMessage(message_id: "123456" text: "Hi!")`
+// `UpdateMessage(message_id:
+// "123456" text: "Hi!")`
 //
 // Note that when using `*` in the body mapping, it is not possible
 // to
@@ -1829,7 +2003,8 @@ func (s *Http) MarshalJSON() ([]byte, error) {
 // -----|-----
 // `GET /v1/messages/123456` | `GetMessage(message_id: "123456")`
 // `GET /v1/users/me/messages/123456` | `GetMessage(user_id: "me"
-// message_id: "123456")`
+// message_id:
+// "123456")`
 //
 // ## Rules for HTTP mapping
 //
@@ -1892,9 +2067,9 @@ func (s *Http) MarshalJSON() ([]byte, error) {
 // server side does the reverse decoding. Such variables show up in
 // the
 // [Discovery
-// Document](https://developers.google.com/discovery/v1/reference/apis)
-// a
-// s `{var}`.
+// Document](https://developers.google.com/discovery/v1/re
+// ference/apis) as
+// `{var}`.
 //
 // If a variable contains multiple path segments, such as
 // "{var=foo/*}"
@@ -1904,11 +2079,12 @@ func (s *Http) MarshalJSON() ([]byte, error) {
 // percent-encoded.
 // The server side does the reverse decoding, except "%2F" and "%2f" are
 // left
-// unchanged. Such variables show up in the
+// unchanged. Such variables show up in
+// the
 // [Discovery
-// Document](https://developers.google.com/discovery/v1/reference/apis)
-// a
-// s `{+var}`.
+// Document](https://developers.google.com/discovery/v1/re
+// ference/apis) as
+// `{+var}`.
 //
 // ## Using gRPC API Service Configuration
 //
@@ -3196,8 +3372,8 @@ func (s *Option) MarshalJSON() ([]byte, error) {
 // nested documentation set structure.
 type Page struct {
 	// Content: The Markdown content of the page. You can use <code>&#40;==
-	// include {path} ==&#41;</code>
-	// to include content from a Markdown file.
+	// include {path}
+	// ==&#41;</code> to include content from a Markdown file.
 	Content string `json:"content,omitempty"`
 
 	// Name: The name of the page. It will be used as an identity of the
@@ -3254,7 +3430,7 @@ func (s *Page) MarshalJSON() ([]byte, error) {
 // service
 // usage.
 //
-// The quota configuration works this way:
+// The metric based quota configuration works this way:
 // - The service configuration defines a set of metrics.
 // - For API calls, the quota.metric_rules maps methods to metrics with
 //   corresponding costs.
@@ -3303,6 +3479,8 @@ func (s *Page) MarshalJSON() ([]byte, error) {
 //        display_name: Write requests
 //        metric_kind: DELTA
 //        value_type: INT64
+//
+//
 type Quota struct {
 	// Limits: List of `QuotaLimit` definitions for the service.
 	Limits []*QuotaLimit `json:"limits,omitempty"`
@@ -3476,6 +3654,43 @@ func (s *QuotaLimit) MarshalJSON() ([]byte, error) {
 	return gensupport.MarshalJSON(raw, s.ForceSendFields, s.NullFields)
 }
 
+// Range: Represents a found unused range.
+type Range struct {
+	// IpCidrRange: CIDR range in "10.x.x.x/y" format that is within
+	// the
+	// allocated ranges and currently unused.
+	IpCidrRange string `json:"ipCidrRange,omitempty"`
+
+	// Network: In the Shared VPC host project, the VPC network that's
+	// peered with the
+	// consumer network. For
+	// example:
+	// `projects/1234321/global/networks/host-network`
+	Network string `json:"network,omitempty"`
+
+	// ForceSendFields is a list of field names (e.g. "IpCidrRange") to
+	// unconditionally include in API requests. By default, fields with
+	// empty values are omitted from API requests. However, any non-pointer,
+	// non-interface field appearing in ForceSendFields will be sent to the
+	// server regardless of whether the field is empty or not. This may be
+	// used to include empty fields in Patch requests.
+	ForceSendFields []string `json:"-"`
+
+	// NullFields is a list of field names (e.g. "IpCidrRange") to include
+	// in API requests with the JSON null value. By default, fields with
+	// empty values are omitted from API requests. However, any field with
+	// an empty value appearing in NullFields will be sent to the server as
+	// null. It is an error if a field in this list has a non-empty value.
+	// This may be used to include null fields in Patch requests.
+	NullFields []string `json:"-"`
+}
+
+func (s *Range) MarshalJSON() ([]byte, error) {
+	type NoMethod Range
+	raw := NoMethod(*s)
+	return gensupport.MarshalJSON(raw, s.ForceSendFields, s.NullFields)
+}
+
 // SearchRangeRequest: Request to search for an unused range within
 // allocated ranges.
 type SearchRangeRequest struct {
@@ -3641,8 +3856,12 @@ type Service struct {
 	// Monitoring: Monitoring configuration.
 	Monitoring *Monitoring `json:"monitoring,omitempty"`
 
-	// Name: The DNS address at which this service is available,
-	// e.g. `calendar.googleapis.com`.
+	// Name: The service name, which is a DNS-like logical identifier for
+	// the
+	// service, such as `calendar.googleapis.com`. The service
+	// name
+	// typically goes through DNS verification to make sure the owner
+	// of the service also owns the DNS name.
 	Name string `json:"name,omitempty"`
 
 	// ProducerProjectId: The Google project that owns this service.
@@ -3773,20 +3992,20 @@ func (s *SourceInfo) MarshalJSON() ([]byte, error) {
 }
 
 // Status: The `Status` type defines a logical error model that is
-// suitable for different
-// programming environments, including REST APIs and RPC APIs. It is
-// used by
-// [gRPC](https://github.com/grpc). The error model is designed to
-// be:
+// suitable for
+// different programming environments, including REST APIs and RPC APIs.
+// It is
+// used by [gRPC](https://github.com/grpc). The error model is designed
+// to be:
 //
 // - Simple to use and understand for most users
 // - Flexible enough to meet unexpected needs
 //
 // # Overview
 //
-// The `Status` message contains three pieces of data: error code, error
-// message,
-// and error details. The error code should be an enum value
+// The `Status` message contains three pieces of data: error code,
+// error
+// message, and error details. The error code should be an enum value
 // of
 // google.rpc.Code, but it may accept additional error codes if needed.
 // The
@@ -4442,14 +4661,13 @@ type ServicesAddSubnetworkCall struct {
 // ranges
 // to find a non-conflicting IP address range. The method will reuse a
 // subnet
-// if subsequent calls contain the same subnet name, region, and prefix
-// length.
-// This method will make producer's tenant project to be a shared VPC
-// service
-// project as needed.
-// The response from the `get` operation will be of type `Subnetwork` if
-// the
-// operation successfully completes.
+// if subsequent calls contain the same subnet name, region, and
+// prefix
+// length. This method will make producer's tenant project to be a
+// shared VPC
+// service project as needed. The response from the `get` operation will
+// be of
+// type `Subnetwork` if the operation successfully completes.
 func (r *ServicesService) AddSubnetwork(parent string, addsubnetworkrequest *AddSubnetworkRequest) *ServicesAddSubnetworkCall {
 	c := &ServicesAddSubnetworkCall{s: r.s, urlParams_: make(gensupport.URLParams)}
 	c.parent = parent
@@ -4547,7 +4765,7 @@ func (c *ServicesAddSubnetworkCall) Do(opts ...googleapi.CallOption) (*Operation
 	}
 	return ret, nil
 	// {
-	//   "description": "For service producers, provisions a new subnet in a\npeered service's shared VPC network in the requested region and with the\nrequested size that's expressed as a CIDR range (number of leading bits of\nipV4 network mask). The method checks against the assigned allocated ranges\nto find a non-conflicting IP address range. The method will reuse a subnet\nif subsequent calls contain the same subnet name, region, and prefix length.\nThis method will make producer's tenant project to be a shared VPC service\nproject as needed.\nThe response from the `get` operation will be of type `Subnetwork` if the\noperation successfully completes.",
+	//   "description": "For service producers, provisions a new subnet in a\npeered service's shared VPC network in the requested region and with the\nrequested size that's expressed as a CIDR range (number of leading bits of\nipV4 network mask). The method checks against the assigned allocated ranges\nto find a non-conflicting IP address range. The method will reuse a subnet\nif subsequent calls contain the same subnet name, region, and prefix\nlength. This method will make producer's tenant project to be a shared VPC\nservice project as needed. The response from the `get` operation will be of\ntype `Subnetwork` if the operation successfully completes.",
 	//   "flatPath": "v1beta/services/{servicesId}/{servicesId1}/{servicesId2}:addSubnetwork",
 	//   "httpMethod": "POST",
 	//   "id": "servicenetworking.services.addSubnetwork",
@@ -4566,177 +4784,6 @@ func (c *ServicesAddSubnetworkCall) Do(opts ...googleapi.CallOption) (*Operation
 	//   "path": "v1beta/{+parent}:addSubnetwork",
 	//   "request": {
 	//     "$ref": "AddSubnetworkRequest"
-	//   },
-	//   "response": {
-	//     "$ref": "Operation"
-	//   },
-	//   "scopes": [
-	//     "https://www.googleapis.com/auth/cloud-platform",
-	//     "https://www.googleapis.com/auth/service.management"
-	//   ]
-	// }
-
-}
-
-// method id "servicenetworking.services.patch":
-
-type ServicesPatchCall struct {
-	s          *APIService
-	name       string
-	connection *Connection
-	urlParams_ gensupport.URLParams
-	ctx_       context.Context
-	header_    http.Header
-}
-
-// Patch: Updates the allocated ranges that are assigned to a
-// connection.
-// The response from the `get` operation will be of type `Connection` if
-// the
-// operation successfully completes.
-func (r *ServicesService) Patch(name string, connection *Connection) *ServicesPatchCall {
-	c := &ServicesPatchCall{s: r.s, urlParams_: make(gensupport.URLParams)}
-	c.name = name
-	c.connection = connection
-	return c
-}
-
-// Force sets the optional parameter "force": If a previously defined
-// allocated range is removed, force flag must be
-// set to true.
-func (c *ServicesPatchCall) Force(force bool) *ServicesPatchCall {
-	c.urlParams_.Set("force", fmt.Sprint(force))
-	return c
-}
-
-// UpdateMask sets the optional parameter "updateMask": The update mask.
-// If this is omitted, it defaults to "*". You can only
-// update the listed peering ranges.
-func (c *ServicesPatchCall) UpdateMask(updateMask string) *ServicesPatchCall {
-	c.urlParams_.Set("updateMask", updateMask)
-	return c
-}
-
-// Fields allows partial responses to be retrieved. See
-// https://developers.google.com/gdata/docs/2.0/basics#PartialResponse
-// for more information.
-func (c *ServicesPatchCall) Fields(s ...googleapi.Field) *ServicesPatchCall {
-	c.urlParams_.Set("fields", googleapi.CombineFields(s))
-	return c
-}
-
-// Context sets the context to be used in this call's Do method. Any
-// pending HTTP request will be aborted if the provided context is
-// canceled.
-func (c *ServicesPatchCall) Context(ctx context.Context) *ServicesPatchCall {
-	c.ctx_ = ctx
-	return c
-}
-
-// Header returns an http.Header that can be modified by the caller to
-// add HTTP headers to the request.
-func (c *ServicesPatchCall) Header() http.Header {
-	if c.header_ == nil {
-		c.header_ = make(http.Header)
-	}
-	return c.header_
-}
-
-func (c *ServicesPatchCall) doRequest(alt string) (*http.Response, error) {
-	reqHeaders := make(http.Header)
-	for k, v := range c.header_ {
-		reqHeaders[k] = v
-	}
-	reqHeaders.Set("User-Agent", c.s.userAgent())
-	var body io.Reader = nil
-	body, err := googleapi.WithoutDataWrapper.JSONReader(c.connection)
-	if err != nil {
-		return nil, err
-	}
-	reqHeaders.Set("Content-Type", "application/json")
-	c.urlParams_.Set("alt", alt)
-	c.urlParams_.Set("prettyPrint", "false")
-	urls := googleapi.ResolveRelative(c.s.BasePath, "v1beta/{+name}")
-	urls += "?" + c.urlParams_.Encode()
-	req, err := http.NewRequest("PATCH", urls, body)
-	if err != nil {
-		return nil, err
-	}
-	req.Header = reqHeaders
-	googleapi.Expand(req.URL, map[string]string{
-		"name": c.name,
-	})
-	return gensupport.SendRequest(c.ctx_, c.s.client, req)
-}
-
-// Do executes the "servicenetworking.services.patch" call.
-// Exactly one of *Operation or error will be non-nil. Any non-2xx
-// status code is an error. Response headers are in either
-// *Operation.ServerResponse.Header or (if a response was returned at
-// all) in error.(*googleapi.Error).Header. Use googleapi.IsNotModified
-// to check whether the returned error was because
-// http.StatusNotModified was returned.
-func (c *ServicesPatchCall) Do(opts ...googleapi.CallOption) (*Operation, error) {
-	gensupport.SetOptions(c.urlParams_, opts...)
-	res, err := c.doRequest("json")
-	if res != nil && res.StatusCode == http.StatusNotModified {
-		if res.Body != nil {
-			res.Body.Close()
-		}
-		return nil, &googleapi.Error{
-			Code:   res.StatusCode,
-			Header: res.Header,
-		}
-	}
-	if err != nil {
-		return nil, err
-	}
-	defer googleapi.CloseBody(res)
-	if err := googleapi.CheckResponse(res); err != nil {
-		return nil, err
-	}
-	ret := &Operation{
-		ServerResponse: googleapi.ServerResponse{
-			Header:         res.Header,
-			HTTPStatusCode: res.StatusCode,
-		},
-	}
-	target := &ret
-	if err := gensupport.DecodeResponse(target, res); err != nil {
-		return nil, err
-	}
-	return ret, nil
-	// {
-	//   "description": "Updates the allocated ranges that are assigned to a connection.\nThe response from the `get` operation will be of type `Connection` if the\noperation successfully completes.",
-	//   "flatPath": "v1beta/services/{servicesId}",
-	//   "httpMethod": "PATCH",
-	//   "id": "servicenetworking.services.patch",
-	//   "parameterOrder": [
-	//     "name"
-	//   ],
-	//   "parameters": {
-	//     "force": {
-	//       "description": "If a previously defined allocated range is removed, force flag must be\nset to true.",
-	//       "location": "query",
-	//       "type": "boolean"
-	//     },
-	//     "name": {
-	//       "description": "The service producer peering service that is managing peering connectivity\nfor a service producer organization.\nFor Google services that support this functionality, this is\n`services/servicenetworking.googleapis.com`.",
-	//       "location": "path",
-	//       "pattern": "^services/[^/]+$",
-	//       "required": true,
-	//       "type": "string"
-	//     },
-	//     "updateMask": {
-	//       "description": "The update mask. If this is omitted, it defaults to \"*\". You can only\nupdate the listed peering ranges.",
-	//       "format": "google-fieldmask",
-	//       "location": "query",
-	//       "type": "string"
-	//     }
-	//   },
-	//   "path": "v1beta/{+name}",
-	//   "request": {
-	//     "$ref": "Connection"
 	//   },
 	//   "response": {
 	//     "$ref": "Operation"
@@ -4888,6 +4935,177 @@ func (c *ServicesSearchRangeCall) Do(opts ...googleapi.CallOption) (*Operation, 
 	//   "path": "v1beta/{+parent}:searchRange",
 	//   "request": {
 	//     "$ref": "SearchRangeRequest"
+	//   },
+	//   "response": {
+	//     "$ref": "Operation"
+	//   },
+	//   "scopes": [
+	//     "https://www.googleapis.com/auth/cloud-platform",
+	//     "https://www.googleapis.com/auth/service.management"
+	//   ]
+	// }
+
+}
+
+// method id "servicenetworking.services.updateConnections":
+
+type ServicesUpdateConnectionsCall struct {
+	s          *APIService
+	name       string
+	connection *Connection
+	urlParams_ gensupport.URLParams
+	ctx_       context.Context
+	header_    http.Header
+}
+
+// UpdateConnections: Updates the allocated ranges that are assigned to
+// a connection.
+// The response from the `get` operation will be of type `Connection` if
+// the
+// operation successfully completes.
+func (r *ServicesService) UpdateConnections(name string, connection *Connection) *ServicesUpdateConnectionsCall {
+	c := &ServicesUpdateConnectionsCall{s: r.s, urlParams_: make(gensupport.URLParams)}
+	c.name = name
+	c.connection = connection
+	return c
+}
+
+// Force sets the optional parameter "force": If a previously defined
+// allocated range is removed, force flag must be
+// set to true.
+func (c *ServicesUpdateConnectionsCall) Force(force bool) *ServicesUpdateConnectionsCall {
+	c.urlParams_.Set("force", fmt.Sprint(force))
+	return c
+}
+
+// UpdateMask sets the optional parameter "updateMask": The update mask.
+// If this is omitted, it defaults to "*". You can only
+// update the listed peering ranges.
+func (c *ServicesUpdateConnectionsCall) UpdateMask(updateMask string) *ServicesUpdateConnectionsCall {
+	c.urlParams_.Set("updateMask", updateMask)
+	return c
+}
+
+// Fields allows partial responses to be retrieved. See
+// https://developers.google.com/gdata/docs/2.0/basics#PartialResponse
+// for more information.
+func (c *ServicesUpdateConnectionsCall) Fields(s ...googleapi.Field) *ServicesUpdateConnectionsCall {
+	c.urlParams_.Set("fields", googleapi.CombineFields(s))
+	return c
+}
+
+// Context sets the context to be used in this call's Do method. Any
+// pending HTTP request will be aborted if the provided context is
+// canceled.
+func (c *ServicesUpdateConnectionsCall) Context(ctx context.Context) *ServicesUpdateConnectionsCall {
+	c.ctx_ = ctx
+	return c
+}
+
+// Header returns an http.Header that can be modified by the caller to
+// add HTTP headers to the request.
+func (c *ServicesUpdateConnectionsCall) Header() http.Header {
+	if c.header_ == nil {
+		c.header_ = make(http.Header)
+	}
+	return c.header_
+}
+
+func (c *ServicesUpdateConnectionsCall) doRequest(alt string) (*http.Response, error) {
+	reqHeaders := make(http.Header)
+	for k, v := range c.header_ {
+		reqHeaders[k] = v
+	}
+	reqHeaders.Set("User-Agent", c.s.userAgent())
+	var body io.Reader = nil
+	body, err := googleapi.WithoutDataWrapper.JSONReader(c.connection)
+	if err != nil {
+		return nil, err
+	}
+	reqHeaders.Set("Content-Type", "application/json")
+	c.urlParams_.Set("alt", alt)
+	c.urlParams_.Set("prettyPrint", "false")
+	urls := googleapi.ResolveRelative(c.s.BasePath, "v1beta/{+name}/connections")
+	urls += "?" + c.urlParams_.Encode()
+	req, err := http.NewRequest("PATCH", urls, body)
+	if err != nil {
+		return nil, err
+	}
+	req.Header = reqHeaders
+	googleapi.Expand(req.URL, map[string]string{
+		"name": c.name,
+	})
+	return gensupport.SendRequest(c.ctx_, c.s.client, req)
+}
+
+// Do executes the "servicenetworking.services.updateConnections" call.
+// Exactly one of *Operation or error will be non-nil. Any non-2xx
+// status code is an error. Response headers are in either
+// *Operation.ServerResponse.Header or (if a response was returned at
+// all) in error.(*googleapi.Error).Header. Use googleapi.IsNotModified
+// to check whether the returned error was because
+// http.StatusNotModified was returned.
+func (c *ServicesUpdateConnectionsCall) Do(opts ...googleapi.CallOption) (*Operation, error) {
+	gensupport.SetOptions(c.urlParams_, opts...)
+	res, err := c.doRequest("json")
+	if res != nil && res.StatusCode == http.StatusNotModified {
+		if res.Body != nil {
+			res.Body.Close()
+		}
+		return nil, &googleapi.Error{
+			Code:   res.StatusCode,
+			Header: res.Header,
+		}
+	}
+	if err != nil {
+		return nil, err
+	}
+	defer googleapi.CloseBody(res)
+	if err := googleapi.CheckResponse(res); err != nil {
+		return nil, err
+	}
+	ret := &Operation{
+		ServerResponse: googleapi.ServerResponse{
+			Header:         res.Header,
+			HTTPStatusCode: res.StatusCode,
+		},
+	}
+	target := &ret
+	if err := gensupport.DecodeResponse(target, res); err != nil {
+		return nil, err
+	}
+	return ret, nil
+	// {
+	//   "description": "Updates the allocated ranges that are assigned to a connection.\nThe response from the `get` operation will be of type `Connection` if the\noperation successfully completes.",
+	//   "flatPath": "v1beta/services/{servicesId}/connections",
+	//   "httpMethod": "PATCH",
+	//   "id": "servicenetworking.services.updateConnections",
+	//   "parameterOrder": [
+	//     "name"
+	//   ],
+	//   "parameters": {
+	//     "force": {
+	//       "description": "If a previously defined allocated range is removed, force flag must be\nset to true.",
+	//       "location": "query",
+	//       "type": "boolean"
+	//     },
+	//     "name": {
+	//       "description": "The service producer peering service that is managing peering connectivity\nfor a service producer organization.\nFor Google services that support this functionality, this is\n`services/servicenetworking.googleapis.com`.",
+	//       "location": "path",
+	//       "pattern": "^services/[^/]+$",
+	//       "required": true,
+	//       "type": "string"
+	//     },
+	//     "updateMask": {
+	//       "description": "The update mask. If this is omitted, it defaults to \"*\". You can only\nupdate the listed peering ranges.",
+	//       "format": "google-fieldmask",
+	//       "location": "query",
+	//       "type": "string"
+	//     }
+	//   },
+	//   "path": "v1beta/{+name}/connections",
+	//   "request": {
+	//     "$ref": "Connection"
 	//   },
 	//   "response": {
 	//     "$ref": "Operation"
