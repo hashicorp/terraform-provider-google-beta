@@ -19,6 +19,7 @@ ENHANCEMENTS:
 * pubsub: `google_pubsub_subscription` now supports setting an `expiration_policy`. ([#1703](https://github.com/GoogleCloudPlatform/magic-modules/pull/1703))
 
 BUG FIXES:
+* bigquery: `google_bigquery_table` will work with a larger range of projects id formats. [GH-658]
 * cloudfunctions: `google_cloudfunctions_fucntion` no longer restricts an outdated list of `region`s [GH-659]
 * compute: `google_compute_instance` now retries updating metadata when fingerprints are mismatched. [GH-583]
 * compute: `google_compute_managed_ssl_certificate` will no longer diff when using an absolute FQDN. [GH-591]
