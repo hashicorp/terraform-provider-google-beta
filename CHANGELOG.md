@@ -17,6 +17,7 @@ ENHANCEMENTS:
 * compute: `iam_compute_subnetwork` is now GA. [GH-656]
 
 BUG FIXES:
+* cloudfunctions: `google_cloudfunctions_fucntion` no longer restricts an outdated list of `region`s [GH-659]
 * compute: `google_compute_instance` now retries updating metadata when fingerprints are mismatched. [GH-583]
 * compute: `google_compute_managed_ssl_certificate` will no longer diff when using an absolute FQDN. [GH-591]
 * compute: `google_compute_disk` resources using `google-beta` will properly detach users at deletion instead of failing. [GH-640]
