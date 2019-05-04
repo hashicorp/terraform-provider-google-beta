@@ -9,6 +9,7 @@ FEATURES:
 * **New Resource**: `google_compute_node_template` for sole-tenant node templates is now available. ([#614](https://github.com/terraform-providers/terraform-provider-google-beta/pull/614))
 * **New Resource**: `google_firestore_index` is now available to configure composite indexes on Firestore. [GH-632]
 * **New Resource**: `google_logging_metric` is now available to configure Stackdriver logs-based metrics. ([#1702](https://github.com/GoogleCloudPlatform/magic-modules/pull/1702))
+* **New Resource**: `google_compute_network_endpoint_group` [GH-630]
 
 ENHANCEMENTS:
 * compute: `google_compute_subnetwork` now supports `log_config` to configure flow logs' logging behaviour. [GH-619]
