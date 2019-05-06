@@ -6,7 +6,8 @@ DEPRECATIONS:
 
 FEATURES: 
 * **New Datasource**: `google_compute_node_types` for sole-tenant node types is now available. ([#614](https://github.com/terraform-providers/terraform-provider-google-beta/pull/614))
-* **New Resource**: `google_compute_node_template` for sole-tenant node templates is now available. ([#614](https://github.com/terraform-providers/terraform-provider-google-beta/pull/614))
+* **New Resource**: `google_compute_node_group` for sole-tenant nodes is now available. ([#643](https://github.com/terraform-providers/terraform-provider-google-beta/pull/643))
+* **New Resource**: `google_compute_node_template` for sole-tenant nodes is now available. ([#614](https://github.com/terraform-providers/terraform-provider-google-beta/pull/614))
 * **New Resource**: `google_firestore_index` is now available to configure composite indexes on Firestore. [GH-632]
 * **New Resource**: `google_logging_metric` is now available to configure Stackdriver logs-based metrics. ([#1702](https://github.com/GoogleCloudPlatform/magic-modules/pull/1702))
 * **New Resource**: `google_compute_network_endpoint_group` [GH-630]
@@ -25,6 +26,7 @@ BUG FIXES:
 * bigquery: `google_bigquery_table` will work with a larger range of projects id formats. [GH-658]
 * cloudfunctions: `google_cloudfunctions_fucntion` no longer restricts an outdated list of `region`s [GH-659]
 * compute: `google_compute_instance` now retries updating metadata when fingerprints are mismatched. [GH-583]
+* compute: `google_compute_instance` and `google_compute_instance_template` now support node affinities for scheduling on sole tenant nodes [GH-663](https://github.com/terraform-providers/terraform-provider-google-beta/pull/663)
 * compute: `google_compute_managed_ssl_certificate` will no longer diff when using an absolute FQDN. [GH-591]
 * compute: `google_compute_disk` resources using `google-beta` will properly detach users at deletion instead of failing. [GH-640]
 * compute: `google_compute_subnetwork.secondary_ip_ranges` doesn't cause a diff on out of band changes, allows updating to empty list of ranges. [GH-3496]
