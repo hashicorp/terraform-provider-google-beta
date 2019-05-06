@@ -13,6 +13,7 @@ FEATURES:
 
 ENHANCEMENTS:
 * compute: `google_compute_subnetwork` now supports `log_config` to configure flow logs' logging behaviour. [GH-619]
+* container: `google_container_cluster` now supports `database_encryption` to configure etcd encryption. [GH-649]
 * dataflow: `google_dataflow_job`'s `network` and `subnetwork` can be configured. [GH-631]
 * monitoring: `google_monitoring_alert_policy` `user_labels` support was added. [GH-635]
 * compute: `google_compute_region_backend_service` is now generated with Magic Modules, adding configurable timeouts, multiple import formats, `creation_timestamp` output. [GH-645]
