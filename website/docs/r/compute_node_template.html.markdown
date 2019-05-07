@@ -48,12 +48,42 @@ data "google_compute_node_types" "central1a" {
 resource "google_compute_node_template" "template" {
   name = "soletenant-tmpl"
   region = "us-central1"
+  node_type = "${data.google_compute_node_types.central1a.names[0]}"
+}
+```
+<div class = "oics-button" style="float: right; margin: 0 0 -15px">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=node_template_server_binding&cloudshell_image=gcr.io%2Fgraphite-cloud-shell-images%2Fterraform%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+    <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
+  </a>
+</div>
+## Example Usage - Node Template Server Binding
+
+
+```hcl
+provider "google-beta" {
+  region = "us-central1"
+  zone   = "us-central1-a"
+}
+
+data "google_compute_node_types" "central1a" {
+  provider = "google-beta"
+  zone = "us-central1-a"
+}
+
+resource "google_compute_node_template" "template" {
+  provider = "google-beta"
+
+  name = "soletenant-with-licenses"
+  region = "us-central1"
+  node_type = "${data.google_compute_node_types.central1a.names[0]}"
 
   node_affinity_labels = {
     foo = "baz"
   }
 
-  node_type = "${data.google_compute_node_types.central1a.names[0]}"
+  server_binding {
+    type = "RESTART_NODE_ON_MINIMAL_SERVERS"
+  }
 }
 ```
 
@@ -91,6 +121,11 @@ The following arguments are supported:
   these properties. Only one of nodeTypeFlexibility and nodeType can
   be specified.  Structure is documented below.
 
+* `server_binding` -
+  (Optional, [Beta](https://terraform.io/docs/providers/google/provider_versions.html))
+  The server binding policy for nodes using this template. Determines
+  where the nodes should restart following a maintenance event.  Structure is documented below.
+
 * `region` -
   (Optional)
   Region where nodes using the node template will be created.
@@ -111,6 +146,22 @@ The `node_type_flexibility` block supports:
 
 * `local_ssd` -
   Use local SSD
+
+The `server_binding` block supports:
+
+* `type` -
+  (Required)
+  Type of server binding policy. If `RESTART_NODE_ON_ANY_SERVER`,
+  nodes using this template will restart on any physical server
+  following a maintenance event.
+  If `RESTART_NODE_ON_MINIMAL_SERVER`, nodes using this template
+  will restart on the same physical server following a maintenance
+  event, instead of being live migrated to or restarted on a new
+  physical server. This option may be useful if you are using
+  software licenses tied to the underlying server characteristics
+  such as physical sockets or cores, to avoid the need for
+  additional licenses when maintenance occurs. However, VMs on such
+  nodes will experience outages while maintenance is applied.
 
 ## Attributes Reference
 

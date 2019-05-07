@@ -21,6 +21,7 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform/helper/validation"
 	"google.golang.org/api/compute/v1"
 )
 
@@ -94,6 +95,23 @@ func resourceComputeNodeTemplate() *schema.Resource {
 				ForceNew:         true,
 				DiffSuppressFunc: compareSelfLinkOrResourceName,
 			},
+			"server_binding": {
+				Type:     schema.TypeList,
+				Computed: true,
+				Optional: true,
+				ForceNew: true,
+				MaxItems: 1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"type": {
+							Type:         schema.TypeString,
+							Required:     true,
+							ForceNew:     true,
+							ValidateFunc: validation.StringInSlice([]string{"RESTART_NODE_ON_ANY_SERVER", "RESTART_NODE_ON_MINIMAL_SERVERS"}, false),
+						},
+					},
+				},
+			},
 			"creation_timestamp": {
 				Type:     schema.TypeString,
 				Computed: true,
@@ -145,6 +163,12 @@ func resourceComputeNodeTemplateCreate(d *schema.ResourceData, meta interface{})
 		return err
 	} else if v, ok := d.GetOkExists("node_type_flexibility"); !isEmptyValue(reflect.ValueOf(nodeTypeFlexibilityProp)) && (ok || !reflect.DeepEqual(v, nodeTypeFlexibilityProp)) {
 		obj["nodeTypeFlexibility"] = nodeTypeFlexibilityProp
+	}
+	serverBindingProp, err := expandComputeNodeTemplateServerBinding(d.Get("server_binding"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("server_binding"); !isEmptyValue(reflect.ValueOf(serverBindingProp)) && (ok || !reflect.DeepEqual(v, serverBindingProp)) {
+		obj["serverBinding"] = serverBindingProp
 	}
 	regionProp, err := expandComputeNodeTemplateRegion(d.Get("region"), d, config)
 	if err != nil {
@@ -233,6 +257,9 @@ func resourceComputeNodeTemplateRead(d *schema.ResourceData, meta interface{}) e
 		return fmt.Errorf("Error reading NodeTemplate: %s", err)
 	}
 	if err := d.Set("node_type_flexibility", flattenComputeNodeTemplateNodeTypeFlexibility(res["nodeTypeFlexibility"], d)); err != nil {
+		return fmt.Errorf("Error reading NodeTemplate: %s", err)
+	}
+	if err := d.Set("server_binding", flattenComputeNodeTemplateServerBinding(res["serverBinding"], d)); err != nil {
 		return fmt.Errorf("Error reading NodeTemplate: %s", err)
 	}
 	if err := d.Set("region", flattenComputeNodeTemplateRegion(res["region"], d)); err != nil {
@@ -347,6 +374,23 @@ func flattenComputeNodeTemplateNodeTypeFlexibilityLocalSsd(v interface{}, d *sch
 	return v
 }
 
+func flattenComputeNodeTemplateServerBinding(v interface{}, d *schema.ResourceData) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["type"] =
+		flattenComputeNodeTemplateServerBindingType(original["type"], d)
+	return []interface{}{transformed}
+}
+func flattenComputeNodeTemplateServerBindingType(v interface{}, d *schema.ResourceData) interface{} {
+	return v
+}
+
 func flattenComputeNodeTemplateRegion(v interface{}, d *schema.ResourceData) interface{} {
 	if v == nil {
 		return v
@@ -419,6 +463,29 @@ func expandComputeNodeTemplateNodeTypeFlexibilityMemory(v interface{}, d Terrafo
 }
 
 func expandComputeNodeTemplateNodeTypeFlexibilityLocalSsd(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeNodeTemplateServerBinding(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedType, err := expandComputeNodeTemplateServerBindingType(original["type"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedType); val.IsValid() && !isEmptyValue(val) {
+		transformed["type"] = transformedType
+	}
+
+	return transformed, nil
+}
+
+func expandComputeNodeTemplateServerBindingType(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
