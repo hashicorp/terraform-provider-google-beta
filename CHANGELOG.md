@@ -1,38 +1,38 @@
-## 2.6.0 (Unreleased)
+## 2.6.0 (May 07, 2019)
 
 
 DEPRECATIONS:
-* monitoring: `google_monitoring_alert_policy` `labels` was deprecated, as the field was never used and it was typed incorrectly. [GH-635]
+* monitoring: `google_monitoring_alert_policy` `labels` was deprecated, as the field was never used and it was typed incorrectly. ([#635](https://github.com/terraform-providers/terraform-provider-google-beta/issues/635))
 
 FEATURES: 
 * **New Datasource**: `google_compute_node_types` for sole-tenant node types is now available. ([#614](https://github.com/terraform-providers/terraform-provider-google-beta/pull/614))
 * **New Resource**: `google_compute_node_group` for sole-tenant nodes is now available. ([#643](https://github.com/terraform-providers/terraform-provider-google-beta/pull/643))
 * **New Resource**: `google_compute_node_template` for sole-tenant nodes is now available. ([#614](https://github.com/terraform-providers/terraform-provider-google-beta/pull/614))
-* **New Resource**: `google_firestore_index` is now available to configure composite indexes on Firestore. [GH-632]
+* **New Resource**: `google_firestore_index` is now available to configure composite indexes on Firestore. ([#632](https://github.com/terraform-providers/terraform-provider-google-beta/issues/632))
 * **New Resource**: `google_logging_metric` is now available to configure Stackdriver logs-based metrics. ([#1702](https://github.com/GoogleCloudPlatform/magic-modules/pull/1702))
-* **New Resource**: `google_compute_network_endpoint_group` [GH-630]
-* **New Resource**: `google_security_scanner_scan_config` is now available for configuring scan runs with Cloud Security Scanner. [GH-641]
+* **New Resource**: `google_compute_network_endpoint_group` ([#630](https://github.com/terraform-providers/terraform-provider-google-beta/issues/630))
+* **New Resource**: `google_security_scanner_scan_config` is now available for configuring scan runs with Cloud Security Scanner. ([#641](https://github.com/terraform-providers/terraform-provider-google-beta/issues/641))
 
 ENHANCEMENTS:
-* compute: `google_compute_subnetwork` now supports `log_config` to configure flow logs' logging behaviour. [GH-619]
-* container: `google_container_cluster` now supports `database_encryption` to configure etcd encryption. [GH-649]
-* dataflow: `google_dataflow_job`'s `network` and `subnetwork` can be configured. [GH-631]
-* monitoring: `google_monitoring_alert_policy` `user_labels` support was added. [GH-635]
-* compute: `google_compute_region_backend_service` is now generated with Magic Modules, adding configurable timeouts, multiple import formats, `creation_timestamp` output. [GH-645]
-* compute: `iam_compute_subnetwork` is now GA. [GH-656]
+* compute: `google_compute_subnetwork` now supports `log_config` to configure flow logs' logging behaviour. ([#619](https://github.com/terraform-providers/terraform-provider-google-beta/issues/619))
+* container: `google_container_cluster` now supports `database_encryption` to configure etcd encryption. ([#649](https://github.com/terraform-providers/terraform-provider-google-beta/issues/649))
+* dataflow: `google_dataflow_job`'s `network` and `subnetwork` can be configured. ([#631](https://github.com/terraform-providers/terraform-provider-google-beta/issues/631))
+* monitoring: `google_monitoring_alert_policy` `user_labels` support was added. ([#635](https://github.com/terraform-providers/terraform-provider-google-beta/issues/635))
+* compute: `google_compute_region_backend_service` is now generated with Magic Modules, adding configurable timeouts, multiple import formats, `creation_timestamp` output. ([#645](https://github.com/terraform-providers/terraform-provider-google-beta/issues/645))
+* compute: `iam_compute_subnetwork` is now GA. ([#656](https://github.com/terraform-providers/terraform-provider-google-beta/issues/656))
 * pubsub: `google_pubsub_subscription` now supports setting an `expiration_policy`. ([#1703](https://github.com/GoogleCloudPlatform/magic-modules/pull/1703))
 
 BUG FIXES:
-* bigquery: `google_bigquery_table` will work with a larger range of projects id formats. [GH-658]
-* cloudfunctions: `google_cloudfunctions_fucntion` no longer restricts an outdated list of `region`s [GH-659]
-* compute: `google_compute_instance` now retries updating metadata when fingerprints are mismatched. [GH-583]
-* compute: `google_compute_instance` and `google_compute_instance_template` now support node affinities for scheduling on sole tenant nodes [GH-663](https://github.com/terraform-providers/terraform-provider-google-beta/pull/663)
-* compute: `google_compute_managed_ssl_certificate` will no longer diff when using an absolute FQDN. [GH-591]
-* compute: `google_compute_disk` resources using `google-beta` will properly detach users at deletion instead of failing. [GH-640]
-* compute: `google_compute_subnetwork.secondary_ip_ranges` doesn't cause a diff on out of band changes, allows updating to empty list of ranges. [GH-3496]
-* container: `google_container_cluster` setting networks / subnetworks by name works with `location`. [GH-634]
-* container: `google_container_cluster` removed an overly restrictive validation restricting `node_pool` and `remove_default_node_pool` being specified at the same time. [GH-637]
-* storage: `data_source_google_storage_bucket_object` now correctly URL encodes the slashes in a file name [GH-587]
+* bigquery: `google_bigquery_table` will work with a larger range of projects id formats. ([#658](https://github.com/terraform-providers/terraform-provider-google-beta/issues/658))
+* cloudfunctions: `google_cloudfunctions_fucntion` no longer restricts an outdated list of `region`s ([#659](https://github.com/terraform-providers/terraform-provider-google-beta/issues/659))
+* compute: `google_compute_instance` now retries updating metadata when fingerprints are mismatched. ([#583](https://github.com/terraform-providers/terraform-provider-google-beta/issues/583))
+* compute: `google_compute_instance` and `google_compute_instance_template` now support node affinities for scheduling on sole tenant nodes [[#663](https://github.com/terraform-providers/terraform-provider-google-beta/issues/663)](https://github.com/terraform-providers/terraform-provider-google-beta/pull/663)
+* compute: `google_compute_managed_ssl_certificate` will no longer diff when using an absolute FQDN. ([#591](https://github.com/terraform-providers/terraform-provider-google-beta/issues/591))
+* compute: `google_compute_disk` resources using `google-beta` will properly detach users at deletion instead of failing. ([#640](https://github.com/terraform-providers/terraform-provider-google-beta/issues/640))
+* compute: `google_compute_subnetwork.secondary_ip_ranges` doesn't cause a diff on out of band changes, allows updating to empty list of ranges. ([#3496](https://github.com/terraform-providers/terraform-provider-google-beta/issues/3496))
+* container: `google_container_cluster` setting networks / subnetworks by name works with `location`. ([#634](https://github.com/terraform-providers/terraform-provider-google-beta/issues/634))
+* container: `google_container_cluster` removed an overly restrictive validation restricting `node_pool` and `remove_default_node_pool` being specified at the same time. ([#637](https://github.com/terraform-providers/terraform-provider-google-beta/issues/637))
+* storage: `data_source_google_storage_bucket_object` now correctly URL encodes the slashes in a file name ([#587](https://github.com/terraform-providers/terraform-provider-google-beta/issues/587))
 
 ## 2.5.1 (April 22, 2019)
 
@@ -54,7 +54,7 @@ KNOWN ISSUES:
 BACKWARDS INCOMPATIBILITIES:
 * all: This is the first release to use the 0.12 SDK required for Terraform 0.12 support. Some provider behaviour may have changed as a result of changes made by the new SDK version.
 * compute: `google_compute_instance_group` will not reconcile instances recreated within the same `terraform apply` due to underlying `0.12` SDK changes in the provider. ([#616](https://github.com/terraform-providers/terraform-provider-google-beta/issues/616))
-* compute: `google_compute_subnetwork` will have a diff if `secondary_ip_range` values defined in config don't exactly match real state; if so, they will need to be reconciled. [GH-3432]
+* compute: `google_compute_subnetwork` will have a diff if `secondary_ip_range` values defined in config don't exactly match real state; if so, they will need to be reconciled. ([#3432](https://github.com/terraform-providers/terraform-provider-google-beta/issues/3432))
 * container: `google_container_cluster` will have a diff if `master_authorized_networks.cidr_blocks` defined in config doesn't exactly match the real state; if so, it will need to be reconciled. ([#603](https://github.com/terraform-providers/terraform-provider-google-beta/issues/603))
 
 
