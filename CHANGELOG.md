@@ -1,4 +1,8 @@
 ## 2.6.1 (Unreleased)
+
+FEATURES: 
+* **New Resources**: `google_compute_instance_iam_binding`, `google_compute_instance_iam_member`, and `google_compute_instance_iam_policy` are now available. ([#685](https://github.com/terraform-providers/terraform-provider-google-beta/pull/685))
+
 ## 2.6.0 (May 07, 2019)
 
 
