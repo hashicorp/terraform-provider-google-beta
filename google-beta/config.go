@@ -35,6 +35,7 @@ import (
 	file "google.golang.org/api/file/v1beta1"
 	"google.golang.org/api/iam/v1"
 	iamcredentials "google.golang.org/api/iamcredentials/v1"
+	iap "google.golang.org/api/iap/v1beta1"
 	cloudlogging "google.golang.org/api/logging/v2"
 	"google.golang.org/api/option"
 	"google.golang.org/api/pubsub/v1"
@@ -88,6 +89,7 @@ type Config struct {
 	clientStorage                *storage.Service
 	clientSqlAdmin               *sqladmin.Service
 	clientIAM                    *iam.Service
+	clientIAP                    *iap.Service
 	clientServiceMan             *servicemanagement.APIService
 	clientServiceUsage           *serviceusage.Service
 	clientBigQuery               *bigquery.Service
@@ -253,6 +255,13 @@ func (c *Config) LoadAndValidate() error {
 		return err
 	}
 	c.clientIamCredentials.UserAgent = userAgent
+
+	log.Printf("[INFO] Instantiating IAP Client...")
+	c.clientIAP, err = iap.NewService(context, option.WithHTTPClient(client))
+	if err != nil {
+		return err
+	}
+	c.clientIAP.UserAgent = userAgent
 
 	log.Printf("[INFO] Instantiating Google Cloud Service Management Client...")
 	c.clientServiceMan, err = servicemanagement.NewService(context, option.WithHTTPClient(client))
