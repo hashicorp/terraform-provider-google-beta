@@ -13,6 +13,7 @@ ENHANCEMENTS:
 BUG FIXES:
 * cloudfunctions: `google_cloudfunctions_function.runtime` now has an explicit default value of `nodejs6`. [GH-697]
 * monitoring: updating `google_monitoring_alert_policy` is more likely to succeed [GH-684]
+* kms: `google_kms_crypto_key` now (in addition to marking all crypto key versions for destruction) correctly disables auto-rotation for destroyed keys [GH-705]
 
 ## 2.6.0 (May 07, 2019)
 
