@@ -186,6 +186,7 @@ The following arguments are supported:
   (Optional)
   Enum field whose value is always `MANAGED` - used to signal to the API
   which type this is.
+
 * `project` - (Optional) The ID of the project in which the resource belongs.
     If it is not provided, the provider project is used.
 

@@ -126,6 +126,7 @@ The following arguments are supported:
 * `networks` -
   (Optional)
   List of network names specifying networks to which this policy is applied.  Structure is documented below.
+
 * `project` - (Optional) The ID of the project in which the resource belongs.
     If it is not provided, the provider project is used.
 

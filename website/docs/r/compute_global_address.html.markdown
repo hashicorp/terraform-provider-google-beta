@@ -107,6 +107,7 @@ The following arguments are supported:
   must be in RFC1918 space. The network cannot be deleted if there are
   any reserved IP ranges referring to it.
   This should only be set when using an Internal address.
+
 * `project` - (Optional) The ID of the project in which the resource belongs.
     If it is not provided, the provider project is used.
 

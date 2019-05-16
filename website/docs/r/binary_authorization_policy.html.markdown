@@ -127,6 +127,7 @@ The `default_admission_rule` block supports:
   Identifier format: `{{location}}.{{clusterId}}`.
   A location is either a compute zone (e.g. `us-central1-a`) or a region
   (e.g. `us-central1`).  Structure is documented below.
+
 * `project` - (Optional) The ID of the project in which the resource belongs.
     If it is not provided, the provider project is used.
 
