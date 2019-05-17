@@ -237,6 +237,7 @@ The following arguments are supported:
   (Optional, [Beta](https://terraform.io/docs/providers/google/provider_versions.html))
   The presence of this field indicates that DNS Peering is enabled for this
   zone. The value of this field contains the network to peer with.  Structure is documented below.
+
 * `project` - (Optional) The ID of the project in which the resource belongs.
     If it is not provided, the provider project is used.
 

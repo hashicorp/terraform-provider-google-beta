@@ -175,6 +175,7 @@ The following arguments are supported:
   (Optional, [Beta](https://terraform.io/docs/providers/google/provider_versions.html))
   Denotes the logging options for the subnetwork flow logs. If logging is enabled
   logs will be exported to Stackdriver.  Structure is documented below.
+
 * `project` - (Optional) The ID of the project in which the resource belongs.
     If it is not provided, the provider project is used.
 

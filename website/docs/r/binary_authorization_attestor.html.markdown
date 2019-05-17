@@ -145,6 +145,7 @@ The `public_keys` block supports:
   (Optional)
   A descriptive comment. This field may be updated. The field may be
   displayed in chooser dialogs.
+
 * `project` - (Optional) The ID of the project in which the resource belongs.
     If it is not provided, the provider project is used.
 
