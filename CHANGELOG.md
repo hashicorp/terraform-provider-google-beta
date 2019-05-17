@@ -12,6 +12,7 @@ FEATURES:
 * **New Resources**: `google_iap_tunnel_instance_iam_binding`, `google_iap_tunnel_instance_iam_member`, and `google_iap_tunnel_instance_iam_policy` are now available. [GH-687]
 
 ENHANCEMENTS:
+* provider: Add GCP zone to `google_client_config` datasource [GH-668]
 * compute: Add support for creating instances with CMEK [GH-698]
 * compute: Can now specify project when importing instance groups.
 * compute: `google_compute_instance` now supports `shielded_instance_config` for verifiable integrity of your VM instances. [GH-711]
