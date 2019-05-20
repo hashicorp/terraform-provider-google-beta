@@ -18,6 +18,7 @@ ENHANCEMENTS:
 * compute: `google_compute_instance` now supports `shielded_instance_config` for verifiable integrity of your VM instances. [GH-711]
 * compute: `google_compute_backend_service` now supports `HTTP2` protocol (beta API feature) [#708](https://github.com/terraform-providers/terraform-provider-google-beta/pull/708)
 * compute: `google_compute_instance_template` now supports `shielded_instance_config` for verifiable integrity of your VM instances. [GH-711]
+* container: use the cluster subnet to look up the node cidr block [GH-722]
 
 BUG FIXES:
 * cloudfunctions: `google_cloudfunctions_function.runtime` now has an explicit default value of `nodejs6`. [GH-697]
