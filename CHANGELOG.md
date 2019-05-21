@@ -1,3 +1,8 @@
+## 2.7.1 (Unreleased)
+
+BUG FIXES:
+* container: allow AUTH_NONE in istio addon_config [GH-664]
+
 ## 2.7.0 (Unreleased)
 
 NOTE:
