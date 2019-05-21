@@ -3,33 +3,33 @@
 BUG FIXES:
 * container: allow AUTH_NONE in istio addon_config [GH-664]
 
-## 2.7.0 (Unreleased)
+## 2.7.0 (May 21, 2019)
 
 NOTE:
 * Several resources were previously undocumented on the site or changelog; they should be added to both with this release. `google_compute_backend_bucket_signed_url_key` and `google_compute_backend_service_signed_url_key` were introduced in `2.4.0`.
 
 BACKWARDS INCOMPATIBILITIES:
-* cloudfunctions: `google_cloudfunctions_function.runtime` now has an explicit default value of `nodejs6`. Users who have a different value set in the API but the value undefined in their config will see a diff. [GH-697]
+* cloudfunctions: `google_cloudfunctions_function.runtime` now has an explicit default value of `nodejs6`. Users who have a different value set in the API but the value undefined in their config will see a diff. ([#697](https://github.com/terraform-providers/terraform-provider-google-beta/issues/697))
 
 FEATURES: 
 * **New Resources**: `google_compute_instance_iam_binding`, `google_compute_instance_iam_member`, and `google_compute_instance_iam_policy` are now available. ([#685](https://github.com/terraform-providers/terraform-provider-google-beta/pull/685))
 * **New Resources**: IAM resources for Dataproc jobs and clusters (`google_dataproc_job_iam_policy`, `google_dataproc_job_iam_member`, `google_dataproc_job_iam_binding`, `google_dataproc_cluster_iam_policy`, `google_dataproc_cluster_iam_member`, `google_dataproc_cluster_iam_binding`) are now available. [#709](https://github.com/terraform-providers/terraform-provider-google-beta/pull/709)
-* **New Resources**: `google_iap_tunnel_instance_iam_binding`, `google_iap_tunnel_instance_iam_member`, and `google_iap_tunnel_instance_iam_policy` are now available. [GH-687]
+* **New Resources**: `google_iap_tunnel_instance_iam_binding`, `google_iap_tunnel_instance_iam_member`, and `google_iap_tunnel_instance_iam_policy` are now available. ([#687](https://github.com/terraform-providers/terraform-provider-google-beta/issues/687))
 
 ENHANCEMENTS:
-* provider: Add GCP zone to `google_client_config` datasource [GH-668]
-* compute: Add support for creating instances with CMEK [GH-698]
+* provider: Add GCP zone to `google_client_config` datasource ([#668](https://github.com/terraform-providers/terraform-provider-google-beta/issues/668))
+* compute: Add support for creating instances with CMEK ([#698](https://github.com/terraform-providers/terraform-provider-google-beta/issues/698))
 * compute: Can now specify project when importing instance groups.
-* compute: `google_compute_instance` now supports `shielded_instance_config` for verifiable integrity of your VM instances. [GH-711]
+* compute: `google_compute_instance` now supports `shielded_instance_config` for verifiable integrity of your VM instances. ([#711](https://github.com/terraform-providers/terraform-provider-google-beta/issues/711))
 * compute: `google_compute_backend_service` now supports `HTTP2` protocol (beta API feature) [#708](https://github.com/terraform-providers/terraform-provider-google-beta/pull/708)
-* compute: `google_compute_instance_template` now supports `shielded_instance_config` for verifiable integrity of your VM instances. [GH-711]
-* container: use the cluster subnet to look up the node cidr block [GH-722]
+* compute: `google_compute_instance_template` now supports `shielded_instance_config` for verifiable integrity of your VM instances. ([#711](https://github.com/terraform-providers/terraform-provider-google-beta/issues/711))
+* container: use the cluster subnet to look up the node cidr block ([#722](https://github.com/terraform-providers/terraform-provider-google-beta/issues/722))
 
 BUG FIXES:
-* cloudfunctions: `google_cloudfunctions_function.runtime` now has an explicit default value of `nodejs6`. [GH-697]
-* monitoring: updating `google_monitoring_alert_policy` is more likely to succeed [GH-684]
-* kms: `google_kms_crypto_key` now (in addition to marking all crypto key versions for destruction) correctly disables auto-rotation for destroyed keys [GH-705]
-* iam: Increase IAM custom role length validation to match API. [GH-728]
+* cloudfunctions: `google_cloudfunctions_function.runtime` now has an explicit default value of `nodejs6`. ([#697](https://github.com/terraform-providers/terraform-provider-google-beta/issues/697))
+* monitoring: updating `google_monitoring_alert_policy` is more likely to succeed ([#684](https://github.com/terraform-providers/terraform-provider-google-beta/issues/684))
+* kms: `google_kms_crypto_key` now (in addition to marking all crypto key versions for destruction) correctly disables auto-rotation for destroyed keys ([#705](https://github.com/terraform-providers/terraform-provider-google-beta/issues/705))
+* iam: Increase IAM custom role length validation to match API. ([#728](https://github.com/terraform-providers/terraform-provider-google-beta/issues/728))
 
 ## 2.6.0 (May 07, 2019)
 
