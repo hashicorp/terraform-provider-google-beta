@@ -172,6 +172,10 @@ all specified zones as well as the primary zone. If specified for a regional
 cluster, nodes will only be created in these zones. `additional_zones` has been
 deprecated in favour of `node_locations`.
 
+* `authenticator_group_config` - (Optional, [Beta](https://terraform.io/docs/providers/google/provider_version.html)) The configuration for Authenticator Group supported by GKE.
+    See [guide in Google docs](https://cloud.google.com/kubernetes-engine/docs/how-to/role-based-access-control#google-groups-for-gke).
+    Structure is documented below.
+
 * `addons_config` - (Optional) The configuration for addons supported by GKE.
     Structure is documented below.
 
@@ -304,6 +308,24 @@ to the datasource. A `region` can have a different set of supported versions tha
 
 * `subnetwork` - (Optional) The name or self_link of the Google Compute Engine subnetwork in
     which the cluster's instances are launched.
+
+The `authenticator_group_config` block supports:
+
+* `enabled` - Enable or disable the authenticator group.
+    It is disabled by default;
+    set `enabled = true` to enable.
+
+* `security_group` - (Required when enabled) The IAM security group to use. The group name
+    needs to be `gke-security-groups@[your-domain]`.
+
+This example `authenticator_group_config` enables GKE security groups:
+
+```
+authenticator_group_config {
+  enabled        = true
+  security_group = "gke-security-groups@google.com"
+}
+```
 
 The `addons_config` block supports:
 

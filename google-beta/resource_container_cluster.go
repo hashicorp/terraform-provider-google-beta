@@ -135,6 +135,26 @@ func resourceContainerCluster() *schema.Resource {
 				Elem:       &schema.Schema{Type: schema.TypeString},
 			},
 
+			"authenticator_group_config": {
+				Type:     schema.TypeList,
+				Optional: true,
+				ForceNew: true,
+				MaxItems: 1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"enabled": {
+							Type:     schema.TypeBool,
+							Default:  false,
+							Optional: true,
+						},
+						"security_group": {
+							Type:     schema.TypeString,
+							Required: true,
+						},
+					},
+				},
+			},
+
 			"addons_config": {
 				Type:     schema.TypeList,
 				Optional: true,
@@ -722,14 +742,15 @@ func resourceContainerClusterCreate(d *schema.ResourceData, meta interface{}) er
 			Enabled:         d.Get("enable_legacy_abac").(bool),
 			ForceSendFields: []string{"Enabled"},
 		},
-		LoggingService:          d.Get("logging_service").(string),
-		MonitoringService:       d.Get("monitoring_service").(string),
-		NetworkPolicy:           expandNetworkPolicy(d.Get("network_policy")),
-		AddonsConfig:            expandClusterAddonsConfig(d.Get("addons_config")),
-		EnableKubernetesAlpha:   d.Get("enable_kubernetes_alpha").(bool),
-		IpAllocationPolicy:      expandIPAllocationPolicy(d.Get("ip_allocation_policy")),
-		PodSecurityPolicyConfig: expandPodSecurityPolicyConfig(d.Get("pod_security_policy_config")),
-		EnableTpu:               d.Get("enable_tpu").(bool),
+		LoggingService:            d.Get("logging_service").(string),
+		MonitoringService:         d.Get("monitoring_service").(string),
+		NetworkPolicy:             expandNetworkPolicy(d.Get("network_policy")),
+		AddonsConfig:              expandClusterAddonsConfig(d.Get("addons_config")),
+		AuthenticatorGroupsConfig: expandClusterAuthenticatorGroupsConfig(d.Get("authenticator_group_config")),
+		EnableKubernetesAlpha:     d.Get("enable_kubernetes_alpha").(bool),
+		IpAllocationPolicy:        expandIPAllocationPolicy(d.Get("ip_allocation_policy")),
+		PodSecurityPolicyConfig:   expandPodSecurityPolicyConfig(d.Get("pod_security_policy_config")),
+		EnableTpu:                 d.Get("enable_tpu").(bool),
 		BinaryAuthorization: &containerBeta.BinaryAuthorization{
 			Enabled:         d.Get("enable_binary_authorization").(bool),
 			ForceSendFields: []string{"Enabled"},
@@ -965,6 +986,9 @@ func resourceContainerClusterRead(d *schema.ResourceData, meta interface{}) erro
 		return err
 	}
 	d.Set("project", project)
+	if err := d.Set("authenticator_group_config", flattenClusterAuthenticatorGroupsConfig(cluster.AuthenticatorGroupsConfig)); err != nil {
+		return err
+	}
 	if err := d.Set("addons_config", flattenClusterAddonsConfig(cluster.AddonsConfig)); err != nil {
 		return err
 	}
@@ -1734,6 +1758,23 @@ func expandClusterAddonsConfig(configured interface{}) *containerBeta.AddonsConf
 	return ac
 }
 
+func expandClusterAuthenticatorGroupsConfig(configured interface{}) *containerBeta.AuthenticatorGroupsConfig {
+	l := configured.([]interface{})
+	if len(l) == 0 {
+		return nil
+	}
+
+	ag := &containerBeta.AuthenticatorGroupsConfig{}
+	config := l[0].(map[string]interface{})
+	if enabled, ok := config["enabled"]; ok && enabled.(bool) {
+		ag.Enabled = true
+		if securityGroup, ok := config["security_group"]; ok {
+			ag.SecurityGroup = securityGroup.(string)
+		}
+	}
+	return ag
+}
+
 func expandIPAllocationPolicy(configured interface{}) *containerBeta.IPAllocationPolicy {
 	l := configured.([]interface{})
 	if len(l) == 0 || l[0] == nil {
@@ -1958,6 +1999,17 @@ func flattenNetworkPolicy(c *containerBeta.NetworkPolicy) []map[string]interface
 		result = append(result, map[string]interface{}{
 			"enabled":  false,
 			"provider": "PROVIDER_UNSPECIFIED",
+		})
+	}
+	return result
+}
+
+func flattenClusterAuthenticatorGroupsConfig(c *containerBeta.AuthenticatorGroupsConfig) []map[string]interface{} {
+	result := []map[string]interface{}{}
+	if c != nil {
+		result = append(result, map[string]interface{}{
+			"enabled":        c.Enabled,
+			"security_group": c.SecurityGroup,
 		})
 	}
 	return result
