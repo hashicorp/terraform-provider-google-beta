@@ -2,6 +2,7 @@
 
 BUG FIXES:
 * container: allow AUTH_NONE in istio addon_config [GH-664]
+* storage: Fix occasional crash when updating storage buckets [GH-706]
 
 ## 2.7.0 (May 21, 2019)
 
