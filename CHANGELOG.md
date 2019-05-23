@@ -1,7 +1,15 @@
-## 2.7.1 (Unreleased)
+## 2.8.0 (Unreleased)
+
+FEATURES:
+* **New Resource**: `google_compute_ha_vpn_gateway` is now available. This is an alternative to `google_compute_vpn_gateway` that can be set up to provide higher availability. [GH-704]
+* **New Datasource**: `google_compute_ssl_certificate` [GH-742]
+
+ENHANCEMENTS:
+* compute: `google_compute_vpn_tunnel` supports `vpn_gateway`, `vpn_gateway_interface`, `peer_gcp_gateway`, `peer_external_gateway`, `vpn_gateway_interface` fields to support `google_compute_ha_vpn_gateway`
 
 BUG FIXES:
 * container: allow AUTH_NONE in istio addon_config [GH-664]
+* storage: Fix occasional crash when updating storage buckets [GH-706]
 
 ## 2.7.0 (May 21, 2019)
 
