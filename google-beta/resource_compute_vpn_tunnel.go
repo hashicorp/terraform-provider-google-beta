@@ -320,7 +320,7 @@ func resourceComputeVpnTunnelCreate(d *schema.ResourceData, meta interface{}) er
 	peerExternalGatewayInterfaceProp, err := expandComputeVpnTunnelPeerExternalGatewayInterface(d.Get("peer_external_gateway_interface"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("peer_external_gateway_interface"); !isEmptyValue(reflect.ValueOf(peerExternalGatewayInterfaceProp)) && (ok || !reflect.DeepEqual(v, peerExternalGatewayInterfaceProp)) {
+	} else if v, ok := d.GetOkExists("peer_external_gateway_interface"); ok || !reflect.DeepEqual(v, peerExternalGatewayInterfaceProp) {
 		obj["peerExternalGatewayInterface"] = peerExternalGatewayInterfaceProp
 	}
 	peerGcpGatewayProp, err := expandComputeVpnTunnelPeerGcpGateway(d.Get("peer_gcp_gateway"), d, config)
