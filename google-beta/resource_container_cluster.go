@@ -644,20 +644,6 @@ func resourceContainerCluster() *schema.Resource {
 				},
 			},
 
-			"vertical_pod_autoscaling": {
-				Type:     schema.TypeList,
-				MaxItems: 1,
-				Optional: true,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"enabled": {
-							Type:     schema.TypeBool,
-							Optional: true,
-						},
-					},
-				},
-			},
-
 			"resource_labels": {
 				Type:     schema.TypeMap,
 				Optional: true,
@@ -853,10 +839,6 @@ func resourceContainerClusterCreate(d *schema.ResourceData, meta interface{}) er
 		cluster.PrivateClusterConfig = expandPrivateClusterConfig(v)
 	}
 
-	if v, ok := d.GetOk("vertical_pod_autoscaling"); ok {
-		cluster.VerticalPodAutoscaling = expandVerticalPodAutoscaling(v)
-	}
-
 	if v, ok := d.GetOk("database_encryption"); ok {
 		cluster.DatabaseEncryption = expandDatabaseEncryption(v)
 	}
@@ -1018,10 +1000,6 @@ func resourceContainerClusterRead(d *schema.ResourceData, meta interface{}) erro
 	}
 
 	if err := d.Set("private_cluster_config", flattenPrivateClusterConfig(cluster.PrivateClusterConfig)); err != nil {
-		return err
-	}
-
-	if err := d.Set("vertical_pod_autoscaling", flattenVerticalPodAutoscaling(cluster.VerticalPodAutoscaling)); err != nil {
 		return err
 	}
 
@@ -1973,17 +1951,6 @@ func expandPrivateClusterConfig(configured interface{}) *containerBeta.PrivateCl
 		EnablePrivateNodes:    config["enable_private_nodes"].(bool),
 		MasterIpv4CidrBlock:   config["master_ipv4_cidr_block"].(string),
 		ForceSendFields:       []string{"EnablePrivateEndpoint", "EnablePrivateNodes", "MasterIpv4CidrBlock"},
-	}
-}
-
-func expandVerticalPodAutoscaling(configured interface{}) *containerBeta.VerticalPodAutoscaling {
-	l := configured.([]interface{})
-	if len(l) == 0 {
-		return nil
-	}
-	config := l[0].(map[string]interface{})
-	return &containerBeta.VerticalPodAutoscaling{
-		Enabled: config["enabled"].(bool),
 	}
 }
 
