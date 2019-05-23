@@ -1,4 +1,4 @@
-## 2.7.1 (Unreleased)
+## 2.8.0 (Unreleased)
 
 FEATURES:
 * **New Resource**: `google_compute_ha_vpn_gateway` is now available. This is an alternative to `google_compute_vpn_gateway` that can be set up to provide higher availability. [GH-704]
