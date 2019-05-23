@@ -6,6 +6,7 @@ FEATURES:
 
 ENHANCEMENTS:
 * compute: `google_compute_vpn_tunnel` supports `vpn_gateway`, `vpn_gateway_interface`, `peer_gcp_gateway`, `peer_external_gateway`, `vpn_gateway_interface` fields to support `google_compute_ha_vpn_gateway`
+* compute: `google_container_cluster` add support for vertical pod autoscaling [GH-749]
 
 BUG FIXES:
 * container: allow AUTH_NONE in istio addon_config [GH-664]
