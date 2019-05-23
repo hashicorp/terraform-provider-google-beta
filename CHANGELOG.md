@@ -2,6 +2,7 @@
 
 FEATURES:
 * **New Resource**: `google_compute_ha_vpn_gateway` is now available. This is an alternative to `google_compute_vpn_gateway` that can be set up to provide higher availability. [GH-704]
+* **New Datasource**: `google_compute_ssl_certificate` [GH-742]
 
 ENHANCEMENTS:
 * compute: `google_compute_vpn_tunnel` supports `vpn_gateway`, `vpn_gateway_interface`, `peer_gcp_gateway`, `peer_external_gateway`, `vpn_gateway_interface` fields to support `google_compute_ha_vpn_gateway`
