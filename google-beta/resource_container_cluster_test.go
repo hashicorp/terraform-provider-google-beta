@@ -3091,34 +3091,6 @@ resource "google_container_cluster" "shared_vpc_cluster" {
 }`, projectName, org, billingId, projectName, org, billingId, acctest.RandString(10), acctest.RandString(10), name)
 }
 
-func testAccContainerCluster_withVerticalPodAutoscalingEnabled(clusterName string) string {
-	return fmt.Sprintf(`
-resource "google_container_cluster" "with_vertical_pod_autoscaling" {
-  name = "%s"
-  zone = "us-central1-a"
-  initial_node_count = 1
-
-  vertical_pod_autoscaling {
-    enabled = true
-  }
-}
-`, clusterName)
-}
-
-func testAccContainerCluster_withVerticalPodAutoscalingDisabled(clusterName string) string {
-	return fmt.Sprintf(`
-resource "google_container_cluster" "with_vertical_pod_autoscaling" {
-  name = "%s"
-  zone = "us-central1-a"
-  initial_node_count = 1
-
-  vertical_pod_autoscaling {
-    enabled = false
-  }
-}
-`, clusterName)
-}
-
 func testAccContainerCluster_withoutResourceLabels(clusterName string) string {
 	return fmt.Sprintf(`
 resource "google_container_cluster" "with_resource_labels" {
