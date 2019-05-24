@@ -7,6 +7,12 @@ FEATURES:
 ENHANCEMENTS:
 * compute: `google_compute_vpn_tunnel` supports `vpn_gateway`, `vpn_gateway_interface`, `peer_gcp_gateway`, `peer_external_gateway`, `vpn_gateway_interface` fields to support `google_compute_ha_vpn_gateway`
 * compute: `google_container_cluster` add support for vertical pod autoscaling [GH-749]
+* compute: `google_compute_router_interface` now supports specifying an `interconnect_attachment`. ([#2116](https://github.com/terraform-providers/terraform-provider-google/issues/2116))
+* compute: `google_compute_router_nat` now supports specifying a `log_config` block ([#3548](https://github.com/terraform-providers/terraform-provider-google/issues/3548))
+* compute: `google_compute_network_peering` now supports importing/exporting custom routes ([#3394](https://github.com/terraform-providers/terraform-provider-google/issues/3394))
+
+DEPRECATIONS:
+* compute: The `auto_create_routes` field on `google_compute_network_peering` has been deprecated because it is not user configurable. ([#3394](https://github.com/terraform-providers/terraform-provider-google/issues/3394))
 
 BUG FIXES:
 * container: allow AUTH_NONE in istio addon_config [GH-664]
