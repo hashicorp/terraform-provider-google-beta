@@ -1,5 +1,8 @@
 ## 2.8.0 (Unreleased)
 
+DEPRECATIONS:
+* compute: The `auto_create_routes` field on `google_compute_network_peering` has been deprecated because it is not user configurable. ([#3394](https://github.com/terraform-providers/terraform-provider-google/issues/3394))
+
 FEATURES:
 * **New Resource**: `google_compute_ha_vpn_gateway` is now available. This is an alternative to `google_compute_vpn_gateway` that can be set up to provide higher availability. [GH-704]
 * **New Datasource**: `google_compute_ssl_certificate` [GH-742]
@@ -11,12 +14,10 @@ ENHANCEMENTS:
 * compute: `google_compute_router_nat` now supports specifying a `log_config` block ([#3548](https://github.com/terraform-providers/terraform-provider-google/issues/3548))
 * compute: `google_compute_network_peering` now supports importing/exporting custom routes ([#3394](https://github.com/terraform-providers/terraform-provider-google/issues/3394))
 
-DEPRECATIONS:
-* compute: The `auto_create_routes` field on `google_compute_network_peering` has been deprecated because it is not user configurable. ([#3394](https://github.com/terraform-providers/terraform-provider-google/issues/3394))
-
 BUG FIXES:
 * compute: allow setting firewall priority to 0 [GH-755]
 * container: allow AUTH_NONE in istio addon_config [GH-664]
+* container: allow going from no ip_allocation_policy to a blank-equivalent one [GH-774]
 * storage: Fix occasional crash when updating storage buckets [GH-706]
 
 ## 2.7.0 (May 21, 2019)
