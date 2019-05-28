@@ -15,6 +15,7 @@ DEPRECATIONS:
 * compute: The `auto_create_routes` field on `google_compute_network_peering` has been deprecated because it is not user configurable. ([#3394](https://github.com/terraform-providers/terraform-provider-google/issues/3394))
 
 BUG FIXES:
+* compute: allow setting firewall priority to 0 [GH-755]
 * container: allow AUTH_NONE in istio addon_config [GH-664]
 * storage: Fix occasional crash when updating storage buckets [GH-706]
 
