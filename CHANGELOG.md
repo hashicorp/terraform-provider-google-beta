@@ -14,6 +14,7 @@ ENHANCEMENTS:
 * compute: `google_compute_router_nat` now supports specifying a `log_config` block ([#3548](https://github.com/terraform-providers/terraform-provider-google/issues/3548))
 * compute: `google_compute_network_peering` now supports importing/exporting custom routes ([#3394](https://github.com/terraform-providers/terraform-provider-google/issues/3394))
 * composer: Make cloud composer environment image version updateable [GH-741]
+* pubsub: `google_pubsub_subscription` supports setting an `expiration_policy` with no `ttl`. [GH-783]
 
 BUG FIXES:
 * binauth: `google_binary_authorization_policy` can be used with attestors in another project. [GH-https://github.com/terraform-providers/terraform-provider-google-beta/pull/778]
