@@ -137,13 +137,20 @@ func resourceBinaryAuthorizationPolicy() *schema.Resource {
 					// overall hash here respects that so changing the attestor format doesn't
 					// change the hash code of cluster_admission_rules.
 					raw := v.(map[string]interface{})
-					at := raw["require_attestations_by"].(*schema.Set)
+
+					// modifying raw actually modifies the values passed to the provider.
+					// Use a copy to avoid that.
+					copy := make((map[string]interface{}))
+					for key, value := range raw {
+						copy[key] = value
+					}
+					at := copy["require_attestations_by"].(*schema.Set)
 					if at != nil {
 						t := convertAndMapStringArr(at.List(), GetResourceNameFromSelfLink)
-						raw["require_attestations_by"] = schema.NewSet(selfLinkNameHash, convertStringArrToInterface(t))
+						copy["require_attestations_by"] = schema.NewSet(selfLinkNameHash, convertStringArrToInterface(t))
 					}
 					var buf bytes.Buffer
-					schema.SerializeResourceForHash(&buf, raw, resourceBinaryAuthorizationPolicy().Schema["cluster_admission_rules"].Elem.(*schema.Resource))
+					schema.SerializeResourceForHash(&buf, copy, resourceBinaryAuthorizationPolicy().Schema["cluster_admission_rules"].Elem.(*schema.Resource))
 					return hashcode.String(buf.String())
 				},
 			},
