@@ -16,6 +16,7 @@ ENHANCEMENTS:
 * composer: Make cloud composer environment image version updateable [GH-741]
 
 BUG FIXES:
+* binauth: `google_binary_authorization_policy` can be used with attestors in another project. [GH-https://github.com/terraform-providers/terraform-provider-google-beta/pull/778]
 * compute: allow setting firewall priority to 0 [GH-755]
 * compute: Resolved an issue where `google_compute_region_backend_service` was unable to perform a state migration. [GH-775]
 * compute: allow empty metadata.startup-script on instances [GH-776]
