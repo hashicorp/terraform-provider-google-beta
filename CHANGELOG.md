@@ -24,6 +24,8 @@ BUG FIXES:
 * compute: allow empty metadata.startup-script on instances [GH-776]
 * container: allow AUTH_NONE in istio addon_config [GH-664]
 * container: allow going from no ip_allocation_policy to a blank-equivalent one [GH-774]
+* container: `google_container_cluster` will no longer diff unnecessarily on `issue_client_certificate`. [GH-788]
+* container: `google_container_cluster` can enable client certificates on GKE `1.12+` series releases. [GH-788]
 * storage: Fix occasional crash when updating storage 
 buckets [GH-706]
 
