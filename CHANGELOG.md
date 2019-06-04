@@ -4,6 +4,7 @@ FEATURES:
 
 ENHANCEMENTS:
 * container: `google_container_cluster` supports `authenticator_groups_config` to allow Google Groups-based authentication. [GH-669]
+* storage: `google_storage_bucket` now supports enabling `bucket_policy_only` access control. ([#1878](https://github.com/GoogleCloudPlatform/magic-modules/pull/1878))
 
 BUG FIXES:
 * compute: `google_project_iam` When importing resources `project` no longer needs to be set in the config post import [GH-805]
