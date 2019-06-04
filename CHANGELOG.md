@@ -3,12 +3,10 @@
 FEATURES:
 
 ENHANCEMENTS:
-
-BUGS:
-* compute: `google_project_iam` When importing resources `project` no longer needs to be set in the config post import [GH-805]
-
-ENHANCEMENTS:
 * container: `google_container_cluster` supports `authenticator_groups_config` to allow Google Groups-based authentication. [GH-669]
+
+BUG FIXES:
+* compute: `google_project_iam` When importing resources `project` no longer needs to be set in the config post import [GH-805]
 
 ## 2.8.0 (June 04, 2019)
 
