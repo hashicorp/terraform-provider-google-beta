@@ -2431,6 +2431,7 @@ resource "google_container_cluster" "with_node_config" {
 		service_account = "default"
 		metadata = {
 			foo = "bar"
+			disable-legacy-endpoints = "true"
 		}
 		labels = {
 			foo = "bar"
@@ -2466,6 +2467,7 @@ resource "google_container_cluster" "with_node_config" {
 		service_account = "default"
 		metadata = {
 			foo = "bar"
+			disable-legacy-endpoints = "true"
 		}
 		labels = {
 			foo = "bar"
@@ -2895,6 +2897,7 @@ resource "google_container_cluster" "with_node_pool_node_config" {
 			service_account = "default"
 			metadata = {
 				foo = "bar"
+				disable-legacy-endpoints = "true"
 			}
 			image_type = "COS"
 			labels = {
