@@ -1,4 +1,4 @@
-## 2.8.0 (Unreleased)
+## 2.8.0 (June 04, 2019)
 
 DEPRECATIONS:
 * compute: The `auto_create_routes` field on `google_compute_network_peering` has been deprecated because it is not user configurable. ([#3394](https://github.com/terraform-providers/terraform-provider-google/issues/3394))
@@ -11,12 +11,12 @@ FEATURES:
 ENHANCEMENTS:
 * app_engine: Remove restrictive `app_engine_application` location validation. ([#760](https://github.com/terraform-providers/terraform-provider-google-beta/pull/760))
 * compute: `google_compute_vpn_tunnel` supports HA fields `vpn_gateway`, `vpn_gateway_interface`, `peer_gcp_gateway`, `peer_external_gateway`, `vpn_gateway_interface` ([#704](https://github.com/terraform-providers/terraform-provider-google-beta/pull/704))
-* compute: `google_container_cluster` add support for vertical pod autoscaling [GH-749]
+* compute: `google_container_cluster` add support for vertical pod autoscaling ([#749](https://github.com/terraform-providers/terraform-provider-google-beta/issues/749))
 * compute: `google_compute_router_interface` now supports specifying an `interconnect_attachment`. ([#769](https://github.com/terraform-providers/terraform-provider-google-beta/pull/769))
 * compute: `google_compute_router_nat` now supports specifying a `log_config` block. ([#743](https://github.com/terraform-providers/terraform-provider-google-beta/pull/743))
 * compute: `google_compute_router_nat` now supports more import formats. ([#785](https://github.com/terraform-providers/terraform-provider-google-beta/pull/785))
 * compute: `google_compute_network_peering` now supports importing/exporting custom routes ([#754](https://github.com/terraform-providers/terraform-provider-google-beta/pull/754))
-* compute: `google_compute_backend_service` now supports self-managed internal load balancing [GH-772]
+* compute: `google_compute_backend_service` now supports self-managed internal load balancing ([#772](https://github.com/terraform-providers/terraform-provider-google-beta/issues/772))
 * compute: `google_compute_region_backend_service` now supports failover policies  ([#789](https://github.com/terraform-providers/terraform-provider-google-beta/pull/789))
 * compute: Add support for INTERNAL_SELF_MANAGED backend service. Changed Resources: `google_compute_backend_service`, `google_compute_global_forwarding_rule`. ([#772](https://github.com/terraform-providers/terraform-provider-google-beta/pull/772))
 * composer: Make cloud composer environment image version updateable ([#741](https://github.com/terraform-providers/terraform-provider-google-beta/pull/741))
@@ -155,8 +155,8 @@ BACKWARDS INCOMPATIBILITIES:
 * accesscontextmanager: `google_access_context_manager_service_perimeter` `unrestricted_services` field was removed based on a removal in the underlying API. ([#576](https://github.com/terraform-providers/terraform-provider-google-beta/issues/576))
 
 FEATURES:
-* **New Resource**: `google_compute_backend_bucket_signed_url_key` is now available. [GH-530]
-* **New Resource**: `google_compute_backend_service_signed_url_key` is now available. [GH-577]
+* **New Resource**: `google_compute_backend_bucket_signed_url_key` is now available. ([#530](https://github.com/terraform-providers/terraform-provider-google-beta/issues/530))
+* **New Resource**: `google_compute_backend_service_signed_url_key` is now available. ([#577](https://github.com/terraform-providers/terraform-provider-google-beta/issues/577))
 * **New Datasource**: `google_service_account_access_token` is now available. ([#575](https://github.com/terraform-providers/terraform-provider-google-beta/issues/575))
 
 ENHANCEMENTS:
