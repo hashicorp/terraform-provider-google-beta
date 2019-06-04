@@ -1,4 +1,8 @@
-## 2.8.1 (Unreleased)
+## 2.9.0 (Unreleased)
+
+ENHANCEMENTS:
+* container: `google_container_cluster` supports `authenticator_groups_config` to allow Google Groups-based authentication. [GH-669]
+
 ## 2.8.0 (June 04, 2019)
 
 DEPRECATIONS:
