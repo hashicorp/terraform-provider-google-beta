@@ -7,6 +7,7 @@ ENHANCEMENTS:
 
 BUG FIXES:
 * compute: `google_project_iam` When importing resources `project` no longer needs to be set in the config post import [GH-805]
+* compute: `google_sql_user` User's can now be updated to change their password [GH-810]
 
 ## 2.8.0 (June 04, 2019)
 
