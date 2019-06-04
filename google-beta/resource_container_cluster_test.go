@@ -693,6 +693,44 @@ func TestAccContainerCluster_withLegacyAbac(t *testing.T) {
 	})
 }
 
+func TestAccContainerCluster_withIntraNodeVisibility(t *testing.T) {
+	t.Parallel()
+
+	clusterName := fmt.Sprintf("cluster-test-%s", acctest.RandString(10))
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckContainerClusterDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccContainerCluster_withIntraNodeVisibility(clusterName),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("google_container_cluster.with_intranode_visibility", "enable_intranode_visibility", "true"),
+				),
+			},
+			{
+				ResourceName:        "google_container_cluster.with_intranode_visibility",
+				ImportStateIdPrefix: "us-central1-a/",
+				ImportState:         true,
+				ImportStateVerify:   true,
+			},
+			{
+				Config: testAccContainerCluster_updateIntraNodeVisibility(clusterName),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("google_container_cluster.with_intranode_visibility", "enable_intranode_visibility", "false"),
+				),
+			},
+			{
+				ResourceName:        "google_container_cluster.with_intranode_visibility",
+				ImportStateIdPrefix: "us-central1-a/",
+				ImportState:         true,
+				ImportStateVerify:   true,
+			},
+		},
+	})
+}
+
 /*
 	Since GKE disables legacy ABAC by default in Kubernetes version 1.8+, and the default Kubernetes
 	version for GKE is also 1.8+, this test will ensure that legacy ABAC is disabled by default to be
@@ -714,6 +752,34 @@ func TestAccContainerCluster_withDefaultLegacyAbac(t *testing.T) {
 			},
 			{
 				ResourceName:        "google_container_cluster.default_legacy_abac",
+				ImportStateIdPrefix: "us-central1-a/",
+				ImportState:         true,
+				ImportStateVerify:   true,
+			},
+		},
+	})
+}
+
+/*
+	Since GKE disables Intra Node Visibility by default, this test will ensure that Intra Node Visibility is disabled by default to be
+	more consistent with default settings in the Cloud Console
+*/
+func TestAccContainerCluster_withDefaultIntraNodeVisibility(t *testing.T) {
+	t.Parallel()
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckContainerClusterDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccContainerCluster_defaultIntraNodeVisibility(acctest.RandString(10)),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("google_container_cluster.default_intranode_visibility", "enable_intranode_visibility", "false"),
+				),
+			},
+			{
+				ResourceName:        "google_container_cluster.default_intranode_visibility",
 				ImportStateIdPrefix: "us-central1-a/",
 				ImportState:         true,
 				ImportStateVerify:   true,
@@ -2364,6 +2430,37 @@ resource "google_container_cluster" "with_legacy_abac" {
 	initial_node_count = 1
 
 	enable_legacy_abac = false
+}`, clusterName)
+}
+
+func testAccContainerCluster_defaultIntraNodeVisibility(clusterName string) string {
+	return fmt.Sprintf(`
+resource "google_container_cluster" "default_intranode_visibility" {
+	name = "cluster-test-%s"
+	zone = "us-central1-a"
+	initial_node_count = 1
+}`, clusterName)
+}
+
+func testAccContainerCluster_withIntraNodeVisibility(clusterName string) string {
+	return fmt.Sprintf(`
+resource "google_container_cluster" "with_intranode_visibility" {
+	name = "cluster-test-%s"
+	zone = "us-central1-a"
+	initial_node_count = 1
+
+	enable_intranode_visibility = true
+}`, clusterName)
+}
+
+func testAccContainerCluster_updateIntraNodeVisibility(clusterName string) string {
+	return fmt.Sprintf(`
+resource "google_container_cluster" "with_intranode_visibility" {
+	name = "cluster-test-%s"
+	zone = "us-central1-a"
+	initial_node_count = 1
+
+	enable_intranode_visibility = false
 }`, clusterName)
 }
 
