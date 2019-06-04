@@ -4,6 +4,7 @@ FEATURES:
 
 ENHANCEMENTS:
 * container: `google_container_cluster` supports `authenticator_groups_config` to allow Google Groups-based authentication. [GH-669]
+* container: `google_container_cluster` supports `enable_intranode_visibility`. [GH-801]
 * storage: `google_storage_bucket` now supports enabling `bucket_policy_only` access control. ([#1878](https://github.com/GoogleCloudPlatform/magic-modules/pull/1878))
 
 BUG FIXES:
