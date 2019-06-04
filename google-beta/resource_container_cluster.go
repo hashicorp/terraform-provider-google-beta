@@ -813,13 +813,12 @@ func resourceContainerClusterCreate(d *schema.ResourceData, meta interface{}) er
 			Enabled:         d.Get("enable_binary_authorization").(bool),
 			ForceSendFields: []string{"Enabled"},
 		},
-		Autoscaling:    expandClusterAutoscaling(d.Get("cluster_autoscaling"), d),
-		MasterAuth:     expandMasterAuth(d.Get("master_auth")),
-		ResourceLabels: expandStringMap(d, "resource_labels"),
+		Autoscaling: expandClusterAutoscaling(d.Get("cluster_autoscaling"), d),
 		NetworkConfig: &containerBeta.NetworkConfig{
 			EnableIntraNodeVisibility: d.Get("enable_intranode_visibility").(bool),
-			ForceSendFields:           []string{"Enabled"},
 		},
+		MasterAuth:     expandMasterAuth(d.Get("master_auth")),
+		ResourceLabels: expandStringMap(d, "resource_labels"),
 	}
 
 	if v, ok := d.GetOk("default_max_pods_per_node"); ok {
@@ -1045,7 +1044,6 @@ func resourceContainerClusterRead(d *schema.ResourceData, meta interface{}) erro
 	d.Set("enable_legacy_abac", cluster.LegacyAbac.Enabled)
 	d.Set("logging_service", cluster.LoggingService)
 	d.Set("monitoring_service", cluster.MonitoringService)
-	d.Set("enable_intranode_visibility", cluster.NetworkConfig.EnableIntraNodeVisibility)
 	d.Set("network", cluster.NetworkConfig.Network)
 	d.Set("subnetwork", cluster.NetworkConfig.Subnetwork)
 	d.Set("enable_binary_authorization", cluster.BinaryAuthorization != nil && cluster.BinaryAuthorization.Enabled)
@@ -1060,6 +1058,7 @@ func resourceContainerClusterRead(d *schema.ResourceData, meta interface{}) erro
 	if err := d.Set("authenticator_groups_config", flattenAuthenticatorGroupsConfig(cluster.AuthenticatorGroupsConfig)); err != nil {
 		return err
 	}
+	d.Set("enable_intranode_visibility", cluster.NetworkConfig.EnableIntraNodeVisibility)
 	if err := d.Set("node_config", flattenNodeConfig(cluster.NodeConfig)); err != nil {
 		return err
 	}
@@ -1215,6 +1214,40 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 		log.Printf("[INFO] GKE cluster %s's cluster-wide autoscaling has been updated", d.Id())
 
 		d.SetPartial("cluster_autoscaling")
+	}
+
+	if d.HasChange("enable_intranode_visibility") {
+		enabled := d.Get("enable_intranode_visibility").(bool)
+		req := &containerBeta.UpdateClusterRequest{
+			Update: &containerBeta.ClusterUpdate{
+				DesiredIntraNodeVisibilityConfig: &containerBeta.IntraNodeVisibilityConfig{
+					Enabled:         enabled,
+					ForceSendFields: []string{"Enabled"},
+				},
+			},
+		}
+		updateF := func() error {
+			log.Println("[DEBUG] updating enable_intranode_visibility")
+			name := containerClusterFullName(project, location, clusterName)
+			op, err := config.clientContainerBeta.Projects.Locations.Clusters.Update(name, req).Do()
+			if err != nil {
+				return err
+			}
+
+			// Wait until it's updated
+			err = containerOperationWait(config, op, project, location, "updating GKE Intra Node Visibility", timeoutInMinutes)
+			log.Println("[DEBUG] done updating enable_intranode_visibility")
+			return err
+		}
+
+		// Call update serially.
+		if err := lockedCall(lockKey, updateF); err != nil {
+			return err
+		}
+
+		log.Printf("[INFO] GKE cluster %s Intra Node Visibility has been updated to %v", d.Id(), enabled)
+
+		d.SetPartial("enable_intranode_visibility")
 	}
 
 	if d.HasChange("maintenance_policy") {
@@ -1379,40 +1412,6 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 		log.Printf("[INFO] GKE cluster %s legacy ABAC has been updated to %v", d.Id(), enabled)
 
 		d.SetPartial("enable_legacy_abac")
-	}
-
-	if d.HasChange("enable_intranode_visibility") {
-		enabled := d.Get("enable_intranode_visibility").(bool)
-		req := &containerBeta.UpdateClusterRequest{
-			Update: &containerBeta.ClusterUpdate{
-				DesiredIntraNodeVisibilityConfig: &containerBeta.IntraNodeVisibilityConfig{
-					Enabled:         enabled,
-					ForceSendFields: []string{"Enabled"},
-				},
-			},
-		}
-		updateF := func() error {
-			log.Println("[DEBUG] updating enable_intranode_visibility")
-			name := containerClusterFullName(project, location, clusterName)
-			op, err := config.clientContainerBeta.Projects.Locations.Clusters.Update(name, req).Do()
-			if err != nil {
-				return err
-			}
-
-			// Wait until it's updated
-			err = containerOperationWait(config, op, project, location, "updating GKE Intra Node Visibility", timeoutInMinutes)
-			log.Println("[DEBUG] done updating enable_intranode_visibility")
-			return err
-		}
-
-		// Call update serially.
-		if err := lockedCall(lockKey, updateF); err != nil {
-			return err
-		}
-
-		log.Printf("[INFO] GKE cluster %s Intra Node Visibility has been updated to %v", d.Id(), enabled)
-
-		d.SetPartial("enable_intranode_visibility")
 	}
 
 	if d.HasChange("monitoring_service") || d.HasChange("logging_service") {
