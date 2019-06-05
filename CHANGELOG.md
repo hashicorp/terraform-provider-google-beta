@@ -1,6 +1,7 @@
 ## 2.9.0 (Unreleased)
 
 FEATURES:
+* **New Resource**: `google_compute_resource_policy` is now available which can be used to schedule disk snapshots. ([#1850](https://github.com/GoogleCloudPlatform/magic-modules/pull/1850))
 
 ENHANCEMENTS:
 * container: `google_container_cluster` supports `authenticator_groups_config` to allow Google Groups-based authentication. [GH-669]
