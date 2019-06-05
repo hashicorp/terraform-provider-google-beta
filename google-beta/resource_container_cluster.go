@@ -729,8 +729,8 @@ func resourceContainerCluster() *schema.Resource {
 
 			"enable_intranode_visibility": {
 				Type:     schema.TypeBool,
-				Default:  false,
 				Optional: true,
+				Default:  false,
 			},
 		},
 	}
