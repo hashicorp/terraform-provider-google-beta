@@ -17,5 +17,5 @@ require (
 	github.com/stoewer/go-strcase v1.0.1
 	github.com/terraform-providers/terraform-provider-random v0.0.0-20180820145304-a3da7a23d7f9
 	golang.org/x/oauth2 v0.0.0-20190226205417-e64efc72b421
-	google.golang.org/api v0.4.0
+	google.golang.org/api v0.5.0
 )
