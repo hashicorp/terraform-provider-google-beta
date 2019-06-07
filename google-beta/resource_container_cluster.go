@@ -692,6 +692,22 @@ func resourceContainerCluster() *schema.Resource {
 				},
 			},
 
+			"workload_identity_config": {
+				Type:     schema.TypeList,
+				MaxItems: 1,
+				Optional: true,
+				ForceNew: true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"identity_namespace": {
+							Type:     schema.TypeString,
+							Required: true,
+							ForceNew: true,
+						},
+					},
+				},
+			},
+
 			"tpu_ipv4_cidr_block": {
 				Computed: true,
 				Type:     schema.TypeString,
@@ -918,6 +934,10 @@ func resourceContainerClusterCreate(d *schema.ResourceData, meta interface{}) er
 		cluster.VerticalPodAutoscaling = expandVerticalPodAutoscaling(v)
 	}
 
+	if v, ok := d.GetOk("workload_identity_config"); ok {
+		cluster.WorkloadIdentityConfig = expandWorkloadIdentityConfig(v)
+	}
+
 	req := &containerBeta.CreateClusterRequest{
 		Cluster: cluster,
 	}
@@ -1091,6 +1111,10 @@ func resourceContainerClusterRead(d *schema.ResourceData, meta interface{}) erro
 	}
 
 	if err := d.Set("vertical_pod_autoscaling", flattenVerticalPodAutoscaling(cluster.VerticalPodAutoscaling)); err != nil {
+		return err
+	}
+
+	if err := d.Set("workload_identity_config", flattenWorkloadIdentityConfig(cluster.WorkloadIdentityConfig)); err != nil {
 		return err
 	}
 
@@ -2105,6 +2129,17 @@ func expandVerticalPodAutoscaling(configured interface{}) *containerBeta.Vertica
 	}
 }
 
+func expandWorkloadIdentityConfig(configured interface{}) *containerBeta.WorkloadIdentityConfig {
+	l := configured.([]interface{})
+	if len(l) == 0 {
+		return nil
+	}
+	config := l[0].(map[string]interface{})
+	return &containerBeta.WorkloadIdentityConfig{
+		IdentityNamespace: config["identity_namespace"].(string),
+	}
+}
+
 func expandPodSecurityPolicyConfig(configured interface{}) *containerBeta.PodSecurityPolicyConfig {
 	l := configured.([]interface{})
 	if len(l) == 0 || l[0] == nil {
@@ -2245,6 +2280,16 @@ func flattenVerticalPodAutoscaling(c *containerBeta.VerticalPodAutoscaling) []ma
 	return []map[string]interface{}{
 		{
 			"enabled": c.Enabled,
+		},
+	}
+}
+func flattenWorkloadIdentityConfig(c *containerBeta.WorkloadIdentityConfig) []map[string]interface{} {
+	if c == nil {
+		return nil
+	}
+	return []map[string]interface{}{
+		{
+			"identity_namespace": c.IdentityNamespace,
 		},
 	}
 }
