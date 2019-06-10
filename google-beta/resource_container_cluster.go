@@ -214,10 +214,11 @@ func resourceContainerCluster() *schema.Resource {
 										Optional: true,
 									},
 									"auth": {
-										Type:         schema.TypeString,
-										Default:      "AUTH_NONE",
-										Optional:     true,
-										ValidateFunc: validation.StringInSlice([]string{"AUTH_NONE", "AUTH_MUTUAL_TLS"}, false),
+										Type:     schema.TypeString,
+										Optional: true,
+										// We can't use a Terraform-level default because it won't be true when the block is disabled: true
+										DiffSuppressFunc: emptyOrDefaultStringSuppress("AUTH_NONE"),
+										ValidateFunc:     validation.StringInSlice([]string{"AUTH_NONE", "AUTH_MUTUAL_TLS"}, false),
 									},
 								},
 							},

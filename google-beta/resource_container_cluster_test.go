@@ -2147,6 +2147,7 @@ resource "google_container_cluster" "with_istio_enabled" {
 	addons_config {
 		istio_config {
 			disabled = false
+			auth     = "AUTH_NONE"
 		}
 	}
 }`, clusterName)
