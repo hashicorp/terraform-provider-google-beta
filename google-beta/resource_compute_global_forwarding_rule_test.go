@@ -124,6 +124,8 @@ func TestAccComputeGlobalForwardingRule_internalLoadBalancing(t *testing.T) {
 	backend := fmt.Sprintf("forwardrule-test-%s", acctest.RandString(10))
 	hc := fmt.Sprintf("forwardrule-test-%s", acctest.RandString(10))
 	urlmap := fmt.Sprintf("forwardrule-test-%s", acctest.RandString(10))
+	igm := fmt.Sprintf("forwardrule-test-%s", acctest.RandString(10))
+	it := fmt.Sprintf("forwardrule-test-%s", acctest.RandString(10))
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -131,7 +133,7 @@ func TestAccComputeGlobalForwardingRule_internalLoadBalancing(t *testing.T) {
 		CheckDestroy: testAccCheckComputeGlobalForwardingRuleDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccComputeGlobalForwardingRule_internalLoadBalancing(fr, proxy, backend, hc, urlmap),
+				Config: testAccComputeGlobalForwardingRule_internalLoadBalancing(fr, proxy, backend, hc, urlmap, igm, it),
 			},
 			{
 				ResourceName:      "google_compute_global_forwarding_rule.forwarding_rule",
@@ -359,7 +361,7 @@ func testAccComputeGlobalForwardingRule_ipv6(fr, proxy, backend, hc, urlmap stri
 	}`, fr, proxy, backend, hc, urlmap)
 }
 
-func testAccComputeGlobalForwardingRule_internalLoadBalancing(fr, proxy, backend, hc, urlmap string) string {
+func testAccComputeGlobalForwardingRule_internalLoadBalancing(fr, proxy, backend, hc, urlmap, igm, it string) string {
 	return fmt.Sprintf(`
 resource "google_compute_global_forwarding_rule" "forwarding_rule" {
   name                  = "%s"
@@ -429,7 +431,7 @@ data "google_compute_image" "debian_image" {
 }
 
 resource "google_compute_instance_group_manager" "igm" {
-  name               = "igm-internal"
+  name               = "%s"
   version {
     instance_template  = "${google_compute_instance_template.instance_template.self_link}"
     name               = "primary"
@@ -440,7 +442,7 @@ resource "google_compute_instance_group_manager" "igm" {
 }
 
 resource "google_compute_instance_template" "instance_template" {
-  name         = "instance-template-internal"
+  name         = "%s"
   machine_type = "n1-standard-1"
 
   network_interface {
@@ -452,5 +454,5 @@ resource "google_compute_instance_template" "instance_template" {
     auto_delete  = true
     boot         = true
   }
-}`, fr, proxy, backend, hc, urlmap)
+}`, fr, proxy, backend, hc, urlmap, igm, it)
 }
