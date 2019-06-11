@@ -896,6 +896,32 @@ func TestAccContainerCluster_withNodeConfigTaints(t *testing.T) {
 	})
 }
 
+func TestAccContainerCluster_withSandboxConfig(t *testing.T) {
+	t.Parallel()
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckContainerClusterDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccContainerCluster_withSandboxConfig(),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("google_container_cluster.with_sandbox_config",
+						"node_config.0.sandbox_config.0.sandbox_type", "gvisor"),
+				),
+			},
+			{
+				ResourceName:            "google_container_cluster.with_sandbox_config",
+				ImportStateIdPrefix:     "us-central1-a/",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"min_master_version"},
+			},
+		},
+	})
+}
+
 func TestAccContainerCluster_withWorkloadMetadataConfig(t *testing.T) {
 	t.Parallel()
 
@@ -2600,6 +2626,33 @@ resource "google_container_cluster" "with_node_config" {
 		}
 	}
 }`, acctest.RandString(10))
+}
+
+func testAccContainerCluster_withSandboxConfig() string {
+	return fmt.Sprintf(`
+data "google_container_engine_versions" "central1a" {
+  zone = "us-central1-a"
+}
+
+resource "google_container_cluster" "with_sandbox_config" {
+  name				 = "cluster-test-%s"
+  zone				 = "us-central1-a"
+  initial_node_count = 1
+  min_master_version = "${data.google_container_engine_versions.central1a.latest_master_version}"
+  node_version		 = "${data.google_container_engine_versions.central1a.latest_node_version}"
+
+  node_config {
+	oauth_scopes = [
+	  "https://www.googleapis.com/auth/logging.write",
+	  "https://www.googleapis.com/auth/monitoring"
+	]
+
+	sandbox_config {
+	  sandbox_type = "gvisor"
+	}
+  }
+}
+`, acctest.RandString(10))
 }
 
 func testAccContainerCluster_withWorkloadMetadataConfig() string {
