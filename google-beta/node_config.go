@@ -131,6 +131,23 @@ var schemaNodeConfig = &schema.Schema{
 				Default:  false,
 			},
 
+			"sandbox_config": {
+				Type:     schema.TypeList,
+				Optional: true,
+				ForceNew: true,
+				MaxItems: 1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"sandbox_type": {
+							Type:         schema.TypeString,
+							Required:     true,
+							ForceNew:     true,
+							ValidateFunc: validation.StringInSlice([]string{"gvisor"}, false),
+						},
+					},
+				},
+			},
+
 			"service_account": {
 				Type:     schema.TypeString,
 				Optional: true,
@@ -306,6 +323,13 @@ func expandNodeConfig(v interface{}) *containerBeta.NodeConfig {
 		}
 	}
 
+	if v, ok := nodeConfig["sandbox_config"]; ok && len(v.([]interface{})) > 0 {
+		conf := v.([]interface{})[0].(map[string]interface{})
+		nc.SandboxConfig = &containerBeta.SandboxConfig{
+			SandboxType: conf["sandbox_type"].(string),
+		}
+	}
+
 	return nc
 }
 
@@ -331,6 +355,7 @@ func flattenNodeConfig(c *containerBeta.NodeConfig) []map[string]interface{} {
 		"min_cpu_platform":         c.MinCpuPlatform,
 		"taint":                    flattenTaints(c.Taints),
 		"workload_metadata_config": flattenWorkloadMetadataConfig(c.WorkloadMetadataConfig),
+		"sandbox_config":           flattenSandboxConfig(c.SandboxConfig),
 	})
 
 	if len(c.OauthScopes) > 0 {
@@ -358,6 +383,16 @@ func flattenTaints(c []*containerBeta.NodeTaint) []map[string]interface{} {
 			"key":    taint.Key,
 			"value":  taint.Value,
 			"effect": taint.Effect,
+		})
+	}
+	return result
+}
+
+func flattenSandboxConfig(c *containerBeta.SandboxConfig) []map[string]interface{} {
+	result := []map[string]interface{}{}
+	if c != nil {
+		result = append(result, map[string]interface{}{
+			"sandbox_type": c.SandboxType,
 		})
 	}
 	return result
