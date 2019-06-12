@@ -8,6 +8,7 @@ ENHANCEMENTS:
 * container: `google_container_cluster` supports `enable_intranode_visibility`. [GH-801]
 * container: `google_container_cluster` supports Workload Identity to access GCP APIs in GKE applications with `workload_identity_config`. [GH-824]
 * dataproc: `google_dataproc_cluster` supports `min_cpu_platform` [GH-424]
+* kms: `kms_crypto_key` supports `purpose` [GH-845]
 * storage: `google_storage_bucket` now supports enabling `bucket_policy_only` access control. ([#1878](https://github.com/GoogleCloudPlatform/magic-modules/pull/1878))
 
 BUG FIXES:
