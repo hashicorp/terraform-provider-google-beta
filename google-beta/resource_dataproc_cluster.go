@@ -12,7 +12,7 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/validation"
 
-	"google.golang.org/api/dataproc/v1beta2"
+	dataproc "google.golang.org/api/dataproc/v1beta2"
 )
 
 func resourceDataprocCluster() *schema.Resource {
@@ -206,14 +206,12 @@ func resourceDataprocCluster() *schema.Resource {
 									// API does not honour this if set ...
 									// It always uses whatever is specified for the worker_config
 									// "machine_type": { ... }
-
 									"min_cpu_platform": {
 										Type:     schema.TypeString,
 										Optional: true,
 										Computed: true,
 										ForceNew: true,
 									},
-
 									"disk_config": {
 										Type:     schema.TypeList,
 										Optional: true,
