@@ -282,6 +282,9 @@ resource "google_composer_environment" "test" {
 
 func testAccComposerEnvironment_update(name string) string {
 	return fmt.Sprintf(`
+data "google_composer_image_versions" "all" {
+}
+
 resource "google_composer_environment" "test" {
 	name = "%s"
 	region = "us-central1"
@@ -290,7 +293,7 @@ resource "google_composer_environment" "test" {
 		node_count = 4
 
 		software_config {
-			image_version = "composer-1.7.0-airflow-1.10.2"
+			image_version = "${data.google_composer_image_versions.all.image_versions.0.image_version_id}"
 
 			airflow_config_overrides = {
 			  core-load_example = "True"
@@ -358,12 +361,15 @@ resource "google_project_iam_member" "composer-worker" {
 
 func testAccComposerEnvironment_softwareCfg(name string) string {
 	return fmt.Sprintf(`
+data "google_composer_image_versions" "all" {
+}
+
 resource "google_composer_environment" "test" {
   name           = "%s"
   region         = "us-central1"
 	config {
 		software_config {
-			image_version = "composer-latest-airflow-1.10"
+			image_version = "${data.google_composer_image_versions.all.image_versions.0.image_version_id}"
 			python_version = "3"
 		}
 	}
