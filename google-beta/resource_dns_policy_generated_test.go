@@ -102,7 +102,7 @@ func testAccCheckDnsPolicyDestroy(s *terraform.State) error {
 
 		config := testAccProvider.Meta().(*Config)
 
-		url, err := replaceVarsForTest(rs, "https://www.googleapis.com/dns/v1beta2/projects/{{project}}/policies/{{name}}")
+		url, err := replaceVarsForTest(rs, "{{DnsBasePath}}projects/{{project}}/policies/{{name}}")
 		if err != nil {
 			return err
 		}

@@ -197,7 +197,7 @@ func resourceBinaryAuthorizationPolicyCreate(d *schema.ResourceData, meta interf
 		obj["defaultAdmissionRule"] = defaultAdmissionRuleProp
 	}
 
-	url, err := replaceVars(d, config, "https://binaryauthorization.googleapis.com/v1beta1/projects/{{project}}/policy")
+	url, err := replaceVars(d, config, "{{BinaryAuthorizationBasePath}}projects/{{project}}/policy")
 	if err != nil {
 		return err
 	}
@@ -223,7 +223,7 @@ func resourceBinaryAuthorizationPolicyCreate(d *schema.ResourceData, meta interf
 func resourceBinaryAuthorizationPolicyRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	url, err := replaceVars(d, config, "https://binaryauthorization.googleapis.com/v1beta1/projects/{{project}}/policy")
+	url, err := replaceVars(d, config, "{{BinaryAuthorizationBasePath}}projects/{{project}}/policy")
 	if err != nil {
 		return err
 	}
@@ -286,7 +286,7 @@ func resourceBinaryAuthorizationPolicyUpdate(d *schema.ResourceData, meta interf
 		obj["defaultAdmissionRule"] = defaultAdmissionRuleProp
 	}
 
-	url, err := replaceVars(d, config, "https://binaryauthorization.googleapis.com/v1beta1/projects/{{project}}/policy")
+	url, err := replaceVars(d, config, "{{BinaryAuthorizationBasePath}}projects/{{project}}/policy")
 	if err != nil {
 		return err
 	}
@@ -304,7 +304,7 @@ func resourceBinaryAuthorizationPolicyUpdate(d *schema.ResourceData, meta interf
 func resourceBinaryAuthorizationPolicyDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	url, err := replaceVars(d, config, "https://binaryauthorization.googleapis.com/v1beta1/projects/{{project}}/policy")
+	url, err := replaceVars(d, config, "{{BinaryAuthorizationBasePath}}projects/{{project}}/policy")
 	if err != nil {
 		return err
 	}

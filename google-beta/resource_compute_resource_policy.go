@@ -241,7 +241,7 @@ func resourceComputeResourcePolicyCreate(d *schema.ResourceData, meta interface{
 		obj["region"] = regionProp
 	}
 
-	url, err := replaceVars(d, config, "https://www.googleapis.com/compute/beta/projects/{{project}}/regions/{{region}}/resourcePolicies")
+	url, err := replaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/regions/{{region}}/resourcePolicies")
 	if err != nil {
 		return err
 	}
@@ -287,7 +287,7 @@ func resourceComputeResourcePolicyCreate(d *schema.ResourceData, meta interface{
 func resourceComputeResourcePolicyRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	url, err := replaceVars(d, config, "https://www.googleapis.com/compute/beta/projects/{{project}}/regions/{{region}}/resourcePolicies/{{name}}")
+	url, err := replaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/regions/{{region}}/resourcePolicies/{{name}}")
 	if err != nil {
 		return err
 	}
@@ -324,7 +324,7 @@ func resourceComputeResourcePolicyRead(d *schema.ResourceData, meta interface{})
 func resourceComputeResourcePolicyDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	url, err := replaceVars(d, config, "https://www.googleapis.com/compute/beta/projects/{{project}}/regions/{{region}}/resourcePolicies/{{name}}")
+	url, err := replaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/regions/{{region}}/resourcePolicies/{{name}}")
 	if err != nil {
 		return err
 	}

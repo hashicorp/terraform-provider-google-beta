@@ -177,7 +177,7 @@ func resourceComputeNodeTemplateCreate(d *schema.ResourceData, meta interface{})
 		obj["region"] = regionProp
 	}
 
-	url, err := replaceVars(d, config, "https://www.googleapis.com/compute/beta/projects/{{project}}/regions/{{region}}/nodeTemplates")
+	url, err := replaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/regions/{{region}}/nodeTemplates")
 	if err != nil {
 		return err
 	}
@@ -223,7 +223,7 @@ func resourceComputeNodeTemplateCreate(d *schema.ResourceData, meta interface{})
 func resourceComputeNodeTemplateRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	url, err := replaceVars(d, config, "https://www.googleapis.com/compute/beta/projects/{{project}}/regions/{{region}}/nodeTemplates/{{name}}")
+	url, err := replaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/regions/{{region}}/nodeTemplates/{{name}}")
 	if err != nil {
 		return err
 	}
@@ -275,7 +275,7 @@ func resourceComputeNodeTemplateRead(d *schema.ResourceData, meta interface{}) e
 func resourceComputeNodeTemplateDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	url, err := replaceVars(d, config, "https://www.googleapis.com/compute/beta/projects/{{project}}/regions/{{region}}/nodeTemplates/{{name}}")
+	url, err := replaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/regions/{{region}}/nodeTemplates/{{name}}")
 	if err != nil {
 		return err
 	}
