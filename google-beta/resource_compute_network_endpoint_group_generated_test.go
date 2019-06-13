@@ -33,11 +33,16 @@ func TestAccComputeNetworkEndpointGroup_networkEndpointGroupExample(t *testing.T
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProvidersOiCS,
+		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckComputeNetworkEndpointGroupDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccComputeNetworkEndpointGroup_networkEndpointGroupExample(context),
+			},
+			{
+				ResourceName:      "google_compute_network_endpoint_group.neg",
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -46,8 +51,6 @@ func TestAccComputeNetworkEndpointGroup_networkEndpointGroupExample(t *testing.T
 func testAccComputeNetworkEndpointGroup_networkEndpointGroupExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_compute_network_endpoint_group" "neg" {
-  provider = "google-beta"
-
   name         = "my-lb-neg-%{random_suffix}"
   network      = "${google_compute_network.default.self_link}"
   subnetwork   = "${google_compute_subnetwork.default.self_link}"
@@ -56,24 +59,15 @@ resource "google_compute_network_endpoint_group" "neg" {
 }
 
 resource "google_compute_network" "default" {
-  provider = "google-beta"
-
   name = "neg-network-%{random_suffix}"
   auto_create_subnetworks = false
 }
 
 resource "google_compute_subnetwork" "default" {
-  provider = "google-beta"
-
   name          = "neg-subnetwork-%{random_suffix}"
   ip_cidr_range = "10.0.0.0/16"
   region        = "us-central1"
   network       = "${google_compute_network.default.self_link}"
-}
-
-provider "google-beta" {
-  region = "us-central1"
-  zone   = "us-central1-a"
 }
 `, context)
 }

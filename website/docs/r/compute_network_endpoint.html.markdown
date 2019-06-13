@@ -28,8 +28,6 @@ collection of these endpoints for GCP resources within a
 single subnet. **NOTE**: Network endpoints cannot be created outside of a
 network endpoint group.
 
-~> **Warning:** This resource is in beta, and should be used with the terraform-provider-google-beta provider.
-See [Provider Versions](https://terraform.io/docs/providers/google/provider_versions.html) for more details on beta resources.
 
 To get more information about NetworkEndpoint, see:
 
@@ -42,8 +40,6 @@ To get more information about NetworkEndpoint, see:
 
 ```hcl
 resource "google_compute_network_endpoint" "default-endpoint {
-  provider               = "google-beta"
-
   network_endpoint_group = "${google_compute_network_endpoint_group.neg.name}"
 
   instance    = "${google_compute_instance.endpoint-instance.name}"
@@ -73,8 +69,6 @@ resource "google_compute_instance" "endpoint-instance" {
 }
 
 resource "google_compute_network_endpoint_group" "group" {
-  provider = "google-beta"
-
   name         = "my-lb-neg"
   network      = "${google_compute_network.default.self_link}"
   subnetwork   = "${google_compute_subnetwork.default.self_link}"
@@ -83,24 +77,15 @@ resource "google_compute_network_endpoint_group" "group" {
 }
 
 resource "google_compute_network" "default" {
-  provider = "google-beta"
-
   name = "neg-network"
   auto_create_subnetworks = false
 }
 
 resource "google_compute_subnetwork" "default" {
-  provider = "google-beta"
-
   name          = "neg-subnetwork"
   ip_cidr_range = "10.0.0.1/16"
   region        = "us-central1"
   network       = "${google_compute_network.default.self_link}"
-}
-
-provider "google-beta" {
-  region = "us-central1"
-  zone = "us-central1-a"
 }
 ```
 
@@ -155,10 +140,10 @@ This resource provides the following
 NetworkEndpoint can be imported using any of these accepted formats:
 
 ```
-$ terraform import -provider=google-beta google_compute_network_endpoint.default projects/{{project}}/zones/{{zone}}/networkEndpointGroups/{{network_endpoint_group}}/{{name}}
-$ terraform import -provider=google-beta google_compute_network_endpoint.default {{project}}/{{zone}}/{{network_endpoint_group}}/{{instance}}/{{ip_address}}/{{port}}
-$ terraform import -provider=google-beta google_compute_network_endpoint.default {{project}}/{{zone}}/{{network_endpoint_group}}/{{name}}
-$ terraform import -provider=google-beta google_compute_network_endpoint.default {{network_endpoint_group}}/{{name}}
+$ terraform import google_compute_network_endpoint.default projects/{{project}}/zones/{{zone}}/networkEndpointGroups/{{network_endpoint_group}}/{{name}}
+$ terraform import google_compute_network_endpoint.default {{project}}/{{zone}}/{{network_endpoint_group}}/{{instance}}/{{ip_address}}/{{port}}
+$ terraform import google_compute_network_endpoint.default {{project}}/{{zone}}/{{network_endpoint_group}}/{{name}}
+$ terraform import google_compute_network_endpoint.default {{network_endpoint_group}}/{{name}}
 ```
 
 -> If you're importing a resource with beta features, make sure to include `-provider=google-beta`
