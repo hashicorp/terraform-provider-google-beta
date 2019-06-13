@@ -22,6 +22,7 @@ BUG FIXES:
 * container: `google_container_cluster` and `google_node_pool` now retry correctly when polling for status of an operation. [GH-818]
 * container: `google_container_cluster` `istio_config.auth` will no longer permadiff on `AUTH_NONE` when an auth method other than TLS is defined. [GH-834]
 * pubsub: `google_pubsub_subscription` and `google_pubsub_topic` resources can be created inside VPC service controls. [GH-827]
+* redis: `google_redis_instance` Fall back to region from `location_id` when region isn't specified [GH-847]
 
 ## 2.8.0 (June 04, 2019)
 
