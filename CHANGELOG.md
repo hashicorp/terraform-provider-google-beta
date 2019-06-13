@@ -1,6 +1,7 @@
 ## 2.9.0 (Unreleased)
 
 FEATURES:
+* **Custom Endpoint Support**: The Google provider supports custom endpoints, allowing you to use GCP-like APIs such as emulators. [GH-811]
 * **New Resource**: `google_compute_resource_policy` is now available which can be used to schedule disk snapshots. ([#1850](https://github.com/GoogleCloudPlatform/magic-modules/pull/1850))
 
 ENHANCEMENTS:
