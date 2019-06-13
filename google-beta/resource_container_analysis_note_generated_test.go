@@ -74,7 +74,7 @@ func testAccCheckContainerAnalysisNoteDestroy(s *terraform.State) error {
 
 		config := testAccProvider.Meta().(*Config)
 
-		url, err := replaceVarsForTest(rs, "https://containeranalysis.googleapis.com/v1beta1/projects/{{project}}/notes/{{name}}")
+		url, err := replaceVarsForTest(rs, "{{ContainerAnalysisBasePath}}projects/{{project}}/notes/{{name}}")
 		if err != nil {
 			return err
 		}

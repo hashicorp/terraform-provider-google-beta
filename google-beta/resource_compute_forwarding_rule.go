@@ -292,7 +292,7 @@ func resourceComputeForwardingRuleCreate(d *schema.ResourceData, meta interface{
 		obj["region"] = regionProp
 	}
 
-	url, err := replaceVars(d, config, "https://www.googleapis.com/compute/beta/projects/{{project}}/regions/{{region}}/forwardingRules")
+	url, err := replaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/regions/{{region}}/forwardingRules")
 	if err != nil {
 		return err
 	}
@@ -349,7 +349,7 @@ func resourceComputeForwardingRuleCreate(d *schema.ResourceData, meta interface{
 		labelFingerprintProp := d.Get("label_fingerprint")
 		obj["labelFingerprint"] = labelFingerprintProp
 
-		url, err = replaceVars(d, config, "https://www.googleapis.com/compute/beta/projects/{{project}}/regions/{{region}}/forwardingRules/{{name}}/setLabels")
+		url, err = replaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/regions/{{region}}/forwardingRules/{{name}}/setLabels")
 		if err != nil {
 			return err
 		}
@@ -379,7 +379,7 @@ func resourceComputeForwardingRuleCreate(d *schema.ResourceData, meta interface{
 func resourceComputeForwardingRuleRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	url, err := replaceVars(d, config, "https://www.googleapis.com/compute/beta/projects/{{project}}/regions/{{region}}/forwardingRules/{{name}}")
+	url, err := replaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/regions/{{region}}/forwardingRules/{{name}}")
 	if err != nil {
 		return err
 	}
@@ -478,7 +478,7 @@ func resourceComputeForwardingRuleUpdate(d *schema.ResourceData, meta interface{
 			obj["target"] = targetProp
 		}
 
-		url, err := replaceVars(d, config, "https://www.googleapis.com/compute/beta/projects/{{project}}/regions/{{region}}/forwardingRules/{{name}}/setTarget")
+		url, err := replaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/regions/{{region}}/forwardingRules/{{name}}/setTarget")
 		if err != nil {
 			return err
 		}
@@ -522,7 +522,7 @@ func resourceComputeForwardingRuleUpdate(d *schema.ResourceData, meta interface{
 			obj["labelFingerprint"] = labelFingerprintProp
 		}
 
-		url, err := replaceVars(d, config, "https://www.googleapis.com/compute/beta/projects/{{project}}/regions/{{region}}/forwardingRules/{{name}}/setLabels")
+		url, err := replaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/regions/{{region}}/forwardingRules/{{name}}/setLabels")
 		if err != nil {
 			return err
 		}
@@ -561,7 +561,7 @@ func resourceComputeForwardingRuleUpdate(d *schema.ResourceData, meta interface{
 func resourceComputeForwardingRuleDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	url, err := replaceVars(d, config, "https://www.googleapis.com/compute/beta/projects/{{project}}/regions/{{region}}/forwardingRules/{{name}}")
+	url, err := replaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/regions/{{region}}/forwardingRules/{{name}}")
 	if err != nil {
 		return err
 	}
@@ -734,7 +734,7 @@ func expandComputeForwardingRuleBackendService(v interface{}, d TerraformResourc
 		return "https://www.googleapis.com/compute/v1/" + v.(string), nil
 	} else if strings.HasPrefix(v.(string), "regions/") || strings.HasPrefix(v.(string), "zones/") {
 		// For regional or zonal resources which include their region or zone, just put the project in front.
-		url, err := replaceVars(d, config, "https://www.googleapis.com/compute/v1/projects/{{project}}/")
+		url, err := replaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/")
 		if err != nil {
 			return nil, err
 		}
@@ -743,7 +743,7 @@ func expandComputeForwardingRuleBackendService(v interface{}, d TerraformResourc
 	// Anything else is assumed to be a regional resource, with a partial link that begins with the resource name.
 	// This isn't very likely - it's a last-ditch effort to extract something useful here.  We can do a better job
 	// as soon as MultiResourceRefs are working since we'll know the types that this field is supposed to point to.
-	url, err := replaceVars(d, config, "https://www.googleapis.com/compute/v1/projects/{{project}}/regions/{{region}}/")
+	url, err := replaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/regions/{{region}}/")
 	if err != nil {
 		return nil, err
 	}
@@ -799,7 +799,7 @@ func expandComputeForwardingRuleTarget(v interface{}, d TerraformResourceData, c
 		return "https://www.googleapis.com/compute/v1/" + v.(string), nil
 	} else if strings.HasPrefix(v.(string), "regions/") || strings.HasPrefix(v.(string), "zones/") {
 		// For regional or zonal resources which include their region or zone, just put the project in front.
-		url, err := replaceVars(d, config, "https://www.googleapis.com/compute/v1/projects/{{project}}/")
+		url, err := replaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/")
 		if err != nil {
 			return nil, err
 		}
@@ -808,7 +808,7 @@ func expandComputeForwardingRuleTarget(v interface{}, d TerraformResourceData, c
 	// Anything else is assumed to be a regional resource, with a partial link that begins with the resource name.
 	// This isn't very likely - it's a last-ditch effort to extract something useful here.  We can do a better job
 	// as soon as MultiResourceRefs are working since we'll know the types that this field is supposed to point to.
-	url, err := replaceVars(d, config, "https://www.googleapis.com/compute/v1/projects/{{project}}/regions/{{region}}/")
+	url, err := replaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/regions/{{region}}/")
 	if err != nil {
 		return nil, err
 	}

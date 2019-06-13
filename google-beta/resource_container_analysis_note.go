@@ -96,7 +96,7 @@ func resourceContainerAnalysisNoteCreate(d *schema.ResourceData, meta interface{
 		obj["attestationAuthority"] = attestationAuthorityProp
 	}
 
-	url, err := replaceVars(d, config, "https://containeranalysis.googleapis.com/v1beta1/projects/{{project}}/notes?noteId={{name}}")
+	url, err := replaceVars(d, config, "{{ContainerAnalysisBasePath}}projects/{{project}}/notes?noteId={{name}}")
 	if err != nil {
 		return err
 	}
@@ -122,7 +122,7 @@ func resourceContainerAnalysisNoteCreate(d *schema.ResourceData, meta interface{
 func resourceContainerAnalysisNoteRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	url, err := replaceVars(d, config, "https://containeranalysis.googleapis.com/v1beta1/projects/{{project}}/notes/{{name}}")
+	url, err := replaceVars(d, config, "{{ContainerAnalysisBasePath}}projects/{{project}}/notes/{{name}}")
 	if err != nil {
 		return err
 	}
@@ -161,7 +161,7 @@ func resourceContainerAnalysisNoteUpdate(d *schema.ResourceData, meta interface{
 		obj["attestationAuthority"] = attestationAuthorityProp
 	}
 
-	url, err := replaceVars(d, config, "https://containeranalysis.googleapis.com/v1beta1/projects/{{project}}/notes/{{name}}")
+	url, err := replaceVars(d, config, "{{ContainerAnalysisBasePath}}projects/{{project}}/notes/{{name}}")
 	if err != nil {
 		return err
 	}
@@ -189,7 +189,7 @@ func resourceContainerAnalysisNoteUpdate(d *schema.ResourceData, meta interface{
 func resourceContainerAnalysisNoteDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	url, err := replaceVars(d, config, "https://containeranalysis.googleapis.com/v1beta1/projects/{{project}}/notes/{{name}}")
+	url, err := replaceVars(d, config, "{{ContainerAnalysisBasePath}}projects/{{project}}/notes/{{name}}")
 	if err != nil {
 		return err
 	}

@@ -123,7 +123,7 @@ func resourceBinaryAuthorizationAttestorCreate(d *schema.ResourceData, meta inte
 		obj["userOwnedDrydockNote"] = userOwnedDrydockNoteProp
 	}
 
-	url, err := replaceVars(d, config, "https://binaryauthorization.googleapis.com/v1beta1/projects/{{project}}/attestors?attestorId={{name}}")
+	url, err := replaceVars(d, config, "{{BinaryAuthorizationBasePath}}projects/{{project}}/attestors?attestorId={{name}}")
 	if err != nil {
 		return err
 	}
@@ -149,7 +149,7 @@ func resourceBinaryAuthorizationAttestorCreate(d *schema.ResourceData, meta inte
 func resourceBinaryAuthorizationAttestorRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	url, err := replaceVars(d, config, "https://binaryauthorization.googleapis.com/v1beta1/projects/{{project}}/attestors/{{name}}")
+	url, err := replaceVars(d, config, "{{BinaryAuthorizationBasePath}}projects/{{project}}/attestors/{{name}}")
 	if err != nil {
 		return err
 	}
@@ -203,7 +203,7 @@ func resourceBinaryAuthorizationAttestorUpdate(d *schema.ResourceData, meta inte
 		obj["userOwnedDrydockNote"] = userOwnedDrydockNoteProp
 	}
 
-	url, err := replaceVars(d, config, "https://binaryauthorization.googleapis.com/v1beta1/projects/{{project}}/attestors/{{name}}")
+	url, err := replaceVars(d, config, "{{BinaryAuthorizationBasePath}}projects/{{project}}/attestors/{{name}}")
 	if err != nil {
 		return err
 	}
@@ -221,7 +221,7 @@ func resourceBinaryAuthorizationAttestorUpdate(d *schema.ResourceData, meta inte
 func resourceBinaryAuthorizationAttestorDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	url, err := replaceVars(d, config, "https://binaryauthorization.googleapis.com/v1beta1/projects/{{project}}/attestors/{{name}}")
+	url, err := replaceVars(d, config, "{{BinaryAuthorizationBasePath}}projects/{{project}}/attestors/{{name}}")
 	if err != nil {
 		return err
 	}

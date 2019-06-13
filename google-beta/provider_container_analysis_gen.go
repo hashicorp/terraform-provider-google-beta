@@ -16,6 +16,19 @@ package google
 
 import "github.com/hashicorp/terraform/helper/schema"
 
+// If the base path has changed as a result of your PR, make sure to update
+// the provider_reference page!
+var ContainerAnalysisDefaultBasePath = "https://containeranalysis.googleapis.com/v1beta1/"
+var ContainerAnalysisCustomEndpointEntryKey = "container_analysis_custom_endpoint"
+var ContainerAnalysisCustomEndpointEntry = &schema.Schema{
+	Type:         schema.TypeString,
+	Optional:     true,
+	ValidateFunc: validateCustomEndpoint,
+	DefaultFunc: schema.MultiEnvDefaultFunc([]string{
+		"GOOGLE_CONTAINER_ANALYSIS_CUSTOM_ENDPOINT",
+	}, ContainerAnalysisDefaultBasePath),
+}
+
 var GeneratedContainerAnalysisResourcesMap = map[string]*schema.Resource{
 	"google_container_analysis_note": resourceContainerAnalysisNote(),
 }

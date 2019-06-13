@@ -302,7 +302,7 @@ func resourceDnsManagedZoneCreate(d *schema.ResourceData, meta interface{}) erro
 		obj["peeringConfig"] = peeringConfigProp
 	}
 
-	url, err := replaceVars(d, config, "https://www.googleapis.com/dns/v1beta2/projects/{{project}}/managedZones")
+	url, err := replaceVars(d, config, "{{DnsBasePath}}projects/{{project}}/managedZones")
 	if err != nil {
 		return err
 	}
@@ -328,7 +328,7 @@ func resourceDnsManagedZoneCreate(d *schema.ResourceData, meta interface{}) erro
 func resourceDnsManagedZoneRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	url, err := replaceVars(d, config, "https://www.googleapis.com/dns/v1beta2/projects/{{project}}/managedZones/{{name}}")
+	url, err := replaceVars(d, config, "{{DnsBasePath}}projects/{{project}}/managedZones/{{name}}")
 	if err != nil {
 		return err
 	}
@@ -418,7 +418,7 @@ func resourceDnsManagedZoneUpdate(d *schema.ResourceData, meta interface{}) erro
 			obj["peeringConfig"] = peeringConfigProp
 		}
 
-		url, err := replaceVars(d, config, "https://www.googleapis.com/dns/v1beta2/projects/{{project}}/managedZones/{{name}}")
+		url, err := replaceVars(d, config, "{{DnsBasePath}}projects/{{project}}/managedZones/{{name}}")
 		if err != nil {
 			return err
 		}
@@ -442,7 +442,7 @@ func resourceDnsManagedZoneUpdate(d *schema.ResourceData, meta interface{}) erro
 func resourceDnsManagedZoneDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	url, err := replaceVars(d, config, "https://www.googleapis.com/dns/v1beta2/projects/{{project}}/managedZones/{{name}}")
+	url, err := replaceVars(d, config, "{{DnsBasePath}}projects/{{project}}/managedZones/{{name}}")
 	if err != nil {
 		return err
 	}

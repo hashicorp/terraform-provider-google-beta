@@ -228,7 +228,7 @@ func resourceSecurityScannerScanConfigCreate(d *schema.ResourceData, meta interf
 		obj["exportToSecurityCommandCenter"] = exportToSecurityCommandCenterProp
 	}
 
-	url, err := replaceVars(d, config, "https://websecurityscanner.googleapis.com/v1beta/projects/{{project}}/scanConfigs")
+	url, err := replaceVars(d, config, "{{SecurityScannerBasePath}}projects/{{project}}/scanConfigs")
 	if err != nil {
 		return err
 	}
@@ -262,7 +262,7 @@ func resourceSecurityScannerScanConfigCreate(d *schema.ResourceData, meta interf
 func resourceSecurityScannerScanConfigRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	url, err := replaceVars(d, config, "https://websecurityscanner.googleapis.com/v1beta/{{name}}")
+	url, err := replaceVars(d, config, "{{SecurityScannerBasePath}}{{name}}")
 	if err != nil {
 		return err
 	}
@@ -373,7 +373,7 @@ func resourceSecurityScannerScanConfigUpdate(d *schema.ResourceData, meta interf
 		obj["exportToSecurityCommandCenter"] = exportToSecurityCommandCenterProp
 	}
 
-	url, err := replaceVars(d, config, "https://websecurityscanner.googleapis.com/v1beta/{{name}}")
+	url, err := replaceVars(d, config, "{{SecurityScannerBasePath}}{{name}}")
 	if err != nil {
 		return err
 	}
@@ -434,7 +434,7 @@ func resourceSecurityScannerScanConfigUpdate(d *schema.ResourceData, meta interf
 func resourceSecurityScannerScanConfigDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	url, err := replaceVars(d, config, "https://websecurityscanner.googleapis.com/v1beta/{{name}}")
+	url, err := replaceVars(d, config, "{{SecurityScannerBasePath}}{{name}}")
 	if err != nil {
 		return err
 	}

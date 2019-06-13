@@ -171,7 +171,7 @@ func resourceDnsPolicyCreate(d *schema.ResourceData, meta interface{}) error {
 		obj["networks"] = networksProp
 	}
 
-	url, err := replaceVars(d, config, "https://www.googleapis.com/dns/v1beta2/projects/{{project}}/policies")
+	url, err := replaceVars(d, config, "{{DnsBasePath}}projects/{{project}}/policies")
 	if err != nil {
 		return err
 	}
@@ -197,7 +197,7 @@ func resourceDnsPolicyCreate(d *schema.ResourceData, meta interface{}) error {
 func resourceDnsPolicyRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	url, err := replaceVars(d, config, "https://www.googleapis.com/dns/v1beta2/projects/{{project}}/policies/{{name}}")
+	url, err := replaceVars(d, config, "{{DnsBasePath}}projects/{{project}}/policies/{{name}}")
 	if err != nil {
 		return err
 	}
@@ -275,7 +275,7 @@ func resourceDnsPolicyUpdate(d *schema.ResourceData, meta interface{}) error {
 			obj["networks"] = networksProp
 		}
 
-		url, err := replaceVars(d, config, "https://www.googleapis.com/dns/v1beta2/projects/{{project}}/policies/{{name}}")
+		url, err := replaceVars(d, config, "{{DnsBasePath}}projects/{{project}}/policies/{{name}}")
 		if err != nil {
 			return err
 		}
@@ -299,7 +299,7 @@ func resourceDnsPolicyUpdate(d *schema.ResourceData, meta interface{}) error {
 func resourceDnsPolicyDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	url, err := replaceVars(d, config, "https://www.googleapis.com/dns/v1beta2/projects/{{project}}/policies/{{name}}")
+	url, err := replaceVars(d, config, "{{DnsBasePath}}projects/{{project}}/policies/{{name}}")
 	if err != nil {
 		return err
 	}
@@ -310,7 +310,7 @@ func resourceDnsPolicyDelete(d *schema.ResourceData, meta interface{}) error {
 		patched := make(map[string]interface{})
 		patched["networks"] = nil
 
-		url, err := replaceVars(d, config, "https://www.googleapis.com/dns/v1beta2/projects/{{project}}/policies/{{name}}")
+		url, err := replaceVars(d, config, "{{DnsBasePath}}projects/{{project}}/policies/{{name}}")
 		if err != nil {
 			return err
 		}
