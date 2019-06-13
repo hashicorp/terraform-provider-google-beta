@@ -69,6 +69,7 @@ var GeneratedComputeResourcesMap = map[string]*schema.Resource{
 	"google_compute_target_tcp_proxy":               resourceComputeTargetTcpProxy(),
 	"google_compute_vpn_gateway":                    resourceComputeVpnGateway(),
 	"google_compute_ha_vpn_gateway":                 resourceComputeHaVpnGateway(),
+	"google_compute_external_vpn_gateway":           resourceComputeExternalVpnGateway(),
 	"google_compute_url_map":                        resourceComputeUrlMap(),
 	"google_compute_vpn_tunnel":                     resourceComputeVpnTunnel(),
 }
