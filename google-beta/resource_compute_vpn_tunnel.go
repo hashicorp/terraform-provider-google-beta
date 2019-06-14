@@ -185,9 +185,10 @@ func resourceComputeVpnTunnel() *schema.Resource {
 				Set: schema.HashString,
 			},
 			"peer_external_gateway": {
-				Type:     schema.TypeString,
-				Optional: true,
-				ForceNew: true,
+				Type:             schema.TypeString,
+				Optional:         true,
+				ForceNew:         true,
+				DiffSuppressFunc: compareSelfLinkOrResourceName,
 			},
 			"peer_external_gateway_interface": {
 				Type:     schema.TypeInt,
@@ -704,7 +705,10 @@ func flattenComputeVpnTunnelVpnGatewayInterface(v interface{}, d *schema.Resourc
 }
 
 func flattenComputeVpnTunnelPeerExternalGateway(v interface{}, d *schema.ResourceData) interface{} {
-	return v
+	if v == nil {
+		return v
+	}
+	return ConvertSelfLinkToV1(v.(string))
 }
 
 func flattenComputeVpnTunnelPeerExternalGatewayInterface(v interface{}, d *schema.ResourceData) interface{} {
@@ -811,7 +815,11 @@ func expandComputeVpnTunnelVpnGatewayInterface(v interface{}, d TerraformResourc
 }
 
 func expandComputeVpnTunnelPeerExternalGateway(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
-	return v, nil
+	f, err := parseGlobalFieldValue("externalVpnGateways", v.(string), "project", d, config, true)
+	if err != nil {
+		return nil, fmt.Errorf("Invalid value for peer_external_gateway: %s", err)
+	}
+	return f.RelativeLink(), nil
 }
 
 func expandComputeVpnTunnelPeerExternalGatewayInterface(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
