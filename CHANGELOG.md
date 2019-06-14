@@ -14,6 +14,7 @@ ENHANCEMENTS:
 * kms: `kms_crypto_key` supports `purpose` [GH-845]
 * storage: `google_storage_bucket` now supports enabling `bucket_policy_only` access control. ([#1878](https://github.com/GoogleCloudPlatform/magic-modules/pull/1878))
 * storage: IAM resources for storage buckets (`google_storage_bucket_iam_*`) now all support import [GH-835]
+* pubsub: `google_pubsub_topic` Updates for labels are now supported [GH-832]
 
 BUG FIXES:
 * compute: `google_project_iam` When importing resources `project` no longer needs to be set in the config post import [GH-805]
