@@ -43,7 +43,7 @@ import (
 	"google.golang.org/api/pubsub/v1"
 	runtimeconfig "google.golang.org/api/runtimeconfig/v1beta1"
 	"google.golang.org/api/servicemanagement/v1"
-	servicenetworking "google.golang.org/api/servicenetworking/v1beta"
+	"google.golang.org/api/servicenetworking/v1"
 	"google.golang.org/api/serviceusage/v1"
 	"google.golang.org/api/sourcerepo/v1"
 	"google.golang.org/api/spanner/v1"
