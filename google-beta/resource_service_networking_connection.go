@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"github.com/hashicorp/terraform/helper/schema"
-	servicenetworking "google.golang.org/api/servicenetworking/v1beta"
+	"google.golang.org/api/servicenetworking/v1"
 )
 
 func resourceServiceNetworkingConnection() *schema.Resource {

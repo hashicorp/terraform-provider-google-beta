@@ -103,8 +103,7 @@ func Provider() terraform.ResourceProvider {
 
 			// Handwritten Products / Versioned / Atypical Entries
 			// start beta-only products
-			IAPCustomEndpointEntryKey:               IAPCustomEndpointEntry,
-			ServiceNetworkingCustomEndpointEntryKey: ServiceNetworkingCustomEndpointEntry,
+			IAPCustomEndpointEntryKey: IAPCustomEndpointEntry,
 			// end beta-only products
 			CloudBillingCustomEndpointEntryKey:           CloudBillingCustomEndpointEntry,
 			ComposerCustomEndpointEntryKey:               ComposerCustomEndpointEntry,
@@ -121,6 +120,7 @@ func Provider() terraform.ResourceProvider {
 			RuntimeconfigCustomEndpointEntryKey:          RuntimeconfigCustomEndpointEntry,
 			IAMCustomEndpointEntryKey:                    IAMCustomEndpointEntry,
 			ServiceManagementCustomEndpointEntryKey:      ServiceManagementCustomEndpointEntry,
+			ServiceNetworkingCustomEndpointEntryKey:      ServiceNetworkingCustomEndpointEntry,
 			ServiceUsageCustomEndpointEntryKey:           ServiceUsageCustomEndpointEntry,
 			BigQueryCustomEndpointEntryKey:               BigQueryCustomEndpointEntry,
 			CloudFunctionsCustomEndpointEntryKey:         CloudFunctionsCustomEndpointEntry,
@@ -390,7 +390,6 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 	config.TpuBasePath = d.Get(TpuCustomEndpointEntryKey).(string)
 
 	config.IAPBasePath = d.Get(IAPCustomEndpointEntryKey).(string)
-	config.ServiceNetworkingBasePath = d.Get(ServiceNetworkingCustomEndpointEntryKey).(string)
 	config.CloudBillingBasePath = d.Get(CloudBillingCustomEndpointEntryKey).(string)
 	config.ComposerBasePath = d.Get(ComposerCustomEndpointEntryKey).(string)
 	config.ComputeBetaBasePath = d.Get(ComputeBetaCustomEndpointEntryKey).(string)
@@ -406,6 +405,7 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 	config.RuntimeconfigBasePath = d.Get(RuntimeconfigCustomEndpointEntryKey).(string)
 	config.IAMBasePath = d.Get(IAMCustomEndpointEntryKey).(string)
 	config.ServiceManagementBasePath = d.Get(ServiceManagementCustomEndpointEntryKey).(string)
+	config.ServiceNetworkingBasePath = d.Get(ServiceNetworkingCustomEndpointEntryKey).(string)
 	config.ServiceUsageBasePath = d.Get(ServiceUsageCustomEndpointEntryKey).(string)
 	config.BigQueryBasePath = d.Get(BigQueryCustomEndpointEntryKey).(string)
 	config.CloudFunctionsBasePath = d.Get(CloudFunctionsCustomEndpointEntryKey).(string)
@@ -451,7 +451,6 @@ func ConfigureBasePaths(c *Config) {
 	// Handwritten Products / Versioned / Atypical Entries
 	// start beta-only products
 	c.IAPBasePath = IAPDefaultBasePath
-	c.ServiceNetworkingBasePath = ServiceNetworkingDefaultBasePath
 	// end beta-only products
 	c.CloudBillingBasePath = CloudBillingDefaultBasePath
 	c.ComposerBasePath = ComposerDefaultBasePath
@@ -467,6 +466,7 @@ func ConfigureBasePaths(c *Config) {
 	c.RuntimeconfigBasePath = RuntimeconfigDefaultBasePath
 	c.IAMBasePath = IAMDefaultBasePath
 	c.ServiceManagementBasePath = ServiceManagementDefaultBasePath
+	c.ServiceNetworkingBasePath = ServiceNetworkingDefaultBasePath
 	c.ServiceUsageBasePath = ServiceUsageDefaultBasePath
 	c.BigQueryBasePath = BigQueryDefaultBasePath
 	c.CloudFunctionsBasePath = CloudFunctionsDefaultBasePath
