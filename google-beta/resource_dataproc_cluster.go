@@ -206,12 +206,7 @@ func resourceDataprocCluster() *schema.Resource {
 									// API does not honour this if set ...
 									// It always uses whatever is specified for the worker_config
 									// "machine_type": { ... }
-									"min_cpu_platform": {
-										Type:     schema.TypeString,
-										Optional: true,
-										Computed: true,
-										ForceNew: true,
-									},
+									// "min_cpu_platform": { ... }
 									"disk_config": {
 										Type:     schema.TypeList,
 										Optional: true,
@@ -363,6 +358,12 @@ func instanceConfigSchema() *schema.Schema {
 					ForceNew: true,
 				},
 
+				"min_cpu_platform": {
+					Type:     schema.TypeString,
+					Optional: true,
+					Computed: true,
+					ForceNew: true,
+				},
 				"disk_config": {
 					Type:     schema.TypeList,
 					Optional: true,
