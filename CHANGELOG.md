@@ -25,6 +25,7 @@ BUG FIXES:
 * comptue: `google_compute_instance_template` Attempt to put disks in state in the same order they were specified [GH-771]
 * container: `google_container_cluster` and `google_node_pool` now retry correctly when polling for status of an operation. [GH-818]
 * container: `google_container_cluster` `istio_config.auth` will no longer permadiff on `AUTH_NONE` when an auth method other than TLS is defined. [GH-834]
+* dns: `google_dns_record_set` overrides all existing record types on create, not just NS [GH-850]
 * pubsub: `google_pubsub_subscription` and `google_pubsub_topic` resources can be created inside VPC service controls. [GH-827]
 * redis: `google_redis_instance` Fall back to region from `location_id` when region isn't specified [GH-847]
 
