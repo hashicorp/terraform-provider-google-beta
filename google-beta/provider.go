@@ -80,7 +80,6 @@ func Provider() terraform.ResourceProvider {
 			// start beta-only products
 			BinaryAuthorizationCustomEndpointEntryKey: BinaryAuthorizationCustomEndpointEntry,
 			ContainerAnalysisCustomEndpointEntryKey:   ContainerAnalysisCustomEndpointEntry,
-			MonitoringCustomEndpointEntryKey:          MonitoringCustomEndpointEntry,
 			SecurityScannerCustomEndpointEntryKey:     SecurityScannerCustomEndpointEntry,
 			// end beta-only products
 			AccessContextManagerCustomEndpointEntryKey: AccessContextManagerCustomEndpointEntry,
@@ -92,6 +91,7 @@ func Provider() terraform.ResourceProvider {
 			FilestoreCustomEndpointEntryKey:            FilestoreCustomEndpointEntry,
 			FirestoreCustomEndpointEntryKey:            FirestoreCustomEndpointEntry,
 			KmsCustomEndpointEntryKey:                  KmsCustomEndpointEntry,
+			MonitoringCustomEndpointEntryKey:           MonitoringCustomEndpointEntry,
 			PubsubCustomEndpointEntryKey:               PubsubCustomEndpointEntry,
 			RedisCustomEndpointEntryKey:                RedisCustomEndpointEntry,
 			ResourceManagerCustomEndpointEntryKey:      ResourceManagerCustomEndpointEntry,
@@ -366,7 +366,6 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 
 	config.BinaryAuthorizationBasePath = d.Get(BinaryAuthorizationCustomEndpointEntryKey).(string)
 	config.ContainerAnalysisBasePath = d.Get(ContainerAnalysisCustomEndpointEntryKey).(string)
-	config.MonitoringBasePath = d.Get(MonitoringCustomEndpointEntryKey).(string)
 	config.SecurityScannerBasePath = d.Get(SecurityScannerCustomEndpointEntryKey).(string)
 
 	config.AccessContextManagerBasePath = d.Get(AccessContextManagerCustomEndpointEntryKey).(string)
@@ -379,6 +378,7 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 	config.DnsBasePath = d.Get(DnsCustomEndpointEntryKey).(string)
 	config.FilestoreBasePath = d.Get(FilestoreCustomEndpointEntryKey).(string)
 	config.KmsBasePath = d.Get(KmsCustomEndpointEntryKey).(string)
+	config.MonitoringBasePath = d.Get(MonitoringCustomEndpointEntryKey).(string)
 	config.PubsubBasePath = d.Get(PubsubCustomEndpointEntryKey).(string)
 	config.RedisBasePath = d.Get(RedisCustomEndpointEntryKey).(string)
 	config.ResourceManagerBasePath = d.Get(ResourceManagerCustomEndpointEntryKey).(string)
@@ -426,7 +426,6 @@ func ConfigureBasePaths(c *Config) {
 	// start beta-only products
 	c.BinaryAuthorizationBasePath = BinaryAuthorizationDefaultBasePath
 	c.ContainerAnalysisBasePath = ContainerAnalysisDefaultBasePath
-	c.MonitoringBasePath = MonitoringDefaultBasePath
 	c.SecurityScannerBasePath = SecurityScannerDefaultBasePath
 	// end beta-only products
 	c.AccessContextManagerBasePath = AccessContextManagerDefaultBasePath
@@ -438,6 +437,7 @@ func ConfigureBasePaths(c *Config) {
 	c.FilestoreBasePath = FilestoreDefaultBasePath
 	c.FirestoreBasePath = FirestoreDefaultBasePath
 	c.KmsBasePath = KmsDefaultBasePath
+	c.MonitoringBasePath = MonitoringDefaultBasePath
 	c.PubsubBasePath = PubsubDefaultBasePath
 	c.RedisBasePath = RedisDefaultBasePath
 	c.ResourceManagerBasePath = ResourceManagerDefaultBasePath
