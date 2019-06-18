@@ -18,6 +18,7 @@ ENHANCEMENTS:
 * pubsub: `google_pubsub_topic` Updates for labels are now supported [GH-832]
 
 BUG FIXES:
+* bigquery: `google_bigquery_dataset` Relax IAM role restrictions on BQ datasets [GH-857]
 * compute: `google_project_iam` When importing resources `project` no longer needs to be set in the config post import [GH-805]
 * compute: `google_sql_user` User's can now be updated to change their password [GH-810]
 * compute: `google_compute_instance_template` Fixed issue so project can now be specified by interpolated varibles. [GH-816]
