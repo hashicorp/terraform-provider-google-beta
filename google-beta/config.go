@@ -69,12 +69,12 @@ type Config struct {
 
 	BinaryAuthorizationBasePath string
 	ContainerAnalysisBasePath   string
-	MonitoringBasePath          string
 	SecurityScannerBasePath     string
 
 	AccessContextManagerBasePath string
 	CloudSchedulerBasePath       string
 	FirestoreBasePath            string
+	MonitoringBasePath           string
 	RedisBasePath                string
 	TpuBasePath                  string
 
