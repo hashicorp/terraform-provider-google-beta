@@ -7,6 +7,7 @@ FEATURES:
 * **New Resource** Network endpoint groups (`google_compute_network_endpoint_group`) and fine-grained resource endpoints (`google_compute_network_endpoint`) are now available. [GH-781]
 
 ENHANCEMENTS:
+* increased default timeouts for `google_compute_instance`, `google_container_cluster`, `google_dataproc_cluster`, and `google_sql_database_instance` [GH-862]
 * container: `google_container_cluster` supports `authenticator_groups_config` to allow Google Groups-based authentication. [GH-669]
 * container: `google_container_cluster` supports `enable_intranode_visibility`. [GH-801]
 * container: `google_container_cluster` supports Workload Identity to access GCP APIs in GKE applications with `workload_identity_config`. [GH-824]
