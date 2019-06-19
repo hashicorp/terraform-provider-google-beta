@@ -1,3 +1,8 @@
+## 2.10.0 (Unreleased)
+
+ENHANCEMENTS:
+* container: `node_config.sandbox_config` is supported on GKE node pool definitions, allowing you to configure GKE Sandbox. [GH-863]
+
 ## 2.9.0 (Unreleased)
 
 FEATURES:
