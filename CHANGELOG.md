@@ -1,6 +1,7 @@
 ## 2.10.0 (Unreleased)
 
 ENHANCEMENTS:
+* Added fields for managing network endpoint group backends in `google_compute_backend`, including `max_connections_per_endpoint` and `max_rate_per_endpoint` ([#854](https://github.com/terraform-providers/terraform-provider-google-beta/issues/854))
 * container: `node_config.sandbox_config` is supported on GKE node pool definitions, allowing you to configure GKE Sandbox. [GH-863]
 
 ## 2.9.0 (Unreleased)
