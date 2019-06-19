@@ -4,41 +4,41 @@ ENHANCEMENTS:
 * Added fields for managing network endpoint group backends in `google_compute_backend`, including `max_connections_per_endpoint` and `max_rate_per_endpoint` ([#854](https://github.com/terraform-providers/terraform-provider-google-beta/issues/854))
 * container: `node_config.sandbox_config` is supported on GKE node pool definitions, allowing you to configure GKE Sandbox. [GH-863]
 
-## 2.9.0 (Unreleased)
+## 2.9.0 (June 19, 2019)
 
 FEATURES:
-* **Custom Endpoint Support**: The Google provider supports custom endpoints, allowing you to use GCP-like APIs such as emulators. See the [Provider Reference](https://www.terraform.io/docs/providers/google/provider_reference.html) for details. [GH-811]
+* **Custom Endpoint Support**: The Google provider supports custom endpoints, allowing you to use GCP-like APIs such as emulators. See the [Provider Reference](https://www.terraform.io/docs/providers/google/provider_reference.html) for details. ([#811](https://github.com/terraform-providers/terraform-provider-google-beta/issues/811))
 * **New Resource**: `google_compute_resource_policy` is now available which can be used to schedule disk snapshots. ([#1850](https://github.com/GoogleCloudPlatform/magic-modules/pull/1850))
-* **New Resource**: `google_compute_external_vpn_gateway` is now available which can be used to connect to external VPN gateways. [GH-833]
-* **New Resource** Network endpoint groups (`google_compute_network_endpoint_group`) and fine-grained resource endpoints (`google_compute_network_endpoint`) are now available. [GH-781]
+* **New Resource**: `google_compute_external_vpn_gateway` is now available which can be used to connect to external VPN gateways. ([#833](https://github.com/terraform-providers/terraform-provider-google-beta/issues/833))
+* **New Resource** Network endpoint groups (`google_compute_network_endpoint_group`) and fine-grained resource endpoints (`google_compute_network_endpoint`) are now available. ([#781](https://github.com/terraform-providers/terraform-provider-google-beta/issues/781))
 
 ENHANCEMENTS:
-* increased default timeouts for `google_compute_instance`, `google_container_cluster`, `google_dataproc_cluster`, and `google_sql_database_instance` [GH-862]
-* container: `google_container_cluster` Stop guest_accelerator from having a permadiff for accelerators with `count=0` [GH-851]
-* container: `google_container_cluster` supports `authenticator_groups_config` to allow Google Groups-based authentication. [GH-669]
-* container: `google_container_cluster` supports `enable_intranode_visibility`. [GH-801]
-* container: `google_container_cluster` supports Workload Identity to access GCP APIs in GKE applications with `workload_identity_config`. [GH-824]
-* dataproc: `google_dataproc_cluster` supports `min_cpu_platform` [GH-424], [GH-848]
-* dns: `google_dns_record_set`: allow importing dns record sets in any project [GH-853]
-* kms: `kms_crypto_key` supports `purpose` [GH-845]
+* increased default timeouts for `google_compute_instance`, `google_container_cluster`, `google_dataproc_cluster`, and `google_sql_database_instance` ([#862](https://github.com/terraform-providers/terraform-provider-google-beta/issues/862))
+* container: `google_container_cluster` Stop guest_accelerator from having a permadiff for accelerators with `count=0` ([#851](https://github.com/terraform-providers/terraform-provider-google-beta/issues/851))
+* container: `google_container_cluster` supports `authenticator_groups_config` to allow Google Groups-based authentication. ([#669](https://github.com/terraform-providers/terraform-provider-google-beta/issues/669))
+* container: `google_container_cluster` supports `enable_intranode_visibility`. ([#801](https://github.com/terraform-providers/terraform-provider-google-beta/issues/801))
+* container: `google_container_cluster` supports Workload Identity to access GCP APIs in GKE applications with `workload_identity_config`. ([#824](https://github.com/terraform-providers/terraform-provider-google-beta/issues/824))
+* dataproc: `google_dataproc_cluster` supports `min_cpu_platform` ([#424](https://github.com/terraform-providers/terraform-provider-google-beta/issues/424)], [[#848](https://github.com/terraform-providers/terraform-provider-google-beta/issues/848))
+* dns: `google_dns_record_set`: allow importing dns record sets in any project ([#853](https://github.com/terraform-providers/terraform-provider-google-beta/issues/853))
+* kms: `kms_crypto_key` supports `purpose` ([#845](https://github.com/terraform-providers/terraform-provider-google-beta/issues/845))
 * storage: `google_storage_bucket` now supports enabling `bucket_policy_only` access control. ([#1878](https://github.com/GoogleCloudPlatform/magic-modules/pull/1878))
-* storage: IAM resources for storage buckets (`google_storage_bucket_iam_*`) now all support import [GH-835]
-* pubsub: `google_pubsub_topic` Updates for labels are now supported [GH-832]
+* storage: IAM resources for storage buckets (`google_storage_bucket_iam_*`) now all support import ([#835](https://github.com/terraform-providers/terraform-provider-google-beta/issues/835))
+* pubsub: `google_pubsub_topic` Updates for labels are now supported ([#832](https://github.com/terraform-providers/terraform-provider-google-beta/issues/832))
 
 BUG FIXES:
-* bigquery: `google_bigquery_dataset` Relax IAM role restrictions on BQ datasets [GH-857]
-* compute: `google_project_iam` When importing resources `project` no longer needs to be set in the config post import [GH-805]
-* compute: `google_sql_user` User's can now be updated to change their password [GH-810]
-* compute: `google_compute_instance_template` Fixed issue so project can now be specified by interpolated varibles. [GH-816]
-* compute: `google_compute_instance_template` Throw error when using incompatible disk fields instead of continual plan diff [GH-812]
-* compute: `google_compute_instance_from_template` Make sure disk type is expanded to a URL [GH-771]
-* comptue: `google_compute_instance_template` Attempt to put disks in state in the same order they were specified [GH-771]
-* container: `google_container_cluster` and `google_node_pool` now retry correctly when polling for status of an operation. [GH-818]
-* container: `google_container_cluster` `istio_config.auth` will no longer permadiff on `AUTH_NONE` when an auth method other than TLS is defined. [GH-834]
-* dns: `google_dns_record_set` overrides all existing record types on create, not just NS [GH-850]
-* monitoring: `google_monitoring_notification_channel` Allow setting enabled to false [GH-864]
-* pubsub: `google_pubsub_subscription` and `google_pubsub_topic` resources can be created inside VPC service controls. [GH-827]
-* redis: `google_redis_instance` Fall back to region from `location_id` when region isn't specified [GH-847]
+* bigquery: `google_bigquery_dataset` Relax IAM role restrictions on BQ datasets ([#857](https://github.com/terraform-providers/terraform-provider-google-beta/issues/857))
+* compute: `google_project_iam` When importing resources `project` no longer needs to be set in the config post import ([#805](https://github.com/terraform-providers/terraform-provider-google-beta/issues/805))
+* compute: `google_sql_user` User's can now be updated to change their password ([#810](https://github.com/terraform-providers/terraform-provider-google-beta/issues/810))
+* compute: `google_compute_instance_template` Fixed issue so project can now be specified by interpolated varibles. ([#816](https://github.com/terraform-providers/terraform-provider-google-beta/issues/816))
+* compute: `google_compute_instance_template` Throw error when using incompatible disk fields instead of continual plan diff ([#812](https://github.com/terraform-providers/terraform-provider-google-beta/issues/812))
+* compute: `google_compute_instance_from_template` Make sure disk type is expanded to a URL ([#771](https://github.com/terraform-providers/terraform-provider-google-beta/issues/771))
+* comptue: `google_compute_instance_template` Attempt to put disks in state in the same order they were specified ([#771](https://github.com/terraform-providers/terraform-provider-google-beta/issues/771))
+* container: `google_container_cluster` and `google_node_pool` now retry correctly when polling for status of an operation. ([#818](https://github.com/terraform-providers/terraform-provider-google-beta/issues/818))
+* container: `google_container_cluster` `istio_config.auth` will no longer permadiff on `AUTH_NONE` when an auth method other than TLS is defined. ([#834](https://github.com/terraform-providers/terraform-provider-google-beta/issues/834))
+* dns: `google_dns_record_set` overrides all existing record types on create, not just NS ([#850](https://github.com/terraform-providers/terraform-provider-google-beta/issues/850))
+* monitoring: `google_monitoring_notification_channel` Allow setting enabled to false ([#864](https://github.com/terraform-providers/terraform-provider-google-beta/issues/864))
+* pubsub: `google_pubsub_subscription` and `google_pubsub_topic` resources can be created inside VPC service controls. ([#827](https://github.com/terraform-providers/terraform-provider-google-beta/issues/827))
+* redis: `google_redis_instance` Fall back to region from `location_id` when region isn't specified ([#847](https://github.com/terraform-providers/terraform-provider-google-beta/issues/847))
 
 ## 2.8.0 (June 04, 2019)
 
