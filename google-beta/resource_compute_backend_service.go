@@ -111,6 +111,23 @@ func resourceGoogleComputeBackendServiceBackendHash(v interface{}) int {
 		// the hash function doesn't return something else.
 		buf.WriteString(fmt.Sprintf("%f-", v.(float64)))
 	}
+	if v, ok := m["max_connections_per_endpoint"]; ok {
+		if v == nil {
+			v = 0
+		}
+
+		buf.WriteString(fmt.Sprintf("%v-", v))
+	}
+	if v, ok := m["max_rate_per_endpoint"]; ok {
+		if v == nil {
+			v = 0.0
+		}
+
+		// floats can't be added to the hash with %v as the other values are because
+		// %v and %f are not equivalent strings so this must remain as a float so that
+		// the hash function doesn't return something else.
+		buf.WriteString(fmt.Sprintf("%f-", v.(float64)))
+	}
 
 	log.Printf("[DEBUG] computed hash value of %v from %v", hashcode.String(buf.String()), buf.String())
 	return hashcode.String(buf.String())
@@ -341,12 +358,20 @@ func computeBackendServiceBackendSchema() *schema.Resource {
 				Type:     schema.TypeInt,
 				Optional: true,
 			},
+			"max_connections_per_endpoint": {
+				Type:     schema.TypeInt,
+				Optional: true,
+			},
 			"max_connections_per_instance": {
 				Type:     schema.TypeInt,
 				Optional: true,
 			},
 			"max_rate": {
 				Type:     schema.TypeInt,
+				Optional: true,
+			},
+			"max_rate_per_endpoint": {
+				Type:     schema.TypeFloat,
 				Optional: true,
 			},
 			"max_rate_per_instance": {
@@ -875,8 +900,10 @@ func flattenComputeBackendServiceBackend(v interface{}, d *schema.ResourceData) 
 			"group":                        flattenComputeBackendServiceBackendGroup(original["group"], d),
 			"max_connections":              flattenComputeBackendServiceBackendMaxConnections(original["maxConnections"], d),
 			"max_connections_per_instance": flattenComputeBackendServiceBackendMaxConnectionsPerInstance(original["maxConnectionsPerInstance"], d),
+			"max_connections_per_endpoint": flattenComputeBackendServiceBackendMaxConnectionsPerEndpoint(original["maxConnectionsPerEndpoint"], d),
 			"max_rate":                     flattenComputeBackendServiceBackendMaxRate(original["maxRate"], d),
 			"max_rate_per_instance":        flattenComputeBackendServiceBackendMaxRatePerInstance(original["maxRatePerInstance"], d),
+			"max_rate_per_endpoint":        flattenComputeBackendServiceBackendMaxRatePerEndpoint(original["maxRatePerEndpoint"], d),
 			"max_utilization":              flattenComputeBackendServiceBackendMaxUtilization(original["maxUtilization"], d),
 		})
 	}
@@ -921,6 +948,16 @@ func flattenComputeBackendServiceBackendMaxConnectionsPerInstance(v interface{},
 	return v
 }
 
+func flattenComputeBackendServiceBackendMaxConnectionsPerEndpoint(v interface{}, d *schema.ResourceData) interface{} {
+	// Handles the string fixed64 format
+	if strVal, ok := v.(string); ok {
+		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
+			return intVal
+		} // let terraform core handle it if we can't convert the string to an int.
+	}
+	return v
+}
+
 func flattenComputeBackendServiceBackendMaxRate(v interface{}, d *schema.ResourceData) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
@@ -932,6 +969,10 @@ func flattenComputeBackendServiceBackendMaxRate(v interface{}, d *schema.Resourc
 }
 
 func flattenComputeBackendServiceBackendMaxRatePerInstance(v interface{}, d *schema.ResourceData) interface{} {
+	return v
+}
+
+func flattenComputeBackendServiceBackendMaxRatePerEndpoint(v interface{}, d *schema.ResourceData) interface{} {
 	return v
 }
 
@@ -1152,7 +1193,7 @@ func expandComputeBackendServiceBackend(v interface{}, d TerraformResourceData, 
 		transformedCapacityScaler, err := expandComputeBackendServiceBackendCapacityScaler(original["capacity_scaler"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedCapacityScaler); val.IsValid() && !isEmptyValue(val) {
+		} else {
 			transformed["capacityScaler"] = transformedCapacityScaler
 		}
 
@@ -1173,35 +1214,49 @@ func expandComputeBackendServiceBackend(v interface{}, d TerraformResourceData, 
 		transformedMaxConnections, err := expandComputeBackendServiceBackendMaxConnections(original["max_connections"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedMaxConnections); val.IsValid() && !isEmptyValue(val) {
+		} else {
 			transformed["maxConnections"] = transformedMaxConnections
 		}
 
 		transformedMaxConnectionsPerInstance, err := expandComputeBackendServiceBackendMaxConnectionsPerInstance(original["max_connections_per_instance"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedMaxConnectionsPerInstance); val.IsValid() && !isEmptyValue(val) {
+		} else {
 			transformed["maxConnectionsPerInstance"] = transformedMaxConnectionsPerInstance
+		}
+
+		transformedMaxConnectionsPerEndpoint, err := expandComputeBackendServiceBackendMaxConnectionsPerEndpoint(original["max_connections_per_endpoint"], d, config)
+		if err != nil {
+			return nil, err
+		} else {
+			transformed["maxConnectionsPerEndpoint"] = transformedMaxConnectionsPerEndpoint
 		}
 
 		transformedMaxRate, err := expandComputeBackendServiceBackendMaxRate(original["max_rate"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedMaxRate); val.IsValid() && !isEmptyValue(val) {
+		} else {
 			transformed["maxRate"] = transformedMaxRate
 		}
 
 		transformedMaxRatePerInstance, err := expandComputeBackendServiceBackendMaxRatePerInstance(original["max_rate_per_instance"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedMaxRatePerInstance); val.IsValid() && !isEmptyValue(val) {
+		} else {
 			transformed["maxRatePerInstance"] = transformedMaxRatePerInstance
+		}
+
+		transformedMaxRatePerEndpoint, err := expandComputeBackendServiceBackendMaxRatePerEndpoint(original["max_rate_per_endpoint"], d, config)
+		if err != nil {
+			return nil, err
+		} else {
+			transformed["maxRatePerEndpoint"] = transformedMaxRatePerEndpoint
 		}
 
 		transformedMaxUtilization, err := expandComputeBackendServiceBackendMaxUtilization(original["max_utilization"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedMaxUtilization); val.IsValid() && !isEmptyValue(val) {
+		} else {
 			transformed["maxUtilization"] = transformedMaxUtilization
 		}
 
@@ -1234,11 +1289,19 @@ func expandComputeBackendServiceBackendMaxConnectionsPerInstance(v interface{}, 
 	return v, nil
 }
 
+func expandComputeBackendServiceBackendMaxConnectionsPerEndpoint(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
 func expandComputeBackendServiceBackendMaxRate(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
 func expandComputeBackendServiceBackendMaxRatePerInstance(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeBackendServiceBackendMaxRatePerEndpoint(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
