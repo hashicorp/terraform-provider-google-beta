@@ -4,6 +4,12 @@ ENHANCEMENTS:
 * Added fields for managing network endpoint group backends in `google_compute_backend`, including `max_connections_per_endpoint` and `max_rate_per_endpoint` ([#854](https://github.com/terraform-providers/terraform-provider-google-beta/issues/854))
 * container: `node_config.sandbox_config` is supported on GKE node pool definitions, allowing you to configure GKE Sandbox. [GH-863]
 
+## 2.9.1 (Unreleased)
+
+BUG FIXES:
+* storage: `google_storage_bucket` fix for crash that occurs when running plan on old buckets [GH-870]
+* storage: `google_storage_bucket` allow updating bucket_policy_only to false [GH-870]
+
 ## 2.9.0 (June 19, 2019)
 
 FEATURES:
