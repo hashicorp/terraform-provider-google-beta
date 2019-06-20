@@ -7,6 +7,7 @@ ENHANCEMENTS:
 ## 2.9.1 (Unreleased)
 
 BUG FIXES:
+* kms: fix regression when reading existing `google_kms_crypto_key` resources [GH-873]
 * storage: `google_storage_bucket` fix for crash that occurs when running plan on old buckets [GH-870]
 * storage: `google_storage_bucket` allow updating bucket_policy_only to false [GH-870]
 
