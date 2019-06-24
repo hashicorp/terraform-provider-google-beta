@@ -6,6 +6,7 @@ ENHANCEMENTS:
 * container: `google_container_cluster` add support for GKE resource usage [GH-825]
 
 BUG FIXES:
+* iam: the member field in iam_* resources is now case-insensitive [GH-876]
 * servicenetworking: `google_service_networking_connection` fix update [GH-871]
 
 ## 2.9.1 (Unreleased)
