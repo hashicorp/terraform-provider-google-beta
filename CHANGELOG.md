@@ -8,6 +8,7 @@ ENHANCEMENTS:
 * container: `node_config.sandbox_config` is supported on GKE node pool definitions, allowing you to configure GKE Sandbox. [GH-863]
 * container: `google_container_cluster` add support for GKE resource usage [GH-825]
 * folder: `google_folder` improve error message on delete [GH-878]
+* iam: sort bindings in `google_*_iam_policy` resources to get simpler diffs [GH-881]
 
 BUG FIXES:
 * iam: the member field in iam_* resources is now case-insensitive [GH-876]
