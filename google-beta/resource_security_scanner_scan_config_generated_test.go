@@ -75,7 +75,7 @@ func testAccCheckSecurityScannerScanConfigDestroy(s *terraform.State) error {
 
 		config := testAccProvider.Meta().(*Config)
 
-		url, err := replaceVarsForTest(rs, "{{SecurityScannerBasePath}}{{name}}")
+		url, err := replaceVarsForTest(config, rs, "{{SecurityScannerBasePath}}{{name}}")
 		if err != nil {
 			return err
 		}
