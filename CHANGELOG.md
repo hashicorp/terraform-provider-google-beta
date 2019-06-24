@@ -7,6 +7,7 @@ ENHANCEMENTS:
 * Added fields for managing network endpoint group backends in `google_compute_backend`, including `max_connections_per_endpoint` and `max_rate_per_endpoint` ([#854](https://github.com/terraform-providers/terraform-provider-google-beta/issues/854))
 * container: `node_config.sandbox_config` is supported on GKE node pool definitions, allowing you to configure GKE Sandbox. [GH-863]
 * container: `google_container_cluster` add support for GKE resource usage [GH-825]
+* folder: `google_folder` improve error message on delete [GH-878]
 
 BUG FIXES:
 * iam: the member field in iam_* resources is now case-insensitive [GH-876]
