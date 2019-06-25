@@ -1,5 +1,8 @@
 ## 2.10.0 (Unreleased)
 
+DEPRECATIONS:
+* monitoring: Deprecated non-existent fields `is_internal` and `internal_checkers` from `google_monitoring_uptime_check_config`. [GH-888]
+
 FEATURES:
 * **New Resource**: `google_compute_project_default_network_tier` [GH-882]
 
