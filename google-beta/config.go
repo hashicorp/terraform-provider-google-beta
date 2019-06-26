@@ -35,6 +35,7 @@ import (
 	"google.golang.org/api/dns/v1"
 	dnsBeta "google.golang.org/api/dns/v1beta2"
 	file "google.golang.org/api/file/v1beta1"
+	healthcare "google.golang.org/api/healthcare/v1beta1"
 	"google.golang.org/api/iam/v1"
 	iamcredentials "google.golang.org/api/iamcredentials/v1"
 	iap "google.golang.org/api/iap/v1beta1"
@@ -152,6 +153,9 @@ type Config struct {
 
 	IAMBasePath string
 	clientIAM   *iam.Service
+
+	HealthcareBasePath string
+	clientHealthcare   *healthcare.Service
 
 	IAPBasePath string
 	clientIAP   *iap.Service
@@ -533,6 +537,16 @@ func (c *Config) LoadAndValidate() error {
 	}
 	c.clientStorageTransfer.UserAgent = userAgent
 	c.clientStorageTransfer.BasePath = storageTransferClientBasePath
+
+	healthcareClientBasePath := removeBasePathVersion(c.HealthcareBasePath)
+	log.Printf("[INFO] Instantiating Google Cloud Healthcare client for path %s", healthcareClientBasePath)
+
+	c.clientHealthcare, err = healthcare.NewService(context, option.WithHTTPClient(client))
+	if err != nil {
+		return err
+	}
+	c.clientHealthcare.UserAgent = userAgent
+	c.clientHealthcare.BasePath = healthcareClientBasePath
 
 	return nil
 }
