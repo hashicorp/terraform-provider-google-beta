@@ -103,7 +103,8 @@ func Provider() terraform.ResourceProvider {
 
 			// Handwritten Products / Versioned / Atypical Entries
 			// start beta-only products
-			IAPCustomEndpointEntryKey: IAPCustomEndpointEntry,
+			HealthcareCustomEndpointEntryKey: HealthcareCustomEndpointEntry,
+			IAPCustomEndpointEntryKey:        IAPCustomEndpointEntry,
 			// end beta-only products
 			CloudBillingCustomEndpointEntryKey:           CloudBillingCustomEndpointEntry,
 			ComposerCustomEndpointEntryKey:               ComposerCustomEndpointEntry,
@@ -198,6 +199,7 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 		GeneratedBinaryAuthorizationResourcesMap,
 		GeneratedContainerAnalysisResourcesMap,
 		GeneratedSecurityScannerResourcesMap,
+		GeneratedHealthcareResourcesMap,
 		// end beta-only products
 		GeneratedAccessContextManagerResourcesMap,
 		GeneratedAppEngineResourcesMap,
@@ -271,6 +273,18 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_folder_iam_member":                     ResourceIamMemberWithImport(IamFolderSchema, NewFolderIamUpdater, FolderIdParseFunc),
 			"google_folder_iam_policy":                     ResourceIamPolicyWithImport(IamFolderSchema, NewFolderIamUpdater, FolderIdParseFunc),
 			"google_folder_organization_policy":            resourceGoogleFolderOrganizationPolicy(),
+			"google_healthcare_dataset_iam_binding":        ResourceIamBindingWithImport(IamHealthcareDatasetSchema, NewHealthcareDatasetIamUpdater, DatasetIdParseFunc),
+			"google_healthcare_dataset_iam_member":         ResourceIamMemberWithImport(IamHealthcareDatasetSchema, NewHealthcareDatasetIamUpdater, DatasetIdParseFunc),
+			"google_healthcare_dataset_iam_policy":         ResourceIamPolicyWithImport(IamHealthcareDatasetSchema, NewHealthcareDatasetIamUpdater, DatasetIdParseFunc),
+			"google_healthcare_dicom_store_iam_binding":    ResourceIamBindingWithImport(IamHealthcareDicomStoreSchema, NewHealthcareDicomStoreIamUpdater, DicomStoreIdParseFunc),
+			"google_healthcare_dicom_store_iam_member":     ResourceIamMemberWithImport(IamHealthcareDicomStoreSchema, NewHealthcareDicomStoreIamUpdater, DicomStoreIdParseFunc),
+			"google_healthcare_dicom_store_iam_policy":     ResourceIamPolicyWithImport(IamHealthcareDicomStoreSchema, NewHealthcareDicomStoreIamUpdater, DicomStoreIdParseFunc),
+			"google_healthcare_fhir_store_iam_binding":     ResourceIamBindingWithImport(IamHealthcareFhirStoreSchema, NewHealthcareFhirStoreIamUpdater, FhirStoreIdParseFunc),
+			"google_healthcare_fhir_store_iam_member":      ResourceIamMemberWithImport(IamHealthcareFhirStoreSchema, NewHealthcareFhirStoreIamUpdater, FhirStoreIdParseFunc),
+			"google_healthcare_fhir_store_iam_policy":      ResourceIamPolicyWithImport(IamHealthcareFhirStoreSchema, NewHealthcareFhirStoreIamUpdater, FhirStoreIdParseFunc),
+			"google_healthcare_hl7_v2_store_iam_binding":   ResourceIamBindingWithImport(IamHealthcareHl7V2StoreSchema, NewHealthcareHl7V2StoreIamUpdater, Hl7V2StoreIdParseFunc),
+			"google_healthcare_hl7_v2_store_iam_member":    ResourceIamMemberWithImport(IamHealthcareHl7V2StoreSchema, NewHealthcareHl7V2StoreIamUpdater, Hl7V2StoreIdParseFunc),
+			"google_healthcare_hl7_v2_store_iam_policy":    ResourceIamPolicyWithImport(IamHealthcareHl7V2StoreSchema, NewHealthcareHl7V2StoreIamUpdater, Hl7V2StoreIdParseFunc),
 			"google_iap_tunnel_instance_iam_binding":       ResourceIamBindingWithImport(IamIapTunnelInstanceSchema, NewIapTunnelInstanceIamUpdater, IapTunnelInstanceIdParseFunc),
 			"google_iap_tunnel_instance_iam_member":        ResourceIamMemberWithImport(IamIapTunnelInstanceSchema, NewIapTunnelInstanceIamUpdater, IapTunnelInstanceIdParseFunc),
 			"google_iap_tunnel_instance_iam_policy":        ResourceIamPolicyWithImport(IamIapTunnelInstanceSchema, NewIapTunnelInstanceIamUpdater, IapTunnelInstanceIdParseFunc),
@@ -389,6 +403,7 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 	config.StorageBasePath = d.Get(StorageCustomEndpointEntryKey).(string)
 	config.TpuBasePath = d.Get(TpuCustomEndpointEntryKey).(string)
 
+	config.HealthcareBasePath = d.Get(HealthcareCustomEndpointEntryKey).(string)
 	config.IAPBasePath = d.Get(IAPCustomEndpointEntryKey).(string)
 	config.CloudBillingBasePath = d.Get(CloudBillingCustomEndpointEntryKey).(string)
 	config.ComposerBasePath = d.Get(ComposerCustomEndpointEntryKey).(string)
