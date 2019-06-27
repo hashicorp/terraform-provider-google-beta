@@ -18,12 +18,12 @@ BUG FIXES:
 * iam: the member field in iam_* resources is now case-insensitive [GH-876]
 * servicenetworking: `google_service_networking_connection` fix update [GH-871]
 
-## 2.9.1 (Unreleased)
+## 2.9.1 (June 21, 2019)
 
 BUG FIXES:
-* kms: fix regression when reading existing `google_kms_crypto_key` resources [GH-873]
-* storage: `google_storage_bucket` fix for crash that occurs when running plan on old buckets [GH-870]
-* storage: `google_storage_bucket` allow updating bucket_policy_only to false [GH-870]
+* kms: fix regression when reading existing `google_kms_crypto_key` resources ([#873](https://github.com/terraform-providers/terraform-provider-google-beta/issues/873))
+* storage: `google_storage_bucket` fix for crash that occurs when running plan on old buckets ([#870](https://github.com/terraform-providers/terraform-provider-google-beta/issues/870))
+* storage: `google_storage_bucket` allow updating bucket_policy_only to false ([#870](https://github.com/terraform-providers/terraform-provider-google-beta/issues/870))
 
 ## 2.9.0 (June 19, 2019)
 
