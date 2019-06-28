@@ -181,7 +181,7 @@ resource "google_compute_forwarding_rule" "foobar" {
 `, addrName, poolName, ruleName)
 }
 
-func testAccComputeForwardingRule_internalLoadBalancing(serviceName, checkName, networkName, ruleName1, ruleName2 string) string {
+func testAccComputeForwardingRule_internalLoadBalancing(serviceName, checkName, networkName, ruleName1, ruleName2, ruleName3 string) string {
 	return fmt.Sprintf(`
 resource "google_compute_region_backend_service" "foobar-bs" {
   name                  = "%s"
@@ -229,7 +229,7 @@ resource "google_compute_forwarding_rule" "foobar3" {
   network               = "${google_compute_network.foobar.name}"
   subnetwork            = "%s"
 }
-`, serviceName, checkName, networkName, ruleName1, networkName, ruleName2)
+`, serviceName, checkName, networkName, ruleName1, networkName, ruleName2, ruleName3, networkName)
 }
 
 func testAccComputeForwardingRule_networkTier(poolName, ruleName string) string {
