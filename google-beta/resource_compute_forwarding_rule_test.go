@@ -63,6 +63,37 @@ func TestAccComputeForwardingRule_ip(t *testing.T) {
 	})
 }
 
+func TestAccComputeForwardingRule_internalLoadBalancing(t *testing.T) {
+        t.Parallel()
+
+        serviceName := fmt.Sprintf("tf-%s", acctest.RandString(10))
+        checkName := fmt.Sprintf("tf-%s", acctest.RandString(10))
+        networkName := fmt.Sprintf("tf-%s", acctest.RandString(10))
+        ruleName1 := fmt.Sprintf("tf-%s", acctest.RandString(10))
+        ruleName2 := fmt.Sprintf("tf-%s", acctest.RandString(10))
+
+        resource.Test(t, resource.TestCase{
+                PreCheck:     func() { testAccPreCheck(t) },
+                Providers:    testAccProviders,
+                CheckDestroy: testAccCheckComputeForwardingRuleDestroy,
+                Steps: []resource.TestStep{
+                        {
+                                Config: testAccComputeForwardingRule_internalLoadBalancing(serviceName, checkName, networkName, ruleName1, ruleName2),
+                        },
+                        {
+                                ResourceName:      "google_compute_forwarding_rule.foobar",
+                                ImportState:       true,
+                                ImportStateVerify: true,
+                        },
+                        {
+                                ResourceName:      "google_compute_forwarding_rule.foobar2",
+                                ImportState:       true,
+                                ImportStateVerify: true,
+                        },
+                },
+        })
+}
+
 func TestAccComputeForwardingRule_networkTier(t *testing.T) {
 	t.Parallel()
 
@@ -111,7 +142,7 @@ resource "google_compute_target_pool" "foo-tp" {
   description = "Resource created for Terraform acceptance testing"
   instances   = ["us-central1-a/foo", "us-central1-b/bar"]
   name        = "foo-%s"
-}
+}	
 resource "google_compute_target_pool" "bar-tp" {
   description = "Resource created for Terraform acceptance testing"
   instances   = ["us-central1-a/foo", "us-central1-b/bar"]
@@ -147,6 +178,57 @@ resource "google_compute_forwarding_rule" "foobar" {
   target      = "${google_compute_target_pool.foobar-tp.self_link}"
 }
 `, addrName, poolName, ruleName)
+}
+
+func testAccComputeForwardingRule_internalLoadBalancing(serviceName, checkName, networkName, ruleName1, ruleName2 string) string {
+        return fmt.Sprintf(`
+resource "google_compute_region_backend_service" "foobar-bs" {
+  name                  = "%s"
+  description           = "Resource created for Terraform acceptance testing"
+  health_checks         = ["${google_compute_health_check.zero.self_link}"]
+  region                = "us-central1"
+}
+resource "google_compute_health_check" "zero" {
+  name               = "%s"
+  description        = "Resource created for Terraform acceptance testing"
+  check_interval_sec = 1
+  timeout_sec        = 1
+
+  tcp_health_check {
+    port = "80"
+  }
+}
+resource "google_compute_network" "foobar" {
+  name = "%s"
+  auto_create_subnetworks = true
+}
+resource "google_compute_forwarding_rule" "foobar" {
+  description           = "Resource created for Terraform acceptance testing"
+  name                  = "%s"
+  load_balancing_scheme = "INTERNAL"
+  backend_service       = "${google_compute_region_backend_service.foobar-bs.self_link}"
+  all_ports             = true
+  network               = "${google_compute_network.foobar.name}"
+  subnetwork            = "%s"
+}
+resource "google_compute_forwarding_rule" "foobar2" {
+  description           = "Resource created for Terraform acceptance testing"
+  name                  = "%s"
+  load_balancing_scheme = "INTERNAL"
+  backend_service       = "${google_compute_region_backend_service.foobar-bs.self_link}"
+  ports                 = ["80"]
+  network               = "${google_compute_network.foobar.self_link}"
+}
+resource "google_compute_forwarding_rule" "foobar3" {
+  description           = "Resource created for Terraform acceptance testing"
+  name                  = "%s"
+  load_balancing_scheme = "INTERNAL"
+  backend_service       = "${google_compute_region_backend_service.foobar-bs.self_link}"
+  allow_global_access   = true
+  network               = "${google_compute_network.foobar.name}"
+  subnetwork            = "%s"
+}
+`, serviceName, checkName, networkName, ruleName1, networkName, ruleName2)
 }
 
 func testAccComputeForwardingRule_networkTier(poolName, ruleName string) string {
