@@ -282,7 +282,7 @@ func resourceComputeForwardingRuleCreate(d *schema.ResourceData, meta interface{
         if err != nil {
                 return err
         } else if v, ok := d.GetOkExists("allow_global_access"); !isEmptyValue(reflect.ValueOf(allowGlobalAccessProp)) && (ok || !reflect.DeepEqual(v, allowGlobalAccessProp)) {
-                obj["allowGlobalAccess"] = allGlobalAccessProp
+                obj["allowGlobalAccess"] = allowGlobalAccessProp
         }
 	networkTierProp, err := expandComputeForwardingRuleNetworkTier(d.Get("network_tier"), d, config)
 	if err != nil {
@@ -704,6 +704,10 @@ func flattenComputeForwardingRuleAllPorts(v interface{}, d *schema.ResourceData)
 	return v
 }
 
+func flattenComputeForwardingRuleAllowGlobalAccess(v interface{}, d *schema.ResourceData) interface{} {
+	return v
+}
+
 func flattenComputeForwardingRuleNetworkTier(v interface{}, d *schema.ResourceData) interface{} {
 	return v
 }
@@ -845,6 +849,10 @@ func expandComputeForwardingRuleLabelFingerprint(v interface{}, d TerraformResou
 }
 
 func expandComputeForwardingRuleAllPorts(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeForwardingRuleAllowGlobalAccess(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
