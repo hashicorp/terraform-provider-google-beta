@@ -64,34 +64,34 @@ func TestAccComputeForwardingRule_ip(t *testing.T) {
 }
 
 func TestAccComputeForwardingRule_internalLoadBalancing(t *testing.T) {
-        t.Parallel()
+	t.Parallel()
 
-        serviceName := fmt.Sprintf("tf-%s", acctest.RandString(10))
-        checkName := fmt.Sprintf("tf-%s", acctest.RandString(10))
-        networkName := fmt.Sprintf("tf-%s", acctest.RandString(10))
-        ruleName1 := fmt.Sprintf("tf-%s", acctest.RandString(10))
-        ruleName2 := fmt.Sprintf("tf-%s", acctest.RandString(10))
+	serviceName := fmt.Sprintf("tf-%s", acctest.RandString(10))
+	checkName := fmt.Sprintf("tf-%s", acctest.RandString(10))
+	networkName := fmt.Sprintf("tf-%s", acctest.RandString(10))
+	ruleName1 := fmt.Sprintf("tf-%s", acctest.RandString(10))
+	ruleName2 := fmt.Sprintf("tf-%s", acctest.RandString(10))
 
-        resource.Test(t, resource.TestCase{
-                PreCheck:     func() { testAccPreCheck(t) },
-                Providers:    testAccProviders,
-                CheckDestroy: testAccCheckComputeForwardingRuleDestroy,
-                Steps: []resource.TestStep{
-                        {
-                                Config: testAccComputeForwardingRule_internalLoadBalancing(serviceName, checkName, networkName, ruleName1, ruleName2),
-                        },
-                        {
-                                ResourceName:      "google_compute_forwarding_rule.foobar",
-                                ImportState:       true,
-                                ImportStateVerify: true,
-                        },
-                        {
-                                ResourceName:      "google_compute_forwarding_rule.foobar2",
-                                ImportState:       true,
-                                ImportStateVerify: true,
-                        },
-                },
-        })
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckComputeForwardingRuleDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeForwardingRule_internalLoadBalancing(serviceName, checkName, networkName, ruleName1, ruleName2),
+			},
+			{
+				ResourceName:      "google_compute_forwarding_rule.foobar",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+			{
+				ResourceName:      "google_compute_forwarding_rule.foobar2",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
 }
 
 func TestAccComputeForwardingRule_networkTier(t *testing.T) {
@@ -181,7 +181,7 @@ resource "google_compute_forwarding_rule" "foobar" {
 }
 
 func testAccComputeForwardingRule_internalLoadBalancing(serviceName, checkName, networkName, ruleName1, ruleName2 string) string {
-        return fmt.Sprintf(`
+	return fmt.Sprintf(`
 resource "google_compute_region_backend_service" "foobar-bs" {
   name                  = "%s"
   description           = "Resource created for Terraform acceptance testing"
