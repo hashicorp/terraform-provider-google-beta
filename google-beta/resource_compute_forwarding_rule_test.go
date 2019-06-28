@@ -142,7 +142,7 @@ resource "google_compute_target_pool" "foo-tp" {
   description = "Resource created for Terraform acceptance testing"
   instances   = ["us-central1-a/foo", "us-central1-b/bar"]
   name        = "foo-%s"
-}	
+}
 resource "google_compute_target_pool" "bar-tp" {
   description = "Resource created for Terraform acceptance testing"
   instances   = ["us-central1-a/foo", "us-central1-b/bar"]
