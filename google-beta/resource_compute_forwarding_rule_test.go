@@ -71,6 +71,7 @@ func TestAccComputeForwardingRule_internalLoadBalancing(t *testing.T) {
 	networkName := fmt.Sprintf("tf-%s", acctest.RandString(10))
 	ruleName1 := fmt.Sprintf("tf-%s", acctest.RandString(10))
 	ruleName2 := fmt.Sprintf("tf-%s", acctest.RandString(10))
+	ruleName3 := fmt.Sprintf("tf-%s", acctest.RandString(10))
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -78,7 +79,7 @@ func TestAccComputeForwardingRule_internalLoadBalancing(t *testing.T) {
 		CheckDestroy: testAccCheckComputeForwardingRuleDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccComputeForwardingRule_internalLoadBalancing(serviceName, checkName, networkName, ruleName1, ruleName2),
+				Config: testAccComputeForwardingRule_internalLoadBalancing(serviceName, checkName, networkName, ruleName1, ruleName2, ruleName3),
 			},
 			{
 				ResourceName:      "google_compute_forwarding_rule.foobar",
