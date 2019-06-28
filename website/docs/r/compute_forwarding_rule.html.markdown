@@ -241,6 +241,12 @@ The following arguments are supported:
   with this forwarding rule. Used with backend service. Cannot be set
   if port or portRange are set.
 
+* `allow_global_access` -
+  (Optional)
+  For internal TCP/UDP load balancing (i.e. load balancing scheme is
+  INTERNAL and protocol is TCP/UDP), set this to true to allow traffic
+  from within the same network, regardless of region or subnetwork.
+
 * `network_tier` -
   (Optional)
   The networking tier used for configuring this address. This field can
