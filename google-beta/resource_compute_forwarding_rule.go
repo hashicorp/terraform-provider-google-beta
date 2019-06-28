@@ -68,6 +68,11 @@ func resourceComputeForwardingRule() *schema.Resource {
 				Optional: true,
 				ForceNew: true,
 			},
+			"allow_global_access": {
+				Type:     schema.TypeBool,
+				Optional: true,
+				ForceNew: true,
+			},
 			"backend_service": {
 				Type:             schema.TypeString,
 				Optional:         true,
@@ -273,6 +278,12 @@ func resourceComputeForwardingRuleCreate(d *schema.ResourceData, meta interface{
 	} else if v, ok := d.GetOkExists("all_ports"); !isEmptyValue(reflect.ValueOf(allPortsProp)) && (ok || !reflect.DeepEqual(v, allPortsProp)) {
 		obj["allPorts"] = allPortsProp
 	}
+        allowGlobalAccessProp, err := expandComputeForwardingRuleAllowGlobalAccess(d.Get("allow_global_access"), d, config)
+        if err != nil {
+                return err
+        } else if v, ok := d.GetOkExists("allow_global_access"); !isEmptyValue(reflect.ValueOf(allowGlobalAccessProp)) && (ok || !reflect.DeepEqual(v, allowGlobalAccessProp)) {
+                obj["allowGlobalAccess"] = allGlobalAccessProp
+        }
 	networkTierProp, err := expandComputeForwardingRuleNetworkTier(d.Get("network_tier"), d, config)
 	if err != nil {
 		return err
@@ -445,6 +456,9 @@ func resourceComputeForwardingRuleRead(d *schema.ResourceData, meta interface{})
 	if err := d.Set("all_ports", flattenComputeForwardingRuleAllPorts(res["allPorts"], d)); err != nil {
 		return fmt.Errorf("Error reading ForwardingRule: %s", err)
 	}
+        if err := d.Set("allow_global_access", flattenComputeForwardingRuleAllowGlobalAccess(res["allowGlobalAccess"], d)); err != nil {
+                return fmt.Errorf("Error reading ForwardingRule: %s", err)
+        }
 	if err := d.Set("network_tier", flattenComputeForwardingRuleNetworkTier(res["networkTier"], d)); err != nil {
 		return fmt.Errorf("Error reading ForwardingRule: %s", err)
 	}
