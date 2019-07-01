@@ -13,6 +13,7 @@ ENHANCEMENTS:
 * folder: `google_folder` improve error message on delete [GH-878]
 * iam: sort bindings in `google_*_iam_policy` resources to get simpler diffs [GH-881]
 * kms: `google_kms_crypto_key` now supports labels. [GH-885]
+* pubsub: `google_pubsub_topic` supports KMS keys with `kms_key_name`. [GH-894]
 
 BUG FIXES:
 * iam: the member field in iam_* resources is now case-insensitive [GH-876]
