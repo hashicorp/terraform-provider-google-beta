@@ -1,24 +1,24 @@
-## 2.10.0 (Unreleased)
+## 2.10.0 (July 02, 2019)
 
 DEPRECATIONS:
-* monitoring: Deprecated non-existent fields `is_internal` and `internal_checkers` from `google_monitoring_uptime_check_config`. [GH-888]
+* monitoring: Deprecated non-existent fields `is_internal` and `internal_checkers` from `google_monitoring_uptime_check_config`. ([#888](https://github.com/terraform-providers/terraform-provider-google-beta/issues/888))
 
 FEATURES:
-* **New Resource**: `google_compute_project_default_network_tier` [GH-882]
+* **New Resource**: `google_compute_project_default_network_tier` ([#882](https://github.com/terraform-providers/terraform-provider-google-beta/issues/882))
 
 ENHANCEMENTS:
 * compute: Added fields for managing network endpoint group backends in `google_compute_backend_service`, including `max_connections_per_endpoint` and `max_rate_per_endpoint` ([#854](https://github.com/terraform-providers/terraform-provider-google-beta/issues/854))
-* compute: Support custom timeouts in `google_compute_instance_group_manager` and `google_compute_region_instance_group_manager` [GH-909]
-* container: `node_config.sandbox_config` is supported on GKE node pool definitions, allowing you to configure GKE Sandbox. [GH-863]
-* container: `google_container_cluster` add support for GKE resource usage [GH-825]
-* folder: `google_folder` improve error message on delete [GH-878]
-* iam: sort bindings in `google_*_iam_policy` resources to get simpler diffs [GH-881]
-* kms: `google_kms_crypto_key` now supports labels. [GH-885]
-* pubsub: `google_pubsub_topic` supports KMS keys with `kms_key_name`. [GH-894]
+* compute: Support custom timeouts in `google_compute_instance_group_manager` and `google_compute_region_instance_group_manager` ([#909](https://github.com/terraform-providers/terraform-provider-google-beta/issues/909))
+* container: `node_config.sandbox_config` is supported on GKE node pool definitions, allowing you to configure GKE Sandbox. ([#863](https://github.com/terraform-providers/terraform-provider-google-beta/issues/863))
+* container: `google_container_cluster` add support for GKE resource usage ([#825](https://github.com/terraform-providers/terraform-provider-google-beta/issues/825))
+* folder: `google_folder` improve error message on delete ([#878](https://github.com/terraform-providers/terraform-provider-google-beta/issues/878))
+* iam: sort bindings in `google_*_iam_policy` resources to get simpler diffs ([#881](https://github.com/terraform-providers/terraform-provider-google-beta/issues/881))
+* kms: `google_kms_crypto_key` now supports labels. ([#885](https://github.com/terraform-providers/terraform-provider-google-beta/issues/885))
+* pubsub: `google_pubsub_topic` supports KMS keys with `kms_key_name`. ([#894](https://github.com/terraform-providers/terraform-provider-google-beta/issues/894))
 
 BUG FIXES:
-* iam: the member field in iam_* resources is now case-insensitive [GH-876]
-* servicenetworking: `google_service_networking_connection` fix update [GH-871]
+* iam: the member field in iam_* resources is now case-insensitive ([#876](https://github.com/terraform-providers/terraform-provider-google-beta/issues/876))
+* servicenetworking: `google_service_networking_connection` fix update ([#871](https://github.com/terraform-providers/terraform-provider-google-beta/issues/871))
 
 ## 2.9.1 (June 21, 2019)
 
@@ -220,8 +220,8 @@ BACKWARDS INCOMPATIBILITIES:
 * accesscontextmanager: `google_access_context_manager_service_perimeter` `unrestricted_services` field was removed based on a removal in the underlying API. ([#576](https://github.com/terraform-providers/terraform-provider-google-beta/issues/576))
 
 FEATURES:
-* **New Resource**: `google_compute_backend_bucket_signed_url_key` is now available. [GH-530]
-* **New Resource**: `google_compute_backend_service_signed_url_key` is now available. [GH-577]
+* **New Resource**: `google_compute_backend_bucket_signed_url_key` is now available. ([#530](https://github.com/terraform-providers/terraform-provider-google-beta/issues/530))
+* **New Resource**: `google_compute_backend_service_signed_url_key` is now available. ([#577](https://github.com/terraform-providers/terraform-provider-google-beta/issues/577))
 * **New Datasource**: `google_service_account_access_token` is now available. ([#575](https://github.com/terraform-providers/terraform-provider-google-beta/issues/575))
 
 ENHANCEMENTS:
