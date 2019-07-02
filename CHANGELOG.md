@@ -8,6 +8,7 @@ FEATURES:
 
 ENHANCEMENTS:
 * compute: Added fields for managing network endpoint group backends in `google_compute_backend_service`, including `max_connections_per_endpoint` and `max_rate_per_endpoint` ([#854](https://github.com/terraform-providers/terraform-provider-google-beta/issues/854))
+* compute: Support custom timeouts in `google_compute_instance_group_manager` and `google_compute_region_instance_group_manager` [GH-909]
 * container: `node_config.sandbox_config` is supported on GKE node pool definitions, allowing you to configure GKE Sandbox. [GH-863]
 * container: `google_container_cluster` add support for GKE resource usage [GH-825]
 * folder: `google_folder` improve error message on delete [GH-878]
