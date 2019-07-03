@@ -6,6 +6,18 @@ DEPRECATIONS:
 
 FEATURES:
 * **New Resource**: `google_compute_project_default_network_tier` ([#882](https://github.com/terraform-providers/terraform-provider-google-beta/issues/882))
+* **New Resource** `google_healthcare_dataset_iam_binding` ([899](https://github.com/terraform-providers/terraform-provider-google-beta/pull/899))
+* **New Resource** `google_healthcare_dataset_iam_member` ([899](https://github.com/terraform-providers/terraform-provider-google-beta/pull/899))
+* **New Resource** `google_healthcare_dataset_iam_policy` ([899](https://github.com/terraform-providers/terraform-provider-google-beta/pull/899))
+* **New Resource** `google_healthcare_dicom_store_iam_binding` ([899](https://github.com/terraform-providers/terraform-provider-google-beta/pull/899))
+* **New Resource** `google_healthcare_dicom_store_iam_member` ([899](https://github.com/terraform-providers/terraform-provider-google-beta/pull/899))
+* **New Resource** `google_healthcare_dicom_store_iam_policy` ([899](https://github.com/terraform-providers/terraform-provider-google-beta/pull/899))
+* **New Resource** `google_healthcare_fhir_store_iam_binding` ([899](https://github.com/terraform-providers/terraform-provider-google-beta/pull/899))
+* **New Resource** `google_healthcare_fhir_store_iam_member` ([899](https://github.com/terraform-providers/terraform-provider-google-beta/pull/899))
+* **New Resource** `google_healthcare_fhir_store_iam_policy` ([899](https://github.com/terraform-providers/terraform-provider-google-beta/pull/899))
+* **New Resource** `google_healthcare_hl7_v2_store_iam_binding` ([899](https://github.com/terraform-providers/terraform-provider-google-beta/pull/899))
+* **New Resource** `google_healthcare_hl7_v2_store_iam_member` ([899](https://github.com/terraform-providers/terraform-provider-google-beta/pull/899))
+* **New Resource** `google_healthcare_hl7_v2_store_iam_policy` ([899](https://github.com/terraform-providers/terraform-provider-google-beta/pull/899))
 
 ENHANCEMENTS:
 * compute: Added fields for managing network endpoint group backends in `google_compute_backend_service`, including `max_connections_per_endpoint` and `max_rate_per_endpoint` ([#854](https://github.com/terraform-providers/terraform-provider-google-beta/issues/854))
