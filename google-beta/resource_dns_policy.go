@@ -332,7 +332,11 @@ func resourceDnsPolicyDelete(d *schema.ResourceData, meta interface{}) error {
 
 func resourceDnsPolicyImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	config := meta.(*Config)
-	if err := parseImportId([]string{"projects/(?P<project>[^/]+)/policies/(?P<name>[^/]+)", "(?P<project>[^/]+)/(?P<name>[^/]+)", "(?P<name>[^/]+)"}, d, config); err != nil {
+	if err := parseImportId([]string{
+		"projects/(?P<project>[^/]+)/policies/(?P<name>[^/]+)",
+		"(?P<project>[^/]+)/(?P<name>[^/]+)",
+		"(?P<name>[^/]+)",
+	}, d, config); err != nil {
 		return nil, err
 	}
 
