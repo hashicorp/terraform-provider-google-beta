@@ -323,7 +323,10 @@ func resourceBinaryAuthorizationPolicyDelete(d *schema.ResourceData, meta interf
 
 func resourceBinaryAuthorizationPolicyImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	config := meta.(*Config)
-	if err := parseImportId([]string{"projects/(?P<project>[^/]+)", "(?P<project>[^/]+)"}, d, config); err != nil {
+	if err := parseImportId([]string{
+		"projects/(?P<project>[^/]+)",
+		"(?P<project>[^/]+)",
+	}, d, config); err != nil {
 		return nil, err
 	}
 
