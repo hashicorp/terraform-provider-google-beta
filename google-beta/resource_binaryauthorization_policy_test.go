@@ -147,7 +147,6 @@ func TestAccBinaryAuthorizationPolicy_update(t *testing.T) {
 		},
 	})
 }
-
 func testAccCheckBinaryAuthorizationPolicyDefault(pid string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		config := testAccProvider.Meta().(*Config)

@@ -23,8 +23,6 @@ description: |-
 
 A policy for container image binary authorization.
 
-~> **Warning:** This resource is in beta, and should be used with the terraform-provider-google-beta provider.
-See [Provider Versions](https://terraform.io/docs/providers/google/provider_versions.html) for more details on beta resources.
 
 To get more information about Policy, see:
 
@@ -179,8 +177,8 @@ This resource provides the following
 Policy can be imported using any of these accepted formats:
 
 ```
-$ terraform import -provider=google-beta google_binary_authorization_policy.default projects/{{project}}
-$ terraform import -provider=google-beta google_binary_authorization_policy.default {{project}}
+$ terraform import google_binary_authorization_policy.default projects/{{project}}
+$ terraform import google_binary_authorization_policy.default {{project}}
 ```
 
 -> If you're importing a resource with beta features, make sure to include `-provider=google-beta`
