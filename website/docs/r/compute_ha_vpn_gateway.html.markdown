@@ -339,6 +339,7 @@ HaVpnGateway can be imported using any of these accepted formats:
 ```
 $ terraform import -provider=google-beta google_compute_ha_vpn_gateway.default projects/{{project}}/regions/{{region}}/vpnGateways/{{name}}
 $ terraform import -provider=google-beta google_compute_ha_vpn_gateway.default {{project}}/{{region}}/{{name}}
+$ terraform import -provider=google-beta google_compute_ha_vpn_gateway.default {{region}}/{{name}}
 $ terraform import -provider=google-beta google_compute_ha_vpn_gateway.default {{name}}
 ```
 
