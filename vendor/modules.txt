@@ -332,7 +332,7 @@ golang.org/x/text/unicode/norm
 golang.org/x/text/transform
 golang.org/x/text/secure/bidirule
 golang.org/x/text/unicode/bidi
-# google.golang.org/api v0.6.0
+# google.golang.org/api v0.7.0
 google.golang.org/api/appengine/v1
 google.golang.org/api/bigquery/v2
 google.golang.org/api/bigtableadmin/v2

@@ -393,7 +393,7 @@
       }
     }
   },
-  "revision": "20190530",
+  "revision": "20190607",
   "rootUrl": "https://serviceusage.googleapis.com/",
   "schemas": {
     "Api": {

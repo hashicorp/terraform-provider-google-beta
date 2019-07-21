@@ -13,9 +13,10 @@ require (
 	github.com/hashicorp/go-version v1.1.0
 	github.com/hashicorp/terraform v0.12.4
 	github.com/keybase/go-crypto v0.0.0-20170628152938-433e2f3d43ef // indirect
+	github.com/kr/pty v1.1.3 // indirect
 	github.com/mitchellh/hashstructure v1.0.0
 	github.com/stoewer/go-strcase v1.0.1
 	github.com/terraform-providers/terraform-provider-random v0.0.0-20180820145304-a3da7a23d7f9
 	golang.org/x/oauth2 v0.0.0-20190604053449-0f29369cfe45
-	google.golang.org/api v0.6.0
+	google.golang.org/api v0.7.0
 )
