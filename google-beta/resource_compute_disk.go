@@ -296,6 +296,15 @@ func resourceComputeDisk() *schema.Resource {
 				Optional: true,
 				ForceNew: true,
 			},
+			"resource_policies": {
+				Type:     schema.TypeList,
+				Optional: true,
+				ForceNew: true,
+				Elem: &schema.Schema{
+					Type:             schema.TypeString,
+					DiffSuppressFunc: compareSelfLinkOrResourceName,
+				},
+			},
 			"size": {
 				Type:     schema.TypeInt,
 				Computed: true,
@@ -482,6 +491,12 @@ func resourceComputeDiskCreate(d *schema.ResourceData, meta interface{}) error {
 	} else if v, ok := d.GetOkExists("image"); !isEmptyValue(reflect.ValueOf(sourceImageProp)) && (ok || !reflect.DeepEqual(v, sourceImageProp)) {
 		obj["sourceImage"] = sourceImageProp
 	}
+	resourcePoliciesProp, err := expandComputeDiskResourcePolicies(d.Get("resource_policies"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("resource_policies"); !isEmptyValue(reflect.ValueOf(resourcePoliciesProp)) && (ok || !reflect.DeepEqual(v, resourcePoliciesProp)) {
+		obj["resourcePolicies"] = resourcePoliciesProp
+	}
 	zoneProp, err := expandComputeDiskZone(d.Get("zone"), d, config)
 	if err != nil {
 		return err
@@ -621,6 +636,9 @@ func resourceComputeDiskRead(d *schema.ResourceData, meta interface{}) error {
 		return fmt.Errorf("Error reading Disk: %s", err)
 	}
 	if err := d.Set("image", flattenComputeDiskImage(res["sourceImage"], d)); err != nil {
+		return fmt.Errorf("Error reading Disk: %s", err)
+	}
+	if err := d.Set("resource_policies", flattenComputeDiskResourcePolicies(res["resourcePolicies"], d)); err != nil {
 		return fmt.Errorf("Error reading Disk: %s", err)
 	}
 	if err := d.Set("zone", flattenComputeDiskZone(res["zone"], d)); err != nil {
@@ -923,6 +941,13 @@ func flattenComputeDiskImage(v interface{}, d *schema.ResourceData) interface{} 
 	return v
 }
 
+func flattenComputeDiskResourcePolicies(v interface{}, d *schema.ResourceData) interface{} {
+	if v == nil {
+		return v
+	}
+	return convertAndMapStringArr(v.([]interface{}), ConvertSelfLinkToV1)
+}
+
 func flattenComputeDiskZone(v interface{}, d *schema.ResourceData) interface{} {
 	if v == nil {
 		return v
@@ -1073,6 +1098,19 @@ func expandComputeDiskType(v interface{}, d TerraformResourceData, config *Confi
 
 func expandComputeDiskImage(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
+}
+
+func expandComputeDiskResourcePolicies(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	l := v.([]interface{})
+	req := make([]interface{}, 0, len(l))
+	for _, raw := range l {
+		f, err := parseRegionalFieldValue("resourcePolicies", raw.(string), "project", "region", "zone", d, config, true)
+		if err != nil {
+			return nil, fmt.Errorf("Invalid value for resource_policies: %s", err)
+		}
+		req = append(req, f.RelativeLink())
+	}
+	return req, nil
 }
 
 func expandComputeDiskZone(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {

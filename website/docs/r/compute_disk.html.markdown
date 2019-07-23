@@ -133,6 +133,10 @@ The following arguments are supported:
   For instance, the image `centos-6-v20180104` includes its family name `centos-6`.
   These images can be referred by family name here.
 
+* `resource_policies` -
+  (Optional, [Beta](https://terraform.io/docs/providers/google/provider_versions.html))
+  Resource policies applied to this disk for automatic snapshot creations.
+
 * `zone` -
   (Optional)
   A reference to the zone where the disk resides.
