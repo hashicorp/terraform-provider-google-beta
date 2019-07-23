@@ -48,13 +48,13 @@ func testAccComputeHaVpnGateway_haVpnGatewayBasicExample(context map[string]inte
 resource "google_compute_ha_vpn_gateway" "ha_gateway1" {
   provider = "google-beta"
   region   = "us-central1"
-  name     = "ha-vpn-1-%{random_suffix}"
+  name     = "ha-vpn-1%{random_suffix}"
   network  = "${google_compute_network.network1.self_link}"
 }
 
 resource "google_compute_network" "network1" {
   provider                = "google-beta"
-  name                    = "network1-%{random_suffix}"
+  name                    = "network1%{random_suffix}"
   auto_create_subnetworks = false
 }
 `, context)
@@ -84,27 +84,27 @@ func testAccComputeHaVpnGateway_haVpnGatewayGcpToGcpExample(context map[string]i
 resource "google_compute_ha_vpn_gateway" "ha_gateway1" {
   provider = "google-beta"
   region   = "us-central1"
-  name     = "ha-vpn-1-%{random_suffix}"
+  name     = "ha-vpn-1%{random_suffix}"
   network  = "${google_compute_network.network1.self_link}"
 }
 
 resource "google_compute_ha_vpn_gateway" "ha_gateway2" {
   provider = "google-beta"
   region   = "us-central1"
-  name     = "ha-vpn-2-%{random_suffix}"
+  name     = "ha-vpn-2%{random_suffix}"
   network  = "${google_compute_network.network2.self_link}"
 }
 
 resource "google_compute_network" "network1" {
   provider                = "google-beta"
-  name                    = "network1-%{random_suffix}"
+  name                    = "network1%{random_suffix}"
   routing_mode            = "GLOBAL"
   auto_create_subnetworks = false
 }
 
 resource "google_compute_network" "network2" {
   provider                = "google-beta"
-  name                    = "network2-%{random_suffix}"
+  name                    = "network2%{random_suffix}"
   routing_mode            = "GLOBAL"
   auto_create_subnetworks = false
 }

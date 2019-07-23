@@ -92,7 +92,7 @@ func TestAccDnsManagedZone_dnsManagedZonePrivateExample(t *testing.T) {
 func testAccDnsManagedZone_dnsManagedZonePrivateExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_dns_managed_zone" "private-zone" {
-  name = "private-zone-%{random_suffix}"
+  name = "private-zone%{random_suffix}"
   dns_name = "private.example.com."
   description = "Example private DNS zone"
   labels = {
@@ -112,12 +112,12 @@ resource "google_dns_managed_zone" "private-zone" {
 }
 
 resource "google_compute_network" "network-1" {
-  name = "network-1-%{random_suffix}"
+  name = "network-1%{random_suffix}"
   auto_create_subnetworks = false
 }
 
 resource "google_compute_network" "network-2" {
-  name = "network-2-%{random_suffix}"
+  name = "network-2%{random_suffix}"
   auto_create_subnetworks = false
 }
 `, context)
@@ -147,7 +147,7 @@ func testAccDnsManagedZone_dnsManagedZonePrivatePeeringExample(context map[strin
 resource "google_dns_managed_zone" "peering-zone" {
   provider = "google-beta"
 
-  name = "peering-zone-%{random_suffix}"
+  name = "peering-zone%{random_suffix}"
   dns_name = "peering.example.com."
   description = "Example private DNS peering zone"
 
@@ -169,14 +169,14 @@ resource "google_dns_managed_zone" "peering-zone" {
 resource "google_compute_network" "network-source" {
   provider = "google-beta"
 
-  name = "network-source-%{random_suffix}"
+  name = "network-source%{random_suffix}"
   auto_create_subnetworks = false
 }
 
 resource "google_compute_network" "network-target" {
   provider = "google-beta"
 
-  name = "network-target-%{random_suffix}"
+  name = "network-target%{random_suffix}"
   auto_create_subnetworks = false
 }
 

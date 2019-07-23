@@ -48,13 +48,13 @@ func testAccComputeExternalVpnGateway_externalVpnGatewayExample(context map[stri
 resource "google_compute_ha_vpn_gateway" "ha_gateway" {
   provider = "google-beta"
   region   = "us-central1"
-  name     = "ha-vpn-%{random_suffix}"
+  name     = "ha-vpn%{random_suffix}"
   network  = "${google_compute_network.network.self_link}"
 }
 
 resource "google_compute_external_vpn_gateway" "external_gateway" {
   provider        = "google-beta"
-  name            = "external-gateway-%{random_suffix}"
+  name            = "external-gateway%{random_suffix}"
   redundancy_type = "SINGLE_IP_INTERNALLY_REDUNDANT"
   description     = "An externally managed VPN gateway"
   interface {
@@ -65,7 +65,7 @@ resource "google_compute_external_vpn_gateway" "external_gateway" {
 
 resource "google_compute_network" "network" {
   provider                = "google-beta"
-  name                    = "network-%{random_suffix}"
+  name                    = "network%{random_suffix}"
   routing_mode            = "GLOBAL"
   auto_create_subnetworks = false
 }

@@ -48,7 +48,7 @@ func testAccContainerAnalysisNote_containerAnalysisNoteBasicExample(context map[
 resource "google_container_analysis_note" "note" {
   provider = "google-beta"
 
-  name = "test-attestor-note-%{random_suffix}"
+  name = "test-attestor-note%{random_suffix}"
   attestation_authority {
     hint {
       human_readable_name = "Attestor Note"
