@@ -98,24 +98,24 @@ func Provider() terraform.ResourceProvider {
 			},
 
 			// Generated Products
-			// start beta-only products
-			ContainerAnalysisCustomEndpointEntryKey: ContainerAnalysisCustomEndpointEntry,
-			SecurityScannerCustomEndpointEntryKey:   SecurityScannerCustomEndpointEntry,
-			// end beta-only products
 			AccessContextManagerCustomEndpointEntryKey: AccessContextManagerCustomEndpointEntry,
 			AppEngineCustomEndpointEntryKey:            AppEngineCustomEndpointEntry,
 			BinaryAuthorizationCustomEndpointEntryKey:  BinaryAuthorizationCustomEndpointEntry,
-			ComputeCustomEndpointEntryKey:              ComputeCustomEndpointEntry,
 			CloudBuildCustomEndpointEntryKey:           CloudBuildCustomEndpointEntry,
 			CloudSchedulerCustomEndpointEntryKey:       CloudSchedulerCustomEndpointEntry,
+			ComputeCustomEndpointEntryKey:              ComputeCustomEndpointEntry,
+			ContainerAnalysisCustomEndpointEntryKey:    ContainerAnalysisCustomEndpointEntry,
 			DnsCustomEndpointEntryKey:                  DnsCustomEndpointEntry,
 			FilestoreCustomEndpointEntryKey:            FilestoreCustomEndpointEntry,
 			FirestoreCustomEndpointEntryKey:            FirestoreCustomEndpointEntry,
+			HealthcareCustomEndpointEntryKey:           HealthcareCustomEndpointEntry,
 			KmsCustomEndpointEntryKey:                  KmsCustomEndpointEntry,
+			LoggingCustomEndpointEntryKey:              LoggingCustomEndpointEntry,
 			MonitoringCustomEndpointEntryKey:           MonitoringCustomEndpointEntry,
 			PubsubCustomEndpointEntryKey:               PubsubCustomEndpointEntry,
 			RedisCustomEndpointEntryKey:                RedisCustomEndpointEntry,
 			ResourceManagerCustomEndpointEntryKey:      ResourceManagerCustomEndpointEntry,
+			SecurityScannerCustomEndpointEntryKey:      SecurityScannerCustomEndpointEntry,
 			SourceRepoCustomEndpointEntryKey:           SourceRepoCustomEndpointEntry,
 			SpannerCustomEndpointEntryKey:              SpannerCustomEndpointEntry,
 			SqlCustomEndpointEntryKey:                  SqlCustomEndpointEntry,
@@ -124,8 +124,7 @@ func Provider() terraform.ResourceProvider {
 
 			// Handwritten Products / Versioned / Atypical Entries
 			// start beta-only products
-			HealthcareCustomEndpointEntryKey: HealthcareCustomEndpointEntry,
-			IAPCustomEndpointEntryKey:        IAPCustomEndpointEntry,
+			IAPCustomEndpointEntryKey: IAPCustomEndpointEntry,
 			// end beta-only products
 			CloudBillingCustomEndpointEntryKey:           CloudBillingCustomEndpointEntry,
 			ComposerCustomEndpointEntryKey:               ComposerCustomEndpointEntry,
@@ -137,7 +136,6 @@ func Provider() terraform.ResourceProvider {
 			DataflowCustomEndpointEntryKey:               DataflowCustomEndpointEntry,
 			DnsBetaCustomEndpointEntryKey:                DnsBetaCustomEndpointEntry,
 			IamCredentialsCustomEndpointEntryKey:         IamCredentialsCustomEndpointEntry,
-			LoggingCustomEndpointEntryKey:                LoggingCustomEndpointEntry,
 			ResourceManagerV2Beta1CustomEndpointEntryKey: ResourceManagerV2Beta1CustomEndpointEntry,
 			RuntimeconfigCustomEndpointEntryKey:          RuntimeconfigCustomEndpointEntry,
 			IAMCustomEndpointEntryKey:                    IAMCustomEndpointEntry,
@@ -217,30 +215,29 @@ func ResourceMap() map[string]*schema.Resource {
 
 func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 	return mergeResourceMaps(
-		// start beta-only products
-		GeneratedContainerAnalysisResourcesMap,
-		GeneratedSecurityScannerResourcesMap,
-		GeneratedHealthcareResourcesMap,
-		// end beta-only products
 		GeneratedAccessContextManagerResourcesMap,
 		GeneratedAppEngineResourcesMap,
 		GeneratedBinaryAuthorizationResourcesMap,
-		GeneratedComputeResourcesMap,
 		GeneratedCloudBuildResourcesMap,
 		GeneratedCloudSchedulerResourcesMap,
+		GeneratedComputeResourcesMap,
+		GeneratedContainerAnalysisResourcesMap,
 		GeneratedDnsResourcesMap,
 		GeneratedFilestoreResourcesMap,
 		GeneratedFirestoreResourcesMap,
+		GeneratedHealthcareResourcesMap,
 		GeneratedKmsResourcesMap,
+		GeneratedLoggingResourcesMap,
+		GeneratedMonitoringResourcesMap,
 		GeneratedPubsubResourcesMap,
 		GeneratedRedisResourcesMap,
 		GeneratedResourceManagerResourcesMap,
+		GeneratedSecurityScannerResourcesMap,
 		GeneratedSourceRepoResourcesMap,
 		GeneratedSpannerResourcesMap,
 		GeneratedSqlResourcesMap,
 		GeneratedStorageResourcesMap,
 		GeneratedTpuResourcesMap,
-		GeneratedMonitoringResourcesMap,
 		map[string]*schema.Resource{
 			"google_app_engine_application":                resourceAppEngineApplication(),
 			"google_bigquery_dataset":                      resourceBigQueryDataset(),
@@ -315,7 +312,6 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_iap_tunnel_instance_iam_policy":        ResourceIamPolicyWithImport(IamIapTunnelInstanceSchema, NewIapTunnelInstanceIamUpdater, IapTunnelInstanceIdParseFunc),
 			"google_logging_billing_account_sink":          resourceLoggingBillingAccountSink(),
 			"google_logging_billing_account_exclusion":     ResourceLoggingExclusion(BillingAccountLoggingExclusionSchema, NewBillingAccountLoggingExclusionUpdater, billingAccountLoggingExclusionIdParseFunc),
-			"google_logging_metric":                        resourceLoggingMetric(),
 			"google_logging_organization_sink":             resourceLoggingOrganizationSink(),
 			"google_logging_organization_exclusion":        ResourceLoggingExclusion(OrganizationLoggingExclusionSchema, NewOrganizationLoggingExclusionUpdater, organizationLoggingExclusionIdParseFunc),
 			"google_logging_folder_sink":                   resourceLoggingFolderSink(),
@@ -407,32 +403,34 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 	}
 	config.BatchingConfig = batchCfg
 
-	config.ContainerAnalysisBasePath = d.Get(ContainerAnalysisCustomEndpointEntryKey).(string)
-	config.SecurityScannerBasePath = d.Get(SecurityScannerCustomEndpointEntryKey).(string)
-
+	// Generated products
 	config.AccessContextManagerBasePath = d.Get(AccessContextManagerCustomEndpointEntryKey).(string)
-	config.CloudSchedulerBasePath = d.Get(CloudSchedulerCustomEndpointEntryKey).(string)
-	config.FirestoreBasePath = d.Get(FirestoreCustomEndpointEntryKey).(string)
-
 	config.AppEngineBasePath = d.Get(AppEngineCustomEndpointEntryKey).(string)
 	config.BinaryAuthorizationBasePath = d.Get(BinaryAuthorizationCustomEndpointEntryKey).(string)
-	config.ComputeBasePath = d.Get(ComputeCustomEndpointEntryKey).(string)
 	config.CloudBuildBasePath = d.Get(CloudBuildCustomEndpointEntryKey).(string)
+	config.CloudSchedulerBasePath = d.Get(CloudSchedulerCustomEndpointEntryKey).(string)
+	config.ComputeBasePath = d.Get(ComputeCustomEndpointEntryKey).(string)
+	config.ContainerAnalysisBasePath = d.Get(ContainerAnalysisCustomEndpointEntryKey).(string)
 	config.DnsBasePath = d.Get(DnsCustomEndpointEntryKey).(string)
 	config.FilestoreBasePath = d.Get(FilestoreCustomEndpointEntryKey).(string)
+	config.FirestoreBasePath = d.Get(FirestoreCustomEndpointEntryKey).(string)
+	config.HealthcareBasePath = d.Get(HealthcareCustomEndpointEntryKey).(string)
 	config.KmsBasePath = d.Get(KmsCustomEndpointEntryKey).(string)
+	config.LoggingBasePath = d.Get(LoggingCustomEndpointEntryKey).(string)
 	config.MonitoringBasePath = d.Get(MonitoringCustomEndpointEntryKey).(string)
 	config.PubsubBasePath = d.Get(PubsubCustomEndpointEntryKey).(string)
 	config.RedisBasePath = d.Get(RedisCustomEndpointEntryKey).(string)
 	config.ResourceManagerBasePath = d.Get(ResourceManagerCustomEndpointEntryKey).(string)
+	config.SecurityScannerBasePath = d.Get(SecurityScannerCustomEndpointEntryKey).(string)
 	config.SourceRepoBasePath = d.Get(SourceRepoCustomEndpointEntryKey).(string)
 	config.SpannerBasePath = d.Get(SpannerCustomEndpointEntryKey).(string)
 	config.SqlBasePath = d.Get(SqlCustomEndpointEntryKey).(string)
 	config.StorageBasePath = d.Get(StorageCustomEndpointEntryKey).(string)
 	config.TpuBasePath = d.Get(TpuCustomEndpointEntryKey).(string)
 
-	config.HealthcareBasePath = d.Get(HealthcareCustomEndpointEntryKey).(string)
+	// Handwritten Products / Versioned / Atypical Entries
 	config.IAPBasePath = d.Get(IAPCustomEndpointEntryKey).(string)
+
 	config.CloudBillingBasePath = d.Get(CloudBillingCustomEndpointEntryKey).(string)
 	config.ComposerBasePath = d.Get(ComposerCustomEndpointEntryKey).(string)
 	config.ComputeBetaBasePath = d.Get(ComputeBetaCustomEndpointEntryKey).(string)
@@ -443,7 +441,6 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 	config.DataflowBasePath = d.Get(DataflowCustomEndpointEntryKey).(string)
 	config.DnsBetaBasePath = d.Get(DnsBetaCustomEndpointEntryKey).(string)
 	config.IamCredentialsBasePath = d.Get(IamCredentialsCustomEndpointEntryKey).(string)
-	config.LoggingBasePath = d.Get(LoggingCustomEndpointEntryKey).(string)
 	config.ResourceManagerV2Beta1BasePath = d.Get(ResourceManagerV2Beta1CustomEndpointEntryKey).(string)
 	config.RuntimeconfigBasePath = d.Get(RuntimeconfigCustomEndpointEntryKey).(string)
 	config.IAMBasePath = d.Get(IAMCustomEndpointEntryKey).(string)
@@ -468,24 +465,24 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 // values to a default. After using this, you should call config.LoadAndValidate.
 func ConfigureBasePaths(c *Config) {
 	// Generated Products
-	// start beta-only products
-	c.ContainerAnalysisBasePath = ContainerAnalysisDefaultBasePath
-	c.SecurityScannerBasePath = SecurityScannerDefaultBasePath
-	// end beta-only products
 	c.AccessContextManagerBasePath = AccessContextManagerDefaultBasePath
 	c.AppEngineBasePath = AppEngineDefaultBasePath
 	c.BinaryAuthorizationBasePath = BinaryAuthorizationDefaultBasePath
-	c.ComputeBasePath = ComputeDefaultBasePath
 	c.CloudBuildBasePath = CloudBuildDefaultBasePath
 	c.CloudSchedulerBasePath = CloudSchedulerDefaultBasePath
+	c.ComputeBasePath = ComputeDefaultBasePath
+	c.ContainerAnalysisBasePath = ContainerAnalysisDefaultBasePath
 	c.DnsBasePath = DnsDefaultBasePath
 	c.FilestoreBasePath = FilestoreDefaultBasePath
 	c.FirestoreBasePath = FirestoreDefaultBasePath
+	c.HealthcareBasePath = HealthcareDefaultBasePath
 	c.KmsBasePath = KmsDefaultBasePath
+	c.LoggingBasePath = LoggingDefaultBasePath
 	c.MonitoringBasePath = MonitoringDefaultBasePath
 	c.PubsubBasePath = PubsubDefaultBasePath
 	c.RedisBasePath = RedisDefaultBasePath
 	c.ResourceManagerBasePath = ResourceManagerDefaultBasePath
+	c.SecurityScannerBasePath = SecurityScannerDefaultBasePath
 	c.SourceRepoBasePath = SourceRepoDefaultBasePath
 	c.SpannerBasePath = SpannerDefaultBasePath
 	c.SqlBasePath = SqlDefaultBasePath
@@ -505,7 +502,6 @@ func ConfigureBasePaths(c *Config) {
 	c.DataflowBasePath = DataflowDefaultBasePath
 	c.DnsBetaBasePath = DnsBetaDefaultBasePath
 	c.IamCredentialsBasePath = IamCredentialsDefaultBasePath
-	c.LoggingBasePath = LoggingDefaultBasePath
 	c.ResourceManagerV2Beta1BasePath = ResourceManagerV2Beta1DefaultBasePath
 	c.RuntimeconfigBasePath = RuntimeconfigDefaultBasePath
 	c.IAMBasePath = IAMDefaultBasePath
