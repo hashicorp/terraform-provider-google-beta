@@ -240,6 +240,7 @@ ResourcePolicy can be imported using any of these accepted formats:
 ```
 $ terraform import -provider=google-beta google_compute_resource_policy.default projects/{{project}}/regions/{{region}}/resourcePolicies/{{name}}
 $ terraform import -provider=google-beta google_compute_resource_policy.default {{project}}/{{region}}/{{name}}
+$ terraform import -provider=google-beta google_compute_resource_policy.default {{region}}/{{name}}
 $ terraform import -provider=google-beta google_compute_resource_policy.default {{name}}
 ```
 
