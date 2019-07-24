@@ -52,7 +52,7 @@ provider "google-beta" {
 
 resource "google_compute_resource_policy" "foo" {
   provider = "google-beta"
-  name = "policy-%{random_suffix}"
+  name = "policy%{random_suffix}"
   region = "us-central1"
   snapshot_schedule_policy {
     schedule {
@@ -94,7 +94,7 @@ provider "google-beta" {
 
 resource "google_compute_resource_policy" "bar" {
   provider = "google-beta"
-  name = "policy-%{random_suffix}"
+  name = "policy%{random_suffix}"
   region = "us-central1"
   snapshot_schedule_policy {
     schedule {
