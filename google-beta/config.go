@@ -74,6 +74,7 @@ type Config struct {
 	AppEngineBasePath            string
 	BinaryAuthorizationBasePath  string
 	CloudBuildBasePath           string
+	CloudRunBasePath             string
 	CloudSchedulerBasePath       string
 	ComputeBasePath              string
 	ContainerAnalysisBasePath    string

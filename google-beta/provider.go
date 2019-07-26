@@ -102,6 +102,7 @@ func Provider() terraform.ResourceProvider {
 			AppEngineCustomEndpointEntryKey:            AppEngineCustomEndpointEntry,
 			BinaryAuthorizationCustomEndpointEntryKey:  BinaryAuthorizationCustomEndpointEntry,
 			CloudBuildCustomEndpointEntryKey:           CloudBuildCustomEndpointEntry,
+			CloudRunCustomEndpointEntryKey:             CloudRunCustomEndpointEntry,
 			CloudSchedulerCustomEndpointEntryKey:       CloudSchedulerCustomEndpointEntry,
 			ComputeCustomEndpointEntryKey:              ComputeCustomEndpointEntry,
 			ContainerAnalysisCustomEndpointEntryKey:    ContainerAnalysisCustomEndpointEntry,
@@ -220,6 +221,7 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 		GeneratedAppEngineResourcesMap,
 		GeneratedBinaryAuthorizationResourcesMap,
 		GeneratedCloudBuildResourcesMap,
+		GeneratedCloudRunResourcesMap,
 		GeneratedCloudSchedulerResourcesMap,
 		GeneratedComputeResourcesMap,
 		GeneratedContainerAnalysisResourcesMap,
@@ -409,6 +411,7 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 	config.AppEngineBasePath = d.Get(AppEngineCustomEndpointEntryKey).(string)
 	config.BinaryAuthorizationBasePath = d.Get(BinaryAuthorizationCustomEndpointEntryKey).(string)
 	config.CloudBuildBasePath = d.Get(CloudBuildCustomEndpointEntryKey).(string)
+	config.CloudRunBasePath = d.Get(CloudRunCustomEndpointEntryKey).(string)
 	config.CloudSchedulerBasePath = d.Get(CloudSchedulerCustomEndpointEntryKey).(string)
 	config.ComputeBasePath = d.Get(ComputeCustomEndpointEntryKey).(string)
 	config.ContainerAnalysisBasePath = d.Get(ContainerAnalysisCustomEndpointEntryKey).(string)
@@ -470,6 +473,7 @@ func ConfigureBasePaths(c *Config) {
 	c.AppEngineBasePath = AppEngineDefaultBasePath
 	c.BinaryAuthorizationBasePath = BinaryAuthorizationDefaultBasePath
 	c.CloudBuildBasePath = CloudBuildDefaultBasePath
+	c.CloudRunBasePath = CloudRunDefaultBasePath
 	c.CloudSchedulerBasePath = CloudSchedulerDefaultBasePath
 	c.ComputeBasePath = ComputeDefaultBasePath
 	c.ContainerAnalysisBasePath = ContainerAnalysisDefaultBasePath
