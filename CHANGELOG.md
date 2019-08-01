@@ -1,6 +1,7 @@
 ## 2.12.0 (Unreleased)
 
 FEATURES:
+* **New Data Source**: `google_kms_crypto_key_version` - Provides access to KMS key version data with Google Cloud KMS. [GH-964]
 * **New Resource**: `google_cloud_run_service` - Set up a cloud run service [GH-757]
 * **New Resource**: `google_cloud_run_domain_mapping` - Allows custom domains to map to a cloud run service [GH-757]
 
