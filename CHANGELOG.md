@@ -1,4 +1,29 @@
-## 2.11.1 (Unreleased)
+## 2.12.0 (Unreleased)
+
+FEATURES:
+* **New Resource**: `google_cloud_run_service` - Set up a cloud run service [GH-757]
+* **New Resource**: `google_cloud_run_domain_mapping` - Allows custom domains to map to a cloud run service [GH-757]
+
+ENHANCEMENTS:
+* binary_authorization: Add support for Cloud KMS PKIX keys to `binary_authorization_attestor`. [GH-964]
+* composer: Add private IP config for `google_composer_environment` [GH-908]
+* compute: add support for port_specification to resource `google_compute_health_check` [GH-933]
+* compute: Fixed import formats for `google_compute_network_endpoint` and add location-only import formats [GH-947]
+* compute: add support for `resource_policies` to resource `google_compute_disk` [GH-960]
+* compute: Support labelling for compute_instance boot_disks and compute_instance_template disks. [GH-982]
+* container: `workload_identity_config` in `google_container_cluster` can now be updated without recreating the cluster. [GH-896]
+* container: validate that master_ipv4_cidr_block is set if enable_private_nodes is true [GH-948]
+* dataflow: added support for user-defined `labels` on resource `google_dataflow_job` [GH-970]
+* dataproc: add support for `optional_components` to resource `resource_dataproc_cluster` [GH-961]
+* project: add checks to import to prevent importing by project number instead of id [GH-954]
+* storage: add support for `retention_policy` to resource `google_storage_bucket` [GH-949]
+
+BUG FIXES:
+* access_context_manager: import format checking [GH-952]
+* dataproc: Suppress diff for `google_dataproc_cluster` `software_config.0.image_version` to prevent permadiff when server uses more specific versions of config value [GH-969]
+* organization: Add auditConfigs to update masks for setting org and folder IAM policy (`google_organization_iam_policy`, `google_folder_iam_policy`) [GH-967]
+* storage: `google_storage_bucket` Set website metadata during read [GH-925]
+
 ## 2.11.0 (July 16, 2019)
 
 NOTES:
