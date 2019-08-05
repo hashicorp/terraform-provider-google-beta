@@ -756,6 +756,44 @@ func resourceComputeDiskUpdate(d *schema.ResourceData, meta interface{}) error {
 
 		d.SetPartial("size")
 	}
+	if d.HasChange("resource_policies") {
+		obj := make(map[string]interface{})
+    resourcePoliciesProp, err := expandComputeDiskResourcePolicies(d.Get("resource_policies"), d, config)
+  	if err != nil {
+  		return err
+  	} else if v, ok := d.GetOkExists("resource_policies"); !isEmptyValue(reflect.ValueOf(resourcePoliciesProp)) && (ok || !reflect.DeepEqual(v, resourcePoliciesProp)) {
+  		obj["resourcePolicies"] = resourcePoliciesProp
+  	}
+
+		url, err := replaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/zones/{{zone}}/disks/{{name}}/addResourcePolicies")
+		if err != nil {
+			return err
+		}
+		res, err := sendRequestWithTimeout(config, "POST", url, obj, d.Timeout(schema.TimeoutUpdate))
+		if err != nil {
+			return fmt.Errorf("Error updating Disk %q: %s", d.Id(), err)
+		}
+
+		project, err := getProject(d, config)
+		if err != nil {
+			return err
+		}
+		op := &compute.Operation{}
+		err = Convert(res, op)
+		if err != nil {
+			return err
+		}
+
+		err = computeOperationWaitTime(
+			config.clientCompute, op, project, "Updating Disk",
+			int(d.Timeout(schema.TimeoutUpdate).Minutes()))
+
+		if err != nil {
+			return err
+		}
+
+		d.SetPartial("resource_policies")
+	}
 
 	d.Partial(false)
 
