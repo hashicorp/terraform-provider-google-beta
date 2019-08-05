@@ -758,12 +758,12 @@ func resourceComputeDiskUpdate(d *schema.ResourceData, meta interface{}) error {
 	}
 	if d.HasChange("resource_policies") {
 		obj := make(map[string]interface{})
-    resourcePoliciesProp, err := expandComputeDiskResourcePolicies(d.Get("resource_policies"), d, config)
-  	if err != nil {
-  		return err
-  	} else if v, ok := d.GetOkExists("resource_policies"); !isEmptyValue(reflect.ValueOf(resourcePoliciesProp)) && (ok || !reflect.DeepEqual(v, resourcePoliciesProp)) {
-  		obj["resourcePolicies"] = resourcePoliciesProp
-  	}
+		resourcePoliciesProp, err := expandComputeDiskResourcePolicies(d.Get("resource_policies"), d, config)
+		if err != nil {
+			return err
+		} else if v, ok := d.GetOkExists("resource_policies"); !isEmptyValue(reflect.ValueOf(resourcePoliciesProp)) && (ok || !reflect.DeepEqual(v, resourcePoliciesProp)) {
+			obj["resourcePolicies"] = resourcePoliciesProp
+		}
 
 		url, err := replaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/zones/{{zone}}/disks/{{name}}/addResourcePolicies")
 		if err != nil {
