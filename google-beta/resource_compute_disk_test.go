@@ -10,7 +10,8 @@ import (
 	"github.com/hashicorp/terraform/helper/acctest"
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/terraform"
-	"google.golang.org/api/compute/v1"
+	computeBeta "google.golang.org/api/compute/v0.beta"
+	compute "google.golang.org/api/compute/v1"
 )
 
 func TestDiskImageDiffSuppress(t *testing.T) {
@@ -442,6 +443,8 @@ func TestAccComputeDisk_resourcePolicies(t *testing.T) {
 
 	diskName := fmt.Sprintf("tf-test-%s", acctest.RandString(10))
 	policyName := fmt.Sprintf("tf-test-policy-%s", acctest.RandString(10))
+	policyName2 := fmt.Sprintf("tf-test-policy-%s-bar", acctest.RandString(10))
+	var disk computeBeta.Disk
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
@@ -454,6 +457,15 @@ func TestAccComputeDisk_resourcePolicies(t *testing.T) {
 				ResourceName:      "google_compute_disk.foobar",
 				ImportState:       true,
 				ImportStateVerify: true,
+			},
+			{
+				Config: testAccComputeDisk_resourcePolicies_updated(diskName, policyName2),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckComputeBetaDiskExists(
+						"google_compute_disk.foobar", getTestProjectFromEnv(), &disk),
+					testAccCheckComputeDiskHasResourcePolicies(
+						&disk, policyName2),
+				),
 			},
 		},
 	})
@@ -473,6 +485,35 @@ func testAccCheckComputeDiskExists(n, p string, disk *compute.Disk) resource.Tes
 		config := testAccProvider.Meta().(*Config)
 
 		found, err := config.clientCompute.Disks.Get(
+			p, rs.Primary.Attributes["zone"], rs.Primary.ID).Do()
+		if err != nil {
+			return err
+		}
+
+		if found.Name != rs.Primary.ID {
+			return fmt.Errorf("Disk not found")
+		}
+
+		*disk = *found
+
+		return nil
+	}
+}
+
+func testAccCheckComputeBetaDiskExists(n, p string, disk *computeBeta.Disk) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		rs, ok := s.RootModule().Resources[n]
+		if !ok {
+			return fmt.Errorf("Not found: %s", n)
+		}
+
+		if rs.Primary.ID == "" {
+			return fmt.Errorf("No ID is set")
+		}
+
+		config := testAccProvider.Meta().(*Config)
+
+		found, err := config.clientComputeBeta.Disks.Get(
 			p, rs.Primary.Attributes["zone"], rs.Primary.ID).Do()
 		if err != nil {
 			return err
@@ -513,6 +554,23 @@ func testAccCheckComputeDiskHasLabelFingerprint(disk *compute.Disk, resourceName
 		if labelFingerprint != disk.LabelFingerprint {
 			return fmt.Errorf("Label fingerprints do not match: api returned %s but state has %s",
 				disk.LabelFingerprint, labelFingerprint)
+		}
+
+		return nil
+	}
+}
+
+func testAccCheckComputeDiskHasResourcePolicies(disk *computeBeta.Disk, policyName string) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		found := false
+		for _, v := range disk.ResourcePolicies {
+			if v == policyName {
+				found = true
+			}
+		}
+
+		if !found {
+			return fmt.Errorf("Resource policy is wrong. Found: %s", disk.ResourcePolicies)
 		}
 
 		return nil
@@ -816,5 +874,35 @@ resource "google_compute_disk" "foobar" {
   type = "pd-ssd"
   zone = "us-central1-a"
   resource_policies = [google_compute_resource_policy.foo.self_link]
+}`, policyName, diskName)
+}
+
+func testAccComputeDisk_resourcePolicies_updated(diskName, policyName string) string {
+	return fmt.Sprintf(`
+data "google_compute_image" "my_image" {
+  family  = "debian-9"
+  project = "debian-cloud"
+}
+
+resource "google_compute_resource_policy" "bar" {
+  name = "%s"
+  region = "us-central1"
+  snapshot_schedule_policy {
+    schedule {
+      daily_schedule {
+        days_in_cycle = 3
+        start_time = "06:00"
+      }
+    }
+  }
+}
+
+resource "google_compute_disk" "foobar" {
+  name = "%s"
+  image = "${data.google_compute_image.my_image.self_link}"
+  size = 50
+  type = "pd-ssd"
+  zone = "us-central1-a"
+  resource_policies = [google_compute_resource_policy.bar.self_link]
 }`, policyName, diskName)
 }
