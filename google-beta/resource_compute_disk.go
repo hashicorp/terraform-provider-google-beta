@@ -299,7 +299,6 @@ func resourceComputeDisk() *schema.Resource {
 			"resource_policies": {
 				Type:     schema.TypeList,
 				Optional: true,
-				ForceNew: true,
 				Elem: &schema.Schema{
 					Type:             schema.TypeString,
 					DiffSuppressFunc: compareSelfLinkOrResourceName,
