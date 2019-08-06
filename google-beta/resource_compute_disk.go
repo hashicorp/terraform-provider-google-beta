@@ -758,20 +758,41 @@ func resourceComputeDiskUpdate(d *schema.ResourceData, meta interface{}) error {
 	}
 	if d.HasChange("resource_policies") {
 		obj := make(map[string]interface{})
-		resourcePoliciesProp, err := expandComputeDiskResourcePolicies(d.Get("resource_policies"), d, config)
+		old, new := d.GetChange("resource_policies")
+		var res map[string]interface{}
+
+		oldResourcePoliciesProp, err := expandComputeDiskResourcePolicies(old, d, config)
 		if err != nil {
 			return err
-		} else if v, ok := d.GetOkExists("resource_policies"); !isEmptyValue(reflect.ValueOf(resourcePoliciesProp)) && (ok || !reflect.DeepEqual(v, resourcePoliciesProp)) {
-			obj["resourcePolicies"] = resourcePoliciesProp
 		}
 
-		url, err := replaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/zones/{{zone}}/disks/{{name}}/addResourcePolicies")
+		if !isEmptyValue(reflect.ValueOf(oldResourcePoliciesProp)) {
+			obj["resourcePolicies"] = oldResourcePoliciesProp
+			url, err := replaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/zones/{{zone}}/disks/{{name}}/removeResourcePolicies")
+			if err != nil {
+				return err
+			}
+			res, err = sendRequestWithTimeout(config, "POST", url, obj, d.Timeout(schema.TimeoutUpdate))
+			if err != nil {
+				return fmt.Errorf("Error removing old resource policies %q: %s", d.Id(), err)
+			}
+		}
+
+		newResourcePoliciesProp, err := expandComputeDiskResourcePolicies(new, d, config)
 		if err != nil {
 			return err
 		}
-		res, err := sendRequestWithTimeout(config, "POST", url, obj, d.Timeout(schema.TimeoutUpdate))
-		if err != nil {
-			return fmt.Errorf("Error updating Disk %q: %s", d.Id(), err)
+
+		if !isEmptyValue(reflect.ValueOf(newResourcePoliciesProp)) {
+			obj["resourcePolicies"] = newResourcePoliciesProp
+			url, err := replaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/zones/{{zone}}/disks/{{name}}/addResourcePolicies")
+			if err != nil {
+				return err
+			}
+			res, err = sendRequestWithTimeout(config, "POST", url, obj, d.Timeout(schema.TimeoutUpdate))
+			if err != nil {
+				return fmt.Errorf("Error adding old resource policies %q: %s", d.Id(), err)
+			}
 		}
 
 		project, err := getProject(d, config)
@@ -785,7 +806,7 @@ func resourceComputeDiskUpdate(d *schema.ResourceData, meta interface{}) error {
 		}
 
 		err = computeOperationWaitTime(
-			config.clientCompute, op, project, "Updating Disk",
+			config.clientCompute, op, project, "Updating Resource Policies",
 			int(d.Timeout(schema.TimeoutUpdate).Minutes()))
 
 		if err != nil {
