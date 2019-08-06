@@ -143,6 +143,13 @@ func resourceHealthcareDicomStoreRead(d *schema.ResourceData, meta interface{}) 
 		return err
 	}
 
+	if res == nil {
+		// Decoding the object has resulted in it being gone. It may be marked deleted
+		log.Printf("[DEBUG] Removing HealthcareDicomStore because it no longer exists.")
+		d.SetId("")
+		return nil
+	}
+
 	if err := d.Set("name", flattenHealthcareDicomStoreName(res["name"], d)); err != nil {
 		return fmt.Errorf("Error reading DicomStore: %s", err)
 	}
