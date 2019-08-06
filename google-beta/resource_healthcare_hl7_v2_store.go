@@ -166,6 +166,13 @@ func resourceHealthcareHl7V2StoreRead(d *schema.ResourceData, meta interface{}) 
 		return err
 	}
 
+	if res == nil {
+		// Decoding the object has resulted in it being gone. It may be marked deleted
+		log.Printf("[DEBUG] Removing HealthcareHl7V2Store because it no longer exists.")
+		d.SetId("")
+		return nil
+	}
+
 	if err := d.Set("name", flattenHealthcareHl7V2StoreName(res["name"], d)); err != nil {
 		return fmt.Errorf("Error reading Hl7V2Store: %s", err)
 	}

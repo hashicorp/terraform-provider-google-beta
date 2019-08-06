@@ -186,6 +186,13 @@ func resourceHealthcareFhirStoreRead(d *schema.ResourceData, meta interface{}) e
 		return err
 	}
 
+	if res == nil {
+		// Decoding the object has resulted in it being gone. It may be marked deleted
+		log.Printf("[DEBUG] Removing HealthcareFhirStore because it no longer exists.")
+		d.SetId("")
+		return nil
+	}
+
 	if err := d.Set("name", flattenHealthcareFhirStoreName(res["name"], d)); err != nil {
 		return fmt.Errorf("Error reading FhirStore: %s", err)
 	}
