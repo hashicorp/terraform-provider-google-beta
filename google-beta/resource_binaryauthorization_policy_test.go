@@ -52,7 +52,7 @@ func TestAccBinaryAuthorizationPolicy_full(t *testing.T) {
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccBinaryAuthorizationPolicyFull(pid, pname, org, billingId, note, attestor),
+				Config: testAccBinaryAuthorizationPolicyFull(pid, pname, org, billingId, note, attestor, "ENABLE"),
 			},
 			{
 				ResourceName:      "google_binary_authorization_policy.policy",
@@ -123,7 +123,15 @@ func TestAccBinaryAuthorizationPolicy_update(t *testing.T) {
 				ImportStateVerify: true,
 			},
 			{
-				Config: testAccBinaryAuthorizationPolicyFull(pid, pname, org, billingId, note, attestor),
+				Config: testAccBinaryAuthorizationPolicyFull(pid, pname, org, billingId, note, attestor, "ENABLE"),
+			},
+			{
+				ResourceName:      "google_binary_authorization_policy.policy",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+			{
+				Config: testAccBinaryAuthorizationPolicyFull(pid, pname, org, billingId, note, attestor, "DISABLE"),
 			},
 			{
 				ResourceName:      "google_binary_authorization_policy.policy",
@@ -202,7 +210,7 @@ resource "google_binary_authorization_policy" "policy" {
 `, pid, pname, org, billing)
 }
 
-func testAccBinaryAuthorizationPolicyFull(pid, pname, org, billing, note, attestor string) string {
+func testAccBinaryAuthorizationPolicyFull(pid, pname, org, billing, note, attestor, gpmode string) string {
 	return fmt.Sprintf(`
 // Use a separate project since each project can only have one policy
 resource "google_project" "project" {
@@ -260,8 +268,10 @@ resource "google_binary_authorization_policy" "policy" {
     enforcement_mode = "ENFORCED_BLOCK_AND_AUDIT_LOG"
     require_attestations_by = ["${google_binary_authorization_attestor.attestor.name}"]
   }
+
+  global_policy_evaluation_mode = "%s"
 }
-`, pid, pname, org, billing, note, attestor)
+`, pid, pname, org, billing, note, attestor, gpmode)
 }
 
 func testAccBinaryAuthorizationPolicy_separateProject(pid, pname, org, billing, note, attestor string) string {
