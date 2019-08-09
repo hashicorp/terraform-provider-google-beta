@@ -110,6 +110,7 @@ func Provider() terraform.ResourceProvider {
 			FilestoreCustomEndpointEntryKey:            FilestoreCustomEndpointEntry,
 			FirestoreCustomEndpointEntryKey:            FirestoreCustomEndpointEntry,
 			HealthcareCustomEndpointEntryKey:           HealthcareCustomEndpointEntry,
+			IapCustomEndpointEntryKey:                  IapCustomEndpointEntry,
 			KmsCustomEndpointEntryKey:                  KmsCustomEndpointEntry,
 			LoggingCustomEndpointEntryKey:              LoggingCustomEndpointEntry,
 			MonitoringCustomEndpointEntryKey:           MonitoringCustomEndpointEntry,
@@ -230,6 +231,7 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 		GeneratedFilestoreResourcesMap,
 		GeneratedFirestoreResourcesMap,
 		GeneratedHealthcareResourcesMap,
+		GeneratedIapResourcesMap,
 		GeneratedKmsResourcesMap,
 		GeneratedLoggingResourcesMap,
 		GeneratedMonitoringResourcesMap,
@@ -420,6 +422,7 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 	config.FilestoreBasePath = d.Get(FilestoreCustomEndpointEntryKey).(string)
 	config.FirestoreBasePath = d.Get(FirestoreCustomEndpointEntryKey).(string)
 	config.HealthcareBasePath = d.Get(HealthcareCustomEndpointEntryKey).(string)
+	config.IapBasePath = d.Get(IapCustomEndpointEntryKey).(string)
 	config.KmsBasePath = d.Get(KmsCustomEndpointEntryKey).(string)
 	config.LoggingBasePath = d.Get(LoggingCustomEndpointEntryKey).(string)
 	config.MonitoringBasePath = d.Get(MonitoringCustomEndpointEntryKey).(string)
@@ -482,6 +485,7 @@ func ConfigureBasePaths(c *Config) {
 	c.FilestoreBasePath = FilestoreDefaultBasePath
 	c.FirestoreBasePath = FirestoreDefaultBasePath
 	c.HealthcareBasePath = HealthcareDefaultBasePath
+	c.IapBasePath = IapDefaultBasePath
 	c.KmsBasePath = KmsDefaultBasePath
 	c.LoggingBasePath = LoggingDefaultBasePath
 	c.MonitoringBasePath = MonitoringDefaultBasePath

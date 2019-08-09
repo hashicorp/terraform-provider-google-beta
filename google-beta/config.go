@@ -82,6 +82,7 @@ type Config struct {
 	FilestoreBasePath            string
 	FirestoreBasePath            string
 	HealthcareBasePath           string
+	IapBasePath                  string
 	KmsBasePath                  string
 	LoggingBasePath              string
 	MonitoringBasePath           string
