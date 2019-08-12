@@ -570,6 +570,7 @@ func (c *Config) LoadAndValidate() error {
 	c.clientHealthcare.UserAgent = userAgent
 	c.clientHealthcare.BasePath = healthcareClientBasePath
 
+	c.Region = GetRegionFromRegionSelfLink(c.Region)
 	return nil
 }
 
