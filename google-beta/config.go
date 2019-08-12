@@ -94,6 +94,7 @@ type Config struct {
 	SqlBasePath                  string
 	StorageBasePath              string
 	TpuBasePath                  string
+	VpcAccessBasePath            string
 
 	CloudBillingBasePath string
 	clientBilling        *cloudbilling.APIService
