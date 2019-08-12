@@ -122,6 +122,7 @@ func Provider() terraform.ResourceProvider {
 			SqlCustomEndpointEntryKey:                  SqlCustomEndpointEntry,
 			StorageCustomEndpointEntryKey:              StorageCustomEndpointEntry,
 			TpuCustomEndpointEntryKey:                  TpuCustomEndpointEntry,
+			VpcAccessCustomEndpointEntryKey:            VpcAccessCustomEndpointEntry,
 
 			// Handwritten Products / Versioned / Atypical Entries
 			// start beta-only products
@@ -242,6 +243,7 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 		GeneratedSqlResourcesMap,
 		GeneratedStorageResourcesMap,
 		GeneratedTpuResourcesMap,
+		GeneratedVpcAccessResourcesMap,
 		map[string]*schema.Resource{
 			"google_app_engine_application":                resourceAppEngineApplication(),
 			"google_bigquery_dataset":                      resourceBigQueryDataset(),
@@ -432,6 +434,7 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 	config.SqlBasePath = d.Get(SqlCustomEndpointEntryKey).(string)
 	config.StorageBasePath = d.Get(StorageCustomEndpointEntryKey).(string)
 	config.TpuBasePath = d.Get(TpuCustomEndpointEntryKey).(string)
+	config.VpcAccessBasePath = d.Get(VpcAccessCustomEndpointEntryKey).(string)
 
 	// Handwritten Products / Versioned / Atypical Entries
 	config.IAPBasePath = d.Get(IAPCustomEndpointEntryKey).(string)
@@ -494,6 +497,7 @@ func ConfigureBasePaths(c *Config) {
 	c.SqlBasePath = SqlDefaultBasePath
 	c.StorageBasePath = StorageDefaultBasePath
 	c.TpuBasePath = TpuDefaultBasePath
+	c.VpcAccessBasePath = VpcAccessDefaultBasePath
 
 	// Handwritten Products / Versioned / Atypical Entries
 	// start beta-only products
