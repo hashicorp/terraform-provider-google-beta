@@ -177,7 +177,11 @@ func resourceDnsPolicyCreate(d *schema.ResourceData, meta interface{}) error {
 	}
 
 	log.Printf("[DEBUG] Creating new Policy: %#v", obj)
-	res, err := sendRequestWithTimeout(config, "POST", url, obj, d.Timeout(schema.TimeoutCreate))
+	project, err := getProject(d, config)
+	if err != nil {
+		return err
+	}
+	res, err := sendRequestWithTimeout(config, "POST", project, url, obj, d.Timeout(schema.TimeoutCreate))
 	if err != nil {
 		return fmt.Errorf("Error creating Policy: %s", err)
 	}
@@ -202,15 +206,15 @@ func resourceDnsPolicyRead(d *schema.ResourceData, meta interface{}) error {
 		return err
 	}
 
-	res, err := sendRequest(config, "GET", url, nil)
-	if err != nil {
-		return handleNotFoundError(err, d, fmt.Sprintf("DnsPolicy %q", d.Id()))
-	}
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
+	res, err := sendRequest(config, "GET", project, url, nil)
+	if err != nil {
+		return handleNotFoundError(err, d, fmt.Sprintf("DnsPolicy %q", d.Id()))
+	}
+
 	if err := d.Set("project", project); err != nil {
 		return fmt.Errorf("Error reading Policy: %s", err)
 	}
@@ -239,6 +243,11 @@ func resourceDnsPolicyRead(d *schema.ResourceData, meta interface{}) error {
 
 func resourceDnsPolicyUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
+
+	project, err := getProject(d, config)
+	if err != nil {
+		return err
+	}
 
 	d.Partial(true)
 
@@ -279,7 +288,7 @@ func resourceDnsPolicyUpdate(d *schema.ResourceData, meta interface{}) error {
 		if err != nil {
 			return err
 		}
-		_, err = sendRequestWithTimeout(config, "PATCH", url, obj, d.Timeout(schema.TimeoutUpdate))
+		_, err = sendRequestWithTimeout(config, "PATCH", project, url, obj, d.Timeout(schema.TimeoutUpdate))
 		if err != nil {
 			return fmt.Errorf("Error updating Policy %q: %s", d.Id(), err)
 		}
@@ -299,6 +308,11 @@ func resourceDnsPolicyUpdate(d *schema.ResourceData, meta interface{}) error {
 func resourceDnsPolicyDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
+	project, err := getProject(d, config)
+	if err != nil {
+		return err
+	}
+
 	url, err := replaceVars(d, config, "{{DnsBasePath}}projects/{{project}}/policies/{{name}}")
 	if err != nil {
 		return err
@@ -315,13 +329,14 @@ func resourceDnsPolicyDelete(d *schema.ResourceData, meta interface{}) error {
 			return err
 		}
 
-		_, err = sendRequestWithTimeout(config, "PATCH", url, patched, d.Timeout(schema.TimeoutUpdate))
+		_, err = sendRequestWithTimeout(config, "PATCH", project, url, patched, d.Timeout(schema.TimeoutUpdate))
 		if err != nil {
 			return fmt.Errorf("Error updating Policy %q: %s", d.Id(), err)
 		}
 	}
 	log.Printf("[DEBUG] Deleting Policy %q", d.Id())
-	res, err := sendRequestWithTimeout(config, "DELETE", url, obj, d.Timeout(schema.TimeoutDelete))
+
+	res, err := sendRequestWithTimeout(config, "DELETE", project, url, obj, d.Timeout(schema.TimeoutDelete))
 	if err != nil {
 		return handleNotFoundError(err, d, "Policy")
 	}

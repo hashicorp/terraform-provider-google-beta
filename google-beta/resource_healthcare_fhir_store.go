@@ -151,7 +151,7 @@ func resourceHealthcareFhirStoreCreate(d *schema.ResourceData, meta interface{})
 	}
 
 	log.Printf("[DEBUG] Creating new FhirStore: %#v", obj)
-	res, err := sendRequestWithTimeout(config, "POST", url, obj, d.Timeout(schema.TimeoutCreate))
+	res, err := sendRequestWithTimeout(config, "POST", "", url, obj, d.Timeout(schema.TimeoutCreate))
 	if err != nil {
 		return fmt.Errorf("Error creating FhirStore: %s", err)
 	}
@@ -176,7 +176,7 @@ func resourceHealthcareFhirStoreRead(d *schema.ResourceData, meta interface{}) e
 		return err
 	}
 
-	res, err := sendRequest(config, "GET", url, nil)
+	res, err := sendRequest(config, "GET", "", url, nil)
 	if err != nil {
 		return handleNotFoundError(err, d, fmt.Sprintf("HealthcareFhirStore %q", d.Id()))
 	}
@@ -266,7 +266,7 @@ func resourceHealthcareFhirStoreUpdate(d *schema.ResourceData, meta interface{})
 	if err != nil {
 		return err
 	}
-	_, err = sendRequestWithTimeout(config, "PATCH", url, obj, d.Timeout(schema.TimeoutUpdate))
+	_, err = sendRequestWithTimeout(config, "PATCH", "", url, obj, d.Timeout(schema.TimeoutUpdate))
 
 	if err != nil {
 		return fmt.Errorf("Error updating FhirStore %q: %s", d.Id(), err)
@@ -285,7 +285,8 @@ func resourceHealthcareFhirStoreDelete(d *schema.ResourceData, meta interface{})
 
 	var obj map[string]interface{}
 	log.Printf("[DEBUG] Deleting FhirStore %q", d.Id())
-	res, err := sendRequestWithTimeout(config, "DELETE", url, obj, d.Timeout(schema.TimeoutDelete))
+
+	res, err := sendRequestWithTimeout(config, "DELETE", "", url, obj, d.Timeout(schema.TimeoutDelete))
 	if err != nil {
 		return handleNotFoundError(err, d, "FhirStore")
 	}

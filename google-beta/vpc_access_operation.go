@@ -18,7 +18,8 @@ import (
 )
 
 type VpcAccessOperationWaiter struct {
-	Config *Config
+	Config  *Config
+	Project string
 	CommonOperationWaiter
 }
 
@@ -28,7 +29,7 @@ func (w *VpcAccessOperationWaiter) QueryOp() (interface{}, error) {
 	}
 	// Returns the proper get.
 	url := fmt.Sprintf("https://vpcaccess.googleapis.com/v1beta1/%s", w.CommonOperationWaiter.Op.Name)
-	return sendRequest(w.Config, "GET", url, nil)
+	return sendRequest(w.Config, "GET", w.Project, url, nil)
 }
 
 func vpcAccessOperationWaitTime(config *Config, op map[string]interface{}, project, activity string, timeoutMinutes int) error {
@@ -37,7 +38,8 @@ func vpcAccessOperationWaitTime(config *Config, op map[string]interface{}, proje
 		return nil
 	}
 	w := &VpcAccessOperationWaiter{
-		Config: config,
+		Config:  config,
+		Project: project,
 	}
 	if err := w.CommonOperationWaiter.SetOp(op); err != nil {
 		return err
