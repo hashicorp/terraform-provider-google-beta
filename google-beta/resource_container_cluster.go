@@ -744,7 +744,7 @@ func resourceContainerCluster() *schema.Resource {
 						"key_name": {
 							Type:     schema.TypeString,
 							ForceNew: true,
-							Required: true,
+							Optional: true,
 						},
 					},
 				},
