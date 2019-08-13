@@ -315,7 +315,11 @@ func resourceCloudRunServiceCreate(d *schema.ResourceData, meta interface{}) err
 	}
 
 	log.Printf("[DEBUG] Creating new Service: %#v", obj)
-	res, err := sendRequestWithTimeout(config, "POST", url, obj, d.Timeout(schema.TimeoutCreate))
+	project, err := getProject(d, config)
+	if err != nil {
+		return err
+	}
+	res, err := sendRequestWithTimeout(config, "POST", project, url, obj, d.Timeout(schema.TimeoutCreate))
 	if err != nil {
 		return fmt.Errorf("Error creating Service: %s", err)
 	}
@@ -340,7 +344,11 @@ func resourceCloudRunServiceRead(d *schema.ResourceData, meta interface{}) error
 		return err
 	}
 
-	res, err := sendRequest(config, "GET", url, nil)
+	project, err := getProject(d, config)
+	if err != nil {
+		return err
+	}
+	res, err := sendRequest(config, "GET", project, url, nil)
 	if err != nil {
 		return handleNotFoundError(err, d, fmt.Sprintf("CloudRunService %q", d.Id()))
 	}
@@ -357,10 +365,6 @@ func resourceCloudRunServiceRead(d *schema.ResourceData, meta interface{}) error
 		return nil
 	}
 
-	project, err := getProject(d, config)
-	if err != nil {
-		return err
-	}
 	if err := d.Set("project", project); err != nil {
 		return fmt.Errorf("Error reading Service: %s", err)
 	}
@@ -388,6 +392,11 @@ func resourceCloudRunServiceRead(d *schema.ResourceData, meta interface{}) error
 func resourceCloudRunServiceUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
+	project, err := getProject(d, config)
+	if err != nil {
+		return err
+	}
+
 	obj := make(map[string]interface{})
 	specProp, err := expandCloudRunServiceSpec(nil, d, config)
 	if err != nil {
@@ -413,7 +422,7 @@ func resourceCloudRunServiceUpdate(d *schema.ResourceData, meta interface{}) err
 	}
 
 	log.Printf("[DEBUG] Updating Service %q: %#v", d.Id(), obj)
-	_, err = sendRequestWithTimeout(config, "PUT", url, obj, d.Timeout(schema.TimeoutUpdate))
+	_, err = sendRequestWithTimeout(config, "PUT", project, url, obj, d.Timeout(schema.TimeoutUpdate))
 
 	if err != nil {
 		return fmt.Errorf("Error updating Service %q: %s", d.Id(), err)
@@ -425,6 +434,11 @@ func resourceCloudRunServiceUpdate(d *schema.ResourceData, meta interface{}) err
 func resourceCloudRunServiceDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
+	project, err := getProject(d, config)
+	if err != nil {
+		return err
+	}
+
 	url, err := replaceVars(d, config, "{{CloudRunBasePath}}projects/{{project}}/locations/{{location}}/services/{{name}}")
 	if err != nil {
 		return err
@@ -432,7 +446,8 @@ func resourceCloudRunServiceDelete(d *schema.ResourceData, meta interface{}) err
 
 	var obj map[string]interface{}
 	log.Printf("[DEBUG] Deleting Service %q", d.Id())
-	res, err := sendRequestWithTimeout(config, "DELETE", url, obj, d.Timeout(schema.TimeoutDelete))
+
+	res, err := sendRequestWithTimeout(config, "DELETE", project, url, obj, d.Timeout(schema.TimeoutDelete))
 	if err != nil {
 		return handleNotFoundError(err, d, "Service")
 	}

@@ -94,7 +94,11 @@ func resourceHealthcareDatasetCreate(d *schema.ResourceData, meta interface{}) e
 	}
 
 	log.Printf("[DEBUG] Creating new Dataset: %#v", obj)
-	res, err := sendRequestWithTimeout(config, "POST", url, obj, d.Timeout(schema.TimeoutCreate))
+	project, err := getProject(d, config)
+	if err != nil {
+		return err
+	}
+	res, err := sendRequestWithTimeout(config, "POST", project, url, obj, d.Timeout(schema.TimeoutCreate))
 	if err != nil {
 		return fmt.Errorf("Error creating Dataset: %s", err)
 	}
@@ -119,7 +123,11 @@ func resourceHealthcareDatasetRead(d *schema.ResourceData, meta interface{}) err
 		return err
 	}
 
-	res, err := sendRequest(config, "GET", url, nil)
+	project, err := getProject(d, config)
+	if err != nil {
+		return err
+	}
+	res, err := sendRequest(config, "GET", project, url, nil)
 	if err != nil {
 		return handleNotFoundError(err, d, fmt.Sprintf("HealthcareDataset %q", d.Id()))
 	}
@@ -136,10 +144,6 @@ func resourceHealthcareDatasetRead(d *schema.ResourceData, meta interface{}) err
 		return nil
 	}
 
-	project, err := getProject(d, config)
-	if err != nil {
-		return err
-	}
 	if err := d.Set("project", project); err != nil {
 		return fmt.Errorf("Error reading Dataset: %s", err)
 	}
@@ -156,6 +160,11 @@ func resourceHealthcareDatasetRead(d *schema.ResourceData, meta interface{}) err
 
 func resourceHealthcareDatasetUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
+
+	project, err := getProject(d, config)
+	if err != nil {
+		return err
+	}
 
 	obj := make(map[string]interface{})
 	timeZoneProp, err := expandHealthcareDatasetTimeZone(d.Get("time_zone"), d, config)
@@ -182,7 +191,7 @@ func resourceHealthcareDatasetUpdate(d *schema.ResourceData, meta interface{}) e
 	if err != nil {
 		return err
 	}
-	_, err = sendRequestWithTimeout(config, "PATCH", url, obj, d.Timeout(schema.TimeoutUpdate))
+	_, err = sendRequestWithTimeout(config, "PATCH", project, url, obj, d.Timeout(schema.TimeoutUpdate))
 
 	if err != nil {
 		return fmt.Errorf("Error updating Dataset %q: %s", d.Id(), err)
@@ -194,6 +203,11 @@ func resourceHealthcareDatasetUpdate(d *schema.ResourceData, meta interface{}) e
 func resourceHealthcareDatasetDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
+	project, err := getProject(d, config)
+	if err != nil {
+		return err
+	}
+
 	url, err := replaceVars(d, config, "{{HealthcareBasePath}}projects/{{project}}/locations/{{location}}/datasets/{{name}}")
 	if err != nil {
 		return err
@@ -201,7 +215,8 @@ func resourceHealthcareDatasetDelete(d *schema.ResourceData, meta interface{}) e
 
 	var obj map[string]interface{}
 	log.Printf("[DEBUG] Deleting Dataset %q", d.Id())
-	res, err := sendRequestWithTimeout(config, "DELETE", url, obj, d.Timeout(schema.TimeoutDelete))
+
+	res, err := sendRequestWithTimeout(config, "DELETE", project, url, obj, d.Timeout(schema.TimeoutDelete))
 	if err != nil {
 		return handleNotFoundError(err, d, "Dataset")
 	}

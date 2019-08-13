@@ -139,7 +139,11 @@ func resourceVpcAccessConnectorCreate(d *schema.ResourceData, meta interface{}) 
 	}
 
 	log.Printf("[DEBUG] Creating new Connector: %#v", obj)
-	res, err := sendRequestWithTimeout(config, "POST", url, obj, d.Timeout(schema.TimeoutCreate))
+	project, err := getProject(d, config)
+	if err != nil {
+		return err
+	}
+	res, err := sendRequestWithTimeout(config, "POST", project, url, obj, d.Timeout(schema.TimeoutCreate))
 	if err != nil {
 		return fmt.Errorf("Error creating Connector: %s", err)
 	}
@@ -151,10 +155,6 @@ func resourceVpcAccessConnectorCreate(d *schema.ResourceData, meta interface{}) 
 	}
 	d.SetId(id)
 
-	project, err := getProject(d, config)
-	if err != nil {
-		return err
-	}
 	waitErr := vpcAccessOperationWaitTime(
 		config, res, project, "Creating Connector",
 		int(d.Timeout(schema.TimeoutCreate).Minutes()))
@@ -183,7 +183,11 @@ func resourceVpcAccessConnectorRead(d *schema.ResourceData, meta interface{}) er
 		return err
 	}
 
-	res, err := sendRequest(config, "GET", url, nil)
+	project, err := getProject(d, config)
+	if err != nil {
+		return err
+	}
+	res, err := sendRequest(config, "GET", project, url, nil)
 	if err != nil {
 		return handleNotFoundError(err, d, fmt.Sprintf("VpcAccessConnector %q", d.Id()))
 	}
@@ -200,10 +204,6 @@ func resourceVpcAccessConnectorRead(d *schema.ResourceData, meta interface{}) er
 		return nil
 	}
 
-	project, err := getProject(d, config)
-	if err != nil {
-		return err
-	}
 	if err := d.Set("project", project); err != nil {
 		return fmt.Errorf("Error reading Connector: %s", err)
 	}
@@ -233,6 +233,11 @@ func resourceVpcAccessConnectorRead(d *schema.ResourceData, meta interface{}) er
 func resourceVpcAccessConnectorDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
+	project, err := getProject(d, config)
+	if err != nil {
+		return err
+	}
+
 	url, err := replaceVars(d, config, "{{VpcAccessBasePath}}projects/{{project}}/locations/{{region}}/connectors/{{name}}")
 	if err != nil {
 		return err
@@ -240,14 +245,10 @@ func resourceVpcAccessConnectorDelete(d *schema.ResourceData, meta interface{}) 
 
 	var obj map[string]interface{}
 	log.Printf("[DEBUG] Deleting Connector %q", d.Id())
-	res, err := sendRequestWithTimeout(config, "DELETE", url, obj, d.Timeout(schema.TimeoutDelete))
+
+	res, err := sendRequestWithTimeout(config, "DELETE", project, url, obj, d.Timeout(schema.TimeoutDelete))
 	if err != nil {
 		return handleNotFoundError(err, d, "Connector")
-	}
-
-	project, err := getProject(d, config)
-	if err != nil {
-		return err
 	}
 
 	err = vpcAccessOperationWaitTime(

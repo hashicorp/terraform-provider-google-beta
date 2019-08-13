@@ -187,7 +187,11 @@ func resourceComputeAddressCreate(d *schema.ResourceData, meta interface{}) erro
 	}
 
 	log.Printf("[DEBUG] Creating new Address: %#v", obj)
-	res, err := sendRequestWithTimeout(config, "POST", url, obj, d.Timeout(schema.TimeoutCreate))
+	project, err := getProject(d, config)
+	if err != nil {
+		return err
+	}
+	res, err := sendRequestWithTimeout(config, "POST", project, url, obj, d.Timeout(schema.TimeoutCreate))
 	if err != nil {
 		return fmt.Errorf("Error creating Address: %s", err)
 	}
@@ -199,10 +203,6 @@ func resourceComputeAddressCreate(d *schema.ResourceData, meta interface{}) erro
 	}
 	d.SetId(id)
 
-	project, err := getProject(d, config)
-	if err != nil {
-		return err
-	}
 	op := &compute.Operation{}
 	err = Convert(res, op)
 	if err != nil {
@@ -242,7 +242,7 @@ func resourceComputeAddressCreate(d *schema.ResourceData, meta interface{}) erro
 		if err != nil {
 			return err
 		}
-		res, err = sendRequest(config, "POST", url, obj)
+		res, err = sendRequest(config, "POST", project, url, obj)
 		if err != nil {
 			return fmt.Errorf("Error adding labels to ComputeAddress %q: %s", d.Id(), err)
 		}
@@ -273,15 +273,15 @@ func resourceComputeAddressRead(d *schema.ResourceData, meta interface{}) error 
 		return err
 	}
 
-	res, err := sendRequest(config, "GET", url, nil)
-	if err != nil {
-		return handleNotFoundError(err, d, fmt.Sprintf("ComputeAddress %q", d.Id()))
-	}
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
+	res, err := sendRequest(config, "GET", project, url, nil)
+	if err != nil {
+		return handleNotFoundError(err, d, fmt.Sprintf("ComputeAddress %q", d.Id()))
+	}
+
 	if err := d.Set("project", project); err != nil {
 		return fmt.Errorf("Error reading Address: %s", err)
 	}
@@ -329,6 +329,11 @@ func resourceComputeAddressRead(d *schema.ResourceData, meta interface{}) error 
 func resourceComputeAddressUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
+	project, err := getProject(d, config)
+	if err != nil {
+		return err
+	}
+
 	d.Partial(true)
 
 	if d.HasChange("labels") || d.HasChange("label_fingerprint") {
@@ -350,15 +355,11 @@ func resourceComputeAddressUpdate(d *schema.ResourceData, meta interface{}) erro
 		if err != nil {
 			return err
 		}
-		res, err := sendRequestWithTimeout(config, "POST", url, obj, d.Timeout(schema.TimeoutUpdate))
+		res, err := sendRequestWithTimeout(config, "POST", project, url, obj, d.Timeout(schema.TimeoutUpdate))
 		if err != nil {
 			return fmt.Errorf("Error updating Address %q: %s", d.Id(), err)
 		}
 
-		project, err := getProject(d, config)
-		if err != nil {
-			return err
-		}
 		op := &compute.Operation{}
 		err = Convert(res, op)
 		if err != nil {
@@ -385,6 +386,11 @@ func resourceComputeAddressUpdate(d *schema.ResourceData, meta interface{}) erro
 func resourceComputeAddressDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
+	project, err := getProject(d, config)
+	if err != nil {
+		return err
+	}
+
 	url, err := replaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/regions/{{region}}/addresses/{{name}}")
 	if err != nil {
 		return err
@@ -392,15 +398,12 @@ func resourceComputeAddressDelete(d *schema.ResourceData, meta interface{}) erro
 
 	var obj map[string]interface{}
 	log.Printf("[DEBUG] Deleting Address %q", d.Id())
-	res, err := sendRequestWithTimeout(config, "DELETE", url, obj, d.Timeout(schema.TimeoutDelete))
+
+	res, err := sendRequestWithTimeout(config, "DELETE", project, url, obj, d.Timeout(schema.TimeoutDelete))
 	if err != nil {
 		return handleNotFoundError(err, d, "Address")
 	}
 
-	project, err := getProject(d, config)
-	if err != nil {
-		return err
-	}
 	op := &compute.Operation{}
 	err = Convert(res, op)
 	if err != nil {

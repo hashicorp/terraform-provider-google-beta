@@ -203,7 +203,11 @@ func resourceComputeRegionAutoscalerCreate(d *schema.ResourceData, meta interfac
 	}
 
 	log.Printf("[DEBUG] Creating new RegionAutoscaler: %#v", obj)
-	res, err := sendRequestWithTimeout(config, "POST", url, obj, d.Timeout(schema.TimeoutCreate))
+	project, err := getProject(d, config)
+	if err != nil {
+		return err
+	}
+	res, err := sendRequestWithTimeout(config, "POST", project, url, obj, d.Timeout(schema.TimeoutCreate))
 	if err != nil {
 		return fmt.Errorf("Error creating RegionAutoscaler: %s", err)
 	}
@@ -215,10 +219,6 @@ func resourceComputeRegionAutoscalerCreate(d *schema.ResourceData, meta interfac
 	}
 	d.SetId(id)
 
-	project, err := getProject(d, config)
-	if err != nil {
-		return err
-	}
 	op := &compute.Operation{}
 	err = Convert(res, op)
 	if err != nil {
@@ -248,15 +248,15 @@ func resourceComputeRegionAutoscalerRead(d *schema.ResourceData, meta interface{
 		return err
 	}
 
-	res, err := sendRequest(config, "GET", url, nil)
-	if err != nil {
-		return handleNotFoundError(err, d, fmt.Sprintf("ComputeRegionAutoscaler %q", d.Id()))
-	}
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
+	res, err := sendRequest(config, "GET", project, url, nil)
+	if err != nil {
+		return handleNotFoundError(err, d, fmt.Sprintf("ComputeRegionAutoscaler %q", d.Id()))
+	}
+
 	if err := d.Set("project", project); err != nil {
 		return fmt.Errorf("Error reading RegionAutoscaler: %s", err)
 	}
@@ -288,6 +288,11 @@ func resourceComputeRegionAutoscalerRead(d *schema.ResourceData, meta interface{
 
 func resourceComputeRegionAutoscalerUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
+
+	project, err := getProject(d, config)
+	if err != nil {
+		return err
+	}
 
 	obj := make(map[string]interface{})
 	nameProp, err := expandComputeRegionAutoscalerName(d.Get("name"), d, config)
@@ -327,16 +332,12 @@ func resourceComputeRegionAutoscalerUpdate(d *schema.ResourceData, meta interfac
 	}
 
 	log.Printf("[DEBUG] Updating RegionAutoscaler %q: %#v", d.Id(), obj)
-	res, err := sendRequestWithTimeout(config, "PUT", url, obj, d.Timeout(schema.TimeoutUpdate))
+	res, err := sendRequestWithTimeout(config, "PUT", project, url, obj, d.Timeout(schema.TimeoutUpdate))
 
 	if err != nil {
 		return fmt.Errorf("Error updating RegionAutoscaler %q: %s", d.Id(), err)
 	}
 
-	project, err := getProject(d, config)
-	if err != nil {
-		return err
-	}
 	op := &compute.Operation{}
 	err = Convert(res, op)
 	if err != nil {
@@ -357,6 +358,11 @@ func resourceComputeRegionAutoscalerUpdate(d *schema.ResourceData, meta interfac
 func resourceComputeRegionAutoscalerDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
+	project, err := getProject(d, config)
+	if err != nil {
+		return err
+	}
+
 	url, err := replaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/regions/{{region}}/autoscalers/{{name}}")
 	if err != nil {
 		return err
@@ -364,15 +370,12 @@ func resourceComputeRegionAutoscalerDelete(d *schema.ResourceData, meta interfac
 
 	var obj map[string]interface{}
 	log.Printf("[DEBUG] Deleting RegionAutoscaler %q", d.Id())
-	res, err := sendRequestWithTimeout(config, "DELETE", url, obj, d.Timeout(schema.TimeoutDelete))
+
+	res, err := sendRequestWithTimeout(config, "DELETE", project, url, obj, d.Timeout(schema.TimeoutDelete))
 	if err != nil {
 		return handleNotFoundError(err, d, "RegionAutoscaler")
 	}
 
-	project, err := getProject(d, config)
-	if err != nil {
-		return err
-	}
 	op := &compute.Operation{}
 	err = Convert(res, op)
 	if err != nil {
