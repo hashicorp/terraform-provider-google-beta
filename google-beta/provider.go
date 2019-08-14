@@ -122,6 +122,7 @@ func Provider() terraform.ResourceProvider {
 			PubsubCustomEndpointEntryKey:               PubsubCustomEndpointEntry,
 			RedisCustomEndpointEntryKey:                RedisCustomEndpointEntry,
 			ResourceManagerCustomEndpointEntryKey:      ResourceManagerCustomEndpointEntry,
+			SecurityCenterCustomEndpointEntryKey:       SecurityCenterCustomEndpointEntry,
 			SecurityScannerCustomEndpointEntryKey:      SecurityScannerCustomEndpointEntry,
 			SourceRepoCustomEndpointEntryKey:           SourceRepoCustomEndpointEntry,
 			SpannerCustomEndpointEntryKey:              SpannerCustomEndpointEntry,
@@ -244,6 +245,7 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 		GeneratedPubsubResourcesMap,
 		GeneratedRedisResourcesMap,
 		GeneratedResourceManagerResourcesMap,
+		GeneratedSecurityCenterResourcesMap,
 		GeneratedSecurityScannerResourcesMap,
 		GeneratedSourceRepoResourcesMap,
 		GeneratedSpannerResourcesMap,
@@ -437,6 +439,7 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 	config.PubsubBasePath = d.Get(PubsubCustomEndpointEntryKey).(string)
 	config.RedisBasePath = d.Get(RedisCustomEndpointEntryKey).(string)
 	config.ResourceManagerBasePath = d.Get(ResourceManagerCustomEndpointEntryKey).(string)
+	config.SecurityCenterBasePath = d.Get(SecurityCenterCustomEndpointEntryKey).(string)
 	config.SecurityScannerBasePath = d.Get(SecurityScannerCustomEndpointEntryKey).(string)
 	config.SourceRepoBasePath = d.Get(SourceRepoCustomEndpointEntryKey).(string)
 	config.SpannerBasePath = d.Get(SpannerCustomEndpointEntryKey).(string)
@@ -501,6 +504,7 @@ func ConfigureBasePaths(c *Config) {
 	c.PubsubBasePath = PubsubDefaultBasePath
 	c.RedisBasePath = RedisDefaultBasePath
 	c.ResourceManagerBasePath = ResourceManagerDefaultBasePath
+	c.SecurityCenterBasePath = SecurityCenterDefaultBasePath
 	c.SecurityScannerBasePath = SecurityScannerDefaultBasePath
 	c.SourceRepoBasePath = SourceRepoDefaultBasePath
 	c.SpannerBasePath = SpannerDefaultBasePath
