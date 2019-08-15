@@ -77,7 +77,7 @@ In addition to the arguments listed above, the following computed attributes are
 
 
 * `self_link` -
-  The fully qualifed name of this dataset
+  The fully qualified name of this dataset
 
 
 ## Timeouts
