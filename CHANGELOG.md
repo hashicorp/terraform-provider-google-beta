@@ -19,8 +19,7 @@ ENHANCEMENTS:
 * pubsub: Pub/Sub topic geo restriction support. [GH-989]
 
 BUG FIXES:
-* all: many resources that previously threw errors when not found now no longer throw errors, and remove the resource from state [GH-1000]
-binary_authorization: don't diff when attestation authority note public keys don't have an ID in the config [GH-1042]
+* binary_authorization: don't diff when attestation authority note public keys don't have an ID in the config [GH-1042]
 * compute: instance descriptions will now be stored in state [GH-990]
 * container: `key_name` in `google_container_cluster.database_encryption` is no longer a required field. [GH-1032]
 * project: ignore errors when deleting a default network that doesn't exist [GH-991]
