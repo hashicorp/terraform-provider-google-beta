@@ -1,4 +1,31 @@
-## 2.12.1 (Unreleased)
+## 2.13.0 (Unreleased)
+
+FEATURES:
+* **New Resource**: added the `google_vpc_access_connector` resource and the `vpc_connector` option on the `google_cloudfunctions_function` resource. [GH-1004]
+* **New Resource**: Added `google_scc_source` resource for managing Cloud Security Command Center sources in Terraform [GH-1033]
+* **New Data Source**: `google_compute_network_endpoint_group`[GH-999]
+
+ENHANCEMENTS:
+* bigtable: `google_bigtable_instance` max number of `cluster` blocks is now 4 [GH-995]
+* bigquery: Added support for `google_bigquery_data_transfer_config` (which include scheduled queries). [GH-975]
+* binary_authorization: Added `globalPolicyEvaluationMode` to `google_binary_authorization_policy`. [GH-987]
+* cloudfunctions: Allow partial URIs in google_cloudfunctions_function event_trigger.resource [GH-1009]
+* compute: Enable update for `google_compute_router_nat` [GH-979]
+* netblock: extended `google_netblock_ip_ranges` to support multiple useful IP address ranges that have a special meaning on GCP. [GH-986]
+* project: Wrapped API requests with retries for `google_project`, `google_folder`, and `google_*_organization_policy` [GH-971]
+* project: IAM and service requests are now batched [GH-1014]
+* provider: allow provider's region to be specified as a self_link [GH-1022]
+* provider: Adds new provider-level field `user_project_override`, which allows billing, quota checks, and service enablement checks to occur against the project a resource is in instead of the project the credentials are from. [GH-1010]
+* pubsub: Pub/Sub topic geo restriction support. [GH-989]
+
+BUG FIXES:
+* all: many resources that previously threw errors when not found now no longer throw errors, and remove the resource from state [GH-1000]
+binary_authorization: don't diff when attestation authority note public keys don't have an ID in the config [GH-1042]
+* compute: instance descriptions will now be stored in state [GH-990]
+* container: `key_name` in `google_container_cluster.database_encryption` is no longer a required field. [GH-1032]
+* project: ignore errors when deleting a default network that doesn't exist [GH-991]
+
+
 ## 2.12.0 (August 01, 2019)
 
 FEATURES:
