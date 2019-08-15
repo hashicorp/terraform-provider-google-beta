@@ -98,7 +98,7 @@ In addition to the arguments listed above, the following computed attributes are
   State of the VPC access connector.
 
 * `self_link` -
-  The fully qualifed name of this VPC connector
+  The fully qualified name of this VPC connector
 
 
 ## Timeouts
