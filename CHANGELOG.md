@@ -6,8 +6,8 @@ FEATURES:
 * **New Data Source**: `google_compute_network_endpoint_group`[GH-999]
 
 ENHANCEMENTS:
-* bigtable: `google_bigtable_instance` max number of `cluster` blocks is now 4 [GH-995]
 * bigquery: Added support for `google_bigquery_data_transfer_config` (which include scheduled queries). [GH-975]
+* bigtable: `google_bigtable_instance` max number of `cluster` blocks is now 4 [GH-995]
 * binary_authorization: Added `globalPolicyEvaluationMode` to `google_binary_authorization_policy`. [GH-987]
 * cloudfunctions: Allow partial URIs in google_cloudfunctions_function event_trigger.resource [GH-1009]
 * compute: Enable update for `google_compute_router_nat` [GH-979]
