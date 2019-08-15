@@ -1,4 +1,30 @@
-## 2.12.1 (Unreleased)
+## 2.13.1 (Unreleased)
+## 2.13.0 (August 15, 2019)
+
+FEATURES:
+* **New Resource**: added the `google_vpc_access_connector` resource and the `vpc_connector` option on the `google_cloudfunctions_function` resource. ([#1004](https://github.com/terraform-providers/terraform-provider-google-beta/issues/1004))
+* **New Resource**: Added `google_scc_source` resource for managing Cloud Security Command Center sources in Terraform ([#1033](https://github.com/terraform-providers/terraform-provider-google-beta/issues/1033))
+* **New Data Source**: `google_compute_network_endpoint_group`([#999](https://github.com/terraform-providers/terraform-provider-google-beta/issues/999))
+
+ENHANCEMENTS:
+* bigquery: Added support for `google_bigquery_data_transfer_config` (which include scheduled queries). ([#975](https://github.com/terraform-providers/terraform-provider-google-beta/issues/975))
+* bigtable: `google_bigtable_instance` max number of `cluster` blocks is now 4 ([#995](https://github.com/terraform-providers/terraform-provider-google-beta/issues/995))
+* binary_authorization: Added `globalPolicyEvaluationMode` to `google_binary_authorization_policy`. ([#987](https://github.com/terraform-providers/terraform-provider-google-beta/issues/987))
+* cloudfunctions: Allow partial URIs in google_cloudfunctions_function event_trigger.resource ([#1009](https://github.com/terraform-providers/terraform-provider-google-beta/issues/1009))
+* compute: Enable update for `google_compute_router_nat` ([#979](https://github.com/terraform-providers/terraform-provider-google-beta/issues/979))
+* netblock: extended `google_netblock_ip_ranges` to support multiple useful IP address ranges that have a special meaning on GCP. ([#986](https://github.com/terraform-providers/terraform-provider-google-beta/issues/986))
+* project: Wrapped API requests with retries for `google_project`, `google_folder`, and `google_*_organization_policy` ([#971](https://github.com/terraform-providers/terraform-provider-google-beta/issues/971))
+* project: IAM and service requests are now batched ([#1014](https://github.com/terraform-providers/terraform-provider-google-beta/issues/1014))
+* provider: allow provider's region to be specified as a self_link ([#1022](https://github.com/terraform-providers/terraform-provider-google-beta/issues/1022))
+* provider: Adds new provider-level field `user_project_override`, which allows billing, quota checks, and service enablement checks to occur against the project a resource is in instead of the project the credentials are from. ([#1010](https://github.com/terraform-providers/terraform-provider-google-beta/issues/1010))
+* pubsub: Pub/Sub topic geo restriction support. ([#989](https://github.com/terraform-providers/terraform-provider-google-beta/issues/989))
+
+BUG FIXES:
+* binary_authorization: don't diff when attestation authority note public keys don't have an ID in the config ([#1042](https://github.com/terraform-providers/terraform-provider-google-beta/issues/1042))
+* compute: instance descriptions will now be stored in state ([#990](https://github.com/terraform-providers/terraform-provider-google-beta/issues/990))
+* container: `key_name` in `google_container_cluster.database_encryption` is no longer a required field. ([#1032](https://github.com/terraform-providers/terraform-provider-google-beta/issues/1032))
+* project: ignore errors when deleting a default network that doesn't exist ([#991](https://github.com/terraform-providers/terraform-provider-google-beta/issues/991))
+
 ## 2.12.0 (August 01, 2019)
 
 FEATURES:
