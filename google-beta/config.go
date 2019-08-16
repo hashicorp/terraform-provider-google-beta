@@ -203,6 +203,35 @@ type Config struct {
 	requestBatcherIam          *RequestBatcher
 }
 
+// Generated product base paths
+var AccessContextManagerDefaultBasePath = "https://accesscontextmanager.googleapis.com/v1/"
+var AppEngineDefaultBasePath = "https://appengine.googleapis.com/v1/"
+var BigqueryDataTransferDefaultBasePath = "https://bigquerydatatransfer.googleapis.com/v1/"
+var BinaryAuthorizationDefaultBasePath = "https://binaryauthorization.googleapis.com/v1beta1/"
+var CloudBuildDefaultBasePath = "https://cloudbuild.googleapis.com/v1/"
+var CloudRunDefaultBasePath = "https://run.googleapis.com/v1alpha1/"
+var CloudSchedulerDefaultBasePath = "https://cloudscheduler.googleapis.com/v1/"
+var ComputeDefaultBasePath = "https://www.googleapis.com/compute/beta/"
+var ContainerAnalysisDefaultBasePath = "https://containeranalysis.googleapis.com/v1beta1/"
+var DnsDefaultBasePath = "https://www.googleapis.com/dns/v1beta2/"
+var FilestoreDefaultBasePath = "https://file.googleapis.com/v1/"
+var FirestoreDefaultBasePath = "https://firestore.googleapis.com/v1/"
+var HealthcareDefaultBasePath = "https://healthcare.googleapis.com/v1beta1/"
+var KmsDefaultBasePath = "https://cloudkms.googleapis.com/v1/"
+var LoggingDefaultBasePath = "https://logging.googleapis.com/v2/"
+var MonitoringDefaultBasePath = "https://monitoring.googleapis.com/v3/"
+var PubsubDefaultBasePath = "https://pubsub.googleapis.com/v1/"
+var RedisDefaultBasePath = "https://redis.googleapis.com/v1beta1/"
+var ResourceManagerDefaultBasePath = "https://cloudresourcemanager.googleapis.com/v1/"
+var SecurityCenterDefaultBasePath = "https://securitycenter.googleapis.com/v1/"
+var SecurityScannerDefaultBasePath = "https://websecurityscanner.googleapis.com/v1beta/"
+var SourceRepoDefaultBasePath = "https://sourcerepo.googleapis.com/v1/"
+var SpannerDefaultBasePath = "https://spanner.googleapis.com/v1/"
+var SqlDefaultBasePath = "https://www.googleapis.com/sql/v1beta4/"
+var StorageDefaultBasePath = "https://www.googleapis.com/storage/v1/"
+var TpuDefaultBasePath = "https://tpu.googleapis.com/v1/"
+var VpcAccessDefaultBasePath = "https://vpcaccess.googleapis.com/v1beta1/"
+
 var defaultClientScopes = []string{
 	"https://www.googleapis.com/auth/compute",
 	"https://www.googleapis.com/auth/cloud-platform",
