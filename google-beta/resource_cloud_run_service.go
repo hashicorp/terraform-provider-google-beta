@@ -274,6 +274,22 @@ func resourceCloudRunService() *schema.Resource {
 								},
 							},
 						},
+						"latest_created_revision_name": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+						"latest_ready_revision_name": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+						"observed_generation": {
+							Type:     schema.TypeInt,
+							Computed: true,
+						},
+						"url": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
 					},
 				},
 			},
@@ -734,6 +750,14 @@ func flattenCloudRunServiceStatus(v interface{}, d *schema.ResourceData) interfa
 	transformed := make(map[string]interface{})
 	transformed["conditions"] =
 		flattenCloudRunServiceStatusConditions(original["conditions"], d)
+	transformed["url"] =
+		flattenCloudRunServiceStatusUrl(original["url"], d)
+	transformed["observed_generation"] =
+		flattenCloudRunServiceStatusObservedGeneration(original["observedGeneration"], d)
+	transformed["latest_created_revision_name"] =
+		flattenCloudRunServiceStatusLatestCreatedRevisionName(original["latestCreatedRevisionName"], d)
+	transformed["latest_ready_revision_name"] =
+		flattenCloudRunServiceStatusLatestReadyRevisionName(original["latestReadyRevisionName"], d)
 	return []interface{}{transformed}
 }
 func flattenCloudRunServiceStatusConditions(v interface{}, d *schema.ResourceData) interface{} {
@@ -770,6 +794,28 @@ func flattenCloudRunServiceStatusConditionsReason(v interface{}, d *schema.Resou
 }
 
 func flattenCloudRunServiceStatusConditionsType(v interface{}, d *schema.ResourceData) interface{} {
+	return v
+}
+
+func flattenCloudRunServiceStatusUrl(v interface{}, d *schema.ResourceData) interface{} {
+	return v
+}
+
+func flattenCloudRunServiceStatusObservedGeneration(v interface{}, d *schema.ResourceData) interface{} {
+	// Handles the string fixed64 format
+	if strVal, ok := v.(string); ok {
+		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
+			return intVal
+		} // let terraform core handle it if we can't convert the string to an int.
+	}
+	return v
+}
+
+func flattenCloudRunServiceStatusLatestCreatedRevisionName(v interface{}, d *schema.ResourceData) interface{} {
+	return v
+}
+
+func flattenCloudRunServiceStatusLatestReadyRevisionName(v interface{}, d *schema.ResourceData) interface{} {
 	return v
 }
 
