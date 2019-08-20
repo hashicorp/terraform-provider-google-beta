@@ -242,7 +242,7 @@ The following arguments are supported:
 
 * `peer_gcp_gateway` -
   (Optional, [Beta](https://terraform.io/docs/providers/google/provider_versions.html))
-  URL of the peer side HA GCP VPN gateway to which this VPN tunnel is connected. 
+  URL of the peer side HA GCP VPN gateway to which this VPN tunnel is connected.
   If provided, the VPN tunnel will automatically use the same vpn_gateway_interface
   ID in the peer GCP VPN gateway.
   This field must reference a `google_compute_ha_vpn_gateway` resource.
