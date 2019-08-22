@@ -130,7 +130,7 @@ The `snapshot_schedule_policy` block supports:
 
 * `schedule` -
   (Required)
-  Contains one of an `hourlySchedule`, `dailySchedule`, or `weeklySchedule`.  Structure is documented below.
+  Contains one of an `hourly_schedule`, `daily_schedule`, or `weekly_schedule`.  Structure is documented below.
 
 * `retention_policy` -
   (Optional)
