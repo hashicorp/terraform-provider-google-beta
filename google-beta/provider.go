@@ -191,6 +191,14 @@ func Provider() terraform.ResourceProvider {
 					"GOOGLE_CONTAINER_ANALYSIS_CUSTOM_ENDPOINT",
 				}, ContainerAnalysisDefaultBasePath),
 			},
+			"dataproc_custom_endpoint": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validateCustomEndpoint,
+				DefaultFunc: schema.MultiEnvDefaultFunc([]string{
+					"GOOGLE_DATAPROC_CUSTOM_ENDPOINT",
+				}, DataprocDefaultBasePath),
+			},
 			"dns_custom_endpoint": {
 				Type:         schema.TypeString,
 				Optional:     true,
@@ -353,7 +361,6 @@ func Provider() terraform.ResourceProvider {
 			ComputeBetaCustomEndpointEntryKey:            ComputeBetaCustomEndpointEntry,
 			ContainerCustomEndpointEntryKey:              ContainerCustomEndpointEntry,
 			ContainerBetaCustomEndpointEntryKey:          ContainerBetaCustomEndpointEntry,
-			DataprocCustomEndpointEntryKey:               DataprocCustomEndpointEntry,
 			DataprocBetaCustomEndpointEntryKey:           DataprocBetaCustomEndpointEntry,
 			DataflowCustomEndpointEntryKey:               DataflowCustomEndpointEntry,
 			DnsBetaCustomEndpointEntryKey:                DnsBetaCustomEndpointEntry,
@@ -432,9 +439,9 @@ func Provider() terraform.ResourceProvider {
 	}
 }
 
-// Generated resources: 86
+// Generated resources: 87
 // Generated IAM resources: 6
-// Total generated resources: 92
+// Total generated resources: 93
 func ResourceMap() map[string]*schema.Resource {
 	resourceMap, _ := ResourceMapWithErrors()
 	return resourceMap
@@ -499,6 +506,7 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_compute_url_map":                          resourceComputeUrlMap(),
 			"google_compute_vpn_tunnel":                       resourceComputeVpnTunnel(),
 			"google_container_analysis_note":                  resourceContainerAnalysisNote(),
+			"google_dataproc_autoscaling_policy":              resourceDataprocAutoscalingPolicy(),
 			"google_dns_managed_zone":                         resourceDnsManagedZone(),
 			"google_dns_policy":                               resourceDnsPolicy(),
 			"google_filestore_instance":                       resourceFilestoreInstance(),
@@ -713,6 +721,7 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 	config.CloudSchedulerBasePath = d.Get("cloud_scheduler_custom_endpoint").(string)
 	config.ComputeBasePath = d.Get("compute_custom_endpoint").(string)
 	config.ContainerAnalysisBasePath = d.Get("container_analysis_custom_endpoint").(string)
+	config.DataprocBasePath = d.Get("dataproc_custom_endpoint").(string)
 	config.DnsBasePath = d.Get("dns_custom_endpoint").(string)
 	config.FilestoreBasePath = d.Get("filestore_custom_endpoint").(string)
 	config.FirestoreBasePath = d.Get("firestore_custom_endpoint").(string)
@@ -741,7 +750,6 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 	config.ComputeBetaBasePath = d.Get(ComputeBetaCustomEndpointEntryKey).(string)
 	config.ContainerBasePath = d.Get(ContainerCustomEndpointEntryKey).(string)
 	config.ContainerBetaBasePath = d.Get(ContainerBetaCustomEndpointEntryKey).(string)
-	config.DataprocBasePath = d.Get(DataprocCustomEndpointEntryKey).(string)
 	config.DataprocBetaBasePath = d.Get(DataprocBetaCustomEndpointEntryKey).(string)
 	config.DataflowBasePath = d.Get(DataflowCustomEndpointEntryKey).(string)
 	config.DnsBetaBasePath = d.Get(DnsBetaCustomEndpointEntryKey).(string)
