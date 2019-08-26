@@ -344,6 +344,27 @@ The `status` block contains:
 * `conditions` -
   Array of observed Service Conditions, indicating the current ready state of the service.  Structure is documented below.
 
+* `url` -
+  From RouteStatus. URL holds the url that will distribute traffic over the provided traffic
+  targets. It generally has the form
+  https://{route-hash}-{project-hash}-{cluster-level-suffix}.a.run.app
+
+* `observed_generation` -
+  ObservedGeneration is the 'Generation' of the Route that was last processed by the
+  controller.
+  Clients polling for completed reconciliation should poll until observedGeneration =
+  metadata.generation and the Ready condition's status is True or False.
+
+* `latest_created_revision_name` -
+  From ConfigurationStatus. LatestCreatedRevisionName is the last revision that was created
+  from this Service's Configuration. It might not be ready yet, for that use
+  LatestReadyRevisionName.
+
+* `latest_ready_revision_name` -
+  From ConfigurationStatus. LatestReadyRevisionName holds the name of the latest Revision
+  stamped out from this Service's Configuration that has had its "Ready" condition become
+  "True".
+
 
 The `conditions` block contains:
 
