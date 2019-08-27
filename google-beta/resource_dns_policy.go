@@ -25,15 +25,15 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
-func resourceDnsPolicy() *schema.Resource {
+func resourceDNSPolicy() *schema.Resource {
 	return &schema.Resource{
-		Create: resourceDnsPolicyCreate,
-		Read:   resourceDnsPolicyRead,
-		Update: resourceDnsPolicyUpdate,
-		Delete: resourceDnsPolicyDelete,
+		Create: resourceDNSPolicyCreate,
+		Read:   resourceDNSPolicyRead,
+		Update: resourceDNSPolicyUpdate,
+		Delete: resourceDNSPolicyDelete,
 
 		Importer: &schema.ResourceImporter{
-			State: resourceDnsPolicyImport,
+			State: resourceDNSPolicyImport,
 		},
 
 		Timeouts: &schema.ResourceTimeout{
@@ -130,48 +130,48 @@ func dnsPolicyNetworksSchema() *schema.Resource {
 	}
 }
 
-func resourceDnsPolicyCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceDNSPolicyCreate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
 	obj := make(map[string]interface{})
-	alternativeNameServerConfigProp, err := expandDnsPolicyAlternativeNameServerConfig(d.Get("alternative_name_server_config"), d, config)
+	alternativeNameServerConfigProp, err := expandDNSPolicyAlternativeNameServerConfig(d.Get("alternative_name_server_config"), d, config)
 	if err != nil {
 		return err
 	} else if v, ok := d.GetOkExists("alternative_name_server_config"); !isEmptyValue(reflect.ValueOf(alternativeNameServerConfigProp)) && (ok || !reflect.DeepEqual(v, alternativeNameServerConfigProp)) {
 		obj["alternativeNameServerConfig"] = alternativeNameServerConfigProp
 	}
-	descriptionProp, err := expandDnsPolicyDescription(d.Get("description"), d, config)
+	descriptionProp, err := expandDNSPolicyDescription(d.Get("description"), d, config)
 	if err != nil {
 		return err
 	} else if v, ok := d.GetOkExists("description"); !isEmptyValue(reflect.ValueOf(descriptionProp)) && (ok || !reflect.DeepEqual(v, descriptionProp)) {
 		obj["description"] = descriptionProp
 	}
-	enableInboundForwardingProp, err := expandDnsPolicyEnableInboundForwarding(d.Get("enable_inbound_forwarding"), d, config)
+	enableInboundForwardingProp, err := expandDNSPolicyEnableInboundForwarding(d.Get("enable_inbound_forwarding"), d, config)
 	if err != nil {
 		return err
 	} else if v, ok := d.GetOkExists("enable_inbound_forwarding"); ok || !reflect.DeepEqual(v, enableInboundForwardingProp) {
 		obj["enableInboundForwarding"] = enableInboundForwardingProp
 	}
-	enableLoggingProp, err := expandDnsPolicyEnableLogging(d.Get("enable_logging"), d, config)
+	enableLoggingProp, err := expandDNSPolicyEnableLogging(d.Get("enable_logging"), d, config)
 	if err != nil {
 		return err
 	} else if v, ok := d.GetOkExists("enable_logging"); ok || !reflect.DeepEqual(v, enableLoggingProp) {
 		obj["enableLogging"] = enableLoggingProp
 	}
-	nameProp, err := expandDnsPolicyName(d.Get("name"), d, config)
+	nameProp, err := expandDNSPolicyName(d.Get("name"), d, config)
 	if err != nil {
 		return err
 	} else if v, ok := d.GetOkExists("name"); !isEmptyValue(reflect.ValueOf(nameProp)) && (ok || !reflect.DeepEqual(v, nameProp)) {
 		obj["name"] = nameProp
 	}
-	networksProp, err := expandDnsPolicyNetworks(d.Get("networks"), d, config)
+	networksProp, err := expandDNSPolicyNetworks(d.Get("networks"), d, config)
 	if err != nil {
 		return err
 	} else if v, ok := d.GetOkExists("networks"); !isEmptyValue(reflect.ValueOf(networksProp)) && (ok || !reflect.DeepEqual(v, networksProp)) {
 		obj["networks"] = networksProp
 	}
 
-	url, err := replaceVars(d, config, "{{DnsBasePath}}projects/{{project}}/policies")
+	url, err := replaceVars(d, config, "{{DNSBasePath}}projects/{{project}}/policies")
 	if err != nil {
 		return err
 	}
@@ -195,13 +195,13 @@ func resourceDnsPolicyCreate(d *schema.ResourceData, meta interface{}) error {
 
 	log.Printf("[DEBUG] Finished creating Policy %q: %#v", d.Id(), res)
 
-	return resourceDnsPolicyRead(d, meta)
+	return resourceDNSPolicyRead(d, meta)
 }
 
-func resourceDnsPolicyRead(d *schema.ResourceData, meta interface{}) error {
+func resourceDNSPolicyRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	url, err := replaceVars(d, config, "{{DnsBasePath}}projects/{{project}}/policies/{{name}}")
+	url, err := replaceVars(d, config, "{{DNSBasePath}}projects/{{project}}/policies/{{name}}")
 	if err != nil {
 		return err
 	}
@@ -212,36 +212,36 @@ func resourceDnsPolicyRead(d *schema.ResourceData, meta interface{}) error {
 	}
 	res, err := sendRequest(config, "GET", project, url, nil)
 	if err != nil {
-		return handleNotFoundError(err, d, fmt.Sprintf("DnsPolicy %q", d.Id()))
+		return handleNotFoundError(err, d, fmt.Sprintf("DNSPolicy %q", d.Id()))
 	}
 
 	if err := d.Set("project", project); err != nil {
 		return fmt.Errorf("Error reading Policy: %s", err)
 	}
 
-	if err := d.Set("alternative_name_server_config", flattenDnsPolicyAlternativeNameServerConfig(res["alternativeNameServerConfig"], d)); err != nil {
+	if err := d.Set("alternative_name_server_config", flattenDNSPolicyAlternativeNameServerConfig(res["alternativeNameServerConfig"], d)); err != nil {
 		return fmt.Errorf("Error reading Policy: %s", err)
 	}
-	if err := d.Set("description", flattenDnsPolicyDescription(res["description"], d)); err != nil {
+	if err := d.Set("description", flattenDNSPolicyDescription(res["description"], d)); err != nil {
 		return fmt.Errorf("Error reading Policy: %s", err)
 	}
-	if err := d.Set("enable_inbound_forwarding", flattenDnsPolicyEnableInboundForwarding(res["enableInboundForwarding"], d)); err != nil {
+	if err := d.Set("enable_inbound_forwarding", flattenDNSPolicyEnableInboundForwarding(res["enableInboundForwarding"], d)); err != nil {
 		return fmt.Errorf("Error reading Policy: %s", err)
 	}
-	if err := d.Set("enable_logging", flattenDnsPolicyEnableLogging(res["enableLogging"], d)); err != nil {
+	if err := d.Set("enable_logging", flattenDNSPolicyEnableLogging(res["enableLogging"], d)); err != nil {
 		return fmt.Errorf("Error reading Policy: %s", err)
 	}
-	if err := d.Set("name", flattenDnsPolicyName(res["name"], d)); err != nil {
+	if err := d.Set("name", flattenDNSPolicyName(res["name"], d)); err != nil {
 		return fmt.Errorf("Error reading Policy: %s", err)
 	}
-	if err := d.Set("networks", flattenDnsPolicyNetworks(res["networks"], d)); err != nil {
+	if err := d.Set("networks", flattenDNSPolicyNetworks(res["networks"], d)); err != nil {
 		return fmt.Errorf("Error reading Policy: %s", err)
 	}
 
 	return nil
 }
 
-func resourceDnsPolicyUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceDNSPolicyUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
 	project, err := getProject(d, config)
@@ -253,38 +253,38 @@ func resourceDnsPolicyUpdate(d *schema.ResourceData, meta interface{}) error {
 
 	if d.HasChange("alternative_name_server_config") || d.HasChange("description") || d.HasChange("enable_inbound_forwarding") || d.HasChange("enable_logging") || d.HasChange("networks") {
 		obj := make(map[string]interface{})
-		alternativeNameServerConfigProp, err := expandDnsPolicyAlternativeNameServerConfig(d.Get("alternative_name_server_config"), d, config)
+		alternativeNameServerConfigProp, err := expandDNSPolicyAlternativeNameServerConfig(d.Get("alternative_name_server_config"), d, config)
 		if err != nil {
 			return err
 		} else if v, ok := d.GetOkExists("alternative_name_server_config"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, alternativeNameServerConfigProp)) {
 			obj["alternativeNameServerConfig"] = alternativeNameServerConfigProp
 		}
-		descriptionProp, err := expandDnsPolicyDescription(d.Get("description"), d, config)
+		descriptionProp, err := expandDNSPolicyDescription(d.Get("description"), d, config)
 		if err != nil {
 			return err
 		} else if v, ok := d.GetOkExists("description"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, descriptionProp)) {
 			obj["description"] = descriptionProp
 		}
-		enableInboundForwardingProp, err := expandDnsPolicyEnableInboundForwarding(d.Get("enable_inbound_forwarding"), d, config)
+		enableInboundForwardingProp, err := expandDNSPolicyEnableInboundForwarding(d.Get("enable_inbound_forwarding"), d, config)
 		if err != nil {
 			return err
 		} else if v, ok := d.GetOkExists("enable_inbound_forwarding"); ok || !reflect.DeepEqual(v, enableInboundForwardingProp) {
 			obj["enableInboundForwarding"] = enableInboundForwardingProp
 		}
-		enableLoggingProp, err := expandDnsPolicyEnableLogging(d.Get("enable_logging"), d, config)
+		enableLoggingProp, err := expandDNSPolicyEnableLogging(d.Get("enable_logging"), d, config)
 		if err != nil {
 			return err
 		} else if v, ok := d.GetOkExists("enable_logging"); ok || !reflect.DeepEqual(v, enableLoggingProp) {
 			obj["enableLogging"] = enableLoggingProp
 		}
-		networksProp, err := expandDnsPolicyNetworks(d.Get("networks"), d, config)
+		networksProp, err := expandDNSPolicyNetworks(d.Get("networks"), d, config)
 		if err != nil {
 			return err
 		} else if v, ok := d.GetOkExists("networks"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, networksProp)) {
 			obj["networks"] = networksProp
 		}
 
-		url, err := replaceVars(d, config, "{{DnsBasePath}}projects/{{project}}/policies/{{name}}")
+		url, err := replaceVars(d, config, "{{DNSBasePath}}projects/{{project}}/policies/{{name}}")
 		if err != nil {
 			return err
 		}
@@ -302,10 +302,10 @@ func resourceDnsPolicyUpdate(d *schema.ResourceData, meta interface{}) error {
 
 	d.Partial(false)
 
-	return resourceDnsPolicyRead(d, meta)
+	return resourceDNSPolicyRead(d, meta)
 }
 
-func resourceDnsPolicyDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceDNSPolicyDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
 	project, err := getProject(d, config)
@@ -313,7 +313,7 @@ func resourceDnsPolicyDelete(d *schema.ResourceData, meta interface{}) error {
 		return err
 	}
 
-	url, err := replaceVars(d, config, "{{DnsBasePath}}projects/{{project}}/policies/{{name}}")
+	url, err := replaceVars(d, config, "{{DNSBasePath}}projects/{{project}}/policies/{{name}}")
 	if err != nil {
 		return err
 	}
@@ -345,7 +345,7 @@ func resourceDnsPolicyDelete(d *schema.ResourceData, meta interface{}) error {
 	return nil
 }
 
-func resourceDnsPolicyImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceDNSPolicyImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	config := meta.(*Config)
 	if err := parseImportId([]string{
 		"projects/(?P<project>[^/]+)/policies/(?P<name>[^/]+)",
@@ -365,7 +365,7 @@ func resourceDnsPolicyImport(d *schema.ResourceData, meta interface{}) ([]*schem
 	return []*schema.ResourceData{d}, nil
 }
 
-func flattenDnsPolicyAlternativeNameServerConfig(v interface{}, d *schema.ResourceData) interface{} {
+func flattenDNSPolicyAlternativeNameServerConfig(v interface{}, d *schema.ResourceData) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -375,10 +375,10 @@ func flattenDnsPolicyAlternativeNameServerConfig(v interface{}, d *schema.Resour
 	}
 	transformed := make(map[string]interface{})
 	transformed["target_name_servers"] =
-		flattenDnsPolicyAlternativeNameServerConfigTargetNameServers(original["targetNameServers"], d)
+		flattenDNSPolicyAlternativeNameServerConfigTargetNameServers(original["targetNameServers"], d)
 	return []interface{}{transformed}
 }
-func flattenDnsPolicyAlternativeNameServerConfigTargetNameServers(v interface{}, d *schema.ResourceData) interface{} {
+func flattenDNSPolicyAlternativeNameServerConfigTargetNameServers(v interface{}, d *schema.ResourceData) interface{} {
 	if v == nil {
 		return v
 	}
@@ -399,32 +399,32 @@ func flattenDnsPolicyAlternativeNameServerConfigTargetNameServers(v interface{},
 			continue
 		}
 		transformed.Add(map[string]interface{}{
-			"ipv4_address": flattenDnsPolicyAlternativeNameServerConfigTargetNameServersIpv4Address(original["ipv4Address"], d),
+			"ipv4_address": flattenDNSPolicyAlternativeNameServerConfigTargetNameServersIpv4Address(original["ipv4Address"], d),
 		})
 	}
 	return transformed
 }
-func flattenDnsPolicyAlternativeNameServerConfigTargetNameServersIpv4Address(v interface{}, d *schema.ResourceData) interface{} {
+func flattenDNSPolicyAlternativeNameServerConfigTargetNameServersIpv4Address(v interface{}, d *schema.ResourceData) interface{} {
 	return v
 }
 
-func flattenDnsPolicyDescription(v interface{}, d *schema.ResourceData) interface{} {
+func flattenDNSPolicyDescription(v interface{}, d *schema.ResourceData) interface{} {
 	return v
 }
 
-func flattenDnsPolicyEnableInboundForwarding(v interface{}, d *schema.ResourceData) interface{} {
+func flattenDNSPolicyEnableInboundForwarding(v interface{}, d *schema.ResourceData) interface{} {
 	return v
 }
 
-func flattenDnsPolicyEnableLogging(v interface{}, d *schema.ResourceData) interface{} {
+func flattenDNSPolicyEnableLogging(v interface{}, d *schema.ResourceData) interface{} {
 	return v
 }
 
-func flattenDnsPolicyName(v interface{}, d *schema.ResourceData) interface{} {
+func flattenDNSPolicyName(v interface{}, d *schema.ResourceData) interface{} {
 	return v
 }
 
-func flattenDnsPolicyNetworks(v interface{}, d *schema.ResourceData) interface{} {
+func flattenDNSPolicyNetworks(v interface{}, d *schema.ResourceData) interface{} {
 	if v == nil {
 		return v
 	}
@@ -445,16 +445,16 @@ func flattenDnsPolicyNetworks(v interface{}, d *schema.ResourceData) interface{}
 			continue
 		}
 		transformed.Add(map[string]interface{}{
-			"network_url": flattenDnsPolicyNetworksNetworkUrl(original["networkUrl"], d),
+			"network_url": flattenDNSPolicyNetworksNetworkUrl(original["networkUrl"], d),
 		})
 	}
 	return transformed
 }
-func flattenDnsPolicyNetworksNetworkUrl(v interface{}, d *schema.ResourceData) interface{} {
+func flattenDNSPolicyNetworksNetworkUrl(v interface{}, d *schema.ResourceData) interface{} {
 	return v
 }
 
-func expandDnsPolicyAlternativeNameServerConfig(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandDNSPolicyAlternativeNameServerConfig(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -463,7 +463,7 @@ func expandDnsPolicyAlternativeNameServerConfig(v interface{}, d TerraformResour
 	original := raw.(map[string]interface{})
 	transformed := make(map[string]interface{})
 
-	transformedTargetNameServers, err := expandDnsPolicyAlternativeNameServerConfigTargetNameServers(original["target_name_servers"], d, config)
+	transformedTargetNameServers, err := expandDNSPolicyAlternativeNameServerConfigTargetNameServers(original["target_name_servers"], d, config)
 	if err != nil {
 		return nil, err
 	} else if val := reflect.ValueOf(transformedTargetNameServers); val.IsValid() && !isEmptyValue(val) {
@@ -473,7 +473,7 @@ func expandDnsPolicyAlternativeNameServerConfig(v interface{}, d TerraformResour
 	return transformed, nil
 }
 
-func expandDnsPolicyAlternativeNameServerConfigTargetNameServers(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandDNSPolicyAlternativeNameServerConfigTargetNameServers(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	v = v.(*schema.Set).List()
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
@@ -484,7 +484,7 @@ func expandDnsPolicyAlternativeNameServerConfigTargetNameServers(v interface{}, 
 		original := raw.(map[string]interface{})
 		transformed := make(map[string]interface{})
 
-		transformedIpv4Address, err := expandDnsPolicyAlternativeNameServerConfigTargetNameServersIpv4Address(original["ipv4_address"], d, config)
+		transformedIpv4Address, err := expandDNSPolicyAlternativeNameServerConfigTargetNameServersIpv4Address(original["ipv4_address"], d, config)
 		if err != nil {
 			return nil, err
 		} else if val := reflect.ValueOf(transformedIpv4Address); val.IsValid() && !isEmptyValue(val) {
@@ -496,27 +496,27 @@ func expandDnsPolicyAlternativeNameServerConfigTargetNameServers(v interface{}, 
 	return req, nil
 }
 
-func expandDnsPolicyAlternativeNameServerConfigTargetNameServersIpv4Address(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandDNSPolicyAlternativeNameServerConfigTargetNameServersIpv4Address(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandDnsPolicyDescription(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandDNSPolicyDescription(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandDnsPolicyEnableInboundForwarding(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandDNSPolicyEnableInboundForwarding(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandDnsPolicyEnableLogging(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandDNSPolicyEnableLogging(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandDnsPolicyName(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandDNSPolicyName(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandDnsPolicyNetworks(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandDNSPolicyNetworks(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	v = v.(*schema.Set).List()
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
@@ -527,7 +527,7 @@ func expandDnsPolicyNetworks(v interface{}, d TerraformResourceData, config *Con
 		original := raw.(map[string]interface{})
 		transformed := make(map[string]interface{})
 
-		transformedNetworkUrl, err := expandDnsPolicyNetworksNetworkUrl(original["network_url"], d, config)
+		transformedNetworkUrl, err := expandDNSPolicyNetworksNetworkUrl(original["network_url"], d, config)
 		if err != nil {
 			return nil, err
 		} else if val := reflect.ValueOf(transformedNetworkUrl); val.IsValid() && !isEmptyValue(val) {
@@ -539,6 +539,6 @@ func expandDnsPolicyNetworks(v interface{}, d TerraformResourceData, config *Con
 	return req, nil
 }
 
-func expandDnsPolicyNetworksNetworkUrl(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandDNSPolicyNetworksNetworkUrl(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }

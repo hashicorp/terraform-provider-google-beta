@@ -24,7 +24,7 @@ import (
 	"github.com/hashicorp/terraform/terraform"
 )
 
-func TestAccDnsPolicy_dnsPolicyBasicExample(t *testing.T) {
+func TestAccDNSPolicy_dnsPolicyBasicExample(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
@@ -34,16 +34,16 @@ func TestAccDnsPolicy_dnsPolicyBasicExample(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProvidersOiCS,
-		CheckDestroy: testAccCheckDnsPolicyDestroy,
+		CheckDestroy: testAccCheckDNSPolicyDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccDnsPolicy_dnsPolicyBasicExample(context),
+				Config: testAccDNSPolicy_dnsPolicyBasicExample(context),
 			},
 		},
 	})
 }
 
-func testAccDnsPolicy_dnsPolicyBasicExample(context map[string]interface{}) string {
+func testAccDNSPolicy_dnsPolicyBasicExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_dns_policy" "example-policy" {
   provider = "google-beta"
@@ -91,7 +91,7 @@ provider "google-beta"{
 `, context)
 }
 
-func testAccCheckDnsPolicyDestroy(s *terraform.State) error {
+func testAccCheckDNSPolicyDestroy(s *terraform.State) error {
 	for name, rs := range s.RootModule().Resources {
 		if rs.Type != "google_dns_policy" {
 			continue
@@ -102,14 +102,14 @@ func testAccCheckDnsPolicyDestroy(s *terraform.State) error {
 
 		config := testAccProvider.Meta().(*Config)
 
-		url, err := replaceVarsForTest(config, rs, "{{DnsBasePath}}projects/{{project}}/policies/{{name}}")
+		url, err := replaceVarsForTest(config, rs, "{{DNSBasePath}}projects/{{project}}/policies/{{name}}")
 		if err != nil {
 			return err
 		}
 
 		_, err = sendRequest(config, "GET", "", url, nil)
 		if err == nil {
-			return fmt.Errorf("DnsPolicy still exists at %s", url)
+			return fmt.Errorf("DNSPolicy still exists at %s", url)
 		}
 	}
 

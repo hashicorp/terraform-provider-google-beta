@@ -82,26 +82,26 @@ type Config struct {
 	CloudSchedulerBasePath       string
 	ComputeBasePath              string
 	ContainerAnalysisBasePath    string
+	DNSBasePath                  string
 	DataprocBasePath             string
-	DnsBasePath                  string
 	FilestoreBasePath            string
 	FirestoreBasePath            string
 	HealthcareBasePath           string
-	KmsBasePath                  string
+	KMSBasePath                  string
 	LoggingBasePath              string
 	MLEngineBasePath             string
 	MonitoringBasePath           string
 	PubsubBasePath               string
 	RedisBasePath                string
 	ResourceManagerBasePath      string
+	SQLBasePath                  string
 	SecurityCenterBasePath       string
 	SecurityScannerBasePath      string
 	SourceRepoBasePath           string
 	SpannerBasePath              string
-	SqlBasePath                  string
 	StorageBasePath              string
-	TpuBasePath                  string
-	VpcAccessBasePath            string
+	TPUBasePath                  string
+	VPCAccessBasePath            string
 
 	CloudBillingBasePath string
 	clientBilling        *cloudbilling.APIService
@@ -217,26 +217,26 @@ var CloudRunDefaultBasePath = "https://run.googleapis.com/v1alpha1/"
 var CloudSchedulerDefaultBasePath = "https://cloudscheduler.googleapis.com/v1/"
 var ComputeDefaultBasePath = "https://www.googleapis.com/compute/beta/"
 var ContainerAnalysisDefaultBasePath = "https://containeranalysis.googleapis.com/v1beta1/"
+var DNSDefaultBasePath = "https://www.googleapis.com/dns/v1beta2/"
 var DataprocDefaultBasePath = "https://dataproc.googleapis.com/v1beta2/"
-var DnsDefaultBasePath = "https://www.googleapis.com/dns/v1beta2/"
 var FilestoreDefaultBasePath = "https://file.googleapis.com/v1/"
 var FirestoreDefaultBasePath = "https://firestore.googleapis.com/v1/"
 var HealthcareDefaultBasePath = "https://healthcare.googleapis.com/v1beta1/"
-var KmsDefaultBasePath = "https://cloudkms.googleapis.com/v1/"
+var KMSDefaultBasePath = "https://cloudkms.googleapis.com/v1/"
 var LoggingDefaultBasePath = "https://logging.googleapis.com/v2/"
 var MLEngineDefaultBasePath = "https://ml.googleapis.com/v1/"
 var MonitoringDefaultBasePath = "https://monitoring.googleapis.com/v3/"
 var PubsubDefaultBasePath = "https://pubsub.googleapis.com/v1/"
 var RedisDefaultBasePath = "https://redis.googleapis.com/v1beta1/"
 var ResourceManagerDefaultBasePath = "https://cloudresourcemanager.googleapis.com/v1/"
+var SQLDefaultBasePath = "https://www.googleapis.com/sql/v1beta4/"
 var SecurityCenterDefaultBasePath = "https://securitycenter.googleapis.com/v1/"
 var SecurityScannerDefaultBasePath = "https://websecurityscanner.googleapis.com/v1beta/"
 var SourceRepoDefaultBasePath = "https://sourcerepo.googleapis.com/v1/"
 var SpannerDefaultBasePath = "https://spanner.googleapis.com/v1/"
-var SqlDefaultBasePath = "https://www.googleapis.com/sql/v1beta4/"
 var StorageDefaultBasePath = "https://www.googleapis.com/storage/v1/"
-var TpuDefaultBasePath = "https://tpu.googleapis.com/v1/"
-var VpcAccessDefaultBasePath = "https://vpcaccess.googleapis.com/v1beta1/"
+var TPUDefaultBasePath = "https://tpu.googleapis.com/v1/"
+var VPCAccessDefaultBasePath = "https://vpcaccess.googleapis.com/v1beta1/"
 
 var defaultClientScopes = []string{
 	"https://www.googleapis.com/auth/compute",
@@ -703,26 +703,26 @@ func ConfigureBasePaths(c *Config) {
 	c.CloudSchedulerBasePath = CloudSchedulerDefaultBasePath
 	c.ComputeBasePath = ComputeDefaultBasePath
 	c.ContainerAnalysisBasePath = ContainerAnalysisDefaultBasePath
+	c.DNSBasePath = DNSDefaultBasePath
 	c.DataprocBasePath = DataprocDefaultBasePath
-	c.DnsBasePath = DnsDefaultBasePath
 	c.FilestoreBasePath = FilestoreDefaultBasePath
 	c.FirestoreBasePath = FirestoreDefaultBasePath
 	c.HealthcareBasePath = HealthcareDefaultBasePath
-	c.KmsBasePath = KmsDefaultBasePath
+	c.KMSBasePath = KMSDefaultBasePath
 	c.LoggingBasePath = LoggingDefaultBasePath
 	c.MLEngineBasePath = MLEngineDefaultBasePath
 	c.MonitoringBasePath = MonitoringDefaultBasePath
 	c.PubsubBasePath = PubsubDefaultBasePath
 	c.RedisBasePath = RedisDefaultBasePath
 	c.ResourceManagerBasePath = ResourceManagerDefaultBasePath
+	c.SQLBasePath = SQLDefaultBasePath
 	c.SecurityCenterBasePath = SecurityCenterDefaultBasePath
 	c.SecurityScannerBasePath = SecurityScannerDefaultBasePath
 	c.SourceRepoBasePath = SourceRepoDefaultBasePath
 	c.SpannerBasePath = SpannerDefaultBasePath
-	c.SqlBasePath = SqlDefaultBasePath
 	c.StorageBasePath = StorageDefaultBasePath
-	c.TpuBasePath = TpuDefaultBasePath
-	c.VpcAccessBasePath = VpcAccessDefaultBasePath
+	c.TPUBasePath = TPUDefaultBasePath
+	c.VPCAccessBasePath = VPCAccessDefaultBasePath
 
 	// Handwritten Products / Versioned / Atypical Entries
 	// start beta-only products

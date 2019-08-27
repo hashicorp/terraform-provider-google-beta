@@ -17,13 +17,13 @@ import (
 	"fmt"
 )
 
-type VpcAccessOperationWaiter struct {
+type VPCAccessOperationWaiter struct {
 	Config  *Config
 	Project string
 	CommonOperationWaiter
 }
 
-func (w *VpcAccessOperationWaiter) QueryOp() (interface{}, error) {
+func (w *VPCAccessOperationWaiter) QueryOp() (interface{}, error) {
 	if w == nil {
 		return nil, fmt.Errorf("Cannot query operation, it's unset or nil.")
 	}
@@ -32,12 +32,12 @@ func (w *VpcAccessOperationWaiter) QueryOp() (interface{}, error) {
 	return sendRequest(w.Config, "GET", w.Project, url, nil)
 }
 
-func vpcAccessOperationWaitTime(config *Config, op map[string]interface{}, project, activity string, timeoutMinutes int) error {
+func vPCAccessOperationWaitTime(config *Config, op map[string]interface{}, project, activity string, timeoutMinutes int) error {
 	if val, ok := op["name"]; !ok || val == "" {
 		// This was a synchronous call - there is no operation to wait for.
 		return nil
 	}
-	w := &VpcAccessOperationWaiter{
+	w := &VPCAccessOperationWaiter{
 		Config:  config,
 		Project: project,
 	}
