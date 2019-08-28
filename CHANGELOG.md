@@ -1,30 +1,30 @@
-## 2.14.0 (Unreleased)
+## 2.14.0 (August 28, 2019)
 
 DEPRECATIONS:
-* cloudiot: `resource_cloudiot_registry`'s `event_notification_config` field has been deprecated. [GH-1064]
+* cloudiot: `resource_cloudiot_registry`'s `event_notification_config` field has been deprecated. ([#1064](https://github.com/terraform-providers/terraform-provider-google-beta/issues/1064))
 
 FEATURES:
-* **New Resource**: `google_bigtable_app_profile` is now available [GH-988]
-* **New Resource**: `google_ml_engine_model` [GH-957]
-* **New Resource**: `google_dataproc_autoscaling_policy` [GH-1078]
-* **New Data Source**: `google_kms_secret_ciphertext` [GH-1011]
+* **New Resource**: `google_bigtable_app_profile` is now available ([#988](https://github.com/terraform-providers/terraform-provider-google-beta/issues/988))
+* **New Resource**: `google_ml_engine_model` ([#957](https://github.com/terraform-providers/terraform-provider-google-beta/issues/957))
+* **New Resource**: `google_dataproc_autoscaling_policy` ([#1078](https://github.com/terraform-providers/terraform-provider-google-beta/issues/1078))
+* **New Data Source**: `google_kms_secret_ciphertext` ([#1011](https://github.com/terraform-providers/terraform-provider-google-beta/issues/1011))
 
 ENHANCEMENTS:
-* bigquery: Add support for clustering/partitioning to bigquery_table [GH-1025]
-* bigtable: `num_nodes` can now be updated in `google_bigtable_instance` [GH-1067]
-* cloudiot: `resource_cloudiot_registry` now has fields plural `event_notification_configs` and `log_level`, and `event_notification_config` has been deprecated. [GH-1064]
-* cloud_run: New output-only fields have been added to google_cloud_run_service' status. [GH-1071]
-* compute: Adding bandwidth attribute to interconnect attachment. [GH-1016]
-* compute: `google_compute_region_instance_group_manager.update_policy` now supports `instance_redistribution_type` [GH-1073]
-* compute: adds admin_enabled to google_compute_interconnect_attachment [GH-1072]
-* compute: The compute routes includes next_hop_ilb attribute support in beta. [GH-1076]
-* scheduler: Add support for `oauth_token` and `oidc_token` on resource `google_cloud_scheduler_job` [GH-1024]
+* bigquery: Add support for clustering/partitioning to bigquery_table ([#1025](https://github.com/terraform-providers/terraform-provider-google-beta/issues/1025))
+* bigtable: `num_nodes` can now be updated in `google_bigtable_instance` ([#1067](https://github.com/terraform-providers/terraform-provider-google-beta/issues/1067))
+* cloudiot: `resource_cloudiot_registry` now has fields plural `event_notification_configs` and `log_level`, and `event_notification_config` has been deprecated. ([#1064](https://github.com/terraform-providers/terraform-provider-google-beta/issues/1064))
+* cloud_run: New output-only fields have been added to google_cloud_run_service' status. ([#1071](https://github.com/terraform-providers/terraform-provider-google-beta/issues/1071))
+* compute: Adding bandwidth attribute to interconnect attachment. ([#1016](https://github.com/terraform-providers/terraform-provider-google-beta/issues/1016))
+* compute: `google_compute_region_instance_group_manager.update_policy` now supports `instance_redistribution_type` ([#1073](https://github.com/terraform-providers/terraform-provider-google-beta/issues/1073))
+* compute: adds admin_enabled to google_compute_interconnect_attachment ([#1072](https://github.com/terraform-providers/terraform-provider-google-beta/issues/1072))
+* compute: The compute routes includes next_hop_ilb attribute support in beta. ([#1076](https://github.com/terraform-providers/terraform-provider-google-beta/issues/1076))
+* scheduler: Add support for `oauth_token` and `oidc_token` on resource `google_cloud_scheduler_job` ([#1024](https://github.com/terraform-providers/terraform-provider-google-beta/issues/1024))
 
 BUG FIXES:
-* containerregistry: Correctly handle domain-scoped projects [GH-1035]
-* iam: Fixed regression in 2.13.0 for permadiff on empty members in IAM policy bindings. [GH-1092]
-* project: `google_project_iam_custom_role` now sets the project properly on import. [GH-1089]
-* sql: Added back a missing import format for `google_sql_database`. [GH-1061]
+* containerregistry: Correctly handle domain-scoped projects ([#1035](https://github.com/terraform-providers/terraform-provider-google-beta/issues/1035))
+* iam: Fixed regression in 2.13.0 for permadiff on empty members in IAM policy bindings. ([#1092](https://github.com/terraform-providers/terraform-provider-google-beta/issues/1092))
+* project: `google_project_iam_custom_role` now sets the project properly on import. ([#1089](https://github.com/terraform-providers/terraform-provider-google-beta/issues/1089))
+* sql: Added back a missing import format for `google_sql_database`. ([#1061](https://github.com/terraform-providers/terraform-provider-google-beta/issues/1061))
 
 ## 2.13.0 (August 15, 2019)
 
@@ -341,8 +341,8 @@ BACKWARDS INCOMPATIBILITIES:
 * accesscontextmanager: `google_access_context_manager_service_perimeter` `unrestricted_services` field was removed based on a removal in the underlying API. ([#576](https://github.com/terraform-providers/terraform-provider-google-beta/issues/576))
 
 FEATURES:
-* **New Resource**: `google_compute_backend_bucket_signed_url_key` is now available. [GH-530]
-* **New Resource**: `google_compute_backend_service_signed_url_key` is now available. [GH-577]
+* **New Resource**: `google_compute_backend_bucket_signed_url_key` is now available. ([#530](https://github.com/terraform-providers/terraform-provider-google-beta/issues/530))
+* **New Resource**: `google_compute_backend_service_signed_url_key` is now available. ([#577](https://github.com/terraform-providers/terraform-provider-google-beta/issues/577))
 * **New Datasource**: `google_service_account_access_token` is now available. ([#575](https://github.com/terraform-providers/terraform-provider-google-beta/issues/575))
 
 ENHANCEMENTS:
