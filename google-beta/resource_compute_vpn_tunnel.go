@@ -264,6 +264,10 @@ func resourceComputeVpnTunnel() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
+			"tunnel_id": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
 			"project": {
 				Type:     schema.TypeString,
 				Optional: true,
@@ -495,6 +499,9 @@ func resourceComputeVpnTunnelRead(d *schema.ResourceData, meta interface{}) erro
 		return fmt.Errorf("Error reading VpnTunnel: %s", err)
 	}
 
+	if err := d.Set("tunnel_id", flattenComputeVpnTunnelTunnel_id(res["id"], d)); err != nil {
+		return fmt.Errorf("Error reading VpnTunnel: %s", err)
+	}
 	if err := d.Set("creation_timestamp", flattenComputeVpnTunnelCreationTimestamp(res["creationTimestamp"], d)); err != nil {
 		return fmt.Errorf("Error reading VpnTunnel: %s", err)
 	}
@@ -674,6 +681,10 @@ func resourceComputeVpnTunnelImport(d *schema.ResourceData, meta interface{}) ([
 	d.SetId(id)
 
 	return []*schema.ResourceData{d}, nil
+}
+
+func flattenComputeVpnTunnelTunnel_id(v interface{}, d *schema.ResourceData) interface{} {
+	return v
 }
 
 func flattenComputeVpnTunnelCreationTimestamp(v interface{}, d *schema.ResourceData) interface{} {
