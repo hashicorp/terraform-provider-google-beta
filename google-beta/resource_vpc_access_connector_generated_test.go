@@ -24,7 +24,7 @@ import (
 	"github.com/hashicorp/terraform/terraform"
 )
 
-func TestAccVpcAccessConnector_vpcAccessConnectorExample(t *testing.T) {
+func TestAccVPCAccessConnector_vpcAccessConnectorExample(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
@@ -34,16 +34,16 @@ func TestAccVpcAccessConnector_vpcAccessConnectorExample(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProvidersOiCS,
-		CheckDestroy: testAccCheckVpcAccessConnectorDestroy,
+		CheckDestroy: testAccCheckVPCAccessConnectorDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccVpcAccessConnector_vpcAccessConnectorExample(context),
+				Config: testAccVPCAccessConnector_vpcAccessConnectorExample(context),
 			},
 		},
 	})
 }
 
-func testAccVpcAccessConnector_vpcAccessConnectorExample(context map[string]interface{}) string {
+func testAccVPCAccessConnector_vpcAccessConnectorExample(context map[string]interface{}) string {
 	return Nprintf(`
 provider "google-beta" {}
 
@@ -57,7 +57,7 @@ resource "google_vpc_access_connector" "connector" {
 `, context)
 }
 
-func testAccCheckVpcAccessConnectorDestroy(s *terraform.State) error {
+func testAccCheckVPCAccessConnectorDestroy(s *terraform.State) error {
 	for name, rs := range s.RootModule().Resources {
 		if rs.Type != "google_vpc_access_connector" {
 			continue
@@ -68,14 +68,14 @@ func testAccCheckVpcAccessConnectorDestroy(s *terraform.State) error {
 
 		config := testAccProvider.Meta().(*Config)
 
-		url, err := replaceVarsForTest(config, rs, "{{VpcAccessBasePath}}projects/{{project}}/locations/{{region}}/connectors/{{name}}")
+		url, err := replaceVarsForTest(config, rs, "{{VPCAccessBasePath}}projects/{{project}}/locations/{{region}}/connectors/{{name}}")
 		if err != nil {
 			return err
 		}
 
 		_, err = sendRequest(config, "GET", "", url, nil)
 		if err == nil {
-			return fmt.Errorf("VpcAccessConnector still exists at %s", url)
+			return fmt.Errorf("VPCAccessConnector still exists at %s", url)
 		}
 	}
 

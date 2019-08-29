@@ -162,7 +162,7 @@ func resourceDataprocAutoscalingPolicyCreate(d *schema.ResourceData, meta interf
 	config := meta.(*Config)
 
 	obj := make(map[string]interface{})
-	idProp, err := expandDataprocAutoscalingPolicyPolicy_id(d.Get("policy_id"), d, config)
+	idProp, err := expandDataprocAutoscalingPolicyPolicyId(d.Get("policy_id"), d, config)
 	if err != nil {
 		return err
 	} else if v, ok := d.GetOkExists("policy_id"); !isEmptyValue(reflect.ValueOf(idProp)) && (ok || !reflect.DeepEqual(v, idProp)) {
@@ -235,7 +235,7 @@ func resourceDataprocAutoscalingPolicyRead(d *schema.ResourceData, meta interfac
 		return fmt.Errorf("Error reading AutoscalingPolicy: %s", err)
 	}
 
-	if err := d.Set("policy_id", flattenDataprocAutoscalingPolicyPolicy_id(res["id"], d)); err != nil {
+	if err := d.Set("policy_id", flattenDataprocAutoscalingPolicyPolicyId(res["id"], d)); err != nil {
 		return fmt.Errorf("Error reading AutoscalingPolicy: %s", err)
 	}
 	if err := d.Set("name", flattenDataprocAutoscalingPolicyName(res["name"], d)); err != nil {
@@ -263,7 +263,7 @@ func resourceDataprocAutoscalingPolicyUpdate(d *schema.ResourceData, meta interf
 	}
 
 	obj := make(map[string]interface{})
-	idProp, err := expandDataprocAutoscalingPolicyPolicy_id(d.Get("policy_id"), d, config)
+	idProp, err := expandDataprocAutoscalingPolicyPolicyId(d.Get("policy_id"), d, config)
 	if err != nil {
 		return err
 	} else if v, ok := d.GetOkExists("policy_id"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, idProp)) {
@@ -348,7 +348,7 @@ func resourceDataprocAutoscalingPolicyImport(d *schema.ResourceData, meta interf
 	return []*schema.ResourceData{d}, nil
 }
 
-func flattenDataprocAutoscalingPolicyPolicy_id(v interface{}, d *schema.ResourceData) interface{} {
+func flattenDataprocAutoscalingPolicyPolicyId(v interface{}, d *schema.ResourceData) interface{} {
 	return v
 }
 
@@ -510,7 +510,7 @@ func flattenDataprocAutoscalingPolicyBasicAlgorithmYarnConfigScaleDownMinWorkerF
 	return v
 }
 
-func expandDataprocAutoscalingPolicyPolicy_id(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandDataprocAutoscalingPolicyPolicyId(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 

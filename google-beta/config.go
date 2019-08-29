@@ -84,11 +84,11 @@ type Config struct {
 	ComputeBasePath              string
 	ContainerAnalysisBasePath    string
 	DataprocBasePath             string
-	DnsBasePath                  string
+	DNSBasePath                  string
 	FilestoreBasePath            string
 	FirestoreBasePath            string
 	HealthcareBasePath           string
-	KmsBasePath                  string
+	KMSBasePath                  string
 	LoggingBasePath              string
 	MLEngineBasePath             string
 	MonitoringBasePath           string
@@ -99,10 +99,10 @@ type Config struct {
 	SecurityScannerBasePath      string
 	SourceRepoBasePath           string
 	SpannerBasePath              string
-	SqlBasePath                  string
+	SQLBasePath                  string
 	StorageBasePath              string
-	TpuBasePath                  string
-	VpcAccessBasePath            string
+	TPUBasePath                  string
+	VPCAccessBasePath            string
 
 	CloudBillingBasePath string
 	clientBilling        *cloudbilling.APIService
@@ -219,11 +219,11 @@ var CloudSchedulerDefaultBasePath = "https://cloudscheduler.googleapis.com/v1/"
 var ComputeDefaultBasePath = "https://www.googleapis.com/compute/beta/"
 var ContainerAnalysisDefaultBasePath = "https://containeranalysis.googleapis.com/v1beta1/"
 var DataprocDefaultBasePath = "https://dataproc.googleapis.com/v1beta2/"
-var DnsDefaultBasePath = "https://www.googleapis.com/dns/v1beta2/"
+var DNSDefaultBasePath = "https://www.googleapis.com/dns/v1beta2/"
 var FilestoreDefaultBasePath = "https://file.googleapis.com/v1/"
 var FirestoreDefaultBasePath = "https://firestore.googleapis.com/v1/"
 var HealthcareDefaultBasePath = "https://healthcare.googleapis.com/v1beta1/"
-var KmsDefaultBasePath = "https://cloudkms.googleapis.com/v1/"
+var KMSDefaultBasePath = "https://cloudkms.googleapis.com/v1/"
 var LoggingDefaultBasePath = "https://logging.googleapis.com/v2/"
 var MLEngineDefaultBasePath = "https://ml.googleapis.com/v1/"
 var MonitoringDefaultBasePath = "https://monitoring.googleapis.com/v3/"
@@ -234,10 +234,10 @@ var SecurityCenterDefaultBasePath = "https://securitycenter.googleapis.com/v1/"
 var SecurityScannerDefaultBasePath = "https://websecurityscanner.googleapis.com/v1beta/"
 var SourceRepoDefaultBasePath = "https://sourcerepo.googleapis.com/v1/"
 var SpannerDefaultBasePath = "https://spanner.googleapis.com/v1/"
-var SqlDefaultBasePath = "https://www.googleapis.com/sql/v1beta4/"
+var SQLDefaultBasePath = "https://www.googleapis.com/sql/v1beta4/"
 var StorageDefaultBasePath = "https://www.googleapis.com/storage/v1/"
-var TpuDefaultBasePath = "https://tpu.googleapis.com/v1/"
-var VpcAccessDefaultBasePath = "https://vpcaccess.googleapis.com/v1beta1/"
+var TPUDefaultBasePath = "https://tpu.googleapis.com/v1/"
+var VPCAccessDefaultBasePath = "https://vpcaccess.googleapis.com/v1beta1/"
 
 var defaultClientScopes = []string{
 	"https://www.googleapis.com/auth/compute",
@@ -314,7 +314,7 @@ func (c *Config) LoadAndValidate() error {
 	c.clientContainerBeta.UserAgent = userAgent
 	c.clientContainerBeta.BasePath = containerBetaClientBasePath
 
-	dnsClientBasePath := removeBasePathVersion(c.DnsBasePath) + "v1/projects/"
+	dnsClientBasePath := removeBasePathVersion(c.DNSBasePath) + "v1/projects/"
 	log.Printf("[INFO] Instantiating Google Cloud DNS client for path %s", dnsClientBasePath)
 	c.clientDns, err = dns.NewService(context, option.WithHTTPClient(client))
 	if err != nil {
@@ -332,7 +332,7 @@ func (c *Config) LoadAndValidate() error {
 	c.clientDnsBeta.UserAgent = userAgent
 	c.clientDnsBeta.BasePath = dnsBetaClientBasePath
 
-	kmsClientBasePath := removeBasePathVersion(c.KmsBasePath)
+	kmsClientBasePath := removeBasePathVersion(c.KMSBasePath)
 	log.Printf("[INFO] Instantiating Google Cloud KMS client for path %s", kmsClientBasePath)
 	c.clientKms, err = cloudkms.NewService(context, option.WithHTTPClient(client))
 	if err != nil {
@@ -359,7 +359,7 @@ func (c *Config) LoadAndValidate() error {
 	c.clientStorage.UserAgent = userAgent
 	c.clientStorage.BasePath = storageClientBasePath
 
-	sqlClientBasePath := removeBasePathVersion(c.SqlBasePath) + "v1beta4/"
+	sqlClientBasePath := removeBasePathVersion(c.SQLBasePath) + "v1beta4/"
 	log.Printf("[INFO] Instantiating Google SqlAdmin client for path %s", sqlClientBasePath)
 	c.clientSqlAdmin, err = sqladmin.NewService(context, option.WithHTTPClient(client))
 	if err != nil {
@@ -704,11 +704,11 @@ func ConfigureBasePaths(c *Config) {
 	c.ComputeBasePath = ComputeDefaultBasePath
 	c.ContainerAnalysisBasePath = ContainerAnalysisDefaultBasePath
 	c.DataprocBasePath = DataprocDefaultBasePath
-	c.DnsBasePath = DnsDefaultBasePath
+	c.DNSBasePath = DNSDefaultBasePath
 	c.FilestoreBasePath = FilestoreDefaultBasePath
 	c.FirestoreBasePath = FirestoreDefaultBasePath
 	c.HealthcareBasePath = HealthcareDefaultBasePath
-	c.KmsBasePath = KmsDefaultBasePath
+	c.KMSBasePath = KMSDefaultBasePath
 	c.LoggingBasePath = LoggingDefaultBasePath
 	c.MLEngineBasePath = MLEngineDefaultBasePath
 	c.MonitoringBasePath = MonitoringDefaultBasePath
@@ -719,10 +719,10 @@ func ConfigureBasePaths(c *Config) {
 	c.SecurityScannerBasePath = SecurityScannerDefaultBasePath
 	c.SourceRepoBasePath = SourceRepoDefaultBasePath
 	c.SpannerBasePath = SpannerDefaultBasePath
-	c.SqlBasePath = SqlDefaultBasePath
+	c.SQLBasePath = SQLDefaultBasePath
 	c.StorageBasePath = StorageDefaultBasePath
-	c.TpuBasePath = TpuDefaultBasePath
-	c.VpcAccessBasePath = VpcAccessDefaultBasePath
+	c.TPUBasePath = TPUDefaultBasePath
+	c.VPCAccessBasePath = VPCAccessDefaultBasePath
 
 	// Handwritten Products / Versioned / Atypical Entries
 	// start beta-only products
