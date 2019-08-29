@@ -8,7 +8,7 @@ import (
 	"github.com/hashicorp/terraform/helper/resource"
 )
 
-func TestAccDnsPolicy_update(t *testing.T) {
+func TestAccDNSPolicy_update(t *testing.T) {
 	t.Parallel()
 
 	policySuffix := acctest.RandString(10)
@@ -16,7 +16,7 @@ func TestAccDnsPolicy_update(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckDnsPolicyDestroy,
+		CheckDestroy: testAccCheckDNSPolicyDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccDnsPolicy_privateUpdate(policySuffix, "true", "172.16.1.10", "network-1"),

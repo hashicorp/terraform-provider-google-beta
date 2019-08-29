@@ -25,14 +25,14 @@ import (
 	"github.com/hashicorp/terraform/helper/validation"
 )
 
-func resourceVpcAccessConnector() *schema.Resource {
+func resourceVPCAccessConnector() *schema.Resource {
 	return &schema.Resource{
-		Create: resourceVpcAccessConnectorCreate,
-		Read:   resourceVpcAccessConnectorRead,
-		Delete: resourceVpcAccessConnectorDelete,
+		Create: resourceVPCAccessConnectorCreate,
+		Read:   resourceVPCAccessConnectorRead,
+		Delete: resourceVPCAccessConnectorDelete,
 
 		Importer: &schema.ResourceImporter{
-			State: resourceVpcAccessConnectorImport,
+			State: resourceVPCAccessConnectorImport,
 		},
 
 		Timeouts: &schema.ResourceTimeout{
@@ -93,47 +93,47 @@ func resourceVpcAccessConnector() *schema.Resource {
 	}
 }
 
-func resourceVpcAccessConnectorCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceVPCAccessConnectorCreate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
 	obj := make(map[string]interface{})
-	nameProp, err := expandVpcAccessConnectorName(d.Get("name"), d, config)
+	nameProp, err := expandVPCAccessConnectorName(d.Get("name"), d, config)
 	if err != nil {
 		return err
 	} else if v, ok := d.GetOkExists("name"); !isEmptyValue(reflect.ValueOf(nameProp)) && (ok || !reflect.DeepEqual(v, nameProp)) {
 		obj["name"] = nameProp
 	}
-	networkProp, err := expandVpcAccessConnectorNetwork(d.Get("network"), d, config)
+	networkProp, err := expandVPCAccessConnectorNetwork(d.Get("network"), d, config)
 	if err != nil {
 		return err
 	} else if v, ok := d.GetOkExists("network"); !isEmptyValue(reflect.ValueOf(networkProp)) && (ok || !reflect.DeepEqual(v, networkProp)) {
 		obj["network"] = networkProp
 	}
-	ipCidrRangeProp, err := expandVpcAccessConnectorIpCidrRange(d.Get("ip_cidr_range"), d, config)
+	ipCidrRangeProp, err := expandVPCAccessConnectorIpCidrRange(d.Get("ip_cidr_range"), d, config)
 	if err != nil {
 		return err
 	} else if v, ok := d.GetOkExists("ip_cidr_range"); !isEmptyValue(reflect.ValueOf(ipCidrRangeProp)) && (ok || !reflect.DeepEqual(v, ipCidrRangeProp)) {
 		obj["ipCidrRange"] = ipCidrRangeProp
 	}
-	minThroughputProp, err := expandVpcAccessConnectorMinThroughput(d.Get("min_throughput"), d, config)
+	minThroughputProp, err := expandVPCAccessConnectorMinThroughput(d.Get("min_throughput"), d, config)
 	if err != nil {
 		return err
 	} else if v, ok := d.GetOkExists("min_throughput"); !isEmptyValue(reflect.ValueOf(minThroughputProp)) && (ok || !reflect.DeepEqual(v, minThroughputProp)) {
 		obj["minThroughput"] = minThroughputProp
 	}
-	maxThroughputProp, err := expandVpcAccessConnectorMaxThroughput(d.Get("max_throughput"), d, config)
+	maxThroughputProp, err := expandVPCAccessConnectorMaxThroughput(d.Get("max_throughput"), d, config)
 	if err != nil {
 		return err
 	} else if v, ok := d.GetOkExists("max_throughput"); !isEmptyValue(reflect.ValueOf(maxThroughputProp)) && (ok || !reflect.DeepEqual(v, maxThroughputProp)) {
 		obj["maxThroughput"] = maxThroughputProp
 	}
 
-	obj, err = resourceVpcAccessConnectorEncoder(d, meta, obj)
+	obj, err = resourceVPCAccessConnectorEncoder(d, meta, obj)
 	if err != nil {
 		return err
 	}
 
-	url, err := replaceVars(d, config, "{{VpcAccessBasePath}}projects/{{project}}/locations/{{region}}/connectors?connectorId={{name}}")
+	url, err := replaceVars(d, config, "{{VPCAccessBasePath}}projects/{{project}}/locations/{{region}}/connectors?connectorId={{name}}")
 	if err != nil {
 		return err
 	}
@@ -172,13 +172,13 @@ func resourceVpcAccessConnectorCreate(d *schema.ResourceData, meta interface{}) 
 	// completed state of the resource.
 	time.Sleep(5 * time.Second)
 
-	return resourceVpcAccessConnectorRead(d, meta)
+	return resourceVPCAccessConnectorRead(d, meta)
 }
 
-func resourceVpcAccessConnectorRead(d *schema.ResourceData, meta interface{}) error {
+func resourceVPCAccessConnectorRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	url, err := replaceVars(d, config, "{{VpcAccessBasePath}}projects/{{project}}/locations/{{region}}/connectors/{{name}}")
+	url, err := replaceVars(d, config, "{{VPCAccessBasePath}}projects/{{project}}/locations/{{region}}/connectors/{{name}}")
 	if err != nil {
 		return err
 	}
@@ -189,17 +189,17 @@ func resourceVpcAccessConnectorRead(d *schema.ResourceData, meta interface{}) er
 	}
 	res, err := sendRequest(config, "GET", project, url, nil)
 	if err != nil {
-		return handleNotFoundError(err, d, fmt.Sprintf("VpcAccessConnector %q", d.Id()))
+		return handleNotFoundError(err, d, fmt.Sprintf("VPCAccessConnector %q", d.Id()))
 	}
 
-	res, err = resourceVpcAccessConnectorDecoder(d, meta, res)
+	res, err = resourceVPCAccessConnectorDecoder(d, meta, res)
 	if err != nil {
 		return err
 	}
 
 	if res == nil {
 		// Decoding the object has resulted in it being gone. It may be marked deleted
-		log.Printf("[DEBUG] Removing VpcAccessConnector because it no longer exists.")
+		log.Printf("[DEBUG] Removing VPCAccessConnector because it no longer exists.")
 		d.SetId("")
 		return nil
 	}
@@ -208,29 +208,29 @@ func resourceVpcAccessConnectorRead(d *schema.ResourceData, meta interface{}) er
 		return fmt.Errorf("Error reading Connector: %s", err)
 	}
 
-	if err := d.Set("name", flattenVpcAccessConnectorName(res["name"], d)); err != nil {
+	if err := d.Set("name", flattenVPCAccessConnectorName(res["name"], d)); err != nil {
 		return fmt.Errorf("Error reading Connector: %s", err)
 	}
-	if err := d.Set("network", flattenVpcAccessConnectorNetwork(res["network"], d)); err != nil {
+	if err := d.Set("network", flattenVPCAccessConnectorNetwork(res["network"], d)); err != nil {
 		return fmt.Errorf("Error reading Connector: %s", err)
 	}
-	if err := d.Set("ip_cidr_range", flattenVpcAccessConnectorIpCidrRange(res["ipCidrRange"], d)); err != nil {
+	if err := d.Set("ip_cidr_range", flattenVPCAccessConnectorIpCidrRange(res["ipCidrRange"], d)); err != nil {
 		return fmt.Errorf("Error reading Connector: %s", err)
 	}
-	if err := d.Set("state", flattenVpcAccessConnectorState(res["state"], d)); err != nil {
+	if err := d.Set("state", flattenVPCAccessConnectorState(res["state"], d)); err != nil {
 		return fmt.Errorf("Error reading Connector: %s", err)
 	}
-	if err := d.Set("min_throughput", flattenVpcAccessConnectorMinThroughput(res["minThroughput"], d)); err != nil {
+	if err := d.Set("min_throughput", flattenVPCAccessConnectorMinThroughput(res["minThroughput"], d)); err != nil {
 		return fmt.Errorf("Error reading Connector: %s", err)
 	}
-	if err := d.Set("max_throughput", flattenVpcAccessConnectorMaxThroughput(res["maxThroughput"], d)); err != nil {
+	if err := d.Set("max_throughput", flattenVPCAccessConnectorMaxThroughput(res["maxThroughput"], d)); err != nil {
 		return fmt.Errorf("Error reading Connector: %s", err)
 	}
 
 	return nil
 }
 
-func resourceVpcAccessConnectorDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceVPCAccessConnectorDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
 	project, err := getProject(d, config)
@@ -238,7 +238,7 @@ func resourceVpcAccessConnectorDelete(d *schema.ResourceData, meta interface{}) 
 		return err
 	}
 
-	url, err := replaceVars(d, config, "{{VpcAccessBasePath}}projects/{{project}}/locations/{{region}}/connectors/{{name}}")
+	url, err := replaceVars(d, config, "{{VPCAccessBasePath}}projects/{{project}}/locations/{{region}}/connectors/{{name}}")
 	if err != nil {
 		return err
 	}
@@ -263,7 +263,7 @@ func resourceVpcAccessConnectorDelete(d *schema.ResourceData, meta interface{}) 
 	return nil
 }
 
-func resourceVpcAccessConnectorImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceVPCAccessConnectorImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	config := meta.(*Config)
 	if err := parseImportId([]string{
 		"projects/(?P<project>[^/]+)/locations/(?P<region>[^/]+)/connectors/(?P<name>[^/]+)",
@@ -284,26 +284,26 @@ func resourceVpcAccessConnectorImport(d *schema.ResourceData, meta interface{}) 
 	return []*schema.ResourceData{d}, nil
 }
 
-func flattenVpcAccessConnectorName(v interface{}, d *schema.ResourceData) interface{} {
+func flattenVPCAccessConnectorName(v interface{}, d *schema.ResourceData) interface{} {
 	if v == nil {
 		return v
 	}
 	return NameFromSelfLinkStateFunc(v)
 }
 
-func flattenVpcAccessConnectorNetwork(v interface{}, d *schema.ResourceData) interface{} {
+func flattenVPCAccessConnectorNetwork(v interface{}, d *schema.ResourceData) interface{} {
 	return v
 }
 
-func flattenVpcAccessConnectorIpCidrRange(v interface{}, d *schema.ResourceData) interface{} {
+func flattenVPCAccessConnectorIpCidrRange(v interface{}, d *schema.ResourceData) interface{} {
 	return v
 }
 
-func flattenVpcAccessConnectorState(v interface{}, d *schema.ResourceData) interface{} {
+func flattenVPCAccessConnectorState(v interface{}, d *schema.ResourceData) interface{} {
 	return v
 }
 
-func flattenVpcAccessConnectorMinThroughput(v interface{}, d *schema.ResourceData) interface{} {
+func flattenVPCAccessConnectorMinThroughput(v interface{}, d *schema.ResourceData) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
@@ -313,7 +313,7 @@ func flattenVpcAccessConnectorMinThroughput(v interface{}, d *schema.ResourceDat
 	return v
 }
 
-func flattenVpcAccessConnectorMaxThroughput(v interface{}, d *schema.ResourceData) interface{} {
+func flattenVPCAccessConnectorMaxThroughput(v interface{}, d *schema.ResourceData) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
@@ -323,32 +323,32 @@ func flattenVpcAccessConnectorMaxThroughput(v interface{}, d *schema.ResourceDat
 	return v
 }
 
-func expandVpcAccessConnectorName(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandVPCAccessConnectorName(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandVpcAccessConnectorNetwork(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandVPCAccessConnectorNetwork(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandVpcAccessConnectorIpCidrRange(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandVPCAccessConnectorIpCidrRange(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandVpcAccessConnectorMinThroughput(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandVPCAccessConnectorMinThroughput(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandVpcAccessConnectorMaxThroughput(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandVPCAccessConnectorMaxThroughput(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
-func resourceVpcAccessConnectorEncoder(d *schema.ResourceData, meta interface{}, obj map[string]interface{}) (map[string]interface{}, error) {
+func resourceVPCAccessConnectorEncoder(d *schema.ResourceData, meta interface{}, obj map[string]interface{}) (map[string]interface{}, error) {
 	delete(obj, "name")
 	return obj, nil
 }
 
-func resourceVpcAccessConnectorDecoder(d *schema.ResourceData, meta interface{}, res map[string]interface{}) (map[string]interface{}, error) {
+func resourceVPCAccessConnectorDecoder(d *schema.ResourceData, meta interface{}, res map[string]interface{}) (map[string]interface{}, error) {
 	// Take the returned long form of the name and use it as `self_link`.
 	// Then modify the name to be the user specified form.
 	// We can't just ignore_read on `name` as the linter will

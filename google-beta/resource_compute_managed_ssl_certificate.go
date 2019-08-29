@@ -212,7 +212,7 @@ func resourceComputeManagedSslCertificateRead(d *schema.ResourceData, meta inter
 	if err := d.Set("description", flattenComputeManagedSslCertificateDescription(res["description"], d)); err != nil {
 		return fmt.Errorf("Error reading ManagedSslCertificate: %s", err)
 	}
-	if err := d.Set("certificate_id", flattenComputeManagedSslCertificateCertificate_id(res["id"], d)); err != nil {
+	if err := d.Set("certificate_id", flattenComputeManagedSslCertificateCertificateId(res["id"], d)); err != nil {
 		return fmt.Errorf("Error reading ManagedSslCertificate: %s", err)
 	}
 	if err := d.Set("name", flattenComputeManagedSslCertificateName(res["name"], d)); err != nil {
@@ -304,7 +304,7 @@ func flattenComputeManagedSslCertificateDescription(v interface{}, d *schema.Res
 	return v
 }
 
-func flattenComputeManagedSslCertificateCertificate_id(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeManagedSslCertificateCertificateId(v interface{}, d *schema.ResourceData) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
