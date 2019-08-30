@@ -34,7 +34,6 @@ See [Provider Versions](https://terraform.io/docs/providers/google/provider_vers
 </div>
 ## Example Usage - Resource Policy Basic
 
-
 ```hcl
 provider "google-beta" {
   region = "us-central1"
@@ -61,7 +60,6 @@ resource "google_compute_resource_policy" "foo" {
   </a>
 </div>
 ## Example Usage - Resource Policy Full
-
 
 ```hcl
 provider "google-beta" {

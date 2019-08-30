@@ -54,7 +54,6 @@ To get more information about Service, see:
 </div>
 ## Example Usage - Cloud Run Service Basic
 
-
 ```hcl
 resource "google_cloud_run_service" "default" {
   name     = "tftest-cloudrun"

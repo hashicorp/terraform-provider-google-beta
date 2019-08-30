@@ -35,7 +35,6 @@ To get more information about Hl7V2Store, see:
 
 ## Example Usage - Healthcare Hl7 V2 Store Basic
 
-
 ```hcl
 resource "google_healthcare_hl7_v2_store" "default" {
   name                          = "example-hl7-v2-store"

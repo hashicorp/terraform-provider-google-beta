@@ -42,7 +42,6 @@ To get more information about DomainMapping, see:
 </div>
 ## Example Usage - Cloud Run Domain Mapping Basic
 
-
 ```hcl
 resource "google_cloud_run_domain_mapping" "default" {
   location = "us-central1"

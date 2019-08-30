@@ -39,7 +39,6 @@ To get more information about ScanConfig, see:
 </div>
 ## Example Usage - Scan Config Basic
 
-
 ```hcl
 resource "google_compute_address" "scanner_static_ip" {
   provider = "google-beta"

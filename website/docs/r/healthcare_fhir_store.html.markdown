@@ -35,7 +35,6 @@ To get more information about FhirStore, see:
 
 ## Example Usage - Healthcare Fhir Store Basic
 
-
 ```hcl
 resource "google_healthcare_fhir_store" "default" {
   name                          = "example-fhir-store"

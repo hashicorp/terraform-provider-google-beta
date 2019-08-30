@@ -36,7 +36,6 @@ To get more information about DicomStore, see:
 
 ## Example Usage - Healthcare Dicom Store Basic
 
-
 ```hcl
 resource "google_healthcare_dicom_store" "default" {
   name           = "example-dicom-store"

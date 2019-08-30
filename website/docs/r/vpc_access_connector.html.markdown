@@ -39,7 +39,6 @@ To get more information about Connector, see:
 </div>
 ## Example Usage - VPC Access Connector
 
-
 ```hcl
 provider "google-beta" {}
 

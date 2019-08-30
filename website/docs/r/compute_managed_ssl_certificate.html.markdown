@@ -57,7 +57,6 @@ In conclusion: Be extremely cautious.
 </div>
 ## Example Usage - Managed Ssl Certificate Basic
 
-
 ```hcl
 resource "google_compute_managed_ssl_certificate" "default" {
   provider = "google-beta"

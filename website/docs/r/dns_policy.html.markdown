@@ -41,7 +41,6 @@ To get more information about Policy, see:
 </div>
 ## Example Usage - Dns Policy Basic
 
-
 ```hcl
 resource "google_dns_policy" "example-policy" {
   provider = "google-beta"

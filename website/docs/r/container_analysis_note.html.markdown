@@ -39,7 +39,6 @@ To get more information about Note, see:
 </div>
 ## Example Usage - Container Analysis Note Basic
 
-
 ```hcl
 resource "google_container_analysis_note" "note" {
   provider = "google-beta"
