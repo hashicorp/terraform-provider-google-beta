@@ -37,7 +37,6 @@ To get more information about ExternalVpnGateway, see:
 </div>
 ## Example Usage - External Vpn Gateway
 
-
 ```hcl
 resource "google_compute_ha_vpn_gateway" "ha_gateway" {
   provider = "google-beta"

@@ -34,7 +34,6 @@ To get more information about Dataset, see:
 
 ## Example Usage - Healthcare Dataset Basic
 
-
 ```hcl
 resource "google_healthcare_dataset" "default" {
   name         = "example-dataset"

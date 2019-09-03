@@ -42,7 +42,6 @@ To get more information about HaVpnGateway, see:
 </div>
 ## Example Usage - Ha Vpn Gateway Basic
 
-
 ```hcl
 resource "google_compute_ha_vpn_gateway" "ha_gateway1" {
   provider = "google-beta"
@@ -63,7 +62,6 @@ resource "google_compute_network" "network1" {
   </a>
 </div>
 ## Example Usage - Ha Vpn Gateway Gcp To Gcp
-
 
 ```hcl
 resource "google_compute_ha_vpn_gateway" "ha_gateway1" {

@@ -34,7 +34,6 @@ See [Provider Versions](https://terraform.io/docs/providers/google/provider_vers
 </div>
 ## Example Usage - Dataproc Autoscaling Policy
 
-
 ```hcl
 provider "google-beta" {}
 
