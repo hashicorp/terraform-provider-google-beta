@@ -140,12 +140,23 @@ func resourceComputeSubnetwork() *schema.Resource {
 				Type:     schema.TypeBool,
 				Optional: true,
 			},
+			"purpose": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ForceNew:     true,
+				ValidateFunc: validation.StringInSlice([]string{"INTERNAL_HTTPS_LOAD_BALANCER", "PRIVATE_RFC_1918", "PRIVATE", ""}, false),
+			},
 			"region": {
 				Type:             schema.TypeString,
 				Computed:         true,
 				Optional:         true,
 				ForceNew:         true,
 				DiffSuppressFunc: compareSelfLinkOrResourceName,
+			},
+			"role": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validation.StringInSlice([]string{"ACTIVE", "BACKUP", ""}, false),
 			},
 			"secondary_ip_range": {
 				Type:       schema.TypeList,
@@ -275,6 +286,18 @@ func resourceComputeSubnetworkCreate(d *schema.ResourceData, meta interface{}) e
 	} else if v, ok := d.GetOkExists("fingerprint"); !isEmptyValue(reflect.ValueOf(fingerprintProp)) && (ok || !reflect.DeepEqual(v, fingerprintProp)) {
 		obj["fingerprint"] = fingerprintProp
 	}
+	purposeProp, err := expandComputeSubnetworkPurpose(d.Get("purpose"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("purpose"); !isEmptyValue(reflect.ValueOf(purposeProp)) && (ok || !reflect.DeepEqual(v, purposeProp)) {
+		obj["purpose"] = purposeProp
+	}
+	roleProp, err := expandComputeSubnetworkRole(d.Get("role"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("role"); !isEmptyValue(reflect.ValueOf(roleProp)) && (ok || !reflect.DeepEqual(v, roleProp)) {
+		obj["role"] = roleProp
+	}
 	secondaryIpRangesProp, err := expandComputeSubnetworkSecondaryIpRange(d.Get("secondary_ip_range"), d, config)
 	if err != nil {
 		return err
@@ -388,6 +411,12 @@ func resourceComputeSubnetworkRead(d *schema.ResourceData, meta interface{}) err
 	if err := d.Set("fingerprint", flattenComputeSubnetworkFingerprint(res["fingerprint"], d)); err != nil {
 		return fmt.Errorf("Error reading Subnetwork: %s", err)
 	}
+	if err := d.Set("purpose", flattenComputeSubnetworkPurpose(res["purpose"], d)); err != nil {
+		return fmt.Errorf("Error reading Subnetwork: %s", err)
+	}
+	if err := d.Set("role", flattenComputeSubnetworkRole(res["role"], d)); err != nil {
+		return fmt.Errorf("Error reading Subnetwork: %s", err)
+	}
 	if err := d.Set("secondary_ip_range", flattenComputeSubnetworkSecondaryIpRange(res["secondaryIpRanges"], d)); err != nil {
 		return fmt.Errorf("Error reading Subnetwork: %s", err)
 	}
@@ -451,7 +480,7 @@ func resourceComputeSubnetworkUpdate(d *schema.ResourceData, meta interface{}) e
 
 		d.SetPartial("ip_cidr_range")
 	}
-	if d.HasChange("enable_flow_logs") || d.HasChange("fingerprint") || d.HasChange("secondary_ip_range") {
+	if d.HasChange("enable_flow_logs") || d.HasChange("fingerprint") || d.HasChange("role") || d.HasChange("secondary_ip_range") {
 		obj := make(map[string]interface{})
 		enableFlowLogsProp, err := expandComputeSubnetworkEnableFlowLogs(d.Get("enable_flow_logs"), d, config)
 		if err != nil {
@@ -464,6 +493,12 @@ func resourceComputeSubnetworkUpdate(d *schema.ResourceData, meta interface{}) e
 			return err
 		} else if v, ok := d.GetOkExists("fingerprint"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, fingerprintProp)) {
 			obj["fingerprint"] = fingerprintProp
+		}
+		roleProp, err := expandComputeSubnetworkRole(d.Get("role"), d, config)
+		if err != nil {
+			return err
+		} else if v, ok := d.GetOkExists("role"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, roleProp)) {
+			obj["role"] = roleProp
 		}
 		secondaryIpRangesProp, err := expandComputeSubnetworkSecondaryIpRange(d.Get("secondary_ip_range"), d, config)
 		if err != nil {
@@ -497,6 +532,7 @@ func resourceComputeSubnetworkUpdate(d *schema.ResourceData, meta interface{}) e
 
 		d.SetPartial("enable_flow_logs")
 		d.SetPartial("fingerprint")
+		d.SetPartial("role")
 		d.SetPartial("secondary_ip_range")
 	}
 	if d.HasChange("private_ip_google_access") {
@@ -634,6 +670,14 @@ func flattenComputeSubnetworkFingerprint(v interface{}, d *schema.ResourceData) 
 	return v
 }
 
+func flattenComputeSubnetworkPurpose(v interface{}, d *schema.ResourceData) interface{} {
+	return v
+}
+
+func flattenComputeSubnetworkRole(v interface{}, d *schema.ResourceData) interface{} {
+	return v
+}
+
 func flattenComputeSubnetworkSecondaryIpRange(v interface{}, d *schema.ResourceData) interface{} {
 	if v == nil {
 		return v
@@ -726,6 +770,14 @@ func expandComputeSubnetworkEnableFlowLogs(v interface{}, d TerraformResourceDat
 }
 
 func expandComputeSubnetworkFingerprint(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeSubnetworkPurpose(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeSubnetworkRole(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
