@@ -145,7 +145,7 @@ func resourceComputeSubnetwork() *schema.Resource {
 				Computed:     true,
 				Optional:     true,
 				ForceNew:     true,
-				ValidateFunc: validation.StringInSlice([]string{"INTERNAL_HTTPS_LOAD_BALANCER", "PRIVATE_RFC_1918", "PRIVATE", ""}, false),
+				ValidateFunc: validation.StringInSlice([]string{"INTERNAL_HTTPS_LOAD_BALANCER", "PRIVATE", ""}, false),
 			},
 			"region": {
 				Type:             schema.TypeString,
