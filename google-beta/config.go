@@ -79,6 +79,7 @@ type Config struct {
 	BigtableBasePath             string
 	BinaryAuthorizationBasePath  string
 	CloudBuildBasePath           string
+	CloudFunctionsBasePath       string
 	CloudRunBasePath             string
 	CloudSchedulerBasePath       string
 	ComputeBasePath              string
@@ -180,8 +181,7 @@ type Config struct {
 
 	clientBigQuery *bigquery.Service
 
-	CloudFunctionsBasePath string
-	clientCloudFunctions   *cloudfunctions.Service
+	clientCloudFunctions *cloudfunctions.Service
 
 	CloudIoTBasePath string
 	clientCloudIoT   *cloudiot.Service
@@ -215,6 +215,7 @@ var BigqueryDataTransferDefaultBasePath = "https://bigquerydatatransfer.googleap
 var BigtableDefaultBasePath = "https://bigtableadmin.googleapis.com/v2/"
 var BinaryAuthorizationDefaultBasePath = "https://binaryauthorization.googleapis.com/v1beta1/"
 var CloudBuildDefaultBasePath = "https://cloudbuild.googleapis.com/v1/"
+var CloudFunctionsDefaultBasePath = "https://cloudfunctions.googleapis.com/v1/"
 var CloudRunDefaultBasePath = "https://run.googleapis.com/v1alpha1/"
 var CloudSchedulerDefaultBasePath = "https://cloudscheduler.googleapis.com/v1/"
 var ComputeDefaultBasePath = "https://www.googleapis.com/compute/beta/"
@@ -701,6 +702,7 @@ func ConfigureBasePaths(c *Config) {
 	c.BigtableBasePath = BigtableDefaultBasePath
 	c.BinaryAuthorizationBasePath = BinaryAuthorizationDefaultBasePath
 	c.CloudBuildBasePath = CloudBuildDefaultBasePath
+	c.CloudFunctionsBasePath = CloudFunctionsDefaultBasePath
 	c.CloudRunBasePath = CloudRunDefaultBasePath
 	c.CloudSchedulerBasePath = CloudSchedulerDefaultBasePath
 	c.ComputeBasePath = ComputeDefaultBasePath
@@ -747,7 +749,6 @@ func ConfigureBasePaths(c *Config) {
 	c.ServiceNetworkingBasePath = ServiceNetworkingDefaultBasePath
 	c.ServiceUsageBasePath = ServiceUsageDefaultBasePath
 	c.BigQueryBasePath = BigQueryDefaultBasePath
-	c.CloudFunctionsBasePath = CloudFunctionsDefaultBasePath
 	c.CloudIoTBasePath = CloudIoTDefaultBasePath
 	c.StorageTransferBasePath = StorageTransferDefaultBasePath
 	c.BigtableAdminBasePath = BigtableAdminDefaultBasePath

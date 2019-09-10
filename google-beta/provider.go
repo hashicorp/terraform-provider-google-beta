@@ -159,6 +159,14 @@ func Provider() terraform.ResourceProvider {
 					"GOOGLE_CLOUD_BUILD_CUSTOM_ENDPOINT",
 				}, CloudBuildDefaultBasePath),
 			},
+			"cloud_functions_custom_endpoint": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validateCustomEndpoint,
+				DefaultFunc: schema.MultiEnvDefaultFunc([]string{
+					"GOOGLE_CLOUD_FUNCTIONS_CUSTOM_ENDPOINT",
+				}, CloudFunctionsDefaultBasePath),
+			},
 			"cloud_run_custom_endpoint": {
 				Type:         schema.TypeString,
 				Optional:     true,
@@ -379,7 +387,6 @@ func Provider() terraform.ResourceProvider {
 			ServiceManagementCustomEndpointEntryKey:      ServiceManagementCustomEndpointEntry,
 			ServiceNetworkingCustomEndpointEntryKey:      ServiceNetworkingCustomEndpointEntry,
 			ServiceUsageCustomEndpointEntryKey:           ServiceUsageCustomEndpointEntry,
-			CloudFunctionsCustomEndpointEntryKey:         CloudFunctionsCustomEndpointEntry,
 			CloudIoTCustomEndpointEntryKey:               CloudIoTCustomEndpointEntry,
 			StorageTransferCustomEndpointEntryKey:        StorageTransferCustomEndpointEntry,
 			BigtableAdminCustomEndpointEntryKey:          BigtableAdminCustomEndpointEntry,
@@ -457,9 +464,9 @@ func Provider() terraform.ResourceProvider {
 	return provider
 }
 
-// Generated resources: 94
-// Generated IAM resources: 18
-// Total generated resources: 112
+// Generated resources: 95
+// Generated IAM resources: 21
+// Total generated resources: 116
 func ResourceMap() map[string]*schema.Resource {
 	resourceMap, _ := ResourceMapWithErrors()
 	return resourceMap
@@ -480,6 +487,9 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_binary_authorization_attestor":            resourceBinaryAuthorizationAttestor(),
 			"google_binary_authorization_policy":              resourceBinaryAuthorizationPolicy(),
 			"google_cloudbuild_trigger":                       resourceCloudBuildTrigger(),
+			"google_cloudfunctions_function_iam_binding":      ResourceIamBinding(CloudFunctionsCloudFunctionIamSchema, CloudFunctionsCloudFunctionIamUpdaterProducer, CloudFunctionsCloudFunctionIdParseFunc),
+			"google_cloudfunctions_function_iam_member":       ResourceIamMember(CloudFunctionsCloudFunctionIamSchema, CloudFunctionsCloudFunctionIamUpdaterProducer, CloudFunctionsCloudFunctionIdParseFunc),
+			"google_cloudfunctions_function_iam_policy":       ResourceIamPolicy(CloudFunctionsCloudFunctionIamSchema, CloudFunctionsCloudFunctionIamUpdaterProducer, CloudFunctionsCloudFunctionIdParseFunc),
 			"google_cloud_run_domain_mapping":                 resourceCloudRunDomainMapping(),
 			"google_cloud_run_service":                        resourceCloudRunService(),
 			"google_cloud_scheduler_job":                      resourceCloudSchedulerJob(),
@@ -750,6 +760,7 @@ func providerConfigure(d *schema.ResourceData, terraformVersion string) (interfa
 	config.BigtableBasePath = d.Get("bigtable_custom_endpoint").(string)
 	config.BinaryAuthorizationBasePath = d.Get("binary_authorization_custom_endpoint").(string)
 	config.CloudBuildBasePath = d.Get("cloud_build_custom_endpoint").(string)
+	config.CloudFunctionsBasePath = d.Get("cloud_functions_custom_endpoint").(string)
 	config.CloudRunBasePath = d.Get("cloud_run_custom_endpoint").(string)
 	config.CloudSchedulerBasePath = d.Get("cloud_scheduler_custom_endpoint").(string)
 	config.ComputeBasePath = d.Get("compute_custom_endpoint").(string)
@@ -794,7 +805,6 @@ func providerConfigure(d *schema.ResourceData, terraformVersion string) (interfa
 	config.ServiceManagementBasePath = d.Get(ServiceManagementCustomEndpointEntryKey).(string)
 	config.ServiceNetworkingBasePath = d.Get(ServiceNetworkingCustomEndpointEntryKey).(string)
 	config.ServiceUsageBasePath = d.Get(ServiceUsageCustomEndpointEntryKey).(string)
-	config.CloudFunctionsBasePath = d.Get(CloudFunctionsCustomEndpointEntryKey).(string)
 	config.CloudIoTBasePath = d.Get(CloudIoTCustomEndpointEntryKey).(string)
 	config.StorageTransferBasePath = d.Get(StorageTransferCustomEndpointEntryKey).(string)
 	config.BigtableAdminBasePath = d.Get(BigtableAdminCustomEndpointEntryKey).(string)
