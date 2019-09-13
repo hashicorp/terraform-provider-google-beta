@@ -187,10 +187,11 @@ The following arguments are supported:
 
 * `purpose` -
   (Optional, [Beta](https://terraform.io/docs/providers/google/provider_versions.html))
-  The purpose of the resource. This field can be either PRIVATE_RFC_1918
+  The purpose of the resource. This field can be either PRIVATE
   or INTERNAL_HTTPS_LOAD_BALANCER. A subnetwork with purpose set to
   INTERNAL_HTTPS_LOAD_BALANCER is a user-created subnetwork that is
-  reserved for Internal HTTP(S) Load Balancing.
+  reserved for Internal HTTP(S) Load Balancing. If unspecified, the
+  purpose defaults to PRIVATE.
   If set to INTERNAL_HTTPS_LOAD_BALANCER you must also set the role.
 
 * `role` -
