@@ -282,6 +282,24 @@ func resourceComputeBackendService() *schema.Resource {
 				ValidateFunc: validation.StringInSlice([]string{"EXTERNAL", "INTERNAL_SELF_MANAGED", ""}, false),
 				Default:      "EXTERNAL",
 			},
+			"log_config": {
+				Type:     schema.TypeList,
+				Computed: true,
+				Optional: true,
+				MaxItems: 1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"enable": {
+							Type:     schema.TypeBool,
+							Optional: true,
+						},
+						"sample_rate": {
+							Type:     schema.TypeFloat,
+							Optional: true,
+						},
+					},
+				},
+			},
 			"port_name": {
 				Type:     schema.TypeString,
 				Computed: true,
@@ -493,6 +511,12 @@ func resourceComputeBackendServiceCreate(d *schema.ResourceData, meta interface{
 	} else if v, ok := d.GetOkExists("timeout_sec"); !isEmptyValue(reflect.ValueOf(timeoutSecProp)) && (ok || !reflect.DeepEqual(v, timeoutSecProp)) {
 		obj["timeoutSec"] = timeoutSecProp
 	}
+	logConfigProp, err := expandComputeBackendServiceLogConfig(d.Get("log_config"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("log_config"); !isEmptyValue(reflect.ValueOf(logConfigProp)) && (ok || !reflect.DeepEqual(v, logConfigProp)) {
+		obj["logConfig"] = logConfigProp
+	}
 
 	obj, err = resourceComputeBackendServiceEncoder(d, meta, obj)
 	if err != nil {
@@ -655,6 +679,9 @@ func resourceComputeBackendServiceRead(d *schema.ResourceData, meta interface{})
 	if err := d.Set("timeout_sec", flattenComputeBackendServiceTimeoutSec(res["timeoutSec"], d)); err != nil {
 		return fmt.Errorf("Error reading BackendService: %s", err)
 	}
+	if err := d.Set("log_config", flattenComputeBackendServiceLogConfig(res["logConfig"], d)); err != nil {
+		return fmt.Errorf("Error reading BackendService: %s", err)
+	}
 	if err := d.Set("self_link", ConvertSelfLinkToV1(res["selfLink"].(string))); err != nil {
 		return fmt.Errorf("Error reading BackendService: %s", err)
 	}
@@ -772,6 +799,12 @@ func resourceComputeBackendServiceUpdate(d *schema.ResourceData, meta interface{
 		return err
 	} else if v, ok := d.GetOkExists("timeout_sec"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, timeoutSecProp)) {
 		obj["timeoutSec"] = timeoutSecProp
+	}
+	logConfigProp, err := expandComputeBackendServiceLogConfig(d.Get("log_config"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("log_config"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, logConfigProp)) {
+		obj["logConfig"] = logConfigProp
 	}
 
 	obj, err = resourceComputeBackendServiceEncoder(d, meta, obj)
@@ -1182,6 +1215,29 @@ func flattenComputeBackendServiceTimeoutSec(v interface{}, d *schema.ResourceDat
 	return v
 }
 
+func flattenComputeBackendServiceLogConfig(v interface{}, d *schema.ResourceData) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["enable"] =
+		flattenComputeBackendServiceLogConfigEnable(original["enable"], d)
+	transformed["sample_rate"] =
+		flattenComputeBackendServiceLogConfigSampleRate(original["sampleRate"], d)
+	return []interface{}{transformed}
+}
+func flattenComputeBackendServiceLogConfigEnable(v interface{}, d *schema.ResourceData) interface{} {
+	return v
+}
+
+func flattenComputeBackendServiceLogConfigSampleRate(v interface{}, d *schema.ResourceData) interface{} {
+	return v
+}
+
 func expandComputeBackendServiceAffinityCookieTtlSec(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
@@ -1530,6 +1586,40 @@ func expandComputeBackendServiceSessionAffinity(v interface{}, d TerraformResour
 }
 
 func expandComputeBackendServiceTimeoutSec(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeBackendServiceLogConfig(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedEnable, err := expandComputeBackendServiceLogConfigEnable(original["enable"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedEnable); val.IsValid() && !isEmptyValue(val) {
+		transformed["enable"] = transformedEnable
+	}
+
+	transformedSampleRate, err := expandComputeBackendServiceLogConfigSampleRate(original["sample_rate"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedSampleRate); val.IsValid() && !isEmptyValue(val) {
+		transformed["sampleRate"] = transformedSampleRate
+	}
+
+	return transformed, nil
+}
+
+func expandComputeBackendServiceLogConfigEnable(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeBackendServiceLogConfigSampleRate(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
