@@ -19,7 +19,6 @@ import (
 	"log"
 	"reflect"
 	"strconv"
-	"strings"
 	"time"
 
 	"github.com/hashicorp/terraform/helper/schema"
@@ -27,97 +26,15 @@ import (
 	"google.golang.org/api/compute/v1"
 )
 
-// Whether the port should be set or not
-func validatePortSpec(diff *schema.ResourceDiff, blockName string) error {
-	block := diff.Get(blockName + ".0").(map[string]interface{})
-	portSpec := block["port_specification"]
-	portName := block["port_name"]
-	port := block["port"]
-
-	hasPort := (port != nil && port != 0)
-	noName := (portName == nil || portName == "")
-
-	if portSpec == "USE_NAMED_PORT" && hasPort {
-		return fmt.Errorf("Error in %s: port cannot be specified when using port_specification USE_NAMED_PORT.", blockName)
-	}
-	if portSpec == "USE_NAMED_PORT" && noName {
-		return fmt.Errorf("Error in %s: Must specify port_name when using USE_NAMED_PORT as port_specification.", blockName)
-	}
-
-	if portSpec == "USE_SERVING_PORT" && hasPort {
-		return fmt.Errorf("Error in %s: port cannot be specified when using port_specification USE_SERVING_PORT.", blockName)
-	}
-	if portSpec == "USE_SERVING_PORT" && !noName {
-		return fmt.Errorf("Error in %s: port_name cannot be specified when using port_specification USE_SERVING_PORT.", blockName)
-	}
-
-	return nil
-}
-
-func healthCheckCustomizeDiff(diff *schema.ResourceDiff, v interface{}) error {
-	if diff.Get("http_health_check") != nil {
-		return validatePortSpec(diff, "http_health_check")
-	}
-	if diff.Get("https_health_check") != nil {
-		return validatePortSpec(diff, "https_health_check")
-	}
-	if diff.Get("http2_health_check") != nil {
-		return validatePortSpec(diff, "http2_health_check")
-	}
-	if diff.Get("tcp_health_check") != nil {
-		return validatePortSpec(diff, "tcp_health_check")
-	}
-	if diff.Get("ssl_health_check") != nil {
-		return validatePortSpec(diff, "ssl_health_check")
-	}
-
-	return nil
-}
-
-func portDiffSuppress(k, old, new string, _ *schema.ResourceData) bool {
-	b := strings.Split(k, ".")
-	if len(b) > 2 {
-		attr := b[2]
-
-		if attr == "port" {
-			var defaultPort int64
-
-			blockType := b[0]
-
-			switch blockType {
-			case "http_health_check":
-				defaultPort = 80
-			case "https_health_check":
-				defaultPort = 443
-			case "http2_health_check":
-				defaultPort = 443
-			case "tcp_health_check":
-				defaultPort = 80
-			case "ssl_health_check":
-				defaultPort = 443
-			}
-
-			oldPort, _ := strconv.Atoi(old)
-			newPort, _ := strconv.Atoi(new)
-
-			if int64(oldPort) == defaultPort && newPort == 0 {
-				return true
-			}
-		}
-	}
-
-	return false
-}
-
-func resourceComputeHealthCheck() *schema.Resource {
+func resourceComputeRegionHealthCheck() *schema.Resource {
 	return &schema.Resource{
-		Create: resourceComputeHealthCheckCreate,
-		Read:   resourceComputeHealthCheckRead,
-		Update: resourceComputeHealthCheckUpdate,
-		Delete: resourceComputeHealthCheckDelete,
+		Create: resourceComputeRegionHealthCheckCreate,
+		Read:   resourceComputeRegionHealthCheckRead,
+		Update: resourceComputeRegionHealthCheckUpdate,
+		Delete: resourceComputeRegionHealthCheckDelete,
 
 		Importer: &schema.ResourceImporter{
-			State: resourceComputeHealthCheckImport,
+			State: resourceComputeRegionHealthCheckImport,
 		},
 
 		Timeouts: &schema.ResourceTimeout{
@@ -277,6 +194,13 @@ func resourceComputeHealthCheck() *schema.Resource {
 				},
 				ConflictsWith: []string{"http_health_check", "tcp_health_check", "ssl_health_check", "http2_health_check"},
 			},
+			"region": {
+				Type:             schema.TypeString,
+				Computed:         true,
+				Optional:         true,
+				ForceNew:         true,
+				DiffSuppressFunc: compareSelfLinkOrResourceName,
+			},
 			"ssl_health_check": {
 				Type:             schema.TypeList,
 				Optional:         true,
@@ -385,95 +309,101 @@ func resourceComputeHealthCheck() *schema.Resource {
 	}
 }
 
-func resourceComputeHealthCheckCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceComputeRegionHealthCheckCreate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
 	obj := make(map[string]interface{})
-	checkIntervalSecProp, err := expandComputeHealthCheckCheckIntervalSec(d.Get("check_interval_sec"), d, config)
+	checkIntervalSecProp, err := expandComputeRegionHealthCheckCheckIntervalSec(d.Get("check_interval_sec"), d, config)
 	if err != nil {
 		return err
 	} else if v, ok := d.GetOkExists("check_interval_sec"); !isEmptyValue(reflect.ValueOf(checkIntervalSecProp)) && (ok || !reflect.DeepEqual(v, checkIntervalSecProp)) {
 		obj["checkIntervalSec"] = checkIntervalSecProp
 	}
-	descriptionProp, err := expandComputeHealthCheckDescription(d.Get("description"), d, config)
+	descriptionProp, err := expandComputeRegionHealthCheckDescription(d.Get("description"), d, config)
 	if err != nil {
 		return err
 	} else if v, ok := d.GetOkExists("description"); !isEmptyValue(reflect.ValueOf(descriptionProp)) && (ok || !reflect.DeepEqual(v, descriptionProp)) {
 		obj["description"] = descriptionProp
 	}
-	healthyThresholdProp, err := expandComputeHealthCheckHealthyThreshold(d.Get("healthy_threshold"), d, config)
+	healthyThresholdProp, err := expandComputeRegionHealthCheckHealthyThreshold(d.Get("healthy_threshold"), d, config)
 	if err != nil {
 		return err
 	} else if v, ok := d.GetOkExists("healthy_threshold"); !isEmptyValue(reflect.ValueOf(healthyThresholdProp)) && (ok || !reflect.DeepEqual(v, healthyThresholdProp)) {
 		obj["healthyThreshold"] = healthyThresholdProp
 	}
-	nameProp, err := expandComputeHealthCheckName(d.Get("name"), d, config)
+	nameProp, err := expandComputeRegionHealthCheckName(d.Get("name"), d, config)
 	if err != nil {
 		return err
 	} else if v, ok := d.GetOkExists("name"); !isEmptyValue(reflect.ValueOf(nameProp)) && (ok || !reflect.DeepEqual(v, nameProp)) {
 		obj["name"] = nameProp
 	}
-	timeoutSecProp, err := expandComputeHealthCheckTimeoutSec(d.Get("timeout_sec"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("timeout_sec"); !isEmptyValue(reflect.ValueOf(timeoutSecProp)) && (ok || !reflect.DeepEqual(v, timeoutSecProp)) {
-		obj["timeoutSec"] = timeoutSecProp
-	}
-	unhealthyThresholdProp, err := expandComputeHealthCheckUnhealthyThreshold(d.Get("unhealthy_threshold"), d, config)
+	unhealthyThresholdProp, err := expandComputeRegionHealthCheckUnhealthyThreshold(d.Get("unhealthy_threshold"), d, config)
 	if err != nil {
 		return err
 	} else if v, ok := d.GetOkExists("unhealthy_threshold"); !isEmptyValue(reflect.ValueOf(unhealthyThresholdProp)) && (ok || !reflect.DeepEqual(v, unhealthyThresholdProp)) {
 		obj["unhealthyThreshold"] = unhealthyThresholdProp
 	}
-	httpHealthCheckProp, err := expandComputeHealthCheckHttpHealthCheck(d.Get("http_health_check"), d, config)
+	timeoutSecProp, err := expandComputeRegionHealthCheckTimeoutSec(d.Get("timeout_sec"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("timeout_sec"); !isEmptyValue(reflect.ValueOf(timeoutSecProp)) && (ok || !reflect.DeepEqual(v, timeoutSecProp)) {
+		obj["timeoutSec"] = timeoutSecProp
+	}
+	httpHealthCheckProp, err := expandComputeRegionHealthCheckHttpHealthCheck(d.Get("http_health_check"), d, config)
 	if err != nil {
 		return err
 	} else if v, ok := d.GetOkExists("http_health_check"); !isEmptyValue(reflect.ValueOf(httpHealthCheckProp)) && (ok || !reflect.DeepEqual(v, httpHealthCheckProp)) {
 		obj["httpHealthCheck"] = httpHealthCheckProp
 	}
-	httpsHealthCheckProp, err := expandComputeHealthCheckHttpsHealthCheck(d.Get("https_health_check"), d, config)
+	httpsHealthCheckProp, err := expandComputeRegionHealthCheckHttpsHealthCheck(d.Get("https_health_check"), d, config)
 	if err != nil {
 		return err
 	} else if v, ok := d.GetOkExists("https_health_check"); !isEmptyValue(reflect.ValueOf(httpsHealthCheckProp)) && (ok || !reflect.DeepEqual(v, httpsHealthCheckProp)) {
 		obj["httpsHealthCheck"] = httpsHealthCheckProp
 	}
-	tcpHealthCheckProp, err := expandComputeHealthCheckTcpHealthCheck(d.Get("tcp_health_check"), d, config)
+	tcpHealthCheckProp, err := expandComputeRegionHealthCheckTcpHealthCheck(d.Get("tcp_health_check"), d, config)
 	if err != nil {
 		return err
 	} else if v, ok := d.GetOkExists("tcp_health_check"); !isEmptyValue(reflect.ValueOf(tcpHealthCheckProp)) && (ok || !reflect.DeepEqual(v, tcpHealthCheckProp)) {
 		obj["tcpHealthCheck"] = tcpHealthCheckProp
 	}
-	sslHealthCheckProp, err := expandComputeHealthCheckSslHealthCheck(d.Get("ssl_health_check"), d, config)
+	sslHealthCheckProp, err := expandComputeRegionHealthCheckSslHealthCheck(d.Get("ssl_health_check"), d, config)
 	if err != nil {
 		return err
 	} else if v, ok := d.GetOkExists("ssl_health_check"); !isEmptyValue(reflect.ValueOf(sslHealthCheckProp)) && (ok || !reflect.DeepEqual(v, sslHealthCheckProp)) {
 		obj["sslHealthCheck"] = sslHealthCheckProp
 	}
-	http2HealthCheckProp, err := expandComputeHealthCheckHttp2HealthCheck(d.Get("http2_health_check"), d, config)
+	http2HealthCheckProp, err := expandComputeRegionHealthCheckHttp2HealthCheck(d.Get("http2_health_check"), d, config)
 	if err != nil {
 		return err
 	} else if v, ok := d.GetOkExists("http2_health_check"); !isEmptyValue(reflect.ValueOf(http2HealthCheckProp)) && (ok || !reflect.DeepEqual(v, http2HealthCheckProp)) {
 		obj["http2HealthCheck"] = http2HealthCheckProp
 	}
+	regionProp, err := expandComputeRegionHealthCheckRegion(d.Get("region"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("region"); !isEmptyValue(reflect.ValueOf(regionProp)) && (ok || !reflect.DeepEqual(v, regionProp)) {
+		obj["region"] = regionProp
+	}
 
-	obj, err = resourceComputeHealthCheckEncoder(d, meta, obj)
+	obj, err = resourceComputeRegionHealthCheckEncoder(d, meta, obj)
 	if err != nil {
 		return err
 	}
 
-	url, err := replaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/global/healthChecks")
+	url, err := replaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/regions/{{region}}/healthChecks")
 	if err != nil {
 		return err
 	}
 
-	log.Printf("[DEBUG] Creating new HealthCheck: %#v", obj)
+	log.Printf("[DEBUG] Creating new RegionHealthCheck: %#v", obj)
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
 	res, err := sendRequestWithTimeout(config, "POST", project, url, obj, d.Timeout(schema.TimeoutCreate))
 	if err != nil {
-		return fmt.Errorf("Error creating HealthCheck: %s", err)
+		return fmt.Errorf("Error creating RegionHealthCheck: %s", err)
 	}
 
 	// Store the ID now
@@ -490,24 +420,24 @@ func resourceComputeHealthCheckCreate(d *schema.ResourceData, meta interface{}) 
 	}
 
 	waitErr := computeOperationWaitTime(
-		config.clientCompute, op, project, "Creating HealthCheck",
+		config.clientCompute, op, project, "Creating RegionHealthCheck",
 		int(d.Timeout(schema.TimeoutCreate).Minutes()))
 
 	if waitErr != nil {
 		// The resource didn't actually create
 		d.SetId("")
-		return fmt.Errorf("Error waiting to create HealthCheck: %s", waitErr)
+		return fmt.Errorf("Error waiting to create RegionHealthCheck: %s", waitErr)
 	}
 
-	log.Printf("[DEBUG] Finished creating HealthCheck %q: %#v", d.Id(), res)
+	log.Printf("[DEBUG] Finished creating RegionHealthCheck %q: %#v", d.Id(), res)
 
-	return resourceComputeHealthCheckRead(d, meta)
+	return resourceComputeRegionHealthCheckRead(d, meta)
 }
 
-func resourceComputeHealthCheckRead(d *schema.ResourceData, meta interface{}) error {
+func resourceComputeRegionHealthCheckRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	url, err := replaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/global/healthChecks/{{name}}")
+	url, err := replaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/regions/{{region}}/healthChecks/{{name}}")
 	if err != nil {
 		return err
 	}
@@ -518,60 +448,63 @@ func resourceComputeHealthCheckRead(d *schema.ResourceData, meta interface{}) er
 	}
 	res, err := sendRequest(config, "GET", project, url, nil)
 	if err != nil {
-		return handleNotFoundError(err, d, fmt.Sprintf("ComputeHealthCheck %q", d.Id()))
+		return handleNotFoundError(err, d, fmt.Sprintf("ComputeRegionHealthCheck %q", d.Id()))
 	}
 
 	if err := d.Set("project", project); err != nil {
-		return fmt.Errorf("Error reading HealthCheck: %s", err)
+		return fmt.Errorf("Error reading RegionHealthCheck: %s", err)
 	}
 
-	if err := d.Set("check_interval_sec", flattenComputeHealthCheckCheckIntervalSec(res["checkIntervalSec"], d)); err != nil {
-		return fmt.Errorf("Error reading HealthCheck: %s", err)
+	if err := d.Set("check_interval_sec", flattenComputeRegionHealthCheckCheckIntervalSec(res["checkIntervalSec"], d)); err != nil {
+		return fmt.Errorf("Error reading RegionHealthCheck: %s", err)
 	}
-	if err := d.Set("creation_timestamp", flattenComputeHealthCheckCreationTimestamp(res["creationTimestamp"], d)); err != nil {
-		return fmt.Errorf("Error reading HealthCheck: %s", err)
+	if err := d.Set("creation_timestamp", flattenComputeRegionHealthCheckCreationTimestamp(res["creationTimestamp"], d)); err != nil {
+		return fmt.Errorf("Error reading RegionHealthCheck: %s", err)
 	}
-	if err := d.Set("description", flattenComputeHealthCheckDescription(res["description"], d)); err != nil {
-		return fmt.Errorf("Error reading HealthCheck: %s", err)
+	if err := d.Set("description", flattenComputeRegionHealthCheckDescription(res["description"], d)); err != nil {
+		return fmt.Errorf("Error reading RegionHealthCheck: %s", err)
 	}
-	if err := d.Set("healthy_threshold", flattenComputeHealthCheckHealthyThreshold(res["healthyThreshold"], d)); err != nil {
-		return fmt.Errorf("Error reading HealthCheck: %s", err)
+	if err := d.Set("healthy_threshold", flattenComputeRegionHealthCheckHealthyThreshold(res["healthyThreshold"], d)); err != nil {
+		return fmt.Errorf("Error reading RegionHealthCheck: %s", err)
 	}
-	if err := d.Set("name", flattenComputeHealthCheckName(res["name"], d)); err != nil {
-		return fmt.Errorf("Error reading HealthCheck: %s", err)
+	if err := d.Set("name", flattenComputeRegionHealthCheckName(res["name"], d)); err != nil {
+		return fmt.Errorf("Error reading RegionHealthCheck: %s", err)
 	}
-	if err := d.Set("timeout_sec", flattenComputeHealthCheckTimeoutSec(res["timeoutSec"], d)); err != nil {
-		return fmt.Errorf("Error reading HealthCheck: %s", err)
+	if err := d.Set("unhealthy_threshold", flattenComputeRegionHealthCheckUnhealthyThreshold(res["unhealthyThreshold"], d)); err != nil {
+		return fmt.Errorf("Error reading RegionHealthCheck: %s", err)
 	}
-	if err := d.Set("unhealthy_threshold", flattenComputeHealthCheckUnhealthyThreshold(res["unhealthyThreshold"], d)); err != nil {
-		return fmt.Errorf("Error reading HealthCheck: %s", err)
+	if err := d.Set("timeout_sec", flattenComputeRegionHealthCheckTimeoutSec(res["timeoutSec"], d)); err != nil {
+		return fmt.Errorf("Error reading RegionHealthCheck: %s", err)
 	}
-	if err := d.Set("type", flattenComputeHealthCheckType(res["type"], d)); err != nil {
-		return fmt.Errorf("Error reading HealthCheck: %s", err)
+	if err := d.Set("type", flattenComputeRegionHealthCheckType(res["type"], d)); err != nil {
+		return fmt.Errorf("Error reading RegionHealthCheck: %s", err)
 	}
-	if err := d.Set("http_health_check", flattenComputeHealthCheckHttpHealthCheck(res["httpHealthCheck"], d)); err != nil {
-		return fmt.Errorf("Error reading HealthCheck: %s", err)
+	if err := d.Set("http_health_check", flattenComputeRegionHealthCheckHttpHealthCheck(res["httpHealthCheck"], d)); err != nil {
+		return fmt.Errorf("Error reading RegionHealthCheck: %s", err)
 	}
-	if err := d.Set("https_health_check", flattenComputeHealthCheckHttpsHealthCheck(res["httpsHealthCheck"], d)); err != nil {
-		return fmt.Errorf("Error reading HealthCheck: %s", err)
+	if err := d.Set("https_health_check", flattenComputeRegionHealthCheckHttpsHealthCheck(res["httpsHealthCheck"], d)); err != nil {
+		return fmt.Errorf("Error reading RegionHealthCheck: %s", err)
 	}
-	if err := d.Set("tcp_health_check", flattenComputeHealthCheckTcpHealthCheck(res["tcpHealthCheck"], d)); err != nil {
-		return fmt.Errorf("Error reading HealthCheck: %s", err)
+	if err := d.Set("tcp_health_check", flattenComputeRegionHealthCheckTcpHealthCheck(res["tcpHealthCheck"], d)); err != nil {
+		return fmt.Errorf("Error reading RegionHealthCheck: %s", err)
 	}
-	if err := d.Set("ssl_health_check", flattenComputeHealthCheckSslHealthCheck(res["sslHealthCheck"], d)); err != nil {
-		return fmt.Errorf("Error reading HealthCheck: %s", err)
+	if err := d.Set("ssl_health_check", flattenComputeRegionHealthCheckSslHealthCheck(res["sslHealthCheck"], d)); err != nil {
+		return fmt.Errorf("Error reading RegionHealthCheck: %s", err)
 	}
-	if err := d.Set("http2_health_check", flattenComputeHealthCheckHttp2HealthCheck(res["http2HealthCheck"], d)); err != nil {
-		return fmt.Errorf("Error reading HealthCheck: %s", err)
+	if err := d.Set("http2_health_check", flattenComputeRegionHealthCheckHttp2HealthCheck(res["http2HealthCheck"], d)); err != nil {
+		return fmt.Errorf("Error reading RegionHealthCheck: %s", err)
+	}
+	if err := d.Set("region", flattenComputeRegionHealthCheckRegion(res["region"], d)); err != nil {
+		return fmt.Errorf("Error reading RegionHealthCheck: %s", err)
 	}
 	if err := d.Set("self_link", ConvertSelfLinkToV1(res["selfLink"].(string))); err != nil {
-		return fmt.Errorf("Error reading HealthCheck: %s", err)
+		return fmt.Errorf("Error reading RegionHealthCheck: %s", err)
 	}
 
 	return nil
 }
 
-func resourceComputeHealthCheckUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceComputeRegionHealthCheckUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
 	project, err := getProject(d, config)
@@ -580,88 +513,94 @@ func resourceComputeHealthCheckUpdate(d *schema.ResourceData, meta interface{}) 
 	}
 
 	obj := make(map[string]interface{})
-	checkIntervalSecProp, err := expandComputeHealthCheckCheckIntervalSec(d.Get("check_interval_sec"), d, config)
+	checkIntervalSecProp, err := expandComputeRegionHealthCheckCheckIntervalSec(d.Get("check_interval_sec"), d, config)
 	if err != nil {
 		return err
 	} else if v, ok := d.GetOkExists("check_interval_sec"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, checkIntervalSecProp)) {
 		obj["checkIntervalSec"] = checkIntervalSecProp
 	}
-	descriptionProp, err := expandComputeHealthCheckDescription(d.Get("description"), d, config)
+	descriptionProp, err := expandComputeRegionHealthCheckDescription(d.Get("description"), d, config)
 	if err != nil {
 		return err
 	} else if v, ok := d.GetOkExists("description"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, descriptionProp)) {
 		obj["description"] = descriptionProp
 	}
-	healthyThresholdProp, err := expandComputeHealthCheckHealthyThreshold(d.Get("healthy_threshold"), d, config)
+	healthyThresholdProp, err := expandComputeRegionHealthCheckHealthyThreshold(d.Get("healthy_threshold"), d, config)
 	if err != nil {
 		return err
 	} else if v, ok := d.GetOkExists("healthy_threshold"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, healthyThresholdProp)) {
 		obj["healthyThreshold"] = healthyThresholdProp
 	}
-	nameProp, err := expandComputeHealthCheckName(d.Get("name"), d, config)
+	nameProp, err := expandComputeRegionHealthCheckName(d.Get("name"), d, config)
 	if err != nil {
 		return err
 	} else if v, ok := d.GetOkExists("name"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, nameProp)) {
 		obj["name"] = nameProp
 	}
-	timeoutSecProp, err := expandComputeHealthCheckTimeoutSec(d.Get("timeout_sec"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("timeout_sec"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, timeoutSecProp)) {
-		obj["timeoutSec"] = timeoutSecProp
-	}
-	unhealthyThresholdProp, err := expandComputeHealthCheckUnhealthyThreshold(d.Get("unhealthy_threshold"), d, config)
+	unhealthyThresholdProp, err := expandComputeRegionHealthCheckUnhealthyThreshold(d.Get("unhealthy_threshold"), d, config)
 	if err != nil {
 		return err
 	} else if v, ok := d.GetOkExists("unhealthy_threshold"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, unhealthyThresholdProp)) {
 		obj["unhealthyThreshold"] = unhealthyThresholdProp
 	}
-	httpHealthCheckProp, err := expandComputeHealthCheckHttpHealthCheck(d.Get("http_health_check"), d, config)
+	timeoutSecProp, err := expandComputeRegionHealthCheckTimeoutSec(d.Get("timeout_sec"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("timeout_sec"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, timeoutSecProp)) {
+		obj["timeoutSec"] = timeoutSecProp
+	}
+	httpHealthCheckProp, err := expandComputeRegionHealthCheckHttpHealthCheck(d.Get("http_health_check"), d, config)
 	if err != nil {
 		return err
 	} else if v, ok := d.GetOkExists("http_health_check"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, httpHealthCheckProp)) {
 		obj["httpHealthCheck"] = httpHealthCheckProp
 	}
-	httpsHealthCheckProp, err := expandComputeHealthCheckHttpsHealthCheck(d.Get("https_health_check"), d, config)
+	httpsHealthCheckProp, err := expandComputeRegionHealthCheckHttpsHealthCheck(d.Get("https_health_check"), d, config)
 	if err != nil {
 		return err
 	} else if v, ok := d.GetOkExists("https_health_check"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, httpsHealthCheckProp)) {
 		obj["httpsHealthCheck"] = httpsHealthCheckProp
 	}
-	tcpHealthCheckProp, err := expandComputeHealthCheckTcpHealthCheck(d.Get("tcp_health_check"), d, config)
+	tcpHealthCheckProp, err := expandComputeRegionHealthCheckTcpHealthCheck(d.Get("tcp_health_check"), d, config)
 	if err != nil {
 		return err
 	} else if v, ok := d.GetOkExists("tcp_health_check"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, tcpHealthCheckProp)) {
 		obj["tcpHealthCheck"] = tcpHealthCheckProp
 	}
-	sslHealthCheckProp, err := expandComputeHealthCheckSslHealthCheck(d.Get("ssl_health_check"), d, config)
+	sslHealthCheckProp, err := expandComputeRegionHealthCheckSslHealthCheck(d.Get("ssl_health_check"), d, config)
 	if err != nil {
 		return err
 	} else if v, ok := d.GetOkExists("ssl_health_check"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, sslHealthCheckProp)) {
 		obj["sslHealthCheck"] = sslHealthCheckProp
 	}
-	http2HealthCheckProp, err := expandComputeHealthCheckHttp2HealthCheck(d.Get("http2_health_check"), d, config)
+	http2HealthCheckProp, err := expandComputeRegionHealthCheckHttp2HealthCheck(d.Get("http2_health_check"), d, config)
 	if err != nil {
 		return err
 	} else if v, ok := d.GetOkExists("http2_health_check"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, http2HealthCheckProp)) {
 		obj["http2HealthCheck"] = http2HealthCheckProp
 	}
+	regionProp, err := expandComputeRegionHealthCheckRegion(d.Get("region"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("region"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, regionProp)) {
+		obj["region"] = regionProp
+	}
 
-	obj, err = resourceComputeHealthCheckEncoder(d, meta, obj)
+	obj, err = resourceComputeRegionHealthCheckEncoder(d, meta, obj)
 	if err != nil {
 		return err
 	}
 
-	url, err := replaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/global/healthChecks/{{name}}")
+	url, err := replaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/regions/{{region}}/healthChecks/{{name}}")
 	if err != nil {
 		return err
 	}
 
-	log.Printf("[DEBUG] Updating HealthCheck %q: %#v", d.Id(), obj)
+	log.Printf("[DEBUG] Updating RegionHealthCheck %q: %#v", d.Id(), obj)
 	res, err := sendRequestWithTimeout(config, "PUT", project, url, obj, d.Timeout(schema.TimeoutUpdate))
 
 	if err != nil {
-		return fmt.Errorf("Error updating HealthCheck %q: %s", d.Id(), err)
+		return fmt.Errorf("Error updating RegionHealthCheck %q: %s", d.Id(), err)
 	}
 
 	op := &compute.Operation{}
@@ -671,17 +610,17 @@ func resourceComputeHealthCheckUpdate(d *schema.ResourceData, meta interface{}) 
 	}
 
 	err = computeOperationWaitTime(
-		config.clientCompute, op, project, "Updating HealthCheck",
+		config.clientCompute, op, project, "Updating RegionHealthCheck",
 		int(d.Timeout(schema.TimeoutUpdate).Minutes()))
 
 	if err != nil {
 		return err
 	}
 
-	return resourceComputeHealthCheckRead(d, meta)
+	return resourceComputeRegionHealthCheckRead(d, meta)
 }
 
-func resourceComputeHealthCheckDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceComputeRegionHealthCheckDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
 	project, err := getProject(d, config)
@@ -689,17 +628,17 @@ func resourceComputeHealthCheckDelete(d *schema.ResourceData, meta interface{}) 
 		return err
 	}
 
-	url, err := replaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/global/healthChecks/{{name}}")
+	url, err := replaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/regions/{{region}}/healthChecks/{{name}}")
 	if err != nil {
 		return err
 	}
 
 	var obj map[string]interface{}
-	log.Printf("[DEBUG] Deleting HealthCheck %q", d.Id())
+	log.Printf("[DEBUG] Deleting RegionHealthCheck %q", d.Id())
 
 	res, err := sendRequestWithTimeout(config, "DELETE", project, url, obj, d.Timeout(schema.TimeoutDelete))
 	if err != nil {
-		return handleNotFoundError(err, d, "HealthCheck")
+		return handleNotFoundError(err, d, "RegionHealthCheck")
 	}
 
 	op := &compute.Operation{}
@@ -709,22 +648,23 @@ func resourceComputeHealthCheckDelete(d *schema.ResourceData, meta interface{}) 
 	}
 
 	err = computeOperationWaitTime(
-		config.clientCompute, op, project, "Deleting HealthCheck",
+		config.clientCompute, op, project, "Deleting RegionHealthCheck",
 		int(d.Timeout(schema.TimeoutDelete).Minutes()))
 
 	if err != nil {
 		return err
 	}
 
-	log.Printf("[DEBUG] Finished deleting HealthCheck %q: %#v", d.Id(), res)
+	log.Printf("[DEBUG] Finished deleting RegionHealthCheck %q: %#v", d.Id(), res)
 	return nil
 }
 
-func resourceComputeHealthCheckImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceComputeRegionHealthCheckImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	config := meta.(*Config)
 	if err := parseImportId([]string{
-		"projects/(?P<project>[^/]+)/global/healthChecks/(?P<name>[^/]+)",
-		"(?P<project>[^/]+)/(?P<name>[^/]+)",
+		"projects/(?P<project>[^/]+)/regions/(?P<region>[^/]+)/healthChecks/(?P<name>[^/]+)",
+		"(?P<project>[^/]+)/(?P<region>[^/]+)/(?P<name>[^/]+)",
+		"(?P<region>[^/]+)/(?P<name>[^/]+)",
 		"(?P<name>[^/]+)",
 	}, d, config); err != nil {
 		return nil, err
@@ -740,7 +680,7 @@ func resourceComputeHealthCheckImport(d *schema.ResourceData, meta interface{}) 
 	return []*schema.ResourceData{d}, nil
 }
 
-func flattenComputeHealthCheckCheckIntervalSec(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionHealthCheckCheckIntervalSec(v interface{}, d *schema.ResourceData) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
@@ -750,15 +690,15 @@ func flattenComputeHealthCheckCheckIntervalSec(v interface{}, d *schema.Resource
 	return v
 }
 
-func flattenComputeHealthCheckCreationTimestamp(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionHealthCheckCreationTimestamp(v interface{}, d *schema.ResourceData) interface{} {
 	return v
 }
 
-func flattenComputeHealthCheckDescription(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionHealthCheckDescription(v interface{}, d *schema.ResourceData) interface{} {
 	return v
 }
 
-func flattenComputeHealthCheckHealthyThreshold(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionHealthCheckHealthyThreshold(v interface{}, d *schema.ResourceData) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
@@ -768,11 +708,11 @@ func flattenComputeHealthCheckHealthyThreshold(v interface{}, d *schema.Resource
 	return v
 }
 
-func flattenComputeHealthCheckName(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionHealthCheckName(v interface{}, d *schema.ResourceData) interface{} {
 	return v
 }
 
-func flattenComputeHealthCheckTimeoutSec(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionHealthCheckUnhealthyThreshold(v interface{}, d *schema.ResourceData) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
@@ -782,7 +722,7 @@ func flattenComputeHealthCheckTimeoutSec(v interface{}, d *schema.ResourceData) 
 	return v
 }
 
-func flattenComputeHealthCheckUnhealthyThreshold(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionHealthCheckTimeoutSec(v interface{}, d *schema.ResourceData) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
@@ -792,11 +732,11 @@ func flattenComputeHealthCheckUnhealthyThreshold(v interface{}, d *schema.Resour
 	return v
 }
 
-func flattenComputeHealthCheckType(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionHealthCheckType(v interface{}, d *schema.ResourceData) interface{} {
 	return v
 }
 
-func flattenComputeHealthCheckHttpHealthCheck(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionHealthCheckHttpHealthCheck(v interface{}, d *schema.ResourceData) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -806,34 +746,34 @@ func flattenComputeHealthCheckHttpHealthCheck(v interface{}, d *schema.ResourceD
 	}
 	transformed := make(map[string]interface{})
 	transformed["host"] =
-		flattenComputeHealthCheckHttpHealthCheckHost(original["host"], d)
+		flattenComputeRegionHealthCheckHttpHealthCheckHost(original["host"], d)
 	transformed["request_path"] =
-		flattenComputeHealthCheckHttpHealthCheckRequestPath(original["requestPath"], d)
+		flattenComputeRegionHealthCheckHttpHealthCheckRequestPath(original["requestPath"], d)
 	transformed["response"] =
-		flattenComputeHealthCheckHttpHealthCheckResponse(original["response"], d)
+		flattenComputeRegionHealthCheckHttpHealthCheckResponse(original["response"], d)
 	transformed["port"] =
-		flattenComputeHealthCheckHttpHealthCheckPort(original["port"], d)
+		flattenComputeRegionHealthCheckHttpHealthCheckPort(original["port"], d)
 	transformed["port_name"] =
-		flattenComputeHealthCheckHttpHealthCheckPortName(original["portName"], d)
+		flattenComputeRegionHealthCheckHttpHealthCheckPortName(original["portName"], d)
 	transformed["proxy_header"] =
-		flattenComputeHealthCheckHttpHealthCheckProxyHeader(original["proxyHeader"], d)
+		flattenComputeRegionHealthCheckHttpHealthCheckProxyHeader(original["proxyHeader"], d)
 	transformed["port_specification"] =
-		flattenComputeHealthCheckHttpHealthCheckPortSpecification(original["portSpecification"], d)
+		flattenComputeRegionHealthCheckHttpHealthCheckPortSpecification(original["portSpecification"], d)
 	return []interface{}{transformed}
 }
-func flattenComputeHealthCheckHttpHealthCheckHost(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionHealthCheckHttpHealthCheckHost(v interface{}, d *schema.ResourceData) interface{} {
 	return v
 }
 
-func flattenComputeHealthCheckHttpHealthCheckRequestPath(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionHealthCheckHttpHealthCheckRequestPath(v interface{}, d *schema.ResourceData) interface{} {
 	return v
 }
 
-func flattenComputeHealthCheckHttpHealthCheckResponse(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionHealthCheckHttpHealthCheckResponse(v interface{}, d *schema.ResourceData) interface{} {
 	return v
 }
 
-func flattenComputeHealthCheckHttpHealthCheckPort(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionHealthCheckHttpHealthCheckPort(v interface{}, d *schema.ResourceData) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
@@ -843,19 +783,19 @@ func flattenComputeHealthCheckHttpHealthCheckPort(v interface{}, d *schema.Resou
 	return v
 }
 
-func flattenComputeHealthCheckHttpHealthCheckPortName(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionHealthCheckHttpHealthCheckPortName(v interface{}, d *schema.ResourceData) interface{} {
 	return v
 }
 
-func flattenComputeHealthCheckHttpHealthCheckProxyHeader(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionHealthCheckHttpHealthCheckProxyHeader(v interface{}, d *schema.ResourceData) interface{} {
 	return v
 }
 
-func flattenComputeHealthCheckHttpHealthCheckPortSpecification(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionHealthCheckHttpHealthCheckPortSpecification(v interface{}, d *schema.ResourceData) interface{} {
 	return v
 }
 
-func flattenComputeHealthCheckHttpsHealthCheck(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionHealthCheckHttpsHealthCheck(v interface{}, d *schema.ResourceData) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -865,34 +805,34 @@ func flattenComputeHealthCheckHttpsHealthCheck(v interface{}, d *schema.Resource
 	}
 	transformed := make(map[string]interface{})
 	transformed["host"] =
-		flattenComputeHealthCheckHttpsHealthCheckHost(original["host"], d)
+		flattenComputeRegionHealthCheckHttpsHealthCheckHost(original["host"], d)
 	transformed["request_path"] =
-		flattenComputeHealthCheckHttpsHealthCheckRequestPath(original["requestPath"], d)
+		flattenComputeRegionHealthCheckHttpsHealthCheckRequestPath(original["requestPath"], d)
 	transformed["response"] =
-		flattenComputeHealthCheckHttpsHealthCheckResponse(original["response"], d)
+		flattenComputeRegionHealthCheckHttpsHealthCheckResponse(original["response"], d)
 	transformed["port"] =
-		flattenComputeHealthCheckHttpsHealthCheckPort(original["port"], d)
+		flattenComputeRegionHealthCheckHttpsHealthCheckPort(original["port"], d)
 	transformed["port_name"] =
-		flattenComputeHealthCheckHttpsHealthCheckPortName(original["portName"], d)
+		flattenComputeRegionHealthCheckHttpsHealthCheckPortName(original["portName"], d)
 	transformed["proxy_header"] =
-		flattenComputeHealthCheckHttpsHealthCheckProxyHeader(original["proxyHeader"], d)
+		flattenComputeRegionHealthCheckHttpsHealthCheckProxyHeader(original["proxyHeader"], d)
 	transformed["port_specification"] =
-		flattenComputeHealthCheckHttpsHealthCheckPortSpecification(original["portSpecification"], d)
+		flattenComputeRegionHealthCheckHttpsHealthCheckPortSpecification(original["portSpecification"], d)
 	return []interface{}{transformed}
 }
-func flattenComputeHealthCheckHttpsHealthCheckHost(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionHealthCheckHttpsHealthCheckHost(v interface{}, d *schema.ResourceData) interface{} {
 	return v
 }
 
-func flattenComputeHealthCheckHttpsHealthCheckRequestPath(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionHealthCheckHttpsHealthCheckRequestPath(v interface{}, d *schema.ResourceData) interface{} {
 	return v
 }
 
-func flattenComputeHealthCheckHttpsHealthCheckResponse(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionHealthCheckHttpsHealthCheckResponse(v interface{}, d *schema.ResourceData) interface{} {
 	return v
 }
 
-func flattenComputeHealthCheckHttpsHealthCheckPort(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionHealthCheckHttpsHealthCheckPort(v interface{}, d *schema.ResourceData) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
@@ -902,19 +842,19 @@ func flattenComputeHealthCheckHttpsHealthCheckPort(v interface{}, d *schema.Reso
 	return v
 }
 
-func flattenComputeHealthCheckHttpsHealthCheckPortName(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionHealthCheckHttpsHealthCheckPortName(v interface{}, d *schema.ResourceData) interface{} {
 	return v
 }
 
-func flattenComputeHealthCheckHttpsHealthCheckProxyHeader(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionHealthCheckHttpsHealthCheckProxyHeader(v interface{}, d *schema.ResourceData) interface{} {
 	return v
 }
 
-func flattenComputeHealthCheckHttpsHealthCheckPortSpecification(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionHealthCheckHttpsHealthCheckPortSpecification(v interface{}, d *schema.ResourceData) interface{} {
 	return v
 }
 
-func flattenComputeHealthCheckTcpHealthCheck(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionHealthCheckTcpHealthCheck(v interface{}, d *schema.ResourceData) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -924,28 +864,28 @@ func flattenComputeHealthCheckTcpHealthCheck(v interface{}, d *schema.ResourceDa
 	}
 	transformed := make(map[string]interface{})
 	transformed["request"] =
-		flattenComputeHealthCheckTcpHealthCheckRequest(original["request"], d)
+		flattenComputeRegionHealthCheckTcpHealthCheckRequest(original["request"], d)
 	transformed["response"] =
-		flattenComputeHealthCheckTcpHealthCheckResponse(original["response"], d)
+		flattenComputeRegionHealthCheckTcpHealthCheckResponse(original["response"], d)
 	transformed["port"] =
-		flattenComputeHealthCheckTcpHealthCheckPort(original["port"], d)
+		flattenComputeRegionHealthCheckTcpHealthCheckPort(original["port"], d)
 	transformed["port_name"] =
-		flattenComputeHealthCheckTcpHealthCheckPortName(original["portName"], d)
+		flattenComputeRegionHealthCheckTcpHealthCheckPortName(original["portName"], d)
 	transformed["proxy_header"] =
-		flattenComputeHealthCheckTcpHealthCheckProxyHeader(original["proxyHeader"], d)
+		flattenComputeRegionHealthCheckTcpHealthCheckProxyHeader(original["proxyHeader"], d)
 	transformed["port_specification"] =
-		flattenComputeHealthCheckTcpHealthCheckPortSpecification(original["portSpecification"], d)
+		flattenComputeRegionHealthCheckTcpHealthCheckPortSpecification(original["portSpecification"], d)
 	return []interface{}{transformed}
 }
-func flattenComputeHealthCheckTcpHealthCheckRequest(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionHealthCheckTcpHealthCheckRequest(v interface{}, d *schema.ResourceData) interface{} {
 	return v
 }
 
-func flattenComputeHealthCheckTcpHealthCheckResponse(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionHealthCheckTcpHealthCheckResponse(v interface{}, d *schema.ResourceData) interface{} {
 	return v
 }
 
-func flattenComputeHealthCheckTcpHealthCheckPort(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionHealthCheckTcpHealthCheckPort(v interface{}, d *schema.ResourceData) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
@@ -955,19 +895,19 @@ func flattenComputeHealthCheckTcpHealthCheckPort(v interface{}, d *schema.Resour
 	return v
 }
 
-func flattenComputeHealthCheckTcpHealthCheckPortName(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionHealthCheckTcpHealthCheckPortName(v interface{}, d *schema.ResourceData) interface{} {
 	return v
 }
 
-func flattenComputeHealthCheckTcpHealthCheckProxyHeader(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionHealthCheckTcpHealthCheckProxyHeader(v interface{}, d *schema.ResourceData) interface{} {
 	return v
 }
 
-func flattenComputeHealthCheckTcpHealthCheckPortSpecification(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionHealthCheckTcpHealthCheckPortSpecification(v interface{}, d *schema.ResourceData) interface{} {
 	return v
 }
 
-func flattenComputeHealthCheckSslHealthCheck(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionHealthCheckSslHealthCheck(v interface{}, d *schema.ResourceData) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -977,28 +917,28 @@ func flattenComputeHealthCheckSslHealthCheck(v interface{}, d *schema.ResourceDa
 	}
 	transformed := make(map[string]interface{})
 	transformed["request"] =
-		flattenComputeHealthCheckSslHealthCheckRequest(original["request"], d)
+		flattenComputeRegionHealthCheckSslHealthCheckRequest(original["request"], d)
 	transformed["response"] =
-		flattenComputeHealthCheckSslHealthCheckResponse(original["response"], d)
+		flattenComputeRegionHealthCheckSslHealthCheckResponse(original["response"], d)
 	transformed["port"] =
-		flattenComputeHealthCheckSslHealthCheckPort(original["port"], d)
+		flattenComputeRegionHealthCheckSslHealthCheckPort(original["port"], d)
 	transformed["port_name"] =
-		flattenComputeHealthCheckSslHealthCheckPortName(original["portName"], d)
+		flattenComputeRegionHealthCheckSslHealthCheckPortName(original["portName"], d)
 	transformed["proxy_header"] =
-		flattenComputeHealthCheckSslHealthCheckProxyHeader(original["proxyHeader"], d)
+		flattenComputeRegionHealthCheckSslHealthCheckProxyHeader(original["proxyHeader"], d)
 	transformed["port_specification"] =
-		flattenComputeHealthCheckSslHealthCheckPortSpecification(original["portSpecification"], d)
+		flattenComputeRegionHealthCheckSslHealthCheckPortSpecification(original["portSpecification"], d)
 	return []interface{}{transformed}
 }
-func flattenComputeHealthCheckSslHealthCheckRequest(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionHealthCheckSslHealthCheckRequest(v interface{}, d *schema.ResourceData) interface{} {
 	return v
 }
 
-func flattenComputeHealthCheckSslHealthCheckResponse(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionHealthCheckSslHealthCheckResponse(v interface{}, d *schema.ResourceData) interface{} {
 	return v
 }
 
-func flattenComputeHealthCheckSslHealthCheckPort(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionHealthCheckSslHealthCheckPort(v interface{}, d *schema.ResourceData) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
@@ -1008,19 +948,19 @@ func flattenComputeHealthCheckSslHealthCheckPort(v interface{}, d *schema.Resour
 	return v
 }
 
-func flattenComputeHealthCheckSslHealthCheckPortName(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionHealthCheckSslHealthCheckPortName(v interface{}, d *schema.ResourceData) interface{} {
 	return v
 }
 
-func flattenComputeHealthCheckSslHealthCheckProxyHeader(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionHealthCheckSslHealthCheckProxyHeader(v interface{}, d *schema.ResourceData) interface{} {
 	return v
 }
 
-func flattenComputeHealthCheckSslHealthCheckPortSpecification(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionHealthCheckSslHealthCheckPortSpecification(v interface{}, d *schema.ResourceData) interface{} {
 	return v
 }
 
-func flattenComputeHealthCheckHttp2HealthCheck(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionHealthCheckHttp2HealthCheck(v interface{}, d *schema.ResourceData) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -1030,34 +970,34 @@ func flattenComputeHealthCheckHttp2HealthCheck(v interface{}, d *schema.Resource
 	}
 	transformed := make(map[string]interface{})
 	transformed["host"] =
-		flattenComputeHealthCheckHttp2HealthCheckHost(original["host"], d)
+		flattenComputeRegionHealthCheckHttp2HealthCheckHost(original["host"], d)
 	transformed["request_path"] =
-		flattenComputeHealthCheckHttp2HealthCheckRequestPath(original["requestPath"], d)
+		flattenComputeRegionHealthCheckHttp2HealthCheckRequestPath(original["requestPath"], d)
 	transformed["response"] =
-		flattenComputeHealthCheckHttp2HealthCheckResponse(original["response"], d)
+		flattenComputeRegionHealthCheckHttp2HealthCheckResponse(original["response"], d)
 	transformed["port"] =
-		flattenComputeHealthCheckHttp2HealthCheckPort(original["port"], d)
+		flattenComputeRegionHealthCheckHttp2HealthCheckPort(original["port"], d)
 	transformed["port_name"] =
-		flattenComputeHealthCheckHttp2HealthCheckPortName(original["portName"], d)
+		flattenComputeRegionHealthCheckHttp2HealthCheckPortName(original["portName"], d)
 	transformed["proxy_header"] =
-		flattenComputeHealthCheckHttp2HealthCheckProxyHeader(original["proxyHeader"], d)
+		flattenComputeRegionHealthCheckHttp2HealthCheckProxyHeader(original["proxyHeader"], d)
 	transformed["port_specification"] =
-		flattenComputeHealthCheckHttp2HealthCheckPortSpecification(original["portSpecification"], d)
+		flattenComputeRegionHealthCheckHttp2HealthCheckPortSpecification(original["portSpecification"], d)
 	return []interface{}{transformed}
 }
-func flattenComputeHealthCheckHttp2HealthCheckHost(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionHealthCheckHttp2HealthCheckHost(v interface{}, d *schema.ResourceData) interface{} {
 	return v
 }
 
-func flattenComputeHealthCheckHttp2HealthCheckRequestPath(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionHealthCheckHttp2HealthCheckRequestPath(v interface{}, d *schema.ResourceData) interface{} {
 	return v
 }
 
-func flattenComputeHealthCheckHttp2HealthCheckResponse(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionHealthCheckHttp2HealthCheckResponse(v interface{}, d *schema.ResourceData) interface{} {
 	return v
 }
 
-func flattenComputeHealthCheckHttp2HealthCheckPort(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionHealthCheckHttp2HealthCheckPort(v interface{}, d *schema.ResourceData) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
@@ -1067,43 +1007,50 @@ func flattenComputeHealthCheckHttp2HealthCheckPort(v interface{}, d *schema.Reso
 	return v
 }
 
-func flattenComputeHealthCheckHttp2HealthCheckPortName(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionHealthCheckHttp2HealthCheckPortName(v interface{}, d *schema.ResourceData) interface{} {
 	return v
 }
 
-func flattenComputeHealthCheckHttp2HealthCheckProxyHeader(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionHealthCheckHttp2HealthCheckProxyHeader(v interface{}, d *schema.ResourceData) interface{} {
 	return v
 }
 
-func flattenComputeHealthCheckHttp2HealthCheckPortSpecification(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionHealthCheckHttp2HealthCheckPortSpecification(v interface{}, d *schema.ResourceData) interface{} {
 	return v
 }
 
-func expandComputeHealthCheckCheckIntervalSec(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func flattenComputeRegionHealthCheckRegion(v interface{}, d *schema.ResourceData) interface{} {
+	if v == nil {
+		return v
+	}
+	return NameFromSelfLinkStateFunc(v)
+}
+
+func expandComputeRegionHealthCheckCheckIntervalSec(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandComputeHealthCheckDescription(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandComputeRegionHealthCheckDescription(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandComputeHealthCheckHealthyThreshold(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandComputeRegionHealthCheckHealthyThreshold(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandComputeHealthCheckName(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandComputeRegionHealthCheckName(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandComputeHealthCheckTimeoutSec(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandComputeRegionHealthCheckUnhealthyThreshold(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandComputeHealthCheckUnhealthyThreshold(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandComputeRegionHealthCheckTimeoutSec(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandComputeHealthCheckHttpHealthCheck(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandComputeRegionHealthCheckHttpHealthCheck(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -1112,49 +1059,49 @@ func expandComputeHealthCheckHttpHealthCheck(v interface{}, d TerraformResourceD
 	original := raw.(map[string]interface{})
 	transformed := make(map[string]interface{})
 
-	transformedHost, err := expandComputeHealthCheckHttpHealthCheckHost(original["host"], d, config)
+	transformedHost, err := expandComputeRegionHealthCheckHttpHealthCheckHost(original["host"], d, config)
 	if err != nil {
 		return nil, err
 	} else if val := reflect.ValueOf(transformedHost); val.IsValid() && !isEmptyValue(val) {
 		transformed["host"] = transformedHost
 	}
 
-	transformedRequestPath, err := expandComputeHealthCheckHttpHealthCheckRequestPath(original["request_path"], d, config)
+	transformedRequestPath, err := expandComputeRegionHealthCheckHttpHealthCheckRequestPath(original["request_path"], d, config)
 	if err != nil {
 		return nil, err
 	} else if val := reflect.ValueOf(transformedRequestPath); val.IsValid() && !isEmptyValue(val) {
 		transformed["requestPath"] = transformedRequestPath
 	}
 
-	transformedResponse, err := expandComputeHealthCheckHttpHealthCheckResponse(original["response"], d, config)
+	transformedResponse, err := expandComputeRegionHealthCheckHttpHealthCheckResponse(original["response"], d, config)
 	if err != nil {
 		return nil, err
 	} else if val := reflect.ValueOf(transformedResponse); val.IsValid() && !isEmptyValue(val) {
 		transformed["response"] = transformedResponse
 	}
 
-	transformedPort, err := expandComputeHealthCheckHttpHealthCheckPort(original["port"], d, config)
+	transformedPort, err := expandComputeRegionHealthCheckHttpHealthCheckPort(original["port"], d, config)
 	if err != nil {
 		return nil, err
 	} else if val := reflect.ValueOf(transformedPort); val.IsValid() && !isEmptyValue(val) {
 		transformed["port"] = transformedPort
 	}
 
-	transformedPortName, err := expandComputeHealthCheckHttpHealthCheckPortName(original["port_name"], d, config)
+	transformedPortName, err := expandComputeRegionHealthCheckHttpHealthCheckPortName(original["port_name"], d, config)
 	if err != nil {
 		return nil, err
 	} else if val := reflect.ValueOf(transformedPortName); val.IsValid() && !isEmptyValue(val) {
 		transformed["portName"] = transformedPortName
 	}
 
-	transformedProxyHeader, err := expandComputeHealthCheckHttpHealthCheckProxyHeader(original["proxy_header"], d, config)
+	transformedProxyHeader, err := expandComputeRegionHealthCheckHttpHealthCheckProxyHeader(original["proxy_header"], d, config)
 	if err != nil {
 		return nil, err
 	} else if val := reflect.ValueOf(transformedProxyHeader); val.IsValid() && !isEmptyValue(val) {
 		transformed["proxyHeader"] = transformedProxyHeader
 	}
 
-	transformedPortSpecification, err := expandComputeHealthCheckHttpHealthCheckPortSpecification(original["port_specification"], d, config)
+	transformedPortSpecification, err := expandComputeRegionHealthCheckHttpHealthCheckPortSpecification(original["port_specification"], d, config)
 	if err != nil {
 		return nil, err
 	} else if val := reflect.ValueOf(transformedPortSpecification); val.IsValid() && !isEmptyValue(val) {
@@ -1164,35 +1111,35 @@ func expandComputeHealthCheckHttpHealthCheck(v interface{}, d TerraformResourceD
 	return transformed, nil
 }
 
-func expandComputeHealthCheckHttpHealthCheckHost(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandComputeRegionHealthCheckHttpHealthCheckHost(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandComputeHealthCheckHttpHealthCheckRequestPath(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandComputeRegionHealthCheckHttpHealthCheckRequestPath(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandComputeHealthCheckHttpHealthCheckResponse(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandComputeRegionHealthCheckHttpHealthCheckResponse(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandComputeHealthCheckHttpHealthCheckPort(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandComputeRegionHealthCheckHttpHealthCheckPort(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandComputeHealthCheckHttpHealthCheckPortName(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandComputeRegionHealthCheckHttpHealthCheckPortName(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandComputeHealthCheckHttpHealthCheckProxyHeader(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandComputeRegionHealthCheckHttpHealthCheckProxyHeader(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandComputeHealthCheckHttpHealthCheckPortSpecification(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandComputeRegionHealthCheckHttpHealthCheckPortSpecification(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandComputeHealthCheckHttpsHealthCheck(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandComputeRegionHealthCheckHttpsHealthCheck(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -1201,49 +1148,49 @@ func expandComputeHealthCheckHttpsHealthCheck(v interface{}, d TerraformResource
 	original := raw.(map[string]interface{})
 	transformed := make(map[string]interface{})
 
-	transformedHost, err := expandComputeHealthCheckHttpsHealthCheckHost(original["host"], d, config)
+	transformedHost, err := expandComputeRegionHealthCheckHttpsHealthCheckHost(original["host"], d, config)
 	if err != nil {
 		return nil, err
 	} else if val := reflect.ValueOf(transformedHost); val.IsValid() && !isEmptyValue(val) {
 		transformed["host"] = transformedHost
 	}
 
-	transformedRequestPath, err := expandComputeHealthCheckHttpsHealthCheckRequestPath(original["request_path"], d, config)
+	transformedRequestPath, err := expandComputeRegionHealthCheckHttpsHealthCheckRequestPath(original["request_path"], d, config)
 	if err != nil {
 		return nil, err
 	} else if val := reflect.ValueOf(transformedRequestPath); val.IsValid() && !isEmptyValue(val) {
 		transformed["requestPath"] = transformedRequestPath
 	}
 
-	transformedResponse, err := expandComputeHealthCheckHttpsHealthCheckResponse(original["response"], d, config)
+	transformedResponse, err := expandComputeRegionHealthCheckHttpsHealthCheckResponse(original["response"], d, config)
 	if err != nil {
 		return nil, err
 	} else if val := reflect.ValueOf(transformedResponse); val.IsValid() && !isEmptyValue(val) {
 		transformed["response"] = transformedResponse
 	}
 
-	transformedPort, err := expandComputeHealthCheckHttpsHealthCheckPort(original["port"], d, config)
+	transformedPort, err := expandComputeRegionHealthCheckHttpsHealthCheckPort(original["port"], d, config)
 	if err != nil {
 		return nil, err
 	} else if val := reflect.ValueOf(transformedPort); val.IsValid() && !isEmptyValue(val) {
 		transformed["port"] = transformedPort
 	}
 
-	transformedPortName, err := expandComputeHealthCheckHttpsHealthCheckPortName(original["port_name"], d, config)
+	transformedPortName, err := expandComputeRegionHealthCheckHttpsHealthCheckPortName(original["port_name"], d, config)
 	if err != nil {
 		return nil, err
 	} else if val := reflect.ValueOf(transformedPortName); val.IsValid() && !isEmptyValue(val) {
 		transformed["portName"] = transformedPortName
 	}
 
-	transformedProxyHeader, err := expandComputeHealthCheckHttpsHealthCheckProxyHeader(original["proxy_header"], d, config)
+	transformedProxyHeader, err := expandComputeRegionHealthCheckHttpsHealthCheckProxyHeader(original["proxy_header"], d, config)
 	if err != nil {
 		return nil, err
 	} else if val := reflect.ValueOf(transformedProxyHeader); val.IsValid() && !isEmptyValue(val) {
 		transformed["proxyHeader"] = transformedProxyHeader
 	}
 
-	transformedPortSpecification, err := expandComputeHealthCheckHttpsHealthCheckPortSpecification(original["port_specification"], d, config)
+	transformedPortSpecification, err := expandComputeRegionHealthCheckHttpsHealthCheckPortSpecification(original["port_specification"], d, config)
 	if err != nil {
 		return nil, err
 	} else if val := reflect.ValueOf(transformedPortSpecification); val.IsValid() && !isEmptyValue(val) {
@@ -1253,35 +1200,35 @@ func expandComputeHealthCheckHttpsHealthCheck(v interface{}, d TerraformResource
 	return transformed, nil
 }
 
-func expandComputeHealthCheckHttpsHealthCheckHost(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandComputeRegionHealthCheckHttpsHealthCheckHost(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandComputeHealthCheckHttpsHealthCheckRequestPath(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandComputeRegionHealthCheckHttpsHealthCheckRequestPath(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandComputeHealthCheckHttpsHealthCheckResponse(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandComputeRegionHealthCheckHttpsHealthCheckResponse(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandComputeHealthCheckHttpsHealthCheckPort(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandComputeRegionHealthCheckHttpsHealthCheckPort(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandComputeHealthCheckHttpsHealthCheckPortName(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandComputeRegionHealthCheckHttpsHealthCheckPortName(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandComputeHealthCheckHttpsHealthCheckProxyHeader(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandComputeRegionHealthCheckHttpsHealthCheckProxyHeader(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandComputeHealthCheckHttpsHealthCheckPortSpecification(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandComputeRegionHealthCheckHttpsHealthCheckPortSpecification(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandComputeHealthCheckTcpHealthCheck(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandComputeRegionHealthCheckTcpHealthCheck(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -1290,42 +1237,42 @@ func expandComputeHealthCheckTcpHealthCheck(v interface{}, d TerraformResourceDa
 	original := raw.(map[string]interface{})
 	transformed := make(map[string]interface{})
 
-	transformedRequest, err := expandComputeHealthCheckTcpHealthCheckRequest(original["request"], d, config)
+	transformedRequest, err := expandComputeRegionHealthCheckTcpHealthCheckRequest(original["request"], d, config)
 	if err != nil {
 		return nil, err
 	} else if val := reflect.ValueOf(transformedRequest); val.IsValid() && !isEmptyValue(val) {
 		transformed["request"] = transformedRequest
 	}
 
-	transformedResponse, err := expandComputeHealthCheckTcpHealthCheckResponse(original["response"], d, config)
+	transformedResponse, err := expandComputeRegionHealthCheckTcpHealthCheckResponse(original["response"], d, config)
 	if err != nil {
 		return nil, err
 	} else if val := reflect.ValueOf(transformedResponse); val.IsValid() && !isEmptyValue(val) {
 		transformed["response"] = transformedResponse
 	}
 
-	transformedPort, err := expandComputeHealthCheckTcpHealthCheckPort(original["port"], d, config)
+	transformedPort, err := expandComputeRegionHealthCheckTcpHealthCheckPort(original["port"], d, config)
 	if err != nil {
 		return nil, err
 	} else if val := reflect.ValueOf(transformedPort); val.IsValid() && !isEmptyValue(val) {
 		transformed["port"] = transformedPort
 	}
 
-	transformedPortName, err := expandComputeHealthCheckTcpHealthCheckPortName(original["port_name"], d, config)
+	transformedPortName, err := expandComputeRegionHealthCheckTcpHealthCheckPortName(original["port_name"], d, config)
 	if err != nil {
 		return nil, err
 	} else if val := reflect.ValueOf(transformedPortName); val.IsValid() && !isEmptyValue(val) {
 		transformed["portName"] = transformedPortName
 	}
 
-	transformedProxyHeader, err := expandComputeHealthCheckTcpHealthCheckProxyHeader(original["proxy_header"], d, config)
+	transformedProxyHeader, err := expandComputeRegionHealthCheckTcpHealthCheckProxyHeader(original["proxy_header"], d, config)
 	if err != nil {
 		return nil, err
 	} else if val := reflect.ValueOf(transformedProxyHeader); val.IsValid() && !isEmptyValue(val) {
 		transformed["proxyHeader"] = transformedProxyHeader
 	}
 
-	transformedPortSpecification, err := expandComputeHealthCheckTcpHealthCheckPortSpecification(original["port_specification"], d, config)
+	transformedPortSpecification, err := expandComputeRegionHealthCheckTcpHealthCheckPortSpecification(original["port_specification"], d, config)
 	if err != nil {
 		return nil, err
 	} else if val := reflect.ValueOf(transformedPortSpecification); val.IsValid() && !isEmptyValue(val) {
@@ -1335,31 +1282,31 @@ func expandComputeHealthCheckTcpHealthCheck(v interface{}, d TerraformResourceDa
 	return transformed, nil
 }
 
-func expandComputeHealthCheckTcpHealthCheckRequest(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandComputeRegionHealthCheckTcpHealthCheckRequest(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandComputeHealthCheckTcpHealthCheckResponse(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandComputeRegionHealthCheckTcpHealthCheckResponse(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandComputeHealthCheckTcpHealthCheckPort(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandComputeRegionHealthCheckTcpHealthCheckPort(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandComputeHealthCheckTcpHealthCheckPortName(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandComputeRegionHealthCheckTcpHealthCheckPortName(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandComputeHealthCheckTcpHealthCheckProxyHeader(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandComputeRegionHealthCheckTcpHealthCheckProxyHeader(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandComputeHealthCheckTcpHealthCheckPortSpecification(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandComputeRegionHealthCheckTcpHealthCheckPortSpecification(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandComputeHealthCheckSslHealthCheck(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandComputeRegionHealthCheckSslHealthCheck(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -1368,42 +1315,42 @@ func expandComputeHealthCheckSslHealthCheck(v interface{}, d TerraformResourceDa
 	original := raw.(map[string]interface{})
 	transformed := make(map[string]interface{})
 
-	transformedRequest, err := expandComputeHealthCheckSslHealthCheckRequest(original["request"], d, config)
+	transformedRequest, err := expandComputeRegionHealthCheckSslHealthCheckRequest(original["request"], d, config)
 	if err != nil {
 		return nil, err
 	} else if val := reflect.ValueOf(transformedRequest); val.IsValid() && !isEmptyValue(val) {
 		transformed["request"] = transformedRequest
 	}
 
-	transformedResponse, err := expandComputeHealthCheckSslHealthCheckResponse(original["response"], d, config)
+	transformedResponse, err := expandComputeRegionHealthCheckSslHealthCheckResponse(original["response"], d, config)
 	if err != nil {
 		return nil, err
 	} else if val := reflect.ValueOf(transformedResponse); val.IsValid() && !isEmptyValue(val) {
 		transformed["response"] = transformedResponse
 	}
 
-	transformedPort, err := expandComputeHealthCheckSslHealthCheckPort(original["port"], d, config)
+	transformedPort, err := expandComputeRegionHealthCheckSslHealthCheckPort(original["port"], d, config)
 	if err != nil {
 		return nil, err
 	} else if val := reflect.ValueOf(transformedPort); val.IsValid() && !isEmptyValue(val) {
 		transformed["port"] = transformedPort
 	}
 
-	transformedPortName, err := expandComputeHealthCheckSslHealthCheckPortName(original["port_name"], d, config)
+	transformedPortName, err := expandComputeRegionHealthCheckSslHealthCheckPortName(original["port_name"], d, config)
 	if err != nil {
 		return nil, err
 	} else if val := reflect.ValueOf(transformedPortName); val.IsValid() && !isEmptyValue(val) {
 		transformed["portName"] = transformedPortName
 	}
 
-	transformedProxyHeader, err := expandComputeHealthCheckSslHealthCheckProxyHeader(original["proxy_header"], d, config)
+	transformedProxyHeader, err := expandComputeRegionHealthCheckSslHealthCheckProxyHeader(original["proxy_header"], d, config)
 	if err != nil {
 		return nil, err
 	} else if val := reflect.ValueOf(transformedProxyHeader); val.IsValid() && !isEmptyValue(val) {
 		transformed["proxyHeader"] = transformedProxyHeader
 	}
 
-	transformedPortSpecification, err := expandComputeHealthCheckSslHealthCheckPortSpecification(original["port_specification"], d, config)
+	transformedPortSpecification, err := expandComputeRegionHealthCheckSslHealthCheckPortSpecification(original["port_specification"], d, config)
 	if err != nil {
 		return nil, err
 	} else if val := reflect.ValueOf(transformedPortSpecification); val.IsValid() && !isEmptyValue(val) {
@@ -1413,31 +1360,31 @@ func expandComputeHealthCheckSslHealthCheck(v interface{}, d TerraformResourceDa
 	return transformed, nil
 }
 
-func expandComputeHealthCheckSslHealthCheckRequest(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandComputeRegionHealthCheckSslHealthCheckRequest(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandComputeHealthCheckSslHealthCheckResponse(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandComputeRegionHealthCheckSslHealthCheckResponse(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandComputeHealthCheckSslHealthCheckPort(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandComputeRegionHealthCheckSslHealthCheckPort(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandComputeHealthCheckSslHealthCheckPortName(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandComputeRegionHealthCheckSslHealthCheckPortName(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandComputeHealthCheckSslHealthCheckProxyHeader(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandComputeRegionHealthCheckSslHealthCheckProxyHeader(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandComputeHealthCheckSslHealthCheckPortSpecification(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandComputeRegionHealthCheckSslHealthCheckPortSpecification(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandComputeHealthCheckHttp2HealthCheck(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandComputeRegionHealthCheckHttp2HealthCheck(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -1446,49 +1393,49 @@ func expandComputeHealthCheckHttp2HealthCheck(v interface{}, d TerraformResource
 	original := raw.(map[string]interface{})
 	transformed := make(map[string]interface{})
 
-	transformedHost, err := expandComputeHealthCheckHttp2HealthCheckHost(original["host"], d, config)
+	transformedHost, err := expandComputeRegionHealthCheckHttp2HealthCheckHost(original["host"], d, config)
 	if err != nil {
 		return nil, err
 	} else if val := reflect.ValueOf(transformedHost); val.IsValid() && !isEmptyValue(val) {
 		transformed["host"] = transformedHost
 	}
 
-	transformedRequestPath, err := expandComputeHealthCheckHttp2HealthCheckRequestPath(original["request_path"], d, config)
+	transformedRequestPath, err := expandComputeRegionHealthCheckHttp2HealthCheckRequestPath(original["request_path"], d, config)
 	if err != nil {
 		return nil, err
 	} else if val := reflect.ValueOf(transformedRequestPath); val.IsValid() && !isEmptyValue(val) {
 		transformed["requestPath"] = transformedRequestPath
 	}
 
-	transformedResponse, err := expandComputeHealthCheckHttp2HealthCheckResponse(original["response"], d, config)
+	transformedResponse, err := expandComputeRegionHealthCheckHttp2HealthCheckResponse(original["response"], d, config)
 	if err != nil {
 		return nil, err
 	} else if val := reflect.ValueOf(transformedResponse); val.IsValid() && !isEmptyValue(val) {
 		transformed["response"] = transformedResponse
 	}
 
-	transformedPort, err := expandComputeHealthCheckHttp2HealthCheckPort(original["port"], d, config)
+	transformedPort, err := expandComputeRegionHealthCheckHttp2HealthCheckPort(original["port"], d, config)
 	if err != nil {
 		return nil, err
 	} else if val := reflect.ValueOf(transformedPort); val.IsValid() && !isEmptyValue(val) {
 		transformed["port"] = transformedPort
 	}
 
-	transformedPortName, err := expandComputeHealthCheckHttp2HealthCheckPortName(original["port_name"], d, config)
+	transformedPortName, err := expandComputeRegionHealthCheckHttp2HealthCheckPortName(original["port_name"], d, config)
 	if err != nil {
 		return nil, err
 	} else if val := reflect.ValueOf(transformedPortName); val.IsValid() && !isEmptyValue(val) {
 		transformed["portName"] = transformedPortName
 	}
 
-	transformedProxyHeader, err := expandComputeHealthCheckHttp2HealthCheckProxyHeader(original["proxy_header"], d, config)
+	transformedProxyHeader, err := expandComputeRegionHealthCheckHttp2HealthCheckProxyHeader(original["proxy_header"], d, config)
 	if err != nil {
 		return nil, err
 	} else if val := reflect.ValueOf(transformedProxyHeader); val.IsValid() && !isEmptyValue(val) {
 		transformed["proxyHeader"] = transformedProxyHeader
 	}
 
-	transformedPortSpecification, err := expandComputeHealthCheckHttp2HealthCheckPortSpecification(original["port_specification"], d, config)
+	transformedPortSpecification, err := expandComputeRegionHealthCheckHttp2HealthCheckPortSpecification(original["port_specification"], d, config)
 	if err != nil {
 		return nil, err
 	} else if val := reflect.ValueOf(transformedPortSpecification); val.IsValid() && !isEmptyValue(val) {
@@ -1498,35 +1445,43 @@ func expandComputeHealthCheckHttp2HealthCheck(v interface{}, d TerraformResource
 	return transformed, nil
 }
 
-func expandComputeHealthCheckHttp2HealthCheckHost(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandComputeRegionHealthCheckHttp2HealthCheckHost(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandComputeHealthCheckHttp2HealthCheckRequestPath(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandComputeRegionHealthCheckHttp2HealthCheckRequestPath(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandComputeHealthCheckHttp2HealthCheckResponse(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandComputeRegionHealthCheckHttp2HealthCheckResponse(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandComputeHealthCheckHttp2HealthCheckPort(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandComputeRegionHealthCheckHttp2HealthCheckPort(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandComputeHealthCheckHttp2HealthCheckPortName(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandComputeRegionHealthCheckHttp2HealthCheckPortName(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandComputeHealthCheckHttp2HealthCheckProxyHeader(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandComputeRegionHealthCheckHttp2HealthCheckProxyHeader(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandComputeHealthCheckHttp2HealthCheckPortSpecification(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandComputeRegionHealthCheckHttp2HealthCheckPortSpecification(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
-func resourceComputeHealthCheckEncoder(d *schema.ResourceData, meta interface{}, obj map[string]interface{}) (map[string]interface{}, error) {
+func expandComputeRegionHealthCheckRegion(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	f, err := parseGlobalFieldValue("regions", v.(string), "project", d, config, true)
+	if err != nil {
+		return nil, fmt.Errorf("Invalid value for region: %s", err)
+	}
+	return f.RelativeLink(), nil
+}
+
+func resourceComputeRegionHealthCheckEncoder(d *schema.ResourceData, meta interface{}, obj map[string]interface{}) (map[string]interface{}, error) {
 
 	if _, ok := d.GetOk("http_health_check"); ok {
 		hc := d.Get("http_health_check").([]interface{})[0]
