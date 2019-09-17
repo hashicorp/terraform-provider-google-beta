@@ -464,9 +464,9 @@ func Provider() terraform.ResourceProvider {
 	return provider
 }
 
-// Generated resources: 96
+// Generated resources: 97
 // Generated IAM resources: 21
-// Total generated resources: 117
+// Total generated resources: 118
 func ResourceMap() map[string]*schema.Resource {
 	resourceMap, _ := ResourceMapWithErrors()
 	return resourceMap
