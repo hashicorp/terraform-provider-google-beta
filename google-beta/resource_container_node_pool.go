@@ -105,6 +105,13 @@ var schemaNodePool = map[string]*schema.Schema{
 		Computed: true,
 	},
 
+	"node_locations": {
+		Type:     schema.TypeSet,
+		Optional: true,
+		Computed: true,
+		Elem:     &schema.Schema{Type: schema.TypeString},
+	},
+
 	"initial_node_count": {
 		Type:     schema.TypeInt,
 		Optional: true,
@@ -476,10 +483,16 @@ func expandNodePool(d *schema.ResourceData, prefix string) (*containerBeta.NodeP
 		nodeCount = nc.(int)
 	}
 
+	var locations []string
+	if v, ok := d.GetOk("node_locations"); ok && v.(*schema.Set).Len() > 0 {
+		locations = convertStringSet(v.(*schema.Set))
+	}
+
 	np := &containerBeta.NodePool{
 		Name:             name,
 		InitialNodeCount: int64(nodeCount),
 		Config:           expandNodeConfig(d.Get(prefix + "node_config")),
+		Locations:        locations,
 		Version:          d.Get(prefix + "version").(string),
 	}
 
@@ -536,6 +549,7 @@ func flattenNodePool(d *schema.ResourceData, config *Config, np *containerBeta.N
 		"name":                np.Name,
 		"name_prefix":         d.Get(prefix + "name_prefix"),
 		"initial_node_count":  np.InitialNodeCount,
+		"node_locations":      schema.NewSet(schema.HashString, convertStringArrToInterface(np.Locations)),
 		"node_count":          size / len(np.InstanceGroupUrls),
 		"node_config":         flattenNodeConfig(np.Config),
 		"instance_group_urls": np.InstanceGroupUrls,
@@ -755,6 +769,33 @@ func nodePoolUpdate(d *schema.ResourceData, meta interface{}, nodePoolInfo *Node
 
 		if prefix == "" {
 			d.SetPartial("version")
+		}
+	}
+
+	if d.HasChange(prefix + "node_locations") {
+		req := &containerBeta.UpdateNodePoolRequest{
+			Locations: convertStringSet(d.Get(prefix + "node_locations").(*schema.Set)),
+		}
+		updateF := func() error {
+			op, err := config.clientContainerBeta.Projects.Locations.Clusters.NodePools.Update(nodePoolInfo.fullyQualifiedName(name), req).Do()
+
+			if err != nil {
+				return err
+			}
+
+			// Wait until it's updated
+			return containerOperationWait(config, op, nodePoolInfo.project, nodePoolInfo.location, "updating GKE node pool node locations", timeoutInMinutes)
+		}
+
+		// Call update serially.
+		if err := lockedCall(lockKey, updateF); err != nil {
+			return err
+		}
+
+		log.Printf("[INFO] Updated node locations in Node Pool %s", name)
+
+		if prefix == "" {
+			d.SetPartial("node_locations")
 		}
 	}
 
