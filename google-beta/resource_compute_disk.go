@@ -298,6 +298,7 @@ func resourceComputeDisk() *schema.Resource {
 			},
 			"resource_policies": {
 				Type:     schema.TypeList,
+				Computed: true,
 				Optional: true,
 				ForceNew: true,
 				Elem: &schema.Schema{
