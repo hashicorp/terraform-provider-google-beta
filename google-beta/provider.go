@@ -303,14 +303,6 @@ func Provider() terraform.ResourceProvider {
 					"GOOGLE_RESOURCE_MANAGER_CUSTOM_ENDPOINT",
 				}, ResourceManagerDefaultBasePath),
 			},
-			"runtime_config_custom_endpoint": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				ValidateFunc: validateCustomEndpoint,
-				DefaultFunc: schema.MultiEnvDefaultFunc([]string{
-					"GOOGLE_RUNTIME_CONFIG_CUSTOM_ENDPOINT",
-				}, RuntimeConfigDefaultBasePath),
-			},
 			"security_center_custom_endpoint": {
 				Type:         schema.TypeString,
 				Optional:     true,
@@ -390,7 +382,7 @@ func Provider() terraform.ResourceProvider {
 			DnsBetaCustomEndpointEntryKey:                DnsBetaCustomEndpointEntry,
 			IamCredentialsCustomEndpointEntryKey:         IamCredentialsCustomEndpointEntry,
 			ResourceManagerV2Beta1CustomEndpointEntryKey: ResourceManagerV2Beta1CustomEndpointEntry,
-			RuntimeConfigCustomEndpointEntryKey:          RuntimeConfigCustomEndpointEntry,
+			RuntimeconfigCustomEndpointEntryKey:          RuntimeconfigCustomEndpointEntry,
 			IAMCustomEndpointEntryKey:                    IAMCustomEndpointEntry,
 			ServiceManagementCustomEndpointEntryKey:      ServiceManagementCustomEndpointEntry,
 			ServiceNetworkingCustomEndpointEntryKey:      ServiceNetworkingCustomEndpointEntry,
@@ -472,9 +464,9 @@ func Provider() terraform.ResourceProvider {
 	return provider
 }
 
-// Generated resources: 93
-// Generated IAM resources: 24
-// Total generated resources: 117
+// Generated resources: 98
+// Generated IAM resources: 21
+// Total generated resources: 119
 func ResourceMap() map[string]*schema.Resource {
 	resourceMap, _ := ResourceMapWithErrors()
 	return resourceMap
@@ -584,9 +576,6 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_pubsub_subscription":                      resourcePubsubSubscription(),
 			"google_redis_instance":                           resourceRedisInstance(),
 			"google_resource_manager_lien":                    resourceResourceManagerLien(),
-			"google_runtimeconfig_config_iam_binding":         ResourceIamBinding(RuntimeConfigConfigIamSchema, RuntimeConfigConfigIamUpdaterProducer, RuntimeConfigConfigIdParseFunc),
-			"google_runtimeconfig_config_iam_member":          ResourceIamMember(RuntimeConfigConfigIamSchema, RuntimeConfigConfigIamUpdaterProducer, RuntimeConfigConfigIdParseFunc),
-			"google_runtimeconfig_config_iam_policy":          ResourceIamPolicy(RuntimeConfigConfigIamSchema, RuntimeConfigConfigIamUpdaterProducer, RuntimeConfigConfigIdParseFunc),
 			"google_scc_source":                               resourceSecurityCenterSource(),
 			"google_security_scanner_scan_config":             resourceSecurityScannerScanConfig(),
 			"google_sourcerepo_repository":                    resourceSourceRepoRepository(),
@@ -792,7 +781,6 @@ func providerConfigure(d *schema.ResourceData, terraformVersion string) (interfa
 	config.PubsubBasePath = d.Get("pubsub_custom_endpoint").(string)
 	config.RedisBasePath = d.Get("redis_custom_endpoint").(string)
 	config.ResourceManagerBasePath = d.Get("resource_manager_custom_endpoint").(string)
-	config.RuntimeConfigBasePath = d.Get("runtime_config_custom_endpoint").(string)
 	config.SecurityCenterBasePath = d.Get("security_center_custom_endpoint").(string)
 	config.SecurityScannerBasePath = d.Get("security_scanner_custom_endpoint").(string)
 	config.SourceRepoBasePath = d.Get("source_repo_custom_endpoint").(string)
@@ -815,7 +803,7 @@ func providerConfigure(d *schema.ResourceData, terraformVersion string) (interfa
 	config.DnsBetaBasePath = d.Get(DnsBetaCustomEndpointEntryKey).(string)
 	config.IamCredentialsBasePath = d.Get(IamCredentialsCustomEndpointEntryKey).(string)
 	config.ResourceManagerV2Beta1BasePath = d.Get(ResourceManagerV2Beta1CustomEndpointEntryKey).(string)
-	config.RuntimeConfigBasePath = d.Get(RuntimeConfigCustomEndpointEntryKey).(string)
+	config.RuntimeconfigBasePath = d.Get(RuntimeconfigCustomEndpointEntryKey).(string)
 	config.IAMBasePath = d.Get(IAMCustomEndpointEntryKey).(string)
 	config.ServiceManagementBasePath = d.Get(ServiceManagementCustomEndpointEntryKey).(string)
 	config.ServiceNetworkingBasePath = d.Get(ServiceNetworkingCustomEndpointEntryKey).(string)
