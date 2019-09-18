@@ -33,11 +33,16 @@ func TestAccComputeResourcePolicy_resourcePolicyBasicExample(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProvidersOiCS,
+		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckComputeResourcePolicyDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccComputeResourcePolicy_resourcePolicyBasicExample(context),
+			},
+			{
+				ResourceName:      "google_compute_resource_policy.foo",
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -45,13 +50,7 @@ func TestAccComputeResourcePolicy_resourcePolicyBasicExample(t *testing.T) {
 
 func testAccComputeResourcePolicy_resourcePolicyBasicExample(context map[string]interface{}) string {
 	return Nprintf(`
-provider "google-beta" {
-  region = "us-central1"
-  zone   = "us-central1-a"
-}
-
 resource "google_compute_resource_policy" "foo" {
-  provider = "google-beta"
   name = "policy%{random_suffix}"
   region = "us-central1"
   snapshot_schedule_policy {
@@ -75,11 +74,16 @@ func TestAccComputeResourcePolicy_resourcePolicyFullExample(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProvidersOiCS,
+		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckComputeResourcePolicyDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccComputeResourcePolicy_resourcePolicyFullExample(context),
+			},
+			{
+				ResourceName:      "google_compute_resource_policy.bar",
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -87,13 +91,7 @@ func TestAccComputeResourcePolicy_resourcePolicyFullExample(t *testing.T) {
 
 func testAccComputeResourcePolicy_resourcePolicyFullExample(context map[string]interface{}) string {
 	return Nprintf(`
-provider "google-beta" {
-  region = "us-central1"
-  zone   = "us-central1-a"
-}
-
 resource "google_compute_resource_policy" "bar" {
-  provider = "google-beta"
   name = "policy%{random_suffix}"
   region = "us-central1"
   snapshot_schedule_policy {

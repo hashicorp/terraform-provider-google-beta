@@ -23,8 +23,6 @@ description: |-
 
 A policy that can be attached to a resource to specify or schedule actions on that resource.
 
-~> **Warning:** This resource is in beta, and should be used with the terraform-provider-google-beta provider.
-See [Provider Versions](https://terraform.io/docs/providers/google/provider_versions.html) for more details on beta resources.
 
 
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
@@ -36,13 +34,7 @@ See [Provider Versions](https://terraform.io/docs/providers/google/provider_vers
 
 
 ```hcl
-provider "google-beta" {
-  region = "us-central1"
-  zone   = "us-central1-a"
-}
-
 resource "google_compute_resource_policy" "foo" {
-  provider = "google-beta"
   name = "policy"
   region = "us-central1"
   snapshot_schedule_policy {
@@ -64,13 +56,7 @@ resource "google_compute_resource_policy" "foo" {
 
 
 ```hcl
-provider "google-beta" {
-  region = "us-central1"
-  zone   = "us-central1-a"
-}
-
 resource "google_compute_resource_policy" "bar" {
-  provider = "google-beta"
   name = "policy"
   region = "us-central1"
   snapshot_schedule_policy {
@@ -238,10 +224,10 @@ This resource provides the following
 ResourcePolicy can be imported using any of these accepted formats:
 
 ```
-$ terraform import -provider=google-beta google_compute_resource_policy.default projects/{{project}}/regions/{{region}}/resourcePolicies/{{name}}
-$ terraform import -provider=google-beta google_compute_resource_policy.default {{project}}/{{region}}/{{name}}
-$ terraform import -provider=google-beta google_compute_resource_policy.default {{region}}/{{name}}
-$ terraform import -provider=google-beta google_compute_resource_policy.default {{name}}
+$ terraform import google_compute_resource_policy.default projects/{{project}}/regions/{{region}}/resourcePolicies/{{name}}
+$ terraform import google_compute_resource_policy.default {{project}}/{{region}}/{{name}}
+$ terraform import google_compute_resource_policy.default {{region}}/{{name}}
+$ terraform import google_compute_resource_policy.default {{name}}
 ```
 
 -> If you're importing a resource with beta features, make sure to include `-provider=google-beta`
