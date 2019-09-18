@@ -1,4 +1,40 @@
-## 2.14.1 (Unreleased)
+## 2.15.1 (Unreleased)
+## 2.15.0 (September 17, 2019)
+
+FEATURES:
+* **New Resource**: `google_iap_web_iam_binding/_member/_policy` are now available for managing IAP web IAM permissions ([#1044](https://github.com/terraform-providers/terraform-provider-google-beta/issues/1044))
+* **New Resource**: `google_iap_web_backend_service_binding/_member/_policy` are now available for managing IAM permissions on IAP enabled backend services ([#1044](https://github.com/terraform-providers/terraform-provider-google-beta/issues/1044))
+* **New Resource**: `google_iap_web_type_compute_iam_binding/_member/_policy` are now available for managing IAM permissions on IAP enabled compute services ([#1044](https://github.com/terraform-providers/terraform-provider-google-beta/issues/1044))
+* **New Resource**: `google_iap_web_type_app_engine_iam_binding/_member/_policy` are now available for managing IAM permissions on IAP enabled App Engine applications ([#1044](https://github.com/terraform-providers/terraform-provider-google-beta/issues/1044))
+* **New Resource**: Add the new resource `google_app_engine_domain_mapping` ([#1079](https://github.com/terraform-providers/terraform-provider-google-beta/issues/1079))
+* **New Resource**: `google_cloudfunctions_function_iam_policy`, `google_cloudfunctions_function_iam_binding`, and `google_cloudfunctions_function_iam_member` ([#1121](https://github.com/terraform-providers/terraform-provider-google-beta/issues/1121))
+* **New Resource**: `google_compute_reservation` allows you to reserve instance capacity in GCE. ([#1086](https://github.com/terraform-providers/terraform-provider-google-beta/issues/1086))
+* **New Resource**: `google_compute_region_health_check` is now available. This and `google_compute_health_check` now include additional support for HTTP2 health checks. ([#1058](https://github.com/terraform-providers/terraform-provider-google-beta/issues/1058))
+
+ENHANCEMENTS:
+* compute: Added full routing options to `google_compute_router_peer` ([#1104](https://github.com/terraform-providers/terraform-provider-google-beta/issues/1104))
+* compute: add `tunnel_id` to `google_compute_vpn_tunnel` and `gateway_id` to `google_compute_vpn_gateway` ([#1106](https://github.com/terraform-providers/terraform-provider-google-beta/issues/1106))
+* compute: `google_compute_subnetwork` now includes the `purpose` and `role` fields. ([#1051](https://github.com/terraform-providers/terraform-provider-google-beta/issues/1051))
+* compute: add `purpose` field to `google_compute_address` ([#1115](https://github.com/terraform-providers/terraform-provider-google-beta/issues/1115))
+* compute: add `mode` option to `google_compute_instance.boot_disk` ([#1119](https://github.com/terraform-providers/terraform-provider-google-beta/issues/1119))
+* compute: `google_compute_firewall` does not show a diff if allowed or denied rules are specified with uppercase protocol values ([#1144](https://github.com/terraform-providers/terraform-provider-google-beta/issues/1144))
+* compute: Add support for the `log_config` block to `compute_backend_service` (Beta only) ([#1137](https://github.com/terraform-providers/terraform-provider-google-beta/issues/1137))
+* logging: added `metric_descriptor.unit` to `google_logging_metric` resource ([#1117](https://github.com/terraform-providers/terraform-provider-google-beta/issues/1117))
+
+BUG FIXES:
+* all: More classes of generic HTTP errors are retried provider-wide. ([#1120](https://github.com/terraform-providers/terraform-provider-google-beta/issues/1120))
+* container: Fix error when `master_authorized_networks_config` is removed from the `google_container_cluster` configuration. ([#1133](https://github.com/terraform-providers/terraform-provider-google-beta/issues/1133))
+* iam: Make `google_service_account_` and `google_service_account_iam_*` validation less restrictive to allow for more default service accounts ([#1109](https://github.com/terraform-providers/terraform-provider-google-beta/issues/1109))
+* iam: set auditconfigs in state for google_\*\_iam_policy resources ([#1134](https://github.com/terraform-providers/terraform-provider-google-beta/issues/1134))
+* logging: `google_logging_metric` `explicit` bucket option can now be set ([#1096](https://github.com/terraform-providers/terraform-provider-google-beta/issues/1096))
+* pubsub: Add retry for Pubsub Topic creation when project is still initializing org policies ([#1094](https://github.com/terraform-providers/terraform-provider-google-beta/issues/1094))
+* servicenetworking: remove need for provider-level project to delete connection ([#1132](https://github.com/terraform-providers/terraform-provider-google-beta/issues/1132))
+* sql: Add more retries for operationInProgress 409 errors for `google_sql_database_instance` ([#1108](https://github.com/terraform-providers/terraform-provider-google-beta/issues/1108))
+
+MISC:
+* The User-Agent header that Terraform sends has been updated to correctly report the version of Terraform being run, and has minorly changed the formatting on the Terraform string. ([#1107](https://github.com/terraform-providers/terraform-provider-google-beta/issues/1107))
+
+
 ## 2.14.0 (August 28, 2019)
 
 DEPRECATIONS:
