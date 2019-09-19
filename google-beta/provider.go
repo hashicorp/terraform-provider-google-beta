@@ -472,9 +472,9 @@ func Provider() terraform.ResourceProvider {
 	return provider
 }
 
-// Generated resources: 93
+// Generated resources: 94
 // Generated IAM resources: 24
-// Total generated resources: 117
+// Total generated resources: 118
 func ResourceMap() map[string]*schema.Resource {
 	resourceMap, _ := ResourceMapWithErrors()
 	return resourceMap
@@ -526,6 +526,7 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_compute_node_template":                    resourceComputeNodeTemplate(),
 			"google_compute_region_autoscaler":                resourceComputeRegionAutoscaler(),
 			"google_compute_region_disk":                      resourceComputeRegionDisk(),
+			"google_compute_region_url_map":                   resourceComputeRegionUrlMap(),
 			"google_compute_region_health_check":              resourceComputeRegionHealthCheck(),
 			"google_compute_resource_policy":                  resourceComputeResourcePolicy(),
 			"google_compute_route":                            resourceComputeRoute(),
