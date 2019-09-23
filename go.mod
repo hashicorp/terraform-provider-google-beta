@@ -20,5 +20,5 @@ require (
 	github.com/stretchr/objx v0.1.1 // indirect
 	github.com/terraform-providers/terraform-provider-random v0.0.0-20180820145304-a3da7a23d7f9
 	golang.org/x/oauth2 v0.0.0-20190604053449-0f29369cfe45
-	google.golang.org/api v0.6.0
+	google.golang.org/api v0.10.0
 )
