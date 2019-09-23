@@ -25,6 +25,8 @@ description: |-
 UrlMaps are used to route requests to a backend service based on rules
 that you define for the host and path of an incoming URL.
 
+~> **Warning:** This resource is in beta, and should be used with the terraform-provider-google-beta provider.
+See [Provider Versions](https://terraform.io/docs/providers/google/provider_versions.html) for more details on beta resources.
 
 
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
@@ -37,9 +39,11 @@ that you define for the host and path of an incoming URL.
 
 ```hcl
 resource "google_compute_region_url_map" "regionurlmap" {
+  provider    = "google-beta"
+  region      = "us-central1"
+
   name        = "regionurlmap"
   description = "a description"
-  region      = "us-central1"
 
   default_service = "${google_compute_region_backend_service.home.self_link}"
 
@@ -71,8 +75,10 @@ resource "google_compute_region_url_map" "regionurlmap" {
 }
 
 resource "google_compute_region_backend_service" "login" {
-  name        = "login"
+  provider    = "google-beta"
   region      = "us-central1"
+
+  name        = "login"
   protocol    = "HTTP"
   timeout_sec = 10
 
@@ -80,8 +86,10 @@ resource "google_compute_region_backend_service" "login" {
 }
 
 resource "google_compute_region_backend_service" "home" {
-  name        = "home"
+  provider    = "google-beta"
   region      = "us-central1"
+
+  name        = "home"
   protocol    = "HTTP"
   timeout_sec = 10
 
@@ -89,8 +97,10 @@ resource "google_compute_region_backend_service" "home" {
 }
 
 resource "google_compute_region_health_check" "default" {
+  provider           = "google-beta"
+  region	     = "us-central1"
+
   name               = "health-check"
-  region             = "us-central1"
   check_interval_sec = 1
   timeout_sec        = 1
   http_health_check  {
@@ -254,10 +264,10 @@ This resource provides the following
 RegionUrlMap can be imported using any of these accepted formats:
 
 ```
-$ terraform import google_compute_region_url_map.default projects/{{project}}/regions/{{region}}/urlMaps/{{name}}
-$ terraform import google_compute_region_url_map.default {{project}}/{{region}}/{{name}}
-$ terraform import google_compute_region_url_map.default {{region}}/{{name}}
-$ terraform import google_compute_region_url_map.default {{name}}
+$ terraform import -provider=google-beta google_compute_region_url_map.default projects/{{project}}/regions/{{region}}/urlMaps/{{name}}
+$ terraform import -provider=google-beta google_compute_region_url_map.default {{project}}/{{region}}/{{name}}
+$ terraform import -provider=google-beta google_compute_region_url_map.default {{region}}/{{name}}
+$ terraform import -provider=google-beta google_compute_region_url_map.default {{name}}
 ```
 
 -> If you're importing a resource with beta features, make sure to include `-provider=google-beta`
