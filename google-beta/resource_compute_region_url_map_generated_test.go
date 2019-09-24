@@ -33,11 +33,16 @@ func TestAccComputeRegionUrlMap_regionUrlMapBasicExample(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProvidersOiCS,
+		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckComputeRegionUrlMapDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccComputeRegionUrlMap_regionUrlMapBasicExample(context),
+			},
+			{
+				ResourceName:      "google_compute_region_url_map.regionurlmap",
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -46,11 +51,9 @@ func TestAccComputeRegionUrlMap_regionUrlMapBasicExample(t *testing.T) {
 func testAccComputeRegionUrlMap_regionUrlMapBasicExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_compute_region_url_map" "regionurlmap" {
-  provider    = "google-beta"
-  region      = "us-central1"
-
   name        = "regionurlmap%{random_suffix}"
   description = "a description"
+  region      = "us-central1"
 
   default_service = "${google_compute_region_backend_service.home.self_link}"
 
@@ -82,10 +85,8 @@ resource "google_compute_region_url_map" "regionurlmap" {
 }
 
 resource "google_compute_region_backend_service" "login" {
-  provider    = "google-beta"
-  region      = "us-central1"
-
   name        = "login%{random_suffix}"
+  region      = "us-central1"
   protocol    = "HTTP"
   timeout_sec = 10
 
@@ -93,10 +94,8 @@ resource "google_compute_region_backend_service" "login" {
 }
 
 resource "google_compute_region_backend_service" "home" {
-  provider    = "google-beta"
-  region      = "us-central1"
-
   name        = "home%{random_suffix}"
+  region      = "us-central1"
   protocol    = "HTTP"
   timeout_sec = 10
 
@@ -104,10 +103,8 @@ resource "google_compute_region_backend_service" "home" {
 }
 
 resource "google_compute_region_health_check" "default" {
-  provider           = "google-beta"
-  region	     = "us-central1"
-
   name               = "health-check%{random_suffix}"
+  region             = "us-central1"
   check_interval_sec = 1
   timeout_sec        = 1
   http_health_check  {
