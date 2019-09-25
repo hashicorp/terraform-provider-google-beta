@@ -24,7 +24,7 @@ import (
 	"github.com/hashicorp/terraform/terraform"
 )
 
-func TestAccComputeRegionUrlMap_regionUrlMapBasicExample(t *testing.T) {
+func TestAccComputeRegionTargetHttpProxy_regionTargetHttpProxyBasicExample(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
@@ -34,26 +34,31 @@ func TestAccComputeRegionUrlMap_regionUrlMapBasicExample(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProvidersOiCS,
-		CheckDestroy: testAccCheckComputeRegionUrlMapDestroy,
+		CheckDestroy: testAccCheckComputeRegionTargetHttpProxyDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccComputeRegionUrlMap_regionUrlMapBasicExample(context),
+				Config: testAccComputeRegionTargetHttpProxy_regionTargetHttpProxyBasicExample(context),
 			},
 		},
 	})
 }
 
-func testAccComputeRegionUrlMap_regionUrlMapBasicExample(context map[string]interface{}) string {
+func testAccComputeRegionTargetHttpProxy_regionTargetHttpProxyBasicExample(context map[string]interface{}) string {
 	return Nprintf(`
-resource "google_compute_region_url_map" "regionurlmap" {
+resource "google_compute_region_target_http_proxy" "default" {
   provider = "google-beta"
 
   region      = "us-central1"
+  name        = "test-proxy%{random_suffix}"
+  url_map     = "${google_compute_region_url_map.default.self_link}"
+}
 
-  name        = "regionurlmap%{random_suffix}"
-  description = "a description"
+resource "google_compute_region_url_map" "default" {
+  provider = "google-beta"
 
-  default_service = "${google_compute_region_backend_service.home.self_link}"
+  region          = "us-central1"
+  name            = "url-map%{random_suffix}"
+  default_service = "${google_compute_region_backend_service.default.self_link}"
 
   host_rule {
     hosts        = ["mysite.com"]
@@ -62,44 +67,20 @@ resource "google_compute_region_url_map" "regionurlmap" {
 
   path_matcher {
     name            = "allpaths"
-    default_service = "${google_compute_region_backend_service.home.self_link}"
+    default_service = "${google_compute_region_backend_service.default.self_link}"
 
     path_rule {
-      paths   = ["/home"]
-      service = "${google_compute_region_backend_service.home.self_link}"
+      paths   = ["/*"]
+      service = "${google_compute_region_backend_service.default.self_link}"
     }
-
-    path_rule {
-      paths   = ["/login"]
-      service = "${google_compute_region_backend_service.login.self_link}"
-    }
-  }
-
-  test {
-    service = "${google_compute_region_backend_service.home.self_link}"
-    host    = "hi.com"
-    path    = "/home"
   }
 }
 
-resource "google_compute_region_backend_service" "login" {
+resource "google_compute_region_backend_service" "default" {
   provider = "google-beta"
 
   region      = "us-central1"
-
-  name        = "login%{random_suffix}"
-  protocol    = "HTTP"
-  timeout_sec = 10
-
-  health_checks = ["${google_compute_region_health_check.default.self_link}"]
-}
-
-resource "google_compute_region_backend_service" "home" {
-  provider = "google-beta"
-
-  region      = "us-central1"
-
-  name        = "home%{random_suffix}"
+  name        = "backend-service%{random_suffix}"
   protocol    = "HTTP"
   timeout_sec = 10
 
@@ -109,22 +90,17 @@ resource "google_compute_region_backend_service" "home" {
 resource "google_compute_region_health_check" "default" {
   provider = "google-beta"
 
-  region	     = "us-central1"
-
-  name               = "health-check%{random_suffix}"
-  check_interval_sec = 1
-  timeout_sec        = 1
-  http_health_check  {
-    port         = 80
-    request_path = "/"
+  region = "us-central1"
+  name   = "http-health-check%{random_suffix}"
+  http_health_check {
   }
 }
 `, context)
 }
 
-func testAccCheckComputeRegionUrlMapDestroy(s *terraform.State) error {
+func testAccCheckComputeRegionTargetHttpProxyDestroy(s *terraform.State) error {
 	for name, rs := range s.RootModule().Resources {
-		if rs.Type != "google_compute_region_url_map" {
+		if rs.Type != "google_compute_region_target_http_proxy" {
 			continue
 		}
 		if strings.HasPrefix(name, "data.") {
@@ -133,14 +109,14 @@ func testAccCheckComputeRegionUrlMapDestroy(s *terraform.State) error {
 
 		config := testAccProvider.Meta().(*Config)
 
-		url, err := replaceVarsForTest(config, rs, "{{ComputeBasePath}}projects/{{project}}/regions/{{region}}/urlMaps/{{name}}")
+		url, err := replaceVarsForTest(config, rs, "{{ComputeBasePath}}projects/{{project}}/regions/{{region}}/targetHttpProxies/{{name}}")
 		if err != nil {
 			return err
 		}
 
 		_, err = sendRequest(config, "GET", "", url, nil)
 		if err == nil {
-			return fmt.Errorf("ComputeRegionUrlMap still exists at %s", url)
+			return fmt.Errorf("ComputeRegionTargetHttpProxy still exists at %s", url)
 		}
 	}
 

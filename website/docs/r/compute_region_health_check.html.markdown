@@ -52,15 +52,15 @@ To get more information about RegionHealthCheck, see:
 
 ```hcl
 resource "google_compute_region_health_check" "tcp-region-health-check" {
- provider = "google-beta"
- name = "tcp-region-health-check"
+  provider = "google-beta"
+  name = "tcp-region-health-check"
 
- timeout_sec        = 1
- check_interval_sec = 1
+  timeout_sec        = 1
+  check_interval_sec = 1
 
- tcp_health_check {
-   port = "80"
- }
+  tcp_health_check {
+    port = "80"
+  }
 }
 ```
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
@@ -101,15 +101,15 @@ resource "google_compute_region_health_check" "tcp-region-health-check" {
 
 ```hcl
 resource "google_compute_region_health_check" "ssl-region-health-check" {
- provider = "google-beta"
- name = "ssl-region-health-check"
+  provider = "google-beta"
+  name = "ssl-region-health-check"
 
- timeout_sec        = 1
- check_interval_sec = 1
+  timeout_sec        = 1
+  check_interval_sec = 1
 
- ssl_health_check {
-   port = "443"
- }
+  ssl_health_check {
+    port = "443"
+  }
 }
 ```
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
@@ -150,15 +150,15 @@ resource "google_compute_region_health_check" "ssl-region-health-check" {
 
 ```hcl
 resource "google_compute_region_health_check" "http-region-health-check" {
- provider = "google-beta"
- name = "http-region-health-check"
+  provider = "google-beta"
+  name = "http-region-health-check"
 
- timeout_sec        = 1
- check_interval_sec = 1
+  timeout_sec        = 1
+  check_interval_sec = 1
 
- http_health_check {
-   port = "80"
- }
+  http_health_check {
+    port = "80"
+  }
 }
 ```
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
@@ -200,15 +200,15 @@ resource "google_compute_region_health_check" "http-region-health-check" {
 
 ```hcl
 resource "google_compute_region_health_check" "https-region-health-check" {
- provider = "google-beta"
- name = "https-region-health-check"
+  provider = "google-beta"
+  name = "https-region-health-check"
 
- timeout_sec        = 1
- check_interval_sec = 1
+  timeout_sec        = 1
+  check_interval_sec = 1
 
- https_health_check {
-   port = "443"
- }
+  https_health_check {
+    port = "443"
+  }
 }
 ```
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
@@ -250,15 +250,15 @@ resource "google_compute_region_health_check" "https-region-health-check" {
 
 ```hcl
 resource "google_compute_region_health_check" "http2-region-health-check" {
- provider = "google-beta"
- name = "http2-region-health-check"
+  provider = "google-beta"
+  name = "http2-region-health-check"
 
- timeout_sec        = 1
- check_interval_sec = 1
+  timeout_sec        = 1
+  check_interval_sec = 1
 
- http2_health_check {
-   port = "443"
- }
+  http2_health_check {
+    port = "443"
+  }
 }
 ```
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
