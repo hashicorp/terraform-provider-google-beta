@@ -1,4 +1,24 @@
-## 2.15.1 (Unreleased)
+## 2.16.1 (Unreleased)
+## 2.16.0 (September 24, 2019)
+
+FEATURES:
+* **New Resource**: `google_compute_region_url_map` is now available. To support this, the `protocol` for `google_compute_region_backend_service` can now be set to `HTTP`, `HTTPS`, `HTTP2`, and `SSL`. ([#1161](https://github.com/terraform-providers/terraform-provider-google-beta/issues/1161))
+* **New Resource**: Adds `google_runtimeconfig_config_iam_*` resources ([#1138](https://github.com/terraform-providers/terraform-provider-google-beta/issues/1138))
+* **New Resource**: Added `google_compute_resource_policy` and `google_compute_disk_resource_policy_attachment` to manage `google_compute_disk` resource policies as fine-grained resources ([#1085](https://github.com/terraform-providers/terraform-provider-google-beta/issues/1085))
+
+ENHANCEMENTS:
+* composer: Add `python_version` and ability to set `image_version` in `google_composer_environment` in the GA provider ([#1143](https://github.com/terraform-providers/terraform-provider-google-beta/issues/1143))
+* compute: `google_compute_global_forwarding_rule` now supports `metadata_filters`. ([#1160](https://github.com/terraform-providers/terraform-provider-google-beta/issues/1160))
+* compute: `google_compute_backend_service` now supports `locality_lb_policy`, `outlier_detection`, `consistent_hash`, and `circuit_breakers`. ([#1118](https://github.com/terraform-providers/terraform-provider-google-beta/issues/1118))
+* compute: Add support for `guest_os_features` to resource `google_compute_image` ([#1156](https://github.com/terraform-providers/terraform-provider-google-beta/issues/1156))
+* compute: Added `drain_nat_ips` to `google_compute_router_nat` ([#1155](https://github.com/terraform-providers/terraform-provider-google-beta/issues/1155))
+* container: google_container_node_pool now supports node_locations to specify specific node zones. ([#1154](https://github.com/terraform-providers/terraform-provider-google-beta/issues/1154))
+* googleapis: `google_netblock_ip_ranges` data source now has a `private-googleapis` field, for the IP addresses used for Private Google Access for services that do not support VPC Service Controls API access. ([#1102](https://github.com/terraform-providers/terraform-provider-google-beta/issues/1102))
+* project: `google_project_iam_*` Properly set the `project` field in state ([#1158](https://github.com/terraform-providers/terraform-provider-google-beta/issues/1158))
+
+BUG FIXES:
+* cloudiot: Fixed error where `subfolder_matches` were not set in `google_cloudiot_registry` `event_notification_configs` ([#1175](https://github.com/terraform-providers/terraform-provider-google-beta/issues/1175))
+
 ## 2.15.0 (September 17, 2019)
 
 FEATURES:
