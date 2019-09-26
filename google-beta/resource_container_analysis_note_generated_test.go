@@ -33,11 +33,16 @@ func TestAccContainerAnalysisNote_containerAnalysisNoteBasicExample(t *testing.T
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProvidersOiCS,
+		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckContainerAnalysisNoteDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccContainerAnalysisNote_containerAnalysisNoteBasicExample(context),
+			},
+			{
+				ResourceName:      "google_container_analysis_note.note",
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -46,19 +51,12 @@ func TestAccContainerAnalysisNote_containerAnalysisNoteBasicExample(t *testing.T
 func testAccContainerAnalysisNote_containerAnalysisNoteBasicExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_container_analysis_note" "note" {
-  provider = "google-beta"
-
   name = "test-attestor-note%{random_suffix}"
   attestation_authority {
     hint {
       human_readable_name = "Attestor Note"
     }
   }
-}
-
-provider "google-beta"{
-  region = "us-central1"
-  zone   = "us-central1-a"
 }
 `, context)
 }

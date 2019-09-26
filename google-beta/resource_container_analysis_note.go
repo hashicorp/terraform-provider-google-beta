@@ -96,6 +96,11 @@ func resourceContainerAnalysisNoteCreate(d *schema.ResourceData, meta interface{
 		obj["attestationAuthority"] = attestationAuthorityProp
 	}
 
+	obj, err = resourceContainerAnalysisNoteEncoder(d, meta, obj)
+	if err != nil {
+		return err
+	}
+
 	url, err := replaceVars(d, config, "{{ContainerAnalysisBasePath}}projects/{{project}}/notes?noteId={{name}}")
 	if err != nil {
 		return err
@@ -140,6 +145,18 @@ func resourceContainerAnalysisNoteRead(d *schema.ResourceData, meta interface{})
 		return handleNotFoundError(err, d, fmt.Sprintf("ContainerAnalysisNote %q", d.Id()))
 	}
 
+	res, err = resourceContainerAnalysisNoteDecoder(d, meta, res)
+	if err != nil {
+		return err
+	}
+
+	if res == nil {
+		// Decoding the object has resulted in it being gone. It may be marked deleted
+		log.Printf("[DEBUG] Removing ContainerAnalysisNote because it no longer exists.")
+		d.SetId("")
+		return nil
+	}
+
 	if err := d.Set("project", project); err != nil {
 		return fmt.Errorf("Error reading Note: %s", err)
 	}
@@ -168,6 +185,11 @@ func resourceContainerAnalysisNoteUpdate(d *schema.ResourceData, meta interface{
 		return err
 	} else if v, ok := d.GetOkExists("attestation_authority"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, attestationAuthorityProp)) {
 		obj["attestationAuthority"] = attestationAuthorityProp
+	}
+
+	obj, err = resourceContainerAnalysisNoteEncoder(d, meta, obj)
+	if err != nil {
+		return err
 	}
 
 	url, err := replaceVars(d, config, "{{ContainerAnalysisBasePath}}projects/{{project}}/notes/{{name}}")
@@ -321,4 +343,16 @@ func expandContainerAnalysisNoteAttestationAuthorityHint(v interface{}, d Terraf
 
 func expandContainerAnalysisNoteAttestationAuthorityHintHumanReadableName(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
+}
+
+func resourceContainerAnalysisNoteEncoder(d *schema.ResourceData, meta interface{}, obj map[string]interface{}) (map[string]interface{}, error) {
+	// encoder logic only in GA provider
+
+	return obj, nil
+}
+
+func resourceContainerAnalysisNoteDecoder(d *schema.ResourceData, meta interface{}, res map[string]interface{}) (map[string]interface{}, error) {
+	// decoder logic only in GA provider
+
+	return res, nil
 }

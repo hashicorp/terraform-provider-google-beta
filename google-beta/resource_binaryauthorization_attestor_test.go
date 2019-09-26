@@ -6,7 +6,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/terraform"
 )
 
 func TestAccBinaryAuthorizationAttestor_basic(t *testing.T) {
@@ -109,32 +108,6 @@ func TestAccBinaryAuthorizationAttestor_update(t *testing.T) {
 			},
 		},
 	})
-}
-
-func testAccCheckBinaryAuthorizationAttestorDestroy(s *terraform.State) error {
-	config := testAccProvider.Meta().(*Config)
-
-	for _, rs := range s.RootModule().Resources {
-		if rs.Type != "google_binary_authorization_attestor" {
-			continue
-		}
-
-		project, err := getTestProject(rs.Primary, config)
-		if err != nil {
-			return err
-		}
-
-		name := rs.Primary.Attributes["name"]
-
-		url := fmt.Sprintf("https://binaryauthorization.googleapis.com/v1beta1/projects/%s/attestors/%s", project, name)
-		_, err = sendRequest(config, "GET", "", url, nil)
-
-		if err == nil {
-			return fmt.Errorf("Error, attestor %s still exists", name)
-		}
-	}
-
-	return nil
 }
 
 func testAccBinaryAuthorizationAttestorBasic(name string) string {
