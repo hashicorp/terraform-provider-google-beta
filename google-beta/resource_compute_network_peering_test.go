@@ -33,6 +33,11 @@ func TestAccComputeNetworkPeering_basic(t *testing.T) {
 					testAccCheckComputeNetworkPeeringExportCustomRoutes(true, &peering_beta),
 				),
 			},
+			{
+				ResourceName:      "google_compute_network_peering.foo",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
 		},
 	})
 
