@@ -1,8 +1,7 @@
 module github.com/terraform-providers/terraform-provider-google-beta
 
 require (
-	cloud.google.com/go/bigtable v1.0.0
-	cloud.google.com/go/pubsub v1.0.1 // indirect
+	cloud.google.com/go/bigtable v1.0.1-0.20190930151326-312d69ccea6e
 	github.com/apparentlymart/go-cidr v1.0.1
 	github.com/apparentlymart/go-dump v0.0.0-20190214190832-042adf3cf4a0 // indirect
 	github.com/aws/aws-sdk-go v1.22.0 // indirect
