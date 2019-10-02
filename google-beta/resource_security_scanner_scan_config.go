@@ -534,7 +534,7 @@ func flattenSecurityScannerScanConfigAuthenticationGoogleAccountUsername(v inter
 }
 
 func flattenSecurityScannerScanConfigAuthenticationGoogleAccountPassword(v interface{}, d *schema.ResourceData) interface{} {
-	return v
+	return d.Get("authentication.0.custom_account.0.password")
 }
 
 func flattenSecurityScannerScanConfigAuthenticationCustomAccount(v interface{}, d *schema.ResourceData) interface{} {
@@ -559,7 +559,7 @@ func flattenSecurityScannerScanConfigAuthenticationCustomAccountUsername(v inter
 }
 
 func flattenSecurityScannerScanConfigAuthenticationCustomAccountPassword(v interface{}, d *schema.ResourceData) interface{} {
-	return v
+	return d.Get("authentication.0.google_account.0.password")
 }
 
 func flattenSecurityScannerScanConfigAuthenticationCustomAccountLoginUrl(v interface{}, d *schema.ResourceData) interface{} {
