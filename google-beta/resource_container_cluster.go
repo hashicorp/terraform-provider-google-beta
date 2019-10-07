@@ -687,6 +687,13 @@ func resourceContainerCluster() *schema.Resource {
 				Elem:     &schema.Schema{Type: schema.TypeString},
 			},
 
+			"default_max_pods_per_node": {
+				Type:     schema.TypeInt,
+				Optional: true,
+				ForceNew: true,
+				Computed: true,
+			},
+
 			"vertical_pod_autoscaling": {
 				Type:     schema.TypeList,
 				MaxItems: 1,
@@ -718,13 +725,6 @@ func resourceContainerCluster() *schema.Resource {
 			"tpu_ipv4_cidr_block": {
 				Computed: true,
 				Type:     schema.TypeString,
-			},
-
-			"default_max_pods_per_node": {
-				Type:     schema.TypeInt,
-				Optional: true,
-				ForceNew: true,
-				Computed: true,
 			},
 
 			"database_encryption": {
@@ -1169,13 +1169,13 @@ func resourceContainerClusterRead(d *schema.ResourceData, meta interface{}) erro
 	if err := d.Set("cluster_autoscaling", flattenClusterAutoscaling(cluster.Autoscaling)); err != nil {
 		return err
 	}
-	if cluster.DefaultMaxPodsConstraint != nil {
-		d.Set("default_max_pods_per_node", cluster.DefaultMaxPodsConstraint.MaxPodsPerNode)
-	}
 	if err := d.Set("authenticator_groups_config", flattenAuthenticatorGroupsConfig(cluster.AuthenticatorGroupsConfig)); err != nil {
 		return err
 	}
 	d.Set("enable_intranode_visibility", cluster.NetworkConfig.EnableIntraNodeVisibility)
+	if cluster.DefaultMaxPodsConstraint != nil {
+		d.Set("default_max_pods_per_node", cluster.DefaultMaxPodsConstraint.MaxPodsPerNode)
+	}
 	if err := d.Set("node_config", flattenNodeConfig(cluster.NodeConfig)); err != nil {
 		return err
 	}
