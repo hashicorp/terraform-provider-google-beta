@@ -1,4 +1,41 @@
-## 2.16.1 (Unreleased)
+## 2.17.1 (Unreleased)
+## 2.17.0 (October 08, 2019)
+
+NOTES:
+* An [upgrade guide](https://www.terraform.io/docs/providers/google/version_3_upgrade.html) has been started for the upcoming 3.0.0 release. ([#1220](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1220))
+* `google_project_services` users of provider versions prior to `2.17.0` should update, as past versions of the provider will not handle an upcoming rename of `bigquery-json.googleapis.com` to `bigquery.googleapis.com` well. See https://github.com/terraform-providers/terraform-provider-google/issues/4590 for details. ([#1234](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1234))
+
+DEPRECATIONS:
+* `google_project_services` ([#1218](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1218))
+
+FEATURES:
+* **New Resource:** `google_bigtable_gc_policy` ([#1213](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1213))
+* **New Resource:** `google_binary_authorization_attestor_iam_policy` ([#1166](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1166))
+* **New Resource:** `google_compute_region_ssl_certificate` ([#1183](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1183))
+* **New Resource:** `google_compute_region_target_http_proxy` ([#1183](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1183))
+* **New Resource:** `google_compute_region_target_https_proxy` ([#1183](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1183))
+* **New Resource:** `google_iap_app_engine_service_iam_*` ([#1205](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1205))
+* **New Resource:** `google_iap_app_engine_version_iam_*` ([#1205](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1205))
+* **New Resource:** `google_storage_bucket_access_control` ([#1177](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1177))
+
+IMPROVEMENTS:
+* all: made `monitoring-read` scope available. ([#1208](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1208))
+* bigquery: added support for default customer-managed encryption keys (CMEK) for BigQuery datasets. ([#1081](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1081))
+* bigtable: import support added to `google_bigtable_instance` ([#1224](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1224))
+* cloudbuild: added `github` field in `google_cloudbuild_trigger`. ([#1229](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1229))
+* container: moved `default_max_pods_per_node` to ga. ([#1235](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1235))
+* containeranalysis: moved `google_containeranalysis_note` to ga ([#1166](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1166))
+* projectservice: added mitigations for bigquery-json to bigquery rename in project service resources. ([#1234](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1234))
+
+BUGS:
+* cloudscheduler: Fixed permadiff for `app_engine_http_target.app_engine_routing` on `google_cloud_scheduler_job` ([#1131](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1131))
+* compute: Added ability to set `quic_override` on `google_compute_https_target_proxy` to empty. ([#1219](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1219))
+* compute: Fix bug where changes to `region_backend_service.backends.failover` was not detected. ([#1236](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1236))
+* compute: fixed `google_compute_router_peer` to default if empty for `advertise_mode` ([#1163](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1163))
+* compute: fixed perma-diff in `google_compute_router_nat` when referencing subnetwork via `name` ([#1194](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1194))
+* compute: fixed perma-diff in `google_compute_router_nat` when referencing subnetwork via `name` ([#1194](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1194))
+* container: fixed an overly-aggressive validation for `master_ipv4_cidr_block` in `google_container_cluster` ([#1211](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1211))
+
 ## 2.16.0 (September 24, 2019)
 
 KNOWN ISSUES:
