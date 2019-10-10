@@ -182,6 +182,11 @@ resource "google_project" "project" {
   org_id          = "%s"
   billing_account = "%s"
 }
+
+resource "google_project_service" "binauthz" {
+  project = "${google_project.project.project_id}"
+  service = "binaryauthorization.googleapis.com"
+}
 `, pid, pname, org, billing)
 }
 
@@ -195,6 +200,11 @@ resource "google_project" "project" {
   billing_account = "%s"
 }
 
+resource "google_project_service" "binauthz" {
+  project = "${google_project.project.project_id}"
+  service = "binaryauthorization.googleapis.com"
+}
+
 resource "google_binary_authorization_policy" "policy" {
   project = "${google_project.project.project_id}"
 
@@ -206,6 +216,8 @@ resource "google_binary_authorization_policy" "policy" {
     evaluation_mode = "ALWAYS_DENY"
     enforcement_mode = "ENFORCED_BLOCK_AND_AUDIT_LOG"
   }
+
+  depends_on = ["google_project_service.binauthz"]
 }
 `, pid, pname, org, billing)
 }
