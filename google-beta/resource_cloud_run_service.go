@@ -1369,13 +1369,57 @@ func resourceCloudRunServiceEncoder(d *schema.ResourceData, meta interface{}, ob
 }
 
 func resourceCloudRunServiceDecoder(d *schema.ResourceData, meta interface{}, res map[string]interface{}) (map[string]interface{}, error) {
-	// metadata is not present if the API returns an error
-	if obj, ok := res["metadata"]; ok {
-		if meta, ok := obj.(map[string]interface{}); ok {
-			res["name"] = meta["name"]
-		} else {
-			return nil, fmt.Errorf("Unable to decode 'metadata' block from API response.")
-		}
+	config := meta.(*Config)
+	url, err := replaceVars(d, config, "{{CloudRunBasePath}}projects/{{project}}/locations/{{location}}/services/{{name}}")
+	if err != nil {
+		return nil, err
 	}
-	return res, nil
+	project, err := getProject(d, config)
+	if err != nil {
+		return nil, err
+	}
+
+	i := 1
+	for {
+		log.Printf("[DEBUG] ##=+--( tmshn )--+=## %d-th loop", i)
+		i = i + 1
+		// metadata is not present if the API returns an error
+		if obj, ok := res["metadata"]; ok {
+			if meta, ok := obj.(map[string]interface{}); ok {
+				res["name"] = meta["name"]
+				status := res["status"].(map[string]interface{})
+				// Get `status.conditions[type=="ready"]`
+				conditions := flattenCloudRunServiceStatusConditions(status["conditions"], d).([]interface{})
+				var ready interface{}
+				for _, cond := range conditions {
+					if c, ok := cond.(map[string]interface{}); ok {
+						if c["type"] == "Ready" {
+							ready = c["status"]
+							break
+						}
+					}
+				}
+				if ready == nil {
+					return nil, fmt.Errorf("Unable to decode 'status.conditions' block from API response, or ready status is missing.")
+				}
+
+				// Examine if its ready; refetch api if not
+				if meta["generation"] == status["observedGeneration"] && (ready == "True" || ready == "False") {
+					log.Printf("[DEBUG] ##=+--( tmshn )--+=## meta[\"generation\"] = %#v (%T)", meta["generation"], meta["generation"])
+					log.Printf("[DEBUG] ##=+--( tmshn )--+=## status[\"observedGeneration\"] = %#v (%T)", status["observedGeneration"], status["observedGeneration"])
+					log.Printf("[DEBUG] ##=+--( tmshn )--+=## ready = %#v (%T)", ready, ready)
+					return res, nil
+				}
+
+				time.Sleep(1 * time.Second)
+				res, err = sendRequest(config, "GET", project, url, nil)
+				if err != nil {
+					return nil, handleNotFoundError(err, d, fmt.Sprintf("CloudRunService %q", d.Id()))
+				}
+			} else {
+				return nil, fmt.Errorf("Unable to decode 'metadata' block from API response.")
+			}
+		}
+		return res, nil
+	}
 }
