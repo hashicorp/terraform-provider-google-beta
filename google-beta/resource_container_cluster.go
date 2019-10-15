@@ -700,6 +700,26 @@ func resourceContainerCluster() *schema.Resource {
 				Computed: true,
 			},
 
+			"release_channel": {
+				Type:     schema.TypeList,
+				ForceNew: true,
+				Optional: true,
+				Computed: true,
+				MaxItems: 1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"channel": {
+							Type:             schema.TypeString,
+							Default:          "UNSPECIFIED",
+							Optional:         true,
+							ForceNew:         true,
+							ValidateFunc:     validation.StringInSlice([]string{"UNSPECIFIED", "RAPID", "REGULAR", "STABLE"}, false),
+							DiffSuppressFunc: emptyOrDefaultStringSuppress("UNSPECIFIED"),
+						},
+					},
+				},
+			},
+
 			"vertical_pod_autoscaling": {
 				Type:     schema.TypeList,
 				MaxItems: 1,
@@ -922,6 +942,7 @@ func resourceContainerClusterCreate(d *schema.ResourceData, meta interface{}) er
 		EnableKubernetesAlpha:   d.Get("enable_kubernetes_alpha").(bool),
 		IpAllocationPolicy:      expandIPAllocationPolicy(d.Get("ip_allocation_policy")),
 		PodSecurityPolicyConfig: expandPodSecurityPolicyConfig(d.Get("pod_security_policy_config")),
+		ReleaseChannel:          expandReleaseChannel(d.Get("release_channel")),
 		ShieldedNodes: &containerBeta.ShieldedNodes{
 			Enabled:         d.Get("enable_shielded_nodes").(bool),
 			ForceSendFields: []string{"Enabled"},
@@ -1181,6 +1202,9 @@ func resourceContainerClusterRead(d *schema.ResourceData, meta interface{}) erro
 		return err
 	}
 	if err := d.Set("authenticator_groups_config", flattenAuthenticatorGroupsConfig(cluster.AuthenticatorGroupsConfig)); err != nil {
+		return err
+	}
+	if err := d.Set("release_channel", flattenReleaseChannel(cluster.ReleaseChannel)); err != nil {
 		return err
 	}
 	d.Set("enable_intranode_visibility", cluster.NetworkConfig.EnableIntraNodeVisibility)
@@ -2299,6 +2323,17 @@ func expandPrivateClusterConfig(configured interface{}) *containerBeta.PrivateCl
 	}
 }
 
+func expandReleaseChannel(configured interface{}) *containerBeta.ReleaseChannel {
+	l := configured.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil
+	}
+	config := l[0].(map[string]interface{})
+	return &containerBeta.ReleaseChannel{
+		Channel: config["channel"].(string),
+	}
+}
+
 func expandDatabaseEncryption(configured interface{}) *containerBeta.DatabaseEncryption {
 	l := configured.([]interface{})
 	if len(l) == 0 {
@@ -2489,6 +2524,21 @@ func flattenPrivateClusterConfig(c *containerBeta.PrivateClusterConfig) []map[st
 			"public_endpoint":         c.PublicEndpoint,
 		},
 	}
+}
+
+func flattenReleaseChannel(c *containerBeta.ReleaseChannel) []map[string]interface{} {
+	result := []map[string]interface{}{}
+	if c != nil {
+		result = append(result, map[string]interface{}{
+			"channel": c.Channel,
+		})
+	} else {
+		// Explicitly set the release channel to the default.
+		result = append(result, map[string]interface{}{
+			"channel": "UNSPECIFIED",
+		})
+	}
+	return result
 }
 
 func flattenVerticalPodAutoscaling(c *containerBeta.VerticalPodAutoscaling) []map[string]interface{} {
