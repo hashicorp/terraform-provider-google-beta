@@ -26,7 +26,7 @@ require (
 	github.com/vmihailenco/msgpack v4.0.1+incompatible // indirect
 	golang.org/x/oauth2 v0.0.0-20190604053449-0f29369cfe45
 	golang.org/x/sys v0.0.0-20190804053845-51ab0e2deafa // indirect
-	google.golang.org/api v0.10.0
+	google.golang.org/api v0.11.0
 )
 
 go 1.13

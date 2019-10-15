@@ -55,8 +55,8 @@ import (
 	"strconv"
 	"strings"
 
-	gensupport "google.golang.org/api/gensupport"
 	googleapi "google.golang.org/api/googleapi"
+	gensupport "google.golang.org/api/internal/gensupport"
 	option "google.golang.org/api/option"
 	htransport "google.golang.org/api/transport/http"
 )
@@ -374,8 +374,7 @@ type Argument struct {
 	Mode string `json:"mode,omitempty"`
 
 	// Name: Optional. The name of this argument. Can be absent for function
-	// return
-	// argument.
+	// return argument.
 	Name string `json:"name,omitempty"`
 
 	// ForceSendFields is a list of field names (e.g. "ArgumentKind") to
@@ -397,6 +396,228 @@ type Argument struct {
 
 func (s *Argument) MarshalJSON() ([]byte, error) {
 	type NoMethod Argument
+	raw := NoMethod(*s)
+	return gensupport.MarshalJSON(raw, s.ForceSendFields, s.NullFields)
+}
+
+// ArimaCoefficients: Arima coefficients.
+type ArimaCoefficients struct {
+	// AutoRegressiveCoefficients: Auto-regressive coefficients, an array of
+	// double.
+	AutoRegressiveCoefficients []float64 `json:"autoRegressiveCoefficients,omitempty"`
+
+	// InterceptCoefficient: Intercept coefficient, just a double not an
+	// array.
+	InterceptCoefficient float64 `json:"interceptCoefficient,omitempty"`
+
+	// MovingAverageCoefficients: Moving-average coefficients, an array of
+	// double.
+	MovingAverageCoefficients []float64 `json:"movingAverageCoefficients,omitempty"`
+
+	// ForceSendFields is a list of field names (e.g.
+	// "AutoRegressiveCoefficients") to unconditionally include in API
+	// requests. By default, fields with empty values are omitted from API
+	// requests. However, any non-pointer, non-interface field appearing in
+	// ForceSendFields will be sent to the server regardless of whether the
+	// field is empty or not. This may be used to include empty fields in
+	// Patch requests.
+	ForceSendFields []string `json:"-"`
+
+	// NullFields is a list of field names (e.g.
+	// "AutoRegressiveCoefficients") to include in API requests with the
+	// JSON null value. By default, fields with empty values are omitted
+	// from API requests. However, any field with an empty value appearing
+	// in NullFields will be sent to the server as null. It is an error if a
+	// field in this list has a non-empty value. This may be used to include
+	// null fields in Patch requests.
+	NullFields []string `json:"-"`
+}
+
+func (s *ArimaCoefficients) MarshalJSON() ([]byte, error) {
+	type NoMethod ArimaCoefficients
+	raw := NoMethod(*s)
+	return gensupport.MarshalJSON(raw, s.ForceSendFields, s.NullFields)
+}
+
+func (s *ArimaCoefficients) UnmarshalJSON(data []byte) error {
+	type NoMethod ArimaCoefficients
+	var s1 struct {
+		InterceptCoefficient gensupport.JSONFloat64 `json:"interceptCoefficient"`
+		*NoMethod
+	}
+	s1.NoMethod = (*NoMethod)(s)
+	if err := json.Unmarshal(data, &s1); err != nil {
+		return err
+	}
+	s.InterceptCoefficient = float64(s1.InterceptCoefficient)
+	return nil
+}
+
+// ArimaFittingMetrics: ARIMA model fitting metrics.
+type ArimaFittingMetrics struct {
+	// Aic: AIC
+	Aic float64 `json:"aic,omitempty"`
+
+	// LogLikelihood: log-likelihood
+	LogLikelihood float64 `json:"logLikelihood,omitempty"`
+
+	// Variance: variance.
+	Variance float64 `json:"variance,omitempty"`
+
+	// ForceSendFields is a list of field names (e.g. "Aic") to
+	// unconditionally include in API requests. By default, fields with
+	// empty values are omitted from API requests. However, any non-pointer,
+	// non-interface field appearing in ForceSendFields will be sent to the
+	// server regardless of whether the field is empty or not. This may be
+	// used to include empty fields in Patch requests.
+	ForceSendFields []string `json:"-"`
+
+	// NullFields is a list of field names (e.g. "Aic") to include in API
+	// requests with the JSON null value. By default, fields with empty
+	// values are omitted from API requests. However, any field with an
+	// empty value appearing in NullFields will be sent to the server as
+	// null. It is an error if a field in this list has a non-empty value.
+	// This may be used to include null fields in Patch requests.
+	NullFields []string `json:"-"`
+}
+
+func (s *ArimaFittingMetrics) MarshalJSON() ([]byte, error) {
+	type NoMethod ArimaFittingMetrics
+	raw := NoMethod(*s)
+	return gensupport.MarshalJSON(raw, s.ForceSendFields, s.NullFields)
+}
+
+func (s *ArimaFittingMetrics) UnmarshalJSON(data []byte) error {
+	type NoMethod ArimaFittingMetrics
+	var s1 struct {
+		Aic           gensupport.JSONFloat64 `json:"aic"`
+		LogLikelihood gensupport.JSONFloat64 `json:"logLikelihood"`
+		Variance      gensupport.JSONFloat64 `json:"variance"`
+		*NoMethod
+	}
+	s1.NoMethod = (*NoMethod)(s)
+	if err := json.Unmarshal(data, &s1); err != nil {
+		return err
+	}
+	s.Aic = float64(s1.Aic)
+	s.LogLikelihood = float64(s1.LogLikelihood)
+	s.Variance = float64(s1.Variance)
+	return nil
+}
+
+// ArimaModelInfo: Arima model information.
+type ArimaModelInfo struct {
+	// ArimaCoefficients: Arima coefficients.
+	ArimaCoefficients *ArimaCoefficients `json:"arimaCoefficients,omitempty"`
+
+	// ArimaFittingMetrics: Arima fitting metrics.
+	ArimaFittingMetrics *ArimaFittingMetrics `json:"arimaFittingMetrics,omitempty"`
+
+	// NonSeasonalOrder: Non-seasonal order.
+	NonSeasonalOrder *ArimaOrder `json:"nonSeasonalOrder,omitempty"`
+
+	// ForceSendFields is a list of field names (e.g. "ArimaCoefficients")
+	// to unconditionally include in API requests. By default, fields with
+	// empty values are omitted from API requests. However, any non-pointer,
+	// non-interface field appearing in ForceSendFields will be sent to the
+	// server regardless of whether the field is empty or not. This may be
+	// used to include empty fields in Patch requests.
+	ForceSendFields []string `json:"-"`
+
+	// NullFields is a list of field names (e.g. "ArimaCoefficients") to
+	// include in API requests with the JSON null value. By default, fields
+	// with empty values are omitted from API requests. However, any field
+	// with an empty value appearing in NullFields will be sent to the
+	// server as null. It is an error if a field in this list has a
+	// non-empty value. This may be used to include null fields in Patch
+	// requests.
+	NullFields []string `json:"-"`
+}
+
+func (s *ArimaModelInfo) MarshalJSON() ([]byte, error) {
+	type NoMethod ArimaModelInfo
+	raw := NoMethod(*s)
+	return gensupport.MarshalJSON(raw, s.ForceSendFields, s.NullFields)
+}
+
+// ArimaOrder: Arima order, can be used for both non-seasonal and
+// seasonal parts.
+type ArimaOrder struct {
+	// D: Order of the differencing part.
+	D int64 `json:"d,omitempty,string"`
+
+	// P: Order of the autoregressive part.
+	P int64 `json:"p,omitempty,string"`
+
+	// Q: Order of the moving-average part.
+	Q int64 `json:"q,omitempty,string"`
+
+	// ForceSendFields is a list of field names (e.g. "D") to
+	// unconditionally include in API requests. By default, fields with
+	// empty values are omitted from API requests. However, any non-pointer,
+	// non-interface field appearing in ForceSendFields will be sent to the
+	// server regardless of whether the field is empty or not. This may be
+	// used to include empty fields in Patch requests.
+	ForceSendFields []string `json:"-"`
+
+	// NullFields is a list of field names (e.g. "D") to include in API
+	// requests with the JSON null value. By default, fields with empty
+	// values are omitted from API requests. However, any field with an
+	// empty value appearing in NullFields will be sent to the server as
+	// null. It is an error if a field in this list has a non-empty value.
+	// This may be used to include null fields in Patch requests.
+	NullFields []string `json:"-"`
+}
+
+func (s *ArimaOrder) MarshalJSON() ([]byte, error) {
+	type NoMethod ArimaOrder
+	raw := NoMethod(*s)
+	return gensupport.MarshalJSON(raw, s.ForceSendFields, s.NullFields)
+}
+
+// ArimaResult: (Auto-)arima fitting result. Wrap everything in
+// ArimaResult for easier
+// refactoring if we want to use model-specific iteration results.
+type ArimaResult struct {
+	// ArimaModelInfo: This message is repeated because there are multiple
+	// arima models
+	// fitted in auto-arima. For non-auto-arima model, its size is one.
+	ArimaModelInfo []*ArimaModelInfo `json:"arimaModelInfo,omitempty"`
+
+	// SeasonalPeriods: Seasonal periods. Repeated because multiple periods
+	// are supported for
+	// one time series.
+	//
+	// Possible values:
+	//   "SEASONAL_PERIOD_TYPE_UNSPECIFIED"
+	//   "NO_SEASONALITY" - No seasonality
+	//   "DAILY" - Daily period, 24 hours.
+	//   "WEEKLY" - Weekly period, 7 days.
+	//   "MONTHLY" - Monthly period, can be as 30 days or irregular.
+	//   "QUARTERLY" - Quarterly period, can be as 90 days or irregular.
+	//   "YEARLY" - Yearly period, can be as 365 days or irregular.
+	SeasonalPeriods []string `json:"seasonalPeriods,omitempty"`
+
+	// ForceSendFields is a list of field names (e.g. "ArimaModelInfo") to
+	// unconditionally include in API requests. By default, fields with
+	// empty values are omitted from API requests. However, any non-pointer,
+	// non-interface field appearing in ForceSendFields will be sent to the
+	// server regardless of whether the field is empty or not. This may be
+	// used to include empty fields in Patch requests.
+	ForceSendFields []string `json:"-"`
+
+	// NullFields is a list of field names (e.g. "ArimaModelInfo") to
+	// include in API requests with the JSON null value. By default, fields
+	// with empty values are omitted from API requests. However, any field
+	// with an empty value appearing in NullFields will be sent to the
+	// server as null. It is an error if a field in this list has a
+	// non-empty value. This may be used to include null fields in Patch
+	// requests.
+	NullFields []string `json:"-"`
+}
+
+func (s *ArimaResult) MarshalJSON() ([]byte, error) {
+	type NoMethod ArimaResult
 	raw := NoMethod(*s)
 	return gensupport.MarshalJSON(raw, s.ForceSendFields, s.NullFields)
 }
@@ -2311,6 +2532,8 @@ func (s *HivePartitioningOptions) MarshalJSON() ([]byte, error) {
 // IterationResult: Information about a single iteration of the training
 // run.
 type IterationResult struct {
+	ArimaResult *ArimaResult `json:"arimaResult,omitempty"`
+
 	// ClusterInfos: Information about top clusters for clustering models.
 	ClusterInfos []*ClusterInfo `json:"clusterInfos,omitempty"`
 
@@ -2330,7 +2553,7 @@ type IterationResult struct {
 	// iteration.
 	TrainingLoss float64 `json:"trainingLoss,omitempty"`
 
-	// ForceSendFields is a list of field names (e.g. "ClusterInfos") to
+	// ForceSendFields is a list of field names (e.g. "ArimaResult") to
 	// unconditionally include in API requests. By default, fields with
 	// empty values are omitted from API requests. However, any non-pointer,
 	// non-interface field appearing in ForceSendFields will be sent to the
@@ -2338,7 +2561,7 @@ type IterationResult struct {
 	// used to include empty fields in Patch requests.
 	ForceSendFields []string `json:"-"`
 
-	// NullFields is a list of field names (e.g. "ClusterInfos") to include
+	// NullFields is a list of field names (e.g. "ArimaResult") to include
 	// in API requests with the JSON null value. By default, fields with
 	// empty values are omitted from API requests. However, any field with
 	// an empty value appearing in NullFields will be sent to the server as
@@ -3210,6 +3433,10 @@ type JobStatistics struct {
 	// used to execute this job.
 	ReservationId string `json:"reservation_id,omitempty"`
 
+	// ScriptStatistics: [Output-only] Statistics for a child job of a
+	// script.
+	ScriptStatistics *ScriptStatistics `json:"scriptStatistics,omitempty"`
+
 	// StartTime: [Output-only] Start time of this job, in milliseconds
 	// since the epoch. This field will be present when the job transitions
 	// from the PENDING state to either RUNNING or DONE.
@@ -3719,11 +3946,10 @@ func (s *MaterializedViewDefinition) MarshalJSON() ([]byte, error) {
 
 type Model struct {
 	// CreationTime: Output only. The time when this model was created, in
-	// millisecs since the
-	// epoch.
+	// millisecs since the epoch.
 	CreationTime int64 `json:"creationTime,omitempty,string"`
 
-	// Description: [Optional] A user-friendly description of this model.
+	// Description: Optional. A user-friendly description of this model.
 	Description string `json:"description,omitempty"`
 
 	// EncryptionConfiguration: Custom encryption configuration (e.g., Cloud
@@ -3736,9 +3962,9 @@ type Model struct {
 	// Etag: Output only. A hash of this resource.
 	Etag string `json:"etag,omitempty"`
 
-	// ExpirationTime: [Optional] The time when this model expires, in
-	// milliseconds since the
-	// epoch. If not present, the model will persist indefinitely. Expired
+	// ExpirationTime: Optional. The time when this model expires, in
+	// milliseconds since the epoch.
+	// If not present, the model will persist indefinitely. Expired
 	// models
 	// will be deleted and their storage reclaimed.  The
 	// defaultTableExpirationMs
@@ -3751,7 +3977,7 @@ type Model struct {
 	// train this model.
 	FeatureColumns []*StandardSqlField `json:"featureColumns,omitempty"`
 
-	// FriendlyName: [Optional] A descriptive name for this model.
+	// FriendlyName: Optional. A descriptive name for this model.
 	FriendlyName string `json:"friendlyName,omitempty"`
 
 	// LabelColumns: Output only. Label columns that were used to train this
@@ -3760,10 +3986,9 @@ type Model struct {
 	// columns.
 	LabelColumns []*StandardSqlField `json:"labelColumns,omitempty"`
 
-	// Labels: [Optional] The labels associated with this model. You can use
-	// these to
-	// organize and group your models. Label keys and values can be no
-	// longer
+	// Labels: The labels associated with this model. You can use these to
+	// organize
+	// and group your models. Label keys and values can be no longer
 	// than 63 characters, can only contain lowercase letters,
 	// numeric
 	// characters, underscores and dashes. International characters are
@@ -3774,8 +3999,7 @@ type Model struct {
 	Labels map[string]string `json:"labels,omitempty"`
 
 	// LastModifiedTime: Output only. The time when this model was last
-	// modified, in millisecs
-	// since the epoch.
+	// modified, in millisecs since the epoch.
 	LastModifiedTime int64 `json:"lastModifiedTime,omitempty,string"`
 
 	// Location: Output only. The geographic location where the model
@@ -3798,8 +4022,7 @@ type Model struct {
 	ModelType string `json:"modelType,omitempty"`
 
 	// TrainingRuns: Output only. Information for all training runs in
-	// increasing order of
-	// start_time.
+	// increasing order of start_time.
 	TrainingRuns []*TrainingRun `json:"trainingRuns,omitempty"`
 
 	// ServerResponse contains the HTTP response code and headers from the
@@ -4608,6 +4831,10 @@ type Routine struct {
 	// Note that both \n are replaced with linebreaks.
 	DefinitionBody string `json:"definitionBody,omitempty"`
 
+	// Description: Optional. [Experimental] The description of the routine
+	// if defined.
+	Description string `json:"description,omitempty"`
+
 	// Etag: Output only. A hash of this resource.
 	Etag string `json:"etag,omitempty"`
 
@@ -4668,7 +4895,7 @@ type Routine struct {
 	// routine.
 	RoutineReference *RoutineReference `json:"routineReference,omitempty"`
 
-	// RoutineType: Required.
+	// RoutineType: Required. The type of routine.
 	//
 	// Possible values:
 	//   "ROUTINE_TYPE_UNSPECIFIED"
@@ -4765,6 +4992,84 @@ type Row struct {
 
 func (s *Row) MarshalJSON() ([]byte, error) {
 	type NoMethod Row
+	raw := NoMethod(*s)
+	return gensupport.MarshalJSON(raw, s.ForceSendFields, s.NullFields)
+}
+
+type ScriptStackFrame struct {
+	// EndColumn: [Output-only] One-based end column.
+	EndColumn int64 `json:"endColumn,omitempty"`
+
+	// EndLine: [Output-only] One-based end line.
+	EndLine int64 `json:"endLine,omitempty"`
+
+	// ProcedureId: [Output-only] Name of the active procedure, empty if in
+	// a top-level script.
+	ProcedureId string `json:"procedureId,omitempty"`
+
+	// StartColumn: [Output-only] One-based start column.
+	StartColumn int64 `json:"startColumn,omitempty"`
+
+	// StartLine: [Output-only] One-based start line.
+	StartLine int64 `json:"startLine,omitempty"`
+
+	// Text: [Output-only] Text of the current statement/expression.
+	Text string `json:"text,omitempty"`
+
+	// ForceSendFields is a list of field names (e.g. "EndColumn") to
+	// unconditionally include in API requests. By default, fields with
+	// empty values are omitted from API requests. However, any non-pointer,
+	// non-interface field appearing in ForceSendFields will be sent to the
+	// server regardless of whether the field is empty or not. This may be
+	// used to include empty fields in Patch requests.
+	ForceSendFields []string `json:"-"`
+
+	// NullFields is a list of field names (e.g. "EndColumn") to include in
+	// API requests with the JSON null value. By default, fields with empty
+	// values are omitted from API requests. However, any field with an
+	// empty value appearing in NullFields will be sent to the server as
+	// null. It is an error if a field in this list has a non-empty value.
+	// This may be used to include null fields in Patch requests.
+	NullFields []string `json:"-"`
+}
+
+func (s *ScriptStackFrame) MarshalJSON() ([]byte, error) {
+	type NoMethod ScriptStackFrame
+	raw := NoMethod(*s)
+	return gensupport.MarshalJSON(raw, s.ForceSendFields, s.NullFields)
+}
+
+type ScriptStatistics struct {
+	// EvaluationKind: [Output-only] Whether this child job was a statement
+	// or expression.
+	EvaluationKind string `json:"evaluationKind,omitempty"`
+
+	// StackFrames: Stack trace showing the line/column/procedure name of
+	// each frame on the stack at the point where the current evaluation
+	// happened. The leaf frame is first, the primary script is last. Never
+	// empty.
+	StackFrames []*ScriptStackFrame `json:"stackFrames,omitempty"`
+
+	// ForceSendFields is a list of field names (e.g. "EvaluationKind") to
+	// unconditionally include in API requests. By default, fields with
+	// empty values are omitted from API requests. However, any non-pointer,
+	// non-interface field appearing in ForceSendFields will be sent to the
+	// server regardless of whether the field is empty or not. This may be
+	// used to include empty fields in Patch requests.
+	ForceSendFields []string `json:"-"`
+
+	// NullFields is a list of field names (e.g. "EvaluationKind") to
+	// include in API requests with the JSON null value. By default, fields
+	// with empty values are omitted from API requests. However, any field
+	// with an empty value appearing in NullFields will be sent to the
+	// server as null. It is an error if a field in this list has a
+	// non-empty value. This may be used to include null fields in Patch
+	// requests.
+	NullFields []string `json:"-"`
+}
+
+func (s *ScriptStatistics) MarshalJSON() ([]byte, error) {
+	type NoMethod ScriptStatistics
 	raw := NoMethod(*s)
 	return gensupport.MarshalJSON(raw, s.ForceSendFields, s.NullFields)
 }
@@ -6039,7 +6344,7 @@ func (c *DatasetsDeleteCall) Header() http.Header {
 
 func (c *DatasetsDeleteCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/1.11.0 gdcl/20190802")
+	reqHeaders.Set("x-goog-api-client", "gl-go/1.11.0 gdcl/20190926")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -6166,7 +6471,7 @@ func (c *DatasetsGetCall) Header() http.Header {
 
 func (c *DatasetsGetCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/1.11.0 gdcl/20190802")
+	reqHeaders.Set("x-goog-api-client", "gl-go/1.11.0 gdcl/20190926")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -6310,7 +6615,7 @@ func (c *DatasetsInsertCall) Header() http.Header {
 
 func (c *DatasetsInsertCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/1.11.0 gdcl/20190802")
+	reqHeaders.Set("x-goog-api-client", "gl-go/1.11.0 gdcl/20190926")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -6490,7 +6795,7 @@ func (c *DatasetsListCall) Header() http.Header {
 
 func (c *DatasetsListCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/1.11.0 gdcl/20190802")
+	reqHeaders.Set("x-goog-api-client", "gl-go/1.11.0 gdcl/20190926")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -6673,7 +6978,7 @@ func (c *DatasetsPatchCall) Header() http.Header {
 
 func (c *DatasetsPatchCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/1.11.0 gdcl/20190802")
+	reqHeaders.Set("x-goog-api-client", "gl-go/1.11.0 gdcl/20190926")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -6824,7 +7129,7 @@ func (c *DatasetsUpdateCall) Header() http.Header {
 
 func (c *DatasetsUpdateCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/1.11.0 gdcl/20190802")
+	reqHeaders.Set("x-goog-api-client", "gl-go/1.11.0 gdcl/20190926")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -6982,7 +7287,7 @@ func (c *JobsCancelCall) Header() http.Header {
 
 func (c *JobsCancelCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/1.11.0 gdcl/20190802")
+	reqHeaders.Set("x-goog-api-client", "gl-go/1.11.0 gdcl/20190926")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -7147,7 +7452,7 @@ func (c *JobsGetCall) Header() http.Header {
 
 func (c *JobsGetCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/1.11.0 gdcl/20190802")
+	reqHeaders.Set("x-goog-api-client", "gl-go/1.11.0 gdcl/20190926")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -7346,7 +7651,7 @@ func (c *JobsGetQueryResultsCall) Header() http.Header {
 
 func (c *JobsGetQueryResultsCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/1.11.0 gdcl/20190802")
+	reqHeaders.Set("x-goog-api-client", "gl-go/1.11.0 gdcl/20190926")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -7580,7 +7885,7 @@ func (c *JobsInsertCall) Header() http.Header {
 
 func (c *JobsInsertCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/1.11.0 gdcl/20190802")
+	reqHeaders.Set("x-goog-api-client", "gl-go/1.11.0 gdcl/20190926")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -7847,7 +8152,7 @@ func (c *JobsListCall) Header() http.Header {
 
 func (c *JobsListCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/1.11.0 gdcl/20190802")
+	reqHeaders.Set("x-goog-api-client", "gl-go/1.11.0 gdcl/20190926")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -8067,7 +8372,7 @@ func (c *JobsQueryCall) Header() http.Header {
 
 func (c *JobsQueryCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/1.11.0 gdcl/20190802")
+	reqHeaders.Set("x-goog-api-client", "gl-go/1.11.0 gdcl/20190926")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -8210,7 +8515,7 @@ func (c *ModelsDeleteCall) Header() http.Header {
 
 func (c *ModelsDeleteCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/1.11.0 gdcl/20190802")
+	reqHeaders.Set("x-goog-api-client", "gl-go/1.11.0 gdcl/20190926")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -8257,21 +8562,21 @@ func (c *ModelsDeleteCall) Do(opts ...googleapi.CallOption) error {
 	//   ],
 	//   "parameters": {
 	//     "datasetId": {
-	//       "description": "Dataset ID of the model to delete.",
+	//       "description": "Required. Dataset ID of the model to delete.",
 	//       "location": "path",
 	//       "pattern": "^[^/]+$",
 	//       "required": true,
 	//       "type": "string"
 	//     },
 	//     "modelId": {
-	//       "description": "Model ID of the model to delete.",
+	//       "description": "Required. Model ID of the model to delete.",
 	//       "location": "path",
 	//       "pattern": "^[^/]+$",
 	//       "required": true,
 	//       "type": "string"
 	//     },
 	//     "projectId": {
-	//       "description": "Project ID of the model to delete.",
+	//       "description": "Required. Project ID of the model to delete.",
 	//       "location": "path",
 	//       "pattern": "^[^/]+$",
 	//       "required": true,
@@ -8346,7 +8651,7 @@ func (c *ModelsGetCall) Header() http.Header {
 
 func (c *ModelsGetCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/1.11.0 gdcl/20190802")
+	reqHeaders.Set("x-goog-api-client", "gl-go/1.11.0 gdcl/20190926")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -8421,21 +8726,21 @@ func (c *ModelsGetCall) Do(opts ...googleapi.CallOption) (*Model, error) {
 	//   ],
 	//   "parameters": {
 	//     "datasetId": {
-	//       "description": "Dataset ID of the requested model.",
+	//       "description": "Required. Dataset ID of the requested model.",
 	//       "location": "path",
 	//       "pattern": "^[^/]+$",
 	//       "required": true,
 	//       "type": "string"
 	//     },
 	//     "modelId": {
-	//       "description": "Model ID of the requested model.",
+	//       "description": "Required. Model ID of the requested model.",
 	//       "location": "path",
 	//       "pattern": "^[^/]+$",
 	//       "required": true,
 	//       "type": "string"
 	//     },
 	//     "projectId": {
-	//       "description": "Project ID of the requested model.",
+	//       "description": "Required. Project ID of the requested model.",
 	//       "location": "path",
 	//       "pattern": "^[^/]+$",
 	//       "required": true,
@@ -8531,7 +8836,7 @@ func (c *ModelsListCall) Header() http.Header {
 
 func (c *ModelsListCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/1.11.0 gdcl/20190802")
+	reqHeaders.Set("x-goog-api-client", "gl-go/1.11.0 gdcl/20190926")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -8604,7 +8909,7 @@ func (c *ModelsListCall) Do(opts ...googleapi.CallOption) (*ListModelsResponse, 
 	//   ],
 	//   "parameters": {
 	//     "datasetId": {
-	//       "description": "Dataset ID of the models to list.",
+	//       "description": "Required. Dataset ID of the models to list.",
 	//       "location": "path",
 	//       "pattern": "^[^/]+$",
 	//       "required": true,
@@ -8622,7 +8927,7 @@ func (c *ModelsListCall) Do(opts ...googleapi.CallOption) (*ListModelsResponse, 
 	//       "type": "string"
 	//     },
 	//     "projectId": {
-	//       "description": "Project ID of the models to list.",
+	//       "description": "Required. Project ID of the models to list.",
 	//       "location": "path",
 	//       "pattern": "^[^/]+$",
 	//       "required": true,
@@ -8714,7 +9019,7 @@ func (c *ModelsPatchCall) Header() http.Header {
 
 func (c *ModelsPatchCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/1.11.0 gdcl/20190802")
+	reqHeaders.Set("x-goog-api-client", "gl-go/1.11.0 gdcl/20190926")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -8791,21 +9096,21 @@ func (c *ModelsPatchCall) Do(opts ...googleapi.CallOption) (*Model, error) {
 	//   ],
 	//   "parameters": {
 	//     "datasetId": {
-	//       "description": "Dataset ID of the model to patch.",
+	//       "description": "Required. Dataset ID of the model to patch.",
 	//       "location": "path",
 	//       "pattern": "^[^/]+$",
 	//       "required": true,
 	//       "type": "string"
 	//     },
 	//     "modelId": {
-	//       "description": "Model ID of the model to patch.",
+	//       "description": "Required. Model ID of the model to patch.",
 	//       "location": "path",
 	//       "pattern": "^[^/]+$",
 	//       "required": true,
 	//       "type": "string"
 	//     },
 	//     "projectId": {
-	//       "description": "Project ID of the model to patch.",
+	//       "description": "Required. Project ID of the model to patch.",
 	//       "location": "path",
 	//       "pattern": "^[^/]+$",
 	//       "required": true,
@@ -8883,7 +9188,7 @@ func (c *ProjectsGetServiceAccountCall) Header() http.Header {
 
 func (c *ProjectsGetServiceAccountCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/1.11.0 gdcl/20190802")
+	reqHeaders.Set("x-goog-api-client", "gl-go/1.11.0 gdcl/20190926")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -9041,7 +9346,7 @@ func (c *ProjectsListCall) Header() http.Header {
 
 func (c *ProjectsListCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/1.11.0 gdcl/20190802")
+	reqHeaders.Set("x-goog-api-client", "gl-go/1.11.0 gdcl/20190926")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -9199,7 +9504,7 @@ func (c *RoutinesDeleteCall) Header() http.Header {
 
 func (c *RoutinesDeleteCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/1.11.0 gdcl/20190802")
+	reqHeaders.Set("x-goog-api-client", "gl-go/1.11.0 gdcl/20190926")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -9246,21 +9551,21 @@ func (c *RoutinesDeleteCall) Do(opts ...googleapi.CallOption) error {
 	//   ],
 	//   "parameters": {
 	//     "datasetId": {
-	//       "description": "Dataset ID of the routine to delete",
+	//       "description": "Required. Dataset ID of the routine to delete",
 	//       "location": "path",
 	//       "pattern": "^[^/]+$",
 	//       "required": true,
 	//       "type": "string"
 	//     },
 	//     "projectId": {
-	//       "description": "Project ID of the routine to delete",
+	//       "description": "Required. Project ID of the routine to delete",
 	//       "location": "path",
 	//       "pattern": "^[^/]+$",
 	//       "required": true,
 	//       "type": "string"
 	//     },
 	//     "routineId": {
-	//       "description": "Routine ID of the routine to delete",
+	//       "description": "Required. Routine ID of the routine to delete",
 	//       "location": "path",
 	//       "pattern": "^[^/]+$",
 	//       "required": true,
@@ -9343,7 +9648,7 @@ func (c *RoutinesGetCall) Header() http.Header {
 
 func (c *RoutinesGetCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/1.11.0 gdcl/20190802")
+	reqHeaders.Set("x-goog-api-client", "gl-go/1.11.0 gdcl/20190926")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -9418,7 +9723,7 @@ func (c *RoutinesGetCall) Do(opts ...googleapi.CallOption) (*Routine, error) {
 	//   ],
 	//   "parameters": {
 	//     "datasetId": {
-	//       "description": "Dataset ID of the requested routine",
+	//       "description": "Required. Dataset ID of the requested routine",
 	//       "location": "path",
 	//       "pattern": "^[^/]+$",
 	//       "required": true,
@@ -9431,14 +9736,14 @@ func (c *RoutinesGetCall) Do(opts ...googleapi.CallOption) (*Routine, error) {
 	//       "type": "string"
 	//     },
 	//     "projectId": {
-	//       "description": "Project ID of the requested routine",
+	//       "description": "Required. Project ID of the requested routine",
 	//       "location": "path",
 	//       "pattern": "^[^/]+$",
 	//       "required": true,
 	//       "type": "string"
 	//     },
 	//     "routineId": {
-	//       "description": "Routine ID of the requested routine",
+	//       "description": "Required. Routine ID of the requested routine",
 	//       "location": "path",
 	//       "pattern": "^[^/]+$",
 	//       "required": true,
@@ -9507,7 +9812,7 @@ func (c *RoutinesInsertCall) Header() http.Header {
 
 func (c *RoutinesInsertCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/1.11.0 gdcl/20190802")
+	reqHeaders.Set("x-goog-api-client", "gl-go/1.11.0 gdcl/20190926")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -9582,14 +9887,14 @@ func (c *RoutinesInsertCall) Do(opts ...googleapi.CallOption) (*Routine, error) 
 	//   ],
 	//   "parameters": {
 	//     "datasetId": {
-	//       "description": "Dataset ID of the new routine",
+	//       "description": "Required. Dataset ID of the new routine",
 	//       "location": "path",
 	//       "pattern": "^[^/]+$",
 	//       "required": true,
 	//       "type": "string"
 	//     },
 	//     "projectId": {
-	//       "description": "Project ID of the new routine",
+	//       "description": "Required. Project ID of the new routine",
 	//       "location": "path",
 	//       "pattern": "^[^/]+$",
 	//       "required": true,
@@ -9686,7 +9991,7 @@ func (c *RoutinesListCall) Header() http.Header {
 
 func (c *RoutinesListCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/1.11.0 gdcl/20190802")
+	reqHeaders.Set("x-goog-api-client", "gl-go/1.11.0 gdcl/20190926")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -9759,7 +10064,7 @@ func (c *RoutinesListCall) Do(opts ...googleapi.CallOption) (*ListRoutinesRespon
 	//   ],
 	//   "parameters": {
 	//     "datasetId": {
-	//       "description": "Dataset ID of the routines to list",
+	//       "description": "Required. Dataset ID of the routines to list",
 	//       "location": "path",
 	//       "pattern": "^[^/]+$",
 	//       "required": true,
@@ -9777,7 +10082,7 @@ func (c *RoutinesListCall) Do(opts ...googleapi.CallOption) (*ListRoutinesRespon
 	//       "type": "string"
 	//     },
 	//     "projectId": {
-	//       "description": "Project ID of the routines to list",
+	//       "description": "Required. Project ID of the routines to list",
 	//       "location": "path",
 	//       "pattern": "^[^/]+$",
 	//       "required": true,
@@ -9871,7 +10176,7 @@ func (c *RoutinesUpdateCall) Header() http.Header {
 
 func (c *RoutinesUpdateCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/1.11.0 gdcl/20190802")
+	reqHeaders.Set("x-goog-api-client", "gl-go/1.11.0 gdcl/20190926")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -9948,21 +10253,21 @@ func (c *RoutinesUpdateCall) Do(opts ...googleapi.CallOption) (*Routine, error) 
 	//   ],
 	//   "parameters": {
 	//     "datasetId": {
-	//       "description": "Dataset ID of the routine to update",
+	//       "description": "Required. Dataset ID of the routine to update",
 	//       "location": "path",
 	//       "pattern": "^[^/]+$",
 	//       "required": true,
 	//       "type": "string"
 	//     },
 	//     "projectId": {
-	//       "description": "Project ID of the routine to update",
+	//       "description": "Required. Project ID of the routine to update",
 	//       "location": "path",
 	//       "pattern": "^[^/]+$",
 	//       "required": true,
 	//       "type": "string"
 	//     },
 	//     "routineId": {
-	//       "description": "Routine ID of the routine to update",
+	//       "description": "Required. Routine ID of the routine to update",
 	//       "location": "path",
 	//       "pattern": "^[^/]+$",
 	//       "required": true,
@@ -10035,7 +10340,7 @@ func (c *TabledataInsertAllCall) Header() http.Header {
 
 func (c *TabledataInsertAllCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/1.11.0 gdcl/20190802")
+	reqHeaders.Set("x-goog-api-client", "gl-go/1.11.0 gdcl/20190926")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -10234,7 +10539,7 @@ func (c *TabledataListCall) Header() http.Header {
 
 func (c *TabledataListCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/1.11.0 gdcl/20190802")
+	reqHeaders.Set("x-goog-api-client", "gl-go/1.11.0 gdcl/20190926")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -10432,7 +10737,7 @@ func (c *TablesDeleteCall) Header() http.Header {
 
 func (c *TablesDeleteCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/1.11.0 gdcl/20190802")
+	reqHeaders.Set("x-goog-api-client", "gl-go/1.11.0 gdcl/20190926")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -10574,7 +10879,7 @@ func (c *TablesGetCall) Header() http.Header {
 
 func (c *TablesGetCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/1.11.0 gdcl/20190802")
+	reqHeaders.Set("x-goog-api-client", "gl-go/1.11.0 gdcl/20190926")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -10733,7 +11038,7 @@ func (c *TablesInsertCall) Header() http.Header {
 
 func (c *TablesInsertCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/1.11.0 gdcl/20190802")
+	reqHeaders.Set("x-goog-api-client", "gl-go/1.11.0 gdcl/20190926")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -10906,7 +11211,7 @@ func (c *TablesListCall) Header() http.Header {
 
 func (c *TablesListCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/1.11.0 gdcl/20190802")
+	reqHeaders.Set("x-goog-api-client", "gl-go/1.11.0 gdcl/20190926")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -11089,7 +11394,7 @@ func (c *TablesPatchCall) Header() http.Header {
 
 func (c *TablesPatchCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/1.11.0 gdcl/20190802")
+	reqHeaders.Set("x-goog-api-client", "gl-go/1.11.0 gdcl/20190926")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -11250,7 +11555,7 @@ func (c *TablesUpdateCall) Header() http.Header {
 
 func (c *TablesUpdateCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/1.11.0 gdcl/20190802")
+	reqHeaders.Set("x-goog-api-client", "gl-go/1.11.0 gdcl/20190926")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
