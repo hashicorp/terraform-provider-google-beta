@@ -396,6 +396,7 @@ func resourceDNSManagedZoneUpdate(d *schema.ResourceData, meta interface{}) erro
 
 	if d.HasChange("description") || d.HasChange("labels") || d.HasChange("private_visibility_config") || d.HasChange("forwarding_config") || d.HasChange("peering_config") {
 		obj := make(map[string]interface{})
+
 		descriptionProp, err := expandDNSManagedZoneDescription(d.Get("description"), d, config)
 		if err != nil {
 			return err
