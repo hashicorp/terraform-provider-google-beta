@@ -476,6 +476,7 @@ func resourceComputeForwardingRuleUpdate(d *schema.ResourceData, meta interface{
 
 	if d.HasChange("target") {
 		obj := make(map[string]interface{})
+
 		targetProp, err := expandComputeForwardingRuleTarget(d.Get("target"), d, config)
 		if err != nil {
 			return err
@@ -510,6 +511,7 @@ func resourceComputeForwardingRuleUpdate(d *schema.ResourceData, meta interface{
 	}
 	if d.HasChange("labels") || d.HasChange("label_fingerprint") {
 		obj := make(map[string]interface{})
+
 		labelsProp, err := expandComputeForwardingRuleLabels(d.Get("labels"), d, config)
 		if err != nil {
 			return err

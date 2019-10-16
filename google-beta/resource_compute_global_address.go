@@ -341,6 +341,7 @@ func resourceComputeGlobalAddressUpdate(d *schema.ResourceData, meta interface{}
 
 	if d.HasChange("labels") || d.HasChange("label_fingerprint") {
 		obj := make(map[string]interface{})
+
 		labelsProp, err := expandComputeGlobalAddressLabels(d.Get("labels"), d, config)
 		if err != nil {
 			return err

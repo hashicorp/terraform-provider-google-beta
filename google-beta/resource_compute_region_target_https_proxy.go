@@ -234,6 +234,7 @@ func resourceComputeRegionTargetHttpsProxyUpdate(d *schema.ResourceData, meta in
 
 	if d.HasChange("ssl_certificates") {
 		obj := make(map[string]interface{})
+
 		sslCertificatesProp, err := expandComputeRegionTargetHttpsProxySslCertificates(d.Get("ssl_certificates"), d, config)
 		if err != nil {
 			return err
@@ -268,6 +269,7 @@ func resourceComputeRegionTargetHttpsProxyUpdate(d *schema.ResourceData, meta in
 	}
 	if d.HasChange("url_map") {
 		obj := make(map[string]interface{})
+
 		urlMapProp, err := expandComputeRegionTargetHttpsProxyUrlMap(d.Get("url_map"), d, config)
 		if err != nil {
 			return err

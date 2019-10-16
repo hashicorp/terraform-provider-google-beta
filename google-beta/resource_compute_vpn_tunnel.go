@@ -578,6 +578,7 @@ func resourceComputeVpnTunnelUpdate(d *schema.ResourceData, meta interface{}) er
 
 	if d.HasChange("labels") || d.HasChange("label_fingerprint") {
 		obj := make(map[string]interface{})
+
 		labelsProp, err := expandComputeVpnTunnelLabels(d.Get("labels"), d, config)
 		if err != nil {
 			return err

@@ -424,6 +424,7 @@ func resourceComputeRegionDiskUpdate(d *schema.ResourceData, meta interface{}) e
 
 	if d.HasChange("label_fingerprint") || d.HasChange("labels") {
 		obj := make(map[string]interface{})
+
 		labelFingerprintProp, err := expandComputeRegionDiskLabelFingerprint(d.Get("label_fingerprint"), d, config)
 		if err != nil {
 			return err
@@ -465,6 +466,7 @@ func resourceComputeRegionDiskUpdate(d *schema.ResourceData, meta interface{}) e
 	}
 	if d.HasChange("size") {
 		obj := make(map[string]interface{})
+
 		sizeGbProp, err := expandComputeRegionDiskSize(d.Get("size"), d, config)
 		if err != nil {
 			return err
