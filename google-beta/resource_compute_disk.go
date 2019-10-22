@@ -1113,6 +1113,9 @@ func expandComputeDiskResourcePolicies(v interface{}, d TerraformResourceData, c
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
 	for _, raw := range l {
+		if raw == nil {
+			return nil, fmt.Errorf("Invalid value for resource_policies: nil")
+		}
 		f, err := parseRegionalFieldValue("resourcePolicies", raw.(string), "project", "region", "zone", d, config, true)
 		if err != nil {
 			return nil, fmt.Errorf("Invalid value for resource_policies: %s", err)
