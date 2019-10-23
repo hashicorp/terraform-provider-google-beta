@@ -160,6 +160,7 @@ func TestAccContainerNodePool_withNodeConfig(t *testing.T) {
 	})
 }
 
+// Authoritative taints
 func TestAccContainerNodePool_withNodeConfigTaints(t *testing.T) {
 	t.Parallel()
 
@@ -182,7 +183,6 @@ func TestAccContainerNodePool_withNodeConfigTaints(t *testing.T) {
 				// but will still cause an import diff
 				ImportStateVerifyIgnore: []string{"autoscaling.#"},
 			},
-			// Once taints are in GA, consider merging this test with the _withNodeConfig test.
 		},
 	})
 }
@@ -1025,6 +1025,12 @@ resource "google_container_node_pool" "np_with_node_config" {
 		preemptible = true
 		min_cpu_platform = "Intel Broadwell"
 
+		initial_taint {
+			key = "taint_key"
+			value = "taint_value"
+			effect = "PREFER_NO_SCHEDULE"
+		}
+
 		// Updatable fields
 		image_type = "COS"
 	}
@@ -1055,6 +1061,12 @@ resource "google_container_node_pool" "np_with_node_config" {
 		preemptible = true
 		min_cpu_platform = "Intel Broadwell"
 
+		initial_taint {
+			key = "taint_key"
+			value = "taint_value"
+			effect = "PREFER_NO_SCHEDULE"
+		}
+
 		// Updatable fields
 		image_type = "UBUNTU"
 	}
@@ -1079,6 +1091,7 @@ resource "google_container_node_pool" "np_with_node_config" {
 			value = "taint_value"
 			effect = "PREFER_NO_SCHEDULE"
 		}
+
 		taint {
 			key = "taint_key2"
 			value = "taint_value2"

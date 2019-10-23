@@ -804,6 +804,7 @@ func TestAccContainerCluster_withNodeConfigScopeAlias(t *testing.T) {
 	})
 }
 
+// Tests the authoritative taint field
 func TestAccContainerCluster_withNodeConfigTaints(t *testing.T) {
 	t.Parallel()
 
@@ -824,7 +825,6 @@ func TestAccContainerCluster_withNodeConfigTaints(t *testing.T) {
 				ImportState:         true,
 				ImportStateVerify:   true,
 			},
-			// Once taints are in GA, consider merging this test with the _withNodeConfig test.
 		},
 	})
 }
@@ -2367,6 +2367,12 @@ resource "google_container_cluster" "with_node_config" {
 		preemptible = true
 		min_cpu_platform = "Intel Broadwell"
 
+		initial_taint {
+			key = "taint_key"
+			value = "taint_value"
+			effect = "PREFER_NO_SCHEDULE"
+		}
+
 		// Updatable fields
 		image_type = "COS"
 	}
@@ -2402,6 +2408,12 @@ resource "google_container_cluster" "with_node_config" {
 		tags = ["foo", "bar"]
 		preemptible = true
 		min_cpu_platform = "Intel Broadwell"
+
+		initial_taint {
+			key = "taint_key"
+			value = "taint_value"
+			effect = "PREFER_NO_SCHEDULE"
+		}
 
 		// Updatable fields
 		image_type = "UBUNTU"
