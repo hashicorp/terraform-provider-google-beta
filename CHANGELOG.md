@@ -1,4 +1,31 @@
-## 2.17.1 (Unreleased)
+## 2.18.1 (Unreleased)
+## 2.18.0 (October 23, 2019)
+
+DEPRECATIONS:
+* `container`: The `kubernetes_dashboard` addon is deprecated for `google_container_cluster`. ([#1247](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1247))
+
+FEATURES:
+* **New Resource:** `google_app_engine_application_url_dispatch_rules` ([#1262](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1262))
+
+IMPROVEMENTS:
+* `all`: increased support for custom endpoints across the provider ([#1244](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1244))
+* `appengine`: added the ability to delete the parent service of `google_app_engine_standard_app_version` ([#1222](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1222))
+* `container`: Added `shielded_instance_config` attribute to `node_config` ([#1198](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1198))
+* `container`: Allow the configuration of release channels when creating GKE clusters. ([#1260](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1260))
+* `dataflow`: added `ip_configuration` option to `job`. ([#1284](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1284))
+* `pubsub`: Added field `oidc_token` to `google_pubsub_subscription` ([#1265](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1265))
+* `sql`: added `location` field to `backup_configuration` block in `google_sql_database_instance` ([#1282](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1282))
+
+BUGS:
+* `all`: fixed the custom endpoint version used by older legacy REST clients ([#1274](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1274))
+* `bigquery`: fix issue with `google_bigquery_data_transfer_config` `params` crashing on boolean values ([#1263](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1263))
+* `cloudrun`: fixed the apiVersion sent in `google_cloud_run_domain_mapping` requests ([#1251](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1251))
+* `compute`: added support for updating multiple fields at once to `google_compute_subnetwork` ([#1269](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1269))
+* `compute`: fixed diffs in `google_compute_instance_group`'s `network` field when equivalent values were specified ([#1286](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1286))
+* `compute`: fixed issues updating `google_compute_instance_group`'s `instances` field when config/state values didn't match ([#1286](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1286))
+* `iam`: fixed bug where IAM binding wouldn't replace members if they were deleted outside of terraform. ([#1272](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1272))
+* `pubsub`: Fixed permadiff due to interaction of organization policies and `google_pubsub_topic`. ([#1281](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1281))
+
 ## 2.17.0 (October 08, 2019)
 
 NOTES:
