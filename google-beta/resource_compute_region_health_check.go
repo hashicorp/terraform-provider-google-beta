@@ -1486,8 +1486,9 @@ func resourceComputeRegionHealthCheckEncoder(d *schema.ResourceData, meta interf
 	if _, ok := d.GetOk("http_health_check"); ok {
 		hc := d.Get("http_health_check").([]interface{})[0]
 		ps := hc.(map[string]interface{})["port_specification"]
+		pn := hc.(map[string]interface{})["port_name"]
 
-		if ps == "USE_FIXED_PORT" || ps == "" {
+		if ps == "USE_FIXED_PORT" || (ps == "" && pn == "") {
 			m := obj["httpHealthCheck"].(map[string]interface{})
 			if m["port"] == nil {
 				m["port"] = 80
@@ -1499,8 +1500,9 @@ func resourceComputeRegionHealthCheckEncoder(d *schema.ResourceData, meta interf
 	if _, ok := d.GetOk("https_health_check"); ok {
 		hc := d.Get("https_health_check").([]interface{})[0]
 		ps := hc.(map[string]interface{})["port_specification"]
+		pn := hc.(map[string]interface{})["port_name"]
 
-		if ps == "USE_FIXED_PORT" || ps == "" {
+		if ps == "USE_FIXED_PORT" || (ps == "" && pn == "") {
 			m := obj["httpsHealthCheck"].(map[string]interface{})
 			if m["port"] == nil {
 				m["port"] = 443
@@ -1512,8 +1514,9 @@ func resourceComputeRegionHealthCheckEncoder(d *schema.ResourceData, meta interf
 	if _, ok := d.GetOk("http2_health_check"); ok {
 		hc := d.Get("http2_health_check").([]interface{})[0]
 		ps := hc.(map[string]interface{})["port_specification"]
+		pn := hc.(map[string]interface{})["port_name"]
 
-		if ps == "USE_FIXED_PORT" || ps == "" {
+		if ps == "USE_FIXED_PORT" || (ps == "" && pn == "") {
 			m := obj["http2HealthCheck"].(map[string]interface{})
 			if m["port"] == nil {
 				m["port"] = 443
@@ -1525,8 +1528,9 @@ func resourceComputeRegionHealthCheckEncoder(d *schema.ResourceData, meta interf
 	if _, ok := d.GetOk("tcp_health_check"); ok {
 		hc := d.Get("tcp_health_check").([]interface{})[0]
 		ps := hc.(map[string]interface{})["port_specification"]
+		pn := hc.(map[string]interface{})["port_name"]
 
-		if ps == "USE_FIXED_PORT" || ps == "" {
+		if ps == "USE_FIXED_PORT" || (ps == "" && pn == "") {
 			m := obj["tcpHealthCheck"].(map[string]interface{})
 			if m["port"] == nil {
 				m["port"] = 80
@@ -1538,8 +1542,9 @@ func resourceComputeRegionHealthCheckEncoder(d *schema.ResourceData, meta interf
 	if _, ok := d.GetOk("ssl_health_check"); ok {
 		hc := d.Get("ssl_health_check").([]interface{})[0]
 		ps := hc.(map[string]interface{})["port_specification"]
+		pn := hc.(map[string]interface{})["port_name"]
 
-		if ps == "USE_FIXED_PORT" || ps == "" {
+		if ps == "USE_FIXED_PORT" || (ps == "" && pn == "") {
 			m := obj["sslHealthCheck"].(map[string]interface{})
 			if m["port"] == nil {
 				m["port"] = 443
