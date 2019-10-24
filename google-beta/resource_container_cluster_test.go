@@ -1199,6 +1199,51 @@ func TestAccContainerCluster_withMaintenanceWindow(t *testing.T) {
 	})
 }
 
+func TestAccContainerCluster_withRecurringMaintenanceWindow(t *testing.T) {
+	t.Parallel()
+	clusterName := acctest.RandString(10)
+	resourceName := "google_container_cluster.with_recurring_maintenance_window"
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckContainerClusterDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccContainerCluster_withRecurringMaintenanceWindow(clusterName, "2019-01-01T00:00:00Z", "2019-01-02T00:00:00Z"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckNoResourceAttr(resourceName,
+						"maintenance_policy.0.daily_maintenance_window.0.start_time"),
+				),
+			},
+			{
+				ResourceName:        resourceName,
+				ImportStateIdPrefix: "us-central1-a/",
+				ImportState:         true,
+				ImportStateVerify:   true,
+			},
+			{
+				Config: testAccContainerCluster_withRecurringMaintenanceWindow(clusterName, "", ""),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckNoResourceAttr(resourceName,
+						"maintenance_policy.0.daily_maintenance_window.0.start_time"),
+					resource.TestCheckNoResourceAttr(resourceName,
+						"maintenance_policy.0.recurring_window.0.start_time"),
+				),
+			},
+			{
+				ResourceName:        resourceName,
+				ImportStateIdPrefix: "us-central1-a/",
+				ImportState:         true,
+				ImportStateVerify:   true,
+				// maintenance_policy.# = 0 is equivalent to no maintenance policy at all,
+				// but will still cause an import diff
+				ImportStateVerifyIgnore: []string{"maintenance_policy.#"},
+			},
+		},
+	})
+}
+
 func TestAccContainerCluster_withIPAllocationPolicy_existingSecondaryRanges(t *testing.T) {
 	t.Parallel()
 
@@ -2012,7 +2057,7 @@ resource "google_container_cluster" "with_release_channel" {
 	initial_node_count = 1
 
   release_channel {
-    channel = "%s"
+	channel = "%s"
   }
 }`, clusterName, channel)
 }
@@ -2871,6 +2916,30 @@ resource "google_container_cluster" "with_maintenance_window" {
 }`, clusterName, maintenancePolicy)
 }
 
+func testAccContainerCluster_withRecurringMaintenanceWindow(clusterName string, startTime, endTime string) string {
+	maintenancePolicy := ""
+	if len(startTime) > 0 {
+		maintenancePolicy = fmt.Sprintf(`
+	maintenance_policy {
+		recurring_window {
+			start_time = "%s"
+			end_time = "%s"
+			recurrence = "FREQ=DAILY"
+		}
+	}`, startTime, endTime)
+	}
+
+	return fmt.Sprintf(`
+resource "google_container_cluster" "with_recurring_maintenance_window" {
+	name = "cluster-test-%s"
+	zone = "us-central1-a"
+	initial_node_count = 1
+
+	%s
+}`, clusterName, maintenancePolicy)
+
+}
+
 func testAccContainerCluster_withIPAllocationPolicy_existingSecondaryRanges(cluster string) string {
 	return fmt.Sprintf(`
 resource "google_compute_network" "container_network" {
@@ -3372,8 +3441,8 @@ resource "google_container_cluster" "cidr_error_overlap" {
   initial_node_count = 1
 
   ip_allocation_policy {
-    cluster_ipv4_cidr_block = "10.0.0.0/16"
-    services_ipv4_cidr_block = "10.1.0.0/16"
+	cluster_ipv4_cidr_block = "10.0.0.0/16"
+	services_ipv4_cidr_block = "10.1.0.0/16"
   }
 }
 `, initConfig, secondCluster)
@@ -3395,11 +3464,11 @@ data "google_project" "project" {}
 
 data "google_iam_policy" "test_kms_binding" {
   binding {
-    role = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
+	role = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
 
-    members = [
+	members = [
 	  "serviceAccount:service-${data.google_project.project.number}@container-engine-robot.iam.gserviceaccount.com",
-    ]
+	]
   }
 }
 

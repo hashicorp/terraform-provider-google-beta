@@ -48,6 +48,14 @@ var (
 	ipAllocationRangeFields     = []string{"ip_allocation_policy.0.cluster_secondary_range_name", "ip_allocation_policy.0.services_secondary_range_name"}
 )
 
+func validateRFC3339Date(v interface{}, k string) (warnings []string, errors []error) {
+	_, err := time.Parse(time.RFC3339, v.(string))
+	if err != nil {
+		errors = append(errors, err)
+	}
+	return
+}
+
 func resourceContainerCluster() *schema.Resource {
 	return &schema.Resource{
 		Create: resourceContainerClusterCreate,
@@ -370,8 +378,10 @@ func resourceContainerCluster() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"daily_maintenance_window": {
-							Type:     schema.TypeList,
-							Required: true,
+							Type: schema.TypeList,
+
+							Optional: true,
+
 							MaxItems: 1,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
@@ -384,6 +394,30 @@ func resourceContainerCluster() *schema.Resource {
 									"duration": {
 										Type:     schema.TypeString,
 										Computed: true,
+									},
+								},
+							},
+						},
+						"recurring_window": {
+							Type:          schema.TypeList,
+							Optional:      true,
+							MaxItems:      1,
+							ConflictsWith: []string{"maintenance_policy.0.daily_maintenance_window"},
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"start_time": {
+										Type:         schema.TypeString,
+										Required:     true,
+										ValidateFunc: validateRFC3339Date,
+									},
+									"end_time": {
+										Type:         schema.TypeString,
+										Required:     true,
+										ValidateFunc: validateRFC3339Date,
+									},
+									"recurrence": {
+										Type:     schema.TypeString,
+										Required: true,
 									},
 								},
 							},
@@ -927,7 +961,7 @@ func resourceContainerClusterCreate(d *schema.ResourceData, meta interface{}) er
 	cluster := &containerBeta.Cluster{
 		Name:                           clusterName,
 		InitialNodeCount:               int64(d.Get("initial_node_count").(int)),
-		MaintenancePolicy:              expandMaintenancePolicy(d.Get("maintenance_policy")),
+		MaintenancePolicy:              expandMaintenancePolicy(d, meta),
 		MasterAuthorizedNetworksConfig: expandMasterAuthorizedNetworksConfig(d.Get("master_authorized_networks_config")),
 		InitialClusterVersion:          d.Get("min_master_version").(string),
 		ClusterIpv4Cidr:                d.Get("cluster_ipv4_cidr").(string),
@@ -1438,15 +1472,8 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 	}
 
 	if d.HasChange("maintenance_policy") {
-		var req *containerBeta.SetMaintenancePolicyRequest
-		if mp, ok := d.GetOk("maintenance_policy"); ok {
-			req = &containerBeta.SetMaintenancePolicyRequest{
-				MaintenancePolicy: expandMaintenancePolicy(mp),
-			}
-		} else {
-			req = &containerBeta.SetMaintenancePolicyRequest{
-				NullFields: []string{"MaintenancePolicy"},
-			}
+		req := &containerBeta.SetMaintenancePolicyRequest{
+			MaintenancePolicy: expandMaintenancePolicy(d, meta),
 		}
 
 		updateF := func() error {
@@ -2172,22 +2199,63 @@ func expandIPAllocationPolicy(configured interface{}) *containerBeta.IPAllocatio
 	}
 }
 
-func expandMaintenancePolicy(configured interface{}) *containerBeta.MaintenancePolicy {
-	l := configured.([]interface{})
-	if len(l) == 0 || l[0] == nil {
-		return nil
+func expandMaintenancePolicy(d *schema.ResourceData, meta interface{}) *containerBeta.MaintenancePolicy {
+	config := meta.(*Config)
+	// We have to perform a full Get() as part of this, to get the fingerprint.  We can't do this
+	// at any other time, because the fingerprint update might happen between plan and apply.
+	// We can omit error checks, since to have gotten this far, a project is definitely configured.
+	project, _ := getProject(d, config)
+	location, _ := getLocation(d, config)
+	clusterName := d.Get("name").(string)
+	name := containerClusterFullName(project, location, clusterName)
+	cluster, _ := config.clientContainerBeta.Projects.Locations.Clusters.Get(name).Do()
+	resourceVersion := ""
+	// If the cluster doesn't exist or if there is a read error of any kind, we will pass in an empty
+	// resourceVersion.  If there happens to be a change to maintenance policy, we will fail at that
+	// point.  This is a compromise between code cleanliness and a slightly worse user experience in
+	// an unlikely error case - we choose code cleanliness.
+	if cluster != nil && cluster.MaintenancePolicy != nil {
+		resourceVersion = cluster.MaintenancePolicy.ResourceVersion
 	}
 
-	maintenancePolicy := l[0].(map[string]interface{})
-	dailyMaintenanceWindow := maintenancePolicy["daily_maintenance_window"].([]interface{})[0].(map[string]interface{})
-	startTime := dailyMaintenanceWindow["start_time"].(string)
-	return &containerBeta.MaintenancePolicy{
-		Window: &containerBeta.MaintenanceWindow{
-			DailyMaintenanceWindow: &containerBeta.DailyMaintenanceWindow{
-				StartTime: startTime,
-			},
-		},
+	configured := d.Get("maintenance_policy")
+	l := configured.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return &containerBeta.MaintenancePolicy{
+			ResourceVersion: resourceVersion,
+		}
 	}
+	maintenancePolicy := l[0].(map[string]interface{})
+
+	if dailyMaintenanceWindow, ok := maintenancePolicy["daily_maintenance_window"]; ok && len(dailyMaintenanceWindow.([]interface{})) > 0 {
+		dmw := dailyMaintenanceWindow.([]interface{})[0].(map[string]interface{})
+		startTime := dmw["start_time"].(string)
+		return &containerBeta.MaintenancePolicy{
+			Window: &containerBeta.MaintenanceWindow{
+				DailyMaintenanceWindow: &containerBeta.DailyMaintenanceWindow{
+					StartTime: startTime,
+				},
+			},
+			ResourceVersion: resourceVersion,
+		}
+	}
+	if recurringWindow, ok := maintenancePolicy["recurring_window"]; ok && len(recurringWindow.([]interface{})) > 0 {
+		rw := recurringWindow.([]interface{})[0].(map[string]interface{})
+		return &containerBeta.MaintenancePolicy{
+			Window: &containerBeta.MaintenanceWindow{
+				RecurringWindow: &containerBeta.RecurringTimeWindow{
+					Window: &containerBeta.TimeWindow{
+						StartTime: rw["start_time"].(string),
+						EndTime:   rw["end_time"].(string),
+					},
+					Recurrence: rw["recurrence"].(string),
+				},
+			},
+			ResourceVersion: resourceVersion,
+		}
+	}
+
+	return nil
 }
 
 func expandClusterAutoscaling(configured interface{}, d *schema.ResourceData) *containerBeta.ClusterAutoscaling {
@@ -2598,19 +2666,36 @@ func flattenIPAllocationPolicy(c *containerBeta.Cluster, d *schema.ResourceData,
 }
 
 func flattenMaintenancePolicy(mp *containerBeta.MaintenancePolicy) []map[string]interface{} {
-	if mp == nil || mp.Window == nil || mp.Window.DailyMaintenanceWindow == nil {
+	if mp == nil || mp.Window == nil {
 		return nil
 	}
-	return []map[string]interface{}{
-		{
-			"daily_maintenance_window": []map[string]interface{}{
-				{
-					"start_time": mp.Window.DailyMaintenanceWindow.StartTime,
-					"duration":   mp.Window.DailyMaintenanceWindow.Duration,
+	if mp.Window.DailyMaintenanceWindow != nil {
+		return []map[string]interface{}{
+			{
+				"daily_maintenance_window": []map[string]interface{}{
+					{
+						"start_time": mp.Window.DailyMaintenanceWindow.StartTime,
+						"duration":   mp.Window.DailyMaintenanceWindow.Duration,
+					},
 				},
 			},
-		},
+		}
 	}
+	if mp.Window.RecurringWindow != nil {
+		return []map[string]interface{}{
+			{
+				"recurring_window": []map[string]interface{}{
+					{
+						"start_time": mp.Window.RecurringWindow.Window.StartTime,
+						"end_time":   mp.Window.RecurringWindow.Window.EndTime,
+						"recurrence": mp.Window.RecurringWindow.Recurrence,
+					},
+				},
+			},
+		}
+	}
+
+	return nil
 }
 
 func flattenMasterAuth(ma *containerBeta.MasterAuth) []map[string]interface{} {
