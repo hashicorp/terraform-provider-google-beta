@@ -155,6 +155,9 @@ BUG FIXES:
 
 ## 2.13.0 (August 15, 2019)
 
+KNOWN ISSUES:
+* `bigtable`: `google_bigtable_instance` may cause a panic on Terraform `0.11`. This was resolved in `2.17.0`.
+
 FEATURES:
 * **New Resource**: added the `google_vpc_access_connector` resource and the `vpc_connector` option on the `google_cloudfunctions_function` resource. ([#1004](https://github.com/terraform-providers/terraform-provider-google-beta/issues/1004))
 * **New Resource**: Added `google_scc_source` resource for managing Cloud Security Command Center sources in Terraform ([#1033](https://github.com/terraform-providers/terraform-provider-google-beta/issues/1033))
