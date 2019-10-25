@@ -1,4 +1,9 @@
-## 2.18.1 (Unreleased)
+## 2.18.2 (Unreleased)
+## 2.18.1 (October 25, 2019)
+
+BUGS:
+* `resourcemanager`: fixed deleting the default network in `google_project` ([#1299](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1299))
+
 ## 2.18.0 (October 23, 2019)
 
 KNOWN ISSUES:
