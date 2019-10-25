@@ -349,6 +349,20 @@ func resourceDataprocCluster() *schema.Resource {
 								},
 							},
 						},
+						"endpoint_config": {
+							Type:     schema.TypeList,
+							Optional: true,
+							MaxItems: 1,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"enable_http_port_access": {
+										Type:     schema.TypeBool,
+										Optional: true,
+										ForceNew: true,
+									},
+								},
+							},
+						},
 					},
 				},
 			},
@@ -555,6 +569,10 @@ func expandClusterConfig(d *schema.ResourceData, config *Config) (*dataproc.Clus
 		conf.AutoscalingConfig = expandAutoscalingConfig(cfg)
 	}
 
+	if cfg, ok := configOptions(d, "cluster_config.0.endpoint_config"); ok {
+		conf.EndpointConfig = expandEndpointConfig(cfg)
+	}
+
 	if cfg, ok := configOptions(d, "cluster_config.0.master_config"); ok {
 		log.Println("[INFO] got master_config")
 		conf.MasterConfig = expandInstanceGroupConfig(cfg)
@@ -661,6 +679,14 @@ func expandAutoscalingConfig(cfg map[string]interface{}) *dataproc.AutoscalingCo
 	conf := &dataproc.AutoscalingConfig{}
 	if v, ok := cfg["policy_uri"]; ok {
 		conf.PolicyUri = v.(string)
+	}
+	return conf
+}
+
+func expandEndpointConfig(cfg map[string]interface{}) *dataproc.EndpointConfig {
+	conf := &dataproc.EndpointConfig{}
+	if v, ok := cfg["enable_http_port_access"]; ok {
+		conf.EnableHttpPortAccess = v.(bool)
 	}
 	return conf
 }
@@ -878,6 +904,7 @@ func flattenClusterConfig(d *schema.ResourceData, cfg *dataproc.ClusterConfig) (
 		"preemptible_worker_config": flattenPreemptibleInstanceGroupConfig(d, cfg.SecondaryWorkerConfig),
 		"encryption_config":         flattenEncryptionConfig(d, cfg.EncryptionConfig),
 		"autoscaling_config":        flattenAutoscalingConfig(d, cfg.AutoscalingConfig),
+		"endpoint_config":           flattenEndpointConfig(d, cfg.EndpointConfig),
 	}
 
 	if len(cfg.InitializationActions) > 0 {
@@ -920,6 +947,18 @@ func flattenAutoscalingConfig(d *schema.ResourceData, ec *dataproc.AutoscalingCo
 
 	data := map[string]interface{}{
 		"policy_uri": ec.PolicyUri,
+	}
+
+	return []map[string]interface{}{data}
+}
+
+func flattenEndpointConfig(d *schema.ResourceData, ec *dataproc.EndpointConfig) []map[string]interface{} {
+	if ec == nil {
+		return nil
+	}
+
+	data := map[string]interface{}{
+		"enable_http_port_access": ec.EnableHttpPortAccess,
 	}
 
 	return []map[string]interface{}{data}
