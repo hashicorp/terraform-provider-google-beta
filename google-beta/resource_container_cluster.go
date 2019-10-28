@@ -56,6 +56,19 @@ func validateRFC3339Date(v interface{}, k string) (warnings []string, errors []e
 	return
 }
 
+func rfc5545RecurrenceDiffSuppress(k, o, n string, d *schema.ResourceData) bool {
+	// This diff gets applied in the cloud console if you specify
+	// "FREQ=DAILY" in your config and add a maintenance exclusion.
+	if o == "FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR,SA,SU" && n == "FREQ=DAILY" {
+		return true
+	}
+	// Writing a full diff suppress for identical recurrences would be
+	// complex and error-prone - it's not a big problem if a user
+	// changes the recurrence and it's textually difference but semantically
+	// identical.
+	return false
+}
+
 func resourceContainerCluster() *schema.Resource {
 	return &schema.Resource{
 		Create: resourceContainerClusterCreate,
@@ -416,8 +429,9 @@ func resourceContainerCluster() *schema.Resource {
 										ValidateFunc: validateRFC3339Date,
 									},
 									"recurrence": {
-										Type:     schema.TypeString,
-										Required: true,
+										Type:             schema.TypeString,
+										Required:         true,
+										DiffSuppressFunc: rfc5545RecurrenceDiffSuppress,
 									},
 								},
 							},
@@ -2217,12 +2231,19 @@ func expandMaintenancePolicy(d *schema.ResourceData, meta interface{}) *containe
 	if cluster != nil && cluster.MaintenancePolicy != nil {
 		resourceVersion = cluster.MaintenancePolicy.ResourceVersion
 	}
+	exclusions := make(map[string]containerBeta.TimeWindow, 0)
+	if cluster != nil && cluster.MaintenancePolicy != nil && cluster.MaintenancePolicy.Window != nil {
+		exclusions = cluster.MaintenancePolicy.Window.MaintenanceExclusions
+	}
 
 	configured := d.Get("maintenance_policy")
 	l := configured.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return &containerBeta.MaintenancePolicy{
 			ResourceVersion: resourceVersion,
+			Window: &containerBeta.MaintenanceWindow{
+				MaintenanceExclusions: exclusions,
+			},
 		}
 	}
 	maintenancePolicy := l[0].(map[string]interface{})
@@ -2232,6 +2253,7 @@ func expandMaintenancePolicy(d *schema.ResourceData, meta interface{}) *containe
 		startTime := dmw["start_time"].(string)
 		return &containerBeta.MaintenancePolicy{
 			Window: &containerBeta.MaintenanceWindow{
+				MaintenanceExclusions: exclusions,
 				DailyMaintenanceWindow: &containerBeta.DailyMaintenanceWindow{
 					StartTime: startTime,
 				},
@@ -2243,6 +2265,7 @@ func expandMaintenancePolicy(d *schema.ResourceData, meta interface{}) *containe
 		rw := recurringWindow.([]interface{})[0].(map[string]interface{})
 		return &containerBeta.MaintenancePolicy{
 			Window: &containerBeta.MaintenanceWindow{
+				MaintenanceExclusions: exclusions,
 				RecurringWindow: &containerBeta.RecurringTimeWindow{
 					Window: &containerBeta.TimeWindow{
 						StartTime: rw["start_time"].(string),
