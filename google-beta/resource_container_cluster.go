@@ -1243,7 +1243,9 @@ func resourceContainerClusterRead(d *schema.ResourceData, meta interface{}) erro
 	d.Set("monitoring_service", cluster.MonitoringService)
 	d.Set("network", cluster.NetworkConfig.Network)
 	d.Set("subnetwork", cluster.NetworkConfig.Subnetwork)
-	d.Set("enable_shielded_nodes", cluster.ShieldedNodes.Enabled)
+	if cluster.ShieldedNodes != nil {
+		d.Set("enable_shielded_nodes", cluster.ShieldedNodes.Enabled)
+	}
 	d.Set("enable_binary_authorization", cluster.BinaryAuthorization != nil && cluster.BinaryAuthorization.Enabled)
 	d.Set("enable_tpu", cluster.EnableTpu)
 	d.Set("tpu_ipv4_cidr_block", cluster.TpuIpv4CidrBlock)
