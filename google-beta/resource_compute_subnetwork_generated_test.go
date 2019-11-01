@@ -68,7 +68,7 @@ resource "google_compute_network" "custom-test" {
 `, context)
 }
 
-func TestAccComputeSubnetwork_subnetworkLoggingConfigBetaExample(t *testing.T) {
+func TestAccComputeSubnetwork_subnetworkLoggingConfigExample(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
@@ -77,42 +77,39 @@ func TestAccComputeSubnetwork_subnetworkLoggingConfigBetaExample(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProvidersOiCS,
+		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckComputeSubnetworkDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccComputeSubnetwork_subnetworkLoggingConfigBetaExample(context),
+				Config: testAccComputeSubnetwork_subnetworkLoggingConfigExample(context),
+			},
+			{
+				ResourceName:      "google_compute_subnetwork.subnet-with-logging",
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
 }
 
-func testAccComputeSubnetwork_subnetworkLoggingConfigBetaExample(context map[string]interface{}) string {
+func testAccComputeSubnetwork_subnetworkLoggingConfigExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_compute_subnetwork" "subnet-with-logging" {
-  provider      = "google-beta" 
   name          = "log-test-subnetwork%{random_suffix}"
   ip_cidr_range = "10.2.0.0/16"
   region        = "us-central1"
   network       = "${google_compute_network.custom-test.self_link}"
 
-  enable_flow_logs = true
   log_config {
     aggregation_interval = "INTERVAL_10_MIN"
-    flow_sampling = 0.5
-    metadata = "INCLUDE_ALL_METADATA"
+    flow_sampling        = 0.5
+    metadata             = "INCLUDE_ALL_METADATA"
   }
 }
 
 resource "google_compute_network" "custom-test" {
-  provider                = "google-beta"
   name                    = "log-test-network%{random_suffix}"
   auto_create_subnetworks = false
-}
-
-provider "google-beta"{
-  region = "us-central1"
-  zone   = "us-central1-a"
 }
 `, context)
 }

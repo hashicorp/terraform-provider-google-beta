@@ -79,38 +79,30 @@ resource "google_compute_network" "custom-test" {
 }
 ```
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
-  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=subnetwork_logging_config_beta&cloudshell_image=gcr.io%2Fgraphite-cloud-shell-images%2Fterraform%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=subnetwork_logging_config&cloudshell_image=gcr.io%2Fgraphite-cloud-shell-images%2Fterraform%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
     <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
   </a>
 </div>
-## Example Usage - Subnetwork Logging Config Beta
+## Example Usage - Subnetwork Logging Config
 
 
 ```hcl
 resource "google_compute_subnetwork" "subnet-with-logging" {
-  provider      = "google-beta" 
   name          = "log-test-subnetwork"
   ip_cidr_range = "10.2.0.0/16"
   region        = "us-central1"
   network       = "${google_compute_network.custom-test.self_link}"
 
-  enable_flow_logs = true
   log_config {
     aggregation_interval = "INTERVAL_10_MIN"
-    flow_sampling = 0.5
-    metadata = "INCLUDE_ALL_METADATA"
+    flow_sampling        = 0.5
+    metadata             = "INCLUDE_ALL_METADATA"
   }
 }
 
 resource "google_compute_network" "custom-test" {
-  provider                = "google-beta"
   name                    = "log-test-network"
   auto_create_subnetworks = false
-}
-
-provider "google-beta"{
-  region = "us-central1"
-  zone   = "us-central1-a"
 }
 ```
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
@@ -179,7 +171,7 @@ The following arguments are supported:
   creation time.
 
 * `enable_flow_logs` -
-  (Optional)
+  (Optional, Deprecated)
   Whether to enable flow logging for this subnetwork.
 
 * `purpose` -
@@ -219,7 +211,7 @@ The following arguments are supported:
   URL of the GCP region for this subnetwork.
 
 * `log_config` -
-  (Optional, [Beta](https://terraform.io/docs/providers/google/provider_versions.html))
+  (Optional)
   Denotes the logging options for the subnetwork flow logs. If logging is enabled
   logs will be exported to Stackdriver.  Structure is documented below.
 
