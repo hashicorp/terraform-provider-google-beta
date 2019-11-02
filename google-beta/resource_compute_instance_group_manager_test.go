@@ -314,10 +314,12 @@ func testAccInstanceGroupManager_basic(template, target, igm1, igm2 string) stri
 	resource "google_compute_instance_group_manager" "igm-basic" {
 		description = "Terraform test instance group manager"
 		name = "%s"
+
 		version {
 			name = "prod"
 			instance_template = "${google_compute_instance_template.igm-basic.self_link}"
 		}
+
 		target_pools = ["${google_compute_target_pool.igm-basic.self_link}"]
 		base_instance_name = "igm-basic"
 		zone = "us-central1-c"
@@ -327,10 +329,12 @@ func testAccInstanceGroupManager_basic(template, target, igm1, igm2 string) stri
 	resource "google_compute_instance_group_manager" "igm-no-tp" {
 		description = "Terraform test instance group manager"
 		name = "%s"
+
 		version {
 			name = "prod"
 			instance_template = "${google_compute_instance_template.igm-basic.self_link}"
 		}
+
 		base_instance_name = "igm-no-tp"
 		zone = "us-central1-c"
 		target_size = 2
@@ -369,10 +373,12 @@ func testAccInstanceGroupManager_targetSizeZero(template, igm string) string {
 	resource "google_compute_instance_group_manager" "igm-basic" {
 		description = "Terraform test instance group manager"
 		name = "%s"
+
 		version {
 			name = "prod"
 			instance_template = "${google_compute_instance_template.igm-basic.self_link}"
 		}
+
 		base_instance_name = "igm-basic"
 		zone = "us-central1-c"
 	}
@@ -416,10 +422,12 @@ func testAccInstanceGroupManager_update(template, target, igm string) string {
 	resource "google_compute_instance_group_manager" "igm-update" {
 		description = "Terraform test instance group manager"
 		name = "%s"
+
 		version {
 			name = "prod"
 			instance_template = "${google_compute_instance_template.igm-update.self_link}"
 		}
+
 		target_pools = ["${google_compute_target_pool.igm-update.self_link}"]
 		base_instance_name = "igm-update"
 		zone = "us-central1-c"
@@ -496,10 +504,12 @@ func testAccInstanceGroupManager_update2(template1, target1, target2, template2,
 	resource "google_compute_instance_group_manager" "igm-update" {
 		description = "Terraform test instance group manager"
 		name = "%s"
+
 		version {
 			name = "prod"
 			instance_template = "${google_compute_instance_template.igm-update2.self_link}"
 		}
+
 		target_pools = [
 			"${google_compute_target_pool.igm-update.self_link}",
 			"${google_compute_target_pool.igm-update2.self_link}",
@@ -552,10 +562,12 @@ func testAccInstanceGroupManager_updateLifecycle(tag, igm string) string {
 	resource "google_compute_instance_group_manager" "igm-update" {
 		description = "Terraform test instance group manager"
 		name = "%s"
+
 		version {
 			name = "prod"
 			instance_template = "${google_compute_instance_template.igm-update.self_link}"
 		}
+
 		base_instance_name = "igm-update"
 		zone = "us-central1-c"
 		target_size = 2
@@ -794,10 +806,12 @@ func testAccInstanceGroupManager_separateRegions(igm1, igm2 string) string {
 	resource "google_compute_instance_group_manager" "igm-basic" {
 		description = "Terraform test instance group manager"
 		name = "%s"
+
 		version {
 			instance_template = "${google_compute_instance_template.igm-basic.self_link}"
 			name = "prod"
 		}
+
 		base_instance_name = "igm-basic"
 		zone = "us-central1-c"
 		target_size = 2
@@ -806,10 +820,12 @@ func testAccInstanceGroupManager_separateRegions(igm1, igm2 string) string {
 	resource "google_compute_instance_group_manager" "igm-basic-2" {
 		description = "Terraform test instance group manager"
 		name = "%s"
+
 		version {
 			name = "prod"
 			instance_template = "${google_compute_instance_template.igm-basic.self_link}"
 		}
+
 		base_instance_name = "igm-basic-2"
 		zone = "us-west1-b"
 		target_size = 2
