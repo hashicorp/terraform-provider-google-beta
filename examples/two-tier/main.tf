@@ -58,7 +58,7 @@ resource "google_compute_instance" "www" {
     destination = var.install_script_dest_path
 
     connection {
-      host = self.network_interface.0.access_config.0.nat_ip
+      host        = self.network_interface.0.access_config.0.nat_ip
       type        = "ssh"
       user        = "root"
       private_key = file(var.private_key_path)
@@ -68,7 +68,7 @@ resource "google_compute_instance" "www" {
 
   provisioner "remote-exec" {
     connection {
-      host = self.network_interface.0.access_config.0.nat_ip
+      host        = self.network_interface.0.access_config.0.nat_ip
       type        = "ssh"
       user        = "root"
       private_key = file(var.private_key_path)
