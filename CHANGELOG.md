@@ -1,4 +1,34 @@
-## 2.18.2 (Unreleased)
+## 2.19.0 (Unreleased)
+
+DEPRECATIONS:
+* `compute`: deprecated `enable_flow_logs` on `google_compute_subnetwork`. The presence of the `log_config` block signals that flow logs are enabled for a subnetwork ([#1320](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1320))
+* `compute`: deprecated `instance_template` for `google_compute_instance_group_manager` and `google_compute_region_instance_group_manager` . Use `version.instance_template` instead. ([#1309](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1309))
+* `compute`: deprecated `update_strategy` for `google_compute_instance_group_manager` . Use `update_policy` instead. ([#1309](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1309))
+* `container`: deprecated `google_container_cluster` `ip_allocation_policy.create_subnetwork`, `ip_allocation_policy.subnetwork_name`, `ip_allocation_policy.node_ipv4_cidr_block`. Define an explicit `google_compute_subnetwork` and use `subnetwork` instead. ([#1312](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1312))
+* `container`: deprecated `google_container_cluster` `ip_allocation_policy.use_ip_aliases`. If it's set to true, remove it from your config. If false, remove `ip_allocation_policy` as a whole. ([#1312](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1312))
+* `iam`: Deprecated `pgp_key` on `google_service_account_key` resource. See https://www.terraform.io/docs/extend/best-practices/sensitive-state.html for more information. ([#1326](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1326))
+
+BREAKING CHANGES:
+* `google_service_account_iam_*` resources now support IAM Conditions. If any conditions had been created out of band before this release, take extra care to ensure they are present in your Terraform config so the provider doesn't try to create new bindings with no conditions. Terraform will show a diff that it is adding the condition to the resource, which is safe to apply. ([#1188](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1188))
+
+FEATURES:
+* `compute`: added `google_compute_router` datasource ([#1233](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1233))
+
+IMPROVEMENTS:
+* `cloudbuild`: added ability to specify `name` for `cloud_build_trigger` to avoid name collisions when creating multiple triggers at once. ([#1277](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1277))
+* `compute`: added support for multiple versions of `instance_template` and granular control of the update policies for `google_compute_instance_group_manager` and `google_compute_region_instance_group_manager`. ([#1309](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1309))
+* `container`: added `taint` field in GKE resources to the GA `google` provider ([#1296](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1296))
+* `container`: fix a diff created in the cloud console when `MaintenanceExclusions` are added. ([#1310](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1310))
+* `container`: added `maintenance_policy.recurring_window` support to `google_container_cluster`, significantly increasing expressive range. ([#1292](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1292))
+* `compute`: added `google_compute_instance` support for display device (Virtual Displays) ([#1313](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1313))
+* `iam`: added support for IAM Conditions to the `google_service_account_iam_*` resources (beta provider only) ([#1188](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1188))
+* `iam`: added `description` to `google_service_account`. ([#1291](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1291))
+
+BUG FIXES:
+* `appengine`: Resolved permadiff in `google_app_engine_domain_mapping.ssl_settings.certificate_id`. ([#1303](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1303))
+* `storage`: Fixed error in `google_storage_bucket` where locked retention policies would cause a bucket to report failure on all updates (even though updates were applied correctly). ([#1307](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1307))
+* `container`: Fixed nil reference to ShieldedNodes. ([#1314](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1314))
+
 ## 2.18.1 (October 25, 2019)
 
 BUGS:
