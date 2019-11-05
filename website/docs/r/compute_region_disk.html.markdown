@@ -186,7 +186,7 @@ The `disk_encryption_key` block supports:
   encryption key that protects this resource.
 
 * `kms_key_name` -
-  (Optional, [Beta](https://terraform.io/docs/providers/google/provider_versions.html))
+  (Optional, [Beta](https://terraform.io/docs/providers/google/guides/provider_versions.html))
   The name of the encryption key that is stored in Google Cloud KMS.
 
 The `source_snapshot_encryption_key` block supports:
@@ -197,7 +197,7 @@ The `source_snapshot_encryption_key` block supports:
   RFC 4648 base64 to either encrypt or decrypt this resource.
 
 * `kms_key_name` -
-  (Optional, [Beta](https://terraform.io/docs/providers/google/provider_versions.html))
+  (Optional, [Beta](https://terraform.io/docs/providers/google/guides/provider_versions.html))
   The name of the encryption key that is stored in Google Cloud KMS.
 
 * `sha256` -
@@ -261,4 +261,4 @@ as an argument so that Terraform uses the correct provider to import your resour
 
 ## User Project Overrides
 
-This resource supports [User Project Overrides](https://www.terraform.io/docs/providers/google/provider_reference.html#user_project_override).
+This resource supports [User Project Overrides](https://www.terraform.io/docs/providers/google/guides/provider_reference.html#user_project_override).

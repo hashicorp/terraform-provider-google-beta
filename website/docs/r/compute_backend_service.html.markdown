@@ -167,12 +167,12 @@ The following arguments are supported:
   The set of backends that serve this BackendService.  Structure is documented below.
 
 * `circuit_breakers` -
-  (Optional, [Beta](https://terraform.io/docs/providers/google/provider_versions.html))
+  (Optional, [Beta](https://terraform.io/docs/providers/google/guides/provider_versions.html))
   Settings controlling the volume of connections to a backend service. This field
   is applicable only when the load_balancing_scheme is set to INTERNAL_SELF_MANAGED.  Structure is documented below.
 
 * `consistent_hash` -
-  (Optional, [Beta](https://terraform.io/docs/providers/google/provider_versions.html))
+  (Optional, [Beta](https://terraform.io/docs/providers/google/guides/provider_versions.html))
   Consistent Hash-based load balancing can be used to provide soft session
   affinity based on HTTP headers, cookies or other properties. This load balancing
   policy is applicable only for HTTP connections. The affinity to a particular
@@ -192,7 +192,7 @@ The following arguments are supported:
   connections, but still work to finish started).
 
 * `custom_request_headers` -
-  (Optional, [Beta](https://terraform.io/docs/providers/google/provider_versions.html))
+  (Optional, [Beta](https://terraform.io/docs/providers/google/guides/provider_versions.html))
   Headers that the HTTP/S load balancer should add to proxied
   requests.
 
@@ -216,7 +216,7 @@ The following arguments are supported:
   `INTERNAL_SELF_MANAGED` for a global backend service. Defaults to `EXTERNAL`.
 
 * `locality_lb_policy` -
-  (Optional, [Beta](https://terraform.io/docs/providers/google/provider_versions.html))
+  (Optional, [Beta](https://terraform.io/docs/providers/google/guides/provider_versions.html))
   The load balancing algorithm used within the scope of the locality.
   The possible values are -
   ROUND_ROBIN - This is a simple policy in which each healthy backend
@@ -241,7 +241,7 @@ The following arguments are supported:
   INTERNAL_SELF_MANAGED.
 
 * `outlier_detection` -
-  (Optional, [Beta](https://terraform.io/docs/providers/google/provider_versions.html))
+  (Optional, [Beta](https://terraform.io/docs/providers/google/guides/provider_versions.html))
   Settings controlling eviction of unhealthy hosts from the load balancing pool.
   This field is applicable only when the load_balancing_scheme is set
   to INTERNAL_SELF_MANAGED.  Structure is documented below.
@@ -274,7 +274,7 @@ The following arguments are supported:
   failed request. Default is 30 seconds. Valid range is [1, 86400].
 
 * `log_config` -
-  (Optional, [Beta](https://terraform.io/docs/providers/google/provider_versions.html))
+  (Optional, [Beta](https://terraform.io/docs/providers/google/guides/provider_versions.html))
   This field denotes the logging options for the load balancer traffic served by this backend service.
   If logging is enabled, logs will be exported to Stackdriver.  Structure is documented below.
 
@@ -694,4 +694,4 @@ as an argument so that Terraform uses the correct provider to import your resour
 
 ## User Project Overrides
 
-This resource supports [User Project Overrides](https://www.terraform.io/docs/providers/google/provider_reference.html#user_project_override).
+This resource supports [User Project Overrides](https://www.terraform.io/docs/providers/google/guides/provider_reference.html#user_project_override).
