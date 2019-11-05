@@ -230,7 +230,7 @@ The following arguments are supported:
   object.
 
 * `labels` -
-  (Optional, [Beta](https://terraform.io/docs/providers/google/provider_versions.html))
+  (Optional, [Beta](https://terraform.io/docs/providers/google/guides/provider_versions.html))
   Labels to apply to this forwarding rule.  A list of key->value pairs.
 
 * `all_ports` -
@@ -312,4 +312,4 @@ as an argument so that Terraform uses the correct provider to import your resour
 
 ## User Project Overrides
 
-This resource supports [User Project Overrides](https://www.terraform.io/docs/providers/google/provider_reference.html#user_project_override).
+This resource supports [User Project Overrides](https://www.terraform.io/docs/providers/google/guides/provider_reference.html#user_project_override).

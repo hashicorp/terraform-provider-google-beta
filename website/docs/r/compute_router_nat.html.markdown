@@ -154,7 +154,7 @@ The following arguments are supported:
   is set to MANUAL_ONLY.
 
 * `drain_nat_ips` -
-  (Optional, [Beta](https://terraform.io/docs/providers/google/provider_versions.html))
+  (Optional, [Beta](https://terraform.io/docs/providers/google/guides/provider_versions.html))
   A list of URLs of the IP resources to be drained. These IPs must be
   valid static external IPs that have been assigned to the NAT.
 
@@ -254,4 +254,4 @@ as an argument so that Terraform uses the correct provider to import your resour
 
 ## User Project Overrides
 
-This resource supports [User Project Overrides](https://www.terraform.io/docs/providers/google/provider_reference.html#user_project_override).
+This resource supports [User Project Overrides](https://www.terraform.io/docs/providers/google/guides/provider_reference.html#user_project_override).

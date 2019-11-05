@@ -207,7 +207,7 @@ The following arguments are supported:
   URL to a VpnTunnel that should handle matching packets.
 
 * `next_hop_ilb` -
-  (Optional, [Beta](https://terraform.io/docs/providers/google/provider_versions.html))
+  (Optional, [Beta](https://terraform.io/docs/providers/google/guides/provider_versions.html))
   The URL to a forwarding rule of type loadBalancingScheme=INTERNAL that should handle matching packets.
   You can only specify the forwarding rule as a partial or full URL. For example, the following are all valid URLs:
   https://www.googleapis.com/compute/v1/projects/project/regions/region/forwardingRules/forwardingRule
@@ -256,4 +256,4 @@ as an argument so that Terraform uses the correct provider to import your resour
 
 ## User Project Overrides
 
-This resource supports [User Project Overrides](https://www.terraform.io/docs/providers/google/provider_reference.html#user_project_override).
+This resource supports [User Project Overrides](https://www.terraform.io/docs/providers/google/guides/provider_reference.html#user_project_override).
