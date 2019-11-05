@@ -70,6 +70,108 @@ resource "google_compute_health_check" "default" {
 `, context)
 }
 
+func TestAccComputeRegionBackendService_regionBackendServiceIlbRoundRobinExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"random_suffix": acctest.RandString(10),
+	}
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProvidersOiCS,
+		CheckDestroy: testAccCheckComputeRegionBackendServiceDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeRegionBackendService_regionBackendServiceIlbRoundRobinExample(context),
+			},
+		},
+	})
+}
+
+func testAccComputeRegionBackendService_regionBackendServiceIlbRoundRobinExample(context map[string]interface{}) string {
+	return Nprintf(`
+resource "google_compute_region_backend_service" "default" {
+  provider = "google-beta"
+
+  region = "us-central1"
+  name = "region-backend-service%{random_suffix}"
+  health_checks = ["${google_compute_health_check.health_check.self_link}"]
+  protocol = "HTTP"
+  load_balancing_scheme = "INTERNAL_MANAGED"
+  locality_lb_policy = "ROUND_ROBIN"
+}
+
+resource "google_compute_health_check" "health_check" {
+  provider = "google-beta"
+
+  name               = "health-check%{random_suffix}"
+  http_health_check {
+
+  }
+}
+`, context)
+}
+
+func TestAccComputeRegionBackendService_regionBackendServiceIlbRingHashExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"random_suffix": acctest.RandString(10),
+	}
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProvidersOiCS,
+		CheckDestroy: testAccCheckComputeRegionBackendServiceDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeRegionBackendService_regionBackendServiceIlbRingHashExample(context),
+			},
+		},
+	})
+}
+
+func testAccComputeRegionBackendService_regionBackendServiceIlbRingHashExample(context map[string]interface{}) string {
+	return Nprintf(`
+resource "google_compute_region_backend_service" "default" {
+  provider = "google-beta"
+
+  region = "us-central1"
+  name = "region-backend-service%{random_suffix}"
+  health_checks = ["${google_compute_health_check.health_check.self_link}"]
+  load_balancing_scheme = "INTERNAL_MANAGED"
+  locality_lb_policy = "RING_HASH"
+  session_affinity = "HTTP_COOKIE"
+  protocol = "HTTP"
+  circuit_breakers {
+    max_connections = 10
+  }
+  consistent_hash {
+    http_cookie {
+      ttl {
+        seconds = 11
+        nanos = 1111
+      }
+      name = "mycookie"
+    }
+  }
+  outlier_detection {
+    consecutive_errors = 2
+  }
+}
+
+resource "google_compute_health_check" "health_check" {
+  provider = "google-beta"
+
+  name               = "health-check%{random_suffix}"
+  http_health_check {
+
+  }
+}
+`, context)
+}
+
 func testAccCheckComputeRegionBackendServiceDestroy(s *terraform.State) error {
 	for name, rs := range s.RootModule().Resources {
 		if rs.Type != "google_compute_region_backend_service" {

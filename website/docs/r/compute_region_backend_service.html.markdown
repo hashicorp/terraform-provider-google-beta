@@ -25,9 +25,6 @@ description: |-
 A Region Backend Service defines a regionally-scoped group of virtual
 machines that will serve traffic for load balancing.
 
-Region backend services can only be used when using internal load balancing.
-For external load balancing, use a global backend service instead.
-
 
 To get more information about RegionBackendService, see:
 
@@ -62,11 +59,91 @@ resource "google_compute_health_check" "default" {
   }
 }
 ```
+<div class = "oics-button" style="float: right; margin: 0 0 -15px">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=region_backend_service_ilb_round_robin&cloudshell_image=gcr.io%2Fgraphite-cloud-shell-images%2Fterraform%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+    <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
+  </a>
+</div>
+## Example Usage - Region Backend Service Ilb Round Robin
+
+
+```hcl
+resource "google_compute_region_backend_service" "default" {
+  provider = "google-beta"
+
+  region = "us-central1"
+  name = "region-backend-service"
+  health_checks = ["${google_compute_health_check.health_check.self_link}"]
+  protocol = "HTTP"
+  load_balancing_scheme = "INTERNAL_MANAGED"
+  locality_lb_policy = "ROUND_ROBIN"
+}
+
+resource "google_compute_health_check" "health_check" {
+  provider = "google-beta"
+
+  name               = "health-check"
+  http_health_check {
+
+  }
+}
+```
+<div class = "oics-button" style="float: right; margin: 0 0 -15px">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=region_backend_service_ilb_ring_hash&cloudshell_image=gcr.io%2Fgraphite-cloud-shell-images%2Fterraform%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+    <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
+  </a>
+</div>
+## Example Usage - Region Backend Service Ilb Ring Hash
+
+
+```hcl
+resource "google_compute_region_backend_service" "default" {
+  provider = "google-beta"
+
+  region = "us-central1"
+  name = "region-backend-service"
+  health_checks = ["${google_compute_health_check.health_check.self_link}"]
+  load_balancing_scheme = "INTERNAL_MANAGED"
+  locality_lb_policy = "RING_HASH"
+  session_affinity = "HTTP_COOKIE"
+  protocol = "HTTP"
+  circuit_breakers {
+    max_connections = 10
+  }
+  consistent_hash {
+    http_cookie {
+      ttl {
+        seconds = 11
+        nanos = 1111
+      }
+      name = "mycookie"
+    }
+  }
+  outlier_detection {
+    consecutive_errors = 2
+  }
+}
+
+resource "google_compute_health_check" "health_check" {
+  provider = "google-beta"
+
+  name               = "health-check"
+  http_health_check {
+
+  }
+}
+```
 
 ## Argument Reference
 
 The following arguments are supported:
 
+
+* `health_checks` -
+  (Required)
+  The set of URLs to HealthCheck resources for health checking
+  this RegionBackendService. Currently at most one health
+  check can be specified, and a health check is required.
 
 * `name` -
   (Required)
@@ -78,19 +155,45 @@ The following arguments are supported:
   characters must be a dash, lowercase letter, or digit, except the last
   character, which cannot be a dash.
 
-* `health_checks` -
-  (Required)
-  The list of HealthChecks for checking the health of the backend service.
-  Currently at most one health check can be specified, and a health check
-  is required.
-
 
 - - -
 
 
+* `affinity_cookie_ttl_sec` -
+  (Optional, [Beta](https://terraform.io/docs/providers/google/provider_versions.html))
+  Lifetime of cookies in seconds if session_affinity is
+  GENERATED_COOKIE. If set to 0, the cookie is non-persistent and lasts
+  only until the end of the browser session (or equivalent). The
+  maximum allowed value for TTL is one day.
+  When the load balancing scheme is INTERNAL, this field is not used.
+
 * `backend` -
   (Optional)
-  The list of backends that serve this RegionBackendService.  Structure is documented below.
+  The set of backends that serve this RegionBackendService.  Structure is documented below.
+
+* `circuit_breakers` -
+  (Optional, [Beta](https://terraform.io/docs/providers/google/provider_versions.html))
+  Settings controlling the volume of connections to a backend service. This field
+  is applicable only when the `load_balancing_scheme` is set to INTERNAL_MANAGED
+  and the `protocol` is set to HTTP, HTTPS, or HTTP2.  Structure is documented below.
+
+* `consistent_hash` -
+  (Optional, [Beta](https://terraform.io/docs/providers/google/provider_versions.html))
+  Consistent Hash-based load balancing can be used to provide soft session
+  affinity based on HTTP headers, cookies or other properties. This load balancing
+  policy is applicable only for HTTP connections. The affinity to a particular
+  destination host will be lost when one or more hosts are added/removed from the
+  destination service. This field specifies parameters that control consistent
+  hashing.
+  This field only applies when all of the following are true -
+    * `load_balancing_scheme` is set to INTERNAL_MANAGED
+    * `protocol` is set to HTTP, HTTPS, or HTTP2
+    * `locality_lb_policy` is set to MAGLEV or RING_HASH  Structure is documented below.
+
+* `connection_draining_timeout_sec` -
+  (Optional)
+  Time for which instance will be drained (not accept new
+  connections, but still work to finish started).
 
 * `description` -
   (Optional)
@@ -100,36 +203,70 @@ The following arguments are supported:
   (Optional, [Beta](https://terraform.io/docs/providers/google/provider_versions.html))
   Policy for failovers.  Structure is documented below.
 
+* `load_balancing_scheme` -
+  (Optional)
+  Indicates what kind of load balancing this regional backend service
+  will be used for. A backend service created for one type of load
+  balancing cannot be used with the other(s). Must be `INTERNAL` or
+  `INTERNAL_MANAGED`. Defaults to `INTERNAL`.
+
+* `locality_lb_policy` -
+  (Optional, [Beta](https://terraform.io/docs/providers/google/provider_versions.html))
+  The load balancing algorithm used within the scope of the locality.
+  The possible values are -
+  ROUND_ROBIN - This is a simple policy in which each healthy backend
+                is selected in round robin order.
+  LEAST_REQUEST - An O(1) algorithm which selects two random healthy
+                  hosts and picks the host which has fewer active requests.
+  RING_HASH - The ring/modulo hash load balancer implements consistent
+              hashing to backends. The algorithm has the property that the
+              addition/removal of a host from a set of N hosts only affects
+              1/N of the requests.
+  RANDOM - The load balancer selects a random healthy host.
+  ORIGINAL_DESTINATION - Backend host is selected based on the client
+                         connection metadata, i.e., connections are opened
+                         to the same address as the destination address of
+                         the incoming connection before the connection
+                         was redirected to the load balancer.
+  MAGLEV - used as a drop in replacement for the ring hash load balancer.
+           Maglev is not as stable as ring hash but has faster table lookup
+           build times and host selection times. For more information about
+           Maglev, refer to https://ai.google/research/pubs/pub44824
+  This field is applicable only when the `load_balancing_scheme` is set to
+  INTERNAL_MANAGED and the `protocol` is set to HTTP, HTTPS, or HTTP2.
+
+* `outlier_detection` -
+  (Optional, [Beta](https://terraform.io/docs/providers/google/provider_versions.html))
+  Settings controlling eviction of unhealthy hosts from the load balancing pool.
+  This field is applicable only when the `load_balancing_scheme` is set
+  to INTERNAL_MANAGED and the `protocol` is set to HTTP, HTTPS, or HTTP2.  Structure is documented below.
+
 * `protocol` -
   (Optional)
-  The protocol this BackendService uses to communicate with backends.
-  The possible values are TCP and UDP, and the default is TCP.
+  The protocol this RegionBackendService uses to communicate with backends.
+  Possible values are HTTP, HTTPS, HTTP2, SSL, TCP, and UDP. The default is
+  HTTP. **NOTE**: HTTP2 is only valid for beta HTTP/2 load balancer
+  types and may result in errors if used with the GA API.
 
 * `session_affinity` -
   (Optional)
-  Type of session affinity to use. The default is NONE.
-  Can be NONE, CLIENT_IP, CLIENT_IP_PROTO, or CLIENT_IP_PORT_PROTO.
-  When the protocol is UDP, this field is not used.
-
-* `region` -
-  (Optional)
-  The Region in which the created backend service should reside.
-  If it is not provided, the provider region is used.
+  Type of session affinity to use. The default is NONE. Session affinity is
+  not applicable if the protocol is UDP.
 
 * `timeout_sec` -
   (Optional)
   How many seconds to wait for the backend before considering it a
   failed request. Default is 30 seconds. Valid range is [1, 86400].
 
-* `connection_draining_timeout_sec` -
-  (Optional)
-  Time for which instance will be drained (not accept new
-  connections, but still work to finish started).
+* `log_config` -
+  (Optional, [Beta](https://terraform.io/docs/providers/google/provider_versions.html))
+  This field denotes the logging options for the load balancer traffic served by this backend service.
+  If logging is enabled, logs will be exported to Stackdriver.  Structure is documented below.
 
-* `load_balancing_scheme` -
+* `region` -
   (Optional)
-  This signifies what the ForwardingRule will be used for and can only
-  be INTERNAL for RegionBackendServices
+  The Region in which the created backend service should reside.
+  If it is not provided, the provider region is used.
 
 * `project` - (Optional) The ID of the project in which the resource belongs.
     If it is not provided, the provider project is used.
@@ -137,27 +274,199 @@ The following arguments are supported:
 
 The `backend` block supports:
 
+* `balancing_mode` -
+  (Optional)
+  Specifies the balancing mode for this backend. Defaults to CONNECTION.
+
+* `capacity_scaler` -
+  (Optional)
+  A multiplier applied to the group's maximum servicing capacity
+  (based on UTILIZATION, RATE or CONNECTION).
+  A setting of 0 means the group is completely drained, offering
+  0% of its available Capacity. Valid range is [0.0,1.0].
+
 * `description` -
   (Optional)
   An optional description of this resource.
   Provide this property when you create the resource.
 
+* `failover` -
+  (Optional, [Beta](https://terraform.io/docs/providers/google/provider_versions.html))
+  This field designates whether this is a failover backend. More
+  than one failover backend can be configured for a given RegionBackendService.
+
 * `group` -
-  (Optional)
-  The fully-qualified URL of an Instance Group. This defines the list
+  (Required)
+  The fully-qualified URL of an Instance Group or Network Endpoint
+  Group resource. In case of instance group this defines the list
   of instances that serve traffic. Member virtual machine
   instances from each instance group must live in the same zone as
   the instance group itself. No two backends in a backend service
   are allowed to use same Instance Group resource.
-  Note that you must specify an Instance Group
-  resource using the fully-qualified URL, rather than a
+  For Network Endpoint Groups this defines list of endpoints. All
+  endpoints of Network Endpoint Group must be hosted on instances
+  located in the same zone as the Network Endpoint Group.
+  Backend services cannot mix Instance Group and
+  Network Endpoint Group backends.
+  When the `load_balancing_scheme` is INTERNAL, only instance groups
+  are supported.
+  Note that you must specify an Instance Group or Network Endpoint
+  Group resource using the fully-qualified URL, rather than a
   partial URL.
-  The instance group must be within the same region as the BackendService.
 
-* `failover` -
-  (Optional, [Beta](https://terraform.io/docs/providers/google/provider_versions.html))
-  This field designates whether this is a failover backend. More
-  than one failover backend can be configured for a given BackendService.
+* `max_connections` -
+  (Optional)
+  The max number of simultaneous connections for the group. Can
+  be used with either CONNECTION or UTILIZATION balancing modes.
+  For CONNECTION mode, either maxConnections or one
+  of maxConnectionsPerInstance or maxConnectionsPerEndpoint,
+  as appropriate for group type, must be set.
+
+* `max_connections_per_instance` -
+  (Optional)
+  The max number of simultaneous connections that a single
+  backend instance can handle. This is used to calculate the
+  capacity of the group. Can be used in either CONNECTION or
+  UTILIZATION balancing modes.
+  For CONNECTION mode, either maxConnections or
+  maxConnectionsPerInstance must be set.
+
+* `max_connections_per_endpoint` -
+  (Optional)
+  The max number of simultaneous connections that a single backend
+  network endpoint can handle. This is used to calculate the
+  capacity of the group. Can be used in either CONNECTION or
+  UTILIZATION balancing modes.
+  For CONNECTION mode, either
+  maxConnections or maxConnectionsPerEndpoint must be set.
+
+* `max_rate` -
+  (Optional)
+  The max requests per second (RPS) of the group.
+  Can be used with either RATE or UTILIZATION balancing modes,
+  but required if RATE mode. Either maxRate or one
+  of maxRatePerInstance or maxRatePerEndpoint, as appropriate for
+  group type, must be set.
+
+* `max_rate_per_instance` -
+  (Optional)
+  The max requests per second (RPS) that a single backend
+  instance can handle. This is used to calculate the capacity of
+  the group. Can be used in either balancing mode. For RATE mode,
+  either maxRate or maxRatePerInstance must be set.
+
+* `max_rate_per_endpoint` -
+  (Optional)
+  The max requests per second (RPS) that a single backend network
+  endpoint can handle. This is used to calculate the capacity of
+  the group. Can be used in either balancing mode. For RATE mode,
+  either maxRate or maxRatePerEndpoint must be set.
+
+* `max_utilization` -
+  (Optional)
+  Used when balancingMode is UTILIZATION. This ratio defines the
+  CPU utilization target for the group. Valid range is [0.0, 1.0].
+
+The `circuit_breakers` block supports:
+
+* `connect_timeout` -
+  (Optional)
+  The timeout for new network connections to hosts.  Structure is documented below.
+
+* `max_requests_per_connection` -
+  (Optional)
+  Maximum requests for a single backend connection. This parameter
+  is respected by both the HTTP/1.1 and HTTP/2 implementations. If
+  not specified, there is no limit. Setting this parameter to 1
+  will effectively disable keep alive.
+
+* `max_connections` -
+  (Optional)
+  The maximum number of connections to the backend cluster.
+  Defaults to 1024.
+
+* `max_pending_requests` -
+  (Optional)
+  The maximum number of pending requests to the backend cluster.
+  Defaults to 1024.
+
+* `max_requests` -
+  (Optional)
+  The maximum number of parallel requests to the backend cluster.
+  Defaults to 1024.
+
+* `max_retries` -
+  (Optional)
+  The maximum number of parallel retries to the backend cluster.
+  Defaults to 3.
+
+
+The `connect_timeout` block supports:
+
+* `seconds` -
+  (Required)
+  Span of time at a resolution of a second.
+  Must be from 0 to 315,576,000,000 inclusive.
+
+* `nanos` -
+  (Optional)
+  Span of time that's a fraction of a second at nanosecond
+  resolution. Durations less than one second are represented
+  with a 0 seconds field and a positive nanos field. Must
+  be from 0 to 999,999,999 inclusive.
+
+The `consistent_hash` block supports:
+
+* `http_cookie` -
+  (Optional)
+  Hash is based on HTTP Cookie. This field describes a HTTP cookie
+  that will be used as the hash key for the consistent hash load
+  balancer. If the cookie is not present, it will be generated.
+  This field is applicable if the sessionAffinity is set to HTTP_COOKIE.  Structure is documented below.
+
+* `http_header_name` -
+  (Optional)
+  The hash based on the value of the specified header field.
+  This field is applicable if the sessionAffinity is set to HEADER_FIELD.
+
+* `minimum_ring_size` -
+  (Optional)
+  The minimum number of virtual nodes to use for the hash ring.
+  Larger ring sizes result in more granular load
+  distributions. If the number of hosts in the load balancing pool
+  is larger than the ring size, each host will be assigned a single
+  virtual node.
+  Defaults to 1024.
+
+
+The `http_cookie` block supports:
+
+* `ttl` -
+  (Optional)
+  Liftime of the cookie.  Structure is documented below.
+
+* `name` -
+  (Optional)
+  Name of the cookie.
+
+* `path` -
+  (Optional)
+  Path to set for the cookie.
+
+
+The `ttl` block supports:
+
+* `seconds` -
+  (Required)
+  Span of time at a resolution of a second.
+  Must be from 0 to 315,576,000,000 inclusive.
+
+* `nanos` -
+  (Optional)
+  Span of time that's a fraction of a second at nanosecond
+  resolution. Durations less than one second are represented
+  with a 0 seconds field and a positive nanos field. Must
+  be from 0 to 999,999,999 inclusive.
 
 The `failover_policy` block supports:
 
@@ -190,10 +499,125 @@ The `failover_policy` block supports:
   VMs with the best effort, or to all VMs when no VM is healthy.
   This field is only used with l4 load balancing.
 
+The `outlier_detection` block supports:
+
+* `base_ejection_time` -
+  (Optional)
+  The base time that a host is ejected for. The real time is equal to the base
+  time multiplied by the number of times the host has been ejected. Defaults to
+  30000ms or 30s.  Structure is documented below.
+
+* `consecutive_errors` -
+  (Optional)
+  Number of errors before a host is ejected from the connection pool. When the
+  backend host is accessed over HTTP, a 5xx return code qualifies as an error.
+  Defaults to 5.
+
+* `consecutive_gateway_failure` -
+  (Optional)
+  The number of consecutive gateway failures (502, 503, 504 status or connection
+  errors that are mapped to one of those status codes) before a consecutive
+  gateway failure ejection occurs. Defaults to 5.
+
+* `enforcing_consecutive_errors` -
+  (Optional)
+  The percentage chance that a host will be actually ejected when an outlier
+  status is detected through consecutive 5xx. This setting can be used to disable
+  ejection or to ramp it up slowly. Defaults to 100.
+
+* `enforcing_consecutive_gateway_failure` -
+  (Optional)
+  The percentage chance that a host will be actually ejected when an outlier
+  status is detected through consecutive gateway failures. This setting can be
+  used to disable ejection or to ramp it up slowly. Defaults to 0.
+
+* `enforcing_success_rate` -
+  (Optional)
+  The percentage chance that a host will be actually ejected when an outlier
+  status is detected through success rate statistics. This setting can be used to
+  disable ejection or to ramp it up slowly. Defaults to 100.
+
+* `interval` -
+  (Optional)
+  Time interval between ejection sweep analysis. This can result in both new
+  ejections as well as hosts being returned to service. Defaults to 10 seconds.  Structure is documented below.
+
+* `max_ejection_percent` -
+  (Optional)
+  Maximum percentage of hosts in the load balancing pool for the backend service
+  that can be ejected. Defaults to 10%.
+
+* `success_rate_minimum_hosts` -
+  (Optional)
+  The number of hosts in a cluster that must have enough request volume to detect
+  success rate outliers. If the number of hosts is less than this setting, outlier
+  detection via success rate statistics is not performed for any host in the
+  cluster. Defaults to 5.
+
+* `success_rate_request_volume` -
+  (Optional)
+  The minimum number of total requests that must be collected in one interval (as
+  defined by the interval duration above) to include this host in success rate
+  based outlier detection. If the volume is lower than this setting, outlier
+  detection via success rate statistics is not performed for that host. Defaults
+  to 100.
+
+* `success_rate_stdev_factor` -
+  (Optional)
+  This factor is used to determine the ejection threshold for success rate outlier
+  ejection. The ejection threshold is the difference between the mean success
+  rate, and the product of this factor and the standard deviation of the mean
+  success rate: mean - (stdev * success_rate_stdev_factor). This factor is divided
+  by a thousand to get a double. That is, if the desired factor is 1.9, the
+  runtime value should be 1900. Defaults to 1900.
+
+
+The `base_ejection_time` block supports:
+
+* `seconds` -
+  (Required)
+  Span of time at a resolution of a second. Must be from 0 to 315,576,000,000
+  inclusive.
+
+* `nanos` -
+  (Optional)
+  Span of time that's a fraction of a second at nanosecond resolution. Durations
+  less than one second are represented with a 0 `seconds` field and a positive
+  `nanos` field. Must be from 0 to 999,999,999 inclusive.
+
+The `interval` block supports:
+
+* `seconds` -
+  (Required)
+  Span of time at a resolution of a second. Must be from 0 to 315,576,000,000
+  inclusive.
+
+* `nanos` -
+  (Optional)
+  Span of time that's a fraction of a second at nanosecond resolution. Durations
+  less than one second are represented with a 0 `seconds` field and a positive
+  `nanos` field. Must be from 0 to 999,999,999 inclusive.
+
+The `log_config` block supports:
+
+* `enable` -
+  (Optional)
+  Whether to enable logging for the load balancer traffic served by this backend service.
+
+* `sample_rate` -
+  (Optional)
+  This field can only be specified if logging is enabled for this backend service. The value of
+  the field must be in [0, 1]. This configures the sampling rate of requests to the load balancer
+  where 1.0 means all logged requests are reported and 0.0 means no logged requests are reported.
+  The default value is 1.0.
+
 ## Attributes Reference
 
 In addition to the arguments listed above, the following computed attributes are exported:
 
+
+* `creation_timestamp` -
+  Creation timestamp in RFC3339 text format.
 
 * `fingerprint` -
   Fingerprint of this resource. A hash of the contents stored in this
