@@ -12,6 +12,7 @@
 #     .github/CONTRIBUTING.md.
 #
 # ----------------------------------------------------------------------------
+subcategory: "Cloud Run"
 layout: "google"
 page_title: "Google: google_cloud_run_service"
 sidebar_current: "docs-google-cloud-run-service"

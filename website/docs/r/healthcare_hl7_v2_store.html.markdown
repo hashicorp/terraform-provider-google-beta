@@ -12,6 +12,7 @@
 #     .github/CONTRIBUTING.md.
 #
 # ----------------------------------------------------------------------------
+subcategory: "Cloud Healthcare"
 layout: "google"
 page_title: "Google: google_healthcare_hl7_v2_store"
 sidebar_current: "docs-google-healthcare-hl7-v2-store"
