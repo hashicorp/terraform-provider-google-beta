@@ -12,6 +12,7 @@
 #     .github/CONTRIBUTING.md.
 #
 # ----------------------------------------------------------------------------
+subcategory: "Cloud Security Scanner"
 layout: "google"
 page_title: "Google: google_security_scanner_scan_config"
 sidebar_current: "docs-google-security-scanner-scan-config"

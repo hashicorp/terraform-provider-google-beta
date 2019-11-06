@@ -12,6 +12,7 @@
 #     .github/CONTRIBUTING.md.
 #
 # ----------------------------------------------------------------------------
+subcategory: "Serverless VPC Access"
 layout: "google"
 page_title: "Google: google_vpc_access_connector"
 sidebar_current: "docs-google-vpc-access-connector"

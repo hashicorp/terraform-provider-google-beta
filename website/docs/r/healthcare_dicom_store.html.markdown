@@ -12,6 +12,7 @@
 #     .github/CONTRIBUTING.md.
 #
 # ----------------------------------------------------------------------------
+subcategory: "Cloud Healthcare"
 layout: "google"
 page_title: "Google: google_healthcare_dicom_store"
 sidebar_current: "docs-google-healthcare-dicom-store"

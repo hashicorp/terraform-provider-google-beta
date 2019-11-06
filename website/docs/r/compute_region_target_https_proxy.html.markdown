@@ -12,6 +12,7 @@
 #     .github/CONTRIBUTING.md.
 #
 # ----------------------------------------------------------------------------
+subcategory: "Compute Engine"
 layout: "google"
 page_title: "Google: google_compute_region_target_https_proxy"
 sidebar_current: "docs-google-compute-region-target-https-proxy"
