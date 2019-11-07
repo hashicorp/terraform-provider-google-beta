@@ -3,10 +3,11 @@ package google
 import (
 	"encoding/json"
 	"fmt"
+	"log"
+
 	"github.com/hashicorp/errwrap"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"google.golang.org/api/cloudresourcemanager/v1"
-	"log"
 )
 
 func resourceGoogleProjectIamPolicy() *schema.Resource {
@@ -150,6 +151,8 @@ func resourceGoogleProjectIamPolicyImport(d *schema.ResourceData, meta interface
 }
 
 func setProjectIamPolicy(policy *cloudresourcemanager.Policy, config *Config, pid string) error {
+	policy.Version = iamPolicyVersion
+
 	// Apply the policy
 	pbytes, _ := json.Marshal(policy)
 	log.Printf("[DEBUG] Setting policy %#v for project: %s", string(pbytes), pid)
@@ -176,7 +179,11 @@ func getResourceIamPolicy(d *schema.ResourceData) (*cloudresourcemanager.Policy,
 // Retrieve the existing IAM Policy for a Project
 func getProjectIamPolicy(project string, config *Config) (*cloudresourcemanager.Policy, error) {
 	p, err := config.clientResourceManager.Projects.GetIamPolicy(project,
-		&cloudresourcemanager.GetIamPolicyRequest{}).Do()
+		&cloudresourcemanager.GetIamPolicyRequest{
+			Options: &cloudresourcemanager.GetPolicyOptions{
+				RequestedPolicyVersion: iamPolicyVersion,
+			},
+		}).Do()
 
 	if err != nil {
 		return nil, fmt.Errorf("Error retrieving IAM policy for project %q: %s", project, err)
