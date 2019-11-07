@@ -39,8 +39,8 @@ To get more information about FhirStore, see:
 
 ```hcl
 resource "google_healthcare_fhir_store" "default" {
-  name                          = "example-fhir-store"
-  dataset                       = "${google_healthcare_dataset.dataset.id}"
+  name    = "example-fhir-store"
+  dataset = google_healthcare_dataset.dataset.id
 
   enable_update_create          = false
   disable_referential_integrity = false
@@ -48,24 +48,24 @@ resource "google_healthcare_fhir_store" "default" {
   enable_history_import         = false
 
   notification_config {
-    pubsub_topic = "${google_pubsub_topic.topic.id}"
+    pubsub_topic = google_pubsub_topic.topic.id
   }
 
   labels = {
     label1 = "labelvalue1"
   }
-  provider     = "google-beta"
+  provider = google-beta
 }
 
 resource "google_pubsub_topic" "topic" {
-  name         = "fhir-notifications"
-  provider     = "google-beta"
+  name     = "fhir-notifications"
+  provider = google-beta
 }
 
 resource "google_healthcare_dataset" "dataset" {
-  name         = "example-dataset"
-  location     = "us-central1"
-  provider     = "google-beta"
+  name     = "example-dataset"
+  location = "us-central1"
+  provider = google-beta
 }
 ```
 

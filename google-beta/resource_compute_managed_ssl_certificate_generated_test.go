@@ -46,7 +46,7 @@ func TestAccComputeManagedSslCertificate_managedSslCertificateBasicExample(t *te
 func testAccComputeManagedSslCertificate_managedSslCertificateBasicExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_compute_managed_ssl_certificate" "default" {
-  provider = "google-beta"
+  provider = google-beta
 
   name = "test-cert%{random_suffix}"
 
@@ -56,20 +56,20 @@ resource "google_compute_managed_ssl_certificate" "default" {
 }
 
 resource "google_compute_target_https_proxy" "default" {
-  provider = "google-beta"
+  provider = google-beta
 
   name             = "test-proxy%{random_suffix}"
-  url_map          = "${google_compute_url_map.default.self_link}"
-  ssl_certificates = ["${google_compute_managed_ssl_certificate.default.self_link}"]
+  url_map          = google_compute_url_map.default.self_link
+  ssl_certificates = [google_compute_managed_ssl_certificate.default.self_link]
 }
 
 resource "google_compute_url_map" "default" {
-  provider = "google-beta"
+  provider = google-beta
 
   name        = "url-map%{random_suffix}"
   description = "a description"
 
-  default_service = "${google_compute_backend_service.default.self_link}"
+  default_service = google_compute_backend_service.default.self_link
 
   host_rule {
     hosts        = ["sslcert.tf-test.club"]
@@ -78,28 +78,28 @@ resource "google_compute_url_map" "default" {
 
   path_matcher {
     name            = "allpaths"
-    default_service = "${google_compute_backend_service.default.self_link}"
+    default_service = google_compute_backend_service.default.self_link
 
     path_rule {
       paths   = ["/*"]
-      service = "${google_compute_backend_service.default.self_link}"
+      service = google_compute_backend_service.default.self_link
     }
   }
 }
 
 resource "google_compute_backend_service" "default" {
-  provider = "google-beta"
+  provider = google-beta
 
   name        = "backend-service%{random_suffix}"
   port_name   = "http"
   protocol    = "HTTP"
   timeout_sec = 10
 
-  health_checks = ["${google_compute_http_health_check.default.self_link}"]
+  health_checks = [google_compute_http_health_check.default.self_link]
 }
 
 resource "google_compute_http_health_check" "default" {
-  provider = "google-beta"
+  provider = google-beta
 
   name               = "http-health-check%{random_suffix}"
   request_path       = "/"
@@ -108,31 +108,31 @@ resource "google_compute_http_health_check" "default" {
 }
 
 resource "google_dns_managed_zone" "zone" {
-  provider = "google-beta"
+  provider = google-beta
 
   name     = "dnszone%{random_suffix}"
   dns_name = "sslcert.tf-test.club."
 }
 
 resource "google_compute_global_forwarding_rule" "default" {
-  provider = "google-beta"
+  provider = google-beta
 
   name       = "forwarding-rule%{random_suffix}"
-  target     = "${google_compute_target_https_proxy.default.self_link}"
+  target     = google_compute_target_https_proxy.default.self_link
   port_range = 443
 }
 
 resource "google_dns_record_set" "set" {
-  provider = "google-beta"
+  provider = google-beta
 
   name         = "sslcert.tf-test.club."
   type         = "A"
   ttl          = 3600
-  managed_zone = "${google_dns_managed_zone.zone.name}"
-  rrdatas      = ["${google_compute_global_forwarding_rule.default.ip_address}"]
+  managed_zone = google_dns_managed_zone.zone.name
+  rrdatas      = [google_compute_global_forwarding_rule.default.ip_address]
 }
 
-provider "google-beta"{
+provider "google-beta" {
   region = "us-central1"
   zone   = "us-central1-a"
 }

@@ -3,11 +3,10 @@ package google
 import (
 	"encoding/json"
 	"fmt"
-	"log"
-
 	"github.com/hashicorp/errwrap"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"google.golang.org/api/cloudresourcemanager/v1"
+	"log"
 )
 
 func resourceGoogleProjectIamPolicy() *schema.Resource {
@@ -34,21 +33,6 @@ func resourceGoogleProjectIamPolicy() *schema.Resource {
 			"etag": {
 				Type:     schema.TypeString,
 				Computed: true,
-			},
-			"authoritative": {
-				Removed:  "The authoritative field was removed. To ignore changes not managed by Terraform, use google_project_iam_binding and google_project_iam_member instead. See https://www.terraform.io/docs/providers/google/r/google_project_iam.html for more information.",
-				Type:     schema.TypeBool,
-				Optional: true,
-			},
-			"restore_policy": {
-				Removed:  "This field was removed alongside the authoritative field. To ignore changes not managed by Terraform, use google_project_iam_binding and google_project_iam_member instead. See https://www.terraform.io/docs/providers/google/r/google_project_iam.html for more information.",
-				Type:     schema.TypeString,
-				Computed: true,
-			},
-			"disable_project": {
-				Removed:  "This field was removed alongside the authoritative field. Use lifecycle.prevent_destroy instead.",
-				Type:     schema.TypeBool,
-				Optional: true,
 			},
 		},
 	}
@@ -151,8 +135,6 @@ func resourceGoogleProjectIamPolicyImport(d *schema.ResourceData, meta interface
 }
 
 func setProjectIamPolicy(policy *cloudresourcemanager.Policy, config *Config, pid string) error {
-	policy.Version = iamPolicyVersion
-
 	// Apply the policy
 	pbytes, _ := json.Marshal(policy)
 	log.Printf("[DEBUG] Setting policy %#v for project: %s", string(pbytes), pid)
@@ -179,11 +161,7 @@ func getResourceIamPolicy(d *schema.ResourceData) (*cloudresourcemanager.Policy,
 // Retrieve the existing IAM Policy for a Project
 func getProjectIamPolicy(project string, config *Config) (*cloudresourcemanager.Policy, error) {
 	p, err := config.clientResourceManager.Projects.GetIamPolicy(project,
-		&cloudresourcemanager.GetIamPolicyRequest{
-			Options: &cloudresourcemanager.GetPolicyOptions{
-				RequestedPolicyVersion: iamPolicyVersion,
-			},
-		}).Do()
+		&cloudresourcemanager.GetIamPolicyRequest{}).Do()
 
 	if err != nil {
 		return nil, fmt.Errorf("Error retrieving IAM policy for project %q: %s", project, err)
