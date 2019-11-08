@@ -206,11 +206,11 @@ The `env_from` block supports:
 
 * `config_map_ref` -
   (Optional)
-  The ConfigMap to select from  Structure is documented below.
+  The ConfigMap to select from.  Structure is documented below.
 
 * `secret_ref` -
   (Optional)
-  The Secret to select from  Structure is documented below.
+  The Secret to select from.  Structure is documented below.
 
 
 The `config_map_ref` block supports:

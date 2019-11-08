@@ -39,33 +39,33 @@ To get more information about Hl7V2Store, see:
 
 ```hcl
 resource "google_healthcare_hl7_v2_store" "default" {
-  name                          = "example-hl7-v2-store"
-  dataset                       = "${google_healthcare_dataset.dataset.id}"
+  name    = "example-hl7-v2-store"
+  dataset = google_healthcare_dataset.dataset.id
 
   parser_config {
-    allow_null_header = false
+    allow_null_header  = false
     segment_terminator = "Jw=="
   }
 
   notification_config {
-    pubsub_topic = "${google_pubsub_topic.topic.id}"
+    pubsub_topic = google_pubsub_topic.topic.id
   }
 
   labels = {
     label1 = "labelvalue1"
   }
-  provider     = "google-beta"
+  provider = google-beta
 }
 
 resource "google_pubsub_topic" "topic" {
-  name         = "hl7-v2-notifications"
-  provider     = "google-beta"
+  name     = "hl7-v2-notifications"
+  provider = google-beta
 }
 
 resource "google_healthcare_dataset" "dataset" {
-  name         = "example-dataset"
-  location     = "us-central1"
-  provider     = "google-beta"
+  name     = "example-dataset"
+  location = "us-central1"
+  provider = google-beta
 }
 ```
 
