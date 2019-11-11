@@ -42,47 +42,60 @@ func resourceComputeNodeTemplate() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"description": {
-				Type:     schema.TypeString,
-				Optional: true,
-				ForceNew: true,
+				Type:        schema.TypeString,
+				Optional:    true,
+				ForceNew:    true,
+				Description: `An optional textual description of the resource.`,
 			},
 			"name": {
-				Type:     schema.TypeString,
-				Optional: true,
-				ForceNew: true,
+				Type:        schema.TypeString,
+				Optional:    true,
+				ForceNew:    true,
+				Description: `Name of the resource.`,
 			},
 			"node_affinity_labels": {
 				Type:     schema.TypeMap,
 				Optional: true,
 				ForceNew: true,
-				Elem:     &schema.Schema{Type: schema.TypeString},
+				Description: `Labels to use for node affinity, which will be used in
+instance scheduling.`,
+				Elem: &schema.Schema{Type: schema.TypeString},
 			},
 			"node_type": {
-				Type:          schema.TypeString,
-				Optional:      true,
-				ForceNew:      true,
+				Type:     schema.TypeString,
+				Optional: true,
+				ForceNew: true,
+				Description: `Node type to use for nodes group that are created from this template.
+Only one of nodeTypeFlexibility and nodeType can be specified.`,
 				ConflictsWith: []string{"node_type_flexibility"},
 			},
 			"node_type_flexibility": {
 				Type:     schema.TypeList,
 				Optional: true,
 				ForceNew: true,
+				Description: `Flexible properties for the desired node type. Node groups that
+use this node template will create nodes of a type that matches
+these properties. Only one of nodeTypeFlexibility and nodeType can
+be specified.`,
 				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"cpus": {
-							Type:     schema.TypeString,
-							Optional: true,
-							ForceNew: true,
+							Type:        schema.TypeString,
+							Optional:    true,
+							ForceNew:    true,
+							Description: `Number of virtual CPUs to use.`,
 						},
 						"memory": {
-							Type:     schema.TypeString,
-							Optional: true,
-							ForceNew: true,
+							Type:        schema.TypeString,
+							Optional:    true,
+							ForceNew:    true,
+							Description: `Physical memory available to the node, defined in MB.`,
 						},
 						"local_ssd": {
-							Type:     schema.TypeString,
-							Computed: true,
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: `Use local SSD`,
 						},
 					},
 				},
@@ -94,12 +107,16 @@ func resourceComputeNodeTemplate() *schema.Resource {
 				Optional:         true,
 				ForceNew:         true,
 				DiffSuppressFunc: compareSelfLinkOrResourceName,
+				Description: `Region where nodes using the node template will be created.
+If it is not provided, the provider region is used.`,
 			},
 			"server_binding": {
 				Type:     schema.TypeList,
 				Computed: true,
 				Optional: true,
 				ForceNew: true,
+				Description: `The server binding policy for nodes using this template. Determines
+where the nodes should restart following a maintenance event.`,
 				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -108,13 +125,26 @@ func resourceComputeNodeTemplate() *schema.Resource {
 							Required:     true,
 							ForceNew:     true,
 							ValidateFunc: validation.StringInSlice([]string{"RESTART_NODE_ON_ANY_SERVER", "RESTART_NODE_ON_MINIMAL_SERVERS"}, false),
+							Description: `Type of server binding policy. If 'RESTART_NODE_ON_ANY_SERVER',
+nodes using this template will restart on any physical server
+following a maintenance event.
+
+If 'RESTART_NODE_ON_MINIMAL_SERVER', nodes using this template
+will restart on the same physical server following a maintenance
+event, instead of being live migrated to or restarted on a new
+physical server. This option may be useful if you are using
+software licenses tied to the underlying server characteristics
+such as physical sockets or cores, to avoid the need for
+additional licenses when maintenance occurs. However, VMs on such
+nodes will experience outages while maintenance is applied.`,
 						},
 					},
 				},
 			},
 			"creation_timestamp": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: `Creation timestamp in RFC3339 text format.`,
 			},
 			"project": {
 				Type:     schema.TypeString,

@@ -453,7 +453,7 @@ The `http_cookie` block supports:
 
 * `ttl` -
   (Optional)
-  Liftime of the cookie.  Structure is documented below.
+  Lifetime of the cookie.  Structure is documented below.
 
 * `name` -
   (Optional)

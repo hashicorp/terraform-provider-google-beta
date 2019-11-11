@@ -43,23 +43,29 @@ func resourceHealthcareDataset() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"location": {
-				Type:     schema.TypeString,
-				Required: true,
-				ForceNew: true,
+				Type:        schema.TypeString,
+				Required:    true,
+				ForceNew:    true,
+				Description: `The location for the Dataset.`,
 			},
 			"name": {
-				Type:     schema.TypeString,
-				Required: true,
-				ForceNew: true,
+				Type:        schema.TypeString,
+				Required:    true,
+				ForceNew:    true,
+				Description: `The resource name for the Dataset.`,
 			},
 			"time_zone": {
 				Type:     schema.TypeString,
 				Computed: true,
 				Optional: true,
+				Description: `The default timezone used by this dataset. Must be a either a valid IANA time zone name such as
+"America/New_York" or empty, which defaults to UTC. This is used for parsing times in resources
+(e.g., HL7 messages) where no explicit timezone is specified.`,
 			},
 			"self_link": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: `The fully qualified name of this dataset`,
 			},
 			"project": {
 				Type:     schema.TypeString,

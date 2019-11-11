@@ -43,14 +43,17 @@ func resourceComputeManagedSslCertificate() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"description": {
-				Type:     schema.TypeString,
-				Optional: true,
-				ForceNew: true,
+				Type:        schema.TypeString,
+				Optional:    true,
+				ForceNew:    true,
+				Description: `An optional description of this resource.`,
 			},
 			"managed": {
 				Type:     schema.TypeList,
 				Optional: true,
 				ForceNew: true,
+				Description: `Properties relevant to a managed certificate.  These will be used if the
+certificate is managed (as indicated by a value of 'MANAGED' in 'type').`,
 				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -59,7 +62,9 @@ func resourceComputeManagedSslCertificate() *schema.Resource {
 							Required:         true,
 							ForceNew:         true,
 							DiffSuppressFunc: absoluteDomainSuppress,
-							MaxItems:         1,
+							Description: `Domains for which a managed SSL certificate will be valid.  Currently,
+there can only be one domain in this list.`,
+							MaxItems: 1,
 							Elem: &schema.Schema{
 								Type: schema.TypeString,
 							},
@@ -71,30 +76,46 @@ func resourceComputeManagedSslCertificate() *schema.Resource {
 				Type:     schema.TypeString,
 				Optional: true,
 				ForceNew: true,
+				Description: `Name of the resource. Provided by the client when the resource is
+created. The name must be 1-63 characters long, and comply with
+RFC1035. Specifically, the name must be 1-63 characters long and match
+the regular expression '[a-z]([-a-z0-9]*[a-z0-9])?' which means the
+first character must be a lowercase letter, and all following
+characters must be a dash, lowercase letter, or digit, except the last
+character, which cannot be a dash.
+
+
+These are in the same namespace as the managed SSL certificates.`,
 			},
 			"type": {
 				Type:         schema.TypeString,
 				Optional:     true,
 				ForceNew:     true,
 				ValidateFunc: validation.StringInSlice([]string{"MANAGED", ""}, false),
-				Default:      "MANAGED",
+				Description: `Enum field whose value is always 'MANAGED' - used to signal to the API
+which type this is.`,
+				Default: "MANAGED",
 			},
 			"certificate_id": {
-				Type:     schema.TypeInt,
-				Computed: true,
-				Optional: true,
+				Type:        schema.TypeInt,
+				Computed:    true,
+				Optional:    true,
+				Description: `The unique identifier for the resource.`,
 			},
 			"creation_timestamp": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: `Creation timestamp in RFC3339 text format.`,
 			},
 			"expire_time": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: `Expire time of the certificate.`,
 			},
 			"subject_alternative_names": {
-				Type:     schema.TypeList,
-				Computed: true,
+				Type:        schema.TypeList,
+				Computed:    true,
+				Description: `Domains associated with the certificate via Subject Alternative Name.`,
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
