@@ -482,9 +482,9 @@ func Provider() terraform.ResourceProvider {
 	return provider
 }
 
-// Generated resources: 100
+// Generated resources: 101
 // Generated IAM resources: 33
-// Total generated resources: 133
+// Total generated resources: 134
 func ResourceMap() map[string]*schema.Resource {
 	resourceMap, _ := ResourceMapWithErrors()
 	return resourceMap
@@ -546,6 +546,7 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_compute_route":                             resourceComputeRoute(),
 			"google_compute_router":                            resourceComputeRouter(),
 			"google_compute_router_nat":                        resourceComputeRouterNat(),
+			"google_compute_router_peer":                       resourceComputeRouterBgpPeer(),
 			"google_compute_snapshot":                          resourceComputeSnapshot(),
 			"google_compute_ssl_certificate":                   resourceComputeSslCertificate(),
 			"google_compute_managed_ssl_certificate":           resourceComputeManagedSslCertificate(),
@@ -657,7 +658,6 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_compute_project_metadata_item":         resourceComputeProjectMetadataItem(),
 			"google_compute_region_instance_group_manager": resourceComputeRegionInstanceGroupManager(),
 			"google_compute_router_interface":              resourceComputeRouterInterface(),
-			"google_compute_router_peer":                   resourceComputeRouterPeer(),
 			"google_compute_security_policy":               resourceComputeSecurityPolicy(),
 			"google_compute_shared_vpc_host_project":       resourceComputeSharedVpcHostProject(),
 			"google_compute_shared_vpc_service_project":    resourceComputeSharedVpcServiceProject(),
