@@ -111,6 +111,7 @@ resource "google_compute_region_health_check" "zero" {
 	region = "us-central1"
 	name   = "regionurlmap-test-%s"
 	http_health_check {
+        port = 80
 	}
 }
 
@@ -156,6 +157,7 @@ resource "google_compute_region_health_check" "zero" {
 	region = "us-central1"
 	name   = "regionurlmap-test-%s"
 	http_health_check {
+        port = 80
 	}
 }
 
@@ -201,6 +203,7 @@ resource "google_compute_region_health_check" "zero" {
 	region = "us-central1"
 	name   = "regionurlmap-test-%s"
 	http_health_check {
+        port = 80
 	}
 }
 
@@ -255,6 +258,7 @@ resource "google_compute_region_health_check" "zero" {
 	region = "us-central1"
 	name = "regionurlmap-test-%s"
 	http_health_check {
+        port = 80
 	}
 }
 
@@ -329,6 +333,7 @@ resource "google_compute_region_health_check" "zero" {
 	region = "us-central1"
 	name   = "regionurlmap-test-%s"
 	http_health_check {
+        port = 80
 	}
 }
 

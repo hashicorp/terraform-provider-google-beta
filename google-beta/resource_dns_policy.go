@@ -60,7 +60,7 @@ Names such as .internal are not available when an alternative name server is spe
 					Schema: map[string]*schema.Schema{
 						"target_name_servers": {
 							Type:     schema.TypeSet,
-							Optional: true,
+							Required: true,
 							Description: `Sets an alternative name server for the associated networks. When specified,
 all DNS queries are forwarded to a name server that you choose. Names such as .internal
 are not available when an alternative name server is specified.`,
@@ -128,7 +128,7 @@ func dnsPolicyAlternativeNameServerConfigTargetNameServersSchema() *schema.Resou
 		Schema: map[string]*schema.Schema{
 			"ipv4_address": {
 				Type:        schema.TypeString,
-				Optional:    true,
+				Required:    true,
 				Description: `IPv4 address to forward to.`,
 			},
 		},
@@ -206,7 +206,7 @@ func resourceDNSPolicyCreate(d *schema.ResourceData, meta interface{}) error {
 	}
 
 	// Store the ID now
-	id, err := replaceVars(d, config, "{{name}}")
+	id, err := replaceVars(d, config, "projects/{{project}}/policies/{{name}}")
 	if err != nil {
 		return fmt.Errorf("Error constructing id: %s", err)
 	}
@@ -376,7 +376,7 @@ func resourceDNSPolicyImport(d *schema.ResourceData, meta interface{}) ([]*schem
 	}
 
 	// Replace import id for the resource id
-	id, err := replaceVars(d, config, "{{name}}")
+	id, err := replaceVars(d, config, "projects/{{project}}/policies/{{name}}")
 	if err != nil {
 		return nil, fmt.Errorf("Error constructing id: %s", err)
 	}

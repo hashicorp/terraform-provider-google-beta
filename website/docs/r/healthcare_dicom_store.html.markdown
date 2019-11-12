@@ -40,28 +40,28 @@ To get more information about DicomStore, see:
 
 ```hcl
 resource "google_healthcare_dicom_store" "default" {
-  name           = "example-dicom-store"
-  dataset        = "${google_healthcare_dataset.dataset.id}"
+  name    = "example-dicom-store"
+  dataset = google_healthcare_dataset.dataset.id
 
   notification_config {
-    pubsub_topic = "${google_pubsub_topic.topic.id}"
+    pubsub_topic = google_pubsub_topic.topic.id
   }
 
   labels = {
     label1 = "labelvalue1"
   }
-  provider     = "google-beta"
+  provider = google-beta
 }
 
 resource "google_pubsub_topic" "topic" {
-  name         = "dicom-notifications"
-  provider     = "google-beta"
+  name     = "dicom-notifications"
+  provider = google-beta
 }
 
 resource "google_healthcare_dataset" "dataset" {
-  name         = "example-dataset"
-  location     = "us-central1"
-  provider     = "google-beta"
+  name     = "example-dataset"
+  location = "us-central1"
+  provider = google-beta
 }
 ```
 

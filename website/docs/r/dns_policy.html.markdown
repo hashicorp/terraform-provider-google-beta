@@ -45,9 +45,9 @@ To get more information about Policy, see:
 
 ```hcl
 resource "google_dns_policy" "example-policy" {
-  provider = "google-beta"
+  provider = google-beta
 
-  name = "example-policy"
+  name                      = "example-policy"
   enable_inbound_forwarding = true
 
   enable_logging = true
@@ -62,28 +62,28 @@ resource "google_dns_policy" "example-policy" {
   }
 
   networks {
-    network_url =  "${google_compute_network.network-1.self_link}"
+    network_url = google_compute_network.network-1.self_link
   }
   networks {
-    network_url =  "${google_compute_network.network-2.self_link}"
+    network_url = google_compute_network.network-2.self_link
   }
 }
 
 resource "google_compute_network" "network-1" {
-  provider = "google-beta"
+  provider = google-beta
 
-  name = "network-1"
+  name                    = "network-1"
   auto_create_subnetworks = false
 }
 
 resource "google_compute_network" "network-2" {
-  provider = "google-beta"
+  provider = google-beta
 
-  name = "network-2"
+  name                    = "network-2"
   auto_create_subnetworks = false
 }
 
-provider "google-beta"{
+provider "google-beta" {
   region = "us-central1"
   zone   = "us-central1-a"
 }
@@ -135,7 +135,7 @@ The following arguments are supported:
 The `alternative_name_server_config` block supports:
 
 * `target_name_servers` -
-  (Optional)
+  (Required)
   Sets an alternative name server for the associated networks. When specified,
   all DNS queries are forwarded to a name server that you choose. Names such as .internal
   are not available when an alternative name server is specified.  Structure is documented below.
@@ -144,7 +144,7 @@ The `alternative_name_server_config` block supports:
 The `target_name_servers` block supports:
 
 * `ipv4_address` -
-  (Optional)
+  (Required)
   IPv4 address to forward to.
 
 The `networks` block supports:

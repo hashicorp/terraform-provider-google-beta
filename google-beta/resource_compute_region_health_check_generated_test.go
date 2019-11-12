@@ -46,8 +46,8 @@ func TestAccComputeRegionHealthCheck_regionHealthCheckTcpExample(t *testing.T) {
 func testAccComputeRegionHealthCheck_regionHealthCheckTcpExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_compute_region_health_check" "tcp-region-health-check" {
-  provider = "google-beta"
-  name = "tcp-region-health-check%{random_suffix}"
+  provider = google-beta
+  name     = "tcp-region-health-check%{random_suffix}"
 
   timeout_sec        = 1
   check_interval_sec = 1
@@ -81,8 +81,8 @@ func TestAccComputeRegionHealthCheck_regionHealthCheckTcpFullExample(t *testing.
 func testAccComputeRegionHealthCheck_regionHealthCheckTcpFullExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_compute_region_health_check" "tcp-region-health-check" {
-  provider = "google-beta"
-  name = "tcp-region-health-check%{random_suffix}"
+  provider    = google-beta
+  name        = "tcp-region-health-check%{random_suffix}"
   description = "Health check via tcp"
 
   timeout_sec         = 1
@@ -91,11 +91,11 @@ resource "google_compute_region_health_check" "tcp-region-health-check" {
   unhealthy_threshold = 5
 
   tcp_health_check {
-    port_name = "health-check-port"
+    port_name          = "health-check-port"
     port_specification = "USE_NAMED_PORT"
-    request = "ARE YOU HEALTHY?"
-    proxy_header = "NONE"
-    response = "I AM HEALTHY"
+    request            = "ARE YOU HEALTHY?"
+    proxy_header       = "NONE"
+    response           = "I AM HEALTHY"
   }
 }
 `, context)
@@ -123,8 +123,8 @@ func TestAccComputeRegionHealthCheck_regionHealthCheckSslExample(t *testing.T) {
 func testAccComputeRegionHealthCheck_regionHealthCheckSslExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_compute_region_health_check" "ssl-region-health-check" {
-  provider = "google-beta"
-  name = "ssl-region-health-check%{random_suffix}"
+  provider = google-beta
+  name     = "ssl-region-health-check%{random_suffix}"
 
   timeout_sec        = 1
   check_interval_sec = 1
@@ -158,8 +158,8 @@ func TestAccComputeRegionHealthCheck_regionHealthCheckSslFullExample(t *testing.
 func testAccComputeRegionHealthCheck_regionHealthCheckSslFullExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_compute_region_health_check" "ssl-region-health-check" {
-  provider = "google-beta"
-  name = "ssl-region-health-check%{random_suffix}"
+  provider    = google-beta
+  name        = "ssl-region-health-check%{random_suffix}"
   description = "Health check via ssl"
 
   timeout_sec         = 1
@@ -168,11 +168,11 @@ resource "google_compute_region_health_check" "ssl-region-health-check" {
   unhealthy_threshold = 5
 
   ssl_health_check {
-    port_name = "health-check-port"
+    port_name          = "health-check-port"
     port_specification = "USE_NAMED_PORT"
-    request = "ARE YOU HEALTHY?"
-    proxy_header = "NONE"
-    response = "I AM HEALTHY"
+    request            = "ARE YOU HEALTHY?"
+    proxy_header       = "NONE"
+    response           = "I AM HEALTHY"
   }
 }
 `, context)
@@ -200,8 +200,8 @@ func TestAccComputeRegionHealthCheck_regionHealthCheckHttpExample(t *testing.T) 
 func testAccComputeRegionHealthCheck_regionHealthCheckHttpExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_compute_region_health_check" "http-region-health-check" {
-  provider = "google-beta"
-  name = "http-region-health-check%{random_suffix}"
+  provider = google-beta
+  name     = "http-region-health-check%{random_suffix}"
 
   timeout_sec        = 1
   check_interval_sec = 1
@@ -235,8 +235,8 @@ func TestAccComputeRegionHealthCheck_regionHealthCheckHttpFullExample(t *testing
 func testAccComputeRegionHealthCheck_regionHealthCheckHttpFullExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_compute_region_health_check" "http-region-health-check" {
-  provider = "google-beta"
-  name = "http-region-health-check%{random_suffix}"
+  provider    = google-beta
+  name        = "http-region-health-check%{random_suffix}"
   description = "Health check via http"
 
   timeout_sec         = 1
@@ -245,12 +245,12 @@ resource "google_compute_region_health_check" "http-region-health-check" {
   unhealthy_threshold = 5
 
   http_health_check {
-    port_name = "health-check-port"
+    port_name          = "health-check-port"
     port_specification = "USE_NAMED_PORT"
-    host = "1.2.3.4"
-    request_path = "/mypath"
-    proxy_header = "NONE"
-    response = "I AM HEALTHY"
+    host               = "1.2.3.4"
+    request_path       = "/mypath"
+    proxy_header       = "NONE"
+    response           = "I AM HEALTHY"
   }
 }
 `, context)
@@ -278,8 +278,8 @@ func TestAccComputeRegionHealthCheck_regionHealthCheckHttpsExample(t *testing.T)
 func testAccComputeRegionHealthCheck_regionHealthCheckHttpsExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_compute_region_health_check" "https-region-health-check" {
-  provider = "google-beta"
-  name = "https-region-health-check%{random_suffix}"
+  provider = google-beta
+  name     = "https-region-health-check%{random_suffix}"
 
   timeout_sec        = 1
   check_interval_sec = 1
@@ -313,8 +313,8 @@ func TestAccComputeRegionHealthCheck_regionHealthCheckHttpsFullExample(t *testin
 func testAccComputeRegionHealthCheck_regionHealthCheckHttpsFullExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_compute_region_health_check" "https-region-health-check" {
-  provider = "google-beta"
-  name = "https-region-health-check%{random_suffix}"
+  provider    = google-beta
+  name        = "https-region-health-check%{random_suffix}"
   description = "Health check via https"
 
   timeout_sec         = 1
@@ -323,12 +323,12 @@ resource "google_compute_region_health_check" "https-region-health-check" {
   unhealthy_threshold = 5
 
   https_health_check {
-    port_name = "health-check-port"
+    port_name          = "health-check-port"
     port_specification = "USE_NAMED_PORT"
-    host = "1.2.3.4"
-    request_path = "/mypath"
-    proxy_header = "NONE"
-    response = "I AM HEALTHY"
+    host               = "1.2.3.4"
+    request_path       = "/mypath"
+    proxy_header       = "NONE"
+    response           = "I AM HEALTHY"
   }
 }
 `, context)
@@ -356,8 +356,8 @@ func TestAccComputeRegionHealthCheck_regionHealthCheckHttp2Example(t *testing.T)
 func testAccComputeRegionHealthCheck_regionHealthCheckHttp2Example(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_compute_region_health_check" "http2-region-health-check" {
-  provider = "google-beta"
-  name = "http2-region-health-check%{random_suffix}"
+  provider = google-beta
+  name     = "http2-region-health-check%{random_suffix}"
 
   timeout_sec        = 1
   check_interval_sec = 1
@@ -391,8 +391,8 @@ func TestAccComputeRegionHealthCheck_regionHealthCheckHttp2FullExample(t *testin
 func testAccComputeRegionHealthCheck_regionHealthCheckHttp2FullExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_compute_region_health_check" "http2-region-health-check" {
-  provider = "google-beta"
-  name = "http2-region-health-check%{random_suffix}"
+  provider    = google-beta
+  name        = "http2-region-health-check%{random_suffix}"
   description = "Health check via http2"
 
   timeout_sec         = 1
@@ -401,12 +401,12 @@ resource "google_compute_region_health_check" "http2-region-health-check" {
   unhealthy_threshold = 5
 
   http2_health_check {
-    port_name = "health-check-port"
+    port_name          = "health-check-port"
     port_specification = "USE_NAMED_PORT"
-    host = "1.2.3.4"
-    request_path = "/mypath"
-    proxy_header = "NONE"
-    response = "I AM HEALTHY"
+    host               = "1.2.3.4"
+    request_path       = "/mypath"
+    proxy_header       = "NONE"
+    response           = "I AM HEALTHY"
   }
 }
 `, context)

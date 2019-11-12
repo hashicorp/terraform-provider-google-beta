@@ -3,9 +3,11 @@ package google
 import (
 	"fmt"
 	"log"
+	"sort"
 	"strings"
 	"time"
 
+	"github.com/hashicorp/terraform-plugin-sdk/helper/customdiff"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
@@ -13,6 +15,53 @@ import (
 	computeBeta "google.golang.org/api/compute/v0.beta"
 	"google.golang.org/api/compute/v1"
 )
+
+func resourceComputeInstanceGroupManagerExactlyOneTargetSizeDiff(diff *schema.ResourceDiff, v interface{}) error {
+	exactlyOneOfList := []string{"version.%d.target_size.%d.fixed", "version.%d.target_size.%d.percent"}
+	errorList := make([]string, 0)
+	versionBlocks := diff.Get("version").([]interface{})
+	if len(versionBlocks) == 0 {
+		return nil
+	}
+
+	for i := range versionBlocks {
+		targetBlocks := diff.Get(fmt.Sprintf("version.%d.target_size", i)).([]interface{})
+		if len(targetBlocks) == 0 {
+			continue
+		}
+
+		for j := range targetBlocks {
+			specified := make([]string, 0)
+			for _, exactlyOneOfKey := range exactlyOneOfList {
+				if val := diff.Get(fmt.Sprintf(exactlyOneOfKey, i, j)); val != 0 {
+					specified = append(specified, exactlyOneOfKey)
+				}
+			}
+
+			if len(specified) == 1 {
+				continue
+			}
+
+			sort.Strings(exactlyOneOfList)
+			keyList := formatStringsInList(exactlyOneOfList, i, j)
+			specified = formatStringsInList(specified, i, j)
+
+			if len(specified) == 0 {
+				errorList = append(errorList, fmt.Sprintf("version.%d.target_size: one of `%s` must be specified", i, strings.Join(keyList, ",")))
+			}
+
+			if len(specified) > 1 {
+				errorList = append(errorList, fmt.Sprintf("version.%d.target_size: only one of `%s` can be specified, but `%s` were specified", i, strings.Join(keyList, ","), strings.Join(specified, ",")))
+			}
+		}
+	}
+
+	if len(errorList) > 0 {
+		return fmt.Errorf(strings.Join(errorList, "\n\t* "))
+	}
+
+	return nil
+}
 
 func resourceComputeInstanceGroupManager() *schema.Resource {
 	return &schema.Resource{
@@ -23,6 +72,9 @@ func resourceComputeInstanceGroupManager() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			State: resourceInstanceGroupManagerStateImporter,
 		},
+		CustomizeDiff: customdiff.All(
+			resourceComputeInstanceGroupManagerExactlyOneTargetSizeDiff,
+		),
 		Timeouts: &schema.ResourceTimeout{
 			Create: schema.DefaultTimeout(5 * time.Minute),
 			Update: schema.DefaultTimeout(5 * time.Minute),
@@ -34,6 +86,14 @@ func resourceComputeInstanceGroupManager() *schema.Resource {
 				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: true,
+			},
+
+			"instance_template": {
+				Type:             schema.TypeString,
+				Optional:         true,
+				Computed:         true,
+				Removed:          "This field has been replaced by `version.instance_template`",
+				DiffSuppressFunc: compareSelfLinkRelativePaths,
 			},
 
 			"version": {
@@ -132,6 +192,13 @@ func resourceComputeInstanceGroupManager() *schema.Resource {
 			"self_link": {
 				Type:     schema.TypeString,
 				Computed: true,
+			},
+
+			"update_strategy": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Default:  "REPLACE",
+				Removed:  "This field has been replaced by `update_policy`",
 			},
 
 			"target_pools": {
@@ -298,7 +365,7 @@ func resourceComputeInstanceGroupManagerCreate(d *schema.ResourceData, meta inte
 	}
 
 	// It probably maybe worked, so store the ID now
-	id, err := replaceVars(d, config, "{{project}}/{{zone}}/{{name}}")
+	id, err := replaceVars(d, config, "projects/{{project}}/zones/{{zone}}/instanceGroupManagers/{{name}}")
 	if err != nil {
 		return err
 	}
@@ -353,9 +420,6 @@ func flattenFixedOrPercent(fixedOrPercent *computeBeta.FixedOrPercent) []map[str
 
 func getManager(d *schema.ResourceData, meta interface{}) (*computeBeta.InstanceGroupManager, error) {
 	config := meta.(*Config)
-	if err := parseImportId([]string{"(?P<project>[^/]+)/(?P<zone>[^/]+)/(?P<name>[^/]+)", "(?P<project>[^/]+)/(?P<name>[^/]+)", "(?P<name>[^/]+)"}, d, config); err != nil {
-		return nil, err
-	}
 
 	project, err := getProject(d, config)
 	if err != nil {
@@ -442,10 +506,6 @@ func resourceComputeInstanceGroupManagerRead(d *schema.ResourceData, meta interf
 
 func resourceComputeInstanceGroupManagerUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
-
-	if err := parseImportId([]string{"(?P<project>[^/]+)/(?P<zone>[^/]+)/(?P<name>[^/]+)", "(?P<project>[^/]+)/(?P<name>[^/]+)", "(?P<name>[^/]+)"}, d, config); err != nil {
-		return err
-	}
 
 	project, err := getProject(d, config)
 	if err != nil {
@@ -553,9 +613,6 @@ func resourceComputeInstanceGroupManagerUpdate(d *schema.ResourceData, meta inte
 func resourceComputeInstanceGroupManagerDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	if err := parseImportId([]string{"(?P<project>[^/]+)/(?P<zone>[^/]+)/(?P<name>[^/]+)", "(?P<project>[^/]+)/(?P<name>[^/]+)", "(?P<name>[^/]+)"}, d, config); err != nil {
-		return err
-	}
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
@@ -742,12 +799,12 @@ func flattenUpdatePolicy(updatePolicy *computeBeta.InstanceGroupManagerUpdatePol
 func resourceInstanceGroupManagerStateImporter(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	d.Set("wait_for_instances", false)
 	config := meta.(*Config)
-	if err := parseImportId([]string{"(?P<project>[^/]+)/(?P<zone>[^/]+)/(?P<name>[^/]+)", "(?P<project>[^/]+)/(?P<name>[^/]+)", "(?P<name>[^/]+)"}, d, config); err != nil {
+	if err := parseImportId([]string{"projects/(?P<project>[^/]+)/zones/(?P<zone>[^/]+)/instanceGroupManagers/(?P<name>[^/]+)", "(?P<project>[^/]+)/(?P<zone>[^/]+)/(?P<name>[^/]+)", "(?P<project>[^/]+)/(?P<name>[^/]+)", "(?P<name>[^/]+)"}, d, config); err != nil {
 		return nil, err
 	}
 
 	// Replace import id for the resource id
-	id, err := replaceVars(d, config, "{{project}}/{{zone}}/{{name}}")
+	id, err := replaceVars(d, config, "projects/{{project}}/zones/{{zone}}/instanceGroupManagers/{{name}}")
 	if err != nil {
 		return nil, fmt.Errorf("Error constructing id: %s", err)
 	}

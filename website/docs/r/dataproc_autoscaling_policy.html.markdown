@@ -37,12 +37,13 @@ See [Provider Versions](https://terraform.io/docs/providers/google/guides/provid
 
 
 ```hcl
-provider "google-beta" {}
+provider "google-beta" {
+}
 
 resource "google_dataproc_cluster" "basic" {
-  provider = "google-beta"
-  name   = "tf-dataproc-test-"
-  region = "us-central1"
+  provider = google-beta
+  name     = "tf-dataproc-test-"
+  region   = "us-central1"
 
   cluster_config {
     autoscaling_config {
@@ -52,9 +53,9 @@ resource "google_dataproc_cluster" "basic" {
 }
 
 resource "google_dataproc_autoscaling_policy" "asp" {
-  provider = "google-beta"
+  provider  = google-beta
   policy_id = "tf-dataproc-test-"
-  location = "us-central1"
+  location  = "us-central1"
 
   worker_config {
     max_instances = 3

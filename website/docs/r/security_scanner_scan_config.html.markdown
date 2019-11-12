@@ -43,12 +43,12 @@ To get more information about ScanConfig, see:
 
 ```hcl
 resource "google_compute_address" "scanner_static_ip" {
-  provider = "google-beta"
+  provider = google-beta
   name     = "scan-basic-static-ip"
 }
 
 resource "google_security_scanner_scan_config" "scan-config" {
-  provider         = "google-beta"
+  provider         = google-beta
   display_name     = "terraform-scan-config"
   starting_urls    = ["http://${google_compute_address.scanner_static_ip.address}"]
   target_platforms = ["COMPUTE"]
@@ -185,6 +185,8 @@ This resource provides the following
 ScanConfig can be imported using any of these accepted formats:
 
 ```
+$ terraform import -provider=google-beta google_security_scanner_scan_config.default projects/{{project}}/scanConfigs/{{name}}
+$ terraform import -provider=google-beta google_security_scanner_scan_config.default {{project}}/{{name}}
 $ terraform import -provider=google-beta google_security_scanner_scan_config.default {{name}}
 ```
 
