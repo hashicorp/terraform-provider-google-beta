@@ -47,52 +47,105 @@ func resourceHealthcareFhirStore() *schema.Resource {
 				Required:         true,
 				ForceNew:         true,
 				DiffSuppressFunc: compareSelfLinkOrResourceName,
+				Description: `Identifies the dataset addressed by this request. Must be in the format
+'projects/{project}/locations/{location}/datasets/{dataset}'`,
 			},
 			"name": {
 				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: true,
+				Description: `The resource name for the FhirStore.
+
+** Changing this property may recreate the FHIR store (removing all data) **`,
 			},
 			"disable_referential_integrity": {
 				Type:     schema.TypeBool,
 				Optional: true,
 				ForceNew: true,
+				Description: `Whether to disable referential integrity in this FHIR store. This field is immutable after FHIR store
+creation. The default value is false, meaning that the API will enforce referential integrity and fail the
+requests that will result in inconsistent state in the FHIR store. When this field is set to true, the API
+will skip referential integrity check. Consequently, operations that rely on references, such as
+Patient.get$everything, will not return all the results if broken references exist.
+
+** Changing this property may recreate the FHIR store (removing all data) **`,
 			},
 			"disable_resource_versioning": {
 				Type:     schema.TypeBool,
 				Optional: true,
 				ForceNew: true,
+				Description: `Whether to disable resource versioning for this FHIR store. This field can not be changed after the creation
+of FHIR store. If set to false, which is the default behavior, all write operations will cause historical
+versions to be recorded automatically. The historical versions can be fetched through the history APIs, but
+cannot be updated. If set to true, no historical versions will be kept. The server will send back errors for
+attempts to read the historical versions.
+
+** Changing this property may recreate the FHIR store (removing all data) **`,
 			},
 			"enable_history_import": {
 				Type:     schema.TypeBool,
 				Optional: true,
 				ForceNew: true,
+				Description: `Whether to allow the bulk import API to accept history bundles and directly insert historical resource
+versions into the FHIR store. Importing resource histories creates resource interactions that appear to have
+occurred in the past, which clients may not want to allow. If set to false, history bundles within an import
+will fail with an error.
+
+** Changing this property may recreate the FHIR store (removing all data) **
+
+** This property can be changed manually in the Google Cloud Healthcare admin console without recreating the FHIR store **`,
 			},
 			"enable_update_create": {
 				Type:     schema.TypeBool,
 				Optional: true,
+				Description: `Whether this FHIR store has the updateCreate capability. This determines if the client can use an Update
+operation to create a new resource with a client-specified ID. If false, all IDs are server-assigned through
+the Create operation and attempts to Update a non-existent resource will return errors. Please treat the audit
+logs with appropriate levels of care if client-specified resource IDs contain sensitive data such as patient
+identifiers, those IDs will be part of the FHIR resource path recorded in Cloud audit logs and Cloud Pub/Sub
+notifications.`,
 			},
 			"labels": {
 				Type:     schema.TypeMap,
 				Optional: true,
-				Elem:     &schema.Schema{Type: schema.TypeString},
+				Description: `User-supplied key-value pairs used to organize FHIR stores.
+
+Label keys must be between 1 and 63 characters long, have a UTF-8 encoding of maximum 128 bytes, and must
+conform to the following PCRE regular expression: [\p{Ll}\p{Lo}][\p{Ll}\p{Lo}\p{N}_-]{0,62}
+
+Label values are optional, must be between 1 and 63 characters long, have a UTF-8 encoding of maximum 128
+bytes, and must conform to the following PCRE regular expression: [\p{Ll}\p{Lo}\p{N}_-]{0,63}
+
+No more than 64 labels can be associated with a given store.
+
+An object containing a list of "key": value pairs.
+Example: { "name": "wrench", "mass": "1.3kg", "count": "3" }.`,
+				Elem: &schema.Schema{Type: schema.TypeString},
 			},
 			"notification_config": {
-				Type:     schema.TypeList,
-				Optional: true,
-				MaxItems: 1,
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: `A nested object resource`,
+				MaxItems:    1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"pubsub_topic": {
 							Type:     schema.TypeString,
 							Required: true,
+							Description: `The Cloud Pub/Sub topic that notifications of changes are published on. Supplied by the client.
+PubsubMessage.Data will contain the resource name. PubsubMessage.MessageId is the ID of this message.
+It is guaranteed to be unique within the topic. PubsubMessage.PublishTime is the time at which the message
+was published. Notifications are only sent if the topic is non-empty. Topic names must be scoped to a
+project. cloud-healthcare@system.gserviceaccount.com must have publisher permissions on the given
+Cloud Pub/Sub topic. Not having adequate permissions will cause the calls that send notifications to fail.`,
 						},
 					},
 				},
 			},
 			"self_link": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: `The fully qualified name of this dataset`,
 			},
 		},
 	}

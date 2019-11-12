@@ -165,6 +165,11 @@ func resourceComputeBackendService() *schema.Resource {
 			"health_checks": {
 				Type:     schema.TypeSet,
 				Required: true,
+				Description: `The set of URLs to the HttpHealthCheck or HttpsHealthCheck resource
+for health checking this BackendService. Currently at most one health
+check can be specified, and a health check is required.
+
+For internal load balancing, a URL to a HealthCheck resource must be specified instead.`,
 				MinItems: 1,
 				MaxItems: 1,
 				Elem: &schema.Schema{
@@ -176,45 +181,76 @@ func resourceComputeBackendService() *schema.Resource {
 				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: true,
+				Description: `Name of the resource. Provided by the client when the resource is
+created. The name must be 1-63 characters long, and comply with
+RFC1035. Specifically, the name must be 1-63 characters long and match
+the regular expression '[a-z]([-a-z0-9]*[a-z0-9])?' which means the
+first character must be a lowercase letter, and all following
+characters must be a dash, lowercase letter, or digit, except the last
+character, which cannot be a dash.`,
 			},
 			"affinity_cookie_ttl_sec": {
 				Type:     schema.TypeInt,
 				Optional: true,
+				Description: `Lifetime of cookies in seconds if session_affinity is
+GENERATED_COOKIE. If set to 0, the cookie is non-persistent and lasts
+only until the end of the browser session (or equivalent). The
+maximum allowed value for TTL is one day.
+
+When the load balancing scheme is INTERNAL, this field is not used.`,
 			},
 			"backend": {
-				Type:     schema.TypeSet,
-				Optional: true,
-				Elem:     computeBackendServiceBackendSchema(),
-				Set:      resourceGoogleComputeBackendServiceBackendHash,
+				Type:        schema.TypeSet,
+				Optional:    true,
+				Description: `The set of backends that serve this BackendService.`,
+				Elem:        computeBackendServiceBackendSchema(),
+				Set:         resourceGoogleComputeBackendServiceBackendHash,
 			},
 			"cdn_policy": {
-				Type:     schema.TypeList,
-				Computed: true,
-				Optional: true,
-				MaxItems: 1,
+				Type:        schema.TypeList,
+				Computed:    true,
+				Optional:    true,
+				Description: `Cloud CDN configuration for this BackendService.`,
+				MaxItems:    1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"cache_key_policy": {
-							Type:     schema.TypeList,
-							Optional: true,
-							MaxItems: 1,
+							Type:        schema.TypeList,
+							Optional:    true,
+							Description: `The CacheKeyPolicy for this CdnPolicy.`,
+							MaxItems:    1,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"include_host": {
-										Type:     schema.TypeBool,
-										Optional: true,
+										Type:        schema.TypeBool,
+										Optional:    true,
+										Description: `If true requests to different hosts will be cached separately.`,
 									},
 									"include_protocol": {
-										Type:     schema.TypeBool,
-										Optional: true,
+										Type:        schema.TypeBool,
+										Optional:    true,
+										Description: `If true, http and https requests will be cached separately.`,
 									},
 									"include_query_string": {
 										Type:     schema.TypeBool,
 										Optional: true,
+										Description: `If true, include query string parameters in the cache key
+according to query_string_whitelist and
+query_string_blacklist. If neither is set, the entire query
+string will be included.
+
+If false, the query string will be excluded from the cache
+key entirely.`,
 									},
 									"query_string_blacklist": {
 										Type:     schema.TypeSet,
 										Optional: true,
+										Description: `Names of query string parameters to exclude in cache keys.
+
+All other parameters will be included. Either specify
+query_string_whitelist or query_string_blacklist, not both.
+'&' and '=' will be percent encoded and not treated as
+delimiters.`,
 										Elem: &schema.Schema{
 											Type: schema.TypeString,
 										},
@@ -223,6 +259,12 @@ func resourceComputeBackendService() *schema.Resource {
 									"query_string_whitelist": {
 										Type:     schema.TypeSet,
 										Optional: true,
+										Description: `Names of query string parameters to include in cache keys.
+
+All other parameters will be excluded. Either specify
+query_string_whitelist or query_string_blacklist, not both.
+'&' and '=' will be percent encoded and not treated as
+delimiters.`,
 										Elem: &schema.Schema{
 											Type: schema.TypeString,
 										},
@@ -234,7 +276,17 @@ func resourceComputeBackendService() *schema.Resource {
 						"signed_url_cache_max_age_sec": {
 							Type:     schema.TypeInt,
 							Optional: true,
-							Default:  3600,
+							Description: `Maximum number of seconds the response to a signed URL request
+will be considered fresh, defaults to 1hr (3600s). After this
+time period, the response will be revalidated before
+being served.
+
+When serving responses to signed URL requests, Cloud CDN will
+internally behave as though all responses from this backend had a
+"Cache-Control: public, max-age=[TTL]" header, regardless of any
+existing Cache-Control header. The actual headers served in
+responses will not be altered.`,
+							Default: 3600,
 						},
 					},
 				},
@@ -242,22 +294,31 @@ func resourceComputeBackendService() *schema.Resource {
 			"circuit_breakers": {
 				Type:     schema.TypeList,
 				Optional: true,
+				Description: `Settings controlling the volume of connections to a backend service. This field
+is applicable only when the load_balancing_scheme is set to INTERNAL_SELF_MANAGED.`,
 				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"connect_timeout": {
-							Type:     schema.TypeList,
-							Optional: true,
-							MaxItems: 1,
+							Type:        schema.TypeList,
+							Optional:    true,
+							Description: `The timeout for new network connections to hosts.`,
+							MaxItems:    1,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"seconds": {
 										Type:     schema.TypeInt,
 										Required: true,
+										Description: `Span of time at a resolution of a second.
+Must be from 0 to 315,576,000,000 inclusive.`,
 									},
 									"nanos": {
 										Type:     schema.TypeInt,
 										Optional: true,
+										Description: `Span of time that's a fraction of a second at nanosecond
+resolution. Durations less than one second are represented
+with a 0 seconds field and a positive nanos field. Must
+be from 0 to 999,999,999 inclusive.`,
 									},
 								},
 							},
@@ -265,26 +326,38 @@ func resourceComputeBackendService() *schema.Resource {
 						"max_connections": {
 							Type:     schema.TypeInt,
 							Optional: true,
-							Default:  1024,
+							Description: `The maximum number of connections to the backend cluster.
+Defaults to 1024.`,
+							Default: 1024,
 						},
 						"max_pending_requests": {
 							Type:     schema.TypeInt,
 							Optional: true,
-							Default:  1024,
+							Description: `The maximum number of pending requests to the backend cluster.
+Defaults to 1024.`,
+							Default: 1024,
 						},
 						"max_requests": {
 							Type:     schema.TypeInt,
 							Optional: true,
-							Default:  1024,
+							Description: `The maximum number of parallel requests to the backend cluster.
+Defaults to 1024.`,
+							Default: 1024,
 						},
 						"max_requests_per_connection": {
 							Type:     schema.TypeInt,
 							Optional: true,
+							Description: `Maximum requests for a single backend connection. This parameter
+is respected by both the HTTP/1.1 and HTTP/2 implementations. If
+not specified, there is no limit. Setting this parameter to 1
+will effectively disable keep alive.`,
 						},
 						"max_retries": {
 							Type:     schema.TypeInt,
 							Optional: true,
-							Default:  3,
+							Description: `The maximum number of parallel retries to the backend cluster.
+Defaults to 3.`,
+							Default: 3,
 						},
 					},
 				},
@@ -292,42 +365,65 @@ func resourceComputeBackendService() *schema.Resource {
 			"connection_draining_timeout_sec": {
 				Type:     schema.TypeInt,
 				Optional: true,
-				Default:  300,
+				Description: `Time for which instance will be drained (not accept new
+connections, but still work to finish started).`,
+				Default: 300,
 			},
 
 			"consistent_hash": {
 				Type:     schema.TypeList,
 				Optional: true,
+				Description: `Consistent Hash-based load balancing can be used to provide soft session
+affinity based on HTTP headers, cookies or other properties. This load balancing
+policy is applicable only for HTTP connections. The affinity to a particular
+destination host will be lost when one or more hosts are added/removed from the
+destination service. This field specifies parameters that control consistent
+hashing. This field only applies if the load_balancing_scheme is set to
+INTERNAL_SELF_MANAGED. This field is only applicable when locality_lb_policy is
+set to MAGLEV or RING_HASH.`,
 				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"http_cookie": {
 							Type:     schema.TypeList,
 							Optional: true,
+							Description: `Hash is based on HTTP Cookie. This field describes a HTTP cookie
+that will be used as the hash key for the consistent hash load
+balancer. If the cookie is not present, it will be generated.
+This field is applicable if the sessionAffinity is set to HTTP_COOKIE.`,
 							MaxItems: 1,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"name": {
-										Type:     schema.TypeString,
-										Optional: true,
+										Type:        schema.TypeString,
+										Optional:    true,
+										Description: `Name of the cookie.`,
 									},
 									"path": {
-										Type:     schema.TypeString,
-										Optional: true,
+										Type:        schema.TypeString,
+										Optional:    true,
+										Description: `Path to set for the cookie.`,
 									},
 									"ttl": {
-										Type:     schema.TypeList,
-										Optional: true,
-										MaxItems: 1,
+										Type:        schema.TypeList,
+										Optional:    true,
+										Description: `Lifetime of the cookie.`,
+										MaxItems:    1,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"seconds": {
 													Type:     schema.TypeInt,
 													Required: true,
+													Description: `Span of time at a resolution of a second.
+Must be from 0 to 315,576,000,000 inclusive.`,
 												},
 												"nanos": {
 													Type:     schema.TypeInt,
 													Optional: true,
+													Description: `Span of time that's a fraction of a second at nanosecond
+resolution. Durations less than one second are represented
+with a 0 seconds field and a positive nanos field. Must
+be from 0 to 999,999,999 inclusive.`,
 												},
 											},
 										},
@@ -338,11 +434,19 @@ func resourceComputeBackendService() *schema.Resource {
 						"http_header_name": {
 							Type:     schema.TypeString,
 							Optional: true,
+							Description: `The hash based on the value of the specified header field.
+This field is applicable if the sessionAffinity is set to HEADER_FIELD.`,
 						},
 						"minimum_ring_size": {
 							Type:     schema.TypeInt,
 							Optional: true,
-							Default:  1024,
+							Description: `The minimum number of virtual nodes to use for the hash ring.
+Larger ring sizes result in more granular load
+distributions. If the number of hosts in the load balancing pool
+is larger than the ring size, each host will be assigned a single
+virtual node.
+Defaults to 1024.`,
+							Default: 1024,
 						},
 					},
 				},
@@ -350,38 +454,46 @@ func resourceComputeBackendService() *schema.Resource {
 			"custom_request_headers": {
 				Type:     schema.TypeSet,
 				Optional: true,
+				Description: `Headers that the HTTP/S load balancer should add to proxied
+requests.`,
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
 				Set: schema.HashString,
 			},
 			"description": {
-				Type:     schema.TypeString,
-				Optional: true,
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: `An optional description of this resource.`,
 			},
 			"enable_cdn": {
-				Type:     schema.TypeBool,
-				Optional: true,
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Description: `If true, enable Cloud CDN for this BackendService.`,
 			},
 			"iap": {
-				Type:     schema.TypeList,
-				Optional: true,
-				MaxItems: 1,
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: `Settings for enabling Cloud Identity Aware Proxy`,
+				MaxItems:    1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"oauth2_client_id": {
-							Type:     schema.TypeString,
-							Required: true,
+							Type:        schema.TypeString,
+							Required:    true,
+							Description: `OAuth2 Client ID for IAP`,
 						},
 						"oauth2_client_secret": {
-							Type:      schema.TypeString,
-							Required:  true,
-							Sensitive: true,
+							Type:        schema.TypeString,
+							Required:    true,
+							Description: `OAuth2 Client Secret for IAP`,
+							Sensitive:   true,
 						},
 						"oauth2_client_secret_sha256": {
-							Type:      schema.TypeString,
-							Computed:  true,
-							Sensitive: true,
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: `OAuth2 Client Secret SHA-256 for IAP`,
+							Sensitive:   true,
 						},
 					},
 				},
@@ -391,28 +503,68 @@ func resourceComputeBackendService() *schema.Resource {
 				Optional:     true,
 				ForceNew:     true,
 				ValidateFunc: validation.StringInSlice([]string{"EXTERNAL", "INTERNAL_SELF_MANAGED", ""}, false),
-				Default:      "EXTERNAL",
+				Description: `Indicates whether the backend service will be used with internal or
+external load balancing. A backend service created for one type of
+load balancing cannot be used with the other. Must be 'EXTERNAL' or
+'INTERNAL_SELF_MANAGED' for a global backend service. Defaults to 'EXTERNAL'.`,
+				Default: "EXTERNAL",
 			},
 			"locality_lb_policy": {
 				Type:         schema.TypeString,
 				Optional:     true,
 				ForceNew:     true,
 				ValidateFunc: validation.StringInSlice([]string{"ROUND_ROBIN", "LEAST_REQUEST", "RING_HASH", "RANDOM", "ORIGINAL_DESTINATION", "MAGLEV", ""}, false),
+				Description: `The load balancing algorithm used within the scope of the locality.
+The possible values are -
+
+ROUND_ROBIN - This is a simple policy in which each healthy backend
+              is selected in round robin order.
+
+LEAST_REQUEST - An O(1) algorithm which selects two random healthy
+                hosts and picks the host which has fewer active requests.
+
+RING_HASH - The ring/modulo hash load balancer implements consistent
+            hashing to backends. The algorithm has the property that the
+            addition/removal of a host from a set of N hosts only affects
+            1/N of the requests.
+
+RANDOM - The load balancer selects a random healthy host.
+
+ORIGINAL_DESTINATION - Backend host is selected based on the client
+                       connection metadata, i.e., connections are opened
+                       to the same address as the destination address of
+                       the incoming connection before the connection
+                       was redirected to the load balancer.
+
+MAGLEV - used as a drop in replacement for the ring hash load balancer.
+         Maglev is not as stable as ring hash but has faster table lookup
+         build times and host selection times. For more information about
+         Maglev, refer to https://ai.google/research/pubs/pub44824
+
+This field is applicable only when the load_balancing_scheme is set to
+INTERNAL_SELF_MANAGED.`,
 			},
 			"log_config": {
 				Type:     schema.TypeList,
 				Computed: true,
 				Optional: true,
+				Description: `This field denotes the logging options for the load balancer traffic served by this backend service.
+If logging is enabled, logs will be exported to Stackdriver.`,
 				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"enable": {
-							Type:     schema.TypeBool,
-							Optional: true,
+							Type:        schema.TypeBool,
+							Optional:    true,
+							Description: `Whether to enable logging for the load balancer traffic served by this backend service.`,
 						},
 						"sample_rate": {
 							Type:     schema.TypeFloat,
 							Optional: true,
+							Description: `This field can only be specified if logging is enabled for this backend service. The value of
+the field must be in [0, 1]. This configures the sampling rate of requests to the load balancer
+where 1.0 means all logged requests are reported and 0.0 means no logged requests are reported.
+The default value is 1.0.`,
 						},
 					},
 				},
@@ -420,22 +572,33 @@ func resourceComputeBackendService() *schema.Resource {
 			"outlier_detection": {
 				Type:     schema.TypeList,
 				Optional: true,
+				Description: `Settings controlling eviction of unhealthy hosts from the load balancing pool.
+This field is applicable only when the load_balancing_scheme is set
+to INTERNAL_SELF_MANAGED.`,
 				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"base_ejection_time": {
 							Type:     schema.TypeList,
 							Optional: true,
+							Description: `The base time that a host is ejected for. The real time is equal to the base
+time multiplied by the number of times the host has been ejected. Defaults to
+30000ms or 30s.`,
 							MaxItems: 1,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"seconds": {
 										Type:     schema.TypeInt,
 										Required: true,
+										Description: `Span of time at a resolution of a second. Must be from 0 to 315,576,000,000
+inclusive.`,
 									},
 									"nanos": {
 										Type:     schema.TypeInt,
 										Optional: true,
+										Description: `Span of time that's a fraction of a second at nanosecond resolution. Durations
+less than one second are represented with a 0 'seconds' field and a positive
+'nanos' field. Must be from 0 to 999,999,999 inclusive.`,
 									},
 								},
 							},
@@ -443,41 +606,63 @@ func resourceComputeBackendService() *schema.Resource {
 						"consecutive_errors": {
 							Type:     schema.TypeInt,
 							Optional: true,
-							Default:  5,
+							Description: `Number of errors before a host is ejected from the connection pool. When the
+backend host is accessed over HTTP, a 5xx return code qualifies as an error.
+Defaults to 5.`,
+							Default: 5,
 						},
 						"consecutive_gateway_failure": {
 							Type:     schema.TypeInt,
 							Optional: true,
-							Default:  5,
+							Description: `The number of consecutive gateway failures (502, 503, 504 status or connection
+errors that are mapped to one of those status codes) before a consecutive
+gateway failure ejection occurs. Defaults to 5.`,
+							Default: 5,
 						},
 						"enforcing_consecutive_errors": {
 							Type:     schema.TypeInt,
 							Optional: true,
-							Default:  100,
+							Description: `The percentage chance that a host will be actually ejected when an outlier
+status is detected through consecutive 5xx. This setting can be used to disable
+ejection or to ramp it up slowly. Defaults to 100.`,
+							Default: 100,
 						},
 						"enforcing_consecutive_gateway_failure": {
 							Type:     schema.TypeInt,
 							Optional: true,
-							Default:  0,
+							Description: `The percentage chance that a host will be actually ejected when an outlier
+status is detected through consecutive gateway failures. This setting can be
+used to disable ejection or to ramp it up slowly. Defaults to 0.`,
+							Default: 0,
 						},
 						"enforcing_success_rate": {
 							Type:     schema.TypeInt,
 							Optional: true,
-							Default:  100,
+							Description: `The percentage chance that a host will be actually ejected when an outlier
+status is detected through success rate statistics. This setting can be used to
+disable ejection or to ramp it up slowly. Defaults to 100.`,
+							Default: 100,
 						},
 						"interval": {
 							Type:     schema.TypeList,
 							Optional: true,
+							Description: `Time interval between ejection sweep analysis. This can result in both new
+ejections as well as hosts being returned to service. Defaults to 10 seconds.`,
 							MaxItems: 1,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"seconds": {
 										Type:     schema.TypeInt,
 										Required: true,
+										Description: `Span of time at a resolution of a second. Must be from 0 to 315,576,000,000
+inclusive.`,
 									},
 									"nanos": {
 										Type:     schema.TypeInt,
 										Optional: true,
+										Description: `Span of time that's a fraction of a second at nanosecond resolution. Durations
+less than one second are represented with a 0 'seconds' field and a positive
+'nanos' field. Must be from 0 to 999,999,999 inclusive.`,
 									},
 								},
 							},
@@ -485,22 +670,39 @@ func resourceComputeBackendService() *schema.Resource {
 						"max_ejection_percent": {
 							Type:     schema.TypeInt,
 							Optional: true,
-							Default:  10,
+							Description: `Maximum percentage of hosts in the load balancing pool for the backend service
+that can be ejected. Defaults to 10%.`,
+							Default: 10,
 						},
 						"success_rate_minimum_hosts": {
 							Type:     schema.TypeInt,
 							Optional: true,
-							Default:  5,
+							Description: `The number of hosts in a cluster that must have enough request volume to detect
+success rate outliers. If the number of hosts is less than this setting, outlier
+detection via success rate statistics is not performed for any host in the
+cluster. Defaults to 5.`,
+							Default: 5,
 						},
 						"success_rate_request_volume": {
 							Type:     schema.TypeInt,
 							Optional: true,
-							Default:  100,
+							Description: `The minimum number of total requests that must be collected in one interval (as
+defined by the interval duration above) to include this host in success rate
+based outlier detection. If the volume is lower than this setting, outlier
+detection via success rate statistics is not performed for that host. Defaults
+to 100.`,
+							Default: 100,
 						},
 						"success_rate_stdev_factor": {
 							Type:     schema.TypeInt,
 							Optional: true,
-							Default:  1900,
+							Description: `This factor is used to determine the ejection threshold for success rate outlier
+ejection. The ejection threshold is the difference between the mean success
+rate, and the product of this factor and the standard deviation of the mean
+success rate: mean - (stdev * success_rate_stdev_factor). This factor is divided
+by a thousand to get a double. That is, if the desired factor is 1.9, the
+runtime value should be 1900. Defaults to 1900.`,
+							Default: 1900,
 						},
 					},
 				},
@@ -509,36 +711,51 @@ func resourceComputeBackendService() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 				Optional: true,
+				Description: `Name of backend port. The same name should appear in the instance
+groups referenced by this service. Required when the load balancing
+scheme is EXTERNAL.`,
 			},
 			"protocol": {
 				Type:         schema.TypeString,
 				Computed:     true,
 				Optional:     true,
 				ValidateFunc: validation.StringInSlice([]string{"HTTP", "HTTPS", "HTTP2", "TCP", "SSL", ""}, false),
+				Description: `The protocol this BackendService uses to communicate with backends.
+Possible values are HTTP, HTTPS, HTTP2, TCP, and SSL. The default is
+HTTP. **NOTE**: HTTP2 is only valid for beta HTTP/2 load balancer
+types and may result in errors if used with the GA API.`,
 			},
 			"security_policy": {
 				Type:             schema.TypeString,
 				Optional:         true,
 				DiffSuppressFunc: compareSelfLinkOrResourceName,
+				Description:      `The security policy associated with this backend service.`,
 			},
 			"session_affinity": {
 				Type:         schema.TypeString,
 				Computed:     true,
 				Optional:     true,
 				ValidateFunc: validation.StringInSlice([]string{"NONE", "CLIENT_IP", "CLIENT_IP_PORT_PROTO", "CLIENT_IP_PROTO", "GENERATED_COOKIE", "HEADER_FIELD", "HTTP_COOKIE", ""}, false),
+				Description: `Type of session affinity to use. The default is NONE. Session affinity is
+not applicable if the protocol is UDP.`,
 			},
 			"timeout_sec": {
 				Type:     schema.TypeInt,
 				Computed: true,
 				Optional: true,
+				Description: `How many seconds to wait for the backend before considering it a
+failed request. Default is 30 seconds. Valid range is [1, 86400].`,
 			},
 			"creation_timestamp": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: `Creation timestamp in RFC3339 text format.`,
 			},
 			"fingerprint": {
 				Type:     schema.TypeString,
 				Computed: true,
+				Description: `Fingerprint of this resource. A hash of the contents stored in this
+object. This field is used in optimistic locking.`,
 			},
 			"project": {
 				Type:     schema.TypeString,
@@ -561,50 +778,118 @@ func computeBackendServiceBackendSchema() *schema.Resource {
 				Type:         schema.TypeString,
 				Optional:     true,
 				ValidateFunc: validation.StringInSlice([]string{"UTILIZATION", "RATE", "CONNECTION", ""}, false),
-				Default:      "UTILIZATION",
+				Description: `Specifies the balancing mode for this backend.
+
+For global HTTP(S) or TCP/SSL load balancing, the default is
+UTILIZATION. Valid values are UTILIZATION, RATE (for HTTP(S))
+and CONNECTION (for TCP/SSL).`,
+				Default: "UTILIZATION",
 			},
 			"capacity_scaler": {
 				Type:     schema.TypeFloat,
 				Optional: true,
-				Default:  1.0,
+				Description: `A multiplier applied to the group's maximum servicing capacity
+(based on UTILIZATION, RATE or CONNECTION).
+
+Default value is 1, which means the group will serve up to 100%
+of its configured capacity (depending on balancingMode). A
+setting of 0 means the group is completely drained, offering
+0% of its available Capacity. Valid range is [0.0,1.0].`,
+				Default: 1.0,
 			},
 			"description": {
 				Type:     schema.TypeString,
 				Optional: true,
+				Description: `An optional description of this resource.
+Provide this property when you create the resource.`,
 			},
 			"group": {
 				Type:             schema.TypeString,
 				Optional:         true,
 				DiffSuppressFunc: compareSelfLinkRelativePaths,
+				Description: `The fully-qualified URL of an Instance Group or Network Endpoint
+Group resource. In case of instance group this defines the list
+of instances that serve traffic. Member virtual machine
+instances from each instance group must live in the same zone as
+the instance group itself. No two backends in a backend service
+are allowed to use same Instance Group resource.
+
+For Network Endpoint Groups this defines list of endpoints. All
+endpoints of Network Endpoint Group must be hosted on instances
+located in the same zone as the Network Endpoint Group.
+
+Backend services cannot mix Instance Group and
+Network Endpoint Group backends.
+
+Note that you must specify an Instance Group or Network Endpoint
+Group resource using the fully-qualified URL, rather than a
+partial URL.`,
 			},
 			"max_connections": {
 				Type:     schema.TypeInt,
 				Optional: true,
+				Description: `The max number of simultaneous connections for the group. Can
+be used with either CONNECTION or UTILIZATION balancing modes.
+
+For CONNECTION mode, either maxConnections or one
+of maxConnectionsPerInstance or maxConnectionsPerEndpoint,
+as appropriate for group type, must be set.`,
 			},
 			"max_connections_per_endpoint": {
 				Type:     schema.TypeInt,
 				Optional: true,
+				Description: `The max number of simultaneous connections that a single backend
+network endpoint can handle. This is used to calculate the
+capacity of the group. Can be used in either CONNECTION or
+UTILIZATION balancing modes.
+
+For CONNECTION mode, either
+maxConnections or maxConnectionsPerEndpoint must be set.`,
 			},
 			"max_connections_per_instance": {
 				Type:     schema.TypeInt,
 				Optional: true,
+				Description: `The max number of simultaneous connections that a single
+backend instance can handle. This is used to calculate the
+capacity of the group. Can be used in either CONNECTION or
+UTILIZATION balancing modes.
+
+For CONNECTION mode, either maxConnections or
+maxConnectionsPerInstance must be set.`,
 			},
 			"max_rate": {
 				Type:     schema.TypeInt,
 				Optional: true,
+				Description: `The max requests per second (RPS) of the group.
+
+Can be used with either RATE or UTILIZATION balancing modes,
+but required if RATE mode. For RATE mode, either maxRate or one
+of maxRatePerInstance or maxRatePerEndpoint, as appropriate for
+group type, must be set.`,
 			},
 			"max_rate_per_endpoint": {
 				Type:     schema.TypeFloat,
 				Optional: true,
+				Description: `The max requests per second (RPS) that a single backend network
+endpoint can handle. This is used to calculate the capacity of
+the group. Can be used in either balancing mode. For RATE mode,
+either maxRate or maxRatePerEndpoint must be set.`,
 			},
 			"max_rate_per_instance": {
 				Type:     schema.TypeFloat,
 				Optional: true,
+				Description: `The max requests per second (RPS) that a single backend
+instance can handle. This is used to calculate the capacity of
+the group. Can be used in either balancing mode. For RATE mode,
+either maxRate or maxRatePerInstance must be set.`,
 			},
 			"max_utilization": {
 				Type:     schema.TypeFloat,
 				Optional: true,
-				Default:  0.8,
+				Description: `Used when balancingMode is UTILIZATION. This ratio defines the
+CPU utilization target for the group. The default is 0.8. Valid
+range is [0.0, 1.0].`,
+				Default: 0.8,
 			},
 		},
 	}

@@ -151,34 +151,52 @@ func resourceComputeVpnTunnel() *schema.Resource {
 				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: true,
+				Description: `Name of the resource. The name must be 1-63 characters long, and
+comply with RFC1035. Specifically, the name must be 1-63
+characters long and match the regular expression
+'[a-z]([-a-z0-9]*[a-z0-9])?' which means the first character
+must be a lowercase letter, and all following characters must
+be a dash, lowercase letter, or digit,
+except the last character, which cannot be a dash.`,
 			},
 			"shared_secret": {
-				Type:      schema.TypeString,
-				Required:  true,
-				ForceNew:  true,
+				Type:     schema.TypeString,
+				Required: true,
+				ForceNew: true,
+				Description: `Shared secret used to set the secure session between the Cloud VPN
+gateway and the peer VPN gateway.`,
 				Sensitive: true,
 			},
 			"description": {
-				Type:     schema.TypeString,
-				Optional: true,
-				ForceNew: true,
+				Type:        schema.TypeString,
+				Optional:    true,
+				ForceNew:    true,
+				Description: `An optional description of this resource.`,
 			},
 			"ike_version": {
 				Type:     schema.TypeInt,
 				Optional: true,
 				ForceNew: true,
-				Default:  2,
+				Description: `IKE protocol version to use when establishing the VPN tunnel with
+peer VPN gateway.
+Acceptable IKE versions are 1 or 2. Default version is 2.`,
+				Default: 2,
 			},
 			"labels": {
-				Type:     schema.TypeMap,
-				Optional: true,
-				Elem:     &schema.Schema{Type: schema.TypeString},
+				Type:        schema.TypeMap,
+				Optional:    true,
+				Description: `Labels to apply to this VpnTunnel.`,
+				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
 			"local_traffic_selector": {
 				Type:     schema.TypeSet,
 				Computed: true,
 				Optional: true,
 				ForceNew: true,
+				Description: `Local traffic selector to use when establishing the VPN tunnel with
+peer VPN gateway. The value should be a CIDR formatted string,
+for example '192.168.0.0/16'. The ranges should be disjoint.
+Only IPv4 is supported.`,
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
@@ -189,17 +207,23 @@ func resourceComputeVpnTunnel() *schema.Resource {
 				Optional:         true,
 				ForceNew:         true,
 				DiffSuppressFunc: compareSelfLinkOrResourceName,
+				Description:      `URL of the peer side external VPN gateway to which this VPN tunnel is connected.`,
 			},
 			"peer_external_gateway_interface": {
-				Type:     schema.TypeInt,
-				Optional: true,
-				ForceNew: true,
+				Type:        schema.TypeInt,
+				Optional:    true,
+				ForceNew:    true,
+				Description: `The interface ID of the external VPN gateway to which this VPN tunnel is connected.`,
 			},
 			"peer_gcp_gateway": {
 				Type:             schema.TypeString,
 				Optional:         true,
 				ForceNew:         true,
 				DiffSuppressFunc: compareSelfLinkOrResourceName,
+				Description: `URL of the peer side HA GCP VPN gateway to which this VPN tunnel is connected.
+If provided, the VPN tunnel will automatically use the same vpn_gateway_interface
+ID in the peer GCP VPN gateway.
+This field must reference a 'google_compute_ha_vpn_gateway' resource.`,
 			},
 			"peer_ip": {
 				Type:         schema.TypeString,
@@ -207,6 +231,7 @@ func resourceComputeVpnTunnel() *schema.Resource {
 				Optional:     true,
 				ForceNew:     true,
 				ValidateFunc: validatePeerAddr,
+				Description:  `IP address of the peer VPN gateway. Only IPv4 is supported.`,
 			},
 			"region": {
 				Type:             schema.TypeString,
@@ -214,12 +239,17 @@ func resourceComputeVpnTunnel() *schema.Resource {
 				Optional:         true,
 				ForceNew:         true,
 				DiffSuppressFunc: compareSelfLinkOrResourceName,
+				Description:      `The region where the tunnel is located. If unset, is set to the region of 'target_vpn_gateway'.`,
 			},
 			"remote_traffic_selector": {
 				Type:     schema.TypeSet,
 				Computed: true,
 				Optional: true,
 				ForceNew: true,
+				Description: `Remote traffic selector to use when establishing the VPN tunnel with
+peer VPN gateway. The value should be a CIDR formatted string,
+for example '192.168.0.0/16'. The ranges should be disjoint.
+Only IPv4 is supported.`,
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
@@ -230,43 +260,56 @@ func resourceComputeVpnTunnel() *schema.Resource {
 				Optional:         true,
 				ForceNew:         true,
 				DiffSuppressFunc: compareSelfLinkOrResourceName,
+				Description:      `URL of router resource to be used for dynamic routing.`,
 			},
 			"target_vpn_gateway": {
 				Type:             schema.TypeString,
 				Optional:         true,
 				ForceNew:         true,
 				DiffSuppressFunc: compareSelfLinkOrResourceName,
+				Description: `URL of the Target VPN gateway with which this VPN tunnel is
+associated.`,
 			},
 			"vpn_gateway": {
 				Type:             schema.TypeString,
 				Optional:         true,
 				ForceNew:         true,
 				DiffSuppressFunc: compareSelfLinkOrResourceName,
+				Description: `URL of the VPN gateway with which this VPN tunnel is associated.
+This must be used if a High Availability VPN gateway resource is created.
+This field must reference a 'google_compute_ha_vpn_gateway' resource.`,
 			},
 			"vpn_gateway_interface": {
-				Type:     schema.TypeInt,
-				Optional: true,
-				ForceNew: true,
+				Type:        schema.TypeInt,
+				Optional:    true,
+				ForceNew:    true,
+				Description: `The interface ID of the VPN gateway with which this VPN tunnel is associated.`,
 			},
 			"creation_timestamp": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: `Creation timestamp in RFC3339 text format.`,
 			},
 			"detailed_status": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: `Detailed status message for the VPN tunnel.`,
 			},
 			"label_fingerprint": {
 				Type:     schema.TypeString,
 				Computed: true,
+				Description: `The fingerprint used for optimistic locking of this resource.  Used
+internally during updates.`,
 			},
 			"shared_secret_hash": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: `Hash of the shared secret.`,
 			},
 			"tunnel_id": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: `The unique identifier for the resource. This identifier is defined by the server.`,
 			},
 			"project": {
 				Type:     schema.TypeString,

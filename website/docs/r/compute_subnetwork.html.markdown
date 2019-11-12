@@ -186,11 +186,11 @@ The following arguments are supported:
 
 * `role` -
   (Optional, [Beta](https://terraform.io/docs/providers/google/guides/provider_versions.html))
-  The role of subnetwork. Currenly, this field is only used
-  when purpose = INTERNAL_HTTPS_LOAD_BALANCER. The value can be set
-  to ACTIVE or BACKUP. An ACTIVE subnetwork is one that is currently
-  being used for Internal HTTP(S) Load Balancing. A BACKUP subnetwork
-  is one that is ready to be promoted to ACTIVE or is currently draining.
+  The role of subnetwork. Currently, this field is only used when
+  purpose = INTERNAL_HTTPS_LOAD_BALANCER. The value can be set to ACTIVE
+  or BACKUP. An ACTIVE subnetwork is one that is currently being used
+  for Internal HTTP(S) Load Balancing. A BACKUP subnetwork is one that
+  is ready to be promoted to ACTIVE or is currently draining.
 
 * `secondary_ip_range` -
   (Optional)
