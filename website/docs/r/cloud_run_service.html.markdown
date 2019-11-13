@@ -206,11 +206,11 @@ The `env_from` block supports:
 
 * `config_map_ref` -
   (Optional)
-  The ConfigMap to select from  Structure is documented below.
+  The ConfigMap to select from.  Structure is documented below.
 
 * `secret_ref` -
   (Optional)
-  The Secret to select from  Structure is documented below.
+  The Secret to select from.  Structure is documented below.
 
 
 The `config_map_ref` block supports:
@@ -227,7 +227,7 @@ The `config_map_ref` block supports:
 The `local_object_reference` block supports:
 
 * `name` -
-  (Optional)
+  (Required)
   Name of the referent.
   More info:
   https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
@@ -246,7 +246,7 @@ The `secret_ref` block supports:
 The `local_object_reference` block supports:
 
 * `name` -
-  (Optional)
+  (Required)
   Name of the referent.
   More info:
   https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names

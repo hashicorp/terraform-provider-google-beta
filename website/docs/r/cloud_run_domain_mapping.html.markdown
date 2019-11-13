@@ -47,8 +47,8 @@ To get more information about DomainMapping, see:
 ```hcl
 resource "google_cloud_run_domain_mapping" "default" {
   location = "us-central1"
-  provider = "google-beta"
-  name = "tftest-domainmapping.com"
+  provider = google-beta
+  name     = "tftest-domainmapping.com"
 
   metadata {
     namespace = "my-project-name"

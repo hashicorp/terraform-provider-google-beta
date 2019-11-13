@@ -227,7 +227,7 @@ resource "google_compute_health_check" "health_check" {
 
   name = "%s"
   http_health_check {
-
+    port = 80
   }
 }
 `, serviceName, checkName)
@@ -254,7 +254,7 @@ resource "google_compute_health_check" "health_check" {
 
   name = "%s"
   http_health_check {
-
+    port = 80
   }
 }
 `, serviceName, checkName)
@@ -290,7 +290,7 @@ resource "google_compute_health_check" "health_check" {
 
   name = "%s"
   http_health_check {
-
+    port = 80
   }
 }
 `, serviceName, checkName)
@@ -387,7 +387,7 @@ resource "google_compute_health_check" "health_check" {
 
   name = "%s"
   http_health_check {
-
+    port = 80
   }
 }
 `, serviceName, igName, instanceName, checkName)
@@ -427,6 +427,7 @@ resource "google_compute_health_check" "zero" {
     timeout_sec = 1
 
     tcp_health_check {
+      port = 443
     }
 }
 
@@ -436,6 +437,7 @@ resource "google_compute_health_check" "one" {
     timeout_sec = 30
 
     tcp_health_check {
+      port = 443
     }
 }
 `, serviceName, checkOne, checkTwo)
@@ -502,7 +504,7 @@ resource "google_compute_health_check" "default" {
   timeout_sec        = 1
 
   tcp_health_check {
-
+    port = 443
   }
 }
 `, serviceName, timeout, igName, itName, checkName)

@@ -265,7 +265,7 @@ func testAccIapWebBackendServiceIamMember_basicGenerated(context map[string]inte
 	return Nprintf(`
 resource "google_compute_backend_service" "default" {
   name          = "backend-service%{random_suffix}"
-  health_checks = ["${google_compute_http_health_check.default.self_link}"]
+  health_checks = [google_compute_http_health_check.default.self_link]
 }
 
 resource "google_compute_http_health_check" "default" {
@@ -288,7 +288,7 @@ func testAccIapWebBackendServiceIamPolicy_basicGenerated(context map[string]inte
 	return Nprintf(`
 resource "google_compute_backend_service" "default" {
   name          = "backend-service%{random_suffix}"
-  health_checks = ["${google_compute_http_health_check.default.self_link}"]
+  health_checks = [google_compute_http_health_check.default.self_link]
 }
 
 resource "google_compute_http_health_check" "default" {
@@ -317,7 +317,7 @@ func testAccIapWebBackendServiceIamBinding_basicGenerated(context map[string]int
 	return Nprintf(`
 resource "google_compute_backend_service" "default" {
   name          = "backend-service%{random_suffix}"
-  health_checks = ["${google_compute_http_health_check.default.self_link}"]
+  health_checks = [google_compute_http_health_check.default.self_link]
 }
 
 resource "google_compute_http_health_check" "default" {
@@ -340,7 +340,7 @@ func testAccIapWebBackendServiceIamBinding_updateGenerated(context map[string]in
 	return Nprintf(`
 resource "google_compute_backend_service" "default" {
   name          = "backend-service%{random_suffix}"
-  health_checks = ["${google_compute_http_health_check.default.self_link}"]
+  health_checks = [google_compute_http_health_check.default.self_link]
 }
 
 resource "google_compute_http_health_check" "default" {
@@ -363,7 +363,7 @@ func testAccIapWebBackendServiceIamBinding_withConditionGenerated(context map[st
 	return Nprintf(`
 resource "google_compute_backend_service" "default" {
   name          = "backend-service%{random_suffix}"
-  health_checks = ["${google_compute_http_health_check.default.self_link}"]
+  health_checks = [google_compute_http_health_check.default.self_link]
 }
 
 resource "google_compute_http_health_check" "default" {
@@ -391,7 +391,7 @@ func testAccIapWebBackendServiceIamBinding_withAndWithoutConditionGenerated(cont
 	return Nprintf(`
 resource "google_compute_backend_service" "default" {
   name          = "backend-service%{random_suffix}"
-  health_checks = ["${google_compute_http_health_check.default.self_link}"]
+  health_checks = [google_compute_http_health_check.default.self_link]
 }
 
 resource "google_compute_http_health_check" "default" {
@@ -426,7 +426,7 @@ func testAccIapWebBackendServiceIamMember_withConditionGenerated(context map[str
 	return Nprintf(`
 resource "google_compute_backend_service" "default" {
   name          = "backend-service%{random_suffix}"
-  health_checks = ["${google_compute_http_health_check.default.self_link}"]
+  health_checks = [google_compute_http_health_check.default.self_link]
 }
 
 resource "google_compute_http_health_check" "default" {
@@ -454,7 +454,7 @@ func testAccIapWebBackendServiceIamMember_withAndWithoutConditionGenerated(conte
 	return Nprintf(`
 resource "google_compute_backend_service" "default" {
   name          = "backend-service%{random_suffix}"
-  health_checks = ["${google_compute_http_health_check.default.self_link}"]
+  health_checks = [google_compute_http_health_check.default.self_link]
 }
 
 resource "google_compute_http_health_check" "default" {
@@ -489,7 +489,7 @@ func testAccIapWebBackendServiceIamPolicy_withConditionGenerated(context map[str
 	return Nprintf(`
 resource "google_compute_backend_service" "default" {
   name          = "backend-service%{random_suffix}"
-  health_checks = ["${google_compute_http_health_check.default.self_link}"]
+  health_checks = [google_compute_http_health_check.default.self_link]
 }
 
 resource "google_compute_http_health_check" "default" {

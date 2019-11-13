@@ -677,7 +677,7 @@ resource "google_compute_health_check" "health_check" {
 
   name = "%s"
   http_health_check {
-
+    port = 80
   }
 }
 `, serviceName, checkName)
@@ -703,7 +703,7 @@ resource "google_compute_health_check" "health_check" {
 
   name = "%s"
   http_health_check {
-
+    port = 80
   }
 }
 `, serviceName, checkName)
@@ -738,7 +738,7 @@ resource "google_compute_health_check" "health_check" {
 
   name = "%s"
   http_health_check {
-
+    port = 80
   }
 }
 `, serviceName, checkName)
@@ -797,7 +797,7 @@ resource "google_compute_health_check" "health_check" {
 
   name = "%s"
   http_health_check {
-
+    port = 80
   }
 }
 `, serviceName, checkName)
@@ -1244,7 +1244,9 @@ resource "google_compute_instance" "endpoint-instance" {
 
   network_interface {
     subnetwork = "${google_compute_subnetwork.default.self_link}"
-    access_config { }
+    access_config {
+	    network_tier = "PREMIUM"
+	}
   }
 }
 
@@ -1320,7 +1322,9 @@ resource "google_compute_instance" "endpoint-instance" {
 
   network_interface {
     subnetwork = "${google_compute_subnetwork.default.self_link}"
-    access_config { }
+    access_config {
+      network_tier = "PREMIUM"
+	}
   }
 }
 
