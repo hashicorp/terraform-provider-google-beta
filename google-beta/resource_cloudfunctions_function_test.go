@@ -523,6 +523,7 @@ resource "google_storage_bucket_object" "archive" {
 
 resource "google_cloudfunctions_function" "function" {
   name                  = "%s"
+  runtime               = "nodejs8"
   description           = "test function"
   available_memory_mb   = 128
   source_archive_bucket = "${google_storage_bucket.bucket.name}"
@@ -627,7 +628,7 @@ resource "google_storage_bucket_object" "archive" {
 
 resource "google_cloudfunctions_function" "function" {
   name                  = "%s"
-  runtime               = "nodejs6"
+  runtime               = "nodejs8"
   available_memory_mb   = 128
   source_archive_bucket = "${google_storage_bucket.bucket.name}"
   source_archive_object = "${google_storage_bucket_object.archive.name}"
@@ -658,6 +659,7 @@ resource "google_storage_bucket_object" "archive" {
 
 resource "google_cloudfunctions_function" "function" {
   name                  = "%s"
+  runtime               = "nodejs8"
   available_memory_mb   = 128
   source_archive_bucket = "${google_storage_bucket.bucket.name}"
   source_archive_object = "${google_storage_bucket_object.archive.name}"
@@ -685,6 +687,7 @@ resource "google_storage_bucket_object" "archive" {
 
 resource "google_cloudfunctions_function" "function" {
   name                  = "%s"
+  runtime               = "nodejs8"
   available_memory_mb   = 128
   source_archive_bucket = "${google_storage_bucket.bucket.name}"
   source_archive_object = "${google_storage_bucket_object.archive.name}"
@@ -701,6 +704,7 @@ func testAccCloudFunctionsFunction_sourceRepo(functionName, project string) stri
 	return fmt.Sprintf(`
 resource "google_cloudfunctions_function" "function" {
   name = "%s"
+  runtime = "nodejs8"
 
   source_repository {
     // There isn't yet an API that'll allow us to create a source repository and
@@ -732,6 +736,7 @@ data "google_compute_default_service_account" "default" { }
 
 resource "google_cloudfunctions_function" "function" {
   name = "%s"
+  runtime = "nodejs8"
 
   source_archive_bucket = "${google_storage_bucket.bucket.name}"
   source_archive_object = "${google_storage_bucket_object.archive.name}"
@@ -776,6 +781,7 @@ resource "google_storage_bucket_object" "archive" {
 
 resource "google_cloudfunctions_function" "function" {
   name     = "%s"
+  runtime  = "nodejs8"
   provider = "google-beta"
 
   description           = "test function"

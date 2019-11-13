@@ -48,8 +48,8 @@ func testAccCloudRunDomainMapping_cloudRunDomainMappingBasicExample(context map[
 	return Nprintf(`
 resource "google_cloud_run_domain_mapping" "default" {
   location = "us-central1"
-  provider = "google-beta"
-  name = "tftest-domainmapping.com%{random_suffix}"
+  provider = google-beta
+  name     = "tftest-domainmapping.com%{random_suffix}"
 
   metadata {
     namespace = "%{namespace}"

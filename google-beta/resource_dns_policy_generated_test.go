@@ -46,9 +46,9 @@ func TestAccDNSPolicy_dnsPolicyBasicExample(t *testing.T) {
 func testAccDNSPolicy_dnsPolicyBasicExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_dns_policy" "example-policy" {
-  provider = "google-beta"
+  provider = google-beta
 
-  name = "example-policy%{random_suffix}"
+  name                      = "example-policy%{random_suffix}"
   enable_inbound_forwarding = true
 
   enable_logging = true
@@ -63,28 +63,28 @@ resource "google_dns_policy" "example-policy" {
   }
 
   networks {
-    network_url =  "${google_compute_network.network-1.self_link}"
+    network_url = google_compute_network.network-1.self_link
   }
   networks {
-    network_url =  "${google_compute_network.network-2.self_link}"
+    network_url = google_compute_network.network-2.self_link
   }
 }
 
 resource "google_compute_network" "network-1" {
-  provider = "google-beta"
+  provider = google-beta
 
-  name = "network-1%{random_suffix}"
+  name                    = "network-1%{random_suffix}"
   auto_create_subnetworks = false
 }
 
 resource "google_compute_network" "network-2" {
-  provider = "google-beta"
+  provider = google-beta
 
-  name = "network-2%{random_suffix}"
+  name                    = "network-2%{random_suffix}"
   auto_create_subnetworks = false
 }
 
-provider "google-beta"{
+provider "google-beta" {
   region = "us-central1"
   zone   = "us-central1-a"
 }

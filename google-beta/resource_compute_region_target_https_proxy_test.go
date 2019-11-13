@@ -61,12 +61,16 @@ resource "google_compute_region_backend_service" "foobar2" {
 
 resource "google_compute_region_health_check" "zero" {
 	name = "httpsproxy-test-health-check1-%s"
-	http_health_check {}
+	http_health_check {
+		port = 443
+	}
 }
 
 resource "google_compute_region_health_check" "one" {
 	name = "httpsproxy-test-health-check2-%s"
-	http_health_check {}
+	http_health_check {
+		port = 443
+	}
 }
 
 resource "google_compute_region_url_map" "foobar1" {
@@ -155,12 +159,16 @@ resource "google_compute_region_backend_service" "foobar2" {
 
 resource "google_compute_region_health_check" "zero" {
 	name = "httpsproxy-test-health-check1-%s"
-	http_health_check {}
+	http_health_check {
+		port = 443
+	}
 }
 
 resource "google_compute_region_health_check" "one" {
 	name = "httpsproxy-test-health-check2-%s"
-	http_health_check {}
+	http_health_check {
+		port = 443
+	}
 }
 
 resource "google_compute_region_url_map" "foobar1" {

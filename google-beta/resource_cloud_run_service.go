@@ -221,7 +221,7 @@ precedence.`,
 												"config_map_ref": {
 													Type:        schema.TypeList,
 													Optional:    true,
-													Description: `The ConfigMap to select from`,
+													Description: `The ConfigMap to select from.`,
 													MaxItems:    1,
 													Elem: &schema.Resource{
 														Schema: map[string]*schema.Schema{
@@ -234,7 +234,7 @@ precedence.`,
 																	Schema: map[string]*schema.Schema{
 																		"name": {
 																			Type:     schema.TypeString,
-																			Optional: true,
+																			Required: true,
 																			Description: `Name of the referent.
 More info:
 https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names`,
@@ -258,7 +258,7 @@ https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names`,
 												"secret_ref": {
 													Type:        schema.TypeList,
 													Optional:    true,
-													Description: `The Secret to select from`,
+													Description: `The Secret to select from.`,
 													MaxItems:    1,
 													Elem: &schema.Resource{
 														Schema: map[string]*schema.Schema{
@@ -271,7 +271,7 @@ https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names`,
 																	Schema: map[string]*schema.Schema{
 																		"name": {
 																			Type:     schema.TypeString,
-																			Optional: true,
+																			Required: true,
 																			Description: `Name of the referent.
 More info:
 https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names`,
@@ -470,7 +470,7 @@ func resourceCloudRunServiceCreate(d *schema.ResourceData, meta interface{}) err
 	}
 
 	// Store the ID now
-	id, err := replaceVars(d, config, "{{name}}")
+	id, err := replaceVars(d, config, "projects/{{project}}/locations/{{location}}/services/{{name}}")
 	if err != nil {
 		return fmt.Errorf("Error constructing id: %s", err)
 	}
@@ -612,7 +612,7 @@ func resourceCloudRunServiceImport(d *schema.ResourceData, meta interface{}) ([]
 	}
 
 	// Replace import id for the resource id
-	id, err := replaceVars(d, config, "{{name}}")
+	id, err := replaceVars(d, config, "projects/{{project}}/locations/{{location}}/services/{{name}}")
 	if err != nil {
 		return nil, fmt.Errorf("Error constructing id: %s", err)
 	}

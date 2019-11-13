@@ -264,19 +264,19 @@ func TestAccIapAppEngineVersionIamPolicyGenerated_withCondition(t *testing.T) {
 func testAccIapAppEngineVersionIamMember_basicGenerated(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_storage_bucket" "bucket" {
-  name    = "appengine-static-content-%{random_suffix}"
+  name = "appengine-static-content-%{random_suffix}"
 }
 
 resource "google_storage_bucket_object" "object" {
-  name    = "hello-world.zip"
-  bucket  = "${google_storage_bucket.bucket.name}"
-  source  = "./test-fixtures/appengine/hello-world.zip"
+  name   = "hello-world.zip"
+  bucket = google_storage_bucket.bucket.name
+  source = "./test-fixtures/appengine/hello-world.zip"
 }
 
 resource "google_app_engine_standard_app_version" "version" {
-  version_id = "%{random_suffix}"
-  service = "default"
-  runtime = "nodejs10"
+  version_id      = "%{random_suffix}"
+  service         = "default"
+  runtime         = "nodejs10"
   noop_on_destroy = false
   entrypoint {
     shell = "node ./app.js"
@@ -305,19 +305,19 @@ resource "google_iap_app_engine_version_iam_member" "foo" {
 func testAccIapAppEngineVersionIamPolicy_basicGenerated(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_storage_bucket" "bucket" {
-  name    = "appengine-static-content-%{random_suffix}"
+  name = "appengine-static-content-%{random_suffix}"
 }
 
 resource "google_storage_bucket_object" "object" {
-  name    = "hello-world.zip"
-  bucket  = "${google_storage_bucket.bucket.name}"
-  source  = "./test-fixtures/appengine/hello-world.zip"
+  name   = "hello-world.zip"
+  bucket = google_storage_bucket.bucket.name
+  source = "./test-fixtures/appengine/hello-world.zip"
 }
 
 resource "google_app_engine_standard_app_version" "version" {
-  version_id = "%{random_suffix}"
-  service = "default"
-  runtime = "nodejs10"
+  version_id      = "%{random_suffix}"
+  service         = "default"
+  runtime         = "nodejs10"
   noop_on_destroy = false
   entrypoint {
     shell = "node ./app.js"
@@ -352,19 +352,19 @@ resource "google_iap_app_engine_version_iam_policy" "foo" {
 func testAccIapAppEngineVersionIamBinding_basicGenerated(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_storage_bucket" "bucket" {
-  name    = "appengine-static-content-%{random_suffix}"
+  name = "appengine-static-content-%{random_suffix}"
 }
 
 resource "google_storage_bucket_object" "object" {
-  name    = "hello-world.zip"
-  bucket  = "${google_storage_bucket.bucket.name}"
-  source  = "./test-fixtures/appengine/hello-world.zip"
+  name   = "hello-world.zip"
+  bucket = google_storage_bucket.bucket.name
+  source = "./test-fixtures/appengine/hello-world.zip"
 }
 
 resource "google_app_engine_standard_app_version" "version" {
-  version_id = "%{random_suffix}"
-  service = "default"
-  runtime = "nodejs10"
+  version_id      = "%{random_suffix}"
+  service         = "default"
+  runtime         = "nodejs10"
   noop_on_destroy = false
   entrypoint {
     shell = "node ./app.js"
@@ -393,19 +393,19 @@ resource "google_iap_app_engine_version_iam_binding" "foo" {
 func testAccIapAppEngineVersionIamBinding_updateGenerated(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_storage_bucket" "bucket" {
-  name    = "appengine-static-content-%{random_suffix}"
+  name = "appengine-static-content-%{random_suffix}"
 }
 
 resource "google_storage_bucket_object" "object" {
-  name    = "hello-world.zip"
-  bucket  = "${google_storage_bucket.bucket.name}"
-  source  = "./test-fixtures/appengine/hello-world.zip"
+  name   = "hello-world.zip"
+  bucket = google_storage_bucket.bucket.name
+  source = "./test-fixtures/appengine/hello-world.zip"
 }
 
 resource "google_app_engine_standard_app_version" "version" {
-  version_id = "%{random_suffix}"
-  service = "default"
-  runtime = "nodejs10"
+  version_id      = "%{random_suffix}"
+  service         = "default"
+  runtime         = "nodejs10"
   noop_on_destroy = false
   entrypoint {
     shell = "node ./app.js"
@@ -434,19 +434,19 @@ resource "google_iap_app_engine_version_iam_binding" "foo" {
 func testAccIapAppEngineVersionIamBinding_withConditionGenerated(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_storage_bucket" "bucket" {
-  name    = "appengine-static-content-%{random_suffix}"
+  name = "appengine-static-content-%{random_suffix}"
 }
 
 resource "google_storage_bucket_object" "object" {
-  name    = "hello-world.zip"
-  bucket  = "${google_storage_bucket.bucket.name}"
-  source  = "./test-fixtures/appengine/hello-world.zip"
+  name   = "hello-world.zip"
+  bucket = google_storage_bucket.bucket.name
+  source = "./test-fixtures/appengine/hello-world.zip"
 }
 
 resource "google_app_engine_standard_app_version" "version" {
-  version_id = "%{random_suffix}"
-  service = "default"
-  runtime = "nodejs10"
+  version_id      = "%{random_suffix}"
+  service         = "default"
+  runtime         = "nodejs10"
   noop_on_destroy = false
   entrypoint {
     shell = "node ./app.js"
@@ -480,19 +480,19 @@ resource "google_iap_app_engine_version_iam_binding" "foo" {
 func testAccIapAppEngineVersionIamBinding_withAndWithoutConditionGenerated(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_storage_bucket" "bucket" {
-  name    = "appengine-static-content-%{random_suffix}"
+  name = "appengine-static-content-%{random_suffix}"
 }
 
 resource "google_storage_bucket_object" "object" {
-  name    = "hello-world.zip"
-  bucket  = "${google_storage_bucket.bucket.name}"
-  source  = "./test-fixtures/appengine/hello-world.zip"
+  name   = "hello-world.zip"
+  bucket = google_storage_bucket.bucket.name
+  source = "./test-fixtures/appengine/hello-world.zip"
 }
 
 resource "google_app_engine_standard_app_version" "version" {
-  version_id = "%{random_suffix}"
-  service = "default"
-  runtime = "nodejs10"
+  version_id      = "%{random_suffix}"
+  service         = "default"
+  runtime         = "nodejs10"
   noop_on_destroy = false
   entrypoint {
     shell = "node ./app.js"
@@ -535,19 +535,19 @@ resource "google_iap_app_engine_version_iam_binding" "foo2" {
 func testAccIapAppEngineVersionIamMember_withConditionGenerated(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_storage_bucket" "bucket" {
-  name    = "appengine-static-content-%{random_suffix}"
+  name = "appengine-static-content-%{random_suffix}"
 }
 
 resource "google_storage_bucket_object" "object" {
-  name    = "hello-world.zip"
-  bucket  = "${google_storage_bucket.bucket.name}"
-  source  = "./test-fixtures/appengine/hello-world.zip"
+  name   = "hello-world.zip"
+  bucket = google_storage_bucket.bucket.name
+  source = "./test-fixtures/appengine/hello-world.zip"
 }
 
 resource "google_app_engine_standard_app_version" "version" {
-  version_id = "%{random_suffix}"
-  service = "default"
-  runtime = "nodejs10"
+  version_id      = "%{random_suffix}"
+  service         = "default"
+  runtime         = "nodejs10"
   noop_on_destroy = false
   entrypoint {
     shell = "node ./app.js"
@@ -581,19 +581,19 @@ resource "google_iap_app_engine_version_iam_member" "foo" {
 func testAccIapAppEngineVersionIamMember_withAndWithoutConditionGenerated(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_storage_bucket" "bucket" {
-  name    = "appengine-static-content-%{random_suffix}"
+  name = "appengine-static-content-%{random_suffix}"
 }
 
 resource "google_storage_bucket_object" "object" {
-  name    = "hello-world.zip"
-  bucket  = "${google_storage_bucket.bucket.name}"
-  source  = "./test-fixtures/appengine/hello-world.zip"
+  name   = "hello-world.zip"
+  bucket = google_storage_bucket.bucket.name
+  source = "./test-fixtures/appengine/hello-world.zip"
 }
 
 resource "google_app_engine_standard_app_version" "version" {
-  version_id = "%{random_suffix}"
-  service = "default"
-  runtime = "nodejs10"
+  version_id      = "%{random_suffix}"
+  service         = "default"
+  runtime         = "nodejs10"
   noop_on_destroy = false
   entrypoint {
     shell = "node ./app.js"
@@ -636,19 +636,19 @@ resource "google_iap_app_engine_version_iam_member" "foo2" {
 func testAccIapAppEngineVersionIamPolicy_withConditionGenerated(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_storage_bucket" "bucket" {
-  name    = "appengine-static-content-%{random_suffix}"
+  name = "appengine-static-content-%{random_suffix}"
 }
 
 resource "google_storage_bucket_object" "object" {
-  name    = "hello-world.zip"
-  bucket  = "${google_storage_bucket.bucket.name}"
-  source  = "./test-fixtures/appengine/hello-world.zip"
+  name   = "hello-world.zip"
+  bucket = google_storage_bucket.bucket.name
+  source = "./test-fixtures/appengine/hello-world.zip"
 }
 
 resource "google_app_engine_standard_app_version" "version" {
-  version_id = "%{random_suffix}"
-  service = "default"
-  runtime = "nodejs10"
+  version_id      = "%{random_suffix}"
+  service         = "default"
+  runtime         = "nodejs10"
   noop_on_destroy = false
   entrypoint {
     shell = "node ./app.js"

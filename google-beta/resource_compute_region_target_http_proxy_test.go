@@ -58,7 +58,9 @@ func testAccComputeRegionTargetHttpProxy_basic1(target, backend, hc, urlmap1, ur
 
 	resource "google_compute_region_health_check" "zero" {
 		name = "%s"
-		http_health_check {}
+		http_health_check {
+			port = 443
+		}
 	}
 
 	resource "google_compute_region_url_map" "foobar1" {
@@ -123,7 +125,9 @@ func testAccComputeRegionTargetHttpProxy_basic2(target, backend, hc, urlmap1, ur
 
 	resource "google_compute_region_health_check" "zero" {
 		name = "%s"
-		http_health_check {}
+		http_health_check {
+			port = 443
+		}
 	}
 
 	resource "google_compute_region_url_map" "foobar1" {
