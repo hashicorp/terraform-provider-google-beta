@@ -1873,7 +1873,9 @@ resource "google_container_cluster" "with_network_policy_enabled" {
 	initial_node_count = 1
 	remove_default_node_pool = true
 
-	network_policy {}
+	network_policy {
+		enabled = false
+	}
 }`, clusterName)
 }
 
@@ -1885,7 +1887,9 @@ resource "google_container_cluster" "with_network_policy_enabled" {
 	initial_node_count = 1
 	remove_default_node_pool = true
 
-	network_policy {}
+	network_policy {
+		enabled = false
+	}
 
 	addons_config {
 		network_policy_config {
