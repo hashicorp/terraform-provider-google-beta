@@ -239,7 +239,7 @@ resource "google_project" "acceptance" {
 }
 
 resource "google_project_iam_policy" "acceptance" {
-    project = "${google_project.acceptance.id}"
+    project = "${google_project.acceptance.project_id}"
     policy_data = "${data.google_iam_policy.admin.policy_data}"
 }
 
@@ -270,7 +270,7 @@ resource "google_project" "acceptance" {
 }
 
 resource "google_project_iam_policy" "acceptance" {
-    project = "${google_project.acceptance.id}"
+    project = "${google_project.acceptance.project_id}"
     policy_data = "${data.google_iam_policy.admin.policy_data}"
 }
 
@@ -332,7 +332,7 @@ resource "google_project" "acceptance" {
 }
 
 resource "google_project_iam_policy" "acceptance" {
-    project = "${google_project.acceptance.id}"
+    project = "${google_project.acceptance.project_id}"
     policy_data = "${data.google_iam_policy.expanded.policy_data}"
 }
 
@@ -352,7 +352,7 @@ resource "google_project" "acceptance" {
     org_id = "%s"
 }
 resource "google_project_iam_policy" "acceptance" {
-    project = "${google_project.acceptance.id}"
+    project = "${google_project.acceptance.project_id}"
     policy_data = "${data.google_iam_policy.expanded.policy_data}"
 }
 
@@ -381,7 +381,7 @@ resource "google_project" "acceptance" {
     org_id = "%s"
 }
 resource "google_project_iam_policy" "acceptance" {
-    project = "${google_project.acceptance.id}"
+    project = "${google_project.acceptance.project_id}"
     policy_data = "${data.google_iam_policy.expanded.policy_data}"
 }
 
@@ -433,7 +433,7 @@ resource "google_project" "acceptance" {
 }
 
 resource "google_project_iam_policy" "acceptance" {
-    project = "${google_project.acceptance.id}"
+    project = "${google_project.acceptance.project_id}"
     policy_data = "${data.google_iam_policy.admin.policy_data}"
 }
 
