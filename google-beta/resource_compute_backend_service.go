@@ -1091,14 +1091,8 @@ func resourceComputeBackendServiceCreate(d *schema.ResourceData, meta interface{
 	}
 	d.SetId(id)
 
-	op := &compute.Operation{}
-	err = Convert(res, op)
-	if err != nil {
-		return err
-	}
-
 	waitErr := computeOperationWaitTime(
-		config.clientCompute, op, project, "Creating BackendService",
+		config, res, project, "Creating BackendService",
 		int(d.Timeout(schema.TimeoutCreate).Minutes()))
 
 	if waitErr != nil {
@@ -1122,7 +1116,7 @@ func resourceComputeBackendServiceCreate(d *schema.ResourceData, meta interface{
 		if err != nil {
 			return errwrap.Wrapf("Error setting Backend Service security policy: {{err}}", err)
 		}
-		waitErr := computeSharedOperationWait(config.clientCompute, op, project, "Setting Backend Service Security Policy")
+		waitErr := computeOperationWait(config, op, project, "Setting Backend Service Security Policy")
 		if waitErr != nil {
 			return waitErr
 		}
@@ -1406,14 +1400,8 @@ func resourceComputeBackendServiceUpdate(d *schema.ResourceData, meta interface{
 		return fmt.Errorf("Error updating BackendService %q: %s", d.Id(), err)
 	}
 
-	op := &compute.Operation{}
-	err = Convert(res, op)
-	if err != nil {
-		return err
-	}
-
 	err = computeOperationWaitTime(
-		config.clientCompute, op, project, "Updating BackendService",
+		config, res, project, "Updating BackendService",
 		int(d.Timeout(schema.TimeoutUpdate).Minutes()))
 
 	if err != nil {
@@ -1433,7 +1421,7 @@ func resourceComputeBackendServiceUpdate(d *schema.ResourceData, meta interface{
 		if err != nil {
 			return errwrap.Wrapf("Error setting Backend Service security policy: {{err}}", err)
 		}
-		waitErr := computeSharedOperationWait(config.clientCompute, op, project, "Setting Backend Service Security Policy")
+		waitErr := computeOperationWait(config, op, project, "Setting Backend Service Security Policy")
 		if waitErr != nil {
 			return waitErr
 		}
@@ -1462,14 +1450,8 @@ func resourceComputeBackendServiceDelete(d *schema.ResourceData, meta interface{
 		return handleNotFoundError(err, d, "BackendService")
 	}
 
-	op := &compute.Operation{}
-	err = Convert(res, op)
-	if err != nil {
-		return err
-	}
-
 	err = computeOperationWaitTime(
-		config.clientCompute, op, project, "Deleting BackendService",
+		config, res, project, "Deleting BackendService",
 		int(d.Timeout(schema.TimeoutDelete).Minutes()))
 
 	if err != nil {
