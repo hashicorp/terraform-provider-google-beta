@@ -23,7 +23,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
-	"google.golang.org/api/compute/v1"
 )
 
 func resourceComputeExternalVpnGateway() *schema.Resource {
@@ -161,14 +160,8 @@ func resourceComputeExternalVpnGatewayCreate(d *schema.ResourceData, meta interf
 	}
 	d.SetId(id)
 
-	op := &compute.Operation{}
-	err = Convert(res, op)
-	if err != nil {
-		return err
-	}
-
 	waitErr := computeOperationWaitTime(
-		config.clientCompute, op, project, "Creating ExternalVpnGateway",
+		config, res, project, "Creating ExternalVpnGateway",
 		int(d.Timeout(schema.TimeoutCreate).Minutes()))
 
 	if waitErr != nil {
@@ -243,14 +236,8 @@ func resourceComputeExternalVpnGatewayDelete(d *schema.ResourceData, meta interf
 		return handleNotFoundError(err, d, "ExternalVpnGateway")
 	}
 
-	op := &compute.Operation{}
-	err = Convert(res, op)
-	if err != nil {
-		return err
-	}
-
 	err = computeOperationWaitTime(
-		config.clientCompute, op, project, "Deleting ExternalVpnGateway",
+		config, res, project, "Deleting ExternalVpnGateway",
 		int(d.Timeout(schema.TimeoutDelete).Minutes()))
 
 	if err != nil {

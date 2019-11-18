@@ -23,7 +23,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
-	"google.golang.org/api/compute/v1"
 )
 
 func resourceComputeGlobalAddress() *schema.Resource {
@@ -241,14 +240,8 @@ func resourceComputeGlobalAddressCreate(d *schema.ResourceData, meta interface{}
 	}
 	d.SetId(id)
 
-	op := &compute.Operation{}
-	err = Convert(res, op)
-	if err != nil {
-		return err
-	}
-
 	waitErr := computeOperationWaitTime(
-		config.clientCompute, op, project, "Creating GlobalAddress",
+		config, res, project, "Creating GlobalAddress",
 		int(d.Timeout(schema.TimeoutCreate).Minutes()))
 
 	if waitErr != nil {
@@ -285,13 +278,8 @@ func resourceComputeGlobalAddressCreate(d *schema.ResourceData, meta interface{}
 			return fmt.Errorf("Error adding labels to ComputeGlobalAddress %q: %s", d.Id(), err)
 		}
 
-		err = Convert(res, op)
-		if err != nil {
-			return err
-		}
-
 		err = computeOperationWaitTime(
-			config.clientCompute, op, project, "Updating ComputeGlobalAddress Labels",
+			config, res, project, "Updating ComputeGlobalAddress Labels",
 			int(d.Timeout(schema.TimeoutUpdate).Minutes()))
 
 		if err != nil {
@@ -399,16 +387,9 @@ func resourceComputeGlobalAddressUpdate(d *schema.ResourceData, meta interface{}
 			return fmt.Errorf("Error updating GlobalAddress %q: %s", d.Id(), err)
 		}
 
-		op := &compute.Operation{}
-		err = Convert(res, op)
-		if err != nil {
-			return err
-		}
-
 		err = computeOperationWaitTime(
-			config.clientCompute, op, project, "Updating GlobalAddress",
+			config, res, project, "Updating GlobalAddress",
 			int(d.Timeout(schema.TimeoutUpdate).Minutes()))
-
 		if err != nil {
 			return err
 		}
@@ -443,14 +424,8 @@ func resourceComputeGlobalAddressDelete(d *schema.ResourceData, meta interface{}
 		return handleNotFoundError(err, d, "GlobalAddress")
 	}
 
-	op := &compute.Operation{}
-	err = Convert(res, op)
-	if err != nil {
-		return err
-	}
-
 	err = computeOperationWaitTime(
-		config.clientCompute, op, project, "Deleting GlobalAddress",
+		config, res, project, "Deleting GlobalAddress",
 		int(d.Timeout(schema.TimeoutDelete).Minutes()))
 
 	if err != nil {

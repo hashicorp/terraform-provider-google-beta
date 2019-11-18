@@ -23,7 +23,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
-	"google.golang.org/api/compute/v1"
 )
 
 func resourceComputeManagedSslCertificate() *schema.Resource {
@@ -185,14 +184,8 @@ func resourceComputeManagedSslCertificateCreate(d *schema.ResourceData, meta int
 	}
 	d.SetId(id)
 
-	op := &compute.Operation{}
-	err = Convert(res, op)
-	if err != nil {
-		return err
-	}
-
 	waitErr := computeOperationWaitTime(
-		config.clientCompute, op, project, "Creating ManagedSslCertificate",
+		config, res, project, "Creating ManagedSslCertificate",
 		int(d.Timeout(schema.TimeoutCreate).Minutes()))
 
 	if waitErr != nil {
@@ -279,14 +272,8 @@ func resourceComputeManagedSslCertificateDelete(d *schema.ResourceData, meta int
 		return handleNotFoundError(err, d, "ManagedSslCertificate")
 	}
 
-	op := &compute.Operation{}
-	err = Convert(res, op)
-	if err != nil {
-		return err
-	}
-
 	err = computeOperationWaitTime(
-		config.clientCompute, op, project, "Deleting ManagedSslCertificate",
+		config, res, project, "Deleting ManagedSslCertificate",
 		int(d.Timeout(schema.TimeoutDelete).Minutes()))
 
 	if err != nil {
