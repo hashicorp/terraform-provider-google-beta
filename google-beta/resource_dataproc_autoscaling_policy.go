@@ -159,7 +159,7 @@ Bounds: [minInstances, ). Defaults to 0.`,
 							Type:         schema.TypeInt,
 							Optional:     true,
 							Description:  `Minimum number of instances for this group. Bounds: [0, maxInstances]. Defaults to 0.`,
-							Default:      2,
+							Default:      0,
 							AtLeastOneOf: []string{"secondary_worker_config.0.min_instances", "secondary_worker_config.0.max_instances", "secondary_worker_config.0.weight"},
 						},
 						"weight": {
