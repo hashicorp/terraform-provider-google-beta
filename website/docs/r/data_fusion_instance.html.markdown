@@ -63,11 +63,16 @@ resource "google_data_fusion_instance" "extended_instance" {
   name = "my-instance"
   description = "My Data Fusion instance"
   region = "us-central1"
-  type = "ENTERPRISE"
+  type = "BASIC"
   enable_stackdriver_logging = true
   enable_stackdriver_monitoring = true
   labels = {
     example_key = "example_value"
+  }
+  private_instance = true
+  network_config {
+    network = "default"
+    ip_allocation = "10.89.48.0/22"
   }
 }
 ```
@@ -116,6 +121,16 @@ The following arguments are supported:
   (Optional)
   Map of additional options used to configure the behavior of Data Fusion instance.
 
+* `private_instance` -
+  (Optional)
+  Specifies whether the Data Fusion instance should be private. If set to
+  true, all Data Fusion nodes will have private IP addresses and will not be
+  able to access the public internet.
+
+* `network_config` -
+  (Optional)
+  Network configuration options. These are required when a private Data Fusion instance is to be created.  Structure is documented below.
+
 * `region` -
   (Optional)
   The region of the Data Fusion instance.
@@ -123,6 +138,19 @@ The following arguments are supported:
 * `project` - (Optional) The ID of the project in which the resource belongs.
     If it is not provided, the provider project is used.
 
+
+The `network_config` block supports:
+
+* `ip_allocation` -
+  (Required)
+  The IP range in CIDR notation to use for the managed Data Fusion instance
+  nodes. This range must not overlap with any other ranges used in the Data Fusion instance network.
+
+* `network` -
+  (Required)
+  Name of the network in the project with which the tenant project
+  will be peered for executing pipelines. In case of shared VPC where the network resides in another host 
+  project the network should specified in the form of projects/{host-project-id}/global/networks/{network}
 
 ## Attributes Reference
 

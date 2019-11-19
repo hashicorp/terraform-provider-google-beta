@@ -80,11 +80,16 @@ resource "google_data_fusion_instance" "extended_instance" {
   name = "my-instance%{random_suffix}"
   description = "My Data Fusion instance"
   region = "us-central1"
-  type = "ENTERPRISE"
+  type = "BASIC"
   enable_stackdriver_logging = true
   enable_stackdriver_monitoring = true
   labels = {
     example_key = "example_value"
+  }
+  private_instance = true
+  network_config {
+    network = "default"
+    ip_allocation = "10.89.48.0/22"
   }
 }
 `, context)
