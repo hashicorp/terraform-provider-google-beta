@@ -233,14 +233,14 @@ func testAccProjectExistingPolicy(pid string) resource.TestCheckFunc {
 func testAccProjectAssociatePolicyBasic(pid, name, org string) string {
 	return fmt.Sprintf(`
 resource "google_project" "acceptance" {
-    project_id = "%s"
-    name = "%s"
-    org_id = "%s"
+  project_id = "%s"
+  name       = "%s"
+  org_id     = "%s"
 }
 
 resource "google_project_iam_policy" "acceptance" {
-    project = "${google_project.acceptance.id}"
-    policy_data = "${data.google_iam_policy.admin.policy_data}"
+  project     = google_project.acceptance.id
+  policy_data = data.google_iam_policy.admin.policy_data
 }
 
 data "google_iam_policy" "admin" {
@@ -264,14 +264,14 @@ data "google_iam_policy" "admin" {
 func testAccProjectAssociatePolicyAuditConfigBasic(pid, name, org string) string {
 	return fmt.Sprintf(`
 resource "google_project" "acceptance" {
-    project_id = "%s"
-    name = "%s"
-    org_id = "%s"
+  project_id = "%s"
+  name       = "%s"
+  org_id     = "%s"
 }
 
 resource "google_project_iam_policy" "acceptance" {
-    project = "${google_project.acceptance.id}"
-    policy_data = "${data.google_iam_policy.admin.policy_data}"
+  project     = google_project.acceptance.id
+  policy_data = data.google_iam_policy.admin.policy_data
 }
 
 data "google_iam_policy" "admin" {
@@ -291,7 +291,7 @@ data "google_iam_policy" "admin" {
   audit_config {
     service = "cloudkms.googleapis.com"
     audit_log_configs {
-      log_type = "DATA_READ"
+      log_type         = "DATA_READ"
       exempted_members = ["user:paddy@hashicorp.com"]
     }
 
@@ -302,7 +302,7 @@ data "google_iam_policy" "admin" {
   audit_config {
     service = "cloudsql.googleapis.com"
     audit_log_configs {
-      log_type = "DATA_READ"
+      log_type         = "DATA_READ"
       exempted_members = ["user:paddy@hashicorp.com"]
     }
 
@@ -317,72 +317,77 @@ data "google_iam_policy" "admin" {
 func testAccProject_create(pid, name, org string) string {
 	return fmt.Sprintf(`
 resource "google_project" "acceptance" {
-    project_id = "%s"
-    name = "%s"
-    org_id = "%s"
-}`, pid, name, org)
+  project_id = "%s"
+  name       = "%s"
+  org_id     = "%s"
+}
+`, pid, name, org)
 }
 
 func testAccProjectIamPolicyEmptyMembers(pid, name, org string) string {
 	return fmt.Sprintf(`
 resource "google_project" "acceptance" {
-    project_id = "%s"
-    name = "%s"
-    org_id = "%s"
+  project_id = "%s"
+  name       = "%s"
+  org_id     = "%s"
 }
 
 resource "google_project_iam_policy" "acceptance" {
-    project = "${google_project.acceptance.id}"
-    policy_data = "${data.google_iam_policy.expanded.policy_data}"
+  project     = google_project.acceptance.id
+  policy_data = data.google_iam_policy.expanded.policy_data
 }
 
 data "google_iam_policy" "expanded" {
-    binding {
-        role = "roles/viewer"
-		members = []
-    }
-}`, pid, name, org)
+  binding {
+    role    = "roles/viewer"
+    members = []
+  }
+}
+`, pid, name, org)
 }
 
 func testAccProjectAssociatePolicyExpanded(pid, name, org string) string {
 	return fmt.Sprintf(`
 resource "google_project" "acceptance" {
-    project_id = "%s"
-    name = "%s"
-    org_id = "%s"
+  project_id = "%s"
+  name       = "%s"
+  org_id     = "%s"
 }
+
 resource "google_project_iam_policy" "acceptance" {
-    project = "${google_project.acceptance.id}"
-    policy_data = "${data.google_iam_policy.expanded.policy_data}"
+  project     = google_project.acceptance.id
+  policy_data = data.google_iam_policy.expanded.policy_data
 }
 
 data "google_iam_policy" "expanded" {
-    binding {
-        role = "roles/viewer"
-        members = [
-            "user:paddy@carvers.co",
-        ]
-    }
+  binding {
+    role = "roles/viewer"
+    members = [
+      "user:paddy@carvers.co",
+    ]
+  }
 
-    binding {
-        role = "roles/viewer"
-        members = [
-            "user:paddy@hashicorp.com",
-        ]
-    }
-}`, pid, name, org)
+  binding {
+    role = "roles/viewer"
+    members = [
+      "user:paddy@hashicorp.com",
+    ]
+  }
+}
+`, pid, name, org)
 }
 
 func testAccProjectAssociatePolicyAuditConfigExpanded(pid, name, org string) string {
 	return fmt.Sprintf(`
 resource "google_project" "acceptance" {
-    project_id = "%s"
-    name = "%s"
-    org_id = "%s"
+  project_id = "%s"
+  name       = "%s"
+  org_id     = "%s"
 }
+
 resource "google_project_iam_policy" "acceptance" {
-    project = "${google_project.acceptance.id}"
-    policy_data = "${data.google_iam_policy.expanded.policy_data}"
+  project     = google_project.acceptance.id
+  policy_data = data.google_iam_policy.expanded.policy_data
 }
 
 data "google_iam_policy" "expanded" {
@@ -402,7 +407,7 @@ data "google_iam_policy" "expanded" {
   audit_config {
     service = "cloudkms.googleapis.com"
     audit_log_configs {
-      log_type = "DATA_READ"
+      log_type         = "DATA_READ"
       exempted_members = ["user:paddy@hashicorp.com"]
     }
 
@@ -413,7 +418,7 @@ data "google_iam_policy" "expanded" {
   audit_config {
     service = "cloudkms.googleapis.com"
     audit_log_configs {
-      log_type = "DATA_READ"
+      log_type         = "DATA_READ"
       exempted_members = ["user:paddy@hashicorp.com"]
     }
 
@@ -421,20 +426,21 @@ data "google_iam_policy" "expanded" {
       log_type = "DATA_WRITE"
     }
   }
-}`, pid, name, org)
+}
+`, pid, name, org)
 }
 
 func testAccProjectAssociatePolicy_withCondition(pid, name, org string) string {
 	return fmt.Sprintf(`
 resource "google_project" "acceptance" {
-    project_id = "%s"
-    name = "%s"
-    org_id = "%s"
+  project_id = "%s"
+  name       = "%s"
+  org_id     = "%s"
 }
 
 resource "google_project_iam_policy" "acceptance" {
-    project = "${google_project.acceptance.id}"
-    policy_data = "${data.google_iam_policy.admin.policy_data}"
+    project     = google_project.acceptance.id
+    policy_data = data.google_iam_policy.admin.policy_data
 }
 
 data "google_iam_policy" "admin" {

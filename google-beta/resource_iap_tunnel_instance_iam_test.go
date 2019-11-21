@@ -121,11 +121,11 @@ resource "google_compute_instance" "test_vm" {
 }
 
 resource "google_iap_tunnel_instance_iam_binding" "foo" {
-  project = "${google_compute_instance.test_vm.project}"
-  zone = "${google_compute_instance.test_vm.zone}"
-  instance = "${google_compute_instance.test_vm.name}"
-  role        = "roles/iap.tunnelResourceAccessor"
-  members      = ["user:admin@hashicorptest.com"]
+  project  = google_compute_instance.test_vm.project
+  zone     = google_compute_instance.test_vm.zone
+  instance = google_compute_instance.test_vm.name
+  role     = "roles/iap.tunnelResourceAccessor"
+  members  = ["user:admin@hashicorptest.com"]
 }
 `, zone, instanceName)
 }
@@ -147,13 +147,13 @@ resource "google_compute_instance" "test_vm" {
 }
 
 resource "google_iap_tunnel_instance_iam_binding" "foo" {
-  project = "${google_compute_instance.test_vm.project}"
-  zone = "${google_compute_instance.test_vm.zone}"
-  instance = "${google_compute_instance.test_vm.name}"
-  role        = "roles/iap.tunnelResourceAccessor"
-  members      = [
+  project  = google_compute_instance.test_vm.project
+  zone     = google_compute_instance.test_vm.zone
+  instance = google_compute_instance.test_vm.name
+  role     = "roles/iap.tunnelResourceAccessor"
+  members = [
     "user:admin@hashicorptest.com",
-    "user:paddy@hashicorp.com"
+    "user:paddy@hashicorp.com",
   ]
 }
 `, zone, instanceName)
@@ -176,11 +176,11 @@ resource "google_compute_instance" "test_vm" {
 }
 
 resource "google_iap_tunnel_instance_iam_member" "foo" {
-  project = "${google_compute_instance.test_vm.project}"
-  zone = "${google_compute_instance.test_vm.zone}"
-  instance = "${google_compute_instance.test_vm.name}"
-  role        = "roles/iap.tunnelResourceAccessor"
-  member      = "user:admin@hashicorptest.com"
+  project  = google_compute_instance.test_vm.project
+  zone     = google_compute_instance.test_vm.zone
+  instance = google_compute_instance.test_vm.name
+  role     = "roles/iap.tunnelResourceAccessor"
+  member   = "user:admin@hashicorptest.com"
 }
 `, zone, instanceName)
 }
@@ -203,16 +203,16 @@ resource "google_compute_instance" "test_vm" {
 
 data "google_iam_policy" "foo" {
   binding {
-    role = "roles/iap.tunnelResourceAccessor"
+    role    = "roles/iap.tunnelResourceAccessor"
     members = ["user:admin@hashicorptest.com"]
   }
 }
 
 resource "google_iap_tunnel_instance_iam_policy" "foo" {
-  project = "${google_compute_instance.test_vm.project}"
-  zone = "${google_compute_instance.test_vm.zone}"
-  instance = "${google_compute_instance.test_vm.name}"
-  policy_data = "${data.google_iam_policy.foo.policy_data}"
+  project     = google_compute_instance.test_vm.project
+  zone        = google_compute_instance.test_vm.zone
+  instance    = google_compute_instance.test_vm.name
+  policy_data = data.google_iam_policy.foo.policy_data
 }
 `, zone, instanceName)
 }

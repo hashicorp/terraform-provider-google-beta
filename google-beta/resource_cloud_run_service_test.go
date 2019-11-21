@@ -45,7 +45,7 @@ func TestAccCloudRunService_cloudRunServiceUpdate(t *testing.T) {
 func testAccCloudRunService_cloudRunServiceUpdate(name, project, concurrency string) string {
 	return fmt.Sprintf(`
 resource "google_cloud_run_service" "default" {
-  name          = "%s"
+  name     = "%s"
   location = "us-central1"
 
   metadata {
@@ -54,10 +54,10 @@ resource "google_cloud_run_service" "default" {
 
   spec {
     containers {
-	  image = "gcr.io/cloudrun/hello"
-	  args = ["arrgs"]
-	}
-	container_concurrency = %s
+      image = "gcr.io/cloudrun/hello"
+      args  = ["arrgs"]
+    }
+    container_concurrency = %s
   }
 }
 `, name, project, concurrency)

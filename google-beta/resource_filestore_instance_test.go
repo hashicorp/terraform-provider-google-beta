@@ -45,17 +45,17 @@ resource "google_filestore_instance" "instance" {
   zone = "us-central1-b"
   file_shares {
     capacity_gb = 2660
-    name = "share"
+    name        = "share"
   }
   networks {
     network = "default"
-    modes = ["MODE_IPV4"]
+    modes   = ["MODE_IPV4"]
   }
-	labels = {
-		baz = "qux"
-	}
-  tier = "PREMIUM"
-	description = "An instance created during testing."
+  labels = {
+    baz = "qux"
+  }
+  tier        = "PREMIUM"
+  description = "An instance created during testing."
 }
 `, name)
 }
@@ -67,13 +67,14 @@ resource "google_filestore_instance" "instance" {
   zone = "us-central1-b"
   file_shares {
     capacity_gb = 2760
-    name = "share"
+    name        = "share"
   }
   networks {
     network = "default"
-    modes = ["MODE_IPV4"]
+    modes   = ["MODE_IPV4"]
   }
-  tier = "PREMIUM"
-	description = "A modified instance created during testing."
-}`, name)
+  tier        = "PREMIUM"
+  description = "A modified instance created during testing."
+}
+`, name)
 }

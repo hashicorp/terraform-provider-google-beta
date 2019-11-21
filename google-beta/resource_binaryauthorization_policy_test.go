@@ -184,7 +184,7 @@ resource "google_project" "project" {
 }
 
 resource "google_project_service" "binauthz" {
-  project = "${google_project.project.project_id}"
+  project = google_project.project.project_id
   service = "binaryauthorization.googleapis.com"
 }
 `, pid, pname, org, billing)
@@ -201,23 +201,23 @@ resource "google_project" "project" {
 }
 
 resource "google_project_service" "binauthz" {
-  project = "${google_project.project.project_id}"
+  project = google_project.project.project_id
   service = "binaryauthorization.googleapis.com"
 }
 
 resource "google_binary_authorization_policy" "policy" {
-  project = "${google_project.project.project_id}"
+  project = google_project.project.project_id
 
   admission_whitelist_patterns {
-    name_pattern= "gcr.io/google_containers/*"
+    name_pattern = "gcr.io/google_containers/*"
   }
 
   default_admission_rule {
-    evaluation_mode = "ALWAYS_DENY"
+    evaluation_mode  = "ALWAYS_DENY"
     enforcement_mode = "ENFORCED_BLOCK_AND_AUDIT_LOG"
   }
 
-  depends_on = ["google_project_service.binauthz"]
+  depends_on = [google_project_service.binauthz]
 }
 `, pid, pname, org, billing)
 }
@@ -233,12 +233,12 @@ resource "google_project" "project" {
 }
 
 resource "google_project_service" "binauthz" {
-  project = "${google_project.project.project_id}"
+  project = google_project.project.project_id
   service = "binaryauthorization.googleapis.com"
 }
 
 resource "google_container_analysis_note" "note" {
-  project = "${google_project.project.project_id}"
+  project = google_project.project.project_id
 
   name = "tf-test-%s"
   attestation_authority {
@@ -247,38 +247,38 @@ resource "google_container_analysis_note" "note" {
     }
   }
 
-  depends_on = ["google_project_service.binauthz"]
+  depends_on = [google_project_service.binauthz]
 }
 
 resource "google_binary_authorization_attestor" "attestor" {
-  project = "${google_project.project.project_id}"
+  project = google_project.project.project_id
 
-  name = "tf-test-%s"
+  name        = "tf-test-%s"
   description = "my description"
   attestation_authority_note {
-    note_reference = "${google_container_analysis_note.note.name}"
+    note_reference = google_container_analysis_note.note.name
   }
 
-  depends_on = ["google_project_service.binauthz"]
+  depends_on = [google_project_service.binauthz]
 }
 
 resource "google_binary_authorization_policy" "policy" {
-  project = "${google_project.project.project_id}"
+  project = google_project.project.project_id
 
   admission_whitelist_patterns {
-    name_pattern= "gcr.io/google_containers/*"
+    name_pattern = "gcr.io/google_containers/*"
   }
 
   default_admission_rule {
-    evaluation_mode = "ALWAYS_ALLOW"
+    evaluation_mode  = "ALWAYS_ALLOW"
     enforcement_mode = "ENFORCED_BLOCK_AND_AUDIT_LOG"
   }
 
   cluster_admission_rules {
-    cluster = "us-central1-a.prod-cluster"
-    evaluation_mode = "REQUIRE_ATTESTATION"
-    enforcement_mode = "ENFORCED_BLOCK_AND_AUDIT_LOG"
-    require_attestations_by = ["${google_binary_authorization_attestor.attestor.name}"]
+    cluster                 = "us-central1-a.prod-cluster"
+    evaluation_mode         = "REQUIRE_ATTESTATION"
+    enforcement_mode        = "ENFORCED_BLOCK_AND_AUDIT_LOG"
+    require_attestations_by = [google_binary_authorization_attestor.attestor.name]
   }
 
   global_policy_evaluation_mode = "%s"
@@ -296,15 +296,16 @@ resource "google_project" "project" {
   billing_account = "%s"
 }
 
-data "google_client_config" "current" {}
+data "google_client_config" "current" {
+}
 
 resource "google_project_service" "binauthz" {
-  project = "${google_project.project.project_id}"
+  project = google_project.project.project_id
   service = "binaryauthorization.googleapis.com"
 }
 
 resource "google_container_analysis_note" "note" {
-  project = "${google_project.project.project_id}"
+  project = google_project.project.project_id
 
   name = "tf-test-%s"
   attestation_authority {
@@ -313,35 +314,35 @@ resource "google_container_analysis_note" "note" {
     }
   }
 
-  depends_on = ["google_project_service.binauthz"]
+  depends_on = [google_project_service.binauthz]
 }
 
 resource "google_binary_authorization_attestor" "attestor" {
-  name = "tf-test-%s"
+  name        = "tf-test-%s"
   description = "my description"
   attestation_authority_note {
-    note_reference = "${google_container_analysis_note.note.name}"
+    note_reference = google_container_analysis_note.note.name
   }
 
-  depends_on = ["google_project_service.binauthz"]
+  depends_on = [google_project_service.binauthz]
 }
 
 resource "google_binary_authorization_policy" "policy" {
-  project = "${google_project.project.project_id}"
+  project = google_project.project.project_id
 
   admission_whitelist_patterns {
-    name_pattern= "gcr.io/google_containers/*"
+    name_pattern = "gcr.io/google_containers/*"
   }
 
   default_admission_rule {
-    evaluation_mode = "ALWAYS_ALLOW"
+    evaluation_mode  = "ALWAYS_ALLOW"
     enforcement_mode = "ENFORCED_BLOCK_AND_AUDIT_LOG"
   }
 
   cluster_admission_rules {
-    cluster = "us-central1-a.prod-cluster"
-    evaluation_mode = "REQUIRE_ATTESTATION"
-    enforcement_mode = "ENFORCED_BLOCK_AND_AUDIT_LOG"
+    cluster                 = "us-central1-a.prod-cluster"
+    evaluation_mode         = "REQUIRE_ATTESTATION"
+    enforcement_mode        = "ENFORCED_BLOCK_AND_AUDIT_LOG"
     require_attestations_by = ["projects/${data.google_client_config.current.project}/attestors/${google_binary_authorization_attestor.attestor.name}"]
   }
 }

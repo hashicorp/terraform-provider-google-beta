@@ -246,9 +246,9 @@ resource "google_service_account" "test_account" {
 }
 
 resource "google_service_account_iam_binding" "foo" {
-  service_account_id = "${google_service_account.test_account.name}"
-  role        = "roles/iam.serviceAccountUser"
-  members     = ["user:admin@hashicorptest.com"]
+  service_account_id = google_service_account.test_account.name
+  role               = "roles/iam.serviceAccountUser"
+  members            = ["user:admin@hashicorptest.com"]
 }
 `, account)
 }
@@ -261,9 +261,9 @@ resource "google_service_account" "test_account" {
 }
 
 resource "google_service_account_iam_binding" "foo" {
-  service_account_id = "${google_service_account.test_account.name}"
-  role        = "roles/iam.serviceAccountUser"
-  members     = ["%s"]
+  service_account_id = google_service_account.test_account.name
+  role               = "roles/iam.serviceAccountUser"
+  members            = ["%s"]
   condition {
     title       = "%s"
     description = "Expiring at midnight of 2019-12-31"
@@ -281,15 +281,15 @@ resource "google_service_account" "test_account" {
 }
 
 resource "google_service_account_iam_binding" "foo" {
-  service_account_id = "${google_service_account.test_account.name}"
-  role        = "roles/iam.serviceAccountUser"
-  members     = ["%s"]
+  service_account_id = google_service_account.test_account.name
+  role               = "roles/iam.serviceAccountUser"
+  members            = ["%s"]
 }
 
 resource "google_service_account_iam_binding" "foo2" {
-  service_account_id = "${google_service_account.test_account.name}"
-  role        = "roles/iam.serviceAccountUser"
-  members     = ["%s"]
+  service_account_id = google_service_account.test_account.name
+  role               = "roles/iam.serviceAccountUser"
+  members            = ["%s"]
   condition {
     title       = "%s"
     description = "Expiring at midnight of 2019-12-31"
@@ -307,9 +307,9 @@ resource "google_service_account" "test_account" {
 }
 
 resource "google_service_account_iam_member" "foo" {
-  service_account_id = "${google_service_account.test_account.name}"
-  role   = "roles/iam.serviceAccountUser"
-  member = "serviceAccount:${google_service_account.test_account.email}"
+  service_account_id = google_service_account.test_account.name
+  role               = "roles/iam.serviceAccountUser"
+  member             = "serviceAccount:${google_service_account.test_account.email}"
 }
 `, account)
 }
@@ -322,9 +322,9 @@ resource "google_service_account" "test_account" {
 }
 
 resource "google_service_account_iam_member" "foo" {
-  service_account_id = "${google_service_account.test_account.name}"
-  role   = "roles/iam.serviceAccountUser"
-  member = "serviceAccount:${google_service_account.test_account.email}"
+  service_account_id = google_service_account.test_account.name
+  role               = "roles/iam.serviceAccountUser"
+  member             = "serviceAccount:${google_service_account.test_account.email}"
   condition {
     title       = "%s"
     description = "Expiring at midnight of 2019-12-31"
@@ -342,15 +342,15 @@ resource "google_service_account" "test_account" {
 }
 
 resource "google_service_account_iam_member" "foo" {
-  service_account_id = "${google_service_account.test_account.name}"
-  role   = "roles/iam.serviceAccountUser"
-  member = "serviceAccount:${google_service_account.test_account.email}"
+  service_account_id = google_service_account.test_account.name
+  role               = "roles/iam.serviceAccountUser"
+  member             = "serviceAccount:${google_service_account.test_account.email}"
 }
 
 resource "google_service_account_iam_member" "foo2" {
-  service_account_id = "${google_service_account.test_account.name}"
-  role   = "roles/iam.serviceAccountUser"
-  member = "serviceAccount:${google_service_account.test_account.email}"
+  service_account_id = google_service_account.test_account.name
+  role               = "roles/iam.serviceAccountUser"
+  member             = "serviceAccount:${google_service_account.test_account.email}"
   condition {
     title       = "%s"
     description = "Expiring at midnight of 2019-12-31"
@@ -376,8 +376,8 @@ data "google_iam_policy" "foo" {
 }
 
 resource "google_service_account_iam_policy" "foo" {
-  service_account_id = "${google_service_account.test_account.name}"
-  policy_data = "${data.google_iam_policy.foo.policy_data}"
+  service_account_id = google_service_account.test_account.name
+  policy_data        = data.google_iam_policy.foo.policy_data
 }
 `, account)
 }
@@ -403,8 +403,8 @@ data "google_iam_policy" "foo" {
 }
 
 resource "google_service_account_iam_policy" "foo" {
-  service_account_id = "${google_service_account.test_account.name}"
-  policy_data = "${data.google_iam_policy.foo.policy_data}"
+  service_account_id = google_service_account.test_account.name
+  policy_data        = data.google_iam_policy.foo.policy_data
 }
 `, account)
 }
