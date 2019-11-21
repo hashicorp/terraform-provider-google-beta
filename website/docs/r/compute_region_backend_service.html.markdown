@@ -264,6 +264,11 @@ The following arguments are supported:
   This field denotes the logging options for the load balancer traffic served by this backend service.
   If logging is enabled, logs will be exported to Stackdriver.  Structure is documented below.
 
+* `network` -
+  (Optional, [Beta](https://terraform.io/docs/providers/google/guides/provider_versions.html))
+  The URL of the network to which this backend service belongs.
+  This field can only be specified when the load balancing scheme is set to INTERNAL.
+
 * `region` -
   (Optional)
   The Region in which the created backend service should reside.
