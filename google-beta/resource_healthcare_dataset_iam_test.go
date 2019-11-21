@@ -171,9 +171,9 @@ resource "google_healthcare_dataset" "dataset" {
 }
 
 resource "google_healthcare_dataset_iam_binding" "foo" {
-  dataset_id = "${google_healthcare_dataset.dataset.id}"
-  role        = "%s"
-  members     = ["serviceAccount:${google_service_account.test_account.email}"]
+  dataset_id = google_healthcare_dataset.dataset.id
+  role       = "%s"
+  members    = ["serviceAccount:${google_service_account.test_account.email}"]
 }
 `, account, datasetName, roleId)
 }
@@ -196,11 +196,11 @@ resource "google_healthcare_dataset" "dataset" {
 }
 
 resource "google_healthcare_dataset_iam_binding" "foo" {
-  dataset_id  = "${google_healthcare_dataset.dataset.id}"
-  role         = "%s"
-  members      = [
+  dataset_id = google_healthcare_dataset.dataset.id
+  role       = "%s"
+  members = [
     "serviceAccount:${google_service_account.test_account.email}",
-    "serviceAccount:${google_service_account.test_account_2.email}"
+    "serviceAccount:${google_service_account.test_account_2.email}",
   ]
 }
 `, account, account, DEFAULT_HEALTHCARE_TEST_LOCATION, datasetName, roleId)
@@ -219,9 +219,9 @@ resource "google_healthcare_dataset" "dataset" {
 }
 
 resource "google_healthcare_dataset_iam_member" "foo" {
-  dataset_id = "${google_healthcare_dataset.dataset.id}"
-  role        = "%s"
-  member      = "serviceAccount:${google_service_account.test_account.email}"
+  dataset_id = google_healthcare_dataset.dataset.id
+  role       = "%s"
+  member     = "serviceAccount:${google_service_account.test_account.email}"
 }
 `, account, DEFAULT_HEALTHCARE_TEST_LOCATION, datasetName, roleId)
 }
@@ -239,16 +239,16 @@ resource "google_healthcare_dataset" "dataset" {
 }
 
 data "google_iam_policy" "foo" {
-	binding {
-		role = "%s"
+  binding {
+    role = "%s"
 
-		members = ["serviceAccount:${google_service_account.test_account.email}"]
-	}
+    members = ["serviceAccount:${google_service_account.test_account.email}"]
+  }
 }
 
 resource "google_healthcare_dataset_iam_policy" "foo" {
-  dataset_id = "${google_healthcare_dataset.dataset.id}"
-  policy_data = "${data.google_iam_policy.foo.policy_data}"
+  dataset_id  = google_healthcare_dataset.dataset.id
+  policy_data = data.google_iam_policy.foo.policy_data
 }
 `, account, DEFAULT_HEALTHCARE_TEST_LOCATION, datasetName, roleId)
 }

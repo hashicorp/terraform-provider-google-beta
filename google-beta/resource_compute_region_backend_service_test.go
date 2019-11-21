@@ -200,12 +200,11 @@ func TestAccComputeRegionBackendService_ilbUpdateFull(t *testing.T) {
 func testAccComputeRegionBackendService_ilbBasic(serviceName, checkName string) string {
 	return fmt.Sprintf(`
 resource "google_compute_region_backend_service" "foobar" {
-
-  name = "%s"
-  health_checks = ["${google_compute_health_check.health_check.self_link}"]
-  protocol = "HTTP"
+  name                  = "%s"
+  health_checks         = [google_compute_health_check.health_check.self_link]
+  protocol              = "HTTP"
   load_balancing_scheme = "INTERNAL_MANAGED"
-  locality_lb_policy = "RING_HASH"
+  locality_lb_policy    = "RING_HASH"
   circuit_breakers {
     max_connections = 10
   }
@@ -213,7 +212,7 @@ resource "google_compute_region_backend_service" "foobar" {
     http_cookie {
       ttl {
         seconds = 11
-        nanos = 1234
+        nanos   = 1234
       }
       name = "mycookie"
     }
@@ -224,8 +223,7 @@ resource "google_compute_region_backend_service" "foobar" {
 }
 
 resource "google_compute_health_check" "health_check" {
-
-  name = "%s"
+  name     = "%s"
   http_health_check {
     port = 80
   }
@@ -236,12 +234,11 @@ resource "google_compute_health_check" "health_check" {
 func testAccComputeRegionBackendService_ilbUpdateBasic(serviceName, checkName string) string {
 	return fmt.Sprintf(`
 resource "google_compute_region_backend_service" "foobar" {
-
-  name = "%s"
-  health_checks = ["${google_compute_health_check.health_check.self_link}"]
-  protocol = "HTTP"
+  name                  = "%s"
+  health_checks         = [google_compute_health_check.health_check.self_link]
+  protocol              = "HTTP"
   load_balancing_scheme = "INTERNAL_MANAGED"
-  locality_lb_policy = "RANDOM"
+  locality_lb_policy    = "RANDOM"
   circuit_breakers {
     max_connections = 10
   }
@@ -251,8 +248,7 @@ resource "google_compute_region_backend_service" "foobar" {
 }
 
 resource "google_compute_health_check" "health_check" {
-
-  name = "%s"
+  name     = "%s"
   http_health_check {
     port = 80
   }
@@ -263,12 +259,11 @@ resource "google_compute_health_check" "health_check" {
 func testAccComputeRegionBackendService_ilbFull(serviceName, checkName string) string {
 	return fmt.Sprintf(`
 resource "google_compute_region_backend_service" "foobar" {
-
-  name = "%s"
-  health_checks = ["${google_compute_health_check.health_check.self_link}"]
-  protocol = "HTTP"
+  name                  = "%s"
+  health_checks         = [google_compute_health_check.health_check.self_link]
+  protocol              = "HTTP"
   load_balancing_scheme = "INTERNAL_MANAGED"
-  locality_lb_policy = "MAGLEV"
+  locality_lb_policy    = "MAGLEV"
   circuit_breakers {
     max_connections = 10
   }
@@ -276,7 +271,7 @@ resource "google_compute_region_backend_service" "foobar" {
     http_cookie {
       ttl {
         seconds = 11
-        nanos = 1234
+        nanos   = 1234
       }
       name = "mycookie"
     }
@@ -287,8 +282,7 @@ resource "google_compute_region_backend_service" "foobar" {
 }
 
 resource "google_compute_health_check" "health_check" {
-
-  name = "%s"
+  name     = "%s"
   http_health_check {
     port = 80
   }
@@ -299,30 +293,29 @@ resource "google_compute_health_check" "health_check" {
 func testAccComputeRegionBackendService_ilbUpdateFull(serviceName, igName, instanceName, checkName string) string {
 	return fmt.Sprintf(`
 resource "google_compute_region_backend_service" "foobar" {
-
-  name = "%s"
-  health_checks = ["${google_compute_health_check.health_check.self_link}"]
-  protocol = "HTTP"
+  name                  = "%s"
+  health_checks         = [google_compute_health_check.health_check.self_link]
+  protocol              = "HTTP"
   load_balancing_scheme = "INTERNAL_MANAGED"
-  locality_lb_policy = "MAGLEV"
+  locality_lb_policy    = "MAGLEV"
   backend {
-    balancing_mode = "UTILIZATION"
+    balancing_mode  = "UTILIZATION"
     capacity_scaler = 0.5
-    description = "The backend"
-    group = google_compute_instance_group.group.self_link
-    max_rate = 6
+    description     = "The backend"
+    group           = google_compute_instance_group.group.self_link
+    max_rate        = 6
     max_utilization = 0.5
   }
   circuit_breakers {
     connect_timeout {
       seconds = 3
-      nanos = 4
+      nanos   = 4
     }
-    max_connections = 11
+    max_connections             = 11
     max_requests_per_connection = 12
-    max_pending_requests = 13
-    max_requests = 14
-    max_retries = 15
+    max_pending_requests        = 13
+    max_requests                = 14
+    max_retries                 = 15
   }
   consistent_hash {
     http_cookie {
@@ -335,32 +328,32 @@ resource "google_compute_region_backend_service" "foobar" {
     minimum_ring_size = 16
   }
   log_config {
-    enable = true
+    enable      = true
     sample_rate = 0.5
   }
   outlier_detection {
     base_ejection_time {
       seconds = 0
-      nanos = 5
+      nanos   = 5
     }
-    consecutive_errors = 1
-    consecutive_gateway_failure = 3
-    enforcing_consecutive_errors = 4
+    consecutive_errors                    = 1
+    consecutive_gateway_failure           = 3
+    enforcing_consecutive_errors          = 4
     enforcing_consecutive_gateway_failure = 5
-    enforcing_success_rate = 6
+    enforcing_success_rate                = 6
     interval {
       seconds = 7
     }
-    max_ejection_percent = 99
-    success_rate_minimum_hosts = 98
+    max_ejection_percent        = 99
+    success_rate_minimum_hosts  = 98
     success_rate_request_volume = 97
-    success_rate_stdev_factor = 1800
+    success_rate_stdev_factor   = 1800
   }
 }
 
 resource "google_compute_instance_group" "group" {
-  name = "%s"
-  instances = [ "${google_compute_instance.ig_instance.self_link}" ]
+  name      = "%s"
+  instances = [google_compute_instance.ig_instance.self_link]
 }
 
 data "google_compute_image" "my_image" {
@@ -369,12 +362,12 @@ data "google_compute_image" "my_image" {
 }
 
 resource "google_compute_instance" "ig_instance" {
-  name = "%s"
+  name         = "%s"
   machine_type = "n1-standard-1"
 
   boot_disk {
     initialize_params {
-      image = "${data.google_compute_image.my_image.self_link}"
+      image = data.google_compute_image.my_image.self_link
     }
   }
 
@@ -384,7 +377,6 @@ resource "google_compute_instance" "ig_instance" {
 }
 
 resource "google_compute_health_check" "health_check" {
-
   name = "%s"
   http_health_check {
     port = 80
@@ -396,9 +388,9 @@ resource "google_compute_health_check" "health_check" {
 func testAccComputeRegionBackendService_basic(serviceName, checkName string) string {
 	return fmt.Sprintf(`
 resource "google_compute_region_backend_service" "foobar" {
-  name                  = "%s"
-  health_checks         = ["${google_compute_health_check.zero.self_link}"]
-  region                = "us-central1"
+  name          = "%s"
+  health_checks = [google_compute_health_check.zero.self_link]
+  region        = "us-central1"
 }
 
 resource "google_compute_health_check" "zero" {
@@ -416,29 +408,29 @@ resource "google_compute_health_check" "zero" {
 func testAccComputeRegionBackendService_basicModified(serviceName, checkOne, checkTwo string) string {
 	return fmt.Sprintf(`
 resource "google_compute_region_backend_service" "foobar" {
-    name = "%s"
-    health_checks = ["${google_compute_health_check.one.self_link}"]
-    region = "us-central1"
+  name          = "%s"
+  health_checks = [google_compute_health_check.one.self_link]
+  region        = "us-central1"
 }
 
 resource "google_compute_health_check" "zero" {
-    name = "%s"
-    check_interval_sec = 1
-    timeout_sec = 1
+  name               = "%s"
+  check_interval_sec = 1
+  timeout_sec        = 1
 
-    tcp_health_check {
-      port = 443
-    }
+  tcp_health_check {
+    port = 443
+  }
 }
 
 resource "google_compute_health_check" "one" {
-    name = "%s"
-    check_interval_sec = 30
-    timeout_sec = 30
+  name               = "%s"
+  check_interval_sec = 30
+  timeout_sec        = 30
 
-    tcp_health_check {
-      port = 443
-    }
+  tcp_health_check {
+    port = 443
+  }
 }
 `, serviceName, checkOne, checkTwo)
 }
@@ -459,24 +451,24 @@ resource "google_compute_region_backend_service" "lipsum" {
   timeout_sec = %v
 
   backend {
-    group = "${google_compute_instance_group_manager.foobar.instance_group}"
+    group    = google_compute_instance_group_manager.foobar.instance_group
     failover = true
   }
 
   failover_policy {
     disable_connection_drain_on_failover = true
-    drop_traffic_if_unhealthy = true
-    failover_ratio = 0.4
+    drop_traffic_if_unhealthy            = true
+    failover_ratio                       = 0.4
   }
 
-  health_checks = ["${google_compute_health_check.default.self_link}"]
+  health_checks = [google_compute_health_check.default.self_link]
 }
 
 resource "google_compute_instance_group_manager" "foobar" {
-  name               = "%s"
+  name = "%s"
   version {
-    instance_template  = "${google_compute_instance_template.foobar.self_link}"
-    name               = "primary"
+    instance_template = google_compute_instance_template.foobar.self_link
+    name              = "primary"
   }
   base_instance_name = "foobar"
   zone               = "us-central1-f"
@@ -492,7 +484,7 @@ resource "google_compute_instance_template" "foobar" {
   }
 
   disk {
-    source_image = "${data.google_compute_image.my_image.self_link}"
+    source_image = data.google_compute_image.my_image.self_link
     auto_delete  = true
     boot         = true
   }
@@ -513,9 +505,9 @@ resource "google_compute_health_check" "default" {
 func testAccComputeRegionBackendService_withConnectionDraining(serviceName, checkName string, drainingTimeout int64) string {
 	return fmt.Sprintf(`
 resource "google_compute_region_backend_service" "foobar" {
-  name                  = "%s"
-  health_checks         = ["${google_compute_health_check.zero.self_link}"]
-  region                = "us-central1"
+  name                            = "%s"
+  health_checks                   = [google_compute_health_check.zero.self_link]
+  region                          = "us-central1"
   connection_draining_timeout_sec = %v
 }
 

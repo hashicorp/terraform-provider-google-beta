@@ -251,12 +251,12 @@ resource "google_healthcare_dataset" "dataset" {
 }
 
 resource "google_healthcare_fhir_store" "fhir_store" {
-  dataset = "${google_healthcare_dataset.dataset.id}"
+  dataset  = google_healthcare_dataset.dataset.id
   name     = "%s"
 }
 
 resource "google_healthcare_fhir_store_iam_binding" "foo" {
-  fhir_store_id = "${google_healthcare_fhir_store.fhir_store.id}"
+  fhir_store_id = google_healthcare_fhir_store.fhir_store.id
   role          = "%s"
   members       = ["serviceAccount:${google_service_account.test_account.email}"]
 }
@@ -281,16 +281,16 @@ resource "google_healthcare_dataset" "dataset" {
 }
 
 resource "google_healthcare_fhir_store" "fhir_store" {
-  dataset = "${google_healthcare_dataset.dataset.id}"
+  dataset  = google_healthcare_dataset.dataset.id
   name     = "%s"
 }
 
 resource "google_healthcare_fhir_store_iam_binding" "foo" {
-  fhir_store_id = "${google_healthcare_fhir_store.fhir_store.id}"
+  fhir_store_id = google_healthcare_fhir_store.fhir_store.id
   role          = "%s"
-  members       = [
+  members = [
     "serviceAccount:${google_service_account.test_account.email}",
-    "serviceAccount:${google_service_account.test_account_2.email}"
+    "serviceAccount:${google_service_account.test_account_2.email}",
   ]
 }
 `, account, account, datasetName, fhirStoreName, roleId)
@@ -307,13 +307,14 @@ resource "google_healthcare_dataset" "dataset" {
   location = "us-central1"
   name     = "%s"
 }
+
 resource "google_healthcare_fhir_store" "fhir_store" {
-  dataset = "${google_healthcare_dataset.dataset.id}"
+  dataset  = google_healthcare_dataset.dataset.id
   name     = "%s"
 }
 
 resource "google_healthcare_fhir_store_iam_member" "foo" {
-  fhir_store_id = "${google_healthcare_fhir_store.fhir_store.id}"
+  fhir_store_id = google_healthcare_fhir_store.fhir_store.id
   role          = "%s"
   member        = "serviceAccount:${google_service_account.test_account.email}"
 }
@@ -331,22 +332,23 @@ resource "google_healthcare_dataset" "dataset" {
   location = "us-central1"
   name     = "%s"
 }
+
 resource "google_healthcare_fhir_store" "fhir_store" {
-  dataset = "${google_healthcare_dataset.dataset.id}"
+  dataset  = google_healthcare_dataset.dataset.id
   name     = "%s"
 }
 
 data "google_iam_policy" "foo" {
-	binding {
-		role = "%s"
+  binding {
+    role = "%s"
 
-		members = ["serviceAccount:${google_service_account.test_account.email}"]
-	}
+    members = ["serviceAccount:${google_service_account.test_account.email}"]
+  }
 }
 
 resource "google_healthcare_fhir_store_iam_policy" "foo" {
-  fhir_store_id = "${google_healthcare_fhir_store.fhir_store.id}"
-  policy_data = "${data.google_iam_policy.foo.policy_data}"
+  fhir_store_id = google_healthcare_fhir_store.fhir_store.id
+  policy_data   = data.google_iam_policy.foo.policy_data
 }
 `, account, datasetName, fhirStoreName, roleId)
 }
