@@ -390,6 +390,13 @@ The default value is 1.0.`,
 					},
 				},
 			},
+			"network": {
+				Type:             schema.TypeString,
+				Optional:         true,
+				DiffSuppressFunc: compareSelfLinkOrResourceName,
+				Description: `The URL of the network to which this backend service belongs.
+This field can only be specified when the load balancing scheme is set to INTERNAL.`,
+			},
 			"outlier_detection": {
 				Type:     schema.TypeList,
 				Optional: true,
@@ -828,6 +835,12 @@ func resourceComputeRegionBackendServiceCreate(d *schema.ResourceData, meta inte
 	} else if v, ok := d.GetOkExists("log_config"); !isEmptyValue(reflect.ValueOf(logConfigProp)) && (ok || !reflect.DeepEqual(v, logConfigProp)) {
 		obj["logConfig"] = logConfigProp
 	}
+	networkProp, err := expandComputeRegionBackendServiceNetwork(d.Get("network"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("network"); !isEmptyValue(reflect.ValueOf(networkProp)) && (ok || !reflect.DeepEqual(v, networkProp)) {
+		obj["network"] = networkProp
+	}
 	regionProp, err := expandComputeRegionBackendServiceRegion(d.Get("region"), d, config)
 	if err != nil {
 		return err
@@ -954,6 +967,9 @@ func resourceComputeRegionBackendServiceRead(d *schema.ResourceData, meta interf
 	if err := d.Set("log_config", flattenComputeRegionBackendServiceLogConfig(res["logConfig"], d)); err != nil {
 		return fmt.Errorf("Error reading RegionBackendService: %s", err)
 	}
+	if err := d.Set("network", flattenComputeRegionBackendServiceNetwork(res["network"], d)); err != nil {
+		return fmt.Errorf("Error reading RegionBackendService: %s", err)
+	}
 	if err := d.Set("region", flattenComputeRegionBackendServiceRegion(res["region"], d)); err != nil {
 		return fmt.Errorf("Error reading RegionBackendService: %s", err)
 	}
@@ -1074,6 +1090,12 @@ func resourceComputeRegionBackendServiceUpdate(d *schema.ResourceData, meta inte
 		return err
 	} else if v, ok := d.GetOkExists("log_config"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, logConfigProp)) {
 		obj["logConfig"] = logConfigProp
+	}
+	networkProp, err := expandComputeRegionBackendServiceNetwork(d.Get("network"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("network"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, networkProp)) {
+		obj["network"] = networkProp
 	}
 	regionProp, err := expandComputeRegionBackendServiceRegion(d.Get("region"), d, config)
 	if err != nil {
@@ -1789,6 +1811,13 @@ func flattenComputeRegionBackendServiceLogConfigSampleRate(v interface{}, d *sch
 	return v
 }
 
+func flattenComputeRegionBackendServiceNetwork(v interface{}, d *schema.ResourceData) interface{} {
+	if v == nil {
+		return v
+	}
+	return ConvertSelfLinkToV1(v.(string))
+}
+
 func flattenComputeRegionBackendServiceRegion(v interface{}, d *schema.ResourceData) interface{} {
 	if v == nil {
 		return v
@@ -2495,6 +2524,14 @@ func expandComputeRegionBackendServiceLogConfigEnable(v interface{}, d Terraform
 
 func expandComputeRegionBackendServiceLogConfigSampleRate(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
+}
+
+func expandComputeRegionBackendServiceNetwork(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	f, err := parseGlobalFieldValue("networks", v.(string), "project", d, config, true)
+	if err != nil {
+		return nil, fmt.Errorf("Invalid value for network: %s", err)
+	}
+	return f.RelativeLink(), nil
 }
 
 func expandComputeRegionBackendServiceRegion(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
