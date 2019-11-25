@@ -26,6 +26,7 @@ func resourceComputeNetworkPeering() *schema.Resource {
 				ForceNew:     true,
 				ValidateFunc: validateGCPName,
 			},
+
 			"network": {
 				Type:             schema.TypeString,
 				Required:         true,
@@ -33,6 +34,7 @@ func resourceComputeNetworkPeering() *schema.Resource {
 				ValidateFunc:     validateRegexp(peerNetworkLinkRegex),
 				DiffSuppressFunc: compareSelfLinkRelativePaths,
 			},
+
 			"peer_network": {
 				Type:             schema.TypeString,
 				Required:         true,
@@ -40,33 +42,36 @@ func resourceComputeNetworkPeering() *schema.Resource {
 				ValidateFunc:     validateRegexp(peerNetworkLinkRegex),
 				DiffSuppressFunc: compareSelfLinkRelativePaths,
 			},
-			// The API only accepts true as a value for exchange_subnet_routes or auto_create_routes (of which only one can be set in a valid request).
-			// Also, you can't set auto_create_routes if you use the networkPeering object. auto_create_routes is also removed
-			"auto_create_routes": {
-				Type:     schema.TypeBool,
-				Optional: true,
-				Removed:  "auto_create_routes has been removed because it's redundant and not user-configurable. It can safely be removed from your config",
-				ForceNew: true,
-			},
-			"state": {
-				Type:     schema.TypeString,
-				Computed: true,
-			},
-			"state_details": {
-				Type:     schema.TypeString,
-				Computed: true,
-			},
+
 			"export_custom_routes": {
 				Type:     schema.TypeBool,
 				ForceNew: true,
 				Optional: true,
 				Default:  false,
 			},
+
 			"import_custom_routes": {
 				Type:     schema.TypeBool,
 				ForceNew: true,
 				Optional: true,
 				Default:  false,
+			},
+
+			"state": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+
+			"state_details": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+
+			"auto_create_routes": {
+				Type:     schema.TypeBool,
+				Optional: true,
+				Removed:  "auto_create_routes has been removed because it's redundant and not user-configurable. It can safely be removed from your config",
+				ForceNew: true,
 			},
 		},
 	}
@@ -178,12 +183,11 @@ func findPeeringFromNetwork(network *computeBeta.Network, peeringName string) *c
 }
 func expandNetworkPeering(d *schema.ResourceData) *computeBeta.NetworkPeering {
 	return &computeBeta.NetworkPeering{
-		ExportCustomRoutes: d.Get("export_custom_routes").(bool),
-		ImportCustomRoutes: d.Get("import_custom_routes").(bool),
-		// auto_create_routes was replaced by exchange_subnet_routes in the network peering object
 		ExchangeSubnetRoutes: true,
 		Name:                 d.Get("name").(string),
 		Network:              d.Get("peer_network").(string),
+		ExportCustomRoutes:   d.Get("export_custom_routes").(bool),
+		ImportCustomRoutes:   d.Get("import_custom_routes").(bool),
 	}
 }
 
