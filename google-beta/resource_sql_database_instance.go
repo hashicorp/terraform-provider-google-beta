@@ -325,6 +325,13 @@ func resourceSqlDatabaseInstance() *schema.Resource {
 				ForceNew: true,
 			},
 
+			"root_password": {
+				Type:      schema.TypeString,
+				Optional:  true,
+				ForceNew:  true,
+				Sensitive: true,
+			},
+
 			"ip_address": {
 				Type:     schema.TypeList,
 				Computed: true,
@@ -557,6 +564,11 @@ func resourceSqlDatabaseInstanceCreate(d *schema.ResourceData, meta interface{})
 		DatabaseVersion:      d.Get("database_version").(string),
 		MasterInstanceName:   d.Get("master_instance_name").(string),
 		ReplicaConfiguration: expandReplicaConfiguration(d.Get("replica_configuration").([]interface{})),
+	}
+
+	// MSSQL Server require rootPassword to be set
+	if strings.Contains(instance.DatabaseVersion, "SQLSERVER") {
+		instance.RootPassword = d.Get("root_password").(string)
 	}
 
 	// Modifying a replica during Create can cause problems if the master is
