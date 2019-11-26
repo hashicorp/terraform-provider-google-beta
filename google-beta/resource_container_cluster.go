@@ -306,6 +306,35 @@ func resourceContainerCluster() *schema.Resource {
 								},
 							},
 						},
+						"auto_provisioning_defaults": {
+							Type:     schema.TypeList,
+							MaxItems: 1,
+							Optional: true,
+							Computed: true,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"oauth_scopes": {
+										Type:             schema.TypeList,
+										Optional:         true,
+										Elem:             &schema.Schema{Type: schema.TypeString},
+										DiffSuppressFunc: containerClusterAddedScopesSuppress,
+										ExactlyOneOf: []string{
+											"cluster_autoscaling.0.auto_provisioning_defaults.0.oauth_scopes",
+											"cluster_autoscaling.0.auto_provisioning_defaults.0.service_account",
+										},
+									},
+									"service_account": {
+										Type:     schema.TypeString,
+										Optional: true,
+										Default:  "default",
+										ExactlyOneOf: []string{
+											"cluster_autoscaling.0.auto_provisioning_defaults.0.oauth_scopes",
+											"cluster_autoscaling.0.auto_provisioning_defaults.0.service_account",
+										},
+									},
+								},
+							},
+						},
 					},
 				},
 			},
@@ -964,6 +993,7 @@ func resourceContainerClusterCreate(d *schema.ResourceData, meta interface{}) er
 		EnableKubernetesAlpha:   d.Get("enable_kubernetes_alpha").(bool),
 		IpAllocationPolicy:      expandIPAllocationPolicy(d.Get("ip_allocation_policy")),
 		PodSecurityPolicyConfig: expandPodSecurityPolicyConfig(d.Get("pod_security_policy_config")),
+		Autoscaling:             expandClusterAutoscaling(d.Get("cluster_autoscaling"), d),
 		ShieldedNodes: &containerBeta.ShieldedNodes{
 			Enabled:         d.Get("enable_shielded_nodes").(bool),
 			ForceSendFields: []string{"Enabled"},
@@ -974,7 +1004,6 @@ func resourceContainerClusterCreate(d *schema.ResourceData, meta interface{}) er
 			Enabled:         d.Get("enable_binary_authorization").(bool),
 			ForceSendFields: []string{"Enabled"},
 		},
-		Autoscaling: expandClusterAutoscaling(d.Get("cluster_autoscaling"), d),
 		NetworkConfig: &containerBeta.NetworkConfig{
 			EnableIntraNodeVisibility: d.Get("enable_intranode_visibility").(bool),
 		},
@@ -1197,15 +1226,16 @@ func resourceContainerClusterRead(d *schema.ResourceData, meta interface{}) erro
 	d.Set("monitoring_service", cluster.MonitoringService)
 	d.Set("network", cluster.NetworkConfig.Network)
 	d.Set("subnetwork", cluster.NetworkConfig.Subnetwork)
+	if err := d.Set("cluster_autoscaling", flattenClusterAutoscaling(cluster.Autoscaling)); err != nil {
+		return err
+	}
 	if cluster.ShieldedNodes != nil {
 		d.Set("enable_shielded_nodes", cluster.ShieldedNodes.Enabled)
 	}
 	d.Set("enable_binary_authorization", cluster.BinaryAuthorization != nil && cluster.BinaryAuthorization.Enabled)
 	d.Set("enable_tpu", cluster.EnableTpu)
 	d.Set("tpu_ipv4_cidr_block", cluster.TpuIpv4CidrBlock)
-	if err := d.Set("cluster_autoscaling", flattenClusterAutoscaling(cluster.Autoscaling)); err != nil {
-		return err
-	}
+
 	if err := d.Set("release_channel", flattenReleaseChannel(cluster.ReleaseChannel)); err != nil {
 		return err
 	}
@@ -1346,6 +1376,24 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 			d.SetPartial("addons_config")
 		}
 	}
+
+	if d.HasChange("cluster_autoscaling") {
+		req := &containerBeta.UpdateClusterRequest{
+			Update: &containerBeta.ClusterUpdate{
+				DesiredClusterAutoscaling: expandClusterAutoscaling(d.Get("cluster_autoscaling"), d),
+			}}
+
+		updateF := updateFunc(req, "updating GKE cluster autoscaling")
+		// Call update serially.
+		if err := lockedCall(lockKey, updateF); err != nil {
+			return err
+		}
+
+		log.Printf("[INFO] GKE cluster %s's cluster-wide autoscaling has been updated", d.Id())
+
+		d.SetPartial("cluster_autoscaling")
+	}
+
 	if d.HasChange("enable_shielded_nodes") {
 		enabled := d.Get("enable_shielded_nodes").(bool)
 		req := &containerBeta.UpdateClusterRequest{
@@ -1388,23 +1436,6 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 		log.Printf("[INFO] GKE cluster %s's binary authorization has been updated to %v", d.Id(), enabled)
 
 		d.SetPartial("enable_binary_authorization")
-	}
-
-	if d.HasChange("cluster_autoscaling") {
-		req := &containerBeta.UpdateClusterRequest{
-			Update: &containerBeta.ClusterUpdate{
-				DesiredClusterAutoscaling: expandClusterAutoscaling(d.Get("cluster_autoscaling"), d),
-			}}
-
-		updateF := updateFunc(req, "updating GKE cluster autoscaling")
-		// Call update serially.
-		if err := lockedCall(lockKey, updateF); err != nil {
-			return err
-		}
-
-		log.Printf("[INFO] GKE cluster %s's cluster-wide autoscaling has been updated", d.Id())
-
-		d.SetPartial("cluster_autoscaling")
 	}
 
 	if d.HasChange("enable_intranode_visibility") {
@@ -2210,8 +2241,22 @@ func expandClusterAutoscaling(configured interface{}, d *schema.ResourceData) *c
 		}
 	}
 	return &containerBeta.ClusterAutoscaling{
-		EnableNodeAutoprovisioning: config["enabled"].(bool),
-		ResourceLimits:             resourceLimits,
+		EnableNodeAutoprovisioning:       config["enabled"].(bool),
+		ResourceLimits:                   resourceLimits,
+		AutoprovisioningNodePoolDefaults: expandAutoProvisioningDefaults(config["auto_provisioning_defaults"], d),
+	}
+}
+
+func expandAutoProvisioningDefaults(configured interface{}, d *schema.ResourceData) *containerBeta.AutoprovisioningNodePoolDefaults {
+	l, ok := configured.([]interface{})
+	if !ok || l == nil || len(l) == 0 || l[0] == nil {
+		return &containerBeta.AutoprovisioningNodePoolDefaults{}
+	}
+	config := l[0].(map[string]interface{})
+
+	return &containerBeta.AutoprovisioningNodePoolDefaults{
+		OauthScopes:    convertStringArr(config["oauth_scopes"].([]interface{})),
+		ServiceAccount: config["service_account"].(string),
 	}
 }
 
@@ -2635,7 +2680,16 @@ func flattenClusterAutoscaling(a *containerBeta.ClusterAutoscaling) []map[string
 		}
 		r["resource_limits"] = resourceLimits
 		r["enabled"] = true
+		r["auto_provisioning_defaults"] = flattenAutoProvisioningDefaults(a.AutoprovisioningNodePoolDefaults)
 	}
+	return []map[string]interface{}{r}
+}
+
+func flattenAutoProvisioningDefaults(a *containerBeta.AutoprovisioningNodePoolDefaults) []map[string]interface{} {
+	r := make(map[string]interface{})
+	r["oauth_scopes"] = a.OauthScopes
+	r["service_account"] = a.ServiceAccount
+
 	return []map[string]interface{}{r}
 }
 
@@ -2751,6 +2805,41 @@ func extractNodePoolInformationFromCluster(d *schema.ResourceData, config *Confi
 func cidrOrSizeDiffSuppress(k, old, new string, d *schema.ResourceData) bool {
 	// If the user specified a size and the API returned a full cidr block, suppress.
 	return strings.HasPrefix(new, "/") && strings.HasSuffix(old, new)
+}
+
+// Suppress unremovable default scope values from GCP.
+// If the default service account would not otherwise have it, the `monitoring.write` scope
+// is added to a GKE cluster's scopes regardless of what the user provided.
+// monitoring.write is inherited from monitoring (rw) and cloud-platform, so it won't always
+// be present.
+// Enabling Stackdriver features through logging_service and monitoring_service may enable
+// monitoring or logging.write. We've chosen not to suppress in those cases because they're
+// removable by disabling those features.
+func containerClusterAddedScopesSuppress(k, old, new string, d *schema.ResourceData) bool {
+	o, n := d.GetChange("cluster_autoscaling.0.auto_provisioning_defaults.0.oauth_scopes")
+
+	addedScopes := []string{
+		"https://www.googleapis.com/auth/monitoring.write",
+	}
+
+	// combine what the default scopes are with what was passed
+	m := golangSetFromStringSlice(append(addedScopes, convertStringArr(n.([]interface{}))...))
+	combined := stringSliceFromGolangSet(m)
+
+	// compare if the combined new scopes and default scopes differ from the old scopes
+	if len(combined) != len(convertStringArr(o.([]interface{}))) {
+		return false
+	}
+
+	for _, i := range combined {
+		if stringInSlice(convertStringArr(o.([]interface{})), i) {
+			continue
+		}
+
+		return false
+	}
+
+	return true
 }
 
 // We want to suppress diffs for empty/disabled private cluster config.
