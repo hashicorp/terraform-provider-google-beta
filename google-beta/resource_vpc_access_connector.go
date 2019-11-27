@@ -163,14 +163,14 @@ func resourceVPCAccessConnectorCreate(d *schema.ResourceData, meta interface{}) 
 	}
 	d.SetId(id)
 
-	waitErr := vpcAccessOperationWaitTime(
+	err = vpcAccessOperationWaitTime(
 		config, res, project, "Creating Connector",
 		int(d.Timeout(schema.TimeoutCreate).Minutes()))
 
-	if waitErr != nil {
+	if err != nil {
 		// The resource didn't actually create
 		d.SetId("")
-		return fmt.Errorf("Error waiting to create Connector: %s", waitErr)
+		return fmt.Errorf("Error waiting to create Connector: %s", err)
 	}
 
 	log.Printf("[DEBUG] Finished creating Connector %q: %#v", d.Id(), res)

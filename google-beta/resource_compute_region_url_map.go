@@ -304,14 +304,14 @@ func resourceComputeRegionUrlMapCreate(d *schema.ResourceData, meta interface{})
 	}
 	d.SetId(id)
 
-	waitErr := computeOperationWaitTime(
+	err = computeOperationWaitTime(
 		config, res, project, "Creating RegionUrlMap",
 		int(d.Timeout(schema.TimeoutCreate).Minutes()))
 
-	if waitErr != nil {
+	if err != nil {
 		// The resource didn't actually create
 		d.SetId("")
-		return fmt.Errorf("Error waiting to create RegionUrlMap: %s", waitErr)
+		return fmt.Errorf("Error waiting to create RegionUrlMap: %s", err)
 	}
 
 	log.Printf("[DEBUG] Finished creating RegionUrlMap %q: %#v", d.Id(), res)

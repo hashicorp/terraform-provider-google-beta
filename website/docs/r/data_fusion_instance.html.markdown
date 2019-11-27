@@ -88,12 +88,12 @@ The following arguments are supported:
 
 * `type` -
   (Required)
-  Represents the type of Data Fusion instance. Each type is configured with 
+  Represents the type of Data Fusion instance. Each type is configured with
   the default settings for processing and memory.
-  - BASIC: Basic Data Fusion instance. In Basic type, the user will be able to create data pipelines 
-  using point and click UI. However, there are certain limitations, such as fewer number 
+  - BASIC: Basic Data Fusion instance. In Basic type, the user will be able to create data pipelines
+  using point and click UI. However, there are certain limitations, such as fewer number
   of concurrent pipelines, no support for streaming pipelines, etc.
-  - ENTERPRISE: Enterprise Data Fusion instance. In Enterprise type, the user will have more features 
+  - ENTERPRISE: Enterprise Data Fusion instance. In Enterprise type, the user will have more features
   available, such as support for streaming pipelines, higher number of concurrent pipelines, etc.
 
 
@@ -149,7 +149,7 @@ The `network_config` block supports:
 * `network` -
   (Required)
   Name of the network in the project with which the tenant project
-  will be peered for executing pipelines. In case of shared VPC where the network resides in another host 
+  will be peered for executing pipelines. In case of shared VPC where the network resides in another host
   project the network should specified in the form of projects/{host-project-id}/global/networks/{network}
 
 ## Attributes Reference

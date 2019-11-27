@@ -168,14 +168,14 @@ func resourceComputeRegionTargetHttpsProxyCreate(d *schema.ResourceData, meta in
 	}
 	d.SetId(id)
 
-	waitErr := computeOperationWaitTime(
+	err = computeOperationWaitTime(
 		config, res, project, "Creating RegionTargetHttpsProxy",
 		int(d.Timeout(schema.TimeoutCreate).Minutes()))
 
-	if waitErr != nil {
+	if err != nil {
 		// The resource didn't actually create
 		d.SetId("")
-		return fmt.Errorf("Error waiting to create RegionTargetHttpsProxy: %s", waitErr)
+		return fmt.Errorf("Error waiting to create RegionTargetHttpsProxy: %s", err)
 	}
 
 	log.Printf("[DEBUG] Finished creating RegionTargetHttpsProxy %q: %#v", d.Id(), res)
