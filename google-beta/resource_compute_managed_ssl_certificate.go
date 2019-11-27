@@ -184,14 +184,14 @@ func resourceComputeManagedSslCertificateCreate(d *schema.ResourceData, meta int
 	}
 	d.SetId(id)
 
-	waitErr := computeOperationWaitTime(
+	err = computeOperationWaitTime(
 		config, res, project, "Creating ManagedSslCertificate",
 		int(d.Timeout(schema.TimeoutCreate).Minutes()))
 
-	if waitErr != nil {
+	if err != nil {
 		// The resource didn't actually create
 		d.SetId("")
-		return fmt.Errorf("Error waiting to create ManagedSslCertificate: %s", waitErr)
+		return fmt.Errorf("Error waiting to create ManagedSslCertificate: %s", err)
 	}
 
 	log.Printf("[DEBUG] Finished creating ManagedSslCertificate %q: %#v", d.Id(), res)

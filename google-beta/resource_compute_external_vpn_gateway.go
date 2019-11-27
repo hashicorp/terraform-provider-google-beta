@@ -160,14 +160,14 @@ func resourceComputeExternalVpnGatewayCreate(d *schema.ResourceData, meta interf
 	}
 	d.SetId(id)
 
-	waitErr := computeOperationWaitTime(
+	err = computeOperationWaitTime(
 		config, res, project, "Creating ExternalVpnGateway",
 		int(d.Timeout(schema.TimeoutCreate).Minutes()))
 
-	if waitErr != nil {
+	if err != nil {
 		// The resource didn't actually create
 		d.SetId("")
-		return fmt.Errorf("Error waiting to create ExternalVpnGateway: %s", waitErr)
+		return fmt.Errorf("Error waiting to create ExternalVpnGateway: %s", err)
 	}
 
 	log.Printf("[DEBUG] Finished creating ExternalVpnGateway %q: %#v", d.Id(), res)
