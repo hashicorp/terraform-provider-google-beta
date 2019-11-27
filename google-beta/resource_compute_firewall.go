@@ -159,6 +159,7 @@ is unspecified, the firewall rule will be enabled.`,
 firewall rule. If logging is enabled, logs will be exported to
 Stackdriver.`,
 			},
+
 			"priority": {
 				Type:         schema.TypeInt,
 				Optional:     true,
@@ -376,11 +377,11 @@ func resourceComputeFirewallCreate(d *schema.ResourceData, meta interface{}) err
 	} else if v, ok := d.GetOkExists("disabled"); ok || !reflect.DeepEqual(v, disabledProp) {
 		obj["disabled"] = disabledProp
 	}
-	enableLoggingProp, err := expandComputeFirewallEnableLogging(d.Get("enable_logging"), d, config)
+	logConfigProp, err := expandComputeFirewallLogConfig(nil, d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("enable_logging"); ok || !reflect.DeepEqual(v, enableLoggingProp) {
-		obj["enableLogging"] = enableLoggingProp
+	} else if !isEmptyValue(reflect.ValueOf(logConfigProp)) {
+		obj["logConfig"] = logConfigProp
 	}
 	nameProp, err := expandComputeFirewallName(d.Get("name"), d, config)
 	if err != nil {
@@ -510,8 +511,15 @@ func resourceComputeFirewallRead(d *schema.ResourceData, meta interface{}) error
 	if err := d.Set("disabled", flattenComputeFirewallDisabled(res["disabled"], d)); err != nil {
 		return fmt.Errorf("Error reading Firewall: %s", err)
 	}
-	if err := d.Set("enable_logging", flattenComputeFirewallEnableLogging(res["enableLogging"], d)); err != nil {
-		return fmt.Errorf("Error reading Firewall: %s", err)
+	// Terraform must set the top level schema field, but since this object contains collapsed properties
+	// it's difficult to know what the top level should be. Instead we just loop over the map returned from flatten.
+	if flattenedProp := flattenComputeFirewallLogConfig(res["logConfig"], d); flattenedProp != nil {
+		casted := flattenedProp.([]interface{})[0]
+		if casted != nil {
+			for k, v := range casted.(map[string]interface{}) {
+				d.Set(k, v)
+			}
+		}
 	}
 	if err := d.Set("name", flattenComputeFirewallName(res["name"], d)); err != nil {
 		return fmt.Errorf("Error reading Firewall: %s", err)
@@ -583,11 +591,11 @@ func resourceComputeFirewallUpdate(d *schema.ResourceData, meta interface{}) err
 	} else if v, ok := d.GetOkExists("disabled"); ok || !reflect.DeepEqual(v, disabledProp) {
 		obj["disabled"] = disabledProp
 	}
-	enableLoggingProp, err := expandComputeFirewallEnableLogging(d.Get("enable_logging"), d, config)
+	logConfigProp, err := expandComputeFirewallLogConfig(nil, d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("enable_logging"); ok || !reflect.DeepEqual(v, enableLoggingProp) {
-		obj["enableLogging"] = enableLoggingProp
+	} else if v, ok := d.GetOkExists("log_config"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, logConfigProp)) {
+		obj["logConfig"] = logConfigProp
 	}
 	networkProp, err := expandComputeFirewallNetwork(d.Get("network"), d, config)
 	if err != nil {
@@ -785,7 +793,20 @@ func flattenComputeFirewallDisabled(v interface{}, d *schema.ResourceData) inter
 	return v
 }
 
-func flattenComputeFirewallEnableLogging(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeFirewallLogConfig(v interface{}, d *schema.ResourceData) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["enable_logging"] =
+		flattenComputeFirewallLogConfigEnableLogging(original["enable"], d)
+	return []interface{}{transformed}
+}
+func flattenComputeFirewallLogConfigEnableLogging(v interface{}, d *schema.ResourceData) interface{} {
 	return v
 }
 
@@ -938,7 +959,19 @@ func expandComputeFirewallDisabled(v interface{}, d TerraformResourceData, confi
 	return v, nil
 }
 
-func expandComputeFirewallEnableLogging(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandComputeFirewallLogConfig(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	transformed := make(map[string]interface{})
+	transformedEnableLogging, err := expandComputeFirewallLogConfigEnableLogging(d.Get("enable_logging"), d, config)
+	if err != nil {
+		return nil, err
+	} else {
+		transformed["enable"] = transformedEnableLogging
+	}
+
+	return transformed, nil
+}
+
+func expandComputeFirewallLogConfigEnableLogging(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 

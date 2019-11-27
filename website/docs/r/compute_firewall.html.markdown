@@ -133,7 +133,7 @@ The following arguments are supported:
   is unspecified, the firewall rule will be enabled.
 
 * `enable_logging` -
-  (Optional, [Beta](https://terraform.io/docs/providers/google/guides/provider_versions.html))
+  (Optional)
   This field denotes whether to enable logging for a particular
   firewall rule. If logging is enabled, logs will be exported to
   Stackdriver.
