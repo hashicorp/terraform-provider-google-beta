@@ -1712,12 +1712,12 @@ resource "google_container_cluster" "primary" {
     created-by = "terraform"
   }
 
-  enable_intranode_visibility = true
-  enable_binary_authorization = true
-
   vertical_pod_autoscaling {
     enabled = true
   }
+
+  enable_intranode_visibility = true
+  enable_binary_authorization = true
 }
 `, name)
 }
@@ -1747,12 +1747,12 @@ resource "google_container_cluster" "primary" {
     new-label  = "update"
   }
 
-  enable_intranode_visibility = true
-  enable_binary_authorization = true
-
   vertical_pod_autoscaling {
     enabled = true
   }
+
+  enable_intranode_visibility = true
+  enable_binary_authorization = true
 }
 `, name)
 }
