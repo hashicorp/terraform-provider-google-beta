@@ -143,6 +143,14 @@ func Provider() terraform.ResourceProvider {
 					"GOOGLE_BIGTABLE_CUSTOM_ENDPOINT",
 				}, BigtableDefaultBasePath),
 			},
+			"billing_custom_endpoint": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validateCustomEndpoint,
+				DefaultFunc: schema.MultiEnvDefaultFunc([]string{
+					"GOOGLE_BILLING_CUSTOM_ENDPOINT",
+				}, BillingDefaultBasePath),
+			},
 			"binary_authorization_custom_endpoint": {
 				Type:         schema.TypeString,
 				Optional:     true,
@@ -489,9 +497,9 @@ func Provider() terraform.ResourceProvider {
 	return provider
 }
 
-// Generated resources: 102
+// Generated resources: 103
 // Generated IAM resources: 39
-// Total generated resources: 141
+// Total generated resources: 142
 func ResourceMap() map[string]*schema.Resource {
 	resourceMap, _ := ResourceMapWithErrors()
 	return resourceMap
@@ -510,6 +518,7 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_bigquery_dataset":                          resourceBigQueryDataset(),
 			"google_bigquery_data_transfer_config":             resourceBigqueryDataTransferConfig(),
 			"google_bigtable_app_profile":                      resourceBigtableAppProfile(),
+			"google_billing_budget":                            resourceBillingBudget(),
 			"google_binary_authorization_attestor":             resourceBinaryAuthorizationAttestor(),
 			"google_binary_authorization_attestor_iam_binding": ResourceIamBinding(BinaryAuthorizationAttestorIamSchema, BinaryAuthorizationAttestorIamUpdaterProducer, BinaryAuthorizationAttestorIdParseFunc),
 			"google_binary_authorization_attestor_iam_member":  ResourceIamMember(BinaryAuthorizationAttestorIamSchema, BinaryAuthorizationAttestorIamUpdaterProducer, BinaryAuthorizationAttestorIdParseFunc),
@@ -807,6 +816,7 @@ func providerConfigure(d *schema.ResourceData, terraformVersion string) (interfa
 	config.BigQueryBasePath = d.Get("big_query_custom_endpoint").(string)
 	config.BigqueryDataTransferBasePath = d.Get("bigquery_data_transfer_custom_endpoint").(string)
 	config.BigtableBasePath = d.Get("bigtable_custom_endpoint").(string)
+	config.BillingBasePath = d.Get("billing_custom_endpoint").(string)
 	config.BinaryAuthorizationBasePath = d.Get("binary_authorization_custom_endpoint").(string)
 	config.CloudBuildBasePath = d.Get("cloud_build_custom_endpoint").(string)
 	config.CloudFunctionsBasePath = d.Get("cloud_functions_custom_endpoint").(string)
