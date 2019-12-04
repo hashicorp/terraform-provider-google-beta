@@ -9,7 +9,7 @@ import (
 	"github.com/hashicorp/errwrap"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
-	"google.golang.org/api/compute/v0.beta"
+	compute "google.golang.org/api/compute/v0.beta"
 )
 
 func resourceComputeSecurityPolicy() *schema.Resource {
@@ -73,7 +73,7 @@ func resourceComputeSecurityPolicy() *schema.Resource {
 								Schema: map[string]*schema.Schema{
 									"config": {
 										Type:     schema.TypeList,
-										Required: true,
+										Optional: true,
 										MaxItems: 1,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
@@ -90,8 +90,35 @@ func resourceComputeSecurityPolicy() *schema.Resource {
 
 									"versioned_expr": {
 										Type:         schema.TypeString,
-										Required:     true,
+										Optional:     true,
 										ValidateFunc: validation.StringInSlice([]string{"SRC_IPS_V1"}, false),
+									},
+
+									"expr": {
+										Type:     schema.TypeList,
+										Optional: true,
+										MaxItems: 1,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"expression": {
+													Type:     schema.TypeString,
+													Required: true,
+												},
+												// These fields are not yet supported (Issue terraform-providers/terraform-provider-google#4497: mbang)
+												// "title": {
+												// 	Type:     schema.TypeString,
+												// 	Optional: true,
+												// },
+												// "description": {
+												// 	Type:     schema.TypeString,
+												// 	Optional: true,
+												// },
+												// "location": {
+												// 	Type:     schema.TypeString,
+												// 	Optional: true,
+												// },
+											},
+										},
 									},
 								},
 							},
@@ -330,6 +357,7 @@ func expandSecurityPolicyMatch(configured []interface{}) *compute.SecurityPolicy
 	return &compute.SecurityPolicyRuleMatcher{
 		VersionedExpr: data["versioned_expr"].(string),
 		Config:        expandSecurityPolicyMatchConfig(data["config"].([]interface{})),
+		Expr:          expandSecurityPolicyMatchExpr(data["expr"].([]interface{})),
 	}
 }
 
@@ -344,6 +372,21 @@ func expandSecurityPolicyMatchConfig(configured []interface{}) *compute.Security
 	}
 }
 
+func expandSecurityPolicyMatchExpr(expr []interface{}) *compute.Expr {
+	if len(expr) == 0 || expr[0] == nil {
+		return nil
+	}
+
+	data := expr[0].(map[string]interface{})
+	return &compute.Expr{
+		Expression: data["expression"].(string),
+		// These fields are not yet supported  (Issue terraform-providers/terraform-provider-google#4497: mbang)
+		// Title:       data["title"].(string),
+		// Description: data["description"].(string),
+		// Location:    data["location"].(string),
+	}
+}
+
 func flattenSecurityPolicyRules(rules []*compute.SecurityPolicyRule) []map[string]interface{} {
 	rulesSchema := make([]map[string]interface{}, 0, len(rules))
 	for _, rule := range rules {
@@ -352,21 +395,54 @@ func flattenSecurityPolicyRules(rules []*compute.SecurityPolicyRule) []map[strin
 			"priority":    rule.Priority,
 			"action":      rule.Action,
 			"preview":     rule.Preview,
-			"match": []map[string]interface{}{
-				{
-					"versioned_expr": rule.Match.VersionedExpr,
-					"config": []map[string]interface{}{
-						{
-							"src_ip_ranges": schema.NewSet(schema.HashString, convertStringArrToInterface(rule.Match.Config.SrcIpRanges)),
-						},
-					},
-				},
-			},
+			"match":       flattenMatch(rule.Match),
 		}
 
 		rulesSchema = append(rulesSchema, data)
 	}
 	return rulesSchema
+}
+
+func flattenMatch(match *compute.SecurityPolicyRuleMatcher) []map[string]interface{} {
+	if match == nil {
+		return nil
+	}
+
+	data := map[string]interface{}{
+		"versioned_expr": match.VersionedExpr,
+		"config":         flattenMatchConfig(match.Config),
+		"expr":           flattenMatchExpr(match),
+	}
+
+	return []map[string]interface{}{data}
+}
+
+func flattenMatchConfig(conf *compute.SecurityPolicyRuleMatcherConfig) []map[string]interface{} {
+	if conf == nil {
+		return nil
+	}
+
+	data := map[string]interface{}{
+		"src_ip_ranges": schema.NewSet(schema.HashString, convertStringArrToInterface(conf.SrcIpRanges)),
+	}
+
+	return []map[string]interface{}{data}
+}
+
+func flattenMatchExpr(match *compute.SecurityPolicyRuleMatcher) []map[string]interface{} {
+	if match.Expr == nil {
+		return nil
+	}
+
+	data := map[string]interface{}{
+		"expression": match.Expr.Expression,
+		// These fields are not yet supported (Issue terraform-providers/terraform-provider-google#4497: mbang)
+		// "title":       match.Expr.Title,
+		// "description": match.Expr.Description,
+		// "location":    match.Expr.Location,
+	}
+
+	return []map[string]interface{}{data}
 }
 
 func resourceSecurityPolicyStateImporter(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
