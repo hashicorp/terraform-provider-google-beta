@@ -53,6 +53,28 @@ func TestAccComputeSecurityPolicy_withRule(t *testing.T) {
 	})
 }
 
+func TestAccComputeSecurityPolicy_withRuleExpr(t *testing.T) {
+	t.Parallel()
+
+	spName := fmt.Sprintf("tf-test-%s", acctest.RandString(10))
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckComputeSecurityPolicyDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeSecurityPolicy_withRuleExpr(spName),
+			},
+			{
+				ResourceName:      "google_compute_security_policy.policy",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
 func TestAccComputeSecurityPolicy_update(t *testing.T) {
 	t.Parallel()
 
@@ -197,6 +219,40 @@ resource "google_compute_security_policy" "policy" {
     description = "updated description"
     preview     = false
   }
+}
+`, spName)
+}
+
+func testAccComputeSecurityPolicy_withRuleExpr(spName string) string {
+	return fmt.Sprintf(`
+resource "google_compute_security_policy" "policy" {
+	name = "%s"
+
+	rule {
+		action   = "allow"
+		priority = "2147483647"
+		match {
+			versioned_expr = "SRC_IPS_V1"
+			config {
+				src_ip_ranges = ["*"]
+			}
+		}
+		description = "default rule"
+	}
+
+	rule {
+		action   = "allow"
+		priority = "2000"
+		match {
+			expr {
+				// These fields are not yet supported (Issue terraform-providers/terraform-provider-google#4497: mbang)
+				// title = "Has User"
+				// description = "Determines whether the request has a user account"
+				expression = "evaluatePreconfiguredExpr('xss-canary')"
+			}
+		}
+		preview = true
+	}
 }
 `, spName)
 }
