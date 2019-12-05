@@ -1,4 +1,48 @@
-## 3.0.1 (Unreleased)
+## 3.1.0 (Unreleased)
+
+BREAKING CHANGES:
+* compute: field `peer_ip_address` in `google_compute_router_peer` is now required, to match the API behavior. ([#1396](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1396))
+
+FEATURES:
+* **New Resource:** `google_billing_budget` ([#1428](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1428))
+* **New Resource:** `google_cloud_tasks_queue` ([#1369](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1369))
+* **New Resource:** `google_organization_iam_audit_config` ([#1427](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1427))
+
+IMPROVEMENTS:
+* accesscontextmanager: added support for `requireAdminApproval` and `requireCorpOwned` in `google_access_context_manager_access_level`'s `devicePolicy`. ([#1403](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1403))
+* all: added retries for timeouts while fetching operations ([#1356](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1356))
+* cloudbuild: Added build timeout to `google_cloudbuild_trigger` ([#1404](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1404))
+* cloudresourcemanager: added support for importing `google_folder` in the form of the bare folder id, rather than requiring `folders/{bare_id}` ([#1430](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1430))
+* compute: Updated default timeouts on `google_compute_project_metadata_item`. ([#1436](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1436))
+* compute: `google_compute_disk` `disk_encryption_key.raw_key` is now sensitive ([#1445](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1445))
+* compute: `google_compute_disk` `disk_encryption_key.raw_key` is now sensitive ([#1452](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1452))
+* compute: `google_compute_network_peering` resource can now be imported ([#1439](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1439))
+* compute: computed attribute `management_type` in `google_compute_router_peer` is now available. ([#1396](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1396))
+* compute: field `network` can now be specified on `google_compute_region_backend_service`, which allows internal load balancers to target the non-primary interface of an instance. ([#1418](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1418))
+* container: Added support for `peering_name` in `google_container_cluster.private_cluster_config`. ([#1438](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1438))
+* container: added `auto_provisioning_defaults` to `google_container_cluster.cluster_autoscaling` ([#1434](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1434))
+* container: added `upgrade_settings` support  to `google_container_node_pool` ([#1400](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1400))
+* container: increased timeouts on `google_container_cluster` and `google_container_node_pool` ([#1386](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1386))
+* datafusion: Added `private_instance` and `network_config` fields to `google_data_fusion_instance` ([#1411](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1411))
+* kms: enabled use of `user_project_override` for the `kms_crypto_key` resource ([#1422](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1422))
+* kms: enabled use of `user_project_override` for the `kms_secret_ciphertext` data source ([#1433](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1433))
+* sql: added `root_password` field to `google_sql_database_instance` resource ([#1432](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1432))
+
+BUG FIXES:
+* bigquery: fixed an issue where bigquery table id formats from the `2.X` series caused an error at plan time ([#1448](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1448))
+* cloudbuild: Fixed incorrect dependency between `trigger_template` and `github` in `google_cloud_build_trigger`. ([#1410](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1410))
+* cloudfunctions: Fixed inability to set `google_cloud_functions_function` update timeout. ([#1447](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1447))
+* cloudrun: Wait for the cloudrun resource to reach a ready state before returning success. ([#1409](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1409))
+* compute: `google_compute_disk` `disk_encryption_key.raw_key` is now sensitive ([#1453](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1453))
+* compute: `self_link` in several datasources will now error on invalid values instead of crashing ([#1373](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1373))
+* compute: field `advertised_ip_ranges` in `google_compute_router_peer` can now be updated without recreating the resource. ([#1396](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1396))
+* compute: marked `min_cpu_platform` on `google_compute_instance` as computed so if it is not specified it will not cause diffs ([#1429](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1429))
+* dataproc: Changed default for `google_dataproc_autoscaling_policy` `secondary_worker_config.min_instances` from 2 to 0. ([#1408](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1408))
+* dns: Fixed bug causing `google_dns_managed_zone` datasource to always return a 404 ([#1405](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1405))
+* dns: Fixed issue causing `google_dns_record_set` deletion to fail when the managed zone ceased to exist before the deletion event. ([#1446](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1446))
+* iam: disallowed `deleted:` principals in IAM resources ([#1417](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1417))
+* sql: added retries to `google_sql_user` create and update to reduce flakiness ([#1399](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1399))
+
 ## 3.0.0 (December 04, 2019)
 
 NOTES:
