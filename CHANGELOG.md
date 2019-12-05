@@ -1,4 +1,4 @@
-## 3.1.0 (Unreleased)
+## 3.1.0 (December 05, 2019)
 
 BREAKING CHANGES:
 * compute: field `peer_ip_address` in `google_compute_router_peer` is now required, to match the API behavior. ([#1396](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1396))
@@ -714,8 +714,8 @@ BACKWARDS INCOMPATIBILITIES:
 * accesscontextmanager: `google_access_context_manager_service_perimeter` `unrestricted_services` field was removed based on a removal in the underlying API. ([#576](https://github.com/terraform-providers/terraform-provider-google-beta/issues/576))
 
 FEATURES:
-* **New Resource**: `google_compute_backend_bucket_signed_url_key` is now available. [GH-530]
-* **New Resource**: `google_compute_backend_service_signed_url_key` is now available. [GH-577]
+* **New Resource**: `google_compute_backend_bucket_signed_url_key` is now available. ([#530](https://github.com/terraform-providers/terraform-provider-google-beta/issues/530))
+* **New Resource**: `google_compute_backend_service_signed_url_key` is now available. ([#577](https://github.com/terraform-providers/terraform-provider-google-beta/issues/577))
 * **New Datasource**: `google_service_account_access_token` is now available. ([#575](https://github.com/terraform-providers/terraform-provider-google-beta/issues/575))
 
 ENHANCEMENTS:
