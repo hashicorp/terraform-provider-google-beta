@@ -121,7 +121,10 @@ func IapAppEngineServiceIdParseFunc(d *schema.ResourceData, config *Config) erro
 }
 
 func (u *IapAppEngineServiceIamUpdater) GetResourceIamPolicy() (*cloudresourcemanager.Policy, error) {
-	url := u.qualifyAppEngineServiceUrl("getIamPolicy")
+	url, err := u.qualifyAppEngineServiceUrl("getIamPolicy")
+	if err != nil {
+		return nil, err
+	}
 
 	project, err := getProject(u.d, u.Config)
 	if err != nil {
@@ -152,7 +155,10 @@ func (u *IapAppEngineServiceIamUpdater) SetResourceIamPolicy(policy *cloudresour
 	obj := make(map[string]interface{})
 	obj["policy"] = json
 
-	url := u.qualifyAppEngineServiceUrl("setIamPolicy")
+	url, err := u.qualifyAppEngineServiceUrl("setIamPolicy")
+	if err != nil {
+		return err
+	}
 
 	project, err := getProject(u.d, u.Config)
 	if err != nil {
@@ -167,8 +173,13 @@ func (u *IapAppEngineServiceIamUpdater) SetResourceIamPolicy(policy *cloudresour
 	return nil
 }
 
-func (u *IapAppEngineServiceIamUpdater) qualifyAppEngineServiceUrl(methodIdentifier string) string {
-	return fmt.Sprintf("https://iap.googleapis.com/v1/%s:%s", fmt.Sprintf("projects/%s/iap_web/appengine-%s/services/%s", u.project, u.appId, u.service), methodIdentifier)
+func (u *IapAppEngineServiceIamUpdater) qualifyAppEngineServiceUrl(methodIdentifier string) (string, error) {
+	urlTemplate := fmt.Sprintf("{{IapBasePath}}%s:%s", fmt.Sprintf("projects/%s/iap_web/appengine-%s/services/%s", u.project, u.appId, u.service), methodIdentifier)
+	url, err := replaceVars(u.d, u.Config, urlTemplate)
+	if err != nil {
+		return "", err
+	}
+	return url, nil
 }
 
 func (u *IapAppEngineServiceIamUpdater) GetResourceId() string {

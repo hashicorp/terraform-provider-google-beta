@@ -21,20 +21,20 @@ import (
 	"google.golang.org/api/cloudresourcemanager/v1"
 )
 
-var ComputeInstanceIamSchema = map[string]*schema.Schema{
+var CloudRunServiceIamSchema = map[string]*schema.Schema{
 	"project": {
 		Type:     schema.TypeString,
 		Computed: true,
 		Optional: true,
 		ForceNew: true,
 	},
-	"zone": {
+	"location": {
 		Type:     schema.TypeString,
 		Computed: true,
 		Optional: true,
 		ForceNew: true,
 	},
-	"instance_name": {
+	"service": {
 		Type:             schema.TypeString,
 		Required:         true,
 		ForceNew:         true,
@@ -42,15 +42,15 @@ var ComputeInstanceIamSchema = map[string]*schema.Schema{
 	},
 }
 
-type ComputeInstanceIamUpdater struct {
-	project      string
-	zone         string
-	instanceName string
-	d            *schema.ResourceData
-	Config       *Config
+type CloudRunServiceIamUpdater struct {
+	project  string
+	location string
+	service  string
+	d        *schema.ResourceData
+	Config   *Config
 }
 
-func ComputeInstanceIamUpdaterProducer(d *schema.ResourceData, config *Config) (ResourceIamUpdater, error) {
+func CloudRunServiceIamUpdaterProducer(d *schema.ResourceData, config *Config) (ResourceIamUpdater, error) {
 	values := make(map[string]string)
 
 	project, err := getProject(d, config)
@@ -58,17 +58,17 @@ func ComputeInstanceIamUpdaterProducer(d *schema.ResourceData, config *Config) (
 		return nil, err
 	}
 	values["project"] = project
-	zone, err := getZone(d, config)
+	location, err := getLocation(d, config)
 	if err != nil {
 		return nil, err
 	}
-	values["zone"] = zone
-	if v, ok := d.GetOk("instance_name"); ok {
-		values["instance_name"] = v.(string)
+	values["location"] = location
+	if v, ok := d.GetOk("service"); ok {
+		values["service"] = v.(string)
 	}
 
 	// We may have gotten either a long or short name, so attempt to parse long name if possible
-	m, err := getImportIdQualifiers([]string{"projects/(?P<project>[^/]+)/zones/(?P<zone>[^/]+)/instances/(?P<instance_name>[^/]+)", "(?P<project>[^/]+)/(?P<zone>[^/]+)/(?P<instance_name>[^/]+)", "(?P<zone>[^/]+)/(?P<instance_name>[^/]+)", "(?P<instance_name>[^/]+)"}, d, config, d.Get("instance_name").(string))
+	m, err := getImportIdQualifiers([]string{"projects/(?P<project>[^/]+)/locations/(?P<location>[^/]+)/services/(?P<service>[^/]+)", "(?P<project>[^/]+)/(?P<location>[^/]+)/(?P<service>[^/]+)", "(?P<location>[^/]+)/(?P<service>[^/]+)", "(?P<service>[^/]+)"}, d, config, d.Get("service").(string))
 	if err != nil {
 		return nil, err
 	}
@@ -77,22 +77,22 @@ func ComputeInstanceIamUpdaterProducer(d *schema.ResourceData, config *Config) (
 		values[k] = v
 	}
 
-	u := &ComputeInstanceIamUpdater{
-		project:      values["project"],
-		zone:         values["zone"],
-		instanceName: values["instance_name"],
-		d:            d,
-		Config:       config,
+	u := &CloudRunServiceIamUpdater{
+		project:  values["project"],
+		location: values["location"],
+		service:  values["service"],
+		d:        d,
+		Config:   config,
 	}
 
 	d.Set("project", u.project)
-	d.Set("zone", u.zone)
-	d.Set("instance_name", u.GetResourceId())
+	d.Set("location", u.location)
+	d.Set("service", u.GetResourceId())
 
 	return u, nil
 }
 
-func ComputeInstanceIdParseFunc(d *schema.ResourceData, config *Config) error {
+func CloudRunServiceIdParseFunc(d *schema.ResourceData, config *Config) error {
 	values := make(map[string]string)
 
 	project, err := getProject(d, config)
@@ -100,13 +100,13 @@ func ComputeInstanceIdParseFunc(d *schema.ResourceData, config *Config) error {
 		return err
 	}
 	values["project"] = project
-	zone, err := getZone(d, config)
+	location, err := getLocation(d, config)
 	if err != nil {
 		return err
 	}
-	values["zone"] = zone
+	values["location"] = location
 
-	m, err := getImportIdQualifiers([]string{"projects/(?P<project>[^/]+)/zones/(?P<zone>[^/]+)/instances/(?P<instance_name>[^/]+)", "(?P<project>[^/]+)/(?P<zone>[^/]+)/(?P<instance_name>[^/]+)", "(?P<zone>[^/]+)/(?P<instance_name>[^/]+)", "(?P<instance_name>[^/]+)"}, d, config, d.Id())
+	m, err := getImportIdQualifiers([]string{"projects/(?P<project>[^/]+)/locations/(?P<location>[^/]+)/services/(?P<service>[^/]+)", "(?P<project>[^/]+)/(?P<location>[^/]+)/(?P<service>[^/]+)", "(?P<location>[^/]+)/(?P<service>[^/]+)", "(?P<service>[^/]+)"}, d, config, d.Id())
 	if err != nil {
 		return err
 	}
@@ -115,20 +115,20 @@ func ComputeInstanceIdParseFunc(d *schema.ResourceData, config *Config) error {
 		values[k] = v
 	}
 
-	u := &ComputeInstanceIamUpdater{
-		project:      values["project"],
-		zone:         values["zone"],
-		instanceName: values["instance_name"],
-		d:            d,
-		Config:       config,
+	u := &CloudRunServiceIamUpdater{
+		project:  values["project"],
+		location: values["location"],
+		service:  values["service"],
+		d:        d,
+		Config:   config,
 	}
-	d.Set("instance_name", u.GetResourceId())
+	d.Set("service", u.GetResourceId())
 	d.SetId(u.GetResourceId())
 	return nil
 }
 
-func (u *ComputeInstanceIamUpdater) GetResourceIamPolicy() (*cloudresourcemanager.Policy, error) {
-	url, err := u.qualifyInstanceUrl("getIamPolicy")
+func (u *CloudRunServiceIamUpdater) GetResourceIamPolicy() (*cloudresourcemanager.Policy, error) {
+	url, err := u.qualifyServiceUrl("getIamPolicy")
 	if err != nil {
 		return nil, err
 	}
@@ -138,10 +138,6 @@ func (u *ComputeInstanceIamUpdater) GetResourceIamPolicy() (*cloudresourcemanage
 		return nil, err
 	}
 	var obj map[string]interface{}
-	url, err = addQueryParams(url, map[string]string{"optionsRequestedPolicyVersion": fmt.Sprintf("%d", iamPolicyVersion)})
-	if err != nil {
-		return nil, err
-	}
 
 	policy, err := sendRequest(u.Config, "GET", project, url, obj)
 	if err != nil {
@@ -157,7 +153,7 @@ func (u *ComputeInstanceIamUpdater) GetResourceIamPolicy() (*cloudresourcemanage
 	return out, nil
 }
 
-func (u *ComputeInstanceIamUpdater) SetResourceIamPolicy(policy *cloudresourcemanager.Policy) error {
+func (u *CloudRunServiceIamUpdater) SetResourceIamPolicy(policy *cloudresourcemanager.Policy) error {
 	json, err := ConvertToMap(policy)
 	if err != nil {
 		return err
@@ -166,7 +162,7 @@ func (u *ComputeInstanceIamUpdater) SetResourceIamPolicy(policy *cloudresourcema
 	obj := make(map[string]interface{})
 	obj["policy"] = json
 
-	url, err := u.qualifyInstanceUrl("setIamPolicy")
+	url, err := u.qualifyServiceUrl("setIamPolicy")
 	if err != nil {
 		return err
 	}
@@ -184,8 +180,8 @@ func (u *ComputeInstanceIamUpdater) SetResourceIamPolicy(policy *cloudresourcema
 	return nil
 }
 
-func (u *ComputeInstanceIamUpdater) qualifyInstanceUrl(methodIdentifier string) (string, error) {
-	urlTemplate := fmt.Sprintf("{{ComputeBasePath}}%s/%s", fmt.Sprintf("projects/%s/zones/%s/instances/%s", u.project, u.zone, u.instanceName), methodIdentifier)
+func (u *CloudRunServiceIamUpdater) qualifyServiceUrl(methodIdentifier string) (string, error) {
+	urlTemplate := fmt.Sprintf("{{CloudRunBasePath}}%s:%s", fmt.Sprintf("v1/projects/%s/locations/%s/services/%s", u.project, u.location, u.service), methodIdentifier)
 	url, err := replaceVars(u.d, u.Config, urlTemplate)
 	if err != nil {
 		return "", err
@@ -193,14 +189,14 @@ func (u *ComputeInstanceIamUpdater) qualifyInstanceUrl(methodIdentifier string) 
 	return url, nil
 }
 
-func (u *ComputeInstanceIamUpdater) GetResourceId() string {
-	return fmt.Sprintf("projects/%s/zones/%s/instances/%s", u.project, u.zone, u.instanceName)
+func (u *CloudRunServiceIamUpdater) GetResourceId() string {
+	return fmt.Sprintf("v1/projects/%s/locations/%s/services/%s", u.project, u.location, u.service)
 }
 
-func (u *ComputeInstanceIamUpdater) GetMutexKey() string {
-	return fmt.Sprintf("iam-compute-instance-%s", u.GetResourceId())
+func (u *CloudRunServiceIamUpdater) GetMutexKey() string {
+	return fmt.Sprintf("iam-cloudrun-service-%s", u.GetResourceId())
 }
 
-func (u *ComputeInstanceIamUpdater) DescribeResource() string {
-	return fmt.Sprintf("compute instance %q", u.GetResourceId())
+func (u *CloudRunServiceIamUpdater) DescribeResource() string {
+	return fmt.Sprintf("cloudrun service %q", u.GetResourceId())
 }
