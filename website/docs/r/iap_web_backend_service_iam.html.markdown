@@ -37,18 +37,18 @@ Three different resources help you manage your IAM policy for Iap WebBackendServ
 
 ```hcl
 data "google_iam_policy" "admin" {
-	binding {
-		role = "roles/iap.httpsResourceAccessor"
-		members = [
-			"user:jane@example.com",
-		]
-	}
+  binding {
+    role = "roles/iap.httpsResourceAccessor"
+    members = [
+      "user:jane@example.com",
+    ]
+  }
 }
 
 resource "google_iap_web_backend_service_iam_policy" "editor" {
-	project = "${google_compute_backend_service.default.project}"
-	web_backend_service = "${google_compute_backend_service.default.name}"
-	policy_data = "${data.google_iam_policy.admin.policy_data}"
+  project = "${google_compute_backend_service.default.project}"
+  web_backend_service = "${google_compute_backend_service.default.name}"
+  policy_data = "${data.google_iam_policy.admin.policy_data}"
 }
 ```
 
@@ -71,8 +71,8 @@ data "google_iam_policy" "admin" {
 }
 
 resource "google_iap_web_backend_service_iam_policy" "editor" {
-	project = "${google_compute_backend_service.default.project}"
-	web_backend_service = "${google_compute_backend_service.default.name}"
+  project = "${google_compute_backend_service.default.project}"
+  web_backend_service = "${google_compute_backend_service.default.name}"
   policy_data = "${data.google_iam_policy.admin.policy_data}"
 }
 ```
@@ -80,12 +80,12 @@ resource "google_iap_web_backend_service_iam_policy" "editor" {
 
 ```hcl
 resource "google_iap_web_backend_service_iam_binding" "editor" {
-	project = "${google_compute_backend_service.default.project}"
-	web_backend_service = "${google_compute_backend_service.default.name}"
-	role = "roles/iap.httpsResourceAccessor"
-	members = [
-		"user:jane@example.com",
-	]
+  project = "${google_compute_backend_service.default.project}"
+  web_backend_service = "${google_compute_backend_service.default.name}"
+  role = "roles/iap.httpsResourceAccessor"
+  members = [
+    "user:jane@example.com",
+  ]
 }
 ```
 
@@ -93,8 +93,8 @@ With IAM Conditions ([beta](https://terraform.io/docs/providers/google/provider_
 
 ```hcl
 resource "google_iap_web_backend_service_iam_binding" "editor" {
-	project = "${google_compute_backend_service.default.project}"
-	web_backend_service = "${google_compute_backend_service.default.name}"
+  project = "${google_compute_backend_service.default.project}"
+  web_backend_service = "${google_compute_backend_service.default.name}"
   role = "roles/iap.httpsResourceAccessor"
   members = [
     "user:jane@example.com",
@@ -111,10 +111,10 @@ resource "google_iap_web_backend_service_iam_binding" "editor" {
 
 ```hcl
 resource "google_iap_web_backend_service_iam_member" "editor" {
-	project = "${google_compute_backend_service.default.project}"
-	web_backend_service = "${google_compute_backend_service.default.name}"
-	role = "roles/iap.httpsResourceAccessor"
-	member = "user:jane@example.com"
+  project = "${google_compute_backend_service.default.project}"
+  web_backend_service = "${google_compute_backend_service.default.name}"
+  role = "roles/iap.httpsResourceAccessor"
+  member = "user:jane@example.com"
 }
 ```
 
@@ -122,8 +122,8 @@ With IAM Conditions ([beta](https://terraform.io/docs/providers/google/provider_
 
 ```hcl
 resource "google_iap_web_backend_service_iam_member" "editor" {
-	project = "${google_compute_backend_service.default.project}"
-	web_backend_service = "${google_compute_backend_service.default.name}"
+  project = "${google_compute_backend_service.default.project}"
+  web_backend_service = "${google_compute_backend_service.default.name}"
   role = "roles/iap.httpsResourceAccessor"
   member = "user:jane@example.com"
 
