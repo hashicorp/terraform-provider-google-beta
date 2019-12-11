@@ -34,8 +34,6 @@ continue to poll unhealthy instances. If an instance later responds
 successfully to some number of consecutive probes, it is marked
 healthy again and can receive new connections.
 
-~> **Warning:** This resource is in beta, and should be used with the terraform-provider-google-beta provider.
-See [Provider Versions](https://terraform.io/docs/providers/google/guides/provider_versions.html) for more details on beta resources.
 
 To get more information about RegionHealthCheck, see:
 
@@ -53,7 +51,6 @@ To get more information about RegionHealthCheck, see:
 
 ```hcl
 resource "google_compute_region_health_check" "tcp-region-health-check" {
-  provider = google-beta
   name     = "tcp-region-health-check"
 
   timeout_sec        = 1
@@ -74,7 +71,6 @@ resource "google_compute_region_health_check" "tcp-region-health-check" {
 
 ```hcl
 resource "google_compute_region_health_check" "tcp-region-health-check" {
-  provider    = google-beta
   name        = "tcp-region-health-check"
   description = "Health check via tcp"
 
@@ -102,7 +98,6 @@ resource "google_compute_region_health_check" "tcp-region-health-check" {
 
 ```hcl
 resource "google_compute_region_health_check" "ssl-region-health-check" {
-  provider = google-beta
   name     = "ssl-region-health-check"
 
   timeout_sec        = 1
@@ -123,7 +118,6 @@ resource "google_compute_region_health_check" "ssl-region-health-check" {
 
 ```hcl
 resource "google_compute_region_health_check" "ssl-region-health-check" {
-  provider    = google-beta
   name        = "ssl-region-health-check"
   description = "Health check via ssl"
 
@@ -151,7 +145,6 @@ resource "google_compute_region_health_check" "ssl-region-health-check" {
 
 ```hcl
 resource "google_compute_region_health_check" "http-region-health-check" {
-  provider = google-beta
   name     = "http-region-health-check"
 
   timeout_sec        = 1
@@ -172,7 +165,6 @@ resource "google_compute_region_health_check" "http-region-health-check" {
 
 ```hcl
 resource "google_compute_region_health_check" "http-region-health-check" {
-  provider    = google-beta
   name        = "http-region-health-check"
   description = "Health check via http"
 
@@ -201,7 +193,6 @@ resource "google_compute_region_health_check" "http-region-health-check" {
 
 ```hcl
 resource "google_compute_region_health_check" "https-region-health-check" {
-  provider = google-beta
   name     = "https-region-health-check"
 
   timeout_sec        = 1
@@ -222,7 +213,6 @@ resource "google_compute_region_health_check" "https-region-health-check" {
 
 ```hcl
 resource "google_compute_region_health_check" "https-region-health-check" {
-  provider    = google-beta
   name        = "https-region-health-check"
   description = "Health check via https"
 
@@ -251,7 +241,6 @@ resource "google_compute_region_health_check" "https-region-health-check" {
 
 ```hcl
 resource "google_compute_region_health_check" "http2-region-health-check" {
-  provider = google-beta
   name     = "http2-region-health-check"
 
   timeout_sec        = 1
@@ -272,7 +261,6 @@ resource "google_compute_region_health_check" "http2-region-health-check" {
 
 ```hcl
 resource "google_compute_region_health_check" "http2-region-health-check" {
-  provider    = google-beta
   name        = "http2-region-health-check"
   description = "Health check via http2"
 
@@ -620,10 +608,10 @@ This resource provides the following
 RegionHealthCheck can be imported using any of these accepted formats:
 
 ```
-$ terraform import -provider=google-beta google_compute_region_health_check.default projects/{{project}}/regions/{{region}}/healthChecks/{{name}}
-$ terraform import -provider=google-beta google_compute_region_health_check.default {{project}}/{{region}}/{{name}}
-$ terraform import -provider=google-beta google_compute_region_health_check.default {{region}}/{{name}}
-$ terraform import -provider=google-beta google_compute_region_health_check.default {{name}}
+$ terraform import google_compute_region_health_check.default projects/{{project}}/regions/{{region}}/healthChecks/{{name}}
+$ terraform import google_compute_region_health_check.default {{project}}/{{region}}/{{name}}
+$ terraform import google_compute_region_health_check.default {{region}}/{{name}}
+$ terraform import google_compute_region_health_check.default {{name}}
 ```
 
 -> If you're importing a resource with beta features, make sure to include `-provider=google-beta`

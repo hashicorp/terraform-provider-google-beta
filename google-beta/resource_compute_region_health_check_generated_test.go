@@ -33,11 +33,16 @@ func TestAccComputeRegionHealthCheck_regionHealthCheckTcpExample(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProvidersOiCS,
+		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckComputeRegionHealthCheckDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccComputeRegionHealthCheck_regionHealthCheckTcpExample(context),
+			},
+			{
+				ResourceName:      "google_compute_region_health_check.tcp-region-health-check",
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -46,7 +51,6 @@ func TestAccComputeRegionHealthCheck_regionHealthCheckTcpExample(t *testing.T) {
 func testAccComputeRegionHealthCheck_regionHealthCheckTcpExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_compute_region_health_check" "tcp-region-health-check" {
-  provider = google-beta
   name     = "tcp-region-health-check%{random_suffix}"
 
   timeout_sec        = 1
@@ -68,11 +72,16 @@ func TestAccComputeRegionHealthCheck_regionHealthCheckTcpFullExample(t *testing.
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProvidersOiCS,
+		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckComputeRegionHealthCheckDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccComputeRegionHealthCheck_regionHealthCheckTcpFullExample(context),
+			},
+			{
+				ResourceName:      "google_compute_region_health_check.tcp-region-health-check",
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -81,7 +90,6 @@ func TestAccComputeRegionHealthCheck_regionHealthCheckTcpFullExample(t *testing.
 func testAccComputeRegionHealthCheck_regionHealthCheckTcpFullExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_compute_region_health_check" "tcp-region-health-check" {
-  provider    = google-beta
   name        = "tcp-region-health-check%{random_suffix}"
   description = "Health check via tcp"
 
@@ -110,11 +118,16 @@ func TestAccComputeRegionHealthCheck_regionHealthCheckSslExample(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProvidersOiCS,
+		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckComputeRegionHealthCheckDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccComputeRegionHealthCheck_regionHealthCheckSslExample(context),
+			},
+			{
+				ResourceName:      "google_compute_region_health_check.ssl-region-health-check",
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -123,7 +136,6 @@ func TestAccComputeRegionHealthCheck_regionHealthCheckSslExample(t *testing.T) {
 func testAccComputeRegionHealthCheck_regionHealthCheckSslExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_compute_region_health_check" "ssl-region-health-check" {
-  provider = google-beta
   name     = "ssl-region-health-check%{random_suffix}"
 
   timeout_sec        = 1
@@ -145,11 +157,16 @@ func TestAccComputeRegionHealthCheck_regionHealthCheckSslFullExample(t *testing.
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProvidersOiCS,
+		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckComputeRegionHealthCheckDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccComputeRegionHealthCheck_regionHealthCheckSslFullExample(context),
+			},
+			{
+				ResourceName:      "google_compute_region_health_check.ssl-region-health-check",
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -158,7 +175,6 @@ func TestAccComputeRegionHealthCheck_regionHealthCheckSslFullExample(t *testing.
 func testAccComputeRegionHealthCheck_regionHealthCheckSslFullExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_compute_region_health_check" "ssl-region-health-check" {
-  provider    = google-beta
   name        = "ssl-region-health-check%{random_suffix}"
   description = "Health check via ssl"
 
@@ -187,11 +203,16 @@ func TestAccComputeRegionHealthCheck_regionHealthCheckHttpExample(t *testing.T) 
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProvidersOiCS,
+		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckComputeRegionHealthCheckDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccComputeRegionHealthCheck_regionHealthCheckHttpExample(context),
+			},
+			{
+				ResourceName:      "google_compute_region_health_check.http-region-health-check",
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -200,7 +221,6 @@ func TestAccComputeRegionHealthCheck_regionHealthCheckHttpExample(t *testing.T) 
 func testAccComputeRegionHealthCheck_regionHealthCheckHttpExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_compute_region_health_check" "http-region-health-check" {
-  provider = google-beta
   name     = "http-region-health-check%{random_suffix}"
 
   timeout_sec        = 1
@@ -222,11 +242,16 @@ func TestAccComputeRegionHealthCheck_regionHealthCheckHttpFullExample(t *testing
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProvidersOiCS,
+		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckComputeRegionHealthCheckDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccComputeRegionHealthCheck_regionHealthCheckHttpFullExample(context),
+			},
+			{
+				ResourceName:      "google_compute_region_health_check.http-region-health-check",
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -235,7 +260,6 @@ func TestAccComputeRegionHealthCheck_regionHealthCheckHttpFullExample(t *testing
 func testAccComputeRegionHealthCheck_regionHealthCheckHttpFullExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_compute_region_health_check" "http-region-health-check" {
-  provider    = google-beta
   name        = "http-region-health-check%{random_suffix}"
   description = "Health check via http"
 
@@ -265,11 +289,16 @@ func TestAccComputeRegionHealthCheck_regionHealthCheckHttpsExample(t *testing.T)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProvidersOiCS,
+		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckComputeRegionHealthCheckDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccComputeRegionHealthCheck_regionHealthCheckHttpsExample(context),
+			},
+			{
+				ResourceName:      "google_compute_region_health_check.https-region-health-check",
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -278,7 +307,6 @@ func TestAccComputeRegionHealthCheck_regionHealthCheckHttpsExample(t *testing.T)
 func testAccComputeRegionHealthCheck_regionHealthCheckHttpsExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_compute_region_health_check" "https-region-health-check" {
-  provider = google-beta
   name     = "https-region-health-check%{random_suffix}"
 
   timeout_sec        = 1
@@ -300,11 +328,16 @@ func TestAccComputeRegionHealthCheck_regionHealthCheckHttpsFullExample(t *testin
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProvidersOiCS,
+		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckComputeRegionHealthCheckDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccComputeRegionHealthCheck_regionHealthCheckHttpsFullExample(context),
+			},
+			{
+				ResourceName:      "google_compute_region_health_check.https-region-health-check",
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -313,7 +346,6 @@ func TestAccComputeRegionHealthCheck_regionHealthCheckHttpsFullExample(t *testin
 func testAccComputeRegionHealthCheck_regionHealthCheckHttpsFullExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_compute_region_health_check" "https-region-health-check" {
-  provider    = google-beta
   name        = "https-region-health-check%{random_suffix}"
   description = "Health check via https"
 
@@ -343,11 +375,16 @@ func TestAccComputeRegionHealthCheck_regionHealthCheckHttp2Example(t *testing.T)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProvidersOiCS,
+		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckComputeRegionHealthCheckDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccComputeRegionHealthCheck_regionHealthCheckHttp2Example(context),
+			},
+			{
+				ResourceName:      "google_compute_region_health_check.http2-region-health-check",
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -356,7 +393,6 @@ func TestAccComputeRegionHealthCheck_regionHealthCheckHttp2Example(t *testing.T)
 func testAccComputeRegionHealthCheck_regionHealthCheckHttp2Example(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_compute_region_health_check" "http2-region-health-check" {
-  provider = google-beta
   name     = "http2-region-health-check%{random_suffix}"
 
   timeout_sec        = 1
@@ -378,11 +414,16 @@ func TestAccComputeRegionHealthCheck_regionHealthCheckHttp2FullExample(t *testin
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProvidersOiCS,
+		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckComputeRegionHealthCheckDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccComputeRegionHealthCheck_regionHealthCheckHttp2FullExample(context),
+			},
+			{
+				ResourceName:      "google_compute_region_health_check.http2-region-health-check",
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -391,7 +432,6 @@ func TestAccComputeRegionHealthCheck_regionHealthCheckHttp2FullExample(t *testin
 func testAccComputeRegionHealthCheck_regionHealthCheckHttp2FullExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_compute_region_health_check" "http2-region-health-check" {
-  provider    = google-beta
   name        = "http2-region-health-check%{random_suffix}"
   description = "Health check via http2"
 
