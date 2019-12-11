@@ -12,10 +12,12 @@ IMPROVEMENTS:
 * bigquery: Added KMS support to `google_bigquery_table` ([#1471](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1471))
 * cloudresourcemanager: Added `org_id` field to `google_organization` datasource to expose the raw organization id ([#1485](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1485))
 * cloudrun: Stopped requiring the root `metadata` block for `google_cloud_run_service`. ([#1478](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1478))
+* compute: added support for `expr` to `google_compute_security_policy.rule.match` ([#1465](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1465))
 * compute: added support for `path_rules` to `google_compute_region_url_map` ([#1489](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1489))
 * compute: added support for `path_rules` to `google_compute_url_map` ([#1483](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1483))
 * compute: added support for `route_rules` to `google_compute_region_url_map` ([#1493](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1493))
 * compute: added support for header actions and route rules to `google_compute_url_map` ([#1435](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1435))
+* dns: Added `visibility` field to `google_dns_managed_zone` data source ([#1462](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1462))
 * sourcerepo: added support for `pubsub_configs` to `google_sourcerepo_repository` ([#1455](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1455))
 
 BUG FIXES:
