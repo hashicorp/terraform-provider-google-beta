@@ -1,4 +1,28 @@
-## 3.1.1 (Unreleased)
+## 3.2.0 (Unreleased)
+
+DEPRECATIONS:
+* compute: deprecated `fingerprint` field in `google_compute_subnetwork`. Its value is now always `""`. ([#1482](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1482))
+
+FEATURES:
+* **New Data Source:** `data_source_google_bigquery_default_service_account` ([#1471](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1471))
+* **New Resource:** cloudrun: Added support for `google_cloud_run_service` IAM resources: `google_cloud_run_service_iam_policy`, `google_cloud_run_service_iam_binding`, `google_cloud_run_service_iam_member` ([#1456](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1456))
+
+IMPROVEMENTS:
+* all: Added `synchronous_timeout` to provider block to allow setting higher per-operation-poll timeouts. ([#1449](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1449))
+* bigquery: Add KMS support to `google_bigquery_table` ([#1471](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1471))
+* cloudresourcemanager: Added `org_id` field to `google_organization` datasource to expose the raw organization id ([#1485](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1485))
+* cloudrun: Stopped requiring the root `metadata` block for `google_cloud_run_service`. ([#1478](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1478))
+* compute: added support for `path_rules` to `google_compute_region_url_map` ([#1489](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1489))
+* compute: added support for `path_rules` to `google_compute_url_map` ([#1483](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1483))
+* compute: added support for `route_rules` to `google_compute_region_url_map` ([#1493](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1493))
+* compute: added support for header actions and route rules to `google_compute_url_map` ([#1435](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1435))
+* sourcerepo: added support for `pubsub_configs` to `google_sourcerepo_repository` ([#1455](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1455))
+
+BUG FIXES:
+* dns: fixed 503s caused by high numbers of `dns_record_set`s. ([#1477](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1477))
+* logging: updated `exponential_buckets.growth_factor` from integer to double. ([#1484](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1484))
+* storage: fixed bug where users without storage.objects.list permissions couldn't delete empty buckets ([#1443](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1443))
+
 ## 3.1.0 (December 05, 2019)
 
 BREAKING CHANGES:
