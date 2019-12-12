@@ -510,15 +510,77 @@ func resourceComputeSubnetworkUpdate(d *schema.ResourceData, meta interface{}) e
 
 		d.SetPartial("ip_cidr_range")
 	}
-	if d.HasChange("role") {
+	if d.HasChange("private_ip_google_access") {
+		obj := make(map[string]interface{})
+
+		privateIpGoogleAccessProp, err := expandComputeSubnetworkPrivateIpGoogleAccess(d.Get("private_ip_google_access"), d, config)
+		if err != nil {
+			return err
+		} else if v, ok := d.GetOkExists("private_ip_google_access"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, privateIpGoogleAccessProp)) {
+			obj["privateIpGoogleAccess"] = privateIpGoogleAccessProp
+		}
+
+		url, err := replaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/regions/{{region}}/subnetworks/{{name}}/setPrivateIpGoogleAccess")
+		if err != nil {
+			return err
+		}
+		res, err := sendRequestWithTimeout(config, "POST", project, url, obj, d.Timeout(schema.TimeoutUpdate))
+		if err != nil {
+			return fmt.Errorf("Error updating Subnetwork %q: %s", d.Id(), err)
+		}
+
+		err = computeOperationWaitTime(
+			config, res, project, "Updating Subnetwork",
+			int(d.Timeout(schema.TimeoutUpdate).Minutes()))
+		if err != nil {
+			return err
+		}
+
+		d.SetPartial("private_ip_google_access")
+	}
+	if d.HasChange("log_config") {
 		obj := make(map[string]interface{})
 
 		getUrl, err := replaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/regions/{{region}}/subnetworks/{{name}}")
 		if err != nil {
 			return err
 		}
+		getRes, err := sendRequest(config, "GET", project, getUrl, nil)
+		if err != nil {
+			return handleNotFoundError(err, d, fmt.Sprintf("ComputeSubnetwork %q", d.Id()))
+		}
 
-		project, err := getProject(d, config)
+		obj["fingerprint"] = getRes["fingerprint"]
+
+		logConfigProp, err := expandComputeSubnetworkLogConfig(d.Get("log_config"), d, config)
+		if err != nil {
+			return err
+		} else if v, ok := d.GetOkExists("log_config"); ok || !reflect.DeepEqual(v, logConfigProp) {
+			obj["logConfig"] = logConfigProp
+		}
+
+		url, err := replaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/regions/{{region}}/subnetworks/{{name}}")
+		if err != nil {
+			return err
+		}
+		res, err := sendRequestWithTimeout(config, "PATCH", project, url, obj, d.Timeout(schema.TimeoutUpdate))
+		if err != nil {
+			return fmt.Errorf("Error updating Subnetwork %q: %s", d.Id(), err)
+		}
+
+		err = computeOperationWaitTime(
+			config, res, project, "Updating Subnetwork",
+			int(d.Timeout(schema.TimeoutUpdate).Minutes()))
+		if err != nil {
+			return err
+		}
+
+		d.SetPartial("log_config")
+	}
+	if d.HasChange("role") {
+		obj := make(map[string]interface{})
+
+		getUrl, err := replaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/regions/{{region}}/subnetworks/{{name}}")
 		if err != nil {
 			return err
 		}
@@ -561,11 +623,6 @@ func resourceComputeSubnetworkUpdate(d *schema.ResourceData, meta interface{}) e
 		if err != nil {
 			return err
 		}
-
-		project, err := getProject(d, config)
-		if err != nil {
-			return err
-		}
 		getRes, err := sendRequest(config, "GET", project, getUrl, nil)
 		if err != nil {
 			return handleNotFoundError(err, d, fmt.Sprintf("ComputeSubnetwork %q", d.Id()))
@@ -597,78 +654,6 @@ func resourceComputeSubnetworkUpdate(d *schema.ResourceData, meta interface{}) e
 		}
 
 		d.SetPartial("secondary_ip_range")
-	}
-	if d.HasChange("private_ip_google_access") {
-		obj := make(map[string]interface{})
-
-		privateIpGoogleAccessProp, err := expandComputeSubnetworkPrivateIpGoogleAccess(d.Get("private_ip_google_access"), d, config)
-		if err != nil {
-			return err
-		} else if v, ok := d.GetOkExists("private_ip_google_access"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, privateIpGoogleAccessProp)) {
-			obj["privateIpGoogleAccess"] = privateIpGoogleAccessProp
-		}
-
-		url, err := replaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/regions/{{region}}/subnetworks/{{name}}/setPrivateIpGoogleAccess")
-		if err != nil {
-			return err
-		}
-		res, err := sendRequestWithTimeout(config, "POST", project, url, obj, d.Timeout(schema.TimeoutUpdate))
-		if err != nil {
-			return fmt.Errorf("Error updating Subnetwork %q: %s", d.Id(), err)
-		}
-
-		err = computeOperationWaitTime(
-			config, res, project, "Updating Subnetwork",
-			int(d.Timeout(schema.TimeoutUpdate).Minutes()))
-		if err != nil {
-			return err
-		}
-
-		d.SetPartial("private_ip_google_access")
-	}
-	if d.HasChange("log_config") {
-		obj := make(map[string]interface{})
-
-		getUrl, err := replaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/regions/{{region}}/subnetworks/{{name}}")
-		if err != nil {
-			return err
-		}
-
-		project, err := getProject(d, config)
-		if err != nil {
-			return err
-		}
-		getRes, err := sendRequest(config, "GET", project, getUrl, nil)
-		if err != nil {
-			return handleNotFoundError(err, d, fmt.Sprintf("ComputeSubnetwork %q", d.Id()))
-		}
-
-		obj["fingerprint"] = getRes["fingerprint"]
-
-		logConfigProp, err := expandComputeSubnetworkLogConfig(d.Get("log_config"), d, config)
-		if err != nil {
-			return err
-		} else if v, ok := d.GetOkExists("log_config"); ok || !reflect.DeepEqual(v, logConfigProp) {
-			obj["logConfig"] = logConfigProp
-		}
-
-		url, err := replaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/regions/{{region}}/subnetworks/{{name}}")
-		if err != nil {
-			return err
-		}
-		res, err := sendRequestWithTimeout(config, "PATCH", project, url, obj, d.Timeout(schema.TimeoutUpdate))
-		if err != nil {
-			return fmt.Errorf("Error updating Subnetwork %q: %s", d.Id(), err)
-		}
-
-		err = computeOperationWaitTime(
-			config, res, project, "Updating Subnetwork",
-			int(d.Timeout(schema.TimeoutUpdate).Minutes()))
-		if err != nil {
-			return err
-		}
-
-		d.SetPartial("log_config")
 	}
 
 	d.Partial(false)
