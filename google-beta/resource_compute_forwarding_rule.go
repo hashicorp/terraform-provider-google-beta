@@ -109,6 +109,12 @@ addressed to any ports to be forwarded to the backends configured
 with this forwarding rule. Used with backend service. Cannot be set
 if port or portRange are set.`,
 			},
+			"allow_global_access": {
+				Type:     schema.TypeBool,
+				Optional: true,
+				Description: `If true, clients can access ILB from all regions.
+Otherwise only allows from the local region the ILB is located at.`,
+			},
 			"backend_service": {
 				Type:             schema.TypeString,
 				Optional:         true,
@@ -365,6 +371,12 @@ func resourceComputeForwardingRuleCreate(d *schema.ResourceData, meta interface{
 	} else if v, ok := d.GetOkExists("target"); !isEmptyValue(reflect.ValueOf(targetProp)) && (ok || !reflect.DeepEqual(v, targetProp)) {
 		obj["target"] = targetProp
 	}
+	allowGlobalAccessProp, err := expandComputeForwardingRuleAllowGlobalAccess(d.Get("allow_global_access"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("allow_global_access"); ok || !reflect.DeepEqual(v, allowGlobalAccessProp) {
+		obj["allowGlobalAccess"] = allowGlobalAccessProp
+	}
 	labelsProp, err := expandComputeForwardingRuleLabels(d.Get("labels"), d, config)
 	if err != nil {
 		return err
@@ -532,6 +544,9 @@ func resourceComputeForwardingRuleRead(d *schema.ResourceData, meta interface{})
 	if err := d.Set("target", flattenComputeForwardingRuleTarget(res["target"], d)); err != nil {
 		return fmt.Errorf("Error reading ForwardingRule: %s", err)
 	}
+	if err := d.Set("allow_global_access", flattenComputeForwardingRuleAllowGlobalAccess(res["allowGlobalAccess"], d)); err != nil {
+		return fmt.Errorf("Error reading ForwardingRule: %s", err)
+	}
 	if err := d.Set("labels", flattenComputeForwardingRuleLabels(res["labels"], d)); err != nil {
 		return fmt.Errorf("Error reading ForwardingRule: %s", err)
 	}
@@ -597,6 +612,34 @@ func resourceComputeForwardingRuleUpdate(d *schema.ResourceData, meta interface{
 		}
 
 		d.SetPartial("target")
+	}
+	if d.HasChange("allow_global_access") {
+		obj := make(map[string]interface{})
+
+		allowGlobalAccessProp, err := expandComputeForwardingRuleAllowGlobalAccess(d.Get("allow_global_access"), d, config)
+		if err != nil {
+			return err
+		} else if v, ok := d.GetOkExists("allow_global_access"); ok || !reflect.DeepEqual(v, allowGlobalAccessProp) {
+			obj["allowGlobalAccess"] = allowGlobalAccessProp
+		}
+
+		url, err := replaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/regions/{{region}}/forwardingRules/{{name}}")
+		if err != nil {
+			return err
+		}
+		res, err := sendRequestWithTimeout(config, "PATCH", project, url, obj, d.Timeout(schema.TimeoutUpdate))
+		if err != nil {
+			return fmt.Errorf("Error updating ForwardingRule %q: %s", d.Id(), err)
+		}
+
+		err = computeOperationWaitTime(
+			config, res, project, "Updating ForwardingRule",
+			int(d.Timeout(schema.TimeoutUpdate).Minutes()))
+		if err != nil {
+			return err
+		}
+
+		d.SetPartial("allow_global_access")
 	}
 	if d.HasChange("labels") || d.HasChange("label_fingerprint") {
 		obj := make(map[string]interface{})
@@ -756,6 +799,10 @@ func flattenComputeForwardingRuleTarget(v interface{}, d *schema.ResourceData) i
 	return ConvertSelfLinkToV1(v.(string))
 }
 
+func flattenComputeForwardingRuleAllowGlobalAccess(v interface{}, d *schema.ResourceData) interface{} {
+	return v
+}
+
 func flattenComputeForwardingRuleLabels(v interface{}, d *schema.ResourceData) interface{} {
 	return v
 }
@@ -895,6 +942,10 @@ func expandComputeForwardingRuleTarget(v interface{}, d TerraformResourceData, c
 		return nil, err
 	}
 	return url + v.(string), nil
+}
+
+func expandComputeForwardingRuleAllowGlobalAccess(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
 }
 
 func expandComputeForwardingRuleLabels(v interface{}, d TerraformResourceData, config *Config) (map[string]string, error) {
