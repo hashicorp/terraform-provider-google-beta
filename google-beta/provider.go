@@ -513,8 +513,8 @@ func Provider() terraform.ResourceProvider {
 }
 
 // Generated resources: 104
-// Generated IAM resources: 42
-// Total generated resources: 146
+// Generated IAM resources: 45
+// Total generated resources: 149
 func ResourceMap() map[string]*schema.Resource {
 	resourceMap, _ := ResourceMapWithErrors()
 	return resourceMap
@@ -664,6 +664,9 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_spanner_instance":                          resourceSpannerInstance(),
 			"google_spanner_database":                          resourceSpannerDatabase(),
 			"google_sql_database":                              resourceSQLDatabase(),
+			"google_storage_bucket_iam_binding":                ResourceIamBinding(StorageBucketIamSchema, StorageBucketIamUpdaterProducer, StorageBucketIdParseFunc),
+			"google_storage_bucket_iam_member":                 ResourceIamMember(StorageBucketIamSchema, StorageBucketIamUpdaterProducer, StorageBucketIdParseFunc),
+			"google_storage_bucket_iam_policy":                 ResourceIamPolicy(StorageBucketIamSchema, StorageBucketIamUpdaterProducer, StorageBucketIdParseFunc),
 			"google_storage_bucket_access_control":             resourceStorageBucketAccessControl(),
 			"google_storage_object_access_control":             resourceStorageObjectAccessControl(),
 			"google_storage_default_object_access_control":     resourceStorageDefaultObjectAccessControl(),
@@ -784,17 +787,11 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_service_account_key":                   resourceGoogleServiceAccountKey(),
 			"google_storage_bucket":                        resourceStorageBucket(),
 			"google_storage_bucket_acl":                    resourceStorageBucketAcl(),
-			// Legacy roles such as roles/storage.legacyBucketReader are automatically added
-			// when creating a bucket. For this reason, it is better not to add the authoritative
-			// google_storage_bucket_iam_policy resource.
-			"google_storage_bucket_iam_binding": ResourceIamBinding(IamStorageBucketSchema, NewStorageBucketIamUpdater, StorageBucketIdParseFunc),
-			"google_storage_bucket_iam_member":  ResourceIamMember(IamStorageBucketSchema, NewStorageBucketIamUpdater, StorageBucketIdParseFunc),
-			"google_storage_bucket_iam_policy":  ResourceIamPolicy(IamStorageBucketSchema, NewStorageBucketIamUpdater, StorageBucketIdParseFunc),
-			"google_storage_bucket_object":      resourceStorageBucketObject(),
-			"google_storage_object_acl":         resourceStorageObjectAcl(),
-			"google_storage_default_object_acl": resourceStorageDefaultObjectAcl(),
-			"google_storage_notification":       resourceStorageNotification(),
-			"google_storage_transfer_job":       resourceStorageTransferJob(),
+			"google_storage_bucket_object":                 resourceStorageBucketObject(),
+			"google_storage_object_acl":                    resourceStorageObjectAcl(),
+			"google_storage_default_object_acl":            resourceStorageDefaultObjectAcl(),
+			"google_storage_notification":                  resourceStorageNotification(),
+			"google_storage_transfer_job":                  resourceStorageTransferJob(),
 		},
 	)
 }
