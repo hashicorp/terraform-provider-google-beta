@@ -206,14 +206,14 @@ resource "google_compute_forwarding_rule" "foobar" {
 func testAccComputeForwardingRule_mirror(backendName, healthchechName, ruleName string) string {
 	return fmt.Sprintf(`
 resource "google_compute_region_backend_service" "foobar-be" {
-	name        = "%s"
-	health_checks = [google_compute_health_check.foobar-hc.self_link]
+	name        	= "%s"
+	health_checks 	= [google_compute_health_check.foobar-hc.self_link]
 	}
 	
 	resource "google_compute_health_check" "foobar-hc" {
-	name        = "%s"
-	check_interval_sec = 1
-	timeout_sec        = 1
+	name        		= "%s"
+	check_interval_sec 	= 1
+	timeout_sec        	= 1
 	
 	tcp_health_check {
 		port = "80"
@@ -221,18 +221,13 @@ resource "google_compute_region_backend_service" "foobar-be" {
 }
 
 resource "google_compute_forwarding_rule" "foobar" {
-  description = "Resource created for Terraform acceptance testing"
-  ip_protocol = "TCP"
-  name        = "%s"
-  all_ports  = true
-  mirroring   = true
-  backend_service             = google_compute_region_backend_service.foobar-be.self_link
+  description 			= "Resource created for Terraform acceptance testing"
+  ip_protocol 			= "TCP"
+  name        			= "%s"
+  all_ports  			= true
+  mirroring_collector   = true
+  backend_service       = google_compute_region_backend_service.foobar-be.self_link
   load_balancing_scheme = "INTERNAL"
-  network               = "projects/delicate-pangolin-756230/global/networks/dev-host1-vpc"
-  subnetwork            = "projects/delicate-pangolin-756230/regions/us-central1/subnetworks/mirror"
-  labels = {
-    "foo" = "bar"
-  }
 }
 `, backendName, healthchechName, ruleName)
 }

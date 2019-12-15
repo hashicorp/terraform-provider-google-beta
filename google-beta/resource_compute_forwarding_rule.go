@@ -287,10 +287,13 @@ This field is only used for INTERNAL load balancing.`,
 				Computed: true,
 				ForceNew: true,
 			},
-			"mirroring": {
+			"mirroring_collector": {
 				Type:     schema.TypeBool,
 				Optional: true,
 				ForceNew: true,
+				Description: `For internal TCP/UDP load balancing (i.e. load balancing scheme is
+					INTERNAL and protocol is TCP/UDP), set this to true to allow mirrored packets
+					to be sent to the forwarder.`,
 			},
 			"self_link": {
 				Type:     schema.TypeString,
@@ -388,10 +391,10 @@ func resourceComputeForwardingRuleCreate(d *schema.ResourceData, meta interface{
 	} else if v, ok := d.GetOkExists("all_ports"); !isEmptyValue(reflect.ValueOf(allPortsProp)) && (ok || !reflect.DeepEqual(v, allPortsProp)) {
 		obj["allPorts"] = allPortsProp
 	}
-	mirroringProp, err := expandComputeForwardingRuleMirroring(d.Get("mirroring"), d, config)
+	mirroringProp, err := expandComputeForwardingRuleMirroring(d.Get("mirroring_collector"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("mirroring"); !isEmptyValue(reflect.ValueOf(mirroringProp)) && (ok || !reflect.DeepEqual(v, mirroringProp)) {
+	} else if v, ok := d.GetOkExists("mirroring_collector"); !isEmptyValue(reflect.ValueOf(mirroringProp)) && (ok || !reflect.DeepEqual(v, mirroringProp)) {
 		obj["isMirroringCollector"] = mirroringProp
 	}
 	networkTierProp, err := expandComputeForwardingRuleNetworkTier(d.Get("network_tier"), d, config)
@@ -552,7 +555,7 @@ func resourceComputeForwardingRuleRead(d *schema.ResourceData, meta interface{})
 	if err := d.Set("all_ports", flattenComputeForwardingRuleAllPorts(res["allPorts"], d)); err != nil {
 		return fmt.Errorf("Error reading ForwardingRule: %s", err)
 	}
-	if err := d.Set("mirroring", flattenComputeForwardingRuleMirroring(res["isMirroringCollector"], d)); err != nil {
+	if err := d.Set("mirroring_collector", flattenComputeForwardingRuleMirroring(res["isMirroringCollector"], d)); err != nil {
 		return fmt.Errorf("Error reading ForwardingRule: %s", err)
 	}
 	if err := d.Set("network_tier", flattenComputeForwardingRuleNetworkTier(res["networkTier"], d)); err != nil {
