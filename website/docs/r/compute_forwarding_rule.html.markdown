@@ -235,6 +235,12 @@ The following arguments are supported:
   with this forwarding rule. Used with backend service. Cannot be set
   if port or portRange are set.
 
+* `mirroring_collector` -
+  (Optional), [Beta](https://terraform.io/docs/providers/google/guides/provider_versions.html))
+  For internal TCP/UDP load balancing (i.e. load balancing scheme is
+  INTERNAL and protocol is TCP/UDP), set this to true to allow mirrored packets
+  to be sent to the forwarder.
+
 * `network_tier` -
   (Optional)
   The networking tier used for configuring this address. This field can
