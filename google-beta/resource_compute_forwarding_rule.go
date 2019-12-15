@@ -552,6 +552,9 @@ func resourceComputeForwardingRuleRead(d *schema.ResourceData, meta interface{})
 	if err := d.Set("all_ports", flattenComputeForwardingRuleAllPorts(res["allPorts"], d)); err != nil {
 		return fmt.Errorf("Error reading ForwardingRule: %s", err)
 	}
+	if err := d.Set("mirroring", flattenComputeForwardingRuleMirroring(res["isMirroringCollector"], d)); err != nil {
+		return fmt.Errorf("Error reading ForwardingRule: %s", err)
+	}
 	if err := d.Set("network_tier", flattenComputeForwardingRuleNetworkTier(res["networkTier"], d)); err != nil {
 		return fmt.Errorf("Error reading ForwardingRule: %s", err)
 	}
@@ -776,6 +779,10 @@ func flattenComputeForwardingRuleLabelFingerprint(v interface{}, d *schema.Resou
 }
 
 func flattenComputeForwardingRuleAllPorts(v interface{}, d *schema.ResourceData) interface{} {
+	return v
+}
+
+func flattenComputeForwardingRuleMirroring(v interface{}, d *schema.ResourceData) interface{} {
 	return v
 }
 
