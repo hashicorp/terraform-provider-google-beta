@@ -287,6 +287,11 @@ This field is only used for INTERNAL load balancing.`,
 				Computed: true,
 				ForceNew: true,
 			},
+			"mirroring": {
+				Type:     schema.TypeBool,
+				Optional: true,
+				ForceNew: true,
+			},
 			"self_link": {
 				Type:     schema.TypeString,
 				Computed: true,
@@ -382,6 +387,12 @@ func resourceComputeForwardingRuleCreate(d *schema.ResourceData, meta interface{
 		return err
 	} else if v, ok := d.GetOkExists("all_ports"); !isEmptyValue(reflect.ValueOf(allPortsProp)) && (ok || !reflect.DeepEqual(v, allPortsProp)) {
 		obj["allPorts"] = allPortsProp
+	}
+	mirroringProp, err := expandComputeForwardingRuleMirroring(d.Get("mirroring"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("mirroring"); !isEmptyValue(reflect.ValueOf(mirroringProp)) && (ok || !reflect.DeepEqual(v, mirroringProp)) {
+		obj["isMirroringCollector"] = mirroringProp
 	}
 	networkTierProp, err := expandComputeForwardingRuleNetworkTier(d.Get("network_tier"), d, config)
 	if err != nil {
@@ -913,6 +924,10 @@ func expandComputeForwardingRuleLabelFingerprint(v interface{}, d TerraformResou
 }
 
 func expandComputeForwardingRuleAllPorts(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeForwardingRuleMirroring(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
