@@ -197,7 +197,7 @@ The `managed` block supports:
 * `domains` -
   (Required)
   Domains for which a managed SSL certificate will be valid.  Currently,
-  there can only be one domain in this list.
+  there can be up to 100 domains in this list.
 
 ## Attributes Reference
 
