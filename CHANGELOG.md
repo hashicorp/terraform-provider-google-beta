@@ -1,4 +1,28 @@
-## 3.2.1 (Unreleased)
+## 3.3.0 (Unreleased)
+
+BREAKING CHANGES:
+* `google_storage_bucket_iam_*` resources now support IAM Conditions (beta provider only). If any conditions had been created out of band before this release, take extra care to ensure they are present in your Terraform config so the provider doesn't try to create new bindings with no conditions. Terraform will show a diff that it is adding the condition to the resource, which is safe to apply. ([#1479](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1479))
+
+FEATURES:
+* **New Resource:** `google_compute_region_health_check` is now available in GA ([#1507](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1507))
+* **New Resource:** `google_deployment_manager_deployment` ([#1498](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1498))
+
+IMPROVEMENTS:
+* bigquery: added `PARQUET` as an option in `google_bigquery_table.external_data_configuration.source_format` ([#1514](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1514))
+* compute: Added `allow_global_access` for to `google_compute_forwarding_rule` resource. ([#1511](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1511))
+* compute: added support for up to 100 domains on `google_compute_managed_ssl_certificate` ([#1519](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1519))
+* dataproc: added support for `security_config` to `google_dataproc_cluster` ([#1492](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1492))
+* storage: added support for IAM Conditions to the `google_storage_bucket_iam_*` resources (beta provider only) ([#1479](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1479))
+* storage: updated `id` and `bucket` fields for `google_storage_bucket_iam_*` resources to use `b/{bucket_name}` ([#1479](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1479))
+
+BUG FIXES:
+* compute: Fixed an issue where interpolated values caused plan-time errors in `google_compute_router_interface`. ([#1517](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1517))
+* compute: relaxed ExactlyOneOf restrictions on `google_compute_firewall`, `google_compute_health_check`, and `google_compute_region_health_check` to enable the use of dynamic blocks with those resources. ([#1520](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1520))
+* iam: Fixed a bug that causes badRequest errors on IAM resources due to deleted serviceAccount principals ([#1501](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1501))
+* resourcemanager: relaxed ExactlyOneOf restrictions on `google_organization_policy `, `google_folder_organization_policy `, and `google_project_organization_policy ` to enable the use of dynamic blocks with those resources. ([#1520](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1520))
+* sourcerepo: Fixed a bug preventing repository IAM resources from referencing repositories with the `/` character in their name ([#1521](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1521))
+* sql: fixed bug where terraform would keep retrying to create new `google_sql_database_instance` with the name of a previously deleted instance ([#1500](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1500))
+
 ## 3.2.0 (December 11, 2019)
 
 DEPRECATIONS:
