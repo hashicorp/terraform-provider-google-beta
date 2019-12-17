@@ -214,7 +214,6 @@ func TestAccProjectIamBinding_noMembers(t *testing.T) {
 }
 
 func TestAccProjectIamBinding_withCondition(t *testing.T) {
-	t.Skipf("IAM Conditions is not whitelisted for new projects in this org, enable this test once it's public beta")
 	t.Parallel()
 
 	org := getTestOrgFromEnv(t)
