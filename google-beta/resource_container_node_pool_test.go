@@ -253,8 +253,8 @@ func TestAccContainerNodePool_withSandboxConfig(t *testing.T) {
 func TestAccContainerNodePool_withUpgradeSettings(t *testing.T) {
 	t.Parallel()
 
-	clusterName := acctest.RandString(10)
-	nodePoolName := acctest.RandString(10)
+	cluster := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(10))
+	np := fmt.Sprintf("tf-test-np-%s", acctest.RandString(10))
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -262,7 +262,7 @@ func TestAccContainerNodePool_withUpgradeSettings(t *testing.T) {
 		CheckDestroy: testAccCheckContainerClusterDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccContainerNodePool_withUpgradeSettings(clusterName, nodePoolName, 2, 3),
+				Config: testAccContainerNodePool_withUpgradeSettings(cluster, np, 2, 3),
 			},
 			{
 				ResourceName:      "google_container_node_pool.with_upgrade_settings",
@@ -270,7 +270,7 @@ func TestAccContainerNodePool_withUpgradeSettings(t *testing.T) {
 				ImportStateVerify: true,
 			},
 			{
-				Config: testAccContainerNodePool_withUpgradeSettings(clusterName, nodePoolName, 1, 1),
+				Config: testAccContainerNodePool_withUpgradeSettings(cluster, np, 1, 1),
 			},
 			{
 				ResourceName:      "google_container_node_pool.with_upgrade_settings",
@@ -284,8 +284,8 @@ func TestAccContainerNodePool_withUpgradeSettings(t *testing.T) {
 func TestAccContainerNodePool_withInvalidUpgradeSettings(t *testing.T) {
 	t.Parallel()
 
-	clusterName := acctest.RandString(10)
-	nodePoolName := acctest.RandString(10)
+	cluster := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(10))
+	np := fmt.Sprintf("tf-test-np-%s", acctest.RandString(10))
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -293,7 +293,7 @@ func TestAccContainerNodePool_withInvalidUpgradeSettings(t *testing.T) {
 		CheckDestroy: testAccCheckContainerClusterDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config:      testAccContainerNodePool_withUpgradeSettings(clusterName, nodePoolName, 0, 0),
+				Config:      testAccContainerNodePool_withUpgradeSettings(cluster, np, 0, 0),
 				ExpectError: regexp.MustCompile(`.?Max_surge and max_unavailable must not be negative and at least one of them must be greater than zero.*`),
 			},
 		},
