@@ -1147,7 +1147,7 @@ func TestAccContainerCluster_withMaintenanceWindow(t *testing.T) {
 
 func TestAccContainerCluster_withRecurringMaintenanceWindow(t *testing.T) {
 	t.Parallel()
-	clusterName := acctest.RandString(10)
+	cluster := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(10))
 	resourceName := "google_container_cluster.with_recurring_maintenance_window"
 
 	resource.Test(t, resource.TestCase{
@@ -1156,7 +1156,7 @@ func TestAccContainerCluster_withRecurringMaintenanceWindow(t *testing.T) {
 		CheckDestroy: testAccCheckContainerClusterDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccContainerCluster_withRecurringMaintenanceWindow(clusterName, "2019-01-01T00:00:00Z", "2019-01-02T00:00:00Z"),
+				Config: testAccContainerCluster_withRecurringMaintenanceWindow(cluster, "2019-01-01T00:00:00Z", "2019-01-02T00:00:00Z"),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckNoResourceAttr(resourceName,
 						"maintenance_policy.0.daily_maintenance_window.0.start_time"),
@@ -1169,7 +1169,7 @@ func TestAccContainerCluster_withRecurringMaintenanceWindow(t *testing.T) {
 				ImportStateVerify:   true,
 			},
 			{
-				Config: testAccContainerCluster_withRecurringMaintenanceWindow(clusterName, "", ""),
+				Config: testAccContainerCluster_withRecurringMaintenanceWindow(cluster, "", ""),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckNoResourceAttr(resourceName,
 						"maintenance_policy.0.daily_maintenance_window.0.start_time"),
