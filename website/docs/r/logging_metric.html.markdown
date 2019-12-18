@@ -108,9 +108,15 @@ resource "google_logging_metric" "logging_metric" {
       value_type  = "STRING"
       description = "amount of matter"
     }
+    labels {
+      key         = "sku"
+      value_type  = "INT64"
+      description = "Identifying number for item"
+    }
   }
   label_extractors = {
     "mass" = "EXTRACT(jsonPayload.request)"
+    "sku"  = "EXTRACT(jsonPayload.id)"
   }
 }
 ```
@@ -163,7 +169,8 @@ The `metric_descriptor` block supports:
   The set of labels that can be used to describe a specific instance of this metric type. For
   example, the appengine.googleapis.com/http/server/response_latencies metric type has a label
   for the HTTP response code, response_code, so you can look at latencies for successful responses
-  or just for responses that failed.  Structure is documented below.
+  or just for responses that failed. Each `labels` block defines a single metric label but you 
+  have add multiple. Structure is documented below.
 
 * `display_name` -
   (Optional)
