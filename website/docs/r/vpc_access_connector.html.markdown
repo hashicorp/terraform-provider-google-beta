@@ -63,6 +63,10 @@ The following arguments are supported:
   (Required)
   The name of the resource (Max 25 characters).
 
+* `network` -
+  (Required)
+  Name of a VPC network.
+
 * `ip_cidr_range` -
   (Required)
   The range of internal addresses that follows RFC 4632 notation. Example: `10.132.0.0/28`.
@@ -74,10 +78,6 @@ The following arguments are supported:
 
 - - -
 
-
-* `network` -
-  (Optional)
-  Name of a VPC network.
 
 * `min_throughput` -
   (Optional)
