@@ -73,6 +73,7 @@ func TestAccBillingBudget_billingBudgetFilterExample(t *testing.T) {
 
 	context := map[string]interface{}{
 		"billing_acct":  getTestBillingAccountFromEnv(t),
+		"project":       getTestProjectFromEnv(),
 		"random_suffix": acctest.RandString(10),
 	}
 
@@ -101,7 +102,7 @@ resource "google_billing_budget" "budget" {
   display_name = "Example Billing Budget%{random_suffix}"
 
   budget_filter {
-    projects = ["projects/example-project"]
+    projects = ["projects/%{project}"]
     credit_types_treatment = "EXCLUDE_ALL_CREDITS"
     services = ["services/24E6-581D-38E5"] # Bigquery
   }
