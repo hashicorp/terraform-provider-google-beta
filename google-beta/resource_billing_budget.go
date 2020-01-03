@@ -288,7 +288,7 @@ func resourceBillingBudgetUpdate(d *schema.ResourceData, meta interface{}) error
 	budgetProp, err := expandBillingBudgetBudget(nil, d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("budget"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, budgetProp)) {
+	} else if !isEmptyValue(reflect.ValueOf(budgetProp)) {
 		obj["budget"] = budgetProp
 	}
 
