@@ -1,4 +1,55 @@
-## 3.3.1 (Unreleased)
+## 3.4.0 (Unreleased)
+
+DEPRECATIONS:
+* kms: deprecated `data.google_kms_secret_ciphertext` as there was no way to make it idempotent. Instead, use the `google_kms_secret_ciphertext` resource. ([#1586](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1586))
+
+BREAKING CHANGES:
+* `google_iap_web_iam_*`, `google_iap_web_type_compute_iam_*`, `google_iap_web_type_app_engine_*`,  and `google_iap_app_engine_service_iam_*` resources now support IAM Conditions (beta provider only). If any conditions had been created out of band before this release, take extra care to ensure they are present in your Terraform config so the provider doesn't try to create new bindings with no conditions. Terraform will show a diff that it is adding the condition to the resource, which is safe to apply. ([#1527](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1527))
+* `google_kms_key_ring_iam_*` and `google_kms_crypto_key_iam_*` resources now support IAM Conditions (beta provider only). If any conditions had been created out of band before this release, take extra care to ensure they are present in your Terraform config so the provider doesn't try to create new bindings with no conditions. Terraform will show a diff that it is adding the condition to the resource, which is safe to apply. ([#1524](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1524))
+* cloudrun: Changed `google_cloud_run_domain_mapping` to correctly match Cloud Run API expected format for `spec.route_name`, {serviceName}, instead of invalid projects/{project}/global/services/{serviceName} ([#1563](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1563))
+* compute: Added back ConflictsWith restrictions for ExactlyOneOf restrictions that were removed in v3.3.0 for `google_compute_firewall`, `google_compute_health_check`, and `google_compute_region_health_check`. This effectively changes an API-side failure that was only accessible in v3.3.0 to a plan-time one. ([#1534](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1534))
+* logging: Changed `google_logging_metric.metric_descriptors.labels` from a list to a set ([#1559](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1559))
+* resourcemanager: Added back ConflictsWith restrictions for ExactlyOneOf restrictions that were removed in v3.3.0 for `google_organization_policy`, `google_folder_organization_policy`, and `google_project_organization_policy`. This effectively changes an API-side failure that was only accessible in v3.3.0 to a plan-time one. ([#1534](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1534))
+
+FEATURES:
+* **New Data Source:** `google_sql_ca_certs` ([#1580](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1580))
+* **New Resource:** `google_identity_platform_default_supported_idp_config` ([#1523](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1523))
+* **New Resource:** `google_identity_platform_inbound_saml_config` ([#1523](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1523))
+* **New Resource:** `google_identity_platform_oauth_idp_config` ([#1523](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1523))
+* **New Resource:** `google_identity_platform_tenant_default_supported_idp_config` ([#1523](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1523))
+* **New Resource:** `google_identity_platform_tenant_inbound_saml_config` ([#1523](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1523))
+* **New Resource:** `google_identity_platform_tenant_oauth_idp_config` ([#1523](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1523))
+* **New Resource:** `google_identity_platform_tenant` ([#1523](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1523))
+* **New Resource:** `google_kms_crypto_key_iam_policy` ([#1554](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1554))
+* **New Resource:** `google_kms_secret_ciphertext` ([#1586](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1586))
+
+IMPROVEMENTS:
+* composer: Increased default timeouts for `google_composer_environment` ([#1539](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1539))
+* compute: Added graceful termination to `container_cluster` create calls so that partially created clusters will resume the original operation if the Terraform process is killed mid create. ([#1533](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1533))
+* compute: Fixed `google_compute_disk_resource_policy_attachment` parsing of region from zone to allow for provider-level zone and make error message more accurate` ([#1557](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1557))
+* datafusion: Increased default timeouts for `google_data_fusion_instance` ([#1545](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1545))
+* datafusion: Increased update timeout for updating `google_data_fusion_instance` ([#1538](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1538))
+* healthcare: Enabled request batching for (beta-only) Healthcare API IAM resources `google_healthcare_*_iam_*` to reduce likelihood of errors from very low default write quota. ([#1558](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1558))
+* iap: added support for IAM Conditions to the `google_iap_web_iam_*`, `google_iap_web_type_compute_iam_*`, `google_iap_web_type_app_engine_*`,  and `google_iap_app_engine_service_iam_*` resources (beta provider only) ([#1527](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1527))
+* kms: added support for IAM Conditions to the `google_kms_key_ring_iam_*` and `google_kms_crypto_key_iam_*` resources (beta provider only) ([#1524](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1524))
+* provider: Reduced default `send_after` controlling the time interval after which a batched request sends. ([#1565](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1565))
+
+BUG FIXES:
+* all: fixed issue where many fields that were removed in 3.0.0 would show a diff when they were removed from config ([#1585](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1585))
+* bigquery: fixed `bigquery_table.encryption_configuration` to correctly recreate the table when modified ([#1591](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1591))
+* cloudrun:  Changed `google_cloud_run_domain_mapping` to correctly match Cloud Run API expected format for `spec.route_name`, {serviceName}, instead of invalid projects/{project}/global/services/{serviceName} ([#1563](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1563))
+* cloudrun: Changed `cloud_run_domain_mapping` to poll for success or failure and throw an appropriate error when ready status returns as false. ([#1564](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1564))
+* cloudrun: Fixed `google_cloudrun_service` to allow update instead of force-recreation for changes in `spec` `env` and `command` fields ([#1566](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1566))
+* cloudrun: Removed unsupported update for `google_cloud_run_domain_mapping` to allow force-recreation. ([#1556](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1556))
+* cloudrun: Stopped returning an error when a `cloud_run_domain_mapping` was waiting on DNS verification. ([#1587](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1587))
+* compute: Fixed `google_compute_backend_service` to allow updating `cdn_policy.cache_key_policy.*` fields to false or empty. ([#1569](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1569))
+* compute: Fixed behaviour where `google_compute_subnetwork` did not record a value for `name` when `self_link` was specified. ([#1579](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1579))
+* container: fixed issue where an empty variable in `tags` would cause a crash ([#1543](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1543))
+* endpoints: Added operation wait for `google_endpoints_service` to fix 403 "Service not found" errors during initial creation ([#1560](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1560))
+* logging: Made `google_logging_metric.metric_descriptors.labels` a set to prevent diff from ordering ([#1559](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1559))
+* resourcemanager: added retries for `data.google_organization` ([#1553](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1553))
+* vpcaccess: marked `network` field as required in order to fail invalid configs at plan-time instead of at apply-time ([#1577](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1577))
+
 ## 3.3.0 (December 17, 2019)
 
 BREAKING CHANGES:
