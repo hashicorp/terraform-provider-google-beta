@@ -1,0 +1,3 @@
+```release-note:bug
+compute: Fixed errors from concurrent creation/deletion of overlapping `google_compute_network_peering` resources.
+```
