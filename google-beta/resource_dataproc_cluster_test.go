@@ -8,6 +8,7 @@ import (
 	"strconv"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
@@ -523,6 +524,61 @@ func TestAccDataprocCluster_withOptionalComponents(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckDataprocClusterExists("google_dataproc_cluster.with_opt_components", &cluster),
 					testAccCheckDataprocClusterHasOptionalComponents(&cluster, "ANACONDA", "ZOOKEEPER"),
+				),
+			},
+		},
+	})
+}
+
+func TestAccDataprocCluster_withLifecycleConfigIdleDeleteTtl(t *testing.T) {
+	t.Parallel()
+
+	rnd := acctest.RandString(10)
+	var cluster dataproc.Cluster
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckDataprocClusterDestroy(),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccDataprocCluster_withLifecycleConfigIdleDeleteTtl(rnd, "600s"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckDataprocClusterExists("google_dataproc_cluster.with_lifecycle_config", &cluster),
+				),
+			},
+			{
+				Config: testAccDataprocCluster_withLifecycleConfigIdleDeleteTtl(rnd, "610s"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckDataprocClusterExists("google_dataproc_cluster.with_lifecycle_config", &cluster),
+				),
+			},
+		},
+	})
+}
+
+func TestAccDataprocCluster_withLifecycleConfigAutoDeletion(t *testing.T) {
+	t.Parallel()
+
+	rnd := acctest.RandString(10)
+	now := time.Now()
+	fmtString := "2006-01-02T15:04:05.072Z"
+
+	var cluster dataproc.Cluster
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckDataprocClusterDestroy(),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccDataprocCluster_withLifecycleConfigAutoDeletionTime(rnd, now.Add(time.Hour*10).Format(fmtString)),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckDataprocClusterExists("google_dataproc_cluster.with_lifecycle_config", &cluster),
+				),
+			},
+			{
+				Config: testAccDataprocCluster_withLifecycleConfigAutoDeletionTime(rnd, now.Add(time.Hour*20).Format(fmtString)),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckDataprocClusterExists("google_dataproc_cluster.with_lifecycle_config", &cluster),
 				),
 			},
 		},
@@ -1200,6 +1256,36 @@ resource "google_dataproc_cluster" "with_opt_components" {
   }
 }
 `, rnd)
+}
+
+func testAccDataprocCluster_withLifecycleConfigIdleDeleteTtl(rnd, tm string) string {
+	return fmt.Sprintf(`
+resource "google_dataproc_cluster" "with_lifecycle_config" {
+  name   = "dproc-cluster-test-%s"
+  region = "us-central1"
+
+  cluster_config {
+    lifecycle_config {
+      idle_delete_ttl = "%s"
+    }
+  }
+}
+`, rnd, tm)
+}
+
+func testAccDataprocCluster_withLifecycleConfigAutoDeletionTime(rnd, tm string) string {
+	return fmt.Sprintf(`
+resource "google_dataproc_cluster" "with_lifecycle_config" {
+ name   = "dproc-cluster-test-%s"
+ region = "us-central1"
+
+ cluster_config {
+   lifecycle_config {
+     auto_delete_time = "%s"
+   }
+ }
+}
+`, rnd, tm)
 }
 
 func testAccDataprocCluster_withServiceAcc(sa string, rnd string) string {

@@ -52,6 +52,7 @@ var (
 		"cluster_config.0.initialization_action",
 		"cluster_config.0.encryption_config",
 		"cluster_config.0.autoscaling_config",
+		"cluster_config.0.lifecycle_config",
 	}
 )
 
@@ -507,6 +508,40 @@ by Dataproc`,
 								},
 							},
 						},
+						"lifecycle_config": {
+							Type:         schema.TypeList,
+							Optional:     true,
+							MaxItems:     1,
+							AtLeastOneOf: clusterConfigKeys,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"idle_delete_ttl": {
+										Type:     schema.TypeString,
+										Optional: true,
+										AtLeastOneOf: []string{
+											"cluster_config.0.lifecycle_config.0.idle_delete_ttl",
+											"cluster_config.0.lifecycle_config.0.auto_delete_time",
+										},
+									},
+									"idle_start_time": {
+										Type:     schema.TypeString,
+										Computed: true,
+									},
+									// the API also has the auto_delete_ttl option in its request, however,
+									// the value is not returned in the response, rather the auto_delete_time
+									// after calculating ttl with the update time is returned, thus, for now
+									// we will only allow auto_delete_time to updated.
+									"auto_delete_time": {
+										Type:     schema.TypeString,
+										Optional: true,
+										AtLeastOneOf: []string{
+											"cluster_config.0.lifecycle_config.0.idle_delete_ttl",
+											"cluster_config.0.lifecycle_config.0.auto_delete_time",
+										},
+									},
+								},
+							},
+						},
 					},
 				},
 			},
@@ -701,7 +736,6 @@ func resourceDataprocClusterCreate(d *schema.ResourceData, meta interface{}) err
 
 	log.Printf("[INFO] Dataproc cluster %s has been created", cluster.ClusterName)
 	return resourceDataprocClusterRead(d, meta)
-
 }
 
 func expandClusterConfig(d *schema.ResourceData, config *Config) (*dataproc.ClusterConfig, error) {
@@ -746,6 +780,10 @@ func expandClusterConfig(d *schema.ResourceData, config *Config) (*dataproc.Clus
 
 	if cfg, ok := configOptions(d, "cluster_config.0.autoscaling_config"); ok {
 		conf.AutoscalingConfig = expandAutoscalingConfig(cfg)
+	}
+
+	if cfg, ok := configOptions(d, "cluster_config.0.lifecycle_config"); ok {
+		conf.LifecycleConfig = expandLifecycleConfig(cfg)
 	}
 
 	if cfg, ok := configOptions(d, "cluster_config.0.master_config"); ok {
@@ -917,6 +955,17 @@ func expandAutoscalingConfig(cfg map[string]interface{}) *dataproc.AutoscalingCo
 	return conf
 }
 
+func expandLifecycleConfig(cfg map[string]interface{}) *dataproc.LifecycleConfig {
+	conf := &dataproc.LifecycleConfig{}
+	if v, ok := cfg["idle_delete_ttl"]; ok {
+		conf.IdleDeleteTtl = v.(string)
+	}
+	if v, ok := cfg["auto_delete_time"]; ok {
+		conf.AutoDeleteTime = v.(string)
+	}
+	return conf
+}
+
 func expandInitializationActions(v interface{}) []*dataproc.NodeInitializationAction {
 	actionList := v.([]interface{})
 
@@ -1063,6 +1112,28 @@ func resourceDataprocClusterUpdate(d *schema.ResourceData, meta interface{}) err
 		updMask = append(updMask, "config.secondary_worker_config.num_instances")
 	}
 
+	if d.HasChange("cluster_config.0.lifecycle_config.0.idle_delete_ttl") {
+		idleDeleteTtl := d.Get("cluster_config.0.lifecycle_config.0.idle_delete_ttl").(string)
+		cluster.Config.LifecycleConfig = &dataproc.LifecycleConfig{
+			IdleDeleteTtl: idleDeleteTtl,
+		}
+
+		updMask = append(updMask, "config.lifecycle_config.idle_delete_ttl")
+	}
+
+	if d.HasChange("cluster_config.0.lifecycle_config.0.auto_delete_time") {
+		desiredDeleteTime := d.Get("cluster_config.0.lifecycle_config.0.auto_delete_time").(string)
+		if cluster.Config.LifecycleConfig != nil {
+			cluster.Config.LifecycleConfig.AutoDeleteTime = desiredDeleteTime
+		} else {
+			cluster.Config.LifecycleConfig = &dataproc.LifecycleConfig{
+				AutoDeleteTime: desiredDeleteTime,
+			}
+		}
+
+		updMask = append(updMask, "config.lifecycle_config.auto_delete_time")
+	}
+
 	if len(updMask) > 0 {
 		patch := config.clientDataprocBeta.Projects.Regions.Clusters.Patch(
 			project, region, clusterName, cluster)
@@ -1131,6 +1202,7 @@ func flattenClusterConfig(d *schema.ResourceData, cfg *dataproc.ClusterConfig) (
 		"preemptible_worker_config": flattenPreemptibleInstanceGroupConfig(d, cfg.SecondaryWorkerConfig),
 		"encryption_config":         flattenEncryptionConfig(d, cfg.EncryptionConfig),
 		"autoscaling_config":        flattenAutoscalingConfig(d, cfg.AutoscalingConfig),
+		"lifecycle_config":          flattenLifecycleConfig(d, cfg.LifecycleConfig),
 	}
 
 	if len(cfg.InitializationActions) > 0 {
@@ -1206,6 +1278,19 @@ func flattenAutoscalingConfig(d *schema.ResourceData, ec *dataproc.AutoscalingCo
 
 	data := map[string]interface{}{
 		"policy_uri": ec.PolicyUri,
+	}
+
+	return []map[string]interface{}{data}
+}
+
+func flattenLifecycleConfig(d *schema.ResourceData, lc *dataproc.LifecycleConfig) []map[string]interface{} {
+	if lc == nil {
+		return nil
+	}
+
+	data := map[string]interface{}{
+		"idle_delete_ttl":  lc.IdleDeleteTtl,
+		"auto_delete_time": lc.AutoDeleteTime,
 	}
 
 	return []map[string]interface{}{data}
