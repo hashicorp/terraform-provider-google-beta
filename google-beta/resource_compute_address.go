@@ -472,9 +472,10 @@ func flattenComputeAddressAddress(v interface{}, d *schema.ResourceData) interfa
 }
 
 func flattenComputeAddressAddressType(v interface{}, d *schema.ResourceData) interface{} {
-	if v == nil || v.(string) == "" {
+	if v == nil || isEmptyValue(reflect.ValueOf(v)) {
 		return "EXTERNAL"
 	}
+
 	return v
 }
 
