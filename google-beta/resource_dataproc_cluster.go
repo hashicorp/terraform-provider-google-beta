@@ -532,8 +532,9 @@ by Dataproc`,
 									// after calculating ttl with the update time is returned, thus, for now
 									// we will only allow auto_delete_time to updated.
 									"auto_delete_time": {
-										Type:     schema.TypeString,
-										Optional: true,
+										Type:             schema.TypeString,
+										Optional:         true,
+										DiffSuppressFunc: timestampDiffSuppress(time.RFC3339Nano),
 										AtLeastOneOf: []string{
 											"cluster_config.0.lifecycle_config.0.idle_delete_ttl",
 											"cluster_config.0.lifecycle_config.0.auto_delete_time",
