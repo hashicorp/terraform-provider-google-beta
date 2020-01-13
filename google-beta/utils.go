@@ -580,3 +580,19 @@ func stringInSlice(arr []string, str string) bool {
 
 	return false
 }
+
+func timestampDiffSuppress(format string) schema.SchemaDiffSuppressFunc {
+	return func(_, old, new string, _ *schema.ResourceData) bool {
+		oldT, err := time.Parse(format, old)
+		if err != nil {
+			return false
+		}
+
+		newT, err := time.Parse(format, new)
+		if err != nil {
+			return false
+		}
+
+		return oldT == newT
+	}
+}
