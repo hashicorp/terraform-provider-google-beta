@@ -146,42 +146,6 @@ func testSweepDatabases(region string) error {
 	return nil
 }
 
-func TestAccSqlDatabaseInstance_basicFirstGen(t *testing.T) {
-	t.Parallel()
-
-	instanceID := acctest.RandInt()
-	instanceName := fmt.Sprintf("tf-lw-%d", instanceID)
-	resourceName := "google_sql_database_instance.instance"
-
-	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: testAccSqlDatabaseInstanceDestroy,
-		Steps: []resource.TestStep{
-			{
-				Config: fmt.Sprintf(testGoogleSqlDatabaseInstance_basic, instanceID),
-			},
-			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateVerify: true,
-			},
-			{
-				ResourceName:      resourceName,
-				ImportStateId:     fmt.Sprintf("projects/%s/instances/%s", getTestProjectFromEnv(), instanceName),
-				ImportState:       true,
-				ImportStateVerify: true,
-			},
-			{
-				ResourceName:      resourceName,
-				ImportStateId:     fmt.Sprintf("%s/%s", getTestProjectFromEnv(), instanceName),
-				ImportState:       true,
-				ImportStateVerify: true,
-			},
-		},
-	})
-}
-
 func TestAccSqlDatabaseInstance_basicInferredName(t *testing.T) {
 	t.Parallel()
 
@@ -302,7 +266,7 @@ func TestAccSqlDatabaseInstance_dontDeleteDefaultUserOnReplica(t *testing.T) {
 func TestAccSqlDatabaseInstance_settings_basic(t *testing.T) {
 	t.Parallel()
 
-	databaseID := acctest.RandInt()
+	databaseName := "tf-test-" + acctest.RandString(10)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -311,7 +275,7 @@ func TestAccSqlDatabaseInstance_settings_basic(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: fmt.Sprintf(
-					testGoogleSqlDatabaseInstance_settings, databaseID),
+					testGoogleSqlDatabaseInstance_settings, databaseName),
 			},
 			{
 				ResourceName:      "google_sql_database_instance.instance",
@@ -458,7 +422,7 @@ func TestAccSqlDatabaseInstance_maintenance(t *testing.T) {
 func TestAccSqlDatabaseInstance_settings_upgrade(t *testing.T) {
 	t.Parallel()
 
-	databaseID := acctest.RandInt()
+	databaseName := "tf-test-" + acctest.RandString(10)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -467,7 +431,7 @@ func TestAccSqlDatabaseInstance_settings_upgrade(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: fmt.Sprintf(
-					testGoogleSqlDatabaseInstance_basic, databaseID),
+					testGoogleSqlDatabaseInstance_basic3, databaseName),
 			},
 			{
 				ResourceName:      "google_sql_database_instance.instance",
@@ -476,7 +440,7 @@ func TestAccSqlDatabaseInstance_settings_upgrade(t *testing.T) {
 			},
 			{
 				Config: fmt.Sprintf(
-					testGoogleSqlDatabaseInstance_settings, databaseID),
+					testGoogleSqlDatabaseInstance_settings, databaseName),
 			},
 			{
 				ResourceName:      "google_sql_database_instance.instance",
@@ -490,7 +454,7 @@ func TestAccSqlDatabaseInstance_settings_upgrade(t *testing.T) {
 func TestAccSqlDatabaseInstance_settingsDowngrade(t *testing.T) {
 	t.Parallel()
 
-	databaseID := acctest.RandInt()
+	databaseName := "tf-test-" + acctest.RandString(10)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -499,7 +463,7 @@ func TestAccSqlDatabaseInstance_settingsDowngrade(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: fmt.Sprintf(
-					testGoogleSqlDatabaseInstance_settings, databaseID),
+					testGoogleSqlDatabaseInstance_settings, databaseName),
 			},
 			{
 				ResourceName:      "google_sql_database_instance.instance",
@@ -508,7 +472,7 @@ func TestAccSqlDatabaseInstance_settingsDowngrade(t *testing.T) {
 			},
 			{
 				Config: fmt.Sprintf(
-					testGoogleSqlDatabaseInstance_basic, databaseID),
+					testGoogleSqlDatabaseInstance_basic3, databaseName),
 			},
 			{
 				ResourceName:      "google_sql_database_instance.instance",
@@ -680,23 +644,11 @@ func testAccCheckGoogleSqlDatabaseRootUserDoesNotExist(instance string) resource
 	}
 }
 
-var testGoogleSqlDatabaseInstance_basic = `
-resource "google_sql_database_instance" "instance" {
-  name   = "tf-lw-%d"
-  region = "us-central"
-  settings {
-    tier                   = "D0"
-    crash_safe_replication = false
-  }
-}
-`
-
 var testGoogleSqlDatabaseInstance_basic2 = `
 resource "google_sql_database_instance" "instance" {
-  region = "us-central"
+  region = "us-central1"
   settings {
-    tier                   = "D0"
-    crash_safe_replication = false
+    tier = "db-f1-micro"
   }
 }
 `
@@ -814,12 +766,10 @@ resource "google_sql_database_instance" "instance" {
 
 var testGoogleSqlDatabaseInstance_settings = `
 resource "google_sql_database_instance" "instance" {
-  name   = "tf-lw-%d"
-  region = "us-central"
+  name   = "%s"
+  region = "us-central1"
   settings {
-    tier                   = "D0"
-    crash_safe_replication = false
-    replication_type       = "ASYNCHRONOUS"
+    tier                   = "db-f1-micro"
     location_preference {
       zone = "us-central1-f"
     }
@@ -829,7 +779,6 @@ resource "google_sql_database_instance" "instance" {
       authorized_networks {
         value           = "108.12.12.12"
         name            = "misc"
-        expiration_time = "2050-11-15T16:19:00.094Z"
       }
     }
 
@@ -838,7 +787,7 @@ resource "google_sql_database_instance" "instance" {
       start_time = "19:19"
     }
 
-    activation_policy = "ON_DEMAND"
+    activation_policy = "ALWAYS"
   }
 }
 `
@@ -983,17 +932,15 @@ resource "google_sql_database_instance" "instance" {
 var testGoogleSqlDatabaseInstance_authNets_step1 = `
 resource "google_sql_database_instance" "instance" {
   name   = "tf-lw-%d"
-  region = "us-central"
+  region = "us-central1"
   settings {
-    tier                   = "D0"
-    crash_safe_replication = false
+    tier                   = "db-f1-micro"
 
     ip_configuration {
       ipv4_enabled = "true"
       authorized_networks {
         value           = "108.12.12.12"
         name            = "misc"
-        expiration_time = "2050-11-15T16:19:00.094Z"
       }
     }
   }
@@ -1003,10 +950,9 @@ resource "google_sql_database_instance" "instance" {
 var testGoogleSqlDatabaseInstance_authNets_step2 = `
 resource "google_sql_database_instance" "instance" {
   name   = "tf-lw-%d"
-  region = "us-central"
+  region = "us-central1"
   settings {
-    tier                   = "D0"
-    crash_safe_replication = false
+    tier                   = "db-f1-micro"
 
     ip_configuration {
       ipv4_enabled = "true"
@@ -1018,10 +964,9 @@ resource "google_sql_database_instance" "instance" {
 var testGoogleSqlDatabaseInstance_multipleOperations = `
 resource "google_sql_database_instance" "instance" {
   name   = "tf-test-%s"
-  region = "us-central"
+  region = "us-central1"
   settings {
-    tier                   = "D0"
-    crash_safe_replication = false
+    tier                   = "db-f1-micro"
   }
 }
 
