@@ -1335,7 +1335,7 @@ func TestAccContainerCluster_sharedVpc(t *testing.T) {
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(10))
 	org := getTestOrgFromEnv(t)
 	billingId := getTestBillingAccountFromEnv(t)
-	projectName := acctest.RandomWithPrefix("tf-test-xpn")
+	projectName := acctest.RandomWithPrefix("tf-test")
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
