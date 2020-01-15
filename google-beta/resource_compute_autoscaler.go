@@ -23,7 +23,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
-	"google.golang.org/api/compute/v1"
 )
 
 func resourceComputeAutoscaler() *schema.Resource {
@@ -333,26 +332,20 @@ func resourceComputeAutoscalerCreate(d *schema.ResourceData, meta interface{}) e
 	}
 
 	// Store the ID now
-	id, err := replaceVars(d, config, "{{zone}}/{{name}}")
+	id, err := replaceVars(d, config, "projects/{{project}}/zones/{{zone}}/autoscalers/{{name}}")
 	if err != nil {
 		return fmt.Errorf("Error constructing id: %s", err)
 	}
 	d.SetId(id)
 
-	op := &compute.Operation{}
-	err = Convert(res, op)
-	if err != nil {
-		return err
-	}
-
-	waitErr := computeOperationWaitTime(
-		config.clientCompute, op, project, "Creating Autoscaler",
+	err = computeOperationWaitTime(
+		config, res, project, "Creating Autoscaler",
 		int(d.Timeout(schema.TimeoutCreate).Minutes()))
 
-	if waitErr != nil {
+	if err != nil {
 		// The resource didn't actually create
 		d.SetId("")
-		return fmt.Errorf("Error waiting to create Autoscaler: %s", waitErr)
+		return fmt.Errorf("Error waiting to create Autoscaler: %s", err)
 	}
 
 	log.Printf("[DEBUG] Finished creating Autoscaler %q: %#v", d.Id(), res)
@@ -458,14 +451,8 @@ func resourceComputeAutoscalerUpdate(d *schema.ResourceData, meta interface{}) e
 		return fmt.Errorf("Error updating Autoscaler %q: %s", d.Id(), err)
 	}
 
-	op := &compute.Operation{}
-	err = Convert(res, op)
-	if err != nil {
-		return err
-	}
-
 	err = computeOperationWaitTime(
-		config.clientCompute, op, project, "Updating Autoscaler",
+		config, res, project, "Updating Autoscaler",
 		int(d.Timeout(schema.TimeoutUpdate).Minutes()))
 
 	if err != nil {
@@ -496,14 +483,8 @@ func resourceComputeAutoscalerDelete(d *schema.ResourceData, meta interface{}) e
 		return handleNotFoundError(err, d, "Autoscaler")
 	}
 
-	op := &compute.Operation{}
-	err = Convert(res, op)
-	if err != nil {
-		return err
-	}
-
 	err = computeOperationWaitTime(
-		config.clientCompute, op, project, "Deleting Autoscaler",
+		config, res, project, "Deleting Autoscaler",
 		int(d.Timeout(schema.TimeoutDelete).Minutes()))
 
 	if err != nil {
@@ -526,7 +507,7 @@ func resourceComputeAutoscalerImport(d *schema.ResourceData, meta interface{}) (
 	}
 
 	// Replace import id for the resource id
-	id, err := replaceVars(d, config, "{{zone}}/{{name}}")
+	id, err := replaceVars(d, config, "projects/{{project}}/zones/{{zone}}/autoscalers/{{name}}")
 	if err != nil {
 		return nil, fmt.Errorf("Error constructing id: %s", err)
 	}

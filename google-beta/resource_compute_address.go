@@ -22,7 +22,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
-	"google.golang.org/api/compute/v1"
 )
 
 func resourceComputeAddress() *schema.Resource {
@@ -242,26 +241,20 @@ func resourceComputeAddressCreate(d *schema.ResourceData, meta interface{}) erro
 	}
 
 	// Store the ID now
-	id, err := replaceVars(d, config, "{{project}}/{{region}}/{{name}}")
+	id, err := replaceVars(d, config, "projects/{{project}}/regions/{{region}}/addresses/{{name}}")
 	if err != nil {
 		return fmt.Errorf("Error constructing id: %s", err)
 	}
 	d.SetId(id)
 
-	op := &compute.Operation{}
-	err = Convert(res, op)
-	if err != nil {
-		return err
-	}
-
-	waitErr := computeOperationWaitTime(
-		config.clientCompute, op, project, "Creating Address",
+	err = computeOperationWaitTime(
+		config, res, project, "Creating Address",
 		int(d.Timeout(schema.TimeoutCreate).Minutes()))
 
-	if waitErr != nil {
+	if err != nil {
 		// The resource didn't actually create
 		d.SetId("")
-		return fmt.Errorf("Error waiting to create Address: %s", waitErr)
+		return fmt.Errorf("Error waiting to create Address: %s", err)
 	}
 
 	log.Printf("[DEBUG] Finished creating Address %q: %#v", d.Id(), res)
@@ -292,13 +285,8 @@ func resourceComputeAddressCreate(d *schema.ResourceData, meta interface{}) erro
 			return fmt.Errorf("Error adding labels to ComputeAddress %q: %s", d.Id(), err)
 		}
 
-		err = Convert(res, op)
-		if err != nil {
-			return err
-		}
-
 		err = computeOperationWaitTime(
-			config.clientCompute, op, project, "Updating ComputeAddress Labels",
+			config, res, project, "Updating ComputeAddress Labels",
 			int(d.Timeout(schema.TimeoutUpdate).Minutes()))
 
 		if err != nil {
@@ -409,16 +397,9 @@ func resourceComputeAddressUpdate(d *schema.ResourceData, meta interface{}) erro
 			return fmt.Errorf("Error updating Address %q: %s", d.Id(), err)
 		}
 
-		op := &compute.Operation{}
-		err = Convert(res, op)
-		if err != nil {
-			return err
-		}
-
 		err = computeOperationWaitTime(
-			config.clientCompute, op, project, "Updating Address",
+			config, res, project, "Updating Address",
 			int(d.Timeout(schema.TimeoutUpdate).Minutes()))
-
 		if err != nil {
 			return err
 		}
@@ -453,14 +434,8 @@ func resourceComputeAddressDelete(d *schema.ResourceData, meta interface{}) erro
 		return handleNotFoundError(err, d, "Address")
 	}
 
-	op := &compute.Operation{}
-	err = Convert(res, op)
-	if err != nil {
-		return err
-	}
-
 	err = computeOperationWaitTime(
-		config.clientCompute, op, project, "Deleting Address",
+		config, res, project, "Deleting Address",
 		int(d.Timeout(schema.TimeoutDelete).Minutes()))
 
 	if err != nil {
@@ -483,7 +458,7 @@ func resourceComputeAddressImport(d *schema.ResourceData, meta interface{}) ([]*
 	}
 
 	// Replace import id for the resource id
-	id, err := replaceVars(d, config, "{{project}}/{{region}}/{{name}}")
+	id, err := replaceVars(d, config, "projects/{{project}}/regions/{{region}}/addresses/{{name}}")
 	if err != nil {
 		return nil, fmt.Errorf("Error constructing id: %s", err)
 	}
@@ -497,9 +472,10 @@ func flattenComputeAddressAddress(v interface{}, d *schema.ResourceData) interfa
 }
 
 func flattenComputeAddressAddressType(v interface{}, d *schema.ResourceData) interface{} {
-	if v == nil || v.(string) == "" {
+	if v == nil || isEmptyValue(reflect.ValueOf(v)) {
 		return "EXTERNAL"
 	}
+
 	return v
 }
 

@@ -36,9 +36,9 @@ func resourceDataFusionInstance() *schema.Resource {
 		},
 
 		Timeouts: &schema.ResourceTimeout{
-			Create: schema.DefaultTimeout(30 * time.Minute),
-			Update: schema.DefaultTimeout(10 * time.Minute),
-			Delete: schema.DefaultTimeout(25 * time.Minute),
+			Create: schema.DefaultTimeout(60 * time.Minute),
+			Update: schema.DefaultTimeout(25 * time.Minute),
+			Delete: schema.DefaultTimeout(50 * time.Minute),
 		},
 
 		Schema: map[string]*schema.Schema{
@@ -53,12 +53,12 @@ func resourceDataFusionInstance() *schema.Resource {
 				Required:     true,
 				ForceNew:     true,
 				ValidateFunc: validation.StringInSlice([]string{"BASIC", "ENTERPRISE"}, false),
-				Description: `Represents the type of Data Fusion instance. Each type is configured with 
+				Description: `Represents the type of Data Fusion instance. Each type is configured with
 the default settings for processing and memory.
-- BASIC: Basic Data Fusion instance. In Basic type, the user will be able to create data pipelines 
-using point and click UI. However, there are certain limitations, such as fewer number 
+- BASIC: Basic Data Fusion instance. In Basic type, the user will be able to create data pipelines
+using point and click UI. However, there are certain limitations, such as fewer number
 of concurrent pipelines, no support for streaming pipelines, etc.
-- ENTERPRISE: Enterprise Data Fusion instance. In Enterprise type, the user will have more features 
+- ENTERPRISE: Enterprise Data Fusion instance. In Enterprise type, the user will have more features
 available, such as support for streaming pipelines, higher number of concurrent pipelines, etc.`,
 			},
 			"description": {
@@ -84,12 +84,46 @@ available, such as support for streaming pipelines, higher number of concurrent 
 such as Compute Engine VMs.`,
 				Elem: &schema.Schema{Type: schema.TypeString},
 			},
+			"network_config": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				ForceNew:    true,
+				Description: `Network configuration options. These are required when a private Data Fusion instance is to be created.`,
+				MaxItems:    1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"ip_allocation": {
+							Type:     schema.TypeString,
+							Required: true,
+							ForceNew: true,
+							Description: `The IP range in CIDR notation to use for the managed Data Fusion instance
+nodes. This range must not overlap with any other ranges used in the Data Fusion instance network.`,
+						},
+						"network": {
+							Type:     schema.TypeString,
+							Required: true,
+							ForceNew: true,
+							Description: `Name of the network in the project with which the tenant project
+will be peered for executing pipelines. In case of shared VPC where the network resides in another host
+project the network should specified in the form of projects/{host-project-id}/global/networks/{network}`,
+						},
+					},
+				},
+			},
 			"options": {
 				Type:        schema.TypeMap,
 				Optional:    true,
 				ForceNew:    true,
 				Description: `Map of additional options used to configure the behavior of Data Fusion instance.`,
 				Elem:        &schema.Schema{Type: schema.TypeString},
+			},
+			"private_instance": {
+				Type:     schema.TypeBool,
+				Optional: true,
+				ForceNew: true,
+				Description: `Specifies whether the Data Fusion instance should be private. If set to
+true, all Data Fusion nodes will have private IP addresses and will not be
+able to access the public internet.`,
 			},
 			"region": {
 				Type:        schema.TypeString,
@@ -190,6 +224,18 @@ func resourceDataFusionInstanceCreate(d *schema.ResourceData, meta interface{}) 
 	} else if v, ok := d.GetOkExists("options"); !isEmptyValue(reflect.ValueOf(optionsProp)) && (ok || !reflect.DeepEqual(v, optionsProp)) {
 		obj["options"] = optionsProp
 	}
+	privateInstanceProp, err := expandDataFusionInstancePrivateInstance(d.Get("private_instance"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("private_instance"); !isEmptyValue(reflect.ValueOf(privateInstanceProp)) && (ok || !reflect.DeepEqual(v, privateInstanceProp)) {
+		obj["privateInstance"] = privateInstanceProp
+	}
+	networkConfigProp, err := expandDataFusionInstanceNetworkConfig(d.Get("network_config"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("network_config"); !isEmptyValue(reflect.ValueOf(networkConfigProp)) && (ok || !reflect.DeepEqual(v, networkConfigProp)) {
+		obj["networkConfig"] = networkConfigProp
+	}
 
 	url, err := replaceVars(d, config, "{{DataFusionBasePath}}projects/{{project}}/locations/{{region}}/instances?instanceId={{name}}")
 	if err != nil {
@@ -207,20 +253,20 @@ func resourceDataFusionInstanceCreate(d *schema.ResourceData, meta interface{}) 
 	}
 
 	// Store the ID now
-	id, err := replaceVars(d, config, "{{project}}/{{region}}/{{name}}")
+	id, err := replaceVars(d, config, "projects/{{project}}/locations/{{region}}/instances/{{name}}")
 	if err != nil {
 		return fmt.Errorf("Error constructing id: %s", err)
 	}
 	d.SetId(id)
 
-	waitErr := dataFusionOperationWaitTime(
+	err = dataFusionOperationWaitTime(
 		config, res, project, "Creating Instance",
 		int(d.Timeout(schema.TimeoutCreate).Minutes()))
 
-	if waitErr != nil {
+	if err != nil {
 		// The resource didn't actually create
 		d.SetId("")
-		return fmt.Errorf("Error waiting to create Instance: %s", waitErr)
+		return fmt.Errorf("Error waiting to create Instance: %s", err)
 	}
 
 	log.Printf("[DEBUG] Finished creating Instance %q: %#v", d.Id(), res)
@@ -294,6 +340,12 @@ func resourceDataFusionInstanceRead(d *schema.ResourceData, meta interface{}) er
 		return fmt.Errorf("Error reading Instance: %s", err)
 	}
 	if err := d.Set("version", flattenDataFusionInstanceVersion(res["version"], d)); err != nil {
+		return fmt.Errorf("Error reading Instance: %s", err)
+	}
+	if err := d.Set("private_instance", flattenDataFusionInstancePrivateInstance(res["privateInstance"], d)); err != nil {
+		return fmt.Errorf("Error reading Instance: %s", err)
+	}
+	if err := d.Set("network_config", flattenDataFusionInstanceNetworkConfig(res["networkConfig"], d)); err != nil {
 		return fmt.Errorf("Error reading Instance: %s", err)
 	}
 
@@ -396,7 +448,7 @@ func resourceDataFusionInstanceImport(d *schema.ResourceData, meta interface{}) 
 	}
 
 	// Replace import id for the resource id
-	id, err := replaceVars(d, config, "{{project}}/{{region}}/{{name}}")
+	id, err := replaceVars(d, config, "projects/{{project}}/locations/{{region}}/instances/{{name}}")
 	if err != nil {
 		return nil, fmt.Errorf("Error constructing id: %s", err)
 	}
@@ -460,18 +512,35 @@ func flattenDataFusionInstanceVersion(v interface{}, d *schema.ResourceData) int
 	return v
 }
 
+func flattenDataFusionInstancePrivateInstance(v interface{}, d *schema.ResourceData) interface{} {
+	return v
+}
+
+func flattenDataFusionInstanceNetworkConfig(v interface{}, d *schema.ResourceData) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["ip_allocation"] =
+		flattenDataFusionInstanceNetworkConfigIpAllocation(original["ipAllocation"], d)
+	transformed["network"] =
+		flattenDataFusionInstanceNetworkConfigNetwork(original["network"], d)
+	return []interface{}{transformed}
+}
+func flattenDataFusionInstanceNetworkConfigIpAllocation(v interface{}, d *schema.ResourceData) interface{} {
+	return v
+}
+
+func flattenDataFusionInstanceNetworkConfigNetwork(v interface{}, d *schema.ResourceData) interface{} {
+	return v
+}
+
 func expandDataFusionInstanceName(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
-	project, err := getProject(d, config)
-	if err != nil {
-		return nil, err
-	}
-
-	region, err := getRegion(d, config)
-	if err != nil {
-		return nil, err
-	}
-
-	return fmt.Sprintf("projects/%s/locations/%s/instances/%s", project, region, v.(string)), nil
+	return replaceVars(d, config, "projects/{{project}}/locations/{{region}}/instances/{{name}}")
 }
 
 func expandDataFusionInstanceDescription(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
@@ -510,4 +579,42 @@ func expandDataFusionInstanceOptions(v interface{}, d TerraformResourceData, con
 		m[k] = val.(string)
 	}
 	return m, nil
+}
+
+func expandDataFusionInstancePrivateInstance(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandDataFusionInstanceNetworkConfig(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedIpAllocation, err := expandDataFusionInstanceNetworkConfigIpAllocation(original["ip_allocation"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedIpAllocation); val.IsValid() && !isEmptyValue(val) {
+		transformed["ipAllocation"] = transformedIpAllocation
+	}
+
+	transformedNetwork, err := expandDataFusionInstanceNetworkConfigNetwork(original["network"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedNetwork); val.IsValid() && !isEmptyValue(val) {
+		transformed["network"] = transformedNetwork
+	}
+
+	return transformed, nil
+}
+
+func expandDataFusionInstanceNetworkConfigIpAllocation(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandDataFusionInstanceNetworkConfigNetwork(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
 }

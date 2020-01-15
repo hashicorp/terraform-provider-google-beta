@@ -37,24 +37,24 @@ Three different resources help you manage your IAM policy for Iap AppEngineVersi
 
 ```hcl
 data "google_iam_policy" "admin" {
-	binding {
-		role = "roles/iap.httpsResourceAccessor"
-		members = [
-			"user:jane@example.com",
-		]
-	}
+  binding {
+    role = "roles/iap.httpsResourceAccessor"
+    members = [
+      "user:jane@example.com",
+    ]
+  }
 }
 
 resource "google_iap_app_engine_version_iam_policy" "editor" {
-	project = "${google_app_engine_standard_app_version.version.project}"
-	app_id = "${google_app_engine_standard_app_version.version.project}"
-	service = "${google_app_engine_standard_app_version.version.service}"
-	version_id = "${google_app_engine_standard_app_version.version.version_id}"
-	policy_data = "${data.google_iam_policy.admin.policy_data}"
+  project = "${google_app_engine_standard_app_version.version.project}"
+  app_id = "${google_app_engine_standard_app_version.version.project}"
+  service = "${google_app_engine_standard_app_version.version.service}"
+  version_id = "${google_app_engine_standard_app_version.version.version_id}"
+  policy_data = "${data.google_iam_policy.admin.policy_data}"
 }
 ```
 
-With IAM Conditions ([beta](https://terraform.io/docs/providers/google/provider_versions.html), Whitelist-only):
+With IAM Conditions ([beta](https://terraform.io/docs/providers/google/provider_versions.html)):
 
 ```hcl
 data "google_iam_policy" "admin" {
@@ -73,10 +73,10 @@ data "google_iam_policy" "admin" {
 }
 
 resource "google_iap_app_engine_version_iam_policy" "editor" {
-	project = "${google_app_engine_standard_app_version.version.project}"
-	app_id = "${google_app_engine_standard_app_version.version.project}"
-	service = "${google_app_engine_standard_app_version.version.service}"
-	version_id = "${google_app_engine_standard_app_version.version.version_id}"
+  project = "${google_app_engine_standard_app_version.version.project}"
+  app_id = "${google_app_engine_standard_app_version.version.project}"
+  service = "${google_app_engine_standard_app_version.version.service}"
+  version_id = "${google_app_engine_standard_app_version.version.version_id}"
   policy_data = "${data.google_iam_policy.admin.policy_data}"
 }
 ```
@@ -84,25 +84,25 @@ resource "google_iap_app_engine_version_iam_policy" "editor" {
 
 ```hcl
 resource "google_iap_app_engine_version_iam_binding" "editor" {
-	project = "${google_app_engine_standard_app_version.version.project}"
-	app_id = "${google_app_engine_standard_app_version.version.project}"
-	service = "${google_app_engine_standard_app_version.version.service}"
-	version_id = "${google_app_engine_standard_app_version.version.version_id}"
-	role = "roles/iap.httpsResourceAccessor"
-	members = [
-		"user:jane@example.com",
-	]
+  project = "${google_app_engine_standard_app_version.version.project}"
+  app_id = "${google_app_engine_standard_app_version.version.project}"
+  service = "${google_app_engine_standard_app_version.version.service}"
+  version_id = "${google_app_engine_standard_app_version.version.version_id}"
+  role = "roles/iap.httpsResourceAccessor"
+  members = [
+    "user:jane@example.com",
+  ]
 }
 ```
 
-With IAM Conditions ([beta](https://terraform.io/docs/providers/google/provider_versions.html), Whitelist-only):
+With IAM Conditions ([beta](https://terraform.io/docs/providers/google/provider_versions.html)):
 
 ```hcl
 resource "google_iap_app_engine_version_iam_binding" "editor" {
-	project = "${google_app_engine_standard_app_version.version.project}"
-	app_id = "${google_app_engine_standard_app_version.version.project}"
-	service = "${google_app_engine_standard_app_version.version.service}"
-	version_id = "${google_app_engine_standard_app_version.version.version_id}"
+  project = "${google_app_engine_standard_app_version.version.project}"
+  app_id = "${google_app_engine_standard_app_version.version.project}"
+  service = "${google_app_engine_standard_app_version.version.service}"
+  version_id = "${google_app_engine_standard_app_version.version.version_id}"
   role = "roles/iap.httpsResourceAccessor"
   members = [
     "user:jane@example.com",
@@ -119,23 +119,23 @@ resource "google_iap_app_engine_version_iam_binding" "editor" {
 
 ```hcl
 resource "google_iap_app_engine_version_iam_member" "editor" {
-	project = "${google_app_engine_standard_app_version.version.project}"
-	app_id = "${google_app_engine_standard_app_version.version.project}"
-	service = "${google_app_engine_standard_app_version.version.service}"
-	version_id = "${google_app_engine_standard_app_version.version.version_id}"
-	role = "roles/iap.httpsResourceAccessor"
-	member = "user:jane@example.com"
+  project = "${google_app_engine_standard_app_version.version.project}"
+  app_id = "${google_app_engine_standard_app_version.version.project}"
+  service = "${google_app_engine_standard_app_version.version.service}"
+  version_id = "${google_app_engine_standard_app_version.version.version_id}"
+  role = "roles/iap.httpsResourceAccessor"
+  member = "user:jane@example.com"
 }
 ```
 
-With IAM Conditions ([beta](https://terraform.io/docs/providers/google/provider_versions.html), Whitelist-only):
+With IAM Conditions ([beta](https://terraform.io/docs/providers/google/provider_versions.html)):
 
 ```hcl
 resource "google_iap_app_engine_version_iam_member" "editor" {
-	project = "${google_app_engine_standard_app_version.version.project}"
-	app_id = "${google_app_engine_standard_app_version.version.project}"
-	service = "${google_app_engine_standard_app_version.version.service}"
-	version_id = "${google_app_engine_standard_app_version.version.version_id}"
+  project = "${google_app_engine_standard_app_version.version.project}"
+  app_id = "${google_app_engine_standard_app_version.version.project}"
+  service = "${google_app_engine_standard_app_version.version.service}"
+  version_id = "${google_app_engine_standard_app_version.version.version_id}"
   role = "roles/iap.httpsResourceAccessor"
   member = "user:jane@example.com"
 
@@ -173,7 +173,7 @@ The following arguments are supported:
 * `policy_data` - (Required only by `google_iap_app_engine_version_iam_policy`) The policy data generated by
   a `google_iam_policy` data source.
 
-* `condition` - (Optional, [Beta](https://terraform.io/docs/providers/google/provider_versions.html)) An [IAM Condition](https://cloud.google.com/iam/docs/conditions-overview) for a given binding. You must be whitelisted for the IAM Conditions private beta in order to use them in Terraform.
+* `condition` - (Optional, [Beta](https://terraform.io/docs/providers/google/provider_versions.html)) An [IAM Condition](https://cloud.google.com/iam/docs/conditions-overview) for a given binding.
   Structure is documented below.
 
 ---
@@ -226,6 +226,9 @@ $ terraform import google_iap_app_engine_version_iam_policy.editor projects/{{pr
 
 -> If you're importing a resource with beta features, make sure to include `-provider=google-beta`
 as an argument so that Terraform uses the correct provider to import your resource.
+
+-> **Custom Roles**: If you're importing a IAM resource with a custom role, make sure to use the
+ full name of the custom role, e.g. `[projects/my-project|organizations/my-org]/roles/my-custom-role`.
 
 ## User Project Overrides
 

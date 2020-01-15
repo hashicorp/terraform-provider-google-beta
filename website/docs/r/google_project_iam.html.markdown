@@ -33,7 +33,7 @@ Four different resources help you manage your IAM policy for a project. Each of 
 ```hcl
 resource "google_project_iam_policy" "project" {
   project     = "your-project-id"
-  policy_data = "${data.google_iam_policy.admin.policy_data}"
+  policy_data = data.google_iam_policy.admin.policy_data
 }
 
 data "google_iam_policy" "admin" {
@@ -47,7 +47,7 @@ data "google_iam_policy" "admin" {
 }
 ```
 
-With IAM Conditions ([beta](https://terraform.io/docs/providers/google/provider_versions.html), Whitelist-only):
+With IAM Conditions ([beta](https://terraform.io/docs/providers/google/provider_versions.html)):
 
 ```hcl
 resource "google_project_iam_policy" "project" {
@@ -87,7 +87,7 @@ resource "google_project_iam_binding" "project" {
 }
 ```
 
-With IAM Conditions ([beta](https://terraform.io/docs/providers/google/provider_versions.html), Whitelist-only):
+With IAM Conditions ([beta](https://terraform.io/docs/providers/google/provider_versions.html)):
 
 ```hcl
 resource "google_project_iam_binding" "project" {
@@ -116,7 +116,7 @@ resource "google_project_iam_member" "project" {
 }
 ```
 
-With IAM Conditions ([beta](https://terraform.io/docs/providers/google/provider_versions.html), Whitelist-only):
+With IAM Conditions ([beta](https://terraform.io/docs/providers/google/provider_versions.html)):
 
 ```hcl
 resource "google_project_iam_member" "project" {
@@ -179,7 +179,7 @@ will not be inferred from the provider.
 
 * `audit_log_config` - (Required only by google\_project\_iam\_audit\_config) The configuration for logging of each type of permission.  This can be specified multiple times.  Structure is documented below.
 
-* `condition` - (Optional, [Beta](https://terraform.io/docs/providers/google/provider_versions.html)) An [IAM Condition](https://cloud.google.com/iam/docs/conditions-overview) for a given binding. You must be whitelisted for the IAM Conditions private beta in order to use them in Terraform.
+* `condition` - (Optional, [Beta](https://terraform.io/docs/providers/google/provider_versions.html)) An [IAM Condition](https://cloud.google.com/iam/docs/conditions-overview) for a given binding.
   Structure is documented below.
 
 ---
@@ -235,3 +235,7 @@ IAM audit config imports use the identifier of the resource in question and the 
 ```
 terraform import google_project_iam_audit_config.my_project "your-project-id foo.googleapis.com"
 ```
+
+-> **Custom Roles**: If you're importing a IAM resource with a custom role, make sure to use the
+ full name of the custom role, e.g. `[projects/my-project|organizations/my-org]/roles/my-custom-role`.
+

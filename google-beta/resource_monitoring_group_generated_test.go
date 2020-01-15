@@ -85,14 +85,14 @@ func TestAccMonitoringGroup_monitoringGroupSubgroupExample(t *testing.T) {
 func testAccMonitoringGroup_monitoringGroupSubgroupExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_monitoring_group" "parent" {
-  display_name = "tf-test MonitoringSubGroup%{random_suffix}"
-  filter = "resource.metadata.region=\"europe-west2\""
+  display_name = "tf-test MonitoringParentGroup%{random_suffix}"
+  filter       = "resource.metadata.region=\"europe-west2\""
 }
 
 resource "google_monitoring_group" "subgroup" {
   display_name = "tf-test MonitoringSubGroup%{random_suffix}"
-  filter = "resource.metadata.region=\"europe-west2\""
-  parent_name =  "${google_monitoring_group.parent.name}"
+  filter       = "resource.metadata.region=\"europe-west2\""
+  parent_name  =  google_monitoring_group.parent.name
 }
 `, context)
 }
@@ -113,7 +113,7 @@ func testAccCheckMonitoringGroupDestroy(s *terraform.State) error {
 			return err
 		}
 
-		_, err = sendRequest(config, "GET", "", url, nil)
+		_, err = sendRequest(config, "GET", "", url, nil, isMonitoringRetryableError)
 		if err == nil {
 			return fmt.Errorf("MonitoringGroup still exists at %s", url)
 		}

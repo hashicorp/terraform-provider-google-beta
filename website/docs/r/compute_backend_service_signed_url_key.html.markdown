@@ -41,9 +41,9 @@ we cannot confirm or reverse changes to a key outside of Terraform.
 
 ```hcl
 resource "google_compute_backend_service_signed_url_key" "backend_key" {
-  name           = "test-key"
-  key_value      = "pPsVemX8GM46QVeezid6Rw=="
-  backend_service = "${google_compute_backend_service.example_backend.name}"
+  name            = "test-key"
+  key_value       = "pPsVemX8GM46QVeezid6Rw=="
+  backend_service = google_compute_backend_service.example_backend.name
 }
 
 resource "google_compute_backend_service" "example_backend" {
@@ -55,17 +55,17 @@ resource "google_compute_backend_service" "example_backend" {
   enable_cdn  = true
 
   backend {
-    group = "${google_compute_instance_group_manager.webservers.instance_group}"
+    group = google_compute_instance_group_manager.webservers.instance_group
   }
 
-  health_checks = ["${google_compute_http_health_check.default.self_link}"]
+  health_checks = [google_compute_http_health_check.default.self_link]
 }
 
 resource "google_compute_instance_group_manager" "webservers" {
   name               = "my-webservers"
 
   version {
-    instance_template  = "${google_compute_instance_template.webserver.self_link}"
+    instance_template  = google_compute_instance_template.webserver.self_link
     name               = "primary"
   }
 
@@ -131,19 +131,6 @@ This resource provides the following
 
 - `create` - Default is 4 minutes.
 - `delete` - Default is 4 minutes.
-
-## Import
-
-BackendServiceSignedUrlKey can be imported using any of these accepted formats:
-
-```
-$ terraform import google_compute_backend_service_signed_url_key.default projects/{{project}}/global/backendServices/{{backend_service}}/{{name}}
-$ terraform import google_compute_backend_service_signed_url_key.default {{project}}/{{backend_service}}/{{name}}
-$ terraform import google_compute_backend_service_signed_url_key.default {{backend_service}}/{{name}}
-```
-
--> If you're importing a resource with beta features, make sure to include `-provider=google-beta`
-as an argument so that Terraform uses the correct provider to import your resource.
 
 ## User Project Overrides
 

@@ -103,9 +103,10 @@ Cloud Pub/Sub topic. Not having adequate permissions will cause the calls that s
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"allow_null_header": {
-							Type:        schema.TypeBool,
-							Optional:    true,
-							Description: `Determines whether messages with no header are allowed.`,
+							Type:         schema.TypeBool,
+							Optional:     true,
+							Description:  `Determines whether messages with no header are allowed.`,
+							AtLeastOneOf: []string{"parser_config.0.allow_null_header", "parser_config.0.segment_terminator"},
 						},
 						"segment_terminator": {
 							Type:     schema.TypeString,
@@ -113,6 +114,7 @@ Cloud Pub/Sub topic. Not having adequate permissions will cause the calls that s
 							Description: `Byte(s) to be used as the segment terminator. If this is unset, '\r' will be used as segment terminator.
 
 A base64-encoded string.`,
+							AtLeastOneOf: []string{"parser_config.0.allow_null_header", "parser_config.0.segment_terminator"},
 						},
 					},
 				},

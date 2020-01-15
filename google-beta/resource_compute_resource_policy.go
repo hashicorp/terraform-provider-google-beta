@@ -23,7 +23,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
-	"google.golang.org/api/compute/v1"
 )
 
 func resourceComputeResourcePolicy() *schema.Resource {
@@ -93,15 +92,17 @@ which cannot be a dash.`,
 													Description: `The number of days between snapshots.`,
 												},
 												"start_time": {
-													Type:     schema.TypeString,
-													Required: true,
-													ForceNew: true,
+													Type:         schema.TypeString,
+													Required:     true,
+													ForceNew:     true,
+													ValidateFunc: validateHourlyOnly,
 													Description: `This must be in UTC format that resolves to one of
 00:00, 04:00, 08:00, 12:00, 16:00, or 20:00. For example,
 both 13:00-5 and 08:00 are valid.`,
 												},
 											},
 										},
+										ExactlyOneOf: []string{"snapshot_schedule_policy.0.schedule.0.hourly_schedule", "snapshot_schedule_policy.0.schedule.0.daily_schedule", "snapshot_schedule_policy.0.schedule.0.weekly_schedule"},
 									},
 									"hourly_schedule": {
 										Type:        schema.TypeList,
@@ -118,15 +119,18 @@ both 13:00-5 and 08:00 are valid.`,
 													Description: `The number of hours between snapshots.`,
 												},
 												"start_time": {
-													Type:     schema.TypeString,
-													Required: true,
-													ForceNew: true,
+													Type:         schema.TypeString,
+													Required:     true,
+													ForceNew:     true,
+													ValidateFunc: validateHourlyOnly,
 													Description: `Time within the window to start the operations.
-It must be in format "HH:MM",
-where HH : [00-23] and MM : [00-00] GMT.`,
+It must be in an hourly format "HH:MM",
+where HH : [00-23] and MM : [00] GMT.
+eg: 21:00`,
 												},
 											},
 										},
+										ExactlyOneOf: []string{"snapshot_schedule_policy.0.schedule.0.hourly_schedule", "snapshot_schedule_policy.0.schedule.0.daily_schedule", "snapshot_schedule_policy.0.schedule.0.weekly_schedule"},
 									},
 									"weekly_schedule": {
 										Type:        schema.TypeList,
@@ -148,6 +152,7 @@ where HH : [00-23] and MM : [00-00] GMT.`,
 												},
 											},
 										},
+										ExactlyOneOf: []string{"snapshot_schedule_policy.0.schedule.0.hourly_schedule", "snapshot_schedule_policy.0.schedule.0.daily_schedule", "snapshot_schedule_policy.0.schedule.0.weekly_schedule"},
 									},
 								},
 							},
@@ -188,17 +193,19 @@ Valid options are KEEP_AUTO_SNAPSHOTS and APPLY_RETENTION_POLICY`,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"guest_flush": {
-										Type:        schema.TypeBool,
-										Optional:    true,
-										ForceNew:    true,
-										Description: `Whether to perform a 'guest aware' snapshot.`,
+										Type:         schema.TypeBool,
+										Optional:     true,
+										ForceNew:     true,
+										Description:  `Whether to perform a 'guest aware' snapshot.`,
+										AtLeastOneOf: []string{"snapshot_schedule_policy.0.snapshot_properties.0.labels", "snapshot_schedule_policy.0.snapshot_properties.0.storage_locations", "snapshot_schedule_policy.0.snapshot_properties.0.guest_flush"},
 									},
 									"labels": {
-										Type:        schema.TypeMap,
-										Optional:    true,
-										ForceNew:    true,
-										Description: `A set of key-value pairs.`,
-										Elem:        &schema.Schema{Type: schema.TypeString},
+										Type:         schema.TypeMap,
+										Optional:     true,
+										ForceNew:     true,
+										Description:  `A set of key-value pairs.`,
+										Elem:         &schema.Schema{Type: schema.TypeString},
+										AtLeastOneOf: []string{"snapshot_schedule_policy.0.snapshot_properties.0.labels", "snapshot_schedule_policy.0.snapshot_properties.0.storage_locations", "snapshot_schedule_policy.0.snapshot_properties.0.guest_flush"},
 									},
 									"storage_locations": {
 										Type:        schema.TypeSet,
@@ -209,7 +216,8 @@ Valid options are KEEP_AUTO_SNAPSHOTS and APPLY_RETENTION_POLICY`,
 										Elem: &schema.Schema{
 											Type: schema.TypeString,
 										},
-										Set: schema.HashString,
+										Set:          schema.HashString,
+										AtLeastOneOf: []string{"snapshot_schedule_policy.0.snapshot_properties.0.labels", "snapshot_schedule_policy.0.snapshot_properties.0.storage_locations", "snapshot_schedule_policy.0.snapshot_properties.0.guest_flush"},
 									},
 								},
 							},
@@ -291,26 +299,20 @@ func resourceComputeResourcePolicyCreate(d *schema.ResourceData, meta interface{
 	}
 
 	// Store the ID now
-	id, err := replaceVars(d, config, "{{name}}")
+	id, err := replaceVars(d, config, "projects/{{project}}/regions/{{region}}/resourcePolicies/{{name}}")
 	if err != nil {
 		return fmt.Errorf("Error constructing id: %s", err)
 	}
 	d.SetId(id)
 
-	op := &compute.Operation{}
-	err = Convert(res, op)
-	if err != nil {
-		return err
-	}
-
-	waitErr := computeOperationWaitTime(
-		config.clientCompute, op, project, "Creating ResourcePolicy",
+	err = computeOperationWaitTime(
+		config, res, project, "Creating ResourcePolicy",
 		int(d.Timeout(schema.TimeoutCreate).Minutes()))
 
-	if waitErr != nil {
+	if err != nil {
 		// The resource didn't actually create
 		d.SetId("")
-		return fmt.Errorf("Error waiting to create ResourcePolicy: %s", waitErr)
+		return fmt.Errorf("Error waiting to create ResourcePolicy: %s", err)
 	}
 
 	log.Printf("[DEBUG] Finished creating ResourcePolicy %q: %#v", d.Id(), res)
@@ -376,14 +378,8 @@ func resourceComputeResourcePolicyDelete(d *schema.ResourceData, meta interface{
 		return handleNotFoundError(err, d, "ResourcePolicy")
 	}
 
-	op := &compute.Operation{}
-	err = Convert(res, op)
-	if err != nil {
-		return err
-	}
-
 	err = computeOperationWaitTime(
-		config.clientCompute, op, project, "Deleting ResourcePolicy",
+		config, res, project, "Deleting ResourcePolicy",
 		int(d.Timeout(schema.TimeoutDelete).Minutes()))
 
 	if err != nil {
@@ -406,7 +402,7 @@ func resourceComputeResourcePolicyImport(d *schema.ResourceData, meta interface{
 	}
 
 	// Replace import id for the resource id
-	id, err := replaceVars(d, config, "{{name}}")
+	id, err := replaceVars(d, config, "projects/{{project}}/regions/{{region}}/resourcePolicies/{{name}}")
 	if err != nil {
 		return nil, fmt.Errorf("Error constructing id: %s", err)
 	}

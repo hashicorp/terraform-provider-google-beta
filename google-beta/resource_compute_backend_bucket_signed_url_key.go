@@ -21,7 +21,6 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"google.golang.org/api/compute/v1"
 )
 
 func resourceComputeBackendBucketSignedUrlKey() *schema.Resource {
@@ -114,26 +113,20 @@ func resourceComputeBackendBucketSignedUrlKeyCreate(d *schema.ResourceData, meta
 	}
 
 	// Store the ID now
-	id, err := replaceVars(d, config, "{{name}}")
+	id, err := replaceVars(d, config, "projects/{{project}}/global/backendBuckets/{{backend_bucket}}")
 	if err != nil {
 		return fmt.Errorf("Error constructing id: %s", err)
 	}
 	d.SetId(id)
 
-	op := &compute.Operation{}
-	err = Convert(res, op)
-	if err != nil {
-		return err
-	}
-
-	waitErr := computeOperationWaitTime(
-		config.clientCompute, op, project, "Creating BackendBucketSignedUrlKey",
+	err = computeOperationWaitTime(
+		config, res, project, "Creating BackendBucketSignedUrlKey",
 		int(d.Timeout(schema.TimeoutCreate).Minutes()))
 
-	if waitErr != nil {
+	if err != nil {
 		// The resource didn't actually create
 		d.SetId("")
-		return fmt.Errorf("Error waiting to create BackendBucketSignedUrlKey: %s", waitErr)
+		return fmt.Errorf("Error waiting to create BackendBucketSignedUrlKey: %s", err)
 	}
 
 	log.Printf("[DEBUG] Finished creating BackendBucketSignedUrlKey %q: %#v", d.Id(), res)
@@ -209,14 +202,8 @@ func resourceComputeBackendBucketSignedUrlKeyDelete(d *schema.ResourceData, meta
 		return handleNotFoundError(err, d, "BackendBucketSignedUrlKey")
 	}
 
-	op := &compute.Operation{}
-	err = Convert(res, op)
-	if err != nil {
-		return err
-	}
-
 	err = computeOperationWaitTime(
-		config.clientCompute, op, project, "Deleting BackendBucketSignedUrlKey",
+		config, res, project, "Deleting BackendBucketSignedUrlKey",
 		int(d.Timeout(schema.TimeoutDelete).Minutes()))
 
 	if err != nil {

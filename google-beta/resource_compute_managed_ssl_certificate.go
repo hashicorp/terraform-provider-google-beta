@@ -23,7 +23,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
-	"google.golang.org/api/compute/v1"
 )
 
 func resourceComputeManagedSslCertificate() *schema.Resource {
@@ -63,8 +62,8 @@ certificate is managed (as indicated by a value of 'MANAGED' in 'type').`,
 							ForceNew:         true,
 							DiffSuppressFunc: absoluteDomainSuppress,
 							Description: `Domains for which a managed SSL certificate will be valid.  Currently,
-there can only be one domain in this list.`,
-							MaxItems: 1,
+there can be up to 100 domains in this list.`,
+							MaxItems: 100,
 							Elem: &schema.Schema{
 								Type: schema.TypeString,
 							},
@@ -179,26 +178,20 @@ func resourceComputeManagedSslCertificateCreate(d *schema.ResourceData, meta int
 	}
 
 	// Store the ID now
-	id, err := replaceVars(d, config, "{{name}}")
+	id, err := replaceVars(d, config, "projects/{{project}}/global/sslCertificates/{{name}}")
 	if err != nil {
 		return fmt.Errorf("Error constructing id: %s", err)
 	}
 	d.SetId(id)
 
-	op := &compute.Operation{}
-	err = Convert(res, op)
-	if err != nil {
-		return err
-	}
-
-	waitErr := computeOperationWaitTime(
-		config.clientCompute, op, project, "Creating ManagedSslCertificate",
+	err = computeOperationWaitTime(
+		config, res, project, "Creating ManagedSslCertificate",
 		int(d.Timeout(schema.TimeoutCreate).Minutes()))
 
-	if waitErr != nil {
+	if err != nil {
 		// The resource didn't actually create
 		d.SetId("")
-		return fmt.Errorf("Error waiting to create ManagedSslCertificate: %s", waitErr)
+		return fmt.Errorf("Error waiting to create ManagedSslCertificate: %s", err)
 	}
 
 	log.Printf("[DEBUG] Finished creating ManagedSslCertificate %q: %#v", d.Id(), res)
@@ -279,14 +272,8 @@ func resourceComputeManagedSslCertificateDelete(d *schema.ResourceData, meta int
 		return handleNotFoundError(err, d, "ManagedSslCertificate")
 	}
 
-	op := &compute.Operation{}
-	err = Convert(res, op)
-	if err != nil {
-		return err
-	}
-
 	err = computeOperationWaitTime(
-		config.clientCompute, op, project, "Deleting ManagedSslCertificate",
+		config, res, project, "Deleting ManagedSslCertificate",
 		int(d.Timeout(schema.TimeoutDelete).Minutes()))
 
 	if err != nil {
@@ -308,7 +295,7 @@ func resourceComputeManagedSslCertificateImport(d *schema.ResourceData, meta int
 	}
 
 	// Replace import id for the resource id
-	id, err := replaceVars(d, config, "{{name}}")
+	id, err := replaceVars(d, config, "projects/{{project}}/global/sslCertificates/{{name}}")
 	if err != nil {
 		return nil, fmt.Errorf("Error constructing id: %s", err)
 	}

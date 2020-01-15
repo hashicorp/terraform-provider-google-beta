@@ -22,7 +22,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
-	"google.golang.org/api/compute/v1"
 )
 
 func resourceComputeNodeTemplate() *schema.Resource {
@@ -81,16 +80,18 @@ be specified.`,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"cpus": {
-							Type:        schema.TypeString,
-							Optional:    true,
-							ForceNew:    true,
-							Description: `Number of virtual CPUs to use.`,
+							Type:         schema.TypeString,
+							Optional:     true,
+							ForceNew:     true,
+							Description:  `Number of virtual CPUs to use.`,
+							AtLeastOneOf: []string{"node_type_flexibility.0.cpus", "node_type_flexibility.0.memory"},
 						},
 						"memory": {
-							Type:        schema.TypeString,
-							Optional:    true,
-							ForceNew:    true,
-							Description: `Physical memory available to the node, defined in MB.`,
+							Type:         schema.TypeString,
+							Optional:     true,
+							ForceNew:     true,
+							Description:  `Physical memory available to the node, defined in MB.`,
+							AtLeastOneOf: []string{"node_type_flexibility.0.cpus", "node_type_flexibility.0.memory"},
 						},
 						"local_ssd": {
 							Type:        schema.TypeString,
@@ -223,26 +224,20 @@ func resourceComputeNodeTemplateCreate(d *schema.ResourceData, meta interface{})
 	}
 
 	// Store the ID now
-	id, err := replaceVars(d, config, "{{name}}")
+	id, err := replaceVars(d, config, "projects/{{project}}/regions/{{region}}/nodeTemplates/{{name}}")
 	if err != nil {
 		return fmt.Errorf("Error constructing id: %s", err)
 	}
 	d.SetId(id)
 
-	op := &compute.Operation{}
-	err = Convert(res, op)
-	if err != nil {
-		return err
-	}
-
-	waitErr := computeOperationWaitTime(
-		config.clientCompute, op, project, "Creating NodeTemplate",
+	err = computeOperationWaitTime(
+		config, res, project, "Creating NodeTemplate",
 		int(d.Timeout(schema.TimeoutCreate).Minutes()))
 
-	if waitErr != nil {
+	if err != nil {
 		// The resource didn't actually create
 		d.SetId("")
-		return fmt.Errorf("Error waiting to create NodeTemplate: %s", waitErr)
+		return fmt.Errorf("Error waiting to create NodeTemplate: %s", err)
 	}
 
 	log.Printf("[DEBUG] Finished creating NodeTemplate %q: %#v", d.Id(), res)
@@ -323,14 +318,8 @@ func resourceComputeNodeTemplateDelete(d *schema.ResourceData, meta interface{})
 		return handleNotFoundError(err, d, "NodeTemplate")
 	}
 
-	op := &compute.Operation{}
-	err = Convert(res, op)
-	if err != nil {
-		return err
-	}
-
 	err = computeOperationWaitTime(
-		config.clientCompute, op, project, "Deleting NodeTemplate",
+		config, res, project, "Deleting NodeTemplate",
 		int(d.Timeout(schema.TimeoutDelete).Minutes()))
 
 	if err != nil {
@@ -353,7 +342,7 @@ func resourceComputeNodeTemplateImport(d *schema.ResourceData, meta interface{})
 	}
 
 	// Replace import id for the resource id
-	id, err := replaceVars(d, config, "{{name}}")
+	id, err := replaceVars(d, config, "projects/{{project}}/regions/{{region}}/nodeTemplates/{{name}}")
 	if err != nil {
 		return nil, fmt.Errorf("Error constructing id: %s", err)
 	}

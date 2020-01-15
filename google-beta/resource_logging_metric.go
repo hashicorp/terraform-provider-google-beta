@@ -80,33 +80,14 @@ without an ending period, for example "Request count". This field is optional bu
 recommended to be set for any metrics associated with user-visible concepts, such as Quota.`,
 						},
 						"labels": {
-							Type:     schema.TypeList,
+							Type:     schema.TypeSet,
 							Optional: true,
 							Description: `The set of labels that can be used to describe a specific instance of this metric type. For
 example, the appengine.googleapis.com/http/server/response_latencies metric type has a label
 for the HTTP response code, response_code, so you can look at latencies for successful responses
 or just for responses that failed.`,
-							Elem: &schema.Resource{
-								Schema: map[string]*schema.Schema{
-									"key": {
-										Type:        schema.TypeString,
-										Required:    true,
-										Description: `The label key.`,
-									},
-									"description": {
-										Type:        schema.TypeString,
-										Optional:    true,
-										Description: `A human-readable description for the label.`,
-									},
-									"value_type": {
-										Type:         schema.TypeString,
-										Optional:     true,
-										ValidateFunc: validation.StringInSlice([]string{"BOOL", "INT64", "STRING", ""}, false),
-										Description:  `The type of data that can be assigned to the label.`,
-										Default:      "STRING",
-									},
-								},
-							},
+							Elem: loggingMetricMetricDescriptorLabelsSchema(),
+							// Default schema.HashSchema is used.
 						},
 						"unit": {
 							Type:     schema.TypeString,
@@ -145,7 +126,7 @@ describes the bucket boundaries used to create a histogram of the extracted valu
 								Schema: map[string]*schema.Schema{
 									"bounds": {
 										Type:        schema.TypeList,
-										Optional:    true,
+										Required:    true,
 										Description: `The values must be monotonically increasing.`,
 										Elem: &schema.Schema{
 											Type: schema.TypeFloat,
@@ -153,6 +134,7 @@ describes the bucket boundaries used to create a histogram of the extracted valu
 									},
 								},
 							},
+							AtLeastOneOf: []string{"bucket_options.0.linear_buckets", "bucket_options.0.exponential_buckets", "bucket_options.0.explicit_buckets"},
 						},
 						"exponential_buckets": {
 							Type:     schema.TypeList,
@@ -163,22 +145,26 @@ the lower bound. Each bucket represents a constant relative uncertainty on a spe
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"growth_factor": {
-										Type:        schema.TypeInt,
-										Optional:    true,
-										Description: `Must be greater than 1.`,
+										Type:         schema.TypeFloat,
+										Optional:     true,
+										Description:  `Must be greater than 1.`,
+										AtLeastOneOf: []string{"bucket_options.0.exponential_buckets.0.num_finite_buckets", "bucket_options.0.exponential_buckets.0.growth_factor", "bucket_options.0.exponential_buckets.0.scale"},
 									},
 									"num_finite_buckets": {
-										Type:        schema.TypeInt,
-										Optional:    true,
-										Description: `Must be greater than 0.`,
+										Type:         schema.TypeInt,
+										Optional:     true,
+										Description:  `Must be greater than 0.`,
+										AtLeastOneOf: []string{"bucket_options.0.exponential_buckets.0.num_finite_buckets", "bucket_options.0.exponential_buckets.0.growth_factor", "bucket_options.0.exponential_buckets.0.scale"},
 									},
 									"scale": {
-										Type:        schema.TypeFloat,
-										Optional:    true,
-										Description: `Must be greater than 0.`,
+										Type:         schema.TypeFloat,
+										Optional:     true,
+										Description:  `Must be greater than 0.`,
+										AtLeastOneOf: []string{"bucket_options.0.exponential_buckets.0.num_finite_buckets", "bucket_options.0.exponential_buckets.0.growth_factor", "bucket_options.0.exponential_buckets.0.scale"},
 									},
 								},
 							},
+							AtLeastOneOf: []string{"bucket_options.0.linear_buckets", "bucket_options.0.exponential_buckets", "bucket_options.0.explicit_buckets"},
 						},
 						"linear_buckets": {
 							Type:     schema.TypeList,
@@ -189,22 +175,26 @@ Each bucket represents a constant absolute uncertainty on the specific value in 
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"num_finite_buckets": {
-										Type:        schema.TypeInt,
-										Optional:    true,
-										Description: `Must be greater than 0.`,
+										Type:         schema.TypeInt,
+										Optional:     true,
+										Description:  `Must be greater than 0.`,
+										AtLeastOneOf: []string{"bucket_options.0.linear_buckets.0.num_finite_buckets", "bucket_options.0.linear_buckets.0.width", "bucket_options.0.linear_buckets.0.offset"},
 									},
 									"offset": {
-										Type:        schema.TypeFloat,
-										Optional:    true,
-										Description: `Lower bound of the first bucket.`,
+										Type:         schema.TypeFloat,
+										Optional:     true,
+										Description:  `Lower bound of the first bucket.`,
+										AtLeastOneOf: []string{"bucket_options.0.linear_buckets.0.num_finite_buckets", "bucket_options.0.linear_buckets.0.width", "bucket_options.0.linear_buckets.0.offset"},
 									},
 									"width": {
-										Type:        schema.TypeInt,
-										Optional:    true,
-										Description: `Must be greater than 0.`,
+										Type:         schema.TypeInt,
+										Optional:     true,
+										Description:  `Must be greater than 0.`,
+										AtLeastOneOf: []string{"bucket_options.0.linear_buckets.0.num_finite_buckets", "bucket_options.0.linear_buckets.0.width", "bucket_options.0.linear_buckets.0.offset"},
 									},
 								},
 							},
+							AtLeastOneOf: []string{"bucket_options.0.linear_buckets", "bucket_options.0.exponential_buckets", "bucket_options.0.explicit_buckets"},
 						},
 					},
 				},
@@ -240,6 +230,30 @@ error to specify a regex that does not include exactly one capture group.`,
 				Optional: true,
 				Computed: true,
 				ForceNew: true,
+			},
+		},
+	}
+}
+
+func loggingMetricMetricDescriptorLabelsSchema() *schema.Resource {
+	return &schema.Resource{
+		Schema: map[string]*schema.Schema{
+			"key": {
+				Type:        schema.TypeString,
+				Required:    true,
+				Description: `The label key.`,
+			},
+			"description": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: `A human-readable description for the label.`,
+			},
+			"value_type": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validation.StringInSlice([]string{"BOOL", "INT64", "STRING", ""}, false),
+				Description:  `The type of data that can be assigned to the label.`,
+				Default:      "STRING",
 			},
 		},
 	}
@@ -548,14 +562,14 @@ func flattenLoggingMetricMetricDescriptorLabels(v interface{}, d *schema.Resourc
 		return v
 	}
 	l := v.([]interface{})
-	transformed := make([]interface{}, 0, len(l))
+	transformed := schema.NewSet(schema.HashResource(loggingMetricMetricDescriptorLabelsSchema()), []interface{}{})
 	for _, raw := range l {
 		original := raw.(map[string]interface{})
 		if len(original) < 1 {
 			// Do not include empty json objects coming back from the api
 			continue
 		}
-		transformed = append(transformed, map[string]interface{}{
+		transformed.Add(map[string]interface{}{
 			"key":         flattenLoggingMetricMetricDescriptorLabelsKey(original["key"], d),
 			"description": flattenLoggingMetricMetricDescriptorLabelsDescription(original["description"], d),
 			"value_type":  flattenLoggingMetricMetricDescriptorLabelsValueType(original["valueType"], d),
@@ -572,9 +586,10 @@ func flattenLoggingMetricMetricDescriptorLabelsDescription(v interface{}, d *sch
 }
 
 func flattenLoggingMetricMetricDescriptorLabelsValueType(v interface{}, d *schema.ResourceData) interface{} {
-	if v == nil || v.(string) == "" {
+	if v == nil || isEmptyValue(reflect.ValueOf(v)) {
 		return "STRING"
 	}
+
 	return v
 }
 
@@ -676,12 +691,6 @@ func flattenLoggingMetricBucketOptionsExponentialBucketsNumFiniteBuckets(v inter
 }
 
 func flattenLoggingMetricBucketOptionsExponentialBucketsGrowthFactor(v interface{}, d *schema.ResourceData) interface{} {
-	// Handles the string fixed64 format
-	if strVal, ok := v.(string); ok {
-		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
-			return intVal
-		} // let terraform core handle it if we can't convert the string to an int.
-	}
 	return v
 }
 
@@ -778,6 +787,7 @@ func expandLoggingMetricMetricDescriptorMetricKind(v interface{}, d TerraformRes
 }
 
 func expandLoggingMetricMetricDescriptorLabels(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	v = v.(*schema.Set).List()
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
 	for _, raw := range l {

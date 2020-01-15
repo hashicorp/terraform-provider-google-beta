@@ -29,7 +29,6 @@ func resourceCloudRunDomainMapping() *schema.Resource {
 	return &schema.Resource{
 		Create: resourceCloudRunDomainMappingCreate,
 		Read:   resourceCloudRunDomainMappingRead,
-		Update: resourceCloudRunDomainMappingUpdate,
 		Delete: resourceCloudRunDomainMappingDelete,
 
 		Importer: &schema.ResourceImporter{
@@ -37,8 +36,7 @@ func resourceCloudRunDomainMapping() *schema.Resource {
 		},
 
 		Timeouts: &schema.ResourceTimeout{
-			Create: schema.DefaultTimeout(4 * time.Minute),
-			Update: schema.DefaultTimeout(4 * time.Minute),
+			Create: schema.DefaultTimeout(6 * time.Minute),
 			Delete: schema.DefaultTimeout(4 * time.Minute),
 		},
 
@@ -46,11 +44,13 @@ func resourceCloudRunDomainMapping() *schema.Resource {
 			"location": {
 				Type:        schema.TypeString,
 				Required:    true,
+				ForceNew:    true,
 				Description: `The location of the cloud run instance. eg us-central1`,
 			},
 			"metadata": {
 				Type:        schema.TypeList,
 				Required:    true,
+				ForceNew:    true,
 				Description: `Metadata associated with this DomainMapping.`,
 				MaxItems:    1,
 				Elem: &schema.Resource{
@@ -58,6 +58,7 @@ func resourceCloudRunDomainMapping() *schema.Resource {
 						"namespace": {
 							Type:     schema.TypeString,
 							Required: true,
+							ForceNew: true,
 							Description: `In Cloud Run the namespace must be equal to either the
 project ID or project number.`,
 						},
@@ -65,6 +66,7 @@ project ID or project number.`,
 							Type:     schema.TypeMap,
 							Computed: true,
 							Optional: true,
+							ForceNew: true,
 							Description: `Annotations is a key value map stored with a resource that
 may be set by external tools to store and retrieve arbitrary metadata. More
 info: http://kubernetes.io/docs/user-guide/annotations`,
@@ -74,6 +76,7 @@ info: http://kubernetes.io/docs/user-guide/annotations`,
 							Type:     schema.TypeMap,
 							Computed: true,
 							Optional: true,
+							ForceNew: true,
 							Description: `Map of string keys and values that can be used to organize and categorize
 (scope and select) objects. May match selectors of replication controllers
 and routes.
@@ -122,25 +125,31 @@ More info: http://kubernetes.io/docs/user-guide/identifiers#uids`,
 			"spec": {
 				Type:        schema.TypeList,
 				Required:    true,
+				ForceNew:    true,
 				Description: `The spec for this DomainMapping.`,
 				MaxItems:    1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"route_name": {
-							Type:     schema.TypeString,
-							Required: true,
+							Type:             schema.TypeString,
+							Required:         true,
+							ForceNew:         true,
+							DiffSuppressFunc: compareSelfLinkOrResourceName,
 							Description: `The name of the Cloud Run Service that this DomainMapping applies to.
 The route must exist.`,
 						},
 						"certificate_mode": {
 							Type:         schema.TypeString,
 							Optional:     true,
+							ForceNew:     true,
 							ValidateFunc: validation.StringInSlice([]string{"NONE", "AUTOMATIC", ""}, false),
 							Description:  `The mode of the certificate.`,
+							Default:      "AUTOMATIC",
 						},
 						"force_override": {
 							Type:     schema.TypeBool,
 							Optional: true,
+							ForceNew: true,
 							Description: `If set, the mapping will override any mapping set before this spec was set.
 It is recommended that the user leaves this empty to receive an error
 warning about a potential conflict and only set it once the respective UI
@@ -164,12 +173,6 @@ records must be added to the domain's DNS configuration in order to
 serve the application via this domain mapping.`,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
-									"rrdata": {
-										Type:     schema.TypeString,
-										Optional: true,
-										Description: `Data for this record. Values vary by record type, as defined in RFC 1035
-(section 5) and RFC 1034 (section 3.6.1).`,
-									},
 									"type": {
 										Type:         schema.TypeString,
 										Optional:     true,
@@ -181,6 +184,12 @@ serve the application via this domain mapping.`,
 										Computed: true,
 										Description: `Relative name of the object affected by this record. Only applicable for
 'CNAME' records. Example: 'www'.`,
+									},
+									"rrdata": {
+										Type:     schema.TypeString,
+										Computed: true,
+										Description: `Data for this record. Values vary by record type, as defined in RFC 1035
+(section 5) and RFC 1034 (section 3.6.1).`,
 									},
 								},
 							},
@@ -261,7 +270,7 @@ func resourceCloudRunDomainMappingCreate(d *schema.ResourceData, meta interface{
 		return err
 	}
 
-	url, err := replaceVars(d, config, "{{CloudRunBasePath}}projects/{{project}}/locations/{{location}}/domainmappings")
+	url, err := replaceVars(d, config, "{{CloudRunBasePath}}apis/domains.cloudrun.com/v1/namespaces/{{project}}/domainmappings")
 	if err != nil {
 		return err
 	}
@@ -277,11 +286,24 @@ func resourceCloudRunDomainMappingCreate(d *schema.ResourceData, meta interface{
 	}
 
 	// Store the ID now
-	id, err := replaceVars(d, config, "{{name}}")
+	id, err := replaceVars(d, config, "locations/{{location}}/namespaces/{{project}}/domainmappings/{{name}}")
 	if err != nil {
 		return fmt.Errorf("Error constructing id: %s", err)
 	}
 	d.SetId(id)
+
+	waitURL, err := replaceVars(d, config, "{{CloudRunBasePath}}apis/domains.cloudrun.com/v1/namespaces/{{project}}/domainmappings/{{name}}")
+	if err != nil {
+		return err
+	}
+
+	err = cloudRunPollingWaitTime(
+		config, res, project, waitURL, "Creating DomainMapping",
+		int(d.Timeout(schema.TimeoutCreate).Minutes()))
+
+	if err != nil {
+		return fmt.Errorf("Error waiting to create DomainMapping: %s", err)
+	}
 
 	log.Printf("[DEBUG] Finished creating DomainMapping %q: %#v", d.Id(), res)
 
@@ -291,7 +313,7 @@ func resourceCloudRunDomainMappingCreate(d *schema.ResourceData, meta interface{
 func resourceCloudRunDomainMappingRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	url, err := replaceVars(d, config, "{{CloudRunBasePath}}projects/{{project}}/locations/{{location}}/domainmappings/{{name}}")
+	url, err := replaceVars(d, config, "{{CloudRunBasePath}}apis/domains.cloudrun.com/v1/namespaces/{{project}}/domainmappings/{{name}}")
 	if err != nil {
 		return err
 	}
@@ -334,48 +356,6 @@ func resourceCloudRunDomainMappingRead(d *schema.ResourceData, meta interface{})
 	return nil
 }
 
-func resourceCloudRunDomainMappingUpdate(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
-
-	project, err := getProject(d, config)
-	if err != nil {
-		return err
-	}
-
-	obj := make(map[string]interface{})
-	specProp, err := expandCloudRunDomainMappingSpec(d.Get("spec"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("spec"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, specProp)) {
-		obj["spec"] = specProp
-	}
-	metadataProp, err := expandCloudRunDomainMappingMetadata(d.Get("metadata"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("metadata"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, metadataProp)) {
-		obj["metadata"] = metadataProp
-	}
-
-	obj, err = resourceCloudRunDomainMappingEncoder(d, meta, obj)
-	if err != nil {
-		return err
-	}
-
-	url, err := replaceVars(d, config, "{{CloudRunBasePath}}projects/{{project}}/locations/{{location}}/domainmappings/{{name}}")
-	if err != nil {
-		return err
-	}
-
-	log.Printf("[DEBUG] Updating DomainMapping %q: %#v", d.Id(), obj)
-	_, err = sendRequestWithTimeout(config, "PUT", project, url, obj, d.Timeout(schema.TimeoutUpdate))
-
-	if err != nil {
-		return fmt.Errorf("Error updating DomainMapping %q: %s", d.Id(), err)
-	}
-
-	return resourceCloudRunDomainMappingRead(d, meta)
-}
-
 func resourceCloudRunDomainMappingDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
@@ -384,7 +364,7 @@ func resourceCloudRunDomainMappingDelete(d *schema.ResourceData, meta interface{
 		return err
 	}
 
-	url, err := replaceVars(d, config, "{{CloudRunBasePath}}projects/{{project}}/locations/{{location}}/domainmappings/{{name}}")
+	url, err := replaceVars(d, config, "{{CloudRunBasePath}}apis/domains.cloudrun.com/v1/namespaces/{{project}}/domainmappings/{{name}}")
 	if err != nil {
 		return err
 	}
@@ -404,15 +384,15 @@ func resourceCloudRunDomainMappingDelete(d *schema.ResourceData, meta interface{
 func resourceCloudRunDomainMappingImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	config := meta.(*Config)
 	if err := parseImportId([]string{
-		"projects/(?P<project>[^/]+)/locations/(?P<location>[^/]+)/domainmappings/(?P<name>[^/]+)",
-		"(?P<project>[^/]+)/(?P<location>[^/]+)/(?P<name>[^/]+)",
+		"locations/(?P<location>[^/]+)/namespaces/(?P<project>[^/]+)/domainmappings/(?P<name>[^/]+)",
+		"(?P<location>[^/]+)/(?P<project>[^/]+)/(?P<name>[^/]+)",
 		"(?P<location>[^/]+)/(?P<name>[^/]+)",
 	}, d, config); err != nil {
 		return nil, err
 	}
 
 	// Replace import id for the resource id
-	id, err := replaceVars(d, config, "{{name}}")
+	id, err := replaceVars(d, config, "locations/{{location}}/namespaces/{{project}}/domainmappings/{{name}}")
 	if err != nil {
 		return nil, fmt.Errorf("Error constructing id: %s", err)
 	}
@@ -604,7 +584,7 @@ func flattenCloudRunDomainMappingMetadataUid(v interface{}, d *schema.ResourceDa
 }
 
 func flattenCloudRunDomainMappingMetadataNamespace(v interface{}, d *schema.ResourceData) interface{} {
-	return v
+	return d.Get("project")
 }
 
 func flattenCloudRunDomainMappingMetadataAnnotations(v interface{}, d *schema.ResourceData) interface{} {
@@ -649,7 +629,7 @@ func expandCloudRunDomainMappingSpecForceOverride(v interface{}, d TerraformReso
 }
 
 func expandCloudRunDomainMappingSpecRouteName(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
-	return v, nil
+	return GetResourceNameFromSelfLink(v.(string)), nil
 }
 
 func expandCloudRunDomainMappingSpecCertificateMode(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
@@ -765,7 +745,7 @@ func resourceCloudRunDomainMappingEncoder(d *schema.ResourceData, meta interface
 	metadata["name"] = name
 
 	// The only acceptable version/kind right now
-	obj["apiVersion"] = "domains.cloudrun.com/v1alpha1"
+	obj["apiVersion"] = "domains.cloudrun.com/v1"
 	obj["kind"] = "DomainMapping"
 	return obj, nil
 }

@@ -9,6 +9,8 @@ description: |-
 
 # google\_kms\_secret\_ciphertext
 
+!> **Warning:** This data source is deprecated. Use the [`google_kms_secret_ciphertext`](../r/kms_secret_ciphertext.html) **resource** instead.
+
 This data source allows you to encrypt data with Google Cloud KMS and use the
 ciphertext within your resource definitions.
 
@@ -33,7 +35,7 @@ resource "google_kms_key_ring" "my_key_ring" {
 
 resource "google_kms_crypto_key" "my_crypto_key" {
   name     = "my-crypto-key"
-  key_ring = "${google_kms_key_ring.my_key_ring.self_link}"
+  key_ring = google_kms_key_ring.my_key_ring.self_link
 }
 ```
 
@@ -41,8 +43,8 @@ Next, encrypt some sensitive information and use the encrypted data in your reso
 
 ```hcl
 data "google_kms_secret_ciphertext" "my_password" {
-  crypto_key = "${google_kms_crypto_key.my_crypto_key.self_link}"
-  plaintext = "my-secret-password"
+  crypto_key = google_kms_crypto_key.my_crypto_key.self_link
+  plaintext  = "my-secret-password"
 }
 
 resource "google_compute_instance" "instance" {
@@ -64,13 +66,14 @@ resource "google_compute_instance" "instance" {
   }
 
   metadata = {
-    password = "${data.google_kms_secret_ciphertext.my_password.ciphertext}"
+    password = data.google_kms_secret_ciphertext.my_password.ciphertext
   }
 }
 ```
 
 The resulting instance can then access the encrypted password from its metadata
 and decrypt it, e.g. using the [Cloud SDK](https://cloud.google.com/sdk/gcloud/reference/kms/decrypt)):
+
 ```bash
 $ curl -H "Metadata-Flavor: Google" http://metadata.google.internal/computeMetadata/v1/instance/attributes/password \
 > | base64 -d | gcloud kms decrypt \
@@ -97,3 +100,7 @@ The following arguments are supported:
 The following attribute is exported:
 
 * `ciphertext` - Contains the result of encrypting the provided plaintext, encoded in base64.
+
+## User Project Overrides
+
+This data source supports [User Project Overrides](https://www.terraform.io/docs/providers/google/guides/provider_reference.html#user_project_override).

@@ -43,13 +43,13 @@ we cannot confirm or reverse changes to a key outside of Terraform.
 resource "google_compute_backend_bucket_signed_url_key" "backend_key" {
   name           = "test-key"
   key_value      = "pPsVemX8GM46QVeezid6Rw=="
-  backend_bucket = "${google_compute_backend_bucket.test_backend.name}"
+  backend_bucket = google_compute_backend_bucket.test_backend.name
 }
 
 resource "google_compute_backend_bucket" "test_backend" {
   name        = "test-signed-backend-bucket"
   description = "Contains beautiful images"
-  bucket_name = "${google_storage_bucket.bucket.name}"
+  bucket_name = google_storage_bucket.bucket.name
   enable_cdn  = true
 }
 
@@ -93,19 +93,6 @@ This resource provides the following
 
 - `create` - Default is 4 minutes.
 - `delete` - Default is 4 minutes.
-
-## Import
-
-BackendBucketSignedUrlKey can be imported using any of these accepted formats:
-
-```
-$ terraform import google_compute_backend_bucket_signed_url_key.default projects/{{project}}/global/backendBuckets/{{backend_bucket}}/{{name}}
-$ terraform import google_compute_backend_bucket_signed_url_key.default {{project}}/{{backend_bucket}}/{{name}}
-$ terraform import google_compute_backend_bucket_signed_url_key.default {{backend_bucket}}/{{name}}
-```
-
--> If you're importing a resource with beta features, make sure to include `-provider=google-beta`
-as an argument so that Terraform uses the correct provider to import your resource.
 
 ## User Project Overrides
 

@@ -53,6 +53,12 @@ func resourceVPCAccessConnector() *schema.Resource {
 				ForceNew:    true,
 				Description: `The name of the resource (Max 25 characters).`,
 			},
+			"network": {
+				Type:        schema.TypeString,
+				Required:    true,
+				ForceNew:    true,
+				Description: `Name of a VPC network.`,
+			},
 			"region": {
 				Type:        schema.TypeString,
 				Required:    true,
@@ -74,12 +80,6 @@ func resourceVPCAccessConnector() *schema.Resource {
 				ValidateFunc: validation.IntBetween(200, 1000),
 				Description:  `Minimum throughput of the connector in Mbps. Default and min is 200.`,
 				Default:      200,
-			},
-			"network": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				ForceNew:    true,
-				Description: `Name of a VPC network.`,
 			},
 			"self_link": {
 				Type:        schema.TypeString,
@@ -157,20 +157,20 @@ func resourceVPCAccessConnectorCreate(d *schema.ResourceData, meta interface{}) 
 	}
 
 	// Store the ID now
-	id, err := replaceVars(d, config, "{{name}}")
+	id, err := replaceVars(d, config, "projects/{{project}}/locations/{{region}}/connectors/{{name}}")
 	if err != nil {
 		return fmt.Errorf("Error constructing id: %s", err)
 	}
 	d.SetId(id)
 
-	waitErr := vpcAccessOperationWaitTime(
+	err = vpcAccessOperationWaitTime(
 		config, res, project, "Creating Connector",
 		int(d.Timeout(schema.TimeoutCreate).Minutes()))
 
-	if waitErr != nil {
+	if err != nil {
 		// The resource didn't actually create
 		d.SetId("")
-		return fmt.Errorf("Error waiting to create Connector: %s", waitErr)
+		return fmt.Errorf("Error waiting to create Connector: %s", err)
 	}
 
 	log.Printf("[DEBUG] Finished creating Connector %q: %#v", d.Id(), res)
@@ -283,7 +283,7 @@ func resourceVPCAccessConnectorImport(d *schema.ResourceData, meta interface{}) 
 	}
 
 	// Replace import id for the resource id
-	id, err := replaceVars(d, config, "{{name}}")
+	id, err := replaceVars(d, config, "projects/{{project}}/locations/{{region}}/connectors/{{name}}")
 	if err != nil {
 		return nil, fmt.Errorf("Error constructing id: %s", err)
 	}

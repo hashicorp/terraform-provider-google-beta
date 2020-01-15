@@ -110,6 +110,15 @@ func TestAccComputeInstanceIamPolicyGenerated(t *testing.T) {
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
+			{
+				Config: testAccComputeInstanceIamPolicy_emptyBinding(context),
+			},
+			{
+				ResourceName:      "google_compute_instance_iam_policy.foo",
+				ImportStateId:     fmt.Sprintf("projects/%s/zones/%s/instances/%s", getTestProjectFromEnv(), getTestZoneFromEnv(), fmt.Sprintf("my-instance%s", context["random_suffix"])),
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
 		},
 	})
 }
@@ -280,11 +289,11 @@ resource "google_compute_instance" "default" {
 }
 
 resource "google_compute_instance_iam_member" "foo" {
-	project = "${google_compute_instance.default.project}"
-	zone = "${google_compute_instance.default.zone}"
-	instance_name = "${google_compute_instance.default.name}"
-	role = "%{role}"
-	member = "user:admin@hashicorptest.com"
+  project = "${google_compute_instance.default.project}"
+  zone = "${google_compute_instance.default.zone}"
+  instance_name = "${google_compute_instance.default.name}"
+  role = "%{role}"
+  member = "user:admin@hashicorptest.com"
 }
 `, context)
 }
@@ -308,17 +317,47 @@ resource "google_compute_instance" "default" {
 }
 
 data "google_iam_policy" "foo" {
-	binding {
-		role = "%{role}"
-		members = ["user:admin@hashicorptest.com"]
-	}
+  binding {
+    role = "%{role}"
+    members = ["user:admin@hashicorptest.com"]
+  }
 }
 
 resource "google_compute_instance_iam_policy" "foo" {
-	project = "${google_compute_instance.default.project}"
-	zone = "${google_compute_instance.default.zone}"
-	instance_name = "${google_compute_instance.default.name}"
-	policy_data = "${data.google_iam_policy.foo.policy_data}"
+  project = "${google_compute_instance.default.project}"
+  zone = "${google_compute_instance.default.zone}"
+  instance_name = "${google_compute_instance.default.name}"
+  policy_data = "${data.google_iam_policy.foo.policy_data}"
+}
+`, context)
+}
+
+func testAccComputeInstanceIamPolicy_emptyBinding(context map[string]interface{}) string {
+	return Nprintf(`
+resource "google_compute_instance" "default" {
+  name         = "my-instance%{random_suffix}"
+  zone         = ""
+  machine_type = "n1-standard-1"
+
+  boot_disk {
+    initialize_params {
+      image = "debian-cloud/debian-9"
+    }
+  }
+
+  network_interface {
+    network = "default"
+  }
+}
+
+data "google_iam_policy" "foo" {
+}
+
+resource "google_compute_instance_iam_policy" "foo" {
+  project = "${google_compute_instance.default.project}"
+  zone = "${google_compute_instance.default.zone}"
+  instance_name = "${google_compute_instance.default.name}"
+  policy_data = "${data.google_iam_policy.foo.policy_data}"
 }
 `, context)
 }
@@ -342,11 +381,11 @@ resource "google_compute_instance" "default" {
 }
 
 resource "google_compute_instance_iam_binding" "foo" {
-	project = "${google_compute_instance.default.project}"
-	zone = "${google_compute_instance.default.zone}"
-	instance_name = "${google_compute_instance.default.name}"
-	role = "%{role}"
-	members = ["user:admin@hashicorptest.com"]
+  project = "${google_compute_instance.default.project}"
+  zone = "${google_compute_instance.default.zone}"
+  instance_name = "${google_compute_instance.default.name}"
+  role = "%{role}"
+  members = ["user:admin@hashicorptest.com"]
 }
 `, context)
 }
@@ -370,11 +409,11 @@ resource "google_compute_instance" "default" {
 }
 
 resource "google_compute_instance_iam_binding" "foo" {
-	project = "${google_compute_instance.default.project}"
-	zone = "${google_compute_instance.default.zone}"
-	instance_name = "${google_compute_instance.default.name}"
-	role = "%{role}"
-	members = ["user:admin@hashicorptest.com", "user:paddy@hashicorp.com"]
+  project = "${google_compute_instance.default.project}"
+  zone = "${google_compute_instance.default.zone}"
+  instance_name = "${google_compute_instance.default.name}"
+  role = "%{role}"
+  members = ["user:admin@hashicorptest.com", "user:paddy@hashicorp.com"]
 }
 `, context)
 }
@@ -398,16 +437,16 @@ resource "google_compute_instance" "default" {
 }
 
 resource "google_compute_instance_iam_binding" "foo" {
-	project = "${google_compute_instance.default.project}"
-	zone = "${google_compute_instance.default.zone}"
-	instance_name = "${google_compute_instance.default.name}"
-	role = "%{role}"
-	members = ["user:admin@hashicorptest.com"]
-	condition {
-		title       = "%{condition_title}"
-		description = "Expiring at midnight of 2019-12-31"
-		expression  = "%{condition_expr}"
-	}
+  project = "${google_compute_instance.default.project}"
+  zone = "${google_compute_instance.default.zone}"
+  instance_name = "${google_compute_instance.default.name}"
+  role = "%{role}"
+  members = ["user:admin@hashicorptest.com"]
+  condition {
+    title       = "%{condition_title}"
+    description = "Expiring at midnight of 2019-12-31"
+    expression  = "%{condition_expr}"
+  }
 }
 `, context)
 }
@@ -431,24 +470,24 @@ resource "google_compute_instance" "default" {
 }
 
 resource "google_compute_instance_iam_binding" "foo" {
-	project = "${google_compute_instance.default.project}"
-	zone = "${google_compute_instance.default.zone}"
-	instance_name = "${google_compute_instance.default.name}"
-	role = "%{role}"
-	members = ["user:admin@hashicorptest.com"]
+  project = "${google_compute_instance.default.project}"
+  zone = "${google_compute_instance.default.zone}"
+  instance_name = "${google_compute_instance.default.name}"
+  role = "%{role}"
+  members = ["user:admin@hashicorptest.com"]
 }
 
 resource "google_compute_instance_iam_binding" "foo2" {
-	project = "${google_compute_instance.default.project}"
-	zone = "${google_compute_instance.default.zone}"
-	instance_name = "${google_compute_instance.default.name}"
-	role = "%{role}"
-	members = ["user:admin@hashicorptest.com"]
-	condition {
-		title       = "%{condition_title}"
-		description = "Expiring at midnight of 2019-12-31"
-		expression  = "%{condition_expr}"
-	}
+  project = "${google_compute_instance.default.project}"
+  zone = "${google_compute_instance.default.zone}"
+  instance_name = "${google_compute_instance.default.name}"
+  role = "%{role}"
+  members = ["user:admin@hashicorptest.com"]
+  condition {
+    title       = "%{condition_title}"
+    description = "Expiring at midnight of 2019-12-31"
+    expression  = "%{condition_expr}"
+  }
 }
 `, context)
 }
@@ -472,16 +511,16 @@ resource "google_compute_instance" "default" {
 }
 
 resource "google_compute_instance_iam_member" "foo" {
-	project = "${google_compute_instance.default.project}"
-	zone = "${google_compute_instance.default.zone}"
-	instance_name = "${google_compute_instance.default.name}"
-	role = "%{role}"
-	member = "user:admin@hashicorptest.com"
-	condition {
-		title       = "%{condition_title}"
-		description = "Expiring at midnight of 2019-12-31"
-		expression  = "%{condition_expr}"
-	}
+  project = "${google_compute_instance.default.project}"
+  zone = "${google_compute_instance.default.zone}"
+  instance_name = "${google_compute_instance.default.name}"
+  role = "%{role}"
+  member = "user:admin@hashicorptest.com"
+  condition {
+    title       = "%{condition_title}"
+    description = "Expiring at midnight of 2019-12-31"
+    expression  = "%{condition_expr}"
+  }
 }
 `, context)
 }
@@ -505,24 +544,24 @@ resource "google_compute_instance" "default" {
 }
 
 resource "google_compute_instance_iam_member" "foo" {
-	project = "${google_compute_instance.default.project}"
-	zone = "${google_compute_instance.default.zone}"
-	instance_name = "${google_compute_instance.default.name}"
-	role = "%{role}"
-	member = "user:admin@hashicorptest.com"
+  project = "${google_compute_instance.default.project}"
+  zone = "${google_compute_instance.default.zone}"
+  instance_name = "${google_compute_instance.default.name}"
+  role = "%{role}"
+  member = "user:admin@hashicorptest.com"
 }
 
 resource "google_compute_instance_iam_member" "foo2" {
-	project = "${google_compute_instance.default.project}"
-	zone = "${google_compute_instance.default.zone}"
-	instance_name = "${google_compute_instance.default.name}"
-	role = "%{role}"
-	member = "user:admin@hashicorptest.com"
-	condition {
-		title       = "%{condition_title}"
-		description = "Expiring at midnight of 2019-12-31"
-		expression  = "%{condition_expr}"
-	}
+  project = "${google_compute_instance.default.project}"
+  zone = "${google_compute_instance.default.zone}"
+  instance_name = "${google_compute_instance.default.name}"
+  role = "%{role}"
+  member = "user:admin@hashicorptest.com"
+  condition {
+    title       = "%{condition_title}"
+    description = "Expiring at midnight of 2019-12-31"
+    expression  = "%{condition_expr}"
+  }
 }
 `, context)
 }
@@ -546,22 +585,22 @@ resource "google_compute_instance" "default" {
 }
 
 data "google_iam_policy" "foo" {
-	binding {
-		role = "%{role}"
-		members = ["user:admin@hashicorptest.com"]
-		condition {
-			title       = "%{condition_title}"
-			description = "Expiring at midnight of 2019-12-31"
-			expression  = "%{condition_expr}"
-		}
-	}
+  binding {
+    role = "%{role}"
+    members = ["user:admin@hashicorptest.com"]
+    condition {
+      title       = "%{condition_title}"
+      description = "Expiring at midnight of 2019-12-31"
+      expression  = "%{condition_expr}"
+    }
+  }
 }
 
 resource "google_compute_instance_iam_policy" "foo" {
-	project = "${google_compute_instance.default.project}"
-	zone = "${google_compute_instance.default.zone}"
-	instance_name = "${google_compute_instance.default.name}"
-	policy_data = "${data.google_iam_policy.foo.policy_data}"
+  project = "${google_compute_instance.default.project}"
+  zone = "${google_compute_instance.default.zone}"
+  instance_name = "${google_compute_instance.default.name}"
+  policy_data = "${data.google_iam_policy.foo.policy_data}"
 }
 `, context)
 }

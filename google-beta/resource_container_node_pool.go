@@ -23,8 +23,8 @@ func resourceContainerNodePool() *schema.Resource {
 
 		Timeouts: &schema.ResourceTimeout{
 			Create: schema.DefaultTimeout(30 * time.Minute),
-			Update: schema.DefaultTimeout(10 * time.Minute),
-			Delete: schema.DefaultTimeout(10 * time.Minute),
+			Update: schema.DefaultTimeout(30 * time.Minute),
+			Delete: schema.DefaultTimeout(30 * time.Minute),
 		},
 
 		SchemaVersion: 1,
@@ -53,18 +53,16 @@ func resourceContainerNodePool() *schema.Resource {
 					ForceNew: true,
 				},
 				"zone": {
-					Type:       schema.TypeString,
-					Optional:   true,
-					Computed:   true,
-					Deprecated: "use location instead",
-					ForceNew:   true,
+					Type:     schema.TypeString,
+					Optional: true,
+					Removed:  "use location instead",
+					Computed: true,
 				},
 				"region": {
-					Type:       schema.TypeString,
-					Optional:   true,
-					Computed:   true,
-					Deprecated: "use location instead",
-					ForceNew:   true,
+					Type:     schema.TypeString,
+					Optional: true,
+					Removed:  "use location instead",
+					Computed: true,
 				},
 				"location": {
 					Type:     schema.TypeString,
@@ -110,6 +108,27 @@ var schemaNodePool = map[string]*schema.Schema{
 		Optional: true,
 		Computed: true,
 		Elem:     &schema.Schema{Type: schema.TypeString},
+	},
+
+	"upgrade_settings": {
+		Type:     schema.TypeList,
+		Optional: true,
+		MaxItems: 1,
+		Elem: &schema.Resource{
+			Schema: map[string]*schema.Schema{
+				"max_surge": {
+					Type:         schema.TypeInt,
+					Required:     true,
+					ValidateFunc: validation.IntAtLeast(0),
+				},
+
+				"max_unavailable": {
+					Type:         schema.TypeInt,
+					Required:     true,
+					ValidateFunc: validation.IntAtLeast(0),
+				},
+			},
+		},
 	},
 
 	"initial_node_count": {
@@ -267,7 +286,7 @@ func resourceContainerNodePoolCreate(d *schema.ResourceData, meta interface{}) e
 	}
 	timeout -= time.Since(startTime)
 
-	d.SetId(fmt.Sprintf("%s/%s/%s", nodePoolInfo.location, nodePoolInfo.cluster, nodePool.Name))
+	d.SetId(fmt.Sprintf("projects/%s/locations/%s/clusters/%s/nodePools/%s", nodePoolInfo.project, nodePoolInfo.location, nodePoolInfo.cluster, nodePool.Name))
 
 	waitErr := containerOperationWait(config,
 		operation, nodePoolInfo.project,
@@ -319,12 +338,6 @@ func resourceContainerNodePoolRead(d *schema.ResourceData, meta interface{}) err
 
 	for k, v := range npMap {
 		d.Set(k, v)
-	}
-
-	if isZone(nodePoolInfo.location) {
-		d.Set("zone", nodePoolInfo.location)
-	} else {
-		d.Set("region", nodePoolInfo.location)
 	}
 
 	d.Set("location", nodePoolInfo.location)
@@ -422,39 +435,16 @@ func resourceContainerNodePoolExists(d *schema.ResourceData, meta interface{}) (
 }
 
 func resourceContainerNodePoolStateImporter(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-	parts := strings.Split(d.Id(), "/")
-
-	switch len(parts) {
-	case 3:
-		location := parts[0]
-		if isZone(location) {
-			d.Set("zone", location)
-		} else {
-			d.Set("region", location)
-		}
-
-		d.Set("location", location)
-		d.Set("cluster", parts[1])
-		d.Set("name", parts[2])
-	case 4:
-		d.Set("project", parts[0])
-
-		location := parts[1]
-		if isZone(location) {
-			d.Set("zone", location)
-		} else {
-			d.Set("region", location)
-		}
-
-		d.Set("location", location)
-		d.Set("cluster", parts[2])
-		d.Set("name", parts[3])
-
-		// override the inputted ID with the <location>/<cluster>/<name> format
-		d.SetId(strings.Join(parts[1:], "/"))
-	default:
-		return nil, fmt.Errorf("Invalid container cluster specifier. Expecting {location}/{cluster}/{name} or {project}/{location}/{cluster}/{name}")
+	config := meta.(*Config)
+	if err := parseImportId([]string{"projects/(?P<project>[^/]+)/locations/(?P<location>[^/]+)/clusters/(?P<cluster>[^/]+)/nodePools/(?P<name>[^/]+)", "(?P<project>[^/]+)/(?P<location>[^/]+)/(?P<cluster>[^/]+)/(?P<name>[^/]+)", "(?P<location>[^/]+)/(?P<cluster>[^/]+)/(?P<name>[^/]+)"}, d, config); err != nil {
+		return nil, err
 	}
+
+	id, err := replaceVars(d, config, "projects/{{project}}/locations/{{location}}/clusters/{{cluster}}/nodePools/{{name}}")
+	if err != nil {
+		return nil, err
+	}
+	d.SetId(id)
 
 	return []*schema.ResourceData{d}, nil
 }
@@ -525,6 +515,19 @@ func expandNodePool(d *schema.ResourceData, prefix string) (*containerBeta.NodeP
 		}
 	}
 
+	if v, ok := d.GetOk(prefix + "upgrade_settings"); ok {
+		upgradeSettingsConfig := v.([]interface{})[0].(map[string]interface{})
+		np.UpgradeSettings = &containerBeta.UpgradeSettings{}
+
+		if v, ok := upgradeSettingsConfig["max_surge"]; ok {
+			np.UpgradeSettings.MaxSurge = int64(v.(int))
+		}
+
+		if v, ok := upgradeSettingsConfig["max_unavailable"]; ok {
+			np.UpgradeSettings.MaxUnavailable = int64(v.(int))
+		}
+	}
+
 	return np, nil
 }
 
@@ -578,6 +581,17 @@ func flattenNodePool(d *schema.ResourceData, config *Config, np *containerBeta.N
 			"auto_repair":  np.Management.AutoRepair,
 			"auto_upgrade": np.Management.AutoUpgrade,
 		},
+	}
+
+	if np.UpgradeSettings != nil {
+		nodePool["upgrade_settings"] = []map[string]interface{}{
+			{
+				"max_surge":       np.UpgradeSettings.MaxSurge,
+				"max_unavailable": np.UpgradeSettings.MaxUnavailable,
+			},
+		}
+	} else {
+		delete(nodePool, "upgrade_settings")
 	}
 
 	return nodePool, nil
@@ -799,10 +813,44 @@ func nodePoolUpdate(d *schema.ResourceData, meta interface{}, nodePoolInfo *Node
 		}
 	}
 
+	if d.HasChange(prefix + "upgrade_settings") {
+		upgradeSettings := &containerBeta.UpgradeSettings{}
+		if v, ok := d.GetOk(prefix + "upgrade_settings"); ok {
+			upgradeSettingsConfig := v.([]interface{})[0].(map[string]interface{})
+			upgradeSettings.MaxSurge = int64(upgradeSettingsConfig["max_surge"].(int))
+			upgradeSettings.MaxUnavailable = int64(upgradeSettingsConfig["max_unavailable"].(int))
+		}
+		req := &containerBeta.UpdateNodePoolRequest{
+			UpgradeSettings: upgradeSettings,
+		}
+		updateF := func() error {
+			op, err := config.clientContainerBeta.Projects.Locations.Clusters.NodePools.Update(nodePoolInfo.fullyQualifiedName(name), req).Do()
+
+			if err != nil {
+				return err
+			}
+
+			// Wait until it's updated
+			return containerOperationWait(config, op, nodePoolInfo.project, nodePoolInfo.location, "updating GKE node pool upgrade settings", timeoutInMinutes)
+		}
+
+		// Call update serially.
+		if err := lockedCall(lockKey, updateF); err != nil {
+			return err
+		}
+
+		log.Printf("[INFO] Updated upgrade settings in Node Pool %s", name)
+
+		if prefix == "" {
+			d.SetPartial("upgrade_settings")
+		}
+	}
+
 	return nil
 }
 
 func getNodePoolName(id string) string {
 	// name can be specified with name, name_prefix, or neither, so read it from the id.
-	return strings.Split(id, "/")[2]
+	splits := strings.Split(id, "/")
+	return splits[len(splits)-1]
 }

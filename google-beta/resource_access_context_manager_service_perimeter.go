@@ -117,6 +117,7 @@ Format: accessPolicies/{policy_id}/accessLevels/{access_level_name}`,
 							Elem: &schema.Schema{
 								Type: schema.TypeString,
 							},
+							AtLeastOneOf: []string{"status.0.resources", "status.0.access_levels", "status.0.restricted_services"},
 						},
 						"resources": {
 							Type:     schema.TypeList,
@@ -127,6 +128,7 @@ Format: projects/{project_number}`,
 							Elem: &schema.Schema{
 								Type: schema.TypeString,
 							},
+							AtLeastOneOf: []string{"status.0.resources", "status.0.access_levels", "status.0.restricted_services"},
 						},
 						"restricted_services": {
 							Type:     schema.TypeList,
@@ -139,6 +141,7 @@ restrictions.`,
 							Elem: &schema.Schema{
 								Type: schema.TypeString,
 							},
+							AtLeastOneOf: []string{"status.0.resources", "status.0.access_levels", "status.0.restricted_services"},
 						},
 					},
 				},
@@ -221,14 +224,14 @@ func resourceAccessContextManagerServicePerimeterCreate(d *schema.ResourceData, 
 	}
 	d.SetId(id)
 
-	waitErr := accessContextManagerOperationWaitTime(
+	err = accessContextManagerOperationWaitTime(
 		config, res, "Creating ServicePerimeter",
 		int(d.Timeout(schema.TimeoutCreate).Minutes()))
 
-	if waitErr != nil {
+	if err != nil {
 		// The resource didn't actually create
 		d.SetId("")
-		return fmt.Errorf("Error waiting to create ServicePerimeter: %s", waitErr)
+		return fmt.Errorf("Error waiting to create ServicePerimeter: %s", err)
 	}
 
 	log.Printf("[DEBUG] Finished creating ServicePerimeter %q: %#v", d.Id(), res)
@@ -404,9 +407,10 @@ func flattenAccessContextManagerServicePerimeterUpdateTime(v interface{}, d *sch
 }
 
 func flattenAccessContextManagerServicePerimeterPerimeterType(v interface{}, d *schema.ResourceData) interface{} {
-	if v == nil || v.(string) == "" {
+	if v == nil || isEmptyValue(reflect.ValueOf(v)) {
 		return "PERIMETER_TYPE_REGULAR"
 	}
+
 	return v
 }
 

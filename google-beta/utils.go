@@ -29,6 +29,7 @@ type TerraformResourceData interface {
 
 type TerraformResourceDiff interface {
 	GetChange(string) (interface{}, interface{})
+	Get(string) interface{}
 	Clear(string) error
 }
 
@@ -210,10 +211,7 @@ func caseDiffSuppress(_, old, new string, _ *schema.ResourceData) bool {
 // `old` is read from the server and always has the full range format (e.g. '80-80', '1024-2048').
 // `new` can be either a single port or a port range.
 func portRangeDiffSuppress(k, old, new string, d *schema.ResourceData) bool {
-	if old == new+"-"+new {
-		return true
-	}
-	return false
+	return old == new+"-"+new
 }
 
 // Single-digit hour is equivalent to hour with leading zero e.g. suppress diff 1:00 => 01:00.
@@ -571,4 +569,30 @@ func calcAddRemove(from []string, to []string) (add, remove []string) {
 		}
 	}
 	return add, remove
+}
+
+func stringInSlice(arr []string, str string) bool {
+	for _, i := range arr {
+		if i == str {
+			return true
+		}
+	}
+
+	return false
+}
+
+func timestampDiffSuppress(format string) schema.SchemaDiffSuppressFunc {
+	return func(_, old, new string, _ *schema.ResourceData) bool {
+		oldT, err := time.Parse(format, old)
+		if err != nil {
+			return false
+		}
+
+		newT, err := time.Parse(format, new)
+		if err != nil {
+			return false
+		}
+
+		return oldT == newT
+	}
 }

@@ -111,6 +111,12 @@ An empty list allows all statuses.`,
 An empty list allows all types and all versions.`,
 													Elem: &schema.Resource{
 														Schema: map[string]*schema.Schema{
+															"os_type": {
+																Type:         schema.TypeString,
+																Required:     true,
+																ValidateFunc: validation.StringInSlice([]string{"OS_UNSPECIFIED", "DESKTOP_MAC", "DESKTOP_WINDOWS", "DESKTOP_LINUX", "DESKTOP_CHROME_OS"}, false),
+																Description:  `The operating system type of the device.`,
+															},
 															"minimum_version": {
 																Type:     schema.TypeString,
 																Optional: true,
@@ -118,14 +124,18 @@ An empty list allows all types and all versions.`,
 of this OS satisfies the constraint.
 Format: "major.minor.patch" such as "10.5.301", "9.2.1".`,
 															},
-															"os_type": {
-																Type:         schema.TypeString,
-																Optional:     true,
-																ValidateFunc: validation.StringInSlice([]string{"OS_UNSPECIFIED", "DESKTOP_MAC", "DESKTOP_WINDOWS", "DESKTOP_LINUX", "DESKTOP_CHROME_OS", ""}, false),
-																Description:  `The operating system type of the device.`,
-															},
 														},
 													},
+												},
+												"require_admin_approval": {
+													Type:        schema.TypeBool,
+													Optional:    true,
+													Description: `Whether the device needs to be approved by the customer admin.`,
+												},
+												"require_corp_owned": {
+													Type:        schema.TypeBool,
+													Optional:    true,
+													Description: `Whether the device needs to be corp owned.`,
 												},
 												"require_screen_lock": {
 													Type:     schema.TypeBool,
@@ -156,12 +166,14 @@ If empty, all IP addresses are allowed.`,
 									"members": {
 										Type:     schema.TypeList,
 										Optional: true,
-										Description: `An allowed list of members (users, groups, service accounts).
+										Description: `An allowed list of members (users, service accounts).
+Using groups is not supported yet.
+
 The signed-in user originating the request must be a part of one
 of the provided members. If not specified, a request may come
 from any user (logged in/not logged in, not present in any
 groups, etc.).
-Formats: 'user:{emailid}', 'group:{emailid}', 'serviceAccount:{emailid}'`,
+Formats: 'user:{emailid}', 'serviceAccount:{emailid}'`,
 										Elem: &schema.Schema{
 											Type: schema.TypeString,
 										},
@@ -269,14 +281,14 @@ func resourceAccessContextManagerAccessLevelCreate(d *schema.ResourceData, meta 
 	}
 	d.SetId(id)
 
-	waitErr := accessContextManagerOperationWaitTime(
+	err = accessContextManagerOperationWaitTime(
 		config, res, "Creating AccessLevel",
 		int(d.Timeout(schema.TimeoutCreate).Minutes()))
 
-	if waitErr != nil {
+	if err != nil {
 		// The resource didn't actually create
 		d.SetId("")
-		return fmt.Errorf("Error waiting to create AccessLevel: %s", waitErr)
+		return fmt.Errorf("Error waiting to create AccessLevel: %s", err)
 	}
 
 	log.Printf("[DEBUG] Finished creating AccessLevel %q: %#v", d.Id(), res)
@@ -450,9 +462,10 @@ func flattenAccessContextManagerAccessLevelBasic(v interface{}, d *schema.Resour
 	return []interface{}{transformed}
 }
 func flattenAccessContextManagerAccessLevelBasicCombiningFunction(v interface{}, d *schema.ResourceData) interface{} {
-	if v == nil || v.(string) == "" {
+	if v == nil || isEmptyValue(reflect.ValueOf(v)) {
 		return "AND"
 	}
+
 	return v
 }
 
@@ -511,6 +524,10 @@ func flattenAccessContextManagerAccessLevelBasicConditionsDevicePolicy(v interfa
 		flattenAccessContextManagerAccessLevelBasicConditionsDevicePolicyAllowedDeviceManagementLevels(original["allowedDeviceManagementLevels"], d)
 	transformed["os_constraints"] =
 		flattenAccessContextManagerAccessLevelBasicConditionsDevicePolicyOsConstraints(original["osConstraints"], d)
+	transformed["require_admin_approval"] =
+		flattenAccessContextManagerAccessLevelBasicConditionsDevicePolicyRequireAdminApproval(original["requireAdminApproval"], d)
+	transformed["require_corp_owned"] =
+		flattenAccessContextManagerAccessLevelBasicConditionsDevicePolicyRequireCorpOwned(original["requireCorpOwned"], d)
 	return []interface{}{transformed}
 }
 func flattenAccessContextManagerAccessLevelBasicConditionsDevicePolicyRequireScreenLock(v interface{}, d *schema.ResourceData) interface{} {
@@ -549,6 +566,14 @@ func flattenAccessContextManagerAccessLevelBasicConditionsDevicePolicyOsConstrai
 }
 
 func flattenAccessContextManagerAccessLevelBasicConditionsDevicePolicyOsConstraintsOsType(v interface{}, d *schema.ResourceData) interface{} {
+	return v
+}
+
+func flattenAccessContextManagerAccessLevelBasicConditionsDevicePolicyRequireAdminApproval(v interface{}, d *schema.ResourceData) interface{} {
+	return v
+}
+
+func flattenAccessContextManagerAccessLevelBasicConditionsDevicePolicyRequireCorpOwned(v interface{}, d *schema.ResourceData) interface{} {
 	return v
 }
 
@@ -697,6 +722,20 @@ func expandAccessContextManagerAccessLevelBasicConditionsDevicePolicy(v interfac
 		transformed["osConstraints"] = transformedOsConstraints
 	}
 
+	transformedRequireAdminApproval, err := expandAccessContextManagerAccessLevelBasicConditionsDevicePolicyRequireAdminApproval(original["require_admin_approval"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedRequireAdminApproval); val.IsValid() && !isEmptyValue(val) {
+		transformed["requireAdminApproval"] = transformedRequireAdminApproval
+	}
+
+	transformedRequireCorpOwned, err := expandAccessContextManagerAccessLevelBasicConditionsDevicePolicyRequireCorpOwned(original["require_corp_owned"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedRequireCorpOwned); val.IsValid() && !isEmptyValue(val) {
+		transformed["requireCorpOwned"] = transformedRequireCorpOwned
+	}
+
 	return transformed, nil
 }
 
@@ -746,6 +785,14 @@ func expandAccessContextManagerAccessLevelBasicConditionsDevicePolicyOsConstrain
 }
 
 func expandAccessContextManagerAccessLevelBasicConditionsDevicePolicyOsConstraintsOsType(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandAccessContextManagerAccessLevelBasicConditionsDevicePolicyRequireAdminApproval(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandAccessContextManagerAccessLevelBasicConditionsDevicePolicyRequireCorpOwned(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 

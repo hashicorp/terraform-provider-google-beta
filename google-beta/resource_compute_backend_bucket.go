@@ -22,7 +22,6 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"google.golang.org/api/compute/v1"
 )
 
 func resourceComputeBackendBucket() *schema.Resource {
@@ -71,16 +70,15 @@ last character, which cannot be a dash.`,
 					Schema: map[string]*schema.Schema{
 						"signed_url_cache_max_age_sec": {
 							Type:     schema.TypeInt,
-							Optional: true,
+							Required: true,
 							Description: `Maximum number of seconds the response to a signed URL request will
-be considered fresh. Defaults to 1hr (3600s). After this time period,
+be considered fresh. After this time period,
 the response will be revalidated before being served.
 When serving responses to signed URL requests,
 Cloud CDN will internally behave as though
 all responses from this backend had a "Cache-Control: public,
 max-age=[TTL]" header, regardless of any existing Cache-Control
 header. The actual headers served in responses will not be altered.`,
-							Default: 3600,
 						},
 					},
 				},
@@ -166,26 +164,20 @@ func resourceComputeBackendBucketCreate(d *schema.ResourceData, meta interface{}
 	}
 
 	// Store the ID now
-	id, err := replaceVars(d, config, "{{name}}")
+	id, err := replaceVars(d, config, "projects/{{project}}/global/backendBuckets/{{name}}")
 	if err != nil {
 		return fmt.Errorf("Error constructing id: %s", err)
 	}
 	d.SetId(id)
 
-	op := &compute.Operation{}
-	err = Convert(res, op)
-	if err != nil {
-		return err
-	}
-
-	waitErr := computeOperationWaitTime(
-		config.clientCompute, op, project, "Creating BackendBucket",
+	err = computeOperationWaitTime(
+		config, res, project, "Creating BackendBucket",
 		int(d.Timeout(schema.TimeoutCreate).Minutes()))
 
-	if waitErr != nil {
+	if err != nil {
 		// The resource didn't actually create
 		d.SetId("")
-		return fmt.Errorf("Error waiting to create BackendBucket: %s", waitErr)
+		return fmt.Errorf("Error waiting to create BackendBucket: %s", err)
 	}
 
 	log.Printf("[DEBUG] Finished creating BackendBucket %q: %#v", d.Id(), res)
@@ -291,14 +283,8 @@ func resourceComputeBackendBucketUpdate(d *schema.ResourceData, meta interface{}
 		return fmt.Errorf("Error updating BackendBucket %q: %s", d.Id(), err)
 	}
 
-	op := &compute.Operation{}
-	err = Convert(res, op)
-	if err != nil {
-		return err
-	}
-
 	err = computeOperationWaitTime(
-		config.clientCompute, op, project, "Updating BackendBucket",
+		config, res, project, "Updating BackendBucket",
 		int(d.Timeout(schema.TimeoutUpdate).Minutes()))
 
 	if err != nil {
@@ -329,14 +315,8 @@ func resourceComputeBackendBucketDelete(d *schema.ResourceData, meta interface{}
 		return handleNotFoundError(err, d, "BackendBucket")
 	}
 
-	op := &compute.Operation{}
-	err = Convert(res, op)
-	if err != nil {
-		return err
-	}
-
 	err = computeOperationWaitTime(
-		config.clientCompute, op, project, "Deleting BackendBucket",
+		config, res, project, "Deleting BackendBucket",
 		int(d.Timeout(schema.TimeoutDelete).Minutes()))
 
 	if err != nil {
@@ -358,7 +338,7 @@ func resourceComputeBackendBucketImport(d *schema.ResourceData, meta interface{}
 	}
 
 	// Replace import id for the resource id
-	id, err := replaceVars(d, config, "{{name}}")
+	id, err := replaceVars(d, config, "projects/{{project}}/global/backendBuckets/{{name}}")
 	if err != nil {
 		return nil, fmt.Errorf("Error constructing id: %s", err)
 	}

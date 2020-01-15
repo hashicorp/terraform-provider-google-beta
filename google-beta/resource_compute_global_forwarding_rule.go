@@ -22,7 +22,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
-	"google.golang.org/api/compute/v1"
 )
 
 func resourceComputeGlobalForwardingRule() *schema.Resource {
@@ -65,10 +64,11 @@ For INTERNAL_SELF_MANAGED load balancing, only HTTP and HTTPS targets
 are valid.`,
 			},
 			"ip_address": {
-				Type:     schema.TypeString,
-				Computed: true,
-				Optional: true,
-				ForceNew: true,
+				Type:         schema.TypeString,
+				Computed:     true,
+				Optional:     true,
+				ForceNew:     true,
+				ValidateFunc: validateIpAddress,
 				Description: `The IP address that this forwarding rule is serving on behalf of.
 
 Addresses are restricted based on the forwarding rule's load balancing
@@ -88,15 +88,11 @@ forwarding rule. By default, if this field is empty, an ephemeral
 internal IP address will be automatically allocated from the IP range
 of the subnet or network configured for this forwarding rule.
 
-~> **NOTE** The address should be specified as a literal IP address,
-e.g. '100.1.2.3' to avoid a permanent diff, as the server returns the
-IP address regardless of the input value.
-
-The server accepts a literal IP address or a URL reference to an existing
-Address resource. The following examples are all valid but only the first
-will prevent a permadiff. If you are using 'google_compute_address' or
-similar, interpolate using '.address' instead of '.self_link' or similar
-to prevent a diff on re-apply.`,
+An address must be specified by a literal IP address. ~> **NOTE**: While
+the API allows you to specify various resource paths for an address resource
+instead, Terraform requires this to specifically be an IP address to
+avoid needing to fetching the IP address from resource paths on refresh
+or unnecessary diffs.`,
 			},
 			"ip_protocol": {
 				Type:             schema.TypeString,
@@ -363,26 +359,20 @@ func resourceComputeGlobalForwardingRuleCreate(d *schema.ResourceData, meta inte
 	}
 
 	// Store the ID now
-	id, err := replaceVars(d, config, "{{name}}")
+	id, err := replaceVars(d, config, "projects/{{project}}/global/forwardingRules/{{name}}")
 	if err != nil {
 		return fmt.Errorf("Error constructing id: %s", err)
 	}
 	d.SetId(id)
 
-	op := &compute.Operation{}
-	err = Convert(res, op)
-	if err != nil {
-		return err
-	}
-
-	waitErr := computeOperationWaitTime(
-		config.clientCompute, op, project, "Creating GlobalForwardingRule",
+	err = computeOperationWaitTime(
+		config, res, project, "Creating GlobalForwardingRule",
 		int(d.Timeout(schema.TimeoutCreate).Minutes()))
 
-	if waitErr != nil {
+	if err != nil {
 		// The resource didn't actually create
 		d.SetId("")
-		return fmt.Errorf("Error waiting to create GlobalForwardingRule: %s", waitErr)
+		return fmt.Errorf("Error waiting to create GlobalForwardingRule: %s", err)
 	}
 
 	log.Printf("[DEBUG] Finished creating GlobalForwardingRule %q: %#v", d.Id(), res)
@@ -413,13 +403,8 @@ func resourceComputeGlobalForwardingRuleCreate(d *schema.ResourceData, meta inte
 			return fmt.Errorf("Error adding labels to ComputeGlobalForwardingRule %q: %s", d.Id(), err)
 		}
 
-		err = Convert(res, op)
-		if err != nil {
-			return err
-		}
-
 		err = computeOperationWaitTime(
-			config.clientCompute, op, project, "Updating ComputeGlobalForwardingRule Labels",
+			config, res, project, "Updating ComputeGlobalForwardingRule Labels",
 			int(d.Timeout(schema.TimeoutUpdate).Minutes()))
 
 		if err != nil {
@@ -530,16 +515,9 @@ func resourceComputeGlobalForwardingRuleUpdate(d *schema.ResourceData, meta inte
 			return fmt.Errorf("Error updating GlobalForwardingRule %q: %s", d.Id(), err)
 		}
 
-		op := &compute.Operation{}
-		err = Convert(res, op)
-		if err != nil {
-			return err
-		}
-
 		err = computeOperationWaitTime(
-			config.clientCompute, op, project, "Updating GlobalForwardingRule",
+			config, res, project, "Updating GlobalForwardingRule",
 			int(d.Timeout(schema.TimeoutUpdate).Minutes()))
-
 		if err != nil {
 			return err
 		}
@@ -566,16 +544,9 @@ func resourceComputeGlobalForwardingRuleUpdate(d *schema.ResourceData, meta inte
 			return fmt.Errorf("Error updating GlobalForwardingRule %q: %s", d.Id(), err)
 		}
 
-		op := &compute.Operation{}
-		err = Convert(res, op)
-		if err != nil {
-			return err
-		}
-
 		err = computeOperationWaitTime(
-			config.clientCompute, op, project, "Updating GlobalForwardingRule",
+			config, res, project, "Updating GlobalForwardingRule",
 			int(d.Timeout(schema.TimeoutUpdate).Minutes()))
-
 		if err != nil {
 			return err
 		}
@@ -609,14 +580,8 @@ func resourceComputeGlobalForwardingRuleDelete(d *schema.ResourceData, meta inte
 		return handleNotFoundError(err, d, "GlobalForwardingRule")
 	}
 
-	op := &compute.Operation{}
-	err = Convert(res, op)
-	if err != nil {
-		return err
-	}
-
 	err = computeOperationWaitTime(
-		config.clientCompute, op, project, "Deleting GlobalForwardingRule",
+		config, res, project, "Deleting GlobalForwardingRule",
 		int(d.Timeout(schema.TimeoutDelete).Minutes()))
 
 	if err != nil {
@@ -638,7 +603,7 @@ func resourceComputeGlobalForwardingRuleImport(d *schema.ResourceData, meta inte
 	}
 
 	// Replace import id for the resource id
-	id, err := replaceVars(d, config, "{{name}}")
+	id, err := replaceVars(d, config, "projects/{{project}}/global/forwardingRules/{{name}}")
 	if err != nil {
 		return nil, fmt.Errorf("Error constructing id: %s", err)
 	}

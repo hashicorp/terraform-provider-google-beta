@@ -22,7 +22,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
-	"google.golang.org/api/appengine/v1"
 )
 
 func resourceAppEngineStandardAppVersion() *schema.Resource {
@@ -66,18 +65,19 @@ All files must be readable using the credentials supplied with this call.`,
 										Type:     schema.TypeString,
 										Required: true,
 									},
+									"source_url": {
+										Type:        schema.TypeString,
+										Required:    true,
+										Description: `Source URL`,
+									},
 									"sha1_sum": {
 										Type:        schema.TypeString,
 										Optional:    true,
 										Description: `SHA1 checksum of the file`,
 									},
-									"source_url": {
-										Type:        schema.TypeString,
-										Optional:    true,
-										Description: `Source URL`,
-									},
 								},
 							},
+							AtLeastOneOf: []string{"deployment.0.zip", "deployment.0.files"},
 						},
 						"zip": {
 							Type:        schema.TypeList,
@@ -86,18 +86,19 @@ All files must be readable using the credentials supplied with this call.`,
 							MaxItems:    1,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
+									"source_url": {
+										Type:        schema.TypeString,
+										Required:    true,
+										Description: `Source URL`,
+									},
 									"files_count": {
 										Type:        schema.TypeInt,
 										Optional:    true,
 										Description: `files count`,
 									},
-									"source_url": {
-										Type:        schema.TypeString,
-										Optional:    true,
-										Description: `Source URL`,
-									},
 								},
 							},
+							AtLeastOneOf: []string{"deployment.0.zip", "deployment.0.files"},
 						},
 					},
 				},
@@ -111,7 +112,7 @@ All files must be readable using the credentials supplied with this call.`,
 					Schema: map[string]*schema.Schema{
 						"shell": {
 							Type:        schema.TypeString,
-							Optional:    true,
+							Required:    true,
 							Description: `The format should be a shell command that can be fed to bash -c.`,
 						},
 					},
@@ -158,7 +159,7 @@ Only the auto value is supported for Node.js in the App Engine standard environm
 								Schema: map[string]*schema.Schema{
 									"script_path": {
 										Type:        schema.TypeString,
-										Optional:    true,
+										Required:    true,
 										Description: `Path to the script from the application root directory.`,
 									},
 								},
@@ -384,7 +385,7 @@ func resourceAppEngineStandardAppVersionCreate(d *schema.ResourceData, meta inte
 	if err != nil {
 		return err
 	}
-	res, err := sendRequestWithTimeout(config, "POST", project, url, obj, d.Timeout(schema.TimeoutCreate))
+	res, err := sendRequestWithTimeout(config, "POST", project, url, obj, d.Timeout(schema.TimeoutCreate), isAppEngineRetryableError)
 	if err != nil {
 		return fmt.Errorf("Error creating StandardAppVersion: %s", err)
 	}
@@ -396,20 +397,14 @@ func resourceAppEngineStandardAppVersionCreate(d *schema.ResourceData, meta inte
 	}
 	d.SetId(id)
 
-	op := &appengine.Operation{}
-	err = Convert(res, op)
-	if err != nil {
-		return err
-	}
-
-	waitErr := appEngineOperationWaitTime(
-		config.clientAppEngine, op, project, "Creating StandardAppVersion",
+	err = appEngineOperationWaitTime(
+		config, res, project, "Creating StandardAppVersion",
 		int(d.Timeout(schema.TimeoutCreate).Minutes()))
 
-	if waitErr != nil {
+	if err != nil {
 		// The resource didn't actually create
 		d.SetId("")
-		return fmt.Errorf("Error waiting to create StandardAppVersion: %s", waitErr)
+		return fmt.Errorf("Error waiting to create StandardAppVersion: %s", err)
 	}
 
 	log.Printf("[DEBUG] Finished creating StandardAppVersion %q: %#v", d.Id(), res)
@@ -429,7 +424,7 @@ func resourceAppEngineStandardAppVersionRead(d *schema.ResourceData, meta interf
 	if err != nil {
 		return err
 	}
-	res, err := sendRequest(config, "GET", project, url, nil)
+	res, err := sendRequest(config, "GET", project, url, nil, isAppEngineRetryableError)
 	if err != nil {
 		return handleNotFoundError(err, d, fmt.Sprintf("AppEngineStandardAppVersion %q", d.Id()))
 	}
@@ -551,20 +546,14 @@ func resourceAppEngineStandardAppVersionUpdate(d *schema.ResourceData, meta inte
 	}
 
 	log.Printf("[DEBUG] Updating StandardAppVersion %q: %#v", d.Id(), obj)
-	res, err := sendRequestWithTimeout(config, "POST", project, url, obj, d.Timeout(schema.TimeoutUpdate))
+	res, err := sendRequestWithTimeout(config, "POST", project, url, obj, d.Timeout(schema.TimeoutUpdate), isAppEngineRetryableError)
 
 	if err != nil {
 		return fmt.Errorf("Error updating StandardAppVersion %q: %s", d.Id(), err)
 	}
 
-	op := &appengine.Operation{}
-	err = Convert(res, op)
-	if err != nil {
-		return err
-	}
-
 	err = appEngineOperationWaitTime(
-		config.clientAppEngine, op, project, "Updating StandardAppVersion",
+		config, res, project, "Updating StandardAppVersion",
 		int(d.Timeout(schema.TimeoutUpdate).Minutes()))
 
 	if err != nil {
@@ -601,17 +590,12 @@ func resourceAppEngineStandardAppVersionDelete(d *schema.ResourceData, meta inte
 		}
 		var obj map[string]interface{}
 		log.Printf("[DEBUG] Deleting Service %q", d.Id())
-		res, err := sendRequestWithTimeout(config, "DELETE", project, url, obj, d.Timeout(schema.TimeoutDelete))
+		res, err := sendRequestWithTimeout(config, "DELETE", project, url, obj, d.Timeout(schema.TimeoutDelete), isAppEngineRetryableError)
 		if err != nil {
 			return handleNotFoundError(err, d, "Service")
 		}
-		op := &appengine.Operation{}
-		err = Convert(res, op)
-		if err != nil {
-			return err
-		}
 		err = appEngineOperationWaitTime(
-			config.clientAppEngine, op, project, "Deleting Service",
+			config, res, project, "Deleting Service",
 			int(d.Timeout(schema.TimeoutDelete).Minutes()))
 
 		if err != nil {
@@ -626,17 +610,12 @@ func resourceAppEngineStandardAppVersionDelete(d *schema.ResourceData, meta inte
 		}
 		var obj map[string]interface{}
 		log.Printf("[DEBUG] Deleting StandardAppVersion %q", d.Id())
-		res, err := sendRequestWithTimeout(config, "DELETE", project, url, obj, d.Timeout(schema.TimeoutDelete))
+		res, err := sendRequestWithTimeout(config, "DELETE", project, url, obj, d.Timeout(schema.TimeoutDelete), isAppEngineRetryableError)
 		if err != nil {
 			return handleNotFoundError(err, d, "StandardAppVersion")
 		}
-		op := &appengine.Operation{}
-		err = Convert(res, op)
-		if err != nil {
-			return err
-		}
 		err = appEngineOperationWaitTime(
-			config.clientAppEngine, op, project, "Deleting StandardAppVersion",
+			config, res, project, "Deleting StandardAppVersion",
 			int(d.Timeout(schema.TimeoutDelete).Minutes()))
 
 		if err != nil {

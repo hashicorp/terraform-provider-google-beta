@@ -22,7 +22,6 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"google.golang.org/api/compute/v1"
 )
 
 func resourceComputeRoute() *schema.Resource {
@@ -87,6 +86,7 @@ partial valid URL:
 * 'projects/project/global/gateways/default-internet-gateway'
 * 'global/gateways/default-internet-gateway'
 * The string 'default-internet-gateway'.`,
+				ExactlyOneOf: []string{"next_hop_gateway", "next_hop_instance", "next_hop_ip", "next_hop_vpn_tunnel", "next_hop_ilb"},
 			},
 			"next_hop_ilb": {
 				Type:             schema.TypeString,
@@ -98,6 +98,7 @@ You can only specify the forwarding rule as a partial or full URL. For example, 
 https://www.googleapis.com/compute/v1/projects/project/regions/region/forwardingRules/forwardingRule
 regions/region/forwardingRules/forwardingRule
 Note that this can only be used when the destinationRange is a public (non-RFC 1918) IP CIDR range.`,
+				ExactlyOneOf: []string{"next_hop_gateway", "next_hop_instance", "next_hop_ip", "next_hop_vpn_tunnel", "next_hop_ilb"},
 			},
 			"next_hop_instance": {
 				Type:             schema.TypeString,
@@ -110,13 +111,15 @@ You can specify this as a full or partial URL. For example:
 * 'projects/project/zones/zone/instances/instance'
 * 'zones/zone/instances/instance'
 * Just the instance name, with the zone in 'next_hop_instance_zone'.`,
+				ExactlyOneOf: []string{"next_hop_gateway", "next_hop_instance", "next_hop_ip", "next_hop_vpn_tunnel", "next_hop_ilb"},
 			},
 			"next_hop_ip": {
-				Type:        schema.TypeString,
-				Computed:    true,
-				Optional:    true,
-				ForceNew:    true,
-				Description: `Network IP address of an instance that should handle matching packets.`,
+				Type:         schema.TypeString,
+				Computed:     true,
+				Optional:     true,
+				ForceNew:     true,
+				Description:  `Network IP address of an instance that should handle matching packets.`,
+				ExactlyOneOf: []string{"next_hop_gateway", "next_hop_instance", "next_hop_ip", "next_hop_vpn_tunnel", "next_hop_ilb"},
 			},
 			"next_hop_vpn_tunnel": {
 				Type:             schema.TypeString,
@@ -124,6 +127,7 @@ You can specify this as a full or partial URL. For example:
 				ForceNew:         true,
 				DiffSuppressFunc: compareSelfLinkOrResourceName,
 				Description:      `URL to a VpnTunnel that should handle matching packets.`,
+				ExactlyOneOf:     []string{"next_hop_gateway", "next_hop_instance", "next_hop_ip", "next_hop_vpn_tunnel", "next_hop_ilb"},
 			},
 			"priority": {
 				Type:     schema.TypeInt,
@@ -203,7 +207,7 @@ func resourceComputeRouteCreate(d *schema.ResourceData, meta interface{}) error 
 	priorityProp, err := expandComputeRoutePriority(d.Get("priority"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("priority"); !isEmptyValue(reflect.ValueOf(priorityProp)) && (ok || !reflect.DeepEqual(v, priorityProp)) {
+	} else if v, ok := d.GetOkExists("priority"); ok || !reflect.DeepEqual(v, priorityProp) {
 		obj["priority"] = priorityProp
 	}
 	tagsProp, err := expandComputeRouteTags(d.Get("tags"), d, config)
@@ -259,26 +263,20 @@ func resourceComputeRouteCreate(d *schema.ResourceData, meta interface{}) error 
 	}
 
 	// Store the ID now
-	id, err := replaceVars(d, config, "{{name}}")
+	id, err := replaceVars(d, config, "projects/{{project}}/global/routes/{{name}}")
 	if err != nil {
 		return fmt.Errorf("Error constructing id: %s", err)
 	}
 	d.SetId(id)
 
-	op := &compute.Operation{}
-	err = Convert(res, op)
-	if err != nil {
-		return err
-	}
-
-	waitErr := computeOperationWaitTime(
-		config.clientCompute, op, project, "Creating Route",
+	err = computeOperationWaitTime(
+		config, res, project, "Creating Route",
 		int(d.Timeout(schema.TimeoutCreate).Minutes()))
 
-	if waitErr != nil {
+	if err != nil {
 		// The resource didn't actually create
 		d.SetId("")
-		return fmt.Errorf("Error waiting to create Route: %s", waitErr)
+		return fmt.Errorf("Error waiting to create Route: %s", err)
 	}
 
 	log.Printf("[DEBUG] Finished creating Route %q: %#v", d.Id(), res)
@@ -383,14 +381,8 @@ func resourceComputeRouteDelete(d *schema.ResourceData, meta interface{}) error 
 		return handleNotFoundError(err, d, "Route")
 	}
 
-	op := &compute.Operation{}
-	err = Convert(res, op)
-	if err != nil {
-		return err
-	}
-
 	err = computeOperationWaitTime(
-		config.clientCompute, op, project, "Deleting Route",
+		config, res, project, "Deleting Route",
 		int(d.Timeout(schema.TimeoutDelete).Minutes()))
 
 	if err != nil {
@@ -412,7 +404,7 @@ func resourceComputeRouteImport(d *schema.ResourceData, meta interface{}) ([]*sc
 	}
 
 	// Replace import id for the resource id
-	id, err := replaceVars(d, config, "{{name}}")
+	id, err := replaceVars(d, config, "projects/{{project}}/global/routes/{{name}}")
 	if err != nil {
 		return nil, fmt.Errorf("Error constructing id: %s", err)
 	}
@@ -520,11 +512,7 @@ func expandComputeRouteTags(v interface{}, d TerraformResourceData, config *Conf
 
 func expandComputeRouteNextHopGateway(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	if v == "default-internet-gateway" {
-		project, err := getProject(d, config)
-		if err != nil {
-			return nil, err
-		}
-		return fmt.Sprintf("projects/%s/global/gateways/default-internet-gateway", project), nil
+		return replaceVars(d, config, "projects/{{project}}/global/gateways/default-internet-gateway")
 	} else {
 		return v, nil
 	}

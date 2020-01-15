@@ -37,19 +37,19 @@ Three different resources help you manage your IAM policy for CloudFunctions Clo
 
 ```hcl
 data "google_iam_policy" "admin" {
-	binding {
-		role = "roles/viewer"
-		members = [
-			"user:jane@example.com",
-		]
-	}
+  binding {
+    role = "roles/viewer"
+    members = [
+      "user:jane@example.com",
+    ]
+  }
 }
 
 resource "google_cloudfunctions_function_iam_policy" "editor" {
-	project = "${google_cloudfunctions_function.function.project}"
-	region = "${google_cloudfunctions_function.function.region}"
-	cloud_function = "${google_cloudfunctions_function.function.name}"
-	policy_data = "${data.google_iam_policy.admin.policy_data}"
+  project = "${google_cloudfunctions_function.function.project}"
+  region = "${google_cloudfunctions_function.function.region}"
+  cloud_function = "${google_cloudfunctions_function.function.name}"
+  policy_data = "${data.google_iam_policy.admin.policy_data}"
 }
 ```
 
@@ -57,13 +57,13 @@ resource "google_cloudfunctions_function_iam_policy" "editor" {
 
 ```hcl
 resource "google_cloudfunctions_function_iam_binding" "editor" {
-	project = "${google_cloudfunctions_function.function.project}"
-	region = "${google_cloudfunctions_function.function.region}"
-	cloud_function = "${google_cloudfunctions_function.function.name}"
-	role = "roles/viewer"
-	members = [
-		"user:jane@example.com",
-	]
+  project = "${google_cloudfunctions_function.function.project}"
+  region = "${google_cloudfunctions_function.function.region}"
+  cloud_function = "${google_cloudfunctions_function.function.name}"
+  role = "roles/viewer"
+  members = [
+    "user:jane@example.com",
+  ]
 }
 ```
 
@@ -71,11 +71,11 @@ resource "google_cloudfunctions_function_iam_binding" "editor" {
 
 ```hcl
 resource "google_cloudfunctions_function_iam_member" "editor" {
-	project = "${google_cloudfunctions_function.function.project}"
-	region = "${google_cloudfunctions_function.function.region}"
-	cloud_function = "${google_cloudfunctions_function.function.name}"
-	role = "roles/viewer"
-	member = "user:jane@example.com"
+  project = "${google_cloudfunctions_function.function.project}"
+  region = "${google_cloudfunctions_function.function.region}"
+  cloud_function = "${google_cloudfunctions_function.function.name}"
+  role = "roles/viewer"
+  member = "user:jane@example.com"
 }
 ```
 
@@ -129,21 +129,24 @@ CloudFunctions cloudfunction IAM resources can be imported using the resource id
 
 IAM member imports use space-delimited identifiers: the resource in question, the role, and the member identity, e.g.
 ```
-$ terraform import google_cloudfunctions_function_iam_member.editor "{{project}}/{{region}}/{{cloud_function}} roles/viewer jane@example.com"
+$ terraform import google_cloudfunctions_function_iam_member.editor "projects/{{project}}/locations/{{region}}/functions/{{cloud_function}} roles/viewer jane@example.com"
 ```
 
 IAM binding imports use space-delimited identifiers: the resource in question and the role, e.g.
 ```
-$ terraform import google_cloudfunctions_function_iam_binding.editor "{{project}}/{{region}}/{{cloud_function}} roles/viewer"
+$ terraform import google_cloudfunctions_function_iam_binding.editor "projects/{{project}}/locations/{{region}}/functions/{{cloud_function}} roles/viewer"
 ```
 
 IAM policy imports use the identifier of the resource in question, e.g.
 ```
-$ terraform import google_cloudfunctions_function_iam_policy.editor {{project}}/{{region}}/{{cloud_function}}
+$ terraform import google_cloudfunctions_function_iam_policy.editor projects/{{project}}/locations/{{region}}/functions/{{cloud_function}}
 ```
 
 -> If you're importing a resource with beta features, make sure to include `-provider=google-beta`
 as an argument so that Terraform uses the correct provider to import your resource.
+
+-> **Custom Roles**: If you're importing a IAM resource with a custom role, make sure to use the
+ full name of the custom role, e.g. `[projects/my-project|organizations/my-org]/roles/my-custom-role`.
 
 ## User Project Overrides
 

@@ -38,10 +38,10 @@ To get more information about Dataset, see:
 
 ```hcl
 resource "google_healthcare_dataset" "default" {
-  name         = "example-dataset"
-  location     = "us-central1"
-  time_zone    = "UTC"
-  provider     = "google-beta"
+  name      = "example-dataset"
+  location  = "us-central1"
+  time_zone = "UTC"
+  provider  = google-beta
 }
 ```
 

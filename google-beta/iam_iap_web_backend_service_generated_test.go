@@ -110,6 +110,15 @@ func TestAccIapWebBackendServiceIamPolicyGenerated(t *testing.T) {
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
+			{
+				Config: testAccIapWebBackendServiceIamPolicy_emptyBinding(context),
+			},
+			{
+				ResourceName:      "google_iap_web_backend_service_iam_policy.foo",
+				ImportStateId:     fmt.Sprintf("projects/%s/iap_web/compute/services/%s", getTestProjectFromEnv(), fmt.Sprintf("backend-service%s", context["random_suffix"])),
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
 		},
 	})
 }
@@ -265,7 +274,7 @@ func testAccIapWebBackendServiceIamMember_basicGenerated(context map[string]inte
 	return Nprintf(`
 resource "google_compute_backend_service" "default" {
   name          = "backend-service%{random_suffix}"
-  health_checks = ["${google_compute_http_health_check.default.self_link}"]
+  health_checks = [google_compute_http_health_check.default.self_link]
 }
 
 resource "google_compute_http_health_check" "default" {
@@ -276,10 +285,10 @@ resource "google_compute_http_health_check" "default" {
 }
 
 resource "google_iap_web_backend_service_iam_member" "foo" {
-	project = "${google_compute_backend_service.default.project}"
-	web_backend_service = "${google_compute_backend_service.default.name}"
-	role = "%{role}"
-	member = "user:admin@hashicorptest.com"
+  project = "${google_compute_backend_service.default.project}"
+  web_backend_service = "${google_compute_backend_service.default.name}"
+  role = "%{role}"
+  member = "user:admin@hashicorptest.com"
 }
 `, context)
 }
@@ -288,7 +297,7 @@ func testAccIapWebBackendServiceIamPolicy_basicGenerated(context map[string]inte
 	return Nprintf(`
 resource "google_compute_backend_service" "default" {
   name          = "backend-service%{random_suffix}"
-  health_checks = ["${google_compute_http_health_check.default.self_link}"]
+  health_checks = [google_compute_http_health_check.default.self_link]
 }
 
 resource "google_compute_http_health_check" "default" {
@@ -299,16 +308,41 @@ resource "google_compute_http_health_check" "default" {
 }
 
 data "google_iam_policy" "foo" {
-	binding {
-		role = "%{role}"
-		members = ["user:admin@hashicorptest.com"]
-	}
+  binding {
+    role = "%{role}"
+    members = ["user:admin@hashicorptest.com"]
+  }
 }
 
 resource "google_iap_web_backend_service_iam_policy" "foo" {
-	project = "${google_compute_backend_service.default.project}"
-	web_backend_service = "${google_compute_backend_service.default.name}"
-	policy_data = "${data.google_iam_policy.foo.policy_data}"
+  project = "${google_compute_backend_service.default.project}"
+  web_backend_service = "${google_compute_backend_service.default.name}"
+  policy_data = "${data.google_iam_policy.foo.policy_data}"
+}
+`, context)
+}
+
+func testAccIapWebBackendServiceIamPolicy_emptyBinding(context map[string]interface{}) string {
+	return Nprintf(`
+resource "google_compute_backend_service" "default" {
+  name          = "backend-service%{random_suffix}"
+  health_checks = [google_compute_http_health_check.default.self_link]
+}
+
+resource "google_compute_http_health_check" "default" {
+  name               = "health-check%{random_suffix}"
+  request_path       = "/"
+  check_interval_sec = 1
+  timeout_sec        = 1
+}
+
+data "google_iam_policy" "foo" {
+}
+
+resource "google_iap_web_backend_service_iam_policy" "foo" {
+  project = "${google_compute_backend_service.default.project}"
+  web_backend_service = "${google_compute_backend_service.default.name}"
+  policy_data = "${data.google_iam_policy.foo.policy_data}"
 }
 `, context)
 }
@@ -317,7 +351,7 @@ func testAccIapWebBackendServiceIamBinding_basicGenerated(context map[string]int
 	return Nprintf(`
 resource "google_compute_backend_service" "default" {
   name          = "backend-service%{random_suffix}"
-  health_checks = ["${google_compute_http_health_check.default.self_link}"]
+  health_checks = [google_compute_http_health_check.default.self_link]
 }
 
 resource "google_compute_http_health_check" "default" {
@@ -328,10 +362,10 @@ resource "google_compute_http_health_check" "default" {
 }
 
 resource "google_iap_web_backend_service_iam_binding" "foo" {
-	project = "${google_compute_backend_service.default.project}"
-	web_backend_service = "${google_compute_backend_service.default.name}"
-	role = "%{role}"
-	members = ["user:admin@hashicorptest.com"]
+  project = "${google_compute_backend_service.default.project}"
+  web_backend_service = "${google_compute_backend_service.default.name}"
+  role = "%{role}"
+  members = ["user:admin@hashicorptest.com"]
 }
 `, context)
 }
@@ -340,7 +374,7 @@ func testAccIapWebBackendServiceIamBinding_updateGenerated(context map[string]in
 	return Nprintf(`
 resource "google_compute_backend_service" "default" {
   name          = "backend-service%{random_suffix}"
-  health_checks = ["${google_compute_http_health_check.default.self_link}"]
+  health_checks = [google_compute_http_health_check.default.self_link]
 }
 
 resource "google_compute_http_health_check" "default" {
@@ -351,10 +385,10 @@ resource "google_compute_http_health_check" "default" {
 }
 
 resource "google_iap_web_backend_service_iam_binding" "foo" {
-	project = "${google_compute_backend_service.default.project}"
-	web_backend_service = "${google_compute_backend_service.default.name}"
-	role = "%{role}"
-	members = ["user:admin@hashicorptest.com", "user:paddy@hashicorp.com"]
+  project = "${google_compute_backend_service.default.project}"
+  web_backend_service = "${google_compute_backend_service.default.name}"
+  role = "%{role}"
+  members = ["user:admin@hashicorptest.com", "user:paddy@hashicorp.com"]
 }
 `, context)
 }
@@ -363,7 +397,7 @@ func testAccIapWebBackendServiceIamBinding_withConditionGenerated(context map[st
 	return Nprintf(`
 resource "google_compute_backend_service" "default" {
   name          = "backend-service%{random_suffix}"
-  health_checks = ["${google_compute_http_health_check.default.self_link}"]
+  health_checks = [google_compute_http_health_check.default.self_link]
 }
 
 resource "google_compute_http_health_check" "default" {
@@ -374,15 +408,15 @@ resource "google_compute_http_health_check" "default" {
 }
 
 resource "google_iap_web_backend_service_iam_binding" "foo" {
-	project = "${google_compute_backend_service.default.project}"
-	web_backend_service = "${google_compute_backend_service.default.name}"
-	role = "%{role}"
-	members = ["user:admin@hashicorptest.com"]
-	condition {
-		title       = "%{condition_title}"
-		description = "Expiring at midnight of 2019-12-31"
-		expression  = "%{condition_expr}"
-	}
+  project = "${google_compute_backend_service.default.project}"
+  web_backend_service = "${google_compute_backend_service.default.name}"
+  role = "%{role}"
+  members = ["user:admin@hashicorptest.com"]
+  condition {
+    title       = "%{condition_title}"
+    description = "Expiring at midnight of 2019-12-31"
+    expression  = "%{condition_expr}"
+  }
 }
 `, context)
 }
@@ -391,7 +425,7 @@ func testAccIapWebBackendServiceIamBinding_withAndWithoutConditionGenerated(cont
 	return Nprintf(`
 resource "google_compute_backend_service" "default" {
   name          = "backend-service%{random_suffix}"
-  health_checks = ["${google_compute_http_health_check.default.self_link}"]
+  health_checks = [google_compute_http_health_check.default.self_link]
 }
 
 resource "google_compute_http_health_check" "default" {
@@ -402,22 +436,22 @@ resource "google_compute_http_health_check" "default" {
 }
 
 resource "google_iap_web_backend_service_iam_binding" "foo" {
-	project = "${google_compute_backend_service.default.project}"
-	web_backend_service = "${google_compute_backend_service.default.name}"
-	role = "%{role}"
-	members = ["user:admin@hashicorptest.com"]
+  project = "${google_compute_backend_service.default.project}"
+  web_backend_service = "${google_compute_backend_service.default.name}"
+  role = "%{role}"
+  members = ["user:admin@hashicorptest.com"]
 }
 
 resource "google_iap_web_backend_service_iam_binding" "foo2" {
-	project = "${google_compute_backend_service.default.project}"
-	web_backend_service = "${google_compute_backend_service.default.name}"
-	role = "%{role}"
-	members = ["user:admin@hashicorptest.com"]
-	condition {
-		title       = "%{condition_title}"
-		description = "Expiring at midnight of 2019-12-31"
-		expression  = "%{condition_expr}"
-	}
+  project = "${google_compute_backend_service.default.project}"
+  web_backend_service = "${google_compute_backend_service.default.name}"
+  role = "%{role}"
+  members = ["user:admin@hashicorptest.com"]
+  condition {
+    title       = "%{condition_title}"
+    description = "Expiring at midnight of 2019-12-31"
+    expression  = "%{condition_expr}"
+  }
 }
 `, context)
 }
@@ -426,7 +460,7 @@ func testAccIapWebBackendServiceIamMember_withConditionGenerated(context map[str
 	return Nprintf(`
 resource "google_compute_backend_service" "default" {
   name          = "backend-service%{random_suffix}"
-  health_checks = ["${google_compute_http_health_check.default.self_link}"]
+  health_checks = [google_compute_http_health_check.default.self_link]
 }
 
 resource "google_compute_http_health_check" "default" {
@@ -437,15 +471,15 @@ resource "google_compute_http_health_check" "default" {
 }
 
 resource "google_iap_web_backend_service_iam_member" "foo" {
-	project = "${google_compute_backend_service.default.project}"
-	web_backend_service = "${google_compute_backend_service.default.name}"
-	role = "%{role}"
-	member = "user:admin@hashicorptest.com"
-	condition {
-		title       = "%{condition_title}"
-		description = "Expiring at midnight of 2019-12-31"
-		expression  = "%{condition_expr}"
-	}
+  project = "${google_compute_backend_service.default.project}"
+  web_backend_service = "${google_compute_backend_service.default.name}"
+  role = "%{role}"
+  member = "user:admin@hashicorptest.com"
+  condition {
+    title       = "%{condition_title}"
+    description = "Expiring at midnight of 2019-12-31"
+    expression  = "%{condition_expr}"
+  }
 }
 `, context)
 }
@@ -454,7 +488,7 @@ func testAccIapWebBackendServiceIamMember_withAndWithoutConditionGenerated(conte
 	return Nprintf(`
 resource "google_compute_backend_service" "default" {
   name          = "backend-service%{random_suffix}"
-  health_checks = ["${google_compute_http_health_check.default.self_link}"]
+  health_checks = [google_compute_http_health_check.default.self_link]
 }
 
 resource "google_compute_http_health_check" "default" {
@@ -465,22 +499,22 @@ resource "google_compute_http_health_check" "default" {
 }
 
 resource "google_iap_web_backend_service_iam_member" "foo" {
-	project = "${google_compute_backend_service.default.project}"
-	web_backend_service = "${google_compute_backend_service.default.name}"
-	role = "%{role}"
-	member = "user:admin@hashicorptest.com"
+  project = "${google_compute_backend_service.default.project}"
+  web_backend_service = "${google_compute_backend_service.default.name}"
+  role = "%{role}"
+  member = "user:admin@hashicorptest.com"
 }
 
 resource "google_iap_web_backend_service_iam_member" "foo2" {
-	project = "${google_compute_backend_service.default.project}"
-	web_backend_service = "${google_compute_backend_service.default.name}"
-	role = "%{role}"
-	member = "user:admin@hashicorptest.com"
-	condition {
-		title       = "%{condition_title}"
-		description = "Expiring at midnight of 2019-12-31"
-		expression  = "%{condition_expr}"
-	}
+  project = "${google_compute_backend_service.default.project}"
+  web_backend_service = "${google_compute_backend_service.default.name}"
+  role = "%{role}"
+  member = "user:admin@hashicorptest.com"
+  condition {
+    title       = "%{condition_title}"
+    description = "Expiring at midnight of 2019-12-31"
+    expression  = "%{condition_expr}"
+  }
 }
 `, context)
 }
@@ -489,7 +523,7 @@ func testAccIapWebBackendServiceIamPolicy_withConditionGenerated(context map[str
 	return Nprintf(`
 resource "google_compute_backend_service" "default" {
   name          = "backend-service%{random_suffix}"
-  health_checks = ["${google_compute_http_health_check.default.self_link}"]
+  health_checks = [google_compute_http_health_check.default.self_link]
 }
 
 resource "google_compute_http_health_check" "default" {
@@ -500,21 +534,21 @@ resource "google_compute_http_health_check" "default" {
 }
 
 data "google_iam_policy" "foo" {
-	binding {
-		role = "%{role}"
-		members = ["user:admin@hashicorptest.com"]
-		condition {
-			title       = "%{condition_title}"
-			description = "Expiring at midnight of 2019-12-31"
-			expression  = "%{condition_expr}"
-		}
-	}
+  binding {
+    role = "%{role}"
+    members = ["user:admin@hashicorptest.com"]
+    condition {
+      title       = "%{condition_title}"
+      description = "Expiring at midnight of 2019-12-31"
+      expression  = "%{condition_expr}"
+    }
+  }
 }
 
 resource "google_iap_web_backend_service_iam_policy" "foo" {
-	project = "${google_compute_backend_service.default.project}"
-	web_backend_service = "${google_compute_backend_service.default.name}"
-	policy_data = "${data.google_iam_policy.foo.policy_data}"
+  project = "${google_compute_backend_service.default.project}"
+  web_backend_service = "${google_compute_backend_service.default.name}"
+  policy_data = "${data.google_iam_policy.foo.policy_data}"
 }
 `, context)
 }

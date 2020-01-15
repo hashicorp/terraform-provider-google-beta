@@ -28,8 +28,6 @@ func TestAccBigtableTable_basic(t *testing.T) {
 				ResourceName:      "google_bigtable_table.table",
 				ImportState:       true,
 				ImportStateVerify: true,
-				//TODO(rileykarson): Remove ImportStateId when id format is fixed in 3.0.0
-				ImportStateId: fmt.Sprintf("%s/%s", instanceName, tableName),
 			},
 		},
 	})
@@ -54,7 +52,6 @@ func TestAccBigtableTable_splitKeys(t *testing.T) {
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"split_keys"},
-				ImportStateId:           fmt.Sprintf("%s/%s", instanceName, tableName),
 			},
 		},
 	})
@@ -79,7 +76,6 @@ func TestAccBigtableTable_family(t *testing.T) {
 				ResourceName:      "google_bigtable_table.table",
 				ImportState:       true,
 				ImportStateVerify: true,
-				ImportStateId:     fmt.Sprintf("%s/%s", instanceName, tableName),
 			},
 		},
 	})
@@ -104,7 +100,6 @@ func TestAccBigtableTable_familyMany(t *testing.T) {
 				ResourceName:      "google_bigtable_table.table",
 				ImportState:       true,
 				ImportStateVerify: true,
-				ImportStateId:     fmt.Sprintf("%s/%s", instanceName, tableName),
 			},
 		},
 	})
@@ -148,7 +143,7 @@ resource "google_bigtable_instance" "instance" {
 
 resource "google_bigtable_table" "table" {
   name          = "%s"
-  instance_name = "${google_bigtable_instance.instance.name}"
+  instance_name = google_bigtable_instance.instance.name
 }
 `, instanceName, instanceName, tableName)
 }
@@ -166,7 +161,7 @@ resource "google_bigtable_instance" "instance" {
 
 resource "google_bigtable_table" "table" {
   name          = "%s"
-  instance_name = "${google_bigtable_instance.instance.name}"
+  instance_name = google_bigtable_instance.instance.name
   split_keys    = ["a", "b", "c"]
 }
 `, instanceName, instanceName, tableName)
@@ -175,7 +170,7 @@ resource "google_bigtable_table" "table" {
 func testAccBigtableTable_family(instanceName, tableName, family string) string {
 	return fmt.Sprintf(`
 resource "google_bigtable_instance" "instance" {
-  name          = "%s"
+  name = "%s"
 
   cluster {
     cluster_id = "%s"
@@ -187,7 +182,7 @@ resource "google_bigtable_instance" "instance" {
 
 resource "google_bigtable_table" "table" {
   name          = "%s"
-  instance_name = "${google_bigtable_instance.instance.name}"
+  instance_name = google_bigtable_instance.instance.name
 
   column_family {
     family = "%s"
@@ -199,7 +194,7 @@ resource "google_bigtable_table" "table" {
 func testAccBigtableTable_familyMany(instanceName, tableName, family string) string {
 	return fmt.Sprintf(`
 resource "google_bigtable_instance" "instance" {
-  name          = "%s"
+  name = "%s"
 
   cluster {
     cluster_id = "%s"
@@ -211,7 +206,7 @@ resource "google_bigtable_instance" "instance" {
 
 resource "google_bigtable_table" "table" {
   name          = "%s"
-  instance_name = "${google_bigtable_instance.instance.name}"
+  instance_name = google_bigtable_instance.instance.name
 
   column_family {
     family = "%s-first"

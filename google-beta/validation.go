@@ -232,6 +232,14 @@ func validateNonNegativeDuration() schema.SchemaValidateFunc {
 	}
 }
 
+func validateIpAddress(i interface{}, val string) ([]string, []error) {
+	ip := net.ParseIP(i.(string))
+	if ip == nil {
+		return nil, []error{fmt.Errorf("could not parse %q to IP address", val)}
+	}
+	return nil, nil
+}
+
 // StringNotInSlice returns a SchemaValidateFunc which tests if the provided value
 // is of type string and that it matches none of the element in the invalid slice.
 // if ignorecase is true, case is ignored.
@@ -252,4 +260,24 @@ func StringNotInSlice(invalid []string, ignoreCase bool) schema.SchemaValidateFu
 
 		return
 	}
+}
+
+// Ensure that hourly timestamp strings "HH:MM" have the minutes zeroed out for hourly only inputs
+func validateHourlyOnly(val interface{}, key string) (warns []string, errs []error) {
+	v := val.(string)
+	parts := strings.Split(v, ":")
+	if len(parts) != 2 {
+		errs = append(errs, fmt.Errorf("%q must be in the format HH:00, got: %s", key, v))
+		return
+	}
+	if parts[1] != "00" {
+		errs = append(errs, fmt.Errorf("%q does not allow minutes, it must be in the format HH:00, got: %s", key, v))
+	}
+	i, err := strconv.Atoi(parts[0])
+	if err != nil {
+		errs = append(errs, fmt.Errorf("%q cannot be parsed, it must be in the format HH:00, got: %s", key, v))
+	} else if i < 0 || i > 23 {
+		errs = append(errs, fmt.Errorf("%q does not specify a valid hour, it must be in the format HH:00 where HH : [00-23], got: %s", key, v))
+	}
+	return
 }

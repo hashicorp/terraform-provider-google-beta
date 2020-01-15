@@ -116,13 +116,15 @@ to sign all other types of resource record sets.`,
 									},
 								},
 							},
+							AtLeastOneOf: []string{"dnssec_config.0.kind", "dnssec_config.0.non_existence", "dnssec_config.0.state", "dnssec_config.0.default_key_specs"},
 						},
 						"kind": {
-							Type:        schema.TypeString,
-							Optional:    true,
-							ForceNew:    true,
-							Description: `Identifies what kind of resource this is`,
-							Default:     "dns#managedZoneDnsSecConfig",
+							Type:         schema.TypeString,
+							Optional:     true,
+							ForceNew:     true,
+							Description:  `Identifies what kind of resource this is`,
+							Default:      "dns#managedZoneDnsSecConfig",
+							AtLeastOneOf: []string{"dnssec_config.0.kind", "dnssec_config.0.non_existence", "dnssec_config.0.state", "dnssec_config.0.default_key_specs"},
 						},
 						"non_existence": {
 							Type:         schema.TypeString,
@@ -131,6 +133,7 @@ to sign all other types of resource record sets.`,
 							ForceNew:     true,
 							ValidateFunc: validation.StringInSlice([]string{"nsec", "nsec3", ""}, false),
 							Description:  `Specifies the mechanism used to provide authenticated denial-of-existence responses.`,
+							AtLeastOneOf: []string{"dnssec_config.0.kind", "dnssec_config.0.non_existence", "dnssec_config.0.state", "dnssec_config.0.default_key_specs"},
 						},
 						"state": {
 							Type:         schema.TypeString,
@@ -138,6 +141,7 @@ to sign all other types of resource record sets.`,
 							ForceNew:     true,
 							ValidateFunc: validation.StringInSlice([]string{"off", "on", "transfer", ""}, false),
 							Description:  `Specifies whether DNSSEC is enabled, and what mode it is in`,
+							AtLeastOneOf: []string{"dnssec_config.0.kind", "dnssec_config.0.non_existence", "dnssec_config.0.state", "dnssec_config.0.default_key_specs"},
 						},
 					},
 				},
@@ -153,7 +157,7 @@ to forward to.`,
 					Schema: map[string]*schema.Schema{
 						"target_name_servers": {
 							Type:     schema.TypeSet,
-							Optional: true,
+							Required: true,
 							Description: `List of target name servers to forward to. Cloud DNS will
 select the best available name server if more than
 one target is given.`,
@@ -187,14 +191,14 @@ zone. The value of this field contains the network to peer with.`,
 					Schema: map[string]*schema.Schema{
 						"target_network": {
 							Type:        schema.TypeList,
-							Optional:    true,
+							Required:    true,
 							Description: `The network with which to peer.`,
 							MaxItems:    1,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"network_url": {
 										Type:     schema.TypeString,
-										Optional: true,
+										Required: true,
 										Description: `The fully qualified URL of the VPC network to forward queries to.
 This should be formatted like
 'https://www.googleapis.com/compute/v1/projects/{project}/global/networks/{network}'`,
@@ -215,7 +219,7 @@ resources that the zone is visible from.`,
 					Schema: map[string]*schema.Schema{
 						"networks": {
 							Type:     schema.TypeSet,
-							Optional: true,
+							Required: true,
 							Description: `The list of VPC networks that can see this zone. Until the provider updates to use the Terraform 0.12 SDK in a future release, you
 may experience issues with this resource while updating. If you've defined a 'networks' block and
 add another 'networks' block while keeping the old block, Terraform will see an incorrect diff
@@ -273,7 +277,7 @@ func dnsManagedZonePrivateVisibilityConfigNetworksSchema() *schema.Resource {
 		Schema: map[string]*schema.Schema{
 			"network_url": {
 				Type:             schema.TypeString,
-				Optional:         true,
+				Required:         true,
 				DiffSuppressFunc: compareSelfLinkOrResourceName,
 				Description: `The fully qualified URL of the VPC network to bind to.
 This should be formatted like
@@ -288,7 +292,7 @@ func dnsManagedZoneForwardingConfigTargetNameServersSchema() *schema.Resource {
 		Schema: map[string]*schema.Schema{
 			"ipv4_address": {
 				Type:        schema.TypeString,
-				Optional:    true,
+				Required:    true,
 				Description: `IPv4 address of a target name server.`,
 			},
 		},
@@ -370,7 +374,7 @@ func resourceDNSManagedZoneCreate(d *schema.ResourceData, meta interface{}) erro
 	}
 
 	// Store the ID now
-	id, err := replaceVars(d, config, "{{name}}")
+	id, err := replaceVars(d, config, "projects/{{project}}/managedZones/{{name}}")
 	if err != nil {
 		return fmt.Errorf("Error constructing id: %s", err)
 	}
@@ -537,7 +541,7 @@ func resourceDNSManagedZoneImport(d *schema.ResourceData, meta interface{}) ([]*
 	}
 
 	// Replace import id for the resource id
-	id, err := replaceVars(d, config, "{{name}}")
+	id, err := replaceVars(d, config, "projects/{{project}}/managedZones/{{name}}")
 	if err != nil {
 		return nil, fmt.Errorf("Error constructing id: %s", err)
 	}
@@ -641,9 +645,10 @@ func flattenDNSManagedZoneLabels(v interface{}, d *schema.ResourceData) interfac
 }
 
 func flattenDNSManagedZoneVisibility(v interface{}, d *schema.ResourceData) interface{} {
-	if v == nil || v.(string) == "" {
+	if v == nil || isEmptyValue(reflect.ValueOf(v)) {
 		return "public"
 	}
+
 	return v
 }
 

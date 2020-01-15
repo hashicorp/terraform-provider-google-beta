@@ -42,11 +42,12 @@ To get more information about Connector, see:
 
 
 ```hcl
-provider "google-beta" {}
+provider "google-beta" {
+}
 
 resource "google_vpc_access_connector" "connector" {
   name          = "my-connector"
-  provider      = "google-beta"
+  provider      = google-beta
   region        = "us-central1"
   ip_cidr_range = "10.8.0.0/28"
   network       = "default"
@@ -62,6 +63,10 @@ The following arguments are supported:
   (Required)
   The name of the resource (Max 25 characters).
 
+* `network` -
+  (Required)
+  Name of a VPC network.
+
 * `ip_cidr_range` -
   (Required)
   The range of internal addresses that follows RFC 4632 notation. Example: `10.132.0.0/28`.
@@ -73,10 +78,6 @@ The following arguments are supported:
 
 - - -
 
-
-* `network` -
-  (Optional)
-  Name of a VPC network.
 
 * `min_throughput` -
   (Optional)

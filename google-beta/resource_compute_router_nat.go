@@ -23,7 +23,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
-	"google.golang.org/api/compute/v1"
 	"google.golang.org/api/googleapi"
 )
 
@@ -412,20 +411,14 @@ func resourceComputeRouterNatCreate(d *schema.ResourceData, meta interface{}) er
 	}
 	d.SetId(id)
 
-	op := &compute.Operation{}
-	err = Convert(res, op)
-	if err != nil {
-		return err
-	}
-
-	waitErr := computeOperationWaitTime(
-		config.clientCompute, op, project, "Creating RouterNat",
+	err = computeOperationWaitTime(
+		config, res, project, "Creating RouterNat",
 		int(d.Timeout(schema.TimeoutCreate).Minutes()))
 
-	if waitErr != nil {
+	if err != nil {
 		// The resource didn't actually create
 		d.SetId("")
-		return fmt.Errorf("Error waiting to create RouterNat: %s", waitErr)
+		return fmt.Errorf("Error waiting to create RouterNat: %s", err)
 	}
 
 	log.Printf("[DEBUG] Finished creating RouterNat %q: %#v", d.Id(), res)
@@ -606,14 +599,8 @@ func resourceComputeRouterNatUpdate(d *schema.ResourceData, meta interface{}) er
 		return fmt.Errorf("Error updating RouterNat %q: %s", d.Id(), err)
 	}
 
-	op := &compute.Operation{}
-	err = Convert(res, op)
-	if err != nil {
-		return err
-	}
-
 	err = computeOperationWaitTime(
-		config.clientCompute, op, project, "Updating RouterNat",
+		config, res, project, "Updating RouterNat",
 		int(d.Timeout(schema.TimeoutUpdate).Minutes()))
 
 	if err != nil {
@@ -656,14 +643,8 @@ func resourceComputeRouterNatDelete(d *schema.ResourceData, meta interface{}) er
 		return handleNotFoundError(err, d, "RouterNat")
 	}
 
-	op := &compute.Operation{}
-	err = Convert(res, op)
-	if err != nil {
-		return err
-	}
-
 	err = computeOperationWaitTime(
-		config.clientCompute, op, project, "Deleting RouterNat",
+		config, res, project, "Deleting RouterNat",
 		int(d.Timeout(schema.TimeoutDelete).Minutes()))
 
 	if err != nil {
@@ -773,42 +754,58 @@ func flattenComputeRouterNatMinPortsPerVm(v interface{}, d *schema.ResourceData)
 }
 
 func flattenComputeRouterNatUdpIdleTimeoutSec(v interface{}, d *schema.ResourceData) interface{} {
+	if v == nil || isEmptyValue(reflect.ValueOf(v)) {
+		return 30
+	}
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
 			return intVal
 		} // let terraform core handle it if we can't convert the string to an int.
 	}
+
 	return v
 }
 
 func flattenComputeRouterNatIcmpIdleTimeoutSec(v interface{}, d *schema.ResourceData) interface{} {
+	if v == nil || isEmptyValue(reflect.ValueOf(v)) {
+		return 30
+	}
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
 			return intVal
 		} // let terraform core handle it if we can't convert the string to an int.
 	}
+
 	return v
 }
 
 func flattenComputeRouterNatTcpEstablishedIdleTimeoutSec(v interface{}, d *schema.ResourceData) interface{} {
+	if v == nil || isEmptyValue(reflect.ValueOf(v)) {
+		return 1200
+	}
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
 			return intVal
 		} // let terraform core handle it if we can't convert the string to an int.
 	}
+
 	return v
 }
 
 func flattenComputeRouterNatTcpTransitoryIdleTimeoutSec(v interface{}, d *schema.ResourceData) interface{} {
+	if v == nil || isEmptyValue(reflect.ValueOf(v)) {
+		return 30
+	}
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
 			return intVal
 		} // let terraform core handle it if we can't convert the string to an int.
 	}
+
 	return v
 }
 

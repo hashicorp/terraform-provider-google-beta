@@ -21,7 +21,6 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"google.golang.org/api/compute/v1"
 )
 
 func resourceComputeDiskResourcePolicyAttachment() *schema.Resource {
@@ -110,20 +109,14 @@ func resourceComputeDiskResourcePolicyAttachmentCreate(d *schema.ResourceData, m
 	}
 	d.SetId(id)
 
-	op := &compute.Operation{}
-	err = Convert(res, op)
-	if err != nil {
-		return err
-	}
-
-	waitErr := computeOperationWaitTime(
-		config.clientCompute, op, project, "Creating DiskResourcePolicyAttachment",
+	err = computeOperationWaitTime(
+		config, res, project, "Creating DiskResourcePolicyAttachment",
 		int(d.Timeout(schema.TimeoutCreate).Minutes()))
 
-	if waitErr != nil {
+	if err != nil {
 		// The resource didn't actually create
 		d.SetId("")
-		return fmt.Errorf("Error waiting to create DiskResourcePolicyAttachment: %s", waitErr)
+		return fmt.Errorf("Error waiting to create DiskResourcePolicyAttachment: %s", err)
 	}
 
 	log.Printf("[DEBUG] Finished creating DiskResourcePolicyAttachment %q: %#v", d.Id(), res)
@@ -199,8 +192,21 @@ func resourceComputeDiskResourcePolicyAttachmentDelete(d *schema.ResourceData, m
 	var obj map[string]interface{}
 	obj = make(map[string]interface{})
 
-	// projects/{project}/regions/{region}/resourcePolicies/{resourceId}
-	region := getRegionFromZone(d.Get("zone").(string))
+	zone, err := getZone(d, config)
+	if err != nil {
+		return err
+	}
+	if zone == "" {
+		return fmt.Errorf("zone must be non-empty - set in resource or at provider-level")
+	}
+
+	// resourcePolicies are referred to by region but affixed to zonal disks.
+	// We construct the regional name from the zone:
+	//   projects/{project}/regions/{region}/resourcePolicies/{resourceId}
+	region := getRegionFromZone(zone)
+	if region == "" {
+		return fmt.Errorf("invalid zone %q, unable to infer region from zone", zone)
+	}
 
 	name, err := expandComputeDiskResourcePolicyAttachmentName(d.Get("name"), d, config)
 	if err != nil {
@@ -215,14 +221,8 @@ func resourceComputeDiskResourcePolicyAttachmentDelete(d *schema.ResourceData, m
 		return handleNotFoundError(err, d, "DiskResourcePolicyAttachment")
 	}
 
-	op := &compute.Operation{}
-	err = Convert(res, op)
-	if err != nil {
-		return err
-	}
-
 	err = computeOperationWaitTime(
-		config.clientCompute, op, project, "Deleting DiskResourcePolicyAttachment",
+		config, res, project, "Deleting DiskResourcePolicyAttachment",
 		int(d.Timeout(schema.TimeoutDelete).Minutes()))
 
 	if err != nil {
@@ -269,7 +269,21 @@ func resourceComputeDiskResourcePolicyAttachmentEncoder(d *schema.ResourceData, 
 		return nil, err
 	}
 
-	region := getRegionFromZone(d.Get("zone").(string))
+	zone, err := getZone(d, config)
+	if err != nil {
+		return nil, err
+	}
+	if zone == "" {
+		return nil, fmt.Errorf("zone must be non-empty - set in resource or at provider-level")
+	}
+
+	// resourcePolicies are referred to by region but affixed to zonal disks.
+	// We construct the regional name from the zone:
+	//   projects/{project}/regions/{region}/resourcePolicies/{resourceId}
+	region := getRegionFromZone(zone)
+	if region == "" {
+		return nil, fmt.Errorf("invalid zone %q, unable to infer region from zone", zone)
+	}
 
 	obj["resourcePolicies"] = []interface{}{fmt.Sprintf("projects/%s/regions/%s/resourcePolicies/%s", project, region, obj["name"])}
 	delete(obj, "name")

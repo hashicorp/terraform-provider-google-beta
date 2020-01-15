@@ -23,7 +23,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"google.golang.org/api/compute/v1"
 )
 
 func resourceComputeRegionSslCertificate() *schema.Resource {
@@ -183,26 +182,20 @@ func resourceComputeRegionSslCertificateCreate(d *schema.ResourceData, meta inte
 	}
 
 	// Store the ID now
-	id, err := replaceVars(d, config, "{{name}}")
+	id, err := replaceVars(d, config, "projects/{{project}}/regions/{{region}}/sslCertificates/{{name}}")
 	if err != nil {
 		return fmt.Errorf("Error constructing id: %s", err)
 	}
 	d.SetId(id)
 
-	op := &compute.Operation{}
-	err = Convert(res, op)
-	if err != nil {
-		return err
-	}
-
-	waitErr := computeOperationWaitTime(
-		config.clientCompute, op, project, "Creating RegionSslCertificate",
+	err = computeOperationWaitTime(
+		config, res, project, "Creating RegionSslCertificate",
 		int(d.Timeout(schema.TimeoutCreate).Minutes()))
 
-	if waitErr != nil {
+	if err != nil {
 		// The resource didn't actually create
 		d.SetId("")
-		return fmt.Errorf("Error waiting to create RegionSslCertificate: %s", waitErr)
+		return fmt.Errorf("Error waiting to create RegionSslCertificate: %s", err)
 	}
 
 	log.Printf("[DEBUG] Finished creating RegionSslCertificate %q: %#v", d.Id(), res)
@@ -277,14 +270,8 @@ func resourceComputeRegionSslCertificateDelete(d *schema.ResourceData, meta inte
 		return handleNotFoundError(err, d, "RegionSslCertificate")
 	}
 
-	op := &compute.Operation{}
-	err = Convert(res, op)
-	if err != nil {
-		return err
-	}
-
 	err = computeOperationWaitTime(
-		config.clientCompute, op, project, "Deleting RegionSslCertificate",
+		config, res, project, "Deleting RegionSslCertificate",
 		int(d.Timeout(schema.TimeoutDelete).Minutes()))
 
 	if err != nil {
@@ -307,7 +294,7 @@ func resourceComputeRegionSslCertificateImport(d *schema.ResourceData, meta inte
 	}
 
 	// Replace import id for the resource id
-	id, err := replaceVars(d, config, "{{name}}")
+	id, err := replaceVars(d, config, "projects/{{project}}/regions/{{region}}/sslCertificates/{{name}}")
 	if err != nil {
 		return nil, fmt.Errorf("Error constructing id: %s", err)
 	}

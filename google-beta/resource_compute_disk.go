@@ -24,7 +24,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/customdiff"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"google.golang.org/api/compute/v1"
 	"google.golang.org/api/googleapi"
 )
 
@@ -216,11 +215,7 @@ func suppressWindowsFamilyDiff(imageName, familyName string) bool {
 	updatedFamilyString := strings.Replace(familyName, "windows-", "windows-server-", 1)
 	updatedImageName := strings.Replace(imageName, "-dc-", "-", 1)
 
-	if strings.Contains(updatedImageName, updatedFamilyString) {
-		return true
-	}
-
-	return false
+	return strings.Contains(updatedImageName, updatedFamilyString)
 }
 
 func resourceComputeDisk() *schema.Resource {
@@ -288,9 +283,10 @@ you do not need to provide a key to use the disk later.`,
 							ForceNew:         true,
 							DiffSuppressFunc: compareSelfLinkRelativePaths,
 							Description: `The self link of the encryption key used to encrypt the disk. Also called KmsKeyName
-in the cloud console. In order to use this additional
-IAM permissions need to be set on the Compute Engine Service Agent. See
-https://cloud.google.com/compute/docs/disks/customer-managed-encryption#encrypt_a_new_persistent_disk_with_your_own_keys`,
+in the cloud console. Your project's Compute Engine System service account
+('service-{{PROJECT_NUMBER}}@compute-system.iam.gserviceaccount.com') must have
+'roles/cloudkms.cryptoKeyEncrypterDecrypter' to use this feature.
+See https://cloud.google.com/compute/docs/disks/customer-managed-encryption#encrypt_a_new_persistent_disk_with_your_own_keys`,
 						},
 						"raw_key": {
 							Type:     schema.TypeString,
@@ -298,6 +294,7 @@ https://cloud.google.com/compute/docs/disks/customer-managed-encryption#encrypt_
 							ForceNew: true,
 							Description: `Specifies a 256-bit customer-supplied encryption key, encoded in
 RFC 4648 base64 to either encrypt or decrypt this resource.`,
+							Sensitive: true,
 						},
 						"sha256": {
 							Type:     schema.TypeString,
@@ -394,9 +391,10 @@ the source image is protected by a customer-supplied encryption key.`,
 							ForceNew:         true,
 							DiffSuppressFunc: compareSelfLinkRelativePaths,
 							Description: `The self link of the encryption key used to encrypt the disk. Also called KmsKeyName
-in the cloud console. In order to use this additional
-IAM permissions need to be set on the Compute Engine Service Agent. See
-https://cloud.google.com/compute/docs/disks/customer-managed-encryption#encrypt_a_new_persistent_disk_with_your_own_keys`,
+in the cloud console. Your project's Compute Engine System service account
+('service-{{PROJECT_NUMBER}}@compute-system.iam.gserviceaccount.com') must have
+'roles/cloudkms.cryptoKeyEncrypterDecrypter' to use this feature.
+See https://cloud.google.com/compute/docs/disks/customer-managed-encryption#encrypt_a_new_persistent_disk_with_your_own_keys`,
 						},
 						"raw_key": {
 							Type:     schema.TypeString,
@@ -430,9 +428,10 @@ key.`,
 							ForceNew:         true,
 							DiffSuppressFunc: compareSelfLinkRelativePaths,
 							Description: `The self link of the encryption key used to encrypt the disk. Also called KmsKeyName
-in the cloud console. In order to use this additional
-IAM permissions need to be set on the Compute Engine Service Agent. See
-https://cloud.google.com/compute/docs/disks/customer-managed-encryption#encrypt_a_new_persistent_disk_with_your_own_keys`,
+in the cloud console. Your project's Compute Engine System service account
+('service-{{PROJECT_NUMBER}}@compute-system.iam.gserviceaccount.com') must have
+'roles/cloudkms.cryptoKeyEncrypterDecrypter' to use this feature.
+See https://cloud.google.com/compute/docs/disks/customer-managed-encryption#encrypt_a_new_persistent_disk_with_your_own_keys`,
 						},
 						"raw_key": {
 							Type:     schema.TypeString,
@@ -516,19 +515,6 @@ project/zones/zone/instances/instance`,
 					Type:             schema.TypeString,
 					DiffSuppressFunc: compareSelfLinkOrResourceName,
 				},
-			},
-			"disk_encryption_key_raw": {
-				Type:      schema.TypeString,
-				Optional:  true,
-				ForceNew:  true,
-				Sensitive: true,
-				Removed:   "Use disk_encryption_key.raw_key instead.",
-			},
-
-			"disk_encryption_key_sha256": {
-				Type:     schema.TypeString,
-				Computed: true,
-				Removed:  "Use disk_encryption_key.sha256 instead.",
 			},
 			"project": {
 				Type:     schema.TypeString,
@@ -654,26 +640,20 @@ func resourceComputeDiskCreate(d *schema.ResourceData, meta interface{}) error {
 	}
 
 	// Store the ID now
-	id, err := replaceVars(d, config, "{{name}}")
+	id, err := replaceVars(d, config, "projects/{{project}}/zones/{{zone}}/disks/{{name}}")
 	if err != nil {
 		return fmt.Errorf("Error constructing id: %s", err)
 	}
 	d.SetId(id)
 
-	op := &compute.Operation{}
-	err = Convert(res, op)
-	if err != nil {
-		return err
-	}
-
-	waitErr := computeOperationWaitTime(
-		config.clientCompute, op, project, "Creating Disk",
+	err = computeOperationWaitTime(
+		config, res, project, "Creating Disk",
 		int(d.Timeout(schema.TimeoutCreate).Minutes()))
 
-	if waitErr != nil {
+	if err != nil {
 		// The resource didn't actually create
 		d.SetId("")
-		return fmt.Errorf("Error waiting to create Disk: %s", waitErr)
+		return fmt.Errorf("Error waiting to create Disk: %s", err)
 	}
 
 	log.Printf("[DEBUG] Finished creating Disk %q: %#v", d.Id(), res)
@@ -816,16 +796,9 @@ func resourceComputeDiskUpdate(d *schema.ResourceData, meta interface{}) error {
 			return fmt.Errorf("Error updating Disk %q: %s", d.Id(), err)
 		}
 
-		op := &compute.Operation{}
-		err = Convert(res, op)
-		if err != nil {
-			return err
-		}
-
 		err = computeOperationWaitTime(
-			config.clientCompute, op, project, "Updating Disk",
+			config, res, project, "Updating Disk",
 			int(d.Timeout(schema.TimeoutUpdate).Minutes()))
-
 		if err != nil {
 			return err
 		}
@@ -852,16 +825,9 @@ func resourceComputeDiskUpdate(d *schema.ResourceData, meta interface{}) error {
 			return fmt.Errorf("Error updating Disk %q: %s", d.Id(), err)
 		}
 
-		op := &compute.Operation{}
-		err = Convert(res, op)
-		if err != nil {
-			return err
-		}
-
 		err = computeOperationWaitTime(
-			config.clientCompute, op, project, "Updating Disk",
+			config, res, project, "Updating Disk",
 			int(d.Timeout(schema.TimeoutUpdate).Minutes()))
-
 		if err != nil {
 			return err
 		}
@@ -931,7 +897,7 @@ func resourceComputeDiskDelete(d *schema.ResourceData, meta interface{}) error {
 				return fmt.Errorf("Error detaching disk %s from instance %s/%s/%s: %s", call.deviceName, call.project,
 					call.zone, call.instance, err.Error())
 			}
-			err = computeOperationWait(config.clientCompute, op, call.project,
+			err = computeOperationWait(config, op, call.project,
 				fmt.Sprintf("Detaching disk from %s/%s/%s", call.project, call.zone, call.instance))
 			if err != nil {
 				if opErr, ok := err.(ComputeOperationError); ok && len(opErr.Errors) == 1 && opErr.Errors[0].Code == "RESOURCE_NOT_FOUND" {
@@ -949,14 +915,8 @@ func resourceComputeDiskDelete(d *schema.ResourceData, meta interface{}) error {
 		return handleNotFoundError(err, d, "Disk")
 	}
 
-	op := &compute.Operation{}
-	err = Convert(res, op)
-	if err != nil {
-		return err
-	}
-
 	err = computeOperationWaitTime(
-		config.clientCompute, op, project, "Deleting Disk",
+		config, res, project, "Deleting Disk",
 		int(d.Timeout(schema.TimeoutDelete).Minutes()))
 
 	if err != nil {
@@ -979,7 +939,7 @@ func resourceComputeDiskImport(d *schema.ResourceData, meta interface{}) ([]*sch
 	}
 
 	// Replace import id for the resource id
-	id, err := replaceVars(d, config, "{{name}}")
+	id, err := replaceVars(d, config, "projects/{{project}}/zones/{{zone}}/disks/{{name}}")
 	if err != nil {
 		return nil, fmt.Errorf("Error constructing id: %s", err)
 	}

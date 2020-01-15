@@ -1,6 +1,7 @@
 package google
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"strings"
@@ -23,7 +24,7 @@ func testSweepMonitoringGroups(region string) error {
 		log.Fatalf("error getting shared config for region: %s", err)
 	}
 
-	err = config.LoadAndValidate()
+	err = config.LoadAndValidate(context.Background())
 	if err != nil {
 		log.Fatalf("error loading: %s", err)
 	}
@@ -36,7 +37,8 @@ func testSweepMonitoringGroups(region string) error {
 
 	groups, ok := res["group"]
 	if !ok {
-		log.Fatalf("Fatal - no groups found in Monitoring Groups response")
+		log.Printf("No groups found in Monitoring Groups response")
+		return nil
 	}
 	gs := groups.([]interface{})
 

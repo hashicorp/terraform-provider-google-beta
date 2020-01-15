@@ -53,7 +53,7 @@ func testAccComputeRoute_routeBasicExample(context map[string]interface{}) strin
 resource "google_compute_route" "default" {
   name        = "network-route%{random_suffix}"
   dest_range  = "15.0.0.0/24"
-  network     = "${google_compute_network.default.name}"
+  network     = google_compute_network.default.name
   next_hop_ip = "10.132.1.5"
   priority    = 100
 }
@@ -64,7 +64,7 @@ resource "google_compute_network" "default" {
 `, context)
 }
 
-func TestAccComputeRoute_routeIlbBetaExample(t *testing.T) {
+func TestAccComputeRoute_routeIlbExample(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
@@ -73,34 +73,36 @@ func TestAccComputeRoute_routeIlbBetaExample(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProvidersOiCS,
+		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckComputeRouteDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccComputeRoute_routeIlbBetaExample(context),
+				Config: testAccComputeRoute_routeIlbExample(context),
+			},
+			{
+				ResourceName:      "google_compute_route.route-ilb",
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
 }
 
-func testAccComputeRoute_routeIlbBetaExample(context map[string]interface{}) string {
+func testAccComputeRoute_routeIlbExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_compute_network" "default" {
-  provider                = "google-beta"
   name                    = "compute-network%{random_suffix}"
   auto_create_subnetworks = false
 }
 
 resource "google_compute_subnetwork" "default" {
-  provider      = "google-beta"
   name          = "compute-subnet%{random_suffix}"
   ip_cidr_range = "10.0.1.0/24"
   region        = "us-central1"
-  network       = "${google_compute_network.default.self_link}"
+  network       = google_compute_network.default.self_link
 }
 
 resource "google_compute_health_check" "hc" {
-  provider           = "google-beta"
   name               = "proxy-health-check%{random_suffix}"
   check_interval_sec = 1
   timeout_sec        = 1
@@ -111,30 +113,27 @@ resource "google_compute_health_check" "hc" {
 }
 
 resource "google_compute_region_backend_service" "backend" {
-  provider              = "google-beta"
-  name                  = "compute-backend%{random_suffix}"
-  region                = "us-central1"
-  health_checks         = ["${google_compute_health_check.hc.self_link}"]
+  name          = "compute-backend%{random_suffix}"
+  region        = "us-central1"
+  health_checks = [google_compute_health_check.hc.self_link]
 }
 
 resource "google_compute_forwarding_rule" "default" {
-  provider              = "google-beta"
-  name                  = "compute-forwarding-rule%{random_suffix}"
-  region                = "us-central1"
+  name     = "compute-forwarding-rule%{random_suffix}"
+  region   = "us-central1"
 
   load_balancing_scheme = "INTERNAL"
-  backend_service       = "${google_compute_region_backend_service.backend.self_link}"
+  backend_service       = google_compute_region_backend_service.backend.self_link
   all_ports             = true
-  network               = "${google_compute_network.default.name}"
-  subnetwork            = "${google_compute_subnetwork.default.name}"
+  network               = google_compute_network.default.name
+  subnetwork            = google_compute_subnetwork.default.name
 }
 
-resource "google_compute_route" "route-ilb-beta" {
-  provider     = "google-beta"
-  name         = "route-ilb-beta%{random_suffix}"
+resource "google_compute_route" "route-ilb" {
+  name         = "route-ilb%{random_suffix}"
   dest_range   = "0.0.0.0/0"
-  network      = "${google_compute_network.default.name}"
-  next_hop_ilb = "${google_compute_forwarding_rule.default.self_link}"
+  network      = google_compute_network.default.name
+  next_hop_ilb = google_compute_forwarding_rule.default.self_link
   priority     = 2000
 }
 `, context)

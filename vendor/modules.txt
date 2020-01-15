@@ -8,7 +8,7 @@ cloud.google.com/go/internal/trace
 cloud.google.com/go/internal/version
 cloud.google.com/go/longrunning
 cloud.google.com/go/longrunning/autogen
-# cloud.google.com/go/bigtable v1.0.1-0.20190930151326-312d69ccea6e
+# cloud.google.com/go/bigtable v1.1.0
 cloud.google.com/go/bigtable
 cloud.google.com/go/bigtable/internal/option
 # cloud.google.com/go/storage v1.0.0
@@ -129,8 +129,6 @@ github.com/golang/protobuf/ptypes/duration
 github.com/golang/protobuf/ptypes/empty
 github.com/golang/protobuf/ptypes/timestamp
 github.com/golang/protobuf/ptypes/wrappers
-# github.com/golang/snappy v0.0.1
-github.com/golang/snappy
 # github.com/golangci/check v0.0.0-20180506172741-cfe4005ccda2
 github.com/golangci/check/cmd/structcheck
 github.com/golangci/check/cmd/varcheck
@@ -269,23 +267,13 @@ github.com/hashicorp/hcl/v2/hclparse
 github.com/hashicorp/hcl/v2/hclsyntax
 github.com/hashicorp/hcl/v2/hclwrite
 github.com/hashicorp/hcl/v2/json
-# github.com/hashicorp/hcl2 v0.0.0-20190821123243-0c888d1241f6
-github.com/hashicorp/hcl2/gohcl
-github.com/hashicorp/hcl2/hcl
-github.com/hashicorp/hcl2/hcl/hclsyntax
-github.com/hashicorp/hcl2/hcl/json
-github.com/hashicorp/hcl2/hclparse
-github.com/hashicorp/hcl2/hclwrite
-# github.com/hashicorp/hil v0.0.0-20190212112733-ab17b08d6590
-github.com/hashicorp/hil/ast
 # github.com/hashicorp/logutils v1.0.0
 github.com/hashicorp/logutils
-# github.com/hashicorp/terraform-config-inspect v0.0.0-20190821133035-82a99dc22ef4
+# github.com/hashicorp/terraform-config-inspect v0.0.0-20191115094559-17f92b0546e8
 github.com/hashicorp/terraform-config-inspect/tfconfig
-# github.com/hashicorp/terraform-plugin-sdk v1.3.0
+# github.com/hashicorp/terraform-plugin-sdk v1.4.0
 github.com/hashicorp/terraform-plugin-sdk/helper/acctest
 github.com/hashicorp/terraform-plugin-sdk/helper/customdiff
-github.com/hashicorp/terraform-plugin-sdk/helper/encryption
 github.com/hashicorp/terraform-plugin-sdk/helper/hashcode
 github.com/hashicorp/terraform-plugin-sdk/helper/logging
 github.com/hashicorp/terraform-plugin-sdk/helper/mutexkv
@@ -327,9 +315,6 @@ github.com/hashicorp/terraform-plugin-sdk/internal/states
 github.com/hashicorp/terraform-plugin-sdk/internal/states/statefile
 github.com/hashicorp/terraform-plugin-sdk/internal/tfdiags
 github.com/hashicorp/terraform-plugin-sdk/internal/tfplugin5
-github.com/hashicorp/terraform-plugin-sdk/internal/vault/helper/pgpkeys
-github.com/hashicorp/terraform-plugin-sdk/internal/vault/sdk/helper/compressutil
-github.com/hashicorp/terraform-plugin-sdk/internal/vault/sdk/helper/jsonutil
 github.com/hashicorp/terraform-plugin-sdk/internal/version
 github.com/hashicorp/terraform-plugin-sdk/meta
 github.com/hashicorp/terraform-plugin-sdk/plugin
@@ -348,20 +333,6 @@ github.com/jmespath/go-jmespath
 github.com/jstemmer/go-junit-report
 github.com/jstemmer/go-junit-report/formatter
 github.com/jstemmer/go-junit-report/parser
-# github.com/keybase/go-crypto v0.0.0-20170628152938-433e2f3d43ef
-github.com/keybase/go-crypto/brainpool
-github.com/keybase/go-crypto/cast5
-github.com/keybase/go-crypto/curve25519
-github.com/keybase/go-crypto/ed25519
-github.com/keybase/go-crypto/ed25519/internal/edwards25519
-github.com/keybase/go-crypto/openpgp
-github.com/keybase/go-crypto/openpgp/armor
-github.com/keybase/go-crypto/openpgp/ecdh
-github.com/keybase/go-crypto/openpgp/elgamal
-github.com/keybase/go-crypto/openpgp/errors
-github.com/keybase/go-crypto/openpgp/packet
-github.com/keybase/go-crypto/openpgp/s2k
-github.com/keybase/go-crypto/rsa
 # github.com/kisielk/gotool v1.0.0
 github.com/kisielk/gotool
 github.com/kisielk/gotool/internal/load
@@ -405,9 +376,6 @@ github.com/nbutton23/zxcvbn-go/utils/math
 github.com/oklog/run
 # github.com/pelletier/go-toml v1.1.0
 github.com/pelletier/go-toml
-# github.com/pierrec/lz4 v2.0.5+incompatible
-github.com/pierrec/lz4
-github.com/pierrec/lz4/internal/xxh32
 # github.com/pkg/errors v0.8.1
 github.com/pkg/errors
 # github.com/posener/complete v1.2.1
@@ -495,10 +463,10 @@ golang.org/x/crypto/openpgp/s2k
 golang.org/x/crypto/poly1305
 golang.org/x/crypto/ssh
 golang.org/x/crypto/ssh/terminal
-# golang.org/x/exp v0.0.0-20190912063710-ac5d2bfcbfe0
+# golang.org/x/exp v0.0.0-20191029154019-8994fa331a53
 golang.org/x/exp/apidiff
 golang.org/x/exp/cmd/apidiff
-# golang.org/x/lint v0.0.0-20190909230951-414d861bb4ac
+# golang.org/x/lint v0.0.0-20190930215403-16217165b5de
 golang.org/x/lint
 golang.org/x/lint/golint
 # golang.org/x/net v0.0.0-20191009170851-d66e71096ffb
@@ -526,7 +494,7 @@ golang.org/x/text/transform
 golang.org/x/text/unicode/bidi
 golang.org/x/text/unicode/norm
 golang.org/x/text/width
-# golang.org/x/tools v0.0.0-20190917162342-3b4f30a44f3b
+# golang.org/x/tools v0.0.0-20191029190741-b9c20aec41a5
 golang.org/x/tools/cmd/goimports
 golang.org/x/tools/go/analysis
 golang.org/x/tools/go/analysis/passes/asmdecl
@@ -576,7 +544,8 @@ golang.org/x/tools/internal/gopathwalk
 golang.org/x/tools/internal/imports
 golang.org/x/tools/internal/module
 golang.org/x/tools/internal/semver
-# google.golang.org/api v0.11.1-0.20191012001332-5e0e3f4a3bb8
+golang.org/x/tools/internal/span
+# google.golang.org/api v0.13.0
 google.golang.org/api/appengine/v1
 google.golang.org/api/bigquery/v2
 google.golang.org/api/bigtableadmin/v2
@@ -640,7 +609,7 @@ google.golang.org/appengine/internal/socket
 google.golang.org/appengine/internal/urlfetch
 google.golang.org/appengine/socket
 google.golang.org/appengine/urlfetch
-# google.golang.org/genproto v0.0.0-20190911173649-1774047e7e51
+# google.golang.org/genproto v0.0.0-20191028173616-919d9bdd9fe6
 google.golang.org/genproto/googleapis/api/annotations
 google.golang.org/genproto/googleapis/bigtable/admin/v2
 google.golang.org/genproto/googleapis/bigtable/v2

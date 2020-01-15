@@ -36,13 +36,13 @@ A policy that can be attached to a resource to specify or schedule actions on th
 
 ```hcl
 resource "google_compute_resource_policy" "foo" {
-  name = "policy"
+  name   = "policy"
   region = "us-central1"
   snapshot_schedule_policy {
     schedule {
       daily_schedule {
         days_in_cycle = 1
-        start_time = "04:00"
+        start_time    = "04:00"
       }
     }
   }
@@ -58,17 +58,17 @@ resource "google_compute_resource_policy" "foo" {
 
 ```hcl
 resource "google_compute_resource_policy" "bar" {
-  name = "policy"
+  name   = "policy"
   region = "us-central1"
   snapshot_schedule_policy {
     schedule {
       hourly_schedule {
         hours_in_cycle = 20
-        start_time = "23:00"
+        start_time     = "23:00"
       }
     }
     retention_policy {
-      max_retention_days = 10
+      max_retention_days    = 10
       on_source_disk_delete = "KEEP_AUTO_SNAPSHOTS"
     }
     snapshot_properties {
@@ -76,7 +76,7 @@ resource "google_compute_resource_policy" "bar" {
         my_label = "value"
       }
       storage_locations = ["us"]
-      guest_flush = true
+      guest_flush       = true
     }
   }
 }
@@ -152,8 +152,9 @@ The `hourly_schedule` block supports:
 * `start_time` -
   (Required)
   Time within the window to start the operations.
-  It must be in format "HH:MM",
-  where HH : [00-23] and MM : [00-00] GMT.
+  It must be in an hourly format "HH:MM",
+  where HH : [00-23] and MM : [00] GMT.
+  eg: 21:00
 
 The `daily_schedule` block supports:
 

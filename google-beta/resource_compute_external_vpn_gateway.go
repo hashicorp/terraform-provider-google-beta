@@ -23,7 +23,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
-	"google.golang.org/api/compute/v1"
 )
 
 func resourceComputeExternalVpnGateway() *schema.Resource {
@@ -155,26 +154,20 @@ func resourceComputeExternalVpnGatewayCreate(d *schema.ResourceData, meta interf
 	}
 
 	// Store the ID now
-	id, err := replaceVars(d, config, "{{name}}")
+	id, err := replaceVars(d, config, "projects/{{project}}/global/externalVpnGateways/{{name}}")
 	if err != nil {
 		return fmt.Errorf("Error constructing id: %s", err)
 	}
 	d.SetId(id)
 
-	op := &compute.Operation{}
-	err = Convert(res, op)
-	if err != nil {
-		return err
-	}
-
-	waitErr := computeOperationWaitTime(
-		config.clientCompute, op, project, "Creating ExternalVpnGateway",
+	err = computeOperationWaitTime(
+		config, res, project, "Creating ExternalVpnGateway",
 		int(d.Timeout(schema.TimeoutCreate).Minutes()))
 
-	if waitErr != nil {
+	if err != nil {
 		// The resource didn't actually create
 		d.SetId("")
-		return fmt.Errorf("Error waiting to create ExternalVpnGateway: %s", waitErr)
+		return fmt.Errorf("Error waiting to create ExternalVpnGateway: %s", err)
 	}
 
 	log.Printf("[DEBUG] Finished creating ExternalVpnGateway %q: %#v", d.Id(), res)
@@ -243,14 +236,8 @@ func resourceComputeExternalVpnGatewayDelete(d *schema.ResourceData, meta interf
 		return handleNotFoundError(err, d, "ExternalVpnGateway")
 	}
 
-	op := &compute.Operation{}
-	err = Convert(res, op)
-	if err != nil {
-		return err
-	}
-
 	err = computeOperationWaitTime(
-		config.clientCompute, op, project, "Deleting ExternalVpnGateway",
+		config, res, project, "Deleting ExternalVpnGateway",
 		int(d.Timeout(schema.TimeoutDelete).Minutes()))
 
 	if err != nil {
@@ -272,7 +259,7 @@ func resourceComputeExternalVpnGatewayImport(d *schema.ResourceData, meta interf
 	}
 
 	// Replace import id for the resource id
-	id, err := replaceVars(d, config, "{{name}}")
+	id, err := replaceVars(d, config, "projects/{{project}}/global/externalVpnGateways/{{name}}")
 	if err != nil {
 		return nil, fmt.Errorf("Error constructing id: %s", err)
 	}

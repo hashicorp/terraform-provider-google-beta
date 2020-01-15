@@ -222,14 +222,16 @@ When the load balancing scheme is INTERNAL, this field is not used.`,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"include_host": {
-										Type:        schema.TypeBool,
-										Optional:    true,
-										Description: `If true requests to different hosts will be cached separately.`,
+										Type:         schema.TypeBool,
+										Optional:     true,
+										Description:  `If true requests to different hosts will be cached separately.`,
+										AtLeastOneOf: []string{"cdn_policy.0.cache_key_policy.0.include_host", "cdn_policy.0.cache_key_policy.0.include_protocol", "cdn_policy.0.cache_key_policy.0.include_query_string", "cdn_policy.0.cache_key_policy.0.query_string_blacklist", "cdn_policy.0.cache_key_policy.0.query_string_whitelist"},
 									},
 									"include_protocol": {
-										Type:        schema.TypeBool,
-										Optional:    true,
-										Description: `If true, http and https requests will be cached separately.`,
+										Type:         schema.TypeBool,
+										Optional:     true,
+										Description:  `If true, http and https requests will be cached separately.`,
+										AtLeastOneOf: []string{"cdn_policy.0.cache_key_policy.0.include_host", "cdn_policy.0.cache_key_policy.0.include_protocol", "cdn_policy.0.cache_key_policy.0.include_query_string", "cdn_policy.0.cache_key_policy.0.query_string_blacklist", "cdn_policy.0.cache_key_policy.0.query_string_whitelist"},
 									},
 									"include_query_string": {
 										Type:     schema.TypeBool,
@@ -241,6 +243,7 @@ string will be included.
 
 If false, the query string will be excluded from the cache
 key entirely.`,
+										AtLeastOneOf: []string{"cdn_policy.0.cache_key_policy.0.include_host", "cdn_policy.0.cache_key_policy.0.include_protocol", "cdn_policy.0.cache_key_policy.0.include_query_string", "cdn_policy.0.cache_key_policy.0.query_string_blacklist", "cdn_policy.0.cache_key_policy.0.query_string_whitelist"},
 									},
 									"query_string_blacklist": {
 										Type:     schema.TypeSet,
@@ -254,7 +257,8 @@ delimiters.`,
 										Elem: &schema.Schema{
 											Type: schema.TypeString,
 										},
-										Set: schema.HashString,
+										Set:          schema.HashString,
+										AtLeastOneOf: []string{"cdn_policy.0.cache_key_policy.0.include_host", "cdn_policy.0.cache_key_policy.0.include_protocol", "cdn_policy.0.cache_key_policy.0.include_query_string", "cdn_policy.0.cache_key_policy.0.query_string_blacklist", "cdn_policy.0.cache_key_policy.0.query_string_whitelist"},
 									},
 									"query_string_whitelist": {
 										Type:     schema.TypeSet,
@@ -268,10 +272,12 @@ delimiters.`,
 										Elem: &schema.Schema{
 											Type: schema.TypeString,
 										},
-										Set: schema.HashString,
+										Set:          schema.HashString,
+										AtLeastOneOf: []string{"cdn_policy.0.cache_key_policy.0.include_host", "cdn_policy.0.cache_key_policy.0.include_protocol", "cdn_policy.0.cache_key_policy.0.include_query_string", "cdn_policy.0.cache_key_policy.0.query_string_blacklist", "cdn_policy.0.cache_key_policy.0.query_string_whitelist"},
 									},
 								},
 							},
+							AtLeastOneOf: []string{"cdn_policy.0.cache_key_policy", "cdn_policy.0.signed_url_cache_max_age_sec"},
 						},
 						"signed_url_cache_max_age_sec": {
 							Type:     schema.TypeInt,
@@ -286,7 +292,8 @@ internally behave as though all responses from this backend had a
 "Cache-Control: public, max-age=[TTL]" header, regardless of any
 existing Cache-Control header. The actual headers served in
 responses will not be altered.`,
-							Default: 3600,
+							Default:      3600,
+							AtLeastOneOf: []string{"cdn_policy.0.cache_key_policy", "cdn_policy.0.signed_url_cache_max_age_sec"},
 						},
 					},
 				},
@@ -322,27 +329,31 @@ be from 0 to 999,999,999 inclusive.`,
 									},
 								},
 							},
+							AtLeastOneOf: []string{"circuit_breakers.0.connect_timeout", "circuit_breakers.0.max_requests_per_connection", "circuit_breakers.0.max_connections", "circuit_breakers.0.max_pending_requests", "circuit_breakers.0.max_requests", "circuit_breakers.0.max_retries"},
 						},
 						"max_connections": {
 							Type:     schema.TypeInt,
 							Optional: true,
 							Description: `The maximum number of connections to the backend cluster.
 Defaults to 1024.`,
-							Default: 1024,
+							Default:      1024,
+							AtLeastOneOf: []string{"circuit_breakers.0.connect_timeout", "circuit_breakers.0.max_requests_per_connection", "circuit_breakers.0.max_connections", "circuit_breakers.0.max_pending_requests", "circuit_breakers.0.max_requests", "circuit_breakers.0.max_retries"},
 						},
 						"max_pending_requests": {
 							Type:     schema.TypeInt,
 							Optional: true,
 							Description: `The maximum number of pending requests to the backend cluster.
 Defaults to 1024.`,
-							Default: 1024,
+							Default:      1024,
+							AtLeastOneOf: []string{"circuit_breakers.0.connect_timeout", "circuit_breakers.0.max_requests_per_connection", "circuit_breakers.0.max_connections", "circuit_breakers.0.max_pending_requests", "circuit_breakers.0.max_requests", "circuit_breakers.0.max_retries"},
 						},
 						"max_requests": {
 							Type:     schema.TypeInt,
 							Optional: true,
 							Description: `The maximum number of parallel requests to the backend cluster.
 Defaults to 1024.`,
-							Default: 1024,
+							Default:      1024,
+							AtLeastOneOf: []string{"circuit_breakers.0.connect_timeout", "circuit_breakers.0.max_requests_per_connection", "circuit_breakers.0.max_connections", "circuit_breakers.0.max_pending_requests", "circuit_breakers.0.max_requests", "circuit_breakers.0.max_retries"},
 						},
 						"max_requests_per_connection": {
 							Type:     schema.TypeInt,
@@ -351,13 +362,15 @@ Defaults to 1024.`,
 is respected by both the HTTP/1.1 and HTTP/2 implementations. If
 not specified, there is no limit. Setting this parameter to 1
 will effectively disable keep alive.`,
+							AtLeastOneOf: []string{"circuit_breakers.0.connect_timeout", "circuit_breakers.0.max_requests_per_connection", "circuit_breakers.0.max_connections", "circuit_breakers.0.max_pending_requests", "circuit_breakers.0.max_requests", "circuit_breakers.0.max_retries"},
 						},
 						"max_retries": {
 							Type:     schema.TypeInt,
 							Optional: true,
 							Description: `The maximum number of parallel retries to the backend cluster.
 Defaults to 3.`,
-							Default: 3,
+							Default:      3,
+							AtLeastOneOf: []string{"circuit_breakers.0.connect_timeout", "circuit_breakers.0.max_requests_per_connection", "circuit_breakers.0.max_connections", "circuit_breakers.0.max_pending_requests", "circuit_breakers.0.max_requests", "circuit_breakers.0.max_retries"},
 						},
 					},
 				},
@@ -395,14 +408,16 @@ This field is applicable if the sessionAffinity is set to HTTP_COOKIE.`,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"name": {
-										Type:        schema.TypeString,
-										Optional:    true,
-										Description: `Name of the cookie.`,
+										Type:         schema.TypeString,
+										Optional:     true,
+										Description:  `Name of the cookie.`,
+										AtLeastOneOf: []string{"consistent_hash.0.http_cookie.0.ttl", "consistent_hash.0.http_cookie.0.name", "consistent_hash.0.http_cookie.0.path"},
 									},
 									"path": {
-										Type:        schema.TypeString,
-										Optional:    true,
-										Description: `Path to set for the cookie.`,
+										Type:         schema.TypeString,
+										Optional:     true,
+										Description:  `Path to set for the cookie.`,
+										AtLeastOneOf: []string{"consistent_hash.0.http_cookie.0.ttl", "consistent_hash.0.http_cookie.0.name", "consistent_hash.0.http_cookie.0.path"},
 									},
 									"ttl": {
 										Type:        schema.TypeList,
@@ -427,15 +442,18 @@ be from 0 to 999,999,999 inclusive.`,
 												},
 											},
 										},
+										AtLeastOneOf: []string{"consistent_hash.0.http_cookie.0.ttl", "consistent_hash.0.http_cookie.0.name", "consistent_hash.0.http_cookie.0.path"},
 									},
 								},
 							},
+							AtLeastOneOf: []string{"consistent_hash.0.http_cookie", "consistent_hash.0.http_header_name", "consistent_hash.0.minimum_ring_size"},
 						},
 						"http_header_name": {
 							Type:     schema.TypeString,
 							Optional: true,
 							Description: `The hash based on the value of the specified header field.
 This field is applicable if the sessionAffinity is set to HEADER_FIELD.`,
+							AtLeastOneOf: []string{"consistent_hash.0.http_cookie", "consistent_hash.0.http_header_name", "consistent_hash.0.minimum_ring_size"},
 						},
 						"minimum_ring_size": {
 							Type:     schema.TypeInt,
@@ -446,7 +464,8 @@ distributions. If the number of hosts in the load balancing pool
 is larger than the ring size, each host will be assigned a single
 virtual node.
 Defaults to 1024.`,
-							Default: 1024,
+							Default:      1024,
+							AtLeastOneOf: []string{"consistent_hash.0.http_cookie", "consistent_hash.0.http_header_name", "consistent_hash.0.minimum_ring_size"},
 						},
 					},
 				},
@@ -554,9 +573,10 @@ If logging is enabled, logs will be exported to Stackdriver.`,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"enable": {
-							Type:        schema.TypeBool,
-							Optional:    true,
-							Description: `Whether to enable logging for the load balancer traffic served by this backend service.`,
+							Type:         schema.TypeBool,
+							Optional:     true,
+							Description:  `Whether to enable logging for the load balancer traffic served by this backend service.`,
+							AtLeastOneOf: []string{"log_config.0.enable", "log_config.0.sample_rate"},
 						},
 						"sample_rate": {
 							Type:     schema.TypeFloat,
@@ -565,6 +585,7 @@ If logging is enabled, logs will be exported to Stackdriver.`,
 the field must be in [0, 1]. This configures the sampling rate of requests to the load balancer
 where 1.0 means all logged requests are reported and 0.0 means no logged requests are reported.
 The default value is 1.0.`,
+							AtLeastOneOf: []string{"log_config.0.enable", "log_config.0.sample_rate"},
 						},
 					},
 				},
@@ -602,6 +623,7 @@ less than one second are represented with a 0 'seconds' field and a positive
 									},
 								},
 							},
+							AtLeastOneOf: []string{"outlier_detection.0.base_ejection_time", "outlier_detection.0.consecutive_errors", "outlier_detection.0.consecutive_gateway_failure", "outlier_detection.0.enforcing_consecutive_errors", "outlier_detection.0.enforcing_consecutive_gateway_failure", "outlier_detection.0.enforcing_success_rate", "outlier_detection.0.interval", "outlier_detection.0.max_ejection_percent", "outlier_detection.0.success_rate_minimum_hosts", "outlier_detection.0.success_rate_request_volume", "outlier_detection.0.success_rate_stdev_factor"},
 						},
 						"consecutive_errors": {
 							Type:     schema.TypeInt,
@@ -609,7 +631,8 @@ less than one second are represented with a 0 'seconds' field and a positive
 							Description: `Number of errors before a host is ejected from the connection pool. When the
 backend host is accessed over HTTP, a 5xx return code qualifies as an error.
 Defaults to 5.`,
-							Default: 5,
+							Default:      5,
+							AtLeastOneOf: []string{"outlier_detection.0.base_ejection_time", "outlier_detection.0.consecutive_errors", "outlier_detection.0.consecutive_gateway_failure", "outlier_detection.0.enforcing_consecutive_errors", "outlier_detection.0.enforcing_consecutive_gateway_failure", "outlier_detection.0.enforcing_success_rate", "outlier_detection.0.interval", "outlier_detection.0.max_ejection_percent", "outlier_detection.0.success_rate_minimum_hosts", "outlier_detection.0.success_rate_request_volume", "outlier_detection.0.success_rate_stdev_factor"},
 						},
 						"consecutive_gateway_failure": {
 							Type:     schema.TypeInt,
@@ -617,7 +640,8 @@ Defaults to 5.`,
 							Description: `The number of consecutive gateway failures (502, 503, 504 status or connection
 errors that are mapped to one of those status codes) before a consecutive
 gateway failure ejection occurs. Defaults to 5.`,
-							Default: 5,
+							Default:      5,
+							AtLeastOneOf: []string{"outlier_detection.0.base_ejection_time", "outlier_detection.0.consecutive_errors", "outlier_detection.0.consecutive_gateway_failure", "outlier_detection.0.enforcing_consecutive_errors", "outlier_detection.0.enforcing_consecutive_gateway_failure", "outlier_detection.0.enforcing_success_rate", "outlier_detection.0.interval", "outlier_detection.0.max_ejection_percent", "outlier_detection.0.success_rate_minimum_hosts", "outlier_detection.0.success_rate_request_volume", "outlier_detection.0.success_rate_stdev_factor"},
 						},
 						"enforcing_consecutive_errors": {
 							Type:     schema.TypeInt,
@@ -625,7 +649,8 @@ gateway failure ejection occurs. Defaults to 5.`,
 							Description: `The percentage chance that a host will be actually ejected when an outlier
 status is detected through consecutive 5xx. This setting can be used to disable
 ejection or to ramp it up slowly. Defaults to 100.`,
-							Default: 100,
+							Default:      100,
+							AtLeastOneOf: []string{"outlier_detection.0.base_ejection_time", "outlier_detection.0.consecutive_errors", "outlier_detection.0.consecutive_gateway_failure", "outlier_detection.0.enforcing_consecutive_errors", "outlier_detection.0.enforcing_consecutive_gateway_failure", "outlier_detection.0.enforcing_success_rate", "outlier_detection.0.interval", "outlier_detection.0.max_ejection_percent", "outlier_detection.0.success_rate_minimum_hosts", "outlier_detection.0.success_rate_request_volume", "outlier_detection.0.success_rate_stdev_factor"},
 						},
 						"enforcing_consecutive_gateway_failure": {
 							Type:     schema.TypeInt,
@@ -633,7 +658,8 @@ ejection or to ramp it up slowly. Defaults to 100.`,
 							Description: `The percentage chance that a host will be actually ejected when an outlier
 status is detected through consecutive gateway failures. This setting can be
 used to disable ejection or to ramp it up slowly. Defaults to 0.`,
-							Default: 0,
+							Default:      0,
+							AtLeastOneOf: []string{"outlier_detection.0.base_ejection_time", "outlier_detection.0.consecutive_errors", "outlier_detection.0.consecutive_gateway_failure", "outlier_detection.0.enforcing_consecutive_errors", "outlier_detection.0.enforcing_consecutive_gateway_failure", "outlier_detection.0.enforcing_success_rate", "outlier_detection.0.interval", "outlier_detection.0.max_ejection_percent", "outlier_detection.0.success_rate_minimum_hosts", "outlier_detection.0.success_rate_request_volume", "outlier_detection.0.success_rate_stdev_factor"},
 						},
 						"enforcing_success_rate": {
 							Type:     schema.TypeInt,
@@ -641,7 +667,8 @@ used to disable ejection or to ramp it up slowly. Defaults to 0.`,
 							Description: `The percentage chance that a host will be actually ejected when an outlier
 status is detected through success rate statistics. This setting can be used to
 disable ejection or to ramp it up slowly. Defaults to 100.`,
-							Default: 100,
+							Default:      100,
+							AtLeastOneOf: []string{"outlier_detection.0.base_ejection_time", "outlier_detection.0.consecutive_errors", "outlier_detection.0.consecutive_gateway_failure", "outlier_detection.0.enforcing_consecutive_errors", "outlier_detection.0.enforcing_consecutive_gateway_failure", "outlier_detection.0.enforcing_success_rate", "outlier_detection.0.interval", "outlier_detection.0.max_ejection_percent", "outlier_detection.0.success_rate_minimum_hosts", "outlier_detection.0.success_rate_request_volume", "outlier_detection.0.success_rate_stdev_factor"},
 						},
 						"interval": {
 							Type:     schema.TypeList,
@@ -666,13 +693,15 @@ less than one second are represented with a 0 'seconds' field and a positive
 									},
 								},
 							},
+							AtLeastOneOf: []string{"outlier_detection.0.base_ejection_time", "outlier_detection.0.consecutive_errors", "outlier_detection.0.consecutive_gateway_failure", "outlier_detection.0.enforcing_consecutive_errors", "outlier_detection.0.enforcing_consecutive_gateway_failure", "outlier_detection.0.enforcing_success_rate", "outlier_detection.0.interval", "outlier_detection.0.max_ejection_percent", "outlier_detection.0.success_rate_minimum_hosts", "outlier_detection.0.success_rate_request_volume", "outlier_detection.0.success_rate_stdev_factor"},
 						},
 						"max_ejection_percent": {
 							Type:     schema.TypeInt,
 							Optional: true,
 							Description: `Maximum percentage of hosts in the load balancing pool for the backend service
 that can be ejected. Defaults to 10%.`,
-							Default: 10,
+							Default:      10,
+							AtLeastOneOf: []string{"outlier_detection.0.base_ejection_time", "outlier_detection.0.consecutive_errors", "outlier_detection.0.consecutive_gateway_failure", "outlier_detection.0.enforcing_consecutive_errors", "outlier_detection.0.enforcing_consecutive_gateway_failure", "outlier_detection.0.enforcing_success_rate", "outlier_detection.0.interval", "outlier_detection.0.max_ejection_percent", "outlier_detection.0.success_rate_minimum_hosts", "outlier_detection.0.success_rate_request_volume", "outlier_detection.0.success_rate_stdev_factor"},
 						},
 						"success_rate_minimum_hosts": {
 							Type:     schema.TypeInt,
@@ -681,7 +710,8 @@ that can be ejected. Defaults to 10%.`,
 success rate outliers. If the number of hosts is less than this setting, outlier
 detection via success rate statistics is not performed for any host in the
 cluster. Defaults to 5.`,
-							Default: 5,
+							Default:      5,
+							AtLeastOneOf: []string{"outlier_detection.0.base_ejection_time", "outlier_detection.0.consecutive_errors", "outlier_detection.0.consecutive_gateway_failure", "outlier_detection.0.enforcing_consecutive_errors", "outlier_detection.0.enforcing_consecutive_gateway_failure", "outlier_detection.0.enforcing_success_rate", "outlier_detection.0.interval", "outlier_detection.0.max_ejection_percent", "outlier_detection.0.success_rate_minimum_hosts", "outlier_detection.0.success_rate_request_volume", "outlier_detection.0.success_rate_stdev_factor"},
 						},
 						"success_rate_request_volume": {
 							Type:     schema.TypeInt,
@@ -691,7 +721,8 @@ defined by the interval duration above) to include this host in success rate
 based outlier detection. If the volume is lower than this setting, outlier
 detection via success rate statistics is not performed for that host. Defaults
 to 100.`,
-							Default: 100,
+							Default:      100,
+							AtLeastOneOf: []string{"outlier_detection.0.base_ejection_time", "outlier_detection.0.consecutive_errors", "outlier_detection.0.consecutive_gateway_failure", "outlier_detection.0.enforcing_consecutive_errors", "outlier_detection.0.enforcing_consecutive_gateway_failure", "outlier_detection.0.enforcing_success_rate", "outlier_detection.0.interval", "outlier_detection.0.max_ejection_percent", "outlier_detection.0.success_rate_minimum_hosts", "outlier_detection.0.success_rate_request_volume", "outlier_detection.0.success_rate_stdev_factor"},
 						},
 						"success_rate_stdev_factor": {
 							Type:     schema.TypeInt,
@@ -702,7 +733,8 @@ rate, and the product of this factor and the standard deviation of the mean
 success rate: mean - (stdev * success_rate_stdev_factor). This factor is divided
 by a thousand to get a double. That is, if the desired factor is 1.9, the
 runtime value should be 1900. Defaults to 1900.`,
-							Default: 1900,
+							Default:      1900,
+							AtLeastOneOf: []string{"outlier_detection.0.base_ejection_time", "outlier_detection.0.consecutive_errors", "outlier_detection.0.consecutive_gateway_failure", "outlier_detection.0.enforcing_consecutive_errors", "outlier_detection.0.enforcing_consecutive_gateway_failure", "outlier_detection.0.enforcing_success_rate", "outlier_detection.0.interval", "outlier_detection.0.max_ejection_percent", "outlier_detection.0.success_rate_minimum_hosts", "outlier_detection.0.success_rate_request_volume", "outlier_detection.0.success_rate_stdev_factor"},
 						},
 					},
 				},
@@ -774,6 +806,28 @@ object. This field is used in optimistic locking.`,
 func computeBackendServiceBackendSchema() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
+			"group": {
+				Type:             schema.TypeString,
+				Required:         true,
+				DiffSuppressFunc: compareSelfLinkRelativePaths,
+				Description: `The fully-qualified URL of an Instance Group or Network Endpoint
+Group resource. In case of instance group this defines the list
+of instances that serve traffic. Member virtual machine
+instances from each instance group must live in the same zone as
+the instance group itself. No two backends in a backend service
+are allowed to use same Instance Group resource.
+
+For Network Endpoint Groups this defines list of endpoints. All
+endpoints of Network Endpoint Group must be hosted on instances
+located in the same zone as the Network Endpoint Group.
+
+Backend services cannot mix Instance Group and
+Network Endpoint Group backends.
+
+Note that you must specify an Instance Group or Network Endpoint
+Group resource using the fully-qualified URL, rather than a
+partial URL.`,
+			},
 			"balancing_mode": {
 				Type:         schema.TypeString,
 				Optional:     true,
@@ -802,28 +856,6 @@ setting of 0 means the group is completely drained, offering
 				Optional: true,
 				Description: `An optional description of this resource.
 Provide this property when you create the resource.`,
-			},
-			"group": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				DiffSuppressFunc: compareSelfLinkRelativePaths,
-				Description: `The fully-qualified URL of an Instance Group or Network Endpoint
-Group resource. In case of instance group this defines the list
-of instances that serve traffic. Member virtual machine
-instances from each instance group must live in the same zone as
-the instance group itself. No two backends in a backend service
-are allowed to use same Instance Group resource.
-
-For Network Endpoint Groups this defines list of endpoints. All
-endpoints of Network Endpoint Group must be hosted on instances
-located in the same zone as the Network Endpoint Group.
-
-Backend services cannot mix Instance Group and
-Network Endpoint Group backends.
-
-Note that you must specify an Instance Group or Network Endpoint
-Group resource using the fully-qualified URL, rather than a
-partial URL.`,
 			},
 			"max_connections": {
 				Type:     schema.TypeInt,
@@ -1053,26 +1085,20 @@ func resourceComputeBackendServiceCreate(d *schema.ResourceData, meta interface{
 	}
 
 	// Store the ID now
-	id, err := replaceVars(d, config, "{{name}}")
+	id, err := replaceVars(d, config, "projects/{{project}}/global/backendServices/{{name}}")
 	if err != nil {
 		return fmt.Errorf("Error constructing id: %s", err)
 	}
 	d.SetId(id)
 
-	op := &compute.Operation{}
-	err = Convert(res, op)
-	if err != nil {
-		return err
-	}
-
-	waitErr := computeOperationWaitTime(
-		config.clientCompute, op, project, "Creating BackendService",
+	err = computeOperationWaitTime(
+		config, res, project, "Creating BackendService",
 		int(d.Timeout(schema.TimeoutCreate).Minutes()))
 
-	if waitErr != nil {
+	if err != nil {
 		// The resource didn't actually create
 		d.SetId("")
-		return fmt.Errorf("Error waiting to create BackendService: %s", waitErr)
+		return fmt.Errorf("Error waiting to create BackendService: %s", err)
 	}
 
 	log.Printf("[DEBUG] Finished creating BackendService %q: %#v", d.Id(), res)
@@ -1090,7 +1116,7 @@ func resourceComputeBackendServiceCreate(d *schema.ResourceData, meta interface{
 		if err != nil {
 			return errwrap.Wrapf("Error setting Backend Service security policy: {{err}}", err)
 		}
-		waitErr := computeSharedOperationWait(config.clientCompute, op, project, "Setting Backend Service Security Policy")
+		waitErr := computeOperationWait(config, op, project, "Setting Backend Service Security Policy")
 		if waitErr != nil {
 			return waitErr
 		}
@@ -1374,14 +1400,8 @@ func resourceComputeBackendServiceUpdate(d *schema.ResourceData, meta interface{
 		return fmt.Errorf("Error updating BackendService %q: %s", d.Id(), err)
 	}
 
-	op := &compute.Operation{}
-	err = Convert(res, op)
-	if err != nil {
-		return err
-	}
-
 	err = computeOperationWaitTime(
-		config.clientCompute, op, project, "Updating BackendService",
+		config, res, project, "Updating BackendService",
 		int(d.Timeout(schema.TimeoutUpdate).Minutes()))
 
 	if err != nil {
@@ -1401,7 +1421,7 @@ func resourceComputeBackendServiceUpdate(d *schema.ResourceData, meta interface{
 		if err != nil {
 			return errwrap.Wrapf("Error setting Backend Service security policy: {{err}}", err)
 		}
-		waitErr := computeSharedOperationWait(config.clientCompute, op, project, "Setting Backend Service Security Policy")
+		waitErr := computeOperationWait(config, op, project, "Setting Backend Service Security Policy")
 		if waitErr != nil {
 			return waitErr
 		}
@@ -1430,14 +1450,8 @@ func resourceComputeBackendServiceDelete(d *schema.ResourceData, meta interface{
 		return handleNotFoundError(err, d, "BackendService")
 	}
 
-	op := &compute.Operation{}
-	err = Convert(res, op)
-	if err != nil {
-		return err
-	}
-
 	err = computeOperationWaitTime(
-		config.clientCompute, op, project, "Deleting BackendService",
+		config, res, project, "Deleting BackendService",
 		int(d.Timeout(schema.TimeoutDelete).Minutes()))
 
 	if err != nil {
@@ -1459,7 +1473,7 @@ func resourceComputeBackendServiceImport(d *schema.ResourceData, meta interface{
 	}
 
 	// Replace import id for the resource id
-	id, err := replaceVars(d, config, "{{name}}")
+	id, err := replaceVars(d, config, "projects/{{project}}/global/backendServices/{{name}}")
 	if err != nil {
 		return nil, fmt.Errorf("Error constructing id: %s", err)
 	}
@@ -2587,35 +2601,35 @@ func expandComputeBackendServiceCdnPolicyCacheKeyPolicy(v interface{}, d Terrafo
 	transformedIncludeHost, err := expandComputeBackendServiceCdnPolicyCacheKeyPolicyIncludeHost(original["include_host"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedIncludeHost); val.IsValid() && !isEmptyValue(val) {
+	} else {
 		transformed["includeHost"] = transformedIncludeHost
 	}
 
 	transformedIncludeProtocol, err := expandComputeBackendServiceCdnPolicyCacheKeyPolicyIncludeProtocol(original["include_protocol"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedIncludeProtocol); val.IsValid() && !isEmptyValue(val) {
+	} else {
 		transformed["includeProtocol"] = transformedIncludeProtocol
 	}
 
 	transformedIncludeQueryString, err := expandComputeBackendServiceCdnPolicyCacheKeyPolicyIncludeQueryString(original["include_query_string"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedIncludeQueryString); val.IsValid() && !isEmptyValue(val) {
+	} else {
 		transformed["includeQueryString"] = transformedIncludeQueryString
 	}
 
 	transformedQueryStringBlacklist, err := expandComputeBackendServiceCdnPolicyCacheKeyPolicyQueryStringBlacklist(original["query_string_blacklist"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedQueryStringBlacklist); val.IsValid() && !isEmptyValue(val) {
+	} else {
 		transformed["queryStringBlacklist"] = transformedQueryStringBlacklist
 	}
 
 	transformedQueryStringWhitelist, err := expandComputeBackendServiceCdnPolicyCacheKeyPolicyQueryStringWhitelist(original["query_string_whitelist"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedQueryStringWhitelist); val.IsValid() && !isEmptyValue(val) {
+	} else {
 		transformed["queryStringWhitelist"] = transformedQueryStringWhitelist
 	}
 

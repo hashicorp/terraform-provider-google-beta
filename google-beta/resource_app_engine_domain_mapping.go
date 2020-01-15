@@ -23,7 +23,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
-	"google.golang.org/api/appengine/v1"
 )
 
 func sslSettingsDiffSuppress(k, old, new string, d *schema.ResourceData) bool {
@@ -80,6 +79,13 @@ By default, overrides are rejected.`,
 				MaxItems:         1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
+						"ssl_management_type": {
+							Type:         schema.TypeString,
+							Required:     true,
+							ValidateFunc: validation.StringInSlice([]string{"AUTOMATIC", "MANUAL"}, false),
+							Description: `SSL management type for this domain. If 'AUTOMATIC', a managed certificate is automatically provisioned.
+If 'MANUAL', 'certificateId' must be manually specified in order to configure SSL for this domain.`,
+						},
 						"certificate_id": {
 							Type:     schema.TypeString,
 							Computed: true,
@@ -90,13 +96,6 @@ By default, a managed certificate is automatically created for every domain mapp
 or to configure SSL manually, specify 'SslManagementType.MANUAL' on a 'CREATE' or 'UPDATE' request. You must be
 authorized to administer the 'AuthorizedCertificate' resource to manually map it to a DomainMapping resource.
 Example: 12345.`,
-						},
-						"ssl_management_type": {
-							Type:         schema.TypeString,
-							Optional:     true,
-							ValidateFunc: validation.StringInSlice([]string{"AUTOMATIC", "MANUAL", ""}, false),
-							Description: `SSL management type for this domain. If 'AUTOMATIC', a managed certificate is automatically provisioned.
-If 'MANUAL', 'certificateId' must be manually specified in order to configure SSL for this domain.`,
 						},
 						"pending_managed_certificate_id": {
 							Type:     schema.TypeString,
@@ -184,26 +183,20 @@ func resourceAppEngineDomainMappingCreate(d *schema.ResourceData, meta interface
 	}
 
 	// Store the ID now
-	id, err := replaceVars(d, config, "{{domain_name}}")
+	id, err := replaceVars(d, config, "apps/{{project}}/domainMappings/{{domain_name}}")
 	if err != nil {
 		return fmt.Errorf("Error constructing id: %s", err)
 	}
 	d.SetId(id)
 
-	op := &appengine.Operation{}
-	err = Convert(res, op)
-	if err != nil {
-		return err
-	}
-
-	waitErr := appEngineOperationWaitTime(
-		config.clientAppEngine, op, project, "Creating DomainMapping",
+	err = appEngineOperationWaitTime(
+		config, res, project, "Creating DomainMapping",
 		int(d.Timeout(schema.TimeoutCreate).Minutes()))
 
-	if waitErr != nil {
+	if err != nil {
 		// The resource didn't actually create
 		d.SetId("")
-		return fmt.Errorf("Error waiting to create DomainMapping: %s", waitErr)
+		return fmt.Errorf("Error waiting to create DomainMapping: %s", err)
 	}
 
 	log.Printf("[DEBUG] Finished creating DomainMapping %q: %#v", d.Id(), res)
@@ -287,14 +280,8 @@ func resourceAppEngineDomainMappingUpdate(d *schema.ResourceData, meta interface
 		return fmt.Errorf("Error updating DomainMapping %q: %s", d.Id(), err)
 	}
 
-	op := &appengine.Operation{}
-	err = Convert(res, op)
-	if err != nil {
-		return err
-	}
-
 	err = appEngineOperationWaitTime(
-		config.clientAppEngine, op, project, "Updating DomainMapping",
+		config, res, project, "Updating DomainMapping",
 		int(d.Timeout(schema.TimeoutUpdate).Minutes()))
 
 	if err != nil {
@@ -325,14 +312,8 @@ func resourceAppEngineDomainMappingDelete(d *schema.ResourceData, meta interface
 		return handleNotFoundError(err, d, "DomainMapping")
 	}
 
-	op := &appengine.Operation{}
-	err = Convert(res, op)
-	if err != nil {
-		return err
-	}
-
 	err = appEngineOperationWaitTime(
-		config.clientAppEngine, op, project, "Deleting DomainMapping",
+		config, res, project, "Deleting DomainMapping",
 		int(d.Timeout(schema.TimeoutDelete).Minutes()))
 
 	if err != nil {
@@ -346,13 +327,15 @@ func resourceAppEngineDomainMappingDelete(d *schema.ResourceData, meta interface
 func resourceAppEngineDomainMappingImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	config := meta.(*Config)
 	if err := parseImportId([]string{
+		"apps/(?P<project>[^/]+)/domainMappings/(?P<domain_name>[^/]+)",
+		"(?P<project>[^/]+)/(?P<domain_name>[^/]+)",
 		"(?P<domain_name>[^/]+)",
 	}, d, config); err != nil {
 		return nil, err
 	}
 
 	// Replace import id for the resource id
-	id, err := replaceVars(d, config, "{{domain_name}}")
+	id, err := replaceVars(d, config, "apps/{{project}}/domainMappings/{{domain_name}}")
 	if err != nil {
 		return nil, fmt.Errorf("Error constructing id: %s", err)
 	}

@@ -34,11 +34,17 @@ func TestAccCloudRunDomainMapping_cloudRunDomainMappingBasicExample(t *testing.T
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProvidersOiCS,
+		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckCloudRunDomainMappingDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudRunDomainMapping_cloudRunDomainMappingBasicExample(context),
+			},
+			{
+				ResourceName:            "google_cloud_run_domain_mapping.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"name", "location"},
 			},
 		},
 	})
@@ -46,17 +52,34 @@ func TestAccCloudRunDomainMapping_cloudRunDomainMappingBasicExample(t *testing.T
 
 func testAccCloudRunDomainMapping_cloudRunDomainMappingBasicExample(context map[string]interface{}) string {
 	return Nprintf(`
+
+resource "google_cloud_run_service" "default" {
+  name     = "tftest-cloudrun%{random_suffix}"
+  location = "us-central1"
+
+  metadata {
+    namespace = "%{namespace}"
+  }
+
+  template {
+    spec {
+      containers {
+        image = "gcr.io/cloudrun/hello"
+      }
+    }
+  }
+}
+
 resource "google_cloud_run_domain_mapping" "default" {
   location = "us-central1"
-  provider = "google-beta"
-  name = "tftest-domainmapping.com%{random_suffix}"
+  name     = "tf-test-domain%{random_suffix}.gcp.tfacc.hashicorptest.com"
 
   metadata {
     namespace = "%{namespace}"
   }
 
   spec {
-    route_name = "should-be-a-service"
+    route_name = google_cloud_run_service.default.name
   }
 }
 `, context)
@@ -73,7 +96,7 @@ func testAccCheckCloudRunDomainMappingDestroy(s *terraform.State) error {
 
 		config := testAccProvider.Meta().(*Config)
 
-		url, err := replaceVarsForTest(config, rs, "{{CloudRunBasePath}}projects/{{project}}/locations/{{location}}/domainmappings/{{name}}")
+		url, err := replaceVarsForTest(config, rs, "{{CloudRunBasePath}}apis/domains.cloudrun.com/v1/namespaces/{{project}}/domainmappings/{{name}}")
 		if err != nil {
 			return err
 		}

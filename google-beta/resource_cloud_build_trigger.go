@@ -24,6 +24,43 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
 )
 
+func stepTimeoutCustomizeDiff(diff *schema.ResourceDiff, v interface{}) error {
+	buildList := diff.Get("build").([]interface{})
+	if len(buildList) == 0 || buildList[0] == nil {
+		return nil
+	}
+	build := buildList[0].(map[string]interface{})
+	buildTimeoutString := build["timeout"].(string)
+
+	buildTimeout, err := time.ParseDuration(buildTimeoutString)
+	if err != nil {
+		return fmt.Errorf("Error parsing build timeout : %s", err)
+	}
+
+	var stepTimeoutSum time.Duration = 0
+	steps := build["step"].([]interface{})
+	for _, rawstep := range steps {
+		if rawstep == nil {
+			continue
+		}
+		step := rawstep.(map[string]interface{})
+		timeoutString := step["timeout"].(string)
+		if len(timeoutString) == 0 {
+			continue
+		}
+
+		timeout, err := time.ParseDuration(timeoutString)
+		if err != nil {
+			return fmt.Errorf("Error parsing build step timeout: %s", err)
+		}
+		stepTimeoutSum += timeout
+	}
+	if stepTimeoutSum > buildTimeout {
+		return fmt.Errorf("Step timeout sum (%v) cannot be greater than build timeout (%v)", stepTimeoutSum, buildTimeout)
+	}
+	return nil
+}
+
 func resourceCloudBuildTrigger() *schema.Resource {
 	return &schema.Resource{
 		Create: resourceCloudBuildTriggerCreate,
@@ -42,6 +79,7 @@ func resourceCloudBuildTrigger() *schema.Resource {
 		},
 
 		SchemaVersion: 1,
+		CustomizeDiff: stepTimeoutCustomizeDiff,
 
 		Schema: map[string]*schema.Schema{
 			"build": {
@@ -51,23 +89,31 @@ func resourceCloudBuildTrigger() *schema.Resource {
 				MaxItems:    1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"images": {
-							Type:     schema.TypeList,
-							Optional: true,
-							Description: `A list of images to be pushed upon the successful completion of all build steps.
-The images are pushed using the builder service account's credentials.
-The digests of the pushed images will be stored in the Build resource's results field.
-If any of the images fail to be pushed, the build status is marked FAILURE.`,
-							Elem: &schema.Schema{
-								Type: schema.TypeString,
-							},
-						},
 						"step": {
 							Type:        schema.TypeList,
-							Optional:    true,
+							Required:    true,
 							Description: `The operations to be performed on the workspace.`,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
+									"name": {
+										Type:     schema.TypeString,
+										Required: true,
+										Description: `The name of the container image that will run this particular build step.
+
+If the image is available in the host's Docker daemon's cache, it will be
+run directly. If not, the host will attempt to pull the image first, using
+the builder service account's credentials if necessary.
+
+The Docker daemon's cache will already have the latest versions of all of
+the officially supported build steps (https://github.com/GoogleCloudPlatform/cloud-builders).
+The Docker daemon will also have cached many of the layers for some popular
+images, like "ubuntu", "debian", but they will be refreshed at the time
+you attempt to use them.
+
+If you built an image in a previous build step, it will be stored in the
+host's Docker daemon's cache and is available to use as the name for a
+later build step.`,
+									},
 									"args": {
 										Type:     schema.TypeList,
 										Optional: true,
@@ -121,25 +167,6 @@ The elements are of the form "KEY=VALUE" for the environment variable
 										Description: `Unique identifier for this build step, used in 'wait_for' to
 reference this build step as a dependency.`,
 									},
-									"name": {
-										Type:     schema.TypeString,
-										Optional: true,
-										Description: `The name of the container image that will run this particular build step.
-
-If the image is available in the host's Docker daemon's cache, it will be
-run directly. If not, the host will attempt to pull the image first, using
-the builder service account's credentials if necessary.
-
-The Docker daemon's cache will already have the latest versions of all of
-the officially supported build steps (https://github.com/GoogleCloudPlatform/cloud-builders).
-The Docker daemon will also have cached many of the layers for some popular
-images, like "ubuntu", "debian", but they will be refreshed at the time
-you attempt to use them.
-
-If you built an image in a previous build step, it will be stored in the
-host's Docker daemon's cache and is available to use as the name for a
-later build step.`,
-									},
 									"secret_env": {
 										Type:     schema.TypeList,
 										Optional: true,
@@ -180,7 +207,7 @@ indicative of a build request with an incorrect configuration.`,
 											Schema: map[string]*schema.Schema{
 												"name": {
 													Type:     schema.TypeString,
-													Optional: true,
+													Required: true,
 													Description: `Name of the volume to mount.
 
 Volume names must be unique per build step and must be valid names for
@@ -188,7 +215,7 @@ Docker volumes. Each named volume must be used by at least two build steps.`,
 												},
 												"path": {
 													Type:     schema.TypeString,
-													Optional: true,
+													Required: true,
 													Description: `Path at which to mount the volume.
 
 Paths must be absolute and cannot conflict with other volume paths on
@@ -213,6 +240,17 @@ have completed successfully.`,
 								},
 							},
 						},
+						"images": {
+							Type:     schema.TypeList,
+							Optional: true,
+							Description: `A list of images to be pushed upon the successful completion of all build steps.
+The images are pushed using the builder service account's credentials.
+The digests of the pushed images will be stored in the Build resource's results field.
+If any of the images fail to be pushed, the build status is marked FAILURE.`,
+							Elem: &schema.Schema{
+								Type: schema.TypeString,
+							},
+						},
 						"tags": {
 							Type:        schema.TypeList,
 							Optional:    true,
@@ -221,9 +259,19 @@ have completed successfully.`,
 								Type: schema.TypeString,
 							},
 						},
+						"timeout": {
+							Type:     schema.TypeString,
+							Optional: true,
+							Description: `Amount of time that this build should be allowed to run, to second granularity. 
+If this amount of time elapses, work on the build will cease and the build status will be TIMEOUT.
+This timeout must be equal to or greater than the sum of the timeouts for build steps within the build.
+The expected format is the number of seconds followed by s.
+Default time is ten minutes (600s).`,
+							Default: "600s",
+						},
 					},
 				},
-				ConflictsWith: []string{"filename"},
+				ExactlyOneOf: []string{"filename", "build"},
 			},
 			"description": {
 				Type:        schema.TypeString,
@@ -236,16 +284,18 @@ have completed successfully.`,
 				Description: `Whether the trigger is disabled or not. If true, the trigger will never result in a build.`,
 			},
 			"filename": {
-				Type:          schema.TypeString,
-				Optional:      true,
-				Description:   `Path, from the source root, to a file whose contents is used for the template. Either a filename or build template must be provided.`,
-				ConflictsWith: []string{"build"},
+				Type:         schema.TypeString,
+				Optional:     true,
+				Description:  `Path, from the source root, to a file whose contents is used for the template. Either a filename or build template must be provided.`,
+				ExactlyOneOf: []string{"filename", "build"},
 			},
 			"github": {
-				Type:        schema.TypeList,
-				Optional:    true,
-				Description: `Describes the configuration of a trigger that creates a build whenever a GitHub event is received.`,
-				MaxItems:    1,
+				Type:     schema.TypeList,
+				Optional: true,
+				Description: `Describes the configuration of a trigger that creates a build whenever a GitHub event is received.
+
+One of 'trigger_template' or 'github' must be provided.`,
+				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"name": {
@@ -269,7 +319,7 @@ https://github.com/googlecloudplatform/cloud-builders is "googlecloudplatform".`
 								Schema: map[string]*schema.Schema{
 									"branch": {
 										Type:        schema.TypeString,
-										Optional:    true,
+										Required:    true,
 										Description: `Regex of branches to match.`,
 									},
 									"comment_control": {
@@ -280,6 +330,7 @@ https://github.com/googlecloudplatform/cloud-builders is "googlecloudplatform".`
 									},
 								},
 							},
+							ExactlyOneOf: []string{"github.0.pull_request", "github.0.push"},
 						},
 						"push": {
 							Type:        schema.TypeList,
@@ -289,20 +340,24 @@ https://github.com/googlecloudplatform/cloud-builders is "googlecloudplatform".`
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"branch": {
-										Type:        schema.TypeString,
-										Optional:    true,
-										Description: `Regex of branches to match.  Specify only one of branch or tag.`,
+										Type:         schema.TypeString,
+										Optional:     true,
+										Description:  `Regex of branches to match.  Specify only one of branch or tag.`,
+										ExactlyOneOf: []string{"github.0.push.0.branch", "github.0.push.0.tag"},
 									},
 									"tag": {
-										Type:        schema.TypeString,
-										Optional:    true,
-										Description: `Regex of tags to match.  Specify only one of branch or tag.`,
+										Type:         schema.TypeString,
+										Optional:     true,
+										Description:  `Regex of tags to match.  Specify only one of branch or tag.`,
+										ExactlyOneOf: []string{"github.0.push.0.branch", "github.0.push.0.tag"},
 									},
 								},
 							},
+							ExactlyOneOf: []string{"github.0.pull_request", "github.0.push"},
 						},
 					},
 				},
+				ExactlyOneOf: []string{"trigger_template", "github"},
 			},
 			"ignored_files": {
 				Type:     schema.TypeList,
@@ -358,7 +413,8 @@ a build.`,
 Branch and tag names in trigger templates are interpreted as regular
 expressions. Any branch or tag change that matches that regular
 expression will trigger a build.
-This field is required, and will be validated as such in 3.0.0.`,
+
+One of 'trigger_template' or 'github' must be provided.`,
 				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -367,11 +423,13 @@ This field is required, and will be validated as such in 3.0.0.`,
 							Optional: true,
 							Description: `Name of the branch to build. Exactly one a of branch name, tag, or commit SHA must be provided.
 This field is a regular expression.`,
+							ExactlyOneOf: []string{"trigger_template.0.branch_name", "trigger_template.0.tag_name", "trigger_template.0.commit_sha"},
 						},
 						"commit_sha": {
-							Type:        schema.TypeString,
-							Optional:    true,
-							Description: `Explicit commit SHA to build. Exactly one of a branch name, tag, or commit SHA must be provided.`,
+							Type:         schema.TypeString,
+							Optional:     true,
+							Description:  `Explicit commit SHA to build. Exactly one of a branch name, tag, or commit SHA must be provided.`,
+							ExactlyOneOf: []string{"trigger_template.0.branch_name", "trigger_template.0.tag_name", "trigger_template.0.commit_sha"},
 						},
 						"dir": {
 							Type:     schema.TypeString,
@@ -400,6 +458,7 @@ omitted, the project ID requesting the build is assumed.`,
 							Optional: true,
 							Description: `Name of the tag to build. Exactly one of a branch name, tag, or commit SHA must be provided.
 This field is a regular expression.`,
+							ExactlyOneOf: []string{"trigger_template.0.branch_name", "trigger_template.0.tag_name", "trigger_template.0.commit_sha"},
 						},
 					},
 				},
@@ -505,7 +564,7 @@ func resourceCloudBuildTriggerCreate(d *schema.ResourceData, meta interface{}) e
 	}
 
 	// Store the ID now
-	id, err := replaceVars(d, config, "{{project}}/{{trigger_id}}")
+	id, err := replaceVars(d, config, "projects/{{project}}/triggers/{{trigger_id}}")
 	if err != nil {
 		return fmt.Errorf("Error constructing id: %s", err)
 	}
@@ -522,7 +581,7 @@ func resourceCloudBuildTriggerCreate(d *schema.ResourceData, meta interface{}) e
 
 	// Store the ID now. We tried to set it before and it failed because
 	// trigger_id didn't exist yet.
-	id, err = replaceVars(d, config, "{{project}}/{{trigger_id}}")
+	id, err = replaceVars(d, config, "projects/{{project}}/triggers/{{trigger_id}}")
 	if err != nil {
 		return fmt.Errorf("Error constructing id: %s", err)
 	}
@@ -714,7 +773,7 @@ func resourceCloudBuildTriggerImport(d *schema.ResourceData, meta interface{}) (
 	}
 
 	// Replace import id for the resource id
-	id, err := replaceVars(d, config, "{{project}}/{{trigger_id}}")
+	id, err := replaceVars(d, config, "projects/{{project}}/triggers/{{trigger_id}}")
 	if err != nil {
 		return nil, fmt.Errorf("Error constructing id: %s", err)
 	}
@@ -892,6 +951,8 @@ func flattenCloudBuildTriggerBuild(v interface{}, d *schema.ResourceData) interf
 		flattenCloudBuildTriggerBuildTags(original["tags"], d)
 	transformed["images"] =
 		flattenCloudBuildTriggerBuildImages(original["images"], d)
+	transformed["timeout"] =
+		flattenCloudBuildTriggerBuildTimeout(original["timeout"], d)
 	transformed["step"] =
 		flattenCloudBuildTriggerBuildStep(original["steps"], d)
 	return []interface{}{transformed}
@@ -901,6 +962,10 @@ func flattenCloudBuildTriggerBuildTags(v interface{}, d *schema.ResourceData) in
 }
 
 func flattenCloudBuildTriggerBuildImages(v interface{}, d *schema.ResourceData) interface{} {
+	return v
+}
+
+func flattenCloudBuildTriggerBuildTimeout(v interface{}, d *schema.ResourceData) interface{} {
 	return v
 }
 
@@ -1251,6 +1316,13 @@ func expandCloudBuildTriggerBuild(v interface{}, d TerraformResourceData, config
 		transformed["images"] = transformedImages
 	}
 
+	transformedTimeout, err := expandCloudBuildTriggerBuildTimeout(original["timeout"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedTimeout); val.IsValid() && !isEmptyValue(val) {
+		transformed["timeout"] = transformedTimeout
+	}
+
 	transformedStep, err := expandCloudBuildTriggerBuildStep(original["step"], d, config)
 	if err != nil {
 		return nil, err
@@ -1266,6 +1338,10 @@ func expandCloudBuildTriggerBuildTags(v interface{}, d TerraformResourceData, co
 }
 
 func expandCloudBuildTriggerBuildImages(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandCloudBuildTriggerBuildTimeout(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 

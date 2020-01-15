@@ -23,7 +23,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
-	"google.golang.org/api/compute/v1"
 )
 
 func resourceComputeRouter() *schema.Resource {
@@ -111,16 +110,16 @@ ranges will be advertised in addition to any specified groups.
 Leave this field blank to advertise no custom IP ranges.`,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
+									"range": {
+										Type:     schema.TypeString,
+										Required: true,
+										Description: `The IP range to advertise. The value must be a
+CIDR-formatted string.`,
+									},
 									"description": {
 										Type:        schema.TypeString,
 										Optional:    true,
 										Description: `User-specified description for the IP range.`,
-									},
-									"range": {
-										Type:     schema.TypeString,
-										Optional: true,
-										Description: `The IP range to advertise. The value must be a
-CIDR-formatted string.`,
 									},
 								},
 							},
@@ -218,26 +217,20 @@ func resourceComputeRouterCreate(d *schema.ResourceData, meta interface{}) error
 	}
 
 	// Store the ID now
-	id, err := replaceVars(d, config, "{{region}}/{{name}}")
+	id, err := replaceVars(d, config, "projects/{{project}}/regions/{{region}}/routers/{{name}}")
 	if err != nil {
 		return fmt.Errorf("Error constructing id: %s", err)
 	}
 	d.SetId(id)
 
-	op := &compute.Operation{}
-	err = Convert(res, op)
-	if err != nil {
-		return err
-	}
-
-	waitErr := computeOperationWaitTime(
-		config.clientCompute, op, project, "Creating Router",
+	err = computeOperationWaitTime(
+		config, res, project, "Creating Router",
 		int(d.Timeout(schema.TimeoutCreate).Minutes()))
 
-	if waitErr != nil {
+	if err != nil {
 		// The resource didn't actually create
 		d.SetId("")
-		return fmt.Errorf("Error waiting to create Router: %s", waitErr)
+		return fmt.Errorf("Error waiting to create Router: %s", err)
 	}
 
 	log.Printf("[DEBUG] Finished creating Router %q: %#v", d.Id(), res)
@@ -332,14 +325,8 @@ func resourceComputeRouterUpdate(d *schema.ResourceData, meta interface{}) error
 		return fmt.Errorf("Error updating Router %q: %s", d.Id(), err)
 	}
 
-	op := &compute.Operation{}
-	err = Convert(res, op)
-	if err != nil {
-		return err
-	}
-
 	err = computeOperationWaitTime(
-		config.clientCompute, op, project, "Updating Router",
+		config, res, project, "Updating Router",
 		int(d.Timeout(schema.TimeoutUpdate).Minutes()))
 
 	if err != nil {
@@ -377,14 +364,8 @@ func resourceComputeRouterDelete(d *schema.ResourceData, meta interface{}) error
 		return handleNotFoundError(err, d, "Router")
 	}
 
-	op := &compute.Operation{}
-	err = Convert(res, op)
-	if err != nil {
-		return err
-	}
-
 	err = computeOperationWaitTime(
-		config.clientCompute, op, project, "Deleting Router",
+		config, res, project, "Deleting Router",
 		int(d.Timeout(schema.TimeoutDelete).Minutes()))
 
 	if err != nil {
@@ -407,7 +388,7 @@ func resourceComputeRouterImport(d *schema.ResourceData, meta interface{}) ([]*s
 	}
 
 	// Replace import id for the resource id
-	id, err := replaceVars(d, config, "{{region}}/{{name}}")
+	id, err := replaceVars(d, config, "projects/{{project}}/regions/{{region}}/routers/{{name}}")
 	if err != nil {
 		return nil, fmt.Errorf("Error constructing id: %s", err)
 	}

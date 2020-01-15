@@ -36,8 +36,8 @@ data "google_iam_policy" "admin" {
 }
 
 resource "google_healthcare_dataset_iam_policy" "dataset" {
-	dataset_id = "your-dataset-id"
-	policy_data = "${data.google_iam_policy.admin.policy_data}"
+  dataset_id  = "your-dataset-id"
+  policy_data = data.google_iam_policy.admin.policy_data
 }
 ```
 
@@ -46,7 +46,7 @@ resource "google_healthcare_dataset_iam_policy" "dataset" {
 ```hcl
 resource "google_healthcare_dataset_iam_binding" "dataset" {
   dataset_id = "your-dataset-id"
-  role        = "roles/editor"
+  role       = "roles/editor"
 
   members = [
     "user:jane@example.com",
@@ -59,8 +59,8 @@ resource "google_healthcare_dataset_iam_binding" "dataset" {
 ```hcl
 resource "google_healthcare_dataset_iam_member" "dataset" {
   dataset_id = "your-dataset-id"
-  role        = "roles/editor"
-  member      = "user:jane@example.com"
+  role       = "roles/editor"
+  member     = "user:jane@example.com"
 }
 ```
 
@@ -115,3 +115,6 @@ IAM policy imports use the identifier of the resource in question.  This policy 
 ```
 $ terraform import google_healthcare_dataset_iam_policy.dataset_iam your-project-id/location-name/dataset-name
 ```
+
+-> **Custom Roles**: If you're importing a IAM resource with a custom role, make sure to use the
+ full name of the custom role, e.g. `[projects/my-project|organizations/my-org]/roles/my-custom-role`.

@@ -22,7 +22,7 @@ func TestAccProjectIamBinding_basic(t *testing.T) {
 	t.Parallel()
 
 	org := getTestOrgFromEnv(t)
-	pid := "terraform-" + acctest.RandString(10)
+	pid := acctest.RandomWithPrefix("tf-test")
 	role := "roles/compute.instanceAdmin"
 	resource.Test(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
@@ -49,7 +49,7 @@ func TestAccProjectIamBinding_multiple(t *testing.T) {
 	t.Parallel()
 
 	org := getTestOrgFromEnv(t)
-	pid := "terraform-" + acctest.RandString(10)
+	pid := acctest.RandomWithPrefix("tf-test")
 	role := "roles/compute.instanceAdmin"
 	role2 := "roles/viewer"
 
@@ -83,7 +83,7 @@ func TestAccProjectIamBinding_multipleAtOnce(t *testing.T) {
 	t.Parallel()
 
 	org := getTestOrgFromEnv(t)
-	pid := "terraform-" + acctest.RandString(10)
+	pid := acctest.RandomWithPrefix("tf-test")
 	role := "roles/compute.instanceAdmin"
 	role2 := "roles/viewer"
 
@@ -113,7 +113,7 @@ func TestAccProjectIamBinding_update(t *testing.T) {
 	t.Parallel()
 
 	org := getTestOrgFromEnv(t)
-	pid := "terraform-" + acctest.RandString(10)
+	pid := acctest.RandomWithPrefix("tf-test")
 	role := "roles/compute.instanceAdmin"
 
 	resource.Test(t, resource.TestCase{
@@ -153,7 +153,7 @@ func TestAccProjectIamBinding_remove(t *testing.T) {
 	t.Parallel()
 
 	org := getTestOrgFromEnv(t)
-	pid := "terraform-" + acctest.RandString(10)
+	pid := acctest.RandomWithPrefix("tf-test")
 	role := "roles/compute.instanceAdmin"
 	role2 := "roles/viewer"
 
@@ -191,7 +191,7 @@ func TestAccProjectIamBinding_noMembers(t *testing.T) {
 	t.Parallel()
 
 	org := getTestOrgFromEnv(t)
-	pid := "terraform-" + acctest.RandString(10)
+	pid := acctest.RandomWithPrefix("tf-test")
 	role := "roles/compute.instanceAdmin"
 	resource.Test(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
@@ -214,11 +214,10 @@ func TestAccProjectIamBinding_noMembers(t *testing.T) {
 }
 
 func TestAccProjectIamBinding_withCondition(t *testing.T) {
-	t.Skipf("IAM Conditions is not whitelisted for new projects in this org, enable this test once it's public beta")
 	t.Parallel()
 
 	org := getTestOrgFromEnv(t)
-	pid := "terraform-" + acctest.RandString(10)
+	pid := acctest.RandomWithPrefix("tf-test")
 	role := "roles/compute.instanceAdmin"
 	conditionTitle := "expires_after_2019_12_31"
 	resource.Test(t, resource.TestCase{
@@ -255,7 +254,7 @@ resource "google_project" "acceptance" {
 }
 
 resource "google_project_iam_binding" "acceptance" {
-  project = "${google_project.acceptance.project_id}"
+  project = google_project.acceptance.project_id
   members = ["user:admin@hashicorptest.com"]
   role    = "%s"
 }
@@ -271,13 +270,13 @@ resource "google_project" "acceptance" {
 }
 
 resource "google_project_iam_binding" "acceptance" {
-  project = "${google_project.acceptance.project_id}"
+  project = google_project.acceptance.project_id
   members = ["user:admin@hashicorptest.com"]
   role    = "%s"
 }
 
 resource "google_project_iam_binding" "multiple" {
-  project = "${google_project.acceptance.project_id}"
+  project = google_project.acceptance.project_id
   members = ["user:paddy@hashicorp.com"]
   role    = "%s"
 }
@@ -293,7 +292,7 @@ resource "google_project" "acceptance" {
 }
 
 resource "google_project_iam_binding" "acceptance" {
-  project = "${google_project.acceptance.project_id}"
+  project = google_project.acceptance.project_id
   members = ["user:admin@hashicorptest.com", "user:paddy@hashicorp.com"]
   role    = "%s"
 }
@@ -309,7 +308,7 @@ resource "google_project" "acceptance" {
 }
 
 resource "google_project_iam_binding" "acceptance" {
-  project = "${google_project.acceptance.project_id}"
+  project = google_project.acceptance.project_id
   members = ["user:paddy@hashicorp.com"]
   role    = "%s"
 }
@@ -325,7 +324,7 @@ resource "google_project" "acceptance" {
 }
 
 resource "google_project_iam_binding" "acceptance" {
-  project = "${google_project.acceptance.project_id}"
+  project = google_project.acceptance.project_id
   members = []
   role    = "%s"
 }
@@ -341,7 +340,7 @@ resource "google_project" "acceptance" {
 }
 
 resource "google_project_iam_binding" "acceptance" {
-  project = "${google_project.acceptance.project_id}"
+  project = google_project.acceptance.project_id
   members = ["user:admin@hashicorptest.com"]
   role    = "%s"
   condition {

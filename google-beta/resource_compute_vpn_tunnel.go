@@ -25,7 +25,6 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"google.golang.org/api/compute/v1"
 )
 
 // validatePeerAddr returns false if a tunnel's peer_ip property
@@ -453,26 +452,20 @@ func resourceComputeVpnTunnelCreate(d *schema.ResourceData, meta interface{}) er
 	}
 
 	// Store the ID now
-	id, err := replaceVars(d, config, "{{name}}")
+	id, err := replaceVars(d, config, "projects/{{project}}/regions/{{region}}/vpnTunnels/{{name}}")
 	if err != nil {
 		return fmt.Errorf("Error constructing id: %s", err)
 	}
 	d.SetId(id)
 
-	op := &compute.Operation{}
-	err = Convert(res, op)
-	if err != nil {
-		return err
-	}
-
-	waitErr := computeOperationWaitTime(
-		config.clientCompute, op, project, "Creating VpnTunnel",
+	err = computeOperationWaitTime(
+		config, res, project, "Creating VpnTunnel",
 		int(d.Timeout(schema.TimeoutCreate).Minutes()))
 
-	if waitErr != nil {
+	if err != nil {
 		// The resource didn't actually create
 		d.SetId("")
-		return fmt.Errorf("Error waiting to create VpnTunnel: %s", waitErr)
+		return fmt.Errorf("Error waiting to create VpnTunnel: %s", err)
 	}
 
 	log.Printf("[DEBUG] Finished creating VpnTunnel %q: %#v", d.Id(), res)
@@ -503,13 +496,8 @@ func resourceComputeVpnTunnelCreate(d *schema.ResourceData, meta interface{}) er
 			return fmt.Errorf("Error adding labels to ComputeVpnTunnel %q: %s", d.Id(), err)
 		}
 
-		err = Convert(res, op)
-		if err != nil {
-			return err
-		}
-
 		err = computeOperationWaitTime(
-			config.clientCompute, op, project, "Updating ComputeVpnTunnel Labels",
+			config, res, project, "Updating ComputeVpnTunnel Labels",
 			int(d.Timeout(schema.TimeoutUpdate).Minutes()))
 
 		if err != nil {
@@ -644,16 +632,9 @@ func resourceComputeVpnTunnelUpdate(d *schema.ResourceData, meta interface{}) er
 			return fmt.Errorf("Error updating VpnTunnel %q: %s", d.Id(), err)
 		}
 
-		op := &compute.Operation{}
-		err = Convert(res, op)
-		if err != nil {
-			return err
-		}
-
 		err = computeOperationWaitTime(
-			config.clientCompute, op, project, "Updating VpnTunnel",
+			config, res, project, "Updating VpnTunnel",
 			int(d.Timeout(schema.TimeoutUpdate).Minutes()))
-
 		if err != nil {
 			return err
 		}
@@ -688,14 +669,8 @@ func resourceComputeVpnTunnelDelete(d *schema.ResourceData, meta interface{}) er
 		return handleNotFoundError(err, d, "VpnTunnel")
 	}
 
-	op := &compute.Operation{}
-	err = Convert(res, op)
-	if err != nil {
-		return err
-	}
-
 	err = computeOperationWaitTime(
-		config.clientCompute, op, project, "Deleting VpnTunnel",
+		config, res, project, "Deleting VpnTunnel",
 		int(d.Timeout(schema.TimeoutDelete).Minutes()))
 
 	if err != nil {
@@ -718,7 +693,7 @@ func resourceComputeVpnTunnelImport(d *schema.ResourceData, meta interface{}) ([
 	}
 
 	// Replace import id for the resource id
-	id, err := replaceVars(d, config, "{{name}}")
+	id, err := replaceVars(d, config, "projects/{{project}}/regions/{{region}}/vpnTunnels/{{name}}")
 	if err != nil {
 		return nil, fmt.Errorf("Error constructing id: %s", err)
 	}

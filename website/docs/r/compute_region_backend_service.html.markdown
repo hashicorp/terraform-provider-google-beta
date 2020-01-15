@@ -45,7 +45,7 @@ To get more information about RegionBackendService, see:
 resource "google_compute_region_backend_service" "default" {
   name                            = "region-backend-service"
   region                          = "us-central1"
-  health_checks                   = ["${google_compute_health_check.default.self_link}"]
+  health_checks                   = [google_compute_health_check.default.self_link]
   connection_draining_timeout_sec = 10
   session_affinity                = "CLIENT_IP"
 }
@@ -85,7 +85,7 @@ resource "google_compute_health_check" "health_check" {
 
   name               = "health-check"
   http_health_check {
-
+    port = 80
   }
 }
 ```
@@ -130,8 +130,102 @@ resource "google_compute_health_check" "health_check" {
 
   name               = "health-check"
   http_health_check {
-
+    port = 80
   }
+}
+```
+<div class = "oics-button" style="float: right; margin: 0 0 -15px">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=region_backend_service_balancing_mode&cloudshell_image=gcr.io%2Fgraphite-cloud-shell-images%2Fterraform%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+    <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
+  </a>
+</div>
+## Example Usage - Region Backend Service Balancing Mode
+
+
+```hcl
+resource "google_compute_region_backend_service" "default" {
+  provider = google-beta
+
+  load_balancing_scheme = "INTERNAL_MANAGED"
+
+  backend {
+    group          = google_compute_region_instance_group_manager.rigm.instance_group
+    balancing_mode = "UTILIZATION"
+  }
+
+  region      = "us-central1"
+  name        = "region-backend-service"
+  protocol    = "HTTP"
+  timeout_sec = 10
+
+  health_checks = [google_compute_region_health_check.default.self_link]
+}
+
+data "google_compute_image" "debian_image" {
+  provider = google-beta
+
+  family   = "debian-9"
+  project  = "debian-cloud"
+}
+
+resource "google_compute_region_instance_group_manager" "rigm" {
+  provider = google-beta
+
+  region   = "us-central1"
+  name     = "rigm-internal"
+  version {
+    instance_template = google_compute_instance_template.instance_template.self_link
+    name              = "primary"
+  }
+  base_instance_name = "internal-glb"
+  target_size        = 1
+}
+
+resource "google_compute_instance_template" "instance_template" {
+  provider     = google-beta
+
+  name         = "template-region-backend-service"
+  machine_type = "n1-standard-1"
+
+  network_interface {
+    network    = google_compute_network.default.self_link
+    subnetwork = google_compute_subnetwork.default.self_link
+  }
+
+  disk {
+    source_image = data.google_compute_image.debian_image.self_link
+    auto_delete  = true
+    boot         = true
+  }
+
+  tags = ["allow-ssh", "load-balanced-backend"]
+}
+
+resource "google_compute_region_health_check" "default" {
+  provider = google-beta
+
+  region = "us-central1"
+  name   = "health-check"
+  http_health_check {
+    port_specification = "USE_SERVING_PORT"
+  }
+}
+
+resource "google_compute_network" "default" {
+  provider = google-beta
+
+  name                    = "net"
+  auto_create_subnetworks = false
+  routing_mode            = "REGIONAL"
+}
+
+resource "google_compute_subnetwork" "default" {
+  provider = google-beta
+
+  name          = "net-default"
+  ip_cidr_range = "10.1.2.0/24"
+  region        = "us-central1"
+  network       = google_compute_network.default.self_link
 }
 ```
 
@@ -264,6 +358,11 @@ The following arguments are supported:
   This field denotes the logging options for the load balancer traffic served by this backend service.
   If logging is enabled, logs will be exported to Stackdriver.  Structure is documented below.
 
+* `network` -
+  (Optional, [Beta](https://terraform.io/docs/providers/google/guides/provider_versions.html))
+  The URL of the network to which this backend service belongs.
+  This field can only be specified when the load balancing scheme is set to INTERNAL.
+
 * `region` -
   (Optional)
   The Region in which the created backend service should reside.
@@ -283,6 +382,8 @@ The `backend` block supports:
   (Optional)
   A multiplier applied to the group's maximum servicing capacity
   (based on UTILIZATION, RATE or CONNECTION).
+  Default value is 1, which means the group will serve up to 100%
+  of its configured capacity (depending on balancingMode).
   A setting of 0 means the group is completely drained, offering
   0% of its available Capacity. Valid range is [0.0,1.0].
 

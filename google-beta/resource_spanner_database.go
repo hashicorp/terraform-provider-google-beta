@@ -125,20 +125,20 @@ func resourceSpannerDatabaseCreate(d *schema.ResourceData, meta interface{}) err
 	}
 
 	// Store the ID now
-	id, err := replaceVars(d, config, "{{project}}/{{instance}}/{{name}}")
+	id, err := replaceVars(d, config, "projects/{{project}}/instances/{{instance}}/databases/{{name}}")
 	if err != nil {
 		return fmt.Errorf("Error constructing id: %s", err)
 	}
 	d.SetId(id)
 
-	waitErr := spannerOperationWaitTime(
+	err = spannerOperationWaitTime(
 		config, res, project, "Creating Database",
 		int(d.Timeout(schema.TimeoutCreate).Minutes()))
 
-	if waitErr != nil {
+	if err != nil {
 		// The resource didn't actually create
 		d.SetId("")
-		return fmt.Errorf("Error waiting to create Database: %s", waitErr)
+		return fmt.Errorf("Error waiting to create Database: %s", err)
 	}
 
 	log.Printf("[DEBUG] Finished creating Database %q: %#v", d.Id(), res)
@@ -229,7 +229,7 @@ func resourceSpannerDatabaseImport(d *schema.ResourceData, meta interface{}) ([]
 	}
 
 	// Replace import id for the resource id
-	id, err := replaceVars(d, config, "{{project}}/{{instance}}/{{name}}")
+	id, err := replaceVars(d, config, "projects/{{project}}/instances/{{instance}}/databases/{{name}}")
 	if err != nil {
 		return nil, fmt.Errorf("Error constructing id: %s", err)
 	}

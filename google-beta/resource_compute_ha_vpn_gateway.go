@@ -22,7 +22,6 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"google.golang.org/api/compute/v1"
 )
 
 func resourceComputeHaVpnGateway() *schema.Resource {
@@ -153,26 +152,20 @@ func resourceComputeHaVpnGatewayCreate(d *schema.ResourceData, meta interface{})
 	}
 
 	// Store the ID now
-	id, err := replaceVars(d, config, "{{name}}")
+	id, err := replaceVars(d, config, "projects/{{project}}/regions/{{region}}/vpnGateways/{{name}}")
 	if err != nil {
 		return fmt.Errorf("Error constructing id: %s", err)
 	}
 	d.SetId(id)
 
-	op := &compute.Operation{}
-	err = Convert(res, op)
-	if err != nil {
-		return err
-	}
-
-	waitErr := computeOperationWaitTime(
-		config.clientCompute, op, project, "Creating HaVpnGateway",
+	err = computeOperationWaitTime(
+		config, res, project, "Creating HaVpnGateway",
 		int(d.Timeout(schema.TimeoutCreate).Minutes()))
 
-	if waitErr != nil {
+	if err != nil {
 		// The resource didn't actually create
 		d.SetId("")
-		return fmt.Errorf("Error waiting to create HaVpnGateway: %s", waitErr)
+		return fmt.Errorf("Error waiting to create HaVpnGateway: %s", err)
 	}
 
 	log.Printf("[DEBUG] Finished creating HaVpnGateway %q: %#v", d.Id(), res)
@@ -244,14 +237,8 @@ func resourceComputeHaVpnGatewayDelete(d *schema.ResourceData, meta interface{})
 		return handleNotFoundError(err, d, "HaVpnGateway")
 	}
 
-	op := &compute.Operation{}
-	err = Convert(res, op)
-	if err != nil {
-		return err
-	}
-
 	err = computeOperationWaitTime(
-		config.clientCompute, op, project, "Deleting HaVpnGateway",
+		config, res, project, "Deleting HaVpnGateway",
 		int(d.Timeout(schema.TimeoutDelete).Minutes()))
 
 	if err != nil {
@@ -274,7 +261,7 @@ func resourceComputeHaVpnGatewayImport(d *schema.ResourceData, meta interface{})
 	}
 
 	// Replace import id for the resource id
-	id, err := replaceVars(d, config, "{{name}}")
+	id, err := replaceVars(d, config, "projects/{{project}}/regions/{{region}}/vpnGateways/{{name}}")
 	if err != nil {
 		return nil, fmt.Errorf("Error constructing id: %s", err)
 	}
