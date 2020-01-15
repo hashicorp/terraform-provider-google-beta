@@ -362,7 +362,7 @@ https://github.com/googlecloudplatform/cloud-builders is "googlecloudplatform".`
 			"ignored_files": {
 				Type:     schema.TypeList,
 				Optional: true,
-				Description: `ignoredFiles and includedFiles are file glob matches using http://godoc/pkg/path/filepath#Match
+				Description: `ignoredFiles and includedFiles are file glob matches using https://golang.org/pkg/path/filepath/#Match
 extended with support for '**'.
 
 If ignoredFiles and changed files are both empty, then they are not
