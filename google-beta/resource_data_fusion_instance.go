@@ -137,6 +137,11 @@ able to access the public internet.`,
 				Computed:    true,
 				Description: `The time the instance was created in RFC3339 UTC "Zulu" format, accurate to nanoseconds.`,
 			},
+			"service_account": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: `Service account which will be used to access resources in the customer project.`,
+			},
 			"service_endpoint": {
 				Type:        schema.TypeString,
 				Computed:    true,
@@ -342,6 +347,9 @@ func resourceDataFusionInstanceRead(d *schema.ResourceData, meta interface{}) er
 	if err := d.Set("version", flattenDataFusionInstanceVersion(res["version"], d)); err != nil {
 		return fmt.Errorf("Error reading Instance: %s", err)
 	}
+	if err := d.Set("service_account", flattenDataFusionInstanceServiceAccount(res["serviceAccount"], d)); err != nil {
+		return fmt.Errorf("Error reading Instance: %s", err)
+	}
 	if err := d.Set("private_instance", flattenDataFusionInstancePrivateInstance(res["privateInstance"], d)); err != nil {
 		return fmt.Errorf("Error reading Instance: %s", err)
 	}
@@ -509,6 +517,10 @@ func flattenDataFusionInstanceServiceEndpoint(v interface{}, d *schema.ResourceD
 }
 
 func flattenDataFusionInstanceVersion(v interface{}, d *schema.ResourceData) interface{} {
+	return v
+}
+
+func flattenDataFusionInstanceServiceAccount(v interface{}, d *schema.ResourceData) interface{} {
 	return v
 }
 
