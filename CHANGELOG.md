@@ -1,4 +1,32 @@
-## 3.4.1 (Unreleased)
+## 3.5.0 (Unreleased)
+
+DEPRECATIONS:
+* kms: deprecated `data.google_kms_secret_ciphertext` as there was no way to make it idempotent. Instead, use the `google_kms_secret_ciphertext` resource. ([#1586](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1586))
+* sql: deprecated first generation-only fields on `google_sql_database_instance` ([#1628](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1628))
+
+FEATURES:
+* **New Resource:** `google_kms_secret_ciphertext` ([#1586](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1586))
+
+IMPROVEMENTS:
+* bigtable: added the ability to add/remove clusters from `google_bigtable_instance` ([#1589](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1589))
+* compute: added support for other resource types (like a Proxy) as a `target` to `google_compute_forwarding_rule` ([#1630](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1630))
+* dataproc: added `lifecycle_config` to `google_dataproc_cluster.cluster_config` ([#1593](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1593))
+* iam: updated to allow for empty bindings in `data_source_google_iam_policy` data source ([#1173](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1173))
+* provider: added retries for batched requests so failed batches will retry each single request separately. ([#1615](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1615))
+* resourcemanager: restricted the length of the `description` field of `google_service_account`. It is now limited to 256 characters. ([#1646](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1646))
+
+BUG FIXES:
+* bigtable: Fixed error on reading non-existent `google_bigtable_gc_policy`,  `google_bigtable_instance`,  `google_bigtable_table` ([#1597](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1597))
+* cloudfunctions: Fixed validation of `google_cloudfunctions_function` name to allow for 63 characters. ([#1640](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1640))
+* cloudtasks: Changed `max_dispatches_per_second` to a double instead of an integer. ([#1633](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1633))
+* compute: Added validation for `compute_resource_policy` to no longer allow invalid `start_time` values that weren't hourly. ([#1603](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1603))
+* compute: Fixed errors from concurrent creation/deletion of overlapping `google_compute_network_peering` resources. ([#1601](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1601))
+* compute: Stopped panic when using `usage_export_bucket` and the setting had been disabled manually. ([#1610](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1610))
+* compute: fixed `google_compute_router_nat` timeout fields causing a diff when using a long-lived resource ([#1613](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1613))
+* compute: fixed `google_compute_target_https_proxy.quic_override` causing a diff when using a long-lived resource ([#1611](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1611))
+* identityplatform: fixed `google_identity_platform_default_supported_idp_config` to correctly allow configuration of both `idp_id` and `client_id` separately ([#1638](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1638))
+* monitoring: Stopped `labels` from causing a perma diff on `AlertPolicy` ([#1622](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1622))
+
 ## 3.4.0 (January 07, 2020)
 
 DEPRECATIONS:
