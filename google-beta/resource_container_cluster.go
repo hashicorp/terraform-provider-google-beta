@@ -774,12 +774,10 @@ func resourceContainerCluster() *schema.Resource {
 							ForceNew:     true,
 							ValidateFunc: orEmpty(validation.CIDRNetwork(28, 28)),
 						},
-
 						"peering_name": {
 							Type:     schema.TypeString,
 							Computed: true,
 						},
-
 						"private_endpoint": {
 							Type:     schema.TypeString,
 							Computed: true,
