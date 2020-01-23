@@ -300,7 +300,7 @@ resource "google_project_service" "project_service" {
 }
 
 resource "google_iap_web_type_compute_iam_member" "foo" {
-  project = "${google_project_service.project_service.project}"
+  project = google_project_service.project_service.project
   role = "%{role}"
   member = "user:admin@hashicorptest.com"
 }
@@ -328,8 +328,8 @@ data "google_iam_policy" "foo" {
 }
 
 resource "google_iap_web_type_compute_iam_policy" "foo" {
-  project = "${google_project_service.project_service.project}"
-  policy_data = "${data.google_iam_policy.foo.policy_data}"
+  project = google_project_service.project_service.project
+  policy_data = data.google_iam_policy.foo.policy_data
 }
 `, context)
 }
@@ -351,8 +351,8 @@ data "google_iam_policy" "foo" {
 }
 
 resource "google_iap_web_type_compute_iam_policy" "foo" {
-  project = "${google_project_service.project_service.project}"
-  policy_data = "${data.google_iam_policy.foo.policy_data}"
+  project = google_project_service.project_service.project
+  policy_data = data.google_iam_policy.foo.policy_data
 }
 `, context)
 }
@@ -371,7 +371,7 @@ resource "google_project_service" "project_service" {
 }
 
 resource "google_iap_web_type_compute_iam_binding" "foo" {
-  project = "${google_project_service.project_service.project}"
+  project = google_project_service.project_service.project
   role = "%{role}"
   members = ["user:admin@hashicorptest.com"]
 }
@@ -392,7 +392,7 @@ resource "google_project_service" "project_service" {
 }
 
 resource "google_iap_web_type_compute_iam_binding" "foo" {
-  project = "${google_project_service.project_service.project}"
+  project = google_project_service.project_service.project
   role = "%{role}"
   members = ["user:admin@hashicorptest.com", "user:paddy@hashicorp.com"]
 }
@@ -413,7 +413,7 @@ resource "google_project_service" "project_service" {
 }
 
 resource "google_iap_web_type_compute_iam_binding" "foo" {
-  project = "${google_project_service.project_service.project}"
+  project = google_project_service.project_service.project
   role = "%{role}"
   members = ["user:admin@hashicorptest.com"]
   condition {
@@ -439,13 +439,13 @@ resource "google_project_service" "project_service" {
 }
 
 resource "google_iap_web_type_compute_iam_binding" "foo" {
-  project = "${google_project_service.project_service.project}"
+  project = google_project_service.project_service.project
   role = "%{role}"
   members = ["user:admin@hashicorptest.com"]
 }
 
 resource "google_iap_web_type_compute_iam_binding" "foo2" {
-  project = "${google_project_service.project_service.project}"
+  project = google_project_service.project_service.project
   role = "%{role}"
   members = ["user:admin@hashicorptest.com"]
   condition {
@@ -471,7 +471,7 @@ resource "google_project_service" "project_service" {
 }
 
 resource "google_iap_web_type_compute_iam_member" "foo" {
-  project = "${google_project_service.project_service.project}"
+  project = google_project_service.project_service.project
   role = "%{role}"
   member = "user:admin@hashicorptest.com"
   condition {
@@ -497,13 +497,13 @@ resource "google_project_service" "project_service" {
 }
 
 resource "google_iap_web_type_compute_iam_member" "foo" {
-  project = "${google_project_service.project_service.project}"
+  project = google_project_service.project_service.project
   role = "%{role}"
   member = "user:admin@hashicorptest.com"
 }
 
 resource "google_iap_web_type_compute_iam_member" "foo2" {
-  project = "${google_project_service.project_service.project}"
+  project = google_project_service.project_service.project
   role = "%{role}"
   member = "user:admin@hashicorptest.com"
   condition {
@@ -541,8 +541,8 @@ data "google_iam_policy" "foo" {
 }
 
 resource "google_iap_web_type_compute_iam_policy" "foo" {
-  project = "${google_project_service.project_service.project}"
-  policy_data = "${data.google_iam_policy.foo.policy_data}"
+  project = google_project_service.project_service.project
+  policy_data = data.google_iam_policy.foo.policy_data
 }
 `, context)
 }

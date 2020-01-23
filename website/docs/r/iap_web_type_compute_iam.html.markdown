@@ -46,8 +46,8 @@ data "google_iam_policy" "admin" {
 }
 
 resource "google_iap_web_type_compute_iam_policy" "editor" {
-  project = "${google_project_service.project_service.project}"
-  policy_data = "${data.google_iam_policy.admin.policy_data}"
+  project = google_project_service.project_service.project
+  policy_data = data.google_iam_policy.admin.policy_data
 }
 ```
 
@@ -70,15 +70,15 @@ data "google_iam_policy" "admin" {
 }
 
 resource "google_iap_web_type_compute_iam_policy" "editor" {
-  project = "${google_project_service.project_service.project}"
-  policy_data = "${data.google_iam_policy.admin.policy_data}"
+  project = google_project_service.project_service.project
+  policy_data = data.google_iam_policy.admin.policy_data
 }
 ```
 ## google\_iap\_web\_type\_compute\_iam\_binding
 
 ```hcl
 resource "google_iap_web_type_compute_iam_binding" "editor" {
-  project = "${google_project_service.project_service.project}"
+  project = google_project_service.project_service.project
   role = "roles/iap.httpsResourceAccessor"
   members = [
     "user:jane@example.com",
@@ -90,7 +90,7 @@ With IAM Conditions ([beta](https://terraform.io/docs/providers/google/provider_
 
 ```hcl
 resource "google_iap_web_type_compute_iam_binding" "editor" {
-  project = "${google_project_service.project_service.project}"
+  project = google_project_service.project_service.project
   role = "roles/iap.httpsResourceAccessor"
   members = [
     "user:jane@example.com",
@@ -107,7 +107,7 @@ resource "google_iap_web_type_compute_iam_binding" "editor" {
 
 ```hcl
 resource "google_iap_web_type_compute_iam_member" "editor" {
-  project = "${google_project_service.project_service.project}"
+  project = google_project_service.project_service.project
   role = "roles/iap.httpsResourceAccessor"
   member = "user:jane@example.com"
 }
@@ -117,7 +117,7 @@ With IAM Conditions ([beta](https://terraform.io/docs/providers/google/provider_
 
 ```hcl
 resource "google_iap_web_type_compute_iam_member" "editor" {
-  project = "${google_project_service.project_service.project}"
+  project = google_project_service.project_service.project
   role = "roles/iap.httpsResourceAccessor"
   member = "user:jane@example.com"
 

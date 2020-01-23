@@ -353,7 +353,7 @@ resource "google_iap_app_engine_version_iam_policy" "foo" {
   app_id = "${google_app_engine_standard_app_version.version.project}"
   service = "${google_app_engine_standard_app_version.version.service}"
   version_id = "${google_app_engine_standard_app_version.version.version_id}"
-  policy_data = "${data.google_iam_policy.foo.policy_data}"
+  policy_data = data.google_iam_policy.foo.policy_data
 }
 `, context)
 }
@@ -396,7 +396,7 @@ resource "google_iap_app_engine_version_iam_policy" "foo" {
   app_id = "${google_app_engine_standard_app_version.version.project}"
   service = "${google_app_engine_standard_app_version.version.service}"
   version_id = "${google_app_engine_standard_app_version.version.version_id}"
-  policy_data = "${data.google_iam_policy.foo.policy_data}"
+  policy_data = data.google_iam_policy.foo.policy_data
 }
 `, context)
 }
@@ -732,7 +732,7 @@ resource "google_iap_app_engine_version_iam_policy" "foo" {
   app_id = "${google_app_engine_standard_app_version.version.project}"
   service = "${google_app_engine_standard_app_version.version.service}"
   version_id = "${google_app_engine_standard_app_version.version.version_id}"
-  policy_data = "${data.google_iam_policy.foo.policy_data}"
+  policy_data = data.google_iam_policy.foo.policy_data
 }
 `, context)
 }

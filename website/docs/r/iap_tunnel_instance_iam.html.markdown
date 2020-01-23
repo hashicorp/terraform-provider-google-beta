@@ -46,10 +46,10 @@ data "google_iam_policy" "admin" {
 }
 
 resource "google_iap_tunnel_instance_iam_policy" "editor" {
-  project = "${google_compute_instance.tunnelvm.project}"
-  zone = "${google_compute_instance.tunnelvm.zone}"
-  instance = "${google_compute_instance.tunnelvm.name}"
-  policy_data = "${data.google_iam_policy.admin.policy_data}"
+  project = google_compute_instance.tunnelvm.project
+  zone = google_compute_instance.tunnelvm.zone
+  instance = google_compute_instance.tunnelvm.name
+  policy_data = data.google_iam_policy.admin.policy_data
 }
 ```
 
@@ -72,19 +72,19 @@ data "google_iam_policy" "admin" {
 }
 
 resource "google_iap_tunnel_instance_iam_policy" "editor" {
-  project = "${google_compute_instance.tunnelvm.project}"
-  zone = "${google_compute_instance.tunnelvm.zone}"
-  instance = "${google_compute_instance.tunnelvm.name}"
-  policy_data = "${data.google_iam_policy.admin.policy_data}"
+  project = google_compute_instance.tunnelvm.project
+  zone = google_compute_instance.tunnelvm.zone
+  instance = google_compute_instance.tunnelvm.name
+  policy_data = data.google_iam_policy.admin.policy_data
 }
 ```
 ## google\_iap\_tunnel\_instance\_iam\_binding
 
 ```hcl
 resource "google_iap_tunnel_instance_iam_binding" "editor" {
-  project = "${google_compute_instance.tunnelvm.project}"
-  zone = "${google_compute_instance.tunnelvm.zone}"
-  instance = "${google_compute_instance.tunnelvm.name}"
+  project = google_compute_instance.tunnelvm.project
+  zone = google_compute_instance.tunnelvm.zone
+  instance = google_compute_instance.tunnelvm.name
   role = "roles/iap.tunnelResourceAccessor"
   members = [
     "user:jane@example.com",
@@ -96,9 +96,9 @@ With IAM Conditions ([beta](https://terraform.io/docs/providers/google/provider_
 
 ```hcl
 resource "google_iap_tunnel_instance_iam_binding" "editor" {
-  project = "${google_compute_instance.tunnelvm.project}"
-  zone = "${google_compute_instance.tunnelvm.zone}"
-  instance = "${google_compute_instance.tunnelvm.name}"
+  project = google_compute_instance.tunnelvm.project
+  zone = google_compute_instance.tunnelvm.zone
+  instance = google_compute_instance.tunnelvm.name
   role = "roles/iap.tunnelResourceAccessor"
   members = [
     "user:jane@example.com",
@@ -115,9 +115,9 @@ resource "google_iap_tunnel_instance_iam_binding" "editor" {
 
 ```hcl
 resource "google_iap_tunnel_instance_iam_member" "editor" {
-  project = "${google_compute_instance.tunnelvm.project}"
-  zone = "${google_compute_instance.tunnelvm.zone}"
-  instance = "${google_compute_instance.tunnelvm.name}"
+  project = google_compute_instance.tunnelvm.project
+  zone = google_compute_instance.tunnelvm.zone
+  instance = google_compute_instance.tunnelvm.name
   role = "roles/iap.tunnelResourceAccessor"
   member = "user:jane@example.com"
 }
@@ -127,9 +127,9 @@ With IAM Conditions ([beta](https://terraform.io/docs/providers/google/provider_
 
 ```hcl
 resource "google_iap_tunnel_instance_iam_member" "editor" {
-  project = "${google_compute_instance.tunnelvm.project}"
-  zone = "${google_compute_instance.tunnelvm.zone}"
-  instance = "${google_compute_instance.tunnelvm.name}"
+  project = google_compute_instance.tunnelvm.project
+  zone = google_compute_instance.tunnelvm.zone
+  instance = google_compute_instance.tunnelvm.name
   role = "roles/iap.tunnelResourceAccessor"
   member = "user:jane@example.com"
 
