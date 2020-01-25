@@ -242,6 +242,14 @@ blocks in an update and then apply another update adding all of them back simult
 					},
 				},
 			},
+			"reverse_lookup": {
+				Type:     schema.TypeBool,
+				Optional: true,
+				ForceNew: true,
+				Description: `Specifies if this is a managed reverse lookup zone. If true, Cloud DNS will resolve reverse
+lookup queries using automatically configured records for VPC resources. This only applies
+to networks listed under 'private_visibility_config'.`,
+			},
 			"visibility": {
 				Type:             schema.TypeString,
 				Optional:         true,
@@ -294,6 +302,14 @@ func dnsManagedZoneForwardingConfigTargetNameServersSchema() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: `IPv4 address of a target name server.`,
+			},
+			"forwarding_path": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validation.StringInSlice([]string{"default", "private", ""}, false),
+				Description: `Forwarding path for this TargetNameServer. If unset or 'default' Cloud DNS will make forwarding
+decision based on address ranges, i.e. RFC1918 addresses go to the VPC, Non-RFC1918 addresses go
+to the Internet. When set to 'private', Cloud DNS will always send queries through VPC for this target`,
 			},
 		},
 	}
@@ -356,6 +372,12 @@ func resourceDNSManagedZoneCreate(d *schema.ResourceData, meta interface{}) erro
 		return err
 	} else if v, ok := d.GetOkExists("peering_config"); !isEmptyValue(reflect.ValueOf(peeringConfigProp)) && (ok || !reflect.DeepEqual(v, peeringConfigProp)) {
 		obj["peeringConfig"] = peeringConfigProp
+	}
+	reverseLookupConfigProp, err := expandDNSManagedZoneReverseLookup(d.Get("reverse_lookup"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("reverse_lookup"); !isEmptyValue(reflect.ValueOf(reverseLookupConfigProp)) && (ok || !reflect.DeepEqual(v, reverseLookupConfigProp)) {
+		obj["reverseLookupConfig"] = reverseLookupConfigProp
 	}
 
 	url, err := replaceVars(d, config, "{{DNSBasePath}}projects/{{project}}/managedZones")
@@ -434,6 +456,9 @@ func resourceDNSManagedZoneRead(d *schema.ResourceData, meta interface{}) error 
 		return fmt.Errorf("Error reading ManagedZone: %s", err)
 	}
 	if err := d.Set("peering_config", flattenDNSManagedZonePeeringConfig(res["peeringConfig"], d)); err != nil {
+		return fmt.Errorf("Error reading ManagedZone: %s", err)
+	}
+	if err := d.Set("reverse_lookup", flattenDNSManagedZoneReverseLookup(res["reverseLookupConfig"], d)); err != nil {
 		return fmt.Errorf("Error reading ManagedZone: %s", err)
 	}
 
@@ -732,12 +757,17 @@ func flattenDNSManagedZoneForwardingConfigTargetNameServers(v interface{}, d *sc
 			continue
 		}
 		transformed.Add(map[string]interface{}{
-			"ipv4_address": flattenDNSManagedZoneForwardingConfigTargetNameServersIpv4Address(original["ipv4Address"], d),
+			"ipv4_address":    flattenDNSManagedZoneForwardingConfigTargetNameServersIpv4Address(original["ipv4Address"], d),
+			"forwarding_path": flattenDNSManagedZoneForwardingConfigTargetNameServersForwardingPath(original["forwardingPath"], d),
 		})
 	}
 	return transformed
 }
 func flattenDNSManagedZoneForwardingConfigTargetNameServersIpv4Address(v interface{}, d *schema.ResourceData) interface{} {
+	return v
+}
+
+func flattenDNSManagedZoneForwardingConfigTargetNameServersForwardingPath(v interface{}, d *schema.ResourceData) interface{} {
 	return v
 }
 
@@ -769,6 +799,10 @@ func flattenDNSManagedZonePeeringConfigTargetNetwork(v interface{}, d *schema.Re
 }
 func flattenDNSManagedZonePeeringConfigTargetNetworkNetworkUrl(v interface{}, d *schema.ResourceData) interface{} {
 	return v
+}
+
+func flattenDNSManagedZoneReverseLookup(v interface{}, d *schema.ResourceData) interface{} {
+	return v != nil
 }
 
 func expandDNSManagedZoneDescription(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
@@ -992,12 +1026,23 @@ func expandDNSManagedZoneForwardingConfigTargetNameServers(v interface{}, d Terr
 			transformed["ipv4Address"] = transformedIpv4Address
 		}
 
+		transformedForwardingPath, err := expandDNSManagedZoneForwardingConfigTargetNameServersForwardingPath(original["forwarding_path"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedForwardingPath); val.IsValid() && !isEmptyValue(val) {
+			transformed["forwardingPath"] = transformedForwardingPath
+		}
+
 		req = append(req, transformed)
 	}
 	return req, nil
 }
 
 func expandDNSManagedZoneForwardingConfigTargetNameServersIpv4Address(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandDNSManagedZoneForwardingConfigTargetNameServersForwardingPath(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
@@ -1041,4 +1086,12 @@ func expandDNSManagedZonePeeringConfigTargetNetwork(v interface{}, d TerraformRe
 
 func expandDNSManagedZonePeeringConfigTargetNetworkNetworkUrl(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
+}
+
+func expandDNSManagedZoneReverseLookup(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	if v == nil || !v.(bool) {
+		return nil, nil
+	}
+
+	return struct{}{}, nil
 }

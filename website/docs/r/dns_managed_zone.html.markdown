@@ -242,6 +242,12 @@ The following arguments are supported:
   The presence of this field indicates that DNS Peering is enabled for this
   zone. The value of this field contains the network to peer with.  Structure is documented below.
 
+* `reverse_lookup` -
+  (Optional, [Beta](https://terraform.io/docs/providers/google/guides/provider_versions.html))
+  Specifies if this is a managed reverse lookup zone. If true, Cloud DNS will resolve reverse
+  lookup queries using automatically configured records for VPC resources. This only applies
+  to networks listed under `private_visibility_config`.
+
 * `project` - (Optional) The ID of the project in which the resource belongs.
     If it is not provided, the provider project is used.
 
@@ -323,6 +329,12 @@ The `target_name_servers` block supports:
 * `ipv4_address` -
   (Required)
   IPv4 address of a target name server.
+
+* `forwarding_path` -
+  (Optional)
+  Forwarding path for this TargetNameServer. If unset or `default` Cloud DNS will make forwarding
+  decision based on address ranges, i.e. RFC1918 addresses go to the VPC, Non-RFC1918 addresses go
+  to the Internet. When set to `private`, Cloud DNS will always send queries through VPC for this target
 
 The `peering_config` block supports:
 
