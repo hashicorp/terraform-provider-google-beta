@@ -56,7 +56,7 @@ func testSweepBinaryAuthorizationAttestor(region string) error {
 		},
 	}
 
-	listTemplate := strings.Split("https://binaryauthorization.googleapis.com/v1beta1/projects/{{project}}/attestors?attestorId={{name}}", "?")[0]
+	listTemplate := strings.Split("https://binaryauthorization.googleapis.com/v1/projects/{{project}}/attestors?attestorId={{name}}", "?")[0]
 	listUrl, err := replaceVars(d, config, listTemplate)
 	if err != nil {
 		log.Printf("[INFO][SWEEPER_LOG] error preparing sweeper list url: %s", err)
@@ -94,7 +94,7 @@ func testSweepBinaryAuthorizationAttestor(region string) error {
 			continue
 		}
 
-		deleteTemplate := "https://binaryauthorization.googleapis.com/v1beta1/projects/{{project}}/attestors/{{name}}"
+		deleteTemplate := "https://binaryauthorization.googleapis.com/v1/projects/{{project}}/attestors/{{name}}"
 		deleteUrl, err := replaceVars(d, config, deleteTemplate)
 		if err != nil {
 			log.Printf("[INFO][SWEEPER_LOG] error preparing delete url: %s", err)
