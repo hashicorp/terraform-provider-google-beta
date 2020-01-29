@@ -8,6 +8,7 @@ IMPROVEMENTS:
 BUG FIXES:
 * compute: `google_compute_instance_template` added plan time check for any disks marked `boot` outside of the first disk ([#1684](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1684))
 * container: Fixed perma-diff in `google_container_cluster`'s `cluster_autoscaling.auto_provisioning_defaults`. ([#1679](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1679))
+* logging: updated `bigquery_options` so the default value from the api will be set in state. ([#1694](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1694))
 * storage: Stopped `project-owner` showing up in the diff for `google_storage_bucket_acl` ([#1674](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1674))
 
 ## 3.5.0 (January 22, 2020)
