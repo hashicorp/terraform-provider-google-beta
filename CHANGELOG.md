@@ -1,4 +1,23 @@
-## 3.5.1 (Unreleased)
+## 3.6.1 (Unreleased)
+## 3.6.0 (January 29, 2020)
+
+FEATURES:
+* **New Data Source:** google_monitoring_notification_channel ([#1643](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1643))
+* **New Resource:** google_compute_network_peering_routes_config ([#1652](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1652))
+
+IMPROVEMENTS:
+* compute: added waiting logic to `google_compute_interconnect_attachment` to avoid modifications when the attachment is UNPROVISIONED ([#1664](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1664))
+* compute: made the `google_compute_network_peering` routes fields available in GA ([#1650](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1650))
+* datafusion: Added `service_account` field to `google_data_fusion_instance` ([#1660](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1660))
+* iap: added support for IAM conditions in `google_iap_tunnel_instance_iam_*` IAM resources ([#1654](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1654))
+* resourcemanager: restricted the length of the `description` field of `google_service_account`. It is now limited to 256 characters. ([#1646](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1646))
+* scheduler: Added `attempt_deadline` to `google_cloud_scheduler_job`. ([#1639](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1639))
+* storage: added `default_event_based_hold` to `google_storage_bucket` ([#1626](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1626))
+
+BUG FIXES:
+* compute: Fixed `google_compute_instance_from_template` with existing boot disks ([#1655](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1655))
+* compute: Fixed a bug in `google_compute_instance` when attempting to update a field that requires stopping and starting an instance with an encrypted disk ([#1658](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1658))
+
 ## 3.5.0 (January 22, 2020)
 
 DEPRECATIONS:
