@@ -779,6 +779,7 @@ resource "google_sql_database_instance" "instance" {
       authorized_networks {
         value           = "108.12.12.12"
         name            = "misc"
+        expiration_time = "2037-11-15T16:19:00.094Z"
       }
     }
 
@@ -941,6 +942,7 @@ resource "google_sql_database_instance" "instance" {
       authorized_networks {
         value           = "108.12.12.12"
         name            = "misc"
+        expiration_time = "2037-11-15T16:19:00.094Z"
       }
     }
   }
