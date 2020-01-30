@@ -155,6 +155,7 @@ The `notification_config` block supports:
 
 In addition to the arguments listed above, the following computed attributes are exported:
 
+* `id` - an identifier for the resource with format `{{dataset}}/fhirStores/{{name}}`
 
 * `self_link` -
   The fully qualified name of this dataset

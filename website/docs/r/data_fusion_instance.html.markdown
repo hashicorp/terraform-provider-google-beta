@@ -156,6 +156,7 @@ The `network_config` block supports:
 
 In addition to the arguments listed above, the following computed attributes are exported:
 
+* `id` - an identifier for the resource with format `projects/{{project}}/locations/{{region}}/instances/{{name}}`
 
 * `create_time` -
   The time the instance was created in RFC3339 UTC "Zulu" format, accurate to nanoseconds.

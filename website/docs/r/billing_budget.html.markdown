@@ -230,6 +230,7 @@ The `all_updates_rule` block supports:
 
 In addition to the arguments listed above, the following computed attributes are exported:
 
+* `id` - an identifier for the resource with format `{{name}}`
 
 * `name` -
   Resource name of the budget. The resource name

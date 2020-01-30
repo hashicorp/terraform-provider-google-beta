@@ -661,6 +661,7 @@ The `log_config` block supports:
 
 In addition to the arguments listed above, the following computed attributes are exported:
 
+* `id` - an identifier for the resource with format `projects/{{project}}/global/backendServices/{{name}}`
 
 * `creation_timestamp` -
   Creation timestamp in RFC3339 text format.
