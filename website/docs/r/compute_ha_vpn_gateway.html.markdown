@@ -309,6 +309,7 @@ The following arguments are supported:
 
 In addition to the arguments listed above, the following computed attributes are exported:
 
+* `id` - an identifier for the resource with format `projects/{{project}}/regions/{{region}}/vpnGateways/{{name}}`
 
 * `vpn_interfaces` -
   A list of interfaces on this VPN gateway.  Structure is documented below.

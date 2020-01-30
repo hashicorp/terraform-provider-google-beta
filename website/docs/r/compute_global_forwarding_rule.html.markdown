@@ -369,6 +369,7 @@ The `filter_labels` block supports:
 
 In addition to the arguments listed above, the following computed attributes are exported:
 
+* `id` - an identifier for the resource with format `projects/{{project}}/global/forwardingRules/{{name}}`
 
 * `label_fingerprint` -
   The fingerprint used for optimistic locking of this resource.  Used

@@ -355,6 +355,7 @@ The `target_network` block supports:
 
 In addition to the arguments listed above, the following computed attributes are exported:
 
+* `id` - an identifier for the resource with format `projects/{{project}}/managedZones/{{name}}`
 
 * `name_servers` -
   Delegate your managed_zone to these virtual name servers;

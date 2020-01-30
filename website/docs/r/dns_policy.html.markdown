@@ -155,6 +155,12 @@ The `networks` block supports:
   This should be formatted like
   `https://www.googleapis.com/compute/v1/projects/{project}/global/networks/{network}`
 
+## Attributes Reference
+
+In addition to the arguments listed above, the following computed attributes are exported:
+
+* `id` - an identifier for the resource with format `projects/{{project}}/policies/{{name}}`
+
 
 ## Timeouts
 

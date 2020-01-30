@@ -207,6 +207,13 @@ The `interface` block supports:
   your on-premise gateway or another Cloud provider’s VPN gateway,
   it cannot be an IP address from Google Compute Engine.
 
+## Attributes Reference
+
+In addition to the arguments listed above, the following computed attributes are exported:
+
+* `id` - an identifier for the resource with format `projects/{{project}}/global/externalVpnGateways/{{name}}`
+* `self_link` - The URI of the created resource.
+
 
 ## Timeouts
 
