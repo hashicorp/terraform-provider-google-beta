@@ -196,16 +196,16 @@ func resourceComputeExternalVpnGatewayRead(d *schema.ResourceData, meta interfac
 		return fmt.Errorf("Error reading ExternalVpnGateway: %s", err)
 	}
 
-	if err := d.Set("description", flattenComputeExternalVpnGatewayDescription(res["description"], d)); err != nil {
+	if err := d.Set("description", flattenComputeExternalVpnGatewayDescription(res["description"], d, config)); err != nil {
 		return fmt.Errorf("Error reading ExternalVpnGateway: %s", err)
 	}
-	if err := d.Set("name", flattenComputeExternalVpnGatewayName(res["name"], d)); err != nil {
+	if err := d.Set("name", flattenComputeExternalVpnGatewayName(res["name"], d, config)); err != nil {
 		return fmt.Errorf("Error reading ExternalVpnGateway: %s", err)
 	}
-	if err := d.Set("redundancy_type", flattenComputeExternalVpnGatewayRedundancyType(res["redundancyType"], d)); err != nil {
+	if err := d.Set("redundancy_type", flattenComputeExternalVpnGatewayRedundancyType(res["redundancyType"], d, config)); err != nil {
 		return fmt.Errorf("Error reading ExternalVpnGateway: %s", err)
 	}
-	if err := d.Set("interface", flattenComputeExternalVpnGatewayInterface(res["interfaces"], d)); err != nil {
+	if err := d.Set("interface", flattenComputeExternalVpnGatewayInterface(res["interfaces"], d, config)); err != nil {
 		return fmt.Errorf("Error reading ExternalVpnGateway: %s", err)
 	}
 	if err := d.Set("self_link", ConvertSelfLinkToV1(res["selfLink"].(string))); err != nil {
@@ -268,19 +268,19 @@ func resourceComputeExternalVpnGatewayImport(d *schema.ResourceData, meta interf
 	return []*schema.ResourceData{d}, nil
 }
 
-func flattenComputeExternalVpnGatewayDescription(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeExternalVpnGatewayDescription(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenComputeExternalVpnGatewayName(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeExternalVpnGatewayName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenComputeExternalVpnGatewayRedundancyType(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeExternalVpnGatewayRedundancyType(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenComputeExternalVpnGatewayInterface(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeExternalVpnGatewayInterface(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	if v == nil {
 		return v
 	}
@@ -293,13 +293,13 @@ func flattenComputeExternalVpnGatewayInterface(v interface{}, d *schema.Resource
 			continue
 		}
 		transformed = append(transformed, map[string]interface{}{
-			"id":         flattenComputeExternalVpnGatewayInterfaceId(original["id"], d),
-			"ip_address": flattenComputeExternalVpnGatewayInterfaceIpAddress(original["ipAddress"], d),
+			"id":         flattenComputeExternalVpnGatewayInterfaceId(original["id"], d, config),
+			"ip_address": flattenComputeExternalVpnGatewayInterfaceIpAddress(original["ipAddress"], d, config),
 		})
 	}
 	return transformed
 }
-func flattenComputeExternalVpnGatewayInterfaceId(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeExternalVpnGatewayInterfaceId(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
@@ -309,7 +309,7 @@ func flattenComputeExternalVpnGatewayInterfaceId(v interface{}, d *schema.Resour
 	return v
 }
 
-func flattenComputeExternalVpnGatewayInterfaceIpAddress(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeExternalVpnGatewayInterfaceIpAddress(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 

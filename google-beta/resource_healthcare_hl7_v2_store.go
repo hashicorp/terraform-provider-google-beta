@@ -205,16 +205,16 @@ func resourceHealthcareHl7V2StoreRead(d *schema.ResourceData, meta interface{}) 
 		return nil
 	}
 
-	if err := d.Set("name", flattenHealthcareHl7V2StoreName(res["name"], d)); err != nil {
+	if err := d.Set("name", flattenHealthcareHl7V2StoreName(res["name"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Hl7V2Store: %s", err)
 	}
-	if err := d.Set("parser_config", flattenHealthcareHl7V2StoreParserConfig(res["parserConfig"], d)); err != nil {
+	if err := d.Set("parser_config", flattenHealthcareHl7V2StoreParserConfig(res["parserConfig"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Hl7V2Store: %s", err)
 	}
-	if err := d.Set("labels", flattenHealthcareHl7V2StoreLabels(res["labels"], d)); err != nil {
+	if err := d.Set("labels", flattenHealthcareHl7V2StoreLabels(res["labels"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Hl7V2Store: %s", err)
 	}
-	if err := d.Set("notification_config", flattenHealthcareHl7V2StoreNotificationConfig(res["notificationConfig"], d)); err != nil {
+	if err := d.Set("notification_config", flattenHealthcareHl7V2StoreNotificationConfig(res["notificationConfig"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Hl7V2Store: %s", err)
 	}
 
@@ -313,11 +313,11 @@ func resourceHealthcareHl7V2StoreImport(d *schema.ResourceData, meta interface{}
 	return []*schema.ResourceData{d}, nil
 }
 
-func flattenHealthcareHl7V2StoreName(v interface{}, d *schema.ResourceData) interface{} {
+func flattenHealthcareHl7V2StoreName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenHealthcareHl7V2StoreParserConfig(v interface{}, d *schema.ResourceData) interface{} {
+func flattenHealthcareHl7V2StoreParserConfig(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -327,24 +327,24 @@ func flattenHealthcareHl7V2StoreParserConfig(v interface{}, d *schema.ResourceDa
 	}
 	transformed := make(map[string]interface{})
 	transformed["allow_null_header"] =
-		flattenHealthcareHl7V2StoreParserConfigAllowNullHeader(original["allowNullHeader"], d)
+		flattenHealthcareHl7V2StoreParserConfigAllowNullHeader(original["allowNullHeader"], d, config)
 	transformed["segment_terminator"] =
-		flattenHealthcareHl7V2StoreParserConfigSegmentTerminator(original["segmentTerminator"], d)
+		flattenHealthcareHl7V2StoreParserConfigSegmentTerminator(original["segmentTerminator"], d, config)
 	return []interface{}{transformed}
 }
-func flattenHealthcareHl7V2StoreParserConfigAllowNullHeader(v interface{}, d *schema.ResourceData) interface{} {
+func flattenHealthcareHl7V2StoreParserConfigAllowNullHeader(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenHealthcareHl7V2StoreParserConfigSegmentTerminator(v interface{}, d *schema.ResourceData) interface{} {
+func flattenHealthcareHl7V2StoreParserConfigSegmentTerminator(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenHealthcareHl7V2StoreLabels(v interface{}, d *schema.ResourceData) interface{} {
+func flattenHealthcareHl7V2StoreLabels(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenHealthcareHl7V2StoreNotificationConfig(v interface{}, d *schema.ResourceData) interface{} {
+func flattenHealthcareHl7V2StoreNotificationConfig(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -354,10 +354,10 @@ func flattenHealthcareHl7V2StoreNotificationConfig(v interface{}, d *schema.Reso
 	}
 	transformed := make(map[string]interface{})
 	transformed["pubsub_topic"] =
-		flattenHealthcareHl7V2StoreNotificationConfigPubsubTopic(original["pubsubTopic"], d)
+		flattenHealthcareHl7V2StoreNotificationConfigPubsubTopic(original["pubsubTopic"], d, config)
 	return []interface{}{transformed}
 }
-func flattenHealthcareHl7V2StoreNotificationConfigPubsubTopic(v interface{}, d *schema.ResourceData) interface{} {
+func flattenHealthcareHl7V2StoreNotificationConfigPubsubTopic(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 

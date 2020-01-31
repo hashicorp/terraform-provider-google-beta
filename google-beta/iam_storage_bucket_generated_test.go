@@ -288,7 +288,7 @@ resource "google_storage_bucket" "default" {
 }
 
 resource "google_storage_bucket_iam_member" "foo" {
-  bucket = "${google_storage_bucket.default.name}"
+  bucket = google_storage_bucket.default.name
   role = "%{role}"
   member = "user:admin@hashicorptest.com"
 }
@@ -314,8 +314,8 @@ data "google_iam_policy" "foo" {
 }
 
 resource "google_storage_bucket_iam_policy" "foo" {
-  bucket = "${google_storage_bucket.default.name}"
-  policy_data = "${data.google_iam_policy.foo.policy_data}"
+  bucket = google_storage_bucket.default.name
+  policy_data = data.google_iam_policy.foo.policy_data
 }
 `, context)
 }
@@ -331,8 +331,8 @@ data "google_iam_policy" "foo" {
 }
 
 resource "google_storage_bucket_iam_policy" "foo" {
-  bucket = "${google_storage_bucket.default.name}"
-  policy_data = "${data.google_iam_policy.foo.policy_data}"
+  bucket = google_storage_bucket.default.name
+  policy_data = data.google_iam_policy.foo.policy_data
 }
 `, context)
 }
@@ -345,7 +345,7 @@ resource "google_storage_bucket" "default" {
 }
 
 resource "google_storage_bucket_iam_binding" "foo" {
-  bucket = "${google_storage_bucket.default.name}"
+  bucket = google_storage_bucket.default.name
   role = "%{role}"
   members = ["user:admin@hashicorptest.com"]
 }
@@ -360,7 +360,7 @@ resource "google_storage_bucket" "default" {
 }
 
 resource "google_storage_bucket_iam_binding" "foo" {
-  bucket = "${google_storage_bucket.default.name}"
+  bucket = google_storage_bucket.default.name
   role = "%{role}"
   members = ["user:admin@hashicorptest.com", "user:paddy@hashicorp.com"]
 }
@@ -375,7 +375,7 @@ resource "google_storage_bucket" "default" {
 }
 
 resource "google_storage_bucket_iam_binding" "foo" {
-  bucket = "${google_storage_bucket.default.name}"
+  bucket = google_storage_bucket.default.name
   role = "%{role}"
   members = ["user:admin@hashicorptest.com"]
   condition {
@@ -395,13 +395,13 @@ resource "google_storage_bucket" "default" {
 }
 
 resource "google_storage_bucket_iam_binding" "foo" {
-  bucket = "${google_storage_bucket.default.name}"
+  bucket = google_storage_bucket.default.name
   role = "%{role}"
   members = ["user:admin@hashicorptest.com"]
 }
 
 resource "google_storage_bucket_iam_binding" "foo2" {
-  bucket = "${google_storage_bucket.default.name}"
+  bucket = google_storage_bucket.default.name
   role = "%{role}"
   members = ["user:admin@hashicorptest.com"]
   condition {
@@ -421,7 +421,7 @@ resource "google_storage_bucket" "default" {
 }
 
 resource "google_storage_bucket_iam_member" "foo" {
-  bucket = "${google_storage_bucket.default.name}"
+  bucket = google_storage_bucket.default.name
   role = "%{role}"
   member = "user:admin@hashicorptest.com"
   condition {
@@ -441,13 +441,13 @@ resource "google_storage_bucket" "default" {
 }
 
 resource "google_storage_bucket_iam_member" "foo" {
-  bucket = "${google_storage_bucket.default.name}"
+  bucket = google_storage_bucket.default.name
   role = "%{role}"
   member = "user:admin@hashicorptest.com"
 }
 
 resource "google_storage_bucket_iam_member" "foo2" {
-  bucket = "${google_storage_bucket.default.name}"
+  bucket = google_storage_bucket.default.name
   role = "%{role}"
   member = "user:admin@hashicorptest.com"
   condition {
@@ -483,8 +483,8 @@ data "google_iam_policy" "foo" {
 }
 
 resource "google_storage_bucket_iam_policy" "foo" {
-  bucket = "${google_storage_bucket.default.name}"
-  policy_data = "${data.google_iam_policy.foo.policy_data}"
+  bucket = google_storage_bucket.default.name
+  policy_data = data.google_iam_policy.foo.policy_data
 }
 `, context)
 }

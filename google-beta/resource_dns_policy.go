@@ -238,22 +238,22 @@ func resourceDNSPolicyRead(d *schema.ResourceData, meta interface{}) error {
 		return fmt.Errorf("Error reading Policy: %s", err)
 	}
 
-	if err := d.Set("alternative_name_server_config", flattenDNSPolicyAlternativeNameServerConfig(res["alternativeNameServerConfig"], d)); err != nil {
+	if err := d.Set("alternative_name_server_config", flattenDNSPolicyAlternativeNameServerConfig(res["alternativeNameServerConfig"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Policy: %s", err)
 	}
-	if err := d.Set("description", flattenDNSPolicyDescription(res["description"], d)); err != nil {
+	if err := d.Set("description", flattenDNSPolicyDescription(res["description"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Policy: %s", err)
 	}
-	if err := d.Set("enable_inbound_forwarding", flattenDNSPolicyEnableInboundForwarding(res["enableInboundForwarding"], d)); err != nil {
+	if err := d.Set("enable_inbound_forwarding", flattenDNSPolicyEnableInboundForwarding(res["enableInboundForwarding"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Policy: %s", err)
 	}
-	if err := d.Set("enable_logging", flattenDNSPolicyEnableLogging(res["enableLogging"], d)); err != nil {
+	if err := d.Set("enable_logging", flattenDNSPolicyEnableLogging(res["enableLogging"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Policy: %s", err)
 	}
-	if err := d.Set("name", flattenDNSPolicyName(res["name"], d)); err != nil {
+	if err := d.Set("name", flattenDNSPolicyName(res["name"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Policy: %s", err)
 	}
-	if err := d.Set("networks", flattenDNSPolicyNetworks(res["networks"], d)); err != nil {
+	if err := d.Set("networks", flattenDNSPolicyNetworks(res["networks"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Policy: %s", err)
 	}
 
@@ -385,7 +385,7 @@ func resourceDNSPolicyImport(d *schema.ResourceData, meta interface{}) ([]*schem
 	return []*schema.ResourceData{d}, nil
 }
 
-func flattenDNSPolicyAlternativeNameServerConfig(v interface{}, d *schema.ResourceData) interface{} {
+func flattenDNSPolicyAlternativeNameServerConfig(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -395,10 +395,10 @@ func flattenDNSPolicyAlternativeNameServerConfig(v interface{}, d *schema.Resour
 	}
 	transformed := make(map[string]interface{})
 	transformed["target_name_servers"] =
-		flattenDNSPolicyAlternativeNameServerConfigTargetNameServers(original["targetNameServers"], d)
+		flattenDNSPolicyAlternativeNameServerConfigTargetNameServers(original["targetNameServers"], d, config)
 	return []interface{}{transformed}
 }
-func flattenDNSPolicyAlternativeNameServerConfigTargetNameServers(v interface{}, d *schema.ResourceData) interface{} {
+func flattenDNSPolicyAlternativeNameServerConfigTargetNameServers(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	if v == nil {
 		return v
 	}
@@ -419,32 +419,32 @@ func flattenDNSPolicyAlternativeNameServerConfigTargetNameServers(v interface{},
 			continue
 		}
 		transformed.Add(map[string]interface{}{
-			"ipv4_address": flattenDNSPolicyAlternativeNameServerConfigTargetNameServersIpv4Address(original["ipv4Address"], d),
+			"ipv4_address": flattenDNSPolicyAlternativeNameServerConfigTargetNameServersIpv4Address(original["ipv4Address"], d, config),
 		})
 	}
 	return transformed
 }
-func flattenDNSPolicyAlternativeNameServerConfigTargetNameServersIpv4Address(v interface{}, d *schema.ResourceData) interface{} {
+func flattenDNSPolicyAlternativeNameServerConfigTargetNameServersIpv4Address(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenDNSPolicyDescription(v interface{}, d *schema.ResourceData) interface{} {
+func flattenDNSPolicyDescription(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenDNSPolicyEnableInboundForwarding(v interface{}, d *schema.ResourceData) interface{} {
+func flattenDNSPolicyEnableInboundForwarding(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenDNSPolicyEnableLogging(v interface{}, d *schema.ResourceData) interface{} {
+func flattenDNSPolicyEnableLogging(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenDNSPolicyName(v interface{}, d *schema.ResourceData) interface{} {
+func flattenDNSPolicyName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenDNSPolicyNetworks(v interface{}, d *schema.ResourceData) interface{} {
+func flattenDNSPolicyNetworks(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	if v == nil {
 		return v
 	}
@@ -465,12 +465,12 @@ func flattenDNSPolicyNetworks(v interface{}, d *schema.ResourceData) interface{}
 			continue
 		}
 		transformed.Add(map[string]interface{}{
-			"network_url": flattenDNSPolicyNetworksNetworkUrl(original["networkUrl"], d),
+			"network_url": flattenDNSPolicyNetworksNetworkUrl(original["networkUrl"], d, config),
 		})
 	}
 	return transformed
 }
-func flattenDNSPolicyNetworksNetworkUrl(v interface{}, d *schema.ResourceData) interface{} {
+func flattenDNSPolicyNetworksNetworkUrl(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 

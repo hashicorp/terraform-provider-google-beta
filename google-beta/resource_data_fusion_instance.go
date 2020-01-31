@@ -308,52 +308,52 @@ func resourceDataFusionInstanceRead(d *schema.ResourceData, meta interface{}) er
 		return fmt.Errorf("Error reading Instance: %s", err)
 	}
 
-	if err := d.Set("name", flattenDataFusionInstanceName(res["name"], d)); err != nil {
+	if err := d.Set("name", flattenDataFusionInstanceName(res["name"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Instance: %s", err)
 	}
-	if err := d.Set("description", flattenDataFusionInstanceDescription(res["description"], d)); err != nil {
+	if err := d.Set("description", flattenDataFusionInstanceDescription(res["description"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Instance: %s", err)
 	}
-	if err := d.Set("type", flattenDataFusionInstanceType(res["type"], d)); err != nil {
+	if err := d.Set("type", flattenDataFusionInstanceType(res["type"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Instance: %s", err)
 	}
-	if err := d.Set("enable_stackdriver_logging", flattenDataFusionInstanceEnableStackdriverLogging(res["enableStackdriverLogging"], d)); err != nil {
+	if err := d.Set("enable_stackdriver_logging", flattenDataFusionInstanceEnableStackdriverLogging(res["enableStackdriverLogging"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Instance: %s", err)
 	}
-	if err := d.Set("enable_stackdriver_monitoring", flattenDataFusionInstanceEnableStackdriverMonitoring(res["enableStackdriverMonitoring"], d)); err != nil {
+	if err := d.Set("enable_stackdriver_monitoring", flattenDataFusionInstanceEnableStackdriverMonitoring(res["enableStackdriverMonitoring"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Instance: %s", err)
 	}
-	if err := d.Set("labels", flattenDataFusionInstanceLabels(res["labels"], d)); err != nil {
+	if err := d.Set("labels", flattenDataFusionInstanceLabels(res["labels"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Instance: %s", err)
 	}
-	if err := d.Set("options", flattenDataFusionInstanceOptions(res["options"], d)); err != nil {
+	if err := d.Set("options", flattenDataFusionInstanceOptions(res["options"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Instance: %s", err)
 	}
-	if err := d.Set("create_time", flattenDataFusionInstanceCreateTime(res["createTime"], d)); err != nil {
+	if err := d.Set("create_time", flattenDataFusionInstanceCreateTime(res["createTime"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Instance: %s", err)
 	}
-	if err := d.Set("update_time", flattenDataFusionInstanceUpdateTime(res["updateTime"], d)); err != nil {
+	if err := d.Set("update_time", flattenDataFusionInstanceUpdateTime(res["updateTime"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Instance: %s", err)
 	}
-	if err := d.Set("state", flattenDataFusionInstanceState(res["state"], d)); err != nil {
+	if err := d.Set("state", flattenDataFusionInstanceState(res["state"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Instance: %s", err)
 	}
-	if err := d.Set("state_message", flattenDataFusionInstanceStateMessage(res["stateMessage"], d)); err != nil {
+	if err := d.Set("state_message", flattenDataFusionInstanceStateMessage(res["stateMessage"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Instance: %s", err)
 	}
-	if err := d.Set("service_endpoint", flattenDataFusionInstanceServiceEndpoint(res["serviceEndpoint"], d)); err != nil {
+	if err := d.Set("service_endpoint", flattenDataFusionInstanceServiceEndpoint(res["serviceEndpoint"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Instance: %s", err)
 	}
-	if err := d.Set("version", flattenDataFusionInstanceVersion(res["version"], d)); err != nil {
+	if err := d.Set("version", flattenDataFusionInstanceVersion(res["version"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Instance: %s", err)
 	}
-	if err := d.Set("service_account", flattenDataFusionInstanceServiceAccount(res["serviceAccount"], d)); err != nil {
+	if err := d.Set("service_account", flattenDataFusionInstanceServiceAccount(res["serviceAccount"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Instance: %s", err)
 	}
-	if err := d.Set("private_instance", flattenDataFusionInstancePrivateInstance(res["privateInstance"], d)); err != nil {
+	if err := d.Set("private_instance", flattenDataFusionInstancePrivateInstance(res["privateInstance"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Instance: %s", err)
 	}
-	if err := d.Set("network_config", flattenDataFusionInstanceNetworkConfig(res["networkConfig"], d)); err != nil {
+	if err := d.Set("network_config", flattenDataFusionInstanceNetworkConfig(res["networkConfig"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Instance: %s", err)
 	}
 
@@ -465,70 +465,70 @@ func resourceDataFusionInstanceImport(d *schema.ResourceData, meta interface{}) 
 	return []*schema.ResourceData{d}, nil
 }
 
-func flattenDataFusionInstanceName(v interface{}, d *schema.ResourceData) interface{} {
+func flattenDataFusionInstanceName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	if v == nil {
 		return v
 	}
 	return NameFromSelfLinkStateFunc(v)
 }
 
-func flattenDataFusionInstanceDescription(v interface{}, d *schema.ResourceData) interface{} {
+func flattenDataFusionInstanceDescription(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenDataFusionInstanceType(v interface{}, d *schema.ResourceData) interface{} {
+func flattenDataFusionInstanceType(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenDataFusionInstanceEnableStackdriverLogging(v interface{}, d *schema.ResourceData) interface{} {
+func flattenDataFusionInstanceEnableStackdriverLogging(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenDataFusionInstanceEnableStackdriverMonitoring(v interface{}, d *schema.ResourceData) interface{} {
+func flattenDataFusionInstanceEnableStackdriverMonitoring(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenDataFusionInstanceLabels(v interface{}, d *schema.ResourceData) interface{} {
+func flattenDataFusionInstanceLabels(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenDataFusionInstanceOptions(v interface{}, d *schema.ResourceData) interface{} {
+func flattenDataFusionInstanceOptions(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenDataFusionInstanceCreateTime(v interface{}, d *schema.ResourceData) interface{} {
+func flattenDataFusionInstanceCreateTime(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenDataFusionInstanceUpdateTime(v interface{}, d *schema.ResourceData) interface{} {
+func flattenDataFusionInstanceUpdateTime(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenDataFusionInstanceState(v interface{}, d *schema.ResourceData) interface{} {
+func flattenDataFusionInstanceState(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenDataFusionInstanceStateMessage(v interface{}, d *schema.ResourceData) interface{} {
+func flattenDataFusionInstanceStateMessage(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenDataFusionInstanceServiceEndpoint(v interface{}, d *schema.ResourceData) interface{} {
+func flattenDataFusionInstanceServiceEndpoint(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenDataFusionInstanceVersion(v interface{}, d *schema.ResourceData) interface{} {
+func flattenDataFusionInstanceVersion(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenDataFusionInstanceServiceAccount(v interface{}, d *schema.ResourceData) interface{} {
+func flattenDataFusionInstanceServiceAccount(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenDataFusionInstancePrivateInstance(v interface{}, d *schema.ResourceData) interface{} {
+func flattenDataFusionInstancePrivateInstance(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenDataFusionInstanceNetworkConfig(v interface{}, d *schema.ResourceData) interface{} {
+func flattenDataFusionInstanceNetworkConfig(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -538,16 +538,16 @@ func flattenDataFusionInstanceNetworkConfig(v interface{}, d *schema.ResourceDat
 	}
 	transformed := make(map[string]interface{})
 	transformed["ip_allocation"] =
-		flattenDataFusionInstanceNetworkConfigIpAllocation(original["ipAllocation"], d)
+		flattenDataFusionInstanceNetworkConfigIpAllocation(original["ipAllocation"], d, config)
 	transformed["network"] =
-		flattenDataFusionInstanceNetworkConfigNetwork(original["network"], d)
+		flattenDataFusionInstanceNetworkConfigNetwork(original["network"], d, config)
 	return []interface{}{transformed}
 }
-func flattenDataFusionInstanceNetworkConfigIpAllocation(v interface{}, d *schema.ResourceData) interface{} {
+func flattenDataFusionInstanceNetworkConfigIpAllocation(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenDataFusionInstanceNetworkConfigNetwork(v interface{}, d *schema.ResourceData) interface{} {
+func flattenDataFusionInstanceNetworkConfigNetwork(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 

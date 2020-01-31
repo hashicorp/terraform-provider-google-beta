@@ -264,12 +264,12 @@ func resourceBillingBudgetRead(d *schema.ResourceData, meta interface{}) error {
 		return handleNotFoundError(err, d, fmt.Sprintf("BillingBudget %q", d.Id()))
 	}
 
-	if err := d.Set("name", flattenBillingBudgetName(res["name"], d)); err != nil {
+	if err := d.Set("name", flattenBillingBudgetName(res["name"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Budget: %s", err)
 	}
 	// Terraform must set the top level schema field, but since this object contains collapsed properties
 	// it's difficult to know what the top level should be. Instead we just loop over the map returned from flatten.
-	if flattenedProp := flattenBillingBudgetBudget(res["budget"], d); flattenedProp != nil {
+	if flattenedProp := flattenBillingBudgetBudget(res["budget"], d, config); flattenedProp != nil {
 		casted := flattenedProp.([]interface{})[0]
 		if casted != nil {
 			for k, v := range casted.(map[string]interface{}) {
@@ -339,11 +339,11 @@ func resourceBillingBudgetImport(d *schema.ResourceData, meta interface{}) ([]*s
 	return []*schema.ResourceData{d}, nil
 }
 
-func flattenBillingBudgetName(v interface{}, d *schema.ResourceData) interface{} {
+func flattenBillingBudgetName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenBillingBudgetBudget(v interface{}, d *schema.ResourceData) interface{} {
+func flattenBillingBudgetBudget(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -353,22 +353,22 @@ func flattenBillingBudgetBudget(v interface{}, d *schema.ResourceData) interface
 	}
 	transformed := make(map[string]interface{})
 	transformed["display_name"] =
-		flattenBillingBudgetBudgetDisplayName(original["displayName"], d)
+		flattenBillingBudgetBudgetDisplayName(original["displayName"], d, config)
 	transformed["budget_filter"] =
-		flattenBillingBudgetBudgetBudgetFilter(original["budgetFilter"], d)
+		flattenBillingBudgetBudgetBudgetFilter(original["budgetFilter"], d, config)
 	transformed["amount"] =
-		flattenBillingBudgetBudgetAmount(original["amount"], d)
+		flattenBillingBudgetBudgetAmount(original["amount"], d, config)
 	transformed["threshold_rules"] =
-		flattenBillingBudgetBudgetThresholdRules(original["thresholdRules"], d)
+		flattenBillingBudgetBudgetThresholdRules(original["thresholdRules"], d, config)
 	transformed["all_updates_rule"] =
-		flattenBillingBudgetBudgetAllUpdatesRule(original["allUpdatesRule"], d)
+		flattenBillingBudgetBudgetAllUpdatesRule(original["allUpdatesRule"], d, config)
 	return []interface{}{transformed}
 }
-func flattenBillingBudgetBudgetDisplayName(v interface{}, d *schema.ResourceData) interface{} {
+func flattenBillingBudgetBudgetDisplayName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenBillingBudgetBudgetBudgetFilter(v interface{}, d *schema.ResourceData) interface{} {
+func flattenBillingBudgetBudgetBudgetFilter(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -378,26 +378,26 @@ func flattenBillingBudgetBudgetBudgetFilter(v interface{}, d *schema.ResourceDat
 	}
 	transformed := make(map[string]interface{})
 	transformed["projects"] =
-		flattenBillingBudgetBudgetBudgetFilterProjects(original["projects"], d)
+		flattenBillingBudgetBudgetBudgetFilterProjects(original["projects"], d, config)
 	transformed["credit_types_treatment"] =
-		flattenBillingBudgetBudgetBudgetFilterCreditTypesTreatment(original["creditTypesTreatment"], d)
+		flattenBillingBudgetBudgetBudgetFilterCreditTypesTreatment(original["creditTypesTreatment"], d, config)
 	transformed["services"] =
-		flattenBillingBudgetBudgetBudgetFilterServices(original["services"], d)
+		flattenBillingBudgetBudgetBudgetFilterServices(original["services"], d, config)
 	return []interface{}{transformed}
 }
-func flattenBillingBudgetBudgetBudgetFilterProjects(v interface{}, d *schema.ResourceData) interface{} {
+func flattenBillingBudgetBudgetBudgetFilterProjects(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenBillingBudgetBudgetBudgetFilterCreditTypesTreatment(v interface{}, d *schema.ResourceData) interface{} {
+func flattenBillingBudgetBudgetBudgetFilterCreditTypesTreatment(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenBillingBudgetBudgetBudgetFilterServices(v interface{}, d *schema.ResourceData) interface{} {
+func flattenBillingBudgetBudgetBudgetFilterServices(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenBillingBudgetBudgetAmount(v interface{}, d *schema.ResourceData) interface{} {
+func flattenBillingBudgetBudgetAmount(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -407,10 +407,10 @@ func flattenBillingBudgetBudgetAmount(v interface{}, d *schema.ResourceData) int
 	}
 	transformed := make(map[string]interface{})
 	transformed["specified_amount"] =
-		flattenBillingBudgetBudgetAmountSpecifiedAmount(original["specifiedAmount"], d)
+		flattenBillingBudgetBudgetAmountSpecifiedAmount(original["specifiedAmount"], d, config)
 	return []interface{}{transformed}
 }
-func flattenBillingBudgetBudgetAmountSpecifiedAmount(v interface{}, d *schema.ResourceData) interface{} {
+func flattenBillingBudgetBudgetAmountSpecifiedAmount(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -420,22 +420,22 @@ func flattenBillingBudgetBudgetAmountSpecifiedAmount(v interface{}, d *schema.Re
 	}
 	transformed := make(map[string]interface{})
 	transformed["currency_code"] =
-		flattenBillingBudgetBudgetAmountSpecifiedAmountCurrencyCode(original["currencyCode"], d)
+		flattenBillingBudgetBudgetAmountSpecifiedAmountCurrencyCode(original["currencyCode"], d, config)
 	transformed["units"] =
-		flattenBillingBudgetBudgetAmountSpecifiedAmountUnits(original["units"], d)
+		flattenBillingBudgetBudgetAmountSpecifiedAmountUnits(original["units"], d, config)
 	transformed["nanos"] =
-		flattenBillingBudgetBudgetAmountSpecifiedAmountNanos(original["nanos"], d)
+		flattenBillingBudgetBudgetAmountSpecifiedAmountNanos(original["nanos"], d, config)
 	return []interface{}{transformed}
 }
-func flattenBillingBudgetBudgetAmountSpecifiedAmountCurrencyCode(v interface{}, d *schema.ResourceData) interface{} {
+func flattenBillingBudgetBudgetAmountSpecifiedAmountCurrencyCode(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenBillingBudgetBudgetAmountSpecifiedAmountUnits(v interface{}, d *schema.ResourceData) interface{} {
+func flattenBillingBudgetBudgetAmountSpecifiedAmountUnits(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenBillingBudgetBudgetAmountSpecifiedAmountNanos(v interface{}, d *schema.ResourceData) interface{} {
+func flattenBillingBudgetBudgetAmountSpecifiedAmountNanos(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
@@ -445,7 +445,7 @@ func flattenBillingBudgetBudgetAmountSpecifiedAmountNanos(v interface{}, d *sche
 	return v
 }
 
-func flattenBillingBudgetBudgetThresholdRules(v interface{}, d *schema.ResourceData) interface{} {
+func flattenBillingBudgetBudgetThresholdRules(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	if v == nil {
 		return v
 	}
@@ -458,21 +458,21 @@ func flattenBillingBudgetBudgetThresholdRules(v interface{}, d *schema.ResourceD
 			continue
 		}
 		transformed = append(transformed, map[string]interface{}{
-			"threshold_percent": flattenBillingBudgetBudgetThresholdRulesThresholdPercent(original["thresholdPercent"], d),
-			"spend_basis":       flattenBillingBudgetBudgetThresholdRulesSpendBasis(original["spendBasis"], d),
+			"threshold_percent": flattenBillingBudgetBudgetThresholdRulesThresholdPercent(original["thresholdPercent"], d, config),
+			"spend_basis":       flattenBillingBudgetBudgetThresholdRulesSpendBasis(original["spendBasis"], d, config),
 		})
 	}
 	return transformed
 }
-func flattenBillingBudgetBudgetThresholdRulesThresholdPercent(v interface{}, d *schema.ResourceData) interface{} {
+func flattenBillingBudgetBudgetThresholdRulesThresholdPercent(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenBillingBudgetBudgetThresholdRulesSpendBasis(v interface{}, d *schema.ResourceData) interface{} {
+func flattenBillingBudgetBudgetThresholdRulesSpendBasis(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenBillingBudgetBudgetAllUpdatesRule(v interface{}, d *schema.ResourceData) interface{} {
+func flattenBillingBudgetBudgetAllUpdatesRule(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -482,16 +482,16 @@ func flattenBillingBudgetBudgetAllUpdatesRule(v interface{}, d *schema.ResourceD
 	}
 	transformed := make(map[string]interface{})
 	transformed["pubsub_topic"] =
-		flattenBillingBudgetBudgetAllUpdatesRulePubsubTopic(original["pubsubTopic"], d)
+		flattenBillingBudgetBudgetAllUpdatesRulePubsubTopic(original["pubsubTopic"], d, config)
 	transformed["schema_version"] =
-		flattenBillingBudgetBudgetAllUpdatesRuleSchemaVersion(original["schemaVersion"], d)
+		flattenBillingBudgetBudgetAllUpdatesRuleSchemaVersion(original["schemaVersion"], d, config)
 	return []interface{}{transformed}
 }
-func flattenBillingBudgetBudgetAllUpdatesRulePubsubTopic(v interface{}, d *schema.ResourceData) interface{} {
+func flattenBillingBudgetBudgetAllUpdatesRulePubsubTopic(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenBillingBudgetBudgetAllUpdatesRuleSchemaVersion(v interface{}, d *schema.ResourceData) interface{} {
+func flattenBillingBudgetBudgetAllUpdatesRuleSchemaVersion(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 

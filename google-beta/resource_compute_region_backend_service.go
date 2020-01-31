@@ -1006,21 +1006,21 @@ func resourceComputeRegionBackendServiceRead(d *schema.ResourceData, meta interf
 		return fmt.Errorf("Error reading RegionBackendService: %s", err)
 	}
 
-	if err := d.Set("affinity_cookie_ttl_sec", flattenComputeRegionBackendServiceAffinityCookieTtlSec(res["affinityCookieTtlSec"], d)); err != nil {
+	if err := d.Set("affinity_cookie_ttl_sec", flattenComputeRegionBackendServiceAffinityCookieTtlSec(res["affinityCookieTtlSec"], d, config)); err != nil {
 		return fmt.Errorf("Error reading RegionBackendService: %s", err)
 	}
-	if err := d.Set("backend", flattenComputeRegionBackendServiceBackend(res["backends"], d)); err != nil {
+	if err := d.Set("backend", flattenComputeRegionBackendServiceBackend(res["backends"], d, config)); err != nil {
 		return fmt.Errorf("Error reading RegionBackendService: %s", err)
 	}
-	if err := d.Set("circuit_breakers", flattenComputeRegionBackendServiceCircuitBreakers(res["circuitBreakers"], d)); err != nil {
+	if err := d.Set("circuit_breakers", flattenComputeRegionBackendServiceCircuitBreakers(res["circuitBreakers"], d, config)); err != nil {
 		return fmt.Errorf("Error reading RegionBackendService: %s", err)
 	}
-	if err := d.Set("consistent_hash", flattenComputeRegionBackendServiceConsistentHash(res["consistentHash"], d)); err != nil {
+	if err := d.Set("consistent_hash", flattenComputeRegionBackendServiceConsistentHash(res["consistentHash"], d, config)); err != nil {
 		return fmt.Errorf("Error reading RegionBackendService: %s", err)
 	}
 	// Terraform must set the top level schema field, but since this object contains collapsed properties
 	// it's difficult to know what the top level should be. Instead we just loop over the map returned from flatten.
-	if flattenedProp := flattenComputeRegionBackendServiceConnectionDraining(res["connectionDraining"], d); flattenedProp != nil {
+	if flattenedProp := flattenComputeRegionBackendServiceConnectionDraining(res["connectionDraining"], d, config); flattenedProp != nil {
 		casted := flattenedProp.([]interface{})[0]
 		if casted != nil {
 			for k, v := range casted.(map[string]interface{}) {
@@ -1028,49 +1028,49 @@ func resourceComputeRegionBackendServiceRead(d *schema.ResourceData, meta interf
 			}
 		}
 	}
-	if err := d.Set("creation_timestamp", flattenComputeRegionBackendServiceCreationTimestamp(res["creationTimestamp"], d)); err != nil {
+	if err := d.Set("creation_timestamp", flattenComputeRegionBackendServiceCreationTimestamp(res["creationTimestamp"], d, config)); err != nil {
 		return fmt.Errorf("Error reading RegionBackendService: %s", err)
 	}
-	if err := d.Set("description", flattenComputeRegionBackendServiceDescription(res["description"], d)); err != nil {
+	if err := d.Set("description", flattenComputeRegionBackendServiceDescription(res["description"], d, config)); err != nil {
 		return fmt.Errorf("Error reading RegionBackendService: %s", err)
 	}
-	if err := d.Set("failover_policy", flattenComputeRegionBackendServiceFailoverPolicy(res["failoverPolicy"], d)); err != nil {
+	if err := d.Set("failover_policy", flattenComputeRegionBackendServiceFailoverPolicy(res["failoverPolicy"], d, config)); err != nil {
 		return fmt.Errorf("Error reading RegionBackendService: %s", err)
 	}
-	if err := d.Set("fingerprint", flattenComputeRegionBackendServiceFingerprint(res["fingerprint"], d)); err != nil {
+	if err := d.Set("fingerprint", flattenComputeRegionBackendServiceFingerprint(res["fingerprint"], d, config)); err != nil {
 		return fmt.Errorf("Error reading RegionBackendService: %s", err)
 	}
-	if err := d.Set("health_checks", flattenComputeRegionBackendServiceHealthChecks(res["healthChecks"], d)); err != nil {
+	if err := d.Set("health_checks", flattenComputeRegionBackendServiceHealthChecks(res["healthChecks"], d, config)); err != nil {
 		return fmt.Errorf("Error reading RegionBackendService: %s", err)
 	}
-	if err := d.Set("load_balancing_scheme", flattenComputeRegionBackendServiceLoadBalancingScheme(res["loadBalancingScheme"], d)); err != nil {
+	if err := d.Set("load_balancing_scheme", flattenComputeRegionBackendServiceLoadBalancingScheme(res["loadBalancingScheme"], d, config)); err != nil {
 		return fmt.Errorf("Error reading RegionBackendService: %s", err)
 	}
-	if err := d.Set("locality_lb_policy", flattenComputeRegionBackendServiceLocalityLbPolicy(res["localityLbPolicy"], d)); err != nil {
+	if err := d.Set("locality_lb_policy", flattenComputeRegionBackendServiceLocalityLbPolicy(res["localityLbPolicy"], d, config)); err != nil {
 		return fmt.Errorf("Error reading RegionBackendService: %s", err)
 	}
-	if err := d.Set("name", flattenComputeRegionBackendServiceName(res["name"], d)); err != nil {
+	if err := d.Set("name", flattenComputeRegionBackendServiceName(res["name"], d, config)); err != nil {
 		return fmt.Errorf("Error reading RegionBackendService: %s", err)
 	}
-	if err := d.Set("outlier_detection", flattenComputeRegionBackendServiceOutlierDetection(res["outlierDetection"], d)); err != nil {
+	if err := d.Set("outlier_detection", flattenComputeRegionBackendServiceOutlierDetection(res["outlierDetection"], d, config)); err != nil {
 		return fmt.Errorf("Error reading RegionBackendService: %s", err)
 	}
-	if err := d.Set("protocol", flattenComputeRegionBackendServiceProtocol(res["protocol"], d)); err != nil {
+	if err := d.Set("protocol", flattenComputeRegionBackendServiceProtocol(res["protocol"], d, config)); err != nil {
 		return fmt.Errorf("Error reading RegionBackendService: %s", err)
 	}
-	if err := d.Set("session_affinity", flattenComputeRegionBackendServiceSessionAffinity(res["sessionAffinity"], d)); err != nil {
+	if err := d.Set("session_affinity", flattenComputeRegionBackendServiceSessionAffinity(res["sessionAffinity"], d, config)); err != nil {
 		return fmt.Errorf("Error reading RegionBackendService: %s", err)
 	}
-	if err := d.Set("timeout_sec", flattenComputeRegionBackendServiceTimeoutSec(res["timeoutSec"], d)); err != nil {
+	if err := d.Set("timeout_sec", flattenComputeRegionBackendServiceTimeoutSec(res["timeoutSec"], d, config)); err != nil {
 		return fmt.Errorf("Error reading RegionBackendService: %s", err)
 	}
-	if err := d.Set("log_config", flattenComputeRegionBackendServiceLogConfig(res["logConfig"], d)); err != nil {
+	if err := d.Set("log_config", flattenComputeRegionBackendServiceLogConfig(res["logConfig"], d, config)); err != nil {
 		return fmt.Errorf("Error reading RegionBackendService: %s", err)
 	}
-	if err := d.Set("network", flattenComputeRegionBackendServiceNetwork(res["network"], d)); err != nil {
+	if err := d.Set("network", flattenComputeRegionBackendServiceNetwork(res["network"], d, config)); err != nil {
 		return fmt.Errorf("Error reading RegionBackendService: %s", err)
 	}
-	if err := d.Set("region", flattenComputeRegionBackendServiceRegion(res["region"], d)); err != nil {
+	if err := d.Set("region", flattenComputeRegionBackendServiceRegion(res["region"], d, config)); err != nil {
 		return fmt.Errorf("Error reading RegionBackendService: %s", err)
 	}
 	if err := d.Set("self_link", ConvertSelfLinkToV1(res["selfLink"].(string))); err != nil {
@@ -1286,7 +1286,7 @@ func resourceComputeRegionBackendServiceImport(d *schema.ResourceData, meta inte
 	return []*schema.ResourceData{d}, nil
 }
 
-func flattenComputeRegionBackendServiceAffinityCookieTtlSec(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionBackendServiceAffinityCookieTtlSec(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
@@ -1296,7 +1296,7 @@ func flattenComputeRegionBackendServiceAffinityCookieTtlSec(v interface{}, d *sc
 	return v
 }
 
-func flattenComputeRegionBackendServiceBackend(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionBackendServiceBackend(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	if v == nil {
 		return v
 	}
@@ -1309,46 +1309,46 @@ func flattenComputeRegionBackendServiceBackend(v interface{}, d *schema.Resource
 			continue
 		}
 		transformed.Add(map[string]interface{}{
-			"balancing_mode":               flattenComputeRegionBackendServiceBackendBalancingMode(original["balancingMode"], d),
-			"capacity_scaler":              flattenComputeRegionBackendServiceBackendCapacityScaler(original["capacityScaler"], d),
-			"description":                  flattenComputeRegionBackendServiceBackendDescription(original["description"], d),
-			"failover":                     flattenComputeRegionBackendServiceBackendFailover(original["failover"], d),
-			"group":                        flattenComputeRegionBackendServiceBackendGroup(original["group"], d),
-			"max_connections":              flattenComputeRegionBackendServiceBackendMaxConnections(original["maxConnections"], d),
-			"max_connections_per_instance": flattenComputeRegionBackendServiceBackendMaxConnectionsPerInstance(original["maxConnectionsPerInstance"], d),
-			"max_connections_per_endpoint": flattenComputeRegionBackendServiceBackendMaxConnectionsPerEndpoint(original["maxConnectionsPerEndpoint"], d),
-			"max_rate":                     flattenComputeRegionBackendServiceBackendMaxRate(original["maxRate"], d),
-			"max_rate_per_instance":        flattenComputeRegionBackendServiceBackendMaxRatePerInstance(original["maxRatePerInstance"], d),
-			"max_rate_per_endpoint":        flattenComputeRegionBackendServiceBackendMaxRatePerEndpoint(original["maxRatePerEndpoint"], d),
-			"max_utilization":              flattenComputeRegionBackendServiceBackendMaxUtilization(original["maxUtilization"], d),
+			"balancing_mode":               flattenComputeRegionBackendServiceBackendBalancingMode(original["balancingMode"], d, config),
+			"capacity_scaler":              flattenComputeRegionBackendServiceBackendCapacityScaler(original["capacityScaler"], d, config),
+			"description":                  flattenComputeRegionBackendServiceBackendDescription(original["description"], d, config),
+			"failover":                     flattenComputeRegionBackendServiceBackendFailover(original["failover"], d, config),
+			"group":                        flattenComputeRegionBackendServiceBackendGroup(original["group"], d, config),
+			"max_connections":              flattenComputeRegionBackendServiceBackendMaxConnections(original["maxConnections"], d, config),
+			"max_connections_per_instance": flattenComputeRegionBackendServiceBackendMaxConnectionsPerInstance(original["maxConnectionsPerInstance"], d, config),
+			"max_connections_per_endpoint": flattenComputeRegionBackendServiceBackendMaxConnectionsPerEndpoint(original["maxConnectionsPerEndpoint"], d, config),
+			"max_rate":                     flattenComputeRegionBackendServiceBackendMaxRate(original["maxRate"], d, config),
+			"max_rate_per_instance":        flattenComputeRegionBackendServiceBackendMaxRatePerInstance(original["maxRatePerInstance"], d, config),
+			"max_rate_per_endpoint":        flattenComputeRegionBackendServiceBackendMaxRatePerEndpoint(original["maxRatePerEndpoint"], d, config),
+			"max_utilization":              flattenComputeRegionBackendServiceBackendMaxUtilization(original["maxUtilization"], d, config),
 		})
 	}
 	return transformed
 }
-func flattenComputeRegionBackendServiceBackendBalancingMode(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionBackendServiceBackendBalancingMode(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenComputeRegionBackendServiceBackendCapacityScaler(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionBackendServiceBackendCapacityScaler(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenComputeRegionBackendServiceBackendDescription(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionBackendServiceBackendDescription(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenComputeRegionBackendServiceBackendFailover(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionBackendServiceBackendFailover(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenComputeRegionBackendServiceBackendGroup(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionBackendServiceBackendGroup(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	if v == nil {
 		return v
 	}
 	return ConvertSelfLinkToV1(v.(string))
 }
 
-func flattenComputeRegionBackendServiceBackendMaxConnections(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionBackendServiceBackendMaxConnections(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
@@ -1358,7 +1358,7 @@ func flattenComputeRegionBackendServiceBackendMaxConnections(v interface{}, d *s
 	return v
 }
 
-func flattenComputeRegionBackendServiceBackendMaxConnectionsPerInstance(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionBackendServiceBackendMaxConnectionsPerInstance(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
@@ -1368,7 +1368,7 @@ func flattenComputeRegionBackendServiceBackendMaxConnectionsPerInstance(v interf
 	return v
 }
 
-func flattenComputeRegionBackendServiceBackendMaxConnectionsPerEndpoint(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionBackendServiceBackendMaxConnectionsPerEndpoint(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
@@ -1378,7 +1378,7 @@ func flattenComputeRegionBackendServiceBackendMaxConnectionsPerEndpoint(v interf
 	return v
 }
 
-func flattenComputeRegionBackendServiceBackendMaxRate(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionBackendServiceBackendMaxRate(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
@@ -1388,19 +1388,19 @@ func flattenComputeRegionBackendServiceBackendMaxRate(v interface{}, d *schema.R
 	return v
 }
 
-func flattenComputeRegionBackendServiceBackendMaxRatePerInstance(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionBackendServiceBackendMaxRatePerInstance(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenComputeRegionBackendServiceBackendMaxRatePerEndpoint(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionBackendServiceBackendMaxRatePerEndpoint(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenComputeRegionBackendServiceBackendMaxUtilization(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionBackendServiceBackendMaxUtilization(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenComputeRegionBackendServiceCircuitBreakers(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionBackendServiceCircuitBreakers(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -1410,20 +1410,20 @@ func flattenComputeRegionBackendServiceCircuitBreakers(v interface{}, d *schema.
 	}
 	transformed := make(map[string]interface{})
 	transformed["connect_timeout"] =
-		flattenComputeRegionBackendServiceCircuitBreakersConnectTimeout(original["connectTimeout"], d)
+		flattenComputeRegionBackendServiceCircuitBreakersConnectTimeout(original["connectTimeout"], d, config)
 	transformed["max_requests_per_connection"] =
-		flattenComputeRegionBackendServiceCircuitBreakersMaxRequestsPerConnection(original["maxRequestsPerConnection"], d)
+		flattenComputeRegionBackendServiceCircuitBreakersMaxRequestsPerConnection(original["maxRequestsPerConnection"], d, config)
 	transformed["max_connections"] =
-		flattenComputeRegionBackendServiceCircuitBreakersMaxConnections(original["maxConnections"], d)
+		flattenComputeRegionBackendServiceCircuitBreakersMaxConnections(original["maxConnections"], d, config)
 	transformed["max_pending_requests"] =
-		flattenComputeRegionBackendServiceCircuitBreakersMaxPendingRequests(original["maxPendingRequests"], d)
+		flattenComputeRegionBackendServiceCircuitBreakersMaxPendingRequests(original["maxPendingRequests"], d, config)
 	transformed["max_requests"] =
-		flattenComputeRegionBackendServiceCircuitBreakersMaxRequests(original["maxRequests"], d)
+		flattenComputeRegionBackendServiceCircuitBreakersMaxRequests(original["maxRequests"], d, config)
 	transformed["max_retries"] =
-		flattenComputeRegionBackendServiceCircuitBreakersMaxRetries(original["maxRetries"], d)
+		flattenComputeRegionBackendServiceCircuitBreakersMaxRetries(original["maxRetries"], d, config)
 	return []interface{}{transformed}
 }
-func flattenComputeRegionBackendServiceCircuitBreakersConnectTimeout(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionBackendServiceCircuitBreakersConnectTimeout(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -1433,12 +1433,12 @@ func flattenComputeRegionBackendServiceCircuitBreakersConnectTimeout(v interface
 	}
 	transformed := make(map[string]interface{})
 	transformed["seconds"] =
-		flattenComputeRegionBackendServiceCircuitBreakersConnectTimeoutSeconds(original["seconds"], d)
+		flattenComputeRegionBackendServiceCircuitBreakersConnectTimeoutSeconds(original["seconds"], d, config)
 	transformed["nanos"] =
-		flattenComputeRegionBackendServiceCircuitBreakersConnectTimeoutNanos(original["nanos"], d)
+		flattenComputeRegionBackendServiceCircuitBreakersConnectTimeoutNanos(original["nanos"], d, config)
 	return []interface{}{transformed}
 }
-func flattenComputeRegionBackendServiceCircuitBreakersConnectTimeoutSeconds(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionBackendServiceCircuitBreakersConnectTimeoutSeconds(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
@@ -1448,7 +1448,7 @@ func flattenComputeRegionBackendServiceCircuitBreakersConnectTimeoutSeconds(v in
 	return v
 }
 
-func flattenComputeRegionBackendServiceCircuitBreakersConnectTimeoutNanos(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionBackendServiceCircuitBreakersConnectTimeoutNanos(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
@@ -1458,7 +1458,7 @@ func flattenComputeRegionBackendServiceCircuitBreakersConnectTimeoutNanos(v inte
 	return v
 }
 
-func flattenComputeRegionBackendServiceCircuitBreakersMaxRequestsPerConnection(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionBackendServiceCircuitBreakersMaxRequestsPerConnection(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
@@ -1468,7 +1468,7 @@ func flattenComputeRegionBackendServiceCircuitBreakersMaxRequestsPerConnection(v
 	return v
 }
 
-func flattenComputeRegionBackendServiceCircuitBreakersMaxConnections(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionBackendServiceCircuitBreakersMaxConnections(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
@@ -1478,7 +1478,7 @@ func flattenComputeRegionBackendServiceCircuitBreakersMaxConnections(v interface
 	return v
 }
 
-func flattenComputeRegionBackendServiceCircuitBreakersMaxPendingRequests(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionBackendServiceCircuitBreakersMaxPendingRequests(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
@@ -1488,7 +1488,7 @@ func flattenComputeRegionBackendServiceCircuitBreakersMaxPendingRequests(v inter
 	return v
 }
 
-func flattenComputeRegionBackendServiceCircuitBreakersMaxRequests(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionBackendServiceCircuitBreakersMaxRequests(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
@@ -1498,7 +1498,7 @@ func flattenComputeRegionBackendServiceCircuitBreakersMaxRequests(v interface{},
 	return v
 }
 
-func flattenComputeRegionBackendServiceCircuitBreakersMaxRetries(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionBackendServiceCircuitBreakersMaxRetries(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
@@ -1508,7 +1508,7 @@ func flattenComputeRegionBackendServiceCircuitBreakersMaxRetries(v interface{}, 
 	return v
 }
 
-func flattenComputeRegionBackendServiceConsistentHash(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionBackendServiceConsistentHash(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -1518,14 +1518,14 @@ func flattenComputeRegionBackendServiceConsistentHash(v interface{}, d *schema.R
 	}
 	transformed := make(map[string]interface{})
 	transformed["http_cookie"] =
-		flattenComputeRegionBackendServiceConsistentHashHttpCookie(original["httpCookie"], d)
+		flattenComputeRegionBackendServiceConsistentHashHttpCookie(original["httpCookie"], d, config)
 	transformed["http_header_name"] =
-		flattenComputeRegionBackendServiceConsistentHashHttpHeaderName(original["httpHeaderName"], d)
+		flattenComputeRegionBackendServiceConsistentHashHttpHeaderName(original["httpHeaderName"], d, config)
 	transformed["minimum_ring_size"] =
-		flattenComputeRegionBackendServiceConsistentHashMinimumRingSize(original["minimumRingSize"], d)
+		flattenComputeRegionBackendServiceConsistentHashMinimumRingSize(original["minimumRingSize"], d, config)
 	return []interface{}{transformed}
 }
-func flattenComputeRegionBackendServiceConsistentHashHttpCookie(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionBackendServiceConsistentHashHttpCookie(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -1535,14 +1535,14 @@ func flattenComputeRegionBackendServiceConsistentHashHttpCookie(v interface{}, d
 	}
 	transformed := make(map[string]interface{})
 	transformed["ttl"] =
-		flattenComputeRegionBackendServiceConsistentHashHttpCookieTtl(original["ttl"], d)
+		flattenComputeRegionBackendServiceConsistentHashHttpCookieTtl(original["ttl"], d, config)
 	transformed["name"] =
-		flattenComputeRegionBackendServiceConsistentHashHttpCookieName(original["name"], d)
+		flattenComputeRegionBackendServiceConsistentHashHttpCookieName(original["name"], d, config)
 	transformed["path"] =
-		flattenComputeRegionBackendServiceConsistentHashHttpCookiePath(original["path"], d)
+		flattenComputeRegionBackendServiceConsistentHashHttpCookiePath(original["path"], d, config)
 	return []interface{}{transformed}
 }
-func flattenComputeRegionBackendServiceConsistentHashHttpCookieTtl(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionBackendServiceConsistentHashHttpCookieTtl(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -1552,12 +1552,12 @@ func flattenComputeRegionBackendServiceConsistentHashHttpCookieTtl(v interface{}
 	}
 	transformed := make(map[string]interface{})
 	transformed["seconds"] =
-		flattenComputeRegionBackendServiceConsistentHashHttpCookieTtlSeconds(original["seconds"], d)
+		flattenComputeRegionBackendServiceConsistentHashHttpCookieTtlSeconds(original["seconds"], d, config)
 	transformed["nanos"] =
-		flattenComputeRegionBackendServiceConsistentHashHttpCookieTtlNanos(original["nanos"], d)
+		flattenComputeRegionBackendServiceConsistentHashHttpCookieTtlNanos(original["nanos"], d, config)
 	return []interface{}{transformed}
 }
-func flattenComputeRegionBackendServiceConsistentHashHttpCookieTtlSeconds(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionBackendServiceConsistentHashHttpCookieTtlSeconds(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
@@ -1567,7 +1567,7 @@ func flattenComputeRegionBackendServiceConsistentHashHttpCookieTtlSeconds(v inte
 	return v
 }
 
-func flattenComputeRegionBackendServiceConsistentHashHttpCookieTtlNanos(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionBackendServiceConsistentHashHttpCookieTtlNanos(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
@@ -1577,19 +1577,19 @@ func flattenComputeRegionBackendServiceConsistentHashHttpCookieTtlNanos(v interf
 	return v
 }
 
-func flattenComputeRegionBackendServiceConsistentHashHttpCookieName(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionBackendServiceConsistentHashHttpCookieName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenComputeRegionBackendServiceConsistentHashHttpCookiePath(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionBackendServiceConsistentHashHttpCookiePath(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenComputeRegionBackendServiceConsistentHashHttpHeaderName(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionBackendServiceConsistentHashHttpHeaderName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenComputeRegionBackendServiceConsistentHashMinimumRingSize(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionBackendServiceConsistentHashMinimumRingSize(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
@@ -1599,7 +1599,7 @@ func flattenComputeRegionBackendServiceConsistentHashMinimumRingSize(v interface
 	return v
 }
 
-func flattenComputeRegionBackendServiceConnectionDraining(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionBackendServiceConnectionDraining(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -1609,10 +1609,10 @@ func flattenComputeRegionBackendServiceConnectionDraining(v interface{}, d *sche
 	}
 	transformed := make(map[string]interface{})
 	transformed["connection_draining_timeout_sec"] =
-		flattenComputeRegionBackendServiceConnectionDrainingConnectionDrainingTimeoutSec(original["drainingTimeoutSec"], d)
+		flattenComputeRegionBackendServiceConnectionDrainingConnectionDrainingTimeoutSec(original["drainingTimeoutSec"], d, config)
 	return []interface{}{transformed}
 }
-func flattenComputeRegionBackendServiceConnectionDrainingConnectionDrainingTimeoutSec(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionBackendServiceConnectionDrainingConnectionDrainingTimeoutSec(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
@@ -1622,15 +1622,15 @@ func flattenComputeRegionBackendServiceConnectionDrainingConnectionDrainingTimeo
 	return v
 }
 
-func flattenComputeRegionBackendServiceCreationTimestamp(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionBackendServiceCreationTimestamp(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenComputeRegionBackendServiceDescription(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionBackendServiceDescription(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenComputeRegionBackendServiceFailoverPolicy(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionBackendServiceFailoverPolicy(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -1640,49 +1640,49 @@ func flattenComputeRegionBackendServiceFailoverPolicy(v interface{}, d *schema.R
 	}
 	transformed := make(map[string]interface{})
 	transformed["disable_connection_drain_on_failover"] =
-		flattenComputeRegionBackendServiceFailoverPolicyDisableConnectionDrainOnFailover(original["disableConnectionDrainOnFailover"], d)
+		flattenComputeRegionBackendServiceFailoverPolicyDisableConnectionDrainOnFailover(original["disableConnectionDrainOnFailover"], d, config)
 	transformed["drop_traffic_if_unhealthy"] =
-		flattenComputeRegionBackendServiceFailoverPolicyDropTrafficIfUnhealthy(original["dropTrafficIfUnhealthy"], d)
+		flattenComputeRegionBackendServiceFailoverPolicyDropTrafficIfUnhealthy(original["dropTrafficIfUnhealthy"], d, config)
 	transformed["failover_ratio"] =
-		flattenComputeRegionBackendServiceFailoverPolicyFailoverRatio(original["failoverRatio"], d)
+		flattenComputeRegionBackendServiceFailoverPolicyFailoverRatio(original["failoverRatio"], d, config)
 	return []interface{}{transformed}
 }
-func flattenComputeRegionBackendServiceFailoverPolicyDisableConnectionDrainOnFailover(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionBackendServiceFailoverPolicyDisableConnectionDrainOnFailover(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenComputeRegionBackendServiceFailoverPolicyDropTrafficIfUnhealthy(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionBackendServiceFailoverPolicyDropTrafficIfUnhealthy(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenComputeRegionBackendServiceFailoverPolicyFailoverRatio(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionBackendServiceFailoverPolicyFailoverRatio(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenComputeRegionBackendServiceFingerprint(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionBackendServiceFingerprint(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenComputeRegionBackendServiceHealthChecks(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionBackendServiceHealthChecks(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	if v == nil {
 		return v
 	}
 	return convertAndMapStringArr(v.([]interface{}), ConvertSelfLinkToV1)
 }
 
-func flattenComputeRegionBackendServiceLoadBalancingScheme(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionBackendServiceLoadBalancingScheme(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenComputeRegionBackendServiceLocalityLbPolicy(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionBackendServiceLocalityLbPolicy(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenComputeRegionBackendServiceName(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionBackendServiceName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenComputeRegionBackendServiceOutlierDetection(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionBackendServiceOutlierDetection(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -1692,30 +1692,30 @@ func flattenComputeRegionBackendServiceOutlierDetection(v interface{}, d *schema
 	}
 	transformed := make(map[string]interface{})
 	transformed["base_ejection_time"] =
-		flattenComputeRegionBackendServiceOutlierDetectionBaseEjectionTime(original["baseEjectionTime"], d)
+		flattenComputeRegionBackendServiceOutlierDetectionBaseEjectionTime(original["baseEjectionTime"], d, config)
 	transformed["consecutive_errors"] =
-		flattenComputeRegionBackendServiceOutlierDetectionConsecutiveErrors(original["consecutiveErrors"], d)
+		flattenComputeRegionBackendServiceOutlierDetectionConsecutiveErrors(original["consecutiveErrors"], d, config)
 	transformed["consecutive_gateway_failure"] =
-		flattenComputeRegionBackendServiceOutlierDetectionConsecutiveGatewayFailure(original["consecutiveGatewayFailure"], d)
+		flattenComputeRegionBackendServiceOutlierDetectionConsecutiveGatewayFailure(original["consecutiveGatewayFailure"], d, config)
 	transformed["enforcing_consecutive_errors"] =
-		flattenComputeRegionBackendServiceOutlierDetectionEnforcingConsecutiveErrors(original["enforcingConsecutiveErrors"], d)
+		flattenComputeRegionBackendServiceOutlierDetectionEnforcingConsecutiveErrors(original["enforcingConsecutiveErrors"], d, config)
 	transformed["enforcing_consecutive_gateway_failure"] =
-		flattenComputeRegionBackendServiceOutlierDetectionEnforcingConsecutiveGatewayFailure(original["enforcingConsecutiveGatewayFailure"], d)
+		flattenComputeRegionBackendServiceOutlierDetectionEnforcingConsecutiveGatewayFailure(original["enforcingConsecutiveGatewayFailure"], d, config)
 	transformed["enforcing_success_rate"] =
-		flattenComputeRegionBackendServiceOutlierDetectionEnforcingSuccessRate(original["enforcingSuccessRate"], d)
+		flattenComputeRegionBackendServiceOutlierDetectionEnforcingSuccessRate(original["enforcingSuccessRate"], d, config)
 	transformed["interval"] =
-		flattenComputeRegionBackendServiceOutlierDetectionInterval(original["interval"], d)
+		flattenComputeRegionBackendServiceOutlierDetectionInterval(original["interval"], d, config)
 	transformed["max_ejection_percent"] =
-		flattenComputeRegionBackendServiceOutlierDetectionMaxEjectionPercent(original["maxEjectionPercent"], d)
+		flattenComputeRegionBackendServiceOutlierDetectionMaxEjectionPercent(original["maxEjectionPercent"], d, config)
 	transformed["success_rate_minimum_hosts"] =
-		flattenComputeRegionBackendServiceOutlierDetectionSuccessRateMinimumHosts(original["successRateMinimumHosts"], d)
+		flattenComputeRegionBackendServiceOutlierDetectionSuccessRateMinimumHosts(original["successRateMinimumHosts"], d, config)
 	transformed["success_rate_request_volume"] =
-		flattenComputeRegionBackendServiceOutlierDetectionSuccessRateRequestVolume(original["successRateRequestVolume"], d)
+		flattenComputeRegionBackendServiceOutlierDetectionSuccessRateRequestVolume(original["successRateRequestVolume"], d, config)
 	transformed["success_rate_stdev_factor"] =
-		flattenComputeRegionBackendServiceOutlierDetectionSuccessRateStdevFactor(original["successRateStdevFactor"], d)
+		flattenComputeRegionBackendServiceOutlierDetectionSuccessRateStdevFactor(original["successRateStdevFactor"], d, config)
 	return []interface{}{transformed}
 }
-func flattenComputeRegionBackendServiceOutlierDetectionBaseEjectionTime(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionBackendServiceOutlierDetectionBaseEjectionTime(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -1725,12 +1725,12 @@ func flattenComputeRegionBackendServiceOutlierDetectionBaseEjectionTime(v interf
 	}
 	transformed := make(map[string]interface{})
 	transformed["seconds"] =
-		flattenComputeRegionBackendServiceOutlierDetectionBaseEjectionTimeSeconds(original["seconds"], d)
+		flattenComputeRegionBackendServiceOutlierDetectionBaseEjectionTimeSeconds(original["seconds"], d, config)
 	transformed["nanos"] =
-		flattenComputeRegionBackendServiceOutlierDetectionBaseEjectionTimeNanos(original["nanos"], d)
+		flattenComputeRegionBackendServiceOutlierDetectionBaseEjectionTimeNanos(original["nanos"], d, config)
 	return []interface{}{transformed}
 }
-func flattenComputeRegionBackendServiceOutlierDetectionBaseEjectionTimeSeconds(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionBackendServiceOutlierDetectionBaseEjectionTimeSeconds(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
@@ -1740,7 +1740,7 @@ func flattenComputeRegionBackendServiceOutlierDetectionBaseEjectionTimeSeconds(v
 	return v
 }
 
-func flattenComputeRegionBackendServiceOutlierDetectionBaseEjectionTimeNanos(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionBackendServiceOutlierDetectionBaseEjectionTimeNanos(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
@@ -1750,7 +1750,7 @@ func flattenComputeRegionBackendServiceOutlierDetectionBaseEjectionTimeNanos(v i
 	return v
 }
 
-func flattenComputeRegionBackendServiceOutlierDetectionConsecutiveErrors(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionBackendServiceOutlierDetectionConsecutiveErrors(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
@@ -1760,7 +1760,7 @@ func flattenComputeRegionBackendServiceOutlierDetectionConsecutiveErrors(v inter
 	return v
 }
 
-func flattenComputeRegionBackendServiceOutlierDetectionConsecutiveGatewayFailure(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionBackendServiceOutlierDetectionConsecutiveGatewayFailure(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
@@ -1770,7 +1770,7 @@ func flattenComputeRegionBackendServiceOutlierDetectionConsecutiveGatewayFailure
 	return v
 }
 
-func flattenComputeRegionBackendServiceOutlierDetectionEnforcingConsecutiveErrors(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionBackendServiceOutlierDetectionEnforcingConsecutiveErrors(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
@@ -1780,7 +1780,7 @@ func flattenComputeRegionBackendServiceOutlierDetectionEnforcingConsecutiveError
 	return v
 }
 
-func flattenComputeRegionBackendServiceOutlierDetectionEnforcingConsecutiveGatewayFailure(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionBackendServiceOutlierDetectionEnforcingConsecutiveGatewayFailure(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
@@ -1790,7 +1790,7 @@ func flattenComputeRegionBackendServiceOutlierDetectionEnforcingConsecutiveGatew
 	return v
 }
 
-func flattenComputeRegionBackendServiceOutlierDetectionEnforcingSuccessRate(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionBackendServiceOutlierDetectionEnforcingSuccessRate(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
@@ -1800,7 +1800,7 @@ func flattenComputeRegionBackendServiceOutlierDetectionEnforcingSuccessRate(v in
 	return v
 }
 
-func flattenComputeRegionBackendServiceOutlierDetectionInterval(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionBackendServiceOutlierDetectionInterval(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -1810,12 +1810,12 @@ func flattenComputeRegionBackendServiceOutlierDetectionInterval(v interface{}, d
 	}
 	transformed := make(map[string]interface{})
 	transformed["seconds"] =
-		flattenComputeRegionBackendServiceOutlierDetectionIntervalSeconds(original["seconds"], d)
+		flattenComputeRegionBackendServiceOutlierDetectionIntervalSeconds(original["seconds"], d, config)
 	transformed["nanos"] =
-		flattenComputeRegionBackendServiceOutlierDetectionIntervalNanos(original["nanos"], d)
+		flattenComputeRegionBackendServiceOutlierDetectionIntervalNanos(original["nanos"], d, config)
 	return []interface{}{transformed}
 }
-func flattenComputeRegionBackendServiceOutlierDetectionIntervalSeconds(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionBackendServiceOutlierDetectionIntervalSeconds(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
@@ -1825,7 +1825,7 @@ func flattenComputeRegionBackendServiceOutlierDetectionIntervalSeconds(v interfa
 	return v
 }
 
-func flattenComputeRegionBackendServiceOutlierDetectionIntervalNanos(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionBackendServiceOutlierDetectionIntervalNanos(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
@@ -1835,7 +1835,7 @@ func flattenComputeRegionBackendServiceOutlierDetectionIntervalNanos(v interface
 	return v
 }
 
-func flattenComputeRegionBackendServiceOutlierDetectionMaxEjectionPercent(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionBackendServiceOutlierDetectionMaxEjectionPercent(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
@@ -1845,7 +1845,7 @@ func flattenComputeRegionBackendServiceOutlierDetectionMaxEjectionPercent(v inte
 	return v
 }
 
-func flattenComputeRegionBackendServiceOutlierDetectionSuccessRateMinimumHosts(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionBackendServiceOutlierDetectionSuccessRateMinimumHosts(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
@@ -1855,7 +1855,7 @@ func flattenComputeRegionBackendServiceOutlierDetectionSuccessRateMinimumHosts(v
 	return v
 }
 
-func flattenComputeRegionBackendServiceOutlierDetectionSuccessRateRequestVolume(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionBackendServiceOutlierDetectionSuccessRateRequestVolume(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
@@ -1865,7 +1865,7 @@ func flattenComputeRegionBackendServiceOutlierDetectionSuccessRateRequestVolume(
 	return v
 }
 
-func flattenComputeRegionBackendServiceOutlierDetectionSuccessRateStdevFactor(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionBackendServiceOutlierDetectionSuccessRateStdevFactor(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
@@ -1875,15 +1875,15 @@ func flattenComputeRegionBackendServiceOutlierDetectionSuccessRateStdevFactor(v 
 	return v
 }
 
-func flattenComputeRegionBackendServiceProtocol(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionBackendServiceProtocol(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenComputeRegionBackendServiceSessionAffinity(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionBackendServiceSessionAffinity(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenComputeRegionBackendServiceTimeoutSec(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionBackendServiceTimeoutSec(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
@@ -1893,7 +1893,7 @@ func flattenComputeRegionBackendServiceTimeoutSec(v interface{}, d *schema.Resou
 	return v
 }
 
-func flattenComputeRegionBackendServiceLogConfig(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionBackendServiceLogConfig(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -1903,27 +1903,27 @@ func flattenComputeRegionBackendServiceLogConfig(v interface{}, d *schema.Resour
 	}
 	transformed := make(map[string]interface{})
 	transformed["enable"] =
-		flattenComputeRegionBackendServiceLogConfigEnable(original["enable"], d)
+		flattenComputeRegionBackendServiceLogConfigEnable(original["enable"], d, config)
 	transformed["sample_rate"] =
-		flattenComputeRegionBackendServiceLogConfigSampleRate(original["sampleRate"], d)
+		flattenComputeRegionBackendServiceLogConfigSampleRate(original["sampleRate"], d, config)
 	return []interface{}{transformed}
 }
-func flattenComputeRegionBackendServiceLogConfigEnable(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionBackendServiceLogConfigEnable(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenComputeRegionBackendServiceLogConfigSampleRate(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionBackendServiceLogConfigSampleRate(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenComputeRegionBackendServiceNetwork(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionBackendServiceNetwork(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	if v == nil {
 		return v
 	}
 	return ConvertSelfLinkToV1(v.(string))
 }
 
-func flattenComputeRegionBackendServiceRegion(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionBackendServiceRegion(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	if v == nil {
 		return v
 	}

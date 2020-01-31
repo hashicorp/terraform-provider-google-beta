@@ -246,25 +246,25 @@ func resourceHealthcareFhirStoreRead(d *schema.ResourceData, meta interface{}) e
 		return nil
 	}
 
-	if err := d.Set("name", flattenHealthcareFhirStoreName(res["name"], d)); err != nil {
+	if err := d.Set("name", flattenHealthcareFhirStoreName(res["name"], d, config)); err != nil {
 		return fmt.Errorf("Error reading FhirStore: %s", err)
 	}
-	if err := d.Set("enable_update_create", flattenHealthcareFhirStoreEnableUpdateCreate(res["enableUpdateCreate"], d)); err != nil {
+	if err := d.Set("enable_update_create", flattenHealthcareFhirStoreEnableUpdateCreate(res["enableUpdateCreate"], d, config)); err != nil {
 		return fmt.Errorf("Error reading FhirStore: %s", err)
 	}
-	if err := d.Set("disable_referential_integrity", flattenHealthcareFhirStoreDisableReferentialIntegrity(res["disableReferentialIntegrity"], d)); err != nil {
+	if err := d.Set("disable_referential_integrity", flattenHealthcareFhirStoreDisableReferentialIntegrity(res["disableReferentialIntegrity"], d, config)); err != nil {
 		return fmt.Errorf("Error reading FhirStore: %s", err)
 	}
-	if err := d.Set("disable_resource_versioning", flattenHealthcareFhirStoreDisableResourceVersioning(res["disableResourceVersioning"], d)); err != nil {
+	if err := d.Set("disable_resource_versioning", flattenHealthcareFhirStoreDisableResourceVersioning(res["disableResourceVersioning"], d, config)); err != nil {
 		return fmt.Errorf("Error reading FhirStore: %s", err)
 	}
-	if err := d.Set("enable_history_import", flattenHealthcareFhirStoreEnableHistoryImport(res["enableHistoryImport"], d)); err != nil {
+	if err := d.Set("enable_history_import", flattenHealthcareFhirStoreEnableHistoryImport(res["enableHistoryImport"], d, config)); err != nil {
 		return fmt.Errorf("Error reading FhirStore: %s", err)
 	}
-	if err := d.Set("labels", flattenHealthcareFhirStoreLabels(res["labels"], d)); err != nil {
+	if err := d.Set("labels", flattenHealthcareFhirStoreLabels(res["labels"], d, config)); err != nil {
 		return fmt.Errorf("Error reading FhirStore: %s", err)
 	}
-	if err := d.Set("notification_config", flattenHealthcareFhirStoreNotificationConfig(res["notificationConfig"], d)); err != nil {
+	if err := d.Set("notification_config", flattenHealthcareFhirStoreNotificationConfig(res["notificationConfig"], d, config)); err != nil {
 		return fmt.Errorf("Error reading FhirStore: %s", err)
 	}
 
@@ -363,31 +363,31 @@ func resourceHealthcareFhirStoreImport(d *schema.ResourceData, meta interface{})
 	return []*schema.ResourceData{d}, nil
 }
 
-func flattenHealthcareFhirStoreName(v interface{}, d *schema.ResourceData) interface{} {
+func flattenHealthcareFhirStoreName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenHealthcareFhirStoreEnableUpdateCreate(v interface{}, d *schema.ResourceData) interface{} {
+func flattenHealthcareFhirStoreEnableUpdateCreate(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenHealthcareFhirStoreDisableReferentialIntegrity(v interface{}, d *schema.ResourceData) interface{} {
+func flattenHealthcareFhirStoreDisableReferentialIntegrity(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenHealthcareFhirStoreDisableResourceVersioning(v interface{}, d *schema.ResourceData) interface{} {
+func flattenHealthcareFhirStoreDisableResourceVersioning(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenHealthcareFhirStoreEnableHistoryImport(v interface{}, d *schema.ResourceData) interface{} {
+func flattenHealthcareFhirStoreEnableHistoryImport(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenHealthcareFhirStoreLabels(v interface{}, d *schema.ResourceData) interface{} {
+func flattenHealthcareFhirStoreLabels(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenHealthcareFhirStoreNotificationConfig(v interface{}, d *schema.ResourceData) interface{} {
+func flattenHealthcareFhirStoreNotificationConfig(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -397,10 +397,10 @@ func flattenHealthcareFhirStoreNotificationConfig(v interface{}, d *schema.Resou
 	}
 	transformed := make(map[string]interface{})
 	transformed["pubsub_topic"] =
-		flattenHealthcareFhirStoreNotificationConfigPubsubTopic(original["pubsubTopic"], d)
+		flattenHealthcareFhirStoreNotificationConfigPubsubTopic(original["pubsubTopic"], d, config)
 	return []interface{}{transformed}
 }
-func flattenHealthcareFhirStoreNotificationConfigPubsubTopic(v interface{}, d *schema.ResourceData) interface{} {
+func flattenHealthcareFhirStoreNotificationConfigPubsubTopic(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 

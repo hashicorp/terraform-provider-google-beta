@@ -220,28 +220,28 @@ func resourceComputeManagedSslCertificateRead(d *schema.ResourceData, meta inter
 		return fmt.Errorf("Error reading ManagedSslCertificate: %s", err)
 	}
 
-	if err := d.Set("creation_timestamp", flattenComputeManagedSslCertificateCreationTimestamp(res["creationTimestamp"], d)); err != nil {
+	if err := d.Set("creation_timestamp", flattenComputeManagedSslCertificateCreationTimestamp(res["creationTimestamp"], d, config)); err != nil {
 		return fmt.Errorf("Error reading ManagedSslCertificate: %s", err)
 	}
-	if err := d.Set("description", flattenComputeManagedSslCertificateDescription(res["description"], d)); err != nil {
+	if err := d.Set("description", flattenComputeManagedSslCertificateDescription(res["description"], d, config)); err != nil {
 		return fmt.Errorf("Error reading ManagedSslCertificate: %s", err)
 	}
-	if err := d.Set("certificate_id", flattenComputeManagedSslCertificateCertificateId(res["id"], d)); err != nil {
+	if err := d.Set("certificate_id", flattenComputeManagedSslCertificateCertificateId(res["id"], d, config)); err != nil {
 		return fmt.Errorf("Error reading ManagedSslCertificate: %s", err)
 	}
-	if err := d.Set("name", flattenComputeManagedSslCertificateName(res["name"], d)); err != nil {
+	if err := d.Set("name", flattenComputeManagedSslCertificateName(res["name"], d, config)); err != nil {
 		return fmt.Errorf("Error reading ManagedSslCertificate: %s", err)
 	}
-	if err := d.Set("managed", flattenComputeManagedSslCertificateManaged(res["managed"], d)); err != nil {
+	if err := d.Set("managed", flattenComputeManagedSslCertificateManaged(res["managed"], d, config)); err != nil {
 		return fmt.Errorf("Error reading ManagedSslCertificate: %s", err)
 	}
-	if err := d.Set("type", flattenComputeManagedSslCertificateType(res["type"], d)); err != nil {
+	if err := d.Set("type", flattenComputeManagedSslCertificateType(res["type"], d, config)); err != nil {
 		return fmt.Errorf("Error reading ManagedSslCertificate: %s", err)
 	}
-	if err := d.Set("subject_alternative_names", flattenComputeManagedSslCertificateSubjectAlternativeNames(res["subjectAlternativeNames"], d)); err != nil {
+	if err := d.Set("subject_alternative_names", flattenComputeManagedSslCertificateSubjectAlternativeNames(res["subjectAlternativeNames"], d, config)); err != nil {
 		return fmt.Errorf("Error reading ManagedSslCertificate: %s", err)
 	}
-	if err := d.Set("expire_time", flattenComputeManagedSslCertificateExpireTime(res["expireTime"], d)); err != nil {
+	if err := d.Set("expire_time", flattenComputeManagedSslCertificateExpireTime(res["expireTime"], d, config)); err != nil {
 		return fmt.Errorf("Error reading ManagedSslCertificate: %s", err)
 	}
 	if err := d.Set("self_link", ConvertSelfLinkToV1(res["selfLink"].(string))); err != nil {
@@ -304,15 +304,15 @@ func resourceComputeManagedSslCertificateImport(d *schema.ResourceData, meta int
 	return []*schema.ResourceData{d}, nil
 }
 
-func flattenComputeManagedSslCertificateCreationTimestamp(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeManagedSslCertificateCreationTimestamp(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenComputeManagedSslCertificateDescription(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeManagedSslCertificateDescription(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenComputeManagedSslCertificateCertificateId(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeManagedSslCertificateCertificateId(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
@@ -322,11 +322,11 @@ func flattenComputeManagedSslCertificateCertificateId(v interface{}, d *schema.R
 	return v
 }
 
-func flattenComputeManagedSslCertificateName(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeManagedSslCertificateName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenComputeManagedSslCertificateManaged(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeManagedSslCertificateManaged(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -336,22 +336,22 @@ func flattenComputeManagedSslCertificateManaged(v interface{}, d *schema.Resourc
 	}
 	transformed := make(map[string]interface{})
 	transformed["domains"] =
-		flattenComputeManagedSslCertificateManagedDomains(original["domains"], d)
+		flattenComputeManagedSslCertificateManagedDomains(original["domains"], d, config)
 	return []interface{}{transformed}
 }
-func flattenComputeManagedSslCertificateManagedDomains(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeManagedSslCertificateManagedDomains(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenComputeManagedSslCertificateType(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeManagedSslCertificateType(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenComputeManagedSslCertificateSubjectAlternativeNames(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeManagedSslCertificateSubjectAlternativeNames(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenComputeManagedSslCertificateExpireTime(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeManagedSslCertificateExpireTime(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 

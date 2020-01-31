@@ -187,22 +187,22 @@ func resourceComputeRegionTargetHttpProxyRead(d *schema.ResourceData, meta inter
 		return fmt.Errorf("Error reading RegionTargetHttpProxy: %s", err)
 	}
 
-	if err := d.Set("creation_timestamp", flattenComputeRegionTargetHttpProxyCreationTimestamp(res["creationTimestamp"], d)); err != nil {
+	if err := d.Set("creation_timestamp", flattenComputeRegionTargetHttpProxyCreationTimestamp(res["creationTimestamp"], d, config)); err != nil {
 		return fmt.Errorf("Error reading RegionTargetHttpProxy: %s", err)
 	}
-	if err := d.Set("description", flattenComputeRegionTargetHttpProxyDescription(res["description"], d)); err != nil {
+	if err := d.Set("description", flattenComputeRegionTargetHttpProxyDescription(res["description"], d, config)); err != nil {
 		return fmt.Errorf("Error reading RegionTargetHttpProxy: %s", err)
 	}
-	if err := d.Set("proxy_id", flattenComputeRegionTargetHttpProxyProxyId(res["id"], d)); err != nil {
+	if err := d.Set("proxy_id", flattenComputeRegionTargetHttpProxyProxyId(res["id"], d, config)); err != nil {
 		return fmt.Errorf("Error reading RegionTargetHttpProxy: %s", err)
 	}
-	if err := d.Set("name", flattenComputeRegionTargetHttpProxyName(res["name"], d)); err != nil {
+	if err := d.Set("name", flattenComputeRegionTargetHttpProxyName(res["name"], d, config)); err != nil {
 		return fmt.Errorf("Error reading RegionTargetHttpProxy: %s", err)
 	}
-	if err := d.Set("url_map", flattenComputeRegionTargetHttpProxyUrlMap(res["urlMap"], d)); err != nil {
+	if err := d.Set("url_map", flattenComputeRegionTargetHttpProxyUrlMap(res["urlMap"], d, config)); err != nil {
 		return fmt.Errorf("Error reading RegionTargetHttpProxy: %s", err)
 	}
-	if err := d.Set("region", flattenComputeRegionTargetHttpProxyRegion(res["region"], d)); err != nil {
+	if err := d.Set("region", flattenComputeRegionTargetHttpProxyRegion(res["region"], d, config)); err != nil {
 		return fmt.Errorf("Error reading RegionTargetHttpProxy: %s", err)
 	}
 	if err := d.Set("self_link", ConvertSelfLinkToV1(res["selfLink"].(string))); err != nil {
@@ -310,15 +310,15 @@ func resourceComputeRegionTargetHttpProxyImport(d *schema.ResourceData, meta int
 	return []*schema.ResourceData{d}, nil
 }
 
-func flattenComputeRegionTargetHttpProxyCreationTimestamp(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionTargetHttpProxyCreationTimestamp(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenComputeRegionTargetHttpProxyDescription(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionTargetHttpProxyDescription(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenComputeRegionTargetHttpProxyProxyId(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionTargetHttpProxyProxyId(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
@@ -328,18 +328,18 @@ func flattenComputeRegionTargetHttpProxyProxyId(v interface{}, d *schema.Resourc
 	return v
 }
 
-func flattenComputeRegionTargetHttpProxyName(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionTargetHttpProxyName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenComputeRegionTargetHttpProxyUrlMap(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionTargetHttpProxyUrlMap(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	if v == nil {
 		return v
 	}
 	return ConvertSelfLinkToV1(v.(string))
 }
 
-func flattenComputeRegionTargetHttpProxyRegion(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionTargetHttpProxyRegion(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	if v == nil {
 		return v
 	}

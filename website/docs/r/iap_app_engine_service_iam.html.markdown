@@ -49,7 +49,7 @@ resource "google_iap_app_engine_service_iam_policy" "editor" {
   project = "${google_app_engine_standard_app_version.version.project}"
   app_id = "${google_app_engine_standard_app_version.version.project}"
   service = "${google_app_engine_standard_app_version.version.service}"
-  policy_data = "${data.google_iam_policy.admin.policy_data}"
+  policy_data = data.google_iam_policy.admin.policy_data
 }
 ```
 
@@ -75,7 +75,7 @@ resource "google_iap_app_engine_service_iam_policy" "editor" {
   project = "${google_app_engine_standard_app_version.version.project}"
   app_id = "${google_app_engine_standard_app_version.version.project}"
   service = "${google_app_engine_standard_app_version.version.service}"
-  policy_data = "${data.google_iam_policy.admin.policy_data}"
+  policy_data = data.google_iam_policy.admin.policy_data
 }
 ```
 ## google\_iap\_app\_engine\_service\_iam\_binding

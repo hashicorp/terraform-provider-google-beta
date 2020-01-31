@@ -216,22 +216,22 @@ func resourceVPCAccessConnectorRead(d *schema.ResourceData, meta interface{}) er
 		return fmt.Errorf("Error reading Connector: %s", err)
 	}
 
-	if err := d.Set("name", flattenVPCAccessConnectorName(res["name"], d)); err != nil {
+	if err := d.Set("name", flattenVPCAccessConnectorName(res["name"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Connector: %s", err)
 	}
-	if err := d.Set("network", flattenVPCAccessConnectorNetwork(res["network"], d)); err != nil {
+	if err := d.Set("network", flattenVPCAccessConnectorNetwork(res["network"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Connector: %s", err)
 	}
-	if err := d.Set("ip_cidr_range", flattenVPCAccessConnectorIpCidrRange(res["ipCidrRange"], d)); err != nil {
+	if err := d.Set("ip_cidr_range", flattenVPCAccessConnectorIpCidrRange(res["ipCidrRange"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Connector: %s", err)
 	}
-	if err := d.Set("state", flattenVPCAccessConnectorState(res["state"], d)); err != nil {
+	if err := d.Set("state", flattenVPCAccessConnectorState(res["state"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Connector: %s", err)
 	}
-	if err := d.Set("min_throughput", flattenVPCAccessConnectorMinThroughput(res["minThroughput"], d)); err != nil {
+	if err := d.Set("min_throughput", flattenVPCAccessConnectorMinThroughput(res["minThroughput"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Connector: %s", err)
 	}
-	if err := d.Set("max_throughput", flattenVPCAccessConnectorMaxThroughput(res["maxThroughput"], d)); err != nil {
+	if err := d.Set("max_throughput", flattenVPCAccessConnectorMaxThroughput(res["maxThroughput"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Connector: %s", err)
 	}
 
@@ -292,26 +292,26 @@ func resourceVPCAccessConnectorImport(d *schema.ResourceData, meta interface{}) 
 	return []*schema.ResourceData{d}, nil
 }
 
-func flattenVPCAccessConnectorName(v interface{}, d *schema.ResourceData) interface{} {
+func flattenVPCAccessConnectorName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	if v == nil {
 		return v
 	}
 	return NameFromSelfLinkStateFunc(v)
 }
 
-func flattenVPCAccessConnectorNetwork(v interface{}, d *schema.ResourceData) interface{} {
+func flattenVPCAccessConnectorNetwork(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenVPCAccessConnectorIpCidrRange(v interface{}, d *schema.ResourceData) interface{} {
+func flattenVPCAccessConnectorIpCidrRange(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenVPCAccessConnectorState(v interface{}, d *schema.ResourceData) interface{} {
+func flattenVPCAccessConnectorState(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenVPCAccessConnectorMinThroughput(v interface{}, d *schema.ResourceData) interface{} {
+func flattenVPCAccessConnectorMinThroughput(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
@@ -321,7 +321,7 @@ func flattenVPCAccessConnectorMinThroughput(v interface{}, d *schema.ResourceDat
 	return v
 }
 
-func flattenVPCAccessConnectorMaxThroughput(v interface{}, d *schema.ResourceData) interface{} {
+func flattenVPCAccessConnectorMaxThroughput(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
