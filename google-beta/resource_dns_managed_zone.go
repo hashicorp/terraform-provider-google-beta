@@ -428,37 +428,37 @@ func resourceDNSManagedZoneRead(d *schema.ResourceData, meta interface{}) error 
 		return fmt.Errorf("Error reading ManagedZone: %s", err)
 	}
 
-	if err := d.Set("description", flattenDNSManagedZoneDescription(res["description"], d)); err != nil {
+	if err := d.Set("description", flattenDNSManagedZoneDescription(res["description"], d, config)); err != nil {
 		return fmt.Errorf("Error reading ManagedZone: %s", err)
 	}
-	if err := d.Set("dns_name", flattenDNSManagedZoneDnsName(res["dnsName"], d)); err != nil {
+	if err := d.Set("dns_name", flattenDNSManagedZoneDnsName(res["dnsName"], d, config)); err != nil {
 		return fmt.Errorf("Error reading ManagedZone: %s", err)
 	}
-	if err := d.Set("dnssec_config", flattenDNSManagedZoneDnssecConfig(res["dnssecConfig"], d)); err != nil {
+	if err := d.Set("dnssec_config", flattenDNSManagedZoneDnssecConfig(res["dnssecConfig"], d, config)); err != nil {
 		return fmt.Errorf("Error reading ManagedZone: %s", err)
 	}
-	if err := d.Set("name", flattenDNSManagedZoneName(res["name"], d)); err != nil {
+	if err := d.Set("name", flattenDNSManagedZoneName(res["name"], d, config)); err != nil {
 		return fmt.Errorf("Error reading ManagedZone: %s", err)
 	}
-	if err := d.Set("name_servers", flattenDNSManagedZoneNameServers(res["nameServers"], d)); err != nil {
+	if err := d.Set("name_servers", flattenDNSManagedZoneNameServers(res["nameServers"], d, config)); err != nil {
 		return fmt.Errorf("Error reading ManagedZone: %s", err)
 	}
-	if err := d.Set("labels", flattenDNSManagedZoneLabels(res["labels"], d)); err != nil {
+	if err := d.Set("labels", flattenDNSManagedZoneLabels(res["labels"], d, config)); err != nil {
 		return fmt.Errorf("Error reading ManagedZone: %s", err)
 	}
-	if err := d.Set("visibility", flattenDNSManagedZoneVisibility(res["visibility"], d)); err != nil {
+	if err := d.Set("visibility", flattenDNSManagedZoneVisibility(res["visibility"], d, config)); err != nil {
 		return fmt.Errorf("Error reading ManagedZone: %s", err)
 	}
-	if err := d.Set("private_visibility_config", flattenDNSManagedZonePrivateVisibilityConfig(res["privateVisibilityConfig"], d)); err != nil {
+	if err := d.Set("private_visibility_config", flattenDNSManagedZonePrivateVisibilityConfig(res["privateVisibilityConfig"], d, config)); err != nil {
 		return fmt.Errorf("Error reading ManagedZone: %s", err)
 	}
-	if err := d.Set("forwarding_config", flattenDNSManagedZoneForwardingConfig(res["forwardingConfig"], d)); err != nil {
+	if err := d.Set("forwarding_config", flattenDNSManagedZoneForwardingConfig(res["forwardingConfig"], d, config)); err != nil {
 		return fmt.Errorf("Error reading ManagedZone: %s", err)
 	}
-	if err := d.Set("peering_config", flattenDNSManagedZonePeeringConfig(res["peeringConfig"], d)); err != nil {
+	if err := d.Set("peering_config", flattenDNSManagedZonePeeringConfig(res["peeringConfig"], d, config)); err != nil {
 		return fmt.Errorf("Error reading ManagedZone: %s", err)
 	}
-	if err := d.Set("reverse_lookup", flattenDNSManagedZoneReverseLookup(res["reverseLookupConfig"], d)); err != nil {
+	if err := d.Set("reverse_lookup", flattenDNSManagedZoneReverseLookup(res["reverseLookupConfig"], d, config)); err != nil {
 		return fmt.Errorf("Error reading ManagedZone: %s", err)
 	}
 
@@ -575,15 +575,15 @@ func resourceDNSManagedZoneImport(d *schema.ResourceData, meta interface{}) ([]*
 	return []*schema.ResourceData{d}, nil
 }
 
-func flattenDNSManagedZoneDescription(v interface{}, d *schema.ResourceData) interface{} {
+func flattenDNSManagedZoneDescription(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenDNSManagedZoneDnsName(v interface{}, d *schema.ResourceData) interface{} {
+func flattenDNSManagedZoneDnsName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenDNSManagedZoneDnssecConfig(v interface{}, d *schema.ResourceData) interface{} {
+func flattenDNSManagedZoneDnssecConfig(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -593,28 +593,28 @@ func flattenDNSManagedZoneDnssecConfig(v interface{}, d *schema.ResourceData) in
 	}
 	transformed := make(map[string]interface{})
 	transformed["kind"] =
-		flattenDNSManagedZoneDnssecConfigKind(original["kind"], d)
+		flattenDNSManagedZoneDnssecConfigKind(original["kind"], d, config)
 	transformed["non_existence"] =
-		flattenDNSManagedZoneDnssecConfigNonExistence(original["nonExistence"], d)
+		flattenDNSManagedZoneDnssecConfigNonExistence(original["nonExistence"], d, config)
 	transformed["state"] =
-		flattenDNSManagedZoneDnssecConfigState(original["state"], d)
+		flattenDNSManagedZoneDnssecConfigState(original["state"], d, config)
 	transformed["default_key_specs"] =
-		flattenDNSManagedZoneDnssecConfigDefaultKeySpecs(original["defaultKeySpecs"], d)
+		flattenDNSManagedZoneDnssecConfigDefaultKeySpecs(original["defaultKeySpecs"], d, config)
 	return []interface{}{transformed}
 }
-func flattenDNSManagedZoneDnssecConfigKind(v interface{}, d *schema.ResourceData) interface{} {
+func flattenDNSManagedZoneDnssecConfigKind(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenDNSManagedZoneDnssecConfigNonExistence(v interface{}, d *schema.ResourceData) interface{} {
+func flattenDNSManagedZoneDnssecConfigNonExistence(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenDNSManagedZoneDnssecConfigState(v interface{}, d *schema.ResourceData) interface{} {
+func flattenDNSManagedZoneDnssecConfigState(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenDNSManagedZoneDnssecConfigDefaultKeySpecs(v interface{}, d *schema.ResourceData) interface{} {
+func flattenDNSManagedZoneDnssecConfigDefaultKeySpecs(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	if v == nil {
 		return v
 	}
@@ -627,19 +627,19 @@ func flattenDNSManagedZoneDnssecConfigDefaultKeySpecs(v interface{}, d *schema.R
 			continue
 		}
 		transformed = append(transformed, map[string]interface{}{
-			"algorithm":  flattenDNSManagedZoneDnssecConfigDefaultKeySpecsAlgorithm(original["algorithm"], d),
-			"key_length": flattenDNSManagedZoneDnssecConfigDefaultKeySpecsKeyLength(original["keyLength"], d),
-			"key_type":   flattenDNSManagedZoneDnssecConfigDefaultKeySpecsKeyType(original["keyType"], d),
-			"kind":       flattenDNSManagedZoneDnssecConfigDefaultKeySpecsKind(original["kind"], d),
+			"algorithm":  flattenDNSManagedZoneDnssecConfigDefaultKeySpecsAlgorithm(original["algorithm"], d, config),
+			"key_length": flattenDNSManagedZoneDnssecConfigDefaultKeySpecsKeyLength(original["keyLength"], d, config),
+			"key_type":   flattenDNSManagedZoneDnssecConfigDefaultKeySpecsKeyType(original["keyType"], d, config),
+			"kind":       flattenDNSManagedZoneDnssecConfigDefaultKeySpecsKind(original["kind"], d, config),
 		})
 	}
 	return transformed
 }
-func flattenDNSManagedZoneDnssecConfigDefaultKeySpecsAlgorithm(v interface{}, d *schema.ResourceData) interface{} {
+func flattenDNSManagedZoneDnssecConfigDefaultKeySpecsAlgorithm(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenDNSManagedZoneDnssecConfigDefaultKeySpecsKeyLength(v interface{}, d *schema.ResourceData) interface{} {
+func flattenDNSManagedZoneDnssecConfigDefaultKeySpecsKeyLength(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
@@ -649,27 +649,27 @@ func flattenDNSManagedZoneDnssecConfigDefaultKeySpecsKeyLength(v interface{}, d 
 	return v
 }
 
-func flattenDNSManagedZoneDnssecConfigDefaultKeySpecsKeyType(v interface{}, d *schema.ResourceData) interface{} {
+func flattenDNSManagedZoneDnssecConfigDefaultKeySpecsKeyType(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenDNSManagedZoneDnssecConfigDefaultKeySpecsKind(v interface{}, d *schema.ResourceData) interface{} {
+func flattenDNSManagedZoneDnssecConfigDefaultKeySpecsKind(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenDNSManagedZoneName(v interface{}, d *schema.ResourceData) interface{} {
+func flattenDNSManagedZoneName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenDNSManagedZoneNameServers(v interface{}, d *schema.ResourceData) interface{} {
+func flattenDNSManagedZoneNameServers(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenDNSManagedZoneLabels(v interface{}, d *schema.ResourceData) interface{} {
+func flattenDNSManagedZoneLabels(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenDNSManagedZoneVisibility(v interface{}, d *schema.ResourceData) interface{} {
+func flattenDNSManagedZoneVisibility(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	if v == nil || isEmptyValue(reflect.ValueOf(v)) {
 		return "public"
 	}
@@ -677,7 +677,7 @@ func flattenDNSManagedZoneVisibility(v interface{}, d *schema.ResourceData) inte
 	return v
 }
 
-func flattenDNSManagedZonePrivateVisibilityConfig(v interface{}, d *schema.ResourceData) interface{} {
+func flattenDNSManagedZonePrivateVisibilityConfig(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -687,10 +687,10 @@ func flattenDNSManagedZonePrivateVisibilityConfig(v interface{}, d *schema.Resou
 	}
 	transformed := make(map[string]interface{})
 	transformed["networks"] =
-		flattenDNSManagedZonePrivateVisibilityConfigNetworks(original["networks"], d)
+		flattenDNSManagedZonePrivateVisibilityConfigNetworks(original["networks"], d, config)
 	return []interface{}{transformed}
 }
-func flattenDNSManagedZonePrivateVisibilityConfigNetworks(v interface{}, d *schema.ResourceData) interface{} {
+func flattenDNSManagedZonePrivateVisibilityConfigNetworks(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	if v == nil {
 		return v
 	}
@@ -714,16 +714,16 @@ func flattenDNSManagedZonePrivateVisibilityConfigNetworks(v interface{}, d *sche
 			continue
 		}
 		transformed.Add(map[string]interface{}{
-			"network_url": flattenDNSManagedZonePrivateVisibilityConfigNetworksNetworkUrl(original["networkUrl"], d),
+			"network_url": flattenDNSManagedZonePrivateVisibilityConfigNetworksNetworkUrl(original["networkUrl"], d, config),
 		})
 	}
 	return transformed
 }
-func flattenDNSManagedZonePrivateVisibilityConfigNetworksNetworkUrl(v interface{}, d *schema.ResourceData) interface{} {
+func flattenDNSManagedZonePrivateVisibilityConfigNetworksNetworkUrl(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenDNSManagedZoneForwardingConfig(v interface{}, d *schema.ResourceData) interface{} {
+func flattenDNSManagedZoneForwardingConfig(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -733,10 +733,10 @@ func flattenDNSManagedZoneForwardingConfig(v interface{}, d *schema.ResourceData
 	}
 	transformed := make(map[string]interface{})
 	transformed["target_name_servers"] =
-		flattenDNSManagedZoneForwardingConfigTargetNameServers(original["targetNameServers"], d)
+		flattenDNSManagedZoneForwardingConfigTargetNameServers(original["targetNameServers"], d, config)
 	return []interface{}{transformed}
 }
-func flattenDNSManagedZoneForwardingConfigTargetNameServers(v interface{}, d *schema.ResourceData) interface{} {
+func flattenDNSManagedZoneForwardingConfigTargetNameServers(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	if v == nil {
 		return v
 	}
@@ -757,21 +757,21 @@ func flattenDNSManagedZoneForwardingConfigTargetNameServers(v interface{}, d *sc
 			continue
 		}
 		transformed.Add(map[string]interface{}{
-			"ipv4_address":    flattenDNSManagedZoneForwardingConfigTargetNameServersIpv4Address(original["ipv4Address"], d),
-			"forwarding_path": flattenDNSManagedZoneForwardingConfigTargetNameServersForwardingPath(original["forwardingPath"], d),
+			"ipv4_address":    flattenDNSManagedZoneForwardingConfigTargetNameServersIpv4Address(original["ipv4Address"], d, config),
+			"forwarding_path": flattenDNSManagedZoneForwardingConfigTargetNameServersForwardingPath(original["forwardingPath"], d, config),
 		})
 	}
 	return transformed
 }
-func flattenDNSManagedZoneForwardingConfigTargetNameServersIpv4Address(v interface{}, d *schema.ResourceData) interface{} {
+func flattenDNSManagedZoneForwardingConfigTargetNameServersIpv4Address(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenDNSManagedZoneForwardingConfigTargetNameServersForwardingPath(v interface{}, d *schema.ResourceData) interface{} {
+func flattenDNSManagedZoneForwardingConfigTargetNameServersForwardingPath(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenDNSManagedZonePeeringConfig(v interface{}, d *schema.ResourceData) interface{} {
+func flattenDNSManagedZonePeeringConfig(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -781,10 +781,10 @@ func flattenDNSManagedZonePeeringConfig(v interface{}, d *schema.ResourceData) i
 	}
 	transformed := make(map[string]interface{})
 	transformed["target_network"] =
-		flattenDNSManagedZonePeeringConfigTargetNetwork(original["targetNetwork"], d)
+		flattenDNSManagedZonePeeringConfigTargetNetwork(original["targetNetwork"], d, config)
 	return []interface{}{transformed}
 }
-func flattenDNSManagedZonePeeringConfigTargetNetwork(v interface{}, d *schema.ResourceData) interface{} {
+func flattenDNSManagedZonePeeringConfigTargetNetwork(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -794,14 +794,14 @@ func flattenDNSManagedZonePeeringConfigTargetNetwork(v interface{}, d *schema.Re
 	}
 	transformed := make(map[string]interface{})
 	transformed["network_url"] =
-		flattenDNSManagedZonePeeringConfigTargetNetworkNetworkUrl(original["networkUrl"], d)
+		flattenDNSManagedZonePeeringConfigTargetNetworkNetworkUrl(original["networkUrl"], d, config)
 	return []interface{}{transformed}
 }
-func flattenDNSManagedZonePeeringConfigTargetNetworkNetworkUrl(v interface{}, d *schema.ResourceData) interface{} {
+func flattenDNSManagedZonePeeringConfigTargetNetworkNetworkUrl(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenDNSManagedZoneReverseLookup(v interface{}, d *schema.ResourceData) interface{} {
+func flattenDNSManagedZoneReverseLookup(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v != nil
 }
 

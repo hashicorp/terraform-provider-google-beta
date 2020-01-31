@@ -154,10 +154,10 @@ func resourceHealthcareDatasetRead(d *schema.ResourceData, meta interface{}) err
 		return fmt.Errorf("Error reading Dataset: %s", err)
 	}
 
-	if err := d.Set("name", flattenHealthcareDatasetName(res["name"], d)); err != nil {
+	if err := d.Set("name", flattenHealthcareDatasetName(res["name"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Dataset: %s", err)
 	}
-	if err := d.Set("time_zone", flattenHealthcareDatasetTimeZone(res["timeZone"], d)); err != nil {
+	if err := d.Set("time_zone", flattenHealthcareDatasetTimeZone(res["timeZone"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Dataset: %s", err)
 	}
 
@@ -251,11 +251,11 @@ func resourceHealthcareDatasetImport(d *schema.ResourceData, meta interface{}) (
 	return []*schema.ResourceData{d}, nil
 }
 
-func flattenHealthcareDatasetName(v interface{}, d *schema.ResourceData) interface{} {
+func flattenHealthcareDatasetName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenHealthcareDatasetTimeZone(v interface{}, d *schema.ResourceData) interface{} {
+func flattenHealthcareDatasetTimeZone(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 

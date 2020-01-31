@@ -289,9 +289,9 @@ resource "google_compute_instance" "tunnelvm" {
 }
 
 resource "google_iap_tunnel_instance_iam_member" "foo" {
-  project = "${google_compute_instance.tunnelvm.project}"
-  zone = "${google_compute_instance.tunnelvm.zone}"
-  instance = "${google_compute_instance.tunnelvm.name}"
+  project = google_compute_instance.tunnelvm.project
+  zone = google_compute_instance.tunnelvm.zone
+  instance = google_compute_instance.tunnelvm.name
   role = "%{role}"
   member = "user:admin@hashicorptest.com"
 }
@@ -324,10 +324,10 @@ data "google_iam_policy" "foo" {
 }
 
 resource "google_iap_tunnel_instance_iam_policy" "foo" {
-  project = "${google_compute_instance.tunnelvm.project}"
-  zone = "${google_compute_instance.tunnelvm.zone}"
-  instance = "${google_compute_instance.tunnelvm.name}"
-  policy_data = "${data.google_iam_policy.foo.policy_data}"
+  project = google_compute_instance.tunnelvm.project
+  zone = google_compute_instance.tunnelvm.zone
+  instance = google_compute_instance.tunnelvm.name
+  policy_data = data.google_iam_policy.foo.policy_data
 }
 `, context)
 }
@@ -354,10 +354,10 @@ data "google_iam_policy" "foo" {
 }
 
 resource "google_iap_tunnel_instance_iam_policy" "foo" {
-  project = "${google_compute_instance.tunnelvm.project}"
-  zone = "${google_compute_instance.tunnelvm.zone}"
-  instance = "${google_compute_instance.tunnelvm.name}"
-  policy_data = "${data.google_iam_policy.foo.policy_data}"
+  project = google_compute_instance.tunnelvm.project
+  zone = google_compute_instance.tunnelvm.zone
+  instance = google_compute_instance.tunnelvm.name
+  policy_data = data.google_iam_policy.foo.policy_data
 }
 `, context)
 }
@@ -381,9 +381,9 @@ resource "google_compute_instance" "tunnelvm" {
 }
 
 resource "google_iap_tunnel_instance_iam_binding" "foo" {
-  project = "${google_compute_instance.tunnelvm.project}"
-  zone = "${google_compute_instance.tunnelvm.zone}"
-  instance = "${google_compute_instance.tunnelvm.name}"
+  project = google_compute_instance.tunnelvm.project
+  zone = google_compute_instance.tunnelvm.zone
+  instance = google_compute_instance.tunnelvm.name
   role = "%{role}"
   members = ["user:admin@hashicorptest.com"]
 }
@@ -409,9 +409,9 @@ resource "google_compute_instance" "tunnelvm" {
 }
 
 resource "google_iap_tunnel_instance_iam_binding" "foo" {
-  project = "${google_compute_instance.tunnelvm.project}"
-  zone = "${google_compute_instance.tunnelvm.zone}"
-  instance = "${google_compute_instance.tunnelvm.name}"
+  project = google_compute_instance.tunnelvm.project
+  zone = google_compute_instance.tunnelvm.zone
+  instance = google_compute_instance.tunnelvm.name
   role = "%{role}"
   members = ["user:admin@hashicorptest.com", "user:paddy@hashicorp.com"]
 }
@@ -437,9 +437,9 @@ resource "google_compute_instance" "tunnelvm" {
 }
 
 resource "google_iap_tunnel_instance_iam_binding" "foo" {
-  project = "${google_compute_instance.tunnelvm.project}"
-  zone = "${google_compute_instance.tunnelvm.zone}"
-  instance = "${google_compute_instance.tunnelvm.name}"
+  project = google_compute_instance.tunnelvm.project
+  zone = google_compute_instance.tunnelvm.zone
+  instance = google_compute_instance.tunnelvm.name
   role = "%{role}"
   members = ["user:admin@hashicorptest.com"]
   condition {
@@ -470,17 +470,17 @@ resource "google_compute_instance" "tunnelvm" {
 }
 
 resource "google_iap_tunnel_instance_iam_binding" "foo" {
-  project = "${google_compute_instance.tunnelvm.project}"
-  zone = "${google_compute_instance.tunnelvm.zone}"
-  instance = "${google_compute_instance.tunnelvm.name}"
+  project = google_compute_instance.tunnelvm.project
+  zone = google_compute_instance.tunnelvm.zone
+  instance = google_compute_instance.tunnelvm.name
   role = "%{role}"
   members = ["user:admin@hashicorptest.com"]
 }
 
 resource "google_iap_tunnel_instance_iam_binding" "foo2" {
-  project = "${google_compute_instance.tunnelvm.project}"
-  zone = "${google_compute_instance.tunnelvm.zone}"
-  instance = "${google_compute_instance.tunnelvm.name}"
+  project = google_compute_instance.tunnelvm.project
+  zone = google_compute_instance.tunnelvm.zone
+  instance = google_compute_instance.tunnelvm.name
   role = "%{role}"
   members = ["user:admin@hashicorptest.com"]
   condition {
@@ -511,9 +511,9 @@ resource "google_compute_instance" "tunnelvm" {
 }
 
 resource "google_iap_tunnel_instance_iam_member" "foo" {
-  project = "${google_compute_instance.tunnelvm.project}"
-  zone = "${google_compute_instance.tunnelvm.zone}"
-  instance = "${google_compute_instance.tunnelvm.name}"
+  project = google_compute_instance.tunnelvm.project
+  zone = google_compute_instance.tunnelvm.zone
+  instance = google_compute_instance.tunnelvm.name
   role = "%{role}"
   member = "user:admin@hashicorptest.com"
   condition {
@@ -544,17 +544,17 @@ resource "google_compute_instance" "tunnelvm" {
 }
 
 resource "google_iap_tunnel_instance_iam_member" "foo" {
-  project = "${google_compute_instance.tunnelvm.project}"
-  zone = "${google_compute_instance.tunnelvm.zone}"
-  instance = "${google_compute_instance.tunnelvm.name}"
+  project = google_compute_instance.tunnelvm.project
+  zone = google_compute_instance.tunnelvm.zone
+  instance = google_compute_instance.tunnelvm.name
   role = "%{role}"
   member = "user:admin@hashicorptest.com"
 }
 
 resource "google_iap_tunnel_instance_iam_member" "foo2" {
-  project = "${google_compute_instance.tunnelvm.project}"
-  zone = "${google_compute_instance.tunnelvm.zone}"
-  instance = "${google_compute_instance.tunnelvm.name}"
+  project = google_compute_instance.tunnelvm.project
+  zone = google_compute_instance.tunnelvm.zone
+  instance = google_compute_instance.tunnelvm.name
   role = "%{role}"
   member = "user:admin@hashicorptest.com"
   condition {
@@ -597,10 +597,10 @@ data "google_iam_policy" "foo" {
 }
 
 resource "google_iap_tunnel_instance_iam_policy" "foo" {
-  project = "${google_compute_instance.tunnelvm.project}"
-  zone = "${google_compute_instance.tunnelvm.zone}"
-  instance = "${google_compute_instance.tunnelvm.name}"
-  policy_data = "${data.google_iam_policy.foo.policy_data}"
+  project = google_compute_instance.tunnelvm.project
+  zone = google_compute_instance.tunnelvm.zone
+  instance = google_compute_instance.tunnelvm.name
+  policy_data = data.google_iam_policy.foo.policy_data
 }
 `, context)
 }

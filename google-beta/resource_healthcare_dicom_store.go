@@ -175,13 +175,13 @@ func resourceHealthcareDicomStoreRead(d *schema.ResourceData, meta interface{}) 
 		return nil
 	}
 
-	if err := d.Set("name", flattenHealthcareDicomStoreName(res["name"], d)); err != nil {
+	if err := d.Set("name", flattenHealthcareDicomStoreName(res["name"], d, config)); err != nil {
 		return fmt.Errorf("Error reading DicomStore: %s", err)
 	}
-	if err := d.Set("labels", flattenHealthcareDicomStoreLabels(res["labels"], d)); err != nil {
+	if err := d.Set("labels", flattenHealthcareDicomStoreLabels(res["labels"], d, config)); err != nil {
 		return fmt.Errorf("Error reading DicomStore: %s", err)
 	}
-	if err := d.Set("notification_config", flattenHealthcareDicomStoreNotificationConfig(res["notificationConfig"], d)); err != nil {
+	if err := d.Set("notification_config", flattenHealthcareDicomStoreNotificationConfig(res["notificationConfig"], d, config)); err != nil {
 		return fmt.Errorf("Error reading DicomStore: %s", err)
 	}
 
@@ -270,15 +270,15 @@ func resourceHealthcareDicomStoreImport(d *schema.ResourceData, meta interface{}
 	return []*schema.ResourceData{d}, nil
 }
 
-func flattenHealthcareDicomStoreName(v interface{}, d *schema.ResourceData) interface{} {
+func flattenHealthcareDicomStoreName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenHealthcareDicomStoreLabels(v interface{}, d *schema.ResourceData) interface{} {
+func flattenHealthcareDicomStoreLabels(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenHealthcareDicomStoreNotificationConfig(v interface{}, d *schema.ResourceData) interface{} {
+func flattenHealthcareDicomStoreNotificationConfig(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -288,10 +288,10 @@ func flattenHealthcareDicomStoreNotificationConfig(v interface{}, d *schema.Reso
 	}
 	transformed := make(map[string]interface{})
 	transformed["pubsub_topic"] =
-		flattenHealthcareDicomStoreNotificationConfigPubsubTopic(original["pubsubTopic"], d)
+		flattenHealthcareDicomStoreNotificationConfigPubsubTopic(original["pubsubTopic"], d, config)
 	return []interface{}{transformed}
 }
-func flattenHealthcareDicomStoreNotificationConfigPubsubTopic(v interface{}, d *schema.ResourceData) interface{} {
+func flattenHealthcareDicomStoreNotificationConfigPubsubTopic(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 

@@ -224,22 +224,22 @@ func resourceComputeRegionSslCertificateRead(d *schema.ResourceData, meta interf
 		return fmt.Errorf("Error reading RegionSslCertificate: %s", err)
 	}
 
-	if err := d.Set("certificate", flattenComputeRegionSslCertificateCertificate(res["certificate"], d)); err != nil {
+	if err := d.Set("certificate", flattenComputeRegionSslCertificateCertificate(res["certificate"], d, config)); err != nil {
 		return fmt.Errorf("Error reading RegionSslCertificate: %s", err)
 	}
-	if err := d.Set("creation_timestamp", flattenComputeRegionSslCertificateCreationTimestamp(res["creationTimestamp"], d)); err != nil {
+	if err := d.Set("creation_timestamp", flattenComputeRegionSslCertificateCreationTimestamp(res["creationTimestamp"], d, config)); err != nil {
 		return fmt.Errorf("Error reading RegionSslCertificate: %s", err)
 	}
-	if err := d.Set("description", flattenComputeRegionSslCertificateDescription(res["description"], d)); err != nil {
+	if err := d.Set("description", flattenComputeRegionSslCertificateDescription(res["description"], d, config)); err != nil {
 		return fmt.Errorf("Error reading RegionSslCertificate: %s", err)
 	}
-	if err := d.Set("certificate_id", flattenComputeRegionSslCertificateCertificateId(res["id"], d)); err != nil {
+	if err := d.Set("certificate_id", flattenComputeRegionSslCertificateCertificateId(res["id"], d, config)); err != nil {
 		return fmt.Errorf("Error reading RegionSslCertificate: %s", err)
 	}
-	if err := d.Set("name", flattenComputeRegionSslCertificateName(res["name"], d)); err != nil {
+	if err := d.Set("name", flattenComputeRegionSslCertificateName(res["name"], d, config)); err != nil {
 		return fmt.Errorf("Error reading RegionSslCertificate: %s", err)
 	}
-	if err := d.Set("region", flattenComputeRegionSslCertificateRegion(res["region"], d)); err != nil {
+	if err := d.Set("region", flattenComputeRegionSslCertificateRegion(res["region"], d, config)); err != nil {
 		return fmt.Errorf("Error reading RegionSslCertificate: %s", err)
 	}
 	if err := d.Set("self_link", ConvertSelfLinkToV1(res["selfLink"].(string))); err != nil {
@@ -303,19 +303,19 @@ func resourceComputeRegionSslCertificateImport(d *schema.ResourceData, meta inte
 	return []*schema.ResourceData{d}, nil
 }
 
-func flattenComputeRegionSslCertificateCertificate(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionSslCertificateCertificate(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenComputeRegionSslCertificateCreationTimestamp(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionSslCertificateCreationTimestamp(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenComputeRegionSslCertificateDescription(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionSslCertificateDescription(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenComputeRegionSslCertificateCertificateId(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionSslCertificateCertificateId(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
@@ -325,11 +325,11 @@ func flattenComputeRegionSslCertificateCertificateId(v interface{}, d *schema.Re
 	return v
 }
 
-func flattenComputeRegionSslCertificateName(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionSslCertificateName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenComputeRegionSslCertificateRegion(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionSslCertificateRegion(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	if v == nil {
 		return v
 	}

@@ -194,19 +194,19 @@ func resourceComputeHaVpnGatewayRead(d *schema.ResourceData, meta interface{}) e
 		return fmt.Errorf("Error reading HaVpnGateway: %s", err)
 	}
 
-	if err := d.Set("description", flattenComputeHaVpnGatewayDescription(res["description"], d)); err != nil {
+	if err := d.Set("description", flattenComputeHaVpnGatewayDescription(res["description"], d, config)); err != nil {
 		return fmt.Errorf("Error reading HaVpnGateway: %s", err)
 	}
-	if err := d.Set("name", flattenComputeHaVpnGatewayName(res["name"], d)); err != nil {
+	if err := d.Set("name", flattenComputeHaVpnGatewayName(res["name"], d, config)); err != nil {
 		return fmt.Errorf("Error reading HaVpnGateway: %s", err)
 	}
-	if err := d.Set("network", flattenComputeHaVpnGatewayNetwork(res["network"], d)); err != nil {
+	if err := d.Set("network", flattenComputeHaVpnGatewayNetwork(res["network"], d, config)); err != nil {
 		return fmt.Errorf("Error reading HaVpnGateway: %s", err)
 	}
-	if err := d.Set("vpn_interfaces", flattenComputeHaVpnGatewayVpnInterfaces(res["vpnInterfaces"], d)); err != nil {
+	if err := d.Set("vpn_interfaces", flattenComputeHaVpnGatewayVpnInterfaces(res["vpnInterfaces"], d, config)); err != nil {
 		return fmt.Errorf("Error reading HaVpnGateway: %s", err)
 	}
-	if err := d.Set("region", flattenComputeHaVpnGatewayRegion(res["region"], d)); err != nil {
+	if err := d.Set("region", flattenComputeHaVpnGatewayRegion(res["region"], d, config)); err != nil {
 		return fmt.Errorf("Error reading HaVpnGateway: %s", err)
 	}
 	if err := d.Set("self_link", ConvertSelfLinkToV1(res["selfLink"].(string))); err != nil {
@@ -270,22 +270,22 @@ func resourceComputeHaVpnGatewayImport(d *schema.ResourceData, meta interface{})
 	return []*schema.ResourceData{d}, nil
 }
 
-func flattenComputeHaVpnGatewayDescription(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeHaVpnGatewayDescription(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenComputeHaVpnGatewayName(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeHaVpnGatewayName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenComputeHaVpnGatewayNetwork(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeHaVpnGatewayNetwork(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	if v == nil {
 		return v
 	}
 	return ConvertSelfLinkToV1(v.(string))
 }
 
-func flattenComputeHaVpnGatewayVpnInterfaces(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeHaVpnGatewayVpnInterfaces(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	if v == nil {
 		return v
 	}
@@ -298,13 +298,13 @@ func flattenComputeHaVpnGatewayVpnInterfaces(v interface{}, d *schema.ResourceDa
 			continue
 		}
 		transformed = append(transformed, map[string]interface{}{
-			"id":         flattenComputeHaVpnGatewayVpnInterfacesId(original["id"], d),
-			"ip_address": flattenComputeHaVpnGatewayVpnInterfacesIpAddress(original["ipAddress"], d),
+			"id":         flattenComputeHaVpnGatewayVpnInterfacesId(original["id"], d, config),
+			"ip_address": flattenComputeHaVpnGatewayVpnInterfacesIpAddress(original["ipAddress"], d, config),
 		})
 	}
 	return transformed
 }
-func flattenComputeHaVpnGatewayVpnInterfacesId(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeHaVpnGatewayVpnInterfacesId(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
@@ -314,11 +314,11 @@ func flattenComputeHaVpnGatewayVpnInterfacesId(v interface{}, d *schema.Resource
 	return v
 }
 
-func flattenComputeHaVpnGatewayVpnInterfacesIpAddress(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeHaVpnGatewayVpnInterfacesIpAddress(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenComputeHaVpnGatewayRegion(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeHaVpnGatewayRegion(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	if v == nil {
 		return v
 	}
