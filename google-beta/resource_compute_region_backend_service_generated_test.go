@@ -51,7 +51,7 @@ func TestAccComputeRegionBackendService_regionBackendServiceBasicExample(t *test
 func testAccComputeRegionBackendService_regionBackendServiceBasicExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_compute_region_backend_service" "default" {
-  name                            = "region-backend-service%{random_suffix}"
+  name                            = "tf-test-rbs%{random_suffix}"
   region                          = "us-central1"
   health_checks                   = [google_compute_health_check.default.self_link]
   connection_draining_timeout_sec = 10
@@ -59,7 +59,7 @@ resource "google_compute_region_backend_service" "default" {
 }
 
 resource "google_compute_health_check" "default" {
-  name               = "health-check%{random_suffix}"
+  name               = "tf-test-hc%{random_suffix}"
   check_interval_sec = 1
   timeout_sec        = 1
 
@@ -95,7 +95,7 @@ resource "google_compute_region_backend_service" "default" {
   provider = "google-beta"
 
   region = "us-central1"
-  name = "region-backend-service%{random_suffix}"
+  name = "tf-test-rbs%{random_suffix}"
   health_checks = ["${google_compute_health_check.health_check.self_link}"]
   protocol = "HTTP"
   load_balancing_scheme = "INTERNAL_MANAGED"
@@ -105,7 +105,7 @@ resource "google_compute_region_backend_service" "default" {
 resource "google_compute_health_check" "health_check" {
   provider = "google-beta"
 
-  name               = "health-check%{random_suffix}"
+  name               = "tf-test-hc%{random_suffix}"
   http_health_check {
     port = 80
   }
@@ -138,7 +138,7 @@ resource "google_compute_region_backend_service" "default" {
   provider = "google-beta"
 
   region = "us-central1"
-  name = "region-backend-service%{random_suffix}"
+  name = "tf-test-rbs%{random_suffix}"
   health_checks = ["${google_compute_health_check.health_check.self_link}"]
   load_balancing_scheme = "INTERNAL_MANAGED"
   locality_lb_policy = "RING_HASH"
@@ -164,7 +164,7 @@ resource "google_compute_region_backend_service" "default" {
 resource "google_compute_health_check" "health_check" {
   provider = "google-beta"
 
-  name               = "health-check%{random_suffix}"
+  name               = "tf-test-hc%{random_suffix}"
   http_health_check {
     port = 80
   }
@@ -201,10 +201,11 @@ resource "google_compute_region_backend_service" "default" {
   backend {
     group          = google_compute_region_instance_group_manager.rigm.instance_group
     balancing_mode = "UTILIZATION"
+    capacity_scaler = 1.0
   }
 
   region      = "us-central1"
-  name        = "region-backend-service%{random_suffix}"
+  name        = "tf-test-rbs%{random_suffix}"
   protocol    = "HTTP"
   timeout_sec = 10
 
@@ -222,7 +223,7 @@ resource "google_compute_region_instance_group_manager" "rigm" {
   provider = google-beta
 
   region   = "us-central1"
-  name     = "rigm-internal"
+  name     = "tf-test-rigm%{random_suffix}"
   version {
     instance_template = google_compute_instance_template.instance_template.self_link
     name              = "primary"
@@ -234,7 +235,7 @@ resource "google_compute_region_instance_group_manager" "rigm" {
 resource "google_compute_instance_template" "instance_template" {
   provider     = google-beta
 
-  name         = "template-region-backend-service%{random_suffix}"
+  name         = "template-tf-test-rbs%{random_suffix}"
   machine_type = "n1-standard-1"
 
   network_interface {
@@ -255,7 +256,7 @@ resource "google_compute_region_health_check" "default" {
   provider = google-beta
 
   region = "us-central1"
-  name   = "health-check%{random_suffix}"
+  name   = "tf-test-hc%{random_suffix}"
   http_health_check {
     port_specification = "USE_SERVING_PORT"
   }
@@ -264,7 +265,7 @@ resource "google_compute_region_health_check" "default" {
 resource "google_compute_network" "default" {
   provider = google-beta
 
-  name                    = "net%{random_suffix}"
+  name                    = "tf-test-net%{random_suffix}"
   auto_create_subnetworks = false
   routing_mode            = "REGIONAL"
 }
@@ -272,7 +273,7 @@ resource "google_compute_network" "default" {
 resource "google_compute_subnetwork" "default" {
   provider = google-beta
 
-  name          = "net%{random_suffix}-default"
+  name          = "tf-test-net%{random_suffix}-default"
   ip_cidr_range = "10.1.2.0/24"
   region        = "us-central1"
   network       = google_compute_network.default.self_link
