@@ -1,6 +1,10 @@
 ## 3.6.1 (Unreleased)
 ## 3.6.0 (January 29, 2020)
 
+KNOWN ISSUES:
+
+* bigtable: due to API changes, bigtable DEVELOPMENT instances may show a diff on `num_nodes`. There will be a fix in the 3.7.0 release of the provider. No known workarounds exist at the moment, but will be tracked in https://github.com/terraform-providers/terraform-provider-google/issues/5492.
+
 FEATURES:
 * **New Data Source:** google_monitoring_notification_channel ([#1643](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1643))
 * **New Resource:** google_compute_network_peering_routes_config ([#1652](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1652))
