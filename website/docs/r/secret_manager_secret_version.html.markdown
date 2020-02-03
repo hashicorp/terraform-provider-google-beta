@@ -80,7 +80,7 @@ The following arguments are supported:
 
 * `secret_data` -
   (Optional)
-  The secret data. Must be no larger than 64KiB. A base64-encoded string.
+  The secret data. Must be no larger than 64KiB.
 
 
 ## Attributes Reference
