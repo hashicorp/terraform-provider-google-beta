@@ -59,7 +59,7 @@ func resourceSecretManagerSecretVersion() *schema.Resource {
 				Type:        schema.TypeString,
 				Optional:    true,
 				ForceNew:    true,
-				Description: `The secret data. Must be no larger than 64KiB. A base64-encoded string.`,
+				Description: `The secret data. Must be no larger than 64KiB.`,
 				Sensitive:   true,
 			},
 
