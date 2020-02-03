@@ -1056,9 +1056,11 @@ func resourceComputeRouterNatPatchCreateEncoder(d *schema.ResourceData, meta int
 	}
 
 	// Return list with the resource to create appended
-	return map[string]interface{}{
+	res := map[string]interface{}{
 		"nats": append(currItems, obj),
-	}, nil
+	}
+
+	return res, nil
 }
 
 // PatchUpdateEncoder handles creating request data to PATCH parent resource
@@ -1086,9 +1088,11 @@ func resourceComputeRouterNatPatchUpdateEncoder(d *schema.ResourceData, meta int
 	items[idx] = item
 
 	// Return list with new item added
-	return map[string]interface{}{
+	res := map[string]interface{}{
 		"nats": items,
-	}, nil
+	}
+
+	return res, nil
 }
 
 // PatchDeleteEncoder handles creating request data to PATCH parent resource
@@ -1112,9 +1116,11 @@ func resourceComputeRouterNatPatchDeleteEncoder(d *schema.ResourceData, meta int
 	}
 
 	updatedItems := append(currItems[:idx], currItems[idx+1:]...)
-	return map[string]interface{}{
+	res := map[string]interface{}{
 		"nats": updatedItems,
-	}, nil
+	}
+
+	return res, nil
 }
 
 // ListForPatch handles making API request to get parent resource and
@@ -1134,7 +1140,10 @@ func resourceComputeRouterNatListForPatch(d *schema.ResourceData, meta interface
 		return nil, err
 	}
 
-	v, ok := res["nats"]
+	var v interface{}
+	var ok bool
+
+	v, ok = res["nats"]
 	if ok && v != nil {
 		ls, lsOk := v.([]interface{})
 		if !lsOk {
