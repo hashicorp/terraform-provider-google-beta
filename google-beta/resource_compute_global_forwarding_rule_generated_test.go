@@ -51,19 +51,19 @@ func TestAccComputeGlobalForwardingRule_globalForwardingRuleHttpExample(t *testi
 func testAccComputeGlobalForwardingRule_globalForwardingRuleHttpExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_compute_global_forwarding_rule" "default" {
-  name       = "global-rule%{random_suffix}"
+  name       = "tf-test-global-rule%{random_suffix}"
   target     = google_compute_target_http_proxy.default.self_link
   port_range = "80"
 }
 
 resource "google_compute_target_http_proxy" "default" {
-  name        = "target-proxy%{random_suffix}"
+  name        = "tf-test-target-proxy%{random_suffix}"
   description = "a description"
   url_map     = google_compute_url_map.default.self_link
 }
 
 resource "google_compute_url_map" "default" {
-  name            = "url-map-target-proxy%{random_suffix}"
+  name            = "url-map-tf-test-target-proxy%{random_suffix}"
   description     = "a description"
   default_service = google_compute_backend_service.default.self_link
 
@@ -124,7 +124,7 @@ func testAccComputeGlobalForwardingRule_globalForwardingRuleInternalExample(cont
 	return Nprintf(`
 resource "google_compute_global_forwarding_rule" "default" {
   provider              = google-beta
-  name                  = "global-rule%{random_suffix}"
+  name                  = "tf-test-global-rule%{random_suffix}"
   target                = google_compute_target_http_proxy.default.self_link
   port_range            = "80"
   load_balancing_scheme = "INTERNAL_SELF_MANAGED"
@@ -140,14 +140,14 @@ resource "google_compute_global_forwarding_rule" "default" {
 
 resource "google_compute_target_http_proxy" "default" {
   provider    = google-beta
-  name        = "target-proxy%{random_suffix}"
+  name        = "tf-test-target-proxy%{random_suffix}"
   description = "a description"
   url_map     = google_compute_url_map.default.self_link
 }
 
 resource "google_compute_url_map" "default" {
   provider        = google-beta
-  name            = "url-map-target-proxy%{random_suffix}"
+  name            = "url-map-tf-test-target-proxy%{random_suffix}"
   description     = "a description"
   default_service = google_compute_backend_service.default.self_link
 

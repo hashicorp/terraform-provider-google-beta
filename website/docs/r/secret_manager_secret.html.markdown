@@ -43,7 +43,7 @@ To get more information about Secret, see:
 resource "google_secret_manager_secret" "secret-basic" {
   provider = google-beta
 
-  secret_id = "tf-test-secret-"
+  secret_id = "secret"
   
   labels = {
     label = "my-label"

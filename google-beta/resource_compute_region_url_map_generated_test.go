@@ -111,7 +111,7 @@ resource "google_compute_region_health_check" "default" {
 
   region = "us-central1"
 
-  name               = "health-check%{random_suffix}"
+  name               = "tf-test-health-check%{random_suffix}"
   check_interval_sec = 1
   timeout_sec        = 1
   http_health_check {
@@ -242,7 +242,7 @@ resource "google_compute_region_backend_service" "home" {
 
 resource "google_compute_region_health_check" "default" {
   provider = "google-beta"
-  name               = "health-check%{random_suffix}"
+  name               = "tf-test-health-check%{random_suffix}"
   http_health_check {
     port = 80
   }
@@ -338,7 +338,7 @@ resource "google_compute_region_backend_service" "home" {
 
 resource "google_compute_region_health_check" "default" {
   provider = "google-beta"
-  name               = "health-check%{random_suffix}"
+  name               = "tf-test-health-check%{random_suffix}"
   http_health_check {
     port = 80
   }
@@ -447,7 +447,7 @@ resource "google_compute_region_backend_service" "home" {
 
 resource "google_compute_region_health_check" "default" {
   provider = "google-beta"
-  name     = "health-check%{random_suffix}"
+  name     = "tf-test-health-check%{random_suffix}"
   http_health_check {
     port = 80
   }
@@ -531,7 +531,7 @@ resource "google_compute_region_backend_service" "home" {
 
 resource "google_compute_region_health_check" "default" {
   provider = "google-beta"
-  name               = "health-check%{random_suffix}"
+  name               = "tf-test-health-check%{random_suffix}"
   http_health_check {
     port = 80
   }

@@ -48,7 +48,7 @@ func testAccSecretManagerSecret_secretConfigBasicExample(context map[string]inte
 resource "google_secret_manager_secret" "secret-basic" {
   provider = google-beta
 
-  secret_id = "tf-test-secret-%{random_suffix}"
+  secret_id = "secret%{random_suffix}"
   
   labels = {
     label = "my-label"

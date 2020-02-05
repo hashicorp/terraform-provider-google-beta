@@ -48,7 +48,7 @@ func testAccComputeHaVpnGateway_haVpnGatewayBasicExample(context map[string]inte
 resource "google_compute_ha_vpn_gateway" "ha_gateway1" {
   provider = google-beta
   region   = "us-central1"
-  name     = "ha-vpn-1%{random_suffix}"
+  name     = "tf-test-ha-vpn-1%{random_suffix}"
   network  = google_compute_network.network1.self_link
 }
 
@@ -84,14 +84,14 @@ func testAccComputeHaVpnGateway_haVpnGatewayGcpToGcpExample(context map[string]i
 resource "google_compute_ha_vpn_gateway" "ha_gateway1" {
   provider = google-beta
   region   = "us-central1"
-  name     = "ha-vpn-1%{random_suffix}"
+  name     = "tf-test-ha-vpn-1%{random_suffix}"
   network  = google_compute_network.network1.self_link
 }
 
 resource "google_compute_ha_vpn_gateway" "ha_gateway2" {
   provider = google-beta
   region   = "us-central1"
-  name     = "ha-vpn-2%{random_suffix}"
+  name     = "tf-test-ha-vpn-2%{random_suffix}"
   network  = google_compute_network.network2.self_link
 }
 
