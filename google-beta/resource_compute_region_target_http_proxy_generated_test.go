@@ -49,7 +49,7 @@ resource "google_compute_region_target_http_proxy" "default" {
   provider = google-beta
 
   region  = "us-central1"
-  name    = "test-proxy%{random_suffix}"
+  name    = "tf-test-test-proxy%{random_suffix}"
   url_map = google_compute_region_url_map.default.self_link
 }
 
@@ -57,7 +57,7 @@ resource "google_compute_region_url_map" "default" {
   provider = google-beta
 
   region          = "us-central1"
-  name            = "url-map%{random_suffix}"
+  name            = "tf-test-url-map%{random_suffix}"
   default_service = google_compute_region_backend_service.default.self_link
 
   host_rule {
@@ -80,7 +80,7 @@ resource "google_compute_region_backend_service" "default" {
   provider = google-beta
 
   region      = "us-central1"
-  name        = "backend-service%{random_suffix}"
+  name        = "tf-test-backend-service%{random_suffix}"
   protocol    = "HTTP"
   timeout_sec = 10
 
@@ -91,7 +91,7 @@ resource "google_compute_region_health_check" "default" {
   provider = google-beta
 
   region = "us-central1"
-  name   = "http-health-check%{random_suffix}"
+  name   = "tf-test-http-health-check%{random_suffix}"
   http_health_check {
     port = 80
   }

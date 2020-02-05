@@ -91,7 +91,7 @@ func testAccSecretManagerSecretIamMember_basicGenerated(context map[string]inter
 resource "google_secret_manager_secret" "secret-basic" {
   provider = google-beta
 
-  secret_id = "tf-test-secret-%{random_suffix}"
+  secret_id = "secret%{random_suffix}"
   
   labels = {
     label = "my-label"
@@ -124,7 +124,7 @@ func testAccSecretManagerSecretIamPolicy_basicGenerated(context map[string]inter
 resource "google_secret_manager_secret" "secret-basic" {
   provider = google-beta
 
-  secret_id = "tf-test-secret-%{random_suffix}"
+  secret_id = "secret%{random_suffix}"
   
   labels = {
     label = "my-label"
@@ -164,7 +164,7 @@ func testAccSecretManagerSecretIamPolicy_emptyBinding(context map[string]interfa
 resource "google_secret_manager_secret" "secret-basic" {
   provider = google-beta
 
-  secret_id = "tf-test-secret-%{random_suffix}"
+  secret_id = "secret%{random_suffix}"
   
   labels = {
     label = "my-label"
@@ -200,7 +200,7 @@ func testAccSecretManagerSecretIamBinding_basicGenerated(context map[string]inte
 resource "google_secret_manager_secret" "secret-basic" {
   provider = google-beta
 
-  secret_id = "tf-test-secret-%{random_suffix}"
+  secret_id = "secret%{random_suffix}"
   
   labels = {
     label = "my-label"
@@ -234,7 +234,7 @@ func testAccSecretManagerSecretIamBinding_updateGenerated(context map[string]int
 resource "google_secret_manager_secret" "secret-basic" {
   provider = google-beta
 
-  secret_id = "tf-test-secret-%{random_suffix}"
+  secret_id = "secret%{random_suffix}"
   
   labels = {
     label = "my-label"

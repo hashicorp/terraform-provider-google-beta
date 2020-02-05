@@ -51,12 +51,12 @@ func TestAccComputeBackendService_backendServiceBasicExample(t *testing.T) {
 func testAccComputeBackendService_backendServiceBasicExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_compute_backend_service" "default" {
-  name          = "backend-service%{random_suffix}"
+  name          = "tf-test-backend-service%{random_suffix}"
   health_checks = [google_compute_http_health_check.default.self_link]
 }
 
 resource "google_compute_http_health_check" "default" {
-  name               = "health-check%{random_suffix}"
+  name               = "tf-test-health-check%{random_suffix}"
   request_path       = "/"
   check_interval_sec = 1
   timeout_sec        = 1
@@ -88,7 +88,7 @@ func testAccComputeBackendService_backendServiceTrafficDirectorRoundRobinExample
 resource "google_compute_backend_service" "default" {
   provider = google-beta
 
-  name                  = "backend-service%{random_suffix}"
+  name                  = "tf-test-backend-service%{random_suffix}"
   health_checks         = [google_compute_health_check.health_check.self_link]
   load_balancing_scheme = "INTERNAL_SELF_MANAGED"
   locality_lb_policy    = "ROUND_ROBIN"
@@ -97,7 +97,7 @@ resource "google_compute_backend_service" "default" {
 resource "google_compute_health_check" "health_check" {
   provider = google-beta
 
-  name = "health-check%{random_suffix}"
+  name = "tf-test-health-check%{random_suffix}"
   http_health_check {
     port = 80
   }
@@ -129,7 +129,7 @@ func testAccComputeBackendService_backendServiceTrafficDirectorRingHashExample(c
 resource "google_compute_backend_service" "default" {
   provider = google-beta
 
-  name                  = "backend-service%{random_suffix}"
+  name                  = "tf-test-backend-service%{random_suffix}"
   health_checks         = [google_compute_health_check.health_check.self_link]
   load_balancing_scheme = "INTERNAL_SELF_MANAGED"
   locality_lb_policy    = "RING_HASH"
@@ -154,7 +154,7 @@ resource "google_compute_backend_service" "default" {
 resource "google_compute_health_check" "health_check" {
   provider = google-beta
 
-  name = "health-check%{random_suffix}"
+  name = "tf-test-health-check%{random_suffix}"
   http_health_check {
     port = 80
   }

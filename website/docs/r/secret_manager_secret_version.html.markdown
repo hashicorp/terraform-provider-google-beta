@@ -40,7 +40,7 @@ See [Provider Versions](https://terraform.io/docs/providers/google/guides/provid
 resource "google_secret_manager_secret" "secret-basic" {
   provider = google-beta
 
-  secret_id = "tf-test-secret-version-"
+  secret_id = "secret-version"
   
   labels = {
     label = "my-label"
@@ -57,7 +57,7 @@ resource "google_secret_manager_secret_version" "secret-version-basic" {
 
   secret = google_secret_manager_secret.secret-basic.name
 
-  secret_data = "my-tf-test-secret"
+  secret_data = "secret-data"
 }
 ```
 
