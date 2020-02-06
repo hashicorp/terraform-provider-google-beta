@@ -16,11 +16,14 @@ require (
 	github.com/hashicorp/go-version v1.2.0
 	github.com/hashicorp/terraform-plugin-sdk v1.4.0
 	github.com/mitchellh/hashstructure v1.0.0
+	github.com/onsi/ginkgo v1.7.0 // indirect
+	github.com/onsi/gomega v1.4.3 // indirect
 	github.com/sirupsen/logrus v1.2.0 // indirect
 	github.com/stoewer/go-strcase v1.0.1
 	github.com/terraform-providers/terraform-provider-random v0.0.0-20190925211435-95c131714b03
 	golang.org/x/oauth2 v0.0.0-20190604053449-0f29369cfe45
-	google.golang.org/api v0.13.0
+	google.golang.org/api v0.16.0
+	gopkg.in/yaml.v2 v2.2.2 // indirect
 )
 
 go 1.13
