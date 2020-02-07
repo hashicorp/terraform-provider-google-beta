@@ -232,6 +232,13 @@ var schemaNodeConfig = &schema.Schema{
 					},
 				},
 			},
+			"boot_disk_kms_key": {
+				Removed:  "This field is in beta. Use it in the the google-beta provider instead. See https://terraform.io/docs/providers/google/guides/provider_versions.html for more details.",
+				Computed: true,
+				Type:     schema.TypeString,
+				Optional: true,
+				ForceNew: true,
+			},
 		},
 	},
 }
@@ -369,6 +376,10 @@ func expandNodeConfig(v interface{}) *containerBeta.NodeConfig {
 		}
 	}
 
+	if v, ok := nodeConfig["boot_disk_kms_key"]; ok {
+		nc.BootDiskKmsKey = v.(string)
+	}
+
 	return nc
 }
 
@@ -396,6 +407,7 @@ func flattenNodeConfig(c *containerBeta.NodeConfig) []map[string]interface{} {
 		"taint":                    flattenTaints(c.Taints),
 		"workload_metadata_config": flattenWorkloadMetadataConfig(c.WorkloadMetadataConfig),
 		"sandbox_config":           flattenSandboxConfig(c.SandboxConfig),
+		"boot_disk_kms_key":        c.BootDiskKmsKey,
 	})
 
 	if len(c.OauthScopes) > 0 {
