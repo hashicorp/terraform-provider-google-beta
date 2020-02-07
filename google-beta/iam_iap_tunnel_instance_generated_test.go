@@ -41,7 +41,7 @@ func TestAccIapTunnelInstanceIamBindingGenerated(t *testing.T) {
 			},
 			{
 				ResourceName:      "google_iap_tunnel_instance_iam_binding.foo",
-				ImportStateId:     fmt.Sprintf("projects/%s/iap_tunnel/zones/%s/instances/%s roles/iap.tunnelResourceAccessor", getTestProjectFromEnv(), getTestZoneFromEnv(), fmt.Sprintf("tf-test-tunnel%s", context["random_suffix"])),
+				ImportStateId:     fmt.Sprintf("projects/%s/iap_tunnel/zones/%s/instances/%s roles/iap.tunnelResourceAccessor", getTestProjectFromEnv(), getTestZoneFromEnv(), fmt.Sprintf("tf-test-tunnel-vm%s", context["random_suffix"])),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
@@ -51,7 +51,7 @@ func TestAccIapTunnelInstanceIamBindingGenerated(t *testing.T) {
 			},
 			{
 				ResourceName:      "google_iap_tunnel_instance_iam_binding.foo",
-				ImportStateId:     fmt.Sprintf("projects/%s/iap_tunnel/zones/%s/instances/%s roles/iap.tunnelResourceAccessor", getTestProjectFromEnv(), getTestZoneFromEnv(), fmt.Sprintf("tf-test-tunnel%s", context["random_suffix"])),
+				ImportStateId:     fmt.Sprintf("projects/%s/iap_tunnel/zones/%s/instances/%s roles/iap.tunnelResourceAccessor", getTestProjectFromEnv(), getTestZoneFromEnv(), fmt.Sprintf("tf-test-tunnel-vm%s", context["random_suffix"])),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
@@ -79,7 +79,7 @@ func TestAccIapTunnelInstanceIamMemberGenerated(t *testing.T) {
 			},
 			{
 				ResourceName:      "google_iap_tunnel_instance_iam_member.foo",
-				ImportStateId:     fmt.Sprintf("projects/%s/iap_tunnel/zones/%s/instances/%s roles/iap.tunnelResourceAccessor user:admin@hashicorptest.com", getTestProjectFromEnv(), getTestZoneFromEnv(), fmt.Sprintf("tf-test-tunnel%s", context["random_suffix"])),
+				ImportStateId:     fmt.Sprintf("projects/%s/iap_tunnel/zones/%s/instances/%s roles/iap.tunnelResourceAccessor user:admin@hashicorptest.com", getTestProjectFromEnv(), getTestZoneFromEnv(), fmt.Sprintf("tf-test-tunnel-vm%s", context["random_suffix"])),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
@@ -106,7 +106,7 @@ func TestAccIapTunnelInstanceIamPolicyGenerated(t *testing.T) {
 			},
 			{
 				ResourceName:      "google_iap_tunnel_instance_iam_policy.foo",
-				ImportStateId:     fmt.Sprintf("projects/%s/iap_tunnel/zones/%s/instances/%s", getTestProjectFromEnv(), getTestZoneFromEnv(), fmt.Sprintf("tf-test-tunnel%s", context["random_suffix"])),
+				ImportStateId:     fmt.Sprintf("projects/%s/iap_tunnel/zones/%s/instances/%s", getTestProjectFromEnv(), getTestZoneFromEnv(), fmt.Sprintf("tf-test-tunnel-vm%s", context["random_suffix"])),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
@@ -115,7 +115,7 @@ func TestAccIapTunnelInstanceIamPolicyGenerated(t *testing.T) {
 			},
 			{
 				ResourceName:      "google_iap_tunnel_instance_iam_policy.foo",
-				ImportStateId:     fmt.Sprintf("projects/%s/iap_tunnel/zones/%s/instances/%s", getTestProjectFromEnv(), getTestZoneFromEnv(), fmt.Sprintf("tf-test-tunnel%s", context["random_suffix"])),
+				ImportStateId:     fmt.Sprintf("projects/%s/iap_tunnel/zones/%s/instances/%s", getTestProjectFromEnv(), getTestZoneFromEnv(), fmt.Sprintf("tf-test-tunnel-vm%s", context["random_suffix"])),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
@@ -142,7 +142,7 @@ func TestAccIapTunnelInstanceIamBindingGenerated_withCondition(t *testing.T) {
 			},
 			{
 				ResourceName:      "google_iap_tunnel_instance_iam_binding.foo",
-				ImportStateId:     fmt.Sprintf("projects/%s/iap_tunnel/zones/%s/instances/%s roles/iap.tunnelResourceAccessor %s", getTestProjectFromEnv(), getTestZoneFromEnv(), fmt.Sprintf("tf-test-tunnel%s", context["random_suffix"]), context["condition_title"]),
+				ImportStateId:     fmt.Sprintf("projects/%s/iap_tunnel/zones/%s/instances/%s roles/iap.tunnelResourceAccessor %s", getTestProjectFromEnv(), getTestZoneFromEnv(), fmt.Sprintf("tf-test-tunnel-vm%s", context["random_suffix"]), context["condition_title"]),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
@@ -169,13 +169,13 @@ func TestAccIapTunnelInstanceIamBindingGenerated_withAndWithoutCondition(t *test
 			},
 			{
 				ResourceName:      "google_iap_tunnel_instance_iam_binding.foo",
-				ImportStateId:     fmt.Sprintf("projects/%s/iap_tunnel/zones/%s/instances/%s roles/iap.tunnelResourceAccessor", getTestProjectFromEnv(), getTestZoneFromEnv(), fmt.Sprintf("tf-test-tunnel%s", context["random_suffix"])),
+				ImportStateId:     fmt.Sprintf("projects/%s/iap_tunnel/zones/%s/instances/%s roles/iap.tunnelResourceAccessor", getTestProjectFromEnv(), getTestZoneFromEnv(), fmt.Sprintf("tf-test-tunnel-vm%s", context["random_suffix"])),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
 			{
 				ResourceName:      "google_iap_tunnel_instance_iam_binding.foo2",
-				ImportStateId:     fmt.Sprintf("projects/%s/iap_tunnel/zones/%s/instances/%s roles/iap.tunnelResourceAccessor %s", getTestProjectFromEnv(), getTestZoneFromEnv(), fmt.Sprintf("tf-test-tunnel%s", context["random_suffix"]), context["condition_title"]),
+				ImportStateId:     fmt.Sprintf("projects/%s/iap_tunnel/zones/%s/instances/%s roles/iap.tunnelResourceAccessor %s", getTestProjectFromEnv(), getTestZoneFromEnv(), fmt.Sprintf("tf-test-tunnel-vm%s", context["random_suffix"]), context["condition_title"]),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
@@ -202,7 +202,7 @@ func TestAccIapTunnelInstanceIamMemberGenerated_withCondition(t *testing.T) {
 			},
 			{
 				ResourceName:      "google_iap_tunnel_instance_iam_member.foo",
-				ImportStateId:     fmt.Sprintf("projects/%s/iap_tunnel/zones/%s/instances/%s roles/iap.tunnelResourceAccessor user:admin@hashicorptest.com %s", getTestProjectFromEnv(), getTestZoneFromEnv(), fmt.Sprintf("tf-test-tunnel%s", context["random_suffix"]), context["condition_title"]),
+				ImportStateId:     fmt.Sprintf("projects/%s/iap_tunnel/zones/%s/instances/%s roles/iap.tunnelResourceAccessor user:admin@hashicorptest.com %s", getTestProjectFromEnv(), getTestZoneFromEnv(), fmt.Sprintf("tf-test-tunnel-vm%s", context["random_suffix"]), context["condition_title"]),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
@@ -229,13 +229,13 @@ func TestAccIapTunnelInstanceIamMemberGenerated_withAndWithoutCondition(t *testi
 			},
 			{
 				ResourceName:      "google_iap_tunnel_instance_iam_member.foo",
-				ImportStateId:     fmt.Sprintf("projects/%s/iap_tunnel/zones/%s/instances/%s roles/iap.tunnelResourceAccessor user:admin@hashicorptest.com", getTestProjectFromEnv(), getTestZoneFromEnv(), fmt.Sprintf("tf-test-tunnel%s", context["random_suffix"])),
+				ImportStateId:     fmt.Sprintf("projects/%s/iap_tunnel/zones/%s/instances/%s roles/iap.tunnelResourceAccessor user:admin@hashicorptest.com", getTestProjectFromEnv(), getTestZoneFromEnv(), fmt.Sprintf("tf-test-tunnel-vm%s", context["random_suffix"])),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
 			{
 				ResourceName:      "google_iap_tunnel_instance_iam_member.foo2",
-				ImportStateId:     fmt.Sprintf("projects/%s/iap_tunnel/zones/%s/instances/%s roles/iap.tunnelResourceAccessor user:admin@hashicorptest.com %s", getTestProjectFromEnv(), getTestZoneFromEnv(), fmt.Sprintf("tf-test-tunnel%s", context["random_suffix"]), context["condition_title"]),
+				ImportStateId:     fmt.Sprintf("projects/%s/iap_tunnel/zones/%s/instances/%s roles/iap.tunnelResourceAccessor user:admin@hashicorptest.com %s", getTestProjectFromEnv(), getTestZoneFromEnv(), fmt.Sprintf("tf-test-tunnel-vm%s", context["random_suffix"]), context["condition_title"]),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
@@ -262,7 +262,7 @@ func TestAccIapTunnelInstanceIamPolicyGenerated_withCondition(t *testing.T) {
 			},
 			{
 				ResourceName:      "google_iap_tunnel_instance_iam_policy.foo",
-				ImportStateId:     fmt.Sprintf("projects/%s/iap_tunnel/zones/%s/instances/%s", getTestProjectFromEnv(), getTestZoneFromEnv(), fmt.Sprintf("tf-test-tunnel%s", context["random_suffix"])),
+				ImportStateId:     fmt.Sprintf("projects/%s/iap_tunnel/zones/%s/instances/%s", getTestProjectFromEnv(), getTestZoneFromEnv(), fmt.Sprintf("tf-test-tunnel-vm%s", context["random_suffix"])),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
