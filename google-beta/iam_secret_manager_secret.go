@@ -46,9 +46,9 @@ type SecretManagerSecretIamUpdater struct {
 func SecretManagerSecretIamUpdaterProducer(d *schema.ResourceData, config *Config) (ResourceIamUpdater, error) {
 	values := make(map[string]string)
 
-	project, err := getProject(d, config)
-	if err != nil {
-		return nil, err
+	project, _ := getProject(d, config)
+	if project != "" {
+		values["project"] = project
 	}
 	values["project"] = project
 	if v, ok := d.GetOk("secret_id"); ok {
@@ -81,11 +81,10 @@ func SecretManagerSecretIamUpdaterProducer(d *schema.ResourceData, config *Confi
 func SecretManagerSecretIdParseFunc(d *schema.ResourceData, config *Config) error {
 	values := make(map[string]string)
 
-	project, err := getProject(d, config)
-	if err != nil {
-		return err
+	project, _ := getProject(d, config)
+	if project != "" {
+		values["project"] = project
 	}
-	values["project"] = project
 
 	m, err := getImportIdQualifiers([]string{"projects/(?P<project>[^/]+)/secrets/(?P<secret_id>[^/]+)", "(?P<project>[^/]+)/(?P<secret_id>[^/]+)", "(?P<secret_id>[^/]+)"}, d, config, d.Id())
 	if err != nil {
