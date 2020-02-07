@@ -232,9 +232,8 @@ var schemaNodeConfig = &schema.Schema{
 					},
 				},
 			},
+
 			"boot_disk_kms_key": {
-				Removed:  "This field is in beta. Use it in the the google-beta provider instead. See https://terraform.io/docs/providers/google/guides/provider_versions.html for more details.",
-				Computed: true,
 				Type:     schema.TypeString,
 				Optional: true,
 				ForceNew: true,
