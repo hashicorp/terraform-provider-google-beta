@@ -1,3 +1,4 @@
+## 3.8.1 (Unreleased)
 ## 3.8.0 (February 10, 2020)
 NOTES:
 * provider: added documentation for the `id` field for many resources, including format ([#1697](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1697))
