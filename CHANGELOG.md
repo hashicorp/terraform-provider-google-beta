@@ -1,4 +1,30 @@
-## 3.7.1 (Unreleased)
+## 3.8.1 (Unreleased)
+## 3.8.0 (February 10, 2020)
+NOTES:
+* provider: added documentation for the `id` field for many resources, including format ([#1697](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1697))
+BREAKING CHANGES:
+* compute: Added conditional requirement of `google_compute_**region**_backend_service` `backend.capacity_scaler` to no longer accept the API default if not INTERNAL. Non-INTERNAL backend services must now specify `capacity_scaler` explicitly and have a total capacity greater than 0. In addition, API default of 1.0 must now be explicitly set and will be treated as nil or zero if not set in config. ([#1707](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1707))
+
+FEATURES:
+* **New Data Source:** `secret_manager_secret_version` ([#1708](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1708))
+* **New Resource:** `google_access_context_manager_service_perimeter_resource` ([#1712](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1712))
+* **New Resource:** `secret_manager_secret_version` ([#1708](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1708))
+* **New Resource:** `secret_manager_secret` ([#1708](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1708))
+* **New Resource:** `google_dialogflow_agent` ([#1706](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1706))
+
+IMPROVEMENTS:
+* appengine: added support for `google_app_engine_application.iap` ([#1703](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1703))
+* compute: `google_compute_security_policy` `rule.match.expr` field is now GA ([#1692](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1692))
+* compute: added additional validation to `google_cloud_router`'s `bgp.asn` field. ([#1699](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1699))
+
+BUG FIXES:
+* bigtable: fixed diff for DEVELOPMENT instances that are returned from the API with one node ([#1704](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1704))
+* compute: Fixed `backend.capacity_scaler` to actually set zero (0.0) value. ([#1707](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1707))
+* compute: Fixed `google_compute_**region**_backend_service` so it no longer has a permadiff if `backend.capacity_scaler` is unset in config by requiring capacity scaler. ([#1707](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1707))
+* compute: updated `google_compute_project_metadata_item` to fail on create if its key is already present in the project metadata. ([#1714](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1714))
+* logging: updated `bigquery_options` so the default value from the api will be set in state. ([#1694](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1694))
+* sql: undeprecated `settings.ip_configuration.authorized_networks.expiration_time` ([#1691](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1691))
+
 ## 3.7.0 (February 03, 2020)
 
 IMPROVEMENTS:
