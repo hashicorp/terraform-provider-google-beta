@@ -254,7 +254,7 @@ var SecurityCenterDefaultBasePath = "https://securitycenter.googleapis.com/v1/"
 var SecurityScannerDefaultBasePath = "https://websecurityscanner.googleapis.com/v1beta/"
 var SourceRepoDefaultBasePath = "https://sourcerepo.googleapis.com/v1/"
 var SpannerDefaultBasePath = "https://spanner.googleapis.com/v1/"
-var SQLDefaultBasePath = "https://www.googleapis.com/sql/v1beta4/"
+var SQLDefaultBasePath = "https://sqladmin.googleapis.com/v1beta4/"
 var StorageDefaultBasePath = "https://www.googleapis.com/storage/v1/"
 var TPUDefaultBasePath = "https://tpu.googleapis.com/v1/"
 var VPCAccessDefaultBasePath = "https://vpcaccess.googleapis.com/v1beta1/"
@@ -377,7 +377,7 @@ func (c *Config) LoadAndValidate(ctx context.Context) error {
 	c.clientStorage.UserAgent = userAgent
 	c.clientStorage.BasePath = storageClientBasePath
 
-	sqlClientBasePath := c.SQLBasePath
+	sqlClientBasePath := removeBasePathVersion(c.SQLBasePath)
 	log.Printf("[INFO] Instantiating Google SqlAdmin client for path %s", sqlClientBasePath)
 	c.clientSqlAdmin, err = sqladmin.NewService(ctx, option.WithHTTPClient(client))
 	if err != nil {
