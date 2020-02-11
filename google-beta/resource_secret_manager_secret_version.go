@@ -265,8 +265,7 @@ func flattenSecretManagerSecretVersionPayload(v interface{}, d *schema.ResourceD
 	parts := strings.Split(d.Get("name").(string), "/")
 	project := parts[1]
 
-	accessRes := make(map[string]interface{})
-	accessRes, err = sendRequest(config, "GET", project, url, nil)
+	accessRes, err := sendRequest(config, "GET", project, url, nil)
 	if err != nil {
 		return err
 	}
