@@ -14,7 +14,6 @@
 package google
 
 import (
-	"encoding/json"
 	"fmt"
 )
 
@@ -32,37 +31,15 @@ func (w *ResourceManagerOperationWaiter) QueryOp() (interface{}, error) {
 	return sendRequest(w.Config, "GET", "", url, nil)
 }
 
-func createResourceManagerWaiter(config *Config, op map[string]interface{}, activity string) (*ResourceManagerOperationWaiter, error) {
+func resourceManagerOperationWaitTime(config *Config, op map[string]interface{}, activity string, timeoutMinutes int) error {
 	if val, ok := op["name"]; !ok || val == "" {
 		// This was a synchronous call - there is no operation to wait for.
-		return nil, nil
+		return nil
 	}
 	w := &ResourceManagerOperationWaiter{
 		Config: config,
 	}
 	if err := w.CommonOperationWaiter.SetOp(op); err != nil {
-		return nil, err
-	}
-	return w, nil
-}
-
-// nolint: deadcode,unused
-func resourceManagerOperationWaitTimeWithResponse(config *Config, op map[string]interface{}, response *map[string]interface{}, activity string, timeoutMinutes int) error {
-	w, err := createResourceManagerWaiter(config, op, activity)
-	if err != nil || w == nil {
-		// If w is nil, the op was synchronous.
-		return err
-	}
-	if err := OperationWait(w, activity, timeoutMinutes); err != nil {
-		return err
-	}
-	return json.Unmarshal([]byte(w.CommonOperationWaiter.Op.Response), response)
-}
-
-func resourceManagerOperationWaitTime(config *Config, op map[string]interface{}, activity string, timeoutMinutes int) error {
-	w, err := createResourceManagerWaiter(config, op, activity)
-	if err != nil || w == nil {
-		// If w is nil, the op was synchronous.
 		return err
 	}
 	return OperationWait(w, activity, timeoutMinutes)

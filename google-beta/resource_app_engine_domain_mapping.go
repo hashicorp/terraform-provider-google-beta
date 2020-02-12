@@ -189,9 +189,8 @@ func resourceAppEngineDomainMappingCreate(d *schema.ResourceData, meta interface
 	}
 	d.SetId(id)
 
-	var response map[string]interface{}
-	err = appEngineOperationWaitTimeWithResponse(
-		config, res, &response, project, "Creating DomainMapping",
+	err = appEngineOperationWaitTime(
+		config, res, project, "Creating DomainMapping",
 		int(d.Timeout(schema.TimeoutCreate).Minutes()))
 
 	if err != nil {
@@ -199,16 +198,6 @@ func resourceAppEngineDomainMappingCreate(d *schema.ResourceData, meta interface
 		d.SetId("")
 		return fmt.Errorf("Error waiting to create DomainMapping: %s", err)
 	}
-	if err := d.Set("name", flattenAppEngineDomainMappingName(response["name"], d, config)); err != nil {
-		return err
-	}
-
-	// This may have caused the ID to update - update it if so.
-	id, err = replaceVars(d, config, "apps/{{project}}/domainMappings/{{domain_name}}")
-	if err != nil {
-		return fmt.Errorf("Error constructing id: %s", err)
-	}
-	d.SetId(id)
 
 	log.Printf("[DEBUG] Finished creating DomainMapping %q: %#v", d.Id(), res)
 

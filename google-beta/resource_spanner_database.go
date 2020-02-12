@@ -131,9 +131,8 @@ func resourceSpannerDatabaseCreate(d *schema.ResourceData, meta interface{}) err
 	}
 	d.SetId(id)
 
-	var response map[string]interface{}
-	err = spannerOperationWaitTimeWithResponse(
-		config, res, &response, project, "Creating Database",
+	err = spannerOperationWaitTime(
+		config, res, project, "Creating Database",
 		int(d.Timeout(schema.TimeoutCreate).Minutes()))
 
 	if err != nil {
@@ -141,16 +140,6 @@ func resourceSpannerDatabaseCreate(d *schema.ResourceData, meta interface{}) err
 		d.SetId("")
 		return fmt.Errorf("Error waiting to create Database: %s", err)
 	}
-	if err := d.Set("name", flattenSpannerDatabaseName(response["name"], d, config)); err != nil {
-		return err
-	}
-
-	// This may have caused the ID to update - update it if so.
-	id, err = replaceVars(d, config, "projects/{{project}}/instances/{{instance}}/databases/{{name}}")
-	if err != nil {
-		return fmt.Errorf("Error constructing id: %s", err)
-	}
-	d.SetId(id)
 
 	log.Printf("[DEBUG] Finished creating Database %q: %#v", d.Id(), res)
 

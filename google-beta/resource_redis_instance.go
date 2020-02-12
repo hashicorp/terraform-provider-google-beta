@@ -279,9 +279,8 @@ func resourceRedisInstanceCreate(d *schema.ResourceData, meta interface{}) error
 	}
 	d.SetId(id)
 
-	var response map[string]interface{}
-	err = redisOperationWaitTimeWithResponse(
-		config, res, &response, project, "Creating Instance",
+	err = redisOperationWaitTime(
+		config, res, project, "Creating Instance",
 		int(d.Timeout(schema.TimeoutCreate).Minutes()))
 
 	if err != nil {
@@ -289,16 +288,6 @@ func resourceRedisInstanceCreate(d *schema.ResourceData, meta interface{}) error
 		d.SetId("")
 		return fmt.Errorf("Error waiting to create Instance: %s", err)
 	}
-	if err := d.Set("name", flattenRedisInstanceName(response["name"], d, config)); err != nil {
-		return err
-	}
-
-	// This may have caused the ID to update - update it if so.
-	id, err = replaceVars(d, config, "projects/{{project}}/locations/{{region}}/instances/{{name}}")
-	if err != nil {
-		return fmt.Errorf("Error constructing id: %s", err)
-	}
-	d.SetId(id)
 
 	log.Printf("[DEBUG] Finished creating Instance %q: %#v", d.Id(), res)
 

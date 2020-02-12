@@ -104,9 +104,8 @@ func resourceAccessContextManagerServicePerimeterResourceCreate(d *schema.Resour
 	}
 	d.SetId(id)
 
-	var response map[string]interface{}
-	err = accessContextManagerOperationWaitTimeWithResponse(
-		config, res, &response, "Creating ServicePerimeterResource",
+	err = accessContextManagerOperationWaitTime(
+		config, res, "Creating ServicePerimeterResource",
 		int(d.Timeout(schema.TimeoutCreate).Minutes()))
 
 	if err != nil {
@@ -114,16 +113,6 @@ func resourceAccessContextManagerServicePerimeterResourceCreate(d *schema.Resour
 		d.SetId("")
 		return fmt.Errorf("Error waiting to create ServicePerimeterResource: %s", err)
 	}
-	if err := d.Set("resource", flattenAccessContextManagerServicePerimeterResourceResource(response["resource"], d, config)); err != nil {
-		return err
-	}
-
-	// This may have caused the ID to update - update it if so.
-	id, err = replaceVars(d, config, "{{perimeter_name}}/{{resource}}")
-	if err != nil {
-		return fmt.Errorf("Error constructing id: %s", err)
-	}
-	d.SetId(id)
 
 	log.Printf("[DEBUG] Finished creating ServicePerimeterResource %q: %#v", d.Id(), res)
 

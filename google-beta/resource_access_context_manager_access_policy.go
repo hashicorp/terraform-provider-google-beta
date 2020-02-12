@@ -108,9 +108,8 @@ func resourceAccessContextManagerAccessPolicyCreate(d *schema.ResourceData, meta
 	}
 	d.SetId(id)
 
-	var response map[string]interface{}
-	err = accessContextManagerOperationWaitTimeWithResponse(
-		config, res, &response, "Creating AccessPolicy",
+	err = accessContextManagerOperationWaitTime(
+		config, res, "Creating AccessPolicy",
 		int(d.Timeout(schema.TimeoutCreate).Minutes()))
 
 	if err != nil {
@@ -118,16 +117,6 @@ func resourceAccessContextManagerAccessPolicyCreate(d *schema.ResourceData, meta
 		d.SetId("")
 		return fmt.Errorf("Error waiting to create AccessPolicy: %s", err)
 	}
-	if err := d.Set("name", flattenAccessContextManagerAccessPolicyName(response["name"], d, config)); err != nil {
-		return err
-	}
-
-	// This may have caused the ID to update - update it if so.
-	id, err = replaceVars(d, config, "{{name}}")
-	if err != nil {
-		return fmt.Errorf("Error constructing id: %s", err)
-	}
-	d.SetId(id)
 
 	log.Printf("[DEBUG] Finished creating AccessPolicy %q: %#v", d.Id(), res)
 

@@ -90,7 +90,6 @@ type Config struct {
 	ContainerAnalysisBasePath    string
 	DataFusionBasePath           string
 	DataprocBasePath             string
-	DatastoreBasePath            string
 	DeploymentManagerBasePath    string
 	DialogflowBasePath           string
 	DNSBasePath                  string
@@ -234,7 +233,6 @@ var ComputeDefaultBasePath = "https://www.googleapis.com/compute/beta/"
 var ContainerAnalysisDefaultBasePath = "https://containeranalysis.googleapis.com/v1beta1/"
 var DataFusionDefaultBasePath = "https://datafusion.googleapis.com/v1beta1/"
 var DataprocDefaultBasePath = "https://dataproc.googleapis.com/v1beta2/"
-var DatastoreDefaultBasePath = "https://datastore.googleapis.com/v1/"
 var DeploymentManagerDefaultBasePath = "https://www.googleapis.com/deploymentmanager/v2/"
 var DialogflowDefaultBasePath = "https://dialogflow.googleapis.com/v2/"
 var DNSDefaultBasePath = "https://www.googleapis.com/dns/v1beta2/"
@@ -736,7 +734,6 @@ func ConfigureBasePaths(c *Config) {
 	c.ContainerAnalysisBasePath = ContainerAnalysisDefaultBasePath
 	c.DataFusionBasePath = DataFusionDefaultBasePath
 	c.DataprocBasePath = DataprocDefaultBasePath
-	c.DatastoreBasePath = DatastoreDefaultBasePath
 	c.DeploymentManagerBasePath = DeploymentManagerDefaultBasePath
 	c.DialogflowBasePath = DialogflowDefaultBasePath
 	c.DNSBasePath = DNSDefaultBasePath
