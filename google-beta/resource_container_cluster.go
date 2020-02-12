@@ -337,6 +337,12 @@ func resourceContainerCluster() *schema.Resource {
 								},
 							},
 						},
+						"autoscaling_profile": {
+							Type:         schema.TypeString,
+							Default:      "BALANCED",
+							Optional:     true,
+							ValidateFunc: validation.StringInSlice([]string{"BALANCED", "OPTIMIZE_UTILIZATION"}, false),
+						},
 					},
 				},
 			},
@@ -2298,6 +2304,7 @@ func expandClusterAutoscaling(configured interface{}, d *schema.ResourceData) *c
 	return &containerBeta.ClusterAutoscaling{
 		EnableNodeAutoprovisioning:       config["enabled"].(bool),
 		ResourceLimits:                   resourceLimits,
+		AutoscalingProfile:               config["autoscaling_profile"].(string),
 		AutoprovisioningNodePoolDefaults: expandAutoProvisioningDefaults(config["auto_provisioning_defaults"], d),
 	}
 }
@@ -2739,6 +2746,8 @@ func flattenClusterAutoscaling(a *containerBeta.ClusterAutoscaling) []map[string
 		r["enabled"] = true
 		r["auto_provisioning_defaults"] = flattenAutoProvisioningDefaults(a.AutoprovisioningNodePoolDefaults)
 	}
+	r["autoscaling_profile"] = a.AutoscalingProfile
+
 	return []map[string]interface{}{r}
 }
 

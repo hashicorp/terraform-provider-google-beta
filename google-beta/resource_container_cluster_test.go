@@ -1352,6 +1352,52 @@ func TestAccContainerCluster_nodeAutoprovisioningDefaults(t *testing.T) {
 	})
 }
 
+func TestAccContainerCluster_withAutoscalingProfile(t *testing.T) {
+	t.Parallel()
+	clusterName := fmt.Sprintf("cluster-test-%s", acctest.RandString(10))
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckContainerClusterDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccContainerCluster_withAutoscalingProfile(clusterName, "BALANCED"),
+			},
+			{
+				ResourceName:        "google_container_cluster.autoscaling_with_profile",
+				ImportStateIdPrefix: "us-central1-a/",
+				ImportState:         true,
+				ImportStateVerify:   true,
+			},
+			{
+				Config: testAccContainerCluster_withAutoscalingProfile(clusterName, "OPTIMIZE_UTILIZATION"),
+			},
+			{
+				ResourceName:        "google_container_cluster.autoscaling_with_profile",
+				ImportStateIdPrefix: "us-central1-a/",
+				ImportState:         true,
+				ImportStateVerify:   true,
+			},
+		},
+	})
+}
+
+func TestAccContainerCluster_withInvalidAutoscalingProfile(t *testing.T) {
+	t.Parallel()
+	clusterName := fmt.Sprintf("cluster-test-%s", acctest.RandString(10))
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckContainerClusterDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config:      testAccContainerCluster_withAutoscalingProfile(clusterName, "AS_CHEAP_AS_POSSIBLE"),
+				ExpectError: regexp.MustCompile(`config is invalid: expected cluster_autoscaling\.0\.autoscaling_profile to be one of \[BALANCED OPTIMIZE_UTILIZATION\], got AS_CHEAP_AS_POSSIBLE`),
+			},
+		},
+	})
+}
+
 func TestAccContainerCluster_sharedVpc(t *testing.T) {
 	t.Parallel()
 
@@ -2786,6 +2832,22 @@ resource "google_container_cluster" "with_node_pool" {
   }
 }
 `, cluster, nodePool)
+}
+
+func testAccContainerCluster_withAutoscalingProfile(cluster string, autoscalingProfile string) string {
+	config := fmt.Sprintf(`
+resource "google_container_cluster" "autoscaling_with_profile" {
+  name               = "%s"
+  location           = "us-central1-a"
+  initial_node_count = 1
+
+  cluster_autoscaling {
+    enabled             = false
+    autoscaling_profile = "%s"
+  }
+}
+`, cluster, autoscalingProfile)
+	return config
 }
 
 func testAccContainerCluster_autoprovisioning(cluster string, autoprovisioning bool) string {
