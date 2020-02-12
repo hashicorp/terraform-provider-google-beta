@@ -1,4 +1,26 @@
-## 3.8.1 (Unreleased)
+## 3.9.0 (Unreleased)
+
+FEATURES:
+* **New Resource:** `google_container_registry` ([#1725](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1725))
+
+IMPROVEMENTS:
+* all: improve error handling of 404s. ([#1728](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1728))
+* bigtable: added update support for `display_name` and `instance_type` ([#1751](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1751))
+* container: `google_container_cluster` will wait for a stable state after updates. ([#1737](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1737))
+* container: added support for `autoscaling_profile` to `google_container_cluster` ([#1756](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1756))
+* container: added `boot_disk_kms_key` to `node_config` block. ([#1736](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1736))
+* dataflow: added `job_id` field to `google_dataflow_job` ([#1754](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1754))
+* dialogflow: improve error handling by increasing retry count ([#1730](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1730))
+* resourcemanager: fixed retry behavior for updates in `google_project`, added retries for billing metadata requests ([#1735](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1735))
+* sql: add `encryption_key_name` to `google_sql_database_instance` ([#1724](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1724))
+
+BUG FIXES:
+* cloudrun: fixed permadiff caused by new API default values on `annotations` and `limits` ([#1727](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1727))
+* container: Removed restriction on `auto_provisioning_defaults` to allow both `oauth_scopes` and `service_account` to be set ([#1748](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1748))
+* firestore: fixed import of `google_firestore_index` when database or collection were non-default. ([#1741](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1741))
+* iam: Fixed an erroneous error during import of IAM resources when a provider default project/zone/region is not defined. ([#1734](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1734))
+* kms: Fixed issue where `google_kms_crypto_key_version` datasource would throw an Invalid Index error on plan ([#1740](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1740))
+
 ## 3.8.0 (February 10, 2020)
 NOTES:
 * provider: added documentation for the `id` field for many resources, including format ([#1697](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1697))
