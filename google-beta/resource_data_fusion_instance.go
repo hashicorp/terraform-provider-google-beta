@@ -264,8 +264,9 @@ func resourceDataFusionInstanceCreate(d *schema.ResourceData, meta interface{}) 
 	}
 	d.SetId(id)
 
-	err = dataFusionOperationWaitTime(
-		config, res, project, "Creating Instance",
+	var response map[string]interface{}
+	err = dataFusionOperationWaitTimeWithResponse(
+		config, res, &response, project, "Creating Instance",
 		int(d.Timeout(schema.TimeoutCreate).Minutes()))
 
 	if err != nil {
@@ -273,6 +274,16 @@ func resourceDataFusionInstanceCreate(d *schema.ResourceData, meta interface{}) 
 		d.SetId("")
 		return fmt.Errorf("Error waiting to create Instance: %s", err)
 	}
+	if err := d.Set("name", flattenDataFusionInstanceName(response["name"], d, config)); err != nil {
+		return err
+	}
+
+	// This may have caused the ID to update - update it if so.
+	id, err = replaceVars(d, config, "projects/{{project}}/locations/{{region}}/instances/{{name}}")
+	if err != nil {
+		return fmt.Errorf("Error constructing id: %s", err)
+	}
+	d.SetId(id)
 
 	log.Printf("[DEBUG] Finished creating Instance %q: %#v", d.Id(), res)
 
