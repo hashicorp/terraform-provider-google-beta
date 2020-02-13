@@ -17,11 +17,11 @@ layout: "google"
 page_title: "Google: google_secret_manager_secret_iam"
 sidebar_current: "docs-google-secret-manager-secret-iam"
 description: |-
-  Collection of resources to manage IAM policy for SecretManagerSecret
+  Collection of resources to manage IAM policy for Secret Manager Secret
 ---
 
-# IAM policy for SecretManagerSecret
-Three different resources help you manage your IAM policy for SecretManager Secret. Each of these resources serves a different use case:
+# IAM policy for Secret Manager Secret
+Three different resources help you manage your IAM policy for Secret Manager Secret. Each of these resources serves a different use case:
 
 * `google_secret_manager_secret_iam_policy`: Authoritative. Sets the IAM policy for the secret and replaces any existing policy already attached.
 * `google_secret_manager_secret_iam_binding`: Authoritative for a given role. Updates the IAM policy to grant a role to a list of members. Other roles within the IAM policy for the secret are preserved.
@@ -119,7 +119,7 @@ For all import syntaxes, the "resource in question" can take any of the followin
 
 Any variables not passed in the import command will be taken from the provider configuration.
 
-SecretManager secret IAM resources can be imported using the resource identifiers, role, and member.
+Secret Manager secret IAM resources can be imported using the resource identifiers, role, and member.
 
 IAM member imports use space-delimited identifiers: the resource in question, the role, and the member identity, e.g.
 ```
