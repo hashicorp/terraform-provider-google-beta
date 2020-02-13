@@ -63,7 +63,7 @@ resource "google_secret_manager_secret" "secret-basic" {
 resource "google_secret_manager_secret_version" "secret-version-basic" {
   provider = google-beta
 
-  secret = google_secret_manager_secret.secret-basic.name
+  secret = google_secret_manager_secret.secret-basic.id
 
   secret_data = "tf-test-secret-data%{random_suffix}"
 }
