@@ -103,6 +103,14 @@ func TestAccHealthcareFhirStore_basic(t *testing.T) {
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
+			{
+				Config: testGoogleHealthcareFhirStore_basic(fhirStoreName, datasetName),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
 		},
 	})
 }
