@@ -103,6 +103,14 @@ func TestAccHealthcareHl7V2Store_basic(t *testing.T) {
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
+			{
+				Config: testGoogleHealthcareHl7V2Store_basic(hl7_v2StoreName, datasetName),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
 		},
 	})
 }
