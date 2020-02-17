@@ -2735,8 +2735,8 @@ func flattenClusterAutoscaling(a *containerBeta.ClusterAutoscaling) []map[string
 		r["resource_limits"] = resourceLimits
 		r["enabled"] = true
 		r["auto_provisioning_defaults"] = flattenAutoProvisioningDefaults(a.AutoprovisioningNodePoolDefaults)
+		r["autoscaling_profile"] = a.AutoscalingProfile
 	}
-	r["autoscaling_profile"] = a.AutoscalingProfile
 
 	return []map[string]interface{}{r}
 }
