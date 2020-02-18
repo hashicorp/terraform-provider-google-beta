@@ -22,6 +22,7 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
 )
 
 func resourceHealthcareFhirStore() *schema.Resource {
@@ -142,6 +143,14 @@ Cloud Pub/Sub topic. Not having adequate permissions will cause the calls that s
 					},
 				},
 			},
+			"version": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ForceNew:     true,
+				ValidateFunc: validation.StringInSlice([]string{"DSTU2", "STU3", "R4", ""}, false),
+				Description:  `The FHIR specification version. Supported values include DSTU2, STU3 and R4. Defaults to STU3.`,
+				Default:      "STU3",
+			},
 			"self_link": {
 				Type:        schema.TypeString,
 				Computed:    true,
@@ -160,6 +169,12 @@ func resourceHealthcareFhirStoreCreate(d *schema.ResourceData, meta interface{})
 		return err
 	} else if v, ok := d.GetOkExists("name"); !isEmptyValue(reflect.ValueOf(nameProp)) && (ok || !reflect.DeepEqual(v, nameProp)) {
 		obj["name"] = nameProp
+	}
+	versionProp, err := expandHealthcareFhirStoreVersion(d.Get("version"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("version"); !isEmptyValue(reflect.ValueOf(versionProp)) && (ok || !reflect.DeepEqual(v, versionProp)) {
+		obj["version"] = versionProp
 	}
 	enableUpdateCreateProp, err := expandHealthcareFhirStoreEnableUpdateCreate(d.Get("enable_update_create"), d, config)
 	if err != nil {
@@ -247,6 +262,9 @@ func resourceHealthcareFhirStoreRead(d *schema.ResourceData, meta interface{}) e
 	}
 
 	if err := d.Set("name", flattenHealthcareFhirStoreName(res["name"], d, config)); err != nil {
+		return fmt.Errorf("Error reading FhirStore: %s", err)
+	}
+	if err := d.Set("version", flattenHealthcareFhirStoreVersion(res["version"], d, config)); err != nil {
 		return fmt.Errorf("Error reading FhirStore: %s", err)
 	}
 	if err := d.Set("enable_update_create", flattenHealthcareFhirStoreEnableUpdateCreate(res["enableUpdateCreate"], d, config)); err != nil {
@@ -367,6 +385,10 @@ func flattenHealthcareFhirStoreName(v interface{}, d *schema.ResourceData, confi
 	return v
 }
 
+func flattenHealthcareFhirStoreVersion(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	return v
+}
+
 func flattenHealthcareFhirStoreEnableUpdateCreate(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
@@ -405,6 +427,10 @@ func flattenHealthcareFhirStoreNotificationConfigPubsubTopic(v interface{}, d *s
 }
 
 func expandHealthcareFhirStoreName(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandHealthcareFhirStoreVersion(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
