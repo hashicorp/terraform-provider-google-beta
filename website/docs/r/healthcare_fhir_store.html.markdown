@@ -41,6 +41,7 @@ To get more information about FhirStore, see:
 resource "google_healthcare_fhir_store" "default" {
   name    = "example-fhir-store"
   dataset = google_healthcare_dataset.dataset.id
+  version = "R4"
 
   enable_update_create          = false
   disable_referential_integrity = false
@@ -87,6 +88,10 @@ The following arguments are supported:
 
 - - -
 
+
+* `version` -
+  (Optional)
+  The FHIR specification version. Supported values include DSTU2, STU3 and R4. Defaults to STU3.
 
 * `enable_update_create` -
   (Optional)
