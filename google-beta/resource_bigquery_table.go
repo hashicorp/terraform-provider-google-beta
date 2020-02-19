@@ -3,6 +3,7 @@ package google
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
 
@@ -300,6 +301,53 @@ func resourceBigQueryTable() *schema.Resource {
 				},
 			},
 
+			// RangePartitioning: [Optional] If specified, configures range-based
+			// partitioning for this table.
+			"range_partitioning": {
+				Type:     schema.TypeList,
+				Optional: true,
+				MaxItems: 1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						// Field: [Required] The field used to determine how to create a range-based
+						// partition.
+						"field": {
+							Type:     schema.TypeString,
+							Required: true,
+							ForceNew: true,
+						},
+
+						// Range: [Required] Information required to partition based on ranges.
+						"range": {
+							Type:     schema.TypeList,
+							Required: true,
+							MaxItems: 1,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									// Start: [Required] Start of the range partitioning, inclusive.
+									"start": {
+										Type:     schema.TypeInt,
+										Required: true,
+									},
+
+									// End: [Required] End of the range partitioning, exclusive.
+									"end": {
+										Type:     schema.TypeInt,
+										Required: true,
+									},
+
+									// Interval: [Required] The width of each range within the partition.
+									"interval": {
+										Type:     schema.TypeInt,
+										Required: true,
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+
 			// Clustering: [Optional] Specifies column names to use for data clustering.  Up to four
 			// top-level columns are allowed, and should be specified in descending priority order.
 			"clustering": {
@@ -462,6 +510,15 @@ func resourceTable(d *schema.ResourceData, meta interface{}) (*bigquery.Table, e
 		table.TimePartitioning = expandTimePartitioning(v)
 	}
 
+	if v, ok := d.GetOk("range_partitioning"); ok {
+		rangePartitioning, err := expandRangePartitioning(v)
+		if err != nil {
+			return nil, err
+		}
+
+		table.RangePartitioning = rangePartitioning
+	}
+
 	if v, ok := d.GetOk("clustering"); ok {
 		table.Clustering = &bigquery.Clustering{
 			Fields:          convertStringArr(v.([]interface{})),
@@ -547,6 +604,12 @@ func resourceBigQueryTableRead(d *schema.ResourceData, meta interface{}) error {
 
 	if res.TimePartitioning != nil {
 		if err := d.Set("time_partitioning", flattenTimePartitioning(res.TimePartitioning)); err != nil {
+			return err
+		}
+	}
+
+	if res.RangePartitioning != nil {
+		if err := d.Set("range_partitioning", flattenRangePartitioning(res.RangePartitioning)); err != nil {
 			return err
 		}
 	}
@@ -836,6 +899,38 @@ func expandTimePartitioning(configured interface{}) *bigquery.TimePartitioning {
 	return tp
 }
 
+func expandRangePartitioning(configured interface{}) (*bigquery.RangePartitioning, error) {
+	if configured == nil {
+		return nil, nil
+	}
+
+	rpList := configured.([]interface{})
+	if len(rpList) == 0 || rpList[0] == nil {
+		return nil, errors.New("Error casting range partitioning interface to expected structure")
+	}
+
+	rangePartJson := rpList[0].(map[string]interface{})
+	rp := &bigquery.RangePartitioning{
+		Field: rangePartJson["field"].(string),
+	}
+
+	if v, ok := rangePartJson["range"]; ok && v != nil {
+		rangeLs := v.([]interface{})
+		if len(rangeLs) != 1 || rangeLs[0] == nil {
+			return nil, errors.New("Non-empty range must be given for range partitioning")
+		}
+
+		rangeJson := rangeLs[0].(map[string]interface{})
+		rp.Range = &bigquery.RangePartitioningRange{
+			Start:    int64(rangeJson["start"].(int)),
+			End:      int64(rangeJson["end"].(int)),
+			Interval: int64(rangeJson["interval"].(int)),
+		}
+	}
+
+	return rp, nil
+}
+
 func flattenEncryptionConfiguration(ec *bigquery.EncryptionConfiguration) []map[string]interface{} {
 	return []map[string]interface{}{{"kms_key_name": ec.KmsKeyName}}
 }
@@ -853,6 +948,21 @@ func flattenTimePartitioning(tp *bigquery.TimePartitioning) []map[string]interfa
 
 	if tp.RequirePartitionFilter {
 		result["require_partition_filter"] = tp.RequirePartitionFilter
+	}
+
+	return []map[string]interface{}{result}
+}
+
+func flattenRangePartitioning(rp *bigquery.RangePartitioning) []map[string]interface{} {
+	result := map[string]interface{}{
+		"field": rp.Field,
+		"range": []map[string]interface{}{
+			{
+				"start":    rp.Range.Start,
+				"end":      rp.Range.End,
+				"interval": rp.Range.Interval,
+			},
+		},
 	}
 
 	return []map[string]interface{}{result}
