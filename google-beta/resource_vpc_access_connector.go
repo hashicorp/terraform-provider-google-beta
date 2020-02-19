@@ -163,17 +163,26 @@ func resourceVPCAccessConnectorCreate(d *schema.ResourceData, meta interface{}) 
 	}
 	d.SetId(id)
 
-	var response map[string]interface{}
+	// Use the resource in the operation response to populate
+	// identity fields and d.Id() before read
+	var opRes map[string]interface{}
 	err = vpcAccessOperationWaitTimeWithResponse(
-		config, res, &response, project, "Creating Connector",
+		config, res, &opRes, project, "Creating Connector",
 		int(d.Timeout(schema.TimeoutCreate).Minutes()))
-
 	if err != nil {
 		// The resource didn't actually create
 		d.SetId("")
 		return fmt.Errorf("Error waiting to create Connector: %s", err)
 	}
-	if err := d.Set("name", flattenVPCAccessConnectorName(response["name"], d, config)); err != nil {
+
+	opRes, err = resourceVPCAccessConnectorDecoder(d, meta, opRes)
+	if err != nil {
+		return fmt.Errorf("Error decoding response from operation: %s", err)
+	}
+	if opRes == nil {
+		return fmt.Errorf("Error decoding response from operation, could not find object")
+	}
+	if err := d.Set("name", flattenVPCAccessConnectorName(opRes["name"], d, config)); err != nil {
 		return err
 	}
 
