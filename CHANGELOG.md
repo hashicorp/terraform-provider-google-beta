@@ -1,7 +1,7 @@
 ## 3.10.0 (Unreleased)
 
 BREAKING CHANGES:
-* container: Fully removed `use_ip_aliases` and `create_subnetwork` fields ([#1760](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1760))
+* container: Fully removed `use_ip_aliases` and `create_subnetwork` fields to fix misleading diff for removed fields ([#1760](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1760))
 
 FEATURES:
 * **New Data Source:** `google_dns_keys` ([#1768](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1768))
