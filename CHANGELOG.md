@@ -13,9 +13,9 @@ FEATURES:
 
 IMPROVEMENTS:
 * container: Enabled configuring autoscaling profile in GKE clusters (https://cloud.google.com/kubernetes-engine/docs/concepts/cluster-autoscaler#autoscaling_profiles) ([#1756](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1756))
-* container: Added import/update/deletion of `google_container_cluster` in error states ([#1759](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1759))
+* container: Allowed import/update/deletion of `google_container_cluster` in error states ([#1759](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1759))
 * container: Changed `google_container_node_pool` so node pools created in an error state will be marked as tainted on creation. ([#1758](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1758))
-* container: Added import/update/deletion of `google_container_node_pool` in error states and updated resource to wait for a stable state after any changes. ([#1758](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1758))
+* container: Allowed import/update/deletion of `google_container_node_pool` in error states and updated resource to wait for a stable state after any changes. ([#1758](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1758))
 * container: added label_fingerprint to `google_container_cluster` ([#1750](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1750))
 * dataflow: added `job_id` field to `google_dataflow_job` ([#1754](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1754))
 * dataflow: added computed `type` field to `google_dataflow_job`. ([#1771](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1771))
