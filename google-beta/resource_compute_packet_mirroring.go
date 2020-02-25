@@ -53,9 +53,10 @@ set to true.`,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"url": {
-							Type:        schema.TypeString,
-							Required:    true,
-							Description: `The URL of the forwarding rule.`,
+							Type:             schema.TypeString,
+							Required:         true,
+							DiffSuppressFunc: compareSelfLinkOrResourceName,
+							Description:      `The URL of the forwarding rule.`,
 						},
 					},
 				},
@@ -74,9 +75,10 @@ set to true.`,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"url": {
-										Type:        schema.TypeString,
-										Required:    true,
-										Description: `The URL of the instances where this rule should be active.`,
+										Type:             schema.TypeString,
+										Required:         true,
+										DiffSuppressFunc: compareSelfLinkOrResourceName,
+										Description:      `The URL of the instances where this rule should be active.`,
 									},
 								},
 							},
@@ -89,9 +91,10 @@ set to true.`,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"url": {
-										Type:        schema.TypeString,
-										Required:    true,
-										Description: `The URL of the subnetwork where this rule should be active.`,
+										Type:             schema.TypeString,
+										Required:         true,
+										DiffSuppressFunc: compareSelfLinkOrResourceName,
+										Description:      `The URL of the subnetwork where this rule should be active.`,
 									},
 								},
 							},
@@ -125,9 +128,10 @@ network. All mirrored subnetworks should belong to the given network.`,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"url": {
-							Type:        schema.TypeString,
-							Required:    true,
-							Description: `The full self_link URL of the network where this rule is active.`,
+							Type:             schema.TypeString,
+							Required:         true,
+							DiffSuppressFunc: compareSelfLinkOrResourceName,
+							Description:      `The full self_link URL of the network where this rule is active.`,
 						},
 					},
 				},
@@ -487,7 +491,10 @@ func flattenComputePacketMirroringNetwork(v interface{}, d *schema.ResourceData,
 	return []interface{}{transformed}
 }
 func flattenComputePacketMirroringNetworkUrl(v interface{}, d *schema.ResourceData, config *Config) interface{} {
-	return v
+	if v == nil {
+		return v
+	}
+	return ConvertSelfLinkToV1(v.(string))
 }
 
 func flattenComputePacketMirroringPriority(v interface{}, d *schema.ResourceData, config *Config) interface{} {
@@ -514,7 +521,10 @@ func flattenComputePacketMirroringCollectorIlb(v interface{}, d *schema.Resource
 	return []interface{}{transformed}
 }
 func flattenComputePacketMirroringCollectorIlbUrl(v interface{}, d *schema.ResourceData, config *Config) interface{} {
-	return v
+	if v == nil {
+		return v
+	}
+	return ConvertSelfLinkToV1(v.(string))
 }
 
 func flattenComputePacketMirroringFilter(v interface{}, d *schema.ResourceData, config *Config) interface{} {
@@ -576,7 +586,10 @@ func flattenComputePacketMirroringMirroredResourcesSubnetworks(v interface{}, d 
 	return transformed
 }
 func flattenComputePacketMirroringMirroredResourcesSubnetworksUrl(v interface{}, d *schema.ResourceData, config *Config) interface{} {
-	return v
+	if v == nil {
+		return v
+	}
+	return ConvertSelfLinkToV1(v.(string))
 }
 
 func flattenComputePacketMirroringMirroredResourcesInstances(v interface{}, d *schema.ResourceData, config *Config) interface{} {
@@ -598,7 +611,10 @@ func flattenComputePacketMirroringMirroredResourcesInstances(v interface{}, d *s
 	return transformed
 }
 func flattenComputePacketMirroringMirroredResourcesInstancesUrl(v interface{}, d *schema.ResourceData, config *Config) interface{} {
-	return v
+	if v == nil {
+		return v
+	}
+	return ConvertSelfLinkToV1(v.(string))
 }
 
 func flattenComputePacketMirroringMirroredResourcesTags(v interface{}, d *schema.ResourceData, config *Config) interface{} {
@@ -637,7 +653,11 @@ func expandComputePacketMirroringNetwork(v interface{}, d TerraformResourceData,
 }
 
 func expandComputePacketMirroringNetworkUrl(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
-	return v, nil
+	f, err := parseGlobalFieldValue("networks", v.(string), "project", d, config, true)
+	if err != nil {
+		return nil, fmt.Errorf("Invalid value for url: %s", err)
+	}
+	return f.RelativeLink(), nil
 }
 
 func expandComputePacketMirroringPriority(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
@@ -664,7 +684,11 @@ func expandComputePacketMirroringCollectorIlb(v interface{}, d TerraformResource
 }
 
 func expandComputePacketMirroringCollectorIlbUrl(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
-	return v, nil
+	f, err := parseRegionalFieldValue("forwardingRules", v.(string), "project", "region", "zone", d, config, true)
+	if err != nil {
+		return nil, fmt.Errorf("Invalid value for url: %s", err)
+	}
+	return f.RelativeLink(), nil
 }
 
 func expandComputePacketMirroringFilter(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
@@ -757,7 +781,11 @@ func expandComputePacketMirroringMirroredResourcesSubnetworks(v interface{}, d T
 }
 
 func expandComputePacketMirroringMirroredResourcesSubnetworksUrl(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
-	return v, nil
+	f, err := parseRegionalFieldValue("subnetworks", v.(string), "project", "region", "zone", d, config, true)
+	if err != nil {
+		return nil, fmt.Errorf("Invalid value for url: %s", err)
+	}
+	return f.RelativeLink(), nil
 }
 
 func expandComputePacketMirroringMirroredResourcesInstances(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
@@ -783,7 +811,11 @@ func expandComputePacketMirroringMirroredResourcesInstances(v interface{}, d Ter
 }
 
 func expandComputePacketMirroringMirroredResourcesInstancesUrl(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
-	return v, nil
+	f, err := parseZonalFieldValue("instances", v.(string), "project", "zone", d, config, true)
+	if err != nil {
+		return nil, fmt.Errorf("Invalid value for url: %s", err)
+	}
+	return f.RelativeLink(), nil
 }
 
 func expandComputePacketMirroringMirroredResourcesTags(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {

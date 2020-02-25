@@ -55,7 +55,6 @@ resource "google_compute_instance" "mirror" {
       image = "debian-cloud/debian-9"
     }
   }
-  zone = "us-east1-b"
 
   network_interface {
     network = google_compute_network.default.self_link
@@ -101,7 +100,6 @@ resource "google_compute_subnetwork" "default" {
 resource "google_compute_region_backend_service" "default" {
   name = "tf-test-my-service%{random_suffix}"
   provider = google-beta
-  region        = "us-east1"
   health_checks = ["${google_compute_health_check.default.self_link}"]
 }
 
@@ -118,7 +116,7 @@ resource "google_compute_health_check" "default" {
 resource "google_compute_forwarding_rule" "default" {
   depends_on = [google_compute_subnetwork.default]
   provider = google-beta
-  name       = ""
+  name       = "tf-test-my-ilb%{random_suffix}"
 
   is_mirroring_collector = true
   ip_protocol            = "TCP"
