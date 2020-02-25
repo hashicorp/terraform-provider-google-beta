@@ -1,4 +1,28 @@
-## 3.9.1 (Unreleased)
+## 3.10.1 (Unreleased)
+## 3.10.0 (February 25, 2020)
+
+BREAKING CHANGES:
+* container: Fully removed `use_ip_aliases` and `create_subnetwork` fields to fix misleading diff for removed fields ([#1760](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1760))
+
+FEATURES:
+* **New Data Source:** `google_dns_keys` ([#1768](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1768))
+* **New Resource:** `google_datastore_index` ([#1755](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1755))
+* **New Resource:** `google_storage_hmac_key` ([#1765](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1765))
+* **New Resource:** `google_endpoints_service_iam_binding` ([#1761](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1761))
+* **New Resource:** `google_endpoints_service_iam_member` ([#1761](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1761))
+* **New Resource:** `google_endpoints_service_iam_policy` ([#1761](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1761))
+
+IMPROVEMENTS:
+* container: Enabled configuring autoscaling profile in GKE clusters (https://cloud.google.com/kubernetes-engine/docs/concepts/cluster-autoscaler#autoscaling_profiles) ([#1756](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1756))
+* container: Allowed import/update/deletion of `google_container_cluster` in error states ([#1759](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1759))
+* container: Changed `google_container_node_pool` so node pools created in an error state will be marked as tainted on creation. ([#1758](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1758))
+* container: Allowed import/update/deletion of `google_container_node_pool` in error states and updated resource to wait for a stable state after any changes. ([#1758](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1758))
+* container: added label_fingerprint to `google_container_cluster` ([#1750](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1750))
+* dataflow: added `job_id` field to `google_dataflow_job` ([#1754](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1754))
+* dataflow: added computed `type` field to `google_dataflow_job`. ([#1771](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1771))
+* healthcare: added `version` field to `google_healthcare_fhir_store` ([#1769](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1769))
+* provider: Added retries for common network errors we've encountered. ([#1762](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1762))
+
 ## 3.9.0 (February 18, 2020)
 
 FEATURES:
