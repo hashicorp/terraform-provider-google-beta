@@ -333,7 +333,7 @@ func TestAccCloudFunctionsFunction_vpcConnector(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProvidersOiCS,
+		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckCloudFunctionsFunctionDestroy,
 		Steps: []resource.TestStep{
 			{
@@ -761,16 +761,13 @@ resource "google_cloudfunctions_function" "function" {
 
 func testAccCloudFunctionsFunction_vpcConnector(projectNumber, networkName, functionName, bucketName, zipFilePath, vpcConnectorName string) string {
 	return fmt.Sprintf(`
-provider "google-beta" { }
 
 resource "google_project_iam_member" "gcfadmin" {
-  provider = "google-beta"
   role     = "roles/editor"
   member   = "serviceAccount:service-%s@gcf-admin-robot.iam.gserviceaccount.com"
 }
 
 resource "google_compute_network" "vpc" {
-	provider = "google-beta"
 	name = "%s"
 	auto_create_subnetworks = false
 }
@@ -783,12 +780,10 @@ resource "google_vpc_access_connector" "connector" {
 }
 
 resource "google_storage_bucket" "bucket" {
-  provider = "google-beta"
   name     = "%s"
 }
 
 resource "google_storage_bucket_object" "archive" {
-  provider = "google-beta"
   name     = "index.zip"
   bucket   = google_storage_bucket.bucket.name
   source   = "%s"
@@ -797,7 +792,6 @@ resource "google_storage_bucket_object" "archive" {
 resource "google_cloudfunctions_function" "function" {
   name     = "%s"
   runtime  = "nodejs8"
-  provider = "google-beta"
 
   description           = "test function"
   available_memory_mb   = 128
