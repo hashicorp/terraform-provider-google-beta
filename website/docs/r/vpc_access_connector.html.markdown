@@ -24,12 +24,10 @@ description: |-
 
 Serverless VPC Access connector resource.
 
-~> **Warning:** This resource is in beta, and should be used with the terraform-provider-google-beta provider.
-See [Provider Versions](https://terraform.io/docs/providers/google/guides/provider_versions.html) for more details on beta resources.
 
 To get more information about Connector, see:
 
-* [API documentation](https://cloud.google.com/vpc/docs/reference/vpcaccess/rest/v1beta1/projects.locations.connectors)
+* [API documentation](https://cloud.google.com/vpc/docs/reference/vpcaccess/rest/v1/projects.locations.connectors)
 * How-to Guides
     * [Configuring Serverless VPC Access](https://cloud.google.com/vpc/docs/configure-serverless-vpc-access)
 
@@ -42,12 +40,8 @@ To get more information about Connector, see:
 
 
 ```hcl
-provider "google-beta" {
-}
-
 resource "google_vpc_access_connector" "connector" {
   name          = "vpcconn"
-  provider      = google-beta
   region        = "us-central1"
   ip_cidr_range = "10.8.0.0/28"
   network       = "default"
@@ -117,10 +111,10 @@ This resource provides the following
 Connector can be imported using any of these accepted formats:
 
 ```
-$ terraform import -provider=google-beta google_vpc_access_connector.default projects/{{project}}/locations/{{region}}/connectors/{{name}}
-$ terraform import -provider=google-beta google_vpc_access_connector.default {{project}}/{{region}}/{{name}}
-$ terraform import -provider=google-beta google_vpc_access_connector.default {{region}}/{{name}}
-$ terraform import -provider=google-beta google_vpc_access_connector.default {{name}}
+$ terraform import google_vpc_access_connector.default projects/{{project}}/locations/{{region}}/connectors/{{name}}
+$ terraform import google_vpc_access_connector.default {{project}}/{{region}}/{{name}}
+$ terraform import google_vpc_access_connector.default {{region}}/{{name}}
+$ terraform import google_vpc_access_connector.default {{name}}
 ```
 
 -> If you're importing a resource with beta features, make sure to include `-provider=google-beta`
