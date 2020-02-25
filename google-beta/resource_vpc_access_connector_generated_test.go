@@ -33,11 +33,17 @@ func TestAccVPCAccessConnector_vpcAccessConnectorExample(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProvidersOiCS,
+		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckVPCAccessConnectorDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccVPCAccessConnector_vpcAccessConnectorExample(context),
+			},
+			{
+				ResourceName:            "google_vpc_access_connector.connector",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"self_link", "region"},
 			},
 		},
 	})
@@ -45,12 +51,8 @@ func TestAccVPCAccessConnector_vpcAccessConnectorExample(t *testing.T) {
 
 func testAccVPCAccessConnector_vpcAccessConnectorExample(context map[string]interface{}) string {
 	return Nprintf(`
-provider "google-beta" {
-}
-
 resource "google_vpc_access_connector" "connector" {
   name          = "vpcconn%{random_suffix}"
-  provider      = google-beta
   region        = "us-central1"
   ip_cidr_range = "10.8.0.0/28"
   network       = "default"
