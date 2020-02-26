@@ -46,7 +46,7 @@ func TestAccGameServicesGameServerDeployment_gameServiceDeploymentBasicExample(t
 func testAccGameServicesGameServerDeployment_gameServiceDeploymentBasicExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_game_services_game_server_deployment" "default" {
-  provider = google-private
+  provider = google-beta
 
   deployment_id  = "tf-test-tf-test-deployment%{random_suffix}"
   description = "a deployment description"
