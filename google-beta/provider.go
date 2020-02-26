@@ -962,7 +962,6 @@ func providerConfigure(d *schema.ResourceData, p *schema.Provider, terraformVers
 	config.VPCAccessBasePath = d.Get("vpc_access_custom_endpoint").(string)
 
 	// Handwritten Products / Versioned / Atypical Entries
-	config.IAPBasePath = d.Get(IAPCustomEndpointEntryKey).(string)
 
 	config.CloudBillingBasePath = d.Get(CloudBillingCustomEndpointEntryKey).(string)
 	config.ComposerBasePath = d.Get(ComposerCustomEndpointEntryKey).(string)
