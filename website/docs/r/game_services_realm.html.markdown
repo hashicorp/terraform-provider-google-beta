@@ -43,7 +43,7 @@ To get more information about Realm, see:
 
 ```hcl
 resource "google_game_services_realm" "default" {
-  provider = google-private
+  provider = google-beta
 
   realm_id  = "tf-test-realm"
   time_zone = "EST"

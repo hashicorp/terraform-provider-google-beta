@@ -46,14 +46,14 @@ func TestAccGameServicesGameServerDeploymentRollout_gameServiceDeploymentRollout
 func testAccGameServicesGameServerDeploymentRollout_gameServiceDeploymentRolloutBasicExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_game_services_game_server_deployment" "default" {
-  provider = google-private
+  provider = google-beta
 
   deployment_id  = "tf-test-tf-test-deployment%{random_suffix}"
   description = "a deployment description"
 }
 
 resource "google_game_services_game_server_config" "default" {
-  provider = google-private
+  provider = google-beta
 
   config_id     = "tf-test-tf-test-config%{random_suffix}"
   deployment_id = google_game_services_game_server_deployment.default.deployment_id
@@ -69,7 +69,7 @@ resource "google_game_services_game_server_config" "default" {
 }
 
 resource "google_game_services_game_server_deployment_rollout" "default" {
-  provider = google-private
+  provider = google-beta
 
   deployment_id              = google_game_services_game_server_deployment.default.deployment_id
   default_game_server_config = google_game_services_game_server_config.default.name

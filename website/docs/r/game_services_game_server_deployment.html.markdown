@@ -43,7 +43,7 @@ To get more information about GameServerDeployment, see:
 
 ```hcl
 resource "google_game_services_game_server_deployment" "default" {
-  provider = google-private
+  provider = google-beta
 
   deployment_id  = "tf-test-deployment"
   description = "a deployment description"

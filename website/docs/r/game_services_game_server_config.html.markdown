@@ -43,14 +43,14 @@ To get more information about GameServerConfig, see:
 
 ```hcl
 resource "google_game_services_game_server_deployment" "default" {
-  provider = google-private
+  provider = google-beta
 
   deployment_id  = "tf-test-deployment"
   description = "a deployment description"
 }
 
 resource "google_game_services_game_server_config" "default" {
-  provider = google-private
+  provider = google-beta
 
   config_id     = "tf-test-config"
   deployment_id = google_game_services_game_server_deployment.default.deployment_id
