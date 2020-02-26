@@ -39,7 +39,6 @@ import (
 	healthcare "google.golang.org/api/healthcare/v1beta1"
 	"google.golang.org/api/iam/v1"
 	iamcredentials "google.golang.org/api/iamcredentials/v1"
-	iap "google.golang.org/api/iap/v1beta1"
 	cloudlogging "google.golang.org/api/logging/v2"
 	"google.golang.org/api/option"
 	"google.golang.org/api/pubsub/v1"
@@ -181,9 +180,6 @@ type Config struct {
 	clientIAM   *iam.Service
 
 	clientHealthcare *healthcare.Service
-
-	IAPBasePath string
-	clientIAP   *iap.Service
 
 	clientServiceMan *servicemanagement.APIService
 
@@ -453,15 +449,6 @@ func (c *Config) LoadAndValidate(ctx context.Context) error {
 	}
 	c.clientIamCredentials.UserAgent = userAgent
 	c.clientIamCredentials.BasePath = iamCredentialsClientBasePath
-
-	iapClientBasePath := removeBasePathVersion(c.IAPBasePath)
-	log.Printf("[INFO] Instantiating IAP client for path %s", iapClientBasePath)
-	c.clientIAP, err = iap.NewService(ctx, option.WithHTTPClient(client))
-	if err != nil {
-		return err
-	}
-	c.clientIAP.UserAgent = userAgent
-	c.clientIAP.BasePath = iapClientBasePath
 
 	serviceManagementClientBasePath := removeBasePathVersion(c.ServiceManagementBasePath)
 	log.Printf("[INFO] Instantiating Google Cloud Service Management client for path %s", serviceManagementClientBasePath)
@@ -769,9 +756,6 @@ func ConfigureBasePaths(c *Config) {
 	c.VPCAccessBasePath = VPCAccessDefaultBasePath
 
 	// Handwritten Products / Versioned / Atypical Entries
-	// start beta-only products
-	c.IAPBasePath = IAPDefaultBasePath
-	// end beta-only products
 	c.CloudBillingBasePath = CloudBillingDefaultBasePath
 	c.ComposerBasePath = ComposerDefaultBasePath
 	c.ComputeBetaBasePath = ComputeBetaDefaultBasePath
