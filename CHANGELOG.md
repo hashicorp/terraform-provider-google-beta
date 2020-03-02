@@ -1,4 +1,27 @@
-## 3.10.1 (Unreleased)
+## 3.11.1 (Unreleased)
+## 3.11.0 (March 02, 2020)
+
+FEATURES:
+* **New Data Source:** `google_compute_backend_bucket` ([#1778](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1778))
+* **New Resource:** `google_app_engine_service_split_traffic` ([#1785](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1785))
+* **New Resource:** `google_compute_packet_mirroring` ([#1791](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1791))
+* **New Resource:** Added new resource `google_game_services_game_server_cluster` ([#1789](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1789))
+* **New Resource:** Added new resource `google_game_services_game_server_config` ([#1789](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1789))
+* **New Resource:** Added new resource `google_game_services_game_server_deployment_rollout` ([#1789](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1789))
+* **New Resource:** Added new resource `google_game_services_game_server_deployment` ([#1789](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1789))
+* **New Resource:** Added new resource `google_game_services_realm` ([#1789](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1789))
+
+IMPROVEMENTS:
+* bigquery: Landed support for range-based partitioning in `google_bigquery_table` ([#1782](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1782))
+* compute: added check on `google_compute_router` for non-empty advertised_groups or advertised_ip_ranges values when advertise_mode is DEFAULT in the bgp block. ([#1776](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1776))
+* compute: added the ability to manage the status of `google_compute_instance` resources with the `desired_status` field ([#1786](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1786))
+* iam: `google_project_iam_member` and `google_project_iam_binding`'s `project` field can be specified with an optional `projects/` prefix ([#1780](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1780))
+* storage: added `metadata` to `google_storage_bucket_object`. ([#1779](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1779))
+
+BUG FIXES:
+* compute: Updated `google_project` to check for valid permissions on the parent billing account before creating and tainting the resource. ([#1777](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1777))
+* container: Fixed panic when upgrading `google_container_cluster` with `autoscaling` block ([#1766](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1766))
+
 ## 3.10.0 (February 25, 2020)
 
 BREAKING CHANGES:
