@@ -20,7 +20,7 @@ IMPROVEMENTS:
 
 BUG FIXES:
 * compute: Updated `google_project` to check for valid permissions on the parent billing account before creating and tainting the resource. ([#1777](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1777))
-
+* container: Fixed panic when upgrading `google_container_cluster` with `autoscaling` block ([#1766](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1766))
 ## 3.10.0 (February 25, 2020)
 
 BREAKING CHANGES:
