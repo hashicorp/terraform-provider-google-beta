@@ -231,12 +231,6 @@ func resourceComputeInstanceTemplate() *schema.Resource {
 							DiffSuppressFunc: compareSelfLinkOrResourceName,
 						},
 
-						"network_ip": {
-							Type:     schema.TypeString,
-							Optional: true,
-							ForceNew: true,
-						},
-
 						"subnetwork": {
 							Type:             schema.TypeString,
 							Optional:         true,
@@ -249,6 +243,17 @@ func resourceComputeInstanceTemplate() *schema.Resource {
 							Type:     schema.TypeString,
 							Optional: true,
 							ForceNew: true,
+							Computed: true,
+						},
+
+						"network_ip": {
+							Type:     schema.TypeString,
+							Optional: true,
+							ForceNew: true,
+						},
+
+						"name": {
+							Type:     schema.TypeString,
 							Computed: true,
 						},
 
@@ -274,6 +279,11 @@ func resourceComputeInstanceTemplate() *schema.Resource {
 										Type:     schema.TypeString,
 										Computed: true,
 										Removed:  "Use network_interface.access_config.nat_ip instead.",
+									},
+									// Possibly configurable- this was added so we don't break if it's inadvertently set
+									"public_ptr_domain_name": {
+										Type:     schema.TypeString,
+										Computed: true,
 									},
 								},
 							},
