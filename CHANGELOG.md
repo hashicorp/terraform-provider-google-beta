@@ -1,4 +1,15 @@
-## 3.11.1 (Unreleased)
+## 3.12.0 (Unreleased)
+IMPROVEMENTS:
+* serviceusage: `google_project_service` no longer attempts to enable a service that is already enabled. ([#1814](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1814))
+* bigtable: Added support for full-name/id `instance` value in `google_bigtable_app_profile` ([#1804](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1804))
+* pubsub: Added polling to ensure correct resource state for negative-cached PubSub resources ([#1816](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1816))
+
+BUG FIXES:
+* compute: Fixed a scenario where `google_compute_instance_template` would cause a crash. ([#1812](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1812))
+* storage: Added check for bucket retention policy list being empty. ([#1807](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1807))
+* storage: Added locking for operations involving `google_storage_*_access_control` resources to prevent errors from ACLs being added at the same time. ([#1806](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1806))
+* container: Fixed panic when upgrading `google_container_cluster` with autoscaling block. ([#1766](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1766))
+
 ## 3.11.0 (March 02, 2020)
 
 FEATURES:
