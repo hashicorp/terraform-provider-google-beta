@@ -155,7 +155,7 @@ The following arguments are supported:
   is set to MANUAL_ONLY.
 
 * `drain_nat_ips` -
-  (Optional, [Beta](https://terraform.io/docs/providers/google/guides/provider_versions.html))
+  (Optional)
   A list of URLs of the IP resources to be drained. These IPs must be
   valid static external IPs that have been assigned to the NAT.
 
