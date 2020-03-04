@@ -1283,7 +1283,7 @@ func resourceComputeBackendServiceUpdate(d *schema.ResourceData, meta interface{
 	connectionDrainingProp, err := expandComputeBackendServiceConnectionDraining(nil, d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("connection_draining"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, connectionDrainingProp)) {
+	} else if !isEmptyValue(reflect.ValueOf(connectionDrainingProp)) {
 		obj["connectionDraining"] = connectionDrainingProp
 	}
 	customRequestHeadersProp, err := expandComputeBackendServiceCustomRequestHeaders(d.Get("custom_request_headers"), d, config)
