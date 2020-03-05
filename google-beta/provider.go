@@ -141,6 +141,14 @@ func Provider() terraform.ResourceProvider {
 					"GOOGLE_BIGQUERY_DATA_TRANSFER_CUSTOM_ENDPOINT",
 				}, BigqueryDataTransferDefaultBasePath),
 			},
+			"bigquery_reservation_custom_endpoint": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validateCustomEndpoint,
+				DefaultFunc: schema.MultiEnvDefaultFunc([]string{
+					"GOOGLE_BIGQUERY_RESERVATION_CUSTOM_ENDPOINT",
+				}, BigqueryReservationDefaultBasePath),
+			},
 			"bigtable_custom_endpoint": {
 				Type:         schema.TypeString,
 				Optional:     true,
@@ -564,9 +572,9 @@ func Provider() terraform.ResourceProvider {
 	return provider
 }
 
-// Generated resources: 127
+// Generated resources: 128
 // Generated IAM resources: 54
-// Total generated resources: 181
+// Total generated resources: 182
 func ResourceMap() map[string]*schema.Resource {
 	resourceMap, _ := ResourceMapWithErrors()
 	return resourceMap
@@ -586,6 +594,7 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_app_engine_service_split_traffic":                      resourceAppEngineServiceSplitTraffic(),
 			"google_bigquery_dataset":                                      resourceBigQueryDataset(),
 			"google_bigquery_data_transfer_config":                         resourceBigqueryDataTransferConfig(),
+			"google_bigquery_reservation":                                  resourceBigqueryReservationReservation(),
 			"google_bigtable_app_profile":                                  resourceBigtableAppProfile(),
 			"google_billing_budget":                                        resourceBillingBudget(),
 			"google_binary_authorization_attestor":                         resourceBinaryAuthorizationAttestor(),
@@ -921,6 +930,7 @@ func providerConfigure(d *schema.ResourceData, p *schema.Provider, terraformVers
 	config.AppEngineBasePath = d.Get("app_engine_custom_endpoint").(string)
 	config.BigQueryBasePath = d.Get("big_query_custom_endpoint").(string)
 	config.BigqueryDataTransferBasePath = d.Get("bigquery_data_transfer_custom_endpoint").(string)
+	config.BigqueryReservationBasePath = d.Get("bigquery_reservation_custom_endpoint").(string)
 	config.BigtableBasePath = d.Get("bigtable_custom_endpoint").(string)
 	config.BillingBasePath = d.Get("billing_custom_endpoint").(string)
 	config.BinaryAuthorizationBasePath = d.Get("binary_authorization_custom_endpoint").(string)
