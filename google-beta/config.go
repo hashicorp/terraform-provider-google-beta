@@ -77,6 +77,7 @@ type Config struct {
 	AppEngineBasePath            string
 	BigQueryBasePath             string
 	BigqueryDataTransferBasePath string
+	BigqueryReservationBasePath  string
 	BigtableBasePath             string
 	BillingBasePath              string
 	BinaryAuthorizationBasePath  string
@@ -219,6 +220,7 @@ var AccessContextManagerDefaultBasePath = "https://accesscontextmanager.googleap
 var AppEngineDefaultBasePath = "https://appengine.googleapis.com/v1/"
 var BigQueryDefaultBasePath = "https://www.googleapis.com/bigquery/v2/"
 var BigqueryDataTransferDefaultBasePath = "https://bigquerydatatransfer.googleapis.com/v1/"
+var BigqueryReservationDefaultBasePath = "https://bigqueryreservation.googleapis.com/v1beta1/"
 var BigtableDefaultBasePath = "https://bigtableadmin.googleapis.com/v2/"
 var BillingDefaultBasePath = "https://billingbudgets.googleapis.com/v1beta1/"
 var BinaryAuthorizationDefaultBasePath = "https://binaryauthorization.googleapis.com/v1/"
@@ -714,6 +716,7 @@ func ConfigureBasePaths(c *Config) {
 	c.AppEngineBasePath = AppEngineDefaultBasePath
 	c.BigQueryBasePath = BigQueryDefaultBasePath
 	c.BigqueryDataTransferBasePath = BigqueryDataTransferDefaultBasePath
+	c.BigqueryReservationBasePath = BigqueryReservationDefaultBasePath
 	c.BigtableBasePath = BigtableDefaultBasePath
 	c.BillingBasePath = BillingDefaultBasePath
 	c.BinaryAuthorizationBasePath = BinaryAuthorizationDefaultBasePath
