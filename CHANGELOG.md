@@ -1,4 +1,4 @@
-## 3.12.0 (Unreleased)
+## 3.12.0 (March 09, 2020)
 IMPROVEMENTS:
 * serviceusage: `google_project_service` no longer attempts to enable a service that is already enabled. ([#1814](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1814))
 * bigtable: Added support for full-name/id `instance` value in `google_bigtable_app_profile` ([#1804](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1804))
@@ -1004,8 +1004,8 @@ BACKWARDS INCOMPATIBILITIES:
 * accesscontextmanager: `google_access_context_manager_service_perimeter` `unrestricted_services` field was removed based on a removal in the underlying API. ([#576](https://github.com/terraform-providers/terraform-provider-google-beta/issues/576))
 
 FEATURES:
-* **New Resource**: `google_compute_backend_bucket_signed_url_key` is now available. [GH-530]
-* **New Resource**: `google_compute_backend_service_signed_url_key` is now available. [GH-577]
+* **New Resource**: `google_compute_backend_bucket_signed_url_key` is now available. ([#530](https://github.com/terraform-providers/terraform-provider-google-beta/issues/530))
+* **New Resource**: `google_compute_backend_service_signed_url_key` is now available. ([#577](https://github.com/terraform-providers/terraform-provider-google-beta/issues/577))
 * **New Datasource**: `google_service_account_access_token` is now available. ([#575](https://github.com/terraform-providers/terraform-provider-google-beta/issues/575))
 
 ENHANCEMENTS:
