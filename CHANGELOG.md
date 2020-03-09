@@ -1,3 +1,4 @@
+## 3.13.0 (Unreleased)
 ## 3.12.0 (March 09, 2020)
 IMPROVEMENTS:
 * serviceusage: `google_project_service` no longer attempts to enable a service that is already enabled. ([#1814](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1814))
