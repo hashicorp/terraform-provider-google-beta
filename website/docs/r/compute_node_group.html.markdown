@@ -64,6 +64,42 @@ resource "google_compute_node_group" "nodes" {
   node_template = google_compute_node_template.soletenant-tmpl.self_link
 }
 ```
+<div class = "oics-button" style="float: right; margin: 0 0 -15px">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=node_group_autoscaling_policy&cloudshell_image=gcr.io%2Fgraphite-cloud-shell-images%2Fterraform%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+    <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
+  </a>
+</div>
+## Example Usage - Node Group Autoscaling Policy
+
+
+```hcl
+data "google_compute_node_types" "central1a" {
+  provider = google-beta
+  zone = "us-central1-a"
+}
+
+resource "google_compute_node_template" "soletenant-tmpl" {
+  provider = google-beta
+  name      = "soletenant-tmpl"
+  region    = "us-central1"
+  node_type = data.google_compute_node_types.central1a.names[0]
+}
+
+resource "google_compute_node_group" "nodes" {
+  provider = google-beta
+  name        = "soletenant-group"
+  zone        = "us-central1-a"
+  description = "example google_compute_node_group for Terraform Google Provider"
+
+  size          = 1
+  node_template = google_compute_node_template.soletenant-tmpl.self_link
+  autoscaling_policy {
+    mode = "ON"
+    min_nodes = 1
+    max_nodes = 10
+  }
+}
+```
 
 ## Argument Reference
 
@@ -90,6 +126,11 @@ The following arguments are supported:
   (Optional)
   Name of the resource.
 
+* `autoscaling_policy` -
+  (Optional, [Beta](https://terraform.io/docs/providers/google/guides/provider_versions.html))
+  If you use sole-tenant nodes for your workloads, you can use the node
+  group autoscaler to automatically manage the sizes of your node groups.  Structure is documented below.
+
 * `zone` -
   (Optional)
   Zone where this node group is located
@@ -97,6 +138,27 @@ The following arguments are supported:
 * `project` - (Optional) The ID of the project in which the resource belongs.
     If it is not provided, the provider project is used.
 
+
+The `autoscaling_policy` block supports:
+
+* `mode` -
+  (Required)
+  The autoscaling mode. Set to one of the following:
+    - OFF: Disables the autoscaler.
+    - ON: Enables scaling in and scaling out.
+    - ONLY_SCALE_OUT: Enables only scaling out. 
+    You must use this mode if your node groups are configured to 
+    restart their hosted VMs on minimal servers.
+
+* `min_nodes` -
+  (Optional)
+  Minimum size of the node group. Must be less 
+  than or equal to max-nodes. The default value is 0.
+
+* `max_nodes` -
+  (Required)
+  Maximum size of the node group. Set to a value less than or equal
+  to 100 and greater than or equal to min-nodes.
 
 ## Attributes Reference
 
