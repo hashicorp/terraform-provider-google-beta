@@ -103,6 +103,14 @@ func TestAccHealthcareFhirStore_basic(t *testing.T) {
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
+			{
+				Config: testGoogleHealthcareFhirStore_basic(fhirStoreName, datasetName),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
 		},
 	})
 }
@@ -110,8 +118,8 @@ func TestAccHealthcareFhirStore_basic(t *testing.T) {
 func testGoogleHealthcareFhirStore_basic(fhirStoreName, datasetName string) string {
 	return fmt.Sprintf(`
 resource "google_healthcare_fhir_store" "default" {
-  name                          = "%s"
-  dataset                       = "${google_healthcare_dataset.dataset.id}"
+  name     = "%s"
+  dataset  = google_healthcare_dataset.dataset.id
 
   enable_update_create          = false
   disable_referential_integrity = false
@@ -120,8 +128,8 @@ resource "google_healthcare_fhir_store" "default" {
 }
 
 resource "google_healthcare_dataset" "dataset" {
-  name         = "%s"
-  location     = "us-central1"
+  name     = "%s"
+  location = "us-central1"
 }
 `, fhirStoreName, datasetName)
 }
@@ -129,13 +137,13 @@ resource "google_healthcare_dataset" "dataset" {
 func testGoogleHealthcareFhirStore_update(fhirStoreName, datasetName, pubsubTopic string) string {
 	return fmt.Sprintf(`
 resource "google_healthcare_fhir_store" "default" {
-  name                          = "%s"
-  dataset                       = "${google_healthcare_dataset.dataset.id}"
+  name     = "%s"
+  dataset  = google_healthcare_dataset.dataset.id
 
-  enable_update_create          = true
+  enable_update_create = true
 
   notification_config {
-    pubsub_topic = "${google_pubsub_topic.topic.id}"
+    pubsub_topic = google_pubsub_topic.topic.id
   }
 
   labels = {
@@ -144,14 +152,13 @@ resource "google_healthcare_fhir_store" "default" {
 }
 
 resource "google_healthcare_dataset" "dataset" {
-  name         = "%s"
-  location     = "us-central1"
+  name     = "%s"
+  location = "us-central1"
 }
 
 resource "google_pubsub_topic" "topic" {
-  name         = "%s"
+  name = "%s"
 }
-
 `, fhirStoreName, datasetName, pubsubTopic)
 }
 

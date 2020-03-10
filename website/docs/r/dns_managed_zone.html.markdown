@@ -12,6 +12,7 @@
 #     .github/CONTRIBUTING.md.
 #
 # ----------------------------------------------------------------------------
+subcategory: "Cloud DNS"
 layout: "google"
 page_title: "Google: google_dns_managed_zone"
 sidebar_current: "docs-google-dns-managed-zone"
@@ -43,8 +44,8 @@ To get more information about ManagedZone, see:
 
 ```hcl
 resource "google_dns_managed_zone" "example-zone" {
-  name = "example-zone"
-  dns_name = "example-${random_id.rnd.hex}.com."
+  name        = "example-zone"
+  dns_name    = "example-${random_id.rnd.hex}.com."
   description = "Example DNS zone"
   labels = {
     foo = "bar"
@@ -65,8 +66,8 @@ resource "random_id" "rnd" {
 
 ```hcl
 resource "google_dns_managed_zone" "private-zone" {
-  name = "private-zone"
-  dns_name = "private.example.com."
+  name        = "private-zone"
+  dns_name    = "private.example.com."
   description = "Example private DNS zone"
   labels = {
     foo = "bar"
@@ -76,21 +77,21 @@ resource "google_dns_managed_zone" "private-zone" {
 
   private_visibility_config {
     networks {
-      network_url =  "${google_compute_network.network-1.self_link}"
+      network_url = google_compute_network.network-1.self_link
     }
     networks {
-      network_url =  "${google_compute_network.network-2.self_link}"
+      network_url = google_compute_network.network-2.self_link
     }
   }
 }
 
 resource "google_compute_network" "network-1" {
-  name = "network-1"
+  name                    = "network-1"
   auto_create_subnetworks = false
 }
 
 resource "google_compute_network" "network-2" {
-  name = "network-2"
+  name                    = "network-2"
   auto_create_subnetworks = false
 }
 ```
@@ -99,9 +100,9 @@ resource "google_compute_network" "network-2" {
 
 ```hcl
 resource "google_dns_managed_zone" "private-zone" {
-  provider = "google-beta"
-  name = "private-zone"
-  dns_name = "private.example.com."
+  provider    = google-beta
+  name        = "private-zone"
+  dns_name    = "private.example.com."
   description = "Example private DNS zone"
   labels = {
     foo = "bar"
@@ -111,10 +112,10 @@ resource "google_dns_managed_zone" "private-zone" {
 
   private_visibility_config {
     networks {
-      network_url =  "${google_compute_network.network-1.self_link}"
+      network_url = google_compute_network.network-1.self_link
     }
     networks {
-      network_url =  "${google_compute_network.network-2.self_link}"
+      network_url = google_compute_network.network-2.self_link
     }
   }
 
@@ -126,16 +127,15 @@ resource "google_dns_managed_zone" "private-zone" {
       ipv4_address = "172.16.1.20"
     }
   }
-
 }
 
 resource "google_compute_network" "network-1" {
-  name = "network-1"
+  name                    = "network-1"
   auto_create_subnetworks = false
 }
 
 resource "google_compute_network" "network-2" {
-  name = "network-2"
+  name                    = "network-2"
   auto_create_subnetworks = false
 }
 ```
@@ -149,38 +149,38 @@ resource "google_compute_network" "network-2" {
 
 ```hcl
 resource "google_dns_managed_zone" "peering-zone" {
-  provider = "google-beta"
+  provider = google-beta
 
-  name = "peering-zone"
-  dns_name = "peering.example.com."
+  name        = "peering-zone"
+  dns_name    = "peering.example.com."
   description = "Example private DNS peering zone"
 
   visibility = "private"
 
   private_visibility_config {
     networks {
-      network_url =  "${google_compute_network.network-source.self_link}"
+      network_url = google_compute_network.network-source.self_link
     }
   }
 
   peering_config {
     target_network {
-      network_url = "${google_compute_network.network-target.self_link}"
+      network_url = google_compute_network.network-target.self_link
     }
   }
 }
 
 resource "google_compute_network" "network-source" {
-  provider = "google-beta"
+  provider = google-beta
 
-  name = "network-source"
+  name                    = "network-source"
   auto_create_subnetworks = false
 }
 
 resource "google_compute_network" "network-target" {
-  provider = "google-beta"
+  provider = google-beta
 
-  name = "network-target"
+  name                    = "network-target"
   auto_create_subnetworks = false
 }
 
@@ -232,15 +232,21 @@ The following arguments are supported:
   resources that the zone is visible from.  Structure is documented below.
 
 * `forwarding_config` -
-  (Optional, [Beta](https://terraform.io/docs/providers/google/provider_versions.html))
+  (Optional, [Beta](https://terraform.io/docs/providers/google/guides/provider_versions.html))
   The presence for this field indicates that outbound forwarding is enabled
   for this zone. The value of this field contains the set of destinations
   to forward to.  Structure is documented below.
 
 * `peering_config` -
-  (Optional, [Beta](https://terraform.io/docs/providers/google/provider_versions.html))
+  (Optional, [Beta](https://terraform.io/docs/providers/google/guides/provider_versions.html))
   The presence of this field indicates that DNS Peering is enabled for this
   zone. The value of this field contains the network to peer with.  Structure is documented below.
+
+* `reverse_lookup` -
+  (Optional, [Beta](https://terraform.io/docs/providers/google/guides/provider_versions.html))
+  Specifies if this is a managed reverse lookup zone. If true, Cloud DNS will resolve reverse
+  lookup queries using automatically configured records for VPC resources. This only applies
+  to networks listed under `private_visibility_config`.
 
 * `project` - (Optional) The ID of the project in which the resource belongs.
     If it is not provided, the provider project is used.
@@ -293,7 +299,7 @@ The `default_key_specs` block supports:
 The `private_visibility_config` block supports:
 
 * `networks` -
-  (Optional)
+  (Required)
   The list of VPC networks that can see this zone. Until the provider updates to use the Terraform 0.12 SDK in a future release, you
   may experience issues with this resource while updating. If you've defined a `networks` block and
   add another `networks` block while keeping the old block, Terraform will see an incorrect diff
@@ -304,7 +310,7 @@ The `private_visibility_config` block supports:
 The `networks` block supports:
 
 * `network_url` -
-  (Optional)
+  (Required)
   The fully qualified URL of the VPC network to bind to.
   This should be formatted like
   `https://www.googleapis.com/compute/v1/projects/{project}/global/networks/{network}`
@@ -312,7 +318,7 @@ The `networks` block supports:
 The `forwarding_config` block supports:
 
 * `target_name_servers` -
-  (Optional)
+  (Required)
   List of target name servers to forward to. Cloud DNS will
   select the best available name server if more than
   one target is given.  Structure is documented below.
@@ -321,20 +327,26 @@ The `forwarding_config` block supports:
 The `target_name_servers` block supports:
 
 * `ipv4_address` -
-  (Optional)
+  (Required)
   IPv4 address of a target name server.
+
+* `forwarding_path` -
+  (Optional)
+  Forwarding path for this TargetNameServer. If unset or `default` Cloud DNS will make forwarding
+  decision based on address ranges, i.e. RFC1918 addresses go to the VPC, Non-RFC1918 addresses go
+  to the Internet. When set to `private`, Cloud DNS will always send queries through VPC for this target
 
 The `peering_config` block supports:
 
 * `target_network` -
-  (Optional)
+  (Required)
   The network with which to peer.  Structure is documented below.
 
 
 The `target_network` block supports:
 
 * `network_url` -
-  (Optional)
+  (Required)
   The fully qualified URL of the VPC network to forward queries to.
   This should be formatted like
   `https://www.googleapis.com/compute/v1/projects/{project}/global/networks/{network}`
@@ -343,6 +355,7 @@ The `target_network` block supports:
 
 In addition to the arguments listed above, the following computed attributes are exported:
 
+* `id` - an identifier for the resource with format `projects/{{project}}/managedZones/{{name}}`
 
 * `name_servers` -
   Delegate your managed_zone to these virtual name servers;
@@ -373,4 +386,4 @@ as an argument so that Terraform uses the correct provider to import your resour
 
 ## User Project Overrides
 
-This resource supports [User Project Overrides](https://www.terraform.io/docs/providers/google/provider_reference.html#user_project_override).
+This resource supports [User Project Overrides](https://www.terraform.io/docs/providers/google/guides/provider_reference.html#user_project_override).

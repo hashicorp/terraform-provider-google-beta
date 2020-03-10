@@ -12,6 +12,7 @@
 #     .github/CONTRIBUTING.md.
 #
 # ----------------------------------------------------------------------------
+subcategory: "Compute Engine"
 layout: "google"
 page_title: "Google: google_compute_region_target_http_proxy"
 sidebar_current: "docs-google-compute-region-target-http-proxy"
@@ -26,7 +27,7 @@ Represents a RegionTargetHttpProxy resource, which is used by one or more
 forwarding rules to route incoming HTTP requests to a URL map.
 
 ~> **Warning:** This resource is in beta, and should be used with the terraform-provider-google-beta provider.
-See [Provider Versions](https://terraform.io/docs/providers/google/provider_versions.html) for more details on beta resources.
+See [Provider Versions](https://terraform.io/docs/providers/google/guides/provider_versions.html) for more details on beta resources.
 
 To get more information about RegionTargetHttpProxy, see:
 
@@ -44,19 +45,19 @@ To get more information about RegionTargetHttpProxy, see:
 
 ```hcl
 resource "google_compute_region_target_http_proxy" "default" {
-  provider = "google-beta"
+  provider = google-beta
 
-  region      = "us-central1"
-  name        = "test-proxy"
-  url_map     = "${google_compute_region_url_map.default.self_link}"
+  region  = "us-central1"
+  name    = "test-proxy"
+  url_map = google_compute_region_url_map.default.self_link
 }
 
 resource "google_compute_region_url_map" "default" {
-  provider = "google-beta"
+  provider = google-beta
 
   region          = "us-central1"
   name            = "url-map"
-  default_service = "${google_compute_region_backend_service.default.self_link}"
+  default_service = google_compute_region_backend_service.default.self_link
 
   host_rule {
     hosts        = ["mysite.com"]
@@ -65,32 +66,33 @@ resource "google_compute_region_url_map" "default" {
 
   path_matcher {
     name            = "allpaths"
-    default_service = "${google_compute_region_backend_service.default.self_link}"
+    default_service = google_compute_region_backend_service.default.self_link
 
     path_rule {
       paths   = ["/*"]
-      service = "${google_compute_region_backend_service.default.self_link}"
+      service = google_compute_region_backend_service.default.self_link
     }
   }
 }
 
 resource "google_compute_region_backend_service" "default" {
-  provider = "google-beta"
+  provider = google-beta
 
   region      = "us-central1"
   name        = "backend-service"
   protocol    = "HTTP"
   timeout_sec = 10
 
-  health_checks = ["${google_compute_region_health_check.default.self_link}"]
+  health_checks = [google_compute_region_health_check.default.self_link]
 }
 
 resource "google_compute_region_health_check" "default" {
-  provider = "google-beta"
+  provider = google-beta
 
   region = "us-central1"
   name   = "http-health-check"
   http_health_check {
+    port = 80
   }
 }
 ```
@@ -136,6 +138,7 @@ The following arguments are supported:
 
 In addition to the arguments listed above, the following computed attributes are exported:
 
+* `id` - an identifier for the resource with format `projects/{{project}}/regions/{{region}}/targetHttpProxies/{{name}}`
 
 * `creation_timestamp` -
   Creation timestamp in RFC3339 text format.
@@ -170,4 +173,4 @@ as an argument so that Terraform uses the correct provider to import your resour
 
 ## User Project Overrides
 
-This resource supports [User Project Overrides](https://www.terraform.io/docs/providers/google/provider_reference.html#user_project_override).
+This resource supports [User Project Overrides](https://www.terraform.io/docs/providers/google/guides/provider_reference.html#user_project_override).

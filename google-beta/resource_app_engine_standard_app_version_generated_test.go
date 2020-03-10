@@ -41,10 +41,10 @@ func TestAccAppEngineStandardAppVersion_appEngineStandardAppVersionExample(t *te
 				Config: testAccAppEngineStandardAppVersion_appEngineStandardAppVersionExample(context),
 			},
 			{
-				ResourceName:            "google_app_engine_standard_app_version.version_id",
+				ResourceName:            "google_app_engine_standard_app_version.myapp_v1",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"threadsafe", "env_variables", "deployment", "entrypoint", "noop_on_destroy"},
+				ImportStateVerifyIgnore: []string{"threadsafe", "env_variables", "deployment", "entrypoint", "instance_class", "service", "delete_service_on_destroy"},
 			},
 		},
 	})
@@ -52,33 +52,58 @@ func TestAccAppEngineStandardAppVersion_appEngineStandardAppVersionExample(t *te
 
 func testAccAppEngineStandardAppVersion_appEngineStandardAppVersionExample(context map[string]interface{}) string {
 	return Nprintf(`
-resource "google_storage_bucket" "bucket" {
-	name = "appengine-static-content%{random_suffix}"
-}
+resource "google_app_engine_standard_app_version" "myapp_v1" {
+  version_id = "v1"
+  service    = "myapp"
+  runtime    = "nodejs10"
 
-resource "google_storage_bucket_object" "object" {
-	name   = "hello-world.zip"
-	bucket = "${google_storage_bucket.bucket.name}"
-	source = "./test-fixtures/appengine/hello-world.zip"
-}
-
-resource "google_app_engine_standard_app_version" "version_id" {
-  version_id = "v2"
-  service = "default"
-  runtime = "nodejs10"
-  noop_on_destroy = true
   entrypoint {
     shell = "node ./app.js"
   }
+
   deployment {
     zip {
-      source_url = "https://storage.googleapis.com/${google_storage_bucket.bucket.name}/hello-world.zip"
-    }  
+      source_url = "https://storage.googleapis.com/${google_storage_bucket.bucket.name}/${google_storage_bucket_object.object.name}"
+    }
   }
+
   env_variables = {
     port = "8080"
-  } 
+  }
 
+  delete_service_on_destroy = true
+}
+
+resource "google_app_engine_standard_app_version" "myapp_v2" {
+  version_id = "v2"
+  service    = "myapp"
+  runtime    = "nodejs10"
+
+  entrypoint {
+    shell = "node ./app.js"
+  }
+
+  deployment {
+    zip {
+      source_url = "https://storage.googleapis.com/${google_storage_bucket.bucket.name}/${google_storage_bucket_object.object.name}"
+    }
+  }
+
+  env_variables = {
+    port = "8080"
+  }
+
+  noop_on_destroy = true
+}
+
+resource "google_storage_bucket" "bucket" {
+  name = "tf-test-appengine-static-content%{random_suffix}"
+}
+
+resource "google_storage_bucket_object" "object" {
+  name   = "hello-world.zip"
+  bucket = google_storage_bucket.bucket.name
+  source = "./test-fixtures/appengine/hello-world.zip"
 }
 `, context)
 }

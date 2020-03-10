@@ -103,6 +103,15 @@ func TestAccHealthcareDicomStore_basic(t *testing.T) {
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
+			// TODO(b/148536607): Uncomment once b/148536607 is fixed.
+			// {
+			// 	Config: testGoogleHealthcareDicomStore_basic(dicomStoreName, datasetName),
+			// },
+			// {
+			// 	ResourceName:      resourceName,
+			// 	ImportState:       true,
+			// 	ImportStateVerify: true,
+			// },
 		},
 	})
 }
@@ -110,13 +119,13 @@ func TestAccHealthcareDicomStore_basic(t *testing.T) {
 func testGoogleHealthcareDicomStore_basic(dicomStoreName, datasetName string) string {
 	return fmt.Sprintf(`
 resource "google_healthcare_dicom_store" "default" {
-  name                          = "%s"
-  dataset                       = "${google_healthcare_dataset.dataset.id}"
+  name     = "%s"
+  dataset  = google_healthcare_dataset.dataset.id
 }
 
 resource "google_healthcare_dataset" "dataset" {
-  name         = "%s"
-  location     = "us-central1"
+  name     = "%s"
+  location = "us-central1"
 }
 `, dicomStoreName, datasetName)
 }
@@ -124,11 +133,11 @@ resource "google_healthcare_dataset" "dataset" {
 func testGoogleHealthcareDicomStore_update(dicomStoreName, datasetName, pubsubTopic string) string {
 	return fmt.Sprintf(`
 resource "google_healthcare_dicom_store" "default" {
-  name                          = "%s"
-  dataset                       = "${google_healthcare_dataset.dataset.id}"
+  name     = "%s"
+  dataset  = google_healthcare_dataset.dataset.id
 
   notification_config {
-    pubsub_topic = "${google_pubsub_topic.topic.id}"
+    pubsub_topic = google_pubsub_topic.topic.id
   }
 
   labels = {
@@ -137,14 +146,13 @@ resource "google_healthcare_dicom_store" "default" {
 }
 
 resource "google_healthcare_dataset" "dataset" {
-  name         = "%s"
-  location     = "us-central1"
+  name     = "%s"
+  location = "us-central1"
 }
 
 resource "google_pubsub_topic" "topic" {
-  name         = "%s"
+  name = "%s"
 }
-
 `, dicomStoreName, datasetName, pubsubTopic)
 }
 

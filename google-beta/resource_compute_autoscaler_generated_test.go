@@ -46,11 +46,11 @@ func TestAccComputeAutoscaler_autoscalerSingleInstanceExample(t *testing.T) {
 func testAccComputeAutoscaler_autoscalerSingleInstanceExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_compute_autoscaler" "default" {
-  provider = "google-beta"
+  provider = google-beta
 
-  name   = "my-autoscaler%{random_suffix}"
+  name   = "tf-test-my-autoscaler%{random_suffix}"
   zone   = "us-central1-f"
-  target = "${google_compute_instance_group_manager.default.self_link}"
+  target = google_compute_instance_group_manager.default.self_link
 
   autoscaling_policy {
     max_replicas    = 5
@@ -66,16 +66,16 @@ resource "google_compute_autoscaler" "default" {
 }
 
 resource "google_compute_instance_template" "default" {
-  provider = "google-beta"
+  provider = google-beta
 
-  name           = "my-instance-template%{random_suffix}"
+  name           = "tf-test-my-instance-template%{random_suffix}"
   machine_type   = "n1-standard-1"
   can_ip_forward = false
 
   tags = ["foo", "bar"]
 
   disk {
-    source_image = "${data.google_compute_image.debian_9.self_link}"
+    source_image = data.google_compute_image.debian_9.self_link
   }
 
   network_interface {
@@ -92,34 +92,34 @@ resource "google_compute_instance_template" "default" {
 }
 
 resource "google_compute_target_pool" "default" {
-  provider = "google-beta"
+  provider = google-beta
 
-  name = "my-target-pool%{random_suffix}"
+  name = "tf-test-my-target-pool%{random_suffix}"
 }
 
 resource "google_compute_instance_group_manager" "default" {
-  provider = "google-beta"
+  provider = google-beta
 
-  name = "my-igm%{random_suffix}"
+  name = "tf-test-my-igm%{random_suffix}"
   zone = "us-central1-f"
 
   version {
-    instance_template  = "${google_compute_instance_template.default.self_link}"
-    name               = "primary"
+    instance_template = google_compute_instance_template.default.self_link
+    name              = "primary"
   }
 
-  target_pools       = ["${google_compute_target_pool.default.self_link}"]
+  target_pools       = [google_compute_target_pool.default.self_link]
   base_instance_name = "autoscaler-sample"
 }
 
 data "google_compute_image" "debian_9" {
-  provider = "google-beta"
+  provider = google-beta
 
   family  = "debian-9"
   project = "debian-cloud"
 }
 
-provider "google-beta"{
+provider "google-beta" {
   region = "us-central1"
   zone   = "us-central1-a"
 }
@@ -153,9 +153,9 @@ func TestAccComputeAutoscaler_autoscalerBasicExample(t *testing.T) {
 func testAccComputeAutoscaler_autoscalerBasicExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_compute_autoscaler" "foobar" {
-  name   = "my-autoscaler%{random_suffix}"
+  name   = "tf-test-my-autoscaler%{random_suffix}"
   zone   = "us-central1-f"
-  target = "${google_compute_instance_group_manager.foobar.self_link}"
+  target = google_compute_instance_group_manager.foobar.self_link
 
   autoscaling_policy {
     max_replicas    = 5
@@ -169,14 +169,14 @@ resource "google_compute_autoscaler" "foobar" {
 }
 
 resource "google_compute_instance_template" "foobar" {
-  name           = "my-instance-template%{random_suffix}"
+  name           = "tf-test-my-instance-template%{random_suffix}"
   machine_type   = "n1-standard-1"
   can_ip_forward = false
 
   tags = ["foo", "bar"]
 
   disk {
-    source_image = "${data.google_compute_image.debian_9.self_link}"
+    source_image = data.google_compute_image.debian_9.self_link
   }
 
   network_interface {
@@ -193,22 +193,25 @@ resource "google_compute_instance_template" "foobar" {
 }
 
 resource "google_compute_target_pool" "foobar" {
-  name = "my-target-pool%{random_suffix}"
+  name = "tf-test-my-target-pool%{random_suffix}"
 }
 
 resource "google_compute_instance_group_manager" "foobar" {
-  name = "my-igm%{random_suffix}"
+  name = "tf-test-my-igm%{random_suffix}"
   zone = "us-central1-f"
 
-  instance_template  = "${google_compute_instance_template.foobar.self_link}"
+  version {
+    instance_template  = google_compute_instance_template.foobar.self_link
+    name               = "primary"
+  }
 
-  target_pools       = ["${google_compute_target_pool.foobar.self_link}"]
+  target_pools       = [google_compute_target_pool.foobar.self_link]
   base_instance_name = "foobar"
 }
 
 data "google_compute_image" "debian_9" {
-	family  = "debian-9"
-	project = "debian-cloud"
+  family  = "debian-9"
+  project = "debian-cloud"
 }
 `, context)
 }

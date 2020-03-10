@@ -39,7 +39,6 @@ import (
 	healthcare "google.golang.org/api/healthcare/v1beta1"
 	"google.golang.org/api/iam/v1"
 	iamcredentials "google.golang.org/api/iamcredentials/v1"
-	iap "google.golang.org/api/iap/v1beta1"
 	cloudlogging "google.golang.org/api/logging/v2"
 	"google.golang.org/api/option"
 	"google.golang.org/api/pubsub/v1"
@@ -65,8 +64,10 @@ type Config struct {
 	Scopes              []string
 	BatchingConfig      *batchingConfig
 	UserProjectOverride bool
+	RequestTimeout      time.Duration
 
 	client           *http.Client
+	context          context.Context
 	terraformVersion string
 	userAgent        string
 
@@ -76,20 +77,29 @@ type Config struct {
 	AppEngineBasePath            string
 	BigQueryBasePath             string
 	BigqueryDataTransferBasePath string
+	BigqueryReservationBasePath  string
 	BigtableBasePath             string
+	BillingBasePath              string
 	BinaryAuthorizationBasePath  string
 	CloudBuildBasePath           string
 	CloudFunctionsBasePath       string
 	CloudRunBasePath             string
 	CloudSchedulerBasePath       string
+	CloudTasksBasePath           string
 	ComputeBasePath              string
 	ContainerAnalysisBasePath    string
+	DataFusionBasePath           string
 	DataprocBasePath             string
+	DatastoreBasePath            string
+	DeploymentManagerBasePath    string
+	DialogflowBasePath           string
 	DNSBasePath                  string
 	FilestoreBasePath            string
 	FirestoreBasePath            string
+	GameServicesBasePath         string
 	HealthcareBasePath           string
 	IapBasePath                  string
+	IdentityPlatformBasePath     string
 	KMSBasePath                  string
 	LoggingBasePath              string
 	MLEngineBasePath             string
@@ -98,8 +108,10 @@ type Config struct {
 	RedisBasePath                string
 	ResourceManagerBasePath      string
 	RuntimeConfigBasePath        string
+	SecretManagerBasePath        string
 	SecurityCenterBasePath       string
 	SecurityScannerBasePath      string
+	ServiceManagementBasePath    string
 	SourceRepoBasePath           string
 	SpannerBasePath              string
 	SQLBasePath                  string
@@ -170,11 +182,7 @@ type Config struct {
 
 	clientHealthcare *healthcare.Service
 
-	IAPBasePath string
-	clientIAP   *iap.Service
-
-	ServiceManagementBasePath string
-	clientServiceMan          *servicemanagement.APIService
+	clientServiceMan *servicemanagement.APIService
 
 	ServiceUsageBasePath string
 	clientServiceUsage   *serviceusage.Service
@@ -212,20 +220,29 @@ var AccessContextManagerDefaultBasePath = "https://accesscontextmanager.googleap
 var AppEngineDefaultBasePath = "https://appengine.googleapis.com/v1/"
 var BigQueryDefaultBasePath = "https://www.googleapis.com/bigquery/v2/"
 var BigqueryDataTransferDefaultBasePath = "https://bigquerydatatransfer.googleapis.com/v1/"
+var BigqueryReservationDefaultBasePath = "https://bigqueryreservation.googleapis.com/v1beta1/"
 var BigtableDefaultBasePath = "https://bigtableadmin.googleapis.com/v2/"
-var BinaryAuthorizationDefaultBasePath = "https://binaryauthorization.googleapis.com/v1beta1/"
+var BillingDefaultBasePath = "https://billingbudgets.googleapis.com/v1beta1/"
+var BinaryAuthorizationDefaultBasePath = "https://binaryauthorization.googleapis.com/v1/"
 var CloudBuildDefaultBasePath = "https://cloudbuild.googleapis.com/v1/"
 var CloudFunctionsDefaultBasePath = "https://cloudfunctions.googleapis.com/v1/"
-var CloudRunDefaultBasePath = "https://run.googleapis.com/v1alpha1/"
+var CloudRunDefaultBasePath = "https://{{location}}-run.googleapis.com/"
 var CloudSchedulerDefaultBasePath = "https://cloudscheduler.googleapis.com/v1/"
+var CloudTasksDefaultBasePath = "https://cloudtasks.googleapis.com/v2/"
 var ComputeDefaultBasePath = "https://www.googleapis.com/compute/beta/"
 var ContainerAnalysisDefaultBasePath = "https://containeranalysis.googleapis.com/v1beta1/"
+var DataFusionDefaultBasePath = "https://datafusion.googleapis.com/v1beta1/"
 var DataprocDefaultBasePath = "https://dataproc.googleapis.com/v1beta2/"
+var DatastoreDefaultBasePath = "https://datastore.googleapis.com/v1/"
+var DeploymentManagerDefaultBasePath = "https://www.googleapis.com/deploymentmanager/v2/"
+var DialogflowDefaultBasePath = "https://dialogflow.googleapis.com/v2/"
 var DNSDefaultBasePath = "https://www.googleapis.com/dns/v1beta2/"
 var FilestoreDefaultBasePath = "https://file.googleapis.com/v1/"
 var FirestoreDefaultBasePath = "https://firestore.googleapis.com/v1/"
+var GameServicesDefaultBasePath = "https://gameservices.googleapis.com/v1beta/"
 var HealthcareDefaultBasePath = "https://healthcare.googleapis.com/v1beta1/"
 var IapDefaultBasePath = "https://iap.googleapis.com/v1/"
+var IdentityPlatformDefaultBasePath = "https://identitytoolkit.googleapis.com/v2/"
 var KMSDefaultBasePath = "https://cloudkms.googleapis.com/v1/"
 var LoggingDefaultBasePath = "https://logging.googleapis.com/v2/"
 var MLEngineDefaultBasePath = "https://ml.googleapis.com/v1/"
@@ -234,23 +251,26 @@ var PubsubDefaultBasePath = "https://pubsub.googleapis.com/v1/"
 var RedisDefaultBasePath = "https://redis.googleapis.com/v1beta1/"
 var ResourceManagerDefaultBasePath = "https://cloudresourcemanager.googleapis.com/v1/"
 var RuntimeConfigDefaultBasePath = "https://runtimeconfig.googleapis.com/v1beta1/"
+var SecretManagerDefaultBasePath = "https://secretmanager.googleapis.com/v1beta1/"
 var SecurityCenterDefaultBasePath = "https://securitycenter.googleapis.com/v1/"
 var SecurityScannerDefaultBasePath = "https://websecurityscanner.googleapis.com/v1beta/"
+var ServiceManagementDefaultBasePath = "https://servicemanagement.googleapis.com/v1/"
 var SourceRepoDefaultBasePath = "https://sourcerepo.googleapis.com/v1/"
 var SpannerDefaultBasePath = "https://spanner.googleapis.com/v1/"
-var SQLDefaultBasePath = "https://www.googleapis.com/sql/v1beta4/"
+var SQLDefaultBasePath = "https://sqladmin.googleapis.com/sql/v1beta4/"
 var StorageDefaultBasePath = "https://www.googleapis.com/storage/v1/"
 var TPUDefaultBasePath = "https://tpu.googleapis.com/v1/"
-var VPCAccessDefaultBasePath = "https://vpcaccess.googleapis.com/v1beta1/"
+var VPCAccessDefaultBasePath = "https://vpcaccess.googleapis.com/v1/"
 
 var defaultClientScopes = []string{
 	"https://www.googleapis.com/auth/compute",
 	"https://www.googleapis.com/auth/cloud-platform",
 	"https://www.googleapis.com/auth/ndev.clouddns.readwrite",
 	"https://www.googleapis.com/auth/devstorage.full_control",
+	"https://www.googleapis.com/auth/userinfo.email",
 }
 
-func (c *Config) LoadAndValidate() error {
+func (c *Config) LoadAndValidate(ctx context.Context) error {
 	if len(c.Scopes) == 0 {
 		c.Scopes = defaultClientScopes
 	}
@@ -263,37 +283,34 @@ func (c *Config) LoadAndValidate() error {
 
 	client := oauth2.NewClient(context.Background(), tokenSource)
 	client.Transport = logging.NewTransport("Google", client.Transport)
-	// Each individual request should return within 30s - timeouts will be retried.
-	// This is a timeout for, e.g. a single GET request of an operation - not a
-	// timeout for the maximum amount of time a logical request can take.
-	client.Timeout, _ = time.ParseDuration("30s")
+	// This timeout is a timeout per HTTP request, not per logical operation.
+	client.Timeout = c.synchronousTimeout()
 
 	tfUserAgent := httpclient.TerraformUserAgent(c.terraformVersion)
 	providerVersion := fmt.Sprintf("terraform-provider-google-beta/%s", version.ProviderVersion)
 	userAgent := fmt.Sprintf("%s %s", tfUserAgent, providerVersion)
 
 	c.client = client
+	c.context = ctx
 	c.userAgent = userAgent
-
-	context := context.Background()
 
 	// This base path and some others below need the version and possibly more of the path
 	// set on them. The client libraries are inconsistent about which values they need;
 	// while most only want the host URL, some older ones also want the version and some
 	// of those "projects" as well. You can find out if this is required by looking at
 	// the basePath value in the client library file.
-	computeClientBasePath := removeBasePathVersion(c.ComputeBasePath) + "v1/projects/"
+	computeClientBasePath := c.ComputeBasePath + "projects/"
 	log.Printf("[INFO] Instantiating GCE client for path %s", computeClientBasePath)
-	c.clientCompute, err = compute.NewService(context, option.WithHTTPClient(client))
+	c.clientCompute, err = compute.NewService(ctx, option.WithHTTPClient(client))
 	if err != nil {
 		return err
 	}
 	c.clientCompute.UserAgent = userAgent
 	c.clientCompute.BasePath = computeClientBasePath
 
-	computeBetaClientBasePath := removeBasePathVersion(c.ComputeBetaBasePath) + "beta/projects/"
+	computeBetaClientBasePath := c.ComputeBetaBasePath + "projects/"
 	log.Printf("[INFO] Instantiating GCE Beta client for path %s", computeBetaClientBasePath)
-	c.clientComputeBeta, err = computeBeta.NewService(context, option.WithHTTPClient(client))
+	c.clientComputeBeta, err = computeBeta.NewService(ctx, option.WithHTTPClient(client))
 	if err != nil {
 		return err
 	}
@@ -302,7 +319,7 @@ func (c *Config) LoadAndValidate() error {
 
 	containerClientBasePath := removeBasePathVersion(c.ContainerBasePath)
 	log.Printf("[INFO] Instantiating GKE client for path %s", containerClientBasePath)
-	c.clientContainer, err = container.NewService(context, option.WithHTTPClient(client))
+	c.clientContainer, err = container.NewService(ctx, option.WithHTTPClient(client))
 	if err != nil {
 		return err
 	}
@@ -311,25 +328,25 @@ func (c *Config) LoadAndValidate() error {
 
 	containerBetaClientBasePath := removeBasePathVersion(c.ContainerBetaBasePath)
 	log.Printf("[INFO] Instantiating GKE Beta client for path %s", containerBetaClientBasePath)
-	c.clientContainerBeta, err = containerBeta.NewService(context, option.WithHTTPClient(client))
+	c.clientContainerBeta, err = containerBeta.NewService(ctx, option.WithHTTPClient(client))
 	if err != nil {
 		return err
 	}
 	c.clientContainerBeta.UserAgent = userAgent
 	c.clientContainerBeta.BasePath = containerBetaClientBasePath
 
-	dnsClientBasePath := removeBasePathVersion(c.DNSBasePath) + "v1/projects/"
+	dnsClientBasePath := c.DNSBasePath + "projects/"
 	log.Printf("[INFO] Instantiating Google Cloud DNS client for path %s", dnsClientBasePath)
-	c.clientDns, err = dns.NewService(context, option.WithHTTPClient(client))
+	c.clientDns, err = dns.NewService(ctx, option.WithHTTPClient(client))
 	if err != nil {
 		return err
 	}
 	c.clientDns.UserAgent = userAgent
 	c.clientDns.BasePath = dnsClientBasePath
 
-	dnsBetaClientBasePath := removeBasePathVersion(c.DnsBetaBasePath) + "v1beta2/projects/"
+	dnsBetaClientBasePath := c.DnsBetaBasePath + "projects/"
 	log.Printf("[INFO] Instantiating Google Cloud DNS Beta client for path %s", dnsBetaClientBasePath)
-	c.clientDnsBeta, err = dnsBeta.NewService(context, option.WithHTTPClient(client))
+	c.clientDnsBeta, err = dnsBeta.NewService(ctx, option.WithHTTPClient(client))
 	if err != nil {
 		return err
 	}
@@ -338,7 +355,7 @@ func (c *Config) LoadAndValidate() error {
 
 	kmsClientBasePath := removeBasePathVersion(c.KMSBasePath)
 	log.Printf("[INFO] Instantiating Google Cloud KMS client for path %s", kmsClientBasePath)
-	c.clientKms, err = cloudkms.NewService(context, option.WithHTTPClient(client))
+	c.clientKms, err = cloudkms.NewService(ctx, option.WithHTTPClient(client))
 	if err != nil {
 		return err
 	}
@@ -347,25 +364,25 @@ func (c *Config) LoadAndValidate() error {
 
 	loggingClientBasePath := removeBasePathVersion(c.LoggingBasePath)
 	log.Printf("[INFO] Instantiating Google Stackdriver Logging client for path %s", loggingClientBasePath)
-	c.clientLogging, err = cloudlogging.NewService(context, option.WithHTTPClient(client))
+	c.clientLogging, err = cloudlogging.NewService(ctx, option.WithHTTPClient(client))
 	if err != nil {
 		return err
 	}
 	c.clientLogging.UserAgent = userAgent
 	c.clientLogging.BasePath = loggingClientBasePath
 
-	storageClientBasePath := removeBasePathVersion(c.StorageBasePath) + "v1/"
+	storageClientBasePath := c.StorageBasePath
 	log.Printf("[INFO] Instantiating Google Storage client for path %s", storageClientBasePath)
-	c.clientStorage, err = storage.NewService(context, option.WithHTTPClient(client))
+	c.clientStorage, err = storage.NewService(ctx, option.WithHTTPClient(client))
 	if err != nil {
 		return err
 	}
 	c.clientStorage.UserAgent = userAgent
 	c.clientStorage.BasePath = storageClientBasePath
 
-	sqlClientBasePath := removeBasePathVersion(c.SQLBasePath) + "v1beta4/"
+	sqlClientBasePath := removeBasePathVersion(removeBasePathVersion(c.SQLBasePath))
 	log.Printf("[INFO] Instantiating Google SqlAdmin client for path %s", sqlClientBasePath)
-	c.clientSqlAdmin, err = sqladmin.NewService(context, option.WithHTTPClient(client))
+	c.clientSqlAdmin, err = sqladmin.NewService(ctx, option.WithHTTPClient(client))
 	if err != nil {
 		return err
 	}
@@ -374,7 +391,7 @@ func (c *Config) LoadAndValidate() error {
 
 	pubsubClientBasePath := removeBasePathVersion(c.PubsubBasePath)
 	log.Printf("[INFO] Instantiating Google Pubsub client for path %s", pubsubClientBasePath)
-	c.clientPubsub, err = pubsub.NewService(context, option.WithHTTPClient(client))
+	c.clientPubsub, err = pubsub.NewService(ctx, option.WithHTTPClient(client))
 	if err != nil {
 		return err
 	}
@@ -383,7 +400,7 @@ func (c *Config) LoadAndValidate() error {
 
 	dataflowClientBasePath := removeBasePathVersion(c.DataflowBasePath)
 	log.Printf("[INFO] Instantiating Google Dataflow client for path %s", dataflowClientBasePath)
-	c.clientDataflow, err = dataflow.NewService(context, option.WithHTTPClient(client))
+	c.clientDataflow, err = dataflow.NewService(ctx, option.WithHTTPClient(client))
 	if err != nil {
 		return err
 	}
@@ -392,7 +409,7 @@ func (c *Config) LoadAndValidate() error {
 
 	resourceManagerBasePath := removeBasePathVersion(c.ResourceManagerBasePath)
 	log.Printf("[INFO] Instantiating Google Cloud ResourceManager client for path %s", resourceManagerBasePath)
-	c.clientResourceManager, err = cloudresourcemanager.NewService(context, option.WithHTTPClient(client))
+	c.clientResourceManager, err = cloudresourcemanager.NewService(ctx, option.WithHTTPClient(client))
 	if err != nil {
 		return err
 	}
@@ -401,7 +418,7 @@ func (c *Config) LoadAndValidate() error {
 
 	resourceManagerV2Beta1BasePath := removeBasePathVersion(c.ResourceManagerV2Beta1BasePath)
 	log.Printf("[INFO] Instantiating Google Cloud ResourceManager V client for path %s", resourceManagerV2Beta1BasePath)
-	c.clientResourceManagerV2Beta1, err = resourceManagerV2Beta1.NewService(context, option.WithHTTPClient(client))
+	c.clientResourceManagerV2Beta1, err = resourceManagerV2Beta1.NewService(ctx, option.WithHTTPClient(client))
 	if err != nil {
 		return err
 	}
@@ -410,7 +427,7 @@ func (c *Config) LoadAndValidate() error {
 
 	runtimeConfigClientBasePath := removeBasePathVersion(c.RuntimeConfigBasePath)
 	log.Printf("[INFO] Instantiating Google Cloud Runtimeconfig client for path %s", runtimeConfigClientBasePath)
-	c.clientRuntimeconfig, err = runtimeconfig.NewService(context, option.WithHTTPClient(client))
+	c.clientRuntimeconfig, err = runtimeconfig.NewService(ctx, option.WithHTTPClient(client))
 	if err != nil {
 		return err
 	}
@@ -419,7 +436,7 @@ func (c *Config) LoadAndValidate() error {
 
 	iamClientBasePath := removeBasePathVersion(c.IAMBasePath)
 	log.Printf("[INFO] Instantiating Google Cloud IAM client for path %s", iamClientBasePath)
-	c.clientIAM, err = iam.NewService(context, option.WithHTTPClient(client))
+	c.clientIAM, err = iam.NewService(ctx, option.WithHTTPClient(client))
 	if err != nil {
 		return err
 	}
@@ -428,25 +445,16 @@ func (c *Config) LoadAndValidate() error {
 
 	iamCredentialsClientBasePath := removeBasePathVersion(c.IamCredentialsBasePath)
 	log.Printf("[INFO] Instantiating Google Cloud IAMCredentials client for path %s", iamCredentialsClientBasePath)
-	c.clientIamCredentials, err = iamcredentials.NewService(context, option.WithHTTPClient(client))
+	c.clientIamCredentials, err = iamcredentials.NewService(ctx, option.WithHTTPClient(client))
 	if err != nil {
 		return err
 	}
 	c.clientIamCredentials.UserAgent = userAgent
 	c.clientIamCredentials.BasePath = iamCredentialsClientBasePath
 
-	iapClientBasePath := removeBasePathVersion(c.IAPBasePath)
-	log.Printf("[INFO] Instantiating IAP client for path %s", iapClientBasePath)
-	c.clientIAP, err = iap.NewService(context, option.WithHTTPClient(client))
-	if err != nil {
-		return err
-	}
-	c.clientIAP.UserAgent = userAgent
-	c.clientIAP.BasePath = iapClientBasePath
-
 	serviceManagementClientBasePath := removeBasePathVersion(c.ServiceManagementBasePath)
 	log.Printf("[INFO] Instantiating Google Cloud Service Management client for path %s", serviceManagementClientBasePath)
-	c.clientServiceMan, err = servicemanagement.NewService(context, option.WithHTTPClient(client))
+	c.clientServiceMan, err = servicemanagement.NewService(ctx, option.WithHTTPClient(client))
 	if err != nil {
 		return err
 	}
@@ -455,7 +463,7 @@ func (c *Config) LoadAndValidate() error {
 
 	serviceUsageClientBasePath := removeBasePathVersion(c.ServiceUsageBasePath)
 	log.Printf("[INFO] Instantiating Google Cloud Service Usage client for path %s", serviceUsageClientBasePath)
-	c.clientServiceUsage, err = serviceusage.NewService(context, option.WithHTTPClient(client))
+	c.clientServiceUsage, err = serviceusage.NewService(ctx, option.WithHTTPClient(client))
 	if err != nil {
 		return err
 	}
@@ -464,7 +472,7 @@ func (c *Config) LoadAndValidate() error {
 
 	cloudBillingClientBasePath := removeBasePathVersion(c.CloudBillingBasePath)
 	log.Printf("[INFO] Instantiating Google Cloud Billing client for path %s", cloudBillingClientBasePath)
-	c.clientBilling, err = cloudbilling.NewService(context, option.WithHTTPClient(client))
+	c.clientBilling, err = cloudbilling.NewService(ctx, option.WithHTTPClient(client))
 	if err != nil {
 		return err
 	}
@@ -473,16 +481,16 @@ func (c *Config) LoadAndValidate() error {
 
 	cloudBuildClientBasePath := removeBasePathVersion(c.CloudBuildBasePath)
 	log.Printf("[INFO] Instantiating Google Cloud Build client for path %s", cloudBuildClientBasePath)
-	c.clientBuild, err = cloudbuild.NewService(context, option.WithHTTPClient(client))
+	c.clientBuild, err = cloudbuild.NewService(ctx, option.WithHTTPClient(client))
 	if err != nil {
 		return err
 	}
 	c.clientBuild.UserAgent = userAgent
 	c.clientBuild.BasePath = cloudBuildClientBasePath
 
-	bigQueryClientBasePath := removeBasePathVersion(c.BigQueryBasePath) + "v2/"
+	bigQueryClientBasePath := c.BigQueryBasePath
 	log.Printf("[INFO] Instantiating Google Cloud BigQuery client for path %s", bigQueryClientBasePath)
-	c.clientBigQuery, err = bigquery.NewService(context, option.WithHTTPClient(client))
+	c.clientBigQuery, err = bigquery.NewService(ctx, option.WithHTTPClient(client))
 	if err != nil {
 		return err
 	}
@@ -491,7 +499,7 @@ func (c *Config) LoadAndValidate() error {
 
 	cloudFunctionsClientBasePath := removeBasePathVersion(c.CloudFunctionsBasePath)
 	log.Printf("[INFO] Instantiating Google Cloud CloudFunctions Client for path %s", cloudFunctionsClientBasePath)
-	c.clientCloudFunctions, err = cloudfunctions.NewService(context, option.WithHTTPClient(client))
+	c.clientCloudFunctions, err = cloudfunctions.NewService(ctx, option.WithHTTPClient(client))
 	if err != nil {
 		return err
 	}
@@ -506,7 +514,7 @@ func (c *Config) LoadAndValidate() error {
 	bigtableAdminBasePath := removeBasePathVersion(c.BigtableAdminBasePath)
 	log.Printf("[INFO] Instantiating Google Cloud BigtableAdmin for path %s", bigtableAdminBasePath)
 
-	clientBigtable, err := bigtableadmin.NewService(context, option.WithHTTPClient(client))
+	clientBigtable, err := bigtableadmin.NewService(ctx, option.WithHTTPClient(client))
 	if err != nil {
 		return err
 	}
@@ -516,7 +524,7 @@ func (c *Config) LoadAndValidate() error {
 
 	sourceRepoClientBasePath := removeBasePathVersion(c.SourceRepoBasePath)
 	log.Printf("[INFO] Instantiating Google Cloud Source Repo client for path %s", sourceRepoClientBasePath)
-	c.clientSourceRepo, err = sourcerepo.NewService(context, option.WithHTTPClient(client))
+	c.clientSourceRepo, err = sourcerepo.NewService(ctx, option.WithHTTPClient(client))
 	if err != nil {
 		return err
 	}
@@ -525,7 +533,7 @@ func (c *Config) LoadAndValidate() error {
 
 	spannerClientBasePath := removeBasePathVersion(c.SpannerBasePath)
 	log.Printf("[INFO] Instantiating Google Cloud Spanner client for path %s", spannerClientBasePath)
-	c.clientSpanner, err = spanner.NewService(context, option.WithHTTPClient(client))
+	c.clientSpanner, err = spanner.NewService(ctx, option.WithHTTPClient(client))
 	if err != nil {
 		return err
 	}
@@ -534,7 +542,7 @@ func (c *Config) LoadAndValidate() error {
 
 	dataprocClientBasePath := removeBasePathVersion(c.DataprocBasePath)
 	log.Printf("[INFO] Instantiating Google Cloud Dataproc client for path %s", dataprocClientBasePath)
-	c.clientDataproc, err = dataproc.NewService(context, option.WithHTTPClient(client))
+	c.clientDataproc, err = dataproc.NewService(ctx, option.WithHTTPClient(client))
 	if err != nil {
 		return err
 	}
@@ -543,7 +551,7 @@ func (c *Config) LoadAndValidate() error {
 
 	dataprocBetaClientBasePath := removeBasePathVersion(c.DataprocBetaBasePath)
 	log.Printf("[INFO] Instantiating Google Cloud Dataproc Beta client for path %s", dataprocBetaClientBasePath)
-	c.clientDataprocBeta, err = dataprocBeta.NewService(context, option.WithHTTPClient(client))
+	c.clientDataprocBeta, err = dataprocBeta.NewService(ctx, option.WithHTTPClient(client))
 	if err != nil {
 		return err
 	}
@@ -552,7 +560,7 @@ func (c *Config) LoadAndValidate() error {
 
 	filestoreClientBasePath := removeBasePathVersion(c.FilestoreBasePath)
 	log.Printf("[INFO] Instantiating Filestore client for path %s", filestoreClientBasePath)
-	c.clientFilestore, err = file.NewService(context, option.WithHTTPClient(client))
+	c.clientFilestore, err = file.NewService(ctx, option.WithHTTPClient(client))
 	if err != nil {
 		return err
 	}
@@ -561,7 +569,7 @@ func (c *Config) LoadAndValidate() error {
 
 	cloudIoTClientBasePath := removeBasePathVersion(c.CloudIoTBasePath)
 	log.Printf("[INFO] Instantiating Google Cloud IoT Core client for path %s", cloudIoTClientBasePath)
-	c.clientCloudIoT, err = cloudiot.NewService(context, option.WithHTTPClient(client))
+	c.clientCloudIoT, err = cloudiot.NewService(ctx, option.WithHTTPClient(client))
 	if err != nil {
 		return err
 	}
@@ -570,7 +578,7 @@ func (c *Config) LoadAndValidate() error {
 
 	appEngineClientBasePath := removeBasePathVersion(c.AppEngineBasePath)
 	log.Printf("[INFO] Instantiating App Engine client for path %s", appEngineClientBasePath)
-	c.clientAppEngine, err = appengine.NewService(context, option.WithHTTPClient(client))
+	c.clientAppEngine, err = appengine.NewService(ctx, option.WithHTTPClient(client))
 	if err != nil {
 		return err
 	}
@@ -579,7 +587,7 @@ func (c *Config) LoadAndValidate() error {
 
 	composerClientBasePath := removeBasePathVersion(c.ComposerBasePath)
 	log.Printf("[INFO] Instantiating Cloud Composer client for path %s", composerClientBasePath)
-	c.clientComposer, err = composer.NewService(context, option.WithHTTPClient(client))
+	c.clientComposer, err = composer.NewService(ctx, option.WithHTTPClient(client))
 	if err != nil {
 		return err
 	}
@@ -588,7 +596,7 @@ func (c *Config) LoadAndValidate() error {
 
 	serviceNetworkingClientBasePath := removeBasePathVersion(c.ServiceNetworkingBasePath)
 	log.Printf("[INFO] Instantiating Service Networking client for path %s", serviceNetworkingClientBasePath)
-	c.clientServiceNetworking, err = servicenetworking.NewService(context, option.WithHTTPClient(client))
+	c.clientServiceNetworking, err = servicenetworking.NewService(ctx, option.WithHTTPClient(client))
 	if err != nil {
 		return err
 	}
@@ -597,7 +605,7 @@ func (c *Config) LoadAndValidate() error {
 
 	storageTransferClientBasePath := removeBasePathVersion(c.StorageTransferBasePath)
 	log.Printf("[INFO] Instantiating Google Cloud Storage Transfer client for path %s", storageTransferClientBasePath)
-	c.clientStorageTransfer, err = storagetransfer.NewService(context, option.WithHTTPClient(client))
+	c.clientStorageTransfer, err = storagetransfer.NewService(ctx, option.WithHTTPClient(client))
 	if err != nil {
 		return err
 	}
@@ -607,7 +615,7 @@ func (c *Config) LoadAndValidate() error {
 	healthcareClientBasePath := removeBasePathVersion(c.HealthcareBasePath)
 	log.Printf("[INFO] Instantiating Google Cloud Healthcare client for path %s", healthcareClientBasePath)
 
-	c.clientHealthcare, err = healthcare.NewService(context, option.WithHTTPClient(client))
+	c.clientHealthcare, err = healthcare.NewService(ctx, option.WithHTTPClient(client))
 	if err != nil {
 		return err
 	}
@@ -616,8 +624,8 @@ func (c *Config) LoadAndValidate() error {
 
 	c.Region = GetRegionFromRegionSelfLink(c.Region)
 
-	c.requestBatcherServiceUsage = NewRequestBatcher("Service Usage", context, c.BatchingConfig)
-	c.requestBatcherIam = NewRequestBatcher("IAM", context, c.BatchingConfig)
+	c.requestBatcherServiceUsage = NewRequestBatcher("Service Usage", ctx, c.BatchingConfig)
+	c.requestBatcherIam = NewRequestBatcher("IAM", ctx, c.BatchingConfig)
 
 	return nil
 }
@@ -650,6 +658,13 @@ func expandProviderBatchingConfig(v interface{}) (*batchingConfig, error) {
 	}
 
 	return config, nil
+}
+
+func (c *Config) synchronousTimeout() time.Duration {
+	if c.RequestTimeout == 0 {
+		return 30 * time.Second
+	}
+	return c.RequestTimeout
 }
 
 func (c *Config) getTokenSource(clientScopes []string) (oauth2.TokenSource, error) {
@@ -686,9 +701,10 @@ func (c *Config) getTokenSource(clientScopes []string) (oauth2.TokenSource, erro
 	return googleoauth.DefaultTokenSource(context.Background(), clientScopes...)
 }
 
-// Remove the `/{{version}}/` from a base path, replacing it with `/`
+// Remove the `/{{version}}/` from a base path if present.
 func removeBasePathVersion(url string) string {
-	return regexp.MustCompile(`/[^/]+/$`).ReplaceAllString(url, "/")
+	re := regexp.MustCompile(`(?P<base>http[s]://.*)(?P<version>/[^/]+?/$)`)
+	return re.ReplaceAllString(url, "$1/")
 }
 
 // For a consumer of config.go that isn't a full fledged provider and doesn't
@@ -700,20 +716,29 @@ func ConfigureBasePaths(c *Config) {
 	c.AppEngineBasePath = AppEngineDefaultBasePath
 	c.BigQueryBasePath = BigQueryDefaultBasePath
 	c.BigqueryDataTransferBasePath = BigqueryDataTransferDefaultBasePath
+	c.BigqueryReservationBasePath = BigqueryReservationDefaultBasePath
 	c.BigtableBasePath = BigtableDefaultBasePath
+	c.BillingBasePath = BillingDefaultBasePath
 	c.BinaryAuthorizationBasePath = BinaryAuthorizationDefaultBasePath
 	c.CloudBuildBasePath = CloudBuildDefaultBasePath
 	c.CloudFunctionsBasePath = CloudFunctionsDefaultBasePath
 	c.CloudRunBasePath = CloudRunDefaultBasePath
 	c.CloudSchedulerBasePath = CloudSchedulerDefaultBasePath
+	c.CloudTasksBasePath = CloudTasksDefaultBasePath
 	c.ComputeBasePath = ComputeDefaultBasePath
 	c.ContainerAnalysisBasePath = ContainerAnalysisDefaultBasePath
+	c.DataFusionBasePath = DataFusionDefaultBasePath
 	c.DataprocBasePath = DataprocDefaultBasePath
+	c.DatastoreBasePath = DatastoreDefaultBasePath
+	c.DeploymentManagerBasePath = DeploymentManagerDefaultBasePath
+	c.DialogflowBasePath = DialogflowDefaultBasePath
 	c.DNSBasePath = DNSDefaultBasePath
 	c.FilestoreBasePath = FilestoreDefaultBasePath
 	c.FirestoreBasePath = FirestoreDefaultBasePath
+	c.GameServicesBasePath = GameServicesDefaultBasePath
 	c.HealthcareBasePath = HealthcareDefaultBasePath
 	c.IapBasePath = IapDefaultBasePath
+	c.IdentityPlatformBasePath = IdentityPlatformDefaultBasePath
 	c.KMSBasePath = KMSDefaultBasePath
 	c.LoggingBasePath = LoggingDefaultBasePath
 	c.MLEngineBasePath = MLEngineDefaultBasePath
@@ -722,8 +747,10 @@ func ConfigureBasePaths(c *Config) {
 	c.RedisBasePath = RedisDefaultBasePath
 	c.ResourceManagerBasePath = ResourceManagerDefaultBasePath
 	c.RuntimeConfigBasePath = RuntimeConfigDefaultBasePath
+	c.SecretManagerBasePath = SecretManagerDefaultBasePath
 	c.SecurityCenterBasePath = SecurityCenterDefaultBasePath
 	c.SecurityScannerBasePath = SecurityScannerDefaultBasePath
+	c.ServiceManagementBasePath = ServiceManagementDefaultBasePath
 	c.SourceRepoBasePath = SourceRepoDefaultBasePath
 	c.SpannerBasePath = SpannerDefaultBasePath
 	c.SQLBasePath = SQLDefaultBasePath
@@ -732,9 +759,6 @@ func ConfigureBasePaths(c *Config) {
 	c.VPCAccessBasePath = VPCAccessDefaultBasePath
 
 	// Handwritten Products / Versioned / Atypical Entries
-	// start beta-only products
-	c.IAPBasePath = IAPDefaultBasePath
-	// end beta-only products
 	c.CloudBillingBasePath = CloudBillingDefaultBasePath
 	c.ComposerBasePath = ComposerDefaultBasePath
 	c.ComputeBetaBasePath = ComputeBetaDefaultBasePath
@@ -746,7 +770,6 @@ func ConfigureBasePaths(c *Config) {
 	c.IamCredentialsBasePath = IamCredentialsDefaultBasePath
 	c.ResourceManagerV2Beta1BasePath = ResourceManagerV2Beta1DefaultBasePath
 	c.IAMBasePath = IAMDefaultBasePath
-	c.ServiceManagementBasePath = ServiceManagementDefaultBasePath
 	c.ServiceNetworkingBasePath = ServiceNetworkingDefaultBasePath
 	c.ServiceUsageBasePath = ServiceUsageDefaultBasePath
 	c.BigQueryBasePath = BigQueryDefaultBasePath

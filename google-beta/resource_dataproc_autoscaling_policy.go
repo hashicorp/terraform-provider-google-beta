@@ -45,40 +45,76 @@ func resourceDataprocAutoscalingPolicy() *schema.Resource {
 			"policy_id": {
 				Type:     schema.TypeString,
 				Required: true,
+				Description: `The policy id. The id must contain only letters (a-z, A-Z), numbers (0-9), underscores (_),
+and hyphens (-). Cannot begin or end with underscore or hyphen. Must consist of between
+3 and 50 characters.`,
 			},
 			"basic_algorithm": {
-				Type:     schema.TypeList,
-				Optional: true,
-				MaxItems: 1,
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: `Basic algorithm for autoscaling.`,
+				MaxItems:    1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"yarn_config": {
-							Type:     schema.TypeList,
-							Required: true,
-							MaxItems: 1,
+							Type:        schema.TypeList,
+							Required:    true,
+							Description: `YARN autoscaling configuration.`,
+							MaxItems:    1,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"graceful_decommission_timeout": {
 										Type:     schema.TypeString,
 										Required: true,
+										Description: `Timeout for YARN graceful decommissioning of Node Managers. Specifies the
+duration to wait for jobs to complete before forcefully removing workers
+(and potentially interrupting jobs). Only applicable to downscaling operations.
+
+Bounds: [0s, 1d].`,
 									},
 									"scale_down_factor": {
 										Type:     schema.TypeFloat,
 										Required: true,
+										Description: `Fraction of average pending memory in the last cooldown period for which to
+remove workers. A scale-down factor of 1 will result in scaling down so that there
+is no available memory remaining after the update (more aggressive scaling).
+A scale-down factor of 0 disables removing workers, which can be beneficial for
+autoscaling a single job.
+
+Bounds: [0.0, 1.0].`,
 									},
 									"scale_up_factor": {
 										Type:     schema.TypeFloat,
 										Required: true,
+										Description: `Fraction of average pending memory in the last cooldown period for which to
+add workers. A scale-up factor of 1.0 will result in scaling up so that there
+is no pending memory remaining after the update (more aggressive scaling).
+A scale-up factor closer to 0 will result in a smaller magnitude of scaling up
+(less aggressive scaling).
+
+Bounds: [0.0, 1.0].`,
 									},
 									"scale_down_min_worker_fraction": {
 										Type:     schema.TypeFloat,
 										Optional: true,
-										Default:  0.0,
+										Description: `Minimum scale-down threshold as a fraction of total cluster size before scaling occurs.
+For example, in a 20-worker cluster, a threshold of 0.1 means the autoscaler must
+recommend at least a 2 worker scale-down for the cluster to scale. A threshold of 0
+means the autoscaler will scale down on any recommended change.
+
+Bounds: [0.0, 1.0]. Default: 0.0.`,
+										Default: 0.0,
 									},
 									"scale_up_min_worker_fraction": {
 										Type:     schema.TypeFloat,
 										Optional: true,
-										Default:  0.0,
+										Description: `Minimum scale-up threshold as a fraction of total cluster size before scaling
+occurs. For example, in a 20-worker cluster, a threshold of 0.1 means the autoscaler
+must recommend at least a 2-worker scale-up for the cluster to scale. A threshold of
+0 means the autoscaler will scale up on any recommended change.
+
+Bounds: [0.0, 1.0]. Default: 0.0.`,
+										Default: 0.0,
 									},
 								},
 							},
@@ -86,7 +122,11 @@ func resourceDataprocAutoscalingPolicy() *schema.Resource {
 						"cooldown_period": {
 							Type:     schema.TypeString,
 							Optional: true,
-							Default:  "120s",
+							Description: `Duration between scaling events. A scaling period starts after the
+update operation from the previous event has completed.
+
+Bounds: [2m, 1d]. Default: 2m.`,
+							Default: "120s",
 						},
 					},
 				},
@@ -95,58 +135,100 @@ func resourceDataprocAutoscalingPolicy() *schema.Resource {
 				Type:     schema.TypeString,
 				Optional: true,
 				ForceNew: true,
-				Default:  "global",
+				Description: `The  location where the autoscaling poicy should reside.
+The default value is 'global'.`,
+				Default: "global",
 			},
 			"secondary_worker_config": {
-				Type:     schema.TypeList,
-				Optional: true,
-				MaxItems: 1,
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: `Describes how the autoscaler will operate for secondary workers.`,
+				MaxItems:    1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"max_instances": {
 							Type:     schema.TypeInt,
 							Optional: true,
-							Default:  0,
+							Description: `Maximum number of instances for this group. Note that by default, clusters will not use
+secondary workers. Required for secondary workers if the minimum secondary instances is set.
+Bounds: [minInstances, ). Defaults to 0.`,
+							Default:      0,
+							AtLeastOneOf: []string{"secondary_worker_config.0.min_instances", "secondary_worker_config.0.max_instances", "secondary_worker_config.0.weight"},
 						},
 						"min_instances": {
-							Type:     schema.TypeInt,
-							Optional: true,
-							Default:  2,
+							Type:         schema.TypeInt,
+							Optional:     true,
+							Description:  `Minimum number of instances for this group. Bounds: [0, maxInstances]. Defaults to 0.`,
+							Default:      0,
+							AtLeastOneOf: []string{"secondary_worker_config.0.min_instances", "secondary_worker_config.0.max_instances", "secondary_worker_config.0.weight"},
 						},
 						"weight": {
 							Type:     schema.TypeInt,
 							Optional: true,
-							Default:  1,
+							Description: `Weight for the instance group, which is used to determine the fraction of total workers
+in the cluster from this instance group. For example, if primary workers have weight 2,
+and secondary workers have weight 1, the cluster will have approximately 2 primary workers
+for each secondary worker.
+
+The cluster may not reach the specified balance if constrained by min/max bounds or other
+autoscaling settings. For example, if maxInstances for secondary workers is 0, then only
+primary workers will be added. The cluster can also be out of balance when created.
+
+If weight is not set on any instance group, the cluster will default to equal weight for
+all groups: the cluster will attempt to maintain an equal number of workers in each group
+within the configured size bounds for each group. If weight is set for one group only,
+the cluster will default to zero weight on the unset group. For example if weight is set
+only on primary workers, the cluster will use primary workers only and no secondary workers.`,
+							Default:      1,
+							AtLeastOneOf: []string{"secondary_worker_config.0.min_instances", "secondary_worker_config.0.max_instances", "secondary_worker_config.0.weight"},
 						},
 					},
 				},
 			},
 			"worker_config": {
-				Type:     schema.TypeList,
-				Optional: true,
-				MaxItems: 1,
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: `Describes how the autoscaler will operate for primary workers.`,
+				MaxItems:    1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"max_instances": {
-							Type:     schema.TypeInt,
-							Required: true,
+							Type:        schema.TypeInt,
+							Required:    true,
+							Description: `Maximum number of instances for this group.`,
 						},
 						"min_instances": {
-							Type:     schema.TypeInt,
-							Optional: true,
-							Default:  2,
+							Type:        schema.TypeInt,
+							Optional:    true,
+							Description: `Minimum number of instances for this group. Bounds: [2, maxInstances]. Defaults to 2.`,
+							Default:     2,
 						},
 						"weight": {
 							Type:     schema.TypeInt,
 							Optional: true,
-							Default:  1,
+							Description: `Weight for the instance group, which is used to determine the fraction of total workers
+in the cluster from this instance group. For example, if primary workers have weight 2,
+and secondary workers have weight 1, the cluster will have approximately 2 primary workers
+for each secondary worker.
+
+The cluster may not reach the specified balance if constrained by min/max bounds or other
+autoscaling settings. For example, if maxInstances for secondary workers is 0, then only
+primary workers will be added. The cluster can also be out of balance when created.
+
+If weight is not set on any instance group, the cluster will default to equal weight for
+all groups: the cluster will attempt to maintain an equal number of workers in each group
+within the configured size bounds for each group. If weight is set for one group only,
+the cluster will default to zero weight on the unset group. For example if weight is set
+only on primary workers, the cluster will use primary workers only and no secondary workers.`,
+							Default: 1,
 						},
 					},
 				},
 			},
 			"name": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: `The "resource name" of the autoscaling policy.`,
 			},
 			"project": {
 				Type:     schema.TypeString,
@@ -235,19 +317,19 @@ func resourceDataprocAutoscalingPolicyRead(d *schema.ResourceData, meta interfac
 		return fmt.Errorf("Error reading AutoscalingPolicy: %s", err)
 	}
 
-	if err := d.Set("policy_id", flattenDataprocAutoscalingPolicyPolicyId(res["id"], d)); err != nil {
+	if err := d.Set("policy_id", flattenDataprocAutoscalingPolicyPolicyId(res["id"], d, config)); err != nil {
 		return fmt.Errorf("Error reading AutoscalingPolicy: %s", err)
 	}
-	if err := d.Set("name", flattenDataprocAutoscalingPolicyName(res["name"], d)); err != nil {
+	if err := d.Set("name", flattenDataprocAutoscalingPolicyName(res["name"], d, config)); err != nil {
 		return fmt.Errorf("Error reading AutoscalingPolicy: %s", err)
 	}
-	if err := d.Set("worker_config", flattenDataprocAutoscalingPolicyWorkerConfig(res["workerConfig"], d)); err != nil {
+	if err := d.Set("worker_config", flattenDataprocAutoscalingPolicyWorkerConfig(res["workerConfig"], d, config)); err != nil {
 		return fmt.Errorf("Error reading AutoscalingPolicy: %s", err)
 	}
-	if err := d.Set("secondary_worker_config", flattenDataprocAutoscalingPolicySecondaryWorkerConfig(res["secondaryWorkerConfig"], d)); err != nil {
+	if err := d.Set("secondary_worker_config", flattenDataprocAutoscalingPolicySecondaryWorkerConfig(res["secondaryWorkerConfig"], d, config)); err != nil {
 		return fmt.Errorf("Error reading AutoscalingPolicy: %s", err)
 	}
-	if err := d.Set("basic_algorithm", flattenDataprocAutoscalingPolicyBasicAlgorithm(res["basicAlgorithm"], d)); err != nil {
+	if err := d.Set("basic_algorithm", flattenDataprocAutoscalingPolicyBasicAlgorithm(res["basicAlgorithm"], d, config)); err != nil {
 		return fmt.Errorf("Error reading AutoscalingPolicy: %s", err)
 	}
 
@@ -348,15 +430,15 @@ func resourceDataprocAutoscalingPolicyImport(d *schema.ResourceData, meta interf
 	return []*schema.ResourceData{d}, nil
 }
 
-func flattenDataprocAutoscalingPolicyPolicyId(v interface{}, d *schema.ResourceData) interface{} {
+func flattenDataprocAutoscalingPolicyPolicyId(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenDataprocAutoscalingPolicyName(v interface{}, d *schema.ResourceData) interface{} {
+func flattenDataprocAutoscalingPolicyName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenDataprocAutoscalingPolicyWorkerConfig(v interface{}, d *schema.ResourceData) interface{} {
+func flattenDataprocAutoscalingPolicyWorkerConfig(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -366,14 +448,14 @@ func flattenDataprocAutoscalingPolicyWorkerConfig(v interface{}, d *schema.Resou
 	}
 	transformed := make(map[string]interface{})
 	transformed["min_instances"] =
-		flattenDataprocAutoscalingPolicyWorkerConfigMinInstances(original["minInstances"], d)
+		flattenDataprocAutoscalingPolicyWorkerConfigMinInstances(original["minInstances"], d, config)
 	transformed["max_instances"] =
-		flattenDataprocAutoscalingPolicyWorkerConfigMaxInstances(original["maxInstances"], d)
+		flattenDataprocAutoscalingPolicyWorkerConfigMaxInstances(original["maxInstances"], d, config)
 	transformed["weight"] =
-		flattenDataprocAutoscalingPolicyWorkerConfigWeight(original["weight"], d)
+		flattenDataprocAutoscalingPolicyWorkerConfigWeight(original["weight"], d, config)
 	return []interface{}{transformed}
 }
-func flattenDataprocAutoscalingPolicyWorkerConfigMinInstances(v interface{}, d *schema.ResourceData) interface{} {
+func flattenDataprocAutoscalingPolicyWorkerConfigMinInstances(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
@@ -383,7 +465,7 @@ func flattenDataprocAutoscalingPolicyWorkerConfigMinInstances(v interface{}, d *
 	return v
 }
 
-func flattenDataprocAutoscalingPolicyWorkerConfigMaxInstances(v interface{}, d *schema.ResourceData) interface{} {
+func flattenDataprocAutoscalingPolicyWorkerConfigMaxInstances(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
@@ -393,7 +475,7 @@ func flattenDataprocAutoscalingPolicyWorkerConfigMaxInstances(v interface{}, d *
 	return v
 }
 
-func flattenDataprocAutoscalingPolicyWorkerConfigWeight(v interface{}, d *schema.ResourceData) interface{} {
+func flattenDataprocAutoscalingPolicyWorkerConfigWeight(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
@@ -403,7 +485,7 @@ func flattenDataprocAutoscalingPolicyWorkerConfigWeight(v interface{}, d *schema
 	return v
 }
 
-func flattenDataprocAutoscalingPolicySecondaryWorkerConfig(v interface{}, d *schema.ResourceData) interface{} {
+func flattenDataprocAutoscalingPolicySecondaryWorkerConfig(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -413,14 +495,14 @@ func flattenDataprocAutoscalingPolicySecondaryWorkerConfig(v interface{}, d *sch
 	}
 	transformed := make(map[string]interface{})
 	transformed["min_instances"] =
-		flattenDataprocAutoscalingPolicySecondaryWorkerConfigMinInstances(original["minInstances"], d)
+		flattenDataprocAutoscalingPolicySecondaryWorkerConfigMinInstances(original["minInstances"], d, config)
 	transformed["max_instances"] =
-		flattenDataprocAutoscalingPolicySecondaryWorkerConfigMaxInstances(original["maxInstances"], d)
+		flattenDataprocAutoscalingPolicySecondaryWorkerConfigMaxInstances(original["maxInstances"], d, config)
 	transformed["weight"] =
-		flattenDataprocAutoscalingPolicySecondaryWorkerConfigWeight(original["weight"], d)
+		flattenDataprocAutoscalingPolicySecondaryWorkerConfigWeight(original["weight"], d, config)
 	return []interface{}{transformed}
 }
-func flattenDataprocAutoscalingPolicySecondaryWorkerConfigMinInstances(v interface{}, d *schema.ResourceData) interface{} {
+func flattenDataprocAutoscalingPolicySecondaryWorkerConfigMinInstances(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
@@ -430,7 +512,7 @@ func flattenDataprocAutoscalingPolicySecondaryWorkerConfigMinInstances(v interfa
 	return v
 }
 
-func flattenDataprocAutoscalingPolicySecondaryWorkerConfigMaxInstances(v interface{}, d *schema.ResourceData) interface{} {
+func flattenDataprocAutoscalingPolicySecondaryWorkerConfigMaxInstances(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
@@ -440,7 +522,7 @@ func flattenDataprocAutoscalingPolicySecondaryWorkerConfigMaxInstances(v interfa
 	return v
 }
 
-func flattenDataprocAutoscalingPolicySecondaryWorkerConfigWeight(v interface{}, d *schema.ResourceData) interface{} {
+func flattenDataprocAutoscalingPolicySecondaryWorkerConfigWeight(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
@@ -450,7 +532,7 @@ func flattenDataprocAutoscalingPolicySecondaryWorkerConfigWeight(v interface{}, 
 	return v
 }
 
-func flattenDataprocAutoscalingPolicyBasicAlgorithm(v interface{}, d *schema.ResourceData) interface{} {
+func flattenDataprocAutoscalingPolicyBasicAlgorithm(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -460,16 +542,16 @@ func flattenDataprocAutoscalingPolicyBasicAlgorithm(v interface{}, d *schema.Res
 	}
 	transformed := make(map[string]interface{})
 	transformed["cooldown_period"] =
-		flattenDataprocAutoscalingPolicyBasicAlgorithmCooldownPeriod(original["cooldownPeriod"], d)
+		flattenDataprocAutoscalingPolicyBasicAlgorithmCooldownPeriod(original["cooldownPeriod"], d, config)
 	transformed["yarn_config"] =
-		flattenDataprocAutoscalingPolicyBasicAlgorithmYarnConfig(original["yarnConfig"], d)
+		flattenDataprocAutoscalingPolicyBasicAlgorithmYarnConfig(original["yarnConfig"], d, config)
 	return []interface{}{transformed}
 }
-func flattenDataprocAutoscalingPolicyBasicAlgorithmCooldownPeriod(v interface{}, d *schema.ResourceData) interface{} {
+func flattenDataprocAutoscalingPolicyBasicAlgorithmCooldownPeriod(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenDataprocAutoscalingPolicyBasicAlgorithmYarnConfig(v interface{}, d *schema.ResourceData) interface{} {
+func flattenDataprocAutoscalingPolicyBasicAlgorithmYarnConfig(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -479,34 +561,34 @@ func flattenDataprocAutoscalingPolicyBasicAlgorithmYarnConfig(v interface{}, d *
 	}
 	transformed := make(map[string]interface{})
 	transformed["graceful_decommission_timeout"] =
-		flattenDataprocAutoscalingPolicyBasicAlgorithmYarnConfigGracefulDecommissionTimeout(original["gracefulDecommissionTimeout"], d)
+		flattenDataprocAutoscalingPolicyBasicAlgorithmYarnConfigGracefulDecommissionTimeout(original["gracefulDecommissionTimeout"], d, config)
 	transformed["scale_up_factor"] =
-		flattenDataprocAutoscalingPolicyBasicAlgorithmYarnConfigScaleUpFactor(original["scaleUpFactor"], d)
+		flattenDataprocAutoscalingPolicyBasicAlgorithmYarnConfigScaleUpFactor(original["scaleUpFactor"], d, config)
 	transformed["scale_down_factor"] =
-		flattenDataprocAutoscalingPolicyBasicAlgorithmYarnConfigScaleDownFactor(original["scaleDownFactor"], d)
+		flattenDataprocAutoscalingPolicyBasicAlgorithmYarnConfigScaleDownFactor(original["scaleDownFactor"], d, config)
 	transformed["scale_up_min_worker_fraction"] =
-		flattenDataprocAutoscalingPolicyBasicAlgorithmYarnConfigScaleUpMinWorkerFraction(original["scaleUpMinWorkerFraction"], d)
+		flattenDataprocAutoscalingPolicyBasicAlgorithmYarnConfigScaleUpMinWorkerFraction(original["scaleUpMinWorkerFraction"], d, config)
 	transformed["scale_down_min_worker_fraction"] =
-		flattenDataprocAutoscalingPolicyBasicAlgorithmYarnConfigScaleDownMinWorkerFraction(original["scaleDownMinWorkerFraction"], d)
+		flattenDataprocAutoscalingPolicyBasicAlgorithmYarnConfigScaleDownMinWorkerFraction(original["scaleDownMinWorkerFraction"], d, config)
 	return []interface{}{transformed}
 }
-func flattenDataprocAutoscalingPolicyBasicAlgorithmYarnConfigGracefulDecommissionTimeout(v interface{}, d *schema.ResourceData) interface{} {
+func flattenDataprocAutoscalingPolicyBasicAlgorithmYarnConfigGracefulDecommissionTimeout(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenDataprocAutoscalingPolicyBasicAlgorithmYarnConfigScaleUpFactor(v interface{}, d *schema.ResourceData) interface{} {
+func flattenDataprocAutoscalingPolicyBasicAlgorithmYarnConfigScaleUpFactor(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenDataprocAutoscalingPolicyBasicAlgorithmYarnConfigScaleDownFactor(v interface{}, d *schema.ResourceData) interface{} {
+func flattenDataprocAutoscalingPolicyBasicAlgorithmYarnConfigScaleDownFactor(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenDataprocAutoscalingPolicyBasicAlgorithmYarnConfigScaleUpMinWorkerFraction(v interface{}, d *schema.ResourceData) interface{} {
+func flattenDataprocAutoscalingPolicyBasicAlgorithmYarnConfigScaleUpMinWorkerFraction(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenDataprocAutoscalingPolicyBasicAlgorithmYarnConfigScaleDownMinWorkerFraction(v interface{}, d *schema.ResourceData) interface{} {
+func flattenDataprocAutoscalingPolicyBasicAlgorithmYarnConfigScaleDownMinWorkerFraction(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 

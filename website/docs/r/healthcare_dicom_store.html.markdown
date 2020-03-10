@@ -12,6 +12,7 @@
 #     .github/CONTRIBUTING.md.
 #
 # ----------------------------------------------------------------------------
+subcategory: "Cloud Healthcare"
 layout: "google"
 page_title: "Google: google_healthcare_dicom_store"
 sidebar_current: "docs-google-healthcare-dicom-store"
@@ -26,7 +27,7 @@ A DicomStore is a datastore inside a Healthcare dataset that conforms to the DIC
 (https://www.dicomstandard.org/about/) standard for Healthcare information exchange
 
 ~> **Warning:** This resource is in beta, and should be used with the terraform-provider-google-beta provider.
-See [Provider Versions](https://terraform.io/docs/providers/google/provider_versions.html) for more details on beta resources.
+See [Provider Versions](https://terraform.io/docs/providers/google/guides/provider_versions.html) for more details on beta resources.
 
 To get more information about DicomStore, see:
 
@@ -39,28 +40,28 @@ To get more information about DicomStore, see:
 
 ```hcl
 resource "google_healthcare_dicom_store" "default" {
-  name           = "example-dicom-store"
-  dataset        = "${google_healthcare_dataset.dataset.id}"
+  name    = "example-dicom-store"
+  dataset = google_healthcare_dataset.dataset.id
 
   notification_config {
-    pubsub_topic = "${google_pubsub_topic.topic.id}"
+    pubsub_topic = google_pubsub_topic.topic.id
   }
 
   labels = {
     label1 = "labelvalue1"
   }
-  provider     = "google-beta"
+  provider = google-beta
 }
 
 resource "google_pubsub_topic" "topic" {
-  name         = "dicom-notifications"
-  provider     = "google-beta"
+  name     = "dicom-notifications"
+  provider = google-beta
 }
 
 resource "google_healthcare_dataset" "dataset" {
-  name         = "example-dataset"
-  location     = "us-central1"
-  provider     = "google-beta"
+  name     = "example-dataset"
+  location = "us-central1"
+  provider = google-beta
 }
 ```
 
@@ -114,6 +115,7 @@ The `notification_config` block supports:
 
 In addition to the arguments listed above, the following computed attributes are exported:
 
+* `id` - an identifier for the resource with format `{{dataset}}/dicomStores/{{name}}`
 
 * `self_link` -
   The fully qualified name of this dataset

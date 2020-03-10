@@ -47,50 +47,82 @@ func resourceHealthcareHl7V2Store() *schema.Resource {
 				Required:         true,
 				ForceNew:         true,
 				DiffSuppressFunc: compareSelfLinkOrResourceName,
+				Description: `Identifies the dataset addressed by this request. Must be in the format
+'projects/{project}/locations/{location}/datasets/{dataset}'`,
 			},
 			"name": {
 				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: true,
+				Description: `The resource name for the Hl7V2Store.
+
+** Changing this property may recreate the Hl7v2 store (removing all data) **`,
 			},
 			"labels": {
 				Type:     schema.TypeMap,
 				Optional: true,
-				Elem:     &schema.Schema{Type: schema.TypeString},
+				Description: `User-supplied key-value pairs used to organize HL7v2 stores.
+
+Label keys must be between 1 and 63 characters long, have a UTF-8 encoding of maximum 128 bytes, and must
+conform to the following PCRE regular expression: [\p{Ll}\p{Lo}][\p{Ll}\p{Lo}\p{N}_-]{0,62}
+
+Label values are optional, must be between 1 and 63 characters long, have a UTF-8 encoding of maximum 128
+bytes, and must conform to the following PCRE regular expression: [\p{Ll}\p{Lo}\p{N}_-]{0,63}
+
+No more than 64 labels can be associated with a given store.
+
+An object containing a list of "key": value pairs.
+Example: { "name": "wrench", "mass": "1.3kg", "count": "3" }.`,
+				Elem: &schema.Schema{Type: schema.TypeString},
 			},
 			"notification_config": {
-				Type:     schema.TypeList,
-				Optional: true,
-				MaxItems: 1,
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: `A nested object resource`,
+				MaxItems:    1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"pubsub_topic": {
 							Type:     schema.TypeString,
 							Required: true,
+							Description: `The Cloud Pub/Sub topic that notifications of changes are published on. Supplied by the client.
+PubsubMessage.Data will contain the resource name. PubsubMessage.MessageId is the ID of this message.
+It is guaranteed to be unique within the topic. PubsubMessage.PublishTime is the time at which the message
+was published. Notifications are only sent if the topic is non-empty. Topic names must be scoped to a
+project. cloud-healthcare@system.gserviceaccount.com must have publisher permissions on the given
+Cloud Pub/Sub topic. Not having adequate permissions will cause the calls that send notifications to fail.`,
 						},
 					},
 				},
 			},
 			"parser_config": {
-				Type:     schema.TypeList,
-				Optional: true,
-				MaxItems: 1,
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: `A nested object resource`,
+				MaxItems:    1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"allow_null_header": {
-							Type:     schema.TypeBool,
-							Optional: true,
+							Type:         schema.TypeBool,
+							Optional:     true,
+							Description:  `Determines whether messages with no header are allowed.`,
+							AtLeastOneOf: []string{"parser_config.0.allow_null_header", "parser_config.0.segment_terminator"},
 						},
 						"segment_terminator": {
 							Type:     schema.TypeString,
 							Optional: true,
+							Description: `Byte(s) to be used as the segment terminator. If this is unset, '\r' will be used as segment terminator.
+
+A base64-encoded string.`,
+							AtLeastOneOf: []string{"parser_config.0.allow_null_header", "parser_config.0.segment_terminator"},
 						},
 					},
 				},
 			},
 			"self_link": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: `The fully qualified name of this dataset`,
 			},
 		},
 	}
@@ -173,16 +205,16 @@ func resourceHealthcareHl7V2StoreRead(d *schema.ResourceData, meta interface{}) 
 		return nil
 	}
 
-	if err := d.Set("name", flattenHealthcareHl7V2StoreName(res["name"], d)); err != nil {
+	if err := d.Set("name", flattenHealthcareHl7V2StoreName(res["name"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Hl7V2Store: %s", err)
 	}
-	if err := d.Set("parser_config", flattenHealthcareHl7V2StoreParserConfig(res["parserConfig"], d)); err != nil {
+	if err := d.Set("parser_config", flattenHealthcareHl7V2StoreParserConfig(res["parserConfig"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Hl7V2Store: %s", err)
 	}
-	if err := d.Set("labels", flattenHealthcareHl7V2StoreLabels(res["labels"], d)); err != nil {
+	if err := d.Set("labels", flattenHealthcareHl7V2StoreLabels(res["labels"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Hl7V2Store: %s", err)
 	}
-	if err := d.Set("notification_config", flattenHealthcareHl7V2StoreNotificationConfig(res["notificationConfig"], d)); err != nil {
+	if err := d.Set("notification_config", flattenHealthcareHl7V2StoreNotificationConfig(res["notificationConfig"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Hl7V2Store: %s", err)
 	}
 
@@ -281,11 +313,11 @@ func resourceHealthcareHl7V2StoreImport(d *schema.ResourceData, meta interface{}
 	return []*schema.ResourceData{d}, nil
 }
 
-func flattenHealthcareHl7V2StoreName(v interface{}, d *schema.ResourceData) interface{} {
+func flattenHealthcareHl7V2StoreName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenHealthcareHl7V2StoreParserConfig(v interface{}, d *schema.ResourceData) interface{} {
+func flattenHealthcareHl7V2StoreParserConfig(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -295,24 +327,24 @@ func flattenHealthcareHl7V2StoreParserConfig(v interface{}, d *schema.ResourceDa
 	}
 	transformed := make(map[string]interface{})
 	transformed["allow_null_header"] =
-		flattenHealthcareHl7V2StoreParserConfigAllowNullHeader(original["allowNullHeader"], d)
+		flattenHealthcareHl7V2StoreParserConfigAllowNullHeader(original["allowNullHeader"], d, config)
 	transformed["segment_terminator"] =
-		flattenHealthcareHl7V2StoreParserConfigSegmentTerminator(original["segmentTerminator"], d)
+		flattenHealthcareHl7V2StoreParserConfigSegmentTerminator(original["segmentTerminator"], d, config)
 	return []interface{}{transformed}
 }
-func flattenHealthcareHl7V2StoreParserConfigAllowNullHeader(v interface{}, d *schema.ResourceData) interface{} {
+func flattenHealthcareHl7V2StoreParserConfigAllowNullHeader(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenHealthcareHl7V2StoreParserConfigSegmentTerminator(v interface{}, d *schema.ResourceData) interface{} {
+func flattenHealthcareHl7V2StoreParserConfigSegmentTerminator(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenHealthcareHl7V2StoreLabels(v interface{}, d *schema.ResourceData) interface{} {
+func flattenHealthcareHl7V2StoreLabels(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenHealthcareHl7V2StoreNotificationConfig(v interface{}, d *schema.ResourceData) interface{} {
+func flattenHealthcareHl7V2StoreNotificationConfig(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -322,10 +354,10 @@ func flattenHealthcareHl7V2StoreNotificationConfig(v interface{}, d *schema.Reso
 	}
 	transformed := make(map[string]interface{})
 	transformed["pubsub_topic"] =
-		flattenHealthcareHl7V2StoreNotificationConfigPubsubTopic(original["pubsubTopic"], d)
+		flattenHealthcareHl7V2StoreNotificationConfigPubsubTopic(original["pubsubTopic"], d, config)
 	return []interface{}{transformed}
 }
-func flattenHealthcareHl7V2StoreNotificationConfigPubsubTopic(v interface{}, d *schema.ResourceData) interface{} {
+func flattenHealthcareHl7V2StoreNotificationConfigPubsubTopic(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 

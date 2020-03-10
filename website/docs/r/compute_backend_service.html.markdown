@@ -12,6 +12,7 @@
 #     .github/CONTRIBUTING.md.
 #
 # ----------------------------------------------------------------------------
+subcategory: "Compute Engine"
 layout: "google"
 page_title: "Google: google_compute_backend_service"
 sidebar_current: "docs-google-compute-backend-service"
@@ -47,7 +48,7 @@ To get more information about BackendService, see:
 ```hcl
 resource "google_compute_backend_service" "default" {
   name          = "backend-service"
-  health_checks = ["${google_compute_http_health_check.default.self_link}"]
+  health_checks = [google_compute_http_health_check.default.self_link]
 }
 
 resource "google_compute_http_health_check" "default" {
@@ -67,20 +68,20 @@ resource "google_compute_http_health_check" "default" {
 
 ```hcl
 resource "google_compute_backend_service" "default" {
-  provider = "google-beta"
+  provider = google-beta
 
-  name          = "backend-service"
-  health_checks = ["${google_compute_health_check.health_check.self_link}"]
+  name                  = "backend-service"
+  health_checks         = [google_compute_health_check.health_check.self_link]
   load_balancing_scheme = "INTERNAL_SELF_MANAGED"
-  locality_lb_policy = "ROUND_ROBIN"
+  locality_lb_policy    = "ROUND_ROBIN"
 }
 
 resource "google_compute_health_check" "health_check" {
-  provider = "google-beta"
+  provider = google-beta
 
-  name               = "health-check"
+  name = "health-check"
   http_health_check {
-
+    port = 80
   }
 }
 ```
@@ -94,13 +95,13 @@ resource "google_compute_health_check" "health_check" {
 
 ```hcl
 resource "google_compute_backend_service" "default" {
-  provider = "google-beta"
+  provider = google-beta
 
-  name          = "backend-service"
-  health_checks = ["${google_compute_health_check.health_check.self_link}"]
+  name                  = "backend-service"
+  health_checks         = [google_compute_health_check.health_check.self_link]
   load_balancing_scheme = "INTERNAL_SELF_MANAGED"
-  locality_lb_policy = "RING_HASH"
-  session_affinity = "HTTP_COOKIE"
+  locality_lb_policy    = "RING_HASH"
+  session_affinity      = "HTTP_COOKIE"
   circuit_breakers {
     max_connections = 10
   }
@@ -108,7 +109,7 @@ resource "google_compute_backend_service" "default" {
     http_cookie {
       ttl {
         seconds = 11
-        nanos = 1111
+        nanos   = 1111
       }
       name = "mycookie"
     }
@@ -119,11 +120,11 @@ resource "google_compute_backend_service" "default" {
 }
 
 resource "google_compute_health_check" "health_check" {
-  provider = "google-beta"
+  provider = google-beta
 
-  name               = "health-check"
+  name = "health-check"
   http_health_check {
-
+    port = 80
   }
 }
 ```
@@ -167,12 +168,12 @@ The following arguments are supported:
   The set of backends that serve this BackendService.  Structure is documented below.
 
 * `circuit_breakers` -
-  (Optional, [Beta](https://terraform.io/docs/providers/google/provider_versions.html))
+  (Optional, [Beta](https://terraform.io/docs/providers/google/guides/provider_versions.html))
   Settings controlling the volume of connections to a backend service. This field
   is applicable only when the load_balancing_scheme is set to INTERNAL_SELF_MANAGED.  Structure is documented below.
 
 * `consistent_hash` -
-  (Optional, [Beta](https://terraform.io/docs/providers/google/provider_versions.html))
+  (Optional, [Beta](https://terraform.io/docs/providers/google/guides/provider_versions.html))
   Consistent Hash-based load balancing can be used to provide soft session
   affinity based on HTTP headers, cookies or other properties. This load balancing
   policy is applicable only for HTTP connections. The affinity to a particular
@@ -192,7 +193,7 @@ The following arguments are supported:
   connections, but still work to finish started).
 
 * `custom_request_headers` -
-  (Optional, [Beta](https://terraform.io/docs/providers/google/provider_versions.html))
+  (Optional, [Beta](https://terraform.io/docs/providers/google/guides/provider_versions.html))
   Headers that the HTTP/S load balancer should add to proxied
   requests.
 
@@ -216,7 +217,7 @@ The following arguments are supported:
   `INTERNAL_SELF_MANAGED` for a global backend service. Defaults to `EXTERNAL`.
 
 * `locality_lb_policy` -
-  (Optional, [Beta](https://terraform.io/docs/providers/google/provider_versions.html))
+  (Optional, [Beta](https://terraform.io/docs/providers/google/guides/provider_versions.html))
   The load balancing algorithm used within the scope of the locality.
   The possible values are -
   ROUND_ROBIN - This is a simple policy in which each healthy backend
@@ -241,7 +242,7 @@ The following arguments are supported:
   INTERNAL_SELF_MANAGED.
 
 * `outlier_detection` -
-  (Optional, [Beta](https://terraform.io/docs/providers/google/provider_versions.html))
+  (Optional, [Beta](https://terraform.io/docs/providers/google/guides/provider_versions.html))
   Settings controlling eviction of unhealthy hosts from the load balancing pool.
   This field is applicable only when the load_balancing_scheme is set
   to INTERNAL_SELF_MANAGED.  Structure is documented below.
@@ -274,7 +275,7 @@ The following arguments are supported:
   failed request. Default is 30 seconds. Valid range is [1, 86400].
 
 * `log_config` -
-  (Optional, [Beta](https://terraform.io/docs/providers/google/provider_versions.html))
+  (Optional, [Beta](https://terraform.io/docs/providers/google/guides/provider_versions.html))
   This field denotes the logging options for the load balancer traffic served by this backend service.
   If logging is enabled, logs will be exported to Stackdriver.  Structure is documented below.
 
@@ -306,7 +307,7 @@ The `backend` block supports:
   Provide this property when you create the resource.
 
 * `group` -
-  (Optional)
+  (Required)
   The fully-qualified URL of an Instance Group or Network Endpoint
   Group resource. In case of instance group this defines the list
   of instances that serve traffic. Member virtual machine
@@ -316,7 +317,7 @@ The `backend` block supports:
   For Network Endpoint Groups this defines list of endpoints. All
   endpoints of Network Endpoint Group must be hosted on instances
   located in the same zone as the Network Endpoint Group.
-  Backend service can not contain mix of Instance Group and
+  Backend services cannot mix Instance Group and
   Network Endpoint Group backends.
   Note that you must specify an Instance Group or Network Endpoint
   Group resource using the fully-qualified URL, rather than a
@@ -452,7 +453,7 @@ The `http_cookie` block supports:
 
 * `ttl` -
   (Optional)
-  Liftime of the cookie.  Structure is documented below.
+  Lifetime of the cookie.  Structure is documented below.
 
 * `name` -
   (Optional)
@@ -660,6 +661,7 @@ The `log_config` block supports:
 
 In addition to the arguments listed above, the following computed attributes are exported:
 
+* `id` - an identifier for the resource with format `projects/{{project}}/global/backendServices/{{name}}`
 
 * `creation_timestamp` -
   Creation timestamp in RFC3339 text format.
@@ -694,4 +696,4 @@ as an argument so that Terraform uses the correct provider to import your resour
 
 ## User Project Overrides
 
-This resource supports [User Project Overrides](https://www.terraform.io/docs/providers/google/provider_reference.html#user_project_override).
+This resource supports [User Project Overrides](https://www.terraform.io/docs/providers/google/guides/provider_reference.html#user_project_override).

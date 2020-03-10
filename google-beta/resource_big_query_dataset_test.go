@@ -135,6 +135,29 @@ func TestAccBigQueryDataset_regionalLocation(t *testing.T) {
 	})
 }
 
+func TestAccBigQueryDataset_cmek(t *testing.T) {
+	t.Parallel()
+
+	kms := BootstrapKMSKeyInLocation(t, "us")
+	pid := getTestProjectFromEnv()
+	datasetID1 := fmt.Sprintf("tf_test_%s", acctest.RandString(10))
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:  func() { testAccPreCheck(t) },
+		Providers: testAccProviders,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccBigQueryDataset_cmek(pid, datasetID1, kms.CryptoKey.Name),
+			},
+			{
+				ResourceName:      "google_bigquery_dataset.test",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
 func testAccAddTable(datasetID string, tableID string) resource.TestCheckFunc {
 	// Not actually a check, but adds a table independently of terraform
 	return func(s *terraform.State) error {
@@ -157,53 +180,56 @@ func testAccAddTable(datasetID string, tableID string) resource.TestCheckFunc {
 func testAccBigQueryDataset(datasetID string) string {
 	return fmt.Sprintf(`
 resource "google_bigquery_dataset" "test" {
-  dataset_id                  = "%s"
-  friendly_name               = "foo"
-  description                 = "This is a foo description"
-  location                    = "EU"
+  dataset_id                      = "%s"
+  friendly_name                   = "foo"
+  description                     = "This is a foo description"
+  location                        = "EU"
   default_partition_expiration_ms = 3600000
-  default_table_expiration_ms = 3600000
+  default_table_expiration_ms     = 3600000
 
   labels = {
     env                         = "foo"
     default_table_expiration_ms = 3600000
   }
-}`, datasetID)
+}
+`, datasetID)
 }
 
 func testAccBigQueryDatasetUpdated(datasetID string) string {
 	return fmt.Sprintf(`
 resource "google_bigquery_dataset" "test" {
-  dataset_id                  = "%s"
-  friendly_name               = "bar"
-  description                 = "This is a bar description"
-  location                    = "EU"
+  dataset_id                      = "%s"
+  friendly_name                   = "bar"
+  description                     = "This is a bar description"
+  location                        = "EU"
   default_partition_expiration_ms = 7200000
-  default_table_expiration_ms = 7200000
+  default_table_expiration_ms     = 7200000
 
   labels = {
     env                         = "bar"
     default_table_expiration_ms = 7200000
   }
-}`, datasetID)
+}
+`, datasetID)
 }
 
 func testAccBigQueryDatasetDeleteContents(datasetID string) string {
 	return fmt.Sprintf(`
 resource "google_bigquery_dataset" "contents_test" {
-  dataset_id                  = "%s"
-  friendly_name               = "foo"
-  description                 = "This is a foo description"
-  location                    = "EU"
+  dataset_id                      = "%s"
+  friendly_name                   = "foo"
+  description                     = "This is a foo description"
+  location                        = "EU"
   default_partition_expiration_ms = 3600000
-  default_table_expiration_ms = 3600000
-  delete_contents_on_destroy = true
+  default_table_expiration_ms     = 3600000
+  delete_contents_on_destroy      = true
 
   labels = {
     env                         = "foo"
     default_table_expiration_ms = 3600000
   }
-}`, datasetID)
+}
+`, datasetID)
 }
 
 func testAccBigQueryRegionalDataset(datasetID string, location string) string {
@@ -219,7 +245,8 @@ resource "google_bigquery_dataset" "test" {
     env                         = "foo"
     default_table_expiration_ms = 3600000
   }
-}`, datasetID, location)
+}
+`, datasetID, location)
 }
 
 func testAccBigQueryDatasetWithOneAccess(datasetID string) string {
@@ -236,7 +263,8 @@ resource "google_bigquery_dataset" "access_test" {
     env                         = "foo"
     default_table_expiration_ms = 3600000
   }
-}`, datasetID)
+}
+`, datasetID)
 }
 
 func testAccBigQueryDatasetWithTwoAccess(datasetID string) string {
@@ -250,14 +278,15 @@ resource "google_bigquery_dataset" "access_test" {
   }
   access {
     role   = "READER"
-    domain = "example.com"
+    domain = "hashicorp.com"
   }
 
   labels = {
     env                         = "foo"
     default_table_expiration_ms = 3600000
   }
-}`, datasetID)
+}
+`, datasetID)
 }
 
 func testAccBigQueryDatasetWithViewAccess(datasetID, otherDatasetID, otherTableID string) string {
@@ -270,14 +299,14 @@ resource "google_bigquery_dataset" "other_dataset" {
 
 resource "google_bigquery_table" "table_with_view" {
   table_id   = "%s"
-  dataset_id = "${google_bigquery_dataset.other_dataset.dataset_id}"
+  dataset_id = google_bigquery_dataset.other_dataset.dataset_id
 
   time_partitioning {
     type = "DAY"
   }
 
   view {
-    query = "SELECT state FROM [lookerdata:cdc.project_tycho_reports]"
+    query          = "SELECT state FROM [lookerdata:cdc.project_tycho_reports]"
     use_legacy_sql = true
   }
 }
@@ -291,9 +320,9 @@ resource "google_bigquery_dataset" "access_test" {
   }
   access {
     view {
-      project_id = "${google_bigquery_dataset.other_dataset.project}"
-      dataset_id = "${google_bigquery_dataset.other_dataset.dataset_id}"
-      table_id   = "${google_bigquery_table.table_with_view.table_id}"
+      project_id = google_bigquery_dataset.other_dataset.project
+      dataset_id = google_bigquery_dataset.other_dataset.dataset_id
+      table_id   = google_bigquery_table.table_with_view.table_id
     }
   }
 
@@ -301,5 +330,34 @@ resource "google_bigquery_dataset" "access_test" {
     env                         = "foo"
     default_table_expiration_ms = 3600000
   }
-}`, otherDatasetID, otherTableID, datasetID)
+}
+`, otherDatasetID, otherTableID, datasetID)
+}
+
+func testAccBigQueryDataset_cmek(pid, datasetID, kmsKey string) string {
+	return fmt.Sprintf(`
+data "google_project" "project" {
+  project_id = "%s"
+}
+
+resource "google_project_iam_member" "kms-project-binding" {
+  project = data.google_project.project.project_id
+  role    = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
+  member  = "serviceAccount:bq-${data.google_project.project.number}@bigquery-encryption.iam.gserviceaccount.com"
+}
+
+resource "google_bigquery_dataset" "test" {
+  dataset_id                  = "%s"
+  friendly_name               = "test"
+  description                 = "This is a test description"
+  location                    = "US"
+  default_table_expiration_ms = 3600000
+
+  default_encryption_configuration {
+    kms_key_name = "%s"
+  }
+
+  project = google_project_iam_member.kms-project-binding.project
+}
+`, pid, datasetID, kmsKey)
 }

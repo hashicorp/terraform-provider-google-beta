@@ -12,6 +12,7 @@
 #     .github/CONTRIBUTING.md.
 #
 # ----------------------------------------------------------------------------
+subcategory: "Compute Engine"
 layout: "google"
 page_title: "Google: google_compute_region_ssl_certificate"
 sidebar_current: "docs-google-compute-region-ssl-certificate"
@@ -26,7 +27,7 @@ provides a mechanism to upload an SSL key and certificate to
 the load balancer to serve secure connections from the user.
 
 ~> **Warning:** This resource is in beta, and should be used with the terraform-provider-google-beta provider.
-See [Provider Versions](https://terraform.io/docs/providers/google/provider_versions.html) for more details on beta resources.
+See [Provider Versions](https://terraform.io/docs/providers/google/guides/provider_versions.html) for more details on beta resources.
 
 To get more information about RegionSslCertificate, see:
 
@@ -44,12 +45,12 @@ To get more information about RegionSslCertificate, see:
 
 ```hcl
 resource "google_compute_region_ssl_certificate" "default" {
-  provider = "google-beta"
-  region = "us-central1"
+  provider    = google-beta
+  region      = "us-central1"
   name_prefix = "my-certificate-"
   description = "a description"
-  private_key = "${file("path/to/private.key")}"
-  certificate = "${file("path/to/certificate.crt")}"
+  private_key = file("path/to/private.key")
+  certificate = file("path/to/certificate.crt")
 
   lifecycle {
     create_before_destroy = true
@@ -67,13 +68,14 @@ resource "google_compute_region_ssl_certificate" "default" {
 ```hcl
 # You may also want to control name generation explicitly:
 resource "google_compute_region_ssl_certificate" "default" {
-  provider = "google-beta"
-  region = "us-central1"
+  provider = google-beta
+  region   = "us-central1"
+
   # The name will contain 8 random hex digits,
   # e.g. "my-certificate-48ab27cd2a"
-  name        = "${random_id.certificate.hex}"
-  private_key = "${file("path/to/private.key")}"
-  certificate = "${file("path/to/certificate.crt")}"
+  name        = random_id.certificate.hex
+  private_key = file("path/to/private.key")
+  certificate = file("path/to/certificate.crt")
 
   lifecycle {
     create_before_destroy = true
@@ -86,8 +88,8 @@ resource "random_id" "certificate" {
 
   # For security, do not expose raw certificate values in the output
   keepers = {
-    private_key = "${base64sha256(file("path/to/private.key"))}"
-    certificate = "${base64sha256(file("path/to/certificate.crt"))}"
+    private_key = filebase64sha256("path/to/private.key")
+    certificate = filebase64sha256("path/to/certificate.crt")
   }
 }
 ```
@@ -111,11 +113,11 @@ resource "random_id" "certificate" {
 // name with name_prefix, or use random_id resource. Example:
 
 resource "google_compute_region_ssl_certificate" "default" {
-  provider = "google-beta"
-  region = "us-central1"
+  provider    = google-beta
+  region      = "us-central1"
   name_prefix = "my-certificate-"
-  private_key = "${file("path/to/private.key")}"
-  certificate = "${file("path/to/certificate.crt")}"
+  private_key = file("path/to/private.key")
+  certificate = file("path/to/certificate.crt")
 
   lifecycle {
     create_before_destroy = true
@@ -123,20 +125,20 @@ resource "google_compute_region_ssl_certificate" "default" {
 }
 
 resource "google_compute_region_target_https_proxy" "default" {
-  provider = "google-beta"
-  region = "us-central1"
+  provider         = google-beta
+  region           = "us-central1"
   name             = "test-proxy"
-  url_map          = "${google_compute_region_url_map.default.self_link}"
-  ssl_certificates = ["${google_compute_region_ssl_certificate.default.self_link}"]
+  url_map          = google_compute_region_url_map.default.self_link
+  ssl_certificates = [google_compute_region_ssl_certificate.default.self_link]
 }
 
 resource "google_compute_region_url_map" "default" {
-  provider = "google-beta"
-  region = "us-central1"
+  provider    = google-beta
+  region      = "us-central1"
   name        = "url-map"
   description = "a description"
 
-  default_service = "${google_compute_region_backend_service.default.self_link}"
+  default_service = google_compute_region_backend_service.default.self_link
 
   host_rule {
     hosts        = ["mysite.com"]
@@ -145,30 +147,31 @@ resource "google_compute_region_url_map" "default" {
 
   path_matcher {
     name            = "allpaths"
-    default_service = "${google_compute_region_backend_service.default.self_link}"
+    default_service = google_compute_region_backend_service.default.self_link
 
     path_rule {
       paths   = ["/*"]
-      service = "${google_compute_region_backend_service.default.self_link}"
+      service = google_compute_region_backend_service.default.self_link
     }
   }
 }
 
 resource "google_compute_region_backend_service" "default" {
-  provider = "google-beta"
-  region = "us-central1"
+  provider    = google-beta
+  region      = "us-central1"
   name        = "backend-service"
   protocol    = "HTTP"
   timeout_sec = 10
 
-  health_checks = ["${google_compute_region_health_check.default.self_link}"]
+  health_checks = [google_compute_region_health_check.default.self_link]
 }
 
 resource "google_compute_region_health_check" "default" {
-  provider = "google-beta"
-  region = "us-central1"
-  name               = "http-health-check"
+  provider = google-beta
+  region   = "us-central1"
+  name     = "http-health-check"
   http_health_check {
+    port = 80
   }
 }
 ```
@@ -224,6 +227,7 @@ The following arguments are supported:
 
 In addition to the arguments listed above, the following computed attributes are exported:
 
+* `id` - an identifier for the resource with format `projects/{{project}}/regions/{{region}}/sslCertificates/{{name}}`
 
 * `creation_timestamp` -
   Creation timestamp in RFC3339 text format.
@@ -257,4 +261,4 @@ as an argument so that Terraform uses the correct provider to import your resour
 
 ## User Project Overrides
 
-This resource supports [User Project Overrides](https://www.terraform.io/docs/providers/google/provider_reference.html#user_project_override).
+This resource supports [User Project Overrides](https://www.terraform.io/docs/providers/google/guides/provider_reference.html#user_project_override).

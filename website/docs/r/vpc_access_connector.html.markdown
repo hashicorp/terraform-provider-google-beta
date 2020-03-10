@@ -12,6 +12,7 @@
 #     .github/CONTRIBUTING.md.
 #
 # ----------------------------------------------------------------------------
+subcategory: "Serverless VPC Access"
 layout: "google"
 page_title: "Google: google_vpc_access_connector"
 sidebar_current: "docs-google-vpc-access-connector"
@@ -23,12 +24,10 @@ description: |-
 
 Serverless VPC Access connector resource.
 
-~> **Warning:** This resource is in beta, and should be used with the terraform-provider-google-beta provider.
-See [Provider Versions](https://terraform.io/docs/providers/google/provider_versions.html) for more details on beta resources.
 
 To get more information about Connector, see:
 
-* [API documentation](https://cloud.google.com/vpc/docs/reference/vpcaccess/rest/v1beta1/projects.locations.connectors)
+* [API documentation](https://cloud.google.com/vpc/docs/reference/vpcaccess/rest/v1/projects.locations.connectors)
 * How-to Guides
     * [Configuring Serverless VPC Access](https://cloud.google.com/vpc/docs/configure-serverless-vpc-access)
 
@@ -41,11 +40,8 @@ To get more information about Connector, see:
 
 
 ```hcl
-provider "google-beta" {}
-
 resource "google_vpc_access_connector" "connector" {
-  name          = "my-connector"
-  provider      = "google-beta"
+  name          = "vpcconn"
   region        = "us-central1"
   ip_cidr_range = "10.8.0.0/28"
   network       = "default"
@@ -61,6 +57,10 @@ The following arguments are supported:
   (Required)
   The name of the resource (Max 25 characters).
 
+* `network` -
+  (Required)
+  Name of a VPC network.
+
 * `ip_cidr_range` -
   (Required)
   The range of internal addresses that follows RFC 4632 notation. Example: `10.132.0.0/28`.
@@ -72,10 +72,6 @@ The following arguments are supported:
 
 - - -
 
-
-* `network` -
-  (Optional)
-  Name of a VPC network.
 
 * `min_throughput` -
   (Optional)
@@ -93,6 +89,7 @@ The following arguments are supported:
 
 In addition to the arguments listed above, the following computed attributes are exported:
 
+* `id` - an identifier for the resource with format `projects/{{project}}/locations/{{region}}/connectors/{{name}}`
 
 * `state` -
   State of the VPC access connector.
@@ -114,10 +111,10 @@ This resource provides the following
 Connector can be imported using any of these accepted formats:
 
 ```
-$ terraform import -provider=google-beta google_vpc_access_connector.default projects/{{project}}/locations/{{region}}/connectors/{{name}}
-$ terraform import -provider=google-beta google_vpc_access_connector.default {{project}}/{{region}}/{{name}}
-$ terraform import -provider=google-beta google_vpc_access_connector.default {{region}}/{{name}}
-$ terraform import -provider=google-beta google_vpc_access_connector.default {{name}}
+$ terraform import google_vpc_access_connector.default projects/{{project}}/locations/{{region}}/connectors/{{name}}
+$ terraform import google_vpc_access_connector.default {{project}}/{{region}}/{{name}}
+$ terraform import google_vpc_access_connector.default {{region}}/{{name}}
+$ terraform import google_vpc_access_connector.default {{name}}
 ```
 
 -> If you're importing a resource with beta features, make sure to include `-provider=google-beta`
@@ -125,4 +122,4 @@ as an argument so that Terraform uses the correct provider to import your resour
 
 ## User Project Overrides
 
-This resource supports [User Project Overrides](https://www.terraform.io/docs/providers/google/provider_reference.html#user_project_override).
+This resource supports [User Project Overrides](https://www.terraform.io/docs/providers/google/guides/provider_reference.html#user_project_override).

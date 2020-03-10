@@ -1,5 +1,597 @@
-## 2.16.1 (Unreleased)
+## 3.11.1 (Unreleased)
+## 3.11.0 (March 02, 2020)
+
+FEATURES:
+* **New Data Source:** `google_compute_backend_bucket` ([#1778](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1778))
+* **New Resource:** `google_app_engine_service_split_traffic` ([#1785](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1785))
+* **New Resource:** `google_compute_packet_mirroring` ([#1791](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1791))
+* **New Resource:** Added new resource `google_game_services_game_server_cluster` ([#1789](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1789))
+* **New Resource:** Added new resource `google_game_services_game_server_config` ([#1789](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1789))
+* **New Resource:** Added new resource `google_game_services_game_server_deployment_rollout` ([#1789](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1789))
+* **New Resource:** Added new resource `google_game_services_game_server_deployment` ([#1789](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1789))
+* **New Resource:** Added new resource `google_game_services_realm` ([#1789](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1789))
+
+IMPROVEMENTS:
+* bigquery: Landed support for range-based partitioning in `google_bigquery_table` ([#1782](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1782))
+* compute: added check on `google_compute_router` for non-empty advertised_groups or advertised_ip_ranges values when advertise_mode is DEFAULT in the bgp block. ([#1776](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1776))
+* compute: added the ability to manage the status of `google_compute_instance` resources with the `desired_status` field ([#1786](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1786))
+* iam: `google_project_iam_member` and `google_project_iam_binding`'s `project` field can be specified with an optional `projects/` prefix ([#1780](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1780))
+* storage: added `metadata` to `google_storage_bucket_object`. ([#1779](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1779))
+
+BUG FIXES:
+* compute: Updated `google_project` to check for valid permissions on the parent billing account before creating and tainting the resource. ([#1777](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1777))
+* container: Fixed panic when upgrading `google_container_cluster` with `autoscaling` block ([#1766](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1766))
+
+## 3.10.0 (February 25, 2020)
+
+BREAKING CHANGES:
+* container: Fully removed `use_ip_aliases` and `create_subnetwork` fields to fix misleading diff for removed fields ([#1760](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1760))
+
+FEATURES:
+* **New Data Source:** `google_dns_keys` ([#1768](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1768))
+* **New Resource:** `google_datastore_index` ([#1755](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1755))
+* **New Resource:** `google_storage_hmac_key` ([#1765](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1765))
+* **New Resource:** `google_endpoints_service_iam_binding` ([#1761](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1761))
+* **New Resource:** `google_endpoints_service_iam_member` ([#1761](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1761))
+* **New Resource:** `google_endpoints_service_iam_policy` ([#1761](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1761))
+
+IMPROVEMENTS:
+* container: Enabled configuring autoscaling profile in GKE clusters (https://cloud.google.com/kubernetes-engine/docs/concepts/cluster-autoscaler#autoscaling_profiles) ([#1756](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1756))
+* container: Allowed import/update/deletion of `google_container_cluster` in error states ([#1759](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1759))
+* container: Changed `google_container_node_pool` so node pools created in an error state will be marked as tainted on creation. ([#1758](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1758))
+* container: Allowed import/update/deletion of `google_container_node_pool` in error states and updated resource to wait for a stable state after any changes. ([#1758](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1758))
+* container: added label_fingerprint to `google_container_cluster` ([#1750](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1750))
+* dataflow: added `job_id` field to `google_dataflow_job` ([#1754](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1754))
+* dataflow: added computed `type` field to `google_dataflow_job`. ([#1771](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1771))
+* healthcare: added `version` field to `google_healthcare_fhir_store` ([#1769](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1769))
+* provider: Added retries for common network errors we've encountered. ([#1762](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1762))
+
+## 3.9.0 (February 18, 2020)
+
+FEATURES:
+* **New Resource:** `google_container_registry` ([#1725](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1725))
+
+IMPROVEMENTS:
+* all: improve error handling of 404s. ([#1728](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1728))
+* bigtable: added update support for `display_name` and `instance_type` ([#1751](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1751))
+* container: `google_container_cluster` will wait for a stable state after updates. ([#1737](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1737))
+* container: added support for `autoscaling_profile` to `google_container_cluster` ([#1756](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1756))
+* container: added `boot_disk_kms_key` to `node_config` block. ([#1736](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1736))
+* dataflow: added `job_id` field to `google_dataflow_job` ([#1754](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1754))
+* dialogflow: improve error handling by increasing retry count ([#1730](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1730))
+* resourcemanager: fixed retry behavior for updates in `google_project`, added retries for billing metadata requests ([#1735](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1735))
+* sql: add `encryption_key_name` to `google_sql_database_instance` ([#1724](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1724))
+
+BUG FIXES:
+* cloudrun: fixed permadiff caused by new API default values on `annotations` and `limits` ([#1727](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1727))
+* container: Removed restriction on `auto_provisioning_defaults` to allow both `oauth_scopes` and `service_account` to be set ([#1748](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1748))
+* firestore: fixed import of `google_firestore_index` when database or collection were non-default. ([#1741](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1741))
+* iam: Fixed an erroneous error during import of IAM resources when a provider default project/zone/region is not defined. ([#1734](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1734))
+* kms: Fixed issue where `google_kms_crypto_key_version` datasource would throw an Invalid Index error on plan ([#1740](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1740))
+
+## 3.8.0 (February 10, 2020)
+NOTES:
+* provider: added documentation for the `id` field for many resources, including format ([#1697](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1697))
+BREAKING CHANGES:
+* compute: Added conditional requirement of `google_compute_**region**_backend_service` `backend.capacity_scaler` to no longer accept the API default if not INTERNAL. Non-INTERNAL backend services must now specify `capacity_scaler` explicitly and have a total capacity greater than 0. In addition, API default of 1.0 must now be explicitly set and will be treated as nil or zero if not set in config. ([#1707](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1707))
+
+FEATURES:
+* **New Data Source:** `secret_manager_secret_version` ([#1708](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1708))
+* **New Resource:** `google_access_context_manager_service_perimeter_resource` ([#1712](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1712))
+* **New Resource:** `secret_manager_secret_version` ([#1708](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1708))
+* **New Resource:** `secret_manager_secret` ([#1708](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1708))
+* **New Resource:** `google_dialogflow_agent` ([#1706](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1706))
+
+IMPROVEMENTS:
+* appengine: added support for `google_app_engine_application.iap` ([#1703](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1703))
+* compute: `google_compute_security_policy` `rule.match.expr` field is now GA ([#1692](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1692))
+* compute: added additional validation to `google_cloud_router`'s `bgp.asn` field. ([#1699](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1699))
+
+BUG FIXES:
+* bigtable: fixed diff for DEVELOPMENT instances that are returned from the API with one node ([#1704](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1704))
+* compute: Fixed `backend.capacity_scaler` to actually set zero (0.0) value. ([#1707](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1707))
+* compute: Fixed `google_compute_**region**_backend_service` so it no longer has a permadiff if `backend.capacity_scaler` is unset in config by requiring capacity scaler. ([#1707](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1707))
+* compute: updated `google_compute_project_metadata_item` to fail on create if its key is already present in the project metadata. ([#1714](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1714))
+* logging: updated `bigquery_options` so the default value from the api will be set in state. ([#1694](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1694))
+* sql: undeprecated `settings.ip_configuration.authorized_networks.expiration_time` ([#1691](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1691))
+
+## 3.7.0 (February 03, 2020)
+
+IMPROVEMENTS:
+* binaryauthorization: moved from beta API to ga API in anticipation of beta API turndown. ([#1689](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1689))
+* dns: `google_dns_managed_zone` added support for Non-RFC1918 fields for reverse lookup and fowarding paths. ([#1685](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1685))
+* monitoring: Added `labels` and `user_labels` filters to data source `google_monitoring_notification_channel` ([#1666](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1666))
+
+BUG FIXES:
+* bigtable: fixed diff for DEVELOPMENT instances that are returned from the API with one node ([#1704](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1704))
+* compute: `google_compute_instance_template` added plan time check for any disks marked `boot` outside of the first disk ([#1684](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1684))
+* container: Fixed perma-diff in `google_container_cluster`'s `cluster_autoscaling.auto_provisioning_defaults`. ([#1679](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1679))
+* logging: updated `bigquery_options` so the default value from the api will be set in state. ([#1694](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1694))
+* storage: Stopped `project-owner` showing up in the diff for `google_storage_bucket_acl` ([#1674](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1674))
+
+## 3.6.0 (January 29, 2020)
+
+KNOWN ISSUES:
+
+* bigtable: due to API changes, bigtable DEVELOPMENT instances may show a diff on `num_nodes`. There will be a fix in the 3.7.0 release of the provider. No known workarounds exist at the moment, but will be tracked in https://github.com/terraform-providers/terraform-provider-google/issues/5492.
+
+FEATURES:
+* **New Data Source:** google_monitoring_notification_channel ([#1643](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1643))
+* **New Resource:** google_compute_network_peering_routes_config ([#1652](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1652))
+
+IMPROVEMENTS:
+* compute: added waiting logic to `google_compute_interconnect_attachment` to avoid modifications when the attachment is UNPROVISIONED ([#1664](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1664))
+* compute: made the `google_compute_network_peering` routes fields available in GA ([#1650](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1650))
+* datafusion: Added `service_account` field to `google_data_fusion_instance` ([#1660](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1660))
+* iap: added support for IAM conditions in `google_iap_tunnel_instance_iam_*` IAM resources ([#1654](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1654))
+* resourcemanager: restricted the length of the `description` field of `google_service_account`. It is now limited to 256 characters. ([#1646](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1646))
+* scheduler: Added `attempt_deadline` to `google_cloud_scheduler_job`. ([#1639](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1639))
+* storage: added `default_event_based_hold` to `google_storage_bucket` ([#1626](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1626))
+
+BUG FIXES:
+* compute: Fixed `google_compute_instance_from_template` with existing boot disks ([#1655](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1655))
+* compute: Fixed a bug in `google_compute_instance` when attempting to update a field that requires stopping and starting an instance with an encrypted disk ([#1658](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1658))
+
+## 3.5.0 (January 22, 2020)
+
+DEPRECATIONS:
+* kms: deprecated `data.google_kms_secret_ciphertext` as there was no way to make it idempotent. Instead, use the `google_kms_secret_ciphertext` resource. ([#1586](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1586))
+* sql: deprecated first generation-only fields on `google_sql_database_instance` ([#1628](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1628))
+
+FEATURES:
+* **New Resource:** `google_kms_secret_ciphertext` ([#1586](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1586))
+
+IMPROVEMENTS:
+* bigtable: added the ability to add/remove clusters from `google_bigtable_instance` ([#1589](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1589))
+* compute: added support for other resource types (like a Proxy) as a `target` to `google_compute_forwarding_rule` ([#1630](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1630))
+* dataproc: added `lifecycle_config` to `google_dataproc_cluster.cluster_config` ([#1593](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1593))
+* iam: updated to allow for empty bindings in `data_source_google_iam_policy` data source ([#1173](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1173))
+* provider: added retries for batched requests so failed batches will retry each single request separately. ([#1615](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1615))
+* resourcemanager: restricted the length of the `description` field of `google_service_account`. It is now limited to 256 characters. ([#1646](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1646))
+
+BUG FIXES:
+* bigtable: Fixed error on reading non-existent `google_bigtable_gc_policy`,  `google_bigtable_instance`,  `google_bigtable_table` ([#1597](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1597))
+* cloudfunctions: Fixed validation of `google_cloudfunctions_function` name to allow for 63 characters. ([#1640](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1640))
+* cloudtasks: Changed `max_dispatches_per_second` to a double instead of an integer. ([#1633](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1633))
+* compute: Added validation for `compute_resource_policy` to no longer allow invalid `start_time` values that weren't hourly. ([#1603](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1603))
+* compute: Fixed errors from concurrent creation/deletion of overlapping `google_compute_network_peering` resources. ([#1601](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1601))
+* compute: Stopped panic when using `usage_export_bucket` and the setting had been disabled manually. ([#1610](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1610))
+* compute: fixed `google_compute_router_nat` timeout fields causing a diff when using a long-lived resource ([#1613](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1613))
+* compute: fixed `google_compute_target_https_proxy.quic_override` causing a diff when using a long-lived resource ([#1611](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1611))
+* identityplatform: fixed `google_identity_platform_default_supported_idp_config` to correctly allow configuration of both `idp_id` and `client_id` separately ([#1638](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1638))
+* monitoring: Stopped `labels` from causing a perma diff on `AlertPolicy` ([#1622](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1622))
+
+## 3.4.0 (January 07, 2020)
+
+DEPRECATIONS:
+* kms: deprecated `data.google_kms_secret_ciphertext` as there was no way to make it idempotent. Instead, use the `google_kms_secret_ciphertext` resource. ([#1586](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1586))
+
+BREAKING CHANGES:
+* `google_iap_web_iam_*`, `google_iap_web_type_compute_iam_*`, `google_iap_web_type_app_engine_*`,  and `google_iap_app_engine_service_iam_*` resources now support IAM Conditions (beta provider only). If any conditions had been created out of band before this release, take extra care to ensure they are present in your Terraform config so the provider doesn't try to create new bindings with no conditions. Terraform will show a diff that it is adding the condition to the resource, which is safe to apply. ([#1527](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1527))
+* `google_kms_key_ring_iam_*` and `google_kms_crypto_key_iam_*` resources now support IAM Conditions (beta provider only). If any conditions had been created out of band before this release, take extra care to ensure they are present in your Terraform config so the provider doesn't try to create new bindings with no conditions. Terraform will show a diff that it is adding the condition to the resource, which is safe to apply. ([#1524](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1524))
+* cloudrun: Changed `google_cloud_run_domain_mapping` to correctly match Cloud Run API expected format for `spec.route_name`, {serviceName}, instead of invalid projects/{project}/global/services/{serviceName} ([#1563](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1563))
+* compute: Added back ConflictsWith restrictions for ExactlyOneOf restrictions that were removed in v3.3.0 for `google_compute_firewall`, `google_compute_health_check`, and `google_compute_region_health_check`. This effectively changes an API-side failure that was only accessible in v3.3.0 to a plan-time one. ([#1534](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1534))
+* logging: Changed `google_logging_metric.metric_descriptors.labels` from a list to a set ([#1559](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1559))
+* resourcemanager: Added back ConflictsWith restrictions for ExactlyOneOf restrictions that were removed in v3.3.0 for `google_organization_policy`, `google_folder_organization_policy`, and `google_project_organization_policy`. This effectively changes an API-side failure that was only accessible in v3.3.0 to a plan-time one. ([#1534](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1534))
+
+FEATURES:
+* **New Data Source:** `google_sql_ca_certs` ([#1580](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1580))
+* **New Resource:** `google_identity_platform_default_supported_idp_config` ([#1523](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1523))
+* **New Resource:** `google_identity_platform_inbound_saml_config` ([#1523](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1523))
+* **New Resource:** `google_identity_platform_oauth_idp_config` ([#1523](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1523))
+* **New Resource:** `google_identity_platform_tenant_default_supported_idp_config` ([#1523](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1523))
+* **New Resource:** `google_identity_platform_tenant_inbound_saml_config` ([#1523](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1523))
+* **New Resource:** `google_identity_platform_tenant_oauth_idp_config` ([#1523](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1523))
+* **New Resource:** `google_identity_platform_tenant` ([#1523](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1523))
+* **New Resource:** `google_kms_crypto_key_iam_policy` ([#1554](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1554))
+* **New Resource:** `google_kms_secret_ciphertext` ([#1586](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1586))
+
+IMPROVEMENTS:
+* composer: Increased default timeouts for `google_composer_environment` ([#1539](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1539))
+* compute: Added graceful termination to `container_cluster` create calls so that partially created clusters will resume the original operation if the Terraform process is killed mid create. ([#1533](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1533))
+* compute: Fixed `google_compute_disk_resource_policy_attachment` parsing of region from zone to allow for provider-level zone and make error message more accurate` ([#1557](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1557))
+* datafusion: Increased default timeouts for `google_data_fusion_instance` ([#1545](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1545))
+* datafusion: Increased update timeout for updating `google_data_fusion_instance` ([#1538](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1538))
+* healthcare: Enabled request batching for (beta-only) Healthcare API IAM resources `google_healthcare_*_iam_*` to reduce likelihood of errors from very low default write quota. ([#1558](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1558))
+* iap: added support for IAM Conditions to the `google_iap_web_iam_*`, `google_iap_web_type_compute_iam_*`, `google_iap_web_type_app_engine_*`,  and `google_iap_app_engine_service_iam_*` resources (beta provider only) ([#1527](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1527))
+* kms: added support for IAM Conditions to the `google_kms_key_ring_iam_*` and `google_kms_crypto_key_iam_*` resources (beta provider only) ([#1524](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1524))
+* provider: Reduced default `send_after` controlling the time interval after which a batched request sends. ([#1565](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1565))
+
+BUG FIXES:
+* all: fixed issue where many fields that were removed in 3.0.0 would show a diff when they were removed from config ([#1585](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1585))
+* bigquery: fixed `bigquery_table.encryption_configuration` to correctly recreate the table when modified ([#1591](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1591))
+* cloudrun:  Changed `google_cloud_run_domain_mapping` to correctly match Cloud Run API expected format for `spec.route_name`, {serviceName}, instead of invalid projects/{project}/global/services/{serviceName} ([#1563](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1563))
+* cloudrun: Changed `cloud_run_domain_mapping` to poll for success or failure and throw an appropriate error when ready status returns as false. ([#1564](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1564))
+* cloudrun: Fixed `google_cloudrun_service` to allow update instead of force-recreation for changes in `spec` `env` and `command` fields ([#1566](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1566))
+* cloudrun: Removed unsupported update for `google_cloud_run_domain_mapping` to allow force-recreation. ([#1556](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1556))
+* cloudrun: Stopped returning an error when a `cloud_run_domain_mapping` was waiting on DNS verification. ([#1587](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1587))
+* compute: Fixed `google_compute_backend_service` to allow updating `cdn_policy.cache_key_policy.*` fields to false or empty. ([#1569](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1569))
+* compute: Fixed behaviour where `google_compute_subnetwork` did not record a value for `name` when `self_link` was specified. ([#1579](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1579))
+* container: fixed issue where an empty variable in `tags` would cause a crash ([#1543](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1543))
+* endpoints: Added operation wait for `google_endpoints_service` to fix 403 "Service not found" errors during initial creation ([#1560](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1560))
+* logging: Made `google_logging_metric.metric_descriptors.labels` a set to prevent diff from ordering ([#1559](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1559))
+* resourcemanager: added retries for `data.google_organization` ([#1553](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1553))
+* vpcaccess: marked `network` field as required in order to fail invalid configs at plan-time instead of at apply-time ([#1577](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1577))
+
+## 3.3.0 (December 17, 2019)
+
+BREAKING CHANGES:
+* `google_storage_bucket_iam_*` resources now support IAM Conditions (beta provider only). If any conditions had been created out of band before this release, take extra care to ensure they are present in your Terraform config so the provider doesn't try to create new bindings with no conditions. Terraform will show a diff that it is adding the condition to the resource, which is safe to apply. ([#1479](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1479))
+
+FEATURES:
+* **New Resource:** `google_compute_region_health_check` is now available in GA ([#1507](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1507))
+* **New Resource:** `google_deployment_manager_deployment` ([#1498](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1498))
+
+IMPROVEMENTS:
+* bigquery: added `PARQUET` as an option in `google_bigquery_table.external_data_configuration.source_format` ([#1514](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1514))
+* compute: Added `allow_global_access` for to `google_compute_forwarding_rule` resource. ([#1511](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1511))
+* compute: added support for up to 100 domains on `google_compute_managed_ssl_certificate` ([#1519](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1519))
+* dataproc: added support for `security_config` to `google_dataproc_cluster` ([#1492](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1492))
+* storage: added support for IAM Conditions to the `google_storage_bucket_iam_*` resources (beta provider only) ([#1479](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1479))
+* storage: updated `id` and `bucket` fields for `google_storage_bucket_iam_*` resources to use `b/{bucket_name}` ([#1479](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1479))
+
+BUG FIXES:
+* compute: Fixed an issue where interpolated values caused plan-time errors in `google_compute_router_interface`. ([#1517](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1517))
+* compute: relaxed ExactlyOneOf restrictions on `google_compute_firewall`, `google_compute_health_check`, and `google_compute_region_health_check` to enable the use of dynamic blocks with those resources. ([#1520](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1520))
+* iam: Fixed a bug that causes badRequest errors on IAM resources due to deleted serviceAccount principals ([#1501](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1501))
+* resourcemanager: relaxed ExactlyOneOf restrictions on `google_organization_policy `, `google_folder_organization_policy `, and `google_project_organization_policy ` to enable the use of dynamic blocks with those resources. ([#1520](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1520))
+* sourcerepo: Fixed a bug preventing repository IAM resources from referencing repositories with the `/` character in their name ([#1521](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1521))
+* sql: fixed bug where terraform would keep retrying to create new `google_sql_database_instance` with the name of a previously deleted instance ([#1500](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1500))
+
+## 3.2.0 (December 11, 2019)
+
+DEPRECATIONS:
+* compute: deprecated `fingerprint` field in `google_compute_subnetwork`. Its value is now always `""`. ([#1482](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1482))
+
+FEATURES:
+* **New Data Source:** `data_source_google_bigquery_default_service_account` ([#1471](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1471))
+* **New Resource:** cloudrun: Added support for `google_cloud_run_service` IAM resources: `google_cloud_run_service_iam_policy`, `google_cloud_run_service_iam_binding`, `google_cloud_run_service_iam_member` ([#1456](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1456))
+
+IMPROVEMENTS:
+* all: Added `synchronous_timeout` to provider block to allow setting higher per-operation-poll timeouts. ([#1449](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1449))
+* bigquery: Added KMS support to `google_bigquery_table` ([#1471](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1471))
+* cloudresourcemanager: Added `org_id` field to `google_organization` datasource to expose the raw organization id ([#1485](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1485))
+* cloudrun: Stopped requiring the root `metadata` block for `google_cloud_run_service`. ([#1478](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1478))
+* compute: added support for `expr` to `google_compute_security_policy.rule.match` ([#1465](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1465))
+* compute: added support for `path_rules` to `google_compute_region_url_map` ([#1489](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1489))
+* compute: added support for `path_rules` to `google_compute_url_map` ([#1483](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1483))
+* compute: added support for `route_rules` to `google_compute_region_url_map` ([#1493](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1493))
+* compute: added support for header actions and route rules to `google_compute_url_map` ([#1435](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1435))
+* dns: Added `visibility` field to `google_dns_managed_zone` data source ([#1462](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1462))
+* sourcerepo: added support for `pubsub_configs` to `google_sourcerepo_repository` ([#1455](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1455))
+
+BUG FIXES:
+* dns: fixed 503s caused by high numbers of `dns_record_set`s. ([#1477](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1477))
+* logging: updated `exponential_buckets.growth_factor` from integer to double. ([#1484](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1484))
+* storage: fixed bug where users without storage.objects.list permissions couldn't delete empty buckets ([#1443](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1443))
+
+## 3.1.0 (December 05, 2019)
+
+BREAKING CHANGES:
+* compute: field `peer_ip_address` in `google_compute_router_peer` is now required, to match the API behavior. ([#1396](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1396))
+
+FEATURES:
+* **New Resource:** `google_billing_budget` ([#1428](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1428))
+* **New Resource:** `google_cloud_tasks_queue` ([#1369](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1369))
+* **New Resource:** `google_organization_iam_audit_config` ([#1427](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1427))
+
+IMPROVEMENTS:
+* accesscontextmanager: added support for `require_admin_approval` and `require_corp_owned` in `google_access_context_manager_access_level`'s `device_policy`. ([#1403](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1403))
+* all: added retries for timeouts while fetching operations ([#1356](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1356))
+* cloudbuild: Added build timeout to `google_cloudbuild_trigger` ([#1404](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1404))
+* cloudresourcemanager: added support for importing `google_folder` in the form of the bare folder id, rather than requiring `folders/{bare_id}` ([#1430](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1430))
+* compute: Updated default timeouts on `google_compute_project_metadata_item`. ([#1436](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1436))
+* compute: `google_compute_disk` `disk_encryption_key.raw_key` is now sensitive ([#1445](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1445))
+* compute: `google_compute_disk` `source_image_encryption_key.raw_key` is now sensitive ([#1452](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1452))
+* compute: `google_compute_network_peering` resource can now be imported ([#1439](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1439))
+* compute: computed attribute `management_type` in `google_compute_router_peer` is now available. ([#1396](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1396))
+* compute: field `network` can now be specified on `google_compute_region_backend_service`, which allows internal load balancers to target the non-primary interface of an instance. ([#1418](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1418))
+* container: Added support for `peering_name` in `google_container_cluster.private_cluster_config`. ([#1438](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1438))
+* container: added `auto_provisioning_defaults` to `google_container_cluster.cluster_autoscaling` ([#1434](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1434))
+* container: added `upgrade_settings` support  to `google_container_node_pool` ([#1400](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1400))
+* container: increased timeouts on `google_container_cluster` and `google_container_node_pool` ([#1386](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1386))
+* datafusion: Added `private_instance` and `network_config` fields to `google_data_fusion_instance` ([#1411](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1411))
+* kms: enabled use of `user_project_override` for the `kms_crypto_key` resource ([#1422](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1422))
+* kms: enabled use of `user_project_override` for the `kms_secret_ciphertext` data source ([#1433](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1433))
+* sql: added `root_password` field to `google_sql_database_instance` resource ([#1432](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1432))
+
+BUG FIXES:
+* bigquery: fixed an issue where bigquery table id formats from the `2.X` series caused an error at plan time ([#1448](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1448))
+* cloudbuild: Fixed incorrect dependency between `trigger_template` and `github` in `google_cloud_build_trigger`. ([#1410](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1410))
+* cloudfunctions: Fixed inability to set `google_cloud_functions_function` update timeout. ([#1447](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1447))
+* cloudrun: Wait for the cloudrun resource to reach a ready state before returning success. ([#1409](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1409))
+* compute: `google_compute_disk` `disk_encryption_key.raw_key` is now sensitive ([#1453](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1453))
+* compute: `self_link` in several datasources will now error on invalid values instead of crashing ([#1373](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1373))
+* compute: field `advertised_ip_ranges` in `google_compute_router_peer` can now be updated without recreating the resource. ([#1396](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1396))
+* compute: marked `min_cpu_platform` on `google_compute_instance` as computed so if it is not specified it will not cause diffs ([#1429](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1429))
+* dataproc: Changed default for `google_dataproc_autoscaling_policy` `secondary_worker_config.min_instances` from 2 to 0. ([#1408](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1408))
+* dns: Fixed issue causing `google_dns_record_set` deletion to fail when the managed zone ceased to exist before the deletion event. ([#1446](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1446))
+* iam: disallowed `deleted:` principals in IAM resources ([#1417](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1417))
+* sql: added retries to `google_sql_user` create and update to reduce flakiness ([#1399](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1399))
+
+## 3.0.0 (December 04, 2019)
+
+NOTES:
+
+These are the changes between 3.0.0-beta.1 and the 3.0.0 final release. For changes since 2.20.0, see also the 3.0.0-beta.1 changelog entry below.
+
+**Please see [the 3.0.0 upgrade guide](https://www.terraform.io/docs/providers/google/guides/version_3_upgrade.html) for upgrade guidance.**
+
+BREAKING CHANGES:
+* cloudrun: updated `cloud_run_service` to v1. Significant updates have been made to the resource including a breaking schema change. ([#1426](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1426))
+
+BUG FIXES:
+* compute: fixed a bug in `google_compute_instance_group_manager` and `google_compute_region_instance_group_manager` that created an artificial diff when removing a now-removed field from a config ([#1401](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1401))
+* dns: Fixed bug causing `google_dns_managed_zone` datasource to always return a 404 ([#1405](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1405))
+* service_networking: fixed "An unknown error occurred" bug when creating multiple google_service_networking_connection resources in parallel ([#1246](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1246))
+
+## 3.0.0-beta.1 (November 15, 2019)
+
+BREAKING CHANGES:
+
+* access_context_manager: Made `os_type` required on block `google_access_context_manager_access_level.basic.conditions.device_policy.os_constraints`. [MM#2665](https://github.com/GoogleCloudPlatform/magic-modules/pull/2665)
+* all: changed any id values that could not be interpolated as self_links into values that could [MM#2461](https://github.com/GoogleCloudPlatform/magic-modules/pull/2461)
+* app_engine: Made `ssl_management_type` required on `google_app_engine_domain_mapping.ssl_settings` [MM#2608](https://github.com/GoogleCloudPlatform/magic-modules/pull/2608)
+* app_engine: Made `shell` required on `google_app_engine_standard_app_version.entrypoint`. [MM#2608](https://github.com/GoogleCloudPlatform/magic-modules/pull/2608)
+* app_engine: Made `source_url` required on `google_app_engine_standard_app_version.deployment.files` and `google_app_engine_standard_app_version.deployment.zip`. [MM#2608](https://github.com/GoogleCloudPlatform/magic-modules/pull/2608)
+* app_engine: Made `split_health_checks ` required on `google_app_engine_application.feature_settings` [MM#2608](https://github.com/GoogleCloudPlatform/magic-modules/pull/2608)
+* app_engine: Made `script_path` required on `google_app_engine_standard_app_version.handlers.script`. [MM#2665](https://github.com/GoogleCloudPlatform/magic-modules/pull/2665)
+* bigtable: Made `cluster_id` required on `google_bigtable_app_profile.single_cluster_routing`. [MM#2608](https://github.com/GoogleCloudPlatform/magic-modules/pull/2608)
+* bigquery: Made at least one of `range` or `skip_leading_rows` required on `google_bigquery_table.external_data_configuration.google_sheets_options`. [MM#2608](https://github.com/GoogleCloudPlatform/magic-modules/pull/2608)
+* bigquery: Made `role` required on `google_bigquery_dataset.access`. [MM#2665](https://github.com/GoogleCloudPlatform/magic-modules/pull/2665)
+* bigtable: Made exactly one of `single_cluster_routing` or `multi_cluster_routing_use_any` required on `google_bigtable_app_profile`. [MM#2665](https://github.com/GoogleCloudPlatform/magic-modules/pull/2665)
+* binary_authorization: Made `name_pattern` required on `google_binary_authorization_policy.admission_whitelist_patterns`. [MM#2665](https://github.com/GoogleCloudPlatform/magic-modules/pull/2665)
+* binary_authorization: Made `evaluation_mode` and `enforcement_mode` required on `google_binary_authorization_policy.cluster_admission_rules`. [MM#2665](https://github.com/GoogleCloudPlatform/magic-modules/pull/2665)
+* cloudbuild: made Cloud Build Trigger's trigger template required to match API requirements. [MM#2352](https://github.com/GoogleCloudPlatform/magic-modules/pull/2352)
+* cloudbuild: Made `branch` required on `google_cloudbuild_trigger.github`. [MM#2608](https://github.com/GoogleCloudPlatform/magic-modules/pull/2608)
+* cloudbuild: Made `steps` required on `google_cloudbuild_trigger.build`. [MM#2608](https://github.com/GoogleCloudPlatform/magic-modules/pull/2608)
+* cloudbuild: Made `name` required on `google_cloudbuild_trigger.build.steps`. [MM#2608](https://github.com/GoogleCloudPlatform/magic-modules/pull/2608)
+* cloudbuild: Made `name` and `path` required on `google_cloudbuild_trigger.build.steps.volumes`. [MM#2608](https://github.com/GoogleCloudPlatform/magic-modules/pull/2608)
+* cloudbuild: Made exactly one of `filename` or `build` required on `google_cloudbuild_trigger`. [MM#2665](https://github.com/GoogleCloudPlatform/magic-modules/pull/2665)
+* cloudfunctions: deprecated `nodejs6` as option for `runtime` in `function` and made it required. [MM#2499](https://github.com/GoogleCloudPlatform/magic-modules/pull/2499)
+* cloudscheduler: Made exactly one of `pubsub_target`, `http_target` or `app_engine_http_target` required on `google_cloudscheduler_job`. [MM#2665](https://github.com/GoogleCloudPlatform/magic-modules/pull/2665)
+* cloudiot: removed `event_notification_config` (singular) from `google_cloudiot_registry`. Use plural `event_notification_configs` instead. [MM#2390](https://github.com/GoogleCloudPlatform/magic-modules/pull/2390)
+* cloudiot: Made `public_key_certificate` required on `google_cloudiot_registry. credentials `. [MM#2608](https://github.com/GoogleCloudPlatform/magic-modules/pull/2608)
+* cloudscheduler: Made `service_account_email` required on `google_cloudscheduler_job.http_target.oauth_token` and `google_cloudscheduler_job.http_target.oidc_token`. [MM#2608](https://github.com/GoogleCloudPlatform/magic-modules/pull/2608)
+* composer: Made at least one of `airflow_config_overrides`, `pypi_packages`, `env_variables, `image_version`, or `python_version` required on `google_composer_environment.config.software_config`. [MM#2608](https://github.com/GoogleCloudPlatform/magic-modules/pull/2608)
+* composer: Made `use_ip_aliases` required on `google_composer_environment.config.node_config.ip_allocation_policy`. [MM#2608](https://github.com/GoogleCloudPlatform/magic-modules/pull/2608)
+* composer: Made `enable_private_endpoint` required on `google_composer_environment.config.private_environment_config`. [MM#2608](https://github.com/GoogleCloudPlatform/magic-modules/pull/2608)
+* composer: Made at least one of `enable_private_endpoint` or `master_ipv4_cidr_block` required on `google_composer_environment.config.private_environment_config` [MM#2682](https://github.com/GoogleCloudPlatform/magic-modules/pull/2682)
+* composer: Made at least one of `node_count`, `node_config`, `software_config` or `private_environment_config` required on `google_composer_environment.config` [MM#2682](https://github.com/GoogleCloudPlatform/magic-modules/pull/2682)
+* compute: `google_compute_backend_service`'s `backend` field field now requires the `group` subfield to be set. [MM#2373](https://github.com/GoogleCloudPlatform/magic-modules/pull/2373)
+* compute: permanently removed `ip_version` field from `google_compute_forwarding_rule` [MM#2436](https://github.com/GoogleCloudPlatform/magic-modules/pull/2436)
+* compute: permanently removed `ipv4_range` field from `google_compute_network`. [MM#2436](https://github.com/GoogleCloudPlatform/magic-modules/pull/2436)
+* compute: permanently removed `auto_create_routes` field from `google_compute_network_peering`. [MM#2436](https://github.com/GoogleCloudPlatform/magic-modules/pull/2436)
+* compute: added check to only allow `google_compute_instance_template`s with 375gb scratch disks [MM#2495](https://github.com/GoogleCloudPlatform/magic-modules/pull/2495)
+* compute: made `google_compute_instance_template` fail at plan time when scratch disks do not have `disk_type` `"local-ssd"`. [MM#2282](https://github.com/GoogleCloudPlatform/magic-modules/pull/2282)
+* compute: removed `enable_flow_logs` field from `google_compute_subnetwork`. This is now controlled by the presence of the `log_config` block [MM#2597](https://github.com/GoogleCloudPlatform/magic-modules/pull/2597)
+* compute: Made `raw_key` required on `google_compute_snapshot.snapshot_encryption_key`. [MM#2608](https://github.com/GoogleCloudPlatform/magic-modules/pull/2608)
+* compute: Made at least one of `auto_delete`, `device_name`, `disk_encryption_key_raw`, `kms_key_self_link`, `initialize_params`, `mode` or `source` required on `google_compute_instance.boot_disk`. [MM#2608](https://github.com/GoogleCloudPlatform/magic-modules/pull/2608)
+* compute: Made at least one of `size`, `type`, `image`, or `labels` required on `google_compute_instance.boot_disk.initialize_params`. [MM#2608](https://github.com/GoogleCloudPlatform/magic-modules/pull/2608)
+* compute: Made at least one of `enable_secure_boot`, `enable_vtpm`, or `enable_integrity_monitoring` required on `google_compute_instance.shielded_instance_config`. [MM#2608](https://github.com/GoogleCloudPlatform/magic-modules/pull/2608)
+* compute: Made at least one of `on_host_maintenance`, `automatic_restart`, `preemptible`, or `node_affinities` required on `google_compute_instance.scheduling`. [MM#2608](https://github.com/GoogleCloudPlatform/magic-modules/pull/2608)
+* compute: Made `interface` required on `google_compute_instance.scratch_disk`. [MM#2608](https://github.com/GoogleCloudPlatform/magic-modules/pull/2608)
+* compute: Made at least one of `enable_secure_boot`, `enable_vtpm`, or `enable_integrity_monitoring` required on `google_compute_instance_template.shielded_instance_config`. [MM#2608](https://github.com/GoogleCloudPlatform/magic-modules/pull/2608)
+* compute: Made at least one of `on_host_maintenance`, `automatic_restart`, `preemptible`, or `node_affinities` are now required on `google_compute_instance_template.scheduling`. [MM#2608](https://github.com/GoogleCloudPlatform/magic-modules/pull/2608)
+* compute: Made `kms_key_self_link` required on `google_compute_instance_template.disk.disk_encryption_key`. [MM#2608](https://github.com/GoogleCloudPlatform/magic-modules/pull/2608)
+* compute: Made `range` required on `google_compute_router_peer. advertised_ip_ranges`. [MM#2608](https://github.com/GoogleCloudPlatform/magic-modules/pull/2608)
+* compute: Removed `instance_template` for `google_compute_instance_group_manager` and `google_compute_region_instance_group_manager`. Use `version.instance_template` instead. [MM#2595](https://github.com/GoogleCloudPlatform/magic-modules/pull/2595)
+* compute: removed `update_strategy` for `google_compute_instance_group_manager`. Use `update_policy` instead. [MM#2595](https://github.com/GoogleCloudPlatform/magic-modules/pull/2595)
+* compute: stopped allowing selfLink or path style references as IP addresses for `google_compute_forwarding_rule` or `google_compute_global_forwarding_rule` [MM#2620](https://github.com/GoogleCloudPlatform/magic-modules/pull/2620)
+* compute: permanently removed `update_strategy` field from `google_compute_region_instance_group_manager`. [MM#2436](https://github.com/GoogleCloudPlatform/magic-modules/pull/2436)
+* compute: Made exactly one of `http_health_check`, `https_health_check`, `http2_health_check`, `tcp_health_check` or `ssl_health_check` required on `google_compute_health_check`. [MM#2665](https://github.com/GoogleCloudPlatform/magic-modules/pull/2665)
+* compute: Made exactly one of `http_health_check`, `https_health_check`, `http2_health_check`, `tcp_health_check` or `ssl_health_check` required on `google_compute_region_health_check`. [MM#2665](https://github.com/GoogleCloudPlatform/magic-modules/pull/2665)
+* container: permanently removed `zone` and `region` fields from data source `google_container_engine_versions`. [MM#2436](https://github.com/GoogleCloudPlatform/magic-modules/pull/2436)
+* container: permanently removed `zone`, `region` and `additional_zones` fields from `google_container_cluster`. [MM#2436](https://github.com/GoogleCloudPlatform/magic-modules/pull/2436)
+* container: permanently removed `zone` and `region` fields from `google_container_node_pool`. [MM#2436](https://github.com/GoogleCloudPlatform/magic-modules/pull/2436)
+* container: set `google_container_cluster`'s `logging_service` and `monitoring_service` defaults to enable GKE Stackdriver Monitoring. [MM#2471](https://github.com/GoogleCloudPlatform/magic-modules/pull/2471)
+* container: removed `kubernetes_dashboard` from `google_container_cluster.addons_config` [MM#2551](https://github.com/GoogleCloudPlatform/magic-modules/pull/2551)
+* container: removed automatic suppression of GPU taints in GKE `taint` [MM#2537](https://github.com/GoogleCloudPlatform/magic-modules/pull/2537)
+* container: Made `disabled` required on `google_container_cluster.addons_config.http_load_balancing`, `google_container_cluster.addons_config.horizontal_pod_autoscaling`, `google_container_cluster.addons_config.network_policy_config`, `google_container_cluster.addons_config.cloudrun_config`, and `google_container_cluster.addons_config.istio_config`. [MM#2608](https://github.com/GoogleCloudPlatform/magic-modules/pull/2608)
+* container: Made at least one of `http_load_balancing`, `horizontal_pod_autoscaling` , `network_policy_config`, `cloudrun_config`, or `istio_config` required on `google_container_cluster.addons_config`. [MM#2608](https://github.com/GoogleCloudPlatform/magic-modules/pull/2608)
+* container: Made `enabled` required on `google_container_cluster.network_policy`. [MM#2608](https://github.com/GoogleCloudPlatform/magic-modules/pull/2608)
+* container: Made `enable_private_endpoint` required on `google_container_cluster.private_cluster_config`. [MM#2608](https://github.com/GoogleCloudPlatform/magic-modules/pull/2608)
+* container: Made `enabled` required on `google_container_cluster.vertical_pod_autoscaling`. [MM#2608](https://github.com/GoogleCloudPlatform/magic-modules/pull/2608)
+* container: Made `cidr_blocks` required on `google_container_cluster.master_authorized_networks_config`. [MM#2608](https://github.com/GoogleCloudPlatform/magic-modules/pull/2608)
+* container: Made at least one of `username`, `password` or `client_certificate_config` required on `google_container_cluster.master_auth`. [MM#2608](https://github.com/GoogleCloudPlatform/magic-modules/pull/2608)
+* container: Made exactly one of `daily_maintenance_window` or `recurring_window` required on `google_container_cluster.maintenance_policy` [MM#2682](https://github.com/GoogleCloudPlatform/magic-modules/pull/2682)
+* container: removed `google_container_cluster` `ip_allocation_policy.use_ip_aliases`. If it's set to true, remove it from your config. If false, remove `ip_allocation_policy` as a whole. [MM#2615](https://github.com/GoogleCloudPlatform/magic-modules/pull/2615)
+* container: removed `google_container_cluster` `ip_allocation_policy.create_subnetwork`, `ip_allocation_policy.subnetwork_name`, `ip_allocation_policy.node_ipv4_cidr_block`. Define an explicit `google_compute_subnetwork` and use `subnetwork` instead. [MM#2615](https://github.com/GoogleCloudPlatform/magic-modules/pull/2615)
+* container: Made `channel` required on `google_container_cluster.release_channel`. [MM#2608](https://github.com/GoogleCloudPlatform/magic-modules/pull/2608)
+* dataproc: Made at least one of `staging_bucket`, `gce_cluster_config`, `master_config`, `worker_config`, `preemptible_worker_config`, `software_config`, `initialization_action` or `encryption_config` required on `google_dataproc_cluster.cluster_config`. [MM#2608](https://github.com/GoogleCloudPlatform/magic-modules/pull/2608)
+* dataproc: Made at least one of `zone`, `network`, `subnetwork`, `tags`, `service_account`, `service_account_scopes`, `internal_ip_only` or `metadata` required on `google_dataproc_cluster.cluster_config.gce_cluster_config`. [MM#2608](https://github.com/GoogleCloudPlatform/magic-modules/pull/2608)
+* dataproc: Made at least one of `num_instances`, `image_uri`, `machine_type`, `min_cpu_platform`, `disk_config`, or `accelerators` required on `google_dataproc_cluster.cluster_config.master_config` and `google_dataproc_cluster.cluster_config.worker_config`. [MM#2608](https://github.com/GoogleCloudPlatform/magic-modules/pull/2608)
+* dataproc: Made at least one of `num_local_ssds`, `boot_disk_size_gb` or `boot_disk_type` required on `google_dataproc_cluster.cluster_config.preemptible_worker_config.disk_config`, `google_dataproc_cluster.cluster_config.master_config.disk_config` and `google_dataproc_cluster.cluster_config.worker_config.disk_config`. [MM#2608](https://github.com/GoogleCloudPlatform/magic-modules/pull/2608)
+* dataproc: Made at least one of `num_instances` or `disk_config` required on `google_dataproc_cluster.cluster_config.preemptible_worker_config`. [MM#2608](https://github.com/GoogleCloudPlatform/magic-modules/pull/2608)
+* dataproc: Made at least one of `image_version`, `override_properties` or `optional_components` is now required on `google_dataproc_cluster.cluster_config.software_config`. [MM#2608](https://github.com/GoogleCloudPlatform/magic-modules/pull/2608)
+* dataproc: Made `policy_uri` required on `google_dataproc_cluster.cluster_config.autoscaling_config`. [MM#2608](https://github.com/GoogleCloudPlatform/magic-modules/pull/2608)
+* dataproc: Made `max_failures_per_hour` required on `google_dataproc_job.scheduling`. [MM#2608](https://github.com/GoogleCloudPlatform/magic-modules/pull/2608)
+* dataproc: Made `driver_log_levels` required on `google_dataproc_job.pyspark_config.logging_config`, `google_dataproc_job.spark_config.logging_config`, `google_dataproc_job.hadoop_config.logging_config`, `google_dataproc_job.hive_config.logging_config`, `google_dataproc_job.pig_config.logging_config`, `google_dataproc_job.sparksql_config.logging_config`. [MM#2608](https://github.com/GoogleCloudPlatform/magic-modules/pull/2608)
+* dataproc: Made at least one of `main_class` or `main_jar_file_uri` required on `google_dataproc_job.spark_config` and `google_dataproc_job.hadoop_config`. [MM#2608](https://github.com/GoogleCloudPlatform/magic-modules/pull/2608)
+* dataproc: Made at least one of `query_file_uri` or `query_list` required on `google_dataproc_job.hive_config`, `google_dataproc_job.pig_config`, and `google_dataproc_job.sparksql_config`. [MM#2608](https://github.com/GoogleCloudPlatform/magic-modules/pull/2608)
+* dns: Made `networks` required on `google_dns_managed_zone.private_visibility_config`. [MM#2608](https://github.com/GoogleCloudPlatform/magic-modules/pull/2608)
+* dns: Made `network_url` required on `google_dns_managed_zone.private_visibility_config.networks`. [MM#2608](https://github.com/GoogleCloudPlatform/magic-modules/pull/2608)
+* iam: made `iam_audit_config` resources overwrite existing audit config on create. Previous implementations merged config with existing audit configs on create. [MM#2438](https://github.com/GoogleCloudPlatform/magic-modules/pull/2438)
+* iam: Made exactly one of `list_policy`, `boolean_policy`, or `restore_policy` required on `google_organization_policy`. [MM#2608](https://github.com/GoogleCloudPlatform/magic-modules/pull/2608)
+* iam: Made exactly one of `all` or `values` required on `google_organization_policy.list_policy.allow` and `google_organization_policy.list_policy.deny`. [MM#2608](https://github.com/GoogleCloudPlatform/magic-modules/pull/2608)
+* iam: `google_project_iam_policy` can handle the `project` field in either of the following forms: `project-id` or `projects/project-id` [MM#2700](https://github.com/GoogleCloudPlatform/magic-modules/pull/2700)
+* iam: Made exactly one of `allow` or `deny` required on `google_organization_policy.list_policy` [MM#2682](https://github.com/GoogleCloudPlatform/magic-modules/pull/2682)
+* iam: removed the deprecated `pgp_key`, `private_key_encrypted` and `private_key_fingerprint` from `google_service_account_key` [MM#2680](https://github.com/GoogleCloudPlatform/magic-modules/pull/2680)
+* monitoring: permanently removed `is_internal` and `internal_checkers` fields from `google_monitoring_uptime_check_config`. [MM#2436](https://github.com/GoogleCloudPlatform/magic-modules/pull/2436)
+* monitoring: permanently removed `labels` field from `google_monitoring_alert_policy`. [MM#2436](https://github.com/GoogleCloudPlatform/magic-modules/pull/2436)
+* monitoring: Made `content` required on `google_monitoring_uptime_check_config.content_matchers`. [MM#2608](https://github.com/GoogleCloudPlatform/magic-modules/pull/2608)
+* monitoring: Made exactly one of `http_check` or `tcp_check` is now required on `google_monitoring_uptime_check_config`. [MM#2665](https://github.com/GoogleCloudPlatform/magic-modules/pull/2665)
+* monitoring: Made at least one of `auth_info`, `port`, `headers`, `path`, `use_ssl`, or `mask_headers` is now required on `google_monitoring_uptime_check_config.http_check` [MM#2665](https://github.com/GoogleCloudPlatform/magic-modules/pull/2665)
+* provider: added the `https://www.googleapis.com/auth/userinfo.email` scope to the provider by default [MM#2473](https://github.com/GoogleCloudPlatform/magic-modules/pull/2473)
+* pubsub: removed ability to set a full path for `google_pubsub_subscription.name` (e.g. `projects/my-project/subscriptions/my-subscription`). `name` now must be the shortname (e.g. `my-subscription`) [MM#2561](https://github.com/GoogleCloudPlatform/magic-modules/pull/2561)
+* resourcemanager: converted `google_folder_organization_policy` and `google_organization_policy` import format to use slashes instead of colons. [MM#2638](https://github.com/GoogleCloudPlatform/magic-modules/pull/2638)
+* serviceusage: removed `google_project_services` [MM#2403](https://github.com/GoogleCloudPlatform/magic-modules/pull/2403)
+* serviceusage: stopped accepting `bigquery-json.googleapis.com` in `google_project_service`. Specify `biquery.googleapis.com` instead. [MM#2626](https://github.com/GoogleCloudPlatform/magic-modules/pull/2626)
+* sql: Made `name` and `value` required on `google_sql_database_instance.settings.database_flags`. [MM#2608](https://github.com/GoogleCloudPlatform/magic-modules/pull/2608)
+* sql: Made at least one of `binary_log_enabled`, `enabled`, `start_time`, and `location` required on `google_sql_database_instance.settings.backup_configuration`. [MM#2608](https://github.com/GoogleCloudPlatform/magic-modules/pull/2608)
+* sql: Made at least one of `authorized_networks`, `ipv4_enabled`, `require_ssl`, and `private_network` required on `google_sql_database_instance.settings.ip_configuration`. [MM#2608](https://github.com/GoogleCloudPlatform/magic-modules/pull/2608)
+* sql: Made at least one of `day`, `hour`, and `update_track` required on `google_sql_database_instance.settings.maintenance_window`. [MM#2608](https://github.com/GoogleCloudPlatform/magic-modules/pull/2608)
+* sql: Made at least one of `cert`, `common_name`, `create_time`, `expiration_time`, or `sha1_fingerprint` required on `google_sql_database_instance.settings.server_ca_cert`. [MM#2608](https://github.com/GoogleCloudPlatform/magic-modules/pull/2608)
+* sql: Made at least one of `ca_certificate`, `client_certificate`, `client_key`, `connect_retry_interval`, `dump_file_path`, `failover_target`, `master_heartbeat_period`, `password`, `ssl_cipher`, `username`, and `verify_server_certificate` required on `google_sql_database_instance.settings.replica_configuration`. [MM#2608](https://github.com/GoogleCloudPlatform/magic-modules/pull/2608)
+* sql: Made `value` required on `google_sql_database_instance.settings.ip_configuration.authorized_networks`. [MM#2608](https://github.com/GoogleCloudPlatform/magic-modules/pull/2608)
+* storage: permanently removed `is_live` flag from `google_storage_bucket`. [MM#2436](https://github.com/GoogleCloudPlatform/magic-modules/pull/2436)
+* storage: Made at least one of `main_page_suffix` or `not_found_page` required on `google_storage_bucket.website`. [MM#2608](https://github.com/GoogleCloudPlatform/magic-modules/pull/2608)
+* storage: Made at least one of `min_time_elapsed_since_last_modification`, `max_time_elapsed_since_last_modification`, `include_prefixes`, or `exclude_prefixes` required on `google_storage_transfer_job.transfer_spec.object_conditions`. [MM#2608](https://github.com/GoogleCloudPlatform/magic-modules/pull/2608)
+* storage: Made at least one of `overwrite_objects_already_existing_in_sink`, `delete_objects_unique_in_sink`, and `delete_objects_from_source_after_transfer` required on `google_storage_transfer_job.transfer_spec.transfer_options`. [MM#2608](https://github.com/GoogleCloudPlatform/magic-modules/pull/2608)
+* storage: Made at least one of `gcs_data_source`, `aws_s3_data_source`, or `http_data_source` required on `google_storage_transfer_job.transfer_options`. [MM#2608](https://github.com/GoogleCloudPlatform/magic-modules/pull/2608)
+
+## 2.20.2 (February 03, 2020)
+
+BUG FIXES:
+* bigtable: fixed diff for DEVELOPMENT instances that are returned from the API with one node ([#1704](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1704))
+
+## 2.20.1 (December 13, 2019)
+
+**Note**: 2.20.1 is a backport release. The changes in it are unavailable in 3.0.0-beta.1 through 3.2.0.
+
+BUG FIXES:
+* iam: Fixed a bug that causes badRequest errors on IAM resources due to deleted serviceAccount principals ([#1501](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1501))
+
+## 2.20.0 (November 13, 2019)
+
+BREAKING CHANGES:
+* `google_compute_instance_iam_*` resources now support IAM Conditions. If any conditions had been created out of band before this release, take extra care to ensure they are present in your Terraform config so the provider doesn't try to create new bindings with no conditions. Terraform will show a diff that it is adding the condition to the resource, which is safe to apply. ([#1360](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1360))
+* `google_iap_app_engine_version_iam_*` resources now support IAM Conditions. If any conditions had been created out of band before this release, take extra care to ensure they are present in your Terraform config so the provider doesn't try to create new bindings with no conditions. Terraform will show a diff that it is adding the condition to the resource, which is safe to apply. ([#1352](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1352))
+* `google_iap_web_backend_service_iam_*` resources now support IAM Conditions. If any conditions had been created out of band before this release, take extra care to ensure they are present in your Terraform config so the provider doesn't try to create new bindings with no conditions. Terraform will show a diff that it is adding the condition to the resource, which is safe to apply. ([#1352](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1352))
+* `google_project_iam_*` resources now support IAM Conditions. If any conditions had been created out of band before this release, take extra care to ensure they are present in your Terraform config so the provider doesn't try to create new bindings with no conditions. Terraform will show a diff that it is adding the condition to the resource, which is safe to apply. ([#1321](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1321))
+* compute: the `backend.group` field is now required for `google_compute_region_backend_service`. Configurations without this would not have worked, so this isn't considered an API break. ([#1311](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1311))
+
+FEATURES:
+* **New Resource:** `google_data_fusion_instance` ([#1339](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1339))
+
+IMPROVEMENTS:
+* bigtable: added import support to `google_bigtable_table` ([#1350](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1350))
+* compute: `load_balancing_scheme` for `google_compute_forwarding_rule` now accepts `INTERNAL_MANAGED` as a value. ([#1311](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1311))
+* compute: added support for L7 ILB to google_compute_region_backend_service. ([#1311](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1311))
+* compute: extended backend configuration options for `google_compute_region_backend_service` to include `backend.balancing_mode`, `backend.capacity_scaler`, `backend.max_connections`, `backend.max_connections_per_endpoint`, `backend.max_connections_per_instance`, `backend.max_rate`, `backend.max_rate_per_endpoint`, `backend.max_rate_per_instance`, and `backend.max_utilization` ([#1311](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1311))
+* iam: changed the `id` for many IAM resources to the reference resource long name. Updated `instance_name` on `google_compute_instance_iam` and `subnetwork` on `google_compute_subnetwork` to their respective long names in state ([#1360](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1360))
+* iap: added support for IAM Conditions to the `google_compute_instance_iam_*` resources ([#1360](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1360))
+* iap: added support for IAM Conditions to the `google_iap_app_engine_version_iam_*` resources ([#1352](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1352))
+* iap: added support for IAM Conditions to the `google_iap_web_backend_service_iam_*` resources ([#1352](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1352))
+* logging: added `display_name` field to `google_logging_metric` resource ([#1344](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1344))
+* monitoring: Added `validate_ssl` to `google_monitoring_uptime_check_config` ([#1243](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1243))
+* project: added batching functionality to `google_project_service` read calls, so fewer API requests are made ([#1354](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1354))
+* resourcemanager: added support for IAM Conditions to the `google_project_iam_*` resources ([#1321](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1321))
+* storage: added notification_id field to `google_storage_notification` ([#1368](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1368))
+
+BUG FIXES:
+* compute: fixed issue where setting a 0 for `min_replicas` in `google_compute_autoscaler` and `google_compute_region_autoscaler` would set that field to its server-side default instead of 0. ([#1351](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1351))
+* dns: fixed crash when `network` blocks are defined without `network_url`s ([#1345](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1345))
+* google: used the correct update method for google_service_account.description ([#1362](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1362))
+* logging: fixed issue where logging exclusion resources silently failed when being mutated in parallel ([#1329](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1329))
+
+## 2.19.0 (November 05, 2019)
+
+DEPRECATIONS:
+* `compute`: deprecated `enable_flow_logs` on `google_compute_subnetwork`. The presence of the `log_config` block signals that flow logs are enabled for a subnetwork ([#1320](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1320))
+* `compute`: deprecated `instance_template` for `google_compute_instance_group_manager` and `google_compute_region_instance_group_manager` . Use `version.instance_template` instead. ([#1309](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1309))
+* `compute`: deprecated `update_strategy` for `google_compute_instance_group_manager` . Use `update_policy` instead. ([#1309](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1309))
+* `container`: deprecated `google_container_cluster` `ip_allocation_policy.create_subnetwork`, `ip_allocation_policy.subnetwork_name`, `ip_allocation_policy.node_ipv4_cidr_block`. Define an explicit `google_compute_subnetwork` and use `subnetwork` instead. ([#1312](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1312))
+* `container`: deprecated `google_container_cluster` `ip_allocation_policy.use_ip_aliases`. If it's set to true, remove it from your config. If false, remove `ip_allocation_policy` as a whole. ([#1312](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1312))
+* `iam`: Deprecated `pgp_key` on `google_service_account_key` resource. See https://www.terraform.io/docs/extend/best-practices/sensitive-state.html for more information. ([#1326](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1326))
+
+BREAKING CHANGES:
+* `google_service_account_iam_*` resources now support IAM Conditions. If any conditions had been created out of band before this release, take extra care to ensure they are present in your Terraform config so the provider doesn't try to create new bindings with no conditions. Terraform will show a diff that it is adding the condition to the resource, which is safe to apply. ([#1188](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1188))
+
+FEATURES:
+* `compute`: added `google_compute_router` datasource ([#1233](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1233))
+
+IMPROVEMENTS:
+* `cloudbuild`: added ability to specify `name` for `cloud_build_trigger` to avoid name collisions when creating multiple triggers at once. ([#1277](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1277))
+* `compute`: added support for multiple versions of `instance_template` and granular control of the update policies for `google_compute_instance_group_manager` and `google_compute_region_instance_group_manager`. ([#1309](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1309))
+* `container`: added `taint` field in GKE resources to the GA `google` provider ([#1296](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1296))
+* `container`: fix a diff created in the cloud console when `MaintenanceExclusions` are added. ([#1310](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1310))
+* `container`: added `maintenance_policy.recurring_window` support to `google_container_cluster`, significantly increasing expressive range. ([#1292](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1292))
+* `compute`: added `google_compute_instance` support for display device (Virtual Displays) ([#1313](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1313))
+* `iam`: added support for IAM Conditions to the `google_service_account_iam_*` resources (beta provider only) ([#1188](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1188))
+* `iam`: added `description` to `google_service_account`. ([#1291](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1291))
+
+BUG FIXES:
+* `appengine`: Resolved permadiff in `google_app_engine_domain_mapping.ssl_settings.certificate_id`. ([#1303](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1303))
+* `storage`: Fixed error in `google_storage_bucket` where locked retention policies would cause a bucket to report failure on all updates (even though updates were applied correctly). ([#1307](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1307))
+* `container`: Fixed nil reference to ShieldedNodes. ([#1314](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1314))
+
+## 2.18.1 (October 25, 2019)
+
+BUGS:
+* `resourcemanager`: fixed deleting the default network in `google_project` ([#1299](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1299))
+
+## 2.18.0 (October 23, 2019)
+
+KNOWN ISSUES:
+* `resourcemanager`: `google_project` `auto_create_network` is failing to delete networks when set to `false`. Use an earlier provider version to resolve.
+
+DEPRECATIONS:
+* `container`: The `kubernetes_dashboard` addon is deprecated for `google_container_cluster`. ([#1247](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1247))
+
+FEATURES:
+* **New Resource:** `google_app_engine_application_url_dispatch_rules` ([#1262](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1262))
+
+IMPROVEMENTS:
+* `all`: increased support for custom endpoints across the provider ([#1244](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1244))
+* `appengine`: added the ability to delete the parent service of `google_app_engine_standard_app_version` ([#1222](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1222))
+* `container`: Added `shielded_instance_config` attribute to `node_config` ([#1198](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1198))
+* `container`: Allow the configuration of release channels when creating GKE clusters. ([#1260](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1260))
+* `dataflow`: added `ip_configuration` option to `job`. ([#1284](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1284))
+* `pubsub`: Added field `oidc_token` to `google_pubsub_subscription` ([#1265](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1265))
+* `sql`: added `location` field to `backup_configuration` block in `google_sql_database_instance` ([#1282](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1282))
+
+BUGS:
+* `all`: fixed the custom endpoint version used by older legacy REST clients ([#1274](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1274))
+* `bigquery`: fix issue with `google_bigquery_data_transfer_config` `params` crashing on boolean values ([#1263](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1263))
+* `cloudrun`: fixed the apiVersion sent in `google_cloud_run_domain_mapping` requests ([#1251](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1251))
+* `compute`: added support for updating multiple fields at once to `google_compute_subnetwork` ([#1269](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1269))
+* `compute`: fixed diffs in `google_compute_instance_group`'s `network` field when equivalent values were specified ([#1286](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1286))
+* `compute`: fixed issues updating `google_compute_instance_group`'s `instances` field when config/state values didn't match ([#1286](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1286))
+* `iam`: fixed bug where IAM binding wouldn't replace members if they were deleted outside of terraform. ([#1272](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1272))
+* `pubsub`: Fixed permadiff due to interaction of organization policies and `google_pubsub_topic`. ([#1281](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1281))
+
+## 2.17.0 (October 08, 2019)
+
+NOTES:
+* An [upgrade guide](https://www.terraform.io/docs/providers/google/version_3_upgrade.html) has been started for the upcoming 3.0.0 release. ([#1220](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1220))
+* `google_project_services` users of provider versions prior to `2.17.0` should update, as past versions of the provider will not handle an upcoming rename of `bigquery-json.googleapis.com` to `bigquery.googleapis.com` well. See https://github.com/terraform-providers/terraform-provider-google/issues/4590 for details. ([#1234](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1234))
+
+DEPRECATIONS:
+* `google_project_services` ([#1218](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1218))
+
+FEATURES:
+* **New Resource:** `google_bigtable_gc_policy` ([#1213](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1213))
+* **New Resource:** `google_binary_authorization_attestor_iam_policy` ([#1166](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1166))
+* **New Resource:** `google_compute_region_ssl_certificate` ([#1183](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1183))
+* **New Resource:** `google_compute_region_target_http_proxy` ([#1183](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1183))
+* **New Resource:** `google_compute_region_target_https_proxy` ([#1183](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1183))
+* **New Resource:** `google_iap_app_engine_service_iam_*` ([#1205](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1205))
+* **New Resource:** `google_iap_app_engine_version_iam_*` ([#1205](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1205))
+* **New Resource:** `google_storage_bucket_access_control` ([#1177](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1177))
+
+IMPROVEMENTS:
+* all: made `monitoring-read` scope available. ([#1208](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1208))
+* bigquery: added support for default customer-managed encryption keys (CMEK) for BigQuery datasets. ([#1081](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1081))
+* bigtable: import support added to `google_bigtable_instance` ([#1224](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1224))
+* cloudbuild: added `github` field in `google_cloudbuild_trigger`. ([#1229](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1229))
+* container: moved `default_max_pods_per_node` to ga. ([#1235](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1235))
+* containeranalysis: moved `google_containeranalysis_note` to ga ([#1166](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1166))
+* projectservice: added mitigations for bigquery-json to bigquery rename in project service resources. ([#1234](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1234))
+
+BUGS:
+* cloudscheduler: Fixed permadiff for `app_engine_http_target.app_engine_routing` on `google_cloud_scheduler_job` ([#1131](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1131))
+* compute: Added ability to set `quic_override` on `google_compute_https_target_proxy` to empty. ([#1219](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1219))
+* compute: Fix bug where changes to `region_backend_service.backends.failover` was not detected. ([#1236](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1236))
+* compute: fixed `google_compute_router_peer` to default if empty for `advertise_mode` ([#1163](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1163))
+* compute: fixed perma-diff in `google_compute_router_nat` when referencing subnetwork via `name` ([#1194](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1194))
+* compute: fixed perma-diff in `google_compute_router_nat` when referencing subnetwork via `name` ([#1194](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1194))
+* container: fixed an overly-aggressive validation for `master_ipv4_cidr_block` in `google_container_cluster` ([#1211](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1211))
+
 ## 2.16.0 (September 24, 2019)
+
+KNOWN ISSUES:
+* Based on an upstream change, users of the `google_project_services` resource may have seen the `bigquery.googleapis.com` service added and the `bigquery-json.googleapis.com` service removed, causing a diff. This was later reverted, causing another diff. This issue is being tracked as https://github.com/terraform-providers/terraform-provider-google/issues/4590.
 
 FEATURES:
 * **New Resource**: `google_compute_region_url_map` is now available. To support this, the `protocol` for `google_compute_region_backend_service` can now be set to `HTTP`, `HTTPS`, `HTTP2`, and `SSL`. ([#1161](https://github.com/terraform-providers/terraform-provider-google-beta/issues/1161))
@@ -84,6 +676,9 @@ BUG FIXES:
 * sql: Added back a missing import format for `google_sql_database`. ([#1061](https://github.com/terraform-providers/terraform-provider-google-beta/issues/1061))
 
 ## 2.13.0 (August 15, 2019)
+
+KNOWN ISSUES:
+* `bigtable`: `google_bigtable_instance` may cause a panic on Terraform `0.11`. This was resolved in `2.17.0`.
 
 FEATURES:
 * **New Resource**: added the `google_vpc_access_connector` resource and the `vpc_connector` option on the `google_cloudfunctions_function` resource. ([#1004](https://github.com/terraform-providers/terraform-provider-google-beta/issues/1004))

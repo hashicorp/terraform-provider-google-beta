@@ -46,13 +46,13 @@ func TestAccSecurityScannerScanConfig_scanConfigBasicExample(t *testing.T) {
 func testAccSecurityScannerScanConfig_scanConfigBasicExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_compute_address" "scanner_static_ip" {
-  provider = "google-beta"
-  name     = "scan-basic-static-ip%{random_suffix}"
+  provider = google-beta
+  name     = "tf-test-scan-basic-static-ip%{random_suffix}"
 }
 
 resource "google_security_scanner_scan_config" "scan-config" {
-  provider         = "google-beta"
-  display_name     = "terraform-scan-config%{random_suffix}"
+  provider         = google-beta
+  display_name     = "tf-test-terraform-scan-config%{random_suffix}"
   starting_urls    = ["http://${google_compute_address.scanner_static_ip.address}"]
   target_platforms = ["COMPUTE"]
 }

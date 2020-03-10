@@ -46,31 +46,31 @@ func TestAccComputeRegionTargetHttpsProxy_regionTargetHttpsProxyBasicExample(t *
 func testAccComputeRegionTargetHttpsProxy_regionTargetHttpsProxyBasicExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_compute_region_target_https_proxy" "default" {
-  provider = "google-beta"
+  provider = google-beta
 
   region           = "us-central1"
-  name             = "test-proxy%{random_suffix}"
-  url_map          = "${google_compute_region_url_map.default.self_link}"
-  ssl_certificates = ["${google_compute_region_ssl_certificate.default.self_link}"]
+  name             = "tf-test-test-proxy%{random_suffix}"
+  url_map          = google_compute_region_url_map.default.self_link
+  ssl_certificates = [google_compute_region_ssl_certificate.default.self_link]
 }
 
 resource "google_compute_region_ssl_certificate" "default" {
-  provider = "google-beta"
+  provider = google-beta
 
   region      = "us-central1"
-  name        = "my-certificate%{random_suffix}"
-  private_key = "${file("test-fixtures/ssl_cert/test.key")}"
-  certificate = "${file("test-fixtures/ssl_cert/test.crt")}"
+  name        = "tf-test-my-certificate%{random_suffix}"
+  private_key = file("test-fixtures/ssl_cert/test.key")
+  certificate = file("test-fixtures/ssl_cert/test.crt")
 }
 
 resource "google_compute_region_url_map" "default" {
-  provider = "google-beta"
+  provider = google-beta
 
   region      = "us-central1"
-  name        = "url-map%{random_suffix}"
+  name        = "tf-test-url-map%{random_suffix}"
   description = "a description"
 
-  default_service = "${google_compute_region_backend_service.default.self_link}"
+  default_service = google_compute_region_backend_service.default.self_link
 
   host_rule {
     hosts        = ["mysite.com"]
@@ -79,32 +79,33 @@ resource "google_compute_region_url_map" "default" {
 
   path_matcher {
     name            = "allpaths"
-    default_service = "${google_compute_region_backend_service.default.self_link}"
+    default_service = google_compute_region_backend_service.default.self_link
 
     path_rule {
       paths   = ["/*"]
-      service = "${google_compute_region_backend_service.default.self_link}"
+      service = google_compute_region_backend_service.default.self_link
     }
   }
 }
 
 resource "google_compute_region_backend_service" "default" {
-  provider = "google-beta"
+  provider = google-beta
 
   region      = "us-central1"
-  name        = "backend-service%{random_suffix}"
+  name        = "tf-test-backend-service%{random_suffix}"
   protocol    = "HTTP"
   timeout_sec = 10
 
-  health_checks = ["${google_compute_region_health_check.default.self_link}"]
+  health_checks = [google_compute_region_health_check.default.self_link]
 }
 
 resource "google_compute_region_health_check" "default" {
-  provider = "google-beta"
+  provider = google-beta
 
-  region             = "us-central1"
-  name               = "http-health-check%{random_suffix}"
+  region = "us-central1"
+  name   = "tf-test-http-health-check%{random_suffix}"
   http_health_check {
+    port = 80
   }
 }
 `, context)

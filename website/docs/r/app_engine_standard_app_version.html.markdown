@@ -12,6 +12,7 @@
 #     .github/CONTRIBUTING.md.
 #
 # ----------------------------------------------------------------------------
+subcategory: "App Engine"
 layout: "google"
 page_title: "Google: google_app_engine_standard_app_version"
 sidebar_current: "docs-google-app-engine-standard-app-version"
@@ -41,33 +42,58 @@ To get more information about StandardAppVersion, see:
 
 
 ```hcl
-resource "google_storage_bucket" "bucket" {
-	name = "appengine-static-content"
-}
+resource "google_app_engine_standard_app_version" "myapp_v1" {
+  version_id = "v1"
+  service    = "myapp"
+  runtime    = "nodejs10"
 
-resource "google_storage_bucket_object" "object" {
-	name   = "hello-world.zip"
-	bucket = "${google_storage_bucket.bucket.name}"
-	source = "./test-fixtures/appengine/hello-world.zip"
-}
-
-resource "google_app_engine_standard_app_version" "version_id" {
-  version_id = "v2"
-  service = "default"
-  runtime = "nodejs10"
-  noop_on_destroy = true
   entrypoint {
     shell = "node ./app.js"
   }
+
   deployment {
     zip {
-      source_url = "https://storage.googleapis.com/${google_storage_bucket.bucket.name}/hello-world.zip"
-    }  
+      source_url = "https://storage.googleapis.com/${google_storage_bucket.bucket.name}/${google_storage_bucket_object.object.name}"
+    }
   }
+
   env_variables = {
     port = "8080"
-  } 
+  }
 
+  delete_service_on_destroy = true
+}
+
+resource "google_app_engine_standard_app_version" "myapp_v2" {
+  version_id = "v2"
+  service    = "myapp"
+  runtime    = "nodejs10"
+
+  entrypoint {
+    shell = "node ./app.js"
+  }
+
+  deployment {
+    zip {
+      source_url = "https://storage.googleapis.com/${google_storage_bucket.bucket.name}/${google_storage_bucket_object.object.name}"
+    }
+  }
+
+  env_variables = {
+    port = "8080"
+  }
+
+  noop_on_destroy = true
+}
+
+resource "google_storage_bucket" "bucket" {
+  name = "appengine-static-content"
+}
+
+resource "google_storage_bucket_object" "object" {
+  name   = "hello-world.zip"
+  bucket = google_storage_bucket.bucket.name
+  source = "./test-fixtures/appengine/hello-world.zip"
 }
 ```
 
@@ -118,6 +144,12 @@ The following arguments are supported:
   (Optional)
   The entrypoint for the application.  Structure is documented below.
 
+* `instance_class` -
+  (Optional)
+  Instance class that is used to run this version. Valid values are
+  AutomaticScaling F1, F2, F4, F4_1G
+  (Only AutomaticScaling is supported at the moment)
+
 * `service` -
   (Optional)
   AppEngine service resource
@@ -126,6 +158,7 @@ The following arguments are supported:
     If it is not provided, the provider project is used.
 
 * `noop_on_destroy` - (Optional) If set to `true`, the application version will not be deleted.
+* `delete_service_on_destroy` - (Optional) If set to `true`, the service will be deleted if it is the last version.    
 
 The `handlers` block supports:
 
@@ -163,7 +196,7 @@ The `handlers` block supports:
 The `script` block supports:
 
 * `script_path` -
-  (Optional)
+  (Required)
   Path to the script from the application root directory.
 
 The `static_files` block supports:
@@ -224,7 +257,7 @@ The `deployment` block supports:
 The `zip` block supports:
 
 * `source_url` -
-  (Optional)
+  (Required)
   Source URL
 
 * `files_count` -
@@ -240,19 +273,20 @@ The `files` block supports:
   SHA1 checksum of the file
 
 * `source_url` -
-  (Optional)
+  (Required)
   Source URL
 
 The `entrypoint` block supports:
 
 * `shell` -
-  (Optional)
+  (Required)
   The format should be a shell command that can be fed to bash -c.
 
 ## Attributes Reference
 
 In addition to the arguments listed above, the following computed attributes are exported:
 
+* `id` - an identifier for the resource with format `apps/{{project}}/services/{{service}}/versions/{{version_id}}`
 
 * `name` -
   Full path to the Version resource in the API. Example, "v1".
@@ -282,4 +316,4 @@ as an argument so that Terraform uses the correct provider to import your resour
 
 ## User Project Overrides
 
-This resource supports [User Project Overrides](https://www.terraform.io/docs/providers/google/provider_reference.html#user_project_override).
+This resource supports [User Project Overrides](https://www.terraform.io/docs/providers/google/guides/provider_reference.html#user_project_override).

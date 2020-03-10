@@ -62,6 +62,40 @@ func TestAccKmsCryptoKeyIamBinding(t *testing.T) {
 	})
 }
 
+func TestAccKmsCryptoKeyIamBinding_withCondition(t *testing.T) {
+	t.Parallel()
+
+	orgId := getTestOrgFromEnv(t)
+	projectId := acctest.RandomWithPrefix("tf-test")
+	billingAccount := getTestBillingAccountFromEnv(t)
+	account := acctest.RandomWithPrefix("tf-test")
+	roleId := "roles/cloudkms.cryptoKeyDecrypter"
+	keyRingName := fmt.Sprintf("tf-test-%s", acctest.RandString(10))
+	keyRingId := &kmsKeyRingId{
+		Project:  projectId,
+		Location: DEFAULT_KMS_TEST_LOCATION,
+		Name:     keyRingName,
+	}
+	cryptoKeyName := fmt.Sprintf("tf-test-%s", acctest.RandString(10))
+	conditionTitle := "expires_after_2019_12_31"
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:  func() { testAccPreCheck(t) },
+		Providers: testAccProviders,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccKmsCryptoKeyIamBinding_withCondition(projectId, orgId, billingAccount, account, keyRingName, cryptoKeyName, roleId, conditionTitle),
+			},
+			{
+				ResourceName:      "google_kms_crypto_key_iam_binding.foo",
+				ImportStateId:     fmt.Sprintf("%s/%s %s %s", keyRingId.terraformId(), cryptoKeyName, roleId, conditionTitle),
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
 func TestAccKmsCryptoKeyIamMember(t *testing.T) {
 	t.Parallel()
 
@@ -92,6 +126,112 @@ func TestAccKmsCryptoKeyIamMember(t *testing.T) {
 			{
 				ResourceName:      "google_kms_crypto_key_iam_member.foo",
 				ImportStateId:     fmt.Sprintf("%s/%s %s serviceAccount:%s@%s.iam.gserviceaccount.com", keyRingId.terraformId(), cryptoKeyName, roleId, account, projectId),
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
+func TestAccKmsCryptoKeyIamMember_withCondition(t *testing.T) {
+	t.Parallel()
+
+	orgId := getTestOrgFromEnv(t)
+	projectId := acctest.RandomWithPrefix("tf-test")
+	billingAccount := getTestBillingAccountFromEnv(t)
+	account := acctest.RandomWithPrefix("tf-test")
+	roleId := "roles/cloudkms.cryptoKeyEncrypter"
+	keyRingName := fmt.Sprintf("tf-test-%s", acctest.RandString(10))
+	keyRingId := &kmsKeyRingId{
+		Project:  projectId,
+		Location: DEFAULT_KMS_TEST_LOCATION,
+		Name:     keyRingName,
+	}
+	cryptoKeyName := fmt.Sprintf("tf-test-%s", acctest.RandString(10))
+	conditionTitle := "expires_after_2019_12_31"
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:  func() { testAccPreCheck(t) },
+		Providers: testAccProviders,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccKmsCryptoKeyIamMember_withCondition(projectId, orgId, billingAccount, account, keyRingName, cryptoKeyName, roleId, conditionTitle),
+			},
+			{
+				ResourceName:      "google_kms_crypto_key_iam_member.foo",
+				ImportStateId:     fmt.Sprintf("%s/%s %s serviceAccount:%s@%s.iam.gserviceaccount.com %s", keyRingId.terraformId(), cryptoKeyName, roleId, account, projectId, conditionTitle),
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
+func TestAccKmsCryptoKeyIamPolicy(t *testing.T) {
+	t.Parallel()
+
+	orgId := getTestOrgFromEnv(t)
+	projectId := acctest.RandomWithPrefix("tf-test")
+	billingAccount := getTestBillingAccountFromEnv(t)
+	account := acctest.RandomWithPrefix("tf-test")
+	roleId := "roles/cloudkms.cryptoKeyEncrypter"
+	keyRingName := fmt.Sprintf("tf-test-%s", acctest.RandString(10))
+
+	keyRingId := &kmsKeyRingId{
+		Project:  projectId,
+		Location: DEFAULT_KMS_TEST_LOCATION,
+		Name:     keyRingName,
+	}
+	cryptoKeyName := fmt.Sprintf("tf-test-%s", acctest.RandString(10))
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:  func() { testAccPreCheck(t) },
+		Providers: testAccProviders,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccKmsCryptoKeyIamPolicy_basic(projectId, orgId, billingAccount, account, keyRingName, cryptoKeyName, roleId),
+				Check: testAccCheckGoogleCryptoKmsKeyIam("foo", roleId, []string{
+					fmt.Sprintf("serviceAccount:%s@%s.iam.gserviceaccount.com", account, projectId),
+				}),
+			},
+			{
+				ResourceName:      "google_kms_crypto_key_iam_policy.foo",
+				ImportStateId:     fmt.Sprintf("%s/%s", keyRingId.terraformId(), cryptoKeyName),
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
+func TestAccKmsCryptoKeyIamPolicy_withCondition(t *testing.T) {
+	t.Parallel()
+
+	orgId := getTestOrgFromEnv(t)
+	projectId := acctest.RandomWithPrefix("tf-test")
+	billingAccount := getTestBillingAccountFromEnv(t)
+	account := acctest.RandomWithPrefix("tf-test")
+	roleId := "roles/cloudkms.cryptoKeyEncrypter"
+	keyRingName := fmt.Sprintf("tf-test-%s", acctest.RandString(10))
+
+	keyRingId := &kmsKeyRingId{
+		Project:  projectId,
+		Location: DEFAULT_KMS_TEST_LOCATION,
+		Name:     keyRingName,
+	}
+	cryptoKeyName := fmt.Sprintf("tf-test-%s", acctest.RandString(10))
+	conditionTitle := "expires_after_2019_12_31"
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:  func() { testAccPreCheck(t) },
+		Providers: testAccProviders,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccKmsCryptoKeyIamPolicy_withCondition(projectId, orgId, billingAccount, account, keyRingName, cryptoKeyName, roleId, conditionTitle),
+			},
+			{
+				ResourceName:      "google_kms_crypto_key_iam_policy.foo",
+				ImportStateId:     fmt.Sprintf("%s/%s", keyRingId.terraformId(), cryptoKeyName),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
@@ -170,6 +310,44 @@ func testAccCheckGoogleKmsCryptoKeyIamMemberExists(n, role, member string) resou
 	}
 }
 
+func testAccCheckGoogleCryptoKmsKeyIam(n, role string, members []string) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		rs, ok := s.RootModule().Resources["google_kms_crypto_key_iam_policy."+n]
+		if !ok {
+			return fmt.Errorf("IAM policy resource not found")
+		}
+
+		config := testAccProvider.Meta().(*Config)
+		cryptoKeyId, err := parseKmsCryptoKeyId(rs.Primary.Attributes["crypto_key_id"], config)
+
+		if err != nil {
+			return err
+		}
+
+		p, err := config.clientKms.Projects.Locations.KeyRings.GetIamPolicy(cryptoKeyId.cryptoKeyId()).Do()
+		if err != nil {
+			return err
+		}
+
+		for _, binding := range p.Bindings {
+			if binding.Role == role {
+				sort.Strings(members)
+				sort.Strings(binding.Members)
+
+				if reflect.DeepEqual(members, binding.Members) {
+					return nil
+				}
+
+				return fmt.Errorf("Binding found but expected members is %v, got %v", members, binding.Members)
+			} else {
+				return fmt.Errorf("Binding found but not expected for role: %v", binding.Role)
+			}
+		}
+
+		return fmt.Errorf("No binding for role %q", role)
+	}
+}
+
 // We are using a custom role since iam_binding is authoritative on the member list and
 // we want to avoid removing members from an existing role to prevent unwanted side effects.
 func testAccKmsCryptoKeyIamBinding_basic(projectId, orgId, billingAccount, account, keyRingName, cryptoKeyName, roleId string) string {
@@ -181,35 +359,35 @@ resource "google_project" "test_project" {
   billing_account = "%s"
 }
 
-resource "google_project_services" "test_project" {
-  project = "${google_project.test_project.project_id}"
+resource "google_project_service" "kms" {
+  project = google_project.test_project.project_id
+  service = "cloudkms.googleapis.com"
+}
 
-  services = [
-     "cloudkms.googleapis.com",
-     "iam.googleapis.com",
-     "iamcredentials.googleapis.com",
-  ]
+resource "google_project_service" "iam" {
+  project = google_project_service.kms.project
+  service = "iam.googleapis.com"
 }
 
 resource "google_service_account" "test_account" {
-  project      = "${google_project_services.test_project.project}"
+  project      = google_project_service.iam.project
   account_id   = "%s"
   display_name = "Kms Crypto Key Iam Testing Account"
 }
 
 resource "google_kms_key_ring" "key_ring" {
-  project      = "${google_project_services.test_project.project}"
+  project  = google_project_service.iam.project
   location = "us-central1"
   name     = "%s"
 }
 
 resource "google_kms_crypto_key" "crypto_key" {
-  key_ring = "${google_kms_key_ring.key_ring.id}"
+  key_ring = google_kms_key_ring.key_ring.id
   name     = "%s"
 }
 
 resource "google_kms_crypto_key_iam_binding" "foo" {
-  crypto_key_id = "${google_kms_crypto_key.crypto_key.id}"
+  crypto_key_id = google_kms_crypto_key.crypto_key.id
   role          = "%s"
   members       = ["serviceAccount:${google_service_account.test_account.email}"]
 }
@@ -225,48 +403,97 @@ resource "google_project" "test_project" {
   billing_account = "%s"
 }
 
-resource "google_project_services" "test_project" {
-  project = "${google_project.test_project.project_id}"
+resource "google_project_service" "kms" {
+  project = google_project.test_project.project_id
+  service = "cloudkms.googleapis.com"
+}
 
-  services = [
-     "cloudkms.googleapis.com",
-     "iam.googleapis.com",
-     "iamcredentials.googleapis.com",
-  ]
+resource "google_project_service" "iam" {
+  project = google_project_service.kms.project
+  service = "iam.googleapis.com"
 }
 
 resource "google_service_account" "test_account" {
-  project      = "${google_project_services.test_project.project}"
+  project      = google_project_service.iam.project
   account_id   = "%s"
   display_name = "Kms Crypto Key Iam Testing Account"
 }
 
 resource "google_service_account" "test_account_2" {
-  project      = "${google_project_services.test_project.project}"
+  project      = google_project_service.iam.project
   account_id   = "%s-2"
   display_name = "Kms Crypto Key Iam Testing Account"
 }
 
 resource "google_kms_key_ring" "key_ring" {
-  project  = "${google_project_services.test_project.project}"
+  project  = google_project_service.iam.project
   location = "us-central1"
   name     = "%s"
 }
 
 resource "google_kms_crypto_key" "crypto_key" {
-  key_ring = "${google_kms_key_ring.key_ring.id}"
+  key_ring = google_kms_key_ring.key_ring.id
   name     = "%s"
 }
 
 resource "google_kms_crypto_key_iam_binding" "foo" {
-  crypto_key_id = "${google_kms_crypto_key.crypto_key.id}"
+  crypto_key_id = google_kms_crypto_key.crypto_key.id
   role          = "%s"
-  members       = [
+  members = [
     "serviceAccount:${google_service_account.test_account.email}",
-    "serviceAccount:${google_service_account.test_account_2.email}"
+    "serviceAccount:${google_service_account.test_account_2.email}",
   ]
 }
 `, projectId, orgId, billingAccount, account, account, keyRingName, cryptoKeyName, roleId)
+}
+
+func testAccKmsCryptoKeyIamBinding_withCondition(projectId, orgId, billingAccount, account, keyRingName, cryptoKeyName, roleId, conditionTitle string) string {
+	return fmt.Sprintf(`
+resource "google_project" "test_project" {
+  name            = "Test project"
+  project_id      = "%s"
+  org_id          = "%s"
+  billing_account = "%s"
+}
+
+resource "google_project_service" "kms" {
+  project = google_project.test_project.project_id
+  service = "cloudkms.googleapis.com"
+}
+
+resource "google_project_service" "iam" {
+  project = google_project_service.kms.project
+  service = "iam.googleapis.com"
+}
+
+resource "google_service_account" "test_account" {
+  project      = google_project_service.iam.project
+  account_id   = "%s"
+  display_name = "Kms Crypto Key Iam Testing Account"
+}
+
+resource "google_kms_key_ring" "key_ring" {
+  project  = google_project_service.iam.project
+  location = "us-central1"
+  name     = "%s"
+}
+
+resource "google_kms_crypto_key" "crypto_key" {
+  key_ring = google_kms_key_ring.key_ring.id
+  name     = "%s"
+}
+
+resource "google_kms_crypto_key_iam_binding" "foo" {
+  crypto_key_id = google_kms_crypto_key.crypto_key.id
+  role          = "%s"
+  members       = ["serviceAccount:${google_service_account.test_account.email}"]
+  condition {
+    title       = "%s"
+    description = "Expiring at midnight of 2019-12-31"
+    expression  = "request.time < timestamp(\"2020-01-01T00:00:00Z\")"
+  }
+}
+`, projectId, orgId, billingAccount, account, keyRingName, cryptoKeyName, roleId, conditionTitle)
 }
 
 func testAccKmsCryptoKeyIamMember_basic(projectId, orgId, billingAccount, account, keyRingName, cryptoKeyName, roleId string) string {
@@ -278,36 +505,191 @@ resource "google_project" "test_project" {
   billing_account = "%s"
 }
 
-resource "google_project_services" "test_project" {
-  project = "${google_project.test_project.project_id}"
+resource "google_project_service" "kms" {
+  project = google_project.test_project.project_id
+  service = "cloudkms.googleapis.com"
+}
 
-  services = [
-     "cloudkms.googleapis.com",
-     "iam.googleapis.com",
-     "iamcredentials.googleapis.com",
-  ]
+resource "google_project_service" "iam" {
+  project = google_project_service.kms.project
+  service = "iam.googleapis.com"
 }
 
 resource "google_service_account" "test_account" {
-  project      = "${google_project_services.test_project.project}"
+  project      = google_project_service.iam.project
   account_id   = "%s"
   display_name = "Kms Crypto Key Iam Testing Account"
 }
 
 resource "google_kms_key_ring" "key_ring" {
-  project  = "${google_project_services.test_project.project}"
+  project  = google_project_service.iam.project
   location = "us-central1"
   name     = "%s"
 }
+
 resource "google_kms_crypto_key" "crypto_key" {
-  key_ring = "${google_kms_key_ring.key_ring.id}"
+  key_ring = google_kms_key_ring.key_ring.id
   name     = "%s"
 }
 
 resource "google_kms_crypto_key_iam_member" "foo" {
-  crypto_key_id = "${google_kms_crypto_key.crypto_key.id}"
+  crypto_key_id = google_kms_crypto_key.crypto_key.id
   role          = "%s"
   member        = "serviceAccount:${google_service_account.test_account.email}"
 }
 `, projectId, orgId, billingAccount, account, keyRingName, cryptoKeyName, roleId)
+}
+
+func testAccKmsCryptoKeyIamMember_withCondition(projectId, orgId, billingAccount, account, keyRingName, cryptoKeyName, roleId, conditionTitle string) string {
+	return fmt.Sprintf(`
+resource "google_project" "test_project" {
+  name            = "Test project"
+  project_id      = "%s"
+  org_id          = "%s"
+  billing_account = "%s"
+}
+
+resource "google_project_service" "kms" {
+  project = google_project.test_project.project_id
+  service = "cloudkms.googleapis.com"
+}
+
+resource "google_project_service" "iam" {
+  project = google_project_service.kms.project
+  service = "iam.googleapis.com"
+}
+
+resource "google_service_account" "test_account" {
+  project      = google_project_service.iam.project
+  account_id   = "%s"
+  display_name = "Kms Crypto Key Iam Testing Account"
+}
+
+resource "google_kms_key_ring" "key_ring" {
+  project  = google_project_service.iam.project
+  location = "us-central1"
+  name     = "%s"
+}
+
+resource "google_kms_crypto_key" "crypto_key" {
+  key_ring = google_kms_key_ring.key_ring.id
+  name     = "%s"
+}
+
+resource "google_kms_crypto_key_iam_member" "foo" {
+  crypto_key_id = google_kms_crypto_key.crypto_key.id
+  role          = "%s"
+  member        = "serviceAccount:${google_service_account.test_account.email}"
+  condition {
+    title       = "%s"
+    description = "Expiring at midnight of 2019-12-31"
+    expression  = "request.time < timestamp(\"2020-01-01T00:00:00Z\")"
+  }
+}
+`, projectId, orgId, billingAccount, account, keyRingName, cryptoKeyName, roleId, conditionTitle)
+}
+
+func testAccKmsCryptoKeyIamPolicy_basic(projectId, orgId, billingAccount, account, keyRingName, cryptoKeyName, roleId string) string {
+	return fmt.Sprintf(`
+resource "google_project" "test_project" {
+  name            = "Test project"
+  project_id      = "%s"
+  org_id          = "%s"
+  billing_account = "%s"
+}
+
+resource "google_project_service" "kms" {
+  project = google_project.test_project.project_id
+  service = "cloudkms.googleapis.com"
+}
+
+resource "google_project_service" "iam" {
+  project = google_project_service.kms.project
+  service = "iam.googleapis.com"
+}
+
+resource "google_service_account" "test_account" {
+  project      = google_project_service.iam.project
+  account_id   = "%s"
+  display_name = "Kms Crypto Key Iam Testing Account"
+}
+
+resource "google_kms_key_ring" "key_ring" {
+  project  = google_project_service.iam.project
+  location = "us-central1"
+  name     = "%s"
+}
+
+resource "google_kms_crypto_key" "crypto_key" {
+  key_ring = google_kms_key_ring.key_ring.id
+  name     = "%s"
+}
+
+data "google_iam_policy" "foo" {
+  binding {
+    role = "%s"
+    members = ["serviceAccount:${google_service_account.test_account.email}"]
+  }
+}
+
+resource "google_kms_crypto_key_iam_policy" "foo" {
+  crypto_key_id = google_kms_crypto_key.crypto_key.id
+  policy_data = data.google_iam_policy.foo.policy_data
+}
+`, projectId, orgId, billingAccount, account, keyRingName, cryptoKeyName, roleId)
+}
+
+func testAccKmsCryptoKeyIamPolicy_withCondition(projectId, orgId, billingAccount, account, keyRingName, cryptoKeyName, roleId, conditionTitle string) string {
+	return fmt.Sprintf(`
+resource "google_project" "test_project" {
+  name            = "Test project"
+  project_id      = "%s"
+  org_id          = "%s"
+  billing_account = "%s"
+}
+
+resource "google_project_service" "kms" {
+  project = google_project.test_project.project_id
+  service = "cloudkms.googleapis.com"
+}
+
+resource "google_project_service" "iam" {
+  project = google_project_service.kms.project
+  service = "iam.googleapis.com"
+}
+
+resource "google_service_account" "test_account" {
+  project      = google_project_service.iam.project
+  account_id   = "%s"
+  display_name = "Kms Crypto Key Iam Testing Account"
+}
+
+resource "google_kms_key_ring" "key_ring" {
+  project  = google_project_service.iam.project
+  location = "us-central1"
+  name     = "%s"
+}
+
+resource "google_kms_crypto_key" "crypto_key" {
+  key_ring = google_kms_key_ring.key_ring.id
+  name     = "%s"
+}
+
+data "google_iam_policy" "foo" {
+  binding {
+    role = "%s"
+    members = ["serviceAccount:${google_service_account.test_account.email}"]
+    condition {
+      title       = "%s"
+      description = "Expiring at midnight of 2019-12-31"
+      expression  = "request.time < timestamp(\"2020-01-01T00:00:00Z\")"
+    }
+  }
+}
+
+resource "google_kms_crypto_key_iam_policy" "foo" {
+  crypto_key_id = google_kms_crypto_key.crypto_key.id
+  policy_data = data.google_iam_policy.foo.policy_data
+}
+`, projectId, orgId, billingAccount, account, keyRingName, cryptoKeyName, roleId, conditionTitle)
 }

@@ -12,6 +12,7 @@
 #     .github/CONTRIBUTING.md.
 #
 # ----------------------------------------------------------------------------
+subcategory: "BigQuery"
 layout: "google"
 page_title: "Google: google_bigquery_dataset"
 sidebar_current: "docs-google-bigquery-dataset"
@@ -47,12 +48,43 @@ resource "google_bigquery_dataset" "dataset" {
 
   access {
     role          = "OWNER"
-    user_by_email = "Joe@example.com"
+    user_by_email = google_service_account.bqowner.email
   }
+
   access {
     role   = "READER"
-    domain = "example.com"
+    domain = "hashicorp.com"
   }
+}
+
+resource "google_service_account" "bqowner" {
+  account_id = "bqowner"
+}
+```
+## Example Usage - Bigquery Dataset Cmek
+
+
+```hcl
+resource "google_bigquery_dataset" "dataset" {
+  dataset_id                  = "example_dataset"
+  friendly_name               = "test"
+  description                 = "This is a test description"
+  location                    = "US"
+  default_table_expiration_ms = 3600000
+
+  default_encryption_configuration {
+    kms_key_name = google_kms_crypto_key.crypto_key.self_link
+  }
+}
+
+resource "google_kms_crypto_key" "crypto_key" {
+  name     = "example-key"
+  key_ring = google_kms_key_ring.key_ring.self_link
+}
+
+resource "google_kms_key_ring" "key_ring" {
+  name     = "example-keyring"
+  location = "us"
 }
 ```
 
@@ -139,6 +171,12 @@ The following arguments are supported:
   The default value is multi-regional location `US`.
   Changing this forces a new resource to be created.
 
+* `default_encryption_configuration` -
+  (Optional)
+  The default encryption key for all tables in the dataset. Once this property is set,
+  all newly-created partitioned tables in the dataset will have encryption key set to
+  this value, unless table creation request (or query) overrides the key.  Structure is documented below.
+
 * `project` - (Optional) The ID of the project in which the resource belongs.
     If it is not provided, the provider project is used.
 
@@ -168,9 +206,7 @@ The `access` block supports:
 
 * `special_group` -
   (Optional)
-  A special group to grant access to.
-
-  Possible values include:
+  A special group to grant access to. Possible values include:
 
   * `projectOwners`: Owners of the enclosing project.
 
@@ -210,10 +246,19 @@ The `view` block supports:
   A-Z), numbers (0-9), or underscores (_). The maximum length
   is 1,024 characters.
 
+The `default_encryption_configuration` block supports:
+
+* `kms_key_name` -
+  (Required)
+  Describes the Cloud KMS encryption key that will be used to protect destination
+  BigQuery table. The BigQuery Service Account associated with your project requires
+  access to this encryption key.
+
 ## Attributes Reference
 
 In addition to the arguments listed above, the following computed attributes are exported:
 
+* `id` - an identifier for the resource with format `projects/{{project}}/datasets/{{dataset_id}}`
 
 * `creation_time` -
   The time when this dataset was created, in milliseconds since the
@@ -242,8 +287,8 @@ This resource provides the following
 Dataset can be imported using any of these accepted formats:
 
 ```
+$ terraform import google_bigquery_dataset.default projects/{{project}}/datasets/{{dataset_id}}
 $ terraform import google_bigquery_dataset.default {{project}}/{{dataset_id}}
-$ terraform import google_bigquery_dataset.default {{project}}:{{dataset_id}}
 $ terraform import google_bigquery_dataset.default {{dataset_id}}
 ```
 
@@ -252,4 +297,4 @@ as an argument so that Terraform uses the correct provider to import your resour
 
 ## User Project Overrides
 
-This resource supports [User Project Overrides](https://www.terraform.io/docs/providers/google/provider_reference.html#user_project_override).
+This resource supports [User Project Overrides](https://www.terraform.io/docs/providers/google/guides/provider_reference.html#user_project_override).

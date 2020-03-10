@@ -43,23 +43,29 @@ func resourceHealthcareDataset() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"location": {
-				Type:     schema.TypeString,
-				Required: true,
-				ForceNew: true,
+				Type:        schema.TypeString,
+				Required:    true,
+				ForceNew:    true,
+				Description: `The location for the Dataset.`,
 			},
 			"name": {
-				Type:     schema.TypeString,
-				Required: true,
-				ForceNew: true,
+				Type:        schema.TypeString,
+				Required:    true,
+				ForceNew:    true,
+				Description: `The resource name for the Dataset.`,
 			},
 			"time_zone": {
 				Type:     schema.TypeString,
 				Computed: true,
 				Optional: true,
+				Description: `The default timezone used by this dataset. Must be a either a valid IANA time zone name such as
+"America/New_York" or empty, which defaults to UTC. This is used for parsing times in resources
+(e.g., HL7 messages) where no explicit timezone is specified.`,
 			},
 			"self_link": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: `The fully qualified name of this dataset`,
 			},
 			"project": {
 				Type:     schema.TypeString,
@@ -148,10 +154,10 @@ func resourceHealthcareDatasetRead(d *schema.ResourceData, meta interface{}) err
 		return fmt.Errorf("Error reading Dataset: %s", err)
 	}
 
-	if err := d.Set("name", flattenHealthcareDatasetName(res["name"], d)); err != nil {
+	if err := d.Set("name", flattenHealthcareDatasetName(res["name"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Dataset: %s", err)
 	}
-	if err := d.Set("time_zone", flattenHealthcareDatasetTimeZone(res["timeZone"], d)); err != nil {
+	if err := d.Set("time_zone", flattenHealthcareDatasetTimeZone(res["timeZone"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Dataset: %s", err)
 	}
 
@@ -245,11 +251,11 @@ func resourceHealthcareDatasetImport(d *schema.ResourceData, meta interface{}) (
 	return []*schema.ResourceData{d}, nil
 }
 
-func flattenHealthcareDatasetName(v interface{}, d *schema.ResourceData) interface{} {
+func flattenHealthcareDatasetName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenHealthcareDatasetTimeZone(v interface{}, d *schema.ResourceData) interface{} {
+func flattenHealthcareDatasetTimeZone(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 

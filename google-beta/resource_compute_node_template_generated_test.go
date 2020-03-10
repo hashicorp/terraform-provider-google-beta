@@ -55,9 +55,9 @@ data "google_compute_node_types" "central1a" {
 }
 
 resource "google_compute_node_template" "template" {
-  name = "soletenant-tmpl%{random_suffix}"
-  region = "us-central1"
-  node_type = "${data.google_compute_node_types.central1a.names[0]}"
+  name      = "tf-test-soletenant-tmpl%{random_suffix}"
+  region    = "us-central1"
+  node_type = data.google_compute_node_types.central1a.names[0]
 }
 `, context)
 }
@@ -89,16 +89,16 @@ provider "google-beta" {
 }
 
 data "google_compute_node_types" "central1a" {
-  provider = "google-beta"
-  zone = "us-central1-a"
+  provider = google-beta
+  zone     = "us-central1-a"
 }
 
 resource "google_compute_node_template" "template" {
-  provider = "google-beta"
+  provider = google-beta
 
-  name = "soletenant-with-licenses%{random_suffix}"
-  region = "us-central1"
-  node_type = "${data.google_compute_node_types.central1a.names[0]}"
+  name      = "tf-test-soletenant-with-licenses%{random_suffix}"
+  region    = "us-central1"
+  node_type = data.google_compute_node_types.central1a.names[0]
 
   node_affinity_labels = {
     foo = "baz"

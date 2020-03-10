@@ -12,17 +12,16 @@
 #     .github/CONTRIBUTING.md.
 #
 # ----------------------------------------------------------------------------
+subcategory: "Cloud Run"
 layout: "google"
 page_title: "Google: google_cloud_run_service"
 sidebar_current: "docs-google-cloud-run-service"
 description: |-
-  **Note:** Cloud Run as a product is in beta, however the REST API is currently still an alpha.
+  Service acts as a top-level container that manages a set of Routes and
+  Configurations which implement a network service.
 ---
 
 # google\_cloud\_run\_service
-
-**Note:** Cloud Run as a product is in beta, however the REST API is currently still an alpha.
-Please use this with caution as it may change when the API moves to beta.
 
 Service acts as a top-level container that manages a set of Routes and
 Configurations which implement a network service. Service exists to provide a
@@ -38,12 +37,10 @@ and Route, reflecting their statuses and conditions as its own.
 See also:
 https://github.com/knative/serving/blob/master/docs/spec/overview.md#service
 
-~> **Warning:** This resource is in beta, and should be used with the terraform-provider-google-beta provider.
-See [Provider Versions](https://terraform.io/docs/providers/google/provider_versions.html) for more details on beta resources.
 
 To get more information about Service, see:
 
-* [API documentation](https://cloud.google.com/run/docs/reference/rest/v1alpha1/projects.locations.services)
+* [API documentation](https://cloud.google.com/run/docs/reference/rest/v1/projects.locations.services)
 * How-to Guides
     * [Official Documentation](https://cloud.google.com/run/docs/)
 
@@ -57,32 +54,133 @@ To get more information about Service, see:
 
 ```hcl
 resource "google_cloud_run_service" "default" {
-  name     = "tftest-cloudrun"
+  name     = "cloudrun-srv"
   location = "us-central1"
-  provider = "google-beta"
 
-  metadata {
-    namespace = "my-project-name"
+  template {
+    spec {
+      containers {
+        image = "gcr.io/cloudrun/hello"
+      }
+    }
   }
 
-  spec {
-    containers {
-      image = "gcr.io/cloudrun/hello"
+  traffic {
+    percent         = 100
+    latest_revision = true
+  }
+}
+```
+<div class = "oics-button" style="float: right; margin: 0 0 -15px">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=cloud_run_service_sql&cloudshell_image=gcr.io%2Fgraphite-cloud-shell-images%2Fterraform%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+    <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
+  </a>
+</div>
+## Example Usage - Cloud Run Service Sql
+
+
+```hcl
+resource "google_cloud_run_service" "default" {
+  name     = "cloudrun-srv"
+  location = "us-central1"
+
+  template {
+    spec {
+      containers {
+        image = "gcr.io/cloudrun/hello"
+      }
+    }
+
+    metadata {
+      annotations = {
+        "autoscaling.knative.dev/maxScale"      = "1000"
+        "run.googleapis.com/cloudsql-instances" = "my-project-name:us-central1:${google_sql_database_instance.instance.name}"
+        "run.googleapis.com/client-name"        = "cloud-console"
+      }
     }
   }
 }
 
-# The Service is ready to be used when the "Ready" condition is True
-# Due to Terraform and API limitations this is best accessed through a local variable
-locals {
-  cloud_run_status = {
-    for cond in google_cloud_run_service.default.status[0].conditions :
-    cond.type => cond.status
+resource "google_sql_database_instance" "instance" {
+  name   = "cloudrun-sql"
+  region = "us-east1"
+  settings {
+    tier = "db-f1-micro"
+  }
+}
+```
+<div class = "oics-button" style="float: right; margin: 0 0 -15px">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=cloud_run_service_noauth&cloudshell_image=gcr.io%2Fgraphite-cloud-shell-images%2Fterraform%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+    <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
+  </a>
+</div>
+## Example Usage - Cloud Run Service Noauth
+
+
+```hcl
+resource "google_cloud_run_service" "default" {
+  name     = "cloudrun-srv"
+  location = "us-central1"
+
+  template {
+    spec {
+      containers {
+        image = "gcr.io/cloudrun/hello"
+      }
+    }
   }
 }
 
-output "isReady" {
-  value = local.cloud_run_status["Ready"] == "True"
+data "google_iam_policy" "noauth" {
+  binding {
+    role = "roles/run.invoker"
+    members = [
+      "allUsers",
+    ]
+  }
+}
+
+resource "google_cloud_run_service_iam_policy" "noauth" {
+  location    = google_cloud_run_service.default.location
+  project     = google_cloud_run_service.default.project
+  service     = google_cloud_run_service.default.name
+
+  policy_data = data.google_iam_policy.noauth.policy_data
+}
+```
+<div class = "oics-button" style="float: right; margin: 0 0 -15px">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=cloud_run_service_multiple_environment_variables&cloudshell_image=gcr.io%2Fgraphite-cloud-shell-images%2Fterraform%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+    <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
+  </a>
+</div>
+## Example Usage - Cloud Run Service Multiple Environment Variables
+
+
+```hcl
+resource "google_cloud_run_service" "default" {
+  name     = "cloudrun-srv"
+  location = "us-central1"
+
+  template {
+    spec {
+      containers {
+        image = "gcr.io/cloudrun/hello"
+        env {
+          name = "SOURCE"
+          value = "remote"
+        }
+        env {
+          name = "TARGET"
+          value = "home"
+        }
+      }
+    }
+  }
+
+  traffic {
+    percent         = 100
+    latest_revision = true
+  }
 }
 ```
 
@@ -98,21 +196,92 @@ The following arguments are supported:
   for creation idempotence and configuration definition. Cannot be updated.
   More info: http://kubernetes.io/docs/user-guide/identifiers#names
 
-* `spec` -
-  (Required)
-  RevisionSpec holds the desired state of the Revision (from the client).  Structure is documented below.
-
-* `metadata` -
-  (Required)
-  Metadata associated with this Service, including name, namespace, labels,
-  and annotations.  Structure is documented below.
-
 * `location` -
   (Required)
   The location of the cloud run instance. eg us-central1
 
 
 
+The `traffic` block supports:
+
+* `revision_name` -
+  (Optional)
+  RevisionName of a specific revision to which to send this portion of traffic.
+
+* `percent` -
+  (Required)
+  Percent specifies percent of the traffic to this Revision or Configuration.
+
+* `latest_revision` -
+  (Optional)
+  LatestRevision may be optionally provided to indicate that the latest ready
+  Revision of the Configuration should be used for this traffic target. When
+  provided LatestRevision must be true if RevisionName is empty; it must be
+  false when RevisionName is non-empty.
+
+The `template` block supports:
+
+* `metadata` -
+  (Optional)
+  Optional metadata for this Revision, including labels and annotations.
+  Name will be generated by the Configuration. To set minimum instances
+  for this revision, use the "autoscaling.knative.dev/minScale" annotation
+  key. To set maximum instances for this revision, use the
+  "autoscaling.knative.dev/maxScale" annotation key. To set Cloud SQL
+  connections for the revision, use the "run.googleapis.com/cloudsql-instances"
+  annotation key.  Structure is documented below.
+
+* `spec` -
+  (Required)
+  RevisionSpec holds the desired state of the Revision (from the client).  Structure is documented below.
+
+
+The `metadata` block supports:
+
+* `labels` -
+  (Optional)
+  Map of string keys and values that can be used to organize and categorize
+  (scope and select) objects. May match selectors of replication controllers
+  and routes.
+  More info: http://kubernetes.io/docs/user-guide/labels
+
+* `generation` -
+  A sequence number representing a specific generation of the desired state.
+
+* `resource_version` -
+  An opaque value that represents the internal version of this object that
+  can be used by clients to determine when objects have changed. May be used
+  for optimistic concurrency, change detection, and the watch operation on a
+  resource or set of resources. They may only be valid for a
+  particular resource or set of resources.
+  More info:
+  https://git.k8s.io/community/contributors/devel/api-conventions.md#concurrency-control-and-consistency
+
+* `self_link` -
+  SelfLink is a URL representing this object.
+
+* `uid` -
+  UID is a unique id generated by the server on successful creation of a resource and is not
+  allowed to change on PUT operations.
+  More info: http://kubernetes.io/docs/user-guide/identifiers#uids
+
+* `namespace` -
+  (Optional)
+  In Cloud Run the namespace must be equal to either the
+  project ID or project number. It will default to the resource's project.
+
+* `annotations` -
+  (Optional)
+  Annotations is a key value map stored with a resource that
+  may be set by external tools to store and retrieve arbitrary metadata. More
+  info: http://kubernetes.io/docs/user-guide/annotations
+
+* `name` -
+  (Optional)
+  Name must be unique within a namespace, within a Cloud Run region.
+  Is required when creating resources. Name is primarily intended
+  for creation idempotence and configuration definition. Cannot be updated.
+  More info: http://kubernetes.io/docs/user-guide/identifiers#names
 
 The `spec` block supports:
 
@@ -133,6 +302,13 @@ The `spec` block supports:
   - `1` not-thread-safe. Single concurrency
   - `2-N` thread-safe, max concurrency of N
 
+* `service_account_name` -
+  (Optional)
+  Email address of the IAM service account associated with the revision of the
+  service. The service account represents the identity of the running revision,
+  and determines what permissions the revision has. If not provided, the revision
+  will use the project's default service account.
+
 * `serving_state` -
   ServingState holds a value describing the state the resources
   are in for this Revision.
@@ -143,7 +319,7 @@ The `spec` block supports:
 The `containers` block supports:
 
 * `working_dir` -
-  (Optional)
+  (Optional, Deprecated)
   Container's working directory.
   If not specified, the container runtime's default will be used, which
   might be configured in the container image.
@@ -161,7 +337,7 @@ The `containers` block supports:
   https://kubernetes.io/docs/tasks/inject-data-application/define-command-argument-container/#running-a-command-in-a-shell
 
 * `env_from` -
-  (Optional)
+  (Optional, Deprecated)
   List of sources to populate environment variables in the container.
   All invalid keys will be reported as an event when the container is starting.
   When a key exists in multiple sources, the value associated with the last source will
@@ -205,11 +381,11 @@ The `env_from` block supports:
 
 * `config_map_ref` -
   (Optional)
-  The ConfigMap to select from  Structure is documented below.
+  The ConfigMap to select from.  Structure is documented below.
 
 * `secret_ref` -
   (Optional)
-  The Secret to select from  Structure is documented below.
+  The Secret to select from.  Structure is documented below.
 
 
 The `config_map_ref` block supports:
@@ -226,7 +402,7 @@ The `config_map_ref` block supports:
 The `local_object_reference` block supports:
 
 * `name` -
-  (Optional)
+  (Required)
   Name of the referent.
   More info:
   https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
@@ -245,7 +421,7 @@ The `secret_ref` block supports:
 The `local_object_reference` block supports:
 
 * `name` -
-  (Optional)
+  (Required)
   Name of the referent.
   More info:
   https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
@@ -283,6 +459,35 @@ The `resources` block supports:
   The values of the map is string form of the 'quantity' k8s type:
   https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/apimachinery/pkg/api/resource/quantity.go
 
+- - -
+
+
+* `traffic` -
+  (Optional)
+  Traffic specifies how to distribute traffic over a collection of Knative Revisions
+  and Configurations  Structure is documented below.
+
+* `template` -
+  (Optional)
+  template holds the latest specification for the Revision to
+  be stamped out. The template references the container image, and may also
+  include labels and annotations that should be attached to the Revision.
+  To correlate a Revision, and/or to force a Revision to be created when the
+  spec doesn't otherwise change, a nonce label may be provided in the
+  template metadata. For more details, see:
+  https://github.com/knative/serving/blob/master/docs/client-conventions.md#associate-modifications-with-revisions
+  Cloud Run does not currently support referencing a build that is
+  responsible for materializing the container image from source.  Structure is documented below.
+
+* `metadata` -
+  (Optional)
+  Metadata associated with this Service, including name, namespace, labels,
+  and annotations.  Structure is documented below.
+
+* `project` - (Optional) The ID of the project in which the resource belongs.
+    If it is not provided, the provider project is used.
+
+
 The `metadata` block supports:
 
 * `labels` -
@@ -313,7 +518,7 @@ The `metadata` block supports:
   More info: http://kubernetes.io/docs/user-guide/identifiers#uids
 
 * `namespace` -
-  (Required)
+  (Optional)
   In Cloud Run the namespace must be equal to either the
   project ID or project number.
 
@@ -323,17 +528,11 @@ The `metadata` block supports:
   may be set by external tools to store and retrieve arbitrary metadata. More
   info: http://kubernetes.io/docs/user-guide/annotations
 
-- - -
-
-
-* `project` - (Optional) The ID of the project in which the resource belongs.
-    If it is not provided, the provider project is used.
-
-
 ## Attributes Reference
 
 In addition to the arguments listed above, the following computed attributes are exported:
 
+* `id` - an identifier for the resource with format `locations/{{location}}/namespaces/{{project}}/services/{{name}}`
 
 * `status` -
   The current status of the Service.  Structure is documented below.
@@ -385,8 +584,8 @@ The `conditions` block contains:
 This resource provides the following
 [Timeouts](/docs/configuration/resources.html#timeouts) configuration options:
 
-- `create` - Default is 4 minutes.
-- `update` - Default is 4 minutes.
+- `create` - Default is 6 minutes.
+- `update` - Default is 6 minutes.
 - `delete` - Default is 4 minutes.
 
 ## Import
@@ -394,9 +593,9 @@ This resource provides the following
 Service can be imported using any of these accepted formats:
 
 ```
-$ terraform import -provider=google-beta google_cloud_run_service.default projects/{{project}}/locations/{{location}}/services/{{name}}
-$ terraform import -provider=google-beta google_cloud_run_service.default {{project}}/{{location}}/{{name}}
-$ terraform import -provider=google-beta google_cloud_run_service.default {{location}}/{{name}}
+$ terraform import google_cloud_run_service.default locations/{{location}}/namespaces/{{project}}/services/{{name}}
+$ terraform import google_cloud_run_service.default {{location}}/{{project}}/{{name}}
+$ terraform import google_cloud_run_service.default {{location}}/{{name}}
 ```
 
 -> If you're importing a resource with beta features, make sure to include `-provider=google-beta`
@@ -404,4 +603,4 @@ as an argument so that Terraform uses the correct provider to import your resour
 
 ## User Project Overrides
 
-This resource supports [User Project Overrides](https://www.terraform.io/docs/providers/google/provider_reference.html#user_project_override).
+This resource supports [User Project Overrides](https://www.terraform.io/docs/providers/google/guides/provider_reference.html#user_project_override).

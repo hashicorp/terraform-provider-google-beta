@@ -23,7 +23,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"google.golang.org/api/compute/v1"
 )
 
 func resourceComputeRegionSslCertificate() *schema.Resource {
@@ -43,9 +42,12 @@ func resourceComputeRegionSslCertificate() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"certificate": {
-				Type:      schema.TypeString,
-				Required:  true,
-				ForceNew:  true,
+				Type:     schema.TypeString,
+				Required: true,
+				ForceNew: true,
+				Description: `The certificate in PEM format.
+The certificate chain must be no greater than 5 certs long.
+The chain must include at least one intermediate cert.`,
 				Sensitive: true,
 			},
 			"private_key": {
@@ -53,12 +55,14 @@ func resourceComputeRegionSslCertificate() *schema.Resource {
 				Required:         true,
 				ForceNew:         true,
 				DiffSuppressFunc: sha256DiffSuppress,
+				Description:      `The write-only private key in PEM format.`,
 				Sensitive:        true,
 			},
 			"description": {
-				Type:     schema.TypeString,
-				Optional: true,
-				ForceNew: true,
+				Type:        schema.TypeString,
+				Optional:    true,
+				ForceNew:    true,
+				Description: `An optional description of this resource.`,
 			},
 			"name": {
 				Type:         schema.TypeString,
@@ -66,6 +70,16 @@ func resourceComputeRegionSslCertificate() *schema.Resource {
 				Optional:     true,
 				ForceNew:     true,
 				ValidateFunc: validateGCPName,
+				Description: `Name of the resource. Provided by the client when the resource is
+created. The name must be 1-63 characters long, and comply with
+RFC1035. Specifically, the name must be 1-63 characters long and match
+the regular expression '[a-z]([-a-z0-9]*[a-z0-9])?' which means the
+first character must be a lowercase letter, and all following
+characters must be a dash, lowercase letter, or digit, except the last
+character, which cannot be a dash.
+
+
+These are in the same namespace as the managed SSL certificates.`,
 			},
 			"region": {
 				Type:             schema.TypeString,
@@ -73,14 +87,18 @@ func resourceComputeRegionSslCertificate() *schema.Resource {
 				Optional:         true,
 				ForceNew:         true,
 				DiffSuppressFunc: compareSelfLinkOrResourceName,
+				Description: `The Region in which the created regional ssl certificate should reside.
+If it is not provided, the provider region is used.`,
 			},
 			"certificate_id": {
-				Type:     schema.TypeInt,
-				Computed: true,
+				Type:        schema.TypeInt,
+				Computed:    true,
+				Description: `The unique identifier for the resource.`,
 			},
 			"creation_timestamp": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: `Creation timestamp in RFC3339 text format.`,
 			},
 			"name_prefix": {
 				Type:          schema.TypeString,
@@ -164,26 +182,20 @@ func resourceComputeRegionSslCertificateCreate(d *schema.ResourceData, meta inte
 	}
 
 	// Store the ID now
-	id, err := replaceVars(d, config, "{{name}}")
+	id, err := replaceVars(d, config, "projects/{{project}}/regions/{{region}}/sslCertificates/{{name}}")
 	if err != nil {
 		return fmt.Errorf("Error constructing id: %s", err)
 	}
 	d.SetId(id)
 
-	op := &compute.Operation{}
-	err = Convert(res, op)
-	if err != nil {
-		return err
-	}
-
-	waitErr := computeOperationWaitTime(
-		config.clientCompute, op, project, "Creating RegionSslCertificate",
+	err = computeOperationWaitTime(
+		config, res, project, "Creating RegionSslCertificate",
 		int(d.Timeout(schema.TimeoutCreate).Minutes()))
 
-	if waitErr != nil {
+	if err != nil {
 		// The resource didn't actually create
 		d.SetId("")
-		return fmt.Errorf("Error waiting to create RegionSslCertificate: %s", waitErr)
+		return fmt.Errorf("Error waiting to create RegionSslCertificate: %s", err)
 	}
 
 	log.Printf("[DEBUG] Finished creating RegionSslCertificate %q: %#v", d.Id(), res)
@@ -212,22 +224,22 @@ func resourceComputeRegionSslCertificateRead(d *schema.ResourceData, meta interf
 		return fmt.Errorf("Error reading RegionSslCertificate: %s", err)
 	}
 
-	if err := d.Set("certificate", flattenComputeRegionSslCertificateCertificate(res["certificate"], d)); err != nil {
+	if err := d.Set("certificate", flattenComputeRegionSslCertificateCertificate(res["certificate"], d, config)); err != nil {
 		return fmt.Errorf("Error reading RegionSslCertificate: %s", err)
 	}
-	if err := d.Set("creation_timestamp", flattenComputeRegionSslCertificateCreationTimestamp(res["creationTimestamp"], d)); err != nil {
+	if err := d.Set("creation_timestamp", flattenComputeRegionSslCertificateCreationTimestamp(res["creationTimestamp"], d, config)); err != nil {
 		return fmt.Errorf("Error reading RegionSslCertificate: %s", err)
 	}
-	if err := d.Set("description", flattenComputeRegionSslCertificateDescription(res["description"], d)); err != nil {
+	if err := d.Set("description", flattenComputeRegionSslCertificateDescription(res["description"], d, config)); err != nil {
 		return fmt.Errorf("Error reading RegionSslCertificate: %s", err)
 	}
-	if err := d.Set("certificate_id", flattenComputeRegionSslCertificateCertificateId(res["id"], d)); err != nil {
+	if err := d.Set("certificate_id", flattenComputeRegionSslCertificateCertificateId(res["id"], d, config)); err != nil {
 		return fmt.Errorf("Error reading RegionSslCertificate: %s", err)
 	}
-	if err := d.Set("name", flattenComputeRegionSslCertificateName(res["name"], d)); err != nil {
+	if err := d.Set("name", flattenComputeRegionSslCertificateName(res["name"], d, config)); err != nil {
 		return fmt.Errorf("Error reading RegionSslCertificate: %s", err)
 	}
-	if err := d.Set("region", flattenComputeRegionSslCertificateRegion(res["region"], d)); err != nil {
+	if err := d.Set("region", flattenComputeRegionSslCertificateRegion(res["region"], d, config)); err != nil {
 		return fmt.Errorf("Error reading RegionSslCertificate: %s", err)
 	}
 	if err := d.Set("self_link", ConvertSelfLinkToV1(res["selfLink"].(string))); err != nil {
@@ -258,14 +270,8 @@ func resourceComputeRegionSslCertificateDelete(d *schema.ResourceData, meta inte
 		return handleNotFoundError(err, d, "RegionSslCertificate")
 	}
 
-	op := &compute.Operation{}
-	err = Convert(res, op)
-	if err != nil {
-		return err
-	}
-
 	err = computeOperationWaitTime(
-		config.clientCompute, op, project, "Deleting RegionSslCertificate",
+		config, res, project, "Deleting RegionSslCertificate",
 		int(d.Timeout(schema.TimeoutDelete).Minutes()))
 
 	if err != nil {
@@ -288,7 +294,7 @@ func resourceComputeRegionSslCertificateImport(d *schema.ResourceData, meta inte
 	}
 
 	// Replace import id for the resource id
-	id, err := replaceVars(d, config, "{{name}}")
+	id, err := replaceVars(d, config, "projects/{{project}}/regions/{{region}}/sslCertificates/{{name}}")
 	if err != nil {
 		return nil, fmt.Errorf("Error constructing id: %s", err)
 	}
@@ -297,19 +303,19 @@ func resourceComputeRegionSslCertificateImport(d *schema.ResourceData, meta inte
 	return []*schema.ResourceData{d}, nil
 }
 
-func flattenComputeRegionSslCertificateCertificate(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionSslCertificateCertificate(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenComputeRegionSslCertificateCreationTimestamp(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionSslCertificateCreationTimestamp(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenComputeRegionSslCertificateDescription(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionSslCertificateDescription(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenComputeRegionSslCertificateCertificateId(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionSslCertificateCertificateId(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
@@ -319,11 +325,11 @@ func flattenComputeRegionSslCertificateCertificateId(v interface{}, d *schema.Re
 	return v
 }
 
-func flattenComputeRegionSslCertificateName(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionSslCertificateName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenComputeRegionSslCertificateRegion(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeRegionSslCertificateRegion(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	if v == nil {
 		return v
 	}

@@ -3,9 +3,9 @@ package google
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
-	"regexp"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/structure"
@@ -20,7 +20,7 @@ func resourceBigQueryTable() *schema.Resource {
 		Delete: resourceBigQueryTableDelete,
 		Update: resourceBigQueryTableUpdate,
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			State: resourceBigQueryTableImport,
 		},
 		Schema: map[string]*schema.Schema{
 			// TableId: [Required] The ID of the table. The ID must contain only
@@ -84,7 +84,7 @@ func resourceBigQueryTable() *schema.Resource {
 							Type:     schema.TypeString,
 							Required: true,
 							ValidateFunc: validation.StringInSlice([]string{
-								"CSV", "GOOGLE_SHEETS", "NEWLINE_DELIMITED_JSON", "AVRO", "DATSTORE_BACKUP",
+								"CSV", "GOOGLE_SHEETS", "NEWLINE_DELIMITED_JSON", "AVRO", "DATSTORE_BACKUP", "PARQUET",
 							}, false),
 						},
 						// SourceURIs [Required] The fully-qualified URIs that point to your data in Google Cloud.
@@ -163,14 +163,16 @@ func resourceBigQueryTable() *schema.Resource {
 									// Range: [Optional] Range of a sheet to query from. Only used when non-empty.
 									// Typical format: !:
 									"range": {
-										Type:     schema.TypeString,
-										Optional: true,
+										Type:         schema.TypeString,
+										Optional:     true,
+										AtLeastOneOf: []string{"external_data_configuration.0.google_sheets_options.0.range"},
 									},
 									// SkipLeadingRows: [Optional] The number of rows at the top
 									// of the sheet that BigQuery will skip when reading the data.
 									"skip_leading_rows": {
-										Type:     schema.TypeInt,
-										Optional: true,
+										Type:         schema.TypeInt,
+										Optional:     true,
+										AtLeastOneOf: []string{"external_data_configuration.0.google_sheets_options.0.skip_leading_rows"},
 									},
 								},
 							},
@@ -299,6 +301,53 @@ func resourceBigQueryTable() *schema.Resource {
 				},
 			},
 
+			// RangePartitioning: [Optional] If specified, configures range-based
+			// partitioning for this table.
+			"range_partitioning": {
+				Type:     schema.TypeList,
+				Optional: true,
+				MaxItems: 1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						// Field: [Required] The field used to determine how to create a range-based
+						// partition.
+						"field": {
+							Type:     schema.TypeString,
+							Required: true,
+							ForceNew: true,
+						},
+
+						// Range: [Required] Information required to partition based on ranges.
+						"range": {
+							Type:     schema.TypeList,
+							Required: true,
+							MaxItems: 1,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									// Start: [Required] Start of the range partitioning, inclusive.
+									"start": {
+										Type:     schema.TypeInt,
+										Required: true,
+									},
+
+									// End: [Required] End of the range partitioning, exclusive.
+									"end": {
+										Type:     schema.TypeInt,
+										Required: true,
+									},
+
+									// Interval: [Required] The width of each range within the partition.
+									"interval": {
+										Type:     schema.TypeInt,
+										Required: true,
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+
 			// Clustering: [Optional] Specifies column names to use for data clustering.  Up to four
 			// top-level columns are allowed, and should be specified in descending priority order.
 			"clustering": {
@@ -307,6 +356,20 @@ func resourceBigQueryTable() *schema.Resource {
 				ForceNew: true,
 				MaxItems: 4,
 				Elem:     &schema.Schema{Type: schema.TypeString},
+			},
+			"encryption_configuration": {
+				Type:     schema.TypeList,
+				Optional: true,
+				ForceNew: true,
+				MaxItems: 1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"kms_key_name": {
+							Type:     schema.TypeString,
+							Required: true,
+						},
+					},
+				},
 			},
 
 			// CreationTime: [Output-only] The time when this table was created, in
@@ -418,6 +481,12 @@ func resourceTable(d *schema.ResourceData, meta interface{}) (*bigquery.Table, e
 		table.FriendlyName = v.(string)
 	}
 
+	if v, ok := d.GetOk("encryption_configuration.0.kms_key_name"); ok {
+		table.EncryptionConfiguration = &bigquery.EncryptionConfiguration{
+			KmsKeyName: v.(string),
+		}
+	}
+
 	if v, ok := d.GetOk("labels"); ok {
 		labels := map[string]string{}
 
@@ -439,6 +508,15 @@ func resourceTable(d *schema.ResourceData, meta interface{}) (*bigquery.Table, e
 
 	if v, ok := d.GetOk("time_partitioning"); ok {
 		table.TimePartitioning = expandTimePartitioning(v)
+	}
+
+	if v, ok := d.GetOk("range_partitioning"); ok {
+		rangePartitioning, err := expandRangePartitioning(v)
+		if err != nil {
+			return nil, err
+		}
+
+		table.RangePartitioning = rangePartitioning
 	}
 
 	if v, ok := d.GetOk("clustering"); ok {
@@ -475,7 +553,7 @@ func resourceBigQueryTableCreate(d *schema.ResourceData, meta interface{}) error
 
 	log.Printf("[INFO] BigQuery table %s has been created", res.Id)
 
-	d.SetId(fmt.Sprintf("%s:%s.%s", res.TableReference.ProjectId, res.TableReference.DatasetId, res.TableReference.TableId))
+	d.SetId(fmt.Sprintf("projects/%s/datasets/%s/tables/%s", res.TableReference.ProjectId, res.TableReference.DatasetId, res.TableReference.TableId))
 
 	return resourceBigQueryTableRead(d, meta)
 }
@@ -485,17 +563,20 @@ func resourceBigQueryTableRead(d *schema.ResourceData, meta interface{}) error {
 
 	log.Printf("[INFO] Reading BigQuery table: %s", d.Id())
 
-	id, err := parseBigQueryTableId(d.Id())
+	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
 
-	res, err := config.clientBigQuery.Tables.Get(id.Project, id.DatasetId, id.TableId).Do()
+	datasetID := d.Get("dataset_id").(string)
+	tableID := d.Get("table_id").(string)
+
+	res, err := config.clientBigQuery.Tables.Get(project, datasetID, tableID).Do()
 	if err != nil {
-		return handleNotFoundError(err, d, fmt.Sprintf("BigQuery table %q", id.TableId))
+		return handleNotFoundError(err, d, fmt.Sprintf("BigQuery table %q", tableID))
 	}
 
-	d.Set("project", id.Project)
+	d.Set("project", project)
 	d.Set("description", res.Description)
 	d.Set("expiration_time", res.ExpirationTime)
 	d.Set("friendly_name", res.FriendlyName)
@@ -527,8 +608,19 @@ func resourceBigQueryTableRead(d *schema.ResourceData, meta interface{}) error {
 		}
 	}
 
+	if res.RangePartitioning != nil {
+		if err := d.Set("range_partitioning", flattenRangePartitioning(res.RangePartitioning)); err != nil {
+			return err
+		}
+	}
+
 	if res.Clustering != nil {
 		d.Set("clustering", res.Clustering.Fields)
+	}
+	if res.EncryptionConfiguration != nil {
+		if err := d.Set("encryption_configuration", flattenEncryptionConfiguration(res.EncryptionConfiguration)); err != nil {
+			return err
+		}
 	}
 
 	if res.Schema != nil {
@@ -558,12 +650,15 @@ func resourceBigQueryTableUpdate(d *schema.ResourceData, meta interface{}) error
 
 	log.Printf("[INFO] Updating BigQuery table: %s", d.Id())
 
-	id, err := parseBigQueryTableId(d.Id())
+	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
 
-	if _, err = config.clientBigQuery.Tables.Update(id.Project, id.DatasetId, id.TableId, table).Do(); err != nil {
+	datasetID := d.Get("dataset_id").(string)
+	tableID := d.Get("table_id").(string)
+
+	if _, err = config.clientBigQuery.Tables.Update(project, datasetID, tableID, table).Do(); err != nil {
 		return err
 	}
 
@@ -575,12 +670,15 @@ func resourceBigQueryTableDelete(d *schema.ResourceData, meta interface{}) error
 
 	log.Printf("[INFO] Deleting BigQuery table: %s", d.Id())
 
-	id, err := parseBigQueryTableId(d.Id())
+	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
 
-	if err := config.clientBigQuery.Tables.Delete(id.Project, id.DatasetId, id.TableId).Do(); err != nil {
+	datasetID := d.Get("dataset_id").(string)
+	tableID := d.Get("table_id").(string)
+
+	if err := config.clientBigQuery.Tables.Delete(project, datasetID, tableID).Do(); err != nil {
 		return err
 	}
 
@@ -645,7 +743,7 @@ func flattenExternalDataConfiguration(edc *bigquery.ExternalDataConfiguration) (
 		result["google_sheets_options"] = flattenGoogleSheetsOptions(edc.GoogleSheetsOptions)
 	}
 
-	if edc.IgnoreUnknownValues == true {
+	if edc.IgnoreUnknownValues {
 		result["ignore_unknown_values"] = edc.IgnoreUnknownValues
 	}
 	if edc.MaxBadRecords != 0 {
@@ -700,11 +798,11 @@ func expandCsvOptions(configured interface{}) *bigquery.CsvOptions {
 func flattenCsvOptions(opts *bigquery.CsvOptions) []map[string]interface{} {
 	result := map[string]interface{}{}
 
-	if opts.AllowJaggedRows == true {
+	if opts.AllowJaggedRows {
 		result["allow_jagged_rows"] = opts.AllowJaggedRows
 	}
 
-	if opts.AllowQuotedNewlines == true {
+	if opts.AllowQuotedNewlines {
 		result["allow_quoted_newlines"] = opts.AllowQuotedNewlines
 	}
 
@@ -801,6 +899,42 @@ func expandTimePartitioning(configured interface{}) *bigquery.TimePartitioning {
 	return tp
 }
 
+func expandRangePartitioning(configured interface{}) (*bigquery.RangePartitioning, error) {
+	if configured == nil {
+		return nil, nil
+	}
+
+	rpList := configured.([]interface{})
+	if len(rpList) == 0 || rpList[0] == nil {
+		return nil, errors.New("Error casting range partitioning interface to expected structure")
+	}
+
+	rangePartJson := rpList[0].(map[string]interface{})
+	rp := &bigquery.RangePartitioning{
+		Field: rangePartJson["field"].(string),
+	}
+
+	if v, ok := rangePartJson["range"]; ok && v != nil {
+		rangeLs := v.([]interface{})
+		if len(rangeLs) != 1 || rangeLs[0] == nil {
+			return nil, errors.New("Non-empty range must be given for range partitioning")
+		}
+
+		rangeJson := rangeLs[0].(map[string]interface{})
+		rp.Range = &bigquery.RangePartitioningRange{
+			Start:    int64(rangeJson["start"].(int)),
+			End:      int64(rangeJson["end"].(int)),
+			Interval: int64(rangeJson["interval"].(int)),
+		}
+	}
+
+	return rp, nil
+}
+
+func flattenEncryptionConfiguration(ec *bigquery.EncryptionConfiguration) []map[string]interface{} {
+	return []map[string]interface{}{{"kms_key_name": ec.KmsKeyName}}
+}
+
 func flattenTimePartitioning(tp *bigquery.TimePartitioning) []map[string]interface{} {
 	result := map[string]interface{}{"type": tp.Type}
 
@@ -812,8 +946,23 @@ func flattenTimePartitioning(tp *bigquery.TimePartitioning) []map[string]interfa
 		result["expiration_ms"] = tp.ExpirationMs
 	}
 
-	if tp.RequirePartitionFilter == true {
+	if tp.RequirePartitionFilter {
 		result["require_partition_filter"] = tp.RequirePartitionFilter
+	}
+
+	return []map[string]interface{}{result}
+}
+
+func flattenRangePartitioning(rp *bigquery.RangePartitioning) []map[string]interface{} {
+	result := map[string]interface{}{
+		"field": rp.Field,
+		"range": []map[string]interface{}{
+			{
+				"start":    rp.Range.Start,
+				"end":      rp.Range.End,
+				"interval": rp.Range.Interval,
+			},
+		},
 	}
 
 	return []map[string]interface{}{result}
@@ -838,21 +987,22 @@ func flattenView(vd *bigquery.ViewDefinition) []map[string]interface{} {
 	return []map[string]interface{}{result}
 }
 
-type bigQueryTableId struct {
-	Project, DatasetId, TableId string
-}
-
-func parseBigQueryTableId(id string) (*bigQueryTableId, error) {
-	// Expected format is "PROJECT:DATASET.TABLE", but the project can itself have . and : in it.
-	// Those characters are not valid dataset or table components, so just split on the last two.
-	matchRegex := regexp.MustCompile("^(.+):([^:.]+)\\.([^:.]+)$")
-	subMatches := matchRegex.FindStringSubmatch(id)
-	if subMatches == nil {
-		return nil, fmt.Errorf("Invalid BigQuery table specifier. Expecting {project}:{dataset-id}.{table-id}, got %s", id)
+func resourceBigQueryTableImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+	config := meta.(*Config)
+	if err := parseImportId([]string{
+		"projects/(?P<project>[^/]+)/datasets/(?P<dataset_id>[^/]+)/tables/(?P<table_id>[^/]+)",
+		"(?P<project>[^/]+)/(?P<dataset_id>[^/]+)/(?P<table_id>[^/]+)",
+		"(?P<dataset_id>[^/]+)/(?P<table_id>[^/]+)",
+	}, d, config); err != nil {
+		return nil, err
 	}
-	return &bigQueryTableId{
-		Project:   subMatches[1],
-		DatasetId: subMatches[2],
-		TableId:   subMatches[3],
-	}, nil
+
+	// Replace import id for the resource id
+	id, err := replaceVars(d, config, "projects/{{project}}/datasets/{{dataset_id}}/tables/{{table_id}}")
+	if err != nil {
+		return nil, fmt.Errorf("Error constructing id: %s", err)
+	}
+	d.SetId(id)
+
+	return []*schema.ResourceData{d}, nil
 }

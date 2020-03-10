@@ -42,25 +42,35 @@ func resourceVPCAccessConnector() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"ip_cidr_range": {
-				Type:     schema.TypeString,
-				Required: true,
-				ForceNew: true,
+				Type:        schema.TypeString,
+				Required:    true,
+				ForceNew:    true,
+				Description: `The range of internal addresses that follows RFC 4632 notation. Example: '10.132.0.0/28'.`,
 			},
 			"name": {
-				Type:     schema.TypeString,
-				Required: true,
-				ForceNew: true,
+				Type:        schema.TypeString,
+				Required:    true,
+				ForceNew:    true,
+				Description: `The name of the resource (Max 25 characters).`,
+			},
+			"network": {
+				Type:        schema.TypeString,
+				Required:    true,
+				ForceNew:    true,
+				Description: `Name of a VPC network.`,
 			},
 			"region": {
-				Type:     schema.TypeString,
-				Required: true,
-				ForceNew: true,
+				Type:        schema.TypeString,
+				Required:    true,
+				ForceNew:    true,
+				Description: `Region where the VPC Access connector resides`,
 			},
 			"max_throughput": {
 				Type:         schema.TypeInt,
 				Optional:     true,
 				ForceNew:     true,
 				ValidateFunc: validation.IntBetween(200, 1000),
+				Description:  `Maximum throughput of the connector in Mbps, must be greater than 'min_throughput'. Default is 1000.`,
 				Default:      1000,
 			},
 			"min_throughput": {
@@ -68,20 +78,18 @@ func resourceVPCAccessConnector() *schema.Resource {
 				Optional:     true,
 				ForceNew:     true,
 				ValidateFunc: validation.IntBetween(200, 1000),
+				Description:  `Minimum throughput of the connector in Mbps. Default and min is 200.`,
 				Default:      200,
 			},
-			"network": {
-				Type:     schema.TypeString,
-				Optional: true,
-				ForceNew: true,
-			},
 			"self_link": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: `The fully qualified name of this VPC connector`,
 			},
 			"state": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: `State of the VPC access connector.`,
 			},
 			"project": {
 				Type:     schema.TypeString,
@@ -149,21 +157,41 @@ func resourceVPCAccessConnectorCreate(d *schema.ResourceData, meta interface{}) 
 	}
 
 	// Store the ID now
-	id, err := replaceVars(d, config, "{{name}}")
+	id, err := replaceVars(d, config, "projects/{{project}}/locations/{{region}}/connectors/{{name}}")
 	if err != nil {
 		return fmt.Errorf("Error constructing id: %s", err)
 	}
 	d.SetId(id)
 
-	waitErr := vpcAccessOperationWaitTime(
-		config, res, project, "Creating Connector",
+	// Use the resource in the operation response to populate
+	// identity fields and d.Id() before read
+	var opRes map[string]interface{}
+	err = vpcAccessOperationWaitTimeWithResponse(
+		config, res, &opRes, project, "Creating Connector",
 		int(d.Timeout(schema.TimeoutCreate).Minutes()))
-
-	if waitErr != nil {
+	if err != nil {
 		// The resource didn't actually create
 		d.SetId("")
-		return fmt.Errorf("Error waiting to create Connector: %s", waitErr)
+		return fmt.Errorf("Error waiting to create Connector: %s", err)
 	}
+
+	opRes, err = resourceVPCAccessConnectorDecoder(d, meta, opRes)
+	if err != nil {
+		return fmt.Errorf("Error decoding response from operation: %s", err)
+	}
+	if opRes == nil {
+		return fmt.Errorf("Error decoding response from operation, could not find object")
+	}
+	if err := d.Set("name", flattenVPCAccessConnectorName(opRes["name"], d, config)); err != nil {
+		return err
+	}
+
+	// This may have caused the ID to update - update it if so.
+	id, err = replaceVars(d, config, "projects/{{project}}/locations/{{region}}/connectors/{{name}}")
+	if err != nil {
+		return fmt.Errorf("Error constructing id: %s", err)
+	}
+	d.SetId(id)
 
 	log.Printf("[DEBUG] Finished creating Connector %q: %#v", d.Id(), res)
 
@@ -208,22 +236,22 @@ func resourceVPCAccessConnectorRead(d *schema.ResourceData, meta interface{}) er
 		return fmt.Errorf("Error reading Connector: %s", err)
 	}
 
-	if err := d.Set("name", flattenVPCAccessConnectorName(res["name"], d)); err != nil {
+	if err := d.Set("name", flattenVPCAccessConnectorName(res["name"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Connector: %s", err)
 	}
-	if err := d.Set("network", flattenVPCAccessConnectorNetwork(res["network"], d)); err != nil {
+	if err := d.Set("network", flattenVPCAccessConnectorNetwork(res["network"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Connector: %s", err)
 	}
-	if err := d.Set("ip_cidr_range", flattenVPCAccessConnectorIpCidrRange(res["ipCidrRange"], d)); err != nil {
+	if err := d.Set("ip_cidr_range", flattenVPCAccessConnectorIpCidrRange(res["ipCidrRange"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Connector: %s", err)
 	}
-	if err := d.Set("state", flattenVPCAccessConnectorState(res["state"], d)); err != nil {
+	if err := d.Set("state", flattenVPCAccessConnectorState(res["state"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Connector: %s", err)
 	}
-	if err := d.Set("min_throughput", flattenVPCAccessConnectorMinThroughput(res["minThroughput"], d)); err != nil {
+	if err := d.Set("min_throughput", flattenVPCAccessConnectorMinThroughput(res["minThroughput"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Connector: %s", err)
 	}
-	if err := d.Set("max_throughput", flattenVPCAccessConnectorMaxThroughput(res["maxThroughput"], d)); err != nil {
+	if err := d.Set("max_throughput", flattenVPCAccessConnectorMaxThroughput(res["maxThroughput"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Connector: %s", err)
 	}
 
@@ -275,7 +303,7 @@ func resourceVPCAccessConnectorImport(d *schema.ResourceData, meta interface{}) 
 	}
 
 	// Replace import id for the resource id
-	id, err := replaceVars(d, config, "{{name}}")
+	id, err := replaceVars(d, config, "projects/{{project}}/locations/{{region}}/connectors/{{name}}")
 	if err != nil {
 		return nil, fmt.Errorf("Error constructing id: %s", err)
 	}
@@ -284,26 +312,26 @@ func resourceVPCAccessConnectorImport(d *schema.ResourceData, meta interface{}) 
 	return []*schema.ResourceData{d}, nil
 }
 
-func flattenVPCAccessConnectorName(v interface{}, d *schema.ResourceData) interface{} {
+func flattenVPCAccessConnectorName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	if v == nil {
 		return v
 	}
 	return NameFromSelfLinkStateFunc(v)
 }
 
-func flattenVPCAccessConnectorNetwork(v interface{}, d *schema.ResourceData) interface{} {
+func flattenVPCAccessConnectorNetwork(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenVPCAccessConnectorIpCidrRange(v interface{}, d *schema.ResourceData) interface{} {
+func flattenVPCAccessConnectorIpCidrRange(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenVPCAccessConnectorState(v interface{}, d *schema.ResourceData) interface{} {
+func flattenVPCAccessConnectorState(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenVPCAccessConnectorMinThroughput(v interface{}, d *schema.ResourceData) interface{} {
+func flattenVPCAccessConnectorMinThroughput(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
@@ -313,7 +341,7 @@ func flattenVPCAccessConnectorMinThroughput(v interface{}, d *schema.ResourceDat
 	return v
 }
 
-func flattenVPCAccessConnectorMaxThroughput(v interface{}, d *schema.ResourceData) interface{} {
+func flattenVPCAccessConnectorMaxThroughput(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {

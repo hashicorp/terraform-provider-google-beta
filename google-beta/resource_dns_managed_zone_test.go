@@ -123,7 +123,7 @@ func TestAccDNSManagedZone_privateForwardingUpdate(t *testing.T) {
 		CheckDestroy: testAccCheckDNSManagedZoneDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccDnsManagedZone_privateForwardingUpdate(zoneSuffix, "172.16.1.10", "172.16.1.20"),
+				Config: testAccDnsManagedZone_privateForwardingUpdate(zoneSuffix, "172.16.1.10", "172.16.1.20", "default", "private"),
 			},
 			{
 				ResourceName:      "google_dns_managed_zone.private",
@@ -131,7 +131,7 @@ func TestAccDNSManagedZone_privateForwardingUpdate(t *testing.T) {
 				ImportStateVerify: true,
 			},
 			{
-				Config: testAccDnsManagedZone_privateForwardingUpdate(zoneSuffix, "172.16.1.10", "192.168.1.1"),
+				Config: testAccDnsManagedZone_privateForwardingUpdate(zoneSuffix, "172.16.1.10", "192.168.1.1", "private", "default"),
 			},
 			{
 				ResourceName:      "google_dns_managed_zone.private",
@@ -142,18 +142,41 @@ func TestAccDNSManagedZone_privateForwardingUpdate(t *testing.T) {
 	})
 }
 
+func TestAccDNSManagedZone_reverseLookup(t *testing.T) {
+	t.Parallel()
+
+	zoneSuffix := acctest.RandString(10)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckDNSManagedZoneDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccDnsManagedZone_reverseLookup(zoneSuffix),
+			},
+			{
+				ResourceName:      "google_dns_managed_zone.reverse",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
 func testAccDnsManagedZone_basic(suffix, description string) string {
 	return fmt.Sprintf(`
 resource "google_dns_managed_zone" "foobar" {
-	name = "mzone-test-%s"
-	dns_name = "tf-acctest-%s.hashicorptest.com."
-	description = "%s"
-	labels = {
-		foo = "bar"
-	}
+  name        = "mzone-test-%s"
+  dns_name    = "tf-acctest-%s.hashicorptest.com."
+  description = "%s"
+  labels = {
+    foo = "bar"
+  }
 
-	visibility = "public"
-}`, suffix, suffix, description)
+  visibility = "public"
+}
+`, suffix, suffix, description)
 }
 
 func testAccDnsManagedZone_dnssec_on(suffix string) string {
@@ -175,7 +198,8 @@ resource "google_dns_managed_zone" "foobar" {
       key_type   = "keySigning"
     }
   }
-}`, suffix, suffix)
+}
+`, suffix, suffix)
 }
 
 func testAccDnsManagedZone_dnssec_off(suffix string) string {
@@ -187,69 +211,92 @@ resource "google_dns_managed_zone" "foobar" {
   dnssec_config {
     state = "off"
   }
-}`, suffix, suffix)
+}
+`, suffix, suffix)
 }
 
 func testAccDnsManagedZone_privateUpdate(suffix, first_network, second_network string) string {
 	return fmt.Sprintf(`
 resource "google_dns_managed_zone" "private" {
-  name = "private-zone-%s"
-  dns_name = "private.example.com."
+  name        = "private-zone-%s"
+  dns_name    = "private.example.com."
   description = "Example private DNS zone"
-  visibility = "private"
+  visibility  = "private"
   private_visibility_config {
     networks {
-      network_url = "${google_compute_network.%s.self_link}"
+      network_url = google_compute_network.%s.self_link
     }
     networks {
-      network_url = "${google_compute_network.%s.self_link}"
+      network_url = google_compute_network.%s.self_link
     }
   }
 }
 
 resource "google_compute_network" "network-1" {
-  name = "network-1-%s"
+  name                    = "network-1-%s"
   auto_create_subnetworks = false
 }
 
 resource "google_compute_network" "network-2" {
-  name = "network-2-%s"
+  name                    = "network-2-%s"
   auto_create_subnetworks = false
 }
 
 resource "google_compute_network" "network-3" {
-  name = "network-3-%s"
+  name                    = "network-3-%s"
   auto_create_subnetworks = false
-}`, suffix, first_network, second_network, suffix, suffix, suffix)
+}
+`, suffix, first_network, second_network, suffix, suffix, suffix)
 }
 
-func testAccDnsManagedZone_privateForwardingUpdate(suffix, first_nameserver, second_nameserver string) string {
+func testAccDnsManagedZone_privateForwardingUpdate(suffix, first_nameserver, second_nameserver, first_forwarding_path, second_forwarding_path string) string {
 	return fmt.Sprintf(`
 resource "google_dns_managed_zone" "private" {
-  name = "private-zone-%s"
-  dns_name = "private.example.com."
+  name        = "private-zone-%s"
+  dns_name    = "private.example.com."
   description = "Example private DNS zone"
-  visibility = "private"
+  visibility  = "private"
   private_visibility_config {
     networks {
-      network_url = "${google_compute_network.network-1.self_link}"
+      network_url = google_compute_network.network-1.self_link
     }
   }
 
   forwarding_config {
     target_name_servers {
       ipv4_address = "%s"
+      forwarding_path = "%s"
     }
     target_name_servers {
       ipv4_address = "%s"
+      forwarding_path = "%s"
     }
   }
 }
 
 resource "google_compute_network" "network-1" {
-  name = "network-1-%s"
+  name                    = "network-1-%s"
   auto_create_subnetworks = false
-}`, suffix, first_nameserver, second_nameserver, suffix)
+}
+`, suffix, first_nameserver, first_forwarding_path, second_nameserver, second_forwarding_path, suffix)
+}
+
+func testAccDnsManagedZone_reverseLookup(suffix string) string {
+	return fmt.Sprintf(`
+resource "google_dns_managed_zone" "reverse" {
+  name        = "reverse-zone-%s"
+  dns_name    = "1.0.168.192.in-addr.arpa."
+  visibility  = "private"
+  description = "Example private DNS zone"
+
+  reverse_lookup = true
+}
+
+resource "google_compute_network" "network-1" {
+  name                    = "network-1-%s"
+  auto_create_subnetworks = false
+}
+`, suffix, suffix)
 }
 
 func TestDnsManagedZoneImport_parseImportId(t *testing.T) {
@@ -355,9 +402,10 @@ func TestAccDNSManagedZone_importWithProject(t *testing.T) {
 func testAccDnsManagedZone_basicWithProject(suffix, description, project string) string {
 	return fmt.Sprintf(`
 resource "google_dns_managed_zone" "foobar" {
-	name = "mzone-test-%s"
-	dns_name = "tf-acctest-%s.hashicorptest.com."
-	description = "%s"
-	project = "%s"
-}`, suffix, suffix, description, project)
+  name        = "mzone-test-%s"
+  dns_name    = "tf-acctest-%s.hashicorptest.com."
+  description = "%s"
+  project     = "%s"
+}
+`, suffix, suffix, description, project)
 }

@@ -47,33 +47,58 @@ func resourceHealthcareDicomStore() *schema.Resource {
 				Required:         true,
 				ForceNew:         true,
 				DiffSuppressFunc: compareSelfLinkOrResourceName,
+				Description: `Identifies the dataset addressed by this request. Must be in the format
+'projects/{project}/locations/{location}/datasets/{dataset}'`,
 			},
 			"name": {
 				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: true,
+				Description: `The resource name for the DicomStore.
+
+** Changing this property may recreate the Dicom store (removing all data) **`,
 			},
 			"labels": {
 				Type:     schema.TypeMap,
 				Optional: true,
-				Elem:     &schema.Schema{Type: schema.TypeString},
+				Description: `User-supplied key-value pairs used to organize DICOM stores.
+
+Label keys must be between 1 and 63 characters long, have a UTF-8 encoding of maximum 128 bytes, and must
+conform to the following PCRE regular expression: [\p{Ll}\p{Lo}][\p{Ll}\p{Lo}\p{N}_-]{0,62}
+
+Label values are optional, must be between 1 and 63 characters long, have a UTF-8 encoding of maximum 128
+bytes, and must conform to the following PCRE regular expression: [\p{Ll}\p{Lo}\p{N}_-]{0,63}
+
+No more than 64 labels can be associated with a given store.
+
+An object containing a list of "key": value pairs.
+Example: { "name": "wrench", "mass": "1.3kg", "count": "3" }.`,
+				Elem: &schema.Schema{Type: schema.TypeString},
 			},
 			"notification_config": {
-				Type:     schema.TypeList,
-				Optional: true,
-				MaxItems: 1,
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: `A nested object resource`,
+				MaxItems:    1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"pubsub_topic": {
 							Type:     schema.TypeString,
 							Required: true,
+							Description: `The Cloud Pub/Sub topic that notifications of changes are published on. Supplied by the client.
+PubsubMessage.Data will contain the resource name. PubsubMessage.MessageId is the ID of this message.
+It is guaranteed to be unique within the topic. PubsubMessage.PublishTime is the time at which the message
+was published. Notifications are only sent if the topic is non-empty. Topic names must be scoped to a
+project. cloud-healthcare@system.gserviceaccount.com must have publisher permissions on the given
+Cloud Pub/Sub topic. Not having adequate permissions will cause the calls that send notifications to fail.`,
 						},
 					},
 				},
 			},
 			"self_link": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: `The fully qualified name of this dataset`,
 			},
 		},
 	}
@@ -150,13 +175,13 @@ func resourceHealthcareDicomStoreRead(d *schema.ResourceData, meta interface{}) 
 		return nil
 	}
 
-	if err := d.Set("name", flattenHealthcareDicomStoreName(res["name"], d)); err != nil {
+	if err := d.Set("name", flattenHealthcareDicomStoreName(res["name"], d, config)); err != nil {
 		return fmt.Errorf("Error reading DicomStore: %s", err)
 	}
-	if err := d.Set("labels", flattenHealthcareDicomStoreLabels(res["labels"], d)); err != nil {
+	if err := d.Set("labels", flattenHealthcareDicomStoreLabels(res["labels"], d, config)); err != nil {
 		return fmt.Errorf("Error reading DicomStore: %s", err)
 	}
-	if err := d.Set("notification_config", flattenHealthcareDicomStoreNotificationConfig(res["notificationConfig"], d)); err != nil {
+	if err := d.Set("notification_config", flattenHealthcareDicomStoreNotificationConfig(res["notificationConfig"], d, config)); err != nil {
 		return fmt.Errorf("Error reading DicomStore: %s", err)
 	}
 
@@ -245,15 +270,15 @@ func resourceHealthcareDicomStoreImport(d *schema.ResourceData, meta interface{}
 	return []*schema.ResourceData{d}, nil
 }
 
-func flattenHealthcareDicomStoreName(v interface{}, d *schema.ResourceData) interface{} {
+func flattenHealthcareDicomStoreName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenHealthcareDicomStoreLabels(v interface{}, d *schema.ResourceData) interface{} {
+func flattenHealthcareDicomStoreLabels(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenHealthcareDicomStoreNotificationConfig(v interface{}, d *schema.ResourceData) interface{} {
+func flattenHealthcareDicomStoreNotificationConfig(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -263,10 +288,10 @@ func flattenHealthcareDicomStoreNotificationConfig(v interface{}, d *schema.Reso
 	}
 	transformed := make(map[string]interface{})
 	transformed["pubsub_topic"] =
-		flattenHealthcareDicomStoreNotificationConfigPubsubTopic(original["pubsubTopic"], d)
+		flattenHealthcareDicomStoreNotificationConfigPubsubTopic(original["pubsubTopic"], d, config)
 	return []interface{}{transformed}
 }
-func flattenHealthcareDicomStoreNotificationConfigPubsubTopic(v interface{}, d *schema.ResourceData) interface{} {
+func flattenHealthcareDicomStoreNotificationConfigPubsubTopic(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 

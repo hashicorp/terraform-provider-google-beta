@@ -51,7 +51,7 @@ func TestAccBigQueryDataset_bigqueryDatasetBasicExample(t *testing.T) {
 func testAccBigQueryDataset_bigqueryDatasetBasicExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_bigquery_dataset" "dataset" {
-  dataset_id                  = "example_dataset%{random_suffix}"
+  dataset_id                  = "tf_test_example_dataset%{random_suffix}"
   friendly_name               = "test"
   description                 = "This is a test description"
   location                    = "EU"
@@ -63,12 +63,17 @@ resource "google_bigquery_dataset" "dataset" {
 
   access {
     role          = "OWNER"
-    user_by_email = "Joe@example.com"
+    user_by_email = google_service_account.bqowner.email
   }
+
   access {
     role   = "READER"
-    domain = "example.com"
+    domain = "hashicorp.com"
   }
+}
+
+resource "google_service_account" "bqowner" {
+  account_id = "bqowner%{random_suffix}"
 }
 `, context)
 }

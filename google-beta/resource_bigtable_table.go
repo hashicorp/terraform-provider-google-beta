@@ -14,6 +14,10 @@ func resourceBigtableTable() *schema.Resource {
 		Read:   resourceBigtableTableRead,
 		Delete: resourceBigtableTableDestroy,
 
+		Importer: &schema.ResourceImporter{
+			State: resourceBigtableTableImport,
+		},
+
 		Schema: map[string]*schema.Schema{
 			"name": {
 				Type:     schema.TypeString,
@@ -36,9 +40,10 @@ func resourceBigtableTable() *schema.Resource {
 			},
 
 			"instance_name": {
-				Type:     schema.TypeString,
-				Required: true,
-				ForceNew: true,
+				Type:             schema.TypeString,
+				Required:         true,
+				ForceNew:         true,
+				DiffSuppressFunc: compareResourceNames,
 			},
 
 			"split_keys": {
@@ -67,11 +72,12 @@ func resourceBigtableTableCreate(d *schema.ResourceData, meta interface{}) error
 		return err
 	}
 
-	instanceName := d.Get("instance_name").(string)
+	instanceName := GetResourceNameFromSelfLink(d.Get("instance_name").(string))
 	c, err := config.bigtableClientFactory.NewAdminClient(project, instanceName)
 	if err != nil {
 		return fmt.Errorf("Error starting admin client. %s", err)
 	}
+	d.Set("instance_name", instanceName)
 
 	defer c.Close()
 
@@ -107,7 +113,11 @@ func resourceBigtableTableCreate(d *schema.ResourceData, meta interface{}) error
 		}
 	}
 
-	d.SetId(name)
+	id, err := replaceVars(d, config, "projects/{{project}}/instances/{{instance_name}}/tables/{{name}}")
+	if err != nil {
+		return fmt.Errorf("Error constructing id: %s", err)
+	}
+	d.SetId(id)
 
 	return resourceBigtableTableRead(d, meta)
 }
@@ -121,7 +131,7 @@ func resourceBigtableTableRead(d *schema.ResourceData, meta interface{}) error {
 		return err
 	}
 
-	instanceName := d.Get("instance_name").(string)
+	instanceName := GetResourceNameFromSelfLink(d.Get("instance_name").(string))
 	c, err := config.bigtableClientFactory.NewAdminClient(project, instanceName)
 	if err != nil {
 		return fmt.Errorf("Error starting admin client. %s", err)
@@ -129,12 +139,12 @@ func resourceBigtableTableRead(d *schema.ResourceData, meta interface{}) error {
 
 	defer c.Close()
 
-	name := d.Id()
+	name := d.Get("name").(string)
 	table, err := c.TableInfo(ctx, name)
 	if err != nil {
 		log.Printf("[WARN] Removing %s because it's gone", name)
 		d.SetId("")
-		return fmt.Errorf("Error retrieving table. Could not find %s in %s. %s", name, instanceName, err)
+		return nil
 	}
 
 	d.Set("project", project)
@@ -152,7 +162,7 @@ func resourceBigtableTableDestroy(d *schema.ResourceData, meta interface{}) erro
 		return err
 	}
 
-	instanceName := d.Get("instance_name").(string)
+	instanceName := GetResourceNameFromSelfLink(d.Get("instance_name").(string))
 	c, err := config.bigtableClientFactory.NewAdminClient(project, instanceName)
 	if err != nil {
 		return fmt.Errorf("Error starting admin client. %s", err)
@@ -181,4 +191,25 @@ func flattenColumnFamily(families []string) []map[string]interface{} {
 	}
 
 	return result
+}
+
+//TODO(rileykarson): Fix the stored import format after rebasing 3.0.0
+func resourceBigtableTableImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+	config := meta.(*Config)
+	if err := parseImportId([]string{
+		"projects/(?P<project>[^/]+)/instances/(?P<instance_name>[^/]+)/tables/(?P<name>[^/]+)",
+		"(?P<project>[^/]+)/(?P<instance_name>[^/]+)/(?P<name>[^/]+)",
+		"(?P<instance_name>[^/]+)/(?P<name>[^/]+)",
+	}, d, config); err != nil {
+		return nil, err
+	}
+
+	// Replace import id for the resource id
+	id, err := replaceVars(d, config, "projects/{{project}}/instances/{{instance_name}}/tables/{{name}}")
+	if err != nil {
+		return nil, fmt.Errorf("Error constructing id: %s", err)
+	}
+	d.SetId(id)
+
+	return []*schema.ResourceData{d}, nil
 }

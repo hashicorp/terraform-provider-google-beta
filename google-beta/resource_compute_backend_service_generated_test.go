@@ -51,12 +51,12 @@ func TestAccComputeBackendService_backendServiceBasicExample(t *testing.T) {
 func testAccComputeBackendService_backendServiceBasicExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_compute_backend_service" "default" {
-  name          = "backend-service%{random_suffix}"
-  health_checks = ["${google_compute_http_health_check.default.self_link}"]
+  name          = "tf-test-backend-service%{random_suffix}"
+  health_checks = [google_compute_http_health_check.default.self_link]
 }
 
 resource "google_compute_http_health_check" "default" {
-  name               = "health-check%{random_suffix}"
+  name               = "tf-test-health-check%{random_suffix}"
   request_path       = "/"
   check_interval_sec = 1
   timeout_sec        = 1
@@ -86,20 +86,20 @@ func TestAccComputeBackendService_backendServiceTrafficDirectorRoundRobinExample
 func testAccComputeBackendService_backendServiceTrafficDirectorRoundRobinExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_compute_backend_service" "default" {
-  provider = "google-beta"
+  provider = google-beta
 
-  name          = "backend-service%{random_suffix}"
-  health_checks = ["${google_compute_health_check.health_check.self_link}"]
+  name                  = "tf-test-backend-service%{random_suffix}"
+  health_checks         = [google_compute_health_check.health_check.self_link]
   load_balancing_scheme = "INTERNAL_SELF_MANAGED"
-  locality_lb_policy = "ROUND_ROBIN"
+  locality_lb_policy    = "ROUND_ROBIN"
 }
 
 resource "google_compute_health_check" "health_check" {
-  provider = "google-beta"
+  provider = google-beta
 
-  name               = "health-check%{random_suffix}"
+  name = "tf-test-health-check%{random_suffix}"
   http_health_check {
-
+    port = 80
   }
 }
 `, context)
@@ -127,13 +127,13 @@ func TestAccComputeBackendService_backendServiceTrafficDirectorRingHashExample(t
 func testAccComputeBackendService_backendServiceTrafficDirectorRingHashExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_compute_backend_service" "default" {
-  provider = "google-beta"
+  provider = google-beta
 
-  name          = "backend-service%{random_suffix}"
-  health_checks = ["${google_compute_health_check.health_check.self_link}"]
+  name                  = "tf-test-backend-service%{random_suffix}"
+  health_checks         = [google_compute_health_check.health_check.self_link]
   load_balancing_scheme = "INTERNAL_SELF_MANAGED"
-  locality_lb_policy = "RING_HASH"
-  session_affinity = "HTTP_COOKIE"
+  locality_lb_policy    = "RING_HASH"
+  session_affinity      = "HTTP_COOKIE"
   circuit_breakers {
     max_connections = 10
   }
@@ -141,7 +141,7 @@ resource "google_compute_backend_service" "default" {
     http_cookie {
       ttl {
         seconds = 11
-        nanos = 1111
+        nanos   = 1111
       }
       name = "mycookie"
     }
@@ -152,11 +152,11 @@ resource "google_compute_backend_service" "default" {
 }
 
 resource "google_compute_health_check" "health_check" {
-  provider = "google-beta"
+  provider = google-beta
 
-  name               = "health-check%{random_suffix}"
+  name = "tf-test-health-check%{random_suffix}"
   http_health_check {
-
+    port = 80
   }
 }
 `, context)

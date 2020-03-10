@@ -45,12 +45,14 @@ func resourceSecurityScannerScanConfig() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"display_name": {
-				Type:     schema.TypeString,
-				Required: true,
+				Type:        schema.TypeString,
+				Required:    true,
+				Description: `The user provider display name of the ScanConfig.`,
 			},
 			"starting_urls": {
-				Type:     schema.TypeList,
-				Required: true,
+				Type:        schema.TypeList,
+				Required:    true,
+				Description: `The starting URLs from which the scanner finds site pages.`,
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
@@ -58,50 +60,63 @@ func resourceSecurityScannerScanConfig() *schema.Resource {
 			"authentication": {
 				Type:     schema.TypeList,
 				Optional: true,
+				Description: `The authentication configuration.
+If specified, service will use the authentication configuration during scanning.`,
 				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"custom_account": {
-							Type:     schema.TypeList,
-							Optional: true,
-							MaxItems: 1,
+							Type:        schema.TypeList,
+							Optional:    true,
+							Description: `Describes authentication configuration that uses a custom account.`,
+							MaxItems:    1,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"login_url": {
-										Type:     schema.TypeString,
-										Required: true,
+										Type:        schema.TypeString,
+										Required:    true,
+										Description: `The login form URL of the website.`,
 									},
 									"password": {
-										Type:      schema.TypeString,
-										Required:  true,
-										ForceNew:  true,
+										Type:     schema.TypeString,
+										Required: true,
+										ForceNew: true,
+										Description: `The password of the custom account. The credential is stored encrypted
+in GCP.`,
 										Sensitive: true,
 									},
 									"username": {
-										Type:     schema.TypeString,
-										Required: true,
+										Type:        schema.TypeString,
+										Required:    true,
+										Description: `The user name of the custom account.`,
 									},
 								},
 							},
+							AtLeastOneOf: []string{"authentication.0.google_account", "authentication.0.custom_account"},
 						},
 						"google_account": {
-							Type:     schema.TypeList,
-							Optional: true,
-							MaxItems: 1,
+							Type:        schema.TypeList,
+							Optional:    true,
+							Description: `Describes authentication configuration that uses a Google account.`,
+							MaxItems:    1,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"password": {
-										Type:      schema.TypeString,
-										Required:  true,
-										ForceNew:  true,
+										Type:     schema.TypeString,
+										Required: true,
+										ForceNew: true,
+										Description: `The password of the Google account. The credential is stored encrypted
+in GCP.`,
 										Sensitive: true,
 									},
 									"username": {
-										Type:     schema.TypeString,
-										Required: true,
+										Type:        schema.TypeString,
+										Required:    true,
+										Description: `The user name of the Google account.`,
 									},
 								},
 							},
+							AtLeastOneOf: []string{"authentication.0.google_account", "authentication.0.custom_account"},
 						},
 					},
 				},
@@ -109,6 +124,8 @@ func resourceSecurityScannerScanConfig() *schema.Resource {
 			"blacklist_patterns": {
 				Type:     schema.TypeList,
 				Optional: true,
+				Description: `The blacklist URL patterns as described in
+https://cloud.google.com/security-scanner/docs/excluded-urls`,
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
@@ -117,34 +134,43 @@ func resourceSecurityScannerScanConfig() *schema.Resource {
 				Type:         schema.TypeString,
 				Optional:     true,
 				ValidateFunc: validation.StringInSlice([]string{"ENABLED", "DISABLED", ""}, false),
+				Description:  `Controls export of scan configurations and results to Cloud Security Command Center.`,
 				Default:      "ENABLED",
 			},
 			"max_qps": {
 				Type:         schema.TypeInt,
 				Optional:     true,
 				ValidateFunc: validation.IntBetween(5, 20),
-				Default:      15,
+				Description: `The maximum QPS during scanning. A valid value ranges from 5 to 20 inclusively.
+Defaults to 15.`,
+				Default: 15,
 			},
 			"schedule": {
-				Type:     schema.TypeList,
-				Optional: true,
-				MaxItems: 1,
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: `The schedule of the ScanConfig`,
+				MaxItems:    1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"interval_duration_days": {
-							Type:     schema.TypeInt,
-							Required: true,
+							Type:        schema.TypeInt,
+							Required:    true,
+							Description: `The duration of time between executions in days`,
 						},
 						"schedule_time": {
 							Type:     schema.TypeString,
 							Optional: true,
+							Description: `A timestamp indicates when the next run will be scheduled. The value is refreshed
+by the server after each run. If unspecified, it will default to current server time,
+which means the scan will be scheduled to start immediately.`,
 						},
 					},
 				},
 			},
 			"target_platforms": {
-				Type:     schema.TypeList,
-				Optional: true,
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: `Set of Cloud Platforms targeted by the scan. If empty, APP_ENGINE will be used as a default.`,
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
@@ -153,11 +179,14 @@ func resourceSecurityScannerScanConfig() *schema.Resource {
 				Type:         schema.TypeString,
 				Optional:     true,
 				ValidateFunc: validation.StringInSlice([]string{"USER_AGENT_UNSPECIFIED", "CHROME_LINUX", "CHROME_ANDROID", "SAFARI_IPHONE", ""}, false),
+				Description:  `Type of the user agents used for scanning`,
 				Default:      "CHROME_LINUX",
 			},
 			"name": {
 				Type:     schema.TypeString,
 				Computed: true,
+				Description: `A server defined name for this index. Format:
+'projects/{{project}}/scanConfigs/{{server_generated_id}}'`,
 			},
 			"project": {
 				Type:     schema.TypeString,
@@ -284,34 +313,34 @@ func resourceSecurityScannerScanConfigRead(d *schema.ResourceData, meta interfac
 		return fmt.Errorf("Error reading ScanConfig: %s", err)
 	}
 
-	if err := d.Set("name", flattenSecurityScannerScanConfigName(res["name"], d)); err != nil {
+	if err := d.Set("name", flattenSecurityScannerScanConfigName(res["name"], d, config)); err != nil {
 		return fmt.Errorf("Error reading ScanConfig: %s", err)
 	}
-	if err := d.Set("display_name", flattenSecurityScannerScanConfigDisplayName(res["displayName"], d)); err != nil {
+	if err := d.Set("display_name", flattenSecurityScannerScanConfigDisplayName(res["displayName"], d, config)); err != nil {
 		return fmt.Errorf("Error reading ScanConfig: %s", err)
 	}
-	if err := d.Set("max_qps", flattenSecurityScannerScanConfigMaxQps(res["maxQps"], d)); err != nil {
+	if err := d.Set("max_qps", flattenSecurityScannerScanConfigMaxQps(res["maxQps"], d, config)); err != nil {
 		return fmt.Errorf("Error reading ScanConfig: %s", err)
 	}
-	if err := d.Set("starting_urls", flattenSecurityScannerScanConfigStartingUrls(res["startingUrls"], d)); err != nil {
+	if err := d.Set("starting_urls", flattenSecurityScannerScanConfigStartingUrls(res["startingUrls"], d, config)); err != nil {
 		return fmt.Errorf("Error reading ScanConfig: %s", err)
 	}
-	if err := d.Set("authentication", flattenSecurityScannerScanConfigAuthentication(res["authentication"], d)); err != nil {
+	if err := d.Set("authentication", flattenSecurityScannerScanConfigAuthentication(res["authentication"], d, config)); err != nil {
 		return fmt.Errorf("Error reading ScanConfig: %s", err)
 	}
-	if err := d.Set("user_agent", flattenSecurityScannerScanConfigUserAgent(res["userAgent"], d)); err != nil {
+	if err := d.Set("user_agent", flattenSecurityScannerScanConfigUserAgent(res["userAgent"], d, config)); err != nil {
 		return fmt.Errorf("Error reading ScanConfig: %s", err)
 	}
-	if err := d.Set("blacklist_patterns", flattenSecurityScannerScanConfigBlacklistPatterns(res["blacklistPatterns"], d)); err != nil {
+	if err := d.Set("blacklist_patterns", flattenSecurityScannerScanConfigBlacklistPatterns(res["blacklistPatterns"], d, config)); err != nil {
 		return fmt.Errorf("Error reading ScanConfig: %s", err)
 	}
-	if err := d.Set("schedule", flattenSecurityScannerScanConfigSchedule(res["schedule"], d)); err != nil {
+	if err := d.Set("schedule", flattenSecurityScannerScanConfigSchedule(res["schedule"], d, config)); err != nil {
 		return fmt.Errorf("Error reading ScanConfig: %s", err)
 	}
-	if err := d.Set("target_platforms", flattenSecurityScannerScanConfigTargetPlatforms(res["targetPlatforms"], d)); err != nil {
+	if err := d.Set("target_platforms", flattenSecurityScannerScanConfigTargetPlatforms(res["targetPlatforms"], d, config)); err != nil {
 		return fmt.Errorf("Error reading ScanConfig: %s", err)
 	}
-	if err := d.Set("export_to_security_command_center", flattenSecurityScannerScanConfigExportToSecurityCommandCenter(res["exportToSecurityCommandCenter"], d)); err != nil {
+	if err := d.Set("export_to_security_command_center", flattenSecurityScannerScanConfigExportToSecurityCommandCenter(res["exportToSecurityCommandCenter"], d, config)); err != nil {
 		return fmt.Errorf("Error reading ScanConfig: %s", err)
 	}
 
@@ -477,15 +506,15 @@ func resourceSecurityScannerScanConfigImport(d *schema.ResourceData, meta interf
 	return []*schema.ResourceData{d}, nil
 }
 
-func flattenSecurityScannerScanConfigName(v interface{}, d *schema.ResourceData) interface{} {
+func flattenSecurityScannerScanConfigName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenSecurityScannerScanConfigDisplayName(v interface{}, d *schema.ResourceData) interface{} {
+func flattenSecurityScannerScanConfigDisplayName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenSecurityScannerScanConfigMaxQps(v interface{}, d *schema.ResourceData) interface{} {
+func flattenSecurityScannerScanConfigMaxQps(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
@@ -495,11 +524,11 @@ func flattenSecurityScannerScanConfigMaxQps(v interface{}, d *schema.ResourceDat
 	return v
 }
 
-func flattenSecurityScannerScanConfigStartingUrls(v interface{}, d *schema.ResourceData) interface{} {
+func flattenSecurityScannerScanConfigStartingUrls(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenSecurityScannerScanConfigAuthentication(v interface{}, d *schema.ResourceData) interface{} {
+func flattenSecurityScannerScanConfigAuthentication(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -509,12 +538,12 @@ func flattenSecurityScannerScanConfigAuthentication(v interface{}, d *schema.Res
 	}
 	transformed := make(map[string]interface{})
 	transformed["google_account"] =
-		flattenSecurityScannerScanConfigAuthenticationGoogleAccount(original["googleAccount"], d)
+		flattenSecurityScannerScanConfigAuthenticationGoogleAccount(original["googleAccount"], d, config)
 	transformed["custom_account"] =
-		flattenSecurityScannerScanConfigAuthenticationCustomAccount(original["customAccount"], d)
+		flattenSecurityScannerScanConfigAuthenticationCustomAccount(original["customAccount"], d, config)
 	return []interface{}{transformed}
 }
-func flattenSecurityScannerScanConfigAuthenticationGoogleAccount(v interface{}, d *schema.ResourceData) interface{} {
+func flattenSecurityScannerScanConfigAuthenticationGoogleAccount(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -524,20 +553,20 @@ func flattenSecurityScannerScanConfigAuthenticationGoogleAccount(v interface{}, 
 	}
 	transformed := make(map[string]interface{})
 	transformed["username"] =
-		flattenSecurityScannerScanConfigAuthenticationGoogleAccountUsername(original["username"], d)
+		flattenSecurityScannerScanConfigAuthenticationGoogleAccountUsername(original["username"], d, config)
 	transformed["password"] =
-		flattenSecurityScannerScanConfigAuthenticationGoogleAccountPassword(original["password"], d)
+		flattenSecurityScannerScanConfigAuthenticationGoogleAccountPassword(original["password"], d, config)
 	return []interface{}{transformed}
 }
-func flattenSecurityScannerScanConfigAuthenticationGoogleAccountUsername(v interface{}, d *schema.ResourceData) interface{} {
+func flattenSecurityScannerScanConfigAuthenticationGoogleAccountUsername(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenSecurityScannerScanConfigAuthenticationGoogleAccountPassword(v interface{}, d *schema.ResourceData) interface{} {
-	return v
+func flattenSecurityScannerScanConfigAuthenticationGoogleAccountPassword(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	return d.Get("authentication.0.custom_account.0.password")
 }
 
-func flattenSecurityScannerScanConfigAuthenticationCustomAccount(v interface{}, d *schema.ResourceData) interface{} {
+func flattenSecurityScannerScanConfigAuthenticationCustomAccount(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -547,34 +576,34 @@ func flattenSecurityScannerScanConfigAuthenticationCustomAccount(v interface{}, 
 	}
 	transformed := make(map[string]interface{})
 	transformed["username"] =
-		flattenSecurityScannerScanConfigAuthenticationCustomAccountUsername(original["username"], d)
+		flattenSecurityScannerScanConfigAuthenticationCustomAccountUsername(original["username"], d, config)
 	transformed["password"] =
-		flattenSecurityScannerScanConfigAuthenticationCustomAccountPassword(original["password"], d)
+		flattenSecurityScannerScanConfigAuthenticationCustomAccountPassword(original["password"], d, config)
 	transformed["login_url"] =
-		flattenSecurityScannerScanConfigAuthenticationCustomAccountLoginUrl(original["loginUrl"], d)
+		flattenSecurityScannerScanConfigAuthenticationCustomAccountLoginUrl(original["loginUrl"], d, config)
 	return []interface{}{transformed}
 }
-func flattenSecurityScannerScanConfigAuthenticationCustomAccountUsername(v interface{}, d *schema.ResourceData) interface{} {
+func flattenSecurityScannerScanConfigAuthenticationCustomAccountUsername(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenSecurityScannerScanConfigAuthenticationCustomAccountPassword(v interface{}, d *schema.ResourceData) interface{} {
+func flattenSecurityScannerScanConfigAuthenticationCustomAccountPassword(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	return d.Get("authentication.0.google_account.0.password")
+}
+
+func flattenSecurityScannerScanConfigAuthenticationCustomAccountLoginUrl(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenSecurityScannerScanConfigAuthenticationCustomAccountLoginUrl(v interface{}, d *schema.ResourceData) interface{} {
+func flattenSecurityScannerScanConfigUserAgent(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenSecurityScannerScanConfigUserAgent(v interface{}, d *schema.ResourceData) interface{} {
+func flattenSecurityScannerScanConfigBlacklistPatterns(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenSecurityScannerScanConfigBlacklistPatterns(v interface{}, d *schema.ResourceData) interface{} {
-	return v
-}
-
-func flattenSecurityScannerScanConfigSchedule(v interface{}, d *schema.ResourceData) interface{} {
+func flattenSecurityScannerScanConfigSchedule(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -584,16 +613,16 @@ func flattenSecurityScannerScanConfigSchedule(v interface{}, d *schema.ResourceD
 	}
 	transformed := make(map[string]interface{})
 	transformed["schedule_time"] =
-		flattenSecurityScannerScanConfigScheduleScheduleTime(original["scheduleTime"], d)
+		flattenSecurityScannerScanConfigScheduleScheduleTime(original["scheduleTime"], d, config)
 	transformed["interval_duration_days"] =
-		flattenSecurityScannerScanConfigScheduleIntervalDurationDays(original["intervalDurationDays"], d)
+		flattenSecurityScannerScanConfigScheduleIntervalDurationDays(original["intervalDurationDays"], d, config)
 	return []interface{}{transformed}
 }
-func flattenSecurityScannerScanConfigScheduleScheduleTime(v interface{}, d *schema.ResourceData) interface{} {
+func flattenSecurityScannerScanConfigScheduleScheduleTime(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenSecurityScannerScanConfigScheduleIntervalDurationDays(v interface{}, d *schema.ResourceData) interface{} {
+func flattenSecurityScannerScanConfigScheduleIntervalDurationDays(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
@@ -603,11 +632,11 @@ func flattenSecurityScannerScanConfigScheduleIntervalDurationDays(v interface{},
 	return v
 }
 
-func flattenSecurityScannerScanConfigTargetPlatforms(v interface{}, d *schema.ResourceData) interface{} {
+func flattenSecurityScannerScanConfigTargetPlatforms(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenSecurityScannerScanConfigExportToSecurityCommandCenter(v interface{}, d *schema.ResourceData) interface{} {
+func flattenSecurityScannerScanConfigExportToSecurityCommandCenter(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 

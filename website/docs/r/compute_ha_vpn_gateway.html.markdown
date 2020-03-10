@@ -12,6 +12,7 @@
 #     .github/CONTRIBUTING.md.
 #
 # ----------------------------------------------------------------------------
+subcategory: "Compute Engine"
 layout: "google"
 page_title: "Google: google_compute_ha_vpn_gateway"
 sidebar_current: "docs-google-compute-ha-vpn-gateway"
@@ -26,7 +27,7 @@ by Google, but used only by you. This type of VPN Gateway allows for the creatio
 of VPN solutions with higher availability than classic Target VPN Gateways.
 
 ~> **Warning:** This resource is in beta, and should be used with the terraform-provider-google-beta provider.
-See [Provider Versions](https://terraform.io/docs/providers/google/provider_versions.html) for more details on beta resources.
+See [Provider Versions](https://terraform.io/docs/providers/google/guides/provider_versions.html) for more details on beta resources.
 
 To get more information about HaVpnGateway, see:
 
@@ -45,14 +46,14 @@ To get more information about HaVpnGateway, see:
 
 ```hcl
 resource "google_compute_ha_vpn_gateway" "ha_gateway1" {
-  provider = "google-beta"
+  provider = google-beta
   region   = "us-central1"
   name     = "ha-vpn-1"
-  network  = "${google_compute_network.network1.self_link}"
+  network  = google_compute_network.network1.self_link
 }
 
 resource "google_compute_network" "network1" {
-  provider                = "google-beta"
+  provider                = google-beta
   name                    = "network1"
   auto_create_subnetworks = false
 }
@@ -67,205 +68,205 @@ resource "google_compute_network" "network1" {
 
 ```hcl
 resource "google_compute_ha_vpn_gateway" "ha_gateway1" {
-  provider = "google-beta"
+  provider = google-beta
   region   = "us-central1"
   name     = "ha-vpn-1"
-  network  = "${google_compute_network.network1.self_link}"
+  network  = google_compute_network.network1.self_link
 }
 
 resource "google_compute_ha_vpn_gateway" "ha_gateway2" {
-  provider = "google-beta"
+  provider = google-beta
   region   = "us-central1"
   name     = "ha-vpn-2"
-  network  = "${google_compute_network.network2.self_link}"
+  network  = google_compute_network.network2.self_link
 }
 
 resource "google_compute_network" "network1" {
-  provider                = "google-beta"
+  provider                = google-beta
   name                    = "network1"
   routing_mode            = "GLOBAL"
   auto_create_subnetworks = false
 }
 
 resource "google_compute_network" "network2" {
-  provider                = "google-beta"
+  provider                = google-beta
   name                    = "network2"
   routing_mode            = "GLOBAL"
   auto_create_subnetworks = false
 }
 
 resource "google_compute_subnetwork" "network1_subnet1" {
-  provider = "google-beta"
+  provider      = google-beta
   name          = "ha-vpn-subnet-1"
   ip_cidr_range = "10.0.1.0/24"
   region        = "us-central1"
-  network       = "${google_compute_network.network1.self_link}"
+  network       = google_compute_network.network1.self_link
 }
 
 resource "google_compute_subnetwork" "network1_subnet2" {
-  provider = "google-beta"
+  provider      = google-beta
   name          = "ha-vpn-subnet-2"
   ip_cidr_range = "10.0.2.0/24"
   region        = "us-west1"
-  network       = "${google_compute_network.network1.self_link}"
+  network       = google_compute_network.network1.self_link
 }
 
 resource "google_compute_subnetwork" "network2_subnet1" {
-  provider = "google-beta"
+  provider      = google-beta
   name          = "ha-vpn-subnet-3"
   ip_cidr_range = "192.168.1.0/24"
   region        = "us-central1"
-  network       = "${google_compute_network.network2.self_link}"
+  network       = google_compute_network.network2.self_link
 }
 
 resource "google_compute_subnetwork" "network2_subnet2" {
-  provider = "google-beta"
+  provider      = google-beta
   name          = "ha-vpn-subnet-4"
   ip_cidr_range = "192.168.2.0/24"
   region        = "us-east1"
-  network       = "${google_compute_network.network2.self_link}"
+  network       = google_compute_network.network2.self_link
 }
 
 resource "google_compute_router" "router1" {
-  provider = "google-beta"
-  name    = "ha-vpn-router1"
-  network = "${google_compute_network.network1.name}"
+  provider = google-beta
+  name     = "ha-vpn-router1"
+  network  = google_compute_network.network1.name
   bgp {
     asn = 64514
   }
 }
 
 resource "google_compute_router" "router2" {
-  provider = "google-beta"
+  provider = google-beta
   name     = "ha-vpn-router2"
-  network  = "${google_compute_network.network2.name}"
+  network  = google_compute_network.network2.name
   bgp {
     asn = 64515
   }
 }
 
 resource "google_compute_vpn_tunnel" "tunnel1" {
-  provider         = "google-beta"
-  name             = "ha-vpn-tunnel1"
-  region           = "us-central1"
-  vpn_gateway      = "${google_compute_ha_vpn_gateway.ha_gateway1.self_link}"
-  peer_gcp_gateway = "${google_compute_ha_vpn_gateway.ha_gateway2.self_link}"
-  shared_secret    = "a secret message"
-  router           = "${google_compute_router.router1.self_link}"
+  provider              = google-beta
+  name                  = "ha-vpn-tunnel1"
+  region                = "us-central1"
+  vpn_gateway           = google_compute_ha_vpn_gateway.ha_gateway1.self_link
+  peer_gcp_gateway      = google_compute_ha_vpn_gateway.ha_gateway2.self_link
+  shared_secret         = "a secret message"
+  router                = google_compute_router.router1.self_link
   vpn_gateway_interface = 0
 }
 
 resource "google_compute_vpn_tunnel" "tunnel2" {
-  provider         = "google-beta"
-  name             = "ha-vpn-tunnel2"
-  region           = "us-central1"
-  vpn_gateway      = "${google_compute_ha_vpn_gateway.ha_gateway1.self_link}"
-  peer_gcp_gateway = "${google_compute_ha_vpn_gateway.ha_gateway2.self_link}"
-  shared_secret    = "a secret message"
-  router           = " ${google_compute_router.router1.self_link}"
+  provider              = google-beta
+  name                  = "ha-vpn-tunnel2"
+  region                = "us-central1"
+  vpn_gateway           = google_compute_ha_vpn_gateway.ha_gateway1.self_link
+  peer_gcp_gateway      = google_compute_ha_vpn_gateway.ha_gateway2.self_link
+  shared_secret         = "a secret message"
+  router                = google_compute_router.router1.self_link
   vpn_gateway_interface = 1
 }
 
 resource "google_compute_vpn_tunnel" "tunnel3" {
-  provider         = "google-beta"
-  name             = "ha-vpn-tunnel3"
-  region           = "us-central1"
-  vpn_gateway      = "${google_compute_ha_vpn_gateway.ha_gateway2.self_link}"
-  peer_gcp_gateway = "${google_compute_ha_vpn_gateway.ha_gateway1.self_link}"
-  shared_secret    = "a secret message"
-  router           = "${google_compute_router.router2.self_link}"
+  provider              = google-beta
+  name                  = "ha-vpn-tunnel3"
+  region                = "us-central1"
+  vpn_gateway           = google_compute_ha_vpn_gateway.ha_gateway2.self_link
+  peer_gcp_gateway      = google_compute_ha_vpn_gateway.ha_gateway1.self_link
+  shared_secret         = "a secret message"
+  router                = google_compute_router.router2.self_link
   vpn_gateway_interface = 0
 }
 
 resource "google_compute_vpn_tunnel" "tunnel4" {
-  provider         = "google-beta"
-  name             = "ha-vpn-tunnel4"
-  region           = "us-central1"
-  vpn_gateway      = "${google_compute_ha_vpn_gateway.ha_gateway2.self_link}"
-  peer_gcp_gateway = "${google_compute_ha_vpn_gateway.ha_gateway1.self_link}"
-  shared_secret    = "a secret message"
-  router           = "${google_compute_router.router2.self_link}"
+  provider              = google-beta
+  name                  = "ha-vpn-tunnel4"
+  region                = "us-central1"
+  vpn_gateway           = google_compute_ha_vpn_gateway.ha_gateway2.self_link
+  peer_gcp_gateway      = google_compute_ha_vpn_gateway.ha_gateway1.self_link
+  shared_secret         = "a secret message"
+  router                = google_compute_router.router2.self_link
   vpn_gateway_interface = 1
 }
 
 resource "google_compute_router_interface" "router1_interface1" {
-  provider = "google-beta"
+  provider   = google-beta
   name       = "router1-interface1"
-  router     = "${google_compute_router.router1.name}"
+  router     = google_compute_router.router1.name
   region     = "us-central1"
   ip_range   = "169.254.0.1/30"
-  vpn_tunnel = "${google_compute_vpn_tunnel.tunnel1.name}"
+  vpn_tunnel = google_compute_vpn_tunnel.tunnel1.name
 }
 
 resource "google_compute_router_peer" "router1_peer1" {
-  provider = "google-beta"
+  provider                  = google-beta
   name                      = "router1-peer1"
-  router                    = "${google_compute_router.router1.name}"
+  router                    = google_compute_router.router1.name
   region                    = "us-central1"
   peer_ip_address           = "169.254.0.2"
   peer_asn                  = 64515
   advertised_route_priority = 100
-  interface                 = "${google_compute_router_interface.router1_interface1.name}"
+  interface                 = google_compute_router_interface.router1_interface1.name
 }
 
 resource "google_compute_router_interface" "router1_interface2" {
-  provider = "google-beta"
+  provider   = google-beta
   name       = "router1-interface2"
-  router     = "${google_compute_router.router1.name}"
+  router     = google_compute_router.router1.name
   region     = "us-central1"
   ip_range   = "169.254.1.1/30"
-  vpn_tunnel = "${google_compute_vpn_tunnel.tunnel2.name}"
+  vpn_tunnel = google_compute_vpn_tunnel.tunnel2.name
 }
 
 resource "google_compute_router_peer" "router1_peer2" {
-  provider = "google-beta"
+  provider                  = google-beta
   name                      = "router1-peer2"
-  router                    = "${google_compute_router.router1.name}"
+  router                    = google_compute_router.router1.name
   region                    = "us-central1"
   peer_ip_address           = "169.254.1.2"
   peer_asn                  = 64515
   advertised_route_priority = 100
-  interface                 = "${google_compute_router_interface.router1_interface2.name}"
+  interface                 = google_compute_router_interface.router1_interface2.name
 }
 
 resource "google_compute_router_interface" "router2_interface1" {
-  provider = "google-beta"
+  provider   = google-beta
   name       = "router2-interface1"
-  router     = "${google_compute_router.router2.name}"
+  router     = google_compute_router.router2.name
   region     = "us-central1"
   ip_range   = "169.254.0.1/30"
-  vpn_tunnel = "${google_compute_vpn_tunnel.tunnel3.name}"
+  vpn_tunnel = google_compute_vpn_tunnel.tunnel3.name
 }
 
 resource "google_compute_router_peer" "router2_peer1" {
-  provider                  = "google-beta"
+  provider                  = google-beta
   name                      = "router2-peer1"
-  router                    = "${google_compute_router.router2.name}"
+  router                    = google_compute_router.router2.name
   region                    = "us-central1"
   peer_ip_address           = "169.254.0.2"
   peer_asn                  = 64514
   advertised_route_priority = 100
-  interface                 = "${google_compute_router_interface.router2_interface1.name}"
+  interface                 = google_compute_router_interface.router2_interface1.name
 }
 
 resource "google_compute_router_interface" "router2_interface2" {
-  provider = "google-beta"
+  provider   = google-beta
   name       = "router2-interface2"
-  router     = "${google_compute_router.router2.name}"
+  router     = google_compute_router.router2.name
   region     = "us-central1"
   ip_range   = "169.254.1.1/30"
-  vpn_tunnel = "${google_compute_vpn_tunnel.tunnel4.name}"
+  vpn_tunnel = google_compute_vpn_tunnel.tunnel4.name
 }
 
 resource "google_compute_router_peer" "router2_peer2" {
-  provider                  = "google-beta"
+  provider                  = google-beta
   name                      = "router2-peer2"
-  router                    = "${google_compute_router.router2.name}"
+  router                    = google_compute_router.router2.name
   region                    = "us-central1"
   peer_ip_address           = "169.254.1.2"
   peer_asn                  = 64514
   advertised_route_priority = 100
-  interface                 = "${google_compute_router_interface.router2_interface2.name}"
+  interface                 = google_compute_router_interface.router2_interface2.name
 }
 ```
 
@@ -308,6 +309,7 @@ The following arguments are supported:
 
 In addition to the arguments listed above, the following computed attributes are exported:
 
+* `id` - an identifier for the resource with format `projects/{{project}}/regions/{{region}}/vpnGateways/{{name}}`
 
 * `vpn_interfaces` -
   A list of interfaces on this VPN gateway.  Structure is documented below.
@@ -348,4 +350,4 @@ as an argument so that Terraform uses the correct provider to import your resour
 
 ## User Project Overrides
 
-This resource supports [User Project Overrides](https://www.terraform.io/docs/providers/google/provider_reference.html#user_project_override).
+This resource supports [User Project Overrides](https://www.terraform.io/docs/providers/google/guides/provider_reference.html#user_project_override).

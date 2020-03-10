@@ -23,7 +23,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
-	"google.golang.org/api/compute/v1"
 )
 
 func resourceComputeExternalVpnGateway() *schema.Resource {
@@ -46,27 +45,45 @@ func resourceComputeExternalVpnGateway() *schema.Resource {
 				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: true,
+				Description: `Name of the resource. Provided by the client when the resource is
+created. The name must be 1-63 characters long, and comply with
+RFC1035.  Specifically, the name must be 1-63 characters long and
+match the regular expression '[a-z]([-a-z0-9]*[a-z0-9])?' which means
+the first character must be a lowercase letter, and all following
+characters must be a dash, lowercase letter, or digit, except the last
+character, which cannot be a dash.`,
 			},
 			"description": {
-				Type:     schema.TypeString,
-				Optional: true,
-				ForceNew: true,
+				Type:        schema.TypeString,
+				Optional:    true,
+				ForceNew:    true,
+				Description: `An optional description of this resource.`,
 			},
 			"interface": {
-				Type:     schema.TypeList,
-				Optional: true,
-				ForceNew: true,
+				Type:        schema.TypeList,
+				Optional:    true,
+				ForceNew:    true,
+				Description: `A list of interfaces on this external VPN gateway.`,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"id": {
 							Type:     schema.TypeInt,
 							Optional: true,
 							ForceNew: true,
+							Description: `The numberic ID for this interface. Allowed values are based on the redundancy type
+of this external VPN gateway
+* '0 - SINGLE_IP_INTERNALLY_REDUNDANT'
+* '0, 1 - TWO_IPS_REDUNDANCY'
+* '0, 1, 2, 3 - FOUR_IPS_REDUNDANCY'`,
 						},
 						"ip_address": {
 							Type:     schema.TypeString,
 							Optional: true,
 							ForceNew: true,
+							Description: `IP address of the interface in the external VPN gateway.
+Only IPv4 is supported. This IP address can be either from
+your on-premise gateway or another Cloud provider’s VPN gateway,
+it cannot be an IP address from Google Compute Engine.`,
 						},
 					},
 				},
@@ -76,6 +93,7 @@ func resourceComputeExternalVpnGateway() *schema.Resource {
 				Optional:     true,
 				ForceNew:     true,
 				ValidateFunc: validation.StringInSlice([]string{"FOUR_IPS_REDUNDANCY", "SINGLE_IP_INTERNALLY_REDUNDANT", "TWO_IPS_REDUNDANCY", ""}, false),
+				Description:  `Indicates the redundancy type of this external VPN gateway`,
 			},
 			"project": {
 				Type:     schema.TypeString,
@@ -136,26 +154,20 @@ func resourceComputeExternalVpnGatewayCreate(d *schema.ResourceData, meta interf
 	}
 
 	// Store the ID now
-	id, err := replaceVars(d, config, "{{name}}")
+	id, err := replaceVars(d, config, "projects/{{project}}/global/externalVpnGateways/{{name}}")
 	if err != nil {
 		return fmt.Errorf("Error constructing id: %s", err)
 	}
 	d.SetId(id)
 
-	op := &compute.Operation{}
-	err = Convert(res, op)
-	if err != nil {
-		return err
-	}
-
-	waitErr := computeOperationWaitTime(
-		config.clientCompute, op, project, "Creating ExternalVpnGateway",
+	err = computeOperationWaitTime(
+		config, res, project, "Creating ExternalVpnGateway",
 		int(d.Timeout(schema.TimeoutCreate).Minutes()))
 
-	if waitErr != nil {
+	if err != nil {
 		// The resource didn't actually create
 		d.SetId("")
-		return fmt.Errorf("Error waiting to create ExternalVpnGateway: %s", waitErr)
+		return fmt.Errorf("Error waiting to create ExternalVpnGateway: %s", err)
 	}
 
 	log.Printf("[DEBUG] Finished creating ExternalVpnGateway %q: %#v", d.Id(), res)
@@ -184,16 +196,16 @@ func resourceComputeExternalVpnGatewayRead(d *schema.ResourceData, meta interfac
 		return fmt.Errorf("Error reading ExternalVpnGateway: %s", err)
 	}
 
-	if err := d.Set("description", flattenComputeExternalVpnGatewayDescription(res["description"], d)); err != nil {
+	if err := d.Set("description", flattenComputeExternalVpnGatewayDescription(res["description"], d, config)); err != nil {
 		return fmt.Errorf("Error reading ExternalVpnGateway: %s", err)
 	}
-	if err := d.Set("name", flattenComputeExternalVpnGatewayName(res["name"], d)); err != nil {
+	if err := d.Set("name", flattenComputeExternalVpnGatewayName(res["name"], d, config)); err != nil {
 		return fmt.Errorf("Error reading ExternalVpnGateway: %s", err)
 	}
-	if err := d.Set("redundancy_type", flattenComputeExternalVpnGatewayRedundancyType(res["redundancyType"], d)); err != nil {
+	if err := d.Set("redundancy_type", flattenComputeExternalVpnGatewayRedundancyType(res["redundancyType"], d, config)); err != nil {
 		return fmt.Errorf("Error reading ExternalVpnGateway: %s", err)
 	}
-	if err := d.Set("interface", flattenComputeExternalVpnGatewayInterface(res["interfaces"], d)); err != nil {
+	if err := d.Set("interface", flattenComputeExternalVpnGatewayInterface(res["interfaces"], d, config)); err != nil {
 		return fmt.Errorf("Error reading ExternalVpnGateway: %s", err)
 	}
 	if err := d.Set("self_link", ConvertSelfLinkToV1(res["selfLink"].(string))); err != nil {
@@ -224,14 +236,8 @@ func resourceComputeExternalVpnGatewayDelete(d *schema.ResourceData, meta interf
 		return handleNotFoundError(err, d, "ExternalVpnGateway")
 	}
 
-	op := &compute.Operation{}
-	err = Convert(res, op)
-	if err != nil {
-		return err
-	}
-
 	err = computeOperationWaitTime(
-		config.clientCompute, op, project, "Deleting ExternalVpnGateway",
+		config, res, project, "Deleting ExternalVpnGateway",
 		int(d.Timeout(schema.TimeoutDelete).Minutes()))
 
 	if err != nil {
@@ -253,7 +259,7 @@ func resourceComputeExternalVpnGatewayImport(d *schema.ResourceData, meta interf
 	}
 
 	// Replace import id for the resource id
-	id, err := replaceVars(d, config, "{{name}}")
+	id, err := replaceVars(d, config, "projects/{{project}}/global/externalVpnGateways/{{name}}")
 	if err != nil {
 		return nil, fmt.Errorf("Error constructing id: %s", err)
 	}
@@ -262,19 +268,19 @@ func resourceComputeExternalVpnGatewayImport(d *schema.ResourceData, meta interf
 	return []*schema.ResourceData{d}, nil
 }
 
-func flattenComputeExternalVpnGatewayDescription(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeExternalVpnGatewayDescription(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenComputeExternalVpnGatewayName(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeExternalVpnGatewayName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenComputeExternalVpnGatewayRedundancyType(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeExternalVpnGatewayRedundancyType(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenComputeExternalVpnGatewayInterface(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeExternalVpnGatewayInterface(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	if v == nil {
 		return v
 	}
@@ -287,13 +293,13 @@ func flattenComputeExternalVpnGatewayInterface(v interface{}, d *schema.Resource
 			continue
 		}
 		transformed = append(transformed, map[string]interface{}{
-			"id":         flattenComputeExternalVpnGatewayInterfaceId(original["id"], d),
-			"ip_address": flattenComputeExternalVpnGatewayInterfaceIpAddress(original["ipAddress"], d),
+			"id":         flattenComputeExternalVpnGatewayInterfaceId(original["id"], d, config),
+			"ip_address": flattenComputeExternalVpnGatewayInterfaceIpAddress(original["ipAddress"], d, config),
 		})
 	}
 	return transformed
 }
-func flattenComputeExternalVpnGatewayInterfaceId(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeExternalVpnGatewayInterfaceId(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
@@ -303,7 +309,7 @@ func flattenComputeExternalVpnGatewayInterfaceId(v interface{}, d *schema.Resour
 	return v
 }
 
-func flattenComputeExternalVpnGatewayInterfaceIpAddress(v interface{}, d *schema.ResourceData) interface{} {
+func flattenComputeExternalVpnGatewayInterfaceIpAddress(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 

@@ -2,8 +2,6 @@ package google
 
 import (
 	"fmt"
-	"reflect"
-	"sort"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
@@ -22,15 +20,69 @@ func TestAccServiceAccountIamBinding(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testAccServiceAccountIamBinding_basic(account),
-				Check: testAccCheckGoogleServiceAccountIam(account, "roles/viewer", []string{
-					fmt.Sprintf("serviceAccount:%s", serviceAccountCanonicalEmail(account)),
-				}),
+				Check:  testAccCheckGoogleServiceAccountIam(account, 1),
 			},
 			{
 				ResourceName:      "google_service_account_iam_binding.foo",
-				ImportStateId:     fmt.Sprintf("%s %s", serviceAccountCanonicalId(account), "roles/viewer"),
 				ImportState:       true,
 				ImportStateVerify: true,
+				ImportStateId:     fmt.Sprintf("%s %s", serviceAccountCanonicalId(account), "roles/iam.serviceAccountUser"),
+			},
+		},
+	})
+}
+
+func TestAccServiceAccountIamBinding_withCondition(t *testing.T) {
+	t.Parallel()
+
+	account := acctest.RandomWithPrefix("tf-test")
+	conditionExpr := `request.time < timestamp(\"2020-01-01T00:00:00Z\")`
+	conditionTitle := "expires_after_2019_12_31"
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:  func() { testAccPreCheck(t) },
+		Providers: testAccProviders,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccServiceAccountIamBinding_withCondition(account, "user:admin@hashicorptest.com", conditionTitle, conditionExpr),
+				Check:  testAccCheckGoogleServiceAccountIam(account, 1),
+			},
+			{
+				ResourceName:      "google_service_account_iam_binding.foo",
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateId:     fmt.Sprintf("%s %s %s", serviceAccountCanonicalId(account), "roles/iam.serviceAccountUser", conditionTitle),
+			},
+		},
+	})
+}
+
+func TestAccServiceAccountIamBinding_withAndWithoutCondition(t *testing.T) {
+	t.Parallel()
+
+	account := acctest.RandomWithPrefix("tf-test")
+	conditionExpr := `request.time < timestamp(\"2020-01-01T00:00:00Z\")`
+	conditionTitle := "expires_after_2019_12_31"
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:  func() { testAccPreCheck(t) },
+		Providers: testAccProviders,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccServiceAccountIamBinding_withAndWithoutCondition(account, "user:admin@hashicorptest.com", conditionTitle, conditionExpr),
+				Check:  testAccCheckGoogleServiceAccountIam(account, 2),
+			},
+			{
+				ResourceName:      "google_service_account_iam_binding.foo",
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateId:     fmt.Sprintf("%s %s", serviceAccountCanonicalId(account), "roles/iam.serviceAccountUser"),
+			},
+			{
+				ResourceName:      "google_service_account_iam_binding.foo2",
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateId:     fmt.Sprintf("%s %s %s", serviceAccountCanonicalId(account), "roles/iam.serviceAccountUser", conditionTitle),
 			},
 		},
 	})
@@ -48,11 +100,67 @@ func TestAccServiceAccountIamMember(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testAccServiceAccountIamMember_basic(account),
-				Check:  testAccCheckGoogleServiceAccountIam(account, "roles/editor", []string{identity}),
+				Check:  testAccCheckGoogleServiceAccountIam(account, 1),
 			},
 			{
 				ResourceName:      "google_service_account_iam_member.foo",
-				ImportStateId:     fmt.Sprintf("%s %s %s", serviceAccountCanonicalId(account), "roles/editor", identity),
+				ImportStateId:     fmt.Sprintf("%s %s %s", serviceAccountCanonicalId(account), "roles/iam.serviceAccountUser", identity),
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
+func TestAccServiceAccountIamMember_withCondition(t *testing.T) {
+	t.Parallel()
+
+	account := acctest.RandomWithPrefix("tf-test")
+	identity := fmt.Sprintf("serviceAccount:%s", serviceAccountCanonicalEmail(account))
+	conditionTitle := "expires_after_2019_12_31"
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:  func() { testAccPreCheck(t) },
+		Providers: testAccProviders,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccServiceAccountIamMember_withCondition(account, conditionTitle),
+				Check:  testAccCheckGoogleServiceAccountIam(account, 1),
+			},
+			{
+				ResourceName:      "google_service_account_iam_member.foo",
+				ImportStateId:     fmt.Sprintf("%s %s %s %s", serviceAccountCanonicalId(account), "roles/iam.serviceAccountUser", identity, conditionTitle),
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
+func TestAccServiceAccountIamMember_withAndWithoutCondition(t *testing.T) {
+	t.Parallel()
+
+	account := acctest.RandomWithPrefix("tf-test")
+	identity := fmt.Sprintf("serviceAccount:%s", serviceAccountCanonicalEmail(account))
+	conditionTitle := "expires_after_2019_12_31"
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:  func() { testAccPreCheck(t) },
+		Providers: testAccProviders,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccServiceAccountIamMember_withAndWithoutCondition(account, conditionTitle),
+				Check:  testAccCheckGoogleServiceAccountIam(account, 2),
+			},
+			{
+				ResourceName:      "google_service_account_iam_member.foo",
+				ImportStateId:     fmt.Sprintf("%s %s %s", serviceAccountCanonicalId(account), "roles/iam.serviceAccountUser", identity),
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+			{
+				ResourceName:      "google_service_account_iam_member.foo2",
+				ImportStateId:     fmt.Sprintf("%s %s %s %s", serviceAccountCanonicalId(account), "roles/iam.serviceAccountUser", identity, conditionTitle),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
@@ -71,9 +179,6 @@ func TestAccServiceAccountIamPolicy(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testAccServiceAccountIamPolicy_basic(account),
-				Check: testAccCheckGoogleServiceAccountIam(account, "roles/owner", []string{
-					fmt.Sprintf("serviceAccount:%s", serviceAccountCanonicalEmail(account)),
-				}),
 			},
 			{
 				ResourceName:      "google_service_account_iam_policy.foo",
@@ -85,28 +190,43 @@ func TestAccServiceAccountIamPolicy(t *testing.T) {
 	})
 }
 
-func testAccCheckGoogleServiceAccountIam(account, role string, members []string) resource.TestCheckFunc {
+func TestAccServiceAccountIamPolicy_withCondition(t *testing.T) {
+	t.Parallel()
+
+	account := acctest.RandomWithPrefix("tf-test")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:  func() { testAccPreCheck(t) },
+		Providers: testAccProviders,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccServiceAccountIamPolicy_withCondition(account),
+			},
+			{
+				ResourceName:      "google_service_account_iam_policy.foo",
+				ImportStateId:     serviceAccountCanonicalId(account),
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
+// Ensure that our tests only create the expected number of bindings.
+// The content of the binding is tested in the import tests.
+func testAccCheckGoogleServiceAccountIam(account string, numBindings int) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		config := testAccProvider.Meta().(*Config)
-		p, err := config.clientIAM.Projects.ServiceAccounts.GetIamPolicy(serviceAccountCanonicalId(account)).Do()
+		p, err := config.clientIAM.Projects.ServiceAccounts.GetIamPolicy(serviceAccountCanonicalId(account)).OptionsRequestedPolicyVersion(iamPolicyVersion).Do()
 		if err != nil {
 			return err
 		}
 
-		for _, binding := range p.Bindings {
-			if binding.Role == role {
-				sort.Strings(members)
-				sort.Strings(binding.Members)
-
-				if reflect.DeepEqual(members, binding.Members) {
-					return nil
-				}
-
-				return fmt.Errorf("Binding found but expected members is %v, got %v", members, binding.Members)
-			}
+		if len(p.Bindings) != numBindings {
+			return fmt.Errorf("Expected exactly %d binding(s) for account %q, was %d", numBindings, account, len(p.Bindings))
 		}
 
-		return fmt.Errorf("No binding for role %q", role)
+		return nil
 	}
 }
 
@@ -126,11 +246,57 @@ resource "google_service_account" "test_account" {
 }
 
 resource "google_service_account_iam_binding" "foo" {
-  service_account_id = "${google_service_account.test_account.name}"
-  role        = "roles/viewer"
-  members     = ["serviceAccount:${google_service_account.test_account.email}"]
+  service_account_id = google_service_account.test_account.name
+  role               = "roles/iam.serviceAccountUser"
+  members            = ["user:admin@hashicorptest.com"]
 }
 `, account)
+}
+
+func testAccServiceAccountIamBinding_withCondition(account, member, conditionTitle, conditionExpr string) string {
+	return fmt.Sprintf(`
+resource "google_service_account" "test_account" {
+  account_id   = "%s"
+  display_name = "Service Account Iam Testing Account"
+}
+
+resource "google_service_account_iam_binding" "foo" {
+  service_account_id = google_service_account.test_account.name
+  role               = "roles/iam.serviceAccountUser"
+  members            = ["%s"]
+  condition {
+    title       = "%s"
+    description = "Expiring at midnight of 2019-12-31"
+    expression  = "%s"
+  }
+}
+`, account, member, conditionTitle, conditionExpr)
+}
+
+func testAccServiceAccountIamBinding_withAndWithoutCondition(account, member, conditionTitle, conditionExpr string) string {
+	return fmt.Sprintf(`
+resource "google_service_account" "test_account" {
+  account_id   = "%s"
+  display_name = "Service Account Iam Testing Account"
+}
+
+resource "google_service_account_iam_binding" "foo" {
+  service_account_id = google_service_account.test_account.name
+  role               = "roles/iam.serviceAccountUser"
+  members            = ["%s"]
+}
+
+resource "google_service_account_iam_binding" "foo2" {
+  service_account_id = google_service_account.test_account.name
+  role               = "roles/iam.serviceAccountUser"
+  members            = ["%s"]
+  condition {
+    title       = "%s"
+    description = "Expiring at midnight of 2019-12-31"
+    expression  = "%s"
+  }
+}
+`, account, member, member, conditionTitle, conditionExpr)
 }
 
 func testAccServiceAccountIamMember_basic(account string) string {
@@ -141,11 +307,57 @@ resource "google_service_account" "test_account" {
 }
 
 resource "google_service_account_iam_member" "foo" {
-  service_account_id = "${google_service_account.test_account.name}"
-  role   = "roles/editor"
-  member = "serviceAccount:${google_service_account.test_account.email}"
+  service_account_id = google_service_account.test_account.name
+  role               = "roles/iam.serviceAccountUser"
+  member             = "serviceAccount:${google_service_account.test_account.email}"
 }
 `, account)
+}
+
+func testAccServiceAccountIamMember_withCondition(account, conditionTitle string) string {
+	return fmt.Sprintf(`
+resource "google_service_account" "test_account" {
+  account_id   = "%s"
+  display_name = "Service Account Iam Testing Account"
+}
+
+resource "google_service_account_iam_member" "foo" {
+  service_account_id = google_service_account.test_account.name
+  role               = "roles/iam.serviceAccountUser"
+  member             = "serviceAccount:${google_service_account.test_account.email}"
+  condition {
+    title       = "%s"
+    description = "Expiring at midnight of 2019-12-31"
+    expression  = "request.time < timestamp(\"2020-01-01T00:00:00Z\")"
+  }
+}
+`, account, conditionTitle)
+}
+
+func testAccServiceAccountIamMember_withAndWithoutCondition(account, conditionTitle string) string {
+	return fmt.Sprintf(`
+resource "google_service_account" "test_account" {
+  account_id   = "%s"
+  display_name = "Service Account Iam Testing Account"
+}
+
+resource "google_service_account_iam_member" "foo" {
+  service_account_id = google_service_account.test_account.name
+  role               = "roles/iam.serviceAccountUser"
+  member             = "serviceAccount:${google_service_account.test_account.email}"
+}
+
+resource "google_service_account_iam_member" "foo2" {
+  service_account_id = google_service_account.test_account.name
+  role               = "roles/iam.serviceAccountUser"
+  member             = "serviceAccount:${google_service_account.test_account.email}"
+  condition {
+    title       = "%s"
+    description = "Expiring at midnight of 2019-12-31"
+    expression  = "request.time < timestamp(\"2020-01-01T00:00:00Z\")"
+  }
+}
+`, account, conditionTitle)
 }
 
 func testAccServiceAccountIamPolicy_basic(account string) string {
@@ -156,16 +368,43 @@ resource "google_service_account" "test_account" {
 }
 
 data "google_iam_policy" "foo" {
-	binding {
-		role = "roles/owner"
+  binding {
+    role = "roles/iam.serviceAccountUser"
 
-		members = ["serviceAccount:${google_service_account.test_account.email}"]
-	}
+    members = ["serviceAccount:${google_service_account.test_account.email}"]
+  }
 }
 
 resource "google_service_account_iam_policy" "foo" {
-  service_account_id = "${google_service_account.test_account.name}"
-  policy_data = "${data.google_iam_policy.foo.policy_data}"
+  service_account_id = google_service_account.test_account.name
+  policy_data        = data.google_iam_policy.foo.policy_data
+}
+`, account)
+}
+
+func testAccServiceAccountIamPolicy_withCondition(account string) string {
+	return fmt.Sprintf(`
+resource "google_service_account" "test_account" {
+  account_id   = "%s"
+  display_name = "Service Account Iam Testing Account"
+}
+
+data "google_iam_policy" "foo" {
+  binding {
+    role = "roles/iam.serviceAccountUser"
+
+    members = ["serviceAccount:${google_service_account.test_account.email}"]
+    condition {
+      title       = "expires_after_2019_12_31"
+      description = "Expiring at midnight of 2019-12-31"
+      expression  = "request.time < timestamp(\"2020-01-01T00:00:00Z\")"
+    }
+  }
+}
+
+resource "google_service_account_iam_policy" "foo" {
+  service_account_id = google_service_account.test_account.name
+  policy_data        = data.google_iam_policy.foo.policy_data
 }
 `, account)
 }

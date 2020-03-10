@@ -51,13 +51,13 @@ func TestAccComputeResourcePolicy_resourcePolicyBasicExample(t *testing.T) {
 func testAccComputeResourcePolicy_resourcePolicyBasicExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_compute_resource_policy" "foo" {
-  name = "policy%{random_suffix}"
+  name   = "policy%{random_suffix}"
   region = "us-central1"
   snapshot_schedule_policy {
     schedule {
       daily_schedule {
         days_in_cycle = 1
-        start_time = "04:00"
+        start_time    = "04:00"
       }
     }
   }
@@ -92,17 +92,17 @@ func TestAccComputeResourcePolicy_resourcePolicyFullExample(t *testing.T) {
 func testAccComputeResourcePolicy_resourcePolicyFullExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_compute_resource_policy" "bar" {
-  name = "policy%{random_suffix}"
+  name   = "policy%{random_suffix}"
   region = "us-central1"
   snapshot_schedule_policy {
     schedule {
       hourly_schedule {
         hours_in_cycle = 20
-        start_time = "23:00"
+        start_time     = "23:00"
       }
     }
     retention_policy {
-      max_retention_days = 10
+      max_retention_days    = 10
       on_source_disk_delete = "KEEP_AUTO_SNAPSHOTS"
     }
     snapshot_properties {
@@ -110,8 +110,45 @@ resource "google_compute_resource_policy" "bar" {
         my_label = "value"
       }
       storage_locations = ["us"]
-      guest_flush = true
+      guest_flush       = true
     }
+  }
+}
+`, context)
+}
+
+func TestAccComputeResourcePolicy_resourcePolicyPlacementPolicyExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"random_suffix": acctest.RandString(10),
+	}
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckComputeResourcePolicyDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeResourcePolicy_resourcePolicyPlacementPolicyExample(context),
+			},
+			{
+				ResourceName:      "google_compute_resource_policy.baz",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
+func testAccComputeResourcePolicy_resourcePolicyPlacementPolicyExample(context map[string]interface{}) string {
+	return Nprintf(`
+resource "google_compute_resource_policy" "baz" {
+  name   = "policy%{random_suffix}"
+  region = "us-central1"
+  group_placement_policy {
+    vm_count = 2
+    collocation = "COLLOCATED"
   }
 }
 `, context)
