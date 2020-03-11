@@ -471,9 +471,6 @@ func Provider() terraform.ResourceProvider {
 			},
 
 			// Handwritten Products / Versioned / Atypical Entries
-			// start beta-only products
-			IAPCustomEndpointEntryKey: IAPCustomEndpointEntry,
-			// end beta-only products
 			CloudBillingCustomEndpointEntryKey:           CloudBillingCustomEndpointEntry,
 			ComposerCustomEndpointEntryKey:               ComposerCustomEndpointEntry,
 			ComputeBetaCustomEndpointEntryKey:            ComputeBetaCustomEndpointEntry,

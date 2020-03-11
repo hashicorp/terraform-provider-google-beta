@@ -128,17 +128,6 @@ var IamCredentialsCustomEndpointEntry = &schema.Schema{
 	}, IamCredentialsDefaultBasePath),
 }
 
-var IAPDefaultBasePath = "https://iap.googleapis.com/v1beta1/"
-var IAPCustomEndpointEntryKey = "iap_custom_endpoint"
-var IAPCustomEndpointEntry = &schema.Schema{
-	Type:         schema.TypeString,
-	Optional:     true,
-	ValidateFunc: validateCustomEndpoint,
-	DefaultFunc: schema.MultiEnvDefaultFunc([]string{
-		"GOOGLE_IAP_CUSTOM_ENDPOINT",
-	}, IAPDefaultBasePath),
-}
-
 var ResourceManagerV2Beta1DefaultBasePath = "https://cloudresourcemanager.googleapis.com/v2beta1/"
 var ResourceManagerV2Beta1CustomEndpointEntryKey = "resource_manager_v2beta1_custom_endpoint"
 var ResourceManagerV2Beta1CustomEndpointEntry = &schema.Schema{
