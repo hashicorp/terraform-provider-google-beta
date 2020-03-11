@@ -1,5 +1,30 @@
 ## 3.13.0 (Unreleased)
 
+BREAKING CHANGES:
+* dialogflow: Changed `google_dialogflow_agent.time_zone` to ForceNew. Updating this field will require recreation. This is due to a change in API behavior. ([#1827](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1827))
+
+FEATURES:
+* **New Resource:** `google_bigquery_reservation` ([#1833](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1833))
+* **New Resource:** `google_compute_region_disk_resource_policy_attachment` ([#1836](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1836))
+* **New Resource:** `google_sql_source_representation_instance` ([#1832](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1832))
+
+IMPROVEMENTS:
+* bigtable: Added support for full-name/id `instance_name` value in `google_bigtable_table` and `google_bigtable_gc_policy` ([#1830](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1830))
+* compute: Added `autoscaling_policy` to `google_compute_node_group` ([#1841](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1841))
+* compute: Added support for `google_compute_instance` `resource_policies` field ([#1839](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1839))
+* compute: Added support for `google_compute_resource_policy` group placement policies ([#1839](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1839))
+* compute: Added support for full-name/id `network_endpoint_group` value in `google_network_endpoint` ([#1831](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1831))
+* compute: moved `google_compute_router_nat`'s `drain_nat_ips` from beta to ga. ([#1821](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1821))
+* dialogflow: Changed `google_dialogflow_agent` to not read `tier` status ([#1829](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1829))
+* monitoring: Added `sensitive_labels` to `google_monitoring_notification_channel` so that labels like `password` and `auth_token` can be managed separately from the other labels and marked as sensitive. ([#1844](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1844))
+
+BUG FIXES:
+* all: fixed issue where nested objects were getting sent as null values to GCP on create instead of being omitted from requests ([#1822](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1822))
+* cloudfunctions: fixed `vpc_connector` to be updated properly in `google_cloudfunctions_function` ([#1825](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1825))
+* compute: fixed `google_compute_security_policy` from allowing two rules with the same priority. ([#1828](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1828))
+* compute: fixed bug where `google_compute_instance.scheduling.node_affinities.operator` would incorrectly accept `NOT` rather than `NOT_IN`. ([#1835](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1835))
+* container: Fixed issue where `google_container_node_pool` resources created in the 2.X series were failing to update after 3.11. ([#1846](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1846))
+
 ## 3.12.0 (March 09, 2020)
 
 IMPROVEMENTS:
