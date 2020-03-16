@@ -122,7 +122,6 @@ A base64-encoded string.`,
 						"schema": {
 							Type:         schema.TypeString,
 							Optional:     true,
-							Computed:     true,
 							AtLeastOneOf: []string{"parser_config.0.allow_null_header", "parser_config.0.segment_terminator", "parser_config.0.schema"},
 							ValidateFunc: validation.ValidateJsonString,
 							StateFunc: func(v interface{}) string {
