@@ -33,11 +33,17 @@ func TestAccComputeRegionSslCertificate_regionSslCertificateBasicExample(t *test
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProvidersOiCS,
+		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckComputeRegionSslCertificateDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccComputeRegionSslCertificate_regionSslCertificateBasicExample(context),
+			},
+			{
+				ResourceName:            "google_compute_region_ssl_certificate.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"private_key", "name_prefix"},
 			},
 		},
 	})
@@ -46,7 +52,6 @@ func TestAccComputeRegionSslCertificate_regionSslCertificateBasicExample(t *test
 func testAccComputeRegionSslCertificate_regionSslCertificateBasicExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_compute_region_ssl_certificate" "default" {
-  provider    = google-beta
   region      = "us-central1"
   name_prefix = "my-certificate-"
   description = "a description"
@@ -69,11 +74,17 @@ func TestAccComputeRegionSslCertificate_regionSslCertificateRandomProviderExampl
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProvidersOiCS,
+		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckComputeRegionSslCertificateDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccComputeRegionSslCertificate_regionSslCertificateRandomProviderExample(context),
+			},
+			{
+				ResourceName:            "google_compute_region_ssl_certificate.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"private_key"},
 			},
 		},
 	})
@@ -83,7 +94,6 @@ func testAccComputeRegionSslCertificate_regionSslCertificateRandomProviderExampl
 	return Nprintf(`
 # You may also want to control name generation explicitly:
 resource "google_compute_region_ssl_certificate" "default" {
-  provider = google-beta
   region   = "us-central1"
 
   # The name will contain 8 random hex digits,

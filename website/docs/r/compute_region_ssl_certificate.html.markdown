@@ -26,8 +26,6 @@ A RegionSslCertificate resource, used for HTTPS load balancing. This resource
 provides a mechanism to upload an SSL key and certificate to
 the load balancer to serve secure connections from the user.
 
-~> **Warning:** This resource is in beta, and should be used with the terraform-provider-google-beta provider.
-See [Provider Versions](https://terraform.io/docs/providers/google/guides/provider_versions.html) for more details on beta resources.
 
 To get more information about RegionSslCertificate, see:
 
@@ -45,7 +43,6 @@ To get more information about RegionSslCertificate, see:
 
 ```hcl
 resource "google_compute_region_ssl_certificate" "default" {
-  provider    = google-beta
   region      = "us-central1"
   name_prefix = "my-certificate-"
   description = "a description"
@@ -68,7 +65,6 @@ resource "google_compute_region_ssl_certificate" "default" {
 ```hcl
 # You may also want to control name generation explicitly:
 resource "google_compute_region_ssl_certificate" "default" {
-  provider = google-beta
   region   = "us-central1"
 
   # The name will contain 8 random hex digits,
@@ -250,10 +246,10 @@ This resource provides the following
 RegionSslCertificate can be imported using any of these accepted formats:
 
 ```
-$ terraform import -provider=google-beta google_compute_region_ssl_certificate.default projects/{{project}}/regions/{{region}}/sslCertificates/{{name}}
-$ terraform import -provider=google-beta google_compute_region_ssl_certificate.default {{project}}/{{region}}/{{name}}
-$ terraform import -provider=google-beta google_compute_region_ssl_certificate.default {{region}}/{{name}}
-$ terraform import -provider=google-beta google_compute_region_ssl_certificate.default {{name}}
+$ terraform import google_compute_region_ssl_certificate.default projects/{{project}}/regions/{{region}}/sslCertificates/{{name}}
+$ terraform import google_compute_region_ssl_certificate.default {{project}}/{{region}}/{{name}}
+$ terraform import google_compute_region_ssl_certificate.default {{region}}/{{name}}
+$ terraform import google_compute_region_ssl_certificate.default {{name}}
 ```
 
 -> If you're importing a resource with beta features, make sure to include `-provider=google-beta`
