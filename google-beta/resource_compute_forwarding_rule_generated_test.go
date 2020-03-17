@@ -33,11 +33,16 @@ func TestAccComputeForwardingRule_forwardingRuleGlobalInternallbExample(t *testi
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProvidersOiCS,
+		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckComputeForwardingRuleDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccComputeForwardingRule_forwardingRuleGlobalInternallbExample(context),
+			},
+			{
+				ResourceName:      "google_compute_forwarding_rule.default",
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -47,7 +52,6 @@ func testAccComputeForwardingRule_forwardingRuleGlobalInternallbExample(context 
 	return Nprintf(`
 // Forwarding rule for Internal Load Balancing
 resource "google_compute_forwarding_rule" "default" {
-  provider = "google-beta"
   name                  = "tf-test-website-forwarding-rule%{random_suffix}"
   region                = "us-central1"
   load_balancing_scheme = "INTERNAL"
@@ -58,13 +62,11 @@ resource "google_compute_forwarding_rule" "default" {
   subnetwork            = "${google_compute_subnetwork.default.name}"
 }
 resource "google_compute_region_backend_service" "backend" {
-  provider = "google-beta"
   name                  = "tf-test-website-backend%{random_suffix}"
   region                = "us-central1"
   health_checks         = ["${google_compute_health_check.hc.self_link}"]
 }
 resource "google_compute_health_check" "hc" {
-  provider = "google-beta"
   name               = "check-tf-test-website-backend%{random_suffix}"
   check_interval_sec = 1
   timeout_sec        = 1
@@ -73,12 +75,10 @@ resource "google_compute_health_check" "hc" {
   }
 }
 resource "google_compute_network" "default" {
-  provider = "google-beta"
   name = "tf-test-website-net%{random_suffix}"
   auto_create_subnetworks = false
 }
 resource "google_compute_subnetwork" "default" {
-  provider = "google-beta"
   name          = "tf-test-website-net%{random_suffix}"
   ip_cidr_range = "10.0.0.0/16"
   region        = "us-central1"
