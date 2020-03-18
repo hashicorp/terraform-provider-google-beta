@@ -2,11 +2,14 @@
 
 FEATURES:
 * **New Data Source:** `google_compute_instance_serial_port` ([#1860](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1860))
+* **New Resource:** `google_compute_region_ssl_certificate` ([#1863](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1863))
 
 IMPROVEMENTS:
 * compute: Add new attribute reference `current_status` ([#1857](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1857))
+* container: added `dns_cache_config` field to `google_container_cluster` resource ([#1853](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1853))
 * container: updated `node_pool.upgrade_settings` to read defaults from API ([#1859](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1859))
 * provider: Added provider-wide request retries for common temporary GCP error codes and network errors ([#1856](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1856))
+* redis: added `connect_mode` field to `google_redis_instance` resource ([#1854](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1854))
 
 ## 3.13.0 (March 16, 2020)
 
