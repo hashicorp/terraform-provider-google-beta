@@ -1,5 +1,4 @@
-## 3.15.0 (Unreleased)
-## 3.14.0 (March 23, 2020)
+## 3.14.0 (Unreleased)
 
 FEATURES:
 * **New Data Source:** `google_compute_instance_serial_port` ([#1860](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1860))
