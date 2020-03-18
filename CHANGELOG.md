@@ -1,4 +1,14 @@
-## 3.14.0 (Unreleased)
+## 3.15.0 (Unreleased)
+## 3.14.0 (March 23, 2020)
+
+FEATURES:
+* **New Data Source:** `google_compute_instance_serial_port` ([#1860](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1860))
+
+IMPROVEMENTS:
+* compute: Add new attribute reference `current_status` ([#1857](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1857))
+* container: updated `node_pool.upgrade_settings` to read defaults from API ([#1859](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1859))
+* provider: Added provider-wide request retries for common temporary GCP error codes and network errors ([#1856](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1856))
+
 ## 3.13.0 (March 16, 2020)
 
 BREAKING CHANGES:
