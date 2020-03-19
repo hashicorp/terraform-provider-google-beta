@@ -1894,9 +1894,16 @@ func flattenComputeRegionUrlMapMapId(v interface{}, d *schema.ResourceData, conf
 	if strVal, ok := v.(string); ok {
 		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
 			return intVal
-		} // let terraform core handle it if we can't convert the string to an int.
+		}
 	}
-	return v
+
+	// number values are represented as float64
+	if floatVal, ok := v.(float64); ok {
+		intVal := int(floatVal)
+		return intVal
+	}
+
+	return v // let terraform core handle it otherwise
 }
 
 func flattenComputeRegionUrlMapFingerprint(v interface{}, d *schema.ResourceData, config *Config) interface{} {
@@ -1972,9 +1979,16 @@ func flattenComputeRegionUrlMapPathMatcherRouteRulesPriority(v interface{}, d *s
 	if strVal, ok := v.(string); ok {
 		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
 			return intVal
-		} // let terraform core handle it if we can't convert the string to an int.
+		}
 	}
-	return v
+
+	// number values are represented as float64
+	if floatVal, ok := v.(float64); ok {
+		intVal := int(floatVal)
+		return intVal
+	}
+
+	return v // let terraform core handle it otherwise
 }
 
 func flattenComputeRegionUrlMapPathMatcherRouteRulesService(v interface{}, d *schema.ResourceData, config *Config) interface{} {
@@ -2168,9 +2182,16 @@ func flattenComputeRegionUrlMapPathMatcherRouteRulesMatchRulesHeaderMatchesRange
 	if strVal, ok := v.(string); ok {
 		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
 			return intVal
-		} // let terraform core handle it if we can't convert the string to an int.
+		}
 	}
-	return v
+
+	// number values are represented as float64
+	if floatVal, ok := v.(float64); ok {
+		intVal := int(floatVal)
+		return intVal
+	}
+
+	return v // let terraform core handle it otherwise
 }
 
 func flattenComputeRegionUrlMapPathMatcherRouteRulesMatchRulesHeaderMatchesRangeMatchRangeStart(v interface{}, d *schema.ResourceData, config *Config) interface{} {
@@ -2178,9 +2199,16 @@ func flattenComputeRegionUrlMapPathMatcherRouteRulesMatchRulesHeaderMatchesRange
 	if strVal, ok := v.(string); ok {
 		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
 			return intVal
-		} // let terraform core handle it if we can't convert the string to an int.
+		}
 	}
-	return v
+
+	// number values are represented as float64
+	if floatVal, ok := v.(float64); ok {
+		intVal := int(floatVal)
+		return intVal
+	}
+
+	return v // let terraform core handle it otherwise
 }
 
 func flattenComputeRegionUrlMapPathMatcherRouteRulesMatchRulesHeaderMatchesRegexMatch(v interface{}, d *schema.ResourceData, config *Config) interface{} {
@@ -2375,9 +2403,16 @@ func flattenComputeRegionUrlMapPathMatcherRouteRulesRouteActionCorsPolicyMaxAge(
 	if strVal, ok := v.(string); ok {
 		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
 			return intVal
-		} // let terraform core handle it if we can't convert the string to an int.
+		}
 	}
-	return v
+
+	// number values are represented as float64
+	if floatVal, ok := v.(float64); ok {
+		intVal := int(floatVal)
+		return intVal
+	}
+
+	return v // let terraform core handle it otherwise
 }
 
 func flattenComputeRegionUrlMapPathMatcherRouteRulesRouteActionFaultInjectionPolicy(v interface{}, d *schema.ResourceData, config *Config) interface{} {
@@ -2415,9 +2450,16 @@ func flattenComputeRegionUrlMapPathMatcherRouteRulesRouteActionFaultInjectionPol
 	if strVal, ok := v.(string); ok {
 		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
 			return intVal
-		} // let terraform core handle it if we can't convert the string to an int.
+		}
 	}
-	return v
+
+	// number values are represented as float64
+	if floatVal, ok := v.(float64); ok {
+		intVal := int(floatVal)
+		return intVal
+	}
+
+	return v // let terraform core handle it otherwise
 }
 
 func flattenComputeRegionUrlMapPathMatcherRouteRulesRouteActionFaultInjectionPolicyAbortPercentage(v interface{}, d *schema.ResourceData, config *Config) interface{} {
@@ -2459,9 +2501,16 @@ func flattenComputeRegionUrlMapPathMatcherRouteRulesRouteActionFaultInjectionPol
 	if strVal, ok := v.(string); ok {
 		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
 			return intVal
-		} // let terraform core handle it if we can't convert the string to an int.
+		}
 	}
-	return v
+
+	// number values are represented as float64
+	if floatVal, ok := v.(float64); ok {
+		intVal := int(floatVal)
+		return intVal
+	}
+
+	return v // let terraform core handle it otherwise
 }
 
 func flattenComputeRegionUrlMapPathMatcherRouteRulesRouteActionFaultInjectionPolicyDelayFixedDelaySeconds(v interface{}, d *schema.ResourceData, config *Config) interface{} {
@@ -2514,9 +2563,16 @@ func flattenComputeRegionUrlMapPathMatcherRouteRulesRouteActionRetryPolicyNumRet
 	if strVal, ok := v.(string); ok {
 		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
 			return intVal
-		} // let terraform core handle it if we can't convert the string to an int.
+		}
 	}
-	return v
+
+	// number values are represented as float64
+	if floatVal, ok := v.(float64); ok {
+		intVal := int(floatVal)
+		return intVal
+	}
+
+	return v // let terraform core handle it otherwise
 }
 
 func flattenComputeRegionUrlMapPathMatcherRouteRulesRouteActionRetryPolicyPerTryTimeout(v interface{}, d *schema.ResourceData, config *Config) interface{} {
@@ -2539,9 +2595,16 @@ func flattenComputeRegionUrlMapPathMatcherRouteRulesRouteActionRetryPolicyPerTry
 	if strVal, ok := v.(string); ok {
 		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
 			return intVal
-		} // let terraform core handle it if we can't convert the string to an int.
+		}
 	}
-	return v
+
+	// number values are represented as float64
+	if floatVal, ok := v.(float64); ok {
+		intVal := int(floatVal)
+		return intVal
+	}
+
+	return v // let terraform core handle it otherwise
 }
 
 func flattenComputeRegionUrlMapPathMatcherRouteRulesRouteActionRetryPolicyPerTryTimeoutSeconds(v interface{}, d *schema.ResourceData, config *Config) interface{} {
@@ -2572,9 +2635,16 @@ func flattenComputeRegionUrlMapPathMatcherRouteRulesRouteActionTimeoutNanos(v in
 	if strVal, ok := v.(string); ok {
 		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
 			return intVal
-		} // let terraform core handle it if we can't convert the string to an int.
+		}
 	}
-	return v
+
+	// number values are represented as float64
+	if floatVal, ok := v.(float64); ok {
+		intVal := int(floatVal)
+		return intVal
+	}
+
+	return v // let terraform core handle it otherwise
 }
 
 func flattenComputeRegionUrlMapPathMatcherRouteRulesRouteActionTimeoutSeconds(v interface{}, d *schema.ResourceData, config *Config) interface{} {
@@ -2727,9 +2797,16 @@ func flattenComputeRegionUrlMapPathMatcherRouteRulesRouteActionWeightedBackendSe
 	if strVal, ok := v.(string); ok {
 		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
 			return intVal
-		} // let terraform core handle it if we can't convert the string to an int.
+		}
 	}
-	return v
+
+	// number values are represented as float64
+	if floatVal, ok := v.(float64); ok {
+		intVal := int(floatVal)
+		return intVal
+	}
+
+	return v // let terraform core handle it otherwise
 }
 
 func flattenComputeRegionUrlMapPathMatcherRouteRulesUrlRedirect(v interface{}, d *schema.ResourceData, config *Config) interface{} {
@@ -2899,9 +2976,16 @@ func flattenComputeRegionUrlMapPathMatcherPathRuleRouteActionCorsPolicyMaxAge(v 
 	if strVal, ok := v.(string); ok {
 		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
 			return intVal
-		} // let terraform core handle it if we can't convert the string to an int.
+		}
 	}
-	return v
+
+	// number values are represented as float64
+	if floatVal, ok := v.(float64); ok {
+		intVal := int(floatVal)
+		return intVal
+	}
+
+	return v // let terraform core handle it otherwise
 }
 
 func flattenComputeRegionUrlMapPathMatcherPathRuleRouteActionFaultInjectionPolicy(v interface{}, d *schema.ResourceData, config *Config) interface{} {
@@ -2939,9 +3023,16 @@ func flattenComputeRegionUrlMapPathMatcherPathRuleRouteActionFaultInjectionPolic
 	if strVal, ok := v.(string); ok {
 		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
 			return intVal
-		} // let terraform core handle it if we can't convert the string to an int.
+		}
 	}
-	return v
+
+	// number values are represented as float64
+	if floatVal, ok := v.(float64); ok {
+		intVal := int(floatVal)
+		return intVal
+	}
+
+	return v // let terraform core handle it otherwise
 }
 
 func flattenComputeRegionUrlMapPathMatcherPathRuleRouteActionFaultInjectionPolicyAbortPercentage(v interface{}, d *schema.ResourceData, config *Config) interface{} {
@@ -2983,9 +3074,16 @@ func flattenComputeRegionUrlMapPathMatcherPathRuleRouteActionFaultInjectionPolic
 	if strVal, ok := v.(string); ok {
 		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
 			return intVal
-		} // let terraform core handle it if we can't convert the string to an int.
+		}
 	}
-	return v
+
+	// number values are represented as float64
+	if floatVal, ok := v.(float64); ok {
+		intVal := int(floatVal)
+		return intVal
+	}
+
+	return v // let terraform core handle it otherwise
 }
 
 func flattenComputeRegionUrlMapPathMatcherPathRuleRouteActionFaultInjectionPolicyDelayFixedDelaySeconds(v interface{}, d *schema.ResourceData, config *Config) interface{} {
@@ -3038,9 +3136,16 @@ func flattenComputeRegionUrlMapPathMatcherPathRuleRouteActionRetryPolicyNumRetri
 	if strVal, ok := v.(string); ok {
 		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
 			return intVal
-		} // let terraform core handle it if we can't convert the string to an int.
+		}
 	}
-	return v
+
+	// number values are represented as float64
+	if floatVal, ok := v.(float64); ok {
+		intVal := int(floatVal)
+		return intVal
+	}
+
+	return v // let terraform core handle it otherwise
 }
 
 func flattenComputeRegionUrlMapPathMatcherPathRuleRouteActionRetryPolicyPerTryTimeout(v interface{}, d *schema.ResourceData, config *Config) interface{} {
@@ -3063,9 +3168,16 @@ func flattenComputeRegionUrlMapPathMatcherPathRuleRouteActionRetryPolicyPerTryTi
 	if strVal, ok := v.(string); ok {
 		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
 			return intVal
-		} // let terraform core handle it if we can't convert the string to an int.
+		}
 	}
-	return v
+
+	// number values are represented as float64
+	if floatVal, ok := v.(float64); ok {
+		intVal := int(floatVal)
+		return intVal
+	}
+
+	return v // let terraform core handle it otherwise
 }
 
 func flattenComputeRegionUrlMapPathMatcherPathRuleRouteActionRetryPolicyPerTryTimeoutSeconds(v interface{}, d *schema.ResourceData, config *Config) interface{} {
@@ -3096,9 +3208,16 @@ func flattenComputeRegionUrlMapPathMatcherPathRuleRouteActionTimeoutNanos(v inte
 	if strVal, ok := v.(string); ok {
 		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
 			return intVal
-		} // let terraform core handle it if we can't convert the string to an int.
+		}
 	}
-	return v
+
+	// number values are represented as float64
+	if floatVal, ok := v.(float64); ok {
+		intVal := int(floatVal)
+		return intVal
+	}
+
+	return v // let terraform core handle it otherwise
 }
 
 func flattenComputeRegionUrlMapPathMatcherPathRuleRouteActionTimeoutSeconds(v interface{}, d *schema.ResourceData, config *Config) interface{} {
@@ -3251,9 +3370,16 @@ func flattenComputeRegionUrlMapPathMatcherPathRuleRouteActionWeightedBackendServ
 	if strVal, ok := v.(string); ok {
 		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
 			return intVal
-		} // let terraform core handle it if we can't convert the string to an int.
+		}
 	}
-	return v
+
+	// number values are represented as float64
+	if floatVal, ok := v.(float64); ok {
+		intVal := int(floatVal)
+		return intVal
+	}
+
+	return v // let terraform core handle it otherwise
 }
 
 func flattenComputeRegionUrlMapPathMatcherPathRuleUrlRedirect(v interface{}, d *schema.ResourceData, config *Config) interface{} {
