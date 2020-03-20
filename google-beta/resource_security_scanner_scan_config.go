@@ -271,6 +271,9 @@ func resourceSecurityScannerScanConfigCreate(d *schema.ResourceData, meta interf
 	if err != nil {
 		return fmt.Errorf("Error creating ScanConfig: %s", err)
 	}
+	if err := d.Set("name", flattenSecurityScannerScanConfigName(res["name"], d, config)); err != nil {
+		return fmt.Errorf(`Error setting computed identity field "name": %s`, err)
+	}
 
 	// Store the ID now
 	id, err := replaceVars(d, config, "{{name}}")
