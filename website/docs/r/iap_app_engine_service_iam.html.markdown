@@ -45,7 +45,7 @@ data "google_iam_policy" "admin" {
   }
 }
 
-resource "google_iap_app_engine_service_iam_policy" "editor" {
+resource "google_iap_app_engine_service_iam_policy" "policy" {
   project = "${google_app_engine_standard_app_version.version.project}"
   app_id = "${google_app_engine_standard_app_version.version.project}"
   service = "${google_app_engine_standard_app_version.version.service}"
@@ -71,7 +71,7 @@ data "google_iam_policy" "admin" {
   }
 }
 
-resource "google_iap_app_engine_service_iam_policy" "editor" {
+resource "google_iap_app_engine_service_iam_policy" "policy" {
   project = "${google_app_engine_standard_app_version.version.project}"
   app_id = "${google_app_engine_standard_app_version.version.project}"
   service = "${google_app_engine_standard_app_version.version.service}"
@@ -81,7 +81,7 @@ resource "google_iap_app_engine_service_iam_policy" "editor" {
 ## google\_iap\_app\_engine\_service\_iam\_binding
 
 ```hcl
-resource "google_iap_app_engine_service_iam_binding" "editor" {
+resource "google_iap_app_engine_service_iam_binding" "binding" {
   project = "${google_app_engine_standard_app_version.version.project}"
   app_id = "${google_app_engine_standard_app_version.version.project}"
   service = "${google_app_engine_standard_app_version.version.service}"
@@ -95,7 +95,7 @@ resource "google_iap_app_engine_service_iam_binding" "editor" {
 With IAM Conditions ([beta](https://terraform.io/docs/providers/google/provider_versions.html)):
 
 ```hcl
-resource "google_iap_app_engine_service_iam_binding" "editor" {
+resource "google_iap_app_engine_service_iam_binding" "binding" {
   project = "${google_app_engine_standard_app_version.version.project}"
   app_id = "${google_app_engine_standard_app_version.version.project}"
   service = "${google_app_engine_standard_app_version.version.service}"
@@ -114,7 +114,7 @@ resource "google_iap_app_engine_service_iam_binding" "editor" {
 ## google\_iap\_app\_engine\_service\_iam\_member
 
 ```hcl
-resource "google_iap_app_engine_service_iam_member" "editor" {
+resource "google_iap_app_engine_service_iam_member" "member" {
   project = "${google_app_engine_standard_app_version.version.project}"
   app_id = "${google_app_engine_standard_app_version.version.project}"
   service = "${google_app_engine_standard_app_version.version.service}"
@@ -126,7 +126,7 @@ resource "google_iap_app_engine_service_iam_member" "editor" {
 With IAM Conditions ([beta](https://terraform.io/docs/providers/google/provider_versions.html)):
 
 ```hcl
-resource "google_iap_app_engine_service_iam_member" "editor" {
+resource "google_iap_app_engine_service_iam_member" "member" {
   project = "${google_app_engine_standard_app_version.version.project}"
   app_id = "${google_app_engine_standard_app_version.version.project}"
   service = "${google_app_engine_standard_app_version.version.service}"
