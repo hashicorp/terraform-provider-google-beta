@@ -563,8 +563,8 @@ resource "google_compute_region_backend_service" "lipsum" {
 
   failover_policy {
     disable_connection_drain_on_failover = true
-    drop_traffic_if_unhealthy = true
-    failover_ratio = 0.4
+    drop_traffic_if_unhealthy            = true
+    failover_ratio                       = 0.4
   }
 
   network = google_compute_network.network2.self_link
