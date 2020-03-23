@@ -360,7 +360,7 @@ The following arguments are supported:
   If logging is enabled, logs will be exported to Stackdriver.  Structure is documented below.
 
 * `network` -
-  (Optional, [Beta](https://terraform.io/docs/providers/google/guides/provider_versions.html))
+  (Optional)
   The URL of the network to which this backend service belongs.
   This field can only be specified when the load balancing scheme is set to INTERNAL.
 
