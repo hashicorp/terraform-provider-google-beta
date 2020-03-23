@@ -45,7 +45,7 @@ data "google_iam_policy" "admin" {
   }
 }
 
-resource "google_iap_tunnel_instance_iam_policy" "editor" {
+resource "google_iap_tunnel_instance_iam_policy" "policy" {
   project = google_compute_instance.tunnelvm.project
   zone = google_compute_instance.tunnelvm.zone
   instance = google_compute_instance.tunnelvm.name
@@ -71,7 +71,7 @@ data "google_iam_policy" "admin" {
   }
 }
 
-resource "google_iap_tunnel_instance_iam_policy" "editor" {
+resource "google_iap_tunnel_instance_iam_policy" "policy" {
   project = google_compute_instance.tunnelvm.project
   zone = google_compute_instance.tunnelvm.zone
   instance = google_compute_instance.tunnelvm.name
@@ -81,7 +81,7 @@ resource "google_iap_tunnel_instance_iam_policy" "editor" {
 ## google\_iap\_tunnel\_instance\_iam\_binding
 
 ```hcl
-resource "google_iap_tunnel_instance_iam_binding" "editor" {
+resource "google_iap_tunnel_instance_iam_binding" "binding" {
   project = google_compute_instance.tunnelvm.project
   zone = google_compute_instance.tunnelvm.zone
   instance = google_compute_instance.tunnelvm.name
@@ -95,7 +95,7 @@ resource "google_iap_tunnel_instance_iam_binding" "editor" {
 With IAM Conditions ([beta](https://terraform.io/docs/providers/google/provider_versions.html)):
 
 ```hcl
-resource "google_iap_tunnel_instance_iam_binding" "editor" {
+resource "google_iap_tunnel_instance_iam_binding" "binding" {
   project = google_compute_instance.tunnelvm.project
   zone = google_compute_instance.tunnelvm.zone
   instance = google_compute_instance.tunnelvm.name
@@ -114,7 +114,7 @@ resource "google_iap_tunnel_instance_iam_binding" "editor" {
 ## google\_iap\_tunnel\_instance\_iam\_member
 
 ```hcl
-resource "google_iap_tunnel_instance_iam_member" "editor" {
+resource "google_iap_tunnel_instance_iam_member" "member" {
   project = google_compute_instance.tunnelvm.project
   zone = google_compute_instance.tunnelvm.zone
   instance = google_compute_instance.tunnelvm.name
@@ -126,7 +126,7 @@ resource "google_iap_tunnel_instance_iam_member" "editor" {
 With IAM Conditions ([beta](https://terraform.io/docs/providers/google/provider_versions.html)):
 
 ```hcl
-resource "google_iap_tunnel_instance_iam_member" "editor" {
+resource "google_iap_tunnel_instance_iam_member" "member" {
   project = google_compute_instance.tunnelvm.project
   zone = google_compute_instance.tunnelvm.zone
   instance = google_compute_instance.tunnelvm.name
