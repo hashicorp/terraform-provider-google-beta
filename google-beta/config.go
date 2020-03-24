@@ -99,6 +99,7 @@ type Config struct {
 	DialogflowBasePath           string
 	DNSBasePath                  string
 	FilestoreBasePath            string
+	FirebaseBasePath             string
 	FirestoreBasePath            string
 	GameServicesBasePath         string
 	HealthcareBasePath           string
@@ -242,6 +243,7 @@ var DeploymentManagerDefaultBasePath = "https://www.googleapis.com/deploymentman
 var DialogflowDefaultBasePath = "https://dialogflow.googleapis.com/v2/"
 var DNSDefaultBasePath = "https://www.googleapis.com/dns/v1beta2/"
 var FilestoreDefaultBasePath = "https://file.googleapis.com/v1/"
+var FirebaseDefaultBasePath = "https://firebase.googleapis.com/v1beta1/"
 var FirestoreDefaultBasePath = "https://firestore.googleapis.com/v1/"
 var GameServicesDefaultBasePath = "https://gameservices.googleapis.com/v1beta/"
 var HealthcareDefaultBasePath = "https://healthcare.googleapis.com/v1beta1/"
@@ -758,6 +760,7 @@ func ConfigureBasePaths(c *Config) {
 	c.DialogflowBasePath = DialogflowDefaultBasePath
 	c.DNSBasePath = DNSDefaultBasePath
 	c.FilestoreBasePath = FilestoreDefaultBasePath
+	c.FirebaseBasePath = FirebaseDefaultBasePath
 	c.FirestoreBasePath = FirestoreDefaultBasePath
 	c.GameServicesBasePath = GameServicesDefaultBasePath
 	c.HealthcareBasePath = HealthcareDefaultBasePath

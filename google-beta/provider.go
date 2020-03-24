@@ -285,6 +285,14 @@ func Provider() terraform.ResourceProvider {
 					"GOOGLE_FILESTORE_CUSTOM_ENDPOINT",
 				}, FilestoreDefaultBasePath),
 			},
+			"firebase_custom_endpoint": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validateCustomEndpoint,
+				DefaultFunc: schema.MultiEnvDefaultFunc([]string{
+					"GOOGLE_FIREBASE_CUSTOM_ENDPOINT",
+				}, FirebaseDefaultBasePath),
+			},
 			"firestore_custom_endpoint": {
 				Type:         schema.TypeString,
 				Optional:     true,
@@ -578,9 +586,9 @@ func Provider() terraform.ResourceProvider {
 	return provider
 }
 
-// Generated resources: 134
+// Generated resources: 135
 // Generated IAM resources: 54
-// Total generated resources: 188
+// Total generated resources: 189
 func ResourceMap() map[string]*schema.Resource {
 	resourceMap, _ := ResourceMapWithErrors()
 	return resourceMap
@@ -690,6 +698,7 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_dns_managed_zone":                                      resourceDNSManagedZone(),
 			"google_dns_policy":                                            resourceDNSPolicy(),
 			"google_filestore_instance":                                    resourceFilestoreInstance(),
+			"google_firebase_project":                                      resourceFirebaseProject(),
 			"google_firestore_index":                                       resourceFirestoreIndex(),
 			"google_game_services_realm":                                   resourceGameServicesRealm(),
 			"google_game_services_game_server_cluster":                     resourceGameServicesGameServerCluster(),
@@ -960,6 +969,7 @@ func providerConfigure(d *schema.ResourceData, p *schema.Provider, terraformVers
 	config.DialogflowBasePath = d.Get("dialogflow_custom_endpoint").(string)
 	config.DNSBasePath = d.Get("dns_custom_endpoint").(string)
 	config.FilestoreBasePath = d.Get("filestore_custom_endpoint").(string)
+	config.FirebaseBasePath = d.Get("firebase_custom_endpoint").(string)
 	config.FirestoreBasePath = d.Get("firestore_custom_endpoint").(string)
 	config.GameServicesBasePath = d.Get("game_services_custom_endpoint").(string)
 	config.HealthcareBasePath = d.Get("healthcare_custom_endpoint").(string)
