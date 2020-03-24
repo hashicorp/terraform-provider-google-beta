@@ -116,6 +116,7 @@ type Config struct {
 	SecurityCenterBasePath       string
 	SecurityScannerBasePath      string
 	ServiceManagementBasePath    string
+	ServiceUsageBasePath         string
 	SourceRepoBasePath           string
 	SpannerBasePath              string
 	SQLBasePath                  string
@@ -188,8 +189,7 @@ type Config struct {
 
 	clientServiceMan *servicemanagement.APIService
 
-	ServiceUsageBasePath string
-	clientServiceUsage   *serviceusage.Service
+	clientServiceUsage *serviceusage.Service
 
 	clientBigQuery *bigquery.Service
 
@@ -259,6 +259,7 @@ var SecretManagerDefaultBasePath = "https://secretmanager.googleapis.com/v1beta1
 var SecurityCenterDefaultBasePath = "https://securitycenter.googleapis.com/v1/"
 var SecurityScannerDefaultBasePath = "https://websecurityscanner.googleapis.com/v1beta/"
 var ServiceManagementDefaultBasePath = "https://servicemanagement.googleapis.com/v1/"
+var ServiceUsageDefaultBasePath = "https://serviceusage.googleapis.com/v1beta1/"
 var SourceRepoDefaultBasePath = "https://sourcerepo.googleapis.com/v1/"
 var SpannerDefaultBasePath = "https://spanner.googleapis.com/v1/"
 var SQLDefaultBasePath = "https://sqladmin.googleapis.com/sql/v1beta4/"
@@ -774,6 +775,7 @@ func ConfigureBasePaths(c *Config) {
 	c.SecurityCenterBasePath = SecurityCenterDefaultBasePath
 	c.SecurityScannerBasePath = SecurityScannerDefaultBasePath
 	c.ServiceManagementBasePath = ServiceManagementDefaultBasePath
+	c.ServiceUsageBasePath = ServiceUsageDefaultBasePath
 	c.SourceRepoBasePath = SourceRepoDefaultBasePath
 	c.SpannerBasePath = SpannerDefaultBasePath
 	c.SQLBasePath = SQLDefaultBasePath
@@ -794,7 +796,6 @@ func ConfigureBasePaths(c *Config) {
 	c.ResourceManagerV2Beta1BasePath = ResourceManagerV2Beta1DefaultBasePath
 	c.IAMBasePath = IAMDefaultBasePath
 	c.ServiceNetworkingBasePath = ServiceNetworkingDefaultBasePath
-	c.ServiceUsageBasePath = ServiceUsageDefaultBasePath
 	c.BigQueryBasePath = BigQueryDefaultBasePath
 	c.CloudIoTBasePath = CloudIoTDefaultBasePath
 	c.StorageTransferBasePath = StorageTransferDefaultBasePath
