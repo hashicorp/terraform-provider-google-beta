@@ -59,14 +59,6 @@ var (
 	}
 )
 
-func validateRFC3339Date(v interface{}, k string) (warnings []string, errors []error) {
-	_, err := time.Parse(time.RFC3339, v.(string))
-	if err != nil {
-		errors = append(errors, err)
-	}
-	return
-}
-
 func rfc5545RecurrenceDiffSuppress(k, o, n string, d *schema.ResourceData) bool {
 	// This diff gets applied in the cloud console if you specify
 	// "FREQ=DAILY" in your config and add a maintenance exclusion.
@@ -448,14 +440,12 @@ func resourceContainerCluster() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"daily_maintenance_window": {
-							Type: schema.TypeList,
-
+							Type:     schema.TypeList,
 							Optional: true,
 							ExactlyOneOf: []string{
 								"maintenance_policy.0.daily_maintenance_window",
 								"maintenance_policy.0.recurring_window",
 							},
-
 							MaxItems: 1,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
@@ -2279,7 +2269,6 @@ func expandMaintenancePolicy(d *schema.ResourceData, meta interface{}) *containe
 			ResourceVersion: resourceVersion,
 		}
 	}
-
 	return nil
 }
 
@@ -2720,7 +2709,6 @@ func flattenMaintenancePolicy(mp *containerBeta.MaintenancePolicy) []map[string]
 			},
 		}
 	}
-
 	return nil
 }
 
