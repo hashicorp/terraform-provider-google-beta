@@ -4,6 +4,9 @@ FEATURES:
 * **New Resource:** `google_compute_instance_group_named_port` ([#1869](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1869))
 * **New Resource:** `google_service_usage_consumer_quota_override` ([#1884](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1884))
 * **New Resource:** `google_firebase_project`: enables Firebase for a referenced Google project ([#1885](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1885))
+* **New Resource:** `google_iap_brand` ([#1848](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1848))
+* **New Resource:** `google_iap_client` ([#1848](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1848))
+* **New Resource:** `google_appengine_flexible_app_version` ([#1849](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1849))
 
 IMPROVEMENTS:
 * accesscontextmanager: Added `regions` field to `google_access_context_manager_access_level` ([#1882](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1882))
