@@ -47,6 +47,7 @@ func TestAccServiceUsageConsumerQuotaOverride_consumerQuotaOverrideExample(t *te
 func testAccServiceUsageConsumerQuotaOverride_consumerQuotaOverrideExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_project" "my_project" {
+  provider   = google-beta
   name       = "tf-test-project"
   project_id = "quota%{random_suffix}"
   org_id     = "%{org_id}"
@@ -54,7 +55,7 @@ resource "google_project" "my_project" {
 
 resource "google_service_usage_consumer_quota_override" "override" {
   provider       = google-beta
-  project        = google_project.my_project.name
+  project        = google_project.my_project.project_id
   service        = "servicemanagement.googleapis.com"
   metric         = "servicemanagement.googleapis.com%2Fdefault_requests"
   limit          = "%2Fmin%2Fproject"
