@@ -885,6 +885,11 @@ func resourceContainerCluster() *schema.Resource {
 							Optional: true,
 							Default:  false,
 						},
+						"enable_resource_consumption_metering": {
+							Type:     schema.TypeBool,
+							Optional: true,
+							Default:  true,
+						},
 						"bigquery_destination": {
 							Type:     schema.TypeList,
 							MaxItems: 1,
@@ -1107,6 +1112,7 @@ func resourceContainerClusterCreate(d *schema.ResourceData, meta interface{}) er
 	if v, ok := d.GetOk("workload_identity_config"); ok {
 		cluster.WorkloadIdentityConfig = expandWorkloadIdentityConfig(v)
 	}
+
 	if v, ok := d.GetOk("resource_usage_export_config"); ok {
 		cluster.ResourceUsageExportConfig = expandResourceUsageExportConfig(v)
 	}
@@ -1336,6 +1342,7 @@ func resourceContainerClusterRead(d *schema.ResourceData, meta interface{}) erro
 	if err := d.Set("resource_usage_export_config", flattenResourceUsageExportConfig(cluster.ResourceUsageExportConfig)); err != nil {
 		return err
 	}
+
 	return nil
 }
 
@@ -1964,6 +1971,7 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 
 		d.SetPartial("resource_usage_export_config")
 	}
+
 	d.Partial(false)
 
 	if _, err := containerClusterAwaitRestingState(config, project, location, clusterName, d.Timeout(schema.TimeoutUpdate)); err != nil {
@@ -2488,7 +2496,6 @@ func expandDefaultMaxPodsConstraint(v interface{}) *containerBeta.MaxPodsConstra
 		MaxPodsPerNode: int64(v.(int)),
 	}
 }
-
 func expandResourceUsageExportConfig(configured interface{}) *containerBeta.ResourceUsageExportConfig {
 	l := configured.([]interface{})
 	if len(l) == 0 || l[0] == nil {
@@ -2499,7 +2506,11 @@ func expandResourceUsageExportConfig(configured interface{}) *containerBeta.Reso
 
 	result := &containerBeta.ResourceUsageExportConfig{
 		EnableNetworkEgressMetering: resourceUsageConfig["enable_network_egress_metering"].(bool),
-		ForceSendFields:             []string{"EnableNetworkEgressMetering"},
+		ConsumptionMeteringConfig: &containerBeta.ConsumptionMeteringConfig{
+			Enabled:         resourceUsageConfig["enable_resource_consumption_metering"].(bool),
+			ForceSendFields: []string{"Enabled"},
+		},
+		ForceSendFields: []string{"EnableNetworkEgressMetering"},
 	}
 	if _, ok := resourceUsageConfig["bigquery_destination"]; ok {
 		if len(resourceUsageConfig["bigquery_destination"].([]interface{})) > 0 {
@@ -2808,9 +2819,16 @@ func flattenResourceUsageExportConfig(c *containerBeta.ResourceUsageExportConfig
 	if c == nil {
 		return nil
 	}
+
+	enableResourceConsumptionMetering := false
+	if c.ConsumptionMeteringConfig != nil && c.ConsumptionMeteringConfig.Enabled == true {
+		enableResourceConsumptionMetering = true
+	}
+
 	return []map[string]interface{}{
 		{
-			"enable_network_egress_metering": c.EnableNetworkEgressMetering,
+			"enable_network_egress_metering":       c.EnableNetworkEgressMetering,
+			"enable_resource_consumption_metering": enableResourceConsumptionMetering,
 			"bigquery_destination": []map[string]interface{}{
 				{"dataset_id": c.BigqueryDestination.DatasetId},
 			},
