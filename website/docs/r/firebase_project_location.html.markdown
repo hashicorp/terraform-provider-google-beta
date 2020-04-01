@@ -14,35 +14,40 @@
 # ----------------------------------------------------------------------------
 subcategory: "Firebase"
 layout: "google"
-page_title: "Google: google_firebase_project"
-sidebar_current: "docs-google-firebase-project"
+page_title: "Google: google_firebase_project_location"
+sidebar_current: "docs-google-firebase-project-location"
 description: |-
-  A Google Cloud Firebase instance.
+  Sets the default Google Cloud Platform (GCP) resource location for the specified FirebaseProject.
 ---
 
-# google\_firebase\_project
+# google\_firebase\_project\_location
 
-A Google Cloud Firebase instance. This enables Firebase resources on a given google project.
-Since a FirebaseProject is actually also a GCP Project, a FirebaseProject uses underlying GCP
-identifiers (most importantly, the projectId) as its own for easy interop with GCP APIs.
+Sets the default Google Cloud Platform (GCP) resource location for the specified FirebaseProject.
 
-Once Firebase has been added to a Google Project it cannot be removed.
+This method creates an App Engine application with a default Cloud Storage bucket, located in the specified
+locationId. This location must be one of the available GCP resource locations.
+
+After the default GCP resource location is finalized, or if it was already set, it cannot be changed.
+The default GCP resource location for the specified FirebaseProject might already be set because either the
+GCP Project already has an App Engine application or defaultLocation.finalize was previously called with a
+specified locationId. Any new calls to defaultLocation.finalize with a different specified locationId will
+return a 409 error.
 
 ~> **Warning:** This resource is in beta, and should be used with the terraform-provider-google-beta provider.
 See [Provider Versions](https://terraform.io/docs/providers/google/guides/provider_versions.html) for more details on beta resources.
 
-To get more information about Project, see:
+To get more information about ProjectLocation, see:
 
-* [API documentation](https://firebase.google.com/docs/projects/api/reference/rest/v1beta1/projects)
+* [API documentation](https://firebase.google.com/docs/projects/api/reference/rest/v1beta1/projects.defaultLocation/finalize)
 * How-to Guides
     * [Official Documentation](https://firebase.google.com/)
 
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
-  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=firebase_project_basic&cloudshell_image=gcr.io%2Fgraphite-cloud-shell-images%2Fterraform%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=firebase_project_location_basic&cloudshell_image=gcr.io%2Fgraphite-cloud-shell-images%2Fterraform%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
     <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
   </a>
 </div>
-## Example Usage - Firebase Project Basic
+## Example Usage - Firebase Project Location Basic
 
 
 ```hcl
@@ -58,12 +63,24 @@ resource "google_firebase_project" "default" {
   provider = google-beta
   project  = google_project.default.project_id
 }
+
+resource "google_firebase_project_location" "basic" {
+	provider = google-beta
+	project = google_firebase_project.default.project
+
+	location_id = "us-central"
+}
 ```
 
 ## Argument Reference
 
 The following arguments are supported:
 
+
+* `location_id` -
+  (Required)
+  The ID of the default GCP resource location for the Project. The location must be one of the available GCP
+  resource locations.
 
 
 - - -
@@ -79,12 +96,6 @@ In addition to the arguments listed above, the following computed attributes are
 
 * `id` - an identifier for the resource with format `projects/{{project}}`
 
-* `project_number` -
-  The number of the google project that firebase is enabled on.
-
-* `display_name` -
-  The GCP project display name
-
 
 ## Timeouts
 
@@ -92,15 +103,15 @@ This resource provides the following
 [Timeouts](/docs/configuration/resources.html#timeouts) configuration options:
 
 - `create` - Default is 10 minutes.
-- `delete` - Default is 10 minutes.
+- `delete` - Default is 4 minutes.
 
 ## Import
 
-Project can be imported using any of these accepted formats:
+ProjectLocation can be imported using any of these accepted formats:
 
 ```
-$ terraform import -provider=google-beta google_firebase_project.default projects/{{project}}
-$ terraform import -provider=google-beta google_firebase_project.default {{project}}
+$ terraform import -provider=google-beta google_firebase_project_location.default projects/{{project}}
+$ terraform import -provider=google-beta google_firebase_project_location.default {{project}}
 ```
 
 -> If you're importing a resource with beta features, make sure to include `-provider=google-beta`

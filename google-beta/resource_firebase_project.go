@@ -79,7 +79,7 @@ func resourceFirebaseProjectCreate(d *schema.ResourceData, meta interface{}) err
 	}
 
 	// Store the ID now
-	id, err := replaceVars(d, config, "projects/{{project}}/{{name}}")
+	id, err := replaceVars(d, config, "projects/{{project}}")
 	if err != nil {
 		return fmt.Errorf("Error constructing id: %s", err)
 	}
@@ -103,7 +103,7 @@ func resourceFirebaseProjectCreate(d *schema.ResourceData, meta interface{}) err
 func resourceFirebaseProjectRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	url, err := replaceVars(d, config, "{{FirebaseBasePath}}projects/{{project}}/{{name}}")
+	url, err := replaceVars(d, config, "{{FirebaseBasePath}}projects/{{project}}")
 	if err != nil {
 		return err
 	}
@@ -150,7 +150,7 @@ func resourceFirebaseProjectImport(d *schema.ResourceData, meta interface{}) ([]
 	}
 
 	// Replace import id for the resource id
-	id, err := replaceVars(d, config, "projects/{{project}}/{{name}}")
+	id, err := replaceVars(d, config, "projects/{{project}}")
 	if err != nil {
 		return nil, fmt.Errorf("Error constructing id: %s", err)
 	}
