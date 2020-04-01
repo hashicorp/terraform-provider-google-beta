@@ -10,7 +10,6 @@ IMPROVEMENTS:
 * cloudrun: added ability to autogenerate revision name ([#1900](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1900))
 * compute: added ability to resize `google_compute_reservation` ([#1908](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1908))
 * container: added `enable_resource_consumption_metering` to `resource_usage_export_config` in `google_container_cluster` ([#1901](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1901))
-* container: added `resource_usage_export_config` to `google_container_cluster`, previously only available in `google-beta` (ga only) ([#1901](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1901))
 * dns: added ability to update `google_dns_managed_zone.dnssec_config` ([#1914](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1914))
 * pubsub: Added `dead_letter_policy` support to `google_pubsub_subscription` ([#1913](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1913))
 
