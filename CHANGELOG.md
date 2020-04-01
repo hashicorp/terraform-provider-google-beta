@@ -1,4 +1,23 @@
 ## 3.16.0 (Unreleased)
+FEATURES:
+* **New Data Source:** monitoring: `google_monitoring_uptime_check_ips` ([#1912](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1912))
+* **New Resource:** firebase: Added new `firebase_project_location` resource to finalize the firebase location. ([#1919](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1919))
+
+IMPROVEMENTS:
+* cloudfunctions: Added `ingress_settings` field to `google_cloudfunctions_function` ([#1898](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1898))
+* cloudfunctions: added support for `vpc_connector_egress_settings` to `google_cloudfunctions_function` ([#1904](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1904))
+* accesscontextmanager: added `status.vpc_accessible_services` to `google_access_context_manager_service_perimeter` to control which services are available from the perimeter's VPC networks to the restricted Google APIs IP address range. ([#1910](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1910))
+* cloudrun: added ability to autogenerate revision name ([#1900](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1900))
+* compute: added ability to resize `google_compute_reservation` ([#1908](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1908))
+* container: added `enable_resource_consumption_metering` to `resource_usage_export_config` in `google_container_cluster` (beta only) ([#1901](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1901))
+* container: added `resource_usage_export_config` to `google_container_cluster`, previously only available in `google-beta` (ga only) ([#1901](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1901))
+* dns: added ability to update `google_dns_managed_zone.dnssec_config` ([#1914](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1914))
+* pubsub: Added `dead_letter_policy` support to `google_pubsub_subscription` ([#1913](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1913))
+
+BUG FIXES:
+* compute: Fixed an issue where `port` could not be removed from health checks ([#1906](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1906))
+* storage: fixed an issue where `google_storage_bucket_iam_member` showed a diff for bucket self links ([#1918](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1918))
+
 ## 3.15.0 (March 30, 2020)
 
 FEATURES:
