@@ -1,6 +1,6 @@
 ## 3.16.0 (Unreleased)
 FEATURES:
-* **New Data Source:** monitoring: `google_monitoring_uptime_check_ips` ([#1912](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1912))
+* **New Data Source:** `google_monitoring_uptime_check_ips` ([#1912](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1912))
 * **New Resource:** firebase: Added new `firebase_project_location` resource to finalize the firebase location. ([#1919](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1919))
 
 IMPROVEMENTS:
