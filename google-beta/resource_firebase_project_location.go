@@ -60,7 +60,7 @@ func resourceFirebaseProjectLocationCreate(d *schema.ResourceData, meta interfac
 	config := meta.(*Config)
 
 	obj := make(map[string]interface{})
-	locationIdProp, err := expandFirebaseProjectLocationLocationId(d.Get("location_id"), d, config)
+	locationIdProp, err := expandNestedFirebaseProjectLocationLocationId(d.Get("location_id"), d, config)
 	if err != nil {
 		return err
 	} else if v, ok := d.GetOkExists("location_id"); !isEmptyValue(reflect.ValueOf(locationIdProp)) && (ok || !reflect.DeepEqual(v, locationIdProp)) {
@@ -137,7 +137,7 @@ func resourceFirebaseProjectLocationRead(d *schema.ResourceData, meta interface{
 		return fmt.Errorf("Error reading ProjectLocation: %s", err)
 	}
 
-	if err := d.Set("location_id", flattenFirebaseProjectLocationLocationId(res["locationId"], d, config)); err != nil {
+	if err := d.Set("location_id", flattenNestedFirebaseProjectLocationLocationId(res["locationId"], d, config)); err != nil {
 		return fmt.Errorf("Error reading ProjectLocation: %s", err)
 	}
 
@@ -172,11 +172,11 @@ func resourceFirebaseProjectLocationImport(d *schema.ResourceData, meta interfac
 	return []*schema.ResourceData{d}, nil
 }
 
-func flattenFirebaseProjectLocationLocationId(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNestedFirebaseProjectLocationLocationId(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func expandFirebaseProjectLocationLocationId(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNestedFirebaseProjectLocationLocationId(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 

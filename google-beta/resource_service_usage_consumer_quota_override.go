@@ -97,13 +97,13 @@ func resourceServiceUsageConsumerQuotaOverrideCreate(d *schema.ResourceData, met
 	config := meta.(*Config)
 
 	obj := make(map[string]interface{})
-	overrideValueProp, err := expandServiceUsageConsumerQuotaOverrideOverrideValue(d.Get("override_value"), d, config)
+	overrideValueProp, err := expandNestedServiceUsageConsumerQuotaOverrideOverrideValue(d.Get("override_value"), d, config)
 	if err != nil {
 		return err
 	} else if v, ok := d.GetOkExists("override_value"); !isEmptyValue(reflect.ValueOf(overrideValueProp)) && (ok || !reflect.DeepEqual(v, overrideValueProp)) {
 		obj["overrideValue"] = overrideValueProp
 	}
-	dimensionsProp, err := expandServiceUsageConsumerQuotaOverrideDimensions(d.Get("dimensions"), d, config)
+	dimensionsProp, err := expandNestedServiceUsageConsumerQuotaOverrideDimensions(d.Get("dimensions"), d, config)
 	if err != nil {
 		return err
 	} else if v, ok := d.GetOkExists("dimensions"); !isEmptyValue(reflect.ValueOf(dimensionsProp)) && (ok || !reflect.DeepEqual(v, dimensionsProp)) {
@@ -154,7 +154,7 @@ func resourceServiceUsageConsumerQuotaOverrideCreate(d *schema.ResourceData, met
 			return fmt.Errorf("Error decoding response from operation, could not find nested object")
 		}
 	}
-	if err := d.Set("name", flattenServiceUsageConsumerQuotaOverrideName(opRes["name"], d, config)); err != nil {
+	if err := d.Set("name", flattenNestedServiceUsageConsumerQuotaOverrideName(opRes["name"], d, config)); err != nil {
 		return err
 	}
 
@@ -203,13 +203,13 @@ func resourceServiceUsageConsumerQuotaOverrideRead(d *schema.ResourceData, meta 
 		return fmt.Errorf("Error reading ConsumerQuotaOverride: %s", err)
 	}
 
-	if err := d.Set("override_value", flattenServiceUsageConsumerQuotaOverrideOverrideValue(res["overrideValue"], d, config)); err != nil {
+	if err := d.Set("override_value", flattenNestedServiceUsageConsumerQuotaOverrideOverrideValue(res["overrideValue"], d, config)); err != nil {
 		return fmt.Errorf("Error reading ConsumerQuotaOverride: %s", err)
 	}
-	if err := d.Set("dimensions", flattenServiceUsageConsumerQuotaOverrideDimensions(res["dimensions"], d, config)); err != nil {
+	if err := d.Set("dimensions", flattenNestedServiceUsageConsumerQuotaOverrideDimensions(res["dimensions"], d, config)); err != nil {
 		return fmt.Errorf("Error reading ConsumerQuotaOverride: %s", err)
 	}
-	if err := d.Set("name", flattenServiceUsageConsumerQuotaOverrideName(res["name"], d, config)); err != nil {
+	if err := d.Set("name", flattenNestedServiceUsageConsumerQuotaOverrideName(res["name"], d, config)); err != nil {
 		return fmt.Errorf("Error reading ConsumerQuotaOverride: %s", err)
 	}
 
@@ -225,7 +225,7 @@ func resourceServiceUsageConsumerQuotaOverrideUpdate(d *schema.ResourceData, met
 	}
 
 	obj := make(map[string]interface{})
-	overrideValueProp, err := expandServiceUsageConsumerQuotaOverrideOverrideValue(d.Get("override_value"), d, config)
+	overrideValueProp, err := expandNestedServiceUsageConsumerQuotaOverrideOverrideValue(d.Get("override_value"), d, config)
 	if err != nil {
 		return err
 	} else if v, ok := d.GetOkExists("override_value"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, overrideValueProp)) {
@@ -308,26 +308,26 @@ func resourceServiceUsageConsumerQuotaOverrideImport(d *schema.ResourceData, met
 	return []*schema.ResourceData{d}, nil
 }
 
-func flattenServiceUsageConsumerQuotaOverrideOverrideValue(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNestedServiceUsageConsumerQuotaOverrideOverrideValue(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenServiceUsageConsumerQuotaOverrideDimensions(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNestedServiceUsageConsumerQuotaOverrideDimensions(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenServiceUsageConsumerQuotaOverrideName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNestedServiceUsageConsumerQuotaOverrideName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	if v == nil {
 		return v
 	}
 	return NameFromSelfLinkStateFunc(v)
 }
 
-func expandServiceUsageConsumerQuotaOverrideOverrideValue(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNestedServiceUsageConsumerQuotaOverrideOverrideValue(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandServiceUsageConsumerQuotaOverrideDimensions(v interface{}, d TerraformResourceData, config *Config) (map[string]string, error) {
+func expandNestedServiceUsageConsumerQuotaOverrideDimensions(v interface{}, d TerraformResourceData, config *Config) (map[string]string, error) {
 	if v == nil {
 		return map[string]string{}, nil
 	}
@@ -368,6 +368,7 @@ func flattenNestedServiceUsageConsumerQuotaOverride(d *schema.ResourceData, meta
 
 func resourceServiceUsageConsumerQuotaOverrideFindNestedObjectInList(d *schema.ResourceData, meta interface{}, items []interface{}) (index int, item map[string]interface{}, err error) {
 	expectedName := d.Get("name")
+	expectedFlattenedName := flattenNestedServiceUsageConsumerQuotaOverrideName(expectedName, d, meta.(*Config))
 
 	// Search list for this resource.
 	for idx, itemRaw := range items {
@@ -376,9 +377,10 @@ func resourceServiceUsageConsumerQuotaOverrideFindNestedObjectInList(d *schema.R
 		}
 		item := itemRaw.(map[string]interface{})
 
-		itemName := flattenServiceUsageConsumerQuotaOverrideName(item["name"], d, meta.(*Config))
-		if !reflect.DeepEqual(itemName, expectedName) {
-			log.Printf("[DEBUG] Skipping item with name= %#v, looking for %#v)", itemName, expectedName)
+		itemName := flattenNestedServiceUsageConsumerQuotaOverrideName(item["name"], d, meta.(*Config))
+		// isEmptyValue check so that if one is nil and the other is "", that's considered a match
+		if !(isEmptyValue(reflect.ValueOf(itemName)) && isEmptyValue(reflect.ValueOf(expectedFlattenedName))) && !reflect.DeepEqual(itemName, expectedFlattenedName) {
+			log.Printf("[DEBUG] Skipping item with name= %#v, looking for %#v)", itemName, expectedFlattenedName)
 			continue
 		}
 		log.Printf("[DEBUG] Found item for resource %q: %#v)", d.Id(), item)
