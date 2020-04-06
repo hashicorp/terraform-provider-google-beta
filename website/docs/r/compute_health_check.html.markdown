@@ -279,6 +279,32 @@ resource "google_compute_health_check" "http2-health-check" {
   }
 }
 ```
+<div class = "oics-button" style="float: right; margin: 0 0 -15px">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=health_check_with_logging&cloudshell_image=gcr.io%2Fgraphite-cloud-shell-images%2Fterraform%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+    <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
+  </a>
+</div>
+## Example Usage - Health Check With Logging
+
+
+```hcl
+resource "google_compute_health_check" "health-check-with-logging" {
+  provider = google-beta
+
+  name = "tcp-health-check"
+
+  timeout_sec        = 1
+  check_interval_sec = 1
+
+  tcp_health_check {
+    port = "22"
+  }
+
+  log_config {
+    enable = true
+  }
+}
+```
 
 ## Argument Reference
 
@@ -344,6 +370,10 @@ The following arguments are supported:
 * `http2_health_check` -
   (Optional)
   A nested object resource  Structure is documented below.
+
+* `log_config` -
+  (Optional, [Beta](https://terraform.io/docs/providers/google/guides/provider_versions.html))
+  Configure logging on this health check.  Structure is documented below.
 
 * `project` - (Optional) The ID of the project in which the resource belongs.
     If it is not provided, the provider project is used.
@@ -575,6 +605,13 @@ The `http2_health_check` block supports:
     checking.
   If not specified, HTTP2 health check follows behavior specified in `port` and
   `portName` fields.
+
+The `log_config` block supports:
+
+* `enable` -
+  (Optional)
+  Indicates whether or not to export logs. This is false by default,
+  which means no health check logging will be done.
 
 ## Attributes Reference
 

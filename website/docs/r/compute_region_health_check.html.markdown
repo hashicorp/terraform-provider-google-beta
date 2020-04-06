@@ -156,6 +156,32 @@ resource "google_compute_region_health_check" "http-region-health-check" {
 }
 ```
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=region_health_check_http_logs&cloudshell_image=gcr.io%2Fgraphite-cloud-shell-images%2Fterraform%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+    <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
+  </a>
+</div>
+## Example Usage - Region Health Check Http Logs
+
+
+```hcl
+resource "google_compute_region_health_check" "http-region-health-check" {
+  provider = google-beta
+
+  name = "http-region-health-check"
+
+  timeout_sec        = 1
+  check_interval_sec = 1
+
+  http_health_check {
+    port = "80"
+  }
+
+  log_config {
+    enable = true
+  }
+}
+```
+<div class = "oics-button" style="float: right; margin: 0 0 -15px">
   <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=region_health_check_http_full&cloudshell_image=gcr.io%2Fgraphite-cloud-shell-images%2Fterraform%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
     <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
   </a>
@@ -344,6 +370,10 @@ The following arguments are supported:
 * `http2_health_check` -
   (Optional)
   A nested object resource  Structure is documented below.
+
+* `log_config` -
+  (Optional, [Beta](https://terraform.io/docs/providers/google/guides/provider_versions.html))
+  Configure logging on this health check.  Structure is documented below.
 
 * `region` -
   (Optional)
@@ -580,6 +610,13 @@ The `http2_health_check` block supports:
     checking.
   If not specified, HTTP2 health check follows behavior specified in `port` and
   `portName` fields.
+
+The `log_config` block supports:
+
+* `enable` -
+  (Optional)
+  Indicates whether or not to export logs. This is false by default,
+  which means no health check logging will be done.
 
 ## Attributes Reference
 

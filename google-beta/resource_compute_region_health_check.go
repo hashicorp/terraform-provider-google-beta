@@ -317,6 +317,22 @@ can only be ASCII.`,
 				ConflictsWith: []string{"http_health_check", "tcp_health_check", "ssl_health_check", "http2_health_check"},
 				AtLeastOneOf:  []string{"http_health_check", "https_health_check", "http2_health_check", "tcp_health_check", "ssl_health_check"},
 			},
+			"log_config": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: `Configure logging on this health check.`,
+				MaxItems:    1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"enable": {
+							Type:     schema.TypeBool,
+							Optional: true,
+							Description: `Indicates whether or not to export logs. This is false by default,
+which means no health check logging will be done.`,
+						},
+					},
+				},
+			},
 			"region": {
 				Type:             schema.TypeString,
 				Computed:         true,
@@ -581,6 +597,12 @@ func resourceComputeRegionHealthCheckCreate(d *schema.ResourceData, meta interfa
 	} else if v, ok := d.GetOkExists("http2_health_check"); !isEmptyValue(reflect.ValueOf(http2HealthCheckProp)) && (ok || !reflect.DeepEqual(v, http2HealthCheckProp)) {
 		obj["http2HealthCheck"] = http2HealthCheckProp
 	}
+	logConfigProp, err := expandComputeRegionHealthCheckLogConfig(d.Get("log_config"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("log_config"); !isEmptyValue(reflect.ValueOf(logConfigProp)) && (ok || !reflect.DeepEqual(v, logConfigProp)) {
+		obj["logConfig"] = logConfigProp
+	}
 	regionProp, err := expandComputeRegionHealthCheckRegion(d.Get("region"), d, config)
 	if err != nil {
 		return err
@@ -690,6 +712,9 @@ func resourceComputeRegionHealthCheckRead(d *schema.ResourceData, meta interface
 	if err := d.Set("http2_health_check", flattenComputeRegionHealthCheckHttp2HealthCheck(res["http2HealthCheck"], d, config)); err != nil {
 		return fmt.Errorf("Error reading RegionHealthCheck: %s", err)
 	}
+	if err := d.Set("log_config", flattenComputeRegionHealthCheckLogConfig(res["logConfig"], d, config)); err != nil {
+		return fmt.Errorf("Error reading RegionHealthCheck: %s", err)
+	}
 	if err := d.Set("region", flattenComputeRegionHealthCheckRegion(res["region"], d, config)); err != nil {
 		return fmt.Errorf("Error reading RegionHealthCheck: %s", err)
 	}
@@ -774,6 +799,12 @@ func resourceComputeRegionHealthCheckUpdate(d *schema.ResourceData, meta interfa
 		return err
 	} else if v, ok := d.GetOkExists("http2_health_check"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, http2HealthCheckProp)) {
 		obj["http2HealthCheck"] = http2HealthCheckProp
+	}
+	logConfigProp, err := expandComputeRegionHealthCheckLogConfig(d.Get("log_config"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("log_config"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, logConfigProp)) {
+		obj["logConfig"] = logConfigProp
 	}
 	regionProp, err := expandComputeRegionHealthCheckRegion(d.Get("region"), d, config)
 	if err != nil {
@@ -1266,6 +1297,23 @@ func flattenComputeRegionHealthCheckHttp2HealthCheckPortSpecification(v interfac
 	return v
 }
 
+func flattenComputeRegionHealthCheckLogConfig(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["enable"] =
+		flattenComputeRegionHealthCheckLogConfigEnable(original["enable"], d, config)
+	return []interface{}{transformed}
+}
+func flattenComputeRegionHealthCheckLogConfigEnable(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	return v
+}
+
 func flattenComputeRegionHealthCheckRegion(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	if v == nil {
 		return v
@@ -1717,6 +1765,29 @@ func expandComputeRegionHealthCheckHttp2HealthCheckProxyHeader(v interface{}, d 
 }
 
 func expandComputeRegionHealthCheckHttp2HealthCheckPortSpecification(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeRegionHealthCheckLogConfig(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedEnable, err := expandComputeRegionHealthCheckLogConfigEnable(original["enable"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedEnable); val.IsValid() && !isEmptyValue(val) {
+		transformed["enable"] = transformedEnable
+	}
+
+	return transformed, nil
+}
+
+func expandComputeRegionHealthCheckLogConfigEnable(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
