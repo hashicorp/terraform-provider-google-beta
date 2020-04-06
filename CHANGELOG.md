@@ -1,4 +1,4 @@
-## 3.16.0 (Unreleased)
+## 3.16.0 (April 06, 2020)
 FEATURES:
 * **New Data Source:** `google_monitoring_uptime_check_ips` ([#1912](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1912))
 * **New Resource:** `firebase_project_location`: finalizes the firebase location. ([#1919](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1919))
@@ -1102,8 +1102,8 @@ BACKWARDS INCOMPATIBILITIES:
 * accesscontextmanager: `google_access_context_manager_service_perimeter` `unrestricted_services` field was removed based on a removal in the underlying API. ([#576](https://github.com/terraform-providers/terraform-provider-google-beta/issues/576))
 
 FEATURES:
-* **New Resource**: `google_compute_backend_bucket_signed_url_key` is now available. [GH-530]
-* **New Resource**: `google_compute_backend_service_signed_url_key` is now available. [GH-577]
+* **New Resource**: `google_compute_backend_bucket_signed_url_key` is now available. ([#530](https://github.com/terraform-providers/terraform-provider-google-beta/issues/530))
+* **New Resource**: `google_compute_backend_service_signed_url_key` is now available. ([#577](https://github.com/terraform-providers/terraform-provider-google-beta/issues/577))
 * **New Datasource**: `google_service_account_access_token` is now available. ([#575](https://github.com/terraform-providers/terraform-provider-google-beta/issues/575))
 
 ENHANCEMENTS:
