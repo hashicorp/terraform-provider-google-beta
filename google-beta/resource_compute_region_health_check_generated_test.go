@@ -233,6 +233,46 @@ resource "google_compute_region_health_check" "http-region-health-check" {
 `, context)
 }
 
+func TestAccComputeRegionHealthCheck_regionHealthCheckHttpLogsExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"random_suffix": acctest.RandString(10),
+	}
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProvidersOiCS,
+		CheckDestroy: testAccCheckComputeRegionHealthCheckDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeRegionHealthCheck_regionHealthCheckHttpLogsExample(context),
+			},
+		},
+	})
+}
+
+func testAccComputeRegionHealthCheck_regionHealthCheckHttpLogsExample(context map[string]interface{}) string {
+	return Nprintf(`
+resource "google_compute_region_health_check" "http-region-health-check" {
+  provider = google-beta
+
+  name = "tf-test-http-region-health-check%{random_suffix}"
+
+  timeout_sec        = 1
+  check_interval_sec = 1
+
+  http_health_check {
+    port = "80"
+  }
+
+  log_config {
+    enable = true
+  }
+}
+`, context)
+}
+
 func TestAccComputeRegionHealthCheck_regionHealthCheckHttpFullExample(t *testing.T) {
 	t.Parallel()
 

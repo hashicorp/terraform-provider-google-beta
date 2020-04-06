@@ -452,6 +452,46 @@ resource "google_compute_health_check" "http2-health-check" {
 `, context)
 }
 
+func TestAccComputeHealthCheck_healthCheckWithLoggingExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"random_suffix": acctest.RandString(10),
+	}
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProvidersOiCS,
+		CheckDestroy: testAccCheckComputeHealthCheckDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeHealthCheck_healthCheckWithLoggingExample(context),
+			},
+		},
+	})
+}
+
+func testAccComputeHealthCheck_healthCheckWithLoggingExample(context map[string]interface{}) string {
+	return Nprintf(`
+resource "google_compute_health_check" "health-check-with-logging" {
+  provider = google-beta
+
+  name = "tf-test-tcp-health-check%{random_suffix}"
+
+  timeout_sec        = 1
+  check_interval_sec = 1
+
+  tcp_health_check {
+    port = "22"
+  }
+
+  log_config {
+    enable = true
+  }
+}
+`, context)
+}
+
 func testAccCheckComputeHealthCheckDestroy(s *terraform.State) error {
 	for name, rs := range s.RootModule().Resources {
 		if rs.Type != "google_compute_health_check" {
