@@ -260,7 +260,6 @@ func resourceContainerCluster() *schema.Resource {
 							Optional:     true,
 							Computed:     true,
 							AtLeastOneOf: addonsConfigKeys,
-							ForceNew:     true,
 							MaxItems:     1,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
@@ -276,7 +275,6 @@ func resourceContainerCluster() *schema.Resource {
 							Optional:     true,
 							Computed:     true,
 							AtLeastOneOf: addonsConfigKeys,
-							ForceNew:     true,
 							MaxItems:     1,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
