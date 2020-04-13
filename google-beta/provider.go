@@ -558,6 +558,8 @@ func Provider() terraform.ResourceProvider {
 			"google_kms_key_ring":                             dataSourceGoogleKmsKeyRing(),
 			"google_kms_secret":                               dataSourceGoogleKmsSecret(),
 			"google_kms_secret_ciphertext":                    dataSourceGoogleKmsSecretCiphertext(),
+			"google_firebase_web_app":                         dataSourceGoogleFirebaseWebApp(),
+			"google_firebase_web_app_config":                  dataSourceGoogleFirebaseWebappConfig(),
 			"google_folder":                                   dataSourceGoogleFolder(),
 			"google_folder_organization_policy":               dataSourceGoogleFolderOrganizationPolicy(),
 			"google_monitoring_notification_channel":          dataSourceMonitoringNotificationChannel(),
@@ -596,9 +598,9 @@ func Provider() terraform.ResourceProvider {
 	return provider
 }
 
-// Generated resources: 142
+// Generated resources: 143
 // Generated IAM resources: 54
-// Total generated resources: 196
+// Total generated resources: 197
 func ResourceMap() map[string]*schema.Resource {
 	resourceMap, _ := ResourceMapWithErrors()
 	return resourceMap
@@ -714,6 +716,7 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_filestore_instance":                                    resourceFilestoreInstance(),
 			"google_firebase_project":                                      resourceFirebaseProject(),
 			"google_firebase_project_location":                             resourceFirebaseProjectLocation(),
+			"google_firebase_web_app":                                      resourceFirebaseWebApp(),
 			"google_firestore_index":                                       resourceFirestoreIndex(),
 			"google_game_services_realm":                                   resourceGameServicesRealm(),
 			"google_game_services_game_server_cluster":                     resourceGameServicesGameServerCluster(),
