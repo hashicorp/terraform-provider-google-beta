@@ -18,7 +18,6 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 )
 
@@ -26,13 +25,13 @@ func TestAccIapWebBackendServiceIamBindingGenerated(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
-		"random_suffix":   acctest.RandString(10),
+		"random_suffix":   randString(t, 10),
 		"role":            "roles/iap.httpsResourceAccessor",
 		"condition_title": "expires_after_2019_12_31",
 		"condition_expr":  `request.time < timestamp(\"2020-01-01T00:00:00Z\")`,
 	}
 
-	resource.Test(t, resource.TestCase{
+	vcrTest(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
@@ -63,13 +62,13 @@ func TestAccIapWebBackendServiceIamMemberGenerated(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
-		"random_suffix":   acctest.RandString(10),
+		"random_suffix":   randString(t, 10),
 		"role":            "roles/iap.httpsResourceAccessor",
 		"condition_title": "expires_after_2019_12_31",
 		"condition_expr":  `request.time < timestamp(\"2020-01-01T00:00:00Z\")`,
 	}
 
-	resource.Test(t, resource.TestCase{
+	vcrTest(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
@@ -91,13 +90,13 @@ func TestAccIapWebBackendServiceIamPolicyGenerated(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
-		"random_suffix":   acctest.RandString(10),
+		"random_suffix":   randString(t, 10),
 		"role":            "roles/iap.httpsResourceAccessor",
 		"condition_title": "expires_after_2019_12_31",
 		"condition_expr":  `request.time < timestamp(\"2020-01-01T00:00:00Z\")`,
 	}
 
-	resource.Test(t, resource.TestCase{
+	vcrTest(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
@@ -127,13 +126,13 @@ func TestAccIapWebBackendServiceIamBindingGenerated_withCondition(t *testing.T) 
 	t.Parallel()
 
 	context := map[string]interface{}{
-		"random_suffix":   acctest.RandString(10),
+		"random_suffix":   randString(t, 10),
 		"role":            "roles/iap.httpsResourceAccessor",
 		"condition_title": "expires_after_2019_12_31",
 		"condition_expr":  `request.time < timestamp(\"2020-01-01T00:00:00Z\")`,
 	}
 
-	resource.Test(t, resource.TestCase{
+	vcrTest(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
@@ -154,13 +153,13 @@ func TestAccIapWebBackendServiceIamBindingGenerated_withAndWithoutCondition(t *t
 	t.Parallel()
 
 	context := map[string]interface{}{
-		"random_suffix":   acctest.RandString(10),
+		"random_suffix":   randString(t, 10),
 		"role":            "roles/iap.httpsResourceAccessor",
 		"condition_title": "expires_after_2019_12_31",
 		"condition_expr":  `request.time < timestamp(\"2020-01-01T00:00:00Z\")`,
 	}
 
-	resource.Test(t, resource.TestCase{
+	vcrTest(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
@@ -187,13 +186,13 @@ func TestAccIapWebBackendServiceIamMemberGenerated_withCondition(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
-		"random_suffix":   acctest.RandString(10),
+		"random_suffix":   randString(t, 10),
 		"role":            "roles/iap.httpsResourceAccessor",
 		"condition_title": "expires_after_2019_12_31",
 		"condition_expr":  `request.time < timestamp(\"2020-01-01T00:00:00Z\")`,
 	}
 
-	resource.Test(t, resource.TestCase{
+	vcrTest(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
@@ -214,13 +213,13 @@ func TestAccIapWebBackendServiceIamMemberGenerated_withAndWithoutCondition(t *te
 	t.Parallel()
 
 	context := map[string]interface{}{
-		"random_suffix":   acctest.RandString(10),
+		"random_suffix":   randString(t, 10),
 		"role":            "roles/iap.httpsResourceAccessor",
 		"condition_title": "expires_after_2019_12_31",
 		"condition_expr":  `request.time < timestamp(\"2020-01-01T00:00:00Z\")`,
 	}
 
-	resource.Test(t, resource.TestCase{
+	vcrTest(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
@@ -247,13 +246,13 @@ func TestAccIapWebBackendServiceIamPolicyGenerated_withCondition(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
-		"random_suffix":   acctest.RandString(10),
+		"random_suffix":   randString(t, 10),
 		"role":            "roles/iap.httpsResourceAccessor",
 		"condition_title": "expires_after_2019_12_31",
 		"condition_expr":  `request.time < timestamp(\"2020-01-01T00:00:00Z\")`,
 	}
 
-	resource.Test(t, resource.TestCase{
+	vcrTest(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{

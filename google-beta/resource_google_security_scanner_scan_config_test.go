@@ -3,15 +3,14 @@ package google
 import (
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 )
 
 func TestAccSecurityScannerScanConfig_scanConfigUpdate(t *testing.T) {
 	t.Parallel()
 
-	firstAddressSuffix := acctest.RandString(10)
-	secondAddressSuffix := acctest.RandString(10)
+	firstAddressSuffix := randString(t, 10)
+	secondAddressSuffix := randString(t, 10)
 	context := map[string]interface{}{
 		"random_suffix":       firstAddressSuffix,
 		"random_suffix2":      secondAddressSuffix,
@@ -29,10 +28,10 @@ func TestAccSecurityScannerScanConfig_scanConfigUpdate(t *testing.T) {
 		"max_qps":             20,
 	}
 
-	resource.Test(t, resource.TestCase{
+	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckSecurityScannerScanConfigDestroy,
+		CheckDestroy: testAccCheckSecurityScannerScanConfigDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccSecurityScannerScanConfig(context),

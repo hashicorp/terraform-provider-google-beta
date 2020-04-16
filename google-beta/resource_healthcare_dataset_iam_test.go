@@ -6,7 +6,6 @@ import (
 	"sort"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/terraform"
 )
@@ -17,9 +16,9 @@ func TestAccHealthcareDatasetIamBinding(t *testing.T) {
 	t.Parallel()
 
 	projectId := getTestProjectFromEnv()
-	account := acctest.RandomWithPrefix("tf-test")
+	account := fmt.Sprintf("tf-test-%d", randInt(t))
 	roleId := "roles/healthcare.datasetAdmin"
-	datasetName := fmt.Sprintf("tf-test-%s", acctest.RandString(10))
+	datasetName := fmt.Sprintf("tf-test-%s", randString(t, 10))
 
 	datasetId := &healthcareDatasetId{
 		Project:  projectId,
@@ -27,14 +26,14 @@ func TestAccHealthcareDatasetIamBinding(t *testing.T) {
 		Name:     datasetName,
 	}
 
-	resource.Test(t, resource.TestCase{
+	vcrTest(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
 				// Test Iam Binding creation
 				Config: testAccHealthcareDatasetIamBinding_basic(account, datasetName, roleId),
-				Check: testAccCheckGoogleHealthcareDatasetIam(datasetId.datasetId(), roleId, []string{
+				Check: testAccCheckGoogleHealthcareDatasetIam(t, datasetId.datasetId(), roleId, []string{
 					fmt.Sprintf("serviceAccount:%s@%s.iam.gserviceaccount.com", account, projectId),
 				}),
 			},
@@ -47,7 +46,7 @@ func TestAccHealthcareDatasetIamBinding(t *testing.T) {
 			{
 				// Test Iam Binding update
 				Config: testAccHealthcareDatasetIamBinding_update(account, datasetName, roleId),
-				Check: testAccCheckGoogleHealthcareDatasetIam(datasetId.datasetId(), roleId, []string{
+				Check: testAccCheckGoogleHealthcareDatasetIam(t, datasetId.datasetId(), roleId, []string{
 					fmt.Sprintf("serviceAccount:%s@%s.iam.gserviceaccount.com", account, projectId),
 					fmt.Sprintf("serviceAccount:%s-2@%s.iam.gserviceaccount.com", account, projectId),
 				}),
@@ -66,9 +65,9 @@ func TestAccHealthcareDatasetIamMember(t *testing.T) {
 	t.Parallel()
 
 	projectId := getTestProjectFromEnv()
-	account := acctest.RandomWithPrefix("tf-test")
+	account := fmt.Sprintf("tf-test-%d", randInt(t))
 	roleId := "roles/healthcare.datasetViewer"
-	datasetName := fmt.Sprintf("tf-test-%s", acctest.RandString(10))
+	datasetName := fmt.Sprintf("tf-test-%s", randString(t, 10))
 
 	datasetId := &healthcareDatasetId{
 		Project:  projectId,
@@ -76,14 +75,14 @@ func TestAccHealthcareDatasetIamMember(t *testing.T) {
 		Name:     datasetName,
 	}
 
-	resource.Test(t, resource.TestCase{
+	vcrTest(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
 				// Test Iam Member creation (no update for member, no need to test)
 				Config: testAccHealthcareDatasetIamMember_basic(account, datasetName, roleId),
-				Check: testAccCheckGoogleHealthcareDatasetIam(datasetId.datasetId(), roleId, []string{
+				Check: testAccCheckGoogleHealthcareDatasetIam(t, datasetId.datasetId(), roleId, []string{
 					fmt.Sprintf("serviceAccount:%s@%s.iam.gserviceaccount.com", account, projectId),
 				}),
 			},
@@ -101,9 +100,9 @@ func TestAccHealthcareDatasetIamPolicy(t *testing.T) {
 	t.Parallel()
 
 	projectId := getTestProjectFromEnv()
-	account := acctest.RandomWithPrefix("tf-test")
+	account := fmt.Sprintf("tf-test-%d", randInt(t))
 	roleId := "roles/healthcare.datasetAdmin"
-	datasetName := fmt.Sprintf("tf-test-%s", acctest.RandString(10))
+	datasetName := fmt.Sprintf("tf-test-%s", randString(t, 10))
 
 	datasetId := &healthcareDatasetId{
 		Project:  projectId,
@@ -111,13 +110,13 @@ func TestAccHealthcareDatasetIamPolicy(t *testing.T) {
 		Name:     datasetName,
 	}
 
-	resource.Test(t, resource.TestCase{
+	vcrTest(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccHealthcareDatasetIamPolicy_basic(account, datasetName, roleId),
-				Check: testAccCheckGoogleHealthcareDatasetIam(datasetId.datasetId(), roleId, []string{
+				Check: testAccCheckGoogleHealthcareDatasetIam(t, datasetId.datasetId(), roleId, []string{
 					fmt.Sprintf("serviceAccount:%s@%s.iam.gserviceaccount.com", account, projectId),
 				}),
 			},
@@ -131,9 +130,9 @@ func TestAccHealthcareDatasetIamPolicy(t *testing.T) {
 	})
 }
 
-func testAccCheckGoogleHealthcareDatasetIam(datasetId, role string, members []string) resource.TestCheckFunc {
+func testAccCheckGoogleHealthcareDatasetIam(t *testing.T, datasetId, role string, members []string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		config := testAccProvider.Meta().(*Config)
+		config := googleProviderConfig(t)
 		p, err := config.clientHealthcare.Projects.Locations.Datasets.GetIamPolicy(datasetId).Do()
 		if err != nil {
 			return err

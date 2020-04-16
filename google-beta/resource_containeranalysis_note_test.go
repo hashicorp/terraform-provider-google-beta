@@ -4,19 +4,18 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 )
 
 func TestAccContainerAnalysisNote_basic(t *testing.T) {
 	t.Parallel()
 
-	name := acctest.RandString(10)
-	readableName := acctest.RandString(10)
-	resource.Test(t, resource.TestCase{
+	name := randString(t, 10)
+	readableName := randString(t, 10)
+	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckContainerAnalysisNoteDestroy,
+		CheckDestroy: testAccCheckContainerAnalysisNoteDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccContainerAnalysisNoteBasic(name, readableName),
@@ -33,13 +32,13 @@ func TestAccContainerAnalysisNote_basic(t *testing.T) {
 func TestAccContainerAnalysisNote_update(t *testing.T) {
 	t.Parallel()
 
-	name := acctest.RandString(10)
-	readableName := acctest.RandString(10)
-	readableName2 := acctest.RandString(10)
-	resource.Test(t, resource.TestCase{
+	name := randString(t, 10)
+	readableName := randString(t, 10)
+	readableName2 := randString(t, 10)
+	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckContainerAnalysisNoteDestroy,
+		CheckDestroy: testAccCheckContainerAnalysisNoteDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccContainerAnalysisNoteBasic(name, readableName),

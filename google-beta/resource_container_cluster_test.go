@@ -10,7 +10,6 @@ import (
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/terraform"
 )
 
@@ -67,7 +66,7 @@ func TestAccContainerCluster_basic(t *testing.T) {
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckContainerClusterDestroy,
+		CheckDestroy: testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccContainerCluster_basic(clusterName),
@@ -93,7 +92,7 @@ func TestAccContainerCluster_basic(t *testing.T) {
 				ImportStateVerify: true,
 			},
 		},
-	}, testAccCheckContainerClusterDestroyProducer)
+	})
 }
 
 func TestAccContainerCluster_misc(t *testing.T) {
@@ -103,7 +102,7 @@ func TestAccContainerCluster_misc(t *testing.T) {
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckContainerClusterDestroy,
+		CheckDestroy: testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccContainerCluster_misc(clusterName),
@@ -128,7 +127,7 @@ func TestAccContainerCluster_misc(t *testing.T) {
 				ImportStateVerifyIgnore: []string{"remove_default_node_pool"},
 			},
 		},
-	}, testAccCheckContainerClusterDestroyProducer)
+	})
 }
 
 func TestAccContainerCluster_withAddons(t *testing.T) {
@@ -139,7 +138,7 @@ func TestAccContainerCluster_withAddons(t *testing.T) {
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckContainerClusterDestroy,
+		CheckDestroy: testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccContainerCluster_withAddons(clusterName),
@@ -160,7 +159,7 @@ func TestAccContainerCluster_withAddons(t *testing.T) {
 				ImportStateVerifyIgnore: []string{"min_master_version"},
 			},
 		},
-	}, testAccCheckContainerClusterDestroyProducer)
+	})
 }
 
 func TestAccContainerCluster_withMasterAuthConfig(t *testing.T) {
@@ -171,7 +170,7 @@ func TestAccContainerCluster_withMasterAuthConfig(t *testing.T) {
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckContainerClusterDestroy,
+		CheckDestroy: testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccContainerCluster_withMasterAuth(clusterName),
@@ -218,7 +217,7 @@ func TestAccContainerCluster_withMasterAuthConfig(t *testing.T) {
 				ImportStateVerify: true,
 			},
 		},
-	}, testAccCheckContainerClusterDestroyProducer)
+	})
 }
 
 func TestAccContainerCluster_withMasterAuthConfig_NoCert(t *testing.T) {
@@ -229,7 +228,7 @@ func TestAccContainerCluster_withMasterAuthConfig_NoCert(t *testing.T) {
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckContainerClusterDestroy,
+		CheckDestroy: testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccContainerCluster_withMasterAuthNoCert(clusterName),
@@ -243,7 +242,7 @@ func TestAccContainerCluster_withMasterAuthConfig_NoCert(t *testing.T) {
 				ImportStateVerify: true,
 			},
 		},
-	}, testAccCheckContainerClusterDestroyProducer)
+	})
 }
 
 func TestAccContainerCluster_withAuthenticatorGroupsConfig(t *testing.T) {
@@ -253,7 +252,7 @@ func TestAccContainerCluster_withAuthenticatorGroupsConfig(t *testing.T) {
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckContainerClusterDestroy,
+		CheckDestroy: testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccContainerCluster_withAuthenticatorGroupsConfig(containerNetName, clusterName),
@@ -264,7 +263,7 @@ func TestAccContainerCluster_withAuthenticatorGroupsConfig(t *testing.T) {
 				ImportStateVerify: true,
 			},
 		},
-	}, testAccCheckContainerClusterDestroyProducer)
+	})
 }
 
 func TestAccContainerCluster_withNetworkPolicyEnabled(t *testing.T) {
@@ -275,7 +274,7 @@ func TestAccContainerCluster_withNetworkPolicyEnabled(t *testing.T) {
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckContainerClusterDestroy,
+		CheckDestroy: testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccContainerCluster_withNetworkPolicyEnabled(clusterName),
@@ -335,7 +334,7 @@ func TestAccContainerCluster_withNetworkPolicyEnabled(t *testing.T) {
 				ExpectNonEmptyPlan: false,
 			},
 		},
-	}, testAccCheckContainerClusterDestroyProducer)
+	})
 }
 
 func TestAccContainerCluster_withReleaseChannelEnabled(t *testing.T) {
@@ -344,7 +343,7 @@ func TestAccContainerCluster_withReleaseChannelEnabled(t *testing.T) {
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckContainerClusterDestroy,
+		CheckDestroy: testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccContainerCluster_withReleaseChannelEnabled(clusterName, "STABLE"),
@@ -383,7 +382,7 @@ func TestAccContainerCluster_withReleaseChannelEnabled(t *testing.T) {
 				ImportStateVerify:   true,
 			},
 		},
-	}, testAccCheckContainerClusterDestroyProducer)
+	})
 }
 
 func TestAccContainerCluster_withInvalidReleaseChannel(t *testing.T) {
@@ -392,14 +391,14 @@ func TestAccContainerCluster_withInvalidReleaseChannel(t *testing.T) {
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckContainerClusterDestroy,
+		CheckDestroy: testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config:      testAccContainerCluster_withReleaseChannelEnabled(clusterName, "CANARY"),
 				ExpectError: regexp.MustCompile(`config is invalid: expected release_channel\.0\.channel to be one of \[UNSPECIFIED RAPID REGULAR STABLE\], got CANARY`),
 			},
 		},
-	}, testAccCheckContainerClusterDestroyProducer)
+	})
 }
 
 func TestAccContainerCluster_withMasterAuthorizedNetworksConfig(t *testing.T) {
@@ -410,7 +409,7 @@ func TestAccContainerCluster_withMasterAuthorizedNetworksConfig(t *testing.T) {
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckContainerClusterDestroy,
+		CheckDestroy: testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccContainerCluster_withMasterAuthorizedNetworksConfig(clusterName, []string{}, ""),
@@ -462,7 +461,7 @@ func TestAccContainerCluster_withMasterAuthorizedNetworksConfig(t *testing.T) {
 				ImportStateVerify: true,
 			},
 		},
-	}, testAccCheckContainerClusterDestroyProducer)
+	})
 }
 
 func TestAccContainerCluster_regional(t *testing.T) {
@@ -473,7 +472,7 @@ func TestAccContainerCluster_regional(t *testing.T) {
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckContainerClusterDestroy,
+		CheckDestroy: testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccContainerCluster_regional(clusterName),
@@ -484,7 +483,7 @@ func TestAccContainerCluster_regional(t *testing.T) {
 				ImportStateVerify: true,
 			},
 		},
-	}, testAccCheckContainerClusterDestroyProducer)
+	})
 }
 
 func TestAccContainerCluster_regionalWithNodePool(t *testing.T) {
@@ -496,7 +495,7 @@ func TestAccContainerCluster_regionalWithNodePool(t *testing.T) {
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckContainerClusterDestroy,
+		CheckDestroy: testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccContainerCluster_regionalWithNodePool(clusterName, npName),
@@ -507,7 +506,7 @@ func TestAccContainerCluster_regionalWithNodePool(t *testing.T) {
 				ImportStateVerify: true,
 			},
 		},
-	}, testAccCheckContainerClusterDestroyProducer)
+	})
 }
 
 func TestAccContainerCluster_regionalWithNodeLocations(t *testing.T) {
@@ -518,7 +517,7 @@ func TestAccContainerCluster_regionalWithNodeLocations(t *testing.T) {
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckContainerClusterDestroy,
+		CheckDestroy: testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccContainerCluster_regionalNodeLocations(clusterName),
@@ -537,7 +536,7 @@ func TestAccContainerCluster_regionalWithNodeLocations(t *testing.T) {
 				ImportStateVerify: true,
 			},
 		},
-	}, testAccCheckContainerClusterDestroyProducer)
+	})
 }
 
 func TestAccContainerCluster_withTpu(t *testing.T) {
@@ -549,7 +548,7 @@ func TestAccContainerCluster_withTpu(t *testing.T) {
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckContainerClusterDestroy,
+		CheckDestroy: testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccContainerCluster_withTpu(containerNetName, clusterName),
@@ -563,7 +562,7 @@ func TestAccContainerCluster_withTpu(t *testing.T) {
 				ImportStateVerify: true,
 			},
 		},
-	}, testAccCheckContainerClusterDestroyProducer)
+	})
 }
 
 func TestAccContainerCluster_withPrivateClusterConfig(t *testing.T) {
@@ -575,7 +574,7 @@ func TestAccContainerCluster_withPrivateClusterConfig(t *testing.T) {
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckContainerClusterDestroy,
+		CheckDestroy: testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccContainerCluster_withPrivateClusterConfig(containerNetName, clusterName),
@@ -586,7 +585,7 @@ func TestAccContainerCluster_withPrivateClusterConfig(t *testing.T) {
 				ImportStateVerify: true,
 			},
 		},
-	}, testAccCheckContainerClusterDestroyProducer)
+	})
 }
 
 func TestAccContainerCluster_withPrivateClusterConfigMissingCidrBlock(t *testing.T) {
@@ -598,14 +597,14 @@ func TestAccContainerCluster_withPrivateClusterConfigMissingCidrBlock(t *testing
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckContainerClusterDestroy,
+		CheckDestroy: testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config:      testAccContainerCluster_withPrivateClusterConfigMissingCidrBlock(containerNetName, clusterName),
 				ExpectError: regexp.MustCompile("master_ipv4_cidr_block must be set if enable_private_nodes == true"),
 			},
 		},
-	}, testAccCheckContainerClusterDestroyProducer)
+	})
 }
 
 func TestAccContainerCluster_withIntraNodeVisibility(t *testing.T) {
@@ -616,7 +615,7 @@ func TestAccContainerCluster_withIntraNodeVisibility(t *testing.T) {
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckContainerClusterDestroy,
+		CheckDestroy: testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccContainerCluster_withIntraNodeVisibility(clusterName),
@@ -641,7 +640,7 @@ func TestAccContainerCluster_withIntraNodeVisibility(t *testing.T) {
 				ImportStateVerify: true,
 			},
 		},
-	}, testAccCheckContainerClusterDestroyProducer)
+	})
 }
 
 func TestAccContainerCluster_withVersion(t *testing.T) {
@@ -652,7 +651,7 @@ func TestAccContainerCluster_withVersion(t *testing.T) {
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckContainerClusterDestroy,
+		CheckDestroy: testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccContainerCluster_withVersion(clusterName),
@@ -664,7 +663,7 @@ func TestAccContainerCluster_withVersion(t *testing.T) {
 				ImportStateVerifyIgnore: []string{"min_master_version"},
 			},
 		},
-	}, testAccCheckContainerClusterDestroyProducer)
+	})
 }
 
 func TestAccContainerCluster_updateVersion(t *testing.T) {
@@ -675,7 +674,7 @@ func TestAccContainerCluster_updateVersion(t *testing.T) {
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckContainerClusterDestroy,
+		CheckDestroy: testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccContainerCluster_withLowerVersion(clusterName),
@@ -696,7 +695,7 @@ func TestAccContainerCluster_updateVersion(t *testing.T) {
 				ImportStateVerifyIgnore: []string{"min_master_version"},
 			},
 		},
-	}, testAccCheckContainerClusterDestroyProducer)
+	})
 }
 
 func TestAccContainerCluster_withNodeConfig(t *testing.T) {
@@ -707,7 +706,7 @@ func TestAccContainerCluster_withNodeConfig(t *testing.T) {
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckContainerClusterDestroy,
+		CheckDestroy: testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccContainerCluster_withNodeConfig(clusterName),
@@ -726,7 +725,7 @@ func TestAccContainerCluster_withNodeConfig(t *testing.T) {
 				ImportStateVerify: true,
 			},
 		},
-	}, testAccCheckContainerClusterDestroyProducer)
+	})
 }
 
 func TestAccContainerCluster_withNodeConfigScopeAlias(t *testing.T) {
@@ -737,7 +736,7 @@ func TestAccContainerCluster_withNodeConfigScopeAlias(t *testing.T) {
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckContainerClusterDestroy,
+		CheckDestroy: testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccContainerCluster_withNodeConfigScopeAlias(clusterName),
@@ -748,7 +747,7 @@ func TestAccContainerCluster_withNodeConfigScopeAlias(t *testing.T) {
 				ImportStateVerify: true,
 			},
 		},
-	}, testAccCheckContainerClusterDestroyProducer)
+	})
 }
 
 func TestAccContainerCluster_withNodeConfigShieldedInstanceConfig(t *testing.T) {
@@ -759,7 +758,7 @@ func TestAccContainerCluster_withNodeConfigShieldedInstanceConfig(t *testing.T) 
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckContainerClusterDestroy,
+		CheckDestroy: testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccContainerCluster_withNodeConfigShieldedInstanceConfig(clusterName),
@@ -770,7 +769,7 @@ func TestAccContainerCluster_withNodeConfigShieldedInstanceConfig(t *testing.T) 
 				ImportStateVerify: true,
 			},
 		},
-	}, testAccCheckContainerClusterDestroyProducer)
+	})
 }
 
 func TestAccContainerCluster_withWorkloadMetadataConfig(t *testing.T) {
@@ -781,7 +780,7 @@ func TestAccContainerCluster_withWorkloadMetadataConfig(t *testing.T) {
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckContainerClusterDestroy,
+		CheckDestroy: testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccContainerCluster_withWorkloadMetadataConfig(clusterName),
@@ -797,7 +796,7 @@ func TestAccContainerCluster_withWorkloadMetadataConfig(t *testing.T) {
 				ImportStateVerifyIgnore: []string{"min_master_version"},
 			},
 		},
-	}, testAccCheckContainerClusterDestroyProducer)
+	})
 }
 
 func TestAccContainerCluster_withSandboxConfig(t *testing.T) {
@@ -808,7 +807,7 @@ func TestAccContainerCluster_withSandboxConfig(t *testing.T) {
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckContainerClusterDestroy,
+		CheckDestroy: testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccContainerCluster_withSandboxConfig(clusterName),
@@ -826,7 +825,7 @@ func TestAccContainerCluster_withSandboxConfig(t *testing.T) {
 				ImportStateVerifyIgnore: []string{"min_master_version"},
 			},
 		},
-	}, testAccCheckContainerClusterDestroyProducer)
+	})
 }
 
 func TestAccContainerCluster_withBootDiskKmsKey(t *testing.T) {
@@ -837,7 +836,7 @@ func TestAccContainerCluster_withBootDiskKmsKey(t *testing.T) {
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckContainerClusterDestroy,
+		CheckDestroy: testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccContainerCluster_withBootDiskKmsKey(getTestProjectFromEnv(), clusterName),
@@ -849,7 +848,7 @@ func TestAccContainerCluster_withBootDiskKmsKey(t *testing.T) {
 				ImportStateVerifyIgnore: []string{"min_master_version"},
 			},
 		},
-	}, testAccCheckContainerClusterDestroyProducer)
+	})
 }
 
 func TestAccContainerCluster_network(t *testing.T) {
@@ -861,7 +860,7 @@ func TestAccContainerCluster_network(t *testing.T) {
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckContainerClusterDestroy,
+		CheckDestroy: testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccContainerCluster_networkRef(clusterName, network),
@@ -877,7 +876,7 @@ func TestAccContainerCluster_network(t *testing.T) {
 				ImportStateVerify: true,
 			},
 		},
-	}, testAccCheckContainerClusterDestroyProducer)
+	})
 }
 
 func TestAccContainerCluster_backend(t *testing.T) {
@@ -888,7 +887,7 @@ func TestAccContainerCluster_backend(t *testing.T) {
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckContainerClusterDestroy,
+		CheckDestroy: testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccContainerCluster_backendRef(clusterName),
@@ -899,7 +898,7 @@ func TestAccContainerCluster_backend(t *testing.T) {
 				ImportStateVerify: true,
 			},
 		},
-	}, testAccCheckContainerClusterDestroyProducer)
+	})
 }
 
 func TestAccContainerCluster_withNodePoolBasic(t *testing.T) {
@@ -911,7 +910,7 @@ func TestAccContainerCluster_withNodePoolBasic(t *testing.T) {
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckContainerClusterDestroy,
+		CheckDestroy: testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccContainerCluster_withNodePoolBasic(clusterName, npName),
@@ -922,7 +921,7 @@ func TestAccContainerCluster_withNodePoolBasic(t *testing.T) {
 				ImportStateVerify: true,
 			},
 		},
-	}, testAccCheckContainerClusterDestroyProducer)
+	})
 }
 
 func TestAccContainerCluster_withNodePoolUpdateVersion(t *testing.T) {
@@ -934,7 +933,7 @@ func TestAccContainerCluster_withNodePoolUpdateVersion(t *testing.T) {
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckContainerClusterDestroy,
+		CheckDestroy: testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccContainerCluster_withNodePoolLowerVersion(clusterName, npName),
@@ -955,7 +954,7 @@ func TestAccContainerCluster_withNodePoolUpdateVersion(t *testing.T) {
 				ImportStateVerifyIgnore: []string{"min_master_version"},
 			},
 		},
-	}, testAccCheckContainerClusterDestroyProducer)
+	})
 }
 
 func TestAccContainerCluster_withNodePoolResize(t *testing.T) {
@@ -966,7 +965,7 @@ func TestAccContainerCluster_withNodePoolResize(t *testing.T) {
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckContainerClusterDestroy,
+		CheckDestroy: testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccContainerCluster_withNodePoolNodeLocations(clusterName, npName),
@@ -991,7 +990,7 @@ func TestAccContainerCluster_withNodePoolResize(t *testing.T) {
 				ImportStateVerify: true,
 			},
 		},
-	}, testAccCheckContainerClusterDestroyProducer)
+	})
 }
 
 func TestAccContainerCluster_withNodePoolAutoscaling(t *testing.T) {
@@ -1003,7 +1002,7 @@ func TestAccContainerCluster_withNodePoolAutoscaling(t *testing.T) {
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckContainerNodePoolDestroy,
+		CheckDestroy: testAccCheckContainerNodePoolDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccContainerCluster_withNodePoolAutoscaling(clusterName, npName),
@@ -1042,7 +1041,7 @@ func TestAccContainerCluster_withNodePoolAutoscaling(t *testing.T) {
 				ImportStateVerify: true,
 			},
 		},
-	}, testAccCheckContainerClusterDestroyProducer)
+	})
 }
 
 func TestAccContainerCluster_withNodePoolNamePrefix(t *testing.T) {
@@ -1054,7 +1053,7 @@ func TestAccContainerCluster_withNodePoolNamePrefix(t *testing.T) {
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckContainerClusterDestroy,
+		CheckDestroy: testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccContainerCluster_withNodePoolNamePrefix(clusterName, npNamePrefix),
@@ -1066,7 +1065,7 @@ func TestAccContainerCluster_withNodePoolNamePrefix(t *testing.T) {
 				ImportStateVerifyIgnore: []string{"node_pool.0.name_prefix"},
 			},
 		},
-	}, testAccCheckContainerClusterDestroyProducer)
+	})
 }
 
 func TestAccContainerCluster_withNodePoolMultiple(t *testing.T) {
@@ -1078,7 +1077,7 @@ func TestAccContainerCluster_withNodePoolMultiple(t *testing.T) {
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckContainerClusterDestroy,
+		CheckDestroy: testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccContainerCluster_withNodePoolMultiple(clusterName, npNamePrefix),
@@ -1089,7 +1088,7 @@ func TestAccContainerCluster_withNodePoolMultiple(t *testing.T) {
 				ImportStateVerify: true,
 			},
 		},
-	}, testAccCheckContainerClusterDestroyProducer)
+	})
 }
 
 func TestAccContainerCluster_withNodePoolConflictingNameFields(t *testing.T) {
@@ -1101,14 +1100,14 @@ func TestAccContainerCluster_withNodePoolConflictingNameFields(t *testing.T) {
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckContainerClusterDestroy,
+		CheckDestroy: testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config:      testAccContainerCluster_withNodePoolConflictingNameFields(clusterName, npPrefix),
 				ExpectError: regexp.MustCompile("Cannot specify both name and name_prefix for a node_pool"),
 			},
 		},
-	}, testAccCheckContainerClusterDestroyProducer)
+	})
 }
 
 func TestAccContainerCluster_withNodePoolNodeConfig(t *testing.T) {
@@ -1120,7 +1119,7 @@ func TestAccContainerCluster_withNodePoolNodeConfig(t *testing.T) {
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckContainerClusterDestroy,
+		CheckDestroy: testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccContainerCluster_withNodePoolNodeConfig(cluster, np),
@@ -1131,7 +1130,7 @@ func TestAccContainerCluster_withNodePoolNodeConfig(t *testing.T) {
 				ImportStateVerify: true,
 			},
 		},
-	}, testAccCheckContainerClusterDestroyProducer)
+	})
 }
 
 func TestAccContainerCluster_withMaintenanceWindow(t *testing.T) {
@@ -1143,7 +1142,7 @@ func TestAccContainerCluster_withMaintenanceWindow(t *testing.T) {
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckContainerClusterDestroy,
+		CheckDestroy: testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccContainerCluster_withMaintenanceWindow(clusterName, "03:00"),
@@ -1169,7 +1168,7 @@ func TestAccContainerCluster_withMaintenanceWindow(t *testing.T) {
 				ImportStateVerifyIgnore: []string{"maintenance_policy.#"},
 			},
 		},
-	}, testAccCheckContainerClusterDestroyProducer)
+	})
 }
 
 func TestAccContainerCluster_withRecurringMaintenanceWindow(t *testing.T) {
@@ -1180,7 +1179,7 @@ func TestAccContainerCluster_withRecurringMaintenanceWindow(t *testing.T) {
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckContainerClusterDestroy,
+		CheckDestroy: testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccContainerCluster_withRecurringMaintenanceWindow(cluster, "2019-01-01T00:00:00Z", "2019-01-02T00:00:00Z"),
@@ -1214,7 +1213,7 @@ func TestAccContainerCluster_withRecurringMaintenanceWindow(t *testing.T) {
 				ImportStateVerifyIgnore: []string{"maintenance_policy.#"},
 			},
 		},
-	}, testAccCheckContainerClusterDestroyProducer)
+	})
 }
 
 func TestAccContainerCluster_withIPAllocationPolicy_existingSecondaryRanges(t *testing.T) {
@@ -1225,7 +1224,7 @@ func TestAccContainerCluster_withIPAllocationPolicy_existingSecondaryRanges(t *t
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckContainerClusterDestroy,
+		CheckDestroy: testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccContainerCluster_withIPAllocationPolicy_existingSecondaryRanges(containerNetName, clusterName),
@@ -1236,7 +1235,7 @@ func TestAccContainerCluster_withIPAllocationPolicy_existingSecondaryRanges(t *t
 				ImportStateVerify: true,
 			},
 		},
-	}, testAccCheckContainerClusterDestroyProducer)
+	})
 }
 
 func TestAccContainerCluster_withIPAllocationPolicy_specificIPRanges(t *testing.T) {
@@ -1247,7 +1246,7 @@ func TestAccContainerCluster_withIPAllocationPolicy_specificIPRanges(t *testing.
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckContainerClusterDestroy,
+		CheckDestroy: testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccContainerCluster_withIPAllocationPolicy_specificIPRanges(containerNetName, clusterName),
@@ -1258,7 +1257,7 @@ func TestAccContainerCluster_withIPAllocationPolicy_specificIPRanges(t *testing.
 				ImportStateVerify: true,
 			},
 		},
-	}, testAccCheckContainerClusterDestroyProducer)
+	})
 }
 
 func TestAccContainerCluster_withIPAllocationPolicy_specificSizes(t *testing.T) {
@@ -1269,7 +1268,7 @@ func TestAccContainerCluster_withIPAllocationPolicy_specificSizes(t *testing.T) 
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckContainerClusterDestroy,
+		CheckDestroy: testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccContainerCluster_withIPAllocationPolicy_specificSizes(containerNetName, clusterName),
@@ -1280,7 +1279,7 @@ func TestAccContainerCluster_withIPAllocationPolicy_specificSizes(t *testing.T) 
 				ImportStateVerify: true,
 			},
 		},
-	}, testAccCheckContainerClusterDestroyProducer)
+	})
 }
 
 func TestAccContainerCluster_nodeAutoprovisioning(t *testing.T) {
@@ -1291,7 +1290,7 @@ func TestAccContainerCluster_nodeAutoprovisioning(t *testing.T) {
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckContainerClusterDestroy,
+		CheckDestroy: testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccContainerCluster_autoprovisioning(clusterName, true),
@@ -1320,7 +1319,7 @@ func TestAccContainerCluster_nodeAutoprovisioning(t *testing.T) {
 				ImportStateVerifyIgnore: []string{"min_master_version"},
 			},
 		},
-	}, testAccCheckContainerClusterDestroyProducer)
+	})
 }
 
 func TestAccContainerCluster_nodeAutoprovisioningDefaults(t *testing.T) {
@@ -1331,7 +1330,7 @@ func TestAccContainerCluster_nodeAutoprovisioningDefaults(t *testing.T) {
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckContainerClusterDestroy,
+		CheckDestroy: testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccContainerCluster_autoprovisioningDefaults(clusterName, false),
@@ -1352,7 +1351,7 @@ func TestAccContainerCluster_nodeAutoprovisioningDefaults(t *testing.T) {
 				ExpectNonEmptyPlan: false,
 			},
 		},
-	}, testAccCheckContainerClusterDestroyProducer)
+	})
 }
 
 func TestAccContainerCluster_withAutoscalingProfile(t *testing.T) {
@@ -1361,7 +1360,7 @@ func TestAccContainerCluster_withAutoscalingProfile(t *testing.T) {
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckContainerClusterDestroy,
+		CheckDestroy: testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccContainerCluster_withAutoscalingProfile(clusterName, "BALANCED"),
@@ -1382,7 +1381,7 @@ func TestAccContainerCluster_withAutoscalingProfile(t *testing.T) {
 				ImportStateVerify:   true,
 			},
 		},
-	}, testAccCheckContainerClusterDestroyProducer)
+	})
 }
 
 func TestAccContainerCluster_withInvalidAutoscalingProfile(t *testing.T) {
@@ -1391,14 +1390,14 @@ func TestAccContainerCluster_withInvalidAutoscalingProfile(t *testing.T) {
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckContainerClusterDestroy,
+		CheckDestroy: testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config:      testAccContainerCluster_withAutoscalingProfile(clusterName, "AS_CHEAP_AS_POSSIBLE"),
 				ExpectError: regexp.MustCompile(`config is invalid: expected cluster_autoscaling\.0\.autoscaling_profile to be one of \[BALANCED OPTIMIZE_UTILIZATION\], got AS_CHEAP_AS_POSSIBLE`),
 			},
 		},
-	}, testAccCheckContainerClusterDestroyProducer)
+	})
 }
 
 func TestAccContainerCluster_sharedVpc(t *testing.T) {
@@ -1413,7 +1412,7 @@ func TestAccContainerCluster_sharedVpc(t *testing.T) {
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckContainerClusterDestroy,
+		CheckDestroy: testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccContainerCluster_sharedVpc(org, billingId, projectName, clusterName, suffix),
@@ -1425,7 +1424,7 @@ func TestAccContainerCluster_sharedVpc(t *testing.T) {
 				ImportStateVerify: true,
 			},
 		},
-	}, testAccCheckContainerClusterDestroyProducer)
+	})
 }
 
 func TestAccContainerCluster_withWorkloadIdentityConfig(t *testing.T) {
@@ -1437,7 +1436,7 @@ func TestAccContainerCluster_withWorkloadIdentityConfig(t *testing.T) {
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckContainerClusterDestroy,
+		CheckDestroy: testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccContainerCluster_withWorkloadIdentityConfigEnabled(pid, clusterName),
@@ -1472,7 +1471,7 @@ func TestAccContainerCluster_withWorkloadIdentityConfig(t *testing.T) {
 				ImportStateVerify: true,
 			},
 		},
-	}, testAccCheckContainerClusterDestroyProducer)
+	})
 
 }
 
@@ -1484,7 +1483,7 @@ func TestAccContainerCluster_withBinaryAuthorization(t *testing.T) {
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckContainerClusterDestroy,
+		CheckDestroy: testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccContainerCluster_withBinaryAuthorization(clusterName, true),
@@ -1503,7 +1502,7 @@ func TestAccContainerCluster_withBinaryAuthorization(t *testing.T) {
 				ImportStateVerify: true,
 			},
 		},
-	}, testAccCheckContainerClusterDestroyProducer)
+	})
 }
 
 func TestAccContainerCluster_withShieldedNodes(t *testing.T) {
@@ -1514,7 +1513,7 @@ func TestAccContainerCluster_withShieldedNodes(t *testing.T) {
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckContainerClusterDestroy,
+		CheckDestroy: testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccContainerCluster_withShieldedNodes(clusterName, true),
@@ -1533,7 +1532,7 @@ func TestAccContainerCluster_withShieldedNodes(t *testing.T) {
 				ImportStateVerify: true,
 			},
 		},
-	}, testAccCheckContainerClusterDestroyProducer)
+	})
 }
 
 func TestAccContainerCluster_withFlexiblePodCIDR(t *testing.T) {
@@ -1545,7 +1544,7 @@ func TestAccContainerCluster_withFlexiblePodCIDR(t *testing.T) {
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckContainerClusterDestroy,
+		CheckDestroy: testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccContainerCluster_withFlexiblePodCIDR(containerNetName, clusterName),
@@ -1556,7 +1555,7 @@ func TestAccContainerCluster_withFlexiblePodCIDR(t *testing.T) {
 				ImportStateVerify: true,
 			},
 		},
-	}, testAccCheckContainerClusterDestroyProducer)
+	})
 }
 
 func TestAccContainerCluster_errorCleanDanglingCluster(t *testing.T) {
@@ -1573,7 +1572,7 @@ func TestAccContainerCluster_errorCleanDanglingCluster(t *testing.T) {
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckContainerClusterDestroy,
+		CheckDestroy: testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: initConfig,
@@ -1594,7 +1593,7 @@ func TestAccContainerCluster_errorCleanDanglingCluster(t *testing.T) {
 				ExpectNonEmptyPlan: true,
 			},
 		},
-	}, testAccCheckContainerClusterDestroyProducer)
+	})
 }
 
 func TestAccContainerCluster_errorNoClusterCreated(t *testing.T) {
@@ -1603,14 +1602,14 @@ func TestAccContainerCluster_errorNoClusterCreated(t *testing.T) {
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckContainerClusterDestroy,
+		CheckDestroy: testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config:      testAccContainerCluster_withInvalidLocation("wonderland"),
 				ExpectError: regexp.MustCompile(`Permission denied on 'locations/wonderland' \(or it may not exist\).`),
 			},
 		},
-	}, testAccCheckContainerClusterDestroyProducer)
+	})
 }
 
 func TestAccContainerCluster_withDatabaseEncryption(t *testing.T) {
@@ -1628,7 +1627,7 @@ func TestAccContainerCluster_withDatabaseEncryption(t *testing.T) {
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckContainerClusterDestroy,
+		CheckDestroy: testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccContainerCluster_withDatabaseEncryption(clusterName, kmsData),
@@ -1639,7 +1638,7 @@ func TestAccContainerCluster_withDatabaseEncryption(t *testing.T) {
 				ImportStateVerify: true,
 			},
 		},
-	}, testAccCheckContainerClusterDestroyProducer)
+	})
 }
 
 func TestAccContainerCluster_withResourceUsageExportConfig(t *testing.T) {
@@ -1652,7 +1651,7 @@ func TestAccContainerCluster_withResourceUsageExportConfig(t *testing.T) {
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckContainerClusterDestroy,
+		CheckDestroy: testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccContainerCluster_withResourceUsageExportConfig(clusterName, datesetId, "true"),
@@ -1679,7 +1678,7 @@ func TestAccContainerCluster_withResourceUsageExportConfig(t *testing.T) {
 				ImportStateVerify: true,
 			},
 		},
-	}, testAccCheckContainerClusterDestroyProducer)
+	})
 }
 
 func TestAccContainerCluster_withMasterAuthorizedNetworksDisabled(t *testing.T) {
@@ -1691,7 +1690,7 @@ func TestAccContainerCluster_withMasterAuthorizedNetworksDisabled(t *testing.T) 
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckContainerClusterDestroy,
+		CheckDestroy: testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccContainerCluster_withMasterAuthorizedNetworksDisabled(containerNetName, clusterName),
@@ -1705,7 +1704,7 @@ func TestAccContainerCluster_withMasterAuthorizedNetworksDisabled(t *testing.T) 
 				ImportStateVerify: true,
 			},
 		},
-	}, testAccCheckContainerClusterDestroyProducer)
+	})
 }
 
 func TestAccContainerCluster_withEnableKubernetesAlpha(t *testing.T) {
@@ -1717,7 +1716,7 @@ func TestAccContainerCluster_withEnableKubernetesAlpha(t *testing.T) {
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckContainerClusterDestroy,
+		CheckDestroy: testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccContainerCluster_withEnableKubernetesAlpha(clusterName, npName),
@@ -1728,7 +1727,7 @@ func TestAccContainerCluster_withEnableKubernetesAlpha(t *testing.T) {
 				ImportStateVerify: true,
 			},
 		},
-	}, testAccCheckContainerClusterDestroyProducer)
+	})
 }
 
 func testAccContainerCluster_masterAuthorizedNetworksDisabled(t *testing.T, resource_name string) resource.TestCheckFunc {
@@ -1738,7 +1737,7 @@ func testAccContainerCluster_masterAuthorizedNetworksDisabled(t *testing.T, reso
 			return fmt.Errorf("can't find %s in state", resource_name)
 		}
 
-		config := getTestAccProviders(t.Name())["google"].(*schema.Provider).Meta().(*Config)
+		config := googleProviderConfig(t)
 		attributes := rs.Primary.Attributes
 
 		cluster, err := config.clientContainer.Projects.Zones.Clusters.Get(
@@ -1755,28 +1754,9 @@ func testAccContainerCluster_masterAuthorizedNetworksDisabled(t *testing.T, reso
 	}
 }
 
-func testAccCheckContainerClusterDestroy(s *terraform.State) error {
-	config := testAccProvider.Meta().(*Config)
-
-	for _, rs := range s.RootModule().Resources {
-		if rs.Type != "google_container_cluster" {
-			continue
-		}
-
-		attributes := rs.Primary.Attributes
-		_, err := config.clientContainer.Projects.Zones.Clusters.Get(
-			config.Project, attributes["location"], attributes["name"]).Do()
-		if err == nil {
-			return fmt.Errorf("Cluster still exists")
-		}
-	}
-
-	return nil
-}
-
-func testAccCheckContainerClusterDestroyProducer(provider *schema.Provider) func(s *terraform.State) error {
+func testAccCheckContainerClusterDestroyProducer(t *testing.T) func(s *terraform.State) error {
 	return func(s *terraform.State) error {
-		config := provider.Meta().(*Config)
+		config := googleProviderConfig(t)
 
 		for _, rs := range s.RootModule().Resources {
 			if rs.Type != "google_container_cluster" {

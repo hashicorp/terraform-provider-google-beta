@@ -4,19 +4,18 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 )
 
 func TestAccDNSManagedZone_update(t *testing.T) {
 	t.Parallel()
 
-	zoneSuffix := acctest.RandString(10)
+	zoneSuffix := randString(t, 10)
 
-	resource.Test(t, resource.TestCase{
+	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckDNSManagedZoneDestroy,
+		CheckDestroy: testAccCheckDNSManagedZoneDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccDnsManagedZone_basic(zoneSuffix, "description1"),
@@ -41,12 +40,12 @@ func TestAccDNSManagedZone_update(t *testing.T) {
 func TestAccDNSManagedZone_privateUpdate(t *testing.T) {
 	t.Parallel()
 
-	zoneSuffix := acctest.RandString(10)
+	zoneSuffix := randString(t, 10)
 
-	resource.Test(t, resource.TestCase{
+	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckDNSManagedZoneDestroy,
+		CheckDestroy: testAccCheckDNSManagedZoneDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccDnsManagedZone_privateUpdate(zoneSuffix, "network-1", "network-2"),
@@ -71,12 +70,12 @@ func TestAccDNSManagedZone_privateUpdate(t *testing.T) {
 func TestAccDNSManagedZone_dnssec_update(t *testing.T) {
 	t.Parallel()
 
-	zoneSuffix := acctest.RandString(10)
+	zoneSuffix := randString(t, 10)
 
-	resource.Test(t, resource.TestCase{
+	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckDNSManagedZoneDestroy,
+		CheckDestroy: testAccCheckDNSManagedZoneDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccDnsManagedZone_dnssec_on(zoneSuffix),
@@ -101,12 +100,12 @@ func TestAccDNSManagedZone_dnssec_update(t *testing.T) {
 func TestAccDNSManagedZone_dnssec_empty(t *testing.T) {
 	t.Parallel()
 
-	zoneSuffix := acctest.RandString(10)
+	zoneSuffix := randString(t, 10)
 
-	resource.Test(t, resource.TestCase{
+	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckDNSManagedZoneDestroy,
+		CheckDestroy: testAccCheckDNSManagedZoneDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccDnsManagedZone_dnssec_empty(zoneSuffix),
@@ -123,12 +122,12 @@ func TestAccDNSManagedZone_dnssec_empty(t *testing.T) {
 func TestAccDNSManagedZone_privateForwardingUpdate(t *testing.T) {
 	t.Parallel()
 
-	zoneSuffix := acctest.RandString(10)
+	zoneSuffix := randString(t, 10)
 
-	resource.Test(t, resource.TestCase{
+	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckDNSManagedZoneDestroy,
+		CheckDestroy: testAccCheckDNSManagedZoneDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccDnsManagedZone_privateForwardingUpdate(zoneSuffix, "172.16.1.10", "172.16.1.20", "default", "private"),
@@ -153,12 +152,12 @@ func TestAccDNSManagedZone_privateForwardingUpdate(t *testing.T) {
 func TestAccDNSManagedZone_reverseLookup(t *testing.T) {
 	t.Parallel()
 
-	zoneSuffix := acctest.RandString(10)
+	zoneSuffix := randString(t, 10)
 
-	resource.Test(t, resource.TestCase{
+	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckDNSManagedZoneDestroy,
+		CheckDestroy: testAccCheckDNSManagedZoneDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccDnsManagedZone_reverseLookup(zoneSuffix),
@@ -414,13 +413,13 @@ func TestDnsManagedZoneImport_parseImportId(t *testing.T) {
 func TestAccDNSManagedZone_importWithProject(t *testing.T) {
 	t.Parallel()
 
-	zoneSuffix := acctest.RandString(10)
+	zoneSuffix := randString(t, 10)
 	project := getTestProjectFromEnv()
 
-	resource.Test(t, resource.TestCase{
+	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckDNSManagedZoneDestroy,
+		CheckDestroy: testAccCheckDNSManagedZoneDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccDnsManagedZone_basicWithProject(zoneSuffix, "description1", project),
