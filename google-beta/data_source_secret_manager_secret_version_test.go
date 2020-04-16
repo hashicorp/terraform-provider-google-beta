@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/terraform"
 )
@@ -13,12 +12,12 @@ import (
 func TestAccDatasourceSecretManagerSecretVersion_basic(t *testing.T) {
 	t.Parallel()
 
-	randomString := acctest.RandString(10)
+	randomString := randString(t, 10)
 
-	resource.Test(t, resource.TestCase{
+	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProvidersOiCS,
-		CheckDestroy: testAccCheckSecretManagerSecretVersionDestroy,
+		CheckDestroy: testAccCheckSecretManagerSecretVersionDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccDatasourceSecretManagerSecretVersion_basic(randomString),
@@ -33,12 +32,12 @@ func TestAccDatasourceSecretManagerSecretVersion_basic(t *testing.T) {
 func TestAccDatasourceSecretManagerSecretVersion_latest(t *testing.T) {
 	t.Parallel()
 
-	randomString := acctest.RandString(10)
+	randomString := randString(t, 10)
 
-	resource.Test(t, resource.TestCase{
+	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProvidersOiCS,
-		CheckDestroy: testAccCheckSecretManagerSecretVersionDestroy,
+		CheckDestroy: testAccCheckSecretManagerSecretVersionDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccDatasourceSecretManagerSecretVersion_latest(randomString),

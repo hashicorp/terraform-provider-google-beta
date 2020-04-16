@@ -4,19 +4,18 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 )
 
 func TestAccComputeRegionUrlMap_update_path_matcher(t *testing.T) {
 	t.Parallel()
 
-	randomSuffix := acctest.RandString(10)
+	randomSuffix := randString(t, 10)
 
-	resource.Test(t, resource.TestCase{
+	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckComputeUrlMapDestroy,
+		CheckDestroy: testAccCheckComputeUrlMapDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccComputeRegionUrlMap_basic1(randomSuffix),
@@ -41,12 +40,12 @@ func TestAccComputeRegionUrlMap_update_path_matcher(t *testing.T) {
 func TestAccComputeRegionUrlMap_advanced(t *testing.T) {
 	t.Parallel()
 
-	randomSuffix := acctest.RandString(10)
+	randomSuffix := randString(t, 10)
 
-	resource.Test(t, resource.TestCase{
+	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckComputeUrlMapDestroy,
+		CheckDestroy: testAccCheckComputeUrlMapDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccComputeRegionUrlMap_advanced1(randomSuffix),
@@ -71,12 +70,12 @@ func TestAccComputeRegionUrlMap_advanced(t *testing.T) {
 func TestAccComputeRegionUrlMap_noPathRulesWithUpdate(t *testing.T) {
 	t.Parallel()
 
-	randomSuffix := acctest.RandString(10)
+	randomSuffix := randString(t, 10)
 
-	resource.Test(t, resource.TestCase{
+	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckComputeUrlMapDestroy,
+		CheckDestroy: testAccCheckComputeUrlMapDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccComputeRegionUrlMap_noPathRules(randomSuffix),
@@ -101,12 +100,12 @@ func TestAccComputeRegionUrlMap_noPathRulesWithUpdate(t *testing.T) {
 func TestAccComputeRegionUrlMap_ilbPathUpdate(t *testing.T) {
 	t.Parallel()
 
-	randomSuffix := acctest.RandString(10)
+	randomSuffix := randString(t, 10)
 
-	resource.Test(t, resource.TestCase{
+	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckComputeUrlMapDestroy,
+		CheckDestroy: testAccCheckComputeUrlMapDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccComputeRegionUrlMap_ilbPath(randomSuffix),
@@ -131,12 +130,12 @@ func TestAccComputeRegionUrlMap_ilbPathUpdate(t *testing.T) {
 func TestAccComputeRegionUrlMap_ilbRouteUpdate(t *testing.T) {
 	t.Parallel()
 
-	randomSuffix := acctest.RandString(10)
+	randomSuffix := randString(t, 10)
 
-	resource.Test(t, resource.TestCase{
+	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckComputeUrlMapDestroy,
+		CheckDestroy: testAccCheckComputeUrlMapDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccComputeRegionUrlMap_ilbRoute(randomSuffix),

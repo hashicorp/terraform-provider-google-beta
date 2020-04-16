@@ -5,7 +5,6 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/terraform"
 )
@@ -14,9 +13,9 @@ func TestAccBinaryAuthorizationPolicy_basic(t *testing.T) {
 	t.Parallel()
 
 	org := getTestOrgFromEnv(t)
-	pid := "tf-test-" + acctest.RandString(10)
+	pid := "tf-test-" + randString(t, 10)
 	billingId := getTestBillingAccountFromEnv(t)
-	resource.Test(t, resource.TestCase{
+	vcrTest(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
@@ -32,7 +31,7 @@ func TestAccBinaryAuthorizationPolicy_basic(t *testing.T) {
 			// that it was restored to the default.
 			{
 				Config: testAccBinaryAuthorizationPolicyDefault(pid, pname, org, billingId),
-				Check:  testAccCheckBinaryAuthorizationPolicyDefault(pid),
+				Check:  testAccCheckBinaryAuthorizationPolicyDefault(t, pid),
 			},
 		},
 	})
@@ -42,12 +41,12 @@ func TestAccBinaryAuthorizationPolicy_full(t *testing.T) {
 	t.Parallel()
 
 	org := getTestOrgFromEnv(t)
-	pid := "tf-test-" + acctest.RandString(10)
+	pid := "tf-test-" + randString(t, 10)
 	billingId := getTestBillingAccountFromEnv(t)
-	note := acctest.RandString(10)
-	attestor := acctest.RandString(10)
+	note := randString(t, 10)
+	attestor := randString(t, 10)
 
-	resource.Test(t, resource.TestCase{
+	vcrTest(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
@@ -63,7 +62,7 @@ func TestAccBinaryAuthorizationPolicy_full(t *testing.T) {
 			// that it was restored to the default.
 			{
 				Config: testAccBinaryAuthorizationPolicyDefault(pid, pname, org, billingId),
-				Check:  testAccCheckBinaryAuthorizationPolicyDefault(pid),
+				Check:  testAccCheckBinaryAuthorizationPolicyDefault(t, pid),
 			},
 		},
 	})
@@ -74,12 +73,12 @@ func TestAccBinaryAuthorizationPolicy_separateProject(t *testing.T) {
 	t.Parallel()
 
 	org := getTestOrgFromEnv(t)
-	pid := "tf-test-" + acctest.RandString(10)
+	pid := "tf-test-" + randString(t, 10)
 	billingId := getTestBillingAccountFromEnv(t)
-	note := acctest.RandString(10)
-	attestor := acctest.RandString(10)
+	note := randString(t, 10)
+	attestor := randString(t, 10)
 
-	resource.Test(t, resource.TestCase{
+	vcrTest(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
@@ -95,7 +94,7 @@ func TestAccBinaryAuthorizationPolicy_separateProject(t *testing.T) {
 			// that it was restored to the default.
 			{
 				Config: testAccBinaryAuthorizationPolicyDefault(pid, pname, org, billingId),
-				Check:  testAccCheckBinaryAuthorizationPolicyDefault(pid),
+				Check:  testAccCheckBinaryAuthorizationPolicyDefault(t, pid),
 			},
 		},
 	})
@@ -105,12 +104,12 @@ func TestAccBinaryAuthorizationPolicy_update(t *testing.T) {
 	t.Parallel()
 
 	org := getTestOrgFromEnv(t)
-	pid := "tf-test-" + acctest.RandString(10)
+	pid := "tf-test-" + randString(t, 10)
 	billingId := getTestBillingAccountFromEnv(t)
-	note := acctest.RandString(10)
-	attestor := acctest.RandString(10)
+	note := randString(t, 10)
+	attestor := randString(t, 10)
 
-	resource.Test(t, resource.TestCase{
+	vcrTest(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
@@ -150,14 +149,14 @@ func TestAccBinaryAuthorizationPolicy_update(t *testing.T) {
 			// that it was restored to the default.
 			{
 				Config: testAccBinaryAuthorizationPolicyDefault(pid, pname, org, billingId),
-				Check:  testAccCheckBinaryAuthorizationPolicyDefault(pid),
+				Check:  testAccCheckBinaryAuthorizationPolicyDefault(t, pid),
 			},
 		},
 	})
 }
-func testAccCheckBinaryAuthorizationPolicyDefault(pid string) resource.TestCheckFunc {
+func testAccCheckBinaryAuthorizationPolicyDefault(t *testing.T, pid string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		config := testAccProvider.Meta().(*Config)
+		config := googleProviderConfig(t)
 		url := fmt.Sprintf("https://binaryauthorization.googleapis.com/v1beta1/projects/%s/policy", pid)
 		pol, err := sendRequest(config, "GET", "", url, nil)
 		if err != nil {

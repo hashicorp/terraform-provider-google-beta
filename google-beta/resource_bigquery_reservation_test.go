@@ -3,7 +3,6 @@ package google
 import (
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 )
 
@@ -12,14 +11,14 @@ func TestAccBigqueryReservationReservation_bigqueryReservationUpdate(t *testing.
 
 	location := "asia-northeast1"
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(10),
+		"random_suffix": randString(t, 10),
 		"location":      location,
 	}
 
-	resource.Test(t, resource.TestCase{
+	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckBigqueryReservationReservationDestroy,
+		CheckDestroy: testAccCheckBigqueryReservationReservationDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccBigqueryReservationReservation_bigqueryReservationBasic(context),
