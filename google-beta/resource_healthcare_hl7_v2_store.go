@@ -15,6 +15,7 @@
 package google
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"reflect"
@@ -22,6 +23,8 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/structure"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
 )
 
 func resourceHealthcareHl7V2Store() *schema.Resource {
@@ -106,7 +109,16 @@ Cloud Pub/Sub topic. Not having adequate permissions will cause the calls that s
 							Type:         schema.TypeBool,
 							Optional:     true,
 							Description:  `Determines whether messages with no header are allowed.`,
-							AtLeastOneOf: []string{"parser_config.0.allow_null_header", "parser_config.0.segment_terminator"},
+							AtLeastOneOf: []string{"parser_config.0.allow_null_header", "parser_config.0.segment_terminator", "parser_config.0.schema"},
+						},
+						"schema": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: validation.ValidateJsonString,
+							StateFunc:    func(v interface{}) string { s, _ := structure.NormalizeJsonString(v); return s },
+							Description: `JSON encoded string for schemas used to parse messages in this
+store if schematized parsing is desired.`,
+							AtLeastOneOf: []string{"parser_config.0.allow_null_header", "parser_config.0.segment_terminator", "parser_config.0.schema"},
 						},
 						"segment_terminator": {
 							Type:     schema.TypeString,
@@ -114,7 +126,7 @@ Cloud Pub/Sub topic. Not having adequate permissions will cause the calls that s
 							Description: `Byte(s) to be used as the segment terminator. If this is unset, '\r' will be used as segment terminator.
 
 A base64-encoded string.`,
-							AtLeastOneOf: []string{"parser_config.0.allow_null_header", "parser_config.0.segment_terminator"},
+							AtLeastOneOf: []string{"parser_config.0.allow_null_header", "parser_config.0.segment_terminator", "parser_config.0.schema"},
 						},
 					},
 				},
@@ -330,6 +342,8 @@ func flattenHealthcareHl7V2StoreParserConfig(v interface{}, d *schema.ResourceDa
 		flattenHealthcareHl7V2StoreParserConfigAllowNullHeader(original["allowNullHeader"], d, config)
 	transformed["segment_terminator"] =
 		flattenHealthcareHl7V2StoreParserConfigSegmentTerminator(original["segmentTerminator"], d, config)
+	transformed["schema"] =
+		flattenHealthcareHl7V2StoreParserConfigSchema(original["schema"], d, config)
 	return []interface{}{transformed}
 }
 func flattenHealthcareHl7V2StoreParserConfigAllowNullHeader(v interface{}, d *schema.ResourceData, config *Config) interface{} {
@@ -338,6 +352,18 @@ func flattenHealthcareHl7V2StoreParserConfigAllowNullHeader(v interface{}, d *sc
 
 func flattenHealthcareHl7V2StoreParserConfigSegmentTerminator(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
+}
+
+func flattenHealthcareHl7V2StoreParserConfigSchema(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	b, err := json.Marshal(v)
+	if err != nil {
+		// TODO: return error once https://github.com/GoogleCloudPlatform/magic-modules/issues/3257 is fixed.
+		log.Printf("[ERROR] failed to marshal schema to JSON: %v", err)
+	}
+	return string(b)
 }
 
 func flattenHealthcareHl7V2StoreLabels(v interface{}, d *schema.ResourceData, config *Config) interface{} {
@@ -388,6 +414,13 @@ func expandHealthcareHl7V2StoreParserConfig(v interface{}, d TerraformResourceDa
 		transformed["segmentTerminator"] = transformedSegmentTerminator
 	}
 
+	transformedSchema, err := expandHealthcareHl7V2StoreParserConfigSchema(original["schema"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedSchema); val.IsValid() && !isEmptyValue(val) {
+		transformed["schema"] = transformedSchema
+	}
+
 	return transformed, nil
 }
 
@@ -397,6 +430,18 @@ func expandHealthcareHl7V2StoreParserConfigAllowNullHeader(v interface{}, d Terr
 
 func expandHealthcareHl7V2StoreParserConfigSegmentTerminator(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
+}
+
+func expandHealthcareHl7V2StoreParserConfigSchema(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	b := []byte(v.(string))
+	if len(b) == 0 {
+		return nil, nil
+	}
+	m := make(map[string]interface{})
+	if err := json.Unmarshal(b, &m); err != nil {
+		return nil, err
+	}
+	return m, nil
 }
 
 func expandHealthcareHl7V2StoreLabels(v interface{}, d TerraformResourceData, config *Config) (map[string]string, error) {
