@@ -429,6 +429,14 @@ func Provider() terraform.ResourceProvider {
 					"GOOGLE_SECURITY_SCANNER_CUSTOM_ENDPOINT",
 				}, SecurityScannerDefaultBasePath),
 			},
+			"service_directory_custom_endpoint": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validateCustomEndpoint,
+				DefaultFunc: schema.MultiEnvDefaultFunc([]string{
+					"GOOGLE_SERVICE_DIRECTORY_CUSTOM_ENDPOINT",
+				}, ServiceDirectoryDefaultBasePath),
+			},
 			"service_management_custom_endpoint": {
 				Type:         schema.TypeString,
 				Optional:     true,
@@ -598,9 +606,9 @@ func Provider() terraform.ResourceProvider {
 	return provider
 }
 
-// Generated resources: 145
-// Generated IAM resources: 54
-// Total generated resources: 199
+// Generated resources: 148
+// Generated IAM resources: 60
+// Total generated resources: 208
 func ResourceMap() map[string]*schema.Resource {
 	resourceMap, _ := ResourceMapWithErrors()
 	return resourceMap
@@ -787,6 +795,15 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_secret_manager_secret_version":                         resourceSecretManagerSecretVersion(),
 			"google_scc_source":                                            resourceSecurityCenterSource(),
 			"google_security_scanner_scan_config":                          resourceSecurityScannerScanConfig(),
+			"google_service_directory_namespace":                           resourceServiceDirectoryNamespace(),
+			"google_service_directory_namespace_iam_binding":               ResourceIamBinding(ServiceDirectoryNamespaceIamSchema, ServiceDirectoryNamespaceIamUpdaterProducer, ServiceDirectoryNamespaceIdParseFunc),
+			"google_service_directory_namespace_iam_member":                ResourceIamMember(ServiceDirectoryNamespaceIamSchema, ServiceDirectoryNamespaceIamUpdaterProducer, ServiceDirectoryNamespaceIdParseFunc),
+			"google_service_directory_namespace_iam_policy":                ResourceIamPolicy(ServiceDirectoryNamespaceIamSchema, ServiceDirectoryNamespaceIamUpdaterProducer, ServiceDirectoryNamespaceIdParseFunc),
+			"google_service_directory_service":                             resourceServiceDirectoryService(),
+			"google_service_directory_service_iam_binding":                 ResourceIamBinding(ServiceDirectoryServiceIamSchema, ServiceDirectoryServiceIamUpdaterProducer, ServiceDirectoryServiceIdParseFunc),
+			"google_service_directory_service_iam_member":                  ResourceIamMember(ServiceDirectoryServiceIamSchema, ServiceDirectoryServiceIamUpdaterProducer, ServiceDirectoryServiceIdParseFunc),
+			"google_service_directory_service_iam_policy":                  ResourceIamPolicy(ServiceDirectoryServiceIamSchema, ServiceDirectoryServiceIamUpdaterProducer, ServiceDirectoryServiceIdParseFunc),
+			"google_service_directory_endpoint":                            resourceServiceDirectoryEndpoint(),
 			"google_endpoints_service_iam_binding":                         ResourceIamBinding(ServiceManagementServiceIamSchema, ServiceManagementServiceIamUpdaterProducer, ServiceManagementServiceIdParseFunc),
 			"google_endpoints_service_iam_member":                          ResourceIamMember(ServiceManagementServiceIamSchema, ServiceManagementServiceIamUpdaterProducer, ServiceManagementServiceIdParseFunc),
 			"google_endpoints_service_iam_policy":                          ResourceIamPolicy(ServiceManagementServiceIamSchema, ServiceManagementServiceIamUpdaterProducer, ServiceManagementServiceIdParseFunc),
@@ -1009,6 +1026,7 @@ func providerConfigure(d *schema.ResourceData, p *schema.Provider, terraformVers
 	config.SecretManagerBasePath = d.Get("secret_manager_custom_endpoint").(string)
 	config.SecurityCenterBasePath = d.Get("security_center_custom_endpoint").(string)
 	config.SecurityScannerBasePath = d.Get("security_scanner_custom_endpoint").(string)
+	config.ServiceDirectoryBasePath = d.Get("service_directory_custom_endpoint").(string)
 	config.ServiceManagementBasePath = d.Get("service_management_custom_endpoint").(string)
 	config.ServiceUsageBasePath = d.Get("service_usage_custom_endpoint").(string)
 	config.SourceRepoBasePath = d.Get("source_repo_custom_endpoint").(string)
