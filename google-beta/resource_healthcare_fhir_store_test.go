@@ -3,7 +3,6 @@ package google
 import (
 	"fmt"
 	"path"
-	"strings"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
@@ -159,33 +158,6 @@ resource "google_pubsub_topic" "topic" {
   name = "%s"
 }
 `, fhirStoreName, datasetName, pubsubTopic)
-}
-
-func testAccCheckHealthcareFhirStoreDestroyProducer(t *testing.T) func(s *terraform.State) error {
-	return func(s *terraform.State) error {
-		for name, rs := range s.RootModule().Resources {
-			if rs.Type != "google_healthcare_fhir_store" {
-				continue
-			}
-			if strings.HasPrefix(name, "data.") {
-				continue
-			}
-
-			config := googleProviderConfig(t)
-
-			url, err := replaceVarsForTest(config, rs, "{{HealthcareBasePath}}{{dataset}}/fhirStores/{{name}}")
-			if err != nil {
-				return err
-			}
-
-			_, err = sendRequest(config, "GET", "", url, nil)
-			if err == nil {
-				return fmt.Errorf("HealthcareFhirStore still exists at %s", url)
-			}
-		}
-
-		return nil
-	}
 }
 
 func testAccCheckGoogleHealthcareFhirStoreUpdate(t *testing.T, pubsubTopic string) resource.TestCheckFunc {

@@ -25,12 +25,10 @@ description: |-
 A Hl7V2Store is a datastore inside a Healthcare dataset that conforms to the FHIR (https://www.hl7.org/hl7V2/STU3/)
 standard for Healthcare information exchange
 
-~> **Warning:** This resource is in beta, and should be used with the terraform-provider-google-beta provider.
-See [Provider Versions](https://terraform.io/docs/providers/google/guides/provider_versions.html) for more details on beta resources.
 
 To get more information about Hl7V2Store, see:
 
-* [API documentation](https://cloud.google.com/healthcare/docs/reference/rest/v1beta1/projects.locations.datasets.hl7V2Stores)
+* [API documentation](https://cloud.google.com/healthcare/docs/reference/rest/v1/projects.locations.datasets.hl7V2Stores)
 * How-to Guides
     * [Creating a HL7v2 Store](https://cloud.google.com/healthcare/docs/how-tos/hl7v2)
 
@@ -54,19 +52,15 @@ resource "google_healthcare_hl7_v2_store" "default" {
   labels = {
     label1 = "labelvalue1"
   }
-
-  provider = google-beta
 }
 
 resource "google_pubsub_topic" "topic" {
   name     = "hl7-v2-notifications"
-  provider = google-beta
 }
 
 resource "google_healthcare_dataset" "dataset" {
   name     = "example-dataset"
   location = "us-central1"
-  provider = google-beta
 }
 ```
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
@@ -266,8 +260,8 @@ This resource provides the following
 Hl7V2Store can be imported using any of these accepted formats:
 
 ```
-$ terraform import -provider=google-beta google_healthcare_hl7_v2_store.default {{dataset}}/hl7V2Stores/{{name}}
-$ terraform import -provider=google-beta google_healthcare_hl7_v2_store.default {{dataset}}/{{name}}
+$ terraform import google_healthcare_hl7_v2_store.default {{dataset}}/hl7V2Stores/{{name}}
+$ terraform import google_healthcare_hl7_v2_store.default {{dataset}}/{{name}}
 ```
 
 -> If you're importing a resource with beta features, make sure to include `-provider=google-beta`
