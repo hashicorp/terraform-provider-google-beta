@@ -1972,6 +1972,9 @@ resource "google_container_cluster" "primary" {
     dns_cache_config {
       enabled = false
     }
+    kalm_config {
+      enabled = false
+    }
   }
 }
 `, clusterName)
@@ -2004,6 +2007,9 @@ resource "google_container_cluster" "primary" {
       disabled = false
     }
     dns_cache_config {
+      enabled = true
+    }
+    kalm_config {
       enabled = true
     }
   }
