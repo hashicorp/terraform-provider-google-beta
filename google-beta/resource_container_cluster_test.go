@@ -1972,6 +1972,9 @@ resource "google_container_cluster" "primary" {
     dns_cache_config {
       enabled = false
     }
+    gce_persistent_disk_csi_driver_config {
+      enabled = false
+    }
   }
 }
 `, clusterName)
@@ -2004,6 +2007,9 @@ resource "google_container_cluster" "primary" {
       disabled = false
     }
     dns_cache_config {
+      enabled = true
+    }
+    gce_persistent_disk_csi_driver_config {
       enabled = true
     }
   }
