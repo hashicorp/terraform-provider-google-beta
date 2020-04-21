@@ -3,7 +3,6 @@ package google
 import (
 	"fmt"
 	"path"
-	"strings"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
@@ -153,33 +152,6 @@ resource "google_pubsub_topic" "topic" {
   name = "%s"
 }
 `, dicomStoreName, datasetName, pubsubTopic)
-}
-
-func testAccCheckHealthcareDicomStoreDestroyProducer(t *testing.T) func(s *terraform.State) error {
-	return func(s *terraform.State) error {
-		for name, rs := range s.RootModule().Resources {
-			if rs.Type != "google_healthcare_dicom_store" {
-				continue
-			}
-			if strings.HasPrefix(name, "data.") {
-				continue
-			}
-
-			config := googleProviderConfig(t)
-
-			url, err := replaceVarsForTest(config, rs, "{{HealthcareBasePath}}{{dataset}}/dicomStores/{{name}}")
-			if err != nil {
-				return err
-			}
-
-			_, err = sendRequest(config, "GET", "", url, nil)
-			if err == nil {
-				return fmt.Errorf("HealthcareDicomStore still exists at %s", url)
-			}
-		}
-
-		return nil
-	}
 }
 
 func testAccCheckGoogleHealthcareDicomStoreUpdate(t *testing.T, pubsubTopic string) resource.TestCheckFunc {

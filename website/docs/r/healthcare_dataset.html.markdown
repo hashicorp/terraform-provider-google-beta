@@ -24,15 +24,18 @@ description: |-
 
 A Healthcare `Dataset` is a toplevel logical grouping of `dicomStores`, `fhirStores` and `hl7V2Stores`.
 
-~> **Warning:** This resource is in beta, and should be used with the terraform-provider-google-beta provider.
-See [Provider Versions](https://terraform.io/docs/providers/google/guides/provider_versions.html) for more details on beta resources.
 
 To get more information about Dataset, see:
 
-* [API documentation](https://cloud.google.com/healthcare/docs/reference/rest/v1beta1/projects.locations.datasets)
+* [API documentation](https://cloud.google.com/healthcare/docs/reference/rest/v1/projects.locations.datasets)
 * How-to Guides
     * [Creating a dataset](https://cloud.google.com/healthcare/docs/how-tos/datasets)
 
+<div class = "oics-button" style="float: right; margin: 0 0 -15px">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=healthcare_dataset_basic&cloudshell_image=gcr.io%2Fgraphite-cloud-shell-images%2Fterraform%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+    <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
+  </a>
+</div>
 ## Example Usage - Healthcare Dataset Basic
 
 
@@ -41,7 +44,6 @@ resource "google_healthcare_dataset" "default" {
   name      = "example-dataset"
   location  = "us-central1"
   time_zone = "UTC"
-  provider  = google-beta
 }
 ```
 
@@ -96,9 +98,9 @@ This resource provides the following
 Dataset can be imported using any of these accepted formats:
 
 ```
-$ terraform import -provider=google-beta google_healthcare_dataset.default projects/{{project}}/locations/{{location}}/datasets/{{name}}
-$ terraform import -provider=google-beta google_healthcare_dataset.default {{project}}/{{location}}/{{name}}
-$ terraform import -provider=google-beta google_healthcare_dataset.default {{location}}/{{name}}
+$ terraform import google_healthcare_dataset.default projects/{{project}}/locations/{{location}}/datasets/{{name}}
+$ terraform import google_healthcare_dataset.default {{project}}/{{location}}/{{name}}
+$ terraform import google_healthcare_dataset.default {{location}}/{{name}}
 ```
 
 -> If you're importing a resource with beta features, make sure to include `-provider=google-beta`

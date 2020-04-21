@@ -32,11 +32,17 @@ func TestAccHealthcareHl7V2Store_healthcareHl7V2StoreBasicExample(t *testing.T) 
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProvidersOiCS,
+		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckHealthcareHl7V2StoreDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccHealthcareHl7V2Store_healthcareHl7V2StoreBasicExample(context),
+			},
+			{
+				ResourceName:            "google_healthcare_hl7_v2_store.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"self_link", "dataset"},
 			},
 		},
 	})
@@ -55,19 +61,15 @@ resource "google_healthcare_hl7_v2_store" "default" {
   labels = {
     label1 = "labelvalue1"
   }
-
-  provider = google-beta
 }
 
 resource "google_pubsub_topic" "topic" {
   name     = "tf-test-hl7-v2-notifications%{random_suffix}"
-  provider = google-beta
 }
 
 resource "google_healthcare_dataset" "dataset" {
   name     = "tf-test-example-dataset%{random_suffix}"
   location = "us-central1"
-  provider = google-beta
 }
 `, context)
 }
