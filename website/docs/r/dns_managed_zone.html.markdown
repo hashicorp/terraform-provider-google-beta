@@ -189,6 +189,45 @@ provider "google-beta" {
   zone   = "us-central1-a"
 }
 ```
+<div class = "oics-button" style="float: right; margin: 0 0 -15px">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=dns_managed_zone_service_directory&cloudshell_image=gcr.io%2Fgraphite-cloud-shell-images%2Fterraform%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+    <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
+  </a>
+</div>
+## Example Usage - Dns Managed Zone Service Directory
+
+
+```hcl
+resource "google_dns_managed_zone" "sd-zone" {
+  provider = google-beta
+
+  name        = "peering-zone"
+  dns_name    = "services.example.com."
+  description = "Example private DNS Service Directory zone"
+
+  visibility = "private"
+
+  service_directory_config {
+    namespace {
+      namespace_url = google_service_directory_namespace.example.id
+    }
+  }
+}
+
+resource "google_service_directory_namespace" "example" {
+  provider = google-beta
+
+  namespace_id = "example"
+  location     = "us-central1"
+}
+
+resource "google_compute_network" "network" {
+  provider = google-beta
+
+  name                    = "network"
+  auto_create_subnetworks = false
+}
+```
 
 ## Argument Reference
 
@@ -247,6 +286,10 @@ The following arguments are supported:
   Specifies if this is a managed reverse lookup zone. If true, Cloud DNS will resolve reverse
   lookup queries using automatically configured records for VPC resources. This only applies
   to networks listed under `private_visibility_config`.
+
+* `service_directory_config` -
+  (Optional, [Beta](https://terraform.io/docs/providers/google/guides/provider_versions.html))
+  The presence of this field indicates that this zone is backed by Service Directory. The value of this field contains information related to the namespace associated with the zone.  Structure is documented below.
 
 * `project` - (Optional) The ID of the project in which the resource belongs.
     If it is not provided, the provider project is used.
@@ -352,6 +395,23 @@ The `target_network` block supports:
   The fully qualified URL of the VPC network to forward queries to.
   This should be formatted like
   `https://www.googleapis.com/compute/v1/projects/{project}/global/networks/{network}`
+
+The `service_directory_config` block supports:
+
+* `namespace` -
+  (Required)
+  The namespace associated with the zone.  Structure is documented below.
+
+
+The `namespace` block supports:
+
+* `namespace_url` -
+  (Required)
+  The fully qualified or partial URL of the service directory namespace that should be
+  associated with the zone. This should be formatted like
+  `https://servicedirectory.googleapis.com/v1/projects/{project}/locations/{location}/namespaces/{namespace_id}`
+  or simply `projects/{project}/locations/{location}/namespaces/{namespace_id}`
+  Ignored for `public` visibility zones.
 
 ## Attributes Reference
 
