@@ -80,6 +80,7 @@ type Config struct {
 
 	AccessContextManagerBasePath string
 	AppEngineBasePath            string
+	ArtifactRegistryBasePath     string
 	BigQueryBasePath             string
 	BigqueryDataTransferBasePath string
 	BigqueryReservationBasePath  string
@@ -226,6 +227,7 @@ type Config struct {
 // Generated product base paths
 var AccessContextManagerDefaultBasePath = "https://accesscontextmanager.googleapis.com/v1/"
 var AppEngineDefaultBasePath = "https://appengine.googleapis.com/v1/"
+var ArtifactRegistryDefaultBasePath = "https://artifactregistry.googleapis.com/v1beta1/"
 var BigQueryDefaultBasePath = "https://www.googleapis.com/bigquery/v2/"
 var BigqueryDataTransferDefaultBasePath = "https://bigquerydatatransfer.googleapis.com/v1/"
 var BigqueryReservationDefaultBasePath = "https://bigqueryreservation.googleapis.com/v1beta1/"
@@ -746,6 +748,7 @@ func ConfigureBasePaths(c *Config) {
 	// Generated Products
 	c.AccessContextManagerBasePath = AccessContextManagerDefaultBasePath
 	c.AppEngineBasePath = AppEngineDefaultBasePath
+	c.ArtifactRegistryBasePath = ArtifactRegistryDefaultBasePath
 	c.BigQueryBasePath = BigQueryDefaultBasePath
 	c.BigqueryDataTransferBasePath = BigqueryDataTransferDefaultBasePath
 	c.BigqueryReservationBasePath = BigqueryReservationDefaultBasePath
