@@ -9,7 +9,7 @@ FEATURES:
 
 IMPROVEMENTS:
 * bigtable: Reduced the minimum number of nodes for the `bigtable_instace` resource from 3 to 1. ([#1968](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1968))
-* compute: Addon "Compute Engine persistent disk CSI Driver" for Google Kubernetes Engine cluster `google_container_cluster` ([#1969](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1969))
+* container: Added support for `google_container_cluster` Compute Engine persistent disk CSI driver ([#1969](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1969))
 * compute: Added support for `google_compute_instance` `resource_policies` field ([#1957](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1957))
 * compute: Added support for `google_compute_resource_policy` group placement policies ([#1957](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1957))
 * healthcare: Added `schema` field to `google_healthcare_hl7_v2_store` ([#1962](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1962))
