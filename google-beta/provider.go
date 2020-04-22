@@ -125,6 +125,14 @@ func Provider() terraform.ResourceProvider {
 					"GOOGLE_APP_ENGINE_CUSTOM_ENDPOINT",
 				}, AppEngineDefaultBasePath),
 			},
+			"artifact_registry_custom_endpoint": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validateCustomEndpoint,
+				DefaultFunc: schema.MultiEnvDefaultFunc([]string{
+					"GOOGLE_ARTIFACT_REGISTRY_CUSTOM_ENDPOINT",
+				}, ArtifactRegistryDefaultBasePath),
+			},
 			"big_query_custom_endpoint": {
 				Type:         schema.TypeString,
 				Optional:     true,
@@ -606,9 +614,9 @@ func Provider() terraform.ResourceProvider {
 	return provider
 }
 
-// Generated resources: 148
-// Generated IAM resources: 60
-// Total generated resources: 208
+// Generated resources: 149
+// Generated IAM resources: 63
+// Total generated resources: 212
 func ResourceMap() map[string]*schema.Resource {
 	resourceMap, _ := ResourceMapWithErrors()
 	return resourceMap
@@ -627,6 +635,10 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_app_engine_flexible_app_version":                       resourceAppEngineFlexibleAppVersion(),
 			"google_app_engine_application_url_dispatch_rules":             resourceAppEngineApplicationUrlDispatchRules(),
 			"google_app_engine_service_split_traffic":                      resourceAppEngineServiceSplitTraffic(),
+			"google_artifact_registry_repository":                          resourceArtifactRegistryRepository(),
+			"google_artifact_registry_repository_iam_binding":              ResourceIamBinding(ArtifactRegistryRepositoryIamSchema, ArtifactRegistryRepositoryIamUpdaterProducer, ArtifactRegistryRepositoryIdParseFunc),
+			"google_artifact_registry_repository_iam_member":               ResourceIamMember(ArtifactRegistryRepositoryIamSchema, ArtifactRegistryRepositoryIamUpdaterProducer, ArtifactRegistryRepositoryIdParseFunc),
+			"google_artifact_registry_repository_iam_policy":               ResourceIamPolicy(ArtifactRegistryRepositoryIamSchema, ArtifactRegistryRepositoryIamUpdaterProducer, ArtifactRegistryRepositoryIdParseFunc),
 			"google_bigquery_dataset":                                      resourceBigQueryDataset(),
 			"google_bigquery_dataset_access":                               resourceBigQueryDatasetAccess(),
 			"google_bigquery_job":                                          resourceBigQueryJob(),
@@ -988,6 +1000,7 @@ func providerConfigure(d *schema.ResourceData, p *schema.Provider, terraformVers
 	// Generated products
 	config.AccessContextManagerBasePath = d.Get("access_context_manager_custom_endpoint").(string)
 	config.AppEngineBasePath = d.Get("app_engine_custom_endpoint").(string)
+	config.ArtifactRegistryBasePath = d.Get("artifact_registry_custom_endpoint").(string)
 	config.BigQueryBasePath = d.Get("big_query_custom_endpoint").(string)
 	config.BigqueryDataTransferBasePath = d.Get("bigquery_data_transfer_custom_endpoint").(string)
 	config.BigqueryReservationBasePath = d.Get("bigquery_reservation_custom_endpoint").(string)
