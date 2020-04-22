@@ -12,7 +12,7 @@
 #     .github/CONTRIBUTING.md.
 #
 # ----------------------------------------------------------------------------
-subcategory: "ServiceDirectory"
+subcategory: "Service Directory"
 layout: "google"
 page_title: "Google: google_service_directory_namespace"
 sidebar_current: "docs-google-service-directory-namespace"
