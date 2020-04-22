@@ -1,5 +1,25 @@
 ## 3.19.0 (Unreleased)
 
+FEATURES:
+* **New Resource:** `google_bigquery_job` ([#1959](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1959))
+* **New Resource:** `google_monitoring_slo` ([#1953](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1953))
+* **New Resource:** `google_service_directory_endpoint` ([#1964](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1964))
+* **New Resource:** `google_service_directory_namespace` ([#1964](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1964))
+* **New Resource:** `google_service_directory_service` ([#1964](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1964))
+
+IMPROVEMENTS:
+* bigtable: Reduced the minimum number of nodes for the `bigtable_instace` resource from 3 to 1. ([#1968](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1968))
+* compute: Addon "Compute Engine persistent disk CSI Driver" for Google Kubernetes Engine cluster `google_container_cluster` ([#1969](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1969))
+* compute: Added support for `google_compute_instance` `resource_policies` field ([#1957](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1957))
+* compute: Added support for `google_compute_resource_policy` group placement policies ([#1957](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1957))
+* healthcare: Added `schema` field to `google_healthcare_hl7_v2_store` ([#1962](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1962))
+
+BUG FIXES:
+* dataproc: Fixed diff when `google_dataproc_cluster` `preemptible_worker_config.0.num_instances` is sized to 0 and other `preemptible_worker_config` subfields are set ([#1954](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1954))
+* resourcemanager: added a wait to `google_project` so that projects are more likely to be ready before the resource finishes creation ([#1970](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1970))
+* sql: Allowed `binary_log_enabled` to be disabled. ([#1973](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1973))
+* sql: Fixed behaviour in `google_sql_database` when the parent instance is deleted, removing it from state ([#1972](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1972))
+
 ## 3.18.0 (April 20, 2020)
 
 FEATURES:
