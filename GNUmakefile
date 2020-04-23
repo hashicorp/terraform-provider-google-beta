@@ -8,10 +8,10 @@ GOFLAGS=-mod=vendor
 
 default: build
 
-build: fmtcheck
+build: fmtcheck generate
 	go install
 
-test: fmtcheck
+test: fmtcheck generate
 	go test -i $(TEST) || exit 1
 	echo $(TEST) | \
 		xargs -t -n4 go test $(TESTARGS) -timeout=30s -parallel=4
@@ -36,6 +36,9 @@ tools:
 	@echo "==> installing required tooling..."
 	go install github.com/client9/misspell/cmd/misspell
 	go install github.com/golangci/golangci-lint/cmd/golangci-lint
+
+generate:
+	go generate  ./...
 
 test-compile:
 	@if [ "$(TEST)" = "./..." ]; then \
@@ -62,5 +65,5 @@ endif
 docscheck:
 	@sh -c "'$(CURDIR)/scripts/docscheck.sh'"
 
-.PHONY: build test testacc vet fmt fmtcheck lint tools errcheck test-compile website website-test docscheck
+.PHONY: build test testacc vet fmt fmtcheck lint tools errcheck test-compile website website-test docscheck generate
 
