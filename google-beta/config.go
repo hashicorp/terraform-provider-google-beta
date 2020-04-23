@@ -80,6 +80,7 @@ type Config struct {
 
 	AccessContextManagerBasePath string
 	AppEngineBasePath            string
+	ArtifactRegistryBasePath     string
 	BigQueryBasePath             string
 	BigqueryDataTransferBasePath string
 	BigqueryReservationBasePath  string
@@ -118,6 +119,7 @@ type Config struct {
 	SecretManagerBasePath        string
 	SecurityCenterBasePath       string
 	SecurityScannerBasePath      string
+	ServiceDirectoryBasePath     string
 	ServiceManagementBasePath    string
 	ServiceUsageBasePath         string
 	SourceRepoBasePath           string
@@ -225,6 +227,7 @@ type Config struct {
 // Generated product base paths
 var AccessContextManagerDefaultBasePath = "https://accesscontextmanager.googleapis.com/v1/"
 var AppEngineDefaultBasePath = "https://appengine.googleapis.com/v1/"
+var ArtifactRegistryDefaultBasePath = "https://artifactregistry.googleapis.com/v1beta1/"
 var BigQueryDefaultBasePath = "https://www.googleapis.com/bigquery/v2/"
 var BigqueryDataTransferDefaultBasePath = "https://bigquerydatatransfer.googleapis.com/v1/"
 var BigqueryReservationDefaultBasePath = "https://bigqueryreservation.googleapis.com/v1beta1/"
@@ -263,6 +266,7 @@ var RuntimeConfigDefaultBasePath = "https://runtimeconfig.googleapis.com/v1beta1
 var SecretManagerDefaultBasePath = "https://secretmanager.googleapis.com/v1beta1/"
 var SecurityCenterDefaultBasePath = "https://securitycenter.googleapis.com/v1/"
 var SecurityScannerDefaultBasePath = "https://websecurityscanner.googleapis.com/v1beta/"
+var ServiceDirectoryDefaultBasePath = "https://servicedirectory.googleapis.com/v1beta1/"
 var ServiceManagementDefaultBasePath = "https://servicemanagement.googleapis.com/v1/"
 var ServiceUsageDefaultBasePath = "https://serviceusage.googleapis.com/v1beta1/"
 var SourceRepoDefaultBasePath = "https://sourcerepo.googleapis.com/v1/"
@@ -744,6 +748,7 @@ func ConfigureBasePaths(c *Config) {
 	// Generated Products
 	c.AccessContextManagerBasePath = AccessContextManagerDefaultBasePath
 	c.AppEngineBasePath = AppEngineDefaultBasePath
+	c.ArtifactRegistryBasePath = ArtifactRegistryDefaultBasePath
 	c.BigQueryBasePath = BigQueryDefaultBasePath
 	c.BigqueryDataTransferBasePath = BigqueryDataTransferDefaultBasePath
 	c.BigqueryReservationBasePath = BigqueryReservationDefaultBasePath
@@ -782,6 +787,7 @@ func ConfigureBasePaths(c *Config) {
 	c.SecretManagerBasePath = SecretManagerDefaultBasePath
 	c.SecurityCenterBasePath = SecurityCenterDefaultBasePath
 	c.SecurityScannerBasePath = SecurityScannerDefaultBasePath
+	c.ServiceDirectoryBasePath = ServiceDirectoryDefaultBasePath
 	c.ServiceManagementBasePath = ServiceManagementDefaultBasePath
 	c.ServiceUsageBasePath = ServiceUsageDefaultBasePath
 	c.SourceRepoBasePath = SourceRepoDefaultBasePath

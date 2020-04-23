@@ -1975,6 +1975,9 @@ resource "google_container_cluster" "primary" {
     kalm_config {
       enabled = false
     }
+    gce_persistent_disk_csi_driver_config {
+      enabled = false
+    }
   }
 }
 `, clusterName)
@@ -2010,6 +2013,9 @@ resource "google_container_cluster" "primary" {
       enabled = true
     }
     kalm_config {
+      enabled = true
+    }
+    gce_persistent_disk_csi_driver_config {
       enabled = true
     }
   }

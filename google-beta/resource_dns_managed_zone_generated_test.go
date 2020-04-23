@@ -186,6 +186,59 @@ provider "google-beta" {
 `, context)
 }
 
+func TestAccDNSManagedZone_dnsManagedZoneServiceDirectoryExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"random_suffix": randString(t, 10),
+	}
+
+	vcrTest(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProvidersOiCS,
+		CheckDestroy: testAccCheckDNSManagedZoneDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccDNSManagedZone_dnsManagedZoneServiceDirectoryExample(context),
+			},
+		},
+	})
+}
+
+func testAccDNSManagedZone_dnsManagedZoneServiceDirectoryExample(context map[string]interface{}) string {
+	return Nprintf(`
+resource "google_dns_managed_zone" "sd-zone" {
+  provider = google-beta
+
+  name        = "tf-test-peering-zone%{random_suffix}"
+  dns_name    = "services.example.com."
+  description = "Example private DNS Service Directory zone"
+
+  visibility = "private"
+
+  service_directory_config {
+    namespace {
+      namespace_url = google_service_directory_namespace.example.id
+    }
+  }
+}
+
+resource "google_service_directory_namespace" "example" {
+  provider = google-beta
+
+  namespace_id = "example"
+  location     = "us-central1"
+}
+
+resource "google_compute_network" "network" {
+  provider = google-beta
+
+  name                    = "network%{random_suffix}"
+  auto_create_subnetworks = false
+}
+`, context)
+}
+
 func testAccCheckDNSManagedZoneDestroyProducer(t *testing.T) func(s *terraform.State) error {
 	return func(s *terraform.State) error {
 		for name, rs := range s.RootModule().Resources {
