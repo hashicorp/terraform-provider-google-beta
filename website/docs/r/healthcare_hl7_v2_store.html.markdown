@@ -45,7 +45,7 @@ resource "google_healthcare_hl7_v2_store" "default" {
   name    = "example-hl7-v2-store"
   dataset = google_healthcare_dataset.dataset.id
 
-  notification_config {
+  notification_configs {
     pubsub_topic = google_pubsub_topic.topic.id
   }
 
@@ -204,8 +204,14 @@ The following arguments are supported:
   An object containing a list of "key": value pairs.
   Example: { "name": "wrench", "mass": "1.3kg", "count": "3" }.
 
-* `notification_config` -
+* `notification_configs` -
   (Optional)
+  A list of notification configs. Each configuration uses a filter to determine whether to publish a
+  message (both Ingest & Create) on the corresponding notification destination. Only the message name
+  is sent as part of the notification. Supplied by the client.  Structure is documented below.
+
+* `notification_config` -
+  (Optional, Deprecated)
   A nested object resource  Structure is documented below.
 
 
@@ -224,6 +230,30 @@ The `parser_config` block supports:
   (Optional)
   JSON encoded string for schemas used to parse messages in this
   store if schematized parsing is desired.
+
+The `notification_configs` block supports:
+
+* `pubsub_topic` -
+  (Required)
+  The Cloud Pub/Sub topic that notifications of changes are published on. Supplied by the client.
+  PubsubMessage.Data will contain the resource name. PubsubMessage.MessageId is the ID of this message.
+  It is guaranteed to be unique within the topic. PubsubMessage.PublishTime is the time at which the message
+  was published. Notifications are only sent if the topic is non-empty. Topic names must be scoped to a
+  project. cloud-healthcare@system.gserviceaccount.com must have publisher permissions on the given
+  Cloud Pub/Sub topic. Not having adequate permissions will cause the calls that send notifications to fail.
+  If a notification cannot be published to Cloud Pub/Sub, errors will be logged to Stackdriver
+
+* `filter` -
+  (Optional)
+  Restricts notifications sent for messages matching a filter. If this is empty, all messages
+  are matched. Syntax: https://cloud.google.com/appengine/docs/standard/python/search/query_strings
+  Fields/functions available for filtering are:
+  * messageType, from the MSH-9.1 field. For example, NOT messageType = "ADT".
+  * send_date or sendDate, the YYYY-MM-DD date the message was sent in the dataset's timeZone, from the MSH-7 segment. For example, send_date < "2017-01-02".
+  * sendTime, the timestamp when the message was sent, using the RFC3339 time format for comparisons, from the MSH-7 segment. For example, sendTime < "2017-01-02T00:00:00-05:00".
+  * sendFacility, the care center that the message came from, from the MSH-4 segment. For example, sendFacility = "ABC".
+  * PatientId(value, type), which matches if the message lists a patient having an ID of the given value and type in the PID-2, PID-3, or PID-4 segments. For example, PatientId("123456", "MRN").
+  * labels.x, a string value of the label with key x as set using the Message.labels map. For example, labels."priority"="high". The operator :* can be used to assert the existence of a label. For example, labels."priority":*.
 
 The `notification_config` block supports:
 
