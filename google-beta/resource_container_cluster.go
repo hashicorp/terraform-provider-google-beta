@@ -829,7 +829,7 @@ func resourceContainerCluster() *schema.Resource {
 
 			"release_channel": {
 				Type:     schema.TypeList,
-				ForceNew: true,
+				ForceNew: false,
 				Optional: true,
 				Computed: true,
 				MaxItems: 1,
@@ -838,7 +838,7 @@ func resourceContainerCluster() *schema.Resource {
 						"channel": {
 							Type:             schema.TypeString,
 							Required:         true,
-							ForceNew:         true,
+							ForceNew:         false,
 							ValidateFunc:     validation.StringInSlice([]string{"UNSPECIFIED", "RAPID", "REGULAR", "STABLE"}, false),
 							DiffSuppressFunc: emptyOrDefaultStringSuppress("UNSPECIFIED"),
 						},
