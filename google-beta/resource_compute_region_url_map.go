@@ -43,12 +43,6 @@ func resourceComputeRegionUrlMap() *schema.Resource {
 		},
 
 		Schema: map[string]*schema.Schema{
-			"default_service": {
-				Type:             schema.TypeString,
-				Required:         true,
-				DiffSuppressFunc: compareSelfLinkOrResourceName,
-				Description:      `A reference to RegionBackendService resource if none of the hostRules match.`,
-			},
 			"name": {
 				Type:     schema.TypeString,
 				Required: true,
@@ -60,6 +54,86 @@ the regular expression '[a-z]([-a-z0-9]*[a-z0-9])?' which means the
 first character must be a lowercase letter, and all following
 characters must be a dash, lowercase letter, or digit, except the last
 character, which cannot be a dash.`,
+			},
+			"default_service": {
+				Type:             schema.TypeString,
+				Optional:         true,
+				DiffSuppressFunc: compareSelfLinkOrResourceName,
+				Description: `The full or partial URL of the defaultService resource to which traffic is directed if
+none of the hostRules match. If defaultRouteAction is additionally specified, advanced
+routing actions like URL Rewrites, etc. take effect prior to sending the request to the
+backend. However, if defaultService is specified, defaultRouteAction cannot contain any
+weightedBackendServices. Conversely, if routeAction specifies any
+weightedBackendServices, service must not be specified.  Only one of defaultService,
+defaultUrlRedirect or defaultRouteAction.weightedBackendService must be set.`,
+				ExactlyOneOf: []string{"default_service", "default_url_redirect"},
+			},
+			"default_url_redirect": {
+				Type:     schema.TypeList,
+				Optional: true,
+				Description: `When none of the specified hostRules match, the request is redirected to a URL specified
+by defaultUrlRedirect. If defaultUrlRedirect is specified, defaultService or
+defaultRouteAction must not be set.`,
+				MaxItems: 1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"host_redirect": {
+							Type:     schema.TypeString,
+							Optional: true,
+							Description: `The host that will be used in the redirect response instead of the one that was
+supplied in the request. The value must be between 1 and 255 characters.`,
+						},
+						"https_redirect": {
+							Type:     schema.TypeBool,
+							Optional: true,
+							Description: `If set to true, the URL scheme in the redirected request is set to https. If set to
+false, the URL scheme of the redirected request will remain the same as that of the
+request. This must only be set for UrlMaps used in TargetHttpProxys. Setting this
+true for TargetHttpsProxy is not permitted. The default is set to false.`,
+							Default: false,
+						},
+						"path_redirect": {
+							Type:     schema.TypeString,
+							Optional: true,
+							Description: `The path that will be used in the redirect response instead of the one that was
+supplied in the request. pathRedirect cannot be supplied together with
+prefixRedirect. Supply one alone or neither. If neither is supplied, the path of the
+original request will be used for the redirect. The value must be between 1 and 1024
+characters.`,
+						},
+						"prefix_redirect": {
+							Type:     schema.TypeString,
+							Optional: true,
+							Description: `The prefix that replaces the prefixMatch specified in the HttpRouteRuleMatch,
+retaining the remaining portion of the URL before redirecting the request.
+prefixRedirect cannot be supplied together with pathRedirect. Supply one alone or
+neither. If neither is supplied, the path of the original request will be used for
+the redirect. The value must be between 1 and 1024 characters.`,
+						},
+						"redirect_response_code": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: validation.StringInSlice([]string{"FOUND", "MOVED_PERMANENTLY_DEFAULT", "PERMANENT_REDIRECT", "SEE_OTHER", "TEMPORARY_REDIRECT", ""}, false),
+							Description: `The HTTP Status code to use for this RedirectAction. Supported values are:
+- MOVED_PERMANENTLY_DEFAULT, which is the default value and corresponds to 301.
+- FOUND, which corresponds to 302.
+- SEE_OTHER which corresponds to 303.
+- TEMPORARY_REDIRECT, which corresponds to 307. In this case, the request method
+will be retained.
+- PERMANENT_REDIRECT, which corresponds to 308. In this case,
+the request method will be retained. Possible values: ["FOUND", "MOVED_PERMANENTLY_DEFAULT", "PERMANENT_REDIRECT", "SEE_OTHER", "TEMPORARY_REDIRECT"]`,
+						},
+						"strip_query": {
+							Type:     schema.TypeBool,
+							Optional: true,
+							Description: `If set to true, any accompanying query portion of the original URL is removed prior
+to redirecting the request. If set to false, the query portion of the original URL is
+retained. The default is set to false.`,
+							Default: false,
+						},
+					},
+				},
+				ExactlyOneOf: []string{"default_service", "default_url_redirect"},
 			},
 			"description": {
 				Type:     schema.TypeString,
@@ -87,11 +161,79 @@ you create the resource.`,
 							Description: `A reference to a RegionBackendService resource. This will be used if
 none of the pathRules defined by this PathMatcher is matched by
 the URL's path portion.`,
+							ExactlyOneOf: []string{},
 						},
 						"name": {
 							Type:        schema.TypeString,
 							Required:    true,
 							Description: `The name to which this PathMatcher is referred by the HostRule.`,
+						},
+						"default_url_redirect": {
+							Type:     schema.TypeList,
+							Optional: true,
+							Description: `When none of the specified hostRules match, the request is redirected to a URL specified
+by defaultUrlRedirect. If defaultUrlRedirect is specified, defaultService or
+defaultRouteAction must not be set.`,
+							MaxItems: 1,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"host_redirect": {
+										Type:     schema.TypeString,
+										Optional: true,
+										Description: `The host that will be used in the redirect response instead of the one that was
+supplied in the request. The value must be between 1 and 255 characters.`,
+									},
+									"https_redirect": {
+										Type:     schema.TypeBool,
+										Optional: true,
+										Description: `If set to true, the URL scheme in the redirected request is set to https. If set to
+false, the URL scheme of the redirected request will remain the same as that of the
+request. This must only be set for UrlMaps used in TargetHttpProxys. Setting this
+true for TargetHttpsProxy is not permitted. The default is set to false.`,
+										Default: false,
+									},
+									"path_redirect": {
+										Type:     schema.TypeString,
+										Optional: true,
+										Description: `The path that will be used in the redirect response instead of the one that was
+supplied in the request. pathRedirect cannot be supplied together with
+prefixRedirect. Supply one alone or neither. If neither is supplied, the path of the
+original request will be used for the redirect. The value must be between 1 and 1024
+characters.`,
+									},
+									"prefix_redirect": {
+										Type:     schema.TypeString,
+										Optional: true,
+										Description: `The prefix that replaces the prefixMatch specified in the HttpRouteRuleMatch,
+retaining the remaining portion of the URL before redirecting the request.
+prefixRedirect cannot be supplied together with pathRedirect. Supply one alone or
+neither. If neither is supplied, the path of the original request will be used for
+the redirect. The value must be between 1 and 1024 characters.`,
+									},
+									"redirect_response_code": {
+										Type:         schema.TypeString,
+										Optional:     true,
+										ValidateFunc: validation.StringInSlice([]string{"FOUND", "MOVED_PERMANENTLY_DEFAULT", "PERMANENT_REDIRECT", "SEE_OTHER", "TEMPORARY_REDIRECT", ""}, false),
+										Description: `The HTTP Status code to use for this RedirectAction. Supported values are:
+- MOVED_PERMANENTLY_DEFAULT, which is the default value and corresponds to 301.
+- FOUND, which corresponds to 302.
+- SEE_OTHER which corresponds to 303.
+- TEMPORARY_REDIRECT, which corresponds to 307. In this case, the request method
+will be retained.
+- PERMANENT_REDIRECT, which corresponds to 308. In this case,
+the request method will be retained. Possible values: ["FOUND", "MOVED_PERMANENTLY_DEFAULT", "PERMANENT_REDIRECT", "SEE_OTHER", "TEMPORARY_REDIRECT"]`,
+									},
+									"strip_query": {
+										Type:     schema.TypeBool,
+										Optional: true,
+										Description: `If set to true, any accompanying query portion of the original URL is removed prior
+to redirecting the request. If set to false, the query portion of the original URL is
+retained. The default is set to false.`,
+										Default: false,
+									},
+								},
+							},
+							ExactlyOneOf: []string{},
 						},
 						"description": {
 							Type:        schema.TypeString,
@@ -616,9 +758,9 @@ the request method will be retained. Possible values: ["FOUND", "MOVED_PERMANENT
 												"strip_query": {
 													Type:     schema.TypeBool,
 													Optional: true,
-													Description: `If set to true, any accompanying query portion of the original URL is
-removed prior to redirecting the request. If set to false, the query
-portion of the original URL is retained. The default is set to false.`,
+													Description: `If set to true, any accompanying query portion of the original URL is removed
+prior to redirecting the request. If set to false, the query portion of the
+original URL is retained.`,
 													Default: false,
 												},
 											},
@@ -1621,6 +1763,12 @@ func resourceComputeRegionUrlMapCreate(d *schema.ResourceData, meta interface{})
 	} else if v, ok := d.GetOkExists("test"); !isEmptyValue(reflect.ValueOf(testsProp)) && (ok || !reflect.DeepEqual(v, testsProp)) {
 		obj["tests"] = testsProp
 	}
+	defaultUrlRedirectProp, err := expandComputeRegionUrlMapDefaultUrlRedirect(d.Get("default_url_redirect"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("default_url_redirect"); !isEmptyValue(reflect.ValueOf(defaultUrlRedirectProp)) && (ok || !reflect.DeepEqual(v, defaultUrlRedirectProp)) {
+		obj["defaultUrlRedirect"] = defaultUrlRedirectProp
+	}
 	regionProp, err := expandComputeRegionUrlMapRegion(d.Get("region"), d, config)
 	if err != nil {
 		return err
@@ -1713,6 +1861,9 @@ func resourceComputeRegionUrlMapRead(d *schema.ResourceData, meta interface{}) e
 	if err := d.Set("test", flattenComputeRegionUrlMapTest(res["tests"], d, config)); err != nil {
 		return fmt.Errorf("Error reading RegionUrlMap: %s", err)
 	}
+	if err := d.Set("default_url_redirect", flattenComputeRegionUrlMapDefaultUrlRedirect(res["defaultUrlRedirect"], d, config)); err != nil {
+		return fmt.Errorf("Error reading RegionUrlMap: %s", err)
+	}
 	if err := d.Set("region", flattenComputeRegionUrlMapRegion(res["region"], d, config)); err != nil {
 		return fmt.Errorf("Error reading RegionUrlMap: %s", err)
 	}
@@ -1773,6 +1924,12 @@ func resourceComputeRegionUrlMapUpdate(d *schema.ResourceData, meta interface{})
 		return err
 	} else if v, ok := d.GetOkExists("test"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, testsProp)) {
 		obj["tests"] = testsProp
+	}
+	defaultUrlRedirectProp, err := expandComputeRegionUrlMapDefaultUrlRedirect(d.Get("default_url_redirect"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("default_url_redirect"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, defaultUrlRedirectProp)) {
+		obj["defaultUrlRedirect"] = defaultUrlRedirectProp
 	}
 	regionProp, err := expandComputeRegionUrlMapRegion(d.Get("region"), d, config)
 	if err != nil {
@@ -1946,11 +2103,12 @@ func flattenComputeRegionUrlMapPathMatcher(v interface{}, d *schema.ResourceData
 			continue
 		}
 		transformed = append(transformed, map[string]interface{}{
-			"default_service": flattenComputeRegionUrlMapPathMatcherDefaultService(original["defaultService"], d, config),
-			"description":     flattenComputeRegionUrlMapPathMatcherDescription(original["description"], d, config),
-			"name":            flattenComputeRegionUrlMapPathMatcherName(original["name"], d, config),
-			"route_rules":     flattenComputeRegionUrlMapPathMatcherRouteRules(original["routeRules"], d, config),
-			"path_rule":       flattenComputeRegionUrlMapPathMatcherPathRule(original["pathRules"], d, config),
+			"default_service":      flattenComputeRegionUrlMapPathMatcherDefaultService(original["defaultService"], d, config),
+			"description":          flattenComputeRegionUrlMapPathMatcherDescription(original["description"], d, config),
+			"name":                 flattenComputeRegionUrlMapPathMatcherName(original["name"], d, config),
+			"route_rules":          flattenComputeRegionUrlMapPathMatcherRouteRules(original["routeRules"], d, config),
+			"path_rule":            flattenComputeRegionUrlMapPathMatcherPathRule(original["pathRules"], d, config),
+			"default_url_redirect": flattenComputeRegionUrlMapPathMatcherDefaultUrlRedirect(original["defaultUrlRedirect"], d, config),
 		})
 	}
 	return transformed
@@ -3448,6 +3606,53 @@ func flattenComputeRegionUrlMapPathMatcherPathRuleUrlRedirectStripQuery(v interf
 	return v
 }
 
+func flattenComputeRegionUrlMapPathMatcherDefaultUrlRedirect(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["host_redirect"] =
+		flattenComputeRegionUrlMapPathMatcherDefaultUrlRedirectHostRedirect(original["hostRedirect"], d, config)
+	transformed["https_redirect"] =
+		flattenComputeRegionUrlMapPathMatcherDefaultUrlRedirectHttpsRedirect(original["httpsRedirect"], d, config)
+	transformed["path_redirect"] =
+		flattenComputeRegionUrlMapPathMatcherDefaultUrlRedirectPathRedirect(original["pathRedirect"], d, config)
+	transformed["prefix_redirect"] =
+		flattenComputeRegionUrlMapPathMatcherDefaultUrlRedirectPrefixRedirect(original["prefixRedirect"], d, config)
+	transformed["redirect_response_code"] =
+		flattenComputeRegionUrlMapPathMatcherDefaultUrlRedirectRedirectResponseCode(original["redirectResponseCode"], d, config)
+	transformed["strip_query"] =
+		flattenComputeRegionUrlMapPathMatcherDefaultUrlRedirectStripQuery(original["stripQuery"], d, config)
+	return []interface{}{transformed}
+}
+func flattenComputeRegionUrlMapPathMatcherDefaultUrlRedirectHostRedirect(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	return v
+}
+
+func flattenComputeRegionUrlMapPathMatcherDefaultUrlRedirectHttpsRedirect(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	return v
+}
+
+func flattenComputeRegionUrlMapPathMatcherDefaultUrlRedirectPathRedirect(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	return v
+}
+
+func flattenComputeRegionUrlMapPathMatcherDefaultUrlRedirectPrefixRedirect(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	return v
+}
+
+func flattenComputeRegionUrlMapPathMatcherDefaultUrlRedirectRedirectResponseCode(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	return v
+}
+
+func flattenComputeRegionUrlMapPathMatcherDefaultUrlRedirectStripQuery(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	return v
+}
+
 func flattenComputeRegionUrlMapTest(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	if v == nil {
 		return v
@@ -3486,6 +3691,53 @@ func flattenComputeRegionUrlMapTestService(v interface{}, d *schema.ResourceData
 		return v
 	}
 	return ConvertSelfLinkToV1(v.(string))
+}
+
+func flattenComputeRegionUrlMapDefaultUrlRedirect(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["host_redirect"] =
+		flattenComputeRegionUrlMapDefaultUrlRedirectHostRedirect(original["hostRedirect"], d, config)
+	transformed["https_redirect"] =
+		flattenComputeRegionUrlMapDefaultUrlRedirectHttpsRedirect(original["httpsRedirect"], d, config)
+	transformed["path_redirect"] =
+		flattenComputeRegionUrlMapDefaultUrlRedirectPathRedirect(original["pathRedirect"], d, config)
+	transformed["prefix_redirect"] =
+		flattenComputeRegionUrlMapDefaultUrlRedirectPrefixRedirect(original["prefixRedirect"], d, config)
+	transformed["redirect_response_code"] =
+		flattenComputeRegionUrlMapDefaultUrlRedirectRedirectResponseCode(original["redirectResponseCode"], d, config)
+	transformed["strip_query"] =
+		flattenComputeRegionUrlMapDefaultUrlRedirectStripQuery(original["stripQuery"], d, config)
+	return []interface{}{transformed}
+}
+func flattenComputeRegionUrlMapDefaultUrlRedirectHostRedirect(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	return v
+}
+
+func flattenComputeRegionUrlMapDefaultUrlRedirectHttpsRedirect(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	return v
+}
+
+func flattenComputeRegionUrlMapDefaultUrlRedirectPathRedirect(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	return v
+}
+
+func flattenComputeRegionUrlMapDefaultUrlRedirectPrefixRedirect(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	return v
+}
+
+func flattenComputeRegionUrlMapDefaultUrlRedirectRedirectResponseCode(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	return v
+}
+
+func flattenComputeRegionUrlMapDefaultUrlRedirectStripQuery(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	return v
 }
 
 func flattenComputeRegionUrlMapRegion(v interface{}, d *schema.ResourceData, config *Config) interface{} {
@@ -3608,6 +3860,13 @@ func expandComputeRegionUrlMapPathMatcher(v interface{}, d TerraformResourceData
 			return nil, err
 		} else if val := reflect.ValueOf(transformedPathRule); val.IsValid() && !isEmptyValue(val) {
 			transformed["pathRules"] = transformedPathRule
+		}
+
+		transformedDefaultUrlRedirect, err := expandComputeRegionUrlMapPathMatcherDefaultUrlRedirect(original["default_url_redirect"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedDefaultUrlRedirect); val.IsValid() && !isEmptyValue(val) {
+			transformed["defaultUrlRedirect"] = transformedDefaultUrlRedirect
 		}
 
 		req = append(req, transformed)
@@ -5692,6 +5951,84 @@ func expandComputeRegionUrlMapPathMatcherPathRuleUrlRedirectStripQuery(v interfa
 	return v, nil
 }
 
+func expandComputeRegionUrlMapPathMatcherDefaultUrlRedirect(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedHostRedirect, err := expandComputeRegionUrlMapPathMatcherDefaultUrlRedirectHostRedirect(original["host_redirect"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedHostRedirect); val.IsValid() && !isEmptyValue(val) {
+		transformed["hostRedirect"] = transformedHostRedirect
+	}
+
+	transformedHttpsRedirect, err := expandComputeRegionUrlMapPathMatcherDefaultUrlRedirectHttpsRedirect(original["https_redirect"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedHttpsRedirect); val.IsValid() && !isEmptyValue(val) {
+		transformed["httpsRedirect"] = transformedHttpsRedirect
+	}
+
+	transformedPathRedirect, err := expandComputeRegionUrlMapPathMatcherDefaultUrlRedirectPathRedirect(original["path_redirect"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedPathRedirect); val.IsValid() && !isEmptyValue(val) {
+		transformed["pathRedirect"] = transformedPathRedirect
+	}
+
+	transformedPrefixRedirect, err := expandComputeRegionUrlMapPathMatcherDefaultUrlRedirectPrefixRedirect(original["prefix_redirect"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedPrefixRedirect); val.IsValid() && !isEmptyValue(val) {
+		transformed["prefixRedirect"] = transformedPrefixRedirect
+	}
+
+	transformedRedirectResponseCode, err := expandComputeRegionUrlMapPathMatcherDefaultUrlRedirectRedirectResponseCode(original["redirect_response_code"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedRedirectResponseCode); val.IsValid() && !isEmptyValue(val) {
+		transformed["redirectResponseCode"] = transformedRedirectResponseCode
+	}
+
+	transformedStripQuery, err := expandComputeRegionUrlMapPathMatcherDefaultUrlRedirectStripQuery(original["strip_query"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedStripQuery); val.IsValid() && !isEmptyValue(val) {
+		transformed["stripQuery"] = transformedStripQuery
+	}
+
+	return transformed, nil
+}
+
+func expandComputeRegionUrlMapPathMatcherDefaultUrlRedirectHostRedirect(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeRegionUrlMapPathMatcherDefaultUrlRedirectHttpsRedirect(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeRegionUrlMapPathMatcherDefaultUrlRedirectPathRedirect(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeRegionUrlMapPathMatcherDefaultUrlRedirectPrefixRedirect(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeRegionUrlMapPathMatcherDefaultUrlRedirectRedirectResponseCode(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeRegionUrlMapPathMatcherDefaultUrlRedirectStripQuery(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
 func expandComputeRegionUrlMapTest(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
@@ -5753,6 +6090,84 @@ func expandComputeRegionUrlMapTestService(v interface{}, d TerraformResourceData
 		return nil, fmt.Errorf("Invalid value for service: %s", err)
 	}
 	return f.RelativeLink(), nil
+}
+
+func expandComputeRegionUrlMapDefaultUrlRedirect(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedHostRedirect, err := expandComputeRegionUrlMapDefaultUrlRedirectHostRedirect(original["host_redirect"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedHostRedirect); val.IsValid() && !isEmptyValue(val) {
+		transformed["hostRedirect"] = transformedHostRedirect
+	}
+
+	transformedHttpsRedirect, err := expandComputeRegionUrlMapDefaultUrlRedirectHttpsRedirect(original["https_redirect"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedHttpsRedirect); val.IsValid() && !isEmptyValue(val) {
+		transformed["httpsRedirect"] = transformedHttpsRedirect
+	}
+
+	transformedPathRedirect, err := expandComputeRegionUrlMapDefaultUrlRedirectPathRedirect(original["path_redirect"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedPathRedirect); val.IsValid() && !isEmptyValue(val) {
+		transformed["pathRedirect"] = transformedPathRedirect
+	}
+
+	transformedPrefixRedirect, err := expandComputeRegionUrlMapDefaultUrlRedirectPrefixRedirect(original["prefix_redirect"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedPrefixRedirect); val.IsValid() && !isEmptyValue(val) {
+		transformed["prefixRedirect"] = transformedPrefixRedirect
+	}
+
+	transformedRedirectResponseCode, err := expandComputeRegionUrlMapDefaultUrlRedirectRedirectResponseCode(original["redirect_response_code"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedRedirectResponseCode); val.IsValid() && !isEmptyValue(val) {
+		transformed["redirectResponseCode"] = transformedRedirectResponseCode
+	}
+
+	transformedStripQuery, err := expandComputeRegionUrlMapDefaultUrlRedirectStripQuery(original["strip_query"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedStripQuery); val.IsValid() && !isEmptyValue(val) {
+		transformed["stripQuery"] = transformedStripQuery
+	}
+
+	return transformed, nil
+}
+
+func expandComputeRegionUrlMapDefaultUrlRedirectHostRedirect(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeRegionUrlMapDefaultUrlRedirectHttpsRedirect(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeRegionUrlMapDefaultUrlRedirectPathRedirect(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeRegionUrlMapDefaultUrlRedirectPrefixRedirect(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeRegionUrlMapDefaultUrlRedirectRedirectResponseCode(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeRegionUrlMapDefaultUrlRedirectStripQuery(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
 }
 
 func expandComputeRegionUrlMapRegion(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
