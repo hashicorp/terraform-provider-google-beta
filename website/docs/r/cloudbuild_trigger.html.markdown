@@ -190,6 +190,10 @@ The `pull_request` block supports:
   (Optional)
   Whether to block builds on a "/gcbrun" comment from a repository owner or collaborator.
 
+  Possible values are:
+  * `COMMENTS_DISABLED`
+  * `COMMENTS_ENABLED`
+
 The `push` block supports:
 
 * `branch` -

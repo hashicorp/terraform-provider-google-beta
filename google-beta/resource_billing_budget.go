@@ -113,7 +113,7 @@ budget.`,
 							Optional:     true,
 							ValidateFunc: validation.StringInSlice([]string{"CURRENT_SPEND", "FORECASTED_SPEND", ""}, false),
 							Description: `The type of basis used to determine if spend has passed
-the threshold.`,
+the threshold. Default value: "CURRENT_SPEND" Possible values: ["CURRENT_SPEND", "FORECASTED_SPEND"]`,
 							Default: "CURRENT_SPEND",
 						},
 					},
@@ -160,7 +160,7 @@ spend against the budget.`,
 							Optional:     true,
 							ValidateFunc: validation.StringInSlice([]string{"INCLUDE_ALL_CREDITS", "EXCLUDE_ALL_CREDITS", ""}, false),
 							Description: `Specifies how credits should be treated when determining spend
-for threshold calculations.`,
+for threshold calculations. Default value: "INCLUDE_ALL_CREDITS" Possible values: ["INCLUDE_ALL_CREDITS", "EXCLUDE_ALL_CREDITS"]`,
 							Default: "INCLUDE_ALL_CREDITS",
 						},
 						"projects": {

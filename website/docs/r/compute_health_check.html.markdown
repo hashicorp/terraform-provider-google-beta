@@ -411,7 +411,12 @@ The `http_health_check` block supports:
 * `proxy_header` -
   (Optional)
   Specifies the type of proxy header to append before sending data to the
-  backend, either NONE or PROXY_V1. The default is NONE.
+  backend.
+
+  Default value: `NONE`
+  Possible values are:
+  * `NONE`
+  * `PROXY_V1`
 
 * `port_specification` -
   (Optional)
@@ -425,6 +430,11 @@ The `http_health_check` block supports:
     checking.
   If not specified, HTTP health check follows behavior specified in `port` and
   `portName` fields.
+
+  Possible values are:
+  * `USE_FIXED_PORT`
+  * `USE_NAMED_PORT`
+  * `USE_SERVING_PORT`
 
 The `https_health_check` block supports:
 
@@ -458,7 +468,12 @@ The `https_health_check` block supports:
 * `proxy_header` -
   (Optional)
   Specifies the type of proxy header to append before sending data to the
-  backend, either NONE or PROXY_V1. The default is NONE.
+  backend.
+
+  Default value: `NONE`
+  Possible values are:
+  * `NONE`
+  * `PROXY_V1`
 
 * `port_specification` -
   (Optional)
@@ -472,6 +487,11 @@ The `https_health_check` block supports:
     checking.
   If not specified, HTTPS health check follows behavior specified in `port` and
   `portName` fields.
+
+  Possible values are:
+  * `USE_FIXED_PORT`
+  * `USE_NAMED_PORT`
+  * `USE_SERVING_PORT`
 
 The `tcp_health_check` block supports:
 
@@ -501,7 +521,12 @@ The `tcp_health_check` block supports:
 * `proxy_header` -
   (Optional)
   Specifies the type of proxy header to append before sending data to the
-  backend, either NONE or PROXY_V1. The default is NONE.
+  backend.
+
+  Default value: `NONE`
+  Possible values are:
+  * `NONE`
+  * `PROXY_V1`
 
 * `port_specification` -
   (Optional)
@@ -515,6 +540,11 @@ The `tcp_health_check` block supports:
     checking.
   If not specified, TCP health check follows behavior specified in `port` and
   `portName` fields.
+
+  Possible values are:
+  * `USE_FIXED_PORT`
+  * `USE_NAMED_PORT`
+  * `USE_SERVING_PORT`
 
 The `ssl_health_check` block supports:
 
@@ -544,7 +574,12 @@ The `ssl_health_check` block supports:
 * `proxy_header` -
   (Optional)
   Specifies the type of proxy header to append before sending data to the
-  backend, either NONE or PROXY_V1. The default is NONE.
+  backend.
+
+  Default value: `NONE`
+  Possible values are:
+  * `NONE`
+  * `PROXY_V1`
 
 * `port_specification` -
   (Optional)
@@ -558,6 +593,11 @@ The `ssl_health_check` block supports:
     checking.
   If not specified, SSL health check follows behavior specified in `port` and
   `portName` fields.
+
+  Possible values are:
+  * `USE_FIXED_PORT`
+  * `USE_NAMED_PORT`
+  * `USE_SERVING_PORT`
 
 The `http2_health_check` block supports:
 
@@ -591,7 +631,12 @@ The `http2_health_check` block supports:
 * `proxy_header` -
   (Optional)
   Specifies the type of proxy header to append before sending data to the
-  backend, either NONE or PROXY_V1. The default is NONE.
+  backend.
+
+  Default value: `NONE`
+  Possible values are:
+  * `NONE`
+  * `PROXY_V1`
 
 * `port_specification` -
   (Optional)
@@ -605,6 +650,11 @@ The `http2_health_check` block supports:
     checking.
   If not specified, HTTP2 health check follows behavior specified in `port` and
   `portName` fields.
+
+  Possible values are:
+  * `USE_FIXED_PORT`
+  * `USE_NAMED_PORT`
+  * `USE_SERVING_PORT`
 
 The `log_config` block supports:
 

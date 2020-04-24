@@ -93,7 +93,7 @@ it cannot be an IP address from Google Compute Engine.`,
 				Optional:     true,
 				ForceNew:     true,
 				ValidateFunc: validation.StringInSlice([]string{"FOUR_IPS_REDUNDANCY", "SINGLE_IP_INTERNALLY_REDUNDANT", "TWO_IPS_REDUNDANCY", ""}, false),
-				Description:  `Indicates the redundancy type of this external VPN gateway`,
+				Description:  `Indicates the redundancy type of this external VPN gateway Possible values: ["FOUR_IPS_REDUNDANCY", "SINGLE_IP_INTERNALLY_REDUNDANT", "TWO_IPS_REDUNDANCY"]`,
 			},
 			"project": {
 				Type:     schema.TypeString,

@@ -611,7 +611,7 @@ must be between 1 and 1024 characters.`,
 - TEMPORARY_REDIRECT, which corresponds to 307. In this case, the request method
 will be retained.
 - PERMANENT_REDIRECT, which corresponds to 308. In this case,
-the request method will be retained.`,
+the request method will be retained. Possible values: ["FOUND", "MOVED_PERMANENTLY_DEFAULT", "PERMANENT_REDIRECT", "SEE_OTHER", "TEMPORARY_REDIRECT"]`,
 												},
 												"strip_query": {
 													Type:     schema.TypeBool,
@@ -901,7 +901,7 @@ contribute towards the overall metadataFilter match. Supported values are:
   - MATCH_ANY: At least one of the filterLabels must have a matching label in the
 provided metadata.
   - MATCH_ALL: All filterLabels must have matching labels in
-the provided metadata.`,
+the provided metadata. Possible values: ["MATCH_ALL", "MATCH_ANY"]`,
 															},
 														},
 													},
@@ -1456,7 +1456,7 @@ must be between 1 and 1024 characters.`,
 - TEMPORARY_REDIRECT, which corresponds to 307. In this case, the request method
 will be retained.
 - PERMANENT_REDIRECT, which corresponds to 308. In this case,
-the request method will be retained.`,
+the request method will be retained. Possible values: ["FOUND", "MOVED_PERMANENTLY_DEFAULT", "PERMANENT_REDIRECT", "SEE_OTHER", "TEMPORARY_REDIRECT"]`,
 												},
 												"strip_query": {
 													Type:     schema.TypeBool,

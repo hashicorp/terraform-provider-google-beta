@@ -231,8 +231,12 @@ The `metric` block supports:
 * `type` -
   (Optional)
   Defines how target utilization value is expressed for a
-  Stackdriver Monitoring metric. Either GAUGE, DELTA_PER_SECOND,
-  or DELTA_PER_MINUTE.
+  Stackdriver Monitoring metric.
+
+  Possible values are:
+  * `GAUGE`
+  * `DELTA_PER_SECOND`
+  * `DELTA_PER_MINUTE`
 
 * `filter` -
   (Optional, [Beta](https://terraform.io/docs/providers/google/guides/provider_versions.html))

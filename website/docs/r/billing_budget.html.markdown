@@ -141,6 +141,11 @@ The `budget_filter` block supports:
   Specifies how credits should be treated when determining spend
   for threshold calculations.
 
+  Default value: `INCLUDE_ALL_CREDITS`
+  Possible values are:
+  * `INCLUDE_ALL_CREDITS`
+  * `EXCLUDE_ALL_CREDITS`
+
 * `services` -
   (Optional)
   A set of services of the form services/{service_id},
@@ -191,6 +196,11 @@ The `threshold_rules` block supports:
   (Optional)
   The type of basis used to determine if spend has passed
   the threshold.
+
+  Default value: `CURRENT_SPEND`
+  Possible values are:
+  * `CURRENT_SPEND`
+  * `FORECASTED_SPEND`
 
 The `all_updates_rule` block supports:
 
