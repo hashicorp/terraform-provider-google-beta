@@ -303,8 +303,12 @@ The following arguments are supported:
   (Optional)
   Indicates what kind of load balancing this regional backend service
   will be used for. A backend service created for one type of load
-  balancing cannot be used with the other(s). Must be `INTERNAL` or
-  `INTERNAL_MANAGED`. Defaults to `INTERNAL`.
+  balancing cannot be used with the other(s).
+
+  Default value: `INTERNAL`
+  Possible values are:
+  * `INTERNAL`
+  * `INTERNAL_MANAGED`
 
 * `locality_lb_policy` -
   (Optional, [Beta](https://terraform.io/docs/providers/google/guides/provider_versions.html))
@@ -331,6 +335,14 @@ The following arguments are supported:
   This field is applicable only when the `load_balancing_scheme` is set to
   INTERNAL_MANAGED and the `protocol` is set to HTTP, HTTPS, or HTTP2.
 
+  Possible values are:
+  * `ROUND_ROBIN`
+  * `LEAST_REQUEST`
+  * `RING_HASH`
+  * `RANDOM`
+  * `ORIGINAL_DESTINATION`
+  * `MAGLEV`
+
 * `outlier_detection` -
   (Optional, [Beta](https://terraform.io/docs/providers/google/guides/provider_versions.html))
   Settings controlling eviction of unhealthy hosts from the load balancing pool.
@@ -340,14 +352,30 @@ The following arguments are supported:
 * `protocol` -
   (Optional)
   The protocol this RegionBackendService uses to communicate with backends.
-  Possible values are HTTP, HTTPS, HTTP2, SSL, TCP, and UDP. The default is
-  HTTP. **NOTE**: HTTP2 is only valid for beta HTTP/2 load balancer
+  The default is HTTP. **NOTE**: HTTP2 is only valid for beta HTTP/2 load balancer
   types and may result in errors if used with the GA API.
+
+  Possible values are:
+  * `HTTP`
+  * `HTTPS`
+  * `HTTP2`
+  * `SSL`
+  * `TCP`
+  * `UDP`
 
 * `session_affinity` -
   (Optional)
   Type of session affinity to use. The default is NONE. Session affinity is
   not applicable if the protocol is UDP.
+
+  Possible values are:
+  * `NONE`
+  * `CLIENT_IP`
+  * `CLIENT_IP_PORT_PROTO`
+  * `CLIENT_IP_PROTO`
+  * `GENERATED_COOKIE`
+  * `HEADER_FIELD`
+  * `HTTP_COOKIE`
 
 * `timeout_sec` -
   (Optional)
@@ -377,7 +405,13 @@ The `backend` block supports:
 
 * `balancing_mode` -
   (Optional)
-  Specifies the balancing mode for this backend. Defaults to CONNECTION.
+  Specifies the balancing mode for this backend.
+
+  Default value: `CONNECTION`
+  Possible values are:
+  * `UTILIZATION`
+  * `RATE`
+  * `CONNECTION`
 
 * `capacity_scaler` -
   (Optional)

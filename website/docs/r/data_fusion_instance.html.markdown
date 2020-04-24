@@ -96,6 +96,10 @@ The following arguments are supported:
   - ENTERPRISE: Enterprise Data Fusion instance. In Enterprise type, the user will have more features
   available, such as support for streaming pipelines, higher number of concurrent pipelines, etc.
 
+  Possible values are:
+  * `BASIC`
+  * `ENTERPRISE`
+
 
 - - -
 

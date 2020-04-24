@@ -94,6 +94,13 @@ The following arguments are supported:
   (Optional)
   Type of the user agents used for scanning
 
+  Default value: `CHROME_LINUX`
+  Possible values are:
+  * `USER_AGENT_UNSPECIFIED`
+  * `CHROME_LINUX`
+  * `CHROME_ANDROID`
+  * `SAFARI_IPHONE`
+
 * `blacklist_patterns` -
   (Optional)
   The blacklist URL patterns as described in
@@ -110,6 +117,11 @@ The following arguments are supported:
 * `export_to_security_command_center` -
   (Optional)
   Controls export of scan configurations and results to Cloud Security Command Center.
+
+  Default value: `ENABLED`
+  Possible values are:
+  * `ENABLED`
+  * `DISABLED`
 
 * `project` - (Optional) The ID of the project in which the resource belongs.
     If it is not provided, the provider project is used.

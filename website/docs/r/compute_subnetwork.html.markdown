@@ -180,6 +180,10 @@ The following arguments are supported:
   purpose defaults to PRIVATE.
   If set to INTERNAL_HTTPS_LOAD_BALANCER you must also set the role.
 
+  Possible values are:
+  * `INTERNAL_HTTPS_LOAD_BALANCER`
+  * `PRIVATE`
+
 * `role` -
   (Optional, [Beta](https://terraform.io/docs/providers/google/guides/provider_versions.html))
   The role of subnetwork. Currently, this field is only used when
@@ -187,6 +191,10 @@ The following arguments are supported:
   or BACKUP. An ACTIVE subnetwork is one that is currently being used
   for Internal HTTP(S) Load Balancing. A BACKUP subnetwork is one that
   is ready to be promoted to ACTIVE or is currently draining.
+
+  Possible values are:
+  * `ACTIVE`
+  * `BACKUP`
 
 * `secondary_ip_range` -
   (Optional)
@@ -246,6 +254,15 @@ The `log_config` block supports:
   Possible values are INTERVAL_5_SEC, INTERVAL_30_SEC, INTERVAL_1_MIN,
   INTERVAL_5_MIN, INTERVAL_10_MIN, INTERVAL_15_MIN
 
+  Default value: `INTERVAL_5_SEC`
+  Possible values are:
+  * `INTERVAL_5_SEC`
+  * `INTERVAL_30_SEC`
+  * `INTERVAL_1_MIN`
+  * `INTERVAL_5_MIN`
+  * `INTERVAL_10_MIN`
+  * `INTERVAL_15_MIN`
+
 * `flow_sampling` -
   (Optional)
   Can only be specified if VPC flow logging for this subnetwork is enabled.
@@ -258,7 +275,12 @@ The `log_config` block supports:
   (Optional)
   Can only be specified if VPC flow logging for this subnetwork is enabled.
   Configures whether metadata fields should be added to the reported VPC
-  flow logs. Default is `INCLUDE_ALL_METADATA`.
+  flow logs.
+
+  Default value: `INCLUDE_ALL_METADATA`
+  Possible values are:
+  * `EXCLUDE_ALL_METADATA`
+  * `INCLUDE_ALL_METADATA`
 
 ## Attributes Reference
 

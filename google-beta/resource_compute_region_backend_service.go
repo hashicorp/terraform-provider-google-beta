@@ -409,8 +409,7 @@ This field is only used with l4 load balancing.`,
 				ValidateFunc: validation.StringInSlice([]string{"INTERNAL", "INTERNAL_MANAGED", ""}, false),
 				Description: `Indicates what kind of load balancing this regional backend service
 will be used for. A backend service created for one type of load
-balancing cannot be used with the other(s). Must be 'INTERNAL' or
-'INTERNAL_MANAGED'. Defaults to 'INTERNAL'.`,
+balancing cannot be used with the other(s). Default value: "INTERNAL" Possible values: ["INTERNAL", "INTERNAL_MANAGED"]`,
 				Default: "INTERNAL",
 			},
 			"locality_lb_policy": {
@@ -446,7 +445,7 @@ MAGLEV - used as a drop in replacement for the ring hash load balancer.
          Maglev, refer to https://ai.google/research/pubs/pub44824
 
 This field is applicable only when the 'load_balancing_scheme' is set to
-INTERNAL_MANAGED and the 'protocol' is set to HTTP, HTTPS, or HTTP2.`,
+INTERNAL_MANAGED and the 'protocol' is set to HTTP, HTTPS, or HTTP2. Possible values: ["ROUND_ROBIN", "LEAST_REQUEST", "RING_HASH", "RANDOM", "ORIGINAL_DESTINATION", "MAGLEV"]`,
 			},
 			"log_config": {
 				Type:     schema.TypeList,
@@ -636,9 +635,8 @@ runtime value should be 1900. Defaults to 1900.`,
 				Optional:     true,
 				ValidateFunc: validation.StringInSlice([]string{"HTTP", "HTTPS", "HTTP2", "SSL", "TCP", "UDP", ""}, false),
 				Description: `The protocol this RegionBackendService uses to communicate with backends.
-Possible values are HTTP, HTTPS, HTTP2, SSL, TCP, and UDP. The default is
-HTTP. **NOTE**: HTTP2 is only valid for beta HTTP/2 load balancer
-types and may result in errors if used with the GA API.`,
+The default is HTTP. **NOTE**: HTTP2 is only valid for beta HTTP/2 load balancer
+types and may result in errors if used with the GA API. Possible values: ["HTTP", "HTTPS", "HTTP2", "SSL", "TCP", "UDP"]`,
 			},
 			"region": {
 				Type:             schema.TypeString,
@@ -654,7 +652,7 @@ If it is not provided, the provider region is used.`,
 				Optional:     true,
 				ValidateFunc: validation.StringInSlice([]string{"NONE", "CLIENT_IP", "CLIENT_IP_PORT_PROTO", "CLIENT_IP_PROTO", "GENERATED_COOKIE", "HEADER_FIELD", "HTTP_COOKIE", ""}, false),
 				Description: `Type of session affinity to use. The default is NONE. Session affinity is
-not applicable if the protocol is UDP.`,
+not applicable if the protocol is UDP. Possible values: ["NONE", "CLIENT_IP", "CLIENT_IP_PORT_PROTO", "CLIENT_IP_PROTO", "GENERATED_COOKIE", "HEADER_FIELD", "HTTP_COOKIE"]`,
 			},
 			"timeout_sec": {
 				Type:     schema.TypeInt,
@@ -720,7 +718,7 @@ partial URL.`,
 				Type:         schema.TypeString,
 				Optional:     true,
 				ValidateFunc: validation.StringInSlice([]string{"UTILIZATION", "RATE", "CONNECTION", ""}, false),
-				Description:  `Specifies the balancing mode for this backend. Defaults to CONNECTION.`,
+				Description:  `Specifies the balancing mode for this backend. Default value: "CONNECTION" Possible values: ["UTILIZATION", "RATE", "CONNECTION"]`,
 				Default:      "CONNECTION",
 			},
 			"capacity_scaler": {

@@ -326,7 +326,7 @@ https://github.com/googlecloudplatform/cloud-builders is "googlecloudplatform".`
 										Type:         schema.TypeString,
 										Optional:     true,
 										ValidateFunc: validation.StringInSlice([]string{"COMMENTS_DISABLED", "COMMENTS_ENABLED", ""}, false),
-										Description:  `Whether to block builds on a "/gcbrun" comment from a repository owner or collaborator.`,
+										Description:  `Whether to block builds on a "/gcbrun" comment from a repository owner or collaborator. Possible values: ["COMMENTS_DISABLED", "COMMENTS_ENABLED"]`,
 									},
 								},
 							},

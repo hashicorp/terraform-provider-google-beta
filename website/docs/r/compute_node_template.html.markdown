@@ -165,6 +165,10 @@ The `server_binding` block supports:
   additional licenses when maintenance occurs. However, VMs on such
   nodes will experience outages while maintenance is applied.
 
+  Possible values are:
+  * `RESTART_NODE_ON_ANY_SERVER`
+  * `RESTART_NODE_ON_MINIMAL_SERVERS`
+
 ## Attributes Reference
 
 In addition to the arguments listed above, the following computed attributes are exported:

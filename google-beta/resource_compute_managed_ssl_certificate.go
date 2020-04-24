@@ -92,7 +92,7 @@ These are in the same namespace as the managed SSL certificates.`,
 				ForceNew:     true,
 				ValidateFunc: validation.StringInSlice([]string{"MANAGED", ""}, false),
 				Description: `Enum field whose value is always 'MANAGED' - used to signal to the API
-which type this is.`,
+which type this is. Default value: "MANAGED" Possible values: ["MANAGED"]`,
 				Default: "MANAGED",
 			},
 			"certificate_id": {

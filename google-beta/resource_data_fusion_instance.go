@@ -59,7 +59,7 @@ the default settings for processing and memory.
 using point and click UI. However, there are certain limitations, such as fewer number
 of concurrent pipelines, no support for streaming pipelines, etc.
 - ENTERPRISE: Enterprise Data Fusion instance. In Enterprise type, the user will have more features
-available, such as support for streaming pipelines, higher number of concurrent pipelines, etc.`,
+available, such as support for streaming pipelines, higher number of concurrent pipelines, etc. Possible values: ["BASIC", "ENTERPRISE"]`,
 			},
 			"description": {
 				Type:        schema.TypeString,

@@ -150,6 +150,11 @@ The `autoscaling_policy` block supports:
     You must use this mode if your node groups are configured to 
     restart their hosted VMs on minimal servers.
 
+  Possible values are:
+  * `OFF`
+  * `ON`
+  * `ONLY_SCALE_OUT`
+
 * `min_nodes` -
   (Optional)
   Minimum size of the node group. Must be less 
