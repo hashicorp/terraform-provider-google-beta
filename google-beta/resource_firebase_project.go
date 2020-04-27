@@ -87,7 +87,7 @@ func resourceFirebaseProjectCreate(d *schema.ResourceData, meta interface{}) err
 
 	err = firebaseOperationWaitTime(
 		config, res, project, "Creating Project",
-		int(d.Timeout(schema.TimeoutCreate).Minutes()))
+		d.Timeout(schema.TimeoutCreate))
 
 	if err != nil {
 		// The resource didn't actually create

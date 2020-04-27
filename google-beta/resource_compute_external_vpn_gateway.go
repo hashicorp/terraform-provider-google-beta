@@ -162,7 +162,7 @@ func resourceComputeExternalVpnGatewayCreate(d *schema.ResourceData, meta interf
 
 	err = computeOperationWaitTime(
 		config, res, project, "Creating ExternalVpnGateway",
-		int(d.Timeout(schema.TimeoutCreate).Minutes()))
+		d.Timeout(schema.TimeoutCreate))
 
 	if err != nil {
 		// The resource didn't actually create
@@ -238,7 +238,7 @@ func resourceComputeExternalVpnGatewayDelete(d *schema.ResourceData, meta interf
 
 	err = computeOperationWaitTime(
 		config, res, project, "Deleting ExternalVpnGateway",
-		int(d.Timeout(schema.TimeoutDelete).Minutes()))
+		d.Timeout(schema.TimeoutDelete))
 
 	if err != nil {
 		return err

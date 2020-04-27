@@ -241,7 +241,7 @@ func resourceComputeGlobalAddressCreate(d *schema.ResourceData, meta interface{}
 
 	err = computeOperationWaitTime(
 		config, res, project, "Creating GlobalAddress",
-		int(d.Timeout(schema.TimeoutCreate).Minutes()))
+		d.Timeout(schema.TimeoutCreate))
 
 	if err != nil {
 		// The resource didn't actually create
@@ -279,7 +279,7 @@ func resourceComputeGlobalAddressCreate(d *schema.ResourceData, meta interface{}
 
 		err = computeOperationWaitTime(
 			config, res, project, "Updating ComputeGlobalAddress Labels",
-			int(d.Timeout(schema.TimeoutUpdate).Minutes()))
+			d.Timeout(schema.TimeoutUpdate))
 
 		if err != nil {
 			return err
@@ -388,7 +388,7 @@ func resourceComputeGlobalAddressUpdate(d *schema.ResourceData, meta interface{}
 
 		err = computeOperationWaitTime(
 			config, res, project, "Updating GlobalAddress",
-			int(d.Timeout(schema.TimeoutUpdate).Minutes()))
+			d.Timeout(schema.TimeoutUpdate))
 		if err != nil {
 			return err
 		}
@@ -425,7 +425,7 @@ func resourceComputeGlobalAddressDelete(d *schema.ResourceData, meta interface{}
 
 	err = computeOperationWaitTime(
 		config, res, project, "Deleting GlobalAddress",
-		int(d.Timeout(schema.TimeoutDelete).Minutes()))
+		d.Timeout(schema.TimeoutDelete))
 
 	if err != nil {
 		return err

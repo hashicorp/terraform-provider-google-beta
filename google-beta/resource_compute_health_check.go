@@ -703,7 +703,7 @@ func resourceComputeHealthCheckCreate(d *schema.ResourceData, meta interface{}) 
 
 	err = computeOperationWaitTime(
 		config, res, project, "Creating HealthCheck",
-		int(d.Timeout(schema.TimeoutCreate).Minutes()))
+		d.Timeout(schema.TimeoutCreate))
 
 	if err != nil {
 		// The resource didn't actually create
@@ -887,7 +887,7 @@ func resourceComputeHealthCheckUpdate(d *schema.ResourceData, meta interface{}) 
 
 	err = computeOperationWaitTime(
 		config, res, project, "Updating HealthCheck",
-		int(d.Timeout(schema.TimeoutUpdate).Minutes()))
+		d.Timeout(schema.TimeoutUpdate))
 
 	if err != nil {
 		return err
@@ -919,7 +919,7 @@ func resourceComputeHealthCheckDelete(d *schema.ResourceData, meta interface{}) 
 
 	err = computeOperationWaitTime(
 		config, res, project, "Deleting HealthCheck",
-		int(d.Timeout(schema.TimeoutDelete).Minutes()))
+		d.Timeout(schema.TimeoutDelete))
 
 	if err != nil {
 		return err

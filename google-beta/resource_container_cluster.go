@@ -87,6 +87,7 @@ func resourceContainerCluster() *schema.Resource {
 
 		Timeouts: &schema.ResourceTimeout{
 			Create: schema.DefaultTimeout(40 * time.Minute),
+			Read:   schema.DefaultTimeout(40 * time.Minute),
 			Update: schema.DefaultTimeout(60 * time.Minute),
 			Delete: schema.DefaultTimeout(40 * time.Minute),
 		},
@@ -1151,8 +1152,7 @@ func resourceContainerClusterCreate(d *schema.ResourceData, meta interface{}) er
 	d.SetId(containerClusterFullName(project, location, clusterName))
 
 	// Wait until it's created
-	timeoutInMinutes := int(d.Timeout(schema.TimeoutCreate).Minutes())
-	waitErr := containerOperationWait(config, op, project, location, "creating GKE cluster", timeoutInMinutes)
+	waitErr := containerOperationWait(config, op, project, location, "creating GKE cluster", d.Timeout(schema.TimeoutCreate))
 	if waitErr != nil {
 		// Check if the create operation failed because Terraform was prematurely terminated. If it was we can persist the
 		// operation id to state so that a subsequent refresh of this resource will wait until the operation has terminated
@@ -1195,7 +1195,7 @@ func resourceContainerClusterCreate(d *schema.ResourceData, meta interface{}) er
 		if err != nil {
 			return errwrap.Wrapf("Error deleting default node pool: {{err}}", err)
 		}
-		err = containerOperationWait(config, op, project, location, "removing default node pool", timeoutInMinutes)
+		err = containerOperationWait(config, op, project, location, "removing default node pool", d.Timeout(schema.TimeoutCreate))
 		if err != nil {
 			return errwrap.Wrapf("Error while waiting to delete default node pool: {{err}}", err)
 		}
@@ -1237,7 +1237,7 @@ func resourceContainerClusterRead(d *schema.ResourceData, meta interface{}) erro
 			Name: operation,
 		}
 		d.Set("operation", "")
-		waitErr := containerOperationWait(config, op, project, location, "resuming GKE cluster", int(d.Timeout(schema.TimeoutCreate).Minutes()))
+		waitErr := containerOperationWait(config, op, project, location, "resuming GKE cluster", d.Timeout(schema.TimeoutRead))
 		if waitErr != nil {
 			return waitErr
 		}
@@ -1374,7 +1374,6 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 	}
 
 	clusterName := d.Get("name").(string)
-	timeoutInMinutes := int(d.Timeout(schema.TimeoutUpdate).Minutes())
 
 	if _, err := containerClusterAwaitRestingState(config, project, location, clusterName, d.Timeout(schema.TimeoutUpdate)); err != nil {
 		return err
@@ -1392,7 +1391,7 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 				return err
 			}
 			// Wait until it's updated
-			return containerOperationWait(config, op, project, location, updateDescription, timeoutInMinutes)
+			return containerOperationWait(config, op, project, location, updateDescription, d.Timeout(schema.TimeoutUpdate))
 		}
 	}
 
@@ -1516,7 +1515,7 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 			}
 
 			// Wait until it's updated
-			err = containerOperationWait(config, op, project, location, "updating GKE Intra Node Visibility", timeoutInMinutes)
+			err = containerOperationWait(config, op, project, location, "updating GKE Intra Node Visibility", d.Timeout(schema.TimeoutUpdate))
 			log.Println("[DEBUG] done updating enable_intranode_visibility")
 			return err
 		}
@@ -1545,7 +1544,7 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 			}
 
 			// Wait until it's updated
-			return containerOperationWait(config, op, project, location, "updating GKE cluster maintenance policy", timeoutInMinutes)
+			return containerOperationWait(config, op, project, location, "updating GKE cluster maintenance policy", d.Timeout(schema.TimeoutUpdate))
 		}
 
 		// Call update serially.
@@ -1623,7 +1622,7 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 			}
 
 			// Wait until it's updated
-			err = containerOperationWait(config, op, project, location, "updating GKE legacy ABAC", timeoutInMinutes)
+			err = containerOperationWait(config, op, project, location, "updating GKE legacy ABAC", d.Timeout(schema.TimeoutUpdate))
 			log.Println("[DEBUG] done updating enable_legacy_abac")
 			return err
 		}
@@ -1656,7 +1655,7 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 			}
 
 			// Wait until it's updated
-			return containerOperationWait(config, op, project, location, "updating GKE logging+monitoring service", timeoutInMinutes)
+			return containerOperationWait(config, op, project, location, "updating GKE logging+monitoring service", d.Timeout(schema.TimeoutUpdate))
 		}
 
 		// Call update serially.
@@ -1684,7 +1683,7 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 			}
 
 			// Wait until it's updated
-			err = containerOperationWait(config, op, project, location, "updating GKE cluster network policy", timeoutInMinutes)
+			err = containerOperationWait(config, op, project, location, "updating GKE cluster network policy", d.Timeout(schema.TimeoutUpdate))
 			log.Println("[DEBUG] done updating network_policy")
 			return err
 		}
@@ -1707,7 +1706,7 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 				return err
 			}
 
-			if err := nodePoolUpdate(d, meta, nodePoolInfo, fmt.Sprintf("node_pool.%d.", i), timeoutInMinutes); err != nil {
+			if err := nodePoolUpdate(d, meta, nodePoolInfo, fmt.Sprintf("node_pool.%d.", i), d.Timeout(schema.TimeoutUpdate)); err != nil {
 				return err
 			}
 		}
@@ -1796,7 +1795,7 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 				}
 
 				// Wait until it's updated
-				return containerOperationWait(config, op, project, location, "updating GKE image type", timeoutInMinutes)
+				return containerOperationWait(config, op, project, location, "updating GKE image type", d.Timeout(schema.TimeoutUpdate))
 			}
 
 			// Call update serially.
@@ -1833,7 +1832,7 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 			}
 
 			// Wait until it's updated
-			return containerOperationWait(config, op, project, location, "updating master auth", timeoutInMinutes)
+			return containerOperationWait(config, op, project, location, "updating master auth", d.Timeout(schema.TimeoutUpdate))
 		}
 
 		// Call update serially.
@@ -1880,7 +1879,7 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 				return err
 			}
 			// Wait until it's updated
-			return containerOperationWait(config, op, project, location, "updating GKE cluster pod security policy config", timeoutInMinutes)
+			return containerOperationWait(config, op, project, location, "updating GKE cluster pod security policy config", d.Timeout(schema.TimeoutUpdate))
 		}
 		if err := lockedCall(lockKey, updateF); err != nil {
 			return err
@@ -1934,7 +1933,7 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 			}
 
 			// Wait until it's updated
-			return containerOperationWait(config, op, project, location, "updating GKE resource labels", timeoutInMinutes)
+			return containerOperationWait(config, op, project, location, "updating GKE resource labels", d.Timeout(schema.TimeoutUpdate))
 		}
 
 		// Call update serially.
@@ -1954,7 +1953,7 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 			}
 			log.Printf("[WARN] Container cluster %q default node pool already removed, no change", d.Id())
 		} else {
-			err = containerOperationWait(config, op, project, location, "removing default node pool", timeoutInMinutes)
+			err = containerOperationWait(config, op, project, location, "removing default node pool", d.Timeout(schema.TimeoutUpdate))
 			if err != nil {
 				return errwrap.Wrapf("Error deleting default node pool: {{err}}", err)
 			}
@@ -1976,7 +1975,7 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 				return err
 			}
 			// Wait until it's updated
-			return containerOperationWait(config, op, project, location, "updating GKE cluster resource usage export config", timeoutInMinutes)
+			return containerOperationWait(config, op, project, location, "updating GKE cluster resource usage export config", d.Timeout(schema.TimeoutUpdate))
 		}
 		if err := lockedCall(lockKey, updateF); err != nil {
 			return err
@@ -2009,7 +2008,6 @@ func resourceContainerClusterDelete(d *schema.ResourceData, meta interface{}) er
 	}
 
 	clusterName := d.Get("name").(string)
-	timeoutInMinutes := int(d.Timeout(schema.TimeoutDelete).Minutes())
 
 	if _, err := containerClusterAwaitRestingState(config, project, location, clusterName, d.Timeout(schema.TimeoutDelete)); err != nil {
 		return err
@@ -2043,7 +2041,7 @@ func resourceContainerClusterDelete(d *schema.ResourceData, meta interface{}) er
 	}
 
 	// Wait until it's deleted
-	waitErr := containerOperationWait(config, op, project, location, "deleting GKE cluster", timeoutInMinutes)
+	waitErr := containerOperationWait(config, op, project, location, "deleting GKE cluster", d.Timeout(schema.TimeoutDelete))
 	if waitErr != nil {
 		return waitErr
 	}
@@ -2082,8 +2080,7 @@ func cleanFailedContainerCluster(d *schema.ResourceData, meta interface{}) error
 	}
 
 	// Wait until it's deleted
-	timeoutInMinutes := int(d.Timeout(schema.TimeoutDelete).Minutes())
-	waitErr := containerOperationWait(config, op, project, location, "deleting GKE cluster", timeoutInMinutes)
+	waitErr := containerOperationWait(config, op, project, location, "deleting GKE cluster", d.Timeout(schema.TimeoutDelete))
 	if waitErr != nil {
 		return waitErr
 	}

@@ -264,7 +264,7 @@ func resourceGameServicesGameServerConfigCreate(d *schema.ResourceData, meta int
 	var opRes map[string]interface{}
 	err = gameServicesOperationWaitTimeWithResponse(
 		config, res, &opRes, project, "Creating GameServerConfig",
-		int(d.Timeout(schema.TimeoutCreate).Minutes()))
+		d.Timeout(schema.TimeoutCreate))
 	if err != nil {
 		// The resource didn't actually create
 		d.SetId("")
@@ -350,7 +350,7 @@ func resourceGameServicesGameServerConfigDelete(d *schema.ResourceData, meta int
 
 	err = gameServicesOperationWaitTime(
 		config, res, project, "Deleting GameServerConfig",
-		int(d.Timeout(schema.TimeoutDelete).Minutes()))
+		d.Timeout(schema.TimeoutDelete))
 
 	if err != nil {
 		return err
