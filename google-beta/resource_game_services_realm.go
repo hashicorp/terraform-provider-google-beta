@@ -144,7 +144,7 @@ func resourceGameServicesRealmCreate(d *schema.ResourceData, meta interface{}) e
 	var opRes map[string]interface{}
 	err = gameServicesOperationWaitTimeWithResponse(
 		config, res, &opRes, project, "Creating Realm",
-		int(d.Timeout(schema.TimeoutCreate).Minutes()))
+		d.Timeout(schema.TimeoutCreate))
 	if err != nil {
 		// The resource didn't actually create
 		d.SetId("")
@@ -268,7 +268,7 @@ func resourceGameServicesRealmUpdate(d *schema.ResourceData, meta interface{}) e
 
 	err = gameServicesOperationWaitTime(
 		config, res, project, "Updating Realm",
-		int(d.Timeout(schema.TimeoutUpdate).Minutes()))
+		d.Timeout(schema.TimeoutUpdate))
 
 	if err != nil {
 		return err
@@ -300,7 +300,7 @@ func resourceGameServicesRealmDelete(d *schema.ResourceData, meta interface{}) e
 
 	err = gameServicesOperationWaitTime(
 		config, res, project, "Deleting Realm",
-		int(d.Timeout(schema.TimeoutDelete).Minutes()))
+		d.Timeout(schema.TimeoutDelete))
 
 	if err != nil {
 		return err

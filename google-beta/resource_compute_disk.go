@@ -648,7 +648,7 @@ func resourceComputeDiskCreate(d *schema.ResourceData, meta interface{}) error {
 
 	err = computeOperationWaitTime(
 		config, res, project, "Creating Disk",
-		int(d.Timeout(schema.TimeoutCreate).Minutes()))
+		d.Timeout(schema.TimeoutCreate))
 
 	if err != nil {
 		// The resource didn't actually create
@@ -798,7 +798,7 @@ func resourceComputeDiskUpdate(d *schema.ResourceData, meta interface{}) error {
 
 		err = computeOperationWaitTime(
 			config, res, project, "Updating Disk",
-			int(d.Timeout(schema.TimeoutUpdate).Minutes()))
+			d.Timeout(schema.TimeoutUpdate))
 		if err != nil {
 			return err
 		}
@@ -827,7 +827,7 @@ func resourceComputeDiskUpdate(d *schema.ResourceData, meta interface{}) error {
 
 		err = computeOperationWaitTime(
 			config, res, project, "Updating Disk",
-			int(d.Timeout(schema.TimeoutUpdate).Minutes()))
+			d.Timeout(schema.TimeoutUpdate))
 		if err != nil {
 			return err
 		}
@@ -917,7 +917,7 @@ func resourceComputeDiskDelete(d *schema.ResourceData, meta interface{}) error {
 
 	err = computeOperationWaitTime(
 		config, res, project, "Deleting Disk",
-		int(d.Timeout(schema.TimeoutDelete).Minutes()))
+		d.Timeout(schema.TimeoutDelete))
 
 	if err != nil {
 		return err

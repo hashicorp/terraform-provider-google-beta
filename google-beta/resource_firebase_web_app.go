@@ -109,7 +109,7 @@ func resourceFirebaseWebAppCreate(d *schema.ResourceData, meta interface{}) erro
 	var opRes map[string]interface{}
 	err = firebaseOperationWaitTimeWithResponse(
 		config, res, &opRes, project, "Creating WebApp",
-		int(d.Timeout(schema.TimeoutCreate).Minutes()))
+		d.Timeout(schema.TimeoutCreate))
 	if err != nil {
 		// The resource didn't actually create
 		d.SetId("")

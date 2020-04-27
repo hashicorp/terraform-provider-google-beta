@@ -197,7 +197,7 @@ func resourceGameServicesGameServerClusterCreate(d *schema.ResourceData, meta in
 	var opRes map[string]interface{}
 	err = gameServicesOperationWaitTimeWithResponse(
 		config, res, &opRes, project, "Creating GameServerCluster",
-		int(d.Timeout(schema.TimeoutCreate).Minutes()))
+		d.Timeout(schema.TimeoutCreate))
 	if err != nil {
 		// The resource didn't actually create
 		d.SetId("")
@@ -308,7 +308,7 @@ func resourceGameServicesGameServerClusterUpdate(d *schema.ResourceData, meta in
 
 	err = gameServicesOperationWaitTime(
 		config, res, project, "Updating GameServerCluster",
-		int(d.Timeout(schema.TimeoutUpdate).Minutes()))
+		d.Timeout(schema.TimeoutUpdate))
 
 	if err != nil {
 		return err
@@ -340,7 +340,7 @@ func resourceGameServicesGameServerClusterDelete(d *schema.ResourceData, meta in
 
 	err = gameServicesOperationWaitTime(
 		config, res, project, "Deleting GameServerCluster",
-		int(d.Timeout(schema.TimeoutDelete).Minutes()))
+		d.Timeout(schema.TimeoutDelete))
 
 	if err != nil {
 		return err

@@ -460,7 +460,7 @@ func resourceComputeVpnTunnelCreate(d *schema.ResourceData, meta interface{}) er
 
 	err = computeOperationWaitTime(
 		config, res, project, "Creating VpnTunnel",
-		int(d.Timeout(schema.TimeoutCreate).Minutes()))
+		d.Timeout(schema.TimeoutCreate))
 
 	if err != nil {
 		// The resource didn't actually create
@@ -498,7 +498,7 @@ func resourceComputeVpnTunnelCreate(d *schema.ResourceData, meta interface{}) er
 
 		err = computeOperationWaitTime(
 			config, res, project, "Updating ComputeVpnTunnel Labels",
-			int(d.Timeout(schema.TimeoutUpdate).Minutes()))
+			d.Timeout(schema.TimeoutUpdate))
 
 		if err != nil {
 			return err
@@ -634,7 +634,7 @@ func resourceComputeVpnTunnelUpdate(d *schema.ResourceData, meta interface{}) er
 
 		err = computeOperationWaitTime(
 			config, res, project, "Updating VpnTunnel",
-			int(d.Timeout(schema.TimeoutUpdate).Minutes()))
+			d.Timeout(schema.TimeoutUpdate))
 		if err != nil {
 			return err
 		}
@@ -671,7 +671,7 @@ func resourceComputeVpnTunnelDelete(d *schema.ResourceData, meta interface{}) er
 
 	err = computeOperationWaitTime(
 		config, res, project, "Deleting VpnTunnel",
-		int(d.Timeout(schema.TimeoutDelete).Minutes()))
+		d.Timeout(schema.TimeoutDelete))
 
 	if err != nil {
 		return err

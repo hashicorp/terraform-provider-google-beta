@@ -154,7 +154,7 @@ func resourceArtifactRegistryRepositoryCreate(d *schema.ResourceData, meta inter
 	var opRes map[string]interface{}
 	err = artifactRegistryOperationWaitTimeWithResponse(
 		config, res, &opRes, project, "Creating Repository",
-		int(d.Timeout(schema.TimeoutCreate).Minutes()))
+		d.Timeout(schema.TimeoutCreate))
 	if err != nil {
 		// The resource didn't actually create
 		d.SetId("")
@@ -262,7 +262,7 @@ func resourceArtifactRegistryRepositoryUpdate(d *schema.ResourceData, meta inter
 
 	err = artifactRegistryOperationWaitTime(
 		config, res, project, "Updating Repository",
-		int(d.Timeout(schema.TimeoutUpdate).Minutes()))
+		d.Timeout(schema.TimeoutUpdate))
 
 	if err != nil {
 		return err
@@ -294,7 +294,7 @@ func resourceArtifactRegistryRepositoryDelete(d *schema.ResourceData, meta inter
 
 	err = artifactRegistryOperationWaitTime(
 		config, res, project, "Deleting Repository",
-		int(d.Timeout(schema.TimeoutDelete).Minutes()))
+		d.Timeout(schema.TimeoutDelete))
 
 	if err != nil {
 		return err

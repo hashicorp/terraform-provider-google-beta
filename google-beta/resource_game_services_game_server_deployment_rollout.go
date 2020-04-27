@@ -214,7 +214,7 @@ func resourceGameServicesGameServerDeploymentRolloutUpdate(d *schema.ResourceDat
 
 	err = gameServicesOperationWaitTime(
 		config, res, project, "Updating GameServerDeploymentRollout",
-		int(d.Timeout(schema.TimeoutUpdate).Minutes()))
+		d.Timeout(schema.TimeoutUpdate))
 
 	if err != nil {
 		return err
@@ -246,7 +246,7 @@ func resourceGameServicesGameServerDeploymentRolloutDelete(d *schema.ResourceDat
 
 	err = gameServicesOperationWaitTime(
 		config, res, project, "Deleting GameServerDeploymentRollout",
-		int(d.Timeout(schema.TimeoutDelete).Minutes()))
+		d.Timeout(schema.TimeoutDelete))
 
 	if err != nil {
 		return err

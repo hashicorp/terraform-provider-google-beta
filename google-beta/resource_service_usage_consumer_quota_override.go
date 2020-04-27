@@ -137,7 +137,7 @@ func resourceServiceUsageConsumerQuotaOverrideCreate(d *schema.ResourceData, met
 	var opRes map[string]interface{}
 	err = serviceUsageOperationWaitTimeWithResponse(
 		config, res, &opRes, project, "Creating ConsumerQuotaOverride",
-		int(d.Timeout(schema.TimeoutCreate).Minutes()))
+		d.Timeout(schema.TimeoutCreate))
 	if err != nil {
 		// The resource didn't actually create
 		d.SetId("")
@@ -246,7 +246,7 @@ func resourceServiceUsageConsumerQuotaOverrideUpdate(d *schema.ResourceData, met
 
 	err = serviceUsageOperationWaitTime(
 		config, res, project, "Updating ConsumerQuotaOverride",
-		int(d.Timeout(schema.TimeoutUpdate).Minutes()))
+		d.Timeout(schema.TimeoutUpdate))
 
 	if err != nil {
 		return err
@@ -278,7 +278,7 @@ func resourceServiceUsageConsumerQuotaOverrideDelete(d *schema.ResourceData, met
 
 	err = serviceUsageOperationWaitTime(
 		config, res, project, "Deleting ConsumerQuotaOverride",
-		int(d.Timeout(schema.TimeoutDelete).Minutes()))
+		d.Timeout(schema.TimeoutDelete))
 
 	if err != nil {
 		return err
