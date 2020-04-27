@@ -1,3 +1,4 @@
+//
 package google
 
 import (
@@ -263,6 +264,26 @@ func resourceComputeRegionInstanceGroupManager() *schema.Resource {
 					},
 				},
 			},
+
+			"stateful_disk": {
+				Type:     schema.TypeSet,
+				Optional: true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"device_name": {
+							Type:     schema.TypeString,
+							Required: true,
+						},
+
+						"delete_rule": {
+							Type:         schema.TypeString,
+							Default:      "NEVER",
+							Optional:     true,
+							ValidateFunc: validation.StringInSlice([]string{"NEVER", "ON_PERMANENT_INSTANCE_DELETION"}, true),
+						},
+					},
+				},
+			},
 		},
 	}
 }
@@ -291,6 +312,7 @@ func resourceComputeRegionInstanceGroupManagerCreate(d *schema.ResourceData, met
 		Versions:            expandVersions(d.Get("version").([]interface{})),
 		UpdatePolicy:        expandRegionUpdatePolicy(d.Get("update_policy").([]interface{})),
 		DistributionPolicy:  expandDistributionPolicy(d.Get("distribution_policy_zones").(*schema.Set)),
+		StatefulPolicy:      expandStatefulPolicy(d.Get("stateful_disk").(*schema.Set).List()),
 		// Force send TargetSize to allow size of 0.
 		ForceSendFields: []string{"TargetSize"},
 	}
@@ -399,6 +421,9 @@ func resourceComputeRegionInstanceGroupManagerRead(d *schema.ResourceData, meta 
 	if err := d.Set("update_policy", flattenRegionUpdatePolicy(manager.UpdatePolicy)); err != nil {
 		return fmt.Errorf("Error setting update_policy in state: %s", err.Error())
 	}
+	if err = d.Set("stateful_disk", flattenStatefulPolicy(manager.StatefulPolicy)); err != nil {
+		return fmt.Errorf("Error setting stateful_disk in state: %s", err.Error())
+	}
 
 	if d.Get("wait_for_instances").(bool) {
 		conf := resource.StateChangeConf{
@@ -452,6 +477,11 @@ func resourceComputeRegionInstanceGroupManagerUpdate(d *schema.ResourceData, met
 
 	if d.HasChange("update_policy") {
 		updatedManager.UpdatePolicy = expandRegionUpdatePolicy(d.Get("update_policy").([]interface{}))
+		change = true
+	}
+
+	if d.HasChange("stateful_disk") {
+		updatedManager.StatefulPolicy = expandStatefulPolicy(d.Get("stateful_disk").(*schema.Set).List())
 		change = true
 	}
 
