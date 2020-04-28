@@ -415,7 +415,6 @@ balancing cannot be used with the other(s). Default value: "INTERNAL" Possible v
 			"locality_lb_policy": {
 				Type:         schema.TypeString,
 				Optional:     true,
-				ForceNew:     true,
 				ValidateFunc: validation.StringInSlice([]string{"ROUND_ROBIN", "LEAST_REQUEST", "RING_HASH", "RANDOM", "ORIGINAL_DESTINATION", "MAGLEV", ""}, false),
 				Description: `The load balancing algorithm used within the scope of the locality.
 The possible values are -
