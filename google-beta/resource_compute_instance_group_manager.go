@@ -755,6 +755,9 @@ func flattenAutoHealingPolicies(autoHealingPolicies []*computeBeta.InstanceGroup
 }
 
 func flattenStatefulPolicy(statefulPolicy *computeBeta.StatefulPolicy) []map[string]interface{} {
+	if statefulPolicy == nil || statefulPolicy.PreservedState == nil || statefulPolicy.PreservedState.Disks == nil {
+		return make([]map[string]interface{}, 0, 0)
+	}
 	result := make([]map[string]interface{}, 0, len(statefulPolicy.PreservedState.Disks))
 	for deviceName, disk := range statefulPolicy.PreservedState.Disks {
 		data := map[string]interface{}{
