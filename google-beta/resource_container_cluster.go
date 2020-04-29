@@ -2219,6 +2219,14 @@ func expandClusterAddonsConfig(configured interface{}) *containerBeta.AddonsConf
 		}
 	}
 
+	if v, ok := config["kalm_config"]; ok && len(v.([]interface{})) > 0 {
+		addon := v.([]interface{})[0].(map[string]interface{})
+		ac.KalmConfig = &containerBeta.KalmConfig{
+			Enabled:         addon["enabled"].(bool),
+			ForceSendFields: []string{"Enabled"},
+		}
+	}
+
 	if v, ok := config["gce_persistent_disk_csi_driver_config"]; ok && len(v.([]interface{})) > 0 {
 		addon := v.([]interface{})[0].(map[string]interface{})
 		ac.GcePersistentDiskCsiDriverConfig = &containerBeta.GcePersistentDiskCsiDriverConfig{
@@ -2628,6 +2636,14 @@ func flattenClusterAddonsConfig(c *containerBeta.AddonsConfig) []map[string]inte
 		result["dns_cache_config"] = []map[string]interface{}{
 			{
 				"enabled": c.DnsCacheConfig.Enabled,
+			},
+		}
+	}
+
+	if c.KalmConfig != nil {
+		result["kalm_config"] = []map[string]interface{}{
+			{
+				"enabled": c.KalmConfig.Enabled,
 			},
 		}
 	}
