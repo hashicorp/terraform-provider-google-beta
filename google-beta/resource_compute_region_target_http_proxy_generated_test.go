@@ -32,11 +32,16 @@ func TestAccComputeRegionTargetHttpProxy_regionTargetHttpProxyBasicExample(t *te
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProvidersOiCS,
+		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckComputeRegionTargetHttpProxyDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccComputeRegionTargetHttpProxy_regionTargetHttpProxyBasicExample(context),
+			},
+			{
+				ResourceName:      "google_compute_region_target_http_proxy.default",
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -45,16 +50,12 @@ func TestAccComputeRegionTargetHttpProxy_regionTargetHttpProxyBasicExample(t *te
 func testAccComputeRegionTargetHttpProxy_regionTargetHttpProxyBasicExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_compute_region_target_http_proxy" "default" {
-  provider = google-beta
-
   region  = "us-central1"
   name    = "tf-test-test-proxy%{random_suffix}"
   url_map = google_compute_region_url_map.default.self_link
 }
 
 resource "google_compute_region_url_map" "default" {
-  provider = google-beta
-
   region          = "us-central1"
   name            = "tf-test-url-map%{random_suffix}"
   default_service = google_compute_region_backend_service.default.self_link
@@ -76,8 +77,6 @@ resource "google_compute_region_url_map" "default" {
 }
 
 resource "google_compute_region_backend_service" "default" {
-  provider = google-beta
-
   region      = "us-central1"
   name        = "tf-test-backend-service%{random_suffix}"
   protocol    = "HTTP"
@@ -87,8 +86,6 @@ resource "google_compute_region_backend_service" "default" {
 }
 
 resource "google_compute_region_health_check" "default" {
-  provider = google-beta
-
   region = "us-central1"
   name   = "tf-test-http-health-check%{random_suffix}"
   http_health_check {
@@ -107,11 +104,16 @@ func TestAccComputeRegionTargetHttpProxy_regionTargetHttpProxyHttpsRedirectExamp
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProvidersOiCS,
+		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckComputeRegionTargetHttpProxyDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccComputeRegionTargetHttpProxy_regionTargetHttpProxyHttpsRedirectExample(context),
+			},
+			{
+				ResourceName:      "google_compute_region_target_http_proxy.default",
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -120,16 +122,12 @@ func TestAccComputeRegionTargetHttpProxy_regionTargetHttpProxyHttpsRedirectExamp
 func testAccComputeRegionTargetHttpProxy_regionTargetHttpProxyHttpsRedirectExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_compute_region_target_http_proxy" "default" {
-  provider = google-beta
-
   region  = "us-central1"
   name    = "tf-test-test-https-redirect-proxy%{random_suffix}"
   url_map = google_compute_region_url_map.default.self_link
 }
 
 resource "google_compute_region_url_map" "default" {
-  provider = google-beta
-
   region          = "us-central1"
   name            = "tf-test-url-map%{random_suffix}"
   default_url_redirect {

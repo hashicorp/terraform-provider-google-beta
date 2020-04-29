@@ -78,11 +78,16 @@ func TestAccComputeRegionBackendService_regionBackendServiceIlbRoundRobinExample
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProvidersOiCS,
+		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckComputeRegionBackendServiceDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccComputeRegionBackendService_regionBackendServiceIlbRoundRobinExample(context),
+			},
+			{
+				ResourceName:      "google_compute_region_backend_service.default",
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -91,8 +96,6 @@ func TestAccComputeRegionBackendService_regionBackendServiceIlbRoundRobinExample
 func testAccComputeRegionBackendService_regionBackendServiceIlbRoundRobinExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_compute_region_backend_service" "default" {
-  provider = "google-beta"
-
   region = "us-central1"
   name = "tf-test-region-service%{random_suffix}"
   health_checks = ["${google_compute_health_check.health_check.self_link}"]
@@ -102,8 +105,6 @@ resource "google_compute_region_backend_service" "default" {
 }
 
 resource "google_compute_health_check" "health_check" {
-  provider = "google-beta"
-
   name               = "tf-test-rbs-health-check%{random_suffix}"
   http_health_check {
     port = 80
@@ -121,11 +122,16 @@ func TestAccComputeRegionBackendService_regionBackendServiceIlbRingHashExample(t
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProvidersOiCS,
+		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckComputeRegionBackendServiceDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccComputeRegionBackendService_regionBackendServiceIlbRingHashExample(context),
+			},
+			{
+				ResourceName:      "google_compute_region_backend_service.default",
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -134,8 +140,6 @@ func TestAccComputeRegionBackendService_regionBackendServiceIlbRingHashExample(t
 func testAccComputeRegionBackendService_regionBackendServiceIlbRingHashExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_compute_region_backend_service" "default" {
-  provider = "google-beta"
-
   region = "us-central1"
   name = "tf-test-region-service%{random_suffix}"
   health_checks = ["${google_compute_health_check.health_check.self_link}"]
@@ -161,8 +165,6 @@ resource "google_compute_region_backend_service" "default" {
 }
 
 resource "google_compute_health_check" "health_check" {
-  provider = "google-beta"
-
   name               = "tf-test-rbs-health-check%{random_suffix}"
   http_health_check {
     port = 80
@@ -180,11 +182,16 @@ func TestAccComputeRegionBackendService_regionBackendServiceBalancingModeExample
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProvidersOiCS,
+		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckComputeRegionBackendServiceDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccComputeRegionBackendService_regionBackendServiceBalancingModeExample(context),
+			},
+			{
+				ResourceName:      "google_compute_region_backend_service.default",
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -193,8 +200,6 @@ func TestAccComputeRegionBackendService_regionBackendServiceBalancingModeExample
 func testAccComputeRegionBackendService_regionBackendServiceBalancingModeExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_compute_region_backend_service" "default" {
-  provider = google-beta
-
   load_balancing_scheme = "INTERNAL_MANAGED"
 
   backend {
@@ -212,15 +217,11 @@ resource "google_compute_region_backend_service" "default" {
 }
 
 data "google_compute_image" "debian_image" {
-  provider = google-beta
-
   family   = "debian-9"
   project  = "debian-cloud"
 }
 
 resource "google_compute_region_instance_group_manager" "rigm" {
-  provider = google-beta
-
   region   = "us-central1"
   name     = "tf-test-rbs-rigm%{random_suffix}"
   version {
@@ -232,8 +233,6 @@ resource "google_compute_region_instance_group_manager" "rigm" {
 }
 
 resource "google_compute_instance_template" "instance_template" {
-  provider     = google-beta
-
   name         = "template-tf-test-region-service%{random_suffix}"
   machine_type = "n1-standard-1"
 
@@ -252,8 +251,6 @@ resource "google_compute_instance_template" "instance_template" {
 }
 
 resource "google_compute_region_health_check" "default" {
-  provider = google-beta
-
   region = "us-central1"
   name   = "tf-test-rbs-health-check%{random_suffix}"
   http_health_check {
@@ -262,16 +259,12 @@ resource "google_compute_region_health_check" "default" {
 }
 
 resource "google_compute_network" "default" {
-  provider = google-beta
-
   name                    = "tf-test-rbs-net%{random_suffix}"
   auto_create_subnetworks = false
   routing_mode            = "REGIONAL"
 }
 
 resource "google_compute_subnetwork" "default" {
-  provider = google-beta
-
   name          = "tf-test-rbs-net%{random_suffix}-default"
   ip_cidr_range = "10.1.2.0/24"
   region        = "us-central1"

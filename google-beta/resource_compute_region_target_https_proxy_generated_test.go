@@ -32,11 +32,16 @@ func TestAccComputeRegionTargetHttpsProxy_regionTargetHttpsProxyBasicExample(t *
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProvidersOiCS,
+		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckComputeRegionTargetHttpsProxyDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccComputeRegionTargetHttpsProxy_regionTargetHttpsProxyBasicExample(context),
+			},
+			{
+				ResourceName:      "google_compute_region_target_https_proxy.default",
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -45,8 +50,6 @@ func TestAccComputeRegionTargetHttpsProxy_regionTargetHttpsProxyBasicExample(t *
 func testAccComputeRegionTargetHttpsProxy_regionTargetHttpsProxyBasicExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_compute_region_target_https_proxy" "default" {
-  provider = google-beta
-
   region           = "us-central1"
   name             = "tf-test-test-proxy%{random_suffix}"
   url_map          = google_compute_region_url_map.default.self_link
@@ -54,8 +57,6 @@ resource "google_compute_region_target_https_proxy" "default" {
 }
 
 resource "google_compute_region_ssl_certificate" "default" {
-  provider = google-beta
-
   region      = "us-central1"
   name        = "tf-test-my-certificate%{random_suffix}"
   private_key = file("test-fixtures/ssl_cert/test.key")
@@ -63,8 +64,6 @@ resource "google_compute_region_ssl_certificate" "default" {
 }
 
 resource "google_compute_region_url_map" "default" {
-  provider = google-beta
-
   region      = "us-central1"
   name        = "tf-test-url-map%{random_suffix}"
   description = "a description"
@@ -88,8 +87,6 @@ resource "google_compute_region_url_map" "default" {
 }
 
 resource "google_compute_region_backend_service" "default" {
-  provider = google-beta
-
   region      = "us-central1"
   name        = "tf-test-backend-service%{random_suffix}"
   protocol    = "HTTP"
@@ -99,8 +96,6 @@ resource "google_compute_region_backend_service" "default" {
 }
 
 resource "google_compute_region_health_check" "default" {
-  provider = google-beta
-
   region = "us-central1"
   name   = "tf-test-http-health-check%{random_suffix}"
   http_health_check {
