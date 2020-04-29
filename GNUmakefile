@@ -1,3 +1,4 @@
+TEST?=$$(go list ./...)
 WEBSITE_REPO=github.com/hashicorp/terraform-website
 PKG_NAME=google
 DIR_NAME=google-beta
@@ -10,12 +11,10 @@ build: fmtcheck generate
 	go install
 
 test: fmtcheck generate
-	go test -i ./... || exit 1
-	echo ./... | \
-		xargs -t -n4 go test $(TESTARGS) -timeout=30s -parallel=4
+	go test -i $(TESTARGS) -timeout=30s -parallel=4 $(TEST)
 
 testacc: fmtcheck
-	TF_ACC=1 TF_SCHEMA_PANIC_ON_ERROR=1 go test ./... -v $(TESTARGS) -timeout 240m -ldflags="-X=github.com/terraform-providers/terraform-provider-google-beta/version.ProviderVersion=acc"
+	TF_ACC=1 TF_SCHEMA_PANIC_ON_ERROR=1 go test $(TEST) -v $(TESTARGS) -timeout 240m -ldflags="-X=github.com/terraform-providers/terraform-provider-google-beta/version.ProviderVersion=acc"
 
 fmt:
 	@echo "==> Fixing source code with gofmt..."
@@ -37,6 +36,14 @@ tools:
 
 generate:
 	go generate  ./...
+
+test-compile:
+	@if [ "$(TEST)" = "./..." ]; then \
+		echo "ERROR: Set TEST to a specific package. For example,"; \
+		echo "  make test-compile TEST=./$(DIR_NAME)"; \
+		exit 1; \
+	fi
+	go test -c $(TEST) $(TESTARGS)
 
 website:
 ifeq (,$(wildcard $(GOPATH)/src/$(WEBSITE_REPO)))
