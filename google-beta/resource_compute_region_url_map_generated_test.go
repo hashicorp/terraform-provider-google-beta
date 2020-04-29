@@ -32,11 +32,16 @@ func TestAccComputeRegionUrlMap_regionUrlMapBasicExample(t *testing.T) {
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProvidersOiCS,
+		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckComputeRegionUrlMapDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccComputeRegionUrlMap_regionUrlMapBasicExample(context),
+			},
+			{
+				ResourceName:      "google_compute_region_url_map.regionurlmap",
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -45,8 +50,6 @@ func TestAccComputeRegionUrlMap_regionUrlMapBasicExample(t *testing.T) {
 func testAccComputeRegionUrlMap_regionUrlMapBasicExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_compute_region_url_map" "regionurlmap" {
-  provider = google-beta
-
   region = "us-central1"
 
   name        = "regionurlmap%{random_suffix}"
@@ -82,8 +85,6 @@ resource "google_compute_region_url_map" "regionurlmap" {
 }
 
 resource "google_compute_region_backend_service" "login" {
-  provider = google-beta
-
   region = "us-central1"
 
   name        = "login%{random_suffix}"
@@ -94,8 +95,6 @@ resource "google_compute_region_backend_service" "login" {
 }
 
 resource "google_compute_region_backend_service" "home" {
-  provider = google-beta
-
   region = "us-central1"
 
   name        = "home%{random_suffix}"
@@ -106,8 +105,6 @@ resource "google_compute_region_backend_service" "home" {
 }
 
 resource "google_compute_region_health_check" "default" {
-  provider = google-beta
-
   region = "us-central1"
 
   name               = "tf-test-health-check%{random_suffix}"
@@ -130,11 +127,16 @@ func TestAccComputeRegionUrlMap_regionUrlMapL7IlbPathExample(t *testing.T) {
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProvidersOiCS,
+		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckComputeRegionUrlMapDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccComputeRegionUrlMap_regionUrlMapL7IlbPathExample(context),
+			},
+			{
+				ResourceName:      "google_compute_region_url_map.regionurlmap",
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -143,7 +145,6 @@ func TestAccComputeRegionUrlMap_regionUrlMapL7IlbPathExample(t *testing.T) {
 func testAccComputeRegionUrlMap_regionUrlMapL7IlbPathExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_compute_region_url_map" "regionurlmap" {
-  provider = "google-beta"
   name        = "regionurlmap%{random_suffix}"
   description = "a description"
   default_service = google_compute_region_backend_service.home.self_link
@@ -230,7 +231,6 @@ resource "google_compute_region_url_map" "regionurlmap" {
 }
 
 resource "google_compute_region_backend_service" "home" {
-  provider = "google-beta"
   name        = "home%{random_suffix}"
   protocol    = "HTTP"
   timeout_sec = 10
@@ -240,7 +240,6 @@ resource "google_compute_region_backend_service" "home" {
 }
 
 resource "google_compute_region_health_check" "default" {
-  provider = "google-beta"
   name               = "tf-test-health-check%{random_suffix}"
   http_health_check {
     port = 80
@@ -258,11 +257,16 @@ func TestAccComputeRegionUrlMap_regionUrlMapL7IlbPathPartialExample(t *testing.T
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProvidersOiCS,
+		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckComputeRegionUrlMapDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccComputeRegionUrlMap_regionUrlMapL7IlbPathPartialExample(context),
+			},
+			{
+				ResourceName:      "google_compute_region_url_map.regionurlmap",
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -271,7 +275,6 @@ func TestAccComputeRegionUrlMap_regionUrlMapL7IlbPathPartialExample(t *testing.T
 func testAccComputeRegionUrlMap_regionUrlMapL7IlbPathPartialExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_compute_region_url_map" "regionurlmap" {
-  provider = "google-beta"
   name        = "regionurlmap%{random_suffix}"
   description = "a description"
   default_service = google_compute_region_backend_service.home.self_link
@@ -326,7 +329,6 @@ resource "google_compute_region_url_map" "regionurlmap" {
 }
 
 resource "google_compute_region_backend_service" "home" {
-  provider = "google-beta"
   name        = "home%{random_suffix}"
   protocol    = "HTTP"
   timeout_sec = 10
@@ -336,7 +338,6 @@ resource "google_compute_region_backend_service" "home" {
 }
 
 resource "google_compute_region_health_check" "default" {
-  provider = "google-beta"
   name               = "tf-test-health-check%{random_suffix}"
   http_health_check {
     port = 80
@@ -354,11 +355,16 @@ func TestAccComputeRegionUrlMap_regionUrlMapL7IlbRouteExample(t *testing.T) {
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProvidersOiCS,
+		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckComputeRegionUrlMapDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccComputeRegionUrlMap_regionUrlMapL7IlbRouteExample(context),
+			},
+			{
+				ResourceName:      "google_compute_region_url_map.regionurlmap",
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -367,7 +373,6 @@ func TestAccComputeRegionUrlMap_regionUrlMapL7IlbRouteExample(t *testing.T) {
 func testAccComputeRegionUrlMap_regionUrlMapL7IlbRouteExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_compute_region_url_map" "regionurlmap" {
-  provider        = "google-beta"
   name            = "regionurlmap%{random_suffix}"
   description     = "a description"
   default_service = google_compute_region_backend_service.home.self_link
@@ -435,7 +440,6 @@ resource "google_compute_region_url_map" "regionurlmap" {
 }
 
 resource "google_compute_region_backend_service" "home" {
-  provider    = "google-beta"
   name        = "home%{random_suffix}"
   protocol    = "HTTP"
   timeout_sec = 10
@@ -445,7 +449,6 @@ resource "google_compute_region_backend_service" "home" {
 }
 
 resource "google_compute_region_health_check" "default" {
-  provider = "google-beta"
   name     = "tf-test-health-check%{random_suffix}"
   http_health_check {
     port = 80
@@ -463,11 +466,16 @@ func TestAccComputeRegionUrlMap_regionUrlMapL7IlbRoutePartialExample(t *testing.
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProvidersOiCS,
+		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckComputeRegionUrlMapDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccComputeRegionUrlMap_regionUrlMapL7IlbRoutePartialExample(context),
+			},
+			{
+				ResourceName:      "google_compute_region_url_map.regionurlmap",
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -476,7 +484,6 @@ func TestAccComputeRegionUrlMap_regionUrlMapL7IlbRoutePartialExample(t *testing.
 func testAccComputeRegionUrlMap_regionUrlMapL7IlbRoutePartialExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_compute_region_url_map" "regionurlmap" {
-  provider = "google-beta"
   name        = "regionurlmap%{random_suffix}"
   description = "a description"
   default_service = google_compute_region_backend_service.home.self_link
@@ -519,7 +526,6 @@ resource "google_compute_region_url_map" "regionurlmap" {
 }
 
 resource "google_compute_region_backend_service" "home" {
-  provider = "google-beta"
   name        = "home%{random_suffix}"
   protocol    = "HTTP"
   timeout_sec = 10
@@ -529,7 +535,6 @@ resource "google_compute_region_backend_service" "home" {
 }
 
 resource "google_compute_region_health_check" "default" {
-  provider = "google-beta"
   name               = "tf-test-health-check%{random_suffix}"
   http_health_check {
     port = 80
