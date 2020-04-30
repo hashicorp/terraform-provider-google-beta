@@ -1,4 +1,29 @@
 ## 3.20.0 (Unreleased)
+
+* **New Resource:** `google_artifact_registry_repository` ([#1981](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1981))
+* **New Resource:** `google_bigquery_connection` ([#2014](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2014))
+* **New Resource:** `google_logging_billing_account_bucket_config` ([#2008](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2008))
+* **New Resource:** `google_logging_folder_bucket_config` ([#2008](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2008))
+* **New Resource:** `google_logging_organization_bucket_config` ([#2008](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2008))
+* **New Resource:** `google_logging_project_bucket_config` ([#2008](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2008))
+
+IMPROVEMENTS:
+* appengine: Added `automatic_scaling`, `basic_scaling`, and `manual_scaling` to `google_app_engine_standard_app_version` ([#1984](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1984))
+* bigquery: added `service_account_name` field to `google_bigquery_data_transfer_config` resource ([#2004](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2004))
+* bigtable: added ability to add/remove column families in `google_bigtable_table` ([#1988](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1988))
+* cloudfunctions: Added validation to label keys for `google_cloudfunctions_function` as API errors aren't useful. ([#2009](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2009))
+* compute: Added support for `stateful_disk` to both `google_compute_instance_group_manager` and `google_compute_region_instance_group_manager`. ([#2006](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2006))
+* compute: Added support for default URL redirects to `google_compute_url_map` and `google_compute_region_url_map` ([#1998](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1998))
+* compute: Made `google_compute_url_map` and `google_compute_region_url_map` field `strip_query` optional and default false ([#1986](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1986))
+* dataflow: Added `additional_experiments` field to `google_dataflow_job` ([#2005](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2005))
+* dns: Added `service_directory_config` field to`google_dns_managed_zone` ([#1976](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1976))
+* compute: Added update of `google_compute_backend_service` and `google_compute_backend_service` field `locality_lb_policy ([#2012](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2012))
+
+BUG FIXES:
+* accesscontextmanager: Fixed setting `require_screen_lock` to true for `google_access_context_manager_access_level` ([#2010](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2010))
+* appengine: Changed `google_app_engine_application` to respect updates in `iap` ([#2000](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2000))
+* storage: Added retries for `google_storage_bucket_iam_*` on 412 (precondition not met) errors for eventually consistent bucket creation. ([#2011](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2011))
+
 ## 3.19.0 (April 27, 2020)
 
 FEATURES:
