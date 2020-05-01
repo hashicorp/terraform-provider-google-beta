@@ -14,7 +14,6 @@ IMPROVEMENTS:
 * cloudfunctions: Added validation to label keys for `google_cloudfunctions_function` as API errors aren't useful. ([#2009](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2009))
 * compute: Added support for `stateful_disk` to both `google_compute_instance_group_manager` and `google_compute_region_instance_group_manager`. ([#2006](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2006))
 * compute: Added support for default URL redirects to `google_compute_url_map` and `google_compute_region_url_map` ([#1998](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1998))
-* compute: Made `google_compute_url_map` and `google_compute_region_url_map` field `strip_query` optional and default false ([#1986](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1986))
 * dataflow: Added `additional_experiments` field to `google_dataflow_job` ([#2005](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2005))
 * dns: Added `service_directory_config` field to`google_dns_managed_zone` ([#1976](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1976))
 * compute: Added update of `google_compute_backend_service` and `google_compute_backend_service` field `locality_lb_policy ([#2012](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2012))
