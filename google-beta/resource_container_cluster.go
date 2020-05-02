@@ -57,6 +57,7 @@ var (
 		"addons_config.0.cloudrun_config",
 		"addons_config.0.dns_cache_config",
 		"addons_config.0.gce_persistent_disk_csi_driver_config",
+		"addons_config.0.kalm_config",
 	}
 )
 
@@ -288,6 +289,21 @@ func resourceContainerCluster() *schema.Resource {
 							},
 						},
 						"gce_persistent_disk_csi_driver_config": {
+							Type:         schema.TypeList,
+							Optional:     true,
+							Computed:     true,
+							AtLeastOneOf: addonsConfigKeys,
+							MaxItems:     1,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"enabled": {
+										Type:     schema.TypeBool,
+										Required: true,
+									},
+								},
+							},
+						},
+						"kalm_config": {
 							Type:         schema.TypeList,
 							Optional:     true,
 							Computed:     true,
@@ -2212,6 +2228,14 @@ func expandClusterAddonsConfig(configured interface{}) *containerBeta.AddonsConf
 		}
 	}
 
+	if v, ok := config["kalm_config"]; ok && len(v.([]interface{})) > 0 {
+		addon := v.([]interface{})[0].(map[string]interface{})
+		ac.KalmConfig = &containerBeta.KalmConfig{
+			Enabled:         addon["enabled"].(bool),
+			ForceSendFields: []string{"Enabled"},
+		}
+	}
+
 	return ac
 }
 
@@ -2621,6 +2645,14 @@ func flattenClusterAddonsConfig(c *containerBeta.AddonsConfig) []map[string]inte
 		result["gce_persistent_disk_csi_driver_config"] = []map[string]interface{}{
 			{
 				"enabled": c.GcePersistentDiskCsiDriverConfig.Enabled,
+			},
+		}
+	}
+
+	if c.KalmConfig != nil {
+		result["kalm_config"] = []map[string]interface{}{
+			{
+				"enabled": c.KalmConfig.Enabled,
 			},
 		}
 	}
