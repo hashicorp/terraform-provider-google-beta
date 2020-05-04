@@ -56,7 +56,7 @@ resource "google_compute_instance" "mirror" {
   }
 
   network_interface {
-    network = google_compute_network.default.self_link
+    network = google_compute_network.default.id
     access_config {
     }
   }
@@ -67,15 +67,15 @@ resource "google_compute_packet_mirroring" "foobar" {
   provider = google-beta
   description = "bar"
   network {
-    url = google_compute_network.default.self_link
+    url = google_compute_network.default.id
   }
   collector_ilb {
-    url = google_compute_forwarding_rule.default.self_link
+    url = google_compute_forwarding_rule.default.id
   }
   mirrored_resources {
     tags = ["foo"]
     instances {
-      url = google_compute_instance.mirror.self_link
+      url = google_compute_instance.mirror.id
     }
   }
   filter {
@@ -91,7 +91,7 @@ resource "google_compute_network" "default" {
 resource "google_compute_subnetwork" "default" {
   name = "my-subnetwork"
   provider = google-beta
-  network       = google_compute_network.default.self_link
+  network       = google_compute_network.default.id
   ip_cidr_range = "10.2.0.0/16"
 
 }
@@ -99,7 +99,7 @@ resource "google_compute_subnetwork" "default" {
 resource "google_compute_region_backend_service" "default" {
   name = "my-service"
   provider = google-beta
-  health_checks = ["${google_compute_health_check.default.self_link}"]
+  health_checks = [google_compute_health_check.default.id]
 }
 
 resource "google_compute_health_check" "default" {
@@ -120,10 +120,10 @@ resource "google_compute_forwarding_rule" "default" {
   is_mirroring_collector = true
   ip_protocol            = "TCP"
   load_balancing_scheme  = "INTERNAL"
-  backend_service        = google_compute_region_backend_service.default.self_link
+  backend_service        = google_compute_region_backend_service.default.id
   all_ports              = true
-  network                = google_compute_network.default.self_link
-  subnetwork             = google_compute_subnetwork.default.self_link
+  network                = google_compute_network.default.id
+  subnetwork             = google_compute_subnetwork.default.id
   network_tier           = "PREMIUM"
 }
 ```

@@ -51,7 +51,7 @@ func testAccComputeBackendService_backendServiceBasicExample(context map[string]
 	return Nprintf(`
 resource "google_compute_backend_service" "default" {
   name          = "tf-test-backend-service%{random_suffix}"
-  health_checks = [google_compute_http_health_check.default.self_link]
+  health_checks = [google_compute_http_health_check.default.id]
 }
 
 resource "google_compute_http_health_check" "default" {
@@ -88,7 +88,7 @@ resource "google_compute_backend_service" "default" {
   provider = google-beta
 
   name                  = "tf-test-backend-service%{random_suffix}"
-  health_checks         = [google_compute_health_check.health_check.self_link]
+  health_checks         = [google_compute_health_check.health_check.id]
   load_balancing_scheme = "INTERNAL_SELF_MANAGED"
   locality_lb_policy    = "ROUND_ROBIN"
 }
@@ -129,7 +129,7 @@ resource "google_compute_backend_service" "default" {
   provider = google-beta
 
   name                  = "tf-test-backend-service%{random_suffix}"
-  health_checks         = [google_compute_health_check.health_check.self_link]
+  health_checks         = [google_compute_health_check.health_check.id]
   load_balancing_scheme = "INTERNAL_SELF_MANAGED"
   locality_lb_policy    = "RING_HASH"
   session_affinity      = "HTTP_COOKIE"
