@@ -54,16 +54,16 @@ resource "google_compute_forwarding_rule" "default" {
   name                  = "tf-test-website-forwarding-rule%{random_suffix}"
   region                = "us-central1"
   load_balancing_scheme = "INTERNAL"
-  backend_service       = "${google_compute_region_backend_service.backend.self_link}"
+  backend_service       = google_compute_region_backend_service.backend.id
   all_ports             = true
   allow_global_access   = true
-  network               = "${google_compute_network.default.name}"
-  subnetwork            = "${google_compute_subnetwork.default.name}"
+  network               = google_compute_network.default.name
+  subnetwork            = google_compute_subnetwork.default.name
 }
 resource "google_compute_region_backend_service" "backend" {
   name                  = "tf-test-website-backend%{random_suffix}"
   region                = "us-central1"
-  health_checks         = ["${google_compute_health_check.hc.self_link}"]
+  health_checks         = [google_compute_health_check.hc.id]
 }
 resource "google_compute_health_check" "hc" {
   name               = "check-tf-test-website-backend%{random_suffix}"
@@ -81,7 +81,7 @@ resource "google_compute_subnetwork" "default" {
   name          = "tf-test-website-net%{random_suffix}"
   ip_cidr_range = "10.0.0.0/16"
   region        = "us-central1"
-  network       = "${google_compute_network.default.self_link}"
+  network       = google_compute_network.default.id
 }
 `, context)
 }
@@ -114,7 +114,7 @@ func testAccComputeForwardingRule_forwardingRuleBasicExample(context map[string]
 	return Nprintf(`
 resource "google_compute_forwarding_rule" "default" {
   name       = "tf-test-website-forwarding-rule%{random_suffix}"
-  target     = google_compute_target_pool.default.self_link
+  target     = google_compute_target_pool.default.id
   port_range = "80"
 }
 
@@ -156,7 +156,7 @@ resource "google_compute_forwarding_rule" "default" {
   region = "us-central1"
 
   load_balancing_scheme = "INTERNAL"
-  backend_service       = google_compute_region_backend_service.backend.self_link
+  backend_service       = google_compute_region_backend_service.backend.id
   all_ports             = true
   network               = google_compute_network.default.name
   subnetwork            = google_compute_subnetwork.default.name
@@ -165,7 +165,7 @@ resource "google_compute_forwarding_rule" "default" {
 resource "google_compute_region_backend_service" "backend" {
   name          = "tf-test-website-backend%{random_suffix}"
   region        = "us-central1"
-  health_checks = [google_compute_health_check.hc.self_link]
+  health_checks = [google_compute_health_check.hc.id]
 }
 
 resource "google_compute_health_check" "hc" {
@@ -187,7 +187,7 @@ resource "google_compute_subnetwork" "default" {
   name          = "tf-test-website-net%{random_suffix}"
   ip_cidr_range = "10.0.0.0/16"
   region        = "us-central1"
-  network       = google_compute_network.default.self_link
+  network       = google_compute_network.default.id
 }
 `, context)
 }
@@ -223,9 +223,9 @@ resource "google_compute_forwarding_rule" "default" {
   ip_protocol           = "TCP"
   load_balancing_scheme = "INTERNAL_MANAGED"
   port_range            = "80"
-  target                = google_compute_region_target_http_proxy.default.self_link
-  network               = google_compute_network.default.self_link
-  subnetwork            = google_compute_subnetwork.default.self_link
+  target                = google_compute_region_target_http_proxy.default.id
+  network               = google_compute_network.default.id
+  subnetwork            = google_compute_subnetwork.default.id
   network_tier          = "PREMIUM"
 }
 
@@ -234,7 +234,7 @@ resource "google_compute_region_target_http_proxy" "default" {
 
   region  = "us-central1"
   name    = "tf-test-website-proxy%{random_suffix}"
-  url_map = google_compute_region_url_map.default.self_link
+  url_map = google_compute_region_url_map.default.id
 }
 
 resource "google_compute_region_url_map" "default" {
@@ -242,7 +242,7 @@ resource "google_compute_region_url_map" "default" {
 
   region          = "us-central1"
   name            = "tf-test-website-map%{random_suffix}"
-  default_service = google_compute_region_backend_service.default.self_link
+  default_service = google_compute_region_backend_service.default.id
 }
 
 resource "google_compute_region_backend_service" "default" {
@@ -261,7 +261,7 @@ resource "google_compute_region_backend_service" "default" {
   protocol    = "HTTP"
   timeout_sec = 10
 
-  health_checks = [google_compute_region_health_check.default.self_link]
+  health_checks = [google_compute_region_health_check.default.id]
 }
 
 data "google_compute_image" "debian_image" {
@@ -288,8 +288,8 @@ resource "google_compute_instance_template" "instance_template" {
   machine_type = "n1-standard-1"
 
   network_interface {
-    network = google_compute_network.default.self_link
-    subnetwork = google_compute_subnetwork.default.self_link
+    network = google_compute_network.default.id
+    subnetwork = google_compute_subnetwork.default.id
   }
 
   disk {
@@ -315,7 +315,7 @@ resource "google_compute_region_health_check" "default" {
 resource "google_compute_firewall" "fw1" {
   provider = google-beta
   name = "tf-test-website-fw%{random_suffix}-1"
-  network = google_compute_network.default.self_link
+  network = google_compute_network.default.id
   source_ranges = ["10.1.2.0/24"]
   allow {
     protocol = "tcp"
@@ -333,7 +333,7 @@ resource "google_compute_firewall" "fw2" {
   depends_on = [google_compute_firewall.fw1]
   provider = google-beta
   name = "tf-test-website-fw%{random_suffix}-2"
-  network = google_compute_network.default.self_link
+  network = google_compute_network.default.id
   source_ranges = ["0.0.0.0/0"]
   allow {
     protocol = "tcp"
@@ -347,7 +347,7 @@ resource "google_compute_firewall" "fw3" {
   depends_on = [google_compute_firewall.fw2]
   provider = google-beta
   name = "tf-test-website-fw%{random_suffix}-3"
-  network = google_compute_network.default.self_link
+  network = google_compute_network.default.id
   source_ranges = ["130.211.0.0/22", "35.191.0.0/16"]
   allow {
     protocol = "tcp"
@@ -360,7 +360,7 @@ resource "google_compute_firewall" "fw4" {
   depends_on = [google_compute_firewall.fw3]
   provider = google-beta
   name = "tf-test-website-fw%{random_suffix}-4"
-  network = google_compute_network.default.self_link
+  network = google_compute_network.default.id
   source_ranges = ["10.129.0.0/26"]
   target_tags = ["load-balanced-backend"]
   allow {
@@ -390,7 +390,7 @@ resource "google_compute_subnetwork" "default" {
   name          = "tf-test-website-net%{random_suffix}-default"
   ip_cidr_range = "10.1.2.0/24"
   region        = "us-central1"
-  network       = google_compute_network.default.self_link
+  network       = google_compute_network.default.id
 }
 
 resource "google_compute_subnetwork" "proxy" {
@@ -398,7 +398,7 @@ resource "google_compute_subnetwork" "proxy" {
   name          = "tf-test-website-net%{random_suffix}-proxy"
   ip_cidr_range = "10.129.0.0/26"
   region        = "us-central1"
-  network       = google_compute_network.default.self_link
+  network       = google_compute_network.default.id
   purpose       = "INTERNAL_HTTPS_LOAD_BALANCER"
   role          = "ACTIVE"
 }
