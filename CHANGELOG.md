@@ -1,4 +1,4 @@
-## 3.20.0 (Unreleased)
+## 3.20.0 (May 04, 2020)
 
 * **New Resource:** `google_artifact_registry_repository` ([#1981](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1981))
 * **New Resource:** `google_artifact_registry_repository_iam_policy` ([#1981](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1981))
