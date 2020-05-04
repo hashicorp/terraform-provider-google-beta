@@ -1,6 +1,9 @@
 ## 3.20.0 (Unreleased)
 
 * **New Resource:** `google_artifact_registry_repository` ([#1981](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1981))
+* **New Resource:** `google_artifact_registry_repository_iam_policy` ([#1981](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1981))
+* **New Resource:** `google_artifact_registry_repository_iam_binding` ([#1981](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1981))
+* **New Resource:** `google_artifact_registry_repository_iam_member` ([#1981](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1981))
 * **New Resource:** `google_bigquery_connection` ([#2014](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2014))
 * **New Resource:** `google_logging_billing_account_bucket_config` ([#2008](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2008))
 * **New Resource:** `google_logging_folder_bucket_config` ([#2008](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2008))
