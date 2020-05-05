@@ -53,8 +53,8 @@ var (
 		"addons_config.0.http_load_balancing",
 		"addons_config.0.horizontal_pod_autoscaling",
 		"addons_config.0.network_policy_config",
-		"addons_config.0.istio_config",
 		"addons_config.0.cloudrun_config",
+		"addons_config.0.istio_config",
 		"addons_config.0.dns_cache_config",
 		"addons_config.0.gce_persistent_disk_csi_driver_config",
 		"addons_config.0.kalm_config",
@@ -236,6 +236,21 @@ func resourceContainerCluster() *schema.Resource {
 								},
 							},
 						},
+						"cloudrun_config": {
+							Type:         schema.TypeList,
+							Optional:     true,
+							Computed:     true,
+							AtLeastOneOf: addonsConfigKeys,
+							MaxItems:     1,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"disabled": {
+										Type:     schema.TypeBool,
+										Required: true,
+									},
+								},
+							},
+						},
 						"istio_config": {
 							Type:         schema.TypeList,
 							Optional:     true,
@@ -254,21 +269,6 @@ func resourceContainerCluster() *schema.Resource {
 										// We can't use a Terraform-level default because it won't be true when the block is disabled: true
 										DiffSuppressFunc: emptyOrDefaultStringSuppress("AUTH_NONE"),
 										ValidateFunc:     validation.StringInSlice([]string{"AUTH_NONE", "AUTH_MUTUAL_TLS"}, false),
-									},
-								},
-							},
-						},
-						"cloudrun_config": {
-							Type:         schema.TypeList,
-							Optional:     true,
-							Computed:     true,
-							AtLeastOneOf: addonsConfigKeys,
-							MaxItems:     1,
-							Elem: &schema.Resource{
-								Schema: map[string]*schema.Schema{
-									"disabled": {
-										Type:     schema.TypeBool,
-										Required: true,
 									},
 								},
 							},
@@ -2195,19 +2195,19 @@ func expandClusterAddonsConfig(configured interface{}) *containerBeta.AddonsConf
 		}
 	}
 
+	if v, ok := config["cloudrun_config"]; ok && len(v.([]interface{})) > 0 {
+		addon := v.([]interface{})[0].(map[string]interface{})
+		ac.CloudRunConfig = &containerBeta.CloudRunConfig{
+			Disabled:        addon["disabled"].(bool),
+			ForceSendFields: []string{"Disabled"},
+		}
+	}
+
 	if v, ok := config["istio_config"]; ok && len(v.([]interface{})) > 0 {
 		addon := v.([]interface{})[0].(map[string]interface{})
 		ac.IstioConfig = &containerBeta.IstioConfig{
 			Disabled:        addon["disabled"].(bool),
 			Auth:            addon["auth"].(string),
-			ForceSendFields: []string{"Disabled"},
-		}
-	}
-
-	if v, ok := config["cloudrun_config"]; ok && len(v.([]interface{})) > 0 {
-		addon := v.([]interface{})[0].(map[string]interface{})
-		ac.CloudRunConfig = &containerBeta.CloudRunConfig{
-			Disabled:        addon["disabled"].(bool),
 			ForceSendFields: []string{"Disabled"},
 		}
 	}
@@ -2616,19 +2616,19 @@ func flattenClusterAddonsConfig(c *containerBeta.AddonsConfig) []map[string]inte
 		}
 	}
 
+	if c.CloudRunConfig != nil {
+		result["cloudrun_config"] = []map[string]interface{}{
+			{
+				"disabled": c.CloudRunConfig.Disabled,
+			},
+		}
+	}
+
 	if c.IstioConfig != nil {
 		result["istio_config"] = []map[string]interface{}{
 			{
 				"disabled": c.IstioConfig.Disabled,
 				"auth":     c.IstioConfig.Auth,
-			},
-		}
-	}
-
-	if c.CloudRunConfig != nil {
-		result["cloudrun_config"] = []map[string]interface{}{
-			{
-				"disabled": c.CloudRunConfig.Disabled,
 			},
 		}
 	}
