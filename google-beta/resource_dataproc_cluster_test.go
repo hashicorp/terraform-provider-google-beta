@@ -10,6 +10,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/terraform"
 
@@ -648,6 +649,27 @@ func TestAccDataprocCluster_withNetworkRefs(t *testing.T) {
 	})
 }
 
+func TestAccDataprocCluster_withEndpointConfig(t *testing.T) {
+	t.Parallel()
+
+	var cluster dataproc.Cluster
+	rnd := acctest.RandString(10)
+	vcrTest(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckDataprocClusterDestroy(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccDataprocCluster_withEndpointConfig(rnd),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckDataprocClusterExists(t, "google_dataproc_cluster.with_endpoint_config", &cluster),
+					resource.TestCheckResourceAttr("google_dataproc_cluster.with_endpoint_config", "cluster_config.0.endpoint_config.0.enable_http_port_access", "true"),
+				),
+			},
+		},
+	})
+}
+
 func TestAccDataprocCluster_KMS(t *testing.T) {
 	t.Parallel()
 
@@ -1234,6 +1256,21 @@ resource "google_dataproc_cluster" "with_labels" {
   lifecycle {
     ignore_changes = [labels]
   }
+}
+`, rnd)
+}
+
+func testAccDataprocCluster_withEndpointConfig(rnd string) string {
+	return fmt.Sprintf(`
+resource "google_dataproc_cluster" "with_endpoint_config" {
+	name                  = "tf-test-%s"
+	region                = "us-central1"
+
+	cluster_config {
+		endpoint_config {
+			enable_http_port_access = "true"
+		}
+	}
 }
 `, rnd)
 }

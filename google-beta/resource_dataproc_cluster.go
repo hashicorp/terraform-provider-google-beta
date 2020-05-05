@@ -53,6 +53,7 @@ var (
 		"cluster_config.0.encryption_config",
 		"cluster_config.0.autoscaling_config",
 		"cluster_config.0.lifecycle_config",
+		"cluster_config.0.endpoint_config",
 	}
 )
 
@@ -543,6 +544,26 @@ by Dataproc`,
 								},
 							},
 						},
+						"endpoint_config": {
+							Type:         schema.TypeList,
+							Optional:     true,
+							Computed:     true,
+							MaxItems:     1,
+							AtLeastOneOf: clusterConfigKeys,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"enable_http_port_access": {
+										Type:     schema.TypeBool,
+										Required: true,
+										ForceNew: true,
+									},
+									"http_ports": {
+										Type:     schema.TypeMap,
+										Computed: true,
+									},
+								},
+							},
+						},
 					},
 				},
 			},
@@ -786,6 +807,10 @@ func expandClusterConfig(d *schema.ResourceData, config *Config) (*dataproc.Clus
 		conf.LifecycleConfig = expandLifecycleConfig(cfg)
 	}
 
+	if cfg, ok := configOptions(d, "cluster_config.0.endpoint_config"); ok {
+		conf.EndpointConfig = expandEndpointConfig(cfg)
+	}
+
 	if cfg, ok := configOptions(d, "cluster_config.0.master_config"); ok {
 		log.Println("[INFO] got master_config")
 		conf.MasterConfig = expandInstanceGroupConfig(cfg)
@@ -962,6 +987,14 @@ func expandLifecycleConfig(cfg map[string]interface{}) *dataproc.LifecycleConfig
 	}
 	if v, ok := cfg["auto_delete_time"]; ok {
 		conf.AutoDeleteTime = v.(string)
+	}
+	return conf
+}
+
+func expandEndpointConfig(cfg map[string]interface{}) *dataproc.EndpointConfig {
+	conf := &dataproc.EndpointConfig{}
+	if v, ok := cfg["enable_http_port_access"]; ok {
+		conf.EnableHttpPortAccess = v.(bool)
 	}
 	return conf
 }
@@ -1202,6 +1235,7 @@ func flattenClusterConfig(d *schema.ResourceData, cfg *dataproc.ClusterConfig) (
 		"encryption_config":         flattenEncryptionConfig(d, cfg.EncryptionConfig),
 		"autoscaling_config":        flattenAutoscalingConfig(d, cfg.AutoscalingConfig),
 		"lifecycle_config":          flattenLifecycleConfig(d, cfg.LifecycleConfig),
+		"endpoint_config":           flattenEndpointConfig(d, cfg.EndpointConfig),
 	}
 
 	if len(cfg.InitializationActions) > 0 {
@@ -1290,6 +1324,19 @@ func flattenLifecycleConfig(d *schema.ResourceData, lc *dataproc.LifecycleConfig
 	data := map[string]interface{}{
 		"idle_delete_ttl":  lc.IdleDeleteTtl,
 		"auto_delete_time": lc.AutoDeleteTime,
+	}
+
+	return []map[string]interface{}{data}
+}
+
+func flattenEndpointConfig(d *schema.ResourceData, ec *dataproc.EndpointConfig) []map[string]interface{} {
+	if ec == nil {
+		return nil
+	}
+
+	data := map[string]interface{}{
+		"enable_http_port_access": ec.EnableHttpPortAccess,
+		"http_ports":              ec.HttpPorts,
 	}
 
 	return []map[string]interface{}{data}
