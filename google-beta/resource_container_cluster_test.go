@@ -1962,12 +1962,12 @@ resource "google_container_cluster" "primary" {
     network_policy_config {
       disabled = true
     }
+    cloudrun_config {
+      disabled = true
+    }
     istio_config {
       disabled = true
       auth     = "AUTH_MUTUAL_TLS"
-    }
-    cloudrun_config {
-      disabled = true
     }
     dns_cache_config {
       enabled = false
@@ -2002,12 +2002,12 @@ resource "google_container_cluster" "primary" {
     network_policy_config {
       disabled = false
     }
+    cloudrun_config {
+      disabled = false
+    }
     istio_config {
       disabled = false
       auth     = "AUTH_NONE"
-    }
-    cloudrun_config {
-      disabled = false
     }
     dns_cache_config {
       enabled = true
