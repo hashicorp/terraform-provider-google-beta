@@ -31,7 +31,7 @@ BUG FIXES:
 * bigquery: Fixed the `google_sheets_options` at least one of logic. ([#2030](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2030))
 * cloudscheduler: Fixed permadiff for `google_cloud_scheduler_job.retry_config.*` block when API provides default values ([#2028](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2028))
 * compute: Added lock to prevent `google_compute_route` from changing while peering operations are happening on its network ([#2016](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2016))
-* compute: Stopped force-recreation of `google_compute_backend_service` and `google_compute_backend_service` on updating `locality_lb_policy ([#2012](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2012))
+* compute: Stopped force-recreation of `google_compute_backend_service` and `google_compute_backend_service` on updating `locality_lb_policy` ([#2012](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2012))
 * compute: fixed issue where the default value for the attribute `advertise_mode` on `google_compte_router_peer` was not populated on import ([#2024](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2024))
 * container: Fix occasional error with `container_node_pool` partially-successful creations not being recorded if an error occurs on the GCP side. ([#2038](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2038))
 * container: fixed issue where terraform would error if a gke instance group was deleted out-of-band ([#2015](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2015))
