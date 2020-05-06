@@ -2,7 +2,7 @@
 
 FEATURES:
 * **New Resource:** `google_bigquery_connection` ([#2014](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2014))
-* **New Resource:** `google_compute_per_instance_config` (Beta) ([#2029](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2029))
+* **New Resource:** `google_compute_per_instance_config` ([#2029](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2029))
 * **New Resource:** `google_logging_billing_account_bucket_config` ([#2008](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2008))
 * **New Resource:** `google_logging_folder_bucket_config` ([#2008](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2008))
 * **New Resource:** `google_logging_organization_bucket_config` ([#2008](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2008))
@@ -33,7 +33,7 @@ BUG FIXES:
 * compute: Added lock to prevent `google_compute_route` from changing while peering operations are happening on its network ([#2016](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2016))
 * compute: Stopped force-recreation of `google_compute_backend_service` and `google_compute_backend_service` on updating `locality_lb_policy` ([#2012](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2012))
 * compute: fixed issue where the default value for the attribute `advertise_mode` on `google_compte_router_peer` was not populated on import ([#2024](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2024))
-* container: Fix occasional error with `container_node_pool` partially-successful creations not being recorded if an error occurs on the GCP side. ([#2038](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2038))
+* container: Fixed occasional error with `container_node_pool` partially-successful creations not being recorded if an error occurs on the GCP side. ([#2038](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2038))
 * container: fixed issue where terraform would error if a gke instance group was deleted out-of-band ([#2015](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2015))
 * storage: Fixed setting/reading `google_storage_bucket_object`  metadata on API object ([#2025](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2025))
 * storage: Marked the credentials field in `google_storage_object_signed_url` as sensitive so it doesn't expose private credentials. ([#2026](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2026))
