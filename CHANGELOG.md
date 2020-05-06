@@ -1,4 +1,47 @@
 ## 3.21.0 (Unreleased)
+
+UNKNOWN CHANGELOG TYPE:
+* Release 3.19.0 ([#2001](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2001))
+* update SDK to v1.11 ([#2031](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2031))
+
+FEATURES:
+* **New Resource:** `google_bigquery_connection` ([#2014](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2014))
+* **New Resource:** `google_compute_per_instance_config` (Beta) ([#2029](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2029))
+* **New Resource:** `google_logging_billing_account_bucket_config` ([#2008](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2008))
+* **New Resource:** `google_logging_folder_bucket_config` ([#2008](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2008))
+* **New Resource:** `google_logging_organization_bucket_config` ([#2008](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2008))
+* **New Resource:** `google_logging_project_bucket_config` ([#2008](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2008))
+
+IMPROVEMENTS:
+* [beta-only]dataproc: added component gateway support to `google_dataproc_cluster` ([#2035](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2035))
+* added `additional_experiments` field to `google_dataflow_job` ([#2005](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2005))
+* all: add configurable timeouts to several resources that did not previously have them ([#2007](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2007))
+* bigquery: added `service_account_name` field to `google_bigquery_data_transfer_config` resource ([#2004](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2004))
+* cloudfunctions: Added validation to label keys for `google_cloudfunctions_function` as API errors aren't useful. ([#2009](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2009))
+* compute: Added support for `stateful_disk` to both `google_compute_instance_group_manager` and `google_compute_region_instance_group_manager`. (Beta) ([#2006](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2006))
+* container: Moved `google_container_cluster.addons_config.cloudrun_config` from beta to GA. ([#2037](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2037))
+* container: Moved `google_container_cluster.enable_shielded_nodes` from beta to GA. ([#2036](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2036))
+* container: added `kalm_config` addon to `google_container_cluster` (beta-only) ([#2027](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2027))
+* container: added `node_locations` to `google_container_node_pool` and `google_container_cluster.node_pool` (now available in GA) ([#2020](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2020))
+* dataflow: Added drift detection for `google_dataflow_job` `template_gcs_path` and `temp_gcs_location` fields ([#2021](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2021))
+* dataflow: Added support for update-by-replacement to `google_dataflow_job` ([#2021](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2021))
+* storage: Added retries for `google_storage_bucket_iam_*` on 412 (precondition not met) errors for eventually consistent bucket creation. ([#2011](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2011))
+
+BUG FIXES:
+* accesscontextmanager: Fixed setting `require_screen_lock` to true for `google_access_context_manager_access_level` ([#2010](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2010))
+* all: fixed bug where timeouts specified in units other than minutes were getting incorrectly rounded. Also fixed several instances of timeout values being used from the wrong method. ([#2002](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2002))
+* appengine: Changed `google_app_engine_application` to respect updates in `iap` ([#2000](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2000))
+* bigquery: Fixed error where `google_bigquery_dataset_access` resources could not be found post-creation if role was set to a predefined IAM role with an equivalent primative role (e.g. `roles/bigquery.dataOwner` and `OWNER`) ([#2039](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2039))
+* bigquery: Fixed the `google_sheets_options` at least one of logic. ([#2030](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2030))
+* cloudscheduler: Fixed permadiff for `google_cloud_scheduler_job.retry_config.*` block when API provides default values ([#2028](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2028))
+* compute: Added lock to prevent `google_compute_route` from changing while peering operations are happening on its network ([#2016](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2016))
+* compute: Stopped force-recreation of `google_compute_backend_service` and `google_compute_backend_service` on updating `locality_lb_policy ([#2012](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2012))
+* compute: fixed issue where the default value for the attribute `advertise_mode` on `google_compte_router_peer` was not populated on import ([#2024](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2024))
+* container: Fix occasional error with `container_node_pool` partially-successful creations not being recorded if an error occurs on the GCP side. ([#2038](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2038))
+* container: fixed issue where terraform would error if a gke instance group was deleted out-of-band ([#2015](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2015))
+* storage: Fixed setting/reading `google_storage_bucket_object`  metadata on API object ([#2025](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2025))
+* storage: Marked the credentials field in `google_storage_object_signed_url` as sensitive so it doesn't expose private credentials. ([#2026](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2026))
+
 ## 3.20.0 (May 04, 2020)
 
 * **New Resource:** `google_artifact_registry_repository` ([#1981](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1981))
