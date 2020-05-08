@@ -628,6 +628,18 @@ runtime value should be 1900. Defaults to 1900.`,
 					},
 				},
 			},
+			"port_name": {
+				Type:     schema.TypeString,
+				Computed: true,
+				Optional: true,
+				Description: `A named port on a backend instance group representing the port for
+communication to the backend VMs in that group. Required when the
+loadBalancingScheme is EXTERNAL, INTERNAL_MANAGED, or INTERNAL_SELF_MANAGED
+and the backends are instance groups. The named port must be defined on each
+backend instance group. This parameter has no meaning if the backends are NEGs. API sets a
+default of "http" if not given.
+Must be omitted when the loadBalancingScheme is INTERNAL (Internal TCP/UDP Load Balancing).`,
+			},
 			"protocol": {
 				Type:         schema.TypeString,
 				Computed:     true,
@@ -904,6 +916,12 @@ func resourceComputeRegionBackendServiceCreate(d *schema.ResourceData, meta inte
 	} else if v, ok := d.GetOkExists("outlier_detection"); !isEmptyValue(reflect.ValueOf(outlierDetectionProp)) && (ok || !reflect.DeepEqual(v, outlierDetectionProp)) {
 		obj["outlierDetection"] = outlierDetectionProp
 	}
+	portNameProp, err := expandComputeRegionBackendServicePortName(d.Get("port_name"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("port_name"); !isEmptyValue(reflect.ValueOf(portNameProp)) && (ok || !reflect.DeepEqual(v, portNameProp)) {
+		obj["portName"] = portNameProp
+	}
 	protocolProp, err := expandComputeRegionBackendServiceProtocol(d.Get("protocol"), d, config)
 	if err != nil {
 		return err
@@ -1068,6 +1086,9 @@ func resourceComputeRegionBackendServiceRead(d *schema.ResourceData, meta interf
 	if err := d.Set("outlier_detection", flattenComputeRegionBackendServiceOutlierDetection(res["outlierDetection"], d, config)); err != nil {
 		return fmt.Errorf("Error reading RegionBackendService: %s", err)
 	}
+	if err := d.Set("port_name", flattenComputeRegionBackendServicePortName(res["portName"], d, config)); err != nil {
+		return fmt.Errorf("Error reading RegionBackendService: %s", err)
+	}
 	if err := d.Set("protocol", flattenComputeRegionBackendServiceProtocol(res["protocol"], d, config)); err != nil {
 		return fmt.Errorf("Error reading RegionBackendService: %s", err)
 	}
@@ -1179,6 +1200,12 @@ func resourceComputeRegionBackendServiceUpdate(d *schema.ResourceData, meta inte
 		return err
 	} else if v, ok := d.GetOkExists("outlier_detection"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, outlierDetectionProp)) {
 		obj["outlierDetection"] = outlierDetectionProp
+	}
+	portNameProp, err := expandComputeRegionBackendServicePortName(d.Get("port_name"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("port_name"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, portNameProp)) {
+		obj["portName"] = portNameProp
 	}
 	protocolProp, err := expandComputeRegionBackendServiceProtocol(d.Get("protocol"), d, config)
 	if err != nil {
@@ -2091,6 +2118,10 @@ func flattenComputeRegionBackendServiceOutlierDetectionSuccessRateStdevFactor(v 
 	return v // let terraform core handle it otherwise
 }
 
+func flattenComputeRegionBackendServicePortName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	return v
+}
+
 func flattenComputeRegionBackendServiceProtocol(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
@@ -2805,6 +2836,10 @@ func expandComputeRegionBackendServiceOutlierDetectionSuccessRateRequestVolume(v
 }
 
 func expandComputeRegionBackendServiceOutlierDetectionSuccessRateStdevFactor(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeRegionBackendServicePortName(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
