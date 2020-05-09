@@ -102,10 +102,10 @@ resource "google_dns_managed_zone" "private-zone" {
 
   private_visibility_config {
     networks {
-      network_url = google_compute_network.network-1.id
+      network_url = google_compute_network.network-1.self_link
     }
     networks {
-      network_url = google_compute_network.network-2.id
+      network_url = google_compute_network.network-2.self_link
     }
   }
 }
@@ -154,13 +154,13 @@ resource "google_dns_managed_zone" "peering-zone" {
 
   private_visibility_config {
     networks {
-      network_url = google_compute_network.network-source.id
+      network_url = google_compute_network.network-source.self_link
     }
   }
 
   peering_config {
     target_network {
-      network_url = google_compute_network.network-target.id
+      network_url = google_compute_network.network-target.self_link
     }
   }
 }
