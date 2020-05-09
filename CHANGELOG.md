@@ -9,23 +9,20 @@ FEATURES:
 * **New Resource:** `google_logging_project_bucket_config` ([#2008](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2008))
 
 IMPROVEMENTS:
-* dataproc: added component gateway support to `google_dataproc_cluster` ([#2035](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2035))
 * all: add configurable timeouts to several resources that did not previously have them ([#2007](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2007))
 * bigquery: added `service_account_name` field to `google_bigquery_data_transfer_config` resource ([#2004](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2004))
 * cloudfunctions: Added validation to label keys for `google_cloudfunctions_function` as API errors aren't useful. ([#2009](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2009))
-* compute: Added support for `stateful_disk` to both `google_compute_instance_group_manager` and `google_compute_region_instance_group_manager`. (Beta) ([#2006](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2006))
-* container: Moved `google_container_cluster.addons_config.cloudrun_config` from beta to GA. ([#2037](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2037))
-* container: Moved `google_container_cluster.enable_shielded_nodes` from beta to GA. ([#2036](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2036))
-* container: added `kalm_config` addon to `google_container_cluster` (beta-only) ([#2027](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2027))
-* container: added `node_locations` to `google_container_node_pool` and `google_container_cluster.node_pool` (now available in GA) ([#2020](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2020))
+* compute: Added support for `stateful_disk` to both `google_compute_instance_group_manager` and `google_compute_region_instance_group_manager`. ([#2006](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2006))
+* container: added `kalm_config` addon to `google_container_cluster` ([#2027](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2027))
 * dataflow: Added drift detection for `google_dataflow_job` `template_gcs_path` and `temp_gcs_location` fields ([#2021](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2021))
 * dataflow: Added support for update-by-replacement to `google_dataflow_job` ([#2021](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2021))
 * dataflow: added `additional_experiments` field to `google_dataflow_job` ([#2005](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2005))
+* dataproc: added component gateway support to `google_dataproc_cluster` ([#2035](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2035))
 * storage: Added retries for `google_storage_bucket_iam_*` on 412 (precondition not met) errors for eventually consistent bucket creation. ([#2011](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2011))
 
 BUG FIXES:
-* accesscontextmanager: Fixed setting `require_screen_lock` to true for `google_access_context_manager_access_level` ([#2010](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2010))
 * all: fixed bug where timeouts specified in units other than minutes were getting incorrectly rounded. Also fixed several instances of timeout values being used from the wrong method. ([#2002](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2002))
+* accesscontextmanager: Fixed setting `require_screen_lock` to true for `google_access_context_manager_access_level` ([#2010](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2010))
 * appengine: Changed `google_app_engine_application` to respect updates in `iap` ([#2000](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2000))
 * bigquery: Fixed error where `google_bigquery_dataset_access` resources could not be found post-creation if role was set to a predefined IAM role with an equivalent primative role (e.g. `roles/bigquery.dataOwner` and `OWNER`) ([#2039](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2039))
 * bigquery: Fixed the `google_sheets_options` at least one of logic. ([#2030](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2030))
