@@ -74,8 +74,8 @@ resource "google_compute_target_https_proxy" "default" {
   provider = google-beta
 
   name             = "test-proxy"
-  url_map          = google_compute_url_map.default.self_link
-  ssl_certificates = [google_compute_managed_ssl_certificate.default.self_link]
+  url_map          = google_compute_url_map.default.id
+  ssl_certificates = [google_compute_managed_ssl_certificate.default.id]
 }
 
 resource "google_compute_url_map" "default" {
@@ -84,7 +84,7 @@ resource "google_compute_url_map" "default" {
   name        = "url-map"
   description = "a description"
 
-  default_service = google_compute_backend_service.default.self_link
+  default_service = google_compute_backend_service.default.id
 
   host_rule {
     hosts        = ["sslcert.tf-test.club"]
@@ -93,11 +93,11 @@ resource "google_compute_url_map" "default" {
 
   path_matcher {
     name            = "allpaths"
-    default_service = google_compute_backend_service.default.self_link
+    default_service = google_compute_backend_service.default.id
 
     path_rule {
       paths   = ["/*"]
-      service = google_compute_backend_service.default.self_link
+      service = google_compute_backend_service.default.id
     }
   }
 }
@@ -110,7 +110,7 @@ resource "google_compute_backend_service" "default" {
   protocol    = "HTTP"
   timeout_sec = 10
 
-  health_checks = [google_compute_http_health_check.default.self_link]
+  health_checks = [google_compute_http_health_check.default.id]
 }
 
 resource "google_compute_http_health_check" "default" {
@@ -133,7 +133,7 @@ resource "google_compute_global_forwarding_rule" "default" {
   provider = google-beta
 
   name       = "forwarding-rule"
-  target     = google_compute_target_https_proxy.default.self_link
+  target     = google_compute_target_https_proxy.default.id
   port_range = 443
 }
 
@@ -167,8 +167,8 @@ provider "google-beta" {
 resource "google_compute_target_https_proxy" "default" {
   provider = google-beta
   name             = "test-proxy"
-  url_map          = google_compute_url_map.default.self_link
-  ssl_certificates = [google_compute_managed_ssl_certificate.cert.self_link]
+  url_map          = google_compute_url_map.default.id
+  ssl_certificates = [google_compute_managed_ssl_certificate.cert.id]
 }
 
 locals {
@@ -201,17 +201,17 @@ resource "google_compute_url_map" "default" {
   provider = google-beta
   name            = "url-map"
   description     = "a description"
-  default_service = google_compute_backend_service.default.self_link
+  default_service = google_compute_backend_service.default.id
   host_rule {
     hosts        = ["mysite.com"]
     path_matcher = "allpaths"
   }
   path_matcher {
     name            = "allpaths"
-    default_service = google_compute_backend_service.default.self_link
+    default_service = google_compute_backend_service.default.id
     path_rule {
       paths   = ["/*"]
-      service = google_compute_backend_service.default.self_link
+      service = google_compute_backend_service.default.id
     }
   }
 }
@@ -222,7 +222,7 @@ resource "google_compute_backend_service" "default" {
   port_name     = "http"
   protocol      = "HTTP"
   timeout_sec   = 10
-  health_checks = [google_compute_http_health_check.default.self_link]
+  health_checks = [google_compute_http_health_check.default.id]
 }
 
 resource "google_compute_http_health_check" "default" {
