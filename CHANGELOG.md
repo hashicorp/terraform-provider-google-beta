@@ -1,4 +1,4 @@
-## 3.21.0 (Unreleased)
+## 3.21.0 (May 11, 2020)
 
 FEATURES:
 * **New Resource:** `google_bigquery_connection` ([#2014](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2014))
