@@ -48,7 +48,7 @@ resource "google_compute_ha_vpn_gateway" "ha_gateway1" {
   provider = google-beta
   region   = "us-central1"
   name     = "tf-test-ha-vpn-1%{random_suffix}"
-  network  = google_compute_network.network1.self_link
+  network  = google_compute_network.network1.id
 }
 
 resource "google_compute_network" "network1" {
@@ -84,14 +84,14 @@ resource "google_compute_ha_vpn_gateway" "ha_gateway1" {
   provider = google-beta
   region   = "us-central1"
   name     = "tf-test-ha-vpn-1%{random_suffix}"
-  network  = google_compute_network.network1.self_link
+  network  = google_compute_network.network1.id
 }
 
 resource "google_compute_ha_vpn_gateway" "ha_gateway2" {
   provider = google-beta
   region   = "us-central1"
   name     = "tf-test-ha-vpn-2%{random_suffix}"
-  network  = google_compute_network.network2.self_link
+  network  = google_compute_network.network2.id
 }
 
 resource "google_compute_network" "network1" {
@@ -113,7 +113,7 @@ resource "google_compute_subnetwork" "network1_subnet1" {
   name          = "ha-vpn-subnet-1"
   ip_cidr_range = "10.0.1.0/24"
   region        = "us-central1"
-  network       = google_compute_network.network1.self_link
+  network       = google_compute_network.network1.id
 }
 
 resource "google_compute_subnetwork" "network1_subnet2" {
@@ -121,7 +121,7 @@ resource "google_compute_subnetwork" "network1_subnet2" {
   name          = "ha-vpn-subnet-2"
   ip_cidr_range = "10.0.2.0/24"
   region        = "us-west1"
-  network       = google_compute_network.network1.self_link
+  network       = google_compute_network.network1.id
 }
 
 resource "google_compute_subnetwork" "network2_subnet1" {
@@ -129,7 +129,7 @@ resource "google_compute_subnetwork" "network2_subnet1" {
   name          = "ha-vpn-subnet-3"
   ip_cidr_range = "192.168.1.0/24"
   region        = "us-central1"
-  network       = google_compute_network.network2.self_link
+  network       = google_compute_network.network2.id
 }
 
 resource "google_compute_subnetwork" "network2_subnet2" {
@@ -137,7 +137,7 @@ resource "google_compute_subnetwork" "network2_subnet2" {
   name          = "ha-vpn-subnet-4"
   ip_cidr_range = "192.168.2.0/24"
   region        = "us-east1"
-  network       = google_compute_network.network2.self_link
+  network       = google_compute_network.network2.id
 }
 
 resource "google_compute_router" "router1" {
@@ -162,10 +162,10 @@ resource "google_compute_vpn_tunnel" "tunnel1" {
   provider              = google-beta
   name                  = "ha-vpn-tunnel1"
   region                = "us-central1"
-  vpn_gateway           = google_compute_ha_vpn_gateway.ha_gateway1.self_link
-  peer_gcp_gateway      = google_compute_ha_vpn_gateway.ha_gateway2.self_link
+  vpn_gateway           = google_compute_ha_vpn_gateway.ha_gateway1.id
+  peer_gcp_gateway      = google_compute_ha_vpn_gateway.ha_gateway2.id
   shared_secret         = "a secret message"
-  router                = google_compute_router.router1.self_link
+  router                = google_compute_router.router1.id
   vpn_gateway_interface = 0
 }
 
@@ -173,10 +173,10 @@ resource "google_compute_vpn_tunnel" "tunnel2" {
   provider              = google-beta
   name                  = "ha-vpn-tunnel2"
   region                = "us-central1"
-  vpn_gateway           = google_compute_ha_vpn_gateway.ha_gateway1.self_link
-  peer_gcp_gateway      = google_compute_ha_vpn_gateway.ha_gateway2.self_link
+  vpn_gateway           = google_compute_ha_vpn_gateway.ha_gateway1.id
+  peer_gcp_gateway      = google_compute_ha_vpn_gateway.ha_gateway2.id
   shared_secret         = "a secret message"
-  router                = google_compute_router.router1.self_link
+  router                = google_compute_router.router1.id
   vpn_gateway_interface = 1
 }
 
@@ -184,10 +184,10 @@ resource "google_compute_vpn_tunnel" "tunnel3" {
   provider              = google-beta
   name                  = "ha-vpn-tunnel3"
   region                = "us-central1"
-  vpn_gateway           = google_compute_ha_vpn_gateway.ha_gateway2.self_link
-  peer_gcp_gateway      = google_compute_ha_vpn_gateway.ha_gateway1.self_link
+  vpn_gateway           = google_compute_ha_vpn_gateway.ha_gateway2.id
+  peer_gcp_gateway      = google_compute_ha_vpn_gateway.ha_gateway1.id
   shared_secret         = "a secret message"
-  router                = google_compute_router.router2.self_link
+  router                = google_compute_router.router2.id
   vpn_gateway_interface = 0
 }
 
@@ -195,10 +195,10 @@ resource "google_compute_vpn_tunnel" "tunnel4" {
   provider              = google-beta
   name                  = "ha-vpn-tunnel4"
   region                = "us-central1"
-  vpn_gateway           = google_compute_ha_vpn_gateway.ha_gateway2.self_link
-  peer_gcp_gateway      = google_compute_ha_vpn_gateway.ha_gateway1.self_link
+  vpn_gateway           = google_compute_ha_vpn_gateway.ha_gateway2.id
+  peer_gcp_gateway      = google_compute_ha_vpn_gateway.ha_gateway1.id
   shared_secret         = "a secret message"
-  router                = google_compute_router.router2.self_link
+  router                = google_compute_router.router2.id
   vpn_gateway_interface = 1
 }
 
