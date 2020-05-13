@@ -559,9 +559,7 @@ func flattenNestedComputePerInstanceConfig(d *schema.ResourceData, meta interfac
 
 	v, ok = res["items"]
 	if !ok || v == nil {
-		// It's possible that there is only one of these resources and
-		// that res represents that resource.
-		v = res
+		return nil, nil
 	}
 
 	switch v.(type) {
