@@ -862,7 +862,6 @@ func resourceContainerCluster() *schema.Resource {
 
 			"release_channel": {
 				Type:     schema.TypeList,
-				ForceNew: true,
 				Optional: true,
 				Computed: true,
 				MaxItems: 1,
@@ -871,7 +870,6 @@ func resourceContainerCluster() *schema.Resource {
 						"channel": {
 							Type:             schema.TypeString,
 							Required:         true,
-							ForceNew:         true,
 							ValidateFunc:     validation.StringInSlice([]string{"UNSPECIFIED", "RAPID", "REGULAR", "STABLE"}, false),
 							DiffSuppressFunc: emptyOrDefaultStringSuppress("UNSPECIFIED"),
 						},
@@ -1527,7 +1525,6 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 
 		d.SetPartial("enable_shielded_nodes")
 	}
-
 	if d.HasChange("enable_intranode_visibility") {
 		enabled := d.Get("enable_intranode_visibility").(bool)
 		req := &containerBeta.UpdateClusterRequest{
@@ -1561,7 +1558,35 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 
 		d.SetPartial("enable_intranode_visibility")
 	}
+	if d.HasChange("release_channel") {
+		req := &containerBeta.UpdateClusterRequest{
+			Update: &containerBeta.ClusterUpdate{
+				DesiredReleaseChannel: expandReleaseChannel(d.Get("release_channel")),
+			},
+		}
+		updateF := func() error {
+			log.Println("[DEBUG] updating release_channel")
+			name := containerClusterFullName(project, location, clusterName)
+			op, err := config.clientContainerBeta.Projects.Locations.Clusters.Update(name, req).Do()
+			if err != nil {
+				return err
+			}
 
+			// Wait until it's updated
+			err = containerOperationWait(config, op, project, location, "updating Release Channel", d.Timeout(schema.TimeoutUpdate))
+			log.Println("[DEBUG] done updating release_channel")
+			return err
+		}
+
+		// Call update serially.
+		if err := lockedCall(lockKey, updateF); err != nil {
+			return err
+		}
+
+		log.Printf("[INFO] GKE cluster %s Release Channel has been updated to %#v", d.Id(), req.Update.DesiredReleaseChannel)
+
+		d.SetPartial("release_channel")
+	}
 	if d.HasChange("maintenance_policy") {
 		req := &containerBeta.SetMaintenancePolicyRequest{
 			MaintenancePolicy: expandMaintenancePolicy(d, meta),
@@ -1746,13 +1771,14 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 	}
 
 	// The master must be updated before the nodes
-	if d.HasChange("min_master_version") {
-		desiredMasterVersion := d.Get("min_master_version").(string)
-		currentMasterVersion := d.Get("master_version").(string)
-		des, err := version.NewVersion(desiredMasterVersion)
+	// If set to "", skip this step- any master version satisfies that minimum.
+	if ver := d.Get("min_master_version").(string); d.HasChange("min_master_version") && ver != "" {
+		des, err := version.NewVersion(ver)
 		if err != nil {
 			return err
 		}
+
+		currentMasterVersion := d.Get("master_version").(string)
 		cur, err := version.NewVersion(currentMasterVersion)
 		if err != nil {
 			return err
@@ -1762,7 +1788,7 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 		if cur.LessThan(des) {
 			req := &containerBeta.UpdateClusterRequest{
 				Update: &containerBeta.ClusterUpdate{
-					DesiredMasterVersion: desiredMasterVersion,
+					DesiredMasterVersion: ver,
 				},
 			}
 
@@ -1771,7 +1797,7 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 			if err := lockedCall(lockKey, updateF); err != nil {
 				return err
 			}
-			log.Printf("[INFO] GKE cluster %s: master has been updated to %s", d.Id(), desiredMasterVersion)
+			log.Printf("[INFO] GKE cluster %s: master has been updated to %s", d.Id(), ver)
 		}
 		d.SetPartial("min_master_version")
 	}
