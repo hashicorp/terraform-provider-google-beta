@@ -134,6 +134,7 @@ func TestAccContainerCluster_withAddons(t *testing.T) {
 	t.Parallel()
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", randString(t, 10))
+	pid := getTestProjectFromEnv()
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -141,7 +142,7 @@ func TestAccContainerCluster_withAddons(t *testing.T) {
 		CheckDestroy: testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccContainerCluster_withAddons(clusterName),
+				Config: testAccContainerCluster_withAddons(pid, clusterName),
 			},
 			{
 				ResourceName:            "google_container_cluster.primary",
@@ -150,7 +151,7 @@ func TestAccContainerCluster_withAddons(t *testing.T) {
 				ImportStateVerifyIgnore: []string{"min_master_version"},
 			},
 			{
-				Config: testAccContainerCluster_updateAddons(clusterName),
+				Config: testAccContainerCluster_updateAddons(pid, clusterName),
 			},
 			{
 				ResourceName:            "google_container_cluster.primary",
@@ -1943,14 +1944,22 @@ resource "google_container_cluster" "primary" {
 `, name)
 }
 
-func testAccContainerCluster_withAddons(clusterName string) string {
+func testAccContainerCluster_withAddons(projectID string, clusterName string) string {
 	return fmt.Sprintf(`
+data "google_project" "project" {
+  project_id = "%s"
+}
+
 resource "google_container_cluster" "primary" {
   name               = "%s"
   location           = "us-central1-a"
   initial_node_count = 1
 
   min_master_version = "latest"
+
+  workload_identity_config {
+    identity_namespace = "${data.google_project.project.project_id}.svc.id.goog"
+  }
 
   addons_config {
     http_load_balancing {
@@ -1977,20 +1986,31 @@ resource "google_container_cluster" "primary" {
     }
     kalm_config {
 	  enabled = false
-     }
+	}
+	config_connector_config {
+	  enabled = false
+	}
   }
 }
-`, clusterName)
+`, projectID, clusterName)
 }
 
-func testAccContainerCluster_updateAddons(clusterName string) string {
+func testAccContainerCluster_updateAddons(projectID string, clusterName string) string {
 	return fmt.Sprintf(`
+data "google_project" "project" {
+  project_id = "%s"
+}	
+
 resource "google_container_cluster" "primary" {
   name               = "%s"
   location           = "us-central1-a"
   initial_node_count = 1
 
   min_master_version = "latest"
+
+  workload_identity_config {
+    identity_namespace = "${data.google_project.project.project_id}.svc.id.goog"
+  }
 
   addons_config {
     http_load_balancing {
@@ -2018,9 +2038,12 @@ resource "google_container_cluster" "primary" {
 	kalm_config {
 	  enabled = true
 	}
+	config_connector_config {
+	  enabled = true
+	}
   }
 }
-`, clusterName)
+`, projectID, clusterName)
 }
 
 func testAccContainerCluster_withMasterAuth(clusterName string) string {
