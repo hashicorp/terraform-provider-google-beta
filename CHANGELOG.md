@@ -1,4 +1,24 @@
 ## 3.22.0 (Unreleased)
+NOTES:
+* `google_bigtable_instance` resources now cannot be destroyed unless `deletion_protection = false` is set in state for the resource. ([#2061](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2061))
+
+FEATURES:
+* **New Resource:** `google_compute_region_per_instance_config` (Beta) ([#2046](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2046))
+* **New Resource:** `google_dialogflow_entity_type` ([#2052](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2052))
+
+IMPROVEMENTS:
+* bigtable: added `deletion_protection` field to `google_bigtable_instance` to make deleting them require an explicit intent. ([#2061](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2061))
+* compute: Added `google_compute_region_backend_service` `portName` parameter ([#2048](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2048))
+* dataproc: Updated `google_dataproc_cluster.software_config.optional_components` to include new options. ([#2049](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2049))
+* monitoring: Added `request_based` SLI support to `google_monitoring_slo` ([#2058](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2058))
+* storage: added `google_storage_bucket` bucket name to the error message when the bucket can't be deleted because it's not empty ([#2059](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2059))
+
+BUG FIXES:
+* bigquery: Fixed error where `google_bigquery_dataset_access` resources could not be found post-creation if role was set to a predefined IAM role with an equivalent primative role (e.g. `roles/bigquery.dataOwner` and `OWNER`) ([#2039](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2039))
+* compute: Fixed permadiff in `google_compute_instance_template`'s `network_tier`. ([#2054](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2054))
+* compute: Removed permadiff or errors on update for `google_compute_backend_service` and `google_compute_region_backend_service` when `consistent_hash` values were previously set on  backend service but are not supported by updated value of `locality_lb_policy` ([#2044](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2044))
+* sql: Fixed occasional failure to delete `google_sql_database_instance` and `google_sql_user`. ([#2045](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2045))
+
 ## 3.21.0 (May 11, 2020)
 
 FEATURES:
