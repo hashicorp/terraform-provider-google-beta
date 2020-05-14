@@ -10,7 +10,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/terraform"
 
@@ -653,7 +652,7 @@ func TestAccDataprocCluster_withEndpointConfig(t *testing.T) {
 	t.Parallel()
 
 	var cluster dataproc.Cluster
-	rnd := acctest.RandString(10)
+	rnd := randString(t, 10)
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,

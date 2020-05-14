@@ -3,7 +3,6 @@ package google
 import (
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 )
 
@@ -12,7 +11,7 @@ func TestAccFirebaseWebApp_firebaseWebAppFull(t *testing.T) {
 
 	context := map[string]interface{}{
 		"org_id":        getTestOrgFromEnv(t),
-		"random_suffix": acctest.RandString(10),
+		"random_suffix": randString(t, 10),
 		"display_name":  "Display Name N",
 	}
 
