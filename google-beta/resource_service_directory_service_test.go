@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 )
 
@@ -13,7 +12,7 @@ func TestAccServiceDirectoryService_serviceDirectoryServiceUpdateExample(t *test
 
 	project := getTestProjectFromEnv()
 	location := "us-central1"
-	testId := fmt.Sprintf("tf-test-example-service%s", acctest.RandString(10))
+	testId := fmt.Sprintf("tf-test-example-service%s", randString(t, 10))
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
