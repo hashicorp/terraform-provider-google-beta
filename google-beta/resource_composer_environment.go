@@ -49,6 +49,20 @@ var (
 		"config.0.node_config",
 		"config.0.software_config",
 		"config.0.private_environment_config",
+		"config.0.web_server_network_access_control",
+	}
+
+	allowedIpRangesConfig = &schema.Resource{
+		Schema: map[string]*schema.Schema{
+			"value": {
+				Type:     schema.TypeString,
+				Required: true,
+			},
+			"description": {
+				Type:     schema.TypeString,
+				Optional: true,
+			},
+		},
 	}
 )
 
@@ -277,6 +291,8 @@ func resourceComposerEnvironment() *schema.Resource {
 										AtLeastOneOf: []string{
 											"config.0.private_environment_config.0.enable_private_endpoint",
 											"config.0.private_environment_config.0.master_ipv4_cidr_block",
+											"config.0.private_environment_config.0.cloud_sql_ipv4_cidr_block",
+											"config.0.private_environment_config.0.web_server_ipv4_cidr_block",
 										},
 										ForceNew: true,
 									},
@@ -286,9 +302,51 @@ func resourceComposerEnvironment() *schema.Resource {
 										AtLeastOneOf: []string{
 											"config.0.private_environment_config.0.enable_private_endpoint",
 											"config.0.private_environment_config.0.master_ipv4_cidr_block",
+											"config.0.private_environment_config.0.cloud_sql_ipv4_cidr_block",
+											"config.0.private_environment_config.0.web_server_ipv4_cidr_block",
 										},
 										ForceNew: true,
 										Default:  "172.16.0.0/28",
+									},
+									"web_server_ipv4_cidr_block": {
+										Type:     schema.TypeString,
+										Optional: true,
+										Computed: true,
+										AtLeastOneOf: []string{
+											"config.0.private_environment_config.0.enable_private_endpoint",
+											"config.0.private_environment_config.0.master_ipv4_cidr_block",
+											"config.0.private_environment_config.0.cloud_sql_ipv4_cidr_block",
+											"config.0.private_environment_config.0.web_server_ipv4_cidr_block",
+										},
+										ForceNew: true,
+									},
+									"cloud_sql_ipv4_cidr_block": {
+										Type:     schema.TypeString,
+										Optional: true,
+										Computed: true,
+										AtLeastOneOf: []string{
+											"config.0.private_environment_config.0.enable_private_endpoint",
+											"config.0.private_environment_config.0.master_ipv4_cidr_block",
+											"config.0.private_environment_config.0.cloud_sql_ipv4_cidr_block",
+											"config.0.private_environment_config.0.web_server_ipv4_cidr_block",
+										},
+										ForceNew: true,
+									},
+								},
+							},
+						},
+						"web_server_network_access_control": {
+							Type:     schema.TypeList,
+							Optional: true,
+							Computed: true,
+							MaxItems: 1,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"allowed_ip_range": {
+										Type:     schema.TypeSet,
+										Computed: true,
+										Optional: true,
+										Elem:     allowedIpRangesConfig,
 									},
 								},
 							},
@@ -512,6 +570,18 @@ func resourceComposerEnvironmentUpdate(d *schema.ResourceData, meta interface{})
 			}
 			d.SetPartial("config")
 		}
+
+		if d.HasChange("config.0.web_server_network_access_control") {
+			patchObj := &composer.Environment{Config: &composer.EnvironmentConfig{}}
+			if config != nil {
+				patchObj.Config.WebServerNetworkAccessControl = config.WebServerNetworkAccessControl
+			}
+			err = resourceComposerEnvironmentPatchField("config.webServerNetworkAccessControl", patchObj, d, tfConfig)
+			if err != nil {
+				return err
+			}
+			d.SetPartial("config")
+		}
 	}
 
 	if d.HasChange("labels") {
@@ -628,8 +698,30 @@ func flattenComposerEnvironmentConfig(envCfg *composer.EnvironmentConfig) interf
 	transformed["node_config"] = flattenComposerEnvironmentConfigNodeConfig(envCfg.NodeConfig)
 	transformed["software_config"] = flattenComposerEnvironmentConfigSoftwareConfig(envCfg.SoftwareConfig)
 	transformed["private_environment_config"] = flattenComposerEnvironmentConfigPrivateEnvironmentConfig(envCfg.PrivateEnvironmentConfig)
+	transformed["web_server_network_access_control"] = flattenComposerEnvironmentConfigWebServerNetworkAccessControl(envCfg.WebServerNetworkAccessControl)
 
 	return []interface{}{transformed}
+}
+
+func flattenComposerEnvironmentConfigWebServerNetworkAccessControl(accessControl *composer.WebServerNetworkAccessControl) interface{} {
+	if accessControl == nil || accessControl.AllowedIpRanges == nil {
+		return nil
+	}
+
+	transformed := make([]interface{}, 0, len(accessControl.AllowedIpRanges))
+	for _, ipRange := range accessControl.AllowedIpRanges {
+		data := map[string]interface{}{
+			"value":       ipRange.Value,
+			"description": ipRange.Description,
+		}
+		transformed = append(transformed, data)
+	}
+
+	webServerNetworkAccessControl := make(map[string]interface{})
+
+	webServerNetworkAccessControl["allowed_ip_range"] = schema.NewSet(schema.HashResource(allowedIpRangesConfig), transformed)
+
+	return []interface{}{webServerNetworkAccessControl}
 }
 
 func flattenComposerEnvironmentConfigPrivateEnvironmentConfig(envCfg *composer.PrivateEnvironmentConfig) interface{} {
@@ -640,6 +732,8 @@ func flattenComposerEnvironmentConfigPrivateEnvironmentConfig(envCfg *composer.P
 	transformed := make(map[string]interface{})
 	transformed["enable_private_endpoint"] = envCfg.PrivateClusterConfig.EnablePrivateEndpoint
 	transformed["master_ipv4_cidr_block"] = envCfg.PrivateClusterConfig.MasterIpv4CidrBlock
+	transformed["cloud_sql_ipv4_cidr_block"] = envCfg.CloudSqlIpv4CidrBlock
+	transformed["web_server_ipv4_cidr_block"] = envCfg.WebServerIpv4CidrBlock
 
 	return []interface{}{transformed}
 }
@@ -736,6 +830,12 @@ func expandComposerEnvironmentConfig(v interface{}, d *schema.ResourceData, conf
 	}
 	transformed.PrivateEnvironmentConfig = transformedPrivateEnvironmentConfig
 
+	transformedWebServerNetworkAccessControl, err := expandComposerEnvironmentConfigWebServerNetworkAccessControl(original["web_server_network_access_control"], d, config)
+	if err != nil {
+		return nil, err
+	}
+	transformed.WebServerNetworkAccessControl = transformedWebServerNetworkAccessControl
+
 	return transformed, nil
 }
 
@@ -744,6 +844,35 @@ func expandComposerEnvironmentConfigNodeCount(v interface{}, d *schema.ResourceD
 		return 0, nil
 	}
 	return int64(v.(int)), nil
+}
+
+func expandComposerEnvironmentConfigWebServerNetworkAccessControl(v interface{}, d *schema.ResourceData, config *Config) (*composer.WebServerNetworkAccessControl, error) {
+	l := v.([]interface{})
+	if len(l) == 0 {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+
+	allowedIpRangesRaw := original["allowed_ip_range"].(*schema.Set).List()
+	if len(allowedIpRangesRaw) == 0 {
+		return nil, nil
+	}
+
+	transformed := &composer.WebServerNetworkAccessControl{}
+	allowedIpRanges := make([]*composer.AllowedIpRange, 0, len(original))
+
+	for _, originalIpRange := range allowedIpRangesRaw {
+		originalRangeRaw := originalIpRange.(map[string]interface{})
+		transformedRange := &composer.AllowedIpRange{Value: originalRangeRaw["value"].(string)}
+		if v, ok := originalRangeRaw["description"]; ok {
+			transformedRange.Description = v.(string)
+		}
+		allowedIpRanges = append(allowedIpRanges, transformedRange)
+	}
+
+	transformed.AllowedIpRanges = allowedIpRanges
+	return transformed, nil
 }
 
 func expandComposerEnvironmentConfigPrivateEnvironmentConfig(v interface{}, d *schema.ResourceData, config *Config) (*composer.PrivateEnvironmentConfig, error) {
@@ -765,6 +894,14 @@ func expandComposerEnvironmentConfigPrivateEnvironmentConfig(v interface{}, d *s
 
 	if v, ok := original["master_ipv4_cidr_block"]; ok {
 		subBlock.MasterIpv4CidrBlock = v.(string)
+	}
+
+	if v, ok := original["cloud_sql_ipv4_cidr_block"]; ok {
+		transformed.CloudSqlIpv4CidrBlock = v.(string)
+	}
+
+	if v, ok := original["web_server_ipv4_cidr_block"]; ok {
+		transformed.WebServerIpv4CidrBlock = v.(string)
 	}
 
 	transformed.PrivateClusterConfig = subBlock
