@@ -1,5 +1,5 @@
 ## 3.22.0 (Unreleased)
-NOTES:
+BREAKING CHANGE:
 * `google_bigtable_instance` resources now cannot be destroyed unless `deletion_protection = false` is set in state for the resource. ([#2061](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2061))
 
 FEATURES:
