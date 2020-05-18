@@ -3,7 +3,7 @@ NOTES:
 * `google_bigtable_instance` resources now cannot be destroyed unless `deletion_protection = false` is set in state for the resource. ([#2061](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2061))
 
 FEATURES:
-* **New Resource:** `google_compute_region_per_instance_config` (Beta) ([#2046](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2046))
+* **New Resource:** `google_compute_region_per_instance_config` ([#2046](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2046))
 * **New Resource:** `google_dialogflow_entity_type` ([#2052](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2052))
 
 IMPROVEMENTS:
