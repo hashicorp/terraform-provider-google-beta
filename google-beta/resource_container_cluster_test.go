@@ -1405,6 +1405,41 @@ func TestAccContainerCluster_withShieldedNodes(t *testing.T) {
 	})
 }
 
+// consider merging this test with TestAccContainerCluster_nodeAutoprovisioningDefaults
+// once the feature is GA
+func TestAccContainerCluster_nodeAutoprovisioningDefaultsMinCpuPlatform(t *testing.T) {
+	t.Parallel()
+
+	clusterName := fmt.Sprintf("tf-test-cluster-%s", randString(t, 10))
+	includeMinCpuPlatform := true
+
+	vcrTest(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckContainerClusterDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccContainerCluster_autoprovisioningDefaultsMinCpuPlatform(clusterName, includeMinCpuPlatform),
+			},
+			{
+				ResourceName:            "google_container_cluster.with_autoprovisioning",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"min_master_version"},
+			},
+			{
+				Config: testAccContainerCluster_autoprovisioningDefaultsMinCpuPlatform(clusterName, !includeMinCpuPlatform),
+			},
+			{
+				ResourceName:            "google_container_cluster.with_autoprovisioning",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"min_master_version"},
+			},
+		},
+	})
+}
+
 func TestAccContainerCluster_withAutoscalingProfile(t *testing.T) {
 	t.Parallel()
 	clusterName := fmt.Sprintf("cluster-test-%s", randString(t, 10))
@@ -3023,6 +3058,43 @@ resource "google_container_cluster" "with_autoprovisioning" {
   }
 }`
 	return config
+}
+
+func testAccContainerCluster_autoprovisioningDefaultsMinCpuPlatform(cluster string, includeMinCpuPlatform bool) string {
+	minCpuPlatformCfg := ""
+	if includeMinCpuPlatform {
+		minCpuPlatformCfg = `min_cpu_platform = "Intel Haswell"`
+	}
+
+	return fmt.Sprintf(`
+data "google_container_engine_versions" "central1a" {
+  location = "us-central1-a"
+}
+
+resource "google_container_cluster" "with_autoprovisioning" {
+  name               = "%s"
+  location           = "us-central1-a"
+  initial_node_count = 1
+
+  min_master_version = data.google_container_engine_versions.central1a.latest_master_version
+
+  cluster_autoscaling {
+    enabled = true
+
+    resource_limits {
+      resource_type = "cpu"
+      maximum       = 2
+    }
+    resource_limits {
+      resource_type = "memory"
+      maximum       = 2048
+    }
+
+    auto_provisioning_defaults {
+      %s
+    }
+  }
+}`, cluster, minCpuPlatformCfg)
 }
 
 func testAccContainerCluster_withNodePoolAutoscaling(cluster, np string) string {

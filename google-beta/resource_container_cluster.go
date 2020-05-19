@@ -390,6 +390,11 @@ func resourceContainerCluster() *schema.Resource {
 										Optional: true,
 										Default:  "default",
 									},
+									"min_cpu_platform": {
+										Type:             schema.TypeString,
+										Optional:         true,
+										DiffSuppressFunc: emptyOrDefaultStringSuppress("automatic"),
+									},
 								},
 							},
 						},
@@ -2424,10 +2429,18 @@ func expandAutoProvisioningDefaults(configured interface{}, d *schema.ResourceDa
 	}
 	config := l[0].(map[string]interface{})
 
-	return &containerBeta.AutoprovisioningNodePoolDefaults{
+	npd := &containerBeta.AutoprovisioningNodePoolDefaults{
 		OauthScopes:    convertStringArr(config["oauth_scopes"].([]interface{})),
 		ServiceAccount: config["service_account"].(string),
 	}
+
+	cpu := config["min_cpu_platform"].(string)
+	// the only way to unset the field is to pass "automatic" as its value
+	if cpu == "" {
+		cpu = "automatic"
+	}
+	npd.MinCpuPlatform = cpu
+	return npd
 }
 
 func expandAuthenticatorGroupsConfig(configured interface{}) *containerBeta.AuthenticatorGroupsConfig {
@@ -2901,6 +2914,7 @@ func flattenAutoProvisioningDefaults(a *containerBeta.AutoprovisioningNodePoolDe
 	r := make(map[string]interface{})
 	r["oauth_scopes"] = a.OauthScopes
 	r["service_account"] = a.ServiceAccount
+	r["min_cpu_platform"] = a.MinCpuPlatform
 
 	return []map[string]interface{}{r}
 }
