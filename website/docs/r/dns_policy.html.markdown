@@ -62,10 +62,10 @@ resource "google_dns_policy" "example-policy" {
   }
 
   networks {
-    network_url = google_compute_network.network-1.id
+    network_url = google_compute_network.network-1.self_link
   }
   networks {
-    network_url = google_compute_network.network-2.id
+    network_url = google_compute_network.network-2.self_link
   }
 }
 
