@@ -245,6 +245,14 @@ func Provider() terraform.ResourceProvider {
 					"GOOGLE_CONTAINER_ANALYSIS_CUSTOM_ENDPOINT",
 				}, ContainerAnalysisDefaultBasePath),
 			},
+			"data_catalog_custom_endpoint": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validateCustomEndpoint,
+				DefaultFunc: schema.MultiEnvDefaultFunc([]string{
+					"GOOGLE_DATA_CATALOG_CUSTOM_ENDPOINT",
+				}, DataCatalogDefaultBasePath),
+			},
 			"data_fusion_custom_endpoint": {
 				Type:         schema.TypeString,
 				Optional:     true,
@@ -623,9 +631,9 @@ func Provider() terraform.ResourceProvider {
 	return provider
 }
 
-// Generated resources: 153
-// Generated IAM resources: 63
-// Total generated resources: 216
+// Generated resources: 154
+// Generated IAM resources: 66
+// Total generated resources: 220
 func ResourceMap() map[string]*schema.Resource {
 	resourceMap, _ := ResourceMapWithErrors()
 	return resourceMap
@@ -738,6 +746,10 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_compute_url_map":                                       resourceComputeUrlMap(),
 			"google_compute_vpn_tunnel":                                    resourceComputeVpnTunnel(),
 			"google_container_analysis_note":                               resourceContainerAnalysisNote(),
+			"google_data_catalog_entry_group":                              resourceDataCatalogEntryGroup(),
+			"google_data_catalog_entry_group_iam_binding":                  ResourceIamBinding(DataCatalogEntryGroupIamSchema, DataCatalogEntryGroupIamUpdaterProducer, DataCatalogEntryGroupIdParseFunc),
+			"google_data_catalog_entry_group_iam_member":                   ResourceIamMember(DataCatalogEntryGroupIamSchema, DataCatalogEntryGroupIamUpdaterProducer, DataCatalogEntryGroupIdParseFunc),
+			"google_data_catalog_entry_group_iam_policy":                   ResourceIamPolicy(DataCatalogEntryGroupIamSchema, DataCatalogEntryGroupIamUpdaterProducer, DataCatalogEntryGroupIdParseFunc),
 			"google_data_fusion_instance":                                  resourceDataFusionInstance(),
 			"google_dataproc_autoscaling_policy":                           resourceDataprocAutoscalingPolicy(),
 			"google_datastore_index":                                       resourceDatastoreIndex(),
@@ -1033,6 +1045,7 @@ func providerConfigure(d *schema.ResourceData, p *schema.Provider, terraformVers
 	config.CloudTasksBasePath = d.Get("cloud_tasks_custom_endpoint").(string)
 	config.ComputeBasePath = d.Get("compute_custom_endpoint").(string)
 	config.ContainerAnalysisBasePath = d.Get("container_analysis_custom_endpoint").(string)
+	config.DataCatalogBasePath = d.Get("data_catalog_custom_endpoint").(string)
 	config.DataFusionBasePath = d.Get("data_fusion_custom_endpoint").(string)
 	config.DataprocBasePath = d.Get("dataproc_custom_endpoint").(string)
 	config.DatastoreBasePath = d.Get("datastore_custom_endpoint").(string)
