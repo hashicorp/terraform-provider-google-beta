@@ -96,6 +96,7 @@ type Config struct {
 	CloudTasksBasePath           string
 	ComputeBasePath              string
 	ContainerAnalysisBasePath    string
+	DataCatalogBasePath          string
 	DataFusionBasePath           string
 	DataprocBasePath             string
 	DatastoreBasePath            string
@@ -244,6 +245,7 @@ var CloudSchedulerDefaultBasePath = "https://cloudscheduler.googleapis.com/v1/"
 var CloudTasksDefaultBasePath = "https://cloudtasks.googleapis.com/v2/"
 var ComputeDefaultBasePath = "https://www.googleapis.com/compute/beta/"
 var ContainerAnalysisDefaultBasePath = "https://containeranalysis.googleapis.com/v1beta1/"
+var DataCatalogDefaultBasePath = "https://datacatalog.googleapis.com/v1/"
 var DataFusionDefaultBasePath = "https://datafusion.googleapis.com/v1beta1/"
 var DataprocDefaultBasePath = "https://dataproc.googleapis.com/v1beta2/"
 var DatastoreDefaultBasePath = "https://datastore.googleapis.com/v1/"
@@ -767,6 +769,7 @@ func ConfigureBasePaths(c *Config) {
 	c.CloudTasksBasePath = CloudTasksDefaultBasePath
 	c.ComputeBasePath = ComputeDefaultBasePath
 	c.ContainerAnalysisBasePath = ContainerAnalysisDefaultBasePath
+	c.DataCatalogBasePath = DataCatalogDefaultBasePath
 	c.DataFusionBasePath = DataFusionDefaultBasePath
 	c.DataprocBasePath = DataprocDefaultBasePath
 	c.DatastoreBasePath = DatastoreDefaultBasePath
