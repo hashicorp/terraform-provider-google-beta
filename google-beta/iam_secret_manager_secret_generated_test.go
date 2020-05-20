@@ -15,6 +15,7 @@
 package google
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
@@ -30,14 +31,26 @@ func TestAccSecretManagerSecretIamBindingGenerated(t *testing.T) {
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
-		Providers: testAccProvidersOiCS,
+		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccSecretManagerSecretIamBinding_basicGenerated(context),
 			},
 			{
+				ResourceName:      "google_secret_manager_secret_iam_binding.foo",
+				ImportStateId:     fmt.Sprintf("projects/%s/secrets/%s roles/viewer", getTestProjectFromEnv(), fmt.Sprintf("secret%s", context["random_suffix"])),
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+			{
 				// Test Iam Binding update
 				Config: testAccSecretManagerSecretIamBinding_updateGenerated(context),
+			},
+			{
+				ResourceName:      "google_secret_manager_secret_iam_binding.foo",
+				ImportStateId:     fmt.Sprintf("projects/%s/secrets/%s roles/viewer", getTestProjectFromEnv(), fmt.Sprintf("secret%s", context["random_suffix"])),
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -53,11 +66,17 @@ func TestAccSecretManagerSecretIamMemberGenerated(t *testing.T) {
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
-		Providers: testAccProvidersOiCS,
+		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
 				// Test Iam Member creation (no update for member, no need to test)
 				Config: testAccSecretManagerSecretIamMember_basicGenerated(context),
+			},
+			{
+				ResourceName:      "google_secret_manager_secret_iam_member.foo",
+				ImportStateId:     fmt.Sprintf("projects/%s/secrets/%s roles/viewer user:admin@hashicorptest.com", getTestProjectFromEnv(), fmt.Sprintf("secret%s", context["random_suffix"])),
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -73,13 +92,25 @@ func TestAccSecretManagerSecretIamPolicyGenerated(t *testing.T) {
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
-		Providers: testAccProvidersOiCS,
+		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccSecretManagerSecretIamPolicy_basicGenerated(context),
 			},
 			{
+				ResourceName:      "google_secret_manager_secret_iam_policy.foo",
+				ImportStateId:     fmt.Sprintf("projects/%s/secrets/%s", getTestProjectFromEnv(), fmt.Sprintf("secret%s", context["random_suffix"])),
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+			{
 				Config: testAccSecretManagerSecretIamPolicy_emptyBinding(context),
+			},
+			{
+				ResourceName:      "google_secret_manager_secret_iam_policy.foo",
+				ImportStateId:     fmt.Sprintf("projects/%s/secrets/%s", getTestProjectFromEnv(), fmt.Sprintf("secret%s", context["random_suffix"])),
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -88,8 +119,6 @@ func TestAccSecretManagerSecretIamPolicyGenerated(t *testing.T) {
 func testAccSecretManagerSecretIamMember_basicGenerated(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_secret_manager_secret" "secret-basic" {
-  provider = google-beta
-
   secret_id = "secret%{random_suffix}"
   
   labels = {
@@ -109,7 +138,6 @@ resource "google_secret_manager_secret" "secret-basic" {
 }
 
 resource "google_secret_manager_secret_iam_member" "foo" {
-  provider = google-beta
   project = google_secret_manager_secret.secret-basic.project
   secret_id = google_secret_manager_secret.secret-basic.secret_id
   role = "%{role}"
@@ -121,8 +149,6 @@ resource "google_secret_manager_secret_iam_member" "foo" {
 func testAccSecretManagerSecretIamPolicy_basicGenerated(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_secret_manager_secret" "secret-basic" {
-  provider = google-beta
-
   secret_id = "secret%{random_suffix}"
   
   labels = {
@@ -142,7 +168,6 @@ resource "google_secret_manager_secret" "secret-basic" {
 }
 
 data "google_iam_policy" "foo" {
-  provider = google-beta
   binding {
     role = "%{role}"
     members = ["user:admin@hashicorptest.com"]
@@ -150,7 +175,6 @@ data "google_iam_policy" "foo" {
 }
 
 resource "google_secret_manager_secret_iam_policy" "foo" {
-  provider = google-beta
   project = google_secret_manager_secret.secret-basic.project
   secret_id = google_secret_manager_secret.secret-basic.secret_id
   policy_data = data.google_iam_policy.foo.policy_data
@@ -161,8 +185,6 @@ resource "google_secret_manager_secret_iam_policy" "foo" {
 func testAccSecretManagerSecretIamPolicy_emptyBinding(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_secret_manager_secret" "secret-basic" {
-  provider = google-beta
-
   secret_id = "secret%{random_suffix}"
   
   labels = {
@@ -182,11 +204,9 @@ resource "google_secret_manager_secret" "secret-basic" {
 }
 
 data "google_iam_policy" "foo" {
-  provider = google-beta
 }
 
 resource "google_secret_manager_secret_iam_policy" "foo" {
-  provider = google-beta
   project = google_secret_manager_secret.secret-basic.project
   secret_id = google_secret_manager_secret.secret-basic.secret_id
   policy_data = data.google_iam_policy.foo.policy_data
@@ -197,8 +217,6 @@ resource "google_secret_manager_secret_iam_policy" "foo" {
 func testAccSecretManagerSecretIamBinding_basicGenerated(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_secret_manager_secret" "secret-basic" {
-  provider = google-beta
-
   secret_id = "secret%{random_suffix}"
   
   labels = {
@@ -218,8 +236,6 @@ resource "google_secret_manager_secret" "secret-basic" {
 }
 
 resource "google_secret_manager_secret_iam_binding" "foo" {
- 
-  provider = google-beta
   project = google_secret_manager_secret.secret-basic.project
   secret_id = google_secret_manager_secret.secret-basic.secret_id
   role = "%{role}"
@@ -231,8 +247,6 @@ resource "google_secret_manager_secret_iam_binding" "foo" {
 func testAccSecretManagerSecretIamBinding_updateGenerated(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_secret_manager_secret" "secret-basic" {
-  provider = google-beta
-
   secret_id = "secret%{random_suffix}"
   
   labels = {
@@ -252,7 +266,6 @@ resource "google_secret_manager_secret" "secret-basic" {
 }
 
 resource "google_secret_manager_secret_iam_binding" "foo" {
-  provider = google-beta
   project = google_secret_manager_secret.secret-basic.project
   secret_id = google_secret_manager_secret.secret-basic.secret_id
   role = "%{role}"

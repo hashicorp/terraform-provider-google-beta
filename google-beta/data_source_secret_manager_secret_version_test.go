@@ -16,7 +16,7 @@ func TestAccDatasourceSecretManagerSecretVersion_basic(t *testing.T) {
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProvidersOiCS,
+		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckSecretManagerSecretVersionDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -36,7 +36,7 @@ func TestAccDatasourceSecretManagerSecretVersion_latest(t *testing.T) {
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProvidersOiCS,
+		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckSecretManagerSecretVersionDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -75,7 +75,6 @@ func testAccCheckDatasourceSecretManagerSecretVersion(n, expected string) resour
 func testAccDatasourceSecretManagerSecretVersion_latest(randomString string) string {
 	return fmt.Sprintf(`
 resource "google_secret_manager_secret" "secret-basic" {
-  provider = google-beta
   secret_id = "tf-test-secret-version-%s"
   labels = {
     label = "my-label"
@@ -86,13 +85,11 @@ resource "google_secret_manager_secret" "secret-basic" {
 }
 
 resource "google_secret_manager_secret_version" "secret-version-basic-1" {
-  provider = google-beta
   secret = google_secret_manager_secret.secret-basic.name
   secret_data = "my-tf-test-secret-first"
 }
 
 resource "google_secret_manager_secret_version" "secret-version-basic-2" {
-  provider = google-beta
   secret = google_secret_manager_secret.secret-basic.name
   secret_data = "my-tf-test-secret-second"
 
@@ -100,7 +97,6 @@ resource "google_secret_manager_secret_version" "secret-version-basic-2" {
 }
 
 data "google_secret_manager_secret_version" "latest" {
-  provider = google-beta
   secret = google_secret_manager_secret_version.secret-version-basic-2.secret
 }
 `, randomString)
@@ -109,7 +105,6 @@ data "google_secret_manager_secret_version" "latest" {
 func testAccDatasourceSecretManagerSecretVersion_basic(randomString string) string {
 	return fmt.Sprintf(`
 resource "google_secret_manager_secret" "secret-basic" {
-  provider = google-beta
   secret_id = "tf-test-secret-version-%s"
   labels = {
     label = "my-label"
@@ -120,13 +115,11 @@ resource "google_secret_manager_secret" "secret-basic" {
 }
 
 resource "google_secret_manager_secret_version" "secret-version-basic" {
-  provider = google-beta
   secret = google_secret_manager_secret.secret-basic.name
   secret_data = "my-tf-test-secret-%s"
 }
 
 data "google_secret_manager_secret_version" "basic" {
-  provider = google-beta
   secret = google_secret_manager_secret_version.secret-version-basic.secret
   version = 1
 }
