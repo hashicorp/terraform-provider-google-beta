@@ -32,11 +32,17 @@ func TestAccSecretManagerSecretVersion_secretVersionBasicExample(t *testing.T) {
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProvidersOiCS,
+		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckSecretManagerSecretVersionDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccSecretManagerSecretVersion_secretVersionBasicExample(context),
+			},
+			{
+				ResourceName:            "google_secret_manager_secret_version.secret-version-basic",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"secret"},
 			},
 		},
 	})
@@ -45,8 +51,6 @@ func TestAccSecretManagerSecretVersion_secretVersionBasicExample(t *testing.T) {
 func testAccSecretManagerSecretVersion_secretVersionBasicExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_secret_manager_secret" "secret-basic" {
-  provider = google-beta
-
   secret_id = "tf-test-secret-version%{random_suffix}"
   
   labels = {
@@ -60,8 +64,6 @@ resource "google_secret_manager_secret" "secret-basic" {
 
 
 resource "google_secret_manager_secret_version" "secret-version-basic" {
-  provider = google-beta
-
   secret = google_secret_manager_secret.secret-basic.id
 
   secret_data = "tf-test-secret-data%{random_suffix}"

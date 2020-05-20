@@ -24,12 +24,10 @@ description: |-
 
 A Secret is a logical secret whose value and versions can be accessed.
 
-~> **Warning:** This resource is in beta, and should be used with the terraform-provider-google-beta provider.
-See [Provider Versions](https://terraform.io/docs/providers/google/guides/provider_versions.html) for more details on beta resources.
 
 To get more information about Secret, see:
 
-* [API documentation](https://cloud.google.com/secret-manager/docs/reference/rest/v1beta1/projects.secrets)
+* [API documentation](https://cloud.google.com/secret-manager/docs/reference/rest/v1/projects.secrets)
 
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
   <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=secret_config_basic&cloudshell_image=gcr.io%2Fgraphite-cloud-shell-images%2Fterraform%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
@@ -41,8 +39,6 @@ To get more information about Secret, see:
 
 ```hcl
 resource "google_secret_manager_secret" "secret-basic" {
-  provider = google-beta
-
   secret_id = "secret"
   
   labels = {
@@ -147,9 +143,9 @@ This resource provides the following
 Secret can be imported using any of these accepted formats:
 
 ```
-$ terraform import -provider=google-beta google_secret_manager_secret.default projects/{{project}}/secrets/{{secret_id}}
-$ terraform import -provider=google-beta google_secret_manager_secret.default {{project}}/{{secret_id}}
-$ terraform import -provider=google-beta google_secret_manager_secret.default {{secret_id}}
+$ terraform import google_secret_manager_secret.default projects/{{project}}/secrets/{{secret_id}}
+$ terraform import google_secret_manager_secret.default {{project}}/{{secret_id}}
+$ terraform import google_secret_manager_secret.default {{secret_id}}
 ```
 
 -> If you're importing a resource with beta features, make sure to include `-provider=google-beta`

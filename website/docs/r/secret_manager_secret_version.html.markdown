@@ -24,8 +24,6 @@ description: |-
 
 A secret version resource.
 
-~> **Warning:** This resource is in beta, and should be used with the terraform-provider-google-beta provider.
-See [Provider Versions](https://terraform.io/docs/providers/google/guides/provider_versions.html) for more details on beta resources.
 
 
 ~> **Warning:** All arguments including `payload.secret_data` will be stored in the raw
@@ -41,8 +39,6 @@ state as plain-text. [Read more about sensitive data in state](/docs/state/sensi
 
 ```hcl
 resource "google_secret_manager_secret" "secret-basic" {
-  provider = google-beta
-
   secret_id = "secret-version"
   
   labels = {
@@ -56,8 +52,6 @@ resource "google_secret_manager_secret" "secret-basic" {
 
 
 resource "google_secret_manager_secret_version" "secret-version-basic" {
-  provider = google-beta
-
   secret = google_secret_manager_secret.secret-basic.id
 
   secret_data = "secret-data"
@@ -116,7 +110,7 @@ This resource provides the following
 SecretVersion can be imported using any of these accepted formats:
 
 ```
-$ terraform import -provider=google-beta google_secret_manager_secret_version.default {{name}}/{{name}}
+$ terraform import google_secret_manager_secret_version.default {{name}}/{{name}}
 ```
 
 -> If you're importing a resource with beta features, make sure to include `-provider=google-beta`
