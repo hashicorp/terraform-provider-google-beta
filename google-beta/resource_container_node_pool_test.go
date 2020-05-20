@@ -166,9 +166,10 @@ func TestAccContainerNodePool_withNodeConfig(t *testing.T) {
 	})
 }
 
-func TestAccContainerNodePool_withWorkloadMetadataConfig(t *testing.T) {
+func TestAccContainerNodePool_withWorkloadIdentityConfig(t *testing.T) {
 	t.Parallel()
 
+	pid := getTestProjectFromEnv()
 	cluster := fmt.Sprintf("tf-test-cluster-%s", randString(t, 10))
 	np := fmt.Sprintf("tf-test-np-%s", randString(t, 10))
 
@@ -194,22 +195,6 @@ func TestAccContainerNodePool_withWorkloadMetadataConfig(t *testing.T) {
 					"node_config.0.workload_metadata_config.0.node_metadata",
 				},
 			},
-		},
-	})
-}
-
-func TestAccContainerNodePool_withWorkloadIdentityConfig(t *testing.T) {
-	t.Parallel()
-
-	pid := getTestProjectFromEnv()
-	cluster := fmt.Sprintf("tf-test-cluster-%s", randString(t, 10))
-	np := fmt.Sprintf("tf-test-np-%s", randString(t, 10))
-
-	vcrTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckContainerClusterDestroyProducer(t),
-		Steps: []resource.TestStep{
 			{
 				Config: testAccContainerNodePool_withWorkloadMetadataConfig_gkeMetadataServer(pid, cluster, np),
 				Check: resource.ComposeTestCheckFunc(
