@@ -5,12 +5,10 @@ BREAKING CHANGES:
 * The base url for the `monitoring` endpoint no longer includes the API version (previously "v3/"). If you use a `monitoring_custom_endpoint`, remove the trailing "v3/". ([#2088](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2088))
 
 FEATURES:
-* **New Data Source:** Add google_iam_testable_permissions data source ([#2071](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2071))
+* **New Data Source:** `google_iam_testable_permissions` ([#2071](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2071))
 * **New Resource:** `google_monitoring_dashboard` ([#2088](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2088))
 
 IMPROVEMENTS:
-(TODO same note as TPG?)
-* remove vendor directory, update makefile etc ([#2066](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2066))
 * bigquery: added ability for various `table_id` fields (and one `dataset_id` field) in `google_bigquery_job` to specify a relative path instead of just the table id ([#2079](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2079))
 * composer: Added support for `google_composer_environment` `config.private_environment_config.cloud_sql_ipv4_cidr_block` ([#2075](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2075))
 * composer: Added support for `google_composer_environment` `config.private_environment_config.web_server_ipv4_cidr_block` ([#2075](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2075))
@@ -20,15 +18,15 @@ IMPROVEMENTS:
 * container: added `release_channel_default_version` to `data.google_container_engine_versions`, allowing you to find the default version for a release channel ([#2068](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2068))
 * container: added the ability to unspecify `google_container_cluster`'s `min_master_version` field ([#2068](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2068))
 * container: added update support to `google_container_cluster`'s `release_channel` field ([#2068](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2068))
-* container: added configConnector GKE addon config to cluster resource ([#2064](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2064))
+* container: added `config_connector_config` `google_container_cluster` ([#2064](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2064))
 * monitoring: Added window-based SLI to `google_monitoring_slo` ([#2070](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2070))
 
 BUG FIXES:
-* Fixed an issue where `google_compute_route` creation failed while VPC peering was in progress. ([#2082](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2082))
+* compute: Fixed an issue where `google_compute_route` creation failed while VPC peering was in progress. ([#2082](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2082))
 * Fixed an issue where data source `google_organization` would ignore exact domain matches if multiple domains were found ([#2085](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2085))
 * compute: Fixed `google_compute_interconnect_attachment` `edge_availability_domain` diff when the field is unspecified ([#2084](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2084))
 * compute: fixed error where plan would error if `google_compute_region_disk_resource_policy_attachment` had been deleted outside of terraform. ([#2065](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2065))
-* google_compute_security_policy: raise limit on number of  srcIpRange values to supported 10 ([#2076](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2076))
+* compute: raise limit on number of `src_ip_ranges` values in `google_compute_security_policy` to supported 10 ([#2076](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2076))
 * iam: Fixed an issue where `google_service_account` shows an error after creating the resource ([#2074](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2074))
 
 ## 3.22.0 (May 18, 2020)
