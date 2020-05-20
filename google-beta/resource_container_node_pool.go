@@ -181,7 +181,7 @@ var schemaNodePool = map[string]*schema.Schema{
 		ForceNew: true,
 	},
 
-	"node_config": schemaNodeConfig,
+	"node_config": schemaNodeConfig(),
 
 	"node_count": {
 		Type:         schema.TypeInt,
@@ -710,6 +710,37 @@ func nodePoolUpdate(d *schema.ResourceData, meta interface{}, nodePoolInfo *Node
 			}
 
 			log.Printf("[INFO] Updated image type in Node Pool %s", d.Id())
+		}
+		if d.HasChange(prefix + "node_config.0.workload_metadata_config") {
+			req := &containerBeta.UpdateNodePoolRequest{
+				NodePoolId: name,
+				WorkloadMetadataConfig: expandWorkloadMetadataConfig(
+					d.Get(prefix + "node_config.0.workload_metadata_config")),
+			}
+			if req.WorkloadMetadataConfig == nil {
+				req.ForceSendFields = []string{"WorkloadMetadataConfig"}
+			}
+			updateF := func() error {
+				op, err := config.clientContainerBeta.Projects.Locations.Clusters.NodePools.
+					Update(nodePoolInfo.fullyQualifiedName(name), req).Do()
+				if err != nil {
+					return err
+				}
+
+				// Wait until it's updated
+				return containerOperationWait(config, op,
+					nodePoolInfo.project,
+					nodePoolInfo.location,
+					"updating GKE node pool workload_metadata_config",
+					timeout)
+			}
+
+			// Call update serially.
+			if err := lockedCall(lockKey, updateF); err != nil {
+				return err
+			}
+
+			log.Printf("[INFO] Updated workload_metadata_config for node pool %s", name)
 		}
 
 		if prefix == "" {
