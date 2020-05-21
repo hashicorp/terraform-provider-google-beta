@@ -100,7 +100,6 @@ resource "google_compute_network" "network-2" {
 
 ```hcl
 resource "google_dns_managed_zone" "private-zone" {
-  provider    = google-beta
   name        = "private-zone"
   dns_name    = "private.example.com."
   description = "Example private DNS zone"
@@ -149,8 +148,6 @@ resource "google_compute_network" "network-2" {
 
 ```hcl
 resource "google_dns_managed_zone" "peering-zone" {
-  provider = google-beta
-
   name        = "peering-zone"
   dns_name    = "peering.example.com."
   description = "Example private DNS peering zone"
@@ -171,22 +168,13 @@ resource "google_dns_managed_zone" "peering-zone" {
 }
 
 resource "google_compute_network" "network-source" {
-  provider = google-beta
-
   name                    = "network-source"
   auto_create_subnetworks = false
 }
 
 resource "google_compute_network" "network-target" {
-  provider = google-beta
-
   name                    = "network-target"
   auto_create_subnetworks = false
-}
-
-provider "google-beta" {
-  region = "us-central1"
-  zone   = "us-central1-a"
 }
 ```
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
@@ -275,13 +263,13 @@ The following arguments are supported:
   resources that the zone is visible from.  Structure is documented below.
 
 * `forwarding_config` -
-  (Optional, [Beta](https://terraform.io/docs/providers/google/guides/provider_versions.html))
+  (Optional)
   The presence for this field indicates that outbound forwarding is enabled
   for this zone. The value of this field contains the set of destinations
   to forward to.  Structure is documented below.
 
 * `peering_config` -
-  (Optional, [Beta](https://terraform.io/docs/providers/google/guides/provider_versions.html))
+  (Optional)
   The presence of this field indicates that DNS Peering is enabled for this
   zone. The value of this field contains the network to peer with.  Structure is documented below.
 
