@@ -15,7 +15,7 @@ func TestAccFirebaseWebApp_firebaseWebAppFull(t *testing.T) {
 		"display_name":  "Display Name N",
 	}
 
-	resource.Test(t, resource.TestCase{
+	vcrTest(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
 		Providers: testAccProvidersOiCS,
 		Steps: []resource.TestStep{
