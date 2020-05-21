@@ -32,11 +32,16 @@ func TestAccDNSPolicy_dnsPolicyBasicExample(t *testing.T) {
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProvidersOiCS,
+		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckDNSPolicyDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccDNSPolicy_dnsPolicyBasicExample(context),
+			},
+			{
+				ResourceName:      "google_dns_policy.example-policy",
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -45,8 +50,6 @@ func TestAccDNSPolicy_dnsPolicyBasicExample(t *testing.T) {
 func testAccDNSPolicy_dnsPolicyBasicExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_dns_policy" "example-policy" {
-  provider = google-beta
-
   name                      = "tf-test-example-policy%{random_suffix}"
   enable_inbound_forwarding = true
 
@@ -70,22 +73,13 @@ resource "google_dns_policy" "example-policy" {
 }
 
 resource "google_compute_network" "network-1" {
-  provider = google-beta
-
   name                    = "tf-test-network-1%{random_suffix}"
   auto_create_subnetworks = false
 }
 
 resource "google_compute_network" "network-2" {
-  provider = google-beta
-
   name                    = "tf-test-network-2%{random_suffix}"
   auto_create_subnetworks = false
-}
-
-provider "google-beta" {
-  region = "us-central1"
-  zone   = "us-central1-a"
 }
 `, context)
 }

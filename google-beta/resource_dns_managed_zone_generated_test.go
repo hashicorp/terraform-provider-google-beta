@@ -132,11 +132,16 @@ func TestAccDNSManagedZone_dnsManagedZonePrivatePeeringExample(t *testing.T) {
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProvidersOiCS,
+		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckDNSManagedZoneDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccDNSManagedZone_dnsManagedZonePrivatePeeringExample(context),
+			},
+			{
+				ResourceName:      "google_dns_managed_zone.peering-zone",
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -145,8 +150,6 @@ func TestAccDNSManagedZone_dnsManagedZonePrivatePeeringExample(t *testing.T) {
 func testAccDNSManagedZone_dnsManagedZonePrivatePeeringExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_dns_managed_zone" "peering-zone" {
-  provider = google-beta
-
   name        = "tf-test-peering-zone%{random_suffix}"
   dns_name    = "peering.example.com."
   description = "Example private DNS peering zone"
@@ -167,22 +170,13 @@ resource "google_dns_managed_zone" "peering-zone" {
 }
 
 resource "google_compute_network" "network-source" {
-  provider = google-beta
-
   name                    = "tf-test-network-source%{random_suffix}"
   auto_create_subnetworks = false
 }
 
 resource "google_compute_network" "network-target" {
-  provider = google-beta
-
   name                    = "tf-test-network-target%{random_suffix}"
   auto_create_subnetworks = false
-}
-
-provider "google-beta" {
-  region = "us-central1"
-  zone   = "us-central1-a"
 }
 `, context)
 }

@@ -26,8 +26,6 @@ description: |-
 A policy is a collection of DNS rules applied to one or more Virtual
 Private Cloud resources.
 
-~> **Warning:** This resource is in beta, and should be used with the terraform-provider-google-beta provider.
-See [Provider Versions](https://terraform.io/docs/providers/google/guides/provider_versions.html) for more details on beta resources.
 
 To get more information about Policy, see:
 
@@ -45,8 +43,6 @@ To get more information about Policy, see:
 
 ```hcl
 resource "google_dns_policy" "example-policy" {
-  provider = google-beta
-
   name                      = "example-policy"
   enable_inbound_forwarding = true
 
@@ -70,22 +66,13 @@ resource "google_dns_policy" "example-policy" {
 }
 
 resource "google_compute_network" "network-1" {
-  provider = google-beta
-
   name                    = "network-1"
   auto_create_subnetworks = false
 }
 
 resource "google_compute_network" "network-2" {
-  provider = google-beta
-
   name                    = "network-2"
   auto_create_subnetworks = false
-}
-
-provider "google-beta" {
-  region = "us-central1"
-  zone   = "us-central1-a"
 }
 ```
 
@@ -176,9 +163,9 @@ This resource provides the following
 Policy can be imported using any of these accepted formats:
 
 ```
-$ terraform import -provider=google-beta google_dns_policy.default projects/{{project}}/policies/{{name}}
-$ terraform import -provider=google-beta google_dns_policy.default {{project}}/{{name}}
-$ terraform import -provider=google-beta google_dns_policy.default {{name}}
+$ terraform import google_dns_policy.default projects/{{project}}/policies/{{name}}
+$ terraform import google_dns_policy.default {{project}}/{{name}}
+$ terraform import google_dns_policy.default {{name}}
 ```
 
 -> If you're importing a resource with beta features, make sure to include `-provider=google-beta`
