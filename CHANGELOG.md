@@ -1,4 +1,28 @@
 ## 3.24.0 (Unreleased)
+
+BREAKING CHANGES:
+* bigquery: Add ability to manage credentials to `google_bigquery_connection`.  This field is required as the resource is not useful without them. ([#2111](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2111))
+
+FEATURES:
+* **New Resource:** `google_compute_machine_image` ([#2109](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2109))
+* **New Resource:** `google_data_catalog_entry_group_iam_binding` ([#2098](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2098))
+* **New Resource:** `google_data_catalog_entry_group_iam_member` ([#2098](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2098))
+* **New Resource:** `google_data_catalog_entry_group_iam_policy` ([#2098](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2098))
+* **New Resource:** `google_data_catalog_entry_group` ([#2098](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2098))
+* **New Resource:** `google_data_catalog_entry` ([#2100](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2100))
+
+IMPROVEMENTS:
+* appengine: added `handlers` to `google_flexible_app_version` ([#2105](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2105))
+* bigquery: suppressed diffs between fully qualified URLs and relative paths that reference the same table or dataset in `google_bigquery_job` ([#2107](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2107))
+* container: Added update support for `node_config.workload_metadata_config` to `google_container_node_pool` ([#2091](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2091))
+
+BUG FIXES:
+* appengine: added ability to fully sync `StandardAppVersion` resources ([#2096](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2096))
+* bigquery: Fixed an issue with `google_bigquery_dataset_access` failing for primitive role `roles/bigquery.dataViewer` ([#2092](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2092))
+* dataflow: fixed an issue where `google_dataflow_job` would try to update `max_workers` ([#2110](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2110))
+* dataflow: fixed an issue where updating `on_delete` in `google_dataflow_job` would cause the job to be replaced ([#2110](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2110))
+* os_login: Fixed `google_os_login_ssh_public_key` `key` field attempting to update in-place ([#2094](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2094))
+
 ## 3.23.0 (May 25, 2020)
 
 BREAKING CHANGES:
