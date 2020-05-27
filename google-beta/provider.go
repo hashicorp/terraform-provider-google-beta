@@ -638,9 +638,9 @@ func Provider() terraform.ResourceProvider {
 	return provider
 }
 
-// Generated resources: 156
+// Generated resources: 157
 // Generated IAM resources: 66
-// Total generated resources: 222
+// Total generated resources: 223
 func ResourceMap() map[string]*schema.Resource {
 	resourceMap, _ := ResourceMapWithErrors()
 	return resourceMap
@@ -711,6 +711,7 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_compute_instance_iam_policy":                           ResourceIamPolicy(ComputeInstanceIamSchema, ComputeInstanceIamUpdaterProducer, ComputeInstanceIdParseFunc),
 			"google_compute_instance_group_named_port":                     resourceComputeInstanceGroupNamedPort(),
 			"google_compute_interconnect_attachment":                       resourceComputeInterconnectAttachment(),
+			"google_compute_machine_image":                                 resourceComputeMachineImage(),
 			"google_compute_network":                                       resourceComputeNetwork(),
 			"google_compute_network_endpoint":                              resourceComputeNetworkEndpoint(),
 			"google_compute_network_endpoint_group":                        resourceComputeNetworkEndpointGroup(),
