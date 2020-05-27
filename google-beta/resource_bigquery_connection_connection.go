@@ -50,6 +50,27 @@ func resourceBigqueryConnectionConnection() *schema.Resource {
 				MaxItems:    1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
+						"credential": {
+							Type:        schema.TypeList,
+							Required:    true,
+							Description: `Cloud SQL properties.`,
+							MaxItems:    1,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"password": {
+										Type:        schema.TypeString,
+										Required:    true,
+										Description: `Password for database.`,
+										Sensitive:   true,
+									},
+									"username": {
+										Type:        schema.TypeString,
+										Required:    true,
+										Description: `Username for database.`,
+									},
+								},
+							},
+						},
 						"database": {
 							Type:        schema.TypeString,
 							Required:    true,
@@ -343,6 +364,8 @@ func flattenBigqueryConnectionConnectionCloudSql(v interface{}, d *schema.Resour
 		flattenBigqueryConnectionConnectionCloudSqlInstanceId(original["instanceId"], d, config)
 	transformed["database"] =
 		flattenBigqueryConnectionConnectionCloudSqlDatabase(original["database"], d, config)
+	transformed["credential"] =
+		flattenBigqueryConnectionConnectionCloudSqlCredential(original["credential"], d, config)
 	transformed["type"] =
 		flattenBigqueryConnectionConnectionCloudSqlType(original["type"], d, config)
 	return []interface{}{transformed}
@@ -353,6 +376,15 @@ func flattenBigqueryConnectionConnectionCloudSqlInstanceId(v interface{}, d *sch
 
 func flattenBigqueryConnectionConnectionCloudSqlDatabase(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
+}
+
+func flattenBigqueryConnectionConnectionCloudSqlCredential(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	return []interface{}{
+		map[string]interface{}{
+			"username": d.Get("cloud_sql.0.credential.0.username"),
+			"password": d.Get("cloud_sql.0.credential.0.password"),
+		},
+	}
 }
 
 func flattenBigqueryConnectionConnectionCloudSqlType(v interface{}, d *schema.ResourceData, config *Config) interface{} {
@@ -390,6 +422,13 @@ func expandBigqueryConnectionConnectionCloudSql(v interface{}, d TerraformResour
 		transformed["database"] = transformedDatabase
 	}
 
+	transformedCredential, err := expandBigqueryConnectionConnectionCloudSqlCredential(original["credential"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedCredential); val.IsValid() && !isEmptyValue(val) {
+		transformed["credential"] = transformedCredential
+	}
+
 	transformedType, err := expandBigqueryConnectionConnectionCloudSqlType(original["type"], d, config)
 	if err != nil {
 		return nil, err
@@ -405,6 +444,40 @@ func expandBigqueryConnectionConnectionCloudSqlInstanceId(v interface{}, d Terra
 }
 
 func expandBigqueryConnectionConnectionCloudSqlDatabase(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandBigqueryConnectionConnectionCloudSqlCredential(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedUsername, err := expandBigqueryConnectionConnectionCloudSqlCredentialUsername(original["username"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedUsername); val.IsValid() && !isEmptyValue(val) {
+		transformed["username"] = transformedUsername
+	}
+
+	transformedPassword, err := expandBigqueryConnectionConnectionCloudSqlCredentialPassword(original["password"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedPassword); val.IsValid() && !isEmptyValue(val) {
+		transformed["password"] = transformedPassword
+	}
+
+	return transformed, nil
+}
+
+func expandBigqueryConnectionConnectionCloudSqlCredentialUsername(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandBigqueryConnectionConnectionCloudSqlCredentialPassword(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
