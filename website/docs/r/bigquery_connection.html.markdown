@@ -33,6 +33,9 @@ To get more information about Connection, see:
 * How-to Guides
     * [Cloud SQL federated queries](https://cloud.google.com/bigquery/docs/cloud-sql-federated-queries)
 
+~> **Warning:** All arguments including `cloud_sql.credential.password` will be stored in the raw
+state as plain-text. [Read more about sensitive data in state](/docs/state/sensitive-data.html).
+
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
   <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=bigquery_connection_basic&cloudshell_image=gcr.io%2Fgraphite-cloud-shell-images%2Fterraform%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
     <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
@@ -58,6 +61,18 @@ resource "google_sql_database" "db" {
     name     = "db"
 }
 
+resource "random_password" "pwd" {
+    length = 16
+    special = false
+}
+
+resource "google_sql_user" "user" {
+    provider = google-beta
+    name = "user"
+    instance = google_sql_database_instance.instance.name
+    password = random_password.pwd.result
+}
+
 resource "google_bigquery_connection" "connection" {
     provider      = google-beta
     friendly_name = "👋"
@@ -66,6 +81,10 @@ resource "google_bigquery_connection" "connection" {
         instance_id = google_sql_database_instance.instance.connection_name
         database    = google_sql_database.db.name
         type        = "POSTGRES"
+        credential {
+          username = google_sql_user.user.name
+          password = google_sql_user.user.password
+        }
     }
 }
 ```
@@ -94,6 +113,18 @@ resource "google_sql_database" "db" {
     name     = "db"
 }
 
+resource "random_password" "pwd" {
+    length = 16
+    special = false
+}
+
+resource "google_sql_user" "user" {
+    provider = google-beta
+    name = "user"
+    instance = google_sql_database_instance.instance.name
+    password = random_password.pwd.result
+}
+
 resource "google_bigquery_connection" "connection" {
     provider      = google-beta
     connection_id = "my-connection"
@@ -104,6 +135,10 @@ resource "google_bigquery_connection" "connection" {
         instance_id = google_sql_database_instance.instance.connection_name
         database    = google_sql_database.db.name
         type        = "POSTGRES"
+        credential {
+          username = google_sql_user.user.name
+          password = google_sql_user.user.password
+        }
     }
 }
 ```
@@ -128,6 +163,10 @@ The `cloud_sql` block supports:
   (Required)
   Database name.
 
+* `credential` -
+  (Required)
+  Cloud SQL properties.  Structure is documented below.
+
 * `type` -
   (Required)
   Type of the Cloud SQL database.
@@ -136,6 +175,17 @@ The `cloud_sql` block supports:
   * `DATABASE_TYPE_UNSPECIFIED`
   * `POSTGRES`
   * `MYSQL`
+
+
+The `credential` block supports:
+
+* `username` -
+  (Required)
+  Username for database.
+
+* `password` -
+  (Required)
+  Password for database.  **Note**: This property is sensitive and will not be displayed in the plan.
 
 - - -
 

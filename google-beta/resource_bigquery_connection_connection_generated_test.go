@@ -60,6 +60,18 @@ resource "google_sql_database" "db" {
     name     = "db"
 }
 
+resource "random_password" "pwd" {
+    length = 16
+    special = false
+}
+
+resource "google_sql_user" "user" {
+    provider = google-beta
+    name = "user%{random_suffix}"
+    instance = google_sql_database_instance.instance.name
+    password = random_password.pwd.result
+}
+
 resource "google_bigquery_connection" "connection" {
     provider      = google-beta
     friendly_name = "👋"
@@ -68,6 +80,10 @@ resource "google_bigquery_connection" "connection" {
         instance_id = google_sql_database_instance.instance.connection_name
         database    = google_sql_database.db.name
         type        = "POSTGRES"
+        credential {
+          username = google_sql_user.user.name
+          password = google_sql_user.user.password
+        }
     }
 }
 `, context)
@@ -110,6 +126,18 @@ resource "google_sql_database" "db" {
     name     = "db"
 }
 
+resource "random_password" "pwd" {
+    length = 16
+    special = false
+}
+
+resource "google_sql_user" "user" {
+    provider = google-beta
+    name = "user%{random_suffix}"
+    instance = google_sql_database_instance.instance.name
+    password = random_password.pwd.result
+}
+
 resource "google_bigquery_connection" "connection" {
     provider      = google-beta
     connection_id = "tf-test-my-connection%{random_suffix}"
@@ -120,6 +148,10 @@ resource "google_bigquery_connection" "connection" {
         instance_id = google_sql_database_instance.instance.connection_name
         database    = google_sql_database.db.name
         type        = "POSTGRES"
+        credential {
+          username = google_sql_user.user.name
+          password = google_sql_user.user.password
+        }
     }
 }
 `, context)
