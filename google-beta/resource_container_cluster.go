@@ -881,6 +881,19 @@ func resourceContainerCluster() *schema.Resource {
 					},
 				},
 			},
+			"workload_identity_config": {
+				Type:     schema.TypeList,
+				MaxItems: 1,
+				Optional: true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"identity_namespace": {
+							Type:     schema.TypeString,
+							Required: true,
+						},
+					},
+				},
+			},
 
 			"release_channel": {
 				Type:     schema.TypeList,
@@ -894,20 +907,6 @@ func resourceContainerCluster() *schema.Resource {
 							Required:         true,
 							ValidateFunc:     validation.StringInSlice([]string{"UNSPECIFIED", "RAPID", "REGULAR", "STABLE"}, false),
 							DiffSuppressFunc: emptyOrDefaultStringSuppress("UNSPECIFIED"),
-						},
-					},
-				},
-			},
-
-			"workload_identity_config": {
-				Type:     schema.TypeList,
-				MaxItems: 1,
-				Optional: true,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"identity_namespace": {
-							Type:     schema.TypeString,
-							Required: true,
 						},
 					},
 				},
