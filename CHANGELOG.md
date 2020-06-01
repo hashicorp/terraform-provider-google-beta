@@ -5,9 +5,7 @@ BREAKING CHANGES:
 
 FEATURES:
 * **New Resource:** `google_compute_machine_image` ([#2109](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2109))
-* **New Resource:** `google_data_catalog_entry_group_iam_binding` ([#2098](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2098))
-* **New Resource:** `google_data_catalog_entry_group_iam_member` ([#2098](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2098))
-* **New Resource:** `google_data_catalog_entry_group_iam_policy` ([#2098](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2098))
+* **New Resources:** `google_data_catalog_entry_group_iam_*` ([#2098](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2098))
 * **New Resource:** `google_data_catalog_entry_group` ([#2098](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2098))
 * **New Resource:** `google_data_catalog_entry` ([#2100](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2100))
 
