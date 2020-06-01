@@ -1,4 +1,4 @@
-## 3.24.0 (Unreleased)
+## 3.24.0 (June 01, 2020)
 
 BREAKING CHANGES:
 * bigquery: Add ability to manage credentials to `google_bigquery_connection`.  This field is required as the resource is not useful without them. ([#2111](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2111))
