@@ -51,7 +51,7 @@ Developing the Provider
 ---------------------------
 
 If you wish to work on the provider, you'll first need [Go](http://www.golang.org)
-installed on your machine (version 1.13.0+ is *required*). You can use [goenv](https://github.com/syndbg/goenv)
+installed on your machine (version 1.14.0+ is *required*). You can use [goenv](https://github.com/syndbg/goenv)
 to manage your Go version. You'll also need to correctly setup a [GOPATH](http://golang.org/doc/code.html#GOPATH),
 as well as adding `$GOPATH/bin` to your `$PATH`.
 
