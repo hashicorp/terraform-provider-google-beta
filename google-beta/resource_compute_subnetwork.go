@@ -178,8 +178,9 @@ If set to INTERNAL_HTTPS_LOAD_BALANCER you must also set the role. Possible valu
 				Type:             schema.TypeString,
 				Computed:         true,
 				Optional:         true,
+				ForceNew:         true,
 				DiffSuppressFunc: compareSelfLinkOrResourceName,
-				Description:      `URL of the GCP region for this subnetwork.`,
+				Description:      `The GCP region for this subnetwork.`,
 			},
 			"role": {
 				Type:         schema.TypeString,
