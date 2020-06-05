@@ -341,8 +341,8 @@ func TestAccContainerNodePool_withManagement(t *testing.T) {
 	nodePool := fmt.Sprintf("tf-test-nodepool-%s", randString(t, 10))
 	management := `
 	management {
-		auto_repair = "true"
-		auto_upgrade = "true"
+		auto_repair = "false"
+		auto_upgrade = "false"
 	}`
 
 	vcrTest(t, resource.TestCase{
@@ -356,9 +356,9 @@ func TestAccContainerNodePool_withManagement(t *testing.T) {
 					resource.TestCheckResourceAttr(
 						"google_container_node_pool.np_with_management", "management.#", "1"),
 					resource.TestCheckResourceAttr(
-						"google_container_node_pool.np_with_management", "management.0.auto_repair", "false"),
+						"google_container_node_pool.np_with_management", "management.0.auto_repair", "true"),
 					resource.TestCheckResourceAttr(
-						"google_container_node_pool.np_with_management", "management.0.auto_repair", "false"),
+						"google_container_node_pool.np_with_management", "management.0.auto_upgrade", "true"),
 				),
 			},
 			{
@@ -372,9 +372,9 @@ func TestAccContainerNodePool_withManagement(t *testing.T) {
 					resource.TestCheckResourceAttr(
 						"google_container_node_pool.np_with_management", "management.#", "1"),
 					resource.TestCheckResourceAttr(
-						"google_container_node_pool.np_with_management", "management.0.auto_repair", "true"),
+						"google_container_node_pool.np_with_management", "management.0.auto_repair", "false"),
 					resource.TestCheckResourceAttr(
-						"google_container_node_pool.np_with_management", "management.0.auto_repair", "true"),
+						"google_container_node_pool.np_with_management", "management.0.auto_upgrade", "false"),
 				),
 			},
 			{
