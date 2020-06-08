@@ -3,7 +3,7 @@ BREAKING CHANGES:
 * bigquery: Add ability to manage credentials to `google_bigquery_connection`.  This field is required as the resource is not useful without them. ([#2111](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2111))
 
 FEATURES:
-* **New Resource:** `data_catalog_tag_template` ([#2120](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2120))
+* **New Resource:** `google_data_catalog_tag_template` ([#2120](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2120))
 * **New Resource:** `google_container_analysis_occurence` ([#2114](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2114))
 
 IMPROVEMENTS:
