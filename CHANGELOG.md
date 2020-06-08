@@ -8,13 +8,12 @@ FEATURES:
 
 IMPROVEMENTS:
 * appengine: added `inbound_services` to `StandardAppVersion` resource ([#2131](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2131))
-* bigquery: Added `google_bigquery_table` `range_partitioning` to GA ([#2121](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2121))
 * bigquery: Added support for `google_bigquery_table` `hive_partitioning_options` ([#2121](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2121))
-* container: Changed retry logic for `google_container_node_pool` deletion to use timeouts and retry errors more specifically when cluster is updating. ([#2115](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2115))
 * container_analysis: Added top-level generic note fields to `google_container_analysis_note` ([#2114](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2114))
 
 BUG FIXES:
 * bigquery: Fixed an issue where `google_bigquery_job` would return "was present, but now absent" error after job creation ([#2122](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2122))
+* container: Changed retry logic for `google_container_node_pool` deletion to use timeouts and retry errors more specifically when cluster is updating. ([#2115](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2115))
 * dataflow: fixed an issue where `google_dataflow_job` would try to update `max_workers` ([#2110](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2110))
 * dataflow: fixed an issue where updating `on_delete` in `google_dataflow_job` would cause the job to be replaced ([#2110](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2110))
 * compute: fixed issue where removing all target pools from `google_compute_instance_group_manager` or `google_compute_region_instance_group_manager` had no effect ([#2124](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2124))
