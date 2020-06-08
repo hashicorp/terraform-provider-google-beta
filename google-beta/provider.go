@@ -654,9 +654,9 @@ func Provider() terraform.ResourceProvider {
 	return provider
 }
 
-// Generated resources: 161
+// Generated resources: 162
 // Generated IAM resources: 66
-// Total generated resources: 227
+// Total generated resources: 228
 func ResourceMap() map[string]*schema.Resource {
 	resourceMap, _ := ResourceMapWithErrors()
 	return resourceMap
@@ -778,6 +778,7 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_data_catalog_entry_group_iam_policy":                   ResourceIamPolicy(DataCatalogEntryGroupIamSchema, DataCatalogEntryGroupIamUpdaterProducer, DataCatalogEntryGroupIdParseFunc),
 			"google_data_catalog_entry":                                    resourceDataCatalogEntry(),
 			"google_data_catalog_tag_template":                             resourceDataCatalogTagTemplate(),
+			"google_data_catalog_tag":                                      resourceDataCatalogTag(),
 			"google_data_fusion_instance":                                  resourceDataFusionInstance(),
 			"google_dataproc_autoscaling_policy":                           resourceDataprocAutoscalingPolicy(),
 			"google_datastore_index":                                       resourceDatastoreIndex(),
