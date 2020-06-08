@@ -1,4 +1,26 @@
-## 3.25.0 (Unreleased)
+## 3.26.0 (Unreleased)
+## 3.25.0 (June 08, 2020)
+BREAKING CHANGES:
+* bigquery: Add ability to manage credentials to `google_bigquery_connection`.  This field is required as the resource is not useful without them. ([#2111](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2111))
+
+FEATURES:
+* **New Resource:** `google_data_catalog_tag_template` ([#2120](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2120))
+* **New Resource:** `google_container_analysis_occurence` ([#2114](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2114))
+
+IMPROVEMENTS:
+* appengine: added `inbound_services` to `StandardAppVersion` resource ([#2131](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2131))
+* bigquery: Added support for `google_bigquery_table` `hive_partitioning_options` ([#2121](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2121))
+* container_analysis: Added top-level generic note fields to `google_container_analysis_note` ([#2114](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2114))
+
+BUG FIXES:
+* bigquery: Fixed an issue where `google_bigquery_job` would return "was present, but now absent" error after job creation ([#2122](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2122))
+* container: Changed retry logic for `google_container_node_pool` deletion to use timeouts and retry errors more specifically when cluster is updating. ([#2115](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2115))
+* dataflow: fixed an issue where `google_dataflow_job` would try to update `max_workers` ([#2110](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2110))
+* dataflow: fixed an issue where updating `on_delete` in `google_dataflow_job` would cause the job to be replaced ([#2110](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2110))
+* compute: fixed issue where removing all target pools from `google_compute_instance_group_manager` or `google_compute_region_instance_group_manager` had no effect ([#2124](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2124))
+* functions: Added retry to `google_cloudfunctions_function` creation when API returns error while pulling source from GCS ([#2116](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2116))
+* provider: Removed credentials from output error when provider cannot parse given credentials ([#2113](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2113))
+
 ## 3.24.0 (June 01, 2020)
 
 BREAKING CHANGES:
