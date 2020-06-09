@@ -539,11 +539,12 @@ func resourceContainerCluster() *schema.Resource {
 			},
 
 			"logging_service": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				Default:      "logging.googleapis.com/kubernetes",
-				ValidateFunc: validation.StringInSlice([]string{"logging.googleapis.com", "logging.googleapis.com/kubernetes", "none"}, false),
-				Description:  `The logging service that the cluster should write logs to. Available options include logging.googleapis.com(Legacy Stackdriver), logging.googleapis.com/kubernetes(Stackdriver Kubernetes Engine Logging), and none. Defaults to logging.googleapis.com/kubernetes.`,
+				Type:          schema.TypeString,
+				Optional:      true,
+				Computed:      true,
+				ConflictsWith: []string{"cluster_telemetry"},
+				ValidateFunc:  validation.StringInSlice([]string{"logging.googleapis.com", "logging.googleapis.com/kubernetes", "none"}, false),
+				Description:   `The logging service that the cluster should write logs to. Available options include logging.googleapis.com(Legacy Stackdriver), logging.googleapis.com/kubernetes(Stackdriver Kubernetes Engine Logging), and none. Defaults to logging.googleapis.com/kubernetes.`,
 			},
 
 			"maintenance_policy": {
@@ -694,11 +695,12 @@ func resourceContainerCluster() *schema.Resource {
 			},
 
 			"monitoring_service": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				Default:      "monitoring.googleapis.com/kubernetes",
-				ValidateFunc: validation.StringInSlice([]string{"monitoring.googleapis.com", "monitoring.googleapis.com/kubernetes", "none"}, false),
-				Description:  `The monitoring service that the cluster should write metrics to. Automatically send metrics from pods in the cluster to the Google Cloud Monitoring API. VM metrics will be collected by Google Compute Engine regardless of this setting Available options include monitoring.googleapis.com(Legacy Stackdriver), monitoring.googleapis.com/kubernetes(Stackdriver Kubernetes Engine Monitoring), and none. Defaults to monitoring.googleapis.com/kubernetes.`,
+				Type:          schema.TypeString,
+				Optional:      true,
+				Computed:      true,
+				ConflictsWith: []string{"cluster_telemetry"},
+				ValidateFunc:  validation.StringInSlice([]string{"monitoring.googleapis.com", "monitoring.googleapis.com/kubernetes", "none"}, false),
+				Description:   `The monitoring service that the cluster should write metrics to. Automatically send metrics from pods in the cluster to the Google Cloud Monitoring API. VM metrics will be collected by Google Compute Engine regardless of this setting Available options include monitoring.googleapis.com(Legacy Stackdriver), monitoring.googleapis.com/kubernetes(Stackdriver Kubernetes Engine Monitoring), and none. Defaults to monitoring.googleapis.com/kubernetes.`,
 			},
 
 			"network": {
@@ -1036,6 +1038,22 @@ func resourceContainerCluster() *schema.Resource {
 				},
 			},
 
+			"cluster_telemetry": {
+				Type:     schema.TypeList,
+				Optional: true,
+				Computed: true,
+				MaxItems: 1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"type": {
+							Type:         schema.TypeString,
+							Required:     true,
+							ValidateFunc: validation.StringInSlice([]string{"DISABLED", "ENABLED", "SYSTEM_ONLY"}, false),
+						},
+					},
+				},
+			},
+
 			"resource_usage_export_config": {
 				Type:        schema.TypeList,
 				MaxItems:    1,
@@ -1184,8 +1202,9 @@ func resourceContainerClusterCreate(d *schema.ResourceData, meta interface{}) er
 			Enabled:         d.Get("enable_shielded_nodes").(bool),
 			ForceSendFields: []string{"Enabled"},
 		},
-		ReleaseChannel: expandReleaseChannel(d.Get("release_channel")),
-		EnableTpu:      d.Get("enable_tpu").(bool),
+		ReleaseChannel:   expandReleaseChannel(d.Get("release_channel")),
+		ClusterTelemetry: expandClusterTelemetry(d.Get("cluster_telemetry")),
+		EnableTpu:        d.Get("enable_tpu").(bool),
 		NetworkConfig: &containerBeta.NetworkConfig{
 			EnableIntraNodeVisibility: d.Get("enable_intranode_visibility").(bool),
 		},
@@ -1500,6 +1519,10 @@ func resourceContainerClusterRead(d *schema.ResourceData, meta interface{}) erro
 	}
 
 	if err := d.Set("database_encryption", flattenDatabaseEncryption(cluster.DatabaseEncryption)); err != nil {
+		return err
+	}
+
+	if err := d.Set("cluster_telemetry", flattenClusterTelemetry(cluster.ClusterTelemetry)); err != nil {
 		return err
 	}
 
@@ -2168,6 +2191,36 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 
 	d.Partial(false)
 
+	if d.HasChange("cluster_telemetry") {
+		req := &containerBeta.UpdateClusterRequest{
+			Update: &containerBeta.ClusterUpdate{
+				DesiredClusterTelemetry: expandClusterTelemetry(d.Get("cluster_telemetry")),
+			},
+		}
+		updateF := func() error {
+			log.Println("[DEBUG] updating cluster_telemetry")
+			name := containerClusterFullName(project, location, clusterName)
+			op, err := config.clientContainerBeta.Projects.Locations.Clusters.Update(name, req).Do()
+			if err != nil {
+				return err
+			}
+
+			// Wait until it's updated
+			err = containerOperationWait(config, op, project, location, "updating Cluster Telemetry", d.Timeout(schema.TimeoutUpdate))
+			log.Println("[DEBUG] done updating cluster_telemetry")
+			return err
+		}
+
+		// Call update serially.
+		if err := lockedCall(lockKey, updateF); err != nil {
+			return err
+		}
+
+		log.Printf("[INFO] GKE cluster %s Cluster Telemetry has been updated to %#v", d.Id(), req.Update.DesiredClusterTelemetry)
+
+		d.SetPartial("cluster_telemetry")
+	}
+
 	if _, err := containerClusterAwaitRestingState(config, project, location, clusterName, d.Timeout(schema.TimeoutUpdate)); err != nil {
 		return err
 	}
@@ -2690,6 +2743,17 @@ func expandDatabaseEncryption(configured interface{}) *containerBeta.DatabaseEnc
 	}
 }
 
+func expandClusterTelemetry(configured interface{}) *containerBeta.ClusterTelemetry {
+	l := configured.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil
+	}
+	config := l[0].(map[string]interface{})
+	return &containerBeta.ClusterTelemetry{
+		Type: config["type"].(string),
+	}
+}
+
 func expandWorkloadIdentityConfig(configured interface{}) *containerBeta.WorkloadIdentityConfig {
 	l := configured.([]interface{})
 	if len(l) == 0 || l[0] == nil {
@@ -2908,6 +2972,16 @@ func flattenReleaseChannel(c *containerBeta.ReleaseChannel) []map[string]interfa
 		// Explicitly set the release channel to the default.
 		result = append(result, map[string]interface{}{
 			"channel": "UNSPECIFIED",
+		})
+	}
+	return result
+}
+
+func flattenClusterTelemetry(c *containerBeta.ClusterTelemetry) []map[string]interface{} {
+	result := []map[string]interface{}{}
+	if c != nil {
+		result = append(result, map[string]interface{}{
+			"type": c.Type,
 		})
 	}
 	return result
