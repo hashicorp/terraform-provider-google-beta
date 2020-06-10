@@ -933,6 +933,22 @@ func resourceContainerCluster() *schema.Resource {
 							Computed:    true,
 							Description: `The external IP address of this cluster's master endpoint.`,
 						},
+						"master_global_access_config": {
+							Type:        schema.TypeList,
+							MaxItems:    1,
+							Optional:    true,
+							Computed:    true,
+							Description: "Controls cluster master global access settings.",
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"enabled": {
+										Type:        schema.TypeBool,
+										Required:    true,
+										Description: `Whether the cluster master is accessible globally or not.`,
+									},
+								},
+							},
+						},
 					},
 				},
 			},
@@ -2702,10 +2718,23 @@ func expandPrivateClusterConfig(configured interface{}) *containerBeta.PrivateCl
 	}
 	config := l[0].(map[string]interface{})
 	return &containerBeta.PrivateClusterConfig{
-		EnablePrivateEndpoint: config["enable_private_endpoint"].(bool),
-		EnablePrivateNodes:    config["enable_private_nodes"].(bool),
-		MasterIpv4CidrBlock:   config["master_ipv4_cidr_block"].(string),
-		ForceSendFields:       []string{"EnablePrivateEndpoint", "EnablePrivateNodes", "MasterIpv4CidrBlock"},
+		EnablePrivateEndpoint:    config["enable_private_endpoint"].(bool),
+		EnablePrivateNodes:       config["enable_private_nodes"].(bool),
+		MasterIpv4CidrBlock:      config["master_ipv4_cidr_block"].(string),
+		MasterGlobalAccessConfig: expandPrivateClusterConfigMasterGlobalAccessConfig(config["master_global_access_config"]),
+		ForceSendFields:          []string{"EnablePrivateEndpoint", "EnablePrivateNodes", "MasterIpv4CidrBlock", "MasterGlobalAccessConfig"},
+	}
+}
+
+func expandPrivateClusterConfigMasterGlobalAccessConfig(configured interface{}) *containerBeta.PrivateClusterMasterGlobalAccessConfig {
+	l := configured.([]interface{})
+	if len(l) == 0 {
+		return nil
+	}
+	config := l[0].(map[string]interface{})
+	return &containerBeta.PrivateClusterMasterGlobalAccessConfig{
+		Enabled:         config["enabled"].(bool),
+		ForceSendFields: []string{"Enabled"},
 	}
 }
 
@@ -2941,12 +2970,24 @@ func flattenPrivateClusterConfig(c *containerBeta.PrivateClusterConfig) []map[st
 	}
 	return []map[string]interface{}{
 		{
-			"enable_private_endpoint": c.EnablePrivateEndpoint,
-			"enable_private_nodes":    c.EnablePrivateNodes,
-			"master_ipv4_cidr_block":  c.MasterIpv4CidrBlock,
-			"peering_name":            c.PeeringName,
-			"private_endpoint":        c.PrivateEndpoint,
-			"public_endpoint":         c.PublicEndpoint,
+			"enable_private_endpoint":     c.EnablePrivateEndpoint,
+			"enable_private_nodes":        c.EnablePrivateNodes,
+			"master_ipv4_cidr_block":      c.MasterIpv4CidrBlock,
+			"master_global_access_config": flattenPrivateClusterConfigMasterGlobalAccessConfig(c.MasterGlobalAccessConfig),
+			"peering_name":                c.PeeringName,
+			"private_endpoint":            c.PrivateEndpoint,
+			"public_endpoint":             c.PublicEndpoint,
+		},
+	}
+}
+
+func flattenPrivateClusterConfigMasterGlobalAccessConfig(c *containerBeta.PrivateClusterMasterGlobalAccessConfig) []map[string]interface{} {
+	if c == nil {
+		return nil
+	}
+	return []map[string]interface{}{
+		{
+			"enabled": c.Enabled,
 		},
 	}
 }
