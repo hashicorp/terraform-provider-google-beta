@@ -10,7 +10,7 @@ FEATURES:
 
 IMPROVEMENTS:
 * compute: added `default_route_action` to `compute_url_map` and `compute_url_map.path_matchers` ([#2143](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2143))
-* container :  Added cluster_telemetry attribute to `google_container_cluster` ([#2149](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2149))
+* container : Added cluster_telemetry attribute to `google_container_cluster` ([#2149](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2149))
 * dataflow: changed the update logic for `google_dataflow_job` to wait for the replacement job to start successfully before modifying the resource ID to point to the replacement job ([#2140](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2140))
 * dns: enabled google_dns_managed_zone to accept network id for two attributes ([#2139](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2139))
 * healthcare: Added support for `streaming_configs` to `google_healthcare_fhir_store` ([#2145](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2145))
