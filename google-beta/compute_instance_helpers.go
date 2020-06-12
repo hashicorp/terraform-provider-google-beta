@@ -1,3 +1,4 @@
+//
 package google
 
 import (
@@ -91,7 +92,6 @@ func expandScheduling(v interface{}) (*computeBeta.Scheduling, error) {
 	if v, ok := original["preemptible"]; ok {
 		scheduling.Preemptible = v.(bool)
 		scheduling.ForceSendFields = append(scheduling.ForceSendFields, "Preemptible")
-
 	}
 
 	if v, ok := original["on_host_maintenance"]; ok {
@@ -117,6 +117,10 @@ func expandScheduling(v interface{}) (*computeBeta.Scheduling, error) {
 		}
 	}
 
+	if v, ok := original["min_node_cpus"]; ok {
+		scheduling.MinNodeCpus = int64(v.(int))
+	}
+
 	return scheduling, nil
 }
 
@@ -124,6 +128,7 @@ func flattenScheduling(resp *computeBeta.Scheduling) []map[string]interface{} {
 	schedulingMap := map[string]interface{}{
 		"on_host_maintenance": resp.OnHostMaintenance,
 		"preemptible":         resp.Preemptible,
+		"min_node_cpus":       resp.MinNodeCpus,
 	}
 
 	if resp.AutomaticRestart != nil {
@@ -371,6 +376,10 @@ func schedulingHasChange(d *schema.ResourceData) bool {
 	}
 
 	if oScheduling["on_host_maintenance"] != newScheduling["on_host_maintenance"] {
+		return true
+	}
+
+	if oScheduling["min_node_cpus"] != newScheduling["min_node_cpus"] {
 		return true
 	}
 
