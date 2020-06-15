@@ -1,4 +1,28 @@
-## 3.26.0 (Unreleased)
+## 3.27.0 (Unreleased)
+
+## 3.26.0 (June 15, 2020)
+
+FEATURES:
+* **New Resource:** `google_data_catalog_tag` ([#2144](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2144))
+* **New Resource:** `google_bigquery_dataset_iam_binding` ([#2147](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2147))
+* **New Resource:** `google_bigquery_dataset_iam_member` ([#2147](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2147))
+* **New Resource:** `google_bigquery_dataset_iam_policy` ([#2147](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2147))
+* **New Resource:** `google_memcache_instance` ([#2142](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2142))
+* **New Resource:** `google_network_management_connectivity_test` ([#2138](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2138))
+
+IMPROVEMENTS:
+* compute: added `default_route_action` to `compute_url_map` and `compute_url_map.path_matchers` ([#2143](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2143))
+* container : Added cluster_telemetry attribute to `google_container_cluster` ([#2149](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2149))
+* dialogflow: Changed `google_dialogflow_agent.time_zone` to be updatable ([#2133](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2133))
+* dns: enabled google_dns_managed_zone to accept network id for two attributes ([#2139](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2139))
+* healthcare: Added support for `streaming_configs` to `google_healthcare_fhir_store` ([#2145](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2145))
+* monitoring: added `matcher` attribute to `content_matchers` block for `google_monitoring_uptime_check_config` ([#2150](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2150))
+
+BUG FIXES:
+* compute: fixed issue where trying to update the region of `google_compute_subnetwork` would fail instead of destroying/recreating the subnetwork ([#2134](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2134))
+* dataflow: added retries in `google_dataflow_job` for common retryable API errors when waiting for job to update ([#2146](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2146))
+* dataflow: changed the update logic for `google_dataflow_job` to wait for the replacement job to start successfully before modifying the resource ID to point to the replacement job ([#2140](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2140))
+
 ## 3.25.0 (June 08, 2020)
 BREAKING CHANGES:
 * bigquery: Add ability to manage credentials to `google_bigquery_connection`.  This field is required as the resource is not useful without them. ([#2111](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2111))
