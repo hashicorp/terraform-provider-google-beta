@@ -1,7 +1,7 @@
 ## 3.26.0 (Unreleased)
 
 FEATURES:
-* **New Resource:** `data_catalog_tag` ([#2144](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2144))
+* **New Resource:** `google_data_catalog_tag` ([#2144](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2144))
 * **New Resource:** `google_bigquery_dataset_iam_binding` ([#2147](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2147))
 * **New Resource:** `google_bigquery_dataset_iam_member` ([#2147](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2147))
 * **New Resource:** `google_bigquery_dataset_iam_policy` ([#2147](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2147))
@@ -11,7 +11,7 @@ FEATURES:
 IMPROVEMENTS:
 * compute: added `default_route_action` to `compute_url_map` and `compute_url_map.path_matchers` ([#2143](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2143))
 * container : Added cluster_telemetry attribute to `google_container_cluster` ([#2149](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2149))
-* dataflow: changed the update logic for `google_dataflow_job` to wait for the replacement job to start successfully before modifying the resource ID to point to the replacement job ([#2140](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2140))
+* dialogflow: Changed `google_dialogflow_agent.time_zone` to be updatable ([#2133](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2133))
 * dns: enabled google_dns_managed_zone to accept network id for two attributes ([#2139](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2139))
 * healthcare: Added support for `streaming_configs` to `google_healthcare_fhir_store` ([#2145](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2145))
 * monitoring: added `matcher` attribute to `content_matchers` block for `google_monitoring_uptime_check_config` ([#2150](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2150))
@@ -19,7 +19,7 @@ IMPROVEMENTS:
 BUG FIXES:
 * compute: fixed issue where trying to update the region of `google_compute_subnetwork` would fail instead of destroying/recreating the subnetwork ([#2134](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2134))
 * dataflow: added retries in `google_dataflow_job` for common retryable API errors when waiting for job to update ([#2146](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2146))
-* dialogflow: Changed `google_dialogflow_agent.time_zone` to be updatable ([#2133](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2133))
+* dataflow: changed the update logic for `google_dataflow_job` to wait for the replacement job to start successfully before modifying the resource ID to point to the replacement job ([#2140](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2140))
 
 ## 3.25.0 (June 08, 2020)
 BREAKING CHANGES:
