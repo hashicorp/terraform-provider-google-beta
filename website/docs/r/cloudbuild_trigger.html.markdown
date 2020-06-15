@@ -145,6 +145,10 @@ The `trigger_template` block supports:
   is an absolute path, this value is ignored for that step's
   execution.
 
+* `invert_regex` -
+  (Optional)
+  Only trigger a build if the revision regex does NOT match the revision regex.
+
 * `branch_name` -
   (Optional)
   Name of the branch to build. Exactly one a of branch name, tag, or commit SHA must be provided.
@@ -194,7 +198,15 @@ The `pull_request` block supports:
   * `COMMENTS_DISABLED`
   * `COMMENTS_ENABLED`
 
+* `invert_regex` -
+  (Optional)
+  If true, branches that do NOT match the git_ref will trigger a build.
+
 The `push` block supports:
+
+* `invert_regex` -
+  (Optional)
+  When true, only trigger a build if the revision regex does NOT match the git_ref regex.
 
 * `branch` -
   (Optional)
