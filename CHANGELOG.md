@@ -1,4 +1,4 @@
-## 3.26.0 (Unreleased)
+## 3.26.0 (June 15, 2020)
 
 FEATURES:
 * **New Resource:** `google_data_catalog_tag` ([#2144](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2144))
