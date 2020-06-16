@@ -4340,10 +4340,6 @@ resource "google_compute_instance" "foobar" {
   }
 }
 
-data "google_compute_node_types" "central1a" {
-  zone = "us-central1-a"
-}
-
 resource "google_compute_node_template" "nodetmpl" {
   name   = "%s"
   region = "us-central1"
@@ -4352,7 +4348,9 @@ resource "google_compute_node_template" "nodetmpl" {
     tfacc = "test"
   }
 
-  node_type = data.google_compute_node_types.central1a.names[1]
+  node_type = "n1-node-96-624"
+
+  cpu_overcommit_type = "ENABLED"
 }
 
 resource "google_compute_node_group" "nodes" {
@@ -4410,10 +4408,6 @@ resource "google_compute_instance" "foobar" {
   }
 }
 
-data "google_compute_node_types" "central1a" {
-  zone = "us-central1-a"
-}
-
 resource "google_compute_node_template" "nodetmpl" {
   name   = "%s"
   region = "us-central1"
@@ -4422,7 +4416,9 @@ resource "google_compute_node_template" "nodetmpl" {
     tfacc = "test"
   }
 
-  node_type = data.google_compute_node_types.central1a.names[1]
+  node_type = "n1-node-96-624"
+
+  cpu_overcommit_type = "ENABLED"
 }
 
 resource "google_compute_node_group" "nodes" {
