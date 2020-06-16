@@ -127,6 +127,14 @@ The following arguments are supported:
   The server binding policy for nodes using this template. Determines
   where the nodes should restart following a maintenance event.  Structure is documented below.
 
+* `cpu_overcommit_type` -
+  (Optional, [Beta](https://terraform.io/docs/providers/google/guides/provider_versions.html))
+  CPU overcommit.
+
+  Possible values are:
+  * `ENABLED`
+  * `DISABLED`
+
 * `region` -
   (Optional)
   Region where nodes using the node template will be created.
