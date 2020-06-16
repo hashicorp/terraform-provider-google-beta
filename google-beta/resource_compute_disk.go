@@ -338,11 +338,17 @@ If an unsupported value is requested, the error message will list
 the supported values for the caller's project.`,
 			},
 			"resource_policies": {
-				Type:        schema.TypeList,
-				Computed:    true,
-				Optional:    true,
-				ForceNew:    true,
-				Description: `Resource policies applied to this disk for automatic snapshot creations.`,
+				Type:     schema.TypeList,
+				Computed: true,
+				Optional: true,
+				ForceNew: true,
+				Description: `Resource policies applied to this disk for automatic snapshot creations.
+
+~>**NOTE** This value does not support updating the
+resource policy, as resource policies can not be updated more than
+one at a time. Use
+['google_compute_disk_resource_policy_attachment'](https://www.terraform.io/docs/providers/google/r/compute_disk_resource_policy_attachment.html)
+to allow for updating the resource policy attached to the disk.`,
 				Elem: &schema.Schema{
 					Type:             schema.TypeString,
 					DiffSuppressFunc: compareSelfLinkOrResourceName,
