@@ -44,8 +44,9 @@ func resourceComputeNodeTemplate() *schema.Resource {
 				Type:         schema.TypeString,
 				Optional:     true,
 				ForceNew:     true,
-				ValidateFunc: validation.StringInSlice([]string{"ENABLED", "DISABLED", ""}, false),
-				Description:  `CPU overcommit. Possible values: ["ENABLED", "DISABLED"]`,
+				ValidateFunc: validation.StringInSlice([]string{"ENABLED", "NONE", ""}, false),
+				Description:  `CPU overcommit. Default value: "NONE" Possible values: ["ENABLED", "NONE"]`,
+				Default:      "NONE",
 			},
 			"description": {
 				Type:        schema.TypeString,
