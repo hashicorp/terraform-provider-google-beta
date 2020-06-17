@@ -30,9 +30,10 @@ func TestAccComputePerInstanceConfig_statefulBasic(t *testing.T) {
 				Config: testAccComputePerInstanceConfig_statefulBasic(context),
 			},
 			{
-				ResourceName:      "google_compute_per_instance_config.default",
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            "google_compute_per_instance_config.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"remove_instance_state_on_destroy"},
 			},
 			{
 				// Force-recreate old config
@@ -42,38 +43,77 @@ func TestAccComputePerInstanceConfig_statefulBasic(t *testing.T) {
 				),
 			},
 			{
-				ResourceName:      "google_compute_per_instance_config.default",
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            "google_compute_per_instance_config.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"remove_instance_state_on_destroy"},
 			},
 			{
 				// Add two new endpoints
 				Config: testAccComputePerInstanceConfig_statefulAdditional(context),
 			},
 			{
-				ResourceName:      "google_compute_per_instance_config.default",
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            "google_compute_per_instance_config.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"remove_instance_state_on_destroy"},
 			},
 			{
 				ResourceName:            "google_compute_per_instance_config.with_disks",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"most_disruptive_allowed_action", "minimal_action"},
+				ImportStateVerifyIgnore: []string{"most_disruptive_allowed_action", "minimal_action", "remove_instance_state_on_destroy"},
 			},
 			{
-				ResourceName:      "google_compute_per_instance_config.add2",
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            "google_compute_per_instance_config.add2",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"remove_instance_state_on_destroy"},
 			},
 			{
 				// delete all configs
 				Config: testAccComputePerInstanceConfig_igm(context),
 				Check: resource.ComposeTestCheckFunc(
+					// Config with remove_instance_state_on_destroy = false won't be destroyed (config4)
 					testAccCheckComputePerInstanceConfigDestroyed(t, igmId, context["config_name2"].(string)),
 					testAccCheckComputePerInstanceConfigDestroyed(t, igmId, context["config_name3"].(string)),
-					testAccCheckComputePerInstanceConfigDestroyed(t, igmId, context["config_name4"].(string)),
 				),
+			},
+		},
+	})
+}
+
+func TestAccComputePerInstanceConfig_update(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"random_suffix": randString(t, 10),
+		"config_name":   fmt.Sprintf("instance-%s", randString(t, 10)),
+	}
+
+	vcrTest(t, resource.TestCase{
+		PreCheck:  func() { testAccPreCheck(t) },
+		Providers: testAccProviders,
+		Steps: []resource.TestStep{
+			{
+				// Create one config
+				Config: testAccComputePerInstanceConfig_statefulBasic(context),
+			},
+			{
+				ResourceName:            "google_compute_per_instance_config.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"remove_instance_state_on_destroy"},
+			},
+			{
+				// Update an existing config
+				Config: testAccComputePerInstanceConfig_update(context),
+			},
+			{
+				ResourceName:            "google_compute_per_instance_config.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"remove_instance_state_on_destroy"},
 			},
 		},
 	})
@@ -85,9 +125,27 @@ resource "google_compute_per_instance_config" "default" {
 	zone = google_compute_instance_group_manager.igm.zone
 	instance_group_manager = google_compute_instance_group_manager.igm.name
 	name = "%{config_name}"
+	remove_instance_state_on_destroy = true
 	preserved_state {
 		metadata = {
 			asdf = "asdf"
+		}
+	}
+}
+`, context) + testAccComputePerInstanceConfig_igm(context)
+}
+
+func testAccComputePerInstanceConfig_update(context map[string]interface{}) string {
+	return Nprintf(`
+resource "google_compute_per_instance_config" "default" {
+	zone = google_compute_instance_group_manager.igm.zone
+	instance_group_manager = google_compute_instance_group_manager.igm.name
+	name = "%{config_name}"
+	remove_instance_state_on_destroy = true
+	preserved_state {
+		metadata = {
+			asdf = "asdf"
+			update = "12345"
 		}
 	}
 }
@@ -100,6 +158,7 @@ resource "google_compute_per_instance_config" "default" {
 	zone = google_compute_instance_group_manager.igm.zone
 	instance_group_manager = google_compute_instance_group_manager.igm.name
 	name = "%{config_name2}"
+	remove_instance_state_on_destroy = true
 	preserved_state {
 		metadata = {
 			asdf = "asdf"
@@ -115,6 +174,7 @@ resource "google_compute_per_instance_config" "default" {
 	zone = google_compute_instance_group_manager.igm.zone
 	instance_group_manager = google_compute_instance_group_manager.igm.name
 	name = "%{config_name2}"
+	remove_instance_state_on_destroy = true
 	preserved_state {
 		metadata = {
 			asdf = "asdf"
@@ -128,6 +188,7 @@ resource "google_compute_per_instance_config" "with_disks" {
 	name = "%{config_name3}"
 	most_disruptive_allowed_action = "REFRESH"
 	minimal_action = "REFRESH"
+	remove_instance_state_on_destroy = true
 	preserved_state {
 		metadata = {
 			meta = "123"

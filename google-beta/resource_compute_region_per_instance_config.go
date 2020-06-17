@@ -95,6 +95,11 @@ func resourceComputeRegionPerInstanceConfig() *schema.Resource {
 				Optional: true,
 				Default:  "REPLACE",
 			},
+			"remove_instance_state_on_destroy": {
+				Type:     schema.TypeBool,
+				Optional: true,
+				Default:  false,
+			},
 			"project": {
 				Type:     schema.TypeString,
 				Optional: true,
@@ -163,7 +168,7 @@ func resourceComputeRegionPerInstanceConfigCreate(d *schema.ResourceData, meta i
 		return err
 	}
 
-	lockName, err := replaceVars(d, config, "instangeGroupManager/{{project}}/{{region}}/{{region_instance_group_manager}}")
+	lockName, err := replaceVars(d, config, "instanceGroupManager/{{project}}/{{region}}/{{region_instance_group_manager}}")
 	if err != nil {
 		return err
 	}
@@ -243,6 +248,9 @@ func resourceComputeRegionPerInstanceConfigRead(d *schema.ResourceData, meta int
 	if _, ok := d.GetOk("most_disruptive_allowed_action"); !ok {
 		d.Set("most_disruptive_allowed_action", "REPLACE")
 	}
+	if _, ok := d.GetOk("remove_instance_state_on_destroy"); !ok {
+		d.Set("remove_instance_state_on_destroy", false)
+	}
 	if err := d.Set("project", project); err != nil {
 		return fmt.Errorf("Error reading RegionPerInstanceConfig: %s", err)
 	}
@@ -284,7 +292,7 @@ func resourceComputeRegionPerInstanceConfigUpdate(d *schema.ResourceData, meta i
 		return err
 	}
 
-	lockName, err := replaceVars(d, config, "instangeGroupManager/{{project}}/{{region}}/{{region_instance_group_manager}}")
+	lockName, err := replaceVars(d, config, "instanceGroupManager/{{project}}/{{region}}/{{region_instance_group_manager}}")
 	if err != nil {
 		return err
 	}
@@ -311,8 +319,8 @@ func resourceComputeRegionPerInstanceConfigUpdate(d *schema.ResourceData, meta i
 		return err
 	}
 
-	// Instance name in applyUpdatesToInstances request must include region
-	instanceName, err := replaceVars(d, config, "regoins/{{region}}/instances/{{name}}")
+	// Instance name in applyUpdatesToInstances request must include zone
+	instanceName, err := findInstanceName(d, config)
 	if err != nil {
 		return err
 	}
@@ -362,7 +370,7 @@ func resourceComputeRegionPerInstanceConfigDelete(d *schema.ResourceData, meta i
 		return err
 	}
 
-	lockName, err := replaceVars(d, config, "instangeGroupManager/{{project}}/{{region}}/{{region_instance_group_manager}}")
+	lockName, err := replaceVars(d, config, "instanceGroupManager/{{project}}/{{region}}/{{region_instance_group_manager}}")
 	if err != nil {
 		return err
 	}
@@ -393,6 +401,45 @@ func resourceComputeRegionPerInstanceConfigDelete(d *schema.ResourceData, meta i
 		return err
 	}
 
+	// Potentially delete the state managed by this config
+	if d.Get("remove_instance_state_on_destroy").(bool) {
+		// Instance name in applyUpdatesToInstances request must include zone
+		instanceName, err := findInstanceName(d, config)
+		if err != nil {
+			return err
+		}
+
+		obj = make(map[string]interface{})
+		obj["instances"] = []string{instanceName}
+
+		// Updates must be applied to the instance after deleting the PerInstanceConfig
+		url, err = replaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/regions/{{region}}/instanceGroupManagers/{{region_instance_group_manager}}/applyUpdatesToInstances")
+		if err != nil {
+			return err
+		}
+
+		log.Printf("[DEBUG] Applying updates to PerInstanceConfig %q: %#v", d.Id(), obj)
+		res, err = sendRequestWithTimeout(config, "POST", project, url, obj, d.Timeout(schema.TimeoutUpdate))
+
+		if err != nil {
+			return fmt.Errorf("Error updating PerInstanceConfig %q: %s", d.Id(), err)
+		}
+
+		err = computeOperationWaitTime(
+			config, res, project, "Applying update to PerInstanceConfig",
+			d.Timeout(schema.TimeoutUpdate))
+
+		if err != nil {
+			return fmt.Errorf("Error deleting PerInstanceConfig %q: %s", d.Id(), err)
+		}
+
+		// RegionPerInstanceConfig goes into "DELETING" state while the instance is actually deleted
+		err = PollingWaitTime(resourceComputeRegionPerInstanceConfigPollRead(d, meta), PollCheckInstanceConfigDeleted, "Deleting RegionPerInstanceConfig", d.Timeout(schema.TimeoutDelete))
+		if err != nil {
+			return fmt.Errorf("Error waiting for delete on RegionPerInstanceConfig %q: %s", d.Id(), err)
+		}
+	}
+
 	log.Printf("[DEBUG] Finished deleting RegionPerInstanceConfig %q: %#v", d.Id(), res)
 	return nil
 }
@@ -418,6 +465,7 @@ func resourceComputeRegionPerInstanceConfigImport(d *schema.ResourceData, meta i
 	// Explicitly set virtual fields to default values on import
 	d.Set("minimal_action", "NONE")
 	d.Set("most_disruptive_allowed_action", "REPLACE")
+	d.Set("remove_instance_state_on_destroy", false)
 
 	return []*schema.ResourceData{d}, nil
 }
