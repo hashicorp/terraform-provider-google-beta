@@ -30,9 +30,10 @@ func TestAccComputeRegionPerInstanceConfig_statefulBasic(t *testing.T) {
 				Config: testAccComputeRegionPerInstanceConfig_statefulBasic(context),
 			},
 			{
-				ResourceName:      "google_compute_region_per_instance_config.default",
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            "google_compute_region_per_instance_config.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"remove_instance_state_on_destroy"},
 			},
 			{
 				// Force-recreate old config
@@ -42,38 +43,77 @@ func TestAccComputeRegionPerInstanceConfig_statefulBasic(t *testing.T) {
 				),
 			},
 			{
-				ResourceName:      "google_compute_region_per_instance_config.default",
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            "google_compute_region_per_instance_config.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"remove_instance_state_on_destroy"},
 			},
 			{
 				// Add two new endpoints
 				Config: testAccComputeRegionPerInstanceConfig_statefulAdditional(context),
 			},
 			{
-				ResourceName:      "google_compute_region_per_instance_config.default",
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            "google_compute_region_per_instance_config.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"remove_instance_state_on_destroy"},
 			},
 			{
 				ResourceName:            "google_compute_region_per_instance_config.with_disks",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"most_disruptive_allowed_action", "minimal_action"},
+				ImportStateVerifyIgnore: []string{"most_disruptive_allowed_action", "minimal_action", "remove_instance_state_on_destroy"},
 			},
 			{
-				ResourceName:      "google_compute_region_per_instance_config.add2",
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            "google_compute_region_per_instance_config.add2",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"remove_instance_state_on_destroy"},
 			},
 			{
 				// delete all configs
 				Config: testAccComputeRegionPerInstanceConfig_rigm(context),
 				Check: resource.ComposeTestCheckFunc(
+					// Config with remove_instance_state_on_destroy = false won't be destroyed (config4)
 					testAccCheckComputeRegionPerInstanceConfigDestroyed(t, rigmId, context["config_name2"].(string)),
 					testAccCheckComputeRegionPerInstanceConfigDestroyed(t, rigmId, context["config_name3"].(string)),
-					testAccCheckComputeRegionPerInstanceConfigDestroyed(t, rigmId, context["config_name4"].(string)),
 				),
+			},
+		},
+	})
+}
+
+func TestAccComputeRegionPerInstanceConfig_update(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"random_suffix": randString(t, 10),
+		"config_name":   fmt.Sprintf("instance-%s", randString(t, 10)),
+	}
+
+	vcrTest(t, resource.TestCase{
+		PreCheck:  func() { testAccPreCheck(t) },
+		Providers: testAccProviders,
+		Steps: []resource.TestStep{
+			{
+				// Create one config
+				Config: testAccComputeRegionPerInstanceConfig_statefulBasic(context),
+			},
+			{
+				ResourceName:            "google_compute_region_per_instance_config.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"remove_instance_state_on_destroy"},
+			},
+			{
+				// Update an existing config
+				Config: testAccComputeRegionPerInstanceConfig_update(context),
+			},
+			{
+				ResourceName:            "google_compute_region_per_instance_config.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"remove_instance_state_on_destroy"},
 			},
 		},
 	})
@@ -85,9 +125,27 @@ resource "google_compute_region_per_instance_config" "default" {
 	region = google_compute_region_instance_group_manager.rigm.region
 	region_instance_group_manager = google_compute_region_instance_group_manager.rigm.name
 	name = "%{config_name}"
+	remove_instance_state_on_destroy = true
 	preserved_state {
 		metadata = {
 			asdf = "asdf"
+		}
+	}
+}
+`, context) + testAccComputeRegionPerInstanceConfig_rigm(context)
+}
+
+func testAccComputeRegionPerInstanceConfig_update(context map[string]interface{}) string {
+	return Nprintf(`
+resource "google_compute_region_per_instance_config" "default" {
+	region = google_compute_region_instance_group_manager.rigm.region
+	region_instance_group_manager = google_compute_region_instance_group_manager.rigm.name
+	name = "%{config_name}"
+	remove_instance_state_on_destroy = true
+	preserved_state {
+		metadata = {
+			asdf = "foo"
+			updated = "12345"
 		}
 	}
 }
@@ -100,6 +158,7 @@ resource "google_compute_region_per_instance_config" "default" {
 	region = google_compute_region_instance_group_manager.rigm.region
 	region_instance_group_manager = google_compute_region_instance_group_manager.rigm.name
 	name = "%{config_name2}"
+	remove_instance_state_on_destroy = true
 	preserved_state {
 		metadata = {
 			asdf = "asdf"
@@ -115,6 +174,7 @@ resource "google_compute_region_per_instance_config" "default" {
 	region = google_compute_region_instance_group_manager.rigm.region
 	region_instance_group_manager = google_compute_region_instance_group_manager.rigm.name
 	name = "%{config_name2}"
+	remove_instance_state_on_destroy = true
 	preserved_state {
 		metadata = {
 			asdf = "asdf"
@@ -128,6 +188,7 @@ resource "google_compute_region_per_instance_config" "with_disks" {
 	name = "%{config_name3}"
 	most_disruptive_allowed_action = "REFRESH"
 	minimal_action = "REFRESH"
+	remove_instance_state_on_destroy = true
 	preserved_state {
 		metadata = {
 			meta = "123"
