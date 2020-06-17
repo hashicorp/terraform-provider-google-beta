@@ -393,7 +393,7 @@ func TestAccDataprocCluster_withStagingBucket(t *testing.T) {
 
 	rnd := randString(t, 10)
 	var cluster dataproc.Cluster
-	clusterName := fmt.Sprintf("dproc-cluster-test-%s", rnd)
+	clusterName := fmt.Sprintf("tf-test-dproc-%s", rnd)
 	bucketName := fmt.Sprintf("%s-bucket", clusterName)
 
 	vcrTest(t, resource.TestCase{
@@ -425,7 +425,7 @@ func TestAccDataprocCluster_withInitAction(t *testing.T) {
 
 	rnd := randString(t, 10)
 	var cluster dataproc.Cluster
-	bucketName := fmt.Sprintf("dproc-cluster-test-%s-init-bucket", rnd)
+	bucketName := fmt.Sprintf("tf-test-dproc-%s-init-bucket", rnd)
 	objectName := "msg.txt"
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -916,7 +916,7 @@ func testAccCheckDataprocClusterExists(t *testing.T, n string, cluster *dataproc
 func testAccCheckDataproc_missingZoneGlobalRegion1(rnd string) string {
 	return fmt.Sprintf(`
 resource "google_dataproc_cluster" "basic" {
-  name   = "dproc-cluster-test-%s"
+  name   = "tf-test-dproc-%s"
   region = "global"
 }
 `, rnd)
@@ -925,7 +925,7 @@ resource "google_dataproc_cluster" "basic" {
 func testAccCheckDataproc_missingZoneGlobalRegion2(rnd string) string {
 	return fmt.Sprintf(`
 resource "google_dataproc_cluster" "basic" {
-  name   = "dproc-cluster-test-%s"
+  name   = "tf-test-dproc-%s"
   region = "global"
 
   cluster_config {
@@ -940,7 +940,7 @@ resource "google_dataproc_cluster" "basic" {
 func testAccDataprocCluster_basic(rnd string) string {
 	return fmt.Sprintf(`
 resource "google_dataproc_cluster" "basic" {
-  name   = "dproc-cluster-test-%s"
+  name   = "tf-test-dproc-%s"
   region = "us-central1"
 }
 `, rnd)
@@ -949,7 +949,7 @@ resource "google_dataproc_cluster" "basic" {
 func testAccDataprocCluster_withAccelerators(rnd, acceleratorType, zone string) string {
 	return fmt.Sprintf(`
 resource "google_dataproc_cluster" "accelerated_cluster" {
-  name   = "dproc-cluster-test-%s"
+  name   = "tf-test-dproc-%s"
   region = "us-central1"
 
   cluster_config {
@@ -982,7 +982,7 @@ variable "subnetwork_cidr" {
 }
 
 resource "google_compute_network" "dataproc_network" {
-  name                    = "dataproc-internalip-network-%s"
+  name                    = "tf-test-dproc-net-%s"
   auto_create_subnetworks = false
 }
 
@@ -991,7 +991,7 @@ resource "google_compute_network" "dataproc_network" {
 # deploying a Dataproc cluster with Internal IP Only enabled.
 #
 resource "google_compute_subnetwork" "dataproc_subnetwork" {
-  name                     = "dataproc-internalip-subnetwork-%s"
+  name                     = "tf-test-dproc-subnet-%s"
   ip_cidr_range            = var.subnetwork_cidr
   network                  = google_compute_network.dataproc_network.self_link
   region                   = "us-central1"
@@ -1006,7 +1006,7 @@ resource "google_compute_subnetwork" "dataproc_subnetwork" {
 # internally as part of their configuration or this will just hang.
 #
 resource "google_compute_firewall" "dataproc_network_firewall" {
-  name        = "dproc-cluster-test-allow-internal"
+  name        = "tf-test-dproc-firewall-%s"
   description = "Firewall rules for dataproc Terraform acceptance testing"
   network     = google_compute_network.dataproc_network.name
 
@@ -1028,7 +1028,7 @@ resource "google_compute_firewall" "dataproc_network_firewall" {
 }
 
 resource "google_dataproc_cluster" "basic" {
-  name       = "dproc-cluster-test-%s"
+  name       = "tf-test-dproc-%s"
   region     = "us-central1"
   depends_on = [google_compute_firewall.dataproc_network_firewall]
 
@@ -1039,13 +1039,13 @@ resource "google_dataproc_cluster" "basic" {
     }
   }
 }
-`, rnd, rnd, rnd)
+`, rnd, rnd, rnd, rnd)
 }
 
 func testAccDataprocCluster_withMetadataAndTags(rnd string) string {
 	return fmt.Sprintf(`
 resource "google_dataproc_cluster" "basic" {
-  name   = "dproc-cluster-test-%s"
+  name   = "tf-test-dproc-%s"
   region = "us-central1"
 
   cluster_config {
@@ -1064,7 +1064,7 @@ resource "google_dataproc_cluster" "basic" {
 func testAccDataprocCluster_singleNodeCluster(rnd string) string {
 	return fmt.Sprintf(`
 resource "google_dataproc_cluster" "single_node_cluster" {
-  name   = "dproc-cluster-test-%s"
+  name   = "tf-test-dproc-%s"
   region = "us-central1"
 
   cluster_config {
@@ -1082,7 +1082,7 @@ resource "google_dataproc_cluster" "single_node_cluster" {
 func testAccDataprocCluster_withConfigOverrides(rnd string) string {
 	return fmt.Sprintf(`
 resource "google_dataproc_cluster" "with_config_overrides" {
-  name     = "dproc-cluster-test-%s"
+  name     = "tf-test-dproc-%s"
   region   = "us-central1"
 
   cluster_config {
@@ -1140,7 +1140,7 @@ EOL
 }
 
 resource "google_dataproc_cluster" "with_init_action" {
-  name   = "dproc-cluster-test-%s"
+  name   = "tf-test-dproc-%s"
   region = "us-central1"
 
   cluster_config {
@@ -1173,7 +1173,7 @@ resource "google_dataproc_cluster" "with_init_action" {
 func testAccDataprocCluster_updatable(rnd string, w, p int) string {
 	return fmt.Sprintf(`
 resource "google_dataproc_cluster" "updatable" {
-  name   = "dproc-cluster-test-%s"
+  name   = "tf-test-dproc-%s"
   region = "us-central1"
 
   cluster_config {
@@ -1245,7 +1245,7 @@ resource "google_dataproc_cluster" "with_bucket" {
 func testAccDataprocCluster_withLabels(rnd string) string {
 	return fmt.Sprintf(`
 resource "google_dataproc_cluster" "with_labels" {
-  name   = "dproc-cluster-test-%s"
+  name   = "tf-test-dproc-%s"
   region = "us-central1"
 
   labels = {
@@ -1279,7 +1279,7 @@ resource "google_dataproc_cluster" "with_endpoint_config" {
 func testAccDataprocCluster_withImageVersion(rnd string) string {
 	return fmt.Sprintf(`
 resource "google_dataproc_cluster" "with_image_version" {
-  name   = "dproc-cluster-test-%s"
+  name   = "tf-test-dproc-%s"
   region = "us-central1"
 
   cluster_config {
@@ -1294,7 +1294,7 @@ resource "google_dataproc_cluster" "with_image_version" {
 func testAccDataprocCluster_withOptionalComponents(rnd string) string {
 	return fmt.Sprintf(`
 resource "google_dataproc_cluster" "with_opt_components" {
-  name   = "dproc-cluster-test-%s"
+  name   = "tf-test-dproc-%s"
   region = "us-central1"
 
   cluster_config {
@@ -1309,7 +1309,7 @@ resource "google_dataproc_cluster" "with_opt_components" {
 func testAccDataprocCluster_withLifecycleConfigIdleDeleteTtl(rnd, tm string) string {
 	return fmt.Sprintf(`
 resource "google_dataproc_cluster" "with_lifecycle_config" {
-  name   = "dproc-cluster-test-%s"
+  name   = "tf-test-dproc-%s"
   region = "us-central1"
 
   cluster_config {
@@ -1324,7 +1324,7 @@ resource "google_dataproc_cluster" "with_lifecycle_config" {
 func testAccDataprocCluster_withLifecycleConfigAutoDeletionTime(rnd, tm string) string {
 	return fmt.Sprintf(`
 resource "google_dataproc_cluster" "with_lifecycle_config" {
- name   = "dproc-cluster-test-%s"
+ name   = "tf-test-dproc-%s"
  region = "us-central1"
 
  cluster_config {
@@ -1403,7 +1403,7 @@ resource "google_compute_network" "dataproc_network" {
 # internally as part of their configuration or this will just hang.
 #
 resource "google_compute_firewall" "dataproc_network_firewall" {
-  name          = "dproc-cluster-test-%s-allow-internal"
+  name          = "tf-test-dproc-%s"
   description   = "Firewall rules for dataproc Terraform acceptance testing"
   network       = google_compute_network.dataproc_network.name
   source_ranges = ["192.168.0.0/16"]
@@ -1424,7 +1424,7 @@ resource "google_compute_firewall" "dataproc_network_firewall" {
 }
 
 resource "google_dataproc_cluster" "with_net_ref_by_name" {
-  name       = "dproc-cluster-test-%s-name"
+  name       = "tf-test-dproc-%s"
   region     = "us-central1"
   depends_on = [google_compute_firewall.dataproc_network_firewall]
 
@@ -1450,7 +1450,7 @@ resource "google_dataproc_cluster" "with_net_ref_by_name" {
 }
 
 resource "google_dataproc_cluster" "with_net_ref_by_url" {
-  name       = "dproc-cluster-test-%s-url"
+  name       = "tf-test-dproc-%s"
   region     = "us-central1"
   depends_on = [google_compute_firewall.dataproc_network_firewall]
 
@@ -1492,7 +1492,7 @@ resource "google_project_iam_member" "kms-project-binding" {
 resource "google_dataproc_cluster" "kms" {
   depends_on = [google_project_iam_member.kms-project-binding]
 
-  name   = "dproc-cluster-test-%s"
+  name   = "tf-test-dproc-%s"
   region = "us-central1"
 
   cluster_config {
@@ -1507,7 +1507,7 @@ resource "google_dataproc_cluster" "kms" {
 func testAccDataprocCluster_withKerberos(rnd, kmsKey string) string {
 	return fmt.Sprintf(`
 resource "google_storage_bucket" "bucket" {
-  name = "dproc-cluster-test-%s"
+  name = "tf-test-dproc-%s"
 }
 resource "google_storage_bucket_object" "password" {
   name = "dataproc-password-%s"
@@ -1516,7 +1516,7 @@ resource "google_storage_bucket_object" "password" {
 }
 
 resource "google_dataproc_cluster" "kerb" {
-  name   = "dproc-cluster-test-%s"
+  name   = "tf-test-dproc-%s"
   region = "us-central1"
 
   cluster_config {
