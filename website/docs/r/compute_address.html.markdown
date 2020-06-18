@@ -180,10 +180,12 @@ The following arguments are supported:
   (Optional)
   The purpose of this resource, which can be one of the following values:
   - GCE_ENDPOINT for addresses that are used by VM instances, alias IP ranges, internal load balancers, and similar resources.
+  - SHARED_LOADBALANCER_VIP for an address that can be used by multiple internal load balancers
   This should only be set when using an Internal address.
 
   Possible values are:
   * `GCE_ENDPOINT`
+  * `SHARED_LOADBALANCER_VIP`
 
 * `network_tier` -
   (Optional)
