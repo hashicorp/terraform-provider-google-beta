@@ -1,4 +1,25 @@
-## 3.27.0 (Unreleased)
+## 3.28.0 (Unreleased)
+## 3.27.0 (June 23, 2020)
+
+IMPROVEMENTS:
+* accesscontextmanager: Added `custom` config to `google_access_context_manager_access_level` ([#2180](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2180))
+* cloudbuild: Added `invert_regex` flag in Github PullRequestFilter and PushFilter in triggerTemplate ([#2171](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2171))
+* cloudrun: Added `template.spec.timeout_seconds` to `google_cloud_run_service` ([#2164](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2164))
+* compute: Added `cpu_over_commit_type` to `google_compute_node_template` ([#2176](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2176))
+* compute: Added `min_node_cpus` to the `scheduling` blocks on `compute_instance` and `compute_instance_template` ([#2169](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2169))
+* compute: Added `export_subnet_routes_with_public_ip` and `import_subnet_routes_with_public_ip` to `google_compute_network_peering` ([#2170](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2170))
+* compute: Added `remove_instance_state_on_destroy` to `google_compute_per_instance_config` to control deletion of underlying instance state. ([#2187](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2187))
+* container: Added support for `private_cluster_config.master_global_access_config` to `google_container_cluster` ([#2157](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2157))
+* compute: Added support for `google_compute_instance_group` `instances` to accept instance id field as well as self_link ([#2161](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2161))
+* dns: Added support for `google_dns_policy` network to accept `google_compute_network.id` ([#2189](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2189))
+* redis: Added validation for name attribute in `redis_instance` ([#2167](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2167))
+
+BUG FIXES:
+* bigquery: Fixed `range_partitioning.range.start` so that the value `0` is sent in `google_bigquery_table` ([#2153](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2153))
+* container: Fixed a regression in `google_container_cluster` where the location was not inferred when using a `subnetwork` shortname value like `name` ([#2160](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2160))
+* datastore: Added retries to `google_datastore_index` requests when under contention. ([#2154](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2154))
+* kms: Fixed the `id` value in the `google_kms_crypto_key_version` datasource to include a `/v1` part following `//cloudkms.googleapis.com/`, making it useful for interpolation into Binary Authorization. ([#2165](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2165))
+
 
 ## 3.26.0 (June 15, 2020)
 
