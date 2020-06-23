@@ -65,6 +65,31 @@ func TestAccComputeAutoscaler_multicondition(t *testing.T) {
 	})
 }
 
+func TestAccComputeAutoscaler_scaleDownControl(t *testing.T) {
+	t.Parallel()
+
+	var it_name = fmt.Sprintf("autoscaler-test-%s", randString(t, 10))
+	var tp_name = fmt.Sprintf("autoscaler-test-%s", randString(t, 10))
+	var igm_name = fmt.Sprintf("autoscaler-test-%s", randString(t, 10))
+	var autoscaler_name = fmt.Sprintf("autoscaler-test-%s", randString(t, 10))
+
+	vcrTest(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckComputeAutoscalerDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeAutoscaler_scaleDownControl(it_name, tp_name, igm_name, autoscaler_name),
+			},
+			{
+				ResourceName:      "google_compute_autoscaler.foobar",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
 func testAccComputeAutoscaler_scaffolding(it_name, tp_name, igm_name string) string {
 	return fmt.Sprintf(`
 data "google_compute_image" "my_image" {
@@ -178,6 +203,31 @@ resource "google_compute_autoscaler" "foobar" {
       name   = "compute.googleapis.com/instance/network/sent_bytes_count"
       target = 50
       type   = "GAUGE"
+    }
+  }
+}
+`, autoscaler_name)
+}
+
+func testAccComputeAutoscaler_scaleDownControl(it_name, tp_name, igm_name, autoscaler_name string) string {
+	return testAccComputeAutoscaler_scaffolding(it_name, tp_name, igm_name) + fmt.Sprintf(`
+resource "google_compute_autoscaler" "foobar" {
+  description = "Resource created for Terraform acceptance testing"
+  name        = "%s"
+  zone        = "us-central1-a"
+  target      = google_compute_instance_group_manager.foobar.self_link
+  autoscaling_policy {
+    max_replicas    = 10
+    min_replicas    = 1
+    cooldown_period = 60
+    cpu_utilization {
+      target = 0.5
+    }
+    scale_down_control {
+      max_scaled_down_replicas {
+        percent = 80
+      }
+      time_window_sec = 300
     }
   }
 }
