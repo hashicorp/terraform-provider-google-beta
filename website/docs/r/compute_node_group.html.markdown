@@ -137,8 +137,8 @@ The `autoscaling_policy` block supports:
   The autoscaling mode. Set to one of the following:
     - OFF: Disables the autoscaler.
     - ON: Enables scaling in and scaling out.
-    - ONLY_SCALE_OUT: Enables only scaling out. 
-    You must use this mode if your node groups are configured to 
+    - ONLY_SCALE_OUT: Enables only scaling out.
+    You must use this mode if your node groups are configured to
     restart their hosted VMs on minimal servers.
 
   Possible values are:
@@ -148,7 +148,7 @@ The `autoscaling_policy` block supports:
 
 * `min_nodes` -
   (Optional)
-  Minimum size of the node group. Must be less 
+  Minimum size of the node group. Must be less
   than or equal to max-nodes. The default value is 0.
 
 * `max_nodes` -
