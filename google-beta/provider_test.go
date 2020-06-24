@@ -65,6 +65,14 @@ var orgEnvVars = []string{
 	"GOOGLE_ORG",
 }
 
+var custIdEnvVars = []string{
+	"GOOGLE_CUST_ID",
+}
+
+var identityUserEnvVars = []string{
+	"GOOGLE_IDENTITY_USER",
+}
+
 var orgEnvDomainVars = []string{
 	"GOOGLE_ORG_DOMAIN",
 }
@@ -835,6 +843,14 @@ func getTestRegionFromEnv() string {
 
 func getTestZoneFromEnv() string {
 	return multiEnvSearch(zoneEnvVars)
+}
+
+func getTestCustIdFromEnv(t *testing.T) string {
+	return multiEnvSearch(custIdEnvVars)
+}
+
+func getTestIdentityUserFromEnv(t *testing.T) string {
+	return multiEnvSearch(identityUserEnvVars)
 }
 
 // Firestore can't be enabled at the same time as Datastore, so we need a new
