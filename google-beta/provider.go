@@ -671,9 +671,9 @@ func Provider() terraform.ResourceProvider {
 	return provider
 }
 
-// Generated resources: 167
+// Generated resources: 168
 // Generated IAM resources: 66
-// Total generated resources: 233
+// Total generated resources: 234
 func ResourceMap() map[string]*schema.Resource {
 	resourceMap, _ := ResourceMapWithErrors()
 	return resourceMap
@@ -853,6 +853,7 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_identity_platform_tenant":                              resourceIdentityPlatformTenant(),
 			"google_kms_key_ring":                                          resourceKMSKeyRing(),
 			"google_kms_crypto_key":                                        resourceKMSCryptoKey(),
+			"google_kms_key_ring_import_job":                               resourceKMSKeyRingImportJob(),
 			"google_kms_secret_ciphertext":                                 resourceKMSSecretCiphertext(),
 			"google_logging_metric":                                        resourceLoggingMetric(),
 			"google_memcache_instance":                                     resourceMemcacheInstance(),
