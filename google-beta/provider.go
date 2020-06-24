@@ -205,6 +205,14 @@ func Provider() terraform.ResourceProvider {
 					"GOOGLE_CLOUD_FUNCTIONS_CUSTOM_ENDPOINT",
 				}, CloudFunctionsDefaultBasePath),
 			},
+			"cloud_identity_custom_endpoint": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validateCustomEndpoint,
+				DefaultFunc: schema.MultiEnvDefaultFunc([]string{
+					"GOOGLE_CLOUD_IDENTITY_CUSTOM_ENDPOINT",
+				}, CloudIdentityDefaultBasePath),
+			},
 			"cloud_iot_custom_endpoint": {
 				Type:         schema.TypeString,
 				Optional:     true,
@@ -663,9 +671,9 @@ func Provider() terraform.ResourceProvider {
 	return provider
 }
 
-// Generated resources: 165
+// Generated resources: 167
 // Generated IAM resources: 66
-// Total generated resources: 231
+// Total generated resources: 233
 func ResourceMap() map[string]*schema.Resource {
 	resourceMap, _ := ResourceMapWithErrors()
 	return resourceMap
@@ -705,6 +713,8 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_cloudfunctions_function_iam_binding":                   ResourceIamBinding(CloudFunctionsCloudFunctionIamSchema, CloudFunctionsCloudFunctionIamUpdaterProducer, CloudFunctionsCloudFunctionIdParseFunc),
 			"google_cloudfunctions_function_iam_member":                    ResourceIamMember(CloudFunctionsCloudFunctionIamSchema, CloudFunctionsCloudFunctionIamUpdaterProducer, CloudFunctionsCloudFunctionIdParseFunc),
 			"google_cloudfunctions_function_iam_policy":                    ResourceIamPolicy(CloudFunctionsCloudFunctionIamSchema, CloudFunctionsCloudFunctionIamUpdaterProducer, CloudFunctionsCloudFunctionIdParseFunc),
+			"google_cloud_identity_group":                                  resourceCloudIdentityGroup(),
+			"google_cloud_identity_group_membership":                       resourceCloudIdentityGroupMembership(),
 			"google_cloudiot_registry":                                     resourceCloudIotDeviceRegistry(),
 			"google_cloud_run_domain_mapping":                              resourceCloudRunDomainMapping(),
 			"google_cloud_run_service":                                     resourceCloudRunService(),
@@ -1085,6 +1095,7 @@ func providerConfigure(d *schema.ResourceData, p *schema.Provider, terraformVers
 	config.BinaryAuthorizationBasePath = d.Get("binary_authorization_custom_endpoint").(string)
 	config.CloudBuildBasePath = d.Get("cloud_build_custom_endpoint").(string)
 	config.CloudFunctionsBasePath = d.Get("cloud_functions_custom_endpoint").(string)
+	config.CloudIdentityBasePath = d.Get("cloud_identity_custom_endpoint").(string)
 	config.CloudIotBasePath = d.Get("cloud_iot_custom_endpoint").(string)
 	config.CloudRunBasePath = d.Get("cloud_run_custom_endpoint").(string)
 	config.CloudSchedulerBasePath = d.Get("cloud_scheduler_custom_endpoint").(string)

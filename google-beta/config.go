@@ -91,6 +91,7 @@ type Config struct {
 	BinaryAuthorizationBasePath  string
 	CloudBuildBasePath           string
 	CloudFunctionsBasePath       string
+	CloudIdentityBasePath        string
 	CloudIotBasePath             string
 	CloudRunBasePath             string
 	CloudSchedulerBasePath       string
@@ -244,6 +245,7 @@ var BillingDefaultBasePath = "https://billingbudgets.googleapis.com/v1beta1/"
 var BinaryAuthorizationDefaultBasePath = "https://binaryauthorization.googleapis.com/v1/"
 var CloudBuildDefaultBasePath = "https://cloudbuild.googleapis.com/v1/"
 var CloudFunctionsDefaultBasePath = "https://cloudfunctions.googleapis.com/v1/"
+var CloudIdentityDefaultBasePath = "https://cloudidentity.googleapis.com/v1beta1/"
 var CloudIotDefaultBasePath = "https://cloudiot.googleapis.com/v1/"
 var CloudRunDefaultBasePath = "https://{{location}}-run.googleapis.com/"
 var CloudSchedulerDefaultBasePath = "https://cloudscheduler.googleapis.com/v1/"
@@ -292,6 +294,7 @@ var VPCAccessDefaultBasePath = "https://vpcaccess.googleapis.com/v1/"
 var defaultClientScopes = []string{
 	"https://www.googleapis.com/auth/compute",
 	"https://www.googleapis.com/auth/cloud-platform",
+	"https://www.googleapis.com/auth/cloud-identity",
 	"https://www.googleapis.com/auth/ndev.clouddns.readwrite",
 	"https://www.googleapis.com/auth/devstorage.full_control",
 	"https://www.googleapis.com/auth/userinfo.email",
@@ -772,6 +775,7 @@ func ConfigureBasePaths(c *Config) {
 	c.BinaryAuthorizationBasePath = BinaryAuthorizationDefaultBasePath
 	c.CloudBuildBasePath = CloudBuildDefaultBasePath
 	c.CloudFunctionsBasePath = CloudFunctionsDefaultBasePath
+	c.CloudIdentityBasePath = CloudIdentityDefaultBasePath
 	c.CloudIotBasePath = CloudIotDefaultBasePath
 	c.CloudRunBasePath = CloudRunDefaultBasePath
 	c.CloudSchedulerBasePath = CloudSchedulerDefaultBasePath
