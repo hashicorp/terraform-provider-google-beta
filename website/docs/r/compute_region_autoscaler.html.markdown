@@ -161,6 +161,21 @@ The `autoscaling_policy` block supports:
   instance may take to initialize. To do this, create an instance
   and time the startup process.
 
+* `mode` -
+  (Optional)
+  Defines operating mode for this policy.
+
+  Default value: `ON`
+  Possible values are:
+  * `OFF`
+  * `ONLY_UP`
+  * `ON`
+
+* `scale_down_control` -
+  (Optional, [Beta](https://terraform.io/docs/providers/google/guides/provider_versions.html))
+  Defines scale down controls to reduce the risk of response latency
+  and outages due to abrupt scale-in events  Structure is documented below.
+
 * `cpu_utilization` -
   (Optional)
   Defines the CPU utilization policy that allows the autoscaler to
@@ -175,6 +190,30 @@ The `autoscaling_policy` block supports:
   (Optional)
   Configuration parameters of autoscaling based on a load balancer.  Structure is documented below.
 
+
+The `scale_down_control` block supports:
+
+* `max_scaled_down_replicas` -
+  (Optional)
+  A nested object resource  Structure is documented below.
+
+* `time_window_sec` -
+  (Optional)
+  How long back autoscaling should look when computing recommendations
+  to include directives regarding slower scale down, as described above.
+
+
+The `max_scaled_down_replicas` block supports:
+
+* `fixed` -
+  (Optional)
+  Specifies a fixed number of VM instances. This must be a positive
+  integer.
+
+* `percent` -
+  (Optional)
+  Specifies a percentage of instances between 0 to 100%, inclusive.
+  For example, specify 80 for 80%.
 
 The `cpu_utilization` block supports:
 
