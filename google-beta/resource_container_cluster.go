@@ -1003,31 +1003,6 @@ func resourceContainerCluster() *schema.Resource {
 				},
 			},
 
-			"release_channel": {
-				Type:        schema.TypeList,
-				Optional:    true,
-				Computed:    true,
-				MaxItems:    1,
-				Description: `Configuration options for the Release channel feature, which provide more control over automatic upgrades of your GKE clusters.`,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"channel": {
-							Type:             schema.TypeString,
-							Required:         true,
-							ValidateFunc:     validation.StringInSlice([]string{"UNSPECIFIED", "RAPID", "REGULAR", "STABLE"}, false),
-							DiffSuppressFunc: emptyOrDefaultStringSuppress("UNSPECIFIED"),
-							Description:      `The selected release channel.`,
-						},
-					},
-				},
-			},
-
-			"tpu_ipv4_cidr_block": {
-				Computed:    true,
-				Type:        schema.TypeString,
-				Description: `The IP address range of the Cloud TPUs in this cluster, in CIDR notation (e.g. 1.2.3.4/29).`,
-			},
-
 			"database_encryption": {
 				Type:        schema.TypeList,
 				MaxItems:    1,
@@ -1052,6 +1027,31 @@ func resourceContainerCluster() *schema.Resource {
 						},
 					},
 				},
+			},
+
+			"release_channel": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Computed:    true,
+				MaxItems:    1,
+				Description: `Configuration options for the Release channel feature, which provide more control over automatic upgrades of your GKE clusters.`,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"channel": {
+							Type:             schema.TypeString,
+							Required:         true,
+							ValidateFunc:     validation.StringInSlice([]string{"UNSPECIFIED", "RAPID", "REGULAR", "STABLE"}, false),
+							DiffSuppressFunc: emptyOrDefaultStringSuppress("UNSPECIFIED"),
+							Description:      `The selected release channel.`,
+						},
+					},
+				},
+			},
+
+			"tpu_ipv4_cidr_block": {
+				Computed:    true,
+				Type:        schema.TypeString,
+				Description: `The IP address range of the Cloud TPUs in this cluster, in CIDR notation (e.g. 1.2.3.4/29).`,
 			},
 
 			"cluster_telemetry": {
@@ -1530,11 +1530,11 @@ func resourceContainerClusterRead(d *schema.ResourceData, meta interface{}) erro
 		return err
 	}
 
-	if err := d.Set("pod_security_policy_config", flattenPodSecurityPolicyConfig(cluster.PodSecurityPolicyConfig)); err != nil {
+	if err := d.Set("database_encryption", flattenDatabaseEncryption(cluster.DatabaseEncryption)); err != nil {
 		return err
 	}
 
-	if err := d.Set("database_encryption", flattenDatabaseEncryption(cluster.DatabaseEncryption)); err != nil {
+	if err := d.Set("pod_security_policy_config", flattenPodSecurityPolicyConfig(cluster.PodSecurityPolicyConfig)); err != nil {
 		return err
 	}
 
@@ -2749,17 +2749,6 @@ func expandVerticalPodAutoscaling(configured interface{}) *containerBeta.Vertica
 	}
 }
 
-func expandReleaseChannel(configured interface{}) *containerBeta.ReleaseChannel {
-	l := configured.([]interface{})
-	if len(l) == 0 || l[0] == nil {
-		return nil
-	}
-	config := l[0].(map[string]interface{})
-	return &containerBeta.ReleaseChannel{
-		Channel: config["channel"].(string),
-	}
-}
-
 func expandDatabaseEncryption(configured interface{}) *containerBeta.DatabaseEncryption {
 	l := configured.([]interface{})
 	if len(l) == 0 {
@@ -2769,6 +2758,17 @@ func expandDatabaseEncryption(configured interface{}) *containerBeta.DatabaseEnc
 	return &containerBeta.DatabaseEncryption{
 		State:   config["state"].(string),
 		KeyName: config["key_name"].(string),
+	}
+}
+
+func expandReleaseChannel(configured interface{}) *containerBeta.ReleaseChannel {
+	l := configured.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil
+	}
+	config := l[0].(map[string]interface{})
+	return &containerBeta.ReleaseChannel{
+		Channel: config["channel"].(string),
 	}
 }
 
