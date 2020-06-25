@@ -2091,7 +2091,7 @@ func testAccContainerCluster_updateAddons(projectID string, clusterName string) 
 	return fmt.Sprintf(`
 data "google_project" "project" {
   project_id = "%s"
-}	
+}
 
 resource "google_container_cluster" "primary" {
   name               = "%s"
