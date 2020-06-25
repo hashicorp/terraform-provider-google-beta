@@ -6,13 +6,13 @@ FEATURES:
 * **New Resource:** `google_notebook_instance` ([#2199](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2199))
 
 IMPROVEMENTS:
-* Add SHARED_LOADBALANCER_VIP as option for google_compute_address.purpose ([#2204](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2204))
-* app_engine: added the option to specify `database_type` in `google_app_engine_application` ([#2193](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2193))
+* compute: Added SHARED_LOADBALANCER_VIP as an option for `google_compute_address.purpose` ([#2204](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2204))
+* appengine: Enabled provisioning Firestore on a new project by adding the option to specify `database_type` in `google_app_engine_application` ([#2193](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2193))
 * compute: Added `mode` to `google_compute_autoscaler` `autoscaling_policy` ([#2214](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2214))
 * compute: Added `remove_instance_state_on_destroy` to `google_compute_per_instance_config` to control deletion of underlying instance state. ([#2187](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2187))
 * compute: Added `remove_instance_state_on_destroy` to `google_compute_region_per_instance_config` to control deletion of underlying instance state. ([#2187](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2187))
 * compute: Added `scale_down_control` for `google_compute_autoscaler` `autoscaling_policy` ([#2214](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2214))
-* dns: enabled `google_dns_policy` to accept network id #6577 ([#2189](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2189))
+* dns: enabled `google_dns_policy` to accept network id ([#2189](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2189))
 
 BUG FIXES:
 * appengine: Added polling to `google_app_engine_firewall_rule` to prevent issues with eventually consistent creation ([#2197](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2197))
