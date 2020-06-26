@@ -23,6 +23,7 @@ import (
 	"google.golang.org/api/cloudbilling/v1"
 	"google.golang.org/api/cloudbuild/v1"
 	"google.golang.org/api/cloudfunctions/v1"
+	cloudidentity "google.golang.org/api/cloudidentity/v1beta1"
 	"google.golang.org/api/cloudiot/v1"
 	"google.golang.org/api/cloudkms/v1"
 	"google.golang.org/api/cloudresourcemanager/v1"
@@ -141,6 +142,8 @@ type Config struct {
 	clientBilling        *cloudbilling.APIService
 
 	clientBuild *cloudbuild.Service
+
+	clientCloudIdentity *cloudidentity.Service
 
 	ComposerBasePath string
 	clientComposer   *composer.Service
@@ -670,6 +673,16 @@ func (c *Config) LoadAndValidate(ctx context.Context) error {
 	}
 	c.clientHealthcare.UserAgent = userAgent
 	c.clientHealthcare.BasePath = healthcareClientBasePath
+
+	cloudidentityClientBasePath := removeBasePathVersion(c.CloudIdentityBasePath)
+	log.Printf("[INFO] Instantiating Google Cloud CloudIdentity client for path %s", cloudidentityClientBasePath)
+
+	c.clientCloudIdentity, err = cloudidentity.NewService(ctx, option.WithHTTPClient(client))
+	if err != nil {
+		return err
+	}
+	c.clientCloudIdentity.UserAgent = userAgent
+	c.clientCloudIdentity.BasePath = cloudidentityClientBasePath
 
 	c.Region = GetRegionFromRegionSelfLink(c.Region)
 
