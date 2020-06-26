@@ -592,6 +592,8 @@ func Provider() terraform.ResourceProvider {
 			"google_client_config":                            dataSourceGoogleClientConfig(),
 			"google_client_openid_userinfo":                   dataSourceGoogleClientOpenIDUserinfo(),
 			"google_cloudfunctions_function":                  dataSourceGoogleCloudFunctionsFunction(),
+			"google_cloud_identity_groups":                    dataSourceGoogleCloudIdentityGroups(),
+			"google_cloud_identity_group_memberships":         dataSourceGoogleCloudIdentityGroupMemberships(),
 			"google_composer_image_versions":                  dataSourceGoogleComposerImageVersions(),
 			"google_compute_address":                          dataSourceGoogleComputeAddress(),
 			"google_compute_backend_service":                  dataSourceGoogleComputeBackendService(),
