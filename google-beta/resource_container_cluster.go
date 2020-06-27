@@ -882,6 +882,15 @@ func resourceContainerCluster() *schema.Resource {
 				},
 			},
 
+			"networking_mode": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				Computed:     true,
+				ForceNew:     true,
+				ValidateFunc: validation.StringInSlice([]string{"VPC_NATIVE", "ROUTES"}, false),
+				Description:  `Determines whether alias IPs or routes will be used for pod IPs in the cluster.`,
+			},
+
 			"remove_default_node_pool": {
 				Type:        schema.TypeBool,
 				Optional:    true,
@@ -1190,6 +1199,11 @@ func resourceContainerClusterCreate(d *schema.ResourceData, meta interface{}) er
 
 	clusterName := d.Get("name").(string)
 
+	ipAllocationBlock, err := expandIPAllocationPolicy(d.Get("ip_allocation_policy"), d.Get("networking_mode").(string))
+	if err != nil {
+		return err
+	}
+
 	cluster := &containerBeta.Cluster{
 		Name:                           clusterName,
 		InitialNodeCount:               int64(d.Get("initial_node_count").(int)),
@@ -1207,7 +1221,7 @@ func resourceContainerClusterCreate(d *schema.ResourceData, meta interface{}) er
 		NetworkPolicy:           expandNetworkPolicy(d.Get("network_policy")),
 		AddonsConfig:            expandClusterAddonsConfig(d.Get("addons_config")),
 		EnableKubernetesAlpha:   d.Get("enable_kubernetes_alpha").(bool),
-		IpAllocationPolicy:      expandIPAllocationPolicy(d.Get("ip_allocation_policy")),
+		IpAllocationPolicy:      ipAllocationBlock,
 		PodSecurityPolicyConfig: expandPodSecurityPolicyConfig(d.Get("pod_security_policy_config")),
 		Autoscaling:             expandClusterAutoscaling(d.Get("cluster_autoscaling"), d),
 		BinaryAuthorization: &containerBeta.BinaryAuthorization{
@@ -2480,25 +2494,29 @@ func expandClusterAddonsConfig(configured interface{}) *containerBeta.AddonsConf
 	return ac
 }
 
-func expandIPAllocationPolicy(configured interface{}) *containerBeta.IPAllocationPolicy {
+func expandIPAllocationPolicy(configured interface{}, networking_mode string) (*containerBeta.IPAllocationPolicy, error) {
 	l := configured.([]interface{})
 	if len(l) == 0 || l[0] == nil {
+		if networking_mode == "VPC_NATIVE" {
+			return nil, fmt.Errorf("`ip_allocation_policy` block is required for VPC_NATIVE clusters.")
+		}
 		return &containerBeta.IPAllocationPolicy{
 			UseIpAliases:    false,
 			ForceSendFields: []string{"UseIpAliases"},
-		}
+		}, nil
 	}
 
 	config := l[0].(map[string]interface{})
 	return &containerBeta.IPAllocationPolicy{
-		UseIpAliases:          true,
+		UseIpAliases:          networking_mode == "VPC_NATIVE",
 		ClusterIpv4CidrBlock:  config["cluster_ipv4_cidr_block"].(string),
 		ServicesIpv4CidrBlock: config["services_ipv4_cidr_block"].(string),
 
 		ClusterSecondaryRangeName:  config["cluster_secondary_range_name"].(string),
 		ServicesSecondaryRangeName: config["services_secondary_range_name"].(string),
 		ForceSendFields:            []string{"UseIpAliases"},
-	}
+		UseRoutes:                  networking_mode == "ROUTES",
+	}, nil
 }
 
 func expandMaintenancePolicy(d *schema.ResourceData, meta interface{}) *containerBeta.MaintenancePolicy {
@@ -3042,8 +3060,10 @@ func flattenWorkloadIdentityConfig(c *containerBeta.WorkloadIdentityConfig) []ma
 func flattenIPAllocationPolicy(c *containerBeta.Cluster, d *schema.ResourceData, config *Config) []map[string]interface{} {
 	// If IP aliasing isn't enabled, none of the values in this block can be set.
 	if c == nil || c.IpAllocationPolicy == nil || !c.IpAllocationPolicy.UseIpAliases {
+		d.Set("networking_mode", "ROUTES")
 		return nil
 	}
+	d.Set("networking_mode", "VPC_NATIVE")
 
 	p := c.IpAllocationPolicy
 	return []map[string]interface{}{
