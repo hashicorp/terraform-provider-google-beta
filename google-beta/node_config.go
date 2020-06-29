@@ -202,6 +202,7 @@ func schemaNodeConfig() *schema.Schema {
 				},
 
 				"workload_metadata_config": {
+					Computed: true,
 					Type:     schema.TypeList,
 					Optional: true,
 					MaxItems: 1,

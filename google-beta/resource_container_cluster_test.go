@@ -2091,7 +2091,7 @@ func testAccContainerCluster_updateAddons(projectID string, clusterName string) 
 	return fmt.Sprintf(`
 data "google_project" "project" {
   project_id = "%s"
-}	
+}
 
 resource "google_container_cluster" "primary" {
   name               = "%s"
@@ -2351,6 +2351,7 @@ resource "google_container_cluster" "with_authenticator_groups" {
     security_group = "gke-security-groups@mydomain.tld"
   }
 
+  networking_mode = "VPC_NATIVE"
   ip_allocation_policy {
     cluster_secondary_range_name  = google_compute_subnetwork.container_subnetwork.secondary_ip_range[0].range_name
     services_secondary_range_name = google_compute_subnetwork.container_subnetwork.secondary_ip_range[1].range_name
@@ -2483,8 +2484,9 @@ resource "google_container_cluster" "with_tpu" {
 
   enable_tpu = true
 
-  network    = google_compute_network.container_network.name
-  subnetwork = google_compute_subnetwork.container_subnetwork.name
+  network         = google_compute_network.container_network.name
+  subnetwork      = google_compute_subnetwork.container_subnetwork.name
+  networking_mode = "VPC_NATIVE"
 
   private_cluster_config {
     enable_private_endpoint = true
@@ -3319,6 +3321,7 @@ resource "google_container_cluster" "with_ip_allocation_policy" {
   network    = google_compute_network.container_network.name
   subnetwork = google_compute_subnetwork.container_subnetwork.name
 
+  networking_mode = "VPC_NATIVE"
   initial_node_count = 1
   ip_allocation_policy {
     cluster_secondary_range_name  = "pods"
@@ -3350,6 +3353,8 @@ resource "google_container_cluster" "with_ip_allocation_policy" {
   subnetwork = google_compute_subnetwork.container_subnetwork.name
 
   initial_node_count = 1
+
+  networking_mode = "VPC_NATIVE"
   ip_allocation_policy {
     cluster_ipv4_cidr_block  = "10.0.0.0/16"
     services_ipv4_cidr_block = "10.1.0.0/16"
@@ -3380,6 +3385,8 @@ resource "google_container_cluster" "with_ip_allocation_policy" {
   subnetwork = google_compute_subnetwork.container_subnetwork.name
 
   initial_node_count = 1
+
+  networking_mode = "VPC_NATIVE"
   ip_allocation_policy {
     cluster_ipv4_cidr_block  = "/16"
     services_ipv4_cidr_block = "/22"
@@ -3457,6 +3464,7 @@ resource "google_container_cluster" "with_private_cluster" {
   location           = "us-central1-a"
   initial_node_count = 1
 
+  networking_mode = "VPC_NATIVE"
   network    = google_compute_network.container_network.name
   subnetwork = google_compute_subnetwork.container_subnetwork.name
 
@@ -3504,6 +3512,7 @@ resource "google_container_cluster" "with_private_cluster" {
   location           = "us-central1-a"
   initial_node_count = 1
 
+  networking_mode = "VPC_NATIVE"
   network    = google_compute_network.container_network.name
   subnetwork = google_compute_subnetwork.container_subnetwork.name
 
@@ -3673,8 +3682,9 @@ resource "google_container_cluster" "shared_vpc_cluster" {
   initial_node_count = 1
   project            = google_compute_shared_vpc_service_project.service_project.service_project
 
-  network    = google_compute_network.shared_network.self_link
-  subnetwork = google_compute_subnetwork.shared_subnetwork.self_link
+  networking_mode = "VPC_NATIVE"
+  network         = google_compute_network.shared_network.self_link
+  subnetwork      = google_compute_subnetwork.shared_subnetwork.self_link
 
   ip_allocation_policy {
     cluster_secondary_range_name  = google_compute_subnetwork.shared_subnetwork.secondary_ip_range[0].range_name
@@ -3732,8 +3742,9 @@ resource "google_container_cluster" "with_flexible_cidr" {
   location           = "us-central1-a"
   initial_node_count = 3
 
-  network    = google_compute_network.container_network.name
-  subnetwork = google_compute_subnetwork.container_subnetwork.name
+  networking_mode = "VPC_NATIVE"
+  network         = google_compute_network.container_network.name
+  subnetwork      = google_compute_subnetwork.container_subnetwork.name
 
   private_cluster_config {
     enable_private_endpoint = true
@@ -3771,6 +3782,7 @@ resource "google_container_cluster" "cidr_error_preempt" {
   name     = "%s"
   location = "us-central1-a"
 
+  networking_mode = "VPC_NATIVE"
   network    = google_compute_network.container_network.name
   subnetwork = google_compute_subnetwork.container_subnetwork.name
 
@@ -3797,6 +3809,7 @@ resource "google_container_cluster" "cidr_error_overlap" {
 
   initial_node_count = 1
 
+  networking_mode = "VPC_NATIVE"
   ip_allocation_policy {
     cluster_ipv4_cidr_block  = "10.0.0.0/16"
     services_ipv4_cidr_block = "10.1.0.0/16"
@@ -3878,6 +3891,7 @@ resource "google_container_cluster" "with_private_cluster" {
   location           = "us-central1-a"
   initial_node_count = 1
 
+  networking_mode = "VPC_NATIVE"
   network    = google_compute_network.container_network.name
   subnetwork = google_compute_subnetwork.container_subnetwork.name
 
