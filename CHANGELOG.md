@@ -1,4 +1,5 @@
-## 3.28.0 (Unreleased)
+## 3.29.0 (Unreleased)
+## 3.28.0 (June 29, 2020)
 
 FEATURES:
 * **New Data Source:** `google_redis_instance` ([#2209](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2209))
