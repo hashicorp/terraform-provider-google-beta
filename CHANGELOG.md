@@ -1,4 +1,24 @@
 ## 3.28.0 (Unreleased)
+
+FEATURES:
+* **New Data Source:** `google_redis_instance` ([#2209](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2209))
+* **New Resource:** `google_notebook_environment` ([#2199](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2199))
+* **New Resource:** `google_notebook_instance` ([#2199](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2199))
+
+IMPROVEMENTS:
+* appengine: Enabled provisioning Firestore on a new project by adding the option to specify `database_type` in `google_app_engine_application` ([#2193](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2193))
+* compute: Added `mode` to `google_compute_autoscaler` `autoscaling_policy` ([#2214](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2214))
+* compute: Added `remove_instance_state_on_destroy` to `google_compute_per_instance_config` to control deletion of underlying instance state. ([#2187](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2187))
+* compute: Added `remove_instance_state_on_destroy` to `google_compute_region_per_instance_config` to control deletion of underlying instance state. ([#2187](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2187))
+* compute: Added `scale_down_control` for `google_compute_autoscaler` `autoscaling_policy` ([#2214](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2214))
+* compute: Added SHARED_LOADBALANCER_VIP as an option for `google_compute_address.purpose` ([#2204](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2204))
+* dns: enabled `google_dns_policy` to accept network id ([#2189](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2189))
+
+BUG FIXES:
+* appengine: Added polling to `google_app_engine_firewall_rule` to prevent issues with eventually consistent creation ([#2197](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2197))
+* compute: Allowed updating `google_compute_network_peering_routes_config ` `import_custom_routes` and  `export_custom_routes` to false ([#2190](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2190))
+* netblock: fixed the google netblock ranges returned by the `google_netblock_ip_ranges` by targeting json on gstatic domain instead of reading SPF dns records (solution provided by network team) ([#2210](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2210))
+
 ## 3.27.0 (June 23, 2020)
 
 IMPROVEMENTS:
