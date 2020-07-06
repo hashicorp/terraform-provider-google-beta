@@ -14,7 +14,7 @@ FEATURES:
 IMPROVEMENTS:
 * bigquery: Added `"HOUR"` option for `google_bigquery_table` time partitioning (`type`) ([#2235](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2235))
 * compute: Added `mode` to `google_compute_region_autoscaler` `autoscaling_policy` ([#2226](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2226))
-* compute: Added `scale_down_control ` to `google_compute_region_autoscaler` `autoscaling_policy` ([#2226](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2226))
+* compute: Added `scale_down_control` to `google_compute_region_autoscaler` `autoscaling_policy` ([#2226](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2226))
 * container: added `networking_mode` to `google_container_cluster` ([#2243](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2243))
 * endpoints: `google_endpoints_service` now allows dependent resources to plan based on the `config_id` value. ([#2248](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2248))
 * monitoring: added `request_method`, `content_type`, and `body` fields within the `http_check` object to `google_monitoring_uptime_check_config` resource ([#2233](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2233))
