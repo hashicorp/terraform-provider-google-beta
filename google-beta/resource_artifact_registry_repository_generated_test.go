@@ -55,6 +55,40 @@ resource "google_artifact_registry_repository" "my-repo" {
 `, context)
 }
 
+func TestAccArtifactRegistryRepository_artifactRegistryRepositoryCmekExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"kms_key_name":  BootstrapKMSKeyInLocation(t, "us-central1").CryptoKey.Name,
+		"random_suffix": randString(t, 10),
+	}
+
+	vcrTest(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProvidersOiCS,
+		CheckDestroy: testAccCheckArtifactRegistryRepositoryDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccArtifactRegistryRepository_artifactRegistryRepositoryCmekExample(context),
+			},
+		},
+	})
+}
+
+func testAccArtifactRegistryRepository_artifactRegistryRepositoryCmekExample(context map[string]interface{}) string {
+	return Nprintf(`
+resource "google_artifact_registry_repository" "my-repo" {
+  provider = google-beta
+
+  location = "us-central1"
+  repository_id = "tf-test-my-repository%{random_suffix}"
+  description = "example docker repository with cmek"
+  format = "DOCKER"
+  kms_key_name = "%{kms_key_name}"
+}
+`, context)
+}
+
 func TestAccArtifactRegistryRepository_artifactRegistryRepositoryIamExample(t *testing.T) {
 	t.Parallel()
 

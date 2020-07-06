@@ -61,6 +61,15 @@ func resourceArtifactRegistryRepository() *schema.Resource {
 				Optional:    true,
 				Description: `The user-provided description of the repository.`,
 			},
+			"kms_key_name": {
+				Type:     schema.TypeString,
+				Optional: true,
+				ForceNew: true,
+				Description: `The Cloud KMS resource name of the customer managed encryption key that’s
+used to encrypt the contents of the Repository. Has the form:
+'projects/my-project/locations/my-region/keyRings/my-kr/cryptoKeys/my-key'.
+This value may not be changed after the Repository has been created.`,
+			},
 			"labels": {
 				Type:     schema.TypeMap,
 				Optional: true,
@@ -125,6 +134,12 @@ func resourceArtifactRegistryRepositoryCreate(d *schema.ResourceData, meta inter
 		return err
 	} else if v, ok := d.GetOkExists("labels"); !isEmptyValue(reflect.ValueOf(labelsProp)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
 		obj["labels"] = labelsProp
+	}
+	kmsKeyNameProp, err := expandArtifactRegistryRepositoryKmsKeyName(d.Get("kms_key_name"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("kms_key_name"); !isEmptyValue(reflect.ValueOf(kmsKeyNameProp)) && (ok || !reflect.DeepEqual(v, kmsKeyNameProp)) {
+		obj["kmsKeyName"] = kmsKeyNameProp
 	}
 
 	url, err := replaceVars(d, config, "{{ArtifactRegistryBasePath}}projects/{{project}}/locations/{{location}}/repositories?repository_id={{repository_id}}")
@@ -210,6 +225,9 @@ func resourceArtifactRegistryRepositoryRead(d *schema.ResourceData, meta interfa
 	if err := d.Set("labels", flattenArtifactRegistryRepositoryLabels(res["labels"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Repository: %s", err)
 	}
+	if err := d.Set("kms_key_name", flattenArtifactRegistryRepositoryKmsKeyName(res["kmsKeyName"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Repository: %s", err)
+	}
 	if err := d.Set("create_time", flattenArtifactRegistryRepositoryCreateTime(res["createTime"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Repository: %s", err)
 	}
@@ -246,6 +264,12 @@ func resourceArtifactRegistryRepositoryUpdate(d *schema.ResourceData, meta inter
 		return err
 	} else if v, ok := d.GetOkExists("labels"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
 		obj["labels"] = labelsProp
+	}
+	kmsKeyNameProp, err := expandArtifactRegistryRepositoryKmsKeyName(d.Get("kms_key_name"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("kms_key_name"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, kmsKeyNameProp)) {
+		obj["kmsKeyName"] = kmsKeyNameProp
 	}
 
 	url, err := replaceVars(d, config, "{{ArtifactRegistryBasePath}}projects/{{project}}/locations/{{location}}/repositories/{{name}}")
@@ -343,6 +367,10 @@ func flattenArtifactRegistryRepositoryLabels(v interface{}, d *schema.ResourceDa
 	return v
 }
 
+func flattenArtifactRegistryRepositoryKmsKeyName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	return v
+}
+
 func flattenArtifactRegistryRepositoryCreateTime(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
@@ -368,4 +396,8 @@ func expandArtifactRegistryRepositoryLabels(v interface{}, d TerraformResourceDa
 		m[k] = val.(string)
 	}
 	return m, nil
+}
+
+func expandArtifactRegistryRepositoryKmsKeyName(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
 }
