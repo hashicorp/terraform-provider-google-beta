@@ -1,4 +1,30 @@
-## 3.29.0 (Unreleased)
+## 3.30.0 (Unreleased)
+## 3.29.0 (July 06, 2020)
+NOTES:
+* added the `https://www.googleapis.com/auth/cloud-identity` scope to the provider by default ([#2224](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2224))
+* `google_app_engine_*_version`'s `service` field is required; previously it would have passed validation but failed on apply if it were absent. ([#6720](https://github.com/terraform-providers/terraform-provider-google/pull/6720))
+
+FEATURES:
+* **New Data Source:** `google_cloud_identity_group_memberships` ([#2240](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2240))
+* **New Data Source:** `google_cloud_identity_groups` ([#2240](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2240))
+* **New Resource:** `google_cloud_identity_group_membership` ([#2224](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2224))
+* **New Resource:** `google_cloud_identity_group` ([#2224](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2224))
+* **New Resource:** `google_kms_key_ring_import_job` ([#2225](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2225))
+* **New Resource:** `google_folder_iam_audit_config` ([#2237](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2237))
+
+IMPROVEMENTS:
+* bigquery: Added `"HOUR"` option for `google_bigquery_table` time partitioning (`type`) ([#2235](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2235))
+* compute: Added `mode` to `google_compute_region_autoscaler` `autoscaling_policy` ([#2226](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2226))
+* compute: Added `scale_down_control` to `google_compute_region_autoscaler` `autoscaling_policy` ([#2226](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2226))
+* container: added `networking_mode` to `google_container_cluster` ([#2243](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2243))
+* endpoints: enable `google_endpoints_service`-dependent resources to plan based on the `config_id` value. ([#2248](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2248))
+* monitoring: added `request_method`, `content_type`, and `body` fields within the `http_check` object to `google_monitoring_uptime_check_config` resource ([#2233](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2233))
+
+BUG FIXES:
+* compute: Fixed an issue in `google_compute_managed_ssl_certificate` where multiple fully qualified domain names would cause a permadiff ([#2241](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2241))
+* compute: fixed an issue in `compute_url_map` where `path_matcher` sub-fields would conflict with `default_service` ([#2247](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2247))
+* container: fixed an issue in `google_container_cluster` where `workload_metadata_config` would cause a permadiff ([#2242](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2242))
+
 ## 3.28.0 (June 29, 2020)
 
 FEATURES:
