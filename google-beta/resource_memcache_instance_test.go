@@ -68,6 +68,13 @@ resource "google_memcache_instance" "test" {
     memory_size_mb = 1024
   }
   node_count = 1
+
+  memcache_parameters {
+    params = {
+      "listen-backlog" = "2048"
+      "max-item-size" = "8388608"
+    }
+  }
 }
 `, prefix, prefix, name)
 }
@@ -102,6 +109,13 @@ resource "google_memcache_instance" "test" {
     memory_size_mb = 1024
   }
   node_count = 2
+
+  memcache_parameters {
+    params = {
+      "listen-backlog" = "2048"
+      "max-item-size" = "8388608"
+    }
+  }
 }
 `, prefix, prefix, name)
 }

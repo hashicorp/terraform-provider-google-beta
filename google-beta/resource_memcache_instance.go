@@ -189,11 +189,11 @@ func resourceMemcacheInstanceCreate(d *schema.ResourceData, meta interface{}) er
 	} else if v, ok := d.GetOkExists("node_config"); !isEmptyValue(reflect.ValueOf(nodeConfigProp)) && (ok || !reflect.DeepEqual(v, nodeConfigProp)) {
 		obj["nodeConfig"] = nodeConfigProp
 	}
-	memcacheParametersProp, err := expandMemcacheInstanceMemcacheParameters(d.Get("memcache_parameters"), d, config)
+	parametersProp, err := expandMemcacheInstanceMemcacheParameters(d.Get("memcache_parameters"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("memcache_parameters"); !isEmptyValue(reflect.ValueOf(memcacheParametersProp)) && (ok || !reflect.DeepEqual(v, memcacheParametersProp)) {
-		obj["memcacheParameters"] = memcacheParametersProp
+	} else if v, ok := d.GetOkExists("memcache_parameters"); !isEmptyValue(reflect.ValueOf(parametersProp)) && (ok || !reflect.DeepEqual(v, parametersProp)) {
+		obj["parameters"] = parametersProp
 	}
 
 	url, err := replaceVars(d, config, "{{MemcacheBasePath}}projects/{{project}}/locations/{{region}}/instances?instanceId={{name}}")
@@ -292,7 +292,7 @@ func resourceMemcacheInstanceRead(d *schema.ResourceData, meta interface{}) erro
 	if err := d.Set("node_config", flattenMemcacheInstanceNodeConfig(res["nodeConfig"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Instance: %s", err)
 	}
-	if err := d.Set("memcache_parameters", flattenMemcacheInstanceMemcacheParameters(res["memcacheParameters"], d, config)); err != nil {
+	if err := d.Set("memcache_parameters", flattenMemcacheInstanceMemcacheParameters(res["parameters"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Instance: %s", err)
 	}
 
