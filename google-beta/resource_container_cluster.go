@@ -2516,10 +2516,10 @@ func expandClusterAddonsConfig(configured interface{}) *containerBeta.AddonsConf
 	return ac
 }
 
-func expandIPAllocationPolicy(configured interface{}, networking_mode string) (*containerBeta.IPAllocationPolicy, error) {
+func expandIPAllocationPolicy(configured interface{}, networkingMode string) (*containerBeta.IPAllocationPolicy, error) {
 	l := configured.([]interface{})
 	if len(l) == 0 || l[0] == nil {
-		if networking_mode == "VPC_NATIVE" {
+		if networkingMode == "VPC_NATIVE" {
 			return nil, fmt.Errorf("`ip_allocation_policy` block is required for VPC_NATIVE clusters.")
 		}
 		return &containerBeta.IPAllocationPolicy{
@@ -2530,14 +2530,14 @@ func expandIPAllocationPolicy(configured interface{}, networking_mode string) (*
 
 	config := l[0].(map[string]interface{})
 	return &containerBeta.IPAllocationPolicy{
-		UseIpAliases:          networking_mode == "VPC_NATIVE",
+		UseIpAliases:          networkingMode == "VPC_NATIVE" || networkingMode == "",
 		ClusterIpv4CidrBlock:  config["cluster_ipv4_cidr_block"].(string),
 		ServicesIpv4CidrBlock: config["services_ipv4_cidr_block"].(string),
 
 		ClusterSecondaryRangeName:  config["cluster_secondary_range_name"].(string),
 		ServicesSecondaryRangeName: config["services_secondary_range_name"].(string),
 		ForceSendFields:            []string{"UseIpAliases"},
-		UseRoutes:                  networking_mode == "ROUTES",
+		UseRoutes:                  networkingMode == "ROUTES",
 	}, nil
 }
 
