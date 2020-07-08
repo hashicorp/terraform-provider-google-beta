@@ -1,4 +1,17 @@
 ## 3.30.0 (Unreleased)
+FEATURES:
+* **New Data Source:** google_game_services_game_server_deployment_rollout ([#2258](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2258))
+* **New Resource:** `google_os_config_patch_deployment` ([#2253](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2253))
+
+IMPROVEMENTS:
+* artifactregistry: Added field `kms_key_name` to `google_artifact_registry_repository` ([#2254](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2254))
+
+BUG FIXES:
+* container: added the ability to update `database_encryption` without recreating the cluster. ([#2259](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2259))
+* container: fixed a bug where useIpAlias was not defaulting to true inside the `ip_allocation_policy` block ([#2260](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2260))
+* endpoints: fixed `google_endpoints_service` to allow dependent resources to plan based on the `config_id` value. ([#2248](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2248))
+* runtimeconfig: fixed `Requested entity was not found.` error when config was deleted outside of terraform. ([#2257](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2257))
+
 ## 3.29.0 (July 06, 2020)
 NOTES:
 * added the `https://www.googleapis.com/auth/cloud-identity` scope to the provider by default ([#2224](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2224))
