@@ -1,4 +1,4 @@
-## 3.30.0 (Unreleased)
+## 3.30.0 (July 13, 2020)
 FEATURES:
 * **New Data Source:** `google_game_services_game_server_deployment_rollout` ([#2258](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2258))
 * **New Resource:** `google_os_config_patch_deployment` ([#2253](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2253))
