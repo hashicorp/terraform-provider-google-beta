@@ -42,6 +42,7 @@ resource "google_data_fusion_instance" "foobar" {
   name   = "%s"
   region = "us-central1"
   type   = "BASIC"
+  version = "6.1.1"
 }
 `, instanceName)
 }
@@ -59,6 +60,7 @@ resource "google_data_fusion_instance" "foobar" {
     label1 = "value1"
     label2 = "value2"
   }
+  version = "6.1.1"
 }
 `, instanceName)
 }
