@@ -1,4 +1,16 @@
 ## 3.31.0 (Unreleased)
+FEATURES:
+* **New Data Source:** `google_service_account_id_token` ([#2269](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2269))
+* **New Resource:** `google_cloudiot_device` ([#2266](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2266))
+
+IMPROVEMENTS:
+* bigquery: added support for BigQuery custom schemas for external data using CSV / NDJSON ([#2264](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2264))
+* datafusion: changed `version` field to be settable in `google_data_fusion_instance` resource ([#2268](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2268))
+
+BUG FIXES:
+* container: fixes a bug where useIpAlias was not defaulting to true inside the `ip_allocation_policy` block ([#2260](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2260))
+* memcache: fixed field `memcache_parameters` to work correctly on `google_memcache_instance` ([#2261](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2261))
+
 ## 3.30.0 (July 13, 2020)
 FEATURES:
 * **New Data Source:** `google_game_services_game_server_deployment_rollout` ([#2258](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2258))
