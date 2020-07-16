@@ -24,15 +24,15 @@ import (
 )
 
 func init() {
-	resource.AddTestSweepers("OSConfigPatchDeployment", &resource.Sweeper{
-		Name: "OSConfigPatchDeployment",
-		F:    testSweepOSConfigPatchDeployment,
+	resource.AddTestSweepers("OSConfigGuestPolicies", &resource.Sweeper{
+		Name: "OSConfigGuestPolicies",
+		F:    testSweepOSConfigGuestPolicies,
 	})
 }
 
 // At the time of writing, the CI only passes us-central1 as the region
-func testSweepOSConfigPatchDeployment(region string) error {
-	resourceName := "OSConfigPatchDeployment"
+func testSweepOSConfigGuestPolicies(region string) error {
+	resourceName := "OSConfigGuestPolicies"
 	log.Printf("[INFO][SWEEPER_LOG] Starting sweeper for %s", resourceName)
 
 	config, err := sharedConfigForRegion(region)
@@ -61,7 +61,7 @@ func testSweepOSConfigPatchDeployment(region string) error {
 		},
 	}
 
-	listTemplate := strings.Split("https://osconfig.googleapis.com/v1beta/projects/{{project}}/patchDeployments", "?")[0]
+	listTemplate := strings.Split("https://osconfig.googleapis.com/v1beta/projects/{{project}}/guestPolicies", "?")[0]
 	listUrl, err := replaceVars(d, config, listTemplate)
 	if err != nil {
 		log.Printf("[INFO][SWEEPER_LOG] error preparing sweeper list url: %s", err)
@@ -74,7 +74,7 @@ func testSweepOSConfigPatchDeployment(region string) error {
 		return nil
 	}
 
-	resourceList, ok := res["patchDeployments"]
+	resourceList, ok := res["guestPolicies"]
 	if !ok {
 		log.Printf("[INFO][SWEEPER_LOG] Nothing found in response.")
 		return nil
@@ -87,19 +87,23 @@ func testSweepOSConfigPatchDeployment(region string) error {
 	nonPrefixCount := 0
 	for _, ri := range rl {
 		obj := ri.(map[string]interface{})
-		if obj["name"] == nil {
-			log.Printf("[INFO][SWEEPER_LOG] %s resource name was nil", resourceName)
+		var name string
+		// Id detected in the delete URL, attempt to use id.
+		if obj["id"] != nil {
+			name = GetResourceNameFromSelfLink(obj["id"].(string))
+		} else if obj["name"] != nil {
+			name = GetResourceNameFromSelfLink(obj["name"].(string))
+		} else {
+			log.Printf("[INFO][SWEEPER_LOG] %s resource name and id were nil", resourceName)
 			return nil
 		}
-
-		name := GetResourceNameFromSelfLink(obj["name"].(string))
 		// Skip resources that shouldn't be sweeped
 		if !isSweepableTestResource(name) {
 			nonPrefixCount++
 			continue
 		}
 
-		deleteTemplate := "https://osconfig.googleapis.com/v1beta/{{name}}"
+		deleteTemplate := "https://osconfig.googleapis.com/v1beta/projects/{{project}}/guestPolicies/{{guest_policy_id}}"
 		deleteUrl, err := replaceVars(d, config, deleteTemplate)
 		if err != nil {
 			log.Printf("[INFO][SWEEPER_LOG] error preparing delete url: %s", err)
