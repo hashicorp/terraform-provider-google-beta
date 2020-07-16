@@ -684,9 +684,9 @@ func Provider() terraform.ResourceProvider {
 	return provider
 }
 
-// Generated resources: 170
+// Generated resources: 171
 // Generated IAM resources: 66
-// Total generated resources: 236
+// Total generated resources: 237
 func ResourceMap() map[string]*schema.Resource {
 	resourceMap, _ := ResourceMapWithErrors()
 	return resourceMap
@@ -883,6 +883,7 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_notebooks_instance":                                    resourceNotebooksInstance(),
 			"google_notebooks_location":                                    resourceNotebooksLocation(),
 			"google_os_config_patch_deployment":                            resourceOSConfigPatchDeployment(),
+			"google_os_config_guest_policies":                              resourceOSConfigGuestPolicies(),
 			"google_os_login_ssh_public_key":                               resourceOSLoginSSHPublicKey(),
 			"google_pubsub_topic":                                          resourcePubsubTopic(),
 			"google_pubsub_topic_iam_binding":                              ResourceIamBinding(PubsubTopicIamSchema, PubsubTopicIamUpdaterProducer, PubsubTopicIdParseFunc),
