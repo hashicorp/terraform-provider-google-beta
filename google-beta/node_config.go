@@ -1,6 +1,9 @@
 package google
 
 import (
+	"math"
+	"regexp"
+	"strconv"
 	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
@@ -17,6 +20,9 @@ var defaultOauthScopes = []string{
 	"https://www.googleapis.com/auth/servicecontrol",
 	"https://www.googleapis.com/auth/trace.append",
 }
+
+// This validates for a tuple-3 of positive integers. Spaces and tabs are supported as separators
+var tcpMemoryRegexp = regexp.MustCompile(`^([1-9][0-9]+|0)[ \t]+([1-9][0-9]+|0)[ \t]+([1-9][0-9]+|0)$`)
 
 func schemaNodeConfig() *schema.Schema {
 	return &schema.Schema{
@@ -242,6 +248,96 @@ func schemaNodeConfig() *schema.Schema {
 					Optional: true,
 					ForceNew: true,
 				},
+
+				"kubelet_config": {
+					Type:     schema.TypeList,
+					Optional: true,
+					MaxItems: 1,
+					Elem: &schema.Resource{
+						Schema: map[string]*schema.Schema{
+							"cpu_manager_policy": {
+								Type:         schema.TypeString,
+								Optional:     true,
+								ValidateFunc: validation.StringInSlice([]string{"static", "default"}, false),
+							},
+							"cpu_cfs_quota": {
+								Type:     schema.TypeBool,
+								Optional: true,
+							},
+							"cpu_cfs_quota_period": {
+								Type:     schema.TypeString,
+								Optional: true,
+							},
+						},
+					},
+				},
+
+				"linux_node_config": {
+					Type:     schema.TypeList,
+					Optional: true,
+					MaxItems: 1,
+					Elem: &schema.Resource{
+						Schema: map[string]*schema.Schema{
+							"sysctls": {
+								Type:     schema.TypeList,
+								Required: true,
+								Elem: &schema.Resource{
+									Schema: map[string]*schema.Schema{
+										"net-core-netdev_max_backlog": {
+											Type:         schema.TypeInt,
+											Optional:     true,
+											ValidateFunc: validation.IntBetween(1, math.MaxInt32),
+										},
+										"net-core-rmem_max": {
+											Type:         schema.TypeInt,
+											Optional:     true,
+											ValidateFunc: validation.IntBetween(1, math.MaxInt32),
+										},
+										"net-core-wmem_default": {
+											Type:         schema.TypeInt,
+											Optional:     true,
+											ValidateFunc: validation.IntBetween(1, math.MaxInt32),
+										},
+										"net-core-wmem_max": {
+											Type:         schema.TypeInt,
+											Optional:     true,
+											ValidateFunc: validation.IntBetween(1, math.MaxInt32),
+										},
+										"net-core-optmem_max": {
+											Type:         schema.TypeInt,
+											Optional:     true,
+											ValidateFunc: validation.IntBetween(1, math.MaxInt32),
+										},
+										"net-core-somaxconn": {
+											Type:         schema.TypeInt,
+											Optional:     true,
+											ValidateFunc: validation.IntBetween(128, math.MaxInt32),
+										},
+										"net-ipv4-tcp_rmem": {
+											Type:     schema.TypeString,
+											Optional: true,
+											ValidateFunc: validation.StringMatch(
+												tcpMemoryRegexp,
+												"net-ipv4-tcp_rmem must be a tuple-3 of positive integers separated by spaces and or tabs"),
+										},
+										"net-ipv4-tcp_wmem": {
+											Type:     schema.TypeString,
+											Optional: true,
+											ValidateFunc: validation.StringMatch(
+												tcpMemoryRegexp,
+												"net-ipv4-tcp_wmem must be a tuple-3 of positive integers separated by spaces and or tabs"),
+										},
+										"net-ipv4-tcp_tw_reuse": {
+											Type:         schema.TypeInt,
+											Optional:     true,
+											ValidateFunc: validation.IntBetween(0, 1),
+										},
+									},
+								},
+							},
+						},
+					},
+				},
 			},
 		},
 	}
@@ -381,6 +477,14 @@ func expandNodeConfig(v interface{}) *containerBeta.NodeConfig {
 		nc.BootDiskKmsKey = v.(string)
 	}
 
+	if v, ok := nodeConfig["kubelet_config"]; ok {
+		nc.KubeletConfig = expandKubeletConfig(v)
+	}
+
+	if v, ok := nodeConfig["linux_node_config"]; ok {
+		nc.LinuxNodeConfig = expandLinuxNodeConfig(v)
+	}
+
 	return nc
 }
 
@@ -396,6 +500,65 @@ func expandWorkloadMetadataConfig(v interface{}) *containerBeta.WorkloadMetadata
 	cfg := ls[0].(map[string]interface{})
 	return &containerBeta.WorkloadMetadataConfig{
 		NodeMetadata: cfg["node_metadata"].(string),
+	}
+}
+
+func expandKubeletConfig(v interface{}) *containerBeta.NodeKubeletConfig {
+	if v == nil {
+		return nil
+	}
+	ls := v.([]interface{})
+	if len(ls) == 0 {
+		return nil
+	}
+	cfg := ls[0].(map[string]interface{})
+	kConfig := &containerBeta.NodeKubeletConfig{}
+	if cpuManagerPolicy, ok := cfg["cpu_manager_policy"]; ok {
+		kConfig.CpuManagerPolicy = cpuManagerPolicy.(string)
+	}
+	if cpuCfsQuota, ok := cfg["cpu_cfs_quota"]; ok {
+		kConfig.CpuCfsQuota = cpuCfsQuota.(bool)
+	}
+	if cpuCfsQuotaPeriod, ok := cfg["cpu_cfs_quota_period"]; ok {
+		kConfig.CpuCfsQuotaPeriod = cpuCfsQuotaPeriod.(string)
+	}
+	return kConfig
+}
+
+func expandLinuxNodeConfig(v interface{}) *containerBeta.LinuxNodeConfig {
+	if v == nil {
+		return nil
+	}
+	ls := v.([]interface{})
+	if len(ls) == 0 {
+		return nil
+	}
+	cfg := ls[0].(map[string]interface{})
+	sysCfgRaw, ok := cfg["sysctls"]
+	if !ok {
+		return nil
+	}
+	sysCfgList := sysCfgRaw.([]interface{})
+	if len(sysCfgList) == 0 {
+		return nil
+	}
+	sysCfg := sysCfgList[0].(map[string]interface{})
+	sysctls := make(map[string]string)
+	for k, v := range sysCfg {
+		var casted string
+		if i, ok := v.(int); ok {
+			casted = strconv.Itoa(i)
+		}
+		if s, ok := v.(string); ok {
+			casted = s
+		}
+		if casted == "" {
+			continue
+		}
+		sysctls[strings.ReplaceAll(k, "-", ".")] = casted
+	}
+	return &containerBeta.LinuxNodeConfig{
+		Sysctls: sysctls,
 	}
 }
 
@@ -424,6 +587,8 @@ func flattenNodeConfig(c *containerBeta.NodeConfig) []map[string]interface{} {
 		"workload_metadata_config": flattenWorkloadMetadataConfig(c.WorkloadMetadataConfig),
 		"sandbox_config":           flattenSandboxConfig(c.SandboxConfig),
 		"boot_disk_kms_key":        c.BootDiskKmsKey,
+		"kubelet_config":           flattenKubeletConfig(c.KubeletConfig),
+		"linux_node_config":        flattenLinuxNodeConfig(c.LinuxNodeConfig),
 	})
 
 	if len(c.OauthScopes) > 0 {
@@ -600,4 +765,30 @@ func containerNodePoolTaintSuppress(k, old, new string, d *schema.ResourceData) 
 	}
 
 	return true
+}
+
+func flattenKubeletConfig(c *containerBeta.NodeKubeletConfig) []map[string]interface{} {
+	result := []map[string]interface{}{}
+	if c != nil {
+		result = append(result, map[string]interface{}{
+			"cpu_cfs_quota":        c.CpuCfsQuota,
+			"cpu_cfs_quota_period": c.CpuCfsQuotaPeriod,
+			"cpu_manager_policy":   c.CpuManagerPolicy,
+		})
+	}
+	return result
+}
+
+func flattenLinuxNodeConfig(c *containerBeta.LinuxNodeConfig) []map[string]interface{} {
+	result := []map[string]interface{}{}
+	if c != nil {
+		m := make(map[string]interface{})
+		for k, v := range c.Sysctls {
+			m[strings.ReplaceAll(k, ".", "-")] = v
+		}
+		result = append(result, map[string]interface{}{
+			"sysctls": m,
+		})
+	}
+	return result
 }
