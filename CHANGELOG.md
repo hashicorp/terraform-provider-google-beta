@@ -8,7 +8,7 @@ IMPROVEMENTS:
 * datafusion: changed `version` field to be settable in `google_data_fusion_instance` resource ([#2268](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2268))
 
 BUG FIXES:
-* container: fixes a bug where useIpAlias was not defaulting to true inside the `ip_allocation_policy` block ([#2260](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2260))
+* container: fixed a bug where `useIpAlias` was not defaulting to true inside the `ip_allocation_policy` block ([#2260](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2260))
 * memcache: fixed field `memcache_parameters` to work correctly on `google_memcache_instance` ([#2261](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2261))
 
 ## 3.30.0 (July 13, 2020)
