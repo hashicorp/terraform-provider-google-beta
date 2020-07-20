@@ -603,7 +603,7 @@ The `msi_installation` block supports:
 
 * `flags` -
   (Optional)
-  The flags to use when installing the MSI defaults to ["/i"] (i.e. the install flag).
+  The flags to use when installing the MSI. Defaults to the install flag.
 
 * `allowed_exit_codes` -
   (Optional)
@@ -743,7 +743,7 @@ The `msi_installation` block supports:
 
 * `flags` -
   (Optional)
-  The flags to use when installing the MSI defaults to ["/i"] (i.e. the install flag).
+  The flags to use when installing the MSI. Defaults to the install flag.
 
 * `allowed_exit_codes` -
   (Optional)
