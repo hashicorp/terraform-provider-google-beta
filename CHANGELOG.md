@@ -1,4 +1,4 @@
-## 3.31.0 (Unreleased)
+## 3.31.0 (July 20, 2020)
 FEATURES:
 * **New Data Source:** `google_service_account_id_token` ([#2269](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2269))
 * **New Resource:** `google_cloudiot_device` ([#2266](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2266))
