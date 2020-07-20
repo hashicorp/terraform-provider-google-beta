@@ -264,6 +264,89 @@ func TestAccContainerNodePool_withSandboxConfig(t *testing.T) {
 	})
 }
 
+func TestAccContainerNodePool_withKubeletConfig(t *testing.T) {
+	t.Parallel()
+
+	cluster := fmt.Sprintf("tf-test-cluster-%s", randString(t, 10))
+	np := fmt.Sprintf("tf-test-np-%s", randString(t, 10))
+
+	vcrTest(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckContainerClusterDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccContainerNodePool_withKubeletConfig(cluster, np, "static"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("google_container_node_pool.with_kubelet_config",
+						"node_config.0.kubelet_config.0.cpu_manager_policy", "static"),
+					resource.TestCheckResourceAttr("google_container_node_pool.with_kubelet_config",
+						"node_config.0.kubelet_config.0.cpu_cfs_quota", "true"),
+					resource.TestCheckResourceAttr("google_container_node_pool.with_kubelet_config",
+						"node_config.0.kubelet_config.0.cpu_cfs_quota_period", "100us"),
+				),
+			},
+			{
+				ResourceName:      "google_container_node_pool.with_kubelet_config",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
+func TestAccContainerNodePool_withInvalidKubeletCpuManagerPolicy(t *testing.T) {
+	t.Parallel()
+
+	cluster := fmt.Sprintf("tf-test-cluster-%s", randString(t, 10))
+	np := fmt.Sprintf("tf-test-np-%s", randString(t, 10))
+
+	vcrTest(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckContainerClusterDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config:      testAccContainerNodePool_withKubeletConfig(cluster, np, "dontexist"),
+				ExpectError: regexp.MustCompile(`.*to be one of \[static default\].*`),
+			},
+		},
+	})
+}
+
+func TestAccContainerNodePool_withLinuxNodeConfig(t *testing.T) {
+	t.Parallel()
+
+	cluster := fmt.Sprintf("tf-test-cluster-%s", randString(t, 10))
+	np := fmt.Sprintf("tf-test-np-%s", randString(t, 10))
+
+	vcrTest(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckContainerClusterDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccContainerNodePool_withLinuxNodeConfig(cluster, np, 100, 128, "10 100 1000", 1),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("google_container_node_pool.with_kubelet_config",
+						"node_config.0.linux_node_config.0.sysctls.0.net_core_netdev_max_backlog", "100"),
+					resource.TestCheckResourceAttr("google_container_node_pool.with_kubelet_config",
+						"node_config.0.linux_node_config.0.sysctls.0.net_core_somaxconn", "128"),
+					resource.TestCheckResourceAttr("google_container_node_pool.with_kubelet_config",
+						"node_config.0.linux_node_config.0.sysctls.0.net_ipv4_tcp_rmem", "10 100 1000"),
+					resource.TestCheckResourceAttr("google_container_node_pool.with_kubelet_config",
+						"node_config.0.linux_node_config.0.sysctls.0.net_ipv4_tcp_tw_reuse", "1"),
+				),
+			},
+			{
+				ResourceName:      "google_container_node_pool.with_linux_node_config",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
 func TestAccContainerNodePool_withBootDiskKmsKey(t *testing.T) {
 	// Uses generated time-based rotation time
 	skipIfVcr(t)
@@ -1351,6 +1434,82 @@ resource "google_container_node_pool" "with_sandbox_config" {
   }
 }
 `, cluster, np)
+}
+
+func testAccContainerNodePool_withKubeletConfig(cluster, np, policy string) string {
+	return fmt.Sprintf(`
+data "google_container_engine_versions" "central1a" {
+  location = "us-central1-a"
+}
+
+resource "google_container_cluster" "cluster" {
+  name               = "%s"
+  location           = "us-central1-a"
+  initial_node_count = 1
+  min_master_version = data.google_container_engine_versions.central1a.latest_master_version
+}
+
+resource "google_container_node_pool" "with_kubelet_config" {
+  name               = "%s"
+  location           = "us-central1-a"
+  cluster            = google_container_cluster.cluster.name
+  initial_node_count = 1
+  node_config {
+    image_type = "COS_CONTAINERD"
+    kubelet_config {
+      cpu_manager_policy   = "%s"
+      cpu_cfs_quota        = true
+      cpu_cfs_quota_period = "100us"
+    }
+    oauth_scopes = [
+      "https://www.googleapis.com/auth/logging.write",
+      "https://www.googleapis.com/auth/monitoring",
+    ]
+  }
+}
+`, cluster, np, policy)
+}
+
+func testAccContainerNodePool_withLinuxNodeConfig(cluster, np string, maxBacklog, soMaxConn int, tcpMem string, twReuse int) string {
+	return fmt.Sprintf(`
+data "google_container_engine_versions" "central1a" {
+  location = "us-central1-a"
+}
+
+resource "google_container_cluster" "cluster" {
+  name               = "%s"
+  location           = "us-central1-a"
+  initial_node_count = 1
+  min_master_version = data.google_container_engine_versions.central1a.latest_master_version
+}
+
+resource "google_container_node_pool" "with_linux_node_config" {
+  name               = "%s"
+  location           = "us-central1-a"
+  cluster            = google_container_cluster.cluster.name
+  initial_node_count = 1
+  node_config {
+    image_type = "COS_CONTAINERD"
+    linux_node_config {
+      sysctls {
+        net_core_netdev_max_backlog = %d
+        net_core_rmem_max           = 100
+        net_core_wmem_default       = 100
+        net_core_wmem_max           = 200
+        net_core_optmem_max         = 100
+        net_core_somaxconn          = %d
+        net_ipv4_tcp_rmem           = "%s"
+        net_ipv4_tcp_wmem           = "%s"
+        net_ipv4_tcp_tw_reuse       = %d
+      }
+    }
+    oauth_scopes = [
+      "https://www.googleapis.com/auth/logging.write",
+      "https://www.googleapis.com/auth/monitoring",
+    ]
+  }
+}
+`, cluster, np, maxBacklog, soMaxConn, tcpMem, tcpMem, twReuse)
 }
 
 func testAccContainerNodePool_withBootDiskKmsKey(project, cluster, np string) string {
