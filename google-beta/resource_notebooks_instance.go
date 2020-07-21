@@ -19,7 +19,6 @@ import (
 	"log"
 	"reflect"
 	"strconv"
-	"strings"
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
@@ -67,6 +66,7 @@ func resourceNotebooksInstance() *schema.Resource {
 			"accelerator_config": {
 				Type:     schema.TypeList,
 				Optional: true,
+				ForceNew: true,
 				Description: `The hardware accelerator used on this instance. If you use accelerators, 
 make sure that your configuration has enough vCPUs and memory to support the 
 machineType you have selected.`,
@@ -76,11 +76,13 @@ machineType you have selected.`,
 						"core_count": {
 							Type:        schema.TypeInt,
 							Required:    true,
+							ForceNew:    true,
 							Description: `Count of cores of this accelerator.`,
 						},
 						"type": {
 							Type:         schema.TypeString,
 							Required:     true,
+							ForceNew:     true,
 							ValidateFunc: validation.StringInSlice([]string{"ACCELERATOR_TYPE_UNSPECIFIED", "NVIDIA_TESLA_K80", "NVIDIA_TESLA_P100", "NVIDIA_TESLA_V100", "NVIDIA_TESLA_P4", "NVIDIA_TESLA_T4", "NVIDIA_TESLA_T4_VWS", "NVIDIA_TESLA_P100_VWS", "NVIDIA_TESLA_P4_VWS", "TPU_V2", "TPU_V3"}, false),
 							Description:  `Type of this accelerator. Possible values: ["ACCELERATOR_TYPE_UNSPECIFIED", "NVIDIA_TESLA_K80", "NVIDIA_TESLA_P100", "NVIDIA_TESLA_V100", "NVIDIA_TESLA_P4", "NVIDIA_TESLA_T4", "NVIDIA_TESLA_T4_VWS", "NVIDIA_TESLA_P100_VWS", "NVIDIA_TESLA_P4_VWS", "TPU_V2", "TPU_V3"]`,
 						},
@@ -90,6 +92,7 @@ machineType you have selected.`,
 			"boot_disk_size_gb": {
 				Type:     schema.TypeInt,
 				Optional: true,
+				ForceNew: true,
 				Description: `The size of the boot disk in GB attached to this instance, 
 up to a maximum of 64000 GB (64 TB). The minimum recommended value is 100 GB. 
 If not specified, this defaults to 100.`,
@@ -97,12 +100,14 @@ If not specified, this defaults to 100.`,
 			"boot_disk_type": {
 				Type:         schema.TypeString,
 				Optional:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.StringInSlice([]string{"DISK_TYPE_UNSPECIFIED", "PD_STANDARD", "PD_SSD", ""}, false),
 				Description:  `Possible disk types for notebook instances. Possible values: ["DISK_TYPE_UNSPECIFIED", "PD_STANDARD", "PD_SSD"]`,
 			},
 			"container_image": {
 				Type:        schema.TypeList,
 				Optional:    true,
+				ForceNew:    true,
 				Description: `Use a container image to start the notebook instance.`,
 				MaxItems:    1,
 				Elem: &schema.Resource{
@@ -110,12 +115,14 @@ If not specified, this defaults to 100.`,
 						"repository": {
 							Type:     schema.TypeString,
 							Required: true,
+							ForceNew: true,
 							Description: `The path to the container image repository. 
 For example: gcr.io/{project_id}/{imageName}`,
 						},
 						"tag": {
 							Type:        schema.TypeString,
 							Optional:    true,
+							ForceNew:    true,
 							Description: `The tag of the container image. If not specified, this defaults to the latest tag.`,
 						},
 					},
@@ -125,12 +132,14 @@ For example: gcr.io/{project_id}/{imageName}`,
 			"custom_gpu_driver_path": {
 				Type:     schema.TypeString,
 				Optional: true,
+				ForceNew: true,
 				Description: `Specify a custom Cloud Storage path where the GPU driver is stored. 
 If not specified, we'll automatically choose from official GPU drivers.`,
 			},
 			"data_disk_size_gb": {
 				Type:     schema.TypeInt,
 				Optional: true,
+				ForceNew: true,
 				Description: `The size of the data disk in GB attached to this instance, 
 up to a maximum of 64000 GB (64 TB). 
 You can choose the size of the data disk based on how big your notebooks and data are. 
@@ -139,12 +148,14 @@ If not specified, this defaults to 100.`,
 			"data_disk_type": {
 				Type:         schema.TypeString,
 				Optional:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.StringInSlice([]string{"DISK_TYPE_UNSPECIFIED", "PD_STANDARD", "PD_SSD", ""}, false),
 				Description:  `Possible disk types for notebook instances. Possible values: ["DISK_TYPE_UNSPECIFIED", "PD_STANDARD", "PD_SSD"]`,
 			},
 			"disk_encryption": {
 				Type:         schema.TypeString,
 				Optional:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.StringInSlice([]string{"DISK_ENCRYPTION_UNSPECIFIED", "GMEK", "CMEK", ""}, false),
 				Description:  `Disk encryption method used on the boot and data disks, defaults to GMEK. Possible values: ["DISK_ENCRYPTION_UNSPECIFIED", "GMEK", "CMEK"]`,
 			},
@@ -158,6 +169,7 @@ use the first partition of the disk for its root filesystem.`,
 			"instance_owners": {
 				Type:     schema.TypeString,
 				Optional: true,
+				ForceNew: true,
 				Description: `The owner of this instance after creation. 
 Format: alias@example.com.
 Currently supports one owner only. 
@@ -167,6 +179,7 @@ your VM instance's service account can use the instance.`,
 			"kms_key": {
 				Type:     schema.TypeString,
 				Optional: true,
+				ForceNew: true,
 				Description: `The KMS key used to encrypt the disks, only applicable if diskEncryption is CMEK. 
 Format: projects/{project_id}/locations/{location}/keyRings/{key_ring_id}/cryptoKeys/{key_id}`,
 			},
@@ -180,35 +193,42 @@ An object containing a list of "key": value pairs. Example: { "name": "wrench", 
 			"metadata": {
 				Type:     schema.TypeMap,
 				Optional: true,
+				ForceNew: true,
 				Description: `Custom metadata to apply to this instance.
 An object containing a list of "key": value pairs. Example: { "name": "wrench", "mass": "1.3kg", "count": "3" }.`,
 				Elem: &schema.Schema{Type: schema.TypeString},
 			},
 			"network": {
-				Type:     schema.TypeString,
-				Computed: true,
-				Optional: true,
+				Type:             schema.TypeString,
+				Computed:         true,
+				Optional:         true,
+				ForceNew:         true,
+				DiffSuppressFunc: compareSelfLinkOrResourceName,
 				Description: `The name of the VPC that this instance is in. 
 Format: projects/{project_id}/global/networks/{network_id}`,
 			},
 			"no_proxy_access": {
 				Type:        schema.TypeBool,
 				Optional:    true,
+				ForceNew:    true,
 				Description: `the notebook instance will not register with the proxy..`,
 			},
 			"no_public_ip": {
 				Type:        schema.TypeBool,
 				Optional:    true,
+				ForceNew:    true,
 				Description: `no public IP will be assigned to this instance.`,
 			},
 			"no_remove_data_disk": {
 				Type:        schema.TypeBool,
 				Optional:    true,
+				ForceNew:    true,
 				Description: `If true, the data disk will not be auto deleted when deleting the instance.`,
 			},
 			"post_startup_script": {
 				Type:     schema.TypeString,
 				Optional: true,
+				ForceNew: true,
 				Description: `Path to a Bash script that automatically runs after a 
 notebook instance fully boots up. The path must be a URL 
 or Cloud Storage path (gs://path-to-file/file-name).`,
@@ -217,6 +237,7 @@ or Cloud Storage path (gs://path-to-file/file-name).`,
 				Type:     schema.TypeString,
 				Computed: true,
 				Optional: true,
+				ForceNew: true,
 				Description: `The service account on this instance, giving access to other 
 Google Cloud services. You can use any service account within 
 the same project, but you must have the service account user 
@@ -224,15 +245,18 @@ permission to use the instance. If not specified,
 the Compute Engine default service account is used.`,
 			},
 			"subnet": {
-				Type:     schema.TypeString,
-				Computed: true,
-				Optional: true,
+				Type:             schema.TypeString,
+				Computed:         true,
+				Optional:         true,
+				ForceNew:         true,
+				DiffSuppressFunc: compareSelfLinkOrResourceName,
 				Description: `The name of the subnet that this instance is in. 
 Format: projects/{project_id}/regions/{region}/subnetworks/{subnetwork_id}`,
 			},
 			"vm_image": {
 				Type:        schema.TypeList,
 				Optional:    true,
+				ForceNew:    true,
 				Description: `Use a Compute Engine VM image to start the notebook instance.`,
 				MaxItems:    1,
 				Elem: &schema.Resource{
@@ -240,17 +264,20 @@ Format: projects/{project_id}/regions/{region}/subnetworks/{subnetwork_id}`,
 						"project": {
 							Type:     schema.TypeString,
 							Required: true,
+							ForceNew: true,
 							Description: `The name of the Google Cloud project that this VM image belongs to. 
 Format: projects/{project_id}`,
 						},
 						"image_family": {
 							Type:        schema.TypeString,
 							Optional:    true,
+							ForceNew:    true,
 							Description: `Use this VM image family to find the image; the newest image in this family will be used.`,
 						},
 						"image_name": {
 							Type:        schema.TypeString,
 							Optional:    true,
+							ForceNew:    true,
 							Description: `Use VM image name to find the image.`,
 						},
 					},
@@ -502,9 +529,6 @@ func resourceNotebooksInstanceRead(d *schema.ResourceData, meta interface{}) err
 	if err := d.Set("proxy_uri", flattenNotebooksInstanceProxyUri(res["proxyUri"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Instance: %s", err)
 	}
-	if err := d.Set("instance_owners", flattenNotebooksInstanceInstanceOwners(res["instanceOwners"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Instance: %s", err)
-	}
 	if err := d.Set("service_account", flattenNotebooksInstanceServiceAccount(res["serviceAccount"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Instance: %s", err)
 	}
@@ -520,16 +544,7 @@ func resourceNotebooksInstanceRead(d *schema.ResourceData, meta interface{}) err
 	if err := d.Set("custom_gpu_driver_path", flattenNotebooksInstanceCustomGpuDriverPath(res["customGpuDriverPath"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Instance: %s", err)
 	}
-	if err := d.Set("boot_disk_type", flattenNotebooksInstanceBootDiskType(res["bootDiskType"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Instance: %s", err)
-	}
-	if err := d.Set("boot_disk_size_gb", flattenNotebooksInstanceBootDiskSizeGb(res["bootDiskSizeGb"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Instance: %s", err)
-	}
 	if err := d.Set("data_disk_type", flattenNotebooksInstanceDataDiskType(res["dataDiskType"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Instance: %s", err)
-	}
-	if err := d.Set("data_disk_size_gb", flattenNotebooksInstanceDataDiskSizeGb(res["dataDiskSizeGb"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Instance: %s", err)
 	}
 	if err := d.Set("no_remove_data_disk", flattenNotebooksInstanceNoRemoveDataDisk(res["noRemoveDataDisk"], d, config)); err != nil {
@@ -574,234 +589,38 @@ func resourceNotebooksInstanceUpdate(d *schema.ResourceData, meta interface{}) e
 		return err
 	}
 
-	obj := make(map[string]interface{})
-	postStartupScriptProp, err := expandNotebooksInstancePostStartupScript(d.Get("post_startup_script"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("post_startup_script"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, postStartupScriptProp)) {
-		obj["postStartupScript"] = postStartupScriptProp
-	}
-	instanceOwnersProp, err := expandNotebooksInstanceInstanceOwners(d.Get("instance_owners"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("instance_owners"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, instanceOwnersProp)) {
-		obj["instanceOwners"] = instanceOwnersProp
-	}
-	serviceAccountProp, err := expandNotebooksInstanceServiceAccount(d.Get("service_account"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("service_account"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, serviceAccountProp)) {
-		obj["serviceAccount"] = serviceAccountProp
-	}
-	acceleratorConfigProp, err := expandNotebooksInstanceAcceleratorConfig(d.Get("accelerator_config"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("accelerator_config"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, acceleratorConfigProp)) {
-		obj["acceleratorConfig"] = acceleratorConfigProp
-	}
-	customGpuDriverPathProp, err := expandNotebooksInstanceCustomGpuDriverPath(d.Get("custom_gpu_driver_path"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("custom_gpu_driver_path"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, customGpuDriverPathProp)) {
-		obj["customGpuDriverPath"] = customGpuDriverPathProp
-	}
-	bootDiskTypeProp, err := expandNotebooksInstanceBootDiskType(d.Get("boot_disk_type"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("boot_disk_type"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, bootDiskTypeProp)) {
-		obj["bootDiskType"] = bootDiskTypeProp
-	}
-	bootDiskSizeGbProp, err := expandNotebooksInstanceBootDiskSizeGb(d.Get("boot_disk_size_gb"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("boot_disk_size_gb"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, bootDiskSizeGbProp)) {
-		obj["bootDiskSizeGb"] = bootDiskSizeGbProp
-	}
-	dataDiskTypeProp, err := expandNotebooksInstanceDataDiskType(d.Get("data_disk_type"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("data_disk_type"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, dataDiskTypeProp)) {
-		obj["dataDiskType"] = dataDiskTypeProp
-	}
-	dataDiskSizeGbProp, err := expandNotebooksInstanceDataDiskSizeGb(d.Get("data_disk_size_gb"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("data_disk_size_gb"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, dataDiskSizeGbProp)) {
-		obj["dataDiskSizeGb"] = dataDiskSizeGbProp
-	}
-	noRemoveDataDiskProp, err := expandNotebooksInstanceNoRemoveDataDisk(d.Get("no_remove_data_disk"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("no_remove_data_disk"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, noRemoveDataDiskProp)) {
-		obj["noRemoveDataDisk"] = noRemoveDataDiskProp
-	}
-	diskEncryptionProp, err := expandNotebooksInstanceDiskEncryption(d.Get("disk_encryption"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("disk_encryption"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, diskEncryptionProp)) {
-		obj["diskEncryption"] = diskEncryptionProp
-	}
-	kmsKeyProp, err := expandNotebooksInstanceKmsKey(d.Get("kms_key"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("kms_key"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, kmsKeyProp)) {
-		obj["kmsKey"] = kmsKeyProp
-	}
-	noPublicIpProp, err := expandNotebooksInstanceNoPublicIp(d.Get("no_public_ip"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("no_public_ip"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, noPublicIpProp)) {
-		obj["noPublicIp"] = noPublicIpProp
-	}
-	noProxyAccessProp, err := expandNotebooksInstanceNoProxyAccess(d.Get("no_proxy_access"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("no_proxy_access"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, noProxyAccessProp)) {
-		obj["noProxyAccess"] = noProxyAccessProp
-	}
-	networkProp, err := expandNotebooksInstanceNetwork(d.Get("network"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("network"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, networkProp)) {
-		obj["network"] = networkProp
-	}
-	subnetProp, err := expandNotebooksInstanceSubnet(d.Get("subnet"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("subnet"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, subnetProp)) {
-		obj["subnet"] = subnetProp
-	}
-	labelsProp, err := expandNotebooksInstanceLabels(d.Get("labels"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("labels"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
-		obj["labels"] = labelsProp
-	}
-	metadataProp, err := expandNotebooksInstanceMetadata(d.Get("metadata"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("metadata"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, metadataProp)) {
-		obj["metadata"] = metadataProp
-	}
-	vmImageProp, err := expandNotebooksInstanceVmImage(d.Get("vm_image"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("vm_image"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, vmImageProp)) {
-		obj["vmImage"] = vmImageProp
-	}
-	containerImageProp, err := expandNotebooksInstanceContainerImage(d.Get("container_image"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("container_image"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, containerImageProp)) {
-		obj["containerImage"] = containerImageProp
-	}
-
-	url, err := replaceVars(d, config, "{{NotebooksBasePath}}projects/{{project}}/locations/{{location}}/instances/{{name}}")
-	if err != nil {
-		return err
-	}
-
-	log.Printf("[DEBUG] Updating Instance %q: %#v", d.Id(), obj)
-	updateMask := []string{}
-
-	if d.HasChange("post_startup_script") {
-		updateMask = append(updateMask, "postStartupScript")
-	}
-
-	if d.HasChange("instance_owners") {
-		updateMask = append(updateMask, "instanceOwners")
-	}
-
-	if d.HasChange("service_account") {
-		updateMask = append(updateMask, "serviceAccount")
-	}
-
-	if d.HasChange("accelerator_config") {
-		updateMask = append(updateMask, "acceleratorConfig")
-	}
-
-	if d.HasChange("custom_gpu_driver_path") {
-		updateMask = append(updateMask, "customGpuDriverPath")
-	}
-
-	if d.HasChange("boot_disk_type") {
-		updateMask = append(updateMask, "bootDiskType")
-	}
-
-	if d.HasChange("boot_disk_size_gb") {
-		updateMask = append(updateMask, "bootDiskSizeGb")
-	}
-
-	if d.HasChange("data_disk_type") {
-		updateMask = append(updateMask, "dataDiskType")
-	}
-
-	if d.HasChange("data_disk_size_gb") {
-		updateMask = append(updateMask, "dataDiskSizeGb")
-	}
-
-	if d.HasChange("no_remove_data_disk") {
-		updateMask = append(updateMask, "noRemoveDataDisk")
-	}
-
-	if d.HasChange("disk_encryption") {
-		updateMask = append(updateMask, "diskEncryption")
-	}
-
-	if d.HasChange("kms_key") {
-		updateMask = append(updateMask, "kmsKey")
-	}
-
-	if d.HasChange("no_public_ip") {
-		updateMask = append(updateMask, "noPublicIp")
-	}
-
-	if d.HasChange("no_proxy_access") {
-		updateMask = append(updateMask, "noProxyAccess")
-	}
-
-	if d.HasChange("network") {
-		updateMask = append(updateMask, "network")
-	}
-
-	if d.HasChange("subnet") {
-		updateMask = append(updateMask, "subnet")
-	}
+	d.Partial(true)
 
 	if d.HasChange("labels") {
-		updateMask = append(updateMask, "labels")
+		obj := make(map[string]interface{})
+
+		labelsProp, err := expandNotebooksInstanceLabels(d.Get("labels"), d, config)
+		if err != nil {
+			return err
+		} else if v, ok := d.GetOkExists("labels"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
+			obj["labels"] = labelsProp
+		}
+
+		url, err := replaceVars(d, config, "{{NotebooksBasePath}}projects/{{project}}/locations/{{location}}/instances/{{name}}:setLabels")
+		if err != nil {
+			return err
+		}
+		res, err := sendRequestWithTimeout(config, "PATCH", project, url, obj, d.Timeout(schema.TimeoutUpdate))
+		if err != nil {
+			return fmt.Errorf("Error updating Instance %q: %s", d.Id(), err)
+		}
+
+		err = notebooksOperationWaitTime(
+			config, res, project, "Updating Instance",
+			d.Timeout(schema.TimeoutUpdate))
+		if err != nil {
+			return err
+		}
+
+		d.SetPartial("labels")
 	}
 
-	if d.HasChange("metadata") {
-		updateMask = append(updateMask, "metadata")
-	}
-
-	if d.HasChange("vm_image") {
-		updateMask = append(updateMask, "vmImage")
-	}
-
-	if d.HasChange("container_image") {
-		updateMask = append(updateMask, "containerImage")
-	}
-	// updateMask is a URL parameter but not present in the schema, so replaceVars
-	// won't set it
-	url, err = addQueryParams(url, map[string]string{"updateMask": strings.Join(updateMask, ",")})
-	if err != nil {
-		return err
-	}
-	res, err := sendRequestWithTimeout(config, "PATCH", project, url, obj, d.Timeout(schema.TimeoutUpdate))
-
-	if err != nil {
-		return fmt.Errorf("Error updating Instance %q: %s", d.Id(), err)
-	}
-
-	err = notebooksOperationWaitTime(
-		config, res, project, "Updating Instance",
-		d.Timeout(schema.TimeoutUpdate))
-
-	if err != nil {
-		return err
-	}
+	d.Partial(false)
 
 	return resourceNotebooksInstanceRead(d, meta)
 }
@@ -874,10 +693,6 @@ func flattenNotebooksInstanceProxyUri(v interface{}, d *schema.ResourceData, con
 	return v
 }
 
-func flattenNotebooksInstanceInstanceOwners(v interface{}, d *schema.ResourceData, config *Config) interface{} {
-	return v
-}
-
 func flattenNotebooksInstanceServiceAccount(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
@@ -930,46 +745,8 @@ func flattenNotebooksInstanceCustomGpuDriverPath(v interface{}, d *schema.Resour
 	return v
 }
 
-func flattenNotebooksInstanceBootDiskType(v interface{}, d *schema.ResourceData, config *Config) interface{} {
-	return v
-}
-
-func flattenNotebooksInstanceBootDiskSizeGb(v interface{}, d *schema.ResourceData, config *Config) interface{} {
-	// Handles the string fixed64 format
-	if strVal, ok := v.(string); ok {
-		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
-			return intVal
-		}
-	}
-
-	// number values are represented as float64
-	if floatVal, ok := v.(float64); ok {
-		intVal := int(floatVal)
-		return intVal
-	}
-
-	return v // let terraform core handle it otherwise
-}
-
 func flattenNotebooksInstanceDataDiskType(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
-}
-
-func flattenNotebooksInstanceDataDiskSizeGb(v interface{}, d *schema.ResourceData, config *Config) interface{} {
-	// Handles the string fixed64 format
-	if strVal, ok := v.(string); ok {
-		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
-			return intVal
-		}
-	}
-
-	// number values are represented as float64
-	if floatVal, ok := v.(float64); ok {
-		intVal := int(floatVal)
-		return intVal
-	}
-
-	return v // let terraform core handle it otherwise
 }
 
 func flattenNotebooksInstanceNoRemoveDataDisk(v interface{}, d *schema.ResourceData, config *Config) interface{} {
