@@ -277,14 +277,6 @@ func TestAccContainerNodePool_withKubeletConfig(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testAccContainerNodePool_withKubeletConfig(cluster, np, "static"),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("google_container_node_pool.with_kubelet_config",
-						"node_config.0.kubelet_config.0.cpu_manager_policy", "static"),
-					resource.TestCheckResourceAttr("google_container_node_pool.with_kubelet_config",
-						"node_config.0.kubelet_config.0.cpu_cfs_quota", "true"),
-					resource.TestCheckResourceAttr("google_container_node_pool.with_kubelet_config",
-						"node_config.0.kubelet_config.0.cpu_cfs_quota_period", "100us"),
-				),
 			},
 			{
 				ResourceName:      "google_container_node_pool.with_kubelet_config",
@@ -326,17 +318,16 @@ func TestAccContainerNodePool_withLinuxNodeConfig(t *testing.T) {
 		CheckDestroy: testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccContainerNodePool_withLinuxNodeConfig(cluster, np, 100, 128, "10 100 1000", 1),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("google_container_node_pool.with_kubelet_config",
-						"node_config.0.linux_node_config.0.sysctls.0.net_core_netdev_max_backlog", "100"),
-					resource.TestCheckResourceAttr("google_container_node_pool.with_kubelet_config",
-						"node_config.0.linux_node_config.0.sysctls.0.net_core_somaxconn", "128"),
-					resource.TestCheckResourceAttr("google_container_node_pool.with_kubelet_config",
-						"node_config.0.linux_node_config.0.sysctls.0.net_ipv4_tcp_rmem", "10 100 1000"),
-					resource.TestCheckResourceAttr("google_container_node_pool.with_kubelet_config",
-						"node_config.0.linux_node_config.0.sysctls.0.net_ipv4_tcp_tw_reuse", "1"),
-				),
+				Config: testAccContainerNodePool_withLinuxNodeConfig(cluster, np, 10000, 12800, "1000 20000 100000", 1),
+			},
+			{
+				ResourceName:      "google_container_node_pool.with_linux_node_config",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+			// Perform an update.
+			{
+				Config: testAccContainerNodePool_withLinuxNodeConfig(cluster, np, 10000, 12800, "1000 20000 200000", 1),
 			},
 			{
 				ResourceName:      "google_container_node_pool.with_linux_node_config",
@@ -1491,16 +1482,16 @@ resource "google_container_node_pool" "with_linux_node_config" {
   node_config {
     image_type = "COS_CONTAINERD"
     linux_node_config {
-      sysctls {
-        net_core_netdev_max_backlog = %d
-        net_core_rmem_max           = 100
-        net_core_wmem_default       = 100
-        net_core_wmem_max           = 200
-        net_core_optmem_max         = 100
-        net_core_somaxconn          = %d
-        net_ipv4_tcp_rmem           = "%s"
-        net_ipv4_tcp_wmem           = "%s"
-        net_ipv4_tcp_tw_reuse       = %d
+      sysctls = {
+        "net.core.netdev_max_backlog" = "%d"
+        "net.core.rmem_max"           = 10000
+        "net.core.wmem_default"       = 10000
+        "net.core.wmem_max"           = 20000
+        "net.core.optmem_max"         = 10000
+        "net.core.somaxconn"          = %d
+        "net.ipv4.tcp_rmem"           = "%s"
+        "net.ipv4.tcp_wmem"           = "%s"
+        "net.ipv4.tcp_tw_reuse"       = %d
       }
     }
     oauth_scopes = [

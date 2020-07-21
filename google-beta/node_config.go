@@ -1,10 +1,6 @@
 package google
 
 import (
-	"math"
-	"regexp"
-	"strconv"
-
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
 	containerBeta "google.golang.org/api/container/v1beta1"
@@ -18,23 +14,6 @@ var defaultOauthScopes = []string{
 	"https://www.googleapis.com/auth/service.management.readonly",
 	"https://www.googleapis.com/auth/servicecontrol",
 	"https://www.googleapis.com/auth/trace.append",
-}
-
-// This validates for a tuple-3 of positive integers. Spaces and tabs are supported as separators
-var tcpMemoryRegexp = regexp.MustCompile(`^([1-9][0-9]+|0)[ \t]+([1-9][0-9]+|0)[ \t]+([1-9][0-9]+|0)$`)
-
-// Keep track of the original sysctl keys since we replace dots by underscores to make the keys more TF idiomatic.
-// Ref: https://cloud.google.com/kubernetes-engine/docs/reference/rest/v1beta1/NodeConfig#LinuxNodeConfig
-var sysAttrsMap = map[string]string{
-	"net_core_netdev_max_backlog": "net.core.netdev_max_backlog",
-	"net_core_rmem_max":           "net.core.rmem_max",
-	"net_core_wmem_default":       "net.core.wmem_default",
-	"net_core_wmem_max":           "net.core.wmem_max",
-	"net_core_optmem_max":         "net.core.optmem_max",
-	"net_core_somaxconn":          "net.core.somaxconn",
-	"net_ipv4_tcp_rmem":           "net.ipv4.tcp_rmem",
-	"net_ipv4_tcp_wmem":           "net.ipv4.tcp_wmem",
-	"net_ipv4_tcp_tw_reuse":       "net.ipv4.tcp_tw_reuse",
 }
 
 func schemaNodeConfig() *schema.Schema {
@@ -292,61 +271,9 @@ func schemaNodeConfig() *schema.Schema {
 					Elem: &schema.Resource{
 						Schema: map[string]*schema.Schema{
 							"sysctls": {
-								Type:     schema.TypeList,
+								Type:     schema.TypeMap,
 								Required: true,
-								Elem: &schema.Resource{
-									Schema: map[string]*schema.Schema{
-										"net_core_netdev_max_backlog": {
-											Type:         schema.TypeInt,
-											Optional:     true,
-											ValidateFunc: validation.IntBetween(1, math.MaxInt32),
-										},
-										"net_core_rmem_max": {
-											Type:         schema.TypeInt,
-											Optional:     true,
-											ValidateFunc: validation.IntBetween(1, math.MaxInt32),
-										},
-										"net_core_wmem_default": {
-											Type:         schema.TypeInt,
-											Optional:     true,
-											ValidateFunc: validation.IntBetween(1, math.MaxInt32),
-										},
-										"net_core_wmem_max": {
-											Type:         schema.TypeInt,
-											Optional:     true,
-											ValidateFunc: validation.IntBetween(1, math.MaxInt32),
-										},
-										"net_core_optmem_max": {
-											Type:         schema.TypeInt,
-											Optional:     true,
-											ValidateFunc: validation.IntBetween(1, math.MaxInt32),
-										},
-										"net_core_somaxconn": {
-											Type:         schema.TypeInt,
-											Optional:     true,
-											ValidateFunc: validation.IntBetween(128, math.MaxInt32),
-										},
-										"net_ipv4_tcp_rmem": {
-											Type:     schema.TypeString,
-											Optional: true,
-											ValidateFunc: validation.StringMatch(
-												tcpMemoryRegexp,
-												"net_ipv4_tcp_rmem must be a tuple-3 of positive integers separated by spaces and or tabs"),
-										},
-										"net_ipv4_tcp_wmem": {
-											Type:     schema.TypeString,
-											Optional: true,
-											ValidateFunc: validation.StringMatch(
-												tcpMemoryRegexp,
-												"net_ipv4_tcp_wmem must be a tuple-3 of positive integers separated by spaces and or tabs"),
-										},
-										"net_ipv4_tcp_tw_reuse": {
-											Type:         schema.TypeInt,
-											Optional:     true,
-											ValidateFunc: validation.IntBetween(0, 1),
-										},
-									},
-								},
+								Elem:     &schema.Schema{Type: schema.TypeString},
 							},
 						},
 					},
@@ -551,35 +478,12 @@ func expandLinuxNodeConfig(v interface{}) *containerBeta.LinuxNodeConfig {
 	if !ok {
 		return nil
 	}
-	sysCfgList := sysCfgRaw.([]interface{})
-	if len(sysCfgList) == 0 {
-		return nil
-	}
-	sysCfg := sysCfgList[0].(map[string]interface{})
-	sysctls := make(map[string]string)
-	for k, v := range sysCfg {
-		var casted string
-		if i, ok := v.(int); ok {
-			casted = strconv.Itoa(i)
-		}
-		if s, ok := v.(string); ok {
-			casted = s
-		}
-		// So far the schema has only strings and ints.
-		// If we get anything other than that we skip it.
-		// If we ever support more types than that, we
-		// will need to add support for it here.
-		if casted == "" {
-			continue
-		}
-		// Lookup the actual sysctl supported key name
-		// to be sent to GCP.
-		if sysK, ok := sysAttrsMap[k]; ok {
-			sysctls[sysK] = casted
-		}
+	m := make(map[string]string)
+	for k, v := range sysCfgRaw.(map[string]interface{}) {
+		m[k] = v.(string)
 	}
 	return &containerBeta.LinuxNodeConfig{
-		Sysctls: sysctls,
+		Sysctls: m,
 	}
 }
 
@@ -803,27 +707,8 @@ func flattenKubeletConfig(c *containerBeta.NodeKubeletConfig) []map[string]inter
 func flattenLinuxNodeConfig(c *containerBeta.LinuxNodeConfig) []map[string]interface{} {
 	result := []map[string]interface{}{}
 	if c != nil {
-		// We are getting the sysctl keys in the Linux format, that is
-		// with dots in the name, let's replace those with the internal
-		// TF keys which use underscores.
-		//
-		// To get there, let's simply flip our sysAttrsMap and perform
-		// the lookups.
-		flipped := func() map[string]string {
-			m := make(map[string]string)
-			for k, v := range sysAttrsMap {
-				m[v] = k
-			}
-			return m
-		}()
-		m := make(map[string]interface{})
-		for sysK, v := range c.Sysctls {
-			if k, ok := flipped[sysK]; ok {
-				m[k] = v
-			}
-		}
 		result = append(result, map[string]interface{}{
-			"sysctls": m,
+			"sysctls": c.Sysctls,
 		})
 	}
 	return result
