@@ -1076,6 +1076,28 @@ func resourceContainerCluster() *schema.Resource {
 				},
 			},
 
+			"default_snat_status": {
+				Type:        schema.TypeList,
+				MaxItems:    1,
+				Optional:    true,
+				Description: `Whether the cluster disables default in-node sNAT rules. In-node sNAT rules will be disabled when defaultSnatStatus is disabled.`,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"disabled": {
+							Type:        schema.TypeBool,
+							Optional:    true,
+							Description: `When disabled is set to false, default IP masquerade rules will be applied to the nodes to prevent sNAT on cluster internal traffic.`,
+						},
+					},
+				},
+			},
+			"enable_intranode_visibility": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Description: `Whether Intra-node visibility is enabled for this cluster. This makes same node pod to pod traffic visible for VPC network.`,
+				Default:     false,
+			},
+
 			"resource_usage_export_config": {
 				Type:        schema.TypeList,
 				MaxItems:    1,
@@ -1112,13 +1134,6 @@ func resourceContainerCluster() *schema.Resource {
 						},
 					},
 				},
-			},
-
-			"enable_intranode_visibility": {
-				Type:        schema.TypeBool,
-				Optional:    true,
-				Description: `Whether Intra-node visibility is enabled for this cluster. This makes same node pod to pod traffic visible for VPC network.`,
-				Default:     false,
 			},
 		},
 	}
@@ -1234,7 +1249,9 @@ func resourceContainerClusterCreate(d *schema.ResourceData, meta interface{}) er
 		EnableTpu:        d.Get("enable_tpu").(bool),
 		NetworkConfig: &containerBeta.NetworkConfig{
 			EnableIntraNodeVisibility: d.Get("enable_intranode_visibility").(bool),
+			DefaultSnatStatus:         expandDefaultSnatStatus(d.Get("default_snat_status")),
 		},
+
 		MasterAuth:     expandMasterAuth(d.Get("master_auth")),
 		ResourceLabels: expandStringMap(d, "resource_labels"),
 	}
@@ -1495,7 +1512,12 @@ func resourceContainerClusterRead(d *schema.ResourceData, meta interface{}) erro
 	if err := d.Set("release_channel", flattenReleaseChannel(cluster.ReleaseChannel)); err != nil {
 		return err
 	}
+
+	if err := d.Set("default_snat_status", flattenDefaultSnatStatus(cluster.NetworkConfig.DefaultSnatStatus)); err != nil {
+		return err
+	}
 	d.Set("enable_intranode_visibility", cluster.NetworkConfig.EnableIntraNodeVisibility)
+
 	if err := d.Set("authenticator_groups_config", flattenAuthenticatorGroupsConfig(cluster.AuthenticatorGroupsConfig)); err != nil {
 		return err
 	}
@@ -1698,6 +1720,7 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 
 		d.SetPartial("enable_shielded_nodes")
 	}
+
 	if d.HasChange("enable_intranode_visibility") {
 		enabled := d.Get("enable_intranode_visibility").(bool)
 		req := &containerBeta.UpdateClusterRequest{
@@ -1731,6 +1754,37 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 
 		d.SetPartial("enable_intranode_visibility")
 	}
+
+	if d.HasChange("default_snat_status") {
+		req := &containerBeta.UpdateClusterRequest{
+			Update: &containerBeta.ClusterUpdate{
+				DesiredDefaultSnatStatus: expandDefaultSnatStatus(d.Get("default_snat_status")),
+			},
+		}
+		updateF := func() error {
+			log.Println("[DEBUG] updating default_snat_status")
+			name := containerClusterFullName(project, location, clusterName)
+			op, err := config.clientContainerBeta.Projects.Locations.Clusters.Update(name, req).Do()
+			if err != nil {
+				return err
+			}
+
+			// Wait until it's updated
+			err = containerOperationWait(config, op, project, location, "updating GKE Default SNAT status", d.Timeout(schema.TimeoutUpdate))
+			log.Println("[DEBUG] done updating default_snat_status")
+			return err
+		}
+
+		// Call update serially.
+		if err := lockedCall(lockKey, updateF); err != nil {
+			return err
+		}
+
+		log.Printf("[INFO] GKE cluster %s Default SNAT status has been updated", d.Id())
+
+		d.SetPartial("default_snat_status")
+	}
+
 	if d.HasChange("release_channel") {
 		req := &containerBeta.UpdateClusterRequest{
 			Update: &containerBeta.ClusterUpdate{
@@ -2823,6 +2877,19 @@ func expandClusterTelemetry(configured interface{}) *containerBeta.ClusterTeleme
 	}
 }
 
+func expandDefaultSnatStatus(configured interface{}) *containerBeta.DefaultSnatStatus {
+	l := configured.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil
+	}
+	config := l[0].(map[string]interface{})
+	return &containerBeta.DefaultSnatStatus{
+		Disabled:        config["disabled"].(bool),
+		ForceSendFields: []string{"Disabled"},
+	}
+
+}
+
 func expandWorkloadIdentityConfig(configured interface{}) *containerBeta.WorkloadIdentityConfig {
 	l := configured.([]interface{})
 	if len(l) == 0 || l[0] == nil {
@@ -3063,6 +3130,16 @@ func flattenClusterTelemetry(c *containerBeta.ClusterTelemetry) []map[string]int
 	if c != nil {
 		result = append(result, map[string]interface{}{
 			"type": c.Type,
+		})
+	}
+	return result
+}
+
+func flattenDefaultSnatStatus(c *containerBeta.DefaultSnatStatus) []map[string]interface{} {
+	result := []map[string]interface{}{}
+	if c != nil {
+		result = append(result, map[string]interface{}{
+			"disabled": c.Disabled,
 		})
 	}
 	return result

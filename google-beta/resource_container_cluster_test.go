@@ -3480,6 +3480,9 @@ resource "google_container_cluster" "with_private_cluster" {
     enable_private_endpoint = true
     enable_private_nodes    = true
   }
+  default_snat_status{
+    disabled = false	  
+  }
   master_authorized_networks_config {
   }
   ip_allocation_policy {
@@ -3521,6 +3524,9 @@ resource "google_container_cluster" "with_private_cluster" {
   initial_node_count = 1
 
   networking_mode = "VPC_NATIVE"
+  default_snat_status {
+    disabled = true
+  }
   network    = google_compute_network.container_network.name
   subnetwork = google_compute_subnetwork.container_subnetwork.name
 
@@ -3530,7 +3536,7 @@ resource "google_container_cluster" "with_private_cluster" {
     master_ipv4_cidr_block  = "10.42.0.0/28"
     master_global_access_config {
       enabled = true
-    }
+	}
   }
   master_authorized_networks_config {
   }
