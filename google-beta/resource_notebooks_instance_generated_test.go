@@ -57,6 +57,152 @@ resource "google_notebooks_instance" "instance" {
 `, context)
 }
 
+func TestAccNotebooksInstance_notebookInstanceBasicContainerExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"random_suffix": randString(t, 10),
+	}
+
+	vcrTest(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProvidersOiCS,
+		CheckDestroy: testAccCheckNotebooksInstanceDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccNotebooksInstance_notebookInstanceBasicContainerExample(context),
+			},
+		},
+	})
+}
+
+func testAccNotebooksInstance_notebookInstanceBasicContainerExample(context map[string]interface{}) string {
+	return Nprintf(`
+resource "google_notebooks_instance" "instance" {
+  provider = google-beta
+  name = "tf-test-notebooks-instance%{random_suffix}"
+  location = "us-west1-a"
+  machine_type = "n1-standard-1"
+  metadata = {
+    proxy-mode = "service_account"
+    terraform  = "true"
+  }
+  container_image {
+    repository = "gcr.io/deeplearning-platform-release/base-cpu"
+    tag = "latest"
+  }
+}
+`, context)
+}
+
+func TestAccNotebooksInstance_notebookInstanceBasicGpuExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"random_suffix": randString(t, 10),
+	}
+
+	vcrTest(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProvidersOiCS,
+		CheckDestroy: testAccCheckNotebooksInstanceDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccNotebooksInstance_notebookInstanceBasicGpuExample(context),
+			},
+		},
+	})
+}
+
+func testAccNotebooksInstance_notebookInstanceBasicGpuExample(context map[string]interface{}) string {
+	return Nprintf(`
+resource "google_notebooks_instance" "instance" {
+  provider = google-beta
+  name = "tf-test-notebooks-instance%{random_suffix}"
+  location = "us-west1-a"
+  machine_type = "n1-standard-1"
+
+  install_gpu_driver = true
+  accelerator_config {
+    type         = "NVIDIA_TESLA_T4"
+    core_count   = 1
+  }
+  vm_image {
+    project      = "deeplearning-platform-release"
+    image_family = "tf-latest-gpu"
+  }
+}
+`, context)
+}
+
+func TestAccNotebooksInstance_notebookInstanceFullExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"service_account": getTestServiceAccountFromEnv(t),
+		"random_suffix":   randString(t, 10),
+	}
+
+	vcrTest(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProvidersOiCS,
+		CheckDestroy: testAccCheckNotebooksInstanceDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccNotebooksInstance_notebookInstanceFullExample(context),
+			},
+		},
+	})
+}
+
+func testAccNotebooksInstance_notebookInstanceFullExample(context map[string]interface{}) string {
+	return Nprintf(`
+resource "google_notebooks_instance" "instance" {
+  provider = google-beta
+  name = "tf-test-notebooks-instance%{random_suffix}"
+  location = "us-central1-a"
+  machine_type = "n1-standard-1"
+
+  vm_image {
+    project      = "deeplearning-platform-release"
+    image_family = "tf-latest-cpu"
+  }
+
+  instance_owners = "admin@hashicorptest.com"
+  service_account = "%{service_account}"
+
+  install_gpu_driver = true
+  boot_disk_type = "PD_SSD"
+  boot_disk_size_gb = 110
+
+  no_public_ip = true
+  no_proxy_access = true
+
+  network = data.google_compute_network.my_network.id
+  subnet = data.google_compute_subnetwork.my_subnetwork.id
+
+  labels = {
+    k = "val"
+  }
+
+  metadata = {
+    terraform = "true"
+  }
+}
+
+data "google_compute_network" "my_network" {
+  provider = google-beta
+  name = "default"
+}
+
+data "google_compute_subnetwork" "my_subnetwork" {
+  provider = google-beta
+  name   = "default"
+  region = "us-central1"
+}
+`, context)
+}
+
 func testAccCheckNotebooksInstanceDestroyProducer(t *testing.T) func(s *terraform.State) error {
 	return func(s *terraform.State) error {
 		for name, rs := range s.RootModule().Resources {

@@ -24,6 +24,11 @@ description: |-
 
 A Cloud AI Platform Notebook instance.
 
+
+~> **Note:** Due to limitations of the Notebooks Instance API, many fields
+in this resource do not properly detect drift. These fields will also not
+appear in state once imported.
+
 ~> **Warning:** This resource is in beta, and should be used with the terraform-provider-google-beta provider.
 See [Provider Versions](https://terraform.io/docs/providers/google/guides/provider_versions.html) for more details on beta resources.
 
@@ -51,6 +56,109 @@ resource "google_notebooks_instance" "instance" {
     project      = "deeplearning-platform-release"
     image_family = "tf-latest-cpu"
   }
+}
+```
+<div class = "oics-button" style="float: right; margin: 0 0 -15px">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=notebook_instance_basic_container&cloudshell_image=gcr.io%2Fgraphite-cloud-shell-images%2Fterraform%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+    <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
+  </a>
+</div>
+## Example Usage - Notebook Instance Basic Container
+
+
+```hcl
+resource "google_notebooks_instance" "instance" {
+  provider = google-beta
+  name = "notebooks-instance"
+  location = "us-west1-a"
+  machine_type = "n1-standard-1"
+  metadata = {
+    proxy-mode = "service_account"
+    terraform  = "true"
+  }
+  container_image {
+    repository = "gcr.io/deeplearning-platform-release/base-cpu"
+    tag = "latest"
+  }
+}
+```
+<div class = "oics-button" style="float: right; margin: 0 0 -15px">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=notebook_instance_basic_gpu&cloudshell_image=gcr.io%2Fgraphite-cloud-shell-images%2Fterraform%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+    <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
+  </a>
+</div>
+## Example Usage - Notebook Instance Basic Gpu
+
+
+```hcl
+resource "google_notebooks_instance" "instance" {
+  provider = google-beta
+  name = "notebooks-instance"
+  location = "us-west1-a"
+  machine_type = "n1-standard-1"
+
+  install_gpu_driver = true
+  accelerator_config {
+    type         = "NVIDIA_TESLA_T4"
+    core_count   = 1
+  }
+  vm_image {
+    project      = "deeplearning-platform-release"
+    image_family = "tf-latest-gpu"
+  }
+}
+```
+<div class = "oics-button" style="float: right; margin: 0 0 -15px">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=notebook_instance_full&cloudshell_image=gcr.io%2Fgraphite-cloud-shell-images%2Fterraform%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+    <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
+  </a>
+</div>
+## Example Usage - Notebook Instance Full
+
+
+```hcl
+resource "google_notebooks_instance" "instance" {
+  provider = google-beta
+  name = "notebooks-instance"
+  location = "us-central1-a"
+  machine_type = "n1-standard-1"
+
+  vm_image {
+    project      = "deeplearning-platform-release"
+    image_family = "tf-latest-cpu"
+  }
+
+  instance_owners = "admin@hashicorptest.com"
+  service_account = "emailAddress:my@service-account.com"
+
+  install_gpu_driver = true
+  boot_disk_type = "PD_SSD"
+  boot_disk_size_gb = 110
+
+  no_public_ip = true
+  no_proxy_access = true
+
+  network = data.google_compute_network.my_network.id
+  subnet = data.google_compute_subnetwork.my_subnetwork.id
+
+  labels = {
+    k = "val"
+  }
+
+  metadata = {
+    terraform = "true"
+  }
+}
+
+data "google_compute_network" "my_network" {
+  provider = google-beta
+  name = "default"
+}
+
+data "google_compute_subnetwork" "my_subnetwork" {
+  provider = google-beta
+  name   = "default"
+  region = "us-central1"
 }
 ```
 
