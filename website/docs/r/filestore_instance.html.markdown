@@ -58,6 +58,45 @@ resource "google_filestore_instance" "instance" {
   }
 }
 ```
+<div class = "oics-button" style="float: right; margin: 0 0 -15px">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=filestore_instance_full&cloudshell_image=gcr.io%2Fgraphite-cloud-shell-images%2Fterraform%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+    <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
+  </a>
+</div>
+## Example Usage - Filestore Instance Full
+
+
+```hcl
+resource "google_filestore_instance" "instance" {
+  name = "test-instance"
+  zone = "us-central1-b"
+  tier = "BASIC_SSD"
+
+  file_shares {
+    capacity_gb = 2660
+    name        = "share1"
+
+    nfs_export_options {
+      ip_ranges = ["10.0.0.0/24"]
+      access_mode = "READ_WRITE"
+      squash_mode = "NO_ROOT_SQUASH"
+   }
+
+   nfs_export_options {
+      ip_ranges = ["10.10.0.0/24"]
+      access_mode = "READ_ONLY"
+      squash_mode = "ROOT_SQUASH"
+      anon_uid = 123
+      anon_gid = 456
+   }
+  }
+
+  networks {
+    network = "default"
+    modes   = ["MODE_IPV4"]
+  }
+}
+```
 
 ## Argument Reference
 
@@ -76,6 +115,9 @@ The following arguments are supported:
   * `TIER_UNSPECIFIED`
   * `STANDARD`
   * `PREMIUM`
+  * `BASIC_HDD`
+  * `BASIC_SSD`
+  * `HIGH_SCALE_SSD`
 
 * `file_shares` -
   (Required)
@@ -102,6 +144,51 @@ The `file_shares` block supports:
   (Required)
   File share capacity in GiB. This must be at least 1024 GiB
   for the standard tier, or 2560 GiB for the premium tier.
+
+* `nfs_export_options` -
+  (Optional, [Beta](https://terraform.io/docs/providers/google/guides/provider_versions.html))
+  Nfs Export Options. There is a limit of 10 export options per file share.  Structure is documented below.
+
+
+The `nfs_export_options` block supports:
+
+* `ip_ranges` -
+  (Optional)
+  List of either IPv4 addresses, or ranges in CIDR notation which may mount the file share.
+  Overlapping IP ranges are not allowed, both within and across NfsExportOptions. An error will be returned.
+  The limit is 64 IP ranges/addresses for each FileShareConfig among all NfsExportOptions.
+
+* `access_mode` -
+  (Optional)
+  Either READ_ONLY, for allowing only read requests on the exported directory,
+  or READ_WRITE, for allowing both read and write requests. The default is READ_WRITE.
+
+  Default value: `READ_WRITE`
+  Possible values are:
+  * `READ_ONLY`
+  * `READ_WRITE`
+
+* `squash_mode` -
+  (Optional)
+  Either NO_ROOT_SQUASH, for allowing root access on the exported directory, or ROOT_SQUASH,
+  for not allowing root access. The default is NO_ROOT_SQUASH.
+
+  Default value: `NO_ROOT_SQUASH`
+  Possible values are:
+  * `NO_ROOT_SQUASH`
+  * `ROOT_SQUASH`
+
+* `anon_uid` -
+  (Optional)
+  An integer representing the anonymous user id with a default value of 65534.
+  Anon_uid may only be set with squashMode of ROOT_SQUASH. An error will be returned
+  if this field is specified for other squashMode settings.
+
+* `anon_gid` -
+  (Optional)
+  An integer representing the anonymous group id with a default value of 65534.
+  Anon_gid may only be set with squashMode of ROOT_SQUASH. An error will be returned
+  if this field is specified for other squashMode settings.
 
 The `networks` block supports:
 

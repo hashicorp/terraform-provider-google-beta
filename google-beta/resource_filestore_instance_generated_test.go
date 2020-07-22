@@ -68,6 +68,59 @@ resource "google_filestore_instance" "instance" {
 `, context)
 }
 
+func TestAccFilestoreInstance_filestoreInstanceFullExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"random_suffix": randString(t, 10),
+	}
+
+	vcrTest(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProvidersOiCS,
+		CheckDestroy: testAccCheckFilestoreInstanceDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccFilestoreInstance_filestoreInstanceFullExample(context),
+			},
+		},
+	})
+}
+
+func testAccFilestoreInstance_filestoreInstanceFullExample(context map[string]interface{}) string {
+	return Nprintf(`
+resource "google_filestore_instance" "instance" {
+  name = "tf-test-test-instance%{random_suffix}"
+  zone = "us-central1-b"
+  tier = "BASIC_SSD"
+
+  file_shares {
+    capacity_gb = 2660
+    name        = "share1"
+
+    nfs_export_options {
+      ip_ranges = ["10.0.0.0/24"]
+      access_mode = "READ_WRITE"
+      squash_mode = "NO_ROOT_SQUASH"
+   }
+
+   nfs_export_options {
+      ip_ranges = ["10.10.0.0/24"]
+      access_mode = "READ_ONLY"
+      squash_mode = "ROOT_SQUASH"
+      anon_uid = 123
+      anon_gid = 456
+   }
+  }
+
+  networks {
+    network = "default"
+    modes   = ["MODE_IPV4"]
+  }
+}
+`, context)
+}
+
 func testAccCheckFilestoreInstanceDestroyProducer(t *testing.T) func(s *terraform.State) error {
 	return func(s *terraform.State) error {
 		for name, rs := range s.RootModule().Resources {
