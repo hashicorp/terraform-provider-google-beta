@@ -176,6 +176,7 @@ The `disk` block supports:
   The mode of the disk.
 
   Default value: `READ_WRITE`
+
   Possible values are:
   * `READ_ONLY`
   * `READ_WRITE`
@@ -189,6 +190,7 @@ The `disk` block supports:
   deleted from the instance group.
 
   Default value: `NEVER`
+
   Possible values are:
   * `NEVER`
   * `ON_PERMANENT_INSTANCE_DELETION`

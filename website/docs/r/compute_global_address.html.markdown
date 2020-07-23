@@ -100,6 +100,7 @@ The following arguments are supported:
   * INTERNAL indicates internal IP ranges belonging to some network.
 
   Default value: `EXTERNAL`
+
   Possible values are:
   * `EXTERNAL`
   * `INTERNAL`

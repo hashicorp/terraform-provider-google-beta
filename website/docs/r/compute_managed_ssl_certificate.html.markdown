@@ -270,6 +270,7 @@ The following arguments are supported:
   which type this is.
 
   Default value: `MANAGED`
+
   Possible values are:
   * `MANAGED`
 

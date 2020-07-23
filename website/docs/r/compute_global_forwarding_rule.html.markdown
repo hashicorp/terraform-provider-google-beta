@@ -298,6 +298,7 @@ The following arguments are supported:
   load balancing.
 
   Default value: `EXTERNAL`
+
   Possible values are:
   * `EXTERNAL`
   * `INTERNAL_SELF_MANAGED`

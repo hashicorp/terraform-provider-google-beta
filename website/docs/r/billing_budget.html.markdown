@@ -142,6 +142,7 @@ The `budget_filter` block supports:
   for threshold calculations.
 
   Default value: `INCLUDE_ALL_CREDITS`
+
   Possible values are:
   * `INCLUDE_ALL_CREDITS`
   * `EXCLUDE_ALL_CREDITS`
@@ -198,6 +199,7 @@ The `threshold_rules` block supports:
   the threshold.
 
   Default value: `CURRENT_SPEND`
+
   Possible values are:
   * `CURRENT_SPEND`
   * `FORECASTED_SPEND`
