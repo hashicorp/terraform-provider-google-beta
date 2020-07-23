@@ -95,6 +95,7 @@ The following arguments are supported:
   Type of the user agents used for scanning
 
   Default value: `CHROME_LINUX`
+
   Possible values are:
   * `USER_AGENT_UNSPECIFIED`
   * `CHROME_LINUX`
@@ -119,6 +120,7 @@ The following arguments are supported:
   Controls export of scan configurations and results to Cloud Security Command Center.
 
   Default value: `ENABLED`
+
   Possible values are:
   * `ENABLED`
   * `DISABLED`

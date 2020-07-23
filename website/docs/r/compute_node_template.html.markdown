@@ -128,6 +128,7 @@ The following arguments are supported:
   CPU overcommit.
 
   Default value: `NONE`
+
   Possible values are:
   * `ENABLED`
   * `NONE`

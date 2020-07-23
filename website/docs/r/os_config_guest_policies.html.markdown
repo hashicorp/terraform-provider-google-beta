@@ -323,6 +323,7 @@ The `packages` block supports:
   The default behavior is ANY.
 
   Default value: `ANY`
+
   Possible values are:
   * `ANY`
   * `APT`
@@ -356,6 +357,7 @@ The `apt` block supports:
   Type of archive files in this repository. The default behavior is DEB.
 
   Default value: `DEB`
+
   Possible values are:
   * `DEB`
   * `DEB_SRC`
@@ -461,6 +463,7 @@ The `recipes` block supports:
   REMOVE: Remove is unsupported for software recipes and attempts to create or update a recipe to the REMOVE state is rejected.
 
   Default value: `INSTALLED`
+
   Possible values are:
   * `INSTALLED`
   * `UPDATED`

@@ -145,6 +145,7 @@ The following arguments are supported:
   The FHIR specification version.
 
   Default value: `STU3`
+
   Possible values are:
   * `DSTU2`
   * `STU3`
@@ -259,6 +260,7 @@ The `schema_config` block supports:
     See https://github.com/FHIR/sql-on-fhir/blob/master/sql-on-fhir.md.
 
   Default value: `ANALYTICS`
+
   Possible values are:
   * `ANALYTICS`
 
