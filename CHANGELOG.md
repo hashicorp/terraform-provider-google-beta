@@ -1,5 +1,5 @@
 ## 3.33.0 (Unreleased)
-## 3.32.0 (July 21, 2020)
+## 3.32.0 (Unreleased)
 FEATURES:
 * **New Data Source:** `google_sql_database_instance`  #2841 ([#2273](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2273))
 * **New Resource:** `google_cloud_asset_folder_feed` ([#2284](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2284))
@@ -9,7 +9,7 @@ FEATURES:
 * **New Resource:** `google_os_config_guest_policies` ([#2276](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2276))
 
 IMPROVEMENTS:
-* cluster: Added `default_snat_status` field for `google_container_cluster` resource
+* cluster: Added `default_snat_status` field for `google_container_cluster` resource. ([#2283](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2283))
 * filestore: Added `nfs_export_options` field on `google_filestore_instance.file_shares`. ([#2289](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2289))
 * filestore: Added support for filestore high scale tier. ([#2289](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2289))
 * resourcemanager: Added `folder_id` as computed attribute to `google_folder` resource and datasource. ([#2287](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2287))
