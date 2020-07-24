@@ -1,4 +1,8 @@
-## 3.30.0 (Unreleased)
+## 3.29.1 (Unreleased)
+
+IMPROVEMENTS:
+* datafusion: changed `version` field to be settable in `google_data_fusion_instance` resource ([#2268](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2268))
+
 ## 3.29.0 (July 06, 2020)
 NOTES:
 * added the `https://www.googleapis.com/auth/cloud-identity` scope to the provider by default ([#2224](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2224))
