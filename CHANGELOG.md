@@ -1,4 +1,4 @@
-## 3.29.1 (Unreleased)
+## 3.29.1 (July 24, 2020)
 
 IMPROVEMENTS:
 * datafusion: changed `version` field to be settable in `google_data_fusion_instance` resource ([#2268](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2268))
