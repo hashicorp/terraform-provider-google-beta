@@ -90,6 +90,7 @@ resource "google_data_fusion_instance" "extended_instance" {
     network = "default"
     ip_allocation = "10.89.48.0/22"
   }
+  version = "6.1.1"
 }
 `, context)
 }

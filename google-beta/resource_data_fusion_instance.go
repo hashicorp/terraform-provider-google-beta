@@ -132,6 +132,13 @@ able to access the public internet.`,
 				ForceNew:    true,
 				Description: `The region of the Data Fusion instance.`,
 			},
+			"version": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Optional:    true,
+				ForceNew:    true,
+				Description: `Current version of the Data Fusion.`,
+			},
 			"create_time": {
 				Type:        schema.TypeString,
 				Computed:    true,
@@ -167,11 +174,6 @@ able to access the public internet.`,
 				Type:        schema.TypeString,
 				Computed:    true,
 				Description: `The time the instance was last updated in RFC3339 UTC "Zulu" format, accurate to nanoseconds.`,
-			},
-			"version": {
-				Type:        schema.TypeString,
-				Computed:    true,
-				Description: `Current version of the Data Fusion.`,
 			},
 			"project": {
 				Type:     schema.TypeString,
@@ -228,6 +230,12 @@ func resourceDataFusionInstanceCreate(d *schema.ResourceData, meta interface{}) 
 		return err
 	} else if v, ok := d.GetOkExists("options"); !isEmptyValue(reflect.ValueOf(optionsProp)) && (ok || !reflect.DeepEqual(v, optionsProp)) {
 		obj["options"] = optionsProp
+	}
+	versionProp, err := expandDataFusionInstanceVersion(d.Get("version"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("version"); !isEmptyValue(reflect.ValueOf(versionProp)) && (ok || !reflect.DeepEqual(v, versionProp)) {
+		obj["version"] = versionProp
 	}
 	privateInstanceProp, err := expandDataFusionInstancePrivateInstance(d.Get("private_instance"), d, config)
 	if err != nil {
@@ -604,6 +612,10 @@ func expandDataFusionInstanceOptions(v interface{}, d TerraformResourceData, con
 		m[k] = val.(string)
 	}
 	return m, nil
+}
+
+func expandDataFusionInstanceVersion(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
 }
 
 func expandDataFusionInstancePrivateInstance(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
