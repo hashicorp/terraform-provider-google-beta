@@ -6,10 +6,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/customdiff"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/customdiff"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	containerBeta "google.golang.org/api/container/v1beta1"
 )
 
@@ -53,20 +53,6 @@ func resourceContainerNodePool() *schema.Resource {
 					Required:    true,
 					ForceNew:    true,
 					Description: `The cluster to create the node pool for. Cluster must be present in location provided for zonal clusters.`,
-				},
-				"zone": {
-					Type:        schema.TypeString,
-					Optional:    true,
-					Removed:     "use location instead",
-					Computed:    true,
-					Description: `The zone of the cluster`,
-				},
-				"region": {
-					Type:        schema.TypeString,
-					Optional:    true,
-					Removed:     "use location instead",
-					Computed:    true,
-					Description: `The region of the cluster`,
 				},
 				"location": {
 					Type:        schema.TypeString,
@@ -724,7 +710,6 @@ func nodePoolUpdate(d *schema.ResourceData, meta interface{}, nodePoolInfo *Node
 		log.Printf("[INFO] Updated autoscaling in Node Pool %s", d.Id())
 
 		if prefix == "" {
-			d.SetPartial("autoscaling")
 		}
 	}
 
@@ -868,7 +853,6 @@ func nodePoolUpdate(d *schema.ResourceData, meta interface{}, nodePoolInfo *Node
 		}
 
 		if prefix == "" {
-			d.SetPartial("node_config")
 		}
 	}
 
@@ -903,7 +887,6 @@ func nodePoolUpdate(d *schema.ResourceData, meta interface{}, nodePoolInfo *Node
 		log.Printf("[INFO] GKE node pool %s size has been updated to %d", name, newSize)
 
 		if prefix == "" {
-			d.SetPartial("node_count")
 		}
 	}
 
@@ -944,7 +927,6 @@ func nodePoolUpdate(d *schema.ResourceData, meta interface{}, nodePoolInfo *Node
 		log.Printf("[INFO] Updated management in Node Pool %s", name)
 
 		if prefix == "" {
-			d.SetPartial("management")
 		}
 	}
 
@@ -978,7 +960,6 @@ func nodePoolUpdate(d *schema.ResourceData, meta interface{}, nodePoolInfo *Node
 		log.Printf("[INFO] Updated version in Node Pool %s", name)
 
 		if prefix == "" {
-			d.SetPartial("version")
 		}
 	}
 
@@ -1009,7 +990,6 @@ func nodePoolUpdate(d *schema.ResourceData, meta interface{}, nodePoolInfo *Node
 		log.Printf("[INFO] Updated node locations in Node Pool %s", name)
 
 		if prefix == "" {
-			d.SetPartial("node_locations")
 		}
 	}
 
@@ -1046,7 +1026,6 @@ func nodePoolUpdate(d *schema.ResourceData, meta interface{}, nodePoolInfo *Node
 		log.Printf("[INFO] Updated upgrade settings in Node Pool %s", name)
 
 		if prefix == "" {
-			d.SetPartial("upgrade_settings")
 		}
 	}
 

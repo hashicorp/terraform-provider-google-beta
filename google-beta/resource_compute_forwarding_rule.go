@@ -21,8 +21,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
 func resourceComputeForwardingRule() *schema.Resource {
@@ -289,12 +289,6 @@ internally during updates.`,
 				Computed: true,
 				Description: `The internal fully qualified service name for this Forwarding Rule.
 This field is only used for INTERNAL load balancing.`,
-			},
-			"ip_version": {
-				Type:     schema.TypeString,
-				Optional: true,
-				Removed:  "ipVersion is not used for regional forwarding rules. Please remove this field if you are using it.",
-				Computed: true,
 			},
 			"project": {
 				Type:     schema.TypeString,
@@ -657,8 +651,6 @@ func resourceComputeForwardingRuleUpdate(d *schema.ResourceData, meta interface{
 		if err != nil {
 			return err
 		}
-
-		d.SetPartial("target")
 	}
 	if d.HasChange("allow_global_access") {
 		obj := make(map[string]interface{})
@@ -693,8 +685,6 @@ func resourceComputeForwardingRuleUpdate(d *schema.ResourceData, meta interface{
 		if err != nil {
 			return err
 		}
-
-		d.SetPartial("allow_global_access")
 	}
 	if d.HasChange("labels") || d.HasChange("label_fingerprint") {
 		obj := make(map[string]interface{})
@@ -735,9 +725,6 @@ func resourceComputeForwardingRuleUpdate(d *schema.ResourceData, meta interface{
 		if err != nil {
 			return err
 		}
-
-		d.SetPartial("labels")
-		d.SetPartial("label_fingerprint")
 	}
 
 	d.Partial(false)

@@ -8,8 +8,8 @@ import (
 	"time"
 
 	"github.com/hashicorp/go-version"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	composer "google.golang.org/api/composer/v1beta1"
 )
 
@@ -573,7 +573,6 @@ func resourceComposerEnvironmentUpdate(d *schema.ResourceData, meta interface{})
 			if err != nil {
 				return err
 			}
-			d.SetPartial("config")
 		}
 
 		if d.HasChange("config.0.software_config.0.airflow_config_overrides") {
@@ -593,7 +592,6 @@ func resourceComposerEnvironmentUpdate(d *schema.ResourceData, meta interface{})
 			if err != nil {
 				return err
 			}
-			d.SetPartial("config")
 		}
 
 		if d.HasChange("config.0.software_config.0.env_variables") {
@@ -612,7 +610,6 @@ func resourceComposerEnvironmentUpdate(d *schema.ResourceData, meta interface{})
 			if err != nil {
 				return err
 			}
-			d.SetPartial("config")
 		}
 
 		if d.HasChange("config.0.software_config.0.pypi_packages") {
@@ -631,7 +628,6 @@ func resourceComposerEnvironmentUpdate(d *schema.ResourceData, meta interface{})
 			if err != nil {
 				return err
 			}
-			d.SetPartial("config")
 		}
 
 		if d.HasChange("config.0.node_count") {
@@ -643,7 +639,6 @@ func resourceComposerEnvironmentUpdate(d *schema.ResourceData, meta interface{})
 			if err != nil {
 				return err
 			}
-			d.SetPartial("config")
 		}
 
 		// If web_server_network_access_control has more fields added it may require changes here.
@@ -657,7 +652,6 @@ func resourceComposerEnvironmentUpdate(d *schema.ResourceData, meta interface{})
 			if err != nil {
 				return err
 			}
-			d.SetPartial("config")
 		}
 
 		if d.HasChange("config.0.database_config.0.machine_type") {
@@ -691,7 +685,6 @@ func resourceComposerEnvironmentUpdate(d *schema.ResourceData, meta interface{})
 		if err != nil {
 			return err
 		}
-		d.SetPartial("labels")
 	}
 
 	d.Partial(false)
@@ -713,7 +706,6 @@ func resourceComposerEnvironmentPostCreateUpdate(updateEnv *composer.Environment
 		}
 
 		log.Printf("[DEBUG] Finish update to Environment %q post create for update only fields", d.Id())
-		d.SetPartial("config")
 	}
 	d.Partial(false)
 	return resourceComposerEnvironmentRead(d, cfg)
