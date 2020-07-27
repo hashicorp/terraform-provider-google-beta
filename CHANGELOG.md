@@ -1,4 +1,28 @@
-## 3.32.0 (Unreleased)
+## 3.33.0 (Unreleased)
+## 3.32.0 (July 27, 2020)
+FEATURES:
+* **New Data Source:** `google_sql_database_instance`  #2841 ([#2273](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2273))
+* **New Resource:** `google_cloud_asset_folder_feed` ([#2284](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2284))
+* **New Resource:** `google_cloud_asset_organization_feed` ([#2284](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2284))
+* **New Resource:** `google_cloud_asset_project_feed` ([#2284](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2284))
+* **New Resource:** `google_monitoring_metric_descriptor` ([#2290](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2290))
+* **New Resource:** `google_os_config_guest_policies` ([#2276](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2276))
+
+IMPROVEMENTS:
+* cluster: Added `default_snat_status` field for `google_container_cluster` resource. ([#2283](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2283))
+* filestore: Added `nfs_export_options` field on `google_filestore_instance.file_shares`. ([#2289](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2289))
+* filestore: Added support for filestore high scale tier. ([#2289](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2289))
+* resourcemanager: Added `folder_id` as computed attribute to `google_folder` resource and datasource. ([#2287](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2287))
+* compute: Added support to `google_compute_backend_service` for setting a network endpoint group as `backend.group`. ([#2304](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2304))
+
+BUG FIXES:
+* container: Fixed `google_container_cluster.pod_security_policy_config` not being set when disabled.
+* container: Fixed a crash in `google_container_cluster` when `""` was specified for `resource_usage_export_config.bigquery_destination.dataset_id`. ([#2296](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2296))
+* bigquery: Fixed bug where a permadiff would show up when adding a column to the middle of a `bigquery_table.schema` ([#2275](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2275))
+* notebook: Fixed bug where many fields were being written as empty to state, causing a diff on the next plan ([#2288](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2288))
+* notebook: Fixed bug where setting `network` or `subnet` to a full URL would succeed, but cause a diff on the next plan ([#2288](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2288))
+* notebook: Fixed bug where updating certain fields would result in a no-op update call instead of a create/destroy. Now, the only field that is updatable in place is `labels` ([#2288](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2288))
+
 ## 3.31.0 (July 20, 2020)
 FEATURES:
 * **New Data Source:** `google_service_account_id_token` ([#2269](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2269))
