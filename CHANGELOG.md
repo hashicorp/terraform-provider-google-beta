@@ -13,6 +13,7 @@ IMPROVEMENTS:
 * filestore: Added `nfs_export_options` field on `google_filestore_instance.file_shares`. ([#2289](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2289))
 * filestore: Added support for filestore high scale tier. ([#2289](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2289))
 * resourcemanager: Added `folder_id` as computed attribute to `google_folder` resource and datasource. ([#2287](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2287))
+* compute: Added support to `google_compute_backend_service` for setting a network endpoint group as `backend.group`. ([#2304](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2304))
 
 BUG FIXES:
 * container: Fixed `google_container_cluster.pod_security_policy_config` not being set when disabled.
