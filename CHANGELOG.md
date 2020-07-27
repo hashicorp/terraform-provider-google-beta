@@ -1,5 +1,5 @@
 ## 3.33.0 (Unreleased)
-## 3.32.0 (Unreleased)
+## 3.32.0 (July 27, 2020)
 FEATURES:
 * **New Data Source:** `google_sql_database_instance`  #2841 ([#2273](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2273))
 * **New Resource:** `google_cloud_asset_folder_feed` ([#2284](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2284))
