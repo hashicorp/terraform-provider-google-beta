@@ -1,7 +1,7 @@
 ## 3.33.0 (Unreleased)
 
 DEPRECATIONS:
-* compute: deprecated `enableLogging` on `google_compute_firewall`, define `logConfig.metadata` to enable logging instead. ([#2310](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2310))
+* compute: deprecated `enable_logging` on `google_compute_firewall`, define `log_config.metadata` to enable logging instead. ([#2310](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2310))
 
 FEATURES:
 * **New Resource:** `google_active_directory_domain` ([#2309](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2309))
@@ -9,8 +9,7 @@ FEATURES:
 
 IMPROVEMENTS:
 * cloudrun: added `ports` field to `google_cloud_run_service` `templates.spec.containers` ([#2311](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2311))
-* compute: added support to `google_compute_backend_service` for setting a network endpoint group as `backend.group` ([#2304](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2304))
-* compute: added `logConfig.metadata` to `google_compute_firewall`, defining this will enable logging. ([#2310](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2310))
+* compute: added `log_config.metadata` to `google_compute_firewall`, defining this will enable logging. ([#2310](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2310))
 
 BUG FIXES:
 * container: Fixed a crash in `google_container_cluster` when `""` was specified for `resource_usage_export_config.bigquery_destination.dataset_id`. ([#2296](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2296))
