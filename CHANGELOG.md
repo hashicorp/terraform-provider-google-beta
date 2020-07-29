@@ -1,4 +1,22 @@
 ## 3.33.0 (Unreleased)
+
+DEPRECATIONS:
+* compute: deprecated `enableLogging` on `google_compute_firewall`, define `logConfig.metadata` to enable logging instead. ([#2310](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2310))
+
+FEATURES:
+* **New Resource:** `google_active_directory_domain` ([#2309](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2309))
+* **New Resource:** `google_dataflow_flex_template_job` ([#2303](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2303))
+
+IMPROVEMENTS:
+* cloudrun: added `ports` field to `google_cloud_run_service` `templates.spec.containers` ([#2311](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2311))
+* compute: added support to `google_compute_backend_service` for setting a network endpoint group as `backend.group` ([#2304](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2304))
+* compute: added `logConfig.metadata` to `google_compute_firewall`, defining this will enable logging. ([#2310](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2310))
+
+BUG FIXES:
+* container: Fixed a crash in `google_container_cluster` when `""` was specified for `resource_usage_export_config.bigquery_destination.dataset_id`. ([#2296](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2296))
+* endpoints: Fixed a crash when `google_endpoints_service` is used on a machine without timezone data ([#2302](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2302))
+* resourcemanager: bumped `google_project` timeout defaults to 10 minutes (from 4) ([#2306](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2306)
+
 ## 3.32.0 (July 27, 2020)
 FEATURES:
 * **New Data Source:** `google_sql_database_instance`  #2841 ([#2273](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2273))
