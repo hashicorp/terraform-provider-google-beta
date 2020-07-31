@@ -1,6 +1,8 @@
 package google
 
 import (
+	"strings"
+
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
 	containerBeta "google.golang.org/api/container/v1beta1"
@@ -76,9 +78,10 @@ func schemaNodeConfig() *schema.Schema {
 					Type:     schema.TypeMap,
 					Optional: true,
 					// Computed=true because GKE Sandbox will automatically add labels to nodes that can/cannot run sandboxed pods.
-					Computed: true,
-					ForceNew: true,
-					Elem:     &schema.Schema{Type: schema.TypeString},
+					Computed:         true,
+					ForceNew:         true,
+					Elem:             &schema.Schema{Type: schema.TypeString},
+					DiffSuppressFunc: containerNodePoolLabelsSuppress,
 				},
 
 				"local_ssd_count": {
@@ -178,7 +181,8 @@ func schemaNodeConfig() *schema.Schema {
 					ForceNew: true,
 					// Legacy config mode allows explicitly defining an empty taint.
 					// See https://www.terraform.io/docs/configuration/attr-as-blocks.html
-					ConfigMode: schema.SchemaConfigModeAttr,
+					ConfigMode:       schema.SchemaConfigModeAttr,
+					DiffSuppressFunc: containerNodePoolTaintSuppress,
 					Elem: &schema.Resource{
 						Schema: map[string]*schema.Schema{
 							"key": {
@@ -481,4 +485,119 @@ func flattenSandboxConfig(c *containerBeta.SandboxConfig) []map[string]interface
 		})
 	}
 	return result
+}
+
+func containerNodePoolLabelsSuppress(k, old, new string, d *schema.ResourceData) bool {
+	// Node configs are embedded into multiple resources (container cluster and
+	// container node pool) so we determine the node config key dynamically.
+	idx := strings.Index(k, ".labels.")
+	if idx < 0 {
+		return false
+	}
+
+	root := k[:idx]
+
+	// Right now, GKE only applies its own out-of-band labels when you enable
+	// Sandbox. We only need to perform diff suppression in this case;
+	// otherwise, the default Terraform behavior is fine.
+	o, n := d.GetChange(root + ".sandbox_config.0.sandbox_type")
+	if o == nil || n == nil {
+		return false
+	}
+
+	// Pull the entire changeset as a list rather than trying to deal with each
+	// element individually.
+	o, n = d.GetChange(root + ".labels")
+	if o == nil || n == nil {
+		return false
+	}
+
+	labels := n.(map[string]interface{})
+
+	// Remove all current labels, skipping GKE-managed ones if not present in
+	// the new configuration.
+	for key, value := range o.(map[string]interface{}) {
+		if nv, ok := labels[key]; ok && nv == value {
+			delete(labels, key)
+		} else if !strings.HasPrefix(key, "sandbox.gke.io/") {
+			// User-provided label removed in new configuration.
+			return false
+		}
+	}
+
+	// If, at this point, the map still has elements, the new configuration
+	// added an additional taint.
+	if len(labels) > 0 {
+		return false
+	}
+
+	return true
+}
+
+func containerNodePoolTaintSuppress(k, old, new string, d *schema.ResourceData) bool {
+	// Node configs are embedded into multiple resources (container cluster and
+	// container node pool) so we determine the node config key dynamically.
+	idx := strings.Index(k, ".taint.")
+	if idx < 0 {
+		return false
+	}
+
+	root := k[:idx]
+
+	// Right now, GKE only applies its own out-of-band labels when you enable
+	// Sandbox. We only need to perform diff suppression in this case;
+	// otherwise, the default Terraform behavior is fine.
+	o, n := d.GetChange(root + ".sandbox_config.0.sandbox_type")
+	if o == nil || n == nil {
+		return false
+	}
+
+	// Pull the entire changeset as a list rather than trying to deal with each
+	// element individually.
+	o, n = d.GetChange(root + ".taint")
+	if o == nil || n == nil {
+		return false
+	}
+
+	type taintType struct {
+		Key, Value, Effect string
+	}
+
+	taintSet := make(map[taintType]struct{})
+
+	// Add all new taints to set.
+	for _, raw := range n.([]interface{}) {
+		data := raw.(map[string]interface{})
+		taint := taintType{
+			Key:    data["key"].(string),
+			Value:  data["value"].(string),
+			Effect: data["effect"].(string),
+		}
+		taintSet[taint] = struct{}{}
+	}
+
+	// Remove all current taints, skipping GKE-managed keys if not present in
+	// the new configuration.
+	for _, raw := range o.([]interface{}) {
+		data := raw.(map[string]interface{})
+		taint := taintType{
+			Key:    data["key"].(string),
+			Value:  data["value"].(string),
+			Effect: data["effect"].(string),
+		}
+		if _, ok := taintSet[taint]; ok {
+			delete(taintSet, taint)
+		} else if !strings.HasPrefix(taint.Key, "sandbox.gke.io/") {
+			// User-provided taint removed in new configuration.
+			return false
+		}
+	}
+
+	// If, at this point, the set still has elements, the new configuration
+	// added an additional taint.
+	if len(taintSet) > 0 {
+		return false
+	}
+
+	return true
 }
