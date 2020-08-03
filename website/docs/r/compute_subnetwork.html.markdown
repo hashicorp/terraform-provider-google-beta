@@ -179,10 +179,7 @@ The following arguments are supported:
   reserved for Internal HTTP(S) Load Balancing. If unspecified, the
   purpose defaults to PRIVATE.
   If set to INTERNAL_HTTPS_LOAD_BALANCER you must also set the role.
-
-  Possible values are:
-  * `INTERNAL_HTTPS_LOAD_BALANCER`
-  * `PRIVATE`
+  Possible values are `INTERNAL_HTTPS_LOAD_BALANCER` and `PRIVATE`.
 
 * `role` -
   (Optional, [Beta](https://terraform.io/docs/providers/google/guides/provider_versions.html))
@@ -191,10 +188,7 @@ The following arguments are supported:
   or BACKUP. An ACTIVE subnetwork is one that is currently being used
   for Internal HTTP(S) Load Balancing. A BACKUP subnetwork is one that
   is ready to be promoted to ACTIVE or is currently draining.
-
-  Possible values are:
-  * `ACTIVE`
-  * `BACKUP`
+  Possible values are `ACTIVE` and `BACKUP`.
 
 * `secondary_ip_range` -
   (Optional)
@@ -206,7 +200,8 @@ The following arguments are supported:
   breaking users during the 0.12 upgrade. To explicitly send a list
   of zero objects you must use the following syntax:
   `example=[]`
-  For more details about this behavior, see [this section](https://www.terraform.io/docs/configuration/attr-as-blocks.html#defining-a-fixed-object-collection-value).  Structure is documented below.
+  For more details about this behavior, see [this section](https://www.terraform.io/docs/configuration/attr-as-blocks.html#defining-a-fixed-object-collection-value).
+  Structure is documented below.
 
 * `private_ip_google_access` -
   (Optional)
@@ -221,7 +216,8 @@ The following arguments are supported:
   (Optional)
   Denotes the logging options for the subnetwork flow logs. If logging is enabled
   logs will be exported to Stackdriver. This field cannot be set if the `purpose` of this
-  subnetwork is `INTERNAL_HTTPS_LOAD_BALANCER`  Structure is documented below.
+  subnetwork is `INTERNAL_HTTPS_LOAD_BALANCER`
+  Structure is documented below.
 
 * `project` - (Optional) The ID of the project in which the resource belongs.
     If it is not provided, the provider project is used.
@@ -253,16 +249,8 @@ The `log_config` block supports:
   lasting connections. Default is an interval of 5 seconds per connection.
   Possible values are INTERVAL_5_SEC, INTERVAL_30_SEC, INTERVAL_1_MIN,
   INTERVAL_5_MIN, INTERVAL_10_MIN, INTERVAL_15_MIN
-
-  Default value: `INTERVAL_5_SEC`
-
-  Possible values are:
-  * `INTERVAL_5_SEC`
-  * `INTERVAL_30_SEC`
-  * `INTERVAL_1_MIN`
-  * `INTERVAL_5_MIN`
-  * `INTERVAL_10_MIN`
-  * `INTERVAL_15_MIN`
+  Default value is `INTERVAL_5_SEC`.
+  Possible values are `INTERVAL_5_SEC`, `INTERVAL_30_SEC`, `INTERVAL_1_MIN`, `INTERVAL_5_MIN`, `INTERVAL_10_MIN`, and `INTERVAL_15_MIN`.
 
 * `flow_sampling` -
   (Optional)
@@ -277,12 +265,8 @@ The `log_config` block supports:
   Can only be specified if VPC flow logging for this subnetwork is enabled.
   Configures whether metadata fields should be added to the reported VPC
   flow logs.
-
-  Default value: `INCLUDE_ALL_METADATA`
-
-  Possible values are:
-  * `EXCLUDE_ALL_METADATA`
-  * `INCLUDE_ALL_METADATA`
+  Default value is `INCLUDE_ALL_METADATA`.
+  Possible values are `EXCLUDE_ALL_METADATA` and `INCLUDE_ALL_METADATA`.
 
 ## Attributes Reference
 

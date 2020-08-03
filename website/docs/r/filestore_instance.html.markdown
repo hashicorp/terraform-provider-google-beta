@@ -111,24 +111,19 @@ The following arguments are supported:
 * `tier` -
   (Required)
   The service tier of the instance.
-
-  Possible values are:
-  * `TIER_UNSPECIFIED`
-  * `STANDARD`
-  * `PREMIUM`
-  * `BASIC_HDD`
-  * `BASIC_SSD`
-  * `HIGH_SCALE_SSD`
+  Possible values are `TIER_UNSPECIFIED`, `STANDARD`, `PREMIUM`, `BASIC_HDD`, `BASIC_SSD`, and `HIGH_SCALE_SSD`.
 
 * `file_shares` -
   (Required)
   File system shares on the instance. For this version, only a
-  single file share is supported.  Structure is documented below.
+  single file share is supported.
+  Structure is documented below.
 
 * `networks` -
   (Required)
   VPC networks to which the instance is connected. For this version,
-  only a single network is supported.  Structure is documented below.
+  only a single network is supported.
+  Structure is documented below.
 
 * `zone` -
   (Required)
@@ -148,7 +143,8 @@ The `file_shares` block supports:
 
 * `nfs_export_options` -
   (Optional, [Beta](https://terraform.io/docs/providers/google/guides/provider_versions.html))
-  Nfs Export Options. There is a limit of 10 export options per file share.  Structure is documented below.
+  Nfs Export Options. There is a limit of 10 export options per file share.
+  Structure is documented below.
 
 
 The `nfs_export_options` block supports:
@@ -163,23 +159,15 @@ The `nfs_export_options` block supports:
   (Optional)
   Either READ_ONLY, for allowing only read requests on the exported directory,
   or READ_WRITE, for allowing both read and write requests. The default is READ_WRITE.
-
-  Default value: `READ_WRITE`
-
-  Possible values are:
-  * `READ_ONLY`
-  * `READ_WRITE`
+  Default value is `READ_WRITE`.
+  Possible values are `READ_ONLY` and `READ_WRITE`.
 
 * `squash_mode` -
   (Optional)
   Either NO_ROOT_SQUASH, for allowing root access on the exported directory, or ROOT_SQUASH,
   for not allowing root access. The default is NO_ROOT_SQUASH.
-
-  Default value: `NO_ROOT_SQUASH`
-
-  Possible values are:
-  * `NO_ROOT_SQUASH`
-  * `ROOT_SQUASH`
+  Default value is `NO_ROOT_SQUASH`.
+  Possible values are `NO_ROOT_SQUASH` and `ROOT_SQUASH`.
 
 * `anon_uid` -
   (Optional)

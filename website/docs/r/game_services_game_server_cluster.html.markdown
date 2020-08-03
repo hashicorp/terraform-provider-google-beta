@@ -82,14 +82,16 @@ The following arguments are supported:
 * `connection_info` -
   (Required)
   Game server cluster connection information. This information is used to
-  manage game server clusters.  Structure is documented below.
+  manage game server clusters.
+  Structure is documented below.
 
 
 The `connection_info` block supports:
 
 * `gke_cluster_reference` -
   (Required)
-  Reference of the GKE cluster where the game servers are installed.  Structure is documented below.
+  Reference of the GKE cluster where the game servers are installed.
+  Structure is documented below.
 
 * `namespace` -
   (Required)

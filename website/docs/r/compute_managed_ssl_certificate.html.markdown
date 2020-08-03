@@ -262,17 +262,15 @@ The following arguments are supported:
 * `managed` -
   (Optional)
   Properties relevant to a managed certificate.  These will be used if the
-  certificate is managed (as indicated by a value of `MANAGED` in `type`).  Structure is documented below.
+  certificate is managed (as indicated by a value of `MANAGED` in `type`).
+  Structure is documented below.
 
 * `type` -
   (Optional)
   Enum field whose value is always `MANAGED` - used to signal to the API
   which type this is.
-
-  Default value: `MANAGED`
-
-  Possible values are:
-  * `MANAGED`
+  Default value is `MANAGED`.
+  Possible values are `MANAGED`.
 
 * `project` - (Optional) The ID of the project in which the resource belongs.
     If it is not provided, the provider project is used.

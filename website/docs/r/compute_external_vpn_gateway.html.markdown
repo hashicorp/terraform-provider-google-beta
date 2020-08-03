@@ -181,15 +181,12 @@ The following arguments are supported:
 * `redundancy_type` -
   (Optional)
   Indicates the redundancy type of this external VPN gateway
-
-  Possible values are:
-  * `FOUR_IPS_REDUNDANCY`
-  * `SINGLE_IP_INTERNALLY_REDUNDANT`
-  * `TWO_IPS_REDUNDANCY`
+  Possible values are `FOUR_IPS_REDUNDANCY`, `SINGLE_IP_INTERNALLY_REDUNDANT`, and `TWO_IPS_REDUNDANCY`.
 
 * `interface` -
   (Optional)
-  A list of interfaces on this external VPN gateway.  Structure is documented below.
+  A list of interfaces on this external VPN gateway.
+  Structure is documented below.
 
 * `project` - (Optional) The ID of the project in which the resource belongs.
     If it is not provided, the provider project is used.

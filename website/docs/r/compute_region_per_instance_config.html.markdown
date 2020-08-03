@@ -128,7 +128,8 @@ The following arguments are supported:
 
 * `preserved_state` -
   (Optional)
-  The preserved state for this instance.  Structure is documented below.
+  The preserved state for this instance.
+  Structure is documented below.
 
 * `project` - (Optional) The ID of the project in which the resource belongs.
     If it is not provided, the provider project is used.
@@ -157,7 +158,8 @@ The `preserved_state` block supports:
 
 * `disk` -
   (Optional)
-  Stateful disks for the instance.  Structure is documented below.
+  Stateful disks for the instance.
+  Structure is documented below.
 
 
 The `disk` block supports:
@@ -174,12 +176,8 @@ The `disk` block supports:
 * `mode` -
   (Optional)
   The mode of the disk.
-
-  Default value: `READ_WRITE`
-
-  Possible values are:
-  * `READ_ONLY`
-  * `READ_WRITE`
+  Default value is `READ_WRITE`.
+  Possible values are `READ_ONLY` and `READ_WRITE`.
 
 * `delete_rule` -
   (Optional)
@@ -188,12 +186,8 @@ The `disk` block supports:
   `NEVER` detatch the disk when the VM is deleted, but not delete the disk.
   `ON_PERMANENT_INSTANCE_DELETION` will delete the stateful disk when the VM is permanently
   deleted from the instance group.
-
-  Default value: `NEVER`
-
-  Possible values are:
-  * `NEVER`
-  * `ON_PERMANENT_INSTANCE_DELETION`
+  Default value is `NEVER`.
+  Possible values are `NEVER` and `ON_PERMANENT_INSTANCE_DELETION`.
 
 ## Attributes Reference
 

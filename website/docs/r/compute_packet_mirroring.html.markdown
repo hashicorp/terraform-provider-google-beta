@@ -141,18 +141,21 @@ The following arguments are supported:
   (Required)
   Specifies the mirrored VPC network. Only packets in this network
   will be mirrored. All mirrored VMs should have a NIC in the given
-  network. All mirrored subnetworks should belong to the given network.  Structure is documented below.
+  network. All mirrored subnetworks should belong to the given network.
+  Structure is documented below.
 
 * `collector_ilb` -
   (Required)
   The Forwarding Rule resource (of type load_balancing_scheme=INTERNAL)
   that will be used as collector for mirrored traffic. The
   specified forwarding rule must have is_mirroring_collector
-  set to true.  Structure is documented below.
+  set to true.
+  Structure is documented below.
 
 * `mirrored_resources` -
   (Required)
-  A means of specifying which resources to mirror.  Structure is documented below.
+  A means of specifying which resources to mirror.
+  Structure is documented below.
 
 
 The `network` block supports:
@@ -171,11 +174,13 @@ The `mirrored_resources` block supports:
 
 * `subnetworks` -
   (Optional)
-  All instances in one of these subnetworks will be mirrored.  Structure is documented below.
+  All instances in one of these subnetworks will be mirrored.
+  Structure is documented below.
 
 * `instances` -
   (Optional)
-  All the listed instances will be mirrored.  Specify at most 50.  Structure is documented below.
+  All the listed instances will be mirrored.  Specify at most 50.
+  Structure is documented below.
 
 * `tags` -
   (Optional)
@@ -214,7 +219,8 @@ The `instances` block supports:
 
 * `filter` -
   (Optional)
-  A filter for mirrored traffic.  If unset, all traffic is mirrored.  Structure is documented below.
+  A filter for mirrored traffic.  If unset, all traffic is mirrored.
+  Structure is documented below.
 
 * `project` - (Optional) The ID of the project in which the resource belongs.
     If it is not provided, the provider project is used.

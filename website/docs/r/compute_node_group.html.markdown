@@ -120,7 +120,8 @@ The following arguments are supported:
 * `autoscaling_policy` -
   (Optional, [Beta](https://terraform.io/docs/providers/google/guides/provider_versions.html))
   If you use sole-tenant nodes for your workloads, you can use the node
-  group autoscaler to automatically manage the sizes of your node groups.  Structure is documented below.
+  group autoscaler to automatically manage the sizes of your node groups.
+  Structure is documented below.
 
 * `zone` -
   (Optional)
@@ -140,11 +141,7 @@ The `autoscaling_policy` block supports:
     - ONLY_SCALE_OUT: Enables only scaling out.
     You must use this mode if your node groups are configured to
     restart their hosted VMs on minimal servers.
-
-  Possible values are:
-  * `OFF`
-  * `ON`
-  * `ONLY_SCALE_OUT`
+  Possible values are `OFF`, `ON`, and `ONLY_SCALE_OUT`.
 
 * `min_nodes` -
   (Optional)

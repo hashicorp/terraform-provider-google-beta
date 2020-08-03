@@ -96,10 +96,7 @@ The following arguments are supported:
   of concurrent pipelines, no support for streaming pipelines, etc.
   - ENTERPRISE: Enterprise Data Fusion instance. In Enterprise type, the user will have more features
   available, such as support for streaming pipelines, higher number of concurrent pipelines, etc.
-
-  Possible values are:
-  * `BASIC`
-  * `ENTERPRISE`
+  Possible values are `BASIC` and `ENTERPRISE`.
 
 
 - - -
@@ -138,7 +135,8 @@ The following arguments are supported:
 
 * `network_config` -
   (Optional)
-  Network configuration options. These are required when a private Data Fusion instance is to be created.  Structure is documented below.
+  Network configuration options. These are required when a private Data Fusion instance is to be created.
+  Structure is documented below.
 
 * `region` -
   (Optional)

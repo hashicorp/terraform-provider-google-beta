@@ -150,7 +150,8 @@ The following arguments are supported:
 
 * `cloud_sql` -
   (Required)
-  Cloud SQL properties.  Structure is documented below.
+  Cloud SQL properties.
+  Structure is documented below.
 
 
 The `cloud_sql` block supports:
@@ -165,16 +166,13 @@ The `cloud_sql` block supports:
 
 * `credential` -
   (Required)
-  Cloud SQL properties.  Structure is documented below.
+  Cloud SQL properties.
+  Structure is documented below.
 
 * `type` -
   (Required)
   Type of the Cloud SQL database.
-
-  Possible values are:
-  * `DATABASE_TYPE_UNSPECIFIED`
-  * `POSTGRES`
-  * `MYSQL`
+  Possible values are `DATABASE_TYPE_UNSPECIFIED`, `POSTGRES`, and `MYSQL`.
 
 
 The `credential` block supports:
@@ -185,7 +183,8 @@ The `credential` block supports:
 
 * `password` -
   (Required)
-  Password for database.  **Note**: This property is sensitive and will not be displayed in the plan.
+  Password for database.
+  **Note**: This property is sensitive and will not be displayed in the plan.
 
 - - -
 

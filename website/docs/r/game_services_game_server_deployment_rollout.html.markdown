@@ -98,7 +98,8 @@ The following arguments are supported:
   The game_server_config_overrides contains the per game server config
   overrides. The overrides are processed in the order they are listed. As
   soon as a match is found for a cluster, the rest of the list is not
-  processed.  Structure is documented below.
+  processed.
+  Structure is documented below.
 
 * `project` - (Optional) The ID of the project in which the resource belongs.
     If it is not provided, the provider project is used.
@@ -108,7 +109,8 @@ The `game_server_config_overrides` block supports:
 
 * `realms_selector` -
   (Optional)
-  Selection by realms.  Structure is documented below.
+  Selection by realms.
+  Structure is documented below.
 
 * `config_version` -
   (Optional)

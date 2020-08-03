@@ -116,22 +116,20 @@ The following arguments are supported:
   Flexible properties for the desired node type. Node groups that
   use this node template will create nodes of a type that matches
   these properties. Only one of nodeTypeFlexibility and nodeType can
-  be specified.  Structure is documented below.
+  be specified.
+  Structure is documented below.
 
 * `server_binding` -
   (Optional, [Beta](https://terraform.io/docs/providers/google/guides/provider_versions.html))
   The server binding policy for nodes using this template. Determines
-  where the nodes should restart following a maintenance event.  Structure is documented below.
+  where the nodes should restart following a maintenance event.
+  Structure is documented below.
 
 * `cpu_overcommit_type` -
   (Optional, [Beta](https://terraform.io/docs/providers/google/guides/provider_versions.html))
   CPU overcommit.
-
-  Default value: `NONE`
-
-  Possible values are:
-  * `ENABLED`
-  * `NONE`
+  Default value is `NONE`.
+  Possible values are `ENABLED` and `NONE`.
 
 * `region` -
   (Optional)
@@ -170,10 +168,7 @@ The `server_binding` block supports:
   such as physical sockets or cores, to avoid the need for
   additional licenses when maintenance occurs. However, VMs on such
   nodes will experience outages while maintenance is applied.
-
-  Possible values are:
-  * `RESTART_NODE_ON_ANY_SERVER`
-  * `RESTART_NODE_ON_MINIMAL_SERVERS`
+  Possible values are `RESTART_NODE_ON_ANY_SERVER` and `RESTART_NODE_ON_MINIMAL_SERVERS`.
 
 ## Attributes Reference
 
