@@ -111,13 +111,15 @@ The following arguments are supported:
 
 * `amount` -
   (Required)
-  The budgeted amount for each usage period.  Structure is documented below.
+  The budgeted amount for each usage period.
+  Structure is documented below.
 
 * `threshold_rules` -
   (Required)
   Rules that trigger alerts (notifications of thresholds being
   crossed) when spend exceeds the specified percentages of the
-  budget.  Structure is documented below.
+  budget.
+  Structure is documented below.
 
 * `billing_account` -
   (Required)
@@ -140,12 +142,8 @@ The `budget_filter` block supports:
   (Optional)
   Specifies how credits should be treated when determining spend
   for threshold calculations.
-
-  Default value: `INCLUDE_ALL_CREDITS`
-
-  Possible values are:
-  * `INCLUDE_ALL_CREDITS`
-  * `EXCLUDE_ALL_CREDITS`
+  Default value is `INCLUDE_ALL_CREDITS`.
+  Possible values are `INCLUDE_ALL_CREDITS` and `EXCLUDE_ALL_CREDITS`.
 
 * `services` -
   (Optional)
@@ -162,7 +160,8 @@ The `amount` block supports:
   (Required)
   A specified amount to use as the budget. currencyCode is
   optional. If specified, it must match the currency of the
-  billing account. The currencyCode is provided on output.  Structure is documented below.
+  billing account. The currencyCode is provided on output.
+  Structure is documented below.
 
 
 The `specified_amount` block supports:
@@ -197,12 +196,8 @@ The `threshold_rules` block supports:
   (Optional)
   The type of basis used to determine if spend has passed
   the threshold.
-
-  Default value: `CURRENT_SPEND`
-
-  Possible values are:
-  * `CURRENT_SPEND`
-  * `FORECASTED_SPEND`
+  Default value is `CURRENT_SPEND`.
+  Possible values are `CURRENT_SPEND` and `FORECASTED_SPEND`.
 
 The `all_updates_rule` block supports:
 
@@ -229,13 +224,15 @@ The `all_updates_rule` block supports:
 * `budget_filter` -
   (Optional)
   Filters that define which resources are used to compute the actual
-  spend against the budget.  Structure is documented below.
+  spend against the budget.
+  Structure is documented below.
 
 * `all_updates_rule` -
   (Optional)
   Defines notifications that are sent on every update to the
   billing account's spend, regardless of the thresholds defined
-  using threshold rules.  Structure is documented below.
+  using threshold rules.
+  Structure is documented below.
 
 
 ## Attributes Reference

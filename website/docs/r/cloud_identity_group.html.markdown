@@ -60,7 +60,8 @@ The following arguments are supported:
 
 * `group_key` -
   (Required)
-  EntityKey of the Group.  Structure is documented below.
+  EntityKey of the Group.
+  Structure is documented below.
 
 * `parent` -
   (Required)

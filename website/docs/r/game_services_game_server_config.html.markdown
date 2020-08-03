@@ -94,7 +94,8 @@ The following arguments are supported:
 * `fleet_configs` -
   (Required)
   The fleet config contains list of fleet specs. In the Single Cloud, there
-  will be only one.  Structure is documented below.
+  will be only one.
+  Structure is documented below.
 
 
 The `fleet_configs` block supports:
@@ -131,7 +132,8 @@ The `fleet_configs` block supports:
 
 * `scaling_configs` -
   (Optional)
-  Optional. This contains the autoscaling settings.  Structure is documented below.
+  Optional. This contains the autoscaling settings.
+  Structure is documented below.
 
 * `project` - (Optional) The ID of the project in which the resource belongs.
     If it is not provided, the provider project is used.
@@ -153,11 +155,13 @@ The `scaling_configs` block supports:
   (Optional)
   Labels used to identify the clusters to which this scaling config
   applies. A cluster is subject to this scaling config if its labels match
-  any of the selector entries.  Structure is documented below.
+  any of the selector entries.
+  Structure is documented below.
 
 * `schedules` -
   (Optional)
-  The schedules to which this scaling config applies.  Structure is documented below.
+  The schedules to which this scaling config applies.
+  Structure is documented below.
 
 
 The `selectors` block supports:

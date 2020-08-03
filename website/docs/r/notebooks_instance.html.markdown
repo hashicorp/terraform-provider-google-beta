@@ -209,7 +209,8 @@ The following arguments are supported:
   (Optional)
   The hardware accelerator used on this instance. If you use accelerators, 
   make sure that your configuration has enough vCPUs and memory to support the 
-  machineType you have selected.  Structure is documented below.
+  machineType you have selected.
+  Structure is documented below.
 
 * `install_gpu_driver` -
   (Optional)
@@ -224,11 +225,7 @@ The following arguments are supported:
 * `boot_disk_type` -
   (Optional)
   Possible disk types for notebook instances.
-
-  Possible values are:
-  * `DISK_TYPE_UNSPECIFIED`
-  * `PD_STANDARD`
-  * `PD_SSD`
+  Possible values are `DISK_TYPE_UNSPECIFIED`, `PD_STANDARD`, and `PD_SSD`.
 
 * `boot_disk_size_gb` -
   (Optional)
@@ -239,11 +236,7 @@ The following arguments are supported:
 * `data_disk_type` -
   (Optional)
   Possible disk types for notebook instances.
-
-  Possible values are:
-  * `DISK_TYPE_UNSPECIFIED`
-  * `PD_STANDARD`
-  * `PD_SSD`
+  Possible values are `DISK_TYPE_UNSPECIFIED`, `PD_STANDARD`, and `PD_SSD`.
 
 * `data_disk_size_gb` -
   (Optional)
@@ -259,11 +252,7 @@ The following arguments are supported:
 * `disk_encryption` -
   (Optional)
   Disk encryption method used on the boot and data disks, defaults to GMEK.
-
-  Possible values are:
-  * `DISK_ENCRYPTION_UNSPECIFIED`
-  * `GMEK`
-  * `CMEK`
+  Possible values are `DISK_ENCRYPTION_UNSPECIFIED`, `GMEK`, and `CMEK`.
 
 * `kms_key` -
   (Optional)
@@ -300,11 +289,13 @@ The following arguments are supported:
 
 * `vm_image` -
   (Optional)
-  Use a Compute Engine VM image to start the notebook instance.  Structure is documented below.
+  Use a Compute Engine VM image to start the notebook instance.
+  Structure is documented below.
 
 * `container_image` -
   (Optional)
-  Use a container image to start the notebook instance.  Structure is documented below.
+  Use a container image to start the notebook instance.
+  Structure is documented below.
 
 * `project` - (Optional) The ID of the project in which the resource belongs.
     If it is not provided, the provider project is used.
@@ -315,19 +306,7 @@ The `accelerator_config` block supports:
 * `type` -
   (Required)
   Type of this accelerator.
-
-  Possible values are:
-  * `ACCELERATOR_TYPE_UNSPECIFIED`
-  * `NVIDIA_TESLA_K80`
-  * `NVIDIA_TESLA_P100`
-  * `NVIDIA_TESLA_V100`
-  * `NVIDIA_TESLA_P4`
-  * `NVIDIA_TESLA_T4`
-  * `NVIDIA_TESLA_T4_VWS`
-  * `NVIDIA_TESLA_P100_VWS`
-  * `NVIDIA_TESLA_P4_VWS`
-  * `TPU_V2`
-  * `TPU_V3`
+  Possible values are `ACCELERATOR_TYPE_UNSPECIFIED`, `NVIDIA_TESLA_K80`, `NVIDIA_TESLA_P100`, `NVIDIA_TESLA_V100`, `NVIDIA_TESLA_P4`, `NVIDIA_TESLA_T4`, `NVIDIA_TESLA_T4_VWS`, `NVIDIA_TESLA_P100_VWS`, `NVIDIA_TESLA_P4_VWS`, `TPU_V2`, and `TPU_V3`.
 
 * `core_count` -
   (Required)

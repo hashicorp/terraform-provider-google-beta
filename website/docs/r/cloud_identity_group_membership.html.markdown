@@ -130,7 +130,8 @@ The following arguments are supported:
 * `roles` -
   (Required)
   The MembershipRoles that apply to the Membership.
-  Must not contain duplicate MembershipRoles with the same name.  Structure is documented below.
+  Must not contain duplicate MembershipRoles with the same name.
+  Structure is documented below.
 
 * `group` -
   (Required)
@@ -142,22 +143,20 @@ The `roles` block supports:
 * `name` -
   (Required)
   The name of the MembershipRole. Must be one of OWNER, MANAGER, MEMBER.
-
-  Possible values are:
-  * `OWNER`
-  * `MANAGER`
-  * `MEMBER`
+  Possible values are `OWNER`, `MANAGER`, and `MEMBER`.
 
 - - -
 
 
 * `member_key` -
   (Optional)
-  EntityKey of the member.  Structure is documented below.
+  EntityKey of the member.
+  Structure is documented below.
 
 * `preferred_member_key` -
   (Optional)
-  EntityKey of the member.  Structure is documented below.
+  EntityKey of the member.
+  Structure is documented below.
 
 
 The `member_key` block supports:

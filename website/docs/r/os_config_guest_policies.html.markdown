@@ -204,7 +204,8 @@ The following arguments are supported:
   At the same level in the resource hierarchy (that is within a project), the service prevents
   the creation of multiple policies that conflict with each other.
   For more information, see how the service
-  [handles assignment conflicts](https://cloud.google.com/compute/docs/os-config-management/create-guest-policy#handle-conflicts).  Structure is documented below.
+  [handles assignment conflicts](https://cloud.google.com/compute/docs/os-config-management/create-guest-policy#handle-conflicts).
+  Structure is documented below.
 
 * `guest_policy_id` -
   (Required)
@@ -221,7 +222,8 @@ The `assignment` block supports:
 * `group_labels` -
   (Optional)
   Targets instances matching at least one of these label sets. This allows an assignment to target disparate groups,
-  for example "env=prod or env=staging".  Structure is documented below.
+  for example "env=prod or env=staging".
+  Structure is documented below.
 
 * `zones` -
   (Optional)
@@ -246,7 +248,8 @@ The `assignment` block supports:
 * `os_types` -
   (Optional)
   Targets VM instances matching at least one of the following OS types.
-  VM instances must match all supplied criteria for a given OsType to be included.  Structure is documented below.
+  VM instances must match all supplied criteria for a given OsType to be included.
+  Structure is documented below.
 
 
 The `group_labels` block supports:
@@ -278,17 +281,20 @@ The `os_types` block supports:
 
 * `packages` -
   (Optional)
-  The software packages to be managed by this policy.  Structure is documented below.
+  The software packages to be managed by this policy.
+  Structure is documented below.
 
 * `package_repositories` -
   (Optional)
   A list of package repositories to configure on the VM instance.
   This is done before any other configs are applied so they can use these repos.
-  Package repositories are only configured if the corresponding package manager(s) are available.  Structure is documented below.
+  Package repositories are only configured if the corresponding package manager(s) are available.
+  Structure is documented below.
 
 * `recipes` -
   (Optional)
-  A list of Recipes to install on the VM instance.  Structure is documented below.
+  A list of Recipes to install on the VM instance.
+  Structure is documented below.
 
 * `etag` -
   (Optional)
@@ -308,11 +314,7 @@ The `packages` block supports:
 * `desired_state` -
   (Optional)
   The desiredState the agent should maintain for this package. The default is to ensure the package is installed.
-
-  Possible values are:
-  * `INSTALLED`
-  * `UPDATED`
-  * `REMOVED`
+  Possible values are `INSTALLED`, `UPDATED`, and `REMOVED`.
 
 * `manager` -
   (Optional)
@@ -321,33 +323,30 @@ The `packages` block supports:
   the agent attempts to install and remove this package using the default package manager.
   This is useful when creating a policy that applies to different types of systems.
   The default behavior is ANY.
-
-  Default value: `ANY`
-
-  Possible values are:
-  * `ANY`
-  * `APT`
-  * `YUM`
-  * `ZYPPER`
-  * `GOO`
+  Default value is `ANY`.
+  Possible values are `ANY`, `APT`, `YUM`, `ZYPPER`, and `GOO`.
 
 The `package_repositories` block supports:
 
 * `apt` -
   (Optional)
-  An Apt Repository.  Structure is documented below.
+  An Apt Repository.
+  Structure is documented below.
 
 * `yum` -
   (Optional)
-  A Yum Repository.  Structure is documented below.
+  A Yum Repository.
+  Structure is documented below.
 
 * `zypper` -
   (Optional)
-  A Zypper Repository.  Structure is documented below.
+  A Zypper Repository.
+  Structure is documented below.
 
 * `goo` -
   (Optional)
-  A Goo Repository.  Structure is documented below.
+  A Goo Repository.
+  Structure is documented below.
 
 
 The `apt` block supports:
@@ -355,12 +354,8 @@ The `apt` block supports:
 * `archive_type` -
   (Optional)
   Type of archive files in this repository. The default behavior is DEB.
-
-  Default value: `DEB`
-
-  Possible values are:
-  * `DEB`
-  * `DEB_SRC`
+  Default value is `DEB`.
+  Possible values are `DEB` and `DEB_SRC`.
 
 * `uri` -
   (Required)
@@ -442,17 +437,20 @@ The `recipes` block supports:
 
 * `artifacts` -
   (Optional)
-  Resources available to be used in the steps in the recipe.  Structure is documented below.
+  Resources available to be used in the steps in the recipe.
+  Structure is documented below.
 
 * `install_steps` -
   (Optional)
   Actions to be taken for installing this recipe. On failure it stops executing steps and does not attempt another installation.
-  Any steps taken (including partially completed steps) are not rolled back.  Structure is documented below.
+  Any steps taken (including partially completed steps) are not rolled back.
+  Structure is documented below.
 
 * `update_steps` -
   (Optional)
   Actions to be taken for updating this recipe. On failure it stops executing steps and does not attempt another update for this recipe.
-  Any steps taken (including partially completed steps) are not rolled back.  Structure is documented below.
+  Any steps taken (including partially completed steps) are not rolled back.
+  Structure is documented below.
 
 * `desired_state` -
   (Optional)
@@ -461,13 +459,8 @@ The `recipes` block supports:
   INSTALLED_KEEP_UPDATED: The software recipe is installed on the instance. The recipe is updated to a higher version,
   if a higher version of the recipe is assigned to this instance.
   REMOVE: Remove is unsupported for software recipes and attempts to create or update a recipe to the REMOVE state is rejected.
-
-  Default value: `INSTALLED`
-
-  Possible values are:
-  * `INSTALLED`
-  * `UPDATED`
-  * `REMOVED`
+  Default value is `INSTALLED`.
+  Possible values are `INSTALLED`, `UPDATED`, and `REMOVED`.
 
 
 The `artifacts` block supports:
@@ -485,11 +478,13 @@ The `artifacts` block supports:
 
 * `remote` -
   (Optional)
-  A generic remote artifact.  Structure is documented below.
+  A generic remote artifact.
+  Structure is documented below.
 
 * `gcs` -
   (Optional)
-  A Google Cloud Storage artifact.  Structure is documented below.
+  A Google Cloud Storage artifact.
+  Structure is documented below.
 
 
 The `remote` block supports:
@@ -525,31 +520,38 @@ The `install_steps` block supports:
 
 * `file_copy` -
   (Optional)
-  Copies a file onto the instance.  Structure is documented below.
+  Copies a file onto the instance.
+  Structure is documented below.
 
 * `archive_extraction` -
   (Optional)
-  Extracts an archive into the specified directory.  Structure is documented below.
+  Extracts an archive into the specified directory.
+  Structure is documented below.
 
 * `msi_installation` -
   (Optional)
-  Installs an MSI file.  Structure is documented below.
+  Installs an MSI file.
+  Structure is documented below.
 
 * `dpkg_installation` -
   (Optional)
-  Installs a deb file via dpkg.  Structure is documented below.
+  Installs a deb file via dpkg.
+  Structure is documented below.
 
 * `rpm_installation` -
   (Optional)
-  Installs an rpm file via the rpm utility.  Structure is documented below.
+  Installs an rpm file via the rpm utility.
+  Structure is documented below.
 
 * `file_exec` -
   (Optional)
-  Executes an artifact or local file.  Structure is documented below.
+  Executes an artifact or local file.
+  Structure is documented below.
 
 * `script_run` -
   (Optional)
-  Runs commands in a shell.  Structure is documented below.
+  Runs commands in a shell.
+  Structure is documented below.
 
 
 The `file_copy` block supports:
@@ -589,14 +591,7 @@ The `archive_extraction` block supports:
 * `type` -
   (Required)
   The type of the archive to extract.
-
-  Possible values are:
-  * `TAR`
-  * `TAR_GZIP`
-  * `TAR_BZIP`
-  * `TAR_LZMA`
-  * `TAR_XZ`
-  * `ZIP`
+  Possible values are `TAR`, `TAR_GZIP`, `TAR_BZIP`, `TAR_LZMA`, `TAR_XZ`, and `ZIP`.
 
 The `msi_installation` block supports:
 
@@ -656,40 +651,44 @@ The `script_run` block supports:
   (Optional)
   The script interpreter to use to run the script. If no interpreter is specified the script is executed directly,
   which likely only succeed for scripts with shebang lines.
-
-  Possible values are:
-  * `SHELL`
-  * `POWERSHELL`
+  Possible values are `SHELL` and `POWERSHELL`.
 
 The `update_steps` block supports:
 
 * `file_copy` -
   (Optional)
-  Copies a file onto the instance.  Structure is documented below.
+  Copies a file onto the instance.
+  Structure is documented below.
 
 * `archive_extraction` -
   (Optional)
-  Extracts an archive into the specified directory.  Structure is documented below.
+  Extracts an archive into the specified directory.
+  Structure is documented below.
 
 * `msi_installation` -
   (Optional)
-  Installs an MSI file.  Structure is documented below.
+  Installs an MSI file.
+  Structure is documented below.
 
 * `dpkg_installation` -
   (Optional)
-  Installs a deb file via dpkg.  Structure is documented below.
+  Installs a deb file via dpkg.
+  Structure is documented below.
 
 * `rpm_installation` -
   (Optional)
-  Installs an rpm file via the rpm utility.  Structure is documented below.
+  Installs an rpm file via the rpm utility.
+  Structure is documented below.
 
 * `file_exec` -
   (Optional)
-  Executes an artifact or local file.  Structure is documented below.
+  Executes an artifact or local file.
+  Structure is documented below.
 
 * `script_run` -
   (Optional)
-  Runs commands in a shell.  Structure is documented below.
+  Runs commands in a shell.
+  Structure is documented below.
 
 
 The `file_copy` block supports:
@@ -729,14 +728,7 @@ The `archive_extraction` block supports:
 * `type` -
   (Required)
   The type of the archive to extract.
-
-  Possible values are:
-  * `TAR`
-  * `TAR_GZIP`
-  * `TAR_BZIP`
-  * `TAR_LZMA`
-  * `TAR_XZ`
-  * `ZIP`
+  Possible values are `TAR`, `TAR_GZIP`, `TAR_BZIP`, `TAR_LZMA`, `TAR_XZ`, and `ZIP`.
 
 The `msi_installation` block supports:
 
@@ -796,10 +788,7 @@ The `script_run` block supports:
   (Optional)
   The script interpreter to use to run the script. If no interpreter is specified the script is executed directly,
   which likely only succeed for scripts with shebang lines.
-
-  Possible values are:
-  * `SHELL`
-  * `POWERSHELL`
+  Possible values are `SHELL` and `POWERSHELL`.
 
 ## Attributes Reference
 

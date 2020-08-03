@@ -91,7 +91,8 @@ The following arguments are supported:
 
 * `node_config` -
   (Required)
-  Configuration for memcache nodes.  Structure is documented below.
+  Configuration for memcache nodes.
+  Structure is documented below.
 
 * `region` -
   (Required)
@@ -131,7 +132,8 @@ The `node_config` block supports:
 
 * `memcache_parameters` -
   (Optional)
-  User-specified parameters for this memcache instance.  Structure is documented below.
+  User-specified parameters for this memcache instance.
+  Structure is documented below.
 
 * `project` - (Optional) The ID of the project in which the resource belongs.
     If it is not provided, the provider project is used.

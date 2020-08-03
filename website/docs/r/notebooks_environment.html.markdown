@@ -85,11 +85,13 @@ The following arguments are supported:
 
 * `vm_image` -
   (Optional)
-  Use a Compute Engine VM image to start the notebook instance.  Structure is documented below.
+  Use a Compute Engine VM image to start the notebook instance.
+  Structure is documented below.
 
 * `container_image` -
   (Optional)
-  Use a container image to start the notebook instance.  Structure is documented below.
+  Use a container image to start the notebook instance.
+  Structure is documented below.
 
 * `project` - (Optional) The ID of the project in which the resource belongs.
     If it is not provided, the provider project is used.

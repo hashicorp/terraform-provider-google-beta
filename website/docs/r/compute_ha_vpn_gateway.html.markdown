@@ -312,7 +312,8 @@ In addition to the arguments listed above, the following computed attributes are
 * `id` - an identifier for the resource with format `projects/{{project}}/regions/{{region}}/vpnGateways/{{name}}`
 
 * `vpn_interfaces` -
-  A list of interfaces on this VPN gateway.  Structure is documented below.
+  A list of interfaces on this VPN gateway.
+  Structure is documented below.
 * `self_link` - The URI of the created resource.
 
 
