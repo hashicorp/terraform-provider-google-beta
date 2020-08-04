@@ -282,6 +282,8 @@ func resourceArtifactRegistryRepositoryUpdate(d *schema.ResourceData, meta inter
 
 	if err != nil {
 		return fmt.Errorf("Error updating Repository %q: %s", d.Id(), err)
+	} else {
+		log.Printf("[DEBUG] Finished updating Repository %q: %#v", d.Id(), res)
 	}
 
 	err = artifactRegistryOperationWaitTime(

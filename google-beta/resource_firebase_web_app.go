@@ -199,10 +199,12 @@ func resourceFirebaseWebAppUpdate(d *schema.ResourceData, meta interface{}) erro
 	if err != nil {
 		return err
 	}
-	_, err = sendRequestWithTimeout(config, "PATCH", project, url, obj, d.Timeout(schema.TimeoutUpdate))
+	res, err := sendRequestWithTimeout(config, "PATCH", project, url, obj, d.Timeout(schema.TimeoutUpdate))
 
 	if err != nil {
 		return fmt.Errorf("Error updating WebApp %q: %s", d.Id(), err)
+	} else {
+		log.Printf("[DEBUG] Finished updating WebApp %q: %#v", d.Id(), res)
 	}
 
 	return resourceFirebaseWebAppRead(d, meta)

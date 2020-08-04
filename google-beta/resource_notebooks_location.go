@@ -178,6 +178,8 @@ func resourceNotebooksLocationUpdate(d *schema.ResourceData, meta interface{}) e
 
 	if err != nil {
 		return fmt.Errorf("Error updating Location %q: %s", d.Id(), err)
+	} else {
+		log.Printf("[DEBUG] Finished updating Location %q: %#v", d.Id(), res)
 	}
 
 	err = notebooksOperationWaitTime(

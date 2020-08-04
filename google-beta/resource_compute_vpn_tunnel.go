@@ -630,6 +630,8 @@ func resourceComputeVpnTunnelUpdate(d *schema.ResourceData, meta interface{}) er
 		res, err := sendRequestWithTimeout(config, "POST", project, url, obj, d.Timeout(schema.TimeoutUpdate))
 		if err != nil {
 			return fmt.Errorf("Error updating VpnTunnel %q: %s", d.Id(), err)
+		} else {
+			log.Printf("[DEBUG] Finished updating VpnTunnel %q: %#v", d.Id(), res)
 		}
 
 		err = computeOperationWaitTime(

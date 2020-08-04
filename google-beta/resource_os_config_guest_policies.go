@@ -1065,10 +1065,12 @@ func resourceOSConfigGuestPoliciesUpdate(d *schema.ResourceData, meta interface{
 	}
 
 	log.Printf("[DEBUG] Updating GuestPolicies %q: %#v", d.Id(), obj)
-	_, err = sendRequestWithTimeout(config, "PATCH", project, url, obj, d.Timeout(schema.TimeoutUpdate))
+	res, err := sendRequestWithTimeout(config, "PATCH", project, url, obj, d.Timeout(schema.TimeoutUpdate))
 
 	if err != nil {
 		return fmt.Errorf("Error updating GuestPolicies %q: %s", d.Id(), err)
+	} else {
+		log.Printf("[DEBUG] Finished updating GuestPolicies %q: %#v", d.Id(), res)
 	}
 
 	return resourceOSConfigGuestPoliciesRead(d, meta)

@@ -234,6 +234,8 @@ func resourceGameServicesGameServerDeploymentUpdate(d *schema.ResourceData, meta
 
 	if err != nil {
 		return fmt.Errorf("Error updating GameServerDeployment %q: %s", d.Id(), err)
+	} else {
+		log.Printf("[DEBUG] Finished updating GameServerDeployment %q: %#v", d.Id(), res)
 	}
 
 	err = gameServicesOperationWaitTime(

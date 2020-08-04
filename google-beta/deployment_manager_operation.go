@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"google.golang.org/api/compute/v1"
+	computeBeta "google.golang.org/api/compute/v0.beta"
 )
 
 type DeploymentManagerOperationWaiter struct {
@@ -27,7 +27,7 @@ func (w *DeploymentManagerOperationWaiter) QueryOp() (interface{}, error) {
 	if err != nil {
 		return nil, err
 	}
-	op := &compute.Operation{}
+	op := &computeBeta.Operation{}
 	if err := Convert(resp, op); err != nil {
 		return nil, fmt.Errorf("could not convert response to operation: %v", err)
 	}
@@ -35,7 +35,7 @@ func (w *DeploymentManagerOperationWaiter) QueryOp() (interface{}, error) {
 }
 
 func deploymentManagerOperationWaitTime(config *Config, resp interface{}, project, activity string, timeout time.Duration) error {
-	op := &compute.Operation{}
+	op := &computeBeta.Operation{}
 	err := Convert(resp, op)
 	if err != nil {
 		return err
@@ -71,7 +71,7 @@ func (w *DeploymentManagerOperationWaiter) Error() error {
 type DeploymentManagerOperationError struct {
 	HTTPStatusCode int64
 	HTTPMessage    string
-	compute.OperationError
+	computeBeta.OperationError
 }
 
 func (e DeploymentManagerOperationError) Error() string {

@@ -308,6 +308,8 @@ func resourceNotebooksEnvironmentUpdate(d *schema.ResourceData, meta interface{}
 
 	if err != nil {
 		return fmt.Errorf("Error updating Environment %q: %s", d.Id(), err)
+	} else {
+		log.Printf("[DEBUG] Finished updating Environment %q: %#v", d.Id(), res)
 	}
 
 	err = notebooksOperationWaitTime(

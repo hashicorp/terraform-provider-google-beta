@@ -309,6 +309,8 @@ func resourceComputePerInstanceConfigUpdate(d *schema.ResourceData, meta interfa
 
 	if err != nil {
 		return fmt.Errorf("Error updating PerInstanceConfig %q: %s", d.Id(), err)
+	} else {
+		log.Printf("[DEBUG] Finished updating PerInstanceConfig %q: %#v", d.Id(), res)
 	}
 
 	err = computeOperationWaitTime(
