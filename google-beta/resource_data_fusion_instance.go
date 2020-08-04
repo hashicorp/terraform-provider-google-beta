@@ -419,6 +419,8 @@ func resourceDataFusionInstanceUpdate(d *schema.ResourceData, meta interface{}) 
 
 	if err != nil {
 		return fmt.Errorf("Error updating Instance %q: %s", d.Id(), err)
+	} else {
+		log.Printf("[DEBUG] Finished updating Instance %q: %#v", d.Id(), res)
 	}
 
 	err = dataFusionOperationWaitTime(

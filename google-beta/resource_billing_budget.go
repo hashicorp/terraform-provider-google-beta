@@ -313,10 +313,12 @@ func resourceBillingBudgetUpdate(d *schema.ResourceData, meta interface{}) error
 	}
 
 	log.Printf("[DEBUG] Updating Budget %q: %#v", d.Id(), obj)
-	_, err = sendRequestWithTimeout(config, "PATCH", "", url, obj, d.Timeout(schema.TimeoutUpdate))
+	res, err := sendRequestWithTimeout(config, "PATCH", "", url, obj, d.Timeout(schema.TimeoutUpdate))
 
 	if err != nil {
 		return fmt.Errorf("Error updating Budget %q: %s", d.Id(), err)
+	} else {
+		log.Printf("[DEBUG] Finished updating Budget %q: %#v", d.Id(), res)
 	}
 
 	return resourceBillingBudgetRead(d, meta)

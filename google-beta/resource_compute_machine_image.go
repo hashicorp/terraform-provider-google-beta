@@ -192,10 +192,12 @@ func resourceComputeMachineImageUpdate(d *schema.ResourceData, meta interface{})
 	}
 
 	log.Printf("[DEBUG] Updating MachineImage %q: %#v", d.Id(), obj)
-	_, err = sendRequestWithTimeout(config, "PUT", project, url, obj, d.Timeout(schema.TimeoutUpdate))
+	res, err := sendRequestWithTimeout(config, "PUT", project, url, obj, d.Timeout(schema.TimeoutUpdate))
 
 	if err != nil {
 		return fmt.Errorf("Error updating MachineImage %q: %s", d.Id(), err)
+	} else {
+		log.Printf("[DEBUG] Finished updating MachineImage %q: %#v", d.Id(), res)
 	}
 
 	return resourceComputeMachineImageRead(d, meta)

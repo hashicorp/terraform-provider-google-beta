@@ -304,6 +304,8 @@ func resourceGameServicesGameServerClusterUpdate(d *schema.ResourceData, meta in
 
 	if err != nil {
 		return fmt.Errorf("Error updating GameServerCluster %q: %s", d.Id(), err)
+	} else {
+		log.Printf("[DEBUG] Finished updating GameServerCluster %q: %#v", d.Id(), res)
 	}
 
 	err = gameServicesOperationWaitTime(

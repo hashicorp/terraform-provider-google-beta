@@ -610,6 +610,8 @@ func resourceNotebooksInstanceUpdate(d *schema.ResourceData, meta interface{}) e
 		res, err := sendRequestWithTimeout(config, "PATCH", project, url, obj, d.Timeout(schema.TimeoutUpdate))
 		if err != nil {
 			return fmt.Errorf("Error updating Instance %q: %s", d.Id(), err)
+		} else {
+			log.Printf("[DEBUG] Finished updating Instance %q: %#v", d.Id(), res)
 		}
 
 		err = notebooksOperationWaitTime(

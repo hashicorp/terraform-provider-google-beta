@@ -199,10 +199,12 @@ func resourceBigqueryReservationReservationUpdate(d *schema.ResourceData, meta i
 	if err != nil {
 		return err
 	}
-	_, err = sendRequestWithTimeout(config, "PATCH", project, url, obj, d.Timeout(schema.TimeoutUpdate))
+	res, err := sendRequestWithTimeout(config, "PATCH", project, url, obj, d.Timeout(schema.TimeoutUpdate))
 
 	if err != nil {
 		return fmt.Errorf("Error updating Reservation %q: %s", d.Id(), err)
+	} else {
+		log.Printf("[DEBUG] Finished updating Reservation %q: %#v", d.Id(), res)
 	}
 
 	return resourceBigqueryReservationReservationRead(d, meta)

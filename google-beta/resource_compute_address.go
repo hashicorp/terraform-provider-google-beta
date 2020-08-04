@@ -392,6 +392,8 @@ func resourceComputeAddressUpdate(d *schema.ResourceData, meta interface{}) erro
 		res, err := sendRequestWithTimeout(config, "POST", project, url, obj, d.Timeout(schema.TimeoutUpdate))
 		if err != nil {
 			return fmt.Errorf("Error updating Address %q: %s", d.Id(), err)
+		} else {
+			log.Printf("[DEBUG] Finished updating Address %q: %#v", d.Id(), res)
 		}
 
 		err = computeOperationWaitTime(

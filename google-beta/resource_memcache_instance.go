@@ -356,6 +356,8 @@ func resourceMemcacheInstanceUpdate(d *schema.ResourceData, meta interface{}) er
 
 	if err != nil {
 		return fmt.Errorf("Error updating Instance %q: %s", d.Id(), err)
+	} else {
+		log.Printf("[DEBUG] Finished updating Instance %q: %#v", d.Id(), res)
 	}
 
 	err = memcacheOperationWaitTime(

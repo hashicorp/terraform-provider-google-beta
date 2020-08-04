@@ -800,6 +800,8 @@ func resourceComputeDiskUpdate(d *schema.ResourceData, meta interface{}) error {
 		res, err := sendRequestWithTimeout(config, "POST", project, url, obj, d.Timeout(schema.TimeoutUpdate))
 		if err != nil {
 			return fmt.Errorf("Error updating Disk %q: %s", d.Id(), err)
+		} else {
+			log.Printf("[DEBUG] Finished updating Disk %q: %#v", d.Id(), res)
 		}
 
 		err = computeOperationWaitTime(
@@ -829,6 +831,8 @@ func resourceComputeDiskUpdate(d *schema.ResourceData, meta interface{}) error {
 		res, err := sendRequestWithTimeout(config, "POST", project, url, obj, d.Timeout(schema.TimeoutUpdate))
 		if err != nil {
 			return fmt.Errorf("Error updating Disk %q: %s", d.Id(), err)
+		} else {
+			log.Printf("[DEBUG] Finished updating Disk %q: %#v", d.Id(), res)
 		}
 
 		err = computeOperationWaitTime(

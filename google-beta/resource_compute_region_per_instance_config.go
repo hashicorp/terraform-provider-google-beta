@@ -309,6 +309,8 @@ func resourceComputeRegionPerInstanceConfigUpdate(d *schema.ResourceData, meta i
 
 	if err != nil {
 		return fmt.Errorf("Error updating RegionPerInstanceConfig %q: %s", d.Id(), err)
+	} else {
+		log.Printf("[DEBUG] Finished updating RegionPerInstanceConfig %q: %#v", d.Id(), res)
 	}
 
 	err = computeOperationWaitTime(

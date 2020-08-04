@@ -162,10 +162,12 @@ func resourceServiceDirectoryServiceUpdate(d *schema.ResourceData, meta interfac
 	if err != nil {
 		return err
 	}
-	_, err = sendRequestWithTimeout(config, "PATCH", "", url, obj, d.Timeout(schema.TimeoutUpdate))
+	res, err := sendRequestWithTimeout(config, "PATCH", "", url, obj, d.Timeout(schema.TimeoutUpdate))
 
 	if err != nil {
 		return fmt.Errorf("Error updating Service %q: %s", d.Id(), err)
+	} else {
+		log.Printf("[DEBUG] Finished updating Service %q: %#v", d.Id(), res)
 	}
 
 	return resourceServiceDirectoryServiceRead(d, meta)
