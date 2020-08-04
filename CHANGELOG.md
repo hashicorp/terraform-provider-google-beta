@@ -1,4 +1,4 @@
-## 3.33.0 (Unreleased)
+## 3.33.0 (August 04, 2020)
 
 DEPRECATIONS:
 * compute: deprecated `enable_logging` on `google_compute_firewall`, define `log_config.metadata` to enable logging instead. ([#2310](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2310))
