@@ -23,6 +23,7 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
 )
 
 func resourceMemcacheInstance() *schema.Resource {
@@ -122,6 +123,15 @@ func resourceMemcacheInstance() *schema.Resource {
 					},
 				},
 			},
+			"memcache_version": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validation.StringInSlice([]string{"MEMCACHE_1_5", ""}, false),
+				Description: `The major version of Memcached software. If not provided, latest supported version will be used.
+Currently the latest supported major version is MEMCACHE_1_5. The minor version will be automatically
+determined by our system based on the latest supported minor version. Default value: "MEMCACHE_1_5" Possible values: ["MEMCACHE_1_5"]`,
+				Default: "MEMCACHE_1_5",
+			},
 			"zones": {
 				Type:     schema.TypeSet,
 				Computed: true,
@@ -138,6 +148,45 @@ provided, all zones will be used.`,
 				Type:        schema.TypeString,
 				Computed:    true,
 				Description: `Creation timestamp in RFC3339 text format.`,
+			},
+			"memcache_full_version": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: `The full version of memcached server running on this instance.`,
+			},
+			"memcache_nodes": {
+				Type:        schema.TypeList,
+				Computed:    true,
+				Description: `Additional information about the instance state, if available.`,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"host": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: `Hostname or IP address of the Memcached node used by the clients to connect to the Memcached server on this node.`,
+						},
+						"node_id": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: `Identifier of the Memcached node. The node id does not include project or location like the Memcached instance name.`,
+						},
+						"port": {
+							Type:        schema.TypeInt,
+							Computed:    true,
+							Description: `The port number of the Memcached server on this node.`,
+						},
+						"state": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: `Current state of the Memcached node.`,
+						},
+						"zone": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: `Location (GCP Zone) for the Memcached node.`,
+						},
+					},
+				},
 			},
 			"project": {
 				Type:     schema.TypeString,
@@ -182,6 +231,12 @@ func resourceMemcacheInstanceCreate(d *schema.ResourceData, meta interface{}) er
 		return err
 	} else if v, ok := d.GetOkExists("node_count"); !isEmptyValue(reflect.ValueOf(nodeCountProp)) && (ok || !reflect.DeepEqual(v, nodeCountProp)) {
 		obj["nodeCount"] = nodeCountProp
+	}
+	memcacheVersionProp, err := expandMemcacheInstanceMemcacheVersion(d.Get("memcache_version"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("memcache_version"); !isEmptyValue(reflect.ValueOf(memcacheVersionProp)) && (ok || !reflect.DeepEqual(v, memcacheVersionProp)) {
+		obj["memcacheVersion"] = memcacheVersionProp
 	}
 	nodeConfigProp, err := expandMemcacheInstanceNodeConfig(d.Get("node_config"), d, config)
 	if err != nil {
@@ -274,10 +329,16 @@ func resourceMemcacheInstanceRead(d *schema.ResourceData, meta interface{}) erro
 	if err := d.Set("display_name", flattenMemcacheInstanceDisplayName(res["displayName"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Instance: %s", err)
 	}
+	if err := d.Set("memcache_nodes", flattenMemcacheInstanceMemcacheNodes(res["memcacheNodes"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Instance: %s", err)
+	}
 	if err := d.Set("create_time", flattenMemcacheInstanceCreateTime(res["createTime"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Instance: %s", err)
 	}
 	if err := d.Set("labels", flattenMemcacheInstanceLabels(res["labels"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Instance: %s", err)
+	}
+	if err := d.Set("memcache_full_version", flattenMemcacheInstanceMemcacheFullVersion(res["memcacheFullVersion"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Instance: %s", err)
 	}
 	if err := d.Set("zones", flattenMemcacheInstanceZones(res["zones"], d, config)); err != nil {
@@ -287,6 +348,9 @@ func resourceMemcacheInstanceRead(d *schema.ResourceData, meta interface{}) erro
 		return fmt.Errorf("Error reading Instance: %s", err)
 	}
 	if err := d.Set("node_count", flattenMemcacheInstanceNodeCount(res["nodeCount"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Instance: %s", err)
+	}
+	if err := d.Set("memcache_version", flattenMemcacheInstanceMemcacheVersion(res["memcacheVersion"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Instance: %s", err)
 	}
 	if err := d.Set("node_config", flattenMemcacheInstanceNodeConfig(res["nodeConfig"], d, config)); err != nil {
@@ -326,6 +390,12 @@ func resourceMemcacheInstanceUpdate(d *schema.ResourceData, meta interface{}) er
 	} else if v, ok := d.GetOkExists("node_count"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, nodeCountProp)) {
 		obj["nodeCount"] = nodeCountProp
 	}
+	memcacheVersionProp, err := expandMemcacheInstanceMemcacheVersion(d.Get("memcache_version"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("memcache_version"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, memcacheVersionProp)) {
+		obj["memcacheVersion"] = memcacheVersionProp
+	}
 
 	url, err := replaceVars(d, config, "{{MemcacheBasePath}}projects/{{project}}/locations/{{region}}/instances/{{name}}")
 	if err != nil {
@@ -345,6 +415,10 @@ func resourceMemcacheInstanceUpdate(d *schema.ResourceData, meta interface{}) er
 
 	if d.HasChange("node_count") {
 		updateMask = append(updateMask, "nodeCount")
+	}
+
+	if d.HasChange("memcache_version") {
+		updateMask = append(updateMask, "memcacheVersion")
 	}
 	// updateMask is a URL parameter but not present in the schema, so replaceVars
 	// won't set it
@@ -429,11 +503,70 @@ func flattenMemcacheInstanceDisplayName(v interface{}, d *schema.ResourceData, c
 	return v
 }
 
+func flattenMemcacheInstanceMemcacheNodes(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	if v == nil {
+		return v
+	}
+	l := v.([]interface{})
+	transformed := make([]interface{}, 0, len(l))
+	for _, raw := range l {
+		original := raw.(map[string]interface{})
+		if len(original) < 1 {
+			// Do not include empty json objects coming back from the api
+			continue
+		}
+		transformed = append(transformed, map[string]interface{}{
+			"node_id": flattenMemcacheInstanceMemcacheNodesNodeId(original["nodeId"], d, config),
+			"zone":    flattenMemcacheInstanceMemcacheNodesZone(original["zone"], d, config),
+			"port":    flattenMemcacheInstanceMemcacheNodesPort(original["port"], d, config),
+			"host":    flattenMemcacheInstanceMemcacheNodesHost(original["host"], d, config),
+			"state":   flattenMemcacheInstanceMemcacheNodesState(original["state"], d, config),
+		})
+	}
+	return transformed
+}
+func flattenMemcacheInstanceMemcacheNodesNodeId(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	return v
+}
+
+func flattenMemcacheInstanceMemcacheNodesZone(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	return v
+}
+
+func flattenMemcacheInstanceMemcacheNodesPort(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	// Handles the string fixed64 format
+	if strVal, ok := v.(string); ok {
+		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
+			return intVal
+		}
+	}
+
+	// number values are represented as float64
+	if floatVal, ok := v.(float64); ok {
+		intVal := int(floatVal)
+		return intVal
+	}
+
+	return v // let terraform core handle it otherwise
+}
+
+func flattenMemcacheInstanceMemcacheNodesHost(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	return v
+}
+
+func flattenMemcacheInstanceMemcacheNodesState(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	return v
+}
+
 func flattenMemcacheInstanceCreateTime(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
 func flattenMemcacheInstanceLabels(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	return v
+}
+
+func flattenMemcacheInstanceMemcacheFullVersion(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
@@ -463,6 +596,10 @@ func flattenMemcacheInstanceNodeCount(v interface{}, d *schema.ResourceData, con
 	}
 
 	return v // let terraform core handle it otherwise
+}
+
+func flattenMemcacheInstanceMemcacheVersion(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	return v
 }
 
 func flattenMemcacheInstanceNodeConfig(v interface{}, d *schema.ResourceData, config *Config) interface{} {
@@ -562,6 +699,10 @@ func expandMemcacheInstanceAuthorizedNetwork(v interface{}, d TerraformResourceD
 }
 
 func expandMemcacheInstanceNodeCount(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandMemcacheInstanceMemcacheVersion(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 

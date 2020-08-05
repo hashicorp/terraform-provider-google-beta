@@ -76,6 +76,7 @@ resource "google_memcache_instance" "instance" {
     memory_size_mb = 1024
   }
   node_count = 1
+  memcache_version = "MEMCACHE_1_5"
 }
 `, context)
 }
