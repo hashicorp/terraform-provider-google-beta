@@ -170,7 +170,7 @@ which means the scan will be scheduled to start immediately.`,
 			"target_platforms": {
 				Type:        schema.TypeList,
 				Optional:    true,
-				Description: `Set of Cloud Platforms targeted by the scan. If empty, APP_ENGINE will be used as a default.`,
+				Description: `Set of Cloud Platforms targeted by the scan. If empty, APP_ENGINE will be used as a default. Possible values: ["APP_ENGINE", "COMPUTE"]`,
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
