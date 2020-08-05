@@ -29,6 +29,7 @@ See [Provider Versions](https://terraform.io/docs/providers/google/guides/provid
 
 To get more information about Instance, see:
 
+* [API documentation](https://cloud.google.com/memorystore/docs/memcached/reference/rest)
 * How-to Guides
     * [Official Documentation](https://cloud.google.com/memcache/docs/creating-instances)
 
@@ -73,6 +74,7 @@ resource "google_memcache_instance" "instance" {
     memory_size_mb = 1024
   }
   node_count = 1
+  memcache_version = "MEMCACHE_1_5"
 }
 ```
 
@@ -130,6 +132,14 @@ The `node_config` block supports:
   The full name of the GCE network to connect the instance to.  If not provided,
   'default' will be used.
 
+* `memcache_version` -
+  (Optional)
+  The major version of Memcached software. If not provided, latest supported version will be used.
+  Currently the latest supported major version is MEMCACHE_1_5. The minor version will be automatically
+  determined by our system based on the latest supported minor version.
+  Default value is `MEMCACHE_1_5`.
+  Possible values are `MEMCACHE_1_5`.
+
 * `memcache_parameters` -
   (Optional)
   User-specified parameters for this memcache instance.
@@ -154,9 +164,33 @@ In addition to the arguments listed above, the following computed attributes are
 
 * `id` - an identifier for the resource with format `projects/{{project}}/locations/{{region}}/instances/{{name}}`
 
+* `memcache_nodes` -
+  Additional information about the instance state, if available.
+  Structure is documented below.
+
 * `create_time` -
   Creation timestamp in RFC3339 text format.
 
+* `memcache_full_version` -
+  The full version of memcached server running on this instance.
+
+
+The `memcache_nodes` block contains:
+
+* `node_id` -
+  Identifier of the Memcached node. The node id does not include project or location like the Memcached instance name.
+
+* `zone` -
+  Location (GCP Zone) for the Memcached node.
+
+* `port` -
+  The port number of the Memcached server on this node.
+
+* `host` -
+  Hostname or IP address of the Memcached node used by the clients to connect to the Memcached server on this node.
+
+* `state` -
+  Current state of the Memcached node.
 
 ## Timeouts
 
