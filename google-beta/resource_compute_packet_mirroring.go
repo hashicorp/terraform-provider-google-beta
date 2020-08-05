@@ -161,7 +161,7 @@ destination (egress) IP in the IP header. Only IPv4 is supported.`,
 						"ip_protocols": {
 							Type:        schema.TypeList,
 							Optional:    true,
-							Description: `Protocols that apply as a filter on mirrored traffic.`,
+							Description: `Protocols that apply as a filter on mirrored traffic. Possible values: ["tcp", "udp", "icmp"]`,
 							Elem: &schema.Schema{
 								Type: schema.TypeString,
 							},

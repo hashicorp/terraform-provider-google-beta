@@ -110,6 +110,7 @@ The following arguments are supported:
 * `target_platforms` -
   (Optional)
   Set of Cloud Platforms targeted by the scan. If empty, APP_ENGINE will be used as a default.
+  Each value may be one of `APP_ENGINE` and `COMPUTE`.
 
 * `export_to_security_command_center` -
   (Optional)
