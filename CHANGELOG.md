@@ -1,6 +1,7 @@
 ## 3.34.0 (Unreleased)
 NOTES:
 * redis: explicitly noted in `google_redis_instance` documentation that `"REDIS_5_0"` is supported ([#2323](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2323))
+* all: fix markdown formatting while showing enum values in documentation ([#2327](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2327))
 
 FEATURES:
 * **New Resource:** `google_compute_compute_organization_security_policy_association` ([#2333](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2333))
@@ -18,7 +19,6 @@ BUG FIXES:
 * compute: fixed issue where the `project` field in `data.google_compute_network_endpoint_group` was returning an error when specified ([#2324](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2324))
 * notebook: fixed bug where not setting `data_disk_type` or `disk_encryption` would cause a diff on the next plan ([#2332](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2332))
 * sourcerepo: fixed perma-diff in `google_sourcerepo_repository` ([#2316](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2316))
-* all: fixed markdown for enum values ([#2327](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2327))
 * all: fixed crash due to nil context when loading credentials ([#2321](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2321))
 
 ## 3.33.0 (August 04, 2020)
