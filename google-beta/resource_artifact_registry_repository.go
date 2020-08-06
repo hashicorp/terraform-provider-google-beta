@@ -333,9 +333,10 @@ func resourceArtifactRegistryRepositoryDelete(d *schema.ResourceData, meta inter
 func resourceArtifactRegistryRepositoryImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	config := meta.(*Config)
 	if err := parseImportId([]string{
-		"projects/(?P<project>[^/]+)/locations/(?P<location>[^/]+)/repositories/(?P<name>[^/]+)",
-		"(?P<project>[^/]+)/(?P<location>[^/]+)/(?P<name>[^/]+)",
-		"(?P<location>[^/]+)/(?P<name>[^/]+)",
+		"projects/(?P<project>[^/]+)/locations/(?P<location>[^/]+)/repositories/(?P<repository_id>[^/]+)",
+		"(?P<project>[^/]+)/(?P<location>[^/]+)/(?P<repository_id>[^/]+)",
+		"(?P<location>[^/]+)/(?P<repository_id>[^/]+)",
+		"(?P<repository_id>[^/]+)",
 	}, d, config); err != nil {
 		return nil, err
 	}

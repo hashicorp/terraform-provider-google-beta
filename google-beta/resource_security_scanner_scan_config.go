@@ -172,7 +172,8 @@ which means the scan will be scheduled to start immediately.`,
 				Optional:    true,
 				Description: `Set of Cloud Platforms targeted by the scan. If empty, APP_ENGINE will be used as a default. Possible values: ["APP_ENGINE", "COMPUTE"]`,
 				Elem: &schema.Schema{
-					Type: schema.TypeString,
+					Type:         schema.TypeString,
+					ValidateFunc: validation.StringInSlice([]string{"APP_ENGINE", "COMPUTE"}, false),
 				},
 			},
 			"user_agent": {
