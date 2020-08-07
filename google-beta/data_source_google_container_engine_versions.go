@@ -58,7 +58,6 @@ func dataSourceGoogleContainerEngineVersions() *schema.Resource {
 				Computed: true,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 			},
-
 			"release_channel_default_version": {
 				Type:     schema.TypeMap,
 				Computed: true,
