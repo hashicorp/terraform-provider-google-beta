@@ -61,7 +61,7 @@ func testSweepGameServicesRealm(region string) error {
 		},
 	}
 
-	listTemplate := strings.Split("https://gameservices.googleapis.com/v1beta/projects/{{project}}/locations/{{location}}/realms/", "?")[0]
+	listTemplate := strings.Split("https://gameservices.googleapis.com/v1beta/projects/{{project}}/locations/{{location}}/realms", "?")[0]
 	listUrl, err := replaceVars(d, config, listTemplate)
 	if err != nil {
 		log.Printf("[INFO][SWEEPER_LOG] error preparing sweeper list url: %s", err)

@@ -32,11 +32,17 @@ func TestAccGameServicesGameServerConfig_gameServiceConfigBasicExample(t *testin
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProvidersOiCS,
+		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckGameServicesGameServerConfigDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccGameServicesGameServerConfig_gameServiceConfigBasicExample(context),
+			},
+			{
+				ResourceName:            "google_game_services_game_server_config.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"config_id", "location", "deployment_id"},
 			},
 		},
 	})
@@ -45,15 +51,11 @@ func TestAccGameServicesGameServerConfig_gameServiceConfigBasicExample(t *testin
 func testAccGameServicesGameServerConfig_gameServiceConfigBasicExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_game_services_game_server_deployment" "default" {
-  provider = google-beta
-
   deployment_id  = "tf-test-tf-test-deployment%{random_suffix}"
   description = "a deployment description"
 }
 
 resource "google_game_services_game_server_config" "default" {
-  provider = google-beta
-
   config_id     = "tf-test-tf-test-config%{random_suffix}"
   deployment_id = google_game_services_game_server_deployment.default.deployment_id
   description   = "a config description"

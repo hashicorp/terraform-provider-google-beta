@@ -315,9 +315,9 @@ func resourceGameServicesRealmDelete(d *schema.ResourceData, meta interface{}) e
 func resourceGameServicesRealmImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	config := meta.(*Config)
 	if err := parseImportId([]string{
-		"projects/(?P<project>[^/]+)/locations/(?P<location>[^/]+)/realms//(?P<name>[^/]+)",
-		"(?P<project>[^/]+)/(?P<location>[^/]+)/(?P<name>[^/]+)",
-		"(?P<location>[^/]+)/(?P<name>[^/]+)",
+		"projects/(?P<project>[^/]+)/locations/(?P<location>[^/]+)/realms/(?P<realm_id>[^/]+)",
+		"(?P<project>[^/]+)/(?P<location>[^/]+)/(?P<realm_id>[^/]+)",
+		"(?P<location>[^/]+)/(?P<realm_id>[^/]+)",
 	}, d, config); err != nil {
 		return nil, err
 	}

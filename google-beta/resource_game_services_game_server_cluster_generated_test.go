@@ -33,11 +33,17 @@ func TestAccGameServicesGameServerCluster_gameServiceClusterBasicExample(t *test
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProvidersOiCS,
+		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckGameServicesGameServerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccGameServicesGameServerCluster_gameServiceClusterBasicExample(context),
+			},
+			{
+				ResourceName:            "google_game_services_game_server_cluster.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"cluster_id", "realm_id", "location"},
 			},
 		},
 	})
@@ -46,7 +52,6 @@ func TestAccGameServicesGameServerCluster_gameServiceClusterBasicExample(t *test
 func testAccGameServicesGameServerCluster_gameServiceClusterBasicExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_game_services_game_server_cluster" "default" {
-  provider   = google-beta
     
   cluster_id = "%{agones_cluster}"
   realm_id   = google_game_services_realm.default.realm_id
@@ -60,8 +65,6 @@ resource "google_game_services_game_server_cluster" "default" {
 }
 
 resource "google_game_services_realm" "default" {
-  provider = google-beta
-
   realm_id   = "realm%{random_suffix}"
   time_zone  = "PST8PDT"
 

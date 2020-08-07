@@ -25,8 +25,6 @@ description: |-
 This represents the rollout state. This is part of the game server
 deployment.
 
-~> **Warning:** This resource is in beta, and should be used with the terraform-provider-google-beta provider.
-See [Provider Versions](https://terraform.io/docs/providers/google/guides/provider_versions.html) for more details on beta resources.
 
 To get more information about GameServerDeploymentRollout, see:
 
@@ -44,15 +42,11 @@ To get more information about GameServerDeploymentRollout, see:
 
 ```hcl
 resource "google_game_services_game_server_deployment" "default" {
-  provider = google-beta
-
   deployment_id  = "tf-test-deployment"
   description = "a deployment description"
 }
 
 resource "google_game_services_game_server_config" "default" {
-  provider = google-beta
-
   config_id     = "tf-test-config"
   deployment_id = google_game_services_game_server_deployment.default.deployment_id
   description   = "a config description"
@@ -67,8 +61,6 @@ resource "google_game_services_game_server_config" "default" {
 }
 
 resource "google_game_services_game_server_deployment_rollout" "default" {
-  provider = google-beta
-
   deployment_id              = google_game_services_game_server_deployment.default.deployment_id
   default_game_server_config = google_game_services_game_server_config.default.name
 }
@@ -148,9 +140,9 @@ This resource provides the following
 GameServerDeploymentRollout can be imported using any of these accepted formats:
 
 ```
-$ terraform import -provider=google-beta google_game_services_game_server_deployment_rollout.default projects/{{project}}/locations/global/gameServerDeployments/{{deployment_id}}/rollout/{{name}}
-$ terraform import -provider=google-beta google_game_services_game_server_deployment_rollout.default {{project}}/{{deployment_id}}/{{name}}
-$ terraform import -provider=google-beta google_game_services_game_server_deployment_rollout.default {{deployment_id}}/{{name}}
+$ terraform import google_game_services_game_server_deployment_rollout.default projects/{{project}}/locations/global/gameServerDeployments/{{deployment_id}}/rollout
+$ terraform import google_game_services_game_server_deployment_rollout.default {{project}}/{{deployment_id}}
+$ terraform import google_game_services_game_server_deployment_rollout.default {{deployment_id}}
 ```
 
 -> If you're importing a resource with beta features, make sure to include `-provider=google-beta`

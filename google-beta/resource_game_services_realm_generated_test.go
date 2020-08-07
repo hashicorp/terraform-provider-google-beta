@@ -32,11 +32,17 @@ func TestAccGameServicesRealm_gameServiceRealmBasicExample(t *testing.T) {
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProvidersOiCS,
+		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckGameServicesRealmDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccGameServicesRealm_gameServiceRealmBasicExample(context),
+			},
+			{
+				ResourceName:            "google_game_services_realm.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"location", "realm_id"},
 			},
 		},
 	})
@@ -45,8 +51,6 @@ func TestAccGameServicesRealm_gameServiceRealmBasicExample(t *testing.T) {
 func testAccGameServicesRealm_gameServiceRealmBasicExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_game_services_realm" "default" {
-  provider = google-beta
-
   realm_id  = "tf-test-tf-test-realm%{random_suffix}"
   time_zone = "EST"
   location  = "global"

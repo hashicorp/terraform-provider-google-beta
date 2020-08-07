@@ -32,11 +32,17 @@ func TestAccGameServicesGameServerDeploymentRollout_gameServiceDeploymentRollout
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProvidersOiCS,
+		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckGameServicesGameServerDeploymentRolloutDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccGameServicesGameServerDeploymentRollout_gameServiceDeploymentRolloutBasicExample(context),
+			},
+			{
+				ResourceName:            "google_game_services_game_server_deployment_rollout.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"deployment_id"},
 			},
 		},
 	})
@@ -45,15 +51,11 @@ func TestAccGameServicesGameServerDeploymentRollout_gameServiceDeploymentRollout
 func testAccGameServicesGameServerDeploymentRollout_gameServiceDeploymentRolloutBasicExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_game_services_game_server_deployment" "default" {
-  provider = google-beta
-
   deployment_id  = "tf-test-tf-test-deployment%{random_suffix}"
   description = "a deployment description"
 }
 
 resource "google_game_services_game_server_config" "default" {
-  provider = google-beta
-
   config_id     = "tf-test-tf-test-config%{random_suffix}"
   deployment_id = google_game_services_game_server_deployment.default.deployment_id
   description   = "a config description"
@@ -68,8 +70,6 @@ resource "google_game_services_game_server_config" "default" {
 }
 
 resource "google_game_services_game_server_deployment_rollout" "default" {
-  provider = google-beta
-
   deployment_id              = google_game_services_game_server_deployment.default.deployment_id
   default_game_server_config = google_game_services_game_server_config.default.name
 }
