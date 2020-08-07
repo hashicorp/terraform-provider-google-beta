@@ -24,8 +24,6 @@ description: |-
 
 A game server cluster resource.
 
-~> **Warning:** This resource is in beta, and should be used with the terraform-provider-google-beta provider.
-See [Provider Versions](https://terraform.io/docs/providers/google/guides/provider_versions.html) for more details on beta resources.
 
 To get more information about GameServerCluster, see:
 
@@ -43,7 +41,6 @@ To get more information about GameServerCluster, see:
 
 ```hcl
 resource "google_game_services_game_server_cluster" "default" {
-  provider   = google-beta
     
   cluster_id = ""
   realm_id   = google_game_services_realm.default.realm_id
@@ -57,8 +54,6 @@ resource "google_game_services_game_server_cluster" "default" {
 }
 
 resource "google_game_services_realm" "default" {
-  provider = google-beta
-
   realm_id   = "realm"
   time_zone  = "PST8PDT"
 
@@ -160,9 +155,9 @@ This resource provides the following
 GameServerCluster can be imported using any of these accepted formats:
 
 ```
-$ terraform import -provider=google-beta google_game_services_game_server_cluster.default projects/{{project}}/locations/{{location}}/realms/{{realm_id}}/gameServerClusters/{{name}}
-$ terraform import -provider=google-beta google_game_services_game_server_cluster.default {{project}}/{{location}}/{{realm_id}}/{{name}}
-$ terraform import -provider=google-beta google_game_services_game_server_cluster.default {{location}}/{{realm_id}}/{{name}}
+$ terraform import google_game_services_game_server_cluster.default projects/{{project}}/locations/{{location}}/realms/{{realm_id}}/gameServerClusters/{{cluster_id}}
+$ terraform import google_game_services_game_server_cluster.default {{project}}/{{location}}/{{realm_id}}/{{cluster_id}}
+$ terraform import google_game_services_game_server_cluster.default {{location}}/{{realm_id}}/{{cluster_id}}
 ```
 
 -> If you're importing a resource with beta features, make sure to include `-provider=google-beta`

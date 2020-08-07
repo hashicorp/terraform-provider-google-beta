@@ -261,9 +261,9 @@ func resourceGameServicesGameServerDeploymentRolloutDelete(d *schema.ResourceDat
 func resourceGameServicesGameServerDeploymentRolloutImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	config := meta.(*Config)
 	if err := parseImportId([]string{
-		"projects/(?P<project>[^/]+)/locations/global/gameServerDeployments/(?P<deployment_id>[^/]+)/rollout/(?P<name>[^/]+)",
-		"(?P<project>[^/]+)/(?P<deployment_id>[^/]+)/(?P<name>[^/]+)",
-		"(?P<deployment_id>[^/]+)/(?P<name>[^/]+)",
+		"projects/(?P<project>[^/]+)/locations/global/gameServerDeployments/(?P<deployment_id>[^/]+)/rollout",
+		"(?P<project>[^/]+)/(?P<deployment_id>[^/]+)",
+		"(?P<deployment_id>[^/]+)",
 	}, d, config); err != nil {
 		return nil, err
 	}
