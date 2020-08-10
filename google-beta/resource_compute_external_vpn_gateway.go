@@ -82,7 +82,7 @@ of this external VPN gateway
 							ForceNew: true,
 							Description: `IP address of the interface in the external VPN gateway.
 Only IPv4 is supported. This IP address can be either from
-your on-premise gateway or another Cloud provider’s VPN gateway,
+your on-premise gateway or another Cloud provider's VPN gateway,
 it cannot be an IP address from Google Compute Engine.`,
 						},
 					},
