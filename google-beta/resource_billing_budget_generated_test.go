@@ -124,6 +124,77 @@ resource "google_billing_budget" "budget" {
 `, context)
 }
 
+func TestAccBillingBudget_billingBudgetNotifyExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"billing_acct":  getTestBillingAccountFromEnv(t),
+		"project":       getTestProjectFromEnv(),
+		"random_suffix": randString(t, 10),
+	}
+
+	vcrTest(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProvidersOiCS,
+		CheckDestroy: testAccCheckBillingBudgetDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccBillingBudget_billingBudgetNotifyExample(context),
+			},
+		},
+	})
+}
+
+func testAccBillingBudget_billingBudgetNotifyExample(context map[string]interface{}) string {
+	return Nprintf(`
+data "google_billing_account" "account" {
+  provider        = google-beta
+  billing_account = "%{billing_acct}"
+}
+
+resource "google_billing_budget" "budget" {
+  provider        = google-beta
+  billing_account = data.google_billing_account.account.id
+  display_name    = "Example Billing Budget%{random_suffix}"
+
+  budget_filter {
+    projects = ["projects/%{project}"]
+  }
+
+  amount {
+    specified_amount {
+      currency_code = "USD"
+      units         = "100000"
+    }
+  }
+
+  threshold_rules {
+    threshold_percent = 1.0
+  }
+  threshold_rules {
+    threshold_percent = 1.0
+    spend_basis       = "FORECASTED_SPEND"
+  }
+  
+  all_updates_rule {
+    monitoring_notification_channels = [
+      google_monitoring_notification_channel.notification_channel.id,
+    ]
+  }
+}
+
+resource "google_monitoring_notification_channel" "notification_channel" {
+  provider     = google-beta
+  display_name = "Example Notification Channel%{random_suffix}"
+  type         = "email"
+  
+  labels = {
+    email_address = "address@example.com"
+  }
+}
+`, context)
+}
+
 func testAccCheckBillingBudgetDestroyProducer(t *testing.T) func(s *terraform.State) error {
 	return func(s *terraform.State) error {
 		for name, rs := range s.RootModule().Resources {
