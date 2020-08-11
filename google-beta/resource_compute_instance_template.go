@@ -521,7 +521,23 @@ func resourceComputeInstanceTemplate() *schema.Resource {
 					},
 				},
 			},
-
+			"confidential_instance_config": {
+				Type:        schema.TypeList,
+				MaxItems:    1,
+				Optional:    true,
+				ForceNew:    true,
+				Computed:    true,
+				Description: `The Confidential VM config being used by the instance. on_host_maintenance has to be set to TERMINATE or this will fail to create.`,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"enable_confidential_compute": {
+							Type:        schema.TypeBool,
+							Required:    true,
+							Description: `Defines whether the instance should have confidential compute enabled.`,
+						},
+					},
+				},
+			},
 			"guest_accelerator": {
 				Type:        schema.TypeList,
 				Optional:    true,
@@ -819,19 +835,20 @@ func resourceComputeInstanceTemplateCreate(d *schema.ResourceData, meta interfac
 	}
 
 	instanceProperties := &computeBeta.InstanceProperties{
-		CanIpForward:           d.Get("can_ip_forward").(bool),
-		Description:            d.Get("instance_description").(string),
-		GuestAccelerators:      expandInstanceTemplateGuestAccelerators(d, config),
-		MachineType:            d.Get("machine_type").(string),
-		MinCpuPlatform:         d.Get("min_cpu_platform").(string),
-		Disks:                  disks,
-		Metadata:               metadata,
-		NetworkInterfaces:      networks,
-		Scheduling:             scheduling,
-		ServiceAccounts:        expandServiceAccounts(d.Get("service_account").([]interface{})),
-		Tags:                   resourceInstanceTags(d),
-		ShieldedInstanceConfig: expandShieldedVmConfigs(d),
-		DisplayDevice:          expandDisplayDevice(d),
+		CanIpForward:               d.Get("can_ip_forward").(bool),
+		Description:                d.Get("instance_description").(string),
+		GuestAccelerators:          expandInstanceTemplateGuestAccelerators(d, config),
+		MachineType:                d.Get("machine_type").(string),
+		MinCpuPlatform:             d.Get("min_cpu_platform").(string),
+		Disks:                      disks,
+		Metadata:                   metadata,
+		NetworkInterfaces:          networks,
+		Scheduling:                 scheduling,
+		ServiceAccounts:            expandServiceAccounts(d.Get("service_account").([]interface{})),
+		Tags:                       resourceInstanceTags(d),
+		ConfidentialInstanceConfig: expandConfidentialInstanceConfig(d),
+		ShieldedInstanceConfig:     expandShieldedVmConfigs(d),
+		DisplayDevice:              expandDisplayDevice(d),
 	}
 
 	if _, ok := d.GetOk("labels"); ok {
@@ -1196,6 +1213,12 @@ func resourceComputeInstanceTemplateRead(d *schema.ResourceData, meta interface{
 	if instanceTemplate.Properties.ShieldedVmConfig != nil {
 		if err = d.Set("shielded_instance_config", flattenShieldedVmConfig(instanceTemplate.Properties.ShieldedInstanceConfig)); err != nil {
 			return fmt.Errorf("Error setting shielded_instance_config: %s", err)
+		}
+	}
+
+	if instanceTemplate.Properties.ConfidentialInstanceConfig != nil {
+		if err = d.Set("confidential_instance_config", flattenConfidentialInstanceConfig(instanceTemplate.Properties.ConfidentialInstanceConfig)); err != nil {
+			return fmt.Errorf("Error setting confidential_instance_config: %s", err)
 		}
 	}
 	if instanceTemplate.Properties.DisplayDevice != nil {
