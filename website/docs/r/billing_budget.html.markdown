@@ -103,6 +103,61 @@ resource "google_billing_budget" "budget" {
   }
 }
 ```
+<div class = "oics-button" style="float: right; margin: 0 0 -15px">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=billing_budget_notify&cloudshell_image=gcr.io%2Fgraphite-cloud-shell-images%2Fterraform%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+    <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
+  </a>
+</div>
+## Example Usage - Billing Budget Notify
+
+
+```hcl
+data "google_billing_account" "account" {
+  provider        = google-beta
+  billing_account = "000000-0000000-0000000-000000"
+}
+
+resource "google_billing_budget" "budget" {
+  provider        = google-beta
+  billing_account = data.google_billing_account.account.id
+  display_name    = "Example Billing Budget"
+
+  budget_filter {
+    projects = ["projects/my-project-name"]
+  }
+
+  amount {
+    specified_amount {
+      currency_code = "USD"
+      units         = "100000"
+    }
+  }
+
+  threshold_rules {
+    threshold_percent = 1.0
+  }
+  threshold_rules {
+    threshold_percent = 1.0
+    spend_basis       = "FORECASTED_SPEND"
+  }
+  
+  all_updates_rule {
+    monitoring_notification_channels = [
+      google_monitoring_notification_channel.notification_channel.id,
+    ]
+  }
+}
+
+resource "google_monitoring_notification_channel" "notification_channel" {
+  provider     = google-beta
+  display_name = "Example Notification Channel"
+  type         = "email"
+  
+  labels = {
+    email_address = "address@example.com"
+  }
+}
+```
 
 ## Argument Reference
 
@@ -202,7 +257,7 @@ The `threshold_rules` block supports:
 The `all_updates_rule` block supports:
 
 * `pubsub_topic` -
-  (Required)
+  (Optional)
   The name of the Cloud Pub/Sub topic where budget related
   messages will be published, in the form
   projects/{project_id}/topics/{topic_id}. Updates are sent
@@ -213,6 +268,13 @@ The `all_updates_rule` block supports:
   The schema version of the notification. Only "1.0" is
   accepted. It represents the JSON schema as defined in
   https://cloud.google.com/billing/docs/how-to/budgets#notification_format.
+
+* `monitoring_notification_channels` -
+  (Optional)
+  The full resource name of a monitoring notification
+  channel in the form
+  projects/{project_id}/notificationChannels/{channel_id}.
+  A maximum of 5 channels are allowed.
 
 - - -
 
