@@ -1,4 +1,38 @@
 ## 3.35.0 (Unreleased)
+NOTES:
+* all: Lists of enums now display the enum options in the documentation pages. ([#2340](https://github.com/hashicorp/terraform-provider-google-beta/pull/2340))
+
+FEATURES:
+* **New Resource:** `google_compute_region_network_endpoint_group` (supports serverless NEGs) ([#2348](https://github.com/hashicorp/terraform-provider-google-beta/pull/2348))
+* **New Resource:** `google_game_services_game_server_cluster` ([#2359](https://github.com/hashicorp/terraform-provider-google-beta/pull/2359))
+* **New Resource:** `google_game_services_game_server_config` ([#2359](https://github.com/hashicorp/terraform-provider-google-beta/pull/2359))
+* **New Resource:** `google_game_services_game_server_deployment_rollout` ([#2359](https://github.com/hashicorp/terraform-provider-google-beta/pull/2359))
+* **New Resource:** `google_game_services_game_server_deployment` ([#2359](https://github.com/hashicorp/terraform-provider-google-beta/pull/2359))
+* **New Resource:** `google_game_services_realm` ([#2359](https://github.com/hashicorp/terraform-provider-google-beta/pull/2359))
+
+IMPROVEMENTS:
+* appengine: converted `google_app_engine_standard_app_version`'s `inbound_services` to an enum array, which enhances docs and provides some client-side validation. ([#2344](https://github.com/hashicorp/terraform-provider-google-beta/pull/2344))
+* billing_budget: Added support for `monitoring_notification_channels` to allow sending budget notifications to Cloud Monitoring email notification channels. ([#2366](https://github.com/hashicorp/terraform-provider-google-beta/pull/2366))
+* cloudbuild: added tags, source, queue_ttl, logs_bucket, substitutions, and secrets to `google_cloudbuild_trigger` ([#2335](https://github.com/hashicorp/terraform-provider-google-beta/pull/2335))
+* cloudfunctions: Updated the `google_cloudfunctions_function` datasource to include new fields available in the API. ([#2334](https://github.com/hashicorp/terraform-provider-google-beta/pull/2334))
+* compute: added `source_image` and `source_snapshot` to `google_compute_image` ([#2356](https://github.com/hashicorp/terraform-provider-google-beta/pull/2356))
+* compute: added confidential_instance_config block to google_compute_instance ([#2369](https://github.com/hashicorp/terraform-provider-google-beta/pull/2369))
+* compute: added confidential_instance_config block to google_compute_instance_template ([#2369](https://github.com/hashicorp/terraform-provider-google-beta/pull/2369))
+* container: added `release_channel_default_version` field to `data.google_container_engine_versions` (GA) ([#2350](https://github.com/hashicorp/terraform-provider-google-beta/pull/2350))
+* container: added `release_channel` to `google_container-cluster` (GA) ([#2343](https://github.com/hashicorp/terraform-provider-google-beta/pull/2343))
+* iam: Added `public_key_type` field to `google_service_account_key ` ([#2368](https://github.com/hashicorp/terraform-provider-google-beta/pull/2368))
+* memcached: added memcacheVersion input and memcacheNodes output field to `google_memcache_instance` ([#2336](https://github.com/hashicorp/terraform-provider-google-beta/pull/2336))
+* pubsub: added `filter` field to `google_pubsub_subscription` resource ([#2367](https://github.com/hashicorp/terraform-provider-google-beta/pull/2367))
+* resource-manager: updated documentation for `folder_iam_*` and `organization_iam_*` resources. ([#2365](https://github.com/hashicorp/terraform-provider-google-beta/pull/2365))
+* sql: added support for point_in_time_recovery for `google_sql_database_instance` ([#2338](https://github.com/hashicorp/terraform-provider-google-beta/pull/2338))
+
+BUG FIXES:
+* appengine: Set `iap` to computed in `google_app_engine_application` ([#2342](https://github.com/hashicorp/terraform-provider-google-beta/pull/2342))
+* artifactrepository: Fixed import failure of `google_artifact_registry_repository`. ([#2345](https://github.com/hashicorp/terraform-provider-google-beta/pull/2345))
+* compute: fixed shielded instance config, which had been failing to apply due to a field rename on the GCP side. ([#2337](https://github.com/hashicorp/terraform-provider-google-beta/pull/2337))
+* monitoring: fixed validation rules for `google_monitoring_slo` `windows_based_sli.metric_sum_in_range.max` field ([#2354](https://github.com/hashicorp/terraform-provider-google-beta/pull/2354))
+* osconfig: fixed `google_os_config_patch_deployment` `windows_update.classifications` field to work correctly, accepting multiple values. ([#2340](https://github.com/hashicorp/terraform-provider-google-beta/pull/2340))
+
 ## 3.34.0 (August 11, 2020)
 NOTES:
 * redis: explicitly noted in `google_redis_instance` documentation that `"REDIS_5_0"` is supported ([#2323](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2323))
