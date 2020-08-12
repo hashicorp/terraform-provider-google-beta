@@ -24,6 +24,7 @@ import (
 )
 
 func TestAccBigqueryConnectionConnection_bigqueryConnectionBasicExample(t *testing.T) {
+	skipIfVcr(t)
 	t.Parallel()
 
 	context := map[string]interface{}{
@@ -90,6 +91,7 @@ resource "google_bigquery_connection" "connection" {
 }
 
 func TestAccBigqueryConnectionConnection_bigqueryConnectionFullExample(t *testing.T) {
+	skipIfVcr(t)
 	t.Parallel()
 
 	context := map[string]interface{}{

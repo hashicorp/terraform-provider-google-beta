@@ -24,6 +24,7 @@ import (
 )
 
 func TestAccComputeExternalVpnGateway_externalVpnGatewayExample(t *testing.T) {
+	skipIfVcr(t)
 	t.Parallel()
 
 	context := map[string]interface{}{

@@ -157,6 +157,8 @@ func TestAccStorageBucketIamBindingGenerated_withCondition(t *testing.T) {
 }
 
 func TestAccStorageBucketIamBindingGenerated_withAndWithoutCondition(t *testing.T) {
+	// Multiple fine-grained resources
+	skipIfVcr(t)
 	t.Parallel()
 
 	context := map[string]interface{}{
@@ -219,6 +221,8 @@ func TestAccStorageBucketIamMemberGenerated_withCondition(t *testing.T) {
 }
 
 func TestAccStorageBucketIamMemberGenerated_withAndWithoutCondition(t *testing.T) {
+	// Multiple fine-grained resources
+	skipIfVcr(t)
 	t.Parallel()
 
 	context := map[string]interface{}{

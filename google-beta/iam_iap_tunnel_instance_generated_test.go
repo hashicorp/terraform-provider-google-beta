@@ -150,6 +150,8 @@ func TestAccIapTunnelInstanceIamBindingGenerated_withCondition(t *testing.T) {
 }
 
 func TestAccIapTunnelInstanceIamBindingGenerated_withAndWithoutCondition(t *testing.T) {
+	// Multiple fine-grained resources
+	skipIfVcr(t)
 	t.Parallel()
 
 	context := map[string]interface{}{
@@ -210,6 +212,8 @@ func TestAccIapTunnelInstanceIamMemberGenerated_withCondition(t *testing.T) {
 }
 
 func TestAccIapTunnelInstanceIamMemberGenerated_withAndWithoutCondition(t *testing.T) {
+	// Multiple fine-grained resources
+	skipIfVcr(t)
 	t.Parallel()
 
 	context := map[string]interface{}{

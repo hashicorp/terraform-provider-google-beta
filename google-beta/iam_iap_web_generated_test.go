@@ -158,6 +158,8 @@ func TestAccIapWebIamBindingGenerated_withCondition(t *testing.T) {
 }
 
 func TestAccIapWebIamBindingGenerated_withAndWithoutCondition(t *testing.T) {
+	// Multiple fine-grained resources
+	skipIfVcr(t)
 	t.Parallel()
 
 	context := map[string]interface{}{
@@ -222,6 +224,8 @@ func TestAccIapWebIamMemberGenerated_withCondition(t *testing.T) {
 }
 
 func TestAccIapWebIamMemberGenerated_withAndWithoutCondition(t *testing.T) {
+	// Multiple fine-grained resources
+	skipIfVcr(t)
 	t.Parallel()
 
 	context := map[string]interface{}{

@@ -60,6 +60,7 @@ resource "google_compute_network" "network1" {
 }
 
 func TestAccComputeHaVpnGateway_haVpnGatewayGcpToGcpExample(t *testing.T) {
+	skipIfVcr(t)
 	t.Parallel()
 
 	context := map[string]interface{}{
