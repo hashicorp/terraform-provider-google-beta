@@ -192,7 +192,7 @@ data "google_compute_image" "debian_image" {
 
 resource "google_compute_instance_group_manager" "igm" {
   provider = google-beta
-  name     = "igm-internal"
+  name     = "tf-test-igm-internal%{random_suffix}"
   version {
     instance_template = google_compute_instance_template.instance_template.id
     name              = "primary"
