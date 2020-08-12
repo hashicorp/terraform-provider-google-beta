@@ -150,6 +150,8 @@ func TestAccIapAppEngineVersionIamBindingGenerated_withCondition(t *testing.T) {
 }
 
 func TestAccIapAppEngineVersionIamBindingGenerated_withAndWithoutCondition(t *testing.T) {
+	// Multiple fine-grained resources
+	skipIfVcr(t)
 	t.Parallel()
 
 	context := map[string]interface{}{
@@ -210,6 +212,8 @@ func TestAccIapAppEngineVersionIamMemberGenerated_withCondition(t *testing.T) {
 }
 
 func TestAccIapAppEngineVersionIamMemberGenerated_withAndWithoutCondition(t *testing.T) {
+	// Multiple fine-grained resources
+	skipIfVcr(t)
 	t.Parallel()
 
 	context := map[string]interface{}{

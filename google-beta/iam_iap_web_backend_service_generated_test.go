@@ -150,6 +150,8 @@ func TestAccIapWebBackendServiceIamBindingGenerated_withCondition(t *testing.T) 
 }
 
 func TestAccIapWebBackendServiceIamBindingGenerated_withAndWithoutCondition(t *testing.T) {
+	// Multiple fine-grained resources
+	skipIfVcr(t)
 	t.Parallel()
 
 	context := map[string]interface{}{
@@ -210,6 +212,8 @@ func TestAccIapWebBackendServiceIamMemberGenerated_withCondition(t *testing.T) {
 }
 
 func TestAccIapWebBackendServiceIamMemberGenerated_withAndWithoutCondition(t *testing.T) {
+	// Multiple fine-grained resources
+	skipIfVcr(t)
 	t.Parallel()
 
 	context := map[string]interface{}{

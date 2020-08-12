@@ -150,6 +150,8 @@ func TestAccComputeInstanceIamBindingGenerated_withCondition(t *testing.T) {
 }
 
 func TestAccComputeInstanceIamBindingGenerated_withAndWithoutCondition(t *testing.T) {
+	// Multiple fine-grained resources
+	skipIfVcr(t)
 	t.Parallel()
 
 	context := map[string]interface{}{
@@ -210,6 +212,8 @@ func TestAccComputeInstanceIamMemberGenerated_withCondition(t *testing.T) {
 }
 
 func TestAccComputeInstanceIamMemberGenerated_withAndWithoutCondition(t *testing.T) {
+	// Multiple fine-grained resources
+	skipIfVcr(t)
 	t.Parallel()
 
 	context := map[string]interface{}{

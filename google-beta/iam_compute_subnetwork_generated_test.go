@@ -150,6 +150,8 @@ func TestAccComputeSubnetworkIamBindingGenerated_withCondition(t *testing.T) {
 }
 
 func TestAccComputeSubnetworkIamBindingGenerated_withAndWithoutCondition(t *testing.T) {
+	// Multiple fine-grained resources
+	skipIfVcr(t)
 	t.Parallel()
 
 	context := map[string]interface{}{
@@ -210,6 +212,8 @@ func TestAccComputeSubnetworkIamMemberGenerated_withCondition(t *testing.T) {
 }
 
 func TestAccComputeSubnetworkIamMemberGenerated_withAndWithoutCondition(t *testing.T) {
+	// Multiple fine-grained resources
+	skipIfVcr(t)
 	t.Parallel()
 
 	context := map[string]interface{}{
