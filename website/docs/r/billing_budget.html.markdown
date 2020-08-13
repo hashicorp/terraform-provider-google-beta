@@ -63,6 +63,41 @@ resource "google_billing_budget" "budget" {
 }
 ```
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=billing_budget_lastperiod&cloudshell_image=gcr.io%2Fgraphite-cloud-shell-images%2Fterraform%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+    <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
+  </a>
+</div>
+## Example Usage - Billing Budget Lastperiod
+
+
+```hcl
+data "google_billing_account" "account" {
+  provider = google-beta
+  billing_account = "000000-0000000-0000000-000000"
+}
+
+resource "google_billing_budget" "budget" {
+  provider = google-beta
+  billing_account = data.google_billing_account.account.id
+  display_name = "Example Billing Budget"
+  
+  budget_filter {
+    projects = ["projects/my-project-name"]
+  }
+
+  amount {
+    last_period_amount = true
+  }
+
+  threshold_rules {
+      threshold_percent =  10.0
+      # Typically threshold_percent would be set closer to 1.0 (100%).
+      # It has been purposely set high (10.0 / 1000%) in this example
+      # so it does not trigger alerts during automated testing.
+  }
+}
+```
+<div class = "oics-button" style="float: right; margin: 0 0 -15px">
   <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=billing_budget_filter&cloudshell_image=gcr.io%2Fgraphite-cloud-shell-images%2Fterraform%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
     <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
   </a>
@@ -212,11 +247,18 @@ The `budget_filter` block supports:
 The `amount` block supports:
 
 * `specified_amount` -
-  (Required)
+  (Optional)
   A specified amount to use as the budget. currencyCode is
   optional. If specified, it must match the currency of the
   billing account. The currencyCode is provided on output.
   Structure is documented below.
+
+* `last_period_amount` -
+  (Optional)
+  Configures a budget amount that is automatically set to 100% of
+  last period's spend.
+  Boolean. Set value to true to use. Do not set to false, instead
+  use the `specified_amount` block.
 
 
 The `specified_amount` block supports:

@@ -57,9 +57,18 @@ func resourceBillingBudget() *schema.Resource {
 				MaxItems:    1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
+						"last_period_amount": {
+							Type:     schema.TypeBool,
+							Optional: true,
+							Description: `Configures a budget amount that is automatically set to 100% of
+last period's spend.
+Boolean. Set value to true to use. Do not set to false, instead
+use the 'specified_amount' block.`,
+							ExactlyOneOf: []string{"amount.0.specified_amount", "amount.0.last_period_amount"},
+						},
 						"specified_amount": {
 							Type:     schema.TypeList,
-							Required: true,
+							Optional: true,
 							Description: `A specified amount to use as the budget. currencyCode is
 optional. If specified, it must match the currency of the
 billing account. The currencyCode is provided on output.`,
@@ -90,6 +99,7 @@ is "USD", then 1 unit is one US dollar.`,
 									},
 								},
 							},
+							ExactlyOneOf: []string{"amount.0.specified_amount", "amount.0.last_period_amount"},
 						},
 					},
 				},
@@ -438,6 +448,8 @@ func flattenBillingBudgetBudgetAmount(v interface{}, d *schema.ResourceData, con
 	transformed := make(map[string]interface{})
 	transformed["specified_amount"] =
 		flattenBillingBudgetBudgetAmountSpecifiedAmount(original["specifiedAmount"], d, config)
+	transformed["last_period_amount"] =
+		flattenBillingBudgetBudgetAmountLastPeriodAmount(original["lastPeriodAmount"], d, config)
 	return []interface{}{transformed}
 }
 func flattenBillingBudgetBudgetAmountSpecifiedAmount(v interface{}, d *schema.ResourceData, config *Config) interface{} {
@@ -480,6 +492,10 @@ func flattenBillingBudgetBudgetAmountSpecifiedAmountNanos(v interface{}, d *sche
 	}
 
 	return v // let terraform core handle it otherwise
+}
+
+func flattenBillingBudgetBudgetAmountLastPeriodAmount(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	return v != nil
 }
 
 func flattenBillingBudgetBudgetThresholdRules(v interface{}, d *schema.ResourceData, config *Config) interface{} {
@@ -643,6 +659,13 @@ func expandBillingBudgetBudgetAmount(v interface{}, d TerraformResourceData, con
 		transformed["specifiedAmount"] = transformedSpecifiedAmount
 	}
 
+	transformedLastPeriodAmount, err := expandBillingBudgetBudgetAmountLastPeriodAmount(original["last_period_amount"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedLastPeriodAmount); val.IsValid() && !isEmptyValue(val) {
+		transformed["lastPeriodAmount"] = transformedLastPeriodAmount
+	}
+
 	return transformed, nil
 }
 
@@ -689,6 +712,14 @@ func expandBillingBudgetBudgetAmountSpecifiedAmountUnits(v interface{}, d Terraf
 
 func expandBillingBudgetBudgetAmountSpecifiedAmountNanos(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
+}
+
+func expandBillingBudgetBudgetAmountLastPeriodAmount(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	if v == nil || !v.(bool) {
+		return nil, nil
+	}
+
+	return struct{}{}, nil
 }
 
 func expandBillingBudgetBudgetThresholdRules(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {

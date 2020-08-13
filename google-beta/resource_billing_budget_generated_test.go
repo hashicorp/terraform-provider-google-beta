@@ -67,6 +67,57 @@ resource "google_billing_budget" "budget" {
 `, context)
 }
 
+func TestAccBillingBudget_billingBudgetLastperiodExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"billing_acct":  getTestBillingAccountFromEnv(t),
+		"project":       getTestProjectFromEnv(),
+		"random_suffix": randString(t, 10),
+	}
+
+	vcrTest(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProvidersOiCS,
+		CheckDestroy: testAccCheckBillingBudgetDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccBillingBudget_billingBudgetLastperiodExample(context),
+			},
+		},
+	})
+}
+
+func testAccBillingBudget_billingBudgetLastperiodExample(context map[string]interface{}) string {
+	return Nprintf(`
+data "google_billing_account" "account" {
+  provider = google-beta
+  billing_account = "%{billing_acct}"
+}
+
+resource "google_billing_budget" "budget" {
+  provider = google-beta
+  billing_account = data.google_billing_account.account.id
+  display_name = "Example Billing Budget%{random_suffix}"
+  
+  budget_filter {
+    projects = ["projects/%{project}"]
+  }
+
+  amount {
+    last_period_amount = true
+  }
+
+  threshold_rules {
+      threshold_percent =  10.0
+      # Typically threshold_percent would be set closer to 1.0 (100%).
+      # It has been purposely set high (10.0 / 1000%) in this example
+      # so it does not trigger alerts during automated testing.
+  }
+}
+`, context)
+}
+
 func TestAccBillingBudget_billingBudgetFilterExample(t *testing.T) {
 	t.Parallel()
 
