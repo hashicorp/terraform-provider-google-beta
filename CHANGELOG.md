@@ -4,11 +4,6 @@ NOTES:
 
 FEATURES:
 * **New Resource:** `google_compute_region_network_endpoint_group` (supports serverless NEGs) ([#2348](https://github.com/hashicorp/terraform-provider-google-beta/pull/2348))
-* **New Resource:** `google_game_services_game_server_cluster` ([#2359](https://github.com/hashicorp/terraform-provider-google-beta/pull/2359))
-* **New Resource:** `google_game_services_game_server_config` ([#2359](https://github.com/hashicorp/terraform-provider-google-beta/pull/2359))
-* **New Resource:** `google_game_services_game_server_deployment_rollout` ([#2359](https://github.com/hashicorp/terraform-provider-google-beta/pull/2359))
-* **New Resource:** `google_game_services_game_server_deployment` ([#2359](https://github.com/hashicorp/terraform-provider-google-beta/pull/2359))
-* **New Resource:** `google_game_services_realm` ([#2359](https://github.com/hashicorp/terraform-provider-google-beta/pull/2359))
 
 IMPROVEMENTS:
 * appengine: converted `google_app_engine_standard_app_version`'s `inbound_services` to an enum array, which enhances docs and provides some client-side validation. ([#2344](https://github.com/hashicorp/terraform-provider-google-beta/pull/2344))
@@ -18,8 +13,6 @@ IMPROVEMENTS:
 * compute: added `source_image` and `source_snapshot` to `google_compute_image` ([#2356](https://github.com/hashicorp/terraform-provider-google-beta/pull/2356))
 * compute: added confidential_instance_config block to google_compute_instance ([#2369](https://github.com/hashicorp/terraform-provider-google-beta/pull/2369))
 * compute: added confidential_instance_config block to google_compute_instance_template ([#2369](https://github.com/hashicorp/terraform-provider-google-beta/pull/2369))
-* container: added `release_channel_default_version` field to `data.google_container_engine_versions` (GA) ([#2350](https://github.com/hashicorp/terraform-provider-google-beta/pull/2350))
-* container: added `release_channel` to `google_container-cluster` (GA) ([#2343](https://github.com/hashicorp/terraform-provider-google-beta/pull/2343))
 * iam: Added `public_key_type` field to `google_service_account_key ` ([#2368](https://github.com/hashicorp/terraform-provider-google-beta/pull/2368))
 * memcached: added memcacheVersion input and memcacheNodes output field to `google_memcache_instance` ([#2336](https://github.com/hashicorp/terraform-provider-google-beta/pull/2336))
 * pubsub: added `filter` field to `google_pubsub_subscription` resource ([#2367](https://github.com/hashicorp/terraform-provider-google-beta/pull/2367))
