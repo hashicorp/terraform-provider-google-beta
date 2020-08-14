@@ -708,9 +708,9 @@ func Provider() terraform.ResourceProvider {
 	return provider
 }
 
-// Generated resources: 183
+// Generated resources: 185
 // Generated IAM resources: 66
-// Total generated resources: 249
+// Total generated resources: 251
 func ResourceMap() map[string]*schema.Resource {
 	resourceMap, _ := ResourceMapWithErrors()
 	return resourceMap
@@ -724,7 +724,9 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_organization_access_approval_settings":                 resourceAccessApprovalOrganizationSettings(),
 			"google_access_context_manager_access_policy":                  resourceAccessContextManagerAccessPolicy(),
 			"google_access_context_manager_access_level":                   resourceAccessContextManagerAccessLevel(),
+			"google_access_context_manager_access_levels":                  resourceAccessContextManagerAccessLevels(),
 			"google_access_context_manager_service_perimeter":              resourceAccessContextManagerServicePerimeter(),
+			"google_access_context_manager_service_perimeters":             resourceAccessContextManagerServicePerimeters(),
 			"google_access_context_manager_service_perimeter_resource":     resourceAccessContextManagerServicePerimeterResource(),
 			"google_active_directory_domain":                               resourceActiveDirectoryDomain(),
 			"google_app_engine_domain_mapping":                             resourceAppEngineDomainMapping(),
