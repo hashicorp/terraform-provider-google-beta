@@ -118,7 +118,7 @@ Service Directory service IAM resources can be imported using the resource ident
 
 IAM member imports use space-delimited identifiers: the resource in question, the role, and the member identity, e.g.
 ```
-$ terraform import -provider=google-beta google_service_directory_service_iam_member.editor "projects/{{project}}/locations/{{location}}/namespaces/{{namespace_id}}/services/{{service_id}} roles/viewer jane@example.com"
+$ terraform import -provider=google-beta google_service_directory_service_iam_member.editor "projects/{{project}}/locations/{{location}}/namespaces/{{namespace_id}}/services/{{service_id}} roles/viewer user:jane@example.com"
 ```
 
 IAM binding imports use space-delimited identifiers: the resource in question and the role, e.g.
