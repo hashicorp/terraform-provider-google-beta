@@ -413,6 +413,8 @@ func TestAccContainerCluster_withReleaseChannelEnabledDefaultVersion(t *testing.
 }
 
 func TestAccContainerCluster_withInvalidReleaseChannel(t *testing.T) {
+	// This is essentially a unit test, no interactions
+	skipIfVcr(t)
 	t.Parallel()
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", randString(t, 10))
 	vcrTest(t, resource.TestCase{
@@ -926,6 +928,8 @@ func TestAccContainerCluster_withSandboxConfig(t *testing.T) {
 }
 
 func TestAccContainerCluster_withBootDiskKmsKey(t *testing.T) {
+	// KMS key has calculated next rotation time
+	skipIfVcr(t)
 	t.Parallel()
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", randString(t, 10))
@@ -1594,6 +1598,8 @@ func TestAccContainerCluster_withAutoscalingProfile(t *testing.T) {
 }
 
 func TestAccContainerCluster_withInvalidAutoscalingProfile(t *testing.T) {
+	// This is essentially a unit test, no interactions
+	skipIfVcr(t)
 	t.Parallel()
 	clusterName := fmt.Sprintf("cluster-test-%s", randString(t, 10))
 	vcrTest(t, resource.TestCase{
@@ -1610,6 +1616,8 @@ func TestAccContainerCluster_withInvalidAutoscalingProfile(t *testing.T) {
 }
 
 func TestAccContainerCluster_sharedVpc(t *testing.T) {
+	// Multiple fine-grained resources
+	skipIfVcr(t)
 	t.Parallel()
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", randString(t, 10))
