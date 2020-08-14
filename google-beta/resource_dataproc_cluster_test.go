@@ -567,6 +567,8 @@ func TestAccDataprocCluster_withLifecycleConfigIdleDeleteTtl(t *testing.T) {
 }
 
 func TestAccDataprocCluster_withLifecycleConfigAutoDeletion(t *testing.T) {
+	// Uses time.Now
+	skipIfVcr(t)
 	t.Parallel()
 
 	rnd := randString(t, 10)
