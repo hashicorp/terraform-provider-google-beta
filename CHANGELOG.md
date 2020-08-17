@@ -1,6 +1,6 @@
 ## 3.35.0 (Unreleased)
 NOTES:
-* all: Lists of enums now display the enum options in the documentation pages. ([#2340](https://github.com/hashicorp/terraform-provider-google-beta/pull/2340))
+* all: Updated lists of enums to display the enum options in the documentation pages. ([#2340](https://github.com/hashicorp/terraform-provider-google-beta/pull/2340))
 
 FEATURES:
 * **New Resource:** `google_compute_region_network_endpoint_group` (supports serverless NEGs) ([#2348](https://github.com/hashicorp/terraform-provider-google-beta/pull/2348))
