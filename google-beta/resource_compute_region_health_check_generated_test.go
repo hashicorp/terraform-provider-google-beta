@@ -517,7 +517,7 @@ func TestAccComputeRegionHealthCheck_regionHealthCheckGrpcExample(t *testing.T) 
 
 func testAccComputeRegionHealthCheck_regionHealthCheckGrpcExample(context map[string]interface{}) string {
 	return Nprintf(`
-resource "google_compute_region_health_check" "grpc-health-check" {
+resource "google_compute_region_health_check" "grpc-region-health-check" {
   name = "tf-test-grpc-region-health-check%{random_suffix}"
 
   timeout_sec        = 1
@@ -556,7 +556,7 @@ func TestAccComputeRegionHealthCheck_regionHealthCheckGrpcFullExample(t *testing
 
 func testAccComputeRegionHealthCheck_regionHealthCheckGrpcFullExample(context map[string]interface{}) string {
 	return Nprintf(`
-resource "google_compute_region_health_check" "grpc-health-check" {
+resource "google_compute_region_health_check" "grpc-region-health-check" {
   name = "tf-test-grpc-region-health-check%{random_suffix}"
 
   timeout_sec        = 1
