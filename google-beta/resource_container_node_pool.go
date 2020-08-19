@@ -769,6 +769,7 @@ func nodePoolUpdate(d *schema.ResourceData, meta interface{}, nodePoolInfo *Node
 
 			log.Printf("[INFO] Updated workload_metadata_config for node pool %s", name)
 		}
+
 		if d.HasChange(prefix + "node_config.0.kubelet_config") {
 			req := &containerBeta.UpdateNodePoolRequest{
 				NodePoolId: name,

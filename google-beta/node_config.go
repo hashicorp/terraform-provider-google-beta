@@ -242,7 +242,8 @@ func schemaNodeConfig() *schema.Schema {
 					Optional: true,
 					ForceNew: true,
 				},
-
+				// Note that AtLeastOneOf can't be set because this schema is reused by
+				// two different resources.
 				"kubelet_config": {
 					Type:     schema.TypeList,
 					Optional: true,
@@ -251,8 +252,8 @@ func schemaNodeConfig() *schema.Schema {
 						Schema: map[string]*schema.Schema{
 							"cpu_manager_policy": {
 								Type:         schema.TypeString,
-								Optional:     true,
-								ValidateFunc: validation.StringInSlice([]string{"static", "default"}, false),
+								Required:     true,
+								ValidateFunc: validation.StringInSlice([]string{"static", "none"}, false),
 							},
 							"cpu_cfs_quota": {
 								Type:     schema.TypeBool,
