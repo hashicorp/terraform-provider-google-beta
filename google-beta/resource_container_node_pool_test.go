@@ -276,7 +276,15 @@ func TestAccContainerNodePool_withKubeletConfig(t *testing.T) {
 		CheckDestroy: testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccContainerNodePool_withKubeletConfig(cluster, np, "static"),
+				Config: testAccContainerNodePool_withKubeletConfig(cluster, np, "static", "100us", false),
+			},
+			{
+				ResourceName:      "google_container_node_pool.with_kubelet_config",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+			{
+				Config: testAccContainerNodePool_withKubeletConfig(cluster, np, "static", "200us", true),
 			},
 			{
 				ResourceName:      "google_container_node_pool.with_kubelet_config",
@@ -299,7 +307,7 @@ func TestAccContainerNodePool_withInvalidKubeletCpuManagerPolicy(t *testing.T) {
 		CheckDestroy: testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config:      testAccContainerNodePool_withKubeletConfig(cluster, np, "dontexist"),
+				Config:      testAccContainerNodePool_withKubeletConfig(cluster, np, "dontexist", "100us", true),
 				ExpectError: regexp.MustCompile(`.*to be one of \[static default\].*`),
 			},
 		},
@@ -1427,7 +1435,7 @@ resource "google_container_node_pool" "with_sandbox_config" {
 `, cluster, np)
 }
 
-func testAccContainerNodePool_withKubeletConfig(cluster, np, policy string) string {
+func testAccContainerNodePool_withKubeletConfig(cluster, np, policy, period string, quota bool) string {
 	return fmt.Sprintf(`
 data "google_container_engine_versions" "central1a" {
   location = "us-central1-a"
@@ -1448,9 +1456,9 @@ resource "google_container_node_pool" "with_kubelet_config" {
   node_config {
     image_type = "COS_CONTAINERD"
     kubelet_config {
-      cpu_manager_policy   = "%s"
-      cpu_cfs_quota        = true
-      cpu_cfs_quota_period = "100us"
+      cpu_manager_policy   = %q
+      cpu_cfs_quota        = %v
+      cpu_cfs_quota_period = %q
     }
     oauth_scopes = [
       "https://www.googleapis.com/auth/logging.write",
@@ -1458,7 +1466,7 @@ resource "google_container_node_pool" "with_kubelet_config" {
     ]
   }
 }
-`, cluster, np, policy)
+`, cluster, np, policy, quota, period)
 }
 
 func testAccContainerNodePool_withLinuxNodeConfig(cluster, np string, maxBacklog, soMaxConn int, tcpMem string, twReuse int) string {
