@@ -242,6 +242,44 @@ func schemaNodeConfig() *schema.Schema {
 					Optional: true,
 					ForceNew: true,
 				},
+
+				"kubelet_config": {
+					Type:     schema.TypeList,
+					Optional: true,
+					MaxItems: 1,
+					Elem: &schema.Resource{
+						Schema: map[string]*schema.Schema{
+							"cpu_manager_policy": {
+								Type:         schema.TypeString,
+								Optional:     true,
+								ValidateFunc: validation.StringInSlice([]string{"static", "default"}, false),
+							},
+							"cpu_cfs_quota": {
+								Type:     schema.TypeBool,
+								Optional: true,
+							},
+							"cpu_cfs_quota_period": {
+								Type:     schema.TypeString,
+								Optional: true,
+							},
+						},
+					},
+				},
+
+				"linux_node_config": {
+					Type:     schema.TypeList,
+					Optional: true,
+					MaxItems: 1,
+					Elem: &schema.Resource{
+						Schema: map[string]*schema.Schema{
+							"sysctls": {
+								Type:     schema.TypeMap,
+								Required: true,
+								Elem:     &schema.Schema{Type: schema.TypeString},
+							},
+						},
+					},
+				},
 			},
 		},
 	}
@@ -381,6 +419,14 @@ func expandNodeConfig(v interface{}) *containerBeta.NodeConfig {
 		nc.BootDiskKmsKey = v.(string)
 	}
 
+	if v, ok := nodeConfig["kubelet_config"]; ok {
+		nc.KubeletConfig = expandKubeletConfig(v)
+	}
+
+	if v, ok := nodeConfig["linux_node_config"]; ok {
+		nc.LinuxNodeConfig = expandLinuxNodeConfig(v)
+	}
+
 	return nc
 }
 
@@ -396,6 +442,50 @@ func expandWorkloadMetadataConfig(v interface{}) *containerBeta.WorkloadMetadata
 	cfg := ls[0].(map[string]interface{})
 	return &containerBeta.WorkloadMetadataConfig{
 		NodeMetadata: cfg["node_metadata"].(string),
+	}
+}
+
+func expandKubeletConfig(v interface{}) *containerBeta.NodeKubeletConfig {
+	if v == nil {
+		return nil
+	}
+	ls := v.([]interface{})
+	if len(ls) == 0 {
+		return nil
+	}
+	cfg := ls[0].(map[string]interface{})
+	kConfig := &containerBeta.NodeKubeletConfig{}
+	if cpuManagerPolicy, ok := cfg["cpu_manager_policy"]; ok {
+		kConfig.CpuManagerPolicy = cpuManagerPolicy.(string)
+	}
+	if cpuCfsQuota, ok := cfg["cpu_cfs_quota"]; ok {
+		kConfig.CpuCfsQuota = cpuCfsQuota.(bool)
+	}
+	if cpuCfsQuotaPeriod, ok := cfg["cpu_cfs_quota_period"]; ok {
+		kConfig.CpuCfsQuotaPeriod = cpuCfsQuotaPeriod.(string)
+	}
+	return kConfig
+}
+
+func expandLinuxNodeConfig(v interface{}) *containerBeta.LinuxNodeConfig {
+	if v == nil {
+		return nil
+	}
+	ls := v.([]interface{})
+	if len(ls) == 0 {
+		return nil
+	}
+	cfg := ls[0].(map[string]interface{})
+	sysCfgRaw, ok := cfg["sysctls"]
+	if !ok {
+		return nil
+	}
+	m := make(map[string]string)
+	for k, v := range sysCfgRaw.(map[string]interface{}) {
+		m[k] = v.(string)
+	}
+	return &containerBeta.LinuxNodeConfig{
+		Sysctls: m,
 	}
 }
 
@@ -424,6 +514,8 @@ func flattenNodeConfig(c *containerBeta.NodeConfig) []map[string]interface{} {
 		"workload_metadata_config": flattenWorkloadMetadataConfig(c.WorkloadMetadataConfig),
 		"sandbox_config":           flattenSandboxConfig(c.SandboxConfig),
 		"boot_disk_kms_key":        c.BootDiskKmsKey,
+		"kubelet_config":           flattenKubeletConfig(c.KubeletConfig),
+		"linux_node_config":        flattenLinuxNodeConfig(c.LinuxNodeConfig),
 	})
 
 	if len(c.OauthScopes) > 0 {
@@ -600,4 +692,26 @@ func containerNodePoolTaintSuppress(k, old, new string, d *schema.ResourceData) 
 	}
 
 	return true
+}
+
+func flattenKubeletConfig(c *containerBeta.NodeKubeletConfig) []map[string]interface{} {
+	result := []map[string]interface{}{}
+	if c != nil {
+		result = append(result, map[string]interface{}{
+			"cpu_cfs_quota":        c.CpuCfsQuota,
+			"cpu_cfs_quota_period": c.CpuCfsQuotaPeriod,
+			"cpu_manager_policy":   c.CpuManagerPolicy,
+		})
+	}
+	return result
+}
+
+func flattenLinuxNodeConfig(c *containerBeta.LinuxNodeConfig) []map[string]interface{} {
+	result := []map[string]interface{}{}
+	if c != nil {
+		result = append(result, map[string]interface{}{
+			"sysctls": c.Sysctls,
+		})
+	}
+	return result
 }
