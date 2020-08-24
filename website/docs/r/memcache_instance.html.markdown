@@ -171,6 +171,9 @@ In addition to the arguments listed above, the following computed attributes are
 * `create_time` -
   Creation timestamp in RFC3339 text format.
 
+* `discovery_endpoint` -
+  Endpoint for Discovery API
+
 * `memcache_full_version` -
   The full version of memcached server running on this instance.
 
