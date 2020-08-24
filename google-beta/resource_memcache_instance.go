@@ -149,6 +149,11 @@ provided, all zones will be used.`,
 				Computed:    true,
 				Description: `Creation timestamp in RFC3339 text format.`,
 			},
+			"discovery_endpoint": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: `Endpoint for Discovery API`,
+			},
 			"memcache_full_version": {
 				Type:        schema.TypeString,
 				Computed:    true,
@@ -333,6 +338,9 @@ func resourceMemcacheInstanceRead(d *schema.ResourceData, meta interface{}) erro
 		return fmt.Errorf("Error reading Instance: %s", err)
 	}
 	if err := d.Set("create_time", flattenMemcacheInstanceCreateTime(res["createTime"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Instance: %s", err)
+	}
+	if err := d.Set("discovery_endpoint", flattenMemcacheInstanceDiscoveryEndpoint(res["discoveryEndpoint"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Instance: %s", err)
 	}
 	if err := d.Set("labels", flattenMemcacheInstanceLabels(res["labels"], d, config)); err != nil {
@@ -559,6 +567,10 @@ func flattenMemcacheInstanceMemcacheNodesState(v interface{}, d *schema.Resource
 }
 
 func flattenMemcacheInstanceCreateTime(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	return v
+}
+
+func flattenMemcacheInstanceDiscoveryEndpoint(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
