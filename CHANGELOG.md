@@ -3,18 +3,20 @@
 FEATURES:
 * **New Resource:** `google_active_directory_domain_trust` ([#2401](https://github.com/hashicorp/terraform-provider-google-beta/pull/2401))
 * **New Resource:** `google_access_context_manager_service_perimeters` ([#2382](https://github.com/hashicorp/terraform-provider-google-beta/pull/2382))
+* **New Resource:** `google_access_context_manager_access_levels` ([#2382](https://github.com/hashicorp/terraform-provider-google-beta/pull/2382))
 * **New Resource:** `google_folder_access_approval_settings` ([#2373](https://github.com/hashicorp/terraform-provider-google-beta/pull/2373))
 * **New Resource:** `google_organization_access_approval_settings` ([#2373](https://github.com/hashicorp/terraform-provider-google-beta/pull/2373))
 * **New Resource:** `google_project_access_approval_settings` ([#2373](https://github.com/hashicorp/terraform-provider-google-beta/pull/2373))
+* **New Resource:** `google_bigquery_table_iam_policy` ([#2392](https://github.com/hashicorp/terraform-provider-google-beta/pull/2392))
+* **New Resource:** `google_bigquery_table_iam_binding` ([#2392](https://github.com/hashicorp/terraform-provider-google-beta/pull/2392))
+* **New Resource:** `google_bigquery_table_iam_member` ([#2392](https://github.com/hashicorp/terraform-provider-google-beta/pull/2392))
 
 IMPROVEMENTS:
-* bigquery: added support for BigQuery table ACLs ([#2392](https://github.com/hashicorp/terraform-provider-google-beta/pull/2392))
 * billing: added `last_period_amount` field to `google_billing_budget` to allow setting budget amount automatically to the last billing period's spend. ([#2378](https://github.com/hashicorp/terraform-provider-google-beta/pull/2378))
 * compute: added confidential_instance_config block to google_compute_instance ([#2369](https://github.com/hashicorp/terraform-provider-google-beta/pull/2369))
 * compute: added confidential_instance_config block to google_compute_instance_template ([#2369](https://github.com/hashicorp/terraform-provider-google-beta/pull/2369))
 * compute: added grpc_health_check block to compute_health_check ([#2389](https://github.com/hashicorp/terraform-provider-google-beta/pull/2389))
 * compute: added grpc_health_check block to compute_region_health_check ([#2389](https://github.com/hashicorp/terraform-provider-google-beta/pull/2389))
-* compute: set the default value for log_config.enable on `google_compute_health_check` to avoid permanent diff on plan/apply. ([#2399](https://github.com/hashicorp/terraform-provider-google-beta/pull/2399))
 * pubsub: added `enable_message_ordering` support to `google_pubsub_subscription` ([#2390](https://github.com/hashicorp/terraform-provider-google-beta/pull/2390))
 * sql: added project field to `google_sql_database_instance` datasource. ([#2370](https://github.com/hashicorp/terraform-provider-google-beta/pull/2370))
 * storage: added `ARCHIVE` as an accepted class for `google_storage_bucket` and `google_storage_bucket_object` ([#2385](https://github.com/hashicorp/terraform-provider-google-beta/pull/2385))
@@ -25,6 +27,7 @@ BUG FIXES:
 * bigquery: fixed an issue with `use_legacy_sql` not being set to `false`. ([#2375](https://github.com/hashicorp/terraform-provider-google-beta/pull/2375))
 * cloudidentity: fixed a bug with importing `google_cloud_identity_group` and `google_cloud_identity_group_membership` ([#2379](https://github.com/hashicorp/terraform-provider-google-beta/pull/2379))
 * cloudidentity: fixed cloud identity datasources to handle pagination ([#2387](https://github.com/hashicorp/terraform-provider-google-beta/pull/2387))
+* compute: set the default value for log_config.enable on `google_compute_health_check` to avoid permanent diff on plan/apply. ([#2399](https://github.com/hashicorp/terraform-provider-google-beta/pull/2399))
 * dns: fixed an issue where `google_dns_managed_zone` would not remove `private_visibility_config` on updates ([#2380](https://github.com/hashicorp/terraform-provider-google-beta/pull/2380))
 * sql: fixed an issue where `google_sql_database_instance` would throw an error when removing `private_network`. Removing `private_network` now recreates the resource. ([#2400](https://github.com/hashicorp/terraform-provider-google-beta/pull/2400))
 
