@@ -259,14 +259,11 @@ This resource provides the following
 PacketMirroring can be imported using any of these accepted formats:
 
 ```
-$ terraform import -provider=google-beta google_compute_packet_mirroring.default projects/{{project}}/regions/{{region}}/packetMirrorings/{{name}}
-$ terraform import -provider=google-beta google_compute_packet_mirroring.default {{project}}/{{region}}/{{name}}
-$ terraform import -provider=google-beta google_compute_packet_mirroring.default {{region}}/{{name}}
-$ terraform import -provider=google-beta google_compute_packet_mirroring.default {{name}}
+$ terraform import google_compute_packet_mirroring.default projects/{{project}}/regions/{{region}}/packetMirrorings/{{name}}
+$ terraform import google_compute_packet_mirroring.default {{project}}/{{region}}/{{name}}
+$ terraform import google_compute_packet_mirroring.default {{region}}/{{name}}
+$ terraform import google_compute_packet_mirroring.default {{name}}
 ```
-
--> If you're importing a resource with beta features, make sure to include `-provider=google-beta`
-as an argument so that Terraform uses the correct provider to import your resource.
 
 ## User Project Overrides
 

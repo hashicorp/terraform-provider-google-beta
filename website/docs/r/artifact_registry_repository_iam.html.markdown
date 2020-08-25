@@ -130,7 +130,7 @@ Artifact Registry repository IAM resources can be imported using the resource id
 
 IAM member imports use space-delimited identifiers: the resource in question, the role, and the member identity, e.g.
 ```
-$ terraform import -provider=google-beta google_artifact_registry_repository_iam_member.editor "projects/{{project}}/locations/{{location}}/repositories/{{repository}} roles/viewer user:jane@example.com"
+$ terraform import google_artifact_registry_repository_iam_member.editor "projects/{{project}}/locations/{{location}}/repositories/{{repository}} roles/viewer user:jane@example.com"
 ```
 
 IAM binding imports use space-delimited identifiers: the resource in question and the role, e.g.
@@ -140,11 +140,8 @@ $ terraform import google_artifact_registry_repository_iam_binding.editor "proje
 
 IAM policy imports use the identifier of the resource in question, e.g.
 ```
-$ terraform import -provider=google-beta google_artifact_registry_repository_iam_policy.editor projects/{{project}}/locations/{{location}}/repositories/{{repository}}
+$ terraform import google_artifact_registry_repository_iam_policy.editor projects/{{project}}/locations/{{location}}/repositories/{{repository}}
 ```
-
--> If you're importing a resource with beta features, make sure to include `-provider=google-beta`
-as an argument so that Terraform uses the correct provider to import your resource.
 
 -> **Custom Roles**: If you're importing a IAM resource with a custom role, make sure to use the
  full name of the custom role, e.g. `[projects/my-project|organizations/my-org]/roles/my-custom-role`.

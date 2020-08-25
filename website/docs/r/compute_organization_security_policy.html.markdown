@@ -109,9 +109,6 @@ This resource provides the following
 OrganizationSecurityPolicy can be imported using any of these accepted formats:
 
 ```
-$ terraform import -provider=google-beta google_compute_organization_security_policy.default locations/global/securityPolicies/{{policy_id}}
-$ terraform import -provider=google-beta google_compute_organization_security_policy.default {{policy_id}}
+$ terraform import google_compute_organization_security_policy.default locations/global/securityPolicies/{{policy_id}}
+$ terraform import google_compute_organization_security_policy.default {{policy_id}}
 ```
-
--> If you're importing a resource with beta features, make sure to include `-provider=google-beta`
-as an argument so that Terraform uses the correct provider to import your resource.

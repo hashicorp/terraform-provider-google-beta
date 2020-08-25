@@ -240,11 +240,8 @@ This resource provides the following
 Connection can be imported using any of these accepted formats:
 
 ```
-$ terraform import -provider=google-beta google_bigquery_connection.default {{name}}
+$ terraform import google_bigquery_connection.default {{name}}
 ```
-
--> If you're importing a resource with beta features, make sure to include `-provider=google-beta`
-as an argument so that Terraform uses the correct provider to import your resource.
 
 ## User Project Overrides
 

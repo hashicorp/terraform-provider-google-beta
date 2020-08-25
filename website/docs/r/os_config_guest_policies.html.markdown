@@ -822,13 +822,10 @@ This resource provides the following
 GuestPolicies can be imported using any of these accepted formats:
 
 ```
-$ terraform import -provider=google-beta google_os_config_guest_policies.default projects/{{project}}/guestPolicies/{{name}}
-$ terraform import -provider=google-beta google_os_config_guest_policies.default {{project}}/{{name}}
-$ terraform import -provider=google-beta google_os_config_guest_policies.default {{name}}
+$ terraform import google_os_config_guest_policies.default projects/{{project}}/guestPolicies/{{name}}
+$ terraform import google_os_config_guest_policies.default {{project}}/{{name}}
+$ terraform import google_os_config_guest_policies.default {{name}}
 ```
-
--> If you're importing a resource with beta features, make sure to include `-provider=google-beta`
-as an argument so that Terraform uses the correct provider to import your resource.
 
 ## User Project Overrides
 

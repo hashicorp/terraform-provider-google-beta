@@ -114,13 +114,10 @@ This resource provides the following
 MachineImage can be imported using any of these accepted formats:
 
 ```
-$ terraform import -provider=google-beta google_compute_machine_image.default projects/{{project}}/global/machineImages/{{name}}
-$ terraform import -provider=google-beta google_compute_machine_image.default {{project}}/{{name}}
-$ terraform import -provider=google-beta google_compute_machine_image.default {{name}}
+$ terraform import google_compute_machine_image.default projects/{{project}}/global/machineImages/{{name}}
+$ terraform import google_compute_machine_image.default {{project}}/{{name}}
+$ terraform import google_compute_machine_image.default {{name}}
 ```
-
--> If you're importing a resource with beta features, make sure to include `-provider=google-beta`
-as an argument so that Terraform uses the correct provider to import your resource.
 
 ## User Project Overrides
 

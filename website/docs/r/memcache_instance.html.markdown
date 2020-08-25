@@ -209,14 +209,11 @@ This resource provides the following
 Instance can be imported using any of these accepted formats:
 
 ```
-$ terraform import -provider=google-beta google_memcache_instance.default projects/{{project}}/locations/{{region}}/instances/{{name}}
-$ terraform import -provider=google-beta google_memcache_instance.default {{project}}/{{region}}/{{name}}
-$ terraform import -provider=google-beta google_memcache_instance.default {{region}}/{{name}}
-$ terraform import -provider=google-beta google_memcache_instance.default {{name}}
+$ terraform import google_memcache_instance.default projects/{{project}}/locations/{{region}}/instances/{{name}}
+$ terraform import google_memcache_instance.default {{project}}/{{region}}/{{name}}
+$ terraform import google_memcache_instance.default {{region}}/{{name}}
+$ terraform import google_memcache_instance.default {{name}}
 ```
-
--> If you're importing a resource with beta features, make sure to include `-provider=google-beta`
-as an argument so that Terraform uses the correct provider to import your resource.
 
 ## User Project Overrides
 

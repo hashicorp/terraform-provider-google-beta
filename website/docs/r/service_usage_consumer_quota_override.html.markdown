@@ -124,13 +124,10 @@ This resource provides the following
 ConsumerQuotaOverride can be imported using any of these accepted formats:
 
 ```
-$ terraform import -provider=google-beta google_service_usage_consumer_quota_override.default projects/{{project}}/services/{{service}}/consumerQuotaMetrics/{{metric}}/limits/{{limit}}/consumerOverrides/{{name}}
-$ terraform import -provider=google-beta google_service_usage_consumer_quota_override.default {{project}}/{{service}}/{{metric}}/{{limit}}/{{name}}
-$ terraform import -provider=google-beta google_service_usage_consumer_quota_override.default {{service}}/{{metric}}/{{limit}}/{{name}}
+$ terraform import google_service_usage_consumer_quota_override.default projects/{{project}}/services/{{service}}/consumerQuotaMetrics/{{metric}}/limits/{{limit}}/consumerOverrides/{{name}}
+$ terraform import google_service_usage_consumer_quota_override.default {{project}}/{{service}}/{{metric}}/{{limit}}/{{name}}
+$ terraform import google_service_usage_consumer_quota_override.default {{service}}/{{metric}}/{{limit}}/{{name}}
 ```
-
--> If you're importing a resource with beta features, make sure to include `-provider=google-beta`
-as an argument so that Terraform uses the correct provider to import your resource.
 
 ## User Project Overrides
 

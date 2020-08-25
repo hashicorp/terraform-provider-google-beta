@@ -111,10 +111,7 @@ This resource provides the following
 Service can be imported using any of these accepted formats:
 
 ```
-$ terraform import -provider=google-beta google_service_directory_service.default projects/{{project}}/locations/{{location}}/namespaces/{{namespace_id}}/services/{{service_id}}
-$ terraform import -provider=google-beta google_service_directory_service.default {{project}}/{{location}}/{{namespace_id}}/{{service_id}}
-$ terraform import -provider=google-beta google_service_directory_service.default {{location}}/{{namespace_id}}/{{service_id}}
+$ terraform import google_service_directory_service.default projects/{{project}}/locations/{{location}}/namespaces/{{namespace_id}}/services/{{service_id}}
+$ terraform import google_service_directory_service.default {{project}}/{{location}}/{{namespace_id}}/{{service_id}}
+$ terraform import google_service_directory_service.default {{location}}/{{namespace_id}}/{{service_id}}
 ```
-
--> If you're importing a resource with beta features, make sure to include `-provider=google-beta`
-as an argument so that Terraform uses the correct provider to import your resource.

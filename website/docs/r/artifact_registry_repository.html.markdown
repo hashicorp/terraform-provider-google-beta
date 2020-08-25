@@ -182,14 +182,11 @@ This resource provides the following
 Repository can be imported using any of these accepted formats:
 
 ```
-$ terraform import -provider=google-beta google_artifact_registry_repository.default projects/{{project}}/locations/{{location}}/repositories/{{repository_id}}
-$ terraform import -provider=google-beta google_artifact_registry_repository.default {{project}}/{{location}}/{{repository_id}}
-$ terraform import -provider=google-beta google_artifact_registry_repository.default {{location}}/{{repository_id}}
-$ terraform import -provider=google-beta google_artifact_registry_repository.default {{repository_id}}
+$ terraform import google_artifact_registry_repository.default projects/{{project}}/locations/{{location}}/repositories/{{repository_id}}
+$ terraform import google_artifact_registry_repository.default {{project}}/{{location}}/{{repository_id}}
+$ terraform import google_artifact_registry_repository.default {{location}}/{{repository_id}}
+$ terraform import google_artifact_registry_repository.default {{repository_id}}
 ```
-
--> If you're importing a resource with beta features, make sure to include `-provider=google-beta`
-as an argument so that Terraform uses the correct provider to import your resource.
 
 ## User Project Overrides
 

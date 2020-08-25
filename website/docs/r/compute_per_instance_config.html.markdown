@@ -209,14 +209,11 @@ This resource provides the following
 PerInstanceConfig can be imported using any of these accepted formats:
 
 ```
-$ terraform import -provider=google-beta google_compute_per_instance_config.default projects/{{project}}/zones/{{zone}}/instanceGroupManagers/{{instance_group_manager}}/{{name}}
-$ terraform import -provider=google-beta google_compute_per_instance_config.default {{project}}/{{zone}}/{{instance_group_manager}}/{{name}}
-$ terraform import -provider=google-beta google_compute_per_instance_config.default {{zone}}/{{instance_group_manager}}/{{name}}
-$ terraform import -provider=google-beta google_compute_per_instance_config.default {{instance_group_manager}}/{{name}}
+$ terraform import google_compute_per_instance_config.default projects/{{project}}/zones/{{zone}}/instanceGroupManagers/{{instance_group_manager}}/{{name}}
+$ terraform import google_compute_per_instance_config.default {{project}}/{{zone}}/{{instance_group_manager}}/{{name}}
+$ terraform import google_compute_per_instance_config.default {{zone}}/{{instance_group_manager}}/{{name}}
+$ terraform import google_compute_per_instance_config.default {{instance_group_manager}}/{{name}}
 ```
-
--> If you're importing a resource with beta features, make sure to include `-provider=google-beta`
-as an argument so that Terraform uses the correct provider to import your resource.
 
 ## User Project Overrides
 
