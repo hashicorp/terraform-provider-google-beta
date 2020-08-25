@@ -211,9 +211,6 @@ This resource provides the following
 OrganizationSecurityPolicyRule can be imported using any of these accepted formats:
 
 ```
-$ terraform import -provider=google-beta google_compute_organization_security_policy_rule.default {{policy_id}}/priority/{{priority}}
-$ terraform import -provider=google-beta google_compute_organization_security_policy_rule.default {{policy_id}}/{{priority}}
+$ terraform import google_compute_organization_security_policy_rule.default {{policy_id}}/priority/{{priority}}
+$ terraform import google_compute_organization_security_policy_rule.default {{policy_id}}/{{priority}}
 ```
-
--> If you're importing a resource with beta features, make sure to include `-provider=google-beta`
-as an argument so that Terraform uses the correct provider to import your resource.

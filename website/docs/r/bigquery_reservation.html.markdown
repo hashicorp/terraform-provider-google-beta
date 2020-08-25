@@ -107,13 +107,10 @@ This resource provides the following
 Reservation can be imported using any of these accepted formats:
 
 ```
-$ terraform import -provider=google-beta google_bigquery_reservation.default projects/{{project}}/locations/{{location}}/reservations/{{name}}
-$ terraform import -provider=google-beta google_bigquery_reservation.default {{project}}/{{location}}/{{name}}
-$ terraform import -provider=google-beta google_bigquery_reservation.default {{location}}/{{name}}
+$ terraform import google_bigquery_reservation.default projects/{{project}}/locations/{{location}}/reservations/{{name}}
+$ terraform import google_bigquery_reservation.default {{project}}/{{location}}/{{name}}
+$ terraform import google_bigquery_reservation.default {{location}}/{{name}}
 ```
-
--> If you're importing a resource with beta features, make sure to include `-provider=google-beta`
-as an argument so that Terraform uses the correct provider to import your resource.
 
 ## User Project Overrides
 

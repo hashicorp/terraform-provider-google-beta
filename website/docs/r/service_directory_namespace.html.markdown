@@ -110,10 +110,7 @@ This resource provides the following
 Namespace can be imported using any of these accepted formats:
 
 ```
-$ terraform import -provider=google-beta google_service_directory_namespace.default projects/{{project}}/locations/{{location}}/namespaces/{{namespace_id}}
-$ terraform import -provider=google-beta google_service_directory_namespace.default {{project}}/{{location}}/{{namespace_id}}
-$ terraform import -provider=google-beta google_service_directory_namespace.default {{location}}/{{namespace_id}}
+$ terraform import google_service_directory_namespace.default projects/{{project}}/locations/{{location}}/namespaces/{{namespace_id}}
+$ terraform import google_service_directory_namespace.default {{project}}/{{location}}/{{namespace_id}}
+$ terraform import google_service_directory_namespace.default {{location}}/{{namespace_id}}
 ```
-
--> If you're importing a resource with beta features, make sure to include `-provider=google-beta`
-as an argument so that Terraform uses the correct provider to import your resource.

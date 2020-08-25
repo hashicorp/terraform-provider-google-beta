@@ -230,13 +230,10 @@ This resource provides the following
 ExternalVpnGateway can be imported using any of these accepted formats:
 
 ```
-$ terraform import -provider=google-beta google_compute_external_vpn_gateway.default projects/{{project}}/global/externalVpnGateways/{{name}}
-$ terraform import -provider=google-beta google_compute_external_vpn_gateway.default {{project}}/{{name}}
-$ terraform import -provider=google-beta google_compute_external_vpn_gateway.default {{name}}
+$ terraform import google_compute_external_vpn_gateway.default projects/{{project}}/global/externalVpnGateways/{{name}}
+$ terraform import google_compute_external_vpn_gateway.default {{project}}/{{name}}
+$ terraform import google_compute_external_vpn_gateway.default {{name}}
 ```
-
--> If you're importing a resource with beta features, make sure to include `-provider=google-beta`
-as an argument so that Terraform uses the correct provider to import your resource.
 
 ## User Project Overrides
 

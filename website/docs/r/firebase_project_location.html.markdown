@@ -110,12 +110,9 @@ This resource provides the following
 ProjectLocation can be imported using any of these accepted formats:
 
 ```
-$ terraform import -provider=google-beta google_firebase_project_location.default projects/{{project}}
-$ terraform import -provider=google-beta google_firebase_project_location.default {{project}}
+$ terraform import google_firebase_project_location.default projects/{{project}}
+$ terraform import google_firebase_project_location.default {{project}}
 ```
-
--> If you're importing a resource with beta features, make sure to include `-provider=google-beta`
-as an argument so that Terraform uses the correct provider to import your resource.
 
 ## User Project Overrides
 

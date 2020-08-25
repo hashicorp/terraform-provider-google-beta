@@ -232,8 +232,5 @@ This resource provides the following
 GroupMembership can be imported using any of these accepted formats:
 
 ```
-$ terraform import -provider=google-beta google_cloud_identity_group_membership.default {{name}}
+$ terraform import google_cloud_identity_group_membership.default {{name}}
 ```
-
--> If you're importing a resource with beta features, make sure to include `-provider=google-beta`
-as an argument so that Terraform uses the correct provider to import your resource.

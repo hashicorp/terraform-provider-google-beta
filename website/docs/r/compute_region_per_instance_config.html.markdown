@@ -210,14 +210,11 @@ This resource provides the following
 RegionPerInstanceConfig can be imported using any of these accepted formats:
 
 ```
-$ terraform import -provider=google-beta google_compute_region_per_instance_config.default projects/{{project}}/regions/{{region}}/instanceGroupManagers/{{region_instance_group_manager}}/{{name}}
-$ terraform import -provider=google-beta google_compute_region_per_instance_config.default {{project}}/{{region}}/{{region_instance_group_manager}}/{{name}}
-$ terraform import -provider=google-beta google_compute_region_per_instance_config.default {{region}}/{{region_instance_group_manager}}/{{name}}
-$ terraform import -provider=google-beta google_compute_region_per_instance_config.default {{region_instance_group_manager}}/{{name}}
+$ terraform import google_compute_region_per_instance_config.default projects/{{project}}/regions/{{region}}/instanceGroupManagers/{{region_instance_group_manager}}/{{name}}
+$ terraform import google_compute_region_per_instance_config.default {{project}}/{{region}}/{{region_instance_group_manager}}/{{name}}
+$ terraform import google_compute_region_per_instance_config.default {{region}}/{{region_instance_group_manager}}/{{name}}
+$ terraform import google_compute_region_per_instance_config.default {{region_instance_group_manager}}/{{name}}
 ```
-
--> If you're importing a resource with beta features, make sure to include `-provider=google-beta`
-as an argument so that Terraform uses the correct provider to import your resource.
 
 ## User Project Overrides
 
