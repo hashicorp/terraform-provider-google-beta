@@ -50,6 +50,8 @@ var (
 		"config.0.software_config",
 		"config.0.private_environment_config",
 		"config.0.web_server_network_access_control",
+		"config.0.database_config",
+		"config.0.web_server_config",
 	}
 
 	allowedIpRangesConfig = &schema.Resource{
@@ -386,6 +388,42 @@ func resourceComposerEnvironment() *schema.Resource {
 								},
 							},
 						},
+						"database_config": {
+							Type:         schema.TypeList,
+							Optional:     true,
+							Computed:     true,
+							AtLeastOneOf: composerConfigKeys,
+							MaxItems:     1,
+							Description:  `The configuration of Cloud SQL instance that is used by the Apache Airflow software.`,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"machine_type": {
+										Type:        schema.TypeString,
+										Required:    true,
+										ForceNew:    true,
+										Description: `Optional. Cloud SQL machine type used by Airflow database. It has to be one of: db-n1-standard-2, db-n1-standard-4, db-n1-standard-8 or db-n1-standard-16. If not specified, db-n1-standard-2 will be used.`,
+									},
+								},
+							},
+						},
+						"web_server_config": {
+							Type:         schema.TypeList,
+							Optional:     true,
+							Computed:     true,
+							AtLeastOneOf: composerConfigKeys,
+							MaxItems:     1,
+							Description:  `The configuration settings for the Airflow web server App Engine instance.`,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"machine_type": {
+										Type:        schema.TypeString,
+										Required:    true,
+										ForceNew:    true,
+										Description: `Optional. Machine type on which Airflow web server is running. It has to be one of: composer-n1-webserver-2, composer-n1-webserver-4 or composer-n1-webserver-8. If not specified, composer-n1-webserver-2 will be used. Value custom is returned only in response, if Airflow web server parameters were manually changed to a non-standard values.`,
+									},
+								},
+							},
+						},
 						"airflow_uri": {
 							Type:        schema.TypeString,
 							Computed:    true,
@@ -623,6 +661,30 @@ func resourceComposerEnvironmentUpdate(d *schema.ResourceData, meta interface{})
 			}
 			d.SetPartial("config")
 		}
+
+		if d.HasChange("config.0.database_config") {
+			patchObj := &composer.Environment{Config: &composer.EnvironmentConfig{}}
+			if config != nil {
+				patchObj.Config.DatabaseConfig = config.DatabaseConfig
+			}
+			err = resourceComposerEnvironmentPatchField("config.databaseConfig", patchObj, d, tfConfig)
+			if err != nil {
+				return err
+			}
+			d.SetPartial("config")
+		}
+
+		if d.HasChange("config.0.web_server_config") {
+			patchObj := &composer.Environment{Config: &composer.EnvironmentConfig{}}
+			if config != nil {
+				patchObj.Config.WebServerConfig = config.WebServerConfig
+			}
+			err = resourceComposerEnvironmentPatchField("config.webServerConfig", patchObj, d, tfConfig)
+			if err != nil {
+				return err
+			}
+			d.SetPartial("config")
+		}
 	}
 
 	if d.HasChange("labels") {
@@ -740,6 +802,8 @@ func flattenComposerEnvironmentConfig(envCfg *composer.EnvironmentConfig) interf
 	transformed["software_config"] = flattenComposerEnvironmentConfigSoftwareConfig(envCfg.SoftwareConfig)
 	transformed["private_environment_config"] = flattenComposerEnvironmentConfigPrivateEnvironmentConfig(envCfg.PrivateEnvironmentConfig)
 	transformed["web_server_network_access_control"] = flattenComposerEnvironmentConfigWebServerNetworkAccessControl(envCfg.WebServerNetworkAccessControl)
+	transformed["database_config"] = flattenComposerEnvironmentConfigDatabaseConfig(envCfg.DatabaseConfig)
+	transformed["web_server_config"] = flattenComposerEnvironmentConfigWebServerConfig(envCfg.WebServerConfig)
 
 	return []interface{}{transformed}
 }
@@ -763,6 +827,28 @@ func flattenComposerEnvironmentConfigWebServerNetworkAccessControl(accessControl
 	webServerNetworkAccessControl["allowed_ip_range"] = schema.NewSet(schema.HashResource(allowedIpRangesConfig), transformed)
 
 	return []interface{}{webServerNetworkAccessControl}
+}
+
+func flattenComposerEnvironmentConfigDatabaseConfig(databaseCfg *composer.DatabaseConfig) interface{} {
+	if databaseCfg == nil {
+		return nil
+	}
+
+	transformed := make(map[string]interface{})
+	transformed["machine_type"] = databaseCfg.MachineType
+
+	return []interface{}{transformed}
+}
+
+func flattenComposerEnvironmentConfigWebServerConfig(webServerCfg *composer.WebServerConfig) interface{} {
+	if webServerCfg == nil {
+		return nil
+	}
+
+	transformed := make(map[string]interface{})
+	transformed["machine_type"] = webServerCfg.MachineType
+
+	return []interface{}{transformed}
 }
 
 func flattenComposerEnvironmentConfigPrivateEnvironmentConfig(envCfg *composer.PrivateEnvironmentConfig) interface{} {
@@ -877,6 +963,18 @@ func expandComposerEnvironmentConfig(v interface{}, d *schema.ResourceData, conf
 	}
 	transformed.WebServerNetworkAccessControl = transformedWebServerNetworkAccessControl
 
+	transformedDatabaseConfig, err := expandComposerEnvironmentConfigDatabaseConfig(original["database_config"], d, config)
+	if err != nil {
+		return nil, err
+	}
+	transformed.DatabaseConfig = transformedDatabaseConfig
+
+	transformedWebServerConfig, err := expandComposerEnvironmentConfigWebServerConfig(original["web_server_config"], d, config)
+	if err != nil {
+		return nil, err
+	}
+	transformed.WebServerConfig = transformedWebServerConfig
+
 	return transformed, nil
 }
 
@@ -913,6 +1011,34 @@ func expandComposerEnvironmentConfigWebServerNetworkAccessControl(v interface{},
 	}
 
 	transformed.AllowedIpRanges = allowedIpRanges
+	return transformed, nil
+}
+
+func expandComposerEnvironmentConfigDatabaseConfig(v interface{}, d *schema.ResourceData, config *Config) (*composer.DatabaseConfig, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+
+	transformed := &composer.DatabaseConfig{}
+	transformed.MachineType = original["machine_type"].(string)
+
+	return transformed, nil
+}
+
+func expandComposerEnvironmentConfigWebServerConfig(v interface{}, d *schema.ResourceData, config *Config) (*composer.WebServerConfig, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+
+	transformed := &composer.WebServerConfig{}
+	transformed.MachineType = original["machine_type"].(string)
+
 	return transformed, nil
 }
 
