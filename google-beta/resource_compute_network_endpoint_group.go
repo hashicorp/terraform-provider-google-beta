@@ -171,20 +171,11 @@ func resourceComputeNetworkEndpointGroupCreate(d *schema.ResourceData, meta inte
 	}
 
 	log.Printf("[DEBUG] Creating new NetworkEndpointGroup: %#v", obj)
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "POST", billingProject, url, obj, d.Timeout(schema.TimeoutCreate))
+	res, err := sendRequestWithTimeout(config, "POST", project, url, obj, d.Timeout(schema.TimeoutCreate))
 	if err != nil {
 		return fmt.Errorf("Error creating NetworkEndpointGroup: %s", err)
 	}
@@ -219,20 +210,11 @@ func resourceComputeNetworkEndpointGroupRead(d *schema.ResourceData, meta interf
 		return err
 	}
 
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequest(config, "GET", billingProject, url, nil)
+	res, err := sendRequest(config, "GET", project, url, nil)
 	if err != nil {
 		return handleNotFoundError(err, d, fmt.Sprintf("ComputeNetworkEndpointGroup %q", d.Id()))
 	}
@@ -275,13 +257,10 @@ func resourceComputeNetworkEndpointGroupRead(d *schema.ResourceData, meta interf
 func resourceComputeNetworkEndpointGroupDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
 
 	url, err := replaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/zones/{{zone}}/networkEndpointGroups/{{name}}")
 	if err != nil {
@@ -291,12 +270,7 @@ func resourceComputeNetworkEndpointGroupDelete(d *schema.ResourceData, meta inte
 	var obj map[string]interface{}
 	log.Printf("[DEBUG] Deleting NetworkEndpointGroup %q", d.Id())
 
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "DELETE", billingProject, url, obj, d.Timeout(schema.TimeoutDelete))
+	res, err := sendRequestWithTimeout(config, "DELETE", project, url, obj, d.Timeout(schema.TimeoutDelete))
 	if err != nil {
 		return handleNotFoundError(err, d, "NetworkEndpointGroup")
 	}

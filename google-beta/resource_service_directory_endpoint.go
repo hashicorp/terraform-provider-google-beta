@@ -118,14 +118,7 @@ func resourceServiceDirectoryEndpointCreate(d *schema.ResourceData, meta interfa
 	}
 
 	log.Printf("[DEBUG] Creating new Endpoint: %#v", obj)
-	billingProject := ""
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "POST", billingProject, url, obj, d.Timeout(schema.TimeoutCreate))
+	res, err := sendRequestWithTimeout(config, "POST", "", url, obj, d.Timeout(schema.TimeoutCreate))
 	if err != nil {
 		return fmt.Errorf("Error creating Endpoint: %s", err)
 	}
@@ -153,14 +146,7 @@ func resourceServiceDirectoryEndpointRead(d *schema.ResourceData, meta interface
 		return err
 	}
 
-	billingProject := ""
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequest(config, "GET", billingProject, url, nil)
+	res, err := sendRequest(config, "GET", "", url, nil)
 	if err != nil {
 		return handleNotFoundError(err, d, fmt.Sprintf("ServiceDirectoryEndpoint %q", d.Id()))
 	}
@@ -183,8 +169,6 @@ func resourceServiceDirectoryEndpointRead(d *schema.ResourceData, meta interface
 
 func resourceServiceDirectoryEndpointUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
-
-	billingProject := ""
 
 	obj := make(map[string]interface{})
 	addressProp, err := expandServiceDirectoryEndpointAddress(d.Get("address"), d, config)
@@ -231,13 +215,7 @@ func resourceServiceDirectoryEndpointUpdate(d *schema.ResourceData, meta interfa
 	if err != nil {
 		return err
 	}
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "PATCH", billingProject, url, obj, d.Timeout(schema.TimeoutUpdate))
+	res, err := sendRequestWithTimeout(config, "PATCH", "", url, obj, d.Timeout(schema.TimeoutUpdate))
 
 	if err != nil {
 		return fmt.Errorf("Error updating Endpoint %q: %s", d.Id(), err)
@@ -251,8 +229,6 @@ func resourceServiceDirectoryEndpointUpdate(d *schema.ResourceData, meta interfa
 func resourceServiceDirectoryEndpointDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	billingProject := ""
-
 	url, err := replaceVars(d, config, "{{ServiceDirectoryBasePath}}{{name}}")
 	if err != nil {
 		return err
@@ -261,12 +237,7 @@ func resourceServiceDirectoryEndpointDelete(d *schema.ResourceData, meta interfa
 	var obj map[string]interface{}
 	log.Printf("[DEBUG] Deleting Endpoint %q", d.Id())
 
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "DELETE", billingProject, url, obj, d.Timeout(schema.TimeoutDelete))
+	res, err := sendRequestWithTimeout(config, "DELETE", "", url, obj, d.Timeout(schema.TimeoutDelete))
 	if err != nil {
 		return handleNotFoundError(err, d, "Endpoint")
 	}

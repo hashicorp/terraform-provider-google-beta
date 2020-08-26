@@ -131,20 +131,11 @@ func resourceSQLDatabaseCreate(d *schema.ResourceData, meta interface{}) error {
 	}
 
 	log.Printf("[DEBUG] Creating new Database: %#v", obj)
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "POST", billingProject, url, obj, d.Timeout(schema.TimeoutCreate))
+	res, err := sendRequestWithTimeout(config, "POST", project, url, obj, d.Timeout(schema.TimeoutCreate))
 	if err != nil {
 		return fmt.Errorf("Error creating Database: %s", err)
 	}
@@ -179,20 +170,11 @@ func resourceSQLDatabaseRead(d *schema.ResourceData, meta interface{}) error {
 		return err
 	}
 
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequest(config, "GET", billingProject, url, nil)
+	res, err := sendRequest(config, "GET", project, url, nil)
 	if err != nil {
 		return handleNotFoundError(transformSQLDatabaseReadError(err), d, fmt.Sprintf("SQLDatabase %q", d.Id()))
 	}
@@ -223,13 +205,10 @@ func resourceSQLDatabaseRead(d *schema.ResourceData, meta interface{}) error {
 func resourceSQLDatabaseUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
 
 	obj := make(map[string]interface{})
 	charsetProp, err := expandSQLDatabaseCharset(d.Get("charset"), d, config)
@@ -270,13 +249,7 @@ func resourceSQLDatabaseUpdate(d *schema.ResourceData, meta interface{}) error {
 	}
 
 	log.Printf("[DEBUG] Updating Database %q: %#v", d.Id(), obj)
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "PUT", billingProject, url, obj, d.Timeout(schema.TimeoutUpdate))
+	res, err := sendRequestWithTimeout(config, "PUT", project, url, obj, d.Timeout(schema.TimeoutUpdate))
 
 	if err != nil {
 		return fmt.Errorf("Error updating Database %q: %s", d.Id(), err)
@@ -298,13 +271,10 @@ func resourceSQLDatabaseUpdate(d *schema.ResourceData, meta interface{}) error {
 func resourceSQLDatabaseDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
 
 	lockName, err := replaceVars(d, config, "google-sql-database-instance-{{project}}-{{instance}}")
 	if err != nil {
@@ -321,12 +291,7 @@ func resourceSQLDatabaseDelete(d *schema.ResourceData, meta interface{}) error {
 	var obj map[string]interface{}
 	log.Printf("[DEBUG] Deleting Database %q", d.Id())
 
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "DELETE", billingProject, url, obj, d.Timeout(schema.TimeoutDelete))
+	res, err := sendRequestWithTimeout(config, "DELETE", project, url, obj, d.Timeout(schema.TimeoutDelete))
 	if err != nil {
 		return handleNotFoundError(err, d, "Database")
 	}

@@ -166,20 +166,11 @@ func resourceComputeTargetSslProxyCreate(d *schema.ResourceData, meta interface{
 	}
 
 	log.Printf("[DEBUG] Creating new TargetSslProxy: %#v", obj)
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "POST", billingProject, url, obj, d.Timeout(schema.TimeoutCreate))
+	res, err := sendRequestWithTimeout(config, "POST", project, url, obj, d.Timeout(schema.TimeoutCreate))
 	if err != nil {
 		return fmt.Errorf("Error creating TargetSslProxy: %s", err)
 	}
@@ -214,20 +205,11 @@ func resourceComputeTargetSslProxyRead(d *schema.ResourceData, meta interface{})
 		return err
 	}
 
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequest(config, "GET", billingProject, url, nil)
+	res, err := sendRequest(config, "GET", project, url, nil)
 	if err != nil {
 		return handleNotFoundError(err, d, fmt.Sprintf("ComputeTargetSslProxy %q", d.Id()))
 	}
@@ -270,13 +252,10 @@ func resourceComputeTargetSslProxyRead(d *schema.ResourceData, meta interface{})
 func resourceComputeTargetSslProxyUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
 
 	d.Partial(true)
 
@@ -294,13 +273,7 @@ func resourceComputeTargetSslProxyUpdate(d *schema.ResourceData, meta interface{
 		if err != nil {
 			return err
 		}
-
-		// err == nil indicates that the billing_project value was found
-		if bp, err := getBillingProject(d, config); err == nil {
-			billingProject = bp
-		}
-
-		res, err := sendRequestWithTimeout(config, "POST", billingProject, url, obj, d.Timeout(schema.TimeoutUpdate))
+		res, err := sendRequestWithTimeout(config, "POST", project, url, obj, d.Timeout(schema.TimeoutUpdate))
 		if err != nil {
 			return fmt.Errorf("Error updating TargetSslProxy %q: %s", d.Id(), err)
 		} else {
@@ -328,13 +301,7 @@ func resourceComputeTargetSslProxyUpdate(d *schema.ResourceData, meta interface{
 		if err != nil {
 			return err
 		}
-
-		// err == nil indicates that the billing_project value was found
-		if bp, err := getBillingProject(d, config); err == nil {
-			billingProject = bp
-		}
-
-		res, err := sendRequestWithTimeout(config, "POST", billingProject, url, obj, d.Timeout(schema.TimeoutUpdate))
+		res, err := sendRequestWithTimeout(config, "POST", project, url, obj, d.Timeout(schema.TimeoutUpdate))
 		if err != nil {
 			return fmt.Errorf("Error updating TargetSslProxy %q: %s", d.Id(), err)
 		} else {
@@ -362,13 +329,7 @@ func resourceComputeTargetSslProxyUpdate(d *schema.ResourceData, meta interface{
 		if err != nil {
 			return err
 		}
-
-		// err == nil indicates that the billing_project value was found
-		if bp, err := getBillingProject(d, config); err == nil {
-			billingProject = bp
-		}
-
-		res, err := sendRequestWithTimeout(config, "POST", billingProject, url, obj, d.Timeout(schema.TimeoutUpdate))
+		res, err := sendRequestWithTimeout(config, "POST", project, url, obj, d.Timeout(schema.TimeoutUpdate))
 		if err != nil {
 			return fmt.Errorf("Error updating TargetSslProxy %q: %s", d.Id(), err)
 		} else {
@@ -396,13 +357,7 @@ func resourceComputeTargetSslProxyUpdate(d *schema.ResourceData, meta interface{
 		if err != nil {
 			return err
 		}
-
-		// err == nil indicates that the billing_project value was found
-		if bp, err := getBillingProject(d, config); err == nil {
-			billingProject = bp
-		}
-
-		res, err := sendRequestWithTimeout(config, "POST", billingProject, url, obj, d.Timeout(schema.TimeoutUpdate))
+		res, err := sendRequestWithTimeout(config, "POST", project, url, obj, d.Timeout(schema.TimeoutUpdate))
 		if err != nil {
 			return fmt.Errorf("Error updating TargetSslProxy %q: %s", d.Id(), err)
 		} else {
@@ -425,13 +380,10 @@ func resourceComputeTargetSslProxyUpdate(d *schema.ResourceData, meta interface{
 func resourceComputeTargetSslProxyDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
 
 	url, err := replaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/global/targetSslProxies/{{name}}")
 	if err != nil {
@@ -441,12 +393,7 @@ func resourceComputeTargetSslProxyDelete(d *schema.ResourceData, meta interface{
 	var obj map[string]interface{}
 	log.Printf("[DEBUG] Deleting TargetSslProxy %q", d.Id())
 
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "DELETE", billingProject, url, obj, d.Timeout(schema.TimeoutDelete))
+	res, err := sendRequestWithTimeout(config, "DELETE", project, url, obj, d.Timeout(schema.TimeoutDelete))
 	if err != nil {
 		return handleNotFoundError(err, d, "TargetSslProxy")
 	}

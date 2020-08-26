@@ -115,20 +115,11 @@ func resourceAppEngineServiceSplitTrafficCreate(d *schema.ResourceData, meta int
 	}
 
 	log.Printf("[DEBUG] Creating new ServiceSplitTraffic: %#v", obj)
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "PATCH", billingProject, url, obj, d.Timeout(schema.TimeoutCreate))
+	res, err := sendRequestWithTimeout(config, "PATCH", project, url, obj, d.Timeout(schema.TimeoutCreate))
 	if err != nil {
 		return fmt.Errorf("Error creating ServiceSplitTraffic: %s", err)
 	}
@@ -163,20 +154,11 @@ func resourceAppEngineServiceSplitTrafficRead(d *schema.ResourceData, meta inter
 		return err
 	}
 
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequest(config, "GET", billingProject, url, nil)
+	res, err := sendRequest(config, "GET", project, url, nil)
 	if err != nil {
 		return handleNotFoundError(err, d, fmt.Sprintf("AppEngineServiceSplitTraffic %q", d.Id()))
 	}
@@ -195,13 +177,10 @@ func resourceAppEngineServiceSplitTrafficRead(d *schema.ResourceData, meta inter
 func resourceAppEngineServiceSplitTrafficUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
 
 	obj := make(map[string]interface{})
 	idProp, err := expandAppEngineServiceSplitTrafficService(d.Get("service"), d, config)
@@ -245,13 +224,7 @@ func resourceAppEngineServiceSplitTrafficUpdate(d *schema.ResourceData, meta int
 	if err != nil {
 		return err
 	}
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "PATCH", billingProject, url, obj, d.Timeout(schema.TimeoutUpdate))
+	res, err := sendRequestWithTimeout(config, "PATCH", project, url, obj, d.Timeout(schema.TimeoutUpdate))
 
 	if err != nil {
 		return fmt.Errorf("Error updating ServiceSplitTraffic %q: %s", d.Id(), err)

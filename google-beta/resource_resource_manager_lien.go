@@ -127,14 +127,7 @@ func resourceResourceManagerLienCreate(d *schema.ResourceData, meta interface{})
 	}
 
 	log.Printf("[DEBUG] Creating new Lien: %#v", obj)
-	billingProject := ""
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "POST", billingProject, url, obj, d.Timeout(schema.TimeoutCreate))
+	res, err := sendRequestWithTimeout(config, "POST", "", url, obj, d.Timeout(schema.TimeoutCreate))
 	if err != nil {
 		return fmt.Errorf("Error creating Lien: %s", err)
 	}
@@ -172,14 +165,7 @@ func resourceResourceManagerLienRead(d *schema.ResourceData, meta interface{}) e
 		return err
 	}
 
-	billingProject := ""
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequest(config, "GET", billingProject, url, nil)
+	res, err := sendRequest(config, "GET", "", url, nil)
 	if err != nil {
 		return handleNotFoundError(err, d, fmt.Sprintf("ResourceManagerLien %q", d.Id()))
 	}
@@ -233,8 +219,6 @@ func resourceResourceManagerLienRead(d *schema.ResourceData, meta interface{}) e
 func resourceResourceManagerLienDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	billingProject := ""
-
 	url, err := replaceVars(d, config, "{{ResourceManagerBasePath}}liens?parent={{parent}}")
 	if err != nil {
 		return err
@@ -251,12 +235,7 @@ func resourceResourceManagerLienDelete(d *schema.ResourceData, meta interface{})
 	}
 	log.Printf("[DEBUG] Deleting Lien %q", d.Id())
 
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "DELETE", billingProject, url, obj, d.Timeout(schema.TimeoutDelete))
+	res, err := sendRequestWithTimeout(config, "DELETE", "", url, obj, d.Timeout(schema.TimeoutDelete))
 	if err != nil {
 		return handleNotFoundError(err, d, "Lien")
 	}

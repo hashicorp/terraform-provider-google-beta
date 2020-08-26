@@ -554,20 +554,11 @@ func resourceAppEngineStandardAppVersionCreate(d *schema.ResourceData, meta inte
 	}
 
 	log.Printf("[DEBUG] Creating new StandardAppVersion: %#v", obj)
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "POST", billingProject, url, obj, d.Timeout(schema.TimeoutCreate), isAppEngineRetryableError)
+	res, err := sendRequestWithTimeout(config, "POST", project, url, obj, d.Timeout(schema.TimeoutCreate), isAppEngineRetryableError)
 	if err != nil {
 		return fmt.Errorf("Error creating StandardAppVersion: %s", err)
 	}
@@ -602,20 +593,11 @@ func resourceAppEngineStandardAppVersionRead(d *schema.ResourceData, meta interf
 		return err
 	}
 
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequest(config, "GET", billingProject, url, nil, isAppEngineRetryableError)
+	res, err := sendRequest(config, "GET", project, url, nil, isAppEngineRetryableError)
 	if err != nil {
 		return handleNotFoundError(err, d, fmt.Sprintf("AppEngineStandardAppVersion %q", d.Id()))
 	}
@@ -674,13 +656,10 @@ func resourceAppEngineStandardAppVersionRead(d *schema.ResourceData, meta interf
 func resourceAppEngineStandardAppVersionUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
 
 	obj := make(map[string]interface{})
 	idProp, err := expandAppEngineStandardAppVersionVersionId(d.Get("version_id"), d, config)
@@ -787,13 +766,7 @@ func resourceAppEngineStandardAppVersionUpdate(d *schema.ResourceData, meta inte
 	}
 
 	log.Printf("[DEBUG] Updating StandardAppVersion %q: %#v", d.Id(), obj)
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "POST", billingProject, url, obj, d.Timeout(schema.TimeoutUpdate), isAppEngineRetryableError)
+	res, err := sendRequestWithTimeout(config, "POST", project, url, obj, d.Timeout(schema.TimeoutUpdate), isAppEngineRetryableError)
 
 	if err != nil {
 		return fmt.Errorf("Error updating StandardAppVersion %q: %s", d.Id(), err)

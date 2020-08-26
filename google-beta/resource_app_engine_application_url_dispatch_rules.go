@@ -103,20 +103,11 @@ func resourceAppEngineApplicationUrlDispatchRulesCreate(d *schema.ResourceData, 
 	}
 
 	log.Printf("[DEBUG] Creating new ApplicationUrlDispatchRules: %#v", obj)
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "PATCH", billingProject, url, obj, d.Timeout(schema.TimeoutCreate), isAppEngineRetryableError)
+	res, err := sendRequestWithTimeout(config, "PATCH", project, url, obj, d.Timeout(schema.TimeoutCreate), isAppEngineRetryableError)
 	if err != nil {
 		return fmt.Errorf("Error creating ApplicationUrlDispatchRules: %s", err)
 	}
@@ -151,20 +142,11 @@ func resourceAppEngineApplicationUrlDispatchRulesRead(d *schema.ResourceData, me
 		return err
 	}
 
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequest(config, "GET", billingProject, url, nil, isAppEngineRetryableError)
+	res, err := sendRequest(config, "GET", project, url, nil, isAppEngineRetryableError)
 	if err != nil {
 		return handleNotFoundError(err, d, fmt.Sprintf("AppEngineApplicationUrlDispatchRules %q", d.Id()))
 	}
@@ -183,13 +165,10 @@ func resourceAppEngineApplicationUrlDispatchRulesRead(d *schema.ResourceData, me
 func resourceAppEngineApplicationUrlDispatchRulesUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
 
 	obj := make(map[string]interface{})
 	dispatchRulesProp, err := expandAppEngineApplicationUrlDispatchRulesDispatchRules(d.Get("dispatch_rules"), d, config)
@@ -212,13 +191,7 @@ func resourceAppEngineApplicationUrlDispatchRulesUpdate(d *schema.ResourceData, 
 	}
 
 	log.Printf("[DEBUG] Updating ApplicationUrlDispatchRules %q: %#v", d.Id(), obj)
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "PATCH", billingProject, url, obj, d.Timeout(schema.TimeoutUpdate), isAppEngineRetryableError)
+	res, err := sendRequestWithTimeout(config, "PATCH", project, url, obj, d.Timeout(schema.TimeoutUpdate), isAppEngineRetryableError)
 
 	if err != nil {
 		return fmt.Errorf("Error updating ApplicationUrlDispatchRules %q: %s", d.Id(), err)
@@ -240,13 +213,10 @@ func resourceAppEngineApplicationUrlDispatchRulesUpdate(d *schema.ResourceData, 
 func resourceAppEngineApplicationUrlDispatchRulesDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
 
 	lockName, err := replaceVars(d, config, "apps/{{project}}")
 	if err != nil {
@@ -263,12 +233,7 @@ func resourceAppEngineApplicationUrlDispatchRulesDelete(d *schema.ResourceData, 
 	var obj map[string]interface{}
 	log.Printf("[DEBUG] Deleting ApplicationUrlDispatchRules %q", d.Id())
 
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "PATCH", billingProject, url, obj, d.Timeout(schema.TimeoutDelete), isAppEngineRetryableError)
+	res, err := sendRequestWithTimeout(config, "PATCH", project, url, obj, d.Timeout(schema.TimeoutDelete), isAppEngineRetryableError)
 	if err != nil {
 		return handleNotFoundError(err, d, "ApplicationUrlDispatchRules")
 	}

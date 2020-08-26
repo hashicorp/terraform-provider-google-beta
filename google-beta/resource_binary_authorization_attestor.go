@@ -203,20 +203,11 @@ func resourceBinaryAuthorizationAttestorCreate(d *schema.ResourceData, meta inte
 	}
 
 	log.Printf("[DEBUG] Creating new Attestor: %#v", obj)
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "POST", billingProject, url, obj, d.Timeout(schema.TimeoutCreate))
+	res, err := sendRequestWithTimeout(config, "POST", project, url, obj, d.Timeout(schema.TimeoutCreate))
 	if err != nil {
 		return fmt.Errorf("Error creating Attestor: %s", err)
 	}
@@ -241,20 +232,11 @@ func resourceBinaryAuthorizationAttestorRead(d *schema.ResourceData, meta interf
 		return err
 	}
 
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequest(config, "GET", billingProject, url, nil)
+	res, err := sendRequest(config, "GET", project, url, nil)
 	if err != nil {
 		return handleNotFoundError(err, d, fmt.Sprintf("BinaryAuthorizationAttestor %q", d.Id()))
 	}
@@ -279,13 +261,10 @@ func resourceBinaryAuthorizationAttestorRead(d *schema.ResourceData, meta interf
 func resourceBinaryAuthorizationAttestorUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
 
 	obj := make(map[string]interface{})
 	nameProp, err := expandBinaryAuthorizationAttestorName(d.Get("name"), d, config)
@@ -313,13 +292,7 @@ func resourceBinaryAuthorizationAttestorUpdate(d *schema.ResourceData, meta inte
 	}
 
 	log.Printf("[DEBUG] Updating Attestor %q: %#v", d.Id(), obj)
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "PUT", billingProject, url, obj, d.Timeout(schema.TimeoutUpdate))
+	res, err := sendRequestWithTimeout(config, "PUT", project, url, obj, d.Timeout(schema.TimeoutUpdate))
 
 	if err != nil {
 		return fmt.Errorf("Error updating Attestor %q: %s", d.Id(), err)
@@ -333,13 +306,10 @@ func resourceBinaryAuthorizationAttestorUpdate(d *schema.ResourceData, meta inte
 func resourceBinaryAuthorizationAttestorDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
 
 	url, err := replaceVars(d, config, "{{BinaryAuthorizationBasePath}}projects/{{project}}/attestors/{{name}}")
 	if err != nil {
@@ -349,12 +319,7 @@ func resourceBinaryAuthorizationAttestorDelete(d *schema.ResourceData, meta inte
 	var obj map[string]interface{}
 	log.Printf("[DEBUG] Deleting Attestor %q", d.Id())
 
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "DELETE", billingProject, url, obj, d.Timeout(schema.TimeoutDelete))
+	res, err := sendRequestWithTimeout(config, "DELETE", project, url, obj, d.Timeout(schema.TimeoutDelete))
 	if err != nil {
 		return handleNotFoundError(err, d, "Attestor")
 	}

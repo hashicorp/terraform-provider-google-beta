@@ -181,20 +181,11 @@ func resourceComputeRegionPerInstanceConfigCreate(d *schema.ResourceData, meta i
 	}
 
 	log.Printf("[DEBUG] Creating new RegionPerInstanceConfig: %#v", obj)
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "POST", billingProject, url, obj, d.Timeout(schema.TimeoutCreate))
+	res, err := sendRequestWithTimeout(config, "POST", project, url, obj, d.Timeout(schema.TimeoutCreate))
 	if err != nil {
 		return fmt.Errorf("Error creating RegionPerInstanceConfig: %s", err)
 	}
@@ -229,20 +220,11 @@ func resourceComputeRegionPerInstanceConfigRead(d *schema.ResourceData, meta int
 		return err
 	}
 
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequest(config, "POST", billingProject, url, nil)
+	res, err := sendRequest(config, "POST", project, url, nil)
 	if err != nil {
 		return handleNotFoundError(err, d, fmt.Sprintf("ComputeRegionPerInstanceConfig %q", d.Id()))
 	}
@@ -286,13 +268,10 @@ func resourceComputeRegionPerInstanceConfigRead(d *schema.ResourceData, meta int
 func resourceComputeRegionPerInstanceConfigUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
 
 	obj := make(map[string]interface{})
 	nameProp, err := expandNestedComputeRegionPerInstanceConfigName(d.Get("name"), d, config)
@@ -326,13 +305,7 @@ func resourceComputeRegionPerInstanceConfigUpdate(d *schema.ResourceData, meta i
 	}
 
 	log.Printf("[DEBUG] Updating RegionPerInstanceConfig %q: %#v", d.Id(), obj)
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "POST", billingProject, url, obj, d.Timeout(schema.TimeoutUpdate))
+	res, err := sendRequestWithTimeout(config, "POST", project, url, obj, d.Timeout(schema.TimeoutUpdate))
 
 	if err != nil {
 		return fmt.Errorf("Error updating RegionPerInstanceConfig %q: %s", d.Id(), err)

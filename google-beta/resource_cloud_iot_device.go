@@ -22,8 +22,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
 func resourceCloudIotDevice() *schema.Resource {
@@ -148,7 +148,6 @@ func resourceCloudIotDevice() *schema.Resource {
 				Type:        schema.TypeList,
 				Computed:    true,
 				Description: `The most recent device configuration, which is eventually sent from Cloud IoT Core to the device.`,
-				MaxItems:    1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"binary_data": {
@@ -189,7 +188,6 @@ indicating that the device has received this configuration version.`,
 				Type:        schema.TypeList,
 				Computed:    true,
 				Description: `The error message of the most recent error, such as a failure to publish to Cloud Pub/Sub.`,
-				MaxItems:    1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"details": {
@@ -243,7 +241,6 @@ This is a more compact way to identify devices, and it is globally unique.`,
 				Type:        schema.TypeList,
 				Computed:    true,
 				Description: `The state most recently received from the device.`,
-				MaxItems:    1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"binary_data": {
@@ -310,14 +307,7 @@ func resourceCloudIotDeviceCreate(d *schema.ResourceData, meta interface{}) erro
 	}
 
 	log.Printf("[DEBUG] Creating new Device: %#v", obj)
-	billingProject := ""
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "POST", billingProject, url, obj, d.Timeout(schema.TimeoutCreate))
+	res, err := sendRequestWithTimeout(config, "POST", "", url, obj, d.Timeout(schema.TimeoutCreate))
 	if err != nil {
 		return fmt.Errorf("Error creating Device: %s", err)
 	}
@@ -342,14 +332,7 @@ func resourceCloudIotDeviceRead(d *schema.ResourceData, meta interface{}) error 
 		return err
 	}
 
-	billingProject := ""
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequest(config, "GET", billingProject, url, nil)
+	res, err := sendRequest(config, "GET", "", url, nil)
 	if err != nil {
 		return handleNotFoundError(err, d, fmt.Sprintf("CloudIotDevice %q", d.Id()))
 	}
@@ -408,8 +391,6 @@ func resourceCloudIotDeviceRead(d *schema.ResourceData, meta interface{}) error 
 
 func resourceCloudIotDeviceUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
-
-	billingProject := ""
 
 	obj := make(map[string]interface{})
 	credentialsProp, err := expandCloudIotDeviceCredentials(d.Get("credentials"), d, config)
@@ -476,13 +457,7 @@ func resourceCloudIotDeviceUpdate(d *schema.ResourceData, meta interface{}) erro
 	if err != nil {
 		return err
 	}
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "PATCH", billingProject, url, obj, d.Timeout(schema.TimeoutUpdate))
+	res, err := sendRequestWithTimeout(config, "PATCH", "", url, obj, d.Timeout(schema.TimeoutUpdate))
 
 	if err != nil {
 		return fmt.Errorf("Error updating Device %q: %s", d.Id(), err)
@@ -496,8 +471,6 @@ func resourceCloudIotDeviceUpdate(d *schema.ResourceData, meta interface{}) erro
 func resourceCloudIotDeviceDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	billingProject := ""
-
 	url, err := replaceVars(d, config, "{{CloudIotBasePath}}{{registry}}/devices/{{name}}")
 	if err != nil {
 		return err
@@ -506,12 +479,7 @@ func resourceCloudIotDeviceDelete(d *schema.ResourceData, meta interface{}) erro
 	var obj map[string]interface{}
 	log.Printf("[DEBUG] Deleting Device %q", d.Id())
 
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "DELETE", billingProject, url, obj, d.Timeout(schema.TimeoutDelete))
+	res, err := sendRequestWithTimeout(config, "DELETE", "", url, obj, d.Timeout(schema.TimeoutDelete))
 	if err != nil {
 		return handleNotFoundError(err, d, "Device")
 	}

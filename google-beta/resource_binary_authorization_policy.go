@@ -259,20 +259,11 @@ func resourceBinaryAuthorizationPolicyCreate(d *schema.ResourceData, meta interf
 	}
 
 	log.Printf("[DEBUG] Creating new Policy: %#v", obj)
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "PUT", billingProject, url, obj, d.Timeout(schema.TimeoutCreate))
+	res, err := sendRequestWithTimeout(config, "PUT", project, url, obj, d.Timeout(schema.TimeoutCreate))
 	if err != nil {
 		return fmt.Errorf("Error creating Policy: %s", err)
 	}
@@ -297,20 +288,11 @@ func resourceBinaryAuthorizationPolicyRead(d *schema.ResourceData, meta interfac
 		return err
 	}
 
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequest(config, "GET", billingProject, url, nil)
+	res, err := sendRequest(config, "GET", project, url, nil)
 	if err != nil {
 		return handleNotFoundError(err, d, fmt.Sprintf("BinaryAuthorizationPolicy %q", d.Id()))
 	}
@@ -341,13 +323,10 @@ func resourceBinaryAuthorizationPolicyRead(d *schema.ResourceData, meta interfac
 func resourceBinaryAuthorizationPolicyUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
 
 	obj := make(map[string]interface{})
 	descriptionProp, err := expandBinaryAuthorizationPolicyDescription(d.Get("description"), d, config)
@@ -387,13 +366,7 @@ func resourceBinaryAuthorizationPolicyUpdate(d *schema.ResourceData, meta interf
 	}
 
 	log.Printf("[DEBUG] Updating Policy %q: %#v", d.Id(), obj)
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "PUT", billingProject, url, obj, d.Timeout(schema.TimeoutUpdate))
+	res, err := sendRequestWithTimeout(config, "PUT", project, url, obj, d.Timeout(schema.TimeoutUpdate))
 
 	if err != nil {
 		return fmt.Errorf("Error updating Policy %q: %s", d.Id(), err)
@@ -407,13 +380,10 @@ func resourceBinaryAuthorizationPolicyUpdate(d *schema.ResourceData, meta interf
 func resourceBinaryAuthorizationPolicyDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
 
 	url, err := replaceVars(d, config, "{{BinaryAuthorizationBasePath}}projects/{{project}}/policy")
 	if err != nil {
@@ -424,12 +394,7 @@ func resourceBinaryAuthorizationPolicyDelete(d *schema.ResourceData, meta interf
 	obj = defaultBinaryAuthorizationPolicy(d.Get("project").(string))
 	log.Printf("[DEBUG] Deleting Policy %q", d.Id())
 
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "PUT", billingProject, url, obj, d.Timeout(schema.TimeoutDelete))
+	res, err := sendRequestWithTimeout(config, "PUT", project, url, obj, d.Timeout(schema.TimeoutDelete))
 	if err != nil {
 		return handleNotFoundError(err, d, "Policy")
 	}

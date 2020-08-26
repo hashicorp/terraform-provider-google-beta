@@ -21,8 +21,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
 func resourceCloudAssetProjectFeed() *schema.Resource {
@@ -167,23 +167,27 @@ func resourceCloudAssetProjectFeedCreate(d *schema.ResourceData, meta interface{
 	}
 
 	log.Printf("[DEBUG] Creating new ProjectFeed: %#v", obj)
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
+	// This should never happen, but the linter complains otherwise with ineffectual assignment to `project`
+	if project == "dummy lint" {
+		log.Printf("[DEBUG] Found project in url: %s", project)
 	}
-
 	// Send the project ID in the X-Goog-User-Project header.
 	origUserProjectOverride := config.UserProjectOverride
 	config.UserProjectOverride = true
-	res, err := sendRequestWithTimeout(config, "POST", billingProject, url, obj, d.Timeout(schema.TimeoutCreate))
+	// If we have a billing project, use that one in the header.
+	bp, bpok := d.GetOk("billing_project")
+	if bpok && bp != "" {
+		project = bp.(string)
+	} else {
+		// otherwise, use the resource's project
+		rp, _ := d.GetOk("project")
+		project = rp.(string)
+	}
+	res, err := sendRequestWithTimeout(config, "POST", project, url, obj, d.Timeout(schema.TimeoutCreate))
 	if err != nil {
 		return fmt.Errorf("Error creating ProjectFeed: %s", err)
 	}
@@ -214,20 +218,11 @@ func resourceCloudAssetProjectFeedRead(d *schema.ResourceData, meta interface{})
 		return err
 	}
 
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequest(config, "GET", billingProject, url, nil)
+	res, err := sendRequest(config, "GET", project, url, nil)
 	if err != nil {
 		return handleNotFoundError(err, d, fmt.Sprintf("CloudAssetProjectFeed %q", d.Id()))
 	}
@@ -258,13 +253,10 @@ func resourceCloudAssetProjectFeedRead(d *schema.ResourceData, meta interface{})
 func resourceCloudAssetProjectFeedUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
 
 	obj := make(map[string]interface{})
 	assetNamesProp, err := expandCloudAssetProjectFeedAssetNames(d.Get("asset_names"), d, config)
@@ -326,13 +318,7 @@ func resourceCloudAssetProjectFeedUpdate(d *schema.ResourceData, meta interface{
 	if err != nil {
 		return err
 	}
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "PATCH", billingProject, url, obj, d.Timeout(schema.TimeoutUpdate))
+	res, err := sendRequestWithTimeout(config, "PATCH", project, url, obj, d.Timeout(schema.TimeoutUpdate))
 
 	if err != nil {
 		return fmt.Errorf("Error updating ProjectFeed %q: %s", d.Id(), err)
@@ -346,13 +332,10 @@ func resourceCloudAssetProjectFeedUpdate(d *schema.ResourceData, meta interface{
 func resourceCloudAssetProjectFeedDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
 
 	url, err := replaceVars(d, config, "{{CloudAssetBasePath}}{{name}}")
 	if err != nil {
@@ -362,12 +345,7 @@ func resourceCloudAssetProjectFeedDelete(d *schema.ResourceData, meta interface{
 	var obj map[string]interface{}
 	log.Printf("[DEBUG] Deleting ProjectFeed %q", d.Id())
 
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "DELETE", billingProject, url, obj, d.Timeout(schema.TimeoutDelete))
+	res, err := sendRequestWithTimeout(config, "DELETE", project, url, obj, d.Timeout(schema.TimeoutDelete))
 	if err != nil {
 		return handleNotFoundError(err, d, "ProjectFeed")
 	}

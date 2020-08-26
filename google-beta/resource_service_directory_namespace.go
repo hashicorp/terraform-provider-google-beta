@@ -98,20 +98,11 @@ func resourceServiceDirectoryNamespaceCreate(d *schema.ResourceData, meta interf
 	}
 
 	log.Printf("[DEBUG] Creating new Namespace: %#v", obj)
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "POST", billingProject, url, obj, d.Timeout(schema.TimeoutCreate))
+	res, err := sendRequestWithTimeout(config, "POST", project, url, obj, d.Timeout(schema.TimeoutCreate))
 	if err != nil {
 		return fmt.Errorf("Error creating Namespace: %s", err)
 	}
@@ -139,20 +130,11 @@ func resourceServiceDirectoryNamespaceRead(d *schema.ResourceData, meta interfac
 		return err
 	}
 
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequest(config, "GET", billingProject, url, nil)
+	res, err := sendRequest(config, "GET", project, url, nil)
 	if err != nil {
 		return handleNotFoundError(err, d, fmt.Sprintf("ServiceDirectoryNamespace %q", d.Id()))
 	}
@@ -174,13 +156,10 @@ func resourceServiceDirectoryNamespaceRead(d *schema.ResourceData, meta interfac
 func resourceServiceDirectoryNamespaceUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
 
 	obj := make(map[string]interface{})
 	labelsProp, err := expandServiceDirectoryNamespaceLabels(d.Get("labels"), d, config)
@@ -207,13 +186,7 @@ func resourceServiceDirectoryNamespaceUpdate(d *schema.ResourceData, meta interf
 	if err != nil {
 		return err
 	}
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "PATCH", billingProject, url, obj, d.Timeout(schema.TimeoutUpdate))
+	res, err := sendRequestWithTimeout(config, "PATCH", project, url, obj, d.Timeout(schema.TimeoutUpdate))
 
 	if err != nil {
 		return fmt.Errorf("Error updating Namespace %q: %s", d.Id(), err)
@@ -227,13 +200,10 @@ func resourceServiceDirectoryNamespaceUpdate(d *schema.ResourceData, meta interf
 func resourceServiceDirectoryNamespaceDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
 
 	url, err := replaceVars(d, config, "{{ServiceDirectoryBasePath}}{{name}}")
 	if err != nil {
@@ -243,12 +213,7 @@ func resourceServiceDirectoryNamespaceDelete(d *schema.ResourceData, meta interf
 	var obj map[string]interface{}
 	log.Printf("[DEBUG] Deleting Namespace %q", d.Id())
 
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "DELETE", billingProject, url, obj, d.Timeout(schema.TimeoutDelete))
+	res, err := sendRequestWithTimeout(config, "DELETE", project, url, obj, d.Timeout(schema.TimeoutDelete))
 	if err != nil {
 		return handleNotFoundError(err, d, "Namespace")
 	}

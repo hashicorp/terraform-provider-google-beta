@@ -276,20 +276,11 @@ func resourceCloudRunDomainMappingCreate(d *schema.ResourceData, meta interface{
 	}
 
 	log.Printf("[DEBUG] Creating new DomainMapping: %#v", obj)
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "POST", billingProject, url, obj, d.Timeout(schema.TimeoutCreate))
+	res, err := sendRequestWithTimeout(config, "POST", project, url, obj, d.Timeout(schema.TimeoutCreate))
 	if err != nil {
 		return fmt.Errorf("Error creating DomainMapping: %s", err)
 	}
@@ -320,20 +311,11 @@ func resourceCloudRunDomainMappingPollRead(d *schema.ResourceData, meta interfac
 			return nil, err
 		}
 
-		billingProject := ""
-
 		project, err := getProject(d, config)
 		if err != nil {
 			return nil, err
 		}
-		billingProject = project
-
-		// err == nil indicates that the billing_project value was found
-		if bp, err := getBillingProject(d, config); err == nil {
-			billingProject = bp
-		}
-
-		res, err := sendRequest(config, "GET", billingProject, url, nil)
+		res, err := sendRequest(config, "GET", project, url, nil)
 		if err != nil {
 			return res, err
 		}
@@ -361,20 +343,11 @@ func resourceCloudRunDomainMappingRead(d *schema.ResourceData, meta interface{})
 		return err
 	}
 
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequest(config, "GET", billingProject, url, nil)
+	res, err := sendRequest(config, "GET", project, url, nil)
 	if err != nil {
 		return handleNotFoundError(err, d, fmt.Sprintf("CloudRunDomainMapping %q", d.Id()))
 	}
@@ -411,13 +384,10 @@ func resourceCloudRunDomainMappingRead(d *schema.ResourceData, meta interface{})
 func resourceCloudRunDomainMappingDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
 
 	url, err := replaceVars(d, config, "{{CloudRunBasePath}}apis/domains.cloudrun.com/v1/namespaces/{{project}}/domainmappings/{{name}}")
 	if err != nil {
@@ -427,12 +397,7 @@ func resourceCloudRunDomainMappingDelete(d *schema.ResourceData, meta interface{
 	var obj map[string]interface{}
 	log.Printf("[DEBUG] Deleting DomainMapping %q", d.Id())
 
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "DELETE", billingProject, url, obj, d.Timeout(schema.TimeoutDelete))
+	res, err := sendRequestWithTimeout(config, "DELETE", project, url, obj, d.Timeout(schema.TimeoutDelete))
 	if err != nil {
 		return handleNotFoundError(err, d, "DomainMapping")
 	}

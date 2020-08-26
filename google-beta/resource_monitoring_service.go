@@ -123,20 +123,11 @@ func resourceMonitoringServiceCreate(d *schema.ResourceData, meta interface{}) e
 	}
 
 	log.Printf("[DEBUG] Creating new Service: %#v", obj)
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "POST", billingProject, url, obj, d.Timeout(schema.TimeoutCreate), isMonitoringConcurrentEditError)
+	res, err := sendRequestWithTimeout(config, "POST", project, url, obj, d.Timeout(schema.TimeoutCreate), isMonitoringConcurrentEditError)
 	if err != nil {
 		return fmt.Errorf("Error creating Service: %s", err)
 	}
@@ -164,20 +155,11 @@ func resourceMonitoringServiceRead(d *schema.ResourceData, meta interface{}) err
 		return err
 	}
 
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequest(config, "GET", billingProject, url, nil, isMonitoringConcurrentEditError)
+	res, err := sendRequest(config, "GET", project, url, nil, isMonitoringConcurrentEditError)
 	if err != nil {
 		return handleNotFoundError(err, d, fmt.Sprintf("MonitoringService %q", d.Id()))
 	}
@@ -205,13 +187,10 @@ func resourceMonitoringServiceRead(d *schema.ResourceData, meta interface{}) err
 func resourceMonitoringServiceUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
 
 	obj := make(map[string]interface{})
 	displayNameProp, err := expandMonitoringServiceDisplayName(d.Get("display_name"), d, config)
@@ -253,13 +232,7 @@ func resourceMonitoringServiceUpdate(d *schema.ResourceData, meta interface{}) e
 	if err != nil {
 		return err
 	}
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "PATCH", billingProject, url, obj, d.Timeout(schema.TimeoutUpdate), isMonitoringConcurrentEditError)
+	res, err := sendRequestWithTimeout(config, "PATCH", project, url, obj, d.Timeout(schema.TimeoutUpdate), isMonitoringConcurrentEditError)
 
 	if err != nil {
 		return fmt.Errorf("Error updating Service %q: %s", d.Id(), err)
@@ -273,13 +246,10 @@ func resourceMonitoringServiceUpdate(d *schema.ResourceData, meta interface{}) e
 func resourceMonitoringServiceDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
 
 	url, err := replaceVars(d, config, "{{MonitoringBasePath}}v3/{{name}}")
 	if err != nil {
@@ -289,12 +259,7 @@ func resourceMonitoringServiceDelete(d *schema.ResourceData, meta interface{}) e
 	var obj map[string]interface{}
 	log.Printf("[DEBUG] Deleting Service %q", d.Id())
 
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "DELETE", billingProject, url, obj, d.Timeout(schema.TimeoutDelete), isMonitoringConcurrentEditError)
+	res, err := sendRequestWithTimeout(config, "DELETE", project, url, obj, d.Timeout(schema.TimeoutDelete), isMonitoringConcurrentEditError)
 	if err != nil {
 		return handleNotFoundError(err, d, "Service")
 	}

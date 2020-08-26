@@ -99,14 +99,7 @@ func resourceSecurityCenterSourceCreate(d *schema.ResourceData, meta interface{}
 	}
 
 	log.Printf("[DEBUG] Creating new Source: %#v", obj)
-	billingProject := ""
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "POST", billingProject, url, obj, d.Timeout(schema.TimeoutCreate))
+	res, err := sendRequestWithTimeout(config, "POST", "", url, obj, d.Timeout(schema.TimeoutCreate))
 	if err != nil {
 		return fmt.Errorf("Error creating Source: %s", err)
 	}
@@ -150,14 +143,7 @@ func resourceSecurityCenterSourceRead(d *schema.ResourceData, meta interface{}) 
 		return err
 	}
 
-	billingProject := ""
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequest(config, "GET", billingProject, url, nil)
+	res, err := sendRequest(config, "GET", "", url, nil)
 	if err != nil {
 		return handleNotFoundError(err, d, fmt.Sprintf("SecurityCenterSource %q", d.Id()))
 	}
@@ -177,8 +163,6 @@ func resourceSecurityCenterSourceRead(d *schema.ResourceData, meta interface{}) 
 
 func resourceSecurityCenterSourceUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
-
-	billingProject := ""
 
 	obj := make(map[string]interface{})
 	descriptionProp, err := expandSecurityCenterSourceDescription(d.Get("description"), d, config)
@@ -215,13 +199,7 @@ func resourceSecurityCenterSourceUpdate(d *schema.ResourceData, meta interface{}
 	if err != nil {
 		return err
 	}
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "PATCH", billingProject, url, obj, d.Timeout(schema.TimeoutUpdate))
+	res, err := sendRequestWithTimeout(config, "PATCH", "", url, obj, d.Timeout(schema.TimeoutUpdate))
 
 	if err != nil {
 		return fmt.Errorf("Error updating Source %q: %s", d.Id(), err)

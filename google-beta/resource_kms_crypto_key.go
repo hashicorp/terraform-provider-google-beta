@@ -166,18 +166,11 @@ func resourceKMSCryptoKeyCreate(d *schema.ResourceData, meta interface{}) error 
 	}
 
 	log.Printf("[DEBUG] Creating new CryptoKey: %#v", obj)
-	billingProject := ""
-
+	var project string
 	if parts := regexp.MustCompile(`projects\/([^\/]+)\/`).FindStringSubmatch(url); parts != nil {
-		billingProject = parts[1]
+		project = parts[1]
 	}
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "POST", billingProject, url, obj, d.Timeout(schema.TimeoutCreate))
+	res, err := sendRequestWithTimeout(config, "POST", project, url, obj, d.Timeout(schema.TimeoutCreate))
 	if err != nil {
 		return fmt.Errorf("Error creating CryptoKey: %s", err)
 	}
@@ -202,18 +195,11 @@ func resourceKMSCryptoKeyRead(d *schema.ResourceData, meta interface{}) error {
 		return err
 	}
 
-	billingProject := ""
-
+	var project string
 	if parts := regexp.MustCompile(`projects\/([^\/]+)\/`).FindStringSubmatch(url); parts != nil {
-		billingProject = parts[1]
+		project = parts[1]
 	}
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequest(config, "GET", billingProject, url, nil)
+	res, err := sendRequest(config, "GET", project, url, nil)
 	if err != nil {
 		return handleNotFoundError(err, d, fmt.Sprintf("KMSCryptoKey %q", d.Id()))
 	}
@@ -248,8 +234,6 @@ func resourceKMSCryptoKeyRead(d *schema.ResourceData, meta interface{}) error {
 
 func resourceKMSCryptoKeyUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
-
-	billingProject := ""
 
 	obj := make(map[string]interface{})
 	labelsProp, err := expandKMSCryptoKeyLabels(d.Get("labels"), d, config)
@@ -302,16 +286,11 @@ func resourceKMSCryptoKeyUpdate(d *schema.ResourceData, meta interface{}) error 
 	if err != nil {
 		return err
 	}
+	var project string
 	if parts := regexp.MustCompile(`projects\/([^\/]+)\/`).FindStringSubmatch(url); parts != nil {
-		billingProject = parts[1]
+		project = parts[1]
 	}
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "PATCH", billingProject, url, obj, d.Timeout(schema.TimeoutUpdate))
+	res, err := sendRequestWithTimeout(config, "PATCH", project, url, obj, d.Timeout(schema.TimeoutUpdate))
 
 	if err != nil {
 		return fmt.Errorf("Error updating CryptoKey %q: %s", d.Id(), err)

@@ -342,20 +342,11 @@ func resourceMonitoringUptimeCheckConfigCreate(d *schema.ResourceData, meta inte
 	}
 
 	log.Printf("[DEBUG] Creating new UptimeCheckConfig: %#v", obj)
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "POST", billingProject, url, obj, d.Timeout(schema.TimeoutCreate), isMonitoringConcurrentEditError)
+	res, err := sendRequestWithTimeout(config, "POST", project, url, obj, d.Timeout(schema.TimeoutCreate), isMonitoringConcurrentEditError)
 	if err != nil {
 		return fmt.Errorf("Error creating UptimeCheckConfig: %s", err)
 	}
@@ -399,20 +390,11 @@ func resourceMonitoringUptimeCheckConfigRead(d *schema.ResourceData, meta interf
 		return err
 	}
 
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequest(config, "GET", billingProject, url, nil, isMonitoringConcurrentEditError)
+	res, err := sendRequest(config, "GET", project, url, nil, isMonitoringConcurrentEditError)
 	if err != nil {
 		return handleNotFoundError(err, d, fmt.Sprintf("MonitoringUptimeCheckConfig %q", d.Id()))
 	}
@@ -461,13 +443,10 @@ func resourceMonitoringUptimeCheckConfigRead(d *schema.ResourceData, meta interf
 func resourceMonitoringUptimeCheckConfigUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
 
 	obj := make(map[string]interface{})
 	displayNameProp, err := expandMonitoringUptimeCheckConfigDisplayName(d.Get("display_name"), d, config)
@@ -551,13 +530,7 @@ func resourceMonitoringUptimeCheckConfigUpdate(d *schema.ResourceData, meta inte
 	if err != nil {
 		return err
 	}
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "PATCH", billingProject, url, obj, d.Timeout(schema.TimeoutUpdate), isMonitoringConcurrentEditError)
+	res, err := sendRequestWithTimeout(config, "PATCH", project, url, obj, d.Timeout(schema.TimeoutUpdate), isMonitoringConcurrentEditError)
 
 	if err != nil {
 		return fmt.Errorf("Error updating UptimeCheckConfig %q: %s", d.Id(), err)
@@ -571,13 +544,10 @@ func resourceMonitoringUptimeCheckConfigUpdate(d *schema.ResourceData, meta inte
 func resourceMonitoringUptimeCheckConfigDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
 
 	lockName, err := replaceVars(d, config, "stackdriver/groups/{{project}}")
 	if err != nil {
@@ -594,12 +564,7 @@ func resourceMonitoringUptimeCheckConfigDelete(d *schema.ResourceData, meta inte
 	var obj map[string]interface{}
 	log.Printf("[DEBUG] Deleting UptimeCheckConfig %q", d.Id())
 
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "DELETE", billingProject, url, obj, d.Timeout(schema.TimeoutDelete), isMonitoringConcurrentEditError)
+	res, err := sendRequestWithTimeout(config, "DELETE", project, url, obj, d.Timeout(schema.TimeoutDelete), isMonitoringConcurrentEditError)
 	if err != nil {
 		return handleNotFoundError(err, d, "UptimeCheckConfig")
 	}

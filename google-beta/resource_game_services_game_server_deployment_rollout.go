@@ -137,20 +137,11 @@ func resourceGameServicesGameServerDeploymentRolloutRead(d *schema.ResourceData,
 		return err
 	}
 
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequest(config, "GET", billingProject, url, nil)
+	res, err := sendRequest(config, "GET", project, url, nil)
 	if err != nil {
 		return handleNotFoundError(err, d, fmt.Sprintf("GameServicesGameServerDeploymentRollout %q", d.Id()))
 	}
@@ -175,13 +166,10 @@ func resourceGameServicesGameServerDeploymentRolloutRead(d *schema.ResourceData,
 func resourceGameServicesGameServerDeploymentRolloutUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
 
 	obj := make(map[string]interface{})
 	defaultGameServerConfigProp, err := expandGameServicesGameServerDeploymentRolloutDefaultGameServerConfig(d.Get("default_game_server_config"), d, config)
@@ -218,13 +206,7 @@ func resourceGameServicesGameServerDeploymentRolloutUpdate(d *schema.ResourceDat
 	if err != nil {
 		return err
 	}
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "PATCH", billingProject, url, obj, d.Timeout(schema.TimeoutUpdate))
+	res, err := sendRequestWithTimeout(config, "PATCH", project, url, obj, d.Timeout(schema.TimeoutUpdate))
 
 	if err != nil {
 		return fmt.Errorf("Error updating GameServerDeploymentRollout %q: %s", d.Id(), err)
@@ -246,13 +228,10 @@ func resourceGameServicesGameServerDeploymentRolloutUpdate(d *schema.ResourceDat
 func resourceGameServicesGameServerDeploymentRolloutDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
 
 	url, err := replaceVars(d, config, "{{GameServicesBasePath}}projects/{{project}}/locations/global/gameServerDeployments/{{deployment_id}}/rollout?updateMask=defaultGameServerConfig")
 	if err != nil {
@@ -262,12 +241,7 @@ func resourceGameServicesGameServerDeploymentRolloutDelete(d *schema.ResourceDat
 	var obj map[string]interface{}
 	log.Printf("[DEBUG] Deleting GameServerDeploymentRollout %q", d.Id())
 
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "PATCH", billingProject, url, obj, d.Timeout(schema.TimeoutDelete))
+	res, err := sendRequestWithTimeout(config, "PATCH", project, url, obj, d.Timeout(schema.TimeoutDelete))
 	if err != nil {
 		return handleNotFoundError(err, d, "GameServerDeploymentRollout")
 	}

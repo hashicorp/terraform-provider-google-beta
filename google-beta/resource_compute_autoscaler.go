@@ -368,20 +368,11 @@ func resourceComputeAutoscalerCreate(d *schema.ResourceData, meta interface{}) e
 	}
 
 	log.Printf("[DEBUG] Creating new Autoscaler: %#v", obj)
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "POST", billingProject, url, obj, d.Timeout(schema.TimeoutCreate))
+	res, err := sendRequestWithTimeout(config, "POST", project, url, obj, d.Timeout(schema.TimeoutCreate))
 	if err != nil {
 		return fmt.Errorf("Error creating Autoscaler: %s", err)
 	}
@@ -416,20 +407,11 @@ func resourceComputeAutoscalerRead(d *schema.ResourceData, meta interface{}) err
 		return err
 	}
 
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequest(config, "GET", billingProject, url, nil)
+	res, err := sendRequest(config, "GET", project, url, nil)
 	if err != nil {
 		return handleNotFoundError(err, d, fmt.Sprintf("ComputeAutoscaler %q", d.Id()))
 	}
@@ -466,13 +448,10 @@ func resourceComputeAutoscalerRead(d *schema.ResourceData, meta interface{}) err
 func resourceComputeAutoscalerUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
 
 	obj := make(map[string]interface{})
 	nameProp, err := expandComputeAutoscalerName(d.Get("name"), d, config)
@@ -512,13 +491,7 @@ func resourceComputeAutoscalerUpdate(d *schema.ResourceData, meta interface{}) e
 	}
 
 	log.Printf("[DEBUG] Updating Autoscaler %q: %#v", d.Id(), obj)
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "PUT", billingProject, url, obj, d.Timeout(schema.TimeoutUpdate))
+	res, err := sendRequestWithTimeout(config, "PUT", project, url, obj, d.Timeout(schema.TimeoutUpdate))
 
 	if err != nil {
 		return fmt.Errorf("Error updating Autoscaler %q: %s", d.Id(), err)
@@ -540,13 +513,10 @@ func resourceComputeAutoscalerUpdate(d *schema.ResourceData, meta interface{}) e
 func resourceComputeAutoscalerDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
 
 	url, err := replaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/zones/{{zone}}/autoscalers/{{name}}")
 	if err != nil {
@@ -556,12 +526,7 @@ func resourceComputeAutoscalerDelete(d *schema.ResourceData, meta interface{}) e
 	var obj map[string]interface{}
 	log.Printf("[DEBUG] Deleting Autoscaler %q", d.Id())
 
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "DELETE", billingProject, url, obj, d.Timeout(schema.TimeoutDelete))
+	res, err := sendRequestWithTimeout(config, "DELETE", project, url, obj, d.Timeout(schema.TimeoutDelete))
 	if err != nil {
 		return handleNotFoundError(err, d, "Autoscaler")
 	}

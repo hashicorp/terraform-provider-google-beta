@@ -314,18 +314,11 @@ func resourceDataCatalogEntryCreate(d *schema.ResourceData, meta interface{}) er
 	}
 
 	log.Printf("[DEBUG] Creating new Entry: %#v", obj)
-	billingProject := ""
-
+	var project string
 	if parts := regexp.MustCompile(`projects\/([^\/]+)\/`).FindStringSubmatch(url); parts != nil {
-		billingProject = parts[1]
+		project = parts[1]
 	}
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "POST", billingProject, url, obj, d.Timeout(schema.TimeoutCreate))
+	res, err := sendRequestWithTimeout(config, "POST", project, url, obj, d.Timeout(schema.TimeoutCreate))
 	if err != nil {
 		return fmt.Errorf("Error creating Entry: %s", err)
 	}
@@ -353,18 +346,11 @@ func resourceDataCatalogEntryRead(d *schema.ResourceData, meta interface{}) erro
 		return err
 	}
 
-	billingProject := ""
-
+	var project string
 	if parts := regexp.MustCompile(`projects\/([^\/]+)\/`).FindStringSubmatch(url); parts != nil {
-		billingProject = parts[1]
+		project = parts[1]
 	}
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequest(config, "GET", billingProject, url, nil)
+	res, err := sendRequest(config, "GET", project, url, nil)
 	if err != nil {
 		return handleNotFoundError(err, d, fmt.Sprintf("DataCatalogEntry %q", d.Id()))
 	}
@@ -411,8 +397,6 @@ func resourceDataCatalogEntryRead(d *schema.ResourceData, meta interface{}) erro
 
 func resourceDataCatalogEntryUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
-
-	billingProject := ""
 
 	obj := make(map[string]interface{})
 	linkedResourceProp, err := expandDataCatalogEntryLinkedResource(d.Get("linked_resource"), d, config)
@@ -499,16 +483,11 @@ func resourceDataCatalogEntryUpdate(d *schema.ResourceData, meta interface{}) er
 	if err != nil {
 		return err
 	}
+	var project string
 	if parts := regexp.MustCompile(`projects\/([^\/]+)\/`).FindStringSubmatch(url); parts != nil {
-		billingProject = parts[1]
+		project = parts[1]
 	}
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "PATCH", billingProject, url, obj, d.Timeout(schema.TimeoutUpdate))
+	res, err := sendRequestWithTimeout(config, "PATCH", project, url, obj, d.Timeout(schema.TimeoutUpdate))
 
 	if err != nil {
 		return fmt.Errorf("Error updating Entry %q: %s", d.Id(), err)
@@ -522,27 +501,19 @@ func resourceDataCatalogEntryUpdate(d *schema.ResourceData, meta interface{}) er
 func resourceDataCatalogEntryDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	billingProject := ""
-
 	url, err := replaceVars(d, config, "{{DataCatalogBasePath}}{{name}}")
 	if err != nil {
 		return err
 	}
 
 	var obj map[string]interface{}
-
+	var project string
 	if parts := regexp.MustCompile(`projects\/([^\/]+)\/`).FindStringSubmatch(url); parts != nil {
-		billingProject = parts[1]
+		project = parts[1]
 	}
-
 	log.Printf("[DEBUG] Deleting Entry %q", d.Id())
 
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "DELETE", billingProject, url, obj, d.Timeout(schema.TimeoutDelete))
+	res, err := sendRequestWithTimeout(config, "DELETE", project, url, obj, d.Timeout(schema.TimeoutDelete))
 	if err != nil {
 		return handleNotFoundError(err, d, "Entry")
 	}

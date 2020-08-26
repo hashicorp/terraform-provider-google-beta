@@ -131,20 +131,11 @@ func resourceSQLSourceRepresentationInstanceCreate(d *schema.ResourceData, meta 
 	}
 
 	log.Printf("[DEBUG] Creating new SourceRepresentationInstance: %#v", obj)
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "POST", billingProject, url, obj, d.Timeout(schema.TimeoutCreate))
+	res, err := sendRequestWithTimeout(config, "POST", project, url, obj, d.Timeout(schema.TimeoutCreate))
 	if err != nil {
 		return fmt.Errorf("Error creating SourceRepresentationInstance: %s", err)
 	}
@@ -179,20 +170,11 @@ func resourceSQLSourceRepresentationInstanceRead(d *schema.ResourceData, meta in
 		return err
 	}
 
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequest(config, "GET", billingProject, url, nil)
+	res, err := sendRequest(config, "GET", project, url, nil)
 	if err != nil {
 		return handleNotFoundError(err, d, fmt.Sprintf("SQLSourceRepresentationInstance %q", d.Id()))
 	}
@@ -242,13 +224,10 @@ func resourceSQLSourceRepresentationInstanceRead(d *schema.ResourceData, meta in
 func resourceSQLSourceRepresentationInstanceDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
 
 	url, err := replaceVars(d, config, "{{SQLBasePath}}projects/{{project}}/instances/{{name}}")
 	if err != nil {
@@ -258,12 +237,7 @@ func resourceSQLSourceRepresentationInstanceDelete(d *schema.ResourceData, meta 
 	var obj map[string]interface{}
 	log.Printf("[DEBUG] Deleting SourceRepresentationInstance %q", d.Id())
 
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "DELETE", billingProject, url, obj, d.Timeout(schema.TimeoutDelete))
+	res, err := sendRequestWithTimeout(config, "DELETE", project, url, obj, d.Timeout(schema.TimeoutDelete))
 	if err != nil {
 		return handleNotFoundError(err, d, "SourceRepresentationInstance")
 	}

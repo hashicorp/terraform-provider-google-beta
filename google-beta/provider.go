@@ -8,7 +8,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/terraform-providers/terraform-provider-google-beta/version"
+	"github.com/hashicorp/terraform-provider-google-beta/version"
 
 	googleoauth "golang.org/x/oauth2/google"
 )
@@ -50,14 +50,6 @@ func Provider() *schema.Provider {
 					"GOOGLE_CLOUD_PROJECT",
 					"GCLOUD_PROJECT",
 					"CLOUDSDK_CORE_PROJECT",
-				}, nil),
-			},
-
-			"billing_project": {
-				Type:     schema.TypeString,
-				Optional: true,
-				DefaultFunc: schema.MultiEnvDefaultFunc([]string{
-					"GOOGLE_BILLING_PROJECT",
 				}, nil),
 			},
 
@@ -111,9 +103,6 @@ func Provider() *schema.Provider {
 			"user_project_override": {
 				Type:     schema.TypeBool,
 				Optional: true,
-				DefaultFunc: schema.MultiEnvDefaultFunc([]string{
-					"USER_PROJECT_OVERRIDE",
-				}, nil),
 			},
 
 			"request_timeout": {
@@ -1142,7 +1131,6 @@ func providerConfigure(ctx context.Context, d *schema.ResourceData, p *schema.Pr
 		Region:              d.Get("region").(string),
 		Zone:                d.Get("zone").(string),
 		UserProjectOverride: d.Get("user_project_override").(bool),
-		BillingProject:      d.Get("billing_project").(string),
 		userAgent:           p.UserAgent("terraform-provider-google-beta", version.ProviderVersion),
 	}
 
@@ -1257,7 +1245,11 @@ func providerConfigure(ctx context.Context, d *schema.ResourceData, p *schema.Pr
 	config.StorageTransferBasePath = d.Get(StorageTransferCustomEndpointEntryKey).(string)
 	config.BigtableAdminBasePath = d.Get(BigtableAdminCustomEndpointEntryKey).(string)
 
-	if err := config.LoadAndValidate(ctx); err != nil {
+	stopCtx, ok := schema.StopContext(ctx)
+	if !ok {
+		stopCtx = ctx
+	}
+	if err := config.LoadAndValidate(stopCtx); err != nil {
 		return nil, diag.FromErr(err)
 	}
 

@@ -20,8 +20,8 @@ import (
 	"reflect"
 	"time"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
 func resourceMonitoringMetricDescriptor() *schema.Resource {
@@ -248,20 +248,11 @@ func resourceMonitoringMetricDescriptorCreate(d *schema.ResourceData, meta inter
 	}
 
 	log.Printf("[DEBUG] Creating new MetricDescriptor: %#v", obj)
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "POST", billingProject, url, obj, d.Timeout(schema.TimeoutCreate), isMonitoringConcurrentEditError)
+	res, err := sendRequestWithTimeout(config, "POST", project, url, obj, d.Timeout(schema.TimeoutCreate), isMonitoringConcurrentEditError)
 	if err != nil {
 		return fmt.Errorf("Error creating MetricDescriptor: %s", err)
 	}
@@ -295,20 +286,11 @@ func resourceMonitoringMetricDescriptorPollRead(d *schema.ResourceData, meta int
 			return nil, err
 		}
 
-		billingProject := ""
-
 		project, err := getProject(d, config)
 		if err != nil {
 			return nil, err
 		}
-		billingProject = project
-
-		// err == nil indicates that the billing_project value was found
-		if bp, err := getBillingProject(d, config); err == nil {
-			billingProject = bp
-		}
-
-		res, err := sendRequest(config, "GET", billingProject, url, nil, isMonitoringConcurrentEditError)
+		res, err := sendRequest(config, "GET", project, url, nil, isMonitoringConcurrentEditError)
 		if err != nil {
 			return res, err
 		}
@@ -324,20 +306,11 @@ func resourceMonitoringMetricDescriptorRead(d *schema.ResourceData, meta interfa
 		return err
 	}
 
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequest(config, "GET", billingProject, url, nil, isMonitoringConcurrentEditError)
+	res, err := sendRequest(config, "GET", project, url, nil, isMonitoringConcurrentEditError)
 	if err != nil {
 		return handleNotFoundError(err, d, fmt.Sprintf("MonitoringMetricDescriptor %q", d.Id()))
 	}
@@ -380,13 +353,10 @@ func resourceMonitoringMetricDescriptorRead(d *schema.ResourceData, meta interfa
 func resourceMonitoringMetricDescriptorUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
 
 	obj := make(map[string]interface{})
 	typeProp, err := expandMonitoringMetricDescriptorType(d.Get("type"), d, config)
@@ -450,13 +420,7 @@ func resourceMonitoringMetricDescriptorUpdate(d *schema.ResourceData, meta inter
 	}
 
 	log.Printf("[DEBUG] Updating MetricDescriptor %q: %#v", d.Id(), obj)
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "POST", billingProject, url, obj, d.Timeout(schema.TimeoutUpdate), isMonitoringConcurrentEditError)
+	res, err := sendRequestWithTimeout(config, "POST", project, url, obj, d.Timeout(schema.TimeoutUpdate), isMonitoringConcurrentEditError)
 
 	if err != nil {
 		return fmt.Errorf("Error updating MetricDescriptor %q: %s", d.Id(), err)
@@ -475,13 +439,10 @@ func resourceMonitoringMetricDescriptorUpdate(d *schema.ResourceData, meta inter
 func resourceMonitoringMetricDescriptorDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
 
 	url, err := replaceVars(d, config, "{{MonitoringBasePath}}v3/{{name}}")
 	if err != nil {
@@ -491,12 +452,7 @@ func resourceMonitoringMetricDescriptorDelete(d *schema.ResourceData, meta inter
 	var obj map[string]interface{}
 	log.Printf("[DEBUG] Deleting MetricDescriptor %q", d.Id())
 
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "DELETE", billingProject, url, obj, d.Timeout(schema.TimeoutDelete), isMonitoringConcurrentEditError)
+	res, err := sendRequestWithTimeout(config, "DELETE", project, url, obj, d.Timeout(schema.TimeoutDelete), isMonitoringConcurrentEditError)
 	if err != nil {
 		return handleNotFoundError(err, d, "MetricDescriptor")
 	}

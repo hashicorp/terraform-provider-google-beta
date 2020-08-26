@@ -253,20 +253,11 @@ func resourceFilestoreInstanceCreate(d *schema.ResourceData, meta interface{}) e
 	}
 
 	log.Printf("[DEBUG] Creating new Instance: %#v", obj)
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "POST", billingProject, url, obj, d.Timeout(schema.TimeoutCreate))
+	res, err := sendRequestWithTimeout(config, "POST", project, url, obj, d.Timeout(schema.TimeoutCreate))
 	if err != nil {
 		return fmt.Errorf("Error creating Instance: %s", err)
 	}
@@ -310,20 +301,11 @@ func resourceFilestoreInstanceRead(d *schema.ResourceData, meta interface{}) err
 		return err
 	}
 
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequest(config, "GET", billingProject, url, nil)
+	res, err := sendRequest(config, "GET", project, url, nil)
 	if err != nil {
 		return handleNotFoundError(err, d, fmt.Sprintf("FilestoreInstance %q", d.Id()))
 	}
@@ -360,13 +342,10 @@ func resourceFilestoreInstanceRead(d *schema.ResourceData, meta interface{}) err
 func resourceFilestoreInstanceUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
 
 	obj := make(map[string]interface{})
 	descriptionProp, err := expandFilestoreInstanceDescription(d.Get("description"), d, config)
@@ -413,13 +392,7 @@ func resourceFilestoreInstanceUpdate(d *schema.ResourceData, meta interface{}) e
 	if err != nil {
 		return err
 	}
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "PATCH", billingProject, url, obj, d.Timeout(schema.TimeoutUpdate))
+	res, err := sendRequestWithTimeout(config, "PATCH", project, url, obj, d.Timeout(schema.TimeoutUpdate))
 
 	if err != nil {
 		return fmt.Errorf("Error updating Instance %q: %s", d.Id(), err)
@@ -441,13 +414,10 @@ func resourceFilestoreInstanceUpdate(d *schema.ResourceData, meta interface{}) e
 func resourceFilestoreInstanceDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
 
 	url, err := replaceVars(d, config, "{{FilestoreBasePath}}projects/{{project}}/locations/{{zone}}/instances/{{name}}")
 	if err != nil {
@@ -457,12 +427,7 @@ func resourceFilestoreInstanceDelete(d *schema.ResourceData, meta interface{}) e
 	var obj map[string]interface{}
 	log.Printf("[DEBUG] Deleting Instance %q", d.Id())
 
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "DELETE", billingProject, url, obj, d.Timeout(schema.TimeoutDelete))
+	res, err := sendRequestWithTimeout(config, "DELETE", project, url, obj, d.Timeout(schema.TimeoutDelete))
 	if err != nil {
 		return handleNotFoundError(err, d, "Instance")
 	}

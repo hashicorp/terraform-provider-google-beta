@@ -421,20 +421,11 @@ func resourceDNSManagedZoneCreate(d *schema.ResourceData, meta interface{}) erro
 	}
 
 	log.Printf("[DEBUG] Creating new ManagedZone: %#v", obj)
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "POST", billingProject, url, obj, d.Timeout(schema.TimeoutCreate))
+	res, err := sendRequestWithTimeout(config, "POST", project, url, obj, d.Timeout(schema.TimeoutCreate))
 	if err != nil {
 		return fmt.Errorf("Error creating ManagedZone: %s", err)
 	}
@@ -459,20 +450,11 @@ func resourceDNSManagedZoneRead(d *schema.ResourceData, meta interface{}) error 
 		return err
 	}
 
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequest(config, "GET", billingProject, url, nil)
+	res, err := sendRequest(config, "GET", project, url, nil)
 	if err != nil {
 		return handleNotFoundError(err, d, fmt.Sprintf("DNSManagedZone %q", d.Id()))
 	}
@@ -528,13 +510,10 @@ func resourceDNSManagedZoneRead(d *schema.ResourceData, meta interface{}) error 
 func resourceDNSManagedZoneUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
 
 	obj := make(map[string]interface{})
 	descriptionProp, err := expandDNSManagedZoneDescription(d.Get("description"), d, config)
@@ -580,13 +559,7 @@ func resourceDNSManagedZoneUpdate(d *schema.ResourceData, meta interface{}) erro
 	}
 
 	log.Printf("[DEBUG] Updating ManagedZone %q: %#v", d.Id(), obj)
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "PATCH", billingProject, url, obj, d.Timeout(schema.TimeoutUpdate))
+	res, err := sendRequestWithTimeout(config, "PATCH", project, url, obj, d.Timeout(schema.TimeoutUpdate))
 
 	if err != nil {
 		return fmt.Errorf("Error updating ManagedZone %q: %s", d.Id(), err)
@@ -600,13 +573,10 @@ func resourceDNSManagedZoneUpdate(d *schema.ResourceData, meta interface{}) erro
 func resourceDNSManagedZoneDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
 
 	url, err := replaceVars(d, config, "{{DNSBasePath}}projects/{{project}}/managedZones/{{name}}")
 	if err != nil {
@@ -686,12 +656,7 @@ func resourceDNSManagedZoneDelete(d *schema.ResourceData, meta interface{}) erro
 	}
 	log.Printf("[DEBUG] Deleting ManagedZone %q", d.Id())
 
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "DELETE", billingProject, url, obj, d.Timeout(schema.TimeoutDelete))
+	res, err := sendRequestWithTimeout(config, "DELETE", project, url, obj, d.Timeout(schema.TimeoutDelete))
 	if err != nil {
 		return handleNotFoundError(err, d, "ManagedZone")
 	}

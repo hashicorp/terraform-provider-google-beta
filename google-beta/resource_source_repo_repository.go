@@ -41,7 +41,7 @@ func resourceSourceRepoRepositoryPubSubConfigsHash(v interface{}) int {
 		buf.WriteString(fmt.Sprintf("%s-", v.(string)))
 	}
 
-	return hashcode.String(buf.String())
+	return hashcode(buf.String())
 }
 
 func resourceSourceRepoRepository() *schema.Resource {
@@ -144,20 +144,11 @@ func resourceSourceRepoRepositoryCreate(d *schema.ResourceData, meta interface{}
 	}
 
 	log.Printf("[DEBUG] Creating new Repository: %#v", obj)
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "POST", billingProject, url, obj, d.Timeout(schema.TimeoutCreate))
+	res, err := sendRequestWithTimeout(config, "POST", project, url, obj, d.Timeout(schema.TimeoutCreate))
 	if err != nil {
 		return fmt.Errorf("Error creating Repository: %s", err)
 	}
@@ -188,20 +179,11 @@ func resourceSourceRepoRepositoryRead(d *schema.ResourceData, meta interface{}) 
 		return err
 	}
 
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequest(config, "GET", billingProject, url, nil)
+	res, err := sendRequest(config, "GET", project, url, nil)
 	if err != nil {
 		return handleNotFoundError(err, d, fmt.Sprintf("SourceRepoRepository %q", d.Id()))
 	}
@@ -229,13 +211,10 @@ func resourceSourceRepoRepositoryRead(d *schema.ResourceData, meta interface{}) 
 func resourceSourceRepoRepositoryUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
 
 	obj := make(map[string]interface{})
 	pubsubConfigsProp, err := expandSourceRepoRepositoryPubsubConfigs(d.Get("pubsub_configs"), d, config)
@@ -267,13 +246,7 @@ func resourceSourceRepoRepositoryUpdate(d *schema.ResourceData, meta interface{}
 	if err != nil {
 		return err
 	}
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "PATCH", billingProject, url, obj, d.Timeout(schema.TimeoutUpdate))
+	res, err := sendRequestWithTimeout(config, "PATCH", project, url, obj, d.Timeout(schema.TimeoutUpdate))
 
 	if err != nil {
 		return fmt.Errorf("Error updating Repository %q: %s", d.Id(), err)
@@ -287,13 +260,10 @@ func resourceSourceRepoRepositoryUpdate(d *schema.ResourceData, meta interface{}
 func resourceSourceRepoRepositoryDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
 
 	url, err := replaceVars(d, config, "{{SourceRepoBasePath}}projects/{{project}}/repos/{{name}}")
 	if err != nil {
@@ -303,12 +273,7 @@ func resourceSourceRepoRepositoryDelete(d *schema.ResourceData, meta interface{}
 	var obj map[string]interface{}
 	log.Printf("[DEBUG] Deleting Repository %q", d.Id())
 
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "DELETE", billingProject, url, obj, d.Timeout(schema.TimeoutDelete))
+	res, err := sendRequestWithTimeout(config, "DELETE", project, url, obj, d.Timeout(schema.TimeoutDelete))
 	if err != nil {
 		return handleNotFoundError(err, d, "Repository")
 	}

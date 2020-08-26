@@ -185,20 +185,11 @@ func resourceIdentityPlatformInboundSamlConfigCreate(d *schema.ResourceData, met
 	}
 
 	log.Printf("[DEBUG] Creating new InboundSamlConfig: %#v", obj)
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "POST", billingProject, url, obj, d.Timeout(schema.TimeoutCreate))
+	res, err := sendRequestWithTimeout(config, "POST", project, url, obj, d.Timeout(schema.TimeoutCreate))
 	if err != nil {
 		return fmt.Errorf("Error creating InboundSamlConfig: %s", err)
 	}
@@ -223,20 +214,11 @@ func resourceIdentityPlatformInboundSamlConfigRead(d *schema.ResourceData, meta 
 		return err
 	}
 
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequest(config, "GET", billingProject, url, nil)
+	res, err := sendRequest(config, "GET", project, url, nil)
 	if err != nil {
 		return handleNotFoundError(err, d, fmt.Sprintf("IdentityPlatformInboundSamlConfig %q", d.Id()))
 	}
@@ -267,13 +249,10 @@ func resourceIdentityPlatformInboundSamlConfigRead(d *schema.ResourceData, meta 
 func resourceIdentityPlatformInboundSamlConfigUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
 
 	obj := make(map[string]interface{})
 	displayNameProp, err := expandIdentityPlatformInboundSamlConfigDisplayName(d.Get("display_name"), d, config)
@@ -330,13 +309,7 @@ func resourceIdentityPlatformInboundSamlConfigUpdate(d *schema.ResourceData, met
 	if err != nil {
 		return err
 	}
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "PATCH", billingProject, url, obj, d.Timeout(schema.TimeoutUpdate))
+	res, err := sendRequestWithTimeout(config, "PATCH", project, url, obj, d.Timeout(schema.TimeoutUpdate))
 
 	if err != nil {
 		return fmt.Errorf("Error updating InboundSamlConfig %q: %s", d.Id(), err)
@@ -350,13 +323,10 @@ func resourceIdentityPlatformInboundSamlConfigUpdate(d *schema.ResourceData, met
 func resourceIdentityPlatformInboundSamlConfigDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
 
 	url, err := replaceVars(d, config, "{{IdentityPlatformBasePath}}projects/{{project}}/inboundSamlConfigs/{{name}}")
 	if err != nil {
@@ -366,12 +336,7 @@ func resourceIdentityPlatformInboundSamlConfigDelete(d *schema.ResourceData, met
 	var obj map[string]interface{}
 	log.Printf("[DEBUG] Deleting InboundSamlConfig %q", d.Id())
 
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "DELETE", billingProject, url, obj, d.Timeout(schema.TimeoutDelete))
+	res, err := sendRequestWithTimeout(config, "DELETE", project, url, obj, d.Timeout(schema.TimeoutDelete))
 	if err != nil {
 		return handleNotFoundError(err, d, "InboundSamlConfig")
 	}

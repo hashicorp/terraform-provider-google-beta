@@ -151,20 +151,11 @@ func resourceSpannerDatabaseCreate(d *schema.ResourceData, meta interface{}) err
 	}
 
 	log.Printf("[DEBUG] Creating new Database: %#v", obj)
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "POST", billingProject, url, obj, d.Timeout(schema.TimeoutCreate))
+	res, err := sendRequestWithTimeout(config, "POST", project, url, obj, d.Timeout(schema.TimeoutCreate))
 	if err != nil {
 		return fmt.Errorf("Error creating Database: %s", err)
 	}
@@ -220,20 +211,11 @@ func resourceSpannerDatabaseRead(d *schema.ResourceData, meta interface{}) error
 		return err
 	}
 
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequest(config, "GET", billingProject, url, nil)
+	res, err := sendRequest(config, "GET", project, url, nil)
 	if err != nil {
 		return handleNotFoundError(err, d, fmt.Sprintf("SpannerDatabase %q", d.Id()))
 	}
@@ -330,13 +312,10 @@ func resourceSpannerDatabaseUpdate(d *schema.ResourceData, meta interface{}) err
 func resourceSpannerDatabaseDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
 
 	url, err := replaceVars(d, config, "{{SpannerBasePath}}projects/{{project}}/instances/{{instance}}/databases/{{name}}")
 	if err != nil {
@@ -346,12 +325,7 @@ func resourceSpannerDatabaseDelete(d *schema.ResourceData, meta interface{}) err
 	var obj map[string]interface{}
 	log.Printf("[DEBUG] Deleting Database %q", d.Id())
 
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "DELETE", billingProject, url, obj, d.Timeout(schema.TimeoutDelete))
+	res, err := sendRequestWithTimeout(config, "DELETE", project, url, obj, d.Timeout(schema.TimeoutDelete))
 	if err != nil {
 		return handleNotFoundError(err, d, "Database")
 	}

@@ -117,20 +117,11 @@ func resourceComputeGlobalNetworkEndpointCreate(d *schema.ResourceData, meta int
 	}
 
 	log.Printf("[DEBUG] Creating new GlobalNetworkEndpoint: %#v", obj)
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "POST", billingProject, url, obj, d.Timeout(schema.TimeoutCreate))
+	res, err := sendRequestWithTimeout(config, "POST", project, url, obj, d.Timeout(schema.TimeoutCreate))
 	if err != nil {
 		return fmt.Errorf("Error creating GlobalNetworkEndpoint: %s", err)
 	}
@@ -165,20 +156,11 @@ func resourceComputeGlobalNetworkEndpointRead(d *schema.ResourceData, meta inter
 		return err
 	}
 
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequest(config, "POST", billingProject, url, nil)
+	res, err := sendRequest(config, "POST", project, url, nil)
 	if err != nil {
 		return handleNotFoundError(err, d, fmt.Sprintf("ComputeGlobalNetworkEndpoint %q", d.Id()))
 	}
@@ -227,13 +209,10 @@ func resourceComputeGlobalNetworkEndpointRead(d *schema.ResourceData, meta inter
 func resourceComputeGlobalNetworkEndpointDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
 
 	lockName, err := replaceVars(d, config, "networkEndpoint/{{project}}/{{global_network_endpoint_group}}")
 	if err != nil {
@@ -278,12 +257,7 @@ func resourceComputeGlobalNetworkEndpointDelete(d *schema.ResourceData, meta int
 	}
 	log.Printf("[DEBUG] Deleting GlobalNetworkEndpoint %q", d.Id())
 
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "POST", billingProject, url, obj, d.Timeout(schema.TimeoutDelete))
+	res, err := sendRequestWithTimeout(config, "POST", project, url, obj, d.Timeout(schema.TimeoutDelete))
 	if err != nil {
 		return handleNotFoundError(err, d, "GlobalNetworkEndpoint")
 	}

@@ -20,7 +20,7 @@ import (
 	"reflect"
 	"time"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func resourceComputeOrganizationSecurityPolicyAssociation() *schema.Resource {
@@ -89,14 +89,7 @@ func resourceComputeOrganizationSecurityPolicyAssociationCreate(d *schema.Resour
 	}
 
 	log.Printf("[DEBUG] Creating new OrganizationSecurityPolicyAssociation: %#v", obj)
-	billingProject := ""
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "POST", billingProject, url, obj, d.Timeout(schema.TimeoutCreate))
+	res, err := sendRequestWithTimeout(config, "POST", "", url, obj, d.Timeout(schema.TimeoutCreate))
 	if err != nil {
 		return fmt.Errorf("Error creating OrganizationSecurityPolicyAssociation: %s", err)
 	}
@@ -146,14 +139,7 @@ func resourceComputeOrganizationSecurityPolicyAssociationRead(d *schema.Resource
 		return err
 	}
 
-	billingProject := ""
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequest(config, "GET", billingProject, url, nil)
+	res, err := sendRequest(config, "GET", "", url, nil)
 	if err != nil {
 		return handleNotFoundError(err, d, fmt.Sprintf("ComputeOrganizationSecurityPolicyAssociation %q", d.Id()))
 	}
@@ -174,8 +160,6 @@ func resourceComputeOrganizationSecurityPolicyAssociationRead(d *schema.Resource
 func resourceComputeOrganizationSecurityPolicyAssociationDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	billingProject := ""
-
 	url, err := replaceVars(d, config, "{{ComputeBasePath}}{{policy_id}}/removeAssociation?name={{name}}")
 	if err != nil {
 		return err
@@ -184,12 +168,7 @@ func resourceComputeOrganizationSecurityPolicyAssociationDelete(d *schema.Resour
 	var obj map[string]interface{}
 	log.Printf("[DEBUG] Deleting OrganizationSecurityPolicyAssociation %q", d.Id())
 
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "POST", billingProject, url, obj, d.Timeout(schema.TimeoutDelete))
+	res, err := sendRequestWithTimeout(config, "POST", "", url, obj, d.Timeout(schema.TimeoutDelete))
 	if err != nil {
 		return handleNotFoundError(err, d, "OrganizationSecurityPolicyAssociation")
 	}

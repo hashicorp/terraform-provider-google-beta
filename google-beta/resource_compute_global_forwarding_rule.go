@@ -347,20 +347,11 @@ func resourceComputeGlobalForwardingRuleCreate(d *schema.ResourceData, meta inte
 	}
 
 	log.Printf("[DEBUG] Creating new GlobalForwardingRule: %#v", obj)
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "POST", billingProject, url, obj, d.Timeout(schema.TimeoutCreate))
+	res, err := sendRequestWithTimeout(config, "POST", project, url, obj, d.Timeout(schema.TimeoutCreate))
 	if err != nil {
 		return fmt.Errorf("Error creating GlobalForwardingRule: %s", err)
 	}
@@ -431,20 +422,11 @@ func resourceComputeGlobalForwardingRuleRead(d *schema.ResourceData, meta interf
 		return err
 	}
 
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequest(config, "GET", billingProject, url, nil)
+	res, err := sendRequest(config, "GET", project, url, nil)
 	if err != nil {
 		return handleNotFoundError(err, d, fmt.Sprintf("ComputeGlobalForwardingRule %q", d.Id()))
 	}
@@ -499,13 +481,10 @@ func resourceComputeGlobalForwardingRuleRead(d *schema.ResourceData, meta interf
 func resourceComputeGlobalForwardingRuleUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
 
 	d.Partial(true)
 
@@ -529,13 +508,7 @@ func resourceComputeGlobalForwardingRuleUpdate(d *schema.ResourceData, meta inte
 		if err != nil {
 			return err
 		}
-
-		// err == nil indicates that the billing_project value was found
-		if bp, err := getBillingProject(d, config); err == nil {
-			billingProject = bp
-		}
-
-		res, err := sendRequestWithTimeout(config, "POST", billingProject, url, obj, d.Timeout(schema.TimeoutUpdate))
+		res, err := sendRequestWithTimeout(config, "POST", project, url, obj, d.Timeout(schema.TimeoutUpdate))
 		if err != nil {
 			return fmt.Errorf("Error updating GlobalForwardingRule %q: %s", d.Id(), err)
 		} else {
@@ -563,13 +536,7 @@ func resourceComputeGlobalForwardingRuleUpdate(d *schema.ResourceData, meta inte
 		if err != nil {
 			return err
 		}
-
-		// err == nil indicates that the billing_project value was found
-		if bp, err := getBillingProject(d, config); err == nil {
-			billingProject = bp
-		}
-
-		res, err := sendRequestWithTimeout(config, "POST", billingProject, url, obj, d.Timeout(schema.TimeoutUpdate))
+		res, err := sendRequestWithTimeout(config, "POST", project, url, obj, d.Timeout(schema.TimeoutUpdate))
 		if err != nil {
 			return fmt.Errorf("Error updating GlobalForwardingRule %q: %s", d.Id(), err)
 		} else {
@@ -592,13 +559,10 @@ func resourceComputeGlobalForwardingRuleUpdate(d *schema.ResourceData, meta inte
 func resourceComputeGlobalForwardingRuleDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
 
 	url, err := replaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/global/forwardingRules/{{name}}")
 	if err != nil {
@@ -608,12 +572,7 @@ func resourceComputeGlobalForwardingRuleDelete(d *schema.ResourceData, meta inte
 	var obj map[string]interface{}
 	log.Printf("[DEBUG] Deleting GlobalForwardingRule %q", d.Id())
 
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "DELETE", billingProject, url, obj, d.Timeout(schema.TimeoutDelete))
+	res, err := sendRequestWithTimeout(config, "DELETE", project, url, obj, d.Timeout(schema.TimeoutDelete))
 	if err != nil {
 		return handleNotFoundError(err, d, "GlobalForwardingRule")
 	}

@@ -20,8 +20,8 @@ import (
 	"reflect"
 	"time"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
 func resourceActiveDirectoryDomainTrust() *schema.Resource {
@@ -152,20 +152,11 @@ func resourceActiveDirectoryDomainTrustCreate(d *schema.ResourceData, meta inter
 	}
 
 	log.Printf("[DEBUG] Creating new DomainTrust: %#v", obj)
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "POST", billingProject, url, obj, d.Timeout(schema.TimeoutCreate))
+	res, err := sendRequestWithTimeout(config, "POST", project, url, obj, d.Timeout(schema.TimeoutCreate))
 	if err != nil {
 		return fmt.Errorf("Error creating DomainTrust: %s", err)
 	}
@@ -231,20 +222,11 @@ func resourceActiveDirectoryDomainTrustRead(d *schema.ResourceData, meta interfa
 		return err
 	}
 
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequest(config, "GET", billingProject, url, nil)
+	res, err := sendRequest(config, "GET", project, url, nil)
 	if err != nil {
 		return handleNotFoundError(err, d, fmt.Sprintf("ActiveDirectoryDomainTrust %q", d.Id()))
 	}
@@ -299,13 +281,10 @@ func resourceActiveDirectoryDomainTrustRead(d *schema.ResourceData, meta interfa
 func resourceActiveDirectoryDomainTrustUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
 
 	obj := make(map[string]interface{})
 	targetDomainNameProp, err := expandNestedActiveDirectoryDomainTrustTargetDomainName(d.Get("target_domain_name"), d, config)
@@ -356,13 +335,7 @@ func resourceActiveDirectoryDomainTrustUpdate(d *schema.ResourceData, meta inter
 	}
 
 	log.Printf("[DEBUG] Updating DomainTrust %q: %#v", d.Id(), obj)
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "POST", billingProject, url, obj, d.Timeout(schema.TimeoutUpdate))
+	res, err := sendRequestWithTimeout(config, "POST", project, url, obj, d.Timeout(schema.TimeoutUpdate))
 
 	if err != nil {
 		return fmt.Errorf("Error updating DomainTrust %q: %s", d.Id(), err)

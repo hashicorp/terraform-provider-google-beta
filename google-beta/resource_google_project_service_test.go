@@ -190,6 +190,7 @@ func testAccProjectService_basic(services []string, pid, name, org string) strin
 provider "google" {
   user_project_override = true
 }
+
 resource "google_project" "acceptance" {
   project_id = "%s"
   name       = "%s"

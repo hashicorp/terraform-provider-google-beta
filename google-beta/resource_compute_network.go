@@ -146,20 +146,11 @@ func resourceComputeNetworkCreate(d *schema.ResourceData, meta interface{}) erro
 	}
 
 	log.Printf("[DEBUG] Creating new Network: %#v", obj)
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "POST", billingProject, url, obj, d.Timeout(schema.TimeoutCreate))
+	res, err := sendRequestWithTimeout(config, "POST", project, url, obj, d.Timeout(schema.TimeoutCreate))
 	if err != nil {
 		return fmt.Errorf("Error creating Network: %s", err)
 	}
@@ -226,20 +217,11 @@ func resourceComputeNetworkRead(d *schema.ResourceData, meta interface{}) error 
 		return err
 	}
 
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequest(config, "GET", billingProject, url, nil)
+	res, err := sendRequest(config, "GET", project, url, nil)
 	if err != nil {
 		return handleNotFoundError(err, d, fmt.Sprintf("ComputeNetwork %q", d.Id()))
 	}
@@ -287,13 +269,10 @@ func resourceComputeNetworkRead(d *schema.ResourceData, meta interface{}) error 
 func resourceComputeNetworkUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
 
 	d.Partial(true)
 
@@ -311,13 +290,7 @@ func resourceComputeNetworkUpdate(d *schema.ResourceData, meta interface{}) erro
 		if err != nil {
 			return err
 		}
-
-		// err == nil indicates that the billing_project value was found
-		if bp, err := getBillingProject(d, config); err == nil {
-			billingProject = bp
-		}
-
-		res, err := sendRequestWithTimeout(config, "PATCH", billingProject, url, obj, d.Timeout(schema.TimeoutUpdate))
+		res, err := sendRequestWithTimeout(config, "PATCH", project, url, obj, d.Timeout(schema.TimeoutUpdate))
 		if err != nil {
 			return fmt.Errorf("Error updating Network %q: %s", d.Id(), err)
 		} else {
@@ -340,13 +313,10 @@ func resourceComputeNetworkUpdate(d *schema.ResourceData, meta interface{}) erro
 func resourceComputeNetworkDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
 
 	url, err := replaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/global/networks/{{name}}")
 	if err != nil {
@@ -356,12 +326,7 @@ func resourceComputeNetworkDelete(d *schema.ResourceData, meta interface{}) erro
 	var obj map[string]interface{}
 	log.Printf("[DEBUG] Deleting Network %q", d.Id())
 
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "DELETE", billingProject, url, obj, d.Timeout(schema.TimeoutDelete))
+	res, err := sendRequestWithTimeout(config, "DELETE", project, url, obj, d.Timeout(schema.TimeoutDelete))
 	if err != nil {
 		return handleNotFoundError(err, d, "Network")
 	}

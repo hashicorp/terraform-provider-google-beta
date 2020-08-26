@@ -113,20 +113,11 @@ func resourceComputeNetworkPeeringRoutesConfigCreate(d *schema.ResourceData, met
 	}
 
 	log.Printf("[DEBUG] Creating new NetworkPeeringRoutesConfig: %#v", obj)
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "PATCH", billingProject, url, obj, d.Timeout(schema.TimeoutCreate))
+	res, err := sendRequestWithTimeout(config, "PATCH", project, url, obj, d.Timeout(schema.TimeoutCreate))
 	if err != nil {
 		return fmt.Errorf("Error creating NetworkPeeringRoutesConfig: %s", err)
 	}
@@ -161,20 +152,11 @@ func resourceComputeNetworkPeeringRoutesConfigRead(d *schema.ResourceData, meta 
 		return err
 	}
 
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequest(config, "GET", billingProject, url, nil)
+	res, err := sendRequest(config, "GET", project, url, nil)
 	if err != nil {
 		return handleNotFoundError(err, d, fmt.Sprintf("ComputeNetworkPeeringRoutesConfig %q", d.Id()))
 	}
@@ -211,13 +193,10 @@ func resourceComputeNetworkPeeringRoutesConfigRead(d *schema.ResourceData, meta 
 func resourceComputeNetworkPeeringRoutesConfigUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
 
 	obj := make(map[string]interface{})
 	nameProp, err := expandNestedComputeNetworkPeeringRoutesConfigPeering(d.Get("peering"), d, config)
@@ -257,13 +236,7 @@ func resourceComputeNetworkPeeringRoutesConfigUpdate(d *schema.ResourceData, met
 	}
 
 	log.Printf("[DEBUG] Updating NetworkPeeringRoutesConfig %q: %#v", d.Id(), obj)
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "PATCH", billingProject, url, obj, d.Timeout(schema.TimeoutUpdate))
+	res, err := sendRequestWithTimeout(config, "PATCH", project, url, obj, d.Timeout(schema.TimeoutUpdate))
 
 	if err != nil {
 		return fmt.Errorf("Error updating NetworkPeeringRoutesConfig %q: %s", d.Id(), err)

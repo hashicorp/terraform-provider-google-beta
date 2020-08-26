@@ -114,20 +114,11 @@ func resourceIdentityPlatformTenantCreate(d *schema.ResourceData, meta interface
 	}
 
 	log.Printf("[DEBUG] Creating new Tenant: %#v", obj)
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "POST", billingProject, url, obj, d.Timeout(schema.TimeoutCreate))
+	res, err := sendRequestWithTimeout(config, "POST", project, url, obj, d.Timeout(schema.TimeoutCreate))
 	if err != nil {
 		return fmt.Errorf("Error creating Tenant: %s", err)
 	}
@@ -168,20 +159,11 @@ func resourceIdentityPlatformTenantRead(d *schema.ResourceData, meta interface{}
 		return err
 	}
 
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequest(config, "GET", billingProject, url, nil)
+	res, err := sendRequest(config, "GET", project, url, nil)
 	if err != nil {
 		return handleNotFoundError(err, d, fmt.Sprintf("IdentityPlatformTenant %q", d.Id()))
 	}
@@ -212,13 +194,10 @@ func resourceIdentityPlatformTenantRead(d *schema.ResourceData, meta interface{}
 func resourceIdentityPlatformTenantUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
 
 	obj := make(map[string]interface{})
 	displayNameProp, err := expandIdentityPlatformTenantDisplayName(d.Get("display_name"), d, config)
@@ -275,13 +254,7 @@ func resourceIdentityPlatformTenantUpdate(d *schema.ResourceData, meta interface
 	if err != nil {
 		return err
 	}
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "PATCH", billingProject, url, obj, d.Timeout(schema.TimeoutUpdate))
+	res, err := sendRequestWithTimeout(config, "PATCH", project, url, obj, d.Timeout(schema.TimeoutUpdate))
 
 	if err != nil {
 		return fmt.Errorf("Error updating Tenant %q: %s", d.Id(), err)
@@ -295,13 +268,10 @@ func resourceIdentityPlatformTenantUpdate(d *schema.ResourceData, meta interface
 func resourceIdentityPlatformTenantDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
 
 	url, err := replaceVars(d, config, "{{IdentityPlatformBasePath}}projects/{{project}}/tenants/{{name}}")
 	if err != nil {
@@ -311,12 +281,7 @@ func resourceIdentityPlatformTenantDelete(d *schema.ResourceData, meta interface
 	var obj map[string]interface{}
 	log.Printf("[DEBUG] Deleting Tenant %q", d.Id())
 
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "DELETE", billingProject, url, obj, d.Timeout(schema.TimeoutDelete))
+	res, err := sendRequestWithTimeout(config, "DELETE", project, url, obj, d.Timeout(schema.TimeoutDelete))
 	if err != nil {
 		return handleNotFoundError(err, d, "Tenant")
 	}

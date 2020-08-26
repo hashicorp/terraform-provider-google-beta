@@ -21,8 +21,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
 func resourceAccessApprovalOrganizationSettings() *schema.Resource {
@@ -139,13 +139,6 @@ func resourceAccessApprovalOrganizationSettingsCreate(d *schema.ResourceData, me
 	}
 
 	log.Printf("[DEBUG] Creating new OrganizationSettings: %#v", obj)
-	billingProject := ""
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
 	updateMask := []string{}
 
 	if d.HasChange("notification_emails") {
@@ -161,7 +154,7 @@ func resourceAccessApprovalOrganizationSettingsCreate(d *schema.ResourceData, me
 	if err != nil {
 		return err
 	}
-	res, err := sendRequestWithTimeout(config, "PATCH", billingProject, url, obj, d.Timeout(schema.TimeoutCreate))
+	res, err := sendRequestWithTimeout(config, "PATCH", "", url, obj, d.Timeout(schema.TimeoutCreate))
 	if err != nil {
 		return fmt.Errorf("Error creating OrganizationSettings: %s", err)
 	}
@@ -189,14 +182,7 @@ func resourceAccessApprovalOrganizationSettingsRead(d *schema.ResourceData, meta
 		return err
 	}
 
-	billingProject := ""
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequest(config, "GET", billingProject, url, nil)
+	res, err := sendRequest(config, "GET", "", url, nil)
 	if err != nil {
 		return handleNotFoundError(err, d, fmt.Sprintf("AccessApprovalOrganizationSettings %q", d.Id()))
 	}
@@ -219,8 +205,6 @@ func resourceAccessApprovalOrganizationSettingsRead(d *schema.ResourceData, meta
 
 func resourceAccessApprovalOrganizationSettingsUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
-
-	billingProject := ""
 
 	obj := make(map[string]interface{})
 	notificationEmailsProp, err := expandAccessApprovalOrganizationSettingsNotificationEmails(d.Get("notification_emails"), d, config)
@@ -257,13 +241,7 @@ func resourceAccessApprovalOrganizationSettingsUpdate(d *schema.ResourceData, me
 	if err != nil {
 		return err
 	}
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "PATCH", billingProject, url, obj, d.Timeout(schema.TimeoutUpdate))
+	res, err := sendRequestWithTimeout(config, "PATCH", "", url, obj, d.Timeout(schema.TimeoutUpdate))
 
 	if err != nil {
 		return fmt.Errorf("Error updating OrganizationSettings %q: %s", d.Id(), err)

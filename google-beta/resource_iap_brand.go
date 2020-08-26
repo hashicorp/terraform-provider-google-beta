@@ -102,20 +102,11 @@ func resourceIapBrandCreate(d *schema.ResourceData, meta interface{}) error {
 	}
 
 	log.Printf("[DEBUG] Creating new Brand: %#v", obj)
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "POST", billingProject, url, obj, d.Timeout(schema.TimeoutCreate))
+	res, err := sendRequestWithTimeout(config, "POST", project, url, obj, d.Timeout(schema.TimeoutCreate))
 	if err != nil {
 		return fmt.Errorf("Error creating Brand: %s", err)
 	}
@@ -165,20 +156,11 @@ func resourceIapBrandPollRead(d *schema.ResourceData, meta interface{}) PollRead
 			return nil, err
 		}
 
-		billingProject := ""
-
 		project, err := getProject(d, config)
 		if err != nil {
 			return nil, err
 		}
-		billingProject = project
-
-		// err == nil indicates that the billing_project value was found
-		if bp, err := getBillingProject(d, config); err == nil {
-			billingProject = bp
-		}
-
-		res, err := sendRequest(config, "GET", billingProject, url, nil)
+		res, err := sendRequest(config, "GET", project, url, nil)
 		if err != nil {
 			return res, err
 		}
@@ -194,20 +176,11 @@ func resourceIapBrandRead(d *schema.ResourceData, meta interface{}) error {
 		return err
 	}
 
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequest(config, "GET", billingProject, url, nil)
+	res, err := sendRequest(config, "GET", project, url, nil)
 	if err != nil {
 		return handleNotFoundError(err, d, fmt.Sprintf("IapBrand %q", d.Id()))
 	}

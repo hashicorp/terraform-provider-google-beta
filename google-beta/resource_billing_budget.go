@@ -250,14 +250,7 @@ func resourceBillingBudgetCreate(d *schema.ResourceData, meta interface{}) error
 	}
 
 	log.Printf("[DEBUG] Creating new Budget: %#v", obj)
-	billingProject := ""
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "POST", billingProject, url, obj, d.Timeout(schema.TimeoutCreate))
+	res, err := sendRequestWithTimeout(config, "POST", "", url, obj, d.Timeout(schema.TimeoutCreate))
 	if err != nil {
 		return fmt.Errorf("Error creating Budget: %s", err)
 	}
@@ -301,14 +294,7 @@ func resourceBillingBudgetRead(d *schema.ResourceData, meta interface{}) error {
 		return err
 	}
 
-	billingProject := ""
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequest(config, "GET", billingProject, url, nil)
+	res, err := sendRequest(config, "GET", "", url, nil)
 	if err != nil {
 		return handleNotFoundError(err, d, fmt.Sprintf("BillingBudget %q", d.Id()))
 	}
@@ -336,8 +322,6 @@ func resourceBillingBudgetRead(d *schema.ResourceData, meta interface{}) error {
 func resourceBillingBudgetUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	billingProject := ""
-
 	obj := make(map[string]interface{})
 	budgetProp, err := expandBillingBudgetBudget(nil, d, config)
 	if err != nil {
@@ -352,13 +336,7 @@ func resourceBillingBudgetUpdate(d *schema.ResourceData, meta interface{}) error
 	}
 
 	log.Printf("[DEBUG] Updating Budget %q: %#v", d.Id(), obj)
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "PATCH", billingProject, url, obj, d.Timeout(schema.TimeoutUpdate))
+	res, err := sendRequestWithTimeout(config, "PATCH", "", url, obj, d.Timeout(schema.TimeoutUpdate))
 
 	if err != nil {
 		return fmt.Errorf("Error updating Budget %q: %s", d.Id(), err)
@@ -372,8 +350,6 @@ func resourceBillingBudgetUpdate(d *schema.ResourceData, meta interface{}) error
 func resourceBillingBudgetDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	billingProject := ""
-
 	url, err := replaceVars(d, config, "{{BillingBasePath}}{{name}}")
 	if err != nil {
 		return err
@@ -382,12 +358,7 @@ func resourceBillingBudgetDelete(d *schema.ResourceData, meta interface{}) error
 	var obj map[string]interface{}
 	log.Printf("[DEBUG] Deleting Budget %q", d.Id())
 
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "DELETE", billingProject, url, obj, d.Timeout(schema.TimeoutDelete))
+	res, err := sendRequestWithTimeout(config, "DELETE", "", url, obj, d.Timeout(schema.TimeoutDelete))
 	if err != nil {
 		return handleNotFoundError(err, d, "Budget")
 	}

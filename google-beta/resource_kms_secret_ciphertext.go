@@ -90,18 +90,11 @@ func resourceKMSSecretCiphertextCreate(d *schema.ResourceData, meta interface{})
 	}
 
 	log.Printf("[DEBUG] Creating new SecretCiphertext: %#v", obj)
-	billingProject := ""
-
+	var project string
 	if parts := regexp.MustCompile(`projects\/([^\/]+)\/`).FindStringSubmatch(url); parts != nil {
-		billingProject = parts[1]
+		project = parts[1]
 	}
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "POST", billingProject, url, obj, d.Timeout(schema.TimeoutCreate))
+	res, err := sendRequestWithTimeout(config, "POST", project, url, obj, d.Timeout(schema.TimeoutCreate))
 	if err != nil {
 		return fmt.Errorf("Error creating SecretCiphertext: %s", err)
 	}
@@ -139,18 +132,11 @@ func resourceKMSSecretCiphertextRead(d *schema.ResourceData, meta interface{}) e
 		return err
 	}
 
-	billingProject := ""
-
+	var project string
 	if parts := regexp.MustCompile(`projects\/([^\/]+)\/`).FindStringSubmatch(url); parts != nil {
-		billingProject = parts[1]
+		project = parts[1]
 	}
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequest(config, "GET", billingProject, url, nil)
+	res, err := sendRequest(config, "GET", project, url, nil)
 	if err != nil {
 		return handleNotFoundError(err, d, fmt.Sprintf("KMSSecretCiphertext %q", d.Id()))
 	}

@@ -27,7 +27,12 @@ import (
 )
 
 func expandCloudIotDeviceRegistryHTTPConfig(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
-	original := v.(map[string]interface{})
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
 	transformed := make(map[string]interface{})
 
 	transformedHTTPEnabledState, err := expandCloudIotDeviceRegistryHTTPEnabledState(original["http_enabled_state"], d, config)
@@ -45,7 +50,12 @@ func expandCloudIotDeviceRegistryHTTPEnabledState(v interface{}, d TerraformReso
 }
 
 func expandCloudIotDeviceRegistryMqttConfig(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
-	original := v.(map[string]interface{})
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
 	transformed := make(map[string]interface{})
 
 	transformedMqttEnabledState, err := expandCloudIotDeviceRegistryMqttEnabledState(original["mqtt_enabled_state"], d, config)
@@ -63,7 +73,12 @@ func expandCloudIotDeviceRegistryMqttEnabledState(v interface{}, d TerraformReso
 }
 
 func expandCloudIotDeviceRegistryStateNotificationConfig(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
-	original := v.(map[string]interface{})
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
 	transformed := make(map[string]interface{})
 
 	transformedPubsubTopicName, err := expandCloudIotDeviceRegistryStateNotificationConfigPubsubTopicName(original["pubsub_topic_name"], d, config)
@@ -105,7 +120,12 @@ func expandCloudIotDeviceRegistryCredentials(v interface{}, d TerraformResourceD
 }
 
 func expandCloudIotDeviceRegistryCredentialsPublicKeyCertificate(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
-	original := v.(map[string]interface{})
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
 	transformed := make(map[string]interface{})
 
 	transformedFormat, err := expandCloudIotDeviceRegistryPublicKeyCertificateFormat(original["format"], d, config)
@@ -176,7 +196,7 @@ func flattenCloudIotDeviceRegistryCredentialsPublicKeyCertificate(v interface{},
 
 	log.Printf("[DEBUG] Transformed public key certificate: %+v", transformed)
 
-	return transformed
+	return []interface{}{transformed}
 }
 
 func flattenCloudIotDeviceRegistryPublicKeyCertificateFormat(v interface{}, d *schema.ResourceData, config *Config) interface{} {
@@ -198,7 +218,7 @@ func flattenCloudIotDeviceRegistryHTTPConfig(v interface{}, d *schema.ResourceDa
 	transformedHTTPEnabledState := flattenCloudIotDeviceRegistryHTTPConfigHTTPEnabledState(original["httpEnabledState"], d, config)
 	transformed["http_enabled_state"] = transformedHTTPEnabledState
 
-	return transformed
+	return []interface{}{transformed}
 }
 
 func flattenCloudIotDeviceRegistryHTTPConfigHTTPEnabledState(v interface{}, d *schema.ResourceData, config *Config) interface{} {
@@ -216,7 +236,7 @@ func flattenCloudIotDeviceRegistryMqttConfig(v interface{}, d *schema.ResourceDa
 	transformedMqttEnabledState := flattenCloudIotDeviceRegistryMqttConfigMqttEnabledState(original["mqttEnabledState"], d, config)
 	transformed["mqtt_enabled_state"] = transformedMqttEnabledState
 
-	return transformed
+	return []interface{}{transformed}
 }
 
 func flattenCloudIotDeviceRegistryMqttConfigMqttEnabledState(v interface{}, d *schema.ResourceData, config *Config) interface{} {
@@ -238,7 +258,7 @@ func flattenCloudIotDeviceRegistryStateNotificationConfig(v interface{}, d *sche
 		transformed["pubsub_topic_name"] = transformedPubsubTopicName
 	}
 
-	return transformed
+	return []interface{}{transformed}
 }
 
 func flattenCloudIotDeviceRegistryStateNotificationConfigPubsubTopicName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
@@ -416,20 +436,11 @@ func resourceCloudIotDeviceRegistryCreate(d *schema.ResourceData, meta interface
 	}
 
 	log.Printf("[DEBUG] Creating new DeviceRegistry: %#v", obj)
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "POST", billingProject, url, obj, d.Timeout(schema.TimeoutCreate))
+	res, err := sendRequestWithTimeout(config, "POST", project, url, obj, d.Timeout(schema.TimeoutCreate))
 	if err != nil {
 		return fmt.Errorf("Error creating DeviceRegistry: %s", err)
 	}
@@ -454,20 +465,11 @@ func resourceCloudIotDeviceRegistryRead(d *schema.ResourceData, meta interface{}
 		return err
 	}
 
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequest(config, "GET", billingProject, url, nil)
+	res, err := sendRequest(config, "GET", project, url, nil)
 	if err != nil {
 		return handleNotFoundError(err, d, fmt.Sprintf("CloudIotDeviceRegistry %q", d.Id()))
 	}
@@ -512,13 +514,10 @@ func resourceCloudIotDeviceRegistryRead(d *schema.ResourceData, meta interface{}
 func resourceCloudIotDeviceRegistryUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
 
 	obj := make(map[string]interface{})
 	eventNotificationConfigsProp, err := expandCloudIotDeviceRegistryEventNotificationConfigs(d.Get("event_notification_configs"), d, config)
@@ -595,13 +594,7 @@ func resourceCloudIotDeviceRegistryUpdate(d *schema.ResourceData, meta interface
 	}
 
 	log.Printf("[DEBUG] Update URL %q: %v", d.Id(), url)
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "PATCH", billingProject, url, obj, d.Timeout(schema.TimeoutUpdate))
+	res, err := sendRequestWithTimeout(config, "PATCH", project, url, obj, d.Timeout(schema.TimeoutUpdate))
 
 	if err != nil {
 		return fmt.Errorf("Error updating DeviceRegistry %q: %s", d.Id(), err)
@@ -615,13 +608,10 @@ func resourceCloudIotDeviceRegistryUpdate(d *schema.ResourceData, meta interface
 func resourceCloudIotDeviceRegistryDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	billingProject := ""
-
 	project, err := getProject(d, config)
 	if err != nil {
 		return err
 	}
-	billingProject = project
 
 	url, err := replaceVars(d, config, "{{CloudIotBasePath}}projects/{{project}}/locations/{{region}}/registries/{{name}}")
 	if err != nil {
@@ -631,12 +621,7 @@ func resourceCloudIotDeviceRegistryDelete(d *schema.ResourceData, meta interface
 	var obj map[string]interface{}
 	log.Printf("[DEBUG] Deleting DeviceRegistry %q", d.Id())
 
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "DELETE", billingProject, url, obj, d.Timeout(schema.TimeoutDelete))
+	res, err := sendRequestWithTimeout(config, "DELETE", project, url, obj, d.Timeout(schema.TimeoutDelete))
 	if err != nil {
 		return handleNotFoundError(err, d, "DeviceRegistry")
 	}

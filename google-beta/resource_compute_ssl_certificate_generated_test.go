@@ -19,8 +19,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
 func TestAccComputeSslCertificate_sslCertificateBasicExample(t *testing.T) {
@@ -73,8 +73,11 @@ func TestAccComputeSslCertificate_sslCertificateRandomProviderExample(t *testing
 	}
 
 	vcrTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
+		PreCheck:  func() { testAccPreCheck(t) },
+		Providers: testAccProviders,
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"random": {},
+		},
 		CheckDestroy: testAccCheckComputeSslCertificateDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
