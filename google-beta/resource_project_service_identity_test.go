@@ -23,7 +23,10 @@ func TestAccProjectServiceIdentity_basic(t *testing.T) {
 
 func testGoogleProjectServiceIdentity_basic() string {
 	return `
+data "google_project" "project" {}
+
 resource "google_project_service_identity" "hc_sa" {
+	project = data.google_project.project.project_id
 	service = "healthcare.googleapis.com"
 }
 
