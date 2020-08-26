@@ -25,9 +25,13 @@ To get more information about Service Identity, see:
 
 
 ```hcl
+data "google_project" "project" {}
+
 resource "google_project_service_identity" "hc_sa" {
   provider = google-beta
-  service  = "healthcare.googleapis.com"
+
+  project = data.google_project.project.project_id
+  service = "healthcare.googleapis.com"
 }
 
 resource "google_project_iam_member" "hc_sa_bq_jobuser" {
