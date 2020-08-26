@@ -16,7 +16,6 @@ func resourceProjectServiceIdentity() *schema.Resource {
 
 		Timeouts: &schema.ResourceTimeout{
 			Create: schema.DefaultTimeout(20 * time.Minute),
-			Update: schema.DefaultTimeout(20 * time.Minute),
 			Read:   schema.DefaultTimeout(10 * time.Minute),
 			Delete: schema.DefaultTimeout(20 * time.Minute),
 		},
@@ -59,7 +58,7 @@ func resourceProjectServiceIdentityCreate(d *schema.ResourceData, meta interface
 
 	res, err := sendRequestWithTimeout(config, "POST", billingProject, url, nil, d.Timeout(schema.TimeoutCreate))
 	if err != nil {
-		return fmt.Errorf("Error creating Dataset: %s", err)
+		return fmt.Errorf("Error creating Service Identity: %s", err)
 	}
 
 	err = serviceUsageOperationWaitTime(
