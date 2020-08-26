@@ -58,7 +58,7 @@ func resourceProjectServiceIdentityCreate(d *schema.ResourceData, meta interface
 
 	res, err := sendRequestWithTimeout(config, "POST", billingProject, url, nil, d.Timeout(schema.TimeoutCreate))
 	if err != nil {
-		return fmt.Errorf("Error creating Dataset: %s", err)
+		return fmt.Errorf("Error creating Service Identity: %s", err)
 	}
 
 	id, err := replaceVars(d, config, "projects/{{project}}/services/{{service}}")
