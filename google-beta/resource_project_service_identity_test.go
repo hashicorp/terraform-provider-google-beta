@@ -19,9 +19,6 @@ func TestAccProjectServiceIdentity_basic(t *testing.T) {
 			{
 				Config: testGoogleProjectServiceIdentity_basic(),
 			},
-			{
-				ResourceName: resourceName,
-			},
 		},
 	})
 }

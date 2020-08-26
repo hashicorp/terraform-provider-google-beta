@@ -62,6 +62,14 @@ func resourceProjectServiceIdentityCreate(d *schema.ResourceData, meta interface
 		return fmt.Errorf("Error creating Dataset: %s", err)
 	}
 
+	err = serviceUsageOperationWaitTime(
+		config, res, project, "Creating Service Identity",
+		d.Timeout(schema.TimeoutCreate))
+
+	if err != nil {
+		return err
+	}
+
 	id, err := replaceVars(d, config, "projects/{{project}}/services/{{service}}")
 	if err != nil {
 		return fmt.Errorf("Error constructing id: %s", err)
