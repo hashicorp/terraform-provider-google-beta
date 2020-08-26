@@ -126,7 +126,14 @@ func resourceComputeOrganizationSecurityPolicyCreate(d *schema.ResourceData, met
 	}
 
 	log.Printf("[DEBUG] Creating new OrganizationSecurityPolicy: %#v", obj)
-	res, err := sendRequestWithTimeout(config, "POST", "", url, obj, d.Timeout(schema.TimeoutCreate))
+	billingProject := ""
+
+	// err == nil indicates that the billing_project value was found
+	if bp, err := getBillingProject(d, config); err == nil {
+		billingProject = bp
+	}
+
+	res, err := sendRequestWithTimeout(config, "POST", billingProject, url, obj, d.Timeout(schema.TimeoutCreate))
 	if err != nil {
 		return fmt.Errorf("Error creating OrganizationSecurityPolicy: %s", err)
 	}
@@ -176,7 +183,14 @@ func resourceComputeOrganizationSecurityPolicyRead(d *schema.ResourceData, meta 
 		return err
 	}
 
-	res, err := sendRequest(config, "GET", "", url, nil)
+	billingProject := ""
+
+	// err == nil indicates that the billing_project value was found
+	if bp, err := getBillingProject(d, config); err == nil {
+		billingProject = bp
+	}
+
+	res, err := sendRequest(config, "GET", billingProject, url, nil)
 	if err != nil {
 		return handleNotFoundError(err, d, fmt.Sprintf("ComputeOrganizationSecurityPolicy %q", d.Id()))
 	}
@@ -206,6 +220,8 @@ func resourceComputeOrganizationSecurityPolicyRead(d *schema.ResourceData, meta 
 func resourceComputeOrganizationSecurityPolicyUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
+	billingProject := ""
+
 	obj := make(map[string]interface{})
 	descriptionProp, err := expandComputeOrganizationSecurityPolicyDescription(d.Get("description"), d, config)
 	if err != nil {
@@ -226,7 +242,13 @@ func resourceComputeOrganizationSecurityPolicyUpdate(d *schema.ResourceData, met
 	}
 
 	log.Printf("[DEBUG] Updating OrganizationSecurityPolicy %q: %#v", d.Id(), obj)
-	res, err := sendRequestWithTimeout(config, "PATCH", "", url, obj, d.Timeout(schema.TimeoutUpdate))
+
+	// err == nil indicates that the billing_project value was found
+	if bp, err := getBillingProject(d, config); err == nil {
+		billingProject = bp
+	}
+
+	res, err := sendRequestWithTimeout(config, "PATCH", billingProject, url, obj, d.Timeout(schema.TimeoutUpdate))
 
 	if err != nil {
 		return fmt.Errorf("Error updating OrganizationSecurityPolicy %q: %s", d.Id(), err)
@@ -250,6 +272,8 @@ func resourceComputeOrganizationSecurityPolicyUpdate(d *schema.ResourceData, met
 func resourceComputeOrganizationSecurityPolicyDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
+	billingProject := ""
+
 	url, err := replaceVars(d, config, "{{ComputeBasePath}}locations/global/securityPolicies/{{policy_id}}")
 	if err != nil {
 		return err
@@ -258,7 +282,12 @@ func resourceComputeOrganizationSecurityPolicyDelete(d *schema.ResourceData, met
 	var obj map[string]interface{}
 	log.Printf("[DEBUG] Deleting OrganizationSecurityPolicy %q", d.Id())
 
-	res, err := sendRequestWithTimeout(config, "DELETE", "", url, obj, d.Timeout(schema.TimeoutDelete))
+	// err == nil indicates that the billing_project value was found
+	if bp, err := getBillingProject(d, config); err == nil {
+		billingProject = bp
+	}
+
+	res, err := sendRequestWithTimeout(config, "DELETE", billingProject, url, obj, d.Timeout(schema.TimeoutDelete))
 	if err != nil {
 		return handleNotFoundError(err, d, "OrganizationSecurityPolicy")
 	}
