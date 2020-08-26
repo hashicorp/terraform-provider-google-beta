@@ -24,12 +24,12 @@ func TestAccProjectServiceIdentity_basic(t *testing.T) {
 func testGoogleProjectServiceIdentity_basic() string {
 	return `
 resource "google_project_service_identity" "hc_sa" {
-  service = "healthcare.googleapis.com"
+	service = "healthcare.googleapis.com"
 }
 
 resource "google_project_iam_member" "hc_sa_bq_jobuser" {
 	project = google_project_service_identity.hc_sa.project
-    role    = "roles/bigquery.jobUser"
+	role    = "roles/bigquery.jobUser"
 	member  = "serviceAccount:service-${data.google_project.project.number}@gcp-sa-healthcare.iam.gserviceaccount.com"
 }`
 }
