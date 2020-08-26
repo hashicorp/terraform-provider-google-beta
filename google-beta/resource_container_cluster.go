@@ -1359,7 +1359,11 @@ func resourceContainerClusterCreate(d *schema.ResourceData, meta interface{}) er
 	parent := fmt.Sprintf("projects/%s/locations/%s", project, location)
 	var op *containerBeta.Operation
 	err = retry(func() error {
-		op, err = config.clientContainerBeta.Projects.Locations.Clusters.Create(parent, req).Do()
+		clusterCreateCall := config.clientContainerBeta.Projects.Locations.Clusters.Create(parent, req)
+		if config.UserProjectOverride {
+			clusterCreateCall.Header().Add("X-Goog-User-Project", project)
+		}
+		op, err = clusterCreateCall.Do()
 		return err
 	})
 	if err != nil {
@@ -1384,7 +1388,11 @@ func resourceContainerClusterCreate(d *schema.ResourceData, meta interface{}) er
 			// leaving default case to ensure this is non blocking
 		}
 		// Try a GET on the cluster so we can see the state in debug logs. This will help classify error states.
-		_, getErr := config.clientContainerBeta.Projects.Locations.Clusters.Get(containerClusterFullName(project, location, clusterName)).Do()
+		clusterGetCall := config.clientContainerBeta.Projects.Locations.Clusters.Get(containerClusterFullName(project, location, clusterName))
+		if config.UserProjectOverride {
+			clusterGetCall.Header().Add("X-Goog-User-Project", project)
+		}
+		_, getErr := clusterGetCall.Do()
 		if getErr != nil {
 			log.Printf("[WARN] Cluster %s was created in an error state and not found", clusterName)
 			d.SetId("")
@@ -1406,7 +1414,11 @@ func resourceContainerClusterCreate(d *schema.ResourceData, meta interface{}) er
 	if d.Get("remove_default_node_pool").(bool) {
 		parent := fmt.Sprintf("%s/nodePools/%s", containerClusterFullName(project, location, clusterName), "default-pool")
 		err = retry(func() error {
-			op, err = config.clientContainerBeta.Projects.Locations.Clusters.NodePools.Delete(parent).Do()
+			clusterNodePoolDeleteCall := config.clientContainerBeta.Projects.Locations.Clusters.NodePools.Delete(parent)
+			if config.UserProjectOverride {
+				clusterNodePoolDeleteCall.Header().Add("X-Goog-User-Project", project)
+			}
+			op, err = clusterNodePoolDeleteCall.Do()
 			return err
 		})
 		if err != nil {
@@ -1462,7 +1474,12 @@ func resourceContainerClusterRead(d *schema.ResourceData, meta interface{}) erro
 
 	clusterName := d.Get("name").(string)
 	name := containerClusterFullName(project, location, clusterName)
-	cluster, err := config.clientContainerBeta.Projects.Locations.Clusters.Get(name).Do()
+	clusterGetCall := config.clientContainerBeta.Projects.Locations.Clusters.Get(name)
+	if config.UserProjectOverride {
+		clusterGetCall.Header().Add("X-Goog-User-Project", project)
+	}
+
+	cluster, err := clusterGetCall.Do()
 	if err != nil {
 		return handleNotFoundError(err, d, fmt.Sprintf("Container Cluster %q", d.Get("name").(string)))
 	}
@@ -1611,7 +1628,11 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 	updateFunc := func(req *containerBeta.UpdateClusterRequest, updateDescription string) func() error {
 		return func() error {
 			name := containerClusterFullName(project, location, clusterName)
-			op, err := config.clientContainerBeta.Projects.Locations.Clusters.Update(name, req).Do()
+			clusterUpdateCall := config.clientContainerBeta.Projects.Locations.Clusters.Update(name, req)
+			if config.UserProjectOverride {
+				clusterUpdateCall.Header().Add("X-Goog-User-Project", project)
+			}
+			op, err := clusterUpdateCall.Do()
 			if err != nil {
 				return err
 			}
@@ -1730,7 +1751,11 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 		updateF := func() error {
 			log.Println("[DEBUG] updating release_channel")
 			name := containerClusterFullName(project, location, clusterName)
-			op, err := config.clientContainerBeta.Projects.Locations.Clusters.Update(name, req).Do()
+			clusterUpdateCall := config.clientContainerBeta.Projects.Locations.Clusters.Update(name, req)
+			if config.UserProjectOverride {
+				clusterUpdateCall.Header().Add("X-Goog-User-Project", project)
+			}
+			op, err := clusterUpdateCall.Do()
 			if err != nil {
 				return err
 			}
@@ -1764,7 +1789,11 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 		updateF := func() error {
 			log.Println("[DEBUG] updating enable_intranode_visibility")
 			name := containerClusterFullName(project, location, clusterName)
-			op, err := config.clientContainerBeta.Projects.Locations.Clusters.Update(name, req).Do()
+			clusterUpdateCall := config.clientContainerBeta.Projects.Locations.Clusters.Update(name, req)
+			if config.UserProjectOverride {
+				clusterUpdateCall.Header().Add("X-Goog-User-Project", project)
+			}
+			op, err := clusterUpdateCall.Do()
 			if err != nil {
 				return err
 			}
@@ -1794,7 +1823,11 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 		updateF := func() error {
 			log.Println("[DEBUG] updating default_snat_status")
 			name := containerClusterFullName(project, location, clusterName)
-			op, err := config.clientContainerBeta.Projects.Locations.Clusters.Update(name, req).Do()
+			clusterUpdateCall := config.clientContainerBeta.Projects.Locations.Clusters.Update(name, req)
+			if config.UserProjectOverride {
+				clusterUpdateCall.Header().Add("X-Goog-User-Project", project)
+			}
+			op, err := clusterUpdateCall.Do()
 			if err != nil {
 				return err
 			}
@@ -1822,7 +1855,11 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 
 		updateF := func() error {
 			name := containerClusterFullName(project, location, clusterName)
-			op, err := config.clientContainerBeta.Projects.Locations.Clusters.SetMaintenancePolicy(name, req).Do()
+			clusterSetMaintenancePolicyCall := config.clientContainerBeta.Projects.Locations.Clusters.SetMaintenancePolicy(name, req)
+			if config.UserProjectOverride {
+				clusterSetMaintenancePolicyCall.Header().Add("X-Goog-User-Project", project)
+			}
+			op, err := clusterSetMaintenancePolicyCall.Do()
 
 			if err != nil {
 				return err
@@ -1901,7 +1938,11 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 		updateF := func() error {
 			log.Println("[DEBUG] updating enable_legacy_abac")
 			name := containerClusterFullName(project, location, clusterName)
-			op, err := config.clientContainerBeta.Projects.Locations.Clusters.SetLegacyAbac(name, req).Do()
+			clusterSetLegacyAbacCall := config.clientContainerBeta.Projects.Locations.Clusters.SetLegacyAbac(name, req)
+			if config.UserProjectOverride {
+				clusterSetLegacyAbacCall.Header().Add("X-Goog-User-Project", project)
+			}
+			op, err := clusterSetLegacyAbacCall.Do()
 			if err != nil {
 				return err
 			}
@@ -1934,7 +1975,11 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 					DesiredLoggingService:    logging,
 				},
 			}
-			op, err := config.clientContainerBeta.Projects.Locations.Clusters.Update(name, req).Do()
+			clusterUpdateCall := config.clientContainerBeta.Projects.Locations.Clusters.Update(name, req)
+			if config.UserProjectOverride {
+				clusterUpdateCall.Header().Add("X-Goog-User-Project", project)
+			}
+			op, err := clusterUpdateCall.Do()
 			if err != nil {
 				return err
 			}
@@ -1962,7 +2007,11 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 		updateF := func() error {
 			log.Println("[DEBUG] updating network_policy")
 			name := containerClusterFullName(project, location, clusterName)
-			op, err := config.clientContainerBeta.Projects.Locations.Clusters.SetNetworkPolicy(name, req).Do()
+			clusterSetNetworkPolicyCall := config.clientContainerBeta.Projects.Locations.Clusters.SetNetworkPolicy(name, req)
+			if config.UserProjectOverride {
+				clusterSetNetworkPolicyCall.Header().Add("X-Goog-User-Project", project)
+			}
+			op, err := clusterSetNetworkPolicyCall.Do()
 			if err != nil {
 				return err
 			}
@@ -2075,7 +2124,11 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 
 			updateF := func() error {
 				name := containerClusterFullName(project, location, clusterName)
-				op, err := config.clientContainerBeta.Projects.Locations.Clusters.Update(name, req).Do()
+				clusterUpdateCall := config.clientContainerBeta.Projects.Locations.Clusters.Update(name, req)
+				if config.UserProjectOverride {
+					clusterUpdateCall.Header().Add("X-Goog-User-Project", project)
+				}
+				op, err := clusterUpdateCall.Do()
 				if err != nil {
 					return err
 				}
@@ -2112,7 +2165,11 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 
 		updateF := func() error {
 			name := containerClusterFullName(project, location, clusterName)
-			op, err := config.clientContainerBeta.Projects.Locations.Clusters.SetMasterAuth(name, req).Do()
+			clusterSetMasterAuthCall := config.clientContainerBeta.Projects.Locations.Clusters.SetMasterAuth(name, req)
+			if config.UserProjectOverride {
+				clusterSetMasterAuthCall.Header().Add("X-Goog-User-Project", project)
+			}
+			op, err := clusterSetMasterAuthCall.Do()
 			if err != nil {
 				return err
 			}
@@ -2160,7 +2217,11 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 
 		updateF := func() error {
 			name := containerClusterFullName(project, location, clusterName)
-			op, err := config.clientContainerBeta.Projects.Locations.Clusters.Update(name, req).Do()
+			clusterUpdateCall := config.clientContainerBeta.Projects.Locations.Clusters.Update(name, req)
+			if config.UserProjectOverride {
+				clusterUpdateCall.Header().Add("X-Goog-User-Project", project)
+			}
+			op, err := clusterUpdateCall.Do()
 			if err != nil {
 				return err
 			}
@@ -2185,7 +2246,11 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 
 		updateF := func() error {
 			name := containerClusterFullName(project, location, clusterName)
-			op, err := config.clientContainerBeta.Projects.Locations.Clusters.Update(name, req).Do()
+			clusterUpdateCall := config.clientContainerBeta.Projects.Locations.Clusters.Update(name, req)
+			if config.UserProjectOverride {
+				clusterUpdateCall.Header().Add("X-Goog-User-Project", project)
+			}
+			op, err := clusterUpdateCall.Do()
 			if err != nil {
 				return err
 			}
@@ -2238,7 +2303,11 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 		}
 		updateF := func() error {
 			name := containerClusterFullName(project, location, clusterName)
-			op, err := config.clientContainerBeta.Projects.Locations.Clusters.SetResourceLabels(name, req).Do()
+			clusterSetResourceLabelsCall := config.clientContainerBeta.Projects.Locations.Clusters.SetResourceLabels(name, req)
+			if config.UserProjectOverride {
+				clusterSetResourceLabelsCall.Header().Add("X-Goog-User-Project", project)
+			}
+			op, err := clusterSetResourceLabelsCall.Do()
 			if err != nil {
 				return err
 			}
@@ -2257,7 +2326,11 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 
 	if d.HasChange("remove_default_node_pool") && d.Get("remove_default_node_pool").(bool) {
 		name := fmt.Sprintf("%s/nodePools/%s", containerClusterFullName(project, location, clusterName), "default-pool")
-		op, err := config.clientContainerBeta.Projects.Locations.Clusters.NodePools.Delete(name).Do()
+		clusterNodePoolDeleteCall := config.clientContainerBeta.Projects.Locations.Clusters.NodePools.Delete(name)
+		if config.UserProjectOverride {
+			clusterNodePoolDeleteCall.Header().Add("X-Goog-User-Project", project)
+		}
+		op, err := clusterNodePoolDeleteCall.Do()
 		if err != nil {
 			if !isGoogleApiErrorWithCode(err, 404) {
 				return errwrap.Wrapf("Error deleting default node pool: {{err}}", err)
@@ -2281,7 +2354,11 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 
 		updateF := func() error {
 			name := containerClusterFullName(project, location, clusterName)
-			op, err := config.clientContainerBeta.Projects.Locations.Clusters.Update(name, req).Do()
+			clusterUpdateCall := config.clientContainerBeta.Projects.Locations.Clusters.Update(name, req)
+			if config.UserProjectOverride {
+				clusterUpdateCall.Header().Add("X-Goog-User-Project", project)
+			}
+			op, err := clusterUpdateCall.Do()
 			if err != nil {
 				return err
 			}
@@ -2307,7 +2384,11 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 		updateF := func() error {
 			log.Println("[DEBUG] updating cluster_telemetry")
 			name := containerClusterFullName(project, location, clusterName)
-			op, err := config.clientContainerBeta.Projects.Locations.Clusters.Update(name, req).Do()
+			clusterUpdateCall := config.clientContainerBeta.Projects.Locations.Clusters.Update(name, req)
+			if config.UserProjectOverride {
+				clusterUpdateCall.Header().Add("X-Goog-User-Project", project)
+			}
+			op, err := clusterUpdateCall.Do()
 			if err != nil {
 				return err
 			}
@@ -2364,7 +2445,11 @@ func resourceContainerClusterDelete(d *schema.ResourceData, meta interface{}) er
 		count++
 
 		name := containerClusterFullName(project, location, clusterName)
-		op, err = config.clientContainerBeta.Projects.Locations.Clusters.Delete(name).Do()
+		clusterDeleteCall := config.clientContainerBeta.Projects.Locations.Clusters.Delete(name)
+		if config.UserProjectOverride {
+			clusterDeleteCall.Header().Add("X-Goog-User-Project", project)
+		}
+		op, err = clusterDeleteCall.Do()
 
 		if err != nil {
 			log.Printf("[WARNING] Cluster is still not ready to delete, retrying %s", clusterName)
@@ -2415,7 +2500,11 @@ func cleanFailedContainerCluster(d *schema.ResourceData, meta interface{}) error
 	fullName := containerClusterFullName(project, location, clusterName)
 
 	log.Printf("[DEBUG] Cleaning up failed GKE cluster %s", d.Get("name").(string))
-	op, err := config.clientContainerBeta.Projects.Locations.Clusters.Delete(fullName).Do()
+	clusterDeleteCall := config.clientContainerBeta.Projects.Locations.Clusters.Delete(fullName)
+	if config.UserProjectOverride {
+		clusterDeleteCall.Header().Add("X-Goog-User-Project", project)
+	}
+	op, err := clusterDeleteCall.Do()
 	if err != nil {
 		return handleNotFoundError(err, d, fmt.Sprintf("Container Cluster %q", d.Get("name").(string)))
 	}
@@ -2441,7 +2530,11 @@ var containerClusterRestingStates = RestingStates{
 func containerClusterAwaitRestingState(config *Config, project, location, clusterName string, timeout time.Duration) (state string, err error) {
 	err = resource.Retry(timeout, func() *resource.RetryError {
 		name := containerClusterFullName(project, location, clusterName)
-		cluster, gErr := config.clientContainerBeta.Projects.Locations.Clusters.Get(name).Do()
+		clusterGetCall := config.clientContainerBeta.Projects.Locations.Clusters.Get(name)
+		if config.UserProjectOverride {
+			clusterGetCall.Header().Add("X-Goog-User-Project", project)
+		}
+		cluster, gErr := clusterGetCall.Do()
 		if gErr != nil {
 			return resource.NonRetryableError(gErr)
 		}
@@ -2605,7 +2698,11 @@ func expandMaintenancePolicy(d *schema.ResourceData, meta interface{}) *containe
 	location, _ := getLocation(d, config)
 	clusterName := d.Get("name").(string)
 	name := containerClusterFullName(project, location, clusterName)
-	cluster, _ := config.clientContainerBeta.Projects.Locations.Clusters.Get(name).Do()
+	clusterGetCall := config.clientContainerBeta.Projects.Locations.Clusters.Get(name)
+	if config.UserProjectOverride {
+		clusterGetCall.Header().Add("X-Goog-User-Project", project)
+	}
+	cluster, _ := clusterGetCall.Do()
 	resourceVersion := ""
 	// If the cluster doesn't exist or if there is a read error of any kind, we will pass in an empty
 	// resourceVersion.  If there happens to be a change to maintenance policy, we will fail at that
