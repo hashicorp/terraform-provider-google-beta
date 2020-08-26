@@ -1,4 +1,35 @@
 ## 3.37.0 (Unreleased)
+NOTES:
+* Drop recommendation to use -provider= on import in documentation ([#2417](https://github.com/hashicorp/terraform-provider-google-beta/pull/2417))
+
+FEATURES:
+* **New Resource:** `google_compute_image_iam_binding` ([#2410](https://github.com/hashicorp/terraform-provider-google-beta/pull/2410))
+* **New Resource:** `google_compute_image_iam_member` ([#2410](https://github.com/hashicorp/terraform-provider-google-beta/pull/2410))
+* **New Resource:** `google_compute_image_iam_policy` ([#2410](https://github.com/hashicorp/terraform-provider-google-beta/pull/2410))
+* **New Resource:** `google_compute_disk_iam_binding` ([#2424](https://github.com/hashicorp/terraform-provider-google-beta/pull/2424))
+* **New Resource:** `google_compute_disk_iam_member` ([#2424](https://github.com/hashicorp/terraform-provider-google-beta/pull/2424))
+* **New Resource:** `google_compute_disk_iam_policy` ([#2424](https://github.com/hashicorp/terraform-provider-google-beta/pull/2424))
+* **New Resource:** `google_compute_region_disk_iam_binding` ([#2424](https://github.com/hashicorp/terraform-provider-google-beta/pull/2424))
+* **New Resource:** `google_compute_region_disk_iam_member` ([#2424](https://github.com/hashicorp/terraform-provider-google-beta/pull/2424))
+* **New Resource:** `google_compute_region_disk_iam_policy` ([#2424](https://github.com/hashicorp/terraform-provider-google-beta/pull/2424))
+
+IMPROVEMENTS:
+* appengine: added `vpc_access_connector` field to `google_app_engine_standard_app_version` resource ([#2405](https://github.com/hashicorp/terraform-provider-google-beta/pull/2405))
+* bigquery: added `notification_pubsub_topic` field to `google_bigquery_data_transfer_config` resource ([#2411](https://github.com/hashicorp/terraform-provider-google-beta/pull/2411))
+* composer: added `database_config` and `web_server_config` to `google_composer_environment` resource (TPGB only) ([#2419](https://github.com/hashicorp/terraform-provider-google-beta/pull/2419))
+* compute: Added custom metadata fields and filter expressions to `google_compute_subnetwork` flow log configuration ([#2416](https://github.com/hashicorp/terraform-provider-google-beta/pull/2416))
+* compute: Added support to `google_compute_backend_service` for setting a serverless regional network endpoint group as `backend.group` ([#2408](https://github.com/hashicorp/terraform-provider-google-beta/pull/2408))
+* compute: added support for pd-balanced disk type for `google_compute_instance` ([#2421](https://github.com/hashicorp/terraform-provider-google-beta/pull/2421))
+* container: added support for `kubelet_config` and `linux_node_config` to GKE node pools (beta) ([#2279](https://github.com/hashicorp/terraform-provider-google-beta/pull/2279))
+* container: added support for `kubelet_config` and `linux_node_config` to GKE node pools (beta) ([#2403](https://github.com/hashicorp/terraform-provider-google-beta/pull/2403))
+* container: added support for pd-balanced disk type for `google_container_node_pool` ([#2421](https://github.com/hashicorp/terraform-provider-google-beta/pull/2421))
+* memcached: added discovery_endpoint to `resource_memcached_instance` ([#2414](https://github.com/hashicorp/terraform-provider-google-beta/pull/2414))
+* pubsub: added `retry_policy` to `google_pubsub_subscription` resource ([#2412](https://github.com/hashicorp/terraform-provider-google-beta/pull/2412))
+
+BUG FIXES:
+* compute: fixed an issue where `google_compute_url_map` `path_matcher.default_route_action` would conflict with `default_url_redirect` ([#2406](https://github.com/hashicorp/terraform-provider-google-beta/pull/2406))
+* kms: updated `data_source_secret_manager_secret_version` to have consistent id value ([#2415](https://github.com/hashicorp/terraform-provider-google-beta/pull/2415))
+
 ## 3.36.0 (August 24, 2020)
 
 FEATURES:
