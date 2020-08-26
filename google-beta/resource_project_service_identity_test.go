@@ -9,8 +9,6 @@ import (
 func TestAccProjectServiceIdentity_basic(t *testing.T) {
 	t.Parallel()
 
-	resourceName := "google_project_service_identity.hc_sa"
-
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
