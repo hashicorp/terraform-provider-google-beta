@@ -709,8 +709,8 @@ func Provider() terraform.ResourceProvider {
 }
 
 // Generated resources: 186
-// Generated IAM resources: 72
-// Total generated resources: 258
+// Generated IAM resources: 78
+// Total generated resources: 264
 func ResourceMap() map[string]*schema.Resource {
 	resourceMap, _ := ResourceMapWithErrors()
 	return resourceMap
@@ -784,6 +784,9 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_compute_region_disk_resource_policy_attachment":        resourceComputeRegionDiskResourcePolicyAttachment(),
 			"google_compute_disk_resource_policy_attachment":               resourceComputeDiskResourcePolicyAttachment(),
 			"google_compute_disk":                                          resourceComputeDisk(),
+			"google_compute_disk_iam_binding":                              ResourceIamBinding(ComputeDiskIamSchema, ComputeDiskIamUpdaterProducer, ComputeDiskIdParseFunc),
+			"google_compute_disk_iam_member":                               ResourceIamMember(ComputeDiskIamSchema, ComputeDiskIamUpdaterProducer, ComputeDiskIdParseFunc),
+			"google_compute_disk_iam_policy":                               ResourceIamPolicy(ComputeDiskIamSchema, ComputeDiskIamUpdaterProducer, ComputeDiskIdParseFunc),
 			"google_compute_firewall":                                      resourceComputeFirewall(),
 			"google_compute_forwarding_rule":                               resourceComputeForwardingRule(),
 			"google_compute_global_address":                                resourceComputeGlobalAddress(),
@@ -818,6 +821,9 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_compute_region_per_instance_config":                    resourceComputeRegionPerInstanceConfig(),
 			"google_compute_region_autoscaler":                             resourceComputeRegionAutoscaler(),
 			"google_compute_region_disk":                                   resourceComputeRegionDisk(),
+			"google_compute_region_disk_iam_binding":                       ResourceIamBinding(ComputeRegionDiskIamSchema, ComputeRegionDiskIamUpdaterProducer, ComputeRegionDiskIdParseFunc),
+			"google_compute_region_disk_iam_member":                        ResourceIamMember(ComputeRegionDiskIamSchema, ComputeRegionDiskIamUpdaterProducer, ComputeRegionDiskIdParseFunc),
+			"google_compute_region_disk_iam_policy":                        ResourceIamPolicy(ComputeRegionDiskIamSchema, ComputeRegionDiskIamUpdaterProducer, ComputeRegionDiskIdParseFunc),
 			"google_compute_region_url_map":                                resourceComputeRegionUrlMap(),
 			"google_compute_region_health_check":                           resourceComputeRegionHealthCheck(),
 			"google_compute_resource_policy":                               resourceComputeResourcePolicy(),
