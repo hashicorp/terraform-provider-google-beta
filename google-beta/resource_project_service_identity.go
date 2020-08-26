@@ -72,10 +72,12 @@ func resourceProjectServiceIdentityCreate(d *schema.ResourceData, meta interface
 	return nil
 }
 
+// There is no read endpoint for this API.
 func resourceProjectServiceIdentityRead(d *schema.ResourceData, meta interface{}) error {
 	return nil
 }
 
+// There is no delete endpoint for this API.
 func resourceProjectServiceIdentityDelete(d *schema.ResourceData, meta interface{}) error {
 	return nil
 }
