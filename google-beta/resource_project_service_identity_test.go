@@ -28,7 +28,8 @@ resource "google_project_service_identity" "hc_sa" {
 }
 
 resource "google_project_iam_member" "hc_sa_bq_jobuser" {
+	project = google_project_service_identity.hc_sa.project
     role    = "roles/bigquery.jobUser"
-    member  = "serviceAccount:service-${data.google_project.project.number}@gcp-sa-healthcare.iam.gserviceaccount.com"
+	member  = "serviceAccount:service-${data.google_project.project.number}@gcp-sa-healthcare.iam.gserviceaccount.com"
 }`
 }
