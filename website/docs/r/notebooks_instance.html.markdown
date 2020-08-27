@@ -191,7 +191,7 @@ The following arguments are supported:
 
 * `instance_owners` -
   (Optional)
-  The owner of this instance after creation. 
+  The list of owners of this instance after creation. 
   Format: alias@example.com.
   Currently supports one owner only. 
   If not specified, all of the service account users of 
@@ -225,7 +225,7 @@ The following arguments are supported:
 * `boot_disk_type` -
   (Optional)
   Possible disk types for notebook instances.
-  Possible values are `DISK_TYPE_UNSPECIFIED`, `PD_STANDARD`, and `PD_SSD`.
+  Possible values are `DISK_TYPE_UNSPECIFIED`, `PD_STANDARD`, `PD_SSD`, and `PD_BALANCED`.
 
 * `boot_disk_size_gb` -
   (Optional)
@@ -236,7 +236,7 @@ The following arguments are supported:
 * `data_disk_type` -
   (Optional)
   Possible disk types for notebook instances.
-  Possible values are `DISK_TYPE_UNSPECIFIED`, `PD_STANDARD`, and `PD_SSD`.
+  Possible values are `DISK_TYPE_UNSPECIFIED`, `PD_STANDARD`, `PD_SSD`, and `PD_BALANCED`.
 
 * `data_disk_size_gb` -
   (Optional)
