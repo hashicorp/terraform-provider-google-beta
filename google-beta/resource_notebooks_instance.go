@@ -101,8 +101,8 @@ If not specified, this defaults to 100.`,
 				Type:         schema.TypeString,
 				Optional:     true,
 				ForceNew:     true,
-				ValidateFunc: validation.StringInSlice([]string{"DISK_TYPE_UNSPECIFIED", "PD_STANDARD", "PD_SSD", ""}, false),
-				Description:  `Possible disk types for notebook instances. Possible values: ["DISK_TYPE_UNSPECIFIED", "PD_STANDARD", "PD_SSD"]`,
+				ValidateFunc: validation.StringInSlice([]string{"DISK_TYPE_UNSPECIFIED", "PD_STANDARD", "PD_SSD", "PD_BALANCED", ""}, false),
+				Description:  `Possible disk types for notebook instances. Possible values: ["DISK_TYPE_UNSPECIFIED", "PD_STANDARD", "PD_SSD", "PD_BALANCED"]`,
 			},
 			"container_image": {
 				Type:        schema.TypeList,
@@ -149,9 +149,9 @@ If not specified, this defaults to 100.`,
 				Type:             schema.TypeString,
 				Optional:         true,
 				ForceNew:         true,
-				ValidateFunc:     validation.StringInSlice([]string{"DISK_TYPE_UNSPECIFIED", "PD_STANDARD", "PD_SSD", ""}, false),
+				ValidateFunc:     validation.StringInSlice([]string{"DISK_TYPE_UNSPECIFIED", "PD_STANDARD", "PD_SSD", "PD_BALANCED", ""}, false),
 				DiffSuppressFunc: emptyOrDefaultStringSuppress("DISK_TYPE_UNSPECIFIED"),
-				Description:      `Possible disk types for notebook instances. Possible values: ["DISK_TYPE_UNSPECIFIED", "PD_STANDARD", "PD_SSD"]`,
+				Description:      `Possible disk types for notebook instances. Possible values: ["DISK_TYPE_UNSPECIFIED", "PD_STANDARD", "PD_SSD", "PD_BALANCED"]`,
 			},
 			"disk_encryption": {
 				Type:             schema.TypeString,
@@ -169,14 +169,17 @@ If not specified, this defaults to 100.`,
 use the first partition of the disk for its root filesystem.`,
 			},
 			"instance_owners": {
-				Type:     schema.TypeString,
+				Type:     schema.TypeList,
 				Optional: true,
 				ForceNew: true,
-				Description: `The owner of this instance after creation. 
+				Description: `The list of owners of this instance after creation. 
 Format: alias@example.com.
 Currently supports one owner only. 
 If not specified, all of the service account users of 
 your VM instance's service account can use the instance.`,
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
 			},
 			"kms_key": {
 				Type:     schema.TypeString,
