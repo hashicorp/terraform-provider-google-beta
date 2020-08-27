@@ -10,8 +10,8 @@ func TestAccProjectServiceIdentity_basic(t *testing.T) {
 	t.Parallel()
 
 	vcrTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
+		PreCheck:  func() { testAccPreCheck(t) },
+		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
 				Config: testGoogleProjectServiceIdentity_basic(),
