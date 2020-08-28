@@ -43,14 +43,14 @@ To get more information about OrganizationSecurityPolicyAssociation, see:
 
 ```hcl
 resource "google_compute_organization_security_policy" "policy" {
-  provider = "google-beta"
+  provider = google-beta
 
   display_name = "tf-test%{random_suffix}"
   parent       = "organizations/123456789"
 }
 
 resource "google_compute_organization_security_policy_rule" "policy" {
-  provider = "google-beta"
+  provider = google-beta
 
   policy_id = google_compute_organization_security_policy.policy.id
   action = "allow"
@@ -73,7 +73,7 @@ resource "google_compute_organization_security_policy_rule" "policy" {
 }
 
 resource "google_compute_organization_security_policy_association" "policy" {
-  provider = "google-beta"
+  provider = google-beta
 
   name          = "tf-test%{random_suffix}"
   attachment_id = google_compute_organization_security_policy.policy.parent
