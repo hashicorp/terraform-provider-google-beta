@@ -19,6 +19,9 @@ func TestAccBigqueryConnectionConnection_bigqueryConnectionBasic(t *testing.T) {
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProvidersOiCS,
 		CheckDestroy: testAccCheckBigqueryConnectionConnectionDestroyProducer(t),
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"random": {},
+		},
 		Steps: []resource.TestStep{
 			{
 				Config: testAccBigqueryConnectionConnection_bigqueryConnectionBasic(context),
