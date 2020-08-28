@@ -43,14 +43,14 @@ To get more information about OrganizationSecurityPolicyRule, see:
 
 ```hcl
 resource "google_compute_organization_security_policy" "policy" {
-  provider = "google-beta"
+  provider = google-beta
 
   display_name = "tf-test%{random_suffix}"
   parent       = "organizations/123456789"
 }
 
 resource "google_compute_organization_security_policy_rule" "policy" {
-  provider = "google-beta"
+  provider = google-beta
 
   policy_id = google_compute_organization_security_policy.policy.id
   action = "allow"
