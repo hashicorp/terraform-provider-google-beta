@@ -42,7 +42,7 @@ func TestAccComputeVpnTunnel_vpnTunnelBasicExample(t *testing.T) {
 				ResourceName:            "google_compute_vpn_tunnel.tunnel1",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"shared_secret"},
+				ImportStateVerifyIgnore: []string{"target_vpn_gateway", "vpn_gateway", "peer_external_gateway", "peer_gcp_gateway", "router", "shared_secret", "region"},
 			},
 		},
 	})
