@@ -287,7 +287,9 @@ func resourceBillingBudgetCreate(d *schema.ResourceData, meta interface{}) error
 			return fmt.Errorf("Create response didn't contain critical fields. Create may not have succeeded.")
 		}
 	}
-	d.Set("name", name.(string))
+	if err := d.Set("name", name.(string)); err != nil {
+		return fmt.Errorf("Error setting name: %s", err)
+	}
 	d.SetId(name.(string))
 
 	return resourceBillingBudgetRead(d, meta)
@@ -325,7 +327,9 @@ func resourceBillingBudgetRead(d *schema.ResourceData, meta interface{}) error {
 		casted := flattenedProp.([]interface{})[0]
 		if casted != nil {
 			for k, v := range casted.(map[string]interface{}) {
-				d.Set(k, v)
+				if err := d.Set(k, v); err != nil {
+					return fmt.Errorf("Error setting %s: %s", k, err)
+				}
 			}
 		}
 	}
