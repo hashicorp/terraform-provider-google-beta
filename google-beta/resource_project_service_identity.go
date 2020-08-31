@@ -32,6 +32,10 @@ func resourceProjectServiceIdentity() *schema.Resource {
 				Computed: true,
 				ForceNew: true,
 			},
+			"email": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
 		},
 	}
 }
@@ -61,13 +65,15 @@ func resourceProjectServiceIdentityCreate(d *schema.ResourceData, meta interface
 		return fmt.Errorf("Error creating Service Identity: %s", err)
 	}
 
-	err = serviceUsageOperationWaitTime(
-		config, res, project, "Creating Service Identity",
+	var opRes map[string]interface{}
+	err = serviceUsageOperationWaitTimeWithResponse(
+		config, res, &opRes, project, "Creating Service Identity",
 		d.Timeout(schema.TimeoutCreate))
-
 	if err != nil {
 		return err
 	}
+
+	log.Printf("[DEBUG] Finished creating Service Identity %q: %#v", d.Id(), res)
 
 	id, err := replaceVars(d, config, "projects/{{project}}/services/{{service}}")
 	if err != nil {
@@ -75,7 +81,15 @@ func resourceProjectServiceIdentityCreate(d *schema.ResourceData, meta interface
 	}
 	d.SetId(id)
 
-	log.Printf("[DEBUG] Finished creating Service Identity %q: %#v", d.Id(), res)
+	emailVal, ok := opRes["email"]
+	if !ok {
+		return fmt.Errorf("response %v missing 'email'", opRes)
+	}
+	email, ok := emailVal.(string)
+	if !ok {
+		return fmt.Errorf("unexpected type for email: got %T, want string", email)
+	}
+	d.Set("email", email)
 	return nil
 }
 
