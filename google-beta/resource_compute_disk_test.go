@@ -819,9 +819,6 @@ resource "google_compute_disk" "foobar" {
   type                        = "pd-ssd"
   zone                        = "us-central1-a"
   erase_windows_vss_signature = true
-  timeouts {
-    create = "10m"
-  }
 }
 `, firstDiskName, projectName, snapshotName, projectName, diskName)
 }
