@@ -62,7 +62,7 @@ resource "google_compute_disk" "default" {
   name  = "test-disk"
   type  = "pd-ssd"
   zone  = "us-central1-a"
-  image = "debian-9-stretch-v20200805"
+  image = "debian-8-jessie-v20170523"
   labels = {
     environment = "dev"
   }
@@ -120,11 +120,6 @@ The following arguments are supported:
   (Optional)
   URL of the disk type resource describing which disk type to use to
   create the disk. Provide this when creating the disk.
-
-* `erase_windows_vss_signature` -
-  (Optional, [Beta](https://terraform.io/docs/providers/google/guides/provider_versions.html))
-  Specifies whether the disk restored from a source snapshot
-  should erase Windows specific VSS signature.
 
 * `image` -
   (Optional)
@@ -211,11 +206,6 @@ The `source_image_encryption_key` block supports:
   `roles/cloudkms.cryptoKeyEncrypterDecrypter` to use this feature.
   See https://cloud.google.com/compute/docs/disks/customer-managed-encryption#encrypt_a_new_persistent_disk_with_your_own_keys
 
-* `kms_key_service_account` -
-  (Optional)
-  The service account used for the encryption request for the given KMS key. 
-  If absent, the Compute Engine Service Agent service account is used.
-
 The `disk_encryption_key` block supports:
 
 * `raw_key` -
@@ -236,11 +226,6 @@ The `disk_encryption_key` block supports:
   `roles/cloudkms.cryptoKeyEncrypterDecrypter` to use this feature.
   See https://cloud.google.com/compute/docs/disks/customer-managed-encryption#encrypt_a_new_persistent_disk_with_your_own_keys
 
-* `kms_key_service_account` -
-  (Optional)
-  The service account used for the encryption request for the given KMS key. 
-  If absent, the Compute Engine Service Agent service account is used.
-
 The `source_snapshot_encryption_key` block supports:
 
 * `raw_key` -
@@ -259,11 +244,6 @@ The `source_snapshot_encryption_key` block supports:
 * `sha256` -
   The RFC 4648 base64 encoded SHA-256 hash of the customer-supplied
   encryption key that protects this resource.
-
-* `kms_key_service_account` -
-  (Optional)
-  The service account used for the encryption request for the given KMS key. 
-  If absent, the Compute Engine Service Agent service account is used.
 
 ## Attributes Reference
 

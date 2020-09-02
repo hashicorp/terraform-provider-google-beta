@@ -288,13 +288,6 @@ in the cloud console. Your project's Compute Engine System service account
 'roles/cloudkms.cryptoKeyEncrypterDecrypter' to use this feature.
 See https://cloud.google.com/compute/docs/disks/customer-managed-encryption#encrypt_a_new_persistent_disk_with_your_own_keys`,
 						},
-						"kms_key_service_account": {
-							Type:     schema.TypeString,
-							Optional: true,
-							ForceNew: true,
-							Description: `The service account used for the encryption request for the given KMS key. 
-If absent, the Compute Engine Service Agent service account is used.`,
-						},
 						"raw_key": {
 							Type:     schema.TypeString,
 							Optional: true,
@@ -311,14 +304,6 @@ encryption key that protects this resource.`,
 						},
 					},
 				},
-			},
-			"erase_windows_vss_signature": {
-				Type:     schema.TypeBool,
-				Optional: true,
-				ForceNew: true,
-				Description: `Specifies whether the disk restored from a source snapshot
-should erase Windows specific VSS signature.`,
-				Default: false,
 			},
 			"image": {
 				Type:             schema.TypeString,
@@ -417,13 +402,6 @@ in the cloud console. Your project's Compute Engine System service account
 'roles/cloudkms.cryptoKeyEncrypterDecrypter' to use this feature.
 See https://cloud.google.com/compute/docs/disks/customer-managed-encryption#encrypt_a_new_persistent_disk_with_your_own_keys`,
 						},
-						"kms_key_service_account": {
-							Type:     schema.TypeString,
-							Optional: true,
-							ForceNew: true,
-							Description: `The service account used for the encryption request for the given KMS key. 
-If absent, the Compute Engine Service Agent service account is used.`,
-						},
 						"raw_key": {
 							Type:     schema.TypeString,
 							Optional: true,
@@ -460,13 +438,6 @@ in the cloud console. Your project's Compute Engine System service account
 ('service-{{PROJECT_NUMBER}}@compute-system.iam.gserviceaccount.com') must have
 'roles/cloudkms.cryptoKeyEncrypterDecrypter' to use this feature.
 See https://cloud.google.com/compute/docs/disks/customer-managed-encryption#encrypt_a_new_persistent_disk_with_your_own_keys`,
-						},
-						"kms_key_service_account": {
-							Type:     schema.TypeString,
-							Optional: true,
-							ForceNew: true,
-							Description: `The service account used for the encryption request for the given KMS key. 
-If absent, the Compute Engine Service Agent service account is used.`,
 						},
 						"raw_key": {
 							Type:     schema.TypeString,
@@ -610,12 +581,6 @@ func resourceComputeDiskCreate(d *schema.ResourceData, meta interface{}) error {
 		return err
 	} else if v, ok := d.GetOkExists("type"); !isEmptyValue(reflect.ValueOf(typeProp)) && (ok || !reflect.DeepEqual(v, typeProp)) {
 		obj["type"] = typeProp
-	}
-	eraseWindowsVssSignatureProp, err := expandComputeDiskEraseWindowsVssSignature(d.Get("erase_windows_vss_signature"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("erase_windows_vss_signature"); !isEmptyValue(reflect.ValueOf(eraseWindowsVssSignatureProp)) && (ok || !reflect.DeepEqual(v, eraseWindowsVssSignatureProp)) {
-		obj["eraseWindowsVssSignature"] = eraseWindowsVssSignatureProp
 	}
 	sourceImageProp, err := expandComputeDiskImage(d.Get("image"), d, config)
 	if err != nil {
@@ -784,9 +749,6 @@ func resourceComputeDiskRead(d *schema.ResourceData, meta interface{}) error {
 		return fmt.Errorf("Error reading Disk: %s", err)
 	}
 	if err := d.Set("type", flattenComputeDiskType(res["type"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Disk: %s", err)
-	}
-	if err := d.Set("erase_windows_vss_signature", flattenComputeDiskEraseWindowsVssSignature(res["eraseWindowsVssSignature"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Disk: %s", err)
 	}
 	if err := d.Set("image", flattenComputeDiskImage(res["sourceImage"], d, config)); err != nil {
@@ -1113,10 +1075,6 @@ func flattenComputeDiskType(v interface{}, d *schema.ResourceData, config *Confi
 	return NameFromSelfLinkStateFunc(v)
 }
 
-func flattenComputeDiskEraseWindowsVssSignature(v interface{}, d *schema.ResourceData, config *Config) interface{} {
-	return v
-}
-
 func flattenComputeDiskImage(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
@@ -1150,8 +1108,6 @@ func flattenComputeDiskSourceImageEncryptionKey(v interface{}, d *schema.Resourc
 		flattenComputeDiskSourceImageEncryptionKeySha256(original["sha256"], d, config)
 	transformed["kms_key_self_link"] =
 		flattenComputeDiskSourceImageEncryptionKeyKmsKeySelfLink(original["kmsKeyName"], d, config)
-	transformed["kms_key_service_account"] =
-		flattenComputeDiskSourceImageEncryptionKeyKmsKeyServiceAccount(original["kmsKeyServiceAccount"], d, config)
 	return []interface{}{transformed}
 }
 func flattenComputeDiskSourceImageEncryptionKeyRawKey(v interface{}, d *schema.ResourceData, config *Config) interface{} {
@@ -1163,10 +1119,6 @@ func flattenComputeDiskSourceImageEncryptionKeySha256(v interface{}, d *schema.R
 }
 
 func flattenComputeDiskSourceImageEncryptionKeyKmsKeySelfLink(v interface{}, d *schema.ResourceData, config *Config) interface{} {
-	return v
-}
-
-func flattenComputeDiskSourceImageEncryptionKeyKmsKeyServiceAccount(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
@@ -1189,8 +1141,6 @@ func flattenComputeDiskDiskEncryptionKey(v interface{}, d *schema.ResourceData, 
 		flattenComputeDiskDiskEncryptionKeySha256(original["sha256"], d, config)
 	transformed["kms_key_self_link"] =
 		flattenComputeDiskDiskEncryptionKeyKmsKeySelfLink(original["kmsKeyName"], d, config)
-	transformed["kms_key_service_account"] =
-		flattenComputeDiskDiskEncryptionKeyKmsKeyServiceAccount(original["kmsKeyServiceAccount"], d, config)
 	return []interface{}{transformed}
 }
 func flattenComputeDiskDiskEncryptionKeyRawKey(v interface{}, d *schema.ResourceData, config *Config) interface{} {
@@ -1202,10 +1152,6 @@ func flattenComputeDiskDiskEncryptionKeySha256(v interface{}, d *schema.Resource
 }
 
 func flattenComputeDiskDiskEncryptionKeyKmsKeySelfLink(v interface{}, d *schema.ResourceData, config *Config) interface{} {
-	return v
-}
-
-func flattenComputeDiskDiskEncryptionKeyKmsKeyServiceAccount(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
@@ -1231,8 +1177,6 @@ func flattenComputeDiskSourceSnapshotEncryptionKey(v interface{}, d *schema.Reso
 		flattenComputeDiskSourceSnapshotEncryptionKeyKmsKeySelfLink(original["kmsKeyName"], d, config)
 	transformed["sha256"] =
 		flattenComputeDiskSourceSnapshotEncryptionKeySha256(original["sha256"], d, config)
-	transformed["kms_key_service_account"] =
-		flattenComputeDiskSourceSnapshotEncryptionKeyKmsKeyServiceAccount(original["kmsKeyServiceAccount"], d, config)
 	return []interface{}{transformed}
 }
 func flattenComputeDiskSourceSnapshotEncryptionKeyRawKey(v interface{}, d *schema.ResourceData, config *Config) interface{} {
@@ -1244,10 +1188,6 @@ func flattenComputeDiskSourceSnapshotEncryptionKeyKmsKeySelfLink(v interface{}, 
 }
 
 func flattenComputeDiskSourceSnapshotEncryptionKeySha256(v interface{}, d *schema.ResourceData, config *Config) interface{} {
-	return v
-}
-
-func flattenComputeDiskSourceSnapshotEncryptionKeyKmsKeyServiceAccount(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
@@ -1292,10 +1232,6 @@ func expandComputeDiskType(v interface{}, d TerraformResourceData, config *Confi
 		return nil, fmt.Errorf("Invalid value for type: %s", err)
 	}
 	return f.RelativeLink(), nil
-}
-
-func expandComputeDiskEraseWindowsVssSignature(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
-	return v, nil
 }
 
 func expandComputeDiskImage(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
@@ -1356,13 +1292,6 @@ func expandComputeDiskSourceImageEncryptionKey(v interface{}, d TerraformResourc
 		transformed["kmsKeyName"] = transformedKmsKeySelfLink
 	}
 
-	transformedKmsKeyServiceAccount, err := expandComputeDiskSourceImageEncryptionKeyKmsKeyServiceAccount(original["kms_key_service_account"], d, config)
-	if err != nil {
-		return nil, err
-	} else if val := reflect.ValueOf(transformedKmsKeyServiceAccount); val.IsValid() && !isEmptyValue(val) {
-		transformed["kmsKeyServiceAccount"] = transformedKmsKeyServiceAccount
-	}
-
 	return transformed, nil
 }
 
@@ -1375,10 +1304,6 @@ func expandComputeDiskSourceImageEncryptionKeySha256(v interface{}, d TerraformR
 }
 
 func expandComputeDiskSourceImageEncryptionKeyKmsKeySelfLink(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
-	return v, nil
-}
-
-func expandComputeDiskSourceImageEncryptionKeyKmsKeyServiceAccount(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
@@ -1412,13 +1337,6 @@ func expandComputeDiskDiskEncryptionKey(v interface{}, d TerraformResourceData, 
 		transformed["kmsKeyName"] = transformedKmsKeySelfLink
 	}
 
-	transformedKmsKeyServiceAccount, err := expandComputeDiskDiskEncryptionKeyKmsKeyServiceAccount(original["kms_key_service_account"], d, config)
-	if err != nil {
-		return nil, err
-	} else if val := reflect.ValueOf(transformedKmsKeyServiceAccount); val.IsValid() && !isEmptyValue(val) {
-		transformed["kmsKeyServiceAccount"] = transformedKmsKeyServiceAccount
-	}
-
 	return transformed, nil
 }
 
@@ -1431,10 +1349,6 @@ func expandComputeDiskDiskEncryptionKeySha256(v interface{}, d TerraformResource
 }
 
 func expandComputeDiskDiskEncryptionKeyKmsKeySelfLink(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
-	return v, nil
-}
-
-func expandComputeDiskDiskEncryptionKeyKmsKeyServiceAccount(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
@@ -1476,13 +1390,6 @@ func expandComputeDiskSourceSnapshotEncryptionKey(v interface{}, d TerraformReso
 		transformed["sha256"] = transformedSha256
 	}
 
-	transformedKmsKeyServiceAccount, err := expandComputeDiskSourceSnapshotEncryptionKeyKmsKeyServiceAccount(original["kms_key_service_account"], d, config)
-	if err != nil {
-		return nil, err
-	} else if val := reflect.ValueOf(transformedKmsKeyServiceAccount); val.IsValid() && !isEmptyValue(val) {
-		transformed["kmsKeyServiceAccount"] = transformedKmsKeyServiceAccount
-	}
-
 	return transformed, nil
 }
 
@@ -1495,10 +1402,6 @@ func expandComputeDiskSourceSnapshotEncryptionKeyKmsKeySelfLink(v interface{}, d
 }
 
 func expandComputeDiskSourceSnapshotEncryptionKeySha256(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
-	return v, nil
-}
-
-func expandComputeDiskSourceSnapshotEncryptionKeyKmsKeyServiceAccount(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
