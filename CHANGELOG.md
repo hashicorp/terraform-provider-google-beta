@@ -21,7 +21,7 @@ IMPROVEMENTS:
 * google_project_service_identity: added `email` output. ([#2447](https://github.com/hashicorp/terraform-provider-google-beta/pull/2447))
 * notebooks: added `PD_BALANCED` as a possible disk type for `google_notebooks_instance` ([#2438](https://github.com/hashicorp/terraform-provider-google-beta/pull/2438))
 * osconfig: added rollout field to `google_os_config_patch_deployment` ([#2449](https://github.com/hashicorp/terraform-provider-google-beta/pull/2449))
-* provider: added a new field `billing_project` to the provider that's associated as a billing/quota project with most requests when `user_project_override` true ([#2427](https://github.com/hashicorp/terraform-provider-google-beta/pull/2427))
+* provider: added a new field `billing_project` to the provider that's associated as a billing/quota project with most requests when `user_project_override` is true ([#2427](https://github.com/hashicorp/terraform-provider-google-beta/pull/2427))
 * resourcemanager: added additional fields to `google_projects` datasource ([#2440](https://github.com/hashicorp/terraform-provider-google-beta/pull/2440))
 * serviceusage: added project override support to `google_project_service` ([#2428](https://github.com/hashicorp/terraform-provider-google-beta/pull/2428))
 
