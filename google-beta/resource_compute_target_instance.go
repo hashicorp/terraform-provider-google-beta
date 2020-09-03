@@ -80,6 +80,12 @@ character, which cannot be a dash.`,
 Currently only NO_NAT (default value) is supported. Default value: "NO_NAT" Possible values: ["NO_NAT"]`,
 				Default: "NO_NAT",
 			},
+			"network": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				ForceNew:    true,
+				Description: `The URL of the network this target instance uses to forward traffic. If not specified, the traffic will be forwarded to the network that the default network interface belongs to.`,
+			},
 			"zone": {
 				Type:             schema.TypeString,
 				Computed:         true,
@@ -116,6 +122,12 @@ func resourceComputeTargetInstanceCreate(d *schema.ResourceData, meta interface{
 		return err
 	} else if v, ok := d.GetOkExists("name"); !isEmptyValue(reflect.ValueOf(nameProp)) && (ok || !reflect.DeepEqual(v, nameProp)) {
 		obj["name"] = nameProp
+	}
+	networkProp, err := expandComputeTargetInstanceNetwork(d.Get("network"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("network"); !isEmptyValue(reflect.ValueOf(networkProp)) && (ok || !reflect.DeepEqual(v, networkProp)) {
+		obj["network"] = networkProp
 	}
 	descriptionProp, err := expandComputeTargetInstanceDescription(d.Get("description"), d, config)
 	if err != nil {
@@ -224,6 +236,9 @@ func resourceComputeTargetInstanceRead(d *schema.ResourceData, meta interface{})
 	if err := d.Set("creation_timestamp", flattenComputeTargetInstanceCreationTimestamp(res["creationTimestamp"], d, config)); err != nil {
 		return fmt.Errorf("Error reading TargetInstance: %s", err)
 	}
+	if err := d.Set("network", flattenComputeTargetInstanceNetwork(res["network"], d, config)); err != nil {
+		return fmt.Errorf("Error reading TargetInstance: %s", err)
+	}
 	if err := d.Set("description", flattenComputeTargetInstanceDescription(res["description"], d, config)); err != nil {
 		return fmt.Errorf("Error reading TargetInstance: %s", err)
 	}
@@ -313,6 +328,10 @@ func flattenComputeTargetInstanceCreationTimestamp(v interface{}, d *schema.Reso
 	return v
 }
 
+func flattenComputeTargetInstanceNetwork(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	return v
+}
+
 func flattenComputeTargetInstanceDescription(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
@@ -336,6 +355,10 @@ func flattenComputeTargetInstanceZone(v interface{}, d *schema.ResourceData, con
 }
 
 func expandComputeTargetInstanceName(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeTargetInstanceNetwork(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
