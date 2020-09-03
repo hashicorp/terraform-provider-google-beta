@@ -13,12 +13,10 @@ FEATURES:
 * **New Resource:** google_data_loss_prevention_job_trigger ([#2433](https://github.com/hashicorp/terraform-provider-google-beta/pull/2433))
 * **New Resource:** google_data_loss_prevention_stored_info_type ([#2444](https://github.com/hashicorp/terraform-provider-google-beta/pull/2444))
 * **New Resource:** google_project_service_identity ([#2430](https://github.com/hashicorp/terraform-provider-google-beta/pull/2430))
-* **New Resource:** google_project_service_identity ([#2437](https://github.com/hashicorp/terraform-provider-google-beta/pull/2437))
 
 IMPROVEMENTS:
 * compute: Added graceful termination to `google_compute_instance_group_manager` create calls so that partially created instance group managers will resume the original operation if the Terraform process is killed mid create. ([#2446](https://github.com/hashicorp/terraform-provider-google-beta/pull/2446))
 * container: added project override support to `google_container_cluster` and `google_container_nodepool` ([#2428](https://github.com/hashicorp/terraform-provider-google-beta/pull/2428))
-* google_project_service_identity: added `email` output. ([#2447](https://github.com/hashicorp/terraform-provider-google-beta/pull/2447))
 * notebooks: added `PD_BALANCED` as a possible disk type for `google_notebooks_instance` ([#2438](https://github.com/hashicorp/terraform-provider-google-beta/pull/2438))
 * osconfig: added rollout field to `google_os_config_patch_deployment` ([#2449](https://github.com/hashicorp/terraform-provider-google-beta/pull/2449))
 * provider: added a new field `billing_project` to the provider that's associated as a billing/quota project with most requests when `user_project_override` is true ([#2427](https://github.com/hashicorp/terraform-provider-google-beta/pull/2427))
