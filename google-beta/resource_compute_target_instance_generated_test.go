@@ -78,6 +78,60 @@ resource "google_compute_instance" "target-vm" {
 `, context)
 }
 
+func TestAccComputeTargetInstance_targetInstanceCustomNetworkExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"random_suffix": randString(t, 10),
+	}
+
+	vcrTest(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProvidersOiCS,
+		CheckDestroy: testAccCheckComputeTargetInstanceDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeTargetInstance_targetInstanceCustomNetworkExample(context),
+			},
+		},
+	})
+}
+
+func testAccComputeTargetInstance_targetInstanceCustomNetworkExample(context map[string]interface{}) string {
+	return Nprintf(`
+resource "google_compute_target_instance" "custom_network" {
+  name     = "tf-test-custom-network%{random_suffix}"
+  instance = google_compute_instance.target-vm.id
+  network  = data.google_compute_network.target-vm.self_link
+}
+
+data "google_compute_network" "target-vm" {
+  name = "default"
+}
+
+data "google_compute_image" "vmimage" {
+  family  = "debian-10"
+  project = "debian-cloud"
+}
+
+resource "google_compute_instance" "target-vm" {
+  name         = "tf-test-cusom-network-target-vm%{random_suffix}"
+  machine_type = "n1-standard-1"
+  zone         = "us-central1-a"
+
+  boot_disk {
+    initialize_params {
+      image = data.google_compute_image.vmimage.self_link
+    }
+  }
+
+  network_interface {
+    network = "default"
+  }
+}
+`, context)
+}
+
 func testAccCheckComputeTargetInstanceDestroyProducer(t *testing.T) func(s *terraform.State) error {
 	return func(s *terraform.State) error {
 		for name, rs := range s.RootModule().Resources {
