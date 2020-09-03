@@ -569,7 +569,6 @@ func flattenWorkloadMetadataConfig(c *containerBeta.WorkloadMetadataConfig) []ma
 	}
 	return result
 }
-
 func flattenSandboxConfig(c *containerBeta.SandboxConfig) []map[string]interface{} {
 	result := []map[string]interface{}{}
 	if c != nil {
