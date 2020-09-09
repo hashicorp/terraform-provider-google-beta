@@ -312,14 +312,6 @@ encryption key that protects this resource.`,
 					},
 				},
 			},
-			"erase_windows_vss_signature": {
-				Type:     schema.TypeBool,
-				Optional: true,
-				ForceNew: true,
-				Description: `Specifies whether the disk restored from a source snapshot
-should erase Windows specific VSS signature.`,
-				Default: false,
-			},
 			"image": {
 				Type:             schema.TypeString,
 				Optional:         true,
@@ -611,12 +603,6 @@ func resourceComputeDiskCreate(d *schema.ResourceData, meta interface{}) error {
 	} else if v, ok := d.GetOkExists("type"); !isEmptyValue(reflect.ValueOf(typeProp)) && (ok || !reflect.DeepEqual(v, typeProp)) {
 		obj["type"] = typeProp
 	}
-	eraseWindowsVssSignatureProp, err := expandComputeDiskEraseWindowsVssSignature(d.Get("erase_windows_vss_signature"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("erase_windows_vss_signature"); !isEmptyValue(reflect.ValueOf(eraseWindowsVssSignatureProp)) && (ok || !reflect.DeepEqual(v, eraseWindowsVssSignatureProp)) {
-		obj["eraseWindowsVssSignature"] = eraseWindowsVssSignatureProp
-	}
 	sourceImageProp, err := expandComputeDiskImage(d.Get("image"), d, config)
 	if err != nil {
 		return err
@@ -784,9 +770,6 @@ func resourceComputeDiskRead(d *schema.ResourceData, meta interface{}) error {
 		return fmt.Errorf("Error reading Disk: %s", err)
 	}
 	if err := d.Set("type", flattenComputeDiskType(res["type"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Disk: %s", err)
-	}
-	if err := d.Set("erase_windows_vss_signature", flattenComputeDiskEraseWindowsVssSignature(res["eraseWindowsVssSignature"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Disk: %s", err)
 	}
 	if err := d.Set("image", flattenComputeDiskImage(res["sourceImage"], d, config)); err != nil {
@@ -1113,10 +1096,6 @@ func flattenComputeDiskType(v interface{}, d *schema.ResourceData, config *Confi
 	return NameFromSelfLinkStateFunc(v)
 }
 
-func flattenComputeDiskEraseWindowsVssSignature(v interface{}, d *schema.ResourceData, config *Config) interface{} {
-	return v
-}
-
 func flattenComputeDiskImage(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
@@ -1292,10 +1271,6 @@ func expandComputeDiskType(v interface{}, d TerraformResourceData, config *Confi
 		return nil, fmt.Errorf("Invalid value for type: %s", err)
 	}
 	return f.RelativeLink(), nil
-}
-
-func expandComputeDiskEraseWindowsVssSignature(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
-	return v, nil
 }
 
 func expandComputeDiskImage(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
