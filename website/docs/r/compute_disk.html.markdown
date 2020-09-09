@@ -121,11 +121,6 @@ The following arguments are supported:
   URL of the disk type resource describing which disk type to use to
   create the disk. Provide this when creating the disk.
 
-* `erase_windows_vss_signature` -
-  (Optional, [Beta](https://terraform.io/docs/providers/google/guides/provider_versions.html))
-  Specifies whether the disk restored from a source snapshot
-  should erase Windows specific VSS signature.
-
 * `image` -
   (Optional)
   The image from which to initialize this disk. This can be
