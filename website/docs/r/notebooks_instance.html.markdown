@@ -214,8 +214,9 @@ The following arguments are supported:
 
 * `install_gpu_driver` -
   (Optional)
-  Indicates that this is a boot disk. The virtual machine will
-  use the first partition of the disk for its root filesystem.
+  Whether the end user authorizes Google Cloud to install GPU driver
+  on this instance. If this field is empty or set to false, the GPU driver
+  won't be installed. Only applicable to instances with GPUs.
 
 * `custom_gpu_driver_path` -
   (Optional)

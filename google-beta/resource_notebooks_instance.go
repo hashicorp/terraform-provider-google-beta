@@ -165,8 +165,9 @@ If not specified, this defaults to 100.`,
 				Type:     schema.TypeBool,
 				Optional: true,
 				ForceNew: true,
-				Description: `Indicates that this is a boot disk. The virtual machine will
-use the first partition of the disk for its root filesystem.`,
+				Description: `Whether the end user authorizes Google Cloud to install GPU driver
+on this instance. If this field is empty or set to false, the GPU driver
+won't be installed. Only applicable to instances with GPUs.`,
 			},
 			"instance_owners": {
 				Type:     schema.TypeList,
