@@ -537,18 +537,14 @@ func resourceComputeOrganizationSecurityPolicyRuleImport(d *schema.ResourceData,
 			"locations/global/securityPolicies/{{policy_id}}/priority/{{priority}}",
 		)
 	}
-	if err := d.Set("policy_id", fmt.Sprintf("locations/global/securityPolicies/%s", nameParts[3])); err != nil {
-		return nil, fmt.Errorf("Error setting policy_id: %s", err)
-	}
+	d.Set("policy_id", fmt.Sprintf("locations/global/securityPolicies/%s", nameParts[3]))
 
 	if prio, err := strconv.ParseInt(nameParts[5], 10, 64); err != nil {
 		return nil, fmt.Errorf(
 			"Priority %s cannot be converted to integer", nameParts[5],
 		)
 	} else {
-		if err := d.Set("priority", prio); err != nil {
-			return nil, fmt.Errorf("Error reading priority: %s", err)
-		}
+		d.Set("priority", prio)
 	}
 
 	return []*schema.ResourceData{d}, nil

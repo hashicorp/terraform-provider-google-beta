@@ -2613,7 +2613,6 @@ resource "google_container_cluster" "with_tpu" {
   networking_mode = "VPC_NATIVE"
 
   private_cluster_config {
-  private_cluster_config {
     enable_private_endpoint = true
     enable_private_nodes    = true
     master_ipv4_cidr_block  = "10.42.0.0/28"

@@ -210,9 +210,7 @@ func resourceCloudIdentityGroupCreate(d *schema.ResourceData, meta interface{}) 
 			return fmt.Errorf("Create response didn't contain critical fields. Create may not have succeeded.")
 		}
 	}
-	if err := d.Set("name", name.(string)); err != nil {
-		return fmt.Errorf("Error setting name: %s", err)
-	}
+	d.Set("name", name.(string))
 	d.SetId(name.(string))
 
 	return resourceCloudIdentityGroupRead(d, meta)
@@ -360,9 +358,7 @@ func resourceCloudIdentityGroupImport(d *schema.ResourceData, meta interface{}) 
 
 	name := d.Get("name").(string)
 
-	if err := d.Set("name", name); err != nil {
-		return nil, fmt.Errorf("Error setting name: %s", err)
-	}
+	d.Set("name", name)
 	d.SetId(name)
 	return []*schema.ResourceData{d}, nil
 }

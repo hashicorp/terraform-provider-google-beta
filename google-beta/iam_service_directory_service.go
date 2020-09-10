@@ -59,9 +59,7 @@ func ServiceDirectoryServiceIamUpdaterProducer(d *schema.ResourceData, config *C
 		Config: config,
 	}
 
-	if err := d.Set("name", u.GetResourceId()); err != nil {
-		return nil, fmt.Errorf("Error reading name: %s", err)
-	}
+	d.Set("name", u.GetResourceId())
 
 	return u, nil
 }
@@ -83,9 +81,7 @@ func ServiceDirectoryServiceIdParseFunc(d *schema.ResourceData, config *Config) 
 		d:      d,
 		Config: config,
 	}
-	if err := d.Set("name", u.GetResourceId()); err != nil {
-		return fmt.Errorf("Error reading name: %s", err)
-	}
+	d.Set("name", u.GetResourceId())
 	d.SetId(u.GetResourceId())
 	return nil
 }

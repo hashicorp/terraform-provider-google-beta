@@ -108,9 +108,7 @@ func resourceDataflowFlexTemplateJobCreate(d *schema.ResourceData, meta interfac
 
 	job := response.Job
 	d.SetId(job.Id)
-	if err := d.Set("job_id", job.Id); err != nil {
-		return fmt.Errorf("Error reading job_id: %s", err)
-	}
+	d.Set("job_id", job.Id)
 
 	return resourceDataflowFlexTemplateJobRead(d, meta)
 }
@@ -136,18 +134,10 @@ func resourceDataflowFlexTemplateJobRead(d *schema.ResourceData, meta interface{
 		return handleNotFoundError(err, d, fmt.Sprintf("Dataflow job %s", jobId))
 	}
 
-	if err := d.Set("state", job.CurrentState); err != nil {
-		return fmt.Errorf("Error reading state: %s", err)
-	}
-	if err := d.Set("name", job.Name); err != nil {
-		return fmt.Errorf("Error reading name: %s", err)
-	}
-	if err := d.Set("project", project); err != nil {
-		return fmt.Errorf("Error reading project: %s", err)
-	}
-	if err := d.Set("labels", job.Labels); err != nil {
-		return fmt.Errorf("Error reading labels: %s", err)
-	}
+	d.Set("state", job.CurrentState)
+	d.Set("name", job.Name)
+	d.Set("project", project)
+	d.Set("labels", job.Labels)
 
 	if _, ok := dataflowTerminalStatesMap[job.CurrentState]; ok {
 		log.Printf("[DEBUG] Removing resource '%s' because it is in state %s.\n", job.Name, job.CurrentState)

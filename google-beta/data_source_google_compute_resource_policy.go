@@ -55,12 +55,8 @@ func dataSourceGoogleComputeResourcePolicyRead(d *schema.ResourceData, meta inte
 	if err != nil {
 		return handleNotFoundError(err, d, fmt.Sprintf("ResourcePolicy Not Found : %s", name))
 	}
-	if err := d.Set("self_link", resourcePolicy.SelfLink); err != nil {
-		return fmt.Errorf("Error reading self_link: %s", err)
-	}
-	if err := d.Set("description", resourcePolicy.Description); err != nil {
-		return fmt.Errorf("Error reading description: %s", err)
-	}
+	d.Set("self_link", resourcePolicy.SelfLink)
+	d.Set("description", resourcePolicy.Description)
 	d.SetId(fmt.Sprintf("projects/%s/regions/%s/resourcePolicies/%s", project, region, name))
 	return nil
 }

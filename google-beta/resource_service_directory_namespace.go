@@ -268,30 +268,16 @@ func resourceServiceDirectoryNamespaceImport(d *schema.ResourceData, meta interf
 	nameParts := strings.Split(d.Get("name").(string), "/")
 	if len(nameParts) == 6 {
 		// `projects/{{project}}/locations/{{location}}/namespaces/{{namespace_id}}`
-		if err := d.Set("project", nameParts[1]); err != nil {
-			return nil, fmt.Errorf("Error reading project: %s", err)
-		}
-		if err := d.Set("location", nameParts[3]); err != nil {
-			return nil, fmt.Errorf("Error reading location: %s", err)
-		}
-		if err := d.Set("namespace_id", nameParts[5]); err != nil {
-			return nil, fmt.Errorf("Error reading namespace_id: %s", err)
-		}
+		d.Set("project", nameParts[1])
+		d.Set("location", nameParts[3])
+		d.Set("namespace_id", nameParts[5])
 	} else if len(nameParts) == 3 {
 		// `{{project}}/{{location}}/{{namespace_id}}`
-		if err := d.Set("project", nameParts[0]); err != nil {
-			return nil, fmt.Errorf("Error reading project: %s", err)
-		}
-		if err := d.Set("location", nameParts[1]); err != nil {
-			return nil, fmt.Errorf("Error reading location: %s", err)
-		}
-		if err := d.Set("namespace_id", nameParts[2]); err != nil {
-			return nil, fmt.Errorf("Error reading namespace_id: %s", err)
-		}
+		d.Set("project", nameParts[0])
+		d.Set("location", nameParts[1])
+		d.Set("namespace_id", nameParts[2])
 		id := fmt.Sprintf("projects/%s/locations/%s/namespaces/%s", nameParts[0], nameParts[1], nameParts[2])
-		if err := d.Set("name", id); err != nil {
-			return nil, fmt.Errorf("Error reading name: %s", err)
-		}
+		d.Set("name", id)
 		d.SetId(id)
 	} else if len(nameParts) == 2 {
 		// `{{location}}/{{namespace_id}}`
@@ -299,19 +285,11 @@ func resourceServiceDirectoryNamespaceImport(d *schema.ResourceData, meta interf
 		if err != nil {
 			return nil, err
 		}
-		if err := d.Set("project", project); err != nil {
-			return nil, fmt.Errorf("Error reading project: %s", err)
-		}
-		if err := d.Set("location", nameParts[0]); err != nil {
-			return nil, fmt.Errorf("Error reading location: %s", err)
-		}
-		if err := d.Set("namespace_id", nameParts[1]); err != nil {
-			return nil, fmt.Errorf("Error reading namespace_id: %s", err)
-		}
+		d.Set("project", project)
+		d.Set("location", nameParts[0])
+		d.Set("namespace_id", nameParts[1])
 		id := fmt.Sprintf("projects/%s/locations/%s/namespaces/%s", project, nameParts[0], nameParts[1])
-		if err := d.Set("name", id); err != nil {
-			return nil, fmt.Errorf("Error reading name: %s", err)
-		}
+		d.Set("name", id)
 		d.SetId(id)
 	} else {
 		return nil, fmt.Errorf(

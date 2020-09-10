@@ -56,9 +56,7 @@ func dataSourceGoogleCloudIdentityGroupMembershipsRead(d *schema.ResourceData, m
 		return handleNotFoundError(err, d, fmt.Sprintf("CloudIdentityGroupMemberships %q", d.Id()))
 	}
 
-	if err := d.Set("memberships", result); err != nil {
-		return fmt.Errorf("Error reading memberships: %s", err)
-	}
+	d.Set("memberships", result)
 	d.SetId(time.Now().UTC().String())
 	return nil
 }

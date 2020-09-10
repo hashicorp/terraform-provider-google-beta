@@ -59,9 +59,7 @@ func dataSourceGoogleCloudIdentityGroupsRead(d *schema.ResourceData, meta interf
 		return handleNotFoundError(err, d, fmt.Sprintf("CloudIdentityGroups %q", d.Id()))
 	}
 
-	if err := d.Set("groups", result); err != nil {
-		return fmt.Errorf("Error reading groups: %s", err)
-	}
+	d.Set("groups", result)
 	d.SetId(time.Now().UTC().String())
 	return nil
 }

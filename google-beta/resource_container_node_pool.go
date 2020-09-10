@@ -355,17 +355,11 @@ func resourceContainerNodePoolRead(d *schema.ResourceData, meta interface{}) err
 	}
 
 	for k, v := range npMap {
-		if err := d.Set(k, v); err != nil {
-			return fmt.Errorf("Error setting %s: %s", k, err)
-		}
+		d.Set(k, v)
 	}
 
-	if err := d.Set("location", nodePoolInfo.location); err != nil {
-		return fmt.Errorf("Error reading location: %s", err)
-	}
-	if err := d.Set("project", nodePoolInfo.project); err != nil {
-		return fmt.Errorf("Error reading project: %s", err)
-	}
+	d.Set("location", nodePoolInfo.location)
+	d.Set("project", nodePoolInfo.project)
 
 	return nil
 }
@@ -719,6 +713,9 @@ func nodePoolUpdate(d *schema.ResourceData, meta interface{}, nodePoolInfo *Node
 		}
 
 		log.Printf("[INFO] Updated autoscaling in Node Pool %s", d.Id())
+
+		if prefix == "" {
+		}
 	}
 
 	if d.HasChange(prefix + "node_config") {
@@ -860,6 +857,8 @@ func nodePoolUpdate(d *schema.ResourceData, meta interface{}, nodePoolInfo *Node
 			log.Printf("[INFO] Updated linux_node_config for node pool %s", name)
 		}
 
+		if prefix == "" {
+		}
 	}
 
 	if d.HasChange(prefix + "node_count") {
@@ -891,6 +890,9 @@ func nodePoolUpdate(d *schema.ResourceData, meta interface{}, nodePoolInfo *Node
 		}
 
 		log.Printf("[INFO] GKE node pool %s size has been updated to %d", name, newSize)
+
+		if prefix == "" {
+		}
 	}
 
 	if d.HasChange(prefix + "management") {
@@ -928,6 +930,9 @@ func nodePoolUpdate(d *schema.ResourceData, meta interface{}, nodePoolInfo *Node
 		}
 
 		log.Printf("[INFO] Updated management in Node Pool %s", name)
+
+		if prefix == "" {
+		}
 	}
 
 	if d.HasChange(prefix + "version") {
@@ -958,6 +963,9 @@ func nodePoolUpdate(d *schema.ResourceData, meta interface{}, nodePoolInfo *Node
 		}
 
 		log.Printf("[INFO] Updated version in Node Pool %s", name)
+
+		if prefix == "" {
+		}
 	}
 
 	if d.HasChange(prefix + "node_locations") {
@@ -985,6 +993,9 @@ func nodePoolUpdate(d *schema.ResourceData, meta interface{}, nodePoolInfo *Node
 		}
 
 		log.Printf("[INFO] Updated node locations in Node Pool %s", name)
+
+		if prefix == "" {
+		}
 	}
 
 	if d.HasChange(prefix + "upgrade_settings") {
@@ -1018,6 +1029,9 @@ func nodePoolUpdate(d *schema.ResourceData, meta interface{}, nodePoolInfo *Node
 		}
 
 		log.Printf("[INFO] Updated upgrade settings in Node Pool %s", name)
+
+		if prefix == "" {
+		}
 	}
 
 	return nil
