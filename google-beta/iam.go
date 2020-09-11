@@ -357,20 +357,25 @@ func listFromIamAuditConfigMap(acMap map[string]map[string]map[string]struct{}) 
 }
 
 func jsonPolicyDiffSuppress(k, old, new string, d *schema.ResourceData) bool {
+	if old == "" && new == "" {
+		return true
+	}
+
 	var oldPolicy, newPolicy cloudresourcemanager.Policy
-	if old != "" {
+	if old != "" && new != "" {
 		if err := json.Unmarshal([]byte(old), &oldPolicy); err != nil {
 			log.Printf("[ERROR] Could not unmarshal old policy %s: %v", old, err)
 			return false
 		}
-	}
-	if new != "" {
 		if err := json.Unmarshal([]byte(new), &newPolicy); err != nil {
 			log.Printf("[ERROR] Could not unmarshal new policy %s: %v", new, err)
 			return false
 		}
+
+		return compareIamPolicies(&newPolicy, &oldPolicy)
 	}
-	return compareIamPolicies(&newPolicy, &oldPolicy)
+
+	return false
 }
 
 func compareIamPolicies(a, b *cloudresourcemanager.Policy) bool {
