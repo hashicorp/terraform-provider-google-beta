@@ -3,8 +3,8 @@
 IMPROVEMENTS:
 * compute: added network field to `compute_target_instance` ([#2456](https://github.com/hashicorp/terraform-provider-google-beta/pull/2456))
 * compute: added storage_locations field to `google_compute_snapshot` ([#2461](https://github.com/hashicorp/terraform-provider-google-beta/pull/2461))
-* compute: added `kms_key_service_account`, `kms_key_self_link ` fields to `snapshot_encryption_key` field in `google_compute_snapshot`
-* compute: added `source_disk_encryption_key.kms_key_service_account` field to `google_compute_snapshot`
+* compute: added `kms_key_service_account`, `kms_key_self_link ` fields to `snapshot_encryption_key` field in `google_compute_snapshot` ([#2461](https://github.com/hashicorp/terraform-provider-google-beta/pull/2461))
+* compute: added `source_disk_encryption_key.kms_key_service_account` field to `google_compute_snapshot` ([#2461](https://github.com/hashicorp/terraform-provider-google-beta/pull/2461))
 * container: Added `self_link` to google_container_cluster ([#2457](https://github.com/hashicorp/terraform-provider-google-beta/pull/2457))
 
 BUG FIXES:
