@@ -281,6 +281,11 @@ func resourceContainerCluster() *schema.Resource {
 										Type:     schema.TypeBool,
 										Required: true,
 									},
+									"load_balancer_type": {
+										Type:         schema.TypeString,
+										ValidateFunc: validation.StringInSlice([]string{"LOAD_BALANCER_TYPE_INTERNAL"}, false),
+										Optional:     true,
+									},
 								},
 							},
 						},
@@ -2624,6 +2629,9 @@ func expandClusterAddonsConfig(configured interface{}) *containerBeta.AddonsConf
 			Disabled:        addon["disabled"].(bool),
 			ForceSendFields: []string{"Disabled"},
 		}
+		if addon["load_balancer_type"] != "" {
+			ac.CloudRunConfig.LoadBalancerType = addon["load_balancer_type"].(string)
+		}
 	}
 
 	if v, ok := config["istio_config"]; ok && len(v.([]interface{})) > 0 {
@@ -3101,11 +3109,14 @@ func flattenClusterAddonsConfig(c *containerBeta.AddonsConfig) []map[string]inte
 	}
 
 	if c.CloudRunConfig != nil {
-		result["cloudrun_config"] = []map[string]interface{}{
-			{
-				"disabled": c.CloudRunConfig.Disabled,
-			},
+		cloudRunConfig := map[string]interface{}{
+			"disabled": c.CloudRunConfig.Disabled,
 		}
+		if c.CloudRunConfig.LoadBalancerType == "LOAD_BALANCER_TYPE_INTERNAL" {
+			// Currently we only allow setting load_balancer_type to LOAD_BALANCER_TYPE_INTERNAL
+			cloudRunConfig["load_balancer_type"] = "LOAD_BALANCER_TYPE_INTERNAL"
+		}
+		result["cloudrun_config"] = []map[string]interface{}{cloudRunConfig}
 	}
 
 	if c.IstioConfig != nil {
