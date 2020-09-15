@@ -1,4 +1,4 @@
-## 3.39.0 (Unreleased)
+## 3.39.0 (September 15, 2020)
 
 IMPROVEMENTS:
 * compute: added network field to `compute_target_instance` ([#2456](https://github.com/hashicorp/terraform-provider-google-beta/pull/2456))
