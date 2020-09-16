@@ -1494,7 +1494,6 @@ func resourceContainerClusterRead(d *schema.ResourceData, meta interface{}) erro
 	if err := d.Set("release_channel", flattenReleaseChannel(cluster.ReleaseChannel)); err != nil {
 		return err
 	}
-	
 	d.Set("enable_tpu", cluster.EnableTpu)
 	d.Set("tpu_ipv4_cidr_block", cluster.TpuIpv4CidrBlock)
 	d.Set("datapath_provider", cluster.NetworkConfig.DatapathProvider)
@@ -1798,7 +1797,6 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 		}
 
 		log.Printf("[INFO] GKE cluster %s Default SNAT status has been updated", d.Id())
-		log.Printf("[INFO] GKE cluster %s Release Channel has been updated to %#v", d.Id(), req.Update.DesiredReleaseChannel)
 	}
 
 	if d.HasChange("maintenance_policy") {
