@@ -31,6 +31,9 @@ func TestAccFirebaseProjectLocation_firebaseProjectLocationBasicExample(t *testi
 	vcrTest(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
 		Providers: testAccProvidersOiCS,
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"random": {},
+		},
 		Steps: []resource.TestStep{
 			{
 				Config: testAccFirebaseProjectLocation_firebaseProjectLocationBasicExample(context),
