@@ -1798,6 +1798,28 @@ func TestAccContainerCluster_withDatabaseEncryption(t *testing.T) {
 	})
 }
 
+func TestAccContainerCluster_withAdvancedDatapath(t *testing.T) {
+	t.Parallel()
+
+	clusterName := fmt.Sprintf("tf-test-cluster-%s", randString(t, 10))
+
+	vcrTest(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckContainerClusterDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccContainerCluster_withDatapathProvider(clusterName, "ADVANCED_DATAPATH"),
+			},
+			{
+				ResourceName:      "google_container_cluster.primary",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
 func TestAccContainerCluster_withResourceUsageExportConfig(t *testing.T) {
 	t.Parallel()
 
@@ -4009,6 +4031,22 @@ resource "google_container_cluster" "primary" {
   }
 }
 `, kmsData.KeyRing.Name, kmsData.CryptoKey.Name, clusterName)
+}
+
+func testAccContainerCluster_withDatapathProvider(clusterName, datapathProvider string) string {
+	return fmt.Sprintf(`
+resource "google_container_cluster" "primary" {
+  name               = "%s"
+  location           = "us-central1-a"
+  initial_node_count = 1
+
+  datapath_provider = "%s"
+
+  release_channel {
+    channel = "RAPID"
+  }
+}
+`, clusterName, datapathProvider)
 }
 
 func testAccContainerCluster_withMasterAuthorizedNetworksDisabled(containerNetName string, clusterName string) string {
