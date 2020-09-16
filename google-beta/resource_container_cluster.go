@@ -241,6 +241,11 @@ func resourceContainerCluster() *schema.Resource {
 										Type:     schema.TypeBool,
 										Required: true,
 									},
+									"load_balancer_type": {
+										Type:         schema.TypeString,
+										ValidateFunc: validation.StringInSlice([]string{"LOAD_BALANCER_TYPE_INTERNAL"}, false),
+										Optional:     true,
+									},
 								},
 							},
 						},
@@ -281,11 +286,6 @@ func resourceContainerCluster() *schema.Resource {
 									"enabled": {
 										Type:     schema.TypeBool,
 										Required: true,
-									},
-									"load_balancer_type": {
-										Type:         schema.TypeString,
-										ValidateFunc: validation.StringInSlice([]string{"LOAD_BALANCER_TYPE_INTERNAL"}, false),
-										Optional:     true,
 									},
 								},
 							},
