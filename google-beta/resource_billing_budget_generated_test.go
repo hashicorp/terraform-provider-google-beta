@@ -19,8 +19,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/terraform"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
 func TestAccBillingBudget_billingBudgetBasicExample(t *testing.T) {
@@ -32,8 +32,11 @@ func TestAccBillingBudget_billingBudgetBasicExample(t *testing.T) {
 	}
 
 	vcrTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProvidersOiCS,
+		PreCheck:  func() { testAccPreCheck(t) },
+		Providers: testAccProvidersOiCS,
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"random": {},
+		},
 		CheckDestroy: testAccCheckBillingBudgetDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -77,8 +80,11 @@ func TestAccBillingBudget_billingBudgetLastperiodExample(t *testing.T) {
 	}
 
 	vcrTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProvidersOiCS,
+		PreCheck:  func() { testAccPreCheck(t) },
+		Providers: testAccProvidersOiCS,
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"random": {},
+		},
 		CheckDestroy: testAccCheckBillingBudgetDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -128,8 +134,11 @@ func TestAccBillingBudget_billingBudgetFilterExample(t *testing.T) {
 	}
 
 	vcrTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProvidersOiCS,
+		PreCheck:  func() { testAccPreCheck(t) },
+		Providers: testAccProvidersOiCS,
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"random": {},
+		},
 		CheckDestroy: testAccCheckBillingBudgetDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -185,8 +194,11 @@ func TestAccBillingBudget_billingBudgetNotifyExample(t *testing.T) {
 	}
 
 	vcrTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProvidersOiCS,
+		PreCheck:  func() { testAccPreCheck(t) },
+		Providers: testAccProvidersOiCS,
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"random": {},
+		},
 		CheckDestroy: testAccCheckBillingBudgetDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{

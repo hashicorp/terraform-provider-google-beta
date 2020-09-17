@@ -17,7 +17,7 @@ package google
 import (
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
 func TestAccFirebaseProjectLocation_firebaseProjectLocationBasicExample(t *testing.T) {
@@ -31,6 +31,9 @@ func TestAccFirebaseProjectLocation_firebaseProjectLocationBasicExample(t *testi
 	vcrTest(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
 		Providers: testAccProvidersOiCS,
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"random": {},
+		},
 		Steps: []resource.TestStep{
 			{
 				Config: testAccFirebaseProjectLocation_firebaseProjectLocationBasicExample(context),

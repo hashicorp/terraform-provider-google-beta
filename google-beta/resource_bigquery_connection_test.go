@@ -3,7 +3,7 @@ package google
 import (
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
 func TestAccBigqueryConnectionConnection_bigqueryConnectionBasic(t *testing.T) {
@@ -19,6 +19,9 @@ func TestAccBigqueryConnectionConnection_bigqueryConnectionBasic(t *testing.T) {
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProvidersOiCS,
 		CheckDestroy: testAccCheckBigqueryConnectionConnectionDestroyProducer(t),
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"random": {},
+		},
 		Steps: []resource.TestStep{
 			{
 				Config: testAccBigqueryConnectionConnection_bigqueryConnectionBasic(context),

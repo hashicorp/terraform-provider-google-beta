@@ -19,8 +19,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/terraform"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
 func TestAccOSConfigGuestPolicies_osConfigGuestPoliciesBasicExample(t *testing.T) {
@@ -31,8 +31,11 @@ func TestAccOSConfigGuestPolicies_osConfigGuestPoliciesBasicExample(t *testing.T
 	}
 
 	vcrTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProvidersOiCS,
+		PreCheck:  func() { testAccPreCheck(t) },
+		Providers: testAccProvidersOiCS,
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"random": {},
+		},
 		CheckDestroy: testAccCheckOSConfigGuestPoliciesDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -97,8 +100,11 @@ func TestAccOSConfigGuestPolicies_osConfigGuestPoliciesPackagesExample(t *testin
 	}
 
 	vcrTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProvidersOiCS,
+		PreCheck:  func() { testAccPreCheck(t) },
+		Providers: testAccProvidersOiCS,
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"random": {},
+		},
 		CheckDestroy: testAccCheckOSConfigGuestPoliciesDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -175,8 +181,11 @@ func TestAccOSConfigGuestPolicies_osConfigGuestPoliciesRecipesExample(t *testing
 	}
 
 	vcrTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProvidersOiCS,
+		PreCheck:  func() { testAccPreCheck(t) },
+		Providers: testAccProvidersOiCS,
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"random": {},
+		},
 		CheckDestroy: testAccCheckOSConfigGuestPoliciesDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{

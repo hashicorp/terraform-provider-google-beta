@@ -1,6 +1,7 @@
 package google
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"reflect"
@@ -10,10 +11,10 @@ import (
 
 	"github.com/hashicorp/errwrap"
 	"github.com/hashicorp/go-version"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/customdiff"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/customdiff"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	containerBeta "google.golang.org/api/container/v1beta1"
 )
 
@@ -38,7 +39,7 @@ var (
 			"cidr_block": {
 				Type:         schema.TypeString,
 				Required:     true,
-				ValidateFunc: validation.CIDRNetwork(0, 32),
+				ValidateFunc: validation.IsCIDRNetwork(0, 32),
 				Description:  `External network that can access Kubernetes master through HTTPS. Must be specified in CIDR notation.`,
 			},
 			"display_name": {
@@ -163,37 +164,12 @@ func resourceContainerCluster() *schema.Resource {
 				Description: `The location (region or zone) in which the cluster master will be created, as well as the default node location. If you specify a zone (such as us-central1-a), the cluster will be a zonal cluster with a single cluster master. If you specify a region (such as us-west1), the cluster will be a regional cluster with multiple masters spread across zones in the region, and with default node locations in those zones as well.`,
 			},
 
-			"region": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				Removed:     "Use location instead",
-				Computed:    true,
-				Description: `The region in which the cluster master will be created. Zone and region have been removed in favor of location.`,
-			},
-
-			"zone": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				Removed:     "Use location instead",
-				Computed:    true,
-				Description: `The zone in which the cluster master will be created. Zone and region have been removed in favor of location.`,
-			},
-
 			"node_locations": {
 				Type:        schema.TypeSet,
 				Optional:    true,
 				Computed:    true,
 				Elem:        &schema.Schema{Type: schema.TypeString},
 				Description: `The list of zones in which the cluster's nodes are located. Nodes must be in the region of their regional cluster or in the same region as their cluster's zone for zonal clusters. If this is specified for a zonal cluster, omit the cluster's zone.`,
-			},
-
-			"additional_zones": {
-				Type:        schema.TypeSet,
-				Optional:    true,
-				Removed:     "Use node_locations instead",
-				Computed:    true,
-				Elem:        &schema.Schema{Type: schema.TypeString},
-				Description: `Additional_zones has been removed in favor of node_locations.`,
 			},
 
 			"addons_config": {
@@ -232,22 +208,6 @@ func resourceContainerCluster() *schema.Resource {
 									"disabled": {
 										Type:     schema.TypeBool,
 										Required: true,
-									},
-								},
-							},
-						},
-						"kubernetes_dashboard": {
-							Type:        schema.TypeList,
-							Optional:    true,
-							Removed:     "The Kubernetes Dashboard addon is removed for clusters on GKE.",
-							Computed:    true,
-							MaxItems:    1,
-							Description: `The status of  Kubernetes Dashboard addon.`,
-							Elem: &schema.Resource{
-								Schema: map[string]*schema.Schema{
-									"disabled": {
-										Type:     schema.TypeBool,
-										Optional: true,
 									},
 								},
 							},
@@ -875,20 +835,6 @@ func resourceContainerCluster() *schema.Resource {
 							ConflictsWith: ipAllocationCidrBlockFields,
 							Description:   `The name of the existing secondary range in the cluster's subnetwork to use for service ClusterIPs. Alternatively, services_ipv4_cidr_block can be used to automatically create a GKE-managed one.`,
 						},
-
-						"subnetwork_name": {
-							Type:     schema.TypeString,
-							Removed:  "This field is removed as of 3.0.0. Define an explicit google_compute_subnetwork and use subnetwork instead.",
-							Computed: true,
-							Optional: true,
-						},
-
-						"node_ipv4_cidr_block": {
-							Type:     schema.TypeString,
-							Removed:  "This field is removed as of 3.0.0. Define an explicit google_compute_subnetwork and use subnetwork instead.",
-							Computed: true,
-							Optional: true,
-						},
 					},
 				},
 			},
@@ -935,7 +881,7 @@ func resourceContainerCluster() *schema.Resource {
 							Type:         schema.TypeString,
 							Optional:     true,
 							ForceNew:     true,
-							ValidateFunc: orEmpty(validation.CIDRNetwork(28, 28)),
+							ValidateFunc: orEmpty(validation.IsCIDRNetwork(28, 28)),
 							Description:  `The IP range in CIDR notation to use for the hosted master network. This range will be used for assigning private IP addresses to the cluster master(s) and the ILB VIP. This range must not overlap with any other ranges in use within the cluster's network, and it must be a /28 subnet. See Private Cluster Limitations for more details. This field only applies to private clusters, when enable_private_nodes is true.`,
 						},
 						"peering_name": {
@@ -1173,7 +1119,7 @@ func resourceContainerCluster() *schema.Resource {
 // we have a work around for removing guest accelerators. Also Terraform 0.11 cannot use dynamic blocks
 // so this isn't a solution for module authors who want to dynamically omit guest accelerators
 // See https://github.com/hashicorp/terraform-provider-google/issues/3786
-func resourceNodeConfigEmptyGuestAccelerator(diff *schema.ResourceDiff, meta interface{}) error {
+func resourceNodeConfigEmptyGuestAccelerator(_ context.Context, diff *schema.ResourceDiff, meta interface{}) error {
 	old, new := diff.GetChange("node_config.0.guest_accelerator")
 	oList := old.([]interface{})
 	nList := new.([]interface{})
@@ -1678,8 +1624,6 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 			return err
 		}
 		log.Printf("[INFO] GKE cluster %s master authorized networks config has been updated", d.Id())
-
-		d.SetPartial("master_authorized_networks_config")
 	}
 
 	if d.HasChange("addons_config") {
@@ -1697,8 +1641,6 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 			}
 
 			log.Printf("[INFO] GKE cluster %s addons have been updated", d.Id())
-
-			d.SetPartial("addons_config")
 		}
 	}
 
@@ -1715,8 +1657,6 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 		}
 
 		log.Printf("[INFO] GKE cluster %s's cluster-wide autoscaling has been updated", d.Id())
-
-		d.SetPartial("cluster_autoscaling")
 	}
 
 	if d.HasChange("enable_binary_authorization") {
@@ -1737,8 +1677,6 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 		}
 
 		log.Printf("[INFO] GKE cluster %s's binary authorization has been updated to %v", d.Id(), enabled)
-
-		d.SetPartial("enable_binary_authorization")
 	}
 
 	if d.HasChange("enable_shielded_nodes") {
@@ -1759,8 +1697,6 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 		}
 
 		log.Printf("[INFO] GKE cluster %s's shielded nodes has been updated to %v", d.Id(), enabled)
-
-		d.SetPartial("enable_shielded_nodes")
 	}
 
 	if d.HasChange("release_channel") {
@@ -1793,8 +1729,6 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 		}
 
 		log.Printf("[INFO] GKE cluster %s Release Channel has been updated to %#v", d.Id(), req.Update.DesiredReleaseChannel)
-
-		d.SetPartial("release_channel")
 	}
 
 	if d.HasChange("enable_intranode_visibility") {
@@ -1831,8 +1765,6 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 		}
 
 		log.Printf("[INFO] GKE cluster %s Intra Node Visibility has been updated to %v", d.Id(), enabled)
-
-		d.SetPartial("enable_intranode_visibility")
 	}
 
 	if d.HasChange("default_snat_status") {
@@ -1865,8 +1797,6 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 		}
 
 		log.Printf("[INFO] GKE cluster %s Default SNAT status has been updated", d.Id())
-
-		d.SetPartial("default_snat_status")
 	}
 
 	if d.HasChange("maintenance_policy") {
@@ -1896,8 +1826,6 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 		}
 
 		log.Printf("[INFO] GKE cluster %s maintenance policy has been updated", d.Id())
-
-		d.SetPartial("maintenance_policy")
 	}
 
 	if d.HasChange("node_locations") {
@@ -1945,8 +1873,6 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 		}
 
 		log.Printf("[INFO] GKE cluster %s node locations have been updated to %v", d.Id(), azSet.List())
-
-		d.SetPartial("node_locations")
 	}
 
 	if d.HasChange("enable_legacy_abac") {
@@ -1980,8 +1906,6 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 		}
 
 		log.Printf("[INFO] GKE cluster %s legacy ABAC has been updated to %v", d.Id(), enabled)
-
-		d.SetPartial("enable_legacy_abac")
 	}
 
 	if d.HasChange("monitoring_service") || d.HasChange("logging_service") {
@@ -2015,8 +1939,6 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 		}
 
 		log.Printf("[INFO] GKE cluster %s: logging service has been updated to %s, monitoring service has been updated to %s", d.Id(), logging, monitoring)
-		d.SetPartial("logging_service")
-		d.SetPartial("monitoring_service")
 	}
 
 	if d.HasChange("network_policy") {
@@ -2050,8 +1972,6 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 
 		log.Printf("[INFO] Network policy for GKE cluster %s has been updated", d.Id())
 
-		d.SetPartial("network_policy")
-
 	}
 
 	if n, ok := d.GetOk("node_pool.#"); ok {
@@ -2065,7 +1985,6 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 				return err
 			}
 		}
-		d.SetPartial("node_pool")
 	}
 
 	// The master must be updated before the nodes
@@ -2097,7 +2016,6 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 			}
 			log.Printf("[INFO] GKE cluster %s: master has been updated to %s", d.Id(), ver)
 		}
-		d.SetPartial("min_master_version")
 	}
 
 	// It's not super important that this come after updating the node pools, but it still seems like a better
@@ -2130,8 +2048,6 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 		if !foundDefault {
 			return fmt.Errorf("node_version was updated but default-pool was not found. To update the version for a non-default pool, use the version attribute on that pool.")
 		}
-
-		d.SetPartial("node_version")
 	}
 
 	if d.HasChange("node_config") {
@@ -2165,7 +2081,6 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 
 			log.Printf("[INFO] GKE cluster %s: image type has been updated to %s", d.Id(), it)
 		}
-		d.SetPartial("node_config")
 	}
 
 	if d.HasChange("master_auth") {
@@ -2205,7 +2120,6 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 		}
 
 		log.Printf("[INFO] GKE cluster %s: master auth has been updated", d.Id())
-		d.SetPartial("master_auth")
 	}
 
 	if d.HasChange("vertical_pod_autoscaling") {
@@ -2223,8 +2137,6 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 			}
 
 			log.Printf("[INFO] GKE cluster %s vertical pod autoscaling has been updated", d.Id())
-
-			d.SetPartial("vertical_pod_autoscaling")
 		}
 	}
 
@@ -2253,8 +2165,6 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 			return err
 		}
 		log.Printf("[INFO] GKE cluster %s database encryption config has been updated", d.Id())
-
-		d.SetPartial("database_encryption")
 	}
 
 	if d.HasChange("pod_security_policy_config") {
@@ -2282,8 +2192,6 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 			return err
 		}
 		log.Printf("[INFO] GKE cluster %s pod security policy config has been updated", d.Id())
-
-		d.SetPartial("pod_security_policy_config")
 	}
 
 	if d.HasChange("workload_identity_config") {
@@ -2311,8 +2219,6 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 		}
 
 		log.Printf("[INFO] GKE cluster %s workload identity config has been updated", d.Id())
-
-		d.SetPartial("workload_identity_config")
 	}
 
 	if d.HasChange("resource_labels") {
@@ -2341,8 +2247,6 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 		if err := lockedCall(lockKey, updateF); err != nil {
 			return err
 		}
-
-		d.SetPartial("resource_labels")
 	}
 
 	if d.HasChange("remove_default_node_pool") && d.Get("remove_default_node_pool").(bool) {
@@ -2390,8 +2294,6 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 			return err
 		}
 		log.Printf("[INFO] GKE cluster %s resource usage export config has been updated", d.Id())
-
-		d.SetPartial("resource_usage_export_config")
 	}
 
 	d.Partial(false)
@@ -2426,8 +2328,6 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 		}
 
 		log.Printf("[INFO] GKE cluster %s Cluster Telemetry has been updated to %#v", d.Id(), req.Update.DesiredClusterTelemetry)
-
-		d.SetPartial("cluster_telemetry")
 	}
 
 	if _, err := containerClusterAwaitRestingState(config, project, location, clusterName, d.Timeout(schema.TimeoutUpdate)); err != nil {
@@ -3578,7 +3478,7 @@ func containerClusterPrivateClusterConfigSuppress(k, old, new string, d *schema.
 	return false
 }
 
-func containerClusterPrivateClusterConfigCustomDiff(d *schema.ResourceDiff, meta interface{}) error {
+func containerClusterPrivateClusterConfigCustomDiff(_ context.Context, d *schema.ResourceDiff, meta interface{}) error {
 	pcc, ok := d.GetOk("private_cluster_config")
 	if !ok {
 		return nil
