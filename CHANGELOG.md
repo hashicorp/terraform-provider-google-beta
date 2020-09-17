@@ -1,4 +1,29 @@
 ## 3.40.0 (Unreleased)
+
+DEPRECATIONS:
+* bigtable: deprecated `instance_type` for `google_bigtable_instance` - it is now recommended to leave field unspecified. ([#2477](https://github.com/hashicorp/terraform-provider-google-beta/pull/2477))
+
+FEATURES:
+* **New Data Source:** compute: added `google_compute_region_ssl_certificate` datasource ([#2476](https://github.com/hashicorp/terraform-provider-google-beta/pull/2476))
+* **New Resource:** `google_compute_target_grpc_proxy` ([#2488](https://github.com/hashicorp/terraform-provider-google-beta/pull/2488))
+
+IMPROVEMENTS:
+* cloudlbuild: added `options` and `artifacts` properties to `google_cloudbuild_trigger` ([#2490](https://github.com/hashicorp/terraform-provider-google-beta/pull/2490))
+* compute: added GRPC as a valid value for `google_compute_backend_service.protocol` (and regional equivalent) ([#2478](https://github.com/hashicorp/terraform-provider-google-beta/pull/2478))
+* compute: added 'all' option for `google_compute_firewall` ([#2465](https://github.com/hashicorp/terraform-provider-google-beta/pull/2465))
+* container: added support for `load_balancer_type` to `google_container_cluster` Cloud Run config addon. ([#2487](https://github.com/hashicorp/terraform-provider-google-beta/pull/2487))
+* dataflow : added `transformnameMapping` to `google_dataflow_job` ([#2480](https://github.com/hashicorp/terraform-provider-google-beta/pull/2480))
+* serviceusage: added ability to pass google.project.id to project property ([#2479](https://github.com/hashicorp/terraform-provider-google-beta/pull/2479))
+* spanner: added schema update/update ddl support for `google_spanner_database` ([#2489](https://github.com/hashicorp/terraform-provider-google-beta/pull/2489))
+
+BUG FIXES:
+* bigtable: fixed the update behaviour of the `single_cluster_routing` sub-fields in `google_bigtable_app_profile` ([#2482](https://github.com/hashicorp/terraform-provider-google-beta/pull/2482))
+* datacatalog: fixed error when trying to set `bool_value` to false on `google_data_catalog_tag` ([#2473](https://github.com/hashicorp/terraform-provider-google-beta/pull/2473))
+* dataproc: fixed issues where updating `google_dataproc_cluster.cluster_config.autoscaling_policy` would do nothing, and where there was no way to remove a policy. ([#2483](https://github.com/hashicorp/terraform-provider-google-beta/pull/2483))
+* osconfig: fixed a potential crash in `google_os_config_patch_deployment` due to an unchecked nil value in `recurring_schedule` ([#2481](https://github.com/hashicorp/terraform-provider-google-beta/pull/2481))
+* serviceusage: fixed intermittent failure when a service is already being modified - added retries ([#2469](https://github.com/hashicorp/terraform-provider-google-beta/pull/2469))
+* serviceusage: fixed an issue where `bigquery.googleapis.com` was getting enabled as the `bigquery-json.googleapis.com` alias instead, incorrectly. This had no user impact yet, but the alias may go away in the future. ([#2469](https://github.com/hashicorp/terraform-provider-google-beta/pull/2469))
+
 ## 3.39.0 (September 15, 2020)
 
 IMPROVEMENTS:
