@@ -55,12 +55,16 @@ func ArtifactRegistryRepositoryIamUpdaterProducer(d *schema.ResourceData, config
 
 	project, _ := getProject(d, config)
 	if project != "" {
-		d.Set("project", project)
+		if err := d.Set("project", project); err != nil {
+			return nil, fmt.Errorf("Error setting project: %s", err)
+		}
 	}
 	values["project"] = project
 	location, _ := getLocation(d, config)
 	if location != "" {
-		d.Set("location", location)
+		if err := d.Set("location", location); err != nil {
+			return nil, fmt.Errorf("Error setting location: %s", err)
+		}
 	}
 	values["location"] = location
 	if v, ok := d.GetOk("repository"); ok {
@@ -85,9 +89,15 @@ func ArtifactRegistryRepositoryIamUpdaterProducer(d *schema.ResourceData, config
 		Config:     config,
 	}
 
-	d.Set("project", u.project)
-	d.Set("location", u.location)
-	d.Set("repository", u.GetResourceId())
+	if err := d.Set("project", u.project); err != nil {
+		return nil, fmt.Errorf("Error setting project: %s", err)
+	}
+	if err := d.Set("location", u.location); err != nil {
+		return nil, fmt.Errorf("Error setting location: %s", err)
+	}
+	if err := d.Set("repository", u.GetResourceId()); err != nil {
+		return nil, fmt.Errorf("Error setting repository: %s", err)
+	}
 
 	return u, nil
 }
@@ -121,7 +131,9 @@ func ArtifactRegistryRepositoryIdParseFunc(d *schema.ResourceData, config *Confi
 		d:          d,
 		Config:     config,
 	}
-	d.Set("repository", u.GetResourceId())
+	if err := d.Set("repository", u.GetResourceId()); err != nil {
+		return fmt.Errorf("Error setting repository: %s", err)
+	}
 	d.SetId(u.GetResourceId())
 	return nil
 }
