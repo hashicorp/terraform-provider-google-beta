@@ -261,13 +261,19 @@ func resourceComputePerInstanceConfigRead(d *schema.ResourceData, meta interface
 
 	// Explicitly set virtual fields to default values if unset
 	if _, ok := d.GetOk("minimal_action"); !ok {
-		d.Set("minimal_action", "NONE")
+		if err := d.Set("minimal_action", "NONE"); err != nil {
+			return fmt.Errorf("Error setting minimal_action: %s", err)
+		}
 	}
 	if _, ok := d.GetOk("most_disruptive_allowed_action"); !ok {
-		d.Set("most_disruptive_allowed_action", "REPLACE")
+		if err := d.Set("most_disruptive_allowed_action", "REPLACE"); err != nil {
+			return fmt.Errorf("Error setting most_disruptive_allowed_action: %s", err)
+		}
 	}
 	if _, ok := d.GetOk("remove_instance_state_on_destroy"); !ok {
-		d.Set("remove_instance_state_on_destroy", false)
+		if err := d.Set("remove_instance_state_on_destroy", false); err != nil {
+			return fmt.Errorf("Error setting remove_instance_state_on_destroy: %s", err)
+		}
 	}
 	if err := d.Set("project", project); err != nil {
 		return fmt.Errorf("Error reading PerInstanceConfig: %s", err)
@@ -491,9 +497,15 @@ func resourceComputePerInstanceConfigImport(d *schema.ResourceData, meta interfa
 	d.SetId(id)
 
 	// Explicitly set virtual fields to default values on import
-	d.Set("minimal_action", "NONE")
-	d.Set("most_disruptive_allowed_action", "REPLACE")
-	d.Set("remove_instance_state_on_destroy", false)
+	if err := d.Set("minimal_action", "NONE"); err != nil {
+		return nil, fmt.Errorf("Error setting minimal_action: %s", err)
+	}
+	if err := d.Set("most_disruptive_allowed_action", "REPLACE"); err != nil {
+		return nil, fmt.Errorf("Error setting most_disruptive_allowed_action: %s", err)
+	}
+	if err := d.Set("remove_instance_state_on_destroy", false); err != nil {
+		return nil, fmt.Errorf("Error setting remove_instance_state_on_destroy: %s", err)
+	}
 
 	return []*schema.ResourceData{d}, nil
 }

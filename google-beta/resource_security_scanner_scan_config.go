@@ -307,7 +307,9 @@ func resourceSecurityScannerScanConfigCreate(d *schema.ResourceData, meta interf
 			return fmt.Errorf("Create response didn't contain critical fields. Create may not have succeeded.")
 		}
 	}
-	d.Set("name", name.(string))
+	if err := d.Set("name", name.(string)); err != nil {
+		return fmt.Errorf("Error setting name: %s", err)
+	}
 	d.SetId(name.(string))
 
 	return resourceSecurityScannerScanConfigRead(d, meta)
