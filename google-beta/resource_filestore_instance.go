@@ -213,7 +213,15 @@ simultaneous updates from overwriting each other.`,
 }
 
 func resourceFilestoreInstanceCreate(d *schema.ResourceData, meta interface{}) error {
+	var m providerMeta
+
+	err := d.GetProviderMeta(&m)
+	if err != nil {
+		return err
+	}
+
 	config := meta.(*Config)
+	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
 
 	obj := make(map[string]interface{})
 	descriptionProp, err := expandFilestoreInstanceDescription(d.Get("description"), d, config)
@@ -303,7 +311,15 @@ func resourceFilestoreInstanceCreate(d *schema.ResourceData, meta interface{}) e
 }
 
 func resourceFilestoreInstanceRead(d *schema.ResourceData, meta interface{}) error {
+	var m providerMeta
+
+	err := d.GetProviderMeta(&m)
+	if err != nil {
+		return err
+	}
+
 	config := meta.(*Config)
+	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
 
 	url, err := replaceVars(d, config, "{{FilestoreBasePath}}projects/{{project}}/locations/{{zone}}/instances/{{name}}")
 	if err != nil {
@@ -358,7 +374,15 @@ func resourceFilestoreInstanceRead(d *schema.ResourceData, meta interface{}) err
 }
 
 func resourceFilestoreInstanceUpdate(d *schema.ResourceData, meta interface{}) error {
+	var m providerMeta
+
+	err := d.GetProviderMeta(&m)
+	if err != nil {
+		return err
+	}
+
 	config := meta.(*Config)
+	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
 
 	billingProject := ""
 
@@ -439,7 +463,15 @@ func resourceFilestoreInstanceUpdate(d *schema.ResourceData, meta interface{}) e
 }
 
 func resourceFilestoreInstanceDelete(d *schema.ResourceData, meta interface{}) error {
+	var m providerMeta
+
+	err := d.GetProviderMeta(&m)
+	if err != nil {
+		return err
+	}
+
 	config := meta.(*Config)
+	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
 
 	billingProject := ""
 

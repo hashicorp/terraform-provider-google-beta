@@ -325,7 +325,15 @@ internally during updates.`,
 }
 
 func resourceComputeVpnTunnelCreate(d *schema.ResourceData, meta interface{}) error {
+	var m providerMeta
+
+	err := d.GetProviderMeta(&m)
+	if err != nil {
+		return err
+	}
+
 	config := meta.(*Config)
+	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
 
 	obj := make(map[string]interface{})
 	nameProp, err := expandComputeVpnTunnelName(d.Get("name"), d, config)
@@ -519,7 +527,15 @@ func resourceComputeVpnTunnelCreate(d *schema.ResourceData, meta interface{}) er
 }
 
 func resourceComputeVpnTunnelRead(d *schema.ResourceData, meta interface{}) error {
+	var m providerMeta
+
+	err := d.GetProviderMeta(&m)
+	if err != nil {
+		return err
+	}
+
 	config := meta.(*Config)
+	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
 
 	url, err := replaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/regions/{{region}}/vpnTunnels/{{name}}")
 	if err != nil {
@@ -616,7 +632,15 @@ func resourceComputeVpnTunnelRead(d *schema.ResourceData, meta interface{}) erro
 }
 
 func resourceComputeVpnTunnelUpdate(d *schema.ResourceData, meta interface{}) error {
+	var m providerMeta
+
+	err := d.GetProviderMeta(&m)
+	if err != nil {
+		return err
+	}
+
 	config := meta.(*Config)
+	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
 
 	billingProject := ""
 
@@ -675,7 +699,15 @@ func resourceComputeVpnTunnelUpdate(d *schema.ResourceData, meta interface{}) er
 }
 
 func resourceComputeVpnTunnelDelete(d *schema.ResourceData, meta interface{}) error {
+	var m providerMeta
+
+	err := d.GetProviderMeta(&m)
+	if err != nil {
+		return err
+	}
+
 	config := meta.(*Config)
+	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
 
 	billingProject := ""
 

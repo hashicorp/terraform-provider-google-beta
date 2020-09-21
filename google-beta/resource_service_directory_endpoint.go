@@ -90,7 +90,15 @@ range of [0, 65535]. If unspecified, the default is 0.`,
 }
 
 func resourceServiceDirectoryEndpointCreate(d *schema.ResourceData, meta interface{}) error {
+	var m providerMeta
+
+	err := d.GetProviderMeta(&m)
+	if err != nil {
+		return err
+	}
+
 	config := meta.(*Config)
+	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
 
 	obj := make(map[string]interface{})
 	addressProp, err := expandServiceDirectoryEndpointAddress(d.Get("address"), d, config)
@@ -146,7 +154,15 @@ func resourceServiceDirectoryEndpointCreate(d *schema.ResourceData, meta interfa
 }
 
 func resourceServiceDirectoryEndpointRead(d *schema.ResourceData, meta interface{}) error {
+	var m providerMeta
+
+	err := d.GetProviderMeta(&m)
+	if err != nil {
+		return err
+	}
+
 	config := meta.(*Config)
+	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
 
 	url, err := replaceVars(d, config, "{{ServiceDirectoryBasePath}}{{name}}")
 	if err != nil {
@@ -182,7 +198,15 @@ func resourceServiceDirectoryEndpointRead(d *schema.ResourceData, meta interface
 }
 
 func resourceServiceDirectoryEndpointUpdate(d *schema.ResourceData, meta interface{}) error {
+	var m providerMeta
+
+	err := d.GetProviderMeta(&m)
+	if err != nil {
+		return err
+	}
+
 	config := meta.(*Config)
+	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
 
 	billingProject := ""
 
@@ -249,7 +273,15 @@ func resourceServiceDirectoryEndpointUpdate(d *schema.ResourceData, meta interfa
 }
 
 func resourceServiceDirectoryEndpointDelete(d *schema.ResourceData, meta interface{}) error {
+	var m providerMeta
+
+	err := d.GetProviderMeta(&m)
+	if err != nil {
+		return err
+	}
+
 	config := meta.(*Config)
+	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
 
 	billingProject := ""
 

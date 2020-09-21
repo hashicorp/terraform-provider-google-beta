@@ -875,7 +875,15 @@ Example: "2014-10-02T15:01:23.045123456Z".`,
 }
 
 func resourceOSConfigGuestPoliciesCreate(d *schema.ResourceData, meta interface{}) error {
+	var m providerMeta
+
+	err := d.GetProviderMeta(&m)
+	if err != nil {
+		return err
+	}
+
 	config := meta.(*Config)
+	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
 
 	obj := make(map[string]interface{})
 	descriptionProp, err := expandOSConfigGuestPoliciesDescription(d.Get("description"), d, config)
@@ -973,7 +981,15 @@ func resourceOSConfigGuestPoliciesCreate(d *schema.ResourceData, meta interface{
 }
 
 func resourceOSConfigGuestPoliciesRead(d *schema.ResourceData, meta interface{}) error {
+	var m providerMeta
+
+	err := d.GetProviderMeta(&m)
+	if err != nil {
+		return err
+	}
+
 	config := meta.(*Config)
+	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
 
 	url, err := replaceVars(d, config, "{{OSConfigBasePath}}projects/{{project}}/guestPolicies/{{guest_policy_id}}")
 	if err != nil {
@@ -1034,7 +1050,15 @@ func resourceOSConfigGuestPoliciesRead(d *schema.ResourceData, meta interface{})
 }
 
 func resourceOSConfigGuestPoliciesUpdate(d *schema.ResourceData, meta interface{}) error {
+	var m providerMeta
+
+	err := d.GetProviderMeta(&m)
+	if err != nil {
+		return err
+	}
+
 	config := meta.(*Config)
+	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
 
 	billingProject := ""
 
@@ -1106,7 +1130,15 @@ func resourceOSConfigGuestPoliciesUpdate(d *schema.ResourceData, meta interface{
 }
 
 func resourceOSConfigGuestPoliciesDelete(d *schema.ResourceData, meta interface{}) error {
+	var m providerMeta
+
+	err := d.GetProviderMeta(&m)
+	if err != nil {
+		return err
+	}
+
 	config := meta.(*Config)
+	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
 
 	billingProject := ""
 

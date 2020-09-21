@@ -134,7 +134,15 @@ which type this is. Default value: "MANAGED" Possible values: ["MANAGED"]`,
 }
 
 func resourceComputeManagedSslCertificateCreate(d *schema.ResourceData, meta interface{}) error {
+	var m providerMeta
+
+	err := d.GetProviderMeta(&m)
+	if err != nil {
+		return err
+	}
+
 	config := meta.(*Config)
+	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
 
 	obj := make(map[string]interface{})
 	descriptionProp, err := expandComputeManagedSslCertificateDescription(d.Get("description"), d, config)
@@ -209,7 +217,15 @@ func resourceComputeManagedSslCertificateCreate(d *schema.ResourceData, meta int
 }
 
 func resourceComputeManagedSslCertificateRead(d *schema.ResourceData, meta interface{}) error {
+	var m providerMeta
+
+	err := d.GetProviderMeta(&m)
+	if err != nil {
+		return err
+	}
+
 	config := meta.(*Config)
+	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
 
 	url, err := replaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/global/sslCertificates/{{name}}")
 	if err != nil {
@@ -270,7 +286,15 @@ func resourceComputeManagedSslCertificateRead(d *schema.ResourceData, meta inter
 }
 
 func resourceComputeManagedSslCertificateDelete(d *schema.ResourceData, meta interface{}) error {
+	var m providerMeta
+
+	err := d.GetProviderMeta(&m)
+	if err != nil {
+		return err
+	}
+
 	config := meta.(*Config)
+	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
 
 	billingProject := ""
 

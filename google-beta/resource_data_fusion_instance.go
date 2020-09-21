@@ -186,7 +186,15 @@ able to access the public internet.`,
 }
 
 func resourceDataFusionInstanceCreate(d *schema.ResourceData, meta interface{}) error {
+	var m providerMeta
+
+	err := d.GetProviderMeta(&m)
+	if err != nil {
+		return err
+	}
+
 	config := meta.(*Config)
+	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
 
 	obj := make(map[string]interface{})
 	nameProp, err := expandDataFusionInstanceName(d.Get("name"), d, config)
@@ -310,7 +318,15 @@ func resourceDataFusionInstanceCreate(d *schema.ResourceData, meta interface{}) 
 }
 
 func resourceDataFusionInstanceRead(d *schema.ResourceData, meta interface{}) error {
+	var m providerMeta
+
+	err := d.GetProviderMeta(&m)
+	if err != nil {
+		return err
+	}
+
 	config := meta.(*Config)
+	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
 
 	url, err := replaceVars(d, config, "{{DataFusionBasePath}}projects/{{project}}/locations/{{region}}/instances/{{name}}")
 	if err != nil {
@@ -400,7 +416,15 @@ func resourceDataFusionInstanceRead(d *schema.ResourceData, meta interface{}) er
 }
 
 func resourceDataFusionInstanceUpdate(d *schema.ResourceData, meta interface{}) error {
+	var m providerMeta
+
+	err := d.GetProviderMeta(&m)
+	if err != nil {
+		return err
+	}
+
 	config := meta.(*Config)
+	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
 
 	billingProject := ""
 
@@ -462,7 +486,15 @@ func resourceDataFusionInstanceUpdate(d *schema.ResourceData, meta interface{}) 
 }
 
 func resourceDataFusionInstanceDelete(d *schema.ResourceData, meta interface{}) error {
+	var m providerMeta
+
+	err := d.GetProviderMeta(&m)
+	if err != nil {
+		return err
+	}
+
 	config := meta.(*Config)
+	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
 
 	billingProject := ""
 

@@ -133,7 +133,15 @@ is the unique ID assigned to the Group.`,
 }
 
 func resourceCloudIdentityGroupCreate(d *schema.ResourceData, meta interface{}) error {
+	var m providerMeta
+
+	err := d.GetProviderMeta(&m)
+	if err != nil {
+		return err
+	}
+
 	config := meta.(*Config)
+	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
 
 	obj := make(map[string]interface{})
 	groupKeyProp, err := expandCloudIdentityGroupGroupKey(d.Get("group_key"), d, config)
@@ -219,7 +227,15 @@ func resourceCloudIdentityGroupCreate(d *schema.ResourceData, meta interface{}) 
 }
 
 func resourceCloudIdentityGroupRead(d *schema.ResourceData, meta interface{}) error {
+	var m providerMeta
+
+	err := d.GetProviderMeta(&m)
+	if err != nil {
+		return err
+	}
+
 	config := meta.(*Config)
+	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
 
 	url, err := replaceVars(d, config, "{{CloudIdentityBasePath}}{{name}}")
 	if err != nil {
@@ -267,7 +283,15 @@ func resourceCloudIdentityGroupRead(d *schema.ResourceData, meta interface{}) er
 }
 
 func resourceCloudIdentityGroupUpdate(d *schema.ResourceData, meta interface{}) error {
+	var m providerMeta
+
+	err := d.GetProviderMeta(&m)
+	if err != nil {
+		return err
+	}
+
 	config := meta.(*Config)
+	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
 
 	billingProject := ""
 
@@ -324,7 +348,15 @@ func resourceCloudIdentityGroupUpdate(d *schema.ResourceData, meta interface{}) 
 }
 
 func resourceCloudIdentityGroupDelete(d *schema.ResourceData, meta interface{}) error {
+	var m providerMeta
+
+	err := d.GetProviderMeta(&m)
+	if err != nil {
+		return err
+	}
+
 	config := meta.(*Config)
+	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
 
 	billingProject := ""
 
