@@ -114,7 +114,15 @@ and dashes.`,
 }
 
 func resourceArtifactRegistryRepositoryCreate(d *schema.ResourceData, meta interface{}) error {
+	var m providerMeta
+
+	err := d.GetProviderMeta(&m)
+	if err != nil {
+		return err
+	}
+
 	config := meta.(*Config)
+	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
 
 	obj := make(map[string]interface{})
 	formatProp, err := expandArtifactRegistryRepositoryFormat(d.Get("format"), d, config)
@@ -202,7 +210,15 @@ func resourceArtifactRegistryRepositoryCreate(d *schema.ResourceData, meta inter
 }
 
 func resourceArtifactRegistryRepositoryRead(d *schema.ResourceData, meta interface{}) error {
+	var m providerMeta
+
+	err := d.GetProviderMeta(&m)
+	if err != nil {
+		return err
+	}
+
 	config := meta.(*Config)
+	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
 
 	url, err := replaceVars(d, config, "{{ArtifactRegistryBasePath}}projects/{{project}}/locations/{{location}}/repositories/{{name}}")
 	if err != nil {
@@ -257,7 +273,15 @@ func resourceArtifactRegistryRepositoryRead(d *schema.ResourceData, meta interfa
 }
 
 func resourceArtifactRegistryRepositoryUpdate(d *schema.ResourceData, meta interface{}) error {
+	var m providerMeta
+
+	err := d.GetProviderMeta(&m)
+	if err != nil {
+		return err
+	}
+
 	config := meta.(*Config)
+	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
 
 	billingProject := ""
 
@@ -325,7 +349,15 @@ func resourceArtifactRegistryRepositoryUpdate(d *schema.ResourceData, meta inter
 }
 
 func resourceArtifactRegistryRepositoryDelete(d *schema.ResourceData, meta interface{}) error {
+	var m providerMeta
+
+	err := d.GetProviderMeta(&m)
+	if err != nil {
+		return err
+	}
+
 	config := meta.(*Config)
+	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
 
 	billingProject := ""
 

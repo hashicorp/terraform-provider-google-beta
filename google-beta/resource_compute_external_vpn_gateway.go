@@ -110,7 +110,15 @@ it cannot be an IP address from Google Compute Engine.`,
 }
 
 func resourceComputeExternalVpnGatewayCreate(d *schema.ResourceData, meta interface{}) error {
+	var m providerMeta
+
+	err := d.GetProviderMeta(&m)
+	if err != nil {
+		return err
+	}
+
 	config := meta.(*Config)
+	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
 
 	obj := make(map[string]interface{})
 	descriptionProp, err := expandComputeExternalVpnGatewayDescription(d.Get("description"), d, config)
@@ -185,7 +193,15 @@ func resourceComputeExternalVpnGatewayCreate(d *schema.ResourceData, meta interf
 }
 
 func resourceComputeExternalVpnGatewayRead(d *schema.ResourceData, meta interface{}) error {
+	var m providerMeta
+
+	err := d.GetProviderMeta(&m)
+	if err != nil {
+		return err
+	}
+
 	config := meta.(*Config)
+	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
 
 	url, err := replaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/global/externalVpnGateways/{{name}}")
 	if err != nil {
@@ -234,7 +250,15 @@ func resourceComputeExternalVpnGatewayRead(d *schema.ResourceData, meta interfac
 }
 
 func resourceComputeExternalVpnGatewayDelete(d *schema.ResourceData, meta interface{}) error {
+	var m providerMeta
+
+	err := d.GetProviderMeta(&m)
+	if err != nil {
+		return err
+	}
+
 	config := meta.(*Config)
+	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
 
 	billingProject := ""
 
