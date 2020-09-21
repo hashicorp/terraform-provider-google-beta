@@ -167,7 +167,7 @@ func resourceCloudIdentityGroupCreate(d *schema.ResourceData, meta interface{}) 
 		obj["labels"] = labelsProp
 	}
 
-	url, err := replaceVars(d, config, "{{CloudIdentityBasePath}}groups")
+	url, err := replaceVars(d, config, "{{CloudIdentityBasePath}}groups?initialGroupConfig=EMPTY")
 	if err != nil {
 		return err
 	}
