@@ -4,7 +4,7 @@ DEPRECATIONS:
 * bigtable: deprecated `instance_type` for `google_bigtable_instance` - it is now recommended to leave field unspecified. ([#2477](https://github.com/hashicorp/terraform-provider-google-beta/pull/2477))
 
 FEATURES:
-* **New Data Source:** compute: added `google_compute_region_ssl_certificate` datasource ([#2476](https://github.com/hashicorp/terraform-provider-google-beta/pull/2476))
+* **New Data Source:** `google_compute_region_ssl_certificate` ([#2476](https://github.com/hashicorp/terraform-provider-google-beta/pull/2476))
 * **New Resource:** `google_compute_target_grpc_proxy` ([#2488](https://github.com/hashicorp/terraform-provider-google-beta/pull/2488))
 
 IMPROVEMENTS:
