@@ -13,7 +13,7 @@ IMPROVEMENTS:
 * compute: added 'all' option for `google_compute_firewall` ([#2465](https://github.com/hashicorp/terraform-provider-google-beta/pull/2465))
 * container: added support for `load_balancer_type` to `google_container_cluster` Cloud Run config addon. ([#2487](https://github.com/hashicorp/terraform-provider-google-beta/pull/2487))
 * dataflow: added `transformnameMapping` to `google_dataflow_job` ([#2480](https://github.com/hashicorp/terraform-provider-google-beta/pull/2480))
-* serviceusage: added ability to pass google.project.id to project property ([#2479](https://github.com/hashicorp/terraform-provider-google-beta/pull/2479))
+* serviceusage: added ability to pass google.project.id to `google_project_service.project` ([#2479](https://github.com/hashicorp/terraform-provider-google-beta/pull/2479))
 * spanner: added schema update/update ddl support for `google_spanner_database` ([#2489](https://github.com/hashicorp/terraform-provider-google-beta/pull/2489))
 
 BUG FIXES:
