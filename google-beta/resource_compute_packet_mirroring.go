@@ -197,15 +197,7 @@ If it is not provided, the provider region is used.`,
 }
 
 func resourceComputePacketMirroringCreate(d *schema.ResourceData, meta interface{}) error {
-	var m providerMeta
-
-	err := d.GetProviderMeta(&m)
-	if err != nil {
-		return err
-	}
-
 	config := meta.(*Config)
-	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
 
 	obj := make(map[string]interface{})
 	nameProp, err := expandComputePacketMirroringName(d.Get("name"), d, config)
@@ -304,15 +296,7 @@ func resourceComputePacketMirroringCreate(d *schema.ResourceData, meta interface
 }
 
 func resourceComputePacketMirroringRead(d *schema.ResourceData, meta interface{}) error {
-	var m providerMeta
-
-	err := d.GetProviderMeta(&m)
-	if err != nil {
-		return err
-	}
-
 	config := meta.(*Config)
-	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
 
 	url, err := replaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/regions/{{region}}/packetMirrorings/{{name}}")
 	if err != nil {
@@ -370,15 +354,7 @@ func resourceComputePacketMirroringRead(d *schema.ResourceData, meta interface{}
 }
 
 func resourceComputePacketMirroringUpdate(d *schema.ResourceData, meta interface{}) error {
-	var m providerMeta
-
-	err := d.GetProviderMeta(&m)
-	if err != nil {
-		return err
-	}
-
 	config := meta.(*Config)
-	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
 
 	billingProject := ""
 
@@ -464,15 +440,7 @@ func resourceComputePacketMirroringUpdate(d *schema.ResourceData, meta interface
 }
 
 func resourceComputePacketMirroringDelete(d *schema.ResourceData, meta interface{}) error {
-	var m providerMeta
-
-	err := d.GetProviderMeta(&m)
-	if err != nil {
-		return err
-	}
-
 	config := meta.(*Config)
-	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
 
 	billingProject := ""
 

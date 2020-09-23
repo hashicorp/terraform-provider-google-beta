@@ -72,15 +72,7 @@ func resourceComputeMachineImage() *schema.Resource {
 }
 
 func resourceComputeMachineImageCreate(d *schema.ResourceData, meta interface{}) error {
-	var m providerMeta
-
-	err := d.GetProviderMeta(&m)
-	if err != nil {
-		return err
-	}
-
 	config := meta.(*Config)
-	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
 
 	obj := make(map[string]interface{})
 	nameProp, err := expandComputeMachineImageName(d.Get("name"), d, config)
@@ -139,15 +131,7 @@ func resourceComputeMachineImageCreate(d *schema.ResourceData, meta interface{})
 }
 
 func resourceComputeMachineImageRead(d *schema.ResourceData, meta interface{}) error {
-	var m providerMeta
-
-	err := d.GetProviderMeta(&m)
-	if err != nil {
-		return err
-	}
-
 	config := meta.(*Config)
-	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
 
 	url, err := replaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/global/machineImages/{{name}}")
 	if err != nil {
@@ -193,15 +177,7 @@ func resourceComputeMachineImageRead(d *schema.ResourceData, meta interface{}) e
 }
 
 func resourceComputeMachineImageUpdate(d *schema.ResourceData, meta interface{}) error {
-	var m providerMeta
-
-	err := d.GetProviderMeta(&m)
-	if err != nil {
-		return err
-	}
-
 	config := meta.(*Config)
-	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
 
 	billingProject := ""
 
@@ -255,15 +231,7 @@ func resourceComputeMachineImageUpdate(d *schema.ResourceData, meta interface{})
 }
 
 func resourceComputeMachineImageDelete(d *schema.ResourceData, meta interface{}) error {
-	var m providerMeta
-
-	err := d.GetProviderMeta(&m)
-	if err != nil {
-		return err
-	}
-
 	config := meta.(*Config)
-	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
 
 	billingProject := ""
 

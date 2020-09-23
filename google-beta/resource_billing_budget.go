@@ -234,15 +234,7 @@ billingAccounts/{billingAccountId}/budgets/{budgetId}.`,
 }
 
 func resourceBillingBudgetCreate(d *schema.ResourceData, meta interface{}) error {
-	var m providerMeta
-
-	err := d.GetProviderMeta(&m)
-	if err != nil {
-		return err
-	}
-
 	config := meta.(*Config)
-	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
 
 	obj := make(map[string]interface{})
 	budgetProp, err := expandBillingBudgetBudget(nil, d, config)
@@ -304,15 +296,7 @@ func resourceBillingBudgetCreate(d *schema.ResourceData, meta interface{}) error
 }
 
 func resourceBillingBudgetRead(d *schema.ResourceData, meta interface{}) error {
-	var m providerMeta
-
-	err := d.GetProviderMeta(&m)
-	if err != nil {
-		return err
-	}
-
 	config := meta.(*Config)
-	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
 
 	url, err := replaceVars(d, config, "{{BillingBasePath}}{{name}}")
 	if err != nil {
@@ -354,15 +338,7 @@ func resourceBillingBudgetRead(d *schema.ResourceData, meta interface{}) error {
 }
 
 func resourceBillingBudgetUpdate(d *schema.ResourceData, meta interface{}) error {
-	var m providerMeta
-
-	err := d.GetProviderMeta(&m)
-	if err != nil {
-		return err
-	}
-
 	config := meta.(*Config)
-	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
 
 	billingProject := ""
 
@@ -398,15 +374,7 @@ func resourceBillingBudgetUpdate(d *schema.ResourceData, meta interface{}) error
 }
 
 func resourceBillingBudgetDelete(d *schema.ResourceData, meta interface{}) error {
-	var m providerMeta
-
-	err := d.GetProviderMeta(&m)
-	if err != nil {
-		return err
-	}
-
 	config := meta.(*Config)
-	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
 
 	billingProject := ""
 

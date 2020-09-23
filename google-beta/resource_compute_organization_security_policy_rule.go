@@ -197,15 +197,7 @@ instances that are applied with this rule.`,
 }
 
 func resourceComputeOrganizationSecurityPolicyRuleCreate(d *schema.ResourceData, meta interface{}) error {
-	var m providerMeta
-
-	err := d.GetProviderMeta(&m)
-	if err != nil {
-		return err
-	}
-
 	config := meta.(*Config)
-	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
 
 	obj := make(map[string]interface{})
 	descriptionProp, err := expandComputeOrganizationSecurityPolicyRuleDescription(d.Get("description"), d, config)
@@ -319,15 +311,7 @@ func resourceComputeOrganizationSecurityPolicyRuleCreate(d *schema.ResourceData,
 }
 
 func resourceComputeOrganizationSecurityPolicyRuleRead(d *schema.ResourceData, meta interface{}) error {
-	var m providerMeta
-
-	err := d.GetProviderMeta(&m)
-	if err != nil {
-		return err
-	}
-
 	config := meta.(*Config)
-	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
 
 	url, err := replaceVars(d, config, "{{ComputeBasePath}}{{policy_id}}/getRule?priority={{priority}}")
 	if err != nil {
@@ -378,15 +362,7 @@ func resourceComputeOrganizationSecurityPolicyRuleRead(d *schema.ResourceData, m
 }
 
 func resourceComputeOrganizationSecurityPolicyRuleUpdate(d *schema.ResourceData, meta interface{}) error {
-	var m providerMeta
-
-	err := d.GetProviderMeta(&m)
-	if err != nil {
-		return err
-	}
-
 	config := meta.(*Config)
-	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
 
 	billingProject := ""
 
@@ -494,15 +470,7 @@ func resourceComputeOrganizationSecurityPolicyRuleUpdate(d *schema.ResourceData,
 }
 
 func resourceComputeOrganizationSecurityPolicyRuleDelete(d *schema.ResourceData, meta interface{}) error {
-	var m providerMeta
-
-	err := d.GetProviderMeta(&m)
-	if err != nil {
-		return err
-	}
-
 	config := meta.(*Config)
-	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
 
 	billingProject := ""
 

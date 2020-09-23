@@ -82,15 +82,7 @@ in the format 'projects/*/locations/*/namespaces/*'.`,
 }
 
 func resourceServiceDirectoryNamespaceCreate(d *schema.ResourceData, meta interface{}) error {
-	var m providerMeta
-
-	err := d.GetProviderMeta(&m)
-	if err != nil {
-		return err
-	}
-
 	config := meta.(*Config)
-	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
 
 	obj := make(map[string]interface{})
 	labelsProp, err := expandServiceDirectoryNamespaceLabels(d.Get("labels"), d, config)
@@ -140,15 +132,7 @@ func resourceServiceDirectoryNamespaceCreate(d *schema.ResourceData, meta interf
 }
 
 func resourceServiceDirectoryNamespaceRead(d *schema.ResourceData, meta interface{}) error {
-	var m providerMeta
-
-	err := d.GetProviderMeta(&m)
-	if err != nil {
-		return err
-	}
-
 	config := meta.(*Config)
-	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
 
 	url, err := replaceVars(d, config, "{{ServiceDirectoryBasePath}}{{name}}")
 	if err != nil {
@@ -188,15 +172,7 @@ func resourceServiceDirectoryNamespaceRead(d *schema.ResourceData, meta interfac
 }
 
 func resourceServiceDirectoryNamespaceUpdate(d *schema.ResourceData, meta interface{}) error {
-	var m providerMeta
-
-	err := d.GetProviderMeta(&m)
-	if err != nil {
-		return err
-	}
-
 	config := meta.(*Config)
-	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
 
 	billingProject := ""
 
@@ -249,15 +225,7 @@ func resourceServiceDirectoryNamespaceUpdate(d *schema.ResourceData, meta interf
 }
 
 func resourceServiceDirectoryNamespaceDelete(d *schema.ResourceData, meta interface{}) error {
-	var m providerMeta
-
-	err := d.GetProviderMeta(&m)
-	if err != nil {
-		return err
-	}
-
 	config := meta.(*Config)
-	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
 
 	billingProject := ""
 

@@ -135,15 +135,7 @@ Format: projects/{project_id}`,
 }
 
 func resourceNotebooksEnvironmentCreate(d *schema.ResourceData, meta interface{}) error {
-	var m providerMeta
-
-	err := d.GetProviderMeta(&m)
-	if err != nil {
-		return err
-	}
-
 	config := meta.(*Config)
-	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
 
 	obj := make(map[string]interface{})
 	displayNameProp, err := expandNotebooksEnvironmentDisplayName(d.Get("display_name"), d, config)
@@ -233,15 +225,7 @@ func resourceNotebooksEnvironmentCreate(d *schema.ResourceData, meta interface{}
 }
 
 func resourceNotebooksEnvironmentRead(d *schema.ResourceData, meta interface{}) error {
-	var m providerMeta
-
-	err := d.GetProviderMeta(&m)
-	if err != nil {
-		return err
-	}
-
 	config := meta.(*Config)
-	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
 
 	url, err := replaceVars(d, config, "{{NotebooksBasePath}}projects/{{project}}/locations/{{location}}/environments/{{name}}")
 	if err != nil {
@@ -293,15 +277,7 @@ func resourceNotebooksEnvironmentRead(d *schema.ResourceData, meta interface{}) 
 }
 
 func resourceNotebooksEnvironmentUpdate(d *schema.ResourceData, meta interface{}) error {
-	var m providerMeta
-
-	err := d.GetProviderMeta(&m)
-	if err != nil {
-		return err
-	}
-
 	config := meta.(*Config)
-	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
 
 	billingProject := ""
 
@@ -375,15 +351,7 @@ func resourceNotebooksEnvironmentUpdate(d *schema.ResourceData, meta interface{}
 }
 
 func resourceNotebooksEnvironmentDelete(d *schema.ResourceData, meta interface{}) error {
-	var m providerMeta
-
-	err := d.GetProviderMeta(&m)
-	if err != nil {
-		return err
-	}
-
 	config := meta.(*Config)
-	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
 
 	billingProject := ""
 

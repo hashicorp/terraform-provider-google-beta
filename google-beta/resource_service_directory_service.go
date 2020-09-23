@@ -75,15 +75,7 @@ format 'projects/*/locations/*/namespaces/*/services/*'.`,
 }
 
 func resourceServiceDirectoryServiceCreate(d *schema.ResourceData, meta interface{}) error {
-	var m providerMeta
-
-	err := d.GetProviderMeta(&m)
-	if err != nil {
-		return err
-	}
-
 	config := meta.(*Config)
-	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
 
 	obj := make(map[string]interface{})
 	metadataProp, err := expandServiceDirectoryServiceMetadata(d.Get("metadata"), d, config)
@@ -127,15 +119,7 @@ func resourceServiceDirectoryServiceCreate(d *schema.ResourceData, meta interfac
 }
 
 func resourceServiceDirectoryServiceRead(d *schema.ResourceData, meta interface{}) error {
-	var m providerMeta
-
-	err := d.GetProviderMeta(&m)
-	if err != nil {
-		return err
-	}
-
 	config := meta.(*Config)
-	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
 
 	url, err := replaceVars(d, config, "{{ServiceDirectoryBasePath}}{{name}}")
 	if err != nil {
@@ -165,15 +149,7 @@ func resourceServiceDirectoryServiceRead(d *schema.ResourceData, meta interface{
 }
 
 func resourceServiceDirectoryServiceUpdate(d *schema.ResourceData, meta interface{}) error {
-	var m providerMeta
-
-	err := d.GetProviderMeta(&m)
-	if err != nil {
-		return err
-	}
-
 	config := meta.(*Config)
-	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
 
 	billingProject := ""
 
@@ -220,15 +196,7 @@ func resourceServiceDirectoryServiceUpdate(d *schema.ResourceData, meta interfac
 }
 
 func resourceServiceDirectoryServiceDelete(d *schema.ResourceData, meta interface{}) error {
-	var m providerMeta
-
-	err := d.GetProviderMeta(&m)
-	if err != nil {
-		return err
-	}
-
 	config := meta.(*Config)
-	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
 
 	billingProject := ""
 

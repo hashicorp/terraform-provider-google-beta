@@ -86,15 +86,7 @@ updates of this resource.`,
 }
 
 func resourceComputeOrganizationSecurityPolicyCreate(d *schema.ResourceData, meta interface{}) error {
-	var m providerMeta
-
-	err := d.GetProviderMeta(&m)
-	if err != nil {
-		return err
-	}
-
 	config := meta.(*Config)
-	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
 
 	obj := make(map[string]interface{})
 	displayNameProp, err := expandComputeOrganizationSecurityPolicyDisplayName(d.Get("display_name"), d, config)
@@ -186,15 +178,7 @@ func resourceComputeOrganizationSecurityPolicyCreate(d *schema.ResourceData, met
 }
 
 func resourceComputeOrganizationSecurityPolicyRead(d *schema.ResourceData, meta interface{}) error {
-	var m providerMeta
-
-	err := d.GetProviderMeta(&m)
-	if err != nil {
-		return err
-	}
-
 	config := meta.(*Config)
-	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
 
 	url, err := replaceVars(d, config, "{{ComputeBasePath}}locations/global/securityPolicies/{{policy_id}}")
 	if err != nil {
@@ -236,15 +220,7 @@ func resourceComputeOrganizationSecurityPolicyRead(d *schema.ResourceData, meta 
 }
 
 func resourceComputeOrganizationSecurityPolicyUpdate(d *schema.ResourceData, meta interface{}) error {
-	var m providerMeta
-
-	err := d.GetProviderMeta(&m)
-	if err != nil {
-		return err
-	}
-
 	config := meta.(*Config)
-	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
 
 	billingProject := ""
 
@@ -296,15 +272,7 @@ func resourceComputeOrganizationSecurityPolicyUpdate(d *schema.ResourceData, met
 }
 
 func resourceComputeOrganizationSecurityPolicyDelete(d *schema.ResourceData, meta interface{}) error {
-	var m providerMeta
-
-	err := d.GetProviderMeta(&m)
-	if err != nil {
-		return err
-	}
-
 	config := meta.(*Config)
-	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
 
 	billingProject := ""
 

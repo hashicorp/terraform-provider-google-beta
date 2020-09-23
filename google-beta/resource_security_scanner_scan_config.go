@@ -200,15 +200,7 @@ which means the scan will be scheduled to start immediately.`,
 }
 
 func resourceSecurityScannerScanConfigCreate(d *schema.ResourceData, meta interface{}) error {
-	var m providerMeta
-
-	err := d.GetProviderMeta(&m)
-	if err != nil {
-		return err
-	}
-
 	config := meta.(*Config)
-	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
 
 	obj := make(map[string]interface{})
 	displayNameProp, err := expandSecurityScannerScanConfigDisplayName(d.Get("display_name"), d, config)
@@ -324,15 +316,7 @@ func resourceSecurityScannerScanConfigCreate(d *schema.ResourceData, meta interf
 }
 
 func resourceSecurityScannerScanConfigRead(d *schema.ResourceData, meta interface{}) error {
-	var m providerMeta
-
-	err := d.GetProviderMeta(&m)
-	if err != nil {
-		return err
-	}
-
 	config := meta.(*Config)
-	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
 
 	url, err := replaceVars(d, config, "{{SecurityScannerBasePath}}{{name}}")
 	if err != nil {
@@ -396,15 +380,7 @@ func resourceSecurityScannerScanConfigRead(d *schema.ResourceData, meta interfac
 }
 
 func resourceSecurityScannerScanConfigUpdate(d *schema.ResourceData, meta interface{}) error {
-	var m providerMeta
-
-	err := d.GetProviderMeta(&m)
-	if err != nil {
-		return err
-	}
-
 	config := meta.(*Config)
-	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
 
 	billingProject := ""
 
@@ -537,15 +513,7 @@ func resourceSecurityScannerScanConfigUpdate(d *schema.ResourceData, meta interf
 }
 
 func resourceSecurityScannerScanConfigDelete(d *schema.ResourceData, meta interface{}) error {
-	var m providerMeta
-
-	err := d.GetProviderMeta(&m)
-	if err != nil {
-		return err
-	}
-
 	config := meta.(*Config)
-	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
 
 	billingProject := ""
 

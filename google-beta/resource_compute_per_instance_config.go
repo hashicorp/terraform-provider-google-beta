@@ -147,15 +147,7 @@ deleted from the instance group. Default value: "NEVER" Possible values: ["NEVER
 }
 
 func resourceComputePerInstanceConfigCreate(d *schema.ResourceData, meta interface{}) error {
-	var m providerMeta
-
-	err := d.GetProviderMeta(&m)
-	if err != nil {
-		return err
-	}
-
 	config := meta.(*Config)
-	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
 
 	obj := make(map[string]interface{})
 	nameProp, err := expandNestedComputePerInstanceConfigName(d.Get("name"), d, config)
@@ -230,15 +222,7 @@ func resourceComputePerInstanceConfigCreate(d *schema.ResourceData, meta interfa
 }
 
 func resourceComputePerInstanceConfigRead(d *schema.ResourceData, meta interface{}) error {
-	var m providerMeta
-
-	err := d.GetProviderMeta(&m)
-	if err != nil {
-		return err
-	}
-
 	config := meta.(*Config)
-	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
 
 	url, err := replaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/zones/{{zone}}/instanceGroupManagers/{{instance_group_manager}}/listPerInstanceConfigs")
 	if err != nil {
@@ -306,15 +290,7 @@ func resourceComputePerInstanceConfigRead(d *schema.ResourceData, meta interface
 }
 
 func resourceComputePerInstanceConfigUpdate(d *schema.ResourceData, meta interface{}) error {
-	var m providerMeta
-
-	err := d.GetProviderMeta(&m)
-	if err != nil {
-		return err
-	}
-
 	config := meta.(*Config)
-	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
 
 	billingProject := ""
 
@@ -422,15 +398,7 @@ func resourceComputePerInstanceConfigUpdate(d *schema.ResourceData, meta interfa
 }
 
 func resourceComputePerInstanceConfigDelete(d *schema.ResourceData, meta interface{}) error {
-	var m providerMeta
-
-	err := d.GetProviderMeta(&m)
-	if err != nil {
-		return err
-	}
-
 	config := meta.(*Config)
-	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
 
 	project, err := getProject(d, config)
 	if err != nil {

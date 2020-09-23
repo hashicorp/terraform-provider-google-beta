@@ -138,15 +138,7 @@ Examples: US, EU, asia-northeast1, us-central1, europe-west1. The default value 
 }
 
 func resourceBigqueryConnectionConnectionCreate(d *schema.ResourceData, meta interface{}) error {
-	var m providerMeta
-
-	err := d.GetProviderMeta(&m)
-	if err != nil {
-		return err
-	}
-
 	config := meta.(*Config)
-	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
 
 	obj := make(map[string]interface{})
 	friendlyNameProp, err := expandBigqueryConnectionConnectionFriendlyName(d.Get("friendly_name"), d, config)
@@ -208,15 +200,7 @@ func resourceBigqueryConnectionConnectionCreate(d *schema.ResourceData, meta int
 }
 
 func resourceBigqueryConnectionConnectionRead(d *schema.ResourceData, meta interface{}) error {
-	var m providerMeta
-
-	err := d.GetProviderMeta(&m)
-	if err != nil {
-		return err
-	}
-
 	config := meta.(*Config)
-	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
 
 	url, err := replaceVars(d, config, "{{BigqueryConnectionBasePath}}{{name}}")
 	if err != nil {
@@ -265,15 +249,7 @@ func resourceBigqueryConnectionConnectionRead(d *schema.ResourceData, meta inter
 }
 
 func resourceBigqueryConnectionConnectionUpdate(d *schema.ResourceData, meta interface{}) error {
-	var m providerMeta
-
-	err := d.GetProviderMeta(&m)
-	if err != nil {
-		return err
-	}
-
 	config := meta.(*Config)
-	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
 
 	billingProject := ""
 
@@ -346,15 +322,7 @@ func resourceBigqueryConnectionConnectionUpdate(d *schema.ResourceData, meta int
 }
 
 func resourceBigqueryConnectionConnectionDelete(d *schema.ResourceData, meta interface{}) error {
-	var m providerMeta
-
-	err := d.GetProviderMeta(&m)
-	if err != nil {
-		return err
-	}
-
 	config := meta.(*Config)
-	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
 
 	billingProject := ""
 
