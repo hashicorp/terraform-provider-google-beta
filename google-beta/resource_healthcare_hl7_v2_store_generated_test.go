@@ -42,7 +42,7 @@ func TestAccHealthcareHl7V2Store_healthcareHl7V2StoreBasicExample(t *testing.T) 
 				Config: testAccHealthcareHl7V2Store_healthcareHl7V2StoreBasicExample(context),
 			},
 			{
-				ResourceName:            "google_healthcare_hl7_v2_store.default",
+				ResourceName:            "google_healthcare_hl7_v2_store.store",
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"self_link", "dataset"},
@@ -53,7 +53,7 @@ func TestAccHealthcareHl7V2Store_healthcareHl7V2StoreBasicExample(t *testing.T) 
 
 func testAccHealthcareHl7V2Store_healthcareHl7V2StoreBasicExample(context map[string]interface{}) string {
 	return Nprintf(`
-resource "google_healthcare_hl7_v2_store" "default" {
+resource "google_healthcare_hl7_v2_store" "store" {
   name    = "tf-test-example-hl7-v2-store%{random_suffix}"
   dataset = google_healthcare_dataset.dataset.id
 
@@ -101,7 +101,7 @@ func TestAccHealthcareHl7V2Store_healthcareHl7V2StoreParserConfigExample(t *test
 
 func testAccHealthcareHl7V2Store_healthcareHl7V2StoreParserConfigExample(context map[string]interface{}) string {
 	return Nprintf(`
-resource "google_healthcare_hl7_v2_store" "default" {
+resource "google_healthcare_hl7_v2_store" "store" {
   provider = google-beta
   name    = "tf-test-example-hl7-v2-store%{random_suffix}"
   dataset = google_healthcare_dataset.dataset.id
@@ -189,6 +189,50 @@ resource "google_healthcare_hl7_v2_store" "default" {
   "ignoreMinOccurs": true
 }
 EOF
+  }
+}
+
+resource "google_healthcare_dataset" "dataset" {
+  provider = google-beta
+  name     = "tf-test-example-dataset%{random_suffix}"
+  location = "us-central1"
+}
+`, context)
+}
+
+func TestAccHealthcareHl7V2Store_healthcareHl7V2StoreUnschematizedExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"random_suffix": randString(t, 10),
+	}
+
+	vcrTest(t, resource.TestCase{
+		PreCheck:  func() { testAccPreCheck(t) },
+		Providers: testAccProvidersOiCS,
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"random": {},
+		},
+		CheckDestroy: testAccCheckHealthcareHl7V2StoreDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccHealthcareHl7V2Store_healthcareHl7V2StoreUnschematizedExample(context),
+			},
+		},
+	})
+}
+
+func testAccHealthcareHl7V2Store_healthcareHl7V2StoreUnschematizedExample(context map[string]interface{}) string {
+	return Nprintf(`
+resource "google_healthcare_hl7_v2_store" "store" {
+  provider = google-beta
+  name    = "tf-test-example-hl7-v2-store%{random_suffix}"
+  dataset = google_healthcare_dataset.dataset.id
+
+  parser_config {
+    allow_null_header  = false
+    segment_terminator = "Jw=="
+    version            = "V2"
   }
 }
 
