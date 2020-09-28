@@ -11,6 +11,10 @@ import (
 func resourceComputePerInstanceConfigPollRead(d *schema.ResourceData, meta interface{}) PollReadFunc {
 	return func() (map[string]interface{}, error) {
 		config := meta.(*Config)
+		userAgent, err := generateUserAgentString(d, config.userAgent)
+		if err != nil {
+			return nil, err
+		}
 
 		url, err := replaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/zones/{{zone}}/instanceGroupManagers/{{instance_group_manager}}/listPerInstanceConfigs")
 		if err != nil {
@@ -21,7 +25,7 @@ func resourceComputePerInstanceConfigPollRead(d *schema.ResourceData, meta inter
 		if err != nil {
 			return nil, err
 		}
-		res, err := sendRequest(config, "POST", project, url, nil)
+		res, err := sendRequest(config, "POST", project, url, userAgent, nil)
 		if err != nil {
 			return res, err
 		}
@@ -39,6 +43,10 @@ func resourceComputePerInstanceConfigPollRead(d *schema.ResourceData, meta inter
 func resourceComputeRegionPerInstanceConfigPollRead(d *schema.ResourceData, meta interface{}) PollReadFunc {
 	return func() (map[string]interface{}, error) {
 		config := meta.(*Config)
+		userAgent, err := generateUserAgentString(d, config.userAgent)
+		if err != nil {
+			return nil, err
+		}
 
 		url, err := replaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/regions/{{region}}/instanceGroupManagers/{{region_instance_group_manager}}/listPerInstanceConfigs")
 		if err != nil {
@@ -49,7 +57,7 @@ func resourceComputeRegionPerInstanceConfigPollRead(d *schema.ResourceData, meta
 		if err != nil {
 			return nil, err
 		}
-		res, err := sendRequest(config, "POST", project, url, nil)
+		res, err := sendRequest(config, "POST", project, url, userAgent, nil)
 		if err != nil {
 			return res, err
 		}
@@ -67,7 +75,11 @@ func resourceComputeRegionPerInstanceConfigPollRead(d *schema.ResourceData, meta
 // instance matching the name of a PerInstanceConfig
 func findInstanceName(d *schema.ResourceData, config *Config) (string, error) {
 	url, err := replaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/regions/{{region}}/instanceGroupManagers/{{region_instance_group_manager}}/listManagedInstances")
+	if err != nil {
+		return "", err
+	}
 
+	userAgent, err := generateUserAgentString(d, config.userAgent)
 	if err != nil {
 		return "", err
 	}
@@ -86,7 +98,7 @@ func findInstanceName(d *schema.ResourceData, config *Config) (string, error) {
 		} else {
 			urlWithToken = fmt.Sprintf("%s?maxResults=1", url)
 		}
-		res, err := sendRequest(config, "POST", project, urlWithToken, nil)
+		res, err := sendRequest(config, "POST", project, urlWithToken, userAgent, nil)
 		if err != nil {
 			return "", err
 		}

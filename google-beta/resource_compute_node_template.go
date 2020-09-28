@@ -170,15 +170,11 @@ nodes will experience outages while maintenance is applied. Possible values: ["R
 }
 
 func resourceComputeNodeTemplateCreate(d *schema.ResourceData, meta interface{}) error {
-	var m providerMeta
-
-	err := d.GetProviderMeta(&m)
+	config := meta.(*Config)
+	userAgent, err := generateUserAgentString(d, config.userAgent)
 	if err != nil {
 		return err
 	}
-
-	config := meta.(*Config)
-	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
 
 	obj := make(map[string]interface{})
 	descriptionProp, err := expandComputeNodeTemplateDescription(d.Get("description"), d, config)
@@ -249,7 +245,7 @@ func resourceComputeNodeTemplateCreate(d *schema.ResourceData, meta interface{})
 		billingProject = bp
 	}
 
-	res, err := sendRequestWithTimeout(config, "POST", billingProject, url, obj, d.Timeout(schema.TimeoutCreate))
+	res, err := sendRequestWithTimeout(config, "POST", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutCreate))
 	if err != nil {
 		return fmt.Errorf("Error creating NodeTemplate: %s", err)
 	}
@@ -262,7 +258,7 @@ func resourceComputeNodeTemplateCreate(d *schema.ResourceData, meta interface{})
 	d.SetId(id)
 
 	err = computeOperationWaitTime(
-		config, res, project, "Creating NodeTemplate",
+		config, res, project, "Creating NodeTemplate", userAgent,
 		d.Timeout(schema.TimeoutCreate))
 
 	if err != nil {
@@ -277,15 +273,11 @@ func resourceComputeNodeTemplateCreate(d *schema.ResourceData, meta interface{})
 }
 
 func resourceComputeNodeTemplateRead(d *schema.ResourceData, meta interface{}) error {
-	var m providerMeta
-
-	err := d.GetProviderMeta(&m)
+	config := meta.(*Config)
+	userAgent, err := generateUserAgentString(d, config.userAgent)
 	if err != nil {
 		return err
 	}
-
-	config := meta.(*Config)
-	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
 
 	url, err := replaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/regions/{{region}}/nodeTemplates/{{name}}")
 	if err != nil {
@@ -305,7 +297,7 @@ func resourceComputeNodeTemplateRead(d *schema.ResourceData, meta interface{}) e
 		billingProject = bp
 	}
 
-	res, err := sendRequest(config, "GET", billingProject, url, nil)
+	res, err := sendRequest(config, "GET", billingProject, url, userAgent, nil)
 	if err != nil {
 		return handleNotFoundError(err, d, fmt.Sprintf("ComputeNodeTemplate %q", d.Id()))
 	}
@@ -349,15 +341,12 @@ func resourceComputeNodeTemplateRead(d *schema.ResourceData, meta interface{}) e
 }
 
 func resourceComputeNodeTemplateDelete(d *schema.ResourceData, meta interface{}) error {
-	var m providerMeta
-
-	err := d.GetProviderMeta(&m)
+	config := meta.(*Config)
+	userAgent, err := generateUserAgentString(d, config.userAgent)
 	if err != nil {
 		return err
 	}
-
-	config := meta.(*Config)
-	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
+	config.userAgent = userAgent
 
 	billingProject := ""
 
@@ -380,13 +369,13 @@ func resourceComputeNodeTemplateDelete(d *schema.ResourceData, meta interface{})
 		billingProject = bp
 	}
 
-	res, err := sendRequestWithTimeout(config, "DELETE", billingProject, url, obj, d.Timeout(schema.TimeoutDelete))
+	res, err := sendRequestWithTimeout(config, "DELETE", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutDelete))
 	if err != nil {
 		return handleNotFoundError(err, d, "NodeTemplate")
 	}
 
 	err = computeOperationWaitTime(
-		config, res, project, "Deleting NodeTemplate",
+		config, res, project, "Deleting NodeTemplate", userAgent,
 		d.Timeout(schema.TimeoutDelete))
 
 	if err != nil {
