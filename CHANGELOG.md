@@ -1,4 +1,16 @@
-## 3.41.0 (Unreleased)
+## 3.42.0 (Unreleased)
+## 3.41.0 (September 28, 2020)
+
+IMPROVEMENTS:
+* container: Added support for `datapath_provider` to `google_container_cluster` ([#2492](https://github.com/hashicorp/terraform-provider-google-beta/pull/2492))
+* cloudfunctions: added the ALLOW_INTERNAL_AND_GCLB option to `ingress_settings` of `google_cloudfunctions_function` resource. ([#2493](https://github.com/hashicorp/terraform-provider-google-beta/pull/2493))
+* composer: allowed in-place updates to webserver and database machine type ([#2491](https://github.com/hashicorp/terraform-provider-google-beta/pull/2491))
+* compute: added `SEV_CAPABLE` option to `guestOsFeatures` in `google_compute_image` resource. ([#2503](https://github.com/hashicorp/terraform-provider-google-beta/pull/2503))
+* tpu: added `use_service_networking` to `google_tpu_node` which enables Shared VPC Support. ([#2497](https://github.com/hashicorp/terraform-provider-google-beta/pull/2497))
+
+BUG FIXES:
+* cloudidentity: Fixed upstream breakage of `google_identity_group`. ([#2507](https://github.com/hashicorp/terraform-provider-google-beta/pull/2507))
+
 ## 3.40.0 (September 22, 2020)
 
 DEPRECATIONS:
