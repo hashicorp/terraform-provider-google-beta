@@ -96,7 +96,7 @@ func (w *ComputeOperationWaiter) TargetStates() []string {
 	return []string{"DONE"}
 }
 
-func computeOperationWaitTime(config *Config, res interface{}, project, activity string, timeout time.Duration) error {
+func computeOperationWaitTime(config *Config, res interface{}, project, activity, userAgent string, timeout time.Duration) error {
 	op := &computeBeta.Operation{}
 	err := Convert(res, op)
 	if err != nil {

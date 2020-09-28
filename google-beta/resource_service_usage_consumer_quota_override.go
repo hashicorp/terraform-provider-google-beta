@@ -94,15 +94,11 @@ If 'force' is 'true', that safety check is ignored.`,
 }
 
 func resourceServiceUsageConsumerQuotaOverrideCreate(d *schema.ResourceData, meta interface{}) error {
-	var m providerMeta
-
-	err := d.GetProviderMeta(&m)
+	config := meta.(*Config)
+	userAgent, err := generateUserAgentString(d, config.userAgent)
 	if err != nil {
 		return err
 	}
-
-	config := meta.(*Config)
-	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
 
 	obj := make(map[string]interface{})
 	overrideValueProp, err := expandNestedServiceUsageConsumerQuotaOverrideOverrideValue(d.Get("override_value"), d, config)
@@ -137,7 +133,7 @@ func resourceServiceUsageConsumerQuotaOverrideCreate(d *schema.ResourceData, met
 		billingProject = bp
 	}
 
-	res, err := sendRequestWithTimeout(config, "POST", billingProject, url, obj, d.Timeout(schema.TimeoutCreate))
+	res, err := sendRequestWithTimeout(config, "POST", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutCreate))
 	if err != nil {
 		return fmt.Errorf("Error creating ConsumerQuotaOverride: %s", err)
 	}
@@ -153,7 +149,7 @@ func resourceServiceUsageConsumerQuotaOverrideCreate(d *schema.ResourceData, met
 	// identity fields and d.Id() before read
 	var opRes map[string]interface{}
 	err = serviceUsageOperationWaitTimeWithResponse(
-		config, res, &opRes, project, "Creating ConsumerQuotaOverride",
+		config, res, &opRes, project, "Creating ConsumerQuotaOverride", userAgent,
 		d.Timeout(schema.TimeoutCreate))
 	if err != nil {
 		// The resource didn't actually create
@@ -188,15 +184,11 @@ func resourceServiceUsageConsumerQuotaOverrideCreate(d *schema.ResourceData, met
 }
 
 func resourceServiceUsageConsumerQuotaOverrideRead(d *schema.ResourceData, meta interface{}) error {
-	var m providerMeta
-
-	err := d.GetProviderMeta(&m)
+	config := meta.(*Config)
+	userAgent, err := generateUserAgentString(d, config.userAgent)
 	if err != nil {
 		return err
 	}
-
-	config := meta.(*Config)
-	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
 
 	url, err := replaceVars(d, config, "{{ServiceUsageBasePath}}projects/{{project}}/services/{{service}}/consumerQuotaMetrics/{{metric}}/limits/{{limit}}/consumerOverrides/")
 	if err != nil {
@@ -216,7 +208,7 @@ func resourceServiceUsageConsumerQuotaOverrideRead(d *schema.ResourceData, meta 
 		billingProject = bp
 	}
 
-	res, err := sendRequest(config, "GET", billingProject, url, nil)
+	res, err := sendRequest(config, "GET", billingProject, url, userAgent, nil)
 	if err != nil {
 		return handleNotFoundError(err, d, fmt.Sprintf("ServiceUsageConsumerQuotaOverride %q", d.Id()))
 	}
@@ -251,15 +243,12 @@ func resourceServiceUsageConsumerQuotaOverrideRead(d *schema.ResourceData, meta 
 }
 
 func resourceServiceUsageConsumerQuotaOverrideUpdate(d *schema.ResourceData, meta interface{}) error {
-	var m providerMeta
-
-	err := d.GetProviderMeta(&m)
+	config := meta.(*Config)
+	userAgent, err := generateUserAgentString(d, config.userAgent)
 	if err != nil {
 		return err
 	}
-
-	config := meta.(*Config)
-	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
+	config.userAgent = userAgent
 
 	billingProject := ""
 
@@ -289,7 +278,7 @@ func resourceServiceUsageConsumerQuotaOverrideUpdate(d *schema.ResourceData, met
 		billingProject = bp
 	}
 
-	res, err := sendRequestWithTimeout(config, "PATCH", billingProject, url, obj, d.Timeout(schema.TimeoutUpdate))
+	res, err := sendRequestWithTimeout(config, "PATCH", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutUpdate))
 
 	if err != nil {
 		return fmt.Errorf("Error updating ConsumerQuotaOverride %q: %s", d.Id(), err)
@@ -298,7 +287,7 @@ func resourceServiceUsageConsumerQuotaOverrideUpdate(d *schema.ResourceData, met
 	}
 
 	err = serviceUsageOperationWaitTime(
-		config, res, project, "Updating ConsumerQuotaOverride",
+		config, res, project, "Updating ConsumerQuotaOverride", userAgent,
 		d.Timeout(schema.TimeoutUpdate))
 
 	if err != nil {
@@ -309,15 +298,12 @@ func resourceServiceUsageConsumerQuotaOverrideUpdate(d *schema.ResourceData, met
 }
 
 func resourceServiceUsageConsumerQuotaOverrideDelete(d *schema.ResourceData, meta interface{}) error {
-	var m providerMeta
-
-	err := d.GetProviderMeta(&m)
+	config := meta.(*Config)
+	userAgent, err := generateUserAgentString(d, config.userAgent)
 	if err != nil {
 		return err
 	}
-
-	config := meta.(*Config)
-	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
+	config.userAgent = userAgent
 
 	billingProject := ""
 
@@ -340,13 +326,13 @@ func resourceServiceUsageConsumerQuotaOverrideDelete(d *schema.ResourceData, met
 		billingProject = bp
 	}
 
-	res, err := sendRequestWithTimeout(config, "DELETE", billingProject, url, obj, d.Timeout(schema.TimeoutDelete))
+	res, err := sendRequestWithTimeout(config, "DELETE", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutDelete))
 	if err != nil {
 		return handleNotFoundError(err, d, "ConsumerQuotaOverride")
 	}
 
 	err = serviceUsageOperationWaitTime(
-		config, res, project, "Deleting ConsumerQuotaOverride",
+		config, res, project, "Deleting ConsumerQuotaOverride", userAgent,
 		d.Timeout(schema.TimeoutDelete))
 
 	if err != nil {

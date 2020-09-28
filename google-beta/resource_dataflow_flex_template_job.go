@@ -89,14 +89,12 @@ func resourceDataflowFlexTemplateJob() *schema.Resource {
 
 // resourceDataflowFlexTemplateJobCreate creates a Flex Template Job from TF code.
 func resourceDataflowFlexTemplateJobCreate(d *schema.ResourceData, meta interface{}) error {
-	var m providerMeta
-
-	err := d.GetProviderMeta(&m)
+	config := meta.(*Config)
+	userAgent, err := generateUserAgentString(d, config.userAgent)
 	if err != nil {
 		return err
 	}
-	config := meta.(*Config)
-	config.clientDataflow.UserAgent = fmt.Sprintf("%s %s", config.clientDataflow.UserAgent, m.ModuleName)
+	config.clientDataflow.UserAgent = userAgent
 
 	project, err := getProject(d, config)
 	if err != nil {
@@ -133,6 +131,11 @@ func resourceDataflowFlexTemplateJobCreate(d *schema.ResourceData, meta interfac
 // resourceDataflowFlexTemplateJobRead reads a Flex Template Job resource.
 func resourceDataflowFlexTemplateJobRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
+	userAgent, err := generateUserAgentString(d, config.userAgent)
+	if err != nil {
+		return err
+	}
+	config.clientDataflow.UserAgent = userAgent
 
 	project, err := getProject(d, config)
 	if err != nil {
@@ -181,6 +184,11 @@ func resourceDataflowFlexTemplateJobUpdate(d *schema.ResourceData, meta interfac
 
 func resourceDataflowFlexTemplateJobDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
+	userAgent, err := generateUserAgentString(d, config.userAgent)
+	if err != nil {
+		return err
+	}
+	config.clientDataflow.UserAgent = userAgent
 
 	project, err := getProject(d, config)
 	if err != nil {

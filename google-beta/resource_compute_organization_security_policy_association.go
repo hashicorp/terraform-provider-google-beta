@@ -67,15 +67,11 @@ func resourceComputeOrganizationSecurityPolicyAssociation() *schema.Resource {
 }
 
 func resourceComputeOrganizationSecurityPolicyAssociationCreate(d *schema.ResourceData, meta interface{}) error {
-	var m providerMeta
-
-	err := d.GetProviderMeta(&m)
+	config := meta.(*Config)
+	userAgent, err := generateUserAgentString(d, config.userAgent)
 	if err != nil {
 		return err
 	}
-
-	config := meta.(*Config)
-	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
 
 	obj := make(map[string]interface{})
 	nameProp, err := expandComputeOrganizationSecurityPolicyAssociationName(d.Get("name"), d, config)
@@ -104,7 +100,7 @@ func resourceComputeOrganizationSecurityPolicyAssociationCreate(d *schema.Resour
 		billingProject = bp
 	}
 
-	res, err := sendRequestWithTimeout(config, "POST", billingProject, url, obj, d.Timeout(schema.TimeoutCreate))
+	res, err := sendRequestWithTimeout(config, "POST", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutCreate))
 	if err != nil {
 		return fmt.Errorf("Error creating OrganizationSecurityPolicyAssociation: %s", err)
 	}
@@ -126,7 +122,7 @@ func resourceComputeOrganizationSecurityPolicyAssociationCreate(d *schema.Resour
 		return err
 	}
 
-	policyRes, err := sendRequest(config, "GET", "", url, nil)
+	policyRes, err := sendRequest(config, "GET", "", url, userAgent, nil)
 	if err != nil {
 		return handleNotFoundError(err, d, fmt.Sprintf("ComputeOrganizationSecurityPolicy %q", d.Get("policy_id")))
 	}
@@ -147,15 +143,11 @@ func resourceComputeOrganizationSecurityPolicyAssociationCreate(d *schema.Resour
 }
 
 func resourceComputeOrganizationSecurityPolicyAssociationRead(d *schema.ResourceData, meta interface{}) error {
-	var m providerMeta
-
-	err := d.GetProviderMeta(&m)
+	config := meta.(*Config)
+	userAgent, err := generateUserAgentString(d, config.userAgent)
 	if err != nil {
 		return err
 	}
-
-	config := meta.(*Config)
-	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
 
 	url, err := replaceVars(d, config, "{{ComputeBasePath}}{{policy_id}}/getAssociation?name={{name}}")
 	if err != nil {
@@ -169,7 +161,7 @@ func resourceComputeOrganizationSecurityPolicyAssociationRead(d *schema.Resource
 		billingProject = bp
 	}
 
-	res, err := sendRequest(config, "GET", billingProject, url, nil)
+	res, err := sendRequest(config, "GET", billingProject, url, userAgent, nil)
 	if err != nil {
 		return handleNotFoundError(err, d, fmt.Sprintf("ComputeOrganizationSecurityPolicyAssociation %q", d.Id()))
 	}
@@ -188,15 +180,12 @@ func resourceComputeOrganizationSecurityPolicyAssociationRead(d *schema.Resource
 }
 
 func resourceComputeOrganizationSecurityPolicyAssociationDelete(d *schema.ResourceData, meta interface{}) error {
-	var m providerMeta
-
-	err := d.GetProviderMeta(&m)
+	config := meta.(*Config)
+	userAgent, err := generateUserAgentString(d, config.userAgent)
 	if err != nil {
 		return err
 	}
-
-	config := meta.(*Config)
-	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
+	config.userAgent = userAgent
 
 	billingProject := ""
 
@@ -213,7 +202,7 @@ func resourceComputeOrganizationSecurityPolicyAssociationDelete(d *schema.Resour
 		billingProject = bp
 	}
 
-	res, err := sendRequestWithTimeout(config, "POST", billingProject, url, obj, d.Timeout(schema.TimeoutDelete))
+	res, err := sendRequestWithTimeout(config, "POST", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutDelete))
 	if err != nil {
 		return handleNotFoundError(err, d, "OrganizationSecurityPolicyAssociation")
 	}
@@ -226,7 +215,7 @@ func resourceComputeOrganizationSecurityPolicyAssociationDelete(d *schema.Resour
 		return err
 	}
 
-	policyRes, err := sendRequest(config, "GET", "", url, nil)
+	policyRes, err := sendRequest(config, "GET", "", url, userAgent, nil)
 	if err != nil {
 		return handleNotFoundError(err, d, fmt.Sprintf("ComputeOrganizationSecurityPolicy %q", d.Get("policy_id")))
 	}

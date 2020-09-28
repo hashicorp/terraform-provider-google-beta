@@ -57,15 +57,11 @@ resource locations.`,
 }
 
 func resourceFirebaseProjectLocationCreate(d *schema.ResourceData, meta interface{}) error {
-	var m providerMeta
-
-	err := d.GetProviderMeta(&m)
+	config := meta.(*Config)
+	userAgent, err := generateUserAgentString(d, config.userAgent)
 	if err != nil {
 		return err
 	}
-
-	config := meta.(*Config)
-	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
 
 	obj := make(map[string]interface{})
 	locationIdProp, err := expandNestedFirebaseProjectLocationLocationId(d.Get("location_id"), d, config)
@@ -94,7 +90,7 @@ func resourceFirebaseProjectLocationCreate(d *schema.ResourceData, meta interfac
 		billingProject = bp
 	}
 
-	res, err := sendRequestWithTimeout(config, "POST", billingProject, url, obj, d.Timeout(schema.TimeoutCreate))
+	res, err := sendRequestWithTimeout(config, "POST", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutCreate))
 	if err != nil {
 		return fmt.Errorf("Error creating ProjectLocation: %s", err)
 	}
@@ -107,7 +103,7 @@ func resourceFirebaseProjectLocationCreate(d *schema.ResourceData, meta interfac
 	d.SetId(id)
 
 	err = firebaseOperationWaitTime(
-		config, res, project, "Creating ProjectLocation",
+		config, res, project, "Creating ProjectLocation", userAgent,
 		d.Timeout(schema.TimeoutCreate))
 
 	if err != nil {
@@ -122,15 +118,11 @@ func resourceFirebaseProjectLocationCreate(d *schema.ResourceData, meta interfac
 }
 
 func resourceFirebaseProjectLocationRead(d *schema.ResourceData, meta interface{}) error {
-	var m providerMeta
-
-	err := d.GetProviderMeta(&m)
+	config := meta.(*Config)
+	userAgent, err := generateUserAgentString(d, config.userAgent)
 	if err != nil {
 		return err
 	}
-
-	config := meta.(*Config)
-	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
 
 	url, err := replaceVars(d, config, "{{FirebaseBasePath}}projects/{{project}}")
 	if err != nil {
@@ -150,7 +142,7 @@ func resourceFirebaseProjectLocationRead(d *schema.ResourceData, meta interface{
 		billingProject = bp
 	}
 
-	res, err := sendRequest(config, "GET", billingProject, url, nil)
+	res, err := sendRequest(config, "GET", billingProject, url, userAgent, nil)
 	if err != nil {
 		return handleNotFoundError(err, d, fmt.Sprintf("FirebaseProjectLocation %q", d.Id()))
 	}

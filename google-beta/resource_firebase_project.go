@@ -59,15 +59,11 @@ func resourceFirebaseProject() *schema.Resource {
 }
 
 func resourceFirebaseProjectCreate(d *schema.ResourceData, meta interface{}) error {
-	var m providerMeta
-
-	err := d.GetProviderMeta(&m)
+	config := meta.(*Config)
+	userAgent, err := generateUserAgentString(d, config.userAgent)
 	if err != nil {
 		return err
 	}
-
-	config := meta.(*Config)
-	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
 
 	obj := make(map[string]interface{})
 
@@ -90,7 +86,7 @@ func resourceFirebaseProjectCreate(d *schema.ResourceData, meta interface{}) err
 		billingProject = bp
 	}
 
-	res, err := sendRequestWithTimeout(config, "POST", billingProject, url, obj, d.Timeout(schema.TimeoutCreate))
+	res, err := sendRequestWithTimeout(config, "POST", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutCreate))
 	if err != nil {
 		return fmt.Errorf("Error creating Project: %s", err)
 	}
@@ -103,7 +99,7 @@ func resourceFirebaseProjectCreate(d *schema.ResourceData, meta interface{}) err
 	d.SetId(id)
 
 	err = firebaseOperationWaitTime(
-		config, res, project, "Creating Project",
+		config, res, project, "Creating Project", userAgent,
 		d.Timeout(schema.TimeoutCreate))
 
 	if err != nil {
@@ -118,15 +114,11 @@ func resourceFirebaseProjectCreate(d *schema.ResourceData, meta interface{}) err
 }
 
 func resourceFirebaseProjectRead(d *schema.ResourceData, meta interface{}) error {
-	var m providerMeta
-
-	err := d.GetProviderMeta(&m)
+	config := meta.(*Config)
+	userAgent, err := generateUserAgentString(d, config.userAgent)
 	if err != nil {
 		return err
 	}
-
-	config := meta.(*Config)
-	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
 
 	url, err := replaceVars(d, config, "{{FirebaseBasePath}}projects/{{project}}")
 	if err != nil {
@@ -146,7 +138,7 @@ func resourceFirebaseProjectRead(d *schema.ResourceData, meta interface{}) error
 		billingProject = bp
 	}
 
-	res, err := sendRequest(config, "GET", billingProject, url, nil)
+	res, err := sendRequest(config, "GET", billingProject, url, userAgent, nil)
 	if err != nil {
 		return handleNotFoundError(err, d, fmt.Sprintf("FirebaseProject %q", d.Id()))
 	}

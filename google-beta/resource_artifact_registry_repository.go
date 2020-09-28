@@ -114,15 +114,11 @@ and dashes.`,
 }
 
 func resourceArtifactRegistryRepositoryCreate(d *schema.ResourceData, meta interface{}) error {
-	var m providerMeta
-
-	err := d.GetProviderMeta(&m)
+	config := meta.(*Config)
+	userAgent, err := generateUserAgentString(d, config.userAgent)
 	if err != nil {
 		return err
 	}
-
-	config := meta.(*Config)
-	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
 
 	obj := make(map[string]interface{})
 	formatProp, err := expandArtifactRegistryRepositoryFormat(d.Get("format"), d, config)
@@ -169,7 +165,7 @@ func resourceArtifactRegistryRepositoryCreate(d *schema.ResourceData, meta inter
 		billingProject = bp
 	}
 
-	res, err := sendRequestWithTimeout(config, "POST", billingProject, url, obj, d.Timeout(schema.TimeoutCreate))
+	res, err := sendRequestWithTimeout(config, "POST", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutCreate))
 	if err != nil {
 		return fmt.Errorf("Error creating Repository: %s", err)
 	}
@@ -185,7 +181,7 @@ func resourceArtifactRegistryRepositoryCreate(d *schema.ResourceData, meta inter
 	// identity fields and d.Id() before read
 	var opRes map[string]interface{}
 	err = artifactRegistryOperationWaitTimeWithResponse(
-		config, res, &opRes, project, "Creating Repository",
+		config, res, &opRes, project, "Creating Repository", userAgent,
 		d.Timeout(schema.TimeoutCreate))
 	if err != nil {
 		// The resource didn't actually create
@@ -210,15 +206,11 @@ func resourceArtifactRegistryRepositoryCreate(d *schema.ResourceData, meta inter
 }
 
 func resourceArtifactRegistryRepositoryRead(d *schema.ResourceData, meta interface{}) error {
-	var m providerMeta
-
-	err := d.GetProviderMeta(&m)
+	config := meta.(*Config)
+	userAgent, err := generateUserAgentString(d, config.userAgent)
 	if err != nil {
 		return err
 	}
-
-	config := meta.(*Config)
-	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
 
 	url, err := replaceVars(d, config, "{{ArtifactRegistryBasePath}}projects/{{project}}/locations/{{location}}/repositories/{{name}}")
 	if err != nil {
@@ -238,7 +230,7 @@ func resourceArtifactRegistryRepositoryRead(d *schema.ResourceData, meta interfa
 		billingProject = bp
 	}
 
-	res, err := sendRequest(config, "GET", billingProject, url, nil)
+	res, err := sendRequest(config, "GET", billingProject, url, userAgent, nil)
 	if err != nil {
 		return handleNotFoundError(err, d, fmt.Sprintf("ArtifactRegistryRepository %q", d.Id()))
 	}
@@ -273,15 +265,12 @@ func resourceArtifactRegistryRepositoryRead(d *schema.ResourceData, meta interfa
 }
 
 func resourceArtifactRegistryRepositoryUpdate(d *schema.ResourceData, meta interface{}) error {
-	var m providerMeta
-
-	err := d.GetProviderMeta(&m)
+	config := meta.(*Config)
+	userAgent, err := generateUserAgentString(d, config.userAgent)
 	if err != nil {
 		return err
 	}
-
-	config := meta.(*Config)
-	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
+	config.userAgent = userAgent
 
 	billingProject := ""
 
@@ -329,7 +318,7 @@ func resourceArtifactRegistryRepositoryUpdate(d *schema.ResourceData, meta inter
 		billingProject = bp
 	}
 
-	res, err := sendRequestWithTimeout(config, "PUT", billingProject, url, obj, d.Timeout(schema.TimeoutUpdate))
+	res, err := sendRequestWithTimeout(config, "PUT", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutUpdate))
 
 	if err != nil {
 		return fmt.Errorf("Error updating Repository %q: %s", d.Id(), err)
@@ -338,7 +327,7 @@ func resourceArtifactRegistryRepositoryUpdate(d *schema.ResourceData, meta inter
 	}
 
 	err = artifactRegistryOperationWaitTime(
-		config, res, project, "Updating Repository",
+		config, res, project, "Updating Repository", userAgent,
 		d.Timeout(schema.TimeoutUpdate))
 
 	if err != nil {
@@ -349,15 +338,12 @@ func resourceArtifactRegistryRepositoryUpdate(d *schema.ResourceData, meta inter
 }
 
 func resourceArtifactRegistryRepositoryDelete(d *schema.ResourceData, meta interface{}) error {
-	var m providerMeta
-
-	err := d.GetProviderMeta(&m)
+	config := meta.(*Config)
+	userAgent, err := generateUserAgentString(d, config.userAgent)
 	if err != nil {
 		return err
 	}
-
-	config := meta.(*Config)
-	config.userAgent = fmt.Sprintf("%s %s", config.userAgent, m.ModuleName)
+	config.userAgent = userAgent
 
 	billingProject := ""
 
@@ -380,13 +366,13 @@ func resourceArtifactRegistryRepositoryDelete(d *schema.ResourceData, meta inter
 		billingProject = bp
 	}
 
-	res, err := sendRequestWithTimeout(config, "DELETE", billingProject, url, obj, d.Timeout(schema.TimeoutDelete))
+	res, err := sendRequestWithTimeout(config, "DELETE", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutDelete))
 	if err != nil {
 		return handleNotFoundError(err, d, "Repository")
 	}
 
 	err = artifactRegistryOperationWaitTime(
-		config, res, project, "Deleting Repository",
+		config, res, project, "Deleting Repository", userAgent,
 		d.Timeout(schema.TimeoutDelete))
 
 	if err != nil {
