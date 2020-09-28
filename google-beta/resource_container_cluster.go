@@ -576,6 +576,38 @@ func resourceContainerCluster() *schema.Resource {
 				},
 			},
 
+			"notification_config": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Computed:    true,
+				MaxItems:    1,
+				Description: `The notification config for sending cluster upgrade notifications`,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"pubsub": {
+							Type:        schema.TypeList,
+							Required:    true,
+							MaxItems:    1,
+							Description: `Notification config for pubsub`,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"enabled": {
+										Type:        schema.TypeBool,
+										Required:    true,
+										Description: `Whether or not the notification config is enabled`,
+									},
+									"topic": {
+										Type:        schema.TypeString,
+										Optional:    true,
+										Description: `The pubsub topic to send the notification to, must be in the format: projects/{project}/topics/{topic}`,
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+
 			"master_auth": {
 				Type:        schema.TypeList,
 				Optional:    true,
@@ -1226,8 +1258,9 @@ func resourceContainerClusterCreate(d *schema.ResourceData, meta interface{}) er
 			DefaultSnatStatus:         expandDefaultSnatStatus(d.Get("default_snat_status")),
 			DatapathProvider:          d.Get("datapath_provider").(string),
 		},
-		MasterAuth:     expandMasterAuth(d.Get("master_auth")),
-		ResourceLabels: expandStringMap(d, "resource_labels"),
+		MasterAuth:         expandMasterAuth(d.Get("master_auth")),
+		NotificationConfig: expandNotificationConfig(d.Get("notification_config")),
+		ResourceLabels:     expandStringMap(d, "resource_labels"),
 	}
 
 	if v, ok := d.GetOk("default_max_pods_per_node"); ok {
@@ -1541,6 +1574,9 @@ func resourceContainerClusterRead(d *schema.ResourceData, meta interface{}) erro
 		}
 	}
 	if err := d.Set("release_channel", flattenReleaseChannel(cluster.ReleaseChannel)); err != nil {
+		return err
+	}
+	if err := d.Set("notification_config", flattenNotificationConfig(cluster.NotificationConfig)); err != nil {
 		return err
 	}
 	if err := d.Set("enable_tpu", cluster.EnableTpu); err != nil {
@@ -2150,6 +2186,38 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 
 			log.Printf("[INFO] GKE cluster %s: image type has been updated to %s", d.Id(), it)
 		}
+	}
+
+	if d.HasChange("notification_config") {
+		req := &containerBeta.UpdateClusterRequest{
+			Update: &containerBeta.ClusterUpdate{
+				DesiredNotificationConfig: expandNotificationConfig(d.Get("notification_config")),
+			},
+		}
+		updateF := func() error {
+			log.Println("[DEBUG] updating notification_config")
+			name := containerClusterFullName(project, location, clusterName)
+			clusterUpdateCall := config.clientContainerBeta.Projects.Locations.Clusters.Update(name, req)
+			if config.UserProjectOverride {
+				clusterUpdateCall.Header().Add("X-Goog-User-Project", project)
+			}
+			op, err := clusterUpdateCall.Do()
+			if err != nil {
+				return err
+			}
+
+			// Wait until it's updated
+			err = containerOperationWait(config, op, project, location, "updating Notification Config", d.Timeout(schema.TimeoutUpdate))
+			log.Println("[DEBUG] done updating notification_config")
+			return err
+		}
+
+		// Call update serially.
+		if err := lockedCall(lockKey, updateF); err != nil {
+			return err
+		}
+
+		log.Printf("[INFO] GKE cluster %s Notification Config has been updated to %#v", d.Id(), req.Update.DesiredNotificationConfig)
 	}
 
 	if d.HasChange("master_auth") {
@@ -2829,6 +2897,37 @@ func expandAuthenticatorGroupsConfig(configured interface{}) *containerBeta.Auth
 	return result
 }
 
+func expandNotificationConfig(configured interface{}) *containerBeta.NotificationConfig {
+	l := configured.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return &containerBeta.NotificationConfig{
+			Pubsub: &containerBeta.PubSub{
+				Enabled: false,
+			},
+		}
+	}
+
+	notificationConfig := l[0].(map[string]interface{})
+	if v, ok := notificationConfig["pubsub"]; ok {
+		if len(v.([]interface{})) > 0 {
+			pubsub := notificationConfig["pubsub"].([]interface{})[0].(map[string]interface{})
+
+			return &containerBeta.NotificationConfig{
+				Pubsub: &containerBeta.PubSub{
+					Enabled: pubsub["enabled"].(bool),
+					Topic:   pubsub["topic"].(string),
+				},
+			}
+		}
+	}
+
+	return &containerBeta.NotificationConfig{
+		Pubsub: &containerBeta.PubSub{
+			Enabled: false,
+		},
+	}
+}
+
 func expandMasterAuth(configured interface{}) *containerBeta.MasterAuth {
 	l := configured.([]interface{})
 	if len(l) == 0 || l[0] == nil {
@@ -3042,6 +3141,23 @@ func expandResourceUsageExportConfig(configured interface{}) *containerBeta.Reso
 		}
 	}
 	return result
+}
+
+func flattenNotificationConfig(c *containerBeta.NotificationConfig) []map[string]interface{} {
+	if c == nil {
+		return nil
+	}
+
+	return []map[string]interface{}{
+		{
+			"pubsub": []map[string]interface{}{
+				{
+					"enabled": c.Pubsub.Enabled,
+					"topic":   c.Pubsub.Topic,
+				},
+			},
+		},
+	}
 }
 
 func flattenNetworkPolicy(c *containerBeta.NetworkPolicy) []map[string]interface{} {
