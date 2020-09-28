@@ -1,4 +1,4 @@
-## 3.41.0 (Unreleased)
+## 3.41.0 (September 28, 2020)
 
 IMPROVEMENTS:
 * container: Added support for `datapath_provider` to `google_container_cluster` ([#2492](https://github.com/hashicorp/terraform-provider-google-beta/pull/2492))
