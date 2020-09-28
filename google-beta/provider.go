@@ -731,9 +731,9 @@ func Provider() *schema.Provider {
 	return provider
 }
 
-// Generated resources: 190
+// Generated resources: 191
 // Generated IAM resources: 78
-// Total generated resources: 268
+// Total generated resources: 269
 func ResourceMap() map[string]*schema.Resource {
 	resourceMap, _ := ResourceMapWithErrors()
 	return resourceMap
@@ -890,6 +890,7 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_data_loss_prevention_job_trigger":                      resourceDataLossPreventionJobTrigger(),
 			"google_data_loss_prevention_inspect_template":                 resourceDataLossPreventionInspectTemplate(),
 			"google_data_loss_prevention_stored_info_type":                 resourceDataLossPreventionStoredInfoType(),
+			"google_data_loss_prevention_deidentify_template":              resourceDataLossPreventionDeidentifyTemplate(),
 			"google_dataproc_autoscaling_policy":                           resourceDataprocAutoscalingPolicy(),
 			"google_datastore_index":                                       resourceDatastoreIndex(),
 			"google_deployment_manager_deployment":                         resourceDeploymentManagerDeployment(),
