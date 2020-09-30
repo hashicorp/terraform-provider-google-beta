@@ -94,7 +94,6 @@ func resourceDataflowFlexTemplateJobCreate(d *schema.ResourceData, meta interfac
 	if err != nil {
 		return err
 	}
-	config.clientDataflow.UserAgent = userAgent
 
 	project, err := getProject(d, config)
 	if err != nil {
@@ -114,7 +113,7 @@ func resourceDataflowFlexTemplateJobCreate(d *schema.ResourceData, meta interfac
 		},
 	}
 
-	response, err := config.clientDataflow.Projects.Locations.FlexTemplates.Launch(project, region, &request).Do()
+	response, err := config.NewDataflowClient(userAgent).Projects.Locations.FlexTemplates.Launch(project, region, &request).Do()
 	if err != nil {
 		return err
 	}
@@ -135,7 +134,6 @@ func resourceDataflowFlexTemplateJobRead(d *schema.ResourceData, meta interface{
 	if err != nil {
 		return err
 	}
-	config.clientDataflow.UserAgent = userAgent
 
 	project, err := getProject(d, config)
 	if err != nil {
@@ -149,7 +147,7 @@ func resourceDataflowFlexTemplateJobRead(d *schema.ResourceData, meta interface{
 
 	jobId := d.Id()
 
-	job, err := resourceDataflowJobGetJob(config, project, region, jobId)
+	job, err := resourceDataflowJobGetJob(config, project, region, userAgent, jobId)
 	if err != nil {
 		return handleNotFoundError(err, d, fmt.Sprintf("Dataflow job %s", jobId))
 	}
@@ -188,7 +186,6 @@ func resourceDataflowFlexTemplateJobDelete(d *schema.ResourceData, meta interfac
 	if err != nil {
 		return err
 	}
-	config.clientDataflow.UserAgent = userAgent
 
 	project, err := getProject(d, config)
 	if err != nil {
@@ -215,7 +212,7 @@ func resourceDataflowFlexTemplateJobDelete(d *schema.ResourceData, meta interfac
 			RequestedState: requestedState,
 		}
 
-		_, updateErr := resourceDataflowJobUpdateJob(config, project, region, id, job)
+		_, updateErr := resourceDataflowJobUpdateJob(config, project, region, userAgent, id, job)
 		if updateErr != nil {
 			gerr, isGoogleErr := updateErr.(*googleapi.Error)
 			if !isGoogleErr {

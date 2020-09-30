@@ -302,7 +302,7 @@ func resourceComputeOrganizationSecurityPolicyRuleCreate(d *schema.ResourceData,
 	parent := flattenComputeOrganizationSecurityPolicyParent(policyRes["parent"], d, config)
 	var opRes map[string]interface{}
 	err = computeOrgOperationWaitTimeWithResponse(
-		config, res, &opRes, parent.(string), "Creating OrganizationSecurityPolicyRule",
+		config, res, &opRes, parent.(string), "Creating OrganizationSecurityPolicyRule", userAgent,
 		d.Timeout(schema.TimeoutCreate))
 
 	if err != nil {
@@ -471,7 +471,7 @@ func resourceComputeOrganizationSecurityPolicyRuleUpdate(d *schema.ResourceData,
 	parent := flattenComputeOrganizationSecurityPolicyParent(policyRes["parent"], d, config)
 	var opRes map[string]interface{}
 	err = computeOrgOperationWaitTimeWithResponse(
-		config, res, &opRes, parent.(string), "Creating OrganizationSecurityPolicyRule",
+		config, res, &opRes, parent.(string), "Creating OrganizationSecurityPolicyRule", userAgent,
 		d.Timeout(schema.TimeoutCreate))
 
 	if err != nil {
@@ -526,7 +526,7 @@ func resourceComputeOrganizationSecurityPolicyRuleDelete(d *schema.ResourceData,
 	parent := flattenComputeOrganizationSecurityPolicyParent(policyRes["parent"], d, config)
 	var opRes map[string]interface{}
 	err = computeOrgOperationWaitTimeWithResponse(
-		config, res, &opRes, parent.(string), "Creating OrganizationSecurityPolicyRule",
+		config, res, &opRes, parent.(string), "Creating OrganizationSecurityPolicyRule", userAgent,
 		d.Timeout(schema.TimeoutCreate))
 
 	if err != nil {
