@@ -154,7 +154,7 @@ func resourceComputeOrganizationSecurityPolicyCreate(d *schema.ResourceData, met
 	parent := d.Get("parent").(string)
 	var opRes map[string]interface{}
 	err = computeOrgOperationWaitTimeWithResponse(
-		config, res, &opRes, parent, "Creating OrganizationSecurityPolicy",
+		config, res, &opRes, parent, "Creating OrganizationSecurityPolicy", userAgent,
 		d.Timeout(schema.TimeoutCreate))
 
 	if err != nil {
@@ -274,7 +274,7 @@ func resourceComputeOrganizationSecurityPolicyUpdate(d *schema.ResourceData, met
 	parent := d.Get("parent").(string)
 	var opRes map[string]interface{}
 	err = computeOrgOperationWaitTimeWithResponse(
-		config, res, &opRes, parent, "Creating OrganizationSecurityPolicy",
+		config, res, &opRes, parent, "Creating OrganizationSecurityPolicy", userAgent,
 		d.Timeout(schema.TimeoutCreate))
 
 	if err != nil {
@@ -315,7 +315,7 @@ func resourceComputeOrganizationSecurityPolicyDelete(d *schema.ResourceData, met
 	parent := d.Get("parent").(string)
 	var opRes map[string]interface{}
 	err = computeOrgOperationWaitTimeWithResponse(
-		config, res, &opRes, parent, "Creating OrganizationSecurityPolicy",
+		config, res, &opRes, parent, "Creating OrganizationSecurityPolicy", userAgent,
 		d.Timeout(schema.TimeoutCreate))
 
 	if err != nil {

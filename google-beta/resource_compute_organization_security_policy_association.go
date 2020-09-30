@@ -130,7 +130,7 @@ func resourceComputeOrganizationSecurityPolicyAssociationCreate(d *schema.Resour
 	parent := flattenComputeOrganizationSecurityPolicyParent(policyRes["parent"], d, config)
 	var opRes map[string]interface{}
 	err = computeOrgOperationWaitTimeWithResponse(
-		config, res, &opRes, parent.(string), "Creating OrganizationSecurityPolicyAssociation",
+		config, res, &opRes, parent.(string), "Creating OrganizationSecurityPolicyAssociation", userAgent,
 		d.Timeout(schema.TimeoutCreate))
 
 	if err != nil {
@@ -223,7 +223,7 @@ func resourceComputeOrganizationSecurityPolicyAssociationDelete(d *schema.Resour
 	parent := flattenComputeOrganizationSecurityPolicyParent(policyRes["parent"], d, config)
 	var opRes map[string]interface{}
 	err = computeOrgOperationWaitTimeWithResponse(
-		config, res, &opRes, parent.(string), "Creating OrganizationSecurityPolicyAssociation",
+		config, res, &opRes, parent.(string), "Creating OrganizationSecurityPolicyAssociation", userAgent,
 		d.Timeout(schema.TimeoutCreate))
 
 	if err != nil {

@@ -104,7 +104,7 @@ func computeOperationWaitTime(config *Config, res interface{}, project, activity
 	}
 
 	w := &ComputeOperationWaiter{
-		Service: config.clientComputeBeta,
+		Service: config.NewComputeBetaClient(userAgent),
 		Context: config.context,
 		Op:      op,
 		Project: project,
@@ -116,7 +116,7 @@ func computeOperationWaitTime(config *Config, res interface{}, project, activity
 	return OperationWait(w, activity, timeout, config.PollInterval)
 }
 
-func computeOrgOperationWaitTimeWithResponse(config *Config, res interface{}, response *map[string]interface{}, parent, activity string, timeout time.Duration) error {
+func computeOrgOperationWaitTimeWithResponse(config *Config, res interface{}, response *map[string]interface{}, parent, activity, userAgent string, timeout time.Duration) error {
 	op := &computeBeta.Operation{}
 	err := Convert(res, op)
 	if err != nil {
@@ -124,7 +124,7 @@ func computeOrgOperationWaitTimeWithResponse(config *Config, res interface{}, re
 	}
 
 	w := &ComputeOperationWaiter{
-		Service: config.clientComputeBeta,
+		Service: config.NewComputeBetaClient(userAgent),
 		Op:      op,
 		Parent:  parent,
 	}
