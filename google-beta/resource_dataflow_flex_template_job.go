@@ -59,6 +59,8 @@ func resourceDataflowFlexTemplateJob() *schema.Resource {
 				Optional:         true,
 				DiffSuppressFunc: resourceDataflowJobLabelDiffSuppress,
 				ForceNew:         true,
+				// TODO add support for labels when the API supports it
+				Deprecated: "Deprecated until the API supports this field",
 			},
 
 			"parameters": {
