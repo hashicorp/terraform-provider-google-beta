@@ -69,9 +69,10 @@ func schemaNodeConfig() *schema.Schema {
 				},
 
 				"image_type": {
-					Type:     schema.TypeString,
-					Optional: true,
-					Computed: true,
+					Type:             schema.TypeString,
+					Optional:         true,
+					Computed:         true,
+					DiffSuppressFunc: caseDiffSuppress,
 				},
 
 				"labels": {
