@@ -25,12 +25,10 @@ description: |-
 A config defined for a single managed instance that belongs to an instance group manager. It preserves the instance name
 across instance group manager operations and can define stateful disks or metadata that are unique to the instance.
 
-~> **Warning:** This resource is in beta, and should be used with the terraform-provider-google-beta provider.
-See [Provider Versions](https://terraform.io/docs/providers/google/guides/provider_versions.html) for more details on beta resources.
 
 To get more information about PerInstanceConfig, see:
 
-* [API documentation](https://cloud.google.com/compute/docs/reference/rest/beta/instanceGroupManagers)
+* [API documentation](https://cloud.google.com/compute/docs/reference/rest/v1/instanceGroupManagers)
 * How-to Guides
     * [Official Documentation](https://cloud.google.com/compute/docs/instance-groups/stateful-migs#per-instance_configs)
 
