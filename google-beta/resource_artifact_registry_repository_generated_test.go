@@ -158,7 +158,7 @@ func testAccCheckArtifactRegistryRepositoryDestroyProducer(t *testing.T) func(s 
 
 			config := googleProviderConfig(t)
 
-			url, err := replaceVarsForTest(config, rs, "{{ArtifactRegistryBasePath}}projects/{{project}}/locations/{{location}}/repositories/{{name}}")
+			url, err := replaceVarsForTest(config, rs, "{{ArtifactRegistryBasePath}}projects/{{project}}/locations/{{location}}/repositories/{{repository_id}}")
 			if err != nil {
 				return err
 			}
