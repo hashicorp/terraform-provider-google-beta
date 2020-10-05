@@ -1,4 +1,20 @@
-## 3.42.0 (Unreleased)
+## 3.43.0 (Unreleased)
+## 3.42.0 (October 05, 2020)
+
+FEATURES:
+* **New Resource:** google_data_loss_prevention_deidentify_template ([#2524](https://github.com/hashicorp/terraform-provider-google-beta/pull/2524))
+
+IMPROVEMENTS:
+* compute: added support for updating `network_interface.[d].network` and `network_interface.[d].subnetwork` properties on `google_compute_instance`. ([#2517](https://github.com/hashicorp/terraform-provider-google-beta/pull/2517))
+* container: added `notification_config` to `google_container_cluster` ([#2521](https://github.com/hashicorp/terraform-provider-google-beta/pull/2521))
+* dataflow: added `region` field to `google_dataflow_flex_template_job` resource ([#2520](https://github.com/hashicorp/terraform-provider-google-beta/pull/2520))
+* healthcare: added field `parser_config.version` to `google_healthcare_hl7_v2_store` ([#2516](https://github.com/hashicorp/terraform-provider-google-beta/pull/2516))
+
+BUG FIXES:
+* bigquery: fixed an issue where `google_bigquery_table` would crash while reading an empty schema ([#2518](https://github.com/hashicorp/terraform-provider-google-beta/pull/2518))
+* compute: fixed an issue where `google_compute_instance_template` would throw an error for unspecified `disk_size_gb` values while upgrading the provider. ([#2515](https://github.com/hashicorp/terraform-provider-google-beta/pull/2515))
+* resourcemanager: fixed an issue in retrieving `google_active_folder` data source when the display name included whitespace ([#2528](https://github.com/hashicorp/terraform-provider-google-beta/pull/2528))
+
 ## 3.41.0 (September 28, 2020)
 
 IMPROVEMENTS:
