@@ -74,10 +74,9 @@ type Config struct {
 	// It controls the interval at which we poll for successful operations
 	PollInterval time.Duration
 
-	client                *http.Client
-	wrappedBigQueryClient *http.Client
-	context               context.Context
-	userAgent             string
+	client    *http.Client
+	context   context.Context
+	userAgent string
 
 	tokenSource oauth2.TokenSource
 
@@ -828,7 +827,7 @@ func (c *Config) NewCloudIdentityClient(userAgent string) *cloudidentity.Service
 	return clientCloudIdentity
 }
 
-func (c *Config) BigQueryClientFactory(userAgent string) *BigtableClientFactory {
+func (c *Config) BigTableClientFactory(userAgent string) *BigtableClientFactory {
 	bigtableClientFactory := &BigtableClientFactory{
 		UserAgent:   userAgent,
 		TokenSource: c.tokenSource,
