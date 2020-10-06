@@ -270,7 +270,7 @@ The `pull_request` block supports:
 * `comment_control` -
   (Optional)
   Whether to block builds on a "/gcbrun" comment from a repository owner or collaborator.
-  Possible values are `COMMENTS_DISABLED` and `COMMENTS_ENABLED`.
+  Possible values are `COMMENTS_DISABLED`, `COMMENTS_ENABLED`, and `COMMENTS_ENABLED_FOR_EXTERNAL_CONTRIBUTORS_ONLY`.
 
 * `invert_regex` -
   (Optional)
