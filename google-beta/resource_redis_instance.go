@@ -66,6 +66,14 @@ against zonal failures by provisioning it across two zones.
 If provided, it must be a different zone from the one provided in
 [locationId].`,
 			},
+			"auth_enabled": {
+				Type:     schema.TypeBool,
+				Optional: true,
+				Description: `Optional. Indicates whether OSS Redis AUTH is enabled for the
+instance. If set to "true" AUTH is enabled on the instance.
+Default value is "false" meaning AUTH is disabled.`,
+				Default: false,
+			},
 			"authorized_network": {
 				Type:             schema.TypeString,
 				Computed:         true,
@@ -212,6 +220,12 @@ func resourceRedisInstanceCreate(d *schema.ResourceData, meta interface{}) error
 		return err
 	} else if v, ok := d.GetOkExists("alternative_location_id"); !isEmptyValue(reflect.ValueOf(alternativeLocationIdProp)) && (ok || !reflect.DeepEqual(v, alternativeLocationIdProp)) {
 		obj["alternativeLocationId"] = alternativeLocationIdProp
+	}
+	authEnabledProp, err := expandRedisInstanceAuthEnabled(d.Get("auth_enabled"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("auth_enabled"); !isEmptyValue(reflect.ValueOf(authEnabledProp)) && (ok || !reflect.DeepEqual(v, authEnabledProp)) {
+		obj["authEnabled"] = authEnabledProp
 	}
 	authorizedNetworkProp, err := expandRedisInstanceAuthorizedNetwork(d.Get("authorized_network"), d, config)
 	if err != nil {
@@ -389,6 +403,9 @@ func resourceRedisInstanceRead(d *schema.ResourceData, meta interface{}) error {
 	if err := d.Set("alternative_location_id", flattenRedisInstanceAlternativeLocationId(res["alternativeLocationId"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Instance: %s", err)
 	}
+	if err := d.Set("auth_enabled", flattenRedisInstanceAuthEnabled(res["authEnabled"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Instance: %s", err)
+	}
 	if err := d.Set("authorized_network", flattenRedisInstanceAuthorizedNetwork(res["authorizedNetwork"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Instance: %s", err)
 	}
@@ -458,6 +475,12 @@ func resourceRedisInstanceUpdate(d *schema.ResourceData, meta interface{}) error
 	billingProject = project
 
 	obj := make(map[string]interface{})
+	authEnabledProp, err := expandRedisInstanceAuthEnabled(d.Get("auth_enabled"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("auth_enabled"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, authEnabledProp)) {
+		obj["authEnabled"] = authEnabledProp
+	}
 	displayNameProp, err := expandRedisInstanceDisplayName(d.Get("display_name"), d, config)
 	if err != nil {
 		return err
@@ -495,6 +518,10 @@ func resourceRedisInstanceUpdate(d *schema.ResourceData, meta interface{}) error
 
 	log.Printf("[DEBUG] Updating Instance %q: %#v", d.Id(), obj)
 	updateMask := []string{}
+
+	if d.HasChange("auth_enabled") {
+		updateMask = append(updateMask, "authEnabled")
+	}
 
 	if d.HasChange("display_name") {
 		updateMask = append(updateMask, "displayName")
@@ -613,6 +640,10 @@ func flattenRedisInstanceAlternativeLocationId(v interface{}, d *schema.Resource
 	return v
 }
 
+func flattenRedisInstanceAuthEnabled(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	return v
+}
+
 func flattenRedisInstanceAuthorizedNetwork(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
@@ -707,6 +738,10 @@ func flattenRedisInstanceTier(v interface{}, d *schema.ResourceData, config *Con
 }
 
 func expandRedisInstanceAlternativeLocationId(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandRedisInstanceAuthEnabled(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
