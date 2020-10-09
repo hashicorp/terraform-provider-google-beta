@@ -17,12 +17,14 @@ IMPROVEMENTS:
 * netblock: changed `google_netblock_ip_ranges` to read from cloud.json file rather than DNS record ([#2543](https://github.com/hashicorp/terraform-provider-google-beta/pull/2543))
 
 BUG FIXES:
+* accessapproval: fixed issue where, due to a recent API change, `google_*_access_approval.enrolled_services.cloud_product` entries specified as a URL would result in a permadiff
 * artifactregistry: fixed an issue where `google_artifact_registry_repository` would import an empty state ([#2546](https://github.com/hashicorp/terraform-provider-google-beta/pull/2546))
 * bigquery: fixed an issue in `google_bigquery_job` where non-US locations could not be read ([#2542](https://github.com/hashicorp/terraform-provider-google-beta/pull/2542))
 * cloudrun: fixed an issue in `google_cloud_run_domain_mapping` where labels provided by Google would cause a diff ([#2531](https://github.com/hashicorp/terraform-provider-google-beta/pull/2531))
 * compute: Fixed an issue where `google_compute_region_backend_service` required `healthChecks` for a serverless network endpoint group. ([#2547](https://github.com/hashicorp/terraform-provider-google-beta/pull/2547))
 * container: fixed `node_config.image_type` perma-diff when specified in lower case. ([#2538](https://github.com/hashicorp/terraform-provider-google-beta/pull/2538))
 * datacatalog: fixed an error in `google_data_catalog_tag` when trying to set boolean field to `false` ([#2534](https://github.com/hashicorp/terraform-provider-google-beta/pull/2534))
+* monitoring: fixed bug where deleting a `google_monitoring_dashboard` would give an "unsupported protocol scheme" error
 
 ## 3.42.0 (October 05, 2020)
 
