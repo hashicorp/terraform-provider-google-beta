@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"regexp"
 	"strings"
 	"testing"
 	"time"
@@ -26,6 +27,7 @@ var ignoredReplicaConfigurationFields = []string{
 	"replica_configuration.0.ssl_cipher",
 	"replica_configuration.0.username",
 	"replica_configuration.0.verify_server_certificate",
+	"deletion_protection",
 }
 
 func init() {
@@ -165,9 +167,10 @@ func TestAccSqlDatabaseInstance_basicInferredName(t *testing.T) {
 				Config: testGoogleSqlDatabaseInstance_basic2,
 			},
 			{
-				ResourceName:      "google_sql_database_instance.instance",
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            "google_sql_database_instance.instance",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"deletion_protection"},
 			},
 		},
 	})
@@ -189,9 +192,10 @@ func TestAccSqlDatabaseInstance_basicSecondGen(t *testing.T) {
 				Check: testAccCheckGoogleSqlDatabaseRootUserDoesNotExist(t, databaseName),
 			},
 			{
-				ResourceName:      "google_sql_database_instance.instance",
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            "google_sql_database_instance.instance",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"deletion_protection"},
 			},
 		},
 	})
@@ -216,7 +220,7 @@ func TestAccSqlDatabaseInstance_basicMSSQL(t *testing.T) {
 				ResourceName:            "google_sql_database_instance.instance",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"root_password"},
+				ImportStateVerifyIgnore: []string{"root_password", "deletion_protection"},
 			},
 		},
 	})
@@ -240,9 +244,10 @@ func TestAccSqlDatabaseInstance_dontDeleteDefaultUserOnReplica(t *testing.T) {
 				Config: testGoogleSqlDatabaseInstanceConfig_withoutReplica(databaseName),
 			},
 			{
-				ResourceName:      "google_sql_database_instance.instance",
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            "google_sql_database_instance.instance",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"deletion_protection"},
 			},
 			{
 				PreConfig: func() {
@@ -285,9 +290,63 @@ func TestAccSqlDatabaseInstance_settings_basic(t *testing.T) {
 					testGoogleSqlDatabaseInstance_settings, databaseName),
 			},
 			{
-				ResourceName:      "google_sql_database_instance.instance",
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            "google_sql_database_instance.instance",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"deletion_protection"},
+			},
+		},
+	})
+}
+
+func TestAccSqlDatabaseInstance_settings_deletionProtection(t *testing.T) {
+	t.Parallel()
+
+	databaseName := "tf-test-" + randString(t, 10)
+
+	vcrTest(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccSqlDatabaseInstanceDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: fmt.Sprintf(
+					testGoogleSqlDatabaseInstance_settings_deletionProtection, databaseName, "true"),
+			},
+			{
+				ResourceName:            "google_sql_database_instance.instance",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"deletion_protection"},
+			},
+			{
+				Config: fmt.Sprintf(
+					testGoogleSqlDatabaseInstance_settings_deletionProtection, databaseName, "true"),
+				Destroy:     true,
+				ExpectError: regexp.MustCompile("Error, failed to delete instance because deletion_protection is set to true. Set it to false to proceed with instance deletion"),
+			},
+			{
+				Config: fmt.Sprintf(
+					testGoogleSqlDatabaseInstance_settings_deletionProtection, databaseName, "false"),
+			},
+		},
+	})
+}
+
+func TestAccSqlDatabaseInstance_settings_checkServiceNetworking(t *testing.T) {
+	t.Parallel()
+
+	databaseName := "tf-test-" + randString(t, 10)
+
+	vcrTest(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccSqlDatabaseInstanceDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: fmt.Sprintf(
+					testGoogleSqlDatabaseInstance_settings_checkServiceNetworking, databaseName, databaseName),
+				ExpectError: regexp.MustCompile("Error, failed to create instance because the network doesn't have at least 1 private services connection. Please see https://cloud.google.com/sql/docs/mysql/private-ip#network_requirements for how to create this connection."),
 			},
 		},
 	})
@@ -308,9 +367,10 @@ func TestAccSqlDatabaseInstance_replica(t *testing.T) {
 					testGoogleSqlDatabaseInstance_replica, databaseID, databaseID, databaseID),
 			},
 			{
-				ResourceName:      "google_sql_database_instance.instance_master",
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            "google_sql_database_instance.instance_master",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"deletion_protection"},
 			},
 			{
 				ResourceName:            "google_sql_database_instance.replica1",
@@ -344,14 +404,16 @@ func TestAccSqlDatabaseInstance_slave(t *testing.T) {
 					testGoogleSqlDatabaseInstance_slave, masterID, slaveID),
 			},
 			{
-				ResourceName:      "google_sql_database_instance.instance_master",
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            "google_sql_database_instance.instance_master",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"deletion_protection"},
 			},
 			{
-				ResourceName:      "google_sql_database_instance.instance_slave",
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            "google_sql_database_instance.instance_slave",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"deletion_protection"},
 			},
 		},
 	})
@@ -372,9 +434,10 @@ func TestAccSqlDatabaseInstance_highAvailability(t *testing.T) {
 					testGoogleSqlDatabaseInstance_highAvailability, instanceID),
 			},
 			{
-				ResourceName:      "google_sql_database_instance.instance",
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            "google_sql_database_instance.instance",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"deletion_protection"},
 			},
 		},
 	})
@@ -395,9 +458,10 @@ func TestAccSqlDatabaseInstance_diskspecs(t *testing.T) {
 					testGoogleSqlDatabaseInstance_diskspecs, masterID),
 			},
 			{
-				ResourceName:      "google_sql_database_instance.instance",
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            "google_sql_database_instance.instance",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"deletion_protection"},
 			},
 		},
 	})
@@ -418,9 +482,10 @@ func TestAccSqlDatabaseInstance_maintenance(t *testing.T) {
 					testGoogleSqlDatabaseInstance_maintenance, masterID),
 			},
 			{
-				ResourceName:      "google_sql_database_instance.instance",
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            "google_sql_database_instance.instance",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"deletion_protection"},
 			},
 		},
 	})
@@ -441,18 +506,20 @@ func TestAccSqlDatabaseInstance_settings_upgrade(t *testing.T) {
 					testGoogleSqlDatabaseInstance_basic3, databaseName),
 			},
 			{
-				ResourceName:      "google_sql_database_instance.instance",
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            "google_sql_database_instance.instance",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"deletion_protection"},
 			},
 			{
 				Config: fmt.Sprintf(
 					testGoogleSqlDatabaseInstance_settings, databaseName),
 			},
 			{
-				ResourceName:      "google_sql_database_instance.instance",
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            "google_sql_database_instance.instance",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"deletion_protection"},
 			},
 		},
 	})
@@ -473,18 +540,20 @@ func TestAccSqlDatabaseInstance_settingsDowngrade(t *testing.T) {
 					testGoogleSqlDatabaseInstance_settings, databaseName),
 			},
 			{
-				ResourceName:      "google_sql_database_instance.instance",
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            "google_sql_database_instance.instance",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"deletion_protection"},
 			},
 			{
 				Config: fmt.Sprintf(
 					testGoogleSqlDatabaseInstance_basic3, databaseName),
 			},
 			{
-				ResourceName:      "google_sql_database_instance.instance",
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            "google_sql_database_instance.instance",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"deletion_protection"},
 			},
 		},
 	})
@@ -506,27 +575,30 @@ func TestAccSqlDatabaseInstance_authNets(t *testing.T) {
 					testGoogleSqlDatabaseInstance_authNets_step1, databaseID),
 			},
 			{
-				ResourceName:      "google_sql_database_instance.instance",
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            "google_sql_database_instance.instance",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"deletion_protection"},
 			},
 			{
 				Config: fmt.Sprintf(
 					testGoogleSqlDatabaseInstance_authNets_step2, databaseID),
 			},
 			{
-				ResourceName:      "google_sql_database_instance.instance",
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            "google_sql_database_instance.instance",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"deletion_protection"},
 			},
 			{
 				Config: fmt.Sprintf(
 					testGoogleSqlDatabaseInstance_authNets_step1, databaseID),
 			},
 			{
-				ResourceName:      "google_sql_database_instance.instance",
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            "google_sql_database_instance.instance",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"deletion_protection"},
 			},
 		},
 	})
@@ -549,9 +621,10 @@ func TestAccSqlDatabaseInstance_multipleOperations(t *testing.T) {
 					testGoogleSqlDatabaseInstance_multipleOperations, databaseID, instanceID, userID),
 			},
 			{
-				ResourceName:      "google_sql_database_instance.instance",
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            "google_sql_database_instance.instance",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"deletion_protection"},
 			},
 		},
 	})
@@ -573,18 +646,20 @@ func TestAccSqlDatabaseInstance_basic_with_user_labels(t *testing.T) {
 				Check: testAccCheckGoogleSqlDatabaseRootUserDoesNotExist(t, databaseName),
 			},
 			{
-				ResourceName:      "google_sql_database_instance.instance",
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            "google_sql_database_instance.instance",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"deletion_protection"},
 			},
 			{
 				Config: fmt.Sprintf(
 					testGoogleSqlDatabaseInstance_basic_with_user_labels_update, databaseName),
 			},
 			{
-				ResourceName:      "google_sql_database_instance.instance",
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            "google_sql_database_instance.instance",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"deletion_protection"},
 			},
 		},
 	})
@@ -606,9 +681,10 @@ func TestAccSqlDatabaseInstance_withPrivateNetwork(t *testing.T) {
 				Config: testAccSqlDatabaseInstance_withPrivateNetwork(databaseName, networkName, addressName),
 			},
 			{
-				ResourceName:      "google_sql_database_instance.instance",
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            "google_sql_database_instance.instance",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"deletion_protection"},
 			},
 		},
 	})
@@ -667,17 +743,19 @@ func TestAccSqlDatabaseInstance_PointInTimeRecoveryEnabled(t *testing.T) {
 				Config: testGoogleSqlDatabaseInstance_PointInTimeRecoveryEnabled(masterID, true),
 			},
 			{
-				ResourceName:      "google_sql_database_instance.instance",
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            "google_sql_database_instance.instance",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"deletion_protection"},
 			},
 			{
 				Config: testGoogleSqlDatabaseInstance_PointInTimeRecoveryEnabled(masterID, false),
 			},
 			{
-				ResourceName:      "google_sql_database_instance.instance",
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            "google_sql_database_instance.instance",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"deletion_protection"},
 			},
 		},
 	})
@@ -686,6 +764,7 @@ func TestAccSqlDatabaseInstance_PointInTimeRecoveryEnabled(t *testing.T) {
 var testGoogleSqlDatabaseInstance_basic2 = `
 resource "google_sql_database_instance" "instance" {
   region = "us-central1"
+  deletion_protection = false
   settings {
     tier = "db-f1-micro"
   }
@@ -696,6 +775,7 @@ var testGoogleSqlDatabaseInstance_basic3 = `
 resource "google_sql_database_instance" "instance" {
   name   = "%s"
   region = "us-central1"
+  deletion_protection = false
   settings {
     tier = "db-f1-micro"
   }
@@ -707,6 +787,7 @@ resource "google_sql_database_instance" "instance" {
   name             = "%s"
   database_version = "SQLSERVER_2017_STANDARD"
   root_password    = "%s"
+  deletion_protection = false
   settings {
     tier = "db-custom-1-3840"
   }
@@ -719,6 +800,7 @@ resource "google_sql_database_instance" "instance" {
   name             = "%s"
   region           = "us-central1"
   database_version = "MYSQL_5_7"
+  deletion_protection = false
 
   settings {
     tier = "db-n1-standard-1"
@@ -739,6 +821,7 @@ resource "google_sql_database_instance" "instance" {
   name             = "%s"
   region           = "us-central1"
   database_version = "MYSQL_5_7"
+  deletion_protection = false
 
   settings {
     tier = "db-n1-standard-1"
@@ -756,6 +839,7 @@ resource "google_sql_database_instance" "instance-failover" {
   region               = "us-central1"
   database_version     = "MYSQL_5_7"
   master_instance_name = google_sql_database_instance.instance.name
+  deletion_protection = false
 
   replica_configuration {
     failover_target = "true"
@@ -792,6 +876,7 @@ resource "google_sql_database_instance" "instance" {
   depends_on = [google_service_networking_connection.foobar]
   name       = "%s"
   region     = "us-central1"
+  deletion_protection = false
   settings {
     tier = "db-f1-micro"
     ip_configuration {
@@ -807,6 +892,7 @@ var testGoogleSqlDatabaseInstance_settings = `
 resource "google_sql_database_instance" "instance" {
   name   = "%s"
   region = "us-central1"
+  deletion_protection = false
   settings {
     tier                   = "db-f1-micro"
     location_preference {
@@ -831,12 +917,61 @@ resource "google_sql_database_instance" "instance" {
   }
 }
 `
+var testGoogleSqlDatabaseInstance_settings_deletionProtection = `
+resource "google_sql_database_instance" "instance" {
+  name   = "%s"
+  region = "us-central1"
+  deletion_protection = %s
+  settings {
+    tier                   = "db-f1-micro"
+    location_preference {
+      zone = "us-central1-f"
+	}
+
+    ip_configuration {
+	  ipv4_enabled = "true"
+      authorized_networks {
+        value           = "108.12.12.12"
+        name            = "misc"
+        expiration_time = "2037-11-15T16:19:00.094Z"
+      }
+    }
+
+    backup_configuration {
+      enabled    = "true"
+      start_time = "19:19"
+    }
+
+    activation_policy = "ALWAYS"
+  }
+}
+`
+
+var testGoogleSqlDatabaseInstance_settings_checkServiceNetworking = `
+resource "google_compute_network" "servicenet" {
+  name                    = "%s"
+}
+
+resource "google_sql_database_instance" "instance" {
+  name       = "%s"
+  region     = "us-central1"
+  deletion_protection = false
+  settings {
+    tier = "db-f1-micro"
+    ip_configuration {
+      ipv4_enabled    = "false"
+      private_network = google_compute_network.servicenet.self_link
+    }
+  }
+}
+`
 
 var testGoogleSqlDatabaseInstance_replica = `
 resource "google_sql_database_instance" "instance_master" {
   name             = "tf-lw-%d"
   database_version = "MYSQL_5_6"
   region           = "us-central1"
+  deletion_protection = false
 
   settings {
     tier = "db-n1-standard-1"
@@ -853,6 +988,7 @@ resource "google_sql_database_instance" "replica1" {
   name             = "tf-lw-%d-1"
   database_version = "MYSQL_5_6"
   region           = "us-central1"
+  deletion_protection = false
 
   settings {
     tier = "db-n1-standard-1"
@@ -874,6 +1010,7 @@ resource "google_sql_database_instance" "replica2" {
   name             = "tf-lw-%d-2"
   database_version = "MYSQL_5_6"
   region           = "us-central1"
+  deletion_protection = false
 
   settings {
     tier = "db-n1-standard-1"
@@ -896,6 +1033,7 @@ var testGoogleSqlDatabaseInstance_slave = `
 resource "google_sql_database_instance" "instance_master" {
   name   = "tf-lw-%d"
   region = "us-central1"
+  deletion_protection = false
 
   settings {
     tier = "db-f1-micro"
@@ -910,6 +1048,7 @@ resource "google_sql_database_instance" "instance_master" {
 resource "google_sql_database_instance" "instance_slave" {
   name   = "tf-lw-%d"
   region = "us-central1"
+  deletion_protection = false
 
   master_instance_name = google_sql_database_instance.instance_master.name
 
@@ -924,6 +1063,7 @@ resource "google_sql_database_instance" "instance" {
   name             = "tf-lw-%d"
   region           = "us-central1"
   database_version = "POSTGRES_9_6"
+  deletion_protection = false
 
   settings {
     tier = "db-f1-micro"
@@ -942,6 +1082,7 @@ var testGoogleSqlDatabaseInstance_diskspecs = `
 resource "google_sql_database_instance" "instance" {
   name   = "tf-lw-%d"
   region = "us-central1"
+  deletion_protection = false
 
   settings {
     tier            = "db-f1-micro"
@@ -956,6 +1097,7 @@ var testGoogleSqlDatabaseInstance_maintenance = `
 resource "google_sql_database_instance" "instance" {
   name   = "tf-lw-%d"
   region = "us-central1"
+  deletion_protection = false
 
   settings {
     tier = "db-f1-micro"
@@ -973,6 +1115,7 @@ var testGoogleSqlDatabaseInstance_authNets_step1 = `
 resource "google_sql_database_instance" "instance" {
   name   = "tf-lw-%d"
   region = "us-central1"
+  deletion_protection = false
   settings {
     tier                   = "db-f1-micro"
 
@@ -991,6 +1134,7 @@ var testGoogleSqlDatabaseInstance_authNets_step2 = `
 resource "google_sql_database_instance" "instance" {
   name   = "tf-lw-%d"
   region = "us-central1"
+  deletion_protection = false
   settings {
     tier                   = "db-f1-micro"
 
@@ -1005,6 +1149,7 @@ var testGoogleSqlDatabaseInstance_multipleOperations = `
 resource "google_sql_database_instance" "instance" {
   name   = "tf-test-%s"
   region = "us-central1"
+  deletion_protection = false
   settings {
     tier                   = "db-f1-micro"
   }
@@ -1027,6 +1172,7 @@ var testGoogleSqlDatabaseInstance_basic_with_user_labels = `
 resource "google_sql_database_instance" "instance" {
   name   = "%s"
   region = "us-central1"
+  deletion_protection = false
   settings {
     tier = "db-f1-micro"
     user_labels = {
@@ -1040,6 +1186,7 @@ var testGoogleSqlDatabaseInstance_basic_with_user_labels_update = `
 resource "google_sql_database_instance" "instance" {
   name   = "%s"
   region = "us-central1"
+  deletion_protection = false
   settings {
     tier = "db-f1-micro"
     user_labels = {
@@ -1055,6 +1202,7 @@ resource "google_sql_database_instance" "instance" {
   name             = "tf-test-%d"
   region           = "us-central1"
   database_version = "POSTGRES_9_6"
+  deletion_protection = false
   settings {
     tier = "db-f1-micro"
     backup_configuration {
