@@ -6,6 +6,7 @@ behavior "assign_random_reviewer" "random" {
     "ndmckinley",
     "slevenick",
     "c2thorn",
+    "scottsuarez",
   ]
   only_non_maintainers = true
 }
