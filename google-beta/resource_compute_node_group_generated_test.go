@@ -79,7 +79,7 @@ func TestAccComputeNodeGroup_nodeGroupAutoscalingPolicyExample(t *testing.T) {
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
-		Providers: testAccProvidersOiCS,
+		Providers: testAccProviders,
 		ExternalProviders: map[string]resource.ExternalProvider{
 			"random": {},
 		},
@@ -88,6 +88,12 @@ func TestAccComputeNodeGroup_nodeGroupAutoscalingPolicyExample(t *testing.T) {
 			{
 				Config: testAccComputeNodeGroup_nodeGroupAutoscalingPolicyExample(context),
 			},
+			{
+				ResourceName:            "google_compute_node_group.nodes",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"node_template", "zone"},
+			},
 		},
 	})
 }
@@ -95,22 +101,20 @@ func TestAccComputeNodeGroup_nodeGroupAutoscalingPolicyExample(t *testing.T) {
 func testAccComputeNodeGroup_nodeGroupAutoscalingPolicyExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_compute_node_template" "soletenant-tmpl" {
-  provider = google-beta
   name      = "tf-test-soletenant-tmpl%{random_suffix}"
   region    = "us-central1"
   node_type = "n1-node-96-624"
 }
 
 resource "google_compute_node_group" "nodes" {
-  provider = google-beta
   name        = "tf-test-soletenant-group%{random_suffix}"
   zone        = "us-central1-a"
   description = "example google_compute_node_group for Terraform Google Provider"
-
+  maintenance_policy = "RESTART_IN_PLACE"
   size          = 1
   node_template = google_compute_node_template.soletenant-tmpl.id
   autoscaling_policy {
-    mode = "ON"
+    mode      = "ONLY_SCALE_OUT"
     min_nodes = 1
     max_nodes = 10
   }
