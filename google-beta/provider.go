@@ -735,9 +735,9 @@ func Provider() *schema.Provider {
 	return provider
 }
 
-// Generated resources: 191
+// Generated resources: 192
 // Generated IAM resources: 78
-// Total generated resources: 269
+// Total generated resources: 270
 func ResourceMap() map[string]*schema.Resource {
 	resourceMap, _ := ResourceMapWithErrors()
 	return resourceMap
@@ -752,6 +752,7 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_access_context_manager_access_policy":                  resourceAccessContextManagerAccessPolicy(),
 			"google_access_context_manager_access_level":                   resourceAccessContextManagerAccessLevel(),
 			"google_access_context_manager_access_levels":                  resourceAccessContextManagerAccessLevels(),
+			"google_access_context_manager_access_level_condition":         resourceAccessContextManagerAccessLevelCondition(),
 			"google_access_context_manager_service_perimeter":              resourceAccessContextManagerServicePerimeter(),
 			"google_access_context_manager_service_perimeters":             resourceAccessContextManagerServicePerimeters(),
 			"google_access_context_manager_service_perimeter_resource":     resourceAccessContextManagerServicePerimeterResource(),
