@@ -51,7 +51,7 @@ resource "google_notebooks_instance" "instance" {
   provider = google-beta
   name = "tf-test-notebooks-instance%{random_suffix}"
   location = "us-west1-a"
-  machine_type = "n1-standard-1"
+  machine_type = "e2-medium"
   vm_image {
     project      = "deeplearning-platform-release"
     image_family = "tf-latest-cpu"
@@ -88,7 +88,7 @@ resource "google_notebooks_instance" "instance" {
   provider = google-beta
   name = "tf-test-notebooks-instance%{random_suffix}"
   location = "us-west1-a"
-  machine_type = "n1-standard-1"
+  machine_type = "e2-medium"
   metadata = {
     proxy-mode = "service_account"
     terraform  = "true"
@@ -129,7 +129,7 @@ resource "google_notebooks_instance" "instance" {
   provider = google-beta
   name = "tf-test-notebooks-instance%{random_suffix}"
   location = "us-west1-a"
-  machine_type = "n1-standard-1"
+  machine_type = "n1-standard-1" // can't be e2 because of accelerator
 
   install_gpu_driver = true
   accelerator_config {
@@ -173,7 +173,7 @@ resource "google_notebooks_instance" "instance" {
   provider = google-beta
   name = "tf-test-notebooks-instance%{random_suffix}"
   location = "us-central1-a"
-  machine_type = "n1-standard-1"
+  machine_type = "e2-medium"
 
   vm_image {
     project      = "deeplearning-platform-release"

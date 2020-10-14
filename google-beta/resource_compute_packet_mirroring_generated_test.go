@@ -50,7 +50,7 @@ func testAccComputePacketMirroring_computePacketMirroringFullExample(context map
 resource "google_compute_instance" "mirror" {
   name = "tf-test-my-instance%{random_suffix}"
   provider = google-beta
-  machine_type = "n1-standard-1"
+  machine_type = "e2-medium"
 
   boot_disk {
     initialize_params {
