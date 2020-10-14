@@ -1,4 +1,32 @@
-## 3.43.0 (Unreleased)
+## 3.44.0 (Unreleased)
+## 3.43.0 (October 12, 2020)
+
+FEATURES:
+* **New Data Source:** `google_pubsub_topic` ([#2556](https://github.com/hashicorp/terraform-provider-google-beta/pull/2556))
+* **New Data Source:** `google_compute_global_forwarding_rule` ([#2548](https://github.com/hashicorp/terraform-provider-google-beta/pull/2548))
+* **New Data Source:** `google_cloud_run_service` ([#2539](https://github.com/hashicorp/terraform-provider-google-beta/pull/2539))
+* **New Resource:** `google_bigtable_table_iam_member` ([#2536](https://github.com/hashicorp/terraform-provider-google-beta/pull/2536))
+* **New Resource:** `google_bigtable_table_iam_binding` ([#2536](https://github.com/hashicorp/terraform-provider-google-beta/pull/2536))
+* **New Resource:** `google_bigtable_table_iam_policy` ([#2536](https://github.com/hashicorp/terraform-provider-google-beta/pull/2536))
+
+IMPROVEMENTS:
+* appengine: added ability to manage pre-firestore appengine applications. ([#2533](https://github.com/hashicorp/terraform-provider-google-beta/pull/2533))
+* bigquery: added support for `google_bigquery_table` `materialized_view` field ([#2532](https://github.com/hashicorp/terraform-provider-google-beta/pull/2532))
+* cloudbuild: Added `COMMENTS_ENABLED_FOR_EXTERNAL_CONTRIBUTORS_ONLY` support to `google_cloudbuild_trigger.github.pull_request.comment_control` field ([#2552](https://github.com/hashicorp/terraform-provider-google-beta/pull/2552))
+* compute: added additional fields to the `google_compute_forwarding_rule` datasource. ([#2550](https://github.com/hashicorp/terraform-provider-google-beta/pull/2550))
+* dns: added `forwarding_path` field to `google_dns_policy` resource ([#2540](https://github.com/hashicorp/terraform-provider-google-beta/pull/2540))
+* netblock: changed `google_netblock_ip_ranges` to read from cloud.json file rather than DNS record ([#2543](https://github.com/hashicorp/terraform-provider-google-beta/pull/2543))
+
+BUG FIXES:
+* accessapproval: fixed issue where, due to a recent API change, `google_*_access_approval.enrolled_services.cloud_product` entries specified as a URL would result in a permadiff
+* artifactregistry: fixed an issue where `google_artifact_registry_repository` would import an empty state ([#2546](https://github.com/hashicorp/terraform-provider-google-beta/pull/2546))
+* bigquery: fixed an issue in `google_bigquery_job` where non-US locations could not be read ([#2542](https://github.com/hashicorp/terraform-provider-google-beta/pull/2542))
+* cloudrun: fixed an issue in `google_cloud_run_domain_mapping` where labels provided by Google would cause a diff ([#2531](https://github.com/hashicorp/terraform-provider-google-beta/pull/2531))
+* compute: Fixed an issue where `google_compute_region_backend_service` required `healthChecks` for a serverless network endpoint group. ([#2547](https://github.com/hashicorp/terraform-provider-google-beta/pull/2547))
+* container: fixed `node_config.image_type` perma-diff when specified in lower case. ([#2538](https://github.com/hashicorp/terraform-provider-google-beta/pull/2538))
+* datacatalog: fixed an error in `google_data_catalog_tag` when trying to set boolean field to `false` ([#2534](https://github.com/hashicorp/terraform-provider-google-beta/pull/2534))
+* monitoring: fixed bug where deleting a `google_monitoring_dashboard` would give an "unsupported protocol scheme" error
+
 ## 3.42.0 (October 05, 2020)
 
 FEATURES:
