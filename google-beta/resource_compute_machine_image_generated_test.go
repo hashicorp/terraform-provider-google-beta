@@ -50,7 +50,7 @@ func testAccComputeMachineImage_machineImageBasicExample(context map[string]inte
 resource "google_compute_instance" "vm" {
   provider     = google-beta
   name         = "vm%{random_suffix}"
-  machine_type = "n1-standard-1"
+  machine_type = "e2-medium"
 
   boot_disk {
     initialize_params {

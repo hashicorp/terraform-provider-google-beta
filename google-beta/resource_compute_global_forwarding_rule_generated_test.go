@@ -212,7 +212,7 @@ resource "google_compute_instance_group_manager" "igm" {
 resource "google_compute_instance_template" "instance_template" {
   provider     = google-beta
   name         = "template-backend%{random_suffix}"
-  machine_type = "n1-standard-1"
+  machine_type = "e2-medium"
 
   network_interface {
     network = "default"
