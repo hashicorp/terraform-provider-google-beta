@@ -138,6 +138,15 @@ using threshold rules.`,
 				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
+						"disable_default_iam_recipients": {
+							Type:     schema.TypeBool,
+							Optional: true,
+							Description: `Boolean. When set to true, disables default notifications sent
+when a threshold is exceeded. Default recipients are
+those with Billing Account Administrators and Billing
+Account Users IAM roles for the target account.`,
+							Default: false,
+						},
 						"monitoring_notification_channels": {
 							Type:     schema.TypeList,
 							Optional: true,
@@ -591,6 +600,8 @@ func flattenBillingBudgetBudgetAllUpdatesRule(v interface{}, d *schema.ResourceD
 		flattenBillingBudgetBudgetAllUpdatesRuleSchemaVersion(original["schemaVersion"], d, config)
 	transformed["monitoring_notification_channels"] =
 		flattenBillingBudgetBudgetAllUpdatesRuleMonitoringNotificationChannels(original["monitoringNotificationChannels"], d, config)
+	transformed["disable_default_iam_recipients"] =
+		flattenBillingBudgetBudgetAllUpdatesRuleDisableDefaultIamRecipients(original["disableDefaultIamRecipients"], d, config)
 	return []interface{}{transformed}
 }
 func flattenBillingBudgetBudgetAllUpdatesRulePubsubTopic(v interface{}, d *schema.ResourceData, config *Config) interface{} {
@@ -602,6 +613,10 @@ func flattenBillingBudgetBudgetAllUpdatesRuleSchemaVersion(v interface{}, d *sch
 }
 
 func flattenBillingBudgetBudgetAllUpdatesRuleMonitoringNotificationChannels(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	return v
+}
+
+func flattenBillingBudgetBudgetAllUpdatesRuleDisableDefaultIamRecipients(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
@@ -840,6 +855,13 @@ func expandBillingBudgetBudgetAllUpdatesRule(v interface{}, d TerraformResourceD
 		transformed["monitoringNotificationChannels"] = transformedMonitoringNotificationChannels
 	}
 
+	transformedDisableDefaultIamRecipients, err := expandBillingBudgetBudgetAllUpdatesRuleDisableDefaultIamRecipients(original["disable_default_iam_recipients"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedDisableDefaultIamRecipients); val.IsValid() && !isEmptyValue(val) {
+		transformed["disableDefaultIamRecipients"] = transformedDisableDefaultIamRecipients
+	}
+
 	return transformed, nil
 }
 
@@ -852,5 +874,9 @@ func expandBillingBudgetBudgetAllUpdatesRuleSchemaVersion(v interface{}, d Terra
 }
 
 func expandBillingBudgetBudgetAllUpdatesRuleMonitoringNotificationChannels(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandBillingBudgetBudgetAllUpdatesRuleDisableDefaultIamRecipients(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
