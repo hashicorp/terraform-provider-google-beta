@@ -67,8 +67,8 @@ func resourceNotebooksInstance() *schema.Resource {
 				Type:     schema.TypeList,
 				Optional: true,
 				ForceNew: true,
-				Description: `The hardware accelerator used on this instance. If you use accelerators, 
-make sure that your configuration has enough vCPUs and memory to support the 
+				Description: `The hardware accelerator used on this instance. If you use accelerators,
+make sure that your configuration has enough vCPUs and memory to support the
 machineType you have selected.`,
 				MaxItems: 1,
 				Elem: &schema.Resource{
@@ -93,8 +93,8 @@ machineType you have selected.`,
 				Type:     schema.TypeInt,
 				Optional: true,
 				ForceNew: true,
-				Description: `The size of the boot disk in GB attached to this instance, 
-up to a maximum of 64000 GB (64 TB). The minimum recommended value is 100 GB. 
+				Description: `The size of the boot disk in GB attached to this instance,
+up to a maximum of 64000 GB (64 TB). The minimum recommended value is 100 GB.
 If not specified, this defaults to 100.`,
 			},
 			"boot_disk_type": {
@@ -116,7 +116,7 @@ If not specified, this defaults to 100.`,
 							Type:     schema.TypeString,
 							Required: true,
 							ForceNew: true,
-							Description: `The path to the container image repository. 
+							Description: `The path to the container image repository.
 For example: gcr.io/{project_id}/{imageName}`,
 						},
 						"tag": {
@@ -133,16 +133,16 @@ For example: gcr.io/{project_id}/{imageName}`,
 				Type:     schema.TypeString,
 				Optional: true,
 				ForceNew: true,
-				Description: `Specify a custom Cloud Storage path where the GPU driver is stored. 
+				Description: `Specify a custom Cloud Storage path where the GPU driver is stored.
 If not specified, we'll automatically choose from official GPU drivers.`,
 			},
 			"data_disk_size_gb": {
 				Type:     schema.TypeInt,
 				Optional: true,
 				ForceNew: true,
-				Description: `The size of the data disk in GB attached to this instance, 
-up to a maximum of 64000 GB (64 TB). 
-You can choose the size of the data disk based on how big your notebooks and data are. 
+				Description: `The size of the data disk in GB attached to this instance,
+up to a maximum of 64000 GB (64 TB).
+You can choose the size of the data disk based on how big your notebooks and data are.
 If not specified, this defaults to 100.`,
 			},
 			"data_disk_type": {
@@ -173,10 +173,10 @@ won't be installed. Only applicable to instances with GPUs.`,
 				Type:     schema.TypeList,
 				Optional: true,
 				ForceNew: true,
-				Description: `The list of owners of this instance after creation. 
+				Description: `The list of owners of this instance after creation.
 Format: alias@example.com.
-Currently supports one owner only. 
-If not specified, all of the service account users of 
+Currently supports one owner only.
+If not specified, all of the service account users of
 your VM instance's service account can use the instance.`,
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
@@ -186,7 +186,7 @@ your VM instance's service account can use the instance.`,
 				Type:     schema.TypeString,
 				Optional: true,
 				ForceNew: true,
-				Description: `The KMS key used to encrypt the disks, only applicable if diskEncryption is CMEK. 
+				Description: `The KMS key used to encrypt the disks, only applicable if diskEncryption is CMEK.
 Format: projects/{project_id}/locations/{location}/keyRings/{key_ring_id}/cryptoKeys/{key_id}`,
 			},
 			"labels": {
@@ -210,7 +210,7 @@ An object containing a list of "key": value pairs. Example: { "name": "wrench", 
 				Optional:         true,
 				ForceNew:         true,
 				DiffSuppressFunc: compareSelfLinkOrResourceName,
-				Description: `The name of the VPC that this instance is in. 
+				Description: `The name of the VPC that this instance is in.
 Format: projects/{project_id}/global/networks/{network_id}`,
 			},
 			"no_proxy_access": {
@@ -235,8 +235,8 @@ Format: projects/{project_id}/global/networks/{network_id}`,
 				Type:     schema.TypeString,
 				Optional: true,
 				ForceNew: true,
-				Description: `Path to a Bash script that automatically runs after a 
-notebook instance fully boots up. The path must be a URL 
+				Description: `Path to a Bash script that automatically runs after a
+notebook instance fully boots up. The path must be a URL
 or Cloud Storage path (gs://path-to-file/file-name).`,
 			},
 			"service_account": {
@@ -244,10 +244,10 @@ or Cloud Storage path (gs://path-to-file/file-name).`,
 				Computed: true,
 				Optional: true,
 				ForceNew: true,
-				Description: `The service account on this instance, giving access to other 
-Google Cloud services. You can use any service account within 
-the same project, but you must have the service account user 
-permission to use the instance. If not specified, 
+				Description: `The service account on this instance, giving access to other
+Google Cloud services. You can use any service account within
+the same project, but you must have the service account user
+permission to use the instance. If not specified,
 the Compute Engine default service account is used.`,
 			},
 			"subnet": {
@@ -256,7 +256,7 @@ the Compute Engine default service account is used.`,
 				Optional:         true,
 				ForceNew:         true,
 				DiffSuppressFunc: compareSelfLinkOrResourceName,
-				Description: `The name of the subnet that this instance is in. 
+				Description: `The name of the subnet that this instance is in.
 Format: projects/{project_id}/regions/{region}/subnetworks/{subnetwork_id}`,
 			},
 			"vm_image": {
@@ -271,7 +271,7 @@ Format: projects/{project_id}/regions/{region}/subnetworks/{subnetwork_id}`,
 							Type:     schema.TypeString,
 							Required: true,
 							ForceNew: true,
-							Description: `The name of the Google Cloud project that this VM image belongs to. 
+							Description: `The name of the Google Cloud project that this VM image belongs to.
 Format: projects/{project_id}`,
 						},
 						"image_family": {
