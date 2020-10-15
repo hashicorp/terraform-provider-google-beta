@@ -64,7 +64,7 @@ Format: projects/{project_id}/locations/{location}/environments/{environmentId}`
 						"repository": {
 							Type:     schema.TypeString,
 							Required: true,
-							Description: `The path to the container image repository. 
+							Description: `The path to the container image repository.
 For example: gcr.io/{project_id}/{imageName}`,
 						},
 						"tag": {
@@ -89,7 +89,7 @@ For example: gcr.io/{project_id}/{imageName}`,
 			"post_startup_script": {
 				Type:     schema.TypeString,
 				Optional: true,
-				Description: `Path to a Bash script that automatically runs after a notebook instance fully boots up. 
+				Description: `Path to a Bash script that automatically runs after a notebook instance fully boots up.
 The path must be a URL or Cloud Storage path. Example: "gs://path-to-file/file-name"`,
 			},
 			"vm_image": {
@@ -102,7 +102,7 @@ The path must be a URL or Cloud Storage path. Example: "gs://path-to-file/file-n
 						"project": {
 							Type:     schema.TypeString,
 							Required: true,
-							Description: `The name of the Google Cloud project that this VM image belongs to. 
+							Description: `The name of the Google Cloud project that this VM image belongs to.
 Format: projects/{project_id}`,
 						},
 						"image_family": {
