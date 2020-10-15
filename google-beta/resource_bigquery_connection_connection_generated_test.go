@@ -28,7 +28,8 @@ func TestAccBigqueryConnectionConnection_bigqueryConnectionBasicExample(t *testi
 	t.Parallel()
 
 	context := map[string]interface{}{
-		"random_suffix": randString(t, 10),
+		"deletion_protection": false,
+		"random_suffix":       randString(t, 10),
 	}
 
 	vcrTest(t, resource.TestCase{
@@ -56,6 +57,8 @@ resource "google_sql_database_instance" "instance" {
     settings {
 		tier = "db-f1-micro"
 	}
+
+    deletion_protection  = "%{deletion_protection}"
 }
 
 resource "google_sql_database" "db" {
@@ -98,7 +101,8 @@ func TestAccBigqueryConnectionConnection_bigqueryConnectionFullExample(t *testin
 	t.Parallel()
 
 	context := map[string]interface{}{
-		"random_suffix": randString(t, 10),
+		"deletion_protection": false,
+		"random_suffix":       randString(t, 10),
 	}
 
 	vcrTest(t, resource.TestCase{
@@ -126,6 +130,8 @@ resource "google_sql_database_instance" "instance" {
     settings {
 		tier = "db-f1-micro"
 	}
+
+    deletion_protection  = "%{deletion_protection}"
 }
 
 resource "google_sql_database" "db" {
