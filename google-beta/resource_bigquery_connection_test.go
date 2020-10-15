@@ -43,6 +43,8 @@ resource "google_sql_database_instance" "instance" {
     settings {
 		tier = "db-f1-micro"
 	}
+
+    deletion_protection = false
 }
 
 resource "google_sql_database" "db" {
@@ -92,6 +94,8 @@ resource "google_sql_database_instance" "instance" {
     settings {
 		tier = "db-f1-micro"
 	}
+
+    deletion_protection = false
 }
 
 resource "google_sql_database" "db" {
