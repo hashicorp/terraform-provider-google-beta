@@ -1,5 +1,5 @@
 ## 3.44.0 (Unreleased)
-NOTES:
+BREAKING CHANGE:
 * Added `deletion_protection` to `google_sql_database_instance`, which defaults to true. SQL instances can no longer be destroyed without setting `deletion_protection = false`. ([#2579](https://github.com/hashicorp/terraform-provider-google-beta/pull/2579))
 
 FEATURES:
