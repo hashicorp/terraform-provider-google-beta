@@ -180,7 +180,7 @@ resource "google_notebooks_instance" "instance" {
     image_family = "tf-latest-cpu"
   }
 
-  instance_owners = "admin@hashicorptest.com"
+  instance_owners = ["admin@hashicorptest.com"]
   service_account = "%{service_account}"
 
   install_gpu_driver = true
