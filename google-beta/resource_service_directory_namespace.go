@@ -185,7 +185,6 @@ func resourceServiceDirectoryNamespaceUpdate(d *schema.ResourceData, meta interf
 	if err != nil {
 		return err
 	}
-	config.userAgent = userAgent
 
 	billingProject := ""
 
@@ -243,7 +242,6 @@ func resourceServiceDirectoryNamespaceDelete(d *schema.ResourceData, meta interf
 	if err != nil {
 		return err
 	}
-	config.userAgent = userAgent
 
 	billingProject := ""
 

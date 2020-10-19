@@ -541,7 +541,6 @@ func resourceDNSManagedZoneUpdate(d *schema.ResourceData, meta interface{}) erro
 	if err != nil {
 		return err
 	}
-	config.userAgent = userAgent
 
 	billingProject := ""
 
@@ -618,7 +617,6 @@ func resourceDNSManagedZoneDelete(d *schema.ResourceData, meta interface{}) erro
 	if err != nil {
 		return err
 	}
-	config.userAgent = userAgent
 
 	billingProject := ""
 

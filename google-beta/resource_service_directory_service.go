@@ -162,7 +162,6 @@ func resourceServiceDirectoryServiceUpdate(d *schema.ResourceData, meta interfac
 	if err != nil {
 		return err
 	}
-	config.userAgent = userAgent
 
 	billingProject := ""
 
@@ -214,7 +213,6 @@ func resourceServiceDirectoryServiceDelete(d *schema.ResourceData, meta interfac
 	if err != nil {
 		return err
 	}
-	config.userAgent = userAgent
 
 	billingProject := ""
 

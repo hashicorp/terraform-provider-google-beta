@@ -476,7 +476,6 @@ func resourceComputeRegionAutoscalerUpdate(d *schema.ResourceData, meta interfac
 	if err != nil {
 		return err
 	}
-	config.userAgent = userAgent
 
 	billingProject := ""
 
@@ -555,7 +554,6 @@ func resourceComputeRegionAutoscalerDelete(d *schema.ResourceData, meta interfac
 	if err != nil {
 		return err
 	}
-	config.userAgent = userAgent
 
 	billingProject := ""
 

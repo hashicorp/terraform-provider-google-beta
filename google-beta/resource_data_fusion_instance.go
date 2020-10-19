@@ -413,7 +413,6 @@ func resourceDataFusionInstanceUpdate(d *schema.ResourceData, meta interface{}) 
 	if err != nil {
 		return err
 	}
-	config.userAgent = userAgent
 
 	billingProject := ""
 
@@ -480,7 +479,6 @@ func resourceDataFusionInstanceDelete(d *schema.ResourceData, meta interface{}) 
 	if err != nil {
 		return err
 	}
-	config.userAgent = userAgent
 
 	billingProject := ""
 
