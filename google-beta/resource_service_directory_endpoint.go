@@ -195,7 +195,6 @@ func resourceServiceDirectoryEndpointUpdate(d *schema.ResourceData, meta interfa
 	if err != nil {
 		return err
 	}
-	config.userAgent = userAgent
 
 	billingProject := ""
 
@@ -267,7 +266,6 @@ func resourceServiceDirectoryEndpointDelete(d *schema.ResourceData, meta interfa
 	if err != nil {
 		return err
 	}
-	config.userAgent = userAgent
 
 	billingProject := ""
 

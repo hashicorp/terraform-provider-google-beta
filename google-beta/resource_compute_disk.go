@@ -839,7 +839,6 @@ func resourceComputeDiskUpdate(d *schema.ResourceData, meta interface{}) error {
 	if err != nil {
 		return err
 	}
-	config.userAgent = userAgent
 
 	billingProject := ""
 
@@ -937,7 +936,6 @@ func resourceComputeDiskDelete(d *schema.ResourceData, meta interface{}) error {
 	if err != nil {
 		return err
 	}
-	config.userAgent = userAgent
 
 	billingProject := ""
 

@@ -290,7 +290,6 @@ func resourceNotebooksEnvironmentUpdate(d *schema.ResourceData, meta interface{}
 	if err != nil {
 		return err
 	}
-	config.userAgent = userAgent
 
 	billingProject := ""
 
@@ -369,7 +368,6 @@ func resourceNotebooksEnvironmentDelete(d *schema.ResourceData, meta interface{}
 	if err != nil {
 		return err
 	}
-	config.userAgent = userAgent
 
 	billingProject := ""
 

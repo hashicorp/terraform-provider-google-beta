@@ -1305,7 +1305,6 @@ func resourceComputeBackendServiceUpdate(d *schema.ResourceData, meta interface{
 	if err != nil {
 		return err
 	}
-	config.userAgent = userAgent
 
 	billingProject := ""
 
@@ -1510,7 +1509,6 @@ func resourceComputeBackendServiceDelete(d *schema.ResourceData, meta interface{
 	if err != nil {
 		return err
 	}
-	config.userAgent = userAgent
 
 	billingProject := ""
 
