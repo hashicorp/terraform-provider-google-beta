@@ -757,9 +757,9 @@ func Provider() *schema.Provider {
 	return provider
 }
 
-// Generated resources: 194
-// Generated IAM resources: 81
-// Total generated resources: 275
+// Generated resources: 196
+// Generated IAM resources: 87
+// Total generated resources: 283
 func ResourceMap() map[string]*schema.Resource {
 	resourceMap, _ := ResourceMapWithErrors()
 	return resourceMap
@@ -914,6 +914,14 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_data_catalog_entry":                                    resourceDataCatalogEntry(),
 			"google_data_catalog_tag_template":                             resourceDataCatalogTagTemplate(),
 			"google_data_catalog_tag":                                      resourceDataCatalogTag(),
+			"google_data_catalog_taxonomy":                                 resourceDataCatalogTaxonomy(),
+			"google_data_catalog_taxonomy_iam_binding":                     ResourceIamBinding(DataCatalogTaxonomyIamSchema, DataCatalogTaxonomyIamUpdaterProducer, DataCatalogTaxonomyIdParseFunc),
+			"google_data_catalog_taxonomy_iam_member":                      ResourceIamMember(DataCatalogTaxonomyIamSchema, DataCatalogTaxonomyIamUpdaterProducer, DataCatalogTaxonomyIdParseFunc),
+			"google_data_catalog_taxonomy_iam_policy":                      ResourceIamPolicy(DataCatalogTaxonomyIamSchema, DataCatalogTaxonomyIamUpdaterProducer, DataCatalogTaxonomyIdParseFunc),
+			"google_data_catalog_policy_tag":                               resourceDataCatalogPolicyTag(),
+			"google_data_catalog_policy_tag_iam_binding":                   ResourceIamBinding(DataCatalogPolicyTagIamSchema, DataCatalogPolicyTagIamUpdaterProducer, DataCatalogPolicyTagIdParseFunc),
+			"google_data_catalog_policy_tag_iam_member":                    ResourceIamMember(DataCatalogPolicyTagIamSchema, DataCatalogPolicyTagIamUpdaterProducer, DataCatalogPolicyTagIdParseFunc),
+			"google_data_catalog_policy_tag_iam_policy":                    ResourceIamPolicy(DataCatalogPolicyTagIamSchema, DataCatalogPolicyTagIamUpdaterProducer, DataCatalogPolicyTagIdParseFunc),
 			"google_data_fusion_instance":                                  resourceDataFusionInstance(),
 			"google_data_loss_prevention_job_trigger":                      resourceDataLossPreventionJobTrigger(),
 			"google_data_loss_prevention_inspect_template":                 resourceDataLossPreventionInspectTemplate(),

@@ -24,15 +24,15 @@ import (
 )
 
 func init() {
-	resource.AddTestSweepers("DataCatalogTag", &resource.Sweeper{
-		Name: "DataCatalogTag",
-		F:    testSweepDataCatalogTag,
+	resource.AddTestSweepers("DataCatalogPolicyTag", &resource.Sweeper{
+		Name: "DataCatalogPolicyTag",
+		F:    testSweepDataCatalogPolicyTag,
 	})
 }
 
 // At the time of writing, the CI only passes us-central1 as the region
-func testSweepDataCatalogTag(region string) error {
-	resourceName := "DataCatalogTag"
+func testSweepDataCatalogPolicyTag(region string) error {
+	resourceName := "DataCatalogPolicyTag"
 	log.Printf("[INFO][SWEEPER_LOG] Starting sweeper for %s", resourceName)
 
 	config, err := sharedConfigForRegion(region)
@@ -61,7 +61,7 @@ func testSweepDataCatalogTag(region string) error {
 		},
 	}
 
-	listTemplate := strings.Split("https://datacatalog.googleapis.com/v1beta1/{{parent}}/tags", "?")[0]
+	listTemplate := strings.Split("https://datacatalog.googleapis.com/v1beta1/{{taxonomy}}/policyTags", "?")[0]
 	listUrl, err := replaceVars(d, config, listTemplate)
 	if err != nil {
 		log.Printf("[INFO][SWEEPER_LOG] error preparing sweeper list url: %s", err)
@@ -74,7 +74,7 @@ func testSweepDataCatalogTag(region string) error {
 		return nil
 	}
 
-	resourceList, ok := res["tags"]
+	resourceList, ok := res["policyTags"]
 	if !ok {
 		log.Printf("[INFO][SWEEPER_LOG] Nothing found in response.")
 		return nil
