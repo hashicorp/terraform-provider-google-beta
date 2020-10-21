@@ -23,6 +23,59 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
+func TestAccComputeForwardingRule_forwardingRuleExternallbExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"random_suffix": randString(t, 10),
+	}
+
+	vcrTest(t, resource.TestCase{
+		PreCheck:  func() { testAccPreCheck(t) },
+		Providers: testAccProvidersOiCS,
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"random": {},
+		},
+		CheckDestroy: testAccCheckComputeForwardingRuleDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeForwardingRule_forwardingRuleExternallbExample(context),
+			},
+		},
+	})
+}
+
+func testAccComputeForwardingRule_forwardingRuleExternallbExample(context map[string]interface{}) string {
+	return Nprintf(`
+// Forwarding rule for External Network Load Balancing using Backend Services
+resource "google_compute_forwarding_rule" "default" {
+  provider              = google-beta
+  name                  = "tf-test-website-forwarding-rule%{random_suffix}"
+  region                = "us-central1"
+  port_range            = 80
+  backend_service       = google_compute_region_backend_service.backend.id
+}
+resource "google_compute_region_backend_service" "backend" {
+  provider              = google-beta
+  name                  = "tf-test-website-backend%{random_suffix}"
+  region                = "us-central1"
+  load_balancing_scheme = "EXTERNAL"
+  health_checks         = [google_compute_region_health_check.hc.id]
+}
+resource "google_compute_region_health_check" "hc" {
+  provider           = google-beta
+  name               = "check-tf-test-website-backend%{random_suffix}"
+  check_interval_sec = 1
+  timeout_sec        = 1
+  region             = "us-central1"
+
+  tcp_health_check {
+    port = "80"
+  }
+}
+`, context)
+}
+
 func TestAccComputeForwardingRule_forwardingRuleGlobalInternallbExample(t *testing.T) {
 	t.Parallel()
 
