@@ -1,9 +1,5 @@
 ## 3.45.0 (Unreleased)
 
-UNKNOWN CHANGELOG TYPE:
-* Add iam policy resources for netbook instance ([#2605](https://github.com/hashicorp/terraform-provider-google-beta/pull/2605))
-* Add taxonomy and policy_tag resources to data_catalog product ([#2626](https://github.com/hashicorp/terraform-provider-google-beta/pull/2626))
-
 BREAKING CHANGES:
 * pubsub: changing the value of `google_pubsub_subscription.enable_message_ordering` will now recreate the resource. Previously, an error was returned. ([#2624](https://github.com/hashicorp/terraform-provider-google-beta/pull/2624))
 * spanner: `google_spanner_database` resources now cannot be destroyed unless `deletion_protection = false` is set in state for the resource. ([#2612](https://github.com/hashicorp/terraform-provider-google-beta/pull/2612))
