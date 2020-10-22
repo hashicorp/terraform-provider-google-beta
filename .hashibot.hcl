@@ -1,6 +1,5 @@
 behavior "assign_random_reviewer" "random" {
   reviewers            = [
-    "danawillow",
     "rileykarson",
     "ndmckinley",
     "slevenick",
