@@ -608,6 +608,25 @@ func resourceContainerCluster() *schema.Resource {
 				},
 			},
 
+			"confidential_nodes": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Computed:    true,
+				ForceNew:    true,
+				MaxItems:    1,
+				Description: `Configuration for the confidential nodes feature, which makes nodes run on confidential VMs. Warning: This configuration can't be changed (or added/removed) after cluster creation without deleting and recreating the entire cluster.`,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"enabled": {
+							Type:        schema.TypeBool,
+							Required:    true,
+							ForceNew:    true,
+							Description: `Whether Confidential Nodes feature is enabled for all nodes in this cluster.`,
+						},
+					},
+				},
+			},
+
 			"master_auth": {
 				Type:        schema.TypeList,
 				Optional:    true,
@@ -1257,6 +1276,7 @@ func resourceContainerClusterCreate(d *schema.ResourceData, meta interface{}) er
 		},
 		MasterAuth:         expandMasterAuth(d.Get("master_auth")),
 		NotificationConfig: expandNotificationConfig(d.Get("notification_config")),
+		ConfidentialNodes:  expandConfidentialNodes(d.Get("confidential_nodes")),
 		ResourceLabels:     expandStringMap(d, "resource_labels"),
 	}
 
@@ -1578,6 +1598,9 @@ func resourceContainerClusterRead(d *schema.ResourceData, meta interface{}) erro
 		return err
 	}
 	if err := d.Set("notification_config", flattenNotificationConfig(cluster.NotificationConfig)); err != nil {
+		return err
+	}
+	if err := d.Set("confidential_nodes", flattenConfidentialNodes(cluster.ConfidentialNodes)); err != nil {
 		return err
 	}
 	if err := d.Set("enable_tpu", cluster.EnableTpu); err != nil {
@@ -2946,6 +2969,17 @@ func expandNotificationConfig(configured interface{}) *containerBeta.Notificatio
 	}
 }
 
+func expandConfidentialNodes(configured interface{}) *containerBeta.ConfidentialNodes {
+	l := configured.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil
+	}
+	config := l[0].(map[string]interface{})
+	return &containerBeta.ConfidentialNodes{
+		Enabled: config["enabled"].(bool),
+	}
+}
+
 func expandMasterAuth(configured interface{}) *containerBeta.MasterAuth {
 	l := configured.([]interface{})
 	if len(l) == 0 || l[0] == nil {
@@ -3176,6 +3210,16 @@ func flattenNotificationConfig(c *containerBeta.NotificationConfig) []map[string
 			},
 		},
 	}
+}
+
+func flattenConfidentialNodes(c *containerBeta.ConfidentialNodes) []map[string]interface{} {
+	result := []map[string]interface{}{}
+	if c != nil {
+		result = append(result, map[string]interface{}{
+			"enabled": c.Enabled,
+		})
+	}
+	return result
 }
 
 func flattenNetworkPolicy(c *containerBeta.NetworkPolicy) []map[string]interface{} {
