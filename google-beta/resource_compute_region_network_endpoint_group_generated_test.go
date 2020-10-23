@@ -33,7 +33,7 @@ func TestAccComputeRegionNetworkEndpointGroup_regionNetworkEndpointGroupFunction
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
-		Providers: testAccProvidersOiCS,
+		Providers: testAccProviders,
 		ExternalProviders: map[string]resource.ExternalProvider{
 			"random": {},
 		},
@@ -41,6 +41,12 @@ func TestAccComputeRegionNetworkEndpointGroup_regionNetworkEndpointGroupFunction
 		Steps: []resource.TestStep{
 			{
 				Config: testAccComputeRegionNetworkEndpointGroup_regionNetworkEndpointGroupFunctionsExample(context),
+			},
+			{
+				ResourceName:            "google_compute_region_network_endpoint_group.function_neg",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"region"},
 			},
 		},
 	})
@@ -50,7 +56,6 @@ func testAccComputeRegionNetworkEndpointGroup_regionNetworkEndpointGroupFunction
 	return Nprintf(`
 // Cloud Functions Example
 resource "google_compute_region_network_endpoint_group" "function_neg" {
-  provider              = google-beta
   name                  = "tf-test-function-neg%{random_suffix}"
   network_endpoint_type = "SERVERLESS"
   region                = "us-central1"
@@ -60,7 +65,6 @@ resource "google_compute_region_network_endpoint_group" "function_neg" {
 }
 
 resource "google_cloudfunctions_function" "function_neg" {
-  provider    = google-beta
   name        = "tf-test-function-neg%{random_suffix}"
   description = "My function"
   runtime     = "nodejs10"
@@ -74,12 +78,10 @@ resource "google_cloudfunctions_function" "function_neg" {
 }
 
 resource "google_storage_bucket" "bucket" {
-  provider   = google-beta
   name       = "tf-test-cloudfunctions-function-example-bucket%{random_suffix}"
 }
 
 resource "google_storage_bucket_object" "archive" { 
-  provider   = google-beta
   name       = "index.zip"
   bucket     = google_storage_bucket.bucket.name
   source     = "%{zip_path}"
@@ -96,7 +98,7 @@ func TestAccComputeRegionNetworkEndpointGroup_regionNetworkEndpointGroupCloudrun
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
-		Providers: testAccProvidersOiCS,
+		Providers: testAccProviders,
 		ExternalProviders: map[string]resource.ExternalProvider{
 			"random": {},
 		},
@@ -104,6 +106,12 @@ func TestAccComputeRegionNetworkEndpointGroup_regionNetworkEndpointGroupCloudrun
 		Steps: []resource.TestStep{
 			{
 				Config: testAccComputeRegionNetworkEndpointGroup_regionNetworkEndpointGroupCloudrunExample(context),
+			},
+			{
+				ResourceName:            "google_compute_region_network_endpoint_group.cloudrun_neg",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"region"},
 			},
 		},
 	})
@@ -113,7 +121,6 @@ func testAccComputeRegionNetworkEndpointGroup_regionNetworkEndpointGroupCloudrun
 	return Nprintf(`
 // Cloud Run Example
 resource "google_compute_region_network_endpoint_group" "cloudrun_neg" {
-  provider              = google-beta
   name                  = "tf-test-cloudrun-neg%{random_suffix}"
   network_endpoint_type = "SERVERLESS"
   region                = "us-central1"
@@ -123,7 +130,6 @@ resource "google_compute_region_network_endpoint_group" "cloudrun_neg" {
 }
 
 resource "google_cloud_run_service" "cloudrun_neg" {
-  provider = google-beta
   name     = "tf-test-cloudrun-neg%{random_suffix}"
   location = "us-central1"
 
@@ -152,7 +158,7 @@ func TestAccComputeRegionNetworkEndpointGroup_regionNetworkEndpointGroupAppengin
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
-		Providers: testAccProvidersOiCS,
+		Providers: testAccProviders,
 		ExternalProviders: map[string]resource.ExternalProvider{
 			"random": {},
 		},
@@ -160,6 +166,12 @@ func TestAccComputeRegionNetworkEndpointGroup_regionNetworkEndpointGroupAppengin
 		Steps: []resource.TestStep{
 			{
 				Config: testAccComputeRegionNetworkEndpointGroup_regionNetworkEndpointGroupAppengineExample(context),
+			},
+			{
+				ResourceName:            "google_compute_region_network_endpoint_group.appengine_neg",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"region"},
 			},
 		},
 	})
@@ -169,7 +181,6 @@ func testAccComputeRegionNetworkEndpointGroup_regionNetworkEndpointGroupAppengin
 	return Nprintf(`
 // App Engine Example
 resource "google_compute_region_network_endpoint_group" "appengine_neg" {
-  provider              = google-beta
   name                  = "tf-test-appengine-neg%{random_suffix}"
   network_endpoint_type = "SERVERLESS"
   region                = "us-central1"
@@ -180,7 +191,6 @@ resource "google_compute_region_network_endpoint_group" "appengine_neg" {
 }
 
 resource "google_app_engine_flexible_app_version" "appengine_neg" {
-  provider   = google-beta
   version_id = "v1"
   service    = "default"
   runtime    = "nodejs"
@@ -230,12 +240,10 @@ resource "google_app_engine_flexible_app_version" "appengine_neg" {
 }
 
 resource "google_storage_bucket" "appengine_neg" {
-  provider   = google-beta
   name       = "tf-test-appengine-neg%{random_suffix}"
 }
 
 resource "google_storage_bucket_object" "appengine_neg" {
-  provider  = google-beta
   name      = "hello-world.zip"
   bucket    = google_storage_bucket.appengine_neg.name
   source    = "./test-fixtures/appengine/hello-world.zip"
