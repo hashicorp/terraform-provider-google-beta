@@ -157,20 +157,20 @@ func resourceServiceNetworkingSubnetCreate(d *schema.ResourceData, meta interfac
 	}
 
 	network := d.Get("network").(string)
-	serviceNetworkingNetworkName, err := retrieveServiceNetworkingNetworkName(d, config, network, userAgent)
+	consumerNetworkName, err := retrieveServiceNetworkingNetworkName(d, config, network, userAgent)
 	if err != nil {
 		return errwrap.Wrapf("Failed to find Service Networking Connection, err: {{err}}", err)
 	}
 
 	subnetRequest := &servicenetworking.AddSubnetworkRequest{
-		Consumer: d.Get("consumer").(string),
-		ConsumerNetwork: serviceNetworkingNetworkName,
-		Description: d.Get("description").(string),
-		IpPrefixLength: int64(d.Get("ip_prefix_length").(int)),
-		Region: region,
-		RequestedAddress: d.Get("requested_address").(string),
-		Subnetwork: d.Get("name").(string),
-		SubnetworkUsers: convertStringArr(d.Get("subnetwork_users").([]interface{})),
+		Consumer:              d.Get("consumer").(string),
+		ConsumerNetwork:       consumerNetworkName,
+		Description:           d.Get("description").(string),
+		IpPrefixLength:        int64(d.Get("ip_prefix_length").(int)),
+		Region:                region,
+		RequestedAddress:      d.Get("requested_address").(string),
+		Subnetwork:            d.Get("name").(string),
+		SubnetworkUsers:       convertStringArr(d.Get("subnetwork_users").([]interface{})),
 		SecondaryIpRangeSpecs: expandSubnetworkSecondaryIpSpec(d.Get("secondary_ip_range_specs")),
 	}
 
@@ -189,7 +189,7 @@ func resourceServiceNetworkingSubnetCreate(d *schema.ResourceData, meta interfac
 	// inside the operation. The subnetwork returned will subsequently be managed by regular compute_subnetwork apis for read and delete.
 	// So we record relevant metadata after the operation finishes.
 	var subnetworkRes servicenetworking.Subnetwork
-	if err := serviceNetworkOperationWaitTimeWithResponse(
+	if err := serviceNetworkOperationWaitTimeWithSubnetworkResponse(
 		config, op, &subnetworkRes, "Create Service Networking Subnetwork", userAgent,
 		d.Timeout(schema.TimeoutCreate)); err != nil {
 		return nil
@@ -199,6 +199,8 @@ func resourceServiceNetworkingSubnetCreate(d *schema.ResourceData, meta interfac
 		return fmt.Errorf("Returned subnet resource is empty: %s", op.Name)
 	}
 
+	// NOTE(nickmaatgoogle): A subnetwork created by service networking belongs to a separate host project different from the calling project.
+	// A provided consumer network is peered with this subnetwork through the service network peering service.
 	subnetwork := subnetworkId{
 		ConsumerNetwork: network,
 		HostNetwork: subnetworkRes.Network,
@@ -219,9 +221,14 @@ func resourceServiceNetworkingSubnetRead(d *schema.ResourceData, meta interface{
 		return err
 	}
 
-	project, err := getProject(d, config)
+	subnetworkId, err := parseSubnetworkId(d.Id())
 	if err != nil {
-		return err
+		return errwrap.Wrapf("Unable to parse Service Networking Subnetwork id, err: {{err}}", err)
+	}
+
+	hostNetworkProject, err := retrieveServiceNetworkingNetworkProject(d, config, subnetworkId.HostNetwork, userAgent)
+	if err != nil {
+		return errwrap.Wrapf("Failed to find Service Networking Subnetwork, err: {{err}}", err)
 	}
 
 	region, err := getRegion(d, config)
@@ -229,7 +236,7 @@ func resourceServiceNetworkingSubnetRead(d *schema.ResourceData, meta interface{
 		return err
 	}
 
-	subnetwork, err := config.NewComputeClient(userAgent).Subnetworks.Get(project, region, d.Id()).Do()
+	subnetwork, err := config.NewComputeClient(userAgent).Subnetworks.Get(string(hostNetworkProject.ProjectNumber), region, subnetworkId.Name).Do()
 	if err != nil {
 		return err
 	}
@@ -240,18 +247,27 @@ func resourceServiceNetworkingSubnetRead(d *schema.ResourceData, meta interface{
 		return nil
 	}
 
-	//if err := d.Set("network", connectionId.Network); err != nil {
-	//	return fmt.Errorf("Error setting network: %s", err)
-	//}
-	//if err := d.Set("service", connectionId.Service); err != nil {
-	//	return fmt.Errorf("Error setting service: %s", err)
-	//}
-	//if err := d.Set("peering", connection.Peering); err != nil {
-	//	return fmt.Errorf("Error setting peering: %s", err)
-	//}
-	//if err := d.Set("reserved_peering_ranges", connection.ReservedPeeringRanges); err != nil {
-	//	return fmt.Errorf("Error setting reserved_peering_ranges: %s", err)
-	//}
+	if err := d.Set("consumer_network", subnetworkId.ConsumerNetwork); err != nil {
+		return fmt.Errorf("Error setting consumer_network: %s", err)
+	}
+	if err := d.Set("host_network", subnetworkId.HostNetwork); err != nil {
+		return fmt.Errorf("Error setting host_network: %s", err)
+	}
+	if err := d.Set("service", subnetworkId.Service); err != nil {
+		return fmt.Errorf("Error setting service: %s", err)
+	}
+	if err := d.Set("secondary_ip_range", subnetwork.SecondaryIpRanges); err != nil {
+		return fmt.Errorf("Error reading Subnetwork: %s", err)
+	}
+	if err := d.Set("ip_cidr_range", subnetwork.IpCidrRange); err != nil {
+		return fmt.Errorf("Error reading Subnetwork: %s", err)
+	}
+	if err := d.Set("name", subnetwork.Name); err != nil {
+		return fmt.Errorf("Error reading Subnetwork: %s", err)
+	}
+	if err := d.Set("full_name", subnetworkFullName(string(hostNetworkProject.ProjectNumber), region, subnetwork.Name)); err != nil {
+		return fmt.Errorf("Error reading Subnetwork: %s", err)
+	}
 	return nil
 }
 
@@ -342,14 +358,6 @@ func resourceServiceNetworkingSubnetDelete(d *schema.ResourceData, meta interfac
 }
 
 func recordSubnetworkMetadata(d *schema.ResourceData, res servicenetworking.Subnetwork) error {
-	if err := d.Set("ip_cidr_range", res.IpCidrRange); err != nil {
-		return fmt.Errorf("Error setting ip_cidr_range: %s", err)
-	}
-
-	if err := d.Set("secondary_ip_ranges", res.SecondaryIpRanges); err != nil {
-		return fmt.Errorf("Error setting secondary_ip_ranges: %s", err)
-	}
-
 	if err := d.Set("outside_allocation", res.OutsideAllocation); err != nil {
 		return fmt.Errorf("Error setting outside_allocation: %s", err)
 	}

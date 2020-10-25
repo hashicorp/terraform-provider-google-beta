@@ -7,6 +7,7 @@ import (
 
 	"github.com/hashicorp/errwrap"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"google.golang.org/api/cloudresourcemanager/v1"
 )
 
 // NOTE(craigatgoogle): An out of band aspect of this API is that it uses a unique formatting of network
@@ -38,6 +39,25 @@ func retrieveServiceNetworkingNetworkName(d *schema.ResourceData, config *Config
 	// return the network name formatting unique to this API
 	return fmt.Sprintf("projects/%v/global/networks/%v", project.ProjectNumber, networkName), nil
 
+}
+
+func retrieveServiceNetworkingNetworkProject(d *schema.ResourceData, config *Config, network, userAgent string) (*cloudresourcemanager.Project, error) {
+	networkFieldValue, err := ParseNetworkFieldValue(network, d, config)
+	if err != nil {
+		return nil, errwrap.Wrapf("Failed to retrieve network field value, err: {{err}}", err)
+	}
+
+	pid := networkFieldValue.Project
+	if pid == "" {
+		return nil, fmt.Errorf("Could not determine project")
+	}
+
+	project, err := config.NewResourceManagerClient(userAgent).Projects.Get(pid).Do()
+	if err != nil {
+		return nil, fmt.Errorf("Failed to retrieve project, pid: %s, err: %s", pid, err)
+	}
+
+	return project, nil
 }
 
 const parentServicePattern = "^services/.+$"
