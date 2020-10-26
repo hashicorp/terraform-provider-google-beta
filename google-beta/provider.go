@@ -766,8 +766,8 @@ func Provider() *schema.Provider {
 }
 
 // Generated resources: 199
-// Generated IAM resources: 96
-// Total generated resources: 295
+// Generated IAM resources: 99
+// Total generated resources: 298
 func ResourceMap() map[string]*schema.Resource {
 	resourceMap, _ := ResourceMapWithErrors()
 	return resourceMap
@@ -875,6 +875,9 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_compute_instance_group_named_port":                     resourceComputeInstanceGroupNamedPort(),
 			"google_compute_interconnect_attachment":                       resourceComputeInterconnectAttachment(),
 			"google_compute_machine_image":                                 resourceComputeMachineImage(),
+			"google_compute_machine_image_iam_binding":                     ResourceIamBinding(ComputeMachineImageIamSchema, ComputeMachineImageIamUpdaterProducer, ComputeMachineImageIdParseFunc),
+			"google_compute_machine_image_iam_member":                      ResourceIamMember(ComputeMachineImageIamSchema, ComputeMachineImageIamUpdaterProducer, ComputeMachineImageIdParseFunc),
+			"google_compute_machine_image_iam_policy":                      ResourceIamPolicy(ComputeMachineImageIamSchema, ComputeMachineImageIamUpdaterProducer, ComputeMachineImageIdParseFunc),
 			"google_compute_network":                                       resourceComputeNetwork(),
 			"google_compute_network_endpoint":                              resourceComputeNetworkEndpoint(),
 			"google_compute_network_endpoint_group":                        resourceComputeNetworkEndpointGroup(),
@@ -1094,6 +1097,7 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_composer_environment":                  resourceComposerEnvironment(),
 			"google_compute_attached_disk":                 resourceComputeAttachedDisk(),
 			"google_compute_instance":                      resourceComputeInstance(),
+			"google_compute_instance_from_machine_image":   resourceComputeInstanceFromMachineImage(),
 			"google_compute_instance_from_template":        resourceComputeInstanceFromTemplate(),
 			"google_compute_instance_group":                resourceComputeInstanceGroup(),
 			"google_compute_instance_group_manager":        resourceComputeInstanceGroupManager(),
