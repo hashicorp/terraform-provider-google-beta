@@ -106,7 +106,7 @@ The IP address range is drawn from a pool of available ranges in the service con
 			"description": {
 				Type:        schema.TypeString,
 				Required:    false,
-				ForceNew: true,
+				ForceNew:    true,
 				Description: `Attach context onto this subnet resource.`,
 			},
 			"subnetwork_users": {
@@ -161,20 +161,49 @@ func resourceServiceNetworkingSubnetCreate(d *schema.ResourceData, meta interfac
 	if err != nil {
 		return errwrap.Wrapf("Failed to find Service Networking Connection, err: {{err}}", err)
 	}
+	ipPrefixLength := int64(d.Get("ip_prefix_length").(int))
+	secondaryIpRangeSpecs := expandSubnetworkSecondaryIpSpec(d.Get("secondary_ip_range_specs"))
+	parentService := formatParentService(d.Get("service").(string))
+
+	if d.HasChange("validate") && d.Get("validate").(bool) {
+		consumerProject, err := retrieveServiceNetworkingNetworkProject(d, config, network, userAgent)
+		if err != nil {
+			return err
+		}
+
+		validateRequest := &servicenetworking.ValidateConsumerConfigRequest{
+			ConsumerNetwork: consumerNetworkName,
+			ConsumerProject: &servicenetworking.ConsumerProject{
+				ProjectNum: consumerProject.ProjectNumber,
+			},
+			ValidateNetwork: true,
+			RangeReservation: &servicenetworking.RangeReservation{
+				IpPrefixLength:                ipPrefixLength,
+				SecondaryRangeIpPrefixLengths: extractSecondaryPrefixLengths(secondaryIpRangeSpecs),
+			},
+		}
+
+		res, err := config.NewServiceNetworkingClient(userAgent).Services.Validate(parentService, validateRequest).Do()
+		if err != nil {
+			return err
+		}
+
+		if !res.IsValid {
+			return fmt.Errorf("Error validating subnet creation request: %s", res.ValidationError)
+		}
+	}
 
 	subnetRequest := &servicenetworking.AddSubnetworkRequest{
 		Consumer:              d.Get("consumer").(string),
 		ConsumerNetwork:       consumerNetworkName,
 		Description:           d.Get("description").(string),
-		IpPrefixLength:        int64(d.Get("ip_prefix_length").(int)),
+		IpPrefixLength:        ipPrefixLength,
 		Region:                region,
 		RequestedAddress:      d.Get("requested_address").(string),
 		Subnetwork:            d.Get("name").(string),
 		SubnetworkUsers:       convertStringArr(d.Get("subnetwork_users").([]interface{})),
-		SecondaryIpRangeSpecs: expandSubnetworkSecondaryIpSpec(d.Get("secondary_ip_range_specs")),
+		SecondaryIpRangeSpecs: secondaryIpRangeSpecs,
 	}
-
-	parentService := formatParentService(d.Get("service").(string))
 
 	op, err := config.NewServiceNetworkingClient(userAgent).Services.AddSubnetwork(parentService, subnetRequest).Do()
 	if err != nil {
@@ -195,7 +224,7 @@ func resourceServiceNetworkingSubnetCreate(d *schema.ResourceData, meta interfac
 		return nil
 	}
 
-	if len(subnetworkRes.Name) == 0 || len(subnetworkRes.Network) == 0  {
+	if len(subnetworkRes.Name) == 0 || len(subnetworkRes.Network) == 0 {
 		return fmt.Errorf("Returned subnet resource is empty: %s", op.Name)
 	}
 
@@ -203,9 +232,9 @@ func resourceServiceNetworkingSubnetCreate(d *schema.ResourceData, meta interfac
 	// A provided consumer network is peered with this subnetwork through the service network peering service.
 	subnetwork := subnetworkId{
 		ConsumerNetwork: network,
-		HostNetwork: subnetworkRes.Network,
-		Name: subnetworkRes.Name,
-		Service: d.Get("service").(string),
+		HostNetwork:     subnetworkRes.Network,
+		Name:            subnetworkRes.Name,
+		Service:         d.Get("service").(string),
 	}
 	d.SetId(subnetwork.Id())
 	if err = recordSubnetworkMetadata(d, subnetworkRes); err != nil {
@@ -361,10 +390,20 @@ func expandSubnetworkSecondaryIpSpec(configured interface{}) []*servicenetworkin
 	for _, v := range l {
 		spec := v.(map[string]interface{})
 		result = append(result, &servicenetworking.SecondaryIpRangeSpec{
-			IpPrefixLength: int64(spec["ip_prefix_length"].(int)),
-			RangeName: spec["range_name"].(string),
+			IpPrefixLength:   int64(spec["ip_prefix_length"].(int)),
+			RangeName:        spec["range_name"].(string),
 			RequestedAddress: spec["requested_address"].(string),
- 		})
+		})
+	}
+
+	return result
+}
+
+func extractSecondaryPrefixLengths(ipRanges []*servicenetworking.SecondaryIpRangeSpec) []int64 {
+	result := make([]int64, 0, len(ipRanges))
+
+	for _, v := range ipRanges {
+		result = append(result, v.IpPrefixLength)
 	}
 
 	return result
@@ -374,9 +413,9 @@ func expandSubnetworkSecondaryIpSpec(configured interface{}) []*servicenetworkin
 // to support the Read method, we create an Id using the tuple(ConsumerNetwork, HostNetwork, Name, Service).
 type subnetworkId struct {
 	ConsumerNetwork string
-	HostNetwork string
-	Name string
-	Service string
+	HostNetwork     string
+	Name            string
+	Service         string
 }
 
 func (id *subnetworkId) Id() string {
@@ -421,8 +460,8 @@ func parseSubnetworkId(id string) (*subnetworkId, error) {
 
 	return &subnetworkId{
 		ConsumerNetwork: consumerNetwork,
-		HostNetwork: hostNetwork,
-		Name: name,
-		Service: service,
+		HostNetwork:     hostNetwork,
+		Name:            name,
+		Service:         service,
 	}, nil
 }
