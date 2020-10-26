@@ -256,58 +256,20 @@ func resourceServiceNetworkingSubnetRead(d *schema.ResourceData, meta interface{
 	if err := d.Set("service", subnetworkId.Service); err != nil {
 		return fmt.Errorf("Error setting service: %s", err)
 	}
+	if err := d.Set("name", subnetworkId.Name); err != nil {
+		return fmt.Errorf("Error setting Name: %s", err)
+	}
 	if err := d.Set("secondary_ip_range", subnetwork.SecondaryIpRanges); err != nil {
 		return fmt.Errorf("Error reading Subnetwork: %s", err)
 	}
 	if err := d.Set("ip_cidr_range", subnetwork.IpCidrRange); err != nil {
 		return fmt.Errorf("Error reading Subnetwork: %s", err)
 	}
-	if err := d.Set("name", subnetwork.Name); err != nil {
-		return fmt.Errorf("Error reading Subnetwork: %s", err)
-	}
+	// resources that consume this subnetwork will use this output
 	if err := d.Set("full_name", subnetworkFullName(string(hostNetworkProject.ProjectNumber), region, subnetwork.Name)); err != nil {
 		return fmt.Errorf("Error reading Subnetwork: %s", err)
 	}
 	return nil
-}
-
-func resourceServiceNetworkingSubnetUpdate(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
-	userAgent, err := generateUserAgentString(d, config.userAgent)
-	if err != nil {
-		return err
-	}
-
-	connectionId, err := parseConnectionId(d.Id())
-	if err != nil {
-		return errwrap.Wrapf("Unable to parse Service Networking Connection id, err: {{err}}", err)
-	}
-
-	parentService := formatParentService(connectionId.Service)
-
-	if d.HasChange("reserved_peering_ranges") {
-		network := d.Get("network").(string)
-		serviceNetworkingNetworkName, err := retrieveServiceNetworkingNetworkName(d, config, network, userAgent)
-		if err != nil {
-			return errwrap.Wrapf("Failed to find Service Networking Connection, err: {{err}}", err)
-		}
-
-		connection := &servicenetworking.Connection{
-			Network:               serviceNetworkingNetworkName,
-			ReservedPeeringRanges: convertStringArr(d.Get("reserved_peering_ranges").([]interface{})),
-		}
-
-		// The API docs don't specify that you can do connections/-, but that's what gcloud does,
-		// and it's easier than grabbing the connection name.
-		op, err := config.NewServiceNetworkingClient(userAgent).Services.Connections.Patch(parentService+"/connections/-", connection).UpdateMask("reservedPeeringRanges").Force(true).Do()
-		if err != nil {
-			return err
-		}
-		if err := serviceNetworkingOperationWaitTime(config, op, "Update Service Networking Connection", userAgent, d.Timeout(schema.TimeoutUpdate)); err != nil {
-			return err
-		}
-	}
-	return resourceServiceNetworkingSubnetRead(d, meta)
 }
 
 func resourceServiceNetworkingSubnetDelete(d *schema.ResourceData, meta interface{}) error {
@@ -317,26 +279,25 @@ func resourceServiceNetworkingSubnetDelete(d *schema.ResourceData, meta interfac
 		return err
 	}
 
-	network := d.Get("network").(string)
-	serviceNetworkingNetworkName, err := retrieveServiceNetworkingNetworkName(d, config, network, userAgent)
+	region, err := getRegion(d, config)
 	if err != nil {
 		return err
 	}
 
-	obj := make(map[string]interface{})
-	peering := d.Get("peering").(string)
-	obj["name"] = peering
-	url := fmt.Sprintf("%s%s/removePeering", config.ComputeBasePath, serviceNetworkingNetworkName)
-
-	networkFieldValue, err := ParseNetworkFieldValue(network, d, config)
+	name := d.Get("name").(string)
+	hostNetwork := d.Get("host_network").(string)
+	hostProject, err := retrieveServiceNetworkingNetworkProject(d, config, hostNetwork, userAgent)
 	if err != nil {
-		return errwrap.Wrapf("Failed to retrieve network field value, err: {{err}}", err)
+		return err
 	}
+	hostProjectNum := string(hostProject.ProjectNumber)
 
-	project := networkFieldValue.Project
-	res, err := sendRequestWithTimeout(config, "POST", project, url, userAgent, obj, d.Timeout(schema.TimeoutDelete))
+	obj := make(map[string]interface{})
+	url := fmt.Sprintf("%s%s", config.ComputeBasePath, subnetworkFullName(string(hostProject.ProjectNumber), region, name))
+
+	res, err := sendRequestWithTimeout(config, "DELETE", hostProjectNum, url, userAgent, obj, d.Timeout(schema.TimeoutDelete))
 	if err != nil {
-		return handleNotFoundError(err, d, fmt.Sprintf("ServiceNetworkingSubnet %q", d.Id()))
+		return handleNotFoundError(err, d, fmt.Sprintf("ServiceNetworking Subnetwork %q", d.Id()))
 	}
 
 	op := &compute.Operation{}
@@ -346,13 +307,13 @@ func resourceServiceNetworkingSubnetDelete(d *schema.ResourceData, meta interfac
 	}
 
 	err = computeOperationWaitTime(
-		config, op, project, "Updating Network", userAgent, d.Timeout(schema.TimeoutDelete))
+		config, op, hostProjectNum, "Deleting subnetwork", userAgent, d.Timeout(schema.TimeoutDelete))
 	if err != nil {
 		return err
 	}
 
 	d.SetId("")
-	log.Printf("[INFO] Service network connection removed.")
+	log.Printf("[INFO] Service network subnetwork removed.")
 
 	return nil
 }
@@ -366,21 +327,26 @@ func recordSubnetworkMetadata(d *schema.ResourceData, res servicenetworking.Subn
 }
 
 func resourceServiceNetworkingSubnetImportState(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-	connectionId, err := parseConnectionId(d.Id())
+	subnetworkId, err := parseSubnetworkId(d.Id())
 	if err != nil {
 		return nil, err
 	}
 
-	if err := d.Set("network", connectionId.Network); err != nil {
-		return nil, fmt.Errorf("Error setting network: %s", err)
+	if err := d.Set("consumer_network", subnetworkId.ConsumerNetwork); err != nil {
+		return nil, fmt.Errorf("Error setting consumer_network: %s", err)
 	}
-	if err := d.Set("service", connectionId.Service); err != nil {
+	if err := d.Set("host_network", subnetworkId.HostNetwork); err != nil {
+		return nil, fmt.Errorf("Error setting host_network: %s", err)
+	}
+	if err := d.Set("service", subnetworkId.Service); err != nil {
 		return nil, fmt.Errorf("Error setting service: %s", err)
+	}
+	if err := d.Set("name", subnetworkId.Name); err != nil {
+		return nil, fmt.Errorf("Error setting name: %s", err)
 	}
 	return []*schema.ResourceData{d}, nil
 }
 
-//
 func subnetworkFullName(project, region, network string) string {
 	return fmt.Sprintf("projects/%s/regions/%s/subnetworks/%s", project, region, network)
 }
