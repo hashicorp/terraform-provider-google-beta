@@ -30,7 +30,6 @@ func serviceNetworkOperationWaitTimeWithSubnetworkResponse(config *Config, op *s
 	return json.Unmarshal([]byte(w.CommonOperationWaiter.Op.Response), response)
 }
 
-
 func serviceNetworkingOperationWaitTime(config *Config, op *servicenetworking.Operation, activity, userAgent string, timeout time.Duration) error {
 	w := &ServiceNetworkingOperationWaiter{
 		Service: config.NewServiceNetworkingClient(userAgent),
