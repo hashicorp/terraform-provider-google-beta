@@ -15,7 +15,6 @@ FEATURES:
 * **New Resource:** `access_context_manager_access_level_condition` ([#2595](https://github.com/hashicorp/terraform-provider-google-beta/pull/2595))
 * **New Resource:** `google_bigquery_routine` ([#2622](https://github.com/hashicorp/terraform-provider-google-beta/pull/2622))
 * **New Resource:** `google_iam_workload_identity_pool` ([#2623](https://github.com/hashicorp/terraform-provider-google-beta/pull/2623))
-* **New Resource:** `google_notebooks_instance_iam_binding` ([#2605](https://github.com/hashicorp/terraform-provider-google-beta/pull/2605))
 * **New Resource:** `google_data_catalog_taxonomy` ([#2626](https://github.com/hashicorp/terraform-provider-google-beta/pull/2626))
 * **New Resource:** `google_data_catalog_policy_tag` ([#2626](https://github.com/hashicorp/terraform-provider-google-beta/pull/2626))
 * **New Resource:** `google_data_catalog_taxonomy_iam_binding` ([#2626](https://github.com/hashicorp/terraform-provider-google-beta/pull/2626))
