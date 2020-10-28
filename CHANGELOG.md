@@ -1,4 +1,4 @@
-## 3.45.0 (Unreleased)
+## 3.45.0 (October 28, 2020)
 
 BREAKING CHANGES:
 * pubsub: changing the value of `google_pubsub_subscription.enable_message_ordering` will now recreate the resource. Previously, an error was returned. ([#2624](https://github.com/hashicorp/terraform-provider-google-beta/pull/2624))
