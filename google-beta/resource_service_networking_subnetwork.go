@@ -292,6 +292,11 @@ func resourceServiceNetworkingSubnetRead(d *schema.ResourceData, meta interface{
 		return err
 	}
 
+	project, err := getProject(d, config)
+	if err != nil {
+		return err
+	}
+
 	subnetwork, err := config.NewComputeClient(userAgent).Subnetworks.Get(string(hostNetworkProject.ProjectNumber), region, subnetworkId.Name).Do()
 	if err != nil {
 		return err
@@ -314,6 +319,12 @@ func resourceServiceNetworkingSubnetRead(d *schema.ResourceData, meta interface{
 	}
 	if err := d.Set("name", subnetworkId.Name); err != nil {
 		return fmt.Errorf("Error setting Name: %s", err)
+	}
+	if err := d.Set("project", project); err != nil {
+		return fmt.Errorf("Error reading resource project: %s", err)
+	}
+	if err := d.Set("region", subnetwork.Region); err != nil {
+		return fmt.Errorf("Error reading Subnetwork: %s", err)
 	}
 	if err := d.Set("secondary_ip_range", subnetwork.SecondaryIpRanges); err != nil {
 		return fmt.Errorf("Error reading Subnetwork: %s", err)
