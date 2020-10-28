@@ -21,7 +21,7 @@ var (
 			"range_name": {
 				Type:         schema.TypeString,
 				Required:     true,
-				ValidateFunc: validateRFC1035Name(1, 63),
+				ValidateFunc: validateRFC1035Name(2, 63),
 				Description: `A name for the secondary IP range.  The name must be 1-63 characters long, and comply with RFC1035. 
 The name must be unique within the subnetwork.`,
 			},
@@ -44,7 +44,8 @@ The range must be within the allocated range that is assigned to the private con
 	}
 )
 
-func resourceServiceNetworkingSubnet() *schema.Resource {
+// This subnetwork resource cannot be updated once created.
+func resourceServiceNetworkingSubnetwork() *schema.Resource {
 	return &schema.Resource{
 		Create: resourceServiceNetworkingSubnetCreate,
 		Read:   resourceServiceNetworkingSubnetRead,
@@ -55,7 +56,6 @@ func resourceServiceNetworkingSubnet() *schema.Resource {
 
 		Timeouts: &schema.ResourceTimeout{
 			Create: schema.DefaultTimeout(10 * time.Minute),
-			Update: schema.DefaultTimeout(10 * time.Minute),
 			Delete: schema.DefaultTimeout(10 * time.Minute),
 		},
 
@@ -105,20 +105,20 @@ The IP address range is drawn from a pool of available ranges in the service con
 			},
 			"description": {
 				Type:        schema.TypeString,
-				Required:    false,
+				Optional:    true,
 				ForceNew:    true,
 				Description: `Attach context onto this subnet resource.`,
 			},
 			"subnetwork_users": {
 				Type:        schema.TypeList,
-				Required:    false,
+				Optional:    true,
 				ForceNew:    true,
 				Elem:        &schema.Schema{Type: schema.TypeString},
 				Description: `A list of members that are granted the "compute.networkUser" role on the subnet.`,
 			},
 			"requested_address": {
 				Type:     schema.TypeString,
-				Required: false,
+				Optional: true,
 				ForceNew: true,
 				Description: `The starting address of a range. The address must be a valid IPv4 address in the x.x.x.x format. 
 This value combined with the IP prefix range is the CIDR range for the subnet. 
@@ -126,16 +126,28 @@ The range must be within the allocated range that is assigned to the private con
 				ValidateFunc: validation.IsIPv4Address,
 			},
 			// TODO(nickmaatgoogle): enable this feature once api release v0.34.0 is released
-			"secondary_ip_range_specs": {
-				Type:        schema.TypeList,
-				Required:    false,
-				ForceNew:    true,
+			"secondary_ip_range_spec": {
+				Type:     schema.TypeList,
+				Computed: true,
+				Optional: true,
+				ForceNew: true,
+				// Activate the "Attributes as Blocks" processing mode
+				ConfigMode:  schema.SchemaConfigModeAttr,
 				Elem:        secondaryIpRangeSpec,
 				Description: `A list of secondary IP ranges to be created within the new subnetwork.`,
+			},
+
+			"project": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Computed:    true,
+				ForceNew:    true,
+				Description: `The ID of the project in which the resource belongs. If it is not provided, the provider project is used.`,
 			},
 			"validate": {
 				Type:     schema.TypeBool,
 				Optional: true,
+				ForceNew: true,
 				Description: `If true, submits the inputs for validation prior to creating the a new subnetwork. 
 Validation will perform basic sanity checking on permissions and connectivity prerequisites. 
 Will fail resource creation faster with a minor startup delay.`,
@@ -156,6 +168,11 @@ func resourceServiceNetworkingSubnetCreate(d *schema.ResourceData, meta interfac
 		return err
 	}
 
+	project, err := getProject(d, config)
+	if err != nil {
+		return err
+	}
+
 	network := d.Get("network").(string)
 	consumerNetworkName, err := retrieveServiceNetworkingNetworkName(d, config, network, userAgent)
 	if err != nil {
@@ -163,7 +180,8 @@ func resourceServiceNetworkingSubnetCreate(d *schema.ResourceData, meta interfac
 	}
 	ipPrefixLength := int64(d.Get("ip_prefix_length").(int))
 	secondaryIpRangeSpecs := expandSubnetworkSecondaryIpSpec(d.Get("secondary_ip_range_specs"))
-	parentService := formatParentService(d.Get("service").(string))
+	peeringService := d.Get("service").(string)
+	parentService := formatParentService(peeringService)
 
 	if d.HasChange("validate") && d.Get("validate").(bool) {
 		consumerProject, err := retrieveServiceNetworkingNetworkProject(d, config, network, userAgent)
@@ -183,6 +201,7 @@ func resourceServiceNetworkingSubnetCreate(d *schema.ResourceData, meta interfac
 			},
 		}
 
+		log.Printf("[INFO] Service networking validating subnetwork configuration.")
 		res, err := config.NewServiceNetworkingClient(userAgent).Services.Validate(parentService, validateRequest).Do()
 		if err != nil {
 			return err
@@ -191,6 +210,7 @@ func resourceServiceNetworkingSubnetCreate(d *schema.ResourceData, meta interfac
 		if !res.IsValid {
 			return fmt.Errorf("Error validating subnet creation request: %s", res.ValidationError)
 		}
+		log.Printf("[INFO] Service networking subnetwork configuration valid.")
 	}
 
 	subnetRequest := &servicenetworking.AddSubnetworkRequest{
@@ -205,7 +225,12 @@ func resourceServiceNetworkingSubnetCreate(d *schema.ResourceData, meta interfac
 		SecondaryIpRangeSpecs: secondaryIpRangeSpecs,
 	}
 
-	op, err := config.NewServiceNetworkingClient(userAgent).Services.AddSubnetwork(parentService, subnetRequest).Do()
+	parentServiceWithProject, err := formatParentServiceWithProject(config, parentService, project, userAgent)
+	if err != nil {
+		return err
+	}
+
+	op, err := config.NewServiceNetworkingClient(userAgent).Services.AddSubnetwork(parentServiceWithProject, subnetRequest).Do()
 	if err != nil {
 		return err
 	}
@@ -228,13 +253,14 @@ func resourceServiceNetworkingSubnetCreate(d *schema.ResourceData, meta interfac
 		return fmt.Errorf("Returned subnet resource is empty: %s", op.Name)
 	}
 
-	// NOTE(nickmaatgoogle): A subnetwork created by service networking belongs to a separate host project different from the calling project.
+	// NOTE(nickmaatgoogle): An out of band aspect of this API is that the subnetwork is returned without an id, we provide our own.
+	// A subnetwork created by service networking belongs to a separate host project different from the resource project.
 	// A provided consumer network is peered with this subnetwork through the service network peering service.
 	subnetwork := subnetworkId{
 		ConsumerNetwork: network,
 		HostNetwork:     subnetworkRes.Network,
 		Name:            subnetworkRes.Name,
-		Service:         d.Get("service").(string),
+		Service:         peeringService,
 	}
 	d.SetId(subnetwork.Id())
 	if err = recordSubnetworkMetadata(d, subnetworkRes); err != nil {
@@ -294,7 +320,9 @@ func resourceServiceNetworkingSubnetRead(d *schema.ResourceData, meta interface{
 	if err := d.Set("ip_cidr_range", subnetwork.IpCidrRange); err != nil {
 		return fmt.Errorf("Error reading Subnetwork: %s", err)
 	}
-	// resources that consume this subnetwork will use this output
+	if err := d.Set("self_link", ConvertSelfLinkToV1(subnetwork.SelfLink)); err != nil {
+		return fmt.Errorf("Error reading Subnetwork: %s", err)
+	}
 	if err := d.Set("full_name", subnetworkFullName(string(hostNetworkProject.ProjectNumber), region, subnetwork.Name)); err != nil {
 		return fmt.Errorf("Error reading Subnetwork: %s", err)
 	}
@@ -409,7 +437,20 @@ func extractSecondaryPrefixLengths(ipRanges []*servicenetworking.SecondaryIpRang
 	return result
 }
 
-// NOTE(nickmaatgoogle): The Subnet resource in managed by this API doesn't have an Id field, so inorder
+// NOTE(nickmaatgoogle): An out of band aspect of this API is that creation of subnetworks requires service name
+// appended with the subnetwork owner's project id, formatted as "services/<serviceName>/projects/<resourceProjectNumber>"
+func formatParentServiceWithProject(config *Config, service, pid, userAgent string) (string, error) {
+	parentService := formatParentService(service)
+
+	project, err := retrieveProjectById(config, pid, userAgent)
+	if err != nil {
+		return "", err
+	}
+
+	return fmt.Sprintf("%s/projects/%d", parentService, project.ProjectNumber), nil
+}
+
+// NOTE(nickmaatgoogle): The Subnet resource in managed by this API doesn't have an Id field, in order
 // to support the Read method, we create an Id using the tuple(ConsumerNetwork, HostNetwork, Name, Service).
 type subnetworkId struct {
 	ConsumerNetwork string

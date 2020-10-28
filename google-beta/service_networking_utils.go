@@ -10,6 +10,18 @@ import (
 	"google.golang.org/api/cloudresourcemanager/v1"
 )
 
+func retrieveProjectById(config *Config, pid, userAgent string) (*cloudresourcemanager.Project, error) {
+	log.Printf("[DEBUG] Retrieving project number by doing a GET with the project id, as required by service networking")
+	project, err := config.NewResourceManagerClient(userAgent).Projects.Get(pid).Do()
+	if err != nil {
+		// note: returning a wrapped error is part of this method's contract!
+		// https://blog.golang.org/go1.13-errors
+		return nil, fmt.Errorf("Failed to retrieve project, pid: %s, err: %s", pid, err)
+	}
+
+	return project, nil
+}
+
 // NOTE(craigatgoogle): An out of band aspect of this API is that it uses a unique formatting of network
 // different from the standard self_link URI. It requires a call to the resource manager to get the project
 // number for the current project.
@@ -23,12 +35,10 @@ func retrieveServiceNetworkingNetworkName(d *schema.ResourceData, config *Config
 	if pid == "" {
 		return "", fmt.Errorf("Could not determine project")
 	}
-	log.Printf("[DEBUG] Retrieving project number by doing a GET with the project id, as required by service networking")
-	project, err := config.NewResourceManagerClient(userAgent).Projects.Get(pid).Do()
+
+	project, err := retrieveProjectById(config, pid, userAgent)
 	if err != nil {
-		// note: returning a wrapped error is part of this method's contract!
-		// https://blog.golang.org/go1.13-errors
-		return "", fmt.Errorf("Failed to retrieve project, pid: %s, err: %w", pid, err)
+		return "", err
 	}
 
 	networkName := networkFieldValue.Name
@@ -52,9 +62,9 @@ func retrieveServiceNetworkingNetworkProject(d *schema.ResourceData, config *Con
 		return nil, fmt.Errorf("Could not determine project")
 	}
 
-	project, err := config.NewResourceManagerClient(userAgent).Projects.Get(pid).Do()
+	project, err := retrieveProjectById(config, pid, userAgent)
 	if err != nil {
-		return nil, fmt.Errorf("Failed to retrieve project, pid: %s, err: %s", pid, err)
+		return nil, err
 	}
 
 	return project, nil
