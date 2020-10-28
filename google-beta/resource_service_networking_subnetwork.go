@@ -80,18 +80,12 @@ func resourceServiceNetworkingSubnetwork() *schema.Resource {
 				Description: `A name for the new subnet. Naming follows the same constraints as 
 [compute subnetworks](https://www.terraform.io/docs/providers/google/r/compute_subnetwork.html#name)`,
 			},
-			"region": {
-				Type:        schema.TypeString,
-				Required:    true,
-				ForceNew:    true,
-				Description: `The GCP region for this subnetwork.`,
-			},
 			"consumer": {
 				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: true,
-				Description: `A resource that represents the service consumer, such as "projects/123456". 
-The project number can be different from the value in the consumer network parameter. 
+				Description: `The project number or project id of the service consumer, such as "123456" or "foo-proj".
+The project number/id can be different from the value in the consumer network parameter.
 For example, the network might be part of a Shared VPC network. 
 In those cases, Service Networking validates that this resource belongs to that Shared VPC.`,
 			},
@@ -137,6 +131,13 @@ The range must be within the allocated range that is assigned to the private con
 				Description: `A list of secondary IP ranges to be created within the new subnetwork.`,
 			},
 
+			"region": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Computed:    true,
+				ForceNew:    true,
+				Description: `The GCP region for this subnetwork. If it is not provided, the provider project is used.`,
+			},
 			"project": {
 				Type:        schema.TypeString,
 				Optional:    true,
@@ -176,19 +177,19 @@ func resourceServiceNetworkingSubnetCreate(d *schema.ResourceData, meta interfac
 	network := d.Get("network").(string)
 	consumerNetworkName, err := retrieveServiceNetworkingNetworkName(d, config, network, userAgent)
 	if err != nil {
-		return errwrap.Wrapf("Failed to find Service Networking Connection, err: {{err}}", err)
+		return errwrap.Wrapf("Failed to find consumer network, err: {{err}}", err)
 	}
+	consumerProject, err := retrieveProjectById(config, d.Get("consumer").(string), userAgent)
+	if err != nil {
+		return errwrap.Wrapf("Failed to find consumer project, err: {{err}}", err)
+	}
+
 	ipPrefixLength := int64(d.Get("ip_prefix_length").(int))
-	secondaryIpRangeSpecs := expandSubnetworkSecondaryIpSpec(d.Get("secondary_ip_range_specs"))
 	peeringService := d.Get("service").(string)
 	parentService := formatParentService(peeringService)
+	secondaryIpRangeSpecs := expandSubnetworkSecondaryIpSpec(d.Get("secondary_ip_range_specs"))
 
 	if d.HasChange("validate") && d.Get("validate").(bool) {
-		consumerProject, err := retrieveServiceNetworkingNetworkProject(d, config, network, userAgent)
-		if err != nil {
-			return err
-		}
-
 		validateRequest := &servicenetworking.ValidateConsumerConfigRequest{
 			ConsumerNetwork: consumerNetworkName,
 			ConsumerProject: &servicenetworking.ConsumerProject{
@@ -214,7 +215,7 @@ func resourceServiceNetworkingSubnetCreate(d *schema.ResourceData, meta interfac
 	}
 
 	subnetRequest := &servicenetworking.AddSubnetworkRequest{
-		Consumer:              d.Get("consumer").(string),
+		Consumer:              formatConsumer(consumerProject.ProjectNumber),
 		ConsumerNetwork:       consumerNetworkName,
 		Description:           d.Get("description").(string),
 		IpPrefixLength:        ipPrefixLength,
@@ -435,6 +436,10 @@ func extractSecondaryPrefixLengths(ipRanges []*servicenetworking.SecondaryIpRang
 	}
 
 	return result
+}
+
+func formatConsumer(projectNumber int64) string {
+	return fmt.Sprintf("projects/%d", projectNumber)
 }
 
 // NOTE(nickmaatgoogle): An out of band aspect of this API is that creation of subnetworks requires service name
