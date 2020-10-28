@@ -340,6 +340,16 @@ Defaults to 1024.`,
 					},
 				},
 			},
+			"custom_request_headers": {
+				Type:     schema.TypeSet,
+				Optional: true,
+				Description: `Headers that the HTTP/S load balancer should add to proxied
+requests.`,
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
+				Set: schema.HashString,
+			},
 			"description": {
 				Type:        schema.TypeString,
 				Optional:    true,
@@ -888,6 +898,12 @@ func resourceComputeRegionBackendServiceCreate(d *schema.ResourceData, meta inte
 	} else if v, ok := d.GetOkExists("failover_policy"); !isEmptyValue(reflect.ValueOf(failoverPolicyProp)) && (ok || !reflect.DeepEqual(v, failoverPolicyProp)) {
 		obj["failoverPolicy"] = failoverPolicyProp
 	}
+	customRequestHeadersProp, err := expandComputeRegionBackendServiceCustomRequestHeaders(d.Get("custom_request_headers"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("custom_request_headers"); !isEmptyValue(reflect.ValueOf(customRequestHeadersProp)) && (ok || !reflect.DeepEqual(v, customRequestHeadersProp)) {
+		obj["customRequestHeaders"] = customRequestHeadersProp
+	}
 	fingerprintProp, err := expandComputeRegionBackendServiceFingerprint(d.Get("fingerprint"), d, config)
 	if err != nil {
 		return err
@@ -1094,6 +1110,9 @@ func resourceComputeRegionBackendServiceRead(d *schema.ResourceData, meta interf
 	if err := d.Set("creation_timestamp", flattenComputeRegionBackendServiceCreationTimestamp(res["creationTimestamp"], d, config)); err != nil {
 		return fmt.Errorf("Error reading RegionBackendService: %s", err)
 	}
+    if err := d.Set("custom_request_headers", flattenComputeRegionBackendServiceCustomRequestHeaders(res["customRequestHeaders"], d, config)); err != nil {
+        return fmt.Errorf("Error reading BackendService: %s", err)
+    }
 	if err := d.Set("description", flattenComputeRegionBackendServiceDescription(res["description"], d, config)); err != nil {
 		return fmt.Errorf("Error reading RegionBackendService: %s", err)
 	}
@@ -1197,6 +1216,12 @@ func resourceComputeRegionBackendServiceUpdate(d *schema.ResourceData, meta inte
 		return err
 	} else if v, ok := d.GetOkExists("description"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, descriptionProp)) {
 		obj["description"] = descriptionProp
+	}
+	customRequestHeadersProp, err := expandComputeRegionBackendServiceCustomRequestHeaders(d.Get("custom_request_headers"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("custom_request_headers"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, customRequestHeadersProp)) {
+		obj["customRequestHeaders"] = customRequestHeadersProp
 	}
 	failoverPolicyProp, err := expandComputeRegionBackendServiceFailoverPolicy(d.Get("failover_policy"), d, config)
 	if err != nil {
@@ -1860,6 +1885,13 @@ func flattenComputeRegionBackendServiceFailoverPolicy(v interface{}, d *schema.R
 }
 func flattenComputeRegionBackendServiceFailoverPolicyDisableConnectionDrainOnFailover(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
+}
+
+func flattenComputeRegionBackendServiceCustomRequestHeaders(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	if v == nil {
+		return v
+	}
+	return schema.NewSet(schema.HashString, v.([]interface{}))
 }
 
 func flattenComputeRegionBackendServiceFailoverPolicyDropTrafficIfUnhealthy(v interface{}, d *schema.ResourceData, config *Config) interface{} {
@@ -2629,6 +2661,11 @@ func expandComputeRegionBackendServiceConnectionDraining(v interface{}, d Terraf
 	}
 
 	return transformed, nil
+}
+
+func expandComputeRegionBackendServiceCustomRequestHeaders(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	v = v.(*schema.Set).List()
+	return v, nil
 }
 
 func expandComputeRegionBackendServiceConnectionDrainingConnectionDrainingTimeoutSec(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
