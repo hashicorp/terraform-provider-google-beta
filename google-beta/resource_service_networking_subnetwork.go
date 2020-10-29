@@ -10,7 +10,6 @@ import (
 	"github.com/hashicorp/errwrap"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
-	"google.golang.org/api/compute/v1"
 	"google.golang.org/api/servicenetworking/v1"
 )
 
@@ -61,21 +60,22 @@ func resourceServiceNetworkingSubnetwork() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			// NOTE(nickmaatgoogle): An out of band aspect of this API is that it uses a unique formatting of network
-			// different from the standard self_link URI.
+			// different from the standard self_link URI. This API uses project numbers only for the following two fields.
 			// Most service providers will not have permissions to call resource manager on a consumer's project to convert project-id
-			// into project-num on a consumer's project. So we enforce that only project numbers are used.
+			// into project-num. So we enforce that only project numbers are used.
 			"consumer_network": {
-				Type:     schema.TypeString,
-				Required: true,
-				ForceNew: true,
+				Type:         schema.TypeString,
+				Required:     true,
+				ForceNew:     true,
+				ValidateFunc: validateServiceNetworkingNetworkResource(),
 				Description: `Name of VPC network connected with service producers using VPC peering.
-The network must use project number and be of the format: 
-projects/12345/global/networks/consumernetwork`,
+The network must use project number and be of the format: projects/12345/global/networks/consumernetwork`,
 			},
 			"consumer": {
-				Type:     schema.TypeInt,
-				Required: true,
-				ForceNew: true,
+				Type:         schema.TypeInt,
+				Required:     true,
+				ForceNew:     true,
+				ValidateFunc: validation.IntAtLeast(1),
 				Description: `The project number of the service consumer, such as "123456".
 The project number can be different from the value in the consumer network parameter.
 For example, the network might be part of a Shared VPC network. 
@@ -196,10 +196,9 @@ Will fail resource creation faster with a minor startup delay.`,
 				Computed: true,
 			},
 			"full_name": {
-				Type:     schema.TypeString,
-				Computed: true,
-				Description: `Full subnetwork resource name returning project number of host project.
-projects/12345/regions/<region>/subnetworks/<subnetwork_name>`,
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: `Full subnetwork resource name returning project returned as: projects/<project_identifier>/regions/<region>/subnetworks/<subnetwork_name>`,
 			},
 		},
 	}
@@ -292,6 +291,7 @@ func resourceServiceNetworkingSubnetCreate(d *schema.ResourceData, meta interfac
 	}
 
 	if len(subnetworkRes.Name) == 0 || len(subnetworkRes.Network) == 0 {
+		d.SetId("")
 		return fmt.Errorf("Returned subnet resource is empty: %s", op.Name)
 	}
 
@@ -323,7 +323,7 @@ func resourceServiceNetworkingSubnetRead(d *schema.ResourceData, meta interface{
 		return errwrap.Wrapf("Unable to parse Service Networking Subnetwork id, err: {{err}}", err)
 	}
 
-	hostNetworkProject, err := retrieveServiceNetworkingNetworkProject(d, config, subnetworkId.HostNetwork, userAgent)
+	hostNetworkFieldValue, err := ParseNetworkFieldValue(subnetworkId.HostNetwork, d, config)
 	if err != nil {
 		return errwrap.Wrapf("Failed to find Service Networking Subnetwork, err: {{err}}", err)
 	}
@@ -338,7 +338,7 @@ func resourceServiceNetworkingSubnetRead(d *schema.ResourceData, meta interface{
 		return err
 	}
 
-	subnetwork, err := config.NewComputeClient(userAgent).Subnetworks.Get(string(hostNetworkProject.ProjectNumber), region, subnetworkId.Name).Do()
+	subnetwork, err := config.NewComputeClient(userAgent).Subnetworks.Get(hostNetworkFieldValue.Name, region, subnetworkId.Name).Do()
 	if err != nil {
 		return err
 	}
@@ -376,7 +376,7 @@ func resourceServiceNetworkingSubnetRead(d *schema.ResourceData, meta interface{
 	if err := d.Set("self_link", ConvertSelfLinkToV1(subnetwork.SelfLink)); err != nil {
 		return fmt.Errorf("Error reading Subnetwork: %s", err)
 	}
-	if err := d.Set("full_name", subnetworkFullName(string(hostNetworkProject.ProjectNumber), region, subnetwork.Name)); err != nil {
+	if err := d.Set("full_name", subnetworkFullName(hostNetworkFieldValue.Name, region, subnetwork.Name)); err != nil {
 		return fmt.Errorf("Error reading Subnetwork: %s", err)
 	}
 	return nil
@@ -396,28 +396,18 @@ func resourceServiceNetworkingSubnetDelete(d *schema.ResourceData, meta interfac
 
 	name := d.Get("name").(string)
 	hostNetwork := d.Get("host_network").(string)
-	hostProject, err := retrieveServiceNetworkingNetworkProject(d, config, hostNetwork, userAgent)
+	hostNetworkFieldValue, err := ParseNetworkFieldValue(hostNetwork, d, config)
 	if err != nil {
-		return err
+		return errwrap.Wrapf("Failed to retrieve network field value, err: {{err}}", err)
 	}
-	hostProjectNum := string(hostProject.ProjectNumber)
 
-	obj := make(map[string]interface{})
-	url := fmt.Sprintf("%s%s", config.ComputeBasePath, subnetworkFullName(string(hostProject.ProjectNumber), region, name))
-
-	res, err := sendRequestWithTimeout(config, "DELETE", hostProjectNum, url, userAgent, obj, d.Timeout(schema.TimeoutDelete))
+	op, err := config.NewComputeClient(userAgent).Subnetworks.Delete(hostNetworkFieldValue.Name, region, name).Do()
 	if err != nil {
 		return handleNotFoundError(err, d, fmt.Sprintf("ServiceNetworking Subnetwork %q", d.Id()))
 	}
 
-	op := &compute.Operation{}
-	err = Convert(res, op)
-	if err != nil {
-		return err
-	}
-
 	err = computeOperationWaitTime(
-		config, op, hostProjectNum, "Deleting subnetwork", userAgent, d.Timeout(schema.TimeoutDelete))
+		config, op, hostNetworkFieldValue.Name, "Deleting subnetwork", userAgent, d.Timeout(schema.TimeoutDelete))
 	if err != nil {
 		return err
 	}
@@ -494,6 +484,19 @@ func formatConsumer(projectNumber int64) string {
 	return fmt.Sprintf("projects/%d", projectNumber)
 }
 
+func getXPNHostProjectIdentifier(config *Config, project, userAgent string) (string, error) {
+	associatedHostProject, err := config.NewComputeClient(userAgent).Projects.GetXpnHost(project).Do()
+	if err != nil {
+		return "", err
+	}
+
+	if associatedHostProject.Id > 0 {
+		return string(associatedHostProject.Id), nil
+	} else {
+		return associatedHostProject.Name, nil
+	}
+}
+
 // NOTE(nickmaatgoogle): An out of band aspect of this API is that creation of subnetworks requires service name
 // appended with the subnetwork owner's project id, formatted as "services/<serviceName>/projects/<resourceProjectNumber>"
 func formatParentServiceWithProject(config *Config, service, pid, userAgent string) (string, error) {
@@ -505,6 +508,12 @@ func formatParentServiceWithProject(config *Config, service, pid, userAgent stri
 	}
 
 	return fmt.Sprintf("%s/projects/%d", parentService, project.ProjectNumber), nil
+}
+
+const networkResourcePattern = "^projects/[-1-9]+/global/.+$"
+
+func validateServiceNetworkingNetworkResource() schema.SchemaValidateFunc {
+	return validateRegexp(networkResourcePattern)
 }
 
 // NOTE(nickmaatgoogle): The Subnet resource in managed by this API doesn't have an Id field, in order
