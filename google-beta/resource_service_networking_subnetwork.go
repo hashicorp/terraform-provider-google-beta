@@ -10,6 +10,7 @@ import (
 	"github.com/hashicorp/errwrap"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
+	"google.golang.org/api/compute/v1"
 	"google.golang.org/api/servicenetworking/v1"
 )
 
@@ -161,7 +162,7 @@ Will fail resource creation faster with a minor startup delay.`,
 			},
 
 			"host_network": {
-				Type:        schema.TypeBool,
+				Type:        schema.TypeString,
 				Computed:    true,
 				Description: `This is the network managed in a separate host project that the created subnetwork belongs to.`,
 			},
@@ -287,6 +288,7 @@ func resourceServiceNetworkingSubnetCreate(d *schema.ResourceData, meta interfac
 	if err := serviceNetworkOperationWaitTimeWithSubnetworkResponse(
 		config, op, &subnetworkRes, "Create Service Networking Subnetwork", userAgent,
 		d.Timeout(schema.TimeoutCreate)); err != nil {
+		d.SetId("")
 		return nil
 	}
 
@@ -328,6 +330,8 @@ func resourceServiceNetworkingSubnetRead(d *schema.ResourceData, meta interface{
 		return errwrap.Wrapf("Failed to find Service Networking Subnetwork, err: {{err}}", err)
 	}
 
+	hostProject := hostNetworkFieldValue.Project
+
 	region, err := getRegion(d, config)
 	if err != nil {
 		return err
@@ -338,7 +342,7 @@ func resourceServiceNetworkingSubnetRead(d *schema.ResourceData, meta interface{
 		return err
 	}
 
-	subnetwork, err := config.NewComputeClient(userAgent).Subnetworks.Get(hostNetworkFieldValue.Name, region, subnetworkId.Name).Do()
+	subnetwork, err := config.NewComputeClient(userAgent).Subnetworks.Get(hostProject, region, subnetworkId.Name).Do()
 	if err != nil {
 		return err
 	}
@@ -364,10 +368,10 @@ func resourceServiceNetworkingSubnetRead(d *schema.ResourceData, meta interface{
 	if err := d.Set("project", project); err != nil {
 		return fmt.Errorf("Error reading resource project: %s", err)
 	}
-	if err := d.Set("region", subnetwork.Region); err != nil {
+	if err := d.Set("region", NameFromSelfLinkStateFunc(subnetwork.Region)); err != nil {
 		return fmt.Errorf("Error reading Subnetwork: %s", err)
 	}
-	if err := d.Set("secondary_ip_range", subnetwork.SecondaryIpRanges); err != nil {
+	if err := d.Set("secondary_ip_range", flattenServiceNetworkingSubnetworkSecondaryIpRange(subnetwork.SecondaryIpRanges)); err != nil {
 		return fmt.Errorf("Error reading Subnetwork: %s", err)
 	}
 	if err := d.Set("ip_cidr_range", subnetwork.IpCidrRange); err != nil {
@@ -376,7 +380,7 @@ func resourceServiceNetworkingSubnetRead(d *schema.ResourceData, meta interface{
 	if err := d.Set("self_link", ConvertSelfLinkToV1(subnetwork.SelfLink)); err != nil {
 		return fmt.Errorf("Error reading Subnetwork: %s", err)
 	}
-	if err := d.Set("full_name", subnetworkFullName(hostNetworkFieldValue.Name, region, subnetwork.Name)); err != nil {
+	if err := d.Set("full_name", subnetworkFullName(hostProject, region, subnetwork.Name)); err != nil {
 		return fmt.Errorf("Error reading Subnetwork: %s", err)
 	}
 	return nil
@@ -395,19 +399,20 @@ func resourceServiceNetworkingSubnetDelete(d *schema.ResourceData, meta interfac
 	}
 
 	name := d.Get("name").(string)
-	hostNetwork := d.Get("host_network").(string)
-	hostNetworkFieldValue, err := ParseNetworkFieldValue(hostNetwork, d, config)
+	hostNetworkFieldValue, err := ParseNetworkFieldValue(d.Get("host_network").(string), d, config)
 	if err != nil {
 		return errwrap.Wrapf("Failed to retrieve network field value, err: {{err}}", err)
 	}
 
-	op, err := config.NewComputeClient(userAgent).Subnetworks.Delete(hostNetworkFieldValue.Name, region, name).Do()
+	hostProject := hostNetworkFieldValue.Project
+
+	op, err := config.NewComputeClient(userAgent).Subnetworks.Delete(hostProject, region, name).Do()
 	if err != nil {
 		return handleNotFoundError(err, d, fmt.Sprintf("ServiceNetworking Subnetwork %q", d.Id()))
 	}
 
 	err = computeOperationWaitTime(
-		config, op, hostNetworkFieldValue.Name, "Deleting subnetwork", userAgent, d.Timeout(schema.TimeoutDelete))
+		config, op, hostProject, "Deleting subnetwork", userAgent, d.Timeout(schema.TimeoutDelete))
 	if err != nil {
 		return err
 	}
@@ -451,6 +456,17 @@ func subnetworkFullName(project, region, network string) string {
 	return fmt.Sprintf("projects/%s/regions/%s/subnetworks/%s", project, region, network)
 }
 
+func flattenServiceNetworkingSubnetworkSecondaryIpRange(secondaryRanges []*compute.SubnetworkSecondaryRange) interface{} {
+	transformed := make([]interface{}, 0, len(secondaryRanges))
+	for _, secondaryRange := range secondaryRanges {
+		transformed = append(transformed, map[string]interface{}{
+			"range_name":    secondaryRange.RangeName,
+			"ip_cidr_range": secondaryRange.IpCidrRange,
+		})
+	}
+	return transformed
+}
+
 func expandSubnetworkSecondaryIpSpec(configured interface{}) []*servicenetworking.SecondaryIpRangeSpec {
 	l := configured.([]interface{})
 	if len(l) == 0 {
@@ -484,19 +500,6 @@ func formatConsumer(projectNumber int64) string {
 	return fmt.Sprintf("projects/%d", projectNumber)
 }
 
-func getXPNHostProjectIdentifier(config *Config, project, userAgent string) (string, error) {
-	associatedHostProject, err := config.NewComputeClient(userAgent).Projects.GetXpnHost(project).Do()
-	if err != nil {
-		return "", err
-	}
-
-	if associatedHostProject.Id > 0 {
-		return string(associatedHostProject.Id), nil
-	} else {
-		return associatedHostProject.Name, nil
-	}
-}
-
 // NOTE(nickmaatgoogle): An out of band aspect of this API is that creation of subnetworks requires service name
 // appended with the subnetwork owner's project id, formatted as "services/<serviceName>/projects/<resourceProjectNumber>"
 func formatParentServiceWithProject(config *Config, service, pid, userAgent string) (string, error) {
@@ -510,7 +513,7 @@ func formatParentServiceWithProject(config *Config, service, pid, userAgent stri
 	return fmt.Sprintf("%s/projects/%d", parentService, project.ProjectNumber), nil
 }
 
-const networkResourcePattern = "^projects/[-1-9]+/global/.+$"
+const networkResourcePattern = "^projects/[-1-9][-0-9]+/global/.+$"
 
 func validateServiceNetworkingNetworkResource() schema.SchemaValidateFunc {
 	return validateRegexp(networkResourcePattern)
