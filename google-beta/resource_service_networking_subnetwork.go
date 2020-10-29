@@ -15,7 +15,6 @@ import (
 )
 
 var (
-	// TODO(nickmaatgoogle): enable this feature once api release v0.34.0 is released
 	secondaryIpRangeSpec = &schema.Resource{
 		Schema: map[string]*schema.Schema{
 			"range_name": {
@@ -126,7 +125,6 @@ This value combined with the IP prefix range is the CIDR range for the subnet.
 The range must be within the allocated range that is assigned to the private connection.`,
 				ValidateFunc: validation.IsIPv4Address,
 			},
-			// TODO(nickmaatgoogle): enable this feature once api release v0.34.0 is released
 			"secondary_ip_range_spec": {
 				Type:     schema.TypeList,
 				Computed: true,

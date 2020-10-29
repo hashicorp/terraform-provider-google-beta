@@ -51,25 +51,6 @@ func retrieveServiceNetworkingNetworkName(d *schema.ResourceData, config *Config
 
 }
 
-func retrieveServiceNetworkingNetworkProject(d *schema.ResourceData, config *Config, network, userAgent string) (*cloudresourcemanager.Project, error) {
-	networkFieldValue, err := ParseNetworkFieldValue(network, d, config)
-	if err != nil {
-		return nil, errwrap.Wrapf("Failed to retrieve network field value, err: {{err}}", err)
-	}
-
-	pid := networkFieldValue.Project
-	if pid == "" {
-		return nil, fmt.Errorf("Could not determine project")
-	}
-
-	project, err := retrieveProjectById(config, pid, userAgent)
-	if err != nil {
-		return nil, err
-	}
-
-	return project, nil
-}
-
 const parentServicePattern = "^services/.+$"
 
 // NOTE(craigatgoogle): An out of band aspect of this API is that it requires the service name to be
