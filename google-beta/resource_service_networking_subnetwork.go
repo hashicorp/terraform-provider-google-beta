@@ -60,13 +60,28 @@ func resourceServiceNetworkingSubnetwork() *schema.Resource {
 		},
 
 		Schema: map[string]*schema.Schema{
-			"network": {
-				Type:             schema.TypeString,
-				Required:         true,
-				ForceNew:         true,
-				DiffSuppressFunc: compareSelfLinkOrResourceName,
-				Description:      `Name of VPC network connected with service producers using VPC peering.`,
+			// NOTE(nickmaatgoogle): An out of band aspect of this API is that it uses a unique formatting of network
+			// different from the standard self_link URI.
+			// Most service providers will not have permissions to call resource manager on a consumer's project to convert project-id
+			// into project-num on a consumer's project. So we enforce that only project numbers are used.
+			"consumer_network": {
+				Type:     schema.TypeString,
+				Required: true,
+				ForceNew: true,
+				Description: `Name of VPC network connected with service producers using VPC peering.
+The network must use project number and be of the format: 
+projects/12345/global/networks/consumernetwork`,
 			},
+			"consumer": {
+				Type:     schema.TypeInt,
+				Required: true,
+				ForceNew: true,
+				Description: `The project number of the service consumer, such as "123456".
+The project number can be different from the value in the consumer network parameter.
+For example, the network might be part of a Shared VPC network. 
+In those cases, Service Networking validates that this resource belongs to that Shared VPC.`,
+			},
+
 			"service": {
 				Type:        schema.TypeString,
 				Required:    true,
@@ -80,15 +95,6 @@ func resourceServiceNetworkingSubnetwork() *schema.Resource {
 				Description: `A name for the new subnet. Naming follows the same constraints as 
 [compute subnetworks](https://www.terraform.io/docs/providers/google/r/compute_subnetwork.html#name)`,
 			},
-			"consumer": {
-				Type:     schema.TypeString,
-				Required: true,
-				ForceNew: true,
-				Description: `The project number or project id of the service consumer, such as "123456" or "foo-proj".
-The project number/id can be different from the value in the consumer network parameter.
-For example, the network might be part of a Shared VPC network. 
-In those cases, Service Networking validates that this resource belongs to that Shared VPC.`,
-			},
 			"ip_prefix_length": {
 				Type:     schema.TypeInt,
 				Required: true,
@@ -101,7 +107,7 @@ The IP address range is drawn from a pool of available ranges in the service con
 				Type:        schema.TypeString,
 				Optional:    true,
 				ForceNew:    true,
-				Description: `Attach context onto this subnet resource.`,
+				Description: `Attach context onto this subnetwork resource.`,
 			},
 			"subnetwork_users": {
 				Type:        schema.TypeList,
@@ -153,6 +159,48 @@ The range must be within the allocated range that is assigned to the private con
 Validation will perform basic sanity checking on permissions and connectivity prerequisites. 
 Will fail resource creation faster with a minor startup delay.`,
 			},
+
+			"host_network": {
+				Type:        schema.TypeBool,
+				Computed:    true,
+				Description: `This is the network managed in a separate host project that the created subnetwork belongs to.`,
+			},
+			"outside_allocation": {
+				Type:        schema.TypeBool,
+				Computed:    true,
+				Description: `Marks if this subnetwork is a discovered subnet that is not within the current consumer allocated ranges.`,
+			},
+			"secondary_ip_range": {
+				Type:        schema.TypeList,
+				Computed:    true,
+				Description: `Returns secondary range information per [compute subnetworks secondary ip range](https://www.terraform.io/docs/providers/google/r/compute_subnetwork.html#secondary_ip_range)`,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"ip_cidr_range": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+						"range_name": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+					},
+				},
+			},
+			"ip_cidr_range": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"self_link": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"full_name": {
+				Type:     schema.TypeString,
+				Computed: true,
+				Description: `Full subnetwork resource name returning project number of host project.
+projects/12345/regions/<region>/subnetworks/<subnetwork_name>`,
+			},
 		},
 	}
 }
@@ -174,26 +222,19 @@ func resourceServiceNetworkingSubnetCreate(d *schema.ResourceData, meta interfac
 		return err
 	}
 
-	network := d.Get("network").(string)
-	consumerNetworkName, err := retrieveServiceNetworkingNetworkName(d, config, network, userAgent)
-	if err != nil {
-		return errwrap.Wrapf("Failed to find consumer network, err: {{err}}", err)
-	}
-	consumerProject, err := retrieveProjectById(config, d.Get("consumer").(string), userAgent)
-	if err != nil {
-		return errwrap.Wrapf("Failed to find consumer project, err: {{err}}", err)
-	}
+	consumerNetworkName := d.Get("consumer_network").(string)
+	consumerProjectNumber := int64(d.Get("consumer").(int))
 
 	ipPrefixLength := int64(d.Get("ip_prefix_length").(int))
 	peeringService := d.Get("service").(string)
 	parentService := formatParentService(peeringService)
-	secondaryIpRangeSpecs := expandSubnetworkSecondaryIpSpec(d.Get("secondary_ip_range_specs"))
+	secondaryIpRangeSpecs := expandSubnetworkSecondaryIpSpec(d.Get("secondary_ip_range_spec"))
 
 	if d.HasChange("validate") && d.Get("validate").(bool) {
 		validateRequest := &servicenetworking.ValidateConsumerConfigRequest{
 			ConsumerNetwork: consumerNetworkName,
 			ConsumerProject: &servicenetworking.ConsumerProject{
-				ProjectNum: consumerProject.ProjectNumber,
+				ProjectNum: consumerProjectNumber,
 			},
 			ValidateNetwork: true,
 			RangeReservation: &servicenetworking.RangeReservation{
@@ -209,13 +250,13 @@ func resourceServiceNetworkingSubnetCreate(d *schema.ResourceData, meta interfac
 		}
 
 		if !res.IsValid {
-			return fmt.Errorf("Error validating subnet creation request: %s", res.ValidationError)
+			return fmt.Errorf("Error validating subnetwork creation request: %s", res.ValidationError)
 		}
 		log.Printf("[INFO] Service networking subnetwork configuration valid.")
 	}
 
 	subnetRequest := &servicenetworking.AddSubnetworkRequest{
-		Consumer:              formatConsumer(consumerProject.ProjectNumber),
+		Consumer:              formatConsumer(consumerProjectNumber),
 		ConsumerNetwork:       consumerNetworkName,
 		Description:           d.Get("description").(string),
 		IpPrefixLength:        ipPrefixLength,
@@ -242,7 +283,7 @@ func resourceServiceNetworkingSubnetCreate(d *schema.ResourceData, meta interfac
 
 	// NOTE(nickmaatgoogle): An out of band aspect of this API is that it returns metadata about the resource
 	// inside the operation. The subnetwork returned will subsequently be managed by regular compute_subnetwork apis for read and delete.
-	// So we record relevant metadata after the operation finishes.
+	// We record relevant metadata after the operation finishes.
 	var subnetworkRes servicenetworking.Subnetwork
 	if err := serviceNetworkOperationWaitTimeWithSubnetworkResponse(
 		config, op, &subnetworkRes, "Create Service Networking Subnetwork", userAgent,
@@ -258,13 +299,13 @@ func resourceServiceNetworkingSubnetCreate(d *schema.ResourceData, meta interfac
 	// A subnetwork created by service networking belongs to a separate host project different from the resource project.
 	// A provided consumer network is peered with this subnetwork through the service network peering service.
 	subnetwork := subnetworkId{
-		ConsumerNetwork: network,
+		ConsumerNetwork: consumerNetworkName,
 		HostNetwork:     subnetworkRes.Network,
 		Name:            subnetworkRes.Name,
 		Service:         peeringService,
 	}
 	d.SetId(subnetwork.Id())
-	if err = recordSubnetworkMetadata(d, subnetworkRes); err != nil {
+	if err := recordSubnetworkMetadata(d, subnetworkRes); err != nil {
 		return err
 	}
 	return resourceServiceNetworkingSubnetRead(d, meta)
