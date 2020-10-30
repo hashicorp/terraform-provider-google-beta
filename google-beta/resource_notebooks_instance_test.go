@@ -74,7 +74,7 @@ func testAccNotebooksInstance_create_vm_image(name string) string {
 resource "google_notebooks_instance" "test" {
   name = "%s"
   location = "us-west1-a"
-  machine_type = "n1-standard-1"
+  machine_type = "e2-medium"
   metadata = {
     proxy-mode = "service_account"
     terraform  = "true"
@@ -92,7 +92,7 @@ func testAccNotebooksInstance_basic(context map[string]interface{}) string {
 resource "google_notebooks_instance" "instance" {
   name = "tf-test-notebooks-instance%{random_suffix}"
   location = "us-central1-a"
-  machine_type = "n1-standard-1"
+  machine_type = "e2-medium"
 
   vm_image {
     project      = "deeplearning-platform-release"
@@ -107,7 +107,7 @@ func testAccNotebooksInstance_update(context map[string]interface{}) string {
 resource "google_notebooks_instance" "instance" {
   name = "tf-test-notebooks-instance%{random_suffix}"
   location = "us-central1-a"
-  machine_type = "n1-standard-1"
+  machine_type = "e2-medium"
 
   vm_image {
     project      = "deeplearning-platform-release"

@@ -221,6 +221,48 @@ func TestAccContainerCluster_withNotificationConfig(t *testing.T) {
 	})
 }
 
+func TestAccContainerCluster_withConfidentialNodes(t *testing.T) {
+	t.Parallel()
+
+	clusterName := fmt.Sprintf("tf-test-cluster-%s", randString(t, 10))
+	npName := fmt.Sprintf("tf-test-cluster-nodepool-%s", randString(t, 10))
+
+	vcrTest(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckContainerClusterDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccContainerCluster_withConfidentialNodes(clusterName, npName),
+			},
+			{
+				ResourceName:            "google_container_cluster.confidential_nodes",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"min_master_version"},
+			},
+			{
+				Config: testAccContainerCluster_disableConfidentialNodes(clusterName, npName),
+			},
+			{
+				ResourceName:            "google_container_cluster.confidential_nodes",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"min_master_version"},
+			},
+			{
+				Config: testAccContainerCluster_withConfidentialNodes(clusterName, npName),
+			},
+			{
+				ResourceName:            "google_container_cluster.confidential_nodes",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"min_master_version"},
+			},
+		},
+	})
+}
+
 func TestAccContainerCluster_withMasterAuthConfig(t *testing.T) {
 	t.Parallel()
 
@@ -2351,6 +2393,61 @@ resource "google_container_cluster" "notification_config" {
 }
 `, clusterName)
 }
+func testAccContainerCluster_withConfidentialNodes(clusterName string, npName string) string {
+	return fmt.Sprintf(`
+resource "google_container_cluster" "confidential_nodes" {
+  name               = "%s"
+  location           = "us-central1-a"
+  enable_shielded_nodes = true
+  // Minimum version for confidential node support.
+  // Can be removed once default version is greater or equal to this version.
+  min_master_version = "1.18.9-gke.1501"
+  release_channel {
+    channel = "RAPID"
+  }
+
+  node_pool {
+    name = "%s"
+    initial_node_count = 1
+    node_config {
+      machine_type = "n2d-standard-2"
+    }
+  }
+
+  confidential_nodes {
+    enabled = true
+  }
+}
+`, clusterName, npName)
+}
+
+func testAccContainerCluster_disableConfidentialNodes(clusterName string, npName string) string {
+	return fmt.Sprintf(`
+resource "google_container_cluster" "confidential_nodes" {
+  name               = "%s"
+  location           = "us-central1-a"
+  enable_shielded_nodes = true
+  // Minimum version for confidential node support.
+  // Can be removed once default version is greater or equal to this version.
+  min_master_version = "1.18.9-gke.1501"
+  release_channel {
+    channel = "RAPID"
+  }
+
+  node_pool {
+    name = "%s"
+    initial_node_count = 1
+    node_config {
+      machine_type = "n2d-standard-2"
+    }
+  }
+
+  confidential_nodes {
+    enabled = false
+  }
+}
+`, clusterName, npName)
+}
 
 func testAccContainerCluster_withMasterAuth(clusterName string) string {
 	return fmt.Sprintf(`
@@ -2795,7 +2892,7 @@ resource "google_container_cluster" "with_node_config" {
   initial_node_count = 1
 
   node_config {
-    machine_type    = "n1-standard-1"
+    machine_type    = "n1-standard-1"  // can't be e2 because of local-ssd
     disk_size_gb    = 15
     disk_type       = "pd-ssd"
     local_ssd_count = 1
@@ -2844,7 +2941,7 @@ resource "google_container_cluster" "with_node_config" {
   initial_node_count = 1
 
   node_config {
-    machine_type    = "n1-standard-1"
+    machine_type    = "n1-standard-1"  // can't be e2 because of local-ssd
     disk_size_gb    = 15
     disk_type       = "pd-ssd"
     local_ssd_count = 1
@@ -2909,10 +3006,9 @@ resource "google_container_cluster" "with_node_config" {
   initial_node_count = 1
 
   node_config {
-    machine_type    = "n1-standard-1"
+    machine_type    = "e2-medium"
     disk_size_gb    = 15
     disk_type       = "pd-ssd"
-    local_ssd_count = 1
     oauth_scopes = [
       "https://www.googleapis.com/auth/monitoring",
       "https://www.googleapis.com/auth/compute",
@@ -2929,7 +3025,6 @@ resource "google_container_cluster" "with_node_config" {
     }
     tags             = ["foo", "bar"]
     preemptible      = true
-    min_cpu_platform = "Intel Broadwell"
 
     // Updatable fields
     image_type = "COS"
@@ -2982,7 +3077,7 @@ resource "google_container_cluster" "with_sandbox_config" {
   min_master_version = data.google_container_engine_versions.central1a.latest_master_version
 
   node_config {
-    machine_type = "n1-standard-1"
+    machine_type = "n1-standard-1"  // can't be e2 because of gvisor
     oauth_scopes = [
       "https://www.googleapis.com/auth/logging.write",
       "https://www.googleapis.com/auth/monitoring",
@@ -3021,7 +3116,7 @@ resource "google_container_cluster" "with_sandbox_config" {
   min_master_version = data.google_container_engine_versions.central1a.latest_master_version
 
   node_config {
-    machine_type = "n1-standard-1"
+    machine_type = "n1-standard-1"  // can't be e2 because of gvisor
     oauth_scopes = [
       "https://www.googleapis.com/auth/logging.write",
       "https://www.googleapis.com/auth/monitoring",
@@ -3485,7 +3580,7 @@ resource "google_container_cluster" "with_node_pool_node_config" {
     name       = "%s"
     node_count = 2
     node_config {
-      machine_type    = "n1-standard-1"
+      machine_type    = "n1-standard-1"  // can't be e2 because of local-ssd
       disk_size_gb    = 15
       local_ssd_count = 1
       oauth_scopes = [

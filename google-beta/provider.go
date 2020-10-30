@@ -159,6 +159,14 @@ func Provider() *schema.Provider {
 					"GOOGLE_ACTIVE_DIRECTORY_CUSTOM_ENDPOINT",
 				}, ActiveDirectoryDefaultBasePath),
 			},
+			"api_gateway_custom_endpoint": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validateCustomEndpoint,
+				DefaultFunc: schema.MultiEnvDefaultFunc([]string{
+					"GOOGLE_API_GATEWAY_CUSTOM_ENDPOINT",
+				}, ApiGatewayDefaultBasePath),
+			},
 			"app_engine_custom_endpoint": {
 				Type:         schema.TypeString,
 				Optional:     true,
@@ -757,9 +765,9 @@ func Provider() *schema.Provider {
 	return provider
 }
 
-// Generated resources: 196
-// Generated IAM resources: 87
-// Total generated resources: 283
+// Generated resources: 199
+// Generated IAM resources: 102
+// Total generated resources: 301
 func ResourceMap() map[string]*schema.Resource {
 	resourceMap, _ := ResourceMapWithErrors()
 	return resourceMap
@@ -780,6 +788,18 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_access_context_manager_service_perimeter_resource":     resourceAccessContextManagerServicePerimeterResource(),
 			"google_active_directory_domain":                               resourceActiveDirectoryDomain(),
 			"google_active_directory_domain_trust":                         resourceActiveDirectoryDomainTrust(),
+			"google_api_gateway_api":                                       resourceApiGatewayApi(),
+			"google_api_gateway_api_iam_binding":                           ResourceIamBinding(ApiGatewayApiIamSchema, ApiGatewayApiIamUpdaterProducer, ApiGatewayApiIdParseFunc),
+			"google_api_gateway_api_iam_member":                            ResourceIamMember(ApiGatewayApiIamSchema, ApiGatewayApiIamUpdaterProducer, ApiGatewayApiIdParseFunc),
+			"google_api_gateway_api_iam_policy":                            ResourceIamPolicy(ApiGatewayApiIamSchema, ApiGatewayApiIamUpdaterProducer, ApiGatewayApiIdParseFunc),
+			"google_api_gateway_api_config":                                resourceApiGatewayApiConfig(),
+			"google_api_gateway_api_config_iam_binding":                    ResourceIamBinding(ApiGatewayApiConfigIamSchema, ApiGatewayApiConfigIamUpdaterProducer, ApiGatewayApiConfigIdParseFunc),
+			"google_api_gateway_api_config_iam_member":                     ResourceIamMember(ApiGatewayApiConfigIamSchema, ApiGatewayApiConfigIamUpdaterProducer, ApiGatewayApiConfigIdParseFunc),
+			"google_api_gateway_api_config_iam_policy":                     ResourceIamPolicy(ApiGatewayApiConfigIamSchema, ApiGatewayApiConfigIamUpdaterProducer, ApiGatewayApiConfigIdParseFunc),
+			"google_api_gateway_gateway":                                   resourceApiGatewayGateway(),
+			"google_api_gateway_gateway_iam_binding":                       ResourceIamBinding(ApiGatewayGatewayIamSchema, ApiGatewayGatewayIamUpdaterProducer, ApiGatewayGatewayIdParseFunc),
+			"google_api_gateway_gateway_iam_member":                        ResourceIamMember(ApiGatewayGatewayIamSchema, ApiGatewayGatewayIamUpdaterProducer, ApiGatewayGatewayIdParseFunc),
+			"google_api_gateway_gateway_iam_policy":                        ResourceIamPolicy(ApiGatewayGatewayIamSchema, ApiGatewayGatewayIamUpdaterProducer, ApiGatewayGatewayIdParseFunc),
 			"google_app_engine_domain_mapping":                             resourceAppEngineDomainMapping(),
 			"google_app_engine_firewall_rule":                              resourceAppEngineFirewallRule(),
 			"google_app_engine_standard_app_version":                       resourceAppEngineStandardAppVersion(),
@@ -855,6 +875,9 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_compute_instance_group_named_port":                     resourceComputeInstanceGroupNamedPort(),
 			"google_compute_interconnect_attachment":                       resourceComputeInterconnectAttachment(),
 			"google_compute_machine_image":                                 resourceComputeMachineImage(),
+			"google_compute_machine_image_iam_binding":                     ResourceIamBinding(ComputeMachineImageIamSchema, ComputeMachineImageIamUpdaterProducer, ComputeMachineImageIdParseFunc),
+			"google_compute_machine_image_iam_member":                      ResourceIamMember(ComputeMachineImageIamSchema, ComputeMachineImageIamUpdaterProducer, ComputeMachineImageIdParseFunc),
+			"google_compute_machine_image_iam_policy":                      ResourceIamPolicy(ComputeMachineImageIamSchema, ComputeMachineImageIamUpdaterProducer, ComputeMachineImageIdParseFunc),
 			"google_compute_network":                                       resourceComputeNetwork(),
 			"google_compute_network_endpoint":                              resourceComputeNetworkEndpoint(),
 			"google_compute_network_endpoint_group":                        resourceComputeNetworkEndpointGroup(),
@@ -971,6 +994,9 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_iap_tunnel_instance_iam_binding":                       ResourceIamBinding(IapTunnelInstanceIamSchema, IapTunnelInstanceIamUpdaterProducer, IapTunnelInstanceIdParseFunc),
 			"google_iap_tunnel_instance_iam_member":                        ResourceIamMember(IapTunnelInstanceIamSchema, IapTunnelInstanceIamUpdaterProducer, IapTunnelInstanceIdParseFunc),
 			"google_iap_tunnel_instance_iam_policy":                        ResourceIamPolicy(IapTunnelInstanceIamSchema, IapTunnelInstanceIamUpdaterProducer, IapTunnelInstanceIdParseFunc),
+			"google_iap_tunnel_iam_binding":                                ResourceIamBinding(IapTunnelIamSchema, IapTunnelIamUpdaterProducer, IapTunnelIdParseFunc),
+			"google_iap_tunnel_iam_member":                                 ResourceIamMember(IapTunnelIamSchema, IapTunnelIamUpdaterProducer, IapTunnelIdParseFunc),
+			"google_iap_tunnel_iam_policy":                                 ResourceIamPolicy(IapTunnelIamSchema, IapTunnelIamUpdaterProducer, IapTunnelIdParseFunc),
 			"google_iap_brand":                                             resourceIapBrand(),
 			"google_iap_client":                                            resourceIapClient(),
 			"google_identity_platform_default_supported_idp_config":        resourceIdentityPlatformDefaultSupportedIdpConfig(),
@@ -1074,6 +1100,7 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_composer_environment":                  resourceComposerEnvironment(),
 			"google_compute_attached_disk":                 resourceComputeAttachedDisk(),
 			"google_compute_instance":                      resourceComputeInstance(),
+			"google_compute_instance_from_machine_image":   resourceComputeInstanceFromMachineImage(),
 			"google_compute_instance_from_template":        resourceComputeInstanceFromTemplate(),
 			"google_compute_instance_group":                resourceComputeInstanceGroup(),
 			"google_compute_instance_group_manager":        resourceComputeInstanceGroupManager(),
@@ -1240,6 +1267,7 @@ func providerConfigure(ctx context.Context, d *schema.ResourceData, p *schema.Pr
 	config.AccessApprovalBasePath = d.Get("access_approval_custom_endpoint").(string)
 	config.AccessContextManagerBasePath = d.Get("access_context_manager_custom_endpoint").(string)
 	config.ActiveDirectoryBasePath = d.Get("active_directory_custom_endpoint").(string)
+	config.ApiGatewayBasePath = d.Get("api_gateway_custom_endpoint").(string)
 	config.AppEngineBasePath = d.Get("app_engine_custom_endpoint").(string)
 	config.ArtifactRegistryBasePath = d.Get("artifact_registry_custom_endpoint").(string)
 	config.BigQueryBasePath = d.Get("big_query_custom_endpoint").(string)
