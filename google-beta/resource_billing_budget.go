@@ -337,7 +337,7 @@ func resourceBillingBudgetRead(d *schema.ResourceData, meta interface{}) error {
 	}
 	// Terraform must set the top level schema field, but since this object contains collapsed properties
 	// it's difficult to know what the top level should be. Instead we just loop over the map returned from flatten.
-	if flattenedProp := flattenBillingBudgetBudget(res["budget"], d, config); flattenedProp != nil {
+	if flattenedProp := flattenBillingBudgetBudget(res, d, config); flattenedProp != nil {
 		if gerr, ok := flattenedProp.(*googleapi.Error); ok {
 			return fmt.Errorf("Error reading Budget: %s", gerr)
 		}
