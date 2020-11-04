@@ -335,6 +335,15 @@ func resourceBillingBudgetRead(d *schema.ResourceData, meta interface{}) error {
 	if err := d.Set("name", flattenBillingBudgetName(res["name"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Budget: %s", err)
 	}
+
+	ba, err := extractBillingAccountFromBudgetName(res["name"])
+	if err != nil {
+		return fmt.Errorf("Error reading Budget: %s", err)
+	}
+	if err := d.Set("billing_account", ba); err != nil {
+		return fmt.Errorf("Error reading Budget: %s", err)
+	}
+
 	// Terraform must set the top level schema field, but since this object contains collapsed properties
 	// it's difficult to know what the top level should be. Instead we just loop over the map returned from flatten.
 	if flattenedProp := flattenBillingBudgetBudget(res, d, config); flattenedProp != nil {
@@ -435,6 +444,14 @@ func resourceBillingBudgetImport(d *schema.ResourceData, meta interface{}) ([]*s
 	}
 
 	return []*schema.ResourceData{d}, nil
+}
+
+func extractBillingAccountFromBudgetName(v interface{}) (interface{}, error) {
+	re, _ := regexp.Compile("^billingAccounts/(?P<billing_account>[^/]+)")
+	if fieldValues := re.FindStringSubmatch(v.(string)); fieldValues != nil {
+		return fieldValues[1], nil
+	}
+	return nil, fmt.Errorf("Could not extract billing account from budiget name: %s", v)
 }
 
 func flattenBillingBudgetName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
