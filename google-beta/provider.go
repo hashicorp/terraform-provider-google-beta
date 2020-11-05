@@ -1179,6 +1179,7 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_monitoring_dashboard":                  resourceMonitoringDashboard(),
 			"google_project_service_identity":              resourceProjectServiceIdentity(),
 			"google_service_networking_connection":         resourceServiceNetworkingConnection(),
+			"google_service_networking_role_binding":       resourceServiceNetworkingRoleBinding(),
 			"google_spanner_instance_iam_binding":          ResourceIamBinding(IamSpannerInstanceSchema, NewSpannerInstanceIamUpdater, SpannerInstanceIdParseFunc),
 			"google_spanner_instance_iam_member":           ResourceIamMember(IamSpannerInstanceSchema, NewSpannerInstanceIamUpdater, SpannerInstanceIdParseFunc),
 			"google_spanner_instance_iam_policy":           ResourceIamPolicy(IamSpannerInstanceSchema, NewSpannerInstanceIamUpdater, SpannerInstanceIdParseFunc),
