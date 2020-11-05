@@ -156,7 +156,7 @@ func resourceArtifactRegistryRepositoryCreate(d *schema.ResourceData, meta inter
 
 	project, err := getProject(d, config)
 	if err != nil {
-		return err
+		return fmt.Errorf("Error fetching project for Repository: %s", err)
 	}
 	billingProject = project
 
@@ -221,7 +221,7 @@ func resourceArtifactRegistryRepositoryRead(d *schema.ResourceData, meta interfa
 
 	project, err := getProject(d, config)
 	if err != nil {
-		return err
+		return fmt.Errorf("Error fetching project for Repository: %s", err)
 	}
 	billingProject = project
 
@@ -275,7 +275,7 @@ func resourceArtifactRegistryRepositoryUpdate(d *schema.ResourceData, meta inter
 
 	project, err := getProject(d, config)
 	if err != nil {
-		return err
+		return fmt.Errorf("Error fetching project for Repository: %s", err)
 	}
 	billingProject = project
 
@@ -347,7 +347,7 @@ func resourceArtifactRegistryRepositoryDelete(d *schema.ResourceData, meta inter
 
 	project, err := getProject(d, config)
 	if err != nil {
-		return err
+		return fmt.Errorf("Error fetching project for Repository: %s", err)
 	}
 	billingProject = project
 

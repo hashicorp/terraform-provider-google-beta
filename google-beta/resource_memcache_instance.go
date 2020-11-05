@@ -270,7 +270,7 @@ func resourceMemcacheInstanceCreate(d *schema.ResourceData, meta interface{}) er
 
 	project, err := getProject(d, config)
 	if err != nil {
-		return err
+		return fmt.Errorf("Error fetching project for Instance: %s", err)
 	}
 	billingProject = project
 
@@ -331,7 +331,7 @@ func resourceMemcacheInstanceRead(d *schema.ResourceData, meta interface{}) erro
 
 	project, err := getProject(d, config)
 	if err != nil {
-		return err
+		return fmt.Errorf("Error fetching project for Instance: %s", err)
 	}
 	billingProject = project
 
@@ -408,7 +408,7 @@ func resourceMemcacheInstanceUpdate(d *schema.ResourceData, meta interface{}) er
 
 	project, err := getProject(d, config)
 	if err != nil {
-		return err
+		return fmt.Errorf("Error fetching project for Instance: %s", err)
 	}
 	billingProject = project
 
@@ -503,7 +503,7 @@ func resourceMemcacheInstanceDelete(d *schema.ResourceData, meta interface{}) er
 
 	project, err := getProject(d, config)
 	if err != nil {
-		return err
+		return fmt.Errorf("Error fetching project for Instance: %s", err)
 	}
 	billingProject = project
 

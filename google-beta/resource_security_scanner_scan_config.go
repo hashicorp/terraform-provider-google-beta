@@ -272,7 +272,7 @@ func resourceSecurityScannerScanConfigCreate(d *schema.ResourceData, meta interf
 
 	project, err := getProject(d, config)
 	if err != nil {
-		return err
+		return fmt.Errorf("Error fetching project for ScanConfig: %s", err)
 	}
 	billingProject = project
 
@@ -335,7 +335,7 @@ func resourceSecurityScannerScanConfigRead(d *schema.ResourceData, meta interfac
 
 	project, err := getProject(d, config)
 	if err != nil {
-		return err
+		return fmt.Errorf("Error fetching project for ScanConfig: %s", err)
 	}
 	billingProject = project
 
@@ -398,7 +398,7 @@ func resourceSecurityScannerScanConfigUpdate(d *schema.ResourceData, meta interf
 
 	project, err := getProject(d, config)
 	if err != nil {
-		return err
+		return fmt.Errorf("Error fetching project for ScanConfig: %s", err)
 	}
 	billingProject = project
 
@@ -535,7 +535,7 @@ func resourceSecurityScannerScanConfigDelete(d *schema.ResourceData, meta interf
 
 	project, err := getProject(d, config)
 	if err != nil {
-		return err
+		return fmt.Errorf("Error fetching project for ScanConfig: %s", err)
 	}
 	billingProject = project
 

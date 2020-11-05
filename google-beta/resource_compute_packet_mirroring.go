@@ -263,7 +263,7 @@ func resourceComputePacketMirroringCreate(d *schema.ResourceData, meta interface
 
 	project, err := getProject(d, config)
 	if err != nil {
-		return err
+		return fmt.Errorf("Error fetching project for PacketMirroring: %s", err)
 	}
 	billingProject = project
 
@@ -315,7 +315,7 @@ func resourceComputePacketMirroringRead(d *schema.ResourceData, meta interface{}
 
 	project, err := getProject(d, config)
 	if err != nil {
-		return err
+		return fmt.Errorf("Error fetching project for PacketMirroring: %s", err)
 	}
 	billingProject = project
 
@@ -372,7 +372,7 @@ func resourceComputePacketMirroringUpdate(d *schema.ResourceData, meta interface
 
 	project, err := getProject(d, config)
 	if err != nil {
-		return err
+		return fmt.Errorf("Error fetching project for PacketMirroring: %s", err)
 	}
 	billingProject = project
 
@@ -462,7 +462,7 @@ func resourceComputePacketMirroringDelete(d *schema.ResourceData, meta interface
 
 	project, err := getProject(d, config)
 	if err != nil {
-		return err
+		return fmt.Errorf("Error fetching project for PacketMirroring: %s", err)
 	}
 	billingProject = project
 

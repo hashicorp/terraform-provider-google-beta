@@ -163,7 +163,7 @@ func resourceIAMBetaWorkloadIdentityPoolCreate(d *schema.ResourceData, meta inte
 
 	project, err := getProject(d, config)
 	if err != nil {
-		return err
+		return fmt.Errorf("Error fetching project for WorkloadIdentityPool: %s", err)
 	}
 	billingProject = project
 
@@ -215,7 +215,7 @@ func resourceIAMBetaWorkloadIdentityPoolRead(d *schema.ResourceData, meta interf
 
 	project, err := getProject(d, config)
 	if err != nil {
-		return err
+		return fmt.Errorf("Error fetching project for WorkloadIdentityPool: %s", err)
 	}
 	billingProject = project
 
@@ -275,7 +275,7 @@ func resourceIAMBetaWorkloadIdentityPoolUpdate(d *schema.ResourceData, meta inte
 
 	project, err := getProject(d, config)
 	if err != nil {
-		return err
+		return fmt.Errorf("Error fetching project for WorkloadIdentityPool: %s", err)
 	}
 	billingProject = project
 
@@ -360,7 +360,7 @@ func resourceIAMBetaWorkloadIdentityPoolDelete(d *schema.ResourceData, meta inte
 
 	project, err := getProject(d, config)
 	if err != nil {
-		return err
+		return fmt.Errorf("Error fetching project for WorkloadIdentityPool: %s", err)
 	}
 	billingProject = project
 

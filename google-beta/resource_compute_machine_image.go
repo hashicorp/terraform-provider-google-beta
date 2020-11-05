@@ -176,7 +176,7 @@ func resourceComputeMachineImageCreate(d *schema.ResourceData, meta interface{})
 
 	project, err := getProject(d, config)
 	if err != nil {
-		return err
+		return fmt.Errorf("Error fetching project for MachineImage: %s", err)
 	}
 	billingProject = project
 
@@ -228,7 +228,7 @@ func resourceComputeMachineImageRead(d *schema.ResourceData, meta interface{}) e
 
 	project, err := getProject(d, config)
 	if err != nil {
-		return err
+		return fmt.Errorf("Error fetching project for MachineImage: %s", err)
 	}
 	billingProject = project
 
@@ -282,7 +282,7 @@ func resourceComputeMachineImageDelete(d *schema.ResourceData, meta interface{})
 
 	project, err := getProject(d, config)
 	if err != nil {
-		return err
+		return fmt.Errorf("Error fetching project for MachineImage: %s", err)
 	}
 	billingProject = project
 

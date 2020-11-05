@@ -106,7 +106,7 @@ func resourceServiceDirectoryNamespaceCreate(d *schema.ResourceData, meta interf
 
 	project, err := getProject(d, config)
 	if err != nil {
-		return err
+		return fmt.Errorf("Error fetching project for Namespace: %s", err)
 	}
 	billingProject = project
 
@@ -151,7 +151,7 @@ func resourceServiceDirectoryNamespaceRead(d *schema.ResourceData, meta interfac
 
 	project, err := getProject(d, config)
 	if err != nil {
-		return err
+		return fmt.Errorf("Error fetching project for Namespace: %s", err)
 	}
 	billingProject = project
 
@@ -190,7 +190,7 @@ func resourceServiceDirectoryNamespaceUpdate(d *schema.ResourceData, meta interf
 
 	project, err := getProject(d, config)
 	if err != nil {
-		return err
+		return fmt.Errorf("Error fetching project for Namespace: %s", err)
 	}
 	billingProject = project
 
@@ -247,7 +247,7 @@ func resourceServiceDirectoryNamespaceDelete(d *schema.ResourceData, meta interf
 
 	project, err := getProject(d, config)
 	if err != nil {
-		return err
+		return fmt.Errorf("Error fetching project for Namespace: %s", err)
 	}
 	billingProject = project
 

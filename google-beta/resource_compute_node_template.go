@@ -236,7 +236,7 @@ func resourceComputeNodeTemplateCreate(d *schema.ResourceData, meta interface{})
 
 	project, err := getProject(d, config)
 	if err != nil {
-		return err
+		return fmt.Errorf("Error fetching project for NodeTemplate: %s", err)
 	}
 	billingProject = project
 
@@ -288,7 +288,7 @@ func resourceComputeNodeTemplateRead(d *schema.ResourceData, meta interface{}) e
 
 	project, err := getProject(d, config)
 	if err != nil {
-		return err
+		return fmt.Errorf("Error fetching project for NodeTemplate: %s", err)
 	}
 	billingProject = project
 
@@ -351,7 +351,7 @@ func resourceComputeNodeTemplateDelete(d *schema.ResourceData, meta interface{})
 
 	project, err := getProject(d, config)
 	if err != nil {
-		return err
+		return fmt.Errorf("Error fetching project for NodeTemplate: %s", err)
 	}
 	billingProject = project
 
