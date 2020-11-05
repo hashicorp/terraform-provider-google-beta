@@ -105,10 +105,16 @@ func testAccCheckIAMBetaWorkloadIdentityPoolDestroyProducer(t *testing.T) func(s
 				return err
 			}
 
-			_, err = sendRequest(config, "GET", "", url, config.userAgent, nil)
-			if err == nil {
-				return fmt.Errorf("IAMBetaWorkloadIdentityPool still exists at %s", url)
+			res, err := sendRequest(config, "GET", "", url, config.userAgent, nil)
+			if err != nil {
+				return nil
 			}
+
+			if v := res["state"]; v == "DELETED" {
+				return nil
+			}
+
+			return fmt.Errorf("IAMBetaWorkloadIdentityPool still exists at %s", url)
 		}
 
 		return nil
