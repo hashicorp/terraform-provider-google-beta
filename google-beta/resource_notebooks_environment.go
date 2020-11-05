@@ -183,7 +183,7 @@ func resourceNotebooksEnvironmentCreate(d *schema.ResourceData, meta interface{}
 
 	project, err := getProject(d, config)
 	if err != nil {
-		return err
+		return fmt.Errorf("Error fetching project for Environment: %s", err)
 	}
 	billingProject = project
 
@@ -244,7 +244,7 @@ func resourceNotebooksEnvironmentRead(d *schema.ResourceData, meta interface{}) 
 
 	project, err := getProject(d, config)
 	if err != nil {
-		return err
+		return fmt.Errorf("Error fetching project for Environment: %s", err)
 	}
 	billingProject = project
 
@@ -295,7 +295,7 @@ func resourceNotebooksEnvironmentUpdate(d *schema.ResourceData, meta interface{}
 
 	project, err := getProject(d, config)
 	if err != nil {
-		return err
+		return fmt.Errorf("Error fetching project for Environment: %s", err)
 	}
 	billingProject = project
 
@@ -373,7 +373,7 @@ func resourceNotebooksEnvironmentDelete(d *schema.ResourceData, meta interface{}
 
 	project, err := getProject(d, config)
 	if err != nil {
-		return err
+		return fmt.Errorf("Error fetching project for Environment: %s", err)
 	}
 	billingProject = project
 

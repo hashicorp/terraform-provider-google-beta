@@ -130,7 +130,7 @@ func resourceApiGatewayGatewayCreate(d *schema.ResourceData, meta interface{}) e
 
 	project, err := getProject(d, config)
 	if err != nil {
-		return err
+		return fmt.Errorf("Error fetching project for Gateway: %s", err)
 	}
 	billingProject = project
 
@@ -195,7 +195,7 @@ func resourceApiGatewayGatewayRead(d *schema.ResourceData, meta interface{}) err
 
 	project, err := getProject(d, config)
 	if err != nil {
-		return err
+		return fmt.Errorf("Error fetching project for Gateway: %s", err)
 	}
 	billingProject = project
 
@@ -243,7 +243,7 @@ func resourceApiGatewayGatewayUpdate(d *schema.ResourceData, meta interface{}) e
 
 	project, err := getProject(d, config)
 	if err != nil {
-		return err
+		return fmt.Errorf("Error fetching project for Gateway: %s", err)
 	}
 	billingProject = project
 
@@ -318,7 +318,7 @@ func resourceApiGatewayGatewayDelete(d *schema.ResourceData, meta interface{}) e
 
 	project, err := getProject(d, config)
 	if err != nil {
-		return err
+		return fmt.Errorf("Error fetching project for Gateway: %s", err)
 	}
 	billingProject = project
 

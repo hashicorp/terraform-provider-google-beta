@@ -96,7 +96,7 @@ func resourceFirebaseWebAppCreate(d *schema.ResourceData, meta interface{}) erro
 
 	project, err := getProject(d, config)
 	if err != nil {
-		return err
+		return fmt.Errorf("Error fetching project for WebApp: %s", err)
 	}
 	billingProject = project
 
@@ -161,7 +161,7 @@ func resourceFirebaseWebAppRead(d *schema.ResourceData, meta interface{}) error 
 
 	project, err := getProject(d, config)
 	if err != nil {
-		return err
+		return fmt.Errorf("Error fetching project for WebApp: %s", err)
 	}
 	billingProject = project
 
@@ -203,7 +203,7 @@ func resourceFirebaseWebAppUpdate(d *schema.ResourceData, meta interface{}) erro
 
 	project, err := getProject(d, config)
 	if err != nil {
-		return err
+		return fmt.Errorf("Error fetching project for WebApp: %s", err)
 	}
 	billingProject = project
 

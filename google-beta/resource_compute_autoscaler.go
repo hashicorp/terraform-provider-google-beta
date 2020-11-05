@@ -376,7 +376,7 @@ func resourceComputeAutoscalerCreate(d *schema.ResourceData, meta interface{}) e
 
 	project, err := getProject(d, config)
 	if err != nil {
-		return err
+		return fmt.Errorf("Error fetching project for Autoscaler: %s", err)
 	}
 	billingProject = project
 
@@ -428,7 +428,7 @@ func resourceComputeAutoscalerRead(d *schema.ResourceData, meta interface{}) err
 
 	project, err := getProject(d, config)
 	if err != nil {
-		return err
+		return fmt.Errorf("Error fetching project for Autoscaler: %s", err)
 	}
 	billingProject = project
 
@@ -482,7 +482,7 @@ func resourceComputeAutoscalerUpdate(d *schema.ResourceData, meta interface{}) e
 
 	project, err := getProject(d, config)
 	if err != nil {
-		return err
+		return fmt.Errorf("Error fetching project for Autoscaler: %s", err)
 	}
 	billingProject = project
 
@@ -560,7 +560,7 @@ func resourceComputeAutoscalerDelete(d *schema.ResourceData, meta interface{}) e
 
 	project, err := getProject(d, config)
 	if err != nil {
-		return err
+		return fmt.Errorf("Error fetching project for Autoscaler: %s", err)
 	}
 	billingProject = project
 

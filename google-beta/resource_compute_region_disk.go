@@ -365,7 +365,7 @@ func resourceComputeRegionDiskCreate(d *schema.ResourceData, meta interface{}) e
 
 	project, err := getProject(d, config)
 	if err != nil {
-		return err
+		return fmt.Errorf("Error fetching project for RegionDisk: %s", err)
 	}
 	billingProject = project
 
@@ -417,7 +417,7 @@ func resourceComputeRegionDiskRead(d *schema.ResourceData, meta interface{}) err
 
 	project, err := getProject(d, config)
 	if err != nil {
-		return err
+		return fmt.Errorf("Error fetching project for RegionDisk: %s", err)
 	}
 	billingProject = project
 
@@ -516,7 +516,7 @@ func resourceComputeRegionDiskUpdate(d *schema.ResourceData, meta interface{}) e
 
 	project, err := getProject(d, config)
 	if err != nil {
-		return err
+		return fmt.Errorf("Error fetching project for RegionDisk: %s", err)
 	}
 	billingProject = project
 
@@ -613,7 +613,7 @@ func resourceComputeRegionDiskDelete(d *schema.ResourceData, meta interface{}) e
 
 	project, err := getProject(d, config)
 	if err != nil {
-		return err
+		return fmt.Errorf("Error fetching project for RegionDisk: %s", err)
 	}
 	billingProject = project
 

@@ -412,7 +412,7 @@ func resourceComputeSubnetworkCreate(d *schema.ResourceData, meta interface{}) e
 
 	project, err := getProject(d, config)
 	if err != nil {
-		return err
+		return fmt.Errorf("Error fetching project for Subnetwork: %s", err)
 	}
 	billingProject = project
 
@@ -464,7 +464,7 @@ func resourceComputeSubnetworkRead(d *schema.ResourceData, meta interface{}) err
 
 	project, err := getProject(d, config)
 	if err != nil {
-		return err
+		return fmt.Errorf("Error fetching project for Subnetwork: %s", err)
 	}
 	billingProject = project
 
@@ -539,7 +539,7 @@ func resourceComputeSubnetworkUpdate(d *schema.ResourceData, meta interface{}) e
 
 	project, err := getProject(d, config)
 	if err != nil {
-		return err
+		return fmt.Errorf("Error fetching project for Subnetwork: %s", err)
 	}
 	billingProject = project
 
@@ -817,7 +817,7 @@ func resourceComputeSubnetworkDelete(d *schema.ResourceData, meta interface{}) e
 
 	project, err := getProject(d, config)
 	if err != nil {
-		return err
+		return fmt.Errorf("Error fetching project for Subnetwork: %s", err)
 	}
 	billingProject = project
 

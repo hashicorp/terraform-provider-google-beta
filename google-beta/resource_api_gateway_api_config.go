@@ -189,7 +189,7 @@ func resourceApiGatewayApiConfigCreate(d *schema.ResourceData, meta interface{})
 
 	project, err := getProject(d, config)
 	if err != nil {
-		return err
+		return fmt.Errorf("Error fetching project for ApiConfig: %s", err)
 	}
 	billingProject = project
 
@@ -254,7 +254,7 @@ func resourceApiGatewayApiConfigRead(d *schema.ResourceData, meta interface{}) e
 
 	project, err := getProject(d, config)
 	if err != nil {
-		return err
+		return fmt.Errorf("Error fetching project for ApiConfig: %s", err)
 	}
 	billingProject = project
 
@@ -302,7 +302,7 @@ func resourceApiGatewayApiConfigUpdate(d *schema.ResourceData, meta interface{})
 
 	project, err := getProject(d, config)
 	if err != nil {
-		return err
+		return fmt.Errorf("Error fetching project for ApiConfig: %s", err)
 	}
 	billingProject = project
 
@@ -387,7 +387,7 @@ func resourceApiGatewayApiConfigDelete(d *schema.ResourceData, meta interface{})
 
 	project, err := getProject(d, config)
 	if err != nil {
-		return err
+		return fmt.Errorf("Error fetching project for ApiConfig: %s", err)
 	}
 	billingProject = project
 

@@ -375,7 +375,7 @@ func resourceComputeRegionAutoscalerCreate(d *schema.ResourceData, meta interfac
 
 	project, err := getProject(d, config)
 	if err != nil {
-		return err
+		return fmt.Errorf("Error fetching project for RegionAutoscaler: %s", err)
 	}
 	billingProject = project
 
@@ -427,7 +427,7 @@ func resourceComputeRegionAutoscalerRead(d *schema.ResourceData, meta interface{
 
 	project, err := getProject(d, config)
 	if err != nil {
-		return err
+		return fmt.Errorf("Error fetching project for RegionAutoscaler: %s", err)
 	}
 	billingProject = project
 
@@ -481,7 +481,7 @@ func resourceComputeRegionAutoscalerUpdate(d *schema.ResourceData, meta interfac
 
 	project, err := getProject(d, config)
 	if err != nil {
-		return err
+		return fmt.Errorf("Error fetching project for RegionAutoscaler: %s", err)
 	}
 	billingProject = project
 
@@ -559,7 +559,7 @@ func resourceComputeRegionAutoscalerDelete(d *schema.ResourceData, meta interfac
 
 	project, err := getProject(d, config)
 	if err != nil {
-		return err
+		return fmt.Errorf("Error fetching project for RegionAutoscaler: %s", err)
 	}
 	billingProject = project
 
