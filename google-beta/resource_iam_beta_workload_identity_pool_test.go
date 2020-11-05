@@ -13,8 +13,9 @@ func TestAccIAMBetaWorkloadIdentityPool_full(t *testing.T) {
 	randomSuffix := randString(t, 10)
 
 	vcrTest(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
-		Providers: testAccProviders,
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckIAMBetaWorkloadIdentityPoolDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccIAMBetaWorkloadIdentityPool_full(randomSuffix),
@@ -42,8 +43,9 @@ func TestAccIAMBetaWorkloadIdentityPool_minimal(t *testing.T) {
 	randomSuffix := randString(t, 10)
 
 	vcrTest(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
-		Providers: testAccProviders,
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckIAMBetaWorkloadIdentityPoolDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccIAMBetaWorkloadIdentityPool_minimal(randomSuffix),

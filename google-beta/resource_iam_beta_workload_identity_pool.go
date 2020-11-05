@@ -101,20 +101,20 @@ access again.`,
 				Type:     schema.TypeString,
 				Computed: true,
 				Description: `The resource name of the pool as
-'projects/<projectnumber>/locations/global/workloadIdentityPools/<id>'.`,
+'projects/{project_number}/locations/global/workloadIdentityPools/{workload_identity_pool_id}'.`,
 			},
 			"state": {
 				Type:     schema.TypeString,
 				Computed: true,
 				Description: `The state of the pool.
-STATE_UNSPECIFIED: State unspecified.
-ACTIVE: The pool is active, and may be used in Google Cloud policies.
-DELETED: The pool is soft-deleted. Soft-deleted pools are permanently deleted after
-approximately 30 days. You can restore a soft-deleted pool using
-UndeleteWorkloadIdentityPool. You cannot reuse the ID of a soft-deleted pool until it is
-permanently deleted. While a pool is deleted, you cannot use it to exchange tokens, or
-use existing tokens to access resources. If the pool is undeleted, existing tokens grant
-access again.`,
+* STATE_UNSPECIFIED: State unspecified.
+* ACTIVE: The pool is active, and may be used in Google Cloud policies.
+* DELETED: The pool is soft-deleted. Soft-deleted pools are permanently deleted after
+  approximately 30 days. You can restore a soft-deleted pool using
+  UndeleteWorkloadIdentityPool. You cannot reuse the ID of a soft-deleted pool until it is
+  permanently deleted. While a pool is deleted, you cannot use it to exchange tokens, or
+  use existing tokens to access resources. If the pool is undeleted, existing tokens grant
+  access again.`,
 			},
 			"project": {
 				Type:     schema.TypeString,
@@ -227,6 +227,18 @@ func resourceIAMBetaWorkloadIdentityPoolRead(d *schema.ResourceData, meta interf
 	res, err := sendRequest(config, "GET", billingProject, url, userAgent, nil)
 	if err != nil {
 		return handleNotFoundError(err, d, fmt.Sprintf("IAMBetaWorkloadIdentityPool %q", d.Id()))
+	}
+
+	res, err = resourceIAMBetaWorkloadIdentityPoolDecoder(d, meta, res)
+	if err != nil {
+		return err
+	}
+
+	if res == nil {
+		// Decoding the object has resulted in it being gone. It may be marked deleted
+		log.Printf("[DEBUG] Removing IAMBetaWorkloadIdentityPool because it no longer exists.")
+		d.SetId("")
+		return nil
 	}
 
 	if err := d.Set("project", project); err != nil {
@@ -432,4 +444,12 @@ func expandIAMBetaWorkloadIdentityPoolDescription(v interface{}, d TerraformReso
 
 func expandIAMBetaWorkloadIdentityPoolDisabled(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
+}
+
+func resourceIAMBetaWorkloadIdentityPoolDecoder(d *schema.ResourceData, meta interface{}, res map[string]interface{}) (map[string]interface{}, error) {
+	if v := res["state"]; v == "DELETED" {
+		return nil, nil
+	}
+
+	return res, nil
 }
