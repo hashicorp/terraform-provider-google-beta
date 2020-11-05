@@ -7,7 +7,6 @@ FEATURES:
 
 IMPROVEMENTS:
 * cloudfunctions: fixed a bug with `google_cloudfunction_function` that blocked updates when Organization Policies are enabled. ([#2681](https://github.com/hashicorp/terraform-provider-google-beta/pull/2681))
-* dataproc: added "FLINK", "DOCKER", "HBASE" as valid options for field cluster_config.0.software_config.0.optional_components of `google_dataproc_cluster` resource ([#2683](https://github.com/hashicorp/terraform-provider-google-beta/pull/2683))
 * functions: added 4096 as a valid value for available_memory_mb field of `google_cloudfunction_function` ([#2666](https://github.com/hashicorp/terraform-provider-google-beta/pull/2666))
 * cloudrun: patched `google_cloud_run_service` to suppress Google generated annotations ([#2679](https://github.com/hashicorp/terraform-provider-google-beta/pull/2679))
 
