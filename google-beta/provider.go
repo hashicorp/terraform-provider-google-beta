@@ -722,6 +722,7 @@ func Provider() *schema.Provider {
 			"google_iam_role":                                     dataSourceGoogleIamRole(),
 			"google_iam_testable_permissions":                     dataSourceGoogleIamTestablePermissions(),
 			"google_iam_workload_identity_pool":                   dataSourceIAMBetaWorkloadIdentityPool(),
+			"google_iam_workload_identity_pool_provider":          dataSourceIAMBetaWorkloadIdentityPoolProvider(),
 			"google_kms_crypto_key":                               dataSourceGoogleKmsCryptoKey(),
 			"google_kms_crypto_key_version":                       dataSourceGoogleKmsCryptoKeyVersion(),
 			"google_kms_key_ring":                                 dataSourceGoogleKmsKeyRing(),
