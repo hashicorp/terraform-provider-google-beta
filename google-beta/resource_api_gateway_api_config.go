@@ -21,6 +21,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
@@ -47,12 +48,6 @@ func resourceApiGatewayApiConfig() *schema.Resource {
 				Required:    true,
 				ForceNew:    true,
 				Description: `The API to attach the config to.`,
-			},
-			"api_config_id": {
-				Type:        schema.TypeString,
-				Required:    true,
-				ForceNew:    true,
-				Description: `Identifier to assign to the API Config. Must be unique within scope of the parent resource(api).`,
 			},
 			"openapi_documents": {
 				Type:        schema.TypeList,
@@ -84,6 +79,13 @@ func resourceApiGatewayApiConfig() *schema.Resource {
 						},
 					},
 				},
+			},
+			"api_config_id": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Optional:    true,
+				ForceNew:    true,
+				Description: `Identifier to assign to the API Config. Must be unique within scope of the parent resource(api).`,
 			},
 			"display_name": {
 				Type:        schema.TypeString,
@@ -136,6 +138,13 @@ If not specified, backend authentication will be set to use OIDC authentication 
 				Computed:    true,
 				Description: `The ID of the associated Service Config (https://cloud.google.com/service-infrastructure/docs/glossary#config).`,
 			},
+			"api_config_id_prefix": {
+				Type:          schema.TypeString,
+				Optional:      true,
+				Computed:      true,
+				ForceNew:      true,
+				ConflictsWith: []string{"api_config_id"},
+			},
 			"project": {
 				Type:     schema.TypeString,
 				Optional: true,
@@ -177,6 +186,11 @@ func resourceApiGatewayApiConfigCreate(d *schema.ResourceData, meta interface{})
 		return err
 	} else if v, ok := d.GetOkExists("openapi_documents"); !isEmptyValue(reflect.ValueOf(openapiDocumentsProp)) && (ok || !reflect.DeepEqual(v, openapiDocumentsProp)) {
 		obj["openapiDocuments"] = openapiDocumentsProp
+	}
+
+	obj, err = resourceApiGatewayApiConfigEncoder(d, meta, obj)
+	if err != nil {
+		return err
 	}
 
 	url, err := replaceVars(d, config, "{{ApiGatewayBasePath}}projects/{{project}}/locations/global/apis/{{api}}/configs?apiConfigId={{api_config_id}}")
@@ -324,6 +338,11 @@ func resourceApiGatewayApiConfigUpdate(d *schema.ResourceData, meta interface{})
 		return err
 	} else if v, ok := d.GetOkExists("openapi_documents"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, openapiDocumentsProp)) {
 		obj["openapiDocuments"] = openapiDocumentsProp
+	}
+
+	obj, err = resourceApiGatewayApiConfigEncoder(d, meta, obj)
+	if err != nil {
+		return err
 	}
 
 	url, err := replaceVars(d, config, "{{ApiGatewayBasePath}}projects/{{project}}/locations/global/apis/{{api}}/configs/{{api_config_id}}")
@@ -609,4 +628,20 @@ func expandApiGatewayApiConfigOpenapiDocumentsDocumentPath(v interface{}, d Terr
 
 func expandApiGatewayApiConfigOpenapiDocumentsDocumentContents(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
+}
+
+func resourceApiGatewayApiConfigEncoder(d *schema.ResourceData, meta interface{}, obj map[string]interface{}) (map[string]interface{}, error) {
+	var apiConfigId string
+	if v, ok := d.GetOk("api_config_id"); ok {
+		apiConfigId = v.(string)
+	} else if v, ok := d.GetOk("api_config_id_prefix"); ok {
+		apiConfigId = resource.PrefixedUniqueId(v.(string))
+	} else {
+		apiConfigId = resource.UniqueId()
+	}
+
+	if err := d.Set("api_config_id", apiConfigId); err != nil {
+		return nil, fmt.Errorf("Error setting api_config_id: %s", err)
+	}
+	return obj, nil
 }

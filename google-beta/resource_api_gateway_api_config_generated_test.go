@@ -55,13 +55,16 @@ resource "google_api_gateway_api" "api_cfg" {
 resource "google_api_gateway_api_config" "api_cfg" {
   provider = google-beta
   api = google_api_gateway_api.api_cfg.api_id
-  api_config_id = "tf-test-api-cfg%{random_suffix}"
+  api_config_id_prefix = "api-cfg-"
 
   openapi_documents {
     document {
       path = "spec.yaml"
       contents = filebase64("test-fixtures/apigateway/openapi.yaml")
     }
+  }
+  lifecycle {
+    create_before_destroy = true
   }
 }
 `, context)

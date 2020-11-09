@@ -95,13 +95,16 @@ resource "google_api_gateway_api" "api_gw" {
 resource "google_api_gateway_api_config" "api_gw" {
   provider = google-beta
   api = google_api_gateway_api.api_gw.api_id
-  api_config_id = "tf-test-api-gw%{random_suffix}"
+  api_config_id_prefix = "tf-test-"
 
   openapi_documents {
     document {
       path = "spec.yaml"
       contents = filebase64("test-fixtures/apigateway/openapi.yaml")
     }
+  }
+  lifecycle {
+    create_before_destroy = true
   }
 }
 
@@ -132,13 +135,16 @@ resource "google_api_gateway_api" "api_gw" {
 resource "google_api_gateway_api_config" "api_gw" {
   provider = google-beta
   api = google_api_gateway_api.api_gw.api_id
-  api_config_id = "tf-test-api-gw%{random_suffix}"
+  api_config_id_prefix = "tf-test-"
 
   openapi_documents {
     document {
       path = "spec.yaml"
       contents = filebase64("test-fixtures/apigateway/openapi.yaml")
     }
+  }
+  lifecycle {
+    create_before_destroy = true
   }
 }
 
@@ -176,13 +182,16 @@ resource "google_api_gateway_api" "api_gw" {
 resource "google_api_gateway_api_config" "api_gw" {
   provider = google-beta
   api = google_api_gateway_api.api_gw.api_id
-  api_config_id = "tf-test-api-gw%{random_suffix}"
+  api_config_id_prefix = "tf-test-"
 
   openapi_documents {
     document {
       path = "spec.yaml"
       contents = filebase64("test-fixtures/apigateway/openapi.yaml")
     }
+  }
+  lifecycle {
+    create_before_destroy = true
   }
 }
 
@@ -216,13 +225,16 @@ resource "google_api_gateway_api" "api_gw" {
 resource "google_api_gateway_api_config" "api_gw" {
   provider = google-beta
   api = google_api_gateway_api.api_gw.api_id
-  api_config_id = "tf-test-api-gw%{random_suffix}"
+  api_config_id_prefix = "tf-test-"
 
   openapi_documents {
     document {
       path = "spec.yaml"
       contents = filebase64("test-fixtures/apigateway/openapi.yaml")
     }
+  }
+  lifecycle {
+    create_before_destroy = true
   }
 }
 
@@ -254,13 +266,16 @@ resource "google_api_gateway_api" "api_gw" {
 resource "google_api_gateway_api_config" "api_gw" {
   provider = google-beta
   api = google_api_gateway_api.api_gw.api_id
-  api_config_id = "tf-test-api-gw%{random_suffix}"
+  api_config_id_prefix = "tf-test-"
 
   openapi_documents {
     document {
       path = "spec.yaml"
       contents = filebase64("test-fixtures/apigateway/openapi.yaml")
     }
+  }
+  lifecycle {
+    create_before_destroy = true
   }
 }
 
