@@ -1,4 +1,4 @@
-## 3.47.0 (Unreleased)
+## 3.47.0 (November 09, 2020)
 
 FEATURES:
 * **New Data Source:** `google_iam_workload_identity_pool` ([#2663](https://github.com/hashicorp/terraform-provider-google-beta/pull/2663))
