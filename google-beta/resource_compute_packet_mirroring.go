@@ -122,6 +122,7 @@ set to true.`,
 			"network": {
 				Type:     schema.TypeList,
 				Required: true,
+				ForceNew: true,
 				Description: `Specifies the mirrored VPC network. Only packets in this network
 will be mirrored. All mirrored VMs should have a NIC in the given
 network. All mirrored subnetworks should belong to the given network.`,
@@ -131,6 +132,7 @@ network. All mirrored subnetworks should belong to the given network.`,
 						"url": {
 							Type:             schema.TypeString,
 							Required:         true,
+							ForceNew:         true,
 							DiffSuppressFunc: compareSelfLinkOrResourceName,
 							Description:      `The full self_link URL of the network where this rule is active.`,
 						},
@@ -388,12 +390,6 @@ func resourceComputePacketMirroringUpdate(d *schema.ResourceData, meta interface
 		return err
 	} else if v, ok := d.GetOkExists("region"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, regionProp)) {
 		obj["region"] = regionProp
-	}
-	networkProp, err := expandComputePacketMirroringNetwork(d.Get("network"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("network"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, networkProp)) {
-		obj["network"] = networkProp
 	}
 	priorityProp, err := expandComputePacketMirroringPriority(d.Get("priority"), d, config)
 	if err != nil {
