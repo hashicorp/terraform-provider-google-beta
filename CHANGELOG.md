@@ -1,4 +1,23 @@
-## 3.47.0 (Unreleased)
+## 3.48.0 (Unreleased)
+
+## 3.47.0 (November 09, 2020)
+
+FEATURES:
+* **New Data Source:** `google_iam_workload_identity_pool` ([#2663](https://github.com/hashicorp/terraform-provider-google-beta/pull/2663))
+* **New Resource:** `google_iam_workload_identity_pool_provider` ([#2670](https://github.com/hashicorp/terraform-provider-google-beta/pull/2670))
+* **New Resource:** `google_project_default_service_accounts` ([#2668](https://github.com/hashicorp/terraform-provider-google-beta/pull/2668))
+
+IMPROVEMENTS:
+* cloudfunctions: fixed a bug with `google_cloudfunction_function` that blocked updates when Organization Policies are enabled. ([#2681](https://github.com/hashicorp/terraform-provider-google-beta/pull/2681))
+* functions: added 4096 as a valid value for available_memory_mb field of `google_cloudfunction_function` ([#2666](https://github.com/hashicorp/terraform-provider-google-beta/pull/2666))
+* cloudrun: patched `google_cloud_run_service` to suppress Google generated annotations ([#2679](https://github.com/hashicorp/terraform-provider-google-beta/pull/2679))
+
+BUG FIXES:
+* dataflow: removed required validation for zone for `google_data_flow_job` when region is given in the config ([#2662](https://github.com/hashicorp/terraform-provider-google-beta/pull/2662))
+* monitoring: Fixed type of `google_monitoring_slo`'s `range` values - some `range` values are doubles, others are integers. ([#2655](https://github.com/hashicorp/terraform-provider-google-beta/pull/2655))
+* pubsub: Fixed permadiff on push_config.attributes. ([#2672](https://github.com/hashicorp/terraform-provider-google-beta/pull/2672))
+* storage: fixed an issue in `google_storage_bucket` where `lifecycle_rules` were always included in update requests ([#2684](https://github.com/hashicorp/terraform-provider-google-beta/pull/2684))
+
 ## 3.46.0 (November 02, 2020)
 
 NOTES:
