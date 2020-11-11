@@ -876,10 +876,12 @@ func getTestZoneFromEnv() string {
 }
 
 func getTestCustIdFromEnv(t *testing.T) string {
+	skipIfEnvNotSet(t, custIdEnvVars...)
 	return multiEnvSearch(custIdEnvVars)
 }
 
 func getTestIdentityUserFromEnv(t *testing.T) string {
+	skipIfEnvNotSet(t, identityUserEnvVars...)
 	return multiEnvSearch(identityUserEnvVars)
 }
 
