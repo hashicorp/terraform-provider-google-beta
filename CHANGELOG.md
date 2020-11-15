@@ -16,7 +16,6 @@ BUG FIXES:
 * compute: fixed an issue in `google_compute_packet_mirroring` where updates would fail due to `network` not being updatable ([#2704](https://github.com/hashicorp/terraform-provider-google-beta/pull/2704))
 * datacatalog: fixed an issue in `google_data_catalog_taxonomy` and `google_data_catalog_policy_tag` where importing would fail ([#2694](https://github.com/hashicorp/terraform-provider-google-beta/pull/2694))
 * spanner: marked `google_spanner_instance.config` as ForceNew as is not updatable ([#2699](https://github.com/hashicorp/terraform-provider-google-beta/pull/2699))
-* storage: fixed an issue in `google_storage_bucket` that caused a crash when `cors` was empty ([#2696](https://github.com/hashicorp/terraform-provider-google-beta/pull/2696))
 
 ## 3.47.0 (November 09, 2020)
 
