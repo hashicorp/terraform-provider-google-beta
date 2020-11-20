@@ -1,5 +1,22 @@
 ## 3.49.0 (Unreleased)
 
+FEATURES:
+* **New Resource:** google_healthcare_consent_store ([#2713](https://github.com/hashicorp/terraform-provider-google-beta/pull/2713))
+* **New Resource:** google_healthcare_consent_store_iam_binding ([#2713](https://github.com/hashicorp/terraform-provider-google-beta/pull/2713))
+* **New Resource:** google_healthcare_consent_store_iam_member ([#2713](https://github.com/hashicorp/terraform-provider-google-beta/pull/2713))
+* **New Resource:** google_healthcare_consent_store_iam_policy ([#2713](https://github.com/hashicorp/terraform-provider-google-beta/pull/2713))
+
+IMPROVEMENTS:
+* bigquery: added `ORC` as a valid option to `source_format` field of  `google_bigquery_table` resource ([#2714](https://github.com/hashicorp/terraform-provider-google-beta/pull/2714))
+* compute: added `custom_response_headers` field to `google_compute_backend_service` resource ([#2722](https://github.com/hashicorp/terraform-provider-google-beta/pull/2722))
+* container: added maintenance_exclusions_window to `google_container_cluster` ([#2724](https://github.com/hashicorp/terraform-provider-google-beta/pull/2724))
+* logging: added description and disabled to logging sinks ([#2718](https://github.com/hashicorp/terraform-provider-google-beta/pull/2718))
+* runtimeconfig: marked value and text fields in `google_runtimeconfig_variable` resource as sensitive ([#2717](https://github.com/hashicorp/terraform-provider-google-beta/pull/2717))
+* sql: added `deletion_policy` field to `google_sql_user` to enable abandoning users rather than deleting them ([#2719](https://github.com/hashicorp/terraform-provider-google-beta/pull/2719))
+
+BUG FIXES:
+* bigtable: added ignore_warnings flag to create call for `google_bigtable_app_profile` ([#2716](https://github.com/hashicorp/terraform-provider-google-beta/pull/2716))
+
 ## 3.48.0 (November 16, 2020)
 
 FEATURES:
