@@ -47,7 +47,7 @@ func resourceArtifactRegistryRepository() *schema.Resource {
 				Required:     true,
 				ForceNew:     true,
 				ValidateFunc: validation.StringInSlice([]string{"DOCKER"}, false),
-				Description:  `The format of packages that are stored in the repoitory. Possible values: ["DOCKER"]`,
+				Description:  `The format of packages that are stored in the repository. Possible values: ["DOCKER"]`,
 			},
 			"repository_id": {
 				Type:     schema.TypeString,

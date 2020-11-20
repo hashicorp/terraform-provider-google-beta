@@ -125,7 +125,7 @@ data "google_compute_image" "vmimage" {
 
 resource "google_compute_instance" "target-vm" {
   provider = google-beta
-  name         = "tf-test-cusom-network-target-vm%{random_suffix}"
+  name         = "tf-test-custom-network-target-vm%{random_suffix}"
   machine_type = "e2-medium"
   zone         = "us-central1-a"
 
