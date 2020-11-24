@@ -1,4 +1,4 @@
-## 3.49.0 (Unreleased)
+## 3.49.0 (November 24, 2020)
 
 FEATURES:
 * **New Resource:** google_healthcare_consent_store ([#2713](https://github.com/hashicorp/terraform-provider-google-beta/pull/2713))
