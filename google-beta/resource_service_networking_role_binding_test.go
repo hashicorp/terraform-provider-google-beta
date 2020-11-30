@@ -12,10 +12,11 @@ func TestAccServiceNetworkingRoleBinding_basic(t *testing.T) {
 	t.Parallel()
 
 	project := getTestProjectFromEnv()
+	producerProject := multiEnvSearch([]string{"SNTEST_PRODUCER_PROJECT"})
 
 	network := BootstrapSharedTestNetwork(t, "service-networking-role-binding-basic")
 	addr := fmt.Sprintf("tf-test-%s", randString(t, 10))
-	service := "servicenetworking.googleapis.com"
+	service := "sn-test.terraform-graphite-test.joonix.net"
 
 	connectionResources := testAccServiceNetworkingRoleBindingConnection(network, addr, service)
 
@@ -25,7 +26,15 @@ func TestAccServiceNetworkingRoleBinding_basic(t *testing.T) {
 		CheckDestroy: testServiceNetworkingRoleBindingDestroy(t, service, network),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccServiceNetworkingRoleBinding1(connectionResources, network, service, project),
+				Config: connectionResources,
+			},
+			{
+				ResourceName:      "google_service_networking_connection.foobar",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+			{
+				Config: testAccServiceNetworkingRoleBinding1(network, service, project, producerProject),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("google_service_networking_role_binding.roles",
 						"policy_binding.#", "1"),
@@ -34,7 +43,7 @@ func TestAccServiceNetworkingRoleBinding_basic(t *testing.T) {
 				),
 			},
 			{
-				Config: testAccServiceNetworkingRoleBinding2(connectionResources, network, service, project),
+				Config: testAccServiceNetworkingRoleBinding2(network, service, project, producerProject),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("google_service_networking_role_binding.roles",
 						"policy_binding.#", "2"),
@@ -93,37 +102,43 @@ resource "google_service_networking_connection" "foobar" {
 `, networkName, addressRangeName, serviceName)
 }
 
-func testAccServiceNetworkingRoleBinding1(connectionBlock, networkName, serviceName, projectId string) string {
+func testAccServiceNetworkingRoleBinding1(networkName, serviceName, consumerProject, producerProject string) string {
 	return fmt.Sprintf(`
-%s
-
 data "google_project" "consumer_project" {
   project_id = "%s"
 }
 
-resource "google_service_networking_role_binding" "roles" {
-  provider         = google-beta
+provider google-beta {
+  project                            = "%s"
+  alias                              = "producer"
+}
 
-	consumer_network = "projects/${data.google_project.consumer_project.number}/global/networks/%s"
+resource "google_service_networking_role_binding" "roles" {
+  provider         = google-beta.producer
+
+  consumer_network = "projects/${data.google_project.consumer_project.number}/global/networks/%s"
   service          = "%s"
-  policy_binding   {
+  policy_binding {
     member = "serviceAccount:${data.google_project.consumer_project.number}@cloudservices.gserviceaccount.com"
     role   = "roles/container.hostServiceAgentUser"
   }
 }
-`, connectionBlock, projectId, networkName, serviceName)
+`, consumerProject, producerProject, networkName, serviceName)
 }
 
-func testAccServiceNetworkingRoleBinding2(connectionBlock, networkName, serviceName, projectId string) string {
+func testAccServiceNetworkingRoleBinding2(networkName, serviceName, consumerProject, producerProject string) string {
 	return fmt.Sprintf(`
-%s
-
 data "google_project" "consumer_project" {
   project_id = "%s"
 }
 
+provider google-beta {
+  project                            = "%s"
+  alias                              = "producer"
+}
+
 resource "google_service_networking_role_binding" "roles" {
-  provider         = google-beta
+  provider         = google-beta.producer
 
 	consumer_network = "projects/${data.google_project.consumer_project.number}/global/networks/%s"
   service          = "%s"
@@ -136,5 +151,5 @@ resource "google_service_networking_role_binding" "roles" {
     role   = "roles/compute.securityAdmin"
   }
 }
-`, connectionBlock, projectId, networkName, serviceName)
+`, consumerProject, producerProject, networkName, serviceName)
 }
