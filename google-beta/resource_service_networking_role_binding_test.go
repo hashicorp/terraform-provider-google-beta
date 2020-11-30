@@ -140,7 +140,7 @@ provider google-beta {
 resource "google_service_networking_role_binding" "roles" {
   provider         = google-beta.producer
 
-	consumer_network = "projects/${data.google_project.consumer_project.number}/global/networks/%s"
+  consumer_network = "projects/${data.google_project.consumer_project.number}/global/networks/%s"
   service          = "%s"
   policy_binding   {
     member = "serviceAccount:${data.google_project.consumer_project.number}@cloudservices.gserviceaccount.com"
