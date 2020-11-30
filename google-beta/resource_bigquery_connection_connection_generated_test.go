@@ -183,7 +183,7 @@ func testAccCheckBigqueryConnectionConnectionDestroyProducer(t *testing.T) func(
 
 			config := googleProviderConfig(t)
 
-			url, err := replaceVarsForTest(config, rs, "{{BigqueryConnectionBasePath}}{{name}}")
+			url, err := replaceVarsForTest(config, rs, "{{BigqueryConnectionBasePath}}projects/{{project}}/locations/{{location}}/connections/{{connection_id}}")
 			if err != nil {
 				return err
 			}
