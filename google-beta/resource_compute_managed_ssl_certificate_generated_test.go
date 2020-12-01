@@ -32,7 +32,7 @@ func TestAccComputeManagedSslCertificate_managedSslCertificateBasicExample(t *te
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
-		Providers: testAccProvidersOiCS,
+		Providers: testAccProviders,
 		ExternalProviders: map[string]resource.ExternalProvider{
 			"random": {},
 		},
@@ -41,6 +41,11 @@ func TestAccComputeManagedSslCertificate_managedSslCertificateBasicExample(t *te
 			{
 				Config: testAccComputeManagedSslCertificate_managedSslCertificateBasicExample(context),
 			},
+			{
+				ResourceName:      "google_compute_managed_ssl_certificate.default",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
 		},
 	})
 }
@@ -48,8 +53,6 @@ func TestAccComputeManagedSslCertificate_managedSslCertificateBasicExample(t *te
 func testAccComputeManagedSslCertificate_managedSslCertificateBasicExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_compute_managed_ssl_certificate" "default" {
-  provider = google-beta
-
   name = "tf-test-test-cert%{random_suffix}"
 
   managed {
@@ -58,16 +61,12 @@ resource "google_compute_managed_ssl_certificate" "default" {
 }
 
 resource "google_compute_target_https_proxy" "default" {
-  provider = google-beta
-
   name             = "tf-test-test-proxy%{random_suffix}"
   url_map          = google_compute_url_map.default.id
   ssl_certificates = [google_compute_managed_ssl_certificate.default.id]
 }
 
 resource "google_compute_url_map" "default" {
-  provider = google-beta
-
   name        = "tf-test-url-map%{random_suffix}"
   description = "a description"
 
@@ -90,8 +89,6 @@ resource "google_compute_url_map" "default" {
 }
 
 resource "google_compute_backend_service" "default" {
-  provider = google-beta
-
   name        = "tf-test-backend-service%{random_suffix}"
   port_name   = "http"
   protocol    = "HTTP"
@@ -101,8 +98,6 @@ resource "google_compute_backend_service" "default" {
 }
 
 resource "google_compute_http_health_check" "default" {
-  provider = google-beta
-
   name               = "tf-test-http-health-check%{random_suffix}"
   request_path       = "/"
   check_interval_sec = 1
@@ -110,33 +105,22 @@ resource "google_compute_http_health_check" "default" {
 }
 
 resource "google_dns_managed_zone" "zone" {
-  provider = google-beta
-
   name     = "dnszone%{random_suffix}"
   dns_name = "sslcert.tf-test.club."
 }
 
 resource "google_compute_global_forwarding_rule" "default" {
-  provider = google-beta
-
   name       = "tf-test-forwarding-rule%{random_suffix}"
   target     = google_compute_target_https_proxy.default.id
   port_range = 443
 }
 
 resource "google_dns_record_set" "set" {
-  provider = google-beta
-
   name         = "sslcert.tf-test.club."
   type         = "A"
   ttl          = 3600
   managed_zone = google_dns_managed_zone.zone.name
   rrdatas      = [google_compute_global_forwarding_rule.default.ip_address]
-}
-
-provider "google-beta" {
-  region = "us-central1"
-  zone   = "us-central1-a"
 }
 `, context)
 }
@@ -151,7 +135,7 @@ func TestAccComputeManagedSslCertificate_managedSslCertificateRecreationExample(
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
-		Providers: testAccProvidersOiCS,
+		Providers: testAccProviders,
 		ExternalProviders: map[string]resource.ExternalProvider{
 			"random": {},
 		},
@@ -159,6 +143,11 @@ func TestAccComputeManagedSslCertificate_managedSslCertificateRecreationExample(
 		Steps: []resource.TestStep{
 			{
 				Config: testAccComputeManagedSslCertificate_managedSslCertificateRecreationExample(context),
+			},
+			{
+				ResourceName:      "google_compute_managed_ssl_certificate.cert",
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -170,7 +159,6 @@ func testAccComputeManagedSslCertificate_managedSslCertificateRecreationExample(
 // recreate the ssl certificate and update the target https proxy correctly
 
 resource "google_compute_target_https_proxy" "default" {
-  provider = google-beta
   name             = "test-proxy"
   url_map          = google_compute_url_map.default.id
   ssl_certificates = [google_compute_managed_ssl_certificate.cert.id]
@@ -190,7 +178,6 @@ resource "random_id" "certificate" {
 }
 
 resource "google_compute_managed_ssl_certificate" "cert" {
-  provider = google-beta
   name     = random_id.certificate.hex
 
   lifecycle {
@@ -203,7 +190,6 @@ resource "google_compute_managed_ssl_certificate" "cert" {
 }
 
 resource "google_compute_url_map" "default" {
-  provider = google-beta
   name            = "url-map"
   description     = "a description"
   default_service = google_compute_backend_service.default.id
@@ -222,7 +208,6 @@ resource "google_compute_url_map" "default" {
 }
 
 resource "google_compute_backend_service" "default" {
-  provider = google-beta
   name          = "backend-service"
   port_name     = "http"
   protocol      = "HTTP"
@@ -231,7 +216,6 @@ resource "google_compute_backend_service" "default" {
 }
 
 resource "google_compute_http_health_check" "default" {
-  provider = google-beta
   name               = "http-health-check"
   request_path       = "/"
   check_interval_sec = 1
