@@ -22,6 +22,7 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
 func resourceComputeBackendBucket() *schema.Resource {
@@ -69,11 +70,12 @@ last character, which cannot be a dash.`,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"cache_mode": {
-							Type:     schema.TypeString,
-							Computed: true,
-							Optional: true,
+							Type:         schema.TypeString,
+							Computed:     true,
+							Optional:     true,
+							ValidateFunc: validation.StringInSlice([]string{"USE_ORIGIN_HEADERS", "FORCE_CACHE_ALL", "CACHE_ALL_STATIC", ""}, false),
 							Description: `Specifies the cache setting for all responses from this backend.
-The possible values are: USE_ORIGIN_HEADERS, FORCE_CACHE_ALL and CACHE_ALL_STATIC`,
+The possible values are: USE_ORIGIN_HEADERS, FORCE_CACHE_ALL and CACHE_ALL_STATIC Possible values: ["USE_ORIGIN_HEADERS", "FORCE_CACHE_ALL", "CACHE_ALL_STATIC"]`,
 						},
 						"client_ttl": {
 							Type:        schema.TypeInt,
