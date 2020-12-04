@@ -10,8 +10,6 @@ IMPROVEMENTS:
 * compute: added `replacement_method` field to `update_policy` block of `google_compute_instance_group_manager` ([#2756](https://github.com/hashicorp/terraform-provider-google-beta/pull/2756))
 * compute: added `replacement_method` field to `update_policy` block of `google_compute_region_instance_group_manager` ([#2756](https://github.com/hashicorp/terraform-provider-google-beta/pull/2756))
 * compute: added more fields to cdn_policy block of `google_compute_backend_bucket` ([#2741](https://github.com/hashicorp/terraform-provider-google-beta/pull/2741))
-* compute: promoted `google_compute_managed_ssl_certificate` to GA ([#2752](https://github.com/hashicorp/terraform-provider-google-beta/pull/2752))
-* compute: promoted `google_compute_resource_policy` to GA ([#2755](https://github.com/hashicorp/terraform-provider-google-beta/pull/2755))
 * compute: updated `google_compute_url_map`'s fields referring to backend services to be able to refer to backend buckets. ([#2754](https://github.com/hashicorp/terraform-provider-google-beta/pull/2754))
 * container: added cluster state check in `resource_container_node_pool` ([#2740](https://github.com/hashicorp/terraform-provider-google-beta/pull/2740))
 * google: added support for more import formats to google_project_iam_custom_role ([#2735](https://github.com/hashicorp/terraform-provider-google-beta/pull/2735))
