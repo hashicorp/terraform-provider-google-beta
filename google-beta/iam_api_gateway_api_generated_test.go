@@ -154,7 +154,6 @@ resource "google_api_gateway_api" "api" {
 }
 
 resource "google_api_gateway_api_iam_binding" "foo" {
- 
   provider = google-beta
   project = google_api_gateway_api.api.project
   api = google_api_gateway_api.api.api_id

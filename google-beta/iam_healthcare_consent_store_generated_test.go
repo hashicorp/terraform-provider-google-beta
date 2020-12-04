@@ -190,7 +190,6 @@ resource "google_healthcare_consent_store" "my-consent" {
 }
 
 resource "google_healthcare_consent_store_iam_binding" "foo" {
- 
   provider = google-beta
   dataset = google_healthcare_consent_store.my-consent.dataset
   consent_store_id = google_healthcare_consent_store.my-consent.name

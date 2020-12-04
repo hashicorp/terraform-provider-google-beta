@@ -245,7 +245,6 @@ resource "google_api_gateway_gateway" "api_gw" {
 }
 
 resource "google_api_gateway_gateway_iam_binding" "foo" {
- 
   provider = google-beta
   project = google_api_gateway_gateway.api_gw.project
   region = google_api_gateway_gateway.api_gw.region

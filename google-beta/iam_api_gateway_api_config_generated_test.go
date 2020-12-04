@@ -218,7 +218,6 @@ resource "google_api_gateway_api_config" "api_cfg" {
 }
 
 resource "google_api_gateway_api_config_iam_binding" "foo" {
- 
   provider = google-beta
   api = google_api_gateway_api_config.api_cfg.api
   api_config = google_api_gateway_api_config.api_cfg.api_config_id

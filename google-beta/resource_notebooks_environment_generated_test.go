@@ -32,7 +32,7 @@ func TestAccNotebooksEnvironment_notebookEnvironmentBasicExample(t *testing.T) {
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
-		Providers: testAccProvidersOiCS,
+		Providers: testAccProviders,
 		ExternalProviders: map[string]resource.ExternalProvider{
 			"random": {},
 		},
@@ -40,6 +40,12 @@ func TestAccNotebooksEnvironment_notebookEnvironmentBasicExample(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testAccNotebooksEnvironment_notebookEnvironmentBasicExample(context),
+			},
+			{
+				ResourceName:            "google_notebooks_environment.environment",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"name", "location"},
 			},
 		},
 	})

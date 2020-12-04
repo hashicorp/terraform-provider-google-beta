@@ -337,7 +337,6 @@ resource "google_compute_machine_image" "image" {
 }
 
 resource "google_compute_machine_image_iam_binding" "foo" {
- 
   provider = google-beta
   project = google_compute_machine_image.image.project
   machine_image = google_compute_machine_image.image.name
