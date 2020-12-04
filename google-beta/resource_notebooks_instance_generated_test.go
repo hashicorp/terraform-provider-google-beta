@@ -32,7 +32,7 @@ func TestAccNotebooksInstance_notebookInstanceBasicExample(t *testing.T) {
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
-		Providers: testAccProvidersOiCS,
+		Providers: testAccProviders,
 		ExternalProviders: map[string]resource.ExternalProvider{
 			"random": {},
 		},
@@ -41,6 +41,12 @@ func TestAccNotebooksInstance_notebookInstanceBasicExample(t *testing.T) {
 			{
 				Config: testAccNotebooksInstance_notebookInstanceBasicExample(context),
 			},
+			{
+				ResourceName:            "google_notebooks_instance.instance",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"name", "instance_owners", "boot_disk_type", "boot_disk_size_gb", "data_disk_size_gb", "metadata", "vm_image", "container_image", "location"},
+			},
 		},
 	})
 }
@@ -48,7 +54,6 @@ func TestAccNotebooksInstance_notebookInstanceBasicExample(t *testing.T) {
 func testAccNotebooksInstance_notebookInstanceBasicExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_notebooks_instance" "instance" {
-  provider = google-beta
   name = "tf-test-notebooks-instance%{random_suffix}"
   location = "us-west1-a"
   machine_type = "e2-medium"
@@ -69,7 +74,7 @@ func TestAccNotebooksInstance_notebookInstanceBasicContainerExample(t *testing.T
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
-		Providers: testAccProvidersOiCS,
+		Providers: testAccProviders,
 		ExternalProviders: map[string]resource.ExternalProvider{
 			"random": {},
 		},
@@ -78,6 +83,12 @@ func TestAccNotebooksInstance_notebookInstanceBasicContainerExample(t *testing.T
 			{
 				Config: testAccNotebooksInstance_notebookInstanceBasicContainerExample(context),
 			},
+			{
+				ResourceName:            "google_notebooks_instance.instance",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"name", "instance_owners", "boot_disk_type", "boot_disk_size_gb", "data_disk_size_gb", "metadata", "vm_image", "container_image", "location"},
+			},
 		},
 	})
 }
@@ -85,7 +96,6 @@ func TestAccNotebooksInstance_notebookInstanceBasicContainerExample(t *testing.T
 func testAccNotebooksInstance_notebookInstanceBasicContainerExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_notebooks_instance" "instance" {
-  provider = google-beta
   name = "tf-test-notebooks-instance%{random_suffix}"
   location = "us-west1-a"
   machine_type = "e2-medium"
@@ -110,7 +120,7 @@ func TestAccNotebooksInstance_notebookInstanceBasicGpuExample(t *testing.T) {
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
-		Providers: testAccProvidersOiCS,
+		Providers: testAccProviders,
 		ExternalProviders: map[string]resource.ExternalProvider{
 			"random": {},
 		},
@@ -119,6 +129,12 @@ func TestAccNotebooksInstance_notebookInstanceBasicGpuExample(t *testing.T) {
 			{
 				Config: testAccNotebooksInstance_notebookInstanceBasicGpuExample(context),
 			},
+			{
+				ResourceName:            "google_notebooks_instance.instance",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"name", "instance_owners", "boot_disk_type", "boot_disk_size_gb", "data_disk_size_gb", "metadata", "vm_image", "container_image", "location"},
+			},
 		},
 	})
 }
@@ -126,7 +142,6 @@ func TestAccNotebooksInstance_notebookInstanceBasicGpuExample(t *testing.T) {
 func testAccNotebooksInstance_notebookInstanceBasicGpuExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_notebooks_instance" "instance" {
-  provider = google-beta
   name = "tf-test-notebooks-instance%{random_suffix}"
   location = "us-west1-a"
   machine_type = "n1-standard-1" // can't be e2 because of accelerator
@@ -154,7 +169,7 @@ func TestAccNotebooksInstance_notebookInstanceFullExample(t *testing.T) {
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
-		Providers: testAccProvidersOiCS,
+		Providers: testAccProviders,
 		ExternalProviders: map[string]resource.ExternalProvider{
 			"random": {},
 		},
@@ -163,6 +178,12 @@ func TestAccNotebooksInstance_notebookInstanceFullExample(t *testing.T) {
 			{
 				Config: testAccNotebooksInstance_notebookInstanceFullExample(context),
 			},
+			{
+				ResourceName:            "google_notebooks_instance.instance",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"name", "instance_owners", "boot_disk_type", "boot_disk_size_gb", "data_disk_size_gb", "metadata", "vm_image", "container_image", "location"},
+			},
 		},
 	})
 }
@@ -170,7 +191,6 @@ func TestAccNotebooksInstance_notebookInstanceFullExample(t *testing.T) {
 func testAccNotebooksInstance_notebookInstanceFullExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_notebooks_instance" "instance" {
-  provider = google-beta
   name = "tf-test-notebooks-instance%{random_suffix}"
   location = "us-central1-a"
   machine_type = "e2-medium"

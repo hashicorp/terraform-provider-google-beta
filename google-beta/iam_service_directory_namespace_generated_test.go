@@ -175,7 +175,6 @@ resource "google_service_directory_namespace" "example" {
 }
 
 resource "google_service_directory_namespace_iam_binding" "foo" {
- 
   provider = google-beta
   name = google_service_directory_namespace.example.name
   role = "%{role}"

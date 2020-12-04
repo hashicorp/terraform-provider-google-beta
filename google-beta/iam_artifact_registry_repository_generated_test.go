@@ -173,7 +173,6 @@ resource "google_artifact_registry_repository" "my-repo" {
 }
 
 resource "google_artifact_registry_repository_iam_binding" "foo" {
- 
   provider = google-beta
   project = google_artifact_registry_repository.my-repo.project
   location = google_artifact_registry_repository.my-repo.location

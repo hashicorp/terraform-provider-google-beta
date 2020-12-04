@@ -15,6 +15,7 @@
 package google
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -30,14 +31,26 @@ func TestAccNotebooksInstanceIamBindingGenerated(t *testing.T) {
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
-		Providers: testAccProvidersOiCS,
+		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccNotebooksInstanceIamBinding_basicGenerated(context),
 			},
 			{
+				ResourceName:      "google_notebooks_instance_iam_binding.foo",
+				ImportStateId:     fmt.Sprintf("projects/%s/locations/%s/instances/%s roles/viewer", getTestProjectFromEnv(), "us-west1-a", fmt.Sprintf("tf-test-notebooks-instance%s", context["random_suffix"])),
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+			{
 				// Test Iam Binding update
 				Config: testAccNotebooksInstanceIamBinding_updateGenerated(context),
+			},
+			{
+				ResourceName:      "google_notebooks_instance_iam_binding.foo",
+				ImportStateId:     fmt.Sprintf("projects/%s/locations/%s/instances/%s roles/viewer", getTestProjectFromEnv(), "us-west1-a", fmt.Sprintf("tf-test-notebooks-instance%s", context["random_suffix"])),
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -53,11 +66,17 @@ func TestAccNotebooksInstanceIamMemberGenerated(t *testing.T) {
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
-		Providers: testAccProvidersOiCS,
+		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
 				// Test Iam Member creation (no update for member, no need to test)
 				Config: testAccNotebooksInstanceIamMember_basicGenerated(context),
+			},
+			{
+				ResourceName:      "google_notebooks_instance_iam_member.foo",
+				ImportStateId:     fmt.Sprintf("projects/%s/locations/%s/instances/%s roles/viewer user:admin@hashicorptest.com", getTestProjectFromEnv(), "us-west1-a", fmt.Sprintf("tf-test-notebooks-instance%s", context["random_suffix"])),
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -73,13 +92,25 @@ func TestAccNotebooksInstanceIamPolicyGenerated(t *testing.T) {
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
-		Providers: testAccProvidersOiCS,
+		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccNotebooksInstanceIamPolicy_basicGenerated(context),
 			},
 			{
+				ResourceName:      "google_notebooks_instance_iam_policy.foo",
+				ImportStateId:     fmt.Sprintf("projects/%s/locations/%s/instances/%s", getTestProjectFromEnv(), "us-west1-a", fmt.Sprintf("tf-test-notebooks-instance%s", context["random_suffix"])),
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+			{
 				Config: testAccNotebooksInstanceIamPolicy_emptyBinding(context),
+			},
+			{
+				ResourceName:      "google_notebooks_instance_iam_policy.foo",
+				ImportStateId:     fmt.Sprintf("projects/%s/locations/%s/instances/%s", getTestProjectFromEnv(), "us-west1-a", fmt.Sprintf("tf-test-notebooks-instance%s", context["random_suffix"])),
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -88,7 +119,6 @@ func TestAccNotebooksInstanceIamPolicyGenerated(t *testing.T) {
 func testAccNotebooksInstanceIamMember_basicGenerated(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_notebooks_instance" "instance" {
-  provider = google-beta
   name = "tf-test-notebooks-instance%{random_suffix}"
   location = "us-west1-a"
   machine_type = "e2-medium"
@@ -99,7 +129,6 @@ resource "google_notebooks_instance" "instance" {
 }
 
 resource "google_notebooks_instance_iam_member" "foo" {
-  provider = google-beta
   project = google_notebooks_instance.instance.project
   location = google_notebooks_instance.instance.location
   instance_name = google_notebooks_instance.instance.name
@@ -112,7 +141,6 @@ resource "google_notebooks_instance_iam_member" "foo" {
 func testAccNotebooksInstanceIamPolicy_basicGenerated(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_notebooks_instance" "instance" {
-  provider = google-beta
   name = "tf-test-notebooks-instance%{random_suffix}"
   location = "us-west1-a"
   machine_type = "e2-medium"
@@ -123,7 +151,6 @@ resource "google_notebooks_instance" "instance" {
 }
 
 data "google_iam_policy" "foo" {
-  provider = google-beta
   binding {
     role = "%{role}"
     members = ["user:admin@hashicorptest.com"]
@@ -131,7 +158,6 @@ data "google_iam_policy" "foo" {
 }
 
 resource "google_notebooks_instance_iam_policy" "foo" {
-  provider = google-beta
   project = google_notebooks_instance.instance.project
   location = google_notebooks_instance.instance.location
   instance_name = google_notebooks_instance.instance.name
@@ -143,7 +169,6 @@ resource "google_notebooks_instance_iam_policy" "foo" {
 func testAccNotebooksInstanceIamPolicy_emptyBinding(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_notebooks_instance" "instance" {
-  provider = google-beta
   name = "tf-test-notebooks-instance%{random_suffix}"
   location = "us-west1-a"
   machine_type = "e2-medium"
@@ -154,11 +179,9 @@ resource "google_notebooks_instance" "instance" {
 }
 
 data "google_iam_policy" "foo" {
-  provider = google-beta
 }
 
 resource "google_notebooks_instance_iam_policy" "foo" {
-  provider = google-beta
   project = google_notebooks_instance.instance.project
   location = google_notebooks_instance.instance.location
   instance_name = google_notebooks_instance.instance.name
@@ -170,7 +193,6 @@ resource "google_notebooks_instance_iam_policy" "foo" {
 func testAccNotebooksInstanceIamBinding_basicGenerated(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_notebooks_instance" "instance" {
-  provider = google-beta
   name = "tf-test-notebooks-instance%{random_suffix}"
   location = "us-west1-a"
   machine_type = "e2-medium"
@@ -181,8 +203,6 @@ resource "google_notebooks_instance" "instance" {
 }
 
 resource "google_notebooks_instance_iam_binding" "foo" {
- 
-  provider = google-beta
   project = google_notebooks_instance.instance.project
   location = google_notebooks_instance.instance.location
   instance_name = google_notebooks_instance.instance.name
@@ -195,7 +215,6 @@ resource "google_notebooks_instance_iam_binding" "foo" {
 func testAccNotebooksInstanceIamBinding_updateGenerated(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_notebooks_instance" "instance" {
-  provider = google-beta
   name = "tf-test-notebooks-instance%{random_suffix}"
   location = "us-west1-a"
   machine_type = "e2-medium"
@@ -206,7 +225,6 @@ resource "google_notebooks_instance" "instance" {
 }
 
 resource "google_notebooks_instance_iam_binding" "foo" {
-  provider = google-beta
   project = google_notebooks_instance.instance.project
   location = google_notebooks_instance.instance.location
   instance_name = google_notebooks_instance.instance.name
