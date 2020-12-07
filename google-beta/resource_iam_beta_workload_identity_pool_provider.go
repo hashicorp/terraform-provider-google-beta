@@ -179,6 +179,7 @@ For OIDC providers, the following rules apply:
 			"aws": {
 				Type:        schema.TypeList,
 				Optional:    true,
+				ForceNew:    true,
 				Description: `An Amazon Web Services identity provider. Not compatible with the property oidc.`,
 				MaxItems:    1,
 				Elem: &schema.Resource{
@@ -211,6 +212,7 @@ However, existing tokens still grant access.`,
 			"oidc": {
 				Type:        schema.TypeList,
 				Optional:    true,
+				ForceNew:    true,
 				Description: `An OpenId Connect 1.0 identity provider. Not compatible with the property aws.`,
 				MaxItems:    1,
 				Elem: &schema.Resource{
@@ -490,18 +492,6 @@ func resourceIAMBetaWorkloadIdentityPoolProviderUpdate(d *schema.ResourceData, m
 	} else if v, ok := d.GetOkExists("attribute_condition"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, attributeConditionProp)) {
 		obj["attributeCondition"] = attributeConditionProp
 	}
-	awsProp, err := expandIAMBetaWorkloadIdentityPoolProviderAws(d.Get("aws"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("aws"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, awsProp)) {
-		obj["aws"] = awsProp
-	}
-	oidcProp, err := expandIAMBetaWorkloadIdentityPoolProviderOidc(d.Get("oidc"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("oidc"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, oidcProp)) {
-		obj["oidc"] = oidcProp
-	}
 
 	url, err := replaceVars(d, config, "{{IAMBetaBasePath}}projects/{{project}}/locations/global/workloadIdentityPools/{{workload_identity_pool_id}}/providers/{{workload_identity_pool_provider_id}}")
 	if err != nil {
@@ -529,14 +519,6 @@ func resourceIAMBetaWorkloadIdentityPoolProviderUpdate(d *schema.ResourceData, m
 
 	if d.HasChange("attribute_condition") {
 		updateMask = append(updateMask, "attributeCondition")
-	}
-
-	if d.HasChange("aws") {
-		updateMask = append(updateMask, "aws")
-	}
-
-	if d.HasChange("oidc") {
-		updateMask = append(updateMask, "oidc")
 	}
 	// updateMask is a URL parameter but not present in the schema, so replaceVars
 	// won't set it
