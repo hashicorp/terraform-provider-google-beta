@@ -1,3 +1,27 @@
+
+## 3.50.0 (Unreleased)
+
+FEATURES:
+* **New Data Source:** `google_composer_environment` ([#2745](https://github.com/hashicorp/terraform-provider-google-beta/pull/2745))
+* **New Data Source:** `google_monitoring_cluster_istio_service` ([#2730](https://github.com/hashicorp/terraform-provider-google-beta/pull/2730))
+* **New Data Source:** `google_monitoring_mesh_istio_service` ([#2730](https://github.com/hashicorp/terraform-provider-google-beta/pull/2730))
+
+IMPROVEMENTS:
+* compute: added `replacement_method` field to `update_policy` block of `google_compute_instance_group_manager` ([#2756](https://github.com/hashicorp/terraform-provider-google-beta/pull/2756))
+* compute: added `replacement_method` field to `update_policy` block of `google_compute_region_instance_group_manager` ([#2756](https://github.com/hashicorp/terraform-provider-google-beta/pull/2756))
+* compute: added more fields to cdn_policy block of `google_compute_backend_bucket` ([#2741](https://github.com/hashicorp/terraform-provider-google-beta/pull/2741))
+* compute: updated `google_compute_url_map`'s fields referring to backend services to be able to refer to backend buckets. ([#2754](https://github.com/hashicorp/terraform-provider-google-beta/pull/2754))
+* container: added cluster state check in `resource_container_node_pool` ([#2740](https://github.com/hashicorp/terraform-provider-google-beta/pull/2740))
+* google: added support for more import formats to google_project_iam_custom_role ([#2735](https://github.com/hashicorp/terraform-provider-google-beta/pull/2735))
+* project: added new restore_policy `REVERT_AND_IGNORE_FAILURE` to `google_project_default_service_accounts` ([#2750](https://github.com/hashicorp/terraform-provider-google-beta/pull/2750))
+* serviceusage: Allowed use of field `force` with updates to `google_service_usage_consumer_quota_override` ([#2747](https://github.com/hashicorp/terraform-provider-google-beta/pull/2747))
+
+BUG FIXES:
+* bigqueryconnection: fixed failure to import a resource if it has a non-default project or location. ([#2746](https://github.com/hashicorp/terraform-provider-google-beta/pull/2746))
+* datacatalog: fixed permadiff on import for tags with a taxonomy set in config. ([#2744](https://github.com/hashicorp/terraform-provider-google-beta/pull/2744))
+* iam: fixed iam conflict handling so that optimistic-locking retries will succeed more often. ([#2753](https://github.com/hashicorp/terraform-provider-google-beta/pull/2753))
+* storage: fixed an issue in `google_storage_bucket` where `cors` could not be removed ([#2732](https://github.com/hashicorp/terraform-provider-google-beta/pull/2732))
+
 ## 3.49.0 (November 24, 2020)
 
 FEATURES:
