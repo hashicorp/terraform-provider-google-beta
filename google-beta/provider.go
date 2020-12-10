@@ -8,7 +8,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/hashicorp/terraform-provider-google-beta/version"
+	"github.com/hashicorp/terraform-provider-google-beta/v3/version"
 
 	googleoauth "golang.org/x/oauth2/google"
 )
