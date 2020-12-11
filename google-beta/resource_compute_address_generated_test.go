@@ -157,7 +157,7 @@ func TestAccComputeAddress_addressWithSharedLoadbalancerVipExample(t *testing.T)
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
-		Providers: testAccProvidersOiCS,
+		Providers: testAccProviders,
 		ExternalProviders: map[string]resource.ExternalProvider{
 			"random": {},
 		},
@@ -166,6 +166,12 @@ func TestAccComputeAddress_addressWithSharedLoadbalancerVipExample(t *testing.T)
 			{
 				Config: testAccComputeAddress_addressWithSharedLoadbalancerVipExample(context),
 			},
+			{
+				ResourceName:            "google_compute_address.internal_with_shared_loadbalancer_vip",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"subnetwork", "region"},
+			},
 		},
 	})
 }
@@ -173,7 +179,6 @@ func TestAccComputeAddress_addressWithSharedLoadbalancerVipExample(t *testing.T)
 func testAccComputeAddress_addressWithSharedLoadbalancerVipExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_compute_address" "internal_with_shared_loadbalancer_vip" {
-  provider     = google-beta 
   name         = "tf-test-my-internal-address%{random_suffix}"
   address_type = "INTERNAL"
   purpose      = "SHARED_LOADBALANCER_VIP"
