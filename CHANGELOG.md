@@ -11,6 +11,7 @@ IMPROVEMENTS:
 * storage: added more lifecycle conditions to `google_storage_bucket` resource ([#2761](https://github.com/hashicorp/terraform-provider-google-beta/pull/2761))
 
 BUG FIXES:
+* all: bump default request timeout to avoid conflicts if creating a resource takes longer than expected ([#2769](https://github.com/hashicorp/terraform-provider-google-beta/pull/2769))
 * spanner: fixed an issue in `google_spanner_database` where multi-statement updates were not formatted correctly ([#2766](https://github.com/hashicorp/terraform-provider-google-beta/pull/2766))
 
 ## 3.50.0 (December 7, 2020)
