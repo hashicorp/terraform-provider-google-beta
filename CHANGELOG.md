@@ -8,10 +8,12 @@ IMPROVEMENTS:
 * compute: added Flexible Cache Control features to `google_compute_backend_service`. ([#2762](https://github.com/hashicorp/terraform-provider-google-beta/pull/2762))
 * compute: added `replacement_method` field to `update_policy` block of `google_compute_instance_group_manager` ([#2756](https://github.com/hashicorp/terraform-provider-google-beta/pull/2756))
 * compute: added `replacement_method` field to `update_policy` block of `google_compute_region_instance_group_manager` ([#2756](https://github.com/hashicorp/terraform-provider-google-beta/pull/2756))
+* logging: added plan time validation for `unique_writer_identity` on `google_logging_project_sink` ([#2767](https://github.com/hashicorp/terraform-provider-google-beta/pull/2767))
 * storage: added more lifecycle conditions to `google_storage_bucket` resource ([#2761](https://github.com/hashicorp/terraform-provider-google-beta/pull/2761))
 
 BUG FIXES:
 * all: bump default request timeout to avoid conflicts if creating a resource takes longer than expected ([#2769](https://github.com/hashicorp/terraform-provider-google-beta/pull/2769))
+* project: fixed a bug where `google_project_default_service_accounts` would delete all IAM bindings on a project when run with `action = "DEPRIVILEGE"` ([#2771](https://github.com/hashicorp/terraform-provider-google-beta/pull/2771))
 * spanner: fixed an issue in `google_spanner_database` where multi-statement updates were not formatted correctly ([#2766](https://github.com/hashicorp/terraform-provider-google-beta/pull/2766))
 
 ## 3.50.0 (December 7, 2020)
