@@ -15,6 +15,7 @@ BUG FIXES:
 * all: bump default request timeout to avoid conflicts if creating a resource takes longer than expected ([#2769](https://github.com/hashicorp/terraform-provider-google-beta/pull/2769))
 * project: fixed a bug where `google_project_default_service_accounts` would delete all IAM bindings on a project when run with `action = "DEPRIVILEGE"` ([#2771](https://github.com/hashicorp/terraform-provider-google-beta/pull/2771))
 * spanner: fixed an issue in `google_spanner_database` where multi-statement updates were not formatted correctly ([#2766](https://github.com/hashicorp/terraform-provider-google-beta/pull/2766))
+* sql: fixed a bug in `google_sql_database_instance` that caused a permadiff on `settings.replication_type` ([#2778](https://github.com/hashicorp/terraform-provider-google-beta/pull/2778))
 
 ## 3.50.0 (December 7, 2020)
 
