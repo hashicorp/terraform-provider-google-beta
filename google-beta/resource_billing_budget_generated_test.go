@@ -33,7 +33,7 @@ func TestAccBillingBudget_billingBudgetBasicExample(t *testing.T) {
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
-		Providers: testAccProvidersOiCS,
+		Providers: testAccProviders,
 		ExternalProviders: map[string]resource.ExternalProvider{
 			"random": {},
 		},
@@ -49,12 +49,10 @@ func TestAccBillingBudget_billingBudgetBasicExample(t *testing.T) {
 func testAccBillingBudget_billingBudgetBasicExample(context map[string]interface{}) string {
 	return Nprintf(`
 data "google_billing_account" "account" {
-  provider = google-beta
   billing_account = "%{billing_acct}"
 }
 
 resource "google_billing_budget" "budget" {
-  provider = google-beta
   billing_account = data.google_billing_account.account.id
   display_name = "Example Billing Budget%{random_suffix}"
   amount {
@@ -75,13 +73,12 @@ func TestAccBillingBudget_billingBudgetLastperiodExample(t *testing.T) {
 
 	context := map[string]interface{}{
 		"billing_acct":  getTestBillingAccountFromEnv(t),
-		"project":       getTestProjectFromEnv(),
 		"random_suffix": randString(t, 10),
 	}
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
-		Providers: testAccProvidersOiCS,
+		Providers: testAccProviders,
 		ExternalProviders: map[string]resource.ExternalProvider{
 			"random": {},
 		},
@@ -97,17 +94,18 @@ func TestAccBillingBudget_billingBudgetLastperiodExample(t *testing.T) {
 func testAccBillingBudget_billingBudgetLastperiodExample(context map[string]interface{}) string {
 	return Nprintf(`
 data "google_billing_account" "account" {
-  provider = google-beta
   billing_account = "%{billing_acct}"
 }
 
+data "google_project" "project" {
+}
+
 resource "google_billing_budget" "budget" {
-  provider = google-beta
   billing_account = data.google_billing_account.account.id
   display_name = "Example Billing Budget%{random_suffix}"
   
   budget_filter {
-    projects = ["projects/%{project}"]
+    projects = ["projects/${data.google_project.project.number}"]
   }
 
   amount {
@@ -129,13 +127,12 @@ func TestAccBillingBudget_billingBudgetFilterExample(t *testing.T) {
 
 	context := map[string]interface{}{
 		"billing_acct":  getTestBillingAccountFromEnv(t),
-		"project":       getTestProjectFromEnv(),
 		"random_suffix": randString(t, 10),
 	}
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
-		Providers: testAccProvidersOiCS,
+		Providers: testAccProviders,
 		ExternalProviders: map[string]resource.ExternalProvider{
 			"random": {},
 		},
@@ -151,17 +148,18 @@ func TestAccBillingBudget_billingBudgetFilterExample(t *testing.T) {
 func testAccBillingBudget_billingBudgetFilterExample(context map[string]interface{}) string {
 	return Nprintf(`
 data "google_billing_account" "account" {
-  provider = google-beta
   billing_account = "%{billing_acct}"
 }
 
+data "google_project" "project" {
+}
+
 resource "google_billing_budget" "budget" {
-  provider = google-beta
   billing_account = data.google_billing_account.account.id
   display_name = "Example Billing Budget%{random_suffix}"
 
   budget_filter {
-    projects = ["projects/%{project}"]
+    projects = ["projects/${data.google_project.project.number}"]
     credit_types_treatment = "EXCLUDE_ALL_CREDITS"
     services = ["services/24E6-581D-38E5"] # Bigquery
   }
@@ -189,13 +187,12 @@ func TestAccBillingBudget_billingBudgetNotifyExample(t *testing.T) {
 
 	context := map[string]interface{}{
 		"billing_acct":  getTestBillingAccountFromEnv(t),
-		"project":       getTestProjectFromEnv(),
 		"random_suffix": randString(t, 10),
 	}
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
-		Providers: testAccProvidersOiCS,
+		Providers: testAccProviders,
 		ExternalProviders: map[string]resource.ExternalProvider{
 			"random": {},
 		},
@@ -211,17 +208,18 @@ func TestAccBillingBudget_billingBudgetNotifyExample(t *testing.T) {
 func testAccBillingBudget_billingBudgetNotifyExample(context map[string]interface{}) string {
 	return Nprintf(`
 data "google_billing_account" "account" {
-  provider        = google-beta
   billing_account = "%{billing_acct}"
 }
 
+data "google_project" "project" {
+}
+
 resource "google_billing_budget" "budget" {
-  provider        = google-beta
   billing_account = data.google_billing_account.account.id
   display_name    = "Example Billing Budget%{random_suffix}"
 
   budget_filter {
-    projects = ["projects/%{project}"]
+    projects = ["projects/${data.google_project.project.number}"]
   }
 
   amount {
@@ -248,7 +246,6 @@ resource "google_billing_budget" "budget" {
 }
 
 resource "google_monitoring_notification_channel" "notification_channel" {
-  provider     = google-beta
   display_name = "Example Notification Channel%{random_suffix}"
   type         = "email"
   
@@ -276,7 +273,13 @@ func testAccCheckBillingBudgetDestroyProducer(t *testing.T) func(s *terraform.St
 				return err
 			}
 
-			_, err = sendRequest(config, "GET", "", url, config.userAgent, nil)
+			billingProject := ""
+
+			if config.BillingProject != "" {
+				billingProject = config.BillingProject
+			}
+
+			_, err = sendRequest(config, "GET", billingProject, url, config.userAgent, nil)
 			if err == nil {
 				return fmt.Errorf("BillingBudget still exists at %s", url)
 			}

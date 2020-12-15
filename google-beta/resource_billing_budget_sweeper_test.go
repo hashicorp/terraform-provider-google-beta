@@ -61,7 +61,7 @@ func testSweepBillingBudget(region string) error {
 		},
 	}
 
-	listTemplate := strings.Split("https://billingbudgets.googleapis.com/v1beta1/billingAccounts/{{billing_account}}/budgets", "?")[0]
+	listTemplate := strings.Split("https://billingbudgets.googleapis.com/v1/billingAccounts/{{billing_account}}/budgets", "?")[0]
 	listUrl, err := replaceVars(d, config, listTemplate)
 	if err != nil {
 		log.Printf("[INFO][SWEEPER_LOG] error preparing sweeper list url: %s", err)
@@ -99,7 +99,7 @@ func testSweepBillingBudget(region string) error {
 			continue
 		}
 
-		deleteTemplate := "https://billingbudgets.googleapis.com/v1beta1/{{name}}"
+		deleteTemplate := "https://billingbudgets.googleapis.com/v1/{{name}}"
 		deleteUrl, err := replaceVars(d, config, deleteTemplate)
 		if err != nil {
 			log.Printf("[INFO][SWEEPER_LOG] error preparing delete url: %s", err)
