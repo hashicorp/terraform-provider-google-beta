@@ -32,7 +32,7 @@ func TestAccBigqueryReservationReservation_bigqueryReservationBasicExample(t *te
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
-		Providers: testAccProvidersOiCS,
+		Providers: testAccProviders,
 		ExternalProviders: map[string]resource.ExternalProvider{
 			"random": {},
 		},
@@ -41,6 +41,12 @@ func TestAccBigqueryReservationReservation_bigqueryReservationBasicExample(t *te
 			{
 				Config: testAccBigqueryReservationReservation_bigqueryReservationBasicExample(context),
 			},
+			{
+				ResourceName:            "google_bigquery_reservation.reservation",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"location", "name"},
+			},
 		},
 	})
 }
@@ -48,7 +54,6 @@ func TestAccBigqueryReservationReservation_bigqueryReservationBasicExample(t *te
 func testAccBigqueryReservationReservation_bigqueryReservationBasicExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_bigquery_reservation" "reservation" {
-	provider       = google-beta
 	name           = "reservation%{random_suffix}"
 	location       = "asia-northeast1"
 	// Set to 0 for testing purposes
