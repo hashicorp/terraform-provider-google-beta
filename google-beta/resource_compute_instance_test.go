@@ -1296,7 +1296,7 @@ func TestAccComputeInstanceConfidentialInstanceConfigMain(t *testing.T) {
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProvidersOiCS,
+		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckComputeInstanceDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -4633,13 +4633,11 @@ resource "google_compute_instance" "foobar" {
 func testAccComputeInstanceConfidentialInstanceConfig(instance string, enableConfidentialCompute bool) string {
 	return fmt.Sprintf(`
 data "google_compute_image" "my_image" {
-  provider  = google-beta
   family    = "ubuntu-2004-lts"
   project   = "ubuntu-os-cloud"
 }
 
 resource "google_compute_instance" "foobar" {
-  provider     = google-beta
   name         = "%s"
   machine_type = "n2d-standard-2"
   zone         = "us-central1-a"
