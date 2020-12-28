@@ -197,6 +197,11 @@ checked before each import/export operation.`,
 				Computed:    true,
 				Description: `The port number of the exposed Redis endpoint.`,
 			},
+			"auth_string": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Computed: true,
+			},
 			"project": {
 				Type:     schema.TypeString,
 				Optional: true,
@@ -342,6 +347,14 @@ func resourceRedisInstanceCreate(d *schema.ResourceData, meta interface{}) error
 		return fmt.Errorf("Error waiting to create Instance: %s", err)
 	}
 
+	opRes, err = resourceRedisInstanceDecoder(d, meta, opRes)
+	if err != nil {
+		return fmt.Errorf("Error decoding response from operation: %s", err)
+	}
+	if opRes == nil {
+		return fmt.Errorf("Error decoding response from operation, could not find object")
+	}
+
 	if err := d.Set("name", flattenRedisInstanceName(opRes["name"], d, config)); err != nil {
 		return err
 	}
@@ -386,6 +399,18 @@ func resourceRedisInstanceRead(d *schema.ResourceData, meta interface{}) error {
 	res, err := sendRequest(config, "GET", billingProject, url, userAgent, nil)
 	if err != nil {
 		return handleNotFoundError(err, d, fmt.Sprintf("RedisInstance %q", d.Id()))
+	}
+
+	res, err = resourceRedisInstanceDecoder(d, meta, res)
+	if err != nil {
+		return err
+	}
+
+	if res == nil {
+		// Decoding the object has resulted in it being gone. It may be marked deleted
+		log.Printf("[DEBUG] Removing RedisInstance because it no longer exists.")
+		d.SetId("")
+		return nil
 	}
 
 	if err := d.Set("project", project); err != nil {
@@ -815,4 +840,51 @@ func resourceRedisInstanceEncoder(d *schema.ResourceData, meta interface{}, obj 
 		return nil, fmt.Errorf("Error setting region: %s", err)
 	}
 	return obj, nil
+}
+
+func resourceRedisInstanceDecoder(d *schema.ResourceData, meta interface{}, res map[string]interface{}) (map[string]interface{}, error) {
+	config := meta.(*Config)
+
+	userAgent, err := generateUserAgentString(d, config.userAgent)
+	if err != nil {
+		return nil, err
+	}
+
+	if v, ok := res["authEnabled"].(bool); ok {
+		if v {
+			url, err := replaceVars(d, config, "{{RedisBasePath}}projects/{{project}}/locations/{{region}}/instances/{{name}}/authString")
+			if err != nil {
+				return nil, err
+			}
+
+			billingProject := ""
+
+			project, err := getProject(d, config)
+			if err != nil {
+				return nil, fmt.Errorf("Error fetching project for Instance: %s", err)
+			}
+
+			billingProject = project
+
+			// err == nil indicates that the billing_project value was found
+			if bp, err := getBillingProject(d, config); err == nil {
+				billingProject = bp
+			}
+
+			res, err := sendRequest(config, "GET", billingProject, url, userAgent, nil)
+			if err != nil {
+				return nil, fmt.Errorf("Error reading AuthString: %s", err)
+			}
+
+			if err := d.Set("auth_string", res["authString"]); err != nil {
+				return nil, fmt.Errorf("Error reading Instance: %s", err)
+			}
+		}
+	} else {
+		if err := d.Set("auth_string", ""); err != nil {
+			return nil, fmt.Errorf("Error reading Instance: %s", err)
+		}
+	}
+
+	return res, nil
 }
