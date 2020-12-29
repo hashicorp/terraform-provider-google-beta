@@ -254,7 +254,7 @@ func schemaNodeConfig() *schema.Schema {
 							"cpu_manager_policy": {
 								Type:         schema.TypeString,
 								Required:     true,
-								ValidateFunc: validation.StringInSlice([]string{"static", "none"}, false),
+								ValidateFunc: validation.StringInSlice([]string{"static", "none", ""}, false),
 							},
 							"cpu_cfs_quota": {
 								Type:     schema.TypeBool,
@@ -462,6 +462,7 @@ func expandKubeletConfig(v interface{}) *containerBeta.NodeKubeletConfig {
 	}
 	if cpuCfsQuota, ok := cfg["cpu_cfs_quota"]; ok {
 		kConfig.CpuCfsQuota = cpuCfsQuota.(bool)
+		kConfig.ForceSendFields = append(kConfig.ForceSendFields, "CpuCfsQuota")
 	}
 	if cpuCfsQuotaPeriod, ok := cfg["cpu_cfs_quota_period"]; ok {
 		kConfig.CpuCfsQuotaPeriod = cpuCfsQuotaPeriod.(string)
