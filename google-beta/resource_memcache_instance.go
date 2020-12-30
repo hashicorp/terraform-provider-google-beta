@@ -200,6 +200,7 @@ provided, all zones will be used.`,
 				ForceNew: true,
 			},
 		},
+		UseJSONNumber: true,
 	}
 }
 

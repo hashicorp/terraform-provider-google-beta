@@ -82,6 +82,7 @@ updates of this resource.`,
 				Description: `The unique identifier for the resource. This identifier is defined by the server.`,
 			},
 		},
+		UseJSONNumber: true,
 	}
 }
 

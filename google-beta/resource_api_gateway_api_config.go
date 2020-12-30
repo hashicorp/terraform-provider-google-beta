@@ -152,6 +152,7 @@ If not specified, backend authentication will be set to use OIDC authentication 
 				ForceNew: true,
 			},
 		},
+		UseJSONNumber: true,
 	}
 }
 

@@ -166,6 +166,7 @@ nodes will experience outages while maintenance is applied. Possible values: ["R
 				Computed: true,
 			},
 		},
+		UseJSONNumber: true,
 	}
 }
 

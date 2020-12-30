@@ -63,6 +63,7 @@ func resourceComputeOrganizationSecurityPolicyAssociation() *schema.Resource {
 				Description: `The display name of the security policy of the association.`,
 			},
 		},
+		UseJSONNumber: true,
 	}
 }
 

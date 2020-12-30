@@ -85,6 +85,7 @@ If not set, defaults to an empty string.`,
 "projects/{project}/locations/{region}/taxonomies/{taxonomy}/policyTags/{policytag}"`,
 			},
 		},
+		UseJSONNumber: true,
 	}
 }
 

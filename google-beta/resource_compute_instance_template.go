@@ -597,6 +597,7 @@ func resourceComputeInstanceTemplate() *schema.Resource {
 				Description: `A set of key/value label pairs to assign to instances created from this template,`,
 			},
 		},
+		UseJSONNumber: true,
 	}
 }
 

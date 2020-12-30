@@ -78,6 +78,7 @@ in the format 'projects/*/locations/*/namespaces/*'.`,
 				ForceNew: true,
 			},
 		},
+		UseJSONNumber: true,
 	}
 }
 

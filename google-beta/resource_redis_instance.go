@@ -204,6 +204,7 @@ checked before each import/export operation.`,
 				ForceNew: true,
 			},
 		},
+		UseJSONNumber: true,
 	}
 }
 

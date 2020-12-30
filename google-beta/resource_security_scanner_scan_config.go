@@ -196,6 +196,7 @@ which means the scan will be scheduled to start immediately.`,
 				ForceNew: true,
 			},
 		},
+		UseJSONNumber: true,
 	}
 }
 

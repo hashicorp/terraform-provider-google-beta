@@ -87,6 +87,7 @@ Example: { "name": "wrench", "mass": "1.3kg", "count": "3" }.`,
 				Elem: &schema.Schema{Type: schema.TypeString},
 			},
 		},
+		UseJSONNumber: true,
 	}
 }
 
