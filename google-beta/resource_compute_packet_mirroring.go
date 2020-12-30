@@ -161,6 +161,13 @@ destination (egress) IP in the IP header. Only IPv4 is supported.`,
 								Type: schema.TypeString,
 							},
 						},
+						"direction": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: validation.StringInSlice([]string{"INGRESS", "EGRESS", "BOTH", ""}, false),
+							Description:  `Direction of traffic to mirror. Default value: "BOTH" Possible values: ["INGRESS", "EGRESS", "BOTH"]`,
+							Default:      "BOTH",
+						},
 						"ip_protocols": {
 							Type:        schema.TypeList,
 							Optional:    true,
@@ -598,6 +605,8 @@ func flattenComputePacketMirroringFilter(v interface{}, d *schema.ResourceData, 
 		flattenComputePacketMirroringFilterIpProtocols(original["IPProtocols"], d, config)
 	transformed["cidr_ranges"] =
 		flattenComputePacketMirroringFilterCidrRanges(original["cidrRanges"], d, config)
+	transformed["direction"] =
+		flattenComputePacketMirroringFilterDirection(original["direction"], d, config)
 	return []interface{}{transformed}
 }
 func flattenComputePacketMirroringFilterIpProtocols(v interface{}, d *schema.ResourceData, config *Config) interface{} {
@@ -605,6 +614,10 @@ func flattenComputePacketMirroringFilterIpProtocols(v interface{}, d *schema.Res
 }
 
 func flattenComputePacketMirroringFilterCidrRanges(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	return v
+}
+
+func flattenComputePacketMirroringFilterDirection(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
@@ -772,6 +785,13 @@ func expandComputePacketMirroringFilter(v interface{}, d TerraformResourceData, 
 		transformed["cidrRanges"] = transformedCidrRanges
 	}
 
+	transformedDirection, err := expandComputePacketMirroringFilterDirection(original["direction"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedDirection); val.IsValid() && !isEmptyValue(val) {
+		transformed["direction"] = transformedDirection
+	}
+
 	return transformed, nil
 }
 
@@ -780,6 +800,10 @@ func expandComputePacketMirroringFilterIpProtocols(v interface{}, d TerraformRes
 }
 
 func expandComputePacketMirroringFilterCidrRanges(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputePacketMirroringFilterDirection(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
