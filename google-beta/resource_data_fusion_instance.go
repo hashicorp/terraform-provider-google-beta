@@ -182,6 +182,7 @@ able to access the public internet.`,
 				ForceNew: true,
 			},
 		},
+		UseJSONNumber: true,
 	}
 }
 

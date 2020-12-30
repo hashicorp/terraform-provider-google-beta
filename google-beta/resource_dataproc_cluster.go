@@ -617,6 +617,7 @@ by Dataproc`,
 				},
 			},
 		},
+		UseJSONNumber: true,
 	}
 }
 

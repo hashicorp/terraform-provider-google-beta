@@ -193,6 +193,7 @@ instances that are applied with this rule.`,
 				},
 			},
 		},
+		UseJSONNumber: true,
 	}
 }
 

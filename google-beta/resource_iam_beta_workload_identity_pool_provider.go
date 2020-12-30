@@ -269,6 +269,7 @@ https://iam.googleapis.com/projects/<project-number>/locations/<location>/worklo
 				ForceNew: true,
 			},
 		},
+		UseJSONNumber: true,
 	}
 }
 

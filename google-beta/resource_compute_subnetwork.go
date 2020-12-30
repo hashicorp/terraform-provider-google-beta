@@ -282,6 +282,7 @@ outside this subnetwork.`,
 				Computed: true,
 			},
 		},
+		UseJSONNumber: true,
 	}
 }
 

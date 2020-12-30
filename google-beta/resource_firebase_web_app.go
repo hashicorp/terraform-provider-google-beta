@@ -68,6 +68,7 @@ projects/projectId/webApps/appId`,
 				ForceNew: true,
 			},
 		},
+		UseJSONNumber: true,
 	}
 }
 

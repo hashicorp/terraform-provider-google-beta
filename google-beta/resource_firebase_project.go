@@ -55,6 +55,7 @@ func resourceFirebaseProject() *schema.Resource {
 				ForceNew: true,
 			},
 		},
+		UseJSONNumber: true,
 	}
 }
 

@@ -88,6 +88,7 @@ long when encoded in UTF-8. If not set, defaults to an empty description.`,
 				ForceNew: true,
 			},
 		},
+		UseJSONNumber: true,
 	}
 }
 

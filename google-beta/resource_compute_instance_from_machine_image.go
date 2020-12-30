@@ -24,6 +24,7 @@ func resourceComputeInstanceFromMachineImage() *schema.Resource {
 
 		Schema:        computeInstanceFromMachineImageSchema(),
 		CustomizeDiff: resourceComputeInstance().CustomizeDiff,
+		UseJSONNumber: true,
 	}
 }
 

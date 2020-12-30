@@ -364,6 +364,7 @@ character, which cannot be a dash.`,
 				Computed: true,
 			},
 		},
+		UseJSONNumber: true,
 	}
 }
 
