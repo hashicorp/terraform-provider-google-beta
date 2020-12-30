@@ -343,6 +343,12 @@ These images can be referred by family name here.`,
 				Description: `Labels to apply to this disk.  A list of key->value pairs.`,
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
+			"multi_writer": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				ForceNew:    true,
+				Description: `Indicates whether or not the disk can be read/write attached to more than one instance.`,
+			},
 			"physical_block_size_bytes": {
 				Type:     schema.TypeInt,
 				Computed: true,
@@ -635,6 +641,12 @@ func resourceComputeDiskCreate(d *schema.ResourceData, meta interface{}) error {
 	} else if v, ok := d.GetOkExists("resource_policies"); !isEmptyValue(reflect.ValueOf(resourcePoliciesProp)) && (ok || !reflect.DeepEqual(v, resourcePoliciesProp)) {
 		obj["resourcePolicies"] = resourcePoliciesProp
 	}
+	multiWriterProp, err := expandComputeDiskMultiWriter(d.Get("multi_writer"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("multi_writer"); !isEmptyValue(reflect.ValueOf(multiWriterProp)) && (ok || !reflect.DeepEqual(v, multiWriterProp)) {
+		obj["multiWriter"] = multiWriterProp
+	}
 	zoneProp, err := expandComputeDiskZone(d.Get("zone"), d, config)
 	if err != nil {
 		return err
@@ -803,6 +815,9 @@ func resourceComputeDiskRead(d *schema.ResourceData, meta interface{}) error {
 		return fmt.Errorf("Error reading Disk: %s", err)
 	}
 	if err := d.Set("resource_policies", flattenComputeDiskResourcePolicies(res["resourcePolicies"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Disk: %s", err)
+	}
+	if err := d.Set("multi_writer", flattenComputeDiskMultiWriter(res["multiWriter"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Disk: %s", err)
 	}
 	if err := d.Set("zone", flattenComputeDiskZone(res["zone"], d, config)); err != nil {
@@ -1141,6 +1156,10 @@ func flattenComputeDiskResourcePolicies(v interface{}, d *schema.ResourceData, c
 	return convertAndMapStringArr(v.([]interface{}), ConvertSelfLinkToV1)
 }
 
+func flattenComputeDiskMultiWriter(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	return v
+}
+
 func flattenComputeDiskZone(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	if v == nil {
 		return v
@@ -1329,6 +1348,10 @@ func expandComputeDiskResourcePolicies(v interface{}, d TerraformResourceData, c
 		req = append(req, f.RelativeLink())
 	}
 	return req, nil
+}
+
+func expandComputeDiskMultiWriter(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
 }
 
 func expandComputeDiskZone(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
