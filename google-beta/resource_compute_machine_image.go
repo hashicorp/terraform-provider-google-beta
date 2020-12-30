@@ -124,6 +124,7 @@ customer-supplied encryption key that protects this resource.`,
 				Computed: true,
 			},
 		},
+		UseJSONNumber: true,
 	}
 }
 

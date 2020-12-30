@@ -261,6 +261,7 @@ internally during updates.`,
 				Computed: true,
 			},
 		},
+		UseJSONNumber: true,
 	}
 }
 

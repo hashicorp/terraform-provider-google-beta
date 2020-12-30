@@ -86,6 +86,7 @@ range of [0, 65535]. If unspecified, the default is 0.`,
 'projects/*/locations/*/namespaces/*/services/*/endpoints/*'.`,
 			},
 		},
+		UseJSONNumber: true,
 	}
 }
 

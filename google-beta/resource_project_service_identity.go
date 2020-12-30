@@ -37,6 +37,7 @@ func resourceProjectServiceIdentity() *schema.Resource {
 				Computed: true,
 			},
 		},
+		UseJSONNumber: true,
 	}
 }
 

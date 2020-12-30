@@ -176,6 +176,7 @@ client when the resource is created.`,
 				Computed: true,
 			},
 		},
+		UseJSONNumber: true,
 	}
 }
 

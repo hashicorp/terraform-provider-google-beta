@@ -135,6 +135,7 @@ Examples: US, EU, asia-northeast1, us-central1, europe-west1. The default value 
 				ForceNew: true,
 			},
 		},
+		UseJSONNumber: true,
 	}
 }
 

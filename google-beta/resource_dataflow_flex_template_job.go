@@ -86,6 +86,7 @@ func resourceDataflowFlexTemplateJob() *schema.Resource {
 				Computed: true,
 			},
 		},
+		UseJSONNumber: true,
 	}
 }
 

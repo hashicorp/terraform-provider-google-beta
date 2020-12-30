@@ -71,6 +71,7 @@ Metadata that goes beyond any these limits will be rejected.`,
 format 'projects/*/locations/*/namespaces/*/services/*'.`,
 			},
 		},
+		UseJSONNumber: true,
 	}
 }
 

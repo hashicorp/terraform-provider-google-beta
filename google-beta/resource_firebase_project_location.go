@@ -53,6 +53,7 @@ resource locations.`,
 				ForceNew: true,
 			},
 		},
+		UseJSONNumber: true,
 	}
 }
 

@@ -110,6 +110,7 @@ and dashes.`,
 				ForceNew: true,
 			},
 		},
+		UseJSONNumber: true,
 	}
 }
 

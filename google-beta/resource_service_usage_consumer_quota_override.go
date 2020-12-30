@@ -90,6 +90,7 @@ If 'force' is 'true', that safety check is ignored.`,
 				ForceNew: true,
 			},
 		},
+		UseJSONNumber: true,
 	}
 }
 

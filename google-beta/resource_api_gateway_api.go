@@ -85,6 +85,7 @@ If not specified, a new Service will automatically be created in the same projec
 				ForceNew: true,
 			},
 		},
+		UseJSONNumber: true,
 	}
 }
 
