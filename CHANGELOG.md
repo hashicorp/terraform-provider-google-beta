@@ -1,4 +1,9 @@
 ## 3.52.0 (Unreleased)
+## 3.51.1 (January 07, 2021)
+
+BUG FIXES:
+* all: fixed a bug that would occur in various resources due to comparison of large integers ([#2826](https://github.com/hashicorp/terraform-provider-google-beta/pull/2826))
+
 ## 3.51.0 (December 14, 2020)
 
 FEATURES:
