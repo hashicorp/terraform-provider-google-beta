@@ -11,21 +11,16 @@ FEATURES:
 * **New Resource:** `google_pubsub_lite_topic` ([#2781](https://github.com/hashicorp/terraform-provider-google-beta/pull/2781))
 
 IMPROVEMENTS:
-* bigquery: promoted bigquery reservation to GA. ([#2813](https://github.com/hashicorp/terraform-provider-google-beta/pull/2813))
 * bigtable: added support for specifying `duration` for `bigtable_gc_policy` to allow durations shorter than a day ([#2815](https://github.com/hashicorp/terraform-provider-google-beta/pull/2815))
-* billing: promoted `google_billing_budget` to GA ([#2789](https://github.com/hashicorp/terraform-provider-google-beta/pull/2789))
 * compute: Added support for Google Virtual Network Interface (gVNIC) for `google_compute_image` ([#2779](https://github.com/hashicorp/terraform-provider-google-beta/pull/2779))
 * compute: added SHARED_LOADBALANCER_VIP as a valid option for `google_compute_address.purpose` ([#2773](https://github.com/hashicorp/terraform-provider-google-beta/pull/2773))
 * compute: added field `multiwriter` to resource `disk` (beta) ([#2822](https://github.com/hashicorp/terraform-provider-google-beta/pull/2822))
 * compute: added support for `enable_independent_endpoint_mapping` to `google_compute_router_nat` resource ([#2805](https://github.com/hashicorp/terraform-provider-google-beta/pull/2805))
 * compute: added support for `filter.direction` to `google_compute_packet_mirroring` ([#2825](https://github.com/hashicorp/terraform-provider-google-beta/pull/2825))
 * compute: promoted `confidential_instance_config` field in `google_compute_instance` and `google_compute_instance_template` to GA ([#2818](https://github.com/hashicorp/terraform-provider-google-beta/pull/2818))
-* compute: promoted `google_compute_forwarding_rule` `is_mirroring_collector` to GA ([#2825](https://github.com/hashicorp/terraform-provider-google-beta/pull/2825))
-* compute: promoted `google_compute_packet_mirroring` to GA ([#2825](https://github.com/hashicorp/terraform-provider-google-beta/pull/2825))
 * dataflow: Added optional `kms_key_name` field for `google_dataflow_job` ([#2829](https://github.com/hashicorp/terraform-provider-google-beta/pull/2829))
 * dataflow: added documentation about using `parameters` for custom service account and other pipeline options to `google_dataflow_flex_template_job` ([#2776](https://github.com/hashicorp/terraform-provider-google-beta/pull/2776))
 * redis: added `auth_string` output to `google_redis_instance` when `auth_enabled` is `true` ([#2819](https://github.com/hashicorp/terraform-provider-google-beta/pull/2819))
-* redis: promoted `google_redis_instance.auth_enabled` to GA ([#2819](https://github.com/hashicorp/terraform-provider-google-beta/pull/2819))
 * sql: added support for setting the `type` field on `google_sql_user` to support IAM authentication ([#2802](https://github.com/hashicorp/terraform-provider-google-beta/pull/2802))
 
 BUG FIXES:
