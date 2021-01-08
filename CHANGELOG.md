@@ -1,4 +1,50 @@
 ## 3.52.0 (Unreleased)
+
+BREAKING CHANGES:
+* billing: removed import support for `google_billing_budget` as it never functioned correctly ([#2789](https://github.com/hashicorp/terraform-provider-google-beta/pull/2789))
+
+FEATURES:
+* **New Data Source:** `google_sql_backup_run` ([#2824](https://github.com/hashicorp/terraform-provider-google-beta/pull/2824))
+* **New Data Source:** `google_storage_bucket_object_content` ([#2785](https://github.com/hashicorp/terraform-provider-google-beta/pull/2785))
+* **New Resource:** `google_billing_subaccount` ([#2788](https://github.com/hashicorp/terraform-provider-google-beta/pull/2788))
+* **New Resource:** `google_pubsub_lite_subscription` ([#2781](https://github.com/hashicorp/terraform-provider-google-beta/pull/2781))
+* **New Resource:** `google_pubsub_lite_topic` ([#2781](https://github.com/hashicorp/terraform-provider-google-beta/pull/2781))
+
+IMPROVEMENTS:
+* bigquery: promoted bigquery reservation to GA. ([#2813](https://github.com/hashicorp/terraform-provider-google-beta/pull/2813))
+* bigtable: added support for specifying `duration` for `bigtable_gc_policy` to allow durations shorter than a day ([#2815](https://github.com/hashicorp/terraform-provider-google-beta/pull/2815))
+* billing: promoted `google_billing_budget` to GA ([#2789](https://github.com/hashicorp/terraform-provider-google-beta/pull/2789))
+* compute: Added support for Google Virtual Network Interface (gVNIC) for `google_compute_image` ([#2779](https://github.com/hashicorp/terraform-provider-google-beta/pull/2779))
+* compute: added SHARED_LOADBALANCER_VIP as a valid option for `google_compute_address.purpose` ([#2773](https://github.com/hashicorp/terraform-provider-google-beta/pull/2773))
+* compute: added field `multiwriter` to resource `disk` (beta) ([#2822](https://github.com/hashicorp/terraform-provider-google-beta/pull/2822))
+* compute: added support for `enable_independent_endpoint_mapping` to `google_compute_router_nat` resource ([#2805](https://github.com/hashicorp/terraform-provider-google-beta/pull/2805))
+* compute: added support for `filter.direction` to `google_compute_packet_mirroring` ([#2825](https://github.com/hashicorp/terraform-provider-google-beta/pull/2825))
+* compute: promoted `confidential_instance_config` field in `google_compute_instance` and `google_compute_instance_template` to GA ([#2818](https://github.com/hashicorp/terraform-provider-google-beta/pull/2818))
+* compute: promoted `google_compute_forwarding_rule` `is_mirroring_collector` to GA ([#2825](https://github.com/hashicorp/terraform-provider-google-beta/pull/2825))
+* compute: promoted `google_compute_packet_mirroring` to GA ([#2825](https://github.com/hashicorp/terraform-provider-google-beta/pull/2825))
+* dataflow: Added optional `kms_key_name` field for `google_dataflow_job` ([#2829](https://github.com/hashicorp/terraform-provider-google-beta/pull/2829))
+* dataflow: added documentation about using `parameters` for custom service account and other pipeline options to `google_dataflow_flex_template_job` ([#2776](https://github.com/hashicorp/terraform-provider-google-beta/pull/2776))
+* redis: added `auth_string` output to `google_redis_instance` when `auth_enabled` is `true` ([#2819](https://github.com/hashicorp/terraform-provider-google-beta/pull/2819))
+* redis: promoted `google_redis_instance.auth_enabled` to GA ([#2819](https://github.com/hashicorp/terraform-provider-google-beta/pull/2819))
+* sql: added support for setting the `type` field on `google_sql_user` to support IAM authentication ([#2802](https://github.com/hashicorp/terraform-provider-google-beta/pull/2802))
+
+BUG FIXES:
+* Fixed setting kubelet_config to disable cpu_cfs_quota does not seem to work ([#2820](https://github.com/hashicorp/terraform-provider-google-beta/pull/2820))
+* Logging: fixed updating on disabled in `google_logging_project_sink` ([#2821](https://github.com/hashicorp/terraform-provider-google-beta/pull/2821))
+* all: fixed a bug that would occur in various resources due to comparison of large integers ([#2826](https://github.com/hashicorp/terraform-provider-google-beta/pull/2826))
+* bigquery: fixed a bug in `google_bigquery_connection` that caused the resource to function incorrectly when `connection_id` was unset ([#2792](https://github.com/hashicorp/terraform-provider-google-beta/pull/2792))
+* cloud_tasks: fixed permadiff on retry_config.max_retry_duration for `google_cloud_tasks_queue` when the 0s is supplied ([#2812](https://github.com/hashicorp/terraform-provider-google-beta/pull/2812))
+* cloudfunctions: fixed a bug where `google_cloudfunctions_function` would sometimes fail to update after being imported from gcloud ([#2780](https://github.com/hashicorp/terraform-provider-google-beta/pull/2780))
+* cloudrun: fixed a permanent diff on `google_cloud_run_domain_mapping` `spec.force_override` field ([#2791](https://github.com/hashicorp/terraform-provider-google-beta/pull/2791))
+* container: added plan time validation to ensure `enable_private_nodes` is true if `master_ipv4_cidr_block` is set on resource `cluster` ([#2811](https://github.com/hashicorp/terraform-provider-google-beta/pull/2811))
+* container: fixed an issue where setting `google_container_cluster.private_cluster_config[0].master_global_access_config.enabled` to `false` caused a permadiff. ([#2816](https://github.com/hashicorp/terraform-provider-google-beta/pull/2816))
+* dataproc: updated jobs to no longer wait for job completion during create ([#2809](https://github.com/hashicorp/terraform-provider-google-beta/pull/2809))
+* filestore: updated retry logic to fail fast on quota error which cannot succeed on retry. ([#2814](https://github.com/hashicorp/terraform-provider-google-beta/pull/2814))
+* google_compute_region_url_map: removed requirement for default_service, as it should be a choice of default_service or default_url_redirect ([#2810](https://github.com/hashicorp/terraform-provider-google-beta/pull/2810))
+* scheduler: Fixed syntax error in the Cloud Scheduler HTTP target example. ([#2777](https://github.com/hashicorp/terraform-provider-google-beta/pull/2777))
+* sql: fixed a bug in `google_sql_database_instance` that caused a permadiff on `settings.replication_type` ([#2778](https://github.com/hashicorp/terraform-provider-google-beta/pull/2778))
+* storage: updated IAM resources to refresh etag sooner on an IAM conflict error, which will make applications of multiple IAM resources much faster. ([#2814](https://github.com/hashicorp/terraform-provider-google-beta/pull/2814))
+
 ## 3.51.0 (December 14, 2020)
 
 FEATURES:
