@@ -24,7 +24,6 @@ IMPROVEMENTS:
 * sql: added support for setting the `type` field on `google_sql_user` to support IAM authentication ([#2802](https://github.com/hashicorp/terraform-provider-google-beta/pull/2802))
 
 BUG FIXES:
-* all: fixed a bug that would occur in various resources due to comparison of large integers ([#2826](https://github.com/hashicorp/terraform-provider-google-beta/pull/2826))
 * bigquery: fixed a bug in `google_bigquery_connection` that caused the resource to function incorrectly when `connection_id` was unset ([#2792](https://github.com/hashicorp/terraform-provider-google-beta/pull/2792))
 * compute: removed requirement for `google_compute_region_url_map` default_service, as it should be a choice of default_service or default_url_redirect ([#2810](https://github.com/hashicorp/terraform-provider-google-beta/pull/2810))
 * cloud_tasks: fixed permadiff on retry_config.max_retry_duration for `google_cloud_tasks_queue` when the 0s is supplied ([#2812](https://github.com/hashicorp/terraform-provider-google-beta/pull/2812))
