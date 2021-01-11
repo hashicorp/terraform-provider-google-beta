@@ -38,8 +38,11 @@ func (w *MemcacheOperationWaiter) QueryOp() (interface{}, error) {
 
 func createMemcacheWaiter(config *Config, op map[string]interface{}, project, activity, userAgent string) (*MemcacheOperationWaiter, error) {
 	if val, ok := op["name"]; !ok || val == "" {
-		// This was a synchronous call - there is no operation to wait for.
-		return nil, nil
+		// An operation could also be indicated with a "metadata" field.
+		if _, ok := op["metadata"]; !ok {
+			// This was a synchronous call - there is no operation to wait for.
+			return nil, nil
+		}
 	}
 	w := &MemcacheOperationWaiter{
 		Config:    config,
