@@ -236,28 +236,25 @@ func TestAccContainerCluster_withConfidentialNodes(t *testing.T) {
 				Config: testAccContainerCluster_withConfidentialNodes(clusterName, npName),
 			},
 			{
-				ResourceName:            "google_container_cluster.confidential_nodes",
-				ImportState:             true,
-				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"min_master_version"},
+				ResourceName:      "google_container_cluster.confidential_nodes",
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 			{
 				Config: testAccContainerCluster_disableConfidentialNodes(clusterName, npName),
 			},
 			{
-				ResourceName:            "google_container_cluster.confidential_nodes",
-				ImportState:             true,
-				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"min_master_version"},
+				ResourceName:      "google_container_cluster.confidential_nodes",
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 			{
 				Config: testAccContainerCluster_withConfidentialNodes(clusterName, npName),
 			},
 			{
-				ResourceName:            "google_container_cluster.confidential_nodes",
-				ImportState:             true,
-				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"min_master_version"},
+				ResourceName:      "google_container_cluster.confidential_nodes",
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -2448,9 +2445,6 @@ resource "google_container_cluster" "confidential_nodes" {
   name               = "%s"
   location           = "us-central1-a"
   enable_shielded_nodes = true
-  // Minimum version for confidential node support.
-  // Can be removed once default version is greater or equal to this version.
-  min_master_version = "1.18.12-gke.300"
   release_channel {
     channel = "RAPID"
   }
@@ -2476,9 +2470,6 @@ resource "google_container_cluster" "confidential_nodes" {
   name               = "%s"
   location           = "us-central1-a"
   enable_shielded_nodes = true
-  // Minimum version for confidential node support.
-  // Can be removed once default version is greater or equal to this version.
-  min_master_version = "1.18.12-gke.300"
   release_channel {
     channel = "RAPID"
   }
