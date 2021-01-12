@@ -87,6 +87,7 @@ type Config struct {
 	AccessContextManagerBasePath string
 	ActiveDirectoryBasePath      string
 	ApiGatewayBasePath           string
+	ApigeeBasePath               string
 	AppEngineBasePath            string
 	ArtifactRegistryBasePath     string
 	BigQueryBasePath             string
@@ -174,6 +175,7 @@ var AccessApprovalDefaultBasePath = "https://accessapproval.googleapis.com/v1/"
 var AccessContextManagerDefaultBasePath = "https://accesscontextmanager.googleapis.com/v1/"
 var ActiveDirectoryDefaultBasePath = "https://managedidentities.googleapis.com/v1/"
 var ApiGatewayDefaultBasePath = "https://apigateway.googleapis.com/v1beta/"
+var ApigeeDefaultBasePath = "https://apigee.googleapis.com/v1/"
 var AppEngineDefaultBasePath = "https://appengine.googleapis.com/v1/"
 var ArtifactRegistryDefaultBasePath = "https://artifactregistry.googleapis.com/v1beta1/"
 var BigQueryDefaultBasePath = "https://bigquery.googleapis.com/bigquery/v2/"
@@ -971,6 +973,7 @@ func ConfigureBasePaths(c *Config) {
 	c.AccessContextManagerBasePath = AccessContextManagerDefaultBasePath
 	c.ActiveDirectoryBasePath = ActiveDirectoryDefaultBasePath
 	c.ApiGatewayBasePath = ApiGatewayDefaultBasePath
+	c.ApigeeBasePath = ApigeeDefaultBasePath
 	c.AppEngineBasePath = AppEngineDefaultBasePath
 	c.ArtifactRegistryBasePath = ArtifactRegistryDefaultBasePath
 	c.BigQueryBasePath = BigQueryDefaultBasePath
