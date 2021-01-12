@@ -43,10 +43,11 @@ func resourceApiGatewayGateway() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"api_config": {
-				Type:        schema.TypeString,
-				Required:    true,
-				ForceNew:    true,
-				Description: `Resource name of the API Config for this Gateway. Format: projects/{project}/locations/global/apis/{api}/configs/{apiConfig}`,
+				Type:             schema.TypeString,
+				Required:         true,
+				ForceNew:         true,
+				DiffSuppressFunc: compareResourceNames,
+				Description:      `Resource name of the API Config for this Gateway. Format: projects/{project}/locations/global/apis/{api}/configs/{apiConfig}`,
 			},
 			"gateway_id": {
 				Type:        schema.TypeString,
