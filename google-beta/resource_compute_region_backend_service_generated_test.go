@@ -82,7 +82,7 @@ func TestAccComputeRegionBackendService_regionBackendServiceCacheExample(t *test
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
-		Providers: testAccProviders,
+		Providers: testAccProvidersOiCS,
 		ExternalProviders: map[string]resource.ExternalProvider{
 			"random": {},
 		},
@@ -91,12 +91,6 @@ func TestAccComputeRegionBackendService_regionBackendServiceCacheExample(t *test
 			{
 				Config: testAccComputeRegionBackendService_regionBackendServiceCacheExample(context),
 			},
-			{
-				ResourceName:            "google_compute_region_backend_service.default",
-				ImportState:             true,
-				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"network", "region"},
-			},
 		},
 	})
 }
@@ -104,6 +98,7 @@ func TestAccComputeRegionBackendService_regionBackendServiceCacheExample(t *test
 func testAccComputeRegionBackendService_regionBackendServiceCacheExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_compute_region_backend_service" "default" {
+  provider                        = google-beta
   name                            = "tf-test-region-service%{random_suffix}"
   region                          = "us-central1"
   health_checks                   = [google_compute_region_health_check.default.id]
