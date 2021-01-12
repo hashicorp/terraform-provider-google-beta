@@ -76,12 +76,6 @@ func resourceMemcacheInstance() *schema.Resource {
 				Required:    true,
 				Description: `Number of nodes in the memcache instance.`,
 			},
-			"region": {
-				Type:        schema.TypeString,
-				Required:    true,
-				ForceNew:    true,
-				Description: `The name of the Memcache region of the instance.`,
-			},
 			"authorized_network": {
 				Type:     schema.TypeString,
 				Optional: true,
@@ -131,6 +125,13 @@ func resourceMemcacheInstance() *schema.Resource {
 Currently the latest supported major version is MEMCACHE_1_5. The minor version will be automatically
 determined by our system based on the latest supported minor version. Default value: "MEMCACHE_1_5" Possible values: ["MEMCACHE_1_5"]`,
 				Default: "MEMCACHE_1_5",
+			},
+			"region": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Optional:    true,
+				ForceNew:    true,
+				Description: `The region of the Memcache instance. If it is not provided, the provider region is used.`,
 			},
 			"zones": {
 				Type:     schema.TypeSet,
@@ -347,14 +348,6 @@ func resourceMemcacheInstanceRead(d *schema.ResourceData, meta interface{}) erro
 	}
 
 	if err := d.Set("project", project); err != nil {
-		return fmt.Errorf("Error reading Instance: %s", err)
-	}
-
-	region, err := getRegion(d, config)
-	if err != nil {
-		return err
-	}
-	if err := d.Set("region", region); err != nil {
 		return fmt.Errorf("Error reading Instance: %s", err)
 	}
 
