@@ -71,7 +71,6 @@ resource "google_service_networking_connection" "private_service_connection" {
 resource "google_memcache_instance" "instance" {
   provider = google-beta
   name = "tf-test-test-instance%{random_suffix}"
-  region = "us-central1"
   authorized_network = google_service_networking_connection.private_service_connection.network
 
   node_config {
