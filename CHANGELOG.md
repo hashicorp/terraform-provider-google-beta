@@ -1,4 +1,23 @@
 ## 3.53.0 (Unreleased)
+
+FEATURES:
+* **New Data Source:** `google_compute_instance_template` ([#2842](https://github.com/hashicorp/terraform-provider-google-beta/pull/2842))
+* **New Resource:** `google_apigee_organization` ([#2856](https://github.com/hashicorp/terraform-provider-google-beta/pull/2856))
+
+IMPROVEMENTS:
+* accesscontextmanager: added support for `google_access_context_manager_gcp_user_access_binding` ([#2851](https://github.com/hashicorp/terraform-provider-google-beta/pull/2851))
+* memcache: fixed an issue where `google_memcached_instance` resource was not inferring the region from the provider. ([#2863](https://github.com/hashicorp/terraform-provider-google-beta/pull/2863))
+* serviceaccount: added a `keepers` field to `google_service_account_key` that recreates the field when it is modified ([#2860](https://github.com/hashicorp/terraform-provider-google-beta/pull/2860))
+* sql: added restore from backup support to `google_sql_database_instance` ([#2843](https://github.com/hashicorp/terraform-provider-google-beta/pull/2843))
+* sql: added support for MYSQL_8_0 on resource `source_representation_instance` ([#2841](https://github.com/hashicorp/terraform-provider-google-beta/pull/2841))
+* tpu: fixed an issue where `google_tpu_node` resource was not inferring the zone from the provider. ([#2863](https://github.com/hashicorp/terraform-provider-google-beta/pull/2863))
+* vpcaccess: fixed an issue where `google_vpc_access_connector` resource was not inferring the region from the provider. ([#2863](https://github.com/hashicorp/terraform-provider-google-beta/pull/2863))
+
+BUG FIXES:
+* bigquery: enhanced diff suppress to ignore certain api divergences on resource `table` ([#2840](https://github.com/hashicorp/terraform-provider-google-beta/pull/2840))
+* container: fixed crash due to nil exclusions object when updating an existent cluster with maintenance_policy but without exclusions ([#2839](https://github.com/hashicorp/terraform-provider-google-beta/pull/2839))
+* project: fixed a bug in `google_project_access_approval_settings` where the default `project` was used rather than `project_id` ([#2852](https://github.com/hashicorp/terraform-provider-google-beta/pull/2852))
+
 ## 3.52.0 (January 11, 2021)
 
 BREAKING CHANGES:
