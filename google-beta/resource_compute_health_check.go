@@ -458,6 +458,7 @@ can only be ASCII.`,
 			},
 			"log_config": {
 				Type:        schema.TypeList,
+				Computed:    true,
 				Optional:    true,
 				Description: `Configure logging on this health check.`,
 				MaxItems:    1,
@@ -1528,20 +1529,16 @@ func flattenComputeHealthCheckGrpcHealthCheckGrpcServiceName(v interface{}, d *s
 }
 
 func flattenComputeHealthCheckLogConfig(v interface{}, d *schema.ResourceData, config *Config) interface{} {
-	if v == nil {
-		return nil
-	}
-	original := v.(map[string]interface{})
-	if len(original) == 0 {
-		return nil
-	}
 	transformed := make(map[string]interface{})
-	transformed["enable"] =
-		flattenComputeHealthCheckLogConfigEnable(original["enable"], d, config)
+	if v == nil {
+		// Disabled by default, but API will not return object if value is false
+		transformed["enable"] = false
+		return []interface{}{transformed}
+	}
+
+	original := v.(map[string]interface{})
+	transformed["enable"] = original["enable"]
 	return []interface{}{transformed}
-}
-func flattenComputeHealthCheckLogConfigEnable(v interface{}, d *schema.ResourceData, config *Config) interface{} {
-	return v
 }
 
 func expandComputeHealthCheckCheckIntervalSec(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
