@@ -1,7 +1,7 @@
 module github.com/hashicorp/terraform-provider-google-beta/v3
 
 require (
-	cloud.google.com/go/bigtable v1.5.0
+	cloud.google.com/go/bigtable v1.6.0
 	github.com/apparentlymart/go-cidr v1.1.0
 	github.com/aws/aws-sdk-go v1.31.9 // indirect
 	github.com/client9/misspell v0.3.4
