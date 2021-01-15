@@ -132,6 +132,7 @@ type Config struct {
 	NotebooksBasePath            string
 	OSConfigBasePath             string
 	OSLoginBasePath              string
+	PrivatecaBasePath            string
 	PubsubBasePath               string
 	PubsubLiteBasePath           string
 	RedisBasePath                string
@@ -220,6 +221,7 @@ var NetworkManagementDefaultBasePath = "https://networkmanagement.googleapis.com
 var NotebooksDefaultBasePath = "https://notebooks.googleapis.com/v1beta1/"
 var OSConfigDefaultBasePath = "https://osconfig.googleapis.com/v1beta/"
 var OSLoginDefaultBasePath = "https://oslogin.googleapis.com/v1/"
+var PrivatecaDefaultBasePath = "https://privateca.googleapis.com/v1beta1/"
 var PubsubDefaultBasePath = "https://pubsub.googleapis.com/v1/"
 var PubsubLiteDefaultBasePath = "https://{{region}}-pubsublite.googleapis.com/v1/admin/"
 var RedisDefaultBasePath = "https://redis.googleapis.com/v1beta1/"
@@ -1020,6 +1022,7 @@ func ConfigureBasePaths(c *Config) {
 	c.NotebooksBasePath = NotebooksDefaultBasePath
 	c.OSConfigBasePath = OSConfigDefaultBasePath
 	c.OSLoginBasePath = OSLoginDefaultBasePath
+	c.PrivatecaBasePath = PrivatecaDefaultBasePath
 	c.PubsubBasePath = PubsubDefaultBasePath
 	c.PubsubLiteBasePath = PubsubLiteDefaultBasePath
 	c.RedisBasePath = RedisDefaultBasePath
