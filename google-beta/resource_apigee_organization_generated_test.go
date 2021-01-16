@@ -24,6 +24,7 @@ import (
 )
 
 func TestAccApigeeOrganization_apigeeOrganizationCloudBasicTestExample(t *testing.T) {
+	skipIfVcr(t)
 	t.Parallel()
 
 	context := map[string]interface{}{
@@ -112,6 +113,7 @@ resource "google_apigee_organization" "org" {
 }
 
 func TestAccApigeeOrganization_apigeeOrganizationCloudFullTestExample(t *testing.T) {
+	skipIfVcr(t)
 	t.Parallel()
 
 	context := map[string]interface{}{
