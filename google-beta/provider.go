@@ -799,8 +799,8 @@ func Provider() *schema.Provider {
 }
 
 // Generated resources: 207
-// Generated IAM resources: 105
-// Total generated resources: 312
+// Generated IAM resources: 108
+// Total generated resources: 315
 func ResourceMap() map[string]*schema.Resource {
 	resourceMap, _ := ResourceMapWithErrors()
 	return resourceMap
@@ -1072,6 +1072,9 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_os_config_guest_policies":                              resourceOSConfigGuestPolicies(),
 			"google_os_login_ssh_public_key":                               resourceOSLoginSSHPublicKey(),
 			"google_privateca_certificate_authority":                       resourcePrivatecaCertificateAuthority(),
+			"google_privateca_certificate_authority_iam_binding":           ResourceIamBinding(PrivatecaCertificateAuthorityIamSchema, PrivatecaCertificateAuthorityIamUpdaterProducer, PrivatecaCertificateAuthorityIdParseFunc),
+			"google_privateca_certificate_authority_iam_member":            ResourceIamMember(PrivatecaCertificateAuthorityIamSchema, PrivatecaCertificateAuthorityIamUpdaterProducer, PrivatecaCertificateAuthorityIdParseFunc),
+			"google_privateca_certificate_authority_iam_policy":            ResourceIamPolicy(PrivatecaCertificateAuthorityIamSchema, PrivatecaCertificateAuthorityIamUpdaterProducer, PrivatecaCertificateAuthorityIdParseFunc),
 			"google_pubsub_topic":                                          resourcePubsubTopic(),
 			"google_pubsub_topic_iam_binding":                              ResourceIamBinding(PubsubTopicIamSchema, PubsubTopicIamUpdaterProducer, PubsubTopicIdParseFunc),
 			"google_pubsub_topic_iam_member":                               ResourceIamMember(PubsubTopicIamSchema, PubsubTopicIamUpdaterProducer, PubsubTopicIdParseFunc),

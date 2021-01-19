@@ -18,11 +18,24 @@ import (
 	"fmt"
 	"log"
 	"reflect"
+	"strings"
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
+
+func certificateAuthorityReusableConfigDiffSuppress(k, old, new string, d *schema.ResourceData) bool {
+	if old != "" && new != "" {
+		newParts := strings.Split(new, "/")
+		// If the new form is a short version, we just
+		// check if it matches the suffix of the old version
+		if len(newParts) == 1 {
+			return strings.HasSuffix(old, new)
+		}
+	}
+	return old == new
+}
 
 func resourcePrivatecaCertificateAuthority() *schema.Resource {
 	return &schema.Resource{
@@ -46,7 +59,7 @@ func resourcePrivatecaCertificateAuthority() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
-				Description: `GCP region of the Realm.`,
+				Description: `The user provided Resource ID for this Certificate Authority.`,
 			},
 			"config": {
 				Type:        schema.TypeList,
@@ -64,10 +77,14 @@ func resourcePrivatecaCertificateAuthority() *schema.Resource {
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"reusable_config": {
-										Type:     schema.TypeString,
-										Required: true,
+										Type:             schema.TypeString,
+										Required:         true,
+										ForceNew:         true,
+										DiffSuppressFunc: certificateAuthorityReusableConfigDiffSuppress,
 										Description: `A resource path to a ReusableConfig in the format
-projects/*/locations/*/reusableConfigs/*.`,
+'projects/*/locations/*/reusableConfigs/*'.
+. Alternatively, one of the short names
+found by running 'gcloud beta privateca reusable-configs list'.`,
 									},
 								},
 							},
@@ -79,6 +96,11 @@ projects/*/locations/*/reusableConfigs/*.`,
 							MaxItems:    1,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
+									"common_name": {
+										Type:        schema.TypeString,
+										Required:    true,
+										Description: `The common name of the distinguished name.`,
+									},
 									"subject": {
 										Type:        schema.TypeList,
 										Required:    true,
@@ -86,48 +108,50 @@ projects/*/locations/*/reusableConfigs/*.`,
 										MaxItems:    1,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
+												"organization": {
+													Type:        schema.TypeString,
+													Required:    true,
+													ForceNew:    true,
+													Description: `The organization of the subject.`,
+												},
 												"country_code": {
 													Type:        schema.TypeString,
 													Optional:    true,
+													ForceNew:    true,
 													Description: `The country code of the subject.`,
 												},
 												"locality": {
 													Type:        schema.TypeString,
 													Optional:    true,
+													ForceNew:    true,
 													Description: `The locality or city of the subject.`,
-												},
-												"organization": {
-													Type:        schema.TypeString,
-													Optional:    true,
-													Description: `The organization of the subject.`,
 												},
 												"organizational_unit": {
 													Type:        schema.TypeString,
 													Optional:    true,
+													ForceNew:    true,
 													Description: `The organizational unit of the subject.`,
 												},
 												"postal_code": {
 													Type:        schema.TypeString,
 													Optional:    true,
+													ForceNew:    true,
 													Description: `The postal code of the subject.`,
 												},
 												"province": {
 													Type:        schema.TypeString,
 													Optional:    true,
+													ForceNew:    true,
 													Description: `The province, territory, or regional state of the subject.`,
 												},
 												"street_address": {
 													Type:        schema.TypeString,
 													Optional:    true,
+													ForceNew:    true,
 													Description: `The street address of the subject.`,
 												},
 											},
 										},
-									},
-									"common_name": {
-										Type:        schema.TypeString,
-										Optional:    true,
-										Description: `The common name of the distinguished name.`,
 									},
 									"subject_alt_name": {
 										Type:        schema.TypeList,
@@ -139,34 +163,42 @@ projects/*/locations/*/reusableConfigs/*.`,
 												"dns_names": {
 													Type:        schema.TypeList,
 													Optional:    true,
+													ForceNew:    true,
 													Description: `Contains only valid, fully-qualified host names.`,
 													Elem: &schema.Schema{
 														Type: schema.TypeString,
 													},
+													AtLeastOneOf: []string{"config.0.subject_config.0.subject_alt_name.0.dns_names", "config.0.subject_config.0.subject_alt_name.0.uris", "config.0.subject_config.0.subject_alt_name.0.email_addresses", "config.0.subject_config.0.subject_alt_name.0.ip_addresses"},
 												},
 												"email_addresses": {
 													Type:        schema.TypeList,
 													Optional:    true,
+													ForceNew:    true,
 													Description: `Contains only valid RFC 2822 E-mail addresses.`,
 													Elem: &schema.Schema{
 														Type: schema.TypeString,
 													},
+													AtLeastOneOf: []string{"config.0.subject_config.0.subject_alt_name.0.dns_names", "config.0.subject_config.0.subject_alt_name.0.uris", "config.0.subject_config.0.subject_alt_name.0.email_addresses", "config.0.subject_config.0.subject_alt_name.0.ip_addresses"},
 												},
 												"ip_addresses": {
 													Type:        schema.TypeList,
 													Optional:    true,
+													ForceNew:    true,
 													Description: `Contains only valid 32-bit IPv4 addresses or RFC 4291 IPv6 addresses.`,
 													Elem: &schema.Schema{
 														Type: schema.TypeString,
 													},
+													AtLeastOneOf: []string{"config.0.subject_config.0.subject_alt_name.0.dns_names", "config.0.subject_config.0.subject_alt_name.0.uris", "config.0.subject_config.0.subject_alt_name.0.email_addresses", "config.0.subject_config.0.subject_alt_name.0.ip_addresses"},
 												},
 												"uris": {
 													Type:        schema.TypeList,
 													Optional:    true,
+													ForceNew:    true,
 													Description: `Contains only valid RFC 3986 URIs.`,
 													Elem: &schema.Schema{
 														Type: schema.TypeString,
 													},
+													AtLeastOneOf: []string{"config.0.subject_config.0.subject_alt_name.0.dns_names", "config.0.subject_config.0.subject_alt_name.0.uris", "config.0.subject_config.0.subject_alt_name.0.email_addresses", "config.0.subject_config.0.subject_alt_name.0.ip_addresses"},
 												},
 											},
 										},
@@ -189,18 +221,28 @@ certificate. Otherwise, it is used to sign a CSR.`,
 					Schema: map[string]*schema.Schema{
 						"algorithm": {
 							Type:         schema.TypeString,
-							Required:     true,
-							ValidateFunc: validation.StringInSlice([]string{"SIGN_HASH_ALGORITHM_UNSPECIFIED", "RSA_PSS_2048_SHA256", "RSA_PSS_3072_SHA256", "RSA_PSS_4096_SHA256", "RSA_PKCS1_2048_SHA256", "RSA_PKCS1_3072_SHA256", "RSA_PKCS1_4096_SHA256", "EC_P256_SHA256", "EC_P384_SHA384"}, false),
+							Optional:     true,
+							ValidateFunc: validation.StringInSlice([]string{"SIGN_HASH_ALGORITHM_UNSPECIFIED", "RSA_PSS_2048_SHA256", "RSA_PSS_3072_SHA256", "RSA_PSS_4096_SHA256", "RSA_PKCS1_2048_SHA256", "RSA_PKCS1_3072_SHA256", "RSA_PKCS1_4096_SHA256", "EC_P256_SHA256", "EC_P384_SHA384", ""}, false),
 							Description: `The algorithm to use for creating a managed Cloud KMS key for a for a simplified
 experience. All managed keys will be have their ProtectionLevel as HSM. Possible values: ["SIGN_HASH_ALGORITHM_UNSPECIFIED", "RSA_PSS_2048_SHA256", "RSA_PSS_3072_SHA256", "RSA_PSS_4096_SHA256", "RSA_PKCS1_2048_SHA256", "RSA_PKCS1_3072_SHA256", "RSA_PKCS1_4096_SHA256", "EC_P256_SHA256", "EC_P384_SHA384"]`,
+							ExactlyOneOf: []string{"key_spec.0.cloud_kms_key_version", "key_spec.0.algorithm"},
+						},
+						"cloud_kms_key_version": {
+							Type:     schema.TypeString,
+							Optional: true,
+							Description: `The resource name for an existing Cloud KMS CryptoKeyVersion in the format
+'projects/*/locations/*/keyRings/*/cryptoKeys/*/cryptoKeyVersions/*'.`,
+							ExactlyOneOf: []string{"key_spec.0.cloud_kms_key_version", "key_spec.0.algorithm"},
 						},
 					},
 				},
 			},
 			"location": {
-				Type:        schema.TypeString,
-				Required:    true,
-				Description: `Location of the Certificate Authority.`,
+				Type:     schema.TypeString,
+				Required: true,
+				ForceNew: true,
+				Description: `Location of the CertificateAuthority. A full list of valid locations can be found by
+running 'gcloud beta privateca locations list'.`,
 			},
 			"gcs_bucket": {
 				Type:     schema.TypeString,
@@ -208,8 +250,8 @@ experience. All managed keys will be have their ProtectionLevel as HSM. Possible
 				ForceNew: true,
 				Description: `The name of a Cloud Storage bucket where this CertificateAuthority will publish content,
 such as the CA certificate and CRLs. This must be a bucket name, without any prefixes
-(such as gs://) or suffixes (such as .googleapis.com). For example, to use a bucket named
-my-bucket, you would simply specify my-bucket. If not specified, a managed bucket will be
+(such as 'gs://') or suffixes (such as '.googleapis.com'). For example, to use a bucket named
+my-bucket, you would simply specify 'my-bucket'. If not specified, a managed bucket will be
 created.`,
 			},
 			"issuing_options": {
@@ -249,6 +291,7 @@ An object containing a list of "key": value pairs. Example: { "name": "wrench", 
 			"lifetime": {
 				Type:     schema.TypeString,
 				Optional: true,
+				ForceNew: true,
 				Description: `The desired lifetime of the CA certificate. Used to create the "notBeforeTime" and
 "notAfterTime" fields inside an X.509 certificate. A duration in seconds with up to nine
 fractional digits, terminated by 's'. Example: "3.5s".`,
@@ -259,16 +302,22 @@ fractional digits, terminated by 's'. Example: "3.5s".`,
 				Optional:     true,
 				ForceNew:     true,
 				ValidateFunc: validation.StringInSlice([]string{"ENTERPRISE", "DEVOPS", ""}, false),
-				Description:  `The Tier of this CertificateAuthority. Default value: "ENTERPRISE" Possible values: ["ENTERPRISE", "DEVOPS"]`,
-				Default:      "ENTERPRISE",
+				Description: `The Tier of this CertificateAuthority. 'ENTERPRISE' Certificate Authorities track
+server side certificates issued, and support certificate revocation. For more details,
+please check the [associated documentation](https://cloud.google.com/certificate-authority-service/docs/tiers). Default value: "ENTERPRISE" Possible values: ["ENTERPRISE", "DEVOPS"]`,
+				Default: "ENTERPRISE",
 			},
 			"type": {
 				Type:         schema.TypeString,
 				Optional:     true,
 				ForceNew:     true,
-				ValidateFunc: validation.StringInSlice([]string{"SELF_SIGNED", ""}, false),
-				Description:  `The Type of this CertificateAuthority. Default value: "SELF_SIGNED" Possible values: ["SELF_SIGNED"]`,
-				Default:      "SELF_SIGNED",
+				ValidateFunc: validation.StringInSlice([]string{"SELF_SIGNED", "SUBORDINATE", ""}, false),
+				Description: `The Type of this CertificateAuthority.
+
+~> **Note:** For 'SUBORDINATE' Certificate Authorities, they need to
+be manually activated (via Cloud Console of 'gcloud') before they can
+issue certificates. Default value: "SELF_SIGNED" Possible values: ["SELF_SIGNED", "SUBORDINATE"]`,
+				Default: "SELF_SIGNED",
 			},
 			"access_urls": {
 				Type:        schema.TypeList,
@@ -328,6 +377,11 @@ CertificateAuthority's certificate.`,
 
 A timestamp in RFC3339 UTC "Zulu" format, with nanosecond resolution and up to nine
 fractional digits. Examples: "2014-10-02T15:01:23Z" and "2014-10-02T15:01:23.045123456Z".`,
+			},
+			"disable_on_delete": {
+				Type:     schema.TypeBool,
+				Optional: true,
+				Default:  false,
 			},
 			"project": {
 				Type:     schema.TypeString,
@@ -395,6 +449,11 @@ func resourcePrivatecaCertificateAuthorityCreate(d *schema.ResourceData, meta in
 		return err
 	} else if v, ok := d.GetOkExists("labels"); !isEmptyValue(reflect.ValueOf(labelsProp)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
 		obj["labels"] = labelsProp
+	}
+
+	obj, err = resourcePrivatecaCertificateAuthorityEncoder(d, meta, obj)
+	if err != nil {
+		return err
 	}
 
 	url, err := replaceVars(d, config, "{{PrivatecaBasePath}}projects/{{project}}/locations/{{location}}/certificateAuthorities?certificateAuthorityId={{certificate_authority_id}}")
@@ -486,6 +545,12 @@ func resourcePrivatecaCertificateAuthorityRead(d *schema.ResourceData, meta inte
 		return handleNotFoundError(err, d, fmt.Sprintf("PrivatecaCertificateAuthority %q", d.Id()))
 	}
 
+	// Explicitly set virtual fields to default values if unset
+	if _, ok := d.GetOkExists("disable_on_delete"); !ok {
+		if err := d.Set("disable_on_delete", false); err != nil {
+			return fmt.Errorf("Error setting disable_on_delete: %s", err)
+		}
+	}
 	if err := d.Set("project", project); err != nil {
 		return fmt.Errorf("Error reading CertificateAuthority: %s", err)
 	}
@@ -552,47 +617,11 @@ func resourcePrivatecaCertificateAuthorityUpdate(d *schema.ResourceData, meta in
 	billingProject = project
 
 	obj := make(map[string]interface{})
-	typeProp, err := expandPrivatecaCertificateAuthorityType(d.Get("type"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("type"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, typeProp)) {
-		obj["type"] = typeProp
-	}
-	tierProp, err := expandPrivatecaCertificateAuthorityTier(d.Get("tier"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("tier"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, tierProp)) {
-		obj["tier"] = tierProp
-	}
-	configProp, err := expandPrivatecaCertificateAuthorityConfig(d.Get("config"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("config"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, configProp)) {
-		obj["config"] = configProp
-	}
-	lifetimeProp, err := expandPrivatecaCertificateAuthorityLifetime(d.Get("lifetime"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("lifetime"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, lifetimeProp)) {
-		obj["lifetime"] = lifetimeProp
-	}
-	keySpecProp, err := expandPrivatecaCertificateAuthorityKeySpec(d.Get("key_spec"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("key_spec"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, keySpecProp)) {
-		obj["keySpec"] = keySpecProp
-	}
 	issuingOptionsProp, err := expandPrivatecaCertificateAuthorityIssuingOptions(d.Get("issuing_options"), d, config)
 	if err != nil {
 		return err
 	} else if v, ok := d.GetOkExists("issuing_options"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, issuingOptionsProp)) {
 		obj["issuingOptions"] = issuingOptionsProp
-	}
-	gcsBucketProp, err := expandPrivatecaCertificateAuthorityGcsBucket(d.Get("gcs_bucket"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("gcs_bucket"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, gcsBucketProp)) {
-		obj["gcsBucket"] = gcsBucketProp
 	}
 	labelsProp, err := expandPrivatecaCertificateAuthorityLabels(d.Get("labels"), d, config)
 	if err != nil {
@@ -601,19 +630,39 @@ func resourcePrivatecaCertificateAuthorityUpdate(d *schema.ResourceData, meta in
 		obj["labels"] = labelsProp
 	}
 
+	obj, err = resourcePrivatecaCertificateAuthorityEncoder(d, meta, obj)
+	if err != nil {
+		return err
+	}
+
 	url, err := replaceVars(d, config, "{{PrivatecaBasePath}}projects/{{project}}/locations/{{location}}/certificateAuthorities/{{certificate_authority_id}}")
 	if err != nil {
 		return err
 	}
 
 	log.Printf("[DEBUG] Updating CertificateAuthority %q: %#v", d.Id(), obj)
+	updateMask := []string{}
+
+	if d.HasChange("issuing_options") {
+		updateMask = append(updateMask, "issuingOptions")
+	}
+
+	if d.HasChange("labels") {
+		updateMask = append(updateMask, "labels")
+	}
+	// updateMask is a URL parameter but not present in the schema, so replaceVars
+	// won't set it
+	url, err = addQueryParams(url, map[string]string{"updateMask": strings.Join(updateMask, ",")})
+	if err != nil {
+		return err
+	}
 
 	// err == nil indicates that the billing_project value was found
 	if bp, err := getBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
-	res, err := sendRequestWithTimeout(config, "PUT", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutUpdate))
+	res, err := sendRequestWithTimeout(config, "PATCH", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutUpdate))
 
 	if err != nil {
 		return fmt.Errorf("Error updating CertificateAuthority %q: %s", d.Id(), err)
@@ -653,21 +702,23 @@ func resourcePrivatecaCertificateAuthorityDelete(d *schema.ResourceData, meta in
 	}
 
 	var obj map[string]interface{}
-	log.Printf("[DEBUG] Disabling CertificateAuthority %q", d.Id())
+	if d.Get("disable_on_delete").(bool) && d.Get("state").(string) == "ENABLED" {
+		log.Printf("[DEBUG] Disabling CertificateAuthority %q", d.Id())
 
-	disableURL, err := replaceVars(d, config, "{{PrivatecaBasePath}}{{name}}:disable")
-	if err != nil {
-		return err
-	}
+		disableURL, err := replaceVars(d, config, "{{PrivatecaBasePath}}{{name}}:disable")
+		if err != nil {
+			return err
+		}
 
-	disableRes, err := sendRequestWithTimeout(config, "POST", billingProject, disableURL, userAgent, obj, d.Timeout(schema.TimeoutDelete))
-	if err != nil {
-		return err
-	}
+		disableRes, err := sendRequestWithTimeout(config, "POST", billingProject, disableURL, userAgent, obj, d.Timeout(schema.TimeoutDelete))
+		if err != nil {
+			return err
+		}
 
-	err = privatecaOperationWaitTime(config, disableRes, project, "Disabling CertificateAuthority", userAgent, d.Timeout(schema.TimeoutDelete))
-	if err != nil {
-		return err
+		err = privatecaOperationWaitTime(config, disableRes, project, "Disabling CertificateAuthority", userAgent, d.Timeout(schema.TimeoutDelete))
+		if err != nil {
+			return err
+		}
 	}
 	log.Printf("[DEBUG] Deleting CertificateAuthority %q", d.Id())
 
@@ -709,6 +760,11 @@ func resourcePrivatecaCertificateAuthorityImport(d *schema.ResourceData, meta in
 		return nil, fmt.Errorf("Error constructing id: %s", err)
 	}
 	d.SetId(id)
+
+	// Explicitly set virtual fields to default values on import
+	if err := d.Set("disable_on_delete", false); err != nil {
+		return nil, fmt.Errorf("Error setting disable_on_delete: %s", err)
+	}
 
 	return []*schema.ResourceData{d}, nil
 }
@@ -879,10 +935,16 @@ func flattenPrivatecaCertificateAuthorityKeySpec(v interface{}, d *schema.Resour
 		return nil
 	}
 	transformed := make(map[string]interface{})
+	transformed["cloud_kms_key_version"] =
+		flattenPrivatecaCertificateAuthorityKeySpecCloudKmsKeyVersion(original["cloudKmsKeyVersion"], d, config)
 	transformed["algorithm"] =
 		flattenPrivatecaCertificateAuthorityKeySpecAlgorithm(original["algorithm"], d, config)
 	return []interface{}{transformed}
 }
+func flattenPrivatecaCertificateAuthorityKeySpecCloudKmsKeyVersion(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	return v
+}
+
 func flattenPrivatecaCertificateAuthorityKeySpecAlgorithm(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
@@ -1209,6 +1271,13 @@ func expandPrivatecaCertificateAuthorityKeySpec(v interface{}, d TerraformResour
 	original := raw.(map[string]interface{})
 	transformed := make(map[string]interface{})
 
+	transformedCloudKmsKeyVersion, err := expandPrivatecaCertificateAuthorityKeySpecCloudKmsKeyVersion(original["cloud_kms_key_version"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedCloudKmsKeyVersion); val.IsValid() && !isEmptyValue(val) {
+		transformed["cloudKmsKeyVersion"] = transformedCloudKmsKeyVersion
+	}
+
 	transformedAlgorithm, err := expandPrivatecaCertificateAuthorityKeySpecAlgorithm(original["algorithm"], d, config)
 	if err != nil {
 		return nil, err
@@ -1217,6 +1286,10 @@ func expandPrivatecaCertificateAuthorityKeySpec(v interface{}, d TerraformResour
 	}
 
 	return transformed, nil
+}
+
+func expandPrivatecaCertificateAuthorityKeySpecCloudKmsKeyVersion(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
 }
 
 func expandPrivatecaCertificateAuthorityKeySpecAlgorithm(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
@@ -1270,4 +1343,20 @@ func expandPrivatecaCertificateAuthorityLabels(v interface{}, d TerraformResourc
 		m[k] = val.(string)
 	}
 	return m, nil
+}
+
+func resourcePrivatecaCertificateAuthorityEncoder(d *schema.ResourceData, meta interface{}, obj map[string]interface{}) (map[string]interface{}, error) {
+	rc := d.Get("config.0.reusable_config.0.reusable_config").(string)
+
+	parts := strings.Split(rc, "/")
+
+	if len(parts) == 1 {
+		// If we have a short form: add the full path to the reusable-configs from
+		// the Google-managed project and the location of the CA.
+		config := obj["config"].(map[string]interface{})
+		configReusableConfig := config["reusableConfig"].(map[string]interface{})
+		configReusableConfig["reusableConfig"] = fmt.Sprintf("projects/568668481468/locations/%s/reusableConfigs/%s", d.Get("location"), parts[0])
+	}
+
+	return obj, nil
 }
