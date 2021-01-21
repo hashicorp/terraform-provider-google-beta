@@ -1,9 +1,4 @@
 ## 3.54.0 (Unreleased)
-UNKNOWN CHANGELOG TYPE:
-* Bump github.com/golangci/golangci-lint from 1.18.0 to 1.35.2 ([#2848](https://github.com/hashicorp/terraform-provider-google-beta/pull/2848))
-* Bump github.com/mitchellh/hashstructure from 1.0.0 to 1.1.0 ([#2865](https://github.com/hashicorp/terraform-provider-google-beta/pull/2865))
-* Revert "Bump github.com/golangci/golangci-lint from 1.18.0 to 1.35.2" ([#2869](https://github.com/hashicorp/terraform-provider-google-beta/pull/2869))
-
 FEATURES:
 * **New Data Source:** `google_cloud_run_locations` ([#2864](https://github.com/hashicorp/terraform-provider-google-beta/pull/2864))
 * **New Resource:** `google_privateca_certificate_authority` ([#2877](https://github.com/hashicorp/terraform-provider-google-beta/pull/2877))
