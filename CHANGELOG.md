@@ -1,10 +1,11 @@
 ## 3.54.0 (Unreleased)
+
 FEATURES:
 * **New Data Source:** `google_cloud_run_locations` ([#2864](https://github.com/hashicorp/terraform-provider-google-beta/pull/2864))
 * **New Resource:** `google_privateca_certificate_authority` ([#2877](https://github.com/hashicorp/terraform-provider-google-beta/pull/2877))
-* **New Resource:** google_privateca_certificate_authority_iam_binding ([#2883](https://github.com/hashicorp/terraform-provider-google-beta/pull/2883))
-* **New Resource:** google_privateca_certificate_authority_iam_member ([#2883](https://github.com/hashicorp/terraform-provider-google-beta/pull/2883))
-* **New Resource:** google_privateca_certificate_authority_iam_policy ([#2883](https://github.com/hashicorp/terraform-provider-google-beta/pull/2883))
+* **New Resource:** `google_privateca_certificate_authority_iam_binding` ([#2883](https://github.com/hashicorp/terraform-provider-google-beta/pull/2883))
+* **New Resource:** `google_privateca_certificate_authority_iam_member` ([#2883](https://github.com/hashicorp/terraform-provider-google-beta/pull/2883))
+* **New Resource:** `google_privateca_certificate_authority_iam_policy` ([#2883](https://github.com/hashicorp/terraform-provider-google-beta/pull/2883))
 
 IMPROVEMENTS:
 * bigquery: made incompatible changes to the `google_bigquery_table.schema` field cause the resource to be recreated ([#2876](https://github.com/hashicorp/terraform-provider-google-beta/pull/2876))
