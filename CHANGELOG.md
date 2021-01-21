@@ -21,7 +21,7 @@ BUG FIXES:
 * compute: fixed a perma-diff on `google_compute_health_check` when `log_config.enable` is set to false ([#2866](https://github.com/hashicorp/terraform-provider-google-beta/pull/2866))
 * notebooks: fixed permadiff on noRemoveDataDisk for `google_notebooks_instance` ([#2880](https://github.com/hashicorp/terraform-provider-google-beta/pull/2880))
 * resourcemanager: fixed an inconsistent result when IAM conditions are specified with `google_folder_iam_*` ([#2878](https://github.com/hashicorp/terraform-provider-google-beta/pull/2878))
-* healthcare: added retry logic on healthcare dataset not initialized error
+* healthcare: added retry logic on healthcare dataset not initialized error ([#2885](https://github.com/hashicorp/terraform-provider-google-beta/pull/2885))
 
 ## 3.53.0 (January 19, 2021)
 
