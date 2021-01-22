@@ -38,11 +38,11 @@ var HealthcareConsentStoreIamSchema = map[string]*schema.Schema{
 type HealthcareConsentStoreIamUpdater struct {
 	dataset        string
 	consentStoreId string
-	d              *schema.ResourceData
+	d              TerraformResourceData
 	Config         *Config
 }
 
-func HealthcareConsentStoreIamUpdaterProducer(d *schema.ResourceData, config *Config) (ResourceIamUpdater, error) {
+func HealthcareConsentStoreIamUpdaterProducer(d TerraformResourceData, config *Config) (ResourceIamUpdater, error) {
 	values := make(map[string]string)
 
 	if v, ok := d.GetOk("dataset"); ok {

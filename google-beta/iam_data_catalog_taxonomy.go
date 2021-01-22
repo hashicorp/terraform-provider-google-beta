@@ -46,11 +46,11 @@ type DataCatalogTaxonomyIamUpdater struct {
 	project  string
 	region   string
 	taxonomy string
-	d        *schema.ResourceData
+	d        TerraformResourceData
 	Config   *Config
 }
 
-func DataCatalogTaxonomyIamUpdaterProducer(d *schema.ResourceData, config *Config) (ResourceIamUpdater, error) {
+func DataCatalogTaxonomyIamUpdaterProducer(d TerraformResourceData, config *Config) (ResourceIamUpdater, error) {
 	values := make(map[string]string)
 
 	project, _ := getProject(d, config)

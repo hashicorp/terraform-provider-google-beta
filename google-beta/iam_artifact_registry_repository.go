@@ -46,11 +46,11 @@ type ArtifactRegistryRepositoryIamUpdater struct {
 	project    string
 	location   string
 	repository string
-	d          *schema.ResourceData
+	d          TerraformResourceData
 	Config     *Config
 }
 
-func ArtifactRegistryRepositoryIamUpdaterProducer(d *schema.ResourceData, config *Config) (ResourceIamUpdater, error) {
+func ArtifactRegistryRepositoryIamUpdaterProducer(d TerraformResourceData, config *Config) (ResourceIamUpdater, error) {
 	values := make(map[string]string)
 
 	project, _ := getProject(d, config)

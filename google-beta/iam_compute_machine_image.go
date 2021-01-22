@@ -39,11 +39,11 @@ var ComputeMachineImageIamSchema = map[string]*schema.Schema{
 type ComputeMachineImageIamUpdater struct {
 	project      string
 	machineImage string
-	d            *schema.ResourceData
+	d            TerraformResourceData
 	Config       *Config
 }
 
-func ComputeMachineImageIamUpdaterProducer(d *schema.ResourceData, config *Config) (ResourceIamUpdater, error) {
+func ComputeMachineImageIamUpdaterProducer(d TerraformResourceData, config *Config) (ResourceIamUpdater, error) {
 	values := make(map[string]string)
 
 	project, _ := getProject(d, config)
