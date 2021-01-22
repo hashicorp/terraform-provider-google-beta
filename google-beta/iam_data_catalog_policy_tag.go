@@ -32,11 +32,11 @@ var DataCatalogPolicyTagIamSchema = map[string]*schema.Schema{
 
 type DataCatalogPolicyTagIamUpdater struct {
 	policyTag string
-	d         *schema.ResourceData
+	d         TerraformResourceData
 	Config    *Config
 }
 
-func DataCatalogPolicyTagIamUpdaterProducer(d *schema.ResourceData, config *Config) (ResourceIamUpdater, error) {
+func DataCatalogPolicyTagIamUpdaterProducer(d TerraformResourceData, config *Config) (ResourceIamUpdater, error) {
 	values := make(map[string]string)
 
 	if v, ok := d.GetOk("policy_tag"); ok {

@@ -32,11 +32,11 @@ var PrivatecaCertificateAuthorityIamSchema = map[string]*schema.Schema{
 
 type PrivatecaCertificateAuthorityIamUpdater struct {
 	certificateAuthority string
-	d                    *schema.ResourceData
+	d                    TerraformResourceData
 	Config               *Config
 }
 
-func PrivatecaCertificateAuthorityIamUpdaterProducer(d *schema.ResourceData, config *Config) (ResourceIamUpdater, error) {
+func PrivatecaCertificateAuthorityIamUpdaterProducer(d TerraformResourceData, config *Config) (ResourceIamUpdater, error) {
 	values := make(map[string]string)
 
 	if v, ok := d.GetOk("certificate_authority"); ok {

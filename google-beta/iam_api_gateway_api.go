@@ -39,11 +39,11 @@ var ApiGatewayApiIamSchema = map[string]*schema.Schema{
 type ApiGatewayApiIamUpdater struct {
 	project string
 	api     string
-	d       *schema.ResourceData
+	d       TerraformResourceData
 	Config  *Config
 }
 
-func ApiGatewayApiIamUpdaterProducer(d *schema.ResourceData, config *Config) (ResourceIamUpdater, error) {
+func ApiGatewayApiIamUpdaterProducer(d TerraformResourceData, config *Config) (ResourceIamUpdater, error) {
 	values := make(map[string]string)
 
 	project, _ := getProject(d, config)

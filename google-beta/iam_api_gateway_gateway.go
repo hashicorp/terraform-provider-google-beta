@@ -46,11 +46,11 @@ type ApiGatewayGatewayIamUpdater struct {
 	project string
 	region  string
 	gateway string
-	d       *schema.ResourceData
+	d       TerraformResourceData
 	Config  *Config
 }
 
-func ApiGatewayGatewayIamUpdaterProducer(d *schema.ResourceData, config *Config) (ResourceIamUpdater, error) {
+func ApiGatewayGatewayIamUpdaterProducer(d TerraformResourceData, config *Config) (ResourceIamUpdater, error) {
 	values := make(map[string]string)
 
 	project, _ := getProject(d, config)
