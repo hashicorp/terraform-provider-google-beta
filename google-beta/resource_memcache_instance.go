@@ -78,6 +78,7 @@ func resourceMemcacheInstance() *schema.Resource {
 			},
 			"authorized_network": {
 				Type:     schema.TypeString,
+				Computed: true,
 				Optional: true,
 				ForceNew: true,
 				Description: `The full name of the GCE network to connect the instance to.  If not provided,
