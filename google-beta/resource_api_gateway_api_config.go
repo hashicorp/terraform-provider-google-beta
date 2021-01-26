@@ -63,10 +63,11 @@ func resourceApiGatewayApiConfig() *schema.Resource {
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"contents": {
-										Type:        schema.TypeString,
-										Required:    true,
-										ForceNew:    true,
-										Description: `Base64 encoded content of the file.`,
+										Type:         schema.TypeString,
+										Required:     true,
+										ForceNew:     true,
+										ValidateFunc: validateBase64String,
+										Description:  `Base64 encoded content of the file.`,
 									},
 									"path": {
 										Type:        schema.TypeString,
