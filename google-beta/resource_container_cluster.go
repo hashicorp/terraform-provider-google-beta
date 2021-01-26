@@ -1138,6 +1138,7 @@ func resourceContainerCluster() *schema.Resource {
 				ValidateFunc:     validation.StringInSlice([]string{"DATAPATH_PROVIDER_UNSPECIFIED", "LEGACY_DATAPATH", "ADVANCED_DATAPATH"}, false),
 				DiffSuppressFunc: emptyOrDefaultStringSuppress("DATAPATH_PROVIDER_UNSPECIFIED"),
 			},
+
 			"enable_intranode_visibility": {
 				Type:        schema.TypeBool,
 				Optional:    true,
@@ -1641,7 +1642,6 @@ func resourceContainerClusterRead(d *schema.ResourceData, meta interface{}) erro
 	if err := d.Set("datapath_provider", cluster.NetworkConfig.DatapathProvider); err != nil {
 		return fmt.Errorf("Error setting datapath_provider: %s", err)
 	}
-
 	if err := d.Set("default_snat_status", flattenDefaultSnatStatus(cluster.NetworkConfig.DefaultSnatStatus)); err != nil {
 		return err
 	}
