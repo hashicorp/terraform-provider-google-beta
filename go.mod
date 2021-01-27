@@ -28,7 +28,7 @@ require (
 	github.com/zclconf/go-cty v1.5.1 // indirect
 	golang.org/x/net v0.0.0-20201224014010-6772e930b67b
 	golang.org/x/oauth2 v0.0.0-20210113160501-8b1d76fa0423
-	google.golang.org/api v0.36.0
+	google.golang.org/api v0.37.0
 	gopkg.in/yaml.v2 v2.2.8 // indirect
 )
 
