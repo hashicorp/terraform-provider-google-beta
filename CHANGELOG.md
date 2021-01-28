@@ -1,5 +1,8 @@
 ## 3.55.0 (Unreleased)
 
+BREAKING CHANGES:
+* Reverted `bigquery: made incompatible changes to the `google_bigquery_table.schema` field cause the resource to be recreated ([#2876](https://github.com/hashicorp/terraform-provider-google-beta/pull/2876))` due to unintended interactions with a bug introduced in an earlier version of the resource.
+
 FEATURES:
 * **New Data Source:** `google_runtimeconfig_config` ([#2889](https://github.com/hashicorp/terraform-provider-google-beta/pull/2889))
 
