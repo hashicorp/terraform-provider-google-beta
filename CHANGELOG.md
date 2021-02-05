@@ -3,7 +3,6 @@ FEATURES:
 * **New Resource:** `google_privateca_certificate` ([#2924](https://github.com/hashicorp/terraform-provider-google-beta/pull/2924))
 
 IMPROVEMENTS:
-* bigquery: added `status` field to `google_bigquery_job` ([#2926](https://github.com/hashicorp/terraform-provider-google-beta/pull/2926))
 * compute: added `disk.resource_policies` field to resource `google_compute_instance_template` ([#2929](https://github.com/hashicorp/terraform-provider-google-beta/pull/2929))
 * all: added plan time validations for fields that expect base64 values. ([#2906](https://github.com/hashicorp/terraform-provider-google-beta/pull/2906))
 * sql: added support for point-in-time-recovery to `google_sql_database_instance` ([#2923](https://github.com/hashicorp/terraform-provider-google-beta/pull/2923))
