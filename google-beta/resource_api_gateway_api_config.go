@@ -145,6 +145,7 @@ If not specified, backend authentication will be set to use OIDC authentication 
 				Computed:      true,
 				ForceNew:      true,
 				ConflictsWith: []string{"api_config_id"},
+				Description:   `Creates a unique name beginning with the specified prefix. If this and api_config_id are unspecified, a random value is chosen for the name.`,
 			},
 			"project": {
 				Type:     schema.TypeString,
