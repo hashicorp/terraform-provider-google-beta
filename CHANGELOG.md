@@ -1,4 +1,4 @@
-## 3.56.0 (Unreleased)
+## 3.56.0 (February 08, 2021)
 FEATURES:
 * **New Resource:** `google_privateca_certificate` ([#2924](https://github.com/hashicorp/terraform-provider-google-beta/pull/2924))
 
