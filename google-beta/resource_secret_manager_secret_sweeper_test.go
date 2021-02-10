@@ -61,7 +61,7 @@ func testSweepSecretManagerSecret(region string) error {
 		},
 	}
 
-	listTemplate := strings.Split("https://secretmanager.googleapis.com/v1beta1/projects/{{project}}/secrets", "?")[0]
+	listTemplate := strings.Split("https://secretmanager.googleapis.com/v1/projects/{{project}}/secrets", "?")[0]
 	listUrl, err := replaceVars(d, config, listTemplate)
 	if err != nil {
 		log.Printf("[INFO][SWEEPER_LOG] error preparing sweeper list url: %s", err)
@@ -103,7 +103,7 @@ func testSweepSecretManagerSecret(region string) error {
 			continue
 		}
 
-		deleteTemplate := "https://secretmanager.googleapis.com/v1beta1/projects/{{project}}/secrets/{{secret_id}}"
+		deleteTemplate := "https://secretmanager.googleapis.com/v1/projects/{{project}}/secrets/{{secret_id}}"
 		deleteUrl, err := replaceVars(d, config, deleteTemplate)
 		if err != nil {
 			log.Printf("[INFO][SWEEPER_LOG] error preparing delete url: %s", err)
