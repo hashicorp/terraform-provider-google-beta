@@ -276,55 +276,56 @@ func TestAccBigQueryTableIamPolicyGenerated_withCondition(t *testing.T) {
 func testAccBigQueryTableIamMember_basicGenerated(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_bigquery_dataset" "test" {
-	dataset_id = "tf_test_dataset_id%{random_suffix}"
+  dataset_id = "tf_test_dataset_id%{random_suffix}"
 }
 
 resource "google_bigquery_table" "test" {
-	table_id   = "tf_test_table_id%{random_suffix}"
-	dataset_id = google_bigquery_dataset.test.dataset_id
-	time_partitioning {
-		type = "DAY"
-	}
-	schema = <<EOH
+  deletion_protection = false
+  table_id   = "tf_test_table_id%{random_suffix}"
+  dataset_id = google_bigquery_dataset.test.dataset_id
+  time_partitioning {
+    type = "DAY"
+  }
+  schema = <<EOH
 [
-	{
-		"name": "city",
-		"type": "RECORD",
-		"fields": [
-	{
-		"name": "id",
-		"type": "INTEGER"
-	},
-	{
-		"name": "coord",
-		"type": "RECORD",
-		"fields": [
-		{
-			"name": "lon",
-			"type": "FLOAT"
-		},
-		{
-			"name": "lat",
-			"type": "FLOAT"
-		}
-		]
-	}
-		]
-	},
-	{
-		"name": "country",
-		"type": "RECORD",
-		"fields": [
-	{
-		"name": "id",
-		"type": "INTEGER"
-	},
-	{
-		"name": "name",
-		"type": "STRING"
-	}
-		]
-	}
+  {
+    "name": "city",
+    "type": "RECORD",
+    "fields": [
+  {
+    "name": "id",
+    "type": "INTEGER"
+  },
+  {
+    "name": "coord",
+    "type": "RECORD",
+    "fields": [
+    {
+      "name": "lon",
+      "type": "FLOAT"
+    },
+    {
+      "name": "lat",
+      "type": "FLOAT"
+    }
+    ]
+  }
+    ]
+  },
+  {
+    "name": "country",
+    "type": "RECORD",
+    "fields": [
+  {
+    "name": "id",
+    "type": "INTEGER"
+  },
+  {
+    "name": "name",
+    "type": "STRING"
+  }
+    ]
+  }
 ]
 EOH
 }
@@ -342,55 +343,56 @@ resource "google_bigquery_table_iam_member" "foo" {
 func testAccBigQueryTableIamPolicy_basicGenerated(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_bigquery_dataset" "test" {
-	dataset_id = "tf_test_dataset_id%{random_suffix}"
+  dataset_id = "tf_test_dataset_id%{random_suffix}"
 }
 
 resource "google_bigquery_table" "test" {
-	table_id   = "tf_test_table_id%{random_suffix}"
-	dataset_id = google_bigquery_dataset.test.dataset_id
-	time_partitioning {
-		type = "DAY"
-	}
-	schema = <<EOH
+  deletion_protection = false
+  table_id   = "tf_test_table_id%{random_suffix}"
+  dataset_id = google_bigquery_dataset.test.dataset_id
+  time_partitioning {
+    type = "DAY"
+  }
+  schema = <<EOH
 [
-	{
-		"name": "city",
-		"type": "RECORD",
-		"fields": [
-	{
-		"name": "id",
-		"type": "INTEGER"
-	},
-	{
-		"name": "coord",
-		"type": "RECORD",
-		"fields": [
-		{
-			"name": "lon",
-			"type": "FLOAT"
-		},
-		{
-			"name": "lat",
-			"type": "FLOAT"
-		}
-		]
-	}
-		]
-	},
-	{
-		"name": "country",
-		"type": "RECORD",
-		"fields": [
-	{
-		"name": "id",
-		"type": "INTEGER"
-	},
-	{
-		"name": "name",
-		"type": "STRING"
-	}
-		]
-	}
+  {
+    "name": "city",
+    "type": "RECORD",
+    "fields": [
+  {
+    "name": "id",
+    "type": "INTEGER"
+  },
+  {
+    "name": "coord",
+    "type": "RECORD",
+    "fields": [
+    {
+      "name": "lon",
+      "type": "FLOAT"
+    },
+    {
+      "name": "lat",
+      "type": "FLOAT"
+    }
+    ]
+  }
+    ]
+  },
+  {
+    "name": "country",
+    "type": "RECORD",
+    "fields": [
+  {
+    "name": "id",
+    "type": "INTEGER"
+  },
+  {
+    "name": "name",
+    "type": "STRING"
+  }
+    ]
+  }
 ]
 EOH
 }
@@ -414,55 +416,56 @@ resource "google_bigquery_table_iam_policy" "foo" {
 func testAccBigQueryTableIamPolicy_emptyBinding(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_bigquery_dataset" "test" {
-	dataset_id = "tf_test_dataset_id%{random_suffix}"
+  dataset_id = "tf_test_dataset_id%{random_suffix}"
 }
 
 resource "google_bigquery_table" "test" {
-	table_id   = "tf_test_table_id%{random_suffix}"
-	dataset_id = google_bigquery_dataset.test.dataset_id
-	time_partitioning {
-		type = "DAY"
-	}
-	schema = <<EOH
+  deletion_protection = false
+  table_id   = "tf_test_table_id%{random_suffix}"
+  dataset_id = google_bigquery_dataset.test.dataset_id
+  time_partitioning {
+    type = "DAY"
+  }
+  schema = <<EOH
 [
-	{
-		"name": "city",
-		"type": "RECORD",
-		"fields": [
-	{
-		"name": "id",
-		"type": "INTEGER"
-	},
-	{
-		"name": "coord",
-		"type": "RECORD",
-		"fields": [
-		{
-			"name": "lon",
-			"type": "FLOAT"
-		},
-		{
-			"name": "lat",
-			"type": "FLOAT"
-		}
-		]
-	}
-		]
-	},
-	{
-		"name": "country",
-		"type": "RECORD",
-		"fields": [
-	{
-		"name": "id",
-		"type": "INTEGER"
-	},
-	{
-		"name": "name",
-		"type": "STRING"
-	}
-		]
-	}
+  {
+    "name": "city",
+    "type": "RECORD",
+    "fields": [
+  {
+    "name": "id",
+    "type": "INTEGER"
+  },
+  {
+    "name": "coord",
+    "type": "RECORD",
+    "fields": [
+    {
+      "name": "lon",
+      "type": "FLOAT"
+    },
+    {
+      "name": "lat",
+      "type": "FLOAT"
+    }
+    ]
+  }
+    ]
+  },
+  {
+    "name": "country",
+    "type": "RECORD",
+    "fields": [
+  {
+    "name": "id",
+    "type": "INTEGER"
+  },
+  {
+    "name": "name",
+    "type": "STRING"
+  }
+    ]
+  }
 ]
 EOH
 }
@@ -482,55 +485,56 @@ resource "google_bigquery_table_iam_policy" "foo" {
 func testAccBigQueryTableIamBinding_basicGenerated(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_bigquery_dataset" "test" {
-	dataset_id = "tf_test_dataset_id%{random_suffix}"
+  dataset_id = "tf_test_dataset_id%{random_suffix}"
 }
 
 resource "google_bigquery_table" "test" {
-	table_id   = "tf_test_table_id%{random_suffix}"
-	dataset_id = google_bigquery_dataset.test.dataset_id
-	time_partitioning {
-		type = "DAY"
-	}
-	schema = <<EOH
+  deletion_protection = false
+  table_id   = "tf_test_table_id%{random_suffix}"
+  dataset_id = google_bigquery_dataset.test.dataset_id
+  time_partitioning {
+    type = "DAY"
+  }
+  schema = <<EOH
 [
-	{
-		"name": "city",
-		"type": "RECORD",
-		"fields": [
-	{
-		"name": "id",
-		"type": "INTEGER"
-	},
-	{
-		"name": "coord",
-		"type": "RECORD",
-		"fields": [
-		{
-			"name": "lon",
-			"type": "FLOAT"
-		},
-		{
-			"name": "lat",
-			"type": "FLOAT"
-		}
-		]
-	}
-		]
-	},
-	{
-		"name": "country",
-		"type": "RECORD",
-		"fields": [
-	{
-		"name": "id",
-		"type": "INTEGER"
-	},
-	{
-		"name": "name",
-		"type": "STRING"
-	}
-		]
-	}
+  {
+    "name": "city",
+    "type": "RECORD",
+    "fields": [
+  {
+    "name": "id",
+    "type": "INTEGER"
+  },
+  {
+    "name": "coord",
+    "type": "RECORD",
+    "fields": [
+    {
+      "name": "lon",
+      "type": "FLOAT"
+    },
+    {
+      "name": "lat",
+      "type": "FLOAT"
+    }
+    ]
+  }
+    ]
+  },
+  {
+    "name": "country",
+    "type": "RECORD",
+    "fields": [
+  {
+    "name": "id",
+    "type": "INTEGER"
+  },
+  {
+    "name": "name",
+    "type": "STRING"
+  }
+    ]
+  }
 ]
 EOH
 }
@@ -548,55 +552,56 @@ resource "google_bigquery_table_iam_binding" "foo" {
 func testAccBigQueryTableIamBinding_updateGenerated(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_bigquery_dataset" "test" {
-	dataset_id = "tf_test_dataset_id%{random_suffix}"
+  dataset_id = "tf_test_dataset_id%{random_suffix}"
 }
 
 resource "google_bigquery_table" "test" {
-	table_id   = "tf_test_table_id%{random_suffix}"
-	dataset_id = google_bigquery_dataset.test.dataset_id
-	time_partitioning {
-		type = "DAY"
-	}
-	schema = <<EOH
+  deletion_protection = false
+  table_id   = "tf_test_table_id%{random_suffix}"
+  dataset_id = google_bigquery_dataset.test.dataset_id
+  time_partitioning {
+    type = "DAY"
+  }
+  schema = <<EOH
 [
-	{
-		"name": "city",
-		"type": "RECORD",
-		"fields": [
-	{
-		"name": "id",
-		"type": "INTEGER"
-	},
-	{
-		"name": "coord",
-		"type": "RECORD",
-		"fields": [
-		{
-			"name": "lon",
-			"type": "FLOAT"
-		},
-		{
-			"name": "lat",
-			"type": "FLOAT"
-		}
-		]
-	}
-		]
-	},
-	{
-		"name": "country",
-		"type": "RECORD",
-		"fields": [
-	{
-		"name": "id",
-		"type": "INTEGER"
-	},
-	{
-		"name": "name",
-		"type": "STRING"
-	}
-		]
-	}
+  {
+    "name": "city",
+    "type": "RECORD",
+    "fields": [
+  {
+    "name": "id",
+    "type": "INTEGER"
+  },
+  {
+    "name": "coord",
+    "type": "RECORD",
+    "fields": [
+    {
+      "name": "lon",
+      "type": "FLOAT"
+    },
+    {
+      "name": "lat",
+      "type": "FLOAT"
+    }
+    ]
+  }
+    ]
+  },
+  {
+    "name": "country",
+    "type": "RECORD",
+    "fields": [
+  {
+    "name": "id",
+    "type": "INTEGER"
+  },
+  {
+    "name": "name",
+    "type": "STRING"
+  }
+    ]
+  }
 ]
 EOH
 }
@@ -614,55 +619,56 @@ resource "google_bigquery_table_iam_binding" "foo" {
 func testAccBigQueryTableIamBinding_withConditionGenerated(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_bigquery_dataset" "test" {
-	dataset_id = "tf_test_dataset_id%{random_suffix}"
+  dataset_id = "tf_test_dataset_id%{random_suffix}"
 }
 
 resource "google_bigquery_table" "test" {
-	table_id   = "tf_test_table_id%{random_suffix}"
-	dataset_id = google_bigquery_dataset.test.dataset_id
-	time_partitioning {
-		type = "DAY"
-	}
-	schema = <<EOH
+  deletion_protection = false
+  table_id   = "tf_test_table_id%{random_suffix}"
+  dataset_id = google_bigquery_dataset.test.dataset_id
+  time_partitioning {
+    type = "DAY"
+  }
+  schema = <<EOH
 [
-	{
-		"name": "city",
-		"type": "RECORD",
-		"fields": [
-	{
-		"name": "id",
-		"type": "INTEGER"
-	},
-	{
-		"name": "coord",
-		"type": "RECORD",
-		"fields": [
-		{
-			"name": "lon",
-			"type": "FLOAT"
-		},
-		{
-			"name": "lat",
-			"type": "FLOAT"
-		}
-		]
-	}
-		]
-	},
-	{
-		"name": "country",
-		"type": "RECORD",
-		"fields": [
-	{
-		"name": "id",
-		"type": "INTEGER"
-	},
-	{
-		"name": "name",
-		"type": "STRING"
-	}
-		]
-	}
+  {
+    "name": "city",
+    "type": "RECORD",
+    "fields": [
+  {
+    "name": "id",
+    "type": "INTEGER"
+  },
+  {
+    "name": "coord",
+    "type": "RECORD",
+    "fields": [
+    {
+      "name": "lon",
+      "type": "FLOAT"
+    },
+    {
+      "name": "lat",
+      "type": "FLOAT"
+    }
+    ]
+  }
+    ]
+  },
+  {
+    "name": "country",
+    "type": "RECORD",
+    "fields": [
+  {
+    "name": "id",
+    "type": "INTEGER"
+  },
+  {
+    "name": "name",
+    "type": "STRING"
+  }
+    ]
+  }
 ]
 EOH
 }
@@ -685,55 +691,56 @@ resource "google_bigquery_table_iam_binding" "foo" {
 func testAccBigQueryTableIamBinding_withAndWithoutConditionGenerated(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_bigquery_dataset" "test" {
-	dataset_id = "tf_test_dataset_id%{random_suffix}"
+  dataset_id = "tf_test_dataset_id%{random_suffix}"
 }
 
 resource "google_bigquery_table" "test" {
-	table_id   = "tf_test_table_id%{random_suffix}"
-	dataset_id = google_bigquery_dataset.test.dataset_id
-	time_partitioning {
-		type = "DAY"
-	}
-	schema = <<EOH
+  deletion_protection = false
+  table_id   = "tf_test_table_id%{random_suffix}"
+  dataset_id = google_bigquery_dataset.test.dataset_id
+  time_partitioning {
+    type = "DAY"
+  }
+  schema = <<EOH
 [
-	{
-		"name": "city",
-		"type": "RECORD",
-		"fields": [
-	{
-		"name": "id",
-		"type": "INTEGER"
-	},
-	{
-		"name": "coord",
-		"type": "RECORD",
-		"fields": [
-		{
-			"name": "lon",
-			"type": "FLOAT"
-		},
-		{
-			"name": "lat",
-			"type": "FLOAT"
-		}
-		]
-	}
-		]
-	},
-	{
-		"name": "country",
-		"type": "RECORD",
-		"fields": [
-	{
-		"name": "id",
-		"type": "INTEGER"
-	},
-	{
-		"name": "name",
-		"type": "STRING"
-	}
-		]
-	}
+  {
+    "name": "city",
+    "type": "RECORD",
+    "fields": [
+  {
+    "name": "id",
+    "type": "INTEGER"
+  },
+  {
+    "name": "coord",
+    "type": "RECORD",
+    "fields": [
+    {
+      "name": "lon",
+      "type": "FLOAT"
+    },
+    {
+      "name": "lat",
+      "type": "FLOAT"
+    }
+    ]
+  }
+    ]
+  },
+  {
+    "name": "country",
+    "type": "RECORD",
+    "fields": [
+  {
+    "name": "id",
+    "type": "INTEGER"
+  },
+  {
+    "name": "name",
+    "type": "STRING"
+  }
+    ]
+  }
 ]
 EOH
 }
@@ -764,55 +771,56 @@ resource "google_bigquery_table_iam_binding" "foo2" {
 func testAccBigQueryTableIamMember_withConditionGenerated(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_bigquery_dataset" "test" {
-	dataset_id = "tf_test_dataset_id%{random_suffix}"
+  dataset_id = "tf_test_dataset_id%{random_suffix}"
 }
 
 resource "google_bigquery_table" "test" {
-	table_id   = "tf_test_table_id%{random_suffix}"
-	dataset_id = google_bigquery_dataset.test.dataset_id
-	time_partitioning {
-		type = "DAY"
-	}
-	schema = <<EOH
+  deletion_protection = false
+  table_id   = "tf_test_table_id%{random_suffix}"
+  dataset_id = google_bigquery_dataset.test.dataset_id
+  time_partitioning {
+    type = "DAY"
+  }
+  schema = <<EOH
 [
-	{
-		"name": "city",
-		"type": "RECORD",
-		"fields": [
-	{
-		"name": "id",
-		"type": "INTEGER"
-	},
-	{
-		"name": "coord",
-		"type": "RECORD",
-		"fields": [
-		{
-			"name": "lon",
-			"type": "FLOAT"
-		},
-		{
-			"name": "lat",
-			"type": "FLOAT"
-		}
-		]
-	}
-		]
-	},
-	{
-		"name": "country",
-		"type": "RECORD",
-		"fields": [
-	{
-		"name": "id",
-		"type": "INTEGER"
-	},
-	{
-		"name": "name",
-		"type": "STRING"
-	}
-		]
-	}
+  {
+    "name": "city",
+    "type": "RECORD",
+    "fields": [
+  {
+    "name": "id",
+    "type": "INTEGER"
+  },
+  {
+    "name": "coord",
+    "type": "RECORD",
+    "fields": [
+    {
+      "name": "lon",
+      "type": "FLOAT"
+    },
+    {
+      "name": "lat",
+      "type": "FLOAT"
+    }
+    ]
+  }
+    ]
+  },
+  {
+    "name": "country",
+    "type": "RECORD",
+    "fields": [
+  {
+    "name": "id",
+    "type": "INTEGER"
+  },
+  {
+    "name": "name",
+    "type": "STRING"
+  }
+    ]
+  }
 ]
 EOH
 }
@@ -835,55 +843,56 @@ resource "google_bigquery_table_iam_member" "foo" {
 func testAccBigQueryTableIamMember_withAndWithoutConditionGenerated(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_bigquery_dataset" "test" {
-	dataset_id = "tf_test_dataset_id%{random_suffix}"
+  dataset_id = "tf_test_dataset_id%{random_suffix}"
 }
 
 resource "google_bigquery_table" "test" {
-	table_id   = "tf_test_table_id%{random_suffix}"
-	dataset_id = google_bigquery_dataset.test.dataset_id
-	time_partitioning {
-		type = "DAY"
-	}
-	schema = <<EOH
+  deletion_protection = false
+  table_id   = "tf_test_table_id%{random_suffix}"
+  dataset_id = google_bigquery_dataset.test.dataset_id
+  time_partitioning {
+    type = "DAY"
+  }
+  schema = <<EOH
 [
-	{
-		"name": "city",
-		"type": "RECORD",
-		"fields": [
-	{
-		"name": "id",
-		"type": "INTEGER"
-	},
-	{
-		"name": "coord",
-		"type": "RECORD",
-		"fields": [
-		{
-			"name": "lon",
-			"type": "FLOAT"
-		},
-		{
-			"name": "lat",
-			"type": "FLOAT"
-		}
-		]
-	}
-		]
-	},
-	{
-		"name": "country",
-		"type": "RECORD",
-		"fields": [
-	{
-		"name": "id",
-		"type": "INTEGER"
-	},
-	{
-		"name": "name",
-		"type": "STRING"
-	}
-		]
-	}
+  {
+    "name": "city",
+    "type": "RECORD",
+    "fields": [
+  {
+    "name": "id",
+    "type": "INTEGER"
+  },
+  {
+    "name": "coord",
+    "type": "RECORD",
+    "fields": [
+    {
+      "name": "lon",
+      "type": "FLOAT"
+    },
+    {
+      "name": "lat",
+      "type": "FLOAT"
+    }
+    ]
+  }
+    ]
+  },
+  {
+    "name": "country",
+    "type": "RECORD",
+    "fields": [
+  {
+    "name": "id",
+    "type": "INTEGER"
+  },
+  {
+    "name": "name",
+    "type": "STRING"
+  }
+    ]
+  }
 ]
 EOH
 }
@@ -914,55 +923,56 @@ resource "google_bigquery_table_iam_member" "foo2" {
 func testAccBigQueryTableIamPolicy_withConditionGenerated(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_bigquery_dataset" "test" {
-	dataset_id = "tf_test_dataset_id%{random_suffix}"
+  dataset_id = "tf_test_dataset_id%{random_suffix}"
 }
 
 resource "google_bigquery_table" "test" {
-	table_id   = "tf_test_table_id%{random_suffix}"
-	dataset_id = google_bigquery_dataset.test.dataset_id
-	time_partitioning {
-		type = "DAY"
-	}
-	schema = <<EOH
+  deletion_protection = false
+  table_id   = "tf_test_table_id%{random_suffix}"
+  dataset_id = google_bigquery_dataset.test.dataset_id
+  time_partitioning {
+    type = "DAY"
+  }
+  schema = <<EOH
 [
-	{
-		"name": "city",
-		"type": "RECORD",
-		"fields": [
-	{
-		"name": "id",
-		"type": "INTEGER"
-	},
-	{
-		"name": "coord",
-		"type": "RECORD",
-		"fields": [
-		{
-			"name": "lon",
-			"type": "FLOAT"
-		},
-		{
-			"name": "lat",
-			"type": "FLOAT"
-		}
-		]
-	}
-		]
-	},
-	{
-		"name": "country",
-		"type": "RECORD",
-		"fields": [
-	{
-		"name": "id",
-		"type": "INTEGER"
-	},
-	{
-		"name": "name",
-		"type": "STRING"
-	}
-		]
-	}
+  {
+    "name": "city",
+    "type": "RECORD",
+    "fields": [
+  {
+    "name": "id",
+    "type": "INTEGER"
+  },
+  {
+    "name": "coord",
+    "type": "RECORD",
+    "fields": [
+    {
+      "name": "lon",
+      "type": "FLOAT"
+    },
+    {
+      "name": "lat",
+      "type": "FLOAT"
+    }
+    ]
+  }
+    ]
+  },
+  {
+    "name": "country",
+    "type": "RECORD",
+    "fields": [
+  {
+    "name": "id",
+    "type": "INTEGER"
+  },
+  {
+    "name": "name",
+    "type": "STRING"
+  }
+    ]
+  }
 ]
 EOH
 }
