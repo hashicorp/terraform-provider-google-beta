@@ -59,6 +59,47 @@ resource "google_compute_global_address" "default" {
 `, context)
 }
 
+func TestAccComputeGlobalAddress_globalAddressPrivateServicesConnectExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"random_suffix": randString(t, 10),
+	}
+
+	vcrTest(t, resource.TestCase{
+		PreCheck:  func() { testAccPreCheck(t) },
+		Providers: testAccProvidersOiCS,
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"random": {},
+		},
+		CheckDestroy: testAccCheckComputeGlobalAddressDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeGlobalAddress_globalAddressPrivateServicesConnectExample(context),
+			},
+		},
+	})
+}
+
+func testAccComputeGlobalAddress_globalAddressPrivateServicesConnectExample(context map[string]interface{}) string {
+	return Nprintf(`
+resource "google_compute_global_address" "default" {
+  provider      = google-beta
+  name          = "tf-test-global-psconnect-ip%{random_suffix}"
+  address_type  = "INTERNAL"
+  purpose       = "PRIVATE_SERVICE_CONNECT"
+  network       = google_compute_network.network.id
+  address       = "100.100.100.105"
+}
+
+resource "google_compute_network" "network" {
+  provider      = google-beta
+  name          = "tf-test%{random_suffix}"
+  auto_create_subnetworks = false
+}
+`, context)
+}
+
 func testAccCheckComputeGlobalAddressDestroyProducer(t *testing.T) func(s *terraform.State) error {
 	return func(s *terraform.State) error {
 		for name, rs := range s.RootModule().Resources {
