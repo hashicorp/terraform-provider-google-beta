@@ -163,6 +163,16 @@ network.`,
 - STANDARD_HA: highly available primary/replica instances Default value: "BASIC" Possible values: ["BASIC", "STANDARD_HA"]`,
 				Default: "BASIC",
 			},
+			"transit_encryption_mode": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ForceNew:     true,
+				ValidateFunc: validation.StringInSlice([]string{"SERVER_AUTHENTICATION", "DISABLED", ""}, false),
+				Description: `The TLS mode of the Redis instance, If not provided, TLS is disabled for the instance.
+
+- SERVER_AUTHENTICATION: Client to Server traffic encryption enabled with server authentcation Default value: "DISABLED" Possible values: ["SERVER_AUTHENTICATION", "DISABLED"]`,
+				Default: "DISABLED",
+			},
 			"create_time": {
 				Type:     schema.TypeString,
 				Computed: true,
@@ -196,6 +206,40 @@ checked before each import/export operation.`,
 				Type:        schema.TypeInt,
 				Computed:    true,
 				Description: `The port number of the exposed Redis endpoint.`,
+			},
+			"server_ca_certs": {
+				Type:        schema.TypeList,
+				Computed:    true,
+				Description: `List of server CA certificates for the instance.`,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"cert": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: `Serial number, as extracted from the certificate.`,
+						},
+						"create_time": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: `The time when the certificate was created.`,
+						},
+						"expire_time": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: `The time when the certificate expires.`,
+						},
+						"serial_number": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: `Serial number, as extracted from the certificate.`,
+						},
+						"sha1_fingerprint": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: `Sha1 Fingerprint of the certificate.`,
+						},
+					},
+				},
 			},
 			"auth_string": {
 				Type:        schema.TypeString,
@@ -299,6 +343,12 @@ func resourceRedisInstanceCreate(d *schema.ResourceData, meta interface{}) error
 		return err
 	} else if v, ok := d.GetOkExists("tier"); !isEmptyValue(reflect.ValueOf(tierProp)) && (ok || !reflect.DeepEqual(v, tierProp)) {
 		obj["tier"] = tierProp
+	}
+	transitEncryptionModeProp, err := expandRedisInstanceTransitEncryptionMode(d.Get("transit_encryption_mode"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("transit_encryption_mode"); !isEmptyValue(reflect.ValueOf(transitEncryptionModeProp)) && (ok || !reflect.DeepEqual(v, transitEncryptionModeProp)) {
+		obj["transitEncryptionMode"] = transitEncryptionModeProp
 	}
 
 	obj, err = resourceRedisInstanceEncoder(d, meta, obj)
@@ -479,6 +529,12 @@ func resourceRedisInstanceRead(d *schema.ResourceData, meta interface{}) error {
 		return fmt.Errorf("Error reading Instance: %s", err)
 	}
 	if err := d.Set("tier", flattenRedisInstanceTier(res["tier"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Instance: %s", err)
+	}
+	if err := d.Set("transit_encryption_mode", flattenRedisInstanceTransitEncryptionMode(res["transitEncryptionMode"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Instance: %s", err)
+	}
+	if err := d.Set("server_ca_certs", flattenRedisInstanceServerCaCerts(res["serverCaCerts"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Instance: %s", err)
 	}
 
@@ -762,6 +818,52 @@ func flattenRedisInstanceTier(v interface{}, d *schema.ResourceData, config *Con
 	return v
 }
 
+func flattenRedisInstanceTransitEncryptionMode(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	return v
+}
+
+func flattenRedisInstanceServerCaCerts(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	if v == nil {
+		return v
+	}
+	l := v.([]interface{})
+	transformed := make([]interface{}, 0, len(l))
+	for _, raw := range l {
+		original := raw.(map[string]interface{})
+		if len(original) < 1 {
+			// Do not include empty json objects coming back from the api
+			continue
+		}
+		transformed = append(transformed, map[string]interface{}{
+			"serial_number":    flattenRedisInstanceServerCaCertsSerialNumber(original["serialNumber"], d, config),
+			"cert":             flattenRedisInstanceServerCaCertsCert(original["cert"], d, config),
+			"create_time":      flattenRedisInstanceServerCaCertsCreateTime(original["createTime"], d, config),
+			"expire_time":      flattenRedisInstanceServerCaCertsExpireTime(original["expireTime"], d, config),
+			"sha1_fingerprint": flattenRedisInstanceServerCaCertsSha1Fingerprint(original["sha1Fingerprint"], d, config),
+		})
+	}
+	return transformed
+}
+func flattenRedisInstanceServerCaCertsSerialNumber(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	return v
+}
+
+func flattenRedisInstanceServerCaCertsCert(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	return v
+}
+
+func flattenRedisInstanceServerCaCertsCreateTime(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	return v
+}
+
+func flattenRedisInstanceServerCaCertsExpireTime(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	return v
+}
+
+func flattenRedisInstanceServerCaCertsSha1Fingerprint(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	return v
+}
+
 func expandRedisInstanceAlternativeLocationId(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
@@ -829,6 +931,10 @@ func expandRedisInstanceReservedIpRange(v interface{}, d TerraformResourceData, 
 }
 
 func expandRedisInstanceTier(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandRedisInstanceTransitEncryptionMode(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
