@@ -1,5 +1,25 @@
 ## 3.57.0 (Unreleased)
 
+DEPRECATIONS:
+* compute: deprecated `source_disk_url` field in `google_compute_snapshot`. ([#2939](https://github.com/hashicorp/terraform-provider-google-beta/pull/2939))
+* kms: deprecated `self_link` field in `google_kms_keyring` and `google_kms_cryptokey` resource as it is identical value to `id` field. ([#2939](https://github.com/hashicorp/terraform-provider-google-beta/pull/2939))
+* pubsub: deprecated `path` field in `google_pubsub_subscription` resource as it is identical value to `id` field. ([#2939](https://github.com/hashicorp/terraform-provider-google-beta/pull/2939))
+
+FEATURES:
+* **New Resource:** `google_essential_contacts_contact` ([#2943](https://github.com/hashicorp/terraform-provider-google-beta/pull/2943))
+* **New Resource:** `google_privateca_certificate` ([#2924](https://github.com/hashicorp/terraform-provider-google-beta/pull/2924))
+
+IMPROVEMENTS:
+* bigquery: added `status` field to `google_bigquery_job` ([#2926](https://github.com/hashicorp/terraform-provider-google-beta/pull/2926))
+* compute: added `disk.resource_policies` field to resource `google_compute_instance_template` ([#2929](https://github.com/hashicorp/terraform-provider-google-beta/pull/2929))
+* compute: added `nic_type` field to `google_compute_instance_template ` resource to support gVNIC ([#2941](https://github.com/hashicorp/terraform-provider-google-beta/pull/2941))
+* compute: added `nic_type` field to `google_compute_instance` resource to support gVNIC ([#2941](https://github.com/hashicorp/terraform-provider-google-beta/pull/2941))
+* pubsub: marked `kms_key_name` field in `google_pubsub_topic` as updatable ([#2942](https://github.com/hashicorp/terraform-provider-google-beta/pull/2942))
+
+BUG FIXES:
+* appengine: added retry for P4SA propagation delay ([#2938](https://github.com/hashicorp/terraform-provider-google-beta/pull/2938))
+* compute: fixed overly-aggressive detection of changes to google_compute_security_policy rules ([#2940](https://github.com/hashicorp/terraform-provider-google-beta/pull/2940))
+
 ## 3.56.0 (February 8, 2021)
 
 FEATURES:
