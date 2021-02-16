@@ -1,4 +1,4 @@
-## 3.57.0 (Unreleased)
+## 3.57.0 (February 16, 2021)
 
 DEPRECATIONS:
 * compute: deprecated `source_disk_url` field in `google_compute_snapshot`. ([#2939](https://github.com/hashicorp/terraform-provider-google-beta/pull/2939))
