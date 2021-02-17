@@ -52,6 +52,7 @@ var (
 		"config.0.web_server_network_access_control",
 		"config.0.database_config",
 		"config.0.web_server_config",
+		"config.0.encryption_config",
 	}
 
 	allowedIpRangesConfig = &schema.Resource{
@@ -418,6 +419,24 @@ func resourceComposerEnvironment() *schema.Resource {
 										Type:        schema.TypeString,
 										Required:    true,
 										Description: `Optional. Machine type on which Airflow web server is running. It has to be one of: composer-n1-webserver-2, composer-n1-webserver-4 or composer-n1-webserver-8. If not specified, composer-n1-webserver-2 will be used. Value custom is returned only in response, if Airflow web server parameters were manually changed to a non-standard values.`,
+									},
+								},
+							},
+						},
+						"encryption_config": {
+							Type:         schema.TypeList,
+							Optional:     true,
+							Computed:     true,
+							AtLeastOneOf: composerConfigKeys,
+							MaxItems:     1,
+							Description:  `The encryption options for the Composer environment and its dependencies.`,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"kms_key_name": {
+										Type:        schema.TypeString,
+										Required:    true,
+										ForceNew:    true,
+										Description: `Optional. Customer-managed Encryption Key available through Google's Key Management Service. Cannot be updated.`,
 									},
 								},
 							},
@@ -809,6 +828,7 @@ func flattenComposerEnvironmentConfig(envCfg *composer.EnvironmentConfig) interf
 	transformed["web_server_network_access_control"] = flattenComposerEnvironmentConfigWebServerNetworkAccessControl(envCfg.WebServerNetworkAccessControl)
 	transformed["database_config"] = flattenComposerEnvironmentConfigDatabaseConfig(envCfg.DatabaseConfig)
 	transformed["web_server_config"] = flattenComposerEnvironmentConfigWebServerConfig(envCfg.WebServerConfig)
+	transformed["encryption_config"] = flattenComposerEnvironmentConfigEncryptionConfig(envCfg.EncryptionConfig)
 
 	return []interface{}{transformed}
 }
@@ -852,6 +872,17 @@ func flattenComposerEnvironmentConfigWebServerConfig(webServerCfg *composer.WebS
 
 	transformed := make(map[string]interface{})
 	transformed["machine_type"] = webServerCfg.MachineType
+
+	return []interface{}{transformed}
+}
+
+func flattenComposerEnvironmentConfigEncryptionConfig(encryptionCfg *composer.EncryptionConfig) interface{} {
+	if encryptionCfg == nil {
+		return nil
+	}
+
+	transformed := make(map[string]interface{})
+	transformed["kms_key_name"] = encryptionCfg.KmsKeyName
 
 	return []interface{}{transformed}
 }
@@ -980,6 +1011,12 @@ func expandComposerEnvironmentConfig(v interface{}, d *schema.ResourceData, conf
 	}
 	transformed.WebServerConfig = transformedWebServerConfig
 
+	transformedEncryptionConfig, err := expandComposerEnvironmentConfigEncryptionConfig(original["encryption_config"], d, config)
+	if err != nil {
+		return nil, err
+	}
+	transformed.EncryptionConfig = transformedEncryptionConfig
+
 	return transformed, nil
 }
 
@@ -1043,6 +1080,20 @@ func expandComposerEnvironmentConfigWebServerConfig(v interface{}, d *schema.Res
 
 	transformed := &composer.WebServerConfig{}
 	transformed.MachineType = original["machine_type"].(string)
+
+	return transformed, nil
+}
+
+func expandComposerEnvironmentConfigEncryptionConfig(v interface{}, d *schema.ResourceData, config *Config) (*composer.EncryptionConfig, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+
+	transformed := &composer.EncryptionConfig{}
+	transformed.KmsKeyName = original["kms_key_name"].(string)
 
 	return transformed, nil
 }
