@@ -13,6 +13,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/logging"
 	"google.golang.org/api/option"
 
+	dcl "github.com/GoogleCloudPlatform/declarative-resource-client-library/dcl"
+	eventarcDcl "github.com/GoogleCloudPlatform/declarative-resource-client-library/services/google/eventarc/beta"
 	"golang.org/x/oauth2"
 	googleoauth "golang.org/x/oauth2/google"
 	appengine "google.golang.org/api/appengine/v1"
@@ -167,9 +169,14 @@ type Config struct {
 	ServiceNetworkingBasePath      string
 	StorageTransferBasePath        string
 	BigtableAdminBasePath          string
+	EventarcBasePath               string
 
 	requestBatcherServiceUsage *RequestBatcher
 	requestBatcherIam          *RequestBatcher
+
+	// start DCL clients
+	dclConfig         *dcl.Config
+	clientEventarcDCL *eventarcDcl.Client
 }
 
 // Generated product base paths
@@ -295,6 +302,11 @@ func (c *Config) LoadAndValidate(ctx context.Context) error {
 	c.requestBatcherServiceUsage = NewRequestBatcher("Service Usage", ctx, c.BatchingConfig)
 	c.requestBatcherIam = NewRequestBatcher("IAM", ctx, c.BatchingConfig)
 	c.PollInterval = 10 * time.Second
+
+	// Start DCL client instantiation
+	// TODO(slevenick): handle user agents
+	c.dclConfig = dcl.NewConfig(dcl.WithHTTPClient(client), dcl.WithUserAgent(c.userAgent), dcl.WithLogger(dclLogger{}))
+	c.clientEventarcDCL = eventarcDcl.NewClient(c.dclConfig)
 
 	return nil
 }
