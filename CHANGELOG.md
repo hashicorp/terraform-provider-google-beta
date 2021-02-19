@@ -1,4 +1,50 @@
-## 3.57.0 (Unreleased)
+## 3.58.0 (Unreleased)
+
+NOTES:
+* `google_bigquery_table` resources now cannot be destroyed unless `deletion_protection = false` is set in state for the resource. ([#2954](https://github.com/hashicorp/terraform-provider-google-beta/pull/2954))
+
+FEATURES:
+* **New Data Source:** `google_runtimeconfig_variable` ([#2945](https://github.com/hashicorp/terraform-provider-google-beta/pull/2945))
+* **New Data Source:** `google_iap_client` ([#2951](https://github.com/hashicorp/terraform-provider-google-beta/pull/2951))
+
+IMPROVEMENTS:
+* bigquery: added `deletion_protection` field to `google_bigquery_table` to make deleting them require an explicit intent. ([#2954](https://github.com/hashicorp/terraform-provider-google-beta/pull/2954))
+* cloudrun: updated retry logic to attempt to retry 409 errors from the Cloud Run API, which may be returned intermittently on create. ([#2948](https://github.com/hashicorp/terraform-provider-google-beta/pull/2948))
+* compute: removed max items limit from `google_compute_target_ssl_proxy`. The API currently allows upto 15 Certificates. ([#2964](https://github.com/hashicorp/terraform-provider-google-beta/pull/2964))
+* compute: added support for Private Services Connect for Google APIs in `google_compute_global_address` and `google_compute_global_forwarding_rule` ([#2956](https://github.com/hashicorp/terraform-provider-google-beta/pull/2956))
+* iam: added a retry condition that retries editing `iam_binding` and `iam_member` resources on policies that have frequently deleted service accounts ([#2963](https://github.com/hashicorp/terraform-provider-google-beta/pull/2963))
+* redis: added transit encryption mode support for `google_redis_instance` ([#2955](https://github.com/hashicorp/terraform-provider-google-beta/pull/2955))
+* secretmanager: changed endpoint to use v1 instead of v1beta1 as it is more up-to-date ([#2946](https://github.com/hashicorp/terraform-provider-google-beta/pull/2946))
+* sql: added `insights_config` block to `google_sql_database_instance` resource ([#2944](https://github.com/hashicorp/terraform-provider-google-beta/pull/2944))
+
+BUG FIXES:
+* compute: fixed an issue where the provider could return an error on a successful delete operation ([#2958](https://github.com/hashicorp/terraform-provider-google-beta/pull/2958))
+* datacatalog: fixed import issue for `google_data_catalog_taxonomy` ([#2961](https://github.com/hashicorp/terraform-provider-google-beta/pull/2961))
+* dataproc : fixed `max_failure_per_hour` not sent in API request for the resource `google_dataproc_job` ([#2949](https://github.com/hashicorp/terraform-provider-google-beta/pull/2949))
+* dlp : modified `google_data_loss_prevention_stored_info_type` `regex.group_indexes` field to trigger resource recreation on update ([#2947](https://github.com/hashicorp/terraform-provider-google-beta/pull/2947))
+* sql: fixed diffs based on case for `charset` in `google_sql_database` ([#2957](https://github.com/hashicorp/terraform-provider-google-beta/pull/2957))
+
+## 3.57.0 (February 16, 2021)
+
+DEPRECATIONS:
+* compute: deprecated `source_disk_url` field in `google_compute_snapshot`. ([#2939](https://github.com/hashicorp/terraform-provider-google-beta/pull/2939))
+* kms: deprecated `self_link` field in `google_kms_keyring` and `google_kms_cryptokey` resource as it is identical value to `id` field. ([#2939](https://github.com/hashicorp/terraform-provider-google-beta/pull/2939))
+* pubsub: deprecated `path` field in `google_pubsub_subscription` resource as it is identical value to `id` field. ([#2939](https://github.com/hashicorp/terraform-provider-google-beta/pull/2939))
+
+FEATURES:
+* **New Resource:** `google_essential_contacts_contact` ([#2943](https://github.com/hashicorp/terraform-provider-google-beta/pull/2943))
+* **New Resource:** `google_privateca_certificate` ([#2924](https://github.com/hashicorp/terraform-provider-google-beta/pull/2924))
+
+IMPROVEMENTS:
+* bigquery: added `status` field to `google_bigquery_job` ([#2926](https://github.com/hashicorp/terraform-provider-google-beta/pull/2926))
+* compute: added `disk.resource_policies` field to resource `google_compute_instance_template` ([#2929](https://github.com/hashicorp/terraform-provider-google-beta/pull/2929))
+* compute: added `nic_type` field to `google_compute_instance_template ` resource to support gVNIC ([#2941](https://github.com/hashicorp/terraform-provider-google-beta/pull/2941))
+* compute: added `nic_type` field to `google_compute_instance` resource to support gVNIC ([#2941](https://github.com/hashicorp/terraform-provider-google-beta/pull/2941))
+* pubsub: marked `kms_key_name` field in `google_pubsub_topic` as updatable ([#2942](https://github.com/hashicorp/terraform-provider-google-beta/pull/2942))
+
+BUG FIXES:
+* appengine: added retry for P4SA propagation delay ([#2938](https://github.com/hashicorp/terraform-provider-google-beta/pull/2938))
+* compute: fixed overly-aggressive detection of changes to google_compute_security_policy rules ([#2940](https://github.com/hashicorp/terraform-provider-google-beta/pull/2940))
 
 ## 3.56.0 (February 8, 2021)
 
