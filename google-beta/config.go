@@ -113,6 +113,7 @@ type Config struct {
 	DataFusionBasePath           string
 	DataLossPreventionBasePath   string
 	DataprocBasePath             string
+	DataprocMetastoreBasePath    string
 	DatastoreBasePath            string
 	DeploymentManagerBasePath    string
 	DialogflowBasePath           string
@@ -208,6 +209,7 @@ var DataCatalogDefaultBasePath = "https://datacatalog.googleapis.com/v1beta1/"
 var DataFusionDefaultBasePath = "https://datafusion.googleapis.com/v1beta1/"
 var DataLossPreventionDefaultBasePath = "https://dlp.googleapis.com/v2/"
 var DataprocDefaultBasePath = "https://dataproc.googleapis.com/v1beta2/"
+var DataprocMetastoreDefaultBasePath = "https://metastore.googleapis.com/v1beta/"
 var DatastoreDefaultBasePath = "https://datastore.googleapis.com/v1/"
 var DeploymentManagerDefaultBasePath = "https://www.googleapis.com/deploymentmanager/v2/"
 var DialogflowDefaultBasePath = "https://dialogflow.googleapis.com/v2/"
@@ -1015,6 +1017,7 @@ func ConfigureBasePaths(c *Config) {
 	c.DataFusionBasePath = DataFusionDefaultBasePath
 	c.DataLossPreventionBasePath = DataLossPreventionDefaultBasePath
 	c.DataprocBasePath = DataprocDefaultBasePath
+	c.DataprocMetastoreBasePath = DataprocMetastoreDefaultBasePath
 	c.DatastoreBasePath = DatastoreDefaultBasePath
 	c.DeploymentManagerBasePath = DeploymentManagerDefaultBasePath
 	c.DialogflowBasePath = DialogflowDefaultBasePath
