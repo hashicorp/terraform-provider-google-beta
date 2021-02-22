@@ -256,7 +256,6 @@ func expandNetworkInterfaces(d TerraformResourceData, config *Config) ([]*comput
 	}
 	return ifaces, nil
 }
-
 func expandNicType(d interface{}) string {
 	if d == nil {
 		return ""
