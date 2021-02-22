@@ -1051,7 +1051,6 @@ func TestAccComputeInstance_multiNic(t *testing.T) {
 		},
 	})
 }
-
 func TestAccComputeInstance_nictype_update(t *testing.T) {
 	t.Parallel()
 
