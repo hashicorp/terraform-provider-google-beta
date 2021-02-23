@@ -1,4 +1,4 @@
-module github.com/hashicorp/terraform-provider-google-beta/v3
+module github.com/hashicorp/terraform-provider-google-beta
 
 require (
 	cloud.google.com/go/bigtable v1.7.1
