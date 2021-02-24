@@ -297,6 +297,7 @@ resource "google_compute_autoscaler" "foobar" {
     cooldown_period = 60
     cpu_utilization {
       target = 0.5
+      predictive_method = "OPTIMIZE_AVAILABILITY"
     }
     scale_down_control {
       max_scaled_down_replicas {
