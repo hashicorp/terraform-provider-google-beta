@@ -1,0 +1,3 @@
+```release-note:bug
+Fixed repeating changes google_service_usage_consumer_quota_override when override_value is 0
+```

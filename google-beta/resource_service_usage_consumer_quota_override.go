@@ -363,6 +363,9 @@ func resourceServiceUsageConsumerQuotaOverrideImport(d *schema.ResourceData, met
 }
 
 func flattenNestedServiceUsageConsumerQuotaOverrideOverrideValue(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	if v == nil {
+		return "0"
+	}
 	return v
 }
 
