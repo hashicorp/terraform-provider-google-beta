@@ -9,9 +9,12 @@ import (
 
 func TestAccMemcacheInstance_update(t *testing.T) {
 	t.Parallel()
+	// Temporary as CI has used up servicenetworking quota
+	skipIfVcr(t)
 
 	prefix := fmt.Sprintf("%d", randInt(t))
 	name := fmt.Sprintf("tf-test-%s", prefix)
+	network := BootstrapSharedTestNetwork(t, "memcache-update")
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -19,7 +22,7 @@ func TestAccMemcacheInstance_update(t *testing.T) {
 		CheckDestroy: testAccCheckMemcacheInstanceDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccMemcacheInstance_update(prefix, name),
+				Config: testAccMemcacheInstance_update(prefix, name, network),
 			},
 			{
 				ResourceName:      "google_memcache_instance.test",
@@ -27,7 +30,7 @@ func TestAccMemcacheInstance_update(t *testing.T) {
 				ImportStateVerify: true,
 			},
 			{
-				Config: testAccMemcacheInstance_update2(prefix, name),
+				Config: testAccMemcacheInstance_update2(prefix, name, network),
 			},
 			{
 				ResourceName:      "google_memcache_instance.test",
@@ -38,22 +41,18 @@ func TestAccMemcacheInstance_update(t *testing.T) {
 	})
 }
 
-func testAccMemcacheInstance_update(prefix, name string) string {
+func testAccMemcacheInstance_update(prefix, name, network string) string {
 	return fmt.Sprintf(`
-resource "google_compute_network" "network" {
-  name = "tf-test%s"
-}
-
 resource "google_compute_global_address" "service_range" {
   name          = "tf-test%s"
   purpose       = "VPC_PEERING"
   address_type  = "INTERNAL"
   prefix_length = 16
-  network       = google_compute_network.network.id
+  network       = data.google_compute_network.memcache_network.id
 }
 
 resource "google_service_networking_connection" "private_service_connection" {
-  network                 = google_compute_network.network.id
+  network                 = data.google_compute_network.memcache_network.id
   service                 = "servicenetworking.googleapis.com"
   reserved_peering_ranges = [google_compute_global_address.service_range.name]
 }
@@ -76,25 +75,25 @@ resource "google_memcache_instance" "test" {
     }
   }
 }
-`, prefix, prefix, name)
+
+data "google_compute_network" "memcache_network" {
+  name = "%s"
+}
+`, prefix, name, network)
 }
 
-func testAccMemcacheInstance_update2(prefix, name string) string {
+func testAccMemcacheInstance_update2(prefix, name, network string) string {
 	return fmt.Sprintf(`
-resource "google_compute_network" "network" {
-  name = "tf-test%s"
-}
-
 resource "google_compute_global_address" "service_range" {
   name          = "tf-test%s"
   purpose       = "VPC_PEERING"
   address_type  = "INTERNAL"
   prefix_length = 16
-  network       = google_compute_network.network.id
+  network       = data.google_compute_network.memcache_network.id
 }
 
 resource "google_service_networking_connection" "private_service_connection" {
-  network                 = google_compute_network.network.id
+  network                 = data.google_compute_network.memcache_network.id
   service                 = "servicenetworking.googleapis.com"
   reserved_peering_ranges = [google_compute_global_address.service_range.name]
 }
@@ -117,5 +116,9 @@ resource "google_memcache_instance" "test" {
     }
   }
 }
-`, prefix, prefix, name)
+
+data "google_compute_network" "memcache_network" {
+  name = "%s"
+}
+`, prefix, name, network)
 }
