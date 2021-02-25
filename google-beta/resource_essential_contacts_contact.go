@@ -47,6 +47,11 @@ func resourceEssentialContactsContact() *schema.Resource {
 				Required:    true,
 				Description: `The email address to send notifications to. This does not need to be a Google account.`,
 			},
+			"language_tag": {
+				Type:        schema.TypeString,
+				Required:    true,
+				Description: `The preferred language for notifications, as a ISO 639-1 language code. See Supported languages for a list of supported languages.`,
+			},
 			"notification_category_subscriptions": {
 				Type:        schema.TypeList,
 				Required:    true,
@@ -60,11 +65,6 @@ func resourceEssentialContactsContact() *schema.Resource {
 				Required:    true,
 				ForceNew:    true,
 				Description: `The resource to save this contact for. Format: organizations/{organization_id}, folders/{folder_id} or projects/{project_id}`,
-			},
-			"language_tag": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				Description: `The preferred language for notifications, as a ISO 639-1 language code. See Supported languages for a list of supported languages.`,
 			},
 			"name": {
 				Type:        schema.TypeString,
