@@ -252,10 +252,10 @@ func expandNetworkInterfaces(d TerraformResourceData, config *Config) ([]*comput
 			AliasIpRanges: expandAliasIpRanges(data["alias_ip_range"].([]interface{})),
 			NicType:       expandNicType(data["nic_type"].(interface{})),
 		}
-
 	}
 	return ifaces, nil
 }
+
 func expandNicType(d interface{}) string {
 	if d == nil {
 		return ""
