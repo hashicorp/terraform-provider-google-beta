@@ -1,8 +1,5 @@
 ## 3.59.0 (Unreleased)
 
-UNKNOWN CHANGELOG TYPE:
-* Bump google.golang.org/api from 0.38.0 to 0.40.0 ([#2959](https://github.com/hashicorp/terraform-provider-google-beta/pull/2959))
-
 FEATURES:
 * **New Resource:** `google_dataproc_metastore_service` ([#2977](https://github.com/hashicorp/terraform-provider-google-beta/pull/2977))
 * **New Resource:** google_eventarc_trigger ([#2972](https://github.com/hashicorp/terraform-provider-google-beta/pull/2972))
