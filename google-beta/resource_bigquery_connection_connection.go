@@ -211,8 +211,6 @@ func resourceBigqueryConnectionConnectionCreate(d *schema.ResourceData, meta int
 	}
 	d.SetId(id)
 
-	log.Printf("[DEBUG] Finished creating Connection %q: %#v", d.Id(), res)
-
 	if isEmptyValue(reflect.ValueOf(d.Get("connection_id"))) {
 		// connection id is set by API when unset and required to GET the connection
 		// it is set by reading the "name" field rather than a field in the response
@@ -220,6 +218,8 @@ func resourceBigqueryConnectionConnectionCreate(d *schema.ResourceData, meta int
 			return fmt.Errorf("Error reading Connection: %s", err)
 		}
 	}
+
+	log.Printf("[DEBUG] Finished creating Connection %q: %#v", d.Id(), res)
 
 	return resourceBigqueryConnectionConnectionRead(d, meta)
 }

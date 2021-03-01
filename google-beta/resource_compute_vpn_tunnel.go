@@ -484,8 +484,6 @@ func resourceComputeVpnTunnelCreate(d *schema.ResourceData, meta interface{}) er
 		return fmt.Errorf("Error waiting to create VpnTunnel: %s", err)
 	}
 
-	log.Printf("[DEBUG] Finished creating VpnTunnel %q: %#v", d.Id(), res)
-
 	if v, ok := d.GetOkExists("labels"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
 		// Labels cannot be set in a create.  We'll have to set them here.
 		err = resourceComputeVpnTunnelRead(d, meta)
@@ -521,6 +519,8 @@ func resourceComputeVpnTunnelCreate(d *schema.ResourceData, meta interface{}) er
 		}
 
 	}
+
+	log.Printf("[DEBUG] Finished creating VpnTunnel %q: %#v", d.Id(), res)
 
 	return resourceComputeVpnTunnelRead(d, meta)
 }

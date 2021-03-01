@@ -150,8 +150,6 @@ func resourceComputeOrganizationSecurityPolicyCreate(d *schema.ResourceData, met
 	}
 	d.SetId(id)
 
-	log.Printf("[DEBUG] Finished creating OrganizationSecurityPolicy %q: %#v", d.Id(), res)
-
 	parent := d.Get("parent").(string)
 	var opRes map[string]interface{}
 	err = computeOrgOperationWaitTimeWithResponse(
@@ -178,6 +176,8 @@ func resourceComputeOrganizationSecurityPolicyCreate(d *schema.ResourceData, met
 		return fmt.Errorf("Error constructing id: %s", err)
 	}
 	d.SetId(id)
+
+	log.Printf("[DEBUG] Finished creating OrganizationSecurityPolicy %q: %#v", d.Id(), res)
 
 	return resourceComputeOrganizationSecurityPolicyRead(d, meta)
 }

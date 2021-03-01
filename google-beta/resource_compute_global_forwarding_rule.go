@@ -392,8 +392,6 @@ func resourceComputeGlobalForwardingRuleCreate(d *schema.ResourceData, meta inte
 		return fmt.Errorf("Error waiting to create GlobalForwardingRule: %s", err)
 	}
 
-	log.Printf("[DEBUG] Finished creating GlobalForwardingRule %q: %#v", d.Id(), res)
-
 	if v, ok := d.GetOkExists("labels"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
 		// Labels cannot be set in a create.  We'll have to set them here.
 		err = resourceComputeGlobalForwardingRuleRead(d, meta)
@@ -429,6 +427,8 @@ func resourceComputeGlobalForwardingRuleCreate(d *schema.ResourceData, meta inte
 		}
 
 	}
+
+	log.Printf("[DEBUG] Finished creating GlobalForwardingRule %q: %#v", d.Id(), res)
 
 	return resourceComputeGlobalForwardingRuleRead(d, meta)
 }
