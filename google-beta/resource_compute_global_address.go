@@ -265,8 +265,6 @@ func resourceComputeGlobalAddressCreate(d *schema.ResourceData, meta interface{}
 		return fmt.Errorf("Error waiting to create GlobalAddress: %s", err)
 	}
 
-	log.Printf("[DEBUG] Finished creating GlobalAddress %q: %#v", d.Id(), res)
-
 	if v, ok := d.GetOkExists("labels"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
 		// Labels cannot be set in a create.  We'll have to set them here.
 		err = resourceComputeGlobalAddressRead(d, meta)
@@ -302,6 +300,8 @@ func resourceComputeGlobalAddressCreate(d *schema.ResourceData, meta interface{}
 		}
 
 	}
+
+	log.Printf("[DEBUG] Finished creating GlobalAddress %q: %#v", d.Id(), res)
 
 	return resourceComputeGlobalAddressRead(d, meta)
 }

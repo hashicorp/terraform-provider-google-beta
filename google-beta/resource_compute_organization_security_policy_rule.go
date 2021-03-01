@@ -285,8 +285,6 @@ func resourceComputeOrganizationSecurityPolicyRuleCreate(d *schema.ResourceData,
 	}
 	d.SetId(id)
 
-	log.Printf("[DEBUG] Finished creating OrganizationSecurityPolicyRule %q: %#v", d.Id(), res)
-
 	// `parent` is needed to poll the asynchronous operations but its available only on the policy.
 
 	policyUrl := fmt.Sprintf("{{ComputeBasePath}}%s", d.Get("policy_id"))
@@ -311,6 +309,8 @@ func resourceComputeOrganizationSecurityPolicyRuleCreate(d *schema.ResourceData,
 		d.SetId("")
 		return fmt.Errorf("Error waiting to create OrganizationSecurityPolicyRule: %s", err)
 	}
+
+	log.Printf("[DEBUG] Finished creating OrganizationSecurityPolicyRule %q: %#v", d.Id(), res)
 
 	return resourceComputeOrganizationSecurityPolicyRuleRead(d, meta)
 }

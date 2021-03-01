@@ -469,8 +469,6 @@ func resourceComputeForwardingRuleCreate(d *schema.ResourceData, meta interface{
 		return fmt.Errorf("Error waiting to create ForwardingRule: %s", err)
 	}
 
-	log.Printf("[DEBUG] Finished creating ForwardingRule %q: %#v", d.Id(), res)
-
 	if v, ok := d.GetOkExists("labels"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
 		// Labels cannot be set in a create.  We'll have to set them here.
 		err = resourceComputeForwardingRuleRead(d, meta)
@@ -506,6 +504,8 @@ func resourceComputeForwardingRuleCreate(d *schema.ResourceData, meta interface{
 		}
 
 	}
+
+	log.Printf("[DEBUG] Finished creating ForwardingRule %q: %#v", d.Id(), res)
 
 	return resourceComputeForwardingRuleRead(d, meta)
 }

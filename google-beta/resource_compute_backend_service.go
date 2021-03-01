@@ -1214,8 +1214,6 @@ func resourceComputeBackendServiceCreate(d *schema.ResourceData, meta interface{
 		return fmt.Errorf("Error waiting to create BackendService: %s", err)
 	}
 
-	log.Printf("[DEBUG] Finished creating BackendService %q: %#v", d.Id(), res)
-
 	// security_policy isn't set by Create / Update
 	if o, n := d.GetChange("security_policy"); o.(string) != n.(string) {
 		pol, err := ParseSecurityPolicyFieldValue(n.(string), d, config)
@@ -1235,6 +1233,8 @@ func resourceComputeBackendServiceCreate(d *schema.ResourceData, meta interface{
 			return waitErr
 		}
 	}
+
+	log.Printf("[DEBUG] Finished creating BackendService %q: %#v", d.Id(), res)
 
 	return resourceComputeBackendServiceRead(d, meta)
 }
