@@ -7,7 +7,6 @@ FEATURES:
 IMPROVEMENTS:
 * composer: added `encryption_config`  to `google_composer_environment` resource ([#2967](https://github.com/hashicorp/terraform-provider-google-beta/pull/2967))
 * compute: Added graceful termination to `google_container_node_pool` create calls so that partially created node pools will resume the original operation if the Terraform process is killed mid create. ([#2969](https://github.com/hashicorp/terraform-provider-google-beta/pull/2969))
-* compute: Promoted gVNIC support for `google_compute_instance` resource to GA ([#2973](https://github.com/hashicorp/terraform-provider-google-beta/pull/2973))
 * redis : marked `auth_string` on the `resource_redis_instance` resource as sensitive ([#2974](https://github.com/hashicorp/terraform-provider-google-beta/pull/2974))
 
 BUG FIXES:
