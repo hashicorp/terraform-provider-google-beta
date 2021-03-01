@@ -347,13 +347,14 @@ func TestAccContainerCluster_withAuthenticatorGroupsConfig(t *testing.T) {
 	t.Parallel()
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", randString(t, 10))
 	containerNetName := fmt.Sprintf("tf-test-container-net-%s", randString(t, 10))
+	orgDomain := getTestOrgDomainFromEnv(t)
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccContainerCluster_withAuthenticatorGroupsConfig(containerNetName, clusterName),
+				Config: testAccContainerCluster_withAuthenticatorGroupsConfig(containerNetName, clusterName, orgDomain),
 			},
 			{
 				ResourceName:      "google_container_cluster.with_authenticator_groups",
@@ -2666,7 +2667,7 @@ resource "google_container_cluster" "with_network_policy_enabled" {
 `, clusterName)
 }
 
-func testAccContainerCluster_withAuthenticatorGroupsConfig(containerNetName string, clusterName string) string {
+func testAccContainerCluster_withAuthenticatorGroupsConfig(containerNetName string, clusterName string, orgDomain string) string {
 	return fmt.Sprintf(`
 resource "google_compute_network" "container_network" {
   name                    = "%s"
@@ -2699,7 +2700,7 @@ resource "google_container_cluster" "with_authenticator_groups" {
   subnetwork         = google_compute_subnetwork.container_subnetwork.name
 
   authenticator_groups_config {
-    security_group = "gke-security-groups@mydomain.tld"
+    security_group = "gke-security-groups-test@%s"
   }
 
   networking_mode = "VPC_NATIVE"
@@ -2708,7 +2709,7 @@ resource "google_container_cluster" "with_authenticator_groups" {
     services_secondary_range_name = google_compute_subnetwork.container_subnetwork.secondary_ip_range[1].range_name
   }
 }
-`, containerNetName, clusterName)
+`, containerNetName, clusterName, orgDomain)
 }
 
 func testAccContainerCluster_withMasterAuthorizedNetworksConfig(clusterName string, cidrs []string, emptyValue string) string {
