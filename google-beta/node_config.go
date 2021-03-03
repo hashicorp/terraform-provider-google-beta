@@ -93,6 +93,23 @@ func schemaNodeConfig() *schema.Schema {
 					ValidateFunc: validation.IntAtLeast(0),
 				},
 
+				"ephemeral_storage_config": {
+					Type:     schema.TypeList,
+					Optional: true,
+					MaxItems: 1,
+					ForceNew: true,
+					Elem: &schema.Resource{
+						Schema: map[string]*schema.Schema{
+							"local_ssd_count": {
+								Type:         schema.TypeInt,
+								Required:     true,
+								ForceNew:     true,
+								ValidateFunc: validation.IntAtLeast(0),
+							},
+						},
+					},
+				},
+
 				"machine_type": {
 					Type:     schema.TypeString,
 					Optional: true,
@@ -331,6 +348,13 @@ func expandNodeConfig(v interface{}) *containerBeta.NodeConfig {
 		nc.LocalSsdCount = int64(v.(int))
 	}
 
+	if v, ok := nodeConfig["ephemeral_storage_config"]; ok && len(v.([]interface{})) > 0 {
+		conf := v.([]interface{})[0].(map[string]interface{})
+		nc.EphemeralStorageConfig = &containerBeta.EphemeralStorageConfig{
+			LocalSsdCount: int64(conf["local_ssd_count"].(int)),
+		}
+	}
+
 	if scopes, ok := nodeConfig["oauth_scopes"]; ok {
 		scopesSet := scopes.(*schema.Set)
 		scopes := make([]string, scopesSet.Len())
@@ -505,6 +529,7 @@ func flattenNodeConfig(c *containerBeta.NodeConfig) []map[string]interface{} {
 		"disk_type":                c.DiskType,
 		"guest_accelerator":        flattenContainerGuestAccelerators(c.Accelerators),
 		"local_ssd_count":          c.LocalSsdCount,
+		"ephemeral_storage_config": flattenEphemeralStorageConfig(c.EphemeralStorageConfig),
 		"service_account":          c.ServiceAccount,
 		"metadata":                 c.Metadata,
 		"image_type":               c.ImageType,
@@ -545,6 +570,16 @@ func flattenShieldedInstanceConfig(c *containerBeta.ShieldedInstanceConfig) []ma
 		result = append(result, map[string]interface{}{
 			"enable_secure_boot":          c.EnableSecureBoot,
 			"enable_integrity_monitoring": c.EnableIntegrityMonitoring,
+		})
+	}
+	return result
+}
+
+func flattenEphemeralStorageConfig(c *containerBeta.EphemeralStorageConfig) []map[string]interface{} {
+	result := []map[string]interface{}{}
+	if c != nil {
+		result = append(result, map[string]interface{}{
+			"local_ssd_count": c.LocalSsdCount,
 		})
 	}
 	return result
