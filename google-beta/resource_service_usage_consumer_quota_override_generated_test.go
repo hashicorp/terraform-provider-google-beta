@@ -67,6 +67,50 @@ resource "google_service_usage_consumer_quota_override" "override" {
 `, context)
 }
 
+func TestAccServiceUsageConsumerQuotaOverride_consumerQuotaOverrideZeroValueExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"org_id":        getTestOrgFromEnv(t),
+		"random_suffix": randString(t, 10),
+	}
+
+	vcrTest(t, resource.TestCase{
+		PreCheck:  func() { testAccPreCheck(t) },
+		Providers: testAccProvidersOiCS,
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"random": {},
+		},
+		CheckDestroy: testAccCheckServiceUsageConsumerQuotaOverrideDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccServiceUsageConsumerQuotaOverride_consumerQuotaOverrideZeroValueExample(context),
+			},
+		},
+	})
+}
+
+func testAccServiceUsageConsumerQuotaOverride_consumerQuotaOverrideZeroValueExample(context map[string]interface{}) string {
+	return Nprintf(`
+resource "google_project" "my_project" {
+  provider   = google-beta
+  name       = "tf-test-project"
+  project_id = "quota%{random_suffix}"
+  org_id     = "%{org_id}"
+}
+
+resource "google_service_usage_consumer_quota_override" "override" {
+  provider       = google-beta
+  project        = google_project.my_project.project_id
+  service        = "servicemanagement.googleapis.com"
+  metric         = "servicemanagement.googleapis.com%2Fdefault_requests"
+  limit          = "%2Fmin%2Fproject"
+  override_value = "0"
+  force          = true
+}
+`, context)
+}
+
 func TestAccServiceUsageConsumerQuotaOverride_regionConsumerQuotaOverrideExample(t *testing.T) {
 	t.Parallel()
 
