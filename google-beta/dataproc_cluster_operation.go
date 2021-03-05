@@ -21,7 +21,7 @@ func (w *DataprocClusterOperationWaiter) QueryOp() (interface{}, error) {
 
 func dataprocClusterOperationWait(config *Config, op *dataproc.Operation, activity, userAgent string, timeout time.Duration) error {
 	w := &DataprocClusterOperationWaiter{
-		Service: config.NewDataprocBetaClient(userAgent),
+		Service: config.NewDataprocClient(userAgent),
 	}
 	if err := w.SetOp(op); err != nil {
 		return err

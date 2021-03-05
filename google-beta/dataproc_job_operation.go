@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"time"
 
-	"google.golang.org/api/dataproc/v1"
+	dataproc "google.golang.org/api/dataproc/v1beta2"
 )
 
 type DataprocJobOperationWaiter struct {
