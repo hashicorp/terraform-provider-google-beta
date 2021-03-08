@@ -1,4 +1,4 @@
-## 3.59.0 (Unreleased)
+## 3.59.0 (March 08, 2021)
 
 FEATURES:
 * **New Resource:** `google_dataproc_metastore_service` ([#2977](https://github.com/hashicorp/terraform-provider-google-beta/pull/2977))
