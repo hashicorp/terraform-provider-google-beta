@@ -2,7 +2,9 @@
 
 FEATURES:
 * **New Resource:** `google_dataproc_metastore_service` ([#2977](https://github.com/hashicorp/terraform-provider-google-beta/pull/2977))
-* **New Resource:** google_eventarc_trigger ([#2972](https://github.com/hashicorp/terraform-provider-google-beta/pull/2972))
+* **New Resource:** `google_workflows_workflow` ([#2989](https://github.com/hashicorp/terraform-provider-google-beta/pull/2989))
+* **New Resource:** `google_apigee_instance` ([#2986](https://github.com/hashicorp/terraform-provider-google-beta/pull/2986))
+* **New Resource:** `google_eventarc_trigger` ([#2972](https://github.com/hashicorp/terraform-provider-google-beta/pull/2972))
 
 IMPROVEMENTS:
 * composer: added `encryption_config`  to `google_composer_environment` resource ([#2967](https://github.com/hashicorp/terraform-provider-google-beta/pull/2967))
