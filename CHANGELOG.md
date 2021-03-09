@@ -1,4 +1,23 @@
-## 3.59.0 (Unreleased)
+## 3.59.0 (March 08, 2021)
+
+FEATURES:
+* **New Resource:** `google_dataproc_metastore_service` ([#2977](https://github.com/hashicorp/terraform-provider-google-beta/pull/2977))
+* **New Resource:** `google_workflows_workflow` ([#2989](https://github.com/hashicorp/terraform-provider-google-beta/pull/2989))
+* **New Resource:** `google_apigee_instance` ([#2986](https://github.com/hashicorp/terraform-provider-google-beta/pull/2986))
+* **New Resource:** `google_eventarc_trigger` ([#2972](https://github.com/hashicorp/terraform-provider-google-beta/pull/2972))
+
+IMPROVEMENTS:
+* composer: added `encryption_config`  to `google_composer_environment` resource ([#2967](https://github.com/hashicorp/terraform-provider-google-beta/pull/2967))
+* compute: Added graceful termination to `google_container_node_pool` create calls so that partially created node pools will resume the original operation if the Terraform process is killed mid create. ([#2969](https://github.com/hashicorp/terraform-provider-google-beta/pull/2969))
+* redis : marked `auth_string` on the `resource_redis_instance` resource as sensitive ([#2974](https://github.com/hashicorp/terraform-provider-google-beta/pull/2974))
+
+BUG FIXES:
+* apigee: fixed IDs when importing `google_apigee_organization` resource ([#2966](https://github.com/hashicorp/terraform-provider-google-beta/pull/2966))
+* artifactregistry: fixed issue where updating `google_artifact_registry_repository` always failed ([#2968](https://github.com/hashicorp/terraform-provider-google-beta/pull/2968))
+* compute : fixed a bug where `guest_flush` could not be set to false for the resource `google_compute_resource_policy` ([#2975](https://github.com/hashicorp/terraform-provider-google-beta/pull/2975))
+* compute: fixed a panic on empty `target_size` in `google_compute_region_instance_group_manager` ([#2979](https://github.com/hashicorp/terraform-provider-google-beta/pull/2979))
+* redis: fixed invalid value error on `auth_string` in `google_redis_instance` ([#2970](https://github.com/hashicorp/terraform-provider-google-beta/pull/2970))
+
 ## 3.58.0 (February 23, 2021)
 
 NOTES:
