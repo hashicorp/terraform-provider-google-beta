@@ -616,7 +616,7 @@ data "google_compute_image" "my_image" {
 }
 
 resource "google_compute_disk" "foobar" {
-  name    = "d1-%s"
+  name    = "%s-d1"
   image   = data.google_compute_image.my_image.self_link
   size    = 50
   type    = "pd-ssd"
@@ -632,7 +632,7 @@ resource "google_compute_snapshot" "snapdisk" {
 }
 
 resource "google_compute_disk" "seconddisk" {
-  name     = "d2-%s"
+  name     = "%s-d2"
   snapshot = google_compute_snapshot.snapdisk.%s
   type     = "pd-ssd"
   zone     = "us-central1-a"
