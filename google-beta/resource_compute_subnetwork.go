@@ -185,18 +185,17 @@ access Google APIs and services by using Private Google Access.`,
 				Description: `The private IPv6 google access type for the VMs in this subnet.`,
 			},
 			"purpose": {
-				Type:         schema.TypeString,
-				Computed:     true,
-				Optional:     true,
-				ForceNew:     true,
-				ValidateFunc: validation.StringInSlice([]string{"INTERNAL_HTTPS_LOAD_BALANCER", "PRIVATE", ""}, false),
+				Type:     schema.TypeString,
+				Computed: true,
+				Optional: true,
+				ForceNew: true,
 				Description: `The purpose of the resource. This field can be either PRIVATE
 or INTERNAL_HTTPS_LOAD_BALANCER. A subnetwork with purpose set to
 INTERNAL_HTTPS_LOAD_BALANCER is a user-created subnetwork that is
 reserved for Internal HTTP(S) Load Balancing. If unspecified, the
 purpose defaults to PRIVATE.
 
-If set to INTERNAL_HTTPS_LOAD_BALANCER you must also set the role. Possible values: ["INTERNAL_HTTPS_LOAD_BALANCER", "PRIVATE"]`,
+If set to INTERNAL_HTTPS_LOAD_BALANCER you must also set 'role'.`,
 			},
 			"region": {
 				Type:             schema.TypeString,
