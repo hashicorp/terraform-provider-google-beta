@@ -27,7 +27,6 @@ IMPROVEMENTS:
 
 BUG FIXES:
 * `cloud_identity`: fixed a bug where `google_cloud_identity_group` would periodically fail with a 403 ([#3012](https://github.com/hashicorp/terraform-provider-google-beta/pull/3012))
-* apigateway: fixed bug where field apiconfig could not be changed on resource `google_apigateway_gateway` ([#3022](https://github.com/hashicorp/terraform-provider-google-beta/pull/3022))
 * bigquery: fixed materialized view to be recreated when query changes ([#3032](https://github.com/hashicorp/terraform-provider-google-beta/pull/3032))
 * bigtable: fixed bug where gc_policy would attempt to recreate the resource when switching from deprecated attribute but maintaining the same value underlying value ([#3037](https://github.com/hashicorp/terraform-provider-google-beta/pull/3037))
 * bigtable: required resource recreation if any fields change on `resource_bigtable_gc_policy` ([#2991](https://github.com/hashicorp/terraform-provider-google-beta/pull/2991))
