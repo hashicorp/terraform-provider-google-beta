@@ -1,10 +1,4 @@
 ## 3.60.0 (Unreleased)
-UNKNOWN CHANGELOG TYPE:
-* Add windows based availability sli to slo ([#3013](https://github.com/hashicorp/terraform-provider-google-beta/pull/3013))
-* Stopped marking provider as a /v3 library (2/2) ([#2984](https://github.com/hashicorp/terraform-provider-google-beta/pull/2984))
-* added 404 response code check on delete call ([#3018](https://github.com/hashicorp/terraform-provider-google-beta/pull/3018))
-* bump sdk to 2.4.4 ([#3002](https://github.com/hashicorp/terraform-provider-google-beta/pull/3002))
-* hashing function added for natIps ([#3007](https://github.com/hashicorp/terraform-provider-google-beta/pull/3007))
 BREAKING CHANGES:
 * compute: Fixed service account scope alias to be updated. ([#3021](https://github.com/hashicorp/terraform-provider-google-beta/pull/3021))
 
@@ -20,8 +14,10 @@ IMPROVEMENTS:
 * compute: added autoscaling_policy.cpu_utilization.predictive_method field to `google_compute_autoscaler` and `google_compute_region_autoscaler` ([#2987](https://github.com/hashicorp/terraform-provider-google-beta/pull/2987))
 * compute: added support for `nic_type` to `google_compute_instance` (GA only) ([#2998](https://github.com/hashicorp/terraform-provider-google-beta/pull/2998))
 * compute: added suppress diff func for cos-family disk images ([#3024](https://github.com/hashicorp/terraform-provider-google-beta/pull/3024))
+* container: fixed container cluster not removed from the state when received 404 error on delete call for the resource `google_container_cluster` ([#3018](https://github.com/hashicorp/terraform-provider-google-beta/pull/3018))
 * container: added field `ephemeral_storage_config` to resource `google_container_node_pool` and `google_container_cluster` (beta) ([#3023](https://github.com/hashicorp/terraform-provider-google-beta/pull/3023))
 * datafusion : new instance type added for the resource `google_data_fusion_instance` ([#3015](https://github.com/hashicorp/terraform-provider-google-beta/pull/3015))
+* monitoring : added windows based availability sli to the resource `google_monitoring_slo` ([#3013](https://github.com/hashicorp/terraform-provider-google-beta/pull/3013))
 * sql: added `settings.0.backup_configuration.transaction_log_retention_days` and `settings.0.backup_configuration.transaction_log_retention_days` fields to `google_sql_database_instance` ([#3010](https://github.com/hashicorp/terraform-provider-google-beta/pull/3010))
 * storage: added `kms_key_name` to `google_storage_bucket_object` resource ([#3026](https://github.com/hashicorp/terraform-provider-google-beta/pull/3026))
 
@@ -32,6 +28,7 @@ BUG FIXES:
 * bigtable: required resource recreation if any fields change on `resource_bigtable_gc_policy` ([#2991](https://github.com/hashicorp/terraform-provider-google-beta/pull/2991))
 * binaryauthorization: fixed permadiff in `google_binary_authorization_attestor` ([#3035](https://github.com/hashicorp/terraform-provider-google-beta/pull/3035))
 * cloudfunction: added retry logic for `google_cloudfunctions_function` updates ([#2992](https://github.com/hashicorp/terraform-provider-google-beta/pull/2992))
+* compute: fixed a perma-diff for `nat_ips` that were specified as short forms in `google_compute_router_nat` ([#3007](https://github.com/hashicorp/terraform-provider-google-beta/pull/3007))
 * container: Fixed failure in deleting `maintenance_exclusion` for `google_container_cluster` ([#3014](https://github.com/hashicorp/terraform-provider-google-beta/pull/3014))
 * container: fixed an issue where release channel UNSPECIFIED could not be set ([#3019](https://github.com/hashicorp/terraform-provider-google-beta/pull/3019))
 * essentialcontacts: set `language_tag` to required for `google_essential_contacts_contact` ([#2994](https://github.com/hashicorp/terraform-provider-google-beta/pull/2994))
