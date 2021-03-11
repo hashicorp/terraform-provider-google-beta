@@ -13,7 +13,7 @@ IMPROVEMENTS:
 * compute: added `mtu` field to `google_compute_interconnect_attachment` ([#3006](https://github.com/hashicorp/terraform-provider-google-beta/pull/3006))
 * compute: added autoscaling_policy.cpu_utilization.predictive_method field to `google_compute_autoscaler` and `google_compute_region_autoscaler` ([#2987](https://github.com/hashicorp/terraform-provider-google-beta/pull/2987))
 * compute: added support for `nic_type` to `google_compute_instance` (GA only) ([#2998](https://github.com/hashicorp/terraform-provider-google-beta/pull/2998))
-* compute: added suppress diff func for cos-family disk images ([#3024](https://github.com/hashicorp/terraform-provider-google-beta/pull/3024))
+* compute: fixed perma-diff for cos-family disk images ([#3024](https://github.com/hashicorp/terraform-provider-google-beta/pull/3024))
 * container: fixed container cluster not removed from the state when received 404 error on delete call for the resource `google_container_cluster` ([#3018](https://github.com/hashicorp/terraform-provider-google-beta/pull/3018))
 * container: added field `ephemeral_storage_config` to resource `google_container_node_pool` and `google_container_cluster` (beta) ([#3023](https://github.com/hashicorp/terraform-provider-google-beta/pull/3023))
 * datafusion : new instance type added for the resource `google_data_fusion_instance` ([#3015](https://github.com/hashicorp/terraform-provider-google-beta/pull/3015))
@@ -22,16 +22,16 @@ IMPROVEMENTS:
 * storage: added `kms_key_name` to `google_storage_bucket_object` resource ([#3026](https://github.com/hashicorp/terraform-provider-google-beta/pull/3026))
 
 BUG FIXES:
-* `cloud_identity`: fixed a bug where `google_cloud_identity_group` would periodically fail with a 403 ([#3012](https://github.com/hashicorp/terraform-provider-google-beta/pull/3012))
 * bigquery: fixed materialized view to be recreated when query changes ([#3032](https://github.com/hashicorp/terraform-provider-google-beta/pull/3032))
-* bigtable: fixed bug where gc_policy would attempt to recreate the resource when switching from deprecated attribute but maintaining the same value underlying value ([#3037](https://github.com/hashicorp/terraform-provider-google-beta/pull/3037))
+* bigtable: fixed bug where gc_policy would attempt to recreate the resource when switching from deprecated attribute but maintaining the same underlying value ([#3037](https://github.com/hashicorp/terraform-provider-google-beta/pull/3037))
 * bigtable: required resource recreation if any fields change on `resource_bigtable_gc_policy` ([#2991](https://github.com/hashicorp/terraform-provider-google-beta/pull/2991))
 * binaryauthorization: fixed permadiff in `google_binary_authorization_attestor` ([#3035](https://github.com/hashicorp/terraform-provider-google-beta/pull/3035))
 * cloudfunction: added retry logic for `google_cloudfunctions_function` updates ([#2992](https://github.com/hashicorp/terraform-provider-google-beta/pull/2992))
+* cloudidentity: fixed a bug where `google_cloud_identity_group` would periodically fail with a 403 ([#3012](https://github.com/hashicorp/terraform-provider-google-beta/pull/3012))
 * compute: fixed a perma-diff for `nat_ips` that were specified as short forms in `google_compute_router_nat` ([#3007](https://github.com/hashicorp/terraform-provider-google-beta/pull/3007))
 * container: Fixed failure in deleting `maintenance_exclusion` for `google_container_cluster` ([#3014](https://github.com/hashicorp/terraform-provider-google-beta/pull/3014))
 * container: fixed an issue where release channel UNSPECIFIED could not be set ([#3019](https://github.com/hashicorp/terraform-provider-google-beta/pull/3019))
-* essentialcontacts: set `language_tag` to required for `google_essential_contacts_contact` ([#2994](https://github.com/hashicorp/terraform-provider-google-beta/pull/2994))
+* essentialcontacts: made `language_tag` required for `google_essential_contacts_contact` ([#2994](https://github.com/hashicorp/terraform-provider-google-beta/pull/2994))
 * serviceusage: fixed an issue in `google_service_usage_consumer_quota_override` where setting the `override_value` to 0 would result in a permanent diff ([#2985](https://github.com/hashicorp/terraform-provider-google-beta/pull/2985))
 * serviceusage: fixed an issue in `google_service_usage_consumer_quota_override` where setting the `override_value` to 0 would result in a permanent diff ([#3025](https://github.com/hashicorp/terraform-provider-google-beta/pull/3025))
 
