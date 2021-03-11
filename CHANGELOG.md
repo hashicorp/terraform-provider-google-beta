@@ -1,6 +1,4 @@
 ## 3.60.0 (Unreleased)
-BREAKING CHANGES:
-* compute: Fixed service account scope alias to be updated. ([#3021](https://github.com/hashicorp/terraform-provider-google-beta/pull/3021))
 
 FEATURES:
 * **New Resource:** `google_workflows_workflow` ([#2989](https://github.com/hashicorp/terraform-provider-google-beta/pull/2989))
@@ -14,6 +12,7 @@ IMPROVEMENTS:
 * compute: added autoscaling_policy.cpu_utilization.predictive_method field to `google_compute_autoscaler` and `google_compute_region_autoscaler` ([#2987](https://github.com/hashicorp/terraform-provider-google-beta/pull/2987))
 * compute: added support for `nic_type` to `google_compute_instance` (GA only) ([#2998](https://github.com/hashicorp/terraform-provider-google-beta/pull/2998))
 * compute: fixed perma-diff for cos-family disk images ([#3024](https://github.com/hashicorp/terraform-provider-google-beta/pull/3024))
+* compute: Fixed service account scope alias to be updated. ([#3021](https://github.com/hashicorp/terraform-provider-google-beta/pull/3021))
 * container: fixed container cluster not removed from the state when received 404 error on delete call for the resource `google_container_cluster` ([#3018](https://github.com/hashicorp/terraform-provider-google-beta/pull/3018))
 * container: added field `ephemeral_storage_config` to resource `google_container_node_pool` and `google_container_cluster` (beta) ([#3023](https://github.com/hashicorp/terraform-provider-google-beta/pull/3023))
 * datafusion : new instance type added for the resource `google_data_fusion_instance` ([#3015](https://github.com/hashicorp/terraform-provider-google-beta/pull/3015))
