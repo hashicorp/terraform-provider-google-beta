@@ -20,11 +20,12 @@ var defaultOauthScopes = []string{
 
 func schemaNodeConfig() *schema.Schema {
 	return &schema.Schema{
-		Type:     schema.TypeList,
-		Optional: true,
-		Computed: true,
-		ForceNew: true,
-		MaxItems: 1,
+		Type:        schema.TypeList,
+		Optional:    true,
+		Computed:    true,
+		ForceNew:    true,
+		Description: `The configuration of the nodepool`,
+		MaxItems:    1,
 		Elem: &schema.Resource{
 			Schema: map[string]*schema.Schema{
 				"disk_size_gb": {
@@ -33,6 +34,7 @@ func schemaNodeConfig() *schema.Schema {
 					Computed:     true,
 					ForceNew:     true,
 					ValidateFunc: validation.IntAtLeast(10),
+					Description:  `Size of the disk attached to each node, specified in GB. The smallest allowed disk size is 10GB.`,
 				},
 
 				"disk_type": {
@@ -41,6 +43,7 @@ func schemaNodeConfig() *schema.Schema {
 					Computed:     true,
 					ForceNew:     true,
 					ValidateFunc: validation.StringInSlice([]string{"pd-standard", "pd-balanced", "pd-ssd"}, false),
+					Description:  `Type of the disk attached to each node.`,
 				},
 
 				"guest_accelerator": {
@@ -50,19 +53,22 @@ func schemaNodeConfig() *schema.Schema {
 					ForceNew: true,
 					// Legacy config mode allows removing GPU's from an existing resource
 					// See https://www.terraform.io/docs/configuration/attr-as-blocks.html
-					ConfigMode: schema.SchemaConfigModeAttr,
+					ConfigMode:  schema.SchemaConfigModeAttr,
+					Description: `List of the type and count of accelerator cards attached to the instance.`,
 					Elem: &schema.Resource{
 						Schema: map[string]*schema.Schema{
 							"count": {
-								Type:     schema.TypeInt,
-								Required: true,
-								ForceNew: true,
+								Type:        schema.TypeInt,
+								Required:    true,
+								ForceNew:    true,
+								Description: `The number of the accelerator cards exposed to an instance.`,
 							},
 							"type": {
 								Type:             schema.TypeString,
 								Required:         true,
 								ForceNew:         true,
 								DiffSuppressFunc: compareSelfLinkOrResourceName,
+								Description:      `The accelerator type resource name.`,
 							},
 						},
 					},
@@ -73,6 +79,7 @@ func schemaNodeConfig() *schema.Schema {
 					Optional:         true,
 					Computed:         true,
 					DiffSuppressFunc: caseDiffSuppress,
+					Description:      `The image type to use for this node. Note that for a given image type, the latest version of it will be used.`,
 				},
 
 				"labels": {
@@ -82,6 +89,7 @@ func schemaNodeConfig() *schema.Schema {
 					Computed:         true,
 					ForceNew:         true,
 					Elem:             &schema.Schema{Type: schema.TypeString},
+					Description:      `The map of Kubernetes labels (key/value pairs) to be applied to each node. These will added in addition to any default label(s) that Kubernetes may apply to the node.`,
 					DiffSuppressFunc: containerNodePoolLabelsSuppress,
 				},
 
@@ -91,6 +99,7 @@ func schemaNodeConfig() *schema.Schema {
 					Computed:     true,
 					ForceNew:     true,
 					ValidateFunc: validation.IntAtLeast(0),
+					Description:  `The number of local SSD disks to be attached to the node.`,
 				},
 
 				"ephemeral_storage_config": {
@@ -111,31 +120,35 @@ func schemaNodeConfig() *schema.Schema {
 				},
 
 				"machine_type": {
-					Type:     schema.TypeString,
-					Optional: true,
-					Computed: true,
-					ForceNew: true,
+					Type:        schema.TypeString,
+					Optional:    true,
+					Computed:    true,
+					ForceNew:    true,
+					Description: `The name of a Google Compute Engine machine type.`,
 				},
 
 				"metadata": {
-					Type:     schema.TypeMap,
-					Optional: true,
-					Computed: true,
-					ForceNew: true,
-					Elem:     &schema.Schema{Type: schema.TypeString},
+					Type:        schema.TypeMap,
+					Optional:    true,
+					Computed:    true,
+					ForceNew:    true,
+					Elem:        &schema.Schema{Type: schema.TypeString},
+					Description: `The metadata key/value pairs assigned to instances in the cluster.`,
 				},
 
 				"min_cpu_platform": {
-					Type:     schema.TypeString,
-					Optional: true,
-					ForceNew: true,
+					Type:        schema.TypeString,
+					Optional:    true,
+					ForceNew:    true,
+					Description: `Minimum CPU platform to be used by this instance. The instance may be scheduled on the specified or newer CPU platform.`,
 				},
 
 				"oauth_scopes": {
-					Type:     schema.TypeSet,
-					Optional: true,
-					Computed: true,
-					ForceNew: true,
+					Type:        schema.TypeSet,
+					Optional:    true,
+					Computed:    true,
+					ForceNew:    true,
+					Description: `The set of Google API scopes to be made available on all of the node VMs.`,
 					Elem: &schema.Schema{
 						Type: schema.TypeString,
 						StateFunc: func(v interface{}) string {
@@ -147,45 +160,51 @@ func schemaNodeConfig() *schema.Schema {
 				},
 
 				"preemptible": {
-					Type:     schema.TypeBool,
-					Optional: true,
-					ForceNew: true,
-					Default:  false,
+					Type:        schema.TypeBool,
+					Optional:    true,
+					ForceNew:    true,
+					Default:     false,
+					Description: `Whether the nodes are created as preemptible VM instances.`,
 				},
 
 				"service_account": {
-					Type:     schema.TypeString,
-					Optional: true,
-					Computed: true,
-					ForceNew: true,
+					Type:        schema.TypeString,
+					Optional:    true,
+					Computed:    true,
+					ForceNew:    true,
+					Description: `The Google Cloud Platform Service Account to be used by the node VMs.`,
 				},
 
 				"tags": {
-					Type:     schema.TypeList,
-					Optional: true,
-					ForceNew: true,
-					Elem:     &schema.Schema{Type: schema.TypeString},
+					Type:        schema.TypeList,
+					Optional:    true,
+					ForceNew:    true,
+					Elem:        &schema.Schema{Type: schema.TypeString},
+					Description: `The list of instance tags applied to all nodes.`,
 				},
 
 				"shielded_instance_config": {
-					Type:     schema.TypeList,
-					Optional: true,
-					Computed: true,
-					ForceNew: true,
-					MaxItems: 1,
+					Type:        schema.TypeList,
+					Optional:    true,
+					Computed:    true,
+					ForceNew:    true,
+					Description: `Shielded Instance options.`,
+					MaxItems:    1,
 					Elem: &schema.Resource{
 						Schema: map[string]*schema.Schema{
 							"enable_secure_boot": {
-								Type:     schema.TypeBool,
-								Optional: true,
-								ForceNew: true,
-								Default:  false,
+								Type:        schema.TypeBool,
+								Optional:    true,
+								ForceNew:    true,
+								Default:     false,
+								Description: `Defines whether the instance has Secure Boot enabled.`,
 							},
 							"enable_integrity_monitoring": {
-								Type:     schema.TypeBool,
-								Optional: true,
-								ForceNew: true,
-								Default:  true,
+								Type:        schema.TypeBool,
+								Optional:    true,
+								ForceNew:    true,
+								Default:     true,
+								Description: `Defines whether the instance has integrity monitoring enabled.`,
 							},
 						},
 					},
@@ -200,55 +219,63 @@ func schemaNodeConfig() *schema.Schema {
 					// Legacy config mode allows explicitly defining an empty taint.
 					// See https://www.terraform.io/docs/configuration/attr-as-blocks.html
 					ConfigMode:       schema.SchemaConfigModeAttr,
+					Description:      `List of Kubernetes taints to be applied to each node.`,
 					DiffSuppressFunc: containerNodePoolTaintSuppress,
 					Elem: &schema.Resource{
 						Schema: map[string]*schema.Schema{
 							"key": {
-								Type:     schema.TypeString,
-								Required: true,
-								ForceNew: true,
+								Type:        schema.TypeString,
+								Required:    true,
+								ForceNew:    true,
+								Description: `Key for taint.`,
 							},
 							"value": {
-								Type:     schema.TypeString,
-								Required: true,
-								ForceNew: true,
+								Type:        schema.TypeString,
+								Required:    true,
+								ForceNew:    true,
+								Description: `Value for taint.`,
 							},
 							"effect": {
 								Type:         schema.TypeString,
 								Required:     true,
 								ForceNew:     true,
 								ValidateFunc: validation.StringInSlice([]string{"NO_SCHEDULE", "PREFER_NO_SCHEDULE", "NO_EXECUTE"}, false),
+								Description:  `Effect for taint.`,
 							},
 						},
 					},
 				},
 
 				"workload_metadata_config": {
-					Computed: true,
-					Type:     schema.TypeList,
-					Optional: true,
-					MaxItems: 1,
+					Computed:    true,
+					Type:        schema.TypeList,
+					Optional:    true,
+					MaxItems:    1,
+					Description: `The workload metadata configuration for this node.`,
 					Elem: &schema.Resource{
 						Schema: map[string]*schema.Schema{
 							"node_metadata": {
 								Type:         schema.TypeString,
 								Required:     true,
 								ValidateFunc: validation.StringInSlice([]string{"UNSPECIFIED", "SECURE", "EXPOSE", "GKE_METADATA_SERVER"}, false),
+								Description:  `NodeMetadata is the configuration for how to expose metadata to the workloads running on the node.`,
 							},
 						},
 					},
 				},
 
 				"sandbox_config": {
-					Type:     schema.TypeList,
-					Optional: true,
-					ForceNew: true,
-					MaxItems: 1,
+					Type:        schema.TypeList,
+					Optional:    true,
+					ForceNew:    true,
+					MaxItems:    1,
+					Description: `Sandbox configuration for this node.`,
 					Elem: &schema.Resource{
 						Schema: map[string]*schema.Schema{
 							"sandbox_type": {
 								Type:         schema.TypeString,
 								Required:     true,
+								Description:  `Type of the sandbox to use for the node (e.g. 'gvisor')`,
 								ValidateFunc: validation.StringInSlice([]string{"gvisor"}, false),
 							},
 						},
@@ -256,45 +283,52 @@ func schemaNodeConfig() *schema.Schema {
 				},
 
 				"boot_disk_kms_key": {
-					Type:     schema.TypeString,
-					Optional: true,
-					ForceNew: true,
+					Type:        schema.TypeString,
+					Optional:    true,
+					ForceNew:    true,
+					Description: `The Customer Managed Encryption Key used to encrypt the boot disk attached to each node in the node pool.`,
 				},
 				// Note that AtLeastOneOf can't be set because this schema is reused by
 				// two different resources.
 				"kubelet_config": {
-					Type:     schema.TypeList,
-					Optional: true,
-					MaxItems: 1,
+					Type:        schema.TypeList,
+					Optional:    true,
+					MaxItems:    1,
+					Description: `Node kubelet configs.`,
 					Elem: &schema.Resource{
 						Schema: map[string]*schema.Schema{
 							"cpu_manager_policy": {
 								Type:         schema.TypeString,
 								Required:     true,
 								ValidateFunc: validation.StringInSlice([]string{"static", "none", ""}, false),
+								Description:  `Control the CPU management policy on the node.`,
 							},
 							"cpu_cfs_quota": {
-								Type:     schema.TypeBool,
-								Optional: true,
+								Type:        schema.TypeBool,
+								Optional:    true,
+								Description: `Enable CPU CFS quota enforcement for containers that specify CPU limits.`,
 							},
 							"cpu_cfs_quota_period": {
-								Type:     schema.TypeString,
-								Optional: true,
+								Type:        schema.TypeString,
+								Optional:    true,
+								Description: `Set the CPU CFS quota period value 'cpu.cfs_period_us'.`,
 							},
 						},
 					},
 				},
 
 				"linux_node_config": {
-					Type:     schema.TypeList,
-					Optional: true,
-					MaxItems: 1,
+					Type:        schema.TypeList,
+					Optional:    true,
+					MaxItems:    1,
+					Description: `Parameters that can be configured on Linux nodes.`,
 					Elem: &schema.Resource{
 						Schema: map[string]*schema.Schema{
 							"sysctls": {
-								Type:     schema.TypeMap,
-								Required: true,
-								Elem:     &schema.Schema{Type: schema.TypeString},
+								Type:        schema.TypeMap,
+								Required:    true,
+								Elem:        &schema.Schema{Type: schema.TypeString},
+								Description: `The Linux kernel parameters to be applied to the nodes and all pods running on the nodes.`,
 							},
 						},
 					},
