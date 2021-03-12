@@ -67,7 +67,7 @@ A duration in seconds with up to nine fractional digits, terminated by 's'. Exam
 			"enable_consent_create_on_update": {
 				Type:        schema.TypeBool,
 				Optional:    true,
-				Description: `If true, [consents.patch] [google.cloud.healthcare.v1beta1.consent.UpdateConsent] creates the consent if it does not already exist.`,
+				Description: `If true, [consents.patch] [google.cloud.healthcare.v1.consent.UpdateConsent] creates the consent if it does not already exist.`,
 			},
 			"labels": {
 				Type:     schema.TypeMap,
@@ -290,9 +290,7 @@ func resourceHealthcareConsentStoreDelete(d *schema.ResourceData, meta interface
 func resourceHealthcareConsentStoreImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	config := meta.(*Config)
 	if err := parseImportId([]string{
-		"(?P<dataset>[^/]+)/consentStores/(?P<name>[^/]+)",
-		"(?P<dataset>[^/]+)/(?P<name>[^/]+)",
-		"(?P<name>[^/]+)",
+		"(?P<dataset>.+)/consentStores/(?P<name>[^/]+)",
 	}, d, config); err != nil {
 		return nil, err
 	}
