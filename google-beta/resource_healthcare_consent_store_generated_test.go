@@ -32,7 +32,7 @@ func TestAccHealthcareConsentStore_healthcareConsentStoreBasicExample(t *testing
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
-		Providers: testAccProvidersOiCS,
+		Providers: testAccProviders,
 		ExternalProviders: map[string]resource.ExternalProvider{
 			"random": {},
 		},
@@ -41,6 +41,12 @@ func TestAccHealthcareConsentStore_healthcareConsentStoreBasicExample(t *testing
 			{
 				Config: testAccHealthcareConsentStore_healthcareConsentStoreBasicExample(context),
 			},
+			{
+				ResourceName:            "google_healthcare_consent_store.my-consent",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"name", "dataset"},
+			},
 		},
 	})
 }
@@ -48,15 +54,11 @@ func TestAccHealthcareConsentStore_healthcareConsentStoreBasicExample(t *testing
 func testAccHealthcareConsentStore_healthcareConsentStoreBasicExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_healthcare_dataset" "dataset" {
-  provider = google-beta
-
   location = "us-central1"
   name     = "tf-test-my-dataset%{random_suffix}"
 }
 
 resource "google_healthcare_consent_store" "my-consent" {
-  provider = google-beta
-
   dataset = google_healthcare_dataset.dataset.id
   name    = "tf-test-my-consent-store%{random_suffix}"
 }
@@ -72,7 +74,7 @@ func TestAccHealthcareConsentStore_healthcareConsentStoreFullExample(t *testing.
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
-		Providers: testAccProvidersOiCS,
+		Providers: testAccProviders,
 		ExternalProviders: map[string]resource.ExternalProvider{
 			"random": {},
 		},
@@ -80,6 +82,12 @@ func TestAccHealthcareConsentStore_healthcareConsentStoreFullExample(t *testing.
 		Steps: []resource.TestStep{
 			{
 				Config: testAccHealthcareConsentStore_healthcareConsentStoreFullExample(context),
+			},
+			{
+				ResourceName:            "google_healthcare_consent_store.my-consent",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"name", "dataset"},
 			},
 		},
 	})
@@ -89,15 +97,11 @@ func testAccHealthcareConsentStore_healthcareConsentStoreFullExample(context map
 	return Nprintf(`
 
 resource "google_healthcare_dataset" "dataset" {
-  provider = google-beta
-
   location = "us-central1"
   name     = "tf-test-my-dataset%{random_suffix}"
 }
 
 resource "google_healthcare_consent_store" "my-consent" {
-  provider = google-beta
-
   dataset = google_healthcare_dataset.dataset.id
   name    = "tf-test-my-consent-store%{random_suffix}"
 
@@ -120,7 +124,7 @@ func TestAccHealthcareConsentStore_healthcareConsentStoreIamExample(t *testing.T
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
-		Providers: testAccProvidersOiCS,
+		Providers: testAccProviders,
 		ExternalProviders: map[string]resource.ExternalProvider{
 			"random": {},
 		},
@@ -129,6 +133,12 @@ func TestAccHealthcareConsentStore_healthcareConsentStoreIamExample(t *testing.T
 			{
 				Config: testAccHealthcareConsentStore_healthcareConsentStoreIamExample(context),
 			},
+			{
+				ResourceName:            "google_healthcare_consent_store.my-consent",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"name", "dataset"},
+			},
 		},
 	})
 }
@@ -136,29 +146,21 @@ func TestAccHealthcareConsentStore_healthcareConsentStoreIamExample(t *testing.T
 func testAccHealthcareConsentStore_healthcareConsentStoreIamExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_healthcare_dataset" "dataset" {
-  provider = google-beta
-
   location = "us-central1"
   name     = "tf-test-my-dataset%{random_suffix}"
 }
 
 resource "google_healthcare_consent_store" "my-consent" {
-  provider = google-beta
-
   dataset = google_healthcare_dataset.dataset.id
   name    = "tf-test-my-consent-store%{random_suffix}"
 }
 
 resource "google_service_account" "test-account" {
-  provider = google-beta
-
   account_id   = "tf-test-my-account%{random_suffix}"
   display_name = "Test Service Account"
 }
 
 resource "google_healthcare_consent_store_iam_member" "test-iam" {
-  provider = google-beta
-
   dataset          = google_healthcare_dataset.dataset.id
   consent_store_id = google_healthcare_consent_store.my-consent.name
   role             = "roles/editor"
