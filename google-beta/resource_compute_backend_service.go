@@ -306,7 +306,7 @@ The possible values are: USE_ORIGIN_HEADERS, FORCE_CACHE_ALL and CACHE_ALL_STATI
 						"default_ttl": {
 							Type:     schema.TypeInt,
 							Optional: true,
-							Description: `Specifies the default TTL for cached content served by this origin for responses 
+							Description: `Specifies the default TTL for cached content served by this origin for responses
 that do not have an existing valid TTL (max-age or s-max-age).`,
 						},
 						"max_ttl": {

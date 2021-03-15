@@ -70,7 +70,7 @@ func TestAccComputeNodeTemplate_nodeTemplateServerBindingExample(t *testing.T) {
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
-		Providers: testAccProvidersOiCS,
+		Providers: testAccProviders,
 		ExternalProviders: map[string]resource.ExternalProvider{
 			"random": {},
 		},
@@ -78,6 +78,12 @@ func TestAccComputeNodeTemplate_nodeTemplateServerBindingExample(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testAccComputeNodeTemplate_nodeTemplateServerBindingExample(context),
+			},
+			{
+				ResourceName:            "google_compute_node_template.template",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"region"},
 			},
 		},
 	})
