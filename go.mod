@@ -26,9 +26,9 @@ require (
 	github.com/spf13/afero v1.2.2 // indirect
 	github.com/spf13/pflag v1.0.3 // indirect
 	github.com/zclconf/go-cty v1.5.1 // indirect
-	golang.org/x/net v0.0.0-20201224014010-6772e930b67b
-	golang.org/x/oauth2 v0.0.0-20210113160501-8b1d76fa0423
-	google.golang.org/api v0.40.0
+	golang.org/x/net v0.0.0-20210119194325-5f4716e94777
+	golang.org/x/oauth2 v0.0.0-20210220000619-9bb904979d93
+	google.golang.org/api v0.41.0
 	gopkg.in/yaml.v2 v2.2.8 // indirect
 )
 
