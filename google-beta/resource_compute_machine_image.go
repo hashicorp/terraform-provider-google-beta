@@ -81,7 +81,7 @@ instance from the image)`,
 							Type:     schema.TypeString,
 							Optional: true,
 							ForceNew: true,
-							Description: `The service account used for the encryption request for the given KMS key. 
+							Description: `The service account used for the encryption request for the given KMS key.
 If absent, the Compute Engine Service Agent service account is used.`,
 						},
 						"raw_key": {
