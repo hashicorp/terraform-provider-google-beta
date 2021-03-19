@@ -835,8 +835,8 @@ func Provider() *schema.Provider {
 }
 
 // Generated resources: 215
-// Generated IAM resources: 108
-// Total generated resources: 323
+// Generated IAM resources: 111
+// Total generated resources: 326
 func ResourceMap() map[string]*schema.Resource {
 	resourceMap, _ := ResourceMapWithErrors()
 	return resourceMap
@@ -1010,6 +1010,9 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_data_catalog_entry_group_iam_policy":                   ResourceIamPolicy(DataCatalogEntryGroupIamSchema, DataCatalogEntryGroupIamUpdaterProducer, DataCatalogEntryGroupIdParseFunc),
 			"google_data_catalog_entry":                                    resourceDataCatalogEntry(),
 			"google_data_catalog_tag_template":                             resourceDataCatalogTagTemplate(),
+			"google_data_catalog_tag_template_iam_binding":                 ResourceIamBinding(DataCatalogTagTemplateIamSchema, DataCatalogTagTemplateIamUpdaterProducer, DataCatalogTagTemplateIdParseFunc),
+			"google_data_catalog_tag_template_iam_member":                  ResourceIamMember(DataCatalogTagTemplateIamSchema, DataCatalogTagTemplateIamUpdaterProducer, DataCatalogTagTemplateIdParseFunc),
+			"google_data_catalog_tag_template_iam_policy":                  ResourceIamPolicy(DataCatalogTagTemplateIamSchema, DataCatalogTagTemplateIamUpdaterProducer, DataCatalogTagTemplateIdParseFunc),
 			"google_data_catalog_tag":                                      resourceDataCatalogTag(),
 			"google_data_catalog_taxonomy":                                 resourceDataCatalogTaxonomy(),
 			"google_data_catalog_taxonomy_iam_binding":                     ResourceIamBinding(DataCatalogTaxonomyIamSchema, DataCatalogTaxonomyIamUpdaterProducer, DataCatalogTaxonomyIdParseFunc),
