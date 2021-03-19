@@ -30,7 +30,6 @@ func resourceDataflowFlexTemplateJob() *schema.Resource {
 			"container_spec_gcs_path": {
 				Type:     schema.TypeString,
 				Required: true,
-				ForceNew: true,
 			},
 
 			"name": {
@@ -58,7 +57,6 @@ func resourceDataflowFlexTemplateJob() *schema.Resource {
 				Type:             schema.TypeMap,
 				Optional:         true,
 				DiffSuppressFunc: resourceDataflowJobLabelDiffSuppress,
-				ForceNew:         true,
 				// TODO add support for labels when the API supports it
 				Deprecated: "Deprecated until the API supports this field",
 			},
@@ -66,7 +64,6 @@ func resourceDataflowFlexTemplateJob() *schema.Resource {
 			"parameters": {
 				Type:     schema.TypeMap,
 				Optional: true,
-				ForceNew: true,
 			},
 
 			"project": {
@@ -177,10 +174,45 @@ func resourceDataflowFlexTemplateJobRead(d *schema.ResourceData, meta interface{
 	return nil
 }
 
-// resourceDataflowFlexTemplateJobUpdate is a blank method to enable updating
-// the on_delete virtual field
+// resourceDataflowFlexTemplateJobUpdate updates a Flex Template Job resource.
 func resourceDataflowFlexTemplateJobUpdate(d *schema.ResourceData, meta interface{}) error {
-	return nil
+	config := meta.(*Config)
+	userAgent, err := generateUserAgentString(d, config.userAgent)
+	if err != nil {
+		return err
+	}
+
+	project, err := getProject(d, config)
+	if err != nil {
+		return err
+	}
+
+	region, err := getRegion(d, config)
+	if err != nil {
+		return err
+	}
+
+	request := dataflow.LaunchFlexTemplateRequest{
+		LaunchParameter: &dataflow.LaunchFlexTemplateParameter{
+			ContainerSpecGcsPath: d.Get("container_spec_gcs_path").(string),
+			JobName:              d.Get("name").(string),
+			Parameters:           expandStringMap(d, "parameters"),
+			Update:               true,
+		},
+	}
+
+	response, err := config.NewDataflowClient(userAgent).Projects.Locations.FlexTemplates.Launch(project, region, &request).Do()
+	if err != nil {
+		return err
+	}
+
+	job := response.Job
+	d.SetId(job.Id)
+	if err := d.Set("job_id", job.Id); err != nil {
+		return fmt.Errorf("Error setting job_id: %s", err)
+	}
+
+	return resourceDataflowFlexTemplateJobRead(d, meta)
 }
 
 func resourceDataflowFlexTemplateJobDelete(d *schema.ResourceData, meta interface{}) error {
