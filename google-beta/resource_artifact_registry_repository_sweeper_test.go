@@ -61,7 +61,7 @@ func testSweepArtifactRegistryRepository(region string) error {
 		},
 	}
 
-	listTemplate := strings.Split("https://artifactregistry.googleapis.com/v1beta1/projects/{{project}}/locations/{{location}}/repositories", "?")[0]
+	listTemplate := strings.Split("https://artifactregistry.googleapis.com/v1beta2/projects/{{project}}/locations/{{location}}/repositories", "?")[0]
 	listUrl, err := replaceVars(d, config, listTemplate)
 	if err != nil {
 		log.Printf("[INFO][SWEEPER_LOG] error preparing sweeper list url: %s", err)
@@ -103,7 +103,7 @@ func testSweepArtifactRegistryRepository(region string) error {
 			continue
 		}
 
-		deleteTemplate := "https://artifactregistry.googleapis.com/v1beta1/projects/{{project}}/locations/{{location}}/repositories/{{repository_id}}"
+		deleteTemplate := "https://artifactregistry.googleapis.com/v1beta2/projects/{{project}}/locations/{{location}}/repositories/{{repository_id}}"
 		deleteUrl, err := replaceVars(d, config, deleteTemplate)
 		if err != nil {
 			log.Printf("[INFO][SWEEPER_LOG] error preparing delete url: %s", err)

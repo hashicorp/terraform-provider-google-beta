@@ -31,7 +31,7 @@ func (w *ArtifactRegistryOperationWaiter) QueryOp() (interface{}, error) {
 		return nil, fmt.Errorf("Cannot query operation, it's unset or nil.")
 	}
 	// Returns the proper get.
-	url := fmt.Sprintf("https://artifactregistry.googleapis.com/v1beta1/%s", w.CommonOperationWaiter.Op.Name)
+	url := fmt.Sprintf("https://artifactregistry.googleapis.com/v1beta2/%s", w.CommonOperationWaiter.Op.Name)
 
 	return sendRequest(w.Config, "GET", w.Project, url, w.UserAgent, nil)
 }
