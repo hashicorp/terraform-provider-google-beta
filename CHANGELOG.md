@@ -1,4 +1,4 @@
-## 3.61.0 (Unreleased)
+## 3.61.0 (March 23, 2021)
 
 IMPROVEMENTS:
 * compute: added `proxy_bind` to `google_compute_target_tcp_proxy`, `google_compute_target_http_proxy` and `google_compute_target_https_proxy` ([#3061](https://github.com/hashicorp/terraform-provider-google-beta/pull/3061))
