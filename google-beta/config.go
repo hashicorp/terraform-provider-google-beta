@@ -122,6 +122,7 @@ type Config struct {
 	FirebaseBasePath             string
 	FirestoreBasePath            string
 	GameServicesBasePath         string
+	GKEHubBasePath               string
 	HealthcareBasePath           string
 	IAMBetaBasePath              string
 	IapBasePath                  string
@@ -219,6 +220,7 @@ var FilestoreDefaultBasePath = "https://file.googleapis.com/v1beta1/"
 var FirebaseDefaultBasePath = "https://firebase.googleapis.com/v1beta1/"
 var FirestoreDefaultBasePath = "https://firestore.googleapis.com/v1/"
 var GameServicesDefaultBasePath = "https://gameservices.googleapis.com/v1beta/"
+var GKEHubDefaultBasePath = "https://gkehub.googleapis.com/v1beta1/"
 var HealthcareDefaultBasePath = "https://healthcare.googleapis.com/v1beta1/"
 var IAMBetaDefaultBasePath = "https://iam.googleapis.com/v1beta/"
 var IapDefaultBasePath = "https://iap.googleapis.com/v1/"
@@ -1006,6 +1008,7 @@ func ConfigureBasePaths(c *Config) {
 	c.FirebaseBasePath = FirebaseDefaultBasePath
 	c.FirestoreBasePath = FirestoreDefaultBasePath
 	c.GameServicesBasePath = GameServicesDefaultBasePath
+	c.GKEHubBasePath = GKEHubDefaultBasePath
 	c.HealthcareBasePath = HealthcareDefaultBasePath
 	c.IAMBetaBasePath = IAMBetaDefaultBasePath
 	c.IapBasePath = IapDefaultBasePath
