@@ -64,6 +64,12 @@ available, such as support for streaming pipelines, higher number of concurrent 
 with restrictive capabilities. This is to help enterprises design and develop their data ingestion and integration 
 pipelines at low cost. Possible values: ["BASIC", "ENTERPRISE", "DEVELOPER"]`,
 			},
+			"dataproc_service_account": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				ForceNew:    true,
+				Description: `User-managed service account to set on Dataproc when Cloud Data Fusion creates Dataproc to run data processing pipelines.`,
+			},
 			"description": {
 				Type:        schema.TypeString,
 				Optional:    true,
@@ -251,6 +257,12 @@ func resourceDataFusionInstanceCreate(d *schema.ResourceData, meta interface{}) 
 	} else if v, ok := d.GetOkExists("private_instance"); !isEmptyValue(reflect.ValueOf(privateInstanceProp)) && (ok || !reflect.DeepEqual(v, privateInstanceProp)) {
 		obj["privateInstance"] = privateInstanceProp
 	}
+	dataprocServiceAccountProp, err := expandDataFusionInstanceDataprocServiceAccount(d.Get("dataproc_service_account"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("dataproc_service_account"); !isEmptyValue(reflect.ValueOf(dataprocServiceAccountProp)) && (ok || !reflect.DeepEqual(v, dataprocServiceAccountProp)) {
+		obj["dataprocServiceAccount"] = dataprocServiceAccountProp
+	}
 	networkConfigProp, err := expandDataFusionInstanceNetworkConfig(d.Get("network_config"), d, config)
 	if err != nil {
 		return err
@@ -402,6 +414,9 @@ func resourceDataFusionInstanceRead(d *schema.ResourceData, meta interface{}) er
 		return fmt.Errorf("Error reading Instance: %s", err)
 	}
 	if err := d.Set("private_instance", flattenDataFusionInstancePrivateInstance(res["privateInstance"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Instance: %s", err)
+	}
+	if err := d.Set("dataproc_service_account", flattenDataFusionInstanceDataprocServiceAccount(res["dataprocServiceAccount"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Instance: %s", err)
 	}
 	if err := d.Set("network_config", flattenDataFusionInstanceNetworkConfig(res["networkConfig"], d, config)); err != nil {
@@ -606,6 +621,10 @@ func flattenDataFusionInstancePrivateInstance(v interface{}, d *schema.ResourceD
 	return v
 }
 
+func flattenDataFusionInstanceDataprocServiceAccount(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	return v
+}
+
 func flattenDataFusionInstanceNetworkConfig(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	if v == nil {
 		return nil
@@ -676,6 +695,10 @@ func expandDataFusionInstanceVersion(v interface{}, d TerraformResourceData, con
 }
 
 func expandDataFusionInstancePrivateInstance(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandDataFusionInstanceDataprocServiceAccount(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
