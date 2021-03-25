@@ -5,7 +5,7 @@ FEATURES:
 * **New Data Source:** `google_kms_secret_asymmetric` ([#3076](https://github.com/hashicorp/terraform-provider-google-beta/pull/3076))
 * **New Resource:** `google_gke_hub_membership` ([#3079](https://github.com/hashicorp/terraform-provider-google-beta/pull/3079))
 * **New Resource:** `google_tags_tag_key` ([#3062](https://github.com/hashicorp/terraform-provider-google-beta/pull/3062))
-* **New Resource:** datacatalog: Added `google_data_catalog_tag_template_iam_*` ([#3071](https://github.com/hashicorp/terraform-provider-google-beta/pull/3071))
+* **New Resource:** `google_data_catalog_tag_template_iam_*` ([#3071](https://github.com/hashicorp/terraform-provider-google-beta/pull/3071))
 
 IMPROVEMENTS:
 * accesscontextmanager: added support for ingress and egress policies to `google_access_context_manager_service_perimeter` ([#3064](https://github.com/hashicorp/terraform-provider-google-beta/pull/3064))
