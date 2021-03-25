@@ -3,6 +3,7 @@
 ## 3.61.0 (March 23, 2021)
 
 IMPROVEMENTS:
+* provider: The provider now supports [Workload Identity Federation](https://cloud.google.com/iam/docs/workload-identity-federation). The federated json credentials must be loaded through the `GOOGLE_APPLICATION_CREDENTIALS` environment variable. ([#3054](https://github.com/hashicorp/terraform-provider-google-beta/pull/3054))
 * compute: added `proxy_bind` to `google_compute_target_tcp_proxy`, `google_compute_target_http_proxy` and `google_compute_target_https_proxy` ([#3061](https://github.com/hashicorp/terraform-provider-google-beta/pull/3061))
 * compute: changed `google_compute_subnetwork` to accept more values in the `purpose` field ([#3043](https://github.com/hashicorp/terraform-provider-google-beta/pull/3043))
 * dataflow: added `enable_streaming_engine` argument ([#3049](https://github.com/hashicorp/terraform-provider-google-beta/pull/3049))
