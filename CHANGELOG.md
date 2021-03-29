@@ -9,25 +9,25 @@ FEATURES:
 
 IMPROVEMENTS:
 * accesscontextmanager: added support for ingress and egress policies to `google_access_context_manager_service_perimeter` ([#3064](https://github.com/hashicorp/terraform-provider-google-beta/pull/3064))
-* artifactregistry: relaxed field validations for format field of `google_artifact_registry_repository` ([#3068](https://github.com/hashicorp/terraform-provider-google-beta/pull/3068))
+* artifactregistry: relaxed field validations for field `format` on `google_artifact_registry_repository` ([#3068](https://github.com/hashicorp/terraform-provider-google-beta/pull/3068))
 * compute: added `proxy_bind` to `google_compute_target_tcp_proxy`, `google_compute_target_http_proxy` and `google_compute_target_https_proxy` ([#3061](https://github.com/hashicorp/terraform-provider-google-beta/pull/3061))
 
 BUG FIXES:
 * compute: fixed an issue where exceeding the operation rate limit would fail without retrying ([#3077](https://github.com/hashicorp/terraform-provider-google-beta/pull/3077))
-* compute: fixed datatype for `mtu` in `google_compute_interconnect_attachment` ([#3075](https://github.com/hashicorp/terraform-provider-google-beta/pull/3075)
+* compute: corrected underlying type to integer for field `mtu` in `google_compute_interconnect_attachment` ([#3075](https://github.com/hashicorp/terraform-provider-google-beta/pull/3075)
 
 ## 3.61.0 (March 23, 2021)
 
 IMPROVEMENTS:
 * compute: added `proxy_bind` to `google_compute_target_tcp_proxy`, `google_compute_target_http_proxy` and `google_compute_target_https_proxy` ([#3061](https://github.com/hashicorp/terraform-provider-google-beta/pull/3061))
-* compute: changed `google_compute_subnetwork` to accept more values in the `purpose` field ([#3043](https://github.com/hashicorp/terraform-provider-google-beta/pull/3043))
-* dataflow: added `enable_streaming_engine` argument ([#3049](https://github.com/hashicorp/terraform-provider-google-beta/pull/3049))
-* vpcaccess: added `subnet`, `machine_type` beta fields to `google_vpc_access_connector` ([#3042](https://github.com/hashicorp/terraform-provider-google-beta/pull/3042))
+* compute: updated `google_compute_subnetwork` to accept more values in the `purpose` field ([#3043](https://github.com/hashicorp/terraform-provider-google-beta/pull/3043))
+* dataflow: added field `enable_streaming_engine` to `google_dataflow_job` ([#3049](https://github.com/hashicorp/terraform-provider-google-beta/pull/3049))
+* vpcaccess: added beta fields `subnet` and `machine_type` to `google_vpc_access_connector` ([#3042](https://github.com/hashicorp/terraform-provider-google-beta/pull/3042))
 
 BUG FIXES:
 * bigtable: fixed bug where gc_policy would attempt to recreate the resource when switching from deprecated attribute but maintaining the same value underlying value ([#3037](https://github.com/hashicorp/terraform-provider-google-beta/pull/3037))
 * binaryauthorization: fixed permadiff in `google_binary_authorization_attestor` ([#3035](https://github.com/hashicorp/terraform-provider-google-beta/pull/3035))
-* container: Fixed updates on `export_custom_routes` and `import_custom_routes` in `google_compute_network_peering` ([#3045](https://github.com/hashicorp/terraform-provider-google-beta/pull/3045))
+* container: fixed update support for fields `export_custom_routes` and `import_custom_routes` in `google_compute_network_peering` ([#3045](https://github.com/hashicorp/terraform-provider-google-beta/pull/3045))
 
 ## 3.60.0 (March 15, 2021)
 
