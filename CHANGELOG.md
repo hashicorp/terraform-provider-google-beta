@@ -1,4 +1,22 @@
-## 3.62.0 (Unreleased)
+## 3.63.0 (Unreleased)
+
+## 3.62.0 (March 27, 2021)
+
+FEATURES:
+* **New Data Source:** `google_compute_health_check` ([#3066](https://github.com/hashicorp/terraform-provider-google-beta/pull/3066))
+* **New Data Source:** `google_kms_secret_asymmetric` ([#3076](https://github.com/hashicorp/terraform-provider-google-beta/pull/3076))
+* **New Resource:** `google_gke_hub_membership` ([#3079](https://github.com/hashicorp/terraform-provider-google-beta/pull/3079))
+* **New Resource:** `google_tags_tag_key` ([#3062](https://github.com/hashicorp/terraform-provider-google-beta/pull/3062))
+* **New Resource:** `google_data_catalog_tag_template_iam_*` ([#3071](https://github.com/hashicorp/terraform-provider-google-beta/pull/3071))
+
+IMPROVEMENTS:
+* accesscontextmanager: added support for ingress and egress policies to `google_access_context_manager_service_perimeter` ([#3064](https://github.com/hashicorp/terraform-provider-google-beta/pull/3064))
+* artifactregistry: relaxed field validations for field `format` on `google_artifact_registry_repository` ([#3068](https://github.com/hashicorp/terraform-provider-google-beta/pull/3068))
+* compute: added `proxy_bind` to `google_compute_target_tcp_proxy`, `google_compute_target_http_proxy` and `google_compute_target_https_proxy` ([#3061](https://github.com/hashicorp/terraform-provider-google-beta/pull/3061))
+
+BUG FIXES:
+* compute: fixed an issue where exceeding the operation rate limit would fail without retrying ([#3077](https://github.com/hashicorp/terraform-provider-google-beta/pull/3077))
+* compute: corrected underlying type to integer for field `mtu` in `google_compute_interconnect_attachment` ([#3075](https://github.com/hashicorp/terraform-provider-google-beta/pull/3075)
 
 ## 3.61.0 (March 23, 2021)
 
