@@ -103,10 +103,11 @@ func schemaNodeConfig() *schema.Schema {
 				},
 
 				"ephemeral_storage_config": {
-					Type:     schema.TypeList,
-					Optional: true,
-					MaxItems: 1,
-					ForceNew: true,
+					Type:        schema.TypeList,
+					Optional:    true,
+					MaxItems:    1,
+					Description: `Parameters for the ephemeral storage filesystem.`,
+					ForceNew:    true,
 					Elem: &schema.Resource{
 						Schema: map[string]*schema.Schema{
 							"local_ssd_count": {
@@ -114,6 +115,7 @@ func schemaNodeConfig() *schema.Schema {
 								Required:     true,
 								ForceNew:     true,
 								ValidateFunc: validation.IntAtLeast(0),
+								Description:  `Number of local SSDs to use to back ephemeral storage. Uses NVMe interfaces. Each local SSD is 375 GB in size.`,
 							},
 						},
 					},
