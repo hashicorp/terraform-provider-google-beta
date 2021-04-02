@@ -16,7 +16,7 @@ IMPROVEMENTS:
 
 BUG FIXES:
 * bigquery: fixed issue where you couldn't extend an existing `schema` with additional columns in `google_bigquery_table` ([#3100](https://github.com/hashicorp/terraform-provider-google-beta/pull/3100))
-* cloudidentity: `google_cloud_identity_groups` and `google_cloud_identity_group_memberships ` will respect the `user_project_override` and `billing_project` configurations and send the appropriate headers to establish a quota project ([#3081](https://github.com/hashicorp/terraform-provider-google-beta/pull/3081))
+* cloudidentity: modified `google_cloud_identity_groups` and `google_cloud_identity_group_memberships ` to respect the `user_project_override` and `billing_project` configurations and send the appropriate headers to establish a quota project ([#3081](https://github.com/hashicorp/terraform-provider-google-beta/pull/3081))
 * compute: added minimum for `scopes` field to `google_compute_instance` resource ([#3098](https://github.com/hashicorp/terraform-provider-google-beta/pull/3098))
 * notebooks: fixed permadiff on labels for `google_notebook_instance` ([#3096](https://github.com/hashicorp/terraform-provider-google-beta/pull/3096))
 * secretmanager: set required on `secrest_data` in `google_secret_manager_secret_version` ([#3094](https://github.com/hashicorp/terraform-provider-google-beta/pull/3094))
