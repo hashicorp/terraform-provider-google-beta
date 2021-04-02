@@ -1,4 +1,25 @@
 ## 3.63.0 (Unreleased)
+UNKNOWN CHANGELOG TYPE:
+* Add support for GKE Autopilot in `google_container_cluster` resource ([#3101](https://github.com/hashicorp/terraform-provider-google-beta/pull/3101))
+* Added data source google kms secret asymmetric ([#3052](https://github.com/hashicorp/terraform-provider-google-beta/pull/3052))
+* updating to go 1.16 ([#3057](https://github.com/hashicorp/terraform-provider-google-beta/pull/3057))
+
+FEATURES:
+* **New Data Source:** `google_monitoring_istio_canonical_service` ([#3092](https://github.com/hashicorp/terraform-provider-google-beta/pull/3092))
+* **New Resource:** `google_apigee_instance_attachment` ([#3093](https://github.com/hashicorp/terraform-provider-google-beta/pull/3093))
+* **New Resource:** `google_gke_hub_membership` ([#3079](https://github.com/hashicorp/terraform-provider-google-beta/pull/3079))
+* **New Resource:** `google_tags_tag_value` ([#3097](https://github.com/hashicorp/terraform-provider-google-beta/pull/3097))
+
+IMPROVEMENTS:
+* container: added `enable_l4_ilb_subsetting` (beta) and `private_ipv6_google_access` fields to `google_container_cluster` ([#3095](https://github.com/hashicorp/terraform-provider-google-beta/pull/3095))
+* sql: changed the default timeout of `google_sql_database_instance` to 30m from 20m ([#3099](https://github.com/hashicorp/terraform-provider-google-beta/pull/3099))
+
+BUG FIXES:
+* bigquery: fixed issue where you couldn't extend an existing `schema` with additional columns in `google_bigquery_table` ([#3100](https://github.com/hashicorp/terraform-provider-google-beta/pull/3100))
+* cloudidentity: `google_cloud_identity_groups` and `google_cloud_identity_group_memberships ` will respect the `user_project_override` and `billing_project` configurations and send the appropriate headers to establish a quota project ([#3081](https://github.com/hashicorp/terraform-provider-google-beta/pull/3081))
+* compute: added minimum for `scopes` field to `google_compute_instance` resource ([#3098](https://github.com/hashicorp/terraform-provider-google-beta/pull/3098))
+* notebooks: Fixed permadiff on labels for `google_notebook_instance` ([#3096](https://github.com/hashicorp/terraform-provider-google-beta/pull/3096))
+* secretmanager:  Set required on `secrest_data` in `google_secret_manager_secret_version` ([#3094](https://github.com/hashicorp/terraform-provider-google-beta/pull/3094))
 
 ## 3.62.0 (March 27, 2021)
 
