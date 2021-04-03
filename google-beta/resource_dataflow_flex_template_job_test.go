@@ -18,7 +18,6 @@ func TestAccDataflowFlexTemplateJob_basic(t *testing.T) {
 	t.Parallel()
 
 	randStr := randString(t, 10)
-	bucket := "tf-test-dataflow-gcs-" + randStr
 	job := "tf-test-dataflow-job-" + randStr
 
 	vcrTest(t, resource.TestCase{
@@ -27,9 +26,9 @@ func TestAccDataflowFlexTemplateJob_basic(t *testing.T) {
 		CheckDestroy: testAccCheckDataflowJobDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccDataflowFlexTemplateJob_basic(bucket, job),
+				Config: testAccDataflowFlexTemplateJob_basic(job),
 				Check: resource.ComposeTestCheckFunc(
-					testAccDataflowJobExists(t, "google_dataflow_flex_template_job.big_data"),
+					testAccDataflowJobExists(t, "google_dataflow_flex_template_job.job"),
 				),
 			},
 		},
@@ -43,7 +42,6 @@ func TestAccDataflowFlexTemplateJob_withServiceAccount(t *testing.T) {
 	t.Parallel()
 
 	randStr := randString(t, 10)
-	bucket := "tf-test-dataflow-gcs-" + randStr
 	job := "tf-test-dataflow-job-" + randStr
 	accountId := "tf-test-dataflow-sa" + randStr
 	zone := "us-central1-b"
@@ -54,10 +52,10 @@ func TestAccDataflowFlexTemplateJob_withServiceAccount(t *testing.T) {
 		CheckDestroy: testAccCheckDataflowJobDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccDataflowFlexTemplateJob_serviceAccount(bucket, job, accountId, zone),
+				Config: testAccDataflowFlexTemplateJob_serviceAccount(job, accountId, zone),
 				Check: resource.ComposeTestCheckFunc(
-					testAccDataflowJobExists(t, "google_dataflow_flex_template_job.big_data"),
-					testAccDataflowFlexTemplateJobHasServiceAccount(t, "google_dataflow_flex_template_job.big_data", accountId, zone),
+					testAccDataflowJobExists(t, "google_dataflow_flex_template_job.job"),
+					testAccDataflowFlexTemplateJobHasServiceAccount(t, "google_dataflow_flex_template_job.job", accountId, zone),
 				),
 			},
 		},
@@ -123,79 +121,33 @@ func testAccDataflowFlexTemplateJobGetGeneratedInstance(t *testing.T, s *terrafo
 	return instance, nil
 }
 
-// note: this config creates a job that doesn't actually do anything
-func testAccDataflowFlexTemplateJob_basic(bucket, job string) string {
+// note: this config creates a job that doesn't actually do anything, but still runs
+func testAccDataflowFlexTemplateJob_basic(job string) string {
 	return fmt.Sprintf(`
-resource "google_storage_bucket" "temp" {
-  name = "%s"
-  force_destroy = true
+data "google_storage_bucket_object" "flex_template" {
+  name   = "latest/flex/Streaming_Data_Generator"
+  bucket = "dataflow-templates"
 }
 
-resource "google_storage_bucket_object" "flex_template" {
-  name   = "flex_template.json"
-  bucket = google_storage_bucket.temp.name
-  content = <<EOF
-{
-    "image": "my-image",
-    "metadata": {
-        "description": "An Apache Beam streaming pipeline that reads JSON encoded messages from Pub/Sub, uses Beam SQL to transform the message data, and writes the results to a BigQuery",
-        "name": "Streaming Beam SQL",
-        "parameters": [
-            {
-                "helpText": "Pub/Sub subscription to read from.",
-                "label": "Pub/Sub input subscription.",
-                "name": "inputSubscription",
-                "regexes": [
-                    "[-_.a-zA-Z0-9]+"
-                ]
-            },
-            {
-                "helpText": "BigQuery table spec to write to, in the form 'project:dataset.table'.",
-                "is_optional": true,
-                "label": "BigQuery output table",
-                "name": "outputTable",
-                "regexes": [
-                    "[^:]+:[^.]+[.].+"
-                ]
-            }
-        ]
-    },
-    "sdkInfo": {
-        "language": "JAVA"
-    }
-}
-EOF
-}
-
-resource "google_dataflow_flex_template_job" "big_data" {
+resource "google_dataflow_flex_template_job" "job" {
   name = "%s"
-  container_spec_gcs_path = "${google_storage_bucket.temp.url}/${google_storage_bucket_object.flex_template.name}"
+  container_spec_gcs_path = "gs://${data.google_storage_bucket_object.flex_template.bucket}/${data.google_storage_bucket_object.flex_template.name}"
   on_delete = "cancel"
   parameters = {
-    inputSubscription = "my-subscription"
-    outputTable  = "my-project:my-dataset.my-table"
+    schemaLocation = "gs://mybucket/schema.json"
+    qps = "1"
+    topic = "projects/myproject/topics/mytopic"
   }
 }
-`, bucket, job)
+`, job)
 }
 
-// note: this config creates a job that doesn't actually do anything
-func testAccDataflowFlexTemplateJob_serviceAccount(bucket, job, accountId, zone string) string {
+// note: this config creates a job that doesn't actually do anything, but still runs
+func testAccDataflowFlexTemplateJob_serviceAccount(job, accountId, zone string) string {
 	return fmt.Sprintf(`
-resource "google_storage_bucket" "temp" {
-  name = "%s"
-  force_destroy = true
-}
-
 resource "google_service_account" "dataflow-sa" {
   account_id   = "%s"
   display_name = "DataFlow Service Account"
-}
-
-resource "google_storage_bucket_iam_member" "dataflow-gcs" {
-  bucket = google_storage_bucket.temp.name
-  role   = "roles/storage.objectAdmin"
-  member = "serviceAccount:${google_service_account.dataflow-sa.email}"
 }
 
 resource "google_project_iam_member" "dataflow-worker" {
@@ -203,56 +155,22 @@ resource "google_project_iam_member" "dataflow-worker" {
   member = "serviceAccount:${google_service_account.dataflow-sa.email}"
 }
 
-resource "google_storage_bucket_object" "flex_template" {
-  name   = "flex_template.json"
-  bucket = google_storage_bucket.temp.name
-  content = <<EOF
-{
-    "image": "my-image",
-    "metadata": {
-        "description": "An Apache Beam streaming pipeline that reads JSON encoded messages from Pub/Sub, uses Beam SQL to transform the message data, and writes the results to a BigQuery",
-        "name": "Streaming Beam SQL",
-        "parameters": [
-            {
-                "helpText": "Pub/Sub subscription to read from.",
-                "label": "Pub/Sub input subscription.",
-                "name": "inputSubscription",
-                "regexes": [
-                    "[-_.a-zA-Z0-9]+"
-                ]
-            },
-            {
-                "helpText": "BigQuery table spec to write to, in the form 'project:dataset.table'.",
-                "is_optional": true,
-                "label": "BigQuery output table",
-                "name": "outputTable",
-                "regexes": [
-                    "[^:]+:[^.]+[.].+"
-                ]
-            }
-        ]
-    },
-    "sdkInfo": {
-        "language": "JAVA"
-    }
-}
-EOF
+data "google_storage_bucket_object" "flex_template" {
+  name   = "latest/flex/Streaming_Data_Generator"
+  bucket = "dataflow-templates"
 }
 
-resource "google_dataflow_flex_template_job" "big_data" {
+resource "google_dataflow_flex_template_job" "job" {
   name = "%s"
-  container_spec_gcs_path = "${google_storage_bucket.temp.url}/${google_storage_bucket_object.flex_template.name}"
+  container_spec_gcs_path = "gs://${data.google_storage_bucket_object.flex_template.bucket}/${data.google_storage_bucket_object.flex_template.name}"
   on_delete = "cancel"
   parameters = {
-    inputSubscription = "my-subscription"
-    outputTable  = "my-project:my-dataset.my-table"
+    schemaLocation = "gs://mybucket/schema.json"
+    qps = "1"
+    topic = "projects/myproject/topics/mytopic"
     serviceAccount = google_service_account.dataflow-sa.email
     zone = "%s"
   }
-  depends_on = [
-    google_storage_bucket_iam_member.dataflow-gcs,
-    google_project_iam_member.dataflow-worker
-  ]
 }
-`, bucket, accountId, job, zone)
+`, accountId, job, zone)
 }
