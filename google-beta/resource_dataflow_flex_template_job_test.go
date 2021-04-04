@@ -26,9 +26,39 @@ func TestAccDataflowFlexTemplateJob_basic(t *testing.T) {
 		CheckDestroy: testAccCheckDataflowJobDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccDataflowFlexTemplateJob_basic(job),
+				Config: testAccDataflowFlexTemplateJob_basic(job, "mytopic"),
 				Check: resource.ComposeTestCheckFunc(
 					testAccDataflowJobExists(t, "google_dataflow_flex_template_job.job"),
+				),
+			},
+		},
+	})
+}
+
+func TestAccDataflowFlexTemplateJob_streamUpdate(t *testing.T) {
+	// This resource uses custom retry logic that cannot be sped up without
+	// modifying the actual resource
+	skipIfVcr(t)
+	t.Parallel()
+
+	randStr := randString(t, 10)
+	job := "tf-test-dataflow-job-" + randStr
+
+	vcrTest(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckDataflowJobDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccDataflowFlexTemplateJob_basic(job, "mytopic"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccDataflowJobExists(t, "google_dataflow_flex_template_job.job"),
+				),
+			},
+			{
+				Config: testAccDataflowFlexTemplateJob_basic(job, "mytopic2"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccDataflowJobHasOption(t, "google_dataflow_flex_template_job.job", "topic", "projects/myproject/topics/mytopic2"),
 				),
 			},
 		},
@@ -122,7 +152,7 @@ func testAccDataflowFlexTemplateJobGetGeneratedInstance(t *testing.T, s *terrafo
 }
 
 // note: this config creates a job that doesn't actually do anything, but still runs
-func testAccDataflowFlexTemplateJob_basic(job string) string {
+func testAccDataflowFlexTemplateJob_basic(job, topicName string) string {
 	return fmt.Sprintf(`
 data "google_storage_bucket_object" "flex_template" {
   name   = "latest/flex/Streaming_Data_Generator"
@@ -136,10 +166,10 @@ resource "google_dataflow_flex_template_job" "job" {
   parameters = {
     schemaLocation = "gs://mybucket/schema.json"
     qps = "1"
-    topic = "projects/myproject/topics/mytopic"
+    topic = "projects/myproject/topics/%s"
   }
 }
-`, job)
+`, job, topicName)
 }
 
 // note: this config creates a job that doesn't actually do anything, but still runs
@@ -173,4 +203,35 @@ resource "google_dataflow_flex_template_job" "job" {
   }
 }
 `, accountId, job, zone)
+}
+
+func testAccDataflowJobHasOption(t *testing.T, res, option, expectedValue string) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		rs, ok := s.RootModule().Resources[res]
+		if !ok {
+			return fmt.Errorf("resource %q not found in state", res)
+		}
+
+		if rs.Primary.ID == "" {
+			return fmt.Errorf("No ID is set")
+		}
+		config := googleProviderConfig(t)
+
+		job, err := config.NewDataflowClient(config.userAgent).Projects.Jobs.Get(config.Project, rs.Primary.ID).View("JOB_VIEW_ALL").Do()
+		if err != nil {
+			return fmt.Errorf("dataflow job does not exist")
+		}
+
+		sdkPipelineOptions, err := ConvertToMap(job.Environment.SdkPipelineOptions)
+		if err != nil {
+			return fmt.Errorf("error from ConvertToMap: %s", err)
+		}
+		optionsMap := sdkPipelineOptions["options"].(map[string]interface{})
+
+		if optionsMap[option] != expectedValue {
+			return fmt.Errorf("Option %s do not match. Got %s while expecting %s", option, optionsMap[option], expectedValue)
+		}
+
+		return nil
+	}
 }

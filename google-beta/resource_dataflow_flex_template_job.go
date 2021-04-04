@@ -174,8 +174,47 @@ func resourceDataflowFlexTemplateJobRead(d *schema.ResourceData, meta interface{
 	return nil
 }
 
+func waitForDataflowJobState(d *schema.ResourceData, config *Config, jobID, userAgent string, timeout time.Duration, targetState string) error {
+	return resource.Retry(timeout, func() *resource.RetryError {
+		project, err := getProject(d, config)
+		if err != nil {
+			return resource.NonRetryableError(err)
+		}
+
+		region, err := getRegion(d, config)
+		if err != nil {
+			return resource.NonRetryableError(err)
+		}
+
+		job, err := resourceDataflowJobGetJob(config, project, region, userAgent, jobID)
+		if err != nil {
+			if isRetryableError(err) {
+				return resource.RetryableError(err)
+			}
+			return resource.NonRetryableError(err)
+		}
+
+		state := job.CurrentState
+		if state == targetState {
+			log.Printf("[DEBUG] the job with ID %q has state %q.", jobID, state)
+			return nil
+		}
+		if _, terminated := dataflowTerminalStatesMap[state]; terminated {
+			return resource.NonRetryableError(fmt.Errorf("the job with ID %q has terminated with state %q instead of expected state %q", jobID, state, targetState))
+		} else {
+			log.Printf("[DEBUG] the job with ID %q has state %q.", jobID, state)
+			return resource.RetryableError(fmt.Errorf("the job with ID %q has state %q, waiting for %q", jobID, state, targetState))
+		}
+	})
+}
+
 // resourceDataflowFlexTemplateJobUpdate updates a Flex Template Job resource.
 func resourceDataflowFlexTemplateJobUpdate(d *schema.ResourceData, meta interface{}) error {
+	// Don't send an update request if only virtual fields have changes
+	if resourceDataflowJobIsVirtualUpdate(d, resourceDataflowFlexTemplateJob().Schema) {
+		return nil
+	}
+
 	config := meta.(*Config)
 	userAgent, err := generateUserAgentString(d, config.userAgent)
 	if err != nil {
@@ -192,6 +231,12 @@ func resourceDataflowFlexTemplateJobUpdate(d *schema.ResourceData, meta interfac
 		return err
 	}
 
+	// wait until current job is running or terminated
+	err = waitForDataflowJobState(d, config, d.Id(), userAgent, d.Timeout(schema.TimeoutUpdate), "JOB_STATE_RUNNING")
+	if err != nil {
+		return fmt.Errorf("Error waiting for job with job ID %q to be running: %v", d.Id(), err)
+	}
+
 	request := dataflow.LaunchFlexTemplateRequest{
 		LaunchParameter: &dataflow.LaunchFlexTemplateParameter{
 			ContainerSpecGcsPath: d.Get("container_spec_gcs_path").(string),
@@ -204,6 +249,12 @@ func resourceDataflowFlexTemplateJobUpdate(d *schema.ResourceData, meta interfac
 	response, err := config.NewDataflowClient(userAgent).Projects.Locations.FlexTemplates.Launch(project, region, &request).Do()
 	if err != nil {
 		return err
+	}
+
+	// don't set id until previous job is successfully updated
+	err = waitForDataflowJobState(d, config, d.Id(), userAgent, d.Timeout(schema.TimeoutUpdate), "JOB_STATE_UPDATED")
+	if err != nil {
+		return fmt.Errorf("Error waiting for Job with job ID %q to be updated: %v", d.Id(), err)
 	}
 
 	job := response.Job
