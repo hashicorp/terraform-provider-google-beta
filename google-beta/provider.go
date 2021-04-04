@@ -843,9 +843,9 @@ func Provider() *schema.Provider {
 	return provider
 }
 
-// Generated resources: 218
+// Generated resources: 219
 // Generated IAM resources: 111
-// Total generated resources: 329
+// Total generated resources: 330
 func ResourceMap() map[string]*schema.Resource {
 	resourceMap, _ := ResourceMapWithErrors()
 	return resourceMap
@@ -1046,6 +1046,7 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_dialogflow_entity_type":                                resourceDialogflowEntityType(),
 			"google_dns_managed_zone":                                      resourceDNSManagedZone(),
 			"google_dns_policy":                                            resourceDNSPolicy(),
+			"google_dns_record_set":                                        resourceDNSResourceDnsRecordSet(),
 			"google_essential_contacts_contact":                            resourceEssentialContactsContact(),
 			"google_filestore_instance":                                    resourceFilestoreInstance(),
 			"google_firebase_project":                                      resourceFirebaseProject(),
@@ -1217,7 +1218,6 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_dataflow_flex_template_job":            resourceDataflowFlexTemplateJob(),
 			"google_dataproc_cluster":                      resourceDataprocCluster(),
 			"google_dataproc_job":                          resourceDataprocJob(),
-			"google_dns_record_set":                        resourceDnsRecordSet(),
 			"google_endpoints_service":                     resourceEndpointsService(),
 			"google_eventarc_trigger":                      resourceEventarcTrigger(),
 			"google_folder":                                resourceGoogleFolder(),
