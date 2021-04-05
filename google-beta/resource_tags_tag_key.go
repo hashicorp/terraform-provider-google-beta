@@ -120,7 +120,7 @@ func resourceTagsTagKeyCreate(d *schema.ResourceData, meta interface{}) error {
 		obj["description"] = descriptionProp
 	}
 
-	lockName, err := replaceVars(d, config, "tagKey/{{parent}}")
+	lockName, err := replaceVars(d, config, "tagKeys/{{parent}}")
 	if err != nil {
 		return err
 	}
@@ -246,7 +246,7 @@ func resourceTagsTagKeyUpdate(d *schema.ResourceData, meta interface{}) error {
 		obj["description"] = descriptionProp
 	}
 
-	lockName, err := replaceVars(d, config, "tagKey/{{parent}}")
+	lockName, err := replaceVars(d, config, "tagKeys/{{parent}}")
 	if err != nil {
 		return err
 	}
@@ -304,7 +304,7 @@ func resourceTagsTagKeyDelete(d *schema.ResourceData, meta interface{}) error {
 
 	billingProject := ""
 
-	lockName, err := replaceVars(d, config, "tagKey/{{parent}}")
+	lockName, err := replaceVars(d, config, "tagKeys/{{parent}}")
 	if err != nil {
 		return err
 	}
