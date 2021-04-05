@@ -10,7 +10,6 @@ IMPROVEMENTS:
 * added support for Apple silicon chip (updated to go 1.16) ([#3057](https://github.com/hashicorp/terraform-provider-google-beta/pull/3057))
 * container: 
   * added support for GKE Autopilot in `google_container_cluster`([#3101](https://github.com/hashicorp/terraform-provider-google-beta/pull/3101))
-  * promoted `networking_mode` to GA in `google_container_cluster` ([#3101](https://github.com/hashicorp/terraform-provider-google-beta/pull/3101))
   * added `enable_l4_ilb_subsetting` (beta) and `private_ipv6_google_access` fields to `google_container_cluster` ([#3095](https://github.com/hashicorp/terraform-provider-google-beta/pull/3095))
 * sql: changed the default timeout of `google_sql_database_instance` to 30m from 20m ([#3099](https://github.com/hashicorp/terraform-provider-google-beta/pull/3099))
 
