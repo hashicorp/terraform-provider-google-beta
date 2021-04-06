@@ -645,6 +645,10 @@ func flattenComputeInterconnectAttachmentDescription(v interface{}, d *schema.Re
 }
 
 func flattenComputeInterconnectAttachmentMtu(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	// Handles int given in float64 format
+	if floatVal, ok := v.(float64); ok {
+		return fmt.Sprintf("%d", int(floatVal))
+	}
 	return v
 }
 

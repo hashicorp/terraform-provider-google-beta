@@ -121,6 +121,7 @@ type Config struct {
 	FirebaseBasePath             string
 	FirestoreBasePath            string
 	GameServicesBasePath         string
+	GKEHubBasePath               string
 	HealthcareBasePath           string
 	IAMBetaBasePath              string
 	IapBasePath                  string
@@ -150,6 +151,7 @@ type Config struct {
 	SpannerBasePath              string
 	SQLBasePath                  string
 	StorageBasePath              string
+	TagsBasePath                 string
 	TPUBasePath                  string
 	VPCAccessBasePath            string
 	WorkflowsBasePath            string
@@ -185,7 +187,7 @@ var ActiveDirectoryDefaultBasePath = "https://managedidentities.googleapis.com/v
 var ApiGatewayDefaultBasePath = "https://apigateway.googleapis.com/v1beta/"
 var ApigeeDefaultBasePath = "https://apigee.googleapis.com/v1/"
 var AppEngineDefaultBasePath = "https://appengine.googleapis.com/v1/"
-var ArtifactRegistryDefaultBasePath = "https://artifactregistry.googleapis.com/v1beta1/"
+var ArtifactRegistryDefaultBasePath = "https://artifactregistry.googleapis.com/v1beta2/"
 var BigQueryDefaultBasePath = "https://bigquery.googleapis.com/bigquery/v2/"
 var BigqueryConnectionDefaultBasePath = "https://bigqueryconnection.googleapis.com/v1beta1/"
 var BigqueryDataTransferDefaultBasePath = "https://bigquerydatatransfer.googleapis.com/v1/"
@@ -217,6 +219,7 @@ var FilestoreDefaultBasePath = "https://file.googleapis.com/v1beta1/"
 var FirebaseDefaultBasePath = "https://firebase.googleapis.com/v1beta1/"
 var FirestoreDefaultBasePath = "https://firestore.googleapis.com/v1/"
 var GameServicesDefaultBasePath = "https://gameservices.googleapis.com/v1beta/"
+var GKEHubDefaultBasePath = "https://gkehub.googleapis.com/v1beta1/"
 var HealthcareDefaultBasePath = "https://healthcare.googleapis.com/v1beta1/"
 var IAMBetaDefaultBasePath = "https://iam.googleapis.com/v1beta/"
 var IapDefaultBasePath = "https://iap.googleapis.com/v1/"
@@ -246,6 +249,7 @@ var SourceRepoDefaultBasePath = "https://sourcerepo.googleapis.com/v1/"
 var SpannerDefaultBasePath = "https://spanner.googleapis.com/v1/"
 var SQLDefaultBasePath = "https://sqladmin.googleapis.com/sql/v1beta4/"
 var StorageDefaultBasePath = "https://storage.googleapis.com/storage/v1/"
+var TagsDefaultBasePath = "https://cloudresourcemanager.googleapis.com/v3/"
 var TPUDefaultBasePath = "https://tpu.googleapis.com/v1/"
 var VPCAccessDefaultBasePath = "https://vpcaccess.googleapis.com/v1beta1/"
 var WorkflowsDefaultBasePath = "https://workflows.googleapis.com/v1beta/"
@@ -987,6 +991,7 @@ func ConfigureBasePaths(c *Config) {
 	c.FirebaseBasePath = FirebaseDefaultBasePath
 	c.FirestoreBasePath = FirestoreDefaultBasePath
 	c.GameServicesBasePath = GameServicesDefaultBasePath
+	c.GKEHubBasePath = GKEHubDefaultBasePath
 	c.HealthcareBasePath = HealthcareDefaultBasePath
 	c.IAMBetaBasePath = IAMBetaDefaultBasePath
 	c.IapBasePath = IapDefaultBasePath
@@ -1016,6 +1021,7 @@ func ConfigureBasePaths(c *Config) {
 	c.SpannerBasePath = SpannerDefaultBasePath
 	c.SQLBasePath = SQLDefaultBasePath
 	c.StorageBasePath = StorageDefaultBasePath
+	c.TagsBasePath = TagsDefaultBasePath
 	c.TPUBasePath = TPUDefaultBasePath
 	c.VPCAccessBasePath = VPCAccessDefaultBasePath
 	c.WorkflowsBasePath = WorkflowsDefaultBasePath

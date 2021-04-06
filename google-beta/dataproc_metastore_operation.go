@@ -36,13 +36,6 @@ func (w *DataprocMetastoreOperationWaiter) QueryOp() (interface{}, error) {
 }
 
 func createDataprocMetastoreWaiter(config *Config, op map[string]interface{}, project, activity, userAgent string) (*DataprocMetastoreOperationWaiter, error) {
-	if val, ok := op["name"]; !ok || val == "" {
-		// An operation could also be indicated with a "metadata" field.
-		if _, ok := op["metadata"]; !ok {
-			// This was a synchronous call - there is no operation to wait for.
-			return nil, nil
-		}
-	}
 	w := &DataprocMetastoreOperationWaiter{
 		Config:    config,
 		UserAgent: userAgent,
@@ -55,8 +48,12 @@ func createDataprocMetastoreWaiter(config *Config, op map[string]interface{}, pr
 }
 
 func dataprocMetastoreOperationWaitTime(config *Config, op map[string]interface{}, project, activity, userAgent string, timeout time.Duration) error {
+	if val, ok := op["name"]; !ok || val == "" {
+		// This was a synchronous call - there is no operation to wait for.
+		return nil
+	}
 	w, err := createDataprocMetastoreWaiter(config, op, project, activity, userAgent)
-	if err != nil || w == nil {
+	if err != nil {
 		// If w is nil, the op was synchronous.
 		return err
 	}

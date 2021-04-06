@@ -439,6 +439,14 @@ func Provider() *schema.Provider {
 					"GOOGLE_GAME_SERVICES_CUSTOM_ENDPOINT",
 				}, GameServicesDefaultBasePath),
 			},
+			"gke_hub_custom_endpoint": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validateCustomEndpoint,
+				DefaultFunc: schema.MultiEnvDefaultFunc([]string{
+					"GOOGLE_GKE_HUB_CUSTOM_ENDPOINT",
+				}, GKEHubDefaultBasePath),
+			},
 			"healthcare_custom_endpoint": {
 				Type:         schema.TypeString,
 				Optional:     true,
@@ -671,6 +679,14 @@ func Provider() *schema.Provider {
 					"GOOGLE_STORAGE_CUSTOM_ENDPOINT",
 				}, StorageDefaultBasePath),
 			},
+			"tags_custom_endpoint": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validateCustomEndpoint,
+				DefaultFunc: schema.MultiEnvDefaultFunc([]string{
+					"GOOGLE_TAGS_CUSTOM_ENDPOINT",
+				}, TagsDefaultBasePath),
+			},
 			"tpu_custom_endpoint": {
 				Type:         schema.TypeString,
 				Optional:     true,
@@ -743,6 +759,7 @@ func Provider() *schema.Provider {
 			"google_compute_forwarding_rule":                      dataSourceGoogleComputeForwardingRule(),
 			"google_compute_global_address":                       dataSourceGoogleComputeGlobalAddress(),
 			"google_compute_global_forwarding_rule":               dataSourceGoogleComputeGlobalForwardingRule(),
+			"google_compute_health_check":                         dataSourceGoogleComputeHealthCheck(),
 			"google_compute_image":                                dataSourceGoogleComputeImage(),
 			"google_compute_instance":                             dataSourceGoogleComputeInstance(),
 			"google_compute_instance_group":                       dataSourceGoogleComputeInstanceGroup(),
@@ -787,6 +804,7 @@ func Provider() *schema.Provider {
 			"google_folder_organization_policy":                   dataSourceGoogleFolderOrganizationPolicy(),
 			"google_monitoring_notification_channel":              dataSourceMonitoringNotificationChannel(),
 			"google_monitoring_cluster_istio_service":             dataSourceMonitoringServiceClusterIstio(),
+			"google_monitoring_istio_canonical_service":           dataSourceMonitoringIstioCanonicalService(),
 			"google_monitoring_mesh_istio_service":                dataSourceMonitoringServiceMeshIstio(),
 			"google_monitoring_app_engine_service":                dataSourceMonitoringServiceAppEngine(),
 			"google_monitoring_uptime_check_ips":                  dataSourceGoogleMonitoringUptimeCheckIps(),
@@ -826,9 +844,9 @@ func Provider() *schema.Provider {
 	return provider
 }
 
-// Generated resources: 214
-// Generated IAM resources: 108
-// Total generated resources: 322
+// Generated resources: 220
+// Generated IAM resources: 117
+// Total generated resources: 337
 func ResourceMap() map[string]*schema.Resource {
 	resourceMap, _ := ResourceMapWithErrors()
 	return resourceMap
@@ -866,6 +884,7 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_apigee_instance":                                       resourceApigeeInstance(),
 			"google_apigee_environment":                                    resourceApigeeEnvironment(),
 			"google_apigee_envgroup":                                       resourceApigeeEnvgroup(),
+			"google_apigee_instance_attachment":                            resourceApigeeInstanceAttachment(),
 			"google_app_engine_domain_mapping":                             resourceAppEngineDomainMapping(),
 			"google_app_engine_firewall_rule":                              resourceAppEngineFirewallRule(),
 			"google_app_engine_standard_app_version":                       resourceAppEngineStandardAppVersion(),
@@ -1002,6 +1021,9 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_data_catalog_entry_group_iam_policy":                   ResourceIamPolicy(DataCatalogEntryGroupIamSchema, DataCatalogEntryGroupIamUpdaterProducer, DataCatalogEntryGroupIdParseFunc),
 			"google_data_catalog_entry":                                    resourceDataCatalogEntry(),
 			"google_data_catalog_tag_template":                             resourceDataCatalogTagTemplate(),
+			"google_data_catalog_tag_template_iam_binding":                 ResourceIamBinding(DataCatalogTagTemplateIamSchema, DataCatalogTagTemplateIamUpdaterProducer, DataCatalogTagTemplateIdParseFunc),
+			"google_data_catalog_tag_template_iam_member":                  ResourceIamMember(DataCatalogTagTemplateIamSchema, DataCatalogTagTemplateIamUpdaterProducer, DataCatalogTagTemplateIdParseFunc),
+			"google_data_catalog_tag_template_iam_policy":                  ResourceIamPolicy(DataCatalogTagTemplateIamSchema, DataCatalogTagTemplateIamUpdaterProducer, DataCatalogTagTemplateIdParseFunc),
 			"google_data_catalog_tag":                                      resourceDataCatalogTag(),
 			"google_data_catalog_taxonomy":                                 resourceDataCatalogTaxonomy(),
 			"google_data_catalog_taxonomy_iam_binding":                     ResourceIamBinding(DataCatalogTaxonomyIamSchema, DataCatalogTaxonomyIamUpdaterProducer, DataCatalogTaxonomyIdParseFunc),
@@ -1025,6 +1047,7 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_dialogflow_entity_type":                                resourceDialogflowEntityType(),
 			"google_dns_managed_zone":                                      resourceDNSManagedZone(),
 			"google_dns_policy":                                            resourceDNSPolicy(),
+			"google_dns_record_set":                                        resourceDNSResourceDnsRecordSet(),
 			"google_essential_contacts_contact":                            resourceEssentialContactsContact(),
 			"google_filestore_instance":                                    resourceFilestoreInstance(),
 			"google_firebase_project":                                      resourceFirebaseProject(),
@@ -1037,6 +1060,7 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_game_services_game_server_deployment":                  resourceGameServicesGameServerDeployment(),
 			"google_game_services_game_server_config":                      resourceGameServicesGameServerConfig(),
 			"google_game_services_game_server_deployment_rollout":          resourceGameServicesGameServerDeploymentRollout(),
+			"google_gke_hub_membership":                                    resourceGKEHubMembership(),
 			"google_healthcare_dataset":                                    resourceHealthcareDataset(),
 			"google_healthcare_dicom_store":                                resourceHealthcareDicomStore(),
 			"google_healthcare_fhir_store":                                 resourceHealthcareFhirStore(),
@@ -1156,6 +1180,15 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_storage_object_access_control":                         resourceStorageObjectAccessControl(),
 			"google_storage_default_object_access_control":                 resourceStorageDefaultObjectAccessControl(),
 			"google_storage_hmac_key":                                      resourceStorageHmacKey(),
+			"google_tags_tag_key":                                          resourceTagsTagKey(),
+			"google_tags_tag_key_iam_binding":                              ResourceIamBinding(TagsTagKeyIamSchema, TagsTagKeyIamUpdaterProducer, TagsTagKeyIdParseFunc),
+			"google_tags_tag_key_iam_member":                               ResourceIamMember(TagsTagKeyIamSchema, TagsTagKeyIamUpdaterProducer, TagsTagKeyIdParseFunc),
+			"google_tags_tag_key_iam_policy":                               ResourceIamPolicy(TagsTagKeyIamSchema, TagsTagKeyIamUpdaterProducer, TagsTagKeyIdParseFunc),
+			"google_tags_tag_value":                                        resourceTagsTagValue(),
+			"google_tags_tag_value_iam_binding":                            ResourceIamBinding(TagsTagValueIamSchema, TagsTagValueIamUpdaterProducer, TagsTagValueIdParseFunc),
+			"google_tags_tag_value_iam_member":                             ResourceIamMember(TagsTagValueIamSchema, TagsTagValueIamUpdaterProducer, TagsTagValueIdParseFunc),
+			"google_tags_tag_value_iam_policy":                             ResourceIamPolicy(TagsTagValueIamSchema, TagsTagValueIamUpdaterProducer, TagsTagValueIdParseFunc),
+			"google_tags_tag_binding":                                      resourceTagsTagBinding(),
 			"google_tpu_node":                                              resourceTPUNode(),
 			"google_vpc_access_connector":                                  resourceVPCAccessConnector(),
 			"google_workflows_workflow":                                    resourceWorkflowsWorkflow(),
@@ -1193,7 +1226,6 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_dataflow_flex_template_job":            resourceDataflowFlexTemplateJob(),
 			"google_dataproc_cluster":                      resourceDataprocCluster(),
 			"google_dataproc_job":                          resourceDataprocJob(),
-			"google_dns_record_set":                        resourceDnsRecordSet(),
 			"google_endpoints_service":                     resourceEndpointsService(),
 			"google_eventarc_trigger":                      resourceEventarcTrigger(),
 			"google_folder":                                resourceGoogleFolder(),
@@ -1395,6 +1427,7 @@ func providerConfigure(ctx context.Context, d *schema.ResourceData, p *schema.Pr
 	config.FirebaseBasePath = d.Get("firebase_custom_endpoint").(string)
 	config.FirestoreBasePath = d.Get("firestore_custom_endpoint").(string)
 	config.GameServicesBasePath = d.Get("game_services_custom_endpoint").(string)
+	config.GKEHubBasePath = d.Get("gke_hub_custom_endpoint").(string)
 	config.HealthcareBasePath = d.Get("healthcare_custom_endpoint").(string)
 	config.IAMBetaBasePath = d.Get("iam_beta_custom_endpoint").(string)
 	config.IapBasePath = d.Get("iap_custom_endpoint").(string)
@@ -1424,6 +1457,7 @@ func providerConfigure(ctx context.Context, d *schema.ResourceData, p *schema.Pr
 	config.SpannerBasePath = d.Get("spanner_custom_endpoint").(string)
 	config.SQLBasePath = d.Get("sql_custom_endpoint").(string)
 	config.StorageBasePath = d.Get("storage_custom_endpoint").(string)
+	config.TagsBasePath = d.Get("tags_custom_endpoint").(string)
 	config.TPUBasePath = d.Get("tpu_custom_endpoint").(string)
 	config.VPCAccessBasePath = d.Get("vpc_access_custom_endpoint").(string)
 	config.WorkflowsBasePath = d.Get("workflows_custom_endpoint").(string)

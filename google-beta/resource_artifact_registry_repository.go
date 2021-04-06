@@ -22,7 +22,6 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
 func resourceArtifactRegistryRepository() *schema.Resource {
@@ -44,11 +43,10 @@ func resourceArtifactRegistryRepository() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"format": {
-				Type:         schema.TypeString,
-				Required:     true,
-				ForceNew:     true,
-				ValidateFunc: validation.StringInSlice([]string{"DOCKER"}, false),
-				Description:  `The format of packages that are stored in the repository. Possible values: ["DOCKER"]`,
+				Type:        schema.TypeString,
+				Required:    true,
+				ForceNew:    true,
+				Description: `The format of packages that are stored in the repository.`,
 			},
 			"repository_id": {
 				Type:     schema.TypeString,
