@@ -77,11 +77,8 @@ func TestAccRedisInstance_redisInstanceAuthEnabled(t *testing.T) {
 	}
 
 	vcrTest(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
-		Providers: testAccProviders,
-		ExternalProviders: map[string]resource.ExternalProvider{
-			"random": {},
-		},
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckRedisInstanceDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -143,8 +140,7 @@ resource "google_redis_instance" "test" {
     maxmemory-policy       = "noeviction"
     notify-keyspace-events = ""
   }
-    
-  transit_encryption_mode = "SERVER_AUTHENTICATION"
+    transit_encryption_mode = "SERVER_AUTHENTICATION"
   }
 `, name)
 }

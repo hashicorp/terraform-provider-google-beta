@@ -14,11 +14,8 @@ func TestAccApiGatewayApi_apigatewayApiBasicExampleUpdated(t *testing.T) {
 	}
 
 	vcrTest(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
-		Providers: testAccProvidersOiCS,
-		ExternalProviders: map[string]resource.ExternalProvider{
-			"random": {},
-		},
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProvidersOiCS,
 		CheckDestroy: testAccCheckApiGatewayApiDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
