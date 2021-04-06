@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"net/url"
 	"regexp"
 	"strings"
 	"time"
@@ -14,7 +13,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/logging"
 	"google.golang.org/api/option"
 
-	kms "cloud.google.com/go/kms/apiv1"
 	dcl "github.com/GoogleCloudPlatform/declarative-resource-client-library/dcl"
 	eventarcDcl "github.com/GoogleCloudPlatform/declarative-resource-client-library/services/google/eventarc/beta"
 	"golang.org/x/oauth2"
@@ -436,10 +434,10 @@ func (c *Config) NewDnsClient(userAgent string) *dns.Service {
 	return clientDns
 }
 
-func (c *Config) NewKmsClient(userAgent string) *cloudkms.Service {
+func (c *Config) NewKmsClientWithCtx(ctx context.Context, userAgent string) *cloudkms.Service {
 	kmsClientBasePath := removeBasePathVersion(c.KMSBasePath)
 	log.Printf("[INFO] Instantiating Google Cloud KMS client for path %s", kmsClientBasePath)
-	clientKms, err := cloudkms.NewService(c.context, option.WithHTTPClient(c.client))
+	clientKms, err := cloudkms.NewService(ctx, option.WithHTTPClient(c.client))
 	if err != nil {
 		log.Printf("[WARN] Error creating client kms: %s", err)
 		return nil
@@ -450,24 +448,8 @@ func (c *Config) NewKmsClient(userAgent string) *cloudkms.Service {
 	return clientKms
 }
 
-func (c *Config) NewKeyManagementClient(ctx context.Context, userAgent string) *kms.KeyManagementClient {
-	u, err := url.Parse(c.KMSBasePath)
-	if err != nil {
-		log.Printf("[WARN] Error creating client kms invalid base path url %s, %s", c.KMSBasePath, err)
-		return nil
-	}
-	endpoint := u.Host
-	if u.Port() == "" {
-		endpoint = fmt.Sprintf("%s:443", u.Host)
-	}
-
-	log.Printf("[INFO] Instantiating Google Cloud KMS client for path on endpoint %s", endpoint)
-	clientKms, err := kms.NewKeyManagementClient(ctx, option.WithUserAgent(userAgent), option.WithEndpoint(endpoint))
-	if err != nil {
-		log.Printf("[WARN] Error creating client kms: %s", err)
-		return nil
-	}
-	return clientKms
+func (c *Config) NewKmsClient(userAgent string) *cloudkms.Service {
+	return c.NewKmsClientWithCtx(c.context, userAgent)
 }
 
 func (c *Config) NewLoggingClient(userAgent string) *cloudlogging.Service {
