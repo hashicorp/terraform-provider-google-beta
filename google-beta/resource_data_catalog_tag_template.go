@@ -96,6 +96,11 @@ Can have up to 500 allowed values.`,
 								},
 							},
 						},
+						"description": {
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: `A description for this field.`,
+						},
 						"display_name": {
 							Type:        schema.TypeString,
 							Optional:    true,
@@ -429,6 +434,7 @@ func flattenDataCatalogTagTemplateFields(v interface{}, d *schema.ResourceData, 
 			"field_id":     k,
 			"name":         flattenDataCatalogTagTemplateFieldsName(original["name"], d, config),
 			"display_name": flattenDataCatalogTagTemplateFieldsDisplayName(original["displayName"], d, config),
+			"description":  flattenDataCatalogTagTemplateFieldsDescription(original["description"], d, config),
 			"type":         flattenDataCatalogTagTemplateFieldsType(original["type"], d, config),
 			"is_required":  flattenDataCatalogTagTemplateFieldsIsRequired(original["isRequired"], d, config),
 			"order":        flattenDataCatalogTagTemplateFieldsOrder(original["order"], d, config),
@@ -441,6 +447,10 @@ func flattenDataCatalogTagTemplateFieldsName(v interface{}, d *schema.ResourceDa
 }
 
 func flattenDataCatalogTagTemplateFieldsDisplayName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	return v
+}
+
+func flattenDataCatalogTagTemplateFieldsDescription(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
@@ -546,6 +556,13 @@ func expandDataCatalogTagTemplateFields(v interface{}, d TerraformResourceData, 
 			transformed["displayName"] = transformedDisplayName
 		}
 
+		transformedDescription, err := expandDataCatalogTagTemplateFieldsDescription(original["description"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedDescription); val.IsValid() && !isEmptyValue(val) {
+			transformed["description"] = transformedDescription
+		}
+
 		transformedType, err := expandDataCatalogTagTemplateFieldsType(original["type"], d, config)
 		if err != nil {
 			return nil, err
@@ -581,6 +598,10 @@ func expandDataCatalogTagTemplateFieldsName(v interface{}, d TerraformResourceDa
 }
 
 func expandDataCatalogTagTemplateFieldsDisplayName(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandDataCatalogTagTemplateFieldsDescription(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
