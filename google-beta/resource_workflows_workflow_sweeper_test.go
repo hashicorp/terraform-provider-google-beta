@@ -99,7 +99,7 @@ func testSweepWorkflowsWorkflow(region string) error {
 			continue
 		}
 
-		deleteTemplate := "https://workflows.googleapis.com/v1beta/{{name}}"
+		deleteTemplate := "https://workflows.googleapis.com/v1beta/projects/{{project}}/locations/{{region}}/workflows/{{name}}"
 		deleteUrl, err := replaceVars(d, config, deleteTemplate)
 		if err != nil {
 			log.Printf("[INFO][SWEEPER_LOG] error preparing delete url: %s", err)
