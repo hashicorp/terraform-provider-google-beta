@@ -32,11 +32,8 @@ func TestAccComputeOrganizationSecurityPolicyRule_organizationSecurityPolicyRule
 	}
 
 	vcrTest(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
-		Providers: testAccProvidersOiCS,
-		ExternalProviders: map[string]resource.ExternalProvider{
-			"random": {},
-		},
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProvidersOiCS,
 		CheckDestroy: testAccCheckComputeOrganizationSecurityPolicyRuleDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{

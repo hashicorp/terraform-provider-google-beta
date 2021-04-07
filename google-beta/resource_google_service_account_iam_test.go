@@ -225,6 +225,7 @@ func TestAccServiceAccountIamPolicy_withCondition(t *testing.T) {
 	})
 }
 
+// google_iam_workload_identity_pool is beta only
 func TestAccServiceAccountIamMember_federatedIdentity(t *testing.T) {
 	t.Parallel()
 
@@ -506,6 +507,7 @@ resource "google_service_account_iam_policy" "foo" {
 `, account)
 }
 
+// google_iam_workload_identity_pool is beta only
 func testAccServiceAccountIamMember_federatedIdentity(account, poolId string) string {
 	return fmt.Sprintf(`
 resource "google_service_account" "test_account" {

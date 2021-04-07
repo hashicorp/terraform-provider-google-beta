@@ -34,11 +34,8 @@ func TestAccApigeeInstance_apigeeInstanceBasicTestExample(t *testing.T) {
 	}
 
 	vcrTest(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
-		Providers: testAccProviders,
-		ExternalProviders: map[string]resource.ExternalProvider{
-			"random": {},
-		},
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckApigeeInstanceDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -129,11 +126,8 @@ func TestAccApigeeInstance_apigeeInstanceFullTestExample(t *testing.T) {
 	}
 
 	vcrTest(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
-		Providers: testAccProvidersOiCS,
-		ExternalProviders: map[string]resource.ExternalProvider{
-			"random": {},
-		},
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProvidersOiCS,
 		CheckDestroy: testAccCheckApigeeInstanceDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{

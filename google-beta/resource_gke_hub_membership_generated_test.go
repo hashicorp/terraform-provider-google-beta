@@ -31,11 +31,8 @@ func TestAccGKEHubMembership_gkehubMembershipBasicExample(t *testing.T) {
 	}
 
 	vcrTest(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
-		Providers: testAccProvidersOiCS,
-		ExternalProviders: map[string]resource.ExternalProvider{
-			"random": {},
-		},
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProvidersOiCS,
 		CheckDestroy: testAccCheckGKEHubMembershipDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -76,11 +73,8 @@ func TestAccGKEHubMembership_gkehubMembershipIssuerExample(t *testing.T) {
 	}
 
 	vcrTest(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
-		Providers: testAccProvidersOiCS,
-		ExternalProviders: map[string]resource.ExternalProvider{
-			"random": {},
-		},
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProvidersOiCS,
 		CheckDestroy: testAccCheckGKEHubMembershipDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{

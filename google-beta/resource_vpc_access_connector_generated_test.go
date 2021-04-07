@@ -31,11 +31,8 @@ func TestAccVPCAccessConnector_vpcAccessConnectorExample(t *testing.T) {
 	}
 
 	vcrTest(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
-		Providers: testAccProviders,
-		ExternalProviders: map[string]resource.ExternalProvider{
-			"random": {},
-		},
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckVPCAccessConnectorDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -69,11 +66,8 @@ func TestAccVPCAccessConnector_vpcAccessConnectorSharedVPCExample(t *testing.T) 
 	}
 
 	vcrTest(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
-		Providers: testAccProvidersOiCS,
-		ExternalProviders: map[string]resource.ExternalProvider{
-			"random": {},
-		},
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProvidersOiCS,
 		CheckDestroy: testAccCheckVPCAccessConnectorDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
