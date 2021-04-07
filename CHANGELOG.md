@@ -16,11 +16,12 @@ IMPROVEMENTS:
 * compute: added field `maintenance_window.start_time` to `google_compute_node_group` ([#3125](https://github.com/hashicorp/terraform-provider-google-beta/pull/3125))
 * compute: added gVNIC support for `google_compute_instance_template` ([#3123](https://github.com/hashicorp/terraform-provider-google-beta/pull/3123))
 * datacatalog: added `description` field to `google_data_catalog_tag_template ` resource ([#3128](https://github.com/hashicorp/terraform-provider-google-beta/pull/3128))
+* iam: added support for third party identities via the principle and principleSet IAM members ([#3133](https://github.com/hashicorp/terraform-provider-google-beta/pull/3133))
 
 BUG FIXES:
 * compute: reverted datatype change for `mtu` in `google_compute_interconnect_attachment` as it was incompatible with existing state representation ([#3112](https://github.com/hashicorp/terraform-provider-google-beta/pull/3112))
 * iam: fixed issue with principle and principleSet members not retaining their casing ([#3133](https://github.com/hashicorp/terraform-provider-google-beta/pull/3133))
-* storage: fixed intermittent error in `google_storage_hmac_key` ([#3107](https://github.com/hashicorp/terraform-provider-google-beta/pull/3107))
+* storage: fixed intermittent `Provider produced inconsistent result after apply` error when creating ([#3107](https://github.com/hashicorp/terraform-provider-google-beta/pull/3107))
 
 ## 3.63.0 (April 5, 2021)
 
