@@ -31,11 +31,8 @@ func TestAccApiGatewayGateway_apigatewayGatewayBasicExample(t *testing.T) {
 	}
 
 	vcrTest(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
-		Providers: testAccProvidersOiCS,
-		ExternalProviders: map[string]resource.ExternalProvider{
-			"random": {},
-		},
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProvidersOiCS,
 		CheckDestroy: testAccCheckApiGatewayGatewayDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -84,11 +81,8 @@ func TestAccApiGatewayGateway_apigatewayGatewayFullExample(t *testing.T) {
 	}
 
 	vcrTest(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
-		Providers: testAccProvidersOiCS,
-		ExternalProviders: map[string]resource.ExternalProvider{
-			"random": {},
-		},
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProvidersOiCS,
 		CheckDestroy: testAccCheckApiGatewayGatewayDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
