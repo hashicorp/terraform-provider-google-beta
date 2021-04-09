@@ -437,10 +437,10 @@ func (c *Config) NewDnsClient(userAgent string) *dns.Service {
 	return clientDns
 }
 
-func (c *Config) NewKmsClient(userAgent string) *cloudkms.Service {
+func (c *Config) NewKmsClientWithCtx(ctx context.Context, userAgent string) *cloudkms.Service {
 	kmsClientBasePath := removeBasePathVersion(c.KMSBasePath)
 	log.Printf("[INFO] Instantiating Google Cloud KMS client for path %s", kmsClientBasePath)
-	clientKms, err := cloudkms.NewService(c.context, option.WithHTTPClient(c.client))
+	clientKms, err := cloudkms.NewService(ctx, option.WithHTTPClient(c.client))
 	if err != nil {
 		log.Printf("[WARN] Error creating client kms: %s", err)
 		return nil
@@ -449,6 +449,10 @@ func (c *Config) NewKmsClient(userAgent string) *cloudkms.Service {
 	clientKms.BasePath = kmsClientBasePath
 
 	return clientKms
+}
+
+func (c *Config) NewKmsClient(userAgent string) *cloudkms.Service {
+	return c.NewKmsClientWithCtx(c.context, userAgent)
 }
 
 func (c *Config) NewLoggingClient(userAgent string) *cloudlogging.Service {
