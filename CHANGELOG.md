@@ -1,4 +1,4 @@
-## 3.64.0 (Unreleased)
+## 3.64.0 (April 12, 2021)
 
 FEATURES:
 * **New Resource:** `google_tags_tag_binding` ([#3121](https://github.com/hashicorp/terraform-provider-google-beta/pull/3121))
