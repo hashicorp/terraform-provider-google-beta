@@ -1,4 +1,28 @@
 ## 3.64.0 (Unreleased)
+
+FEATURES:
+* **New Resource:** `google_tags_tag_binding` ([#3121](https://github.com/hashicorp/terraform-provider-google-beta/pull/3121))
+* **New Resource:** `google_tags_tag_key_iam_binding` ([#3124](https://github.com/hashicorp/terraform-provider-google-beta/pull/3124))
+* **New Resource:** `google_tags_tag_key_iam_member` ([#3124](https://github.com/hashicorp/terraform-provider-google-beta/pull/3124))
+* **New Resource:** `google_tags_tag_key_iam_policy` ([#3124](https://github.com/hashicorp/terraform-provider-google-beta/pull/3124))
+* **New Resource:** `google_tags_tag_value_iam_binding` ([#3124](https://github.com/hashicorp/terraform-provider-google-beta/pull/3124))
+* **New Resource:** `google_tags_tag_value_iam_member` ([#3124](https://github.com/hashicorp/terraform-provider-google-beta/pull/3124))
+* **New Resource:** `google_tags_tag_value_iam_policy` ([#3124](https://github.com/hashicorp/terraform-provider-google-beta/pull/3124))
+* **New Resource:** `google_apigee_envgroup_attachment` ([#3129](https://github.com/hashicorp/terraform-provider-google-beta/pull/3129))
+
+IMPROVEMENTS:
+* bigquery: added `require_partition_filter` field to `google_bigquery_table` when provisioning `hive_partitioning_options` ([#3106](https://github.com/hashicorp/terraform-provider-google-beta/pull/3106))
+* cloudbuild: added new machine types for `google_cloudbuild_trigger` ([#3115](https://github.com/hashicorp/terraform-provider-google-beta/pull/3115))
+* compute: added field `maintenance_window.start_time` to `google_compute_node_group` ([#3125](https://github.com/hashicorp/terraform-provider-google-beta/pull/3125))
+* compute: added gVNIC support for `google_compute_instance_template` ([#3123](https://github.com/hashicorp/terraform-provider-google-beta/pull/3123))
+* datacatalog: added `description` field to `google_data_catalog_tag_template ` resource ([#3128](https://github.com/hashicorp/terraform-provider-google-beta/pull/3128))
+* iam: added support for third party identities via the principle and principleSet IAM members ([#3133](https://github.com/hashicorp/terraform-provider-google-beta/pull/3133))
+
+BUG FIXES:
+* compute: reverted datatype change for `mtu` in `google_compute_interconnect_attachment` as it was incompatible with existing state representation ([#3112](https://github.com/hashicorp/terraform-provider-google-beta/pull/3112))
+* iam: fixed issue with principle and principleSet members not retaining their casing ([#3133](https://github.com/hashicorp/terraform-provider-google-beta/pull/3133))
+* storage: fixed intermittent `Provider produced inconsistent result after apply` error when creating ([#3107](https://github.com/hashicorp/terraform-provider-google-beta/pull/3107))
+
 ## 3.63.0 (April 5, 2021)
 
 FEATURES:
