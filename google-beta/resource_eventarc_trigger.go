@@ -73,12 +73,20 @@ func resourceEventarcTrigger() *schema.Resource {
 				Description: ``,
 			},
 
-			"project": {
-				Type:        schema.TypeString,
-				Computed:    true,
+			"labels": {
+				Type:        schema.TypeMap,
 				Optional:    true,
-				ForceNew:    true,
 				Description: ``,
+				Elem:        &schema.Schema{Type: schema.TypeString},
+			},
+
+			"project": {
+				Type:             schema.TypeString,
+				Computed:         true,
+				Optional:         true,
+				ForceNew:         true,
+				DiffSuppressFunc: compareSelfLinkOrResourceName,
+				Description:      ``,
 			},
 
 			"service_account": {
@@ -86,6 +94,16 @@ func resourceEventarcTrigger() *schema.Resource {
 				Optional:         true,
 				DiffSuppressFunc: compareSelfLinkOrResourceName,
 				Description:      ``,
+			},
+
+			"transport": {
+				Type:        schema.TypeList,
+				Computed:    true,
+				Optional:    true,
+				ForceNew:    true,
+				Description: ``,
+				MaxItems:    1,
+				Elem:        EventarcTriggerTransportSchema(),
 			},
 
 			"create_time": {
@@ -98,13 +116,6 @@ func resourceEventarcTrigger() *schema.Resource {
 				Type:        schema.TypeString,
 				Computed:    true,
 				Description: ``,
-			},
-
-			"transport": {
-				Type:        schema.TypeList,
-				Computed:    true,
-				Description: ``,
-				Elem:        EventarcTriggerTransportSchema(),
 			},
 
 			"update_time": {
@@ -122,7 +133,6 @@ func EventarcTriggerDestinationSchema() *schema.Resource {
 			"cloud_run_service": {
 				Type:        schema.TypeList,
 				Optional:    true,
-				ForceNew:    true,
 				Description: ``,
 				MaxItems:    1,
 				Elem:        EventarcTriggerDestinationCloudRunServiceSchema(),
@@ -137,7 +147,6 @@ func EventarcTriggerDestinationCloudRunServiceSchema() *schema.Resource {
 			"service": {
 				Type:             schema.TypeString,
 				Required:         true,
-				ForceNew:         true,
 				DiffSuppressFunc: compareSelfLinkOrResourceName,
 				Description:      ``,
 			},
@@ -145,7 +154,6 @@ func EventarcTriggerDestinationCloudRunServiceSchema() *schema.Resource {
 			"path": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				ForceNew:    true,
 				Description: ``,
 			},
 
@@ -153,7 +161,6 @@ func EventarcTriggerDestinationCloudRunServiceSchema() *schema.Resource {
 				Type:        schema.TypeString,
 				Computed:    true,
 				Optional:    true,
-				ForceNew:    true,
 				Description: ``,
 			},
 		},
@@ -166,14 +173,12 @@ func EventarcTriggerMatchingCriteriaSchema() *schema.Resource {
 			"attribute": {
 				Type:        schema.TypeString,
 				Required:    true,
-				ForceNew:    true,
 				Description: ``,
 			},
 
 			"value": {
 				Type:        schema.TypeString,
 				Required:    true,
-				ForceNew:    true,
 				Description: ``,
 			},
 		},
@@ -185,8 +190,10 @@ func EventarcTriggerTransportSchema() *schema.Resource {
 		Schema: map[string]*schema.Schema{
 			"pubsub": {
 				Type:        schema.TypeList,
-				Computed:    true,
+				Optional:    true,
+				ForceNew:    true,
 				Description: ``,
+				MaxItems:    1,
 				Elem:        EventarcTriggerTransportPubsubSchema(),
 			},
 		},
@@ -196,13 +203,14 @@ func EventarcTriggerTransportSchema() *schema.Resource {
 func EventarcTriggerTransportPubsubSchema() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
-			"subscription": {
+			"topic": {
 				Type:        schema.TypeString,
-				Computed:    true,
+				Optional:    true,
+				ForceNew:    true,
 				Description: ``,
 			},
 
-			"topic": {
+			"subscription": {
 				Type:        schema.TypeString,
 				Computed:    true,
 				Description: ``,
@@ -223,8 +231,10 @@ func resourceEventarcTriggerCreate(d *schema.ResourceData, meta interface{}) err
 		Location:         dcl.StringOrNil(d.Get("location").(string)),
 		MatchingCriteria: expandEventarcTriggerMatchingCriteriaArray(d.Get("matching_criteria")),
 		Name:             dcl.StringOrNil(d.Get("name").(string)),
+		Labels:           checkStringMap(d.Get("labels")),
 		Project:          dcl.String(project),
 		ServiceAccount:   dcl.StringOrNil(d.Get("service_account").(string)),
+		Transport:        expandEventarcTriggerTransport(d.Get("transport")),
 	}
 
 	id, err := replaceVarsForId(d, config, "projects/{{project}}/locations/{{location}}/triggers/{{name}}")
@@ -257,8 +267,10 @@ func resourceEventarcTriggerRead(d *schema.ResourceData, meta interface{}) error
 		Location:         dcl.StringOrNil(d.Get("location").(string)),
 		MatchingCriteria: expandEventarcTriggerMatchingCriteriaArray(d.Get("matching_criteria")),
 		Name:             dcl.StringOrNil(d.Get("name").(string)),
+		Labels:           checkStringMap(d.Get("labels")),
 		Project:          dcl.String(project),
 		ServiceAccount:   dcl.StringOrNil(d.Get("service_account").(string)),
+		Transport:        expandEventarcTriggerTransport(d.Get("transport")),
 	}
 
 	res, err := config.clientEventarcDCL.GetTrigger(context.Background(), obj)
@@ -280,20 +292,23 @@ func resourceEventarcTriggerRead(d *schema.ResourceData, meta interface{}) error
 	if err = d.Set("name", res.Name); err != nil {
 		return fmt.Errorf("error setting name in state: %s", err)
 	}
+	if err = d.Set("labels", res.Labels); err != nil {
+		return fmt.Errorf("error setting labels in state: %s", err)
+	}
 	if err = d.Set("project", res.Project); err != nil {
 		return fmt.Errorf("error setting project in state: %s", err)
 	}
 	if err = d.Set("service_account", res.ServiceAccount); err != nil {
 		return fmt.Errorf("error setting service_account in state: %s", err)
 	}
+	if err = d.Set("transport", flattenEventarcTriggerTransport(res.Transport)); err != nil {
+		return fmt.Errorf("error setting transport in state: %s", err)
+	}
 	if err = d.Set("create_time", res.CreateTime); err != nil {
 		return fmt.Errorf("error setting create_time in state: %s", err)
 	}
 	if err = d.Set("etag", res.Etag); err != nil {
 		return fmt.Errorf("error setting etag in state: %s", err)
-	}
-	if err = d.Set("transport", flattenEventarcTriggerTransport(res.Transport)); err != nil {
-		return fmt.Errorf("error setting transport in state: %s", err)
 	}
 	if err = d.Set("update_time", res.UpdateTime); err != nil {
 		return fmt.Errorf("error setting update_time in state: %s", err)
@@ -313,8 +328,10 @@ func resourceEventarcTriggerUpdate(d *schema.ResourceData, meta interface{}) err
 		Location:         dcl.StringOrNil(d.Get("location").(string)),
 		MatchingCriteria: expandEventarcTriggerMatchingCriteriaArray(d.Get("matching_criteria")),
 		Name:             dcl.StringOrNil(d.Get("name").(string)),
+		Labels:           checkStringMap(d.Get("labels")),
 		Project:          dcl.String(project),
 		ServiceAccount:   dcl.StringOrNil(d.Get("service_account").(string)),
+		Transport:        expandEventarcTriggerTransport(d.Get("transport")),
 	}
 	directive := UpdateDirective
 	res, err := config.clientEventarcDCL.ApplyTrigger(context.Background(), obj, directive...)
@@ -339,8 +356,10 @@ func resourceEventarcTriggerDelete(d *schema.ResourceData, meta interface{}) err
 		Location:         dcl.StringOrNil(d.Get("location").(string)),
 		MatchingCriteria: expandEventarcTriggerMatchingCriteriaArray(d.Get("matching_criteria")),
 		Name:             dcl.StringOrNil(d.Get("name").(string)),
+		Labels:           checkStringMap(d.Get("labels")),
 		Project:          dcl.String(project),
 		ServiceAccount:   dcl.StringOrNil(d.Get("service_account").(string)),
+		Transport:        expandEventarcTriggerTransport(d.Get("transport")),
 	}
 
 	log.Printf("[DEBUG] Deleting Trigger %q", d.Id())
@@ -487,6 +506,20 @@ func flattenEventarcTriggerMatchingCriteria(obj *eventarc.TriggerMatchingCriteri
 
 }
 
+func expandEventarcTriggerTransport(o interface{}) *eventarc.TriggerTransport {
+	if o == nil {
+		return nil
+	}
+	objArr := o.([]interface{})
+	if len(objArr) == 0 {
+		return nil
+	}
+	obj := objArr[0].(map[string]interface{})
+	return &eventarc.TriggerTransport{
+		Pubsub: expandEventarcTriggerTransportPubsub(obj["pubsub"]),
+	}
+}
+
 func flattenEventarcTriggerTransport(obj *eventarc.TriggerTransport) interface{} {
 	if obj == nil {
 		return nil
@@ -499,13 +532,27 @@ func flattenEventarcTriggerTransport(obj *eventarc.TriggerTransport) interface{}
 
 }
 
+func expandEventarcTriggerTransportPubsub(o interface{}) *eventarc.TriggerTransportPubsub {
+	if o == nil {
+		return nil
+	}
+	objArr := o.([]interface{})
+	if len(objArr) == 0 {
+		return nil
+	}
+	obj := objArr[0].(map[string]interface{})
+	return &eventarc.TriggerTransportPubsub{
+		Topic: dcl.StringOrNil(obj["topic"].(string)),
+	}
+}
+
 func flattenEventarcTriggerTransportPubsub(obj *eventarc.TriggerTransportPubsub) interface{} {
 	if obj == nil {
 		return nil
 	}
 	transformed := map[string]interface{}{
-		"subscription": obj.Subscription,
 		"topic":        obj.Topic,
+		"subscription": obj.Subscription,
 	}
 
 	return []interface{}{transformed}
