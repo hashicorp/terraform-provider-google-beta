@@ -2,7 +2,7 @@ module github.com/hashicorp/terraform-provider-google-beta
 
 require (
 	cloud.google.com/go/bigtable v1.7.1
-	github.com/GoogleCloudPlatform/declarative-resource-client-library v0.0.0-20210209234318-2149dbf673cf
+	github.com/GoogleCloudPlatform/declarative-resource-client-library v0.0.0-20210405181318-9364c5bf716b
 	github.com/apparentlymart/go-cidr v1.1.0
 	github.com/aws/aws-sdk-go v1.31.9 // indirect
 	github.com/client9/misspell v0.3.4
