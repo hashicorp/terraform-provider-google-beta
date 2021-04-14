@@ -584,7 +584,6 @@ func resourceDataflowJobIsVirtualUpdate(d *schema.ResourceData, resourceSchema m
 	// on_delete is the only virtual field
 	if d.HasChange("on_delete") {
 		// Check if other fields have changes, which would require an actual update request
-		resourceSchema := resourceDataflowJob().Schema
 		for field := range resourceSchema {
 			if field == "on_delete" {
 				continue
