@@ -172,9 +172,12 @@ func testAccCheckServiceUsageConsumerQuotaOverrideDestroyProducer(t *testing.T) 
 				billingProject = config.BillingProject
 			}
 
-			_, err = sendRequest(config, "GET", billingProject, url, config.userAgent, nil)
+			res, err := sendRequest(config, "GET", billingProject, url, config.userAgent, nil)
 			if err == nil {
-				return fmt.Errorf("ServiceUsageConsumerQuotaOverride still exists at %s", url)
+				// Sometimes the API returns an empty response instead of erroring, treat empty as nonexistent
+				if len(res) != 0 {
+					return fmt.Errorf("ServiceUsageConsumerQuotaOverride still exists at %s", url)
+				}
 			}
 		}
 
