@@ -1,24 +1,18 @@
 ## 3.65.0 (Unreleased)
 
-UNKNOWN CHANGELOG TYPE:
-*  ([#3153](https://github.com/hashicorp/terraform-provider-google-beta/pull/3153))
-* Bump github.com/hashicorp/go-version from 1.2.1 to 1.3.0 ([#3109](https://github.com/hashicorp/terraform-provider-google-beta/pull/3109))
-* Revert "add minItems for the required field scopes" ([#3147](https://github.com/hashicorp/terraform-provider-google-beta/pull/3147))
-* Update DCL dependency ([#3148](https://github.com/hashicorp/terraform-provider-google-beta/pull/3148))
-
 FEATURES:
 * **New Data Source:** `google_kms_secret_asymmetric` ([#3141](https://github.com/hashicorp/terraform-provider-google-beta/pull/3141))
-* **New Resource:** google_eventarc_trigger (GA only) ([#3149](https://github.com/hashicorp/terraform-provider-google-beta/pull/3149))
 
 IMPROVEMENTS:
 * compute: added the ability to specify `google_compute_forwarding_rule.ip_address` by a reference in addition to raw IP address ([#3140](https://github.com/hashicorp/terraform-provider-google-beta/pull/3140))
 * compute: enabled fields `advertiseMode`, `advertisedGroups`, `peerAsn`, and `peerIpAddress` to be updatable on resource `google_compute_router_peer` ([#3134](https://github.com/hashicorp/terraform-provider-google-beta/pull/3134))
-* eventarc: added `transport.pubsub.topic` to `google_eventarc_trigger` (beta only) ([#3149](https://github.com/hashicorp/terraform-provider-google-beta/pull/3149))
+* eventarc: added `transport.pubsub.topic` to `google_eventarc_trigger` ([#3149](https://github.com/hashicorp/terraform-provider-google-beta/pull/3149))
 
 BUG FIXES:
-* cloud_identity: fix google_cloud_identity_group_membership import/update ([#3136](https://github.com/hashicorp/terraform-provider-google-beta/pull/3136))
+* cloud_identity: fixed google_cloud_identity_group_membership import/update ([#3136](https://github.com/hashicorp/terraform-provider-google-beta/pull/3136))
 * iam: fixed issue with principle and principleSet members not retaining their casing ([#3133](https://github.com/hashicorp/terraform-provider-google-beta/pull/3133))
 * workflows: fixed a bug in `google_workflows_workflow` that could cause inconsistent final plan errors when using the `name` field in other resources ([#3138](https://github.com/hashicorp/terraform-provider-google-beta/pull/3138))
+* compute: removed minimum for `scopes` field on `google_compute_instance` resource ([#3147](https://github.com/hashicorp/terraform-provider-google-beta/pull/3147))
 
 ## 3.64.0 (April 12, 2021)
 
