@@ -1,4 +1,19 @@
 ## 3.65.0 (Unreleased)
+
+FEATURES:
+* **New Data Source:** `google_kms_secret_asymmetric` ([#3141](https://github.com/hashicorp/terraform-provider-google-beta/pull/3141))
+
+IMPROVEMENTS:
+* compute: added the ability to specify `google_compute_forwarding_rule.ip_address` by a reference in addition to raw IP address ([#3140](https://github.com/hashicorp/terraform-provider-google-beta/pull/3140))
+* compute: enabled fields `advertiseMode`, `advertisedGroups`, `peerAsn`, and `peerIpAddress` to be updatable on resource `google_compute_router_peer` ([#3134](https://github.com/hashicorp/terraform-provider-google-beta/pull/3134))
+* eventarc: added `transport.pubsub.topic` to `google_eventarc_trigger` ([#3149](https://github.com/hashicorp/terraform-provider-google-beta/pull/3149))
+
+BUG FIXES:
+* cloud_identity: fixed google_cloud_identity_group_membership import/update ([#3136](https://github.com/hashicorp/terraform-provider-google-beta/pull/3136))
+* compute: removed minimum for `scopes` field on `google_compute_instance` resource ([#3147](https://github.com/hashicorp/terraform-provider-google-beta/pull/3147))
+* iam: fixed issue with principle and principleSet members not retaining their casing ([#3133](https://github.com/hashicorp/terraform-provider-google-beta/pull/3133))
+* workflows: fixed a bug in `google_workflows_workflow` that could cause inconsistent final plan errors when using the `name` field in other resources ([#3138](https://github.com/hashicorp/terraform-provider-google-beta/pull/3138))
+
 ## 3.64.0 (April 12, 2021)
 
 FEATURES:
