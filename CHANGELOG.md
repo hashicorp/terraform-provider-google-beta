@@ -10,9 +10,9 @@ IMPROVEMENTS:
 
 BUG FIXES:
 * cloud_identity: fixed google_cloud_identity_group_membership import/update ([#3136](https://github.com/hashicorp/terraform-provider-google-beta/pull/3136))
+* compute: removed minimum for `scopes` field on `google_compute_instance` resource ([#3147](https://github.com/hashicorp/terraform-provider-google-beta/pull/3147))
 * iam: fixed issue with principle and principleSet members not retaining their casing ([#3133](https://github.com/hashicorp/terraform-provider-google-beta/pull/3133))
 * workflows: fixed a bug in `google_workflows_workflow` that could cause inconsistent final plan errors when using the `name` field in other resources ([#3138](https://github.com/hashicorp/terraform-provider-google-beta/pull/3138))
-* compute: removed minimum for `scopes` field on `google_compute_instance` resource ([#3147](https://github.com/hashicorp/terraform-provider-google-beta/pull/3147))
 
 ## 3.64.0 (April 12, 2021)
 
