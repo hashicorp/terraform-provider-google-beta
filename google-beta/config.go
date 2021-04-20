@@ -14,6 +14,7 @@ import (
 	"google.golang.org/api/option"
 
 	dcl "github.com/GoogleCloudPlatform/declarative-resource-client-library/dcl"
+	dataprocDcl "github.com/GoogleCloudPlatform/declarative-resource-client-library/services/google/dataproc/beta"
 	eventarcDcl "github.com/GoogleCloudPlatform/declarative-resource-client-library/services/google/eventarc/beta"
 	"golang.org/x/oauth2"
 	googleoauth "golang.org/x/oauth2/google"
@@ -176,6 +177,7 @@ type Config struct {
 
 	// start DCL clients
 	dclConfig         *dcl.Config
+	clientDataprocDCL *dataprocDcl.Client
 	clientEventarcDCL *eventarcDcl.Client
 }
 
@@ -310,6 +312,7 @@ func (c *Config) LoadAndValidate(ctx context.Context) error {
 	// Start DCL client instantiation
 	// TODO(slevenick): handle user agents
 	c.dclConfig = dcl.NewConfig(dcl.WithHTTPClient(client), dcl.WithUserAgent(c.userAgent), dcl.WithLogger(dclLogger{}))
+	c.clientDataprocDCL = dataprocDcl.NewClient(c.dclConfig)
 	c.clientEventarcDCL = eventarcDcl.NewClient(c.dclConfig)
 
 	return nil
