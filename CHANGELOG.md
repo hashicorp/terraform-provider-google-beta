@@ -1,4 +1,4 @@
-## 3.65.0 (Unreleased)
+## 3.65.0 (April 20, 2021)
 
 FEATURES:
 * **New Data Source:** `google_kms_secret_asymmetric` ([#3141](https://github.com/hashicorp/terraform-provider-google-beta/pull/3141))
