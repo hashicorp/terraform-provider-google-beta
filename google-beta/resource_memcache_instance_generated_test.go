@@ -34,11 +34,17 @@ func TestAccMemcacheInstance_memcacheInstanceBasicExample(t *testing.T) {
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProvidersOiCS,
+		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckMemcacheInstanceDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccMemcacheInstance_memcacheInstanceBasicExample(context),
+			},
+			{
+				ResourceName:            "google_memcache_instance.instance",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"name", "region"},
 			},
 		},
 	})
@@ -60,7 +66,6 @@ data "google_compute_network" "memcache_network" {
 }
 
 resource "google_compute_global_address" "service_range" {
-  provider = google-beta
   name          = "address%{random_suffix}"
   purpose       = "VPC_PEERING"
   address_type  = "INTERNAL"
@@ -69,14 +74,12 @@ resource "google_compute_global_address" "service_range" {
 }
 
 resource "google_service_networking_connection" "private_service_connection" {
-  provider = google-beta
   network                 = data.google_compute_network.memcache_network.id
   service                 = "servicenetworking.googleapis.com"
   reserved_peering_ranges = [google_compute_global_address.service_range.name]
 }
 
 resource "google_memcache_instance" "instance" {
-  provider = google-beta
   name = "tf-test-test-instance%{random_suffix}"
   authorized_network = google_service_networking_connection.private_service_connection.network
 
