@@ -74,6 +74,81 @@ resource "google_healthcare_dataset" "dataset" {
 `, context)
 }
 
+func TestAccHealthcareDicomStore_healthcareDicomStoreBqStreamExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"random_suffix": randString(t, 10),
+	}
+
+	vcrTest(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProvidersOiCS,
+		CheckDestroy: testAccCheckHealthcareDicomStoreDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccHealthcareDicomStore_healthcareDicomStoreBqStreamExample(context),
+			},
+		},
+	})
+}
+
+func testAccHealthcareDicomStore_healthcareDicomStoreBqStreamExample(context map[string]interface{}) string {
+	return Nprintf(`
+resource "google_healthcare_dicom_store" "default" {
+  provider = google-beta
+
+  name    = "tf-test-example-dicom-store%{random_suffix}"
+  dataset = google_healthcare_dataset.dataset.id
+
+  notification_config {
+    pubsub_topic = google_pubsub_topic.topic.id
+  }
+
+  labels = {
+    label1 = "labelvalue1"
+  }
+
+  stream_configs {
+    bigquery_destination {
+      table_uri = "bq://${google_bigquery_dataset.bq_dataset.project}.${google_bigquery_dataset.bq_dataset.dataset_id}.${google_bigquery_table.bq_table.table_id}"
+    }
+  }  
+}
+
+resource "google_pubsub_topic" "topic" {
+  provider = google-beta
+
+  name     = "tf-test-dicom-notifications%{random_suffix}"
+}
+
+resource "google_healthcare_dataset" "dataset" {
+  provider = google-beta
+
+  name     = "tf-test-example-dataset%{random_suffix}"
+  location = "us-central1"
+}
+
+resource "google_bigquery_dataset" "bq_dataset" {
+  provider = google-beta
+
+  dataset_id    = "tf_test_dicom_bq_ds%{random_suffix}"
+  friendly_name = "test"
+  description   = "This is a test description"
+  location      = "US"
+  delete_contents_on_destroy = true
+}
+
+resource "google_bigquery_table" "bq_table" {
+  provider = google-beta
+
+  deletion_protection = false
+  dataset_id = google_bigquery_dataset.bq_dataset.dataset_id
+  table_id   = "tf_test_dicom_bq_tb%{random_suffix}"
+}
+`, context)
+}
+
 func testAccCheckHealthcareDicomStoreDestroyProducer(t *testing.T) func(s *terraform.State) error {
 	return func(s *terraform.State) error {
 		for name, rs := range s.RootModule().Resources {
