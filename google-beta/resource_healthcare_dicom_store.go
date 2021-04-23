@@ -95,6 +95,31 @@ Cloud Pub/Sub topic. Not having adequate permissions will cause the calls that s
 					},
 				},
 			},
+			"stream_configs": {
+				Type:     schema.TypeList,
+				Optional: true,
+				Description: `To enable streaming to BigQuery, configure the streamConfigs object in your DICOM store.
+streamConfigs is an array, so you can specify multiple BigQuery destinations. You can stream metadata from a single DICOM store to up to five BigQuery tables in a BigQuery dataset.`,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"bigquery_destination": {
+							Type:        schema.TypeList,
+							Required:    true,
+							Description: `BigQueryDestination to include a fully qualified BigQuery table URI where DICOM instance metadata will be streamed.`,
+							MaxItems:    1,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"table_uri": {
+										Type:        schema.TypeString,
+										Required:    true,
+										Description: `a fully qualified BigQuery table URI where DICOM instance metadata will be streamed.`,
+									},
+								},
+							},
+						},
+					},
+				},
+			},
 			"self_link": {
 				Type:        schema.TypeString,
 				Computed:    true,
@@ -130,6 +155,12 @@ func resourceHealthcareDicomStoreCreate(d *schema.ResourceData, meta interface{}
 		return err
 	} else if v, ok := d.GetOkExists("notification_config"); !isEmptyValue(reflect.ValueOf(notificationConfigProp)) && (ok || !reflect.DeepEqual(v, notificationConfigProp)) {
 		obj["notificationConfig"] = notificationConfigProp
+	}
+	streamConfigsProp, err := expandHealthcareDicomStoreStreamConfigs(d.Get("stream_configs"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("stream_configs"); !isEmptyValue(reflect.ValueOf(streamConfigsProp)) && (ok || !reflect.DeepEqual(v, streamConfigsProp)) {
+		obj["streamConfigs"] = streamConfigsProp
 	}
 
 	url, err := replaceVars(d, config, "{{HealthcareBasePath}}{{dataset}}/dicomStores?dicomStoreId={{name}}")
@@ -207,6 +238,9 @@ func resourceHealthcareDicomStoreRead(d *schema.ResourceData, meta interface{}) 
 	if err := d.Set("notification_config", flattenHealthcareDicomStoreNotificationConfig(res["notificationConfig"], d, config)); err != nil {
 		return fmt.Errorf("Error reading DicomStore: %s", err)
 	}
+	if err := d.Set("stream_configs", flattenHealthcareDicomStoreStreamConfigs(res["streamConfigs"], d, config)); err != nil {
+		return fmt.Errorf("Error reading DicomStore: %s", err)
+	}
 
 	return nil
 }
@@ -233,6 +267,12 @@ func resourceHealthcareDicomStoreUpdate(d *schema.ResourceData, meta interface{}
 	} else if v, ok := d.GetOkExists("notification_config"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, notificationConfigProp)) {
 		obj["notificationConfig"] = notificationConfigProp
 	}
+	streamConfigsProp, err := expandHealthcareDicomStoreStreamConfigs(d.Get("stream_configs"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("stream_configs"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, streamConfigsProp)) {
+		obj["streamConfigs"] = streamConfigsProp
+	}
 
 	url, err := replaceVars(d, config, "{{HealthcareBasePath}}{{dataset}}/dicomStores/{{name}}")
 	if err != nil {
@@ -248,6 +288,10 @@ func resourceHealthcareDicomStoreUpdate(d *schema.ResourceData, meta interface{}
 
 	if d.HasChange("notification_config") {
 		updateMask = append(updateMask, "notificationConfig")
+	}
+
+	if d.HasChange("stream_configs") {
+		updateMask = append(updateMask, "streamConfigs")
 	}
 	// updateMask is a URL parameter but not present in the schema, so replaceVars
 	// won't set it
@@ -347,6 +391,41 @@ func flattenHealthcareDicomStoreNotificationConfigPubsubTopic(v interface{}, d *
 	return v
 }
 
+func flattenHealthcareDicomStoreStreamConfigs(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	if v == nil {
+		return v
+	}
+	l := v.([]interface{})
+	transformed := make([]interface{}, 0, len(l))
+	for _, raw := range l {
+		original := raw.(map[string]interface{})
+		if len(original) < 1 {
+			// Do not include empty json objects coming back from the api
+			continue
+		}
+		transformed = append(transformed, map[string]interface{}{
+			"bigquery_destination": flattenHealthcareDicomStoreStreamConfigsBigqueryDestination(original["bigqueryDestination"], d, config),
+		})
+	}
+	return transformed
+}
+func flattenHealthcareDicomStoreStreamConfigsBigqueryDestination(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["table_uri"] =
+		flattenHealthcareDicomStoreStreamConfigsBigqueryDestinationTableUri(original["tableUri"], d, config)
+	return []interface{}{transformed}
+}
+func flattenHealthcareDicomStoreStreamConfigsBigqueryDestinationTableUri(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	return v
+}
+
 func expandHealthcareDicomStoreName(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
@@ -382,6 +461,51 @@ func expandHealthcareDicomStoreNotificationConfig(v interface{}, d TerraformReso
 }
 
 func expandHealthcareDicomStoreNotificationConfigPubsubTopic(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandHealthcareDicomStoreStreamConfigs(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	l := v.([]interface{})
+	req := make([]interface{}, 0, len(l))
+	for _, raw := range l {
+		if raw == nil {
+			continue
+		}
+		original := raw.(map[string]interface{})
+		transformed := make(map[string]interface{})
+
+		transformedBigqueryDestination, err := expandHealthcareDicomStoreStreamConfigsBigqueryDestination(original["bigquery_destination"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedBigqueryDestination); val.IsValid() && !isEmptyValue(val) {
+			transformed["bigqueryDestination"] = transformedBigqueryDestination
+		}
+
+		req = append(req, transformed)
+	}
+	return req, nil
+}
+
+func expandHealthcareDicomStoreStreamConfigsBigqueryDestination(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedTableUri, err := expandHealthcareDicomStoreStreamConfigsBigqueryDestinationTableUri(original["table_uri"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedTableUri); val.IsValid() && !isEmptyValue(val) {
+		transformed["tableUri"] = transformedTableUri
+	}
+
+	return transformed, nil
+}
+
+func expandHealthcareDicomStoreStreamConfigsBigqueryDestinationTableUri(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
