@@ -1511,7 +1511,7 @@ func expandComputeRegionAutoscalerAutoscalingPolicyScalingSchedules(v interface{
 		transformedMinRequiredReplicas, err := expandComputeRegionAutoscalerAutoscalingPolicyScalingSchedulesMinRequiredReplicas(original["min_required_replicas"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedMinRequiredReplicas); val.IsValid() && !isEmptyValue(val) {
+		} else {
 			transformed["minRequiredReplicas"] = transformedMinRequiredReplicas
 		}
 
