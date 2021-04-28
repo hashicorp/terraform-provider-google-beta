@@ -1,4 +1,31 @@
-## 3.66.0 (Unreleased)
+## 3.67.0 (Unreleased)
+## 3.66.0 (April 28, 2021)
+
+NOTES:
+* all: changed default HTTP request timeout from 30 seconds to 120 seconds ([#3181](https://github.com/hashicorp/terraform-provider-google-beta/pull/3181))
+
+BREAKING CHANGES:
+* datacatalog: updating `parent` in `google_data_catalog_tag` will now recreate the resource ([#3179](https://github.com/hashicorp/terraform-provider-google-beta/pull/3179))
+
+FEATURES:
+* **New Data Source:** `google_compute_ha_vpn_gateway` ([#3173](https://github.com/hashicorp/terraform-provider-google-beta/pull/3173))
+* **New Resource:** `google_dataproc_workflow_template` ([#3178](https://github.com/hashicorp/terraform-provider-google-beta/pull/3178))
+
+IMPROVEMENTS:
+* bigquery: Added BigTable source format in BigQuery table ([#3165](https://github.com/hashicorp/terraform-provider-google-beta/pull/3165))
+* cloudfunctions: removed bounds on the supported memory range in `google_cloudfunctions_function.available_memory_mb` ([#3171](https://github.com/hashicorp/terraform-provider-google-beta/pull/3171))
+* compute: marked scheduling.0.node_affinities as updatable in `google_compute_instance` ([#3166](https://github.com/hashicorp/terraform-provider-google-beta/pull/3166))
+* dataproc: added `shielded_instance_config` fields to `google_dataproc_cluster` ([#3157](https://github.com/hashicorp/terraform-provider-google-beta/pull/3157))
+* spanner: added support for setting a CMEK on `google_spanner_database` ([#3181](https://github.com/hashicorp/terraform-provider-google-beta/pull/3181))
+
+BUG FIXES:
+* compute: fixed error when creating empty `scopes` on `google_compute_instance` ([#3174](https://github.com/hashicorp/terraform-provider-google-beta/pull/3174))
+* container: fixed a bug that allowed specifying `node_config` on `google_container_cluster` when autopilot is used ([#3155](https://github.com/hashicorp/terraform-provider-google-beta/pull/3155))
+* datacatalog: fixed an issue where `parent` in `google_data_catalog_tag` attempted to update the resource when change instead of recreating it ([#3179](https://github.com/hashicorp/terraform-provider-google-beta/pull/3179))
+* datacatalog: set default false for `force_delete` on `google_data_catalog_tag_template` ([#3164](https://github.com/hashicorp/terraform-provider-google-beta/pull/3164))
+* dns: added missing record types to `google_dns_record_set` resource ([#3160](https://github.com/hashicorp/terraform-provider-google-beta/pull/3160))
+* sql: set `clone.point_in_time` optional for `google_sql_database_instance` ([#3180](https://github.com/hashicorp/terraform-provider-google-beta/pull/3180))
+
 ## 3.65.0 (April 20, 2021)
 
 FEATURES:
