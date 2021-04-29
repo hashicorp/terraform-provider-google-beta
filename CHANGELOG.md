@@ -1,4 +1,8 @@
 ## 3.67.0 (Unreleased)
+## 3.66.1 (April 29, 2021)
+BUG FIXES:
+* compute: fixed bug where terraform would crash if updating from no `service_account.scopes` to more. ([#3208](https://github.com/hashicorp/terraform-provider-google-beta/pull/3208))
+
 ## 3.66.0 (April 28, 2021)
 
 NOTES:
