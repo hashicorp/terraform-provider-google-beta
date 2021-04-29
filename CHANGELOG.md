@@ -1,3 +1,7 @@
+## 3.66.1 (April 29, 2021)
+BUG FIXES:
+* compute: fixed bug where terraform would crash if updating from no `service_account.scopes` to more. ([#3208](https://github.com/hashicorp/terraform-provider-google-beta/pull/3208))
+
 ## 3.66.0 (April 28, 2021)
 NOTES:
 * all: changed default HTTP request timeout from 30 seconds to 120 seconds ([#3181](https://github.com/hashicorp/terraform-provider-google-beta/pull/3181))
