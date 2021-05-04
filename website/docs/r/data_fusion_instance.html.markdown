@@ -122,6 +122,10 @@ The following arguments are supported:
   (Optional)
   Option to enable Stackdriver Monitoring.
 
+* `enable_rbac` -
+  (Optional)
+  Option to enable granular role-based access control.
+  
 * `labels` -
   (Optional)
   The resource labels for instance to use to annotate any related underlying resources,
