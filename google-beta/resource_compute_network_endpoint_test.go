@@ -20,7 +20,7 @@ func TestAccComputeNetworkEndpoint_networkEndpointsBasic(t *testing.T) {
 		"add1_port":     101,
 		"add2_port":     102,
 	}
-	negId := fmt.Sprintf("projects/%s/zones/%s/networkEndpointGroups/neg-%s",
+	negId := fmt.Sprintf("projects/%s/zones/%s/networkEndpointGroups/tf-test-neg-%s",
 		getTestProjectFromEnv(), getTestZoneFromEnv(), context["random_suffix"])
 
 	vcrTest(t, resource.TestCase{
