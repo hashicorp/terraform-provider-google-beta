@@ -164,7 +164,7 @@ func resourceComputeOrganizationSecurityPolicyAssociationRead(d *schema.Resource
 
 	res, err := sendRequest(config, "GET", billingProject, url, userAgent, nil)
 	if err != nil {
-		return handleNotFoundError(err, d, fmt.Sprintf("ComputeOrganizationSecurityPolicyAssociation %q", d.Id()))
+		return handleNotFoundError(transformSecurityPolicyAssociationReadError(err), d, fmt.Sprintf("ComputeOrganizationSecurityPolicyAssociation %q", d.Id()))
 	}
 
 	if err := d.Set("name", flattenComputeOrganizationSecurityPolicyAssociationName(res["name"], d, config)); err != nil {
