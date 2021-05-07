@@ -77,6 +77,13 @@ instance from the image)`,
 				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
+						"kms_key_name": {
+							Type:             schema.TypeString,
+							Optional:         true,
+							ForceNew:         true,
+							DiffSuppressFunc: compareCryptoKeyVersions,
+							Description:      `The name of the encryption key that is stored in Google Cloud KMS.`,
+						},
 						"kms_key_service_account": {
 							Type:     schema.TypeString,
 							Optional: true,
@@ -90,11 +97,6 @@ If absent, the Compute Engine Service Agent service account is used.`,
 							ForceNew: true,
 							Description: `Specifies a 256-bit customer-supplied encryption key, encoded in
 RFC 4648 base64 to either encrypt or decrypt this resource.`,
-						},
-						"kms_key_name": {
-							Type:        schema.TypeString,
-							Computed:    true,
-							Description: `The name of the encryption key that is stored in Google Cloud KMS.`,
 						},
 						"sha256": {
 							Type:     schema.TypeString,
