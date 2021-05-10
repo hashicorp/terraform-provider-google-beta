@@ -1,4 +1,4 @@
-## 3.67.0 (Unreleased)
+## 3.67.0 (May 10, 2021)
 
 NOTES:
 * all: changed default HTTP request timeout from 30 seconds to 120 seconds ([#3181](https://github.com/hashicorp/terraform-provider-google-beta/pull/3181))
