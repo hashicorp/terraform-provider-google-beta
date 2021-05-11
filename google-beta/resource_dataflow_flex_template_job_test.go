@@ -158,7 +158,6 @@ data "google_storage_bucket_object" "flex_template" {
   name   = "latest/flex/Streaming_Data_Generator"
   bucket = "dataflow-templates"
 }
-
 resource "google_dataflow_flex_template_job" "job" {
   name = "%s"
   container_spec_gcs_path = "gs://${data.google_storage_bucket_object.flex_template.bucket}/${data.google_storage_bucket_object.flex_template.name}"
@@ -179,17 +178,14 @@ resource "google_service_account" "dataflow-sa" {
   account_id   = "%s"
   display_name = "DataFlow Service Account"
 }
-
 resource "google_project_iam_member" "dataflow-worker" {
   role   = "roles/dataflow.worker"
   member = "serviceAccount:${google_service_account.dataflow-sa.email}"
 }
-
 data "google_storage_bucket_object" "flex_template" {
   name   = "latest/flex/Streaming_Data_Generator"
   bucket = "dataflow-templates"
 }
-
 resource "google_dataflow_flex_template_job" "job" {
   name = "%s"
   container_spec_gcs_path = "gs://${data.google_storage_bucket_object.flex_template.bucket}/${data.google_storage_bucket_object.flex_template.name}"
