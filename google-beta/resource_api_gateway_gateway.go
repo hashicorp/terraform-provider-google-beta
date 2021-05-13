@@ -45,9 +45,9 @@ func resourceApiGatewayGateway() *schema.Resource {
 			"api_config": {
 				Type:             schema.TypeString,
 				Required:         true,
-				ForceNew:         true,
 				DiffSuppressFunc: compareResourceNames,
-				Description:      `Resource name of the API Config for this Gateway. Format: projects/{project}/locations/global/apis/{api}/configs/{apiConfig}`,
+				Description: `Resource name of the API Config for this Gateway. Format: projects/{project}/locations/global/apis/{api}/configs/{apiConfig}.
+When changing api configs please ensure the new config is a new resource and the lifecycle rule 'create_before_destroy' is set.`,
 			},
 			"gateway_id": {
 				Type:        schema.TypeString,
@@ -256,6 +256,12 @@ func resourceApiGatewayGatewayUpdate(d *schema.ResourceData, meta interface{}) e
 	} else if v, ok := d.GetOkExists("display_name"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, displayNameProp)) {
 		obj["displayName"] = displayNameProp
 	}
+	apiConfigProp, err := expandApiGatewayGatewayApiConfig(d.Get("api_config"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("api_config"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, apiConfigProp)) {
+		obj["apiConfig"] = apiConfigProp
+	}
 	labelsProp, err := expandApiGatewayGatewayLabels(d.Get("labels"), d, config)
 	if err != nil {
 		return err
@@ -273,6 +279,10 @@ func resourceApiGatewayGatewayUpdate(d *schema.ResourceData, meta interface{}) e
 
 	if d.HasChange("display_name") {
 		updateMask = append(updateMask, "displayName")
+	}
+
+	if d.HasChange("api_config") {
+		updateMask = append(updateMask, "apiConfig")
 	}
 
 	if d.HasChange("labels") {
