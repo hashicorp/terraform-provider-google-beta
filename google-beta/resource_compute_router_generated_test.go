@@ -73,6 +73,45 @@ resource "google_compute_network" "foobar" {
 `, context)
 }
 
+func TestAccComputeRouter_computeRouterEncryptedInterconnectExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"random_suffix": randString(t, 10),
+	}
+
+	vcrTest(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProvidersOiCS,
+		CheckDestroy: testAccCheckComputeRouterDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeRouter_computeRouterEncryptedInterconnectExample(context),
+			},
+		},
+	})
+}
+
+func testAccComputeRouter_computeRouterEncryptedInterconnectExample(context map[string]interface{}) string {
+	return Nprintf(`
+resource "google_compute_router" "encrypted-interconnect-router" {
+  name                          = "tf-test-test-router%{random_suffix}"
+  network                       = google_compute_network.network.name
+  encrypted_interconnect_router = true
+  bgp {
+    asn = 64514
+  }
+  provider = google-beta
+}
+
+resource "google_compute_network" "network" {
+  name                    = "tf-test-test-network%{random_suffix}"
+  auto_create_subnetworks = false
+  provider = google-beta
+}
+`, context)
+}
+
 func testAccCheckComputeRouterDestroyProducer(t *testing.T) func(s *terraform.State) error {
 	return func(s *terraform.State) error {
 		for name, rs := range s.RootModule().Resources {
