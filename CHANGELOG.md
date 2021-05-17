@@ -1,21 +1,18 @@
 ## 3.68.0 (Unreleased)
-UNKNOWN CHANGELOG TYPE:
-* Allow Dataflow flex template jobs to be updated ([#3069](https://github.com/hashicorp/terraform-provider-google-beta/pull/3069))
-
 FEATURES:
-* **New Resource:** pubsub: Add schema resource as `google_pubsub_schema` to google pubsub ([#3243](https://github.com/hashicorp/terraform-provider-google-beta/pull/3243))
+* **New Resource:** pubsub: Added schema resource as `google_pubsub_schema` to google pubsub ([#3243](https://github.com/hashicorp/terraform-provider-google-beta/pull/3243))
 
 IMPROVEMENTS:
 * compute: Fixed permadiff for `cdn_policy.serve_while_stale` and `cdn_policy.*_ttl` in `google_compute_backend_service` (beta) ([#3230](https://github.com/hashicorp/terraform-provider-google-beta/pull/3230))
 * compute: Fixed permadiff for `cdn_policy.serve_while_stale` and `cdn_policy.*_ttl` in `google_compute_region_backend_service` (beta) ([#3230](https://github.com/hashicorp/terraform-provider-google-beta/pull/3230))
-* compute: added `initial_size` to account for scenarios where size may change under the hood in resource `google_compute_node_group` ([#3228](https://github.com/hashicorp/terraform-provider-google-beta/pull/3228))
+* compute: added `initial_size` in resource `google_compute_node_group` to account for scenarios where size may change under the hood ([#3228](https://github.com/hashicorp/terraform-provider-google-beta/pull/3228))
 * compute: added support for setting `kms_key_name` on `google_compute_machine_image` ([#3241](https://github.com/hashicorp/terraform-provider-google-beta/pull/3241))
 * dataflow: enabled updates for `google_dataflow_flex_template_job` ([#3246](https://github.com/hashicorp/terraform-provider-google-beta/pull/3246))
 
 BUG FIXES:
 * compute: fixed bug where, when an organization security policy association was removed outside of terraform, the next plan/apply would fail. ([#3234](https://github.com/hashicorp/terraform-provider-google-beta/pull/3234))
 * container: added validation to check that both `node_version` and `remove_default_node_pool` cannot be set on `google_container_cluster` ([#3237](https://github.com/hashicorp/terraform-provider-google-beta/pull/3237))
-* dns: suppress spurious diffs due to case changes in DS records ([#3236](https://github.com/hashicorp/terraform-provider-google-beta/pull/3236))
+* dns: suppressed spurious diffs due to case changes in DS records ([#3236](https://github.com/hashicorp/terraform-provider-google-beta/pull/3236))
 
 ## 3.67.0 (May 10, 2021)
 NOTES:
