@@ -1,4 +1,4 @@
-## 3.68.0 (Unreleased)
+## 3.68.0 (May 18, 2021)
 FEATURES:
 * **New Resource:** `google_pubsub_schema` ([#3243](https://github.com/hashicorp/terraform-provider-google-beta/pull/3243))
 
