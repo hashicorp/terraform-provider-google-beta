@@ -1,4 +1,19 @@
-## 3.68.0 (Unreleased)
+## 3.69.0 (Unreleased)
+
+## 3.68.0 (May 18, 2021)
+FEATURES:
+* **New Resource:** `google_pubsub_schema` ([#3243](https://github.com/hashicorp/terraform-provider-google-beta/pull/3243))
+
+IMPROVEMENTS:
+* compute: added `initial_size` in resource `google_compute_node_group` to account for scenarios where size may change under the hood ([#3228](https://github.com/hashicorp/terraform-provider-google-beta/pull/3228))
+* compute: added support for setting `kms_key_name` on `google_compute_machine_image` ([#3241](https://github.com/hashicorp/terraform-provider-google-beta/pull/3241))
+* dataflow: enabled updates for `google_dataflow_flex_template_job` ([#3246](https://github.com/hashicorp/terraform-provider-google-beta/pull/3246))
+
+BUG FIXES:
+* compute: Fixed permadiff for `cdn_policy.serve_while_stale` and `cdn_policy.*_ttl` in `google_compute_region_backend_service` (beta) ([#3230](https://github.com/hashicorp/terraform-provider-google-beta/pull/3230))
+* compute: fixed bug where, when an organization security policy association was removed outside of terraform, the next plan/apply would fail. ([#3234](https://github.com/hashicorp/terraform-provider-google-beta/pull/3234))
+* container: added validation to check that both `node_version` and `remove_default_node_pool` cannot be set on `google_container_cluster` ([#3237](https://github.com/hashicorp/terraform-provider-google-beta/pull/3237))
+* dns: suppressed spurious diffs due to case changes in DS records ([#3236](https://github.com/hashicorp/terraform-provider-google-beta/pull/3236))
 
 ## 3.67.0 (May 10, 2021)
 NOTES:
