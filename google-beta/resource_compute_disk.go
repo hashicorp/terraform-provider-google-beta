@@ -1173,6 +1173,10 @@ func flattenComputeDiskPhysicalBlockSizeBytes(v interface{}, d *schema.ResourceD
 }
 
 func flattenComputeDiskInterface(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	if v == nil || isEmptyValue(reflect.ValueOf(v)) {
+		return "SCSI"
+	}
+
 	return v
 }
 

@@ -825,6 +825,10 @@ func flattenComputeRegionDiskType(v interface{}, d *schema.ResourceData, config 
 }
 
 func flattenComputeRegionDiskInterface(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	if v == nil || isEmptyValue(reflect.ValueOf(v)) {
+		return "SCSI"
+	}
+
 	return v
 }
 
