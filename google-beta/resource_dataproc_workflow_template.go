@@ -1802,10 +1802,10 @@ func resourceDataprocWorkflowTemplateCreate(d *schema.ResourceData, meta interfa
 
 	obj := &dataproc.WorkflowTemplate{
 		Jobs:       expandDataprocWorkflowTemplateJobsArray(d.Get("jobs")),
-		Location:   dcl.StringOrNil(d.Get("location").(string)),
-		Name:       dcl.StringOrNil(d.Get("name").(string)),
+		Location:   dcl.String(d.Get("location").(string)),
+		Name:       dcl.String(d.Get("name").(string)),
 		Placement:  expandDataprocWorkflowTemplatePlacement(d.Get("placement")),
-		DagTimeout: dcl.StringOrNil(d.Get("dag_timeout").(string)),
+		DagTimeout: dcl.String(d.Get("dag_timeout").(string)),
 		Labels:     checkStringMap(d.Get("labels")),
 		Parameters: expandDataprocWorkflowTemplateParametersArray(d.Get("parameters")),
 		Project:    dcl.String(project),
@@ -1839,10 +1839,10 @@ func resourceDataprocWorkflowTemplateRead(d *schema.ResourceData, meta interface
 
 	obj := &dataproc.WorkflowTemplate{
 		Jobs:       expandDataprocWorkflowTemplateJobsArray(d.Get("jobs")),
-		Location:   dcl.StringOrNil(d.Get("location").(string)),
-		Name:       dcl.StringOrNil(d.Get("name").(string)),
+		Location:   dcl.String(d.Get("location").(string)),
+		Name:       dcl.String(d.Get("name").(string)),
 		Placement:  expandDataprocWorkflowTemplatePlacement(d.Get("placement")),
-		DagTimeout: dcl.StringOrNil(d.Get("dag_timeout").(string)),
+		DagTimeout: dcl.String(d.Get("dag_timeout").(string)),
 		Labels:     checkStringMap(d.Get("labels")),
 		Parameters: expandDataprocWorkflowTemplateParametersArray(d.Get("parameters")),
 		Project:    dcl.String(project),
@@ -1902,10 +1902,10 @@ func resourceDataprocWorkflowTemplateDelete(d *schema.ResourceData, meta interfa
 
 	obj := &dataproc.WorkflowTemplate{
 		Jobs:       expandDataprocWorkflowTemplateJobsArray(d.Get("jobs")),
-		Location:   dcl.StringOrNil(d.Get("location").(string)),
-		Name:       dcl.StringOrNil(d.Get("name").(string)),
+		Location:   dcl.String(d.Get("location").(string)),
+		Name:       dcl.String(d.Get("name").(string)),
 		Placement:  expandDataprocWorkflowTemplatePlacement(d.Get("placement")),
-		DagTimeout: dcl.StringOrNil(d.Get("dag_timeout").(string)),
+		DagTimeout: dcl.String(d.Get("dag_timeout").(string)),
 		Labels:     checkStringMap(d.Get("labels")),
 		Parameters: expandDataprocWorkflowTemplateParametersArray(d.Get("parameters")),
 		Project:    dcl.String(project),
@@ -1962,12 +1962,12 @@ func expandDataprocWorkflowTemplateJobsArray(o interface{}) []dataproc.WorkflowT
 
 func expandDataprocWorkflowTemplateJobs(o interface{}) *dataproc.WorkflowTemplateJobs {
 	if o == nil {
-		return nil
+		return dataproc.EmptyWorkflowTemplateJobs
 	}
 
 	obj := o.(map[string]interface{})
 	return &dataproc.WorkflowTemplateJobs{
-		StepId:              dcl.StringOrNil(obj["step_id"].(string)),
+		StepId:              dcl.String(obj["step_id"].(string)),
 		HadoopJob:           expandDataprocWorkflowTemplateJobsHadoopJob(obj["hadoop_job"]),
 		HiveJob:             expandDataprocWorkflowTemplateJobsHiveJob(obj["hive_job"]),
 		Labels:              checkStringMap(obj["labels"]),
@@ -1997,7 +1997,7 @@ func flattenDataprocWorkflowTemplateJobsArray(objs []dataproc.WorkflowTemplateJo
 }
 
 func flattenDataprocWorkflowTemplateJobs(obj *dataproc.WorkflowTemplateJobs) interface{} {
-	if obj == nil {
+	if obj == nil || obj.Empty() {
 		return nil
 	}
 	transformed := map[string]interface{}{
@@ -2021,11 +2021,11 @@ func flattenDataprocWorkflowTemplateJobs(obj *dataproc.WorkflowTemplateJobs) int
 
 func expandDataprocWorkflowTemplateJobsHadoopJob(o interface{}) *dataproc.WorkflowTemplateJobsHadoopJob {
 	if o == nil {
-		return nil
+		return dataproc.EmptyWorkflowTemplateJobsHadoopJob
 	}
 	objArr := o.([]interface{})
 	if len(objArr) == 0 {
-		return nil
+		return dataproc.EmptyWorkflowTemplateJobsHadoopJob
 	}
 	obj := objArr[0].(map[string]interface{})
 	return &dataproc.WorkflowTemplateJobsHadoopJob{
@@ -2034,14 +2034,14 @@ func expandDataprocWorkflowTemplateJobsHadoopJob(o interface{}) *dataproc.Workfl
 		FileUris:       expandStringArray(obj["file_uris"]),
 		JarFileUris:    expandStringArray(obj["jar_file_uris"]),
 		LoggingConfig:  expandDataprocWorkflowTemplateJobsHadoopJobLoggingConfig(obj["logging_config"]),
-		MainClass:      dcl.StringOrNil(obj["main_class"].(string)),
-		MainJarFileUri: dcl.StringOrNil(obj["main_jar_file_uri"].(string)),
+		MainClass:      dcl.String(obj["main_class"].(string)),
+		MainJarFileUri: dcl.String(obj["main_jar_file_uri"].(string)),
 		Properties:     checkStringMap(obj["properties"]),
 	}
 }
 
 func flattenDataprocWorkflowTemplateJobsHadoopJob(obj *dataproc.WorkflowTemplateJobsHadoopJob) interface{} {
-	if obj == nil {
+	if obj == nil || obj.Empty() {
 		return nil
 	}
 	transformed := map[string]interface{}{
@@ -2061,11 +2061,11 @@ func flattenDataprocWorkflowTemplateJobsHadoopJob(obj *dataproc.WorkflowTemplate
 
 func expandDataprocWorkflowTemplateJobsHadoopJobLoggingConfig(o interface{}) *dataproc.WorkflowTemplateJobsHadoopJobLoggingConfig {
 	if o == nil {
-		return nil
+		return dataproc.EmptyWorkflowTemplateJobsHadoopJobLoggingConfig
 	}
 	objArr := o.([]interface{})
 	if len(objArr) == 0 {
-		return nil
+		return dataproc.EmptyWorkflowTemplateJobsHadoopJobLoggingConfig
 	}
 	obj := objArr[0].(map[string]interface{})
 	return &dataproc.WorkflowTemplateJobsHadoopJobLoggingConfig{
@@ -2074,7 +2074,7 @@ func expandDataprocWorkflowTemplateJobsHadoopJobLoggingConfig(o interface{}) *da
 }
 
 func flattenDataprocWorkflowTemplateJobsHadoopJobLoggingConfig(obj *dataproc.WorkflowTemplateJobsHadoopJobLoggingConfig) interface{} {
-	if obj == nil {
+	if obj == nil || obj.Empty() {
 		return nil
 	}
 	transformed := map[string]interface{}{
@@ -2087,25 +2087,25 @@ func flattenDataprocWorkflowTemplateJobsHadoopJobLoggingConfig(obj *dataproc.Wor
 
 func expandDataprocWorkflowTemplateJobsHiveJob(o interface{}) *dataproc.WorkflowTemplateJobsHiveJob {
 	if o == nil {
-		return nil
+		return dataproc.EmptyWorkflowTemplateJobsHiveJob
 	}
 	objArr := o.([]interface{})
 	if len(objArr) == 0 {
-		return nil
+		return dataproc.EmptyWorkflowTemplateJobsHiveJob
 	}
 	obj := objArr[0].(map[string]interface{})
 	return &dataproc.WorkflowTemplateJobsHiveJob{
 		ContinueOnFailure: dcl.Bool(obj["continue_on_failure"].(bool)),
 		JarFileUris:       expandStringArray(obj["jar_file_uris"]),
 		Properties:        checkStringMap(obj["properties"]),
-		QueryFileUri:      dcl.StringOrNil(obj["query_file_uri"].(string)),
+		QueryFileUri:      dcl.String(obj["query_file_uri"].(string)),
 		QueryList:         expandDataprocWorkflowTemplateJobsHiveJobQueryList(obj["query_list"]),
 		ScriptVariables:   checkStringMap(obj["script_variables"]),
 	}
 }
 
 func flattenDataprocWorkflowTemplateJobsHiveJob(obj *dataproc.WorkflowTemplateJobsHiveJob) interface{} {
-	if obj == nil {
+	if obj == nil || obj.Empty() {
 		return nil
 	}
 	transformed := map[string]interface{}{
@@ -2123,11 +2123,11 @@ func flattenDataprocWorkflowTemplateJobsHiveJob(obj *dataproc.WorkflowTemplateJo
 
 func expandDataprocWorkflowTemplateJobsHiveJobQueryList(o interface{}) *dataproc.WorkflowTemplateJobsHiveJobQueryList {
 	if o == nil {
-		return nil
+		return dataproc.EmptyWorkflowTemplateJobsHiveJobQueryList
 	}
 	objArr := o.([]interface{})
 	if len(objArr) == 0 {
-		return nil
+		return dataproc.EmptyWorkflowTemplateJobsHiveJobQueryList
 	}
 	obj := objArr[0].(map[string]interface{})
 	return &dataproc.WorkflowTemplateJobsHiveJobQueryList{
@@ -2136,7 +2136,7 @@ func expandDataprocWorkflowTemplateJobsHiveJobQueryList(o interface{}) *dataproc
 }
 
 func flattenDataprocWorkflowTemplateJobsHiveJobQueryList(obj *dataproc.WorkflowTemplateJobsHiveJobQueryList) interface{} {
-	if obj == nil {
+	if obj == nil || obj.Empty() {
 		return nil
 	}
 	transformed := map[string]interface{}{
@@ -2149,11 +2149,11 @@ func flattenDataprocWorkflowTemplateJobsHiveJobQueryList(obj *dataproc.WorkflowT
 
 func expandDataprocWorkflowTemplateJobsPigJob(o interface{}) *dataproc.WorkflowTemplateJobsPigJob {
 	if o == nil {
-		return nil
+		return dataproc.EmptyWorkflowTemplateJobsPigJob
 	}
 	objArr := o.([]interface{})
 	if len(objArr) == 0 {
-		return nil
+		return dataproc.EmptyWorkflowTemplateJobsPigJob
 	}
 	obj := objArr[0].(map[string]interface{})
 	return &dataproc.WorkflowTemplateJobsPigJob{
@@ -2161,14 +2161,14 @@ func expandDataprocWorkflowTemplateJobsPigJob(o interface{}) *dataproc.WorkflowT
 		JarFileUris:       expandStringArray(obj["jar_file_uris"]),
 		LoggingConfig:     expandDataprocWorkflowTemplateJobsPigJobLoggingConfig(obj["logging_config"]),
 		Properties:        checkStringMap(obj["properties"]),
-		QueryFileUri:      dcl.StringOrNil(obj["query_file_uri"].(string)),
+		QueryFileUri:      dcl.String(obj["query_file_uri"].(string)),
 		QueryList:         expandDataprocWorkflowTemplateJobsPigJobQueryList(obj["query_list"]),
 		ScriptVariables:   checkStringMap(obj["script_variables"]),
 	}
 }
 
 func flattenDataprocWorkflowTemplateJobsPigJob(obj *dataproc.WorkflowTemplateJobsPigJob) interface{} {
-	if obj == nil {
+	if obj == nil || obj.Empty() {
 		return nil
 	}
 	transformed := map[string]interface{}{
@@ -2187,11 +2187,11 @@ func flattenDataprocWorkflowTemplateJobsPigJob(obj *dataproc.WorkflowTemplateJob
 
 func expandDataprocWorkflowTemplateJobsPigJobLoggingConfig(o interface{}) *dataproc.WorkflowTemplateJobsPigJobLoggingConfig {
 	if o == nil {
-		return nil
+		return dataproc.EmptyWorkflowTemplateJobsPigJobLoggingConfig
 	}
 	objArr := o.([]interface{})
 	if len(objArr) == 0 {
-		return nil
+		return dataproc.EmptyWorkflowTemplateJobsPigJobLoggingConfig
 	}
 	obj := objArr[0].(map[string]interface{})
 	return &dataproc.WorkflowTemplateJobsPigJobLoggingConfig{
@@ -2200,7 +2200,7 @@ func expandDataprocWorkflowTemplateJobsPigJobLoggingConfig(o interface{}) *datap
 }
 
 func flattenDataprocWorkflowTemplateJobsPigJobLoggingConfig(obj *dataproc.WorkflowTemplateJobsPigJobLoggingConfig) interface{} {
-	if obj == nil {
+	if obj == nil || obj.Empty() {
 		return nil
 	}
 	transformed := map[string]interface{}{
@@ -2213,11 +2213,11 @@ func flattenDataprocWorkflowTemplateJobsPigJobLoggingConfig(obj *dataproc.Workfl
 
 func expandDataprocWorkflowTemplateJobsPigJobQueryList(o interface{}) *dataproc.WorkflowTemplateJobsPigJobQueryList {
 	if o == nil {
-		return nil
+		return dataproc.EmptyWorkflowTemplateJobsPigJobQueryList
 	}
 	objArr := o.([]interface{})
 	if len(objArr) == 0 {
-		return nil
+		return dataproc.EmptyWorkflowTemplateJobsPigJobQueryList
 	}
 	obj := objArr[0].(map[string]interface{})
 	return &dataproc.WorkflowTemplateJobsPigJobQueryList{
@@ -2226,7 +2226,7 @@ func expandDataprocWorkflowTemplateJobsPigJobQueryList(o interface{}) *dataproc.
 }
 
 func flattenDataprocWorkflowTemplateJobsPigJobQueryList(obj *dataproc.WorkflowTemplateJobsPigJobQueryList) interface{} {
-	if obj == nil {
+	if obj == nil || obj.Empty() {
 		return nil
 	}
 	transformed := map[string]interface{}{
@@ -2239,26 +2239,26 @@ func flattenDataprocWorkflowTemplateJobsPigJobQueryList(obj *dataproc.WorkflowTe
 
 func expandDataprocWorkflowTemplateJobsPrestoJob(o interface{}) *dataproc.WorkflowTemplateJobsPrestoJob {
 	if o == nil {
-		return nil
+		return dataproc.EmptyWorkflowTemplateJobsPrestoJob
 	}
 	objArr := o.([]interface{})
 	if len(objArr) == 0 {
-		return nil
+		return dataproc.EmptyWorkflowTemplateJobsPrestoJob
 	}
 	obj := objArr[0].(map[string]interface{})
 	return &dataproc.WorkflowTemplateJobsPrestoJob{
 		ClientTags:        expandStringArray(obj["client_tags"]),
 		ContinueOnFailure: dcl.Bool(obj["continue_on_failure"].(bool)),
 		LoggingConfig:     expandDataprocWorkflowTemplateJobsPrestoJobLoggingConfig(obj["logging_config"]),
-		OutputFormat:      dcl.StringOrNil(obj["output_format"].(string)),
+		OutputFormat:      dcl.String(obj["output_format"].(string)),
 		Properties:        checkStringMap(obj["properties"]),
-		QueryFileUri:      dcl.StringOrNil(obj["query_file_uri"].(string)),
+		QueryFileUri:      dcl.String(obj["query_file_uri"].(string)),
 		QueryList:         expandDataprocWorkflowTemplateJobsPrestoJobQueryList(obj["query_list"]),
 	}
 }
 
 func flattenDataprocWorkflowTemplateJobsPrestoJob(obj *dataproc.WorkflowTemplateJobsPrestoJob) interface{} {
-	if obj == nil {
+	if obj == nil || obj.Empty() {
 		return nil
 	}
 	transformed := map[string]interface{}{
@@ -2277,11 +2277,11 @@ func flattenDataprocWorkflowTemplateJobsPrestoJob(obj *dataproc.WorkflowTemplate
 
 func expandDataprocWorkflowTemplateJobsPrestoJobLoggingConfig(o interface{}) *dataproc.WorkflowTemplateJobsPrestoJobLoggingConfig {
 	if o == nil {
-		return nil
+		return dataproc.EmptyWorkflowTemplateJobsPrestoJobLoggingConfig
 	}
 	objArr := o.([]interface{})
 	if len(objArr) == 0 {
-		return nil
+		return dataproc.EmptyWorkflowTemplateJobsPrestoJobLoggingConfig
 	}
 	obj := objArr[0].(map[string]interface{})
 	return &dataproc.WorkflowTemplateJobsPrestoJobLoggingConfig{
@@ -2290,7 +2290,7 @@ func expandDataprocWorkflowTemplateJobsPrestoJobLoggingConfig(o interface{}) *da
 }
 
 func flattenDataprocWorkflowTemplateJobsPrestoJobLoggingConfig(obj *dataproc.WorkflowTemplateJobsPrestoJobLoggingConfig) interface{} {
-	if obj == nil {
+	if obj == nil || obj.Empty() {
 		return nil
 	}
 	transformed := map[string]interface{}{
@@ -2303,11 +2303,11 @@ func flattenDataprocWorkflowTemplateJobsPrestoJobLoggingConfig(obj *dataproc.Wor
 
 func expandDataprocWorkflowTemplateJobsPrestoJobQueryList(o interface{}) *dataproc.WorkflowTemplateJobsPrestoJobQueryList {
 	if o == nil {
-		return nil
+		return dataproc.EmptyWorkflowTemplateJobsPrestoJobQueryList
 	}
 	objArr := o.([]interface{})
 	if len(objArr) == 0 {
-		return nil
+		return dataproc.EmptyWorkflowTemplateJobsPrestoJobQueryList
 	}
 	obj := objArr[0].(map[string]interface{})
 	return &dataproc.WorkflowTemplateJobsPrestoJobQueryList{
@@ -2316,7 +2316,7 @@ func expandDataprocWorkflowTemplateJobsPrestoJobQueryList(o interface{}) *datapr
 }
 
 func flattenDataprocWorkflowTemplateJobsPrestoJobQueryList(obj *dataproc.WorkflowTemplateJobsPrestoJobQueryList) interface{} {
-	if obj == nil {
+	if obj == nil || obj.Empty() {
 		return nil
 	}
 	transformed := map[string]interface{}{
@@ -2329,15 +2329,15 @@ func flattenDataprocWorkflowTemplateJobsPrestoJobQueryList(obj *dataproc.Workflo
 
 func expandDataprocWorkflowTemplateJobsPysparkJob(o interface{}) *dataproc.WorkflowTemplateJobsPysparkJob {
 	if o == nil {
-		return nil
+		return dataproc.EmptyWorkflowTemplateJobsPysparkJob
 	}
 	objArr := o.([]interface{})
 	if len(objArr) == 0 {
-		return nil
+		return dataproc.EmptyWorkflowTemplateJobsPysparkJob
 	}
 	obj := objArr[0].(map[string]interface{})
 	return &dataproc.WorkflowTemplateJobsPysparkJob{
-		MainPythonFileUri: dcl.StringOrNil(obj["main_python_file_uri"].(string)),
+		MainPythonFileUri: dcl.String(obj["main_python_file_uri"].(string)),
 		ArchiveUris:       expandStringArray(obj["archive_uris"]),
 		Args:              expandStringArray(obj["args"]),
 		FileUris:          expandStringArray(obj["file_uris"]),
@@ -2349,7 +2349,7 @@ func expandDataprocWorkflowTemplateJobsPysparkJob(o interface{}) *dataproc.Workf
 }
 
 func flattenDataprocWorkflowTemplateJobsPysparkJob(obj *dataproc.WorkflowTemplateJobsPysparkJob) interface{} {
-	if obj == nil {
+	if obj == nil || obj.Empty() {
 		return nil
 	}
 	transformed := map[string]interface{}{
@@ -2369,11 +2369,11 @@ func flattenDataprocWorkflowTemplateJobsPysparkJob(obj *dataproc.WorkflowTemplat
 
 func expandDataprocWorkflowTemplateJobsPysparkJobLoggingConfig(o interface{}) *dataproc.WorkflowTemplateJobsPysparkJobLoggingConfig {
 	if o == nil {
-		return nil
+		return dataproc.EmptyWorkflowTemplateJobsPysparkJobLoggingConfig
 	}
 	objArr := o.([]interface{})
 	if len(objArr) == 0 {
-		return nil
+		return dataproc.EmptyWorkflowTemplateJobsPysparkJobLoggingConfig
 	}
 	obj := objArr[0].(map[string]interface{})
 	return &dataproc.WorkflowTemplateJobsPysparkJobLoggingConfig{
@@ -2382,7 +2382,7 @@ func expandDataprocWorkflowTemplateJobsPysparkJobLoggingConfig(o interface{}) *d
 }
 
 func flattenDataprocWorkflowTemplateJobsPysparkJobLoggingConfig(obj *dataproc.WorkflowTemplateJobsPysparkJobLoggingConfig) interface{} {
-	if obj == nil {
+	if obj == nil || obj.Empty() {
 		return nil
 	}
 	transformed := map[string]interface{}{
@@ -2395,21 +2395,21 @@ func flattenDataprocWorkflowTemplateJobsPysparkJobLoggingConfig(obj *dataproc.Wo
 
 func expandDataprocWorkflowTemplateJobsScheduling(o interface{}) *dataproc.WorkflowTemplateJobsScheduling {
 	if o == nil {
-		return nil
+		return dataproc.EmptyWorkflowTemplateJobsScheduling
 	}
 	objArr := o.([]interface{})
 	if len(objArr) == 0 {
-		return nil
+		return dataproc.EmptyWorkflowTemplateJobsScheduling
 	}
 	obj := objArr[0].(map[string]interface{})
 	return &dataproc.WorkflowTemplateJobsScheduling{
-		MaxFailuresPerHour: dcl.Int64OrNil(int64(obj["max_failures_per_hour"].(int))),
-		MaxFailuresTotal:   dcl.Int64OrNil(int64(obj["max_failures_total"].(int))),
+		MaxFailuresPerHour: dcl.Int64(int64(obj["max_failures_per_hour"].(int))),
+		MaxFailuresTotal:   dcl.Int64(int64(obj["max_failures_total"].(int))),
 	}
 }
 
 func flattenDataprocWorkflowTemplateJobsScheduling(obj *dataproc.WorkflowTemplateJobsScheduling) interface{} {
-	if obj == nil {
+	if obj == nil || obj.Empty() {
 		return nil
 	}
 	transformed := map[string]interface{}{
@@ -2423,11 +2423,11 @@ func flattenDataprocWorkflowTemplateJobsScheduling(obj *dataproc.WorkflowTemplat
 
 func expandDataprocWorkflowTemplateJobsSparkJob(o interface{}) *dataproc.WorkflowTemplateJobsSparkJob {
 	if o == nil {
-		return nil
+		return dataproc.EmptyWorkflowTemplateJobsSparkJob
 	}
 	objArr := o.([]interface{})
 	if len(objArr) == 0 {
-		return nil
+		return dataproc.EmptyWorkflowTemplateJobsSparkJob
 	}
 	obj := objArr[0].(map[string]interface{})
 	return &dataproc.WorkflowTemplateJobsSparkJob{
@@ -2436,14 +2436,14 @@ func expandDataprocWorkflowTemplateJobsSparkJob(o interface{}) *dataproc.Workflo
 		FileUris:       expandStringArray(obj["file_uris"]),
 		JarFileUris:    expandStringArray(obj["jar_file_uris"]),
 		LoggingConfig:  expandDataprocWorkflowTemplateJobsSparkJobLoggingConfig(obj["logging_config"]),
-		MainClass:      dcl.StringOrNil(obj["main_class"].(string)),
-		MainJarFileUri: dcl.StringOrNil(obj["main_jar_file_uri"].(string)),
+		MainClass:      dcl.String(obj["main_class"].(string)),
+		MainJarFileUri: dcl.String(obj["main_jar_file_uri"].(string)),
 		Properties:     checkStringMap(obj["properties"]),
 	}
 }
 
 func flattenDataprocWorkflowTemplateJobsSparkJob(obj *dataproc.WorkflowTemplateJobsSparkJob) interface{} {
-	if obj == nil {
+	if obj == nil || obj.Empty() {
 		return nil
 	}
 	transformed := map[string]interface{}{
@@ -2463,11 +2463,11 @@ func flattenDataprocWorkflowTemplateJobsSparkJob(obj *dataproc.WorkflowTemplateJ
 
 func expandDataprocWorkflowTemplateJobsSparkJobLoggingConfig(o interface{}) *dataproc.WorkflowTemplateJobsSparkJobLoggingConfig {
 	if o == nil {
-		return nil
+		return dataproc.EmptyWorkflowTemplateJobsSparkJobLoggingConfig
 	}
 	objArr := o.([]interface{})
 	if len(objArr) == 0 {
-		return nil
+		return dataproc.EmptyWorkflowTemplateJobsSparkJobLoggingConfig
 	}
 	obj := objArr[0].(map[string]interface{})
 	return &dataproc.WorkflowTemplateJobsSparkJobLoggingConfig{
@@ -2476,7 +2476,7 @@ func expandDataprocWorkflowTemplateJobsSparkJobLoggingConfig(o interface{}) *dat
 }
 
 func flattenDataprocWorkflowTemplateJobsSparkJobLoggingConfig(obj *dataproc.WorkflowTemplateJobsSparkJobLoggingConfig) interface{} {
-	if obj == nil {
+	if obj == nil || obj.Empty() {
 		return nil
 	}
 	transformed := map[string]interface{}{
@@ -2489,15 +2489,15 @@ func flattenDataprocWorkflowTemplateJobsSparkJobLoggingConfig(obj *dataproc.Work
 
 func expandDataprocWorkflowTemplateJobsSparkRJob(o interface{}) *dataproc.WorkflowTemplateJobsSparkRJob {
 	if o == nil {
-		return nil
+		return dataproc.EmptyWorkflowTemplateJobsSparkRJob
 	}
 	objArr := o.([]interface{})
 	if len(objArr) == 0 {
-		return nil
+		return dataproc.EmptyWorkflowTemplateJobsSparkRJob
 	}
 	obj := objArr[0].(map[string]interface{})
 	return &dataproc.WorkflowTemplateJobsSparkRJob{
-		MainRFileUri:  dcl.StringOrNil(obj["main_r_file_uri"].(string)),
+		MainRFileUri:  dcl.String(obj["main_r_file_uri"].(string)),
 		ArchiveUris:   expandStringArray(obj["archive_uris"]),
 		Args:          expandStringArray(obj["args"]),
 		FileUris:      expandStringArray(obj["file_uris"]),
@@ -2507,7 +2507,7 @@ func expandDataprocWorkflowTemplateJobsSparkRJob(o interface{}) *dataproc.Workfl
 }
 
 func flattenDataprocWorkflowTemplateJobsSparkRJob(obj *dataproc.WorkflowTemplateJobsSparkRJob) interface{} {
-	if obj == nil {
+	if obj == nil || obj.Empty() {
 		return nil
 	}
 	transformed := map[string]interface{}{
@@ -2525,11 +2525,11 @@ func flattenDataprocWorkflowTemplateJobsSparkRJob(obj *dataproc.WorkflowTemplate
 
 func expandDataprocWorkflowTemplateJobsSparkRJobLoggingConfig(o interface{}) *dataproc.WorkflowTemplateJobsSparkRJobLoggingConfig {
 	if o == nil {
-		return nil
+		return dataproc.EmptyWorkflowTemplateJobsSparkRJobLoggingConfig
 	}
 	objArr := o.([]interface{})
 	if len(objArr) == 0 {
-		return nil
+		return dataproc.EmptyWorkflowTemplateJobsSparkRJobLoggingConfig
 	}
 	obj := objArr[0].(map[string]interface{})
 	return &dataproc.WorkflowTemplateJobsSparkRJobLoggingConfig{
@@ -2538,7 +2538,7 @@ func expandDataprocWorkflowTemplateJobsSparkRJobLoggingConfig(o interface{}) *da
 }
 
 func flattenDataprocWorkflowTemplateJobsSparkRJobLoggingConfig(obj *dataproc.WorkflowTemplateJobsSparkRJobLoggingConfig) interface{} {
-	if obj == nil {
+	if obj == nil || obj.Empty() {
 		return nil
 	}
 	transformed := map[string]interface{}{
@@ -2551,25 +2551,25 @@ func flattenDataprocWorkflowTemplateJobsSparkRJobLoggingConfig(obj *dataproc.Wor
 
 func expandDataprocWorkflowTemplateJobsSparkSqlJob(o interface{}) *dataproc.WorkflowTemplateJobsSparkSqlJob {
 	if o == nil {
-		return nil
+		return dataproc.EmptyWorkflowTemplateJobsSparkSqlJob
 	}
 	objArr := o.([]interface{})
 	if len(objArr) == 0 {
-		return nil
+		return dataproc.EmptyWorkflowTemplateJobsSparkSqlJob
 	}
 	obj := objArr[0].(map[string]interface{})
 	return &dataproc.WorkflowTemplateJobsSparkSqlJob{
 		JarFileUris:     expandStringArray(obj["jar_file_uris"]),
 		LoggingConfig:   expandDataprocWorkflowTemplateJobsSparkSqlJobLoggingConfig(obj["logging_config"]),
 		Properties:      checkStringMap(obj["properties"]),
-		QueryFileUri:    dcl.StringOrNil(obj["query_file_uri"].(string)),
+		QueryFileUri:    dcl.String(obj["query_file_uri"].(string)),
 		QueryList:       expandDataprocWorkflowTemplateJobsSparkSqlJobQueryList(obj["query_list"]),
 		ScriptVariables: checkStringMap(obj["script_variables"]),
 	}
 }
 
 func flattenDataprocWorkflowTemplateJobsSparkSqlJob(obj *dataproc.WorkflowTemplateJobsSparkSqlJob) interface{} {
-	if obj == nil {
+	if obj == nil || obj.Empty() {
 		return nil
 	}
 	transformed := map[string]interface{}{
@@ -2587,11 +2587,11 @@ func flattenDataprocWorkflowTemplateJobsSparkSqlJob(obj *dataproc.WorkflowTempla
 
 func expandDataprocWorkflowTemplateJobsSparkSqlJobLoggingConfig(o interface{}) *dataproc.WorkflowTemplateJobsSparkSqlJobLoggingConfig {
 	if o == nil {
-		return nil
+		return dataproc.EmptyWorkflowTemplateJobsSparkSqlJobLoggingConfig
 	}
 	objArr := o.([]interface{})
 	if len(objArr) == 0 {
-		return nil
+		return dataproc.EmptyWorkflowTemplateJobsSparkSqlJobLoggingConfig
 	}
 	obj := objArr[0].(map[string]interface{})
 	return &dataproc.WorkflowTemplateJobsSparkSqlJobLoggingConfig{
@@ -2600,7 +2600,7 @@ func expandDataprocWorkflowTemplateJobsSparkSqlJobLoggingConfig(o interface{}) *
 }
 
 func flattenDataprocWorkflowTemplateJobsSparkSqlJobLoggingConfig(obj *dataproc.WorkflowTemplateJobsSparkSqlJobLoggingConfig) interface{} {
-	if obj == nil {
+	if obj == nil || obj.Empty() {
 		return nil
 	}
 	transformed := map[string]interface{}{
@@ -2613,11 +2613,11 @@ func flattenDataprocWorkflowTemplateJobsSparkSqlJobLoggingConfig(obj *dataproc.W
 
 func expandDataprocWorkflowTemplateJobsSparkSqlJobQueryList(o interface{}) *dataproc.WorkflowTemplateJobsSparkSqlJobQueryList {
 	if o == nil {
-		return nil
+		return dataproc.EmptyWorkflowTemplateJobsSparkSqlJobQueryList
 	}
 	objArr := o.([]interface{})
 	if len(objArr) == 0 {
-		return nil
+		return dataproc.EmptyWorkflowTemplateJobsSparkSqlJobQueryList
 	}
 	obj := objArr[0].(map[string]interface{})
 	return &dataproc.WorkflowTemplateJobsSparkSqlJobQueryList{
@@ -2626,7 +2626,7 @@ func expandDataprocWorkflowTemplateJobsSparkSqlJobQueryList(o interface{}) *data
 }
 
 func flattenDataprocWorkflowTemplateJobsSparkSqlJobQueryList(obj *dataproc.WorkflowTemplateJobsSparkSqlJobQueryList) interface{} {
-	if obj == nil {
+	if obj == nil || obj.Empty() {
 		return nil
 	}
 	transformed := map[string]interface{}{
@@ -2639,11 +2639,11 @@ func flattenDataprocWorkflowTemplateJobsSparkSqlJobQueryList(obj *dataproc.Workf
 
 func expandDataprocWorkflowTemplatePlacement(o interface{}) *dataproc.WorkflowTemplatePlacement {
 	if o == nil {
-		return nil
+		return dataproc.EmptyWorkflowTemplatePlacement
 	}
 	objArr := o.([]interface{})
 	if len(objArr) == 0 {
-		return nil
+		return dataproc.EmptyWorkflowTemplatePlacement
 	}
 	obj := objArr[0].(map[string]interface{})
 	return &dataproc.WorkflowTemplatePlacement{
@@ -2653,7 +2653,7 @@ func expandDataprocWorkflowTemplatePlacement(o interface{}) *dataproc.WorkflowTe
 }
 
 func flattenDataprocWorkflowTemplatePlacement(obj *dataproc.WorkflowTemplatePlacement) interface{} {
-	if obj == nil {
+	if obj == nil || obj.Empty() {
 		return nil
 	}
 	transformed := map[string]interface{}{
@@ -2667,11 +2667,11 @@ func flattenDataprocWorkflowTemplatePlacement(obj *dataproc.WorkflowTemplatePlac
 
 func expandDataprocWorkflowTemplatePlacementClusterSelector(o interface{}) *dataproc.WorkflowTemplatePlacementClusterSelector {
 	if o == nil {
-		return nil
+		return dataproc.EmptyWorkflowTemplatePlacementClusterSelector
 	}
 	objArr := o.([]interface{})
 	if len(objArr) == 0 {
-		return nil
+		return dataproc.EmptyWorkflowTemplatePlacementClusterSelector
 	}
 	obj := objArr[0].(map[string]interface{})
 	return &dataproc.WorkflowTemplatePlacementClusterSelector{
@@ -2681,7 +2681,7 @@ func expandDataprocWorkflowTemplatePlacementClusterSelector(o interface{}) *data
 }
 
 func flattenDataprocWorkflowTemplatePlacementClusterSelector(obj *dataproc.WorkflowTemplatePlacementClusterSelector) interface{} {
-	if obj == nil {
+	if obj == nil || obj.Empty() {
 		return nil
 	}
 	transformed := map[string]interface{}{
@@ -2695,22 +2695,22 @@ func flattenDataprocWorkflowTemplatePlacementClusterSelector(obj *dataproc.Workf
 
 func expandDataprocWorkflowTemplatePlacementManagedCluster(o interface{}) *dataproc.WorkflowTemplatePlacementManagedCluster {
 	if o == nil {
-		return nil
+		return dataproc.EmptyWorkflowTemplatePlacementManagedCluster
 	}
 	objArr := o.([]interface{})
 	if len(objArr) == 0 {
-		return nil
+		return dataproc.EmptyWorkflowTemplatePlacementManagedCluster
 	}
 	obj := objArr[0].(map[string]interface{})
 	return &dataproc.WorkflowTemplatePlacementManagedCluster{
-		ClusterName: dcl.StringOrNil(obj["cluster_name"].(string)),
+		ClusterName: dcl.String(obj["cluster_name"].(string)),
 		Config:      expandDataprocWorkflowTemplateClusterClusterConfig(obj["config"]),
 		Labels:      checkStringMap(obj["labels"]),
 	}
 }
 
 func flattenDataprocWorkflowTemplatePlacementManagedCluster(obj *dataproc.WorkflowTemplatePlacementManagedCluster) interface{} {
-	if obj == nil {
+	if obj == nil || obj.Empty() {
 		return nil
 	}
 	transformed := map[string]interface{}{
@@ -2743,14 +2743,14 @@ func expandDataprocWorkflowTemplateParametersArray(o interface{}) []dataproc.Wor
 
 func expandDataprocWorkflowTemplateParameters(o interface{}) *dataproc.WorkflowTemplateParameters {
 	if o == nil {
-		return nil
+		return dataproc.EmptyWorkflowTemplateParameters
 	}
 
 	obj := o.(map[string]interface{})
 	return &dataproc.WorkflowTemplateParameters{
 		Fields:      expandStringArray(obj["fields"]),
-		Name:        dcl.StringOrNil(obj["name"].(string)),
-		Description: dcl.StringOrNil(obj["description"].(string)),
+		Name:        dcl.String(obj["name"].(string)),
+		Description: dcl.String(obj["description"].(string)),
 		Validation:  expandDataprocWorkflowTemplateParametersValidation(obj["validation"]),
 	}
 }
@@ -2770,7 +2770,7 @@ func flattenDataprocWorkflowTemplateParametersArray(objs []dataproc.WorkflowTemp
 }
 
 func flattenDataprocWorkflowTemplateParameters(obj *dataproc.WorkflowTemplateParameters) interface{} {
-	if obj == nil {
+	if obj == nil || obj.Empty() {
 		return nil
 	}
 	transformed := map[string]interface{}{
@@ -2786,11 +2786,11 @@ func flattenDataprocWorkflowTemplateParameters(obj *dataproc.WorkflowTemplatePar
 
 func expandDataprocWorkflowTemplateParametersValidation(o interface{}) *dataproc.WorkflowTemplateParametersValidation {
 	if o == nil {
-		return nil
+		return dataproc.EmptyWorkflowTemplateParametersValidation
 	}
 	objArr := o.([]interface{})
 	if len(objArr) == 0 {
-		return nil
+		return dataproc.EmptyWorkflowTemplateParametersValidation
 	}
 	obj := objArr[0].(map[string]interface{})
 	return &dataproc.WorkflowTemplateParametersValidation{
@@ -2800,7 +2800,7 @@ func expandDataprocWorkflowTemplateParametersValidation(o interface{}) *dataproc
 }
 
 func flattenDataprocWorkflowTemplateParametersValidation(obj *dataproc.WorkflowTemplateParametersValidation) interface{} {
-	if obj == nil {
+	if obj == nil || obj.Empty() {
 		return nil
 	}
 	transformed := map[string]interface{}{
@@ -2814,11 +2814,11 @@ func flattenDataprocWorkflowTemplateParametersValidation(obj *dataproc.WorkflowT
 
 func expandDataprocWorkflowTemplateParametersValidationRegex(o interface{}) *dataproc.WorkflowTemplateParametersValidationRegex {
 	if o == nil {
-		return nil
+		return dataproc.EmptyWorkflowTemplateParametersValidationRegex
 	}
 	objArr := o.([]interface{})
 	if len(objArr) == 0 {
-		return nil
+		return dataproc.EmptyWorkflowTemplateParametersValidationRegex
 	}
 	obj := objArr[0].(map[string]interface{})
 	return &dataproc.WorkflowTemplateParametersValidationRegex{
@@ -2827,7 +2827,7 @@ func expandDataprocWorkflowTemplateParametersValidationRegex(o interface{}) *dat
 }
 
 func flattenDataprocWorkflowTemplateParametersValidationRegex(obj *dataproc.WorkflowTemplateParametersValidationRegex) interface{} {
-	if obj == nil {
+	if obj == nil || obj.Empty() {
 		return nil
 	}
 	transformed := map[string]interface{}{
@@ -2840,11 +2840,11 @@ func flattenDataprocWorkflowTemplateParametersValidationRegex(obj *dataproc.Work
 
 func expandDataprocWorkflowTemplateParametersValidationValues(o interface{}) *dataproc.WorkflowTemplateParametersValidationValues {
 	if o == nil {
-		return nil
+		return dataproc.EmptyWorkflowTemplateParametersValidationValues
 	}
 	objArr := o.([]interface{})
 	if len(objArr) == 0 {
-		return nil
+		return dataproc.EmptyWorkflowTemplateParametersValidationValues
 	}
 	obj := objArr[0].(map[string]interface{})
 	return &dataproc.WorkflowTemplateParametersValidationValues{
@@ -2853,7 +2853,7 @@ func expandDataprocWorkflowTemplateParametersValidationValues(o interface{}) *da
 }
 
 func flattenDataprocWorkflowTemplateParametersValidationValues(obj *dataproc.WorkflowTemplateParametersValidationValues) interface{} {
-	if obj == nil {
+	if obj == nil || obj.Empty() {
 		return nil
 	}
 	transformed := map[string]interface{}{
@@ -2866,26 +2866,26 @@ func flattenDataprocWorkflowTemplateParametersValidationValues(obj *dataproc.Wor
 
 func expandDataprocWorkflowTemplateClusterInstanceGroupConfig(o interface{}) *dataproc.ClusterInstanceGroupConfig {
 	if o == nil {
-		return nil
+		return dataproc.EmptyClusterInstanceGroupConfig
 	}
 	objArr := o.([]interface{})
 	if len(objArr) == 0 {
-		return nil
+		return dataproc.EmptyClusterInstanceGroupConfig
 	}
 	obj := objArr[0].(map[string]interface{})
 	return &dataproc.ClusterInstanceGroupConfig{
 		Accelerators:   expandDataprocWorkflowTemplateClusterInstanceGroupConfigAcceleratorsArray(obj["accelerators"]),
 		DiskConfig:     expandDataprocWorkflowTemplateClusterInstanceGroupConfigDiskConfig(obj["disk_config"]),
-		Image:          dcl.StringOrNil(obj["image"].(string)),
-		MachineType:    dcl.StringOrNil(obj["machine_type"].(string)),
-		MinCpuPlatform: dcl.StringOrNil(obj["min_cpu_platform"].(string)),
-		NumInstances:   dcl.Int64OrNil(int64(obj["num_instances"].(int))),
+		Image:          dcl.String(obj["image"].(string)),
+		MachineType:    dcl.String(obj["machine_type"].(string)),
+		MinCpuPlatform: dcl.String(obj["min_cpu_platform"].(string)),
+		NumInstances:   dcl.Int64(int64(obj["num_instances"].(int))),
 		Preemptibility: dataproc.ClusterInstanceGroupConfigPreemptibilityEnumRef(obj["preemptibility"].(string)),
 	}
 }
 
 func flattenDataprocWorkflowTemplateClusterInstanceGroupConfig(obj *dataproc.ClusterInstanceGroupConfig) interface{} {
-	if obj == nil {
+	if obj == nil || obj.Empty() {
 		return nil
 	}
 	transformed := map[string]interface{}{
@@ -2925,13 +2925,13 @@ func expandDataprocWorkflowTemplateClusterInstanceGroupConfigAcceleratorsArray(o
 
 func expandDataprocWorkflowTemplateClusterInstanceGroupConfigAccelerators(o interface{}) *dataproc.ClusterInstanceGroupConfigAccelerators {
 	if o == nil {
-		return nil
+		return dataproc.EmptyClusterInstanceGroupConfigAccelerators
 	}
 
 	obj := o.(map[string]interface{})
 	return &dataproc.ClusterInstanceGroupConfigAccelerators{
-		AcceleratorCount: dcl.Int64OrNil(int64(obj["accelerator_count"].(int))),
-		AcceleratorType:  dcl.StringOrNil(obj["accelerator_type"].(string)),
+		AcceleratorCount: dcl.Int64(int64(obj["accelerator_count"].(int))),
+		AcceleratorType:  dcl.String(obj["accelerator_type"].(string)),
 	}
 }
 
@@ -2950,7 +2950,7 @@ func flattenDataprocWorkflowTemplateClusterInstanceGroupConfigAcceleratorsArray(
 }
 
 func flattenDataprocWorkflowTemplateClusterInstanceGroupConfigAccelerators(obj *dataproc.ClusterInstanceGroupConfigAccelerators) interface{} {
-	if obj == nil {
+	if obj == nil || obj.Empty() {
 		return nil
 	}
 	transformed := map[string]interface{}{
@@ -2964,22 +2964,22 @@ func flattenDataprocWorkflowTemplateClusterInstanceGroupConfigAccelerators(obj *
 
 func expandDataprocWorkflowTemplateClusterInstanceGroupConfigDiskConfig(o interface{}) *dataproc.ClusterInstanceGroupConfigDiskConfig {
 	if o == nil {
-		return nil
+		return dataproc.EmptyClusterInstanceGroupConfigDiskConfig
 	}
 	objArr := o.([]interface{})
 	if len(objArr) == 0 {
-		return nil
+		return dataproc.EmptyClusterInstanceGroupConfigDiskConfig
 	}
 	obj := objArr[0].(map[string]interface{})
 	return &dataproc.ClusterInstanceGroupConfigDiskConfig{
-		BootDiskSizeGb: dcl.Int64OrNil(int64(obj["boot_disk_size_gb"].(int))),
-		BootDiskType:   dcl.StringOrNil(obj["boot_disk_type"].(string)),
+		BootDiskSizeGb: dcl.Int64(int64(obj["boot_disk_size_gb"].(int))),
+		BootDiskType:   dcl.String(obj["boot_disk_type"].(string)),
 		NumLocalSsds:   dcl.Int64OrNil(int64(obj["num_local_ssds"].(int))),
 	}
 }
 
 func flattenDataprocWorkflowTemplateClusterInstanceGroupConfigDiskConfig(obj *dataproc.ClusterInstanceGroupConfigDiskConfig) interface{} {
-	if obj == nil {
+	if obj == nil || obj.Empty() {
 		return nil
 	}
 	transformed := map[string]interface{}{
@@ -2993,7 +2993,7 @@ func flattenDataprocWorkflowTemplateClusterInstanceGroupConfigDiskConfig(obj *da
 }
 
 func flattenDataprocWorkflowTemplateClusterInstanceGroupConfigManagedGroupConfig(obj *dataproc.ClusterInstanceGroupConfigManagedGroupConfig) interface{} {
-	if obj == nil {
+	if obj == nil || obj.Empty() {
 		return nil
 	}
 	transformed := map[string]interface{}{
@@ -3007,11 +3007,11 @@ func flattenDataprocWorkflowTemplateClusterInstanceGroupConfigManagedGroupConfig
 
 func expandDataprocWorkflowTemplateClusterClusterConfig(o interface{}) *dataproc.ClusterClusterConfig {
 	if o == nil {
-		return nil
+		return dataproc.EmptyClusterClusterConfig
 	}
 	objArr := o.([]interface{})
 	if len(objArr) == 0 {
-		return nil
+		return dataproc.EmptyClusterClusterConfig
 	}
 	obj := objArr[0].(map[string]interface{})
 	return &dataproc.ClusterClusterConfig{
@@ -3027,14 +3027,14 @@ func expandDataprocWorkflowTemplateClusterClusterConfig(o interface{}) *dataproc
 		SecondaryWorkerConfig: expandDataprocWorkflowTemplateClusterInstanceGroupConfig(obj["secondary_worker_config"]),
 		SecurityConfig:        expandDataprocWorkflowTemplateClusterClusterConfigSecurityConfig(obj["security_config"]),
 		SoftwareConfig:        expandDataprocWorkflowTemplateClusterClusterConfigSoftwareConfig(obj["software_config"]),
-		StagingBucket:         dcl.StringOrNil(obj["staging_bucket"].(string)),
-		TempBucket:            dcl.StringOrNil(obj["temp_bucket"].(string)),
+		StagingBucket:         dcl.String(obj["staging_bucket"].(string)),
+		TempBucket:            dcl.String(obj["temp_bucket"].(string)),
 		WorkerConfig:          expandDataprocWorkflowTemplateClusterInstanceGroupConfig(obj["worker_config"]),
 	}
 }
 
 func flattenDataprocWorkflowTemplateClusterClusterConfig(obj *dataproc.ClusterClusterConfig) interface{} {
-	if obj == nil {
+	if obj == nil || obj.Empty() {
 		return nil
 	}
 	transformed := map[string]interface{}{
@@ -3061,20 +3061,20 @@ func flattenDataprocWorkflowTemplateClusterClusterConfig(obj *dataproc.ClusterCl
 
 func expandDataprocWorkflowTemplateClusterClusterConfigAutoscalingConfig(o interface{}) *dataproc.ClusterClusterConfigAutoscalingConfig {
 	if o == nil {
-		return nil
+		return dataproc.EmptyClusterClusterConfigAutoscalingConfig
 	}
 	objArr := o.([]interface{})
 	if len(objArr) == 0 {
-		return nil
+		return dataproc.EmptyClusterClusterConfigAutoscalingConfig
 	}
 	obj := objArr[0].(map[string]interface{})
 	return &dataproc.ClusterClusterConfigAutoscalingConfig{
-		Policy: dcl.StringOrNil(obj["policy"].(string)),
+		Policy: dcl.String(obj["policy"].(string)),
 	}
 }
 
 func flattenDataprocWorkflowTemplateClusterClusterConfigAutoscalingConfig(obj *dataproc.ClusterClusterConfigAutoscalingConfig) interface{} {
-	if obj == nil {
+	if obj == nil || obj.Empty() {
 		return nil
 	}
 	transformed := map[string]interface{}{
@@ -3087,20 +3087,20 @@ func flattenDataprocWorkflowTemplateClusterClusterConfigAutoscalingConfig(obj *d
 
 func expandDataprocWorkflowTemplateClusterClusterConfigEncryptionConfig(o interface{}) *dataproc.ClusterClusterConfigEncryptionConfig {
 	if o == nil {
-		return nil
+		return dataproc.EmptyClusterClusterConfigEncryptionConfig
 	}
 	objArr := o.([]interface{})
 	if len(objArr) == 0 {
-		return nil
+		return dataproc.EmptyClusterClusterConfigEncryptionConfig
 	}
 	obj := objArr[0].(map[string]interface{})
 	return &dataproc.ClusterClusterConfigEncryptionConfig{
-		GcePdKmsKeyName: dcl.StringOrNil(obj["gce_pd_kms_key_name"].(string)),
+		GcePdKmsKeyName: dcl.String(obj["gce_pd_kms_key_name"].(string)),
 	}
 }
 
 func flattenDataprocWorkflowTemplateClusterClusterConfigEncryptionConfig(obj *dataproc.ClusterClusterConfigEncryptionConfig) interface{} {
-	if obj == nil {
+	if obj == nil || obj.Empty() {
 		return nil
 	}
 	transformed := map[string]interface{}{
@@ -3113,11 +3113,11 @@ func flattenDataprocWorkflowTemplateClusterClusterConfigEncryptionConfig(obj *da
 
 func expandDataprocWorkflowTemplateClusterClusterConfigEndpointConfig(o interface{}) *dataproc.ClusterClusterConfigEndpointConfig {
 	if o == nil {
-		return nil
+		return dataproc.EmptyClusterClusterConfigEndpointConfig
 	}
 	objArr := o.([]interface{})
 	if len(objArr) == 0 {
-		return nil
+		return dataproc.EmptyClusterClusterConfigEndpointConfig
 	}
 	obj := objArr[0].(map[string]interface{})
 	return &dataproc.ClusterClusterConfigEndpointConfig{
@@ -3126,7 +3126,7 @@ func expandDataprocWorkflowTemplateClusterClusterConfigEndpointConfig(o interfac
 }
 
 func flattenDataprocWorkflowTemplateClusterClusterConfigEndpointConfig(obj *dataproc.ClusterClusterConfigEndpointConfig) interface{} {
-	if obj == nil {
+	if obj == nil || obj.Empty() {
 		return nil
 	}
 	transformed := map[string]interface{}{
@@ -3140,30 +3140,30 @@ func flattenDataprocWorkflowTemplateClusterClusterConfigEndpointConfig(obj *data
 
 func expandDataprocWorkflowTemplateClusterClusterConfigGceClusterConfig(o interface{}) *dataproc.ClusterClusterConfigGceClusterConfig {
 	if o == nil {
-		return nil
+		return dataproc.EmptyClusterClusterConfigGceClusterConfig
 	}
 	objArr := o.([]interface{})
 	if len(objArr) == 0 {
-		return nil
+		return dataproc.EmptyClusterClusterConfigGceClusterConfig
 	}
 	obj := objArr[0].(map[string]interface{})
 	return &dataproc.ClusterClusterConfigGceClusterConfig{
 		InternalIPOnly:          dcl.Bool(obj["internal_ip_only"].(bool)),
 		Metadata:                checkStringMap(obj["metadata"]),
-		Network:                 dcl.StringOrNil(obj["network"].(string)),
+		Network:                 dcl.String(obj["network"].(string)),
 		NodeGroupAffinity:       expandDataprocWorkflowTemplateClusterClusterConfigGceClusterConfigNodeGroupAffinity(obj["node_group_affinity"]),
 		PrivateIPv6GoogleAccess: dataproc.ClusterClusterConfigGceClusterConfigPrivateIPv6GoogleAccessEnumRef(obj["private_ipv6_google_access"].(string)),
 		ReservationAffinity:     expandDataprocWorkflowTemplateClusterClusterConfigGceClusterConfigReservationAffinity(obj["reservation_affinity"]),
-		ServiceAccount:          dcl.StringOrNil(obj["service_account"].(string)),
+		ServiceAccount:          dcl.String(obj["service_account"].(string)),
 		ServiceAccountScopes:    expandStringArray(obj["service_account_scopes"]),
-		Subnetwork:              dcl.StringOrNil(obj["subnetwork"].(string)),
+		Subnetwork:              dcl.String(obj["subnetwork"].(string)),
 		Tags:                    expandStringArray(obj["tags"]),
 		Zone:                    dcl.StringOrNil(obj["zone"].(string)),
 	}
 }
 
 func flattenDataprocWorkflowTemplateClusterClusterConfigGceClusterConfig(obj *dataproc.ClusterClusterConfigGceClusterConfig) interface{} {
-	if obj == nil {
+	if obj == nil || obj.Empty() {
 		return nil
 	}
 	transformed := map[string]interface{}{
@@ -3186,20 +3186,20 @@ func flattenDataprocWorkflowTemplateClusterClusterConfigGceClusterConfig(obj *da
 
 func expandDataprocWorkflowTemplateClusterClusterConfigGceClusterConfigNodeGroupAffinity(o interface{}) *dataproc.ClusterClusterConfigGceClusterConfigNodeGroupAffinity {
 	if o == nil {
-		return nil
+		return dataproc.EmptyClusterClusterConfigGceClusterConfigNodeGroupAffinity
 	}
 	objArr := o.([]interface{})
 	if len(objArr) == 0 {
-		return nil
+		return dataproc.EmptyClusterClusterConfigGceClusterConfigNodeGroupAffinity
 	}
 	obj := objArr[0].(map[string]interface{})
 	return &dataproc.ClusterClusterConfigGceClusterConfigNodeGroupAffinity{
-		NodeGroup: dcl.StringOrNil(obj["node_group"].(string)),
+		NodeGroup: dcl.String(obj["node_group"].(string)),
 	}
 }
 
 func flattenDataprocWorkflowTemplateClusterClusterConfigGceClusterConfigNodeGroupAffinity(obj *dataproc.ClusterClusterConfigGceClusterConfigNodeGroupAffinity) interface{} {
-	if obj == nil {
+	if obj == nil || obj.Empty() {
 		return nil
 	}
 	transformed := map[string]interface{}{
@@ -3212,22 +3212,22 @@ func flattenDataprocWorkflowTemplateClusterClusterConfigGceClusterConfigNodeGrou
 
 func expandDataprocWorkflowTemplateClusterClusterConfigGceClusterConfigReservationAffinity(o interface{}) *dataproc.ClusterClusterConfigGceClusterConfigReservationAffinity {
 	if o == nil {
-		return nil
+		return dataproc.EmptyClusterClusterConfigGceClusterConfigReservationAffinity
 	}
 	objArr := o.([]interface{})
 	if len(objArr) == 0 {
-		return nil
+		return dataproc.EmptyClusterClusterConfigGceClusterConfigReservationAffinity
 	}
 	obj := objArr[0].(map[string]interface{})
 	return &dataproc.ClusterClusterConfigGceClusterConfigReservationAffinity{
 		ConsumeReservationType: dataproc.ClusterClusterConfigGceClusterConfigReservationAffinityConsumeReservationTypeEnumRef(obj["consume_reservation_type"].(string)),
-		Key:                    dcl.StringOrNil(obj["key"].(string)),
+		Key:                    dcl.String(obj["key"].(string)),
 		Values:                 expandStringArray(obj["values"]),
 	}
 }
 
 func flattenDataprocWorkflowTemplateClusterClusterConfigGceClusterConfigReservationAffinity(obj *dataproc.ClusterClusterConfigGceClusterConfigReservationAffinity) interface{} {
-	if obj == nil {
+	if obj == nil || obj.Empty() {
 		return nil
 	}
 	transformed := map[string]interface{}{
@@ -3242,11 +3242,11 @@ func flattenDataprocWorkflowTemplateClusterClusterConfigGceClusterConfigReservat
 
 func expandDataprocWorkflowTemplateClusterClusterConfigGkeClusterConfig(o interface{}) *dataproc.ClusterClusterConfigGkeClusterConfig {
 	if o == nil {
-		return nil
+		return dataproc.EmptyClusterClusterConfigGkeClusterConfig
 	}
 	objArr := o.([]interface{})
 	if len(objArr) == 0 {
-		return nil
+		return dataproc.EmptyClusterClusterConfigGkeClusterConfig
 	}
 	obj := objArr[0].(map[string]interface{})
 	return &dataproc.ClusterClusterConfigGkeClusterConfig{
@@ -3255,7 +3255,7 @@ func expandDataprocWorkflowTemplateClusterClusterConfigGkeClusterConfig(o interf
 }
 
 func flattenDataprocWorkflowTemplateClusterClusterConfigGkeClusterConfig(obj *dataproc.ClusterClusterConfigGkeClusterConfig) interface{} {
-	if obj == nil {
+	if obj == nil || obj.Empty() {
 		return nil
 	}
 	transformed := map[string]interface{}{
@@ -3268,21 +3268,21 @@ func flattenDataprocWorkflowTemplateClusterClusterConfigGkeClusterConfig(obj *da
 
 func expandDataprocWorkflowTemplateClusterClusterConfigGkeClusterConfigNamespacedGkeDeploymentTarget(o interface{}) *dataproc.ClusterClusterConfigGkeClusterConfigNamespacedGkeDeploymentTarget {
 	if o == nil {
-		return nil
+		return dataproc.EmptyClusterClusterConfigGkeClusterConfigNamespacedGkeDeploymentTarget
 	}
 	objArr := o.([]interface{})
 	if len(objArr) == 0 {
-		return nil
+		return dataproc.EmptyClusterClusterConfigGkeClusterConfigNamespacedGkeDeploymentTarget
 	}
 	obj := objArr[0].(map[string]interface{})
 	return &dataproc.ClusterClusterConfigGkeClusterConfigNamespacedGkeDeploymentTarget{
-		ClusterNamespace: dcl.StringOrNil(obj["cluster_namespace"].(string)),
-		TargetGkeCluster: dcl.StringOrNil(obj["target_gke_cluster"].(string)),
+		ClusterNamespace: dcl.String(obj["cluster_namespace"].(string)),
+		TargetGkeCluster: dcl.String(obj["target_gke_cluster"].(string)),
 	}
 }
 
 func flattenDataprocWorkflowTemplateClusterClusterConfigGkeClusterConfigNamespacedGkeDeploymentTarget(obj *dataproc.ClusterClusterConfigGkeClusterConfigNamespacedGkeDeploymentTarget) interface{} {
-	if obj == nil {
+	if obj == nil || obj.Empty() {
 		return nil
 	}
 	transformed := map[string]interface{}{
@@ -3314,13 +3314,13 @@ func expandDataprocWorkflowTemplateClusterClusterConfigInitializationActionsArra
 
 func expandDataprocWorkflowTemplateClusterClusterConfigInitializationActions(o interface{}) *dataproc.ClusterClusterConfigInitializationActions {
 	if o == nil {
-		return nil
+		return dataproc.EmptyClusterClusterConfigInitializationActions
 	}
 
 	obj := o.(map[string]interface{})
 	return &dataproc.ClusterClusterConfigInitializationActions{
-		ExecutableFile:   dcl.StringOrNil(obj["executable_file"].(string)),
-		ExecutionTimeout: dcl.StringOrNil(obj["execution_timeout"].(string)),
+		ExecutableFile:   dcl.String(obj["executable_file"].(string)),
+		ExecutionTimeout: dcl.String(obj["execution_timeout"].(string)),
 	}
 }
 
@@ -3339,7 +3339,7 @@ func flattenDataprocWorkflowTemplateClusterClusterConfigInitializationActionsArr
 }
 
 func flattenDataprocWorkflowTemplateClusterClusterConfigInitializationActions(obj *dataproc.ClusterClusterConfigInitializationActions) interface{} {
-	if obj == nil {
+	if obj == nil || obj.Empty() {
 		return nil
 	}
 	transformed := map[string]interface{}{
@@ -3353,22 +3353,22 @@ func flattenDataprocWorkflowTemplateClusterClusterConfigInitializationActions(ob
 
 func expandDataprocWorkflowTemplateClusterClusterConfigLifecycleConfig(o interface{}) *dataproc.ClusterClusterConfigLifecycleConfig {
 	if o == nil {
-		return nil
+		return dataproc.EmptyClusterClusterConfigLifecycleConfig
 	}
 	objArr := o.([]interface{})
 	if len(objArr) == 0 {
-		return nil
+		return dataproc.EmptyClusterClusterConfigLifecycleConfig
 	}
 	obj := objArr[0].(map[string]interface{})
 	return &dataproc.ClusterClusterConfigLifecycleConfig{
-		AutoDeleteTime: dcl.StringOrNil(obj["auto_delete_time"].(string)),
-		AutoDeleteTtl:  dcl.StringOrNil(obj["auto_delete_ttl"].(string)),
-		IdleDeleteTtl:  dcl.StringOrNil(obj["idle_delete_ttl"].(string)),
+		AutoDeleteTime: dcl.String(obj["auto_delete_time"].(string)),
+		AutoDeleteTtl:  dcl.String(obj["auto_delete_ttl"].(string)),
+		IdleDeleteTtl:  dcl.String(obj["idle_delete_ttl"].(string)),
 	}
 }
 
 func flattenDataprocWorkflowTemplateClusterClusterConfigLifecycleConfig(obj *dataproc.ClusterClusterConfigLifecycleConfig) interface{} {
-	if obj == nil {
+	if obj == nil || obj.Empty() {
 		return nil
 	}
 	transformed := map[string]interface{}{
@@ -3384,20 +3384,20 @@ func flattenDataprocWorkflowTemplateClusterClusterConfigLifecycleConfig(obj *dat
 
 func expandDataprocWorkflowTemplateClusterClusterConfigMetastoreConfig(o interface{}) *dataproc.ClusterClusterConfigMetastoreConfig {
 	if o == nil {
-		return nil
+		return dataproc.EmptyClusterClusterConfigMetastoreConfig
 	}
 	objArr := o.([]interface{})
 	if len(objArr) == 0 {
-		return nil
+		return dataproc.EmptyClusterClusterConfigMetastoreConfig
 	}
 	obj := objArr[0].(map[string]interface{})
 	return &dataproc.ClusterClusterConfigMetastoreConfig{
-		DataprocMetastoreService: dcl.StringOrNil(obj["dataproc_metastore_service"].(string)),
+		DataprocMetastoreService: dcl.String(obj["dataproc_metastore_service"].(string)),
 	}
 }
 
 func flattenDataprocWorkflowTemplateClusterClusterConfigMetastoreConfig(obj *dataproc.ClusterClusterConfigMetastoreConfig) interface{} {
-	if obj == nil {
+	if obj == nil || obj.Empty() {
 		return nil
 	}
 	transformed := map[string]interface{}{
@@ -3410,11 +3410,11 @@ func flattenDataprocWorkflowTemplateClusterClusterConfigMetastoreConfig(obj *dat
 
 func expandDataprocWorkflowTemplateClusterClusterConfigSecurityConfig(o interface{}) *dataproc.ClusterClusterConfigSecurityConfig {
 	if o == nil {
-		return nil
+		return dataproc.EmptyClusterClusterConfigSecurityConfig
 	}
 	objArr := o.([]interface{})
 	if len(objArr) == 0 {
-		return nil
+		return dataproc.EmptyClusterClusterConfigSecurityConfig
 	}
 	obj := objArr[0].(map[string]interface{})
 	return &dataproc.ClusterClusterConfigSecurityConfig{
@@ -3423,7 +3423,7 @@ func expandDataprocWorkflowTemplateClusterClusterConfigSecurityConfig(o interfac
 }
 
 func flattenDataprocWorkflowTemplateClusterClusterConfigSecurityConfig(obj *dataproc.ClusterClusterConfigSecurityConfig) interface{} {
-	if obj == nil {
+	if obj == nil || obj.Empty() {
 		return nil
 	}
 	transformed := map[string]interface{}{
@@ -3436,34 +3436,34 @@ func flattenDataprocWorkflowTemplateClusterClusterConfigSecurityConfig(obj *data
 
 func expandDataprocWorkflowTemplateClusterClusterConfigSecurityConfigKerberosConfig(o interface{}) *dataproc.ClusterClusterConfigSecurityConfigKerberosConfig {
 	if o == nil {
-		return nil
+		return dataproc.EmptyClusterClusterConfigSecurityConfigKerberosConfig
 	}
 	objArr := o.([]interface{})
 	if len(objArr) == 0 {
-		return nil
+		return dataproc.EmptyClusterClusterConfigSecurityConfigKerberosConfig
 	}
 	obj := objArr[0].(map[string]interface{})
 	return &dataproc.ClusterClusterConfigSecurityConfigKerberosConfig{
-		CrossRealmTrustAdminServer:    dcl.StringOrNil(obj["cross_realm_trust_admin_server"].(string)),
-		CrossRealmTrustKdc:            dcl.StringOrNil(obj["cross_realm_trust_kdc"].(string)),
-		CrossRealmTrustRealm:          dcl.StringOrNil(obj["cross_realm_trust_realm"].(string)),
-		CrossRealmTrustSharedPassword: dcl.StringOrNil(obj["cross_realm_trust_shared_password"].(string)),
+		CrossRealmTrustAdminServer:    dcl.String(obj["cross_realm_trust_admin_server"].(string)),
+		CrossRealmTrustKdc:            dcl.String(obj["cross_realm_trust_kdc"].(string)),
+		CrossRealmTrustRealm:          dcl.String(obj["cross_realm_trust_realm"].(string)),
+		CrossRealmTrustSharedPassword: dcl.String(obj["cross_realm_trust_shared_password"].(string)),
 		EnableKerberos:                dcl.Bool(obj["enable_kerberos"].(bool)),
-		KdcDbKey:                      dcl.StringOrNil(obj["kdc_db_key"].(string)),
-		KeyPassword:                   dcl.StringOrNil(obj["key_password"].(string)),
-		Keystore:                      dcl.StringOrNil(obj["keystore"].(string)),
-		KeystorePassword:              dcl.StringOrNil(obj["keystore_password"].(string)),
-		KmsKey:                        dcl.StringOrNil(obj["kms_key"].(string)),
-		Realm:                         dcl.StringOrNil(obj["realm"].(string)),
-		RootPrincipalPassword:         dcl.StringOrNil(obj["root_principal_password"].(string)),
-		TgtLifetimeHours:              dcl.Int64OrNil(int64(obj["tgt_lifetime_hours"].(int))),
-		Truststore:                    dcl.StringOrNil(obj["truststore"].(string)),
-		TruststorePassword:            dcl.StringOrNil(obj["truststore_password"].(string)),
+		KdcDbKey:                      dcl.String(obj["kdc_db_key"].(string)),
+		KeyPassword:                   dcl.String(obj["key_password"].(string)),
+		Keystore:                      dcl.String(obj["keystore"].(string)),
+		KeystorePassword:              dcl.String(obj["keystore_password"].(string)),
+		KmsKey:                        dcl.String(obj["kms_key"].(string)),
+		Realm:                         dcl.String(obj["realm"].(string)),
+		RootPrincipalPassword:         dcl.String(obj["root_principal_password"].(string)),
+		TgtLifetimeHours:              dcl.Int64(int64(obj["tgt_lifetime_hours"].(int))),
+		Truststore:                    dcl.String(obj["truststore"].(string)),
+		TruststorePassword:            dcl.String(obj["truststore_password"].(string)),
 	}
 }
 
 func flattenDataprocWorkflowTemplateClusterClusterConfigSecurityConfigKerberosConfig(obj *dataproc.ClusterClusterConfigSecurityConfigKerberosConfig) interface{} {
-	if obj == nil {
+	if obj == nil || obj.Empty() {
 		return nil
 	}
 	transformed := map[string]interface{}{
@@ -3490,21 +3490,21 @@ func flattenDataprocWorkflowTemplateClusterClusterConfigSecurityConfigKerberosCo
 
 func expandDataprocWorkflowTemplateClusterClusterConfigSoftwareConfig(o interface{}) *dataproc.ClusterClusterConfigSoftwareConfig {
 	if o == nil {
-		return nil
+		return dataproc.EmptyClusterClusterConfigSoftwareConfig
 	}
 	objArr := o.([]interface{})
 	if len(objArr) == 0 {
-		return nil
+		return dataproc.EmptyClusterClusterConfigSoftwareConfig
 	}
 	obj := objArr[0].(map[string]interface{})
 	return &dataproc.ClusterClusterConfigSoftwareConfig{
-		ImageVersion: dcl.StringOrNil(obj["image_version"].(string)),
+		ImageVersion: dcl.String(obj["image_version"].(string)),
 		Properties:   checkStringMap(obj["properties"]),
 	}
 }
 
 func flattenDataprocWorkflowTemplateClusterClusterConfigSoftwareConfig(obj *dataproc.ClusterClusterConfigSoftwareConfig) interface{} {
-	if obj == nil {
+	if obj == nil || obj.Empty() {
 		return nil
 	}
 	transformed := map[string]interface{}{
