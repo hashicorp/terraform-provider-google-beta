@@ -1,4 +1,4 @@
-## 3.69.0 (Unreleased)
+## 3.69.0 (May 24, 2021)
 
 IMPROVEMENTS:
 * apigateway: allowed field `apiconfig` to change on resource `google_apigateway_gateway` ([#3248](https://github.com/hashicorp/terraform-provider-google-beta/pull/3248))
