@@ -1,4 +1,18 @@
-## 3.69.0 (Unreleased)
+## 3.70.0 (Unreleased)
+
+## 3.69.0 (May 24, 2021)
+
+IMPROVEMENTS:
+* apigateway: allowed field `apiconfig` to change on resource `google_apigateway_gateway` ([#3248](https://github.com/hashicorp/terraform-provider-google-beta/pull/3248))
+* compute: added "description" field to "google_compute_resource_policy" resource ([#3263](https://github.com/hashicorp/terraform-provider-google-beta/pull/3263))
+* compute: added "instance_schedule_policy" field to "google_compute_resource_policy" resource ([#3263](https://github.com/hashicorp/terraform-provider-google-beta/pull/3263))
+* compute: added support for IPsec-encrypted Interconnect in the form of new fields on `google_compute_router`, `google_compute_ha_vpn_gateway`, `google_compute_interconnect_attachment` and `google_compute_address` ([#3256](https://github.com/hashicorp/terraform-provider-google-beta/pull/3256))
+* dataflow: enabled updates for `google_dataflow_flex_template_job` ([#3246](https://github.com/hashicorp/terraform-provider-google-beta/pull/3246))
+
+BUG FIXES:
+* cloudidentity: fixed recreation on the `initial_group_config` of `google_cloud_identity_group` ([#3252](https://github.com/hashicorp/terraform-provider-google-beta/pull/3252))
+* compute: added mutex in `google_compute_metadata_item` to reduce retries + quota errors ([#3262](https://github.com/hashicorp/terraform-provider-google-beta/pull/3262))
+* container: fixed bug where `enable_shielded_nodes` could not be false on resource `google_container_cluster` ([#3247](https://github.com/hashicorp/terraform-provider-google-beta/pull/3247))
 
 ## 3.68.0 (May 18, 2021)
 FEATURES:
