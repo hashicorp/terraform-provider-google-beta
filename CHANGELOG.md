@@ -1,9 +1,4 @@
 ## 3.70.0 (Unreleased)
-UNKNOWN CHANGELOG TYPE:
-* Bump cloud.google.com/go/bigtable from 1.7.1 to 1.10.0 ([#3259](https://github.com/hashicorp/terraform-provider-google-beta/pull/3259))
-* Downgraded bigtable to 1.7.1 ([#3275](https://github.com/hashicorp/terraform-provider-google-beta/pull/3275))
-* Update dcl ([#3271](https://github.com/hashicorp/terraform-provider-google-beta/pull/3271))
-
 IMPROVEMENTS:
 * compute: added `provisioned_iops` to `google_compute_disk` ([#3269](https://github.com/hashicorp/terraform-provider-google-beta/pull/3269))
 * sql: added field `disk_autoresize_limit` to `sql_database_instance` ([#3273](https://github.com/hashicorp/terraform-provider-google-beta/pull/3273))
