@@ -154,10 +154,11 @@ func TestAccBinaryAuthorizationPolicy_update(t *testing.T) {
 		},
 	})
 }
+
 func testAccCheckBinaryAuthorizationPolicyDefault(t *testing.T, pid string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		config := googleProviderConfig(t)
-		url := fmt.Sprintf("https://binaryauthorization.googleapis.com/v1beta1/projects/%s/policy", pid)
+		url := fmt.Sprintf("https://binaryauthorization.googleapis.com/v1/projects/%s/policy", pid)
 		pol, err := sendRequest(config, "GET", "", url, config.userAgent, nil)
 		if err != nil {
 			return err
