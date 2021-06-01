@@ -1,4 +1,13 @@
 ## 3.70.0 (Unreleased)
+IMPROVEMENTS:
+* compute: added `provisioned_iops` to `google_compute_disk` ([#3269](https://github.com/hashicorp/terraform-provider-google-beta/pull/3269))
+* sql: added field `disk_autoresize_limit` to `sql_database_instance` ([#3273](https://github.com/hashicorp/terraform-provider-google-beta/pull/3273))
+
+BUG FIXES:
+* cloudrun: fixed a bug where resources would return successfully due to responses based on a previous version of the resource ([#3277](https://github.com/hashicorp/terraform-provider-google-beta/pull/3277))
+* compute: fixed issue where `google_compute_region_disk` and `google_compute_disk` would force recreation due to the addition of `interface` property ([#3272](https://github.com/hashicorp/terraform-provider-google-beta/pull/3272))
+* compute: fixed missing values for `negative_caching` and `serve_while_stale` on `google_compute_backend_service` ([#3278](https://github.com/hashicorp/terraform-provider-google-beta/pull/3278))
+* storage: fixed error when `matches_storage_class` is set empty on `google_storage_bucket` ([#3282](https://github.com/hashicorp/terraform-provider-google-beta/pull/3282))
 
 ## 3.69.0 (May 24, 2021)
 
