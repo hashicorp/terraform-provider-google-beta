@@ -1,4 +1,4 @@
-## 3.70.0 (Unreleased)
+## 3.70.0 (June 01, 2021)
 IMPROVEMENTS:
 * compute: added `provisioned_iops` to `google_compute_disk` ([#3269](https://github.com/hashicorp/terraform-provider-google-beta/pull/3269))
 * sql: added field `disk_autoresize_limit` to `sql_database_instance` ([#3273](https://github.com/hashicorp/terraform-provider-google-beta/pull/3273))
