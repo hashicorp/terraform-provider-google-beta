@@ -13,8 +13,9 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 
-	dataproc "google.golang.org/api/dataproc/v1beta2"
 	"google.golang.org/api/googleapi"
+
+	dataproc "google.golang.org/api/dataproc/v1beta2"
 )
 
 func TestDataprocExtractInitTimeout(t *testing.T) {
