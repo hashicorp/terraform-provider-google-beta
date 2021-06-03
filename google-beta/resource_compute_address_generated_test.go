@@ -240,11 +240,17 @@ func TestAccComputeAddress_computeAddressIpsecInterconnectExample(t *testing.T) 
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProvidersOiCS,
+		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckComputeAddressDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccComputeAddress_computeAddressIpsecInterconnectExample(context),
+			},
+			{
+				ResourceName:            "google_compute_address.ipsec-interconnect-address",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"subnetwork", "network", "region"},
 			},
 		},
 	})
@@ -259,13 +265,11 @@ resource "google_compute_address" "ipsec-interconnect-address" {
   address       = "192.168.1.0"
   prefix_length = 29
   network       = google_compute_network.network.self_link
-  provider = google-beta
 }
 
 resource "google_compute_network" "network" {
   name                    = "tf-test-test-network%{random_suffix}"
   auto_create_subnetworks = false
-  provider = google-beta
 }
 `, context)
 }

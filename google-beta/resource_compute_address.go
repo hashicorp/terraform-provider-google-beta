@@ -124,7 +124,7 @@ specified, it is assumed to be PREMIUM. Possible values: ["PREMIUM", "STANDARD"]
 
 * VPC_PEERING for addresses that are reserved for VPC peer networks.
 
-* IPSEC_INTERCONNECT (Beta only) for addresses created from a private IP range
+* IPSEC_INTERCONNECT for addresses created from a private IP range
   that are reserved for a VLAN attachment in an IPsec-encrypted Cloud
   Interconnect configuration. These addresses are regional resources.
 
