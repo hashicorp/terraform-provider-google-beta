@@ -282,11 +282,17 @@ func TestAccComputeHaVpnGateway_computeHaVpnGatewayEncryptedInterconnectExample(
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProvidersOiCS,
+		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckComputeHaVpnGatewayDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccComputeHaVpnGateway_computeHaVpnGatewayEncryptedInterconnectExample(context),
+			},
+			{
+				ResourceName:            "google_compute_ha_vpn_gateway.vpn-gateway",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"network", "region"},
 			},
 		},
 	})
@@ -305,7 +311,6 @@ resource "google_compute_ha_vpn_gateway" "vpn-gateway" {
       id                      = 1
       interconnect_attachment = google_compute_interconnect_attachment.attachment2.self_link
   }
-  provider = google-beta
 }
 
 resource "google_compute_interconnect_attachment" "attachment1" {
@@ -317,7 +322,6 @@ resource "google_compute_interconnect_attachment" "attachment1" {
   ipsec_internal_addresses = [
     google_compute_address.address1.self_link,
   ]
-  provider = google-beta
 }
 
 resource "google_compute_interconnect_attachment" "attachment2" {
@@ -329,7 +333,6 @@ resource "google_compute_interconnect_attachment" "attachment2" {
   ipsec_internal_addresses = [
     google_compute_address.address2.self_link,
   ]
-  provider = google-beta
 }
 
 resource "google_compute_address" "address1" {
@@ -339,7 +342,6 @@ resource "google_compute_address" "address1" {
   address       = "192.168.1.0"
   prefix_length = 29
   network       = google_compute_network.network.self_link
-  provider = google-beta
 }
 
 resource "google_compute_address" "address2" {
@@ -349,7 +351,6 @@ resource "google_compute_address" "address2" {
   address       = "192.168.2.0"
   prefix_length = 29
   network       = google_compute_network.network.self_link
-  provider = google-beta
 }
 
 resource "google_compute_router" "router" {
@@ -359,13 +360,11 @@ resource "google_compute_router" "router" {
   bgp {
     asn = 16550
   }
-  provider = google-beta
 }
 
 resource "google_compute_network" "network" {
   name                    = "tf-test-test-network%{random_suffix}"
   auto_create_subnetworks = false
-  provider = google-beta
 }
 `, context)
 }

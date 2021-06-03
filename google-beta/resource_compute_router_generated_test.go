@@ -82,11 +82,17 @@ func TestAccComputeRouter_computeRouterEncryptedInterconnectExample(t *testing.T
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProvidersOiCS,
+		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckComputeRouterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccComputeRouter_computeRouterEncryptedInterconnectExample(context),
+			},
+			{
+				ResourceName:            "google_compute_router.encrypted-interconnect-router",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"network", "region"},
 			},
 		},
 	})
@@ -101,13 +107,11 @@ resource "google_compute_router" "encrypted-interconnect-router" {
   bgp {
     asn = 64514
   }
-  provider = google-beta
 }
 
 resource "google_compute_network" "network" {
   name                    = "tf-test-test-network%{random_suffix}"
   auto_create_subnetworks = false
-  provider = google-beta
 }
 `, context)
 }
