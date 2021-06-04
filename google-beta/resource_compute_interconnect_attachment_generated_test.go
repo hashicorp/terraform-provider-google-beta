@@ -82,17 +82,11 @@ func TestAccComputeInterconnectAttachment_computeInterconnectAttachmentIpsecEncr
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
+		Providers:    testAccProvidersOiCS,
 		CheckDestroy: testAccCheckComputeInterconnectAttachmentDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccComputeInterconnectAttachment_computeInterconnectAttachmentIpsecEncryptionExample(context),
-			},
-			{
-				ResourceName:            "google_compute_interconnect_attachment.ipsec-encrypted-interconnect-attachment",
-				ImportState:             true,
-				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"router", "candidate_subnets", "region"},
 			},
 		},
 	})

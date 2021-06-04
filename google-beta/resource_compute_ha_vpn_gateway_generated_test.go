@@ -282,17 +282,11 @@ func TestAccComputeHaVpnGateway_computeHaVpnGatewayEncryptedInterconnectExample(
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
+		Providers:    testAccProvidersOiCS,
 		CheckDestroy: testAccCheckComputeHaVpnGatewayDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccComputeHaVpnGateway_computeHaVpnGatewayEncryptedInterconnectExample(context),
-			},
-			{
-				ResourceName:            "google_compute_ha_vpn_gateway.vpn-gateway",
-				ImportState:             true,
-				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"network", "region"},
 			},
 		},
 	})

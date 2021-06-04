@@ -82,17 +82,11 @@ func TestAccComputeRouter_computeRouterEncryptedInterconnectExample(t *testing.T
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
+		Providers:    testAccProvidersOiCS,
 		CheckDestroy: testAccCheckComputeRouterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccComputeRouter_computeRouterEncryptedInterconnectExample(context),
-			},
-			{
-				ResourceName:            "google_compute_router.encrypted-interconnect-router",
-				ImportState:             true,
-				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"network", "region"},
 			},
 		},
 	})
