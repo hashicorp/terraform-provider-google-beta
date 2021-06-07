@@ -1,4 +1,18 @@
 ## 3.71.0 (Unreleased)
+FEATURES:
+* **New Resource:** `google_dialogflow_fulfillment` ([#3286](https://github.com/hashicorp/terraform-provider-google-beta/pull/3286))
+
+IMPROVEMENTS:
+* compute: added `reservation_affinity` to `google_compute_instance` and `google_compute_instance_template` ([#3288](https://github.com/hashicorp/terraform-provider-google-beta/pull/3288))
+* compute: added support for `wait_for_instances_status` on `google_compute_instance_group_manager` and `google_compute_region_instance_group_manager` ([#3283](https://github.com/hashicorp/terraform-provider-google-beta/pull/3283))
+* compute: added support for output-only `status` field on `google_compute_instance_group_manager` and `google_compute_region_instance_group_manager` ([#3283](https://github.com/hashicorp/terraform-provider-google-beta/pull/3283))
+* compute: set the default value for log_config.enable on `google_compute_region_health_check` to avoid permanent diff on plan/apply. ([#3291](https://github.com/hashicorp/terraform-provider-google-beta/pull/3291))
+
+BUG FIXES:
+* composer: fixed a check that did not allow for preview versions in `google_composer_environment` ([#3287](https://github.com/hashicorp/terraform-provider-google-beta/pull/3287))
+* storage: fixed error when `matches_storage_class` is set empty on `google_storage_bucket` ([#3282](https://github.com/hashicorp/terraform-provider-google-beta/pull/3282))
+* vpcaccess: fixed permadiff when `max_throughput` is not set on `google_vpc_access_connector` ([#3294](https://github.com/hashicorp/terraform-provider-google-beta/pull/3294))
+
 ## 3.70.0 (June 01, 2021)
 IMPROVEMENTS:
 * compute: added `provisioned_iops` to `google_compute_disk` ([#3269](https://github.com/hashicorp/terraform-provider-google-beta/pull/3269))
