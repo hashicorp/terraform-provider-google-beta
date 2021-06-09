@@ -10,7 +10,7 @@ import (
 	"github.com/hashicorp/errwrap"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
-	"google.golang.org/api/compute/v1"
+	compute "google.golang.org/api/compute/v0.beta"
 )
 
 func resourceComputeSecurityPolicy() *schema.Resource {
@@ -165,7 +165,41 @@ func resourceComputeSecurityPolicy() *schema.Resource {
 				Computed:    true,
 				Description: `The URI of the created resource.`,
 			},
+
+			"adaptive_protection_config": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: `Adaptive Protection Config of this security policy.`,
+				MaxItems:    1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"layer_7_ddos_defense_config": {
+							Type:        schema.TypeList,
+							Description: `Layer 7 DDoS Defense Config of this security policy`,
+							Optional:    true,
+							MaxItems:    1,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"enable": {
+										Type:        schema.TypeBool,
+										Optional:    true,
+										Description: `If set to true, enables CAAP for L7 DDoS detection.`,
+									},
+									"rule_visibility": {
+										Type:         schema.TypeString,
+										Optional:     true,
+										Default:      "STANDARD",
+										ValidateFunc: validation.StringInSlice([]string{"STANDARD", "PREMIUM"}, false),
+										Description:  `Rule visibility. Supported values include: "STANDARD", "PREMIUM".`,
+									},
+								},
+							},
+						},
+					},
+				},
+			},
 		},
+
 		UseJSONNumber: true,
 	}
 }
@@ -207,9 +241,15 @@ func resourceComputeSecurityPolicyCreate(d *schema.ResourceData, meta interface{
 		securityPolicy.Rules = expandSecurityPolicyRules(v.(*schema.Set).List())
 	}
 
+	if v, ok := d.GetOk("adaptive_protection_config"); ok {
+		securityPolicy.AdaptiveProtectionConfig = expandSecurityPolicyAdaptiveProtectionConfig(v.([]interface{}))
+	}
+
 	log.Printf("[DEBUG] SecurityPolicy insert request: %#v", securityPolicy)
 
-	op, err := config.NewComputeClient(userAgent).SecurityPolicies.Insert(project, securityPolicy).Do()
+	client := config.NewComputeBetaClient(userAgent)
+
+	op, err := client.SecurityPolicies.Insert(project, securityPolicy).Do()
 
 	if err != nil {
 		return errwrap.Wrapf("Error creating SecurityPolicy: {{err}}", err)
@@ -242,7 +282,10 @@ func resourceComputeSecurityPolicyRead(d *schema.ResourceData, meta interface{})
 	}
 
 	sp := d.Get("name").(string)
-	securityPolicy, err := config.NewComputeClient(userAgent).SecurityPolicies.Get(project, sp).Do()
+
+	client := config.NewComputeBetaClient(userAgent)
+
+	securityPolicy, err := client.SecurityPolicies.Get(project, sp).Do()
 	if err != nil {
 		return handleNotFoundError(err, d, fmt.Sprintf("SecurityPolicy %q", d.Id()))
 	}
@@ -264,6 +307,9 @@ func resourceComputeSecurityPolicyRead(d *schema.ResourceData, meta interface{})
 	}
 	if err := d.Set("self_link", ConvertSelfLinkToV1(securityPolicy.SelfLink)); err != nil {
 		return fmt.Errorf("Error setting self_link: %s", err)
+	}
+	if err := d.Set("adaptive_protection_config", flattenSecurityPolicyAdaptiveProtectionConfig(securityPolicy.AdaptiveProtectionConfig)); err != nil {
+		return fmt.Errorf("Error setting adaptive_protection_config: %s", err)
 	}
 
 	return nil
@@ -289,7 +335,10 @@ func resourceComputeSecurityPolicyUpdate(d *schema.ResourceData, meta interface{
 			Fingerprint:     d.Get("fingerprint").(string),
 			ForceSendFields: []string{"Description"},
 		}
-		op, err := config.NewComputeClient(userAgent).SecurityPolicies.Patch(project, sp, securityPolicy).Do()
+
+		client := config.NewComputeBetaClient(userAgent)
+
+		op, err := client.SecurityPolicies.Patch(project, sp, securityPolicy).Do()
 
 		if err != nil {
 			return errwrap.Wrapf(fmt.Sprintf("Error updating SecurityPolicy %q: {{err}}", sp), err)
@@ -316,8 +365,10 @@ func resourceComputeSecurityPolicyUpdate(d *schema.ResourceData, meta interface{
 			priority := int64(rule.(map[string]interface{})["priority"].(int))
 			nPriorities[priority] = true
 			if !oPriorities[priority] {
+				client := config.NewComputeBetaClient(userAgent)
+
 				// If the rule is in new and its priority does not exist in old, then add it.
-				op, err := config.NewComputeClient(userAgent).SecurityPolicies.AddRule(project, sp, expandSecurityPolicyRule(rule)).Do()
+				op, err := client.SecurityPolicies.AddRule(project, sp, expandSecurityPolicyRule(rule)).Do()
 
 				if err != nil {
 					return errwrap.Wrapf(fmt.Sprintf("Error updating SecurityPolicy %q: {{err}}", sp), err)
@@ -328,8 +379,10 @@ func resourceComputeSecurityPolicyUpdate(d *schema.ResourceData, meta interface{
 					return err
 				}
 			} else if !oSet.Contains(rule) {
+				client := config.NewComputeBetaClient(userAgent)
+
 				// If the rule is in new, and its priority is in old, but its hash is different than the one in old, update it.
-				op, err := config.NewComputeClient(userAgent).SecurityPolicies.PatchRule(project, sp, expandSecurityPolicyRule(rule)).Priority(priority).Do()
+				op, err := client.SecurityPolicies.PatchRule(project, sp, expandSecurityPolicyRule(rule)).Priority(priority).Do()
 
 				if err != nil {
 					return errwrap.Wrapf(fmt.Sprintf("Error updating SecurityPolicy %q: {{err}}", sp), err)
@@ -345,8 +398,10 @@ func resourceComputeSecurityPolicyUpdate(d *schema.ResourceData, meta interface{
 		for _, rule := range oSet.List() {
 			priority := int64(rule.(map[string]interface{})["priority"].(int))
 			if !nPriorities[priority] {
+				client := config.NewComputeBetaClient(userAgent)
+
 				// If the rule's priority is in old but not new, remove it.
-				op, err := config.NewComputeClient(userAgent).SecurityPolicies.RemoveRule(project, sp).Priority(priority).Do()
+				op, err := client.SecurityPolicies.RemoveRule(project, sp).Priority(priority).Do()
 
 				if err != nil {
 					return errwrap.Wrapf(fmt.Sprintf("Error updating SecurityPolicy %q: {{err}}", sp), err)
@@ -375,8 +430,10 @@ func resourceComputeSecurityPolicyDelete(d *schema.ResourceData, meta interface{
 		return err
 	}
 
+	client := config.NewComputeBetaClient(userAgent)
+
 	// Delete the SecurityPolicy
-	op, err := config.NewComputeClient(userAgent).SecurityPolicies.Delete(project, d.Get("name").(string)).Do()
+	op, err := client.SecurityPolicies.Delete(project, d.Get("name").(string)).Do()
 	if err != nil {
 		return errwrap.Wrapf("Error deleting SecurityPolicy: {{err}}", err)
 	}
@@ -502,6 +559,54 @@ func flattenMatchExpr(match *compute.SecurityPolicyRuleMatcher) []map[string]int
 		// "title":       match.Expr.Title,
 		// "description": match.Expr.Description,
 		// "location":    match.Expr.Location,
+	}
+
+	return []map[string]interface{}{data}
+}
+
+func expandSecurityPolicyAdaptiveProtectionConfig(configured []interface{}) *compute.SecurityPolicyAdaptiveProtectionConfig {
+	if len(configured) == 0 || configured[0] == nil {
+		return nil
+	}
+
+	data := configured[0].(map[string]interface{})
+	return &compute.SecurityPolicyAdaptiveProtectionConfig{
+		Layer7DdosDefenseConfig: expandLayer7DdosDefenseConfig(data["layer_7_ddos_defense_config"].([]interface{})),
+	}
+}
+
+func expandLayer7DdosDefenseConfig(configured []interface{}) *compute.SecurityPolicyAdaptiveProtectionConfigLayer7DdosDefenseConfig {
+	if len(configured) == 0 || configured[0] == nil {
+		return nil
+	}
+
+	data := configured[0].(map[string]interface{})
+	return &compute.SecurityPolicyAdaptiveProtectionConfigLayer7DdosDefenseConfig{
+		Enable:         data["enable"].(bool),
+		RuleVisibility: data["rule_visibility"].(string),
+	}
+}
+
+func flattenSecurityPolicyAdaptiveProtectionConfig(conf *compute.SecurityPolicyAdaptiveProtectionConfig) []map[string]interface{} {
+	if conf == nil {
+		return nil
+	}
+
+	data := map[string]interface{}{
+		"layer_7_ddos_defense_config": flattenLayer7DdosDefenseConfig(conf.Layer7DdosDefenseConfig),
+	}
+
+	return []map[string]interface{}{data}
+}
+
+func flattenLayer7DdosDefenseConfig(conf *compute.SecurityPolicyAdaptiveProtectionConfigLayer7DdosDefenseConfig) []map[string]interface{} {
+	if conf == nil {
+		return nil
+	}
+
+	data := map[string]interface{}{
+		"enable":          conf.Enable,
+		"rule_visibility": conf.RuleVisibility,
 	}
 
 	return []map[string]interface{}{data}
