@@ -112,6 +112,7 @@ type Config struct {
 	DatastoreBasePath            string
 	DeploymentManagerBasePath    string
 	DialogflowBasePath           string
+	DialogflowCXBasePath         string
 	DNSBasePath                  string
 	EssentialContactsBasePath    string
 	FilestoreBasePath            string
@@ -209,6 +210,7 @@ var DataprocMetastoreDefaultBasePath = "https://metastore.googleapis.com/v1beta/
 var DatastoreDefaultBasePath = "https://datastore.googleapis.com/v1/"
 var DeploymentManagerDefaultBasePath = "https://www.googleapis.com/deploymentmanager/v2/"
 var DialogflowDefaultBasePath = "https://dialogflow.googleapis.com/v2/"
+var DialogflowCXDefaultBasePath = "https://{{location}}-dialogflow.googleapis.com/v3/"
 var DNSDefaultBasePath = "https://dns.googleapis.com/dns/v1beta2/"
 var EssentialContactsDefaultBasePath = "https://essentialcontacts.googleapis.com/v1beta1/"
 var FilestoreDefaultBasePath = "https://file.googleapis.com/v1beta1/"
@@ -1034,6 +1036,7 @@ func ConfigureBasePaths(c *Config) {
 	c.DatastoreBasePath = DatastoreDefaultBasePath
 	c.DeploymentManagerBasePath = DeploymentManagerDefaultBasePath
 	c.DialogflowBasePath = DialogflowDefaultBasePath
+	c.DialogflowCXBasePath = DialogflowCXDefaultBasePath
 	c.DNSBasePath = DNSDefaultBasePath
 	c.EssentialContactsBasePath = EssentialContactsDefaultBasePath
 	c.FilestoreBasePath = FilestoreDefaultBasePath
