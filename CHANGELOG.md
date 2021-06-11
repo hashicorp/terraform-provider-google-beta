@@ -7,7 +7,7 @@ BUG FIXES:
 * bigquery: Fixed `google_bigquery_table.schema` handling of policyTags ([#3307](https://github.com/hashicorp/terraform-provider-google-beta/pull/3307))
 * bigtable: fixed bug that would error if creating multiple bigtable gc policies at the same time ([#3311](https://github.com/hashicorp/terraform-provider-google-beta/pull/3311))
 * compute: fixed bug where `encryption` showed a perma-diff on resources created prior to the feature being released. ([#3309](https://github.com/hashicorp/terraform-provider-google-beta/pull/3309))
-* dataflow: fixed handling of failed `google_dataflow_flex_template_job` updates (beta) ([#3318](https://github.com/hashicorp/terraform-provider-google-beta/pull/3318))
+* dataflow: fixed handling of failed `google_dataflow_flex_template_job` updates ([#3318](https://github.com/hashicorp/terraform-provider-google-beta/pull/3318))
 * dataflow: made `google_dataflow_flex_template_job` updates fail fast if the job is in the process of cancelling or draining([#3317](https://github.com/hashicorp/terraform-provider-google-beta/pull/3317))
 
 ## 3.71.0 (June 07, 2021)
