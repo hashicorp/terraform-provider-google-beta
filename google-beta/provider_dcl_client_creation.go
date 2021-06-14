@@ -22,7 +22,7 @@ import (
 	gke_hub "github.com/GoogleCloudPlatform/declarative-resource-client-library/services/google/gkehub/beta"
 )
 
-func CreateDataprocClient(config *Config, userAgent, billingProject string) *dataproc.Client {
+func NewDCLDataprocClient(config *Config, userAgent, billingProject string) *dataproc.Client {
 	dclClientOptions := dcl.WithHTTPClient(config.client)
 	dclUserAgentOptions := dcl.WithUserAgent(userAgent)
 	dclLoggerOptions := dcl.WithLogger(dclLogger{})
@@ -48,7 +48,7 @@ func CreateDataprocClient(config *Config, userAgent, billingProject string) *dat
 	return dataproc.NewClient(dclConfig)
 }
 
-func CreateEventarcClient(config *Config, userAgent, billingProject string) *eventarc.Client {
+func NewDCLEventarcClient(config *Config, userAgent, billingProject string) *eventarc.Client {
 	dclClientOptions := dcl.WithHTTPClient(config.client)
 	dclUserAgentOptions := dcl.WithUserAgent(userAgent)
 	dclLoggerOptions := dcl.WithLogger(dclLogger{})
@@ -74,7 +74,7 @@ func CreateEventarcClient(config *Config, userAgent, billingProject string) *eve
 	return eventarc.NewClient(dclConfig)
 }
 
-func CreateGkeHubClient(config *Config, userAgent, billingProject string) *gke_hub.Client {
+func NewDCLGkeHubClient(config *Config, userAgent, billingProject string) *gke_hub.Client {
 	dclClientOptions := dcl.WithHTTPClient(config.client)
 	dclUserAgentOptions := dcl.WithUserAgent(userAgent)
 	dclLoggerOptions := dcl.WithLogger(dclLogger{})

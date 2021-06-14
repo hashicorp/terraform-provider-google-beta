@@ -314,7 +314,7 @@ func resourceGkeHubFeatureMembershipCreate(d *schema.ResourceData, meta interfac
 	if bp, err := getBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
-	client := CreateGkeHubClient(config, userAgent, billingProject)
+	client := NewDCLGkeHubClient(config, userAgent, billingProject)
 	res, err := client.ApplyFeatureMembership(context.Background(), obj, createDirective...)
 	if err != nil {
 		// The resource didn't actually create
@@ -351,7 +351,7 @@ func resourceGkeHubFeatureMembershipRead(d *schema.ResourceData, meta interface{
 	if bp, err := getBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
-	client := CreateGkeHubClient(config, userAgent, billingProject)
+	client := NewDCLGkeHubClient(config, userAgent, billingProject)
 	res, err := client.GetFeatureMembership(context.Background(), obj)
 	if err != nil {
 		// Resource not found
@@ -408,7 +408,7 @@ func resourceGkeHubFeatureMembershipUpdate(d *schema.ResourceData, meta interfac
 	if bp, err := getBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
-	client := CreateGkeHubClient(config, userAgent, billingProject)
+	client := NewDCLGkeHubClient(config, userAgent, billingProject)
 	res, err := client.ApplyFeatureMembership(context.Background(), obj, directive...)
 	if err != nil {
 		return fmt.Errorf("Error updating FeatureMembership: %s", err)
@@ -450,7 +450,7 @@ func resourceGkeHubFeatureMembershipDelete(d *schema.ResourceData, meta interfac
 	if bp, err := getBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
-	client := CreateGkeHubClient(config, userAgent, billingProject)
+	client := NewDCLGkeHubClient(config, userAgent, billingProject)
 	if err := client.DeleteFeatureMembership(context.Background(), obj); err != nil {
 		return fmt.Errorf("Error deleting FeatureMembership: %s", err)
 	}
