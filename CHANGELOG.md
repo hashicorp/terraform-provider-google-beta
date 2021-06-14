@@ -1,4 +1,4 @@
-## 3.72.0 (Unreleased)
+## 3.72.0 (June 14, 2021)
 IMPROVEMENTS:
 * container: Allowed specifying a cluster id field for `google_container_node_pool.cluster` to ensure that a node pool is recreated if the associated cluster is recreated. ([#3314](https://github.com/hashicorp/terraform-provider-google-beta/pull/3314))
 * storagetransfer: added support for `azure_blob_storage_data_source` to `google_storage_transfer_job` ([#3316](https://github.com/hashicorp/terraform-provider-google-beta/pull/3316))
