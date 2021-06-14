@@ -166,7 +166,7 @@ func resourceGkeHubFeatureCreate(d *schema.ResourceData, meta interface{}) error
 	if bp, err := getBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
-	client := CreateGkeHubClient(config, userAgent, billingProject)
+	client := NewDCLGkeHubClient(config, userAgent, billingProject)
 	res, err := client.ApplyFeature(context.Background(), obj, createDirective...)
 	if err != nil {
 		// The resource didn't actually create
@@ -203,7 +203,7 @@ func resourceGkeHubFeatureRead(d *schema.ResourceData, meta interface{}) error {
 	if bp, err := getBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
-	client := CreateGkeHubClient(config, userAgent, billingProject)
+	client := NewDCLGkeHubClient(config, userAgent, billingProject)
 	res, err := client.GetFeature(context.Background(), obj)
 	if err != nil {
 		// Resource not found
@@ -269,7 +269,7 @@ func resourceGkeHubFeatureUpdate(d *schema.ResourceData, meta interface{}) error
 	if bp, err := getBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
-	client := CreateGkeHubClient(config, userAgent, billingProject)
+	client := NewDCLGkeHubClient(config, userAgent, billingProject)
 	res, err := client.ApplyFeature(context.Background(), obj, directive...)
 	if err != nil {
 		return fmt.Errorf("Error updating Feature: %s", err)
@@ -311,7 +311,7 @@ func resourceGkeHubFeatureDelete(d *schema.ResourceData, meta interface{}) error
 	if bp, err := getBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
-	client := CreateGkeHubClient(config, userAgent, billingProject)
+	client := NewDCLGkeHubClient(config, userAgent, billingProject)
 	if err := client.DeleteFeature(context.Background(), obj); err != nil {
 		return fmt.Errorf("Error deleting Feature: %s", err)
 	}
