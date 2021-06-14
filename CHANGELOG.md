@@ -1,7 +1,7 @@
 ## 3.72.0 (Unreleased)
 IMPROVEMENTS:
 * container: Allowed specifying a cluster id field for `google_container_node_pool.cluster` to ensure that a node pool is recreated if the associated cluster is recreated. ([#3314](https://github.com/hashicorp/terraform-provider-google-beta/pull/3314))
-* storage-transfer: added support for `azure_blob_storage_data_source` to `google_storage_transfer_job` ([#3316](https://github.com/hashicorp/terraform-provider-google-beta/pull/3316))
+* storagetransfer: added support for `azure_blob_storage_data_source` to `google_storage_transfer_job` ([#3316](https://github.com/hashicorp/terraform-provider-google-beta/pull/3316))
 
 BUG FIXES:
 * bigquery: Fixed `google_bigquery_table.schema` handling of policyTags ([#3307](https://github.com/hashicorp/terraform-provider-google-beta/pull/3307))
