@@ -15,16 +15,49 @@
 package google
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"reflect"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
 
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/customdiff"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
+
+// Is the new redis version less than the old one?
+func isRedisVersionDecreasing(_ context.Context, old, new, _ interface{}) bool {
+	return isRedisVersionDecreasingFunc(old, new)
+}
+
+// separate function for unit testing
+func isRedisVersionDecreasingFunc(old, new interface{}) bool {
+	if old == nil || new == nil {
+		return false
+	}
+	re := regexp.MustCompile(`REDIS_(\d+)_(\d+)`)
+	oldParsed := re.FindSubmatch([]byte(old.(string)))
+	newParsed := re.FindSubmatch([]byte(new.(string)))
+
+	if oldParsed == nil || newParsed == nil {
+		return false
+	}
+
+	oldVersion, err := strconv.ParseFloat(fmt.Sprintf("%s.%s", oldParsed[1], oldParsed[2]), 32)
+	if err != nil {
+		return false
+	}
+	newVersion, err := strconv.ParseFloat(fmt.Sprintf("%s.%s", newParsed[1], newParsed[2]), 32)
+	if err != nil {
+		return false
+	}
+
+	return newVersion < oldVersion
+}
 
 func resourceRedisInstance() *schema.Resource {
 	return &schema.Resource{
@@ -42,6 +75,9 @@ func resourceRedisInstance() *schema.Resource {
 			Update: schema.DefaultTimeout(10 * time.Minute),
 			Delete: schema.DefaultTimeout(10 * time.Minute),
 		},
+
+		CustomizeDiff: customdiff.All(
+			customdiff.ForceNewIfChange("redis_version", isRedisVersionDecreasing)),
 
 		Schema: map[string]*schema.Schema{
 			"memory_size_gb": {
@@ -126,7 +162,6 @@ https://cloud.google.com/memorystore/docs/redis/reference/rest/v1/projects.locat
 				Type:     schema.TypeString,
 				Computed: true,
 				Optional: true,
-				ForceNew: true,
 				Description: `The version of Redis software. If not provided, latest supported
 version will be used. Currently, the supported values are:
 
@@ -632,21 +667,62 @@ func resourceRedisInstanceUpdate(d *schema.ResourceData, meta interface{}) error
 		billingProject = bp
 	}
 
-	res, err := sendRequestWithTimeout(config, "PATCH", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutUpdate))
+	// if updateMask is empty we are not updating anything so skip the post
+	if len(updateMask) > 0 {
+		res, err := sendRequestWithTimeout(config, "PATCH", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutUpdate))
 
-	if err != nil {
-		return fmt.Errorf("Error updating Instance %q: %s", d.Id(), err)
-	} else {
-		log.Printf("[DEBUG] Finished updating Instance %q: %#v", d.Id(), res)
+		if err != nil {
+			return fmt.Errorf("Error updating Instance %q: %s", d.Id(), err)
+		} else {
+			log.Printf("[DEBUG] Finished updating Instance %q: %#v", d.Id(), res)
+		}
+
+		err = redisOperationWaitTime(
+			config, res, project, "Updating Instance", userAgent,
+			d.Timeout(schema.TimeoutUpdate))
+
+		if err != nil {
+			return err
+		}
+	}
+	d.Partial(true)
+
+	if d.HasChange("redis_version") {
+		obj := make(map[string]interface{})
+
+		redisVersionProp, err := expandRedisInstanceRedisVersion(d.Get("redis_version"), d, config)
+		if err != nil {
+			return err
+		} else if v, ok := d.GetOkExists("redis_version"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, redisVersionProp)) {
+			obj["redisVersion"] = redisVersionProp
+		}
+
+		url, err := replaceVars(d, config, "{{RedisBasePath}}projects/{{project}}/locations/{{region}}/instances/{{name}}:upgrade")
+		if err != nil {
+			return err
+		}
+
+		// err == nil indicates that the billing_project value was found
+		if bp, err := getBillingProject(d, config); err == nil {
+			billingProject = bp
+		}
+
+		res, err := sendRequestWithTimeout(config, "POST", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutUpdate))
+		if err != nil {
+			return fmt.Errorf("Error updating Instance %q: %s", d.Id(), err)
+		} else {
+			log.Printf("[DEBUG] Finished updating Instance %q: %#v", d.Id(), res)
+		}
+
+		err = redisOperationWaitTime(
+			config, res, project, "Updating Instance", userAgent,
+			d.Timeout(schema.TimeoutUpdate))
+		if err != nil {
+			return err
+		}
 	}
 
-	err = redisOperationWaitTime(
-		config, res, project, "Updating Instance", userAgent,
-		d.Timeout(schema.TimeoutUpdate))
-
-	if err != nil {
-		return err
-	}
+	d.Partial(false)
 
 	return resourceRedisInstanceRead(d, meta)
 }
