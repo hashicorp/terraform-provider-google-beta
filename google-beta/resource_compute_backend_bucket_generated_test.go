@@ -85,7 +85,6 @@ func TestAccComputeBackendBucket_backendBucketFullExample(t *testing.T) {
 func testAccComputeBackendBucket_backendBucketFullExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_compute_backend_bucket" "image_backend" {
-  provider    = google-beta
   name        = "tf-test-image-backend-bucket-full%{random_suffix}"
   description = "Contains beautiful beta mages"
   bucket_name = google_storage_bucket.image_bucket.name
@@ -104,7 +103,6 @@ resource "google_compute_backend_bucket" "image_backend" {
 }
 
 resource "google_storage_bucket" "image_bucket" {
-  provider = google-beta
   name     = "tf-test-image-store-bucket-full%{random_suffix}"
   location = "EU"
 }

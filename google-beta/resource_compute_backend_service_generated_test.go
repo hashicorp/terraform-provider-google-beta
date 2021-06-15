@@ -273,21 +273,18 @@ func TestAccComputeBackendService_backendServiceNetworkEndpointExample(t *testin
 func testAccComputeBackendService_backendServiceNetworkEndpointExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_compute_global_network_endpoint_group" "external_proxy" {
-  provider=google-beta
   name                  = "tf-test-network-endpoint%{random_suffix}"
   network_endpoint_type = "INTERNET_FQDN_PORT"
   default_port          = "443"
 }
 
 resource "google_compute_global_network_endpoint" "proxy" {
-  provider=google-beta
   global_network_endpoint_group = google_compute_global_network_endpoint_group.external_proxy.id
   fqdn                          = "test.example.com"
   port                          = google_compute_global_network_endpoint_group.external_proxy.default_port
 }
 
 resource "google_compute_backend_service" "default" {
-  provider=google-beta
   name                            = "tf-test-backend-service%{random_suffix}"
   enable_cdn                      = true
   timeout_sec                     = 10
