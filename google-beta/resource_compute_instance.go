@@ -353,7 +353,24 @@ func resourceComputeInstance() *schema.Resource {
 					},
 				},
 			},
-
+			"network_performance_config": {
+				Type:        schema.TypeList,
+				MaxItems:    1,
+				Optional:    true,
+				ForceNew:    true,
+				Description: `Configures network performance settings for the instance. If not specified, the instance will be created with its default network performance configuration.`,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"total_egress_bandwidth_tier": {
+							Type:         schema.TypeString,
+							Required:     true,
+							ForceNew:     true,
+							ValidateFunc: validation.StringInSlice([]string{"TIER_1", "DEFAULT"}, false),
+							Description:  `The egress bandwidth tier to enable. Possible values:TIER_1, DEFAULT`,
+						},
+					},
+				},
+			},
 			"allow_stopping_for_update": {
 				Type:        schema.TypeBool,
 				Optional:    true,
@@ -894,7 +911,10 @@ func expandComputeInstance(project string, d *schema.ResourceData, config *Confi
 	if err != nil {
 		return nil, fmt.Errorf("Error creating network interfaces: %s", err)
 	}
-
+	networkPerformanceConfig, err := expandNetworkPerformanceConfig(d, config)
+	if err != nil {
+		return nil, fmt.Errorf("Error creating network performance config: %s", err)
+	}
 	accels, err := expandInstanceGuestAccelerators(d, config)
 	if err != nil {
 		return nil, fmt.Errorf("Error creating guest accelerators: %s", err)
@@ -914,6 +934,7 @@ func expandComputeInstance(project string, d *schema.ResourceData, config *Confi
 		Metadata:                   metadata,
 		Name:                       d.Get("name").(string),
 		NetworkInterfaces:          networkInterfaces,
+		NetworkPerformanceConfig:   networkPerformanceConfig,
 		Tags:                       resourceInstanceTags(d),
 		Labels:                     expandLabels(d),
 		ServiceAccounts:            expandServiceAccounts(d.Get("service_account").([]interface{})),
@@ -1081,7 +1102,9 @@ func resourceComputeInstanceRead(d *schema.ResourceData, meta interface{}) error
 	if err := d.Set("machine_type", GetResourceNameFromSelfLink(instance.MachineType)); err != nil {
 		return fmt.Errorf("Error setting machine_type: %s", err)
 	}
-
+	if err := d.Set("network_performance_config", flattenNetworkPerformanceConfig(instance.NetworkPerformanceConfig)); err != nil {
+		return err
+	}
 	// Set the networks
 	// Use the first external IP found for the default connection info.
 	networkInterfaces, _, internalIP, externalIP, err := flattenNetworkInterfaces(d, config, instance.NetworkInterfaces)
