@@ -1,4 +1,3 @@
-//
 package google
 
 import (
@@ -280,7 +279,24 @@ func resourceComputeInstanceTemplate() *schema.Resource {
 				Computed:    true,
 				Description: `The unique fingerprint of the metadata.`,
 			},
-
+			"network_performance_config": {
+				Type:        schema.TypeList,
+				MaxItems:    1,
+				Optional:    true,
+				ForceNew:    true,
+				Description: `Configures network performance settings for the instance. If not specified, the instance will be created with its default network performance configuration.`,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"total_egress_bandwidth_tier": {
+							Type:         schema.TypeString,
+							Required:     true,
+							ForceNew:     true,
+							ValidateFunc: validation.StringInSlice([]string{"TIER_1", "DEFAULT"}, false),
+							Description:  `The egress bandwidth tier to enable. Possible values:TIER_1, DEFAULT`,
+						},
+					},
+				},
+			},
 			"network_interface": {
 				Type:        schema.TypeList,
 				Optional:    true,
@@ -942,7 +958,10 @@ func resourceComputeInstanceTemplateCreate(d *schema.ResourceData, meta interfac
 	if err != nil {
 		return err
 	}
-
+	networkPerformanceConfig, err := expandNetworkPerformanceConfig(d, config)
+	if err != nil {
+		return nil
+	}
 	reservationAffinity, err := expandReservationAffinity(d)
 	if err != nil {
 		return err
@@ -957,6 +976,7 @@ func resourceComputeInstanceTemplateCreate(d *schema.ResourceData, meta interfac
 		Disks:                      disks,
 		Metadata:                   metadata,
 		NetworkInterfaces:          networks,
+		NetworkPerformanceConfig:   networkPerformanceConfig,
 		Scheduling:                 scheduling,
 		ServiceAccounts:            expandServiceAccounts(d.Get("service_account").([]interface{})),
 		Tags:                       resourceInstanceTags(d),
@@ -1302,6 +1322,9 @@ func resourceComputeInstanceTemplateRead(d *schema.ResourceData, meta interface{
 	}
 	if err = d.Set("project", project); err != nil {
 		return fmt.Errorf("Error setting project: %s", err)
+	}
+	if err := d.Set("network_performance_config", flattenNetworkPerformanceConfig(instanceTemplate.Properties.NetworkPerformanceConfig)); err != nil {
+		return err
 	}
 	if instanceTemplate.Properties.NetworkInterfaces != nil {
 		networkInterfaces, region, _, _, err := flattenNetworkInterfaces(d, config, instanceTemplate.Properties.NetworkInterfaces)
