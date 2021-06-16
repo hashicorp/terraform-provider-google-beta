@@ -178,80 +178,184 @@ type Config struct {
 	GkeHubBasePath   string
 }
 
+const AccessApprovalBasePathKey = "AccessApproval"
+const AccessContextManagerBasePathKey = "AccessContextManager"
+const ActiveDirectoryBasePathKey = "ActiveDirectory"
+const ApiGatewayBasePathKey = "ApiGateway"
+const ApigeeBasePathKey = "Apigee"
+const AppEngineBasePathKey = "AppEngine"
+const ArtifactRegistryBasePathKey = "ArtifactRegistry"
+const BigQueryBasePathKey = "BigQuery"
+const BigqueryConnectionBasePathKey = "BigqueryConnection"
+const BigqueryDataTransferBasePathKey = "BigqueryDataTransfer"
+const BigqueryReservationBasePathKey = "BigqueryReservation"
+const BigtableBasePathKey = "Bigtable"
+const BillingBasePathKey = "Billing"
+const BinaryAuthorizationBasePathKey = "BinaryAuthorization"
+const CloudAssetBasePathKey = "CloudAsset"
+const CloudBuildBasePathKey = "CloudBuild"
+const CloudFunctionsBasePathKey = "CloudFunctions"
+const CloudIdentityBasePathKey = "CloudIdentity"
+const CloudIotBasePathKey = "CloudIot"
+const CloudRunBasePathKey = "CloudRun"
+const CloudSchedulerBasePathKey = "CloudScheduler"
+const CloudTasksBasePathKey = "CloudTasks"
+const ComputeBasePathKey = "Compute"
+const ContainerAnalysisBasePathKey = "ContainerAnalysis"
+const DataCatalogBasePathKey = "DataCatalog"
+const DataFusionBasePathKey = "DataFusion"
+const DataLossPreventionBasePathKey = "DataLossPrevention"
+const DataprocBasePathKey = "Dataproc"
+const DataprocMetastoreBasePathKey = "DataprocMetastore"
+const DatastoreBasePathKey = "Datastore"
+const DeploymentManagerBasePathKey = "DeploymentManager"
+const DialogflowBasePathKey = "Dialogflow"
+const DialogflowCXBasePathKey = "DialogflowCX"
+const DNSBasePathKey = "DNS"
+const EssentialContactsBasePathKey = "EssentialContacts"
+const FilestoreBasePathKey = "Filestore"
+const FirebaseBasePathKey = "Firebase"
+const FirestoreBasePathKey = "Firestore"
+const GameServicesBasePathKey = "GameServices"
+const GKEHubBasePathKey = "GKEHub"
+const HealthcareBasePathKey = "Healthcare"
+const IAMBetaBasePathKey = "IAMBeta"
+const IapBasePathKey = "Iap"
+const IdentityPlatformBasePathKey = "IdentityPlatform"
+const KMSBasePathKey = "KMS"
+const LoggingBasePathKey = "Logging"
+const MemcacheBasePathKey = "Memcache"
+const MLEngineBasePathKey = "MLEngine"
+const MonitoringBasePathKey = "Monitoring"
+const NetworkManagementBasePathKey = "NetworkManagement"
+const NotebooksBasePathKey = "Notebooks"
+const OSConfigBasePathKey = "OSConfig"
+const OSLoginBasePathKey = "OSLogin"
+const PrivatecaBasePathKey = "Privateca"
+const PubsubBasePathKey = "Pubsub"
+const PubsubLiteBasePathKey = "PubsubLite"
+const RedisBasePathKey = "Redis"
+const ResourceManagerBasePathKey = "ResourceManager"
+const RuntimeConfigBasePathKey = "RuntimeConfig"
+const SecretManagerBasePathKey = "SecretManager"
+const SecurityCenterBasePathKey = "SecurityCenter"
+const SecurityScannerBasePathKey = "SecurityScanner"
+const ServiceDirectoryBasePathKey = "ServiceDirectory"
+const ServiceManagementBasePathKey = "ServiceManagement"
+const ServiceUsageBasePathKey = "ServiceUsage"
+const SourceRepoBasePathKey = "SourceRepo"
+const SpannerBasePathKey = "Spanner"
+const SQLBasePathKey = "SQL"
+const StorageBasePathKey = "Storage"
+const TagsBasePathKey = "Tags"
+const TPUBasePathKey = "TPU"
+const VPCAccessBasePathKey = "VPCAccess"
+const WorkflowsBasePathKey = "Workflows"
+const CloudBillingBasePathKey = "CloudBilling"
+const ComposerBasePathKey = "Composer"
+const ComputeBetaBasePathKey = "ComputeBeta"
+const ContainerBasePathKey = "Container"
+const DataprocBetaBasePathKey = "DataprocBeta"
+const ContainerBetaBasePathKey = "ContainerBeta"
+const DataflowBasePathKey = "Dataflow"
+const IAMBasePathKey = "IAM"
+const IamCredentialsBasePathKey = "IamCredentials"
+const ResourceManagerV2BasePathKey = "ResourceManagerV2"
+const ServiceNetworkingBasePathKey = "ServiceNetworking"
+const StorageTransferBasePathKey = "StorageTransfer"
+const BigtableAdminBasePathKey = "BigtableAdmin"
+const GkeHubFeatureBasePathKey = "GkeHubFeatureBasePathKey"
+
 // Generated product base paths
-var AccessApprovalDefaultBasePath = "https://accessapproval.googleapis.com/v1/"
-var AccessContextManagerDefaultBasePath = "https://accesscontextmanager.googleapis.com/v1/"
-var ActiveDirectoryDefaultBasePath = "https://managedidentities.googleapis.com/v1/"
-var ApiGatewayDefaultBasePath = "https://apigateway.googleapis.com/v1beta/"
-var ApigeeDefaultBasePath = "https://apigee.googleapis.com/v1/"
-var AppEngineDefaultBasePath = "https://appengine.googleapis.com/v1/"
-var ArtifactRegistryDefaultBasePath = "https://artifactregistry.googleapis.com/v1beta2/"
-var BigQueryDefaultBasePath = "https://bigquery.googleapis.com/bigquery/v2/"
-var BigqueryConnectionDefaultBasePath = "https://bigqueryconnection.googleapis.com/v1beta1/"
-var BigqueryDataTransferDefaultBasePath = "https://bigquerydatatransfer.googleapis.com/v1/"
-var BigqueryReservationDefaultBasePath = "https://bigqueryreservation.googleapis.com/v1beta1/"
-var BigtableDefaultBasePath = "https://bigtableadmin.googleapis.com/v2/"
-var BillingDefaultBasePath = "https://billingbudgets.googleapis.com/v1/"
-var BinaryAuthorizationDefaultBasePath = "https://binaryauthorization.googleapis.com/v1/"
-var CloudAssetDefaultBasePath = "https://cloudasset.googleapis.com/v1/"
-var CloudBuildDefaultBasePath = "https://cloudbuild.googleapis.com/v1/"
-var CloudFunctionsDefaultBasePath = "https://cloudfunctions.googleapis.com/v1/"
-var CloudIdentityDefaultBasePath = "https://cloudidentity.googleapis.com/v1beta1/"
-var CloudIotDefaultBasePath = "https://cloudiot.googleapis.com/v1/"
-var CloudRunDefaultBasePath = "https://{{location}}-run.googleapis.com/"
-var CloudSchedulerDefaultBasePath = "https://cloudscheduler.googleapis.com/v1/"
-var CloudTasksDefaultBasePath = "https://cloudtasks.googleapis.com/v2/"
-var ComputeDefaultBasePath = "https://compute.googleapis.com/compute/beta/"
-var ContainerAnalysisDefaultBasePath = "https://containeranalysis.googleapis.com/v1beta1/"
-var DataCatalogDefaultBasePath = "https://datacatalog.googleapis.com/v1beta1/"
-var DataFusionDefaultBasePath = "https://datafusion.googleapis.com/v1beta1/"
-var DataLossPreventionDefaultBasePath = "https://dlp.googleapis.com/v2/"
-var DataprocDefaultBasePath = "https://dataproc.googleapis.com/v1beta2/"
-var DataprocMetastoreDefaultBasePath = "https://metastore.googleapis.com/v1beta/"
-var DatastoreDefaultBasePath = "https://datastore.googleapis.com/v1/"
-var DeploymentManagerDefaultBasePath = "https://www.googleapis.com/deploymentmanager/v2/"
-var DialogflowDefaultBasePath = "https://dialogflow.googleapis.com/v2/"
-var DialogflowCXDefaultBasePath = "https://{{location}}-dialogflow.googleapis.com/v3/"
-var DNSDefaultBasePath = "https://dns.googleapis.com/dns/v1beta2/"
-var EssentialContactsDefaultBasePath = "https://essentialcontacts.googleapis.com/v1beta1/"
-var FilestoreDefaultBasePath = "https://file.googleapis.com/v1beta1/"
-var FirebaseDefaultBasePath = "https://firebase.googleapis.com/v1beta1/"
-var FirestoreDefaultBasePath = "https://firestore.googleapis.com/v1/"
-var GameServicesDefaultBasePath = "https://gameservices.googleapis.com/v1beta/"
-var GKEHubDefaultBasePath = "https://gkehub.googleapis.com/v1beta1/"
-var HealthcareDefaultBasePath = "https://healthcare.googleapis.com/v1beta1/"
-var IAMBetaDefaultBasePath = "https://iam.googleapis.com/v1beta/"
-var IapDefaultBasePath = "https://iap.googleapis.com/v1/"
-var IdentityPlatformDefaultBasePath = "https://identitytoolkit.googleapis.com/v2/"
-var KMSDefaultBasePath = "https://cloudkms.googleapis.com/v1/"
-var LoggingDefaultBasePath = "https://logging.googleapis.com/v2/"
-var MemcacheDefaultBasePath = "https://memcache.googleapis.com/v1beta2/"
-var MLEngineDefaultBasePath = "https://ml.googleapis.com/v1/"
-var MonitoringDefaultBasePath = "https://monitoring.googleapis.com/"
-var NetworkManagementDefaultBasePath = "https://networkmanagement.googleapis.com/v1/"
-var NotebooksDefaultBasePath = "https://notebooks.googleapis.com/v1beta1/"
-var OSConfigDefaultBasePath = "https://osconfig.googleapis.com/v1beta/"
-var OSLoginDefaultBasePath = "https://oslogin.googleapis.com/v1/"
-var PrivatecaDefaultBasePath = "https://privateca.googleapis.com/v1beta1/"
-var PubsubDefaultBasePath = "https://pubsub.googleapis.com/v1/"
-var PubsubLiteDefaultBasePath = "https://{{region}}-pubsublite.googleapis.com/v1/admin/"
-var RedisDefaultBasePath = "https://redis.googleapis.com/v1beta1/"
-var ResourceManagerDefaultBasePath = "https://cloudresourcemanager.googleapis.com/v1/"
-var RuntimeConfigDefaultBasePath = "https://runtimeconfig.googleapis.com/v1beta1/"
-var SecretManagerDefaultBasePath = "https://secretmanager.googleapis.com/v1/"
-var SecurityCenterDefaultBasePath = "https://securitycenter.googleapis.com/v1/"
-var SecurityScannerDefaultBasePath = "https://websecurityscanner.googleapis.com/v1beta/"
-var ServiceDirectoryDefaultBasePath = "https://servicedirectory.googleapis.com/v1beta1/"
-var ServiceManagementDefaultBasePath = "https://servicemanagement.googleapis.com/v1/"
-var ServiceUsageDefaultBasePath = "https://serviceusage.googleapis.com/v1beta1/"
-var SourceRepoDefaultBasePath = "https://sourcerepo.googleapis.com/v1/"
-var SpannerDefaultBasePath = "https://spanner.googleapis.com/v1/"
-var SQLDefaultBasePath = "https://sqladmin.googleapis.com/sql/v1beta4/"
-var StorageDefaultBasePath = "https://storage.googleapis.com/storage/v1/"
-var TagsDefaultBasePath = "https://cloudresourcemanager.googleapis.com/v3/"
-var TPUDefaultBasePath = "https://tpu.googleapis.com/v1/"
-var VPCAccessDefaultBasePath = "https://vpcaccess.googleapis.com/v1beta1/"
-var WorkflowsDefaultBasePath = "https://workflows.googleapis.com/v1beta/"
+var DefaultBasePaths = map[string]string{
+	AccessApprovalBasePathKey:       "https://accessapproval.googleapis.com/v1/",
+	AccessContextManagerBasePathKey: "https://accesscontextmanager.googleapis.com/v1/",
+	ActiveDirectoryBasePathKey:      "https://managedidentities.googleapis.com/v1/",
+	ApiGatewayBasePathKey:           "https://apigateway.googleapis.com/v1beta/",
+	ApigeeBasePathKey:               "https://apigee.googleapis.com/v1/",
+	AppEngineBasePathKey:            "https://appengine.googleapis.com/v1/",
+	ArtifactRegistryBasePathKey:     "https://artifactregistry.googleapis.com/v1beta2/",
+	BigQueryBasePathKey:             "https://bigquery.googleapis.com/bigquery/v2/",
+	BigqueryConnectionBasePathKey:   "https://bigqueryconnection.googleapis.com/v1beta1/",
+	BigqueryDataTransferBasePathKey: "https://bigquerydatatransfer.googleapis.com/v1/",
+	BigqueryReservationBasePathKey:  "https://bigqueryreservation.googleapis.com/v1beta1/",
+	BigtableBasePathKey:             "https://bigtableadmin.googleapis.com/v2/",
+	BillingBasePathKey:              "https://billingbudgets.googleapis.com/v1/",
+	BinaryAuthorizationBasePathKey:  "https://binaryauthorization.googleapis.com/v1/",
+	CloudAssetBasePathKey:           "https://cloudasset.googleapis.com/v1/",
+	CloudBuildBasePathKey:           "https://cloudbuild.googleapis.com/v1/",
+	CloudFunctionsBasePathKey:       "https://cloudfunctions.googleapis.com/v1/",
+	CloudIdentityBasePathKey:        "https://cloudidentity.googleapis.com/v1beta1/",
+	CloudIotBasePathKey:             "https://cloudiot.googleapis.com/v1/",
+	CloudRunBasePathKey:             "https://{{location}}-run.googleapis.com/",
+	CloudSchedulerBasePathKey:       "https://cloudscheduler.googleapis.com/v1/",
+	CloudTasksBasePathKey:           "https://cloudtasks.googleapis.com/v2/",
+	ComputeBasePathKey:              "https://compute.googleapis.com/compute/beta/",
+	ContainerAnalysisBasePathKey:    "https://containeranalysis.googleapis.com/v1beta1/",
+	DataCatalogBasePathKey:          "https://datacatalog.googleapis.com/v1beta1/",
+	DataFusionBasePathKey:           "https://datafusion.googleapis.com/v1beta1/",
+	DataLossPreventionBasePathKey:   "https://dlp.googleapis.com/v2/",
+	DataprocBasePathKey:             "https://dataproc.googleapis.com/v1beta2/",
+	DataprocMetastoreBasePathKey:    "https://metastore.googleapis.com/v1beta/",
+	DatastoreBasePathKey:            "https://datastore.googleapis.com/v1/",
+	DeploymentManagerBasePathKey:    "https://www.googleapis.com/deploymentmanager/v2/",
+	DialogflowBasePathKey:           "https://dialogflow.googleapis.com/v2/",
+	DialogflowCXBasePathKey:         "https://{{location}}-dialogflow.googleapis.com/v3/",
+	DNSBasePathKey:                  "https://dns.googleapis.com/dns/v1beta2/",
+	EssentialContactsBasePathKey:    "https://essentialcontacts.googleapis.com/v1beta1/",
+	FilestoreBasePathKey:            "https://file.googleapis.com/v1beta1/",
+	FirebaseBasePathKey:             "https://firebase.googleapis.com/v1beta1/",
+	FirestoreBasePathKey:            "https://firestore.googleapis.com/v1/",
+	GameServicesBasePathKey:         "https://gameservices.googleapis.com/v1beta/",
+	GKEHubBasePathKey:               "https://gkehub.googleapis.com/v1beta1/",
+	HealthcareBasePathKey:           "https://healthcare.googleapis.com/v1beta1/",
+	IAMBetaBasePathKey:              "https://iam.googleapis.com/v1beta/",
+	IapBasePathKey:                  "https://iap.googleapis.com/v1/",
+	IdentityPlatformBasePathKey:     "https://identitytoolkit.googleapis.com/v2/",
+	KMSBasePathKey:                  "https://cloudkms.googleapis.com/v1/",
+	LoggingBasePathKey:              "https://logging.googleapis.com/v2/",
+	MemcacheBasePathKey:             "https://memcache.googleapis.com/v1beta2/",
+	MLEngineBasePathKey:             "https://ml.googleapis.com/v1/",
+	MonitoringBasePathKey:           "https://monitoring.googleapis.com/",
+	NetworkManagementBasePathKey:    "https://networkmanagement.googleapis.com/v1/",
+	NotebooksBasePathKey:            "https://notebooks.googleapis.com/v1beta1/",
+	OSConfigBasePathKey:             "https://osconfig.googleapis.com/v1beta/",
+	OSLoginBasePathKey:              "https://oslogin.googleapis.com/v1/",
+	PrivatecaBasePathKey:            "https://privateca.googleapis.com/v1beta1/",
+	PubsubBasePathKey:               "https://pubsub.googleapis.com/v1/",
+	PubsubLiteBasePathKey:           "https://{{region}}-pubsublite.googleapis.com/v1/admin/",
+	RedisBasePathKey:                "https://redis.googleapis.com/v1beta1/",
+	ResourceManagerBasePathKey:      "https://cloudresourcemanager.googleapis.com/v1/",
+	RuntimeConfigBasePathKey:        "https://runtimeconfig.googleapis.com/v1beta1/",
+	SecretManagerBasePathKey:        "https://secretmanager.googleapis.com/v1/",
+	SecurityCenterBasePathKey:       "https://securitycenter.googleapis.com/v1/",
+	SecurityScannerBasePathKey:      "https://websecurityscanner.googleapis.com/v1beta/",
+	ServiceDirectoryBasePathKey:     "https://servicedirectory.googleapis.com/v1beta1/",
+	ServiceManagementBasePathKey:    "https://servicemanagement.googleapis.com/v1/",
+	ServiceUsageBasePathKey:         "https://serviceusage.googleapis.com/v1beta1/",
+	SourceRepoBasePathKey:           "https://sourcerepo.googleapis.com/v1/",
+	SpannerBasePathKey:              "https://spanner.googleapis.com/v1/",
+	SQLBasePathKey:                  "https://sqladmin.googleapis.com/sql/v1beta4/",
+	StorageBasePathKey:              "https://storage.googleapis.com/storage/v1/",
+	TagsBasePathKey:                 "https://cloudresourcemanager.googleapis.com/v3/",
+	TPUBasePathKey:                  "https://tpu.googleapis.com/v1/",
+	VPCAccessBasePathKey:            "https://vpcaccess.googleapis.com/v1beta1/",
+	WorkflowsBasePathKey:            "https://workflows.googleapis.com/v1beta/",
+	CloudBillingBasePathKey:         "https://cloudbilling.googleapis.com/v1/",
+	ComposerBasePathKey:             "https://composer.googleapis.com/v1beta1/",
+	ComputeBetaBasePathKey:          "https://www.googleapis.com/compute/beta/",
+	ContainerBasePathKey:            "https://container.googleapis.com/v1/",
+	ContainerBetaBasePathKey:        "https://container.googleapis.com/v1beta1/",
+	DataprocBetaBasePathKey:         "https://dataproc.googleapis.com/v1beta2/",
+	DataflowBasePathKey:             "https://dataflow.googleapis.com/v1b3/",
+	IAMBasePathKey:                  "https://iam.googleapis.com/v1/",
+	IamCredentialsBasePathKey:       "https://iamcredentials.googleapis.com/v1/",
+	ResourceManagerV2BasePathKey:    "https://cloudresourcemanager.googleapis.com/v2/",
+	ServiceNetworkingBasePathKey:    "https://servicenetworking.googleapis.com/v1/",
+	StorageTransferBasePathKey:      "https://storagetransfer.googleapis.com/v1/",
+	BigtableAdminBasePathKey:        "https://bigtableadmin.googleapis.com/v2/",
+	GkeHubFeatureBasePathKey:        "https://gkehub.googleapis.com/v1beta/",
+}
 
 var DefaultClientScopes = []string{
 	"https://www.googleapis.com/auth/compute",
@@ -278,9 +382,11 @@ func (c *Config) LoadAndValidate(ctx context.Context) error {
 
 	cleanCtx := context.WithValue(ctx, oauth2.HTTPClient, cleanhttp.DefaultClient())
 
-	// 1. OAUTH2 TRANSPORT/CLIENT - sets up proper auth headers
-	client := oauth2.NewClient(cleanCtx, tokenSource)
-
+	// 1. MTLS TRANSPORT/CLIENT - sets up proper auth headers
+	client, _, err := transport.NewHTTPClient(cleanCtx, option.WithTokenSource(tokenSource))
+	if err != nil {
+		return err
+	}
 	// Userinfo is fetched before request logging is enabled to reduce additional noise.
 	err = c.logGoogleIdentities()
 	if err != nil {
@@ -1005,93 +1111,93 @@ func removeBasePathVersion(url string) string {
 // values to a default. After using this, you should call config.LoadAndValidate.
 func ConfigureBasePaths(c *Config) {
 	// Generated Products
-	c.AccessApprovalBasePath = AccessApprovalDefaultBasePath
-	c.AccessContextManagerBasePath = AccessContextManagerDefaultBasePath
-	c.ActiveDirectoryBasePath = ActiveDirectoryDefaultBasePath
-	c.ApiGatewayBasePath = ApiGatewayDefaultBasePath
-	c.ApigeeBasePath = ApigeeDefaultBasePath
-	c.AppEngineBasePath = AppEngineDefaultBasePath
-	c.ArtifactRegistryBasePath = ArtifactRegistryDefaultBasePath
-	c.BigQueryBasePath = BigQueryDefaultBasePath
-	c.BigqueryConnectionBasePath = BigqueryConnectionDefaultBasePath
-	c.BigqueryDataTransferBasePath = BigqueryDataTransferDefaultBasePath
-	c.BigqueryReservationBasePath = BigqueryReservationDefaultBasePath
-	c.BigtableBasePath = BigtableDefaultBasePath
-	c.BillingBasePath = BillingDefaultBasePath
-	c.BinaryAuthorizationBasePath = BinaryAuthorizationDefaultBasePath
-	c.CloudAssetBasePath = CloudAssetDefaultBasePath
-	c.CloudBuildBasePath = CloudBuildDefaultBasePath
-	c.CloudFunctionsBasePath = CloudFunctionsDefaultBasePath
-	c.CloudIdentityBasePath = CloudIdentityDefaultBasePath
-	c.CloudIotBasePath = CloudIotDefaultBasePath
-	c.CloudRunBasePath = CloudRunDefaultBasePath
-	c.CloudSchedulerBasePath = CloudSchedulerDefaultBasePath
-	c.CloudTasksBasePath = CloudTasksDefaultBasePath
-	c.ComputeBasePath = ComputeDefaultBasePath
-	c.ContainerAnalysisBasePath = ContainerAnalysisDefaultBasePath
-	c.DataCatalogBasePath = DataCatalogDefaultBasePath
-	c.DataFusionBasePath = DataFusionDefaultBasePath
-	c.DataLossPreventionBasePath = DataLossPreventionDefaultBasePath
-	c.DataprocBasePath = DataprocDefaultBasePath
-	c.DataprocMetastoreBasePath = DataprocMetastoreDefaultBasePath
-	c.DatastoreBasePath = DatastoreDefaultBasePath
-	c.DeploymentManagerBasePath = DeploymentManagerDefaultBasePath
-	c.DialogflowBasePath = DialogflowDefaultBasePath
-	c.DialogflowCXBasePath = DialogflowCXDefaultBasePath
-	c.DNSBasePath = DNSDefaultBasePath
-	c.EssentialContactsBasePath = EssentialContactsDefaultBasePath
-	c.FilestoreBasePath = FilestoreDefaultBasePath
-	c.FirebaseBasePath = FirebaseDefaultBasePath
-	c.FirestoreBasePath = FirestoreDefaultBasePath
-	c.GameServicesBasePath = GameServicesDefaultBasePath
-	c.GKEHubBasePath = GKEHubDefaultBasePath
-	c.HealthcareBasePath = HealthcareDefaultBasePath
-	c.IAMBetaBasePath = IAMBetaDefaultBasePath
-	c.IapBasePath = IapDefaultBasePath
-	c.IdentityPlatformBasePath = IdentityPlatformDefaultBasePath
-	c.KMSBasePath = KMSDefaultBasePath
-	c.LoggingBasePath = LoggingDefaultBasePath
-	c.MemcacheBasePath = MemcacheDefaultBasePath
-	c.MLEngineBasePath = MLEngineDefaultBasePath
-	c.MonitoringBasePath = MonitoringDefaultBasePath
-	c.NetworkManagementBasePath = NetworkManagementDefaultBasePath
-	c.NotebooksBasePath = NotebooksDefaultBasePath
-	c.OSConfigBasePath = OSConfigDefaultBasePath
-	c.OSLoginBasePath = OSLoginDefaultBasePath
-	c.PrivatecaBasePath = PrivatecaDefaultBasePath
-	c.PubsubBasePath = PubsubDefaultBasePath
-	c.PubsubLiteBasePath = PubsubLiteDefaultBasePath
-	c.RedisBasePath = RedisDefaultBasePath
-	c.ResourceManagerBasePath = ResourceManagerDefaultBasePath
-	c.RuntimeConfigBasePath = RuntimeConfigDefaultBasePath
-	c.SecretManagerBasePath = SecretManagerDefaultBasePath
-	c.SecurityCenterBasePath = SecurityCenterDefaultBasePath
-	c.SecurityScannerBasePath = SecurityScannerDefaultBasePath
-	c.ServiceDirectoryBasePath = ServiceDirectoryDefaultBasePath
-	c.ServiceManagementBasePath = ServiceManagementDefaultBasePath
-	c.ServiceUsageBasePath = ServiceUsageDefaultBasePath
-	c.SourceRepoBasePath = SourceRepoDefaultBasePath
-	c.SpannerBasePath = SpannerDefaultBasePath
-	c.SQLBasePath = SQLDefaultBasePath
-	c.StorageBasePath = StorageDefaultBasePath
-	c.TagsBasePath = TagsDefaultBasePath
-	c.TPUBasePath = TPUDefaultBasePath
-	c.VPCAccessBasePath = VPCAccessDefaultBasePath
-	c.WorkflowsBasePath = WorkflowsDefaultBasePath
+	c.AccessApprovalBasePath = DefaultBasePaths[AccessApprovalBasePathKey]
+	c.AccessContextManagerBasePath = DefaultBasePaths[AccessContextManagerBasePathKey]
+	c.ActiveDirectoryBasePath = DefaultBasePaths[ActiveDirectoryBasePathKey]
+	c.ApiGatewayBasePath = DefaultBasePaths[ApiGatewayBasePathKey]
+	c.ApigeeBasePath = DefaultBasePaths[ApigeeBasePathKey]
+	c.AppEngineBasePath = DefaultBasePaths[AppEngineBasePathKey]
+	c.ArtifactRegistryBasePath = DefaultBasePaths[ArtifactRegistryBasePathKey]
+	c.BigQueryBasePath = DefaultBasePaths[BigQueryBasePathKey]
+	c.BigqueryConnectionBasePath = DefaultBasePaths[BigqueryConnectionBasePathKey]
+	c.BigqueryDataTransferBasePath = DefaultBasePaths[BigqueryDataTransferBasePathKey]
+	c.BigqueryReservationBasePath = DefaultBasePaths[BigqueryReservationBasePathKey]
+	c.BigtableBasePath = DefaultBasePaths[BigtableBasePathKey]
+	c.BillingBasePath = DefaultBasePaths[BillingBasePathKey]
+	c.BinaryAuthorizationBasePath = DefaultBasePaths[BinaryAuthorizationBasePathKey]
+	c.CloudAssetBasePath = DefaultBasePaths[CloudAssetBasePathKey]
+	c.CloudBuildBasePath = DefaultBasePaths[CloudBuildBasePathKey]
+	c.CloudFunctionsBasePath = DefaultBasePaths[CloudFunctionsBasePathKey]
+	c.CloudIdentityBasePath = DefaultBasePaths[CloudIdentityBasePathKey]
+	c.CloudIotBasePath = DefaultBasePaths[CloudIotBasePathKey]
+	c.CloudRunBasePath = DefaultBasePaths[CloudRunBasePathKey]
+	c.CloudSchedulerBasePath = DefaultBasePaths[CloudSchedulerBasePathKey]
+	c.CloudTasksBasePath = DefaultBasePaths[CloudTasksBasePathKey]
+	c.ComputeBasePath = DefaultBasePaths[ComputeBasePathKey]
+	c.ContainerAnalysisBasePath = DefaultBasePaths[ContainerAnalysisBasePathKey]
+	c.DataCatalogBasePath = DefaultBasePaths[DataCatalogBasePathKey]
+	c.DataFusionBasePath = DefaultBasePaths[DataFusionBasePathKey]
+	c.DataLossPreventionBasePath = DefaultBasePaths[DataLossPreventionBasePathKey]
+	c.DataprocBasePath = DefaultBasePaths[DataprocBasePathKey]
+	c.DataprocMetastoreBasePath = DefaultBasePaths[DataprocMetastoreBasePathKey]
+	c.DatastoreBasePath = DefaultBasePaths[DatastoreBasePathKey]
+	c.DeploymentManagerBasePath = DefaultBasePaths[DeploymentManagerBasePathKey]
+	c.DialogflowBasePath = DefaultBasePaths[DialogflowBasePathKey]
+	c.DialogflowCXBasePath = DefaultBasePaths[DialogflowCXBasePathKey]
+	c.DNSBasePath = DefaultBasePaths[DNSBasePathKey]
+	c.EssentialContactsBasePath = DefaultBasePaths[EssentialContactsBasePathKey]
+	c.FilestoreBasePath = DefaultBasePaths[FilestoreBasePathKey]
+	c.FirebaseBasePath = DefaultBasePaths[FirebaseBasePathKey]
+	c.FirestoreBasePath = DefaultBasePaths[FirestoreBasePathKey]
+	c.GameServicesBasePath = DefaultBasePaths[GameServicesBasePathKey]
+	c.GKEHubBasePath = DefaultBasePaths[GKEHubBasePathKey]
+	c.HealthcareBasePath = DefaultBasePaths[HealthcareBasePathKey]
+	c.IAMBetaBasePath = DefaultBasePaths[IAMBetaBasePathKey]
+	c.IapBasePath = DefaultBasePaths[IapBasePathKey]
+	c.IdentityPlatformBasePath = DefaultBasePaths[IdentityPlatformBasePathKey]
+	c.KMSBasePath = DefaultBasePaths[KMSBasePathKey]
+	c.LoggingBasePath = DefaultBasePaths[LoggingBasePathKey]
+	c.MemcacheBasePath = DefaultBasePaths[MemcacheBasePathKey]
+	c.MLEngineBasePath = DefaultBasePaths[MLEngineBasePathKey]
+	c.MonitoringBasePath = DefaultBasePaths[MonitoringBasePathKey]
+	c.NetworkManagementBasePath = DefaultBasePaths[NetworkManagementBasePathKey]
+	c.NotebooksBasePath = DefaultBasePaths[NotebooksBasePathKey]
+	c.OSConfigBasePath = DefaultBasePaths[OSConfigBasePathKey]
+	c.OSLoginBasePath = DefaultBasePaths[OSLoginBasePathKey]
+	c.PrivatecaBasePath = DefaultBasePaths[PrivatecaBasePathKey]
+	c.PubsubBasePath = DefaultBasePaths[PubsubBasePathKey]
+	c.PubsubLiteBasePath = DefaultBasePaths[PubsubLiteBasePathKey]
+	c.RedisBasePath = DefaultBasePaths[RedisBasePathKey]
+	c.ResourceManagerBasePath = DefaultBasePaths[ResourceManagerBasePathKey]
+	c.RuntimeConfigBasePath = DefaultBasePaths[RuntimeConfigBasePathKey]
+	c.SecretManagerBasePath = DefaultBasePaths[SecretManagerBasePathKey]
+	c.SecurityCenterBasePath = DefaultBasePaths[SecurityCenterBasePathKey]
+	c.SecurityScannerBasePath = DefaultBasePaths[SecurityScannerBasePathKey]
+	c.ServiceDirectoryBasePath = DefaultBasePaths[ServiceDirectoryBasePathKey]
+	c.ServiceManagementBasePath = DefaultBasePaths[ServiceManagementBasePathKey]
+	c.ServiceUsageBasePath = DefaultBasePaths[ServiceUsageBasePathKey]
+	c.SourceRepoBasePath = DefaultBasePaths[SourceRepoBasePathKey]
+	c.SpannerBasePath = DefaultBasePaths[SpannerBasePathKey]
+	c.SQLBasePath = DefaultBasePaths[SQLBasePathKey]
+	c.StorageBasePath = DefaultBasePaths[StorageBasePathKey]
+	c.TagsBasePath = DefaultBasePaths[TagsBasePathKey]
+	c.TPUBasePath = DefaultBasePaths[TPUBasePathKey]
+	c.VPCAccessBasePath = DefaultBasePaths[VPCAccessBasePathKey]
+	c.WorkflowsBasePath = DefaultBasePaths[WorkflowsBasePathKey]
 
 	// Handwritten Products / Versioned / Atypical Entries
-	c.CloudBillingBasePath = CloudBillingDefaultBasePath
-	c.ComposerBasePath = ComposerDefaultBasePath
-	c.ComputeBetaBasePath = ComputeBetaDefaultBasePath
-	c.ContainerBasePath = ContainerDefaultBasePath
-	c.ContainerBetaBasePath = ContainerBetaDefaultBasePath
-	c.DataprocBasePath = DataprocDefaultBasePath
-	c.DataflowBasePath = DataflowDefaultBasePath
-	c.IamCredentialsBasePath = IamCredentialsDefaultBasePath
-	c.ResourceManagerV2BasePath = ResourceManagerV2DefaultBasePath
-	c.IAMBasePath = IAMDefaultBasePath
-	c.ServiceNetworkingBasePath = ServiceNetworkingDefaultBasePath
-	c.BigQueryBasePath = BigQueryDefaultBasePath
-	c.StorageTransferBasePath = StorageTransferDefaultBasePath
-	c.BigtableAdminBasePath = BigtableAdminDefaultBasePath
+	c.CloudBillingBasePath = DefaultBasePaths[CloudBillingBasePathKey]
+	c.ComposerBasePath = DefaultBasePaths[ComposerBasePathKey]
+	c.ComputeBetaBasePath = DefaultBasePaths[ComputeBetaBasePathKey]
+	c.ContainerBasePath = DefaultBasePaths[ContainerBasePathKey]
+	c.ContainerBetaBasePath = DefaultBasePaths[ContainerBetaBasePathKey]
+	c.DataprocBasePath = DefaultBasePaths[DataprocBasePathKey]
+	c.DataflowBasePath = DefaultBasePaths[DataflowBasePathKey]
+	c.IamCredentialsBasePath = DefaultBasePaths[IamCredentialsBasePathKey]
+	c.ResourceManagerV2BasePath = DefaultBasePaths[ResourceManagerV2BasePathKey]
+	c.IAMBasePath = DefaultBasePaths[IAMBasePathKey]
+	c.ServiceNetworkingBasePath = DefaultBasePaths[ServiceNetworkingBasePathKey]
+	c.BigQueryBasePath = DefaultBasePaths[BigQueryBasePathKey]
+	c.StorageTransferBasePath = DefaultBasePaths[StorageTransferBasePathKey]
+	c.BigtableAdminBasePath = DefaultBasePaths[BigtableAdminBasePathKey]
 }
