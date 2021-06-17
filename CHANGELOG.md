@@ -7,7 +7,7 @@ FEATURES:
 * **New Resource:** `google_gkehub_feature_membership` ([#3330](https://github.com/hashicorp/terraform-provider-google-beta/pull/3330))
 
 IMPROVEMENTS:
-* added support for [mtls authentication](https://google.aip.dev/auth/4114) ([#3348](https://github.com/hashicorp/terraform-provider-google-beta/pull/3348))
+* provider: added support for [mtls authentication](https://google.aip.dev/auth/4114) ([#3348](https://github.com/hashicorp/terraform-provider-google-beta/pull/3348))
 * compute: added field `adaptive_protection_config` to `google_compute_security_policy` ([#3322](https://github.com/hashicorp/terraform-provider-google-beta/pull/3322))
 * compute: added `advanced_machine_features` fields to `google_compute_instance_template` ([#3337](https://github.com/hashicorp/terraform-provider-google-beta/pull/3337))
 * compute: added a `network_performance_config` block to each of `resource_compute_instance`, `resource_compute_instance_from_template`, and `resource_compute_instance_template` ([#3341](https://github.com/hashicorp/terraform-provider-google-beta/pull/3341))
