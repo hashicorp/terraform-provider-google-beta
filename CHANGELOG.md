@@ -1,4 +1,4 @@
-## 3.73.0 (Unreleased)
+## 3.73.0 (June 21, 2021)
 
 FEATURES:
 * **New Resource:** `google_compute_service_attachment` ([#3328](https://github.com/hashicorp/terraform-provider-google-beta/pull/3328))
