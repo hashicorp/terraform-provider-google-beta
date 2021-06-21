@@ -1,4 +1,23 @@
 ## 3.73.0 (Unreleased)
+
+FEATURES:
+* **New Resource:** `google_compute_service_attachment` ([#3328](https://github.com/hashicorp/terraform-provider-google-beta/pull/3328))
+* **New Resource:** `google_dialogflow_cx_agent` ([#3324](https://github.com/hashicorp/terraform-provider-google-beta/pull/3324))
+* **New Resource:** `google_gkehub_feature` ([#3330](https://github.com/hashicorp/terraform-provider-google-beta/pull/3330))
+* **New Resource:** `google_gkehub_feature_membership` ([#3330](https://github.com/hashicorp/terraform-provider-google-beta/pull/3330))
+
+IMPROVEMENTS:
+* provider: added support for [mtls authentication](https://google.aip.dev/auth/4114) ([#3348](https://github.com/hashicorp/terraform-provider-google-beta/pull/3348))
+* compute: added field `adaptive_protection_config` to `google_compute_security_policy` ([#3322](https://github.com/hashicorp/terraform-provider-google-beta/pull/3322))
+* compute: added `advanced_machine_features` fields to `google_compute_instance_template` ([#3337](https://github.com/hashicorp/terraform-provider-google-beta/pull/3337))
+* compute: added a `network_performance_config` block to each of `resource_compute_instance`, `resource_compute_instance_from_template`, and `resource_compute_instance_template` ([#3341](https://github.com/hashicorp/terraform-provider-google-beta/pull/3341))
+* redis: allowed `redis_version` to be upgraded on `google_redis_instance` ([#3344](https://github.com/hashicorp/terraform-provider-google-beta/pull/3344))
+
+BUG FIXES:
+* apigee: added SLASH_23 support for `peering_cidr_range` on `google_apigee_instance` ([#3327](https://github.com/hashicorp/terraform-provider-google-beta/pull/3327))
+* cloudrun: fixed a bug where plan would should a diff on `google_cloud_run_service` if the order of the `template.spec.containers.env` list was re-ordered outside of terraform. ([#3326](https://github.com/hashicorp/terraform-provider-google-beta/pull/3326))
+* container: added `user_project_override` support to the ContainerOperationWaiter used by `google_container_cluster` ([#3345](https://github.com/hashicorp/terraform-provider-google-beta/pull/3345))
+
 ## 3.72.0 (June 14, 2021)
 IMPROVEMENTS:
 * container: Allowed specifying a cluster id field for `google_container_node_pool.cluster` to ensure that a node pool is recreated if the associated cluster is recreated. ([#3314](https://github.com/hashicorp/terraform-provider-google-beta/pull/3314))
