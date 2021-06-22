@@ -868,9 +868,9 @@ func Provider() *schema.Provider {
 	return provider
 }
 
-// Generated resources: 226
+// Generated resources: 227
 // Generated IAM resources: 117
-// Total generated resources: 343
+// Total generated resources: 344
 func ResourceMap() map[string]*schema.Resource {
 	resourceMap, _ := ResourceMapWithErrors()
 	return resourceMap
@@ -916,6 +916,7 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_app_engine_flexible_app_version":                       resourceAppEngineFlexibleAppVersion(),
 			"google_app_engine_application_url_dispatch_rules":             resourceAppEngineApplicationUrlDispatchRules(),
 			"google_app_engine_service_split_traffic":                      resourceAppEngineServiceSplitTraffic(),
+			"google_app_engine_service_network_settings":                   resourceAppEngineServiceNetworkSettings(),
 			"google_artifact_registry_repository":                          resourceArtifactRegistryRepository(),
 			"google_artifact_registry_repository_iam_binding":              ResourceIamBinding(ArtifactRegistryRepositoryIamSchema, ArtifactRegistryRepositoryIamUpdaterProducer, ArtifactRegistryRepositoryIdParseFunc),
 			"google_artifact_registry_repository_iam_member":               ResourceIamMember(ArtifactRegistryRepositoryIamSchema, ArtifactRegistryRepositoryIamUpdaterProducer, ArtifactRegistryRepositoryIdParseFunc),
