@@ -750,8 +750,9 @@ func Provider() *schema.Provider {
 			BigtableAdminCustomEndpointEntryKey:     BigtableAdminCustomEndpointEntry,
 
 			// dcl
-			EventarcEndpointEntryKey:            EventarcEndpointEntry,
-			GkeHubFeatureCustomEndpointEntryKey: GkeHubFeatureCustomEndpointEntry,
+			EventarcEndpointEntryKey:             EventarcEndpointEntry,
+			GkeHubFeatureCustomEndpointEntryKey:  GkeHubFeatureCustomEndpointEntry,
+			CloudBuildWorkerPoolEndpointEntryKey: CloudBuildWorkerPoolEndpointEntry,
 		},
 
 		ProviderMetaSchema: map[string]*schema.Schema{
@@ -1231,6 +1232,7 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_bigtable_instance":                     resourceBigtableInstance(),
 			"google_bigtable_table":                        resourceBigtableTable(),
 			"google_billing_subaccount":                    resourceBillingSubaccount(),
+			"google_cloudbuild_worker_pool":                resourceCloudbuildWorkerPool(),
 			"google_cloudfunctions_function":               resourceCloudFunctionsFunction(),
 			"google_composer_environment":                  resourceComposerEnvironment(),
 			"google_compute_attached_disk":                 resourceComputeAttachedDisk(),
@@ -1531,6 +1533,7 @@ func providerConfigure(ctx context.Context, d *schema.ResourceData, p *schema.Pr
 	// dcl
 	config.EventarcBasePath = d.Get(EventarcEndpointEntryKey).(string)
 	config.GkeHubBasePath = d.Get(GkeHubFeatureCustomEndpointEntryKey).(string)
+	config.CloudBuildWorkerPoolBasePath = d.Get(CloudBuildWorkerPoolEndpointEntryKey).(string)
 
 	stopCtx, ok := schema.StopContext(ctx)
 	if !ok {
