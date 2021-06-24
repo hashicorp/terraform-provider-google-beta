@@ -1,13 +1,4 @@
 ## 3.74.0 (Unreleased)
-UNKNOWN CHANGELOG TYPE:
-*  ([#3366](https://github.com/hashicorp/terraform-provider-google-beta/pull/3366))
-* Bump cloud.google.com/go/bigtable from 1.7.1 to 1.10.1 ([#3308](https://github.com/hashicorp/terraform-provider-google-beta/pull/3308))
-* Changelog ([#3351](https://github.com/hashicorp/terraform-provider-google-beta/pull/3351))
-* Exported mapper struct from mappers.go ([#3373](https://github.com/hashicorp/terraform-provider-google-beta/pull/3373))
-* Iam gen ([#3356](https://github.com/hashicorp/terraform-provider-google-beta/pull/3356))
-* Revert "Changelog (#3351)" ([#3365](https://github.com/hashicorp/terraform-provider-google-beta/pull/3365))
-* fix remove waiting response gha ([#3346](https://github.com/hashicorp/terraform-provider-google-beta/pull/3346))
-* use commit sha rather than version numbers, update random reviewer wo… ([#3353](https://github.com/hashicorp/terraform-provider-google-beta/pull/3353))
 
 FEATURES:
 * **New Resource:** `google_app_engine_service_network_settings` ([#3371](https://github.com/hashicorp/terraform-provider-google-beta/pull/3371))
