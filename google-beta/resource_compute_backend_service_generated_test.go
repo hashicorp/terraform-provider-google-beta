@@ -116,11 +116,16 @@ func TestAccComputeBackendService_backendServiceCacheExample(t *testing.T) {
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProvidersOiCS,
+		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckComputeBackendServiceDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccComputeBackendService_backendServiceCacheExample(context),
+			},
+			{
+				ResourceName:      "google_compute_backend_service.default",
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -129,7 +134,6 @@ func TestAccComputeBackendService_backendServiceCacheExample(t *testing.T) {
 func testAccComputeBackendService_backendServiceCacheExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_compute_backend_service" "default" {
-  provider      = google-beta
   name          = "tf-test-backend-service%{random_suffix}"
   health_checks = [google_compute_http_health_check.default.id]
   enable_cdn  = true
@@ -144,7 +148,6 @@ resource "google_compute_backend_service" "default" {
 }
 
 resource "google_compute_http_health_check" "default" {
-  provider           = google-beta
   name               = "tf-test-health-check%{random_suffix}"
   request_path       = "/"
   check_interval_sec = 1

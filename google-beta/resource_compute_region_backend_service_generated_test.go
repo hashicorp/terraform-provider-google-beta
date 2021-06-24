@@ -92,7 +92,6 @@ func TestAccComputeRegionBackendService_regionBackendServiceCacheExample(t *test
 func testAccComputeRegionBackendService_regionBackendServiceCacheExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_compute_region_backend_service" "default" {
-  provider                        = google-beta
   name                            = "tf-test-region-service%{random_suffix}"
   region                          = "us-central1"
   health_checks                   = [google_compute_region_health_check.default.id]
@@ -112,7 +111,6 @@ resource "google_compute_region_backend_service" "default" {
 }
 
 resource "google_compute_region_health_check" "default" {
-  provider           = google-beta
   name               = "tf-test-rbs-health-check%{random_suffix}"
   region             = "us-central1"
 

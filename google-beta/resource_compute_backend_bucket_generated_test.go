@@ -72,11 +72,16 @@ func TestAccComputeBackendBucket_backendBucketFullExample(t *testing.T) {
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProvidersOiCS,
+		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckComputeBackendBucketDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccComputeBackendBucket_backendBucketFullExample(context),
+			},
+			{
+				ResourceName:      "google_compute_backend_bucket.image_backend_full",
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -84,10 +89,10 @@ func TestAccComputeBackendBucket_backendBucketFullExample(t *testing.T) {
 
 func testAccComputeBackendBucket_backendBucketFullExample(context map[string]interface{}) string {
 	return Nprintf(`
-resource "google_compute_backend_bucket" "image_backend" {
+resource "google_compute_backend_bucket" "image_backend_full" {
   name        = "tf-test-image-backend-bucket-full%{random_suffix}"
   description = "Contains beautiful beta mages"
-  bucket_name = google_storage_bucket.image_bucket.name
+  bucket_name = google_storage_bucket.image_backend_full.name
   enable_cdn  = true
   cdn_policy {
     cache_mode = "CACHE_ALL_STATIC"
@@ -102,7 +107,7 @@ resource "google_compute_backend_bucket" "image_backend" {
   ]
 }
 
-resource "google_storage_bucket" "image_bucket" {
+resource "google_storage_bucket" "image_backend_full" {
   name     = "tf-test-image-store-bucket-full%{random_suffix}"
   location = "EU"
 }
