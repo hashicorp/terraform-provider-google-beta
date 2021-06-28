@@ -3,7 +3,7 @@
 FEATURES:
 * **New Resource:** `google_app_engine_service_network_settings` ([#3371](https://github.com/hashicorp/terraform-provider-google-beta/pull/3371))
 * **New Resource:** `google_vertex_ai_dataset` ([#3369](https://github.com/hashicorp/terraform-provider-google-beta/pull/3369))
-* **New Resource:** google_cloudbuild_worker_pool ([#3372](https://github.com/hashicorp/terraform-provider-google-beta/pull/3372))
+* **New Resource:** `google_cloudbuild_worker_pool` ([#3372](https://github.com/hashicorp/terraform-provider-google-beta/pull/3372))
 
 IMPROVEMENTS:
 * bigtable: added `cluster.kms_key_name` field to `google_bigtable_instance` ([#3354](https://github.com/hashicorp/terraform-provider-google-beta/pull/3354))
