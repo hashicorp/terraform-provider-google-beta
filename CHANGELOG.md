@@ -1,4 +1,24 @@
-## 3.74.0 (Unreleased)
+## 3.75.0 (Unreleased)
+
+## 3.74.0 (June 28, 2021)
+
+FEATURES:
+* **New Resource:** `google_app_engine_service_network_settings` ([#3371](https://github.com/hashicorp/terraform-provider-google-beta/pull/3371))
+* **New Resource:** `google_vertex_ai_dataset` ([#3369](https://github.com/hashicorp/terraform-provider-google-beta/pull/3369))
+* **New Resource:** `google_cloudbuild_worker_pool` ([#3372](https://github.com/hashicorp/terraform-provider-google-beta/pull/3372))
+
+IMPROVEMENTS:
+* bigtable: added `cluster.kms_key_name` field to `google_bigtable_instance` ([#3354](https://github.com/hashicorp/terraform-provider-google-beta/pull/3354))
+* composer: added field `max_pods_per_node` to resource `google_composer_environment` (beta) ([#3376](https://github.com/hashicorp/terraform-provider-google-beta/pull/3376))
+* secretmanager: added `ttl`, `expire_time`, `topics` and `rotation` fields to `google_secret_manager_secret` ([#3360](https://github.com/hashicorp/terraform-provider-google-beta/pull/3360))
+
+BUG FIXES:
+* container: allowed setting `node_config.service_account` at the same time as `enable_autopilot = true` for `google_container_cluster` ([#3361](https://github.com/hashicorp/terraform-provider-google-beta/pull/3361))
+* container: fixed issue where creating a node pool with a name that already exists would import that resource. `google_container_node_pool` ([#3378](https://github.com/hashicorp/terraform-provider-google-beta/pull/3378))
+* dataproc: fixed crash when creating `google_dataproc_workflow_template` with `secondary_worker_config` empty except for `num_instances = 0` ([#3347](https://github.com/hashicorp/terraform-provider-google-beta/pull/3347))
+* filestore: fixed an issue in `google_filestore_instance` where creating two instances simultaneously resulted in an error. ([#3358](https://github.com/hashicorp/terraform-provider-google-beta/pull/3358))
+* iam: fixed an issue in `google_iam_workload_identity_pool_provider` where `aws` and `oidc` were not updatable. ([#3350](https://github.com/hashicorp/terraform-provider-google-beta/pull/3350))
+* sql: added support for `binary_logging` on replica instances for `googe_sql_database_instance` ([#3379](https://github.com/hashicorp/terraform-provider-google-beta/pull/3379))
 
 ## 3.73.0 (June 21, 2021)
 FEATURES:
