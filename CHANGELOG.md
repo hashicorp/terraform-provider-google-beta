@@ -11,7 +11,6 @@ IMPROVEMENTS:
 * secretmanager: added `ttl`, `expire_time`, `topics` and `rotation` fields to `google_secret_manager_secret` ([#3360](https://github.com/hashicorp/terraform-provider-google-beta/pull/3360))
 
 BUG FIXES:
-* Exported fields in Mapper struct. ([#3375](https://github.com/hashicorp/terraform-provider-google-beta/pull/3375))
 * container: allowed setting `node_config.service_account` at the same time as `enable_autopilot = true` for `google_container_cluster` ([#3361](https://github.com/hashicorp/terraform-provider-google-beta/pull/3361))
 * container: fixed issue where creating a node pool with a name that already exists would import that resource. `google_container_node_pool` ([#3378](https://github.com/hashicorp/terraform-provider-google-beta/pull/3378))
 * dataproc: fixed crash when creating `google_dataproc_workflow_template` with `secondary_worker_config` empty except for `num_instances = 0` ([#3347](https://github.com/hashicorp/terraform-provider-google-beta/pull/3347))
