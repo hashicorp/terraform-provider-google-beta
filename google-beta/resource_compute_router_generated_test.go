@@ -95,6 +95,7 @@ func TestAccComputeRouter_computeRouterEncryptedInterconnectExample(t *testing.T
 func testAccComputeRouter_computeRouterEncryptedInterconnectExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_compute_router" "encrypted-interconnect-router" {
+  provider = google-beta
   name                          = "tf-test-test-router%{random_suffix}"
   network                       = google_compute_network.network.name
   encrypted_interconnect_router = true
@@ -104,6 +105,7 @@ resource "google_compute_router" "encrypted-interconnect-router" {
 }
 
 resource "google_compute_network" "network" {
+  provider = google-beta
   name                    = "tf-test-test-network%{random_suffix}"
   auto_create_subnetworks = false
 }
