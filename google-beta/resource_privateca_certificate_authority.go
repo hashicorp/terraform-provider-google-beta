@@ -18,30 +18,16 @@ import (
 	"fmt"
 	"log"
 	"reflect"
-	"strings"
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
-func certificateAuthorityReusableConfigDiffSuppress(k, old, new string, d *schema.ResourceData) bool {
-	if old != "" && new != "" {
-		newParts := strings.Split(new, "/")
-		// If the new form is a short version, we just
-		// check if it matches the suffix of the old version
-		if len(newParts) == 1 {
-			return strings.HasSuffix(old, new)
-		}
-	}
-	return old == new
-}
-
 func resourcePrivatecaCertificateAuthority() *schema.Resource {
 	return &schema.Resource{
 		Create: resourcePrivatecaCertificateAuthorityCreate,
 		Read:   resourcePrivatecaCertificateAuthorityRead,
-		Update: resourcePrivatecaCertificateAuthorityUpdate,
 		Delete: resourcePrivatecaCertificateAuthorityDelete,
 
 		Importer: &schema.ResourceImporter{
@@ -50,7 +36,6 @@ func resourcePrivatecaCertificateAuthority() *schema.Resource {
 
 		Timeouts: &schema.ResourceTimeout{
 			Create: schema.DefaultTimeout(4 * time.Minute),
-			Update: schema.DefaultTimeout(4 * time.Minute),
 			Delete: schema.DefaultTimeout(4 * time.Minute),
 		},
 
@@ -69,45 +54,28 @@ func resourcePrivatecaCertificateAuthority() *schema.Resource {
 				MaxItems:    1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"reusable_config": {
-							Type:        schema.TypeList,
-							Required:    true,
-							Description: `Specifies some of the values in a certificate that are related to the subject.`,
-							MaxItems:    1,
-							Elem: &schema.Resource{
-								Schema: map[string]*schema.Schema{
-									"reusable_config": {
-										Type:             schema.TypeString,
-										Required:         true,
-										ForceNew:         true,
-										DiffSuppressFunc: certificateAuthorityReusableConfigDiffSuppress,
-										Description: `A resource path to a ReusableConfig in the format
-'projects/*/locations/*/reusableConfigs/*'.
-. Alternatively, one of the short names
-found by running 'gcloud beta privateca reusable-configs list'.`,
-									},
-								},
-							},
-						},
 						"subject_config": {
 							Type:        schema.TypeList,
 							Required:    true,
+							ForceNew:    true,
 							Description: `Specifies some of the values in a certificate that are related to the subject.`,
 							MaxItems:    1,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
-									"common_name": {
-										Type:        schema.TypeString,
-										Required:    true,
-										Description: `The common name of the distinguished name.`,
-									},
 									"subject": {
 										Type:        schema.TypeList,
 										Required:    true,
+										ForceNew:    true,
 										Description: `Contains distinguished name fields such as the location and organization.`,
 										MaxItems:    1,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
+												"common_name": {
+													Type:        schema.TypeString,
+													Required:    true,
+													ForceNew:    true,
+													Description: `The common name of the distinguished name.`,
+												},
 												"organization": {
 													Type:        schema.TypeString,
 													Required:    true,
@@ -156,6 +124,7 @@ found by running 'gcloud beta privateca reusable-configs list'.`,
 									"subject_alt_name": {
 										Type:        schema.TypeList,
 										Optional:    true,
+										ForceNew:    true,
 										Description: `The subject alternative name fields.`,
 										MaxItems:    1,
 										Elem: &schema.Resource{
@@ -206,6 +175,257 @@ found by running 'gcloud beta privateca reusable-configs list'.`,
 								},
 							},
 						},
+						"x509_config": {
+							Type:        schema.TypeList,
+							Required:    true,
+							ForceNew:    true,
+							Description: `Describes how some of the technical X.509 fields in a certificate should be populated.`,
+							MaxItems:    1,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"ca_options": {
+										Type:        schema.TypeList,
+										Required:    true,
+										ForceNew:    true,
+										Description: `Describes values that are relevant in a CA certificate.`,
+										MaxItems:    1,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"is_ca": {
+													Type:     schema.TypeBool,
+													Required: true,
+													ForceNew: true,
+													Description: `Refers to the "CA" X.509 extension, which is a boolean value. When this value is missing,
+the extension will be omitted from the CA certificate.`,
+												},
+												"max_issuer_path_length": {
+													Type:     schema.TypeInt,
+													Optional: true,
+													ForceNew: true,
+													Description: `Refers to the path length restriction X.509 extension. For a CA certificate, this value describes the depth of
+subordinate CA certificates that are allowed. If this value is less than 0, the request will fail. If this
+value is missing, the max path length will be omitted from the CA certificate.`,
+												},
+											},
+										},
+									},
+									"key_usage": {
+										Type:        schema.TypeList,
+										Required:    true,
+										ForceNew:    true,
+										Description: `Indicates the intended use for keys that correspond to a certificate.`,
+										MaxItems:    1,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"base_key_usage": {
+													Type:        schema.TypeList,
+													Required:    true,
+													ForceNew:    true,
+													Description: `Describes high-level ways in which a key may be used.`,
+													MaxItems:    1,
+													Elem: &schema.Resource{
+														Schema: map[string]*schema.Schema{
+															"cert_sign": {
+																Type:        schema.TypeBool,
+																Optional:    true,
+																ForceNew:    true,
+																Description: `The key may be used to sign certificates.`,
+															},
+															"content_commitment": {
+																Type:        schema.TypeBool,
+																Optional:    true,
+																ForceNew:    true,
+																Description: `The key may be used for cryptographic commitments. Note that this may also be referred to as "non-repudiation".`,
+															},
+															"crl_sign": {
+																Type:        schema.TypeBool,
+																Optional:    true,
+																ForceNew:    true,
+																Description: `The key may be used sign certificate revocation lists.`,
+															},
+															"data_encipherment": {
+																Type:        schema.TypeBool,
+																Optional:    true,
+																ForceNew:    true,
+																Description: `The key may be used to encipher data.`,
+															},
+															"decipher_only": {
+																Type:        schema.TypeBool,
+																Optional:    true,
+																ForceNew:    true,
+																Description: `The key may be used to decipher only.`,
+															},
+															"digital_signature": {
+																Type:        schema.TypeBool,
+																Optional:    true,
+																ForceNew:    true,
+																Description: `The key may be used for digital signatures.`,
+															},
+															"encipher_only": {
+																Type:        schema.TypeBool,
+																Optional:    true,
+																ForceNew:    true,
+																Description: `The key may be used to encipher only.`,
+															},
+															"key_agreement": {
+																Type:        schema.TypeBool,
+																Optional:    true,
+																ForceNew:    true,
+																Description: `The key may be used in a key agreement protocol.`,
+															},
+															"key_encipherment": {
+																Type:        schema.TypeBool,
+																Optional:    true,
+																ForceNew:    true,
+																Description: `The key may be used to encipher other keys.`,
+															},
+														},
+													},
+												},
+												"extended_key_usage": {
+													Type:        schema.TypeList,
+													Required:    true,
+													ForceNew:    true,
+													Description: `Describes high-level ways in which a key may be used.`,
+													MaxItems:    1,
+													Elem: &schema.Resource{
+														Schema: map[string]*schema.Schema{
+															"client_auth": {
+																Type:        schema.TypeBool,
+																Optional:    true,
+																ForceNew:    true,
+																Description: `Corresponds to OID 1.3.6.1.5.5.7.3.2. Officially described as "TLS WWW client authentication", though regularly used for non-WWW TLS.`,
+															},
+															"code_signing": {
+																Type:        schema.TypeBool,
+																Optional:    true,
+																ForceNew:    true,
+																Description: `Corresponds to OID 1.3.6.1.5.5.7.3.3. Officially described as "Signing of downloadable executable code client authentication".`,
+															},
+															"email_protection": {
+																Type:        schema.TypeBool,
+																Optional:    true,
+																ForceNew:    true,
+																Description: `Corresponds to OID 1.3.6.1.5.5.7.3.4. Officially described as "Email protection".`,
+															},
+															"ocsp_signing": {
+																Type:        schema.TypeBool,
+																Optional:    true,
+																ForceNew:    true,
+																Description: `Corresponds to OID 1.3.6.1.5.5.7.3.9. Officially described as "Signing OCSP responses".`,
+															},
+															"server_auth": {
+																Type:        schema.TypeBool,
+																Optional:    true,
+																ForceNew:    true,
+																Description: `Corresponds to OID 1.3.6.1.5.5.7.3.1. Officially described as "TLS WWW server authentication", though regularly used for non-WWW TLS.`,
+															},
+															"time_stamping": {
+																Type:        schema.TypeBool,
+																Optional:    true,
+																ForceNew:    true,
+																Description: `Corresponds to OID 1.3.6.1.5.5.7.3.8. Officially described as "Binding the hash of an object to a time".`,
+															},
+														},
+													},
+												},
+												"unknown_extended_key_usages": {
+													Type:        schema.TypeList,
+													Optional:    true,
+													ForceNew:    true,
+													Description: `An ObjectId specifies an object identifier (OID). These provide context and describe types in ASN.1 messages.`,
+													Elem: &schema.Resource{
+														Schema: map[string]*schema.Schema{
+															"object_id_path": {
+																Type:        schema.TypeList,
+																Required:    true,
+																ForceNew:    true,
+																Description: `An ObjectId specifies an object identifier (OID). These provide context and describe types in ASN.1 messages.`,
+																Elem: &schema.Schema{
+																	Type: schema.TypeInt,
+																},
+															},
+														},
+													},
+												},
+											},
+										},
+									},
+									"additional_extensions": {
+										Type:        schema.TypeList,
+										Optional:    true,
+										ForceNew:    true,
+										Description: `Specifies an X.509 extension, which may be used in different parts of X.509 objects like certificates, CSRs, and CRLs.`,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"critical": {
+													Type:     schema.TypeBool,
+													Required: true,
+													ForceNew: true,
+													Description: `Indicates whether or not this extension is critical (i.e., if the client does not know how to
+handle this extension, the client should consider this to be an error).`,
+												},
+												"object_id": {
+													Type:        schema.TypeList,
+													Required:    true,
+													ForceNew:    true,
+													Description: `Describes values that are relevant in a CA certificate.`,
+													MaxItems:    1,
+													Elem: &schema.Resource{
+														Schema: map[string]*schema.Schema{
+															"object_id_path": {
+																Type:        schema.TypeList,
+																Required:    true,
+																ForceNew:    true,
+																Description: `An ObjectId specifies an object identifier (OID). These provide context and describe types in ASN.1 messages.`,
+																Elem: &schema.Schema{
+																	Type: schema.TypeInt,
+																},
+															},
+														},
+													},
+												},
+												"value": {
+													Type:        schema.TypeString,
+													Required:    true,
+													ForceNew:    true,
+													Description: `The value of this X.509 extension. A base64-encoded string.`,
+												},
+											},
+										},
+									},
+									"aia_ocsp_servers": {
+										Type:     schema.TypeList,
+										Optional: true,
+										ForceNew: true,
+										Description: `Describes Online Certificate Status Protocol (OCSP) endpoint addresses that appear in the
+"Authority Information Access" extension in the certificate.`,
+										Elem: &schema.Schema{
+											Type: schema.TypeString,
+										},
+									},
+									"policy_ids": {
+										Type:        schema.TypeList,
+										Optional:    true,
+										ForceNew:    true,
+										Description: `Describes the X.509 certificate policy object identifiers, per https://tools.ietf.org/html/rfc5280#section-4.2.1.4.`,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"object_id_path": {
+													Type:        schema.TypeList,
+													Required:    true,
+													ForceNew:    true,
+													Description: `An ObjectId specifies an object identifier (OID). These provide context and describe types in ASN.1 messages.`,
+													Elem: &schema.Schema{
+														Type: schema.TypeInt,
+													},
+												},
+											},
+										},
+									},
+								},
+							},
+						},
 					},
 				},
 			},
@@ -222,6 +442,7 @@ certificate. Otherwise, it is used to sign a CSR.`,
 						"algorithm": {
 							Type:         schema.TypeString,
 							Optional:     true,
+							ForceNew:     true,
 							ValidateFunc: validation.StringInSlice([]string{"SIGN_HASH_ALGORITHM_UNSPECIFIED", "RSA_PSS_2048_SHA256", "RSA_PSS_3072_SHA256", "RSA_PSS_4096_SHA256", "RSA_PKCS1_2048_SHA256", "RSA_PKCS1_3072_SHA256", "RSA_PKCS1_4096_SHA256", "EC_P256_SHA256", "EC_P384_SHA384", ""}, false),
 							Description: `The algorithm to use for creating a managed Cloud KMS key for a for a simplified
 experience. All managed keys will be have their ProtectionLevel as HSM. Possible values: ["SIGN_HASH_ALGORITHM_UNSPECIFIED", "RSA_PSS_2048_SHA256", "RSA_PSS_3072_SHA256", "RSA_PSS_4096_SHA256", "RSA_PKCS1_2048_SHA256", "RSA_PKCS1_3072_SHA256", "RSA_PKCS1_4096_SHA256", "EC_P256_SHA256", "EC_P384_SHA384"]`,
@@ -230,6 +451,7 @@ experience. All managed keys will be have their ProtectionLevel as HSM. Possible
 						"cloud_kms_key_version": {
 							Type:     schema.TypeString,
 							Optional: true,
+							ForceNew: true,
 							Description: `The resource name for an existing Cloud KMS CryptoKeyVersion in the format
 'projects/*/locations/*/keyRings/*/cryptoKeys/*/cryptoKeyVersions/*'.`,
 							ExactlyOneOf: []string{"key_spec.0.cloud_kms_key_version", "key_spec.0.algorithm"},
@@ -242,7 +464,13 @@ experience. All managed keys will be have their ProtectionLevel as HSM. Possible
 				Required: true,
 				ForceNew: true,
 				Description: `Location of the CertificateAuthority. A full list of valid locations can be found by
-running 'gcloud beta privateca locations list'.`,
+running 'gcloud privateca locations list'.`,
+			},
+			"pool": {
+				Type:        schema.TypeString,
+				Required:    true,
+				ForceNew:    true,
+				Description: `The name of the CaPool this Certificate Authority belongs to.`,
 			},
 			"gcs_bucket": {
 				Type:     schema.TypeString,
@@ -254,34 +482,18 @@ such as the CA certificate and CRLs. This must be a bucket name, without any pre
 my-bucket, you would simply specify 'my-bucket'. If not specified, a managed bucket will be
 created.`,
 			},
-			"issuing_options": {
-				Type:        schema.TypeList,
-				Optional:    true,
-				Description: `Options that affect all certificates issued by a CertificateAuthority.`,
-				MaxItems:    1,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"include_ca_cert_url": {
-							Type:     schema.TypeBool,
-							Optional: true,
-							Description: `When true, includes a URL to the issuing CA certificate in the "authority
-information access" X.509 extension.`,
-							Default: true,
-						},
-						"include_crl_access_url": {
-							Type:     schema.TypeBool,
-							Optional: true,
-							Description: `When true, includes a URL to the CRL corresponding to certificates issued from a
-CertificateAuthority. CRLs will expire 7 days from their creation. However, we will
-rebuild daily. CRLs are also rebuilt shortly after a certificate is revoked.`,
-							Default: false,
-						},
-					},
-				},
+			"ignore_active_certificates": {
+				Type:     schema.TypeBool,
+				Optional: true,
+				ForceNew: true,
+				Description: `This field allows the CA to be deleted even if the CA has active certs. Active certs include both unrevoked and unexpired certs.
+Use with care. Defaults to 'false'.`,
+				Default: false,
 			},
 			"labels": {
 				Type:     schema.TypeMap,
 				Optional: true,
+				ForceNew: true,
 				Description: `Labels with user-defined metadata.
 
 An object containing a list of "key": value pairs. Example: { "name": "wrench", "mass":
@@ -378,11 +590,6 @@ CertificateAuthority's certificate.`,
 A timestamp in RFC3339 UTC "Zulu" format, with nanosecond resolution and up to nine
 fractional digits. Examples: "2014-10-02T15:01:23Z" and "2014-10-02T15:01:23.045123456Z".`,
 			},
-			"disable_on_delete": {
-				Type:     schema.TypeBool,
-				Optional: true,
-				Default:  false,
-			},
 			"project": {
 				Type:     schema.TypeString,
 				Optional: true,
@@ -432,12 +639,6 @@ func resourcePrivatecaCertificateAuthorityCreate(d *schema.ResourceData, meta in
 	} else if v, ok := d.GetOkExists("key_spec"); !isEmptyValue(reflect.ValueOf(keySpecProp)) && (ok || !reflect.DeepEqual(v, keySpecProp)) {
 		obj["keySpec"] = keySpecProp
 	}
-	issuingOptionsProp, err := expandPrivatecaCertificateAuthorityIssuingOptions(d.Get("issuing_options"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("issuing_options"); !isEmptyValue(reflect.ValueOf(issuingOptionsProp)) && (ok || !reflect.DeepEqual(v, issuingOptionsProp)) {
-		obj["issuingOptions"] = issuingOptionsProp
-	}
 	gcsBucketProp, err := expandPrivatecaCertificateAuthorityGcsBucket(d.Get("gcs_bucket"), d, config)
 	if err != nil {
 		return err
@@ -451,12 +652,7 @@ func resourcePrivatecaCertificateAuthorityCreate(d *schema.ResourceData, meta in
 		obj["labels"] = labelsProp
 	}
 
-	obj, err = resourcePrivatecaCertificateAuthorityEncoder(d, meta, obj)
-	if err != nil {
-		return err
-	}
-
-	url, err := replaceVars(d, config, "{{PrivatecaBasePath}}projects/{{project}}/locations/{{location}}/certificateAuthorities?certificateAuthorityId={{certificate_authority_id}}")
+	url, err := replaceVars(d, config, "{{PrivatecaBasePath}}projects/{{project}}/locations/{{location}}/caPools/{{pool}}/certificateAuthorities?certificateAuthorityId={{certificate_authority_id}}")
 	if err != nil {
 		return err
 	}
@@ -481,7 +677,7 @@ func resourcePrivatecaCertificateAuthorityCreate(d *schema.ResourceData, meta in
 	}
 
 	// Store the ID now
-	id, err := replaceVars(d, config, "projects/{{project}}/locations/{{location}}/certificateAuthorities/{{certificate_authority_id}}")
+	id, err := replaceVars(d, config, "projects/{{project}}/locations/{{location}}/caPools/{{pool}}/certificateAuthorities/{{certificate_authority_id}}")
 	if err != nil {
 		return fmt.Errorf("Error constructing id: %s", err)
 	}
@@ -499,16 +695,36 @@ func resourcePrivatecaCertificateAuthorityCreate(d *schema.ResourceData, meta in
 		return fmt.Errorf("Error waiting to create CertificateAuthority: %s", err)
 	}
 
+	opRes, err = resourcePrivatecaCertificateAuthorityDecoder(d, meta, opRes)
+	if err != nil {
+		return fmt.Errorf("Error decoding response from operation: %s", err)
+	}
+	if opRes == nil {
+		return fmt.Errorf("Error decoding response from operation, could not find object")
+	}
+
 	if err := d.Set("name", flattenPrivatecaCertificateAuthorityName(opRes["name"], d, config)); err != nil {
 		return err
 	}
 
 	// This may have caused the ID to update - update it if so.
-	id, err = replaceVars(d, config, "projects/{{project}}/locations/{{location}}/certificateAuthorities/{{certificate_authority_id}}")
+	id, err = replaceVars(d, config, "projects/{{project}}/locations/{{location}}/caPools/{{pool}}/certificateAuthorities/{{certificate_authority_id}}")
 	if err != nil {
 		return fmt.Errorf("Error constructing id: %s", err)
 	}
 	d.SetId(id)
+
+	url, err = replaceVars(d, config, "{{PrivatecaBasePath}}projects/{{project}}/locations/{{location}}/caPools/{{pool}}/certificateAuthorities/{{certificate_authority_id}}:enable")
+	if err != nil {
+		return err
+	}
+
+	log.Printf("[DEBUG] Enabling CertificateAuthority: %#v", obj)
+
+	res, err = sendRequest(config, "POST", billingProject, url, userAgent, nil)
+	if err != nil {
+		return fmt.Errorf("Error enabling CertificateAuthority: %s", err)
+	}
 
 	log.Printf("[DEBUG] Finished creating CertificateAuthority %q: %#v", d.Id(), res)
 
@@ -522,7 +738,7 @@ func resourcePrivatecaCertificateAuthorityRead(d *schema.ResourceData, meta inte
 		return err
 	}
 
-	url, err := replaceVars(d, config, "{{PrivatecaBasePath}}projects/{{project}}/locations/{{location}}/certificateAuthorities/{{certificate_authority_id}}")
+	url, err := replaceVars(d, config, "{{PrivatecaBasePath}}projects/{{project}}/locations/{{location}}/caPools/{{pool}}/certificateAuthorities/{{certificate_authority_id}}")
 	if err != nil {
 		return err
 	}
@@ -545,12 +761,18 @@ func resourcePrivatecaCertificateAuthorityRead(d *schema.ResourceData, meta inte
 		return handleNotFoundError(err, d, fmt.Sprintf("PrivatecaCertificateAuthority %q", d.Id()))
 	}
 
-	// Explicitly set virtual fields to default values if unset
-	if _, ok := d.GetOkExists("disable_on_delete"); !ok {
-		if err := d.Set("disable_on_delete", false); err != nil {
-			return fmt.Errorf("Error setting disable_on_delete: %s", err)
-		}
+	res, err = resourcePrivatecaCertificateAuthorityDecoder(d, meta, res)
+	if err != nil {
+		return err
 	}
+
+	if res == nil {
+		// Decoding the object has resulted in it being gone. It may be marked deleted
+		log.Printf("[DEBUG] Removing PrivatecaCertificateAuthority because it no longer exists.")
+		d.SetId("")
+		return nil
+	}
+
 	if err := d.Set("project", project); err != nil {
 		return fmt.Errorf("Error reading CertificateAuthority: %s", err)
 	}
@@ -571,9 +793,6 @@ func resourcePrivatecaCertificateAuthorityRead(d *schema.ResourceData, meta inte
 		return fmt.Errorf("Error reading CertificateAuthority: %s", err)
 	}
 	if err := d.Set("key_spec", flattenPrivatecaCertificateAuthorityKeySpec(res["keySpec"], d, config)); err != nil {
-		return fmt.Errorf("Error reading CertificateAuthority: %s", err)
-	}
-	if err := d.Set("issuing_options", flattenPrivatecaCertificateAuthorityIssuingOptions(res["issuingOptions"], d, config)); err != nil {
 		return fmt.Errorf("Error reading CertificateAuthority: %s", err)
 	}
 	if err := d.Set("state", flattenPrivatecaCertificateAuthorityState(res["state"], d, config)); err != nil {
@@ -601,86 +820,6 @@ func resourcePrivatecaCertificateAuthorityRead(d *schema.ResourceData, meta inte
 	return nil
 }
 
-func resourcePrivatecaCertificateAuthorityUpdate(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
-	userAgent, err := generateUserAgentString(d, config.userAgent)
-	if err != nil {
-		return err
-	}
-
-	billingProject := ""
-
-	project, err := getProject(d, config)
-	if err != nil {
-		return fmt.Errorf("Error fetching project for CertificateAuthority: %s", err)
-	}
-	billingProject = project
-
-	obj := make(map[string]interface{})
-	issuingOptionsProp, err := expandPrivatecaCertificateAuthorityIssuingOptions(d.Get("issuing_options"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("issuing_options"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, issuingOptionsProp)) {
-		obj["issuingOptions"] = issuingOptionsProp
-	}
-	labelsProp, err := expandPrivatecaCertificateAuthorityLabels(d.Get("labels"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("labels"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
-		obj["labels"] = labelsProp
-	}
-
-	obj, err = resourcePrivatecaCertificateAuthorityEncoder(d, meta, obj)
-	if err != nil {
-		return err
-	}
-
-	url, err := replaceVars(d, config, "{{PrivatecaBasePath}}projects/{{project}}/locations/{{location}}/certificateAuthorities/{{certificate_authority_id}}")
-	if err != nil {
-		return err
-	}
-
-	log.Printf("[DEBUG] Updating CertificateAuthority %q: %#v", d.Id(), obj)
-	updateMask := []string{}
-
-	if d.HasChange("issuing_options") {
-		updateMask = append(updateMask, "issuingOptions")
-	}
-
-	if d.HasChange("labels") {
-		updateMask = append(updateMask, "labels")
-	}
-	// updateMask is a URL parameter but not present in the schema, so replaceVars
-	// won't set it
-	url, err = addQueryParams(url, map[string]string{"updateMask": strings.Join(updateMask, ",")})
-	if err != nil {
-		return err
-	}
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := sendRequestWithTimeout(config, "PATCH", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutUpdate))
-
-	if err != nil {
-		return fmt.Errorf("Error updating CertificateAuthority %q: %s", d.Id(), err)
-	} else {
-		log.Printf("[DEBUG] Finished updating CertificateAuthority %q: %#v", d.Id(), res)
-	}
-
-	err = privatecaOperationWaitTime(
-		config, res, project, "Updating CertificateAuthority", userAgent,
-		d.Timeout(schema.TimeoutUpdate))
-
-	if err != nil {
-		return err
-	}
-
-	return resourcePrivatecaCertificateAuthorityRead(d, meta)
-}
-
 func resourcePrivatecaCertificateAuthorityDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 	userAgent, err := generateUserAgentString(d, config.userAgent)
@@ -696,29 +835,22 @@ func resourcePrivatecaCertificateAuthorityDelete(d *schema.ResourceData, meta in
 	}
 	billingProject = project
 
-	url, err := replaceVars(d, config, "{{PrivatecaBasePath}}{{name}}:scheduleDelete")
+	url, err := replaceVars(d, config, "{{PrivatecaBasePath}}projects/{{project}}/locations/{{location}}/caPools/{{pool}}/certificateAuthorities/{{certificate_authority_id}}?ignoreActiveCertificates={{ignore_active_certificates}}")
 	if err != nil {
 		return err
 	}
 
 	var obj map[string]interface{}
-	if d.Get("disable_on_delete").(bool) && d.Get("state").(string) == "ENABLED" {
-		log.Printf("[DEBUG] Disabling CertificateAuthority %q", d.Id())
+	disableUrl, err := replaceVars(d, config, "{{PrivatecaBasePath}}projects/{{project}}/locations/{{location}}/caPools/{{pool}}/certificateAuthorities/{{certificate_authority_id}}:disable")
+	if err != nil {
+		return err
+	}
 
-		disableURL, err := replaceVars(d, config, "{{PrivatecaBasePath}}{{name}}:disable")
-		if err != nil {
-			return err
-		}
+	log.Printf("[DEBUG] Enabling CertificateAuthority: %#v", obj)
 
-		disableRes, err := sendRequestWithTimeout(config, "POST", billingProject, disableURL, userAgent, obj, d.Timeout(schema.TimeoutDelete))
-		if err != nil {
-			return err
-		}
-
-		err = privatecaOperationWaitTime(config, disableRes, project, "Disabling CertificateAuthority", userAgent, d.Timeout(schema.TimeoutDelete))
-		if err != nil {
-			return err
-		}
+	_, err = sendRequest(config, "POST", billingProject, disableUrl, userAgent, nil)
+	if err != nil {
+		return fmt.Errorf("Error enabling CertificateAuthority: %s", err)
 	}
 	log.Printf("[DEBUG] Deleting CertificateAuthority %q", d.Id())
 
@@ -727,7 +859,7 @@ func resourcePrivatecaCertificateAuthorityDelete(d *schema.ResourceData, meta in
 		billingProject = bp
 	}
 
-	res, err := sendRequestWithTimeout(config, "POST", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutDelete))
+	res, err := sendRequestWithTimeout(config, "DELETE", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutDelete))
 	if err != nil {
 		return handleNotFoundError(err, d, "CertificateAuthority")
 	}
@@ -747,24 +879,19 @@ func resourcePrivatecaCertificateAuthorityDelete(d *schema.ResourceData, meta in
 func resourcePrivatecaCertificateAuthorityImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	config := meta.(*Config)
 	if err := parseImportId([]string{
-		"projects/(?P<project>[^/]+)/locations/(?P<location>[^/]+)/certificateAuthorities/(?P<certificate_authority_id>[^/]+)",
-		"(?P<project>[^/]+)/(?P<location>[^/]+)/(?P<certificate_authority_id>[^/]+)",
-		"(?P<location>[^/]+)/(?P<certificate_authority_id>[^/]+)",
+		"projects/(?P<project>[^/]+)/locations/(?P<location>[^/]+)/caPools/(?P<pool>[^/]+)/certificateAuthorities/(?P<certificate_authority_id>[^/]+)",
+		"(?P<project>[^/]+)/(?P<location>[^/]+)/(?P<pool>[^/]+)/(?P<certificate_authority_id>[^/]+)",
+		"(?P<location>[^/]+)/(?P<pool>[^/]+)/(?P<certificate_authority_id>[^/]+)",
 	}, d, config); err != nil {
 		return nil, err
 	}
 
 	// Replace import id for the resource id
-	id, err := replaceVars(d, config, "projects/{{project}}/locations/{{location}}/certificateAuthorities/{{certificate_authority_id}}")
+	id, err := replaceVars(d, config, "projects/{{project}}/locations/{{location}}/caPools/{{pool}}/certificateAuthorities/{{certificate_authority_id}}")
 	if err != nil {
 		return nil, fmt.Errorf("Error constructing id: %s", err)
 	}
 	d.SetId(id)
-
-	// Explicitly set virtual fields to default values on import
-	if err := d.Set("disable_on_delete", false); err != nil {
-		return nil, fmt.Errorf("Error setting disable_on_delete: %s", err)
-	}
 
 	return []*schema.ResourceData{d}, nil
 }
@@ -790,12 +917,31 @@ func flattenPrivatecaCertificateAuthorityConfig(v interface{}, d *schema.Resourc
 		return nil
 	}
 	transformed := make(map[string]interface{})
+	transformed["x509_config"] =
+		flattenPrivatecaCertificateAuthorityConfigX509Config(original["x509Config"], d, config)
 	transformed["subject_config"] =
 		flattenPrivatecaCertificateAuthorityConfigSubjectConfig(original["subjectConfig"], d, config)
-	transformed["reusable_config"] =
-		flattenPrivatecaCertificateAuthorityConfigReusableConfig(original["reusableConfig"], d, config)
 	return []interface{}{transformed}
 }
+
+func flattenPrivatecaCertificateAuthorityConfigX509Config(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	if v == nil {
+		v = make(map[string]interface{})
+	}
+	original := v.(map[string]interface{})
+	transformed := make(map[string]interface{})
+	transformed["additional_extensions"] =
+		flattenPrivatecaCertificateConfigX509ConfigAdditionalExtensions(original["additionalExtensions"], d, config)
+	transformed["policy_ids"] =
+		flattenPrivatecaCertificateConfigX509ConfigPolicyIds(original["policyIds"], d, config)
+	transformed["aia_ocsp_servers"] = flattenPrivatecaCertificateConfigX509ConfigAiaOcspServers(original["aiaOcspServers"], d, config)
+	transformed["ca_options"] =
+		flattenPrivatecaCertificateConfigX509ConfigCaOptions(original["caOptions"], d, config)
+	transformed["key_usage"] =
+		flattenPrivatecaCertificateConfigX509ConfigKeyUsage(original["keyUsage"], d, config)
+	return []interface{}{transformed}
+}
+
 func flattenPrivatecaCertificateAuthorityConfigSubjectConfig(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	if v == nil {
 		return nil
@@ -807,8 +953,6 @@ func flattenPrivatecaCertificateAuthorityConfigSubjectConfig(v interface{}, d *s
 	transformed := make(map[string]interface{})
 	transformed["subject"] =
 		flattenPrivatecaCertificateAuthorityConfigSubjectConfigSubject(original["subject"], d, config)
-	transformed["common_name"] =
-		flattenPrivatecaCertificateAuthorityConfigSubjectConfigCommonName(original["commonName"], d, config)
 	transformed["subject_alt_name"] =
 		flattenPrivatecaCertificateAuthorityConfigSubjectConfigSubjectAltName(original["subjectAltName"], d, config)
 	return []interface{}{transformed}
@@ -836,6 +980,8 @@ func flattenPrivatecaCertificateAuthorityConfigSubjectConfigSubject(v interface{
 		flattenPrivatecaCertificateAuthorityConfigSubjectConfigSubjectStreetAddress(original["streetAddress"], d, config)
 	transformed["postal_code"] =
 		flattenPrivatecaCertificateAuthorityConfigSubjectConfigSubjectPostalCode(original["postalCode"], d, config)
+	transformed["common_name"] =
+		flattenPrivatecaCertificateAuthorityConfigSubjectConfigSubjectCommonName(original["commonName"], d, config)
 	return []interface{}{transformed}
 }
 func flattenPrivatecaCertificateAuthorityConfigSubjectConfigSubjectCountryCode(v interface{}, d *schema.ResourceData, config *Config) interface{} {
@@ -866,7 +1012,7 @@ func flattenPrivatecaCertificateAuthorityConfigSubjectConfigSubjectPostalCode(v 
 	return v
 }
 
-func flattenPrivatecaCertificateAuthorityConfigSubjectConfigCommonName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenPrivatecaCertificateAuthorityConfigSubjectConfigSubjectCommonName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
@@ -905,23 +1051,6 @@ func flattenPrivatecaCertificateAuthorityConfigSubjectConfigSubjectAltNameIpAddr
 	return v
 }
 
-func flattenPrivatecaCertificateAuthorityConfigReusableConfig(v interface{}, d *schema.ResourceData, config *Config) interface{} {
-	if v == nil {
-		return nil
-	}
-	original := v.(map[string]interface{})
-	if len(original) == 0 {
-		return nil
-	}
-	transformed := make(map[string]interface{})
-	transformed["reusable_config"] =
-		flattenPrivatecaCertificateAuthorityConfigReusableConfigReusableConfig(original["reusableConfig"], d, config)
-	return []interface{}{transformed}
-}
-func flattenPrivatecaCertificateAuthorityConfigReusableConfigReusableConfig(v interface{}, d *schema.ResourceData, config *Config) interface{} {
-	return v
-}
-
 func flattenPrivatecaCertificateAuthorityLifetime(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
@@ -946,29 +1075,6 @@ func flattenPrivatecaCertificateAuthorityKeySpecCloudKmsKeyVersion(v interface{}
 }
 
 func flattenPrivatecaCertificateAuthorityKeySpecAlgorithm(v interface{}, d *schema.ResourceData, config *Config) interface{} {
-	return v
-}
-
-func flattenPrivatecaCertificateAuthorityIssuingOptions(v interface{}, d *schema.ResourceData, config *Config) interface{} {
-	if v == nil {
-		return nil
-	}
-	original := v.(map[string]interface{})
-	if len(original) == 0 {
-		return nil
-	}
-	transformed := make(map[string]interface{})
-	transformed["include_ca_cert_url"] =
-		flattenPrivatecaCertificateAuthorityIssuingOptionsIncludeCaCertUrl(original["includeCaCertUrl"], d, config)
-	transformed["include_crl_access_url"] =
-		flattenPrivatecaCertificateAuthorityIssuingOptionsIncludeCrlAccessUrl(original["includeCrlAccessUrl"], d, config)
-	return []interface{}{transformed}
-}
-func flattenPrivatecaCertificateAuthorityIssuingOptionsIncludeCaCertUrl(v interface{}, d *schema.ResourceData, config *Config) interface{} {
-	return v
-}
-
-func flattenPrivatecaCertificateAuthorityIssuingOptionsIncludeCrlAccessUrl(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
@@ -1036,6 +1142,13 @@ func expandPrivatecaCertificateAuthorityConfig(v interface{}, d TerraformResourc
 	original := raw.(map[string]interface{})
 	transformed := make(map[string]interface{})
 
+	transformedX509Config, err := expandPrivatecaCertificateAuthorityConfigX509Config(original["x509_config"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedX509Config); val.IsValid() && !isEmptyValue(val) {
+		transformed["x509Config"] = transformedX509Config
+	}
+
 	transformedSubjectConfig, err := expandPrivatecaCertificateAuthorityConfigSubjectConfig(original["subject_config"], d, config)
 	if err != nil {
 		return nil, err
@@ -1043,14 +1156,433 @@ func expandPrivatecaCertificateAuthorityConfig(v interface{}, d TerraformResourc
 		transformed["subjectConfig"] = transformedSubjectConfig
 	}
 
-	transformedReusableConfig, err := expandPrivatecaCertificateAuthorityConfigReusableConfig(original["reusable_config"], d, config)
+	return transformed, nil
+}
+
+func expandPrivatecaCertificateAuthorityConfigX509Config(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedAdditionalExtensions, err := expandPrivatecaCertificateAuthorityConfigX509ConfigAdditionalExtensions(original["additional_extensions"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedReusableConfig); val.IsValid() && !isEmptyValue(val) {
-		transformed["reusableConfig"] = transformedReusableConfig
+	} else if val := reflect.ValueOf(transformedAdditionalExtensions); val.IsValid() && !isEmptyValue(val) {
+		transformed["additionalExtensions"] = transformedAdditionalExtensions
+	}
+
+	transformedPolicyIds, err := expandPrivatecaCertificateAuthorityConfigX509ConfigPolicyIds(original["policy_ids"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedPolicyIds); val.IsValid() && !isEmptyValue(val) {
+		transformed["policyIds"] = transformedPolicyIds
+	}
+
+	transformedAiaOcspServers, err := expandPrivatecaCertificateAuthorityConfigX509ConfigAiaOcspServers(original["aia_ocsp_servers"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedAiaOcspServers); val.IsValid() && !isEmptyValue(val) {
+		transformed["aiaOcspServers"] = transformedAiaOcspServers
+	}
+
+	transformedCaOptions, err := expandPrivatecaCertificateAuthorityConfigX509ConfigCaOptions(original["ca_options"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedCaOptions); val.IsValid() && !isEmptyValue(val) {
+		transformed["caOptions"] = transformedCaOptions
+	}
+
+	transformedKeyUsage, err := expandPrivatecaCertificateAuthorityConfigX509ConfigKeyUsage(original["key_usage"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedKeyUsage); val.IsValid() && !isEmptyValue(val) {
+		transformed["keyUsage"] = transformedKeyUsage
 	}
 
 	return transformed, nil
+}
+
+func expandPrivatecaCertificateAuthorityConfigX509ConfigAdditionalExtensions(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	l := v.([]interface{})
+	req := make([]interface{}, 0, len(l))
+	for _, raw := range l {
+		if raw == nil {
+			continue
+		}
+		original := raw.(map[string]interface{})
+		transformed := make(map[string]interface{})
+
+		transformedCritical, err := expandPrivatecaCertificateAuthorityConfigX509ConfigAdditionalExtensionsCritical(original["critical"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedCritical); val.IsValid() && !isEmptyValue(val) {
+			transformed["critical"] = transformedCritical
+		}
+
+		transformedValue, err := expandPrivatecaCertificateAuthorityConfigX509ConfigAdditionalExtensionsValue(original["value"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedValue); val.IsValid() && !isEmptyValue(val) {
+			transformed["value"] = transformedValue
+		}
+
+		transformedObjectId, err := expandPrivatecaCertificateAuthorityConfigX509ConfigAdditionalExtensionsObjectId(original["object_id"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedObjectId); val.IsValid() && !isEmptyValue(val) {
+			transformed["objectId"] = transformedObjectId
+		}
+
+		req = append(req, transformed)
+	}
+	return req, nil
+}
+
+func expandPrivatecaCertificateAuthorityConfigX509ConfigAdditionalExtensionsCritical(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandPrivatecaCertificateAuthorityConfigX509ConfigAdditionalExtensionsValue(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandPrivatecaCertificateAuthorityConfigX509ConfigAdditionalExtensionsObjectId(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedObjectIdPath, err := expandPrivatecaCertificateAuthorityConfigX509ConfigAdditionalExtensionsObjectIdObjectIdPath(original["object_id_path"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedObjectIdPath); val.IsValid() && !isEmptyValue(val) {
+		transformed["objectIdPath"] = transformedObjectIdPath
+	}
+
+	return transformed, nil
+}
+
+func expandPrivatecaCertificateAuthorityConfigX509ConfigAdditionalExtensionsObjectIdObjectIdPath(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandPrivatecaCertificateAuthorityConfigX509ConfigPolicyIds(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	l := v.([]interface{})
+	req := make([]interface{}, 0, len(l))
+	for _, raw := range l {
+		if raw == nil {
+			continue
+		}
+		original := raw.(map[string]interface{})
+		transformed := make(map[string]interface{})
+
+		transformedObjectIdPath, err := expandPrivatecaCertificateAuthorityConfigX509ConfigPolicyIdsObjectIdPath(original["object_id_path"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedObjectIdPath); val.IsValid() && !isEmptyValue(val) {
+			transformed["objectIdPath"] = transformedObjectIdPath
+		}
+
+		req = append(req, transformed)
+	}
+	return req, nil
+}
+
+func expandPrivatecaCertificateAuthorityConfigX509ConfigPolicyIdsObjectIdPath(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandPrivatecaCertificateAuthorityConfigX509ConfigAiaOcspServers(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandPrivatecaCertificateAuthorityConfigX509ConfigCaOptions(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedIsCa, err := expandPrivatecaCertificateAuthorityConfigX509ConfigCaOptionsIsCa(original["is_ca"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedIsCa); val.IsValid() && !isEmptyValue(val) {
+		transformed["isCa"] = transformedIsCa
+	}
+
+	transformedMaxIssuerPathLength, err := expandPrivatecaCertificateAuthorityConfigX509ConfigCaOptionsMaxIssuerPathLength(original["max_issuer_path_length"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedMaxIssuerPathLength); val.IsValid() && !isEmptyValue(val) {
+		transformed["maxIssuerPathLength"] = transformedMaxIssuerPathLength
+	}
+
+	return transformed, nil
+}
+
+func expandPrivatecaCertificateAuthorityConfigX509ConfigCaOptionsIsCa(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandPrivatecaCertificateAuthorityConfigX509ConfigCaOptionsMaxIssuerPathLength(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandPrivatecaCertificateAuthorityConfigX509ConfigKeyUsage(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedBaseKeyUsage, err := expandPrivatecaCertificateAuthorityConfigX509ConfigKeyUsageBaseKeyUsage(original["base_key_usage"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedBaseKeyUsage); val.IsValid() && !isEmptyValue(val) {
+		transformed["baseKeyUsage"] = transformedBaseKeyUsage
+	}
+
+	transformedExtendedKeyUsage, err := expandPrivatecaCertificateAuthorityConfigX509ConfigKeyUsageExtendedKeyUsage(original["extended_key_usage"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedExtendedKeyUsage); val.IsValid() && !isEmptyValue(val) {
+		transformed["extendedKeyUsage"] = transformedExtendedKeyUsage
+	}
+
+	transformedUnknownExtendedKeyUsages, err := expandPrivatecaCertificateAuthorityConfigX509ConfigKeyUsageUnknownExtendedKeyUsages(original["unknown_extended_key_usages"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedUnknownExtendedKeyUsages); val.IsValid() && !isEmptyValue(val) {
+		transformed["unknownExtendedKeyUsages"] = transformedUnknownExtendedKeyUsages
+	}
+
+	return transformed, nil
+}
+
+func expandPrivatecaCertificateAuthorityConfigX509ConfigKeyUsageBaseKeyUsage(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedDigitalSignature, err := expandPrivatecaCertificateAuthorityConfigX509ConfigKeyUsageBaseKeyUsageDigitalSignature(original["digital_signature"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedDigitalSignature); val.IsValid() && !isEmptyValue(val) {
+		transformed["digitalSignature"] = transformedDigitalSignature
+	}
+
+	transformedContentCommitment, err := expandPrivatecaCertificateAuthorityConfigX509ConfigKeyUsageBaseKeyUsageContentCommitment(original["content_commitment"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedContentCommitment); val.IsValid() && !isEmptyValue(val) {
+		transformed["contentCommitment"] = transformedContentCommitment
+	}
+
+	transformedKeyEncipherment, err := expandPrivatecaCertificateAuthorityConfigX509ConfigKeyUsageBaseKeyUsageKeyEncipherment(original["key_encipherment"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedKeyEncipherment); val.IsValid() && !isEmptyValue(val) {
+		transformed["keyEncipherment"] = transformedKeyEncipherment
+	}
+
+	transformedDataEncipherment, err := expandPrivatecaCertificateAuthorityConfigX509ConfigKeyUsageBaseKeyUsageDataEncipherment(original["data_encipherment"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedDataEncipherment); val.IsValid() && !isEmptyValue(val) {
+		transformed["dataEncipherment"] = transformedDataEncipherment
+	}
+
+	transformedKeyAgreement, err := expandPrivatecaCertificateAuthorityConfigX509ConfigKeyUsageBaseKeyUsageKeyAgreement(original["key_agreement"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedKeyAgreement); val.IsValid() && !isEmptyValue(val) {
+		transformed["keyAgreement"] = transformedKeyAgreement
+	}
+
+	transformedCertSign, err := expandPrivatecaCertificateAuthorityConfigX509ConfigKeyUsageBaseKeyUsageCertSign(original["cert_sign"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedCertSign); val.IsValid() && !isEmptyValue(val) {
+		transformed["certSign"] = transformedCertSign
+	}
+
+	transformedCrlSign, err := expandPrivatecaCertificateAuthorityConfigX509ConfigKeyUsageBaseKeyUsageCrlSign(original["crl_sign"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedCrlSign); val.IsValid() && !isEmptyValue(val) {
+		transformed["crlSign"] = transformedCrlSign
+	}
+
+	transformedEncipherOnly, err := expandPrivatecaCertificateAuthorityConfigX509ConfigKeyUsageBaseKeyUsageEncipherOnly(original["encipher_only"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedEncipherOnly); val.IsValid() && !isEmptyValue(val) {
+		transformed["encipherOnly"] = transformedEncipherOnly
+	}
+
+	transformedDecipherOnly, err := expandPrivatecaCertificateAuthorityConfigX509ConfigKeyUsageBaseKeyUsageDecipherOnly(original["decipher_only"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedDecipherOnly); val.IsValid() && !isEmptyValue(val) {
+		transformed["decipherOnly"] = transformedDecipherOnly
+	}
+
+	return transformed, nil
+}
+
+func expandPrivatecaCertificateAuthorityConfigX509ConfigKeyUsageBaseKeyUsageDigitalSignature(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandPrivatecaCertificateAuthorityConfigX509ConfigKeyUsageBaseKeyUsageContentCommitment(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandPrivatecaCertificateAuthorityConfigX509ConfigKeyUsageBaseKeyUsageKeyEncipherment(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandPrivatecaCertificateAuthorityConfigX509ConfigKeyUsageBaseKeyUsageDataEncipherment(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandPrivatecaCertificateAuthorityConfigX509ConfigKeyUsageBaseKeyUsageKeyAgreement(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandPrivatecaCertificateAuthorityConfigX509ConfigKeyUsageBaseKeyUsageCertSign(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandPrivatecaCertificateAuthorityConfigX509ConfigKeyUsageBaseKeyUsageCrlSign(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandPrivatecaCertificateAuthorityConfigX509ConfigKeyUsageBaseKeyUsageEncipherOnly(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandPrivatecaCertificateAuthorityConfigX509ConfigKeyUsageBaseKeyUsageDecipherOnly(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandPrivatecaCertificateAuthorityConfigX509ConfigKeyUsageExtendedKeyUsage(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedServerAuth, err := expandPrivatecaCertificateAuthorityConfigX509ConfigKeyUsageExtendedKeyUsageServerAuth(original["server_auth"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedServerAuth); val.IsValid() && !isEmptyValue(val) {
+		transformed["serverAuth"] = transformedServerAuth
+	}
+
+	transformedClientAuth, err := expandPrivatecaCertificateAuthorityConfigX509ConfigKeyUsageExtendedKeyUsageClientAuth(original["client_auth"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedClientAuth); val.IsValid() && !isEmptyValue(val) {
+		transformed["clientAuth"] = transformedClientAuth
+	}
+
+	transformedCodeSigning, err := expandPrivatecaCertificateAuthorityConfigX509ConfigKeyUsageExtendedKeyUsageCodeSigning(original["code_signing"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedCodeSigning); val.IsValid() && !isEmptyValue(val) {
+		transformed["codeSigning"] = transformedCodeSigning
+	}
+
+	transformedEmailProtection, err := expandPrivatecaCertificateAuthorityConfigX509ConfigKeyUsageExtendedKeyUsageEmailProtection(original["email_protection"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedEmailProtection); val.IsValid() && !isEmptyValue(val) {
+		transformed["emailProtection"] = transformedEmailProtection
+	}
+
+	transformedTimeStamping, err := expandPrivatecaCertificateAuthorityConfigX509ConfigKeyUsageExtendedKeyUsageTimeStamping(original["time_stamping"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedTimeStamping); val.IsValid() && !isEmptyValue(val) {
+		transformed["timeStamping"] = transformedTimeStamping
+	}
+
+	transformedOcspSigning, err := expandPrivatecaCertificateAuthorityConfigX509ConfigKeyUsageExtendedKeyUsageOcspSigning(original["ocsp_signing"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedOcspSigning); val.IsValid() && !isEmptyValue(val) {
+		transformed["ocspSigning"] = transformedOcspSigning
+	}
+
+	return transformed, nil
+}
+
+func expandPrivatecaCertificateAuthorityConfigX509ConfigKeyUsageExtendedKeyUsageServerAuth(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandPrivatecaCertificateAuthorityConfigX509ConfigKeyUsageExtendedKeyUsageClientAuth(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandPrivatecaCertificateAuthorityConfigX509ConfigKeyUsageExtendedKeyUsageCodeSigning(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandPrivatecaCertificateAuthorityConfigX509ConfigKeyUsageExtendedKeyUsageEmailProtection(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandPrivatecaCertificateAuthorityConfigX509ConfigKeyUsageExtendedKeyUsageTimeStamping(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandPrivatecaCertificateAuthorityConfigX509ConfigKeyUsageExtendedKeyUsageOcspSigning(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandPrivatecaCertificateAuthorityConfigX509ConfigKeyUsageUnknownExtendedKeyUsages(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	l := v.([]interface{})
+	req := make([]interface{}, 0, len(l))
+	for _, raw := range l {
+		if raw == nil {
+			continue
+		}
+		original := raw.(map[string]interface{})
+		transformed := make(map[string]interface{})
+
+		transformedObjectIdPath, err := expandPrivatecaCertificateAuthorityConfigX509ConfigKeyUsageUnknownExtendedKeyUsagesObjectIdPath(original["object_id_path"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedObjectIdPath); val.IsValid() && !isEmptyValue(val) {
+			transformed["objectIdPath"] = transformedObjectIdPath
+		}
+
+		req = append(req, transformed)
+	}
+	return req, nil
+}
+
+func expandPrivatecaCertificateAuthorityConfigX509ConfigKeyUsageUnknownExtendedKeyUsagesObjectIdPath(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
 }
 
 func expandPrivatecaCertificateAuthorityConfigSubjectConfig(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
@@ -1067,13 +1599,6 @@ func expandPrivatecaCertificateAuthorityConfigSubjectConfig(v interface{}, d Ter
 		return nil, err
 	} else if val := reflect.ValueOf(transformedSubject); val.IsValid() && !isEmptyValue(val) {
 		transformed["subject"] = transformedSubject
-	}
-
-	transformedCommonName, err := expandPrivatecaCertificateAuthorityConfigSubjectConfigCommonName(original["common_name"], d, config)
-	if err != nil {
-		return nil, err
-	} else if val := reflect.ValueOf(transformedCommonName); val.IsValid() && !isEmptyValue(val) {
-		transformed["commonName"] = transformedCommonName
 	}
 
 	transformedSubjectAltName, err := expandPrivatecaCertificateAuthorityConfigSubjectConfigSubjectAltName(original["subject_alt_name"], d, config)
@@ -1144,6 +1669,13 @@ func expandPrivatecaCertificateAuthorityConfigSubjectConfigSubject(v interface{}
 		transformed["postalCode"] = transformedPostalCode
 	}
 
+	transformedCommonName, err := expandPrivatecaCertificateAuthorityConfigSubjectConfigSubjectCommonName(original["common_name"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedCommonName); val.IsValid() && !isEmptyValue(val) {
+		transformed["commonName"] = transformedCommonName
+	}
+
 	return transformed, nil
 }
 
@@ -1175,7 +1707,7 @@ func expandPrivatecaCertificateAuthorityConfigSubjectConfigSubjectPostalCode(v i
 	return v, nil
 }
 
-func expandPrivatecaCertificateAuthorityConfigSubjectConfigCommonName(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandPrivatecaCertificateAuthorityConfigSubjectConfigSubjectCommonName(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
@@ -1235,29 +1767,6 @@ func expandPrivatecaCertificateAuthorityConfigSubjectConfigSubjectAltNameIpAddre
 	return v, nil
 }
 
-func expandPrivatecaCertificateAuthorityConfigReusableConfig(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
-	l := v.([]interface{})
-	if len(l) == 0 || l[0] == nil {
-		return nil, nil
-	}
-	raw := l[0]
-	original := raw.(map[string]interface{})
-	transformed := make(map[string]interface{})
-
-	transformedReusableConfig, err := expandPrivatecaCertificateAuthorityConfigReusableConfigReusableConfig(original["reusable_config"], d, config)
-	if err != nil {
-		return nil, err
-	} else if val := reflect.ValueOf(transformedReusableConfig); val.IsValid() && !isEmptyValue(val) {
-		transformed["reusableConfig"] = transformedReusableConfig
-	}
-
-	return transformed, nil
-}
-
-func expandPrivatecaCertificateAuthorityConfigReusableConfigReusableConfig(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
-	return v, nil
-}
-
 func expandPrivatecaCertificateAuthorityLifetime(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
@@ -1296,40 +1805,6 @@ func expandPrivatecaCertificateAuthorityKeySpecAlgorithm(v interface{}, d Terraf
 	return v, nil
 }
 
-func expandPrivatecaCertificateAuthorityIssuingOptions(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
-	l := v.([]interface{})
-	if len(l) == 0 || l[0] == nil {
-		return nil, nil
-	}
-	raw := l[0]
-	original := raw.(map[string]interface{})
-	transformed := make(map[string]interface{})
-
-	transformedIncludeCaCertUrl, err := expandPrivatecaCertificateAuthorityIssuingOptionsIncludeCaCertUrl(original["include_ca_cert_url"], d, config)
-	if err != nil {
-		return nil, err
-	} else if val := reflect.ValueOf(transformedIncludeCaCertUrl); val.IsValid() && !isEmptyValue(val) {
-		transformed["includeCaCertUrl"] = transformedIncludeCaCertUrl
-	}
-
-	transformedIncludeCrlAccessUrl, err := expandPrivatecaCertificateAuthorityIssuingOptionsIncludeCrlAccessUrl(original["include_crl_access_url"], d, config)
-	if err != nil {
-		return nil, err
-	} else if val := reflect.ValueOf(transformedIncludeCrlAccessUrl); val.IsValid() && !isEmptyValue(val) {
-		transformed["includeCrlAccessUrl"] = transformedIncludeCrlAccessUrl
-	}
-
-	return transformed, nil
-}
-
-func expandPrivatecaCertificateAuthorityIssuingOptionsIncludeCaCertUrl(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
-	return v, nil
-}
-
-func expandPrivatecaCertificateAuthorityIssuingOptionsIncludeCrlAccessUrl(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
-	return v, nil
-}
-
 func expandPrivatecaCertificateAuthorityGcsBucket(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
@@ -1345,18 +1820,10 @@ func expandPrivatecaCertificateAuthorityLabels(v interface{}, d TerraformResourc
 	return m, nil
 }
 
-func resourcePrivatecaCertificateAuthorityEncoder(d *schema.ResourceData, meta interface{}, obj map[string]interface{}) (map[string]interface{}, error) {
-	rc := d.Get("config.0.reusable_config.0.reusable_config").(string)
-
-	parts := strings.Split(rc, "/")
-
-	if len(parts) == 1 {
-		// If we have a short form: add the full path to the reusable-configs from
-		// the Google-managed project and the location of the CA.
-		config := obj["config"].(map[string]interface{})
-		configReusableConfig := config["reusableConfig"].(map[string]interface{})
-		configReusableConfig["reusableConfig"] = fmt.Sprintf("projects/568668481468/locations/%s/reusableConfigs/%s", d.Get("location"), parts[0])
+func resourcePrivatecaCertificateAuthorityDecoder(d *schema.ResourceData, meta interface{}, res map[string]interface{}) (map[string]interface{}, error) {
+	if v := res["state"]; v == "DELETED" {
+		return nil, nil
 	}
 
-	return obj, nil
+	return res, nil
 }

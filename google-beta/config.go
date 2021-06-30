@@ -325,7 +325,7 @@ var DefaultBasePaths = map[string]string{
 	NotebooksBasePathKey:            "https://notebooks.googleapis.com/v1beta1/",
 	OSConfigBasePathKey:             "https://osconfig.googleapis.com/v1beta/",
 	OSLoginBasePathKey:              "https://oslogin.googleapis.com/v1/",
-	PrivatecaBasePathKey:            "https://privateca.googleapis.com/v1beta1/",
+	PrivatecaBasePathKey:            "https://privateca.googleapis.com/v1/",
 	PubsubBasePathKey:               "https://pubsub.googleapis.com/v1/",
 	PubsubLiteBasePathKey:           "https://{{region}}-pubsublite.googleapis.com/v1/admin/",
 	RedisBasePathKey:                "https://redis.googleapis.com/v1beta1/",

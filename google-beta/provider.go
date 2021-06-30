@@ -869,9 +869,9 @@ func Provider() *schema.Provider {
 	return provider
 }
 
-// Generated resources: 227
+// Generated resources: 228
 // Generated IAM resources: 117
-// Total generated resources: 344
+// Total generated resources: 345
 func ResourceMap() map[string]*schema.Resource {
 	resourceMap, _ := ResourceMapWithErrors()
 	return resourceMap
@@ -1159,10 +1159,11 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_os_config_guest_policies":                              resourceOSConfigGuestPolicies(),
 			"google_os_login_ssh_public_key":                               resourceOSLoginSSHPublicKey(),
 			"google_privateca_certificate_authority":                       resourcePrivatecaCertificateAuthority(),
-			"google_privateca_certificate_authority_iam_binding":           ResourceIamBinding(PrivatecaCertificateAuthorityIamSchema, PrivatecaCertificateAuthorityIamUpdaterProducer, PrivatecaCertificateAuthorityIdParseFunc),
-			"google_privateca_certificate_authority_iam_member":            ResourceIamMember(PrivatecaCertificateAuthorityIamSchema, PrivatecaCertificateAuthorityIamUpdaterProducer, PrivatecaCertificateAuthorityIdParseFunc),
-			"google_privateca_certificate_authority_iam_policy":            ResourceIamPolicy(PrivatecaCertificateAuthorityIamSchema, PrivatecaCertificateAuthorityIamUpdaterProducer, PrivatecaCertificateAuthorityIdParseFunc),
 			"google_privateca_certificate":                                 resourcePrivatecaCertificate(),
+			"google_privateca_ca_pool":                                     resourcePrivatecaCaPool(),
+			"google_privateca_ca_pool_iam_binding":                         ResourceIamBinding(PrivatecaCaPoolIamSchema, PrivatecaCaPoolIamUpdaterProducer, PrivatecaCaPoolIdParseFunc),
+			"google_privateca_ca_pool_iam_member":                          ResourceIamMember(PrivatecaCaPoolIamSchema, PrivatecaCaPoolIamUpdaterProducer, PrivatecaCaPoolIdParseFunc),
+			"google_privateca_ca_pool_iam_policy":                          ResourceIamPolicy(PrivatecaCaPoolIamSchema, PrivatecaCaPoolIamUpdaterProducer, PrivatecaCaPoolIdParseFunc),
 			"google_pubsub_topic":                                          resourcePubsubTopic(),
 			"google_pubsub_topic_iam_binding":                              ResourceIamBinding(PubsubTopicIamSchema, PubsubTopicIamUpdaterProducer, PubsubTopicIdParseFunc),
 			"google_pubsub_topic_iam_member":                               ResourceIamMember(PubsubTopicIamSchema, PubsubTopicIamUpdaterProducer, PubsubTopicIdParseFunc),
