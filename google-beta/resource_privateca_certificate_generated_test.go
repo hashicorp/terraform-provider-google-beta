@@ -28,16 +28,23 @@ func TestAccPrivatecaCertificate_privatecaCertificateConfigExample(t *testing.T)
 
 	context := map[string]interface{}{
 		"project":       getTestProjectFromEnv(),
+		"pool":          "static-ca-pool",
 		"random_suffix": randString(t, 10),
 	}
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProvidersOiCS,
+		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckPrivatecaCertificateDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccPrivatecaCertificate_privatecaCertificateConfigExample(context),
+			},
+			{
+				ResourceName:            "google_privateca_certificate.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"pool", "name", "location", "certificate_authority"},
 			},
 		},
 	})
@@ -46,65 +53,82 @@ func TestAccPrivatecaCertificate_privatecaCertificateConfigExample(t *testing.T)
 func testAccPrivatecaCertificate_privatecaCertificateConfigExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_privateca_certificate_authority" "test-ca" {
-  provider = google-beta
   certificate_authority_id = "tf-test-my-certificate-authority%{random_suffix}"
   location = "us-central1"
+  pool = "%{pool}"
   tier = "ENTERPRISE"
+  ignore_active_certificates = true
   config {
     subject_config {
       subject {
         organization = "HashiCorp"
+        common_name = "my-certificate-authority"
       }
-      common_name = "my-certificate-authority"
       subject_alt_name {
         dns_names = ["hashicorp.com"]
       }
     }
-    reusable_config {
-      reusable_config = "projects/568668481468/locations/us-central1/reusableConfigs/root-unconstrained"
+    x509_config {
+      ca_options {
+        is_ca = true
+      }
+      key_usage {
+        base_key_usage {
+          cert_sign = true
+          crl_sign = true
+        }
+        extended_key_usage {
+          server_auth = true
+        }
+      }
     }
   }
   key_spec {
     algorithm = "RSA_PKCS1_4096_SHA256"
   }
-  disable_on_delete = true
 }
 
-
 resource "google_privateca_certificate" "default" {
-  provider = google-beta
-  project = "%{project}"
+  pool = "%{pool}"
   location = "us-central1"
   certificate_authority = google_privateca_certificate_authority.test-ca.certificate_authority_id
   lifetime = "860s"
   name = "tf-test-my-certificate%{random_suffix}"
   config {
-      reusable_config {
-        reusable_config= "projects/568668481468/locations/us-central1/reusableConfigs/leaf-server-tls"
-      } 
-      subject_config  {
+    subject_config  {
+      subject {
         common_name = "san1.example.com"
-        subject {
-          country_code = "us"
-          organization = "google"
-          organizational_unit = "enterprise"
-          locality = "mountain view"
-          province = "california"
-          street_address = "1600 amphitheatre parkway"
-          postal_code = "94109"
-        } 
-        subject_alt_name {
-          dns_names = ["hashicorp.com"]
-          email_addresses = ["email@example.com"]
-          ip_addresses = ["127.0.0.1"]
-          uris = ["http://www.ietf.org/rfc/rfc3986.txt"]
+        country_code = "us"
+        organization = "google"
+        organizational_unit = "enterprise"
+        locality = "mountain view"
+        province = "california"
+        street_address = "1600 amphitheatre parkway"
+      } 
+      subject_alt_name {
+        email_addresses = ["email@example.com"]
+        ip_addresses = ["127.0.0.1"]
+        uris = ["http://www.ietf.org/rfc/rfc3986.txt"]
+      }
+    }
+    x509_config {
+      ca_options {
+        is_ca = false
+      }
+      key_usage {
+        base_key_usage {
+          crl_sign = false
+          decipher_only = false
+        }
+        extended_key_usage {
+          server_auth = false
         }
       }
-
+    }
     public_key {
-      type = "PEM_RSA_KEY"
+      format = "PEM"
       key = filebase64("test-fixtures/rsa_public.pem")
-    }    
+    }
   }
 }
 `, context)
@@ -115,16 +139,23 @@ func TestAccPrivatecaCertificate_privatecaCertificateCsrExample(t *testing.T) {
 
 	context := map[string]interface{}{
 		"project":       getTestProjectFromEnv(),
+		"pool":          "static-ca-pool",
 		"random_suffix": randString(t, 10),
 	}
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProvidersOiCS,
+		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckPrivatecaCertificateDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccPrivatecaCertificate_privatecaCertificateCsrExample(context),
+			},
+			{
+				ResourceName:            "google_privateca_certificate.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"pool", "name", "location", "certificate_authority"},
 			},
 		},
 	})
@@ -133,7 +164,7 @@ func TestAccPrivatecaCertificate_privatecaCertificateCsrExample(t *testing.T) {
 func testAccPrivatecaCertificate_privatecaCertificateCsrExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_privateca_certificate_authority" "test-ca" {
-  provider = google-beta
+  pool = "%{pool}"
   certificate_authority_id = "tf-test-my-certificate-authority%{random_suffix}"
   location = "us-central1"
   tier = "ENTERPRISE"
@@ -141,33 +172,153 @@ resource "google_privateca_certificate_authority" "test-ca" {
     subject_config {
       subject {
         organization = "HashiCorp"
+        common_name = "my-certificate-authority"
       }
-      common_name = "my-certificate-authority"
       subject_alt_name {
         dns_names = ["hashicorp.com"]
       }
     }
-    reusable_config {
-      reusable_config = "projects/568668481468/locations/us-central1/reusableConfigs/root-unconstrained"
+    x509_config {
+      ca_options {
+        # is_ca *MUST* be true for certificate authorities
+        is_ca = true
+      }
+      key_usage {
+        base_key_usage {
+          # cert_sign and crl_sign *MUST* be true for certificate authorities
+          cert_sign = true
+          crl_sign = true
+        }
+        extended_key_usage {
+          server_auth = false
+        }
+      }
     }
   }
   key_spec {
     algorithm = "RSA_PKCS1_4096_SHA256"
   }
-  disable_on_delete = true
 }
 
 
-
-
 resource "google_privateca_certificate" "default" {
-  provider = google-beta
-  project = "%{project}"
+  pool = "%{pool}"
   location = "us-central1"
   certificate_authority = google_privateca_certificate_authority.test-ca.certificate_authority_id
   lifetime = "860s"
   name = "tf-test-my-certificate%{random_suffix}"
   pem_csr = file("test-fixtures/rsa_csr.pem")
+}
+`, context)
+}
+
+func TestAccPrivatecaCertificate_privatecaCertificateNoAuthorityExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"project":       getTestProjectFromEnv(),
+		"pool":          "static-ca-pool",
+		"random_suffix": randString(t, 10),
+	}
+
+	vcrTest(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckPrivatecaCertificateDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccPrivatecaCertificate_privatecaCertificateNoAuthorityExample(context),
+			},
+			{
+				ResourceName:            "google_privateca_certificate.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"pool", "name", "location", "certificate_authority"},
+			},
+		},
+	})
+}
+
+func testAccPrivatecaCertificate_privatecaCertificateNoAuthorityExample(context map[string]interface{}) string {
+	return Nprintf(`
+resource "google_privateca_certificate_authority" "authority" {
+  // This example assumes this pool already exists.
+  // Pools cannot be deleted in normal test circumstances, so we depend on static pools
+  pool = "%{pool}"
+  certificate_authority_id = "tf-test-my-authority%{random_suffix}"
+  location = "us-central1"
+  config {
+    subject_config {
+      subject {
+        organization = "HashiCorp"
+        common_name = "my-certificate-authority"
+      }
+      subject_alt_name {
+        dns_names = ["hashicorp.com"]
+      }
+    }
+    x509_config {
+      ca_options {
+        is_ca = true
+      }
+      key_usage {
+        base_key_usage {
+          digital_signature = true
+          cert_sign = true
+          crl_sign = true
+        }
+        extended_key_usage {
+          server_auth = true
+        }
+      }
+    }
+  }
+  lifetime = "86400s"
+  key_spec {
+    algorithm = "RSA_PKCS1_4096_SHA256"
+  }
+}
+
+
+resource "google_privateca_certificate" "default" {
+  pool = "%{pool}"
+  location = "us-central1"
+  lifetime = "860s"
+  name = "tf-test-my-certificate%{random_suffix}"
+  config {
+    subject_config  {
+      subject {
+        common_name = "san1.example.com"
+        country_code = "us"
+        organization = "google"
+        organizational_unit = "enterprise"
+        locality = "mountain view"
+        province = "california"
+        street_address = "1600 amphitheatre parkway"
+        postal_code = "94109"
+      }
+    }
+    x509_config {
+      ca_options {
+        is_ca = false
+      }
+      key_usage {
+        base_key_usage {
+          crl_sign = true
+        }
+        extended_key_usage {
+          server_auth = true
+        }
+      }
+    }
+    public_key {
+      format = "PEM"
+      key = filebase64("test-fixtures/rsa_public.pem")
+    }
+  }
+  // Certificates require an authority to exist in the pool, though they don't
+  // need to be explicitly connected to it
+  depends_on = [google_privateca_certificate_authority.authority]
 }
 `, context)
 }
@@ -184,7 +335,7 @@ func testAccCheckPrivatecaCertificateDestroyProducer(t *testing.T) func(s *terra
 
 			config := googleProviderConfig(t)
 
-			url, err := replaceVarsForTest(config, rs, "{{PrivatecaBasePath}}projects/{{project}}/locations/{{location}}/certificateAuthorities/{{certificate_authority}}/certificates/{{name}}")
+			url, err := replaceVarsForTest(config, rs, "{{PrivatecaBasePath}}projects/{{project}}/locations/{{location}}/caPools/{{pool}}/certificates/{{name}}")
 
 			if err != nil {
 				return err
