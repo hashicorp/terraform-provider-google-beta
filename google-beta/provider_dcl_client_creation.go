@@ -23,7 +23,7 @@ import (
 	gke_hub "github.com/GoogleCloudPlatform/declarative-resource-client-library/services/google/gkehub/beta"
 )
 
-func NewDCLCloudBuildClient(config *Config, userAgent, billingProject string) *cloudbuild.Client {
+func NewDCLCloudbuildClient(config *Config, userAgent, billingProject string) *cloudbuild.Client {
 	dclClientOptions := dcl.WithHTTPClient(config.client)
 	dclUserAgentOptions := dcl.WithUserAgent(userAgent)
 	dclLoggerOptions := dcl.WithLogger(dclLogger{})
