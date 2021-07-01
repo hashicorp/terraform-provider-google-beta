@@ -180,7 +180,7 @@ func resourceCloudbuildWorkerPoolCreate(d *schema.ResourceData, meta interface{}
 	if bp, err := getBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
-	client := NewDCLCloudBuildClient(config, userAgent, billingProject)
+	client := NewDCLCloudbuildClient(config, userAgent, billingProject)
 	res, err := client.ApplyWorkerPool(context.Background(), obj, createDirective...)
 	if err != nil {
 		// The resource didn't actually create
@@ -217,7 +217,7 @@ func resourceCloudbuildWorkerPoolRead(d *schema.ResourceData, meta interface{}) 
 	if bp, err := getBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
-	client := NewDCLCloudBuildClient(config, userAgent, billingProject)
+	client := NewDCLCloudbuildClient(config, userAgent, billingProject)
 	res, err := client.GetWorkerPool(context.Background(), obj)
 	if err != nil {
 		// Resource not found
@@ -279,7 +279,7 @@ func resourceCloudbuildWorkerPoolUpdate(d *schema.ResourceData, meta interface{}
 	if bp, err := getBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
-	client := NewDCLCloudBuildClient(config, userAgent, billingProject)
+	client := NewDCLCloudbuildClient(config, userAgent, billingProject)
 	res, err := client.ApplyWorkerPool(context.Background(), obj, directive...)
 	if err != nil {
 		return fmt.Errorf("Error updating WorkerPool: %s", err)
@@ -315,7 +315,7 @@ func resourceCloudbuildWorkerPoolDelete(d *schema.ResourceData, meta interface{}
 	if bp, err := getBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
-	client := NewDCLCloudBuildClient(config, userAgent, billingProject)
+	client := NewDCLCloudbuildClient(config, userAgent, billingProject)
 	if err := client.DeleteWorkerPool(context.Background(), obj); err != nil {
 		return fmt.Errorf("Error deleting WorkerPool: %s", err)
 	}
