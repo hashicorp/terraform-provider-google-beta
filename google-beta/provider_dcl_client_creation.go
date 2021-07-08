@@ -17,11 +17,38 @@ package google
 import (
 	dcl "github.com/GoogleCloudPlatform/declarative-resource-client-library/dcl"
 
+	assuredworkloads "github.com/GoogleCloudPlatform/declarative-resource-client-library/services/google/assuredworkloads/beta"
 	cloudbuild "github.com/GoogleCloudPlatform/declarative-resource-client-library/services/google/cloudbuild/beta"
 	dataproc "github.com/GoogleCloudPlatform/declarative-resource-client-library/services/google/dataproc/beta"
 	eventarc "github.com/GoogleCloudPlatform/declarative-resource-client-library/services/google/eventarc/beta"
 	gke_hub "github.com/GoogleCloudPlatform/declarative-resource-client-library/services/google/gkehub/beta"
 )
+
+func NewDCLAssuredWorkloadsClient(config *Config, userAgent, billingProject string) *assuredworkloads.Client {
+	dclClientOptions := dcl.WithHTTPClient(config.client)
+	dclUserAgentOptions := dcl.WithUserAgent(userAgent)
+	dclLoggerOptions := dcl.WithLogger(dclLogger{})
+	var dclConfig *dcl.Config
+	if config.UserProjectOverride && billingProject != "" {
+		dclBillingProjectHeader := dcl.WithHeader("X-Goog-User-Project", billingProject)
+		dclConfig = dcl.NewConfig(
+			dclClientOptions,
+			dclUserAgentOptions,
+			dclLoggerOptions,
+			dcl.WithBasePath(config.AssuredWorkloadsBasePath),
+			dclBillingProjectHeader,
+		)
+	} else {
+		dclConfig = dcl.NewConfig(
+			dclClientOptions,
+			dclUserAgentOptions,
+			dclLoggerOptions,
+			dcl.WithBasePath(config.AssuredWorkloadsBasePath),
+		)
+	}
+
+	return assuredworkloads.NewClient(dclConfig)
+}
 
 func NewDCLCloudbuildClient(config *Config, userAgent, billingProject string) *cloudbuild.Client {
 	dclClientOptions := dcl.WithHTTPClient(config.client)
