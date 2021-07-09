@@ -9,7 +9,7 @@ FEATURES:
 * **New Resource:** google_privateca_certificate_authority ([#3397](https://github.com/hashicorp/terraform-provider-google-beta/pull/3397))
 
 IMPROVEMENTS:
-* bigquery: add `kms_key_version` as an output on `bigquery_table.encryption_configuration` and the `destination_encryption_configuration` blocks of `bigquery_job.query`, `bigquery_job.load`, and `bigquery_copy`. ([#3406](https://github.com/hashicorp/terraform-provider-google-beta/pull/3406))
+* bigquery: added `kms_key_version` as an output on `bigquery_table.encryption_configuration` and the `destination_encryption_configuration` blocks of `bigquery_job.query`, `bigquery_job.load`, and `bigquery_copy`. ([#3406](https://github.com/hashicorp/terraform-provider-google-beta/pull/3406))
 * compute: added `advanced_machine_features` to `google_compute_instance` ([#3392](https://github.com/hashicorp/terraform-provider-google-beta/pull/3392))
 * dlp: Added `replace_with_info_type_config` to `dlp_deidentify_template`. ([#3384](https://github.com/hashicorp/terraform-provider-google-beta/pull/3384))
 * storage_bucket_object: added temporary_hold and event_based_hold attributes ([#3399](https://github.com/hashicorp/terraform-provider-google-beta/pull/3399))
