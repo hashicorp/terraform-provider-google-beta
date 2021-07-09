@@ -175,9 +175,8 @@ type Config struct {
 
 	// start DCLBasePaths
 	// dataprocBasePath is implemented in mm
-	AssuredWorkloadsBasePath string
-	EventarcBasePath         string
-	GkeHubBasePath           string
+	EventarcBasePath string
+	GkeHubBasePath   string
 	// CloudBuild WorkerPool uses a different endpoint (v1beta1) than any other CloudBuild resources
 	CloudBuildWorkerPoolBasePath string
 }
