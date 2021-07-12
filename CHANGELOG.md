@@ -1,4 +1,4 @@
-## 3.75.0 (Unreleased)
+## 3.75.0 (July 12, 2021)
 
 BREAKING CHANGES:
 * privateca: existing beta resources will no longer function ([#3397](https://github.com/hashicorp/terraform-provider-google-beta/pull/3397))
