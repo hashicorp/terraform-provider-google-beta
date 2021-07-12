@@ -1,5 +1,26 @@
 ## 3.75.0 (Unreleased)
 
+BREAKING CHANGES:
+* privateca: existing beta resources will no longer function ([#3397](https://github.com/hashicorp/terraform-provider-google-beta/pull/3397))
+
+FEATURES:
+* **New Resource:** google_privateca_ca_pool ([#3397](https://github.com/hashicorp/terraform-provider-google-beta/pull/3397))
+* **New Resource:** google_privateca_certificate ([#3397](https://github.com/hashicorp/terraform-provider-google-beta/pull/3397))
+* **New Resource:** google_privateca_certificate_authority ([#3397](https://github.com/hashicorp/terraform-provider-google-beta/pull/3397))
+
+IMPROVEMENTS:
+* bigquery: added `kms_key_version` as an output on `bigquery_table.encryption_configuration` and the `destination_encryption_configuration` blocks of `bigquery_job.query`, `bigquery_job.load`, and `bigquery_copy`. ([#3406](https://github.com/hashicorp/terraform-provider-google-beta/pull/3406))
+* compute: added `advanced_machine_features` to `google_compute_instance` ([#3392](https://github.com/hashicorp/terraform-provider-google-beta/pull/3392))
+* dlp: Added `replace_with_info_type_config` to `dlp_deidentify_template`. ([#3384](https://github.com/hashicorp/terraform-provider-google-beta/pull/3384))
+* storage: added `temporary_hold` and `event_based_hold` attributes to `google_storage_bucket_object` ([#3399](https://github.com/hashicorp/terraform-provider-google-beta/pull/3399))
+
+BUG FIXES:
+* bigquery: Fixed permadiff due to lowercase mode/type in `google_bigquery_table.schema` ([#3405](https://github.com/hashicorp/terraform-provider-google-beta/pull/3405))
+* billing: made `all_updates_rule.*` fields updatable on `google_billing_budget` ([#3394](https://github.com/hashicorp/terraform-provider-google-beta/pull/3394))
+* billing: made `amount.specified_amount.units` updatable on `google_billing_budget` ([#3391](https://github.com/hashicorp/terraform-provider-google-beta/pull/3391))
+* compute: fixed perma-diff in `google_compute_instance` ([#3389](https://github.com/hashicorp/terraform-provider-google-beta/pull/3389))
+* storage: fixed handling of object paths that contain slashes for `google_storage_object_access_control` ([#3407](https://github.com/hashicorp/terraform-provider-google-beta/pull/3407))
+
 ## 3.74.0 (June 28, 2021)
 
 FEATURES:
