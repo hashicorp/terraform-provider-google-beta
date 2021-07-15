@@ -251,14 +251,6 @@ func Provider() *schema.Provider {
 					"GOOGLE_BINARY_AUTHORIZATION_CUSTOM_ENDPOINT",
 				}, DefaultBasePaths[BinaryAuthorizationBasePathKey]),
 			},
-			"certificate_manager_custom_endpoint": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				ValidateFunc: validateCustomEndpoint,
-				DefaultFunc: schema.MultiEnvDefaultFunc([]string{
-					"GOOGLE_CERTIFICATE_MANAGER_CUSTOM_ENDPOINT",
-				}, DefaultBasePaths[CertificateManagerBasePathKey]),
-			},
 			"cloud_asset_custom_endpoint": {
 				Type:         schema.TypeString,
 				Optional:     true,
@@ -886,9 +878,9 @@ func Provider() *schema.Provider {
 	return provider
 }
 
-// Generated resources: 238
+// Generated resources: 236
 // Generated IAM resources: 117
-// Total generated resources: 355
+// Total generated resources: 353
 func ResourceMap() map[string]*schema.Resource {
 	resourceMap, _ := ResourceMapWithErrors()
 	return resourceMap
@@ -956,8 +948,6 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_binary_authorization_attestor_iam_member":              ResourceIamMember(BinaryAuthorizationAttestorIamSchema, BinaryAuthorizationAttestorIamUpdaterProducer, BinaryAuthorizationAttestorIdParseFunc),
 			"google_binary_authorization_attestor_iam_policy":              ResourceIamPolicy(BinaryAuthorizationAttestorIamSchema, BinaryAuthorizationAttestorIamUpdaterProducer, BinaryAuthorizationAttestorIdParseFunc),
 			"google_binary_authorization_policy":                           resourceBinaryAuthorizationPolicy(),
-			"google_certificate_manager_dns_authorization":                 resourceCertificateManagerDnsAuthorization(),
-			"google_certificate_manager_certificate":                       resourceCertificateManagerCertificate(),
 			"google_cloud_asset_project_feed":                              resourceCloudAssetProjectFeed(),
 			"google_cloud_asset_folder_feed":                               resourceCloudAssetFolderFeed(),
 			"google_cloud_asset_organization_feed":                         resourceCloudAssetOrganizationFeed(),
@@ -1480,7 +1470,6 @@ func providerConfigure(ctx context.Context, d *schema.ResourceData, p *schema.Pr
 	config.BigtableBasePath = d.Get("bigtable_custom_endpoint").(string)
 	config.BillingBasePath = d.Get("billing_custom_endpoint").(string)
 	config.BinaryAuthorizationBasePath = d.Get("binary_authorization_custom_endpoint").(string)
-	config.CertificateManagerBasePath = d.Get("certificate_manager_custom_endpoint").(string)
 	config.CloudAssetBasePath = d.Get("cloud_asset_custom_endpoint").(string)
 	config.CloudBuildBasePath = d.Get("cloud_build_custom_endpoint").(string)
 	config.CloudFunctionsBasePath = d.Get("cloud_functions_custom_endpoint").(string)
