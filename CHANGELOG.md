@@ -1,4 +1,23 @@
 ## 3.76.0 (Unreleased)
+FEATURES:
+* **New Resource:** `google_certificate_manager_certificate` ([#3417](https://github.com/hashicorp/terraform-provider-google-beta/pull/3417))
+* **New Resource:** `google_certificate_manager_dns_authorization` ([#3417](https://github.com/hashicorp/terraform-provider-google-beta/pull/3417))
+* **New Resource:** `google_dialogflow_cx_flow` ([#3422](https://github.com/hashicorp/terraform-provider-google-beta/pull/3422))
+* **New Resource:** `google_dialogflow_cx_intent` ([#3415](https://github.com/hashicorp/terraform-provider-google-beta/pull/3415))
+* **New Resource:** `google_dialogflow_cx_version` ([#3423](https://github.com/hashicorp/terraform-provider-google-beta/pull/3423))
+* **New Resource:** `google_network_services_edge_cache_keyset` ([#3417](https://github.com/hashicorp/terraform-provider-google-beta/pull/3417))
+* **New Resource:** `google_network_services_edge_cache_origin` ([#3417](https://github.com/hashicorp/terraform-provider-google-beta/pull/3417))
+* **New Resource:** `google_network_services_edge_cache_service` ([#3417](https://github.com/hashicorp/terraform-provider-google-beta/pull/3417))
+* **New Resource:** `google_vertex_ai_featurestore_entitytype` ([#3416](https://github.com/hashicorp/terraform-provider-google-beta/pull/3416))
+* **New Resource:** `google_vertex_ai_featurestore` ([#3416](https://github.com/hashicorp/terraform-provider-google-beta/pull/3416))
+
+IMPROVEMENTS:
+* apigee: Added SLASH_22 support for `peering_cidr_range` on `google_apigee_instance` ([#3424](https://github.com/hashicorp/terraform-provider-google-beta/pull/3424))
+* cloudbuild: Added `pubsub_config` and `webhook_config` parameter to `google_cloudbuild_trigger`. ([#3418](https://github.com/hashicorp/terraform-provider-google-beta/pull/3418))
+
+BUG FIXES:
+* pubsub: fixed pubsublite update issues ([#3421](https://github.com/hashicorp/terraform-provider-google-beta/pull/3421))
+
 ## 3.75.0 (July 12, 2021)
 
 BREAKING CHANGES:
