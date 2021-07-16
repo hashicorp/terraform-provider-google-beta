@@ -1,7 +1,5 @@
 ## 3.76.0 (Unreleased)
 FEATURES:
-* **New Resource:** `google_certificate_manager_certificate` ([#3417](https://github.com/hashicorp/terraform-provider-google-beta/pull/3417))
-* **New Resource:** `google_certificate_manager_dns_authorization` ([#3417](https://github.com/hashicorp/terraform-provider-google-beta/pull/3417))
 * **New Resource:** `google_dialogflow_cx_flow` ([#3422](https://github.com/hashicorp/terraform-provider-google-beta/pull/3422))
 * **New Resource:** `google_dialogflow_cx_intent` ([#3415](https://github.com/hashicorp/terraform-provider-google-beta/pull/3415))
 * **New Resource:** `google_dialogflow_cx_version` ([#3423](https://github.com/hashicorp/terraform-provider-google-beta/pull/3423))
