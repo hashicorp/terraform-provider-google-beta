@@ -82,11 +82,17 @@ func TestAccComputeInterconnectAttachment_computeInterconnectAttachmentIpsecEncr
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProvidersOiCS,
+		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckComputeInterconnectAttachmentDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccComputeInterconnectAttachment_computeInterconnectAttachmentIpsecEncryptionExample(context),
+			},
+			{
+				ResourceName:            "google_compute_interconnect_attachment.ipsec-encrypted-interconnect-attachment",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"router", "candidate_subnets", "region"},
 			},
 		},
 	})
@@ -95,7 +101,6 @@ func TestAccComputeInterconnectAttachment_computeInterconnectAttachmentIpsecEncr
 func testAccComputeInterconnectAttachment_computeInterconnectAttachmentIpsecEncryptionExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_compute_interconnect_attachment" "ipsec-encrypted-interconnect-attachment" {
-  provider = google-beta
   name                     = "tf-test-test-interconnect-attachment%{random_suffix}"
   edge_availability_domain = "AVAILABILITY_DOMAIN_1"
   type                     = "PARTNER"
@@ -107,7 +112,6 @@ resource "google_compute_interconnect_attachment" "ipsec-encrypted-interconnect-
 }
 
 resource "google_compute_address" "address" {
-  provider = google-beta
   name          = "tf-test-test-address%{random_suffix}"
   address_type  = "INTERNAL"
   purpose       = "IPSEC_INTERCONNECT"
@@ -117,7 +121,6 @@ resource "google_compute_address" "address" {
 }
 
 resource "google_compute_router" "router" {
-  provider = google-beta
   name                          = "tf-test-test-router%{random_suffix}"
   network                       = google_compute_network.network.name
   encrypted_interconnect_router = true
@@ -127,7 +130,6 @@ resource "google_compute_router" "router" {
 }
 
 resource "google_compute_network" "network" {
-  provider = google-beta
   name                    = "tf-test-test-network%{random_suffix}"
   auto_create_subnetworks = false
 }
