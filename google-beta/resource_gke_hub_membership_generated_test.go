@@ -32,11 +32,17 @@ func TestAccGKEHubMembership_gkehubMembershipBasicExample(t *testing.T) {
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProvidersOiCS,
+		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckGKEHubMembershipDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccGKEHubMembership_gkehubMembershipBasicExample(context),
+			},
+			{
+				ResourceName:            "google_gke_hub_membership.basic_membership",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"membership_id"},
 			},
 		},
 	})
@@ -48,7 +54,6 @@ resource "google_container_cluster" "primary" {
   name               = "basiccluster%{random_suffix}"
   location           = "us-central1-a"
   initial_node_count = 1
-  provider = google-beta
 }
 
 resource "google_gke_hub_membership" "membership" {
@@ -58,8 +63,6 @@ resource "google_gke_hub_membership" "membership" {
       resource_link = "//container.googleapis.com/${google_container_cluster.primary.id}"
     }
   }
-  description = "test resource."
-  provider = google-beta
 }
 `, context)
 }
@@ -74,11 +77,17 @@ func TestAccGKEHubMembership_gkehubMembershipIssuerExample(t *testing.T) {
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProvidersOiCS,
+		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckGKEHubMembershipDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccGKEHubMembership_gkehubMembershipIssuerExample(context),
+			},
+			{
+				ResourceName:            "google_gke_hub_membership.issuer_membership",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"membership_id"},
 			},
 		},
 	})
@@ -93,7 +102,6 @@ resource "google_container_cluster" "primary" {
   workload_identity_config {
     identity_namespace = "%{project}.svc.id.goog"
   }
-  provider = google-beta
 }
 
 resource "google_gke_hub_membership" "membership" {
@@ -106,8 +114,6 @@ resource "google_gke_hub_membership" "membership" {
   authority {
     issuer = "https://container.googleapis.com/v1/${google_container_cluster.primary.id}"
   }
-  description = "test resource."
-  provider = google-beta
 }
 `, context)
 }
