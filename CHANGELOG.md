@@ -10,7 +10,7 @@ IMPROVEMENTS:
 
 BUG FIXES:
 * bigquerydatatransfer: fixed a bug where `destination_dataset_id` was required, it is now optional. ([#3438](https://github.com/hashicorp/terraform-provider-google-beta/pull/3438))
-* billling: Fixed ordering of `budget_filter. projects` on `google_billing_budget` ([#3436](https://github.com/hashicorp/terraform-provider-google-beta/pull/3436))
+* billing: Fixed ordering of `budget_filter. projects` on `google_billing_budget` ([#3436](https://github.com/hashicorp/terraform-provider-google-beta/pull/3436))
 * compute: removed default value of `0.8` from `google_backend_service.backend.max_utilization` and it will now default from API. All `max_connections_xxx` and `max_rate_xxx` will also default from API as these are all conditional on balancing mode. ([#3432](https://github.com/hashicorp/terraform-provider-google-beta/pull/3432))
 * sql: fixed bug where the provider would retry on an error if the database instance name couldn't be reused. ([#3434](https://github.com/hashicorp/terraform-provider-google-beta/pull/3434))
 
