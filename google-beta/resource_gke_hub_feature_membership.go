@@ -23,7 +23,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
 	dcl "github.com/GoogleCloudPlatform/declarative-resource-client-library/dcl"
-	gke_hub "github.com/GoogleCloudPlatform/declarative-resource-client-library/services/google/gkehub/beta"
+	gkehub "github.com/GoogleCloudPlatform/declarative-resource-client-library/services/google/gkehub/beta"
 )
 
 func resourceGkeHubFeatureMembership() *schema.Resource {
@@ -285,7 +285,7 @@ func resourceGkeHubFeatureMembershipCreate(d *schema.ResourceData, meta interfac
 		return err
 	}
 
-	obj := &gke_hub.FeatureMembership{
+	obj := &gkehub.FeatureMembership{
 		Configmanagement: expandGkeHubFeatureMembershipConfigmanagement(d.Get("configmanagement")),
 		Feature:          dcl.String(d.Get("feature").(string)),
 		Location:         dcl.String(d.Get("location").(string)),
@@ -334,7 +334,7 @@ func resourceGkeHubFeatureMembershipRead(d *schema.ResourceData, meta interface{
 		return err
 	}
 
-	obj := &gke_hub.FeatureMembership{
+	obj := &gkehub.FeatureMembership{
 		Configmanagement: expandGkeHubFeatureMembershipConfigmanagement(d.Get("configmanagement")),
 		Feature:          dcl.String(d.Get("feature").(string)),
 		Location:         dcl.String(d.Get("location").(string)),
@@ -384,7 +384,7 @@ func resourceGkeHubFeatureMembershipUpdate(d *schema.ResourceData, meta interfac
 		return err
 	}
 
-	obj := &gke_hub.FeatureMembership{
+	obj := &gkehub.FeatureMembership{
 		Configmanagement: expandGkeHubFeatureMembershipConfigmanagement(d.Get("configmanagement")),
 		Feature:          dcl.String(d.Get("feature").(string)),
 		Location:         dcl.String(d.Get("location").(string)),
@@ -426,7 +426,7 @@ func resourceGkeHubFeatureMembershipDelete(d *schema.ResourceData, meta interfac
 		return err
 	}
 
-	obj := &gke_hub.FeatureMembership{
+	obj := &gkehub.FeatureMembership{
 		Configmanagement: expandGkeHubFeatureMembershipConfigmanagement(d.Get("configmanagement")),
 		Feature:          dcl.String(d.Get("feature").(string)),
 		Location:         dcl.String(d.Get("location").(string)),
@@ -479,16 +479,16 @@ func resourceGkeHubFeatureMembershipImport(d *schema.ResourceData, meta interfac
 	return []*schema.ResourceData{d}, nil
 }
 
-func expandGkeHubFeatureMembershipConfigmanagement(o interface{}) *gke_hub.FeatureMembershipConfigmanagement {
+func expandGkeHubFeatureMembershipConfigmanagement(o interface{}) *gkehub.FeatureMembershipConfigmanagement {
 	if o == nil {
-		return gke_hub.EmptyFeatureMembershipConfigmanagement
+		return gkehub.EmptyFeatureMembershipConfigmanagement
 	}
 	objArr := o.([]interface{})
 	if len(objArr) == 0 {
-		return gke_hub.EmptyFeatureMembershipConfigmanagement
+		return gkehub.EmptyFeatureMembershipConfigmanagement
 	}
 	obj := objArr[0].(map[string]interface{})
-	return &gke_hub.FeatureMembershipConfigmanagement{
+	return &gkehub.FeatureMembershipConfigmanagement{
 		Binauthz:            expandGkeHubFeatureMembershipConfigmanagementBinauthz(obj["binauthz"]),
 		ConfigSync:          expandGkeHubFeatureMembershipConfigmanagementConfigSync(obj["config_sync"]),
 		HierarchyController: expandGkeHubFeatureMembershipConfigmanagementHierarchyController(obj["hierarchy_controller"]),
@@ -497,7 +497,7 @@ func expandGkeHubFeatureMembershipConfigmanagement(o interface{}) *gke_hub.Featu
 	}
 }
 
-func flattenGkeHubFeatureMembershipConfigmanagement(obj *gke_hub.FeatureMembershipConfigmanagement) interface{} {
+func flattenGkeHubFeatureMembershipConfigmanagement(obj *gkehub.FeatureMembershipConfigmanagement) interface{} {
 	if obj == nil || obj.Empty() {
 		return nil
 	}
@@ -513,21 +513,21 @@ func flattenGkeHubFeatureMembershipConfigmanagement(obj *gke_hub.FeatureMembersh
 
 }
 
-func expandGkeHubFeatureMembershipConfigmanagementBinauthz(o interface{}) *gke_hub.FeatureMembershipConfigmanagementBinauthz {
+func expandGkeHubFeatureMembershipConfigmanagementBinauthz(o interface{}) *gkehub.FeatureMembershipConfigmanagementBinauthz {
 	if o == nil {
-		return gke_hub.EmptyFeatureMembershipConfigmanagementBinauthz
+		return gkehub.EmptyFeatureMembershipConfigmanagementBinauthz
 	}
 	objArr := o.([]interface{})
 	if len(objArr) == 0 {
-		return gke_hub.EmptyFeatureMembershipConfigmanagementBinauthz
+		return gkehub.EmptyFeatureMembershipConfigmanagementBinauthz
 	}
 	obj := objArr[0].(map[string]interface{})
-	return &gke_hub.FeatureMembershipConfigmanagementBinauthz{
+	return &gkehub.FeatureMembershipConfigmanagementBinauthz{
 		Enabled: dcl.Bool(obj["enabled"].(bool)),
 	}
 }
 
-func flattenGkeHubFeatureMembershipConfigmanagementBinauthz(obj *gke_hub.FeatureMembershipConfigmanagementBinauthz) interface{} {
+func flattenGkeHubFeatureMembershipConfigmanagementBinauthz(obj *gkehub.FeatureMembershipConfigmanagementBinauthz) interface{} {
 	if obj == nil || obj.Empty() {
 		return nil
 	}
@@ -539,22 +539,22 @@ func flattenGkeHubFeatureMembershipConfigmanagementBinauthz(obj *gke_hub.Feature
 
 }
 
-func expandGkeHubFeatureMembershipConfigmanagementConfigSync(o interface{}) *gke_hub.FeatureMembershipConfigmanagementConfigSync {
+func expandGkeHubFeatureMembershipConfigmanagementConfigSync(o interface{}) *gkehub.FeatureMembershipConfigmanagementConfigSync {
 	if o == nil {
-		return gke_hub.EmptyFeatureMembershipConfigmanagementConfigSync
+		return gkehub.EmptyFeatureMembershipConfigmanagementConfigSync
 	}
 	objArr := o.([]interface{})
 	if len(objArr) == 0 {
-		return gke_hub.EmptyFeatureMembershipConfigmanagementConfigSync
+		return gkehub.EmptyFeatureMembershipConfigmanagementConfigSync
 	}
 	obj := objArr[0].(map[string]interface{})
-	return &gke_hub.FeatureMembershipConfigmanagementConfigSync{
+	return &gkehub.FeatureMembershipConfigmanagementConfigSync{
 		Git:          expandGkeHubFeatureMembershipConfigmanagementConfigSyncGit(obj["git"]),
 		SourceFormat: dcl.String(obj["source_format"].(string)),
 	}
 }
 
-func flattenGkeHubFeatureMembershipConfigmanagementConfigSync(obj *gke_hub.FeatureMembershipConfigmanagementConfigSync) interface{} {
+func flattenGkeHubFeatureMembershipConfigmanagementConfigSync(obj *gkehub.FeatureMembershipConfigmanagementConfigSync) interface{} {
 	if obj == nil || obj.Empty() {
 		return nil
 	}
@@ -567,16 +567,16 @@ func flattenGkeHubFeatureMembershipConfigmanagementConfigSync(obj *gke_hub.Featu
 
 }
 
-func expandGkeHubFeatureMembershipConfigmanagementConfigSyncGit(o interface{}) *gke_hub.FeatureMembershipConfigmanagementConfigSyncGit {
+func expandGkeHubFeatureMembershipConfigmanagementConfigSyncGit(o interface{}) *gkehub.FeatureMembershipConfigmanagementConfigSyncGit {
 	if o == nil {
-		return gke_hub.EmptyFeatureMembershipConfigmanagementConfigSyncGit
+		return gkehub.EmptyFeatureMembershipConfigmanagementConfigSyncGit
 	}
 	objArr := o.([]interface{})
 	if len(objArr) == 0 {
-		return gke_hub.EmptyFeatureMembershipConfigmanagementConfigSyncGit
+		return gkehub.EmptyFeatureMembershipConfigmanagementConfigSyncGit
 	}
 	obj := objArr[0].(map[string]interface{})
-	return &gke_hub.FeatureMembershipConfigmanagementConfigSyncGit{
+	return &gkehub.FeatureMembershipConfigmanagementConfigSyncGit{
 		HttpsProxy:   dcl.String(obj["https_proxy"].(string)),
 		PolicyDir:    dcl.String(obj["policy_dir"].(string)),
 		SecretType:   dcl.String(obj["secret_type"].(string)),
@@ -587,7 +587,7 @@ func expandGkeHubFeatureMembershipConfigmanagementConfigSyncGit(o interface{}) *
 	}
 }
 
-func flattenGkeHubFeatureMembershipConfigmanagementConfigSyncGit(obj *gke_hub.FeatureMembershipConfigmanagementConfigSyncGit) interface{} {
+func flattenGkeHubFeatureMembershipConfigmanagementConfigSyncGit(obj *gkehub.FeatureMembershipConfigmanagementConfigSyncGit) interface{} {
 	if obj == nil || obj.Empty() {
 		return nil
 	}
@@ -605,23 +605,23 @@ func flattenGkeHubFeatureMembershipConfigmanagementConfigSyncGit(obj *gke_hub.Fe
 
 }
 
-func expandGkeHubFeatureMembershipConfigmanagementHierarchyController(o interface{}) *gke_hub.FeatureMembershipConfigmanagementHierarchyController {
+func expandGkeHubFeatureMembershipConfigmanagementHierarchyController(o interface{}) *gkehub.FeatureMembershipConfigmanagementHierarchyController {
 	if o == nil {
-		return gke_hub.EmptyFeatureMembershipConfigmanagementHierarchyController
+		return gkehub.EmptyFeatureMembershipConfigmanagementHierarchyController
 	}
 	objArr := o.([]interface{})
 	if len(objArr) == 0 {
-		return gke_hub.EmptyFeatureMembershipConfigmanagementHierarchyController
+		return gkehub.EmptyFeatureMembershipConfigmanagementHierarchyController
 	}
 	obj := objArr[0].(map[string]interface{})
-	return &gke_hub.FeatureMembershipConfigmanagementHierarchyController{
+	return &gkehub.FeatureMembershipConfigmanagementHierarchyController{
 		EnableHierarchicalResourceQuota: dcl.Bool(obj["enable_hierarchical_resource_quota"].(bool)),
 		EnablePodTreeLabels:             dcl.Bool(obj["enable_pod_tree_labels"].(bool)),
 		Enabled:                         dcl.Bool(obj["enabled"].(bool)),
 	}
 }
 
-func flattenGkeHubFeatureMembershipConfigmanagementHierarchyController(obj *gke_hub.FeatureMembershipConfigmanagementHierarchyController) interface{} {
+func flattenGkeHubFeatureMembershipConfigmanagementHierarchyController(obj *gkehub.FeatureMembershipConfigmanagementHierarchyController) interface{} {
 	if obj == nil || obj.Empty() {
 		return nil
 	}
@@ -635,16 +635,16 @@ func flattenGkeHubFeatureMembershipConfigmanagementHierarchyController(obj *gke_
 
 }
 
-func expandGkeHubFeatureMembershipConfigmanagementPolicyController(o interface{}) *gke_hub.FeatureMembershipConfigmanagementPolicyController {
+func expandGkeHubFeatureMembershipConfigmanagementPolicyController(o interface{}) *gkehub.FeatureMembershipConfigmanagementPolicyController {
 	if o == nil {
-		return gke_hub.EmptyFeatureMembershipConfigmanagementPolicyController
+		return gkehub.EmptyFeatureMembershipConfigmanagementPolicyController
 	}
 	objArr := o.([]interface{})
 	if len(objArr) == 0 {
-		return gke_hub.EmptyFeatureMembershipConfigmanagementPolicyController
+		return gkehub.EmptyFeatureMembershipConfigmanagementPolicyController
 	}
 	obj := objArr[0].(map[string]interface{})
-	return &gke_hub.FeatureMembershipConfigmanagementPolicyController{
+	return &gkehub.FeatureMembershipConfigmanagementPolicyController{
 		AuditIntervalSeconds:     dcl.String(obj["audit_interval_seconds"].(string)),
 		Enabled:                  dcl.Bool(obj["enabled"].(bool)),
 		ExemptableNamespaces:     expandStringArray(obj["exemptable_namespaces"]),
@@ -654,7 +654,7 @@ func expandGkeHubFeatureMembershipConfigmanagementPolicyController(o interface{}
 	}
 }
 
-func flattenGkeHubFeatureMembershipConfigmanagementPolicyController(obj *gke_hub.FeatureMembershipConfigmanagementPolicyController) interface{} {
+func flattenGkeHubFeatureMembershipConfigmanagementPolicyController(obj *gkehub.FeatureMembershipConfigmanagementPolicyController) interface{} {
 	if obj == nil || obj.Empty() {
 		return nil
 	}
