@@ -21,7 +21,7 @@ import (
 	cloudbuild "github.com/GoogleCloudPlatform/declarative-resource-client-library/services/google/cloudbuild/beta"
 	dataproc "github.com/GoogleCloudPlatform/declarative-resource-client-library/services/google/dataproc/beta"
 	eventarc "github.com/GoogleCloudPlatform/declarative-resource-client-library/services/google/eventarc/beta"
-	gke_hub "github.com/GoogleCloudPlatform/declarative-resource-client-library/services/google/gkehub/beta"
+	gkehub "github.com/GoogleCloudPlatform/declarative-resource-client-library/services/google/gkehub/beta"
 )
 
 func NewDCLAssuredWorkloadsClient(config *Config, userAgent, billingProject string) *assuredworkloads.Client {
@@ -128,7 +128,7 @@ func NewDCLEventarcClient(config *Config, userAgent, billingProject string) *eve
 	return eventarc.NewClient(dclConfig)
 }
 
-func NewDCLGkeHubClient(config *Config, userAgent, billingProject string) *gke_hub.Client {
+func NewDCLGkeHubClient(config *Config, userAgent, billingProject string) *gkehub.Client {
 	dclClientOptions := dcl.WithHTTPClient(config.client)
 	dclUserAgentOptions := dcl.WithUserAgent(userAgent)
 	dclLoggerOptions := dcl.WithLogger(dclLogger{})
@@ -151,5 +151,5 @@ func NewDCLGkeHubClient(config *Config, userAgent, billingProject string) *gke_h
 		)
 	}
 
-	return gke_hub.NewClient(dclConfig)
+	return gkehub.NewClient(dclConfig)
 }
