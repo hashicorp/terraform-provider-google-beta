@@ -232,10 +232,11 @@ resource "google_compute_health_check" "default" {
 `, context)
 }
 
-func TestAccComputeGlobalForwardingRule_globalForwardingRulePrivateServicesConnectExample(t *testing.T) {
+func TestAccComputeGlobalForwardingRule_privateServiceConnectGoogleApisExample(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
+		"project":       getTestProjectFromEnv(),
 		"random_suffix": randString(t, 10),
 	}
 
@@ -245,16 +246,34 @@ func TestAccComputeGlobalForwardingRule_globalForwardingRulePrivateServicesConne
 		CheckDestroy: testAccCheckComputeGlobalForwardingRuleDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccComputeGlobalForwardingRule_globalForwardingRulePrivateServicesConnectExample(context),
+				Config: testAccComputeGlobalForwardingRule_privateServiceConnectGoogleApisExample(context),
 			},
 		},
 	})
 }
 
-func testAccComputeGlobalForwardingRule_globalForwardingRulePrivateServicesConnectExample(context map[string]interface{}) string {
+func testAccComputeGlobalForwardingRule_privateServiceConnectGoogleApisExample(context map[string]interface{}) string {
 	return Nprintf(`
+resource "google_compute_network" "network" {
+  provider      = google-beta
+  project       = "%{project}"
+  name          = "tf-test-my-network%{random_suffix}"
+  auto_create_subnetworks = false
+}
+
+resource "google_compute_subnetwork" "vpc_subnetwork" {
+  provider                 = google-beta
+  project                  = google_compute_network.network.project
+  name                     = "tf-test-my-subnetwork%{random_suffix}"
+  ip_cidr_range            = "10.2.0.0/16"
+  region                   = "us-central1"
+  network                  = google_compute_network.network.id
+  private_ip_google_access = true
+}
+
 resource "google_compute_global_address" "default" {
   provider      = google-beta
+  project       = google_compute_network.network.project
   name          = "tf-test-global-psconnect-ip%{random_suffix}"
   address_type  = "INTERNAL"
   purpose       = "PRIVATE_SERVICE_CONNECT"
@@ -264,17 +283,12 @@ resource "google_compute_global_address" "default" {
 
 resource "google_compute_global_forwarding_rule" "default" {
   provider      = google-beta
+  project       = google_compute_network.network.project
   name          = "globalrule%{random_suffix}"
   target        = "all-apis"
   network       = google_compute_network.network.id
   ip_address    = google_compute_global_address.default.id
   load_balancing_scheme = ""
-}
-
-resource "google_compute_network" "network" {
-  provider      = google-beta
-  name          = "tf-test%{random_suffix}"
-  auto_create_subnetworks = false
 }
 `, context)
 }
