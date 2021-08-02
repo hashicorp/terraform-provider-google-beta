@@ -1,4 +1,4 @@
-## 3.78.0 (Unreleased)
+## 3.78.0 (August 02, 2021)
 
 IMPROVEMENTS:
 * composer: added validation for `max_pods_per_node` field. ([#3445](https://github.com/hashicorp/terraform-provider-google-beta/pull/3445))
