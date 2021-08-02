@@ -256,9 +256,13 @@ func resourceEventarcTriggerCreate(d *schema.ResourceData, meta interface{}) err
 	client := NewDCLEventarcClient(config, userAgent, billingProject)
 	res, err := client.ApplyTrigger(context.Background(), obj, createDirective...)
 	if err != nil {
-		// The resource didn't actually create
-		d.SetId("")
-		return fmt.Errorf("Error creating Trigger: %s", err)
+		if _, ok := err.(dcl.DiffAfterApplyError); ok {
+			log.Printf("[DEBUG] Diff after apply returned from the DCL: %s", err)
+		} else {
+			// The resource didn't actually create
+			d.SetId("")
+			return fmt.Errorf("Error creating Trigger: %s", err)
+		}
 	}
 
 	log.Printf("[DEBUG] Finished creating Trigger %q: %#v", d.Id(), res)
@@ -367,7 +371,13 @@ func resourceEventarcTriggerUpdate(d *schema.ResourceData, meta interface{}) err
 	client := NewDCLEventarcClient(config, userAgent, billingProject)
 	res, err := client.ApplyTrigger(context.Background(), obj, directive...)
 	if err != nil {
-		return fmt.Errorf("Error updating Trigger: %s", err)
+		if _, ok := err.(dcl.DiffAfterApplyError); ok {
+			log.Printf("[DEBUG] Diff after apply returned from the DCL: %s", err)
+		} else {
+			// The resource didn't actually create
+			d.SetId("")
+			return fmt.Errorf("Error updating Trigger: %s", err)
+		}
 	}
 
 	log.Printf("[DEBUG] Finished creating Trigger %q: %#v", d.Id(), res)
