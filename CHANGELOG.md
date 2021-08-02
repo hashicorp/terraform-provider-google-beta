@@ -6,7 +6,6 @@ IMPROVEMENTS:
 
 BUG FIXES:
 * storagetransfer: fixed a crash on `azure_blob_storage_data_source` for `google_storage_transfer_job` ([#3447](https://github.com/hashicorp/terraform-provider-google-beta/pull/3447))
-* bigquerydatatransfer: fixed a bug where `destination_dataset_id` was required, it is now optional. ([#3438](https://github.com/hashicorp/terraform-provider-google-beta/pull/3438))
 * sql: fixed bug that wouldn't insert the `google_sql_user` in state for iam users. ([#3442](https://github.com/hashicorp/terraform-provider-google-beta/pull/3442))
 * storage: fixed a crash when `azure_credentials` was defined in `google_storage_transfer_job` ([#3457](https://github.com/hashicorp/terraform-provider-google-beta/pull/3457))
 
