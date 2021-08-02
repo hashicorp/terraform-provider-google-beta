@@ -1,4 +1,16 @@
-## 3.78.0 (Unreleased)
+## 3.79.0 (Unreleased)
+
+## 3.78.0 (August 02, 2021)
+
+IMPROVEMENTS:
+* composer: added validation for `max_pods_per_node` field. ([#3445](https://github.com/hashicorp/terraform-provider-google-beta/pull/3445))
+* servicenetworking: added support for `user_project_override` and `billing_project ` to `google_service_networking_connection` ([#3455](https://github.com/hashicorp/terraform-provider-google-beta/pull/3455))
+
+BUG FIXES:
+* storagetransfer: fixed a crash on `azure_blob_storage_data_source` for `google_storage_transfer_job` ([#3447](https://github.com/hashicorp/terraform-provider-google-beta/pull/3447))
+* sql: fixed bug that wouldn't insert the `google_sql_user` in state for iam users. ([#3442](https://github.com/hashicorp/terraform-provider-google-beta/pull/3442))
+* storage: fixed a crash when `azure_credentials` was defined in `google_storage_transfer_job` ([#3457](https://github.com/hashicorp/terraform-provider-google-beta/pull/3457))
+
 ## 3.77.0 (July 26, 2021)
 
 FEATURES:
