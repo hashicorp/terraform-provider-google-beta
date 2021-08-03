@@ -183,14 +183,13 @@ func resourceCloudbuildWorkerPoolCreate(d *schema.ResourceData, meta interface{}
 	}
 	client := NewDCLCloudbuildClient(config, userAgent, billingProject)
 	res, err := client.ApplyWorkerPool(context.Background(), obj, createDirective...)
-	if err != nil {
-		if _, ok := err.(dcl.DiffAfterApplyError); ok {
-			log.Printf("[DEBUG] Diff after apply returned from the DCL: %s", err)
-		} else {
-			// The resource didn't actually create
-			d.SetId("")
-			return fmt.Errorf("Error creating WorkerPool: %s", err)
-		}
+
+	if _, ok := err.(dcl.DiffAfterApplyError); ok {
+		log.Printf("[DEBUG] Diff after apply returned from the DCL: %s", err)
+	} else if err != nil {
+		// The resource didn't actually create
+		d.SetId("")
+		return fmt.Errorf("Error creating WorkerPool: %s", err)
 	}
 
 	log.Printf("[DEBUG] Finished creating WorkerPool %q: %#v", d.Id(), res)
@@ -286,14 +285,13 @@ func resourceCloudbuildWorkerPoolUpdate(d *schema.ResourceData, meta interface{}
 	}
 	client := NewDCLCloudbuildClient(config, userAgent, billingProject)
 	res, err := client.ApplyWorkerPool(context.Background(), obj, directive...)
-	if err != nil {
-		if _, ok := err.(dcl.DiffAfterApplyError); ok {
-			log.Printf("[DEBUG] Diff after apply returned from the DCL: %s", err)
-		} else {
-			// The resource didn't actually create
-			d.SetId("")
-			return fmt.Errorf("Error updating WorkerPool: %s", err)
-		}
+
+	if _, ok := err.(dcl.DiffAfterApplyError); ok {
+		log.Printf("[DEBUG] Diff after apply returned from the DCL: %s", err)
+	} else if err != nil {
+		// The resource didn't actually create
+		d.SetId("")
+		return fmt.Errorf("Error updating WorkerPool: %s", err)
 	}
 
 	log.Printf("[DEBUG] Finished creating WorkerPool %q: %#v", d.Id(), res)

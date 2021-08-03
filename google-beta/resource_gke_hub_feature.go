@@ -169,14 +169,13 @@ func resourceGkeHubFeatureCreate(d *schema.ResourceData, meta interface{}) error
 	}
 	client := NewDCLGkeHubClient(config, userAgent, billingProject)
 	res, err := client.ApplyFeature(context.Background(), obj, createDirective...)
-	if err != nil {
-		if _, ok := err.(dcl.DiffAfterApplyError); ok {
-			log.Printf("[DEBUG] Diff after apply returned from the DCL: %s", err)
-		} else {
-			// The resource didn't actually create
-			d.SetId("")
-			return fmt.Errorf("Error creating Feature: %s", err)
-		}
+
+	if _, ok := err.(dcl.DiffAfterApplyError); ok {
+		log.Printf("[DEBUG] Diff after apply returned from the DCL: %s", err)
+	} else if err != nil {
+		// The resource didn't actually create
+		d.SetId("")
+		return fmt.Errorf("Error creating Feature: %s", err)
 	}
 
 	log.Printf("[DEBUG] Finished creating Feature %q: %#v", d.Id(), res)
@@ -276,14 +275,13 @@ func resourceGkeHubFeatureUpdate(d *schema.ResourceData, meta interface{}) error
 	}
 	client := NewDCLGkeHubClient(config, userAgent, billingProject)
 	res, err := client.ApplyFeature(context.Background(), obj, directive...)
-	if err != nil {
-		if _, ok := err.(dcl.DiffAfterApplyError); ok {
-			log.Printf("[DEBUG] Diff after apply returned from the DCL: %s", err)
-		} else {
-			// The resource didn't actually create
-			d.SetId("")
-			return fmt.Errorf("Error updating Feature: %s", err)
-		}
+
+	if _, ok := err.(dcl.DiffAfterApplyError); ok {
+		log.Printf("[DEBUG] Diff after apply returned from the DCL: %s", err)
+	} else if err != nil {
+		// The resource didn't actually create
+		d.SetId("")
+		return fmt.Errorf("Error updating Feature: %s", err)
 	}
 
 	log.Printf("[DEBUG] Finished creating Feature %q: %#v", d.Id(), res)
