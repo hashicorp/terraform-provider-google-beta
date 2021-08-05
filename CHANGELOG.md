@@ -1,4 +1,18 @@
 ## 3.79.0 (Unreleased)
+UNKNOWN CHANGELOG TYPE:
+* Update DCL to fix worker pool issues ([#3473](https://github.com/hashicorp/terraform-provider-google-beta/pull/3473))
+* resource_storage_bucket_object: added support for Customer Supplied E… ([#3469](https://github.com/hashicorp/terraform-provider-google-beta/pull/3469))
+NOTES:
+* spanner: `num_nodes` will become a required field in the next major release and a value has to be set on `google_spanner_instance`. It will also conflict with the new field `processing_units`. ([#3479](https://github.com/hashicorp/terraform-provider-google-beta/pull/3479))
+
+FEATURES:
+* **New Resource:** `google_dialogflow_cx_entity_type` ([#3480](https://github.com/hashicorp/terraform-provider-google-beta/pull/3480))
+* **New Resource:** `google_dialogflow_cx_page` ([#3461](https://github.com/hashicorp/terraform-provider-google-beta/pull/3461))
+
+IMPROVEMENTS:
+* all (DCL resources only): ignore diff after apply errors coming from the DCL ([#3466](https://github.com/hashicorp/terraform-provider-google-beta/pull/3466))
+* container: added `network_config` block to `google_container_node_pool` resource (beta) ([#3472](https://github.com/hashicorp/terraform-provider-google-beta/pull/3472))
+* spanner: added `processing_units` to `google_spanner_instance`. ([#3479](https://github.com/hashicorp/terraform-provider-google-beta/pull/3479))
 
 ## 3.78.0 (August 02, 2021)
 
