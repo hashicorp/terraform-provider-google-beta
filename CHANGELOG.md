@@ -7,7 +7,6 @@ FEATURES:
 * **New Resource:** `google_dialogflow_cx_page` ([#3461](https://github.com/hashicorp/terraform-provider-google-beta/pull/3461))
 
 IMPROVEMENTS:
-* all (DCL resources only): ignore diff after apply errors coming from the DCL ([#3466](https://github.com/hashicorp/terraform-provider-google-beta/pull/3466))
 * container: added `network_config` block to `google_container_node_pool` resource ([#3472](https://github.com/hashicorp/terraform-provider-google-beta/pull/3472))
 * spanner: added `processing_units` to `google_spanner_instance`. ([#3479](https://github.com/hashicorp/terraform-provider-google-beta/pull/3479))
 * storage: added support for `customer_encryption` on `resource_storage_bucket_object` ([#3469](https://github.com/hashicorp/terraform-provider-google-beta/pull/3469))
