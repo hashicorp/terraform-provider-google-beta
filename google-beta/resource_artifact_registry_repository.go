@@ -43,9 +43,10 @@ func resourceArtifactRegistryRepository() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"format": {
-				Type:     schema.TypeString,
-				Required: true,
-				ForceNew: true,
+				Type:             schema.TypeString,
+				Required:         true,
+				ForceNew:         true,
+				DiffSuppressFunc: compareCaseInsensitive,
 				Description: `The format of packages that are stored in the repository. You can only create
 alpha formats if you are a member of the [alpha user group](https://cloud.google.com/artifact-registry/docs/supported-formats#alpha-access).
 
