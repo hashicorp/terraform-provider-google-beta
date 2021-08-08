@@ -155,7 +155,7 @@ func predictServiceId(_ context.Context, d *schema.ResourceDiff, meta interface{
 	if !d.HasChange("openapi_config") && !d.HasChange("grpc_config") && !d.HasChange("protoc_output_base64") {
 		return nil
 	}
-	loc, err := time.LoadLocation("America/Los_Angeles")
+	loc, err := time.Location()
 	if err != nil {
 		// Timezone data may not be present on some machines, in that case skip
 		return nil
