@@ -878,9 +878,9 @@ func Provider() *schema.Provider {
 	return provider
 }
 
-// Generated resources: 240
+// Generated resources: 242
 // Generated IAM resources: 117
-// Total generated resources: 357
+// Total generated resources: 359
 func ResourceMap() map[string]*schema.Resource {
 	resourceMap, _ := ResourceMapWithErrors()
 	return resourceMap
@@ -940,7 +940,9 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_bigquery_routine":                                      resourceBigQueryRoutine(),
 			"google_bigquery_connection":                                   resourceBigqueryConnectionConnection(),
 			"google_bigquery_data_transfer_config":                         resourceBigqueryDataTransferConfig(),
+			"google_bigquery_capacity_commitments":                         resourceBigqueryReservationCapacityCommitments(),
 			"google_bigquery_reservation":                                  resourceBigqueryReservationReservation(),
+			"google_bigquery_reservation_assignment":                       resourceBigqueryReservationReservationAssignment(),
 			"google_bigtable_app_profile":                                  resourceBigtableAppProfile(),
 			"google_billing_budget":                                        resourceBillingBudget(),
 			"google_binary_authorization_attestor":                         resourceBinaryAuthorizationAttestor(),

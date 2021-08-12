@@ -61,6 +61,44 @@ resource "google_bigquery_reservation" "reservation" {
 `, context)
 }
 
+func TestAccBigqueryReservationReservation_bigqueryReservationBasicExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"random_suffix": randString(t, 10),
+	}
+
+	vcrTest(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckBigqueryReservationReservationDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccBigqueryReservationReservation_bigqueryReservationBasicExample(context),
+			},
+			{
+				ResourceName:            "google_bigquery_reservation.reservation",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"location", "name"},
+			},
+		},
+	})
+}
+
+func testAccBigqueryReservationReservation_bigqueryReservationBasicExample(context map[string]interface{}) string {
+	return Nprintf(`
+resource "google_bigquery_reservation" "reservation" {
+	name           = "tf-test-my-reservation%{random_suffix}"
+	location       = "asia-northeast1"
+	// Set to 0 for testing purposes
+	// In reality this would be larger than zero
+	slot_capacity  = 0
+	ignore_idle_slots = false
+}
+`, context)
+}
+
 func testAccCheckBigqueryReservationReservationDestroyProducer(t *testing.T) func(s *terraform.State) error {
 	return func(s *terraform.State) error {
 		for name, rs := range s.RootModule().Resources {
