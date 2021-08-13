@@ -1,5 +1,23 @@
 ## 3.80.0 (Unreleased)
 
+FEATURES:
+* **New Resource:** `google_dialogflow_cx_environment` ([#3488](https://github.com/hashicorp/terraform-provider-google-beta/pull/3488))
+
+IMPROVEMENTS:
+* compute: added `enable` attribute to `google_compute_router_peer` ([#3507](https://github.com/hashicorp/terraform-provider-google-beta/pull/3507))
+* compute: added support for `L3_DEFAULT` as `ip_protocol` for `google_compute_forwarding_rule` and `UNSPECIFIED` as `protocol` for `google_compute_region_backend_service` to support network load balancers that forward all protocols and ports. ([#3516](https://github.com/hashicorp/terraform-provider-google-beta/pull/3516))
+* compute: added support for `security_settings` to `google_compute_backend_service` ([#3515](https://github.com/hashicorp/terraform-provider-google-beta/pull/3515))
+* gkehub: `google_gke_hub_membership` supports both `//container.googleapis.com/${google_container_cluster.my-cluster.id}` and `google_container_cluster.my-cluster.id` in `endpoint.0.gke_cluster.0.resource_link` ([#3502](https://github.com/hashicorp/terraform-provider-google-beta/pull/3502))
+* kms: added `name` field to `google_kms_crypto_key_version` datasource ([#3500](https://github.com/hashicorp/terraform-provider-google-beta/pull/3500))
+* provider: added provider support for `request_reason` ([#3513](https://github.com/hashicorp/terraform-provider-google-beta/pull/3513))
+
+BUG FIXES:
+* privateca: fixed null for `ignore_active_certificates_on_deletion` on the imported `google_privateca_certificate_authority` ([#3511](https://github.com/hashicorp/terraform-provider-google-beta/pull/3511))
+* apigee: fixed update behavior on `google_apigee_envgroup` ([#3489](https://github.com/hashicorp/terraform-provider-google-beta/pull/3489))
+* artifact_registry: transitioned the field `format` to be case insensitive in aligning with backend behavior on `google_artifact_registry_repository` ([#3491](https://github.com/hashicorp/terraform-provider-google-beta/pull/3491))
+* composer: fixed environment version regexp to explicitly require . (dot) instead of any character after 'preview' (example: composer-2.0.0-preview.0-airflow-2.1.1) ([#3520](https://github.com/hashicorp/terraform-provider-google-beta/pull/3520))
+* privateca: fixed a failure to create `google_privateca_certificate_authority` of type `SUBORDINATE` due to an invalid attempt to activate it on creation. ([#3499](https://github.com/hashicorp/terraform-provider-google-beta/pull/3499))
+
 ## 3.79.0 (August 09, 2021)
 
 NOTES:
