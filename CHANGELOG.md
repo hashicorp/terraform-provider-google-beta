@@ -1,4 +1,18 @@
-## 3.79.0 (Unreleased)
+## 3.80.0 (Unreleased)
+
+FEATURES:
+* **New Resource:** `google_dialogflow_cx_environment` ([#3488](https://github.com/hashicorp/terraform-provider-google-beta/pull/3488))
+
+IMPROVEMENTS:
+* gkehub: added support for both `//container.googleapis.com/${google_container_cluster.my-cluster.id}` and `google_container_cluster.my-cluster.id` references in `google_gke_hub_membership.endpoint.0.gke_cluster.0.resource_link` ([#3502](https://github.com/hashicorp/terraform-provider-google-beta/pull/3502))
+* kms: added `name` field to `google_kms_crypto_key_version` datasource ([#3500](https://github.com/hashicorp/terraform-provider-google-beta/pull/3500))
+
+BUG FIXES:
+* apigee: fixed update behavior on `google_apigee_envgroup` ([#3489](https://github.com/hashicorp/terraform-provider-google-beta/pull/3489))
+* artifact_registry: transitioned the field `format` to be case insensitive in aligning with backend behavior on `google_artifact_registry_repository` ([#3491](https://github.com/hashicorp/terraform-provider-google-beta/pull/3491))
+* privateca: fixed a failure to create `google_privateca_certificate_authority` of type `SUBORDINATE` due to an invalid attempt to activate it on creation. ([#3499](https://github.com/hashicorp/terraform-provider-google-beta/pull/3499))
+
+## 3.79.0 (August 09, 2021)
 NOTES:
 * spanner: The `num_nodes` field on `google_spanner_instance` will have its default removed in a future major release, and either `num_nodes` or `processing_units` will be required. ([#3479](https://github.com/hashicorp/terraform-provider-google-beta/pull/3479))
 
