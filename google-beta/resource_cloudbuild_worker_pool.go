@@ -278,7 +278,8 @@ func resourceCloudbuildWorkerPoolUpdate(d *schema.ResourceData, meta interface{}
 	if err != nil {
 		return err
 	}
-	billingProject := project
+
+	billingProject := ""
 	// err == nil indicates that the billing_project value was found
 	if bp, err := getBillingProject(d, config); err == nil {
 		billingProject = bp
