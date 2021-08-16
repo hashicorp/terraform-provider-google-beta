@@ -32,11 +32,17 @@ func TestAccEssentialContactsContact_essentialContactExample(t *testing.T) {
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProvidersOiCS,
+		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckEssentialContactsContactDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccEssentialContactsContact_essentialContactExample(context),
+			},
+			{
+				ResourceName:            "google_essential_contacts_contact.contact",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"parent"},
 			},
 		},
 	})
@@ -45,11 +51,9 @@ func TestAccEssentialContactsContact_essentialContactExample(t *testing.T) {
 func testAccEssentialContactsContact_essentialContactExample(context map[string]interface{}) string {
 	return Nprintf(`
 data "google_project" "project" {
-  provider = google-beta
 }
 
 resource "google_essential_contacts_contact" "contact" {
-  provider = google-beta
   parent = data.google_project.project.id
   email = "foo@bar.com"
   language_tag = "en-GB"
