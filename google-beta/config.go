@@ -310,7 +310,7 @@ var DefaultBasePaths = map[string]string{
 	DialogflowBasePathKey:           "https://dialogflow.googleapis.com/v2/",
 	DialogflowCXBasePathKey:         "https://dialogflow.googleapis.com/v3/",
 	DNSBasePathKey:                  "https://dns.googleapis.com/dns/v1beta2/",
-	EssentialContactsBasePathKey:    "https://essentialcontacts.googleapis.com/v1beta1/",
+	EssentialContactsBasePathKey:    "https://essentialcontacts.googleapis.com/v1/",
 	FilestoreBasePathKey:            "https://file.googleapis.com/v1beta1/",
 	FirebaseBasePathKey:             "https://firebase.googleapis.com/v1beta1/",
 	FirestoreBasePathKey:            "https://firestore.googleapis.com/v1/",
