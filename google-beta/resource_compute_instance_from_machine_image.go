@@ -3,6 +3,7 @@ package google
 import (
 	"fmt"
 	"log"
+	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	computeBeta "google.golang.org/api/compute/v0.beta"
@@ -117,12 +118,30 @@ func resourceComputeInstanceFromMachineImageCreate(d *schema.ResourceData, meta 
 		return err
 	}
 
-	tpl, err := ParseMachineImageFieldValue(d.Get("source_machine_image").(string), d, config)
+	sa := d.Get("service_account").([]interface{})
+	if len(sa) == 0 {
+		// ServiceAccount is required when the image is from a different project
+		accounts := make([]*computeBeta.ServiceAccount, 1)
+		accounts[0] = &computeBeta.ServiceAccount{
+			Email:  "default",
+			Scopes: nil,
+		}
+		instance.ServiceAccounts = accounts
+	}
+
+	src := d.Get("source_machine_image").(string)
+	instance.SourceMachineImage = src
+
+	tpl, err := ParseMachineImageFieldValue(src, d, config)
 	if err != nil {
 		return err
 	}
 
-	mi, err := config.NewComputeBetaClient(userAgent).MachineImages.Get(project, tpl.Name).Do()
+	// obtain the project where the image resides (could be different from the default)
+	tmp := strings.Split(src, "projects/")
+	mi_project := strings.Split(tmp[len(tmp)-1], "/")[0]
+
+	mi, err := config.NewComputeBetaClient(userAgent).MachineImages.Get(mi_project, tpl.Name).Do()
 	if err != nil {
 		return err
 	}
@@ -159,7 +178,7 @@ func resourceComputeInstanceFromMachineImageCreate(d *schema.ResourceData, meta 
 	}
 
 	log.Printf("[INFO] Requesting instance creation")
-	op, err := config.NewComputeBetaClient(userAgent).Instances.Insert(project, zone.Name, instance).SourceMachineImage(tpl.RelativeLink()).Do()
+	op, err := config.NewComputeBetaClient(userAgent).Instances.Insert(project, zone.Name, instance).Do()
 	if err != nil {
 		return fmt.Errorf("Error creating instance: %s", err)
 	}
