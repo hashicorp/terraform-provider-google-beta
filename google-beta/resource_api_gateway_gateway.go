@@ -165,10 +165,6 @@ func resourceApiGatewayGatewayCreate(d *schema.ResourceData, meta interface{}) e
 		return fmt.Errorf("Error waiting to create Gateway: %s", err)
 	}
 
-	if err := d.Set("name", flattenApiGatewayGatewayName(opRes["name"], d, config)); err != nil {
-		return err
-	}
-
 	// This may have caused the ID to update - update it if so.
 	id, err = replaceVars(d, config, "projects/{{project}}/locations/{{region}}/gateways/{{gateway_id}}")
 	if err != nil {
@@ -367,10 +363,10 @@ func resourceApiGatewayGatewayDelete(d *schema.ResourceData, meta interface{}) e
 func resourceApiGatewayGatewayImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	config := meta.(*Config)
 	if err := parseImportId([]string{
-		"projects/(?P<project>[^/]+)/locations/(?P<region>[^/]+)/gateways/(?P<name>[^/]+)",
-		"(?P<project>[^/]+)/(?P<region>[^/]+)/(?P<name>[^/]+)",
-		"(?P<region>[^/]+)/(?P<name>[^/]+)",
-		"(?P<name>[^/]+)",
+		"projects/(?P<project>[^/]+)/locations/(?P<region>[^/]+)/gateways/(?P<gateway_id>[^/]+)",
+		"(?P<project>[^/]+)/(?P<region>[^/]+)/(?P<gateway_id>[^/]+)",
+		"(?P<region>[^/]+)/(?P<gateway_id>[^/]+)",
+		"(?P<gateway_id>[^/]+)",
 	}, d, config); err != nil {
 		return nil, err
 	}
