@@ -239,10 +239,6 @@ func resourceApiGatewayApiConfigCreate(d *schema.ResourceData, meta interface{})
 		return fmt.Errorf("Error waiting to create ApiConfig: %s", err)
 	}
 
-	if err := d.Set("name", flattenApiGatewayApiConfigName(opRes["name"], d, config)); err != nil {
-		return err
-	}
-
 	// This may have caused the ID to update - update it if so.
 	id, err = replaceVars(d, config, "projects/{{project}}/locations/global/apis/{{api}}/configs/{{api_config_id}}")
 	if err != nil {
@@ -446,9 +442,9 @@ func resourceApiGatewayApiConfigDelete(d *schema.ResourceData, meta interface{})
 func resourceApiGatewayApiConfigImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	config := meta.(*Config)
 	if err := parseImportId([]string{
-		"projects/(?P<project>[^/]+)/locations/global/apis/(?P<api>[^/]+)/configs/(?P<name>[^/]+)",
-		"(?P<project>[^/]+)/(?P<api>[^/]+)/(?P<name>[^/]+)",
-		"(?P<api>[^/]+)/(?P<name>[^/]+)",
+		"projects/(?P<project>[^/]+)/locations/global/apis/(?P<api>[^/]+)/configs/(?P<api_config_id>[^/]+)",
+		"(?P<project>[^/]+)/(?P<api>[^/]+)/(?P<api_config_id>[^/]+)",
+		"(?P<api>[^/]+)/(?P<api_config_id>[^/]+)",
 	}, d, config); err != nil {
 		return nil, err
 	}
