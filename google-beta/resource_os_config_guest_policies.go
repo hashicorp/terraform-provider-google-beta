@@ -943,9 +943,6 @@ func resourceOSConfigGuestPoliciesCreate(d *schema.ResourceData, meta interface{
 	if err != nil {
 		return fmt.Errorf("Error creating GuestPolicies: %s", err)
 	}
-	if err := d.Set("name", flattenOSConfigGuestPoliciesName(res["name"], d, config)); err != nil {
-		return fmt.Errorf(`Error setting computed identity field "name": %s`, err)
-	}
 
 	// Store the ID now
 	id, err := replaceVars(d, config, "{{name}}")
