@@ -346,7 +346,7 @@ func resourceServiceUsageConsumerQuotaOverrideImport(d *schema.ResourceData, met
 	config := meta.(*Config)
 	if err := parseImportId([]string{
 		"projects/(?P<project>[^/]+)/services/(?P<service>[^/]+)/consumerQuotaMetrics/(?P<metric>[^/]+)/limits/(?P<limit>[^/]+)/consumerOverrides/(?P<name>[^/]+)",
-		"(?P<project>[^/]+)/(?P<service>[^/]+)/(?P<metric>[^/]+)/(?P<limit>[^/]+)/(?P<name>[^/]+)",
+		"services/(?P<service>[^/]+)/consumerQuotaMetrics/(?P<metric>[^/]+)/limits/(?P<limit>[^/]+)/consumerOverrides/(?P<name>[^/]+)",
 		"(?P<service>[^/]+)/(?P<metric>[^/]+)/(?P<limit>[^/]+)/(?P<name>[^/]+)",
 	}, d, config); err != nil {
 		return nil, err
