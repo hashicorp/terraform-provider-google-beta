@@ -20,6 +20,7 @@ import (
 
 	assuredworkloads "github.com/GoogleCloudPlatform/declarative-resource-client-library/services/google/assuredworkloads/beta"
 	cloudbuild "github.com/GoogleCloudPlatform/declarative-resource-client-library/services/google/cloudbuild/beta"
+	compute "github.com/GoogleCloudPlatform/declarative-resource-client-library/services/google/compute/beta"
 	dataproc "github.com/GoogleCloudPlatform/declarative-resource-client-library/services/google/dataproc/beta"
 	eventarc "github.com/GoogleCloudPlatform/declarative-resource-client-library/services/google/eventarc/beta"
 	gkehub "github.com/GoogleCloudPlatform/declarative-resource-client-library/services/google/gkehub/beta"
@@ -61,6 +62,25 @@ func NewDCLCloudbuildClient(config *Config, userAgent, billingProject string) *c
 
 	dclConfig := dcl.NewConfig(configOptions...)
 	return cloudbuild.NewClient(dclConfig)
+}
+
+func NewDCLComputeClient(config *Config, userAgent, billingProject string) *compute.Client {
+	configOptions := []dcl.ConfigOption{
+		dcl.WithHTTPClient(config.client),
+		dcl.WithUserAgent(userAgent),
+		dcl.WithLogger(dclLogger{}),
+		dcl.WithBasePath(config.ComputeBasePath),
+	}
+
+	if config.UserProjectOverride {
+		configOptions = append(configOptions, dcl.WithUserProjectOverride())
+		if billingProject != "" {
+			configOptions = append(configOptions, dcl.WithBillingProject(billingProject))
+		}
+	}
+
+	dclConfig := dcl.NewConfig(configOptions...)
+	return compute.NewClient(dclConfig)
 }
 
 func NewDCLDataprocClient(config *Config, userAgent, billingProject string) *dataproc.Client {
