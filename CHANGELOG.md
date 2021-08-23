@@ -2,6 +2,7 @@
 
 ## 3.81.0 (August 23, 2021)
 
+IMPROVEMENTS:
 * compute: Added `enable` attribute to `google_compute_router_peer` ([#3507](https://github.com/hashicorp/terraform-provider-google-beta/pull/3507))
 * compute: added support for `L3_DEFAULT` as `ip_protocol` for `google_compute_forwarding_rule` and `UNSPECIFIED` as `protocol` for `google_compute_region_backend_service` to support network load balancers that forward all protocols and ports. ([#3516](https://github.com/hashicorp/terraform-provider-google-beta/pull/3516))
 * compute: added support for `security_settings` to `google_compute_backend_service` ([#3515](https://github.com/hashicorp/terraform-provider-google-beta/pull/3515))
