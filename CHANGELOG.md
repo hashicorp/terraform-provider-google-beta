@@ -4,7 +4,7 @@
 * compute: added support for `L3_DEFAULT` as `ip_protocol` for `google_compute_forwarding_rule` and `UNSPECIFIED` as `protocol` for `google_compute_region_backend_service` to support network load balancers that forward all protocols and ports. ([#3516](https://github.com/hashicorp/terraform-provider-google-beta/pull/3516))
 * compute: added support for `security_settings` to `google_compute_backend_service` ([#3515](https://github.com/hashicorp/terraform-provider-google-beta/pull/3515))
 * gkehub: added `google_gke_hub_membership` support for both `//container.googleapis.com/${google_container_cluster.my-cluster.id}` and `google_container_cluster.my-cluster.id` in `endpoint.0.gke_cluster.0.resource_link` ([#3502](https://github.com/hashicorp/terraform-provider-google-beta/pull/3502))
-* provider: Add provider support for `request_reason` ([#3513](https://github.com/hashicorp/terraform-provider-google-beta/pull/3513))
+* provider: Added provider support for `request_reason` ([#3513](https://github.com/hashicorp/terraform-provider-google-beta/pull/3513))
 * provider: added support for `billing_project` across all resources. If `user_project_override` is set to `true` and a `billing_project` is set, the `X-Goog-User-Project` header will be sent for all resources. ([#3539](https://github.com/hashicorp/terraform-provider-google-beta/pull/3539))
 
 BUG FIXES:
