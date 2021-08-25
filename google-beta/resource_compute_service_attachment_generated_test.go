@@ -32,11 +32,17 @@ func TestAccComputeServiceAttachment_serviceAttachmentBasicExample(t *testing.T)
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProvidersOiCS,
+		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckComputeServiceAttachmentDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccComputeServiceAttachment_serviceAttachmentBasicExample(context),
+			},
+			{
+				ResourceName:            "google_compute_service_attachment.psc_ilb_service_attachment",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"target_service", "region"},
 			},
 		},
 	})
@@ -45,8 +51,6 @@ func TestAccComputeServiceAttachment_serviceAttachmentBasicExample(t *testing.T)
 func testAccComputeServiceAttachment_serviceAttachmentBasicExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_compute_service_attachment" "psc_ilb_service_attachment" {
-  provider = "google-beta"
-
   name        = "tf-test-my-psc-ilb%{random_suffix}"
   region      = "us-west2"
   description = "A service attachment configured with Terraform"
@@ -58,8 +62,6 @@ resource "google_compute_service_attachment" "psc_ilb_service_attachment" {
 }
 
 resource "google_compute_address" "psc_ilb_consumer_address" {
-  provider = "google-beta"
-
   name   = "tf-test-psc-ilb-consumer-address%{random_suffix}"
   region = "us-west2"
 
@@ -69,8 +71,6 @@ resource "google_compute_address" "psc_ilb_consumer_address" {
 }
 
 resource "google_compute_forwarding_rule" "psc_ilb_consumer" {
-  provider = "google-beta"
-
   name   = "tf-test-psc-ilb-consumer-forwarding-rule%{random_suffix}"
   region = "us-west2"
 
@@ -81,8 +81,6 @@ resource "google_compute_forwarding_rule" "psc_ilb_consumer" {
 }
 
 resource "google_compute_forwarding_rule" "psc_ilb_target_service" {
-  provider = "google-beta"
-
   name   = "tf-test-producer-forwarding-rule%{random_suffix}"
   region = "us-west2"
 
@@ -94,8 +92,6 @@ resource "google_compute_forwarding_rule" "psc_ilb_target_service" {
 }
 
 resource "google_compute_region_backend_service" "producer_service_backend" {
-  provider = "google-beta"
-
   name   = "tf-test-producer-service%{random_suffix}"
   region = "us-west2"
 
@@ -103,8 +99,6 @@ resource "google_compute_region_backend_service" "producer_service_backend" {
 }
 
 resource "google_compute_health_check" "producer_service_health_check" {
-  provider = "google-beta"
-
   name = "tf-test-producer-service-health-check%{random_suffix}"
 
   check_interval_sec = 1
@@ -115,15 +109,11 @@ resource "google_compute_health_check" "producer_service_health_check" {
 }
 
 resource "google_compute_network" "psc_ilb_network" {
-  provider = "google-beta"
-
   name = "tf-test-psc-ilb-network%{random_suffix}"
   auto_create_subnetworks = false
 }
 
 resource "google_compute_subnetwork" "psc_ilb_producer_subnetwork" {
-  provider = "google-beta"
-
   name   = "tf-test-psc-ilb-producer-subnetwork%{random_suffix}"
   region = "us-west2"
 
@@ -132,8 +122,6 @@ resource "google_compute_subnetwork" "psc_ilb_producer_subnetwork" {
 }
 
 resource "google_compute_subnetwork" "psc_ilb_nat" {
-  provider = "google-beta"
-
   name   = "tf-test-psc-ilb-nat%{random_suffix}"
   region = "us-west2"
 
@@ -153,11 +141,17 @@ func TestAccComputeServiceAttachment_serviceAttachmentExplicitProjectsExample(t 
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProvidersOiCS,
+		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckComputeServiceAttachmentDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccComputeServiceAttachment_serviceAttachmentExplicitProjectsExample(context),
+			},
+			{
+				ResourceName:            "google_compute_service_attachment.psc_ilb_service_attachment",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"target_service", "region"},
 			},
 		},
 	})
@@ -166,8 +160,6 @@ func TestAccComputeServiceAttachment_serviceAttachmentExplicitProjectsExample(t 
 func testAccComputeServiceAttachment_serviceAttachmentExplicitProjectsExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_compute_service_attachment" "psc_ilb_service_attachment" {
-  provider = "google-beta"
-
   name        = "tf-test-my-psc-ilb%{random_suffix}"
   region      = "us-west2"
   description = "A service attachment configured with Terraform"
@@ -186,8 +178,6 @@ resource "google_compute_service_attachment" "psc_ilb_service_attachment" {
 }
 
 resource "google_compute_address" "psc_ilb_consumer_address" {
-  provider = "google-beta"
-
   name   = "tf-test-psc-ilb-consumer-address%{random_suffix}"
   region = "us-west2"
 
@@ -197,8 +187,6 @@ resource "google_compute_address" "psc_ilb_consumer_address" {
 }
 
 resource "google_compute_forwarding_rule" "psc_ilb_consumer" {
-  provider = "google-beta"
-
   name   = "tf-test-psc-ilb-consumer-forwarding-rule%{random_suffix}"
   region = "us-west2"
 
@@ -209,8 +197,6 @@ resource "google_compute_forwarding_rule" "psc_ilb_consumer" {
 }
 
 resource "google_compute_forwarding_rule" "psc_ilb_target_service" {
-  provider = "google-beta"
-
   name   = "tf-test-producer-forwarding-rule%{random_suffix}"
   region = "us-west2"
 
@@ -222,8 +208,6 @@ resource "google_compute_forwarding_rule" "psc_ilb_target_service" {
 }
 
 resource "google_compute_region_backend_service" "producer_service_backend" {
-  provider = "google-beta"
-
   name   = "tf-test-producer-service%{random_suffix}"
   region = "us-west2"
 
@@ -231,8 +215,6 @@ resource "google_compute_region_backend_service" "producer_service_backend" {
 }
 
 resource "google_compute_health_check" "producer_service_health_check" {
-  provider = "google-beta"
-
   name = "tf-test-producer-service-health-check%{random_suffix}"
 
   check_interval_sec = 1
@@ -243,15 +225,11 @@ resource "google_compute_health_check" "producer_service_health_check" {
 }
 
 resource "google_compute_network" "psc_ilb_network" {
-  provider = "google-beta"
-
   name = "tf-test-psc-ilb-network%{random_suffix}"
   auto_create_subnetworks = false
 }
 
 resource "google_compute_subnetwork" "psc_ilb_producer_subnetwork" {
-  provider = "google-beta"
-
   name   = "tf-test-psc-ilb-producer-subnetwork%{random_suffix}"
   region = "us-west2"
 
@@ -260,8 +238,6 @@ resource "google_compute_subnetwork" "psc_ilb_producer_subnetwork" {
 }
 
 resource "google_compute_subnetwork" "psc_ilb_nat" {
-  provider = "google-beta"
-
   name   = "tf-test-psc-ilb-nat%{random_suffix}"
   region = "us-west2"
 
