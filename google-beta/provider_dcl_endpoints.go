@@ -58,20 +58,32 @@ var EventarcEndpointEntry = &schema.Schema{
 	}, ""),
 }
 
+var PrivatecaEndpointEntryKey = "privateca_custom_endpoint"
+var PrivatecaEndpointEntry = &schema.Schema{
+	Type:     schema.TypeString,
+	Optional: true,
+	DefaultFunc: schema.MultiEnvDefaultFunc([]string{
+		"GOOGLE_PRIVATECA_CUSTOM_ENDPOINT",
+	}, ""),
+}
+
 //Add new values to config.go.erb config object declaration
 //AssuredWorkloadsBasePath string
 //CloudBuildWorkerPoolBasePath string
 //ComputeBasePath string
 //EventarcBasePath string
+//PrivatecaBasePath string
 
 //Add new values to provider.go.erb schema initialization
 // AssuredWorkloadsEndpointEntryKey:               AssuredWorkloadsEndpointEntry,
 // CloudBuildWorkerPoolEndpointEntryKey:               CloudBuildWorkerPoolEndpointEntry,
 // ComputeEndpointEntryKey:               ComputeEndpointEntry,
 // EventarcEndpointEntryKey:               EventarcEndpointEntry,
+// PrivatecaEndpointEntryKey:               PrivatecaEndpointEntry,
 
 //Add new values to provider.go.erb - provider block read
 // config.AssuredWorkloadsBasePath = d.Get(AssuredWorkloadsEndpointEntryKey).(string)
 // config.CloudBuildWorkerPoolBasePath = d.Get(CloudBuildWorkerPoolEndpointEntryKey).(string)
 // config.ComputeBasePath = d.Get(ComputeEndpointEntryKey).(string)
 // config.EventarcBasePath = d.Get(EventarcEndpointEntryKey).(string)
+// config.PrivatecaBasePath = d.Get(PrivatecaEndpointEntryKey).(string)
