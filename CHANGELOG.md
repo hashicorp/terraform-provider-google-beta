@@ -15,7 +15,6 @@ BUG FIXES:
 * dns: fixed not-exists error message on data source `google_dns_managed_zone` ([#3559](https://github.com/hashicorp/terraform-provider-google-beta/pull/3559))
 * healthcare: fixed bug where changes to `google_healthcare_hl7_v2_store.parser_config` subfields would error with "...parser_config.version field is immutable..." ([#3560](https://github.com/hashicorp/terraform-provider-google-beta/pull/3560))
 * os_config: fixed imports for `google_os_config_guest_policies` ([#3550](https://github.com/hashicorp/terraform-provider-google-beta/pull/3550))
-* privateca: fixed the creation of subordinate `google_privateca_certificate_authority` with `max_issuer_path_length = 0`. ([#3540](https://github.com/hashicorp/terraform-provider-google-beta/pull/3540))
 * pubsub: added polling to `google_pubsub_schema` to deal with eventually consistent deletes ([#3544](https://github.com/hashicorp/terraform-provider-google-beta/pull/3544))
 * secretmanager: fixed an issue where `replication` fields would not update in `google_secret_manager_secret` ([#3558](https://github.com/hashicorp/terraform-provider-google-beta/pull/3558))
 * service_usage: fixed imports on `google_service_usage_consumer_quota_override` ([#3552](https://github.com/hashicorp/terraform-provider-google-beta/pull/3552))
