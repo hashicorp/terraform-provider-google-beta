@@ -62,6 +62,7 @@ var (
 		"cluster_config.0.autoscaling_config",
 		"cluster_config.0.lifecycle_config",
 		"cluster_config.0.endpoint_config",
+		"cluster_config.0.metastore_config",
 	}
 )
 
@@ -667,6 +668,23 @@ by Dataproc`,
 								},
 							},
 						},
+						"metastore_config": {
+							Type:         schema.TypeList,
+							Optional:     true,
+							AtLeastOneOf: clusterConfigKeys,
+							MaxItems:     1,
+							Description:  `Specifies a Metastore configuration.`,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"dataproc_metastore_service": {
+										Type:        schema.TypeString,
+										Required:    true,
+										ForceNew:    true,
+										Description: `Resource name of an existing Dataproc Metastore service.`,
+									},
+								},
+							},
+						},
 					},
 				},
 			},
@@ -935,6 +953,10 @@ func expandClusterConfig(d *schema.ResourceData, config *Config) (*dataproc.Clus
 		conf.EndpointConfig = expandEndpointConfig(cfg)
 	}
 
+	if cfg, ok := configOptions(d, "cluster_config.0.metastore_config"); ok {
+		conf.MetastoreConfig = expandMetastoreConfig(cfg)
+	}
+
 	if cfg, ok := configOptions(d, "cluster_config.0.master_config"); ok {
 		log.Println("[INFO] got master_config")
 		conf.MasterConfig = expandInstanceGroupConfig(cfg)
@@ -1132,6 +1154,14 @@ func expandEndpointConfig(cfg map[string]interface{}) *dataproc.EndpointConfig {
 	conf := &dataproc.EndpointConfig{}
 	if v, ok := cfg["enable_http_port_access"]; ok {
 		conf.EnableHttpPortAccess = v.(bool)
+	}
+	return conf
+}
+
+func expandMetastoreConfig(cfg map[string]interface{}) *dataproc.MetastoreConfig {
+	conf := &dataproc.MetastoreConfig{}
+	if v, ok := cfg["dataproc_metastore_service"]; ok {
+		conf.DataprocMetastoreService = v.(string)
 	}
 	return conf
 }
@@ -1403,6 +1433,7 @@ func flattenClusterConfig(d *schema.ResourceData, cfg *dataproc.ClusterConfig) (
 		"preemptible_worker_config": flattenPreemptibleInstanceGroupConfig(d, cfg.SecondaryWorkerConfig),
 		"lifecycle_config":          flattenLifecycleConfig(d, cfg.LifecycleConfig),
 		"endpoint_config":           flattenEndpointConfig(d, cfg.EndpointConfig),
+		"metastore_config":          flattenMetastoreConfig(d, cfg.MetastoreConfig),
 	}
 
 	if len(cfg.InitializationActions) > 0 {
@@ -1504,6 +1535,18 @@ func flattenEndpointConfig(d *schema.ResourceData, ec *dataproc.EndpointConfig) 
 	data := map[string]interface{}{
 		"enable_http_port_access": ec.EnableHttpPortAccess,
 		"http_ports":              ec.HttpPorts,
+	}
+
+	return []map[string]interface{}{data}
+}
+
+func flattenMetastoreConfig(d *schema.ResourceData, ec *dataproc.MetastoreConfig) []map[string]interface{} {
+	if ec == nil {
+		return nil
+	}
+
+	data := map[string]interface{}{
+		"dataproc_metastore_service": ec.DataprocMetastoreService,
 	}
 
 	return []map[string]interface{}{data}
