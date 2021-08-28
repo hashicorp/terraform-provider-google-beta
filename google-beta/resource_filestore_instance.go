@@ -889,7 +889,7 @@ func expandFilestoreInstanceNetworks(v interface{}, d TerraformResourceData, con
 		if err != nil {
 			return nil, err
 		} else if val := reflect.ValueOf(transformedIpAddresses); val.IsValid() && !isEmptyValue(val) {
-			transformed["ipAddresses"] = transformedConnectMode
+			transformed["connect_mode"] = transformedConnectMode
 		}
 
 		req = append(req, transformed)
