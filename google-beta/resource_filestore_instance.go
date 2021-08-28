@@ -898,7 +898,11 @@ func expandFilestoreInstanceNetworks(v interface{}, d TerraformResourceData, con
 }
 
 func expandFilestoreInstanceNetworksNetwork(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
-	return v, nil
+	fv, err := ParseNetworkFieldValue(v.(string), d, config)
+	if err != nil {
+		return nil, err
+	}
+	return fv.RelativeLink(), nil
 }
 
 func expandFilestoreInstanceNetworksModes(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
