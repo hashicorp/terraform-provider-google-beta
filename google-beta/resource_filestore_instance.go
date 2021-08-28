@@ -128,7 +128,7 @@ for not allowing root access. The default is NO_ROOT_SQUASH. Default value: "NO_
 				ForceNew: true,
 				Description: `VPC networks to which the instance is connected. For this version,
 only a single network is supported.`,
-				MinItems: 1,
+				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"modes": {
@@ -162,6 +162,16 @@ addresses reserved for this instance.`,
 							Description: `A list of IPv4 or IPv6 addresses.`,
 							Elem: &schema.Schema{
 								Type: schema.TypeString,
+							},
+						},
+						"connect_mode": {
+							Type:        schema.TypeList,
+							Required:    true,
+							ForceNew:    true,
+							Description: `Available connection modes. Possible values: ["CONNECT_MODE_UNSPECIFIED", "DIRECT_PEERING", "PRIVATE_SERVICE_ACCESS"]`,
+							Elem: &schema.Schema{
+								Type:         schema.TypeString,
+								ValidateFunc: validation.StringInSlice([]string{"CONNECT_MODE_UNSPECIFIED", "DIRECT_PEERING", "PRIVATE_SERVICE_ACCESS"}, false),
 							},
 						},
 					},
@@ -873,6 +883,13 @@ func expandFilestoreInstanceNetworks(v interface{}, d TerraformResourceData, con
 			return nil, err
 		} else if val := reflect.ValueOf(transformedIpAddresses); val.IsValid() && !isEmptyValue(val) {
 			transformed["ipAddresses"] = transformedIpAddresses
+		}
+
+		transformedConnectMode, err := expandFilestoreInstanceNetworksIpAddresses(original["connect_mode"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedIpAddresses); val.IsValid() && !isEmptyValue(val) {
+			transformed["ipAddresses"] = transformedConnectMode
 		}
 
 		req = append(req, transformed)
