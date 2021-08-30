@@ -1,4 +1,4 @@
-## 3.82.0 (Unreleased)
+## 3.82.0 (August 30, 2021)
 FEATURES:
 * **New Resource:** `google_privateca_certificate_template` ([#3561](https://github.com/hashicorp/terraform-provider-google-beta/pull/3561))
 * **New Resource:** `google_compute_firewall_policy` ([#3556](https://github.com/hashicorp/terraform-provider-google-beta/pull/3556))
