@@ -85,6 +85,12 @@ func TestAccComputeRegionBackendService_regionBackendServiceCacheExample(t *test
 			{
 				Config: testAccComputeRegionBackendService_regionBackendServiceCacheExample(context),
 			},
+			{
+				ResourceName:            "google_compute_region_backend_service.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"network", "region"},
+			},
 		},
 	})
 }
@@ -184,6 +190,12 @@ func TestAccComputeRegionBackendService_regionBackendServiceExternalExample(t *t
 		Steps: []resource.TestStep{
 			{
 				Config: testAccComputeRegionBackendService_regionBackendServiceExternalExample(context),
+			},
+			{
+				ResourceName:            "google_compute_region_backend_service.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"network", "region"},
 			},
 		},
 	})

@@ -546,6 +546,11 @@ func TestAccComputeHealthCheck_healthCheckWithLoggingExample(t *testing.T) {
 			{
 				Config: testAccComputeHealthCheck_healthCheckWithLoggingExample(context),
 			},
+			{
+				ResourceName:      "google_compute_health_check.health-check-with-logging",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
 		},
 	})
 }

@@ -38,6 +38,12 @@ func TestAccServiceDirectoryService_serviceDirectoryServiceBasicExample(t *testi
 			{
 				Config: testAccServiceDirectoryService_serviceDirectoryServiceBasicExample(context),
 			},
+			{
+				ResourceName:            "google_service_directory_service.example",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"namespace", "service_id"},
+			},
 		},
 	})
 }

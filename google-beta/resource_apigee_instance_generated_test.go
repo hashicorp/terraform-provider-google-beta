@@ -133,6 +133,12 @@ func TestAccApigeeInstance_apigeeInstanceFullTestExample(t *testing.T) {
 			{
 				Config: testAccApigeeInstance_apigeeInstanceFullTestExample(context),
 			},
+			{
+				ResourceName:            "google_apigee_instance.apigee_instance",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"org_id"},
+			},
 		},
 	})
 }

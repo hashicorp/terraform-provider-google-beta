@@ -89,6 +89,12 @@ func TestAccHealthcareDicomStore_healthcareDicomStoreBqStreamExample(t *testing.
 			{
 				Config: testAccHealthcareDicomStore_healthcareDicomStoreBqStreamExample(context),
 			},
+			{
+				ResourceName:            "google_healthcare_dicom_store.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"self_link", "dataset"},
+			},
 		},
 	})
 }

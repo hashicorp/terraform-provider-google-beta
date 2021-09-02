@@ -38,6 +38,12 @@ func TestAccServiceDirectoryNamespace_serviceDirectoryNamespaceBasicExample(t *t
 			{
 				Config: testAccServiceDirectoryNamespace_serviceDirectoryNamespaceBasicExample(context),
 			},
+			{
+				ResourceName:            "google_service_directory_namespace.example",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"location", "namespace_id"},
+			},
 		},
 	})
 }

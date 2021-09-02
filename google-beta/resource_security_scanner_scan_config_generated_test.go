@@ -38,6 +38,11 @@ func TestAccSecurityScannerScanConfig_scanConfigBasicExample(t *testing.T) {
 			{
 				Config: testAccSecurityScannerScanConfig_scanConfigBasicExample(context),
 			},
+			{
+				ResourceName:      "google_security_scanner_scan_config.scan-config",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
 		},
 	})
 }

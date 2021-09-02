@@ -38,6 +38,12 @@ func TestAccOSConfigGuestPolicies_osConfigGuestPoliciesBasicExample(t *testing.T
 			{
 				Config: testAccOSConfigGuestPolicies_osConfigGuestPoliciesBasicExample(context),
 			},
+			{
+				ResourceName:            "google_os_config_guest_policies.guest_policies",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"guest_policy_id"},
+			},
 		},
 	})
 }
@@ -103,6 +109,12 @@ func TestAccOSConfigGuestPolicies_osConfigGuestPoliciesPackagesExample(t *testin
 		Steps: []resource.TestStep{
 			{
 				Config: testAccOSConfigGuestPolicies_osConfigGuestPoliciesPackagesExample(context),
+			},
+			{
+				ResourceName:            "google_os_config_guest_policies.guest_policies",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"guest_policy_id"},
 			},
 		},
 	})
@@ -181,6 +193,12 @@ func TestAccOSConfigGuestPolicies_osConfigGuestPoliciesRecipesExample(t *testing
 		Steps: []resource.TestStep{
 			{
 				Config: testAccOSConfigGuestPolicies_osConfigGuestPoliciesRecipesExample(context),
+			},
+			{
+				ResourceName:            "google_os_config_guest_policies.guest_policies",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"guest_policy_id"},
 			},
 		},
 	})

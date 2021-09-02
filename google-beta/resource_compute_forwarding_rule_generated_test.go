@@ -38,6 +38,12 @@ func TestAccComputeForwardingRule_internalHttpLbWithMigBackendExample(t *testing
 			{
 				Config: testAccComputeForwardingRule_internalHttpLbWithMigBackendExample(context),
 			},
+			{
+				ResourceName:            "google_compute_forwarding_rule.google_compute_forwarding_rule",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"backend_service", "network", "subnetwork", "region"},
+			},
 		},
 	})
 }
@@ -251,6 +257,12 @@ func TestAccComputeForwardingRule_internalTcpUdpLbWithMigBackendExample(t *testi
 			{
 				Config: testAccComputeForwardingRule_internalTcpUdpLbWithMigBackendExample(context),
 			},
+			{
+				ResourceName:            "google_compute_forwarding_rule.google_compute_forwarding_rule",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"backend_service", "network", "subnetwork", "region"},
+			},
 		},
 	})
 }
@@ -452,6 +464,12 @@ func TestAccComputeForwardingRule_forwardingRuleExternallbExample(t *testing.T) 
 			{
 				Config: testAccComputeForwardingRule_forwardingRuleExternallbExample(context),
 			},
+			{
+				ResourceName:            "google_compute_forwarding_rule.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"backend_service", "network", "subnetwork", "region"},
+			},
 		},
 	})
 }
@@ -605,6 +623,12 @@ func TestAccComputeForwardingRule_forwardingRuleL3DefaultExample(t *testing.T) {
 			{
 				Config: testAccComputeForwardingRule_forwardingRuleL3DefaultExample(context),
 			},
+			{
+				ResourceName:            "google_compute_forwarding_rule.fwd_rule",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"backend_service", "network", "subnetwork", "region"},
+			},
 		},
 	})
 }
@@ -723,6 +747,12 @@ func TestAccComputeForwardingRule_forwardingRuleHttpLbExample(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testAccComputeForwardingRule_forwardingRuleHttpLbExample(context),
+			},
+			{
+				ResourceName:            "google_compute_forwarding_rule.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"backend_service", "network", "subnetwork", "region"},
 			},
 		},
 	})

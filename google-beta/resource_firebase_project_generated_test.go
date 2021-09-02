@@ -35,6 +35,11 @@ func TestAccFirebaseProject_firebaseProjectBasicExample(t *testing.T) {
 			{
 				Config: testAccFirebaseProject_firebaseProjectBasicExample(context),
 			},
+			{
+				ResourceName:      "google_firebase_project.default",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
 		},
 	})
 }

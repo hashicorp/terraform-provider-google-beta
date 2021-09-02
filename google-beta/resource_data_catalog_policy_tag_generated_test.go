@@ -38,6 +38,12 @@ func TestAccDataCatalogPolicyTag_dataCatalogTaxonomiesPolicyTagBasicExample(t *t
 			{
 				Config: testAccDataCatalogPolicyTag_dataCatalogTaxonomiesPolicyTagBasicExample(context),
 			},
+			{
+				ResourceName:            "google_data_catalog_policy_tag.basic_policy_tag",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"taxonomy"},
+			},
 		},
 	})
 }
@@ -75,6 +81,12 @@ func TestAccDataCatalogPolicyTag_dataCatalogTaxonomiesPolicyTagChildPoliciesExam
 		Steps: []resource.TestStep{
 			{
 				Config: testAccDataCatalogPolicyTag_dataCatalogTaxonomiesPolicyTagChildPoliciesExample(context),
+			},
+			{
+				ResourceName:            "google_data_catalog_policy_tag.child_policy",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"taxonomy"},
 			},
 		},
 	})

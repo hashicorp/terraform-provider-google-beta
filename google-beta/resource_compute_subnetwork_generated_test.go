@@ -130,6 +130,12 @@ func TestAccComputeSubnetwork_subnetworkInternalL7lbExample(t *testing.T) {
 			{
 				Config: testAccComputeSubnetwork_subnetworkInternalL7lbExample(context),
 			},
+			{
+				ResourceName:            "google_compute_subnetwork.network-for-l7lb",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"network", "region"},
+			},
 		},
 	})
 }

@@ -38,6 +38,12 @@ func TestAccComputeAutoscaler_autoscalerSingleInstanceExample(t *testing.T) {
 			{
 				Config: testAccComputeAutoscaler_autoscalerSingleInstanceExample(context),
 			},
+			{
+				ResourceName:            "google_compute_autoscaler.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"target", "zone"},
+			},
 		},
 	})
 }

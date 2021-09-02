@@ -199,6 +199,11 @@ func TestAccDNSManagedZone_dnsManagedZoneServiceDirectoryExample(t *testing.T) {
 			{
 				Config: testAccDNSManagedZone_dnsManagedZoneServiceDirectoryExample(context),
 			},
+			{
+				ResourceName:      "google_dns_managed_zone.sd-zone",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
 		},
 	})
 }

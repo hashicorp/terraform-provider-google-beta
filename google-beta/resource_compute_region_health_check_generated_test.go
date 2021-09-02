@@ -252,6 +252,12 @@ func TestAccComputeRegionHealthCheck_regionHealthCheckHttpLogsExample(t *testing
 			{
 				Config: testAccComputeRegionHealthCheck_regionHealthCheckHttpLogsExample(context),
 			},
+			{
+				ResourceName:            "google_compute_region_health_check.http-region-health-check",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"region"},
+			},
 		},
 	})
 }

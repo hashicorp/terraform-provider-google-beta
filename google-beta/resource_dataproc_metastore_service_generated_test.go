@@ -38,6 +38,12 @@ func TestAccDataprocMetastoreService_dataprocMetastoreServiceBasicExample(t *tes
 			{
 				Config: testAccDataprocMetastoreService_dataprocMetastoreServiceBasicExample(context),
 			},
+			{
+				ResourceName:            "google_dataproc_metastore_service.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"service_id", "location"},
+			},
 		},
 	})
 }

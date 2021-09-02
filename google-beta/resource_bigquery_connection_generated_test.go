@@ -43,6 +43,12 @@ func TestAccBigqueryConnectionConnection_bigqueryConnectionBasicExample(t *testi
 			{
 				Config: testAccBigqueryConnectionConnection_bigqueryConnectionBasicExample(context),
 			},
+			{
+				ResourceName:            "google_bigquery_connection.connection",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"location"},
+			},
 		},
 	})
 }
@@ -115,6 +121,12 @@ func TestAccBigqueryConnectionConnection_bigqueryConnectionFullExample(t *testin
 		Steps: []resource.TestStep{
 			{
 				Config: testAccBigqueryConnectionConnection_bigqueryConnectionFullExample(context),
+			},
+			{
+				ResourceName:            "google_bigquery_connection.connection",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"location"},
 			},
 		},
 	})

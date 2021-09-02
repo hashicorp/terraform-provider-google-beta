@@ -127,6 +127,12 @@ func TestAccApigeeOrganization_apigeeOrganizationCloudFullTestExample(t *testing
 			{
 				Config: testAccApigeeOrganization_apigeeOrganizationCloudFullTestExample(context),
 			},
+			{
+				ResourceName:            "google_apigee_organization.org",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"project_id"},
+			},
 		},
 	})
 }

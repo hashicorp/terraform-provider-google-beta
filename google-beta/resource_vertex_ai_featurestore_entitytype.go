@@ -366,8 +366,7 @@ func resourceVertexAIFeaturestoreEntitytypeDelete(d *schema.ResourceData, meta i
 func resourceVertexAIFeaturestoreEntitytypeImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	config := meta.(*Config)
 	if err := parseImportId([]string{
-		"(?P<featurestore>[^/]+)/entityTypes/(?P<name>[^/]+)",
-		"(?P<featurestore>[^/]+)/(?P<name>[^/]+)",
+		"(?P<featurestore>.+)/entityTypes/(?P<name>[^/]+)",
 	}, d, config); err != nil {
 		return nil, err
 	}

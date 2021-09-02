@@ -38,6 +38,12 @@ func TestAccIAMBetaWorkloadIdentityPoolProvider_iamWorkloadIdentityPoolProviderA
 			{
 				Config: testAccIAMBetaWorkloadIdentityPoolProvider_iamWorkloadIdentityPoolProviderAwsBasicExample(context),
 			},
+			{
+				ResourceName:            "google_iam_workload_identity_pool_provider.example",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"workload_identity_pool_id", "workload_identity_pool_provider_id"},
+			},
 		},
 	})
 }
@@ -74,6 +80,12 @@ func TestAccIAMBetaWorkloadIdentityPoolProvider_iamWorkloadIdentityPoolProviderA
 		Steps: []resource.TestStep{
 			{
 				Config: testAccIAMBetaWorkloadIdentityPoolProvider_iamWorkloadIdentityPoolProviderAwsFullExample(context),
+			},
+			{
+				ResourceName:            "google_iam_workload_identity_pool_provider.example",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"workload_identity_pool_id", "workload_identity_pool_provider_id"},
 			},
 		},
 	})
@@ -121,6 +133,12 @@ func TestAccIAMBetaWorkloadIdentityPoolProvider_iamWorkloadIdentityPoolProviderO
 			{
 				Config: testAccIAMBetaWorkloadIdentityPoolProvider_iamWorkloadIdentityPoolProviderOidcBasicExample(context),
 			},
+			{
+				ResourceName:            "google_iam_workload_identity_pool_provider.example",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"workload_identity_pool_id", "workload_identity_pool_provider_id"},
+			},
 		},
 	})
 }
@@ -160,6 +178,12 @@ func TestAccIAMBetaWorkloadIdentityPoolProvider_iamWorkloadIdentityPoolProviderO
 		Steps: []resource.TestStep{
 			{
 				Config: testAccIAMBetaWorkloadIdentityPoolProvider_iamWorkloadIdentityPoolProviderOidcFullExample(context),
+			},
+			{
+				ResourceName:            "google_iam_workload_identity_pool_provider.example",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"workload_identity_pool_id", "workload_identity_pool_provider_id"},
 			},
 		},
 	})

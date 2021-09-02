@@ -39,6 +39,12 @@ func TestAccComputeOrganizationSecurityPolicyAssociation_organizationSecurityPol
 			{
 				Config: testAccComputeOrganizationSecurityPolicyAssociation_organizationSecurityPolicyAssociationBasicExample(context),
 			},
+			{
+				ResourceName:            "google_compute_organization_security_policy_association.policy",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"policy_id"},
+			},
 		},
 	})
 }

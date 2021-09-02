@@ -278,6 +278,12 @@ func TestAccCloudRunService_cloudRunServiceSecretEnvironmentVariablesExample(t *
 			{
 				Config: testAccCloudRunService_cloudRunServiceSecretEnvironmentVariablesExample(context),
 			},
+			{
+				ResourceName:            "google_cloud_run_service.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"name", "location", "autogenerate_revision_name"},
+			},
 		},
 	})
 }
@@ -375,6 +381,12 @@ func TestAccCloudRunService_cloudRunServiceSecretVolumesExample(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudRunService_cloudRunServiceSecretVolumesExample(context),
+			},
+			{
+				ResourceName:            "google_cloud_run_service.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"name", "location", "autogenerate_revision_name"},
 			},
 		},
 	})
