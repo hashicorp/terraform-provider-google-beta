@@ -224,9 +224,8 @@ func resourceCloudbuildWorkerPoolRead(d *schema.ResourceData, meta interface{}) 
 	client := NewDCLCloudbuildClient(config, userAgent, billingProject)
 	res, err := client.GetWorkerPool(context.Background(), obj)
 	if err != nil {
-		// Resource not found
-		d.SetId("")
-		return err
+		resourceName := fmt.Sprintf("CloudbuildWorkerPool %q", d.Id())
+		return handleNotFoundDCLError(err, d, resourceName)
 	}
 
 	if err = d.Set("location", res.Location); err != nil {
