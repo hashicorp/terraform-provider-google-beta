@@ -71,6 +71,12 @@ func TestAccComputeGlobalAddress_globalAddressPrivateServicesConnectExample(t *t
 			{
 				Config: testAccComputeGlobalAddress_globalAddressPrivateServicesConnectExample(context),
 			},
+			{
+				ResourceName:            "google_compute_global_address.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"network"},
+			},
 		},
 	})
 }

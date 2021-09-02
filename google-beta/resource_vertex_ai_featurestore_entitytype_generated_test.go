@@ -38,6 +38,12 @@ func TestAccVertexAIFeaturestoreEntitytype_vertexAiFeaturestoreEntitytypeExample
 			{
 				Config: testAccVertexAIFeaturestoreEntitytype_vertexAiFeaturestoreEntitytypeExample(context),
 			},
+			{
+				ResourceName:            "google_vertex_ai_featurestore_entitytype.entity",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"name", "etag", "featurestore"},
+			},
 		},
 	})
 }
@@ -56,7 +62,7 @@ resource "google_vertex_ai_featurestore" "featurestore" {
   }
 }
 
-resource "google_vertex_ai_featurestore_entitytype" "featurestore" {
+resource "google_vertex_ai_featurestore_entitytype" "entity" {
   provider = google-beta
   name     = "terraform%{random_suffix}"
   labels = {

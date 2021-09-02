@@ -35,6 +35,11 @@ func TestAccFirebaseProjectLocation_firebaseProjectLocationBasicExample(t *testi
 			{
 				Config: testAccFirebaseProjectLocation_firebaseProjectLocationBasicExample(context),
 			},
+			{
+				ResourceName:      "google_firebase_project_location.basic",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
 		},
 	})
 }

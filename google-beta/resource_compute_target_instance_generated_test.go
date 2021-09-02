@@ -93,6 +93,12 @@ func TestAccComputeTargetInstance_targetInstanceCustomNetworkExample(t *testing.
 			{
 				Config: testAccComputeTargetInstance_targetInstanceCustomNetworkExample(context),
 			},
+			{
+				ResourceName:            "google_compute_target_instance.custom_network",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"instance", "zone"},
+			},
 		},
 	})
 }

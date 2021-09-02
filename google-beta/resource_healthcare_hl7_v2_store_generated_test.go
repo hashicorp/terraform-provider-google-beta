@@ -89,6 +89,12 @@ func TestAccHealthcareHl7V2Store_healthcareHl7V2StoreParserConfigExample(t *test
 			{
 				Config: testAccHealthcareHl7V2Store_healthcareHl7V2StoreParserConfigExample(context),
 			},
+			{
+				ResourceName:            "google_healthcare_hl7_v2_store.store",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"self_link", "dataset"},
+			},
 		},
 	})
 }
@@ -208,6 +214,12 @@ func TestAccHealthcareHl7V2Store_healthcareHl7V2StoreUnschematizedExample(t *tes
 		Steps: []resource.TestStep{
 			{
 				Config: testAccHealthcareHl7V2Store_healthcareHl7V2StoreUnschematizedExample(context),
+			},
+			{
+				ResourceName:            "google_healthcare_hl7_v2_store.store",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"self_link", "dataset"},
 			},
 		},
 	})

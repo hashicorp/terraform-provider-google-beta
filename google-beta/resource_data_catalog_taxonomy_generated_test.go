@@ -38,6 +38,12 @@ func TestAccDataCatalogTaxonomy_dataCatalogTaxonomyBasicExample(t *testing.T) {
 			{
 				Config: testAccDataCatalogTaxonomy_dataCatalogTaxonomyBasicExample(context),
 			},
+			{
+				ResourceName:            "google_data_catalog_taxonomy.basic_taxonomy",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"region"},
+			},
 		},
 	})
 }

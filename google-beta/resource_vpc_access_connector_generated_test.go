@@ -73,6 +73,12 @@ func TestAccVPCAccessConnector_vpcAccessConnectorSharedVPCExample(t *testing.T) 
 			{
 				Config: testAccVPCAccessConnector_vpcAccessConnectorSharedVPCExample(context),
 			},
+			{
+				ResourceName:            "google_vpc_access_connector.connector",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"self_link", "region"},
+			},
 		},
 	})
 }
