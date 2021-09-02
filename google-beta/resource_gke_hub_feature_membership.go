@@ -358,9 +358,8 @@ func resourceGkeHubFeatureMembershipRead(d *schema.ResourceData, meta interface{
 	client := NewDCLGkeHubClient(config, userAgent, billingProject)
 	res, err := client.GetFeatureMembership(context.Background(), obj)
 	if err != nil {
-		// Resource not found
-		d.SetId("")
-		return err
+		resourceName := fmt.Sprintf("GkeHubFeatureMembership %q", d.Id())
+		return handleNotFoundDCLError(err, d, resourceName)
 	}
 
 	if err = d.Set("configmanagement", flattenGkeHubFeatureMembershipConfigmanagement(res.Configmanagement)); err != nil {

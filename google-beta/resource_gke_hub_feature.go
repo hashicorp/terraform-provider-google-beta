@@ -210,9 +210,8 @@ func resourceGkeHubFeatureRead(d *schema.ResourceData, meta interface{}) error {
 	client := NewDCLGkeHubClient(config, userAgent, billingProject)
 	res, err := client.GetFeature(context.Background(), obj)
 	if err != nil {
-		// Resource not found
-		d.SetId("")
-		return err
+		resourceName := fmt.Sprintf("GkeHubFeature %q", d.Id())
+		return handleNotFoundDCLError(err, d, resourceName)
 	}
 
 	if err = d.Set("location", res.Location); err != nil {
