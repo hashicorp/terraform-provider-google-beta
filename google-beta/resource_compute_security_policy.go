@@ -62,7 +62,7 @@ func resourceComputeSecurityPolicy() *schema.Resource {
 						"action": {
 							Type:         schema.TypeString,
 							Required:     true,
-							ValidateFunc: validation.StringInSlice([]string{"allow", "deny(403)", "deny(404)", "deny(502)"}, false),
+							ValidateFunc: validation.StringInSlice([]string{"allow", "deny(403)", "deny(404)", "deny(502)", "throttle"}, false),
 							Description:  `Action to take when match matches the request. Valid values:   "allow" : allow access to target, "deny(status)" : deny access to target, returns the HTTP response code specified (valid values are 403, 404 and 502)`,
 						},
 
@@ -198,6 +198,88 @@ func resourceComputeSecurityPolicy() *schema.Resource {
 					},
 				},
 			},
+
+			"rate_limit_options": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: `Rate limit threshold for this security policy.Must be specified if the action is "rate_based_ban" or "throttle". Cannot be specified for any other actions.`,
+				MaxItems:    1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"rate_limit_threshold": {
+							Type:        schema.TypeList,
+							Optional:    true,
+							Description: `Threshold at which to begin ratelimiting.`,
+							MaxItems:    1,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"count": {
+										Type:        schema.TypeInt,
+										Optional:    true,
+										Description: `Number of HTTP(S) requests for calculating the threshold.`,
+									},
+									"interval_sec": {
+										Type:        schema.TypeInt,
+										Optional:    true,
+										Description: `Interval over which the threshold is computed.`,
+									},
+								},
+							},
+						},
+						"conform_action": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							Default:      "allow",
+							ValidateFunc: validation.StringInSlice([]string{"deny-403", "deny-404", "deny-429", "deny-502"}, false),
+							Description:  `When a request is denied, returns the HTTP response code specified. Valid options are "deny()" where valid values for status are 403, 404, 429, and 502.`,
+						},
+						"exceed_action": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							Default:      "deny-429",
+							ValidateFunc: validation.StringInSlice([]string{"allow"}, false),
+							Description:  `Action to take for requests that are under the configured rate limit threshold. Valid option is "allow" only.`,
+						},
+						"enforce_on_key": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							Default:      "ALL",
+							ValidateFunc: validation.StringInSlice([]string{"ALL", "ALL_IPS", "HTTP_HEADER", "XFF_IP"}, false),
+							Description:  `Determines the key to enforce the rateLimitThreshold on. Possible values are: "ALL" -- A single rate limit threshold is applied to all the requests matching this rule. This is the default value if this field 'enforceOnKey' is not configured. "ALL_IPS" -- This definition, equivalent to "ALL", has been depprecated. "IP" -- The source IP address of the request is the key. Each IP has this limit enforced separately. "HTTP_HEADER" -- The value of the HTTP Header whose name is configured under "enforceOnKeyName". The key value is truncated to the first 128 bytes of the Header value. If no such header is present in the request, the key type defaults to "ALL". "XFF_IP" -- The first IP address (i.e. the originating client IP address) specified in the list of IPs under X-Forwarded-For HTTP Header. If no such header is present or the value is not a valid IP, the key type defaults to "ALL".`,
+						},
+						"enforce_on_key_name": {
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: `Rate limit key name applicable only for the following key types: HTTP_HEADER -- Name of the HTTP Header whose value is taken as the key value.`,
+						},
+						"ban_threshold": {
+							Type:        schema.TypeList,
+							Optional:    true,
+							Description: `Can only be specified if the action for the rule is "rate_based_ban". If specified, the key will be banned for the configured 'banDurationSec' when the number of requests that exceed the 'rateLimitThreshold' also exceed this 'banThreshold'.`,
+							MaxItems:    1,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"count": {
+										Type:        schema.TypeInt,
+										Optional:    true,
+										Description: `Number of HTTP(S) requests for calculating the threshold.`,
+									},
+									"interval_sec": {
+										Type:        schema.TypeInt,
+										Optional:    true,
+										Description: `Interval over which the threshold is computed.`,
+									},
+								},
+							},
+						},
+						"ban_duration_sec": {
+							Type:        schema.TypeInt,
+							Optional:    true,
+							Description: `Can only be specified if the action for the rule is "rate_based_ban". If specified, determines the time (in seconds) the traffic will continue to be banned by the rate limit after the rate falls below the threshold.`,
+						},
+					},
+				},
+			},
 		},
 
 		UseJSONNumber: true,
@@ -243,6 +325,10 @@ func resourceComputeSecurityPolicyCreate(d *schema.ResourceData, meta interface{
 
 	if v, ok := d.GetOk("adaptive_protection_config"); ok {
 		securityPolicy.AdaptiveProtectionConfig = expandSecurityPolicyAdaptiveProtectionConfig(v.([]interface{}))
+	}
+
+	if v, ok := d.GetOk("rate_limit_options"); ok {
+		securityPolicy.RateLimitOptions = expandSecurityPolicyRateLimitOptions(v.([]interface{}))
 	}
 
 	log.Printf("[DEBUG] SecurityPolicy insert request: %#v", securityPolicy)
@@ -310,6 +396,9 @@ func resourceComputeSecurityPolicyRead(d *schema.ResourceData, meta interface{})
 	}
 	if err := d.Set("adaptive_protection_config", flattenSecurityPolicyAdaptiveProtectionConfig(securityPolicy.AdaptiveProtectionConfig)); err != nil {
 		return fmt.Errorf("Error setting adaptive_protection_config: %s", err)
+	}
+	if err := d.Set("rate_limit_options", flattenSecurityPolicyRateLimitOptions(securityPolicy.RateLimitOptions)); err != nil {
+		return fmt.Errorf("Error setting rate_limit_options: %s", err)
 	}
 
 	return nil
@@ -607,6 +696,66 @@ func flattenLayer7DdosDefenseConfig(conf *compute.SecurityPolicyAdaptiveProtecti
 	data := map[string]interface{}{
 		"enable":          conf.Enable,
 		"rule_visibility": conf.RuleVisibility,
+	}
+
+	return []map[string]interface{}{data}
+}
+
+func expandSecurityPolicyRateLimitOptions(configured []interface{}) *compute.SecurityPolicyRateLimitOptions {
+	if len(configured) == 0 || configured[0] == nil {
+		return nil
+	}
+
+	data := configured[0].(map[string]interface{})
+	return &compute.SecurityPolicyRateLimitOptions{
+		BanThreshold:       expandThreshold(data["ban_threshold"].([]interface{})),
+		RateLimitThreshold: expandThreshold(data["rate_limit_threshold"].([]interface{})),
+		ExceedAction:       data["exceed_action"].(string),
+		ConformAction:      data["conform_action"].(string),
+		EnforceOnKey:       data["enforce_on_key"].(string),
+		EnforceOnKeyName:   data["enforce_on_key_name"].(string),
+		BanDurationSec:     data["ban_duration_sec"].(int),
+	}
+}
+
+func expandThreshold(configured []interface{}) *compute.SecurityPolicyRateLimitOptionThreshold {
+	if len(configured) == 0 || configured[0] == nil {
+		return nil
+	}
+
+	data := configured[0].(map[string]interface{})
+	return &compute.SecurityPolicyRateLimitOptionThreshold{
+		Count:       data["count"].(int),
+		IntervalSec: data["interval_sec"].(int),
+	}
+}
+
+func flattenSecurityPolicyRateLimitOptions(conf *compute.SecurityPolicyRateLimitOptions) []map[string]interface{} {
+	if conf == nil {
+		return nil
+	}
+
+	data := map[string]interface{}{
+		"ban_threshold":        flattenThreshold(conf.Threshold),
+		"rate_limit_threshold": flattenThreshold(conf.Threshold),
+		"exceed_action":        conf.ExceedAction,
+		"conform_action":       conf.ConformAction,
+		"enforce_on_key":       conf.EnforceOnKey,
+		"enforce_on_key_name":  conf.EnforceOnKeyName,
+		"ban_duration_sec":     conf.BanDurationSec,
+	}
+
+	return []map[string]interface{}{data}
+}
+
+func flattenThreshold(conf *compute.SecurityPolicyRateLimitOptionThreshold) []map[string]interface{} {
+	if conf == nil {
+		return nil
+	}
+
+	data := map[string]interface{}{
+		"count":        conf.Count,
+		"interval_sec": conf.IntervalSec,
 	}
 
 	return []map[string]interface{}{data}

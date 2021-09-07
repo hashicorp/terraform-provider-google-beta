@@ -142,6 +142,28 @@ func TestAccComputeSecurityPolicy_withAdaptiveProtection(t *testing.T) {
 	})
 }
 
+func TestAccComputeSecurityPolicy_withRateLimitOptions(t *testing.T) {
+	t.Parallel()
+
+	spName := fmt.Sprintf("tf-test-%s", randString(t, 10))
+
+	vcrTest(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckComputeSecurityPolicyDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeSecurityPolicy_withRateLimitOptions(spName),
+			},
+			{
+				ResourceName:      "google_compute_security_policy.policy",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
 func testAccCheckComputeSecurityPolicyDestroyProducer(t *testing.T) func(s *terraform.State) error {
 	return func(s *terraform.State) error {
 		config := googleProviderConfig(t)
@@ -343,6 +365,24 @@ resource "google_compute_security_policy" "policy" {
       enable = true
       rule_visibility = "STANDARD"
 	}
+  }
+}
+`, spName)
+}
+
+func testAccComputeSecurityPolicy_withRateLimitOptions(spName string) string {
+	return fmt.Sprintf(`
+resource "google_compute_security_policy" "policy" {
+  name        = "%s"
+  description = "updated description"
+
+  rate_limit_options {
+    exceed_action = "deny-429"
+    enforce_on_key = "IP"
+    rate_limit_threshold {
+      count = 100
+      interval_sec = 60
+    }
   }
 }
 `, spName)
