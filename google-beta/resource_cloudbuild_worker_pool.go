@@ -49,21 +49,21 @@ func resourceCloudbuildWorkerPool() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
-				Description: ``,
+				Description: "The location for the resource",
 			},
 
 			"name": {
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
-				Description: ``,
+				Description: "User-defined name of the `WorkerPool`.",
 			},
 
 			"network_config": {
 				Type:        schema.TypeList,
 				Optional:    true,
 				ForceNew:    true,
-				Description: ``,
+				Description: "Network configuration for the `WorkerPool`.",
 				MaxItems:    1,
 				Elem:        CloudbuildWorkerPoolNetworkConfigSchema(),
 			},
@@ -74,14 +74,14 @@ func resourceCloudbuildWorkerPool() *schema.Resource {
 				Optional:         true,
 				ForceNew:         true,
 				DiffSuppressFunc: compareSelfLinkOrResourceName,
-				Description:      ``,
+				Description:      "The project for the resource",
 			},
 
 			"worker_config": {
 				Type:        schema.TypeList,
 				Computed:    true,
 				Optional:    true,
-				Description: ``,
+				Description: "Configuration to be used for a creating workers in the `WorkerPool`.",
 				MaxItems:    1,
 				Elem:        CloudbuildWorkerPoolWorkerConfigSchema(),
 			},
@@ -89,25 +89,25 @@ func resourceCloudbuildWorkerPool() *schema.Resource {
 			"create_time": {
 				Type:        schema.TypeString,
 				Computed:    true,
-				Description: ``,
+				Description: "Output only. Time at which the request to create the `WorkerPool` was received.",
 			},
 
 			"delete_time": {
 				Type:        schema.TypeString,
 				Computed:    true,
-				Description: ``,
+				Description: "Output only. Time at which the request to delete the `WorkerPool` was received.",
 			},
 
 			"state": {
 				Type:        schema.TypeString,
 				Computed:    true,
-				Description: ``,
+				Description: "Output only. WorkerPool state. Possible values: STATE_UNSPECIFIED, PENDING, APPROVED, REJECTED, CANCELLED",
 			},
 
 			"update_time": {
 				Type:        schema.TypeString,
 				Computed:    true,
-				Description: ``,
+				Description: "Output only. Time at which the request to update the `WorkerPool` was received.",
 			},
 		},
 	}
@@ -121,7 +121,7 @@ func CloudbuildWorkerPoolNetworkConfigSchema() *schema.Resource {
 				Required:         true,
 				ForceNew:         true,
 				DiffSuppressFunc: compareResourceNames,
-				Description:      ``,
+				Description:      "Required. Immutable. The network definition that the workers are peered to. If this section is left empty, the workers will be peered to `WorkerPool.project_id` on the service producer network. Must be in the format `projects/{project}/global/networks/{network}`, where `{project}` is a project number, such as `12345`, and `{network}` is the name of a VPC network in the project. See (https://cloud.google.com/cloud-build/docs/custom-workers/set-up-custom-worker-pool-environment#understanding_the_network_configuration_options)",
 			},
 		},
 	}
@@ -133,19 +133,19 @@ func CloudbuildWorkerPoolWorkerConfigSchema() *schema.Resource {
 			"disk_size_gb": {
 				Type:        schema.TypeInt,
 				Optional:    true,
-				Description: ``,
+				Description: "Size of the disk attached to the worker, in GB. See (https://cloud.google.com/cloud-build/docs/custom-workers/worker-pool-config-file). Specify a value of up to 1000. If `0` is specified, Cloud Build will use a standard disk size.",
 			},
 
 			"machine_type": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: ``,
+				Description: "Machine type of a worker, such as `n1-standard-1`. See (https://cloud.google.com/cloud-build/docs/custom-workers/worker-pool-config-file). If left blank, Cloud Build will use `n1-standard-1`.",
 			},
 
 			"no_external_ip": {
 				Type:        schema.TypeBool,
 				Optional:    true,
-				Description: ``,
+				Description: "If true, workers are created without any public address, which prevents network egress to public IPs.",
 			},
 		},
 	}

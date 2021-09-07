@@ -49,13 +49,13 @@ func resourceGkeHubFeature() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
-				Description: ``,
+				Description: "The location for the resource",
 			},
 
 			"labels": {
 				Type:        schema.TypeMap,
 				Optional:    true,
-				Description: ``,
+				Description: "GCP labels for this Feature.",
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
 
@@ -63,7 +63,7 @@ func resourceGkeHubFeature() *schema.Resource {
 				Type:        schema.TypeString,
 				Optional:    true,
 				ForceNew:    true,
-				Description: ``,
+				Description: "The full, unique name of this Feature resource",
 			},
 
 			"project": {
@@ -72,13 +72,13 @@ func resourceGkeHubFeature() *schema.Resource {
 				Optional:         true,
 				ForceNew:         true,
 				DiffSuppressFunc: compareSelfLinkOrResourceName,
-				Description:      ``,
+				Description:      "The project for the resource",
 			},
 
 			"spec": {
 				Type:        schema.TypeList,
 				Optional:    true,
-				Description: ``,
+				Description: "Optional. Hub-wide Feature configuration. If this Feature does not support any Hub-wide configuration, this field may be unused.",
 				MaxItems:    1,
 				Elem:        GkeHubFeatureSpecSchema(),
 			},
@@ -86,19 +86,19 @@ func resourceGkeHubFeature() *schema.Resource {
 			"create_time": {
 				Type:        schema.TypeString,
 				Computed:    true,
-				Description: ``,
+				Description: "Output only. When the Feature resource was created.",
 			},
 
 			"delete_time": {
 				Type:        schema.TypeString,
 				Computed:    true,
-				Description: ``,
+				Description: "Output only. When the Feature resource was deleted.",
 			},
 
 			"update_time": {
 				Type:        schema.TypeString,
 				Computed:    true,
-				Description: ``,
+				Description: "Output only. When the Feature resource was last updated.",
 			},
 		},
 	}
@@ -110,7 +110,7 @@ func GkeHubFeatureSpecSchema() *schema.Resource {
 			"multiclusteringress": {
 				Type:        schema.TypeList,
 				Optional:    true,
-				Description: ``,
+				Description: "Multicluster Ingress-specific spec.",
 				MaxItems:    1,
 				Elem:        GkeHubFeatureSpecMulticlusteringressSchema(),
 			},
@@ -125,7 +125,7 @@ func GkeHubFeatureSpecMulticlusteringressSchema() *schema.Resource {
 				Type:             schema.TypeString,
 				Optional:         true,
 				DiffSuppressFunc: compareSelfLinkOrResourceName,
-				Description:      ``,
+				Description:      "Fully-qualified Membership name which hosts the MultiClusterIngress CRD. Example: `projects/foo-proj/locations/global/memberships/bar`",
 			},
 		},
 	}

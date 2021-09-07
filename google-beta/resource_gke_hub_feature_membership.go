@@ -48,7 +48,7 @@ func resourceGkeHubFeatureMembership() *schema.Resource {
 			"configmanagement": {
 				Type:        schema.TypeList,
 				Optional:    true,
-				Description: ``,
+				Description: "Config Management-specific spec.",
 				MaxItems:    1,
 				Elem:        GkeHubFeatureMembershipConfigmanagementSchema(),
 			},
@@ -58,14 +58,14 @@ func resourceGkeHubFeatureMembership() *schema.Resource {
 				Optional:         true,
 				ForceNew:         true,
 				DiffSuppressFunc: compareSelfLinkOrResourceName,
-				Description:      ``,
+				Description:      "The name of the feature",
 			},
 
 			"location": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				ForceNew:    true,
-				Description: ``,
+				Description: "The location of the feature",
 			},
 
 			"membership": {
@@ -73,7 +73,7 @@ func resourceGkeHubFeatureMembership() *schema.Resource {
 				Optional:         true,
 				ForceNew:         true,
 				DiffSuppressFunc: compareSelfLinkOrResourceName,
-				Description:      ``,
+				Description:      "The name of the membership",
 			},
 
 			"project": {
@@ -82,7 +82,7 @@ func resourceGkeHubFeatureMembership() *schema.Resource {
 				Optional:         true,
 				ForceNew:         true,
 				DiffSuppressFunc: compareSelfLinkOrResourceName,
-				Description:      ``,
+				Description:      "The project of the feature",
 			},
 		},
 	}
@@ -94,7 +94,7 @@ func GkeHubFeatureMembershipConfigmanagementSchema() *schema.Resource {
 			"binauthz": {
 				Type:        schema.TypeList,
 				Optional:    true,
-				Description: ``,
+				Description: "Binauthz configuration for the cluster.",
 				MaxItems:    1,
 				Elem:        GkeHubFeatureMembershipConfigmanagementBinauthzSchema(),
 			},
@@ -102,7 +102,7 @@ func GkeHubFeatureMembershipConfigmanagementSchema() *schema.Resource {
 			"config_sync": {
 				Type:        schema.TypeList,
 				Optional:    true,
-				Description: ``,
+				Description: "Config Sync configuration for the cluster.",
 				MaxItems:    1,
 				Elem:        GkeHubFeatureMembershipConfigmanagementConfigSyncSchema(),
 			},
@@ -110,7 +110,7 @@ func GkeHubFeatureMembershipConfigmanagementSchema() *schema.Resource {
 			"hierarchy_controller": {
 				Type:        schema.TypeList,
 				Optional:    true,
-				Description: ``,
+				Description: "Hierarchy Controller configuration for the cluster.",
 				MaxItems:    1,
 				Elem:        GkeHubFeatureMembershipConfigmanagementHierarchyControllerSchema(),
 			},
@@ -118,7 +118,7 @@ func GkeHubFeatureMembershipConfigmanagementSchema() *schema.Resource {
 			"policy_controller": {
 				Type:        schema.TypeList,
 				Optional:    true,
-				Description: ``,
+				Description: "Policy Controller configuration for the cluster.",
 				MaxItems:    1,
 				Elem:        GkeHubFeatureMembershipConfigmanagementPolicyControllerSchema(),
 			},
@@ -126,7 +126,7 @@ func GkeHubFeatureMembershipConfigmanagementSchema() *schema.Resource {
 			"version": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: ``,
+				Description: "Version of ACM installed.",
 			},
 		},
 	}
@@ -138,7 +138,7 @@ func GkeHubFeatureMembershipConfigmanagementBinauthzSchema() *schema.Resource {
 			"enabled": {
 				Type:        schema.TypeBool,
 				Optional:    true,
-				Description: ``,
+				Description: "Whether binauthz is enabled in this cluster.",
 			},
 		},
 	}
@@ -150,7 +150,7 @@ func GkeHubFeatureMembershipConfigmanagementConfigSyncSchema() *schema.Resource 
 			"git": {
 				Type:        schema.TypeList,
 				Optional:    true,
-				Description: ``,
+				Description: "",
 				MaxItems:    1,
 				Elem:        GkeHubFeatureMembershipConfigmanagementConfigSyncGitSchema(),
 			},
@@ -158,7 +158,7 @@ func GkeHubFeatureMembershipConfigmanagementConfigSyncSchema() *schema.Resource 
 			"source_format": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: ``,
+				Description: "Specifies whether the Config Sync Repo is in \"hierarchical\" or \"unstructured\" mode.",
 			},
 		},
 	}
@@ -170,43 +170,43 @@ func GkeHubFeatureMembershipConfigmanagementConfigSyncGitSchema() *schema.Resour
 			"https_proxy": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: ``,
+				Description: "URL for the HTTPS proxy to be used when communicating with the Git repo.",
 			},
 
 			"policy_dir": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: ``,
+				Description: "The path within the Git repository that represents the top level of the repo to sync. Default: the root directory of the repository.",
 			},
 
 			"secret_type": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: ``,
+				Description: "Type of secret configured for access to the Git repo.",
 			},
 
 			"sync_branch": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: ``,
+				Description: "The branch of the repository to sync from. Default: master.",
 			},
 
 			"sync_repo": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: ``,
+				Description: "The URL of the Git repository to use as the source of truth.",
 			},
 
 			"sync_rev": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: ``,
+				Description: "Git revision (tag or hash) to check out. Default HEAD.",
 			},
 
 			"sync_wait_secs": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: ``,
+				Description: "Period in seconds between consecutive syncs. Default: 15.",
 			},
 		},
 	}
@@ -218,19 +218,19 @@ func GkeHubFeatureMembershipConfigmanagementHierarchyControllerSchema() *schema.
 			"enable_hierarchical_resource_quota": {
 				Type:        schema.TypeBool,
 				Optional:    true,
-				Description: ``,
+				Description: "Whether hierarchical resource quota is enabled in this cluster.",
 			},
 
 			"enable_pod_tree_labels": {
 				Type:        schema.TypeBool,
 				Optional:    true,
-				Description: ``,
+				Description: "Whether pod tree labels are enabled in this cluster.",
 			},
 
 			"enabled": {
 				Type:        schema.TypeBool,
 				Optional:    true,
-				Description: ``,
+				Description: "Whether Hierarchy Controller is enabled in this cluster.",
 			},
 		},
 	}
@@ -242,38 +242,38 @@ func GkeHubFeatureMembershipConfigmanagementPolicyControllerSchema() *schema.Res
 			"audit_interval_seconds": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: ``,
+				Description: "Sets the interval for Policy Controller Audit Scans (in seconds). When set to 0, this disables audit functionality altogether.",
 			},
 
 			"enabled": {
 				Type:        schema.TypeBool,
 				Optional:    true,
-				Description: ``,
+				Description: "Enables the installation of Policy Controller. If false, the rest of PolicyController fields take no effect.",
 			},
 
 			"exemptable_namespaces": {
 				Type:        schema.TypeList,
 				Optional:    true,
-				Description: ``,
+				Description: "The set of namespaces that are excluded from Policy Controller checks. Namespaces do not need to currently exist on the cluster.",
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
 
 			"log_denies_enabled": {
 				Type:        schema.TypeBool,
 				Optional:    true,
-				Description: ``,
+				Description: "Logs all denies and dry run failures.",
 			},
 
 			"referential_rules_enabled": {
 				Type:        schema.TypeBool,
 				Optional:    true,
-				Description: ``,
+				Description: "Enables the ability to use Constraint Templates that reference to objects other than the object currently being evaluated.",
 			},
 
 			"template_library_installed": {
 				Type:        schema.TypeBool,
 				Optional:    true,
-				Description: ``,
+				Description: "Installs the default template library along with Policy Controller.",
 			},
 		},
 	}
