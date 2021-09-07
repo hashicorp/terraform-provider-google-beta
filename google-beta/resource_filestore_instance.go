@@ -149,6 +149,16 @@ IP addresses assigned. Possible values: ["ADDRESS_MODE_UNSPECIFIED", "MODE_IPV4"
 							Description: `The name of the GCE VPC network to which the
 instance is connected.`,
 						},
+						"connect_mode": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							ForceNew:     true,
+							ValidateFunc: validation.StringInSlice([]string{"DIRECT_PEERING", "PRIVATE_SERVICE_ACCESS", ""}, false),
+							Description: `The network connect mode of the Filestore instance.
+If not provided, the connect mode defaults to
+DIRECT_PEERING. Default value: "DIRECT_PEERING" Possible values: ["DIRECT_PEERING", "PRIVATE_SERVICE_ACCESS"]`,
+							Default: "DIRECT_PEERING",
+						},
 						"reserved_ip_range": {
 							Type:     schema.TypeString,
 							Computed: true,
@@ -680,6 +690,7 @@ func flattenFilestoreInstanceNetworks(v interface{}, d *schema.ResourceData, con
 			"modes":             flattenFilestoreInstanceNetworksModes(original["modes"], d, config),
 			"reserved_ip_range": flattenFilestoreInstanceNetworksReservedIpRange(original["reservedIpRange"], d, config),
 			"ip_addresses":      flattenFilestoreInstanceNetworksIpAddresses(original["ipAddresses"], d, config),
+			"connect_mode":      flattenFilestoreInstanceNetworksConnectMode(original["connectMode"], d, config),
 		})
 	}
 	return transformed
@@ -697,6 +708,14 @@ func flattenFilestoreInstanceNetworksReservedIpRange(v interface{}, d *schema.Re
 }
 
 func flattenFilestoreInstanceNetworksIpAddresses(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	return v
+}
+
+func flattenFilestoreInstanceNetworksConnectMode(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	if v == nil || isEmptyValue(reflect.ValueOf(v)) {
+		return "DIRECT_PEERING"
+	}
+
 	return v
 }
 
@@ -875,6 +894,13 @@ func expandFilestoreInstanceNetworks(v interface{}, d TerraformResourceData, con
 			transformed["ipAddresses"] = transformedIpAddresses
 		}
 
+		transformedConnectMode, err := expandFilestoreInstanceNetworksConnectMode(original["connect_mode"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedConnectMode); val.IsValid() && !isEmptyValue(val) {
+			transformed["connectMode"] = transformedConnectMode
+		}
+
 		req = append(req, transformed)
 	}
 	return req, nil
@@ -893,5 +919,9 @@ func expandFilestoreInstanceNetworksReservedIpRange(v interface{}, d TerraformRe
 }
 
 func expandFilestoreInstanceNetworksIpAddresses(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandFilestoreInstanceNetworksConnectMode(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }

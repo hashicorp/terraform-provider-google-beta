@@ -123,6 +123,7 @@ resource "google_filestore_instance" "instance" {
   networks {
     network = "default"
     modes   = ["MODE_IPV4"]
+    connect_mode = "DIRECT_PEERING"
   }
 }
 `, context)
