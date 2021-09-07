@@ -230,7 +230,7 @@ func resourceComputeSecurityPolicy() *schema.Resource {
 							Type:         schema.TypeString,
 							Optional:     true,
 							Default:      "allow",
-							ValidateFunc: validation.StringInSlice([]string{"deny-403", "deny-404", "deny-429", "deny-502"}, false),
+							ValidateFunc: validation.StringInSlice([]string{"deny(403)", "deny(404)", "deny(429)", "deny(502)"}, false),
 							Description:  `When a request is denied, returns the HTTP response code specified. Valid options are "deny()" where valid values for status are 403, 404, 429, and 502.`,
 						},
 						"exceed_action": {
