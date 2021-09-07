@@ -945,7 +945,7 @@ func resourceOSConfigGuestPoliciesCreate(d *schema.ResourceData, meta interface{
 	}
 
 	// Store the ID now
-	id, err := replaceVars(d, config, "{{name}}")
+	id, err := replaceVars(d, config, "projects/{{project}}/guestPolicies/{{guest_policy_id}}")
 	if err != nil {
 		return fmt.Errorf("Error constructing id: %s", err)
 	}
@@ -1153,13 +1153,21 @@ func resourceOSConfigGuestPoliciesDelete(d *schema.ResourceData, meta interface{
 }
 
 func resourceOSConfigGuestPoliciesImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-
 	config := meta.(*Config)
-
-	// current import_formats can't import fields with forward slashes in their value
-	if err := parseImportId([]string{"(?P<project>[^ ]+) (?P<name>[^ ]+)", "(?P<name>[^ ]+)"}, d, config); err != nil {
+	if err := parseImportId([]string{
+		"projects/(?P<project>[^/]+)/guestPolicies/(?P<guest_policy_id>[^/]+)",
+		"(?P<project>[^/]+)/(?P<guest_policy_id>[^/]+)",
+		"(?P<guest_policy_id>[^/]+)",
+	}, d, config); err != nil {
 		return nil, err
 	}
+
+	// Replace import id for the resource id
+	id, err := replaceVars(d, config, "projects/{{project}}/guestPolicies/{{guest_policy_id}}")
+	if err != nil {
+		return nil, fmt.Errorf("Error constructing id: %s", err)
+	}
+	d.SetId(id)
 
 	return []*schema.ResourceData{d}, nil
 }
