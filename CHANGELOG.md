@@ -5,8 +5,6 @@ FEATURES:
 IMPROVEMENTS:
 * privateca: Added `certificate_template` to `google_privateca_certificate`. ([#3567](https://github.com/hashicorp/terraform-provider-google-beta/pull/3567))
 * compute: allowed setting `ip_address` field of `google_compute_router_peer` ([#3565](https://github.com/hashicorp/terraform-provider-google-beta/pull/3565))
-* compute: promoted `google_compute_service_attachment` to ga ([#3566](https://github.com/hashicorp/terraform-provider-google-beta/pull/3566))
-* compute: promoted `role` and `purpose` fields in `google_compute_subnetwork` to ga ([#3566](https://github.com/hashicorp/terraform-provider-google-beta/pull/3566))
 * dataproc: added field `metastore_config` to `google_dataproc_cluster` (beta) ([#3577](https://github.com/hashicorp/terraform-provider-google-beta/pull/3577))
 * kms: added support for `destroy_scheduled_duration` to `google_kms_crypto_key` ([#3563](https://github.com/hashicorp/terraform-provider-google-beta/pull/3563))
 
