@@ -42,7 +42,7 @@ func TestAccComputeForwardingRule_internalHttpLbWithMigBackendExample(t *testing
 				ResourceName:            "google_compute_forwarding_rule.google_compute_forwarding_rule",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"backend_service", "network", "subnetwork", "region"},
+				ImportStateVerifyIgnore: []string{"backend_service", "network", "subnetwork", "region", "port_range", "target"},
 			},
 		},
 	})
@@ -468,7 +468,7 @@ func TestAccComputeForwardingRule_forwardingRuleExternallbExample(t *testing.T) 
 				ResourceName:            "google_compute_forwarding_rule.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"backend_service", "network", "subnetwork", "region"},
+				ImportStateVerifyIgnore: []string{"backend_service", "network", "subnetwork", "region", "port_range"},
 			},
 		},
 	})
@@ -588,7 +588,7 @@ func TestAccComputeForwardingRule_forwardingRuleBasicExample(t *testing.T) {
 				ResourceName:            "google_compute_forwarding_rule.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"backend_service", "network", "subnetwork", "region"},
+				ImportStateVerifyIgnore: []string{"backend_service", "network", "subnetwork", "region", "port_range", "target"},
 			},
 		},
 	})
@@ -683,7 +683,7 @@ func TestAccComputeForwardingRule_forwardingRuleInternallbExample(t *testing.T) 
 				ResourceName:            "google_compute_forwarding_rule.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"backend_service", "network", "subnetwork", "region"},
+				ImportStateVerifyIgnore: []string{"backend_service", "network", "subnetwork", "region", "port_range", "target"},
 			},
 		},
 	})
@@ -752,7 +752,7 @@ func TestAccComputeForwardingRule_forwardingRuleHttpLbExample(t *testing.T) {
 				ResourceName:            "google_compute_forwarding_rule.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"backend_service", "network", "subnetwork", "region"},
+				ImportStateVerifyIgnore: []string{"backend_service", "network", "subnetwork", "region", "port_range", "target"},
 			},
 		},
 	})

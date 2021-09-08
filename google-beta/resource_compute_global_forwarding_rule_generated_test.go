@@ -42,7 +42,7 @@ func TestAccComputeGlobalForwardingRule_globalForwardingRuleHttpExample(t *testi
 				ResourceName:            "google_compute_global_forwarding_rule.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"network"},
+				ImportStateVerifyIgnore: []string{"network", "port_range", "target"},
 			},
 		},
 	})
@@ -120,7 +120,7 @@ func TestAccComputeGlobalForwardingRule_globalForwardingRuleInternalExample(t *t
 				ResourceName:            "google_compute_global_forwarding_rule.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"network"},
+				ImportStateVerifyIgnore: []string{"network", "port_range", "target"},
 			},
 		},
 	})
@@ -258,7 +258,7 @@ func TestAccComputeGlobalForwardingRule_privateServiceConnectGoogleApisExample(t
 				ResourceName:            "google_compute_global_forwarding_rule.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"network"},
+				ImportStateVerifyIgnore: []string{"network", "ip_address"},
 			},
 		},
 	})
