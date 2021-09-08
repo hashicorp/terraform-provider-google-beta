@@ -3,9 +3,9 @@ FEATURES:
 * **New Resource:** `google_privateca_certificate_template` ([#3561](https://github.com/hashicorp/terraform-provider-google-beta/pull/3561))
 
 IMPROVEMENTS:
-* privateca: Added `certificate_template` to `google_privateca_certificate`. ([#3567](https://github.com/hashicorp/terraform-provider-google-beta/pull/3567))
+* privateca: added `certificate_template` to `google_privateca_certificate`. ([#3567](https://github.com/hashicorp/terraform-provider-google-beta/pull/3567))
 * compute: allowed setting `ip_address` field of `google_compute_router_peer` ([#3565](https://github.com/hashicorp/terraform-provider-google-beta/pull/3565))
-* dataproc: added field `metastore_config` to `google_dataproc_cluster` (beta) ([#3577](https://github.com/hashicorp/terraform-provider-google-beta/pull/3577))
+* dataproc: added field `metastore_config` to `google_dataproc_cluster` ([#3577](https://github.com/hashicorp/terraform-provider-google-beta/pull/3577))
 * kms: added support for `destroy_scheduled_duration` to `google_kms_crypto_key` ([#3563](https://github.com/hashicorp/terraform-provider-google-beta/pull/3563))
 
 BUG FIXES:
