@@ -239,8 +239,7 @@ func resourceComputeOrganizationSecurityPolicyAssociationDelete(d *schema.Resour
 func resourceComputeOrganizationSecurityPolicyAssociationImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	config := meta.(*Config)
 	if err := parseImportId([]string{
-		"(?P<policy_id>[^/]+)/association/(?P<name>[^/]+)",
-		"(?P<policy_id>[^/]+)/(?P<name>[^/]+)",
+		"(?P<policy_id>.+)/association/(?P<name>[^/]+)",
 	}, d, config); err != nil {
 		return nil, err
 	}
