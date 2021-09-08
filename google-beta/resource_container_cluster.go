@@ -1236,6 +1236,36 @@ func resourceContainerCluster() *schema.Resource {
 					},
 				},
 			},
+			"dns_config": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				MaxItems:    1,
+				ForceNew:    true,
+				Description: `Configuration for Cloud DNS for Kubernetes Engine.`,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"cluster_dns": {
+							Type:         schema.TypeString,
+							Default:      "PROVIDER_UNSPECIFIED",
+							ValidateFunc: validation.StringInSlice([]string{"PROVIDER_UNSPECIFIED", "PLATFORM_DEFAULT", "CLOUD_DNS"}, false),
+							Description:  `Which in-cluster DNS provider should be used.`,
+							Optional:     true,
+						},
+						"cluster_dns_scope": {
+							Type:         schema.TypeString,
+							Default:      "DNS_SCOPE_UNSPECIFIED",
+							ValidateFunc: validation.StringInSlice([]string{"DNS_SCOPE_UNSPECIFIED", "CLUSTER_SCOPE", "VPC_SCOPE"}, false),
+							Description:  `The scope of access to cluster DNS records.`,
+							Optional:     true,
+						},
+						"cluster_dns_domain": {
+							Type:        schema.TypeString,
+							Description: `The suffix used for all cluster service records.`,
+							Optional:    true,
+						},
+					},
+				},
+			},
 		},
 	}
 }
@@ -1358,6 +1388,7 @@ func resourceContainerClusterCreate(d *schema.ResourceData, meta interface{}) er
 			DatapathProvider:          d.Get("datapath_provider").(string),
 			PrivateIpv6GoogleAccess:   d.Get("private_ipv6_google_access").(string),
 			EnableL4ilbSubsetting:     d.Get("enable_l4_ilb_subsetting").(bool),
+			DnsConfig:                 expandDnsConfig(d.Get("dns_config")),
 		},
 		MasterAuth:         expandMasterAuth(d.Get("master_auth")),
 		NotificationConfig: expandNotificationConfig(d.Get("notification_config")),
@@ -1797,6 +1828,9 @@ func resourceContainerClusterRead(d *schema.ResourceData, meta interface{}) erro
 	}
 
 	if err := d.Set("resource_usage_export_config", flattenResourceUsageExportConfig(cluster.ResourceUsageExportConfig)); err != nil {
+		return err
+	}
+	if err := d.Set("dns_config", flattenDnsConfig(cluster.NetworkConfig.DnsConfig)); err != nil {
 		return err
 	}
 
@@ -3392,6 +3426,20 @@ func expandResourceUsageExportConfig(configured interface{}) *containerBeta.Reso
 	return result
 }
 
+func expandDnsConfig(configured interface{}) *containerBeta.DNSConfig {
+	l := configured.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil
+	}
+
+	config := l[0].(map[string]interface{})
+	return &containerBeta.DNSConfig{
+		ClusterDns:       config["cluster_dns"].(string),
+		ClusterDnsScope:  config["cluster_dns_scope"].(string),
+		ClusterDnsDomain: config["cluster_dns_domain"].(string),
+	}
+}
+
 func flattenNotificationConfig(c *containerBeta.NotificationConfig) []map[string]interface{} {
 	if c == nil {
 		return nil
@@ -3821,6 +3869,19 @@ func flattenDatabaseEncryption(c *containerBeta.DatabaseEncryption) []map[string
 		{
 			"state":    c.State,
 			"key_name": c.KeyName,
+		},
+	}
+}
+
+func flattenDnsConfig(c *containerBeta.DNSConfig) []map[string]interface{} {
+	if c == nil {
+		return nil
+	}
+	return []map[string]interface{}{
+		{
+			"cluster_dns":        c.ClusterDns,
+			"cluster_dns_scope":  c.ClusterDnsScope,
+			"cluster_dns_domain": c.ClusterDnsDomain,
 		},
 	}
 }
