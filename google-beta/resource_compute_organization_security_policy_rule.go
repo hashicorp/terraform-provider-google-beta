@@ -19,7 +19,6 @@ import (
 	"log"
 	"reflect"
 	"strconv"
-	"strings"
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -540,33 +539,18 @@ func resourceComputeOrganizationSecurityPolicyRuleDelete(d *schema.ResourceData,
 
 func resourceComputeOrganizationSecurityPolicyRuleImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	config := meta.(*Config)
-
-	// current import_formats can't import fields with forward slashes in their value
-	if err := parseImportId([]string{"(?P<policy_id>.+)"}, d, config); err != nil {
+	if err := parseImportId([]string{
+		"(?P<policy_id>.+)/priority/(?P<priority>[^/]+)",
+	}, d, config); err != nil {
 		return nil, err
 	}
 
-	nameParts := strings.Split(d.Get("policy_id").(string), "/")
-	if len(nameParts) != 6 {
-		return nil, fmt.Errorf(
-			"Saw %s when the import ID is expected to have shape %s",
-			d.Get("policy_id").(string),
-			"locations/global/securityPolicies/{{policy_id}}/priority/{{priority}}",
-		)
+	// Replace import id for the resource id
+	id, err := replaceVars(d, config, "{{policy_id}}/priority/{{priority}}")
+	if err != nil {
+		return nil, fmt.Errorf("Error constructing id: %s", err)
 	}
-	if err := d.Set("policy_id", fmt.Sprintf("locations/global/securityPolicies/%s", nameParts[3])); err != nil {
-		return nil, fmt.Errorf("Error setting policy_id: %s", err)
-	}
-
-	if prio, err := strconv.ParseInt(nameParts[5], 10, 64); err != nil {
-		return nil, fmt.Errorf(
-			"Priority %s cannot be converted to integer", nameParts[5],
-		)
-	} else {
-		if err := d.Set("priority", prio); err != nil {
-			return nil, fmt.Errorf("Error setting priority: %s", err)
-		}
-	}
+	d.SetId(id)
 
 	return []*schema.ResourceData{d}, nil
 }
