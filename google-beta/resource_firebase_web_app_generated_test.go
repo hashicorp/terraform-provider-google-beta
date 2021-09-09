@@ -36,9 +36,10 @@ func TestAccFirebaseWebApp_firebaseWebAppBasicExample(t *testing.T) {
 				Config: testAccFirebaseWebApp_firebaseWebAppBasicExample(context),
 			},
 			{
-				ResourceName:      "google_firebase_web_app.basic",
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            "google_firebase_web_app.basic",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"project"},
 			},
 		},
 	})
