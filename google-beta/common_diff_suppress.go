@@ -195,3 +195,8 @@ func compareIpAddressOrSelfLinkOrResourceName(_, old, new string, _ *schema.Reso
 	// otherwise compare as self links
 	return compareSelfLinkOrResourceName("", old, new, nil)
 }
+
+// Suppress all diffs, used for Disk.Interface which is a nonfunctional field
+func alwaysDiffSuppress(_, _, _ string, _ *schema.ResourceData) bool {
+	return true
+}
