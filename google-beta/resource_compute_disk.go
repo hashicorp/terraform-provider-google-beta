@@ -25,7 +25,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/customdiff"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"google.golang.org/api/googleapi"
 )
 
@@ -347,12 +346,13 @@ For instance, the image 'centos-6-v20180104' includes its family name 'centos-6'
 These images can be referred by family name here.`,
 			},
 			"interface": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				ForceNew:     true,
-				ValidateFunc: validation.StringInSlice([]string{"SCSI", "NVME", ""}, false),
-				Description:  `Specifies the disk interface to use for attaching this disk, which is either SCSI or NVME. The default is SCSI. Default value: "SCSI" Possible values: ["SCSI", "NVME"]`,
-				Default:      "SCSI",
+				Type:             schema.TypeString,
+				Optional:         true,
+				Deprecated:       "This field is no longer in use, disk interfaces will be automatically determined on attachment. To resolve this issue, remove this field from your config.",
+				ForceNew:         true,
+				DiffSuppressFunc: alwaysDiffSuppress,
+				Description:      `Specifies the disk interface to use for attaching this disk, which is either SCSI or NVME. The default is SCSI.`,
+				Default:          "SCSI",
 			},
 			"labels": {
 				Type:        schema.TypeMap,
@@ -646,12 +646,6 @@ func resourceComputeDiskCreate(d *schema.ResourceData, meta interface{}) error {
 	} else if v, ok := d.GetOkExists("physical_block_size_bytes"); !isEmptyValue(reflect.ValueOf(physicalBlockSizeBytesProp)) && (ok || !reflect.DeepEqual(v, physicalBlockSizeBytesProp)) {
 		obj["physicalBlockSizeBytes"] = physicalBlockSizeBytesProp
 	}
-	interfaceProp, err := expandComputeDiskInterface(d.Get("interface"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("interface"); !isEmptyValue(reflect.ValueOf(interfaceProp)) && (ok || !reflect.DeepEqual(v, interfaceProp)) {
-		obj["interface"] = interfaceProp
-	}
 	typeProp, err := expandComputeDiskType(d.Get("type"), d, config)
 	if err != nil {
 		return err
@@ -838,9 +832,6 @@ func resourceComputeDiskRead(d *schema.ResourceData, meta interface{}) error {
 		return fmt.Errorf("Error reading Disk: %s", err)
 	}
 	if err := d.Set("physical_block_size_bytes", flattenComputeDiskPhysicalBlockSizeBytes(res["physicalBlockSizeBytes"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Disk: %s", err)
-	}
-	if err := d.Set("interface", flattenComputeDiskInterface(res["interface"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Disk: %s", err)
 	}
 	if err := d.Set("type", flattenComputeDiskType(res["type"], d, config)); err != nil {
@@ -1172,14 +1163,6 @@ func flattenComputeDiskPhysicalBlockSizeBytes(v interface{}, d *schema.ResourceD
 	return v // let terraform core handle it otherwise
 }
 
-func flattenComputeDiskInterface(v interface{}, d *schema.ResourceData, config *Config) interface{} {
-	if v == nil || isEmptyValue(reflect.ValueOf(v)) {
-		return "SCSI"
-	}
-
-	return v
-}
-
 func flattenComputeDiskType(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	if v == nil {
 		return v
@@ -1374,10 +1357,6 @@ func expandComputeDiskSize(v interface{}, d TerraformResourceData, config *Confi
 }
 
 func expandComputeDiskPhysicalBlockSizeBytes(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
-	return v, nil
-}
-
-func expandComputeDiskInterface(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 

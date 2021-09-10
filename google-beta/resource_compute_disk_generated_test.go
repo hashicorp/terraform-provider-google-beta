@@ -42,7 +42,7 @@ func TestAccComputeDisk_diskBasicExample(t *testing.T) {
 				ResourceName:            "google_compute_disk.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"type", "zone", "snapshot"},
+				ImportStateVerifyIgnore: []string{"interface", "type", "zone", "snapshot"},
 			},
 		},
 	})
