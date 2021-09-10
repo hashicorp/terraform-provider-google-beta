@@ -1,4 +1,4 @@
-## 3.83.0 (Unreleased)
+## 3.84.0 (Unreleased)
 
 DEPRECATIONS:
 * compute: deprecated `interface` field on `google_compute_disk` and `google_compute_region_disk` ([#3611](https://github.com/hashicorp/terraform-provider-google-beta/pull/3611))
@@ -26,6 +26,26 @@ BUG FIXES:
 * redis: extended the default timeouts on `google_redis_instance` ([#3604](https://github.com/hashicorp/terraform-provider-google-beta/pull/3604))
 * serviceusage: fixed an issue in `google_project_service` where users could not reenable services that were disabled outside of Terraform. ([#3607](https://github.com/hashicorp/terraform-provider-google-beta/pull/3607))
 * storage: fixed a undetected change on `days_since_noncurrent_time` of `google_storage_bucket` ([#3599](https://github.com/hashicorp/terraform-provider-google-beta/pull/3599))
+
+## 3.83.0 (September 09, 2021)
+FEATURES:
+* **New Resource:** `google_privateca_certificate_template` ([#3561](https://github.com/hashicorp/terraform-provider-google-beta/pull/3561))
+
+IMPROVEMENTS:
+* privateca: added `certificate_template` to `google_privateca_certificate`. ([#3567](https://github.com/hashicorp/terraform-provider-google-beta/pull/3567))
+* compute: allowed setting `ip_address` field of `google_compute_router_peer` ([#3565](https://github.com/hashicorp/terraform-provider-google-beta/pull/3565))
+* dataproc: added field `metastore_config` to `google_dataproc_cluster` ([#3577](https://github.com/hashicorp/terraform-provider-google-beta/pull/3577))
+* kms: added support for `destroy_scheduled_duration` to `google_kms_crypto_key` ([#3563](https://github.com/hashicorp/terraform-provider-google-beta/pull/3563))
+
+BUG FIXES:
+* endpoints: fixed a timezone discrepancy in `config_id` on `google_endpoints_service` ([#3564](https://github.com/hashicorp/terraform-provider-google-beta/pull/3564))
+* cloudbuild: marked `google_cloudbuild_trigger` as requiring one of branch_name/tag_name/commit_sha  within build.source.repo_source ([#3582](https://github.com/hashicorp/terraform-provider-google-beta/pull/3582))
+* compute: fixed a crash on `enable` field of `google_compute_router_peer` ([#3579](https://github.com/hashicorp/terraform-provider-google-beta/pull/3579))
+* compute: fixed a permanent diff for `next_hop_instance_zone` on `google_compute_route` when `next_hop_instance` was set to a self link ([#3571](https://github.com/hashicorp/terraform-provider-google-beta/pull/3571))
+* compute: fixed an issue in `google_compute_router_nat` where removing `log_config` resulted in a perma-diff ([#3581](https://github.com/hashicorp/terraform-provider-google-beta/pull/3581))
+* privateca: fixed a permadiff bug for `publishing_options` on `google_privateca_ca_pool` when both attributes set false ([#3570](https://github.com/hashicorp/terraform-provider-google-beta/pull/3570))
+* spanner: fixed instance updates to processing units ([#3575](https://github.com/hashicorp/terraform-provider-google-beta/pull/3575))
+* storage: added support for timeouts on `google_storage_bucket_object` ([#3578](https://github.com/hashicorp/terraform-provider-google-beta/pull/3578))
 
 ## 3.82.0 (August 30, 2021)
 FEATURES:
