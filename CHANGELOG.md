@@ -12,7 +12,6 @@ IMPROVEMENTS:
 
 BUG FIXES:
 * container: fixed a bug in failing to remove `maintenance_exclusion` on `google_container_cluster` ([#3600](https://github.com/hashicorp/terraform-provider-google-beta/pull/3600))
-* cloudbuild: marked `google_cloudbuild_trigger` as requiring one of branch_name/tag_name/commit_sha  within `build.source.repo_source` ([#3582](https://github.com/hashicorp/terraform-provider-google-beta/pull/3582))
 * compute: fixed `advanced_machine_features` error messages in `google_compute_instance` ([#3598](https://github.com/hashicorp/terraform-provider-google-beta/pull/3598))
 * eventarc: fixed bug where resources deleted outside of Terraform would cause errors ([#3590](https://github.com/hashicorp/terraform-provider-google-beta/pull/3590))
 * functions: fixed an error message on `google_cloudfunctions_function` ([#3591](https://github.com/hashicorp/terraform-provider-google-beta/pull/3591))
