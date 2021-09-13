@@ -8,12 +8,7 @@ FEATURES:
 
 IMPROVEMENTS:
 * compute: added update support to `google_compute_service_attachment` ([#3587](https://github.com/hashicorp/terraform-provider-google-beta/pull/3587))
-* compute: added `iap` fields to `google_compute_region_backend_service` ([#3605](https://github.com/hashicorp/terraform-provider-google-beta/pull/3605))
-* compute: allow passing an IP address to the `next_hop_ilb` field of `google_compute_route` resource ([#3609](https://github.com/hashicorp/terraform-provider-google-beta/pull/3609))
-* container: added field `dns_config` to resource `google_container_cluster` ([#3606](https://github.com/hashicorp/terraform-provider-google-beta/pull/3606))
 * filestore: added `connect_mode` to `networks` field in `google_filestore_instance` ([#3595](https://github.com/hashicorp/terraform-provider-google-beta/pull/3595))
-* iam: added `disabled` field to `google_service_account` resource ([#3603](https://github.com/hashicorp/terraform-provider-google-beta/pull/3603))
-* storage: added field `path` to `google_storage_transfer_job` ([#3608](https://github.com/hashicorp/terraform-provider-google-beta/pull/3608))
 
 BUG FIXES:
 * container: fixed a bug in failing to remove `maintenance_exclusion` on `google_container_cluster` ([#3600](https://github.com/hashicorp/terraform-provider-google-beta/pull/3600))
@@ -22,10 +17,8 @@ BUG FIXES:
 * eventarc: fixed bug where resources deleted outside of Terraform would cause errors ([#3590](https://github.com/hashicorp/terraform-provider-google-beta/pull/3590))
 * functions: fixed a error message on `google_cloudfunctions_function` ([#3591](https://github.com/hashicorp/terraform-provider-google-beta/pull/3591))
 * logging: fixed the data type for `bucket_options.linear_buckets.width` on `google_logging_metric` ([#3589](https://github.com/hashicorp/terraform-provider-google-beta/pull/3589))
-* osconfig: fixed import on `google_os_config_guest_policies` ([#3594](https://github.com/hashicorp/terraform-provider-google-beta/pull/3594))
-* redis: extended the default timeouts on `google_redis_instance` ([#3604](https://github.com/hashicorp/terraform-provider-google-beta/pull/3604))
-* serviceusage: fixed an issue in `google_project_service` where users could not reenable services that were disabled outside of Terraform. ([#3607](https://github.com/hashicorp/terraform-provider-google-beta/pull/3607))
-* storage: fixed a undetected change on `days_since_noncurrent_time` of `google_storage_bucket` ([#3599](https://github.com/hashicorp/terraform-provider-google-beta/pull/3599))
+* osconfig: fixed import on google_os_config_guest_policies ([#3594](https://github.com/hashicorp/terraform-provider-google-beta/pull/3594))
+* storage: fixed an undetected change on `days_since_noncurrent_time` of `google_storage_bucket` ([#3599](https://github.com/hashicorp/terraform-provider-google-beta/pull/3599))
 
 ## 3.83.0 (September 09, 2021)
 FEATURES:
