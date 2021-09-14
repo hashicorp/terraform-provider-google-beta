@@ -37,6 +37,10 @@ func TestAccIapWebTypeAppEngineIamBindingGenerated(t *testing.T) {
 	vcrTest(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
 		Providers: testAccProviders,
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"random": {},
+			"time":   {},
+		},
 		Steps: []resource.TestStep{
 			{
 				Config: testAccIapWebTypeAppEngineIamBinding_basicGenerated(context),
@@ -77,6 +81,10 @@ func TestAccIapWebTypeAppEngineIamMemberGenerated(t *testing.T) {
 	vcrTest(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
 		Providers: testAccProviders,
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"random": {},
+			"time":   {},
+		},
 		Steps: []resource.TestStep{
 			{
 				// Test Iam Member creation (no update for member, no need to test)
@@ -108,6 +116,10 @@ func TestAccIapWebTypeAppEngineIamPolicyGenerated(t *testing.T) {
 	vcrTest(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
 		Providers: testAccProviders,
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"random": {},
+			"time":   {},
+		},
 		Steps: []resource.TestStep{
 			{
 				Config: testAccIapWebTypeAppEngineIamPolicy_basicGenerated(context),
@@ -147,6 +159,10 @@ func TestAccIapWebTypeAppEngineIamBindingGenerated_withCondition(t *testing.T) {
 	vcrTest(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
 		Providers: testAccProviders,
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"random": {},
+			"time":   {},
+		},
 		Steps: []resource.TestStep{
 			{
 				Config: testAccIapWebTypeAppEngineIamBinding_withConditionGenerated(context),
@@ -179,6 +195,10 @@ func TestAccIapWebTypeAppEngineIamBindingGenerated_withAndWithoutCondition(t *te
 	vcrTest(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
 		Providers: testAccProviders,
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"random": {},
+			"time":   {},
+		},
 		Steps: []resource.TestStep{
 			{
 				Config: testAccIapWebTypeAppEngineIamBinding_withAndWithoutConditionGenerated(context),
@@ -215,6 +235,10 @@ func TestAccIapWebTypeAppEngineIamMemberGenerated_withCondition(t *testing.T) {
 	vcrTest(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
 		Providers: testAccProviders,
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"random": {},
+			"time":   {},
+		},
 		Steps: []resource.TestStep{
 			{
 				Config: testAccIapWebTypeAppEngineIamMember_withConditionGenerated(context),
@@ -247,6 +271,10 @@ func TestAccIapWebTypeAppEngineIamMemberGenerated_withAndWithoutCondition(t *tes
 	vcrTest(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
 		Providers: testAccProviders,
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"random": {},
+			"time":   {},
+		},
 		Steps: []resource.TestStep{
 			{
 				Config: testAccIapWebTypeAppEngineIamMember_withAndWithoutConditionGenerated(context),
@@ -283,6 +311,10 @@ func TestAccIapWebTypeAppEngineIamPolicyGenerated_withCondition(t *testing.T) {
 	vcrTest(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
 		Providers: testAccProviders,
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"random": {},
+			"time":   {},
+		},
 		Steps: []resource.TestStep{
 			{
 				Config: testAccIapWebTypeAppEngineIamPolicy_withConditionGenerated(context),
@@ -299,16 +331,26 @@ func TestAccIapWebTypeAppEngineIamPolicyGenerated_withCondition(t *testing.T) {
 
 func testAccIapWebTypeAppEngineIamMember_basicGenerated(context map[string]interface{}) string {
 	return Nprintf(`
-resource "google_project" "my_project" {
+resource "google_project" "project" {
   name       = "%{project_id}"
   project_id = "%{project_id}"
   org_id     = "%{org_id}"
 }
 
-resource "google_project_service" "project_service" {
-  project = google_project.my_project.project_id
-  service = "iap.googleapis.com"
+resource "time_sleep" "wait_60_seconds" {
+  depends_on = [google_project.project]
+
+  create_duration = "60s"
 }
+
+resource "google_project_service" "project_service" {
+  project = google_project.project.project_id
+  service = "iap.googleapis.com"
+
+  # Needed for CI tests for permissions to propagate, should not be needed for actual usage
+  depends_on = [time_sleep.wait_60_seconds]
+}
+
 
 resource "google_app_engine_application" "app" {
   project     = google_project_service.project_service.project
@@ -326,16 +368,26 @@ resource "google_iap_web_type_app_engine_iam_member" "foo" {
 
 func testAccIapWebTypeAppEngineIamPolicy_basicGenerated(context map[string]interface{}) string {
 	return Nprintf(`
-resource "google_project" "my_project" {
+resource "google_project" "project" {
   name       = "%{project_id}"
   project_id = "%{project_id}"
   org_id     = "%{org_id}"
 }
 
-resource "google_project_service" "project_service" {
-  project = google_project.my_project.project_id
-  service = "iap.googleapis.com"
+resource "time_sleep" "wait_60_seconds" {
+  depends_on = [google_project.project]
+
+  create_duration = "60s"
 }
+
+resource "google_project_service" "project_service" {
+  project = google_project.project.project_id
+  service = "iap.googleapis.com"
+
+  # Needed for CI tests for permissions to propagate, should not be needed for actual usage
+  depends_on = [time_sleep.wait_60_seconds]
+}
+
 
 resource "google_app_engine_application" "app" {
   project     = google_project_service.project_service.project
@@ -359,16 +411,26 @@ resource "google_iap_web_type_app_engine_iam_policy" "foo" {
 
 func testAccIapWebTypeAppEngineIamPolicy_emptyBinding(context map[string]interface{}) string {
 	return Nprintf(`
-resource "google_project" "my_project" {
+resource "google_project" "project" {
   name       = "%{project_id}"
   project_id = "%{project_id}"
   org_id     = "%{org_id}"
 }
 
-resource "google_project_service" "project_service" {
-  project = google_project.my_project.project_id
-  service = "iap.googleapis.com"
+resource "time_sleep" "wait_60_seconds" {
+  depends_on = [google_project.project]
+
+  create_duration = "60s"
 }
+
+resource "google_project_service" "project_service" {
+  project = google_project.project.project_id
+  service = "iap.googleapis.com"
+
+  # Needed for CI tests for permissions to propagate, should not be needed for actual usage
+  depends_on = [time_sleep.wait_60_seconds]
+}
+
 
 resource "google_app_engine_application" "app" {
   project     = google_project_service.project_service.project
@@ -388,16 +450,26 @@ resource "google_iap_web_type_app_engine_iam_policy" "foo" {
 
 func testAccIapWebTypeAppEngineIamBinding_basicGenerated(context map[string]interface{}) string {
 	return Nprintf(`
-resource "google_project" "my_project" {
+resource "google_project" "project" {
   name       = "%{project_id}"
   project_id = "%{project_id}"
   org_id     = "%{org_id}"
 }
 
-resource "google_project_service" "project_service" {
-  project = google_project.my_project.project_id
-  service = "iap.googleapis.com"
+resource "time_sleep" "wait_60_seconds" {
+  depends_on = [google_project.project]
+
+  create_duration = "60s"
 }
+
+resource "google_project_service" "project_service" {
+  project = google_project.project.project_id
+  service = "iap.googleapis.com"
+
+  # Needed for CI tests for permissions to propagate, should not be needed for actual usage
+  depends_on = [time_sleep.wait_60_seconds]
+}
+
 
 resource "google_app_engine_application" "app" {
   project     = google_project_service.project_service.project
@@ -415,16 +487,26 @@ resource "google_iap_web_type_app_engine_iam_binding" "foo" {
 
 func testAccIapWebTypeAppEngineIamBinding_updateGenerated(context map[string]interface{}) string {
 	return Nprintf(`
-resource "google_project" "my_project" {
+resource "google_project" "project" {
   name       = "%{project_id}"
   project_id = "%{project_id}"
   org_id     = "%{org_id}"
 }
 
-resource "google_project_service" "project_service" {
-  project = google_project.my_project.project_id
-  service = "iap.googleapis.com"
+resource "time_sleep" "wait_60_seconds" {
+  depends_on = [google_project.project]
+
+  create_duration = "60s"
 }
+
+resource "google_project_service" "project_service" {
+  project = google_project.project.project_id
+  service = "iap.googleapis.com"
+
+  # Needed for CI tests for permissions to propagate, should not be needed for actual usage
+  depends_on = [time_sleep.wait_60_seconds]
+}
+
 
 resource "google_app_engine_application" "app" {
   project     = google_project_service.project_service.project
@@ -442,16 +524,26 @@ resource "google_iap_web_type_app_engine_iam_binding" "foo" {
 
 func testAccIapWebTypeAppEngineIamBinding_withConditionGenerated(context map[string]interface{}) string {
 	return Nprintf(`
-resource "google_project" "my_project" {
+resource "google_project" "project" {
   name       = "%{project_id}"
   project_id = "%{project_id}"
   org_id     = "%{org_id}"
 }
 
-resource "google_project_service" "project_service" {
-  project = google_project.my_project.project_id
-  service = "iap.googleapis.com"
+resource "time_sleep" "wait_60_seconds" {
+  depends_on = [google_project.project]
+
+  create_duration = "60s"
 }
+
+resource "google_project_service" "project_service" {
+  project = google_project.project.project_id
+  service = "iap.googleapis.com"
+
+  # Needed for CI tests for permissions to propagate, should not be needed for actual usage
+  depends_on = [time_sleep.wait_60_seconds]
+}
+
 
 resource "google_app_engine_application" "app" {
   project     = google_project_service.project_service.project
@@ -474,16 +566,26 @@ resource "google_iap_web_type_app_engine_iam_binding" "foo" {
 
 func testAccIapWebTypeAppEngineIamBinding_withAndWithoutConditionGenerated(context map[string]interface{}) string {
 	return Nprintf(`
-resource "google_project" "my_project" {
+resource "google_project" "project" {
   name       = "%{project_id}"
   project_id = "%{project_id}"
   org_id     = "%{org_id}"
 }
 
-resource "google_project_service" "project_service" {
-  project = google_project.my_project.project_id
-  service = "iap.googleapis.com"
+resource "time_sleep" "wait_60_seconds" {
+  depends_on = [google_project.project]
+
+  create_duration = "60s"
 }
+
+resource "google_project_service" "project_service" {
+  project = google_project.project.project_id
+  service = "iap.googleapis.com"
+
+  # Needed for CI tests for permissions to propagate, should not be needed for actual usage
+  depends_on = [time_sleep.wait_60_seconds]
+}
+
 
 resource "google_app_engine_application" "app" {
   project     = google_project_service.project_service.project
@@ -513,16 +615,26 @@ resource "google_iap_web_type_app_engine_iam_binding" "foo2" {
 
 func testAccIapWebTypeAppEngineIamMember_withConditionGenerated(context map[string]interface{}) string {
 	return Nprintf(`
-resource "google_project" "my_project" {
+resource "google_project" "project" {
   name       = "%{project_id}"
   project_id = "%{project_id}"
   org_id     = "%{org_id}"
 }
 
-resource "google_project_service" "project_service" {
-  project = google_project.my_project.project_id
-  service = "iap.googleapis.com"
+resource "time_sleep" "wait_60_seconds" {
+  depends_on = [google_project.project]
+
+  create_duration = "60s"
 }
+
+resource "google_project_service" "project_service" {
+  project = google_project.project.project_id
+  service = "iap.googleapis.com"
+
+  # Needed for CI tests for permissions to propagate, should not be needed for actual usage
+  depends_on = [time_sleep.wait_60_seconds]
+}
+
 
 resource "google_app_engine_application" "app" {
   project     = google_project_service.project_service.project
@@ -545,16 +657,26 @@ resource "google_iap_web_type_app_engine_iam_member" "foo" {
 
 func testAccIapWebTypeAppEngineIamMember_withAndWithoutConditionGenerated(context map[string]interface{}) string {
 	return Nprintf(`
-resource "google_project" "my_project" {
+resource "google_project" "project" {
   name       = "%{project_id}"
   project_id = "%{project_id}"
   org_id     = "%{org_id}"
 }
 
-resource "google_project_service" "project_service" {
-  project = google_project.my_project.project_id
-  service = "iap.googleapis.com"
+resource "time_sleep" "wait_60_seconds" {
+  depends_on = [google_project.project]
+
+  create_duration = "60s"
 }
+
+resource "google_project_service" "project_service" {
+  project = google_project.project.project_id
+  service = "iap.googleapis.com"
+
+  # Needed for CI tests for permissions to propagate, should not be needed for actual usage
+  depends_on = [time_sleep.wait_60_seconds]
+}
+
 
 resource "google_app_engine_application" "app" {
   project     = google_project_service.project_service.project
@@ -584,16 +706,26 @@ resource "google_iap_web_type_app_engine_iam_member" "foo2" {
 
 func testAccIapWebTypeAppEngineIamPolicy_withConditionGenerated(context map[string]interface{}) string {
 	return Nprintf(`
-resource "google_project" "my_project" {
+resource "google_project" "project" {
   name       = "%{project_id}"
   project_id = "%{project_id}"
   org_id     = "%{org_id}"
 }
 
-resource "google_project_service" "project_service" {
-  project = google_project.my_project.project_id
-  service = "iap.googleapis.com"
+resource "time_sleep" "wait_60_seconds" {
+  depends_on = [google_project.project]
+
+  create_duration = "60s"
 }
+
+resource "google_project_service" "project_service" {
+  project = google_project.project.project_id
+  service = "iap.googleapis.com"
+
+  # Needed for CI tests for permissions to propagate, should not be needed for actual usage
+  depends_on = [time_sleep.wait_60_seconds]
+}
+
 
 resource "google_app_engine_application" "app" {
   project     = google_project_service.project_service.project
