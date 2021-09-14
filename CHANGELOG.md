@@ -1,4 +1,25 @@
-## 3.84.0 (Unreleased)
+## 3.85.0 (Unreleased)
+
+## 3.84.0 (September 13, 2021)
+DEPRECATIONS:
+* compute: deprecated `interface` field on `google_compute_disk` and `google_compute_region_disk` ([#3611](https://github.com/hashicorp/terraform-provider-google-beta/pull/3611))
+
+FEATURES:
+* **New Data Source:** `google_secret_manager_secret` ([#3588](https://github.com/hashicorp/terraform-provider-google-beta/pull/3588))
+
+IMPROVEMENTS:
+* compute: added update support to `google_compute_service_attachment` ([#3587](https://github.com/hashicorp/terraform-provider-google-beta/pull/3587))
+* filestore: added `connect_mode` to `networks` field in `google_filestore_instance` ([#3595](https://github.com/hashicorp/terraform-provider-google-beta/pull/3595))
+
+BUG FIXES:
+* container: fixed a bug in failing to remove `maintenance_exclusion` on `google_container_cluster` ([#3600](https://github.com/hashicorp/terraform-provider-google-beta/pull/3600))
+* compute: fixed `advanced_machine_features` error messages in `google_compute_instance` ([#3598](https://github.com/hashicorp/terraform-provider-google-beta/pull/3598))
+* eventarc: fixed bug where resources deleted outside of Terraform would cause errors ([#3590](https://github.com/hashicorp/terraform-provider-google-beta/pull/3590))
+* functions: fixed an error message on `google_cloudfunctions_function` ([#3591](https://github.com/hashicorp/terraform-provider-google-beta/pull/3591))
+* logging: fixed the data type for `bucket_options.linear_buckets.width` on `google_logging_metric` ([#3589](https://github.com/hashicorp/terraform-provider-google-beta/pull/3589))
+* osconfig: fixed import on google_os_config_guest_policies ([#3594](https://github.com/hashicorp/terraform-provider-google-beta/pull/3594))
+* storage: fixed an undetected change on `days_since_noncurrent_time` of `google_storage_bucket` ([#3599](https://github.com/hashicorp/terraform-provider-google-beta/pull/3599))
+
 
 ## 3.83.0 (September 09, 2021)
 FEATURES:
