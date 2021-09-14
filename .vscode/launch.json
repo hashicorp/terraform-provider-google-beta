@@ -1,0 +1,21 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug sweeper",
+      "type": "go",
+      "request": "launch",
+      "mode": "test",
+      "program": "${workspaceFolder}/google-beta",
+      "go.testFlags": [
+        "-ldflags", "-X=github.com/hashicorp/terraform-provider-google-beta/version.ProviderVersion=acc\""
+      ],
+      "args": [
+        "-sweep=us-central1",
+        "-sweep-run=ComputeFirewall",
+        "-test.v",
+        "-test.timeout=240m",
+      ]
+    }
+  ]
+}
