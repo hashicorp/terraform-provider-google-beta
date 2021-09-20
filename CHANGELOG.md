@@ -1,4 +1,23 @@
+## 3.86.0 (Unreleased)
+
 ## 3.85.0 (Unreleased)
+DEPRECATIONS:
+* compute: deprecated `interface` field on `google_compute_disk` and `google_compute_region_disk` ([#3611](https://github.com/hashicorp/terraform-provider-google-beta/pull/3611))
+
+IMPROVEMENTS:
+* bigtable: enabled support for `user_project_override` in `google_bigtable_instance` and `google_bigtable_table` ([#3614](https://github.com/hashicorp/terraform-provider-google-beta/pull/3614))
+* compute: added `iap` fields to `google_compute_region_backend_service` ([#3605](https://github.com/hashicorp/terraform-provider-google-beta/pull/3605))
+* compute: allowed passing an IP address to the `nextHopIlb` field of `google_compute_route` resource ([#3609](https://github.com/hashicorp/terraform-provider-google-beta/pull/3609))
+* container: added field `dns_config` to resource `google_container_cluster` ([#3606](https://github.com/hashicorp/terraform-provider-google-beta/pull/3606))
+* iam: added `disabled` field to `google_service_account` resource ([#3603](https://github.com/hashicorp/terraform-provider-google-beta/pull/3603))
+* provider: added links to nested types documentation within a resource ([#3615](https://github.com/hashicorp/terraform-provider-google-beta/pull/3615))
+* storage: added field `path` to `google_storage_transfer_job` ([#3608](https://github.com/hashicorp/terraform-provider-google-beta/pull/3608))
+
+BUG FIXES:
+* appengine: fixed bug where `deployment.container.image` would update to an old version even if in `ignore_changes` ([#3613](https://github.com/hashicorp/terraform-provider-google-beta/pull/3613))
+* bigquery: fixed a bug where `destination_encryption_config.kms_key_name` stored the version rather than the key name. ([#3616](https://github.com/hashicorp/terraform-provider-google-beta/pull/3616))
+* redis: extended the default timeouts on `google_redis_instance` ([#3604](https://github.com/hashicorp/terraform-provider-google-beta/pull/3604))
+* serviceusage: fixed an issue in `google_project_service` where users could not reenable services that were disabled outside of Terraform. ([#3607](https://github.com/hashicorp/terraform-provider-google-beta/pull/3607))
 
 ## 3.84.0 (September 13, 2021)
 DEPRECATIONS:
