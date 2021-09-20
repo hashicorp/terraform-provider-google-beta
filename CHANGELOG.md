@@ -1,6 +1,6 @@
 ## 3.86.0 (Unreleased)
 
-## 3.85.0 (Unreleased)
+## 3.85.0 (September 20, 2021)
 DEPRECATIONS:
 * compute: deprecated `interface` field on `google_compute_disk` and `google_compute_region_disk` ([#3611](https://github.com/hashicorp/terraform-provider-google-beta/pull/3611))
 
