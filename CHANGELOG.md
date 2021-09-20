@@ -1,18 +1,16 @@
 ## 3.86.0 (Unreleased)
 
 ## 3.85.0 (Unreleased)
-UNKNOWN CHANGELOG TYPE:
-* ignore .vscode folder in .gitignore ([#3619](https://github.com/hashicorp/terraform-provider-google-beta/pull/3619))
 DEPRECATIONS:
-* compute: deprecated `interface` field on `google_compute_disk` and `google_compute_region_disk` (beta only) ([#3611](https://github.com/hashicorp/terraform-provider-google-beta/pull/3611))
+* compute: deprecated `interface` field on `google_compute_disk` and `google_compute_region_disk` ([#3611](https://github.com/hashicorp/terraform-provider-google-beta/pull/3611))
 
 IMPROVEMENTS:
 * bigtable: enabled support for `user_project_override` in `google_bigtable_instance` and `google_bigtable_table` ([#3614](https://github.com/hashicorp/terraform-provider-google-beta/pull/3614))
 * compute: added `iap` fields to `google_compute_region_backend_service` ([#3605](https://github.com/hashicorp/terraform-provider-google-beta/pull/3605))
-* compute: allow passing an IP address to the `nextHopIlb` field of `google_compute_route` resource ([#3609](https://github.com/hashicorp/terraform-provider-google-beta/pull/3609))
-* container: added field `dns_config` to resource `google_container_cluster` (beta) ([#3606](https://github.com/hashicorp/terraform-provider-google-beta/pull/3606))
+* compute: allowed passing an IP address to the `nextHopIlb` field of `google_compute_route` resource ([#3609](https://github.com/hashicorp/terraform-provider-google-beta/pull/3609))
+* container: added field `dns_config` to resource `google_container_cluster` ([#3606](https://github.com/hashicorp/terraform-provider-google-beta/pull/3606))
 * iam: added `disabled` field to `google_service_account` resource ([#3603](https://github.com/hashicorp/terraform-provider-google-beta/pull/3603))
-* provider: Added links to nested types documentation within a resource ([#3615](https://github.com/hashicorp/terraform-provider-google-beta/pull/3615))
+* provider: added links to nested types documentation within a resource ([#3615](https://github.com/hashicorp/terraform-provider-google-beta/pull/3615))
 * storage: added field `path` to `google_storage_transfer_job` ([#3608](https://github.com/hashicorp/terraform-provider-google-beta/pull/3608))
 
 BUG FIXES:
