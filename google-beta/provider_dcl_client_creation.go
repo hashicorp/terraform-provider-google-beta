@@ -25,7 +25,6 @@ import (
 	dataproc "github.com/GoogleCloudPlatform/declarative-resource-client-library/services/google/dataproc/beta"
 	eventarc "github.com/GoogleCloudPlatform/declarative-resource-client-library/services/google/eventarc/beta"
 	gkehub "github.com/GoogleCloudPlatform/declarative-resource-client-library/services/google/gkehub/beta"
-	monitoring "github.com/GoogleCloudPlatform/declarative-resource-client-library/services/google/monitoring/beta"
 	orgpolicy "github.com/GoogleCloudPlatform/declarative-resource-client-library/services/google/orgpolicy/beta"
 	privateca "github.com/GoogleCloudPlatform/declarative-resource-client-library/services/google/privateca/beta"
 )
@@ -161,25 +160,6 @@ func NewDCLGkeHubClient(config *Config, userAgent, billingProject string) *gkehu
 
 	dclConfig := dcl.NewConfig(configOptions...)
 	return gkehub.NewClient(dclConfig)
-}
-
-func NewDCLMonitoringClient(config *Config, userAgent, billingProject string) *monitoring.Client {
-	configOptions := []dcl.ConfigOption{
-		dcl.WithHTTPClient(config.client),
-		dcl.WithUserAgent(userAgent),
-		dcl.WithLogger(dclLogger{}),
-		dcl.WithBasePath(config.MonitoringBasePath),
-	}
-
-	if config.UserProjectOverride {
-		configOptions = append(configOptions, dcl.WithUserProjectOverride())
-		if billingProject != "" {
-			configOptions = append(configOptions, dcl.WithBillingProject(billingProject))
-		}
-	}
-
-	dclConfig := dcl.NewConfig(configOptions...)
-	return monitoring.NewClient(dclConfig)
 }
 
 func NewDCLOrgPolicyClient(config *Config, userAgent, billingProject string) *orgpolicy.Client {

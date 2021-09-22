@@ -30,8 +30,10 @@ func init() {
 		F:    testSweepCloudbuildWorker_pool,
 	})
 }
+
 func testSweepCloudbuildWorker_pool(region string) error {
-	log.Print("[INFO][SWEEPER_LOG] Starting sweeper for CloudbuildWorker_pool")
+	resourceName := "CloudbuildWorker_pool"
+	log.Printf("[INFO][SWEEPER_LOG] Starting sweeper for %s", resourceName)
 
 	config, err := sharedConfigForRegion(region)
 	if err != nil {
