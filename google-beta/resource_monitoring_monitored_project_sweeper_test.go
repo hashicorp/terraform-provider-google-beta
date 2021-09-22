@@ -20,18 +20,18 @@ import (
 	"log"
 	"testing"
 
-	dataproc "github.com/GoogleCloudPlatform/declarative-resource-client-library/services/google/dataproc/beta"
+	monitoring "github.com/GoogleCloudPlatform/declarative-resource-client-library/services/google/monitoring/beta"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
 func init() {
-	resource.AddTestSweepers("DataprocWorkflow_template", &resource.Sweeper{
-		Name: "DataprocWorkflow_template",
-		F:    testSweepDataprocWorkflow_template,
+	resource.AddTestSweepers("MonitoringMonitored_project", &resource.Sweeper{
+		Name: "MonitoringMonitored_project",
+		F:    testSweepMonitoringMonitored_project,
 	})
 }
-func testSweepDataprocWorkflow_template(region string) error {
-	log.Print("[INFO][SWEEPER_LOG] Starting sweeper for DataprocWorkflow_template")
+func testSweepMonitoringMonitored_project(region string) error {
+	log.Print("[INFO][SWEEPER_LOG] Starting sweeper for MonitoringMonitored_project")
 
 	config, err := sharedConfigForRegion(region)
 	if err != nil {
@@ -57,14 +57,14 @@ func testSweepDataprocWorkflow_template(region string) error {
 		"billing_account": billingId,
 	}
 
-	client := NewDCLDataprocClient(config, config.userAgent, "")
-	err = client.DeleteAllWorkflowTemplate(context.Background(), d["project"], d["location"], isDeletableDataprocWorkflow_template)
+	client := NewDCLMonitoringClient(config, config.userAgent, "")
+	err = client.DeleteAllMonitoredProject(context.Background(), d["metricsscope"], isDeletableMonitoringMonitored_project)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func isDeletableDataprocWorkflow_template(r *dataproc.WorkflowTemplate) bool {
+func isDeletableMonitoringMonitored_project(r *monitoring.MonitoredProject) bool {
 	return isSweepableTestResource(*r.Name)
 }
