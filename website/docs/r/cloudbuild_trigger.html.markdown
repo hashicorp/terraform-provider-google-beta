@@ -154,6 +154,14 @@ The following arguments are supported:
   (Optional)
   Substitutions data for Build resource.
 
+* `service_account` -
+  (Optional)
+  The service account used for all user-controlled operations including
+  triggers.patch, triggers.run, builds.create, and builds.cancel.
+  If no service account is set, then the standard Cloud Build service account
+  ([PROJECT_NUM]@system.gserviceaccount.com) will be used instead.
+  Format: projects/{PROJECT_ID}/serviceAccounts/{ACCOUNT_ID_OR_EMAIL}
+
 * `filename` -
   (Optional)
   Path, from the source root, to a file whose contents is used for the template. Either a filename or build template must be provided.
