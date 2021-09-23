@@ -163,6 +163,7 @@ DIRECT_PEERING. Default value: "DIRECT_PEERING" Possible values: ["DIRECT_PEERIN
 							Type:     schema.TypeString,
 							Computed: true,
 							Optional: true,
+							ForceNew: true,
 							Description: `A /29 CIDR block that identifies the range of IP
 addresses reserved for this instance.`,
 						},
