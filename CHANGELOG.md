@@ -1,4 +1,4 @@
-## 3.86.0 (Unreleased)
+## 3.86.0 (September 27, 2021)
 
 BUG FIXES:
 * dns: fixed an issue in `google_dns_record_set` where `rrdatas` could not be updated ([#3625](https://github.com/hashicorp/terraform-provider-google-beta/pull/3625))
