@@ -1,4 +1,11 @@
-## 3.86.0 (Unreleased)
+## 3.87.0 (Unreleased)
+
+## 3.86.0 (September 27, 2021)
+
+BUG FIXES:
+* dns: fixed an issue in `google_dns_record_set` where `rrdatas` could not be updated ([#3625](https://github.com/hashicorp/terraform-provider-google-beta/pull/3625))
+* dns: fixed an issue in `google_dns_record_set` where creating the resource would result in an 409 error ([#3625](https://github.com/hashicorp/terraform-provider-google-beta/pull/3625))
+* platform: fixed a bug in wrongly writing to state when creation failed on `google_organization_policy` ([#3624](https://github.com/hashicorp/terraform-provider-google-beta/pull/3624))
 
 ## 3.85.0 (September 20, 2021)
 DEPRECATIONS:
