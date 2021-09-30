@@ -303,6 +303,7 @@ func testAccCheckEventarcTriggerDestroyProducer(t *testing.T) func(s *terraform.
 				ServiceAccount: dcl.String(rs.Primary.Attributes["service_account"]),
 				CreateTime:     dcl.StringOrNil(rs.Primary.Attributes["create_time"]),
 				Etag:           dcl.StringOrNil(rs.Primary.Attributes["etag"]),
+				Uid:            dcl.StringOrNil(rs.Primary.Attributes["uid"]),
 				UpdateTime:     dcl.StringOrNil(rs.Primary.Attributes["update_time"]),
 			}
 
