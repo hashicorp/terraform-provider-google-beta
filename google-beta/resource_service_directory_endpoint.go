@@ -55,6 +55,7 @@ lowercase letters or the hyphen character.`,
 			"service": {
 				Type:        schema.TypeString,
 				Required:    true,
+				ForceNew:    true,
 				Description: `The resource name of the service that this endpoint provides.`,
 			},
 			"address": {
