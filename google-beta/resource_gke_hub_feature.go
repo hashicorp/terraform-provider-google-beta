@@ -95,6 +95,20 @@ func resourceGkeHubFeature() *schema.Resource {
 				Description: "Output only. When the Feature resource was deleted.",
 			},
 
+			"resource_state": {
+				Type:        schema.TypeList,
+				Computed:    true,
+				Description: "State of the Feature resource itself.",
+				Elem:        GkeHubFeatureResourceStateSchema(),
+			},
+
+			"state": {
+				Type:        schema.TypeList,
+				Computed:    true,
+				Description: "Output only. The Hub-wide Feature state",
+				Elem:        GkeHubFeatureStateSchema(),
+			},
+
 			"update_time": {
 				Type:        schema.TypeString,
 				Computed:    true,
@@ -123,9 +137,64 @@ func GkeHubFeatureSpecMulticlusteringressSchema() *schema.Resource {
 		Schema: map[string]*schema.Schema{
 			"config_membership": {
 				Type:             schema.TypeString,
-				Optional:         true,
+				Required:         true,
 				DiffSuppressFunc: compareSelfLinkOrResourceName,
 				Description:      "Fully-qualified Membership name which hosts the MultiClusterIngress CRD. Example: `projects/foo-proj/locations/global/memberships/bar`",
+			},
+		},
+	}
+}
+
+func GkeHubFeatureResourceStateSchema() *schema.Resource {
+	return &schema.Resource{
+		Schema: map[string]*schema.Schema{
+			"has_resources": {
+				Type:        schema.TypeBool,
+				Computed:    true,
+				Description: "Whether this Feature has outstanding resources that need to be cleaned up before it can be disabled.",
+			},
+
+			"state": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "The current state of the Feature resource in the Hub API. Possible values: STATE_UNSPECIFIED, ENABLING, ACTIVE, DISABLING, UPDATING, SERVICE_UPDATING",
+			},
+		},
+	}
+}
+
+func GkeHubFeatureStateSchema() *schema.Resource {
+	return &schema.Resource{
+		Schema: map[string]*schema.Schema{
+			"state": {
+				Type:        schema.TypeList,
+				Computed:    true,
+				Description: "Output only. The \"running state\" of the Feature in this Hub.",
+				Elem:        GkeHubFeatureStateStateSchema(),
+			},
+		},
+	}
+}
+
+func GkeHubFeatureStateStateSchema() *schema.Resource {
+	return &schema.Resource{
+		Schema: map[string]*schema.Schema{
+			"code": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "The high-level, machine-readable status of this Feature. Possible values: CODE_UNSPECIFIED, OK, WARNING, ERROR",
+			},
+
+			"description": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "A human-readable description of the current status.",
+			},
+
+			"update_time": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "The time this status and any related Feature-specific details were updated. A timestamp in RFC3339 UTC \"Zulu\" format, with nanosecond resolution and up to nine fractional digits. Examples: \"2014-10-02T15:01:23Z\" and \"2014-10-02T15:01:23.045123456Z\"",
 			},
 		},
 	}
@@ -234,6 +303,12 @@ func resourceGkeHubFeatureRead(d *schema.ResourceData, meta interface{}) error {
 	}
 	if err = d.Set("delete_time", res.DeleteTime); err != nil {
 		return fmt.Errorf("error setting delete_time in state: %s", err)
+	}
+	if err = d.Set("resource_state", flattenGkeHubFeatureResourceState(res.ResourceState)); err != nil {
+		return fmt.Errorf("error setting resource_state in state: %s", err)
+	}
+	if err = d.Set("state", flattenGkeHubFeatureState(res.State)); err != nil {
+		return fmt.Errorf("error setting state in state: %s", err)
 	}
 	if err = d.Set("update_time", res.UpdateTime); err != nil {
 		return fmt.Errorf("error setting update_time in state: %s", err)
@@ -395,6 +470,45 @@ func flattenGkeHubFeatureSpecMulticlusteringress(obj *gkehub.FeatureSpecMulticlu
 	}
 	transformed := map[string]interface{}{
 		"config_membership": obj.ConfigMembership,
+	}
+
+	return []interface{}{transformed}
+
+}
+
+func flattenGkeHubFeatureResourceState(obj *gkehub.FeatureResourceState) interface{} {
+	if obj == nil || obj.Empty() {
+		return nil
+	}
+	transformed := map[string]interface{}{
+		"has_resources": obj.HasResources,
+		"state":         obj.State,
+	}
+
+	return []interface{}{transformed}
+
+}
+
+func flattenGkeHubFeatureState(obj *gkehub.FeatureState) interface{} {
+	if obj == nil || obj.Empty() {
+		return nil
+	}
+	transformed := map[string]interface{}{
+		"state": flattenGkeHubFeatureStateState(obj.State),
+	}
+
+	return []interface{}{transformed}
+
+}
+
+func flattenGkeHubFeatureStateState(obj *gkehub.FeatureStateState) interface{} {
+	if obj == nil || obj.Empty() {
+		return nil
+	}
+	transformed := map[string]interface{}{
+		"code":        obj.Code,
+		"description": obj.Description,
+		"update_time": obj.UpdateTime,
 	}
 
 	return []interface{}{transformed}

@@ -63,7 +63,7 @@ func resourceEventarcTrigger() *schema.Resource {
 			"matching_criteria": {
 				Type:        schema.TypeSet,
 				Required:    true,
-				Description: "Required. The criteria by which events are filtered. Only events that match with this criteria will be sent to the destination.",
+				Description: "Required. null The list of filters that applies to event attributes. Only events that match all the provided filters will be sent to the destination.",
 				Elem:        EventarcTriggerMatchingCriteriaSchema(),
 				Set:         schema.HashResource(EventarcTriggerMatchingCriteriaSchema()),
 			},
@@ -119,6 +119,12 @@ func resourceEventarcTrigger() *schema.Resource {
 				Description: "Output only. This checksum is computed by the server based on the value of other fields, and may be sent only on create requests to ensure the client has an up-to-date value before proceeding.",
 			},
 
+			"uid": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "Output only. Server assigned unique identifier for the trigger. The value is a UUID4 string and guaranteed to remain unchanged until the resource is deleted.",
+			},
+
 			"update_time": {
 				Type:        schema.TypeString,
 				Computed:    true,
@@ -131,10 +137,17 @@ func resourceEventarcTrigger() *schema.Resource {
 func EventarcTriggerDestinationSchema() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
+			"cloud_function": {
+				Type:             schema.TypeString,
+				Optional:         true,
+				DiffSuppressFunc: compareSelfLinkOrResourceName,
+				Description:      "The Cloud Function resource name. Only Cloud Functions V2 is supported. Format: projects/{project}/locations/{location}/functions/{function}",
+			},
+
 			"cloud_run_service": {
 				Type:        schema.TypeList,
 				Optional:    true,
-				Description: "Cloud Run fully-managed service that receives the events. The service should be running in the same project as the trigger.",
+				Description: "Cloud Run fully-managed service that receives the events. The service should be running in the same project of the trigger.",
 				MaxItems:    1,
 				Elem:        EventarcTriggerDestinationCloudRunServiceSchema(),
 			},
@@ -149,7 +162,7 @@ func EventarcTriggerDestinationCloudRunServiceSchema() *schema.Resource {
 				Type:             schema.TypeString,
 				Required:         true,
 				DiffSuppressFunc: compareSelfLinkOrResourceName,
-				Description:      "Required. The name of the Cloud run service being addressed (see https://cloud.google.com/run/docs/reference/rest/v1/namespaces.services). Only services located in the same project of the trigger object can be addressed.",
+				Description:      "Required. The name of the Cloud Run service being addressed. See https://cloud.google.com/run/docs/reference/rest/v1/namespaces.services. Only services located in the same project of the trigger object can be addressed.",
 			},
 
 			"path": {
@@ -174,7 +187,7 @@ func EventarcTriggerMatchingCriteriaSchema() *schema.Resource {
 			"attribute": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "Required. The name of a CloudEvents attribute. Currently, only a subset of attributes can be specified. All triggers MUST provide a matching criteria for the 'type' attribute.",
+				Description: "Required. The name of a CloudEvents attribute. Currently, only a subset of attributes are supported for filtering. All triggers MUST provide a filter for the 'type' attribute.",
 			},
 
 			"value": {
@@ -208,7 +221,7 @@ func EventarcTriggerTransportPubsubSchema() *schema.Resource {
 				Type:        schema.TypeString,
 				Optional:    true,
 				ForceNew:    true,
-				Description: "Optional. The name of the Pub/Sub topic created and managed by Eventarc system as a transport for the event delivery. Format: `projects/{PROJECT_ID}/topics/{TOPIC_NAME}`. You may set an existing topic for triggers of the type `google.cloud.pubsub.topic.v1.messagePublished` only. The topic you provide here will not be deleted by Eventarc at trigger deletion.",
+				Description: "Optional. The name of the Pub/Sub topic created and managed by Eventarc system as a transport for the event delivery. Format: `projects/{PROJECT_ID}/topics/{TOPIC_NAME You may set an existing topic for triggers of the type google.cloud.pubsub.topic.v1.messagePublished` only. The topic you provide here will not be deleted by Eventarc at trigger deletion.",
 			},
 
 			"subscription": {
@@ -333,6 +346,9 @@ func resourceEventarcTriggerRead(d *schema.ResourceData, meta interface{}) error
 	if err = d.Set("etag", res.Etag); err != nil {
 		return fmt.Errorf("error setting etag in state: %s", err)
 	}
+	if err = d.Set("uid", res.Uid); err != nil {
+		return fmt.Errorf("error setting uid in state: %s", err)
+	}
 	if err = d.Set("update_time", res.UpdateTime); err != nil {
 		return fmt.Errorf("error setting update_time in state: %s", err)
 	}
@@ -450,6 +466,7 @@ func expandEventarcTriggerDestination(o interface{}) *eventarc.TriggerDestinatio
 	}
 	obj := objArr[0].(map[string]interface{})
 	return &eventarc.TriggerDestination{
+		CloudFunction:   dcl.String(obj["cloud_function"].(string)),
 		CloudRunService: expandEventarcTriggerDestinationCloudRunService(obj["cloud_run_service"]),
 	}
 }
@@ -459,6 +476,7 @@ func flattenEventarcTriggerDestination(obj *eventarc.TriggerDestination) interfa
 		return nil
 	}
 	transformed := map[string]interface{}{
+		"cloud_function":    obj.CloudFunction,
 		"cloud_run_service": flattenEventarcTriggerDestinationCloudRunService(obj.CloudRunService),
 	}
 

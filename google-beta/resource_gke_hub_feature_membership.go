@@ -47,7 +47,7 @@ func resourceGkeHubFeatureMembership() *schema.Resource {
 		Schema: map[string]*schema.Schema{
 			"configmanagement": {
 				Type:        schema.TypeList,
-				Optional:    true,
+				Required:    true,
 				Description: "Config Management-specific spec.",
 				MaxItems:    1,
 				Elem:        GkeHubFeatureMembershipConfigmanagementSchema(),
@@ -55,7 +55,7 @@ func resourceGkeHubFeatureMembership() *schema.Resource {
 
 			"feature": {
 				Type:             schema.TypeString,
-				Optional:         true,
+				Required:         true,
 				ForceNew:         true,
 				DiffSuppressFunc: compareSelfLinkOrResourceName,
 				Description:      "The name of the feature",
@@ -63,14 +63,14 @@ func resourceGkeHubFeatureMembership() *schema.Resource {
 
 			"location": {
 				Type:        schema.TypeString,
-				Optional:    true,
+				Required:    true,
 				ForceNew:    true,
 				Description: "The location of the feature",
 			},
 
 			"membership": {
 				Type:             schema.TypeString,
-				Optional:         true,
+				Required:         true,
 				ForceNew:         true,
 				DiffSuppressFunc: compareSelfLinkOrResourceName,
 				Description:      "The name of the membership",
@@ -167,6 +167,13 @@ func GkeHubFeatureMembershipConfigmanagementConfigSyncSchema() *schema.Resource 
 func GkeHubFeatureMembershipConfigmanagementConfigSyncGitSchema() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
+			"gcp_service_account_email": {
+				Type:             schema.TypeString,
+				Optional:         true,
+				DiffSuppressFunc: compareSelfLinkOrResourceName,
+				Description:      "The GCP Service Account Email used for auth when secretType is gcpServiceAccount.",
+			},
+
 			"https_proxy": {
 				Type:        schema.TypeString,
 				Optional:    true,
@@ -586,13 +593,14 @@ func expandGkeHubFeatureMembershipConfigmanagementConfigSyncGit(o interface{}) *
 	}
 	obj := objArr[0].(map[string]interface{})
 	return &gkehub.FeatureMembershipConfigmanagementConfigSyncGit{
-		HttpsProxy:   dcl.String(obj["https_proxy"].(string)),
-		PolicyDir:    dcl.String(obj["policy_dir"].(string)),
-		SecretType:   dcl.String(obj["secret_type"].(string)),
-		SyncBranch:   dcl.String(obj["sync_branch"].(string)),
-		SyncRepo:     dcl.String(obj["sync_repo"].(string)),
-		SyncRev:      dcl.String(obj["sync_rev"].(string)),
-		SyncWaitSecs: dcl.String(obj["sync_wait_secs"].(string)),
+		GcpServiceAccountEmail: dcl.String(obj["gcp_service_account_email"].(string)),
+		HttpsProxy:             dcl.String(obj["https_proxy"].(string)),
+		PolicyDir:              dcl.String(obj["policy_dir"].(string)),
+		SecretType:             dcl.String(obj["secret_type"].(string)),
+		SyncBranch:             dcl.String(obj["sync_branch"].(string)),
+		SyncRepo:               dcl.String(obj["sync_repo"].(string)),
+		SyncRev:                dcl.String(obj["sync_rev"].(string)),
+		SyncWaitSecs:           dcl.String(obj["sync_wait_secs"].(string)),
 	}
 }
 
@@ -601,13 +609,14 @@ func flattenGkeHubFeatureMembershipConfigmanagementConfigSyncGit(obj *gkehub.Fea
 		return nil
 	}
 	transformed := map[string]interface{}{
-		"https_proxy":    obj.HttpsProxy,
-		"policy_dir":     obj.PolicyDir,
-		"secret_type":    obj.SecretType,
-		"sync_branch":    obj.SyncBranch,
-		"sync_repo":      obj.SyncRepo,
-		"sync_rev":       obj.SyncRev,
-		"sync_wait_secs": obj.SyncWaitSecs,
+		"gcp_service_account_email": obj.GcpServiceAccountEmail,
+		"https_proxy":               obj.HttpsProxy,
+		"policy_dir":                obj.PolicyDir,
+		"secret_type":               obj.SecretType,
+		"sync_branch":               obj.SyncBranch,
+		"sync_repo":                 obj.SyncRepo,
+		"sync_rev":                  obj.SyncRev,
+		"sync_wait_secs":            obj.SyncWaitSecs,
 	}
 
 	return []interface{}{transformed}
