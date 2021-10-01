@@ -58,14 +58,14 @@ func testAccMonitoringMonitoredProject_BasicMonitoredProject(context map[string]
 resource "google_monitoring_monitored_project" "primary" {
   metrics_scope = "%{project_name}"
   name          = google_project.basic.name
+  provider      = google-beta
 }
-
 resource "google_project" "basic" {
   project_id = "id%{random_suffix}"
   name       = "id%{random_suffix}"
   org_id     = "%{org_id}"
+  provider   = google-beta
 }
-
 
 `, context)
 }
