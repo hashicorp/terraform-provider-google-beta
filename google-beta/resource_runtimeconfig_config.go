@@ -17,6 +17,8 @@ func resourceRuntimeconfigConfig() *schema.Resource {
 		Update: resourceRuntimeconfigConfigUpdate,
 		Delete: resourceRuntimeconfigConfigDelete,
 
+		DeprecationMessage: "This resource has been deprecated in the google (GA) provider, and will only be available in the google-beta provider in a future release.",
+
 		Importer: &schema.ResourceImporter{
 			State: resourceRuntimeconfigConfigImport,
 		},
