@@ -30,14 +30,14 @@ A basic example of a monitoring monitored project
 resource "google_monitoring_monitored_project" "primary" {
   metrics_scope = "my-project-name"
   name          = google_project.basic.name
+  provider      = google-beta
 }
-
 resource "google_project" "basic" {
   project_id = "id"
   name       = "id"
   org_id     = "123456789"
+  provider   = google-beta
 }
-
 
 ```
 
