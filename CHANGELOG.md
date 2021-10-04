@@ -11,7 +11,6 @@ IMPROVEMENTS:
 * cloudbuild: added field `service_account` to `google_cloudbuild_trigger` ([#3661](https://github.com/hashicorp/terraform-provider-google-beta/pull/3661))
 * composer: added field `scheduler_count` to `google_composer_environment` ([#3660](https://github.com/hashicorp/terraform-provider-google-beta/pull/3660))
 * compute: Disabled recreation of GCE instances when updating `resource_policies` property ([#3668](https://github.com/hashicorp/terraform-provider-google-beta/pull/3668))
-* compute: added NetLB support for Connection Tracking as `connectionTrackingPolicy` in `RegionBackendService` ([#3655](https://github.com/hashicorp/terraform-provider-google-beta/pull/3655))
 * container: added support for `logging_config` and `monitoring_config` to `google_container_cluster` ([#3641](https://github.com/hashicorp/terraform-provider-google-beta/pull/3641))
 * kms: added support for `import_only` to `google_kms_crypto_key` ([#3659](https://github.com/hashicorp/terraform-provider-google-beta/pull/3659))
 * networkservices: boosted the default timeout for `google_network_services_edge_cache_origin` from 30m to 60m ([#3674](https://github.com/hashicorp/terraform-provider-google-beta/pull/3674))
