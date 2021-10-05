@@ -49,7 +49,7 @@ func NewDCLAssuredWorkloadsClient(config *Config, userAgent, billingProject stri
 	return assuredworkloads.NewClient(dclConfig)
 }
 
-func NewDCLCloudbuildClient(config *Config, userAgent, billingProject string) *cloudbuild.Client {
+func NewDCLcloudbuildClient(config *Config, userAgent, billingProject string) *cloudbuild.Client {
 	configOptions := []dcl.ConfigOption{
 		dcl.WithHTTPClient(config.client),
 		dcl.WithUserAgent(userAgent),
