@@ -997,15 +997,16 @@ func testAccComposerEnvironment_nodeCfg(environment, network, subnetwork, servic
 	return fmt.Sprintf(`
 resource "google_composer_environment" "test" {
 	name   = "%s"
-	region = "us-central1"
+	region = "us-east1"  # later should be changed to us-central1, when ip_masq_agent feature is accessible globally
 	config {
 		node_config {
 			network    = google_compute_network.test.self_link
 			subnetwork = google_compute_subnetwork.test.self_link
-			zone       = "us-central1-a"
+			zone       = "us-east1-b"   # later should be changed to us-central1-a, when ip_masq_agent feature is accessible globally
 
 			service_account = google_service_account.test.name
 			max_pods_per_node = 33
+			enable_ip_masq_agent = true
 			ip_allocation_policy {
 				use_ip_aliases          = true
 				cluster_ipv4_cidr_block = "10.0.0.0/16"
@@ -1023,7 +1024,7 @@ resource "google_compute_network" "test" {
 resource "google_compute_subnetwork" "test" {
 	name          = "%s"
 	ip_cidr_range = "10.2.0.0/16"
-	region        = "us-central1"
+	region        = "us-east1"  # later should be changed to us-central1, when ip_masq_agent feature is accessible globally
 	network       = google_compute_network.test.self_link
 }
 

@@ -203,6 +203,13 @@ func resourceComposerEnvironment() *schema.Resource {
 										ValidateFunc: validation.IntBetween(8, 110),
 										Description:  `The maximum pods per node in the GKE cluster allocated during environment creation. Lowering this value reduces IP address consumption by the Cloud Composer Kubernetes cluster. This value can only be set during environment creation, and only if the environment is VPC-Native. The range of possible values is 8-110, and the default is 32.`,
 									},
+									"enable_ip_masq_agent": {
+										Type:        schema.TypeBool,
+										Computed:    true,
+										Optional:    true,
+										ForceNew:    true,
+										Description: `Deploys 'ip-masq-agent' daemon set in the GKE cluster and defines nonMasqueradeCIDRs equals to pod IP range so IP masquerading is used for all destination addresses, except between pods traffic. See: https://cloud.google.com/kubernetes-engine/docs/how-to/ip-masquerade-agent`,
+									},
 									"tags": {
 										Type:     schema.TypeSet,
 										Optional: true,
@@ -995,6 +1002,7 @@ func flattenComposerEnvironmentConfigNodeConfig(nodeCfg *composer.NodeConfig) in
 	transformed["service_account"] = nodeCfg.ServiceAccount
 	transformed["oauth_scopes"] = flattenComposerEnvironmentConfigNodeConfigOauthScopes(nodeCfg.OauthScopes)
 	transformed["max_pods_per_node"] = nodeCfg.MaxPodsPerNode
+	transformed["enable_ip_masq_agent"] = nodeCfg.EnableIpMasqAgent
 	transformed["tags"] = flattenComposerEnvironmentConfigNodeConfigTags(nodeCfg.Tags)
 	transformed["ip_allocation_policy"] = flattenComposerEnvironmentConfigNodeConfigIPAllocationPolicy(nodeCfg.IpAllocationPolicy)
 	return []interface{}{transformed}
@@ -1271,6 +1279,10 @@ func expandComposerEnvironmentConfigNodeConfig(v interface{}, d *schema.Resource
 
 	if transformedMaxPodsPerNode, ok := original["max_pods_per_node"]; ok {
 		transformed.MaxPodsPerNode = int64(transformedMaxPodsPerNode.(int))
+	}
+
+	if transformedEnableIpMasqAgent, ok := original["enable_ip_masq_agent"]; ok {
+		transformed.EnableIpMasqAgent = transformedEnableIpMasqAgent.(bool)
 	}
 
 	var nodeConfigZone string
