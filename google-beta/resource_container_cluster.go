@@ -294,12 +294,13 @@ func resourceContainerCluster() *schema.Resource {
 							},
 						},
 						"dns_cache_config": {
-							Type:         schema.TypeList,
-							Optional:     true,
-							Computed:     true,
-							AtLeastOneOf: addonsConfigKeys,
-							MaxItems:     1,
-							Description:  `The status of the NodeLocal DNSCache addon. It is disabled by default. Set enabled = true to enable.`,
+							Type:          schema.TypeList,
+							Optional:      true,
+							Computed:      true,
+							AtLeastOneOf:  addonsConfigKeys,
+							MaxItems:      1,
+							Description:   `The status of the NodeLocal DNSCache addon. It is disabled by default. Set enabled = true to enable.`,
+							ConflictsWith: []string{"enable_autopilot"},
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"enabled": {
