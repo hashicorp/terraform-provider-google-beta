@@ -894,9 +894,9 @@ func Provider() *schema.Provider {
 	return provider
 }
 
-// Generated resources: 239
+// Generated resources: 240
 // Generated IAM resources: 117
-// Total generated resources: 356
+// Total generated resources: 357
 func ResourceMap() map[string]*schema.Resource {
 	resourceMap, _ := ResourceMapWithErrors()
 	return resourceMap
@@ -1203,6 +1203,7 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_pubsub_topic_iam_policy":                               ResourceIamPolicy(PubsubTopicIamSchema, PubsubTopicIamUpdaterProducer, PubsubTopicIdParseFunc),
 			"google_pubsub_subscription":                                   resourcePubsubSubscription(),
 			"google_pubsub_schema":                                         resourcePubsubSchema(),
+			"google_pubsub_lite_reservation":                               resourcePubsubLiteReservation(),
 			"google_pubsub_lite_topic":                                     resourcePubsubLiteTopic(),
 			"google_pubsub_lite_subscription":                              resourcePubsubLiteSubscription(),
 			"google_redis_instance":                                        resourceRedisInstance(),
