@@ -1,4 +1,56 @@
-## 3.87.0 (Unreleased)
+## 3.88.0 (Unreleased)
+NOTES:
+* reorganized documentation to group all Compute Engine and Monitoring (Stackdriver) resources together. ([#3686](https://github.com/hashicorp/terraform-provider-google-beta/pull/3686))
+DEPRECATIONS:
+* container: deprecated `workload_metadata_configuration.node_metadata` in favor of `workload_metadata_configuration.mode` in `google_container_cluster` ([#3694](https://github.com/hashicorp/terraform-provider-google-beta/pull/3694))
+* dataproc: deprecated the `google_dataproc_workflow_template.version` field, as it wasn't actually useful. The field is used during updates, but updates aren't currently possible with the resource. ([#3675](https://github.com/hashicorp/terraform-provider-google-beta/pull/3675))
+BREAKING CHANGES:
+* gke_hub: made the `config_membership` field in `google_gke_hub_feature` required, disallowing invalid configurations ([#3681](https://github.com/hashicorp/terraform-provider-google-beta/pull/3681))
+* gke_hub: made the `configmanagement`, `feature`, `location`, `membership` fields in `google_gke_hub_feature_membership` required, disallowing invalid configurations ([#3681](https://github.com/hashicorp/terraform-provider-google-beta/pull/3681))
+
+FEATURES:
+* **New Data Source:** `google_service_networking_peered_dns_domain` ([#3690](https://github.com/hashicorp/terraform-provider-google-beta/pull/3690))
+* **New Data Source:** `google_sourcerepo_repository` ([#3684](https://github.com/hashicorp/terraform-provider-google-beta/pull/3684))
+* **New Data Source:** `google_storage_bucket` ([#3678](https://github.com/hashicorp/terraform-provider-google-beta/pull/3678))
+* **New Resource:** `google_pubsub_lite_reservation` ([#3708](https://github.com/hashicorp/terraform-provider-google-beta/pull/3708))
+* **New Resource:** `google_service_networking_peered_dns_domain` ([#3690](https://github.com/hashicorp/terraform-provider-google-beta/pull/3690))
+
+IMPROVEMENTS:
+* composer: added field `enable_privately_used_public_ips` to resource `google_composer_environment` (beta) ([#3697](https://github.com/hashicorp/terraform-provider-google-beta/pull/3697))
+* composer: added field `enable_ip_masq_agent` to resource `google_composer_environment` (beta) ([#3705](https://github.com/hashicorp/terraform-provider-google-beta/pull/3705))
+* compute: added NetLB support for Connection Tracking as `connectionTrackingPolicy` in `RegionBackendService`(beta) ([#3698](https://github.com/hashicorp/terraform-provider-google-beta/pull/3698))
+* compute: added external IPv6 support on `google_compute_subnetwork` and `google_compute_instance.network_interfaces` ([#3677](https://github.com/hashicorp/terraform-provider-google-beta/pull/3677))
+* container: added support for `workload_metadata_configuration.mode` in `google_container_cluster` ([#3694](https://github.com/hashicorp/terraform-provider-google-beta/pull/3694))
+* eventarc: added support for `uid` output field, `cloud_function` destination to `google_eventarc_trigger` ([#3681](https://github.com/hashicorp/terraform-provider-google-beta/pull/3681))
+* gke_hub: added support for `gcp_service_account_email` when configuring Git sync in `google_gke_hub_feature_membership` ([#3681](https://github.com/hashicorp/terraform-provider-google-beta/pull/3681))
+* gke_hub: added support for `resource_state`, `state` outputs to `google_gke_hub_feature` ([#3681](https://github.com/hashicorp/terraform-provider-google-beta/pull/3681))
+* pubsub:  Added support for references to `google_pubsub_lite_reservation` to `google_pubsub_lite_topic`. ([#3708](https://github.com/hashicorp/terraform-provider-google-beta/pull/3708))
+
+BUG FIXES:
+* monitoring: fixed typo in `google_monitoring_uptime_check_config` where `NOT_MATCHES_REGEX` could not be specified. ([#3700](https://github.com/hashicorp/terraform-provider-google-beta/pull/3700))
+* servicedirectory: marked `service` on `google_service_directory_endpoint` as ForceNew to trigger recreates on changes ([#3683](https://github.com/hashicorp/terraform-provider-google-beta/pull/3683))
+
+## 3.87.0 (October 04, 2021)
+
+DEPRECATIONS:
+* dataproc: deprecated the `google_dataproc_workflow_template.version` field, as it wasn't actually useful. The field is used during updates, but updates aren't currently possible with the resource. ([#3675](https://github.com/hashicorp/terraform-provider-google-beta/pull/3675))
+
+FEATURES:
+* **New Resource:** `google_monitoring_monitored_project` ([#3658](https://github.com/hashicorp/terraform-provider-google-beta/pull/3658))
+* **New Resource:** `google_org_policy_policy` ([#3637](https://github.com/hashicorp/terraform-provider-google-beta/pull/3637))
+
+IMPROVEMENTS:
+* cloudbuild: added field `service_account` to `google_cloudbuild_trigger` ([#3661](https://github.com/hashicorp/terraform-provider-google-beta/pull/3661))
+* composer: added field `scheduler_count` to `google_composer_environment` ([#3660](https://github.com/hashicorp/terraform-provider-google-beta/pull/3660))
+* compute: Disabled recreation of GCE instances when updating `resource_policies` property ([#3668](https://github.com/hashicorp/terraform-provider-google-beta/pull/3668))
+* container: added support for `logging_config` and `monitoring_config` to `google_container_cluster` ([#3641](https://github.com/hashicorp/terraform-provider-google-beta/pull/3641))
+* kms: added support for `import_only` to `google_kms_crypto_key` ([#3659](https://github.com/hashicorp/terraform-provider-google-beta/pull/3659))
+* networkservices: boosted the default timeout for `google_network_services_edge_cache_origin` from 30m to 60m ([#3674](https://github.com/hashicorp/terraform-provider-google-beta/pull/3674))
+
+BUG FIXES:
+* container: fixed an issue where a node pool created with error (eg. GKE_STOCKOUT) would not be captured in state ([#3646](https://github.com/hashicorp/terraform-provider-google-beta/pull/3646))
+* filestore: Allowed updating `reserved_ip_range` on `google_filestore_instance` via recreation of the instance ([#3651](https://github.com/hashicorp/terraform-provider-google-beta/pull/3651))
+* serviceusage: Made the service api retry failed operation calls in anticipation of transient errors that occur when first enabling the service. ([#3666](https://github.com/hashicorp/terraform-provider-google-beta/pull/3666))
 
 ## 3.86.0 (September 27, 2021)
 
