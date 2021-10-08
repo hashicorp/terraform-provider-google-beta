@@ -3551,7 +3551,7 @@ func expandMonitoringConfig(configured interface{}) *containerBeta.MonitoringCon
 	config := l[0].(map[string]interface{})
 	return &containerBeta.MonitoringConfig{
 		ComponentConfig: &containerBeta.MonitoringComponentConfig{
-			EnableComponents: config["enable_components"].([]string),
+			EnableComponents: convertStringArr(config["enable_components"].([]interface{})),
 		},
 	}
 }
