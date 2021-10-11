@@ -1,4 +1,4 @@
-## 3.88.0 (Unreleased)
+## 3.88.0 (October 11, 2021)
 NOTES:
 * reorganized documentation to group all Compute Engine and Monitoring (Stackdriver) resources together. ([#3686](https://github.com/hashicorp/terraform-provider-google-beta/pull/3686))
 DEPRECATIONS:
