@@ -3,6 +3,7 @@
 ## 3.88.0 (October 11, 2021)
 NOTES:
 * reorganized documentation to group all Compute Engine and Monitoring (Stackdriver) resources together. ([#3686](https://github.com/hashicorp/terraform-provider-google-beta/pull/3686))
+
 DEPRECATIONS:
 * container: deprecated `workload_metadata_configuration.node_metadata` in favor of `workload_metadata_configuration.mode` in `google_container_cluster` ([#3694](https://github.com/hashicorp/terraform-provider-google-beta/pull/3694))
 * dataproc: deprecated the `google_dataproc_workflow_template.version` field, as it wasn't actually useful. The field is used during updates, but updates aren't currently possible with the resource. ([#3675](https://github.com/hashicorp/terraform-provider-google-beta/pull/3675))
