@@ -85,6 +85,25 @@ Defaults to 3306.`,
 				Sensitive:    true,
 				Description:  `The password for connecting to on-premises instance.`,
 			},
+			"ca_certificate": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ForceNew:     true,
+				Description:  `PEM representation of the trusted CA's x509 certificate.`,
+			},
+			"client_certificate": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ForceNew:     true,
+				Description:  `PEM representation of the replica's x509 certificate.`,
+			},
+			"client_key": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ForceNew:     true,
+				Sensitive:    true,
+				Description:  `PEM representation of the replica's private key. The corresponsing public key is encoded in the client's certificate.`,
+			},
 			"dump_file_path": {
 				Type:         schema.TypeString,
 				Optional:     true,
@@ -363,6 +382,12 @@ func flattenSQLSourceRepresentationInstanceOnPremisesConfiguration(v interface{}
 		flattenSQLSourceRepresentationInstanceOnPremisesConfigurationUsername(original["username"], d, config)
 	transformed["password"] =
 		flattenSQLSourceRepresentationInstanceOnPremisesConfigurationPassword(original["password"], d, config)
+	transformed["ca_certificate"] =
+		flattenSQLSourceRepresentationInstanceOnPremisesConfigurationCaCertificate(original["ca_certificate"], d, config)
+	transformed["client_certificate"] =
+		flattenSQLSourceRepresentationInstanceOnPremisesConfigurationClientCertificate(original["client_certificate"], d, config)
+	transformed["client_key"] =
+		flattenSQLSourceRepresentationInstanceOnPremisesConfigurationClientKey(original["client_key"], d, config)
 	transformed["dump_file_path"] =
 		flattenSQLSourceRepresentationInstanceOnPremisesConfigurationDumpFilePath(original["dump_file_path"], d, config)
 	return []interface{}{transformed}
@@ -393,6 +418,18 @@ func flattenSQLSourceRepresentationInstanceOnPremisesConfigurationUsername(v int
 }
 
 func flattenSQLSourceRepresentationInstanceOnPremisesConfigurationPassword(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	return v
+}
+
+func flattenSQLSourceRepresentationInstanceOnPremisesConfigurationCaCertificate(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	return v
+}
+
+func flattenSQLSourceRepresentationInstanceOnPremisesConfigurationClientCertificate(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	return v
+}
+
+func flattenSQLSourceRepresentationInstanceOnPremisesConfigurationClientKey(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
@@ -444,6 +481,18 @@ func expandSQLSourceRepresentationInstanceOnPremisesConfigurationUsername(v inte
 }
 
 func expandSQLSourceRepresentationInstanceOnPremisesConfigurationPassword(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandSQLSourceRepresentationInstanceOnPremisesConfigurationCaCertificate(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandSQLSourceRepresentationInstanceOnPremisesConfigurationClientCertificate(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandSQLSourceRepresentationInstanceOnPremisesConfigurationClientKey(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
