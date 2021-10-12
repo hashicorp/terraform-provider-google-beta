@@ -72,6 +72,19 @@ func resourceSQLSourceRepresentationInstance() *schema.Resource {
 Defaults to 3306.`,
 				Default: 3306,
 			},
+			"username": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ForceNew:     true,
+				Description:  `The username for connecting to on-premises instance.`,
+			},
+			"password": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ForceNew:     true,
+				Sensitive:    true,
+				Description:  `The password for connecting to on-premises instance.`,
+			},
 
 			"region": {
 				Type:     schema.TypeString,
@@ -340,6 +353,10 @@ func flattenSQLSourceRepresentationInstanceOnPremisesConfiguration(v interface{}
 		flattenSQLSourceRepresentationInstanceOnPremisesConfigurationHost(original["host"], d, config)
 	transformed["port"] =
 		flattenSQLSourceRepresentationInstanceOnPremisesConfigurationPort(original["port"], d, config)
+	transformed["username"] =
+		flattenSQLSourceRepresentationInstanceOnPremisesConfigurationUsername(original["username"], d, config)
+	transformed["password"] =
+		flattenSQLSourceRepresentationInstanceOnPremisesConfigurationPassword(original["password"], d, config)
 	return []interface{}{transformed}
 }
 func flattenSQLSourceRepresentationInstanceOnPremisesConfigurationHost(v interface{}, d *schema.ResourceData, config *Config) interface{} {
@@ -361,6 +378,14 @@ func flattenSQLSourceRepresentationInstanceOnPremisesConfigurationPort(v interfa
 	}
 
 	return v // let terraform core handle it otherwise
+}
+
+func flattenSQLSourceRepresentationInstanceOnPremisesConfigurationUsername(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	return v
+}
+
+func flattenSQLSourceRepresentationInstanceOnPremisesConfigurationPassword(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	return v
 }
 
 func expandSQLSourceRepresentationInstanceName(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
@@ -399,6 +424,14 @@ func expandSQLSourceRepresentationInstanceOnPremisesConfigurationHost(v interfac
 }
 
 func expandSQLSourceRepresentationInstanceOnPremisesConfigurationPort(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandSQLSourceRepresentationInstanceOnPremisesConfigurationUsername(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandSQLSourceRepresentationInstanceOnPremisesConfigurationPassword(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
