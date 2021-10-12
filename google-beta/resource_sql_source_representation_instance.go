@@ -85,6 +85,12 @@ Defaults to 3306.`,
 				Sensitive:    true,
 				Description:  `The password for connecting to on-premises instance.`,
 			},
+			"dump_file_path": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ForceNew:     true,
+				Description:  `The dump file to create the Cloud SQL replica.`,
+			},
 
 			"region": {
 				Type:     schema.TypeString,
@@ -357,6 +363,8 @@ func flattenSQLSourceRepresentationInstanceOnPremisesConfiguration(v interface{}
 		flattenSQLSourceRepresentationInstanceOnPremisesConfigurationUsername(original["username"], d, config)
 	transformed["password"] =
 		flattenSQLSourceRepresentationInstanceOnPremisesConfigurationPassword(original["password"], d, config)
+	transformed["dump_file_path"] =
+		flattenSQLSourceRepresentationInstanceOnPremisesConfigurationDumpFilePath(original["dump_file_path"], d, config)
 	return []interface{}{transformed}
 }
 func flattenSQLSourceRepresentationInstanceOnPremisesConfigurationHost(v interface{}, d *schema.ResourceData, config *Config) interface{} {
@@ -385,6 +393,10 @@ func flattenSQLSourceRepresentationInstanceOnPremisesConfigurationUsername(v int
 }
 
 func flattenSQLSourceRepresentationInstanceOnPremisesConfigurationPassword(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	return v
+}
+
+func flattenSQLSourceRepresentationInstanceOnPremisesConfigurationDumpFilePath(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
@@ -432,6 +444,10 @@ func expandSQLSourceRepresentationInstanceOnPremisesConfigurationUsername(v inte
 }
 
 func expandSQLSourceRepresentationInstanceOnPremisesConfigurationPassword(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandSQLSourceRepresentationInstanceOnPremisesConfigurationDumpFilePath(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
