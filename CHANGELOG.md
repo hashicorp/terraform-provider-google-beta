@@ -1,5 +1,14 @@
 ## 3.89.0 (Unreleased)
 
+IMPROVEMENTS:
+* compute: fixed bug where `google_compute_router_peer` could not set an advertised route priority of 0, causing permadiff. ([#3718](https://github.com/hashicorp/terraform-provider-google-beta/pull/3718))
+* iam: Add `projectOwner`, `projectEditor` and `projectViewer` as possible values for members field in documentation. ([#3712](https://github.com/hashicorp/terraform-provider-google-beta/pull/3712))
+* iam: fixed request batching bug where failed requests would show unnecessary backslash escaping to the user. ([#3723](https://github.com/hashicorp/terraform-provider-google-beta/pull/3723))
+
+BUG FIXES:
+* container: fixed a crash on `monitoring_config` of `google_container_cluster` ([#3717](https://github.com/hashicorp/terraform-provider-google-beta/pull/3717))
+* storage: fixed a bug to better handle eventual consistency among `google_storage_bucket` resources. ([#3715](https://github.com/hashicorp/terraform-provider-google-beta/pull/3715))
+
 ## 3.88.0 (October 11, 2021)
 NOTES:
 * reorganized documentation to group all Compute Engine and Monitoring (Stackdriver) resources together. ([#3686](https://github.com/hashicorp/terraform-provider-google-beta/pull/3686))
