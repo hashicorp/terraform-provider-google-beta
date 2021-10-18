@@ -1,4 +1,4 @@
-## 3.89.0 (Unreleased)
+## 3.89.0 (October 18, 2021)
 
 BUG FIXES:
 * compute: fixed bug where `google_compute_router_peer` could not set an advertised route priority of 0, causing permadiff. ([#3718](https://github.com/hashicorp/terraform-provider-google-beta/pull/3718))
