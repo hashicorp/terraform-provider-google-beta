@@ -567,6 +567,10 @@ resource "google_composer_environment" "test" {
 			subnetwork 		= google_compute_subnetwork.test.self_link
 			zone       		= "us-central1-a"
 			machine_type  = "n1-standard-1"
+			ip_allocation_policy {
+				use_ip_aliases          = true
+				cluster_ipv4_cidr_block = "10.0.0.0/16"
+			}
 		}
 	}
 }
@@ -978,6 +982,9 @@ resource "google_composer_environment" "test" {
 			node_config {
       	network    			= google_compute_network.test.self_link
       	subnetwork 			= google_compute_subnetwork.test.self_link
+				ip_allocation_policy {
+					cluster_ipv4_cidr_block = "10.0.0.0/16"
+				}
     	}
 
   		software_config {
