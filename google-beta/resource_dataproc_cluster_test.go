@@ -15,7 +15,7 @@ import (
 
 	"google.golang.org/api/googleapi"
 
-	"google.golang.org/api/dataproc/v1beta2"
+	dataproc "google.golang.org/api/dataproc/v1beta2"
 )
 
 func TestDataprocExtractInitTimeout(t *testing.T) {
