@@ -276,7 +276,8 @@ func TestAccIapAppEngineVersionIamPolicyGenerated_withCondition(t *testing.T) {
 func testAccIapAppEngineVersionIamMember_basicGenerated(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_storage_bucket" "bucket" {
-  name = "appengine-static-content-%{random_suffix}"
+  name     = "appengine-static-content-%{random_suffix}"
+  location = "US"
 }
 
 resource "google_storage_bucket_object" "object" {
@@ -317,7 +318,8 @@ resource "google_iap_app_engine_version_iam_member" "foo" {
 func testAccIapAppEngineVersionIamPolicy_basicGenerated(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_storage_bucket" "bucket" {
-  name = "appengine-static-content-%{random_suffix}"
+  name     = "appengine-static-content-%{random_suffix}"
+  location = "US"
 }
 
 resource "google_storage_bucket_object" "object" {
@@ -364,7 +366,8 @@ resource "google_iap_app_engine_version_iam_policy" "foo" {
 func testAccIapAppEngineVersionIamPolicy_emptyBinding(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_storage_bucket" "bucket" {
-  name = "appengine-static-content-%{random_suffix}"
+  name     = "appengine-static-content-%{random_suffix}"
+  location = "US"
 }
 
 resource "google_storage_bucket_object" "object" {
@@ -407,7 +410,8 @@ resource "google_iap_app_engine_version_iam_policy" "foo" {
 func testAccIapAppEngineVersionIamBinding_basicGenerated(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_storage_bucket" "bucket" {
-  name = "appengine-static-content-%{random_suffix}"
+  name     = "appengine-static-content-%{random_suffix}"
+  location = "US"
 }
 
 resource "google_storage_bucket_object" "object" {
@@ -448,7 +452,8 @@ resource "google_iap_app_engine_version_iam_binding" "foo" {
 func testAccIapAppEngineVersionIamBinding_updateGenerated(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_storage_bucket" "bucket" {
-  name = "appengine-static-content-%{random_suffix}"
+  name     = "appengine-static-content-%{random_suffix}"
+  location = "US"
 }
 
 resource "google_storage_bucket_object" "object" {
@@ -489,7 +494,8 @@ resource "google_iap_app_engine_version_iam_binding" "foo" {
 func testAccIapAppEngineVersionIamBinding_withConditionGenerated(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_storage_bucket" "bucket" {
-  name = "appengine-static-content-%{random_suffix}"
+  name     = "appengine-static-content-%{random_suffix}"
+  location = "US"
 }
 
 resource "google_storage_bucket_object" "object" {
@@ -535,7 +541,8 @@ resource "google_iap_app_engine_version_iam_binding" "foo" {
 func testAccIapAppEngineVersionIamBinding_withAndWithoutConditionGenerated(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_storage_bucket" "bucket" {
-  name = "appengine-static-content-%{random_suffix}"
+  name     = "appengine-static-content-%{random_suffix}"
+  location = "US"
 }
 
 resource "google_storage_bucket_object" "object" {
@@ -590,7 +597,8 @@ resource "google_iap_app_engine_version_iam_binding" "foo2" {
 func testAccIapAppEngineVersionIamMember_withConditionGenerated(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_storage_bucket" "bucket" {
-  name = "appengine-static-content-%{random_suffix}"
+  name     = "appengine-static-content-%{random_suffix}"
+  location = "US"
 }
 
 resource "google_storage_bucket_object" "object" {
@@ -636,7 +644,8 @@ resource "google_iap_app_engine_version_iam_member" "foo" {
 func testAccIapAppEngineVersionIamMember_withAndWithoutConditionGenerated(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_storage_bucket" "bucket" {
-  name = "appengine-static-content-%{random_suffix}"
+  name     = "appengine-static-content-%{random_suffix}"
+  location = "US"
 }
 
 resource "google_storage_bucket_object" "object" {
@@ -691,7 +700,8 @@ resource "google_iap_app_engine_version_iam_member" "foo2" {
 func testAccIapAppEngineVersionIamPolicy_withConditionGenerated(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_storage_bucket" "bucket" {
-  name = "appengine-static-content-%{random_suffix}"
+  name     = "appengine-static-content-%{random_suffix}"
+  location = "US"
 }
 
 resource "google_storage_bucket_object" "object" {

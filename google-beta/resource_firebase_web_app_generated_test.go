@@ -75,7 +75,8 @@ data "google_firebase_web_app_config" "basic" {
 
 resource "google_storage_bucket" "default" {
     provider = google-beta
-    name = "tf-test-fb-webapp-%{random_suffix}"
+    name     = "tf-test-fb-webapp-%{random_suffix}"
+    location = "US"
 }
 
 resource "google_storage_bucket_object" "default" {
