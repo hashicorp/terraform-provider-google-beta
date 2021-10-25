@@ -495,8 +495,8 @@ func resourceContainerCluster() *schema.Resource {
 			"enable_shielded_nodes": {
 				Type:          schema.TypeBool,
 				Optional:      true,
-				Computed:      true,
-				Description:   `Enable Shielded Nodes features on all nodes in this cluster.`,
+				Default:       true,
+				Description:   `Enable Shielded Nodes features on all nodes in this cluster. Defaults to true.`,
 				ConflictsWith: []string{"enable_autopilot"},
 			},
 
@@ -1451,10 +1451,6 @@ func resourceContainerClusterCreate(d *schema.ResourceData, meta interface{}) er
 		ResourceLabels:     expandStringMap(d, "resource_labels"),
 	}
 
-	// shielded nodes is computed and optional yet serverside
-	// default is true. Forcing true here esentially serves
-	// as a default false but is unavoidable due to how
-	// computed and GetOk work together.
 	v := d.Get("enable_shielded_nodes")
 	cluster.ShieldedNodes = &containerBeta.ShieldedNodes{
 		Enabled:         v.(bool),
@@ -4224,9 +4220,6 @@ func containerClusterPrivateClusterConfigCustomDiff(_ context.Context, d *schema
 func containerClusterAutopilotCustomizeDiff(_ context.Context, d *schema.ResourceDiff, meta interface{}) error {
 	if d.HasChange("enable_autopilot") && d.Get("enable_autopilot").(bool) {
 		if err := d.SetNew("enable_intranode_visibility", true); err != nil {
-			return err
-		}
-		if err := d.SetNew("enable_shielded_nodes", true); err != nil {
 			return err
 		}
 	}
