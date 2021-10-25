@@ -13,9 +13,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 
-	"google.golang.org/api/googleapi"
-
 	dataproc "google.golang.org/api/dataproc/v1beta2"
+	"google.golang.org/api/googleapi"
 )
 
 func TestDataprocExtractInitTimeout(t *testing.T) {
@@ -1508,11 +1507,14 @@ resource "google_dataproc_cluster" "with_lifecycle_config" {
 
 func testAccDataprocCluster_withServiceAcc(sa string, rnd string) string {
 	return fmt.Sprintf(`
+data "google_project" "project" {}
+
 resource "google_service_account" "service_account" {
   account_id = "%s"
 }
 
 resource "google_project_iam_member" "service_account" {
+  project = data.google_project.project.project_id
   role   = "roles/dataproc.worker"
   member = "serviceAccount:${google_service_account.service_account.email}"
 }
