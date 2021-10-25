@@ -2597,7 +2597,6 @@ func testAccContainerCluster_withConfidentialNodes(clusterName string, npName st
 resource "google_container_cluster" "confidential_nodes" {
   name               = "%s"
   location           = "us-central1-a"
-  enable_shielded_nodes = true
   release_channel {
     channel = "RAPID"
   }
@@ -2622,7 +2621,6 @@ func testAccContainerCluster_disableConfidentialNodes(clusterName string, npName
 resource "google_container_cluster" "confidential_nodes" {
   name               = "%s"
   location           = "us-central1-a"
-  enable_shielded_nodes = true
   release_channel {
     channel = "RAPID"
   }
@@ -2647,7 +2645,6 @@ func testAccContainerCluster_withILBSubSetting(clusterName string, npName string
 resource "google_container_cluster" "confidential_nodes" {
   name               = "%s"
   location           = "us-central1-a"
-  enable_shielded_nodes = true
   release_channel {
     channel = "RAPID"
   }
@@ -2670,7 +2667,6 @@ func testAccContainerCluster_disableILBSubSetting(clusterName string, npName str
 resource "google_container_cluster" "confidential_nodes" {
   name               = "%s"
   location           = "us-central1-a"
-  enable_shielded_nodes = true
   release_channel {
     channel = "RAPID"
   }
