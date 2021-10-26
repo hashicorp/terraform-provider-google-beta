@@ -248,8 +248,8 @@ func resourceComputeInstanceGroupManager() *schema.Resource {
 						"min_ready_sec": {
 							Type:         schema.TypeInt,
 							Optional:     true,
-							ValidateFunc: validation.IntBetween(0, 3600),
 							Description:  `Minimum number of seconds to wait for after a newly created instance becomes available. This value must be from range [0, 3600].`,
+							ValidateFunc: validation.IntBetween(0, 3600),
 						},
 						"replacement_method": {
 							Type:             schema.TypeString,
