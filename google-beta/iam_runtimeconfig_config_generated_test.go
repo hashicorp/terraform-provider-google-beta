@@ -15,7 +15,6 @@
 package google
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -31,26 +30,14 @@ func TestAccRuntimeConfigConfigIamBindingGenerated(t *testing.T) {
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
-		Providers: testAccProviders,
+		Providers: testAccProvidersOiCS,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccRuntimeConfigConfigIamBinding_basicGenerated(context),
 			},
 			{
-				ResourceName:      "google_runtimeconfig_config_iam_binding.foo",
-				ImportStateId:     fmt.Sprintf("projects/%s/configs/%s roles/viewer", getTestProjectFromEnv(), fmt.Sprintf("tf-test-my-config%s", context["random_suffix"])),
-				ImportState:       true,
-				ImportStateVerify: true,
-			},
-			{
 				// Test Iam Binding update
 				Config: testAccRuntimeConfigConfigIamBinding_updateGenerated(context),
-			},
-			{
-				ResourceName:      "google_runtimeconfig_config_iam_binding.foo",
-				ImportStateId:     fmt.Sprintf("projects/%s/configs/%s roles/viewer", getTestProjectFromEnv(), fmt.Sprintf("tf-test-my-config%s", context["random_suffix"])),
-				ImportState:       true,
-				ImportStateVerify: true,
 			},
 		},
 	})
@@ -66,17 +53,11 @@ func TestAccRuntimeConfigConfigIamMemberGenerated(t *testing.T) {
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
-		Providers: testAccProviders,
+		Providers: testAccProvidersOiCS,
 		Steps: []resource.TestStep{
 			{
 				// Test Iam Member creation (no update for member, no need to test)
 				Config: testAccRuntimeConfigConfigIamMember_basicGenerated(context),
-			},
-			{
-				ResourceName:      "google_runtimeconfig_config_iam_member.foo",
-				ImportStateId:     fmt.Sprintf("projects/%s/configs/%s roles/viewer user:admin@hashicorptest.com", getTestProjectFromEnv(), fmt.Sprintf("tf-test-my-config%s", context["random_suffix"])),
-				ImportState:       true,
-				ImportStateVerify: true,
 			},
 		},
 	})
@@ -92,25 +73,13 @@ func TestAccRuntimeConfigConfigIamPolicyGenerated(t *testing.T) {
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
-		Providers: testAccProviders,
+		Providers: testAccProvidersOiCS,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccRuntimeConfigConfigIamPolicy_basicGenerated(context),
 			},
 			{
-				ResourceName:      "google_runtimeconfig_config_iam_policy.foo",
-				ImportStateId:     fmt.Sprintf("projects/%s/configs/%s", getTestProjectFromEnv(), fmt.Sprintf("tf-test-my-config%s", context["random_suffix"])),
-				ImportState:       true,
-				ImportStateVerify: true,
-			},
-			{
 				Config: testAccRuntimeConfigConfigIamPolicy_emptyBinding(context),
-			},
-			{
-				ResourceName:      "google_runtimeconfig_config_iam_policy.foo",
-				ImportStateId:     fmt.Sprintf("projects/%s/configs/%s", getTestProjectFromEnv(), fmt.Sprintf("tf-test-my-config%s", context["random_suffix"])),
-				ImportState:       true,
-				ImportStateVerify: true,
 			},
 		},
 	})
@@ -124,6 +93,7 @@ resource "google_runtimeconfig_config" "config" {
 }
 
 resource "google_runtimeconfig_config_iam_member" "foo" {
+  provider = google-beta
   project = google_runtimeconfig_config.config.project
   config = google_runtimeconfig_config.config.name
   role = "%{role}"
@@ -140,6 +110,7 @@ resource "google_runtimeconfig_config" "config" {
 }
 
 data "google_iam_policy" "foo" {
+  provider = google-beta
   binding {
     role = "%{role}"
     members = ["user:admin@hashicorptest.com"]
@@ -147,6 +118,7 @@ data "google_iam_policy" "foo" {
 }
 
 resource "google_runtimeconfig_config_iam_policy" "foo" {
+  provider = google-beta
   project = google_runtimeconfig_config.config.project
   config = google_runtimeconfig_config.config.name
   policy_data = data.google_iam_policy.foo.policy_data
@@ -162,9 +134,11 @@ resource "google_runtimeconfig_config" "config" {
 }
 
 data "google_iam_policy" "foo" {
+  provider = google-beta
 }
 
 resource "google_runtimeconfig_config_iam_policy" "foo" {
+  provider = google-beta
   project = google_runtimeconfig_config.config.project
   config = google_runtimeconfig_config.config.name
   policy_data = data.google_iam_policy.foo.policy_data
@@ -180,6 +154,7 @@ resource "google_runtimeconfig_config" "config" {
 }
 
 resource "google_runtimeconfig_config_iam_binding" "foo" {
+  provider = google-beta
   project = google_runtimeconfig_config.config.project
   config = google_runtimeconfig_config.config.name
   role = "%{role}"
@@ -196,6 +171,7 @@ resource "google_runtimeconfig_config" "config" {
 }
 
 resource "google_runtimeconfig_config_iam_binding" "foo" {
+  provider = google-beta
   project = google_runtimeconfig_config.config.project
   config = google_runtimeconfig_config.config.name
   role = "%{role}"

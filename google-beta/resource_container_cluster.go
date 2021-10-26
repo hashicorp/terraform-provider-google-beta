@@ -875,11 +875,11 @@ func resourceContainerCluster() *schema.Resource {
 			},
 
 			"pod_security_policy_config": {
-				DiffSuppressFunc: podSecurityPolicyCfgSuppress,
 				Type:             schema.TypeList,
 				Optional:         true,
-				MaxItems:         1,
 				Description:      `Configuration for the PodSecurityPolicy feature.`,
+				MaxItems:         1,
+				DiffSuppressFunc: podSecurityPolicyCfgSuppress,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"enabled": {
@@ -1123,13 +1123,6 @@ func resourceContainerCluster() *schema.Resource {
 				ConflictsWith: []string{"enable_autopilot"},
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"identity_namespace": {
-							Type:        schema.TypeString,
-							Optional:    true,
-							Description: `Enables workload identity.`,
-							Deprecated:  "This field will be removed in a future major release as it has been deprecated in the API. Use `workload_pool` instead.",
-						},
-
 						"workload_pool": {
 							Type:        schema.TypeString,
 							Optional:    true,
@@ -3472,7 +3465,6 @@ func expandWorkloadIdentityConfig(configured interface{}) *containerBeta.Workloa
 	}
 
 	config := l[0].(map[string]interface{})
-	v.IdentityNamespace = config["identity_namespace"].(string)
 	v.WorkloadPool = config["workload_pool"].(string)
 	return v
 }
@@ -3799,30 +3791,9 @@ func flattenWorkloadIdentityConfig(c *containerBeta.WorkloadIdentityConfig, d *s
 		return nil
 	}
 
-	_, identityNamespaceSet := d.GetOk("workload_identity_config.0.identity_namespace")
-	_, workloadPoolSet := d.GetOk("workload_identity_config.0.workload_pool")
-
-	if identityNamespaceSet && workloadPoolSet {
-		// if both are set, set both
-		return []map[string]interface{}{
-			{
-				"identity_namespace": c.IdentityNamespace,
-				"workload_pool":      c.WorkloadPool,
-			},
-		}
-	} else if workloadPoolSet {
-		// if the new value is set, set it
-		return []map[string]interface{}{
-			{
-				"workload_pool": c.WorkloadPool,
-			},
-		}
-	}
-
-	// otherwise, set the old value (incl. import)
 	return []map[string]interface{}{
 		{
-			"identity_namespace": c.IdentityNamespace,
+			"workload_pool": c.WorkloadPool,
 		},
 	}
 }
