@@ -13,8 +13,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
-	computeBeta "google.golang.org/api/compute/v0.beta"
-	"google.golang.org/api/compute/v1"
+	compute "google.golang.org/api/compute/v0.beta"
 )
 
 func init() {
@@ -1071,7 +1070,7 @@ func TestAccComputeInstance_soleTenantNodeAffinities(t *testing.T) {
 func TestAccComputeInstance_reservationAffinities(t *testing.T) {
 	t.Parallel()
 
-	var instance computeBeta.Instance
+	var instance compute.Instance
 	var instanceName = fmt.Sprintf("tf-test-resaffinity-%s", randString(t, 10))
 
 	vcrTest(t, resource.TestCase{
@@ -1256,7 +1255,7 @@ func TestAccComputeInstance_private_image_family(t *testing.T) {
 func TestAccComputeInstance_networkPerformanceConfig(t *testing.T) {
 	t.Parallel()
 
-	var instance computeBeta.Instance
+	var instance compute.Instance
 	var instanceName = fmt.Sprintf("tf-test-%s", randString(t, 10))
 	var diskName = fmt.Sprintf("tf-testd-%s", randString(t, 10))
 	var imageName = fmt.Sprintf("tf-testf-%s", randString(t, 10))
@@ -1540,7 +1539,7 @@ func TestAccComputeInstance_secondaryAliasIpRange(t *testing.T) {
 func TestAccComputeInstance_hostname(t *testing.T) {
 	t.Parallel()
 
-	var instance computeBeta.Instance
+	var instance compute.Instance
 	instanceName := fmt.Sprintf("tf-test-%s", randString(t, 10))
 
 	vcrTest(t, resource.TestCase{
@@ -1563,7 +1562,7 @@ func TestAccComputeInstance_hostname(t *testing.T) {
 func TestAccComputeInstance_shieldedVmConfig(t *testing.T) {
 	t.Parallel()
 
-	var instance computeBeta.Instance
+	var instance compute.Instance
 	instanceName := fmt.Sprintf("tf-test-%s", randString(t, 10))
 
 	vcrTest(t, resource.TestCase{
@@ -1594,7 +1593,7 @@ func TestAccComputeInstance_shieldedVmConfig(t *testing.T) {
 func TestAccComputeInstanceConfidentialInstanceConfigMain(t *testing.T) {
 	t.Parallel()
 
-	var instance computeBeta.Instance
+	var instance compute.Instance
 	instanceName := fmt.Sprintf("tf-test-%s", randString(t, 10))
 
 	vcrTest(t, resource.TestCase{
@@ -2386,14 +2385,7 @@ func testAccCheckComputeInstanceExists(t *testing.T, n string, instance interfac
 		panic("Attempted to check existence of Instance that was nil.")
 	}
 
-	switch instance.(type) {
-	case *compute.Instance:
-		return testAccCheckComputeInstanceExistsInProject(t, n, getTestProjectFromEnv(), instance.(*compute.Instance))
-	case *computeBeta.Instance:
-		return testAccCheckComputeBetaInstanceExistsInProject(t, n, getTestProjectFromEnv(), instance.(*computeBeta.Instance))
-	default:
-		panic("Attempted to check existence of an Instance of unknown type.")
-	}
+	return testAccCheckComputeInstanceExistsInProject(t, n, getTestProjectFromEnv(), instance.(*compute.Instance))
 }
 
 func testAccCheckComputeInstanceExistsInProject(t *testing.T, n, p string, instance *compute.Instance) resource.TestCheckFunc {
@@ -2410,35 +2402,6 @@ func testAccCheckComputeInstanceExistsInProject(t *testing.T, n, p string, insta
 		config := googleProviderConfig(t)
 
 		found, err := config.NewComputeClient(config.userAgent).Instances.Get(
-			p, rs.Primary.Attributes["zone"], rs.Primary.Attributes["name"]).Do()
-		if err != nil {
-			return err
-		}
-
-		if found.Name != rs.Primary.Attributes["name"] {
-			return fmt.Errorf("Instance not found")
-		}
-
-		*instance = *found
-
-		return nil
-	}
-}
-
-func testAccCheckComputeBetaInstanceExistsInProject(t *testing.T, n, p string, instance *computeBeta.Instance) resource.TestCheckFunc {
-	return func(s *terraform.State) error {
-		rs, ok := s.RootModule().Resources[n]
-		if !ok {
-			return fmt.Errorf("Not found: %s", n)
-		}
-
-		if rs.Primary.ID == "" {
-			return fmt.Errorf("No ID is set")
-		}
-
-		config := googleProviderConfig(t)
-
-		found, err := config.NewComputeBetaClient(config.userAgent).Instances.Get(
 			p, rs.Primary.Attributes["zone"], rs.Primary.Attributes["name"]).Do()
 		if err != nil {
 			return err
@@ -2835,7 +2798,7 @@ func testAccCheckComputeInstanceHasNetworkIP(instance *compute.Instance, network
 	}
 }
 
-func testAccCheckComputeInstanceHasNetworkPerformanceConfig(instance *computeBeta.Instance, bandwidthTier string) resource.TestCheckFunc {
+func testAccCheckComputeInstanceHasNetworkPerformanceConfig(instance *compute.Instance, bandwidthTier string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		if instance.NetworkPerformanceConfig == nil {
 			return fmt.Errorf("Expected instance to have network performance config, but it was nil")
@@ -2944,7 +2907,7 @@ func testAccCheckComputeInstanceHasConfiguredDeletionProtection(instance *comput
 	}
 }
 
-func testAccCheckComputeInstanceHasReservationAffinity(instance *computeBeta.Instance, reservationType string, specificReservationNames ...string) resource.TestCheckFunc {
+func testAccCheckComputeInstanceHasReservationAffinity(instance *compute.Instance, reservationType string, specificReservationNames ...string) resource.TestCheckFunc {
 	if len(specificReservationNames) > 1 {
 		panic("too many specificReservationNames provided in test")
 	}
@@ -2972,25 +2935,25 @@ func testAccCheckComputeInstanceHasReservationAffinity(instance *computeBeta.Ins
 	}
 }
 
-func testAccCheckComputeInstanceHasShieldedVmConfig(instance *computeBeta.Instance, enableSecureBoot bool, enableVtpm bool, enableIntegrityMonitoring bool) resource.TestCheckFunc {
+func testAccCheckComputeInstanceHasShieldedVmConfig(instance *compute.Instance, enableSecureBoot bool, enableVtpm bool, enableIntegrityMonitoring bool) resource.TestCheckFunc {
 
 	return func(s *terraform.State) error {
-		if instance.ShieldedVmConfig.EnableSecureBoot != enableSecureBoot {
-			return fmt.Errorf("Wrong shieldedVmConfig enableSecureBoot: expected %t, got, %t", enableSecureBoot, instance.ShieldedVmConfig.EnableSecureBoot)
+		if instance.ShieldedInstanceConfig.EnableSecureBoot != enableSecureBoot {
+			return fmt.Errorf("Wrong shieldedVmConfig enableSecureBoot: expected %t, got, %t", enableSecureBoot, instance.ShieldedInstanceConfig.EnableSecureBoot)
 		}
 
-		if instance.ShieldedVmConfig.EnableVtpm != enableVtpm {
-			return fmt.Errorf("Wrong shieldedVmConfig enableVtpm: expected %t, got, %t", enableVtpm, instance.ShieldedVmConfig.EnableVtpm)
+		if instance.ShieldedInstanceConfig.EnableVtpm != enableVtpm {
+			return fmt.Errorf("Wrong shieldedVmConfig enableVtpm: expected %t, got, %t", enableVtpm, instance.ShieldedInstanceConfig.EnableVtpm)
 		}
 
-		if instance.ShieldedVmConfig.EnableIntegrityMonitoring != enableIntegrityMonitoring {
-			return fmt.Errorf("Wrong shieldedVmConfig enableIntegrityMonitoring: expected %t, got, %t", enableIntegrityMonitoring, instance.ShieldedVmConfig.EnableIntegrityMonitoring)
+		if instance.ShieldedInstanceConfig.EnableIntegrityMonitoring != enableIntegrityMonitoring {
+			return fmt.Errorf("Wrong shieldedVmConfig enableIntegrityMonitoring: expected %t, got, %t", enableIntegrityMonitoring, instance.ShieldedInstanceConfig.EnableIntegrityMonitoring)
 		}
 		return nil
 	}
 }
 
-func testAccCheckComputeInstanceHasConfidentialInstanceConfig(instance *computeBeta.Instance, EnableConfidentialCompute bool) resource.TestCheckFunc {
+func testAccCheckComputeInstanceHasConfidentialInstanceConfig(instance *compute.Instance, EnableConfidentialCompute bool) resource.TestCheckFunc {
 
 	return func(s *terraform.State) error {
 		if instance.ConfidentialInstanceConfig.EnableConfidentialCompute != EnableConfidentialCompute {
@@ -3001,9 +2964,9 @@ func testAccCheckComputeInstanceHasConfidentialInstanceConfig(instance *computeB
 	}
 }
 
-func testAccCheckComputeInstanceLacksShieldedVmConfig(instance *computeBeta.Instance) resource.TestCheckFunc {
+func testAccCheckComputeInstanceLacksShieldedVmConfig(instance *compute.Instance) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		if instance.ShieldedVmConfig != nil {
+		if instance.ShieldedInstanceConfig != nil {
 			return fmt.Errorf("Expected no shielded vm config")
 		}
 

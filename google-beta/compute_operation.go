@@ -9,12 +9,12 @@ import (
 	"log"
 	"time"
 
-	computeBeta "google.golang.org/api/compute/v0.beta"
+	compute "google.golang.org/api/compute/v0.beta"
 )
 
 type ComputeOperationWaiter struct {
-	Service *computeBeta.Service
-	Op      *computeBeta.Operation
+	Service *compute.Service
+	Op      *compute.Operation
 	Context context.Context
 	Project string
 	Parent  string
@@ -48,7 +48,7 @@ func (w *ComputeOperationWaiter) IsRetryable(err error) bool {
 
 func (w *ComputeOperationWaiter) SetOp(op interface{}) error {
 	var ok bool
-	w.Op, ok = op.(*computeBeta.Operation)
+	w.Op, ok = op.(*compute.Operation)
 	if !ok {
 		return fmt.Errorf("Unable to set operation. Bad type!")
 	}
@@ -97,14 +97,14 @@ func (w *ComputeOperationWaiter) TargetStates() []string {
 }
 
 func computeOperationWaitTime(config *Config, res interface{}, project, activity, userAgent string, timeout time.Duration) error {
-	op := &computeBeta.Operation{}
+	op := &compute.Operation{}
 	err := Convert(res, op)
 	if err != nil {
 		return err
 	}
 
 	w := &ComputeOperationWaiter{
-		Service: config.NewComputeBetaClient(userAgent),
+		Service: config.NewComputeClient(userAgent),
 		Context: config.context,
 		Op:      op,
 		Project: project,
@@ -117,14 +117,14 @@ func computeOperationWaitTime(config *Config, res interface{}, project, activity
 }
 
 func computeOrgOperationWaitTimeWithResponse(config *Config, res interface{}, response *map[string]interface{}, parent, activity, userAgent string, timeout time.Duration) error {
-	op := &computeBeta.Operation{}
+	op := &compute.Operation{}
 	err := Convert(res, op)
 	if err != nil {
 		return err
 	}
 
 	w := &ComputeOperationWaiter{
-		Service: config.NewComputeBetaClient(userAgent),
+		Service: config.NewComputeClient(userAgent),
 		Op:      op,
 		Parent:  parent,
 	}
@@ -144,7 +144,7 @@ func computeOrgOperationWaitTimeWithResponse(config *Config, res interface{}, re
 
 // ComputeOperationError wraps compute.OperationError and implements the
 // error interface so it can be returned.
-type ComputeOperationError computeBeta.OperationError
+type ComputeOperationError compute.OperationError
 
 func (e ComputeOperationError) Error() string {
 	var buf bytes.Buffer

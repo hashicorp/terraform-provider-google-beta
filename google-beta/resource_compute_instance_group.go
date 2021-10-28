@@ -6,10 +6,11 @@ import (
 	"strings"
 	"time"
 
-	"google.golang.org/api/compute/v1"
 	"google.golang.org/api/googleapi"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+
+	compute "google.golang.org/api/compute/v0.beta"
 )
 
 func resourceComputeInstanceGroup() *schema.Resource {

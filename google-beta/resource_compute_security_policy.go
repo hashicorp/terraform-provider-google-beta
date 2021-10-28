@@ -247,7 +247,7 @@ func resourceComputeSecurityPolicyCreate(d *schema.ResourceData, meta interface{
 
 	log.Printf("[DEBUG] SecurityPolicy insert request: %#v", securityPolicy)
 
-	client := config.NewComputeBetaClient(userAgent)
+	client := config.NewComputeClient(userAgent)
 
 	op, err := client.SecurityPolicies.Insert(project, securityPolicy).Do()
 
@@ -283,7 +283,7 @@ func resourceComputeSecurityPolicyRead(d *schema.ResourceData, meta interface{})
 
 	sp := d.Get("name").(string)
 
-	client := config.NewComputeBetaClient(userAgent)
+	client := config.NewComputeClient(userAgent)
 
 	securityPolicy, err := client.SecurityPolicies.Get(project, sp).Do()
 	if err != nil {
@@ -336,7 +336,7 @@ func resourceComputeSecurityPolicyUpdate(d *schema.ResourceData, meta interface{
 			ForceSendFields: []string{"Description"},
 		}
 
-		client := config.NewComputeBetaClient(userAgent)
+		client := config.NewComputeClient(userAgent)
 
 		op, err := client.SecurityPolicies.Patch(project, sp, securityPolicy).Do()
 
@@ -365,7 +365,7 @@ func resourceComputeSecurityPolicyUpdate(d *schema.ResourceData, meta interface{
 			priority := int64(rule.(map[string]interface{})["priority"].(int))
 			nPriorities[priority] = true
 			if !oPriorities[priority] {
-				client := config.NewComputeBetaClient(userAgent)
+				client := config.NewComputeClient(userAgent)
 
 				// If the rule is in new and its priority does not exist in old, then add it.
 				op, err := client.SecurityPolicies.AddRule(project, sp, expandSecurityPolicyRule(rule)).Do()
@@ -379,7 +379,7 @@ func resourceComputeSecurityPolicyUpdate(d *schema.ResourceData, meta interface{
 					return err
 				}
 			} else if !oSet.Contains(rule) {
-				client := config.NewComputeBetaClient(userAgent)
+				client := config.NewComputeClient(userAgent)
 
 				// If the rule is in new, and its priority is in old, but its hash is different than the one in old, update it.
 				op, err := client.SecurityPolicies.PatchRule(project, sp, expandSecurityPolicyRule(rule)).Priority(priority).Do()
@@ -398,7 +398,7 @@ func resourceComputeSecurityPolicyUpdate(d *schema.ResourceData, meta interface{
 		for _, rule := range oSet.List() {
 			priority := int64(rule.(map[string]interface{})["priority"].(int))
 			if !nPriorities[priority] {
-				client := config.NewComputeBetaClient(userAgent)
+				client := config.NewComputeClient(userAgent)
 
 				// If the rule's priority is in old but not new, remove it.
 				op, err := client.SecurityPolicies.RemoveRule(project, sp).Priority(priority).Do()
@@ -430,7 +430,7 @@ func resourceComputeSecurityPolicyDelete(d *schema.ResourceData, meta interface{
 		return err
 	}
 
-	client := config.NewComputeBetaClient(userAgent)
+	client := config.NewComputeClient(userAgent)
 
 	// Delete the SecurityPolicy
 	op, err := client.SecurityPolicies.Delete(project, d.Get("name").(string)).Do()
