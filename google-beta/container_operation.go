@@ -104,7 +104,7 @@ func (w *ContainerOperationWaiter) TargetStates() []string {
 
 func containerOperationWait(config *Config, op *container.Operation, project, location, activity, userAgent string, timeout time.Duration) error {
 	w := &ContainerOperationWaiter{
-		Service:             config.NewContainerBetaClient(userAgent),
+		Service:             config.NewContainerClient(userAgent),
 		Context:             config.context,
 		Op:                  op,
 		Project:             project,
