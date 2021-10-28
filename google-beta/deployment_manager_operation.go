@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	compute "google.golang.org/api/compute/v0.beta"
+	"google.golang.org/api/compute/v0.beta"
 )
 
 type DeploymentManagerOperationWaiter struct {
