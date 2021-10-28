@@ -9,7 +9,7 @@ import (
 	"testing"
 	"time"
 
-	"google.golang.org/api/compute/v1"
+	compute "google.golang.org/api/compute/v0.beta"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )

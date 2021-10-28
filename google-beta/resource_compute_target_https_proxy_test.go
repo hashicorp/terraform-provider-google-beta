@@ -6,7 +6,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
-	"google.golang.org/api/compute/v1"
+	compute "google.golang.org/api/compute/v0.beta"
 )
 
 const (

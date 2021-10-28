@@ -8,8 +8,9 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"google.golang.org/api/compute/v1"
 	"google.golang.org/api/googleapi"
+
+	compute "google.golang.org/api/compute/v0.beta"
 )
 
 const peerNetworkLinkRegex = "projects/(" + ProjectRegex + ")/global/networks/((?:[a-z](?:[-a-z0-9]*[a-z0-9])?))$"
