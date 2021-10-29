@@ -4,11 +4,13 @@ import (
 	"fmt"
 	"os"
 	"regexp"
+	"strconv"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
-	compute "google.golang.org/api/compute/v0.beta"
+
+	"google.golang.org/api/compute/v0.beta"
 )
 
 func TestDiskImageDiffSuppress(t *testing.T) {
