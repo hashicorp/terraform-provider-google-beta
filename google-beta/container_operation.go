@@ -7,7 +7,7 @@ import (
 	"log"
 	"time"
 
-	"google.golang.org/api/container/v1beta1"
+	container "google.golang.org/api/container/v1beta1"
 )
 
 type ContainerOperationWaiter struct {
