@@ -1,4 +1,27 @@
-## 3.90.0 (Unreleased)
+## 4.0.0 (Unreleased)
+
+## 3.90.0 (October 26, 2021)
+
+DEPRECATIONS:
+* container: deprecated `workload_identity_config.0.identity_namespace` and it will be removed in a future major release as it has been deprecated in the API. Use `workload_identity_config.0.workload_pool` instead. Switching your configuration from one value to the other will trigger a diff at plan time, and a spurious update. ([#3733](https://github.com/hashicorp/terraform-provider-google-beta/pull/3733))
+* container: deprecated the following `google_container_cluster` fields: `instance_group_urls` and `master_auth` ([#3746](https://github.com/hashicorp/terraform-provider-google-beta/pull/3746))
+
+IMPROVEMENTS:
+* composer: added field `environment_size` to resource `google_composer_environment` ([#3730](https://github.com/hashicorp/terraform-provider-google-beta/pull/3730))
+* container: added `node_config.0.guest_accelerator.0.gpu_partition_size` field to google_container_node_pool ([#3739](https://github.com/hashicorp/terraform-provider-google-beta/pull/3739))
+* container: added `workload_identity_config.0.workload_pool` to `google_container_cluster` ([#3733](https://github.com/hashicorp/terraform-provider-google-beta/pull/3733))
+* container: made `dns_cache_config` conflict with GKE Autopilot mode ([#3725](https://github.com/hashicorp/terraform-provider-google-beta/pull/3725))
+* container_cluster: Updated `monitoring_config` to accept `WORKLOAD` ([#3732](https://github.com/hashicorp/terraform-provider-google-beta/pull/3732))
+* provider: Added links to nested types documentation for manually generated pages ([#3736](https://github.com/hashicorp/terraform-provider-google-beta/pull/3736))
+
+BUG FIXES:
+* cloudrun: fixed a permadiff on the field `template.spec.containers.ports.name` of the `google_cloud_run_service` resource ([#3740](https://github.com/hashicorp/terraform-provider-google-beta/pull/3740))
+* composer: removed `config.node_config.zone` requirement on `google_composer_environment` ([#3745](https://github.com/hashicorp/terraform-provider-google-beta/pull/3745))
+* compute: fixed permadiff for `failover_policy` on `google_compute_region_backend_service` ([#3728](https://github.com/hashicorp/terraform-provider-google-beta/pull/3728))
+* compute: fixed to make `description` updatable without recreation on `google_compute_instance_group_manager` ([#3735](https://github.com/hashicorp/terraform-provider-google-beta/pull/3735))
+* container: fixed a permadiff on `google_container_node_pool.workload_metadata_config.mode` ([#3726](https://github.com/hashicorp/terraform-provider-google-beta/pull/3726))
+* iam: fixed request batching bug where failed requests would show unnecessary backslash escaping to the user. ([#3723](https://github.com/hashicorp/terraform-provider-google-beta/pull/3723))
+* securitycenter: fixed bug where `google_scc_notification_config.streaming_config.filter` was not updating. ([#3727](https://github.com/hashicorp/terraform-provider-google-beta/pull/3727))
 
 ## 3.89.0 (October 18, 2021)
 
