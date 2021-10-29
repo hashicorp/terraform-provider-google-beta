@@ -10,7 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"google.golang.org/api/googleapi"
 
-	compute "google.golang.org/api/compute/v0.beta"
+	"google.golang.org/api/compute/v0.beta"
 )
 
 var instancesSelfLinkPattern = regexp.MustCompile(fmt.Sprintf(zonalLinkBasePattern, "instances"))
