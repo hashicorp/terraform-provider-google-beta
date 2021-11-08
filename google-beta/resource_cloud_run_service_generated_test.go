@@ -273,7 +273,7 @@ func TestAccCloudRunService_cloudRunServiceSecretEnvironmentVariablesExample(t *
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProvidersOiCS,
+		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckCloudRunServiceDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -292,12 +292,9 @@ func TestAccCloudRunService_cloudRunServiceSecretEnvironmentVariablesExample(t *
 func testAccCloudRunService_cloudRunServiceSecretEnvironmentVariablesExample(context map[string]interface{}) string {
 	return Nprintf(`
 data "google_project" "project" {
-  provider = google-beta
 }
 
 resource "google_secret_manager_secret" "secret" {
-  provider = google-beta
-
   secret_id = "secret%{random_suffix}"
   replication {
     automatic = true
@@ -305,15 +302,11 @@ resource "google_secret_manager_secret" "secret" {
 }
 
 resource "google_secret_manager_secret_version" "secret-version-data" {
-  provider = google-beta
-
   secret = google_secret_manager_secret.secret.name
   secret_data = "secret-data"
 }
 
 resource "google_secret_manager_secret_iam_member" "secret-access" {
-  provider = google-beta
-
   secret_id = google_secret_manager_secret.secret.id
   role      = "roles/secretmanager.secretAccessor"
   member    = "serviceAccount:${data.google_project.project.number}-compute@developer.gserviceaccount.com"
@@ -321,8 +314,6 @@ resource "google_secret_manager_secret_iam_member" "secret-access" {
 }
 
 resource "google_cloud_run_service" "default" {
-  provider = google-beta
-
   name     = "tf-test-cloudrun-srv%{random_suffix}"
   location = "us-central1"
 
@@ -346,7 +337,6 @@ resource "google_cloud_run_service" "default" {
   metadata {
     annotations = {
       generated-by = "magic-modules"
-      "run.googleapis.com/launch-stage" = "BETA"
     }
   }
 
@@ -377,7 +367,7 @@ func TestAccCloudRunService_cloudRunServiceSecretVolumesExample(t *testing.T) {
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProvidersOiCS,
+		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckCloudRunServiceDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -396,12 +386,9 @@ func TestAccCloudRunService_cloudRunServiceSecretVolumesExample(t *testing.T) {
 func testAccCloudRunService_cloudRunServiceSecretVolumesExample(context map[string]interface{}) string {
 	return Nprintf(`
 data "google_project" "project" {
-  provider = google-beta
 }
 
 resource "google_secret_manager_secret" "secret" {
-  provider = google-beta
-
   secret_id = "secret%{random_suffix}"
   replication {
     automatic = true
@@ -409,15 +396,11 @@ resource "google_secret_manager_secret" "secret" {
 }
 
 resource "google_secret_manager_secret_version" "secret-version-data" {
-  provider = google-beta
-
   secret = google_secret_manager_secret.secret.name
   secret_data = "secret-data"
 }
 
 resource "google_secret_manager_secret_iam_member" "secret-access" {
-  provider = google-beta
-
   secret_id = google_secret_manager_secret.secret.id
   role      = "roles/secretmanager.secretAccessor"
   member    = "serviceAccount:${data.google_project.project.number}-compute@developer.gserviceaccount.com"
@@ -425,8 +408,6 @@ resource "google_secret_manager_secret_iam_member" "secret-access" {
 }
 
 resource "google_cloud_run_service" "default" {
-  provider = google-beta
-
   name     = "tf-test-cloudrun-srv%{random_suffix}"
   location = "us-central1"
 
@@ -455,7 +436,6 @@ resource "google_cloud_run_service" "default" {
   metadata {
     annotations = {
       generated-by = "magic-modules"
-      "run.googleapis.com/launch-stage" = "BETA"
     }
   }
 
