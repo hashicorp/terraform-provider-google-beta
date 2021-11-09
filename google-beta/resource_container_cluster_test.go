@@ -2567,6 +2567,7 @@ resource "google_container_cluster" "notification_config" {
 }
 `, clusterName)
 }
+
 func testAccContainerCluster_withConfidentialNodes(clusterName string, npName string) string {
 	return fmt.Sprintf(`
 resource "google_container_cluster" "confidential_nodes" {
