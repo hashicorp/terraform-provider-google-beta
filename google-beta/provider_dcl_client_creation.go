@@ -17,6 +17,7 @@ package google
 
 import (
 	dcl "github.com/GoogleCloudPlatform/declarative-resource-client-library/dcl"
+	"time"
 
 	assuredworkloads "github.com/GoogleCloudPlatform/declarative-resource-client-library/services/google/assuredworkloads/beta"
 	cloudbuild "github.com/GoogleCloudPlatform/declarative-resource-client-library/services/google/cloudbuild/beta"
@@ -35,6 +36,7 @@ func NewDCLAssuredWorkloadsClient(config *Config, userAgent, billingProject stri
 		dcl.WithHTTPClient(config.client),
 		dcl.WithUserAgent(userAgent),
 		dcl.WithLogger(dclLogger{}),
+		dcl.WithTimeout(30 * time.Minute),
 		dcl.WithBasePath(config.AssuredWorkloadsBasePath),
 	}
 
@@ -54,6 +56,7 @@ func NewDCLcloudbuildClient(config *Config, userAgent, billingProject string) *c
 		dcl.WithHTTPClient(config.client),
 		dcl.WithUserAgent(userAgent),
 		dcl.WithLogger(dclLogger{}),
+		dcl.WithTimeout(30 * time.Minute),
 		dcl.WithBasePath(config.CloudBuildWorkerPoolBasePath),
 	}
 
@@ -73,6 +76,7 @@ func NewDCLCloudResourceManagerClient(config *Config, userAgent, billingProject 
 		dcl.WithHTTPClient(config.client),
 		dcl.WithUserAgent(userAgent),
 		dcl.WithLogger(dclLogger{}),
+		dcl.WithTimeout(30 * time.Minute),
 		dcl.WithBasePath(config.CloudResourceManagerBasePath),
 	}
 
@@ -92,6 +96,7 @@ func NewDCLComputeClient(config *Config, userAgent, billingProject string) *comp
 		dcl.WithHTTPClient(config.client),
 		dcl.WithUserAgent(userAgent),
 		dcl.WithLogger(dclLogger{}),
+		dcl.WithTimeout(30 * time.Minute),
 		dcl.WithBasePath(config.ComputeBasePath),
 	}
 
@@ -111,6 +116,7 @@ func NewDCLDataprocClient(config *Config, userAgent, billingProject string) *dat
 		dcl.WithHTTPClient(config.client),
 		dcl.WithUserAgent(userAgent),
 		dcl.WithLogger(dclLogger{}),
+		dcl.WithTimeout(30 * time.Minute),
 		dcl.WithBasePath(config.DataprocBasePath),
 	}
 
@@ -130,6 +136,7 @@ func NewDCLEventarcClient(config *Config, userAgent, billingProject string) *eve
 		dcl.WithHTTPClient(config.client),
 		dcl.WithUserAgent(userAgent),
 		dcl.WithLogger(dclLogger{}),
+		dcl.WithTimeout(30 * time.Minute),
 		dcl.WithBasePath(config.EventarcBasePath),
 	}
 
@@ -149,6 +156,7 @@ func NewDCLGkeHubClient(config *Config, userAgent, billingProject string) *gkehu
 		dcl.WithHTTPClient(config.client),
 		dcl.WithUserAgent(userAgent),
 		dcl.WithLogger(dclLogger{}),
+		dcl.WithTimeout(30 * time.Minute),
 		dcl.WithBasePath(config.GkeHubBasePath),
 	}
 
@@ -168,6 +176,7 @@ func NewDCLMonitoringClient(config *Config, userAgent, billingProject string) *m
 		dcl.WithHTTPClient(config.client),
 		dcl.WithUserAgent(userAgent),
 		dcl.WithLogger(dclLogger{}),
+		dcl.WithTimeout(30 * time.Minute),
 		dcl.WithBasePath(config.MonitoringBasePath),
 	}
 
@@ -187,6 +196,7 @@ func NewDCLOrgPolicyClient(config *Config, userAgent, billingProject string) *or
 		dcl.WithHTTPClient(config.client),
 		dcl.WithUserAgent(userAgent),
 		dcl.WithLogger(dclLogger{}),
+		dcl.WithTimeout(30 * time.Minute),
 		dcl.WithBasePath(config.OrgPolicyBasePath),
 	}
 
@@ -206,6 +216,7 @@ func NewDCLPrivatecaClient(config *Config, userAgent, billingProject string) *pr
 		dcl.WithHTTPClient(config.client),
 		dcl.WithUserAgent(userAgent),
 		dcl.WithLogger(dclLogger{}),
+		dcl.WithTimeout(30 * time.Minute),
 		dcl.WithBasePath(config.PrivatecaBasePath),
 	}
 
