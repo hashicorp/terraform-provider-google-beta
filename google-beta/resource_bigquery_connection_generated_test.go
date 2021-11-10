@@ -48,7 +48,7 @@ func TestAccBigqueryConnectionConnection_bigqueryConnectionBasicExample(t *testi
 				ResourceName:            "google_bigquery_connection.connection",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"location"},
+				ImportStateVerifyIgnore: []string{"location", "cloud_sql.0.credential"},
 			},
 		},
 	})
@@ -128,7 +128,7 @@ func TestAccBigqueryConnectionConnection_bigqueryConnectionFullExample(t *testin
 				ResourceName:            "google_bigquery_connection.connection",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"location"},
+				ImportStateVerifyIgnore: []string{"location", "cloud_sql.0.credential"},
 			},
 		},
 	})

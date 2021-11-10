@@ -219,6 +219,13 @@ func resourceBigqueryConnectionConnectionCreate(d *schema.ResourceData, meta int
 		}
 	}
 
+	// Reset id to make sure connection_id is not empty
+	id2, err := replaceVars(d, config, "projects/{{project}}/locations/{{location}}/connections/{{connection_id}}")
+	if err != nil {
+		return fmt.Errorf("Error constructing id: %s", err)
+	}
+	d.SetId(id2)
+
 	log.Printf("[DEBUG] Finished creating Connection %q: %#v", d.Id(), res)
 
 	return resourceBigqueryConnectionConnectionRead(d, meta)
