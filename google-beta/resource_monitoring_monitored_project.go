@@ -38,8 +38,8 @@ func resourceMonitoringMonitoredProject() *schema.Resource {
 		},
 
 		Timeouts: &schema.ResourceTimeout{
-			Create: schema.DefaultTimeout(30 * time.Minute),
-			Delete: schema.DefaultTimeout(30 * time.Minute),
+			Create: schema.DefaultTimeout(10 * time.Minute),
+			Delete: schema.DefaultTimeout(10 * time.Minute),
 		},
 
 		Schema: map[string]*schema.Schema{
@@ -90,7 +90,7 @@ func resourceMonitoringMonitoredProjectCreate(d *schema.ResourceData, meta inter
 	if bp, err := getBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
-	client := NewDCLMonitoringClient(config, userAgent, billingProject)
+	client := NewDCLMonitoringClient(config, userAgent, billingProject, d.Timeout(schema.TimeoutCreate))
 	client.Config.BasePath += "v1"
 	res, err := client.ApplyMonitoredProject(context.Background(), obj, createDirective...)
 
@@ -124,7 +124,7 @@ func resourceMonitoringMonitoredProjectRead(d *schema.ResourceData, meta interfa
 	if bp, err := getBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
-	client := NewDCLMonitoringClient(config, userAgent, billingProject)
+	client := NewDCLMonitoringClient(config, userAgent, billingProject, d.Timeout(schema.TimeoutRead))
 	client.Config.BasePath += "v1"
 	res, err := client.GetMonitoredProject(context.Background(), obj)
 	if err != nil {
@@ -163,7 +163,7 @@ func resourceMonitoringMonitoredProjectDelete(d *schema.ResourceData, meta inter
 	if bp, err := getBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
-	client := NewDCLMonitoringClient(config, userAgent, billingProject)
+	client := NewDCLMonitoringClient(config, userAgent, billingProject, d.Timeout(schema.TimeoutDelete))
 	client.Config.BasePath += "v1"
 	if err := client.DeleteMonitoredProject(context.Background(), obj); err != nil {
 		return fmt.Errorf("Error deleting MonitoredProject: %s", err)
