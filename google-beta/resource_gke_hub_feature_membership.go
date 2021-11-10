@@ -39,9 +39,9 @@ func resourceGkeHubFeatureMembership() *schema.Resource {
 		},
 
 		Timeouts: &schema.ResourceTimeout{
-			Create: schema.DefaultTimeout(30 * time.Minute),
-			Update: schema.DefaultTimeout(30 * time.Minute),
-			Delete: schema.DefaultTimeout(30 * time.Minute),
+			Create: schema.DefaultTimeout(10 * time.Minute),
+			Update: schema.DefaultTimeout(10 * time.Minute),
+			Delete: schema.DefaultTimeout(10 * time.Minute),
 		},
 
 		Schema: map[string]*schema.Schema{
@@ -321,7 +321,7 @@ func resourceGkeHubFeatureMembershipCreate(d *schema.ResourceData, meta interfac
 	if bp, err := getBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
-	client := NewDCLGkeHubClient(config, userAgent, billingProject)
+	client := NewDCLGkeHubClient(config, userAgent, billingProject, d.Timeout(schema.TimeoutCreate))
 	res, err := client.ApplyFeatureMembership(context.Background(), obj, createDirective...)
 
 	if _, ok := err.(dcl.DiffAfterApplyError); ok {
@@ -361,7 +361,7 @@ func resourceGkeHubFeatureMembershipRead(d *schema.ResourceData, meta interface{
 	if bp, err := getBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
-	client := NewDCLGkeHubClient(config, userAgent, billingProject)
+	client := NewDCLGkeHubClient(config, userAgent, billingProject, d.Timeout(schema.TimeoutRead))
 	res, err := client.GetFeatureMembership(context.Background(), obj)
 	if err != nil {
 		resourceName := fmt.Sprintf("GkeHubFeatureMembership %q", d.Id())
@@ -418,7 +418,7 @@ func resourceGkeHubFeatureMembershipUpdate(d *schema.ResourceData, meta interfac
 	if bp, err := getBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
-	client := NewDCLGkeHubClient(config, userAgent, billingProject)
+	client := NewDCLGkeHubClient(config, userAgent, billingProject, d.Timeout(schema.TimeoutUpdate))
 	res, err := client.ApplyFeatureMembership(context.Background(), obj, directive...)
 
 	if _, ok := err.(dcl.DiffAfterApplyError); ok {
@@ -465,7 +465,7 @@ func resourceGkeHubFeatureMembershipDelete(d *schema.ResourceData, meta interfac
 	if bp, err := getBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
-	client := NewDCLGkeHubClient(config, userAgent, billingProject)
+	client := NewDCLGkeHubClient(config, userAgent, billingProject, d.Timeout(schema.TimeoutDelete))
 	if err := client.DeleteFeatureMembership(context.Background(), obj); err != nil {
 		return fmt.Errorf("Error deleting FeatureMembership: %s", err)
 	}
