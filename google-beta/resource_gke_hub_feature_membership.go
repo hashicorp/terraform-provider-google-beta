@@ -77,11 +77,12 @@ func resourceGkeHubFeatureMembership() *schema.Resource {
 			},
 
 			"project": {
-				Type:        schema.TypeString,
-				Computed:    true,
-				Optional:    true,
-				ForceNew:    true,
-				Description: "The project of the feature",
+				Type:             schema.TypeString,
+				Computed:         true,
+				Optional:         true,
+				ForceNew:         true,
+				DiffSuppressFunc: compareSelfLinkOrResourceName,
+				Description:      "The project of the feature",
 			},
 		},
 	}
