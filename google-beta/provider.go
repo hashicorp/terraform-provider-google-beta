@@ -893,9 +893,9 @@ func Provider() *schema.Provider {
 	return provider
 }
 
-// Generated resources: 239
+// Generated resources: 240
 // Generated IAM resources: 117
-// Total generated resources: 356
+// Total generated resources: 357
 func ResourceMap() map[string]*schema.Resource {
 	resourceMap, _ := ResourceMapWithErrors()
 	return resourceMap
@@ -1046,6 +1046,7 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_compute_managed_ssl_certificate":                       resourceComputeManagedSslCertificate(),
 			"google_compute_region_ssl_certificate":                        resourceComputeRegionSslCertificate(),
 			"google_compute_reservation":                                   resourceComputeReservation(),
+			"google_compute_service_attachment":                            resourceComputeServiceAttachment(),
 			"google_compute_ssl_policy":                                    resourceComputeSslPolicy(),
 			"google_compute_subnetwork":                                    resourceComputeSubnetwork(),
 			"google_compute_subnetwork_iam_binding":                        ResourceIamBinding(ComputeSubnetworkIamSchema, ComputeSubnetworkIamUpdaterProducer, ComputeSubnetworkIdParseFunc),
@@ -1344,7 +1345,6 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_compute_firewall_policy_association": resourceComputeFirewallPolicyAssociation(),
 			"google_compute_firewall_policy":             resourceComputeFirewallPolicy(),
 			"google_compute_firewall_policy_rule":        resourceComputeFirewallPolicyRule(),
-			"google_compute_service_attachment":          resourceComputeServiceAttachment(),
 			"google_dataproc_workflow_template":          resourceDataprocWorkflowTemplate(),
 			"google_eventarc_trigger":                    resourceEventarcTrigger(),
 			"google_gke_hub_feature":                     resourceGkeHubFeature(),
