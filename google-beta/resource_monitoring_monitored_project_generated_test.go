@@ -61,8 +61,8 @@ resource "google_monitoring_monitored_project" "primary" {
   provider      = google-beta
 }
 resource "google_project" "basic" {
-  project_id = "id%{random_suffix}"
-  name       = "id%{random_suffix}"
+  project_id = "tf-test-id%{random_suffix}"
+  name       = "tf-test-id%{random_suffix}"
   org_id     = "%{org_id}"
   provider   = google-beta
 }
