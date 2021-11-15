@@ -1,4 +1,4 @@
-## 4.1.0 (Unreleased)
+## 4.1.0 (November 15, 2021)
 
 IMPROVEMENTS:
 * compute: Added `bfd` to `google_compute_router_peer` ([#3822](https://github.com/hashicorp/terraform-provider-google-beta/pull/3822))
