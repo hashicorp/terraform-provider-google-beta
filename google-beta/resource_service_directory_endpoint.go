@@ -73,6 +73,11 @@ up to 512 characters, spread across all key-value pairs.
 Metadata that goes beyond any these limits will be rejected.`,
 				Elem: &schema.Schema{Type: schema.TypeString},
 			},
+			"network": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: `The URL to the network, such as projects/PROJECT_NUMBER/locations/global/networks/NETWORK_NAME.`,
+			},
 			"port": {
 				Type:         schema.TypeInt,
 				Optional:     true,
@@ -116,6 +121,12 @@ func resourceServiceDirectoryEndpointCreate(d *schema.ResourceData, meta interfa
 		return err
 	} else if v, ok := d.GetOkExists("metadata"); !isEmptyValue(reflect.ValueOf(metadataProp)) && (ok || !reflect.DeepEqual(v, metadataProp)) {
 		obj["metadata"] = metadataProp
+	}
+	networkProp, err := expandServiceDirectoryEndpointNetwork(d.Get("network"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("network"); !isEmptyValue(reflect.ValueOf(networkProp)) && (ok || !reflect.DeepEqual(v, networkProp)) {
+		obj["network"] = networkProp
 	}
 
 	url, err := replaceVars(d, config, "{{ServiceDirectoryBasePath}}{{service}}/endpoints?endpointId={{endpoint_id}}")
@@ -187,6 +198,9 @@ func resourceServiceDirectoryEndpointRead(d *schema.ResourceData, meta interface
 	if err := d.Set("metadata", flattenServiceDirectoryEndpointMetadata(res["metadata"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Endpoint: %s", err)
 	}
+	if err := d.Set("network", flattenServiceDirectoryEndpointNetwork(res["network"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Endpoint: %s", err)
+	}
 
 	return nil
 }
@@ -219,6 +233,12 @@ func resourceServiceDirectoryEndpointUpdate(d *schema.ResourceData, meta interfa
 	} else if v, ok := d.GetOkExists("metadata"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, metadataProp)) {
 		obj["metadata"] = metadataProp
 	}
+	networkProp, err := expandServiceDirectoryEndpointNetwork(d.Get("network"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("network"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, networkProp)) {
+		obj["network"] = networkProp
+	}
 
 	url, err := replaceVars(d, config, "{{ServiceDirectoryBasePath}}{{name}}")
 	if err != nil {
@@ -238,6 +258,10 @@ func resourceServiceDirectoryEndpointUpdate(d *schema.ResourceData, meta interfa
 
 	if d.HasChange("metadata") {
 		updateMask = append(updateMask, "metadata")
+	}
+
+	if d.HasChange("network") {
+		updateMask = append(updateMask, "network")
 	}
 	// updateMask is a URL parameter but not present in the schema, so replaceVars
 	// won't set it
@@ -380,6 +404,10 @@ func flattenServiceDirectoryEndpointMetadata(v interface{}, d *schema.ResourceDa
 	return v
 }
 
+func flattenServiceDirectoryEndpointNetwork(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	return v
+}
+
 func expandServiceDirectoryEndpointAddress(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
@@ -397,4 +425,8 @@ func expandServiceDirectoryEndpointMetadata(v interface{}, d TerraformResourceDa
 		m[k] = val.(string)
 	}
 	return m, nil
+}
+
+func expandServiceDirectoryEndpointNetwork(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
 }
