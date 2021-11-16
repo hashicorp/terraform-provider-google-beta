@@ -213,7 +213,6 @@ func adjustInstanceFromMachineImageDisks(d *schema.ResourceData, config *Config,
 		for _, disk := range mi.SourceInstanceProperties.Disks {
 			if disk.Boot {
 				newdisk := &compute.AttachedDisk{
-					Source:     disk.Source,
 					AutoDelete: disk.AutoDelete,
 					Type:       disk.Type,
 					DeviceName: disk.DeviceName,
@@ -235,7 +234,6 @@ func adjustInstanceFromMachineImageDisks(d *schema.ResourceData, config *Config,
 		for _, disk := range mi.SourceInstanceProperties.Disks {
 			if disk.Type == "SCRATCH" {
 				newdisk := &compute.AttachedDisk{
-					Source:     disk.Source,
 					AutoDelete: disk.AutoDelete,
 					Type:       disk.Type,
 					DeviceName: disk.DeviceName,
@@ -261,7 +259,6 @@ func adjustInstanceFromMachineImageDisks(d *schema.ResourceData, config *Config,
 		for _, disk := range mi.SourceInstanceProperties.Disks {
 			if !disk.Boot && disk.Type != "SCRATCH" {
 				newdisk := &compute.AttachedDisk{
-					Source:     disk.Source,
 					AutoDelete: disk.AutoDelete,
 					Type:       disk.Type,
 					DeviceName: disk.DeviceName,
