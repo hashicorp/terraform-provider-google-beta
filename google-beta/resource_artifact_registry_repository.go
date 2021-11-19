@@ -55,7 +55,8 @@ alpha formats if you are a member of the [alpha user group](https://cloud.google
 - NPM ([Preview](https://cloud.google.com/products#product-launch-stages))
 - PYTHON ([Preview](https://cloud.google.com/products#product-launch-stages))
 - APT ([alpha](https://cloud.google.com/products#product-launch-stages))
-- YUM ([alpha](https://cloud.google.com/products#product-launch-stages))`,
+- YUM ([alpha](https://cloud.google.com/products#product-launch-stages))
+- HELM ([alpha](https://cloud.google.com/products#product-launch-stages))`,
 			},
 			"repository_id": {
 				Type:     schema.TypeString,
