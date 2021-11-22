@@ -59,6 +59,19 @@ func resourceCloudbuildWorkerPool() *schema.Resource {
 				Description: "User-defined name of the `WorkerPool`.",
 			},
 
+			"annotations": {
+				Type:        schema.TypeMap,
+				Optional:    true,
+				Description: "User specified annotations. See https://google.aip.dev/128#annotations for more details such as format and size limitations.",
+				Elem:        &schema.Schema{Type: schema.TypeString},
+			},
+
+			"display_name": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "A user-specified, human-readable name for the `WorkerPool`. If provided, this value must be 1-63 characters.",
+			},
+
 			"network_config": {
 				Type:        schema.TypeList,
 				Optional:    true,
@@ -102,6 +115,12 @@ func resourceCloudbuildWorkerPool() *schema.Resource {
 				Type:        schema.TypeString,
 				Computed:    true,
 				Description: "Output only. `WorkerPool` state. Possible values: STATE_UNSPECIFIED, PENDING, APPROVED, REJECTED, CANCELLED",
+			},
+
+			"uid": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "Output only. A unique identifier for the `WorkerPool`.",
 			},
 
 			"update_time": {
@@ -161,6 +180,8 @@ func resourceCloudbuildWorkerPoolCreate(d *schema.ResourceData, meta interface{}
 	obj := &cloudbuild.WorkerPool{
 		Location:      dcl.String(d.Get("location").(string)),
 		Name:          dcl.String(d.Get("name").(string)),
+		Annotations:   checkStringMap(d.Get("annotations")),
+		DisplayName:   dcl.String(d.Get("display_name").(string)),
 		NetworkConfig: expandCloudbuildWorkerPoolNetworkConfig(d.Get("network_config")),
 		Project:       dcl.String(project),
 		WorkerConfig:  expandCloudbuildWorkerPoolWorkerConfig(d.Get("worker_config")),
@@ -207,6 +228,8 @@ func resourceCloudbuildWorkerPoolRead(d *schema.ResourceData, meta interface{}) 
 	obj := &cloudbuild.WorkerPool{
 		Location:      dcl.String(d.Get("location").(string)),
 		Name:          dcl.String(d.Get("name").(string)),
+		Annotations:   checkStringMap(d.Get("annotations")),
+		DisplayName:   dcl.String(d.Get("display_name").(string)),
 		NetworkConfig: expandCloudbuildWorkerPoolNetworkConfig(d.Get("network_config")),
 		Project:       dcl.String(project),
 		WorkerConfig:  expandCloudbuildWorkerPoolWorkerConfig(d.Get("worker_config")),
@@ -234,6 +257,12 @@ func resourceCloudbuildWorkerPoolRead(d *schema.ResourceData, meta interface{}) 
 	if err = d.Set("name", res.Name); err != nil {
 		return fmt.Errorf("error setting name in state: %s", err)
 	}
+	if err = d.Set("annotations", res.Annotations); err != nil {
+		return fmt.Errorf("error setting annotations in state: %s", err)
+	}
+	if err = d.Set("display_name", res.DisplayName); err != nil {
+		return fmt.Errorf("error setting display_name in state: %s", err)
+	}
 	if err = d.Set("network_config", flattenCloudbuildWorkerPoolNetworkConfig(res.NetworkConfig)); err != nil {
 		return fmt.Errorf("error setting network_config in state: %s", err)
 	}
@@ -252,6 +281,9 @@ func resourceCloudbuildWorkerPoolRead(d *schema.ResourceData, meta interface{}) 
 	if err = d.Set("state", res.State); err != nil {
 		return fmt.Errorf("error setting state in state: %s", err)
 	}
+	if err = d.Set("uid", res.Uid); err != nil {
+		return fmt.Errorf("error setting uid in state: %s", err)
+	}
 	if err = d.Set("update_time", res.UpdateTime); err != nil {
 		return fmt.Errorf("error setting update_time in state: %s", err)
 	}
@@ -268,6 +300,8 @@ func resourceCloudbuildWorkerPoolUpdate(d *schema.ResourceData, meta interface{}
 	obj := &cloudbuild.WorkerPool{
 		Location:      dcl.String(d.Get("location").(string)),
 		Name:          dcl.String(d.Get("name").(string)),
+		Annotations:   checkStringMap(d.Get("annotations")),
+		DisplayName:   dcl.String(d.Get("display_name").(string)),
 		NetworkConfig: expandCloudbuildWorkerPoolNetworkConfig(d.Get("network_config")),
 		Project:       dcl.String(project),
 		WorkerConfig:  expandCloudbuildWorkerPoolWorkerConfig(d.Get("worker_config")),
@@ -309,6 +343,8 @@ func resourceCloudbuildWorkerPoolDelete(d *schema.ResourceData, meta interface{}
 	obj := &cloudbuild.WorkerPool{
 		Location:      dcl.String(d.Get("location").(string)),
 		Name:          dcl.String(d.Get("name").(string)),
+		Annotations:   checkStringMap(d.Get("annotations")),
+		DisplayName:   dcl.String(d.Get("display_name").(string)),
 		NetworkConfig: expandCloudbuildWorkerPoolNetworkConfig(d.Get("network_config")),
 		Project:       dcl.String(project),
 		WorkerConfig:  expandCloudbuildWorkerPoolWorkerConfig(d.Get("worker_config")),
