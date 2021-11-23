@@ -894,9 +894,9 @@ func Provider() *schema.Provider {
 	return provider
 }
 
-// Generated resources: 240
-// Generated IAM resources: 120
-// Total generated resources: 360
+// Generated resources: 241
+// Generated IAM resources: 123
+// Total generated resources: 364
 func ResourceMap() map[string]*schema.Resource {
 	resourceMap, _ := ResourceMapWithErrors()
 	return resourceMap
@@ -1190,6 +1190,10 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_notebooks_instance_iam_binding":                        ResourceIamBinding(NotebooksInstanceIamSchema, NotebooksInstanceIamUpdaterProducer, NotebooksInstanceIdParseFunc),
 			"google_notebooks_instance_iam_member":                         ResourceIamMember(NotebooksInstanceIamSchema, NotebooksInstanceIamUpdaterProducer, NotebooksInstanceIdParseFunc),
 			"google_notebooks_instance_iam_policy":                         ResourceIamPolicy(NotebooksInstanceIamSchema, NotebooksInstanceIamUpdaterProducer, NotebooksInstanceIdParseFunc),
+			"google_notebooks_runtime":                                     resourceNotebooksRuntime(),
+			"google_notebooks_runtime_iam_binding":                         ResourceIamBinding(NotebooksRuntimeIamSchema, NotebooksRuntimeIamUpdaterProducer, NotebooksRuntimeIdParseFunc),
+			"google_notebooks_runtime_iam_member":                          ResourceIamMember(NotebooksRuntimeIamSchema, NotebooksRuntimeIamUpdaterProducer, NotebooksRuntimeIdParseFunc),
+			"google_notebooks_runtime_iam_policy":                          ResourceIamPolicy(NotebooksRuntimeIamSchema, NotebooksRuntimeIamUpdaterProducer, NotebooksRuntimeIdParseFunc),
 			"google_notebooks_location":                                    resourceNotebooksLocation(),
 			"google_os_config_patch_deployment":                            resourceOSConfigPatchDeployment(),
 			"google_os_config_guest_policies":                              resourceOSConfigGuestPolicies(),

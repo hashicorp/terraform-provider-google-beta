@@ -321,7 +321,7 @@ var DefaultBasePaths = map[string]string{
 	MonitoringBasePathKey:           "https://monitoring.googleapis.com/",
 	NetworkManagementBasePathKey:    "https://networkmanagement.googleapis.com/v1/",
 	NetworkServicesBasePathKey:      "https://networkservices.googleapis.com/v1/",
-	NotebooksBasePathKey:            "https://notebooks.googleapis.com/v1beta1/",
+	NotebooksBasePathKey:            "https://notebooks.googleapis.com/v1/",
 	OSConfigBasePathKey:             "https://osconfig.googleapis.com/v1beta/",
 	OSLoginBasePathKey:              "https://oslogin.googleapis.com/v1/",
 	PrivatecaBasePathKey:            "https://privateca.googleapis.com/v1/",

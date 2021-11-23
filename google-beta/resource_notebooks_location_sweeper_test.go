@@ -61,7 +61,7 @@ func testSweepNotebooksLocation(region string) error {
 		},
 	}
 
-	listTemplate := strings.Split("https://notebooks.googleapis.com/v1beta1/projects/{{project}}/locations", "?")[0]
+	listTemplate := strings.Split("https://notebooks.googleapis.com/v1/projects/{{project}}/locations", "?")[0]
 	listUrl, err := replaceVars(d, config, listTemplate)
 	if err != nil {
 		log.Printf("[INFO][SWEEPER_LOG] error preparing sweeper list url: %s", err)
@@ -99,7 +99,7 @@ func testSweepNotebooksLocation(region string) error {
 			continue
 		}
 
-		deleteTemplate := "https://notebooks.googleapis.com/v1beta1/projects/{{project}}/locations/{{name}}"
+		deleteTemplate := "https://notebooks.googleapis.com/v1/projects/{{project}}/locations/{{name}}"
 		deleteUrl, err := replaceVars(d, config, deleteTemplate)
 		if err != nil {
 			log.Printf("[INFO][SWEEPER_LOG] error preparing delete url: %s", err)
