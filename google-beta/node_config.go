@@ -367,6 +367,12 @@ func schemaNodeConfig() *schema.Schema {
 						},
 					},
 				},
+				"node_group": {
+					Type:        schema.TypeString,
+					Optional:    true,
+					ForceNew:    true,
+					Description: `Setting this field will assign instances of this pool to run on the specified node group. This is useful for running workloads on sole tenant nodes.`,
+				},
 			},
 		},
 	}
@@ -530,6 +536,10 @@ func expandNodeConfig(v interface{}) *container.NodeConfig {
 		nc.LinuxNodeConfig = expandLinuxNodeConfig(v)
 	}
 
+	if v, ok := nodeConfig["node_group"]; ok {
+		nc.NodeGroup = v.(string)
+	}
+
 	return nc
 }
 
@@ -627,6 +637,7 @@ func flattenNodeConfig(c *container.NodeConfig) []map[string]interface{} {
 		"boot_disk_kms_key":        c.BootDiskKmsKey,
 		"kubelet_config":           flattenKubeletConfig(c.KubeletConfig),
 		"linux_node_config":        flattenLinuxNodeConfig(c.LinuxNodeConfig),
+		"node_group":               c.NodeGroup,
 	})
 
 	if len(c.OauthScopes) > 0 {
