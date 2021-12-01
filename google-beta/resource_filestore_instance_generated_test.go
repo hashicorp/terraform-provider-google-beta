@@ -42,7 +42,7 @@ func TestAccFilestoreInstance_filestoreInstanceBasicExample(t *testing.T) {
 				ResourceName:            "google_filestore_instance.instance",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"name", "zone"},
+				ImportStateVerifyIgnore: []string{"name", "zone", "location"},
 			},
 		},
 	})
@@ -52,7 +52,7 @@ func testAccFilestoreInstance_filestoreInstanceBasicExample(context map[string]i
 	return Nprintf(`
 resource "google_filestore_instance" "instance" {
   name = "tf-test-test-instance%{random_suffix}"
-  zone = "us-central1-b"
+  location = "us-central1-b"
   tier = "PREMIUM"
 
   file_shares {
@@ -87,7 +87,7 @@ func TestAccFilestoreInstance_filestoreInstanceFullExample(t *testing.T) {
 				ResourceName:            "google_filestore_instance.instance",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"name", "zone"},
+				ImportStateVerifyIgnore: []string{"name", "zone", "location"},
 			},
 		},
 	})
@@ -98,7 +98,7 @@ func testAccFilestoreInstance_filestoreInstanceFullExample(context map[string]in
 resource "google_filestore_instance" "instance" {
   provider = google-beta
   name = "tf-test-test-instance%{random_suffix}"
-  zone = "us-central1-b"
+  location = "us-central1-b"
   tier = "BASIC_SSD"
 
   file_shares {
@@ -141,7 +141,7 @@ func testAccCheckFilestoreInstanceDestroyProducer(t *testing.T) func(s *terrafor
 
 			config := googleProviderConfig(t)
 
-			url, err := replaceVarsForTest(config, rs, "{{FilestoreBasePath}}projects/{{project}}/locations/{{zone}}/instances/{{name}}")
+			url, err := replaceVarsForTest(config, rs, "{{FilestoreBasePath}}projects/{{project}}/locations/{{location}}/instances/{{name}}")
 			if err != nil {
 				return err
 			}
