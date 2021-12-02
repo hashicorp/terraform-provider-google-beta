@@ -771,6 +771,7 @@ func Provider() *schema.Provider {
 			GkeHubFeatureCustomEndpointEntryKey:          GkeHubFeatureCustomEndpointEntry,
 			OrgPolicyEndpointEntryKey:                    OrgPolicyEndpointEntry,
 			PrivatecaCertificateTemplateEndpointEntryKey: PrivatecaCertificateTemplateCustomEndpointEntry,
+			RecaptchaEnterpriseEndpointEntryKey:          RecaptchaEnterpriseEndpointEntry,
 
 			CloudBuildWorkerPoolEndpointEntryKey: CloudBuildWorkerPoolEndpointEntry,
 		},
@@ -1362,6 +1363,7 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_monitoring_monitored_project":        resourceMonitoringMonitoredProject(),
 			"google_org_policy_policy":                   resourceOrgPolicyPolicy(),
 			"google_privateca_certificate_template":      resourcePrivatecaCertificateTemplate(),
+			"google_recaptcha_enterprise_key":            resourceRecaptchaEnterpriseKey(),
 		},
 		// ------------------------------------
 		map[string]*schema.Resource{

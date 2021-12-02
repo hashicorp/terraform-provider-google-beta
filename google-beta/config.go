@@ -177,6 +177,7 @@ type Config struct {
 	EventarcBasePath             string
 	GkeHubBasePath               string
 	OrgPolicyBasePath            string
+	RecaptchaEnterpriseBasePath  string
 	// CloudBuild WorkerPool uses a different endpoint (v1beta1) than any other CloudBuild resources
 	CloudBuildWorkerPoolBasePath string
 }

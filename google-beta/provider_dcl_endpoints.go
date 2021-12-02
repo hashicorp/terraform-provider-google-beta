@@ -94,6 +94,15 @@ var PrivatecaEndpointEntry = &schema.Schema{
 	}, ""),
 }
 
+var RecaptchaEnterpriseEndpointEntryKey = "recaptcha_enterprise_custom_endpoint"
+var RecaptchaEnterpriseEndpointEntry = &schema.Schema{
+	Type:     schema.TypeString,
+	Optional: true,
+	DefaultFunc: schema.MultiEnvDefaultFunc([]string{
+		"GOOGLE_RECAPTCHA_ENTERPRISE_CUSTOM_ENDPOINT",
+	}, ""),
+}
+
 //Add new values to config.go.erb config object declaration
 //AssuredWorkloadsBasePath string
 //CloudBuildWorkerPoolBasePath string
@@ -103,6 +112,7 @@ var PrivatecaEndpointEntry = &schema.Schema{
 //MonitoringBasePath string
 //OrgPolicyBasePath string
 //PrivatecaBasePath string
+//RecaptchaEnterpriseBasePath string
 
 //Add new values to provider.go.erb schema initialization
 // AssuredWorkloadsEndpointEntryKey:               AssuredWorkloadsEndpointEntry,
@@ -113,6 +123,7 @@ var PrivatecaEndpointEntry = &schema.Schema{
 // MonitoringEndpointEntryKey:               MonitoringEndpointEntry,
 // OrgPolicyEndpointEntryKey:               OrgPolicyEndpointEntry,
 // PrivatecaEndpointEntryKey:               PrivatecaEndpointEntry,
+// RecaptchaEnterpriseEndpointEntryKey:               RecaptchaEnterpriseEndpointEntry,
 
 //Add new values to provider.go.erb - provider block read
 // config.AssuredWorkloadsBasePath = d.Get(AssuredWorkloadsEndpointEntryKey).(string)
@@ -123,3 +134,4 @@ var PrivatecaEndpointEntry = &schema.Schema{
 // config.MonitoringBasePath = d.Get(MonitoringEndpointEntryKey).(string)
 // config.OrgPolicyBasePath = d.Get(OrgPolicyEndpointEntryKey).(string)
 // config.PrivatecaBasePath = d.Get(PrivatecaEndpointEntryKey).(string)
+// config.RecaptchaEnterpriseBasePath = d.Get(RecaptchaEnterpriseEndpointEntryKey).(string)
