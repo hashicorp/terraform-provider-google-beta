@@ -49,7 +49,7 @@ func resourceVertexAIMetadataStore() *schema.Resource {
 				Type:        schema.TypeList,
 				Optional:    true,
 				ForceNew:    true,
-				Description: `Customer-managed encryption key spec for a Dataset. If set, this MetadataStore and all sub-resources of this MetadataStore will be secured by this key.`,
+				Description: `Customer-managed encryption key spec for a MetadataStore. If set, this MetadataStore and all sub-resources of this MetadataStore will be secured by this key.`,
 				MaxItems:    1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
