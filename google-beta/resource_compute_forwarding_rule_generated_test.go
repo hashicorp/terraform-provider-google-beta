@@ -52,7 +52,7 @@ func testAccComputeForwardingRule_internalHttpLbWithMigBackendExample(context ma
 	return Nprintf(`
 # Internal HTTP load balancer with a managed instance group backend
 
-# VPC
+# VPC network
 resource "google_compute_network" "ilb_network" {
   name                    = "tf-test-l7-ilb-network%{random_suffix}"
   provider                = google-beta
@@ -70,7 +70,7 @@ resource "google_compute_subnetwork" "proxy_subnet" {
   network       = google_compute_network.ilb_network.id
 }
 
-# backed subnet
+# backend subnet
 resource "google_compute_subnetwork" "ilb_subnet" {
   name          = "tf-test-l7-ilb-subnet%{random_suffix}"
   provider      = google-beta
@@ -94,7 +94,7 @@ resource "google_compute_forwarding_rule" "google_compute_forwarding_rule" {
   network_tier          = "PREMIUM"
 }
 
-# http proxy
+# HTTP target proxy
 resource "google_compute_region_target_http_proxy" "default" {
   name     = "tf-test-l7-ilb-target-http-proxy%{random_suffix}"
   provider = google-beta
@@ -102,7 +102,7 @@ resource "google_compute_region_target_http_proxy" "default" {
   url_map  = google_compute_region_url_map.default.id
 }
 
-# url map
+# URL map
 resource "google_compute_region_url_map" "default" {
   name            = "tf-test-l7-ilb-regional-url-map%{random_suffix}"
   provider        = google-beta
