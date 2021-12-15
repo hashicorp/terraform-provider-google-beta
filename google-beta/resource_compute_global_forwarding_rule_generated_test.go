@@ -23,7 +23,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
-func TestAccComputeGlobalForwardingRule_externalTcpProxyLbMigBackendCustomHeaderExample(t *testing.T) {
+func TestAccComputeGlobalForwardingRule_externalTcpProxyLbMigBackendExample(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
@@ -36,7 +36,7 @@ func TestAccComputeGlobalForwardingRule_externalTcpProxyLbMigBackendCustomHeader
 		CheckDestroy: testAccCheckComputeGlobalForwardingRuleDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccComputeGlobalForwardingRule_externalTcpProxyLbMigBackendCustomHeaderExample(context),
+				Config: testAccComputeGlobalForwardingRule_externalTcpProxyLbMigBackendExample(context),
 			},
 			{
 				ResourceName:            "google_compute_global_forwarding_rule.default",
@@ -48,7 +48,7 @@ func TestAccComputeGlobalForwardingRule_externalTcpProxyLbMigBackendCustomHeader
 	})
 }
 
-func testAccComputeGlobalForwardingRule_externalTcpProxyLbMigBackendCustomHeaderExample(context map[string]interface{}) string {
+func testAccComputeGlobalForwardingRule_externalTcpProxyLbMigBackendExample(context map[string]interface{}) string {
 	return Nprintf(`
 # External TCP proxy load balancer with managed instance group backend
 
