@@ -92,6 +92,12 @@ func resourceMonitoringMonitoredProjectCreate(d *schema.ResourceData, meta inter
 	}
 	client := NewDCLMonitoringClient(config, userAgent, billingProject, d.Timeout(schema.TimeoutCreate))
 	client.Config.BasePath += "v1"
+	if bp, err := replaceVars(d, config, client.Config.BasePath); err != nil {
+		d.SetId("")
+		return fmt.Errorf("Could not format %q: %w", client.Config.BasePath, err)
+	} else {
+		client.Config.BasePath = bp
+	}
 	res, err := client.ApplyMonitoredProject(context.Background(), obj, createDirective...)
 
 	if _, ok := err.(dcl.DiffAfterApplyError); ok {
@@ -126,6 +132,12 @@ func resourceMonitoringMonitoredProjectRead(d *schema.ResourceData, meta interfa
 	}
 	client := NewDCLMonitoringClient(config, userAgent, billingProject, d.Timeout(schema.TimeoutRead))
 	client.Config.BasePath += "v1"
+	if bp, err := replaceVars(d, config, client.Config.BasePath); err != nil {
+		d.SetId("")
+		return fmt.Errorf("Could not format %q: %w", client.Config.BasePath, err)
+	} else {
+		client.Config.BasePath = bp
+	}
 	res, err := client.GetMonitoredProject(context.Background(), obj)
 	if err != nil {
 		resourceName := fmt.Sprintf("MonitoringMonitoredProject %q", d.Id())
@@ -165,6 +177,12 @@ func resourceMonitoringMonitoredProjectDelete(d *schema.ResourceData, meta inter
 	}
 	client := NewDCLMonitoringClient(config, userAgent, billingProject, d.Timeout(schema.TimeoutDelete))
 	client.Config.BasePath += "v1"
+	if bp, err := replaceVars(d, config, client.Config.BasePath); err != nil {
+		d.SetId("")
+		return fmt.Errorf("Could not format %q: %w", client.Config.BasePath, err)
+	} else {
+		client.Config.BasePath = bp
+	}
 	if err := client.DeleteMonitoredProject(context.Background(), obj); err != nil {
 		return fmt.Errorf("Error deleting MonitoredProject: %s", err)
 	}

@@ -58,6 +58,24 @@ var ComputeEndpointEntry = &schema.Schema{
 	}, ""),
 }
 
+var ContainerAwsEndpointEntryKey = "container_aws_custom_endpoint"
+var ContainerAwsEndpointEntry = &schema.Schema{
+	Type:     schema.TypeString,
+	Optional: true,
+	DefaultFunc: schema.MultiEnvDefaultFunc([]string{
+		"GOOGLE_CONTAINER_AWS_CUSTOM_ENDPOINT",
+	}, ""),
+}
+
+var ContainerAzureEndpointEntryKey = "container_azure_custom_endpoint"
+var ContainerAzureEndpointEntry = &schema.Schema{
+	Type:     schema.TypeString,
+	Optional: true,
+	DefaultFunc: schema.MultiEnvDefaultFunc([]string{
+		"GOOGLE_CONTAINER_AZURE_CUSTOM_ENDPOINT",
+	}, ""),
+}
+
 var EventarcEndpointEntryKey = "eventarc_custom_endpoint"
 var EventarcEndpointEntry = &schema.Schema{
 	Type:     schema.TypeString,
@@ -117,6 +135,8 @@ var RecaptchaEnterpriseEndpointEntry = &schema.Schema{
 //CloudBuildWorkerPoolBasePath string
 //CloudResourceManagerBasePath string
 //ComputeBasePath string
+//ContainerAwsBasePath string
+//ContainerAzureBasePath string
 //EventarcBasePath string
 //MonitoringBasePath string
 //OrgPolicyBasePath string
@@ -129,6 +149,8 @@ var RecaptchaEnterpriseEndpointEntry = &schema.Schema{
 // CloudBuildWorkerPoolEndpointEntryKey:               CloudBuildWorkerPoolEndpointEntry,
 // CloudResourceManagerEndpointEntryKey:               CloudResourceManagerEndpointEntry,
 // ComputeEndpointEntryKey:               ComputeEndpointEntry,
+// ContainerAwsEndpointEntryKey:               ContainerAwsEndpointEntry,
+// ContainerAzureEndpointEntryKey:               ContainerAzureEndpointEntry,
 // EventarcEndpointEntryKey:               EventarcEndpointEntry,
 // MonitoringEndpointEntryKey:               MonitoringEndpointEntry,
 // OrgPolicyEndpointEntryKey:               OrgPolicyEndpointEntry,
@@ -141,6 +163,8 @@ var RecaptchaEnterpriseEndpointEntry = &schema.Schema{
 // config.CloudBuildWorkerPoolBasePath = d.Get(CloudBuildWorkerPoolEndpointEntryKey).(string)
 // config.CloudResourceManagerBasePath = d.Get(CloudResourceManagerEndpointEntryKey).(string)
 // config.ComputeBasePath = d.Get(ComputeEndpointEntryKey).(string)
+// config.ContainerAwsBasePath = d.Get(ContainerAwsEndpointEntryKey).(string)
+// config.ContainerAzureBasePath = d.Get(ContainerAzureEndpointEntryKey).(string)
 // config.EventarcBasePath = d.Get(EventarcEndpointEntryKey).(string)
 // config.MonitoringBasePath = d.Get(MonitoringEndpointEntryKey).(string)
 // config.OrgPolicyBasePath = d.Get(OrgPolicyEndpointEntryKey).(string)
