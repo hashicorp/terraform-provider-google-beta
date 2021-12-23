@@ -543,6 +543,7 @@ func resourceComposerEnvironment() *schema.Resource {
 								},
 							},
 						},
+
 						"workloads_config": {
 							Type:         schema.TypeList,
 							Optional:     true,
@@ -980,7 +981,6 @@ func resourceComposerEnvironmentUpdate(d *schema.ResourceData, meta interface{})
 				return err
 			}
 		}
-
 		if d.HasChange("config.0.workloads_config") {
 			patchObj := &composer.Environment{Config: &composer.EnvironmentConfig{}}
 			if config != nil {
@@ -991,7 +991,16 @@ func resourceComposerEnvironmentUpdate(d *schema.ResourceData, meta interface{})
 				return err
 			}
 		}
-
+		if d.HasChange("config.0.environment_size") {
+			patchObj := &composer.Environment{Config: &composer.EnvironmentConfig{}}
+			if config != nil {
+				patchObj.Config.EnvironmentSize = config.EnvironmentSize
+			}
+			err = resourceComposerEnvironmentPatchField("config.EnvironmentSize", userAgent, patchObj, d, tfConfig)
+			if err != nil {
+				return err
+			}
+		}
 		if d.HasChange("config.0.master_authorized_networks_config") {
 			patchObj := &composer.Environment{Config: &composer.EnvironmentConfig{}}
 			if config != nil {
@@ -1128,7 +1137,6 @@ func flattenComposerEnvironmentConfig(envCfg *composer.EnvironmentConfig) interf
 	transformed["workloads_config"] = flattenComposerEnvironmentConfigWorkloadsConfig(envCfg.WorkloadsConfig)
 	transformed["environment_size"] = envCfg.EnvironmentSize
 	transformed["master_authorized_networks_config"] = flattenComposerEnvironmentConfigMasterAuthorizedNetworksConfig(envCfg.MasterAuthorizedNetworksConfig)
-
 	return []interface{}{transformed}
 }
 
@@ -1409,7 +1417,6 @@ func expandComposerEnvironmentConfig(v interface{}, d *schema.ResourceData, conf
 		return nil, err
 	}
 	transformed.MaintenanceWindow = transformedMaintenanceWindow
-
 	transformedWorkloadsConfig, err := expandComposerEnvironmentConfigWorkloadsConfig(original["workloads_config"], d, config)
 	if err != nil {
 		return nil, err
@@ -1421,13 +1428,11 @@ func expandComposerEnvironmentConfig(v interface{}, d *schema.ResourceData, conf
 		return nil, err
 	}
 	transformed.EnvironmentSize = transformedEnvironmentSize
-
 	transformedMasterAuthorizedNetworksConfig, err := expandComposerEnvironmentConfigMasterAuthorizedNetworksConfig(original["master_authorized_networks_config"], d, config)
 	if err != nil {
 		return nil, err
 	}
 	transformed.MasterAuthorizedNetworksConfig = transformedMasterAuthorizedNetworksConfig
-
 	return transformed, nil
 }
 
@@ -1643,10 +1648,10 @@ func expandComposerEnvironmentConfigPrivateEnvironmentConfig(v interface{}, d *s
 	if v, ok := original["web_server_ipv4_cidr_block"]; ok {
 		transformed.WebServerIpv4CidrBlock = v.(string)
 	}
+
 	if v, ok := original["cloud_composer_network_ipv4_cidr_block"]; ok {
 		transformed.CloudComposerNetworkIpv4CidrBlock = v.(string)
 	}
-
 	if v, ok := original["enable_privately_used_public_ips"]; ok {
 		transformed.EnablePrivatelyUsedPublicIps = v.(bool)
 	}
