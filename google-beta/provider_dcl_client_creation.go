@@ -29,6 +29,7 @@ import (
 	eventarc "github.com/GoogleCloudPlatform/declarative-resource-client-library/services/google/eventarc/beta"
 	gkehub "github.com/GoogleCloudPlatform/declarative-resource-client-library/services/google/gkehub/beta"
 	monitoring "github.com/GoogleCloudPlatform/declarative-resource-client-library/services/google/monitoring/beta"
+	networkconnectivity "github.com/GoogleCloudPlatform/declarative-resource-client-library/services/google/networkconnectivity/beta"
 	orgpolicy "github.com/GoogleCloudPlatform/declarative-resource-client-library/services/google/orgpolicy/beta"
 	osconfig "github.com/GoogleCloudPlatform/declarative-resource-client-library/services/google/osconfig/beta"
 	privateca "github.com/GoogleCloudPlatform/declarative-resource-client-library/services/google/privateca/beta"
@@ -263,6 +264,29 @@ func NewDCLMonitoringClient(config *Config, userAgent, billingProject string, ti
 
 	dclConfig := dcl.NewConfig(configOptions...)
 	return monitoring.NewClient(dclConfig)
+}
+
+func NewDCLNetworkConnectivityClient(config *Config, userAgent, billingProject string, timeout time.Duration) *networkconnectivity.Client {
+	configOptions := []dcl.ConfigOption{
+		dcl.WithHTTPClient(config.client),
+		dcl.WithUserAgent(userAgent),
+		dcl.WithLogger(dclLogger{}),
+		dcl.WithBasePath(config.NetworkConnectivityBasePath),
+	}
+
+	if timeout != 0 {
+		configOptions = append(configOptions, dcl.WithTimeout(timeout))
+	}
+
+	if config.UserProjectOverride {
+		configOptions = append(configOptions, dcl.WithUserProjectOverride())
+		if billingProject != "" {
+			configOptions = append(configOptions, dcl.WithBillingProject(billingProject))
+		}
+	}
+
+	dclConfig := dcl.NewConfig(configOptions...)
+	return networkconnectivity.NewClient(dclConfig)
 }
 
 func NewDCLOrgPolicyClient(config *Config, userAgent, billingProject string, timeout time.Duration) *orgpolicy.Client {
