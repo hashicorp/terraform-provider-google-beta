@@ -461,7 +461,7 @@ resource "google_compute_instance_group_manager" "igm" {
     instance_template = google_compute_instance_template.instance_template.self_link
     name              = "primary"
   }
-  base_instance_name = "internal-igm"
+  base_instance_name = "tf-test-internal-igm"
   zone               = "us-central1-f"
   target_size        = 1
 }
@@ -580,7 +580,7 @@ resource "google_compute_instance_group_manager" "igm" {
     instance_template = google_compute_instance_template.instance_template.self_link
     name              = "primary"
   }
-  base_instance_name = "internal-igm"
+  base_instance_name = "tf-test-internal-igm"
   zone               = "us-central1-f"
   target_size        = 1
 }

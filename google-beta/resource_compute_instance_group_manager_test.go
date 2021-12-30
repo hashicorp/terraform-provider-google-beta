@@ -493,7 +493,7 @@ resource "google_compute_instance_group_manager" "igm-basic" {
   }
 
   target_pools       = [google_compute_target_pool.igm-basic.self_link]
-  base_instance_name = "igm-basic"
+  base_instance_name = "tf-test-igm-basic"
   zone               = "us-central1-c"
   target_size        = 2
 }
@@ -507,7 +507,7 @@ resource "google_compute_instance_group_manager" "igm-no-tp" {
     instance_template = google_compute_instance_template.igm-basic.self_link
   }
 
-  base_instance_name = "igm-no-tp"
+  base_instance_name = "tf-test-igm-no-tp"
   zone               = "us-central1-c"
   target_size        = 2
 }
@@ -551,7 +551,7 @@ resource "google_compute_instance_group_manager" "igm-basic" {
     instance_template = google_compute_instance_template.igm-basic.self_link
   }
 
-  base_instance_name = "igm-basic"
+  base_instance_name = "tf-test-igm-basic"
   zone               = "us-central1-c"
 }
 `, template, igm)
@@ -601,7 +601,7 @@ resource "google_compute_instance_group_manager" "igm-update" {
   }
 
   target_pools       = [google_compute_target_pool.igm-update.self_link]
-  base_instance_name = "igm-update"
+  base_instance_name = "tf-test-igm-update"
   zone               = "us-central1-c"
   target_size        = 2
   named_port {
@@ -687,7 +687,7 @@ resource "google_compute_instance_group_manager" "igm-update" {
     google_compute_target_pool.igm-update.self_link,
     google_compute_target_pool.igm-update2.self_link,
   ]
-  base_instance_name = "igm-update"
+  base_instance_name = "tf-test-igm-update"
   zone               = "us-central1-c"
   target_size        = 3
   named_port {
@@ -773,7 +773,7 @@ resource "google_compute_instance_group_manager" "igm-update" {
     instance_template = google_compute_instance_template.igm-update2.self_link
   }
 
-  base_instance_name = "igm-update"
+  base_instance_name = "tf-test-igm-update"
   zone               = "us-central1-c"
   target_size        = 3
   named_port {
@@ -828,7 +828,7 @@ resource "google_compute_instance_group_manager" "igm-update" {
     instance_template = google_compute_instance_template.igm-update.self_link
   }
 
-  base_instance_name = "igm-update"
+  base_instance_name = "tf-test-igm-update"
   zone               = "us-central1-c"
   target_size        = 2
   named_port {
@@ -877,7 +877,7 @@ resource "google_compute_instance_group_manager" "igm-rolling-update-policy" {
     name              = "prod"
     instance_template = google_compute_instance_template.igm-rolling-update-policy.self_link
   }
-  base_instance_name = "igm-rolling-update-policy"
+  base_instance_name = "tf-test-igm-rolling-update-policy"
   zone               = "us-central1-c"
   target_size        = 3
   update_policy {
@@ -928,7 +928,7 @@ resource "google_compute_instance_group_manager" "igm-rolling-update-policy" {
     name              = "prod2"
     instance_template = google_compute_instance_template.igm-rolling-update-policy.self_link
   }
-  base_instance_name = "igm-rolling-update-policy"
+  base_instance_name = "tf-test-igm-rolling-update-policy"
   zone               = "us-central1-c"
   target_size        = 3
   update_policy {
@@ -976,7 +976,7 @@ resource "google_compute_instance_group_manager" "igm-rolling-update-policy" {
     name              = "prod2"
     instance_template = google_compute_instance_template.igm-rolling-update-policy.self_link
   }
-  base_instance_name = "igm-rolling-update-policy"
+  base_instance_name = "tf-test-igm-rolling-update-policy"
   zone               = "us-central1-c"
   target_size        = 3
   update_policy {
@@ -1025,7 +1025,7 @@ resource "google_compute_instance_group_manager" "igm-rolling-update-policy" {
     name              = "prod2"
     instance_template = google_compute_instance_template.igm-rolling-update-policy.self_link
   }
-  base_instance_name = "igm-rolling-update-policy"
+  base_instance_name = "tf-test-igm-rolling-update-policy"
   zone               = "us-central1-c"
   target_size        = 3
   update_policy {
@@ -1073,7 +1073,7 @@ resource "google_compute_instance_group_manager" "igm-rolling-update-policy" {
     name              = "prod2"
     instance_template = google_compute_instance_template.igm-rolling-update-policy.self_link
   }
-  base_instance_name = "igm-rolling-update-policy"
+  base_instance_name = "tf-test-igm-rolling-update-policy"
   zone               = "us-central1-c"
   target_size        = 3
   update_policy {
@@ -1127,7 +1127,7 @@ resource "google_compute_instance_group_manager" "igm-basic" {
     name              = "prod"
   }
 
-  base_instance_name = "igm-basic"
+  base_instance_name = "tf-test-igm-basic"
   zone               = "us-central1-c"
   target_size        = 2
 }
@@ -1141,7 +1141,7 @@ resource "google_compute_instance_group_manager" "igm-basic-2" {
     instance_template = google_compute_instance_template.igm-basic.self_link
   }
 
-  base_instance_name = "igm-basic-2"
+  base_instance_name = "tf-test-igm-basic-2"
   zone               = "us-west1-b"
   target_size        = 2
 }
@@ -1188,7 +1188,7 @@ resource "google_compute_instance_group_manager" "igm-basic" {
     name              = "prod"
   }
   target_pools       = [google_compute_target_pool.igm-basic.self_link]
-  base_instance_name = "igm-basic"
+  base_instance_name = "tf-test-igm-basic"
   zone               = "us-central1-c"
   target_size        = 2
   auto_healing_policies {
@@ -1246,7 +1246,7 @@ resource "google_compute_instance_group_manager" "igm-basic" {
     name              = "prod"
   }
   target_pools       = [google_compute_target_pool.igm-basic.self_link]
-  base_instance_name = "igm-basic"
+  base_instance_name = "tf-test-igm-basic"
   zone               = "us-central1-c"
   target_size        = 2
 }
@@ -1308,7 +1308,7 @@ resource "google_compute_instance_template" "igm-canary" {
 resource "google_compute_instance_group_manager" "igm-basic" {
   description        = "Terraform test instance group manager"
   name               = "%s"
-  base_instance_name = "igm-basic"
+  base_instance_name = "tf-test-igm-basic"
   zone               = "us-central1-c"
   target_size        = 2
 
@@ -1382,12 +1382,12 @@ resource "google_compute_instance_group_manager" "igm-basic" {
     name              = "prod"
   }
   target_pools       = [google_compute_target_pool.igm-basic.self_link]
-  base_instance_name = "igm-basic"
+  base_instance_name = "tf-test-igm-basic"
   zone               = "us-central1-c"
   target_size        = 2
   stateful_disk {
     device_name = "my-stateful-disk"
-    delete_rule = "NEVER"
+    delete_rule = "ON_PERMANENT_INSTANCE_DELETION"
   }
 }
 
@@ -1454,7 +1454,7 @@ resource "google_compute_instance_group_manager" "igm-basic" {
     name              = "prod"
   }
   target_pools       = [google_compute_target_pool.igm-basic.self_link]
-  base_instance_name = "igm-basic"
+  base_instance_name = "tf-test-igm-basic"
   zone               = "us-central1-c"
   target_size        = 2
   stateful_disk {
@@ -1519,7 +1519,7 @@ resource "google_compute_instance_group_manager" "igm-basic" {
     name              = "prod"
   }
   target_pools       = [google_compute_target_pool.igm-basic.self_link]
-  base_instance_name = "igm-basic"
+  base_instance_name = "tf-test-igm-basic"
   zone               = "us-central1-c"
   wait_for_instances = true
   wait_for_instances_status = "STABLE"
@@ -1581,7 +1581,7 @@ resource "google_compute_instance_group_manager" "igm-basic" {
     name              = "prod"
   }
   target_pools       = [google_compute_target_pool.igm-basic.self_link]
-  base_instance_name = "igm-basic"
+  base_instance_name = "tf-test-igm-basic"
   zone               = "us-central1-c"
   wait_for_instances = true
   wait_for_instances_status = "UPDATED"
