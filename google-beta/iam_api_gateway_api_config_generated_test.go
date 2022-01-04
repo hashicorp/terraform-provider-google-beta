@@ -255,7 +255,7 @@ resource "google_api_gateway_api_config_iam_binding" "foo" {
   api = google_api_gateway_api_config.api_cfg.api
   api_config = google_api_gateway_api_config.api_cfg.api_config_id
   role = "%{role}"
-  members = ["user:admin@hashicorptest.com", "user:paddy@hashicorp.com"]
+  members = ["user:admin@hashicorptest.com", "user:gterraformtest1@gmail.com"]
 }
 `, context)
 }

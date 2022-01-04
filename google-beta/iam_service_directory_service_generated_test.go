@@ -230,7 +230,7 @@ resource "google_service_directory_service_iam_binding" "foo" {
   provider = google-beta
   name = google_service_directory_service.example.name
   role = "%{role}"
-  members = ["user:admin@hashicorptest.com", "user:paddy@hashicorp.com"]
+  members = ["user:admin@hashicorptest.com", "user:gterraformtest1@gmail.com"]
 }
 `, context)
 }

@@ -220,7 +220,7 @@ resource "google_data_catalog_policy_tag_iam_binding" "foo" {
   provider = google-beta
   policy_tag = google_data_catalog_policy_tag.basic_policy_tag.name
   role = "%{role}"
-  members = ["user:admin@hashicorptest.com", "user:paddy@hashicorp.com"]
+  members = ["user:admin@hashicorptest.com", "user:gterraformtest1@gmail.com"]
 }
 `, context)
 }

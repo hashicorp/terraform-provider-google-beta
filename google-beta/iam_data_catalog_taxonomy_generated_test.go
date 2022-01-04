@@ -185,7 +185,7 @@ resource "google_data_catalog_taxonomy_iam_binding" "foo" {
   provider = google-beta
   taxonomy = google_data_catalog_taxonomy.basic_taxonomy.name
   role = "%{role}"
-  members = ["user:admin@hashicorptest.com", "user:paddy@hashicorp.com"]
+  members = ["user:admin@hashicorptest.com", "user:gterraformtest1@gmail.com"]
 }
 `, context)
 }
