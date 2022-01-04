@@ -1743,6 +1743,51 @@ func TestAccContainerCluster_withWorkloadIdentityConfig(t *testing.T) {
 	})
 }
 
+func TestAccContainerCluster_withIdentityServiceConfig(t *testing.T) {
+	t.Parallel()
+
+	clusterName := fmt.Sprintf("tf-test-cluster-%s", randString(t, 10))
+	vcrTest(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckContainerClusterDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccContainerCluster_basic(clusterName),
+			},
+			{
+				ResourceName:      "google_container_cluster.primary",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+			{
+				Config: testAccContainerCluster_withIdentityServiceConfigEnabled(clusterName),
+			},
+			{
+				ResourceName:      "google_container_cluster.primary",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+			{
+				Config: testAccContainerCluster_withIdentityServiceConfigUpdated(clusterName),
+			},
+			{
+				ResourceName:      "google_container_cluster.primary",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+			{
+				Config: testAccContainerCluster_basic(clusterName),
+			},
+			{
+				ResourceName:      "google_container_cluster.primary",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
 func TestAccContainerCluster_withLoggingConfig(t *testing.T) {
 	t.Parallel()
 
@@ -4667,6 +4712,32 @@ resource "google_container_cluster" "with_dns_config" {
 	}
 }
 `, clusterName, clusterDns, clusterDnsDomain, clusterDnsScope)
+}
+
+func testAccContainerCluster_withIdentityServiceConfigEnabled(name string) string {
+	return fmt.Sprintf(`
+resource "google_container_cluster" "primary" {
+  name               = "%s"
+  location           = "us-central1-a"
+  initial_node_count = 1
+  identity_service_config {
+	  enabled = true
+  }
+}
+`, name)
+}
+
+func testAccContainerCluster_withIdentityServiceConfigUpdated(name string) string {
+	return fmt.Sprintf(`
+resource "google_container_cluster" "primary" {
+  name               = "%s"
+  location           = "us-central1-a"
+  initial_node_count = 1
+  identity_service_config {
+	  enabled = false
+  }
+}
+`, name)
 }
 
 func testAccContainerCluster_withLoggingConfigEnabled(name string) string {
