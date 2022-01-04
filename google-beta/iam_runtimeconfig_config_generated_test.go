@@ -180,7 +180,7 @@ resource "google_runtimeconfig_config_iam_binding" "foo" {
   project = google_runtimeconfig_config.config.project
   config = google_runtimeconfig_config.config.name
   role = "%{role}"
-  members = ["user:admin@hashicorptest.com", "user:paddy@hashicorp.com"]
+  members = ["user:admin@hashicorptest.com", "user:gterraformtest1@gmail.com"]
 }
 `, context)
 }

@@ -290,7 +290,7 @@ resource "google_api_gateway_gateway_iam_binding" "foo" {
   region = google_api_gateway_gateway.api_gw.region
   gateway = google_api_gateway_gateway.api_gw.gateway_id
   role = "%{role}"
-  members = ["user:admin@hashicorptest.com", "user:paddy@hashicorp.com"]
+  members = ["user:admin@hashicorptest.com", "user:gterraformtest1@gmail.com"]
 }
 `, context)
 }
