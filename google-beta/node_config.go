@@ -315,7 +315,6 @@ func schemaNodeConfig() *schema.Schema {
 						},
 					},
 				},
-
 				"boot_disk_kms_key": {
 					Type:        schema.TypeString,
 					Optional:    true,
@@ -523,7 +522,6 @@ func expandNodeConfig(v interface{}) *container.NodeConfig {
 			SandboxType: conf["sandbox_type"].(string),
 		}
 	}
-
 	if v, ok := nodeConfig["boot_disk_kms_key"]; ok {
 		nc.BootDiskKmsKey = v.(string)
 	}
