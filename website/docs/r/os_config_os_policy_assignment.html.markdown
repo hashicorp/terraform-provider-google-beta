@@ -13,15 +13,14 @@
 #     are required, please file an issue at https:#github.com/hashicorp/terraform-provider-google/issues/new/choose
 #
 # ----------------------------------------------------------------------------
-subcategory: "OSConfig"
+subcategory: "OsConfig"
 layout: "google"
 page_title: "Google: google_os_config_os_policy_assignment"
-sidebar_current: "docs-google-os-config-os-policy-assignment"
 description: |-
 Represents an OSPolicyAssignment resource.
 ---
 
-# google\_os\_config\_os\_policy\_assignment
+# google_os_config_os_policy_assignment
 
 Represents an OSPolicyAssignment resource.
 
@@ -703,24 +702,6 @@ The `disruption_budget` block supports:
   (Optional)
   Specifies the relative value defined as a percentage, which will be multiplied by a reference value.
     
-The `source` block supports:
-    
-* `allow_insecure` -
-  (Optional)
-  Defaults to false. When false, files are subject to validations based on the file type: Remote: A checksum must be specified. Cloud Storage: An object generation number must be specified.
-    
-* `gcs` -
-  (Optional)
-  A Cloud Storage object.
-    
-* `local_path` -
-  (Optional)
-  A local path within the VM to use.
-    
-* `remote` -
-  (Optional)
-  A generic remote file.
-    
 - - -
 
 * `description` -
@@ -969,6 +950,24 @@ The `zypper` block supports:
 * `id` -
   (Required)
   Required. A one word, unique name for this repository. This is the `repo id` in the zypper config file and also the `display_name` if `display_name` is omitted. This id is also used as the unique identifier when checking for GuestPolicy conflicts.
+    
+The `file` block supports:
+    
+* `allow_insecure` -
+  (Optional)
+  Defaults to false. When false, files are subject to validations based on the file type: Remote: A checksum must be specified. Cloud Storage: An object generation number must be specified.
+    
+* `gcs` -
+  (Optional)
+  A Cloud Storage object.
+    
+* `local_path` -
+  (Optional)
+  A local path within the VM to use.
+    
+* `remote` -
+  (Optional)
+  A generic remote file.
     
 The `gcs` block supports:
     
