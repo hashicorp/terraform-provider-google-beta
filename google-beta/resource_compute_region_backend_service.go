@@ -442,7 +442,7 @@ generally not recommended to use this mode overriding the default. Default value
 							Computed: true,
 							Optional: true,
 							Description: `Specifies how long to keep a Connection Tracking entry while there is
-no matching traffic (in seconds). 
+no matching traffic (in seconds).
 
 For L4 ILB the minimum(default) is 10 minutes and maximum is 16 hours.
 
