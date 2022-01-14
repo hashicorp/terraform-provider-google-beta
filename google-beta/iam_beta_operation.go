@@ -30,7 +30,7 @@ func (w *IAMBetaOperationWaiter) QueryOp() (interface{}, error) {
 		return nil, fmt.Errorf("Cannot query operation, it's unset or nil.")
 	}
 	// Returns the proper get.
-	url := fmt.Sprintf("https://iam.googleapis.com/v1beta/%s", w.CommonOperationWaiter.Op.Name)
+	url := fmt.Sprintf("%s%s", w.Config.IAMBetaBasePath, w.CommonOperationWaiter.Op.Name)
 
 	return sendRequest(w.Config, "GET", w.Project, url, w.UserAgent, nil)
 }
