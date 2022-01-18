@@ -1367,6 +1367,7 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_gke_hub_feature_membership":          resourceGkeHubFeatureMembership(),
 			"google_monitoring_monitored_project":        resourceMonitoringMonitoredProject(),
 			"google_network_connectivity_hub":            resourceNetworkConnectivityHub(),
+			"google_network_connectivity_spoke":          resourceNetworkConnectivitySpoke(),
 			"google_org_policy_policy":                   resourceOrgPolicyPolicy(),
 			"google_os_config_os_policy_assignment":      resourceOsConfigOsPolicyAssignment(),
 			"google_privateca_certificate_template":      resourcePrivatecaCertificateTemplate(),
