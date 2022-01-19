@@ -66,6 +66,7 @@ resource "google_data_fusion_instance" "extended_instance" {
   type = "BASIC"
   enable_stackdriver_logging = true
   enable_stackdriver_monitoring = true
+  enable_rbac = true
   labels = {
     example_key = "example_value"
   }
@@ -121,6 +122,10 @@ The following arguments are supported:
 * `enable_stackdriver_monitoring` -
   (Optional)
   Option to enable Stackdriver Monitoring.
+
+* `enable_rbac` -
+  (Optional)
+  Option to enable granular Role Based Access Controls.
 
 * `labels` -
   (Optional)
