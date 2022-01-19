@@ -1,4 +1,10 @@
-## 4.7.0 (Unreleased)
+## 4.8.0 (Unreleased)
+## 4.7.0 (January 19, 2022)
+
+IMPROVEMENTS:
+* compute: added `EXTERNAL_MANAGED` as option for `load_balancing_scheme` in `google_compute_backend_service` resource ([#3975](https://github.com/hashicorp/terraform-provider-google-beta/pull/3975))
+* container: promoted `dns_config` field of `google_container_cluster` to GA ([#3978](https://github.com/hashicorp/terraform-provider-google-beta/pull/3978))
+* monitoring: added `conditionMatchedLog` and `alertStrategy` fields to `google_monitoring_alert_policy` resource ([#3968](https://github.com/hashicorp/terraform-provider-google-beta/pull/3968))
 
 ## 4.6.0 (January 10, 2021)
 
