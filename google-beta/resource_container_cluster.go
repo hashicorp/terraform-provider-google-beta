@@ -425,6 +425,19 @@ func resourceContainerCluster() *schema.Resource {
 										Default:     "default",
 										Description: `The Google Cloud Platform Service Account to be used by the node VMs.`,
 									},
+									"image_type": {
+										Type:        schema.TypeString,
+										Optional:    true,
+										Default:     "cos",
+										Description: `The default image type used by NAP once a new node pool is being created.`,
+										ValidateFunc: func(val interface{}, key string) (warns []string, errs []error) {
+										   v := val.(string)
+										   if v != "cos_containerd" || v != "cos" || v != "ubuntu_containerd" || v != "ubuntu" {
+										     errs = append(errs, fmt.Errorf("%q must be one of the [cos_containerd, cos, ubuntu_containerd, ubuntu], got: %d", key, v))
+										   }
+										   return
+										 },
+									},
 									"min_cpu_platform": {
 										Type:             schema.TypeString,
 										Optional:         true,
@@ -3182,6 +3195,7 @@ func expandAutoProvisioningDefaults(configured interface{}, d *schema.ResourceDa
 	npd := &container.AutoprovisioningNodePoolDefaults{
 		OauthScopes:    convertStringArr(config["oauth_scopes"].([]interface{})),
 		ServiceAccount: config["service_account"].(string),
+		ImageType: config["image_type"].(string),
 	}
 
 	cpu := config["min_cpu_platform"].(string)
@@ -3892,6 +3906,7 @@ func flattenAutoProvisioningDefaults(a *container.AutoprovisioningNodePoolDefaul
 	r := make(map[string]interface{})
 	r["oauth_scopes"] = a.OauthScopes
 	r["service_account"] = a.ServiceAccount
+	r["image_type"] = a.ImageType
 	r["min_cpu_platform"] = a.MinCpuPlatform
 
 	return []map[string]interface{}{r}
