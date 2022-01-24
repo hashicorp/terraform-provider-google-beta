@@ -22,7 +22,6 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
 func resourceBigqueryConnectionConnection() *schema.Resource {
@@ -84,7 +83,7 @@ func resourceBigqueryConnectionConnection() *schema.Resource {
 						"type": {
 							Type:         schema.TypeString,
 							Required:     true,
-							ValidateFunc: validation.StringInSlice([]string{"DATABASE_TYPE_UNSPECIFIED", "POSTGRES", "MYSQL"}, false),
+							ValidateFunc: validateEnum([]string{"DATABASE_TYPE_UNSPECIFIED", "POSTGRES", "MYSQL"}),
 							Description:  `Type of the Cloud SQL database. Possible values: ["DATABASE_TYPE_UNSPECIFIED", "POSTGRES", "MYSQL"]`,
 						},
 					},

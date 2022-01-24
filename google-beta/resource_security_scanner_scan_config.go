@@ -18,7 +18,6 @@ import (
 	"fmt"
 	"log"
 	"reflect"
-	"strconv"
 	"strings"
 	"time"
 
@@ -133,7 +132,7 @@ https://cloud.google.com/security-scanner/docs/excluded-urls`,
 			"export_to_security_command_center": {
 				Type:         schema.TypeString,
 				Optional:     true,
-				ValidateFunc: validation.StringInSlice([]string{"ENABLED", "DISABLED", ""}, false),
+				ValidateFunc: validateEnum([]string{"ENABLED", "DISABLED", ""}),
 				Description:  `Controls export of scan configurations and results to Cloud Security Command Center. Default value: "ENABLED" Possible values: ["ENABLED", "DISABLED"]`,
 				Default:      "ENABLED",
 			},
@@ -173,13 +172,13 @@ which means the scan will be scheduled to start immediately.`,
 				Description: `Set of Cloud Platforms targeted by the scan. If empty, APP_ENGINE will be used as a default. Possible values: ["APP_ENGINE", "COMPUTE"]`,
 				Elem: &schema.Schema{
 					Type:         schema.TypeString,
-					ValidateFunc: validation.StringInSlice([]string{"APP_ENGINE", "COMPUTE"}, false),
+					ValidateFunc: validateEnum([]string{"APP_ENGINE", "COMPUTE"}),
 				},
 			},
 			"user_agent": {
 				Type:         schema.TypeString,
 				Optional:     true,
-				ValidateFunc: validation.StringInSlice([]string{"USER_AGENT_UNSPECIFIED", "CHROME_LINUX", "CHROME_ANDROID", "SAFARI_IPHONE", ""}, false),
+				ValidateFunc: validateEnum([]string{"USER_AGENT_UNSPECIFIED", "CHROME_LINUX", "CHROME_ANDROID", "SAFARI_IPHONE", ""}),
 				Description:  `Type of the user agents used for scanning Default value: "CHROME_LINUX" Possible values: ["USER_AGENT_UNSPECIFIED", "CHROME_LINUX", "CHROME_ANDROID", "SAFARI_IPHONE"]`,
 				Default:      "CHROME_LINUX",
 			},
@@ -585,7 +584,7 @@ func flattenSecurityScannerScanConfigDisplayName(v interface{}, d *schema.Resour
 func flattenSecurityScannerScanConfigMaxQps(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
-		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
+		if intVal, err := stringToFixed64(strVal); err == nil {
 			return intVal
 		}
 	}
@@ -700,7 +699,7 @@ func flattenSecurityScannerScanConfigScheduleScheduleTime(v interface{}, d *sche
 func flattenSecurityScannerScanConfigScheduleIntervalDurationDays(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
-		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
+		if intVal, err := stringToFixed64(strVal); err == nil {
 			return intVal
 		}
 	}

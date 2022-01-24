@@ -21,7 +21,6 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
 func resourceDataFusionInstance() *schema.Resource {
@@ -52,7 +51,7 @@ func resourceDataFusionInstance() *schema.Resource {
 				Type:         schema.TypeString,
 				Required:     true,
 				ForceNew:     true,
-				ValidateFunc: validation.StringInSlice([]string{"BASIC", "ENTERPRISE", "DEVELOPER"}, false),
+				ValidateFunc: validateEnum([]string{"BASIC", "ENTERPRISE", "DEVELOPER"}),
 				Description: `Represents the type of Data Fusion instance. Each type is configured with
 the default settings for processing and memory.
 - BASIC: Basic Data Fusion instance. In Basic type, the user will be able to create data pipelines

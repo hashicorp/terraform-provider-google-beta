@@ -18,12 +18,10 @@ import (
 	"fmt"
 	"log"
 	"reflect"
-	"strconv"
 	"strings"
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
 func resourceDataprocMetastoreService() *schema.Resource {
@@ -139,7 +137,7 @@ This specifies when the service can be restarted for maintenance purposes in UTC
 						"day_of_week": {
 							Type:         schema.TypeString,
 							Required:     true,
-							ValidateFunc: validation.StringInSlice([]string{"MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"}, false),
+							ValidateFunc: validateEnum([]string{"MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"}),
 							Description:  `The day of week, when the window starts. Possible values: ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"]`,
 						},
 						"hour_of_day": {
@@ -169,7 +167,7 @@ This specifies when the service can be restarted for maintenance purposes in UTC
 				Type:         schema.TypeString,
 				Computed:     true,
 				Optional:     true,
-				ValidateFunc: validation.StringInSlice([]string{"DEVELOPER", "ENTERPRISE", ""}, false),
+				ValidateFunc: validateEnum([]string{"DEVELOPER", "ENTERPRISE", ""}),
 				Description:  `The tier of the service. Possible values: ["DEVELOPER", "ENTERPRISE"]`,
 			},
 			"artifact_gcs_uri": {
@@ -559,7 +557,7 @@ func flattenDataprocMetastoreServiceEndpointUri(v interface{}, d *schema.Resourc
 func flattenDataprocMetastoreServicePort(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
-		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
+		if intVal, err := stringToFixed64(strVal); err == nil {
 			return intVal
 		}
 	}
@@ -607,7 +605,7 @@ func flattenDataprocMetastoreServiceMaintenanceWindow(v interface{}, d *schema.R
 func flattenDataprocMetastoreServiceMaintenanceWindowHourOfDay(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
-		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
+		if intVal, err := stringToFixed64(strVal); err == nil {
 			return intVal
 		}
 	}

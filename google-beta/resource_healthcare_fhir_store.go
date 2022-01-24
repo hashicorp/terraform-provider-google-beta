@@ -18,12 +18,10 @@ import (
 	"fmt"
 	"log"
 	"reflect"
-	"strconv"
 	"strings"
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
 func resourceHealthcareFhirStore() *schema.Resource {
@@ -189,7 +187,7 @@ value 2. The maximum depth allowed is 5.`,
 												"schema_type": {
 													Type:         schema.TypeString,
 													Optional:     true,
-													ValidateFunc: validation.StringInSlice([]string{"ANALYTICS", ""}, false),
+													ValidateFunc: validateEnum([]string{"ANALYTICS", ""}),
 													Description: `Specifies the output schema type. Only ANALYTICS is supported at this time.
  * ANALYTICS: Analytics schema defined by the FHIR community.
   See https://github.com/FHIR/sql-on-fhir/blob/master/sql-on-fhir.md. Default value: "ANALYTICS" Possible values: ["ANALYTICS"]`,
@@ -218,7 +216,7 @@ an empty list as an intent to stream all the supported resource types in this FH
 				Type:         schema.TypeString,
 				Optional:     true,
 				ForceNew:     true,
-				ValidateFunc: validation.StringInSlice([]string{"DSTU2", "STU3", "R4", ""}, false),
+				ValidateFunc: validateEnum([]string{"DSTU2", "STU3", "R4", ""}),
 				Description:  `The FHIR specification version. Default value: "STU3" Possible values: ["DSTU2", "STU3", "R4"]`,
 				Default:      "STU3",
 			},
@@ -632,7 +630,7 @@ func flattenHealthcareFhirStoreStreamConfigsBigqueryDestinationSchemaConfigSchem
 func flattenHealthcareFhirStoreStreamConfigsBigqueryDestinationSchemaConfigRecursiveStructureDepth(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
-		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
+		if intVal, err := stringToFixed64(strVal); err == nil {
 			return intVal
 		}
 	}
