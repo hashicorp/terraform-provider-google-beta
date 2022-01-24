@@ -18,11 +18,9 @@ import (
 	"fmt"
 	"log"
 	"reflect"
-	"strconv"
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
 func resourceComputeOrganizationSecurityPolicyRule() *schema.Resource {
@@ -126,7 +124,7 @@ INGRESS rules.`,
 						"versioned_expr": {
 							Type:         schema.TypeString,
 							Optional:     true,
-							ValidateFunc: validation.StringInSlice([]string{"FIREWALL", ""}, false),
+							ValidateFunc: validateEnum([]string{"FIREWALL", ""}),
 							Description: `Preconfigured versioned expression. For organization security policy rules,
 the only supported type is "FIREWALL". Default value: "FIREWALL" Possible values: ["FIREWALL"]`,
 							Default: "FIREWALL",
@@ -156,7 +154,7 @@ highest priority and 2147483647 is the lowest prority.`,
 			"direction": {
 				Type:         schema.TypeString,
 				Optional:     true,
-				ValidateFunc: validation.StringInSlice([]string{"INGRESS", "EGRESS", ""}, false),
+				ValidateFunc: validateEnum([]string{"INGRESS", "EGRESS", ""}),
 				Description:  `The direction in which this rule applies. If unspecified an INGRESS rule is created. Possible values: ["INGRESS", "EGRESS"]`,
 			},
 			"enable_logging": {
@@ -562,7 +560,7 @@ func flattenComputeOrganizationSecurityPolicyRuleDescription(v interface{}, d *s
 func flattenComputeOrganizationSecurityPolicyRulePriority(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
-		if intVal, err := strconv.ParseInt(strVal, 10, 64); err == nil {
+		if intVal, err := stringToFixed64(strVal); err == nil {
 			return intVal
 		}
 	}

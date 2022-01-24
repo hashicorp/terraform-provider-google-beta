@@ -21,7 +21,6 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
 func resourceComputeOrganizationSecurityPolicy() *schema.Resource {
@@ -64,7 +63,7 @@ Format: organizations/{organization_id} or folders/{folder_id}`,
 				Type:         schema.TypeString,
 				Optional:     true,
 				ForceNew:     true,
-				ValidateFunc: validation.StringInSlice([]string{"FIREWALL", ""}, false),
+				ValidateFunc: validateEnum([]string{"FIREWALL", ""}),
 				Description: `The type indicates the intended use of the security policy.
 For organization security policies, the only supported type
 is "FIREWALL". Default value: "FIREWALL" Possible values: ["FIREWALL"]`,
