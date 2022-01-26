@@ -761,6 +761,81 @@ resource "google_compute_health_check" "default" {
 `, context)
 }
 
+func TestAccComputeGlobalForwardingRule_globalForwardingRuleExternalManagedExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"random_suffix": randString(t, 10),
+	}
+
+	vcrTest(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProvidersOiCS,
+		CheckDestroy: testAccCheckComputeGlobalForwardingRuleDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeGlobalForwardingRule_globalForwardingRuleExternalManagedExample(context),
+			},
+			{
+				ResourceName:            "google_compute_global_forwarding_rule.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"network", "port_range", "target"},
+			},
+		},
+	})
+}
+
+func testAccComputeGlobalForwardingRule_globalForwardingRuleExternalManagedExample(context map[string]interface{}) string {
+	return Nprintf(`
+resource "google_compute_global_forwarding_rule" "default" {
+  provider              = google-beta
+  name                  = "tf-test-global-rule%{random_suffix}"
+  target                = google_compute_target_http_proxy.default.id
+  port_range            = "80"
+  load_balancing_scheme = "EXTERNAL_MANAGED"
+}
+
+resource "google_compute_target_http_proxy" "default" {
+  provider    = google-beta
+  name        = "tf-test-target-proxy%{random_suffix}"
+  description = "a description"
+  url_map     = google_compute_url_map.default.id
+}
+
+resource "google_compute_url_map" "default" {
+  provider        = google-beta
+  name            = "url-map-tf-test-target-proxy%{random_suffix}"
+  description     = "a description"
+  default_service = google_compute_backend_service.default.id
+
+  host_rule {
+    hosts        = ["mysite.com"]
+    path_matcher = "allpaths"
+  }
+
+  path_matcher {
+    name            = "allpaths"
+    default_service = google_compute_backend_service.default.id
+
+    path_rule {
+      paths   = ["/*"]
+      service = google_compute_backend_service.default.id
+    }
+  }
+}
+
+resource "google_compute_backend_service" "default" {
+  provider              = google-beta
+  name                  = "backend%{random_suffix}"
+  port_name             = "http"
+  protocol              = "HTTP"
+  timeout_sec           = 10
+  load_balancing_scheme = "EXTERNAL_MANAGED"
+}
+`, context)
+}
+
 func TestAccComputeGlobalForwardingRule_privateServiceConnectGoogleApisExample(t *testing.T) {
 	t.Parallel()
 
