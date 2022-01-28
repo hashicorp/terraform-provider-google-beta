@@ -2519,6 +2519,9 @@ resource "google_container_cluster" "primary" {
     network_policy_config {
       disabled = true
     }
+    gcp_filestore_csi_driver_config {
+      enabled = false
+    }
     cloudrun_config {
       disabled = true
     }
@@ -2569,6 +2572,9 @@ resource "google_container_cluster" "primary" {
     }
     network_policy_config {
       disabled = false
+    }
+    gcp_filestore_csi_driver_config {
+      enabled = true
     }
     cloudrun_config {
       disabled = false
