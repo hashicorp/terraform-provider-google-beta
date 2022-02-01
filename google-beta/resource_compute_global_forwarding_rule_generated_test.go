@@ -770,7 +770,7 @@ func TestAccComputeGlobalForwardingRule_globalForwardingRuleExternalManagedExamp
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProvidersOiCS,
+		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckComputeGlobalForwardingRuleDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -789,7 +789,6 @@ func TestAccComputeGlobalForwardingRule_globalForwardingRuleExternalManagedExamp
 func testAccComputeGlobalForwardingRule_globalForwardingRuleExternalManagedExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_compute_global_forwarding_rule" "default" {
-  provider              = google-beta
   name                  = "tf-test-global-rule%{random_suffix}"
   target                = google_compute_target_http_proxy.default.id
   port_range            = "80"
@@ -797,14 +796,12 @@ resource "google_compute_global_forwarding_rule" "default" {
 }
 
 resource "google_compute_target_http_proxy" "default" {
-  provider    = google-beta
   name        = "tf-test-target-proxy%{random_suffix}"
   description = "a description"
   url_map     = google_compute_url_map.default.id
 }
 
 resource "google_compute_url_map" "default" {
-  provider        = google-beta
   name            = "url-map-tf-test-target-proxy%{random_suffix}"
   description     = "a description"
   default_service = google_compute_backend_service.default.id
@@ -826,7 +823,6 @@ resource "google_compute_url_map" "default" {
 }
 
 resource "google_compute_backend_service" "default" {
-  provider              = google-beta
   name                  = "backend%{random_suffix}"
   port_name             = "http"
   protocol              = "HTTP"

@@ -330,7 +330,7 @@ func TestAccComputeBackendService_backendServiceExternalManagedExample(t *testin
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProvidersOiCS,
+		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckComputeBackendServiceDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -348,14 +348,12 @@ func TestAccComputeBackendService_backendServiceExternalManagedExample(t *testin
 func testAccComputeBackendService_backendServiceExternalManagedExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_compute_backend_service" "default" {
-  provider = google-beta
   name          = "tf-test-backend-service%{random_suffix}"
   health_checks = [google_compute_health_check.default.id]
   load_balancing_scheme = "EXTERNAL_MANAGED"
 }
 
 resource "google_compute_health_check" "default" {
-  provider = google-beta
   name = "tf-test-health-check%{random_suffix}"
   http_health_check {
     port = 80
