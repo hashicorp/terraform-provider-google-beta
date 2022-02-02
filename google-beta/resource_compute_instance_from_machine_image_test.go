@@ -14,8 +14,8 @@ func TestAccComputeInstanceFromMachineImage_basic(t *testing.T) {
 	t.Parallel()
 
 	var instance compute.Instance
-	instanceName := fmt.Sprintf("terraform-test-%s", randString(t, 10))
-	generatedInstanceName := fmt.Sprintf("terraform-test-generated-%s", randString(t, 10))
+	instanceName := fmt.Sprintf("tf-test-%s", randString(t, 10))
+	generatedInstanceName := fmt.Sprintf("tf-test-generated-%s", randString(t, 10))
 	resourceName := "google_compute_instance_from_machine_image.foobar"
 
 	vcrTest(t, resource.TestCase{
@@ -42,8 +42,8 @@ func TestAccComputeInstanceFromMachineImage_overrideMetadataDotStartupScript(t *
 	t.Parallel()
 
 	var instance compute.Instance
-	instanceName := fmt.Sprintf("terraform-test-%s", randString(t, 10))
-	generatedInstanceName := fmt.Sprintf("terraform-test-generated-%s", randString(t, 10))
+	instanceName := fmt.Sprintf("tf-test-%s", randString(t, 10))
+	generatedInstanceName := fmt.Sprintf("tf-test-generated-%s", randString(t, 10))
 	resourceName := "google_compute_instance_from_machine_image.foobar"
 
 	vcrTest(t, resource.TestCase{
@@ -67,8 +67,8 @@ func TestAccComputeInstanceFromMachineImage_diffProject(t *testing.T) {
 	t.Parallel()
 
 	var instance compute.Instance
-	instanceName := fmt.Sprintf("terraform-test-%s", randString(t, 10))
-	generatedInstanceName := fmt.Sprintf("terraform-test-generated-%s", randString(t, 10))
+	instanceName := fmt.Sprintf("tf-test-%s", randString(t, 10))
+	generatedInstanceName := fmt.Sprintf("tf-test-generated-%s", randString(t, 10))
 	resourceName := "google_compute_instance_from_machine_image.foobar"
 	org := getTestOrgFromEnv(t)
 	billingId := getTestBillingAccountFromEnv(t)
