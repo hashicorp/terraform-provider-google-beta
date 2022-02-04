@@ -6,7 +6,6 @@ FEATURES:
 IMPROVEMENTS:
 * compute: added `EXTERNAL_MANAGED` as option for `load_balancing_scheme` in `google_compute_global_forwarding_rule` resource ([#4011](https://github.com/hashicorp/terraform-provider-google-beta/pull/4011))
 * compute: added field `rate_limit_options` to `google_compute_security_policy` rules ([#4020](https://github.com/hashicorp/terraform-provider-google-beta/pull/4020))
-* compute: promoted `EXTERNAL_MANAGED` value for `load_balancing_scheme` in `google_compute_backend_service ` and `google_compute_global_forwarding_rule` to GA ([#4024](https://github.com/hashicorp/terraform-provider-google-beta/pull/4024))
 * container: added support for image type configuration on the GKE Node Auto-provisioning ([#4023](https://github.com/hashicorp/terraform-provider-google-beta/pull/4023))
 * container: added support for GCPFilestoreCSIDriver addon to `google_container_cluster` resource. ([#4015](https://github.com/hashicorp/terraform-provider-google-beta/pull/4015))
 * dataproc: increased the default timeout for `google_dataproc_cluster` from 20m to 45m ([#4027](https://github.com/hashicorp/terraform-provider-google-beta/pull/4027))
