@@ -64,7 +64,7 @@ character, which cannot be a dash.`,
 				Optional: true,
 				ForceNew: true,
 				Description: `Only valid when networkEndpointType is "SERVERLESS".
-Only one of cloud_run, app_engine or cloud_function may be set.`,
+Only one of cloud_run, app_engine, cloud_function or serverless_deployment may be set.`,
 				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -99,14 +99,14 @@ Example value: "v1", "v2".`,
 						},
 					},
 				},
-				ExactlyOneOf: []string{"app_engine", "cloud_function", "cloud_run"},
+				ExactlyOneOf: []string{"app_engine", "cloud_function", "cloud_run", "serverless_deployment"},
 			},
 			"cloud_function": {
 				Type:     schema.TypeList,
 				Optional: true,
 				ForceNew: true,
 				Description: `Only valid when networkEndpointType is "SERVERLESS".
-Only one of cloud_run, app_engine or cloud_function may be set.`,
+Only one of cloud_run, app_engine, cloud_function or serverless_deployment may be set.`,
 				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -134,14 +134,14 @@ will parse them to { function = "function1" } and { function = "function2" } res
 						},
 					},
 				},
-				ExactlyOneOf: []string{"app_engine", "cloud_function", "cloud_run"},
+				ExactlyOneOf: []string{"app_engine", "cloud_function", "cloud_run", "serverless_deployment"},
 			},
 			"cloud_run": {
 				Type:     schema.TypeList,
 				Optional: true,
 				ForceNew: true,
 				Description: `Only valid when networkEndpointType is "SERVERLESS".
-Only one of cloud_run, app_engine or cloud_function may be set.`,
+Only one of cloud_run, app_engine, cloud_function or serverless_deployment may be set.`,
 				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -179,7 +179,7 @@ and { service="bar2", tag="foo2" } respectively.`,
 						},
 					},
 				},
-				ExactlyOneOf: []string{"cloud_run", "cloud_function", "app_engine"},
+				ExactlyOneOf: []string{"cloud_run", "cloud_function", "app_engine", "serverless_deployment"},
 			},
 			"description": {
 				Type:     schema.TypeString,
@@ -195,6 +195,50 @@ you create the resource.`,
 				ValidateFunc: validateEnum([]string{"SERVERLESS", ""}),
 				Description:  `Type of network endpoints in this network endpoint group. Defaults to SERVERLESS Default value: "SERVERLESS" Possible values: ["SERVERLESS"]`,
 				Default:      "SERVERLESS",
+			},
+			"serverless_deployment": {
+				Type:     schema.TypeList,
+				Optional: true,
+				ForceNew: true,
+				Description: `Only valid when networkEndpointType is "SERVERLESS".
+Only one of cloudRun, appEngine, cloudFunction or serverlessDeployment may be set.`,
+				MaxItems: 1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"platform": {
+							Type:     schema.TypeString,
+							Required: true,
+							ForceNew: true,
+							Description: `The platform of the NEG backend target(s). Possible values:
+API Gateway: apigateway.googleapis.com`,
+						},
+						"url_mask": {
+							Type:     schema.TypeString,
+							Required: true,
+							ForceNew: true,
+							Description: `A template to parse platform-specific fields from a request URL. URL mask allows for routing to multiple resources
+on the same serverless platform without having to create multiple Network Endpoint Groups and backend resources.
+The fields parsed by this template are platform-specific and are as follows: API Gateway: The gateway ID,
+App Engine: The service and version, Cloud Functions: The function name, Cloud Run: The service and tag`,
+						},
+						"resource": {
+							Type:     schema.TypeString,
+							Optional: true,
+							ForceNew: true,
+							Description: `The user-defined name of the workload/instance. This value must be provided explicitly or in the urlMask.
+The resource identified by this value is platform-specific and is as follows: API Gateway: The gateway ID, App Engine: The service name,
+Cloud Functions: The function name, Cloud Run: The service name`,
+						},
+						"version": {
+							Type:     schema.TypeString,
+							Optional: true,
+							ForceNew: true,
+							Description: `The optional resource version. The version identified by this value is platform-specific and is follows:
+API Gateway: Unused, App Engine: The service version, Cloud Functions: Unused, Cloud Run: The service tag`,
+						},
+					},
+				},
+				ExactlyOneOf: []string{"app_engine", "cloud_function", "cloud_run", "serverless_deployment"},
 			},
 			"project": {
 				Type:     schema.TypeString,
@@ -254,6 +298,12 @@ func resourceComputeRegionNetworkEndpointGroupCreate(d *schema.ResourceData, met
 		return err
 	} else if v, ok := d.GetOkExists("cloud_function"); !isEmptyValue(reflect.ValueOf(cloudFunctionProp)) && (ok || !reflect.DeepEqual(v, cloudFunctionProp)) {
 		obj["cloudFunction"] = cloudFunctionProp
+	}
+	serverlessDeploymentProp, err := expandComputeRegionNetworkEndpointGroupServerlessDeployment(d.Get("serverless_deployment"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("serverless_deployment"); !isEmptyValue(reflect.ValueOf(serverlessDeploymentProp)) && (ok || !reflect.DeepEqual(v, serverlessDeploymentProp)) {
+		obj["serverlessDeployment"] = serverlessDeploymentProp
 	}
 	regionProp, err := expandComputeRegionNetworkEndpointGroupRegion(d.Get("region"), d, config)
 	if err != nil {
@@ -358,6 +408,9 @@ func resourceComputeRegionNetworkEndpointGroupRead(d *schema.ResourceData, meta 
 		return fmt.Errorf("Error reading RegionNetworkEndpointGroup: %s", err)
 	}
 	if err := d.Set("cloud_function", flattenComputeRegionNetworkEndpointGroupCloudFunction(res["cloudFunction"], d, config)); err != nil {
+		return fmt.Errorf("Error reading RegionNetworkEndpointGroup: %s", err)
+	}
+	if err := d.Set("serverless_deployment", flattenComputeRegionNetworkEndpointGroupServerlessDeployment(res["serverlessDeployment"], d, config)); err != nil {
 		return fmt.Errorf("Error reading RegionNetworkEndpointGroup: %s", err)
 	}
 	if err := d.Set("region", flattenComputeRegionNetworkEndpointGroupRegion(res["region"], d, config)); err != nil {
@@ -526,6 +579,38 @@ func flattenComputeRegionNetworkEndpointGroupCloudFunctionUrlMask(v interface{},
 	return v
 }
 
+func flattenComputeRegionNetworkEndpointGroupServerlessDeployment(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	transformed := make(map[string]interface{})
+	transformed["platform"] =
+		flattenComputeRegionNetworkEndpointGroupServerlessDeploymentPlatform(original["platform"], d, config)
+	transformed["resource"] =
+		flattenComputeRegionNetworkEndpointGroupServerlessDeploymentResource(original["resource"], d, config)
+	transformed["version"] =
+		flattenComputeRegionNetworkEndpointGroupServerlessDeploymentVersion(original["version"], d, config)
+	transformed["url_mask"] =
+		flattenComputeRegionNetworkEndpointGroupServerlessDeploymentUrlMask(original["urlMask"], d, config)
+	return []interface{}{transformed}
+}
+func flattenComputeRegionNetworkEndpointGroupServerlessDeploymentPlatform(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	return v
+}
+
+func flattenComputeRegionNetworkEndpointGroupServerlessDeploymentResource(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	return v
+}
+
+func flattenComputeRegionNetworkEndpointGroupServerlessDeploymentVersion(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	return v
+}
+
+func flattenComputeRegionNetworkEndpointGroupServerlessDeploymentUrlMask(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	return v
+}
+
 func flattenComputeRegionNetworkEndpointGroupRegion(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	if v == nil {
 		return v
@@ -671,6 +756,67 @@ func expandComputeRegionNetworkEndpointGroupCloudFunctionFunction(v interface{},
 }
 
 func expandComputeRegionNetworkEndpointGroupCloudFunctionUrlMask(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeRegionNetworkEndpointGroupServerlessDeployment(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 {
+		return nil, nil
+	}
+
+	if l[0] == nil {
+		transformed := make(map[string]interface{})
+		return transformed, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedPlatform, err := expandComputeRegionNetworkEndpointGroupServerlessDeploymentPlatform(original["platform"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedPlatform); val.IsValid() && !isEmptyValue(val) {
+		transformed["platform"] = transformedPlatform
+	}
+
+	transformedResource, err := expandComputeRegionNetworkEndpointGroupServerlessDeploymentResource(original["resource"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedResource); val.IsValid() && !isEmptyValue(val) {
+		transformed["resource"] = transformedResource
+	}
+
+	transformedVersion, err := expandComputeRegionNetworkEndpointGroupServerlessDeploymentVersion(original["version"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedVersion); val.IsValid() && !isEmptyValue(val) {
+		transformed["version"] = transformedVersion
+	}
+
+	transformedUrlMask, err := expandComputeRegionNetworkEndpointGroupServerlessDeploymentUrlMask(original["url_mask"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedUrlMask); val.IsValid() && !isEmptyValue(val) {
+		transformed["urlMask"] = transformedUrlMask
+	}
+
+	return transformed, nil
+}
+
+func expandComputeRegionNetworkEndpointGroupServerlessDeploymentPlatform(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeRegionNetworkEndpointGroupServerlessDeploymentResource(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeRegionNetworkEndpointGroupServerlessDeploymentVersion(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeRegionNetworkEndpointGroupServerlessDeploymentUrlMask(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
