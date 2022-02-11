@@ -32,7 +32,7 @@ func TestAccDataFusionInstance_dataFusionInstanceBasicExample(t *testing.T) {
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProvidersOiCS,
+		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckDataFusionInstanceDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -51,7 +51,6 @@ func TestAccDataFusionInstance_dataFusionInstanceBasicExample(t *testing.T) {
 func testAccDataFusionInstance_dataFusionInstanceBasicExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_data_fusion_instance" "basic_instance" {
-  provider = google-beta
   name = "tf-test-my-instance%{random_suffix}"
   region = "us-central1"
   type = "BASIC"
@@ -68,7 +67,7 @@ func TestAccDataFusionInstance_dataFusionInstanceFullExample(t *testing.T) {
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProvidersOiCS,
+		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckDataFusionInstanceDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -87,7 +86,6 @@ func TestAccDataFusionInstance_dataFusionInstanceFullExample(t *testing.T) {
 func testAccDataFusionInstance_dataFusionInstanceFullExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_data_fusion_instance" "extended_instance" {
-  provider = google-beta
   name = "tf-test-my-instance%{random_suffix}"
   description = "My Data Fusion instance"
   region = "us-central1"
@@ -107,7 +105,6 @@ resource "google_data_fusion_instance" "extended_instance" {
 }
 
 data "google_app_engine_default_service_account" "default" {
-  provider = google-beta
 }
 `, context)
 }
