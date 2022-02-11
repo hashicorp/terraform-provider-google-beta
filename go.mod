@@ -1,4 +1,5 @@
 module github.com/hashicorp/terraform-provider-google-beta
+
 require (
 	cloud.google.com/go/bigtable v1.10.1
 	cloud.google.com/go/iam v0.1.1 // indirect
@@ -27,6 +28,5 @@ require (
 	google.golang.org/api v0.66.0
 	google.golang.org/grpc v1.40.1
 )
-
 
 go 1.16

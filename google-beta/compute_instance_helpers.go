@@ -118,10 +118,7 @@ func expandScheduling(v interface{}) (*compute.Scheduling, error) {
 	if v, ok := original["min_node_cpus"]; ok {
 		scheduling.MinNodeCpus = int64(v.(int))
 	}
-	if v, ok := original["provisioning_model"]; ok {
-		scheduling.ProvisioningModel = v.(string)
-		scheduling.ForceSendFields = append(scheduling.ForceSendFields, "ProvisioningModel")
-	}
+
 	return scheduling, nil
 }
 
@@ -130,7 +127,6 @@ func flattenScheduling(resp *compute.Scheduling) []map[string]interface{} {
 		"on_host_maintenance": resp.OnHostMaintenance,
 		"preemptible":         resp.Preemptible,
 		"min_node_cpus":       resp.MinNodeCpus,
-		"provisioning_model":  resp.ProvisioningModel,
 	}
 
 	if resp.AutomaticRestart != nil {
@@ -472,10 +468,6 @@ func schedulingHasChangeWithoutReboot(d *schema.ResourceData) bool {
 	}
 
 	if oScheduling["min_node_cpus"] != newScheduling["min_node_cpus"] {
-		return true
-	}
-
-	if oScheduling["provisioning_model"] != newScheduling["provisioning_model"] {
 		return true
 	}
 
