@@ -125,8 +125,9 @@ func GkeHubFeatureMembershipConfigmanagementSchema() *schema.Resource {
 
 			"version": {
 				Type:        schema.TypeString,
+				Computed:    true,
 				Optional:    true,
-				Description: "Version of ACM installed.",
+				Description: "Optional. Version of ACM to install. Defaults to the latest version.",
 			},
 		},
 	}
@@ -533,7 +534,7 @@ func expandGkeHubFeatureMembershipConfigmanagement(o interface{}) *gkehub.Featur
 		ConfigSync:          expandGkeHubFeatureMembershipConfigmanagementConfigSync(obj["config_sync"]),
 		HierarchyController: expandGkeHubFeatureMembershipConfigmanagementHierarchyController(obj["hierarchy_controller"]),
 		PolicyController:    expandGkeHubFeatureMembershipConfigmanagementPolicyController(obj["policy_controller"]),
-		Version:             dcl.String(obj["version"].(string)),
+		Version:             dcl.StringOrNil(obj["version"].(string)),
 	}
 }
 
