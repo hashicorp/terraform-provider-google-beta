@@ -435,7 +435,7 @@ Write requests should target 'port'.`,
 						"cert": {
 							Type:        schema.TypeString,
 							Computed:    true,
-							Description: `Serial number, as extracted from the certificate.`,
+							Description: `The certificate data in PEM format.`,
 						},
 						"create_time": {
 							Type:        schema.TypeString,
