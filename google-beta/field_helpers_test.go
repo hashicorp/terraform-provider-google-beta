@@ -83,6 +83,85 @@ func TestParseGlobalFieldValue(t *testing.T) {
 	}
 }
 
+func TestParseLocationFieldValue(t *testing.T) {
+	const resourceType = "certificateMaps"
+	cases := map[string]struct {
+		FieldValue           string
+		ExpectedRelativeLink string
+		ExpectedError        bool
+		IsEmptyValid         bool
+		ProjectSchemaField   string
+		ProjectSchemaValue   string
+		Config               *Config
+	}{
+		"certificateMap is a full self link": {
+			FieldValue:           "//certificatemanager.googleapis.com/projects/myproject/locations/mylocation/certificateMaps/mymap",
+			ExpectedRelativeLink: "projects/myproject/locations/mylocation/certificateMaps/mymap",
+		},
+		"certificateMap is a relative self link": {
+			FieldValue:           "projects/myproject/locations/mylocation/certificateMaps/mymap",
+			ExpectedRelativeLink: "projects/myproject/locations/mylocation/certificateMaps/mymap",
+		},
+		"certificateMap is a partial relative self link": {
+			FieldValue:           "global/certificateMaps/mymap",
+			Config:               &Config{Project: "default-project"},
+			ExpectedRelativeLink: "projects/default-project/locations/global/certificateMaps/mymap",
+		},
+		"certificateMap is the name only": {
+			FieldValue:           "mymap",
+			Config:               &Config{Project: "default-project"},
+			ExpectedRelativeLink: "projects/default-project/locations/global/certificateMaps/mymap",
+		},
+		"certificateMap is the name only and has a project set in schema": {
+			FieldValue:           "mymap",
+			ProjectSchemaField:   "project",
+			ProjectSchemaValue:   "schema-project",
+			Config:               &Config{Project: "default-project"},
+			ExpectedRelativeLink: "projects/schema-project/locations/global/certificateMaps/mymap",
+		},
+		"certificateMap is the name only and has a project set in schema but the field is not specified.": {
+			FieldValue:           "mymap",
+			ProjectSchemaValue:   "schema-project",
+			Config:               &Config{Project: "default-project"},
+			ExpectedRelativeLink: "projects/default-project/locations/global/certificateMaps/mymap",
+		},
+		"certificateMap is empty and it is valid": {
+			FieldValue:           "",
+			IsEmptyValid:         true,
+			ExpectedRelativeLink: "",
+		},
+		"certificateMap is empty and it is not valid": {
+			FieldValue:    "",
+			IsEmptyValid:  false,
+			ExpectedError: true,
+		},
+	}
+
+	for tn, tc := range cases {
+		fieldsInSchema := make(map[string]interface{})
+
+		if len(tc.ProjectSchemaValue) > 0 && len(tc.ProjectSchemaField) > 0 {
+			fieldsInSchema[tc.ProjectSchemaField] = tc.ProjectSchemaValue
+		}
+
+		d := &ResourceDataMock{
+			FieldsInSchema: fieldsInSchema,
+		}
+
+		v, err := parseLocationFieldValue(resourceType, tc.FieldValue, tc.ProjectSchemaField, d, tc.Config, tc.IsEmptyValid)
+
+		if err != nil {
+			if !tc.ExpectedError {
+				t.Errorf("bad: %s, did not expect an error. Error: %s", tn, err)
+			}
+		} else {
+			if v.RelativeLink() != tc.ExpectedRelativeLink {
+				t.Errorf("bad: %s, expected relative link to be '%s' but got '%s'", tn, tc.ExpectedRelativeLink, v.RelativeLink())
+			}
+		}
+	}
+}
+
 func TestParseZonalFieldValue(t *testing.T) {
 	const resourceType = "instances"
 	cases := map[string]struct {

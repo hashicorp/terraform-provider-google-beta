@@ -8,6 +8,8 @@ import (
 const (
 	globalLinkTemplate             = "projects/%s/global/%s/%s"
 	globalLinkBasePattern          = "projects/(.+)/global/%s/(.+)"
+	locationLinkTemplate           = "projects/%s/locations/%s/%s/%s"
+	locationLinkBasePattern        = "projects/(.+)/locations/(.+)/%s/(.+)"
 	zonalLinkTemplate              = "projects/%s/zones/%s/%s/%s"
 	zonalLinkBasePattern           = "projects/(.+)/zones/(.+)/%s/(.+)"
 	zonalPartialLinkBasePattern    = "zones/(.+)/%s/(.+)"
@@ -141,6 +143,64 @@ func parseGlobalFieldValue(resourceType, fieldValue, projectSchemaField string, 
 	return &GlobalFieldValue{
 		Project: project,
 		Name:    GetResourceNameFromSelfLink(fieldValue),
+
+		resourceType: resourceType,
+	}, nil
+}
+
+type LocationFieldValue struct {
+	Project  string
+	Location string
+	Name     string
+
+	resourceType string
+}
+
+func (f LocationFieldValue) RelativeLink() string {
+	if len(f.Name) == 0 {
+		return ""
+	}
+
+	return fmt.Sprintf(locationLinkTemplate, f.Project, f.Location, f.resourceType, f.Name)
+}
+
+// Parses a location field supporting 5 different formats:
+// - https://www.googleapis.com/compute/ANY_VERSION/projects/{my_project}/locations/{location}/{resource_type}/{resource_name}
+// - projects/{my_project}/locations/{location}/{resource_type}/{resource_name}
+// - {location}/{resource_type}/{resource_name}
+// - resource_name
+// - "" (empty string). RelativeLink() returns empty if isEmptyValid is true.
+//
+// If the project is not specified, it first tries to get the project from the `projectSchemaField` and then fallback on the default project.
+// If the location is not specified, it will assume 'global' location.
+func parseLocationFieldValue(resourceType, fieldValue, projectSchemaField string, d TerraformResourceData, config *Config, isEmptyValid bool) (*LocationFieldValue, error) {
+	if len(fieldValue) == 0 {
+		if isEmptyValid {
+			return &LocationFieldValue{resourceType: resourceType}, nil
+		}
+		return nil, fmt.Errorf("The location field for resource %s cannot be empty", resourceType)
+	}
+
+	r := regexp.MustCompile(fmt.Sprintf(locationLinkBasePattern, resourceType))
+	if parts := r.FindStringSubmatch(fieldValue); parts != nil {
+		return &LocationFieldValue{
+			Project:  parts[1],
+			Location: parts[2],
+			Name:     parts[3],
+
+			resourceType: resourceType,
+		}, nil
+	}
+
+	project, err := getProjectFromSchema(projectSchemaField, d, config)
+	if err != nil {
+		return nil, err
+	}
+
+	return &LocationFieldValue{
+		Project:  project,
+		Location: "global",
+		Name:     GetResourceNameFromSelfLink(fieldValue),
 
 		resourceType: resourceType,
 	}, nil
