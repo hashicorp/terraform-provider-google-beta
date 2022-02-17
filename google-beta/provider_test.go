@@ -16,6 +16,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"sync"
 	"testing"
 	"time"
 
@@ -117,6 +118,8 @@ var masterBillingAccountEnvVars = []string{
 	"GOOGLE_MASTER_BILLING_ACCOUNT",
 }
 
+var mutex = &sync.Mutex{}
+
 func init() {
 	configs = make(map[string]*Config)
 	sources = make(map[string]VcrSource)
@@ -215,7 +218,9 @@ func getCachedConfig(ctx context.Context, d *schema.ResourceData, configureFunc 
 		return false
 	})
 	config.client.Transport = rec
+	mutex.Lock()
 	configs[testName] = config
+	mutex.Unlock()
 	return config, nil
 }
 
@@ -238,8 +243,10 @@ func closeRecorder(t *testing.T) {
 			}
 		}
 		// Clean up test config
+		mutex.Lock()
 		delete(configs, t.Name())
 		delete(sources, t.Name())
+		mutex.Unlock()
 	}
 }
 
@@ -309,7 +316,9 @@ func vcrSource(t *testing.T, path, mode string) (*VcrSource, error) {
 		seed := rand.Int63()
 		s := rand.NewSource(seed)
 		vcrSource := VcrSource{seed: seed, source: s}
+		mutex.Lock()
 		sources[t.Name()] = vcrSource
+		mutex.Unlock()
 		return &vcrSource, nil
 	case "REPLAYING":
 		seed, err := readSeedFromFile(vcrSeedFile(path, t.Name()))
@@ -318,7 +327,9 @@ func vcrSource(t *testing.T, path, mode string) (*VcrSource, error) {
 		}
 		s := rand.NewSource(seed)
 		vcrSource := VcrSource{seed: seed, source: s}
+		mutex.Lock()
 		sources[t.Name()] = vcrSource
+		mutex.Unlock()
 		return &vcrSource, nil
 	default:
 		log.Printf("[DEBUG] No valid environment var set for VCR_MODE, expected RECORDING or REPLAYING, skipping VCR. VCR_MODE: %s", mode)
