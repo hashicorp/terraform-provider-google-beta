@@ -2349,7 +2349,7 @@ data "google_compute_image" "my_image" {
 }
 
 resource "google_compute_instance_template" "foobar" {
-  name           = "instancet-test-%s"
+  name           = "tf-test-instancet-%s"
   machine_type   = "e2-medium"
   can_ip_forward = false
 
@@ -2378,7 +2378,7 @@ data "google_compute_image" "my_image" {
 }
 
 resource "google_compute_instance_template" "foobar" {
-  name           = "instancet-test-%s"
+  name           = "tf-test-instancet-%s"
   machine_type   = "e2-medium"
   can_ip_forward = false
 
