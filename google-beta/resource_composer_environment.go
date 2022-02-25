@@ -82,14 +82,14 @@ var (
 	allowedIpRangesConfig = &schema.Resource{
 		Schema: map[string]*schema.Schema{
 			"value": {
-				Type:        schema.TypeString,
-				Required:    true,
-				Description: `IP address or range, defined using CIDR notation, of requests that this rule applies to. Examples: 192.168.1.1 or 192.168.0.0/16 or 2001:db8::/32 or 2001:0db8:0000:0042:0000:8a2e:0370:7334. IP range prefixes should be properly truncated. For example, 1.2.3.4/24 should be truncated to 1.2.3.0/24. Similarly, for IPv6, 2001:db8::1/32 should be truncated to 2001:db8::/32.`,
+				Type:     schema.TypeString,
+				Required: true,
+				Description:  `IP address or range, defined using CIDR notation, of requests that this rule applies to. Examples: 192.168.1.1 or 192.168.0.0/16 or 2001:db8::/32 or 2001:0db8:0000:0042:0000:8a2e:0370:7334. IP range prefixes should be properly truncated. For example, 1.2.3.4/24 should be truncated to 1.2.3.0/24. Similarly, for IPv6, 2001:db8::1/32 should be truncated to 2001:db8::/32.`,
 			},
 			"description": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				Description: `A description of this ip range.`,
+				Type:     schema.TypeString,
+				Optional: true,
+				Description:  `A description of this ip range.`,
 			},
 		},
 	}
@@ -97,14 +97,14 @@ var (
 	cidrBlocks = &schema.Resource{
 		Schema: map[string]*schema.Schema{
 			"display_name": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				Description: `display_name is a field for users to identify CIDR blocks.`,
+				Type:     		schema.TypeString,
+				Optional: 		true,
+				Description:  `display_name is a field for users to identify CIDR blocks.`,
 			},
 			"cidr_block": {
-				Type:        schema.TypeString,
-				Required:    true,
-				Description: `cidr_block must be specified in CIDR notation.`,
+				Type:     		schema.TypeString,
+				Required: 		true,
+				Description:  `cidr_block must be specified in CIDR notation.`,
 			},
 		},
 	}
@@ -138,6 +138,7 @@ func resourceComposerEnvironment() *schema.Resource {
 			},
 			"region": {
 				Type:        schema.TypeString,
+				Computed:    true
 				Optional:    true,
 				ForceNew:    true,
 				Description: `The location or Compute Engine region for the environment.`,
@@ -233,19 +234,19 @@ func resourceComposerEnvironment() *schema.Resource {
 										Description:      `The Google Cloud Platform Service Account to be used by the node VMs. If a service account is not specified, the "default" Compute Engine service account is used. Cannot be updated. If given, note that the service account must have roles/composer.worker for any GCP resources created under the Cloud Composer Environment.`,
 									},
 									"max_pods_per_node": {
-										Type:         schema.TypeInt,
-										Computed:     true,
-										Optional:     true,
-										ForceNew:     true,
-										ValidateFunc: validation.IntBetween(8, 110),
-										Description:  `The maximum pods per node in the GKE cluster allocated during environment creation. Lowering this value reduces IP address consumption by the Cloud Composer Kubernetes cluster. This value can only be set during environment creation, and only if the environment is VPC-Native. The range of possible values is 8-110, and the default is 32. Cannot be updated. This field is supported for Cloud Composer environments in versions composer-1.*.*-airflow-*.*.*.`,
+										Type:             schema.TypeInt,
+										Computed:         true,
+										Optional:         true,
+										ForceNew:         true,
+										ValidateFunc:     validation.IntBetween(8, 110),
+										Description:      `The maximum pods per node in the GKE cluster allocated during environment creation. Lowering this value reduces IP address consumption by the Cloud Composer Kubernetes cluster. This value can only be set during environment creation, and only if the environment is VPC-Native. The range of possible values is 8-110, and the default is 32. Cannot be updated. This field is supported for Cloud Composer environments in versions composer-1.*.*-airflow-*.*.*.`,
 									},
 									"enable_ip_masq_agent": {
-										Type:        schema.TypeBool,
-										Computed:    true,
-										Optional:    true,
-										ForceNew:    true,
-										Description: `Deploys 'ip-masq-agent' daemon set in the GKE cluster and defines nonMasqueradeCIDRs equals to pod IP range so IP masquerading is used for all destination addresses, except between pods traffic. See: https://cloud.google.com/kubernetes-engine/docs/how-to/ip-masquerade-agent`,
+										Type:             schema.TypeBool,
+										Computed:         true,
+										Optional:         true,
+										ForceNew:         true,
+										Description:      `Deploys 'ip-masq-agent' daemon set in the GKE cluster and defines nonMasqueradeCIDRs equals to pod IP range so IP masquerading is used for all destination addresses, except between pods traffic. See: https://cloud.google.com/kubernetes-engine/docs/how-to/ip-masquerade-agent`,
 									},
 									"tags": {
 										Type:     schema.TypeSet,
@@ -294,7 +295,7 @@ func resourceComposerEnvironment() *schema.Resource {
 													Type:             schema.TypeString,
 													Optional:         true,
 													ForceNew:         true,
-													AtLeastOneOf:     composerIpAllocationPolicyKeys,
+													AtLeastOneOf: 		composerIpAllocationPolicyKeys,
 													Description:      `The IP address range used to allocate IP addresses to pods in the cluster. For Cloud Composer environments in versions composer-1.*.*-airflow-*.*.*, this field is applicable only when use_ip_aliases is true. Set to blank to have GKE choose a range with the default size. Set to /netmask (e.g. /14) to have GKE choose a range with a specific netmask. Set to a CIDR notation (e.g. 10.96.0.0/14) from the RFC-1918 private networks (e.g. 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16) to pick a specific range to use. Specify either cluster_secondary_range_name or cluster_ipv4_cidr_block but not both.`,
 													DiffSuppressFunc: cidrOrSizeDiffSuppress,
 													ConflictsWith:    []string{"config.0.node_config.0.ip_allocation_policy.0.cluster_secondary_range_name"},
@@ -303,7 +304,7 @@ func resourceComposerEnvironment() *schema.Resource {
 													Type:             schema.TypeString,
 													Optional:         true,
 													ForceNew:         true,
-													AtLeastOneOf:     composerIpAllocationPolicyKeys,
+													AtLeastOneOf: 		composerIpAllocationPolicyKeys,
 													Description:      `The IP address range used to allocate IP addresses in this cluster. For Cloud Composer environments in versions composer-1.*.*-airflow-*.*.*, this field is applicable only when use_ip_aliases is true. Set to blank to have GKE choose a range with the default size. Set to /netmask (e.g. /14) to have GKE choose a range with a specific netmask. Set to a CIDR notation (e.g. 10.96.0.0/14) from the RFC-1918 private networks (e.g. 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16) to pick a specific range to use. Specify either services_secondary_range_name or services_ipv4_cidr_block but not both.`,
 													DiffSuppressFunc: cidrOrSizeDiffSuppress,
 													ConflictsWith:    []string{"config.0.node_config.0.ip_allocation_policy.0.services_secondary_range_name"},
@@ -384,71 +385,71 @@ func resourceComposerEnvironment() *schema.Resource {
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"enable_private_endpoint": {
-										Type:         schema.TypeBool,
-										Optional:     true,
-										Default:      true,
+										Type:     schema.TypeBool,
+										Optional: true,
+										Default:  true,
 										AtLeastOneOf: composerPrivateEnvironmentConfig,
-										ForceNew:     true,
-										Description:  `If true, access to the public endpoint of the GKE cluster is denied. If this field is set to true, ip_allocation_policy.use_ip_aliases must be set to true for Cloud Composer environments in versions composer-1.*.*-airflow-*.*.*.`,
+										ForceNew:    true,
+										Description: `If true, access to the public endpoint of the GKE cluster is denied. If this field is set to true, ip_allocation_policy.use_ip_aliases must be set to true for Cloud Composer environments in versions composer-1.*.*-airflow-*.*.*.`,
 									},
 									"master_ipv4_cidr_block": {
-										Type:         schema.TypeString,
-										Optional:     true,
-										Computed:     true,
+										Type:     schema.TypeString,
+										Optional: true,
+										Computed: true,
 										AtLeastOneOf: composerPrivateEnvironmentConfig,
-										ForceNew:     true,
-										Description:  `The IP range in CIDR notation to use for the hosted master network. This range is used for assigning internal IP addresses to the cluster master or set of masters and to the internal load balancer virtual IP. This range must not overlap with any other ranges in use within the cluster's network. If left blank, the default value of '172.16.0.0/28' is used.`,
+										ForceNew:    true,
+										Description: `The IP range in CIDR notation to use for the hosted master network. This range is used for assigning internal IP addresses to the cluster master or set of masters and to the internal load balancer virtual IP. This range must not overlap with any other ranges in use within the cluster's network. If left blank, the default value of '172.16.0.0/28' is used.`,
 									},
 									"web_server_ipv4_cidr_block": {
-										Type:         schema.TypeString,
-										Optional:     true,
-										Computed:     true,
+										Type:     schema.TypeString,
+										Optional: true,
+										Computed: true,
 										AtLeastOneOf: composerPrivateEnvironmentConfig,
-										ForceNew:     true,
-										Description:  `The CIDR block from which IP range for web server will be reserved. Needs to be disjoint from master_ipv4_cidr_block and cloud_sql_ipv4_cidr_block. This field is supported for Cloud Composer environments in versions composer-1.*.*-airflow-*.*.*.`,
+										ForceNew:    true,
+										Description: `The CIDR block from which IP range for web server will be reserved. Needs to be disjoint from master_ipv4_cidr_block and cloud_sql_ipv4_cidr_block. This field is supported for Cloud Composer environments in versions composer-1.*.*-airflow-*.*.*.`,
 									},
 									"cloud_sql_ipv4_cidr_block": {
-										Type:         schema.TypeString,
-										Optional:     true,
-										Computed:     true,
+										Type:     schema.TypeString,
+										Optional: true,
+										Computed: true,
 										AtLeastOneOf: composerPrivateEnvironmentConfig,
-										ForceNew:     true,
-										Description:  `The CIDR block from which IP range in tenant project will be reserved for Cloud SQL. Needs to be disjoint from web_server_ipv4_cidr_block.`,
+										ForceNew:    true,
+										Description: `The CIDR block from which IP range in tenant project will be reserved for Cloud SQL. Needs to be disjoint from web_server_ipv4_cidr_block.`,
 									},
 									"cloud_composer_network_ipv4_cidr_block": {
-										Type:         schema.TypeString,
-										Optional:     true,
-										Computed:     true,
+										Type:     schema.TypeString,
+										Optional: true,
+										Computed: true,
 										AtLeastOneOf: composerPrivateEnvironmentConfig,
-										ForceNew:     true,
-										Description:  `The CIDR block from which IP range for Cloud Composer Network in tenant project will be reserved. Needs to be disjoint from private_cluster_config.master_ipv4_cidr_block and cloud_sql_ipv4_cidr_block. This field is supported for Cloud Composer environments in versions composer-2.*.*-airflow-*.*.* and newer.`,
+										ForceNew: true,
+										Description: `The CIDR block from which IP range for Cloud Composer Network in tenant project will be reserved. Needs to be disjoint from private_cluster_config.master_ipv4_cidr_block and cloud_sql_ipv4_cidr_block. This field is supported for Cloud Composer environments in versions composer-2.*.*-airflow-*.*.* and newer.`,
 									},
 									"enable_privately_used_public_ips": {
-										Type:         schema.TypeBool,
-										Optional:     true,
-										Computed:     true,
+										Type:     schema.TypeBool,
+										Optional: true,
+										Computed: true,
 										AtLeastOneOf: composerPrivateEnvironmentConfig,
-										ForceNew:     true,
-										Description:  `When enabled, IPs from public (non-RFC1918) ranges can be used for ip_allocation_policy.cluster_ipv4_cidr_block and ip_allocation_policy.service_ipv4_cidr_block.`,
+										ForceNew: true,
+										Description: `When enabled, IPs from public (non-RFC1918) ranges can be used for ip_allocation_policy.cluster_ipv4_cidr_block and ip_allocation_policy.service_ipv4_cidr_block.`,
 									},
 									"cloud_composer_connection_subnetwork": {
-										Type:         schema.TypeString,
-										Optional:     true,
-										Computed:     true,
+										Type:     schema.TypeString,
+										Optional: true,
+										Computed: true,
 										AtLeastOneOf: composerPrivateEnvironmentConfig,
-										ForceNew:     true,
-										Description:  `When specified, the environment will use Private Service Connect instead of VPC peerings to connect to Cloud SQL in the Tenant Project, and the PSC endpoint in the Customer Project will use an IP address from this subnetwork. This field is supported for Cloud Composer environments in versions composer-2.*.*-airflow-*.*.* and newer.`,
+										ForceNew: true,
+										Description: `When specified, the environment will use Private Service Connect instead of VPC peerings to connect to Cloud SQL in the Tenant Project, and the PSC endpoint in the Customer Project will use an IP address from this subnetwork. This field is supported for Cloud Composer environments in versions composer-2.*.*-airflow-*.*.* and newer.`,
 									},
 								},
 							},
 						},
 						"web_server_network_access_control": {
-							Type:         schema.TypeList,
-							Optional:     true,
-							Computed:     true,
+							Type:        schema.TypeList,
+							Optional:    true,
+							Computed:    true,
 							AtLeastOneOf: composerConfigKeys,
-							MaxItems:     1,
-							Description:  `The network-level access control policy for the Airflow web server. If unspecified, no network-level access restrictions will be applied. This field is supported for Cloud Composer environments in versions composer-1.*.*-airflow-*.*.*.`,
+							MaxItems:    1,
+							Description: `The network-level access control policy for the Airflow web server. If unspecified, no network-level access restrictions will be applied. This field is supported for Cloud Composer environments in versions composer-1.*.*-airflow-*.*.*.`,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"allowed_ip_range": {
@@ -471,8 +472,8 @@ func resourceComposerEnvironment() *schema.Resource {
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"machine_type": {
-										Type:        schema.TypeString,
-										Required:    true,
+										Type:         schema.TypeString,
+										Required:     true,
 										Description: `Optional. Cloud SQL machine type used by Airflow database. It has to be one of: db-n1-standard-2, db-n1-standard-4, db-n1-standard-8 or db-n1-standard-16. If not specified, db-n1-standard-2 will be used.`,
 									},
 								},
@@ -488,8 +489,8 @@ func resourceComposerEnvironment() *schema.Resource {
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"machine_type": {
-										Type:        schema.TypeString,
-										Required:    true,
+										Type:         schema.TypeString,
+										Required:     true,
 										Description: `Optional. Machine type on which Airflow web server is running. It has to be one of: composer-n1-webserver-2, composer-n1-webserver-4 or composer-n1-webserver-8. If not specified, composer-n1-webserver-2 will be used. Value custom is returned only in response, if Airflow web server parameters were manually changed to a non-standard values.`,
 									},
 								},
@@ -505,9 +506,9 @@ func resourceComposerEnvironment() *schema.Resource {
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"kms_key_name": {
-										Type:        schema.TypeString,
-										Required:    true,
-										ForceNew:    true,
+										Type:         schema.TypeString,
+										Required:     true,
+										ForceNew:     true,
 										Description: `Optional. Customer-managed Encryption Key available through Google's Key Management Service. Cannot be updated.`,
 									},
 								},
@@ -557,7 +558,7 @@ func resourceComposerEnvironment() *schema.Resource {
 										Optional:    true,
 										ForceNew:    false,
 										Description: `Configuration for resources used by Airflow schedulers.`,
-										MaxItems:    1,
+										MaxItems:     1,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"cpu": {
@@ -568,11 +569,11 @@ func resourceComposerEnvironment() *schema.Resource {
 													Description:  `CPU request and limit for a single Airflow scheduler replica`,
 												},
 												"memory_gb": {
-													Type:         schema.TypeFloat,
-													Optional:     true,
-													ForceNew:     false,
+													Type:        schema.TypeFloat,
+													Optional:    true,
+													ForceNew:    false,
 													ValidateFunc: validation.FloatAtLeast(0),
-													Description:  `Memory (GB) request and limit for a single Airflow scheduler replica.`,
+													Description: `Memory (GB) request and limit for a single Airflow scheduler replica.`,
 												},
 												"storage_gb": {
 													Type:         schema.TypeFloat,
@@ -596,7 +597,7 @@ func resourceComposerEnvironment() *schema.Resource {
 										Optional:    true,
 										ForceNew:    false,
 										Description: `Configuration for resources used by Airflow web server.`,
-										MaxItems:    1,
+										MaxItems:     1,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"cpu": {
@@ -628,7 +629,7 @@ func resourceComposerEnvironment() *schema.Resource {
 										Optional:    true,
 										ForceNew:    false,
 										Description: `Configuration for resources used by Airflow workers.`,
-										MaxItems:    1,
+										MaxItems:     1,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"cpu": {
@@ -673,20 +674,20 @@ func resourceComposerEnvironment() *schema.Resource {
 							},
 						},
 						"environment_size": {
-							Type:         schema.TypeString,
-							Optional:     true,
-							Computed:     true,
-							ForceNew:     false,
-							AtLeastOneOf: composerConfigKeys,
-							ValidateFunc: validation.StringInSlice([]string{"ENVIRONMENT_SIZE_SMALL", "ENVIRONMENT_SIZE_MEDIUM", "ENVIRONMENT_SIZE_LARGE"}, false),
-							Description:  `The size of the Cloud Composer environment. This field is supported for Cloud Composer environments in versions composer-2.*.*-airflow-*.*.* and newer.`,
-						},
+              Type:         schema.TypeString,
+              Optional:     true,
+							Computed:			true,
+              ForceNew:     false,
+              AtLeastOneOf: composerConfigKeys,
+              ValidateFunc: validation.StringInSlice([]string{"ENVIRONMENT_SIZE_SMALL", "ENVIRONMENT_SIZE_MEDIUM", "ENVIRONMENT_SIZE_LARGE"}, false),
+              Description:  `The size of the Cloud Composer environment. This field is supported for Cloud Composer environments in versions composer-2.*.*-airflow-*.*.* and newer.`,
+            },
 						"master_authorized_networks_config": {
-							Type:         schema.TypeList,
-							Optional:     true,
+							Type:        	schema.TypeList,
+							Optional:    	true,
 							AtLeastOneOf: composerConfigKeys,
-							MaxItems:     1,
-							Description:  `Configuration options for the master authorized networks feature. Enabled master authorized networks will disallow all external traffic to access Kubernetes master through HTTPS except traffic from the given CIDR blocks, Google Compute Engine Public IPs and Google Prod IPs.`,
+							MaxItems:    	1,
+							Description: 	`Configuration options for the master authorized networks feature. Enabled master authorized networks will disallow all external traffic to access Kubernetes master through HTTPS except traffic from the given CIDR blocks, Google Compute Engine Public IPs and Google Prod IPs.`,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"enabled": {
@@ -991,16 +992,16 @@ func resourceComposerEnvironmentUpdate(d *schema.ResourceData, meta interface{})
 				return err
 			}
 		}
-		if d.HasChange("config.0.environment_size") {
+    if d.HasChange("config.0.environment_size") {
 			patchObj := &composer.Environment{Config: &composer.EnvironmentConfig{}}
 			if config != nil {
 				patchObj.Config.EnvironmentSize = config.EnvironmentSize
 			}
 			err = resourceComposerEnvironmentPatchField("config.EnvironmentSize", userAgent, patchObj, d, tfConfig)
-			if err != nil {
+      if err != nil {
 				return err
 			}
-		}
+    }
 		if d.HasChange("config.0.master_authorized_networks_config") {
 			patchObj := &composer.Environment{Config: &composer.EnvironmentConfig{}}
 			if config != nil {
@@ -1212,45 +1213,46 @@ func flattenComposerEnvironmentConfigWorkloadsConfig(workloadsConfig *composer.W
 		return nil
 	}
 
-	transformed := make(map[string]interface{})
-	transformedScheduler := make(map[string]interface{})
-	transformedWebServer := make(map[string]interface{})
-	transformedWorker := make(map[string]interface{})
+	  transformed := make(map[string]interface{})
+    transformedScheduler := make(map[string]interface{})
+    transformedWebServer := make(map[string]interface{})
+    transformedWorker := make(map[string]interface{})
 
-	wlCfgScheduler := workloadsConfig.Scheduler
-	wlCfgWebServer := workloadsConfig.WebServer
-	wlCfgWorker := workloadsConfig.Worker
+    wlCfgScheduler := workloadsConfig.Scheduler
+    wlCfgWebServer := workloadsConfig.WebServer
+    wlCfgWorker := workloadsConfig.Worker
 
-	if wlCfgScheduler == nil {
-		transformedScheduler = nil
-	} else {
-		transformedScheduler["cpu"] = wlCfgScheduler.Cpu
-		transformedScheduler["memory_gb"] = wlCfgScheduler.MemoryGb
-		transformedScheduler["storage_gb"] = wlCfgScheduler.StorageGb
-		transformedScheduler["count"] = wlCfgScheduler.Count
-	}
+    if wlCfgScheduler == nil {
+      transformedScheduler = nil
+    } else {
+      transformedScheduler["cpu"] = wlCfgScheduler.Cpu
+      transformedScheduler["memory_gb"] = wlCfgScheduler.MemoryGb
+      transformedScheduler["storage_gb"] = wlCfgScheduler.StorageGb
+      transformedScheduler["count"] = wlCfgScheduler.Count
+    }
 
-	if wlCfgWebServer == nil {
-		transformedWebServer = nil
-	} else {
-		transformedWebServer["cpu"] = wlCfgWebServer.Cpu
-		transformedWebServer["memory_gb"] = wlCfgWebServer.MemoryGb
-		transformedWebServer["storage_gb"] = wlCfgWebServer.StorageGb
-	}
+    if wlCfgWebServer == nil {
+      transformedWebServer = nil
+    } else {
+      transformedWebServer["cpu"] = wlCfgWebServer.Cpu
+      transformedWebServer["memory_gb"] = wlCfgWebServer.MemoryGb
+      transformedWebServer["storage_gb"] = wlCfgWebServer.StorageGb
+    }
 
-	if wlCfgWorker == nil {
-		transformedWorker = nil
-	} else {
-		transformedWorker["cpu"] = wlCfgWorker.Cpu
-		transformedWorker["memory_gb"] = wlCfgWorker.MemoryGb
-		transformedWorker["storage_gb"] = wlCfgWorker.StorageGb
-		transformedWorker["min_count"] = wlCfgWorker.MinCount
-		transformedWorker["max_count"] = wlCfgWorker.MaxCount
-	}
+    if wlCfgWorker == nil {
+      transformedWorker = nil
+    } else {
+      transformedWorker["cpu"] = wlCfgWorker.Cpu
+      transformedWorker["memory_gb"] = wlCfgWorker.MemoryGb
+      transformedWorker["storage_gb"] = wlCfgWorker.StorageGb
+      transformedWorker["min_count"] = wlCfgWorker.MinCount
+      transformedWorker["max_count"] = wlCfgWorker.MaxCount
+    }
 
-	transformed["scheduler"] = []interface{}{transformedScheduler}
-	transformed["web_server"] = []interface{}{transformedWebServer}
-	transformed["worker"] = []interface{}{transformedWorker}
+    transformed["scheduler"] = []interface{}{transformedScheduler}
+    transformed["web_server"] = []interface{}{transformedWebServer}
+    transformed["worker"] = []interface{}{transformedWorker}
+
 
 	return []interface{}{transformed}
 }
@@ -1268,6 +1270,7 @@ func flattenComposerEnvironmentConfigPrivateEnvironmentConfig(envCfg *composer.P
 	transformed["cloud_composer_network_ipv4_cidr_block"] = envCfg.CloudComposerNetworkIpv4CidrBlock
 	transformed["enable_privately_used_public_ips"] = envCfg.EnablePrivatelyUsedPublicIps
 	transformed["cloud_composer_connection_subnetwork"] = envCfg.CloudComposerConnectionSubnetwork
+
 
 	return []interface{}{transformed}
 }
@@ -1342,7 +1345,7 @@ func flattenComposerEnvironmentConfigMasterAuthorizedNetworksConfig(masterAuthNe
 	for _, cidrBlock := range masterAuthNetsCfg.CidrBlocks {
 		data := map[string]interface{}{
 			"display_name": cidrBlock.DisplayName,
-			"cidr_block":   cidrBlock.CidrBlock,
+			"cidr_block": cidrBlock.CidrBlock,
 		}
 		transformed = append(transformed, data)
 	}
@@ -1424,10 +1427,10 @@ func expandComposerEnvironmentConfig(v interface{}, d *schema.ResourceData, conf
 	transformed.WorkloadsConfig = transformedWorkloadsConfig
 
 	transformedEnvironmentSize, err := expandComposerEnvironmentConfigEnvironmentSize(original["environment_size"], d, config)
-	if err != nil {
-		return nil, err
-	}
-	transformed.EnvironmentSize = transformedEnvironmentSize
+  	if err != nil {
+  		return nil, err
+  	}
+  	transformed.EnvironmentSize = transformedEnvironmentSize
 	transformedMasterAuthorizedNetworksConfig, err := expandComposerEnvironmentConfigMasterAuthorizedNetworksConfig(original["master_authorized_networks_config"], d, config)
 	if err != nil {
 		return nil, err
@@ -1498,6 +1501,7 @@ func expandComposerEnvironmentConfigMasterAuthorizedNetworksConfig(v interface{}
 	transformed.CidrBlocks = cidrBlocks
 	return transformed, nil
 }
+
 
 func expandComposerEnvironmentConfigDatabaseConfig(v interface{}, d *schema.ResourceData, config *Config) (*composer.DatabaseConfig, error) {
 	l := v.([]interface{})
@@ -1659,6 +1663,7 @@ func expandComposerEnvironmentConfigPrivateEnvironmentConfig(v interface{}, d *s
 	if v, ok := original["cloud_composer_connection_subnetwork"]; ok {
 		transformed.CloudComposerConnectionSubnetwork = v.(string)
 	}
+
 
 	transformed.PrivateClusterConfig = subBlock
 
