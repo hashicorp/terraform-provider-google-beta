@@ -904,8 +904,8 @@ func Provider() *schema.Provider {
 }
 
 // Generated resources: 245
-// Generated IAM resources: 126
-// Total generated resources: 371
+// Generated IAM resources: 129
+// Total generated resources: 374
 func ResourceMap() map[string]*schema.Resource {
 	resourceMap, _ := ResourceMapWithErrors()
 	return resourceMap
@@ -1004,6 +1004,9 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_compute_backend_service_iam_member":                    ResourceIamMember(ComputeBackendServiceIamSchema, ComputeBackendServiceIamUpdaterProducer, ComputeBackendServiceIdParseFunc),
 			"google_compute_backend_service_iam_policy":                    ResourceIamPolicy(ComputeBackendServiceIamSchema, ComputeBackendServiceIamUpdaterProducer, ComputeBackendServiceIdParseFunc),
 			"google_compute_region_backend_service":                        resourceComputeRegionBackendService(),
+			"google_compute_region_backend_service_iam_binding":            ResourceIamBinding(ComputeRegionBackendServiceIamSchema, ComputeRegionBackendServiceIamUpdaterProducer, ComputeRegionBackendServiceIdParseFunc),
+			"google_compute_region_backend_service_iam_member":             ResourceIamMember(ComputeRegionBackendServiceIamSchema, ComputeRegionBackendServiceIamUpdaterProducer, ComputeRegionBackendServiceIdParseFunc),
+			"google_compute_region_backend_service_iam_policy":             ResourceIamPolicy(ComputeRegionBackendServiceIamSchema, ComputeRegionBackendServiceIamUpdaterProducer, ComputeRegionBackendServiceIdParseFunc),
 			"google_compute_backend_service_signed_url_key":                resourceComputeBackendServiceSignedUrlKey(),
 			"google_compute_region_disk_resource_policy_attachment":        resourceComputeRegionDiskResourcePolicyAttachment(),
 			"google_compute_disk_resource_policy_attachment":               resourceComputeDiskResourcePolicyAttachment(),
