@@ -167,6 +167,56 @@ resource "google_service_usage_consumer_quota_override" "override" {
 `, context)
 }
 
+func TestAccServiceUsageConsumerQuotaOverride_consumerQuotaOverrideCustomDimensionExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"org_id":        getTestOrgFromEnv(t),
+		"random_suffix": randString(t, 10),
+	}
+
+	vcrTest(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProvidersOiCS,
+		CheckDestroy: testAccCheckServiceUsageConsumerQuotaOverrideDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccServiceUsageConsumerQuotaOverride_consumerQuotaOverrideCustomDimensionExample(context),
+			},
+			{
+				ResourceName:            "google_service_usage_consumer_quota_override.override",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"force", "service", "metric", "limit"},
+			},
+		},
+	})
+}
+
+func testAccServiceUsageConsumerQuotaOverride_consumerQuotaOverrideCustomDimensionExample(context map[string]interface{}) string {
+	return Nprintf(`
+resource "google_project" "my_project" {
+  provider   = google-beta
+  name       = "tf-test-project"
+  project_id = "quota%{random_suffix}"
+  org_id     = "%{org_id}"
+}
+
+resource "google_service_usage_consumer_quota_override" "override" {
+  provider       = google-beta
+  project        = google_project.my_project.project_id
+  service        = "libraryagent.googleapis.com"
+  metric         = urlencode("libraryagent.googleapis.com/borrows")
+  limit          = urlencode("/author/project")
+  override_value = "1"
+  force          = true
+  dimensions = {
+    author = "larry"
+  }
+}
+`, context)
+}
+
 func testAccCheckServiceUsageConsumerQuotaOverrideDestroyProducer(t *testing.T) func(s *terraform.State) error {
 	return func(s *terraform.State) error {
 		for name, rs := range s.RootModule().Resources {
