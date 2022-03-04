@@ -8,14 +8,13 @@ FEATURES:
 * **New Datasource:** `google_privateca_certificate_authority` ([#4087](https://github.com/hashicorp/terraform-provider-google-beta/pull/4087))
 
 IMPROVEMENTS:
-* composer: added support for Cloud Composer maintenance window in GA ([#4079](https://github.com/hashicorp/terraform-provider-google-beta/pull/4079))
 * compute: added support for `keepalive_interval` to `google_compute_router.bgp` ([#4089](https://github.com/hashicorp/terraform-provider-google-beta/pull/4089))
 * compute: added update support for `google_compute_reservation.share_settings` ([#4092](https://github.com/hashicorp/terraform-provider-google-beta/pull/4092))
-* transfer: added attribute `subject_id` to data source `google_storage_transfer_project_service_account` ([#4073](https://github.com/hashicorp/terraform-provider-google-beta/pull/4073))
+* storagetransfer: added attribute `subject_id` to data source `google_storage_transfer_project_service_account` ([#4073](https://github.com/hashicorp/terraform-provider-google-beta/pull/4073))
 
 BUG FIXES:
 * composer: allow region to be undefined in configuration for `google_composer_environment` ([#4083](https://github.com/hashicorp/terraform-provider-google-beta/pull/4083))
-* container: allowed `vertical_pod_autoscaling` to be computed as `enable_autopilot` can mutate it ([#4076](https://github.com/hashicorp/terraform-provider-google-beta/pull/4076))
+* container: fixed a bug where `vertical_pod_autoscaling` would cause autopilot clusters to recreate ([#4076](https://github.com/hashicorp/terraform-provider-google-beta/pull/4076))
 
 ## 4.12.0 (February 28, 2022)
 
