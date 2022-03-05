@@ -1656,7 +1656,6 @@ func expandComposerEnvironmentConfigPrivateEnvironmentConfig(v interface{}, d *s
 	if v, ok := original["enable_privately_used_public_ips"]; ok {
 		transformed.EnablePrivatelyUsedPublicIps = v.(bool)
 	}
-
 	if v, ok := original["cloud_composer_connection_subnetwork"]; ok {
 		transformed.CloudComposerConnectionSubnetwork = v.(string)
 	}
