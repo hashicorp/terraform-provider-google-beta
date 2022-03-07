@@ -502,6 +502,7 @@ func resourceGkeHubFeatureMembershipDelete(d *schema.ResourceData, meta interfac
 
 func resourceGkeHubFeatureMembershipImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	config := meta.(*Config)
+
 	if err := parseImportId([]string{
 		"projects/(?P<project>[^/]+)/locations/(?P<location>[^/]+)/features/(?P<feature>[^/]+)/membershipId/(?P<membership>[^/]+)",
 		"(?P<project>[^/]+)/(?P<location>[^/]+)/(?P<feature>[^/]+)/(?P<membership>[^/]+)",
