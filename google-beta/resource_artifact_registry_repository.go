@@ -96,6 +96,33 @@ and dashes.`,
 				ForceNew:    true,
 				Description: `The name of the location this repository is located in.`,
 			},
+			"maven_config": {
+				Type:     schema.TypeList,
+				Optional: true,
+				Description: `MavenRepositoryConfig is maven related repository details.
+Provides additional configuration details for repositories of the maven
+format type.`,
+				MaxItems: 1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"allow_snapshot_overwrites": {
+							Type:     schema.TypeBool,
+							Optional: true,
+							ForceNew: true,
+							Description: `The repository with this flag will allow publishing the same
+snapshot versions.`,
+						},
+						"version_policy": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							ForceNew:     true,
+							ValidateFunc: validateEnum([]string{"VERSION_POLICY_UNSPECIFIED", "RELEASE", "SNAPSHOT", ""}),
+							Description:  `Version policy defines the versions that the registry will accept. Default value: "VERSION_POLICY_UNSPECIFIED" Possible values: ["VERSION_POLICY_UNSPECIFIED", "RELEASE", "SNAPSHOT"]`,
+							Default:      "VERSION_POLICY_UNSPECIFIED",
+						},
+					},
+				},
+			},
 			"create_time": {
 				Type:        schema.TypeString,
 				Computed:    true,
@@ -154,6 +181,12 @@ func resourceArtifactRegistryRepositoryCreate(d *schema.ResourceData, meta inter
 		return err
 	} else if v, ok := d.GetOkExists("kms_key_name"); !isEmptyValue(reflect.ValueOf(kmsKeyNameProp)) && (ok || !reflect.DeepEqual(v, kmsKeyNameProp)) {
 		obj["kmsKeyName"] = kmsKeyNameProp
+	}
+	mavenConfigProp, err := expandArtifactRegistryRepositoryMavenConfig(d.Get("maven_config"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("maven_config"); !isEmptyValue(reflect.ValueOf(mavenConfigProp)) && (ok || !reflect.DeepEqual(v, mavenConfigProp)) {
+		obj["mavenConfig"] = mavenConfigProp
 	}
 
 	url, err := replaceVars(d, config, "{{ArtifactRegistryBasePath}}projects/{{project}}/locations/{{location}}/repositories?repository_id={{repository_id}}")
@@ -270,6 +303,9 @@ func resourceArtifactRegistryRepositoryRead(d *schema.ResourceData, meta interfa
 	if err := d.Set("update_time", flattenArtifactRegistryRepositoryUpdateTime(res["updateTime"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Repository: %s", err)
 	}
+	if err := d.Set("maven_config", flattenArtifactRegistryRepositoryMavenConfig(res["mavenConfig"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Repository: %s", err)
+	}
 
 	return nil
 }
@@ -302,6 +338,12 @@ func resourceArtifactRegistryRepositoryUpdate(d *schema.ResourceData, meta inter
 	} else if v, ok := d.GetOkExists("labels"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
 		obj["labels"] = labelsProp
 	}
+	mavenConfigProp, err := expandArtifactRegistryRepositoryMavenConfig(d.Get("maven_config"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("maven_config"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, mavenConfigProp)) {
+		obj["mavenConfig"] = mavenConfigProp
+	}
 
 	url, err := replaceVars(d, config, "{{ArtifactRegistryBasePath}}projects/{{project}}/locations/{{location}}/repositories/{{repository_id}}")
 	if err != nil {
@@ -317,6 +359,10 @@ func resourceArtifactRegistryRepositoryUpdate(d *schema.ResourceData, meta inter
 
 	if d.HasChange("labels") {
 		updateMask = append(updateMask, "labels")
+	}
+
+	if d.HasChange("maven_config") {
+		updateMask = append(updateMask, "mavenConfig")
 	}
 	// updateMask is a URL parameter but not present in the schema, so replaceVars
 	// won't set it
@@ -438,6 +484,29 @@ func flattenArtifactRegistryRepositoryUpdateTime(v interface{}, d *schema.Resour
 	return v
 }
 
+func flattenArtifactRegistryRepositoryMavenConfig(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["allow_snapshot_overwrites"] =
+		flattenArtifactRegistryRepositoryMavenConfigAllowSnapshotOverwrites(original["allowSnapshotOverwrites"], d, config)
+	transformed["version_policy"] =
+		flattenArtifactRegistryRepositoryMavenConfigVersionPolicy(original["versionPolicy"], d, config)
+	return []interface{}{transformed}
+}
+func flattenArtifactRegistryRepositoryMavenConfigAllowSnapshotOverwrites(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	return v
+}
+
+func flattenArtifactRegistryRepositoryMavenConfigVersionPolicy(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	return v
+}
+
 func expandArtifactRegistryRepositoryFormat(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
@@ -458,5 +527,39 @@ func expandArtifactRegistryRepositoryLabels(v interface{}, d TerraformResourceDa
 }
 
 func expandArtifactRegistryRepositoryKmsKeyName(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandArtifactRegistryRepositoryMavenConfig(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedAllowSnapshotOverwrites, err := expandArtifactRegistryRepositoryMavenConfigAllowSnapshotOverwrites(original["allow_snapshot_overwrites"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedAllowSnapshotOverwrites); val.IsValid() && !isEmptyValue(val) {
+		transformed["allowSnapshotOverwrites"] = transformedAllowSnapshotOverwrites
+	}
+
+	transformedVersionPolicy, err := expandArtifactRegistryRepositoryMavenConfigVersionPolicy(original["version_policy"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedVersionPolicy); val.IsValid() && !isEmptyValue(val) {
+		transformed["versionPolicy"] = transformedVersionPolicy
+	}
+
+	return transformed, nil
+}
+
+func expandArtifactRegistryRepositoryMavenConfigAllowSnapshotOverwrites(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandArtifactRegistryRepositoryMavenConfigVersionPolicy(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
