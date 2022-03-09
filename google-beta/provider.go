@@ -783,6 +783,7 @@ func Provider() *schema.Provider {
 			RecaptchaEnterpriseEndpointEntryKey:          RecaptchaEnterpriseEndpointEntry,
 			ContainerAwsCustomEndpointEntryKey:           ContainerAwsCustomEndpointEntry,
 			ContainerAzureCustomEndpointEntryKey:         ContainerAzureCustomEndpointEntry,
+			ApikeysEndpointEntryKey:                      ApikeysEndpointEntry,
 
 			CloudBuildWorkerPoolEndpointEntryKey: CloudBuildWorkerPoolEndpointEntry,
 		},
@@ -1377,6 +1378,7 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 		},
 		// resources implemented within tpgtools
 		map[string]*schema.Resource{
+			"google_apikeys_key":                         resourceApikeysKey(),
 			"google_assured_workloads_workload":          resourceAssuredWorkloadsWorkload(),
 			"google_cloudbuild_worker_pool":              resourceCloudbuildWorkerPool(),
 			"google_compute_firewall_policy_association": resourceComputeFirewallPolicyAssociation(),
@@ -1638,6 +1640,7 @@ func providerConfigure(ctx context.Context, d *schema.ResourceData, p *schema.Pr
 	config.BigtableAdminBasePath = d.Get(BigtableAdminCustomEndpointEntryKey).(string)
 
 	// dcl
+	config.ApikeysBasePath = d.Get(ApikeysEndpointEntryKey).(string)
 	config.AssuredWorkloadsBasePath = d.Get(AssuredWorkloadsEndpointEntryKey).(string)
 	config.CloudResourceManagerBasePath = d.Get(CloudResourceManagerEndpointEntryKey).(string)
 	config.EventarcBasePath = d.Get(EventarcEndpointEntryKey).(string)
