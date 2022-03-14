@@ -117,7 +117,7 @@ FEATURES:
 
 IMPROVEMENTS:
 * apigee: added `ip_range` field to `google_apigee_instance` ([#3989](https://github.com/hashicorp/terraform-provider-google-beta/pull/3989))
-* cloudrun: added support for `default_mode` and `mode` settings for created files within `secrets` in `google_cloud_run` ([#3984](https://github.com/hashicorp/terraform-provider-google-beta/pull/3984))
+* cloudrun: added support for `default_mode` and `mode` settings for created files within `secrets` in `google_cloud_run_service` ([#3984](https://github.com/hashicorp/terraform-provider-google-beta/pull/3984))
 * compute: Added `share_settings` in `google_compute_reservation` ([#3980](https://github.com/hashicorp/terraform-provider-google-beta/pull/3980))
 
 BUG FIXES:
