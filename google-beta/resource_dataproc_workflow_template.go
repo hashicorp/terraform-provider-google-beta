@@ -2307,7 +2307,7 @@ func expandDataprocWorkflowTemplateJobsArray(o interface{}) []dataproc.WorkflowT
 	}
 
 	objs := o.([]interface{})
-	if len(objs) == 0 {
+	if len(objs) == 0 || objs[0] == nil {
 		return make([]dataproc.WorkflowTemplateJobs, 0)
 	}
 
@@ -2384,7 +2384,7 @@ func expandDataprocWorkflowTemplateJobsHadoopJob(o interface{}) *dataproc.Workfl
 		return dataproc.EmptyWorkflowTemplateJobsHadoopJob
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return dataproc.EmptyWorkflowTemplateJobsHadoopJob
 	}
 	obj := objArr[0].(map[string]interface{})
@@ -2424,7 +2424,7 @@ func expandDataprocWorkflowTemplateJobsHadoopJobLoggingConfig(o interface{}) *da
 		return dataproc.EmptyWorkflowTemplateJobsHadoopJobLoggingConfig
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return dataproc.EmptyWorkflowTemplateJobsHadoopJobLoggingConfig
 	}
 	obj := objArr[0].(map[string]interface{})
@@ -2450,7 +2450,7 @@ func expandDataprocWorkflowTemplateJobsHiveJob(o interface{}) *dataproc.Workflow
 		return dataproc.EmptyWorkflowTemplateJobsHiveJob
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return dataproc.EmptyWorkflowTemplateJobsHiveJob
 	}
 	obj := objArr[0].(map[string]interface{})
@@ -2486,7 +2486,7 @@ func expandDataprocWorkflowTemplateJobsHiveJobQueryList(o interface{}) *dataproc
 		return dataproc.EmptyWorkflowTemplateJobsHiveJobQueryList
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return dataproc.EmptyWorkflowTemplateJobsHiveJobQueryList
 	}
 	obj := objArr[0].(map[string]interface{})
@@ -2512,7 +2512,7 @@ func expandDataprocWorkflowTemplateJobsPigJob(o interface{}) *dataproc.WorkflowT
 		return dataproc.EmptyWorkflowTemplateJobsPigJob
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return dataproc.EmptyWorkflowTemplateJobsPigJob
 	}
 	obj := objArr[0].(map[string]interface{})
@@ -2550,7 +2550,7 @@ func expandDataprocWorkflowTemplateJobsPigJobLoggingConfig(o interface{}) *datap
 		return dataproc.EmptyWorkflowTemplateJobsPigJobLoggingConfig
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return dataproc.EmptyWorkflowTemplateJobsPigJobLoggingConfig
 	}
 	obj := objArr[0].(map[string]interface{})
@@ -2576,7 +2576,7 @@ func expandDataprocWorkflowTemplateJobsPigJobQueryList(o interface{}) *dataproc.
 		return dataproc.EmptyWorkflowTemplateJobsPigJobQueryList
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return dataproc.EmptyWorkflowTemplateJobsPigJobQueryList
 	}
 	obj := objArr[0].(map[string]interface{})
@@ -2602,7 +2602,7 @@ func expandDataprocWorkflowTemplateJobsPrestoJob(o interface{}) *dataproc.Workfl
 		return dataproc.EmptyWorkflowTemplateJobsPrestoJob
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return dataproc.EmptyWorkflowTemplateJobsPrestoJob
 	}
 	obj := objArr[0].(map[string]interface{})
@@ -2640,7 +2640,7 @@ func expandDataprocWorkflowTemplateJobsPrestoJobLoggingConfig(o interface{}) *da
 		return dataproc.EmptyWorkflowTemplateJobsPrestoJobLoggingConfig
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return dataproc.EmptyWorkflowTemplateJobsPrestoJobLoggingConfig
 	}
 	obj := objArr[0].(map[string]interface{})
@@ -2666,7 +2666,7 @@ func expandDataprocWorkflowTemplateJobsPrestoJobQueryList(o interface{}) *datapr
 		return dataproc.EmptyWorkflowTemplateJobsPrestoJobQueryList
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return dataproc.EmptyWorkflowTemplateJobsPrestoJobQueryList
 	}
 	obj := objArr[0].(map[string]interface{})
@@ -2692,7 +2692,7 @@ func expandDataprocWorkflowTemplateJobsPysparkJob(o interface{}) *dataproc.Workf
 		return dataproc.EmptyWorkflowTemplateJobsPysparkJob
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return dataproc.EmptyWorkflowTemplateJobsPysparkJob
 	}
 	obj := objArr[0].(map[string]interface{})
@@ -2732,7 +2732,7 @@ func expandDataprocWorkflowTemplateJobsPysparkJobLoggingConfig(o interface{}) *d
 		return dataproc.EmptyWorkflowTemplateJobsPysparkJobLoggingConfig
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return dataproc.EmptyWorkflowTemplateJobsPysparkJobLoggingConfig
 	}
 	obj := objArr[0].(map[string]interface{})
@@ -2758,7 +2758,7 @@ func expandDataprocWorkflowTemplateJobsScheduling(o interface{}) *dataproc.Workf
 		return dataproc.EmptyWorkflowTemplateJobsScheduling
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return dataproc.EmptyWorkflowTemplateJobsScheduling
 	}
 	obj := objArr[0].(map[string]interface{})
@@ -2786,7 +2786,7 @@ func expandDataprocWorkflowTemplateJobsSparkJob(o interface{}) *dataproc.Workflo
 		return dataproc.EmptyWorkflowTemplateJobsSparkJob
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return dataproc.EmptyWorkflowTemplateJobsSparkJob
 	}
 	obj := objArr[0].(map[string]interface{})
@@ -2826,7 +2826,7 @@ func expandDataprocWorkflowTemplateJobsSparkJobLoggingConfig(o interface{}) *dat
 		return dataproc.EmptyWorkflowTemplateJobsSparkJobLoggingConfig
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return dataproc.EmptyWorkflowTemplateJobsSparkJobLoggingConfig
 	}
 	obj := objArr[0].(map[string]interface{})
@@ -2852,7 +2852,7 @@ func expandDataprocWorkflowTemplateJobsSparkRJob(o interface{}) *dataproc.Workfl
 		return dataproc.EmptyWorkflowTemplateJobsSparkRJob
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return dataproc.EmptyWorkflowTemplateJobsSparkRJob
 	}
 	obj := objArr[0].(map[string]interface{})
@@ -2888,7 +2888,7 @@ func expandDataprocWorkflowTemplateJobsSparkRJobLoggingConfig(o interface{}) *da
 		return dataproc.EmptyWorkflowTemplateJobsSparkRJobLoggingConfig
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return dataproc.EmptyWorkflowTemplateJobsSparkRJobLoggingConfig
 	}
 	obj := objArr[0].(map[string]interface{})
@@ -2914,7 +2914,7 @@ func expandDataprocWorkflowTemplateJobsSparkSqlJob(o interface{}) *dataproc.Work
 		return dataproc.EmptyWorkflowTemplateJobsSparkSqlJob
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return dataproc.EmptyWorkflowTemplateJobsSparkSqlJob
 	}
 	obj := objArr[0].(map[string]interface{})
@@ -2950,7 +2950,7 @@ func expandDataprocWorkflowTemplateJobsSparkSqlJobLoggingConfig(o interface{}) *
 		return dataproc.EmptyWorkflowTemplateJobsSparkSqlJobLoggingConfig
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return dataproc.EmptyWorkflowTemplateJobsSparkSqlJobLoggingConfig
 	}
 	obj := objArr[0].(map[string]interface{})
@@ -2976,7 +2976,7 @@ func expandDataprocWorkflowTemplateJobsSparkSqlJobQueryList(o interface{}) *data
 		return dataproc.EmptyWorkflowTemplateJobsSparkSqlJobQueryList
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return dataproc.EmptyWorkflowTemplateJobsSparkSqlJobQueryList
 	}
 	obj := objArr[0].(map[string]interface{})
@@ -3002,7 +3002,7 @@ func expandDataprocWorkflowTemplatePlacement(o interface{}) *dataproc.WorkflowTe
 		return dataproc.EmptyWorkflowTemplatePlacement
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return dataproc.EmptyWorkflowTemplatePlacement
 	}
 	obj := objArr[0].(map[string]interface{})
@@ -3030,7 +3030,7 @@ func expandDataprocWorkflowTemplatePlacementClusterSelector(o interface{}) *data
 		return dataproc.EmptyWorkflowTemplatePlacementClusterSelector
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return dataproc.EmptyWorkflowTemplatePlacementClusterSelector
 	}
 	obj := objArr[0].(map[string]interface{})
@@ -3058,7 +3058,7 @@ func expandDataprocWorkflowTemplatePlacementManagedCluster(o interface{}) *datap
 		return dataproc.EmptyWorkflowTemplatePlacementManagedCluster
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return dataproc.EmptyWorkflowTemplatePlacementManagedCluster
 	}
 	obj := objArr[0].(map[string]interface{})
@@ -3088,7 +3088,7 @@ func expandDataprocWorkflowTemplatePlacementManagedClusterConfig(o interface{}) 
 		return dataproc.EmptyWorkflowTemplatePlacementManagedClusterConfig
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return dataproc.EmptyWorkflowTemplatePlacementManagedClusterConfig
 	}
 	obj := objArr[0].(map[string]interface{})
@@ -3142,7 +3142,7 @@ func expandDataprocWorkflowTemplatePlacementManagedClusterConfigAutoscalingConfi
 		return dataproc.EmptyWorkflowTemplatePlacementManagedClusterConfigAutoscalingConfig
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return dataproc.EmptyWorkflowTemplatePlacementManagedClusterConfigAutoscalingConfig
 	}
 	obj := objArr[0].(map[string]interface{})
@@ -3168,7 +3168,7 @@ func expandDataprocWorkflowTemplatePlacementManagedClusterConfigEncryptionConfig
 		return dataproc.EmptyWorkflowTemplatePlacementManagedClusterConfigEncryptionConfig
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return dataproc.EmptyWorkflowTemplatePlacementManagedClusterConfigEncryptionConfig
 	}
 	obj := objArr[0].(map[string]interface{})
@@ -3194,7 +3194,7 @@ func expandDataprocWorkflowTemplatePlacementManagedClusterConfigEndpointConfig(o
 		return dataproc.EmptyWorkflowTemplatePlacementManagedClusterConfigEndpointConfig
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return dataproc.EmptyWorkflowTemplatePlacementManagedClusterConfigEndpointConfig
 	}
 	obj := objArr[0].(map[string]interface{})
@@ -3221,7 +3221,7 @@ func expandDataprocWorkflowTemplatePlacementManagedClusterConfigGceClusterConfig
 		return dataproc.EmptyWorkflowTemplatePlacementManagedClusterConfigGceClusterConfig
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return dataproc.EmptyWorkflowTemplatePlacementManagedClusterConfigGceClusterConfig
 	}
 	obj := objArr[0].(map[string]interface{})
@@ -3267,7 +3267,7 @@ func expandDataprocWorkflowTemplatePlacementManagedClusterConfigGceClusterConfig
 		return dataproc.EmptyWorkflowTemplatePlacementManagedClusterConfigGceClusterConfigNodeGroupAffinity
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return dataproc.EmptyWorkflowTemplatePlacementManagedClusterConfigGceClusterConfigNodeGroupAffinity
 	}
 	obj := objArr[0].(map[string]interface{})
@@ -3293,7 +3293,7 @@ func expandDataprocWorkflowTemplatePlacementManagedClusterConfigGceClusterConfig
 		return dataproc.EmptyWorkflowTemplatePlacementManagedClusterConfigGceClusterConfigReservationAffinity
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return dataproc.EmptyWorkflowTemplatePlacementManagedClusterConfigGceClusterConfigReservationAffinity
 	}
 	obj := objArr[0].(map[string]interface{})
@@ -3323,7 +3323,7 @@ func expandDataprocWorkflowTemplatePlacementManagedClusterConfigGkeClusterConfig
 		return dataproc.EmptyWorkflowTemplatePlacementManagedClusterConfigGkeClusterConfig
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return dataproc.EmptyWorkflowTemplatePlacementManagedClusterConfigGkeClusterConfig
 	}
 	obj := objArr[0].(map[string]interface{})
@@ -3349,7 +3349,7 @@ func expandDataprocWorkflowTemplatePlacementManagedClusterConfigGkeClusterConfig
 		return dataproc.EmptyWorkflowTemplatePlacementManagedClusterConfigGkeClusterConfigNamespacedGkeDeploymentTarget
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return dataproc.EmptyWorkflowTemplatePlacementManagedClusterConfigGkeClusterConfigNamespacedGkeDeploymentTarget
 	}
 	obj := objArr[0].(map[string]interface{})
@@ -3377,7 +3377,7 @@ func expandDataprocWorkflowTemplatePlacementManagedClusterConfigInitializationAc
 	}
 
 	objs := o.([]interface{})
-	if len(objs) == 0 {
+	if len(objs) == 0 || objs[0] == nil {
 		return make([]dataproc.WorkflowTemplatePlacementManagedClusterConfigInitializationActions, 0)
 	}
 
@@ -3434,7 +3434,7 @@ func expandDataprocWorkflowTemplatePlacementManagedClusterConfigLifecycleConfig(
 		return dataproc.EmptyWorkflowTemplatePlacementManagedClusterConfigLifecycleConfig
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return dataproc.EmptyWorkflowTemplatePlacementManagedClusterConfigLifecycleConfig
 	}
 	obj := objArr[0].(map[string]interface{})
@@ -3465,7 +3465,7 @@ func expandDataprocWorkflowTemplatePlacementManagedClusterConfigMasterConfig(o i
 		return nil
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return nil
 	}
 	obj := objArr[0].(map[string]interface{})
@@ -3506,7 +3506,7 @@ func expandDataprocWorkflowTemplatePlacementManagedClusterConfigMasterConfigAcce
 	}
 
 	objs := o.([]interface{})
-	if len(objs) == 0 {
+	if len(objs) == 0 || objs[0] == nil {
 		return nil
 	}
 
@@ -3563,7 +3563,7 @@ func expandDataprocWorkflowTemplatePlacementManagedClusterConfigMasterConfigDisk
 		return nil
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return nil
 	}
 	obj := objArr[0].(map[string]interface{})
@@ -3606,7 +3606,7 @@ func expandDataprocWorkflowTemplatePlacementManagedClusterConfigMetastoreConfig(
 		return dataproc.EmptyWorkflowTemplatePlacementManagedClusterConfigMetastoreConfig
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return dataproc.EmptyWorkflowTemplatePlacementManagedClusterConfigMetastoreConfig
 	}
 	obj := objArr[0].(map[string]interface{})
@@ -3632,7 +3632,7 @@ func expandDataprocWorkflowTemplatePlacementManagedClusterConfigSecondaryWorkerC
 		return nil
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return nil
 	}
 	obj := objArr[0].(map[string]interface{})
@@ -3673,7 +3673,7 @@ func expandDataprocWorkflowTemplatePlacementManagedClusterConfigSecondaryWorkerC
 	}
 
 	objs := o.([]interface{})
-	if len(objs) == 0 {
+	if len(objs) == 0 || objs[0] == nil {
 		return nil
 	}
 
@@ -3730,7 +3730,7 @@ func expandDataprocWorkflowTemplatePlacementManagedClusterConfigSecondaryWorkerC
 		return nil
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return nil
 	}
 	obj := objArr[0].(map[string]interface{})
@@ -3773,7 +3773,7 @@ func expandDataprocWorkflowTemplatePlacementManagedClusterConfigSecurityConfig(o
 		return dataproc.EmptyWorkflowTemplatePlacementManagedClusterConfigSecurityConfig
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return dataproc.EmptyWorkflowTemplatePlacementManagedClusterConfigSecurityConfig
 	}
 	obj := objArr[0].(map[string]interface{})
@@ -3799,7 +3799,7 @@ func expandDataprocWorkflowTemplatePlacementManagedClusterConfigSecurityConfigKe
 		return dataproc.EmptyWorkflowTemplatePlacementManagedClusterConfigSecurityConfigKerberosConfig
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return dataproc.EmptyWorkflowTemplatePlacementManagedClusterConfigSecurityConfigKerberosConfig
 	}
 	obj := objArr[0].(map[string]interface{})
@@ -3853,7 +3853,7 @@ func expandDataprocWorkflowTemplatePlacementManagedClusterConfigSoftwareConfig(o
 		return dataproc.EmptyWorkflowTemplatePlacementManagedClusterConfigSoftwareConfig
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return dataproc.EmptyWorkflowTemplatePlacementManagedClusterConfigSoftwareConfig
 	}
 	obj := objArr[0].(map[string]interface{})
@@ -3883,7 +3883,7 @@ func expandDataprocWorkflowTemplatePlacementManagedClusterConfigWorkerConfig(o i
 		return nil
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return nil
 	}
 	obj := objArr[0].(map[string]interface{})
@@ -3924,7 +3924,7 @@ func expandDataprocWorkflowTemplatePlacementManagedClusterConfigWorkerConfigAcce
 	}
 
 	objs := o.([]interface{})
-	if len(objs) == 0 {
+	if len(objs) == 0 || objs[0] == nil {
 		return nil
 	}
 
@@ -3981,7 +3981,7 @@ func expandDataprocWorkflowTemplatePlacementManagedClusterConfigWorkerConfigDisk
 		return nil
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return nil
 	}
 	obj := objArr[0].(map[string]interface{})
@@ -4024,7 +4024,7 @@ func expandDataprocWorkflowTemplateParametersArray(o interface{}) []dataproc.Wor
 	}
 
 	objs := o.([]interface{})
-	if len(objs) == 0 {
+	if len(objs) == 0 || objs[0] == nil {
 		return make([]dataproc.WorkflowTemplateParameters, 0)
 	}
 
@@ -4085,7 +4085,7 @@ func expandDataprocWorkflowTemplateParametersValidation(o interface{}) *dataproc
 		return dataproc.EmptyWorkflowTemplateParametersValidation
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return dataproc.EmptyWorkflowTemplateParametersValidation
 	}
 	obj := objArr[0].(map[string]interface{})
@@ -4113,7 +4113,7 @@ func expandDataprocWorkflowTemplateParametersValidationRegex(o interface{}) *dat
 		return dataproc.EmptyWorkflowTemplateParametersValidationRegex
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return dataproc.EmptyWorkflowTemplateParametersValidationRegex
 	}
 	obj := objArr[0].(map[string]interface{})
@@ -4139,7 +4139,7 @@ func expandDataprocWorkflowTemplateParametersValidationValues(o interface{}) *da
 		return dataproc.EmptyWorkflowTemplateParametersValidationValues
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return dataproc.EmptyWorkflowTemplateParametersValidationValues
 	}
 	obj := objArr[0].(map[string]interface{})

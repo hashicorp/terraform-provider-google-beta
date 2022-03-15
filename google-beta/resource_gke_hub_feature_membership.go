@@ -526,7 +526,7 @@ func expandGkeHubFeatureMembershipConfigmanagement(o interface{}) *gkehub.Featur
 		return gkehub.EmptyFeatureMembershipConfigmanagement
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return gkehub.EmptyFeatureMembershipConfigmanagement
 	}
 	obj := objArr[0].(map[string]interface{})
@@ -560,7 +560,7 @@ func expandGkeHubFeatureMembershipConfigmanagementBinauthz(o interface{}) *gkehu
 		return gkehub.EmptyFeatureMembershipConfigmanagementBinauthz
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return gkehub.EmptyFeatureMembershipConfigmanagementBinauthz
 	}
 	obj := objArr[0].(map[string]interface{})
@@ -586,7 +586,7 @@ func expandGkeHubFeatureMembershipConfigmanagementConfigSync(o interface{}) *gke
 		return gkehub.EmptyFeatureMembershipConfigmanagementConfigSync
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return gkehub.EmptyFeatureMembershipConfigmanagementConfigSync
 	}
 	obj := objArr[0].(map[string]interface{})
@@ -614,7 +614,7 @@ func expandGkeHubFeatureMembershipConfigmanagementConfigSyncGit(o interface{}) *
 		return gkehub.EmptyFeatureMembershipConfigmanagementConfigSyncGit
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return gkehub.EmptyFeatureMembershipConfigmanagementConfigSyncGit
 	}
 	obj := objArr[0].(map[string]interface{})
@@ -654,7 +654,7 @@ func expandGkeHubFeatureMembershipConfigmanagementHierarchyController(o interfac
 		return gkehub.EmptyFeatureMembershipConfigmanagementHierarchyController
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return gkehub.EmptyFeatureMembershipConfigmanagementHierarchyController
 	}
 	obj := objArr[0].(map[string]interface{})
@@ -684,7 +684,7 @@ func expandGkeHubFeatureMembershipConfigmanagementPolicyController(o interface{}
 		return gkehub.EmptyFeatureMembershipConfigmanagementPolicyController
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return gkehub.EmptyFeatureMembershipConfigmanagementPolicyController
 	}
 	obj := objArr[0].(map[string]interface{})
