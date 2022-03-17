@@ -83,6 +83,16 @@ var (
 	}
 )
 
+func diffSuppressSqlReplicaKeyName(k, old, new string, d *schema.ResourceData) bool {
+	if d.Get("replica_configuration") != nil {
+		// This is a replica and the config value must be null, but the API will
+		// return the key name of the master instance, so we'll suppress this diff
+		return true
+	}
+
+	return false
+}
+
 func resourceSqlDatabaseInstance() *schema.Resource {
 	return &schema.Resource{
 		Create: resourceSqlDatabaseInstanceCreate,
@@ -436,9 +446,10 @@ settings.backup_configuration.binary_log_enabled are both set to true.`,
 			},
 
 			"encryption_key_name": {
-				Type:     schema.TypeString,
-				Optional: true,
-				ForceNew: true,
+				Type:             schema.TypeString,
+				Optional:         true,
+				DiffSuppressFunc: diffSuppressSqlReplicaKeyName,
+				ForceNew:         true,
 			},
 
 			"root_password": {
