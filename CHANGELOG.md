@@ -3,7 +3,7 @@ FEATURES:
 * **New Resource:** google_logging_log_view ([#4125](https://github.com/hashicorp/terraform-provider-google-beta/pull/4125))
 
 IMPROVEMENTS:
-* apigee: added `billing_type` attribute to Apigee Organization resource. ([#4126](https://github.com/hashicorp/terraform-provider-google-beta/pull/4126))
+* apigee: added `billing_type` attribute to `google_apigee_organization` resource. ([#4126](https://github.com/hashicorp/terraform-provider-google-beta/pull/4126))
 * networkservices: added `disable_http2` property to `google_network_services_edge_cache_service` resource ([#4119](https://github.com/hashicorp/terraform-provider-google-beta/pull/4119))
 * networkservices: updated EdgeCacheOrigin resource to read and write the `timeout` property, including a new `read_timeout` field. ([#4122](https://github.com/hashicorp/terraform-provider-google-beta/pull/4122))
 * networkservices: updated EdgeCacheOrigin to retry_conditions to include `FORBIDDEN` ([#4122](https://github.com/hashicorp/terraform-provider-google-beta/pull/4122))
