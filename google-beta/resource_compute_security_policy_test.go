@@ -190,6 +190,7 @@ func testAccComputeSecurityPolicy_basic(spName string) string {
 resource "google_compute_security_policy" "policy" {
   name        = "%s"
   description = "basic security policy"
+  type        = "CLOUD_ARMOR_EDGE"
 }
 `, spName)
 }
@@ -390,7 +391,7 @@ resource "google_compute_security_policy" "policy" {
 
 	rule {
 		action = "throttle"
-		priority = 100	  
+		priority = 100
 		match {
 			versioned_expr = "SRC_IPS_V1"
 			config {
