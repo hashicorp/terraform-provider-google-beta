@@ -3227,7 +3227,7 @@ resource "google_container_cluster" "with_node_config" {
     }
 
     // Updatable fields
-    image_type = "cos"
+    image_type = "COS_CONTAINERD"
   }
 }
 `, clusterName)
@@ -3276,7 +3276,7 @@ resource "google_container_cluster" "with_node_config" {
     }
 
     // Updatable fields
-    image_type = "UBUNTU"
+    image_type = "UBUNTU_CONTAINERD"
   }
 }
 `, clusterName)
@@ -3327,7 +3327,7 @@ resource "google_container_cluster" "with_node_config" {
     preemptible      = true
 
     // Updatable fields
-    image_type = "COS"
+    image_type = "COS_CONTAINERD"
 
     shielded_instance_config {
       enable_secure_boot          = true
@@ -3911,7 +3911,7 @@ resource "google_container_cluster" "with_node_pool_node_config" {
         foo                      = "bar"
         disable-legacy-endpoints = "true"
       }
-      image_type = "COS"
+      image_type = "COS_CONTAINERD"
       labels = {
         foo = "bar"
       }
