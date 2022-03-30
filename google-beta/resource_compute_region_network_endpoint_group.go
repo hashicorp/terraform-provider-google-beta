@@ -214,7 +214,7 @@ API Gateway: apigateway.googleapis.com`,
 						},
 						"url_mask": {
 							Type:     schema.TypeString,
-							Required: true,
+							Required: false,
 							ForceNew: true,
 							Description: `A template to parse platform-specific fields from a request URL. URL mask allows for routing to multiple resources
 on the same serverless platform without having to create multiple Network Endpoint Groups and backend resources.
