@@ -1,7 +1,6 @@
 ## 4.16.0 (Unreleased)
 FEATURES:
 * **New Data Source:** dataproc_metastore_service ([#4155](https://github.com/hashicorp/terraform-provider-google-beta/pull/4155))
-* **New Resource:** Add billingType attribute to Apigee Organization resource. ([#4126](https://github.com/hashicorp/terraform-provider-google-beta/pull/4126))
 * **New Resource:** `google_firebaserules_release` ([#4132](https://github.com/hashicorp/terraform-provider-google-beta/pull/4132))
 * **New Resource:** `google_firebaserules_ruleset` ([#4132](https://github.com/hashicorp/terraform-provider-google-beta/pull/4132))
 
@@ -12,7 +11,6 @@ IMPROVEMENTS:
 * compute: added support for field `type` to `google_compute_security_policy` ([#4154](https://github.com/hashicorp/terraform-provider-google-beta/pull/4154))
 * eventarc: added gke and workflows destination for eventarc trigger resource. ([#4152](https://github.com/hashicorp/terraform-provider-google-beta/pull/4152))
 * networkservices: added `included_cookie_names` to cache key policy configuration ([#4147](https://github.com/hashicorp/terraform-provider-google-beta/pull/4147))
-* redis: added read replica field `replicaCount `, `nodes`,  `readEndpoint`, `readEndpointPort`, `readReplicasMode` in `google_redis_instance` (GA only) ([#4145](https://github.com/hashicorp/terraform-provider-google-beta/pull/4145))
 * spanner: added support for setting database_dialect on `google_spanner_database` ([#4158](https://github.com/hashicorp/terraform-provider-google-beta/pull/4158))
 * storagetransfer: added `repeat_interval` field to `google_storage_transfer_job` resource ([#4144](https://github.com/hashicorp/terraform-provider-google-beta/pull/4144))
 
