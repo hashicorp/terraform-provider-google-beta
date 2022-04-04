@@ -1,6 +1,6 @@
 ## 4.16.0 (Unreleased)
 FEATURES:
-* **New Data Source:** dataproc_metastore_service ([#4155](https://github.com/hashicorp/terraform-provider-google-beta/pull/4155))
+* **New Data Source:** `dataproc_metastore_service` ([#4155](https://github.com/hashicorp/terraform-provider-google-beta/pull/4155))
 * **New Resource:** `google_firebaserules_release` ([#4132](https://github.com/hashicorp/terraform-provider-google-beta/pull/4132))
 * **New Resource:** `google_firebaserules_ruleset` ([#4132](https://github.com/hashicorp/terraform-provider-google-beta/pull/4132))
 
