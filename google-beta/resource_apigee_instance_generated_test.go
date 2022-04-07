@@ -109,7 +109,7 @@ resource "google_apigee_organization" "apigee_org" {
 
 resource "google_apigee_instance" "apigee_instance" {
   name     = "tf-test%{random_suffix}"
-  location = "us-central1-b"
+  location = "us-central1"
   org_id   = google_apigee_organization.apigee_org.id
 }
 `, context)
@@ -450,7 +450,7 @@ resource "google_apigee_instance" "apigee_instance" {
   provider = google-beta
 
   name                     = "tf-test%{random_suffix}"
-  location                 = "us-central1-b"
+  location                 = "us-central1"
   description              = "Terraform-managed Apigee Instance"
   display_name             = "tf-test%{random_suffix}"
   org_id                   = google_apigee_organization.apigee_org.id
