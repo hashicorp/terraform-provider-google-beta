@@ -69,6 +69,85 @@ resource "google_dataproc_metastore_service" "default" {
 `, context)
 }
 
+func TestAccDataprocMetastoreService_dataprocMetastoreServiceCmekTestExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"random_suffix": randString(t, 10),
+	}
+
+	vcrTest(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProvidersOiCS,
+		CheckDestroy: testAccCheckDataprocMetastoreServiceDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccDataprocMetastoreService_dataprocMetastoreServiceCmekTestExample(context),
+			},
+			{
+				ResourceName:            "google_dataproc_metastore_service.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"service_id", "location"},
+			},
+		},
+	})
+}
+
+func testAccDataprocMetastoreService_dataprocMetastoreServiceCmekTestExample(context map[string]interface{}) string {
+	return Nprintf(`
+data "google_project" "project" {
+  provider = google-beta
+}
+
+data "google_storage_project_service_account" "gcs_account" {
+  provider = google-beta
+}
+
+
+resource "google_dataproc_metastore_service" "default" {
+  provider   = google-beta
+  service_id = "tf-test-example-service%{random_suffix}"
+  location   = "us-central1"
+
+  encryption_config {
+    kms_key = google_kms_crypto_key.crypto_key.id
+  }
+
+  hive_metastore_config {
+    version = "3.1.2"
+  }
+
+  depends_on = [google_kms_crypto_key_iam_binding.crypto_key_binding]
+}
+
+resource "google_kms_crypto_key" "crypto_key" {
+  provider = google-beta
+  name     = "tf-test-example-key%{random_suffix}"
+  key_ring = google_kms_key_ring.key_ring.id
+
+  purpose  = "ENCRYPT_DECRYPT"
+}
+
+resource "google_kms_key_ring" "key_ring" {
+  provider = google-beta
+  name     = "tf-test-example-keyring%{random_suffix}"
+  location = "us-central1"
+}
+
+resource "google_kms_crypto_key_iam_binding" "crypto_key_binding" {
+  provider      = google-beta
+  crypto_key_id = google_kms_crypto_key.crypto_key.id
+  role          = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
+
+  members = [
+    "serviceAccount:service-${data.google_project.project.number}@gcp-sa-metastore.iam.gserviceaccount.com",
+    "serviceAccount:${data.google_storage_project_service_account.gcs_account.email_address}"
+  ]
+}
+`, context)
+}
+
 func testAccCheckDataprocMetastoreServiceDestroyProducer(t *testing.T) func(s *terraform.State) error {
 	return func(s *terraform.State) error {
 		for name, rs := range s.RootModule().Resources {

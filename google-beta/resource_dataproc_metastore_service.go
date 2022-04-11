@@ -50,6 +50,24 @@ func resourceDataprocMetastoreService() *schema.Resource {
 and hyphens (-). Cannot begin or end with underscore or hyphen. Must consist of between
 3 and 63 characters.`,
 			},
+			"encryption_config": {
+				Type:     schema.TypeList,
+				Optional: true,
+				Description: `Information used to configure the Dataproc Metastore service to encrypt
+customer data at rest.`,
+				MaxItems: 1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"kms_key": {
+							Type:     schema.TypeString,
+							Required: true,
+							ForceNew: true,
+							Description: `The fully qualified customer provided Cloud KMS key name to use for customer data encryption.
+Use the following format: 'projects/([^/]+)/locations/([^/]+)/keyRings/([^/]+)/cryptoKeys/([^/]+)'`,
+						},
+					},
+				},
+			},
 			"hive_metastore_config": {
 				Type:        schema.TypeList,
 				Optional:    true,
@@ -244,6 +262,12 @@ func resourceDataprocMetastoreServiceCreate(d *schema.ResourceData, meta interfa
 	} else if v, ok := d.GetOkExists("maintenance_window"); !isEmptyValue(reflect.ValueOf(maintenanceWindowProp)) && (ok || !reflect.DeepEqual(v, maintenanceWindowProp)) {
 		obj["maintenanceWindow"] = maintenanceWindowProp
 	}
+	encryptionConfigProp, err := expandDataprocMetastoreServiceEncryptionConfig(d.Get("encryption_config"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("encryption_config"); !isEmptyValue(reflect.ValueOf(encryptionConfigProp)) && (ok || !reflect.DeepEqual(v, encryptionConfigProp)) {
+		obj["encryptionConfig"] = encryptionConfigProp
+	}
 	hiveMetastoreConfigProp, err := expandDataprocMetastoreServiceHiveMetastoreConfig(d.Get("hive_metastore_config"), d, config)
 	if err != nil {
 		return err
@@ -361,6 +385,9 @@ func resourceDataprocMetastoreServiceRead(d *schema.ResourceData, meta interface
 	if err := d.Set("maintenance_window", flattenDataprocMetastoreServiceMaintenanceWindow(res["maintenanceWindow"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Service: %s", err)
 	}
+	if err := d.Set("encryption_config", flattenDataprocMetastoreServiceEncryptionConfig(res["encryptionConfig"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Service: %s", err)
+	}
 	if err := d.Set("hive_metastore_config", flattenDataprocMetastoreServiceHiveMetastoreConfig(res["hiveMetastoreConfig"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Service: %s", err)
 	}
@@ -408,6 +435,12 @@ func resourceDataprocMetastoreServiceUpdate(d *schema.ResourceData, meta interfa
 	} else if v, ok := d.GetOkExists("maintenance_window"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, maintenanceWindowProp)) {
 		obj["maintenanceWindow"] = maintenanceWindowProp
 	}
+	encryptionConfigProp, err := expandDataprocMetastoreServiceEncryptionConfig(d.Get("encryption_config"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("encryption_config"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, encryptionConfigProp)) {
+		obj["encryptionConfig"] = encryptionConfigProp
+	}
 	hiveMetastoreConfigProp, err := expandDataprocMetastoreServiceHiveMetastoreConfig(d.Get("hive_metastore_config"), d, config)
 	if err != nil {
 		return err
@@ -437,6 +470,10 @@ func resourceDataprocMetastoreServiceUpdate(d *schema.ResourceData, meta interfa
 
 	if d.HasChange("maintenance_window") {
 		updateMask = append(updateMask, "maintenanceWindow")
+	}
+
+	if d.HasChange("encryption_config") {
+		updateMask = append(updateMask, "encryptionConfig")
 	}
 
 	if d.HasChange("hive_metastore_config") {
@@ -623,6 +660,23 @@ func flattenDataprocMetastoreServiceMaintenanceWindowDayOfWeek(v interface{}, d 
 	return v
 }
 
+func flattenDataprocMetastoreServiceEncryptionConfig(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["kms_key"] =
+		flattenDataprocMetastoreServiceEncryptionConfigKmsKey(original["kmsKey"], d, config)
+	return []interface{}{transformed}
+}
+func flattenDataprocMetastoreServiceEncryptionConfigKmsKey(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	return v
+}
+
 func flattenDataprocMetastoreServiceHiveMetastoreConfig(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	if v == nil {
 		return nil
@@ -744,6 +798,29 @@ func expandDataprocMetastoreServiceMaintenanceWindowHourOfDay(v interface{}, d T
 }
 
 func expandDataprocMetastoreServiceMaintenanceWindowDayOfWeek(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandDataprocMetastoreServiceEncryptionConfig(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedKmsKey, err := expandDataprocMetastoreServiceEncryptionConfigKmsKey(original["kms_key"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedKmsKey); val.IsValid() && !isEmptyValue(val) {
+		transformed["kmsKey"] = transformedKmsKey
+	}
+
+	return transformed, nil
+}
+
+func expandDataprocMetastoreServiceEncryptionConfigKmsKey(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
