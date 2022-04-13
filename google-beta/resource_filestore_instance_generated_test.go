@@ -77,7 +77,7 @@ func TestAccFilestoreInstance_filestoreInstanceFullExample(t *testing.T) {
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProvidersOiCS,
+		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckFilestoreInstanceDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -96,7 +96,6 @@ func TestAccFilestoreInstance_filestoreInstanceFullExample(t *testing.T) {
 func testAccFilestoreInstance_filestoreInstanceFullExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_filestore_instance" "instance" {
-  provider = google-beta
   name = "tf-test-test-instance%{random_suffix}"
   location = "us-central1-b"
   tier = "BASIC_SSD"
