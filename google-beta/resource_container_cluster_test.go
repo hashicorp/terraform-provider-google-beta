@@ -2574,6 +2574,9 @@ resource "google_container_cluster" "primary" {
 	config_connector_config {
 	  enabled = false
 	}
+    gke_backup_agent_config {
+	  enabled = false
+	}
   }
 }
 `, projectID, clusterName)
@@ -2626,6 +2629,9 @@ resource "google_container_cluster" "primary" {
 	  enabled = true
 	}
 	config_connector_config {
+	  enabled = true
+	}
+	gke_backup_agent_config {
 	  enabled = true
 	}
   }
