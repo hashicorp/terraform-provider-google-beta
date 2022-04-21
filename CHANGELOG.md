@@ -1,5 +1,32 @@
 ## 4.19.0 (Unreleased)
 
+UNKNOWN CHANGELOG TYPE:
+* Include 'Exceed Redirect Options' in security policy rules ([#4238](https://github.com/hashicorp/terraform-provider-google-beta/pull/4238))
+* Move filestore enterprise features out of beta and add support for cu… ([#4218](https://github.com/hashicorp/terraform-provider-google-beta/pull/4218))
+
+FEATURES:
+* **New Resource:** `google_cloud_deploy_delivery_pipeline` ([#4225](https://github.com/hashicorp/terraform-provider-google-beta/pull/4225))
+* **New Resource:** `google_cloud_deploy_target` ([#4225](https://github.com/hashicorp/terraform-provider-google-beta/pull/4225))
+
+IMPROVEMENTS:
+* compute: Added `redirect_options` field for `google_compute_security_policy` rules ([#4217](https://github.com/hashicorp/terraform-provider-google-beta/pull/4217))
+* compute: added `FIXED_STANDARD` as a valid value to the field `network_interface.0.access_configs.0.network_tier` of  `google_compute_instance_template` resource ([#4233](https://github.com/hashicorp/terraform-provider-google-beta/pull/4233))
+* compute: added `FIXED_STANDARD` as a valid value to the field `network_interface.0.access_configs.0.network_tier` of  `google_compute_instance` resource ([#4233](https://github.com/hashicorp/terraform-provider-google-beta/pull/4233))
+* compute: added `STANDARD` as a valid value to the field `network_interface.0.ipv6_access_configs.0.network_tier` of  `google_compute_instance_template` resource ([#4233](https://github.com/hashicorp/terraform-provider-google-beta/pull/4233))
+* compute: added `STANDARD` as a valid value to the field `network_interface.0.ipv6_access_configs.0.network_tier` of  `google_compute_instance` resource ([#4233](https://github.com/hashicorp/terraform-provider-google-beta/pull/4233))
+* compute: added field `update_policy.most_disruptive_allowed_action` to `google_compute_instance_group_manager` and `google_compute_region_instance_group_manager` ([#4235](https://github.com/hashicorp/terraform-provider-google-beta/pull/4235))
+* compute: added value `REFRESH` to field update_policy.minimal_action` in `google_compute_instance_group_manager` and `google_compute_region_instance_group_manager` ([#4235](https://github.com/hashicorp/terraform-provider-google-beta/pull/4235))
+* container: added `gke_backup_agent_config` in `addons_config` to `google_container_cluster` (beta) ([#4231](https://github.com/hashicorp/terraform-provider-google-beta/pull/4231))
+* logging: made `google_logging_*_bucket_config` deletable ([#4234](https://github.com/hashicorp/terraform-provider-google-beta/pull/4234))
+* notebooks: updated container_images config to default_from_api ([#4216](https://github.com/hashicorp/terraform-provider-google-beta/pull/4216))
+* provider: modified request retry logic to retry all per-minute quota limits returned with a 403 error code. Previously, only read requests were retried. This will generally affect Google Compute Engine resources. ([#4223](https://github.com/hashicorp/terraform-provider-google-beta/pull/4223))
+
+BUG FIXES:
+* Make `CLOUD_LOGGING_ONLY` available as a cloud build logging option. ([#4224](https://github.com/hashicorp/terraform-provider-google-beta/pull/4224))
+* bigquery: fixed a bug where `encryption_configuration.kms_key_name` stored the version rather than the key name. ([#4221](https://github.com/hashicorp/terraform-provider-google-beta/pull/4221))
+* compute: fixed url_mask required mis-annotation in `google_compute_region_network_endpoint_group`, making it optional ([#4227](https://github.com/hashicorp/terraform-provider-google-beta/pull/4227))
+* spanner: fix escaping of database names with Postgres dialect in `google_spanner_database` ([#4228](https://github.com/hashicorp/terraform-provider-google-beta/pull/4228))
+
 ## 4.18.0 (April 18, 2022)
 
 FEATURES:
