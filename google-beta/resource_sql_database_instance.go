@@ -84,7 +84,7 @@ var (
 )
 
 func diffSuppressSqlReplicaKeyName(k, old, new string, d *schema.ResourceData) bool {
-	if d.Get("replica_configuration") != nil {
+	if d.Get("master_instance_name").(string) != "" {
 		// This is a replica and the config value must be null, but the API will
 		// return the key name of the master instance, so we'll suppress this diff
 		return true
