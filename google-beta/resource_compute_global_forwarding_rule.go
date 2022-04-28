@@ -449,6 +449,7 @@ func resourceComputeGlobalForwardingRuleDelete(d *schema.ResourceData, meta inte
 
 func resourceComputeGlobalForwardingRuleImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	config := meta.(*Config)
+
 	if err := parseImportId([]string{
 		"projects/(?P<project>[^/]+)/global/forwardingRules/(?P<name>[^/]+)",
 		"(?P<project>[^/]+)/(?P<name>[^/]+)",
@@ -473,7 +474,7 @@ func expandComputeGlobalForwardingRuleMetadataFilterArray(o interface{}) []compu
 	}
 
 	objs := o.([]interface{})
-	if len(objs) == 0 {
+	if len(objs) == 0 || objs[0] == nil {
 		return make([]compute.ForwardingRuleMetadataFilter, 0)
 	}
 
@@ -530,7 +531,7 @@ func expandComputeGlobalForwardingRuleMetadataFilterFilterLabelArray(o interface
 	}
 
 	objs := o.([]interface{})
-	if len(objs) == 0 {
+	if len(objs) == 0 || objs[0] == nil {
 		return make([]compute.ForwardingRuleMetadataFilterFilterLabel, 0)
 	}
 

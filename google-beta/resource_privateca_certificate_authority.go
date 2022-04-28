@@ -18,6 +18,7 @@ import (
 	"fmt"
 	"log"
 	"reflect"
+	"strings"
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -27,6 +28,7 @@ func resourcePrivatecaCertificateAuthority() *schema.Resource {
 	return &schema.Resource{
 		Create: resourcePrivatecaCertificateAuthorityCreate,
 		Read:   resourcePrivatecaCertificateAuthorityRead,
+		Update: resourcePrivatecaCertificateAuthorityUpdate,
 		Delete: resourcePrivatecaCertificateAuthorityDelete,
 
 		Importer: &schema.ResourceImporter{
@@ -35,6 +37,7 @@ func resourcePrivatecaCertificateAuthority() *schema.Resource {
 
 		Timeouts: &schema.ResourceTimeout{
 			Create: schema.DefaultTimeout(20 * time.Minute),
+			Update: schema.DefaultTimeout(20 * time.Minute),
 			Delete: schema.DefaultTimeout(20 * time.Minute),
 		},
 
@@ -497,7 +500,6 @@ created.`,
 			"ignore_active_certificates_on_deletion": {
 				Type:     schema.TypeBool,
 				Optional: true,
-				ForceNew: true,
 				Description: `This field allows the CA to be deleted even if the CA has active certs. Active certs include both unrevoked and unexpired certs.
 Use with care. Defaults to 'false'.`,
 				Default: false,
@@ -505,7 +507,6 @@ Use with care. Defaults to 'false'.`,
 			"labels": {
 				Type:     schema.TypeMap,
 				Optional: true,
-				ForceNew: true,
 				Description: `Labels with user-defined metadata.
 
 An object containing a list of "key": value pairs. Example: { "name": "wrench", "mass":
@@ -594,6 +595,11 @@ CertificateAuthority's certificate.`,
 
 A timestamp in RFC3339 UTC "Zulu" format, with nanosecond resolution and up to nine
 fractional digits. Examples: "2014-10-02T15:01:23Z" and "2014-10-02T15:01:23.045123456Z".`,
+			},
+			"deletion_protection": {
+				Type:     schema.TypeBool,
+				Optional: true,
+				Default:  true,
 			},
 			"project": {
 				Type:     schema.TypeString,
@@ -781,6 +787,12 @@ func resourcePrivatecaCertificateAuthorityRead(d *schema.ResourceData, meta inte
 		return nil
 	}
 
+	// Explicitly set virtual fields to default values if unset
+	if _, ok := d.GetOkExists("deletion_protection"); !ok {
+		if err := d.Set("deletion_protection", true); err != nil {
+			return fmt.Errorf("Error setting deletion_protection: %s", err)
+		}
+	}
 	if err := d.Set("project", project); err != nil {
 		return fmt.Errorf("Error reading CertificateAuthority: %s", err)
 	}
@@ -825,6 +837,71 @@ func resourcePrivatecaCertificateAuthorityRead(d *schema.ResourceData, meta inte
 	return nil
 }
 
+func resourcePrivatecaCertificateAuthorityUpdate(d *schema.ResourceData, meta interface{}) error {
+	config := meta.(*Config)
+	userAgent, err := generateUserAgentString(d, config.userAgent)
+	if err != nil {
+		return err
+	}
+
+	billingProject := ""
+
+	project, err := getProject(d, config)
+	if err != nil {
+		return fmt.Errorf("Error fetching project for CertificateAuthority: %s", err)
+	}
+	billingProject = project
+
+	obj := make(map[string]interface{})
+	labelsProp, err := expandPrivatecaCertificateAuthorityLabels(d.Get("labels"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("labels"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
+		obj["labels"] = labelsProp
+	}
+
+	url, err := replaceVars(d, config, "{{PrivatecaBasePath}}projects/{{project}}/locations/{{location}}/caPools/{{pool}}/certificateAuthorities/{{certificate_authority_id}}")
+	if err != nil {
+		return err
+	}
+
+	log.Printf("[DEBUG] Updating CertificateAuthority %q: %#v", d.Id(), obj)
+	updateMask := []string{}
+
+	if d.HasChange("labels") {
+		updateMask = append(updateMask, "labels")
+	}
+	// updateMask is a URL parameter but not present in the schema, so replaceVars
+	// won't set it
+	url, err = addQueryParams(url, map[string]string{"updateMask": strings.Join(updateMask, ",")})
+	if err != nil {
+		return err
+	}
+
+	// err == nil indicates that the billing_project value was found
+	if bp, err := getBillingProject(d, config); err == nil {
+		billingProject = bp
+	}
+
+	res, err := sendRequestWithTimeout(config, "PATCH", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutUpdate))
+
+	if err != nil {
+		return fmt.Errorf("Error updating CertificateAuthority %q: %s", d.Id(), err)
+	} else {
+		log.Printf("[DEBUG] Finished updating CertificateAuthority %q: %#v", d.Id(), res)
+	}
+
+	err = privatecaOperationWaitTime(
+		config, res, project, "Updating CertificateAuthority", userAgent,
+		d.Timeout(schema.TimeoutUpdate))
+
+	if err != nil {
+		return err
+	}
+
+	return resourcePrivatecaCertificateAuthorityRead(d, meta)
+}
+
 func resourcePrivatecaCertificateAuthorityDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 	userAgent, err := generateUserAgentString(d, config.userAgent)
@@ -846,6 +923,10 @@ func resourcePrivatecaCertificateAuthorityDelete(d *schema.ResourceData, meta in
 	}
 
 	var obj map[string]interface{}
+	if d.Get("deletion_protection").(bool) {
+		return fmt.Errorf("cannot destroy CertificateAuthority without setting deletion_protection=false and running `terraform apply`")
+	}
+
 	if d.Get("state").(string) == "ENABLED" {
 		disableUrl, err := replaceVars(d, config, "{{PrivatecaBasePath}}projects/{{project}}/locations/{{location}}/caPools/{{pool}}/certificateAuthorities/{{certificate_authority_id}}:disable")
 		if err != nil {
@@ -908,6 +989,10 @@ func resourcePrivatecaCertificateAuthorityImport(d *schema.ResourceData, meta in
 	}
 	d.SetId(id)
 
+	// Explicitly set virtual fields to default values on import
+	if err := d.Set("deletion_protection", true); err != nil {
+		return nil, fmt.Errorf("Error setting deletion_protection: %s", err)
+	}
 	if err := d.Set("ignore_active_certificates_on_deletion", false); err != nil {
 		return nil, err
 	}

@@ -32,7 +32,7 @@ To get more information about UptimeCheckConfig, see:
     * [Official Documentation](https://cloud.google.com/monitoring/uptime-checks/)
 
 ~> **Warning:** All arguments including `http_check.auth_info.password` will be stored in the raw
-state as plain-text. [Read more about sensitive data in state](/docs/state/sensitive-data.html).
+state as plain-text. [Read more about sensitive data in state](/language/state/sensitive-data.html).
 
 ## Example Usage - Uptime Check Config Http
 
@@ -43,7 +43,7 @@ resource "google_monitoring_uptime_check_config" "http" {
   timeout      = "60s"
 
   http_check {
-    path = "/some-path"
+    path = "some-path"
     port = "8010"
     request_method = "POST"
     content_type = "URL_ENCODED"
@@ -214,7 +214,7 @@ The following arguments are supported:
 
 * `path` -
   (Optional)
-  The path to the page to run the check against. Will be combined with the host (specified within the MonitoredResource) and port to construct the full URL. Optional (defaults to "/").
+  The path to the page to run the check against. Will be combined with the host (specified within the MonitoredResource) and port to construct the full URL. If the provided path does not begin with "/", a "/" will be prepended automatically. Optional (defaults to "/").
 
 * `use_ssl` -
   (Optional)

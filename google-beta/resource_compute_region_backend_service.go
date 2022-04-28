@@ -926,6 +926,22 @@ If it is not provided, the provider region is used.`,
 				Description: `Type of session affinity to use. The default is NONE. Session affinity is
 not applicable if the protocol is UDP. Possible values: ["NONE", "CLIENT_IP", "CLIENT_IP_PORT_PROTO", "CLIENT_IP_PROTO", "GENERATED_COOKIE", "HEADER_FIELD", "HTTP_COOKIE", "CLIENT_IP_NO_DESTINATION"]`,
 			},
+			"subsetting": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: `Subsetting configuration for this BackendService. Currently this is applicable only for Internal TCP/UDP load balancing and Internal HTTP(S) load balancing.`,
+				MaxItems:    1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"policy": {
+							Type:         schema.TypeString,
+							Required:     true,
+							ValidateFunc: validateEnum([]string{"CONSISTENT_HASH_SUBSETTING"}),
+							Description:  `The algorithm used for subsetting. Possible values: ["CONSISTENT_HASH_SUBSETTING"]`,
+						},
+					},
+				},
+			},
 			"timeout_sec": {
 				Type:     schema.TypeInt,
 				Computed: true,
@@ -1242,6 +1258,12 @@ func resourceComputeRegionBackendServiceCreate(d *schema.ResourceData, meta inte
 	} else if v, ok := d.GetOkExists("network"); !isEmptyValue(reflect.ValueOf(networkProp)) && (ok || !reflect.DeepEqual(v, networkProp)) {
 		obj["network"] = networkProp
 	}
+	subsettingProp, err := expandComputeRegionBackendServiceSubsetting(d.Get("subsetting"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("subsetting"); !isEmptyValue(reflect.ValueOf(subsettingProp)) && (ok || !reflect.DeepEqual(v, subsettingProp)) {
+		obj["subsetting"] = subsettingProp
+	}
 	regionProp, err := expandComputeRegionBackendServiceRegion(d.Get("region"), d, config)
 	if err != nil {
 		return err
@@ -1430,6 +1452,9 @@ func resourceComputeRegionBackendServiceRead(d *schema.ResourceData, meta interf
 	if err := d.Set("network", flattenComputeRegionBackendServiceNetwork(res["network"], d, config)); err != nil {
 		return fmt.Errorf("Error reading RegionBackendService: %s", err)
 	}
+	if err := d.Set("subsetting", flattenComputeRegionBackendServiceSubsetting(res["subsetting"], d, config)); err != nil {
+		return fmt.Errorf("Error reading RegionBackendService: %s", err)
+	}
 	if err := d.Set("region", flattenComputeRegionBackendServiceRegion(res["region"], d, config)); err != nil {
 		return fmt.Errorf("Error reading RegionBackendService: %s", err)
 	}
@@ -1593,6 +1618,12 @@ func resourceComputeRegionBackendServiceUpdate(d *schema.ResourceData, meta inte
 		return err
 	} else if v, ok := d.GetOkExists("network"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, networkProp)) {
 		obj["network"] = networkProp
+	}
+	subsettingProp, err := expandComputeRegionBackendServiceSubsetting(d.Get("subsetting"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("subsetting"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, subsettingProp)) {
+		obj["subsetting"] = subsettingProp
 	}
 	regionProp, err := expandComputeRegionBackendServiceRegion(d.Get("region"), d, config)
 	if err != nil {
@@ -2851,6 +2882,23 @@ func flattenComputeRegionBackendServiceNetwork(v interface{}, d *schema.Resource
 	return ConvertSelfLinkToV1(v.(string))
 }
 
+func flattenComputeRegionBackendServiceSubsetting(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["policy"] =
+		flattenComputeRegionBackendServiceSubsettingPolicy(original["policy"], d, config)
+	return []interface{}{transformed}
+}
+func flattenComputeRegionBackendServiceSubsettingPolicy(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	return v
+}
+
 func flattenComputeRegionBackendServiceRegion(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	if v == nil {
 		return v
@@ -3874,6 +3922,29 @@ func expandComputeRegionBackendServiceNetwork(v interface{}, d TerraformResource
 	return f.RelativeLink(), nil
 }
 
+func expandComputeRegionBackendServiceSubsetting(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedPolicy, err := expandComputeRegionBackendServiceSubsettingPolicy(original["policy"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedPolicy); val.IsValid() && !isEmptyValue(val) {
+		transformed["policy"] = transformedPolicy
+	}
+
+	return transformed, nil
+}
+
+func expandComputeRegionBackendServiceSubsettingPolicy(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
 func expandComputeRegionBackendServiceRegion(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	f, err := parseGlobalFieldValue("regions", v.(string), "project", d, config, true)
 	if err != nil {
@@ -3905,6 +3976,19 @@ func resourceComputeRegionBackendServiceEncoder(d *schema.ResourceData, meta int
 
 	if d.Get("load_balancing_scheme").(string) == "EXTERNAL_MANAGED" || d.Get("load_balancing_scheme").(string) == "INTERNAL_MANAGED" {
 		return obj, nil
+	}
+
+	// To remove subsetting on an ILB, "NONE" must be specified. If subsetting
+	// isn't specified, we set the value to NONE to make this use case work.
+	_, ok := obj["subsetting"]
+	if !ok {
+		loadBalancingScheme, ok := obj["loadBalancingScheme"]
+		// External load balancing scheme does not support subsetting
+		if !ok || loadBalancingScheme.(string) != "EXTERNAL" {
+			data := map[string]interface{}{}
+			data["policy"] = "NONE"
+			obj["subsetting"] = data
+		}
 	}
 
 	backendServiceOnlyManagedApiFieldNames := []string{
@@ -3951,6 +4035,17 @@ func resourceComputeRegionBackendServiceDecoder(d *schema.ResourceData, meta int
 	m := v.(map[string]interface{})
 	if ok && m["enabled"] == false {
 		delete(res, "iap")
+	}
+
+	// Since we add in a NONE subsetting policy, we need to remove it in some
+	// cases for backwards compatibility with the config
+	v, ok = res["subsetting"]
+	if ok && v != nil {
+		subsetting := v.(map[string]interface{})
+		policy, ok := subsetting["policy"]
+		if ok && policy == "NONE" {
+			delete(res, "subsetting")
+		}
 	}
 
 	// Requests with consistentHash will error for specific values of

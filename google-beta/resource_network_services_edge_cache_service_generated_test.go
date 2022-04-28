@@ -160,6 +160,7 @@ resource "google_network_services_edge_cache_service" "instance" {
   name                 = "tf-test-my-service%{random_suffix}"
   description          = "some description"
   disable_quic         = true
+  disable_http2        = true
   labels = {
     a = "b"
   }
@@ -261,6 +262,7 @@ resource "google_network_services_edge_cache_service" "instance" {
                 exclude_host = true
                 included_query_parameters = ["apple", "dev", "santa", "claus"]
                 included_header_names = ["banana"]
+                included_cookie_names = ["orange"]
               }
               negative_caching = true
               signed_request_mode = "DISABLED"

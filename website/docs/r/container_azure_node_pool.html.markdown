@@ -16,8 +16,9 @@
 subcategory: "ContainerAzure"
 layout: "google"
 page_title: "Google: google_container_azure_node_pool"
+sidebar_current: "docs-google-container-azure-node-pool"
 description: |-
-An Anthos node pool running on Azure.
+  An Anthos node pool running on Azure.
 ---
 
 # google_container_azure_node_pool
@@ -128,7 +129,7 @@ The following arguments are supported:
 
 * `autoscaling` -
   (Required)
-  Required. Autoscaler configuration for this node pool.
+  Autoscaler configuration for this node pool.
   
 * `cluster` -
   (Required)
@@ -136,7 +137,7 @@ The following arguments are supported:
   
 * `config` -
   (Required)
-  Required. The node configuration of the node pool.
+  The node configuration of the node pool.
   
 * `location` -
   (Required)
@@ -144,7 +145,7 @@ The following arguments are supported:
   
 * `max_pods_constraint` -
   (Required)
-  Required. The constraint on the maximum number of pods that can be run simultaneously on a node in the node pool.
+  The constraint on the maximum number of pods that can be run simultaneously on a node in the node pool.
   
 * `name` -
   (Required)
@@ -152,11 +153,11 @@ The following arguments are supported:
   
 * `subnet_id` -
   (Required)
-  Required. The ARM ID of the subnet where the node pool VMs run. Make sure it's a subnet under the virtual network in the cluster configuration.
+  The ARM ID of the subnet where the node pool VMs run. Make sure it's a subnet under the virtual network in the cluster configuration.
   
 * `version` -
   (Required)
-  Required. The Kubernetes version (e.g. `1.19.10-gke.1000`) running on this node pool.
+  The Kubernetes version (e.g. `1.19.10-gke.1000`) running on this node pool.
   
 
 
@@ -164,11 +165,11 @@ The `autoscaling` block supports:
     
 * `max_node_count` -
   (Required)
-  Required. Maximum number of nodes in the node pool. Must be >= min_node_count.
+  Maximum number of nodes in the node pool. Must be >= min_node_count.
     
 * `min_node_count` -
   (Required)
-  Required. Minimum number of nodes in the node pool. Must be >= 1 and <= max_node_count.
+  Minimum number of nodes in the node pool. Must be >= 1 and <= max_node_count.
     
 The `config` block supports:
     
@@ -178,7 +179,7 @@ The `config` block supports:
     
 * `ssh_config` -
   (Required)
-  Required. SSH configuration for how to access the node pool machines.
+  SSH configuration for how to access the node pool machines.
     
 * `tags` -
   (Optional)
@@ -192,13 +193,13 @@ The `ssh_config` block supports:
     
 * `authorized_key` -
   (Required)
-  Required. The SSH public key data for VMs managed by Anthos. This accepts the authorized_keys file format used in OpenSSH according to the sshd(8) manual page.
+  The SSH public key data for VMs managed by Anthos. This accepts the authorized_keys file format used in OpenSSH according to the sshd(8) manual page.
     
 The `max_pods_constraint` block supports:
     
 * `max_pods_per_node` -
   (Required)
-  Required. The maximum number of pods to schedule on a single node.
+  The maximum number of pods to schedule on a single node.
     
 - - -
 

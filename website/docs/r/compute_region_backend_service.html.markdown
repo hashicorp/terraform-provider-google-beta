@@ -34,7 +34,7 @@ To get more information about RegionBackendService, see:
     * [Internal TCP/UDP Load Balancing](https://cloud.google.com/compute/docs/load-balancing/internal/)
 
 ~> **Warning:** All arguments including `iap.oauth2_client_secret` and `iap.oauth2_client_secret_sha256` will be stored in the raw
-state as plain-text. [Read more about sensitive data in state](/docs/state/sensitive-data.html).
+state as plain-text. [Read more about sensitive data in state](/language/state/sensitive-data.html).
 
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
   <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=region_backend_service_basic&cloudshell_image=gcr.io%2Fgraphite-cloud-shell-images%2Fterraform%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
@@ -500,6 +500,11 @@ The following arguments are supported:
   (Optional)
   The URL of the network to which this backend service belongs.
   This field can only be specified when the load balancing scheme is set to INTERNAL.
+
+* `subsetting` -
+  (Optional, [Beta](https://terraform.io/docs/providers/google/guides/provider_versions.html))
+  Subsetting configuration for this BackendService. Currently this is applicable only for Internal TCP/UDP load balancing and Internal HTTP(S) load balancing.
+  Structure is [documented below](#nested_subsetting).
 
 * `region` -
   (Optional)
@@ -1018,6 +1023,13 @@ The following arguments are supported:
   the field must be in [0, 1]. This configures the sampling rate of requests to the load balancer
   where 1.0 means all logged requests are reported and 0.0 means no logged requests are reported.
   The default value is 1.0.
+
+<a name="nested_subsetting"></a>The `subsetting` block supports:
+
+* `policy` -
+  (Required)
+  The algorithm used for subsetting.
+  Possible values are `CONSISTENT_HASH_SUBSETTING`.
 
 ## Attributes Reference
 

@@ -39,6 +39,7 @@ resource "google_privateca_certificate_authority" "test-ca" {
   location = "us-central1"
   pool = ""
   ignore_active_certificates_on_deletion = true
+  deletion_protection = false
   config {
     subject_config {
       subject {
@@ -196,6 +197,7 @@ resource "google_privateca_certificate_authority" "test-ca" {
   pool = ""
   certificate_authority_id = "my-certificate-authority"
   location = "us-central1"
+  deletion_protection = false
   config {
     subject_config {
       subject {
@@ -247,6 +249,7 @@ resource "google_privateca_certificate_authority" "test-ca" {
   pool = ""
   certificate_authority_id = "my-certificate-authority"
   location = "us-central1"
+  deletion_protection = false
   config {
     subject_config {
       subject {
@@ -299,6 +302,7 @@ resource "google_privateca_certificate_authority" "authority" {
   pool = ""
   certificate_authority_id = "my-authority"
   location = "us-central1"
+  deletion_protection = false
   config {
     subject_config {
       subject {
@@ -698,6 +702,9 @@ In addition to the arguments listed above, the following computed attributes are
 
 * `id` - an identifier for the resource with format `projects/{{project}}/locations/{{location}}/caPools/{{pool}}/certificates/{{name}}`
 
+* `issuer_certificate_authority` -
+  The resource name of the issuing CertificateAuthority in the format projects/*/locations/*/caPools/*/certificateAuthorities/*.
+
 * `revocation_details` -
   Output only. Details regarding the revocation of this Certificate. This Certificate is 
   considered revoked if and only if this field is present.
@@ -710,7 +717,11 @@ In addition to the arguments listed above, the following computed attributes are
   Output only. Details regarding the revocation of this Certificate. This Certificate is considered revoked if and only if this field is present.
   Structure is [documented below](#nested_certificate_description).
 
+* `pem_certificate_chain` -
+  The chain that may be used to verify the X.509 certificate. Expected to be in issuer-to-root order according to RFC 5246.
+
 * `pem_certificates` -
+  (Deprecated)
   Required. Expected to be in leaf-to-root order according to RFC 5246.
 
 * `create_time` -
@@ -736,7 +747,12 @@ In addition to the arguments listed above, the following computed attributes are
   Describes some of the values in a certificate that are related to the subject and lifetime.
   Structure is [documented below](#nested_subject_description).
 
+* `x509_description` -
+  A structured description of the issued X.509 certificate.
+  Structure is [documented below](#nested_x509_description).
+
 * `config_values` -
+  (Deprecated)
   Describes some of the technical fields in a certificate.
   Structure is [documented below](#nested_config_values).
 
@@ -845,6 +861,132 @@ In addition to the arguments listed above, the following computed attributes are
 
 
 <a name="nested_obect_id"></a>The `obect_id` block contains:
+
+* `object_id_path` -
+  An ObjectId specifies an object identifier (OID). These provide context and describe types in ASN.1 messages.
+
+<a name="nested_x509_description"></a>The `x509_description` block contains:
+
+* `additional_extensions` -
+  Describes custom X.509 extensions.
+  Structure is [documented below](#nested_additional_extensions).
+
+* `policy_ids` -
+  Describes the X.509 certificate policy object identifiers, per https://tools.ietf.org/html/rfc5280#section-4.2.1.4.
+  Structure is [documented below](#nested_policy_ids).
+
+* `aia_ocsp_servers` -
+  Describes Online Certificate Status Protocol (OCSP) endpoint addresses that appear in the
+  "Authority Information Access" extension in the certificate.
+
+* `ca_options` -
+  Describes values that are relevant in a CA certificate.
+  Structure is [documented below](#nested_ca_options).
+
+* `key_usage` -
+  Indicates the intended use for keys that correspond to a certificate.
+  Structure is [documented below](#nested_key_usage).
+
+
+<a name="nested_additional_extensions"></a>The `additional_extensions` block contains:
+
+* `critical` -
+  Indicates whether or not this extension is critical (i.e., if the client does not know how to
+  handle this extension, the client should consider this to be an error).
+
+* `value` -
+  (Optional)
+  The value of this X.509 extension. A base64-encoded string.
+
+* `object_id` -
+  Describes values that are relevant in a CA certificate.
+  Structure is [documented below](#nested_object_id).
+
+
+<a name="nested_object_id"></a>The `object_id` block contains:
+
+* `object_id_path` -
+  An ObjectId specifies an object identifier (OID). These provide context and describe types in ASN.1 messages.
+
+<a name="nested_policy_ids"></a>The `policy_ids` block contains:
+
+* `object_id_path` -
+  An ObjectId specifies an object identifier (OID). These provide context and describe types in ASN.1 messages.
+
+<a name="nested_ca_options"></a>The `ca_options` block contains:
+
+* `is_ca` -
+  When true, the "CA" in Basic Constraints extension will be set to true.
+
+* `max_issuer_path_length` -
+  Refers to the "path length constraint" in Basic Constraints extension. For a CA certificate, this value describes the depth of
+  subordinate CA certificates that are allowed. If this value is less than 0, the request will fail.
+
+<a name="nested_key_usage"></a>The `key_usage` block contains:
+
+* `base_key_usage` -
+  Describes high-level ways in which a key may be used.
+  Structure is [documented below](#nested_base_key_usage).
+
+* `extended_key_usage` -
+  Describes high-level ways in which a key may be used.
+  Structure is [documented below](#nested_extended_key_usage).
+
+* `unknown_extended_key_usages` -
+  An ObjectId specifies an object identifier (OID). These provide context and describe types in ASN.1 messages.
+  Structure is [documented below](#nested_unknown_extended_key_usages).
+
+
+<a name="nested_base_key_usage"></a>The `base_key_usage` block contains:
+
+* `digital_signature` -
+  The key may be used for digital signatures.
+
+* `content_commitment` -
+  The key may be used for cryptographic commitments. Note that this may also be referred to as "non-repudiation".
+
+* `key_encipherment` -
+  The key may be used to encipher other keys.
+
+* `data_encipherment` -
+  The key may be used to encipher data.
+
+* `key_agreement` -
+  The key may be used in a key agreement protocol.
+
+* `cert_sign` -
+  The key may be used to sign certificates.
+
+* `crl_sign` -
+  The key may be used sign certificate revocation lists.
+
+* `encipher_only` -
+  The key may be used to encipher only.
+
+* `decipher_only` -
+  The key may be used to decipher only.
+
+<a name="nested_extended_key_usage"></a>The `extended_key_usage` block contains:
+
+* `server_auth` -
+  Corresponds to OID 1.3.6.1.5.5.7.3.1. Officially described as "TLS WWW server authentication", though regularly used for non-WWW TLS.
+
+* `client_auth` -
+  Corresponds to OID 1.3.6.1.5.5.7.3.2. Officially described as "TLS WWW client authentication", though regularly used for non-WWW TLS.
+
+* `code_signing` -
+  Corresponds to OID 1.3.6.1.5.5.7.3.3. Officially described as "Signing of downloadable executable code client authentication".
+
+* `email_protection` -
+  Corresponds to OID 1.3.6.1.5.5.7.3.4. Officially described as "Email protection".
+
+* `time_stamping` -
+  Corresponds to OID 1.3.6.1.5.5.7.3.8. Officially described as "Binding the hash of an object to a time".
+
+* `ocsp_signing` -
+  Corresponds to OID 1.3.6.1.5.5.7.3.9. Officially described as "Signing OCSP responses".
+
+<a name="nested_unknown_extended_key_usages"></a>The `unknown_extended_key_usages` block contains:
 
 * `object_id_path` -
   An ObjectId specifies an object identifier (OID). These provide context and describe types in ASN.1 messages.
@@ -968,6 +1110,7 @@ This resource provides the following
 [Timeouts](/docs/configuration/resources.html#timeouts) configuration options:
 
 - `create` - Default is 20 minutes.
+- `update` - Default is 20 minutes.
 - `delete` - Default is 20 minutes.
 
 ## Import

@@ -192,12 +192,18 @@ addresses reserved for this instance.`,
 				Required: true,
 				ForceNew: true,
 				Description: `The service tier of the instance.
-Possible values include: STANDARD, PREMIUM, BASIC_HDD, BASIC_SSD, HIGH_SCALE_SSD and ENTERPRISE (beta only)`,
+Possible values include: STANDARD, PREMIUM, BASIC_HDD, BASIC_SSD, HIGH_SCALE_SSD and ENTERPRISE`,
 			},
 			"description": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: `A description of the instance.`,
+			},
+			"kms_key_name": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				ForceNew:    true,
+				Description: `KMS key name used for data encryption.`,
 			},
 			"labels": {
 				Type:        schema.TypeMap,
@@ -281,6 +287,12 @@ func resourceFilestoreInstanceCreate(d *schema.ResourceData, meta interface{}) e
 		return err
 	} else if v, ok := d.GetOkExists("networks"); !isEmptyValue(reflect.ValueOf(networksProp)) && (ok || !reflect.DeepEqual(v, networksProp)) {
 		obj["networks"] = networksProp
+	}
+	kmsKeyNameProp, err := expandFilestoreInstanceKmsKeyName(d.Get("kms_key_name"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("kms_key_name"); !isEmptyValue(reflect.ValueOf(kmsKeyNameProp)) && (ok || !reflect.DeepEqual(v, kmsKeyNameProp)) {
+		obj["kmsKeyName"] = kmsKeyNameProp
 	}
 
 	lockName, err := replaceVars(d, config, "filestore/{{project}}")
@@ -415,6 +427,9 @@ func resourceFilestoreInstanceRead(d *schema.ResourceData, meta interface{}) err
 		return fmt.Errorf("Error reading Instance: %s", err)
 	}
 	if err := d.Set("etag", flattenFilestoreInstanceEtag(res["etag"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Instance: %s", err)
+	}
+	if err := d.Set("kms_key_name", flattenFilestoreInstanceKmsKeyName(res["kmsKeyName"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Instance: %s", err)
 	}
 
@@ -760,6 +775,10 @@ func flattenFilestoreInstanceEtag(v interface{}, d *schema.ResourceData, config 
 	return v
 }
 
+func flattenFilestoreInstanceKmsKeyName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	return v
+}
+
 func expandFilestoreInstanceDescription(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
@@ -960,6 +979,10 @@ func expandFilestoreInstanceNetworksIpAddresses(v interface{}, d TerraformResour
 }
 
 func expandFilestoreInstanceNetworksConnectMode(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandFilestoreInstanceKmsKeyName(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 

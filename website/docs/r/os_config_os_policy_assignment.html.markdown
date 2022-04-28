@@ -16,8 +16,9 @@
 subcategory: "OsConfig"
 layout: "google"
 page_title: "Google: google_os_config_os_policy_assignment"
+sidebar_current: "docs-google-os-config-os-policy-assignment"
 description: |-
-Represents an OSPolicyAssignment resource.
+  Represents an OSPolicyAssignment resource.
 ---
 
 # google_os_config_os_policy_assignment

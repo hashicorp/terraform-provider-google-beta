@@ -17,7 +17,7 @@ import (
 const (
 	composerEnvironmentEnvVariablesRegexp          = "[a-zA-Z_][a-zA-Z0-9_]*."
 	composerEnvironmentReservedAirflowEnvVarRegexp = "AIRFLOW__[A-Z0-9_]+__[A-Z0-9_]+"
-	composerEnvironmentVersionRegexp               = `composer-([0-9]+\.[0-9]+\.[0-9]+(-preview\.[0-9]+)?|latest)-airflow-([0-9]+\.[0-9]+(\.[0-9]+.*)?)`
+	composerEnvironmentVersionRegexp               = `composer-(([0-9]+)(\.[0-9]+\.[0-9]+(-preview\.[0-9]+)?)?|latest)-airflow-(([0-9]+)((\.[0-9]+)(\.[0-9]+)?)?)`
 )
 
 var composerEnvironmentReservedEnvVar = map[string]struct{}{
@@ -138,6 +138,7 @@ func resourceComposerEnvironment() *schema.Resource {
 			},
 			"region": {
 				Type:        schema.TypeString,
+				Computed:    true,
 				Optional:    true,
 				ForceNew:    true,
 				Description: `The location or Compute Engine region for the environment.`,
@@ -344,7 +345,7 @@ func resourceComposerEnvironment() *schema.Resource {
 										AtLeastOneOf: composerSoftwareConfigKeys,
 										Elem:         &schema.Schema{Type: schema.TypeString},
 										ValidateFunc: validateComposerEnvironmentEnvVariables,
-										Description:  `Additional environment variables to provide to the Apache Airflow schedulerf, worker, and webserver processes. Environment variable names must match the regular expression [a-zA-Z_][a-zA-Z0-9_]*. They cannot specify Apache Airflow software configuration overrides (they cannot match the regular expression AIRFLOW__[A-Z0-9_]+__[A-Z0-9_]+), and they cannot match any of the following reserved names: AIRFLOW_HOME C_FORCE_ROOT CONTAINER_NAME DAGS_FOLDER GCP_PROJECT GCS_BUCKET GKE_CLUSTER_NAME SQL_DATABASE SQL_INSTANCE SQL_PASSWORD SQL_PROJECT SQL_REGION SQL_USER.`,
+										Description:  `Additional environment variables to provide to the Apache Airflow scheduler, worker, and webserver processes. Environment variable names must match the regular expression [a-zA-Z_][a-zA-Z0-9_]*. They cannot specify Apache Airflow software configuration overrides (they cannot match the regular expression AIRFLOW__[A-Z0-9_]+__[A-Z0-9_]+), and they cannot match any of the following reserved names: AIRFLOW_HOME C_FORCE_ROOT CONTAINER_NAME DAGS_FOLDER GCP_PROJECT GCS_BUCKET GKE_CLUSTER_NAME SQL_DATABASE SQL_INSTANCE SQL_PASSWORD SQL_PROJECT SQL_REGION SQL_USER.`,
 									},
 									"image_version": {
 										Type:             schema.TypeString,
@@ -353,7 +354,7 @@ func resourceComposerEnvironment() *schema.Resource {
 										AtLeastOneOf:     composerSoftwareConfigKeys,
 										ValidateFunc:     validateRegexp(composerEnvironmentVersionRegexp),
 										DiffSuppressFunc: composerImageVersionDiffSuppress,
-										Description:      `The version of the software running in the environment. This encapsulates both the version of Cloud Composer functionality and the version of Apache Airflow. It must match the regular expression composer-[0-9]+\.[0-9]+(\.[0-9]+)?-airflow-[0-9]+\.[0-9]+(\.[0-9]+.*)?. The Cloud Composer portion of the version is a semantic version. The portion of the image version following 'airflow-' is an official Apache Airflow repository release name. See documentation for allowed release names.`,
+										Description:      `The version of the software running in the environment. This encapsulates both the version of Cloud Composer functionality and the version of Apache Airflow. It must match the regular expression composer-([0-9]+(\.[0-9]+\.[0-9]+(-preview\.[0-9]+)?)?|latest)-airflow-([0-9]+(\.[0-9]+(\.[0-9]+)?)?). The Cloud Composer portion of the image version is a full semantic version, or an alias in the form of major version number or 'latest'. The Apache Airflow portion of the image version is a full semantic version that points to one of the supported Apache Airflow versions, or an alias in the form of only major or major.minor versions specified. See documentation for more details and version list.`,
 									},
 									"python_version": {
 										Type:         schema.TypeString,
@@ -543,7 +544,6 @@ func resourceComposerEnvironment() *schema.Resource {
 								},
 							},
 						},
-
 						"workloads_config": {
 							Type:         schema.TypeList,
 							Optional:     true,
@@ -981,6 +981,7 @@ func resourceComposerEnvironmentUpdate(d *schema.ResourceData, meta interface{})
 				return err
 			}
 		}
+
 		if d.HasChange("config.0.workloads_config") {
 			patchObj := &composer.Environment{Config: &composer.EnvironmentConfig{}}
 			if config != nil {
@@ -1655,7 +1656,6 @@ func expandComposerEnvironmentConfigPrivateEnvironmentConfig(v interface{}, d *s
 	if v, ok := original["enable_privately_used_public_ips"]; ok {
 		transformed.EnablePrivatelyUsedPublicIps = v.(bool)
 	}
-
 	if v, ok := original["cloud_composer_connection_subnetwork"]; ok {
 		transformed.CloudComposerConnectionSubnetwork = v.(string)
 	}
@@ -2043,48 +2043,87 @@ func composerImageVersionDiffSuppress(_, old, new string, _ *schema.ResourceData
 	versionRe := regexp.MustCompile(composerEnvironmentVersionRegexp)
 	oldVersions := versionRe.FindStringSubmatch(old)
 	newVersions := versionRe.FindStringSubmatch(new)
-	if oldVersions == nil || len(oldVersions) < 4 {
+	if oldVersions == nil || len(oldVersions) < 10 {
 		// Somehow one of the versions didn't match the regexp or didn't
 		// have values in the capturing groups. In that case, fall back to
 		// an equality check.
 		if old != "" {
-			log.Printf("[WARN] Composer version didn't match regexp: %s", old)
+			log.Printf("[WARN] Image version didn't match regexp: %s", old)
 		}
 		return old == new
 	}
-	if newVersions == nil || len(newVersions) < 3 {
+	if newVersions == nil || len(newVersions) < 10 {
 		// Somehow one of the versions didn't match the regexp or didn't
 		// have values in the capturing groups. In that case, fall back to
 		// an equality check.
 		if new != "" {
-			log.Printf("[WARN] Composer version didn't match regexp: %s", new)
+			log.Printf("[WARN] Image version didn't match regexp: %s", new)
 		}
 		return old == new
 	}
 
-	// Check airflow version using the version package to account for
-	// diffs like 1.10 and 1.10.0
-	eq, err := versionsEqual(oldVersions[3], newVersions[3])
-	if err != nil {
-		log.Printf("[WARN] Could not parse airflow version, %s", err)
-	}
-	if !eq {
-		return false
+	oldAirflow := oldVersions[5]
+	oldAirflowMajor := oldVersions[6]
+	oldAirflowMajorMinor := oldVersions[6] + oldVersions[8]
+	newAirflow := newVersions[5]
+	newAirflowMajor := newVersions[6]
+	newAirflowMajorMinor := newVersions[6] + newVersions[8]
+	// Check Airflow versions.
+	if oldAirflow == oldAirflowMajor || newAirflow == newAirflowMajor {
+		// If one of the Airflow versions specifies only major version
+		// (like 1), we can only compare major versions.
+		eq, err := versionsEqual(oldAirflowMajor, newAirflowMajor)
+		if err != nil {
+			log.Printf("[WARN] Could not parse airflow version, %s", err)
+		}
+		if !eq {
+			return false
+		}
+	} else if oldAirflow == oldAirflowMajorMinor || newAirflow == newAirflowMajorMinor {
+		// If one of the Airflow versions specifies only major and minor version
+		// (like 1.10), we can only compare major and minor versions.
+		eq, err := versionsEqual(oldAirflowMajorMinor, newAirflowMajorMinor)
+		if err != nil {
+			log.Printf("[WARN] Could not parse airflow version, %s", err)
+		}
+		if !eq {
+			return false
+		}
+	} else {
+		// Otherwise, we compare the full Airflow versions (like 1.10.15).
+		eq, err := versionsEqual(oldAirflow, newAirflow)
+		if err != nil {
+			log.Printf("[WARN] Could not parse airflow version, %s", err)
+		}
+		if !eq {
+			return false
+		}
 	}
 
-	// Check composer version. Assume that "latest" means we should
-	// suppress the diff, because we don't have any other way of
-	// knowing what the latest version actually is.
-	if oldVersions[1] == "latest" || newVersions[1] == "latest" {
+	oldComposer := oldVersions[1]
+	oldComposerMajor := oldVersions[2]
+	newComposer := newVersions[1]
+	newComposerMajor := newVersions[2]
+	// Check Composer versions.
+	if oldComposer == "latest" || newComposer == "latest" {
+		// We don't know what the latest version is so we suppress the diff.
 		return true
+	} else if oldComposer == oldComposerMajor || newComposer == newComposerMajor {
+		// If one of the Composer versions specifies only major version
+		// (like 1), we can only compare major versions.
+		eq, err := versionsEqual(oldComposerMajor, newComposerMajor)
+		if err != nil {
+			log.Printf("[WARN] Could not parse composer version, %s", err)
+		}
+		return eq
+	} else {
+		// Otherwise, we compare the full Composer versions (like 1.18.1).
+		eq, err := versionsEqual(oldComposer, newComposer)
+		if err != nil {
+			log.Printf("[WARN] Could not parse composer version, %s", err)
+		}
+		return eq
 	}
-	// If neither version is "latest", check them using the version
-	// package like we did for airflow.
-	eq, err = versionsEqual(oldVersions[1], newVersions[1])
-	if err != nil {
-		log.Printf("[WARN] Could not parse composer version, %s", err)
-	}
-	return eq
 }
 
 func versionsEqual(old, new string) (bool, error) {

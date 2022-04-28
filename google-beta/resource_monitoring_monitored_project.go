@@ -44,11 +44,10 @@ func resourceMonitoringMonitoredProject() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"metrics_scope": {
-				Type:             schema.TypeString,
-				Required:         true,
-				ForceNew:         true,
-				DiffSuppressFunc: compareSelfLinkOrResourceName,
-				Description:      "Required. The resource name of the existing Metrics Scope that will monitor this project. Example: locations/global/metricsScopes/{SCOPING_PROJECT_ID_OR_NUMBER}",
+				Type:        schema.TypeString,
+				Required:    true,
+				ForceNew:    true,
+				Description: "Required. The resource name of the existing Metrics Scope that will monitor this project. Example: locations/global/metricsScopes/{SCOPING_PROJECT_ID_OR_NUMBER}",
 			},
 
 			"name": {
@@ -193,6 +192,7 @@ func resourceMonitoringMonitoredProjectDelete(d *schema.ResourceData, meta inter
 
 func resourceMonitoringMonitoredProjectImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	config := meta.(*Config)
+
 	if err := parseImportId([]string{
 		"locations/global/metricsScopes/(?P<metrics_scope>[^/]+)/projects/(?P<name>[^/]+)",
 		"(?P<metrics_scope>[^/]+)/(?P<name>[^/]+)",

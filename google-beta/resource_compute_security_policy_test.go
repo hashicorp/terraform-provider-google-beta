@@ -164,6 +164,28 @@ func TestAccComputeSecurityPolicy_withRateLimitOptions(t *testing.T) {
 	})
 }
 
+func TestAccComputeSecurityPolicy_withRateLimitWithRedirectOptions(t *testing.T) {
+	t.Parallel()
+
+	spName := fmt.Sprintf("tf-test-%s", randString(t, 10))
+
+	vcrTest(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckComputeSecurityPolicyDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeSecurityPolicy_withRateLimitWithRedirectOptions(spName),
+			},
+			{
+				ResourceName:      "google_compute_security_policy.policy",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
 func testAccCheckComputeSecurityPolicyDestroyProducer(t *testing.T) func(s *terraform.State) error {
 	return func(s *terraform.State) error {
 		config := googleProviderConfig(t)
@@ -190,6 +212,7 @@ func testAccComputeSecurityPolicy_basic(spName string) string {
 resource "google_compute_security_policy" "policy" {
   name        = "%s"
   description = "basic security policy"
+  type        = "CLOUD_ARMOR_EDGE"
 }
 `, spName)
 }
@@ -390,7 +413,7 @@ resource "google_compute_security_policy" "policy" {
 
 	rule {
 		action = "throttle"
-		priority = 100	  
+		priority = 100
 		match {
 			versioned_expr = "SRC_IPS_V1"
 			config {
@@ -407,6 +430,174 @@ resource "google_compute_security_policy" "policy" {
 				count = 100
 				interval_sec = 60
 			}
+		}
+	}
+}
+`, spName)
+}
+
+func testAccComputeSecurityPolicy_withRateLimitWithRedirectOptions(spName string) string {
+	return fmt.Sprintf(`
+resource "google_compute_security_policy" "policy" {
+	name        = "%s"
+	description = "updated description"
+
+	rule {
+		action   = "allow"
+		priority = "2147483647"
+		match {
+			versioned_expr = "SRC_IPS_V1"
+			config {
+				src_ip_ranges = ["*"]
+			}
+		}
+		description = "default rule"
+	}
+
+	rule {
+		action = "throttle"
+		priority = 100
+		match {
+			versioned_expr = "SRC_IPS_V1"
+			config {
+				src_ip_ranges = [
+					"0.0.0.0/32",
+				]
+			}
+		}
+		rate_limit_options {
+			conform_action = "allow"
+			exceed_action = "redirect"
+			enforce_on_key = "IP"
+			exceed_redirect_options {
+				type = "EXTERNAL_302"
+				target = "https://www.example.com"
+			}
+			rate_limit_threshold {
+				count = 100
+				interval_sec = 60
+			}
+		}
+	}
+}
+`, spName)
+}
+
+func TestAccComputeSecurityPolicy_withRedirectOptionsRecaptcha(t *testing.T) {
+	t.Parallel()
+
+	spName := fmt.Sprintf("tf-test-%s", randString(t, 10))
+
+	vcrTest(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckComputeSecurityPolicyDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeSecurityPolicy_withRedirectOptionsRecaptcha(spName),
+			},
+			{
+				ResourceName:      "google_compute_security_policy.policy",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
+func TestAccComputeSecurityPolicy_withRedirectOptionsUpdate(t *testing.T) {
+	t.Parallel()
+
+	spName := fmt.Sprintf("tf-test-%s", randString(t, 10))
+
+	vcrTest(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckComputeSecurityPolicyDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeSecurityPolicy_withRedirectOptionsRecaptcha(spName),
+			},
+			{
+				ResourceName:      "google_compute_security_policy.policy",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+			{
+				Config: testAccComputeSecurityPolicy_withRedirectOptionsExternal(spName),
+			},
+			{
+				ResourceName:      "google_compute_security_policy.policy",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
+func TestAccComputeSecurityPolicy_withRedirectOptionsExternal(t *testing.T) {
+	t.Parallel()
+
+	spName := fmt.Sprintf("tf-test-%s", randString(t, 10))
+
+	vcrTest(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckComputeSecurityPolicyDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeSecurityPolicy_withRedirectOptionsExternal(spName),
+			},
+			{
+				ResourceName:      "google_compute_security_policy.policy",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
+func testAccComputeSecurityPolicy_withRedirectOptionsRecaptcha(spName string) string {
+	return fmt.Sprintf(`
+resource "google_compute_security_policy" "policy" {
+	name        = "%s"
+
+	rule {
+		action   = "redirect"
+		priority = "2147483647"
+		match {
+			versioned_expr = "SRC_IPS_V1"
+			config {
+				src_ip_ranges = ["*"]
+			}
+		}
+		description = "default rule"
+		redirect_options {
+			type = "GOOGLE_RECAPTCHA"
+		}
+	}
+}
+`, spName)
+}
+
+func testAccComputeSecurityPolicy_withRedirectOptionsExternal(spName string) string {
+	return fmt.Sprintf(`
+resource "google_compute_security_policy" "policy" {
+	name        = "%s"
+
+	rule {
+		action   = "redirect"
+		priority = "2147483647"
+		match {
+			versioned_expr = "SRC_IPS_V1"
+			config {
+				src_ip_ranges = ["*"]
+			}
+		}
+		description = "default rule"
+		redirect_options {
+			type = "EXTERNAL_302"
+			target = "https://example.com"
 		}
 	}
 }

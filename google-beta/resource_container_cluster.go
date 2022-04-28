@@ -65,6 +65,7 @@ var (
 		"addons_config.0.gce_persistent_disk_csi_driver_config",
 		"addons_config.0.kalm_config",
 		"addons_config.0.config_connector_config",
+		"addons_config.0.gke_backup_agent_config",
 	}
 
 	forceNewClusterNodeConfigFields = []string{
@@ -377,6 +378,22 @@ func resourceContainerCluster() *schema.Resource {
 								},
 							},
 						},
+						"gke_backup_agent_config": {
+							Type:         schema.TypeList,
+							Optional:     true,
+							Computed:     true,
+							AtLeastOneOf: addonsConfigKeys,
+							MaxItems:     1,
+							Description:  `The status of the Backup for GKE Agent addon. It is disabled by default. Set enabled = true to enable.`,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"enabled": {
+										Type:     schema.TypeBool,
+										Required: true,
+									},
+								},
+							},
+						},
 					},
 				},
 			},
@@ -535,13 +552,12 @@ func resourceContainerCluster() *schema.Resource {
 			},
 
 			"authenticator_groups_config": {
-				Type:          schema.TypeList,
-				Optional:      true,
-				Computed:      true,
-				ForceNew:      true,
-				MaxItems:      1,
-				Description:   `Configuration for the Google Groups for GKE feature.`,
-				ConflictsWith: []string{"enable_autopilot"},
+				Type:        schema.TypeList,
+				Optional:    true,
+				Computed:    true,
+				ForceNew:    true,
+				MaxItems:    1,
+				Description: `Configuration for the Google Groups for GKE feature.`,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"security_group": {
@@ -1096,6 +1112,7 @@ func resourceContainerCluster() *schema.Resource {
 				Type:        schema.TypeList,
 				MaxItems:    1,
 				Optional:    true,
+				Computed:    true,
 				Description: `Vertical Pod Autoscaling automatically adjusts the resources of pods controlled by it.`,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -3040,6 +3057,13 @@ func expandClusterAddonsConfig(configured interface{}) *container.AddonsConfig {
 			ForceSendFields: []string{"Enabled"},
 		}
 	}
+	if v, ok := config["gke_backup_agent_config"]; ok && len(v.([]interface{})) > 0 {
+		addon := v.([]interface{})[0].(map[string]interface{})
+		ac.GkeBackupAgentConfig = &container.GkeBackupAgentConfig{
+			Enabled:         addon["enabled"].(bool),
+			ForceSendFields: []string{"Enabled"},
+		}
+	}
 
 	return ac
 }
@@ -3679,6 +3703,13 @@ func flattenClusterAddonsConfig(c *container.AddonsConfig) []map[string]interfac
 		result["config_connector_config"] = []map[string]interface{}{
 			{
 				"enabled": c.ConfigConnectorConfig.Enabled,
+			},
+		}
+	}
+	if c.GkeBackupAgentConfig != nil {
+		result["gke_backup_agent_config"] = []map[string]interface{}{
+			{
+				"enabled": c.GkeBackupAgentConfig.Enabled,
 			},
 		}
 	}

@@ -1547,6 +1547,7 @@ func resourceOsConfigOsPolicyAssignmentDelete(d *schema.ResourceData, meta inter
 
 func resourceOsConfigOsPolicyAssignmentImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	config := meta.(*Config)
+
 	if err := parseImportId([]string{
 		"projects/(?P<project>[^/]+)/locations/(?P<location>[^/]+)/osPolicyAssignments/(?P<name>[^/]+)",
 		"(?P<project>[^/]+)/(?P<location>[^/]+)/(?P<name>[^/]+)",
@@ -1570,7 +1571,7 @@ func expandOsConfigOsPolicyAssignmentInstanceFilter(o interface{}) *osconfig.OSP
 		return osconfig.EmptyOSPolicyAssignmentInstanceFilter
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return osconfig.EmptyOSPolicyAssignmentInstanceFilter
 	}
 	obj := objArr[0].(map[string]interface{})
@@ -1602,7 +1603,7 @@ func expandOsConfigOsPolicyAssignmentInstanceFilterExclusionLabelsArray(o interf
 	}
 
 	objs := o.([]interface{})
-	if len(objs) == 0 {
+	if len(objs) == 0 || objs[0] == nil {
 		return make([]osconfig.OSPolicyAssignmentInstanceFilterExclusionLabels, 0)
 	}
 
@@ -1657,7 +1658,7 @@ func expandOsConfigOsPolicyAssignmentInstanceFilterInclusionLabelsArray(o interf
 	}
 
 	objs := o.([]interface{})
-	if len(objs) == 0 {
+	if len(objs) == 0 || objs[0] == nil {
 		return make([]osconfig.OSPolicyAssignmentInstanceFilterInclusionLabels, 0)
 	}
 
@@ -1712,7 +1713,7 @@ func expandOsConfigOsPolicyAssignmentInstanceFilterInventoriesArray(o interface{
 	}
 
 	objs := o.([]interface{})
-	if len(objs) == 0 {
+	if len(objs) == 0 || objs[0] == nil {
 		return make([]osconfig.OSPolicyAssignmentInstanceFilterInventories, 0)
 	}
 
@@ -1769,7 +1770,7 @@ func expandOsConfigOsPolicyAssignmentOSPoliciesArray(o interface{}) []osconfig.O
 	}
 
 	objs := o.([]interface{})
-	if len(objs) == 0 {
+	if len(objs) == 0 || objs[0] == nil {
 		return make([]osconfig.OSPolicyAssignmentOSPolicies, 0)
 	}
 
@@ -1832,7 +1833,7 @@ func expandOsConfigOsPolicyAssignmentOSPoliciesResourceGroupsArray(o interface{}
 	}
 
 	objs := o.([]interface{})
-	if len(objs) == 0 {
+	if len(objs) == 0 || objs[0] == nil {
 		return make([]osconfig.OSPolicyAssignmentOSPoliciesResourceGroups, 0)
 	}
 
@@ -1889,7 +1890,7 @@ func expandOsConfigOsPolicyAssignmentOSPoliciesResourceGroupsResourcesArray(o in
 	}
 
 	objs := o.([]interface{})
-	if len(objs) == 0 {
+	if len(objs) == 0 || objs[0] == nil {
 		return make([]osconfig.OSPolicyAssignmentOSPoliciesResourceGroupsResources, 0)
 	}
 
@@ -1952,7 +1953,7 @@ func expandOsConfigOsPolicyAssignmentOSPoliciesResourceGroupsResourcesExec(o int
 		return osconfig.EmptyOSPolicyAssignmentOSPoliciesResourceGroupsResourcesExec
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return osconfig.EmptyOSPolicyAssignmentOSPoliciesResourceGroupsResourcesExec
 	}
 	obj := objArr[0].(map[string]interface{})
@@ -1980,7 +1981,7 @@ func expandOsConfigOsPolicyAssignmentOSPoliciesResourceGroupsResourcesExecValida
 		return osconfig.EmptyOSPolicyAssignmentOSPoliciesResourceGroupsResourcesExecValidate
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return osconfig.EmptyOSPolicyAssignmentOSPoliciesResourceGroupsResourcesExecValidate
 	}
 	obj := objArr[0].(map[string]interface{})
@@ -2014,7 +2015,7 @@ func expandOsConfigOsPolicyAssignmentOSPoliciesResourceGroupsResourcesExecValida
 		return osconfig.EmptyOSPolicyAssignmentOSPoliciesResourceGroupsResourcesExecValidateFile
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return osconfig.EmptyOSPolicyAssignmentOSPoliciesResourceGroupsResourcesExecValidateFile
 	}
 	obj := objArr[0].(map[string]interface{})
@@ -2046,7 +2047,7 @@ func expandOsConfigOsPolicyAssignmentOSPoliciesResourceGroupsResourcesExecValida
 		return osconfig.EmptyOSPolicyAssignmentOSPoliciesResourceGroupsResourcesExecValidateFileGcs
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return osconfig.EmptyOSPolicyAssignmentOSPoliciesResourceGroupsResourcesExecValidateFileGcs
 	}
 	obj := objArr[0].(map[string]interface{})
@@ -2076,7 +2077,7 @@ func expandOsConfigOsPolicyAssignmentOSPoliciesResourceGroupsResourcesExecValida
 		return osconfig.EmptyOSPolicyAssignmentOSPoliciesResourceGroupsResourcesExecValidateFileRemote
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return osconfig.EmptyOSPolicyAssignmentOSPoliciesResourceGroupsResourcesExecValidateFileRemote
 	}
 	obj := objArr[0].(map[string]interface{})
@@ -2104,7 +2105,7 @@ func expandOsConfigOsPolicyAssignmentOSPoliciesResourceGroupsResourcesExecEnforc
 		return osconfig.EmptyOSPolicyAssignmentOSPoliciesResourceGroupsResourcesExecEnforce
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return osconfig.EmptyOSPolicyAssignmentOSPoliciesResourceGroupsResourcesExecEnforce
 	}
 	obj := objArr[0].(map[string]interface{})
@@ -2138,7 +2139,7 @@ func expandOsConfigOsPolicyAssignmentOSPoliciesResourceGroupsResourcesExecEnforc
 		return osconfig.EmptyOSPolicyAssignmentOSPoliciesResourceGroupsResourcesExecEnforceFile
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return osconfig.EmptyOSPolicyAssignmentOSPoliciesResourceGroupsResourcesExecEnforceFile
 	}
 	obj := objArr[0].(map[string]interface{})
@@ -2170,7 +2171,7 @@ func expandOsConfigOsPolicyAssignmentOSPoliciesResourceGroupsResourcesExecEnforc
 		return osconfig.EmptyOSPolicyAssignmentOSPoliciesResourceGroupsResourcesExecEnforceFileGcs
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return osconfig.EmptyOSPolicyAssignmentOSPoliciesResourceGroupsResourcesExecEnforceFileGcs
 	}
 	obj := objArr[0].(map[string]interface{})
@@ -2200,7 +2201,7 @@ func expandOsConfigOsPolicyAssignmentOSPoliciesResourceGroupsResourcesExecEnforc
 		return osconfig.EmptyOSPolicyAssignmentOSPoliciesResourceGroupsResourcesExecEnforceFileRemote
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return osconfig.EmptyOSPolicyAssignmentOSPoliciesResourceGroupsResourcesExecEnforceFileRemote
 	}
 	obj := objArr[0].(map[string]interface{})
@@ -2228,7 +2229,7 @@ func expandOsConfigOsPolicyAssignmentOSPoliciesResourceGroupsResourcesFile(o int
 		return osconfig.EmptyOSPolicyAssignmentOSPoliciesResourceGroupsResourcesFile
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return osconfig.EmptyOSPolicyAssignmentOSPoliciesResourceGroupsResourcesFile
 	}
 	obj := objArr[0].(map[string]interface{})
@@ -2261,7 +2262,7 @@ func expandOsConfigOsPolicyAssignmentOSPoliciesResourceGroupsResourcesFileFile(o
 		return osconfig.EmptyOSPolicyAssignmentOSPoliciesResourceGroupsResourcesFileFile
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return osconfig.EmptyOSPolicyAssignmentOSPoliciesResourceGroupsResourcesFileFile
 	}
 	obj := objArr[0].(map[string]interface{})
@@ -2293,7 +2294,7 @@ func expandOsConfigOsPolicyAssignmentOSPoliciesResourceGroupsResourcesFileFileGc
 		return osconfig.EmptyOSPolicyAssignmentOSPoliciesResourceGroupsResourcesFileFileGcs
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return osconfig.EmptyOSPolicyAssignmentOSPoliciesResourceGroupsResourcesFileFileGcs
 	}
 	obj := objArr[0].(map[string]interface{})
@@ -2323,7 +2324,7 @@ func expandOsConfigOsPolicyAssignmentOSPoliciesResourceGroupsResourcesFileFileRe
 		return osconfig.EmptyOSPolicyAssignmentOSPoliciesResourceGroupsResourcesFileFileRemote
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return osconfig.EmptyOSPolicyAssignmentOSPoliciesResourceGroupsResourcesFileFileRemote
 	}
 	obj := objArr[0].(map[string]interface{})
@@ -2351,7 +2352,7 @@ func expandOsConfigOsPolicyAssignmentOSPoliciesResourceGroupsResourcesPkg(o inte
 		return osconfig.EmptyOSPolicyAssignmentOSPoliciesResourceGroupsResourcesPkg
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return osconfig.EmptyOSPolicyAssignmentOSPoliciesResourceGroupsResourcesPkg
 	}
 	obj := objArr[0].(map[string]interface{})
@@ -2391,7 +2392,7 @@ func expandOsConfigOsPolicyAssignmentOSPoliciesResourceGroupsResourcesPkgApt(o i
 		return osconfig.EmptyOSPolicyAssignmentOSPoliciesResourceGroupsResourcesPkgApt
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return osconfig.EmptyOSPolicyAssignmentOSPoliciesResourceGroupsResourcesPkgApt
 	}
 	obj := objArr[0].(map[string]interface{})
@@ -2417,7 +2418,7 @@ func expandOsConfigOsPolicyAssignmentOSPoliciesResourceGroupsResourcesPkgDeb(o i
 		return osconfig.EmptyOSPolicyAssignmentOSPoliciesResourceGroupsResourcesPkgDeb
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return osconfig.EmptyOSPolicyAssignmentOSPoliciesResourceGroupsResourcesPkgDeb
 	}
 	obj := objArr[0].(map[string]interface{})
@@ -2445,7 +2446,7 @@ func expandOsConfigOsPolicyAssignmentOSPoliciesResourceGroupsResourcesPkgDebSour
 		return osconfig.EmptyOSPolicyAssignmentOSPoliciesResourceGroupsResourcesPkgDebSource
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return osconfig.EmptyOSPolicyAssignmentOSPoliciesResourceGroupsResourcesPkgDebSource
 	}
 	obj := objArr[0].(map[string]interface{})
@@ -2477,7 +2478,7 @@ func expandOsConfigOsPolicyAssignmentOSPoliciesResourceGroupsResourcesPkgDebSour
 		return osconfig.EmptyOSPolicyAssignmentOSPoliciesResourceGroupsResourcesPkgDebSourceGcs
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return osconfig.EmptyOSPolicyAssignmentOSPoliciesResourceGroupsResourcesPkgDebSourceGcs
 	}
 	obj := objArr[0].(map[string]interface{})
@@ -2507,7 +2508,7 @@ func expandOsConfigOsPolicyAssignmentOSPoliciesResourceGroupsResourcesPkgDebSour
 		return osconfig.EmptyOSPolicyAssignmentOSPoliciesResourceGroupsResourcesPkgDebSourceRemote
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return osconfig.EmptyOSPolicyAssignmentOSPoliciesResourceGroupsResourcesPkgDebSourceRemote
 	}
 	obj := objArr[0].(map[string]interface{})
@@ -2535,7 +2536,7 @@ func expandOsConfigOsPolicyAssignmentOSPoliciesResourceGroupsResourcesPkgGooget(
 		return osconfig.EmptyOSPolicyAssignmentOSPoliciesResourceGroupsResourcesPkgGooget
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return osconfig.EmptyOSPolicyAssignmentOSPoliciesResourceGroupsResourcesPkgGooget
 	}
 	obj := objArr[0].(map[string]interface{})
@@ -2561,7 +2562,7 @@ func expandOsConfigOsPolicyAssignmentOSPoliciesResourceGroupsResourcesPkgMsi(o i
 		return osconfig.EmptyOSPolicyAssignmentOSPoliciesResourceGroupsResourcesPkgMsi
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return osconfig.EmptyOSPolicyAssignmentOSPoliciesResourceGroupsResourcesPkgMsi
 	}
 	obj := objArr[0].(map[string]interface{})
@@ -2589,7 +2590,7 @@ func expandOsConfigOsPolicyAssignmentOSPoliciesResourceGroupsResourcesPkgMsiSour
 		return osconfig.EmptyOSPolicyAssignmentOSPoliciesResourceGroupsResourcesPkgMsiSource
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return osconfig.EmptyOSPolicyAssignmentOSPoliciesResourceGroupsResourcesPkgMsiSource
 	}
 	obj := objArr[0].(map[string]interface{})
@@ -2621,7 +2622,7 @@ func expandOsConfigOsPolicyAssignmentOSPoliciesResourceGroupsResourcesPkgMsiSour
 		return osconfig.EmptyOSPolicyAssignmentOSPoliciesResourceGroupsResourcesPkgMsiSourceGcs
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return osconfig.EmptyOSPolicyAssignmentOSPoliciesResourceGroupsResourcesPkgMsiSourceGcs
 	}
 	obj := objArr[0].(map[string]interface{})
@@ -2651,7 +2652,7 @@ func expandOsConfigOsPolicyAssignmentOSPoliciesResourceGroupsResourcesPkgMsiSour
 		return osconfig.EmptyOSPolicyAssignmentOSPoliciesResourceGroupsResourcesPkgMsiSourceRemote
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return osconfig.EmptyOSPolicyAssignmentOSPoliciesResourceGroupsResourcesPkgMsiSourceRemote
 	}
 	obj := objArr[0].(map[string]interface{})
@@ -2679,7 +2680,7 @@ func expandOsConfigOsPolicyAssignmentOSPoliciesResourceGroupsResourcesPkgRpm(o i
 		return osconfig.EmptyOSPolicyAssignmentOSPoliciesResourceGroupsResourcesPkgRpm
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return osconfig.EmptyOSPolicyAssignmentOSPoliciesResourceGroupsResourcesPkgRpm
 	}
 	obj := objArr[0].(map[string]interface{})
@@ -2707,7 +2708,7 @@ func expandOsConfigOsPolicyAssignmentOSPoliciesResourceGroupsResourcesPkgRpmSour
 		return osconfig.EmptyOSPolicyAssignmentOSPoliciesResourceGroupsResourcesPkgRpmSource
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return osconfig.EmptyOSPolicyAssignmentOSPoliciesResourceGroupsResourcesPkgRpmSource
 	}
 	obj := objArr[0].(map[string]interface{})
@@ -2739,7 +2740,7 @@ func expandOsConfigOsPolicyAssignmentOSPoliciesResourceGroupsResourcesPkgRpmSour
 		return osconfig.EmptyOSPolicyAssignmentOSPoliciesResourceGroupsResourcesPkgRpmSourceGcs
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return osconfig.EmptyOSPolicyAssignmentOSPoliciesResourceGroupsResourcesPkgRpmSourceGcs
 	}
 	obj := objArr[0].(map[string]interface{})
@@ -2769,7 +2770,7 @@ func expandOsConfigOsPolicyAssignmentOSPoliciesResourceGroupsResourcesPkgRpmSour
 		return osconfig.EmptyOSPolicyAssignmentOSPoliciesResourceGroupsResourcesPkgRpmSourceRemote
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return osconfig.EmptyOSPolicyAssignmentOSPoliciesResourceGroupsResourcesPkgRpmSourceRemote
 	}
 	obj := objArr[0].(map[string]interface{})
@@ -2797,7 +2798,7 @@ func expandOsConfigOsPolicyAssignmentOSPoliciesResourceGroupsResourcesPkgYum(o i
 		return osconfig.EmptyOSPolicyAssignmentOSPoliciesResourceGroupsResourcesPkgYum
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return osconfig.EmptyOSPolicyAssignmentOSPoliciesResourceGroupsResourcesPkgYum
 	}
 	obj := objArr[0].(map[string]interface{})
@@ -2823,7 +2824,7 @@ func expandOsConfigOsPolicyAssignmentOSPoliciesResourceGroupsResourcesPkgZypper(
 		return osconfig.EmptyOSPolicyAssignmentOSPoliciesResourceGroupsResourcesPkgZypper
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return osconfig.EmptyOSPolicyAssignmentOSPoliciesResourceGroupsResourcesPkgZypper
 	}
 	obj := objArr[0].(map[string]interface{})
@@ -2849,7 +2850,7 @@ func expandOsConfigOsPolicyAssignmentOSPoliciesResourceGroupsResourcesRepository
 		return osconfig.EmptyOSPolicyAssignmentOSPoliciesResourceGroupsResourcesRepository
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return osconfig.EmptyOSPolicyAssignmentOSPoliciesResourceGroupsResourcesRepository
 	}
 	obj := objArr[0].(map[string]interface{})
@@ -2881,7 +2882,7 @@ func expandOsConfigOsPolicyAssignmentOSPoliciesResourceGroupsResourcesRepository
 		return osconfig.EmptyOSPolicyAssignmentOSPoliciesResourceGroupsResourcesRepositoryApt
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return osconfig.EmptyOSPolicyAssignmentOSPoliciesResourceGroupsResourcesRepositoryApt
 	}
 	obj := objArr[0].(map[string]interface{})
@@ -2915,7 +2916,7 @@ func expandOsConfigOsPolicyAssignmentOSPoliciesResourceGroupsResourcesRepository
 		return osconfig.EmptyOSPolicyAssignmentOSPoliciesResourceGroupsResourcesRepositoryGoo
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return osconfig.EmptyOSPolicyAssignmentOSPoliciesResourceGroupsResourcesRepositoryGoo
 	}
 	obj := objArr[0].(map[string]interface{})
@@ -2943,7 +2944,7 @@ func expandOsConfigOsPolicyAssignmentOSPoliciesResourceGroupsResourcesRepository
 		return osconfig.EmptyOSPolicyAssignmentOSPoliciesResourceGroupsResourcesRepositoryYum
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return osconfig.EmptyOSPolicyAssignmentOSPoliciesResourceGroupsResourcesRepositoryYum
 	}
 	obj := objArr[0].(map[string]interface{})
@@ -2975,7 +2976,7 @@ func expandOsConfigOsPolicyAssignmentOSPoliciesResourceGroupsResourcesRepository
 		return osconfig.EmptyOSPolicyAssignmentOSPoliciesResourceGroupsResourcesRepositoryZypper
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return osconfig.EmptyOSPolicyAssignmentOSPoliciesResourceGroupsResourcesRepositoryZypper
 	}
 	obj := objArr[0].(map[string]interface{})
@@ -3007,7 +3008,7 @@ func expandOsConfigOsPolicyAssignmentOSPoliciesResourceGroupsInventoryFiltersArr
 	}
 
 	objs := o.([]interface{})
-	if len(objs) == 0 {
+	if len(objs) == 0 || objs[0] == nil {
 		return make([]osconfig.OSPolicyAssignmentOSPoliciesResourceGroupsInventoryFilters, 0)
 	}
 
@@ -3064,7 +3065,7 @@ func expandOsConfigOsPolicyAssignmentRollout(o interface{}) *osconfig.OSPolicyAs
 		return osconfig.EmptyOSPolicyAssignmentRollout
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return osconfig.EmptyOSPolicyAssignmentRollout
 	}
 	obj := objArr[0].(map[string]interface{})
@@ -3092,7 +3093,7 @@ func expandOsConfigOsPolicyAssignmentRolloutDisruptionBudget(o interface{}) *osc
 		return osconfig.EmptyOSPolicyAssignmentRolloutDisruptionBudget
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return osconfig.EmptyOSPolicyAssignmentRolloutDisruptionBudget
 	}
 	obj := objArr[0].(map[string]interface{})

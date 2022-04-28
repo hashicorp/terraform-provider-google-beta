@@ -53,6 +53,13 @@ func resourceComputeSecurityPolicy() *schema.Resource {
 				Description: `The project in which the resource belongs. If it is not provided, the provider project is used.`,
 			},
 
+			"type": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Computed:    true,
+				Description: `The type indicates the intended use of the security policy. CLOUD_ARMOR - Cloud Armor backend security policies can be configured to filter incoming HTTP requests targeting backend services. They filter requests before they hit the origin servers. CLOUD_ARMOR_EDGE - Cloud Armor edge security policies can be configured to filter incoming HTTP requests targeting backend services (including Cloud CDN-enabled) as well as backend buckets (Cloud Storage). They filter requests before the request is served from Google's cache.`,
+			},
+
 			"rule": {
 				Type:     schema.TypeSet,
 				Optional: true,
@@ -258,6 +265,29 @@ func resourceComputeSecurityPolicy() *schema.Resource {
 								},
 							},
 						},
+
+						"redirect_options": {
+							Type:     schema.TypeList,
+							Optional: true,
+							MaxItems: 1,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"type": {
+										Type:         schema.TypeString,
+										Required:     true,
+										ValidateFunc: validation.StringInSlice([]string{"EXTERNAL_302", "GOOGLE_RECAPTCHA"}, false),
+										Description:  `Type of the redirect action. Available options: EXTERNAL_302: Must specify the corresponding target field in config. GOOGLE_RECAPTCHA: Cannot specify target field in config.`,
+									},
+
+									"target": {
+										Type:        schema.TypeString,
+										Optional:    true,
+										Description: `Target for the redirect action. This is required if the type is EXTERNAL_302 and cannot be specified for GOOGLE_RECAPTCHA.`,
+									},
+								},
+							},
+							Description: `Parameters defining the redirect action. Cannot be specified for any other actions.`,
+						},
 					},
 				},
 				Description: `The set of rules that belong to this policy. There must always be a default rule (rule with priority 2147483647 and match "*"). If no rules are provided when creating a security policy, a default rule with action "allow" will be added.`,
@@ -346,6 +376,11 @@ func resourceComputeSecurityPolicyCreate(d *schema.ResourceData, meta interface{
 		Name:        sp,
 		Description: d.Get("description").(string),
 	}
+
+	if v, ok := d.GetOk("type"); ok {
+		securityPolicy.Type = v.(string)
+	}
+
 	if v, ok := d.GetOk("rule"); ok {
 		securityPolicy.Rules = expandSecurityPolicyRules(v.(*schema.Set).List())
 	}
@@ -405,6 +440,9 @@ func resourceComputeSecurityPolicyRead(d *schema.ResourceData, meta interface{})
 	if err := d.Set("description", securityPolicy.Description); err != nil {
 		return fmt.Errorf("Error setting description: %s", err)
 	}
+	if err := d.Set("type", securityPolicy.Type); err != nil {
+		return fmt.Errorf("Error setting type: %s", err)
+	}
 	if err := d.Set("rule", flattenSecurityPolicyRules(securityPolicy.Rules)); err != nil {
 		return err
 	}
@@ -438,13 +476,21 @@ func resourceComputeSecurityPolicyUpdate(d *schema.ResourceData, meta interface{
 
 	sp := d.Get("name").(string)
 
-	if d.HasChange("description") {
-		securityPolicy := &compute.SecurityPolicy{
-			Description:     d.Get("description").(string),
-			Fingerprint:     d.Get("fingerprint").(string),
-			ForceSendFields: []string{"Description"},
-		}
+	securityPolicy := &compute.SecurityPolicy{
+		Fingerprint: d.Get("fingerprint").(string),
+	}
 
+	if d.HasChange("type") {
+		securityPolicy.Type = d.Get("type").(string)
+		securityPolicy.ForceSendFields = append(securityPolicy.ForceSendFields, "Type")
+	}
+
+	if d.HasChange("description") {
+		securityPolicy.Description = d.Get("description").(string)
+		securityPolicy.ForceSendFields = append(securityPolicy.ForceSendFields, "Description")
+	}
+
+	if len(securityPolicy.ForceSendFields) > 0 {
 		client := config.NewComputeClient(userAgent)
 
 		op, err := client.SecurityPolicies.Patch(project, sp, securityPolicy).Do()
@@ -573,6 +619,7 @@ func expandSecurityPolicyRule(raw interface{}) *compute.SecurityPolicyRule {
 		Preview:          data["preview"].(bool),
 		Match:            expandSecurityPolicyMatch(data["match"].([]interface{})),
 		RateLimitOptions: expandSecurityPolicyRuleRateLimitOptions(data["rate_limit_options"].([]interface{})),
+		RedirectOptions:  expandSecurityPolicyRuleRedirectOptions(data["redirect_options"].([]interface{})),
 		ForceSendFields:  []string{"Description", "Preview"},
 	}
 }
@@ -626,6 +673,7 @@ func flattenSecurityPolicyRules(rules []*compute.SecurityPolicyRule) []map[strin
 			"preview":            rule.Preview,
 			"match":              flattenMatch(rule.Match),
 			"rate_limit_options": flattenSecurityPolicyRuleRateLimitOptions(rule.RateLimitOptions),
+			"redirect_options":   flattenSecurityPolicyRedirectOptions(rule.RedirectOptions),
 		}
 
 		rulesSchema = append(rulesSchema, data)
@@ -730,13 +778,14 @@ func expandSecurityPolicyRuleRateLimitOptions(configured []interface{}) *compute
 
 	data := configured[0].(map[string]interface{})
 	return &compute.SecurityPolicyRuleRateLimitOptions{
-		BanThreshold:       expandThreshold(data["ban_threshold"].([]interface{})),
-		RateLimitThreshold: expandThreshold(data["rate_limit_threshold"].([]interface{})),
-		ExceedAction:       data["exceed_action"].(string),
-		ConformAction:      data["conform_action"].(string),
-		EnforceOnKey:       data["enforce_on_key"].(string),
-		EnforceOnKeyName:   data["enforce_on_key_name"].(string),
-		BanDurationSec:     int64(data["ban_duration_sec"].(int)),
+		BanThreshold:          expandThreshold(data["ban_threshold"].([]interface{})),
+		RateLimitThreshold:    expandThreshold(data["rate_limit_threshold"].([]interface{})),
+		ExceedAction:          data["exceed_action"].(string),
+		ConformAction:         data["conform_action"].(string),
+		EnforceOnKey:          data["enforce_on_key"].(string),
+		EnforceOnKeyName:      data["enforce_on_key_name"].(string),
+		BanDurationSec:        int64(data["ban_duration_sec"].(int)),
+		ExceedRedirectOptions: expandSecurityPolicyRuleRedirectOptions(data["exceed_redirect_options"].([]interface{})),
 	}
 }
 
@@ -758,13 +807,14 @@ func flattenSecurityPolicyRuleRateLimitOptions(conf *compute.SecurityPolicyRuleR
 	}
 
 	data := map[string]interface{}{
-		"ban_threshold":        flattenThreshold(conf.BanThreshold),
-		"rate_limit_threshold": flattenThreshold(conf.RateLimitThreshold),
-		"exceed_action":        conf.ExceedAction,
-		"conform_action":       conf.ConformAction,
-		"enforce_on_key":       conf.EnforceOnKey,
-		"enforce_on_key_name":  conf.EnforceOnKeyName,
-		"ban_duration_sec":     conf.BanDurationSec,
+		"ban_threshold":           flattenThreshold(conf.BanThreshold),
+		"rate_limit_threshold":    flattenThreshold(conf.RateLimitThreshold),
+		"exceed_action":           conf.ExceedAction,
+		"conform_action":          conf.ConformAction,
+		"enforce_on_key":          conf.EnforceOnKey,
+		"enforce_on_key_name":     conf.EnforceOnKeyName,
+		"ban_duration_sec":        conf.BanDurationSec,
+		"exceed_redirect_options": flattenSecurityPolicyRedirectOptions(conf.ExceedRedirectOptions),
 	}
 
 	return []map[string]interface{}{data}
@@ -778,6 +828,31 @@ func flattenThreshold(conf *compute.SecurityPolicyRuleRateLimitOptionsThreshold)
 	data := map[string]interface{}{
 		"count":        conf.Count,
 		"interval_sec": conf.IntervalSec,
+	}
+
+	return []map[string]interface{}{data}
+}
+
+func expandSecurityPolicyRuleRedirectOptions(configured []interface{}) *compute.SecurityPolicyRuleRedirectOptions {
+	if len(configured) == 0 || configured[0] == nil {
+		return nil
+	}
+
+	data := configured[0].(map[string]interface{})
+	return &compute.SecurityPolicyRuleRedirectOptions{
+		Type:   data["type"].(string),
+		Target: data["target"].(string),
+	}
+}
+
+func flattenSecurityPolicyRedirectOptions(conf *compute.SecurityPolicyRuleRedirectOptions) []map[string]interface{} {
+	if conf == nil {
+		return nil
+	}
+
+	data := map[string]interface{}{
+		"type":   conf.Type,
+		"target": conf.Target,
 	}
 
 	return []map[string]interface{}{data}

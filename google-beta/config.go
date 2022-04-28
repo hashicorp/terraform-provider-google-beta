@@ -178,6 +178,7 @@ type Config struct {
 	CloudAssetBasePath           string
 	CloudBuildBasePath           string
 	CloudFunctionsBasePath       string
+	Cloudfunctions2BasePath      string
 	CloudIdentityBasePath        string
 	CloudIotBasePath             string
 	CloudRunBasePath             string
@@ -202,6 +203,7 @@ type Config struct {
 	GameServicesBasePath         string
 	GKEHubBasePath               string
 	HealthcareBasePath           string
+	IAM2BasePath                 string
 	IAMBetaBasePath              string
 	IapBasePath                  string
 	IdentityPlatformBasePath     string
@@ -256,13 +258,15 @@ type Config struct {
 	// dataprocBasePath is implemented in mm
 	AssuredWorkloadsBasePath     string
 	CloudResourceManagerBasePath string
-	EventarcBasePath             string
-	GkeHubBasePath               string
-	ContainerAzureBasePath       string
 	ContainerAwsBasePath         string
+	ContainerAzureBasePath       string
+	EventarcBasePath             string
+	FirebaserulesBasePath        string
+	GkeHubBasePath               string
 	NetworkConnectivityBasePath  string
 	OrgPolicyBasePath            string
 	RecaptchaEnterpriseBasePath  string
+	ApikeysBasePath              string
 	// CloudBuild WorkerPool uses a different endpoint (v1beta1) than any other CloudBuild resources
 	CloudBuildWorkerPoolBasePath string
 }
@@ -284,6 +288,7 @@ const BinaryAuthorizationBasePathKey = "BinaryAuthorization"
 const CloudAssetBasePathKey = "CloudAsset"
 const CloudBuildBasePathKey = "CloudBuild"
 const CloudFunctionsBasePathKey = "CloudFunctions"
+const Cloudfunctions2BasePathKey = "Cloudfunctions2"
 const CloudIdentityBasePathKey = "CloudIdentity"
 const CloudIotBasePathKey = "CloudIot"
 const CloudRunBasePathKey = "CloudRun"
@@ -308,6 +313,7 @@ const FirestoreBasePathKey = "Firestore"
 const GameServicesBasePathKey = "GameServices"
 const GKEHubBasePathKey = "GKEHub"
 const HealthcareBasePathKey = "Healthcare"
+const IAM2BasePathKey = "IAM2"
 const IAMBetaBasePathKey = "IAMBeta"
 const IapBasePathKey = "Iap"
 const IdentityPlatformBasePathKey = "IdentityPlatform"
@@ -375,6 +381,7 @@ var DefaultBasePaths = map[string]string{
 	CloudAssetBasePathKey:           "https://cloudasset.googleapis.com/v1/",
 	CloudBuildBasePathKey:           "https://cloudbuild.googleapis.com/v1/",
 	CloudFunctionsBasePathKey:       "https://cloudfunctions.googleapis.com/v1/",
+	Cloudfunctions2BasePathKey:      "https://cloudfunctions.googleapis.com/v2beta/",
 	CloudIdentityBasePathKey:        "https://cloudidentity.googleapis.com/v1beta1/",
 	CloudIotBasePathKey:             "https://cloudiot.googleapis.com/v1/",
 	CloudRunBasePathKey:             "https://{{location}}-run.googleapis.com/",
@@ -390,7 +397,7 @@ var DefaultBasePaths = map[string]string{
 	DatastoreBasePathKey:            "https://datastore.googleapis.com/v1/",
 	DeploymentManagerBasePathKey:    "https://www.googleapis.com/deploymentmanager/v2/",
 	DialogflowBasePathKey:           "https://dialogflow.googleapis.com/v2/",
-	DialogflowCXBasePathKey:         "https://dialogflow.googleapis.com/v3/",
+	DialogflowCXBasePathKey:         "https://{{location}}-dialogflow.googleapis.com/v3/",
 	DNSBasePathKey:                  "https://dns.googleapis.com/dns/v1beta2/",
 	EssentialContactsBasePathKey:    "https://essentialcontacts.googleapis.com/v1/",
 	FilestoreBasePathKey:            "https://file.googleapis.com/v1beta1/",
@@ -399,6 +406,7 @@ var DefaultBasePaths = map[string]string{
 	GameServicesBasePathKey:         "https://gameservices.googleapis.com/v1beta/",
 	GKEHubBasePathKey:               "https://gkehub.googleapis.com/v1beta1/",
 	HealthcareBasePathKey:           "https://healthcare.googleapis.com/v1beta1/",
+	IAM2BasePathKey:                 "https://iam.googleapis.com/v2beta/",
 	IAMBetaBasePathKey:              "https://iam.googleapis.com/v1beta/",
 	IapBasePathKey:                  "https://iap.googleapis.com/v1/",
 	IdentityPlatformBasePathKey:     "https://identitytoolkit.googleapis.com/v2/",
@@ -1242,6 +1250,7 @@ func ConfigureBasePaths(c *Config) {
 	c.CloudAssetBasePath = DefaultBasePaths[CloudAssetBasePathKey]
 	c.CloudBuildBasePath = DefaultBasePaths[CloudBuildBasePathKey]
 	c.CloudFunctionsBasePath = DefaultBasePaths[CloudFunctionsBasePathKey]
+	c.Cloudfunctions2BasePath = DefaultBasePaths[Cloudfunctions2BasePathKey]
 	c.CloudIdentityBasePath = DefaultBasePaths[CloudIdentityBasePathKey]
 	c.CloudIotBasePath = DefaultBasePaths[CloudIotBasePathKey]
 	c.CloudRunBasePath = DefaultBasePaths[CloudRunBasePathKey]
@@ -1266,6 +1275,7 @@ func ConfigureBasePaths(c *Config) {
 	c.GameServicesBasePath = DefaultBasePaths[GameServicesBasePathKey]
 	c.GKEHubBasePath = DefaultBasePaths[GKEHubBasePathKey]
 	c.HealthcareBasePath = DefaultBasePaths[HealthcareBasePathKey]
+	c.IAM2BasePath = DefaultBasePaths[IAM2BasePathKey]
 	c.IAMBetaBasePath = DefaultBasePaths[IAMBetaBasePathKey]
 	c.IapBasePath = DefaultBasePaths[IapBasePathKey]
 	c.IdentityPlatformBasePath = DefaultBasePaths[IdentityPlatformBasePathKey]

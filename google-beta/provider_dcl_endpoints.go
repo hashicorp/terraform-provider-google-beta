@@ -22,6 +22,15 @@ import (
 // empty string is passed for dcl default since dcl
 // [hardcodes the values](https://github.com/GoogleCloudPlatform/declarative-resource-client-library/blob/main/services/google/eventarc/beta/trigger_internal.go#L96-L103)
 
+var ApikeysEndpointEntryKey = "apikeys_custom_endpoint"
+var ApikeysEndpointEntry = &schema.Schema{
+	Type:     schema.TypeString,
+	Optional: true,
+	DefaultFunc: schema.MultiEnvDefaultFunc([]string{
+		"GOOGLE_APIKEYS_CUSTOM_ENDPOINT",
+	}, ""),
+}
+
 var AssuredWorkloadsEndpointEntryKey = "assured_workloads_custom_endpoint"
 var AssuredWorkloadsEndpointEntry = &schema.Schema{
 	Type:     schema.TypeString,
@@ -85,6 +94,24 @@ var EventarcEndpointEntry = &schema.Schema{
 	}, ""),
 }
 
+var FirebaserulesEndpointEntryKey = "firebaserules_custom_endpoint"
+var FirebaserulesEndpointEntry = &schema.Schema{
+	Type:     schema.TypeString,
+	Optional: true,
+	DefaultFunc: schema.MultiEnvDefaultFunc([]string{
+		"GOOGLE_FIREBASERULES_CUSTOM_ENDPOINT",
+	}, ""),
+}
+
+var LoggingEndpointEntryKey = "logging_custom_endpoint"
+var LoggingEndpointEntry = &schema.Schema{
+	Type:     schema.TypeString,
+	Optional: true,
+	DefaultFunc: schema.MultiEnvDefaultFunc([]string{
+		"GOOGLE_LOGGING_CUSTOM_ENDPOINT",
+	}, ""),
+}
+
 var MonitoringEndpointEntryKey = "monitoring_custom_endpoint"
 var MonitoringEndpointEntry = &schema.Schema{
 	Type:     schema.TypeString,
@@ -140,6 +167,7 @@ var RecaptchaEnterpriseEndpointEntry = &schema.Schema{
 }
 
 //Add new values to config.go.erb config object declaration
+//ApikeysBasePath string
 //AssuredWorkloadsBasePath string
 //CloudBuildWorkerPoolBasePath string
 //CloudResourceManagerBasePath string
@@ -147,6 +175,8 @@ var RecaptchaEnterpriseEndpointEntry = &schema.Schema{
 //ContainerAwsBasePath string
 //ContainerAzureBasePath string
 //EventarcBasePath string
+//FirebaserulesBasePath string
+//LoggingBasePath string
 //MonitoringBasePath string
 //NetworkConnectivityBasePath string
 //OrgPolicyBasePath string
@@ -155,6 +185,7 @@ var RecaptchaEnterpriseEndpointEntry = &schema.Schema{
 //RecaptchaEnterpriseBasePath string
 
 //Add new values to provider.go.erb schema initialization
+// ApikeysEndpointEntryKey:               ApikeysEndpointEntry,
 // AssuredWorkloadsEndpointEntryKey:               AssuredWorkloadsEndpointEntry,
 // CloudBuildWorkerPoolEndpointEntryKey:               CloudBuildWorkerPoolEndpointEntry,
 // CloudResourceManagerEndpointEntryKey:               CloudResourceManagerEndpointEntry,
@@ -162,6 +193,8 @@ var RecaptchaEnterpriseEndpointEntry = &schema.Schema{
 // ContainerAwsEndpointEntryKey:               ContainerAwsEndpointEntry,
 // ContainerAzureEndpointEntryKey:               ContainerAzureEndpointEntry,
 // EventarcEndpointEntryKey:               EventarcEndpointEntry,
+// FirebaserulesEndpointEntryKey:               FirebaserulesEndpointEntry,
+// LoggingEndpointEntryKey:               LoggingEndpointEntry,
 // MonitoringEndpointEntryKey:               MonitoringEndpointEntry,
 // NetworkConnectivityEndpointEntryKey:               NetworkConnectivityEndpointEntry,
 // OrgPolicyEndpointEntryKey:               OrgPolicyEndpointEntry,
@@ -170,6 +203,7 @@ var RecaptchaEnterpriseEndpointEntry = &schema.Schema{
 // RecaptchaEnterpriseEndpointEntryKey:               RecaptchaEnterpriseEndpointEntry,
 
 //Add new values to provider.go.erb - provider block read
+// config.ApikeysBasePath = d.Get(ApikeysEndpointEntryKey).(string)
 // config.AssuredWorkloadsBasePath = d.Get(AssuredWorkloadsEndpointEntryKey).(string)
 // config.CloudBuildWorkerPoolBasePath = d.Get(CloudBuildWorkerPoolEndpointEntryKey).(string)
 // config.CloudResourceManagerBasePath = d.Get(CloudResourceManagerEndpointEntryKey).(string)
@@ -177,6 +211,8 @@ var RecaptchaEnterpriseEndpointEntry = &schema.Schema{
 // config.ContainerAwsBasePath = d.Get(ContainerAwsEndpointEntryKey).(string)
 // config.ContainerAzureBasePath = d.Get(ContainerAzureEndpointEntryKey).(string)
 // config.EventarcBasePath = d.Get(EventarcEndpointEntryKey).(string)
+// config.FirebaserulesBasePath = d.Get(FirebaserulesEndpointEntryKey).(string)
+// config.LoggingBasePath = d.Get(LoggingEndpointEntryKey).(string)
 // config.MonitoringBasePath = d.Get(MonitoringEndpointEntryKey).(string)
 // config.NetworkConnectivityBasePath = d.Get(NetworkConnectivityEndpointEntryKey).(string)
 // config.OrgPolicyBasePath = d.Get(OrgPolicyEndpointEntryKey).(string)

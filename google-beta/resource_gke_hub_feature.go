@@ -430,6 +430,7 @@ func resourceGkeHubFeatureDelete(d *schema.ResourceData, meta interface{}) error
 
 func resourceGkeHubFeatureImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	config := meta.(*Config)
+
 	if err := parseImportId([]string{
 		"projects/(?P<project>[^/]+)/locations/(?P<location>[^/]+)/features/(?P<name>[^/]+)",
 		"(?P<project>[^/]+)/(?P<location>[^/]+)/(?P<name>[^/]+)",
@@ -453,7 +454,7 @@ func expandGkeHubFeatureSpec(o interface{}) *gkehub.FeatureSpec {
 		return gkehub.EmptyFeatureSpec
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return gkehub.EmptyFeatureSpec
 	}
 	obj := objArr[0].(map[string]interface{})
@@ -479,7 +480,7 @@ func expandGkeHubFeatureSpecMulticlusteringress(o interface{}) *gkehub.FeatureSp
 		return gkehub.EmptyFeatureSpecMulticlusteringress
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return gkehub.EmptyFeatureSpecMulticlusteringress
 	}
 	obj := objArr[0].(map[string]interface{})

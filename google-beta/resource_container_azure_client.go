@@ -47,7 +47,7 @@ func resourceContainerAzureClient() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
-				Description: "Required. The Azure Active Directory Application ID.",
+				Description: "The Azure Active Directory Application ID.",
 			},
 
 			"location": {
@@ -68,7 +68,7 @@ func resourceContainerAzureClient() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
-				Description: "Required. The Azure Active Directory Tenant ID.",
+				Description: "The Azure Active Directory Tenant ID.",
 			},
 
 			"project": {
@@ -260,6 +260,7 @@ func resourceContainerAzureClientDelete(d *schema.ResourceData, meta interface{}
 
 func resourceContainerAzureClientImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	config := meta.(*Config)
+
 	if err := parseImportId([]string{
 		"projects/(?P<project>[^/]+)/locations/(?P<location>[^/]+)/azureClients/(?P<name>[^/]+)",
 		"(?P<project>[^/]+)/(?P<location>[^/]+)/(?P<name>[^/]+)",

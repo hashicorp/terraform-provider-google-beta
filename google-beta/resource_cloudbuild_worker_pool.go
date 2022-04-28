@@ -163,6 +163,7 @@ func CloudbuildWorkerPoolWorkerConfigSchema() *schema.Resource {
 
 			"no_external_ip": {
 				Type:        schema.TypeBool,
+				Computed:    true,
 				Optional:    true,
 				Description: "If true, workers are created without any public address, which prevents network egress to public IPs.",
 			},
@@ -395,6 +396,7 @@ func resourceCloudbuildWorkerPoolDelete(d *schema.ResourceData, meta interface{}
 
 func resourceCloudbuildWorkerPoolImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	config := meta.(*Config)
+
 	if err := parseImportId([]string{
 		"projects/(?P<project>[^/]+)/locations/(?P<location>[^/]+)/workerPools/(?P<name>[^/]+)",
 		"(?P<project>[^/]+)/(?P<location>[^/]+)/(?P<name>[^/]+)",
@@ -418,7 +420,7 @@ func expandCloudbuildWorkerPoolNetworkConfig(o interface{}) *cloudbuild.WorkerPo
 		return cloudbuild.EmptyWorkerPoolNetworkConfig
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return cloudbuild.EmptyWorkerPoolNetworkConfig
 	}
 	obj := objArr[0].(map[string]interface{})
@@ -444,7 +446,7 @@ func expandCloudbuildWorkerPoolWorkerConfig(o interface{}) *cloudbuild.WorkerPoo
 		return nil
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return nil
 	}
 	obj := objArr[0].(map[string]interface{})

@@ -16,8 +16,9 @@
 subcategory: "Eventarc"
 layout: "google"
 page_title: "Google: google_eventarc_trigger"
+sidebar_current: "docs-google-eventarc-trigger"
 description: |-
-The Eventarc Trigger resource
+  The Eventarc Trigger resource
 ---
 
 # google_eventarc_trigger
@@ -106,11 +107,23 @@ The `destination` block supports:
   (Optional)
   Cloud Run fully-managed service that receives the events. The service should be running in the same project of the trigger.
     
+* `gke` -
+  (Optional)
+  A GKE service capable of receiving events. The service should be running in the same project as the trigger.
+    
+* `workflow` -
+  (Optional)
+  The resource name of the Workflow whose Executions are triggered by the events. The Workflow resource should be deployed in the same project as the trigger. Format: `projects/{project}/locations/{location}/workflows/{workflow}`
+    
 The `matching_criteria` block supports:
     
 * `attribute` -
   (Required)
   Required. The name of a CloudEvents attribute. Currently, only a subset of attributes are supported for filtering. All triggers MUST provide a filter for the 'type' attribute.
+    
+* `operator` -
+  (Optional)
+  Optional. The operator used for matching the events with the value of the filter. If not specified, only events that have an exact key-value pair specified in the filter are matched. The only allowed value is `match-path-pattern`.
     
 * `value` -
   (Required)
@@ -128,7 +141,7 @@ The `matching_criteria` block supports:
   
 * `service_account` -
   (Optional)
-  Optional. The IAM service account email associated with the trigger. The service account represents the identity of the trigger. The principal who calls this API must have `iam.serviceAccounts.actAs` permission in the service account. See https://cloud.google.com/iam/docs/understanding-service-accounts?hl=en#sa_common for more information. For Cloud Run destinations, this service account is used to generate identity tokens when invoking the service. See https://cloud.google.com/run/docs/triggering/pubsub-push#create-service-account for information on how to invoke authenticated Cloud Run services. In order to create Audit Log triggers, the service account should also have `roles/eventarc.eventReceiver` IAM role.
+  Optional. The IAM service account email associated with the trigger. The service account represents the identity of the trigger. The principal who calls this API must have `iam.serviceAccounts.actAs` permission in the service account. See https://cloud.google.com/iam/docs/understanding-service-accounts#sa_common for more information. For Cloud Run destinations, this service account is used to generate identity tokens when invoking the service. See https://cloud.google.com/run/docs/triggering/pubsub-push#create-service-account for information on how to invoke authenticated Cloud Run services. In order to create Audit Log triggers, the service account should also have `roles/eventarc.eventReceiver` IAM role.
   
 * `transport` -
   (Optional)
@@ -149,6 +162,28 @@ The `cloud_run_service` block supports:
 * `service` -
   (Required)
   Required. The name of the Cloud Run service being addressed. See https://cloud.google.com/run/docs/reference/rest/v1/namespaces.services. Only services located in the same project of the trigger object can be addressed.
+    
+The `gke` block supports:
+    
+* `cluster` -
+  (Required)
+  Required. The name of the cluster the GKE service is running in. The cluster must be running in the same project as the trigger being created.
+    
+* `location` -
+  (Required)
+  Required. The name of the Google Compute Engine in which the cluster resides, which can either be compute zone (for example, us-central1-a) for the zonal clusters or region (for example, us-central1) for regional clusters.
+    
+* `namespace` -
+  (Required)
+  Required. The namespace the GKE service is running in.
+    
+* `path` -
+  (Optional)
+  Optional. The relative path on the GKE service the events should be sent to. The value must conform to the definition of a URI path segment (section 3.3 of RFC2396). Examples: "/route", "route", "route/subroute".
+    
+* `service` -
+  (Required)
+  Required. Name of the GKE service.
     
 The `transport` block supports:
     

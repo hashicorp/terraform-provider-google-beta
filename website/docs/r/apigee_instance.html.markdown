@@ -64,7 +64,7 @@ resource "google_apigee_organization" "apigee_org" {
 
 resource "google_apigee_instance" "apigee_instance" {
   name     = "tf-test%{random_suffix}"
-  location = "us-central1-b"
+  location = "us-central1"
   org_id   = google_apigee_organization.apigee_org.id
 }
 ```
@@ -101,7 +101,7 @@ resource "google_apigee_organization" "apigee_org" {
 
 resource "google_apigee_instance" "apigee_instance" {
   name     = "tf-test%{random_suffix}"
-  location = "us-central1-b"
+  location = "us-central1"
   org_id   = google_apigee_organization.apigee_org.id
   peering_cidr_range = "SLASH_22"
 }
@@ -139,7 +139,7 @@ resource "google_apigee_organization" "apigee_org" {
 
 resource "google_apigee_instance" "apigee_instance" {
   name     = "tf-test%{random_suffix}"
-  location = "us-central1-b"
+  location = "us-central1"
   org_id   = google_apigee_organization.apigee_org.id
   ip_range = "10.87.8.0/22"
 }
@@ -213,8 +213,8 @@ resource "google_apigee_organization" "apigee_org" {
 
 resource "google_apigee_instance" "apigee_instance" {
   name                     = "tf-test%{random_suffix}"
-  location                 = "us-central1-b"
-  description	             = "Terraform-managed Apigee Runtime Instance"
+  location                 = "us-central1"
+  description              = "Terraform-managed Apigee Runtime Instance"
   display_name             = "tf-test%{random_suffix}"
   org_id                   = google_apigee_organization.apigee_org.id
   disk_encryption_key_name = google_kms_crypto_key.apigee_key.id
@@ -232,9 +232,7 @@ The following arguments are supported:
 
 * `location` -
   (Required)
-  Compute Engine location where the instance resides. For trial organization
-  subscriptions, the location must be a Compute Engine zone. For paid organization
-  subscriptions, it should correspond to a Compute Engine region.
+  Required. Compute Engine location where the instance resides.
 
 * `org_id` -
   (Required)
@@ -273,6 +271,13 @@ The following arguments are supported:
   Customer Managed Encryption Key (CMEK) used for disk and volume encryption. Required for Apigee paid subscriptions only.
   Use the following format: `projects/([^/]+)/locations/([^/]+)/keyRings/([^/]+)/cryptoKeys/([^/]+)`
 
+* `consumer_accept_list` -
+  (Optional)
+  Optional. Customer accept list represents the list of projects (id/number) on customer
+  side that can privately connect to the service attachment. It is an optional field
+  which the customers can provide during the instance creation. By default, the customer
+  project associated with the Apigee organization will be included to the list.
+
 
 ## Attributes Reference
 
@@ -285,6 +290,11 @@ In addition to the arguments listed above, the following computed attributes are
 
 * `port` -
   Output only. Port number of the exposed Apigee endpoint.
+
+* `service_attachment` -
+  Output only. Resource name of the service attachment created for the instance in
+  the format: projects/*/regions/*/serviceAttachments/* Apigee customers can privately
+  forward traffic to this service attachment using the PSC endpoints.
 
 
 ## Timeouts

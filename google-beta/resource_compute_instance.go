@@ -315,11 +315,10 @@ func resourceComputeInstance() *schema.Resource {
 									},
 
 									"network_tier": {
-										Type:         schema.TypeString,
-										Optional:     true,
-										Computed:     true,
-										ValidateFunc: validation.StringInSlice([]string{"PREMIUM", "STANDARD"}, false),
-										Description:  `The networking tier used for configuring this instance. One of PREMIUM or STANDARD.`,
+										Type:        schema.TypeString,
+										Optional:    true,
+										Computed:    true,
+										Description: `The networking tier used for configuring this instance. One of PREMIUM or STANDARD.`,
 									},
 
 									"public_ptr_domain_name": {
@@ -373,10 +372,9 @@ func resourceComputeInstance() *schema.Resource {
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"network_tier": {
-										Type:         schema.TypeString,
-										Required:     true,
-										ValidateFunc: validation.StringInSlice([]string{"PREMIUM"}, false),
-										Description:  `The service-level to be provided for IPv6 traffic when the subnet has an external subnet. Only PREMIUM tier is valid for IPv6`,
+										Type:        schema.TypeString,
+										Required:    true,
+										Description: `The service-level to be provided for IPv6 traffic when the subnet has an external subnet. Only PREMIUM tier is valid for IPv6`,
 									},
 									"public_ptr_domain_name": {
 										Type:        schema.TypeString,
@@ -1421,7 +1419,7 @@ func resourceComputeInstanceUpdate(d *schema.ResourceData, meta interface{}) err
 	// Change back to getInstance(config, d) once updating alias ips is GA.
 	instance, err := config.NewComputeClient(userAgent).Instances.Get(project, zone, d.Get("name").(string)).Do()
 	if err != nil {
-		return handleNotFoundError(err, d, fmt.Sprintf("Instance %s", instance.Name))
+		return handleNotFoundError(err, d, fmt.Sprintf("Instance %s", d.Get("name").(string)))
 	}
 
 	// Enable partial mode for the resource since it is possible

@@ -395,6 +395,7 @@ func resourceComputeFirewallPolicyRuleDelete(d *schema.ResourceData, meta interf
 
 func resourceComputeFirewallPolicyRuleImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	config := meta.(*Config)
+
 	if err := parseImportId([]string{
 		"locations/global/firewallPolicies/(?P<firewall_policy>[^/]+)/rules/(?P<priority>[^/]+)",
 		"(?P<firewall_policy>[^/]+)/(?P<priority>[^/]+)",
@@ -417,7 +418,7 @@ func expandComputeFirewallPolicyRuleMatch(o interface{}) *compute.FirewallPolicy
 		return compute.EmptyFirewallPolicyRuleMatch
 	}
 	objArr := o.([]interface{})
-	if len(objArr) == 0 {
+	if len(objArr) == 0 || objArr[0] == nil {
 		return compute.EmptyFirewallPolicyRuleMatch
 	}
 	obj := objArr[0].(map[string]interface{})
@@ -447,7 +448,7 @@ func expandComputeFirewallPolicyRuleMatchLayer4ConfigsArray(o interface{}) []com
 	}
 
 	objs := o.([]interface{})
-	if len(objs) == 0 {
+	if len(objs) == 0 || objs[0] == nil {
 		return make([]compute.FirewallPolicyRuleMatchLayer4Configs, 0)
 	}
 

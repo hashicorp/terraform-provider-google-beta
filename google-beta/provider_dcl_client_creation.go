@@ -19,7 +19,9 @@ import (
 	dcl "github.com/GoogleCloudPlatform/declarative-resource-client-library/dcl"
 	"time"
 
+	apikeys "github.com/GoogleCloudPlatform/declarative-resource-client-library/services/google/apikeys/beta"
 	assuredworkloads "github.com/GoogleCloudPlatform/declarative-resource-client-library/services/google/assuredworkloads/beta"
+	bigqueryreservation "github.com/GoogleCloudPlatform/declarative-resource-client-library/services/google/bigqueryreservation/beta"
 	cloudbuild "github.com/GoogleCloudPlatform/declarative-resource-client-library/services/google/cloudbuild/beta"
 	cloudresourcemanager "github.com/GoogleCloudPlatform/declarative-resource-client-library/services/google/cloudresourcemanager/beta"
 	compute "github.com/GoogleCloudPlatform/declarative-resource-client-library/services/google/compute/beta"
@@ -27,7 +29,9 @@ import (
 	containerazure "github.com/GoogleCloudPlatform/declarative-resource-client-library/services/google/containerazure/beta"
 	dataproc "github.com/GoogleCloudPlatform/declarative-resource-client-library/services/google/dataproc/beta"
 	eventarc "github.com/GoogleCloudPlatform/declarative-resource-client-library/services/google/eventarc/beta"
+	firebaserules "github.com/GoogleCloudPlatform/declarative-resource-client-library/services/google/firebaserules/beta"
 	gkehub "github.com/GoogleCloudPlatform/declarative-resource-client-library/services/google/gkehub/beta"
+	logging "github.com/GoogleCloudPlatform/declarative-resource-client-library/services/google/logging/beta"
 	monitoring "github.com/GoogleCloudPlatform/declarative-resource-client-library/services/google/monitoring/beta"
 	networkconnectivity "github.com/GoogleCloudPlatform/declarative-resource-client-library/services/google/networkconnectivity/beta"
 	orgpolicy "github.com/GoogleCloudPlatform/declarative-resource-client-library/services/google/orgpolicy/beta"
@@ -35,6 +39,29 @@ import (
 	privateca "github.com/GoogleCloudPlatform/declarative-resource-client-library/services/google/privateca/beta"
 	recaptchaenterprise "github.com/GoogleCloudPlatform/declarative-resource-client-library/services/google/recaptchaenterprise/beta"
 )
+
+func NewDCLApikeysClient(config *Config, userAgent, billingProject string, timeout time.Duration) *apikeys.Client {
+	configOptions := []dcl.ConfigOption{
+		dcl.WithHTTPClient(config.client),
+		dcl.WithUserAgent(userAgent),
+		dcl.WithLogger(dclLogger{}),
+		dcl.WithBasePath(config.ApikeysBasePath),
+	}
+
+	if timeout != 0 {
+		configOptions = append(configOptions, dcl.WithTimeout(timeout))
+	}
+
+	if config.UserProjectOverride {
+		configOptions = append(configOptions, dcl.WithUserProjectOverride())
+		if billingProject != "" {
+			configOptions = append(configOptions, dcl.WithBillingProject(billingProject))
+		}
+	}
+
+	dclConfig := dcl.NewConfig(configOptions...)
+	return apikeys.NewClient(dclConfig)
+}
 
 func NewDCLAssuredWorkloadsClient(config *Config, userAgent, billingProject string, timeout time.Duration) *assuredworkloads.Client {
 	configOptions := []dcl.ConfigOption{
@@ -57,6 +84,29 @@ func NewDCLAssuredWorkloadsClient(config *Config, userAgent, billingProject stri
 
 	dclConfig := dcl.NewConfig(configOptions...)
 	return assuredworkloads.NewClient(dclConfig)
+}
+
+func NewDCLBigqueryReservationClient(config *Config, userAgent, billingProject string, timeout time.Duration) *bigqueryreservation.Client {
+	configOptions := []dcl.ConfigOption{
+		dcl.WithHTTPClient(config.client),
+		dcl.WithUserAgent(userAgent),
+		dcl.WithLogger(dclLogger{}),
+		dcl.WithBasePath(config.BigqueryReservationBasePath),
+	}
+
+	if timeout != 0 {
+		configOptions = append(configOptions, dcl.WithTimeout(timeout))
+	}
+
+	if config.UserProjectOverride {
+		configOptions = append(configOptions, dcl.WithUserProjectOverride())
+		if billingProject != "" {
+			configOptions = append(configOptions, dcl.WithBillingProject(billingProject))
+		}
+	}
+
+	dclConfig := dcl.NewConfig(configOptions...)
+	return bigqueryreservation.NewClient(dclConfig)
 }
 
 func NewDCLCloudbuildClient(config *Config, userAgent, billingProject string, timeout time.Duration) *cloudbuild.Client {
@@ -220,6 +270,29 @@ func NewDCLEventarcClient(config *Config, userAgent, billingProject string, time
 	return eventarc.NewClient(dclConfig)
 }
 
+func NewDCLFirebaserulesClient(config *Config, userAgent, billingProject string, timeout time.Duration) *firebaserules.Client {
+	configOptions := []dcl.ConfigOption{
+		dcl.WithHTTPClient(config.client),
+		dcl.WithUserAgent(userAgent),
+		dcl.WithLogger(dclLogger{}),
+		dcl.WithBasePath(config.FirebaserulesBasePath),
+	}
+
+	if timeout != 0 {
+		configOptions = append(configOptions, dcl.WithTimeout(timeout))
+	}
+
+	if config.UserProjectOverride {
+		configOptions = append(configOptions, dcl.WithUserProjectOverride())
+		if billingProject != "" {
+			configOptions = append(configOptions, dcl.WithBillingProject(billingProject))
+		}
+	}
+
+	dclConfig := dcl.NewConfig(configOptions...)
+	return firebaserules.NewClient(dclConfig)
+}
+
 func NewDCLGkeHubClient(config *Config, userAgent, billingProject string, timeout time.Duration) *gkehub.Client {
 	configOptions := []dcl.ConfigOption{
 		dcl.WithHTTPClient(config.client),
@@ -241,6 +314,29 @@ func NewDCLGkeHubClient(config *Config, userAgent, billingProject string, timeou
 
 	dclConfig := dcl.NewConfig(configOptions...)
 	return gkehub.NewClient(dclConfig)
+}
+
+func NewDCLLoggingClient(config *Config, userAgent, billingProject string, timeout time.Duration) *logging.Client {
+	configOptions := []dcl.ConfigOption{
+		dcl.WithHTTPClient(config.client),
+		dcl.WithUserAgent(userAgent),
+		dcl.WithLogger(dclLogger{}),
+		dcl.WithBasePath(config.LoggingBasePath),
+	}
+
+	if timeout != 0 {
+		configOptions = append(configOptions, dcl.WithTimeout(timeout))
+	}
+
+	if config.UserProjectOverride {
+		configOptions = append(configOptions, dcl.WithUserProjectOverride())
+		if billingProject != "" {
+			configOptions = append(configOptions, dcl.WithBillingProject(billingProject))
+		}
+	}
+
+	dclConfig := dcl.NewConfig(configOptions...)
+	return logging.NewClient(dclConfig)
 }
 
 func NewDCLMonitoringClient(config *Config, userAgent, billingProject string, timeout time.Duration) *monitoring.Client {
