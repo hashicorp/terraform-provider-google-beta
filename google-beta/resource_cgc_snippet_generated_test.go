@@ -826,3 +826,43 @@ output "object_metadata" {
 }
 `, context)
 }
+
+func TestAccCGCSnippet_storageMakeDataPublicExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"random_suffix": randString(t, 10),
+	}
+
+	vcrTest(t, resource.TestCase{
+		PreCheck:  func() { testAccPreCheck(t) },
+		Providers: testAccProvidersOiCS,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCGCSnippet_storageMakeDataPublicExample(context),
+			},
+			{
+				ResourceName:      "google_storage_bucket.default",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
+func testAccCGCSnippet_storageMakeDataPublicExample(context map[string]interface{}) string {
+	return Nprintf(`
+resource "google_storage_bucket" "default" {
+    name = "tf-test-example-bucket-name%{random_suffix}"
+    location = "US"
+    uniform_bucket_level_access = true
+}
+
+# Make bucket public
+resource "google_storage_bucket_iam_member" "member" {
+  bucket = google_storage_bucket.default.name
+  role   = "roles/storage.objectViewer"
+  member = "allUsers"
+}
+`, context)
+}
