@@ -1,4 +1,24 @@
 ## 4.20.0 (Unreleased)
+
+IMPROVEMENTS:
+* cloudfunctions: added CMEK support for Cloud Functions ([#4272](https://github.com/hashicorp/terraform-provider-google-beta/pull/4272))
+* compute: added `service_directory_registrations` to `google_compute_forwarding_rule` resource ([#4276](https://github.com/hashicorp/terraform-provider-google-beta/pull/4276))
+* compute: removed validation checking against a fixed set of persistent disk types ([#4273](https://github.com/hashicorp/terraform-provider-google-beta/pull/4273))
+* container: removed validation checking against a fixed set of persistent disk types ([#4273](https://github.com/hashicorp/terraform-provider-google-beta/pull/4273))
+* containeraws: added `image_type` and `instance_placement` to `google_container_aws_node_pool` resource (beta) ([#4276](https://github.com/hashicorp/terraform-provider-google-beta/pull/4276))
+* containeraws: added `instance_placement` and `logging_config` to `google_container_aws_cluster` resource (beta) ([#4276](https://github.com/hashicorp/terraform-provider-google-beta/pull/4276))
+* containeraws: added `proxy_config` to `google_container_aws_node_pool` resource ([#4276](https://github.com/hashicorp/terraform-provider-google-beta/pull/4276))
+* containerazure: added `image_type` to `google_container_azure_node_pool` resource (beta) ([#4276](https://github.com/hashicorp/terraform-provider-google-beta/pull/4276))
+* containerazure: added `logging_config` to `google_container_azure_cluster` resource (beta) ([#4276](https://github.com/hashicorp/terraform-provider-google-beta/pull/4276))
+* containerazure: added `proxy_config` to `google_container_azure_node_pool` resource ([#4276](https://github.com/hashicorp/terraform-provider-google-beta/pull/4276))
+* dataproc: removed validation checking against a fixed set of persistent disk types ([#4273](https://github.com/hashicorp/terraform-provider-google-beta/pull/4273))
+* dns: added `routing_policy` to `google_dns_record_set` resource ([#4265](https://github.com/hashicorp/terraform-provider-google-beta/pull/4265))
+
+BUG FIXES:
+* cloudfunctions: fixed an issue where `google_cloudfunctions2_function` would not update ([#4278](https://github.com/hashicorp/terraform-provider-google-beta/pull/4278))
+* compute: fixed a crash when `compute.instance` is not found ([#4262](https://github.com/hashicorp/terraform-provider-google-beta/pull/4262))
+* provider: removed printing credentials to the console if malformed JSON is given ([#4266](https://github.com/hashicorp/terraform-provider-google-beta/pull/4266))
+
 ## 4.19.0 (April 25, 2022)
 
 IMPROVEMENTS:
