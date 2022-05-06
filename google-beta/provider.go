@@ -782,6 +782,7 @@ func Provider() *schema.Provider {
 
 			// dcl
 			AssuredWorkloadsEndpointEntryKey:             AssuredWorkloadsEndpointEntry,
+			ClouddeployEndpointEntryKey:                  ClouddeployEndpointEntry,
 			CloudResourceManagerEndpointEntryKey:         CloudResourceManagerEndpointEntry,
 			EventarcEndpointEntryKey:                     EventarcEndpointEntry,
 			FirebaserulesEndpointEntryKey:                FirebaserulesEndpointEntry,
@@ -1408,6 +1409,8 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_apikeys_key":                         resourceApikeysKey(),
 			"google_assured_workloads_workload":          resourceAssuredWorkloadsWorkload(),
 			"google_cloudbuild_worker_pool":              resourceCloudbuildWorkerPool(),
+			"google_clouddeploy_delivery_pipeline":       resourceClouddeployDeliveryPipeline(),
+			"google_clouddeploy_target":                  resourceClouddeployTarget(),
 			"google_compute_firewall_policy_association": resourceComputeFirewallPolicyAssociation(),
 			"google_compute_firewall_policy":             resourceComputeFirewallPolicy(),
 			"google_compute_firewall_policy_rule":        resourceComputeFirewallPolicyRule(),
@@ -1675,6 +1678,7 @@ func providerConfigure(ctx context.Context, d *schema.ResourceData, p *schema.Pr
 	// dcl
 	config.ApikeysBasePath = d.Get(ApikeysEndpointEntryKey).(string)
 	config.AssuredWorkloadsBasePath = d.Get(AssuredWorkloadsEndpointEntryKey).(string)
+	config.ClouddeployBasePath = d.Get(ClouddeployEndpointEntryKey).(string)
 	config.CloudResourceManagerBasePath = d.Get(CloudResourceManagerEndpointEntryKey).(string)
 	config.EventarcBasePath = d.Get(EventarcEndpointEntryKey).(string)
 	config.FirebaserulesBasePath = d.Get(FirebaserulesEndpointEntryKey).(string)
