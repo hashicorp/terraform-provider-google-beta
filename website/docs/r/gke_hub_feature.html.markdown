@@ -63,6 +63,20 @@ resource "google_gke_hub_feature" "feature" {
 }
 ```
 
+## Example Usage - Anthos Service Mesh
+
+```hcl
+resource "google_gke_hub_feature" "feature" {
+  name = "servicemesh"
+  location = "global"
+  project = "my-project"
+  labels = {
+    foo = "bar"
+  }
+  provider = google-beta
+}
+```
+
 ## Argument Reference
 
 The following arguments are supported:
