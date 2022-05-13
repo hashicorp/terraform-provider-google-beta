@@ -375,7 +375,7 @@ var DefaultBasePaths = map[string]string{
 	AppEngineBasePathKey:            "https://appengine.googleapis.com/v1/",
 	ArtifactRegistryBasePathKey:     "https://artifactregistry.googleapis.com/v1beta2/",
 	BigQueryBasePathKey:             "https://bigquery.googleapis.com/bigquery/v2/",
-	BigqueryConnectionBasePathKey:   "https://bigqueryconnection.googleapis.com/v1beta1/",
+	BigqueryConnectionBasePathKey:   "https://bigqueryconnection.googleapis.com/v1/",
 	BigqueryDataTransferBasePathKey: "https://bigquerydatatransfer.googleapis.com/v1/",
 	BigqueryReservationBasePathKey:  "https://bigqueryreservation.googleapis.com/v1beta1/",
 	BigtableBasePathKey:             "https://bigtableadmin.googleapis.com/v2/",
