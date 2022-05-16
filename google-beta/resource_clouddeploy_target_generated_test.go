@@ -91,9 +91,9 @@ resource "google_clouddeploy_target" "primary" {
   name     = "tf-test-target%{random_suffix}"
 
   annotations = {
-    my_first_annotation = "example-annotation-1"
-
     my_second_annotation = "example-annotation-2"
+
+    my_first_annotation = "example-annotation-1"
   }
 
   description = "basic description"
@@ -195,9 +195,9 @@ resource "google_clouddeploy_target" "primary" {
   name     = "tf-test-target%{random_suffix}"
 
   annotations = {
-    my_third_annotation = "example-annotation-3"
-
     my_second_annotation = "updated-example-annotation-2"
+
+    my_third_annotation = "example-annotation-3"
   }
 
   description = "updated description"
@@ -267,9 +267,9 @@ resource "google_clouddeploy_target" "primary" {
   }
 
   labels = {
-    my_third_label = "example-label-3"
-
     my_second_label = "updated-example-label-2"
+
+    my_third_label = "example-label-3"
   }
 
   project          = "%{project_name}"
