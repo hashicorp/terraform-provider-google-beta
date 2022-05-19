@@ -67,17 +67,17 @@ resource "google_clouddeploy_delivery_pipeline" "primary" {
   name     = "tf-test-pipeline%{random_suffix}"
 
   annotations = {
-    my_second_annotation = "example-annotation-2"
-
     my_first_annotation = "example-annotation-1"
+
+    my_second_annotation = "example-annotation-2"
   }
 
   description = "basic description"
 
   labels = {
-    my_first_label = "example-label-1"
-
     my_second_label = "example-label-2"
+
+    my_first_label = "example-label-1"
   }
 
   project = "%{project_name}"
@@ -114,9 +114,9 @@ resource "google_clouddeploy_delivery_pipeline" "primary" {
   description = "updated description"
 
   labels = {
-    my_second_label = "updated-example-label-2"
-
     my_third_label = "example-label-3"
+
+    my_second_label = "updated-example-label-2"
   }
 
   project = "%{project_name}"
