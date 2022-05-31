@@ -1,6 +1,4 @@
 ## 4.23.0 (Unreleased)
-NOTES:
-* clouddeploy: updated example documentation ([#4344](https://github.com/hashicorp/terraform-provider-google-beta/pull/4344))
 
 FEATURES:
 * **New Data Source:** `google_tags_tag_key` ([#4337](https://github.com/hashicorp/terraform-provider-google-beta/pull/4337))
