@@ -1,4 +1,10 @@
-## 4.24.0 (Unreleased)
+## 4.25.0 (Unreleased)
+
+## 4.24.0 (June 6, 2022)
+
+IMPROVEMENTS:
+* compute: added `cache_key_policy` field to `google_compute_backend_bucket` resource ([#4349](https://github.com/hashicorp/terraform-provider-google-beta/pull/4349))
+
 ## 4.23.0 (June 1, 2022)
 
 FEATURES:
