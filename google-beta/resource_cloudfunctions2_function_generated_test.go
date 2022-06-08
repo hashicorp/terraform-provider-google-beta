@@ -27,8 +27,10 @@ func TestAccCloudfunctions2function_cloudfunctions2BasicExample(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
-		"zip_path":      "./test-fixtures/cloudfunctions2/function-source.zip",
-		"random_suffix": randString(t, 10),
+		"zip_path":            "./test-fixtures/cloudfunctions2/function-source.zip",
+		"primary_resource_id": "terraform-test2",
+		"location":            "us-central1",
+		"random_suffix":       randString(t, 10),
 	}
 
 	vcrTest(t, resource.TestCase{
@@ -95,8 +97,10 @@ func TestAccCloudfunctions2function_cloudfunctions2FullExample(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
-		"zip_path":      "./test-fixtures/cloudfunctions2/function-source.zip",
-		"random_suffix": randString(t, 10),
+		"zip_path":            "./test-fixtures/cloudfunctions2/function-source.zip",
+		"primary_resource_id": "terraform-test",
+		"location":            "us-central1",
+		"random_suffix":       randString(t, 10),
 	}
 
 	vcrTest(t, resource.TestCase{
