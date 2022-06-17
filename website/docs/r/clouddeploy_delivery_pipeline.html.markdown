@@ -100,6 +100,10 @@ The following arguments are supported:
   (Optional)
   SerialPipeline defines a sequential set of stages for a `DeliveryPipeline`.
   
+* `suspended` -
+  (Optional)
+  When suspended, no new releases or rollouts can be created, but in-progress ones will complete.
+  
 
 
 The `serial_pipeline` block supports:
