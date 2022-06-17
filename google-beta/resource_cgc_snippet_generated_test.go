@@ -143,12 +143,14 @@ func testAccCGCSnippet_sqlSqlserverVmInstanceExample(context map[string]interfac
 	return Nprintf(`
 # VPC network
 resource "google_compute_network" "default" {
+  provider                = google-beta
   name                    = "tf-test-vpc-network%{random_suffix}"
   auto_create_subnetworks = false
 }
 
 # Subnet
 resource "google_compute_subnetwork" "default" {
+  provider      = google-beta
   name          = "tf-test-vpc-subnet%{random_suffix}"
   ip_cidr_range = "10.0.1.0/24"
   region        = "europe-west1"
@@ -156,7 +158,8 @@ resource "google_compute_subnetwork" "default" {
 }
 
 resource "google_compute_instance" "sqlserver_vm" {
-  name = "tf-test-sqlserver-vm%{random_suffix}"
+  provider = google-beta
+  name     = "tf-test-sqlserver-vm%{random_suffix}"
   boot_disk {
     auto_delete = true
     device_name = "persistent-disk-0"
@@ -180,6 +183,7 @@ resource "google_compute_instance" "sqlserver_vm" {
 }
 
 resource "google_compute_firewall" "sql_server_1433" {
+  provider      = google-beta
   name          = "tf-test-sql-server-1433-3%{random_suffix}"
   allow {
     ports    = ["1433"]
@@ -826,7 +830,7 @@ func TestAccCGCSnippet_sqlInstanceCmekExample(t *testing.T) {
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
-		Providers: testAccProviders,
+		Providers: testAccProvidersOiCS,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCGCSnippet_sqlInstanceCmekExample(context),
@@ -849,17 +853,20 @@ resource "google_project_service_identity" "gcp_sa_cloud_sql" {
 }
 
 resource "google_kms_key_ring" "keyring" {
+  provider = google-beta
   name     = "tf-test-keyring-name%{random_suffix}"
   location = "us-central1"
 }
 
 resource "google_kms_crypto_key" "key" {
+  provider = google-beta
   name     = "tf-test-crypto-key-name%{random_suffix}"
   key_ring = google_kms_key_ring.keyring.id
   purpose  = "ENCRYPT_DECRYPT"
 }
 
 resource "google_kms_crypto_key_iam_binding" "crypto_key" {
+  provider      = google-beta
   crypto_key_id = google_kms_crypto_key.key.id
   role          = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
 
@@ -1003,16 +1010,18 @@ func TestAccCGCSnippet_storageMakeDataPublicExample(t *testing.T) {
 func testAccCGCSnippet_storageMakeDataPublicExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_storage_bucket" "default" {
-    name = "tf-test-example-bucket-name%{random_suffix}"
-    location = "US"
-    uniform_bucket_level_access = true
+  provider                    = google-beta
+  name                        = "tf-test-example-bucket-name%{random_suffix}"
+  location                    = "US"
+  uniform_bucket_level_access = true
 }
 
 # Make bucket public
 resource "google_storage_bucket_iam_member" "member" {
-  bucket = google_storage_bucket.default.name
-  role   = "roles/storage.objectViewer"
-  member = "allUsers"
+  provider = google-beta
+  bucket   = google_storage_bucket.default.name
+  role     = "roles/storage.objectViewer"
+  member   = "allUsers"
 }
 `, context)
 }
