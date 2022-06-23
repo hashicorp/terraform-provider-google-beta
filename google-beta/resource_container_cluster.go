@@ -60,8 +60,8 @@ var (
 		"addons_config.0.network_policy_config",
 		"addons_config.0.cloudrun_config",
 		"addons_config.0.gcp_filestore_csi_driver_config",
-		"addons_config.0.istio_config",
 		"addons_config.0.dns_cache_config",
+		"addons_config.0.istio_config",
 		"addons_config.0.gce_persistent_disk_csi_driver_config",
 		"addons_config.0.kalm_config",
 		"addons_config.0.config_connector_config",
@@ -288,6 +288,23 @@ func resourceContainerCluster() *schema.Resource {
 								},
 							},
 						},
+						"dns_cache_config": {
+							Type:          schema.TypeList,
+							Optional:      true,
+							Computed:      true,
+							AtLeastOneOf:  addonsConfigKeys,
+							MaxItems:      1,
+							Description:   `The status of the NodeLocal DNSCache addon. It is disabled by default. Set enabled = true to enable.`,
+							ConflictsWith: []string{"enable_autopilot"},
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"enabled": {
+										Type:     schema.TypeBool,
+										Required: true,
+									},
+								},
+							},
+						},
 						"istio_config": {
 							Type:         schema.TypeList,
 							Optional:     true,
@@ -309,23 +326,6 @@ func resourceContainerCluster() *schema.Resource {
 										DiffSuppressFunc: emptyOrDefaultStringSuppress("AUTH_NONE"),
 										ValidateFunc:     validation.StringInSlice([]string{"AUTH_NONE", "AUTH_MUTUAL_TLS"}, false),
 										Description:      `The authentication type between services in Istio. Available options include AUTH_MUTUAL_TLS.`,
-									},
-								},
-							},
-						},
-						"dns_cache_config": {
-							Type:          schema.TypeList,
-							Optional:      true,
-							Computed:      true,
-							AtLeastOneOf:  addonsConfigKeys,
-							MaxItems:      1,
-							Description:   `The status of the NodeLocal DNSCache addon. It is disabled by default. Set enabled = true to enable.`,
-							ConflictsWith: []string{"enable_autopilot"},
-							Elem: &schema.Resource{
-								Schema: map[string]*schema.Schema{
-									"enabled": {
-										Type:     schema.TypeBool,
-										Required: true,
 									},
 								},
 							},
@@ -3092,20 +3092,20 @@ func expandClusterAddonsConfig(configured interface{}) *container.AddonsConfig {
 		}
 	}
 
+	if v, ok := config["dns_cache_config"]; ok && len(v.([]interface{})) > 0 {
+		addon := v.([]interface{})[0].(map[string]interface{})
+		ac.DnsCacheConfig = &container.DnsCacheConfig{
+			Enabled:         addon["enabled"].(bool),
+			ForceSendFields: []string{"Enabled"},
+		}
+	}
+
 	if v, ok := config["istio_config"]; ok && len(v.([]interface{})) > 0 {
 		addon := v.([]interface{})[0].(map[string]interface{})
 		ac.IstioConfig = &container.IstioConfig{
 			Disabled:        addon["disabled"].(bool),
 			Auth:            addon["auth"].(string),
 			ForceSendFields: []string{"Disabled"},
-		}
-	}
-
-	if v, ok := config["dns_cache_config"]; ok && len(v.([]interface{})) > 0 {
-		addon := v.([]interface{})[0].(map[string]interface{})
-		ac.DnsCacheConfig = &container.DnsCacheConfig{
-			Enabled:         addon["enabled"].(bool),
-			ForceSendFields: []string{"Enabled"},
 		}
 	}
 
@@ -3698,7 +3698,6 @@ func flattenNotificationConfig(c *container.NotificationConfig) []map[string]int
 		},
 	}
 }
-
 func flattenConfidentialNodes(c *container.ConfidentialNodes) []map[string]interface{} {
 	result := []map[string]interface{}{}
 	if c != nil {
@@ -3772,19 +3771,19 @@ func flattenClusterAddonsConfig(c *container.AddonsConfig) []map[string]interfac
 		result["cloudrun_config"] = []map[string]interface{}{cloudRunConfig}
 	}
 
+	if c.DnsCacheConfig != nil {
+		result["dns_cache_config"] = []map[string]interface{}{
+			{
+				"enabled": c.DnsCacheConfig.Enabled,
+			},
+		}
+	}
+
 	if c.IstioConfig != nil {
 		result["istio_config"] = []map[string]interface{}{
 			{
 				"disabled": c.IstioConfig.Disabled,
 				"auth":     c.IstioConfig.Auth,
-			},
-		}
-	}
-
-	if c.DnsCacheConfig != nil {
-		result["dns_cache_config"] = []map[string]interface{}{
-			{
-				"enabled": c.DnsCacheConfig.Enabled,
 			},
 		}
 	}

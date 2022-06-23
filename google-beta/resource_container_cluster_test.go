@@ -2816,12 +2816,12 @@ resource "google_container_cluster" "primary" {
     cloudrun_config {
       disabled = true
     }
+	dns_cache_config {
+      enabled = false
+    }
     istio_config {
       disabled = true
       auth     = "AUTH_MUTUAL_TLS"
-    }
-    dns_cache_config {
-      enabled = false
     }
     gce_persistent_disk_csi_driver_config {
       enabled = false
@@ -2873,13 +2873,14 @@ resource "google_container_cluster" "primary" {
     cloudrun_config {
       disabled = false
     }
+	dns_cache_config {
+      enabled = true
+	}
     istio_config {
       disabled = false
       auth     = "AUTH_NONE"
     }
-    dns_cache_config {
-      enabled = true
-    }
+
     gce_persistent_disk_csi_driver_config {
       enabled = true
 	}
