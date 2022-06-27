@@ -458,6 +458,59 @@ resource "google_cloud_run_service" "default" {
 `, context)
 }
 
+func TestAccCloudRunService_cloudRunServiceIngressExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"random_suffix": randString(t, 10),
+	}
+
+	vcrTest(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProvidersOiCS,
+		CheckDestroy: testAccCheckCloudRunServiceDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudRunService_cloudRunServiceIngressExample(context),
+			},
+			{
+				ResourceName:            "google_cloud_run_service.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"name", "location"},
+			},
+		},
+	})
+}
+
+func testAccCloudRunService_cloudRunServiceIngressExample(context map[string]interface{}) string {
+	return Nprintf(`
+resource "google_cloud_run_service" "default" {
+    name     = "tf-test-ingress-service%{random_suffix}"
+    location = "us-central1"
+
+    template {
+      spec {
+        containers {
+          image = "gcr.io/cloudrun/hello" #public image for your service
+        }
+      }
+    }
+    traffic {
+      percent         = 100
+      latest_revision = true
+    }
+    metadata {
+      annotations = {
+        # For valid annotation values and descriptions, see
+        # https://cloud.google.com/sdk/gcloud/reference/run/deploy#--ingress
+        "run.googleapis.com/ingress" = "internal"
+      }
+    }
+}
+`, context)
+}
+
 func TestAccCloudRunService_eventarcBasicTfExample(t *testing.T) {
 	t.Parallel()
 
