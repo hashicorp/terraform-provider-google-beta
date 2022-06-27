@@ -1,4 +1,6 @@
-## 4.27.0 (Unreleased)
+## 4.28.0 (Unreleased)
+
+## 4.27.0 (June 27, 2022)
 
 IMPROVEMENTS:
 * clouddeploy: added `suspend` field to `google_clouddeploy_delivery_pipeline` resource ([#4394](https://github.com/hashicorp/terraform-provider-google-beta/pull/4394))
