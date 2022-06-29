@@ -936,8 +936,8 @@ func Provider() *schema.Provider {
 }
 
 // Generated resources: 252
-// Generated IAM resources: 144
-// Total generated resources: 396
+// Generated IAM resources: 147
+// Total generated resources: 399
 func ResourceMap() map[string]*schema.Resource {
 	resourceMap, _ := ResourceMapWithErrors()
 	return resourceMap
@@ -1036,6 +1036,9 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_cloud_run_service_iam_policy":                          ResourceIamPolicy(CloudRunServiceIamSchema, CloudRunServiceIamUpdaterProducer, CloudRunServiceIdParseFunc),
 			"google_cloud_scheduler_job":                                   resourceCloudSchedulerJob(),
 			"google_cloud_tasks_queue":                                     resourceCloudTasksQueue(),
+			"google_cloud_tasks_queue_iam_binding":                         ResourceIamBinding(CloudTasksQueueIamSchema, CloudTasksQueueIamUpdaterProducer, CloudTasksQueueIdParseFunc),
+			"google_cloud_tasks_queue_iam_member":                          ResourceIamMember(CloudTasksQueueIamSchema, CloudTasksQueueIamUpdaterProducer, CloudTasksQueueIdParseFunc),
+			"google_cloud_tasks_queue_iam_policy":                          ResourceIamPolicy(CloudTasksQueueIamSchema, CloudTasksQueueIamUpdaterProducer, CloudTasksQueueIdParseFunc),
 			"google_compute_address":                                       resourceComputeAddress(),
 			"google_compute_autoscaler":                                    resourceComputeAutoscaler(),
 			"google_compute_backend_bucket":                                resourceComputeBackendBucket(),
