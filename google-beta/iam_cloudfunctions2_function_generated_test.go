@@ -96,9 +96,10 @@ func TestAccCloudfunctions2functionIamPolicyGenerated(t *testing.T) {
 
 func testAccCloudfunctions2functionIamMember_basicGenerated(context map[string]interface{}) string {
 	return Nprintf(`
+# [START functions_v2_basic]
 resource "google_storage_bucket" "bucket" {
   provider = google-beta
-  name     = "tf-test-cloudfunctions2-function-bucket%{random_suffix}"
+  name     = "tf-test-cloudfunctions2-function-bucket%{random_suffix}"  # Every bucket name must be globally unique
   location = "US"
   uniform_bucket_level_access = true
 }
@@ -107,7 +108,7 @@ resource "google_storage_bucket_object" "object" {
   provider = google-beta
   name   = "function-source.zip"
   bucket = google_storage_bucket.bucket.name
-  source = "%{zip_path}"
+  source = "%{zip_path}"  # Add path to the zipped function source code
 }
  
 resource "google_cloudfunctions2_function" "terraform-test2" {
@@ -118,7 +119,7 @@ resource "google_cloudfunctions2_function" "terraform-test2" {
  
   build_config {
     runtime = "nodejs16"
-    entry_point = "helloHttp"
+    entry_point = "helloHttp"  # Set the entry point 
     source {
       storage_source {
         bucket = google_storage_bucket.bucket.name
@@ -133,6 +134,7 @@ resource "google_cloudfunctions2_function" "terraform-test2" {
     timeout_seconds     = 60
   }
 }
+# [END functions_v2_basic]
 
 resource "google_cloudfunctions2_function_iam_member" "foo" {
   provider = google-beta
@@ -146,9 +148,10 @@ resource "google_cloudfunctions2_function_iam_member" "foo" {
 
 func testAccCloudfunctions2functionIamPolicy_basicGenerated(context map[string]interface{}) string {
 	return Nprintf(`
+# [START functions_v2_basic]
 resource "google_storage_bucket" "bucket" {
   provider = google-beta
-  name     = "tf-test-cloudfunctions2-function-bucket%{random_suffix}"
+  name     = "tf-test-cloudfunctions2-function-bucket%{random_suffix}"  # Every bucket name must be globally unique
   location = "US"
   uniform_bucket_level_access = true
 }
@@ -157,7 +160,7 @@ resource "google_storage_bucket_object" "object" {
   provider = google-beta
   name   = "function-source.zip"
   bucket = google_storage_bucket.bucket.name
-  source = "%{zip_path}"
+  source = "%{zip_path}"  # Add path to the zipped function source code
 }
  
 resource "google_cloudfunctions2_function" "terraform-test2" {
@@ -168,7 +171,7 @@ resource "google_cloudfunctions2_function" "terraform-test2" {
  
   build_config {
     runtime = "nodejs16"
-    entry_point = "helloHttp"
+    entry_point = "helloHttp"  # Set the entry point 
     source {
       storage_source {
         bucket = google_storage_bucket.bucket.name
@@ -183,6 +186,7 @@ resource "google_cloudfunctions2_function" "terraform-test2" {
     timeout_seconds     = 60
   }
 }
+# [END functions_v2_basic]
 
 data "google_iam_policy" "foo" {
   provider = google-beta
@@ -203,9 +207,10 @@ resource "google_cloudfunctions2_function_iam_policy" "foo" {
 
 func testAccCloudfunctions2functionIamPolicy_emptyBinding(context map[string]interface{}) string {
 	return Nprintf(`
+# [START functions_v2_basic]
 resource "google_storage_bucket" "bucket" {
   provider = google-beta
-  name     = "tf-test-cloudfunctions2-function-bucket%{random_suffix}"
+  name     = "tf-test-cloudfunctions2-function-bucket%{random_suffix}"  # Every bucket name must be globally unique
   location = "US"
   uniform_bucket_level_access = true
 }
@@ -214,7 +219,7 @@ resource "google_storage_bucket_object" "object" {
   provider = google-beta
   name   = "function-source.zip"
   bucket = google_storage_bucket.bucket.name
-  source = "%{zip_path}"
+  source = "%{zip_path}"  # Add path to the zipped function source code
 }
  
 resource "google_cloudfunctions2_function" "terraform-test2" {
@@ -225,7 +230,7 @@ resource "google_cloudfunctions2_function" "terraform-test2" {
  
   build_config {
     runtime = "nodejs16"
-    entry_point = "helloHttp"
+    entry_point = "helloHttp"  # Set the entry point 
     source {
       storage_source {
         bucket = google_storage_bucket.bucket.name
@@ -240,6 +245,7 @@ resource "google_cloudfunctions2_function" "terraform-test2" {
     timeout_seconds     = 60
   }
 }
+# [END functions_v2_basic]
 
 data "google_iam_policy" "foo" {
   provider = google-beta
@@ -256,9 +262,10 @@ resource "google_cloudfunctions2_function_iam_policy" "foo" {
 
 func testAccCloudfunctions2functionIamBinding_basicGenerated(context map[string]interface{}) string {
 	return Nprintf(`
+# [START functions_v2_basic]
 resource "google_storage_bucket" "bucket" {
   provider = google-beta
-  name     = "tf-test-cloudfunctions2-function-bucket%{random_suffix}"
+  name     = "tf-test-cloudfunctions2-function-bucket%{random_suffix}"  # Every bucket name must be globally unique
   location = "US"
   uniform_bucket_level_access = true
 }
@@ -267,7 +274,7 @@ resource "google_storage_bucket_object" "object" {
   provider = google-beta
   name   = "function-source.zip"
   bucket = google_storage_bucket.bucket.name
-  source = "%{zip_path}"
+  source = "%{zip_path}"  # Add path to the zipped function source code
 }
  
 resource "google_cloudfunctions2_function" "terraform-test2" {
@@ -278,7 +285,7 @@ resource "google_cloudfunctions2_function" "terraform-test2" {
  
   build_config {
     runtime = "nodejs16"
-    entry_point = "helloHttp"
+    entry_point = "helloHttp"  # Set the entry point 
     source {
       storage_source {
         bucket = google_storage_bucket.bucket.name
@@ -293,6 +300,7 @@ resource "google_cloudfunctions2_function" "terraform-test2" {
     timeout_seconds     = 60
   }
 }
+# [END functions_v2_basic]
 
 resource "google_cloudfunctions2_function_iam_binding" "foo" {
   provider = google-beta
@@ -306,9 +314,10 @@ resource "google_cloudfunctions2_function_iam_binding" "foo" {
 
 func testAccCloudfunctions2functionIamBinding_updateGenerated(context map[string]interface{}) string {
 	return Nprintf(`
+# [START functions_v2_basic]
 resource "google_storage_bucket" "bucket" {
   provider = google-beta
-  name     = "tf-test-cloudfunctions2-function-bucket%{random_suffix}"
+  name     = "tf-test-cloudfunctions2-function-bucket%{random_suffix}"  # Every bucket name must be globally unique
   location = "US"
   uniform_bucket_level_access = true
 }
@@ -317,7 +326,7 @@ resource "google_storage_bucket_object" "object" {
   provider = google-beta
   name   = "function-source.zip"
   bucket = google_storage_bucket.bucket.name
-  source = "%{zip_path}"
+  source = "%{zip_path}"  # Add path to the zipped function source code
 }
  
 resource "google_cloudfunctions2_function" "terraform-test2" {
@@ -328,7 +337,7 @@ resource "google_cloudfunctions2_function" "terraform-test2" {
  
   build_config {
     runtime = "nodejs16"
-    entry_point = "helloHttp"
+    entry_point = "helloHttp"  # Set the entry point 
     source {
       storage_source {
         bucket = google_storage_bucket.bucket.name
@@ -343,6 +352,7 @@ resource "google_cloudfunctions2_function" "terraform-test2" {
     timeout_seconds     = 60
   }
 }
+# [END functions_v2_basic]
 
 resource "google_cloudfunctions2_function_iam_binding" "foo" {
   provider = google-beta
