@@ -50,6 +50,14 @@ func resourceDataprocMetastoreService() *schema.Resource {
 and hyphens (-). Cannot begin or end with underscore or hyphen. Must consist of between
 3 and 63 characters.`,
 			},
+			"database_type": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ForceNew:     true,
+				ValidateFunc: validateEnum([]string{"MYSQL", "SPANNER", ""}),
+				Description:  `The database type that the Metastore service stores its data. Default value: "MYSQL" Possible values: ["MYSQL", "SPANNER"]`,
+				Default:      "MYSQL",
+			},
 			"encryption_config": {
 				Type:     schema.TypeList,
 				Optional: true,
@@ -89,6 +97,14 @@ Use the following format: 'projects/([^/]+)/locations/([^/]+)/keyRings/([^/]+)/c
 							Description: `A mapping of Hive metastore configuration key-value pairs to apply to the Hive metastore (configured in hive-site.xml).
 The mappings override system defaults (some keys cannot be overridden)`,
 							Elem: &schema.Schema{Type: schema.TypeString},
+						},
+						"endpoint_protocol": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							ForceNew:     true,
+							ValidateFunc: validateEnum([]string{"THRIFT", "GRPC", ""}),
+							Description:  `The protocol to use for the metastore service endpoint. If unspecified, defaults to 'THRIFT'. Default value: "THRIFT" Possible values: ["THRIFT", "GRPC"]`,
+							Default:      "THRIFT",
 						},
 						"kerberos_config": {
 							Type:        schema.TypeList,
@@ -140,7 +156,7 @@ The mappings override system defaults (some keys cannot be overridden)`,
 				Type:     schema.TypeString,
 				Optional: true,
 				ForceNew: true,
-				Description: `The  location where the autoscaling policy should reside.
+				Description: `The location where the metastore service should reside.
 The default value is 'global'.`,
 				Default: "global",
 			},
@@ -148,7 +164,8 @@ The default value is 'global'.`,
 				Type:     schema.TypeList,
 				Optional: true,
 				Description: `The one hour maintenance window of the metastore service.
-This specifies when the service can be restarted for maintenance purposes in UTC time.`,
+This specifies when the service can be restarted for maintenance purposes in UTC time.
+Maintenance window is not needed for services with the 'SPANNER' database type.`,
 				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -181,6 +198,14 @@ This specifies when the service can be restarted for maintenance purposes in UTC
 				Optional:    true,
 				Description: `The TCP port at which the metastore service is reached. Default: 9083.`,
 			},
+			"release_channel": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ForceNew:     true,
+				ValidateFunc: validateEnum([]string{"CANARY", "STABLE", ""}),
+				Description:  `The release channel of the service. If unspecified, defaults to 'STABLE'. Default value: "STABLE" Possible values: ["CANARY", "STABLE"]`,
+				Default:      "STABLE",
+			},
 			"tier": {
 				Type:         schema.TypeString,
 				Computed:     true,
@@ -212,6 +237,11 @@ This specifies when the service can be restarted for maintenance purposes in UTC
 				Type:        schema.TypeString,
 				Computed:    true,
 				Description: `Additional information about the current state of the metastore service, if available.`,
+			},
+			"uid": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: `The globally unique resource identifier of the metastore service.`,
 			},
 			"project": {
 				Type:     schema.TypeString,
@@ -273,6 +303,18 @@ func resourceDataprocMetastoreServiceCreate(d *schema.ResourceData, meta interfa
 		return err
 	} else if v, ok := d.GetOkExists("hive_metastore_config"); !isEmptyValue(reflect.ValueOf(hiveMetastoreConfigProp)) && (ok || !reflect.DeepEqual(v, hiveMetastoreConfigProp)) {
 		obj["hiveMetastoreConfig"] = hiveMetastoreConfigProp
+	}
+	databaseTypeProp, err := expandDataprocMetastoreServiceDatabaseType(d.Get("database_type"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("database_type"); !isEmptyValue(reflect.ValueOf(databaseTypeProp)) && (ok || !reflect.DeepEqual(v, databaseTypeProp)) {
+		obj["databaseType"] = databaseTypeProp
+	}
+	releaseChannelProp, err := expandDataprocMetastoreServiceReleaseChannel(d.Get("release_channel"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("release_channel"); !isEmptyValue(reflect.ValueOf(releaseChannelProp)) && (ok || !reflect.DeepEqual(v, releaseChannelProp)) {
+		obj["releaseChannel"] = releaseChannelProp
 	}
 
 	url, err := replaceVars(d, config, "{{DataprocMetastoreBasePath}}projects/{{project}}/locations/{{location}}/services?serviceId={{service_id}}")
@@ -389,6 +431,15 @@ func resourceDataprocMetastoreServiceRead(d *schema.ResourceData, meta interface
 		return fmt.Errorf("Error reading Service: %s", err)
 	}
 	if err := d.Set("hive_metastore_config", flattenDataprocMetastoreServiceHiveMetastoreConfig(res["hiveMetastoreConfig"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Service: %s", err)
+	}
+	if err := d.Set("database_type", flattenDataprocMetastoreServiceDatabaseType(res["databaseType"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Service: %s", err)
+	}
+	if err := d.Set("release_channel", flattenDataprocMetastoreServiceReleaseChannel(res["releaseChannel"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Service: %s", err)
+	}
+	if err := d.Set("uid", flattenDataprocMetastoreServiceUid(res["uid"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Service: %s", err)
 	}
 
@@ -686,6 +737,8 @@ func flattenDataprocMetastoreServiceHiveMetastoreConfig(v interface{}, d *schema
 		return nil
 	}
 	transformed := make(map[string]interface{})
+	transformed["endpoint_protocol"] =
+		flattenDataprocMetastoreServiceHiveMetastoreConfigEndpointProtocol(original["endpointProtocol"], d, config)
 	transformed["version"] =
 		flattenDataprocMetastoreServiceHiveMetastoreConfigVersion(original["version"], d, config)
 	transformed["config_overrides"] =
@@ -694,6 +747,10 @@ func flattenDataprocMetastoreServiceHiveMetastoreConfig(v interface{}, d *schema
 		flattenDataprocMetastoreServiceHiveMetastoreConfigKerberosConfig(original["kerberosConfig"], d, config)
 	return []interface{}{transformed}
 }
+func flattenDataprocMetastoreServiceHiveMetastoreConfigEndpointProtocol(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	return v
+}
+
 func flattenDataprocMetastoreServiceHiveMetastoreConfigVersion(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
@@ -741,6 +798,18 @@ func flattenDataprocMetastoreServiceHiveMetastoreConfigKerberosConfigPrincipal(v
 }
 
 func flattenDataprocMetastoreServiceHiveMetastoreConfigKerberosConfigKrb5ConfigGcsUri(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	return v
+}
+
+func flattenDataprocMetastoreServiceDatabaseType(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	return v
+}
+
+func flattenDataprocMetastoreServiceReleaseChannel(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	return v
+}
+
+func flattenDataprocMetastoreServiceUid(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
@@ -833,6 +902,13 @@ func expandDataprocMetastoreServiceHiveMetastoreConfig(v interface{}, d Terrafor
 	original := raw.(map[string]interface{})
 	transformed := make(map[string]interface{})
 
+	transformedEndpointProtocol, err := expandDataprocMetastoreServiceHiveMetastoreConfigEndpointProtocol(original["endpoint_protocol"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedEndpointProtocol); val.IsValid() && !isEmptyValue(val) {
+		transformed["endpointProtocol"] = transformedEndpointProtocol
+	}
+
 	transformedVersion, err := expandDataprocMetastoreServiceHiveMetastoreConfigVersion(original["version"], d, config)
 	if err != nil {
 		return nil, err
@@ -855,6 +931,10 @@ func expandDataprocMetastoreServiceHiveMetastoreConfig(v interface{}, d Terrafor
 	}
 
 	return transformed, nil
+}
+
+func expandDataprocMetastoreServiceHiveMetastoreConfigEndpointProtocol(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
 }
 
 func expandDataprocMetastoreServiceHiveMetastoreConfigVersion(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
@@ -933,5 +1013,13 @@ func expandDataprocMetastoreServiceHiveMetastoreConfigKerberosConfigPrincipal(v 
 }
 
 func expandDataprocMetastoreServiceHiveMetastoreConfigKerberosConfigKrb5ConfigGcsUri(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandDataprocMetastoreServiceDatabaseType(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandDataprocMetastoreServiceReleaseChannel(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
