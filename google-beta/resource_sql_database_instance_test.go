@@ -1055,13 +1055,14 @@ func TestAccSqlDatabaseInstance_encryptionKey(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
+		"project_id":    getTestProjectFromEnv(),
 		"key_name":      "tf-test-key-" + randString(t, 10),
 		"instance_name": "tf-test-sql-" + randString(t, 10),
 	}
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProvidersOiCS,
+		Providers:    testAccProviders,
 		CheckDestroy: testAccSqlDatabaseInstanceDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -1088,13 +1089,14 @@ func TestAccSqlDatabaseInstance_encryptionKey_replicaInDifferentRegion(t *testin
 	t.Parallel()
 
 	context := map[string]interface{}{
+		"project_id":    getTestProjectFromEnv(),
 		"key_name":      "tf-test-key-" + randString(t, 10),
 		"instance_name": "tf-test-sql-" + randString(t, 10),
 	}
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProvidersOiCS,
+		Providers:    testAccProviders,
 		CheckDestroy: testAccSqlDatabaseInstanceDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -1942,37 +1944,29 @@ resource "google_sql_database_instance" "instance" {
 }
 `
 var testGoogleSqlDatabaseInstance_encryptionKey = `
-resource "google_project_service_identity" "gcp_sa_cloud_sql" {
-  provider = google-beta
-  service  = "sqladmin.googleapis.com"
+data "google_project" "project" {
+  project_id = "%{project_id}"
 }
-
 resource "google_kms_key_ring" "keyring" {
-  provider = google-beta
-
   name     = "%{key_name}"
   location = "us-central1"
 }
 
 resource "google_kms_crypto_key" "key" {
-  provider = google-beta
-
   name     = "%{key_name}"
   key_ring = google_kms_key_ring.keyring.id
 }
 
 resource "google_kms_crypto_key_iam_binding" "crypto_key" {
-  provider      = google-beta
   crypto_key_id = google_kms_crypto_key.key.id
   role          = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
 
   members = [
-    "serviceAccount:${google_project_service_identity.gcp_sa_cloud_sql.email}",
+  "serviceAccount:service-${data.google_project.project.number}@gcp-sa-cloud-sql.iam.gserviceaccount.com",
   ]
 }
 
 resource "google_sql_database_instance" "master" {
-  provider            = google-beta
   name                = "%{instance_name}-master"
   database_version    = "MYSQL_5_7"
   region              = "us-central1"
@@ -1991,7 +1985,6 @@ resource "google_sql_database_instance" "master" {
 }
 
 resource "google_sql_database_instance" "replica" {
-  provider             = google-beta
   name                 = "%{instance_name}-replica"
   database_version     = "MYSQL_5_7"
   region               = "us-central1"
@@ -2007,37 +2000,32 @@ resource "google_sql_database_instance" "replica" {
 `
 
 var testGoogleSqlDatabaseInstance_encryptionKey_replicaInDifferentRegion = `
-resource "google_project_service_identity" "gcp_sa_cloud_sql" {
-  provider = google-beta
-  service  = "sqladmin.googleapis.com"
+
+data "google_project" "project" {
+  project_id = "%{project_id}"
 }
 
 resource "google_kms_key_ring" "keyring" {
-  provider = google-beta
-
   name     = "%{key_name}"
   location = "us-central1"
 }
 
 resource "google_kms_crypto_key" "key" {
-  provider = google-beta
 
   name     = "%{key_name}"
   key_ring = google_kms_key_ring.keyring.id
 }
 
 resource "google_kms_crypto_key_iam_binding" "crypto_key" {
-  provider      = google-beta
   crypto_key_id = google_kms_crypto_key.key.id
   role          = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
 
   members = [
-    "serviceAccount:${google_project_service_identity.gcp_sa_cloud_sql.email}",
+    "serviceAccount:service-${data.google_project.project.number}@gcp-sa-cloud-sql.iam.gserviceaccount.com",
   ]
 }
 
 resource "google_sql_database_instance" "master" {
-  provider            = google-beta
   name                = "%{instance_name}-master"
   database_version    = "MYSQL_5_7"
   region              = "us-central1"
@@ -2056,31 +2044,27 @@ resource "google_sql_database_instance" "master" {
 }
 
 resource "google_kms_key_ring" "keyring-rep" {
-  provider = google-beta
 
   name     = "%{key_name}-rep"
   location = "us-east1"
 }
 
 resource "google_kms_crypto_key" "key-rep" {
-  provider = google-beta
 
   name     = "%{key_name}-rep"
   key_ring = google_kms_key_ring.keyring-rep.id
 }
 
 resource "google_kms_crypto_key_iam_binding" "crypto_key_rep" {
-  provider      = google-beta
   crypto_key_id = google_kms_crypto_key.key-rep.id
   role          = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
 
   members = [
-    "serviceAccount:${google_project_service_identity.gcp_sa_cloud_sql.email}",
+    "serviceAccount:service-${data.google_project.project.number}@gcp-sa-cloud-sql.iam.gserviceaccount.com",
   ]
 }
 
 resource "google_sql_database_instance" "replica" {
-  provider             = google-beta
   name                 = "%{instance_name}-replica"
   database_version     = "MYSQL_5_7"
   region               = "us-east1"

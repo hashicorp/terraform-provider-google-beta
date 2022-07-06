@@ -840,6 +840,7 @@ func resourceSqlDatabaseInstanceCreate(d *schema.ResourceData, meta interface{})
 		mutexKV.Lock(instanceMutexKey(project, instance.MasterInstanceName))
 		defer mutexKV.Unlock(instanceMutexKey(project, instance.MasterInstanceName))
 	}
+
 	if k, ok := d.GetOk("encryption_key_name"); ok {
 		instance.DiskEncryptionConfiguration = &sqladmin.DiskEncryptionConfiguration{
 			KmsKeyName: k.(string),
@@ -1229,6 +1230,7 @@ func resourceSqlDatabaseInstanceRead(d *schema.ResourceData, meta interface{}) e
 	if err := d.Set("settings", flattenSettings(instance.Settings)); err != nil {
 		log.Printf("[WARN] Failed to set SQL Database Instance Settings")
 	}
+
 	if instance.DiskEncryptionConfiguration != nil {
 		if err := d.Set("encryption_key_name", instance.DiskEncryptionConfiguration.KmsKeyName); err != nil {
 			return fmt.Errorf("Error setting encryption_key_name: %s", err)
