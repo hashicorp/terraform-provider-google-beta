@@ -60,9 +60,9 @@ var (
 		"cluster_config.0.initialization_action",
 		"cluster_config.0.encryption_config",
 		"cluster_config.0.autoscaling_config",
+		"cluster_config.0.metastore_config",
 		"cluster_config.0.lifecycle_config",
 		"cluster_config.0.endpoint_config",
-		"cluster_config.0.metastore_config",
 	}
 )
 
@@ -636,6 +636,23 @@ by Dataproc`,
 								},
 							},
 						},
+						"metastore_config": {
+							Type:         schema.TypeList,
+							Optional:     true,
+							AtLeastOneOf: clusterConfigKeys,
+							MaxItems:     1,
+							Description:  `Specifies a Metastore configuration.`,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"dataproc_metastore_service": {
+										Type:        schema.TypeString,
+										Required:    true,
+										ForceNew:    true,
+										Description: `Resource name of an existing Dataproc Metastore service.`,
+									},
+								},
+							},
+						},
 						"lifecycle_config": {
 							Type:         schema.TypeList,
 							Optional:     true,
@@ -694,23 +711,6 @@ by Dataproc`,
 										Type:        schema.TypeMap,
 										Computed:    true,
 										Description: `The map of port descriptions to URLs. Will only be populated if enable_http_port_access is true.`,
-									},
-								},
-							},
-						},
-						"metastore_config": {
-							Type:         schema.TypeList,
-							Optional:     true,
-							AtLeastOneOf: clusterConfigKeys,
-							MaxItems:     1,
-							Description:  `Specifies a Metastore configuration.`,
-							Elem: &schema.Resource{
-								Schema: map[string]*schema.Schema{
-									"dataproc_metastore_service": {
-										Type:        schema.TypeString,
-										Required:    true,
-										ForceNew:    true,
-										Description: `Resource name of an existing Dataproc Metastore service.`,
 									},
 								},
 							},
@@ -974,16 +974,16 @@ func expandClusterConfig(d *schema.ResourceData, config *Config) (*dataproc.Clus
 		conf.AutoscalingConfig = expandAutoscalingConfig(cfg)
 	}
 
+	if cfg, ok := configOptions(d, "cluster_config.0.metastore_config"); ok {
+		conf.MetastoreConfig = expandMetastoreConfig(cfg)
+	}
+
 	if cfg, ok := configOptions(d, "cluster_config.0.lifecycle_config"); ok {
 		conf.LifecycleConfig = expandLifecycleConfig(cfg)
 	}
 
 	if cfg, ok := configOptions(d, "cluster_config.0.endpoint_config"); ok {
 		conf.EndpointConfig = expandEndpointConfig(cfg)
-	}
-
-	if cfg, ok := configOptions(d, "cluster_config.0.metastore_config"); ok {
-		conf.MetastoreConfig = expandMetastoreConfig(cfg)
 	}
 
 	if cfg, ok := configOptions(d, "cluster_config.0.master_config"); ok {
@@ -1460,9 +1460,9 @@ func flattenClusterConfig(d *schema.ResourceData, cfg *dataproc.ClusterConfig) (
 		"autoscaling_config":        flattenAutoscalingConfig(d, cfg.AutoscalingConfig),
 		"security_config":           flattenSecurityConfig(d, cfg.SecurityConfig),
 		"preemptible_worker_config": flattenPreemptibleInstanceGroupConfig(d, cfg.SecondaryWorkerConfig),
+		"metastore_config":          flattenMetastoreConfig(d, cfg.MetastoreConfig),
 		"lifecycle_config":          flattenLifecycleConfig(d, cfg.LifecycleConfig),
 		"endpoint_config":           flattenEndpointConfig(d, cfg.EndpointConfig),
-		"metastore_config":          flattenMetastoreConfig(d, cfg.MetastoreConfig),
 	}
 
 	if len(cfg.InitializationActions) > 0 {
