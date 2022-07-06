@@ -2201,7 +2201,7 @@ func TestAccContainerCluster_sharedVpc(t *testing.T) {
 	})
 }
 
-func TestAccContainerCluster_withBinaryAuthorization(t *testing.T) {
+func TestAccContainerCluster_withBinaryAuthorizationEnabledBool(t *testing.T) {
 	t.Parallel()
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", randString(t, 10))
@@ -2212,18 +2212,111 @@ func TestAccContainerCluster_withBinaryAuthorization(t *testing.T) {
 		CheckDestroy: testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccContainerCluster_withBinaryAuthorization(clusterName, true),
+				Config: testAccContainerCluster_withBinaryAuthorizationEnabledBool(clusterName, true),
 			},
 			{
-				ResourceName:      "google_container_cluster.with_binary_authorization",
+				ResourceName:            "google_container_cluster.with_binary_authorization_enabled_bool",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"enable_binary_authorization"},
+			},
+			{
+				Config: testAccContainerCluster_withBinaryAuthorizationEnabledBool(clusterName, false),
+			},
+			{
+				ResourceName:      "google_container_cluster.with_binary_authorization_enabled_bool",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
+func TestAccContainerCluster_withBinaryAuthorizationEnabledBoolLegacy(t *testing.T) {
+	t.Parallel()
+
+	clusterName := fmt.Sprintf("tf-test-cluster-%s", randString(t, 10))
+
+	vcrTest(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckContainerClusterDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccContainerCluster_withBinaryAuthorizationEnabledBoolLegacy(clusterName, true),
+			},
+			{
+				ResourceName:            "google_container_cluster.with_binary_authorization_enabled_bool_legacy",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"enable_binary_authorization", "binary_authorization.#", "binary_authorization.0.%", "binary_authorization.0.enabled", "binary_authorization.0.evaluation_mode"},
+			},
+			{
+				Config: testAccContainerCluster_withBinaryAuthorizationEnabledBoolLegacy(clusterName, false),
+			},
+			{
+				ResourceName:            "google_container_cluster.with_binary_authorization_enabled_bool_legacy",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"enable_binary_authorization"},
+			},
+		},
+	})
+}
+
+func TestAccContainerCluster_withBinaryAuthorizationEvaluationModeAutopilot(t *testing.T) {
+	t.Parallel()
+
+	clusterName := fmt.Sprintf("tf-test-cluster-%s", randString(t, 10))
+
+	vcrTest(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckContainerClusterDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccContainerCluster_withBinaryAuthorizationEvaluationMode(clusterName, true, "PROJECT_SINGLETON_POLICY_ENFORCE"),
+			},
+			{
+				ResourceName:      "google_container_cluster.with_binary_authorization_evaluation_mode",
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
 			{
-				Config: testAccContainerCluster_withBinaryAuthorization(clusterName, false),
+				Config: testAccContainerCluster_withBinaryAuthorizationEvaluationMode(clusterName, true, "DISABLED"),
 			},
 			{
-				ResourceName:      "google_container_cluster.with_binary_authorization",
+				ResourceName:      "google_container_cluster.with_binary_authorization_evaluation_mode",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
+func TestAccContainerCluster_withBinaryAuthorizationEvaluationModeClassic(t *testing.T) {
+	t.Parallel()
+
+	clusterName := fmt.Sprintf("tf-test-cluster-%s", randString(t, 10))
+
+	vcrTest(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckContainerClusterDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccContainerCluster_withBinaryAuthorizationEvaluationMode(clusterName, false, "PROJECT_SINGLETON_POLICY_ENFORCE"),
+			},
+			{
+				ResourceName:      "google_container_cluster.with_binary_authorization_evaluation_mode",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+			{
+				Config: testAccContainerCluster_withBinaryAuthorizationEvaluationMode(clusterName, false, "DISABLED"),
+			},
+			{
+				ResourceName:      "google_container_cluster.with_binary_authorization_evaluation_mode",
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
@@ -2747,8 +2840,10 @@ resource "google_container_cluster" "primary" {
     enabled = true
   }
 
+  binary_authorization {
+    evaluation_mode = "PROJECT_SINGLETON_POLICY_ENFORCE"
+  }
   enable_intranode_visibility = true
-  enable_binary_authorization = true
 }
 `, name)
 }
@@ -2778,8 +2873,10 @@ resource "google_container_cluster" "primary" {
     enabled = true
   }
 
+  binary_authorization {
+    evaluation_mode = "PROJECT_SINGLETON_POLICY_ENFORCE"
+  }
   enable_intranode_visibility = true
-  enable_binary_authorization = true
 }
 `, name)
 }
@@ -4823,9 +4920,23 @@ resource "google_container_cluster" "shared_vpc_cluster" {
 `, projectName, org, billingId, projectName, org, billingId, suffix, suffix, name)
 }
 
-func testAccContainerCluster_withBinaryAuthorization(clusterName string, enabled bool) string {
+func testAccContainerCluster_withBinaryAuthorizationEnabledBool(clusterName string, enabled bool) string {
 	return fmt.Sprintf(`
-resource "google_container_cluster" "with_binary_authorization" {
+resource "google_container_cluster" "with_binary_authorization_enabled_bool" {
+  name               = "%s"
+  location           = "us-central1-a"
+  initial_node_count = 1
+
+  binary_authorization {
+    enabled = %v
+  }
+}
+`, clusterName, enabled)
+}
+
+func testAccContainerCluster_withBinaryAuthorizationEnabledBoolLegacy(clusterName string, enabled bool) string {
+	return fmt.Sprintf(`
+resource "google_container_cluster" "with_binary_authorization_enabled_bool_legacy" {
   name               = "%s"
   location           = "us-central1-a"
   initial_node_count = 1
@@ -4833,6 +4944,23 @@ resource "google_container_cluster" "with_binary_authorization" {
   enable_binary_authorization = %v
 }
 `, clusterName, enabled)
+}
+
+func testAccContainerCluster_withBinaryAuthorizationEvaluationMode(clusterName string, autopilot_enabled bool, evaluation_mode string) string {
+	return fmt.Sprintf(`
+resource "google_container_cluster" "with_binary_authorization_evaluation_mode" {
+  name               = "%s"
+  location           = "us-central1"
+  initial_node_count = 1
+  ip_allocation_policy {
+  }
+  enable_autopilot = %v
+
+  binary_authorization {
+    evaluation_mode = "%s"
+  }
+}
+`, clusterName, autopilot_enabled, evaluation_mode)
 }
 
 func testAccContainerCluster_withFlexiblePodCIDR(containerNetName string, clusterName string) string {
