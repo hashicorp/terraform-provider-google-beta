@@ -15,6 +15,7 @@
 package google
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -30,14 +31,26 @@ func TestAccDataprocMetastoreServiceIamBindingGenerated(t *testing.T) {
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
-		Providers: testAccProvidersOiCS,
+		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccDataprocMetastoreServiceIamBinding_basicGenerated(context),
 			},
 			{
+				ResourceName:      "google_dataproc_metastore_service_iam_binding.foo",
+				ImportStateId:     fmt.Sprintf("projects/%s/locations/%s/services/%s roles/viewer", getTestProjectFromEnv(), getTestRegionFromEnv(), fmt.Sprintf("tf-test-metastore-srv%s", context["random_suffix"])),
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+			{
 				// Test Iam Binding update
 				Config: testAccDataprocMetastoreServiceIamBinding_updateGenerated(context),
+			},
+			{
+				ResourceName:      "google_dataproc_metastore_service_iam_binding.foo",
+				ImportStateId:     fmt.Sprintf("projects/%s/locations/%s/services/%s roles/viewer", getTestProjectFromEnv(), getTestRegionFromEnv(), fmt.Sprintf("tf-test-metastore-srv%s", context["random_suffix"])),
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -53,11 +66,17 @@ func TestAccDataprocMetastoreServiceIamMemberGenerated(t *testing.T) {
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
-		Providers: testAccProvidersOiCS,
+		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
 				// Test Iam Member creation (no update for member, no need to test)
 				Config: testAccDataprocMetastoreServiceIamMember_basicGenerated(context),
+			},
+			{
+				ResourceName:      "google_dataproc_metastore_service_iam_member.foo",
+				ImportStateId:     fmt.Sprintf("projects/%s/locations/%s/services/%s roles/viewer user:admin@hashicorptest.com", getTestProjectFromEnv(), getTestRegionFromEnv(), fmt.Sprintf("tf-test-metastore-srv%s", context["random_suffix"])),
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -73,13 +92,25 @@ func TestAccDataprocMetastoreServiceIamPolicyGenerated(t *testing.T) {
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
-		Providers: testAccProvidersOiCS,
+		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccDataprocMetastoreServiceIamPolicy_basicGenerated(context),
 			},
 			{
+				ResourceName:      "google_dataproc_metastore_service_iam_policy.foo",
+				ImportStateId:     fmt.Sprintf("projects/%s/locations/%s/services/%s", getTestProjectFromEnv(), getTestRegionFromEnv(), fmt.Sprintf("tf-test-metastore-srv%s", context["random_suffix"])),
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+			{
 				Config: testAccDataprocMetastoreServiceIamPolicy_emptyBinding(context),
+			},
+			{
+				ResourceName:      "google_dataproc_metastore_service_iam_policy.foo",
+				ImportStateId:     fmt.Sprintf("projects/%s/locations/%s/services/%s", getTestProjectFromEnv(), getTestRegionFromEnv(), fmt.Sprintf("tf-test-metastore-srv%s", context["random_suffix"])),
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -88,7 +119,6 @@ func TestAccDataprocMetastoreServiceIamPolicyGenerated(t *testing.T) {
 func testAccDataprocMetastoreServiceIamMember_basicGenerated(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_dataproc_metastore_service" "default" {
-  provider   = google-beta
   service_id = "tf-test-metastore-srv%{random_suffix}"
   location   = "us-central1"
   port       = 9080
@@ -105,7 +135,6 @@ resource "google_dataproc_metastore_service" "default" {
 }
 
 resource "google_dataproc_metastore_service_iam_member" "foo" {
-  provider = google-beta
   project = google_dataproc_metastore_service.default.project
   location = google_dataproc_metastore_service.default.location
   service_id = google_dataproc_metastore_service.default.service_id
@@ -118,7 +147,6 @@ resource "google_dataproc_metastore_service_iam_member" "foo" {
 func testAccDataprocMetastoreServiceIamPolicy_basicGenerated(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_dataproc_metastore_service" "default" {
-  provider   = google-beta
   service_id = "tf-test-metastore-srv%{random_suffix}"
   location   = "us-central1"
   port       = 9080
@@ -135,7 +163,6 @@ resource "google_dataproc_metastore_service" "default" {
 }
 
 data "google_iam_policy" "foo" {
-  provider = google-beta
   binding {
     role = "%{role}"
     members = ["user:admin@hashicorptest.com"]
@@ -143,7 +170,6 @@ data "google_iam_policy" "foo" {
 }
 
 resource "google_dataproc_metastore_service_iam_policy" "foo" {
-  provider = google-beta
   project = google_dataproc_metastore_service.default.project
   location = google_dataproc_metastore_service.default.location
   service_id = google_dataproc_metastore_service.default.service_id
@@ -155,7 +181,6 @@ resource "google_dataproc_metastore_service_iam_policy" "foo" {
 func testAccDataprocMetastoreServiceIamPolicy_emptyBinding(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_dataproc_metastore_service" "default" {
-  provider   = google-beta
   service_id = "tf-test-metastore-srv%{random_suffix}"
   location   = "us-central1"
   port       = 9080
@@ -172,11 +197,9 @@ resource "google_dataproc_metastore_service" "default" {
 }
 
 data "google_iam_policy" "foo" {
-  provider = google-beta
 }
 
 resource "google_dataproc_metastore_service_iam_policy" "foo" {
-  provider = google-beta
   project = google_dataproc_metastore_service.default.project
   location = google_dataproc_metastore_service.default.location
   service_id = google_dataproc_metastore_service.default.service_id
@@ -188,7 +211,6 @@ resource "google_dataproc_metastore_service_iam_policy" "foo" {
 func testAccDataprocMetastoreServiceIamBinding_basicGenerated(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_dataproc_metastore_service" "default" {
-  provider   = google-beta
   service_id = "tf-test-metastore-srv%{random_suffix}"
   location   = "us-central1"
   port       = 9080
@@ -205,7 +227,6 @@ resource "google_dataproc_metastore_service" "default" {
 }
 
 resource "google_dataproc_metastore_service_iam_binding" "foo" {
-  provider = google-beta
   project = google_dataproc_metastore_service.default.project
   location = google_dataproc_metastore_service.default.location
   service_id = google_dataproc_metastore_service.default.service_id
@@ -218,7 +239,6 @@ resource "google_dataproc_metastore_service_iam_binding" "foo" {
 func testAccDataprocMetastoreServiceIamBinding_updateGenerated(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_dataproc_metastore_service" "default" {
-  provider   = google-beta
   service_id = "tf-test-metastore-srv%{random_suffix}"
   location   = "us-central1"
   port       = 9080
@@ -235,7 +255,6 @@ resource "google_dataproc_metastore_service" "default" {
 }
 
 resource "google_dataproc_metastore_service_iam_binding" "foo" {
-  provider = google-beta
   project = google_dataproc_metastore_service.default.project
   location = google_dataproc_metastore_service.default.location
   service_id = google_dataproc_metastore_service.default.service_id
