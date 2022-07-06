@@ -117,7 +117,6 @@ func resourceContainerAwsCluster() *schema.Resource {
 				Type:        schema.TypeList,
 				Computed:    true,
 				Optional:    true,
-				ForceNew:    true,
 				Description: "Logging configuration.",
 				MaxItems:    1,
 				Elem:        ContainerAwsClusterLoggingConfigSchema(),
@@ -240,7 +239,6 @@ func ContainerAwsClusterControlPlaneSchema() *schema.Resource {
 			"iam_instance_profile": {
 				Type:        schema.TypeString,
 				Required:    true,
-				ForceNew:    true,
 				Description: "The name of the AWS IAM instance pofile to assign to each control plane replica.",
 			},
 
@@ -543,7 +541,6 @@ func ContainerAwsClusterLoggingConfigSchema() *schema.Resource {
 				Type:        schema.TypeList,
 				Computed:    true,
 				Optional:    true,
-				ForceNew:    true,
 				Description: "Configuration of the logging components.",
 				MaxItems:    1,
 				Elem:        ContainerAwsClusterLoggingConfigComponentConfigSchema(),
@@ -559,7 +556,6 @@ func ContainerAwsClusterLoggingConfigComponentConfigSchema() *schema.Resource {
 				Type:        schema.TypeList,
 				Computed:    true,
 				Optional:    true,
-				ForceNew:    true,
 				Description: "Components of the logging configuration to be enabled.",
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},

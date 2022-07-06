@@ -192,7 +192,6 @@ func ContainerAwsNodePoolConfigSchema() *schema.Resource {
 			"iam_instance_profile": {
 				Type:        schema.TypeString,
 				Required:    true,
-				ForceNew:    true,
 				Description: "The name of the AWS IAM role assigned to nodes in the pool.",
 			},
 
@@ -218,6 +217,7 @@ func ContainerAwsNodePoolConfigSchema() *schema.Resource {
 				Type:        schema.TypeString,
 				Computed:    true,
 				Optional:    true,
+				ForceNew:    true,
 				Description: "Optional. The AWS instance type. When unspecified, it defaults to `m5.large`.",
 			},
 
