@@ -292,6 +292,7 @@ func TestAccCloudRunService_cloudRunServiceScheduledExample(t *testing.T) {
 func testAccCloudRunService_cloudRunServiceScheduledExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_project_service" "run_api" {
+  provider = google-beta
   project                    = "%{project}"
   service                    = "run.googleapis.com"
   disable_dependent_services = true
@@ -299,24 +300,28 @@ resource "google_project_service" "run_api" {
 }
 
 resource "google_project_service" "iam_api" {
+  provider = google-beta
   project                    = "%{project}"
   service                    = "iam.googleapis.com"
   disable_on_destroy         = false
 }
 
 resource "google_project_service" "resource_manager_api" {
+  provider = google-beta
   project                    = "%{project}"
   service                    = "cloudresourcemanager.googleapis.com"
   disable_on_destroy         = false
 }
 
 resource "google_project_service" "scheduler_api" {
+  provider = google-beta
   project                    = "%{project}"
   service                    = "cloudscheduler.googleapis.com"
   disable_on_destroy         = false
 }
 
 resource "google_cloud_run_service" "default" {
+  provider = google-beta
   project  = "%{project}"
   name     = "tf-test-my-scheduled-service%{random_suffix}"
   location = "us-central1"
@@ -341,6 +346,7 @@ resource "google_cloud_run_service" "default" {
 }
 
 resource "google_service_account" "default" {
+  provider = google-beta
   project      = "%{project}"
   account_id   = "tf-test-scheduler-sa%{random_suffix}"
   description  = "Cloud Scheduler service account; used to trigger scheduled Cloud Run jobs."
@@ -353,6 +359,7 @@ resource "google_service_account" "default" {
 }
 
 resource "google_cloud_scheduler_job" "default" {
+  provider = google-beta
   name             = "tf-test-scheduled-cloud-run-job%{random_suffix}"
   description      = "Invoke a Cloud Run container on a schedule."
   schedule         = "*/8 * * * *"
@@ -611,7 +618,8 @@ func TestAccCloudRunService_cloudRunServiceIngressExample(t *testing.T) {
 func testAccCloudRunService_cloudRunServiceIngressExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_cloud_run_service" "default" {
-    name     = "tf-test-ingress-service%{random_suffix}"
+  provider = google-beta
+  name     = "tf-test-ingress-service%{random_suffix}"
     location = "us-central1"
 
     template {
@@ -806,6 +814,7 @@ func testAccCloudRunService_cloudRunServiceMultipleRegionsExample(context map[st
 # Cloud Run service replicated across multiple GCP regions
 
 resource "google_project_service" "compute_api" {
+  provider = google-beta
   project                    = "%{project}"
   service                    = "compute.googleapis.com"
   disable_dependent_services = true
@@ -813,6 +822,7 @@ resource "google_project_service" "compute_api" {
 }
 
 resource "google_project_service" "run_api" {
+  provider = google-beta
   project                    = "%{project}"
   service                    = "run.googleapis.com"
   disable_dependent_services = true
@@ -830,6 +840,7 @@ variable "run_regions" {
 }
 
 resource "google_compute_global_address" "lb_default" {
+  provider = google-beta
   name    = "tf-test-myservice-service-ip%{random_suffix}"
   project = "%{project}"
 
@@ -840,6 +851,7 @@ resource "google_compute_global_address" "lb_default" {
 }
 
 resource "google_compute_backend_service" "lb_default" {
+  provider = google-beta
   name                  = "tf-test-myservice-backend%{random_suffix}"
   project               = "%{project}"
   load_balancing_scheme = "EXTERNAL_MANAGED"
@@ -864,6 +876,7 @@ resource "google_compute_backend_service" "lb_default" {
 
 
 resource "google_compute_url_map" "lb_default" {
+  provider = google-beta
   name            = "tf-test-myservice-lb-urlmap%{random_suffix}"
   project         = "%{project}"
   default_service = google_compute_backend_service.lb_default.id
@@ -882,6 +895,7 @@ resource "google_compute_url_map" "lb_default" {
 }
 
 resource "google_compute_managed_ssl_certificate" "lb_default" {
+  provider = google-beta
   name    = "tf-test-myservice-ssl-cert%{random_suffix}"
   project = "%{project}"
 
@@ -891,6 +905,7 @@ resource "google_compute_managed_ssl_certificate" "lb_default" {
 }
 
 resource "google_compute_target_https_proxy" "lb_default" {
+  provider = google-beta
   name    = "tf-test-myservice-https-proxy%{random_suffix}"
   project = "%{project}"
   url_map = google_compute_url_map.lb_default.id
@@ -903,6 +918,7 @@ resource "google_compute_target_https_proxy" "lb_default" {
 }
 
 resource "google_compute_global_forwarding_rule" "lb_default" {
+  provider = google-beta
   name                  = "tf-test-myservice-lb-fr%{random_suffix}"
   project               = "%{project}"
   load_balancing_scheme = "EXTERNAL_MANAGED"
@@ -913,6 +929,7 @@ resource "google_compute_global_forwarding_rule" "lb_default" {
 }
 
 resource "google_compute_region_network_endpoint_group" "lb_default" {
+  provider = google-beta
   count                 = length(var.run_regions)
   project               = "%{project}"
   name                  = "tf-test-myservice-neg%{random_suffix}"
@@ -928,6 +945,7 @@ output "load_balancer_ip_addr" {
 }
 
 resource "google_cloud_run_service" "run_default" {
+  provider = google-beta
   count    = length(var.run_regions)
   project  = "%{project}"
   name     = "tf-test-myservice-run-app%{random_suffix}-${var.run_regions[count.index]}"
@@ -953,6 +971,7 @@ resource "google_cloud_run_service" "run_default" {
 }
 
 resource "google_cloud_run_service_iam_member" "run_allow_unauthenticated" {
+  provider = google-beta
   count    = length(var.run_regions)
   project  = "%{project}"
   location = google_cloud_run_service.run_default[count.index].location
@@ -962,6 +981,7 @@ resource "google_cloud_run_service_iam_member" "run_allow_unauthenticated" {
 }
 
 resource "google_compute_url_map" "https_default" {
+  provider = google-beta
   name    = "tf-test-myservice-https-urlmap%{random_suffix}"
   project = "%{project}"
 
@@ -973,6 +993,7 @@ resource "google_compute_url_map" "https_default" {
 }
 
 resource "google_compute_target_http_proxy" "https_default" {
+  provider = google-beta
   name    = "tf-test-myservice-http-proxy%{random_suffix}"
   project = "%{project}"
   url_map = google_compute_url_map.https_default.id
@@ -983,6 +1004,7 @@ resource "google_compute_target_http_proxy" "https_default" {
 }
 
 resource "google_compute_global_forwarding_rule" "https_default" {
+  provider = google-beta
   name       = "tf-test-myservice-https-fr%{random_suffix}"
   project    = "%{project}"
   target     = google_compute_target_http_proxy.https_default.id
