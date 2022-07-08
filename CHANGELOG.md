@@ -1,8 +1,4 @@
 ## 4.28.0 (Unreleased)
-UNKNOWN CHANGELOG TYPE:
-* Remove lint from GH Actions ([#4417](https://github.com/hashicorp/terraform-provider-google-beta/pull/4417))
-* Split changelog on versions ([#4415](https://github.com/hashicorp/terraform-provider-google-beta/pull/4415))
-* docs: add link to Load Balancer types doc ([#4412](https://github.com/hashicorp/terraform-provider-google-beta/pull/4412))
 
 FEATURES:
 * **New Resource:** google_bigquery_connection_iam_binding ([#4437](https://github.com/hashicorp/terraform-provider-google-beta/pull/4437))
@@ -17,28 +13,26 @@ FEATURES:
 * **New Resource:** google_dataproc_metastore_service_iam_binding ([#4416](https://github.com/hashicorp/terraform-provider-google-beta/pull/4416))
 * **New Resource:** google_dataproc_metastore_service_iam_member ([#4416](https://github.com/hashicorp/terraform-provider-google-beta/pull/4416))
 * **New Resource:** google_dataproc_metastore_service_iam_policy ([#4416](https://github.com/hashicorp/terraform-provider-google-beta/pull/4416))
-* **New Resource:** monitoring: Promoted 'monitoredproject' to GA ([#4419](https://github.com/hashicorp/terraform-provider-google-beta/pull/4419))
 
 IMPROVEMENTS:
 * bigquery: fixed a permadiff in `google_bigquery_job.query. destination_table` ([#4401](https://github.com/hashicorp/terraform-provider-google-beta/pull/4401))
-* billing: Added `calendar_period` and `custom_period` fields to `google_billing_budget` ([#4429](https://github.com/hashicorp/terraform-provider-google-beta/pull/4429))
+* billing: added `calendar_period` and `custom_period` fields to `google_billing_budget` ([#4429](https://github.com/hashicorp/terraform-provider-google-beta/pull/4429))
 * cloudsql: added attribute `project` to data source `google_sql_backup_run` ([#4402](https://github.com/hashicorp/terraform-provider-google-beta/pull/4402))
 * composer: added CMEK, PUPI and IP_masq_agent support for Composer 2 in `google_composer_environment` resource ([#4430](https://github.com/hashicorp/terraform-provider-google-beta/pull/4430))
-* compute: add maxPortsPerVm field to `google_compute_router_nat` resource ([#4400](https://github.com/hashicorp/terraform-provider-google-beta/pull/4400))
+* compute: added maxPortsPerVm field to `google_compute_router_nat` resource ([#4400](https://github.com/hashicorp/terraform-provider-google-beta/pull/4400))
 * compute: added `GCE_VM_IP` support to `google_compute_network_endpoint_group` resource. ([#4434](https://github.com/hashicorp/terraform-provider-google-beta/pull/4434))
 * compute: promoted `disk_encryption_key.kms_key_name` on `google_compute_region_disk` ([#4421](https://github.com/hashicorp/terraform-provider-google-beta/pull/4421))
-* container: Promoted `gce_persistent_disk_csi_driver_config` addon in `google_container_cluster` resource to GA ([#4436](https://github.com/hashicorp/terraform-provider-google-beta/pull/4436))
+* container: promoted `gce_persistent_disk_csi_driver_config` addon in `google_container_cluster` resource to GA ([#4436](https://github.com/hashicorp/terraform-provider-google-beta/pull/4436))
 * container: promoted `notification_config` and `dns_cache_config` on `google_container_cluster` ([#4405](https://github.com/hashicorp/terraform-provider-google-beta/pull/4405))
-* google_cloud_run_service: added samples for traffic splitting ([#4413](https://github.com/hashicorp/terraform-provider-google-beta/pull/4413))
 * privateca: added support to subordinate CA activation ([#4422](https://github.com/hashicorp/terraform-provider-google-beta/pull/4422))
-* redis: Added CMEK key field `customer_managed_key` in `google_redis_instance ` ([#4435](https://github.com/hashicorp/terraform-provider-google-beta/pull/4435))
-* spanner: Added field `version_retention_period` to `google_spanner_database` resource ([#4424](https://github.com/hashicorp/terraform-provider-google-beta/pull/4424))
-* spanner: Fixed issue where `ddl` and `version_retention_period` could not be set when first creating `google_spanner_database` using POSTGRESQL ([#4424](https://github.com/hashicorp/terraform-provider-google-beta/pull/4424))
+* redis: added CMEK key field `customer_managed_key` in `google_redis_instance ` ([#4435](https://github.com/hashicorp/terraform-provider-google-beta/pull/4435))
+* spanner: added field `version_retention_period` to `google_spanner_database` resource ([#4424](https://github.com/hashicorp/terraform-provider-google-beta/pull/4424))
+* spanner: fixed issue where `ddl` and `version_retention_period` could not be set when first creating `google_spanner_database` using POSTGRESQL ([#4424](https://github.com/hashicorp/terraform-provider-google-beta/pull/4424))
 * sql: added `settings.location_preference.secondary_zone` field in `google_sql_database_instance` ([#4433](https://github.com/hashicorp/terraform-provider-google-beta/pull/4433))
 * sql: added `sql_server_audit_config` field in `google_sql_database_instance` ([#4403](https://github.com/hashicorp/terraform-provider-google-beta/pull/4403))
 
 BUG FIXES:
-* composer: fix a problem with updating Cloud Composer's scheduler_count field (https://github.com/hashicorp/terraform-provider-google/issues/11940) ([#4408](https://github.com/hashicorp/terraform-provider-google-beta/pull/4408))
+* composer: fixed a problem with updating Cloud Composer's scheduler_count field (https://github.com/hashicorp/terraform-provider-google/issues/11940) ([#4408](https://github.com/hashicorp/terraform-provider-google-beta/pull/4408))
 * composer: fixed permadiff on `private_environment_config.cloud_composer_connection_subnetwork` ([#4411](https://github.com/hashicorp/terraform-provider-google-beta/pull/4411))
 * container: fixed an issue where `node_config.min_cpu_platform` could cause a perma-diff in `google_container_cluster` ([#4426](https://github.com/hashicorp/terraform-provider-google-beta/pull/4426))
 * example: fixed tcp proxy example named port ([#4404](https://github.com/hashicorp/terraform-provider-google-beta/pull/4404))
