@@ -21,9 +21,6 @@ IMPROVEMENTS:
 * composer: added CMEK, PUPI and IP_masq_agent support for Composer 2 in `google_composer_environment` resource ([#4430](https://github.com/hashicorp/terraform-provider-google-beta/pull/4430))
 * compute: added maxPortsPerVm field to `google_compute_router_nat` resource ([#4400](https://github.com/hashicorp/terraform-provider-google-beta/pull/4400))
 * compute: added `GCE_VM_IP` support to `google_compute_network_endpoint_group` resource. ([#4434](https://github.com/hashicorp/terraform-provider-google-beta/pull/4434))
-* compute: promoted `disk_encryption_key.kms_key_name` on `google_compute_region_disk` ([#4421](https://github.com/hashicorp/terraform-provider-google-beta/pull/4421))
-* container: promoted `gce_persistent_disk_csi_driver_config` addon in `google_container_cluster` resource to GA ([#4436](https://github.com/hashicorp/terraform-provider-google-beta/pull/4436))
-* container: promoted `notification_config` and `dns_cache_config` on `google_container_cluster` ([#4405](https://github.com/hashicorp/terraform-provider-google-beta/pull/4405))
 * privateca: added support to subordinate CA activation ([#4422](https://github.com/hashicorp/terraform-provider-google-beta/pull/4422))
 * redis: added CMEK key field `customer_managed_key` in `google_redis_instance ` ([#4435](https://github.com/hashicorp/terraform-provider-google-beta/pull/4435))
 * spanner: added field `version_retention_period` to `google_spanner_database` resource ([#4424](https://github.com/hashicorp/terraform-provider-google-beta/pull/4424))
@@ -35,7 +32,6 @@ BUG FIXES:
 * composer: fixed a problem with updating Cloud Composer's scheduler_count field (https://github.com/hashicorp/terraform-provider-google/issues/11940) ([#4408](https://github.com/hashicorp/terraform-provider-google-beta/pull/4408))
 * composer: fixed permadiff on `private_environment_config.cloud_composer_connection_subnetwork` ([#4411](https://github.com/hashicorp/terraform-provider-google-beta/pull/4411))
 * container: fixed an issue where `node_config.min_cpu_platform` could cause a perma-diff in `google_container_cluster` ([#4426](https://github.com/hashicorp/terraform-provider-google-beta/pull/4426))
-* example: fixed tcp proxy example named port ([#4404](https://github.com/hashicorp/terraform-provider-google-beta/pull/4404))
 * filestore: fixed a case where `google_filestore_instance.networks.network` would incorrectly see a diff between state and config when the network `id` format was used ([#4431](https://github.com/hashicorp/terraform-provider-google-beta/pull/4431))
 * serviceusage: fixed an issue where `google_project_service_identity` didn't handle service identities without emails correctly (beta) ([#4432](https://github.com/hashicorp/terraform-provider-google-beta/pull/4432))
 
