@@ -33,7 +33,7 @@ BUG FIXES:
 * composer: fixed permadiff on `private_environment_config.cloud_composer_connection_subnetwork` ([#4411](https://github.com/hashicorp/terraform-provider-google-beta/pull/4411))
 * container: fixed an issue where `node_config.min_cpu_platform` could cause a perma-diff in `google_container_cluster` ([#4426](https://github.com/hashicorp/terraform-provider-google-beta/pull/4426))
 * filestore: fixed a case where `google_filestore_instance.networks.network` would incorrectly see a diff between state and config when the network `id` format was used ([#4431](https://github.com/hashicorp/terraform-provider-google-beta/pull/4431))
-* serviceusage: fixed an issue where `google_project_service_identity` didn't handle service identities without emails correctly (beta) ([#4432](https://github.com/hashicorp/terraform-provider-google-beta/pull/4432))
+* serviceusage: fixed an issue where `google_project_service_identity` didn't handle service identities without emails correctly ([#4432](https://github.com/hashicorp/terraform-provider-google-beta/pull/4432))
 
 
 ## 4.27.0 (June 27, 2022)
