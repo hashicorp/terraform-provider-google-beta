@@ -889,6 +889,7 @@ func resourceDataprocClusterCreate(d *schema.ResourceData, meta interface{}) err
 	}
 
 	cluster.Config, err = expandClusterConfig(d, config)
+
 	if err != nil {
 		return err
 	}
@@ -1433,7 +1434,10 @@ func resourceDataprocClusterRead(d *schema.ResourceData, meta interface{}) error
 		return fmt.Errorf("Error setting labels: %s", err)
 	}
 
-	cfg, err := flattenClusterConfig(d, cluster.Config)
+	var cfg []map[string]interface{}
+
+	cfg, err = flattenClusterConfig(d, cluster.Config)
+
 	if err != nil {
 		return err
 	}
