@@ -134,6 +134,125 @@ resource "google_sql_database_instance" "instance" {
 `, context)
 }
 
+func TestAccCloudRunService_cloudRunServiceConfigurationExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"random_suffix": randString(t, 10),
+	}
+
+	vcrTest(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProvidersOiCS,
+		CheckDestroy: testAccCheckCloudRunServiceDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudRunService_cloudRunServiceConfigurationExample(context),
+			},
+			{
+				ResourceName:            "google_cloud_run_service.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"name", "location"},
+			},
+		},
+	})
+}
+
+func testAccCloudRunService_cloudRunServiceConfigurationExample(context map[string]interface{}) string {
+	return Nprintf(`
+# Example configuration of a Cloud Run service
+
+resource "google_cloud_run_service" "default" {
+  name     = "config%{random_suffix}"
+  location = "us-central1"
+
+  template {
+    spec {
+      containers {
+        image = "us-docker.pkg.dev/cloudrun/container/hello"
+
+        # Container "entry-point" command
+        # https://cloud.google.com/run/docs/configuring/containers#configure-entrypoint
+        command = ["/server"]
+
+        # Container "entry-point" args
+        # https://cloud.google.com/run/docs/configuring/containers#configure-entrypoint
+        args = []
+
+        # Enable HTTP/2
+        # https://cloud.google.com/run/docs/configuring/http2
+        ports {
+          name           = "h2c"
+          container_port = 8080
+        }
+
+        # Environment variables
+        # https://cloud.google.com/run/docs/configuring/environment-variables
+        env {
+          name  = "foo"
+          value = "bar"
+        }
+        env {
+          name  = "baz"
+          value = "quux"
+        }
+
+        resources {
+          limits = {
+            # CPU usage limit
+            # https://cloud.google.com/run/docs/configuring/cpu
+            cpu = "1000m" # 1 vCPU
+
+            # Memory usage limit (per container)
+            # https://cloud.google.com/run/docs/configuring/memory-limits
+            memory = "512Mi"
+          }
+        }
+      }
+
+      # Timeout
+      # https://cloud.google.com/run/docs/configuring/request-timeout
+      timeout_seconds = 300
+
+      # Maximum concurrent requests
+      # https://cloud.google.com/run/docs/configuring/concurrency
+      container_concurrency = 80
+    }
+
+    metadata {
+      annotations = {
+
+        # Max instances
+        # https://cloud.google.com/run/docs/configuring/max-instances
+        "autoscaling.knative.dev/maxScale" = 10
+
+        # Min instances
+        # https://cloud.google.com/run/docs/configuring/min-instances
+        "autoscaling.knative.dev/minScale" = 1
+
+        # If true, garbage-collect CPU when once a request finishes
+        # https://cloud.google.com/run/docs/configuring/cpu-allocation
+        "run.googleapis.com/cpu-throttling" = false
+      }
+
+      # Labels
+      # https://cloud.google.com/run/docs/configuring/labels
+      labels = {
+        foo : "bar"
+        baz : "quux"
+      }
+    }
+  }
+
+  traffic {
+    percent         = 100
+    latest_revision = true
+  }
+}
+`, context)
+}
+
 func TestAccCloudRunService_cloudRunServiceNoauthExample(t *testing.T) {
 	t.Parallel()
 
