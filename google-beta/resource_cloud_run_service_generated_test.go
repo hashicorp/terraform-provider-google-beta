@@ -1074,6 +1074,81 @@ resource "google_cloud_run_service_iam_member" "allow_unauthenticated" {
 `, context)
 }
 
+func TestAccCloudRunService_cloudRunServiceTasksExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"project":       getTestProjectFromEnv(),
+		"random_suffix": randString(t, 10),
+	}
+
+	vcrTest(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProvidersOiCS,
+		CheckDestroy: testAccCheckCloudRunServiceDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudRunService_cloudRunServiceTasksExample(context),
+			},
+			{
+				ResourceName:            "google_cloud_run_service.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"name", "location"},
+			},
+		},
+	})
+}
+
+func testAccCloudRunService_cloudRunServiceTasksExample(context map[string]interface{}) string {
+	return Nprintf(`
+resource "google_cloud_run_service" "default" {
+    name     = "tf-test-cloud-run-service-name%{random_suffix}"
+    location = "us-central1"
+    provider = google-beta
+    template {
+      spec {
+            containers {
+                image = "gcr.io/cloudrun/hello"
+            }
+      }
+    }
+    traffic {
+      percent         = 100
+      latest_revision = true
+    }
+}
+
+resource "google_service_account" "sa" {
+  account_id   = "cloud-run-task-invoker"
+  display_name = "Cloud Run Task Invoker"
+  provider = google-beta
+}
+
+resource "google_cloud_run_service_iam_binding" "binding" {
+  location = google_cloud_run_service.default.location
+  service = google_cloud_run_service.default.name
+  role = "roles/run.invoker"
+  members = ["serviceAccount:${google_service_account.sa.email}"]
+  provider = google-beta
+  project = google_cloud_run_service.default.project
+}
+
+resource "google_project_iam_binding" "project_binding" {
+  role    = "roles/iam.serviceAccountTokenCreator"
+  members = ["serviceAccount:${google_service_account.sa.email}"]
+  provider = google-beta
+  project = google_cloud_run_service.default.project
+}
+
+resource "google_cloud_tasks_queue" "default" {
+  name = "tf-test-cloud-tasks-queue-name%{random_suffix}"
+  location = "us-central1"
+  provider = google-beta
+}
+`, context)
+}
+
 func testAccCheckCloudRunServiceDestroyProducer(t *testing.T) func(s *terraform.State) error {
 	return func(s *terraform.State) error {
 		for name, rs := range s.RootModule().Resources {
