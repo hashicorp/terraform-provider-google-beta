@@ -1134,6 +1134,62 @@ resource "google_compute_global_forwarding_rule" "https_default" {
 `, context)
 }
 
+func TestAccCloudRunService_cloudrunServiceAccessControlExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"random_suffix": randString(t, 10),
+	}
+
+	vcrTest(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckCloudRunServiceDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudRunService_cloudrunServiceAccessControlExample(context),
+			},
+			{
+				ResourceName:            "google_cloud_run_service.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"name", "location"},
+			},
+		},
+	})
+}
+
+func testAccCloudRunService_cloudrunServiceAccessControlExample(context map[string]interface{}) string {
+	return Nprintf(`
+resource "google_cloud_run_service" "default" {
+  name     = "tf-test-cloud-run-srv%{random_suffix}"
+  location = "us-central1"
+
+  template {
+    spec {
+      containers {
+        image = "gcr.io/cloudrun/hello"
+      }
+    }
+  }
+
+  traffic {
+    percent         = 100
+    latest_revision = true
+  }
+}
+
+resource "google_cloud_run_service_iam_binding" "default" {
+  location = google_cloud_run_service.default.location
+  service  = google_cloud_run_service.default.name
+  role     = "roles/run.invoker"
+  members = [
+    "allUsers"
+  ]
+}
+`, context)
+}
+
 func TestAccCloudRunService_cloudRunSystemPackagesExample(t *testing.T) {
 	t.Parallel()
 
