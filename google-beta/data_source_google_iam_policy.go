@@ -17,12 +17,14 @@ import (
 // of how the schema would be used in a config:
 //
 // data "google_iam_policy" "admin" {
-//   binding {
-//     role = "roles/storage.objectViewer"
-//     members = [
-//       "user:evanbrown@google.com",
-//     ]
-//   }
+//
+//	binding {
+//	  role = "roles/storage.objectViewer"
+//	  members = [
+//	    "user:evanbrown@google.com",
+//	  ]
+//	}
+//
 // }
 func dataSourceGoogleIamPolicy() *schema.Resource {
 	return &schema.Resource{

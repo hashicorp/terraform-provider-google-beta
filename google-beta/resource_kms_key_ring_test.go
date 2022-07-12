@@ -100,8 +100,8 @@ func TestAccKmsKeyRing_basic(t *testing.T) {
 }
 
 /*
-	KMS KeyRings cannot be deleted. This ensures that the KeyRing resource was removed from state,
-	even though the server-side resource was not removed.
+KMS KeyRings cannot be deleted. This ensures that the KeyRing resource was removed from state,
+even though the server-side resource was not removed.
 */
 func testAccCheckGoogleKmsKeyRingWasRemovedFromState(resourceName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
@@ -116,8 +116,8 @@ func testAccCheckGoogleKmsKeyRingWasRemovedFromState(resourceName string) resour
 }
 
 /*
-	This test runs in its own project, otherwise the test project would start to get filled
-	with undeletable resources
+This test runs in its own project, otherwise the test project would start to get filled
+with undeletable resources
 */
 func testGoogleKmsKeyRing_basic(projectId, projectOrg, projectBillingAccount, keyRingName string) string {
 	return fmt.Sprintf(`

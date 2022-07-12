@@ -1217,6 +1217,7 @@ func resourceContainerCluster() *schema.Resource {
 					},
 				},
 			},
+
 			"workload_identity_config": {
 				Type:     schema.TypeList,
 				MaxItems: 1,
@@ -1250,6 +1251,23 @@ func resourceContainerCluster() *schema.Resource {
 							Type:        schema.TypeBool,
 							Optional:    true,
 							Description: "Whether to enable the Identity Service component.",
+						},
+					},
+				},
+			},
+
+			"mesh_certificates": {
+				Type:        schema.TypeList,
+				MaxItems:    1,
+				Optional:    true,
+				Computed:    true,
+				Description: `If set, and enable_certificates=1, the GKE Workload Identity Certificates controller and node agent will be deployed in the cluster.`,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"enable_certificates": {
+							Type:        schema.TypeBool,
+							Required:    true,
+							Description: `When enabled the GKE Workload Identity Certificates controller and node agent will be deployed in the cluster.`,
 						},
 					},
 				},
@@ -1648,6 +1666,10 @@ func resourceContainerClusterCreate(d *schema.ResourceData, meta interface{}) er
 
 	if v, ok := d.GetOk("vertical_pod_autoscaling"); ok {
 		cluster.VerticalPodAutoscaling = expandVerticalPodAutoscaling(v)
+	}
+
+	if v, ok := d.GetOk("mesh_certificates"); ok {
+		cluster.MeshCertificates = expandMeshCertificates(v)
 	}
 
 	if v, ok := d.GetOk("database_encryption"); ok {
@@ -2686,6 +2708,33 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 		}
 	}
 
+	if d.HasChange("mesh_certificates") {
+		c := d.Get("mesh_certificates")
+		req := &container.UpdateClusterRequest{
+			Update: &container.ClusterUpdate{
+				DesiredMeshCertificates: expandMeshCertificates(c),
+			},
+		}
+
+		updateF := func() error {
+			name := containerClusterFullName(project, location, clusterName)
+			clusterUpdateCall := config.NewContainerClient(userAgent).Projects.Locations.Clusters.Update(name, req)
+			if config.UserProjectOverride {
+				clusterUpdateCall.Header().Add("X-Goog-User-Project", project)
+			}
+			op, err := clusterUpdateCall.Do()
+			if err != nil {
+				return err
+			}
+			// Wait until it's updated
+			return containerOperationWait(config, op, project, location, "updating GKE cluster mesh certificates config", userAgent, d.Timeout(schema.TimeoutUpdate))
+		}
+		if err := lockedCall(lockKey, updateF); err != nil {
+			return err
+		}
+		log.Printf("[INFO] GKE cluster %s mesh certificates config has been updated", d.Id())
+	}
+
 	if d.HasChange("database_encryption") {
 		c := d.Get("database_encryption")
 		req := &container.UpdateClusterRequest{
@@ -3553,6 +3602,17 @@ func expandVerticalPodAutoscaling(configured interface{}) *container.VerticalPod
 	config := l[0].(map[string]interface{})
 	return &container.VerticalPodAutoscaling{
 		Enabled: config["enabled"].(bool),
+	}
+}
+
+func expandMeshCertificates(configured interface{}) *container.MeshCertificates {
+	l := configured.([]interface{})
+	if len(l) == 0 {
+		return nil
+	}
+	config := l[0].(map[string]interface{})
+	return &container.MeshCertificates{
+		EnableCertificates: config["enable_certificates"].(bool),
 	}
 }
 

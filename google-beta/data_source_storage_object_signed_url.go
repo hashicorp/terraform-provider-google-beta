@@ -170,10 +170,10 @@ func dataSourceGoogleSignedUrlRead(d *schema.ResourceData, meta interface{}) err
 
 // loadJwtConfig looks for credentials json in the following places,
 // in order of preference:
-//   1. `credentials` attribute of the datasource
-//   2. `credentials` attribute in the provider definition.
-//   3. A JSON file whose path is specified by the
-//      GOOGLE_APPLICATION_CREDENTIALS environment variable.
+//  1. `credentials` attribute of the datasource
+//  2. `credentials` attribute in the provider definition.
+//  3. A JSON file whose path is specified by the
+//     GOOGLE_APPLICATION_CREDENTIALS environment variable.
 func loadJwtConfig(d *schema.ResourceData, meta interface{}) (*jwt.Config, error) {
 	config := meta.(*Config)
 
@@ -249,7 +249,6 @@ type UrlData struct {
 // Example output:
 // -------------------
 // GET
-//
 //
 // 1388534400
 // bucket/objectname

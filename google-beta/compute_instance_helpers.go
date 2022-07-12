@@ -1,4 +1,3 @@
-//
 package google
 
 import (
@@ -175,7 +174,6 @@ func flattenIpv6AccessConfigs(ipv6AccessConfigs []*compute.AccessConfig) []map[s
 			"network_tier": ac.NetworkTier,
 		}
 		flattened[i]["public_ptr_domain_name"] = ac.PublicPtrDomainName
-		flattened[i]["external_ipv6"] = ac.ExternalIpv6
 	}
 	return flattened
 }

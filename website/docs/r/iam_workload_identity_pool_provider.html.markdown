@@ -24,10 +24,12 @@ description: |-
 
 A configuration for an external identity provider.
 
+~> **Warning:** This resource is in beta, and should be used with the terraform-provider-google-beta provider.
+See [Provider Versions](https://terraform.io/docs/providers/google/guides/provider_versions.html) for more details on beta resources.
 
 To get more information about WorkloadIdentityPoolProvider, see:
 
-* [API documentation](https://cloud.google.com/iam/docs/reference/rest/v1/projects.locations.workloadIdentityPools.providers)
+* [API documentation](https://cloud.google.com/iam/docs/reference/rest/v1beta/projects.locations.workloadIdentityPools.providers)
 * How-to Guides
     * [Managing workload identity providers](https://cloud.google.com/iam/docs/manage-workload-identity-pools-providers#managing_workload_identity_providers)
 
@@ -41,10 +43,12 @@ To get more information about WorkloadIdentityPoolProvider, see:
 
 ```hcl
 resource "google_iam_workload_identity_pool" "pool" {
+  provider                  = google-beta
   workload_identity_pool_id = "example-pool"
 }
 
 resource "google_iam_workload_identity_pool_provider" "example" {
+  provider                           = google-beta
   workload_identity_pool_id          = google_iam_workload_identity_pool.pool.workload_identity_pool_id
   workload_identity_pool_provider_id = "example-prvdr"
   aws {
@@ -62,10 +66,12 @@ resource "google_iam_workload_identity_pool_provider" "example" {
 
 ```hcl
 resource "google_iam_workload_identity_pool" "pool" {
+  provider                  = google-beta
   workload_identity_pool_id = "example-pool"
 }
 
 resource "google_iam_workload_identity_pool_provider" "example" {
+  provider                           = google-beta
   workload_identity_pool_id          = google_iam_workload_identity_pool.pool.workload_identity_pool_id
   workload_identity_pool_provider_id = "example-prvdr"
   display_name                       = "Name of provider"
@@ -92,10 +98,12 @@ resource "google_iam_workload_identity_pool_provider" "example" {
 
 ```hcl
 resource "google_iam_workload_identity_pool" "pool" {
+  provider                  = google-beta
   workload_identity_pool_id = "example-pool"
 }
 
 resource "google_iam_workload_identity_pool_provider" "example" {
+  provider                           = google-beta
   workload_identity_pool_id          = google_iam_workload_identity_pool.pool.workload_identity_pool_id
   workload_identity_pool_provider_id = "example-prvdr"
   attribute_mapping                  = {
@@ -116,10 +124,12 @@ resource "google_iam_workload_identity_pool_provider" "example" {
 
 ```hcl
 resource "google_iam_workload_identity_pool" "pool" {
+  provider                  = google-beta
   workload_identity_pool_id = "example-pool"
 }
 
 resource "google_iam_workload_identity_pool_provider" "example" {
+  provider                           = google-beta
   workload_identity_pool_id          = google_iam_workload_identity_pool.pool.workload_identity_pool_id
   workload_identity_pool_provider_id = "example-prvdr"
   display_name                       = "Name of provider"

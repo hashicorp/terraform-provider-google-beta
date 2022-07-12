@@ -32,14 +32,17 @@ Three different resources help you manage your IAM policy for Artifact Registry 
 ~> **Note:** `google_artifact_registry_repository_iam_binding` resources **can be** used in conjunction with `google_artifact_registry_repository_iam_member` resources **only if** they do not grant privilege to the same role.
 
 
+~> **Warning:** This resource is in beta, and should be used with the terraform-provider-google-beta provider.
+See [Provider Versions](https://terraform.io/docs/providers/google/guides/provider_versions.html) for more details on beta resources.
 
 
 ## google\_artifact\_registry\_repository\_iam\_policy
 
 ```hcl
 data "google_iam_policy" "admin" {
+  provider = google-beta
   binding {
-    role = "roles/artifactregistry.reader"
+    role = "roles/viewer"
     members = [
       "user:jane@example.com",
     ]
@@ -47,6 +50,7 @@ data "google_iam_policy" "admin" {
 }
 
 resource "google_artifact_registry_repository_iam_policy" "policy" {
+  provider = google-beta
   project = google_artifact_registry_repository.my-repo.project
   location = google_artifact_registry_repository.my-repo.location
   repository = google_artifact_registry_repository.my-repo.name
@@ -58,10 +62,11 @@ resource "google_artifact_registry_repository_iam_policy" "policy" {
 
 ```hcl
 resource "google_artifact_registry_repository_iam_binding" "binding" {
+  provider = google-beta
   project = google_artifact_registry_repository.my-repo.project
   location = google_artifact_registry_repository.my-repo.location
   repository = google_artifact_registry_repository.my-repo.name
-  role = "roles/artifactregistry.reader"
+  role = "roles/viewer"
   members = [
     "user:jane@example.com",
   ]
@@ -72,10 +77,11 @@ resource "google_artifact_registry_repository_iam_binding" "binding" {
 
 ```hcl
 resource "google_artifact_registry_repository_iam_member" "member" {
+  provider = google-beta
   project = google_artifact_registry_repository.my-repo.project
   location = google_artifact_registry_repository.my-repo.location
   repository = google_artifact_registry_repository.my-repo.name
-  role = "roles/artifactregistry.reader"
+  role = "roles/viewer"
   member = "user:jane@example.com"
 }
 ```
@@ -132,12 +138,12 @@ Artifact Registry repository IAM resources can be imported using the resource id
 
 IAM member imports use space-delimited identifiers: the resource in question, the role, and the member identity, e.g.
 ```
-$ terraform import google_artifact_registry_repository_iam_member.editor "projects/{{project}}/locations/{{location}}/repositories/{{repository}} roles/artifactregistry.reader user:jane@example.com"
+$ terraform import google_artifact_registry_repository_iam_member.editor "projects/{{project}}/locations/{{location}}/repositories/{{repository}} roles/viewer user:jane@example.com"
 ```
 
 IAM binding imports use space-delimited identifiers: the resource in question and the role, e.g.
 ```
-$ terraform import google_artifact_registry_repository_iam_binding.editor "projects/{{project}}/locations/{{location}}/repositories/{{repository}} roles/artifactregistry.reader"
+$ terraform import google_artifact_registry_repository_iam_binding.editor "projects/{{project}}/locations/{{location}}/repositories/{{repository}} roles/viewer"
 ```
 
 IAM policy imports use the identifier of the resource in question, e.g.
