@@ -10,10 +10,10 @@ FEATURES:
 
 IMPROVEMENTS:
 * container: added `binauthz_evaluation_mode` field to `resource_container_cluster`. ([#4451](https://github.com/hashicorp/terraform-provider-google-beta/pull/4451))
-* metastore: add `databaseType`, `releaseChannel`, and `hiveMetastoreConfig.endpointProtocol` arguments ([#4443](https://github.com/hashicorp/terraform-provider-google-beta/pull/4443))
+* kms: added support for MAC value in `google_kms_crypto_key.purpose` ([#4458](https://github.com/hashicorp/terraform-provider-google-beta/pull/4458))
+* metastore: added `databaseType`, `releaseChannel`, and `hiveMetastoreConfig.endpointProtocol` arguments ([#4443](https://github.com/hashicorp/terraform-provider-google-beta/pull/4443))
 
 BUG FIXES:
-*  ([#4458](https://github.com/hashicorp/terraform-provider-google-beta/pull/4458))
 * bigquery: fixed case-sensitivity for `user_by_email` and `group_by_email` on `google_bigquery_dataset_access` ([#4446](https://github.com/hashicorp/terraform-provider-google-beta/pull/4446))
 * cloudscheduler: fixed a diff on the last slash of uri on `google_cloud_scheduler_job` ([#4444](https://github.com/hashicorp/terraform-provider-google-beta/pull/4444))
 * compute: fixed force recreation on `provisioned_iops` of `google_compute_disk` ([#4464](https://github.com/hashicorp/terraform-provider-google-beta/pull/4464))
