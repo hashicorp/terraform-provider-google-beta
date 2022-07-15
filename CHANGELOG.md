@@ -1,12 +1,12 @@
 ## 4.29.0 (Unreleased)
 
 FEATURES:
-* **New Resource:** google_cloudiot_registry_iam_binding ([#4452](https://github.com/hashicorp/terraform-provider-google-beta/pull/4452))
-* **New Resource:** google_cloudiot_registry_iam_member ([#4452](https://github.com/hashicorp/terraform-provider-google-beta/pull/4452))
-* **New Resource:** google_cloudiot_registry_iam_policy ([#4452](https://github.com/hashicorp/terraform-provider-google-beta/pull/4452))
-* **New Resource:** google_compute_snapshot_iam_binding ([#4445](https://github.com/hashicorp/terraform-provider-google-beta/pull/4445))
-* **New Resource:** google_compute_snapshot_iam_member ([#4445](https://github.com/hashicorp/terraform-provider-google-beta/pull/4445))
-* **New Resource:** google_compute_snapshot_iam_policy ([#4445](https://github.com/hashicorp/terraform-provider-google-beta/pull/4445))
+* **New Resource:** `google_cloudiot_registry_iam_binding` ([#4452](https://github.com/hashicorp/terraform-provider-google-beta/pull/4452))
+* **New Resource:** `google_cloudiot_registry_iam_member` ([#4452](https://github.com/hashicorp/terraform-provider-google-beta/pull/4452))
+* **New Resource:** `google_cloudiot_registry_iam_policy` ([#4452](https://github.com/hashicorp/terraform-provider-google-beta/pull/4452))
+* **New Resource:** `google_compute_snapshot_iam_binding` ([#4445](https://github.com/hashicorp/terraform-provider-google-beta/pull/4445))
+* **New Resource:** `google_compute_snapshot_iam_member` ([#4445](https://github.com/hashicorp/terraform-provider-google-beta/pull/4445))
+* **New Resource:** `google_compute_snapshot_iam_policy` ([#4445](https://github.com/hashicorp/terraform-provider-google-beta/pull/4445))
 
 IMPROVEMENTS:
 * container: added `binauthz_evaluation_mode` field to `resource_container_cluster`. ([#4451](https://github.com/hashicorp/terraform-provider-google-beta/pull/4451))
