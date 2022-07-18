@@ -179,7 +179,7 @@ and { service="bar2", tag="foo2" } respectively.`,
 						},
 					},
 				},
-				ConflictsWith: []string{"app_engine", "cloud_function", "serverless_deployment"},
+				ConflictsWith: []string{"cloud_function", "app_engine", "serverless_deployment"},
 			},
 			"description": {
 				Type:     schema.TypeString,
@@ -245,7 +245,7 @@ API Gateway: Unused, App Engine: The service version, Cloud Functions: Unused, C
 						},
 					},
 				},
-				ConflictsWith: []string{"cloud_run", "app_engine", "cloud_function"},
+				ConflictsWith: []string{"cloud_run", "cloud_function", "app_engine"},
 			},
 			"project": {
 				Type:     schema.TypeString,
