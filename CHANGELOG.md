@@ -1,5 +1,26 @@
 ## 4.29.0 (Unreleased)
 
+FEATURES:
+* **New Resource:** `google_cloudiot_registry_iam_binding` ([#4452](https://github.com/hashicorp/terraform-provider-google-beta/pull/4452))
+* **New Resource:** `google_cloudiot_registry_iam_member` ([#4452](https://github.com/hashicorp/terraform-provider-google-beta/pull/4452))
+* **New Resource:** `google_cloudiot_registry_iam_policy` ([#4452](https://github.com/hashicorp/terraform-provider-google-beta/pull/4452))
+* **New Resource:** `google_compute_snapshot_iam_binding` ([#4445](https://github.com/hashicorp/terraform-provider-google-beta/pull/4445))
+* **New Resource:** `google_compute_snapshot_iam_member` ([#4445](https://github.com/hashicorp/terraform-provider-google-beta/pull/4445))
+* **New Resource:** `google_compute_snapshot_iam_policy` ([#4445](https://github.com/hashicorp/terraform-provider-google-beta/pull/4445))
+
+IMPROVEMENTS:
+* container: added `binauthz_evaluation_mode` field to `resource_container_cluster`. ([#4451](https://github.com/hashicorp/terraform-provider-google-beta/pull/4451))
+* kms: added support for MAC value in `google_kms_crypto_key.purpose` ([#4458](https://github.com/hashicorp/terraform-provider-google-beta/pull/4458))
+* metastore: added `databaseType`, `releaseChannel`, and `hiveMetastoreConfig.endpointProtocol` arguments ([#4443](https://github.com/hashicorp/terraform-provider-google-beta/pull/4443))
+
+BUG FIXES:
+* bigquery: fixed case-sensitivity for `user_by_email` and `group_by_email` on `google_bigquery_dataset_access` ([#4446](https://github.com/hashicorp/terraform-provider-google-beta/pull/4446))
+* cloudscheduler: fixed a diff on the last slash of uri on `google_cloud_scheduler_job` ([#4444](https://github.com/hashicorp/terraform-provider-google-beta/pull/4444))
+* compute: fixed force recreation on `provisioned_iops` of `google_compute_disk` ([#4464](https://github.com/hashicorp/terraform-provider-google-beta/pull/4464))
+* compute: fixed missing `network_interface.0.ipv6_access_config.0.external_ipv6` output on `google_compute_instance` ([#4470](https://github.com/hashicorp/terraform-provider-google-beta/pull/4470))
+* documentai: fixed a bug where eu region could not be utilized for documentai resources ([#4472](https://github.com/hashicorp/terraform-provider-google-beta/pull/4472))
+* gkehub: fixed a bug where `issuer` can't be updated on `google_gke_hub_membership` ([#4471](https://github.com/hashicorp/terraform-provider-google-beta/pull/4471))
+
 ## 4.28.0 (July 11, 2022)
 
 FEATURES:
