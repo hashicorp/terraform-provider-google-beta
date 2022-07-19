@@ -577,6 +577,15 @@ resource "google_compute_region_instance_group_manager" "igm-update" {
     name = "customhttp"
     port = 8080
   }
+
+  all_instances_config {
+    metadata = {
+      foo = "bar"
+    }
+    labels = {
+      doo = "dad"
+    }
+  }
 }
 `, template, target, igm)
 }
@@ -666,6 +675,15 @@ resource "google_compute_region_instance_group_manager" "igm-update" {
   named_port {
     name = "customhttps"
     port = 8443
+  }
+
+  all_instances_config {
+    metadata = {
+      doo = "dad"
+    }
+    labels = {
+      foo = "bar"
+    }
   }
 }
 `, template1, target1, target2, template2, igm)
