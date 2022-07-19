@@ -530,7 +530,7 @@ func resourceContainerAzureClusterCreate(d *schema.ResourceData, meta interface{
 		Project:         dcl.String(project),
 	}
 
-	id, err := replaceVarsForId(d, config, "projects/{{project}}/locations/{{location}}/azureClusters/{{name}}")
+	id, err := obj.ID()
 	if err != nil {
 		return fmt.Errorf("error constructing id: %s", err)
 	}
