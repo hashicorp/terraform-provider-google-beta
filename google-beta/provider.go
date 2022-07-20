@@ -1463,6 +1463,7 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_container_azure_cluster":             resourceContainerAzureCluster(),
 			"google_container_azure_node_pool":           resourceContainerAzureNodePool(),
 			"google_dataplex_lake":                       resourceDataplexLake(),
+			"google_dataplex_zone":                       resourceDataplexZone(),
 			"google_dataproc_workflow_template":          resourceDataprocWorkflowTemplate(),
 			"google_eventarc_trigger":                    resourceEventarcTrigger(),
 			"google_firebaserules_release":               resourceFirebaserulesRelease(),
