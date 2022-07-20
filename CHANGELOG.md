@@ -1,5 +1,35 @@
 ## 4.30.0 (Unreleased)
 
+FEATURES:
+* **New Data Source:** `google_service_account_jwt` ([#4489](https://github.com/hashicorp/terraform-provider-google-beta/pull/4489))
+* **New Resource:** `google_certificate_map_entry` ([#4501](https://github.com/hashicorp/terraform-provider-google-beta/pull/4501))
+* **New Resource:** `google_certificate_map` ([#4501](https://github.com/hashicorp/terraform-provider-google-beta/pull/4501))
+* **New Resource:** google_compute_backned_bucket_iam_binding (beta) ([#4484](https://github.com/hashicorp/terraform-provider-google-beta/pull/4484))
+* **New Resource:** google_compute_backned_bucket_iam_member (beta) ([#4484](https://github.com/hashicorp/terraform-provider-google-beta/pull/4484))
+* **New Resource:** google_compute_backned_bucket_iam_policy (beta) ([#4484](https://github.com/hashicorp/terraform-provider-google-beta/pull/4484))
+* **New Resource:** google_dataproc_metastore_federation (beta) ([#4482](https://github.com/hashicorp/terraform-provider-google-beta/pull/4482))
+* **New Resource:** google_dataproc_metastore_federation_iam_binding (beta) ([#4482](https://github.com/hashicorp/terraform-provider-google-beta/pull/4482))
+* **New Resource:** google_dataproc_metastore_federation_iam_member (beta) ([#4482](https://github.com/hashicorp/terraform-provider-google-beta/pull/4482))
+* **New Resource:** google_dataproc_metastore_federation_iam_policy (beta) ([#4482](https://github.com/hashicorp/terraform-provider-google-beta/pull/4482))
+
+IMPROVEMENTS:
+* Remove validation for the IP protocol type ([#4496](https://github.com/hashicorp/terraform-provider-google-beta/pull/4496))
+* billingbudget: made `thresholdRules` optional in `google_billing_budget` ([#4480](https://github.com/hashicorp/terraform-provider-google-beta/pull/4480))
+* compute: add `request_coalescing` and `bypass_cache_on_request_headers` args to `compute_backned_bucket` ([#4484](https://github.com/hashicorp/terraform-provider-google-beta/pull/4484))
+* compute: added `instance_termination_action` field to `google_compute_instance_template` resource to support Spot VM termination action ([#4488](https://github.com/hashicorp/terraform-provider-google-beta/pull/4488))
+* compute: added `instance_termination_action` field to `google_compute_instance` resource to support Spot VM termination action ([#4488](https://github.com/hashicorp/terraform-provider-google-beta/pull/4488))
+* compute: added field `all_instances_config` to `google_compute_instance_group_manager` and `google_compute_region_instance_group_manager` (Beta) ([#4506](https://github.com/hashicorp/terraform-provider-google-beta/pull/4506))
+* compute: promote `rules.rate_limit_options`,  `rules.redirect_options`,  `adaptive_protection_config` in `compute_security_policy` to ga ([#4478](https://github.com/hashicorp/terraform-provider-google-beta/pull/4478))
+* dataproc: promote `lifecycle_config` and `endpoint_config` to ga in `google_dataproc_cluster` ([#4503](https://github.com/hashicorp/terraform-provider-google-beta/pull/4503))
+* monitoring: added `evaluation_missing_data` field to `google_monitoring_alert_policy` ([#4502](https://github.com/hashicorp/terraform-provider-google-beta/pull/4502))
+* notebooks: added field `reserved_ip_range` to `google_notebooks_runtime` ([#4492](https://github.com/hashicorp/terraform-provider-google-beta/pull/4492))
+
+BUG FIXES:
+* bigtable: fixed an incorrect diff when adding two or more clusters ([#4490](https://github.com/hashicorp/terraform-provider-google-beta/pull/4490))
+* compute: allow properly updating `adaptive_protection_config` in `compute_security_policy` ([#4478](https://github.com/hashicorp/terraform-provider-google-beta/pull/4478))
+* notebooks: fixed a bug where`google_notebooks_runtime` can't be updated ([#4492](https://github.com/hashicorp/terraform-provider-google-beta/pull/4492))
+* sql: fixed an issue in `google_sql_database_instance` where updates would fail because of the `collation` field ([#4505](https://github.com/hashicorp/terraform-provider-google-beta/pull/4505))
+
 ## 4.29.0 (July 18, 2022)
 
 FEATURES:
