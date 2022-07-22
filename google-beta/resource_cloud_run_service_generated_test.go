@@ -143,7 +143,7 @@ func TestAccCloudRunService_cloudRunServiceConfigurationExample(t *testing.T) {
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProvidersOiCS,
+		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckCloudRunServiceDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -414,10 +414,12 @@ func testAccCloudRunService_cloudRunServiceStaticOutboundExample(context map[str
 # Example of setting up a Cloud Run service with a static outbound IP
 
 resource "google_compute_network" "default" {
+  provider = google-beta
   name = "tf-test-cr-static-ip-network%{random_suffix}"
 }
 
 resource "google_compute_subnetwork" "default" {
+  provider = google-beta
   name          = "tf-test-cr-static-ip%{random_suffix}"
   ip_cidr_range = "10.124.0.0/28"
   network       = google_compute_network.default.id
@@ -425,6 +427,7 @@ resource "google_compute_subnetwork" "default" {
 }
 
 resource "google_project_service" "vpc" {
+  provider = google-beta
   service = "vpcaccess.googleapis.com"
 }
 
@@ -444,17 +447,20 @@ resource "google_vpc_access_connector" "default" {
 }
 
 resource "google_compute_router" "default" {
+  provider = google-beta
   name    = "tf-test-cr-static-ip-router%{random_suffix}"
   network = google_compute_network.default.name
   region  = google_compute_subnetwork.default.region
 }
 
 resource "google_compute_address" "default" {
+  provider = google-beta
   name   = "tf-test-cr-static-ip-addr%{random_suffix}"
   region = google_compute_subnetwork.default.region
 }
 
 resource "google_compute_router_nat" "default" {
+  provider = google-beta
   name   = "tf-test-cr-static-nat%{random_suffix}"
   router = google_compute_router.default.name
   region = google_compute_subnetwork.default.region
@@ -470,6 +476,7 @@ resource "google_compute_router_nat" "default" {
 }
 
 resource "google_cloud_run_service" "default" {
+  provider = google-beta
   name     = "tf-test-cr-static-ip-service%{random_suffix}"
   location = google_compute_subnetwork.default.region
 
@@ -504,7 +511,7 @@ func TestAccCloudRunService_cloudRunServiceScheduledExample(t *testing.T) {
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProvidersOiCS,
+		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckCloudRunServiceDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -523,7 +530,6 @@ func TestAccCloudRunService_cloudRunServiceScheduledExample(t *testing.T) {
 func testAccCloudRunService_cloudRunServiceScheduledExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_project_service" "run_api" {
-  provider = google-beta
   project                    = "%{project}"
   service                    = "run.googleapis.com"
   disable_dependent_services = true
@@ -531,28 +537,24 @@ resource "google_project_service" "run_api" {
 }
 
 resource "google_project_service" "iam_api" {
-  provider = google-beta
   project                    = "%{project}"
   service                    = "iam.googleapis.com"
   disable_on_destroy         = false
 }
 
 resource "google_project_service" "resource_manager_api" {
-  provider = google-beta
   project                    = "%{project}"
   service                    = "cloudresourcemanager.googleapis.com"
   disable_on_destroy         = false
 }
 
 resource "google_project_service" "scheduler_api" {
-  provider = google-beta
   project                    = "%{project}"
   service                    = "cloudscheduler.googleapis.com"
   disable_on_destroy         = false
 }
 
 resource "google_cloud_run_service" "default" {
-  provider = google-beta
   project  = "%{project}"
   name     = "tf-test-my-scheduled-service%{random_suffix}"
   location = "us-central1"
@@ -577,7 +579,6 @@ resource "google_cloud_run_service" "default" {
 }
 
 resource "google_service_account" "default" {
-  provider = google-beta
   project      = "%{project}"
   account_id   = "tf-test-scheduler-sa%{random_suffix}"
   description  = "Cloud Scheduler service account; used to trigger scheduled Cloud Run jobs."
@@ -590,7 +591,6 @@ resource "google_service_account" "default" {
 }
 
 resource "google_cloud_scheduler_job" "default" {
-  provider = google-beta
   name             = "tf-test-scheduled-cloud-run-job%{random_suffix}"
   description      = "Invoke a Cloud Run container on a schedule."
   schedule         = "*/8 * * * *"
@@ -1422,7 +1422,7 @@ func TestAccCloudRunService_cloudRunSystemPackagesExample(t *testing.T) {
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProvidersOiCS,
+		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckCloudRunServiceDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -1556,7 +1556,7 @@ func TestAccCloudRunService_cloudrunServiceIdentityExample(t *testing.T) {
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProvidersOiCS,
+		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckCloudRunServiceDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
