@@ -473,6 +473,12 @@ func resourceContainerCluster() *schema.Resource {
 										DiffSuppressFunc: emptyOrDefaultStringSuppress("automatic"),
 										Description:      `Minimum CPU platform to be used by this instance. The instance may be scheduled on the specified or newer CPU platform. Applicable values are the friendly names of CPU platforms, such as Intel Haswell.`,
 									},
+									"boot_disk_kms_key": {
+										Type:        schema.TypeString,
+										Optional:    true,
+										ForceNew:    true,
+										Description: `The Customer Managed Encryption Key used to encrypt the boot disk attached to each node in the node pool.`,
+									},
 								},
 							},
 						},
@@ -3372,6 +3378,7 @@ func expandAutoProvisioningDefaults(configured interface{}, d *schema.ResourceDa
 		OauthScopes:    convertStringArr(config["oauth_scopes"].([]interface{})),
 		ServiceAccount: config["service_account"].(string),
 		ImageType:      config["image_type"].(string),
+		BootDiskKmsKey: config["boot_disk_kms_key"].(string),
 	}
 
 	cpu := config["min_cpu_platform"].(string)
@@ -4162,6 +4169,7 @@ func flattenAutoProvisioningDefaults(a *container.AutoprovisioningNodePoolDefaul
 	r["service_account"] = a.ServiceAccount
 	r["image_type"] = a.ImageType
 	r["min_cpu_platform"] = a.MinCpuPlatform
+	r["boot_disk_kms_key"] = a.BootDiskKmsKey
 
 	return []map[string]interface{}{r}
 }
