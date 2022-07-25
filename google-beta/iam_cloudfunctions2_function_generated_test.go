@@ -24,10 +24,12 @@ func TestAccCloudfunctions2functionIamBindingGenerated(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
-		"random_suffix":       randString(t, 10),
-		"role":                "roles/viewer",
+		"random_suffix": randString(t, 10),
+		"role":          "roles/viewer",
+		"project":       getTestProjectFromEnv(),
+
 		"zip_path":            "./test-fixtures/cloudfunctions2/function-source.zip",
-		"primary_resource_id": "terraform-test2",
+		"primary_resource_id": "function",
 		"location":            "us-central1",
 	}
 
@@ -50,10 +52,12 @@ func TestAccCloudfunctions2functionIamMemberGenerated(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
-		"random_suffix":       randString(t, 10),
-		"role":                "roles/viewer",
+		"random_suffix": randString(t, 10),
+		"role":          "roles/viewer",
+		"project":       getTestProjectFromEnv(),
+
 		"zip_path":            "./test-fixtures/cloudfunctions2/function-source.zip",
-		"primary_resource_id": "terraform-test2",
+		"primary_resource_id": "function",
 		"location":            "us-central1",
 	}
 
@@ -73,10 +77,12 @@ func TestAccCloudfunctions2functionIamPolicyGenerated(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
-		"random_suffix":       randString(t, 10),
-		"role":                "roles/viewer",
+		"random_suffix": randString(t, 10),
+		"role":          "roles/viewer",
+		"project":       getTestProjectFromEnv(),
+
 		"zip_path":            "./test-fixtures/cloudfunctions2/function-source.zip",
-		"primary_resource_id": "terraform-test2",
+		"primary_resource_id": "function",
 		"location":            "us-central1",
 	}
 
@@ -97,9 +103,17 @@ func TestAccCloudfunctions2functionIamPolicyGenerated(t *testing.T) {
 func testAccCloudfunctions2functionIamMember_basicGenerated(context map[string]interface{}) string {
 	return Nprintf(`
 # [START functions_v2_basic]
+locals {
+  project = "%{project}" # Google Cloud Platform Project ID
+}
+
+provider "google-beta" {
+   project = local.project
+}
+
 resource "google_storage_bucket" "bucket" {
   provider = google-beta
-  name     = "tf-test-cloudfunctions2-function-bucket%{random_suffix}"  # Every bucket name must be globally unique
+  name     = "${local.project}-tf-test-gcf-source%{random_suffix}"  # Every bucket name must be globally unique
   location = "US"
   uniform_bucket_level_access = true
 }
@@ -111,7 +125,7 @@ resource "google_storage_bucket_object" "object" {
   source = "%{zip_path}"  # Add path to the zipped function source code
 }
  
-resource "google_cloudfunctions2_function" "terraform-test2" {
+resource "google_cloudfunctions2_function" "function" {
   provider = google-beta
   name = "tf-test-test-function%{random_suffix}"
   location = "us-central1"
@@ -133,6 +147,10 @@ resource "google_cloudfunctions2_function" "terraform-test2" {
     available_memory    = "256M"
     timeout_seconds     = 60
   }
+}
+
+output "function_uri" { 
+  value = google_cloudfunctions2_function.function.service_config[0].uri
 }
 # [END functions_v2_basic]
 
@@ -149,9 +167,17 @@ resource "google_cloudfunctions2_function_iam_member" "foo" {
 func testAccCloudfunctions2functionIamPolicy_basicGenerated(context map[string]interface{}) string {
 	return Nprintf(`
 # [START functions_v2_basic]
+locals {
+  project = "%{project}" # Google Cloud Platform Project ID
+}
+
+provider "google-beta" {
+   project = local.project
+}
+
 resource "google_storage_bucket" "bucket" {
   provider = google-beta
-  name     = "tf-test-cloudfunctions2-function-bucket%{random_suffix}"  # Every bucket name must be globally unique
+  name     = "${local.project}-tf-test-gcf-source%{random_suffix}"  # Every bucket name must be globally unique
   location = "US"
   uniform_bucket_level_access = true
 }
@@ -163,7 +189,7 @@ resource "google_storage_bucket_object" "object" {
   source = "%{zip_path}"  # Add path to the zipped function source code
 }
  
-resource "google_cloudfunctions2_function" "terraform-test2" {
+resource "google_cloudfunctions2_function" "function" {
   provider = google-beta
   name = "tf-test-test-function%{random_suffix}"
   location = "us-central1"
@@ -185,6 +211,10 @@ resource "google_cloudfunctions2_function" "terraform-test2" {
     available_memory    = "256M"
     timeout_seconds     = 60
   }
+}
+
+output "function_uri" { 
+  value = google_cloudfunctions2_function.function.service_config[0].uri
 }
 # [END functions_v2_basic]
 
@@ -208,9 +238,17 @@ resource "google_cloudfunctions2_function_iam_policy" "foo" {
 func testAccCloudfunctions2functionIamPolicy_emptyBinding(context map[string]interface{}) string {
 	return Nprintf(`
 # [START functions_v2_basic]
+locals {
+  project = "%{project}" # Google Cloud Platform Project ID
+}
+
+provider "google-beta" {
+   project = local.project
+}
+
 resource "google_storage_bucket" "bucket" {
   provider = google-beta
-  name     = "tf-test-cloudfunctions2-function-bucket%{random_suffix}"  # Every bucket name must be globally unique
+  name     = "${local.project}-tf-test-gcf-source%{random_suffix}"  # Every bucket name must be globally unique
   location = "US"
   uniform_bucket_level_access = true
 }
@@ -222,7 +260,7 @@ resource "google_storage_bucket_object" "object" {
   source = "%{zip_path}"  # Add path to the zipped function source code
 }
  
-resource "google_cloudfunctions2_function" "terraform-test2" {
+resource "google_cloudfunctions2_function" "function" {
   provider = google-beta
   name = "tf-test-test-function%{random_suffix}"
   location = "us-central1"
@@ -244,6 +282,10 @@ resource "google_cloudfunctions2_function" "terraform-test2" {
     available_memory    = "256M"
     timeout_seconds     = 60
   }
+}
+
+output "function_uri" { 
+  value = google_cloudfunctions2_function.function.service_config[0].uri
 }
 # [END functions_v2_basic]
 
@@ -263,9 +305,17 @@ resource "google_cloudfunctions2_function_iam_policy" "foo" {
 func testAccCloudfunctions2functionIamBinding_basicGenerated(context map[string]interface{}) string {
 	return Nprintf(`
 # [START functions_v2_basic]
+locals {
+  project = "%{project}" # Google Cloud Platform Project ID
+}
+
+provider "google-beta" {
+   project = local.project
+}
+
 resource "google_storage_bucket" "bucket" {
   provider = google-beta
-  name     = "tf-test-cloudfunctions2-function-bucket%{random_suffix}"  # Every bucket name must be globally unique
+  name     = "${local.project}-tf-test-gcf-source%{random_suffix}"  # Every bucket name must be globally unique
   location = "US"
   uniform_bucket_level_access = true
 }
@@ -277,7 +327,7 @@ resource "google_storage_bucket_object" "object" {
   source = "%{zip_path}"  # Add path to the zipped function source code
 }
  
-resource "google_cloudfunctions2_function" "terraform-test2" {
+resource "google_cloudfunctions2_function" "function" {
   provider = google-beta
   name = "tf-test-test-function%{random_suffix}"
   location = "us-central1"
@@ -299,6 +349,10 @@ resource "google_cloudfunctions2_function" "terraform-test2" {
     available_memory    = "256M"
     timeout_seconds     = 60
   }
+}
+
+output "function_uri" { 
+  value = google_cloudfunctions2_function.function.service_config[0].uri
 }
 # [END functions_v2_basic]
 
@@ -315,9 +369,17 @@ resource "google_cloudfunctions2_function_iam_binding" "foo" {
 func testAccCloudfunctions2functionIamBinding_updateGenerated(context map[string]interface{}) string {
 	return Nprintf(`
 # [START functions_v2_basic]
+locals {
+  project = "%{project}" # Google Cloud Platform Project ID
+}
+
+provider "google-beta" {
+   project = local.project
+}
+
 resource "google_storage_bucket" "bucket" {
   provider = google-beta
-  name     = "tf-test-cloudfunctions2-function-bucket%{random_suffix}"  # Every bucket name must be globally unique
+  name     = "${local.project}-tf-test-gcf-source%{random_suffix}"  # Every bucket name must be globally unique
   location = "US"
   uniform_bucket_level_access = true
 }
@@ -329,7 +391,7 @@ resource "google_storage_bucket_object" "object" {
   source = "%{zip_path}"  # Add path to the zipped function source code
 }
  
-resource "google_cloudfunctions2_function" "terraform-test2" {
+resource "google_cloudfunctions2_function" "function" {
   provider = google-beta
   name = "tf-test-test-function%{random_suffix}"
   location = "us-central1"
@@ -351,6 +413,10 @@ resource "google_cloudfunctions2_function" "terraform-test2" {
     available_memory    = "256M"
     timeout_seconds     = 60
   }
+}
+
+output "function_uri" { 
+  value = google_cloudfunctions2_function.function.service_config[0].uri
 }
 # [END functions_v2_basic]
 
