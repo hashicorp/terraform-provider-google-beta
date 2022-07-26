@@ -395,6 +395,127 @@ resource "google_compute_instance" "instance_virtual_display" {
 `, context)
 }
 
+func TestAccCGCSnippet_eventarcWorkflowsExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"random_suffix": randString(t, 10),
+	}
+
+	vcrTest(t, resource.TestCase{
+		PreCheck:  func() { testAccPreCheck(t) },
+		Providers: testAccProvidersOiCS,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCGCSnippet_eventarcWorkflowsExample(context),
+			},
+			{
+				ResourceName:      "google_eventarc_trigger.trigger_pubsub_tf",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
+func testAccCGCSnippet_eventarcWorkflowsExample(context map[string]interface{}) string {
+	return Nprintf(`
+# Used to retrieve project_number later
+data "google_project" "project" {
+  provider = google-beta
+}
+
+# Enable Eventarc API
+resource "google_project_service" "eventarc" {
+  provider = google-beta
+  service            = "eventarc.googleapis.com"
+  disable_on_destroy = false
+}
+
+# Enable Pub/Sub API
+resource "google_project_service" "pubsub" {
+  provider = google-beta
+  service            = "pubsub.googleapis.com"
+  disable_on_destroy = false
+}
+
+# Enable Workflows API
+resource "google_project_service" "workflows" {
+  provider = google-beta
+  service            = "workflows.googleapis.com"
+  disable_on_destroy = false
+}
+
+
+
+# Create a service account for Eventarc trigger and Workflows
+resource "google_service_account" "eventarc_workflows_service_account" {
+  provider = google-beta
+  account_id   = "eventarc-workflows-sa"
+  display_name = "Eventarc Workflows Service Account"
+}
+
+# Grant the logWriter role to the service account
+resource "google_project_iam_binding" "project_binding_eventarc" {
+  provider = google-beta
+  project = data.google_project.project.id
+  role    = "roles/logging.logWriter"
+
+members = ["serviceAccount:${google_service_account.eventarc_workflows_service_account.email}"]
+
+  depends_on = [google_service_account.eventarc_workflows_service_account]
+}
+
+# Grant the workflows.invoker role to the service account
+resource "google_project_iam_binding" "project_binding_workflows" {
+  provider = google-beta
+  project = data.google_project.project.id
+  role    = "roles/workflows.invoker"
+
+members = ["serviceAccount:${google_service_account.eventarc_workflows_service_account.email}"]
+
+  depends_on = [google_service_account.eventarc_workflows_service_account]
+}
+
+
+# Define and deploy a workflow
+resource "google_workflows_workflow" "workflows_example" {
+  name            = "tf-test-pubsub-workflow-tf%{random_suffix}"
+  provider = google-beta
+  region          = "us-central1"
+  description     = "A sample workflow"
+  service_account = google_service_account.eventarc_workflows_service_account.id
+  # Imported main workflow YAML file
+  source_contents = templatefile("test-fixtures/workflow.yaml",{})
+
+  depends_on = [google_project_service.workflows, 
+google_service_account.eventarc_workflows_service_account]
+}
+
+
+# Create an Eventarc trigger routing Pub/Sub events to Workflows
+resource "google_eventarc_trigger" "trigger_pubsub_tf" {
+  name     = "tf-test-trigger-pubsub-workflow-tf%{random_suffix}"
+  provider = google-beta
+  location = "us-central1"
+  matching_criteria {
+    attribute = "type"
+    value     = "google.cloud.pubsub.topic.v1.messagePublished"
+  }
+  destination {
+    workflow = google_workflows_workflow.workflows_example.id
+  }
+
+
+  service_account = google_service_account.eventarc_workflows_service_account.id
+
+  depends_on = [google_project_service.pubsub, google_project_service.eventarc, 
+google_service_account.eventarc_workflows_service_account]
+}
+
+`, context)
+}
+
 func TestAccCGCSnippet_sqlDatabaseInstanceSqlserverExample(t *testing.T) {
 	skipIfVcr(t)
 	t.Parallel()
