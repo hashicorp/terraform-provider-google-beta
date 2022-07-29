@@ -24,15 +24,15 @@ import (
 )
 
 func init() {
-	resource.AddTestSweepers("ActiveDirectoryDomain", &resource.Sweeper{
-		Name: "ActiveDirectoryDomain",
-		F:    testSweepActiveDirectoryDomain,
+	resource.AddTestSweepers("ActiveDirectoryPeering", &resource.Sweeper{
+		Name: "ActiveDirectoryPeering",
+		F:    testSweepActiveDirectoryPeering,
 	})
 }
 
 // At the time of writing, the CI only passes us-central1 as the region
-func testSweepActiveDirectoryDomain(region string) error {
-	resourceName := "ActiveDirectoryDomain"
+func testSweepActiveDirectoryPeering(region string) error {
+	resourceName := "ActiveDirectoryPeering"
 	log.Printf("[INFO][SWEEPER_LOG] Starting sweeper for %s", resourceName)
 
 	config, err := sharedConfigForRegion(region)
@@ -61,7 +61,7 @@ func testSweepActiveDirectoryDomain(region string) error {
 		},
 	}
 
-	listTemplate := strings.Split("https://managedidentities.googleapis.com/v1beta1/projects/{{project}}/locations/global/domains", "?")[0]
+	listTemplate := strings.Split("https://managedidentities.googleapis.com/v1beta1/projects/{{project}}/locations/global/peerings", "?")[0]
 	listUrl, err := replaceVars(d, config, listTemplate)
 	if err != nil {
 		log.Printf("[INFO][SWEEPER_LOG] error preparing sweeper list url: %s", err)
@@ -74,7 +74,7 @@ func testSweepActiveDirectoryDomain(region string) error {
 		return nil
 	}
 
-	resourceList, ok := res["domains"]
+	resourceList, ok := res["peerings"]
 	if !ok {
 		log.Printf("[INFO][SWEEPER_LOG] Nothing found in response.")
 		return nil
@@ -87,19 +87,23 @@ func testSweepActiveDirectoryDomain(region string) error {
 	nonPrefixCount := 0
 	for _, ri := range rl {
 		obj := ri.(map[string]interface{})
-		if obj["name"] == nil {
-			log.Printf("[INFO][SWEEPER_LOG] %s resource name was nil", resourceName)
+		var name string
+		// Id detected in the delete URL, attempt to use id.
+		if obj["id"] != nil {
+			name = GetResourceNameFromSelfLink(obj["id"].(string))
+		} else if obj["name"] != nil {
+			name = GetResourceNameFromSelfLink(obj["name"].(string))
+		} else {
+			log.Printf("[INFO][SWEEPER_LOG] %s resource name and id were nil", resourceName)
 			return nil
 		}
-
-		name := GetResourceNameFromSelfLink(obj["name"].(string))
 		// Skip resources that shouldn't be sweeped
 		if !isSweepableTestResource(name) {
 			nonPrefixCount++
 			continue
 		}
 
-		deleteTemplate := "https://managedidentities.googleapis.com/v1beta1/projects/{{project}}/locations/global/domains/{{domain_name}}"
+		deleteTemplate := "https://managedidentities.googleapis.com/v1beta1/projects/{{project}}/locations/global/peerings/{{peering_id}}"
 		deleteUrl, err := replaceVars(d, config, deleteTemplate)
 		if err != nil {
 			log.Printf("[INFO][SWEEPER_LOG] error preparing delete url: %s", err)
