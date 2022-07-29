@@ -1,5 +1,24 @@
 ## 4.31.0 (Unreleased)
 
+FEATURES:
+* **New Resource:** `google_dataplex_zone` ([#4511](https://github.com/hashicorp/terraform-provider-google-beta/pull/4511))
+
+IMPROVEMENTS:
+* bucket: added support for `matches_prefix` and `matches_suffix`` in `condition` of a `lifecycle_rule` in  `google_storage_bucket` ([#4527](https://github.com/hashicorp/terraform-provider-google-beta/pull/4527))
+* compute: Added `network` and `subnetwork` fields to `google_compute_region_network_endpoint_group` for PSC. ([#4528](https://github.com/hashicorp/terraform-provider-google-beta/pull/4528))
+* compute: add `rules` and `tcp_time_wait_timeout_sec` to `google_compute_router_nat` ([#4526](https://github.com/hashicorp/terraform-provider-google-beta/pull/4526))
+* container: Added field `boot_disk_kms_key` to `auto_provisioning_defaults` ([#4524](https://github.com/hashicorp/terraform-provider-google-beta/pull/4524))
+* notebooks: added `bootDiskType` support for `PD_EXTREME` in `google_notebooks_instance` ([#4530](https://github.com/hashicorp/terraform-provider-google-beta/pull/4530))
+* notebooks: added `softwareConfig.upgradeable, `softwareConfig.postStartupScriptBehavior`, `softwareConfig.kernels` in `google_notebooks_runtime` ([#4530](https://github.com/hashicorp/terraform-provider-google-beta/pull/4530))
+* notebooks: promoted `nicType` and `reservationAffinity` in `google_notebooks_instance` to GA ([#4530](https://github.com/hashicorp/terraform-provider-google-beta/pull/4530))
+* storage: Added name validation for `google_storage_bucket` ([#4532](https://github.com/hashicorp/terraform-provider-google-beta/pull/4532))
+
+BUG FIXES:
+* compute: fixed perma-diff on `google_compute_disk` for new arm64 images ([#4533](https://github.com/hashicorp/terraform-provider-google-beta/pull/4533))
+* dns: fixed a bug where `google_dns_record_set` would create an inconsistent plan when using interpolated values in `rrdatas` ([#4515](https://github.com/hashicorp/terraform-provider-google-beta/pull/4515))
+* kms: fixed setting of resource id post-import for `google_kms_crypto_key` ([#4520](https://github.com/hashicorp/terraform-provider-google-beta/pull/4520))
+* provider: fixed bug where user-agent was showing "dev" rather than the provider version ([#4509](https://github.com/hashicorp/terraform-provider-google-beta/pull/4509))
+
 ## 4.30.0 (July 25, 2022)
 
 FEATURES:
