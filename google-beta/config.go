@@ -67,7 +67,7 @@ type Formatter struct {
 // Borrowed logic from https://github.com/sirupsen/logrus/blob/master/json_formatter.go and https://github.com/t-tomalak/logrus-easy-formatter/blob/master/formatter.go
 func (f *Formatter) Format(entry *logrus.Entry) ([]byte, error) {
 	// Suppress logs if TF_LOG is not DEBUG or TRACE
-	// also suppress frequent transport spam
+	// Also suppress frequent transport spam
 	if !logging.IsDebugOrHigher() || strings.Contains(entry.Message, "transport is closing") {
 		return nil, nil
 	}
@@ -358,7 +358,7 @@ const ContainerAzureBasePathKey = "ContainerAzure"
 var DefaultBasePaths = map[string]string{
 	AccessApprovalBasePathKey:       "https://accessapproval.googleapis.com/v1/",
 	AccessContextManagerBasePathKey: "https://accesscontextmanager.googleapis.com/v1/",
-	ActiveDirectoryBasePathKey:      "https://managedidentities.googleapis.com/v1/",
+	ActiveDirectoryBasePathKey:      "https://managedidentities.googleapis.com/v1beta1/",
 	ApiGatewayBasePathKey:           "https://apigateway.googleapis.com/v1beta/",
 	ApigeeBasePathKey:               "https://apigee.googleapis.com/v1/",
 	AppEngineBasePathKey:            "https://appengine.googleapis.com/v1/",
