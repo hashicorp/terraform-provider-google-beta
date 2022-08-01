@@ -1,4 +1,4 @@
-## 4.31.0 (Unreleased)
+## 4.31.0 (Aug 1, 2022)
 
 FEATURES:
 * **New Resource:** `google_dataplex_zone` ([#4511](https://github.com/hashicorp/terraform-provider-google-beta/pull/4511))
