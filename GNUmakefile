@@ -25,7 +25,7 @@ fmtcheck:
 
 lint:
 	@echo "==> Checking source code against linters..."
-	@golangci-lint run ./$(DIR_NAME)
+	@GOGC=off golangci-lint run -v ./$(DIR_NAME)
 
 tools:
 	@echo "==> installing required tooling..."
