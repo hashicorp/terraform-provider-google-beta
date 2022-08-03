@@ -452,7 +452,7 @@ func testAccCheckInstanceGroupManagerDestroyProducer(t *testing.T) func(s *terra
 func testAccInstanceGroupManager_basic(template, target, igm1, igm2 string) string {
 	return fmt.Sprintf(`
 data "google_compute_image" "my_image" {
-  family  = "debian-9"
+  family  = "debian-11"
   project = "debian-cloud"
 }
 
@@ -517,7 +517,7 @@ resource "google_compute_instance_group_manager" "igm-no-tp" {
 func testAccInstanceGroupManager_targetSizeZero(template, igm string) string {
 	return fmt.Sprintf(`
 data "google_compute_image" "my_image" {
-  family  = "debian-9"
+  family  = "debian-11"
   project = "debian-cloud"
 }
 
@@ -560,7 +560,7 @@ resource "google_compute_instance_group_manager" "igm-basic" {
 func testAccInstanceGroupManager_update(template, target, description, igm string) string {
 	return fmt.Sprintf(`
 data "google_compute_image" "my_image" {
-  family  = "debian-9"
+  family  = "debian-11"
   project = "debian-cloud"
 }
 
@@ -624,7 +624,7 @@ resource "google_compute_instance_group_manager" "igm-update" {
 func testAccInstanceGroupManager_update2(template1, target1, target2, template2, description, igm string) string {
 	return fmt.Sprintf(`
 data "google_compute_image" "my_image" {
-  family  = "debian-9"
+  family  = "debian-11"
   project = "debian-cloud"
 }
 
@@ -723,7 +723,7 @@ resource "google_compute_instance_group_manager" "igm-update" {
 func testAccInstanceGroupManager_update3(template1, target1, target2, template2, description2, igm string) string {
 	return fmt.Sprintf(`
 data "google_compute_image" "my_image" {
-  family  = "debian-9"
+  family  = "debian-11"
   project = "debian-cloud"
 }
 
@@ -808,7 +808,7 @@ resource "google_compute_instance_group_manager" "igm-update" {
 func testAccInstanceGroupManager_updateLifecycle(tag, igm string) string {
 	return fmt.Sprintf(`
 data "google_compute_image" "my_image" {
-  family  = "debian-9"
+  family  = "debian-11"
   project = "debian-cloud"
 }
 
@@ -859,7 +859,7 @@ resource "google_compute_instance_group_manager" "igm-update" {
 func testAccInstanceGroupManager_rollingUpdatePolicy(igm string) string {
 	return fmt.Sprintf(`
 data "google_compute_image" "my_image" {
-  family  = "debian-9"
+  family  = "debian-11"
   project = "debian-cloud"
 }
 
@@ -914,7 +914,7 @@ resource "google_compute_instance_group_manager" "igm-rolling-update-policy" {
 func testAccInstanceGroupManager_rollingUpdatePolicy2(igm string) string {
 	return fmt.Sprintf(`
 data "google_compute_image" "my_image" {
-  family  = "debian-9"
+  family  = "debian-11"
   project = "debian-cloud"
 }
 
@@ -966,7 +966,7 @@ resource "google_compute_instance_group_manager" "igm-rolling-update-policy" {
 func testAccInstanceGroupManager_rollingUpdatePolicy3(igm string) string {
 	return fmt.Sprintf(`
 data "google_compute_image" "my_image" {
-  family  = "debian-9"
+  family  = "debian-11"
   project = "debian-cloud"
 }
 
@@ -1015,7 +1015,7 @@ resource "google_compute_instance_group_manager" "igm-rolling-update-policy" {
 func testAccInstanceGroupManager_rollingUpdatePolicy4(igm string) string {
 	return fmt.Sprintf(`
 data "google_compute_image" "my_image" {
-  family  = "debian-9"
+  family  = "debian-11"
   project = "debian-cloud"
 }
 
@@ -1063,7 +1063,7 @@ resource "google_compute_instance_group_manager" "igm-rolling-update-policy" {
 func testAccInstanceGroupManager_rollingUpdatePolicy5(igm string) string {
 	return fmt.Sprintf(`
 data "google_compute_image" "my_image" {
-  family  = "debian-9"
+  family  = "debian-11"
   project = "debian-cloud"
 }
 
@@ -1112,7 +1112,7 @@ resource "google_compute_instance_group_manager" "igm-rolling-update-policy" {
 func testAccInstanceGroupManager_separateRegions(igm1, igm2 string) string {
 	return fmt.Sprintf(`
 data "google_compute_image" "my_image" {
-  family  = "debian-9"
+  family  = "debian-11"
   project = "debian-cloud"
 }
 
@@ -1169,7 +1169,7 @@ resource "google_compute_instance_group_manager" "igm-basic-2" {
 func testAccInstanceGroupManager_autoHealingPolicies(template, target, igm, hck string) string {
 	return fmt.Sprintf(`
 data "google_compute_image" "my_image" {
-  family  = "debian-9"
+  family  = "debian-11"
   project = "debian-cloud"
 }
 
@@ -1227,7 +1227,7 @@ resource "google_compute_http_health_check" "zero" {
 func testAccInstanceGroupManager_autoHealingPoliciesRemoved(template, target, igm, hck string) string {
 	return fmt.Sprintf(`
 data "google_compute_image" "my_image" {
-  family  = "debian-9"
+  family  = "debian-11"
   project = "debian-cloud"
 }
 
@@ -1281,7 +1281,7 @@ resource "google_compute_http_health_check" "zero" {
 func testAccInstanceGroupManager_versions(primaryTemplate string, canaryTemplate string, igm string) string {
 	return fmt.Sprintf(`
 data "google_compute_image" "my_image" {
-  family  = "debian-9"
+  family  = "debian-11"
   project = "debian-cloud"
 }
 
@@ -1349,7 +1349,7 @@ resource "google_compute_instance_group_manager" "igm-basic" {
 func testAccInstanceGroupManager_stateful(template, target, igm, hck string) string {
 	return fmt.Sprintf(`
 data "google_compute_image" "my_image" {
-  family  = "debian-9"
+  family  = "debian-11"
   project = "debian-cloud"
 }
 
@@ -1421,7 +1421,7 @@ resource "google_compute_http_health_check" "zero" {
 func testAccInstanceGroupManager_statefulUpdated(template, target, igm, hck string) string {
 	return fmt.Sprintf(`
 data "google_compute_image" "my_image" {
-  family  = "debian-9"
+  family  = "debian-11"
   project = "debian-cloud"
 }
 
@@ -1498,7 +1498,7 @@ resource "google_compute_http_health_check" "zero" {
 func testAccInstanceGroupManager_waitForStatus(template, target, igm, perInstanceConfig string) string {
 	return fmt.Sprintf(`
 data "google_compute_image" "my_image" {
-  family  = "debian-9"
+  family  = "debian-11"
   project = "debian-cloud"
 }
 
@@ -1560,7 +1560,7 @@ resource "google_compute_per_instance_config" "per-instance" {
 func testAccInstanceGroupManager_waitForStatusUpdated(template, target, igm, perInstanceConfig string) string {
 	return fmt.Sprintf(`
 data "google_compute_image" "my_image" {
-  family  = "debian-9"
+  family  = "debian-11"
   project = "debian-cloud"
 }
 
