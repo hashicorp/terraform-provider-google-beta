@@ -5491,7 +5491,7 @@ resource "google_container_cluster" "primary" {
   location           = "us-central1-a"
   initial_node_count = 1
   monitoring_config {
-      enable_components = [ "SYSTEM_COMPONENTS" ]
+      enable_components = [ "SYSTEM_COMPONENTS", "APISERVER", "CONTROLLER_MANAGER", "SCHEDULER" ]
   }
 }
 `, name)
@@ -5504,7 +5504,7 @@ resource "google_container_cluster" "primary" {
   location           = "us-central1-a"
   initial_node_count = 1
   monitoring_config {
-         enable_components = [ "SYSTEM_COMPONENTS", "WORKLOADS" ]
+         enable_components = [ "SYSTEM_COMPONENTS", "APISERVER", "CONTROLLER_MANAGER", "SCHEDULER", "WORKLOADS" ]
   }
 }
 `, name)
@@ -5517,7 +5517,7 @@ resource "google_container_cluster" "primary" {
   location           = "us-central1-a"
   initial_node_count = 1
   monitoring_config {
-         enable_components = [ "SYSTEM_COMPONENTS", "WORKLOADS" ]
+         enable_components = [ "SYSTEM_COMPONENTS", "APISERVER", "CONTROLLER_MANAGER", "SCHEDULER", "WORKLOADS" ]
          managed_prometheus {
                  enabled = true
          }

@@ -788,10 +788,10 @@ func resourceContainerCluster() *schema.Resource {
 							Type:        schema.TypeList,
 							Optional:    true,
 							Computed:    true,
-							Description: `GKE components exposing metrics. Valid values include SYSTEM_COMPONENTS and WORKLOADS.`,
+							Description: `GKE components exposing metrics. Valid values include SYSTEM_COMPONENTS, APISERVER, CONTROLLER_MANAGER, SCHEDULER, and WORKLOADS.`,
 							Elem: &schema.Schema{
 								Type:         schema.TypeString,
-								ValidateFunc: validation.StringInSlice([]string{"SYSTEM_COMPONENTS", "WORKLOADS"}, false),
+								ValidateFunc: validation.StringInSlice([]string{"SYSTEM_COMPONENTS", "APISERVER", "CONTROLLER_MANAGER", "SCHEDULER", "WORKLOADS"}, false),
 							},
 						},
 						"managed_prometheus": {
