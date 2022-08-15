@@ -13,13 +13,13 @@ IMPROVEMENTS:
 * cloudfunctions2: added field `event_filters` to resource `google_cloudfunctions2_function` ([#4547](https://github.com/hashicorp/terraform-provider-google-beta/pull/4547))
 * compute: added `certificate_map` to `compute_target_https_proxy` resource ([#4550](https://github.com/hashicorp/terraform-provider-google-beta/pull/4550))
 * compute: added validation for name field on `google_compute_network` ([#4579](https://github.com/hashicorp/terraform-provider-google-beta/pull/4579))
-* compute: made `port` optional in `google_compute_network_endpoint` to be associated with `GCE_VM_IP` network endpoint groups ([#4575](https://github.com/hashicorp/terraform-provider-google-beta/pull/4575))
+* compute: made `port` optional in `google_compute_network_endpoint` to allow network endpoints to be associated with `GCE_VM_IP` network endpoint groups ([#4575](https://github.com/hashicorp/terraform-provider-google-beta/pull/4575))
 * container: added support for additional values `APISERVER`, `CONTROLLER_MANAGER`, and `SCHEDULER` in `google_container_cluster.monitoring_config` ([#4565](https://github.com/hashicorp/terraform-provider-google-beta/pull/4565))
-* gkehub: added `policyControllerMonitoring` and `mutationEnabled` fields to resource `feature_membership` ([#4572](https://github.com/hashicorp/terraform-provider-google-beta/pull/4572))
+* gkehub: added `monitoring` and `mutation_enabled` fields to resource `feature_membership` ([#4572](https://github.com/hashicorp/terraform-provider-google-beta/pull/4572))
 * gkehub: added better support for import for `google_gke_hub_membership` ([#4542](https://github.com/hashicorp/terraform-provider-google-beta/pull/4542))
 * pubsub: added `bigquery_config` to `google_pubsub_subscription` ([#4545](https://github.com/hashicorp/terraform-provider-google-beta/pull/4545))
-* scheduler: Added `paused` field to `google_cloud_scheduler_job` ([#4535](https://github.com/hashicorp/terraform-provider-google-beta/pull/4535))
-* scheduler: Added `state` output field to `google_cloud_scheduler_job` ([#4535](https://github.com/hashicorp/terraform-provider-google-beta/pull/4535))
+* scheduler: added `paused` field to `google_cloud_scheduler_job` ([#4535](https://github.com/hashicorp/terraform-provider-google-beta/pull/4535))
+* scheduler: added `state` output field to `google_cloud_scheduler_job` ([#4535](https://github.com/hashicorp/terraform-provider-google-beta/pull/4535))
 
 BUG FIXES:
 * apigee: fixed an issue where `google_apigee_instance` creation would fail due to multiple concurrent instances ([#4584](https://github.com/hashicorp/terraform-provider-google-beta/pull/4584))
