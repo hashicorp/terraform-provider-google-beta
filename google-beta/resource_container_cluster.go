@@ -620,7 +620,6 @@ func resourceContainerCluster() *schema.Resource {
 				Type:        schema.TypeList,
 				Optional:    true,
 				Computed:    true,
-				ForceNew:    true,
 				MaxItems:    1,
 				Description: `Configuration for the Google Groups for GKE feature.`,
 				Elem: &schema.Resource{
@@ -628,7 +627,6 @@ func resourceContainerCluster() *schema.Resource {
 						"security_group": {
 							Type:        schema.TypeString,
 							Required:    true,
-							ForceNew:    true,
 							Description: `The name of the RBAC security group for use with Google security groups in Kubernetes RBAC. Group name must be in format gke-security-groups@yourdomain.com.`,
 						},
 					},
@@ -2351,6 +2349,21 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 		log.Printf("[INFO] GKE cluster %s L4 ILB Subsetting has been updated to %v", d.Id(), enabled)
 	}
 
+	if d.HasChange("authenticator_groups_config") {
+		req := &container.UpdateClusterRequest{
+			Update: &container.ClusterUpdate{
+				DesiredAuthenticatorGroupsConfig: expandContainerClusterAuthenticatorGroupsConfig(d.Get("authenticator_groups_config")),
+			},
+		}
+		updateF := updateFunc(req, "updating GKE cluster authenticator groups config")
+		// Call update serially.
+		if err := lockedCall(lockKey, updateF); err != nil {
+			return err
+		}
+
+		log.Printf("[INFO] GKE cluster %s authenticator groups config has been updated", d.Id())
+	}
+
 	if d.HasChange("default_snat_status") {
 		req := &container.UpdateClusterRequest{
 			Update: &container.ClusterUpdate{
@@ -3814,6 +3827,18 @@ func expandContainerClusterTpuConfig(configured interface{}) *container.TpuConfi
 	return &container.TpuConfig{
 		Enabled:              config["enabled"].(bool),
 		UseServiceNetworking: config["use_service_networking"].(bool),
+	}
+}
+
+func expandContainerClusterAuthenticatorGroupsConfig(configured interface{}) *container.AuthenticatorGroupsConfig {
+	l := configured.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil
+	}
+
+	config := l[0].(map[string]interface{})
+	return &container.AuthenticatorGroupsConfig{
+		SecurityGroup: config["security_group"].(string),
 	}
 }
 
