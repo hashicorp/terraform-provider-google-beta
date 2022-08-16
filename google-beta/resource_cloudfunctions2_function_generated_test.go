@@ -27,16 +27,15 @@ func TestAccCloudfunctions2function_cloudfunctions2BasicExample(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
-		"project":             getTestProjectFromEnv(),
-		"zip_path":            "./test-fixtures/cloudfunctions2/function-source.zip",
-		"primary_resource_id": "function",
-		"location":            "us-central1",
-		"random_suffix":       randString(t, 10),
+		"project":       getTestProjectFromEnv(),
+		"zip_path":      "./test-fixtures/cloudfunctions2/function-source.zip",
+		"location":      "us-central1",
+		"random_suffix": randString(t, 10),
 	}
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProvidersOiCS,
+		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckCloudfunctions2functionDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -59,27 +58,20 @@ locals {
   project = "%{project}" # Google Cloud Platform Project ID
 }
 
-provider "google-beta" {
-   project = local.project
-}
-
 resource "google_storage_bucket" "bucket" {
-  provider = google-beta
   name     = "${local.project}-tf-test-gcf-source%{random_suffix}"  # Every bucket name must be globally unique
   location = "US"
   uniform_bucket_level_access = true
 }
  
 resource "google_storage_bucket_object" "object" {
-  provider = google-beta
   name   = "function-source.zip"
   bucket = google_storage_bucket.bucket.name
   source = "%{zip_path}"  # Add path to the zipped function source code
 }
  
 resource "google_cloudfunctions2_function" "function" {
-  provider = google-beta
-  name = "tf-test-test-function%{random_suffix}"
+  name = "tf-test-function-v2%{random_suffix}"
   location = "us-central1"
   description = "a new function"
  
@@ -121,7 +113,7 @@ func TestAccCloudfunctions2function_cloudfunctions2FullExample(t *testing.T) {
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProvidersOiCS,
+		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckCloudfunctions2functionDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -144,38 +136,29 @@ locals {
   project = "%{project}" # Google Cloud Platform Project ID
 }
 
-provider "google-beta" {
-   project = local.project
-}
-
 resource "google_service_account" "account" {
-  provider = google-beta
-  account_id = "tf-test-test-sa%{random_suffix}"
+  account_id = "sa%{random_suffix}"
   display_name = "Test Service Account"
 }
 
 resource "google_pubsub_topic" "topic" {
-  provider = google-beta
   name = "tf-test-functions2-topic%{random_suffix}"
 }
 
 resource "google_storage_bucket" "bucket" {
-  provider = google-beta
   name     = "${local.project}-tf-test-gcf-source%{random_suffix}"  # Every bucket name must be globally unique
   location = "US"
   uniform_bucket_level_access = true
 }
  
 resource "google_storage_bucket_object" "object" {
-  provider = google-beta
   name   = "function-source.zip"
   bucket = google_storage_bucket.bucket.name
   source = "%{zip_path}"  # Add path to the zipped function source code
 }
  
 resource "google_cloudfunctions2_function" "function" {
-  provider = google-beta
-  name = "tf-test-test-function%{random_suffix}"
+  name = "function%{random_suffix}"
   location = "us-central1"
   description = "a new function"
  
@@ -229,7 +212,7 @@ func TestAccCloudfunctions2function_cloudfunctions2BasicGcsExample(t *testing.T)
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProvidersOiCS,
+		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckCloudfunctions2functionDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -250,74 +233,64 @@ func testAccCloudfunctions2function_cloudfunctions2BasicGcsExample(context map[s
 # [START functions_v2_basic_gcs]
 
 resource "google_storage_bucket" "source-bucket" {
-  provider = google-beta
   name     = "tf-test-gcf-source-bucket%{random_suffix}"
   location = "US"
   uniform_bucket_level_access = true
 }
  
 resource "google_storage_bucket_object" "object" {
-  provider = google-beta
   name   = "function-source.zip"
   bucket = google_storage_bucket.source-bucket.name
   source = "%{zip_path}"  # Add path to the zipped function source code
 }
 
 resource "google_storage_bucket" "trigger-bucket" {
-  provider = google-beta
   name     = "tf-test-gcf-trigger-bucket%{random_suffix}"
   location = "us-central1" # The trigger must be in the same location as the bucket
   uniform_bucket_level_access = true
 }
 
 data "google_storage_project_service_account" "gcs_account" {
-  provider = google-beta
 }
 
 # To use GCS CloudEvent triggers, the GCS service account requires the Pub/Sub Publisher(roles/pubsub.publisher) IAM role in the specified project.
 # (See https://cloud.google.com/eventarc/docs/run/quickstart-storage#before-you-begin)
 resource "google_project_iam_member" "gcs-pubsub-publishing" {
-  provider = google-beta
   project = "%{project}"
   role    = "roles/pubsub.publisher"
   member  = "serviceAccount:${data.google_storage_project_service_account.gcs_account.email_address}"
 }
 
 resource "google_service_account" "account" {
-  provider     = google-beta
-  account_id   = "tf-test-test-sa%{random_suffix}"
+  account_id   = "sa%{random_suffix}"
   display_name = "Test Service Account - used for both the cloud function and eventarc trigger in the test"
 }
 
 # Permissions on the service account used by the function and Eventarc trigger
 resource "google_project_iam_member" "invoking" {
-  provider = google-beta
   project = "%{project}"
   role    = "roles/run.invoker"
   member  = "serviceAccount:${google_service_account.account.email}"
 }
 
 resource "google_project_iam_member" "event-receiving" {
-  provider = google-beta
   project = "%{project}"
   role    = "roles/eventarc.eventReceiver"
   member  = "serviceAccount:${google_service_account.account.email}"
 }
 
 resource "google_project_iam_member" "artifactregistry-reader" {
-  provider = google-beta
   project = "%{project}"
   role     = "roles/artifactregistry.reader"
   member   = "serviceAccount:${google_service_account.account.email}"
 }
 
 resource "google_cloudfunctions2_function" "function" {
-  provider = google-beta
   depends_on = [
     google_project_iam_member.event-receiving,
     google_project_iam_member.artifactregistry-reader,
   ]
-  name = "tf-test-test-function%{random_suffix}"
+  name = "function%{random_suffix}"
   location = "us-central1"
   description = "a new function"
  
@@ -375,7 +348,7 @@ func TestAccCloudfunctions2function_cloudfunctions2BasicAuditlogsExample(t *test
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProvidersOiCS,
+		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckCloudfunctions2functionDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -400,21 +373,18 @@ func testAccCloudfunctions2function_cloudfunctions2BasicAuditlogsExample(context
 # https://cloud.google.com/eventarc/docs/path-patterns
 
 resource "google_storage_bucket" "source-bucket" {
-  provider = google-beta
   name     = "tf-test-gcf-source-bucket%{random_suffix}"
   location = "US"
   uniform_bucket_level_access = true
 }
  
 resource "google_storage_bucket_object" "object" {
-  provider = google-beta
   name   = "function-source.zip"
   bucket = google_storage_bucket.source-bucket.name
   source = "%{zip_path}"  # Add path to the zipped function source code
 }
 
 resource "google_service_account" "account" {
-  provider     = google-beta
   account_id   = "tf-test-gcf-sa%{random_suffix}"
   display_name = "Test Service Account - used for both the cloud function and eventarc trigger in the test"
 }
@@ -423,7 +393,6 @@ resource "google_service_account" "account" {
 # Here we use Audit Logs to monitor the bucket so path patterns can be used in the example of
 # google_cloudfunctions2_function below (Audit Log events have path pattern support)
 resource "google_storage_bucket" "audit-log-bucket" {
-  provider = google-beta
   name     = "tf-test-gcf-auditlog-bucket%{random_suffix}"
   location = "us-central1"  # The trigger must be in the same location as the bucket
   uniform_bucket_level_access = true
@@ -431,28 +400,24 @@ resource "google_storage_bucket" "audit-log-bucket" {
 
 # Permissions on the service account used by the function and Eventarc trigger
 resource "google_project_iam_member" "invoking" {
-  provider = google-beta
   project = "%{project}"
   role    = "roles/run.invoker"
   member  = "serviceAccount:${google_service_account.account.email}"
 }
 
 resource "google_project_iam_member" "event-receiving" {
-  provider = google-beta
   project = "%{project}"
   role    = "roles/eventarc.eventReceiver"
   member  = "serviceAccount:${google_service_account.account.email}"
 }
 
 resource "google_project_iam_member" "artifactregistry-reader" {
-  provider = google-beta
   project = "%{project}"
   role     = "roles/artifactregistry.reader"
   member   = "serviceAccount:${google_service_account.account.email}"
 }
 
 resource "google_cloudfunctions2_function" "function" {
-  provider = google-beta
   depends_on = [
     google_project_iam_member.event-receiving,
     google_project_iam_member.artifactregistry-reader,
