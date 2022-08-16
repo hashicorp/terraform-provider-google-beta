@@ -90,7 +90,7 @@ func testAccDataprocMetastoreFederationIamMember_basicGenerated(context map[stri
 resource "google_dataproc_metastore_federation" "default" {
   provider      = google-beta
   location      = "us-central1"
-  federation_id = "fed%{random_suffix}"
+  federation_id = "tf-test-fed-1%{random_suffix}"
   version       = "3.1.2"
 
   backend_metastores {
@@ -102,7 +102,7 @@ resource "google_dataproc_metastore_federation" "default" {
 
 resource "google_dataproc_metastore_service" "default" {
   provider   = google-beta
-  service_id = "fed%{random_suffix}"
+  service_id = "tf-test-fed-1%{random_suffix}"
   location   = "us-central1"
   tier       = "DEVELOPER"
 
@@ -129,7 +129,7 @@ func testAccDataprocMetastoreFederationIamPolicy_basicGenerated(context map[stri
 resource "google_dataproc_metastore_federation" "default" {
   provider      = google-beta
   location      = "us-central1"
-  federation_id = "fed%{random_suffix}"
+  federation_id = "tf-test-fed-1%{random_suffix}"
   version       = "3.1.2"
 
   backend_metastores {
@@ -141,7 +141,7 @@ resource "google_dataproc_metastore_federation" "default" {
 
 resource "google_dataproc_metastore_service" "default" {
   provider   = google-beta
-  service_id = "fed%{random_suffix}"
+  service_id = "tf-test-fed-1%{random_suffix}"
   location   = "us-central1"
   tier       = "DEVELOPER"
 
@@ -175,7 +175,7 @@ func testAccDataprocMetastoreFederationIamPolicy_emptyBinding(context map[string
 resource "google_dataproc_metastore_federation" "default" {
   provider      = google-beta
   location      = "us-central1"
-  federation_id = "fed%{random_suffix}"
+  federation_id = "tf-test-fed-1%{random_suffix}"
   version       = "3.1.2"
 
   backend_metastores {
@@ -187,7 +187,7 @@ resource "google_dataproc_metastore_federation" "default" {
 
 resource "google_dataproc_metastore_service" "default" {
   provider   = google-beta
-  service_id = "fed%{random_suffix}"
+  service_id = "tf-test-fed-1%{random_suffix}"
   location   = "us-central1"
   tier       = "DEVELOPER"
 
@@ -217,7 +217,7 @@ func testAccDataprocMetastoreFederationIamBinding_basicGenerated(context map[str
 resource "google_dataproc_metastore_federation" "default" {
   provider      = google-beta
   location      = "us-central1"
-  federation_id = "fed%{random_suffix}"
+  federation_id = "tf-test-fed-1%{random_suffix}"
   version       = "3.1.2"
 
   backend_metastores {
@@ -229,7 +229,7 @@ resource "google_dataproc_metastore_federation" "default" {
 
 resource "google_dataproc_metastore_service" "default" {
   provider   = google-beta
-  service_id = "fed%{random_suffix}"
+  service_id = "tf-test-fed-1%{random_suffix}"
   location   = "us-central1"
   tier       = "DEVELOPER"
 
@@ -256,7 +256,7 @@ func testAccDataprocMetastoreFederationIamBinding_updateGenerated(context map[st
 resource "google_dataproc_metastore_federation" "default" {
   provider      = google-beta
   location      = "us-central1"
-  federation_id = "fed%{random_suffix}"
+  federation_id = "tf-test-fed-1%{random_suffix}"
   version       = "3.1.2"
 
   backend_metastores {
@@ -268,7 +268,7 @@ resource "google_dataproc_metastore_federation" "default" {
 
 resource "google_dataproc_metastore_service" "default" {
   provider   = google-beta
-  service_id = "fed%{random_suffix}"
+  service_id = "tf-test-fed-1%{random_suffix}"
   location   = "us-central1"
   tier       = "DEVELOPER"
 
