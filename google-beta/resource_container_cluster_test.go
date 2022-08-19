@@ -11,6 +11,8 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+
+	container "google.golang.org/api/container/v1beta1"
 )
 
 func init() {
@@ -1759,7 +1761,7 @@ func TestAccContainerCluster_nodeAutoprovisioning(t *testing.T) {
 		CheckDestroy: testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccContainerCluster_autoprovisioning(clusterName, true),
+				Config: testAccContainerCluster_autoprovisioning(clusterName, true, false),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("google_container_cluster.with_autoprovisioning",
 						"cluster_autoscaling.0.enabled", "true"),
@@ -1772,7 +1774,7 @@ func TestAccContainerCluster_nodeAutoprovisioning(t *testing.T) {
 				ImportStateVerifyIgnore: []string{"min_master_version"},
 			},
 			{
-				Config: testAccContainerCluster_autoprovisioning(clusterName, false),
+				Config: testAccContainerCluster_autoprovisioning(clusterName, false, false),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("google_container_cluster.with_autoprovisioning",
 						"cluster_autoscaling.0.enabled", "false"),
@@ -1820,6 +1822,33 @@ func TestAccContainerCluster_nodeAutoprovisioningDefaults(t *testing.T) {
 	})
 }
 
+func TestAccContainerCluster_nodeAutoprovisioningNetworkTags(t *testing.T) {
+	t.Parallel()
+
+	clusterName := fmt.Sprintf("tf-test-cluster-%s", randString(t, 10))
+
+	vcrTest(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckContainerClusterDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccContainerCluster_autoprovisioning(clusterName, true, true),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("google_container_cluster.with_autoprovisioning",
+						"node_pool_auto_config.0.network_tags.0.tags.0", "test-network-tag"),
+				),
+			},
+			{
+				ResourceName:            "google_container_cluster.with_autoprovisioning",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"min_master_version"},
+			},
+		},
+	})
+}
+
 func TestAccContainerCluster_withShieldedNodes(t *testing.T) {
 	t.Parallel()
 
@@ -1862,7 +1891,7 @@ func TestAccContainerCluster_withAutopilot(t *testing.T) {
 		CheckDestroy: testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccContainerCluster_withAutopilot(containerNetName, clusterName, "us-central1", true),
+				Config: testAccContainerCluster_withAutopilot(containerNetName, clusterName, "us-central1", true, false),
 			},
 			{
 				ResourceName:            "google_container_cluster.with_autopilot",
@@ -1886,8 +1915,32 @@ func TestAccContainerCluster_errorAutopilotLocation(t *testing.T) {
 		CheckDestroy: testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config:      testAccContainerCluster_withAutopilot(containerNetName, clusterName, "us-central1-a", true),
+				Config:      testAccContainerCluster_withAutopilot(containerNetName, clusterName, "us-central1-a", true, false),
 				ExpectError: regexp.MustCompile(`Autopilot clusters must be regional clusters.`),
+			},
+		},
+	})
+}
+
+func TestAccContainerCluster_withAutopilotNetworkTags(t *testing.T) {
+	t.Parallel()
+
+	containerNetName := fmt.Sprintf("tf-test-container-net-%s", randString(t, 10))
+	clusterName := fmt.Sprintf("tf-test-cluster-%s", randString(t, 10))
+
+	vcrTest(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckContainerClusterDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccContainerCluster_withAutopilot(containerNetName, clusterName, "us-central1", true, true),
+			},
+			{
+				ResourceName:            "google_container_cluster.with_autopilot",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"min_master_version"},
 			},
 		},
 	})
@@ -4094,7 +4147,7 @@ resource "google_container_cluster" "autoscaling_with_profile" {
 	return config
 }
 
-func testAccContainerCluster_autoprovisioning(cluster string, autoprovisioning bool) string {
+func testAccContainerCluster_autoprovisioning(cluster string, autoprovisioning, withNetworkTag bool) string {
 	config := fmt.Sprintf(`
 data "google_container_engine_versions" "central1a" {
   location = "us-central1-a"
@@ -4123,6 +4176,14 @@ resource "google_container_cluster" "with_autoprovisioning" {
 		config += `
   cluster_autoscaling {
     enabled = false
+  }`
+	}
+	if withNetworkTag {
+		config += `
+  node_pool_auto_config {
+    network_tags {
+      tags = ["test-network-tag"]
+    }
   }`
 	}
 	config += `
@@ -5366,8 +5427,8 @@ resource "google_container_cluster" "primary" {
 `, name)
 }
 
-func testAccContainerCluster_withAutopilot(containerNetName string, clusterName string, location string, enabled bool) string {
-	return fmt.Sprintf(`
+func testAccContainerCluster_withAutopilot(containerNetName string, clusterName string, location string, enabled bool, withNetworkTag bool) string {
+	config := fmt.Sprintf(`
 resource "google_compute_network" "container_network" {
 	name                    = "%s"
 	auto_create_subnetworks = false
@@ -5416,9 +5477,18 @@ resource "google_container_cluster" "with_autopilot" {
 	}
 	vertical_pod_autoscaling {
 		enabled = true
+	}`, containerNetName, clusterName, location, enabled)
+	if withNetworkTag {
+		config += `
+	node_pool_auto_config {
+		network_tags {
+			tags = ["test-network-tag"]
+		}
+	}`
 	}
-}
-`, containerNetName, clusterName, location, enabled)
+	config += `
+}`
+	return config
 }
 
 func testAccContainerCluster_withDNSConfig(clusterName string, clusterDns string, clusterDnsDomain string, clusterDnsScope string) string {
@@ -5636,4 +5706,85 @@ resource "google_container_cluster" "with_tpu_config" {
 	}
 }
 `, network, cluster)
+}
+
+func TestValidateNodePoolAutoConfig(t *testing.T) {
+	withTags := &container.NodePoolAutoConfig{
+		NetworkTags: &container.NetworkTags{
+			Tags: []string{"not-empty"},
+		},
+	}
+	noTags := &container.NodePoolAutoConfig{}
+
+	cases := map[string]struct {
+		Input       *container.Cluster
+		ExpectError bool
+	}{
+		"with tags, nap nil, autopilot nil": {
+			Input:       &container.Cluster{NodePoolAutoConfig: withTags},
+			ExpectError: true,
+		},
+		"with tags, autopilot disabled": {
+			Input: &container.Cluster{
+				Autopilot:          &container.Autopilot{Enabled: false},
+				NodePoolAutoConfig: withTags,
+			},
+			ExpectError: true,
+		},
+		"with tags, nap disabled": {
+			Input: &container.Cluster{
+				Autoscaling:        &container.ClusterAutoscaling{EnableNodeAutoprovisioning: false},
+				NodePoolAutoConfig: withTags,
+			},
+			ExpectError: true,
+		},
+		"with tags, autopilot enabled": {
+			Input: &container.Cluster{
+				Autopilot:          &container.Autopilot{Enabled: true},
+				NodePoolAutoConfig: withTags,
+			},
+			ExpectError: false,
+		},
+		"with tags, nap enabled": {
+			Input: &container.Cluster{
+				Autoscaling:        &container.ClusterAutoscaling{EnableNodeAutoprovisioning: true},
+				NodePoolAutoConfig: withTags,
+			},
+			ExpectError: false,
+		},
+		"no tags, autopilot enabled": {
+			Input: &container.Cluster{
+				Autopilot:          &container.Autopilot{Enabled: true},
+				NodePoolAutoConfig: noTags,
+			},
+			ExpectError: false,
+		},
+		"no tags, nap enabled": {
+			Input: &container.Cluster{
+				Autoscaling:        &container.ClusterAutoscaling{EnableNodeAutoprovisioning: true},
+				NodePoolAutoConfig: noTags,
+			},
+			ExpectError: false,
+		},
+		"no tags, autopilot disabled": {
+			Input: &container.Cluster{
+				Autopilot:          &container.Autopilot{Enabled: false},
+				NodePoolAutoConfig: noTags,
+			},
+			ExpectError: false,
+		},
+		"no tags, nap disabled": {
+			Input: &container.Cluster{
+				Autoscaling:        &container.ClusterAutoscaling{EnableNodeAutoprovisioning: false},
+				NodePoolAutoConfig: noTags,
+			},
+			ExpectError: false,
+		},
+	}
+
+	for tn, tc := range cases {
+		if err := validateNodePoolAutoConfig(tc.Input); (err != nil) != tc.ExpectError {
+			t.Fatalf("bad: '%s', expected error: %t, received error: %t", tn, tc.ExpectError, (err != nil))
+		}
+	}
 }
