@@ -1373,6 +1373,49 @@ resource "google_pubsub_topic" "topic" {
 `, context)
 }
 
+func TestAccCGCSnippet_storageObjectLifecycleSettingExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"random_suffix": randString(t, 10),
+	}
+
+	vcrTest(t, resource.TestCase{
+		PreCheck:  func() { testAccPreCheck(t) },
+		Providers: testAccProvidersOiCS,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCGCSnippet_storageObjectLifecycleSettingExample(context),
+			},
+			{
+				ResourceName:            "google_storage_bucket.auto_expire",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"force_destroy"},
+			},
+		},
+	})
+}
+
+func testAccCGCSnippet_storageObjectLifecycleSettingExample(context map[string]interface{}) string {
+	return Nprintf(`
+resource "google_storage_bucket" "auto_expire" {
+  name          = "tf-test-example-bucket%{random_suffix}"
+  location      = "US"
+  uniform_bucket_level_access = true
+
+  lifecycle_rule {
+    condition {
+      age = 3
+    }
+    action {
+      type = "Delete"
+    }
+  }
+}
+`, context)
+}
+
 func TestAccCGCSnippet_storageStaticWebsiteExample(t *testing.T) {
 	t.Parallel()
 
