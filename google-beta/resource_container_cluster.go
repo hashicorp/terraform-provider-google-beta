@@ -1412,11 +1412,19 @@ func resourceContainerCluster() *schema.Resource {
 				Description: `Whether L4ILB Subsetting is enabled for this cluster.`,
 				Default:     false,
 			},
+
 			"private_ipv6_google_access": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: `The desired state of IPv6 connectivity to Google Services. By default, no private IPv6 access to or from Google Services (all access will be via IPv4).`,
 				Computed:    true,
+			},
+
+			"enable_cost_allocation": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Description: `Whether to enable GKE cost allocation. When you enable GKE cost allocation, the cluster name and namespace of your GKE workloads appear in the labels field of the billing export to BigQuery. Defaults to false.`,
+				Default:     false,
 			},
 
 			"resource_usage_export_config": {
@@ -1612,6 +1620,9 @@ func resourceContainerClusterCreate(d *schema.ResourceData, meta interface{}) er
 		ConfidentialNodes:  expandConfidentialNodes(d.Get("confidential_nodes")),
 		ResourceLabels:     expandStringMap(d, "resource_labels"),
 		NodePoolAutoConfig: expandNodePoolAutoConfig(d.Get("node_pool_auto_config")),
+		CostManagementConfig: &container.CostManagementConfig{
+			Enabled: d.Get("enable_cost_allocation").(bool),
+		},
 	}
 
 	v := d.Get("enable_shielded_nodes")
@@ -1985,6 +1996,11 @@ func resourceContainerClusterRead(d *schema.ResourceData, meta interface{}) erro
 	if err := d.Set("enable_l4_ilb_subsetting", cluster.NetworkConfig.EnableL4ilbSubsetting); err != nil {
 		return fmt.Errorf("Error setting enable_l4_ilb_subsetting: %s", err)
 	}
+
+	if err := d.Set("enable_cost_allocation", cluster.CostManagementConfig.Enabled); err != nil {
+		return fmt.Errorf("Error setting enable_cost_allocation: %s", err)
+	}
+
 	if err := d.Set("confidential_nodes", flattenConfidentialNodes(cluster.ConfidentialNodes)); err != nil {
 		return err
 	}
@@ -2384,6 +2400,26 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 		}
 
 		log.Printf("[INFO] GKE cluster %s L4 ILB Subsetting has been updated to %v", d.Id(), enabled)
+	}
+
+	if d.HasChange("enable_cost_allocation") {
+		enabled := d.Get("enable_cost_allocation").(bool)
+		req := &container.UpdateClusterRequest{
+			Update: &container.ClusterUpdate{
+				DesiredCostManagementConfig: &container.CostManagementConfig{
+					Enabled:         enabled,
+					ForceSendFields: []string{"Enabled"},
+				},
+			},
+		}
+
+		updateF := updateFunc(req, "updating cost management config")
+		// Call update serially.
+		if err := lockedCall(lockKey, updateF); err != nil {
+			return err
+		}
+
+		log.Printf("[INFO] GKE cluster %s cost management config to %v", d.Id(), enabled)
 	}
 
 	if d.HasChange("authenticator_groups_config") {
