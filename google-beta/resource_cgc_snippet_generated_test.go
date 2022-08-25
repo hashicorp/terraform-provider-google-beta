@@ -1400,6 +1400,7 @@ func TestAccCGCSnippet_storageObjectLifecycleSettingExample(t *testing.T) {
 func testAccCGCSnippet_storageObjectLifecycleSettingExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_storage_bucket" "auto_expire" {
+  provider      = google-beta
   name          = "tf-test-example-bucket%{random_suffix}"
   location      = "US"
   uniform_bucket_level_access = true
