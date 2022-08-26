@@ -1,4 +1,26 @@
 ## 4.34.0 (Unreleased)
+UNKNOWN CHANGELOG TYPE:
+* Adding support for major version upgrade in cloud sql instance. ([#4606](https://github.com/hashicorp/terraform-provider-google-beta/pull/4606))
+* Create empty go.mod file in scripts folder ([#4609](https://github.com/hashicorp/terraform-provider-google-beta/pull/4609))
+NOTES:
+*  ([#4621](https://github.com/hashicorp/terraform-provider-google-beta/pull/4621))
+
+IMPROVEMENTS:
+* Update Bigtable go client version from 1.13 to 1.16. ([#4613](https://github.com/hashicorp/terraform-provider-google-beta/pull/4613))
+* apigee: added support for specifying retention when deleting `google_apigee_organization` ([#4604](https://github.com/hashicorp/terraform-provider-google-beta/pull/4604))
+* appengine: added `app_engine_apis` field to `google_app_engine_standard_app_version` resource ([#4607](https://github.com/hashicorp/terraform-provider-google-beta/pull/4607))
+* cloudfunction2: promote to `google_cloudfunctions2_function` ga ([#4599](https://github.com/hashicorp/terraform-provider-google-beta/pull/4599))
+* compute: improved error messaging for compute errors ([#4602](https://github.com/hashicorp/terraform-provider-google-beta/pull/4602))
+* container: Added general field `reservation_affinity` to `google_container_node_pool` ([#4622](https://github.com/hashicorp/terraform-provider-google-beta/pull/4622))
+* container: added field `auto_provisioning_network_tags` to `google_container_cluster` (beta) ([#4611](https://github.com/hashicorp/terraform-provider-google-beta/pull/4611))
+* pubsub: updated documentation for `message_retention_duration` in `google_pubsub_topic` resource to reflect new 31 day maximum ([#4616](https://github.com/hashicorp/terraform-provider-google-beta/pull/4616))
+
+BUG FIXES:
+* bigtable: fixed comparing column family name when reading a GC policy. ([#4624](https://github.com/hashicorp/terraform-provider-google-beta/pull/4624))
+* bigtable: passed `isTopeLevel` in getGCPolicyFromJSON() instead of hardcoding it to true. ([#4615](https://github.com/hashicorp/terraform-provider-google-beta/pull/4615))
+* cloud iam: made `denial_condition` optional on `google_iam_deny_policy` ([#4617](https://github.com/hashicorp/terraform-provider-google-beta/pull/4617))
+* composer: corrected the description of `image_version` field. ([#4601](https://github.com/hashicorp/terraform-provider-google-beta/pull/4601))
+
 
 ## 4.33.0 (August 22, 2022)
 IMPROVEMENTS:
