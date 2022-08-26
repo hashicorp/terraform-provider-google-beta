@@ -8,7 +8,6 @@ IMPROVEMENTS:
 * compute: improved error messaging for compute errors ([#4602](https://github.com/hashicorp/terraform-provider-google-beta/pull/4602))
 * container: added general field `reservation_affinity` to `google_container_node_pool` ([#4622](https://github.com/hashicorp/terraform-provider-google-beta/pull/4622))
 * container: added field `auto_provisioning_network_tags` to `google_container_cluster` (beta) ([#4611](https://github.com/hashicorp/terraform-provider-google-beta/pull/4611))
-* pubsub: updated documentation for `message_retention_duration` in `google_pubsub_topic` resource to reflect new 31 day maximum ([#4616](https://github.com/hashicorp/terraform-provider-google-beta/pull/4616))
 * sql: added support for major version upgrade to `google_sql_database_instance ` resource  ([#4606](https://github.com/hashicorp/terraform-provider-google-beta/pull/4606))
 
 BUG FIXES:
