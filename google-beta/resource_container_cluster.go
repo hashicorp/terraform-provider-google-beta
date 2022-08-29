@@ -1436,6 +1436,23 @@ func resourceContainerCluster() *schema.Resource {
 				Computed:    true,
 			},
 
+			"cost_management_config": {
+				Type:        schema.TypeList,
+				MaxItems:    1,
+				Optional:    true,
+				Computed:    true,
+				Description: `Cost management configuration for the cluster.`,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"enabled": {
+							Type:        schema.TypeBool,
+							Required:    true,
+							Description: `Whether to enable GKE cost allocation. When you enable GKE cost allocation, the cluster name and namespace of your GKE workloads appear in the labels field of the billing export to BigQuery. Defaults to false.`,
+						},
+					},
+				},
+			},
+
 			"resource_usage_export_config": {
 				Type:        schema.TypeList,
 				MaxItems:    1,
@@ -1624,11 +1641,12 @@ func resourceContainerClusterCreate(d *schema.ResourceData, meta interface{}) er
 			EnableL4ilbSubsetting:     d.Get("enable_l4_ilb_subsetting").(bool),
 			DnsConfig:                 expandDnsConfig(d.Get("dns_config")),
 		},
-		MasterAuth:         expandMasterAuth(d.Get("master_auth")),
-		NotificationConfig: expandNotificationConfig(d.Get("notification_config")),
-		ConfidentialNodes:  expandConfidentialNodes(d.Get("confidential_nodes")),
-		ResourceLabels:     expandStringMap(d, "resource_labels"),
-		NodePoolAutoConfig: expandNodePoolAutoConfig(d.Get("node_pool_auto_config")),
+		MasterAuth:           expandMasterAuth(d.Get("master_auth")),
+		NotificationConfig:   expandNotificationConfig(d.Get("notification_config")),
+		ConfidentialNodes:    expandConfidentialNodes(d.Get("confidential_nodes")),
+		ResourceLabels:       expandStringMap(d, "resource_labels"),
+		NodePoolAutoConfig:   expandNodePoolAutoConfig(d.Get("node_pool_auto_config")),
+		CostManagementConfig: expandCostManagementConfig(d.Get("cost_management_config")),
 	}
 
 	v := d.Get("enable_shielded_nodes")
@@ -2005,6 +2023,10 @@ func resourceContainerClusterRead(d *schema.ResourceData, meta interface{}) erro
 	}
 	if err := d.Set("enable_l4_ilb_subsetting", cluster.NetworkConfig.EnableL4ilbSubsetting); err != nil {
 		return fmt.Errorf("Error setting enable_l4_ilb_subsetting: %s", err)
+	}
+
+	if err := d.Set("cost_management_config", flattenManagementConfig(cluster.CostManagementConfig)); err != nil {
+		return fmt.Errorf("Error setting cost_management_config: %s", err)
 	}
 	if err := d.Set("confidential_nodes", flattenConfidentialNodes(cluster.ConfidentialNodes)); err != nil {
 		return err
@@ -2409,6 +2431,23 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 		}
 
 		log.Printf("[INFO] GKE cluster %s L4 ILB Subsetting has been updated to %v", d.Id(), enabled)
+	}
+
+	if d.HasChange("cost_management_config") {
+		c := d.Get("cost_management_config")
+		req := &container.UpdateClusterRequest{
+			Update: &container.ClusterUpdate{
+				DesiredCostManagementConfig: expandCostManagementConfig(c),
+			},
+		}
+
+		updateF := updateFunc(req, "updating cost management config")
+		// Call update serially.
+		if err := lockedCall(lockKey, updateF); err != nil {
+			return err
+		}
+
+		log.Printf("[INFO] GKE cluster %s cost management config has been updated", d.Id())
 	}
 
 	if d.HasChange("authenticator_groups_config") {
@@ -3858,6 +3897,20 @@ func expandDefaultMaxPodsConstraint(v interface{}) *container.MaxPodsConstraint 
 		MaxPodsPerNode: int64(v.(int)),
 	}
 }
+
+func expandCostManagementConfig(configured interface{}) *container.CostManagementConfig {
+	l := configured.([]interface{})
+	if len(l) == 0 {
+		return nil
+	}
+
+	config := l[0].(map[string]interface{})
+	return &container.CostManagementConfig{
+		Enabled:         config["enabled"].(bool),
+		ForceSendFields: []string{"Enabled"},
+	}
+}
+
 func expandResourceUsageExportConfig(configured interface{}) *container.ResourceUsageExportConfig {
 	l := configured.([]interface{})
 	if len(l) == 0 || l[0] == nil {
@@ -4485,6 +4538,17 @@ func flattenMeshCertificates(c *container.MeshCertificates) []map[string]interfa
 	return []map[string]interface{}{
 		{
 			"enable_certificates": c.EnableCertificates,
+		},
+	}
+}
+
+func flattenManagementConfig(c *container.CostManagementConfig) []map[string]interface{} {
+	if c == nil {
+		return nil
+	}
+	return []map[string]interface{}{
+		{
+			"enabled": c.Enabled,
 		},
 	}
 }
