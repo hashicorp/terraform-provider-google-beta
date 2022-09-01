@@ -953,6 +953,59 @@ func TestAccContainerCluster_withNodeConfig(t *testing.T) {
 	})
 }
 
+func TestAccContainerCluster_withNodePoolDefaults(t *testing.T) {
+	t.Parallel()
+	clusterName := fmt.Sprintf("tf-test-cluster-%s", randString(t, 10))
+	vcrTest(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckContainerClusterDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccContainerCluster_basic(clusterName),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckNoResourceAttr("google_container_cluster.primary",
+						"node_pool_defaults.0.node_config_defaults.0.gcfs_config.0.enabled"),
+				),
+			},
+			{
+				ResourceName:      "google_container_cluster.primary",
+				ImportStateId:     fmt.Sprintf("us-central1-a/%s", clusterName),
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+			{
+				Config: testAccContainerCluster_withNodePoolDefaults(clusterName, "true"),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr("google_container_cluster.with_node_pool_defaults",
+						"node_pool_defaults.0.node_config_defaults.0.gcfs_config.#", "1"),
+					resource.TestCheckResourceAttr("google_container_cluster.with_node_pool_defaults",
+						"node_pool_defaults.0.node_config_defaults.0.gcfs_config.0.enabled", "true"),
+				),
+			},
+			{
+				ResourceName:      "google_container_cluster.with_node_pool_defaults",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+			{
+				Config: testAccContainerCluster_withNodePoolDefaults(clusterName, "false"),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr("google_container_cluster.with_node_pool_defaults",
+						"node_pool_defaults.0.node_config_defaults.0.gcfs_config.#", "1"),
+					resource.TestCheckResourceAttr("google_container_cluster.with_node_pool_defaults",
+						"node_pool_defaults.0.node_config_defaults.0.gcfs_config.0.enabled", "false"),
+				),
+			},
+			{
+				ResourceName:      "google_container_cluster.with_node_pool_defaults",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
 func TestAccContainerCluster_withNodeConfigScopeAlias(t *testing.T) {
 	t.Parallel()
 
@@ -3850,6 +3903,24 @@ resource "google_container_cluster" "with_node_config" {
   }
 }
 `, clusterName)
+}
+
+func testAccContainerCluster_withNodePoolDefaults(clusterName, enabled string) string {
+	return fmt.Sprintf(`
+resource "google_container_cluster" "with_node_pool_defaults" {
+  name               = "%s"
+  location           = "us-central1-f"
+  initial_node_count = 1
+
+  node_pool_defaults {
+    node_config_defaults {
+      gcfs_config {
+        enabled = "%s"
+      }
+    }
+  }
+}
+`, clusterName, enabled)
 }
 
 func testAccContainerCluster_withNodeConfigUpdate(clusterName string) string {
