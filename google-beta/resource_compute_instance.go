@@ -121,7 +121,7 @@ func resourceComputeInstance() *schema.Resource {
 					Schema: map[string]*schema.Schema{
 						"auto_delete": {
 							Type:         schema.TypeBool,
-							Optional:     true,
+							Required:     true,
 							AtLeastOneOf: bootDiskKeys,
 							Default:      true,
 							ForceNew:     true,
