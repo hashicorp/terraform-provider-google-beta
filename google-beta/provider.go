@@ -413,6 +413,14 @@ func Provider() *schema.Provider {
 					"GOOGLE_DATASTORE_CUSTOM_ENDPOINT",
 				}, DefaultBasePaths[DatastoreBasePathKey]),
 			},
+			"datastream_custom_endpoint": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validateCustomEndpoint,
+				DefaultFunc: schema.MultiEnvDefaultFunc([]string{
+					"GOOGLE_DATASTREAM_CUSTOM_ENDPOINT",
+				}, DefaultBasePaths[DatastreamBasePathKey]),
+			},
 			"deployment_manager_custom_endpoint": {
 				Type:         schema.TypeString,
 				Optional:     true,
@@ -944,9 +952,9 @@ func Provider() *schema.Provider {
 	return provider
 }
 
-// Generated resources: 257
+// Generated resources: 258
 // Generated IAM resources: 171
-// Total generated resources: 428
+// Total generated resources: 429
 func ResourceMap() map[string]*schema.Resource {
 	resourceMap, _ := ResourceMapWithErrors()
 	return resourceMap
@@ -1196,6 +1204,7 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_dataproc_metastore_federation_iam_member":              ResourceIamMember(DataprocMetastoreFederationIamSchema, DataprocMetastoreFederationIamUpdaterProducer, DataprocMetastoreFederationIdParseFunc),
 			"google_dataproc_metastore_federation_iam_policy":              ResourceIamPolicy(DataprocMetastoreFederationIamSchema, DataprocMetastoreFederationIamUpdaterProducer, DataprocMetastoreFederationIdParseFunc),
 			"google_datastore_index":                                       resourceDatastoreIndex(),
+			"google_datastream_connection_profile":                         resourceDatastreamConnectionProfile(),
 			"google_deployment_manager_deployment":                         resourceDeploymentManagerDeployment(),
 			"google_dialogflow_agent":                                      resourceDialogflowAgent(),
 			"google_dialogflow_intent":                                     resourceDialogflowIntent(),
@@ -1644,6 +1653,7 @@ func providerConfigure(ctx context.Context, d *schema.ResourceData, p *schema.Pr
 	config.DataprocBasePath = d.Get("dataproc_custom_endpoint").(string)
 	config.DataprocMetastoreBasePath = d.Get("dataproc_metastore_custom_endpoint").(string)
 	config.DatastoreBasePath = d.Get("datastore_custom_endpoint").(string)
+	config.DatastreamBasePath = d.Get("datastream_custom_endpoint").(string)
 	config.DeploymentManagerBasePath = d.Get("deployment_manager_custom_endpoint").(string)
 	config.DialogflowBasePath = d.Get("dialogflow_custom_endpoint").(string)
 	config.DialogflowCXBasePath = d.Get("dialogflow_cx_custom_endpoint").(string)
