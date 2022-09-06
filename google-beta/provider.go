@@ -213,6 +213,14 @@ func Provider() *schema.Provider {
 					"GOOGLE_BIG_QUERY_CUSTOM_ENDPOINT",
 				}, DefaultBasePaths[BigQueryBasePathKey]),
 			},
+			"bigquery_analytics_hub_custom_endpoint": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validateCustomEndpoint,
+				DefaultFunc: schema.MultiEnvDefaultFunc([]string{
+					"GOOGLE_BIGQUERY_ANALYTICS_HUB_CUSTOM_ENDPOINT",
+				}, DefaultBasePaths[BigqueryAnalyticsHubBasePathKey]),
+			},
 			"bigquery_connection_custom_endpoint": {
 				Type:         schema.TypeString,
 				Optional:     true,
@@ -936,9 +944,9 @@ func Provider() *schema.Provider {
 	return provider
 }
 
-// Generated resources: 256
-// Generated IAM resources: 168
-// Total generated resources: 424
+// Generated resources: 257
+// Generated IAM resources: 171
+// Total generated resources: 428
 func ResourceMap() map[string]*schema.Resource {
 	resourceMap, _ := ResourceMapWithErrors()
 	return resourceMap
@@ -1004,6 +1012,10 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_bigquery_table_iam_member":                             ResourceIamMember(BigQueryTableIamSchema, BigQueryTableIamUpdaterProducer, BigQueryTableIdParseFunc),
 			"google_bigquery_table_iam_policy":                             ResourceIamPolicy(BigQueryTableIamSchema, BigQueryTableIamUpdaterProducer, BigQueryTableIdParseFunc),
 			"google_bigquery_routine":                                      resourceBigQueryRoutine(),
+			"google_bigquery_analytics_hub_data_exchange":                  resourceBigqueryAnalyticsHubDataExchange(),
+			"google_bigquery_analytics_hub_data_exchange_iam_binding":      ResourceIamBinding(BigqueryAnalyticsHubDataExchangeIamSchema, BigqueryAnalyticsHubDataExchangeIamUpdaterProducer, BigqueryAnalyticsHubDataExchangeIdParseFunc),
+			"google_bigquery_analytics_hub_data_exchange_iam_member":       ResourceIamMember(BigqueryAnalyticsHubDataExchangeIamSchema, BigqueryAnalyticsHubDataExchangeIamUpdaterProducer, BigqueryAnalyticsHubDataExchangeIdParseFunc),
+			"google_bigquery_analytics_hub_data_exchange_iam_policy":       ResourceIamPolicy(BigqueryAnalyticsHubDataExchangeIamSchema, BigqueryAnalyticsHubDataExchangeIamUpdaterProducer, BigqueryAnalyticsHubDataExchangeIdParseFunc),
 			"google_bigquery_connection":                                   resourceBigqueryConnectionConnection(),
 			"google_bigquery_connection_iam_binding":                       ResourceIamBinding(BigqueryConnectionConnectionIamSchema, BigqueryConnectionConnectionIamUpdaterProducer, BigqueryConnectionConnectionIdParseFunc),
 			"google_bigquery_connection_iam_member":                        ResourceIamMember(BigqueryConnectionConnectionIamSchema, BigqueryConnectionConnectionIamUpdaterProducer, BigqueryConnectionConnectionIdParseFunc),
@@ -1607,6 +1619,7 @@ func providerConfigure(ctx context.Context, d *schema.ResourceData, p *schema.Pr
 	config.AppEngineBasePath = d.Get("app_engine_custom_endpoint").(string)
 	config.ArtifactRegistryBasePath = d.Get("artifact_registry_custom_endpoint").(string)
 	config.BigQueryBasePath = d.Get("big_query_custom_endpoint").(string)
+	config.BigqueryAnalyticsHubBasePath = d.Get("bigquery_analytics_hub_custom_endpoint").(string)
 	config.BigqueryConnectionBasePath = d.Get("bigquery_connection_custom_endpoint").(string)
 	config.BigqueryDataTransferBasePath = d.Get("bigquery_data_transfer_custom_endpoint").(string)
 	config.BigqueryReservationBasePath = d.Get("bigquery_reservation_custom_endpoint").(string)
