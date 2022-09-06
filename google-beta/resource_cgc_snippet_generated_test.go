@@ -522,7 +522,7 @@ resource "google_project_service" "workflows" {
 # Create a service account for Eventarc trigger and Workflows
 resource "google_service_account" "eventarc_workflows_service_account" {
   provider = google-beta
-  account_id   = "eventarc-workflows-sa"
+  account_id   = "tf-test-eventarc-sa%{random_suffix}"
   display_name = "Eventarc Workflows Service Account"
 }
 
