@@ -1,4 +1,22 @@
-## 4.35.0 (Unreleased)
+## 4.36.0 (Unreleased)
+
+## 4.35.0 (September 6, 2022)
+
+IMPROVEMENTS:
+* apigee: added support for `nodeConfig` in `google_apigee_environment` ([#4632](https://github.com/hashicorp/terraform-provider-google-beta/pull/4632))
+* apigee: added a `properties` field to `google_apigee_organization` ([#4644](https://github.com/hashicorp/terraform-provider-google-beta/pull/4644))
+* cloudfunctions2: added `secret_environment_variables` and `secret_volumes` to `google_cloudfunctions2_function` ([#4641](https://github.com/hashicorp/terraform-provider-google-beta/pull/4641))
+* compute: added support for param `visible_core_count` in `google_compute_instance` and `google_compute_instance_template` under `advanced_machine_features` ([#4635](https://github.com/hashicorp/terraform-provider-google-beta/pull/4635))
+* compute: added support documentation links to error messages for certain Compute Operation errors. ([#4642](https://github.com/hashicorp/terraform-provider-google-beta/pull/4642))
+* container: added `service_external_ips_config` support to `cluster_container` resource. ([#4639](https://github.com/hashicorp/terraform-provider-google-beta/pull/4639))
+* container: added `enable_cost_allocation` to `google_container_cluster` ([#4640](https://github.com/hashicorp/terraform-provider-google-beta/pull/4640))
+* dns: added `behavior` field to `google_dns_response_policy_rule` resource ([#4637](https://github.com/hashicorp/terraform-provider-google-beta/pull/4637))
+* monitoring: added `force_delete` field to `google_monitoring_notification_channel` resource ([#4638](https://github.com/hashicorp/terraform-provider-google-beta/pull/4638))
+* pubsub: made `enable_exactly_once_delivery` mutable so that it updates subscription in-place and avoids recreation of the subscription. ([#4645](https://github.com/hashicorp/terraform-provider-google-beta/pull/4645))
+* vertexai: added `encryption_spec` field to `google_vertex_ai_featurestore` resource (beta) ([#4643](https://github.com/hashicorp/terraform-provider-google-beta/pull/4643))
+
+BUG FIXES:
+* compute: fixed the `id` format of the data source `google_compute_instance` ([#4636](https://github.com/hashicorp/terraform-provider-google-beta/pull/4636))
 
 ## 4.34.0 (August 29, 2022)
 NOTES:
