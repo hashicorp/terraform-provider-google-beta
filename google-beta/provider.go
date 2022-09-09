@@ -819,7 +819,7 @@ func Provider() *schema.Provider {
 			"google_bigquery_default_service_account":             dataSourceGoogleBigqueryDefaultServiceAccount(),
 			"google_client_config":                                dataSourceGoogleClientConfig(),
 			"google_client_openid_userinfo":                       dataSourceGoogleClientOpenIDUserinfo(),
-			"google_cloudfunctions_function":                      dataSourceGoogleCloudFunctionsFunction(),
+			"google_cloudfunctions_functions":                     dataSourceGoogleCloudFunctionsFunction(),
 			"google_cloud_identity_groups":                        dataSourceGoogleCloudIdentityGroups(),
 			"google_cloud_identity_group_memberships":             dataSourceGoogleCloudIdentityGroupMemberships(),
 			"google_cloud_run_locations":                          dataSourceGoogleCloudRunLocations(),
@@ -949,7 +949,7 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 		map[string]*schema.Resource{
 			"google_folder_access_approval_settings":                       resourceAccessApprovalFolderSettings(),
 			"google_project_access_approval_settings":                      resourceAccessApprovalProjectSettings(),
-			"google_organization_access_approval_settings":                 resourceAccessApprovalOrganizationSettings(),
+			"google_organization_access_approval_setting":                  resourceAccessApprovalOrganizationSettings(),
 			"google_access_context_manager_access_policy":                  resourceAccessContextManagerAccessPolicy(),
 			"google_access_context_manager_access_policy_iam_binding":      ResourceIamBinding(AccessContextManagerAccessPolicyIamSchema, AccessContextManagerAccessPolicyIamUpdaterProducer, AccessContextManagerAccessPolicyIdParseFunc),
 			"google_access_context_manager_access_policy_iam_member":       ResourceIamMember(AccessContextManagerAccessPolicyIamSchema, AccessContextManagerAccessPolicyIamUpdaterProducer, AccessContextManagerAccessPolicyIdParseFunc),

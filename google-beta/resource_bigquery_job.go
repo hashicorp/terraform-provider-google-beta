@@ -47,7 +47,7 @@ func resourceBigQueryJob() *schema.Resource {
 		},
 
 		Schema: map[string]*schema.Schema{
-			"copy": {
+			"copies": {
 				Type:        schema.TypeList,
 				Optional:    true,
 				ForceNew:    true,
@@ -76,15 +76,7 @@ or of the form 'projects/{{project}}/datasets/{{dataset_id}}/tables/{{table_id}}
 										Optional:    true,
 										ForceNew:    true,
 										Description: `The ID of the dataset containing this table.`,
-									},
-									"project_id": {
-										Type:        schema.TypeString,
-										Computed:    true,
-										Optional:    true,
-										ForceNew:    true,
-										Description: `The ID of the project containing this table.`,
-									},
-								},
+									}},
 							},
 						},
 						"create_disposition": {

@@ -680,7 +680,7 @@ func TestAccContainerNodePool_regionalAutoscaling(t *testing.T) {
 	})
 }
 
-//This test exists to validate a node pool with total size *and* and update to it.
+// This test exists to validate a node pool with total size *and* and update to it.
 func TestAccContainerNodePool_totalSize(t *testing.T) {
 	t.Parallel()
 
