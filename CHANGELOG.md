@@ -1,28 +1,25 @@
 ## 4.36.0 (Unreleased)
 
-UNKNOWN CHANGELOG TYPE:
-* Add field `node_pool_defaults` to `resource_container_cluster`. ([#4648](https://github.com/hashicorp/terraform-provider-google-beta/pull/4648))
-* Made github actions use go 1.18 ([#4650](https://github.com/hashicorp/terraform-provider-google-beta/pull/4650))
-
 FEATURES:
-* **New Resource:** `google_analytics_hub_data_exchange_iam_binding` (beta) ([#4656](https://github.com/hashicorp/terraform-provider-google-beta/pull/4656))
-* **New Resource:** `google_analytics_hub_data_exchange_iam_member` (beta) ([#4656](https://github.com/hashicorp/terraform-provider-google-beta/pull/4656))
-* **New Resource:** `google_analytics_hub_data_exchange_iam_policy` (beta) ([#4656](https://github.com/hashicorp/terraform-provider-google-beta/pull/4656))
-* **New Resource:** `google_analytics_hub_data_exchange` (beta) ([#4656](https://github.com/hashicorp/terraform-provider-google-beta/pull/4656))
+* **New Resource:** `google_analytics_hub_data_exchange_iam_binding` ([#4656](https://github.com/hashicorp/terraform-provider-google-beta/pull/4656))
+* **New Resource:** `google_analytics_hub_data_exchange_iam_member` ([#4656](https://github.com/hashicorp/terraform-provider-google-beta/pull/4656))
+* **New Resource:** `google_analytics_hub_data_exchange_iam_policy` ([#4656](https://github.com/hashicorp/terraform-provider-google-beta/pull/4656))
+* **New Resource:** `google_analytics_hub_data_exchange` ([#4656](https://github.com/hashicorp/terraform-provider-google-beta/pull/4656))
 * **New Resource:** google_datastream_connection_profile ([#4657](https://github.com/hashicorp/terraform-provider-google-beta/pull/4657))
 
 IMPROVEMENTS:
-* appengine: Added field `serviceAccount` to `app_engine_flexible_app_version` ([#4653](https://github.com/hashicorp/terraform-provider-google-beta/pull/4653))
-* bigtable: increased timeout in table creation. ([#4655](https://github.com/hashicorp/terraform-provider-google-beta/pull/4655))
+* appengine: added field `service_account` to `google_app_engine_flexible_app_version` ([#4653](https://github.com/hashicorp/terraform-provider-google-beta/pull/4653))
+* bigtable: increased timeout in `google_bigtable_table` creation. ([#4655](https://github.com/hashicorp/terraform-provider-google-beta/pull/4655))
 * cloudbuild: added `location` field to `google_cloudbuild_trigger` resource ([#4646](https://github.com/hashicorp/terraform-provider-google-beta/pull/4646))
 * compute: added `certificate_map` to `compute_target_ssl_proxy` resource ([#4654](https://github.com/hashicorp/terraform-provider-google-beta/pull/4654))
-* compute: added field `chain_name` to resource `google_compute_resource_policy. snapshot_properties` ([#4660](https://github.com/hashicorp/terraform-provider-google-beta/pull/4660))
+* compute: added field `chain_name` to `google_compute_resource_policy.snapshot_properties` ([#4660](https://github.com/hashicorp/terraform-provider-google-beta/pull/4660))
 * compute: added field `chain_name` to resource `google_compute_snapshot` ([#4660](https://github.com/hashicorp/terraform-provider-google-beta/pull/4660))
 * container: added `autoscaling.total_min_node_count`, `autoscaling.total_max_node_count`, and `autoscaling.location_policy` to `google_container_cluster.node_pool` ([#4649](https://github.com/hashicorp/terraform-provider-google-beta/pull/4649))
 * container: added `autoscaling.total_min_node_count`, `autoscaling.total_max_node_count`, and `autoscaling.location_policy` to `google_container_node_pool` resource ([#4649](https://github.com/hashicorp/terraform-provider-google-beta/pull/4649))
+* container: added field `node_pool_defaults` to `resource_container_cluster`. ([#4648](https://github.com/hashicorp/terraform-provider-google-beta/pull/4648))
 * dataproc: added option `shielded_instance_config` to resource `google_dataproc_workflow_template`. ([#4647](https://github.com/hashicorp/terraform-provider-google-beta/pull/4647))
 * metastore: extended default timeouts for `google_dataproc_metastore_service` from 40m to 60m ([#4652](https://github.com/hashicorp/terraform-provider-google-beta/pull/4652))
-* pubsub: made enableExactlyOnceDelivery mutable so that it updates subscription in-place and avoids recreation of the subscription. ([#4645](https://github.com/hashicorp/terraform-provider-google-beta/pull/4645))
+* pubsub: made `google_pubsub_subscription.enable_exactly_once_delivery` mutable so that it updates subscription without recreation. ([#4645](https://github.com/hashicorp/terraform-provider-google-beta/pull/4645))
 
 ## 4.35.0 (September 6, 2022)
 
