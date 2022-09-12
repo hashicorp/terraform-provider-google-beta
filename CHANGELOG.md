@@ -1,10 +1,10 @@
 ## 4.36.0 (Unreleased)
 
 FEATURES:
-* **New Resource:** `google_analytics_hub_data_exchange_iam_binding` ([#4656](https://github.com/hashicorp/terraform-provider-google-beta/pull/4656))
-* **New Resource:** `google_analytics_hub_data_exchange_iam_member` ([#4656](https://github.com/hashicorp/terraform-provider-google-beta/pull/4656))
-* **New Resource:** `google_analytics_hub_data_exchange_iam_policy` ([#4656](https://github.com/hashicorp/terraform-provider-google-beta/pull/4656))
-* **New Resource:** `google_analytics_hub_data_exchange` ([#4656](https://github.com/hashicorp/terraform-provider-google-beta/pull/4656))
+* **New Resource:** `google_bigquery_analytics_hub_data_exchange_iam_binding` ([#4656](https://github.com/hashicorp/terraform-provider-google-beta/pull/4656))
+* **New Resource:** `google_bigquery_analytics_hub_data_exchange_iam_member` ([#4656](https://github.com/hashicorp/terraform-provider-google-beta/pull/4656))
+* **New Resource:** `google_bigquery_analytics_hub_data_exchange_iam_policy` ([#4656](https://github.com/hashicorp/terraform-provider-google-beta/pull/4656))
+* **New Resource:** `google_bigquery_analytics_hub_data_exchange` ([#4656](https://github.com/hashicorp/terraform-provider-google-beta/pull/4656))
 * **New Resource:** google_datastream_connection_profile ([#4657](https://github.com/hashicorp/terraform-provider-google-beta/pull/4657))
 
 IMPROVEMENTS:
