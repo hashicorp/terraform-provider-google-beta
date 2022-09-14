@@ -25,7 +25,7 @@ What exactly constitutes a breaking change? Bellow we'll
 go into the four categories and rules therein.
 
 
-### Resource List Level Breakages
+### Resource Inventory Level Breakages
 Resource/datasource naming conventions and entry differences.
 
 <h4 id="resource_map_resource-removal-or-rename"> Removing or Renaming an resource </h4>
