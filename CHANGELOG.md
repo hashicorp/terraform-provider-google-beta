@@ -1,5 +1,31 @@
 ## 4.37.0 (Unreleased)
 
+UNKNOWN CHANGELOG TYPE:
+* google_project Datasource project_id Validated ([#4684](https://github.com/hashicorp/terraform-provider-google-beta/pull/4684))
+* shortname removed from the resource_policies description ([#4683](https://github.com/hashicorp/terraform-provider-google-beta/pull/4683))
+
+FEATURES:
+* **New Resource:** Apigee: Added Apigee NAT address resource `google_apigee_nat_address` ([#4676](https://github.com/hashicorp/terraform-provider-google-beta/pull/4676))
+* **New Resource:** google_filestore_snapshot ([#4661](https://github.com/hashicorp/terraform-provider-google-beta/pull/4661))
+
+IMPROVEMENTS:
+* apigee: Added read-only field `connectionState` to `google_apigee_endpoint_attachment` ([#4668](https://github.com/hashicorp/terraform-provider-google-beta/pull/4668))
+* bigquery: fixed incorrect documentation formatting for `source_uris` attributes ([#4669](https://github.com/hashicorp/terraform-provider-google-beta/pull/4669))
+* bigtable: added support for `autoscaling_config.storage_target` to `google_bigtable_instance` ([#4671](https://github.com/hashicorp/terraform-provider-google-beta/pull/4671))
+* bigtable: combined create table and create column families into a single API call. ([#4666](https://github.com/hashicorp/terraform-provider-google-beta/pull/4666))
+* compute: added field `chain_name` to resource `google_compute_resource_policy. snapshot_properties` ([#4660](https://github.com/hashicorp/terraform-provider-google-beta/pull/4660))
+* compute: added field `chain_name` to resource `google_compute_snapshot` ([#4660](https://github.com/hashicorp/terraform-provider-google-beta/pull/4660))
+* dialogflowcx: added `google_dialogflow_cx_webhook` resource to support Dialogflow CX webhook API ([#4667](https://github.com/hashicorp/terraform-provider-google-beta/pull/4667))
+* dns: Added in validation for trailing dot at end of DNS record name ([#4674](https://github.com/hashicorp/terraform-provider-google-beta/pull/4674))
+* google_service_account_jwt: added `expires_in` attribute for generating `exp` claim. ([#4677](https://github.com/hashicorp/terraform-provider-google-beta/pull/4677))
+
+BUG FIXES:
+* cloudbuild: added support for `"BITBUCKET"` option to `git_source.repo_type` in `google_cloudbuild_trigger` ([#4679](https://github.com/hashicorp/terraform-provider-google-beta/pull/4679))
+* notebooks: fixed perma-diff in `google_notebooks_instance` ([#4664](https://github.com/hashicorp/terraform-provider-google-beta/pull/4664))
+* privateca: fixed an issue that blocked subordinate CA data sources when `state` was not `AWAITING_USER_ACTIVATION` ([#4672](https://github.com/hashicorp/terraform-provider-google-beta/pull/4672))
+* storage: fixed permdiff on the field `versioning` of `google_storage_bucket` ([#4665](https://github.com/hashicorp/terraform-provider-google-beta/pull/4665))
+* vpcaccess: updated defaults for `minThroughput` and `maxThroughput` on `google_vpc_access_connector` ([#4680](https://github.com/hashicorp/terraform-provider-google-beta/pull/4680))
+
 ## 4.36.0 (September 12, 2022)
 
 FEATURES:
