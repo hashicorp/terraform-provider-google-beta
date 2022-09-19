@@ -19,10 +19,6 @@ This is the ['google-beta' provider](https://github.com/hashicorp/terraform-prov
 
 Please see [instructions](https://registry.terraform.io/providers/hashicorp/google/latest/docs/guides/provider_reference) on how to configure the Google Provider.
 
-### Using local Provider
-
-Please see [instructions](https://github.com/GoogleCloudPlatform/magic-modules#using-released-terraform-binary-with-local-provider-binary) on how to use your locally generated provider binary.
-
 ### Upgrading the provider
 
 The Google provider doesn't upgrade automatically once you've started using it. After a new release you can run
