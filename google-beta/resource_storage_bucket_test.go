@@ -485,6 +485,22 @@ func TestAccStorageBucket_update(t *testing.T) {
 				ImportStateVerifyIgnore: []string{"force_destroy"},
 			},
 			{
+				Config: testAccStorageBucket_customAttributes_withLifecycle1Update(bucketName),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckStorageBucketExists(
+						t, "google_storage_bucket.bucket", bucketName, &updated),
+					testAccCheckStorageBucketWasUpdated(&updated, &recreated),
+					resource.TestCheckResourceAttr(
+						"google_storage_bucket.bucket", "force_destroy", "true"),
+				),
+			},
+			{
+				ResourceName:            "google_storage_bucket.bucket",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"force_destroy"},
+			},
+			{
 				Config: testAccStorageBucket_customAttributes(bucketName),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckStorageBucketExists(
@@ -1236,6 +1252,24 @@ resource "google_storage_bucket" "bucket" {
     }
     condition {
       age = 10
+    }
+  }
+}
+`, bucketName)
+}
+
+func testAccStorageBucket_customAttributes_withLifecycle1Update(bucketName string) string {
+	return fmt.Sprintf(`
+resource "google_storage_bucket" "bucket" {
+  name          = "%s"
+  location      = "EU"
+  force_destroy = "true"
+  lifecycle_rule {
+    action {
+      type = "Delete"
+    }
+    condition {
+      age = 0
     }
   }
 }
