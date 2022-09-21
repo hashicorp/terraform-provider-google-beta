@@ -90,11 +90,11 @@ func clusterSchemaNodeConfig() *schema.Schema {
 // overridden if specified on the specific NodePool object.
 func clusterSchemaNodePoolDefaults() *schema.Schema {
 	return &schema.Schema{
-		Type:             schema.TypeList,
-		Optional:         true,
-		DiffSuppressFunc: emptyOrUnsetBlockDiffSuppress,
-		Description:      `The default nodel pool settings for the entire cluster.`,
-		MaxItems:         1,
+		Type:        schema.TypeList,
+		Optional:    true,
+		Computed:    true,
+		Description: `The default nodel pool settings for the entire cluster.`,
+		MaxItems:    1,
 		Elem: &schema.Resource{
 			Schema: map[string]*schema.Schema{
 				"node_config_defaults": {
@@ -1013,11 +1013,11 @@ func resourceContainerCluster() *schema.Resource {
 			"node_pool_defaults": clusterSchemaNodePoolDefaults(),
 
 			"node_pool_auto_config": {
-				Type:             schema.TypeList,
-				Optional:         true,
-				DiffSuppressFunc: emptyOrUnsetBlockDiffSuppress,
-				MaxItems:         1,
-				Description:      `Node pool configs that apply to all auto-provisioned node pools in autopilot clusters and node auto-provisioning enabled clusters.`,
+				Type:        schema.TypeList,
+				Optional:    true,
+				Computed:    true,
+				MaxItems:    1,
+				Description: `Node pool configs that apply to all auto-provisioned node pools in autopilot clusters and node auto-provisioning enabled clusters.`,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"network_tags": {
@@ -4097,10 +4097,12 @@ func flattenNodePoolDefaults(c *container.NodePoolDefaults) []map[string]interfa
 	if c == nil {
 		return nil
 	}
+
 	result := make(map[string]interface{})
 	if c.NodeConfigDefaults != nil && c.NodeConfigDefaults.GcfsConfig != nil {
 		result["node_config_defaults"] = flattenNodeConfigDefaults(c.NodeConfigDefaults)
 	}
+
 	return []map[string]interface{}{result}
 }
 
@@ -4709,6 +4711,7 @@ func flattenNodePoolAutoConfig(c *container.NodePoolAutoConfig) []map[string]int
 	if c.NetworkTags != nil {
 		result["network_tags"] = flattenNodePoolAutoConfigNetworkTags(c.NetworkTags)
 	}
+
 	return []map[string]interface{}{result}
 }
 
