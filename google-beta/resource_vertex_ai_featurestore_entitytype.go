@@ -25,8 +25,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-var project string
-
 func resourceVertexAIFeaturestoreEntitytype() *schema.Resource {
 	return &schema.Resource{
 		Create: resourceVertexAIFeaturestoreEntitytypeCreate,
@@ -119,6 +117,7 @@ A duration in seconds with up to nine fractional digits, terminated by 's'. Exam
 }
 
 func resourceVertexAIFeaturestoreEntitytypeCreate(d *schema.ResourceData, meta interface{}) error {
+	var project string
 	config := meta.(*Config)
 	userAgent, err := generateUserAgentString(d, config.userAgent)
 	if err != nil {
@@ -238,6 +237,7 @@ func resourceVertexAIFeaturestoreEntitytypeRead(d *schema.ResourceData, meta int
 }
 
 func resourceVertexAIFeaturestoreEntitytypeUpdate(d *schema.ResourceData, meta interface{}) error {
+	var project string
 	config := meta.(*Config)
 	userAgent, err := generateUserAgentString(d, config.userAgent)
 	if err != nil {
@@ -316,6 +316,7 @@ func resourceVertexAIFeaturestoreEntitytypeUpdate(d *schema.ResourceData, meta i
 }
 
 func resourceVertexAIFeaturestoreEntitytypeDelete(d *schema.ResourceData, meta interface{}) error {
+	var project string
 	config := meta.(*Config)
 	userAgent, err := generateUserAgentString(d, config.userAgent)
 	if err != nil {
