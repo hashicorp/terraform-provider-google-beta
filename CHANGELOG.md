@@ -1,3 +1,24 @@
+## 4.38.0 (September 26, 2022)
+
+FEATURES:
+* **New Data Source:** `google_vpc_access_connector` ([#4693](https://github.com/hashicorp/terraform-provider-google-beta/pull/4693))
+* **New Resource:** `google_datastream_private_connection` ([#4691](https://github.com/hashicorp/terraform-provider-google-beta/pull/4691))
+
+IMPROVEMENTS:
+* appengine: Added `egress_setting` for field `vpc_access_connector` to `google_app_engine_standard_app_version` ([#4701](https://github.com/hashicorp/terraform-provider-google-beta/pull/4701))
+* bigquery: added `json_extension` field to the `load` block of `google_bigquery_job` resource ([#4699](https://github.com/hashicorp/terraform-provider-google-beta/pull/4699))
+* cloudfunctions: Added `build_worker_pool` to `google_cloudfunctions_function` ([#4696](https://github.com/hashicorp/terraform-provider-google-beta/pull/4696))
+* compute: added `json_custom_config` field to `google_compute_security_policy` resource ([#4703](https://github.com/hashicorp/terraform-provider-google-beta/pull/4703))
+* redis: Added `persistence_config` field to the `google_redis_instance` resource. ([#4688](https://github.com/hashicorp/terraform-provider-google-beta/pull/4688))
+* storage: added support for `overwriteWhen` field to `transfer_options` in `google_storage_transfer_job` resource ([#4690](https://github.com/hashicorp/terraform-provider-google-beta/pull/4690))
+
+BUG FIXES:
+* bigtable: added drift detection on `gc_rules` for `google_bigtable_gc_policy` ([#4687](https://github.com/hashicorp/terraform-provider-google-beta/pull/4687))
+* compute: fixed the inability to update `most_disruptive_allowed_action` for both `google_compute_per_instance_config` and `google_compute_region_per_instance_config` ([#4685](https://github.com/hashicorp/terraform-provider-google-beta/pull/4685))
+* container: fixed allow passing empty list to monitoring_config and logging_config in `google_container_cluster` ([#4700](https://github.com/hashicorp/terraform-provider-google-beta/pull/4700))
+* sql: fixed a bug causing a perma-diff on `disk_type` due to API values being downcased ([#4686](https://github.com/hashicorp/terraform-provider-google-beta/pull/4686))
+* storage: fixed the inability to set 0 for `lifecycle_rule.condition.age` on `google_storage_bucket` ([#4698](https://github.com/hashicorp/terraform-provider-google-beta/pull/4698))
+
 ## 4.37.0 (September 19, 2022)
 
 FEATURES:
