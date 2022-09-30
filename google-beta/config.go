@@ -230,6 +230,7 @@ type Config struct {
 	NetworkManagementBasePath    string
 	NetworkServicesBasePath      string
 	NotebooksBasePath            string
+	OrgPolicyBasePath            string
 	OSConfigBasePath             string
 	OSLoginBasePath              string
 	PrivatecaBasePath            string
@@ -332,6 +333,7 @@ const MonitoringBasePathKey = "Monitoring"
 const NetworkManagementBasePathKey = "NetworkManagement"
 const NetworkServicesBasePathKey = "NetworkServices"
 const NotebooksBasePathKey = "Notebooks"
+const OrgPolicyBasePathKey = "OrgPolicy"
 const OSConfigBasePathKey = "OSConfig"
 const OSLoginBasePathKey = "OSLogin"
 const PrivatecaBasePathKey = "Privateca"
@@ -428,6 +430,7 @@ var DefaultBasePaths = map[string]string{
 	NetworkManagementBasePathKey:    "https://networkmanagement.googleapis.com/v1/",
 	NetworkServicesBasePathKey:      "https://networkservices.googleapis.com/v1/",
 	NotebooksBasePathKey:            "https://notebooks.googleapis.com/v1/",
+	OrgPolicyBasePathKey:            "https://orgpolicy.googleapis.com/v2/",
 	OSConfigBasePathKey:             "https://osconfig.googleapis.com/v1beta/",
 	OSLoginBasePathKey:              "https://oslogin.googleapis.com/v1/",
 	PrivatecaBasePathKey:            "https://privateca.googleapis.com/v1/",
@@ -1300,6 +1303,7 @@ func ConfigureBasePaths(c *Config) {
 	c.NetworkManagementBasePath = DefaultBasePaths[NetworkManagementBasePathKey]
 	c.NetworkServicesBasePath = DefaultBasePaths[NetworkServicesBasePathKey]
 	c.NotebooksBasePath = DefaultBasePaths[NotebooksBasePathKey]
+	c.OrgPolicyBasePath = DefaultBasePaths[OrgPolicyBasePathKey]
 	c.OSConfigBasePath = DefaultBasePaths[OSConfigBasePathKey]
 	c.OSLoginBasePath = DefaultBasePaths[OSLoginBasePathKey]
 	c.PrivatecaBasePath = DefaultBasePaths[PrivatecaBasePathKey]

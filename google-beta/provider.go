@@ -613,6 +613,14 @@ func Provider() *schema.Provider {
 					"GOOGLE_NOTEBOOKS_CUSTOM_ENDPOINT",
 				}, DefaultBasePaths[NotebooksBasePathKey]),
 			},
+			"org_policy_custom_endpoint": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validateCustomEndpoint,
+				DefaultFunc: schema.MultiEnvDefaultFunc([]string{
+					"GOOGLE_ORG_POLICY_CUSTOM_ENDPOINT",
+				}, DefaultBasePaths[OrgPolicyBasePathKey]),
+			},
 			"os_config_custom_endpoint": {
 				Type:         schema.TypeString,
 				Optional:     true,
@@ -956,9 +964,9 @@ func Provider() *schema.Provider {
 	return provider
 }
 
-// Generated resources: 264
+// Generated resources: 265
 // Generated IAM resources: 171
-// Total generated resources: 435
+// Total generated resources: 436
 func ResourceMap() map[string]*schema.Resource {
 	resourceMap, _ := ResourceMapWithErrors()
 	return resourceMap
@@ -1320,6 +1328,7 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_notebooks_runtime_iam_member":                          ResourceIamMember(NotebooksRuntimeIamSchema, NotebooksRuntimeIamUpdaterProducer, NotebooksRuntimeIdParseFunc),
 			"google_notebooks_runtime_iam_policy":                          ResourceIamPolicy(NotebooksRuntimeIamSchema, NotebooksRuntimeIamUpdaterProducer, NotebooksRuntimeIdParseFunc),
 			"google_notebooks_location":                                    resourceNotebooksLocation(),
+			"google_org_policy_custom_constraint":                          resourceOrgPolicyCustomConstraint(),
 			"google_os_config_patch_deployment":                            resourceOSConfigPatchDeployment(),
 			"google_os_config_guest_policies":                              resourceOSConfigGuestPolicies(),
 			"google_os_login_ssh_public_key":                               resourceOSLoginSSHPublicKey(),
@@ -1688,6 +1697,7 @@ func providerConfigure(ctx context.Context, d *schema.ResourceData, p *schema.Pr
 	config.NetworkManagementBasePath = d.Get("network_management_custom_endpoint").(string)
 	config.NetworkServicesBasePath = d.Get("network_services_custom_endpoint").(string)
 	config.NotebooksBasePath = d.Get("notebooks_custom_endpoint").(string)
+	config.OrgPolicyBasePath = d.Get("org_policy_custom_endpoint").(string)
 	config.OSConfigBasePath = d.Get("os_config_custom_endpoint").(string)
 	config.OSLoginBasePath = d.Get("os_login_custom_endpoint").(string)
 	config.PrivatecaBasePath = d.Get("privateca_custom_endpoint").(string)
