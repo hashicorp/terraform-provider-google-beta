@@ -381,7 +381,7 @@ var DefaultBasePaths = map[string]string{
 	BigqueryAnalyticsHubBasePathKey: "https://analyticshub.googleapis.com/v1beta1/",
 	BigqueryConnectionBasePathKey:   "https://bigqueryconnection.googleapis.com/v1/",
 	BigqueryDataTransferBasePathKey: "https://bigquerydatatransfer.googleapis.com/v1/",
-	BigqueryReservationBasePathKey:  "https://bigqueryreservation.googleapis.com/v1beta1/",
+	BigqueryReservationBasePathKey:  "https://bigqueryreservation.googleapis.com/v1/",
 	BigtableBasePathKey:             "https://bigtableadmin.googleapis.com/v2/",
 	BillingBasePathKey:              "https://billingbudgets.googleapis.com/v1/",
 	BinaryAuthorizationBasePathKey:  "https://binaryauthorization.googleapis.com/v1/",
