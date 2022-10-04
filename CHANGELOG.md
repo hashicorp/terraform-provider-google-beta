@@ -1,3 +1,31 @@
+## 4.39.0 (Unreleased)
+
+FEATURES:
+* **New Data Source:** `google_artifact_registry_repository` ([#4714](https://github.com/hashicorp/terraform-provider-google-beta/pull/4714))
+* **New Resource:** `google_identity_platform_config` ([#4729](https://github.com/hashicorp/terraform-provider-google-beta/pull/4729))
+
+IMPROVEMENTS:
+* certificatemanager: added public/private PEM fields `pem_certificate` / `pem_private_key` and deprecated `certificate_pem` / `private_key_pem` ([#4728](https://github.com/hashicorp/terraform-provider-google-beta/pull/4728))
+* clouddeploy: added `serial_pipeline.stages.strategy` field to `google_clouddeploy_delivery_pipeline` ([#4707](https://github.com/hashicorp/terraform-provider-google-beta/pull/4707))
+* container: added `notification_config.pubsub.filter` field to `google_container_cluster` ([#4718](https://github.com/hashicorp/terraform-provider-google-beta/pull/4718))
+* eventarc: added `channels` and `conditions` fields to `google_eventarc_trigger` ([#4707](https://github.com/hashicorp/terraform-provider-google-beta/pull/4707))
+* healthcare: added `notification_configs ` field to `google_healthcare_fhir_store` resource ([#4720](https://github.com/hashicorp/terraform-provider-google-beta/pull/4720))
+* iap: added ability to import `google_iap_brand` using ID using {{project}}/{{brand_id}} format ([#4712](https://github.com/hashicorp/terraform-provider-google-beta/pull/4712))
+* secretmanager: added output field 'version' to resource 'secret_manager_secret_version' ([#4724](https://github.com/hashicorp/terraform-provider-google-beta/pull/4724))
+* sql: added `maintenance_version` and `available_maintenance_versions` fields to `google_sql_database_instance` resource ([#4725](https://github.com/hashicorp/terraform-provider-google-beta/pull/4725))
+* storagetransfer: added `notification_config` field to `google_storage_transfer_job` resource ([#4709](https://github.com/hashicorp/terraform-provider-google-beta/pull/4709))
+* tags: added `purpose` and `purpose_data` properties to `google_tags_tag_key` ([#4721](https://github.com/hashicorp/terraform-provider-google-beta/pull/4721))
+
+BUG FIXES:
+* bigquery: fixed a bug where `allow_quoted_newlines` and `allow_jagged_rows` could not be set to false on `google_bigquery_table` ([#4711](https://github.com/hashicorp/terraform-provider-google-beta/pull/4711))
+* cloudfunction: fixed inability to update `docker_repository` and `kms_key_name` on `google_cloudfunctions_function` ([#4727](https://github.com/hashicorp/terraform-provider-google-beta/pull/4727))
+* compute: fixed inability to manage Cloud Armor `adaptive_protection_config` on `google_compute_security_policy` ([#4726](https://github.com/hashicorp/terraform-provider-google-beta/pull/4726))
+* container: fixed a bug where upgrading provider version breaks on `node_pool_auto_config` or `node_pool_defaults` ([#4706](https://github.com/hashicorp/terraform-provider-google-beta/pull/4706))
+* iam: fixed diffs between `policy_data` from `google_iam_policy` data source and policy data in API responses ([#4722](https://github.com/hashicorp/terraform-provider-google-beta/pull/4722))
+* iam: fixed permadiff resulting from empty fields being sent in requests to set conditional IAM policies ([#4723](https://github.com/hashicorp/terraform-provider-google-beta/pull/4723))
+* secretmanager: fixed a bug where `google_secret_manager_secret_version` that was destroyed outside of Terraform would not be recreated on apply ([#4719](https://github.com/hashicorp/terraform-provider-google-beta/pull/4719))
+* storagetransfer: fixed a crash in `google_storagetransfer_job` when `transfer_schedule` is empty ([#4745](https://github.com/hashicorp/terraform-provider-google-beta/pull/4745))
+
 ## 4.38.0 (September 26, 2022)
 
 FEATURES:
