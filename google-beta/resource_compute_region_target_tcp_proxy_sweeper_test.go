@@ -24,15 +24,15 @@ import (
 )
 
 func init() {
-	resource.AddTestSweepers("ComputeRegionTargetHttpsProxy", &resource.Sweeper{
-		Name: "ComputeRegionTargetHttpsProxy",
-		F:    testSweepComputeRegionTargetHttpsProxy,
+	resource.AddTestSweepers("ComputeRegionTargetTcpProxy", &resource.Sweeper{
+		Name: "ComputeRegionTargetTcpProxy",
+		F:    testSweepComputeRegionTargetTcpProxy,
 	})
 }
 
 // At the time of writing, the CI only passes us-central1 as the region
-func testSweepComputeRegionTargetHttpsProxy(region string) error {
-	resourceName := "ComputeRegionTargetHttpsProxy"
+func testSweepComputeRegionTargetTcpProxy(region string) error {
+	resourceName := "ComputeRegionTargetTcpProxy"
 	log.Printf("[INFO][SWEEPER_LOG] Starting sweeper for %s", resourceName)
 
 	config, err := sharedConfigForRegion(region)
@@ -61,7 +61,7 @@ func testSweepComputeRegionTargetHttpsProxy(region string) error {
 		},
 	}
 
-	listTemplate := strings.Split("https://compute.googleapis.com/compute/beta/projects/{{project}}/regions/{{region}}/targetHttpsProxies", "?")[0]
+	listTemplate := strings.Split("https://compute.googleapis.com/compute/beta/projects/{{project}}/regions/{{region}}/targetTcpProxies", "?")[0]
 	listUrl, err := replaceVars(d, config, listTemplate)
 	if err != nil {
 		log.Printf("[INFO][SWEEPER_LOG] error preparing sweeper list url: %s", err)
@@ -74,7 +74,7 @@ func testSweepComputeRegionTargetHttpsProxy(region string) error {
 		return nil
 	}
 
-	resourceList, ok := res["regionTargetHttpsProxies"]
+	resourceList, ok := res["regionTargetTcpProxies"]
 	if !ok {
 		log.Printf("[INFO][SWEEPER_LOG] Nothing found in response.")
 		return nil
@@ -99,7 +99,7 @@ func testSweepComputeRegionTargetHttpsProxy(region string) error {
 			continue
 		}
 
-		deleteTemplate := "https://compute.googleapis.com/compute/beta/projects/{{project}}/regions/{{region}}/targetHttpsProxies/{{name}}"
+		deleteTemplate := "https://compute.googleapis.com/compute/beta/projects/{{project}}/regions/{{region}}/targetTcpProxies/{{name}}"
 		deleteUrl, err := replaceVars(d, config, deleteTemplate)
 		if err != nil {
 			log.Printf("[INFO][SWEEPER_LOG] error preparing delete url: %s", err)
