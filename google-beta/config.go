@@ -182,6 +182,7 @@ type Config struct {
 	BigQueryBasePath             string
 	BigqueryAnalyticsHubBasePath string
 	BigqueryConnectionBasePath   string
+	BigqueryDatapolicyBasePath   string
 	BigqueryDataTransferBasePath string
 	BigqueryReservationBasePath  string
 	BigtableBasePath             string
@@ -285,6 +286,7 @@ const ArtifactRegistryBasePathKey = "ArtifactRegistry"
 const BigQueryBasePathKey = "BigQuery"
 const BigqueryAnalyticsHubBasePathKey = "BigqueryAnalyticsHub"
 const BigqueryConnectionBasePathKey = "BigqueryConnection"
+const BigqueryDatapolicyBasePathKey = "BigqueryDatapolicy"
 const BigqueryDataTransferBasePathKey = "BigqueryDataTransfer"
 const BigqueryReservationBasePathKey = "BigqueryReservation"
 const BigtableBasePathKey = "Bigtable"
@@ -382,6 +384,7 @@ var DefaultBasePaths = map[string]string{
 	BigQueryBasePathKey:             "https://bigquery.googleapis.com/bigquery/v2/",
 	BigqueryAnalyticsHubBasePathKey: "https://analyticshub.googleapis.com/v1beta1/",
 	BigqueryConnectionBasePathKey:   "https://bigqueryconnection.googleapis.com/v1/",
+	BigqueryDatapolicyBasePathKey:   "https://bigquerydatapolicy.googleapis.com/v1beta1/",
 	BigqueryDataTransferBasePathKey: "https://bigquerydatatransfer.googleapis.com/v1/",
 	BigqueryReservationBasePathKey:  "https://bigqueryreservation.googleapis.com/v1/",
 	BigtableBasePathKey:             "https://bigtableadmin.googleapis.com/v2/",
@@ -1255,6 +1258,7 @@ func ConfigureBasePaths(c *Config) {
 	c.BigQueryBasePath = DefaultBasePaths[BigQueryBasePathKey]
 	c.BigqueryAnalyticsHubBasePath = DefaultBasePaths[BigqueryAnalyticsHubBasePathKey]
 	c.BigqueryConnectionBasePath = DefaultBasePaths[BigqueryConnectionBasePathKey]
+	c.BigqueryDatapolicyBasePath = DefaultBasePaths[BigqueryDatapolicyBasePathKey]
 	c.BigqueryDataTransferBasePath = DefaultBasePaths[BigqueryDataTransferBasePathKey]
 	c.BigqueryReservationBasePath = DefaultBasePaths[BigqueryReservationBasePathKey]
 	c.BigtableBasePath = DefaultBasePaths[BigtableBasePathKey]
