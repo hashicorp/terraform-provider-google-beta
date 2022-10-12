@@ -173,6 +173,14 @@ func Provider() *schema.Provider {
 					"GOOGLE_ACTIVE_DIRECTORY_CUSTOM_ENDPOINT",
 				}, DefaultBasePaths[ActiveDirectoryBasePathKey]),
 			},
+			"alloydb_custom_endpoint": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validateCustomEndpoint,
+				DefaultFunc: schema.MultiEnvDefaultFunc([]string{
+					"GOOGLE_ALLOYDB_CUSTOM_ENDPOINT",
+				}, DefaultBasePaths[AlloydbBasePathKey]),
+			},
 			"api_gateway_custom_endpoint": {
 				Type:         schema.TypeString,
 				Optional:     true,
@@ -980,9 +988,9 @@ func Provider() *schema.Provider {
 	return provider
 }
 
-// Generated resources: 269
+// Generated resources: 270
 // Generated IAM resources: 177
-// Total generated resources: 446
+// Total generated resources: 447
 func ResourceMap() map[string]*schema.Resource {
 	resourceMap, _ := ResourceMapWithErrors()
 	return resourceMap
@@ -1008,6 +1016,7 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_active_directory_peering":                              resourceActiveDirectoryPeering(),
 			"google_active_directory_domain":                               resourceActiveDirectoryDomain(),
 			"google_active_directory_domain_trust":                         resourceActiveDirectoryDomainTrust(),
+			"google_alloydb_cluster":                                       resourceAlloydbCluster(),
 			"google_api_gateway_api":                                       resourceApiGatewayApi(),
 			"google_api_gateway_api_iam_binding":                           ResourceIamBinding(ApiGatewayApiIamSchema, ApiGatewayApiIamUpdaterProducer, ApiGatewayApiIdParseFunc),
 			"google_api_gateway_api_iam_member":                            ResourceIamMember(ApiGatewayApiIamSchema, ApiGatewayApiIamUpdaterProducer, ApiGatewayApiIdParseFunc),
@@ -1668,6 +1677,7 @@ func providerConfigure(ctx context.Context, d *schema.ResourceData, p *schema.Pr
 	config.AccessApprovalBasePath = d.Get("access_approval_custom_endpoint").(string)
 	config.AccessContextManagerBasePath = d.Get("access_context_manager_custom_endpoint").(string)
 	config.ActiveDirectoryBasePath = d.Get("active_directory_custom_endpoint").(string)
+	config.AlloydbBasePath = d.Get("alloydb_custom_endpoint").(string)
 	config.ApiGatewayBasePath = d.Get("api_gateway_custom_endpoint").(string)
 	config.ApigeeBasePath = d.Get("apigee_custom_endpoint").(string)
 	config.AppEngineBasePath = d.Get("app_engine_custom_endpoint").(string)
