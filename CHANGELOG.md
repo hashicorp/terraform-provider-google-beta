@@ -1,20 +1,18 @@
 ## 4.41.0 (Unreleased)
-NOTES:
-* Updated regex validation of resource ids to prevent leading slashes ([#4767](https://github.com/hashicorp/terraform-provider-google-beta/pull/4767))
 BREAKING CHANGES:
 * sql: updated `google_sql_user.sql_server_user_details` to be read only. Any configuration attempting to set this field is invalid and will cause the provider to crash during plan time. ([#4764](https://github.com/hashicorp/terraform-provider-google-beta/pull/4764))
 
 FEATURES:
-* **New Resource:**  ([#4765](https://github.com/hashicorp/terraform-provider-google-beta/pull/4765))
-* **New Resource:** `google_bigquery_analytics_hub_listing_iam_binding` (beta) ([#4771](https://github.com/hashicorp/terraform-provider-google-beta/pull/4771))
-* **New Resource:** `google_bigquery_analytics_hub_listing_iam_member` (beta) ([#4771](https://github.com/hashicorp/terraform-provider-google-beta/pull/4771))
-* **New Resource:** `google_bigquery_analytics_hub_listing_iam_policy` (beta) ([#4771](https://github.com/hashicorp/terraform-provider-google-beta/pull/4771))
-* **New Resource:** `google_bigquery_analytics_hub_listing` (beta) ([#4771](https://github.com/hashicorp/terraform-provider-google-beta/pull/4771))
+* **New Resource:**  `google_cloud_ids_endpoint` ([#4765](https://github.com/hashicorp/terraform-provider-google-beta/pull/4765))
+* **New Resource:** `google_bigquery_analytics_hub_listing_iam_binding` ([#4771](https://github.com/hashicorp/terraform-provider-google-beta/pull/4771))
+* **New Resource:** `google_bigquery_analytics_hub_listing_iam_member` ([#4771](https://github.com/hashicorp/terraform-provider-google-beta/pull/4771))
+* **New Resource:** `google_bigquery_analytics_hub_listing_iam_policy` ([#4771](https://github.com/hashicorp/terraform-provider-google-beta/pull/4771))
+* **New Resource:** `google_bigquery_analytics_hub_listing` ([#4771](https://github.com/hashicorp/terraform-provider-google-beta/pull/4771))
 
 IMPROVEMENTS:
 * appengine: added support for `service_account` field to `google_app_engine_standard_app_version` resource ([#4757](https://github.com/hashicorp/terraform-provider-google-beta/pull/4757))
 * bigquery: added `avro_options` field to `google_bigquery_table` resource ([#4768](https://github.com/hashicorp/terraform-provider-google-beta/pull/4768))
-* cloudrun: added field `startup_probe` to resource `google_cloud_run_service` (beta) ([#4773](https://github.com/hashicorp/terraform-provider-google-beta/pull/4773))
+* cloudrun: added field `startup_probe` to resource `google_cloud_run_service` ([#4773](https://github.com/hashicorp/terraform-provider-google-beta/pull/4773))
 * compute: added `node_config.0.guest_accelerator.0.gpu_sharing_config` field to `google_container_node_pool` resource ([#4758](https://github.com/hashicorp/terraform-provider-google-beta/pull/4758))
 * datafusion: added `crypto_key_config` field to `google_data_fusion_instance` resource ([#4761](https://github.com/hashicorp/terraform-provider-google-beta/pull/4761))
 * filestore: removed constraint that forced multiple `google_filestore_instance` creations to occur serially ([#4770](https://github.com/hashicorp/terraform-provider-google-beta/pull/4770))
