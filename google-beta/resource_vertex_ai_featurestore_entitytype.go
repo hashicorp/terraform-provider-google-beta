@@ -78,8 +78,9 @@ If this is populated with [FeaturestoreMonitoringConfig.monitoring_interval] spe
 										Default:     false,
 									},
 									"monitoring_interval": {
-										Type:     schema.TypeString,
-										Optional: true,
+										Type:       schema.TypeString,
+										Optional:   true,
+										Deprecated: "This field is unavailable in the GA provider and will be removed from the beta provider in a future release.",
 										Description: `Configuration of the snapshot analysis based monitoring pipeline running interval. The value is rolled up to full day.
 
 A duration in seconds with up to nine fractional digits, terminated by 's'. Example: "3.5s".`,
