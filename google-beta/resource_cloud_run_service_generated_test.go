@@ -511,6 +511,11 @@ resource "google_cloud_run_service" "default" {
             port = 8080
           }
         }
+        liveness_probe {
+          http_get {
+            path = "/"
+          }
+        }
       }
     }
   }
