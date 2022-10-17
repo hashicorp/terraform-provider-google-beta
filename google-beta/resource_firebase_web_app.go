@@ -47,6 +47,15 @@ func resourceFirebaseWebApp() *schema.Resource {
 				Required:    true,
 				Description: `The user-assigned display name of the App.`,
 			},
+			"deletion_policy": {
+				Type:     schema.TypeString,
+				Optional: true,
+				ForceNew: true,
+				Description: `(Optional) Set to 'ABANDON' to allow the WebApp to be untracked from terraform state
+rather than deleted upon 'terraform destroy'. This is useful becaue the WebApp may be 
+serving traffic. Set to 'DELETE' to delete the WebApp. Default to 'ABANDON'`,
+				Default: "ABANDON",
+			},
 			"app_id": {
 				Type:     schema.TypeString,
 				Computed: true,
@@ -252,11 +261,55 @@ func resourceFirebaseWebAppUpdate(d *schema.ResourceData, meta interface{}) erro
 }
 
 func resourceFirebaseWebAppDelete(d *schema.ResourceData, meta interface{}) error {
-	log.Printf("[WARNING] Firebase WebApp resources"+
-		" cannot be deleted from Google Cloud. The resource %s will be removed from Terraform"+
-		" state, but will still be present on Google Cloud.", d.Id())
-	d.SetId("")
+	config := meta.(*Config)
+	userAgent, err := generateUserAgentString(d, config.userAgent)
+	if err != nil {
+		return err
+	}
 
+	// Handwritten
+	obj := make(map[string]interface{})
+	if d.Get("deletion_policy") == "DELETE" {
+		obj["immediate"] = true
+	} else {
+		fmt.Printf("Skip deleting App %q due to deletion_policy: %q\n", d.Id(), d.Get("deletion_policy"))
+		return nil
+	}
+	// End of Handwritten
+	billingProject := ""
+
+	project, err := getProject(d, config)
+	if err != nil {
+		return fmt.Errorf("Error fetching project for App: %s", err)
+	}
+	billingProject = project
+
+	url, err := replaceVars(d, config, "{{FirebaseBasePath}}{{name}}:remove")
+	if err != nil {
+		return err
+	}
+
+	log.Printf("[DEBUG] Deleting App %q", d.Id())
+
+	// err == nil indicates that the billing_project value was found
+	if bp, err := getBillingProject(d, config); err == nil {
+		billingProject = bp
+	}
+
+	res, err := sendRequestWithTimeout(config, "POST", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutDelete))
+	if err != nil {
+		return handleNotFoundError(err, d, "App")
+	}
+
+	err = firebaseOperationWaitTime(
+		config, res, project, "Deleting App", userAgent,
+		d.Timeout(schema.TimeoutDelete))
+
+	if err != nil {
+		return err
+	}
+
+	log.Printf("[DEBUG] Finished deleting App %q: %#v", d.Id(), res)
 	return nil
 }
 
