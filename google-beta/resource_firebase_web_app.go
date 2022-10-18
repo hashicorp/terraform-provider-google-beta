@@ -63,6 +63,14 @@ serving traffic. Set to 'DELETE' to delete the WebApp. Default to 'ABANDON'`,
 
 This identifier should be treated as an opaque token, as the data format is not specified.`,
 			},
+			"app_urls": {
+				Type:        schema.TypeList,
+				Computed:    true,
+				Description: `The URLs where the 'WebApp' is hosted.`,
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
+			},
 			"name": {
 				Type:     schema.TypeString,
 				Computed: true,
@@ -197,6 +205,9 @@ func resourceFirebaseWebAppRead(d *schema.ResourceData, meta interface{}) error 
 		return fmt.Errorf("Error reading WebApp: %s", err)
 	}
 	if err := d.Set("app_id", flattenFirebaseWebAppAppId(res["appId"], d, config)); err != nil {
+		return fmt.Errorf("Error reading WebApp: %s", err)
+	}
+	if err := d.Set("app_urls", flattenFirebaseWebAppAppUrls(res["appUrls"], d, config)); err != nil {
 		return fmt.Errorf("Error reading WebApp: %s", err)
 	}
 
@@ -334,6 +345,10 @@ func flattenFirebaseWebAppDisplayName(v interface{}, d *schema.ResourceData, con
 }
 
 func flattenFirebaseWebAppAppId(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	return v
+}
+
+func flattenFirebaseWebAppAppUrls(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
