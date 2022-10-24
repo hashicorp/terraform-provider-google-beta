@@ -565,6 +565,14 @@ func Provider() *schema.Provider {
 					"GOOGLE_IAM_BETA_CUSTOM_ENDPOINT",
 				}, DefaultBasePaths[IAMBetaBasePathKey]),
 			},
+			"iam_workforce_pool_custom_endpoint": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validateCustomEndpoint,
+				DefaultFunc: schema.MultiEnvDefaultFunc([]string{
+					"GOOGLE_IAM_WORKFORCE_POOL_CUSTOM_ENDPOINT",
+				}, DefaultBasePaths[IAMWorkforcePoolBasePathKey]),
+			},
 			"iap_custom_endpoint": {
 				Type:         schema.TypeString,
 				Optional:     true,
@@ -998,9 +1006,9 @@ func Provider() *schema.Provider {
 	return provider
 }
 
-// Generated resources: 274
+// Generated resources: 275
 // Generated IAM resources: 180
-// Total generated resources: 454
+// Total generated resources: 455
 func ResourceMap() map[string]*schema.Resource {
 	resourceMap, _ := ResourceMapWithErrors()
 	return resourceMap
@@ -1313,6 +1321,7 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_iam_deny_policy":                                       resourceIAM2DenyPolicy(),
 			"google_iam_workload_identity_pool":                            resourceIAMBetaWorkloadIdentityPool(),
 			"google_iam_workload_identity_pool_provider":                   resourceIAMBetaWorkloadIdentityPoolProvider(),
+			"google_iam_workforce_pool":                                    resourceIAMWorkforcePoolWorkforcePool(),
 			"google_iap_web_iam_binding":                                   ResourceIamBinding(IapWebIamSchema, IapWebIamUpdaterProducer, IapWebIdParseFunc),
 			"google_iap_web_iam_member":                                    ResourceIamMember(IapWebIamSchema, IapWebIamUpdaterProducer, IapWebIdParseFunc),
 			"google_iap_web_iam_policy":                                    ResourceIamPolicy(IapWebIamSchema, IapWebIamUpdaterProducer, IapWebIdParseFunc),
@@ -1743,6 +1752,7 @@ func providerConfigure(ctx context.Context, d *schema.ResourceData, p *schema.Pr
 	config.HealthcareBasePath = d.Get("healthcare_custom_endpoint").(string)
 	config.IAM2BasePath = d.Get("iam2_custom_endpoint").(string)
 	config.IAMBetaBasePath = d.Get("iam_beta_custom_endpoint").(string)
+	config.IAMWorkforcePoolBasePath = d.Get("iam_workforce_pool_custom_endpoint").(string)
 	config.IapBasePath = d.Get("iap_custom_endpoint").(string)
 	config.IdentityPlatformBasePath = d.Get("identity_platform_custom_endpoint").(string)
 	config.KMSBasePath = d.Get("kms_custom_endpoint").(string)
