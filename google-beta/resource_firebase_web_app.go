@@ -47,15 +47,6 @@ func resourceFirebaseWebApp() *schema.Resource {
 				Required:    true,
 				Description: `The user-assigned display name of the App.`,
 			},
-			"deletion_policy": {
-				Type:     schema.TypeString,
-				Optional: true,
-				ForceNew: true,
-				Description: `(Optional) Set to 'ABANDON' to allow the WebApp to be untracked from terraform state
-rather than deleted upon 'terraform destroy'. This is useful becaue the WebApp may be 
-serving traffic. Set to 'DELETE' to delete the WebApp. Default to 'ABANDON'`,
-				Default: "ABANDON",
-			},
 			"app_id": {
 				Type:     schema.TypeString,
 				Computed: true,
@@ -76,6 +67,14 @@ This identifier should be treated as an opaque token, as the data format is not 
 				Computed: true,
 				Description: `The fully qualified resource name of the App, for example:
 projects/projectId/webApps/appId`,
+			},
+			"deletion_policy": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Default:  "ABANDON",
+				Description: `Set to 'ABANDON' to allow the WebApp to be untracked from terraform state
+rather than deleted upon 'terraform destroy'. This is useful becaue the WebApp may be
+serving traffic. Set to 'DELETE' to delete the WebApp. Default to 'ABANDON'`,
 			},
 			"project": {
 				Type:     schema.TypeString,
@@ -193,6 +192,12 @@ func resourceFirebaseWebAppRead(d *schema.ResourceData, meta interface{}) error 
 		return handleNotFoundError(err, d, fmt.Sprintf("FirebaseWebApp %q", d.Id()))
 	}
 
+	// Explicitly set virtual fields to default values if unset
+	if _, ok := d.GetOkExists("deletion_policy"); !ok {
+		if err := d.Set("deletion_policy", "ABANDON"); err != nil {
+			return fmt.Errorf("Error setting deletion_policy: %s", err)
+		}
+	}
 	if err := d.Set("project", project); err != nil {
 		return fmt.Errorf("Error reading WebApp: %s", err)
 	}
