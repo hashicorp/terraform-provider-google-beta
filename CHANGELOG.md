@@ -43,7 +43,7 @@ BUG FIXES:
 * compute: made `vm_count` in `google_compute_resource_policy` optional ([#4792](https://github.com/hashicorp/terraform-provider-google-beta/pull/4792))
 * container: fixed inability to update `datapath_provider` on `google_container_cluster` by making field changes trigger resource recreation ([#4824](https://github.com/hashicorp/terraform-provider-google-beta/pull/4824))
 * pubsub: ensured topics are recreated when their schemas change. ([#4791](https://github.com/hashicorp/terraform-provider-google-beta/pull/4791))
-* redis: updated `rdb_snapshot_period` to optional in the `persistence_config` resource. ([#4821](https://github.com/hashicorp/terraform-provider-google-beta/pull/4821))
+* redis: updated `persistence_config.rdb_snapshot_period` to optional in the `google_redis_instance` resource. ([#4821](https://github.com/hashicorp/terraform-provider-google-beta/pull/4821))
 
 ## 4.41.0 (October 17, 2022)
 
