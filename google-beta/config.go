@@ -254,6 +254,7 @@ type Config struct {
 	SpannerBasePath              string
 	SQLBasePath                  string
 	StorageBasePath              string
+	StorageTransferBasePath      string
 	TagsBasePath                 string
 	TPUBasePath                  string
 	VertexAIBasePath             string
@@ -269,7 +270,6 @@ type Config struct {
 	IAMBasePath               string
 	CloudIoTBasePath          string
 	ServiceNetworkingBasePath string
-	StorageTransferBasePath   string
 	BigtableAdminBasePath     string
 
 	// dcl
@@ -362,6 +362,7 @@ const SourceRepoBasePathKey = "SourceRepo"
 const SpannerBasePathKey = "Spanner"
 const SQLBasePathKey = "SQL"
 const StorageBasePathKey = "Storage"
+const StorageTransferBasePathKey = "StorageTransfer"
 const TagsBasePathKey = "Tags"
 const TPUBasePathKey = "TPU"
 const VertexAIBasePathKey = "VertexAI"
@@ -375,7 +376,6 @@ const IAMBasePathKey = "IAM"
 const IamCredentialsBasePathKey = "IamCredentials"
 const ResourceManagerV3BasePathKey = "ResourceManagerV3"
 const ServiceNetworkingBasePathKey = "ServiceNetworking"
-const StorageTransferBasePathKey = "StorageTransfer"
 const BigtableAdminBasePathKey = "BigtableAdmin"
 const ContainerAwsBasePathKey = "ContainerAws"
 const ContainerAzureBasePathKey = "ContainerAzure"
@@ -464,6 +464,7 @@ var DefaultBasePaths = map[string]string{
 	SpannerBasePathKey:              "https://spanner.googleapis.com/v1/",
 	SQLBasePathKey:                  "https://sqladmin.googleapis.com/sql/v1beta4/",
 	StorageBasePathKey:              "https://storage.googleapis.com/storage/v1/",
+	StorageTransferBasePathKey:      "https://storagetransfer.googleapis.com/v1/",
 	TagsBasePathKey:                 "https://cloudresourcemanager.googleapis.com/v3/",
 	TPUBasePathKey:                  "https://tpu.googleapis.com/v1/",
 	VertexAIBasePathKey:             "https://{{region}}-aiplatform.googleapis.com/v1beta1/",
@@ -477,7 +478,6 @@ var DefaultBasePaths = map[string]string{
 	IamCredentialsBasePathKey:       "https://iamcredentials.googleapis.com/v1/",
 	ResourceManagerV3BasePathKey:    "https://cloudresourcemanager.googleapis.com/v3/",
 	ServiceNetworkingBasePathKey:    "https://servicenetworking.googleapis.com/v1/",
-	StorageTransferBasePathKey:      "https://storagetransfer.googleapis.com/v1/",
 	BigtableAdminBasePathKey:        "https://bigtableadmin.googleapis.com/v2/",
 	ContainerAwsBasePathKey:         "https://{{location}}-gkemulticloud.googleapis.com/v1/",
 	ContainerAzureBasePathKey:       "https://{{location}}-gkemulticloud.googleapis.com/v1/",
@@ -1342,6 +1342,7 @@ func ConfigureBasePaths(c *Config) {
 	c.SpannerBasePath = DefaultBasePaths[SpannerBasePathKey]
 	c.SQLBasePath = DefaultBasePaths[SQLBasePathKey]
 	c.StorageBasePath = DefaultBasePaths[StorageBasePathKey]
+	c.StorageTransferBasePath = DefaultBasePaths[StorageTransferBasePathKey]
 	c.TagsBasePath = DefaultBasePaths[TagsBasePathKey]
 	c.TPUBasePath = DefaultBasePaths[TPUBasePathKey]
 	c.VertexAIBasePath = DefaultBasePaths[VertexAIBasePathKey]
@@ -1359,6 +1360,5 @@ func ConfigureBasePaths(c *Config) {
 	c.IAMBasePath = DefaultBasePaths[IAMBasePathKey]
 	c.ServiceNetworkingBasePath = DefaultBasePaths[ServiceNetworkingBasePathKey]
 	c.BigQueryBasePath = DefaultBasePaths[BigQueryBasePathKey]
-	c.StorageTransferBasePath = DefaultBasePaths[StorageTransferBasePathKey]
 	c.BigtableAdminBasePath = DefaultBasePaths[BigtableAdminBasePathKey]
 }
