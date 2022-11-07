@@ -218,6 +218,7 @@ type Config struct {
 	EssentialContactsBasePath    string
 	FilestoreBasePath            string
 	FirebaseBasePath             string
+	FirebaseHostingBasePath      string
 	FirestoreBasePath            string
 	GameServicesBasePath         string
 	GKEHubBasePath               string
@@ -326,6 +327,7 @@ const DocumentAIBasePathKey = "DocumentAI"
 const EssentialContactsBasePathKey = "EssentialContacts"
 const FilestoreBasePathKey = "Filestore"
 const FirebaseBasePathKey = "Firebase"
+const FirebaseHostingBasePathKey = "FirebaseHosting"
 const FirestoreBasePathKey = "Firestore"
 const GameServicesBasePathKey = "GameServices"
 const GKEHubBasePathKey = "GKEHub"
@@ -428,6 +430,7 @@ var DefaultBasePaths = map[string]string{
 	EssentialContactsBasePathKey:    "https://essentialcontacts.googleapis.com/v1/",
 	FilestoreBasePathKey:            "https://file.googleapis.com/v1beta1/",
 	FirebaseBasePathKey:             "https://firebase.googleapis.com/v1beta1/",
+	FirebaseHostingBasePathKey:      "https://firebasehosting.googleapis.com/v1beta1/",
 	FirestoreBasePathKey:            "https://firestore.googleapis.com/v1/",
 	GameServicesBasePathKey:         "https://gameservices.googleapis.com/v1beta/",
 	GKEHubBasePathKey:               "https://gkehub.googleapis.com/v1beta1/",
@@ -1306,6 +1309,7 @@ func ConfigureBasePaths(c *Config) {
 	c.EssentialContactsBasePath = DefaultBasePaths[EssentialContactsBasePathKey]
 	c.FilestoreBasePath = DefaultBasePaths[FilestoreBasePathKey]
 	c.FirebaseBasePath = DefaultBasePaths[FirebaseBasePathKey]
+	c.FirebaseHostingBasePath = DefaultBasePaths[FirebaseHostingBasePathKey]
 	c.FirestoreBasePath = DefaultBasePaths[FirestoreBasePathKey]
 	c.GameServicesBasePath = DefaultBasePaths[GameServicesBasePathKey]
 	c.GKEHubBasePath = DefaultBasePaths[GKEHubBasePathKey]
