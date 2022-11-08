@@ -1021,9 +1021,9 @@ func Provider() *schema.Provider {
 	return provider
 }
 
-// Generated resources: 279
+// Generated resources: 280
 // Generated IAM resources: 183
-// Total generated resources: 462
+// Total generated resources: 463
 func ResourceMap() map[string]*schema.Resource {
 	resourceMap, _ := ResourceMapWithErrors()
 	return resourceMap
@@ -1050,6 +1050,7 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_active_directory_domain":                               resourceActiveDirectoryDomain(),
 			"google_active_directory_domain_trust":                         resourceActiveDirectoryDomainTrust(),
 			"google_alloydb_cluster":                                       resourceAlloydbCluster(),
+			"google_alloydb_instance":                                      resourceAlloydbInstance(),
 			"google_api_gateway_api":                                       resourceApiGatewayApi(),
 			"google_api_gateway_api_iam_binding":                           ResourceIamBinding(ApiGatewayApiIamSchema, ApiGatewayApiIamUpdaterProducer, ApiGatewayApiIdParseFunc),
 			"google_api_gateway_api_iam_member":                            ResourceIamMember(ApiGatewayApiIamSchema, ApiGatewayApiIamUpdaterProducer, ApiGatewayApiIdParseFunc),
