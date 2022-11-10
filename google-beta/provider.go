@@ -213,6 +213,14 @@ func Provider() *schema.Provider {
 					"GOOGLE_ARTIFACT_REGISTRY_CUSTOM_ENDPOINT",
 				}, DefaultBasePaths[ArtifactRegistryBasePathKey]),
 			},
+			"beyondcorp_custom_endpoint": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validateCustomEndpoint,
+				DefaultFunc: schema.MultiEnvDefaultFunc([]string{
+					"GOOGLE_BEYONDCORP_CUSTOM_ENDPOINT",
+				}, DefaultBasePaths[BeyondcorpBasePathKey]),
+			},
 			"big_query_custom_endpoint": {
 				Type:         schema.TypeString,
 				Optional:     true,
@@ -1021,9 +1029,9 @@ func Provider() *schema.Provider {
 	return provider
 }
 
-// Generated resources: 280
+// Generated resources: 282
 // Generated IAM resources: 183
-// Total generated resources: 463
+// Total generated resources: 465
 func ResourceMap() map[string]*schema.Resource {
 	resourceMap, _ := ResourceMapWithErrors()
 	return resourceMap
@@ -1085,6 +1093,8 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_artifact_registry_repository_iam_binding":              ResourceIamBinding(ArtifactRegistryRepositoryIamSchema, ArtifactRegistryRepositoryIamUpdaterProducer, ArtifactRegistryRepositoryIdParseFunc),
 			"google_artifact_registry_repository_iam_member":               ResourceIamMember(ArtifactRegistryRepositoryIamSchema, ArtifactRegistryRepositoryIamUpdaterProducer, ArtifactRegistryRepositoryIdParseFunc),
 			"google_artifact_registry_repository_iam_policy":               ResourceIamPolicy(ArtifactRegistryRepositoryIamSchema, ArtifactRegistryRepositoryIamUpdaterProducer, ArtifactRegistryRepositoryIdParseFunc),
+			"google_beyondcorp_app_connector":                              resourceBeyondcorpAppConnector(),
+			"google_beyondcorp_app_gateway":                                resourceBeyondcorpAppGateway(),
 			"google_bigquery_dataset":                                      resourceBigQueryDataset(),
 			"google_bigquery_dataset_access":                               resourceBigQueryDatasetAccess(),
 			"google_bigquery_job":                                          resourceBigQueryJob(),
@@ -1731,6 +1741,7 @@ func providerConfigure(ctx context.Context, d *schema.ResourceData, p *schema.Pr
 	config.ApigeeBasePath = d.Get("apigee_custom_endpoint").(string)
 	config.AppEngineBasePath = d.Get("app_engine_custom_endpoint").(string)
 	config.ArtifactRegistryBasePath = d.Get("artifact_registry_custom_endpoint").(string)
+	config.BeyondcorpBasePath = d.Get("beyondcorp_custom_endpoint").(string)
 	config.BigQueryBasePath = d.Get("big_query_custom_endpoint").(string)
 	config.BigqueryAnalyticsHubBasePath = d.Get("bigquery_analytics_hub_custom_endpoint").(string)
 	config.BigqueryConnectionBasePath = d.Get("bigquery_connection_custom_endpoint").(string)
