@@ -2,6 +2,8 @@
 
 FEATURES:
 * **New Resource:** `google_alloydb_instance` ([#4857](https://github.com/hashicorp/terraform-provider-google-beta/pull/4857))
+* **New Resource:** `google_compute_network_firewall_policy` ([#4851](https://github.com/hashicorp/terraform-provider-google-beta/pull/4851))
+* **New Resource:** `google_compute_region_network_firewall_policy` ([#4851](https://github.com/hashicorp/terraform-provider-google-beta/pull/4851))
 * **New Resource:** `google_firebase_hosting_site` ([#4846](https://github.com/hashicorp/terraform-provider-google-beta/pull/4846))
 * **New Resource:** `google_kms_crypto_key_version` ([#4831](https://github.com/hashicorp/terraform-provider-google-beta/pull/4831))
 * **New Resource:** `google_storage_transfer_agent_pool` ([#4835](https://github.com/hashicorp/terraform-provider-google-beta/pull/4835))
