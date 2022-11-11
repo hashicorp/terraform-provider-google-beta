@@ -1,5 +1,38 @@
 ## 4.44.0 (Unreleased)
 
+FEATURES:
+* **New Resource:** `google_alloydb_instance` ([#4857](https://github.com/hashicorp/terraform-provider-google-beta/pull/4857))
+* **New Resource:** `google_firebase_hosting_site` ([#4846](https://github.com/hashicorp/terraform-provider-google-beta/pull/4846))
+* **New Resource:** `google_kms_crypto_key_version` ([#4831](https://github.com/hashicorp/terraform-provider-google-beta/pull/4831))
+* **New Resource:** `google_storage_transfer_agent_pool` ([#4835](https://github.com/hashicorp/terraform-provider-google-beta/pull/4835))
+* **New Resource:** `identity_platform_project_default_config` ([#4853](https://github.com/hashicorp/terraform-provider-google-beta/pull/4853))
+
+IMPROVEMENTS:
+* clouddeploy: Added execution_configs.execution_timeout in target resource. ([#4849](https://github.com/hashicorp/terraform-provider-google-beta/pull/4849))
+* clouddeploy: Added support for Cloud Run Targets ([#4849](https://github.com/hashicorp/terraform-provider-google-beta/pull/4849))
+* clouddeploy: Added support for Deployment Verification standard strategy ([#4849](https://github.com/hashicorp/terraform-provider-google-beta/pull/4849))
+* cloudidentity: made security label settable by making labels updatable on `google_cloud_identity_group` ([#4834](https://github.com/hashicorp/terraform-provider-google-beta/pull/4834))
+* compute: added `preconfigured_waf_config` block to `google_compute_security_policy` resource ([#4852](https://github.com/hashicorp/terraform-provider-google-beta/pull/4852))
+* compute: updated machine_type field in compute instance resource to accept short name. ([#4849](https://github.com/hashicorp/terraform-provider-google-beta/pull/4849))
+* container: Added support for Shielded Instance configuration for node auto-provisioning to `google_container_cluster` ([#4833](https://github.com/hashicorp/terraform-provider-google-beta/pull/4833))
+* container: added field `blue_green_settings` to `google_container_node_pool` ([#4860](https://github.com/hashicorp/terraform-provider-google-beta/pull/4860))
+* container: added field `strategy` to `google_container_node_pool` ([#4860](https://github.com/hashicorp/terraform-provider-google-beta/pull/4860))
+* container: added support for additional values `APISERVER`, `CONTROLLER_MANAGER`, and `SCHEDULER` in `google_container_cluster.monitoring_config` ([#4854](https://github.com/hashicorp/terraform-provider-google-beta/pull/4854))
+* dlp: added fields `rows_limit`, `rows_limit_percent`, and `sample_method` to `big_query_options` in `google_data_loss_prevention_job_trigger` ([#4856](https://github.com/hashicorp/terraform-provider-google-beta/pull/4856))
+* dlp: added pubsub action to `google_data_loss_prevention_job_trigger` ([#4832](https://github.com/hashicorp/terraform-provider-google-beta/pull/4832))
+* sql: added `query_plan_per_minute` field to `insights_config` in `google_sql_database_instance` resource ([#4840](https://github.com/hashicorp/terraform-provider-google-beta/pull/4840))
+* vertexai: added fields to `vertex_ai_featurestore_entitytype` to support feature value monitoring ([#4859](https://github.com/hashicorp/terraform-provider-google-beta/pull/4859))
+
+BUG FIXES:
+* appengine: Fixed permadiff on serviceaccount for 'google_app_engine_flexible_app_version' ([#4858](https://github.com/hashicorp/terraform-provider-google-beta/pull/4858))
+* bigtable: updated the error handling logic to remove the resource on resource not found error only ([#4841](https://github.com/hashicorp/terraform-provider-google-beta/pull/4841))
+* billingbudget: fixed a bug where `budget_filter.credit_types_treatment` in `google_billing_budget` resource was not updating. ([#4836](https://github.com/hashicorp/terraform-provider-google-beta/pull/4836))
+* cloudids: fixed `endpoint_forwarding_rule` and `endpoint_ip` attributes for `google_cloud_ids_endpoint` ([#4843](https://github.com/hashicorp/terraform-provider-google-beta/pull/4843))
+* compute: fixed perma-diff on `google_compute_disk` for new amd64 images ([#4847](https://github.com/hashicorp/terraform-provider-google-beta/pull/4847))
+* compute: made `target_https_proxy` possible to set `ssl_certificates` and `certificate_map` at the same time ([#4839](https://github.com/hashicorp/terraform-provider-google-beta/pull/4839))
+* dns: fixed apply failure when `description` is set to empty string on `google_dns_managed_zone` ([#4837](https://github.com/hashicorp/terraform-provider-google-beta/pull/4837))
+* vertex_ai:  made google_vertex_ai_featurestore_entitytype always use regional endpoint corresponding to parent's region ([#4845](https://github.com/hashicorp/terraform-provider-google-beta/pull/4845))
+
 ## 4.43.0 (November 7, 2022)
 
 FEATURES:
