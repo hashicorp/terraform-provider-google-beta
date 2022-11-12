@@ -2100,6 +2100,7 @@ func TestAccContainerCluster_withShieldedNodes(t *testing.T) {
 func TestAccContainerCluster_withAutopilot(t *testing.T) {
 	t.Parallel()
 
+	pid := getTestProjectFromEnv()
 	containerNetName := fmt.Sprintf("tf-test-container-net-%s", randString(t, 10))
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", randString(t, 10))
 
@@ -2109,7 +2110,42 @@ func TestAccContainerCluster_withAutopilot(t *testing.T) {
 		CheckDestroy: testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccContainerCluster_withAutopilot(containerNetName, clusterName, "us-central1", true, false),
+				Config: testAccContainerCluster_withAutopilot(pid, containerNetName, clusterName, "us-central1", true, false, ""),
+			},
+			{
+				ResourceName:            "google_container_cluster.with_autopilot",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"min_master_version"},
+			},
+		},
+	})
+}
+
+func TestAccContainerClusterCustomServiceAccount_withAutopilot(t *testing.T) {
+	t.Parallel()
+
+	pid := getTestProjectFromEnv()
+	containerNetName := fmt.Sprintf("tf-test-container-net-%s", randString(t, 10))
+	clusterName := fmt.Sprintf("tf-test-cluster-%s", randString(t, 10))
+	serviceAccountName := fmt.Sprintf("tf-test-sa-%s", randString(t, 10))
+
+	vcrTest(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckContainerClusterDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccContainerCluster_withAutopilot(pid, containerNetName, clusterName, "us-central1", true, false, serviceAccountName),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("google_container_cluster.with_autopilot",
+						"cluster_autoscaling.0.enabled", "true"),
+					resource.TestCheckResourceAttr("google_container_cluster.with_autopilot",
+						"cluster_autoscaling.0.auto_provisioning_defaults.0.service_account",
+						fmt.Sprintf("%s@%s.iam.gserviceaccount.com", serviceAccountName, pid)),
+					resource.TestCheckResourceAttr("google_container_cluster.with_autopilot",
+						"cluster_autoscaling.0.auto_provisioning_defaults.0.oauth_scopes.0", "https://www.googleapis.com/auth/cloud-platform"),
+				),
 			},
 			{
 				ResourceName:            "google_container_cluster.with_autopilot",
@@ -2124,6 +2160,7 @@ func TestAccContainerCluster_withAutopilot(t *testing.T) {
 func TestAccContainerCluster_errorAutopilotLocation(t *testing.T) {
 	t.Parallel()
 
+	pid := getTestProjectFromEnv()
 	containerNetName := fmt.Sprintf("tf-test-container-net-%s", randString(t, 10))
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", randString(t, 10))
 
@@ -2133,7 +2170,7 @@ func TestAccContainerCluster_errorAutopilotLocation(t *testing.T) {
 		CheckDestroy: testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config:      testAccContainerCluster_withAutopilot(containerNetName, clusterName, "us-central1-a", true, false),
+				Config:      testAccContainerCluster_withAutopilot(pid, containerNetName, clusterName, "us-central1-a", true, false, ""),
 				ExpectError: regexp.MustCompile(`Autopilot clusters must be regional clusters.`),
 			},
 		},
@@ -2143,6 +2180,7 @@ func TestAccContainerCluster_errorAutopilotLocation(t *testing.T) {
 func TestAccContainerCluster_withAutopilotNetworkTags(t *testing.T) {
 	t.Parallel()
 
+	pid := getTestProjectFromEnv()
 	containerNetName := fmt.Sprintf("tf-test-container-net-%s", randString(t, 10))
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", randString(t, 10))
 
@@ -2152,7 +2190,7 @@ func TestAccContainerCluster_withAutopilotNetworkTags(t *testing.T) {
 		CheckDestroy: testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccContainerCluster_withAutopilot(containerNetName, clusterName, "us-central1", true, true),
+				Config: testAccContainerCluster_withAutopilot(pid, containerNetName, clusterName, "us-central1", true, true, ""),
 			},
 			{
 				ResourceName:            "google_container_cluster.with_autopilot",
@@ -3250,8 +3288,8 @@ func testAccCheckContainerClusterDestroyProducer(t *testing.T) func(s *terraform
 			}
 
 			attributes := rs.Primary.Attributes
-			_, err := config.NewContainerClient(config.userAgent).Projects.Zones.Clusters.Get(
-				config.Project, attributes["location"], attributes["name"]).Do()
+			_, err := config.NewContainerClient(config.userAgent).Projects.Locations.Clusters.Get(
+				fmt.Sprintf("projects/%s/locations/%s/clusters/%s", config.Project, attributes["location"], attributes["name"])).Do()
 			if err == nil {
 				return fmt.Errorf("Cluster still exists")
 			}
@@ -6264,8 +6302,36 @@ resource "google_container_cluster" "primary" {
 `, name)
 }
 
-func testAccContainerCluster_withAutopilot(containerNetName string, clusterName string, location string, enabled bool, withNetworkTag bool) string {
-	config := fmt.Sprintf(`
+func testAccContainerCluster_withAutopilot(projectID string, containerNetName string, clusterName string, location string, enabled bool, withNetworkTag bool, serviceAccount string) string {
+	config := ""
+	clusterAutoscaling := ""
+	if serviceAccount != "" {
+		config += fmt.Sprintf(`
+resource "google_service_account" "service_account" {
+	account_id   = "%[1]s"
+	project      = "%[2]s"
+	display_name = "Service Account"
+}
+
+resource "google_project_iam_binding" "project" {
+	project = "%[2]s"
+	role    = "roles/container.nodeServiceAccount"
+	members = [
+		"serviceAccount:%[1]s@%[2]s.iam.gserviceaccount.com",
+	]
+}`, serviceAccount, projectID)
+
+		clusterAutoscaling = fmt.Sprintf(`
+	cluster_autoscaling {
+		auto_provisioning_defaults {
+			service_account = "%s@%s.iam.gserviceaccount.com"
+			oauth_scopes = ["https://www.googleapis.com/auth/cloud-platform"]
+		}
+	}`, serviceAccount, projectID)
+	}
+
+	config += fmt.Sprintf(`
+
 resource "google_compute_network" "container_network" {
 	name                    = "%s"
 	auto_create_subnetworks = false
@@ -6312,9 +6378,10 @@ resource "google_container_cluster" "with_autopilot" {
 			disabled = false
 		}
 	}
+	%s
 	vertical_pod_autoscaling {
 		enabled = true
-	}`, containerNetName, clusterName, location, enabled)
+	}`, containerNetName, clusterName, location, enabled, clusterAutoscaling)
 	if withNetworkTag {
 		config += `
 	node_pool_auto_config {
