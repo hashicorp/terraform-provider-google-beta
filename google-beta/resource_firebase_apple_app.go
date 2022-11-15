@@ -24,15 +24,15 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func resourceFirebaseAndroidApp() *schema.Resource {
+func resourceFirebaseAppleApp() *schema.Resource {
 	return &schema.Resource{
-		Create: resourceFirebaseAndroidAppCreate,
-		Read:   resourceFirebaseAndroidAppRead,
-		Update: resourceFirebaseAndroidAppUpdate,
-		Delete: resourceFirebaseAndroidAppDelete,
+		Create: resourceFirebaseAppleAppCreate,
+		Read:   resourceFirebaseAppleAppRead,
+		Update: resourceFirebaseAppleAppUpdate,
+		Delete: resourceFirebaseAppleAppDelete,
 
 		Importer: &schema.ResourceImporter{
-			State: resourceFirebaseAndroidAppImport,
+			State: resourceFirebaseAppleAppImport,
 		},
 
 		Timeouts: &schema.ResourceTimeout{
@@ -47,20 +47,29 @@ func resourceFirebaseAndroidApp() *schema.Resource {
 				Required:    true,
 				Description: `The user-assigned display name of the App.`,
 			},
+			"app_store_id": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: `The automatically generated Apple ID assigned to the Apple app by Apple in the Apple App Store.`,
+			},
+			"bundle_id": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: `The canonical bundle ID of the Apple app as it would appear in the Apple AppStore.`,
+			},
 			"deletion_policy": {
 				Type:     schema.TypeString,
 				Optional: true,
 				ForceNew: true,
-				Description: `(Optional) Set to 'ABANDON' to allow the AndroidApp to be untracked from terraform state
-rather than deleted upon 'terraform destroy'. This is useful because the AndroidApp may be
-serving traffic. Set to 'DELETE' to delete the AndroidApp. Default to 'DELETE'.`,
+				Description: `(Optional) Set to 'ABANDON' to allow the AppleApp to be untracked from terraform state
+rather than deleted upon 'terraform destroy'. This is useful because the AppleApp may be
+serving traffic. Set to 'DELETE' to delete the AppleApp. Default to 'DELETE'.`,
 				Default: "DELETE",
 			},
-			"package_name": {
-				Type:     schema.TypeString,
-				Optional: true,
-				Description: `Immutable. The canonical package name of the Android app as would appear in the Google Play
-Developer Console.`,
+			"team_id": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: `The Apple Developer Team ID associated with the App in the App Store.`,
 			},
 			"app_id": {
 				Type:     schema.TypeString,
@@ -72,7 +81,7 @@ This identifier should be treated as an opaque token, as the data format is not 
 				Type:     schema.TypeString,
 				Computed: true,
 				Description: `The fully qualified resource name of the App, for example:
-projects/projectId/androidApps/appId`,
+projects/projectId/iosApps/appId`,
 			},
 			"project": {
 				Type:     schema.TypeString,
@@ -85,7 +94,7 @@ projects/projectId/androidApps/appId`,
 	}
 }
 
-func resourceFirebaseAndroidAppCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceFirebaseAppleAppCreate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 	userAgent, err := generateUserAgentString(d, config.userAgent)
 	if err != nil {
@@ -93,30 +102,42 @@ func resourceFirebaseAndroidAppCreate(d *schema.ResourceData, meta interface{}) 
 	}
 
 	obj := make(map[string]interface{})
-	displayNameProp, err := expandFirebaseAndroidAppDisplayName(d.Get("display_name"), d, config)
+	displayNameProp, err := expandFirebaseAppleAppDisplayName(d.Get("display_name"), d, config)
 	if err != nil {
 		return err
 	} else if v, ok := d.GetOkExists("display_name"); !isEmptyValue(reflect.ValueOf(displayNameProp)) && (ok || !reflect.DeepEqual(v, displayNameProp)) {
 		obj["displayName"] = displayNameProp
 	}
-	packageNameProp, err := expandFirebaseAndroidAppPackageName(d.Get("package_name"), d, config)
+	bundleIdProp, err := expandFirebaseAppleAppBundleId(d.Get("bundle_id"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("package_name"); !isEmptyValue(reflect.ValueOf(packageNameProp)) && (ok || !reflect.DeepEqual(v, packageNameProp)) {
-		obj["packageName"] = packageNameProp
+	} else if v, ok := d.GetOkExists("bundle_id"); !isEmptyValue(reflect.ValueOf(bundleIdProp)) && (ok || !reflect.DeepEqual(v, bundleIdProp)) {
+		obj["bundleId"] = bundleIdProp
+	}
+	appStoreIdProp, err := expandFirebaseAppleAppAppStoreId(d.Get("app_store_id"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("app_store_id"); !isEmptyValue(reflect.ValueOf(appStoreIdProp)) && (ok || !reflect.DeepEqual(v, appStoreIdProp)) {
+		obj["appStoreId"] = appStoreIdProp
+	}
+	teamIdProp, err := expandFirebaseAppleAppTeamId(d.Get("team_id"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("team_id"); !isEmptyValue(reflect.ValueOf(teamIdProp)) && (ok || !reflect.DeepEqual(v, teamIdProp)) {
+		obj["teamId"] = teamIdProp
 	}
 
-	url, err := replaceVars(d, config, "{{FirebaseBasePath}}projects/{{project}}/androidApps")
+	url, err := replaceVars(d, config, "{{FirebaseBasePath}}projects/{{project}}/iosApps")
 	if err != nil {
 		return err
 	}
 
-	log.Printf("[DEBUG] Creating new AndroidApp: %#v", obj)
+	log.Printf("[DEBUG] Creating new AppleApp: %#v", obj)
 	billingProject := ""
 
 	project, err := getProject(d, config)
 	if err != nil {
-		return fmt.Errorf("Error fetching project for AndroidApp: %s", err)
+		return fmt.Errorf("Error fetching project for AppleApp: %s", err)
 	}
 	billingProject = project
 
@@ -127,7 +148,7 @@ func resourceFirebaseAndroidAppCreate(d *schema.ResourceData, meta interface{}) 
 
 	res, err := sendRequestWithTimeout(config, "POST", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutCreate))
 	if err != nil {
-		return fmt.Errorf("Error creating AndroidApp: %s", err)
+		return fmt.Errorf("Error creating AppleApp: %s", err)
 	}
 
 	// Store the ID now
@@ -141,16 +162,16 @@ func resourceFirebaseAndroidAppCreate(d *schema.ResourceData, meta interface{}) 
 	// identity fields and d.Id() before read
 	var opRes map[string]interface{}
 	err = firebaseOperationWaitTimeWithResponse(
-		config, res, &opRes, project, "Creating AndroidApp", userAgent,
+		config, res, &opRes, project, "Creating AppleApp", userAgent,
 		d.Timeout(schema.TimeoutCreate))
 	if err != nil {
 		// The resource didn't actually create
 		d.SetId("")
 
-		return fmt.Errorf("Error waiting to create AndroidApp: %s", err)
+		return fmt.Errorf("Error waiting to create AppleApp: %s", err)
 	}
 
-	if err := d.Set("name", flattenFirebaseAndroidAppName(opRes["name"], d, config)); err != nil {
+	if err := d.Set("name", flattenFirebaseAppleAppName(opRes["name"], d, config)); err != nil {
 		return err
 	}
 
@@ -161,12 +182,12 @@ func resourceFirebaseAndroidAppCreate(d *schema.ResourceData, meta interface{}) 
 	}
 	d.SetId(id)
 
-	log.Printf("[DEBUG] Finished creating AndroidApp %q: %#v", d.Id(), res)
+	log.Printf("[DEBUG] Finished creating AppleApp %q: %#v", d.Id(), res)
 
-	return resourceFirebaseAndroidAppRead(d, meta)
+	return resourceFirebaseAppleAppRead(d, meta)
 }
 
-func resourceFirebaseAndroidAppRead(d *schema.ResourceData, meta interface{}) error {
+func resourceFirebaseAppleAppRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 	userAgent, err := generateUserAgentString(d, config.userAgent)
 	if err != nil {
@@ -182,7 +203,7 @@ func resourceFirebaseAndroidAppRead(d *schema.ResourceData, meta interface{}) er
 
 	project, err := getProject(d, config)
 	if err != nil {
-		return fmt.Errorf("Error fetching project for AndroidApp: %s", err)
+		return fmt.Errorf("Error fetching project for AppleApp: %s", err)
 	}
 	billingProject = project
 
@@ -193,30 +214,36 @@ func resourceFirebaseAndroidAppRead(d *schema.ResourceData, meta interface{}) er
 
 	res, err := sendRequest(config, "GET", billingProject, url, userAgent, nil)
 	if err != nil {
-		return handleNotFoundError(err, d, fmt.Sprintf("FirebaseAndroidApp %q", d.Id()))
+		return handleNotFoundError(err, d, fmt.Sprintf("FirebaseAppleApp %q", d.Id()))
 	}
 
 	if err := d.Set("project", project); err != nil {
-		return fmt.Errorf("Error reading AndroidApp: %s", err)
+		return fmt.Errorf("Error reading AppleApp: %s", err)
 	}
 
-	if err := d.Set("name", flattenFirebaseAndroidAppName(res["name"], d, config)); err != nil {
-		return fmt.Errorf("Error reading AndroidApp: %s", err)
+	if err := d.Set("name", flattenFirebaseAppleAppName(res["name"], d, config)); err != nil {
+		return fmt.Errorf("Error reading AppleApp: %s", err)
 	}
-	if err := d.Set("display_name", flattenFirebaseAndroidAppDisplayName(res["displayName"], d, config)); err != nil {
-		return fmt.Errorf("Error reading AndroidApp: %s", err)
+	if err := d.Set("display_name", flattenFirebaseAppleAppDisplayName(res["displayName"], d, config)); err != nil {
+		return fmt.Errorf("Error reading AppleApp: %s", err)
 	}
-	if err := d.Set("app_id", flattenFirebaseAndroidAppAppId(res["appId"], d, config)); err != nil {
-		return fmt.Errorf("Error reading AndroidApp: %s", err)
+	if err := d.Set("app_id", flattenFirebaseAppleAppAppId(res["appId"], d, config)); err != nil {
+		return fmt.Errorf("Error reading AppleApp: %s", err)
 	}
-	if err := d.Set("package_name", flattenFirebaseAndroidAppPackageName(res["packageName"], d, config)); err != nil {
-		return fmt.Errorf("Error reading AndroidApp: %s", err)
+	if err := d.Set("bundle_id", flattenFirebaseAppleAppBundleId(res["bundleId"], d, config)); err != nil {
+		return fmt.Errorf("Error reading AppleApp: %s", err)
+	}
+	if err := d.Set("app_store_id", flattenFirebaseAppleAppAppStoreId(res["appStoreId"], d, config)); err != nil {
+		return fmt.Errorf("Error reading AppleApp: %s", err)
+	}
+	if err := d.Set("team_id", flattenFirebaseAppleAppTeamId(res["teamId"], d, config)); err != nil {
+		return fmt.Errorf("Error reading AppleApp: %s", err)
 	}
 
 	return nil
 }
 
-func resourceFirebaseAndroidAppUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceFirebaseAppleAppUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 	userAgent, err := generateUserAgentString(d, config.userAgent)
 	if err != nil {
@@ -227,22 +254,34 @@ func resourceFirebaseAndroidAppUpdate(d *schema.ResourceData, meta interface{}) 
 
 	project, err := getProject(d, config)
 	if err != nil {
-		return fmt.Errorf("Error fetching project for AndroidApp: %s", err)
+		return fmt.Errorf("Error fetching project for AppleApp: %s", err)
 	}
 	billingProject = project
 
 	obj := make(map[string]interface{})
-	displayNameProp, err := expandFirebaseAndroidAppDisplayName(d.Get("display_name"), d, config)
+	displayNameProp, err := expandFirebaseAppleAppDisplayName(d.Get("display_name"), d, config)
 	if err != nil {
 		return err
 	} else if v, ok := d.GetOkExists("display_name"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, displayNameProp)) {
 		obj["displayName"] = displayNameProp
 	}
-	packageNameProp, err := expandFirebaseAndroidAppPackageName(d.Get("package_name"), d, config)
+	bundleIdProp, err := expandFirebaseAppleAppBundleId(d.Get("bundle_id"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("package_name"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, packageNameProp)) {
-		obj["packageName"] = packageNameProp
+	} else if v, ok := d.GetOkExists("bundle_id"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, bundleIdProp)) {
+		obj["bundleId"] = bundleIdProp
+	}
+	appStoreIdProp, err := expandFirebaseAppleAppAppStoreId(d.Get("app_store_id"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("app_store_id"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, appStoreIdProp)) {
+		obj["appStoreId"] = appStoreIdProp
+	}
+	teamIdProp, err := expandFirebaseAppleAppTeamId(d.Get("team_id"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("team_id"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, teamIdProp)) {
+		obj["teamId"] = teamIdProp
 	}
 
 	url, err := replaceVars(d, config, "{{FirebaseBasePath}}{{name}}")
@@ -250,15 +289,23 @@ func resourceFirebaseAndroidAppUpdate(d *schema.ResourceData, meta interface{}) 
 		return err
 	}
 
-	log.Printf("[DEBUG] Updating AndroidApp %q: %#v", d.Id(), obj)
+	log.Printf("[DEBUG] Updating AppleApp %q: %#v", d.Id(), obj)
 	updateMask := []string{}
 
 	if d.HasChange("display_name") {
 		updateMask = append(updateMask, "displayName")
 	}
 
-	if d.HasChange("package_name") {
-		updateMask = append(updateMask, "packageName")
+	if d.HasChange("bundle_id") {
+		updateMask = append(updateMask, "bundleId")
+	}
+
+	if d.HasChange("app_store_id") {
+		updateMask = append(updateMask, "appStoreId")
+	}
+
+	if d.HasChange("team_id") {
+		updateMask = append(updateMask, "teamId")
 	}
 	// updateMask is a URL parameter but not present in the schema, so replaceVars
 	// won't set it
@@ -275,15 +322,15 @@ func resourceFirebaseAndroidAppUpdate(d *schema.ResourceData, meta interface{}) 
 	res, err := sendRequestWithTimeout(config, "PATCH", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutUpdate))
 
 	if err != nil {
-		return fmt.Errorf("Error updating AndroidApp %q: %s", d.Id(), err)
+		return fmt.Errorf("Error updating AppleApp %q: %s", d.Id(), err)
 	} else {
-		log.Printf("[DEBUG] Finished updating AndroidApp %q: %#v", d.Id(), res)
+		log.Printf("[DEBUG] Finished updating AppleApp %q: %#v", d.Id(), res)
 	}
 
-	return resourceFirebaseAndroidAppRead(d, meta)
+	return resourceFirebaseAppleAppRead(d, meta)
 }
 
-func resourceFirebaseAndroidAppDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceFirebaseAppleAppDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 	userAgent, err := generateUserAgentString(d, config.userAgent)
 	if err != nil {
@@ -341,7 +388,7 @@ func resourceFirebaseAndroidAppDelete(d *schema.ResourceData, meta interface{}) 
 	return nil
 }
 
-func resourceFirebaseAndroidAppImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceFirebaseAppleAppImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 
 	config := meta.(*Config)
 
@@ -353,26 +400,42 @@ func resourceFirebaseAndroidAppImport(d *schema.ResourceData, meta interface{}) 
 	return []*schema.ResourceData{d}, nil
 }
 
-func flattenFirebaseAndroidAppName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenFirebaseAppleAppName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenFirebaseAndroidAppDisplayName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenFirebaseAppleAppDisplayName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenFirebaseAndroidAppAppId(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenFirebaseAppleAppAppId(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenFirebaseAndroidAppPackageName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenFirebaseAppleAppBundleId(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func expandFirebaseAndroidAppDisplayName(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func flattenFirebaseAppleAppAppStoreId(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	return v
+}
+
+func flattenFirebaseAppleAppTeamId(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	return v
+}
+
+func expandFirebaseAppleAppDisplayName(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandFirebaseAndroidAppPackageName(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandFirebaseAppleAppBundleId(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandFirebaseAppleAppAppStoreId(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandFirebaseAppleAppTeamId(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
