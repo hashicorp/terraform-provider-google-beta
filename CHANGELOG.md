@@ -36,7 +36,7 @@ IMPROVEMENTS:
 * container: Added `node_config.logging_variant` to `google_container_node_pool`. ([#4889](https://github.com/hashicorp/terraform-provider-google-beta/pull/4889))
 * container: Added `node_pool_defaults.node_config_defaults.logging_variant`, `node_pool.node_config.logging_variant`, and `node_config.logging_variant` to `google_container_cluster`. ([#4889](https://github.com/hashicorp/terraform-provider-google-beta/pull/4889))
 * container: Added support for Shielded Instance configuration for node auto-provisioning to `google_container_cluster` ([#4833](https://github.com/hashicorp/terraform-provider-google-beta/pull/4833))
-* container: Adding management attribute to the google_container_cluster resource ([#4862](https://github.com/hashicorp/terraform-provider-google-beta/pull/4862))
+* container: Added management attribute to the google_container_cluster resource ([#4862](https://github.com/hashicorp/terraform-provider-google-beta/pull/4862))
 * container: added field `blue_green_settings` to `google_container_node_pool` ([#4860](https://github.com/hashicorp/terraform-provider-google-beta/pull/4860))
 * container: added field `strategy` to `google_container_node_pool` ([#4860](https://github.com/hashicorp/terraform-provider-google-beta/pull/4860))
 * container: added support for additional values `APISERVER`, `CONTROLLER_MANAGER`, and `SCHEDULER` in `google_container_cluster.monitoring_config` ([#4854](https://github.com/hashicorp/terraform-provider-google-beta/pull/4854))
