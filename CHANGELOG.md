@@ -33,7 +33,6 @@ IMPROVEMENTS:
 * compute: added `default_route_action.weighted_backend_services` field to `google_compute_region_url_map` resource ([#4879](https://github.com/hashicorp/terraform-provider-google-beta/pull/4879))
 * compute: added `preconfigured_waf_config` block to `google_compute_security_policy` resource (beta) ([#4852](https://github.com/hashicorp/terraform-provider-google-beta/pull/4852))
 * compute: modified machine_type field in compute instance resource to accept short name. ([#4849](https://github.com/hashicorp/terraform-provider-google-beta/pull/4849))
-* compute: promoted `visible_core_count` field of `google_compute_instance` to GA ([#4885](https://github.com/hashicorp/terraform-provider-google-beta/pull/4885))
 * container: Added `node_config.logging_variant` to `google_container_node_pool`. ([#4889](https://github.com/hashicorp/terraform-provider-google-beta/pull/4889))
 * container: Added `node_pool_defaults.node_config_defaults.logging_variant`, `node_pool.node_config.logging_variant`, and `node_config.logging_variant` to `google_container_cluster`. ([#4889](https://github.com/hashicorp/terraform-provider-google-beta/pull/4889))
 * container: Added support for Shielded Instance configuration for node auto-provisioning to `google_container_cluster` ([#4833](https://github.com/hashicorp/terraform-provider-google-beta/pull/4833))
