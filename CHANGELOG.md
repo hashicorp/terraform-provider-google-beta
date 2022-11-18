@@ -2,7 +2,6 @@
 
 FEATURES:
 * **New Data Source:** `google_cloud_asset_resources_search_all` (beta) ([#4891](https://github.com/hashicorp/terraform-provider-google-beta/pull/4891))
-* **New Resource:** `google_firebase_apple_app` ([#4887](https://github.com/hashicorp/terraform-provider-google-beta/pull/4887))
 * **New Resource:** `google_alloydb_instance` ([#4857](https://github.com/hashicorp/terraform-provider-google-beta/pull/4857))
 * **New Resource:** `google_beyondcorp_app_connector` ([#4866](https://github.com/hashicorp/terraform-provider-google-beta/pull/4866))
 * **New Resource:** `google_beyondcorp_app_gateway` ([#4866](https://github.com/hashicorp/terraform-provider-google-beta/pull/4866))
@@ -13,6 +12,7 @@ FEATURES:
 * **New Resource:** `google_compute_region_network_firewall_policy_rule` ([#4880](https://github.com/hashicorp/terraform-provider-google-beta/pull/4880))
 * **New Resource:** `google_compute_region_network_firewall_policy` ([#4851](https://github.com/hashicorp/terraform-provider-google-beta/pull/4851))
 * **New Resource:** `google_eventarc_channel` ([#4876](https://github.com/hashicorp/terraform-provider-google-beta/pull/4876))
+* **New Resource:** `google_firebase_apple_app` ([#4887](https://github.com/hashicorp/terraform-provider-google-beta/pull/4887))
 * **New Resource:** `google_firebase_hosting_channel` ([#4890](https://github.com/hashicorp/terraform-provider-google-beta/pull/4890))
 * **New Resource:** `google_firebase_hosting_site` ([#4846](https://github.com/hashicorp/terraform-provider-google-beta/pull/4846))
 * **New Resource:** `google_identity_platform_project_default_config` ([#4853](https://github.com/hashicorp/terraform-provider-google-beta/pull/4853))
