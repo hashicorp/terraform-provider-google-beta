@@ -1,4 +1,8 @@
 ## 4.45.0 (Unreleased)
+## 4.44.1 (November 22, 2022)
+
+NOTES: No changes, only released to keep this provider in sync with the `google` provider
+
 ## 4.44.0 (November 21, 2022)
 
 FEATURES:
