@@ -1,4 +1,8 @@
-## 4.44.0 (Unreleased)
+## 4.44.1 (Unreleased)
+
+NOTES: No changes, only released to keep this provider in sync with the `google` provider
+
+## 4.44.0 (November 21, 2022)
 
 FEATURES:
 * **New Data Source:** `google_cloud_asset_resources_search_all` (beta) ([#4891](https://github.com/hashicorp/terraform-provider-google-beta/pull/4891))
