@@ -1031,9 +1031,9 @@ func Provider() *schema.Provider {
 	return provider
 }
 
-// Generated resources: 283
+// Generated resources: 284
 // Generated IAM resources: 186
-// Total generated resources: 469
+// Total generated resources: 470
 func ResourceMap() map[string]*schema.Resource {
 	resourceMap, _ := ResourceMapWithErrors()
 	return resourceMap
@@ -1351,6 +1351,7 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_iam_workload_identity_pool":                            resourceIAMBetaWorkloadIdentityPool(),
 			"google_iam_workload_identity_pool_provider":                   resourceIAMBetaWorkloadIdentityPoolProvider(),
 			"google_iam_workforce_pool":                                    resourceIAMWorkforcePoolWorkforcePool(),
+			"google_iam_workforce_pool_provider":                           resourceIAMWorkforcePoolWorkforcePoolProvider(),
 			"google_iap_web_iam_binding":                                   ResourceIamBinding(IapWebIamSchema, IapWebIamUpdaterProducer, IapWebIdParseFunc),
 			"google_iap_web_iam_member":                                    ResourceIamMember(IapWebIamSchema, IapWebIamUpdaterProducer, IapWebIdParseFunc),
 			"google_iap_web_iam_policy":                                    ResourceIamPolicy(IapWebIamSchema, IapWebIamUpdaterProducer, IapWebIdParseFunc),
