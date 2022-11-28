@@ -331,10 +331,15 @@ var schemaNodePool = map[string]*schema.Schema{
 					ForceNew:    true,
 					Description: `Whether to create a new range for pod IPs in this node pool. Defaults are provided for pod_range and pod_ipv4_cidr_block if they are not specified.`,
 				},
-
+				"enable_private_nodes": {
+					Type:        schema.TypeBool,
+					Optional:    true,
+					Computed:    true,
+					Description: `Whether nodes have internal IP addresses only.`,
+				},
 				"pod_range": {
 					Type:        schema.TypeString,
-					Required:    true,
+					Optional:    true,
 					ForceNew:    true,
 					Description: `The ID of the secondary range for pod IPs. If create_pod_range is true, this ID is used for the new range. If create_pod_range is false, uses an existing secondary range with this ID.`,
 				},
@@ -1058,9 +1063,10 @@ func flattenNodeNetworkConfig(c *container.NodeNetworkConfig, d *schema.Resource
 	result := []map[string]interface{}{}
 	if c != nil {
 		result = append(result, map[string]interface{}{
-			"create_pod_range":    d.Get(prefix + "network_config.0.create_pod_range"), // API doesn't return this value so we set the old one. Field is ForceNew + Required
-			"pod_ipv4_cidr_block": c.PodIpv4CidrBlock,
-			"pod_range":           c.PodRange,
+			"create_pod_range":     d.Get(prefix + "network_config.0.create_pod_range"), // API doesn't return this value so we set the old one. Field is ForceNew + Required
+			"pod_ipv4_cidr_block":  c.PodIpv4CidrBlock,
+			"pod_range":            c.PodRange,
+			"enable_private_nodes": c.EnablePrivateNodes,
 		})
 	}
 	return result
@@ -1087,6 +1093,11 @@ func expandNodeNetworkConfig(v interface{}) *container.NodeNetworkConfig {
 
 	if v, ok := networkNodeConfig["pod_ipv4_cidr_block"]; ok {
 		nnc.PodIpv4CidrBlock = v.(string)
+	}
+
+	if v, ok := networkNodeConfig["enable_private_nodes"]; ok {
+		nnc.EnablePrivateNodes = v.(bool)
+		nnc.ForceSendFields = []string{"EnablePrivateNodes"}
 	}
 
 	return nnc
@@ -1623,6 +1634,40 @@ func nodePoolUpdate(d *schema.ResourceData, meta interface{}, nodePoolInfo *Node
 		}
 
 		log.Printf("[INFO] Updated upgrade settings in Node Pool %s", name)
+	}
+
+	if d.HasChange(prefix + "network_config") {
+		if d.HasChange(prefix + "network_config.0.enable_private_nodes") {
+			req := &container.UpdateNodePoolRequest{
+				NodePoolId:        name,
+				NodeNetworkConfig: expandNodeNetworkConfig(d.Get(prefix + "network_config")),
+			}
+			updateF := func() error {
+				clusterNodePoolsUpdateCall := config.NewContainerClient(userAgent).Projects.Locations.Clusters.NodePools.Update(nodePoolInfo.fullyQualifiedName(name), req)
+				if config.UserProjectOverride {
+					clusterNodePoolsUpdateCall.Header().Add("X-Goog-User-Project", nodePoolInfo.project)
+				}
+				op, err := clusterNodePoolsUpdateCall.Do()
+
+				if err != nil {
+					return err
+				}
+
+				// Wait until it's updated
+				return containerOperationWait(config, op,
+					nodePoolInfo.project,
+					nodePoolInfo.location,
+					"updating GKE node pool workload_metadata_config", userAgent,
+					timeout)
+			}
+
+			// Call update serially.
+			if err := lockedCall(lockKey, updateF); err != nil {
+				return err
+			}
+
+			log.Printf("[INFO] Updated workload_metadata_config for node pool %s", name)
+		}
 	}
 
 	return nil
