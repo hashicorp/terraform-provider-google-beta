@@ -1032,8 +1032,8 @@ func Provider() *schema.Provider {
 }
 
 // Generated resources: 285
-// Generated IAM resources: 186
-// Total generated resources: 471
+// Generated IAM resources: 189
+// Total generated resources: 474
 func ResourceMap() map[string]*schema.Resource {
 	resourceMap, _ := ResourceMapWithErrors()
 	return resourceMap
@@ -1282,6 +1282,9 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_data_catalog_policy_tag_iam_policy":                    ResourceIamPolicy(DataCatalogPolicyTagIamSchema, DataCatalogPolicyTagIamUpdaterProducer, DataCatalogPolicyTagIdParseFunc),
 			"google_dataform_repository":                                   resourceDataformRepository(),
 			"google_data_fusion_instance":                                  resourceDataFusionInstance(),
+			"google_data_fusion_instance_iam_binding":                      ResourceIamBinding(DataFusionInstanceIamSchema, DataFusionInstanceIamUpdaterProducer, DataFusionInstanceIdParseFunc),
+			"google_data_fusion_instance_iam_member":                       ResourceIamMember(DataFusionInstanceIamSchema, DataFusionInstanceIamUpdaterProducer, DataFusionInstanceIdParseFunc),
+			"google_data_fusion_instance_iam_policy":                       ResourceIamPolicy(DataFusionInstanceIamSchema, DataFusionInstanceIamUpdaterProducer, DataFusionInstanceIdParseFunc),
 			"google_data_loss_prevention_job_trigger":                      resourceDataLossPreventionJobTrigger(),
 			"google_data_loss_prevention_inspect_template":                 resourceDataLossPreventionInspectTemplate(),
 			"google_data_loss_prevention_stored_info_type":                 resourceDataLossPreventionStoredInfoType(),
