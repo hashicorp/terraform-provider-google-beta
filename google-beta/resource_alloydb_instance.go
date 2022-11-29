@@ -320,9 +320,6 @@ func resourceAlloydbInstanceRead(d *schema.ResourceData, meta interface{}) error
 	if err := d.Set("state", flattenAlloydbInstanceState(res["state"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Instance: %s", err)
 	}
-	if err := d.Set("display_name", flattenAlloydbInstanceDisplayName(res["displayName"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Instance: %s", err)
-	}
 	if err := d.Set("gce_zone", flattenAlloydbInstanceGceZone(res["gceZone"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Instance: %s", err)
 	}
@@ -566,10 +563,6 @@ func flattenAlloydbInstanceAnnotations(v interface{}, d *schema.ResourceData, co
 }
 
 func flattenAlloydbInstanceState(v interface{}, d *schema.ResourceData, config *Config) interface{} {
-	return v
-}
-
-func flattenAlloydbInstanceDisplayName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
