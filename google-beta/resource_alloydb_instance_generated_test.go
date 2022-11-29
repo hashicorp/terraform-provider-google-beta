@@ -42,7 +42,7 @@ func TestAccAlloydbInstance_alloydbInstanceBasicExample(t *testing.T) {
 				ResourceName:            "google_alloydb_instance.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"cluster", "instance_id", "reconciling", "update_time"},
+				ImportStateVerifyIgnore: []string{"display_name", "cluster", "instance_id", "reconciling", "update_time"},
 			},
 		},
 	})
