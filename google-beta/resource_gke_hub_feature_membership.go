@@ -334,6 +334,12 @@ func GkeHubFeatureMembershipConfigmanagementPolicyControllerMonitoringSchema() *
 func GkeHubFeatureMembershipMeshSchema() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
+			"control_plane": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Whether to automatically manage Service Mesh control planes. Possible values: CONTROL_PLANE_MANAGEMENT_UNSPECIFIED, AUTOMATIC, MANUAL",
+			},
+
 			"management": {
 				Type:        schema.TypeString,
 				Optional:    true,
@@ -820,7 +826,8 @@ func expandGkeHubFeatureMembershipMesh(o interface{}) *gkehub.FeatureMembershipM
 	}
 	obj := objArr[0].(map[string]interface{})
 	return &gkehub.FeatureMembershipMesh{
-		Management: gkehub.FeatureMembershipMeshManagementEnumRef(obj["management"].(string)),
+		ControlPlane: gkehub.FeatureMembershipMeshControlPlaneEnumRef(obj["control_plane"].(string)),
+		Management:   gkehub.FeatureMembershipMeshManagementEnumRef(obj["management"].(string)),
 	}
 }
 
@@ -829,7 +836,8 @@ func flattenGkeHubFeatureMembershipMesh(obj *gkehub.FeatureMembershipMesh) inter
 		return nil
 	}
 	transformed := map[string]interface{}{
-		"management": obj.Management,
+		"control_plane": obj.ControlPlane,
+		"management":    obj.Management,
 	}
 
 	return []interface{}{transformed}
