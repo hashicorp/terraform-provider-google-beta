@@ -365,6 +365,14 @@ func Provider() *schema.Provider {
 					"GOOGLE_CLOUD_RUN_CUSTOM_ENDPOINT",
 				}, DefaultBasePaths[CloudRunBasePathKey]),
 			},
+			"cloud_run_v2_custom_endpoint": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validateCustomEndpoint,
+				DefaultFunc: schema.MultiEnvDefaultFunc([]string{
+					"GOOGLE_CLOUD_RUN_V2_CUSTOM_ENDPOINT",
+				}, DefaultBasePaths[CloudRunV2BasePathKey]),
+			},
 			"cloud_scheduler_custom_endpoint": {
 				Type:         schema.TypeString,
 				Optional:     true,
@@ -1031,9 +1039,9 @@ func Provider() *schema.Provider {
 	return provider
 }
 
-// Generated resources: 285
+// Generated resources: 286
 // Generated IAM resources: 189
-// Total generated resources: 474
+// Total generated resources: 475
 func ResourceMap() map[string]*schema.Resource {
 	resourceMap, _ := ResourceMapWithErrors()
 	return resourceMap
@@ -1157,6 +1165,7 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_cloud_run_service_iam_binding":                         ResourceIamBinding(CloudRunServiceIamSchema, CloudRunServiceIamUpdaterProducer, CloudRunServiceIdParseFunc),
 			"google_cloud_run_service_iam_member":                          ResourceIamMember(CloudRunServiceIamSchema, CloudRunServiceIamUpdaterProducer, CloudRunServiceIdParseFunc),
 			"google_cloud_run_service_iam_policy":                          ResourceIamPolicy(CloudRunServiceIamSchema, CloudRunServiceIamUpdaterProducer, CloudRunServiceIdParseFunc),
+			"google_cloud_run_v2_job":                                      resourceCloudRunV2Job(),
 			"google_cloud_scheduler_job":                                   resourceCloudSchedulerJob(),
 			"google_cloud_tasks_queue":                                     resourceCloudTasksQueue(),
 			"google_cloud_tasks_queue_iam_binding":                         ResourceIamBinding(CloudTasksQueueIamSchema, CloudTasksQueueIamUpdaterProducer, CloudTasksQueueIdParseFunc),
@@ -1773,6 +1782,7 @@ func providerConfigure(ctx context.Context, d *schema.ResourceData, p *schema.Pr
 	config.CloudIdsBasePath = d.Get("cloud_ids_custom_endpoint").(string)
 	config.CloudIotBasePath = d.Get("cloud_iot_custom_endpoint").(string)
 	config.CloudRunBasePath = d.Get("cloud_run_custom_endpoint").(string)
+	config.CloudRunV2BasePath = d.Get("cloud_run_v2_custom_endpoint").(string)
 	config.CloudSchedulerBasePath = d.Get("cloud_scheduler_custom_endpoint").(string)
 	config.CloudTasksBasePath = d.Get("cloud_tasks_custom_endpoint").(string)
 	config.ComputeBasePath = d.Get("compute_custom_endpoint").(string)
