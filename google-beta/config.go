@@ -199,6 +199,7 @@ type Config struct {
 	CloudIdsBasePath             string
 	CloudIotBasePath             string
 	CloudRunBasePath             string
+	CloudRunV2BasePath           string
 	CloudSchedulerBasePath       string
 	CloudTasksBasePath           string
 	ComputeBasePath              string
@@ -309,6 +310,7 @@ const CloudIdentityBasePathKey = "CloudIdentity"
 const CloudIdsBasePathKey = "CloudIds"
 const CloudIotBasePathKey = "CloudIot"
 const CloudRunBasePathKey = "CloudRun"
+const CloudRunV2BasePathKey = "CloudRunV2"
 const CloudSchedulerBasePathKey = "CloudScheduler"
 const CloudTasksBasePathKey = "CloudTasks"
 const ComputeBasePathKey = "Compute"
@@ -413,6 +415,7 @@ var DefaultBasePaths = map[string]string{
 	CloudIdsBasePathKey:             "https://ids.googleapis.com/v1/",
 	CloudIotBasePathKey:             "https://cloudiot.googleapis.com/v1/",
 	CloudRunBasePathKey:             "https://{{location}}-run.googleapis.com/",
+	CloudRunV2BasePathKey:           "https://run.googleapis.com/v2/",
 	CloudSchedulerBasePathKey:       "https://cloudscheduler.googleapis.com/v1/",
 	CloudTasksBasePathKey:           "https://cloudtasks.googleapis.com/v2/",
 	ComputeBasePathKey:              "https://compute.googleapis.com/compute/beta/",
@@ -1293,6 +1296,7 @@ func ConfigureBasePaths(c *Config) {
 	c.CloudIdsBasePath = DefaultBasePaths[CloudIdsBasePathKey]
 	c.CloudIotBasePath = DefaultBasePaths[CloudIotBasePathKey]
 	c.CloudRunBasePath = DefaultBasePaths[CloudRunBasePathKey]
+	c.CloudRunV2BasePath = DefaultBasePaths[CloudRunV2BasePathKey]
 	c.CloudSchedulerBasePath = DefaultBasePaths[CloudSchedulerBasePathKey]
 	c.CloudTasksBasePath = DefaultBasePaths[CloudTasksBasePathKey]
 	c.ComputeBasePath = DefaultBasePaths[ComputeBasePathKey]
