@@ -1575,6 +1575,10 @@ func nodePoolUpdate(d *schema.ResourceData, meta interface{}, nodePoolInfo *Node
 				if v, ok := upgradeSettingsConfig["max_surge"]; ok {
 					upgradeSettings.MaxSurge = int64(v.(int))
 				}
+				// max_unavailable not be preserved if only max_surge is updated
+				if v, ok := upgradeSettingsConfig["max_unavailable"]; ok {
+					upgradeSettings.MaxUnavailable = int64(v.(int))
+				}
 			}
 
 			if d.HasChange(prefix + "upgrade_settings.0.max_unavailable") {
@@ -1583,6 +1587,10 @@ func nodePoolUpdate(d *schema.ResourceData, meta interface{}, nodePoolInfo *Node
 				}
 				if v, ok := upgradeSettingsConfig["max_unavailable"]; ok {
 					upgradeSettings.MaxUnavailable = int64(v.(int))
+				}
+				// max_surge not be preserved if only max_unavailable is updated
+				if v, ok := upgradeSettingsConfig["max_surge"]; ok {
+					upgradeSettings.MaxSurge = int64(v.(int))
 				}
 			}
 
