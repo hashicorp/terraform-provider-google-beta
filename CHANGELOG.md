@@ -40,8 +40,8 @@ BUG FIXES:
 * alloydb: fixed permdiff on `display_name` of `google_alloydb_instance` ([#4925](https://github.com/hashicorp/terraform-provider-google-beta/pull/4925))
 * compute: fixed a failure in updating `most_disruptive_allowed_action` on `google_compute_per_instance_config` and `google_compute_region_per_instance_config` ([#4898](https://github.com/hashicorp/terraform-provider-google-beta/pull/4898))
 * compute: fixed the error when `metadata` and `machine_type` are updated while `metadata_startup_script` was already provided on `google_compute_instance` ([#4901](https://github.com/hashicorp/terraform-provider-google-beta/pull/4901))
-* container: fixed unable to update `authenticator_groups_config` on `google_container_cluster` ([#4918](https://github.com/hashicorp/terraform-provider-google-beta/pull/4918))
-* container: throw exception if the data source `google_container_cluster` does not exist ([#4900](https://github.com/hashicorp/terraform-provider-google-beta/pull/4900))
+* container: fixed the inability to update `authenticator_groups_config` on `google_container_cluster` ([#4918](https://github.com/hashicorp/terraform-provider-google-beta/pull/4918))
+* container: fixed the data source `google_container_cluster` to return an error if it does not exist ([#4900](https://github.com/hashicorp/terraform-provider-google-beta/pull/4900))
 * sql: fixed `googe_sql_database_instance` to include `backup_configuration` in initial create request ([#4911](https://github.com/hashicorp/terraform-provider-google-beta/pull/4911))
 * storage: fixed permdiff when `website`, `website.main_page_suffix`, `website.not_found_page` are removed on `google_storage_bucket` ([#4899](https://github.com/hashicorp/terraform-provider-google-beta/pull/4899))
 
