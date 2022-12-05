@@ -557,6 +557,14 @@ func Provider() *schema.Provider {
 					"GOOGLE_GAME_SERVICES_CUSTOM_ENDPOINT",
 				}, DefaultBasePaths[GameServicesBasePathKey]),
 			},
+			"gke_backup_custom_endpoint": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validateCustomEndpoint,
+				DefaultFunc: schema.MultiEnvDefaultFunc([]string{
+					"GOOGLE_GKE_BACKUP_CUSTOM_ENDPOINT",
+				}, DefaultBasePaths[GKEBackupBasePathKey]),
+			},
 			"gke_hub_custom_endpoint": {
 				Type:         schema.TypeString,
 				Optional:     true,
@@ -1039,9 +1047,9 @@ func Provider() *schema.Provider {
 	return provider
 }
 
-// Generated resources: 287
+// Generated resources: 288
 // Generated IAM resources: 189
-// Total generated resources: 476
+// Total generated resources: 477
 func ResourceMap() map[string]*schema.Resource {
 	resourceMap, _ := ResourceMapWithErrors()
 	return resourceMap
@@ -1348,6 +1356,7 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_game_services_game_server_deployment":                  resourceGameServicesGameServerDeployment(),
 			"google_game_services_game_server_config":                      resourceGameServicesGameServerConfig(),
 			"google_game_services_game_server_deployment_rollout":          resourceGameServicesGameServerDeploymentRollout(),
+			"google_gke_backup_backup_plan":                                resourceGKEBackupBackupPlan(),
 			"google_gke_hub_membership":                                    resourceGKEHubMembership(),
 			"google_gke_hub_membership_iam_binding":                        ResourceIamBinding(GKEHubMembershipIamSchema, GKEHubMembershipIamUpdaterProducer, GKEHubMembershipIdParseFunc),
 			"google_gke_hub_membership_iam_member":                         ResourceIamMember(GKEHubMembershipIamSchema, GKEHubMembershipIamUpdaterProducer, GKEHubMembershipIdParseFunc),
@@ -1807,6 +1816,7 @@ func providerConfigure(ctx context.Context, d *schema.ResourceData, p *schema.Pr
 	config.FirebaseHostingBasePath = d.Get("firebase_hosting_custom_endpoint").(string)
 	config.FirestoreBasePath = d.Get("firestore_custom_endpoint").(string)
 	config.GameServicesBasePath = d.Get("game_services_custom_endpoint").(string)
+	config.GKEBackupBasePath = d.Get("gke_backup_custom_endpoint").(string)
 	config.GKEHubBasePath = d.Get("gke_hub_custom_endpoint").(string)
 	config.HealthcareBasePath = d.Get("healthcare_custom_endpoint").(string)
 	config.IAM2BasePath = d.Get("iam2_custom_endpoint").(string)
