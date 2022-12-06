@@ -58,9 +58,10 @@ func resourceFirebaseAppleApp() *schema.Resource {
 				Description: `The canonical bundle ID of the Apple app as it would appear in the Apple AppStore.`,
 			},
 			"deletion_policy": {
-				Type:     schema.TypeString,
-				Optional: true,
-				ForceNew: true,
+				Type:             schema.TypeString,
+				Optional:         true,
+				ForceNew:         true,
+				DiffSuppressFunc: emptyOrDefaultStringSuppress("DELETE"),
 				Description: `(Optional) Set to 'ABANDON' to allow the AppleApp to be untracked from terraform state
 rather than deleted upon 'terraform destroy'. This is useful because the AppleApp may be
 serving traffic. Set to 'DELETE' to delete the AppleApp. Default to 'DELETE'.`,
