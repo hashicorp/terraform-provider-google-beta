@@ -5,7 +5,7 @@
 - Documentation: https://www.terraform.io/docs/providers/google/index.html
 - [![Gitter chat](https://badges.gitter.im/hashicorp-terraform/Lobby.png)](https://gitter.im/hashicorp-terraform/Lobby)
 - Mailing list: [Google Groups](http://groups.google.com/group/terraform-tool)
-- Issues have been turned off for this repository. To report a bug, [file an issue in terraform-provider-google repository](https://github.com/hashicorp/terraform-provider-google/issues/new/choose).
+- Issue tracker: [terraform-provider-google](https://github.com/hashicorp/terraform-provider-google/issues/new/choose)
 
 The Terraform Google provider beta is a plugin that allows [Terraform](https://www.terraform.io) to manage resources on Google Cloud Platform. This provider is maintained by the [Terraform team at Google](https://cloudplatform.googleblog.com/2017/03/partnering-on-open-source-Google-and-HashiCorp-engineers-on-managing-GCP-infrastructure.html) and the Terraform team at [HashiCorp](https://www.hashicorp.com/)
 
