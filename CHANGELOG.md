@@ -1,5 +1,29 @@
 ## 4.46.0 (Unreleased)
 
+FEATURES:
+* **New Data Source:** `google_firebase_android_app` ([#4955](https://github.com/hashicorp/terraform-provider-google-beta/pull/4955))
+* **New Resource:** `google_cloud_run_v2_job` ([#4937](https://github.com/hashicorp/terraform-provider-google-beta/pull/4937))
+* **New Resource:** `google_cloud_run_v2_service` ([#4942](https://github.com/hashicorp/terraform-provider-google-beta/pull/4942))
+* **New Resource:** `google_gke_backup_backup_plan` (beta) ([#4948](https://github.com/hashicorp/terraform-provider-google-beta/pull/4948))
+* **New Resource:** google_firebase_storage_bucket ([#4951](https://github.com/hashicorp/terraform-provider-google-beta/pull/4951))
+
+IMPROVEMENTS:
+* `network_services`: added `origin_override_action` and `origin_redirect` to `google_network_services_edge_cache_origin` ([#4936](https://github.com/hashicorp/terraform-provider-google-beta/pull/4936))
+* bigquerydatatransfer: recreate `google_bigquery_data_transfer_config` for Cloud Storage transfers when immutable params `data_path_template` and `destination_table_name_template` are changed ([#4929](https://github.com/hashicorp/terraform-provider-google-beta/pull/4929))
+* compute: Added fields to resource `google_compute_security_policy` to support Cloud Armor bot management ([#4938](https://github.com/hashicorp/terraform-provider-google-beta/pull/4938))
+* container: Added support for concurrent node pool mutations on a cluster. Previously, node pool mutations were restricted to run synchronously clientside. NOTE: While this feature is supported in Terraform from this release onwards, only a limited number of GCP projects will support this behavior initially. The provider will automatically process mutations concurrently as the feature rolls out generally. ([#4947](https://github.com/hashicorp/terraform-provider-google-beta/pull/4947))
+* container: promoted `managed_prometheus` field in google_container_cluster` to GA ([#4934](https://github.com/hashicorp/terraform-provider-google-beta/pull/4934))
+* metastore: added general field `network_config` to `google_dataproc_metastore_service` ([#4952](https://github.com/hashicorp/terraform-provider-google-beta/pull/4952))
+* storage: added support for `autoclass` in `google_storage_bucket` resource ([#4953](https://github.com/hashicorp/terraform-provider-google-beta/pull/4953))
+
+BUG FIXES:
+* alloydb: made `machine_config.cpu_count` updatable on `google_alloydb_instance` ([#4930](https://github.com/hashicorp/terraform-provider-google-beta/pull/4930))
+* cloud composer: fixed a crash when updating `ip_allocation_policy` of `google_composer_environment` ([#4956](https://github.com/hashicorp/terraform-provider-google-beta/pull/4956))
+* container: fixed GKE permadiff/thrashing when `update_settings. max_surge` or `update_settings. max_unavailable` values are updating on `google_container_node_pool` ([#4945](https://github.com/hashicorp/terraform-provider-google-beta/pull/4945))
+* datastream: fixed `google_datastream_private_connection` ignoring failures during creation ([#4939](https://github.com/hashicorp/terraform-provider-google-beta/pull/4939))
+* firebase: fixed permadiff on the field `deletion_policy` of `google_firebase_apple_app` ([#4954](https://github.com/hashicorp/terraform-provider-google-beta/pull/4954))
+* kms: fixed issues with deleting crypto key versions in states other than ENABLED ([#4943](https://github.com/hashicorp/terraform-provider-google-beta/pull/4943))
+
 ## 4.45.0 (December 5, 2022)
 
 FEATURES:
