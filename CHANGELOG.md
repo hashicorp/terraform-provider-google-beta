@@ -8,7 +8,7 @@ FEATURES:
 * **New Resource:** `google_firebase_storage_bucket` ([#4951](https://github.com/hashicorp/terraform-provider-google-beta/pull/4951))
 
 IMPROVEMENTS:
-* `network_services`: added `origin_override_action` and `origin_redirect` to `google_network_services_edge_cache_origin` ([#4936](https://github.com/hashicorp/terraform-provider-google-beta/pull/4936))
+* network_services: added `origin_override_action` and `origin_redirect` to `google_network_services_edge_cache_origin` ([#4936](https://github.com/hashicorp/terraform-provider-google-beta/pull/4936))
 * bigquerydatatransfer: recreate `google_bigquery_data_transfer_config` for Cloud Storage transfers when immutable params `data_path_template` and `destination_table_name_template` are changed ([#4929](https://github.com/hashicorp/terraform-provider-google-beta/pull/4929))
 * compute: added fields to resource `google_compute_security_policy` to support Cloud Armor bot management ([#4938](https://github.com/hashicorp/terraform-provider-google-beta/pull/4938))
 * container: added support for concurrent node pool mutations on a cluster. Previously, node pool mutations were restricted to run synchronously clientside. NOTE: While this feature is supported in Terraform from this release onwards, only a limited number of GCP projects will support this behavior initially. The provider will automatically process mutations concurrently as the feature rolls out generally. ([#4947](https://github.com/hashicorp/terraform-provider-google-beta/pull/4947))
