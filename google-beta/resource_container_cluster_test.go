@@ -3702,6 +3702,9 @@ resource "google_container_cluster" "primary" {
     gce_persistent_disk_csi_driver_config {
       enabled = false
     }
+	gke_backup_agent_config {
+	  enabled = false
+	}
     istio_config {
       disabled = true
       auth     = "AUTH_MUTUAL_TLS"
@@ -3710,9 +3713,6 @@ resource "google_container_cluster" "primary" {
 	  enabled = false
 	}
 	config_connector_config {
-	  enabled = false
-	}
-    gke_backup_agent_config {
 	  enabled = false
 	}
   }
@@ -3761,6 +3761,9 @@ resource "google_container_cluster" "primary" {
     gce_persistent_disk_csi_driver_config {
       enabled = true
     }
+	gke_backup_agent_config {
+	  enabled = true
+	}
     istio_config {
       disabled = false
       auth     = "AUTH_NONE"
@@ -3769,9 +3772,6 @@ resource "google_container_cluster" "primary" {
 	  enabled = true
 	}
 	config_connector_config {
-	  enabled = true
-	}
-	gke_backup_agent_config {
 	  enabled = true
 	}
   }
