@@ -997,6 +997,7 @@ func Provider() *schema.Provider {
 			"google_kms_secret_ciphertext":                        dataSourceGoogleKmsSecretCiphertext(),
 			"google_kms_secret_asymmetric":                        dataSourceGoogleKmsSecretAsymmetric(),
 			"google_firebase_android_app":                         dataSourceGoogleFirebaseAndroidApp(),
+			"google_firebase_apple_app":                           dataSourceGoogleFirebaseAppleApp(),
 			"google_firebase_web_app":                             dataSourceGoogleFirebaseWebApp(),
 			"google_firebase_web_app_config":                      dataSourceGoogleFirebaseWebappConfig(),
 			"google_folder":                                       dataSourceGoogleFolder(),
