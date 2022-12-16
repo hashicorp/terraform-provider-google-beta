@@ -1,5 +1,35 @@
 ## 4.47.0 (Unreleased)
 
+UNKNOWN CHANGELOG TYPE:
+* Bigtable: table deletion protection support ([#4975](https://github.com/hashicorp/terraform-provider-google-beta/pull/4975))
+* Fix user-agent bug due to goreleaser ldflags not overriding value in release process ([#4957](https://github.com/hashicorp/terraform-provider-google-beta/pull/4957))
+* Update README to explain where to file issues ([#4961](https://github.com/hashicorp/terraform-provider-google-beta/pull/4961))
+NOTES:
+* sql: fixed an issue where `google_sql_database` was abandoned by default as of version `4.45.0`. Users who have upgraded to `4.45.0` or `4.46.0` will see a diff when running their next `terraform apply` after upgrading this version, indicating the `deletion_policy` field's value has changed from `"ABANDON"` to `"DELETE"`. This will create a no-op call against the API, but can otherwise be safely applied. ([#4972](https://github.com/hashicorp/terraform-provider-google-beta/pull/4972))
+
+FEATURES:
+* **New Resource:** `google_alloydb_backup` ([#4959](https://github.com/hashicorp/terraform-provider-google-beta/pull/4959))
+* **New Resource:** `google_filestore_backup` ([#4963](https://github.com/hashicorp/terraform-provider-google-beta/pull/4963))
+
+IMPROVEMENTS:
+* compute: Made subnetwork ipv6_access_type field updatable ([#4965](https://github.com/hashicorp/terraform-provider-google-beta/pull/4965))
+* container: added `auto_provisioning_defaults.cluster_autoscaling.upgrade_settings` in `google_container_cluster` ([#4958](https://github.com/hashicorp/terraform-provider-google-beta/pull/4958))
+* container: added `gateway_api_config` block to `google_container_cluster` resource for supporting the gke gateway api controller ([#4976](https://github.com/hashicorp/terraform-provider-google-beta/pull/4976))
+* container: promoted `gke_backup_agent_config` in `google_container_cluster` to GA ([#4970](https://github.com/hashicorp/terraform-provider-google-beta/pull/4970))
+* container: promoted `min_cpu_platform` in `google_container_cluster` to GA ([#4958](https://github.com/hashicorp/terraform-provider-google-beta/pull/4958))
+* datacatalog: added update support for `fields` in `google_data_catalog_tag_template` ([#4968](https://github.com/hashicorp/terraform-provider-google-beta/pull/4968))
+* dataproc: added support for `SPOT` option for `preemptibility` in `google_dataproc_cluster` ([#4974](https://github.com/hashicorp/terraform-provider-google-beta/pull/4974))
+* dataproc: added support for `dataproc_metric_config` in `google_dataproc_cluster` ([#4974](https://github.com/hashicorp/terraform-provider-google-beta/pull/4974))
+* dataproc: added support for `node_group_affinity` in `google_dataproc_cluster` ([#4974](https://github.com/hashicorp/terraform-provider-google-beta/pull/4974))
+* dataproc: added support for `reservation_affinity` in `google_dataproc_cluster` ([#4974](https://github.com/hashicorp/terraform-provider-google-beta/pull/4974))
+* iam: Added plan-time validation for IAM members ([#4960](https://github.com/hashicorp/terraform-provider-google-beta/pull/4960))
+* logging: added `bucket_name` argument to `google_logging_metric` ([#4964](https://github.com/hashicorp/terraform-provider-google-beta/pull/4964))
+* logging: made `metric_descriptor` argument optional for `google_logging_metric` ([#4971](https://github.com/hashicorp/terraform-provider-google-beta/pull/4971))
+
+BUG FIXES:
+* cloud composer: fixed a crash when updating `ip_allocation_policy` of `google_composer_environment` ([#4956](https://github.com/hashicorp/terraform-provider-google-beta/pull/4956))
+* sql: fixed an issue where `google_sql_database` was abandoned by default as of version `4.45.0`. Users who have upgraded to `4.45.0` or `4.46.0` will see a diff when running their next `terraform apply` after upgrading this version, indicating the `deletion_policy` field's value has changed from `"ABANDON"` to `"DELETE"`. This will create a no-op call against the API, but can otherwise be safely applied. ([#4972](https://github.com/hashicorp/terraform-provider-google-beta/pull/4972))
+
 ## 4.46.0 (December 12, 2022)
 
 FEATURES:
