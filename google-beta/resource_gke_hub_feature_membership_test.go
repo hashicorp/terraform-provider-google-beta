@@ -105,7 +105,8 @@ resource "google_gke_hub_feature_membership" "feature_member_1" {
     config_sync {
       source_format = "hierarchy"
       git {
-        sync_repo = "https://github.com/GoogleCloudPlatform/magic-modules"
+        sync_repo   = "https://github.com/GoogleCloudPlatform/magic-modules"
+        secret_type = "none"
       }
     }
   }
@@ -122,7 +123,8 @@ resource "google_gke_hub_feature_membership" "feature_member_2" {
     config_sync {
       source_format = "hierarchy"
       git {
-        sync_repo = "https://github.com/terraform-providers/terraform-provider-google"
+        sync_repo   = "https://github.com/terraform-providers/terraform-provider-google"
+        secret_type = "none"
       }
     }
   }
@@ -155,7 +157,8 @@ resource "google_gke_hub_feature_membership" "feature_member_1" {
     config_sync {
       source_format = "hierarchy"
       git {
-        sync_repo = "https://github.com/GoogleCloudPlatform/magic-modules"
+        sync_repo   = "https://github.com/GoogleCloudPlatform/magic-modules"
+        secret_type = "none"
       }
     }
   }
@@ -172,7 +175,8 @@ resource "google_gke_hub_feature_membership" "feature_member_2" {
     config_sync {
       source_format = "hierarchy"
       git {
-        sync_repo = "https://github.com/terraform-providers/terraform-provider-google-beta"
+        sync_repo   = "https://github.com/terraform-providers/terraform-provider-google-beta"
+        secret_type = "none"
       }
     }
     policy_controller {
@@ -211,7 +215,8 @@ resource "google_gke_hub_feature_membership" "feature_member_2" {
     config_sync {
       source_format = "unstructured"
       git {
-        sync_repo = "https://github.com/terraform-providers/terraform-provider-google-beta"
+        sync_repo   = "https://github.com/terraform-providers/terraform-provider-google-beta"
+        secret_type = "none"
       }
     }
     policy_controller {
@@ -239,7 +244,8 @@ resource "google_gke_hub_feature_membership" "feature_member_3" {
     config_sync {
       source_format = "hierarchy"
       git {
-        sync_repo = "https://github.com/hashicorp/terraform"
+        sync_repo   = "https://github.com/hashicorp/terraform"
+        secret_type = "none"
       }
     }
     policy_controller {
@@ -423,11 +429,12 @@ resource "google_gke_hub_feature_membership" "feature_member" {
     version = "1.12.0"
     config_sync {
       git {
-        sync_repo = "https://github.com/hashicorp/terraform"
-        https_proxy = "https://example.com"
-        policy_dir = "google/"
-        sync_branch = "some-branch"
-        sync_rev = "v3.60.0"
+        sync_repo      = "https://github.com/hashicorp/terraform"
+        https_proxy    = "https://example.com"
+        policy_dir     = "google/"
+        secret_type    = "none"
+        sync_branch    = "some-branch"
+        sync_rev       = "v3.60.0"
         sync_wait_secs = "30"
       }
     }
@@ -489,11 +496,12 @@ resource "google_gke_hub_feature_membership" "feature_member" {
     version = "1.12.0"
     config_sync {
       git {
-        sync_repo = "https://github.com/hashicorp/terraform"
-        https_proxy = "https://example.com"
-        policy_dir = "google/"
-        sync_branch = "some-branch"
-        sync_rev = "v3.60.0"
+        sync_repo      = "https://github.com/hashicorp/terraform"
+        https_proxy    = "https://example.com"
+        policy_dir     = "google/"
+        secret_type    = "none"
+        sync_branch    = "some-branch"
+        sync_rev       = "v3.60.0"
         sync_wait_secs = "30"
       }
       prevent_drift = true
@@ -562,7 +570,8 @@ resource "google_gke_hub_feature_membership" "feature_member" {
     version = "1.12.0"
     config_sync {
       git {
-        sync_repo = "https://github.com/hashicorp/terraform"
+        sync_repo   = "https://github.com/hashicorp/terraform"
+        secret_type = "none"
       }
     }
   }
