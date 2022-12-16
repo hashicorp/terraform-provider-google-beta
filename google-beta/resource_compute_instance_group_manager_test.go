@@ -367,6 +367,7 @@ func TestAccInstanceGroupManager_stateful(t *testing.T) {
 	target := fmt.Sprintf("tf-test-igm-%s", randString(t, 10))
 	igm := fmt.Sprintf("tf-test-igm-%s", randString(t, 10))
 	hck := fmt.Sprintf("tf-test-igm-%s", randString(t, 10))
+	network := fmt.Sprintf("tf-test-igm-%s", randString(t, 10))
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -374,7 +375,7 @@ func TestAccInstanceGroupManager_stateful(t *testing.T) {
 		CheckDestroy: testAccCheckInstanceGroupManagerDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccInstanceGroupManager_stateful(template, target, igm, hck),
+				Config: testAccInstanceGroupManager_stateful(network, template, target, igm, hck),
 			},
 			{
 				ResourceName:            "google_compute_instance_group_manager.igm-basic",
@@ -383,7 +384,7 @@ func TestAccInstanceGroupManager_stateful(t *testing.T) {
 				ImportStateVerifyIgnore: []string{"status"},
 			},
 			{
-				Config: testAccInstanceGroupManager_statefulUpdated(template, target, igm, hck),
+				Config: testAccInstanceGroupManager_statefulUpdated(network, template, target, igm, hck),
 			},
 			{
 				ResourceName:            "google_compute_instance_group_manager.igm-basic",
@@ -1349,11 +1350,15 @@ resource "google_compute_instance_group_manager" "igm-basic" {
 `, primaryTemplate, canaryTemplate, igm)
 }
 
-func testAccInstanceGroupManager_stateful(template, target, igm, hck string) string {
+func testAccInstanceGroupManager_stateful(network, template, target, igm, hck string) string {
 	return fmt.Sprintf(`
 data "google_compute_image" "my_image" {
   family  = "debian-11"
   project = "debian-cloud"
+}
+
+resource "google_compute_network" "igm-basic" {
+  name = "%s"
 }
 
 resource "google_compute_instance_template" "igm-basic" {
@@ -1382,6 +1387,10 @@ resource "google_compute_instance_template" "igm-basic" {
 
   network_interface {
     network = "default"
+  }
+
+  network_interface {
+    network = google_compute_network.igm-basic.self_link
   }
 
   service_account {
@@ -1410,6 +1419,15 @@ resource "google_compute_instance_group_manager" "igm-basic" {
     device_name = "my-stateful-disk"
     delete_rule = "ON_PERMANENT_INSTANCE_DELETION"
   }
+  stateful_internal_ip {
+    interface_name = "nic0"
+    delete_rule = "ON_PERMANENT_INSTANCE_DELETION"
+  }
+
+  stateful_external_ip {
+    interface_name = "nic0"
+    delete_rule = "NEVER"
+  }
 }
 
 resource "google_compute_http_health_check" "zero" {
@@ -1418,14 +1436,18 @@ resource "google_compute_http_health_check" "zero" {
   check_interval_sec = 1
   timeout_sec        = 1
 }
-`, template, target, igm, hck)
+`, network, template, target, igm, hck)
 }
 
-func testAccInstanceGroupManager_statefulUpdated(template, target, igm, hck string) string {
+func testAccInstanceGroupManager_statefulUpdated(network, template, target, igm, hck string) string {
 	return fmt.Sprintf(`
 data "google_compute_image" "my_image" {
   family  = "debian-11"
   project = "debian-cloud"
+}
+
+resource "google_compute_network" "igm-basic" {
+  name = "%s"
 }
 
 resource "google_compute_instance_template" "igm-basic" {
@@ -1454,6 +1476,10 @@ resource "google_compute_instance_template" "igm-basic" {
 
   network_interface {
     network = "default"
+  }
+
+  network_interface {
+    network = google_compute_network.igm-basic.self_link
   }
 
   service_account {
@@ -1483,9 +1509,14 @@ resource "google_compute_instance_group_manager" "igm-basic" {
     delete_rule = "NEVER"
   }
 
-  stateful_disk {
-    device_name = "my-stateful-disk2"
+  stateful_internal_ip {
+    interface_name = "nic0"
     delete_rule = "ON_PERMANENT_INSTANCE_DELETION"
+  }
+
+  stateful_external_ip {
+    interface_name = "nic0"
+    delete_rule = "NEVER"
   }
 }
 
@@ -1495,7 +1526,7 @@ resource "google_compute_http_health_check" "zero" {
   check_interval_sec = 1
   timeout_sec        = 1
 }
-`, template, target, igm, hck)
+`, network, template, target, igm, hck)
 }
 
 func testAccInstanceGroupManager_waitForStatus(template, target, igm, perInstanceConfig string) string {
