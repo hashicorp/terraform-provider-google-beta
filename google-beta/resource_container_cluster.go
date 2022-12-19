@@ -83,6 +83,7 @@ var (
 	}
 
 	forceNewClusterNodeConfigFields = []string{
+		"labels",
 		"workload_metadata_config",
 	}
 
