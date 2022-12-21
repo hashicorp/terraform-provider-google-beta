@@ -15,7 +15,7 @@ import (
 
 	"google.golang.org/api/googleapi"
 
-	dataproc "google.golang.org/api/dataproc/v1beta2"
+	"google.golang.org/api/dataproc/v1"
 )
 
 func TestDataprocExtractInitTimeout(t *testing.T) {
@@ -670,8 +670,8 @@ func TestAccDataprocCluster_withLabels(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckDataprocClusterExists(t, "google_dataproc_cluster.with_labels", &cluster),
 
-					// We only provide one, but GCP adds three, so expect 4.
-					resource.TestCheckResourceAttr("google_dataproc_cluster.with_labels", "labels.%", "4"),
+					// We only provide one, but GCP adds three and we added goog-dataproc-autozone internally, so expect 5.
+					resource.TestCheckResourceAttr("google_dataproc_cluster.with_labels", "labels.%", "5"),
 					resource.TestCheckResourceAttr("google_dataproc_cluster.with_labels", "labels.key1", "value1"),
 				),
 			},
@@ -1087,6 +1087,19 @@ resource "google_dataproc_cluster" "basic" {
   region = "us-central1"
 }
 `, rnd)
+}
+
+func testAccCheckDataprocGkeClusterNodePoolsHaveRoles(cluster *dataproc.Cluster, roles ...string) func(s *terraform.State) error {
+	return func(s *terraform.State) error {
+
+		for _, nodePool := range cluster.VirtualClusterConfig.KubernetesClusterConfig.GkeClusterConfig.NodePoolTarget {
+			if reflect.DeepEqual(roles, nodePool.Roles) {
+				return nil
+			}
+		}
+
+		return fmt.Errorf("Cluster NodePools does not contain expected roles : %v", roles)
+	}
 }
 
 func testAccDataprocCluster_withAccelerators(rnd, acceleratorType, zone string) string {
