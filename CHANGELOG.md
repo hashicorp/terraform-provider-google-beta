@@ -27,7 +27,7 @@ IMPROVEMENTS:
 * dlp: Added field `deidentify_config.record_transformations.record_suppressions` to `google_data_loss_prevention_deidentify_template` ([#5004](https://github.com/hashicorp/terraform-provider-google-beta/pull/5004))
 * sql: made `settings.sql_server_audit_config.bucket` field in `google_sql_database_instance` to be optional. ([#4988](https://github.com/hashicorp/terraform-provider-google-beta/pull/4988))
 * sql: added [new deletion protection](https://cloud.google.com/sql/docs/mysql/deletion-protection) feature `deletion_protection_enabled` to guard against deletion from all surfaces. ([#4987](https://github.com/hashicorp/terraform-provider-google-beta/pull/4987))
-* storagetransfer: made `storage_transfer_job schedule` field mutable ([#4993](https://github.com/hashicorp/terraform-provider-google-beta/pull/4993))
+* storagetransfer: made `storage_transfer_job` `schedule` field mutable ([#4993](https://github.com/hashicorp/terraform-provider-google-beta/pull/4993))
 
 BUG FIXES:
 * compute: fixed `google_compute_router_nat` so that `enable_dynamic_port_allocation` can be set to false ([#4982](https://github.com/hashicorp/terraform-provider-google-beta/pull/4982))
