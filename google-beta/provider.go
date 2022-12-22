@@ -933,6 +933,7 @@ func Provider() *schema.Provider {
 			"google_bigquery_default_service_account":             dataSourceGoogleBigqueryDefaultServiceAccount(),
 			"google_client_config":                                dataSourceGoogleClientConfig(),
 			"google_client_openid_userinfo":                       dataSourceGoogleClientOpenIDUserinfo(),
+			"google_cloudbuild_trigger":                           dataSourceGoogleCloudBuildTrigger(),
 			"google_cloudfunctions_function":                      dataSourceGoogleCloudFunctionsFunction(),
 			"google_cloudfunctions2_function":                     dataSourceGoogleCloudFunctions2Function(),
 			"google_cloud_asset_resources_search_all":             dataSourceGoogleCloudAssetResourcesSearchAll(),
