@@ -220,6 +220,7 @@ type Config struct {
 	EssentialContactsBasePath    string
 	FilestoreBasePath            string
 	FirebaseBasePath             string
+	FirebaseDatabaseBasePath     string
 	FirebaseHostingBasePath      string
 	FirebaseStorageBasePath      string
 	FirestoreBasePath            string
@@ -333,6 +334,7 @@ const DocumentAIBasePathKey = "DocumentAI"
 const EssentialContactsBasePathKey = "EssentialContacts"
 const FilestoreBasePathKey = "Filestore"
 const FirebaseBasePathKey = "Firebase"
+const FirebaseDatabaseBasePathKey = "FirebaseDatabase"
 const FirebaseHostingBasePathKey = "FirebaseHosting"
 const FirebaseStorageBasePathKey = "FirebaseStorage"
 const FirestoreBasePathKey = "Firestore"
@@ -440,6 +442,7 @@ var DefaultBasePaths = map[string]string{
 	EssentialContactsBasePathKey:    "https://essentialcontacts.googleapis.com/v1/",
 	FilestoreBasePathKey:            "https://file.googleapis.com/v1beta1/",
 	FirebaseBasePathKey:             "https://firebase.googleapis.com/v1beta1/",
+	FirebaseDatabaseBasePathKey:     "https://firebasedatabase.googleapis.com/v1beta/",
 	FirebaseHostingBasePathKey:      "https://firebasehosting.googleapis.com/v1beta1/",
 	FirebaseStorageBasePathKey:      "https://firebasestorage.googleapis.com/v1beta/",
 	FirestoreBasePathKey:            "https://firestore.googleapis.com/v1/",
@@ -1323,6 +1326,7 @@ func ConfigureBasePaths(c *Config) {
 	c.EssentialContactsBasePath = DefaultBasePaths[EssentialContactsBasePathKey]
 	c.FilestoreBasePath = DefaultBasePaths[FilestoreBasePathKey]
 	c.FirebaseBasePath = DefaultBasePaths[FirebaseBasePathKey]
+	c.FirebaseDatabaseBasePath = DefaultBasePaths[FirebaseDatabaseBasePathKey]
 	c.FirebaseHostingBasePath = DefaultBasePaths[FirebaseHostingBasePathKey]
 	c.FirebaseStorageBasePath = DefaultBasePaths[FirebaseStorageBasePathKey]
 	c.FirestoreBasePath = DefaultBasePaths[FirestoreBasePathKey]
