@@ -18,7 +18,6 @@ import (
 	"fmt"
 	"log"
 	"reflect"
-	"regexp"
 	"strings"
 	"time"
 
@@ -332,12 +331,6 @@ func resourceDataCatalogTaxonomyImport(d *schema.ResourceData, meta interface{})
 
 	name := d.Get("name").(string)
 	d.SetId(name)
-
-	re := regexp.MustCompile("projects/(.+)/(?:locations|regions)/(.+)/taxonomies/(.+)")
-	if matches := re.FindStringSubmatch(name); matches != nil {
-		d.Set("project", matches[1])
-		d.Set("locations", matches[2])
-	}
 
 	return []*schema.ResourceData{d}, nil
 }
