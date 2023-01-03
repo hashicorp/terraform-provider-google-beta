@@ -405,6 +405,14 @@ func Provider() *schema.Provider {
 					"GOOGLE_CONTAINER_ANALYSIS_CUSTOM_ENDPOINT",
 				}, DefaultBasePaths[ContainerAnalysisBasePathKey]),
 			},
+			"container_attached_custom_endpoint": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validateCustomEndpoint,
+				DefaultFunc: schema.MultiEnvDefaultFunc([]string{
+					"GOOGLE_CONTAINER_ATTACHED_CUSTOM_ENDPOINT",
+				}, DefaultBasePaths[ContainerAttachedBasePathKey]),
+			},
 			"data_catalog_custom_endpoint": {
 				Type:         schema.TypeString,
 				Optional:     true,
@@ -1072,9 +1080,9 @@ func Provider() *schema.Provider {
 	return provider
 }
 
-// Generated resources: 294
+// Generated resources: 295
 // Generated IAM resources: 192
-// Total generated resources: 486
+// Total generated resources: 487
 func ResourceMap() map[string]*schema.Resource {
 	resourceMap, _ := ResourceMapWithErrors()
 	return resourceMap
@@ -1308,6 +1316,7 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_compute_target_grpc_proxy":                             resourceComputeTargetGrpcProxy(),
 			"google_container_analysis_note":                               resourceContainerAnalysisNote(),
 			"google_container_analysis_occurrence":                         resourceContainerAnalysisOccurrence(),
+			"google_container_attached_cluster":                            resourceContainerAttachedCluster(),
 			"google_data_catalog_entry_group":                              resourceDataCatalogEntryGroup(),
 			"google_data_catalog_entry_group_iam_binding":                  ResourceIamBinding(DataCatalogEntryGroupIamSchema, DataCatalogEntryGroupIamUpdaterProducer, DataCatalogEntryGroupIdParseFunc),
 			"google_data_catalog_entry_group_iam_member":                   ResourceIamMember(DataCatalogEntryGroupIamSchema, DataCatalogEntryGroupIamUpdaterProducer, DataCatalogEntryGroupIdParseFunc),
@@ -1831,6 +1840,7 @@ func providerConfigure(ctx context.Context, d *schema.ResourceData, p *schema.Pr
 	config.CloudTasksBasePath = d.Get("cloud_tasks_custom_endpoint").(string)
 	config.ComputeBasePath = d.Get("compute_custom_endpoint").(string)
 	config.ContainerAnalysisBasePath = d.Get("container_analysis_custom_endpoint").(string)
+	config.ContainerAttachedBasePath = d.Get("container_attached_custom_endpoint").(string)
 	config.DataCatalogBasePath = d.Get("data_catalog_custom_endpoint").(string)
 	config.DataformBasePath = d.Get("dataform_custom_endpoint").(string)
 	config.DataFusionBasePath = d.Get("data_fusion_custom_endpoint").(string)
