@@ -3751,14 +3751,14 @@ resource "google_container_cluster" "primary" {
 	gke_backup_agent_config {
 	  enabled = false
 	}
+	config_connector_config {
+	  enabled = false
+	}
     istio_config {
       disabled = true
       auth     = "AUTH_MUTUAL_TLS"
     }
     kalm_config {
-	  enabled = false
-	}
-	config_connector_config {
 	  enabled = false
 	}
   }
@@ -3810,14 +3810,14 @@ resource "google_container_cluster" "primary" {
 	gke_backup_agent_config {
 	  enabled = true
 	}
+	config_connector_config {
+	  enabled = true
+	}
     istio_config {
       disabled = false
       auth     = "AUTH_NONE"
     }
 	kalm_config {
-	  enabled = true
-	}
-	config_connector_config {
 	  enabled = true
 	}
   }
