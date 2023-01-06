@@ -30,7 +30,7 @@ IMPROVEMENTS:
 * dataproc: added support for `SPOT` option for `preemptibility` in `google_dataproc_cluster` ([#5024](https://github.com/hashicorp/terraform-provider-google-beta/pull/5024))
 * dlp: added field `deidentify_config.record_transformations.field_transformations` to `google_data_loss_prevention_deidentify_template` ([#4996](https://github.com/hashicorp/terraform-provider-google-beta/pull/4996))
 * dlp: added field `deidentify_config.record_transformations.record_suppressions` to `google_data_loss_prevention_deidentify_template` ([#5004](https://github.com/hashicorp/terraform-provider-google-beta/pull/5004))
-* dlp: added `version` field to `data_loss_prevention_inspect_template` resource ([#5032](https://github.com/hashicorp/terraform-provider-google-beta/pull/5032))
+* dlp: added `version` field to `google_data_loss_prevention_inspect_template` resource ([#5032](https://github.com/hashicorp/terraform-provider-google-beta/pull/5032))
 * osconfig: added support for `skip_await_rollout` in `google_os_config_os_policy_assignment` ([#5026](https://github.com/hashicorp/terraform-provider-google-beta/pull/5026))
 * sql: added [new deletion protection](https://cloud.google.com/sql/docs/mysql/deletion-protection) feature `deletion_protection_enabled` in `google_sql_database_instance` to guard against deletion from all surfaces ([#4987](https://github.com/hashicorp/terraform-provider-google-beta/pull/4987))
 * sql: made `settings.sql_server_audit_config.bucket` field in `google_sql_database_instance` to be optional. ([#4988](https://github.com/hashicorp/terraform-provider-google-beta/pull/4988))
@@ -39,8 +39,8 @@ IMPROVEMENTS:
 BUG FIXES:
 * bigquery: fixed a permadiff on `labels` of `google_bigquery_dataset` when it is referenced in `google_dataplex_asset` ([#5022](https://github.com/hashicorp/terraform-provider-google-beta/pull/5022))
 * compute: fixed an issue where `enable_dynamic_port_allocation` was not able to set to `false` in `google_compute_router_nat` ([#4982](https://github.com/hashicorp/terraform-provider-google-beta/pull/4982))
-* cloudidentity: fixed an issue where where plan would fail when `cloud_identity_group_membership` had been removed outside terraform ([#5020](https://github.com/hashicorp/terraform-provider-google-beta/pull/5020))
-* identityplatform: fixed issues with `identity_platform_config` creation  ([#5005](https://github.com/hashicorp/terraform-provider-google-beta/pull/5005))
+* cloudidentity: fixed an issue where where plan would fail when `google_cloud_identity_group_membership` had been removed outside terraform ([#5020](https://github.com/hashicorp/terraform-provider-google-beta/pull/5020))
+* identityplatform: fixed issues with `google_identity_platform_config` creation  ([#5005](https://github.com/hashicorp/terraform-provider-google-beta/pull/5005))
 * resourcemanager: fixed the `google_project` datasource silently returning empty results when the project was not found or not in the ACTIVE state. Now, an error will be surfaced instead. ([#5029](https://github.com/hashicorp/terraform-provider-google-beta/pull/5029))
 * sql: fixed `sql_database_instance` leaking root users ([#4991](https://github.com/hashicorp/terraform-provider-google-beta/pull/4991))
 
