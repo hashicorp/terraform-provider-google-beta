@@ -1046,7 +1046,7 @@ func containerNodePoolTaintSuppress(k, old, new string, d *schema.ResourceData) 
 		}
 		if _, ok := taintSet[taint]; ok {
 			delete(taintSet, taint)
-		} else if !strings.HasPrefix(taint.Key, "sandbox.gke.io/") {
+		} else if !strings.HasPrefix(taint.Key, "sandbox.gke.io/") && taint.Key != "kubernetes.io/arch" {
 			// User-provided taint removed in new configuration.
 			return false
 		}
