@@ -1,8 +1,5 @@
 ## 4.48.0 (Unreleased)
 
-UNKNOWN CHANGELOG TYPE:
-* compute: added stateful ip fields `stateful_internal_ip` and `stateful_external_ip` to `google_compute_instance_group_manager` resource ([#4992](https://github.com/hashicorp/terraform-provider-google-beta/pull/4992))
-
 FEATURES:
 * **New Data Source:** `google_beyondcorp_app_connection` ([#5025](https://github.com/hashicorp/terraform-provider-google-beta/pull/5025))
 * **New Data Source:** `google_beyondcorp_app_connector` ([#5008](https://github.com/hashicorp/terraform-provider-google-beta/pull/5008))
