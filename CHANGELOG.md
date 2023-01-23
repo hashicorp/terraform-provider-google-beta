@@ -1,5 +1,39 @@
-## 4.50.0 (Unreleased)
+## 4.51.0 (Unreleased)
+
+## 4.50.0 (January 23, 2023)
+
+FEATURES:
+* **New Data Source:** `google_compute_network_peering` ([#5092](https://github.com/hashicorp/terraform-provider-google-beta/pull/5092))
+* **New Data Source:** `google_compute_router_nat` ([#5091](https://github.com/hashicorp/terraform-provider-google-beta/pull/5091))
+* **New Resource:** `google_cloud_run_v2_job_iam_binding` ([#5099](https://github.com/hashicorp/terraform-provider-google-beta/pull/5099))
+* **New Resource:** `google_cloud_run_v2_job_iam_member` ([#5099](https://github.com/hashicorp/terraform-provider-google-beta/pull/5099))
+* **New Resource:** `google_cloud_run_v2_job_iam_policy` ([#5099](https://github.com/hashicorp/terraform-provider-google-beta/pull/5099))
+* **New Resource:** `google_cloud_run_v2_service_iam_binding` ([#5099](https://github.com/hashicorp/terraform-provider-google-beta/pull/5099))
+* **New Resource:** `google_cloud_run_v2_service_iam_member` ([#5099](https://github.com/hashicorp/terraform-provider-google-beta/pull/5099))
+* **New Resource:** `google_cloud_run_v2_service_iam_policy` ([#5099](https://github.com/hashicorp/terraform-provider-google-beta/pull/5099))
+* **New Resource:** `google_gke_backup_backup_plan_iam_binding` ([#5107](https://github.com/hashicorp/terraform-provider-google-beta/pull/5107))
+* **New Resource:** `google_gke_backup_backup_plan_iam_member` ([#5107](https://github.com/hashicorp/terraform-provider-google-beta/pull/5107))
+* **New Resource:** `google_gke_backup_backup_plan_iam_policy` ([#5107](https://github.com/hashicorp/terraform-provider-google-beta/pull/5107))
+
+IMPROVEMENTS:
+* bigquery_table - added `reference_file_schema_uri` ([#5100](https://github.com/hashicorp/terraform-provider-google-beta/pull/5100))
+* billingbudget: made fields `credit_types` and `subaccounts` updatable for `google_billing_budget` ([#5087](https://github.com/hashicorp/terraform-provider-google-beta/pull/5087))
+* cloudrunV2: added `annotations` to `CloudRunV2_service` resource ([#5108](https://github.com/hashicorp/terraform-provider-google-beta/pull/5108))
+* composer: added `recovery_config` in `google_composer_environment` resource ([#5105](https://github.com/hashicorp/terraform-provider-google-beta/pull/5105))
+* compute: added support for 'edge_security_policy' field to 'google_compute_backend_service' resource. ([#5101](https://github.com/hashicorp/terraform-provider-google-beta/pull/5101))
+* compute: added `max_run_duration` field to `google_compute_instance` and `google_compute_instance_template` resource (beta) ([#5096](https://github.com/hashicorp/terraform-provider-google-beta/pull/5096))
+* dataproc: added support for `dataproc_metric_config` to resource `google_dataproc_cluster` ([#5093](https://github.com/hashicorp/terraform-provider-google-beta/pull/5093))
+* dlp: added all subfields under `deidentify_template.record_transformations.field_transformations.primitive_transformation` to `google_data_loss_prevention_deidentify_template` ([#5104](https://github.com/hashicorp/terraform-provider-google-beta/pull/5104))
+* sql: changed the default create timeout of `google_sql_database_instance` to 40m from 30m ([#5094](https://github.com/hashicorp/terraform-provider-google-beta/pull/5094))
+
+BUG FIXES:
+* certificatemanager: removed incorrect indication that the `self_managed` field in `google_certificate_manager_certificate` was treated as sensitive, and marked `self_managed.pem_private_key` as sensitive ([#5106](https://github.com/hashicorp/terraform-provider-google-beta/pull/5106))
+* cloudplatform: fixed the error with header `X-Goog-User-Project` on `google_client_openid_userinfo` ([#5090](https://github.com/hashicorp/terraform-provider-google-beta/pull/5090))
+* cloudsql: fixed `disk_type` can't be updated on `google_sql_database_instance` ([#5095](https://github.com/hashicorp/terraform-provider-google-beta/pull/5095))
+* vertexai: fixed updating value_type in google_vertex_ai_featurestore_entitytype_feature ([#5098](https://github.com/hashicorp/terraform-provider-google-beta/pull/5098))
+
 ## 4.49.0 (January 17, 2023)
+
 FEATURES:
 * **New Data Source:** `google_project_service` ([#5067](https://github.com/hashicorp/terraform-provider-google-beta/pull/5067))
 * **New Data Source:** `google_sql_database_instances` ([#5066](https://github.com/hashicorp/terraform-provider-google-beta/pull/5066))
