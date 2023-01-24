@@ -69,9 +69,9 @@ var (
 		"addons_config.0.dns_cache_config",
 		"addons_config.0.gce_persistent_disk_csi_driver_config",
 		"addons_config.0.gke_backup_agent_config",
+		"addons_config.0.config_connector_config",
 		"addons_config.0.istio_config",
 		"addons_config.0.kalm_config",
-		"addons_config.0.config_connector_config",
 	}
 
 	privateClusterConfigKeys = []string{
