@@ -1088,9 +1088,9 @@ func Provider() *schema.Provider {
 	return provider
 }
 
-// Generated resources: 296
+// Generated resources: 297
 // Generated IAM resources: 201
-// Total generated resources: 497
+// Total generated resources: 498
 func ResourceMap() map[string]*schema.Resource {
 	resourceMap, _ := ResourceMapWithErrors()
 	return resourceMap
@@ -1431,6 +1431,7 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_healthcare_consent_store_iam_member":                   ResourceIamMember(HealthcareConsentStoreIamSchema, HealthcareConsentStoreIamUpdaterProducer, HealthcareConsentStoreIdParseFunc),
 			"google_healthcare_consent_store_iam_policy":                   ResourceIamPolicy(HealthcareConsentStoreIamSchema, HealthcareConsentStoreIamUpdaterProducer, HealthcareConsentStoreIdParseFunc),
 			"google_iam_deny_policy":                                       resourceIAM2DenyPolicy(),
+			"google_iam_access_boundary_policy":                            resourceIAM2AccessBoundaryPolicy(),
 			"google_iam_workload_identity_pool":                            resourceIAMBetaWorkloadIdentityPool(),
 			"google_iam_workload_identity_pool_provider":                   resourceIAMBetaWorkloadIdentityPoolProvider(),
 			"google_iam_workforce_pool":                                    resourceIAMWorkforcePoolWorkforcePool(),
