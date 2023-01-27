@@ -842,7 +842,7 @@ https://github.com/googlecloudplatform/cloud-builders is "googlecloudplatform".`
 						},
 					},
 				},
-				AtLeastOneOf: []string{"trigger_template", "github", "pubsub_config", "webhook_config", "source_to_build"},
+				AtLeastOneOf: []string{"trigger_template", "github", "pubsub_config", "webhook_config", "source_to_build", "repository_event_config"},
 			},
 			"ignored_files": {
 				Type:     schema.TypeList,
@@ -933,7 +933,88 @@ Only populated on get requests.`,
 						},
 					},
 				},
-				AtLeastOneOf: []string{"trigger_template", "github", "pubsub_config", "webhook_config", "source_to_build"},
+				AtLeastOneOf: []string{"trigger_template", "github", "pubsub_config", "webhook_config", "source_to_build", "repository_event_config"},
+			},
+			"repository_event_config": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: `The configuration of a trigger that creates a build whenever an event from Repo API is received.`,
+				MaxItems:    1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"pull_request": {
+							Type:        schema.TypeList,
+							Optional:    true,
+							Description: `Contains filter properties for matching Pull Requests.`,
+							MaxItems:    1,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"branch": {
+										Type:     schema.TypeString,
+										Optional: true,
+										Description: `Regex of branches to match.
+
+The syntax of the regular expressions accepted is the syntax accepted by
+RE2 and described at https://github.com/google/re2/wiki/Syntax`,
+										ExactlyOneOf: []string{},
+									},
+									"comment_control": {
+										Type:         schema.TypeString,
+										Optional:     true,
+										ValidateFunc: validateEnum([]string{"COMMENTS_DISABLED", "COMMENTS_ENABLED", "COMMENTS_ENABLED_FOR_EXTERNAL_CONTRIBUTORS_ONLY", ""}),
+										Description:  `Configure builds to run whether a repository owner or collaborator need to comment '/gcbrun'. Possible values: ["COMMENTS_DISABLED", "COMMENTS_ENABLED", "COMMENTS_ENABLED_FOR_EXTERNAL_CONTRIBUTORS_ONLY"]`,
+									},
+									"invert_regex": {
+										Type:        schema.TypeBool,
+										Optional:    true,
+										Description: `If true, branches that do NOT match the git_ref will trigger a build.`,
+									},
+								},
+							},
+							ExactlyOneOf: []string{},
+						},
+						"push": {
+							Type:        schema.TypeList,
+							Optional:    true,
+							Description: `Contains filter properties for matching git pushes.`,
+							MaxItems:    1,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"branch": {
+										Type:     schema.TypeString,
+										Optional: true,
+										Description: `Regex of branches to match.
+
+The syntax of the regular expressions accepted is the syntax accepted by
+RE2 and described at https://github.com/google/re2/wiki/Syntax`,
+										ExactlyOneOf: []string{},
+									},
+									"invert_regex": {
+										Type:        schema.TypeBool,
+										Optional:    true,
+										Description: `If true, only trigger a build if the revision regex does NOT match the git_ref regex.`,
+									},
+									"tag": {
+										Type:     schema.TypeString,
+										Optional: true,
+										Description: `Regex of tags to match.
+
+The syntax of the regular expressions accepted is the syntax accepted by
+RE2 and described at https://github.com/google/re2/wiki/Syntax`,
+										ExactlyOneOf: []string{},
+									},
+								},
+							},
+							ExactlyOneOf: []string{},
+						},
+						"repository": {
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: `The resource name of the Repo API resource.`,
+						},
+					},
+				},
+				AtLeastOneOf: []string{"trigger_template", "github", "pubsub_config", "webhook_config", "source_to_build", "repository_event_config"},
 			},
 			"service_account": {
 				Type:     schema.TypeString,
@@ -983,7 +1064,7 @@ Format: projects/{project}/locations/{location}/githubEnterpriseConfigs/{id}. pr
 						},
 					},
 				},
-				AtLeastOneOf: []string{"trigger_template", "github", "pubsub_config", "webhook_config", "source_to_build"},
+				AtLeastOneOf: []string{"trigger_template", "github", "pubsub_config", "webhook_config", "source_to_build", "repository_event_config"},
 			},
 			"substitutions": {
 				Type:        schema.TypeMap,
@@ -1061,7 +1142,7 @@ This field is a regular expression.`,
 						},
 					},
 				},
-				AtLeastOneOf: []string{"trigger_template", "github", "pubsub_config", "webhook_config", "source_to_build"},
+				AtLeastOneOf: []string{"trigger_template", "github", "pubsub_config", "webhook_config", "source_to_build", "repository_event_config"},
 			},
 			"webhook_config": {
 				Type:     schema.TypeList,
@@ -1086,7 +1167,7 @@ Only populated on get requests.`,
 						},
 					},
 				},
-				AtLeastOneOf: []string{"trigger_template", "github", "pubsub_config", "webhook_config", "source_to_build"},
+				AtLeastOneOf: []string{"trigger_template", "github", "pubsub_config", "webhook_config", "source_to_build", "repository_event_config"},
 			},
 			"create_time": {
 				Type:        schema.TypeString,
@@ -1176,6 +1257,12 @@ func resourceCloudBuildTriggerCreate(d *schema.ResourceData, meta interface{}) e
 		return err
 	} else if v, ok := d.GetOkExists("git_file_source"); !isEmptyValue(reflect.ValueOf(gitFileSourceProp)) && (ok || !reflect.DeepEqual(v, gitFileSourceProp)) {
 		obj["gitFileSource"] = gitFileSourceProp
+	}
+	repositoryEventConfigProp, err := expandCloudBuildTriggerRepositoryEventConfig(d.Get("repository_event_config"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("repository_event_config"); !isEmptyValue(reflect.ValueOf(repositoryEventConfigProp)) && (ok || !reflect.DeepEqual(v, repositoryEventConfigProp)) {
+		obj["repositoryEventConfig"] = repositoryEventConfigProp
 	}
 	sourceToBuildProp, err := expandCloudBuildTriggerSourceToBuild(d.Get("source_to_build"), d, config)
 	if err != nil {
@@ -1359,6 +1446,9 @@ func resourceCloudBuildTriggerRead(d *schema.ResourceData, meta interface{}) err
 	if err := d.Set("git_file_source", flattenCloudBuildTriggerGitFileSource(res["gitFileSource"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Trigger: %s", err)
 	}
+	if err := d.Set("repository_event_config", flattenCloudBuildTriggerRepositoryEventConfig(res["repositoryEventConfig"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
 	if err := d.Set("source_to_build", flattenCloudBuildTriggerSourceToBuild(res["sourceToBuild"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Trigger: %s", err)
 	}
@@ -1465,6 +1555,12 @@ func resourceCloudBuildTriggerUpdate(d *schema.ResourceData, meta interface{}) e
 		return err
 	} else if v, ok := d.GetOkExists("git_file_source"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, gitFileSourceProp)) {
 		obj["gitFileSource"] = gitFileSourceProp
+	}
+	repositoryEventConfigProp, err := expandCloudBuildTriggerRepositoryEventConfig(d.Get("repository_event_config"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("repository_event_config"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, repositoryEventConfigProp)) {
+		obj["repositoryEventConfig"] = repositoryEventConfigProp
 	}
 	sourceToBuildProp, err := expandCloudBuildTriggerSourceToBuild(d.Get("source_to_build"), d, config)
 	if err != nil {
@@ -1694,6 +1790,85 @@ func flattenCloudBuildTriggerGitFileSourceRevision(v interface{}, d *schema.Reso
 }
 
 func flattenCloudBuildTriggerGitFileSourceGithubEnterpriseConfig(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	return v
+}
+
+func flattenCloudBuildTriggerRepositoryEventConfig(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["repository"] =
+		flattenCloudBuildTriggerRepositoryEventConfigRepository(original["repository"], d, config)
+	transformed["pull_request"] =
+		flattenCloudBuildTriggerRepositoryEventConfigPullRequest(original["pullRequest"], d, config)
+	transformed["push"] =
+		flattenCloudBuildTriggerRepositoryEventConfigPush(original["push"], d, config)
+	return []interface{}{transformed}
+}
+func flattenCloudBuildTriggerRepositoryEventConfigRepository(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	return v
+}
+
+func flattenCloudBuildTriggerRepositoryEventConfigPullRequest(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["branch"] =
+		flattenCloudBuildTriggerRepositoryEventConfigPullRequestBranch(original["branch"], d, config)
+	transformed["invert_regex"] =
+		flattenCloudBuildTriggerRepositoryEventConfigPullRequestInvertRegex(original["invertRegex"], d, config)
+	transformed["comment_control"] =
+		flattenCloudBuildTriggerRepositoryEventConfigPullRequestCommentControl(original["commentControl"], d, config)
+	return []interface{}{transformed}
+}
+func flattenCloudBuildTriggerRepositoryEventConfigPullRequestBranch(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	return v
+}
+
+func flattenCloudBuildTriggerRepositoryEventConfigPullRequestInvertRegex(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	return v
+}
+
+func flattenCloudBuildTriggerRepositoryEventConfigPullRequestCommentControl(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	return v
+}
+
+func flattenCloudBuildTriggerRepositoryEventConfigPush(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["branch"] =
+		flattenCloudBuildTriggerRepositoryEventConfigPushBranch(original["branch"], d, config)
+	transformed["tag"] =
+		flattenCloudBuildTriggerRepositoryEventConfigPushTag(original["tag"], d, config)
+	transformed["invert_regex"] =
+		flattenCloudBuildTriggerRepositoryEventConfigPushInvertRegex(original["invertRegex"], d, config)
+	return []interface{}{transformed}
+}
+func flattenCloudBuildTriggerRepositoryEventConfigPushBranch(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	return v
+}
+
+func flattenCloudBuildTriggerRepositoryEventConfigPushTag(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	return v
+}
+
+func flattenCloudBuildTriggerRepositoryEventConfigPushInvertRegex(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
@@ -2571,6 +2746,133 @@ func expandCloudBuildTriggerGitFileSourceRevision(v interface{}, d TerraformReso
 }
 
 func expandCloudBuildTriggerGitFileSourceGithubEnterpriseConfig(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandCloudBuildTriggerRepositoryEventConfig(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedRepository, err := expandCloudBuildTriggerRepositoryEventConfigRepository(original["repository"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedRepository); val.IsValid() && !isEmptyValue(val) {
+		transformed["repository"] = transformedRepository
+	}
+
+	transformedPullRequest, err := expandCloudBuildTriggerRepositoryEventConfigPullRequest(original["pull_request"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedPullRequest); val.IsValid() && !isEmptyValue(val) {
+		transformed["pullRequest"] = transformedPullRequest
+	}
+
+	transformedPush, err := expandCloudBuildTriggerRepositoryEventConfigPush(original["push"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedPush); val.IsValid() && !isEmptyValue(val) {
+		transformed["push"] = transformedPush
+	}
+
+	return transformed, nil
+}
+
+func expandCloudBuildTriggerRepositoryEventConfigRepository(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandCloudBuildTriggerRepositoryEventConfigPullRequest(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedBranch, err := expandCloudBuildTriggerRepositoryEventConfigPullRequestBranch(original["branch"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedBranch); val.IsValid() && !isEmptyValue(val) {
+		transformed["branch"] = transformedBranch
+	}
+
+	transformedInvertRegex, err := expandCloudBuildTriggerRepositoryEventConfigPullRequestInvertRegex(original["invert_regex"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedInvertRegex); val.IsValid() && !isEmptyValue(val) {
+		transformed["invertRegex"] = transformedInvertRegex
+	}
+
+	transformedCommentControl, err := expandCloudBuildTriggerRepositoryEventConfigPullRequestCommentControl(original["comment_control"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedCommentControl); val.IsValid() && !isEmptyValue(val) {
+		transformed["commentControl"] = transformedCommentControl
+	}
+
+	return transformed, nil
+}
+
+func expandCloudBuildTriggerRepositoryEventConfigPullRequestBranch(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandCloudBuildTriggerRepositoryEventConfigPullRequestInvertRegex(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandCloudBuildTriggerRepositoryEventConfigPullRequestCommentControl(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandCloudBuildTriggerRepositoryEventConfigPush(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedBranch, err := expandCloudBuildTriggerRepositoryEventConfigPushBranch(original["branch"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedBranch); val.IsValid() && !isEmptyValue(val) {
+		transformed["branch"] = transformedBranch
+	}
+
+	transformedTag, err := expandCloudBuildTriggerRepositoryEventConfigPushTag(original["tag"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedTag); val.IsValid() && !isEmptyValue(val) {
+		transformed["tag"] = transformedTag
+	}
+
+	transformedInvertRegex, err := expandCloudBuildTriggerRepositoryEventConfigPushInvertRegex(original["invert_regex"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedInvertRegex); val.IsValid() && !isEmptyValue(val) {
+		transformed["invertRegex"] = transformedInvertRegex
+	}
+
+	return transformed, nil
+}
+
+func expandCloudBuildTriggerRepositoryEventConfigPushBranch(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandCloudBuildTriggerRepositoryEventConfigPushTag(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandCloudBuildTriggerRepositoryEventConfigPushInvertRegex(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
