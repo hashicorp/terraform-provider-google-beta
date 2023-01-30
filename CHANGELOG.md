@@ -28,7 +28,7 @@ BUG FIXES:
 * bigquery: fixed bug where valid iam member values for bigquery were prevented from actuation by validation ([#5111](https://github.com/hashicorp/terraform-provider-google-beta/pull/5111))
 * bigquery: fixed permadiff on `external_data_configuration.connection_id` of `google_bigquery_table` ([#5126](https://github.com/hashicorp/terraform-provider-google-beta/pull/5126))
 * gke: fixed the error of Invalid address to set on `config_connector_config` of the data source `google_container_cluster` ([#5131](https://github.com/hashicorp/terraform-provider-google-beta/pull/5131))
-* google_project: fixes misleading examples that could cause `firebase:enabled` label to be accidentally removed. ([#5122](h
+* google_project: fixes misleading examples that could cause `firebase:enabled` label to be accidentally removed. ([#5122](https://github.com/hashicorp/terraform-provider-google-beta/pull/5122))
 
 ## 4.50.0 (January 23, 2023)
 
