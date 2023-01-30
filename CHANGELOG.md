@@ -1,5 +1,33 @@
 ## 4.51.0 (Unreleased)
 
+DEPRECATIONS:
+* cloudrunv2: deprecated `liveness_probe.tcp_socket` field from `google_cloud_run_v2_service` resource as it is not supported by the API and it will be removed in a future major release ([#5128](https://github.com/hashicorp/terraform-provider-google-beta/pull/5128))
+* cloudrunv2: deprecated `startup_probe` and `liveness_probe` fields from `google_cloud_run_v2_job` resource as they are not supported by the API and they will be removed in a future major release ([#5118](https://github.com/hashicorp/terraform-provider-google-beta/pull/5118))
+
+FEATURES:
+* **New Resource:** `google_iam_access_boundary_policy` ([#5130](https://github.com/hashicorp/terraform-provider-google-beta/pull/5130))
+* **New Resource:** `google_tags_location_tag_bindings` ([#5115](https://github.com/hashicorp/terraform-provider-google-beta/pull/5115))
+
+IMPROVEMENTS:
+* cloudbuild: added `github_enterprise_config` fields to `google_cloudbuild_trigger` resource. ([#5110](https://github.com/hashicorp/terraform-provider-google-beta/pull/5110))
+* cloudrunV2: added `annotations` to `google_cloud_run_v2_service` resource ([#5108](https://github.com/hashicorp/terraform-provider-google-beta/pull/5108))
+* composer: Added field `cloud_data_lineage_integration` to resource `google_composer_environment` (beta) ([#5109](https://github.com/hashicorp/terraform-provider-google-beta/pull/5109))
+* compute: added `tcp_time_wait_timeout_sec` field to `google_compute_router_nat` resource ([#5123](https://github.com/hashicorp/terraform-provider-google-beta/pull/5123))
+* compute: Added fields to resource `google_compute_security_policy` to support Cloud Armor Auto Deploy (beta) ([#5116](https://github.com/hashicorp/terraform-provider-google-beta/pull/5116))
+* compute: added `share_settings` field to the `google_compute_node_group` resource. ([#5113](https://github.com/hashicorp/terraform-provider-google-beta/pull/5113))
+* containerattached: added `deletion_policy` field to `google_container_attached_cluster` resource. ([#5121](https://github.com/hashicorp/terraform-provider-google-beta/pull/5121))
+* datastream: added `customer_managed_encryption_key` and `destination_config.bigquery_destination_config.source_hierarchy_datasets.dataset_template.kms_key_name` fields to `google_datastream_stream` resource ([#5120](https://github.com/hashicorp/terraform-provider-google-beta/pull/5120))
+* dlp: added `publish_findings_to_cloud_data_catalog` and `publish_summary_to_cscc` to `google_data_loss_prevention_job_trigger` resource ([#5127](https://github.com/hashicorp/terraform-provider-google-beta/pull/5127))
+* sql: added point_in_time_recovery_enabled for SQLServer in `google_sql_database_instance` ([#5124](https://github.com/hashicorp/terraform-provider-google-beta/pull/5124))
+* spanner: added support for IAM conditions with `google_spanner_database_iam_member` and `google_spanner_instance_iam_member` ([#5125](https://github.com/hashicorp/terraform-provider-google-beta/pull/5125))
+* sql: added additional fields to `google_sql_source_representation_instance`([#5114](https://github.com/hashicorp/terraform-provider-google-beta/pull/5114))
+
+BUG FIXES:
+* bigquery: fixed bug where valid iam member values for bigquery were prevented from actuation by validation ([#5111](https://github.com/hashicorp/terraform-provider-google-beta/pull/5111))
+* bigquery: fixed permadiff on `external_data_configuration.connection_id` of `google_bigquery_table` ([#5126](https://github.com/hashicorp/terraform-provider-google-beta/pull/5126))
+* gke: fixed the error of Invalid address to set on `config_connector_config` of the data source `google_container_cluster` ([#5131](https://github.com/hashicorp/terraform-provider-google-beta/pull/5131))
+* google_project: fixes misleading examples that could cause `firebase:enabled` label to be accidentally removed. ([#5122](h
+
 ## 4.50.0 (January 23, 2023)
 
 FEATURES:
