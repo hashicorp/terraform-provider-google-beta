@@ -909,6 +909,14 @@ func Provider() *schema.Provider {
 					"GOOGLE_WORKFLOWS_CUSTOM_ENDPOINT",
 				}, DefaultBasePaths[WorkflowsBasePathKey]),
 			},
+			"workstations_custom_endpoint": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validateCustomEndpoint,
+				DefaultFunc: schema.MultiEnvDefaultFunc([]string{
+					"GOOGLE_WORKSTATIONS_CUSTOM_ENDPOINT",
+				}, DefaultBasePaths[WorkstationsBasePathKey]),
+			},
 
 			// Handwritten Products / Versioned / Atypical Entries
 			CloudBillingCustomEndpointEntryKey:      CloudBillingCustomEndpointEntry,
@@ -1089,9 +1097,9 @@ func Provider() *schema.Provider {
 	return provider
 }
 
-// Generated resources: 297
+// Generated resources: 298
 // Generated IAM resources: 201
-// Total generated resources: 498
+// Total generated resources: 499
 func ResourceMap() map[string]*schema.Resource {
 	resourceMap, _ := ResourceMapWithErrors()
 	return resourceMap
@@ -1598,6 +1606,7 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_vertex_ai_index":                                       resourceVertexAIIndex(),
 			"google_vpc_access_connector":                                  resourceVPCAccessConnector(),
 			"google_workflows_workflow":                                    resourceWorkflowsWorkflow(),
+			"google_workstations_workstation_cluster":                      resourceWorkstationsWorkstationCluster(),
 		},
 		map[string]*schema.Resource{
 			// ####### START handwritten resources ###########
@@ -1924,6 +1933,7 @@ func providerConfigure(ctx context.Context, d *schema.ResourceData, p *schema.Pr
 	config.VertexAIBasePath = d.Get("vertex_ai_custom_endpoint").(string)
 	config.VPCAccessBasePath = d.Get("vpc_access_custom_endpoint").(string)
 	config.WorkflowsBasePath = d.Get("workflows_custom_endpoint").(string)
+	config.WorkstationsBasePath = d.Get("workstations_custom_endpoint").(string)
 
 	// Handwritten Products / Versioned / Atypical Entries
 	config.CloudBillingBasePath = d.Get(CloudBillingCustomEndpointEntryKey).(string)
