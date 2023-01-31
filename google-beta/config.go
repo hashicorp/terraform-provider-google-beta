@@ -267,6 +267,7 @@ type Config struct {
 	VertexAIBasePath             string
 	VPCAccessBasePath            string
 	WorkflowsBasePath            string
+	WorkstationsBasePath         string
 
 	CloudBillingBasePath      string
 	ComposerBasePath          string
@@ -383,6 +384,7 @@ const TPUBasePathKey = "TPU"
 const VertexAIBasePathKey = "VertexAI"
 const VPCAccessBasePathKey = "VPCAccess"
 const WorkflowsBasePathKey = "Workflows"
+const WorkstationsBasePathKey = "Workstations"
 const CloudBillingBasePathKey = "CloudBilling"
 const ComposerBasePathKey = "Composer"
 const ContainerBasePathKey = "Container"
@@ -493,6 +495,7 @@ var DefaultBasePaths = map[string]string{
 	VertexAIBasePathKey:             "https://{{region}}-aiplatform.googleapis.com/v1beta1/",
 	VPCAccessBasePathKey:            "https://vpcaccess.googleapis.com/v1beta1/",
 	WorkflowsBasePathKey:            "https://workflows.googleapis.com/v1beta/",
+	WorkstationsBasePathKey:         "https://workstations.googleapis.com/v1beta/",
 	CloudBillingBasePathKey:         "https://cloudbilling.googleapis.com/v1/",
 	ComposerBasePathKey:             "https://composer.googleapis.com/v1beta1/",
 	ContainerBasePathKey:            "https://container.googleapis.com/v1beta1/",
@@ -1379,6 +1382,7 @@ func ConfigureBasePaths(c *Config) {
 	c.VertexAIBasePath = DefaultBasePaths[VertexAIBasePathKey]
 	c.VPCAccessBasePath = DefaultBasePaths[VPCAccessBasePathKey]
 	c.WorkflowsBasePath = DefaultBasePaths[WorkflowsBasePathKey]
+	c.WorkstationsBasePath = DefaultBasePaths[WorkstationsBasePathKey]
 
 	// Handwritten Products / Versioned / Atypical Entries
 	c.CloudBillingBasePath = DefaultBasePaths[CloudBillingBasePathKey]

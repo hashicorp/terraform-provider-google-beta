@@ -113,6 +113,7 @@ func configureTestBasePaths(c *Config, url string) {
 	c.VertexAIBasePath = url
 	c.VPCAccessBasePath = url
 	c.WorkflowsBasePath = url
+	c.WorkstationsBasePath = url
 
 	// Handwritten Products / Versioned / Atypical Entries
 	c.CloudBillingBasePath = url
