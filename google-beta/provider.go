@@ -317,6 +317,14 @@ func Provider() *schema.Provider {
 					"GOOGLE_CLOUD_BUILD_CUSTOM_ENDPOINT",
 				}, DefaultBasePaths[CloudBuildBasePathKey]),
 			},
+			"cloudbuildv2_custom_endpoint": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validateCustomEndpoint,
+				DefaultFunc: schema.MultiEnvDefaultFunc([]string{
+					"GOOGLE_CLOUDBUILDV2_CUSTOM_ENDPOINT",
+				}, DefaultBasePaths[Cloudbuildv2BasePathKey]),
+			},
 			"cloud_functions_custom_endpoint": {
 				Type:         schema.TypeString,
 				Optional:     true,
@@ -1098,8 +1106,8 @@ func Provider() *schema.Provider {
 }
 
 // Generated resources: 298
-// Generated IAM resources: 201
-// Total generated resources: 499
+// Generated IAM resources: 204
+// Total generated resources: 502
 func ResourceMap() map[string]*schema.Resource {
 	resourceMap, _ := ResourceMapWithErrors()
 	return resourceMap
@@ -1206,6 +1214,9 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_cloud_asset_folder_feed":                               resourceCloudAssetFolderFeed(),
 			"google_cloud_asset_organization_feed":                         resourceCloudAssetOrganizationFeed(),
 			"google_cloudbuild_trigger":                                    resourceCloudBuildTrigger(),
+			"google_cloudbuildv2_connection_iam_binding":                   ResourceIamBinding(Cloudbuildv2ConnectionIamSchema, Cloudbuildv2ConnectionIamUpdaterProducer, Cloudbuildv2ConnectionIdParseFunc),
+			"google_cloudbuildv2_connection_iam_member":                    ResourceIamMember(Cloudbuildv2ConnectionIamSchema, Cloudbuildv2ConnectionIamUpdaterProducer, Cloudbuildv2ConnectionIdParseFunc),
+			"google_cloudbuildv2_connection_iam_policy":                    ResourceIamPolicy(Cloudbuildv2ConnectionIamSchema, Cloudbuildv2ConnectionIamUpdaterProducer, Cloudbuildv2ConnectionIdParseFunc),
 			"google_cloudfunctions_function_iam_binding":                   ResourceIamBinding(CloudFunctionsCloudFunctionIamSchema, CloudFunctionsCloudFunctionIamUpdaterProducer, CloudFunctionsCloudFunctionIdParseFunc),
 			"google_cloudfunctions_function_iam_member":                    ResourceIamMember(CloudFunctionsCloudFunctionIamSchema, CloudFunctionsCloudFunctionIamUpdaterProducer, CloudFunctionsCloudFunctionIdParseFunc),
 			"google_cloudfunctions_function_iam_policy":                    ResourceIamPolicy(CloudFunctionsCloudFunctionIamSchema, CloudFunctionsCloudFunctionIamUpdaterProducer, CloudFunctionsCloudFunctionIdParseFunc),
@@ -1859,6 +1870,7 @@ func providerConfigure(ctx context.Context, d *schema.ResourceData, p *schema.Pr
 	config.CertificateManagerBasePath = d.Get("certificate_manager_custom_endpoint").(string)
 	config.CloudAssetBasePath = d.Get("cloud_asset_custom_endpoint").(string)
 	config.CloudBuildBasePath = d.Get("cloud_build_custom_endpoint").(string)
+	config.Cloudbuildv2BasePath = d.Get("cloudbuildv2_custom_endpoint").(string)
 	config.CloudFunctionsBasePath = d.Get("cloud_functions_custom_endpoint").(string)
 	config.Cloudfunctions2BasePath = d.Get("cloudfunctions2_custom_endpoint").(string)
 	config.CloudIdentityBasePath = d.Get("cloud_identity_custom_endpoint").(string)

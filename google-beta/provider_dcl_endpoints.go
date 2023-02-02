@@ -49,15 +49,6 @@ var CloudBuildWorkerPoolEndpointEntry = &schema.Schema{
 	}, ""),
 }
 
-var Cloudbuildv2EndpointEntryKey = "cloudbuildv2_custom_endpoint"
-var Cloudbuildv2EndpointEntry = &schema.Schema{
-	Type:     schema.TypeString,
-	Optional: true,
-	DefaultFunc: schema.MultiEnvDefaultFunc([]string{
-		"GOOGLE_CLOUDBUILDV2_CUSTOM_ENDPOINT",
-	}, ""),
-}
-
 var ClouddeployEndpointEntryKey = "clouddeploy_custom_endpoint"
 var ClouddeployEndpointEntry = &schema.Schema{
 	Type:     schema.TypeString,
@@ -134,7 +125,6 @@ type DCLConfig struct {
 	ApikeysBasePath              string
 	AssuredWorkloadsBasePath     string
 	CloudBuildWorkerPoolBasePath string
-	Cloudbuildv2BasePath         string
 	ClouddeployBasePath          string
 	CloudResourceManagerBasePath string
 	DataplexBasePath             string
@@ -149,7 +139,6 @@ func configureDCLProvider(provider *schema.Provider) {
 	provider.Schema[ApikeysEndpointEntryKey] = ApikeysEndpointEntry
 	provider.Schema[AssuredWorkloadsEndpointEntryKey] = AssuredWorkloadsEndpointEntry
 	provider.Schema[CloudBuildWorkerPoolEndpointEntryKey] = CloudBuildWorkerPoolEndpointEntry
-	provider.Schema[Cloudbuildv2EndpointEntryKey] = Cloudbuildv2EndpointEntry
 	provider.Schema[ClouddeployEndpointEntryKey] = ClouddeployEndpointEntry
 	provider.Schema[CloudResourceManagerEndpointEntryKey] = CloudResourceManagerEndpointEntry
 	provider.Schema[DataplexEndpointEntryKey] = DataplexEndpointEntry
@@ -164,7 +153,6 @@ func providerDCLConfigure(d *schema.ResourceData, config *Config) interface{} {
 	config.ApikeysBasePath = d.Get(ApikeysEndpointEntryKey).(string)
 	config.AssuredWorkloadsBasePath = d.Get(AssuredWorkloadsEndpointEntryKey).(string)
 	config.CloudBuildWorkerPoolBasePath = d.Get(CloudBuildWorkerPoolEndpointEntryKey).(string)
-	config.Cloudbuildv2BasePath = d.Get(Cloudbuildv2EndpointEntryKey).(string)
 	config.ClouddeployBasePath = d.Get(ClouddeployEndpointEntryKey).(string)
 	config.CloudResourceManagerBasePath = d.Get(CloudResourceManagerEndpointEntryKey).(string)
 	config.DataplexBasePath = d.Get(DataplexEndpointEntryKey).(string)
