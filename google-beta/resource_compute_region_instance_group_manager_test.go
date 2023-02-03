@@ -597,6 +597,10 @@ resource "google_compute_region_instance_group_manager" "igm-update" {
       doo = "dad"
     }
   }
+
+  instance_lifecycle_policy {
+    force_update_on_repair = "YES"
+  }
 }
 `, template, target, igm)
 }
@@ -696,6 +700,10 @@ resource "google_compute_region_instance_group_manager" "igm-update" {
     labels = {
       foo = "bar"
     }
+  }
+
+  instance_lifecycle_policy {
+    force_update_on_repair = "NO"
   }
 }
 `, template1, target1, target2, template2, igm)
