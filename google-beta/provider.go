@@ -781,9 +781,9 @@ func Provider() *schema.Provider {
 	return provider
 }
 
-// Generated resources: 298
+// Generated resources: 299
 // Generated IAM resources: 204
-// Total generated resources: 502
+// Total generated resources: 503
 func ResourceMap() map[string]*schema.Resource {
 	resourceMap, _ := ResourceMapWithErrors()
 	return resourceMap
@@ -836,6 +836,7 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_apigee_endpoint_attachment":                            resourceApigeeEndpointAttachment(),
 			"google_apigee_nat_address":                                    resourceApigeeNatAddress(),
 			"google_apigee_sync_authorization":                             resourceApigeeSyncAuthorization(),
+			"google_apigee_addons_config":                                  resourceApigeeAddonsConfig(),
 			"google_app_engine_domain_mapping":                             resourceAppEngineDomainMapping(),
 			"google_app_engine_firewall_rule":                              resourceAppEngineFirewallRule(),
 			"google_app_engine_standard_app_version":                       resourceAppEngineStandardAppVersion(),
