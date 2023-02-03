@@ -7,7 +7,7 @@ FEATURES:
 * **New Resource:** `google_workstations_workstation_cluster` ([#5154](https://github.com/hashicorp/terraform-provider-google-beta/pull/5154))
 
 IMPROVEMENTS:
-* sql: updated the `settings.deletion_protection_enabled` property documentation. ([#13581](https://github.com/hashicorp/terraform-provider-google/pull/13581))
+* sql: updated the `settings.deletion_protection_enabled` property documentation. ([#13581](https://github.com/hashicorp/terraform-provider-google-beta/pull/13581))
 * bigquery: added support for federated Azure identities to BigQuery Omni connections. ([#5150](https://github.com/hashicorp/terraform-provider-google-beta/pull/5150))
 * bigquery: added `cloud_spanner.use_serverless_analytics` field ([#5139](https://github.com/hashicorp/terraform-provider-google-beta/pull/5139))
 * bigquery: added `cloud_sql.service_account_id` and `azure.identity` output fields ([#5139](https://github.com/hashicorp/terraform-provider-google-beta/pull/5139))
@@ -16,7 +16,7 @@ IMPROVEMENTS:
 * sql: made `root_password` field updatable in `google_sql_database_instance` ([#5133](https://github.com/hashicorp/terraform-provider-google-beta/pull/5133))
 
 BUG FIXES:
-* cloudfunctions: updated max_instances field to take API's result as default value ([#13575](https://github.com/hashicorp/terraform-provider-google/pull/13575))
+* cloudfunctions: updated max_instances field to take API's result as default value ([#13575](https://github.com/hashicorp/terraform-provider-google-beta/pull/13575))
 * container: fixed an issue with resuming failed cluster creation ([#5136](https://github.com/hashicorp/terraform-provider-google-beta/pull/5136))
 * datacatalog: fixed the import failure when the `project` is different from the default on `google_data_catalog_taxonomy` ([#5145](https://github.com/hashicorp/terraform-provider-google-beta/pull/5145))
 * secretmanager: fixed incorrect required_with for topics in `google_secret_managed_secret` ([#5149](https://github.com/hashicorp/terraform-provider-google-beta/pull/5149))
