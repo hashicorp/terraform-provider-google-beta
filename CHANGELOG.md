@@ -2,17 +2,17 @@
 
 FEATURES:
 * **New Data Source:** `google_secret_manager_secret_version_access` ([#5147](https://github.com/hashicorp/terraform-provider-google-beta/pull/5147))
-* **New Resource:** `google_cloudbuildv2_connection` (beta) ([#5140](https://github.com/hashicorp/terraform-provider-google-beta/pull/5140))
-* **New Resource:** `google_cloudbuildv2_repository` (beta) ([#5140](https://github.com/hashicorp/terraform-provider-google-beta/pull/5140))
+* **New Resource:** `google_cloudbuildv2_connection` ([#5140](https://github.com/hashicorp/terraform-provider-google-beta/pull/5140))
+* **New Resource:** `google_cloudbuildv2_repository` ([#5140](https://github.com/hashicorp/terraform-provider-google-beta/pull/5140))
 * **New Resource:** `google_workstations_workstation_cluster` ([#5154](https://github.com/hashicorp/terraform-provider-google-beta/pull/5154))
 
 IMPROVEMENTS:
-* sql: updated the `settings.deletion_protection_enabled` property documentation. ([#13581](https://github.com/hashicorp/terraform-provider-google-beta/pull/13581))
 * bigquery: added support for federated Azure identities to BigQuery Omni connections. ([#5150](https://github.com/hashicorp/terraform-provider-google-beta/pull/5150))
 * bigquery: added `cloud_spanner.use_serverless_analytics` field ([#5139](https://github.com/hashicorp/terraform-provider-google-beta/pull/5139))
 * bigquery: added `cloud_sql.service_account_id` and `azure.identity` output fields ([#5139](https://github.com/hashicorp/terraform-provider-google-beta/pull/5139))
-* cloudbuild: added field `repository_event_config` to resource `trigger` (beta) ([#5142](https://github.com/hashicorp/terraform-provider-google-beta/pull/5142))
+* cloudbuild: added field `repository_event_config` to resource `trigger` ([#5142](https://github.com/hashicorp/terraform-provider-google-beta/pull/5142))
 * compute: added `locality_lb_policies` field to `google_compute_backend_service` ([#5146](https://github.com/hashicorp/terraform-provider-google-beta/pull/5146))
+* sql: updated the `settings.deletion_protection_enabled` property documentation. ([#13581](https://github.com/hashicorp/terraform-provider-google-beta/pull/13581))
 * sql: made `root_password` field updatable in `google_sql_database_instance` ([#5133](https://github.com/hashicorp/terraform-provider-google-beta/pull/5133))
 
 BUG FIXES:
