@@ -930,6 +930,7 @@ func (p *frameworkProvider) DataSources(_ context.Context) []func() datasource.D
 	return []func() datasource.DataSource{
 		NewGoogleDnsManagedZoneDataSource,
 		NewGoogleDnsRecordSetDataSource,
+		NewGoogleDnsKeysDataSource,
 	}
 }
 
