@@ -2,16 +2,16 @@
 
 FEATURES:
 * **New Resource:** `google_apigee_addons_config` ([#5171](https://github.com/hashicorp/terraform-provider-google-beta/pull/5171))
-* **New Resource:** `google_cloudbuildv2_connection_iam_binding` (beta) ([#5158](https://github.com/hashicorp/terraform-provider-google-beta/pull/5158))
-* **New Resource:** `google_cloudbuildv2_connection_iam_member` (beta) ([#5158](https://github.com/hashicorp/terraform-provider-google-beta/pull/5158))
-* **New Resource:** `google_cloudbuildv2_connection_iam_policy` (beta) ([#5158](https://github.com/hashicorp/terraform-provider-google-beta/pull/5158))
+* **New Resource:** `google_cloudbuildv2_connection_iam_binding` ([#5158](https://github.com/hashicorp/terraform-provider-google-beta/pull/5158))
+* **New Resource:** `google_cloudbuildv2_connection_iam_member` ([#5158](https://github.com/hashicorp/terraform-provider-google-beta/pull/5158))
+* **New Resource:** `google_cloudbuildv2_connection_iam_policy` ([#5158](https://github.com/hashicorp/terraform-provider-google-beta/pull/5158))
 * **New Resource:** `google_firestore_database` ([#5181](https://github.com/hashicorp/terraform-provider-google-beta/pull/5181))
 * **New Resource:** `google_workstations_workstation_cluster` ([#5154](https://github.com/hashicorp/terraform-provider-google-beta/pull/5154))
 
 IMPROVEMENTS:
 * compute: added `resource_policies` field to `google_compute_instance_template` ([#5182](https://github.com/hashicorp/terraform-provider-google-beta/pull/5182))
 * compute: added field `force_update_on_repair` to `instance_lifecycle_policy` ([#5172](https://github.com/hashicorp/terraform-provider-google-beta/pull/5172))
-* compute: added field `instance_lifecycle_policy` to `google_compute_instance_group_manager` and `google_compute_region_instance_group_manager` (beta) ([#5172](https://github.com/hashicorp/terraform-provider-google-beta/pull/5172))
+* compute: added field `instance_lifecycle_policy` to `google_compute_instance_group_manager` and `google_compute_region_instance_group_manager` ([#5172](https://github.com/hashicorp/terraform-provider-google-beta/pull/5172))
 * compute: added the `labels` field to the `google_compute_external_vpn_gateway` resource ([#5162](https://github.com/hashicorp/terraform-provider-google-beta/pull/5162))
 * datastream: added `postgresql_source_config` & `oracle_source_config` in `google_datastream_stream` ([#5166](https://github.com/hashicorp/terraform-provider-google-beta/pull/5166))
 * datastream: added support for creating `google_datastream_stream` with `desired_state=RUNNING` ([#5166](https://github.com/hashicorp/terraform-provider-google-beta/pull/5166))
