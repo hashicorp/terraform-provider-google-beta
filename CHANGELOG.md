@@ -1,5 +1,10 @@
 ## 4.54.0 (Unreleased)
 
+## 4.53.1 (February 14, 2023)
+
+BUG FIXES:
+* provider: fixed crash when trying to configure the provider with invalid credentials
+
 ## 4.53.0 (February 13, 2023)
 
 FEATURES:
@@ -28,6 +33,7 @@ BUG FIXES:
 * composer: fixed an issue with cleaning up environments created in an error state ([#5164](https://github.com/hashicorp/terraform-provider-google-beta/pull/5164))
 * compute: fixed wrong maximum limit description for possible VPC MTUs ([#5180](https://github.com/hashicorp/terraform-provider-google-beta/pull/5180))
 * datafusion: fixed `version` can't be updated on `google_data_fusion_instance` ([#5175](https://github.com/hashicorp/terraform-provider-google-beta/pull/5175))
+
 ## 4.52.0 (February 6, 2023)
 
 FEATURES:
