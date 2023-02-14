@@ -15,7 +15,7 @@ func TestAccFirebaseWebApp_firebaseWebAppFull(t *testing.T) {
 	context := map[string]interface{}{
 		"org_id":        getTestOrgFromEnv(t),
 		"random_suffix": randString(t, 10),
-		"display_name":  "Display Name N",
+		"display_name":  "tf-test Display Name N",
 	}
 
 	vcrTest(t, resource.TestCase{
@@ -77,7 +77,7 @@ func TestAccFirebaseWebApp_firebaseWebAppSkipDelete(t *testing.T) {
 	context := map[string]interface{}{
 		"project_id":    getTestProjectFromEnv(),
 		"random_suffix": randString(t, 10),
-		"display_name":  "Display Name N",
+		"display_name":  "tf-test Display Name N",
 	}
 
 	vcrTest(t, resource.TestCase{
