@@ -1,5 +1,10 @@
 ## 4.53.1 (Unreleased)
 
+BUG FIXES:
+* provider: fixed crash when trying to configure the provider with invalid credentials
+
+## 4.53.0 (February 13, 2023)
+
 FEATURES:
 * **New Resource:** `google_apigee_addons_config` ([#5171](https://github.com/hashicorp/terraform-provider-google-beta/pull/5171))
 * **New Resource:** `google_cloudbuildv2_connection_iam_binding` ([#5158](https://github.com/hashicorp/terraform-provider-google-beta/pull/5158))
