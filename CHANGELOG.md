@@ -8,14 +8,14 @@ FEATURES:
 IMPROVEMENTS:
 * cloudbuild: added `bitbucket_server_trigger_config` field to `google_cloudbuild_trigger` resource ([#5198](https://github.com/hashicorp/terraform-provider-google-beta/pull/5198))
 * cloudbuild: added `github.enterprise_config_resource_name` field to `google_cloudbuild_trigger` resource ([#5205](https://github.com/hashicorp/terraform-provider-google-beta/pull/5205))
-* compute: added field `rsaEncryptedKey` to resource `disk` ([#5187](https://github.com/hashicorp/terraform-provider-google-beta/pull/5187))
-* compute: added new contents in `rules[].rateLimitOptionsfields` for `google_compute_security_policy` to support Cloud Armor Rate Limit Options ([#5193](https://github.com/hashicorp/terraform-provider-google-beta/pull/5193))
+* compute: added field `rsa_encrypted_key` to `google_compute_disk` resource ([#5187](https://github.com/hashicorp/terraform-provider-google-beta/pull/5187))
+* compute: added additional fields to `rules[].rate_limit_options` in `google_compute_security_policy` to support Cloud Armor Rate Limit Options ([#5193](https://github.com/hashicorp/terraform-provider-google-beta/pull/5193))
 * sql: added replica promotion support to `google_sql_database_instance`. This change will allow users to promote read replica as stand alone primary instance. ([#5184](https://github.com/hashicorp/terraform-provider-google-beta/pull/5184))
 
 BUG FIXES:
 * bigquery: fixed permadiff on `max_time_travel_hours` of `google_bigquery_dataset` ([#5190](https://github.com/hashicorp/terraform-provider-google-beta/pull/5190))
-* compute: added possibility to remove `stateful_disks` in `compute_instance_group_manager` and `compute_region_instance_group_manager`. ([#5203](https://github.com/hashicorp/terraform-provider-google-beta/pull/5203))
-* sql: fixed an issue with updating the `google_sql_database_instance.settings.activation_policy` field ([#5202](https://github.com/hashicorp/terraform-provider-google-beta/pull/5202))
+* compute: added possibility to remove `stateful_disk` in `compute_instance_group_manager` and `compute_region_instance_group_manager`. ([#5203](https://github.com/hashicorp/terraform-provider-google-beta/pull/5203))
+* sql: fixed an issue with updating the `settings.activation_policy` field in `google_sql_database_instance` ([#5202](https://github.com/hashicorp/terraform-provider-google-beta/pull/5202))
 
 ## 4.53.1 (February 14, 2023)
 
