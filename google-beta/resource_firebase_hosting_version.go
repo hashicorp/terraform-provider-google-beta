@@ -24,7 +24,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func resourceFirebaseHostingVersion() *schema.Resource {
+func ResourceFirebaseHostingVersion() *schema.Resource {
 	return &schema.Resource{
 		Create: resourceFirebaseHostingVersionCreate,
 		Read:   resourceFirebaseHostingVersionRead,
