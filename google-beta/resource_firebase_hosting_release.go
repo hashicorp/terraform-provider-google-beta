@@ -23,7 +23,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func resourceFirebaseHostingRelease() *schema.Resource {
+func ResourceFirebaseHostingRelease() *schema.Resource {
 	return &schema.Resource{
 		Create: resourceFirebaseHostingReleaseCreate,
 		Read:   resourceFirebaseHostingReleaseRead,
