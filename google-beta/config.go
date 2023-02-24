@@ -409,7 +409,7 @@ var DefaultBasePaths = map[string]string{
 	ApiGatewayBasePathKey:           "https://apigateway.googleapis.com/v1beta/",
 	ApigeeBasePathKey:               "https://apigee.googleapis.com/v1/",
 	AppEngineBasePathKey:            "https://appengine.googleapis.com/v1/",
-	ArtifactRegistryBasePathKey:     "https://artifactregistry.googleapis.com/v1beta2/",
+	ArtifactRegistryBasePathKey:     "https://artifactregistry.googleapis.com/v1/",
 	BeyondcorpBasePathKey:           "https://beyondcorp.googleapis.com/v1/",
 	BigQueryBasePathKey:             "https://bigquery.googleapis.com/bigquery/v2/",
 	BigqueryAnalyticsHubBasePathKey: "https://analyticshub.googleapis.com/v1beta1/",
