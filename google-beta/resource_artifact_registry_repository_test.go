@@ -14,7 +14,7 @@ func TestAccArtifactRegistryRepository_update(t *testing.T) {
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProvidersOiCS,
+		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckArtifactRegistryRepositoryDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -37,18 +37,18 @@ func TestAccArtifactRegistryRepository_update(t *testing.T) {
 	})
 }
 
-func TestAccArtifactRegistryRepository_create_mvn_snapshot(t *testing.T) {
+func TestAccArtifactRegistryRepository_createMvnSnapshot(t *testing.T) {
 	t.Parallel()
 
 	repositoryID := fmt.Sprintf("tf-test-%d", randInt(t))
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProvidersOiCS,
+		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckArtifactRegistryRepositoryDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccArtifactRegistryRepository_create(repositoryID, "SNAPSHOT"),
+				Config: testAccArtifactRegistryRepository_createMvnWithVersionPolicy(repositoryID, "SNAPSHOT"),
 			},
 			{
 				ResourceName:      "google_artifact_registry_repository.test",
@@ -59,18 +59,40 @@ func TestAccArtifactRegistryRepository_create_mvn_snapshot(t *testing.T) {
 	})
 }
 
-func TestAccArtifactRegistryRepository_create_mvn_release(t *testing.T) {
+func TestAccArtifactRegistryRepository_createMvnRelease(t *testing.T) {
 	t.Parallel()
 
 	repositoryID := fmt.Sprintf("tf-test-%d", randInt(t))
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProvidersOiCS,
+		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckArtifactRegistryRepositoryDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccArtifactRegistryRepository_create(repositoryID, "RELEASE"),
+				Config: testAccArtifactRegistryRepository_createMvnWithVersionPolicy(repositoryID, "RELEASE"),
+			},
+			{
+				ResourceName:      "google_artifact_registry_repository.test",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
+func TestAccArtifactRegistryRepository_kfp(t *testing.T) {
+	t.Parallel()
+
+	repositoryID := fmt.Sprintf("tf-test-%d", randInt(t))
+
+	vcrTest(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckArtifactRegistryRepositoryDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccArtifactRegistryRepository_kfp(repositoryID),
 			},
 			{
 				ResourceName:      "google_artifact_registry_repository.test",
@@ -84,8 +106,6 @@ func TestAccArtifactRegistryRepository_create_mvn_release(t *testing.T) {
 func testAccArtifactRegistryRepository_update(repositoryID string) string {
 	return fmt.Sprintf(`
 resource "google_artifact_registry_repository" "test" {
-  provider = google-beta
-
   repository_id = "%s"
   location = "us-central1"
   description = "pre-update"
@@ -102,8 +122,6 @@ resource "google_artifact_registry_repository" "test" {
 func testAccArtifactRegistryRepository_update2(repositoryID string) string {
 	return fmt.Sprintf(`
 resource "google_artifact_registry_repository" "test" {
-  provider = google-beta
-
   repository_id = "%s"
   location = "us-central1"
   description = "post-update"
@@ -117,11 +135,9 @@ resource "google_artifact_registry_repository" "test" {
 `, repositoryID)
 }
 
-func testAccArtifactRegistryRepository_create(repositoryID string, versionPolicy string) string {
+func testAccArtifactRegistryRepository_createMvnWithVersionPolicy(repositoryID string, versionPolicy string) string {
 	return fmt.Sprintf(`
 resource "google_artifact_registry_repository" "test" {
-  provider = google-beta
-
   repository_id = "%s"
   location = "us-central1"
   description = "post-update"
@@ -131,4 +147,15 @@ resource "google_artifact_registry_repository" "test" {
   }
 }
 `, repositoryID, versionPolicy)
+}
+
+func testAccArtifactRegistryRepository_kfp(repositoryID string) string {
+	return fmt.Sprintf(`
+resource "google_artifact_registry_repository" "test" {
+  repository_id = "%s"
+  location = "us-central1"
+  description = "my-kfp-repository"
+  format = "KFP"
+}
+`, repositoryID)
 }
