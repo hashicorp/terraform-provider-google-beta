@@ -1108,9 +1108,9 @@ func Provider() *schema.Provider {
 	return provider
 }
 
-// Generated resources: 304
+// Generated resources: 305
 // Generated IAM resources: 204
-// Total generated resources: 508
+// Total generated resources: 509
 func ResourceMap() map[string]*schema.Resource {
 	resourceMap, _ := ResourceMapWithErrors()
 	return resourceMap
@@ -1627,6 +1627,7 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_vpc_access_connector":                                  ResourceVPCAccessConnector(),
 			"google_workflows_workflow":                                    ResourceWorkflowsWorkflow(),
 			"google_workstations_workstation_cluster":                      ResourceWorkstationsWorkstationCluster(),
+			"google_workstations_workstation_config":                       ResourceWorkstationsWorkstationConfig(),
 		},
 		map[string]*schema.Resource{
 			// ####### START handwritten resources ###########
