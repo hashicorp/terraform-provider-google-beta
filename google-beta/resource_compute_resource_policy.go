@@ -82,6 +82,12 @@ Specify 'COLLOCATED' to enable collocation. Can only be specified with 'vm_count
 with a COLLOCATED policy, then exactly 'vm_count' instances must be created at the same time with the resource policy
 attached. Possible values: ["COLLOCATED"]`,
 						},
+						"max_distance": {
+							Type:        schema.TypeInt,
+							Optional:    true,
+							ForceNew:    true,
+							Description: `Specifies the number of max logical switches.`,
+						},
 						"vm_count": {
 							Type:     schema.TypeInt,
 							Optional: true,
@@ -837,6 +843,8 @@ func flattenComputeResourcePolicyGroupPlacementPolicy(v interface{}, d *schema.R
 		flattenComputeResourcePolicyGroupPlacementPolicyAvailabilityDomainCount(original["availabilityDomainCount"], d, config)
 	transformed["collocation"] =
 		flattenComputeResourcePolicyGroupPlacementPolicyCollocation(original["collocation"], d, config)
+	transformed["max_distance"] =
+		flattenComputeResourcePolicyGroupPlacementPolicyMaxDistance(original["maxDistance"], d, config)
 	return []interface{}{transformed}
 }
 func flattenComputeResourcePolicyGroupPlacementPolicyVmCount(v interface{}, d *schema.ResourceData, config *Config) interface{} {
@@ -875,6 +883,23 @@ func flattenComputeResourcePolicyGroupPlacementPolicyAvailabilityDomainCount(v i
 
 func flattenComputeResourcePolicyGroupPlacementPolicyCollocation(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
+}
+
+func flattenComputeResourcePolicyGroupPlacementPolicyMaxDistance(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	// Handles the string fixed64 format
+	if strVal, ok := v.(string); ok {
+		if intVal, err := stringToFixed64(strVal); err == nil {
+			return intVal
+		}
+	}
+
+	// number values are represented as float64
+	if floatVal, ok := v.(float64); ok {
+		intVal := int(floatVal)
+		return intVal
+	}
+
+	return v // let terraform core handle it otherwise
 }
 
 func flattenComputeResourcePolicyInstanceSchedulePolicy(v interface{}, d *schema.ResourceData, config *Config) interface{} {
@@ -1278,6 +1303,13 @@ func expandComputeResourcePolicyGroupPlacementPolicy(v interface{}, d TerraformR
 		transformed["collocation"] = transformedCollocation
 	}
 
+	transformedMaxDistance, err := expandComputeResourcePolicyGroupPlacementPolicyMaxDistance(original["max_distance"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedMaxDistance); val.IsValid() && !isEmptyValue(val) {
+		transformed["maxDistance"] = transformedMaxDistance
+	}
+
 	return transformed, nil
 }
 
@@ -1290,6 +1322,10 @@ func expandComputeResourcePolicyGroupPlacementPolicyAvailabilityDomainCount(v in
 }
 
 func expandComputeResourcePolicyGroupPlacementPolicyCollocation(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeResourcePolicyGroupPlacementPolicyMaxDistance(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
