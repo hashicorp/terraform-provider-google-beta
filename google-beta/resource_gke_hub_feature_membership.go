@@ -382,7 +382,8 @@ func GkeHubFeatureMembershipMeshSchema() *schema.Resource {
 			"control_plane": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: "Whether to automatically manage Service Mesh control planes. Possible values: CONTROL_PLANE_MANAGEMENT_UNSPECIFIED, AUTOMATIC, MANUAL",
+				Description: "**DEPRECATED** Whether to automatically manage Service Mesh control planes. Possible values: CONTROL_PLANE_MANAGEMENT_UNSPECIFIED, AUTOMATIC, MANUAL",
+				Deprecated:  "Deprecated in favor of the `management` field",
 			},
 
 			"management": {
