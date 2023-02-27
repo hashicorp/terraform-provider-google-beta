@@ -32,7 +32,7 @@ func TestAccDataCatalogTaxonomy_dataCatalogTaxonomyBasicExample(t *testing.T) {
 
 	vcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProvidersOiCS,
+		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckDataCatalogTaxonomyDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -51,9 +51,7 @@ func TestAccDataCatalogTaxonomy_dataCatalogTaxonomyBasicExample(t *testing.T) {
 func testAccDataCatalogTaxonomy_dataCatalogTaxonomyBasicExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_data_catalog_taxonomy" "basic_taxonomy" {
-  provider = google-beta
-  region = "us"
-  display_name =  "tf_test_my_display_name%{random_suffix}"
+  display_name =  "tf_test_my_taxonomy%{random_suffix}"
   description = "A collection of policy tags"
   activated_policy_types = ["FINE_GRAINED_ACCESS_CONTROL"]
 }
