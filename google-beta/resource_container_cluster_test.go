@@ -3477,6 +3477,38 @@ func TestAccContainerCluster_withTPUConfig(t *testing.T) {
 	})
 }
 
+func TestAccContainerCluster_withProtectConfig(t *testing.T) {
+	t.Parallel()
+
+	clusterName := fmt.Sprintf("tf-test-cluster-%s", randString(t, 10))
+
+	vcrTest(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckContainerClusterDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccContainerCluster_withProtectConfig(clusterName),
+			},
+			{
+				ResourceName:            "google_container_cluster.primary",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"min_master_version"},
+			},
+			{
+				Config: testAccContainerCluster_withProtectConfigUpdated(clusterName),
+			},
+			{
+				ResourceName:            "google_container_cluster.primary",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"min_master_version"},
+			},
+		},
+	})
+}
+
 func testAccContainerCluster_masterAuthorizedNetworksDisabled(t *testing.T, resource_name string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[resource_name]
@@ -7260,6 +7292,40 @@ resource "google_container_cluster" "primary" {
     workload_pool = "%s.svc.id.goog"
   }
 }`, cluster, project, project)
+}
+
+func testAccContainerCluster_withProtectConfig(name string) string {
+	return fmt.Sprintf(`
+resource "google_container_cluster" "primary" {
+  name               = "%s"
+  location           = "us-central1-a"
+  initial_node_count = 1
+
+  protect_config {
+	workload_config {
+		audit_mode = "BASIC"
+	}
+	workload_vulnerability_mode = "BASIC"
+  }
+}
+`, name)
+}
+
+func testAccContainerCluster_withProtectConfigUpdated(name string) string {
+	return fmt.Sprintf(`
+resource "google_container_cluster" "primary" {
+  name               = "%s"
+  location           = "us-central1-a"
+  initial_node_count = 1
+
+  protect_config {
+	workload_config {
+		audit_mode = "DISABLED"
+	}
+	workload_vulnerability_mode = "DISABLED"
+  }
+}
+`, name)
 }
 
 func TestValidateNodePoolAutoConfig(t *testing.T) {
