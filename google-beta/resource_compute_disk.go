@@ -669,7 +669,7 @@ project/zones/zone/instances/instance`,
 
 func resourceComputeDiskCreate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
-	userAgent, err := generateUserAgentString(d, config.userAgent)
+	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
 	}
@@ -802,7 +802,7 @@ func resourceComputeDiskCreate(d *schema.ResourceData, meta interface{}) error {
 		billingProject = bp
 	}
 
-	res, err := sendRequestWithTimeout(config, "POST", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutCreate))
+	res, err := SendRequestWithTimeout(config, "POST", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutCreate))
 	if err != nil {
 		return fmt.Errorf("Error creating Disk: %s", err)
 	}
@@ -814,7 +814,7 @@ func resourceComputeDiskCreate(d *schema.ResourceData, meta interface{}) error {
 	}
 	d.SetId(id)
 
-	err = computeOperationWaitTime(
+	err = ComputeOperationWaitTime(
 		config, res, project, "Creating Disk", userAgent,
 		d.Timeout(schema.TimeoutCreate))
 
@@ -831,7 +831,7 @@ func resourceComputeDiskCreate(d *schema.ResourceData, meta interface{}) error {
 
 func resourceComputeDiskRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
-	userAgent, err := generateUserAgentString(d, config.userAgent)
+	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
 	}
@@ -854,7 +854,7 @@ func resourceComputeDiskRead(d *schema.ResourceData, meta interface{}) error {
 		billingProject = bp
 	}
 
-	res, err := sendRequest(config, "GET", billingProject, url, userAgent, nil)
+	res, err := SendRequest(config, "GET", billingProject, url, userAgent, nil)
 	if err != nil {
 		return handleNotFoundError(err, d, fmt.Sprintf("ComputeDisk %q", d.Id()))
 	}
@@ -956,7 +956,7 @@ func resourceComputeDiskRead(d *schema.ResourceData, meta interface{}) error {
 
 func resourceComputeDiskUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
-	userAgent, err := generateUserAgentString(d, config.userAgent)
+	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
 	}
@@ -997,14 +997,14 @@ func resourceComputeDiskUpdate(d *schema.ResourceData, meta interface{}) error {
 			billingProject = bp
 		}
 
-		res, err := sendRequestWithTimeout(config, "POST", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutUpdate))
+		res, err := SendRequestWithTimeout(config, "POST", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutUpdate))
 		if err != nil {
 			return fmt.Errorf("Error updating Disk %q: %s", d.Id(), err)
 		} else {
 			log.Printf("[DEBUG] Finished updating Disk %q: %#v", d.Id(), res)
 		}
 
-		err = computeOperationWaitTime(
+		err = ComputeOperationWaitTime(
 			config, res, project, "Updating Disk", userAgent,
 			d.Timeout(schema.TimeoutUpdate))
 		if err != nil {
@@ -1031,14 +1031,14 @@ func resourceComputeDiskUpdate(d *schema.ResourceData, meta interface{}) error {
 			billingProject = bp
 		}
 
-		res, err := sendRequestWithTimeout(config, "POST", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutUpdate))
+		res, err := SendRequestWithTimeout(config, "POST", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutUpdate))
 		if err != nil {
 			return fmt.Errorf("Error updating Disk %q: %s", d.Id(), err)
 		} else {
 			log.Printf("[DEBUG] Finished updating Disk %q: %#v", d.Id(), res)
 		}
 
-		err = computeOperationWaitTime(
+		err = ComputeOperationWaitTime(
 			config, res, project, "Updating Disk", userAgent,
 			d.Timeout(schema.TimeoutUpdate))
 		if err != nil {
@@ -1053,7 +1053,7 @@ func resourceComputeDiskUpdate(d *schema.ResourceData, meta interface{}) error {
 
 func resourceComputeDiskDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
-	userAgent, err := generateUserAgentString(d, config.userAgent)
+	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
 	}
@@ -1072,7 +1072,7 @@ func resourceComputeDiskDelete(d *schema.ResourceData, meta interface{}) error {
 	}
 
 	var obj map[string]interface{}
-	readRes, err := sendRequest(config, "GET", project, url, userAgent, nil)
+	readRes, err := SendRequest(config, "GET", project, url, userAgent, nil)
 	if err != nil {
 		return handleNotFoundError(err, d, fmt.Sprintf("ComputeDisk %q", d.Id()))
 	}
@@ -1115,7 +1115,7 @@ func resourceComputeDiskDelete(d *schema.ResourceData, meta interface{}) error {
 				return fmt.Errorf("Error detaching disk %s from instance %s/%s/%s: %s", call.deviceName, call.project,
 					call.zone, call.instance, err.Error())
 			}
-			err = computeOperationWaitTime(config, op, call.project,
+			err = ComputeOperationWaitTime(config, op, call.project,
 				fmt.Sprintf("Detaching disk from %s/%s/%s", call.project, call.zone, call.instance), userAgent, d.Timeout(schema.TimeoutDelete))
 			if err != nil {
 				if opErr, ok := err.(ComputeOperationError); ok && len(opErr.Errors) == 1 && opErr.Errors[0].Code == "RESOURCE_NOT_FOUND" {
@@ -1133,12 +1133,12 @@ func resourceComputeDiskDelete(d *schema.ResourceData, meta interface{}) error {
 		billingProject = bp
 	}
 
-	res, err := sendRequestWithTimeout(config, "DELETE", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutDelete))
+	res, err := SendRequestWithTimeout(config, "DELETE", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutDelete))
 	if err != nil {
 		return handleNotFoundError(err, d, "Disk")
 	}
 
-	err = computeOperationWaitTime(
+	err = ComputeOperationWaitTime(
 		config, res, project, "Deleting Disk", userAgent,
 		d.Timeout(schema.TimeoutDelete))
 
@@ -1202,7 +1202,7 @@ func flattenComputeDiskName(v interface{}, d *schema.ResourceData, config *Confi
 func flattenComputeDiskSize(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
-		if intVal, err := stringToFixed64(strVal); err == nil {
+		if intVal, err := StringToFixed64(strVal); err == nil {
 			return intVal
 		}
 	}
@@ -1226,7 +1226,7 @@ func flattenComputeDiskUsers(v interface{}, d *schema.ResourceData, config *Conf
 func flattenComputeDiskPhysicalBlockSizeBytes(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
-		if intVal, err := stringToFixed64(strVal); err == nil {
+		if intVal, err := StringToFixed64(strVal); err == nil {
 			return intVal
 		}
 	}
@@ -1273,7 +1273,7 @@ func flattenComputeDiskMultiWriter(v interface{}, d *schema.ResourceData, config
 func flattenComputeDiskProvisionedIops(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
-		if intVal, err := stringToFixed64(strVal); err == nil {
+		if intVal, err := StringToFixed64(strVal); err == nil {
 			return intVal
 		}
 	}
@@ -1694,7 +1694,7 @@ func resourceComputeDiskEncoder(d *schema.ResourceData, meta interface{}, obj ma
 		return nil, err
 	}
 
-	userAgent, err := generateUserAgentString(d, config.userAgent)
+	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return nil, err
 	}

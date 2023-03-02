@@ -89,7 +89,7 @@ func testAccCheckFirebaseStorageBucketDestroyProducer(t *testing.T) func(s *terr
 				billingProject = config.BillingProject
 			}
 
-			_, err = sendRequest(config, "GET", billingProject, url, config.userAgent, nil)
+			_, err = SendRequest(config, "GET", billingProject, url, config.UserAgent, nil)
 			if err == nil {
 				return fmt.Errorf("FirebaseStorageBucket still exists at %s", url)
 			}

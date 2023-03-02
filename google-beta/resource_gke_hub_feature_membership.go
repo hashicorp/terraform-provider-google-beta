@@ -423,7 +423,7 @@ func resourceGkeHubFeatureMembershipCreate(d *schema.ResourceData, meta interfac
 	}
 	d.SetId(id)
 	directive := CreateDirective
-	userAgent, err := generateUserAgentString(d, config.userAgent)
+	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
 	}
@@ -470,7 +470,7 @@ func resourceGkeHubFeatureMembershipRead(d *schema.ResourceData, meta interface{
 		Project:          dcl.String(project),
 	}
 
-	userAgent, err := generateUserAgentString(d, config.userAgent)
+	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
 	}
@@ -536,7 +536,7 @@ func resourceGkeHubFeatureMembershipUpdate(d *schema.ResourceData, meta interfac
 	defer mutexKV.Unlock(lockName)
 
 	directive := UpdateDirective
-	userAgent, err := generateUserAgentString(d, config.userAgent)
+	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
 	}
@@ -591,7 +591,7 @@ func resourceGkeHubFeatureMembershipDelete(d *schema.ResourceData, meta interfac
 	defer mutexKV.Unlock(lockName)
 
 	log.Printf("[DEBUG] Deleting FeatureMembership %q", d.Id())
-	userAgent, err := generateUserAgentString(d, config.userAgent)
+	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
 	}

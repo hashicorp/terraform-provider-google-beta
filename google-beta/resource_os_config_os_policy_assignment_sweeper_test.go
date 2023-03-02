@@ -58,7 +58,7 @@ func testSweepOsConfigOsPolicyAssignment(region string) error {
 		"billing_account": billingId,
 	}
 
-	client := NewDCLOsConfigClient(config, config.userAgent, "", 0)
+	client := NewDCLOsConfigClient(config, config.UserAgent, "", 0)
 	err = client.DeleteAllOSPolicyAssignment(context.Background(), d["project"], d["location"], isDeletableOsConfigOsPolicyAssignment)
 	if err != nil {
 		return err

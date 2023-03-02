@@ -123,7 +123,7 @@ To send traffic to a different port, clients may prefix the host with the destin
 
 func resourceWorkstationsWorkstationCreate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
-	userAgent, err := generateUserAgentString(d, config.userAgent)
+	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
 	}
@@ -167,7 +167,7 @@ func resourceWorkstationsWorkstationCreate(d *schema.ResourceData, meta interfac
 		billingProject = bp
 	}
 
-	res, err := sendRequestWithTimeout(config, "POST", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutCreate))
+	res, err := SendRequestWithTimeout(config, "POST", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutCreate))
 	if err != nil {
 		return fmt.Errorf("Error creating Workstation: %s", err)
 	}
@@ -179,7 +179,7 @@ func resourceWorkstationsWorkstationCreate(d *schema.ResourceData, meta interfac
 	}
 	d.SetId(id)
 
-	err = workstationsOperationWaitTime(
+	err = WorkstationsOperationWaitTime(
 		config, res, project, "Creating Workstation", userAgent,
 		d.Timeout(schema.TimeoutCreate))
 
@@ -196,7 +196,7 @@ func resourceWorkstationsWorkstationCreate(d *schema.ResourceData, meta interfac
 
 func resourceWorkstationsWorkstationRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
-	userAgent, err := generateUserAgentString(d, config.userAgent)
+	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
 	}
@@ -219,7 +219,7 @@ func resourceWorkstationsWorkstationRead(d *schema.ResourceData, meta interface{
 		billingProject = bp
 	}
 
-	res, err := sendRequest(config, "GET", billingProject, url, userAgent, nil)
+	res, err := SendRequest(config, "GET", billingProject, url, userAgent, nil)
 	if err != nil {
 		return handleNotFoundError(err, d, fmt.Sprintf("WorkstationsWorkstation %q", d.Id()))
 	}
@@ -258,7 +258,7 @@ func resourceWorkstationsWorkstationRead(d *schema.ResourceData, meta interface{
 
 func resourceWorkstationsWorkstationUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
-	userAgent, err := generateUserAgentString(d, config.userAgent)
+	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
 	}
@@ -322,7 +322,7 @@ func resourceWorkstationsWorkstationUpdate(d *schema.ResourceData, meta interfac
 		billingProject = bp
 	}
 
-	res, err := sendRequestWithTimeout(config, "PATCH", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutUpdate))
+	res, err := SendRequestWithTimeout(config, "PATCH", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutUpdate))
 
 	if err != nil {
 		return fmt.Errorf("Error updating Workstation %q: %s", d.Id(), err)
@@ -330,7 +330,7 @@ func resourceWorkstationsWorkstationUpdate(d *schema.ResourceData, meta interfac
 		log.Printf("[DEBUG] Finished updating Workstation %q: %#v", d.Id(), res)
 	}
 
-	err = workstationsOperationWaitTime(
+	err = WorkstationsOperationWaitTime(
 		config, res, project, "Updating Workstation", userAgent,
 		d.Timeout(schema.TimeoutUpdate))
 
@@ -343,7 +343,7 @@ func resourceWorkstationsWorkstationUpdate(d *schema.ResourceData, meta interfac
 
 func resourceWorkstationsWorkstationDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
-	userAgent, err := generateUserAgentString(d, config.userAgent)
+	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
 	}
@@ -369,12 +369,12 @@ func resourceWorkstationsWorkstationDelete(d *schema.ResourceData, meta interfac
 		billingProject = bp
 	}
 
-	res, err := sendRequestWithTimeout(config, "DELETE", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutDelete))
+	res, err := SendRequestWithTimeout(config, "DELETE", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutDelete))
 	if err != nil {
 		return handleNotFoundError(err, d, "Workstation")
 	}
 
-	err = workstationsOperationWaitTime(
+	err = WorkstationsOperationWaitTime(
 		config, res, project, "Deleting Workstation", userAgent,
 		d.Timeout(schema.TimeoutDelete))
 

@@ -182,7 +182,7 @@ func testAccCheckFirebaseDatabaseInstanceDestroyProducer(t *testing.T) func(s *t
 				billingProject = config.BillingProject
 			}
 
-			res, err := sendRequest(config, "GET", billingProject, url, config.userAgent, nil)
+			res, err := SendRequest(config, "GET", billingProject, url, config.UserAgent, nil)
 			if err != nil {
 				return err // RTDB only supports soft-delete.
 			}
