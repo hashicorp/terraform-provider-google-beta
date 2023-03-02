@@ -507,7 +507,6 @@ func resourceWorkstationsWorkstationClusterImport(d *schema.ResourceData, meta i
 		"projects/(?P<project>[^/]+)/locations/(?P<location>[^/]+)/workstationClusters/(?P<workstation_cluster_id>[^/]+)",
 		"(?P<project>[^/]+)/(?P<location>[^/]+)/(?P<workstation_cluster_id>[^/]+)",
 		"(?P<location>[^/]+)/(?P<workstation_cluster_id>[^/]+)",
-		"(?P<workstation_cluster_id>[^/]+)",
 	}, d, config); err != nil {
 		return nil, err
 	}
