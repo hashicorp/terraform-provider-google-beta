@@ -1108,9 +1108,9 @@ func Provider() *schema.Provider {
 	return provider
 }
 
-// Generated resources: 307
+// Generated resources: 308
 // Generated IAM resources: 204
-// Total generated resources: 511
+// Total generated resources: 512
 func ResourceMap() map[string]*schema.Resource {
 	resourceMap, _ := ResourceMapWithErrors()
 	return resourceMap
@@ -1628,6 +1628,7 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_vertex_ai_tensorboard":                                 ResourceVertexAITensorboard(),
 			"google_vpc_access_connector":                                  ResourceVPCAccessConnector(),
 			"google_workflows_workflow":                                    ResourceWorkflowsWorkflow(),
+			"google_workstations_workstation":                              ResourceWorkstationsWorkstation(),
 			"google_workstations_workstation_cluster":                      ResourceWorkstationsWorkstationCluster(),
 			"google_workstations_workstation_config":                       ResourceWorkstationsWorkstationConfig(),
 		},

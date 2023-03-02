@@ -733,7 +733,6 @@ func resourceWorkstationsWorkstationConfigImport(d *schema.ResourceData, meta in
 		"projects/(?P<project>[^/]+)/locations/(?P<location>[^/]+)/workstationClusters/(?P<workstation_cluster_id>[^/]+)/workstationConfigs/(?P<workstation_config_id>[^/]+)",
 		"(?P<project>[^/]+)/(?P<location>[^/]+)/(?P<workstation_cluster_id>[^/]+)/(?P<workstation_config_id>[^/]+)",
 		"(?P<location>[^/]+)/(?P<workstation_cluster_id>[^/]+)/(?P<workstation_config_id>[^/]+)",
-		"(?P<workstation_config_id>[^/]+)",
 	}, d, config); err != nil {
 		return nil, err
 	}
