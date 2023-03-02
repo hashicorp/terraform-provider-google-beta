@@ -181,7 +181,7 @@ func testAccCheckCloudbuildv2RepositoryDestroyProducer(t *testing.T) func(s *ter
 				UpdateTime: dcl.StringOrNil(rs.Primary.Attributes["update_time"]),
 			}
 
-			client := NewDCLCloudbuildv2Client(config, config.userAgent, billingProject, 0)
+			client := NewDCLCloudbuildv2Client(config, config.UserAgent, billingProject, 0)
 			_, err := client.GetRepository(context.Background(), obj)
 			if err == nil {
 				return fmt.Errorf("google_cloudbuildv2_repository still exists %v", obj)

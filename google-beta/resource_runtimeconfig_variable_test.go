@@ -119,7 +119,7 @@ func testAccCheckRuntimeconfigVariableExists(t *testing.T, resourceName string, 
 
 		config := googleProviderConfig(t)
 
-		found, err := config.NewRuntimeconfigClient(config.userAgent).Projects.Configs.Variables.Get(rs.Primary.ID).Do()
+		found, err := config.NewRuntimeconfigClient(config.UserAgent).Projects.Configs.Variables.Get(rs.Primary.ID).Do()
 		if err != nil {
 			return err
 		}
@@ -183,7 +183,7 @@ func testAccCheckRuntimeconfigVariableDestroyProducer(t *testing.T) func(s *terr
 				continue
 			}
 
-			_, err := config.NewRuntimeconfigClient(config.userAgent).Projects.Configs.Variables.Get(rs.Primary.ID).Do()
+			_, err := config.NewRuntimeconfigClient(config.UserAgent).Projects.Configs.Variables.Get(rs.Primary.ID).Do()
 
 			if err == nil {
 				return fmt.Errorf("Runtimeconfig variable still exists")

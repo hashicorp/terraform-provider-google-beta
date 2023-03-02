@@ -58,7 +58,7 @@ func testSweepCloudbuildv2Connection(region string) error {
 		"billing_account": billingId,
 	}
 
-	client := NewDCLCloudbuildv2Client(config, config.userAgent, "", 0)
+	client := NewDCLCloudbuildv2Client(config, config.UserAgent, "", 0)
 	err = client.DeleteAllConnection(context.Background(), d["project"], d["location"], isDeletableCloudbuildv2Connection)
 	if err != nil {
 		return err

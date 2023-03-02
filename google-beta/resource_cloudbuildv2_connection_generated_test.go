@@ -395,7 +395,7 @@ func testAccCheckCloudbuildv2ConnectionDestroyProducer(t *testing.T) func(s *ter
 				UpdateTime:  dcl.StringOrNil(rs.Primary.Attributes["update_time"]),
 			}
 
-			client := NewDCLCloudbuildv2Client(config, config.userAgent, billingProject, 0)
+			client := NewDCLCloudbuildv2Client(config, config.UserAgent, billingProject, 0)
 			_, err := client.GetConnection(context.Background(), obj)
 			if err == nil {
 				return fmt.Errorf("google_cloudbuildv2_connection still exists %v", obj)

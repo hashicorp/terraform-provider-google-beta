@@ -240,7 +240,7 @@ func testAccCheckServiceUsageConsumerQuotaOverrideDestroyProducer(t *testing.T) 
 				billingProject = config.BillingProject
 			}
 
-			res, err := sendRequest(config, "GET", billingProject, url, config.userAgent, nil)
+			res, err := SendRequest(config, "GET", billingProject, url, config.UserAgent, nil)
 			if err == nil {
 				// Sometimes the API returns an empty response instead of erroring, treat empty as nonexistent
 				if len(res) != 0 {
