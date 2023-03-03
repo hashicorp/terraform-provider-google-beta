@@ -16,7 +16,6 @@ IMPROVEMENTS:
 * compute: added field `deletion_policy` to resource `google_compute_shared_vpc_service_project` ([#5243](https://github.com/hashicorp/terraform-provider-google-beta/pull/5243))
 * container: added field `protect_config` to `google_container_cluster` (beta) ([#5255](https://github.com/hashicorp/terraform-provider-google-beta/pull/5255))
 * containerazure: added `azure_services_authentication` to `google_container_azure_cluster` ([#5258](https://github.com/hashicorp/terraform-provider-google-beta/pull/5258))
-* datacatalog - bump Taxonomy and PolicyTag to ga ([#5254](https://github.com/hashicorp/terraform-provider-google-beta/pull/5254))
 * network_services: increase maximum `allow_origins` from 5 to 25 on `network_services_edge_cache_service` ([#5239](https://github.com/hashicorp/terraform-provider-google-beta/pull/5239))
 * storagetransfer: added general field `sink_agent_pool_name` and `source_agent_pool_name` to `google_storage_transfer_job` ([#5262](https://github.com/hashicorp/terraform-provider-google-beta/pull/5262))
 
