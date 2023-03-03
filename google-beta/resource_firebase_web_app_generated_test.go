@@ -27,14 +27,14 @@ func TestAccFirebaseWebApp_firebaseWebAppBasicExample(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
-		"org_id":        getTestOrgFromEnv(t),
+		"org_id":        GetTestOrgFromEnv(t),
 		"display_name":  "tf-test Display Name Basic",
-		"random_suffix": randString(t, 10),
+		"random_suffix": RandString(t, 10),
 	}
 
-	vcrTest(t, resource.TestCase{
+	VcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProvidersOiCS,
+		Providers:    TestAccProvidersOiCS,
 		CheckDestroy: testAccCheckFirebaseWebAppDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -117,7 +117,7 @@ func testAccCheckFirebaseWebAppDestroyProducer(t *testing.T) func(s *terraform.S
 				continue
 			}
 
-			config := googleProviderConfig(t)
+			config := GoogleProviderConfig(t)
 
 			url, err := replaceVarsForTest(config, rs, "{{FirebaseBasePath}}{{name}}")
 			if err != nil {

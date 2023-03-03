@@ -30,15 +30,15 @@ func TestAccClouddeployTarget_MultiTarget(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
-		"project_name":  getTestProjectFromEnv(),
-		"region":        getTestRegionFromEnv(),
-		"random_suffix": randString(t, 10),
+		"project_name":  GetTestProjectFromEnv(),
+		"region":        GetTestRegionFromEnv(),
+		"random_suffix": RandString(t, 10),
 	}
 
-	vcrTest(t, resource.TestCase{
+	VcrTest(t, resource.TestCase{
 		PreCheck: func() { testAccPreCheck(t) },
 
-		Providers:    testAccProvidersOiCS,
+		Providers:    TestAccProvidersOiCS,
 		CheckDestroy: testAccCheckClouddeployTargetDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -64,15 +64,15 @@ func TestAccClouddeployTarget_RunTarget(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
-		"project_name":  getTestProjectFromEnv(),
-		"region":        getTestRegionFromEnv(),
-		"random_suffix": randString(t, 10),
+		"project_name":  GetTestProjectFromEnv(),
+		"region":        GetTestRegionFromEnv(),
+		"random_suffix": RandString(t, 10),
 	}
 
-	vcrTest(t, resource.TestCase{
+	VcrTest(t, resource.TestCase{
 		PreCheck: func() { testAccPreCheck(t) },
 
-		Providers:    testAccProvidersOiCS,
+		Providers:    TestAccProvidersOiCS,
 		CheckDestroy: testAccCheckClouddeployTargetDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -98,14 +98,14 @@ func TestAccClouddeployTarget_Target(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
-		"project_name":  getTestProjectFromEnv(),
-		"region":        getTestRegionFromEnv(),
-		"random_suffix": randString(t, 10),
+		"project_name":  GetTestProjectFromEnv(),
+		"region":        GetTestRegionFromEnv(),
+		"random_suffix": RandString(t, 10),
 	}
 
-	vcrTest(t, resource.TestCase{
+	VcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
+		Providers:    TestAccProviders,
 		CheckDestroy: testAccCheckClouddeployTargetDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -498,7 +498,7 @@ func testAccCheckClouddeployTargetDestroyProducer(t *testing.T) func(s *terrafor
 				continue
 			}
 
-			config := googleProviderConfig(t)
+			config := GoogleProviderConfig(t)
 
 			billingProject := ""
 			if config.BillingProject != "" {

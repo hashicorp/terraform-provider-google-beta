@@ -27,12 +27,12 @@ func TestAccWorkstationsWorkstationConfig_workstationConfigBasicExample(t *testi
 	t.Parallel()
 
 	context := map[string]interface{}{
-		"random_suffix": randString(t, 10),
+		"random_suffix": RandString(t, 10),
 	}
 
-	vcrTest(t, resource.TestCase{
+	VcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProvidersOiCS,
+		Providers:    TestAccProvidersOiCS,
 		CheckDestroy: testAccCheckWorkstationsWorkstationConfigDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -101,12 +101,12 @@ func TestAccWorkstationsWorkstationConfig_workstationConfigContainerExample(t *t
 	t.Parallel()
 
 	context := map[string]interface{}{
-		"random_suffix": randString(t, 10),
+		"random_suffix": RandString(t, 10),
 	}
 
-	vcrTest(t, resource.TestCase{
+	VcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProvidersOiCS,
+		Providers:    TestAccProvidersOiCS,
 		CheckDestroy: testAccCheckWorkstationsWorkstationConfigDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -183,12 +183,12 @@ func TestAccWorkstationsWorkstationConfig_workstationConfigPersistentDirectories
 	t.Parallel()
 
 	context := map[string]interface{}{
-		"random_suffix": randString(t, 10),
+		"random_suffix": RandString(t, 10),
 	}
 
-	vcrTest(t, resource.TestCase{
+	VcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProvidersOiCS,
+		Providers:    TestAccProvidersOiCS,
 		CheckDestroy: testAccCheckWorkstationsWorkstationConfigDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -269,12 +269,12 @@ func TestAccWorkstationsWorkstationConfig_workstationConfigShieldedInstanceConfi
 	t.Parallel()
 
 	context := map[string]interface{}{
-		"random_suffix": randString(t, 10),
+		"random_suffix": RandString(t, 10),
 	}
 
-	vcrTest(t, resource.TestCase{
+	VcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProvidersOiCS,
+		Providers:    TestAccProvidersOiCS,
 		CheckDestroy: testAccCheckWorkstationsWorkstationConfigDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -347,12 +347,12 @@ func TestAccWorkstationsWorkstationConfig_workstationConfigEncryptionKeyExample(
 	t.Parallel()
 
 	context := map[string]interface{}{
-		"random_suffix": randString(t, 10),
+		"random_suffix": RandString(t, 10),
 	}
 
-	vcrTest(t, resource.TestCase{
+	VcrTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProvidersOiCS,
+		Providers:    TestAccProvidersOiCS,
 		CheckDestroy: testAccCheckWorkstationsWorkstationConfigDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -455,7 +455,7 @@ func testAccCheckWorkstationsWorkstationConfigDestroyProducer(t *testing.T) func
 				continue
 			}
 
-			config := googleProviderConfig(t)
+			config := GoogleProviderConfig(t)
 
 			url, err := replaceVarsForTest(config, rs, "{{WorkstationsBasePath}}projects/{{project}}/locations/{{location}}/workstationClusters/{{workstation_cluster_id}}/workstationConfigs/{{workstation_config_id}}")
 			if err != nil {
