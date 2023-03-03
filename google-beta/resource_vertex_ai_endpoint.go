@@ -59,6 +59,11 @@ func ResourceVertexAIEndpoint() *schema.Resource {
 				ForceNew:    true,
 				Description: `The resource name of the Endpoint. The name must be numeric with no leading zeros and can be at most 10 digits.`,
 			},
+			"covered_field": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: `A non-existant field that has test coverage`,
+			},
 			"description": {
 				Type:        schema.TypeString,
 				Optional:    true,
@@ -92,6 +97,11 @@ func ResourceVertexAIEndpoint() *schema.Resource {
 				Optional:    true,
 				ForceNew:    true,
 				Description: `The full name of the Google Compute Engine [network](https://cloud.google.com//compute/docs/networks-and-firewalls#networks) to which the Endpoint should be peered. Private services access must already be configured for the network. If left unspecified, the Endpoint is not peered with any network. Only one of the fields, network or enable_private_service_connect, can be set. [Format](https://cloud.google.com/compute/docs/reference/rest/v1/networks/insert): 'projects/{project}/global/networks/{network}'. Where '{project}' is a project number, as in '12345', and '{network}' is network name.`,
+			},
+			"uncovered_field": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: `A non-existant field that has no test coverage`,
 			},
 			"create_time": {
 				Type:        schema.TypeString,
@@ -296,6 +306,18 @@ func resourceVertexAIEndpointCreate(d *schema.ResourceData, meta interface{}) er
 	}
 
 	obj := make(map[string]interface{})
+	coveredFieldProp, err := expandVertexAIEndpointCoveredField(d.Get("covered_field"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("covered_field"); !isEmptyValue(reflect.ValueOf(coveredFieldProp)) && (ok || !reflect.DeepEqual(v, coveredFieldProp)) {
+		obj["coveredField"] = coveredFieldProp
+	}
+	uncoveredFieldProp, err := expandVertexAIEndpointUncoveredField(d.Get("uncovered_field"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("uncovered_field"); !isEmptyValue(reflect.ValueOf(uncoveredFieldProp)) && (ok || !reflect.DeepEqual(v, uncoveredFieldProp)) {
+		obj["uncoveredField"] = uncoveredFieldProp
+	}
 	displayNameProp, err := expandVertexAIEndpointDisplayName(d.Get("display_name"), d, config)
 	if err != nil {
 		return err
@@ -417,6 +439,12 @@ func resourceVertexAIEndpointRead(d *schema.ResourceData, meta interface{}) erro
 		return fmt.Errorf("Error reading Endpoint: %s", err)
 	}
 
+	if err := d.Set("covered_field", flattenVertexAIEndpointCoveredField(res["coveredField"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Endpoint: %s", err)
+	}
+	if err := d.Set("uncovered_field", flattenVertexAIEndpointUncoveredField(res["uncoveredField"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Endpoint: %s", err)
+	}
 	if err := d.Set("display_name", flattenVertexAIEndpointDisplayName(res["displayName"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Endpoint: %s", err)
 	}
@@ -464,6 +492,18 @@ func resourceVertexAIEndpointUpdate(d *schema.ResourceData, meta interface{}) er
 	billingProject = project
 
 	obj := make(map[string]interface{})
+	coveredFieldProp, err := expandVertexAIEndpointCoveredField(d.Get("covered_field"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("covered_field"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, coveredFieldProp)) {
+		obj["coveredField"] = coveredFieldProp
+	}
+	uncoveredFieldProp, err := expandVertexAIEndpointUncoveredField(d.Get("uncovered_field"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("uncovered_field"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, uncoveredFieldProp)) {
+		obj["uncoveredField"] = uncoveredFieldProp
+	}
 	displayNameProp, err := expandVertexAIEndpointDisplayName(d.Get("display_name"), d, config)
 	if err != nil {
 		return err
@@ -490,6 +530,14 @@ func resourceVertexAIEndpointUpdate(d *schema.ResourceData, meta interface{}) er
 
 	log.Printf("[DEBUG] Updating Endpoint %q: %#v", d.Id(), obj)
 	updateMask := []string{}
+
+	if d.HasChange("covered_field") {
+		updateMask = append(updateMask, "coveredField")
+	}
+
+	if d.HasChange("uncovered_field") {
+		updateMask = append(updateMask, "uncoveredField")
+	}
 
 	if d.HasChange("display_name") {
 		updateMask = append(updateMask, "displayName")
@@ -588,6 +636,14 @@ func resourceVertexAIEndpointImport(d *schema.ResourceData, meta interface{}) ([
 	d.SetId(id)
 
 	return []*schema.ResourceData{d}, nil
+}
+
+func flattenVertexAIEndpointCoveredField(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	return v
+}
+
+func flattenVertexAIEndpointUncoveredField(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+	return v
 }
 
 func flattenVertexAIEndpointDisplayName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
@@ -917,6 +973,14 @@ func flattenVertexAIEndpointNetwork(v interface{}, d *schema.ResourceData, confi
 
 func flattenVertexAIEndpointModelDeploymentMonitoringJob(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
+}
+
+func expandVertexAIEndpointCoveredField(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandVertexAIEndpointUncoveredField(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+	return v, nil
 }
 
 func expandVertexAIEndpointDisplayName(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {

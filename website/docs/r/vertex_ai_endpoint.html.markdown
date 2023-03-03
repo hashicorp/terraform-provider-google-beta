@@ -97,6 +97,14 @@ The following arguments are supported:
 - - -
 
 
+* `covered_field` -
+  (Optional)
+  A non-existant field that has test coverage
+
+* `uncovered_field` -
+  (Optional)
+  A non-existant field that has no test coverage
+
 * `description` -
   (Optional)
   The description of the Endpoint.
