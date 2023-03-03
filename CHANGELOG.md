@@ -8,9 +8,9 @@ FEATURES:
 * **New Resource:** google_workstations_workstation_config ([#5246](https://github.com/hashicorp/terraform-provider-google-beta/pull/5246))
 
 IMPROVEMENTS:
-* added `template.0.containers0.liveness_probe.grpc`, `template.0.containers0.startup_probe.grpc` fields to `google_cloud_run_v2_service` resource ([#5259](https://github.com/hashicorp/terraform-provider-google-beta/pull/5259))
 * cloudbuild: added `peered_network_ip_range` field to `google_cloudbuild_worker_pool` resource ([#5258](https://github.com/hashicorp/terraform-provider-google-beta/pull/5258))
 * clouddeploy: added `multi_target` field to `google_clouddeploy_target` resource ([#5258](https://github.com/hashicorp/terraform-provider-google-beta/pull/5258))
+* cloudrun: added `template.0.containers0.liveness_probe.grpc`, `template.0.containers0.startup_probe.grpc` fields to `google_cloud_run_v2_service` resource ([#5259](https://github.com/hashicorp/terraform-provider-google-beta/pull/5259))
 * compute: added `internal_ip` and `external_ip` to `google_compute_per_instance_config` and `google_compute_region_per_instance_config` (beta) ([#5256](https://github.com/hashicorp/terraform-provider-google-beta/pull/5256))
 * compute: added `max_distance` field to `resource-policy` resource ([#5257](https://github.com/hashicorp/terraform-provider-google-beta/pull/5257))
 * compute: added field `deletion_policy` to resource `google_compute_shared_vpc_service_project` ([#5243](https://github.com/hashicorp/terraform-provider-google-beta/pull/5243))
