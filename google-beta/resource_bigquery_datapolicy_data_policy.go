@@ -76,8 +76,8 @@ func ResourceBigqueryDatapolicyDataPolicy() *schema.Resource {
 						"predefined_expression": {
 							Type:         schema.TypeString,
 							Required:     true,
-							ValidateFunc: validateEnum([]string{"SHA256", "ALWAYS_NULL", "DEFAULT_MASKING_VALUE"}),
-							Description:  `The available masking rules. Learn more here: https://cloud.google.com/bigquery/docs/column-data-masking-intro#masking_options. Possible values: ["SHA256", "ALWAYS_NULL", "DEFAULT_MASKING_VALUE"]`,
+							ValidateFunc: validateEnum([]string{"SHA256", "ALWAYS_NULL", "DEFAULT_MASKING_VALUE", "LAST_FOUR_CHARACTERS", "FIRST_FOUR_CHARACTERS", "EMAIL_MASK", "DATE_YEAR_MASK"}),
+							Description:  `The available masking rules. Learn more here: https://cloud.google.com/bigquery/docs/column-data-masking-intro#masking_options. Possible values: ["SHA256", "ALWAYS_NULL", "DEFAULT_MASKING_VALUE", "LAST_FOUR_CHARACTERS", "FIRST_FOUR_CHARACTERS", "EMAIL_MASK", "DATE_YEAR_MASK"]`,
 						},
 					},
 				},
