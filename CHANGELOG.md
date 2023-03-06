@@ -1,4 +1,32 @@
-## 4.56.0 (Unreleased)
+## 4.57.0 (Unreleased)
+## 4.56.0 (March 6, 2023)
+
+DEPRECATIONS:
+* gkehub: deprecated `mesh.control_plane` in `google_gke_hub_feature_membership`. Use `mesh.management` instead ([#5258](https://github.com/hashicorp/terraform-provider-google-beta/pull/5258))
+
+FEATURES:
+* **New Resource:** google_scc_mute_config ([#5241](https://github.com/hashicorp/terraform-provider-google-beta/pull/5241))
+* **New Resource:** google_workstations_workstation_config ([#5246](https://github.com/hashicorp/terraform-provider-google-beta/pull/5246))
+
+IMPROVEMENTS:
+* cloudbuild: added `peered_network_ip_range` field to `google_cloudbuild_worker_pool` resource ([#5258](https://github.com/hashicorp/terraform-provider-google-beta/pull/5258))
+* clouddeploy: added `multi_target` field to `google_clouddeploy_target` resource ([#5258](https://github.com/hashicorp/terraform-provider-google-beta/pull/5258))
+* cloudrun: added `template.0.containers0.liveness_probe.grpc`, `template.0.containers0.startup_probe.grpc` fields to `google_cloud_run_v2_service` resource ([#5259](https://github.com/hashicorp/terraform-provider-google-beta/pull/5259))
+* compute: added `internal_ip` and `external_ip` to `google_compute_per_instance_config` and `google_compute_region_per_instance_config` (beta) ([#5256](https://github.com/hashicorp/terraform-provider-google-beta/pull/5256))
+* compute: added `max_distance` field to `resource-policy` resource ([#5257](https://github.com/hashicorp/terraform-provider-google-beta/pull/5257))
+* compute: added field `deletion_policy` to resource `google_compute_shared_vpc_service_project` ([#5243](https://github.com/hashicorp/terraform-provider-google-beta/pull/5243))
+* container: added field `protect_config` to `google_container_cluster` (beta) ([#5255](https://github.com/hashicorp/terraform-provider-google-beta/pull/5255))
+* containerazure: added `azure_services_authentication` to `google_container_azure_cluster` ([#5258](https://github.com/hashicorp/terraform-provider-google-beta/pull/5258))
+* networkservices: increased maximum `allow_origins` from 5 to 25 on `network_services_edge_cache_service` ([#5239](https://github.com/hashicorp/terraform-provider-google-beta/pull/5239))
+* storagetransfer: added general field `sink_agent_pool_name` and `source_agent_pool_name` to `google_storage_transfer_job` ([#5262](https://github.com/hashicorp/terraform-provider-google-beta/pull/5262))
+
+BUG FIXES:
+* artifactregistry: fixed an issue where `google-beta` used an outdated beta API rather than the GA service API. New format values like "KFP" will now be accepted by both providers. ([#5247](https://github.com/hashicorp/terraform-provider-google-beta/pull/5247))
+* cloudfunctions: fixed no diff found on `event_trigger.resource` of `google_cloudfunctions_function` ([#5261](https://github.com/hashicorp/terraform-provider-google-beta/pull/5261))
+* dataproc: fixed an issue where `master_config.num_instances` would not force recreation when changed in `google_dataproc_cluster` ([#5251](https://github.com/hashicorp/terraform-provider-google-beta/pull/5251))
+* spanner: fixed the error when updating `deletion_protection` on `google_spanner_database` ([#5242](https://github.com/hashicorp/terraform-provider-google-beta/pull/5242))
+* spanner: fixed the error when updating `force_destroy` on `google_spanner_instance` ([#5242](https://github.com/hashicorp/terraform-provider-google-beta/pull/5242))
+
 ## 4.55.0 (February 27, 2023)
 
 FEATURES:
