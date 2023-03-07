@@ -78,7 +78,7 @@ func TestAccHealthcareDicomStore_healthcareDicomStoreBqStreamExample(t *testing.
 	t.Parallel()
 
 	context := map[string]interface{}{
-		"policyChanged": BootstrapPSARoles(t, "gsp-sa-healthcare", []string{"roles/bigquery.dataEditor", "roles/bigquery.jobUser"}),
+		"policyChanged": BootstrapPSARoles(t, "gcp-sa-healthcare", []string{"roles/bigquery.dataEditor", "roles/bigquery.jobUser"}),
 		"random_suffix": RandString(t, 10),
 	}
 
