@@ -26,6 +26,7 @@ var (
 		"scheduling.0.provisioning_model",
 		"scheduling.0.instance_termination_action",
 		"scheduling.0.max_run_duration",
+		"scheduling.0.maintenance_interval",
 	}
 
 	shieldedInstanceTemplateConfigKeys = []string{
@@ -638,6 +639,11 @@ be from 0 to 999,999,999 inclusive.`,
 									},
 								},
 							},
+						},
+						"maintenance_interval": {
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: `Specifies the frequency of planned maintenance events. The accepted values are: PERIODIC`,
 						},
 					},
 				},
