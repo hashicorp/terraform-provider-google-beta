@@ -292,6 +292,41 @@ func TestAccComputeInstanceTemplate_preemptible(t *testing.T) {
 	})
 }
 
+func TestAccComputeInstanceTemplate_maintenance_interval(t *testing.T) {
+	t.Parallel()
+
+	var instanceTemplate compute.InstanceTemplate
+
+	VcrTest(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    TestAccProviders,
+		CheckDestroy: testAccCheckComputeInstanceTemplateDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeInstanceTemplate_maintenance_interval(RandString(t, 10)),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckComputeInstanceTemplateExists(
+						t, "google_compute_instance_template.foobar", &instanceTemplate),
+					testAccCheckComputeInstanceTemplateMaintenanceInterval(&instanceTemplate, "PERIODIC"),
+				),
+			},
+			{
+				ResourceName:      "google_compute_instance_template.foobar",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+			{
+				Config: testAccComputeInstanceTemplate_basic(RandString(t, 10)),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckComputeInstanceTemplateExists(
+						t, "google_compute_instance_template.foobar", &instanceTemplate),
+					testAccCheckComputeInstanceTemplateMaintenanceInterval(&instanceTemplate, ""),
+				),
+			},
+		},
+	})
+}
+
 func TestAccComputeInstanceTemplate_IP(t *testing.T) {
 	t.Parallel()
 
@@ -1395,6 +1430,15 @@ func testAccCheckComputeInstanceTemplatePreemptible(instanceTemplate *compute.In
 	}
 }
 
+func testAccCheckComputeInstanceTemplateMaintenanceInterval(instanceTemplate *compute.InstanceTemplate, maintenance_interval string) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		if instanceTemplate.Properties.Scheduling.MaintenanceInterval != maintenance_interval {
+			return fmt.Errorf("Expected maintenance interval value %v, got %v", maintenance_interval, instanceTemplate.Properties.Scheduling.MaintenanceInterval)
+		}
+		return nil
+	}
+}
+
 func testAccCheckComputeInstanceTemplateProvisioningModel(instanceTemplate *compute.InstanceTemplate, provisioning_model string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		if instanceTemplate.Properties.Scheduling.ProvisioningModel != provisioning_model {
@@ -1771,6 +1815,50 @@ resource "google_compute_instance_template" "foobar" {
 
   service_account {
     scopes = ["userinfo-email", "compute-ro", "storage-ro"]
+  }
+}
+`, suffix)
+}
+
+func testAccComputeInstanceTemplate_maintenance_interval(suffix string) string {
+	return fmt.Sprintf(`
+data "google_compute_image" "my_image" {
+  family  = "debian-11"
+  project = "debian-cloud"
+}
+
+resource "google_compute_instance_template" "foobar" {
+  name           = "tf-test-instance-template-%s"
+  machine_type   = "e2-medium"
+  can_ip_forward = false
+  tags           = ["foo", "bar"]
+
+  disk {
+    source_image = data.google_compute_image.my_image.self_link
+    auto_delete  = true
+    boot         = true
+  }
+
+  network_interface {
+    network = "default"
+  }
+
+  scheduling {
+    preemptible       = false
+    automatic_restart = true
+    maintenance_interval = "PERIODIC"
+  }
+
+  metadata = {
+    foo = "bar"
+  }
+
+  service_account {
+    scopes = ["userinfo-email", "compute-ro", "storage-ro"]
+  }
+
+  labels = {
+    my_label = "foobar"
   }
 }
 `, suffix)
