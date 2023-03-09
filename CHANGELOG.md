@@ -4,8 +4,8 @@ FEATURES:
 * **New Resource:** `google_access_context_manager_authorized_orgs_desc` ([#5292](https://github.com/hashicorp/terraform-provider-google-beta/pull/5292))
 * **New Resource:** `google_bigquery_capacity_commitment` ([#5282](https://github.com/hashicorp/terraform-provider-google-beta/pull/5282))
 * **New Resource:** `google_workstations_workstation` ([#5273](https://github.com/hashicorp/terraform-provider-google-beta/pull/5273))
-* **New Resource:** google_apigee_env_keystore ([#5267](https://github.com/hashicorp/terraform-provider-google-beta/pull/5267))
-* **New Resource:** google_apigee_env_references ([#5267](https://github.com/hashicorp/terraform-provider-google-beta/pull/5267))
+* **New Resource:** `google_apigee_env_keystore` ([#5267](https://github.com/hashicorp/terraform-provider-google-beta/pull/5267))
+* **New Resource:** `google_apigee_env_references` ([#5267](https://github.com/hashicorp/terraform-provider-google-beta/pull/5267))
 
 IMPROVEMENTS:
 * artifactregistry: added field `virtual_repository_config` and `remote_repository_config` to `google_artifact_registry_repository` ([#5289](https://github.com/hashicorp/terraform-provider-google-beta/pull/5289))
