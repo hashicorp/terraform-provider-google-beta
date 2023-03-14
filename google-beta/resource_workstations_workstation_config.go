@@ -209,6 +209,7 @@ If the encryption key is revoked, the workstation session will automatically be 
 									},
 									"service_account": {
 										Type:        schema.TypeString,
+										Computed:    true,
 										Optional:    true,
 										ForceNew:    true,
 										Description: `Email address of the service account that will be used on VM instances used to support this config. This service account must have permission to pull the specified container image. If not set, VMs will run without a service account, in which case the image must be publicly accessible.`,
