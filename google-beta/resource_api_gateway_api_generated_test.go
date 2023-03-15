@@ -52,7 +52,7 @@ func testAccApiGatewayApi_apigatewayApiBasicExample(context map[string]interface
 	return Nprintf(`
 resource "google_api_gateway_api" "api" {
   provider = google-beta
-  api_id = "api%{random_suffix}"
+  api_id = "tf-test-my-api%{random_suffix}"
 }
 `, context)
 }
@@ -86,7 +86,7 @@ func testAccApiGatewayApi_apigatewayApiFullExample(context map[string]interface{
 	return Nprintf(`
 resource "google_api_gateway_api" "api" {
   provider = google-beta
-  api_id = "api%{random_suffix}"
+  api_id = "tf-test-my-api%{random_suffix}"
   display_name = "MM Dev API"
   labels = {
     environment = "dev"

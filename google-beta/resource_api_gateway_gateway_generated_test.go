@@ -52,13 +52,13 @@ func testAccApiGatewayGateway_apigatewayGatewayBasicExample(context map[string]i
 	return Nprintf(`
 resource "google_api_gateway_api" "api_gw" {
   provider = google-beta
-  api_id = "tf-test-api-gw%{random_suffix}"
+  api_id = "tf-test-my-api%{random_suffix}"
 }
 
 resource "google_api_gateway_api_config" "api_gw" {
   provider = google-beta
   api = google_api_gateway_api.api_gw.api_id
-  api_config_id = "config%{random_suffix}"
+  api_config_id = "tf-test-my-config%{random_suffix}"
 
   openapi_documents {
     document {
@@ -74,7 +74,7 @@ resource "google_api_gateway_api_config" "api_gw" {
 resource "google_api_gateway_gateway" "api_gw" {
   provider = google-beta
   api_config = google_api_gateway_api_config.api_gw.id
-  gateway_id = "tf-test-api-gw%{random_suffix}"
+  gateway_id = "tf-test-my-gateway%{random_suffix}"
 }
 `, context)
 }
@@ -108,13 +108,13 @@ func testAccApiGatewayGateway_apigatewayGatewayFullExample(context map[string]in
 	return Nprintf(`
 resource "google_api_gateway_api" "api_gw" {
   provider = google-beta
-  api_id = "tf-test-api-gw%{random_suffix}"
+  api_id = "tf-test-my-api%{random_suffix}"
 }
 
 resource "google_api_gateway_api_config" "api_gw" {
   provider = google-beta
   api = google_api_gateway_api.api_gw.api_id
-  api_config_id = "tf-test-api-gw%{random_suffix}"
+  api_config_id = "tf-test-my-config%{random_suffix}"
 
   openapi_documents {
     document {
@@ -128,7 +128,7 @@ resource "google_api_gateway_gateway" "api_gw" {
   provider = google-beta
   region     = "us-central1"
   api_config = google_api_gateway_api_config.api_gw.id
-  gateway_id = "tf-test-api-gw%{random_suffix}"
+  gateway_id = "tf-test-my-gateway%{random_suffix}"
   display_name = "MM Dev API Gateway"
   labels = {
     environment = "dev"
