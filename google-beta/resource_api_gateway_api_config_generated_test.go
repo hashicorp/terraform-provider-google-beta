@@ -52,13 +52,13 @@ func testAccApiGatewayApiConfig_apigatewayApiConfigBasicExample(context map[stri
 	return Nprintf(`
 resource "google_api_gateway_api" "api_cfg" {
   provider = google-beta
-  api_id = "tf-test-api-cfg%{random_suffix}"
+  api_id = "tf-test-my-api%{random_suffix}"
 }
 
 resource "google_api_gateway_api_config" "api_cfg" {
   provider = google-beta
   api = google_api_gateway_api.api_cfg.api_id
-  api_config_id = "cfg%{random_suffix}"
+  api_config_id = "tf-test-my-config%{random_suffix}"
 
   openapi_documents {
     document {
@@ -102,13 +102,13 @@ func testAccApiGatewayApiConfig_apigatewayApiConfigFullExample(context map[strin
 	return Nprintf(`
 resource "google_api_gateway_api" "api_cfg" {
   provider = google-beta
-  api_id = "tf-test-api-cfg%{random_suffix}"
+  api_id = "tf-test-my-api%{random_suffix}"
 }
 
 resource "google_api_gateway_api_config" "api_cfg" {
   provider = google-beta
   api = google_api_gateway_api.api_cfg.api_id
-  api_config_id = "tf-test-api-cfg%{random_suffix}"
+  api_config_id = "tf-test-my-config%{random_suffix}"
   display_name = "MM Dev API Config"
   labels = {
     environment = "dev"
@@ -153,13 +153,13 @@ func testAccApiGatewayApiConfig_apigatewayApiConfigGrpcExample(context map[strin
 	return Nprintf(`
 resource "google_api_gateway_api" "api_cfg" {
   provider = google-beta
-  api_id = "tf-test-api-cfg%{random_suffix}"
+  api_id = "tf-test-my-api%{random_suffix}"
 }
 
 resource "google_api_gateway_api_config" "api_cfg" {
   provider = google-beta
   api = google_api_gateway_api.api_cfg.api_id
-  api_config_id = "cfg%{random_suffix}"
+  api_config_id = "tf-test-my-config%{random_suffix}"
 
   grpc_services {
     file_descriptor_set {
@@ -225,13 +225,13 @@ func testAccApiGatewayApiConfig_apigatewayApiConfigGrpcFullExample(context map[s
 	return Nprintf(`
 resource "google_api_gateway_api" "api_cfg" {
   provider = google-beta
-  api_id = "tf-test-api-cfg%{random_suffix}"
+  api_id = "tf-test-my-api%{random_suffix}"
 }
 
 resource "google_api_gateway_api_config" "api_cfg" {
   provider = google-beta
   api = google_api_gateway_api.api_cfg.api_id
-  api_config_id = "cfg%{random_suffix}"
+  api_config_id = "tf-test-my-config%{random_suffix}"
 
   grpc_services {
     file_descriptor_set {
