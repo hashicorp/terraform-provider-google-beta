@@ -1,5 +1,10 @@
 ## 4.58.0 (Unreleased)
 
+* **New Resource:** `google_apigee_sharedflow` ([#5300](https://github.com/hashicorp/terraform-provider-google-beta/pull/5300))
+* **New Resource:** `google_apigee_sharedflow_deployment` ([#5300](https://github.com/hashicorp/terraform-provider-google-beta/pull/5300))
+* **New Resource:** `google_apigee_flowhook` ([#5300](https://github.com/hashicorp/terraform-provider-google-beta/pull/5300))
+
+
 UNKNOWN CHANGELOG TYPE:
 * Add support for Apigee Sharedflow ([#5300](https://github.com/hashicorp/terraform-provider-google-beta/pull/5300))
 
