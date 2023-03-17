@@ -36,9 +36,9 @@ func TestAccClouddeployDeliveryPipeline_DeliveryPipeline(t *testing.T) {
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    TestAccProviders,
-		CheckDestroy: testAccCheckClouddeployDeliveryPipelineDestroyProducer(t),
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckClouddeployDeliveryPipelineDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccClouddeployDeliveryPipeline_DeliveryPipeline(context),
@@ -71,8 +71,8 @@ func TestAccClouddeployDeliveryPipeline_VerifyDeliveryPipeline(t *testing.T) {
 	VcrTest(t, resource.TestCase{
 		PreCheck: func() { testAccPreCheck(t) },
 
-		Providers:    TestAccProvidersOiCS,
-		CheckDestroy: testAccCheckClouddeployDeliveryPipelineDestroyProducer(t),
+		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckClouddeployDeliveryPipelineDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccClouddeployDeliveryPipeline_VerifyDeliveryPipeline(context),

@@ -31,9 +31,9 @@ func TestAccApiGatewayApi_apigatewayApiBasicExample(t *testing.T) {
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    TestAccProvidersOiCS,
-		CheckDestroy: testAccCheckApiGatewayApiDestroyProducer(t),
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckApiGatewayApiDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccApiGatewayApi_apigatewayApiBasicExample(context),
@@ -65,9 +65,9 @@ func TestAccApiGatewayApi_apigatewayApiFullExample(t *testing.T) {
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    TestAccProvidersOiCS,
-		CheckDestroy: testAccCheckApiGatewayApiDestroyProducer(t),
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckApiGatewayApiDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccApiGatewayApi_apigatewayApiFullExample(context),
