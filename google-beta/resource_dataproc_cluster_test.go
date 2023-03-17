@@ -139,8 +139,8 @@ func TestAccDataprocCluster_missingZoneGlobalRegion1(t *testing.T) {
 
 	rnd := RandString(t, 10)
 	VcrTest(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
-		Providers: TestAccProviders,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
 		Steps: []resource.TestStep{
 			{
 				Config:      testAccCheckDataproc_missingZoneGlobalRegion1(rnd),
@@ -155,8 +155,8 @@ func TestAccDataprocCluster_missingZoneGlobalRegion2(t *testing.T) {
 
 	rnd := RandString(t, 10)
 	VcrTest(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
-		Providers: TestAccProviders,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
 		Steps: []resource.TestStep{
 			{
 				Config:      testAccCheckDataproc_missingZoneGlobalRegion2(rnd),
@@ -172,9 +172,9 @@ func TestAccDataprocCluster_basic(t *testing.T) {
 	var cluster dataproc.Cluster
 	rnd := RandString(t, 10)
 	VcrTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    TestAccProviders,
-		CheckDestroy: testAccCheckDataprocClusterDestroy(t),
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckDataprocClusterDestroy(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccDataprocCluster_basic(rnd),
@@ -226,9 +226,9 @@ func TestAccDataprocCluster_withAccelerators(t *testing.T) {
 	zone := "us-central1-c"
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    TestAccProviders,
-		CheckDestroy: testAccCheckDataprocClusterDestroy(t),
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckDataprocClusterDestroy(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccDataprocCluster_withAccelerators(rnd, acceleratorType, zone),
@@ -284,9 +284,9 @@ func TestAccDataprocCluster_withInternalIpOnlyTrueAndShieldedConfig(t *testing.T
 	var cluster dataproc.Cluster
 	rnd := RandString(t, 10)
 	VcrTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    TestAccProviders,
-		CheckDestroy: testAccCheckDataprocClusterDestroy(t),
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckDataprocClusterDestroy(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccDataprocCluster_withInternalIpOnlyTrueAndShieldedConfig(rnd),
@@ -310,9 +310,9 @@ func TestAccDataprocCluster_withMetadataAndTags(t *testing.T) {
 	var cluster dataproc.Cluster
 	rnd := RandString(t, 10)
 	VcrTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    TestAccProviders,
-		CheckDestroy: testAccCheckDataprocClusterDestroy(t),
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckDataprocClusterDestroy(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccDataprocCluster_withMetadataAndTags(rnd),
@@ -334,9 +334,9 @@ func TestAccDataprocCluster_withReservationAffinity(t *testing.T) {
 	var cluster dataproc.Cluster
 	rnd := RandString(t, 10)
 	VcrTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    TestAccProviders,
-		CheckDestroy: testAccCheckDataprocClusterDestroy(t),
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckDataprocClusterDestroy(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccDataprocCluster_withReservationAffinity(rnd),
@@ -358,9 +358,9 @@ func TestAccDataprocCluster_withDataprocMetricConfig(t *testing.T) {
 	var cluster dataproc.Cluster
 	rnd := RandString(t, 10)
 	VcrTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    TestAccProviders,
-		CheckDestroy: testAccCheckDataprocClusterDestroy(t),
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckDataprocClusterDestroy(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccDataprocCluster_withDataprocMetricConfig(rnd),
@@ -383,9 +383,9 @@ func TestAccDataprocCluster_withNodeGroupAffinity(t *testing.T) {
 	var cluster dataproc.Cluster
 	rnd := RandString(t, 10)
 	VcrTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    TestAccProviders,
-		CheckDestroy: testAccCheckDataprocClusterDestroy(t),
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckDataprocClusterDestroy(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccDataprocCluster_withNodeGroupAffinity(rnd),
@@ -405,9 +405,9 @@ func TestAccDataprocCluster_singleNodeCluster(t *testing.T) {
 	rnd := RandString(t, 10)
 	var cluster dataproc.Cluster
 	VcrTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    TestAccProviders,
-		CheckDestroy: testAccCheckDataprocClusterDestroy(t),
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckDataprocClusterDestroy(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccDataprocCluster_singleNodeCluster(rnd),
@@ -432,9 +432,9 @@ func TestAccDataprocCluster_updatable(t *testing.T) {
 	var cluster dataproc.Cluster
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    TestAccProviders,
-		CheckDestroy: testAccCheckDataprocClusterDestroy(t),
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckDataprocClusterDestroy(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccDataprocCluster_updatable(rnd, 2, 1),
@@ -469,9 +469,9 @@ func TestAccDataprocCluster_nonPreemptibleSecondary(t *testing.T) {
 	rnd := RandString(t, 10)
 	var cluster dataproc.Cluster
 	VcrTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    TestAccProviders,
-		CheckDestroy: testAccCheckDataprocClusterDestroy(t),
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckDataprocClusterDestroy(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccDataprocCluster_nonPreemptibleSecondary(rnd),
@@ -490,9 +490,9 @@ func TestAccDataprocCluster_spotSecondary(t *testing.T) {
 	rnd := RandString(t, 10)
 	var cluster dataproc.Cluster
 	VcrTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    TestAccProviders,
-		CheckDestroy: testAccCheckDataprocClusterDestroy(t),
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckDataprocClusterDestroy(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccDataprocCluster_spotSecondary(rnd),
@@ -514,9 +514,9 @@ func TestAccDataprocCluster_withStagingBucket(t *testing.T) {
 	bucketName := fmt.Sprintf("%s-bucket", clusterName)
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    TestAccProviders,
-		CheckDestroy: testAccCheckDataprocClusterDestroy(t),
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckDataprocClusterDestroy(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccDataprocCluster_withStagingBucketAndCluster(clusterName, bucketName),
@@ -546,9 +546,9 @@ func TestAccDataprocCluster_withTempBucket(t *testing.T) {
 	bucketName := fmt.Sprintf("%s-temp-bucket", clusterName)
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    TestAccProviders,
-		CheckDestroy: testAccCheckDataprocClusterDestroy(t),
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckDataprocClusterDestroy(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccDataprocCluster_withTempBucketAndCluster(clusterName, bucketName),
@@ -576,9 +576,9 @@ func TestAccDataprocCluster_withInitAction(t *testing.T) {
 	bucketName := fmt.Sprintf("tf-test-dproc-%s-init-bucket", rnd)
 	objectName := "msg.txt"
 	VcrTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    TestAccProviders,
-		CheckDestroy: testAccCheckDataprocClusterDestroy(t),
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckDataprocClusterDestroy(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccDataprocCluster_withInitAction(rnd, bucketName, objectName),
@@ -599,9 +599,9 @@ func TestAccDataprocCluster_withConfigOverrides(t *testing.T) {
 	rnd := RandString(t, 10)
 	var cluster dataproc.Cluster
 	VcrTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    TestAccProviders,
-		CheckDestroy: testAccCheckDataprocClusterDestroy(t),
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckDataprocClusterDestroy(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccDataprocCluster_withConfigOverrides(rnd),
@@ -624,9 +624,9 @@ func TestAccDataprocCluster_withServiceAcc(t *testing.T) {
 	var cluster dataproc.Cluster
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    TestAccProviders,
-		CheckDestroy: testAccCheckDataprocClusterDestroy(t),
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckDataprocClusterDestroy(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccDataprocCluster_withServiceAcc(sa, rnd),
@@ -654,9 +654,9 @@ func TestAccDataprocCluster_withImageVersion(t *testing.T) {
 
 	var cluster dataproc.Cluster
 	VcrTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    TestAccProviders,
-		CheckDestroy: testAccCheckDataprocClusterDestroy(t),
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckDataprocClusterDestroy(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccDataprocCluster_withImageVersion(rnd, version),
@@ -675,9 +675,9 @@ func TestAccDataprocCluster_withOptionalComponents(t *testing.T) {
 	rnd := RandString(t, 10)
 	var cluster dataproc.Cluster
 	VcrTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    TestAccProviders,
-		CheckDestroy: testAccCheckDataprocClusterDestroy(t),
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckDataprocClusterDestroy(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccDataprocCluster_withOptionalComponents(rnd),
@@ -696,9 +696,9 @@ func TestAccDataprocCluster_withLifecycleConfigIdleDeleteTtl(t *testing.T) {
 	rnd := RandString(t, 10)
 	var cluster dataproc.Cluster
 	VcrTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    TestAccProviders,
-		CheckDestroy: testAccCheckDataprocClusterDestroy(t),
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckDataprocClusterDestroy(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccDataprocCluster_withLifecycleConfigIdleDeleteTtl(rnd, "600s"),
@@ -727,9 +727,9 @@ func TestAccDataprocCluster_withLifecycleConfigAutoDeletion(t *testing.T) {
 
 	var cluster dataproc.Cluster
 	VcrTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    TestAccProviders,
-		CheckDestroy: testAccCheckDataprocClusterDestroy(t),
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckDataprocClusterDestroy(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccDataprocCluster_withLifecycleConfigAutoDeletionTime(rnd, now.Add(time.Hour*10).Format(fmtString)),
@@ -753,9 +753,9 @@ func TestAccDataprocCluster_withLabels(t *testing.T) {
 	rnd := RandString(t, 10)
 	var cluster dataproc.Cluster
 	VcrTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    TestAccProviders,
-		CheckDestroy: testAccCheckDataprocClusterDestroy(t),
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckDataprocClusterDestroy(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccDataprocCluster_withLabels(rnd),
@@ -780,9 +780,9 @@ func TestAccDataprocCluster_withNetworkRefs(t *testing.T) {
 	rnd := RandString(t, 10)
 	netName := fmt.Sprintf(`dproc-cluster-test-%s-net`, rnd)
 	VcrTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    TestAccProviders,
-		CheckDestroy: testAccCheckDataprocClusterDestroy(t),
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckDataprocClusterDestroy(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccDataprocCluster_withNetworkRefs(rnd, netName),
@@ -802,9 +802,9 @@ func TestAccDataprocCluster_withEndpointConfig(t *testing.T) {
 	var cluster dataproc.Cluster
 	rnd := RandString(t, 10)
 	VcrTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    TestAccProviders,
-		CheckDestroy: testAccCheckDataprocClusterDestroy(t),
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckDataprocClusterDestroy(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccDataprocCluster_withEndpointConfig(rnd),
@@ -826,9 +826,9 @@ func TestAccDataprocCluster_KMS(t *testing.T) {
 
 	var cluster dataproc.Cluster
 	VcrTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    TestAccProviders,
-		CheckDestroy: testAccCheckDataprocClusterDestroy(t),
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckDataprocClusterDestroy(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccDataprocCluster_KMS(pid, rnd, kms.CryptoKey.Name),
@@ -848,9 +848,9 @@ func TestAccDataprocCluster_withKerberos(t *testing.T) {
 
 	var cluster dataproc.Cluster
 	VcrTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    TestAccProviders,
-		CheckDestroy: testAccCheckDataprocClusterDestroy(t),
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckDataprocClusterDestroy(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccDataprocCluster_withKerberos(rnd, kms.CryptoKey.Name),
@@ -869,9 +869,9 @@ func TestAccDataprocCluster_withAutoscalingPolicy(t *testing.T) {
 
 	var cluster dataproc.Cluster
 	VcrTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    TestAccProviders,
-		CheckDestroy: testAccCheckDataprocClusterDestroy(t),
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckDataprocClusterDestroy(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccDataprocCluster_withAutoscalingPolicy(rnd),
@@ -903,9 +903,9 @@ func TestAccDataprocCluster_withMetastoreConfig(t *testing.T) {
 	var cluster dataproc.Cluster
 	clusterName := "tf-test-" + RandString(t, 10)
 	VcrTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    TestAccProviders,
-		CheckDestroy: testAccCheckDataprocClusterDestroy(t),
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckDataprocClusterDestroy(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccDataprocCluster_withMetastoreConfig(clusterName, basicServiceId),

@@ -38,8 +38,8 @@ func TestAccCloudbuildv2Connection_GheCompleteConnection(t *testing.T) {
 	VcrTest(t, resource.TestCase{
 		PreCheck: func() { testAccPreCheck(t) },
 
-		Providers:    TestAccProvidersOiCS,
-		CheckDestroy: testAccCheckCloudbuildv2ConnectionDestroyProducer(t),
+		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckCloudbuildv2ConnectionDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudbuildv2Connection_GheCompleteConnection(context),
@@ -64,8 +64,8 @@ func TestAccCloudbuildv2Connection_GheConnection(t *testing.T) {
 	VcrTest(t, resource.TestCase{
 		PreCheck: func() { testAccPreCheck(t) },
 
-		Providers:    TestAccProvidersOiCS,
-		CheckDestroy: testAccCheckCloudbuildv2ConnectionDestroyProducer(t),
+		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckCloudbuildv2ConnectionDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudbuildv2Connection_GheConnection(context),
@@ -98,8 +98,8 @@ func TestAccCloudbuildv2Connection_GhePrivConnection(t *testing.T) {
 	VcrTest(t, resource.TestCase{
 		PreCheck: func() { testAccPreCheck(t) },
 
-		Providers:    TestAccProvidersOiCS,
-		CheckDestroy: testAccCheckCloudbuildv2ConnectionDestroyProducer(t),
+		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckCloudbuildv2ConnectionDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudbuildv2Connection_GhePrivConnection(context),
@@ -124,8 +124,8 @@ func TestAccCloudbuildv2Connection_GhePrivUpdateConnection(t *testing.T) {
 	VcrTest(t, resource.TestCase{
 		PreCheck: func() { testAccPreCheck(t) },
 
-		Providers:    TestAccProvidersOiCS,
-		CheckDestroy: testAccCheckCloudbuildv2ConnectionDestroyProducer(t),
+		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckCloudbuildv2ConnectionDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudbuildv2Connection_GhePrivUpdateConnection(context),
@@ -158,8 +158,8 @@ func TestAccCloudbuildv2Connection_GithubConnection(t *testing.T) {
 	VcrTest(t, resource.TestCase{
 		PreCheck: func() { testAccPreCheck(t) },
 
-		Providers:    TestAccProvidersOiCS,
-		CheckDestroy: testAccCheckCloudbuildv2ConnectionDestroyProducer(t),
+		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckCloudbuildv2ConnectionDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudbuildv2Connection_GithubConnection(context),
