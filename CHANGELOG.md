@@ -1,4 +1,19 @@
 ## 4.58.0 (Unreleased)
+
+FEATURES:
+* **New Resource:** `google_apigee_sharedflow` ([#5300](https://github.com/hashicorp/terraform-provider-google-beta/pull/5300))
+* **New Resource:** `google_apigee_sharedflow_deployment` ([#5300](https://github.com/hashicorp/terraform-provider-google-beta/pull/5300))
+* **New Resource:** `google_apigee_flowhook` ([#5300](https://github.com/hashicorp/terraform-provider-google-beta/pull/5300))
+
+IMPROVEMENTS:
+* datafusion: added support for `accelerators` field to `google_datafusion_instance` resource. ([#5304](https://github.com/hashicorp/terraform-provider-google-beta/pull/5304))
+* privateca: added support for X.509 name constraints to `google_privateca_pool`, `google_privateca_certificate`, and `google_privateca_certificate_authority` ([#5317](https://github.com/hashicorp/terraform-provider-google-beta/pull/5317))
+
+BUG FIXES:
+* alloydb: fixed permadiff on `automated_backup_policy.weekly_schedule` of `google_alloydb_cluster` ([#5305](https://github.com/hashicorp/terraform-provider-google-beta/pull/5305))
+* bigquery: fixed a permadiff when `friendly_name` is removed from `google_bigquery_dataset` ([#5319](https://github.com/hashicorp/terraform-provider-google-beta/pull/5319))
+* redis: fixed a bug causing diff detection on `reserved_ip_range` in `google_redis_instance` ([#5310](https://github.com/hashicorp/terraform-provider-google-beta/pull/5310))
+
 ## 4.57.0 (March 13, 2023)
 
 FEATURES:
