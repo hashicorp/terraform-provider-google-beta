@@ -56,6 +56,7 @@ func configureTestBasePaths(c *Config, url string) {
 	c.DataformBasePath = url
 	c.DataFusionBasePath = url
 	c.DataLossPreventionBasePath = url
+	c.DataplexBasePath = url
 	c.DataprocBasePath = url
 	c.DataprocMetastoreBasePath = url
 	c.DatastoreBasePath = url
