@@ -211,6 +211,7 @@ type Config struct {
 	DataformBasePath             string
 	DataFusionBasePath           string
 	DataLossPreventionBasePath   string
+	DataplexBasePath             string
 	DataprocBasePath             string
 	DataprocMetastoreBasePath    string
 	DatastoreBasePath            string
@@ -329,6 +330,7 @@ const DataCatalogBasePathKey = "DataCatalog"
 const DataformBasePathKey = "Dataform"
 const DataFusionBasePathKey = "DataFusion"
 const DataLossPreventionBasePathKey = "DataLossPrevention"
+const DataplexBasePathKey = "Dataplex"
 const DataprocBasePathKey = "Dataproc"
 const DataprocMetastoreBasePathKey = "DataprocMetastore"
 const DatastoreBasePathKey = "Datastore"
@@ -441,6 +443,7 @@ var DefaultBasePaths = map[string]string{
 	DataformBasePathKey:             "https://dataform.googleapis.com/v1beta1/",
 	DataFusionBasePathKey:           "https://datafusion.googleapis.com/v1beta1/",
 	DataLossPreventionBasePathKey:   "https://dlp.googleapis.com/v2/",
+	DataplexBasePathKey:             "https://dataplex.googleapis.com/v1/",
 	DataprocBasePathKey:             "https://dataproc.googleapis.com/v1beta2/",
 	DataprocMetastoreBasePathKey:    "https://metastore.googleapis.com/v1beta/",
 	DatastoreBasePathKey:            "https://datastore.googleapis.com/v1/",
@@ -1343,6 +1346,7 @@ func ConfigureBasePaths(c *Config) {
 	c.DataformBasePath = DefaultBasePaths[DataformBasePathKey]
 	c.DataFusionBasePath = DefaultBasePaths[DataFusionBasePathKey]
 	c.DataLossPreventionBasePath = DefaultBasePaths[DataLossPreventionBasePathKey]
+	c.DataplexBasePath = DefaultBasePaths[DataplexBasePathKey]
 	c.DataprocBasePath = DefaultBasePaths[DataprocBasePathKey]
 	c.DataprocMetastoreBasePath = DefaultBasePaths[DataprocMetastoreBasePathKey]
 	c.DatastoreBasePath = DefaultBasePaths[DatastoreBasePathKey]
