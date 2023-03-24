@@ -1,8 +1,5 @@
 ## 4.59.0 (Unreleased)
 
-NOTES:
-* auth: added support for oauth2 token exchange over mTLS ([#5343](https://github.com/hashicorp/terraform-provider-google-beta/pull/5343))
-
 FEATURES:
 * **New Resource:** `google_dataplex_asset_iam_*` ([#5348](https://github.com/hashicorp/terraform-provider-google-beta/pull/5348))
 * **New Resource:** `google_dataplex_lake_iam_*` ([#5348](https://github.com/hashicorp/terraform-provider-google-beta/pull/5348))
@@ -10,6 +7,7 @@ FEATURES:
 * **New Resource:** `google_network_services_gateway` ([#5355](https://github.com/hashicorp/terraform-provider-google-beta/pull/5355))
 
 IMPROVEMENTS:
+* auth: added support for oauth2 token exchange over mTLS ([#5343](https://github.com/hashicorp/terraform-provider-google-beta/pull/5343))
 * bigquery: added `is_case_insensitive` and `default_collation` fields to `google_bigquery_dataset` resource ([#5342](https://github.com/hashicorp/terraform-provider-google-beta/pull/5342))
 * compute: added `scratch_disk.size` field on `google_compute_instance` ([#5358](https://github.com/hashicorp/terraform-provider-google-beta/pull/5358))
 * compute: added 3000 as allowable value for `disk_size_gb` for SCRATCH disks in `google_compute_instance_template` ([#5358](https://github.com/hashicorp/terraform-provider-google-beta/pull/5358))
