@@ -11,6 +11,7 @@ FEATURES:
 
 IMPROVEMENTS:
 * bigquery: added `is_case_insensitive` and `default_collation` fields to `google_bigquery_dataset` resource ([#5342](https://github.com/hashicorp/terraform-provider-google-beta/pull/5342))
+* compute: added `scratch_disk.size` field on `google_compute_instance` ([#5358](https://github.com/hashicorp/terraform-provider-google-beta/pull/5358))
 * compute: added 3000 as allowable value for `disk_size_gb` for SCRATCH disks in `google_compute_instance_template` ([#5358](https://github.com/hashicorp/terraform-provider-google-beta/pull/5358))
 * compute: added `WEIGHED_MAGLEV` to `locality_lb_policy` enum for backend service resources ([#5353](https://github.com/hashicorp/terraform-provider-google-beta/pull/5353))
 * container: added `local_nvme_ssd_block` to `node_config` block in the `google_container_node_pool` ([#5335](https://github.com/hashicorp/terraform-provider-google-beta/pull/5335))
