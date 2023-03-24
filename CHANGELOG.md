@@ -1,7 +1,7 @@
 ## 4.59.0 (Unreleased)
 
 NOTES:
-* updated google golang api to v0.114.0 to support oauth2 token exchange over mTLS ([#5343](https://github.com/hashicorp/terraform-provider-google-beta/pull/5343))
+* auth: added support for oauth2 token exchange over mTLS ([#5343](https://github.com/hashicorp/terraform-provider-google-beta/pull/5343))
 
 FEATURES:
 * **New Resource:** `google_dataplex_asset_iam_*` ([#5348](https://github.com/hashicorp/terraform-provider-google-beta/pull/5348))
