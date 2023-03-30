@@ -1,4 +1,26 @@
 ## 4.60.0 (Unreleased)
+
+FEATURES:
+* **New Data Source:** `google_compute_region_instance_template` ([#5388](https://github.com/hashicorp/terraform-provider-google-beta/pull/5388))
+* **New Resource:** `apigeeKeystoresAliasesKeyCertFile` ([#5386](https://github.com/hashicorp/terraform-provider-google-beta/pull/5386))
+* **New Resource:** `google_compute_region_instance_template` ([#5370](https://github.com/hashicorp/terraform-provider-google-beta/pull/5370))
+
+IMPROVEMENTS:
+* compute: added missing fields for `google_compute_(?.*_)address` datasource ([#5363](https://github.com/hashicorp/terraform-provider-google-beta/pull/5363))
+* compute: added `network_firewall_policy_enforcement_order` field to `google_compute_network` resource ([#5375](https://github.com/hashicorp/terraform-provider-google-beta/pull/5375))
+* compute: added output-only attribute `self_link_unique` id for `google_compute_instance_template` to point to the unique id of the resource (instead of its name) ([#5384](https://github.com/hashicorp/terraform-provider-google-beta/pull/5384))
+* compute: supported region instance template in`source_instance_template` field of `google_compute_instance_from_template` resource ([#5370](https://github.com/hashicorp/terraform-provider-google-beta/pull/5370))
+* container: added `stack_type` field to `google_container_cluster` resource ([#5364](https://github.com/hashicorp/terraform-provider-google-beta/pull/5364))
+* container: added support for `advanced_machine_features.threads_per_core` ([#5371](https://github.com/hashicorp/terraform-provider-google-beta/pull/5371))
+* networkservice: updated the max number of `host_rule` on `google_network_services_edge_cache_service` ([#5376](https://github.com/hashicorp/terraform-provider-google-beta/pull/5376))
+* sql: added support of single-database-recovery for SQL Server PITR with `database_names` attribute to `google_sql_instance` ([#5366](https://github.com/hashicorp/terraform-provider-google-beta/pull/5366))
+
+BUG FIXES:
+* cloudrun: fixed race condition when polling for status during an update of a `google_cloud_run_service` ([#5365](https://github.com/hashicorp/terraform-provider-google-beta/pull/5365))
+* cloudsql: fixed the error in any subsequent apply on `google_sql_user` after its `google_sql_database_instance` is deleted ([#5369](https://github.com/hashicorp/terraform-provider-google-beta/pull/5369))
+* datacatalog: fixed `google_data_catalog_tag` only allowing 10 tags.. increased to 1000 ([#5362](https://github.com/hashicorp/terraform-provider-google-beta/pull/5362))
+* firebase: fixed `google_firebase_project` to succeed on apply when the project already has firebase enabled ([#5379](https://github.com/hashicorp/terraform-provider-google-beta/pull/5379))
+
 ## 4.59.0 (March 28, 2023)
 
 FEATURES:
