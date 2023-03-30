@@ -720,7 +720,6 @@ func Provider() *schema.Provider {
 			"google_firebase_apple_app":                           DataSourceGoogleFirebaseAppleApp(),
 			"google_firebase_hosting_channel":                     DataSourceGoogleFirebaseHostingChannel(),
 			"google_firebase_web_app":                             DataSourceGoogleFirebaseWebApp(),
-			"google_firebase_web_app_config":                      DataSourceGoogleFirebaseWebappConfig(),
 			"google_folder":                                       DataSourceGoogleFolder(),
 			"google_folders":                                      DataSourceGoogleFolders(),
 			"google_folder_organization_policy":                   DataSourceGoogleFolderOrganizationPolicy(),

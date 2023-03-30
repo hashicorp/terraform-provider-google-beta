@@ -12,6 +12,12 @@ import (
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
 
+// Ensure the implementation satisfies the expected interfaces
+var (
+	_ datasource.DataSource              = &GoogleFirebaseAppleAppConfigDataSource{}
+	_ datasource.DataSourceWithConfigure = &GoogleFirebaseAppleAppConfigDataSource{}
+)
+
 func NewGoogleFirebaseAppleAppConfigDataSource() datasource.DataSource {
 	return &GoogleFirebaseAppleAppConfigDataSource{}
 }
@@ -46,6 +52,12 @@ func (d *GoogleFirebaseAppleAppConfigDataSource) Schema(ctx context.Context, req
 				Required:            true,
 			},
 
+			"project": schema.StringAttribute{
+				Description:         "The project id of the Firebase iOS App.",
+				MarkdownDescription: "The project id of the Firebase iOS App.",
+				Optional:            true,
+			},
+
 			"config_filename": schema.StringAttribute{
 				Description:         "The filename that the configuration artifact for the IosApp is typically saved as.",
 				MarkdownDescription: "The filename that the configuration artifact for the IosApp is typically saved as.",
@@ -56,12 +68,6 @@ func (d *GoogleFirebaseAppleAppConfigDataSource) Schema(ctx context.Context, req
 				Description:         "The content of the XML configuration file as a base64-encoded string.",
 				MarkdownDescription: "The content of the XML configuration file as a base64-encoded string.",
 				Computed:            true,
-			},
-
-			"project": schema.StringAttribute{
-				Description:         "The project id of the Firebase iOS App.",
-				MarkdownDescription: "The project id of the Firebase iOS App.",
-				Optional:            true,
 			},
 
 			"id": schema.StringAttribute{
