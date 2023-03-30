@@ -944,6 +944,7 @@ func (p *frameworkProvider) DataSources(_ context.Context) []func() datasource.D
 		NewGoogleDnsRecordSetDataSource,
 		NewGoogleDnsKeysDataSource,
 		NewGoogleFirebaseAppleAppConfigDataSource,
+		NewGoogleFirebaseWebAppConfigDataSource,
 	}
 }
 
