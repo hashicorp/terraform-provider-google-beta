@@ -1179,7 +1179,7 @@ resource "google_compute_subnetwork" "proxy" {
 `, context)
 }
 
-func TestAccComputeForwardingRule_forwardingRuleVPCPscExample(t *testing.T) {
+func TestAccComputeForwardingRule_forwardingRuleVpcPscExample(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
@@ -1192,7 +1192,7 @@ func TestAccComputeForwardingRule_forwardingRuleVPCPscExample(t *testing.T) {
 		CheckDestroy:             testAccCheckComputeForwardingRuleDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccComputeForwardingRule_forwardingRuleVPCPscExample(context),
+				Config: testAccComputeForwardingRule_forwardingRuleVpcPscExample(context),
 			},
 			{
 				ResourceName:            "google_compute_forwarding_rule.default",
@@ -1204,7 +1204,7 @@ func TestAccComputeForwardingRule_forwardingRuleVPCPscExample(t *testing.T) {
 	})
 }
 
-func testAccComputeForwardingRule_forwardingRuleVPCPscExample(context map[string]interface{}) string {
+func testAccComputeForwardingRule_forwardingRuleVpcPscExample(context map[string]interface{}) string {
 	return Nprintf(`
 // Forwarding rule for VPC private service connect
 resource "google_compute_forwarding_rule" "default" {
