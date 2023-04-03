@@ -24,6 +24,7 @@ import (
 )
 
 func TestAccFirebaseWebApp_firebaseWebAppBasicExample(t *testing.T) {
+	SkipIfVcr(t)
 	t.Parallel()
 
 	context := map[string]interface{}{
