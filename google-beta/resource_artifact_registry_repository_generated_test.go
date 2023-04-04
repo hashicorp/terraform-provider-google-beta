@@ -117,7 +117,7 @@ func TestAccArtifactRegistryRepository_artifactRegistryRepositoryVirtualExample(
 
 	VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
-		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckArtifactRegistryRepositoryDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -136,7 +136,6 @@ func TestAccArtifactRegistryRepository_artifactRegistryRepositoryVirtualExample(
 func testAccArtifactRegistryRepository_artifactRegistryRepositoryVirtualExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_artifact_registry_repository" "my-repo-upstream" {
-  provider      = google-beta
   location      = "us-central1"
   repository_id = "tf-test-my-repository-upstream%{random_suffix}"
   description   = "example docker repository (upstream source)%{random_suffix}"
@@ -145,7 +144,6 @@ resource "google_artifact_registry_repository" "my-repo-upstream" {
 
 resource "google_artifact_registry_repository" "my-repo" {
   depends_on    = []
-  provider      = google-beta
   location      = "us-central1"
   repository_id = "tf-test-my-repository%{random_suffix}"
   description   = "example virtual docker repository%{random_suffix}"
@@ -171,7 +169,7 @@ func TestAccArtifactRegistryRepository_artifactRegistryRepositoryRemoteExample(t
 
 	VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
-		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckArtifactRegistryRepositoryDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -190,7 +188,6 @@ func TestAccArtifactRegistryRepository_artifactRegistryRepositoryRemoteExample(t
 func testAccArtifactRegistryRepository_artifactRegistryRepositoryRemoteExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_artifact_registry_repository" "my-repo" {
-  provider      = google-beta
   location      = "us-central1"
   repository_id = "tf-test-my-repository%{random_suffix}"
   description   = "example remote docker repository%{random_suffix}"
