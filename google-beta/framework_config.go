@@ -132,6 +132,7 @@ func (p *frameworkProvider) LoadAndValidateFramework(ctx context.Context, data P
 	p.MLEngineBasePath = data.MLEngineCustomEndpoint.ValueString()
 	p.MonitoringBasePath = data.MonitoringCustomEndpoint.ValueString()
 	p.NetworkManagementBasePath = data.NetworkManagementCustomEndpoint.ValueString()
+	p.NetworkSecurityBasePath = data.NetworkSecurityCustomEndpoint.ValueString()
 	p.NetworkServicesBasePath = data.NetworkServicesCustomEndpoint.ValueString()
 	p.NotebooksBasePath = data.NotebooksCustomEndpoint.ValueString()
 	p.OrgPolicyBasePath = data.OrgPolicyCustomEndpoint.ValueString()
@@ -840,6 +841,14 @@ func (p *frameworkProvider) HandleDefaults(ctx context.Context, data *ProviderMo
 		}, DefaultBasePaths[NetworkManagementBasePathKey])
 		if customEndpoint != nil {
 			data.NetworkManagementCustomEndpoint = types.StringValue(customEndpoint.(string))
+		}
+	}
+	if data.NetworkSecurityCustomEndpoint.IsNull() {
+		customEndpoint := MultiEnvDefault([]string{
+			"GOOGLE_NETWORK_SECURITY_CUSTOM_ENDPOINT",
+		}, DefaultBasePaths[NetworkSecurityBasePathKey])
+		if customEndpoint != nil {
+			data.NetworkSecurityCustomEndpoint = types.StringValue(customEndpoint.(string))
 		}
 	}
 	if data.NetworkServicesCustomEndpoint.IsNull() {
