@@ -469,6 +469,11 @@ func Provider() *schema.Provider {
 				Optional:     true,
 				ValidateFunc: validateCustomEndpoint,
 			},
+			"network_security_custom_endpoint": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validateCustomEndpoint,
+			},
 			"network_services_custom_endpoint": {
 				Type:         schema.TypeString,
 				Optional:     true,
@@ -783,9 +788,9 @@ func Provider() *schema.Provider {
 	return provider
 }
 
-// Generated resources: 314
+// Generated resources: 316
 // Generated IAM resources: 213
-// Total generated resources: 527
+// Total generated resources: 529
 func ResourceMap() map[string]*schema.Resource {
 	resourceMap, _ := ResourceMapWithErrors()
 	return resourceMap
@@ -1206,6 +1211,8 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_monitoring_slo":                                        ResourceMonitoringSlo(),
 			"google_monitoring_uptime_check_config":                        ResourceMonitoringUptimeCheckConfig(),
 			"google_network_management_connectivity_test":                  ResourceNetworkManagementConnectivityTest(),
+			"google_network_security_gateway_security_policies":            ResourceNetworkSecurityGatewaySecurityPolicies(),
+			"google_network_security_gateway_security_policies_rule":       ResourceNetworkSecurityGatewaySecurityPoliciesRule(),
 			"google_network_services_edge_cache_keyset":                    ResourceNetworkServicesEdgeCacheKeyset(),
 			"google_network_services_edge_cache_origin":                    ResourceNetworkServicesEdgeCacheOrigin(),
 			"google_network_services_edge_cache_service":                   ResourceNetworkServicesEdgeCacheService(),
@@ -1630,6 +1637,7 @@ func providerConfigure(ctx context.Context, d *schema.ResourceData, p *schema.Pr
 	config.MLEngineBasePath = d.Get("ml_engine_custom_endpoint").(string)
 	config.MonitoringBasePath = d.Get("monitoring_custom_endpoint").(string)
 	config.NetworkManagementBasePath = d.Get("network_management_custom_endpoint").(string)
+	config.NetworkSecurityBasePath = d.Get("network_security_custom_endpoint").(string)
 	config.NetworkServicesBasePath = d.Get("network_services_custom_endpoint").(string)
 	config.NotebooksBasePath = d.Get("notebooks_custom_endpoint").(string)
 	config.OrgPolicyBasePath = d.Get("org_policy_custom_endpoint").(string)

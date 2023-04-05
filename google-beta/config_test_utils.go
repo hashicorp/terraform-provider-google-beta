@@ -88,6 +88,7 @@ func configureTestBasePaths(c *Config, url string) {
 	c.MLEngineBasePath = url
 	c.MonitoringBasePath = url
 	c.NetworkManagementBasePath = url
+	c.NetworkSecurityBasePath = url
 	c.NetworkServicesBasePath = url
 	c.NotebooksBasePath = url
 	c.OrgPolicyBasePath = url

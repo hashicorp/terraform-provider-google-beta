@@ -125,6 +125,7 @@ type frameworkProvider struct {
 	MLEngineBasePath             string
 	MonitoringBasePath           string
 	NetworkManagementBasePath    string
+	NetworkSecurityBasePath      string
 	NetworkServicesBasePath      string
 	NotebooksBasePath            string
 	OrgPolicyBasePath            string
@@ -642,6 +643,12 @@ func (p *frameworkProvider) Schema(_ context.Context, _ provider.SchemaRequest, 
 				},
 			},
 			"network_management_custom_endpoint": &schema.StringAttribute{
+				Optional: true,
+				Validators: []validator.String{
+					CustomEndpointValidator(),
+				},
+			},
+			"network_security_custom_endpoint": &schema.StringAttribute{
 				Optional: true,
 				Validators: []validator.String{
 					CustomEndpointValidator(),
