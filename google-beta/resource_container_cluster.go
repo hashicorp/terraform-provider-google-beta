@@ -1010,7 +1010,7 @@ func ResourceContainerCluster() *schema.Resource {
 				Optional:    true,
 				Computed:    true,
 				MaxItems:    1,
-				Description: `The notification config for sending cluster upgrade notifications`,
+				Description: `Enable/Disable Protect API features for the cluster.`,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"workload_config": {
@@ -1018,13 +1018,13 @@ func ResourceContainerCluster() *schema.Resource {
 							Optional:    true,
 							Computed:    true,
 							MaxItems:    1,
-							Description: `WorkloadConfig defines the flags to enable or disable the workload configurations for the cluster.`,
+							Description: `WorkloadConfig defines which actions are enabled for a cluster's workload configurations.`,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"audit_mode": {
 										Type:        schema.TypeString,
 										Required:    true,
-										Description: `Mode defines how to audit the workload configs. Accepted values are MODE_UNSPECIFIED, DISABLED, BASIC.`,
+										Description: `Sets which mode of auditing should be used for the cluster's workloads. Accepted values are DISABLED, BASIC.`,
 									},
 								},
 							},
@@ -1037,7 +1037,7 @@ func ResourceContainerCluster() *schema.Resource {
 							Type:        schema.TypeString,
 							Optional:    true,
 							Computed:    true,
-							Description: `WorkloadVulnerabilityMode defines mode to perform vulnerability scanning. Accepted values are WORKLOAD_VULNERABILITY_MODE_UNSPECIFIED, DISABLED, BASIC.`,
+							Description: `Sets which mode to use for Protect workload vulnerability scanning feature. Accepted values are DISABLED, BASIC.`,
 							AtLeastOneOf: []string{
 								"protect_config.0.workload_config",
 								"protect_config.0.workload_vulnerability_mode",
@@ -3899,7 +3899,6 @@ func expandClusterAddonsConfig(configured interface{}) *container.AddonsConfig {
 }
 
 func expandIPAllocationPolicy(configured interface{}, networkingMode string) (*container.IPAllocationPolicy, error) {
-
 	l := configured.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		if networkingMode == "VPC_NATIVE" {
