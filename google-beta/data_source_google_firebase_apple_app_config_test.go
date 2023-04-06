@@ -22,7 +22,7 @@ func TestAccDataSourceGoogleFirebaseAppleAppConfig(t *testing.T) {
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck: func() { testAccPreCheck(t) },
+		PreCheck: func() { AccTestPreCheck(t) },
 		Steps: []resource.TestStep{
 			{
 				ExternalProviders: map[string]resource.ExternalProvider{

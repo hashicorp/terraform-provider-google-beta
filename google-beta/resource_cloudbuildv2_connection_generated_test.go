@@ -36,7 +36,7 @@ func TestAccCloudbuildv2Connection_GheCompleteConnection(t *testing.T) {
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck: func() { testAccPreCheck(t) },
+		PreCheck: func() { AccTestPreCheck(t) },
 
 		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
 		CheckDestroy:             testAccCheckCloudbuildv2ConnectionDestroyProducer(t),
@@ -62,7 +62,7 @@ func TestAccCloudbuildv2Connection_GheConnection(t *testing.T) {
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck: func() { testAccPreCheck(t) },
+		PreCheck: func() { AccTestPreCheck(t) },
 
 		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
 		CheckDestroy:             testAccCheckCloudbuildv2ConnectionDestroyProducer(t),
@@ -96,7 +96,7 @@ func TestAccCloudbuildv2Connection_GhePrivConnection(t *testing.T) {
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck: func() { testAccPreCheck(t) },
+		PreCheck: func() { AccTestPreCheck(t) },
 
 		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
 		CheckDestroy:             testAccCheckCloudbuildv2ConnectionDestroyProducer(t),
@@ -122,7 +122,7 @@ func TestAccCloudbuildv2Connection_GhePrivUpdateConnection(t *testing.T) {
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck: func() { testAccPreCheck(t) },
+		PreCheck: func() { AccTestPreCheck(t) },
 
 		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
 		CheckDestroy:             testAccCheckCloudbuildv2ConnectionDestroyProducer(t),
@@ -156,7 +156,7 @@ func TestAccCloudbuildv2Connection_GithubConnection(t *testing.T) {
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck: func() { testAccPreCheck(t) },
+		PreCheck: func() { AccTestPreCheck(t) },
 
 		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
 		CheckDestroy:             testAccCheckCloudbuildv2ConnectionDestroyProducer(t),

@@ -31,7 +31,7 @@ func TestAccWorkstationsWorkstationConfig_workstationConfigBasicExample(t *testi
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
 		CheckDestroy:             testAccCheckWorkstationsWorkstationConfigDestroyProducer(t),
 		Steps: []resource.TestStep{
@@ -105,7 +105,7 @@ func TestAccWorkstationsWorkstationConfig_workstationConfigContainerExample(t *t
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
 		CheckDestroy:             testAccCheckWorkstationsWorkstationConfigDestroyProducer(t),
 		Steps: []resource.TestStep{
@@ -187,7 +187,7 @@ func TestAccWorkstationsWorkstationConfig_workstationConfigPersistentDirectories
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
 		CheckDestroy:             testAccCheckWorkstationsWorkstationConfigDestroyProducer(t),
 		Steps: []resource.TestStep{
@@ -273,7 +273,7 @@ func TestAccWorkstationsWorkstationConfig_workstationConfigShieldedInstanceConfi
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
 		CheckDestroy:             testAccCheckWorkstationsWorkstationConfigDestroyProducer(t),
 		Steps: []resource.TestStep{
@@ -351,7 +351,7 @@ func TestAccWorkstationsWorkstationConfig_workstationConfigEncryptionKeyExample(
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
 		CheckDestroy:             testAccCheckWorkstationsWorkstationConfigDestroyProducer(t),
 		Steps: []resource.TestStep{

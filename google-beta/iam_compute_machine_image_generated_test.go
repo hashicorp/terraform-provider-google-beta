@@ -36,7 +36,7 @@ func TestAccComputeMachineImageIamBindingGenerated(t *testing.T) {
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
 		Steps: []resource.TestStep{
 			{
@@ -76,7 +76,7 @@ func TestAccComputeMachineImageIamMemberGenerated(t *testing.T) {
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
 		Steps: []resource.TestStep{
 			{
@@ -107,7 +107,7 @@ func TestAccComputeMachineImageIamPolicyGenerated(t *testing.T) {
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
 		Steps: []resource.TestStep{
 			{
@@ -146,7 +146,7 @@ func TestAccComputeMachineImageIamBindingGenerated_withCondition(t *testing.T) {
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
 		Steps: []resource.TestStep{
 			{
@@ -178,7 +178,7 @@ func TestAccComputeMachineImageIamBindingGenerated_withAndWithoutCondition(t *te
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
 		Steps: []resource.TestStep{
 			{
@@ -220,7 +220,7 @@ func TestAccComputeMachineImageIamMemberGenerated_withCondition(t *testing.T) {
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
 		Steps: []resource.TestStep{
 			{
@@ -252,7 +252,7 @@ func TestAccComputeMachineImageIamMemberGenerated_withAndWithoutCondition(t *tes
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
 		Steps: []resource.TestStep{
 			{
@@ -298,7 +298,7 @@ func TestAccComputeMachineImageIamPolicyGenerated_withCondition(t *testing.T) {
 	expectedPolicyData = strings.Replace(expectedPolicyData, "<", "\\u003c", -1)
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
 		Steps: []resource.TestStep{
 			{

@@ -33,7 +33,7 @@ func TestAccComputeAutoscaler_autoscalerSingleInstanceExample(t *testing.T) {
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
 		CheckDestroy:             testAccCheckComputeAutoscalerDestroyProducer(t),
 		Steps: []resource.TestStep{
@@ -142,7 +142,7 @@ func TestAccComputeAutoscaler_autoscalerBasicExample(t *testing.T) {
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckComputeAutoscalerDestroyProducer(t),
 		Steps: []resource.TestStep{

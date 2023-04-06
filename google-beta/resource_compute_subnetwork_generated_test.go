@@ -31,7 +31,7 @@ func TestAccComputeSubnetwork_subnetworkBasicExample(t *testing.T) {
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckComputeSubnetworkDestroyProducer(t),
 		Steps: []resource.TestStep{
@@ -76,7 +76,7 @@ func TestAccComputeSubnetwork_subnetworkLoggingConfigExample(t *testing.T) {
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckComputeSubnetworkDestroyProducer(t),
 		Steps: []resource.TestStep{
@@ -123,7 +123,7 @@ func TestAccComputeSubnetwork_subnetworkInternalL7lbExample(t *testing.T) {
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
 		CheckDestroy:             testAccCheckComputeSubnetworkDestroyProducer(t),
 		Steps: []resource.TestStep{
@@ -170,7 +170,7 @@ func TestAccComputeSubnetwork_subnetworkIpv6Example(t *testing.T) {
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckComputeSubnetworkDestroyProducer(t),
 		Steps: []resource.TestStep{
@@ -216,7 +216,7 @@ func TestAccComputeSubnetwork_subnetworkInternalIpv6Example(t *testing.T) {
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckComputeSubnetworkDestroyProducer(t),
 		Steps: []resource.TestStep{

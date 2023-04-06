@@ -29,7 +29,7 @@ func TestAccApiGatewayApiConfigIamBindingGenerated(t *testing.T) {
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
 		Steps: []resource.TestStep{
 			{
@@ -52,7 +52,7 @@ func TestAccApiGatewayApiConfigIamMemberGenerated(t *testing.T) {
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
 		Steps: []resource.TestStep{
 			{
@@ -72,7 +72,7 @@ func TestAccApiGatewayApiConfigIamPolicyGenerated(t *testing.T) {
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
 		Steps: []resource.TestStep{
 			{

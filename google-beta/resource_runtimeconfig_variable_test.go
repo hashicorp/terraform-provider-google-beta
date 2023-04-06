@@ -19,7 +19,7 @@ func TestAccRuntimeconfigVariable_basic(t *testing.T) {
 	varText := "this is my test value"
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckRuntimeconfigVariableDestroyProducer(t),
 		Steps: []resource.TestStep{
@@ -52,7 +52,7 @@ func TestAccRuntimeconfigVariable_basicUpdate(t *testing.T) {
 	varText2 := "this is my updated value"
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckRuntimeconfigVariableDestroyProducer(t),
 		Steps: []resource.TestStep{
@@ -84,7 +84,7 @@ func TestAccRuntimeconfigVariable_basicValue(t *testing.T) {
 	varValue := "Zm9vYmFyCg=="
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckRuntimeconfigVariableDestroyProducer(t),
 		Steps: []resource.TestStep{

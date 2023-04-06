@@ -41,7 +41,7 @@ func TestAccContainerAzureNodePool_BasicHandWritten(t *testing.T) {
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckContainerAzureNodePoolDestroyProducer(t),
 		Steps: []resource.TestStep{
@@ -79,7 +79,7 @@ func TestAccContainerAzureNodePool_BetaBasicHandWritten(t *testing.T) {
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck: func() { testAccPreCheck(t) },
+		PreCheck: func() { AccTestPreCheck(t) },
 
 		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
 		CheckDestroy:             testAccCheckContainerAzureNodePoolDestroyProducer(t),

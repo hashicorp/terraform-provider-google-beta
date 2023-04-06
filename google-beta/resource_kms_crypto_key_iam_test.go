@@ -27,7 +27,7 @@ func TestAccKmsCryptoKeyIamBinding(t *testing.T) {
 	cryptoKeyName := fmt.Sprintf("tf-test-%s", RandString(t, 10))
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
 		Steps: []resource.TestStep{
 			{
@@ -79,7 +79,7 @@ func TestAccKmsCryptoKeyIamBinding_withCondition(t *testing.T) {
 	conditionTitle := "expires_after_2019_12_31"
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
 		Steps: []resource.TestStep{
 			{
@@ -112,7 +112,7 @@ func TestAccKmsCryptoKeyIamMember(t *testing.T) {
 	cryptoKeyName := fmt.Sprintf("tf-test-%s", RandString(t, 10))
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
 		Steps: []resource.TestStep{
 			{
@@ -150,7 +150,7 @@ func TestAccKmsCryptoKeyIamMember_withCondition(t *testing.T) {
 	conditionTitle := "expires_after_2019_12_31"
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
 		Steps: []resource.TestStep{
 			{
@@ -184,7 +184,7 @@ func TestAccKmsCryptoKeyIamPolicy(t *testing.T) {
 	cryptoKeyName := fmt.Sprintf("tf-test-%s", RandString(t, 10))
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
 		Steps: []resource.TestStep{
 			{
@@ -222,7 +222,7 @@ func TestAccKmsCryptoKeyIamPolicy_withCondition(t *testing.T) {
 	conditionTitle := "expires_after_2019_12_31"
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
 		Steps: []resource.TestStep{
 			{

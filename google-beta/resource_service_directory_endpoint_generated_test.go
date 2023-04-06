@@ -31,7 +31,7 @@ func TestAccServiceDirectoryEndpoint_serviceDirectoryEndpointBasicExample(t *tes
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
 		CheckDestroy:             testAccCheckServiceDirectoryEndpointDestroyProducer(t),
 		Steps: []resource.TestStep{
@@ -86,7 +86,7 @@ func TestAccServiceDirectoryEndpoint_serviceDirectoryEndpointWithNetworkExample(
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
 		CheckDestroy:             testAccCheckServiceDirectoryEndpointDestroyProducer(t),
 		Steps: []resource.TestStep{

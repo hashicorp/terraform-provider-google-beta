@@ -34,7 +34,7 @@ func TestAccFirebaseAppleApp_firebaseAppleAppBasicExample(t *testing.T) {
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
 		CheckDestroy:             testAccCheckFirebaseAppleAppDestroyProducer(t),
 		Steps: []resource.TestStep{
@@ -74,7 +74,7 @@ func TestAccFirebaseAppleApp_firebaseAppleAppFullExample(t *testing.T) {
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
 		CheckDestroy:             testAccCheckFirebaseAppleAppDestroyProducer(t),
 		Steps: []resource.TestStep{

@@ -13,7 +13,7 @@ func TestAccArtifactRegistryRepository_update(t *testing.T) {
 	repositoryID := fmt.Sprintf("tf-test-%d", RandInt(t))
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckArtifactRegistryRepositoryDestroyProducer(t),
 		Steps: []resource.TestStep{
@@ -43,7 +43,7 @@ func TestAccArtifactRegistryRepository_createMvnSnapshot(t *testing.T) {
 	repositoryID := fmt.Sprintf("tf-test-%d", RandInt(t))
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckArtifactRegistryRepositoryDestroyProducer(t),
 		Steps: []resource.TestStep{
@@ -65,7 +65,7 @@ func TestAccArtifactRegistryRepository_createMvnRelease(t *testing.T) {
 	repositoryID := fmt.Sprintf("tf-test-%d", RandInt(t))
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckArtifactRegistryRepositoryDestroyProducer(t),
 		Steps: []resource.TestStep{
@@ -87,7 +87,7 @@ func TestAccArtifactRegistryRepository_kfp(t *testing.T) {
 	repositoryID := fmt.Sprintf("tf-test-%d", RandInt(t))
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckArtifactRegistryRepositoryDestroyProducer(t),
 		Steps: []resource.TestStep{
@@ -167,7 +167,7 @@ func TestAccArtifactRegistryRepository_virtual(t *testing.T) {
 	repositoryID := fmt.Sprintf("%s-virtual", upstreamRepositoryID)
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckArtifactRegistryRepositoryDestroyProducer(t),
 		Steps: []resource.TestStep{
@@ -197,7 +197,7 @@ func TestAccArtifactRegistryRepository_remote(t *testing.T) {
 	repositoryID := fmt.Sprintf("tf-test-%d", RandInt(t))
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckArtifactRegistryRepositoryDestroyProducer(t),
 		Steps: []resource.TestStep{

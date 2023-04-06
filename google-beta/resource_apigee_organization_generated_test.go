@@ -34,7 +34,7 @@ func TestAccApigeeOrganization_apigeeOrganizationCloudBasicTestExample(t *testin
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckApigeeOrganizationDestroyProducer(t),
 		Steps: []resource.TestStep{
@@ -120,7 +120,7 @@ func TestAccApigeeOrganization_apigeeOrganizationCloudFullTestExample(t *testing
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
 		CheckDestroy:             testAccCheckApigeeOrganizationDestroyProducer(t),
 		Steps: []resource.TestStep{
@@ -278,7 +278,7 @@ func TestAccApigeeOrganization_apigeeOrganizationRetentionTestExample(t *testing
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
 		CheckDestroy:             testAccCheckApigeeOrganizationDestroyProducer(t),
 		Steps: []resource.TestStep{

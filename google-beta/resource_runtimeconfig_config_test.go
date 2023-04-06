@@ -17,7 +17,7 @@ func TestAccRuntimeconfigConfig_basic(t *testing.T) {
 	description := "my test description"
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckRuntimeconfigConfigDestroyProducer(t),
 		Steps: []resource.TestStep{
@@ -47,7 +47,7 @@ func TestAccRuntimeconfig_update(t *testing.T) {
 	secondDescription := "my updated test description"
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckRuntimeconfigConfigDestroyProducer(t),
 		Steps: []resource.TestStep{
@@ -78,7 +78,7 @@ func TestAccRuntimeconfig_updateEmptyDescription(t *testing.T) {
 	description := "my test description"
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckRuntimeconfigConfigDestroyProducer(t),
 		Steps: []resource.TestStep{

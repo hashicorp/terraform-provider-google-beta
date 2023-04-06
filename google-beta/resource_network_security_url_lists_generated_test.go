@@ -31,7 +31,7 @@ func TestAccNetworkSecurityUrlLists_networkSecurityUrlListsBasicExample(t *testi
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
 		CheckDestroy:             testAccCheckNetworkSecurityUrlListsDestroyProducer(t),
 		Steps: []resource.TestStep{
@@ -67,7 +67,7 @@ func TestAccNetworkSecurityUrlLists_networkSecurityUrlListsAdvancedExample(t *te
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
 		CheckDestroy:             testAccCheckNetworkSecurityUrlListsDestroyProducer(t),
 		Steps: []resource.TestStep{

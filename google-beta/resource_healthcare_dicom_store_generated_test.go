@@ -31,7 +31,7 @@ func TestAccHealthcareDicomStore_healthcareDicomStoreBasicExample(t *testing.T) 
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckHealthcareDicomStoreDestroyProducer(t),
 		Steps: []resource.TestStep{
@@ -83,7 +83,7 @@ func TestAccHealthcareDicomStore_healthcareDicomStoreBqStreamExample(t *testing.
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
 		CheckDestroy:             testAccCheckHealthcareDicomStoreDestroyProducer(t),
 		Steps: []resource.TestStep{

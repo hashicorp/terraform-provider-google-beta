@@ -36,7 +36,7 @@ func TestAccCloudbuildv2Repository_GheRepository(t *testing.T) {
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck: func() { testAccPreCheck(t) },
+		PreCheck: func() { AccTestPreCheck(t) },
 
 		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
 		CheckDestroy:             testAccCheckCloudbuildv2RepositoryDestroyProducer(t),
@@ -62,7 +62,7 @@ func TestAccCloudbuildv2Repository_GithubRepository(t *testing.T) {
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck: func() { testAccPreCheck(t) },
+		PreCheck: func() { AccTestPreCheck(t) },
 
 		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
 		CheckDestroy:             testAccCheckCloudbuildv2RepositoryDestroyProducer(t),

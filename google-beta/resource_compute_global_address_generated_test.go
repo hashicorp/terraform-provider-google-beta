@@ -31,7 +31,7 @@ func TestAccComputeGlobalAddress_globalAddressBasicExample(t *testing.T) {
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckComputeGlobalAddressDestroyProducer(t),
 		Steps: []resource.TestStep{
@@ -64,7 +64,7 @@ func TestAccComputeGlobalAddress_globalAddressPrivateServicesConnectExample(t *t
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
 		CheckDestroy:             testAccCheckComputeGlobalAddressDestroyProducer(t),
 		Steps: []resource.TestStep{

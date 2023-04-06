@@ -19,7 +19,7 @@ func TestAccComputeInstanceFromMachineImage_basic(t *testing.T) {
 	resourceName := "google_compute_instance_from_machine_image.foobar"
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
 		CheckDestroy:             testAccCheckComputeInstanceFromMachineImageDestroyProducer(t),
 		Steps: []resource.TestStep{
@@ -47,7 +47,7 @@ func TestAccComputeInstanceFromMachineImage_overrideMetadataDotStartupScript(t *
 	resourceName := "google_compute_instance_from_machine_image.foobar"
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
 		CheckDestroy:             testAccCheckComputeInstanceFromMachineImageDestroyProducer(t),
 		Steps: []resource.TestStep{
@@ -75,7 +75,7 @@ func TestAccComputeInstanceFromMachineImage_diffProject(t *testing.T) {
 	projectID := fmt.Sprintf("tf-test-%d", RandInt(t))
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
 		CheckDestroy:             testAccCheckComputeInstanceFromMachineImageDestroyProducer(t),
 		Steps: []resource.TestStep{
