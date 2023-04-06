@@ -31,7 +31,7 @@ func TestAccNetworkSecurityGatewaySecurityPolicies_networkSecurityGatewaySecurit
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
 		CheckDestroy:             testAccCheckNetworkSecurityGatewaySecurityPoliciesDestroyProducer(t),
 		Steps: []resource.TestStep{

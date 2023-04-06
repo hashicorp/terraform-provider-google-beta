@@ -31,7 +31,7 @@ func TestAccNetworkServicesMesh_networkServicesMeshBasicExample(t *testing.T) {
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
 		CheckDestroy:             testAccCheckNetworkServicesMeshDestroyProducer(t),
 		Steps: []resource.TestStep{
@@ -70,7 +70,7 @@ func TestAccNetworkServicesMesh_networkServicesMeshNoPortExample(t *testing.T) {
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
 		CheckDestroy:             testAccCheckNetworkServicesMeshDestroyProducer(t),
 		Steps: []resource.TestStep{

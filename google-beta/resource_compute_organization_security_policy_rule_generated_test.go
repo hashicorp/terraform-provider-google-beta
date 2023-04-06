@@ -32,7 +32,7 @@ func TestAccComputeOrganizationSecurityPolicyRule_organizationSecurityPolicyRule
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
 		CheckDestroy:             testAccCheckComputeOrganizationSecurityPolicyRuleDestroyProducer(t),
 		Steps: []resource.TestStep{

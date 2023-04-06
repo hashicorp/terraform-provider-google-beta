@@ -32,7 +32,7 @@ func TestAccFirebaseStorageBucket_firebasestorageBucketBasicExample(t *testing.T
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
 		CheckDestroy:             testAccCheckFirebaseStorageBucketDestroyProducer(t),
 		Steps: []resource.TestStep{

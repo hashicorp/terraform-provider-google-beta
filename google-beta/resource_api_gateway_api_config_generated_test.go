@@ -31,7 +31,7 @@ func TestAccApiGatewayApiConfig_apigatewayApiConfigBasicExample(t *testing.T) {
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
 		CheckDestroy:             testAccCheckApiGatewayApiConfigDestroyProducer(t),
 		Steps: []resource.TestStep{
@@ -81,7 +81,7 @@ func TestAccApiGatewayApiConfig_apigatewayApiConfigFullExample(t *testing.T) {
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
 		CheckDestroy:             testAccCheckApiGatewayApiConfigDestroyProducer(t),
 		Steps: []resource.TestStep{
@@ -132,7 +132,7 @@ func TestAccApiGatewayApiConfig_apigatewayApiConfigGrpcExample(t *testing.T) {
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
 		CheckDestroy:             testAccCheckApiGatewayApiConfigDestroyProducer(t),
 		Steps: []resource.TestStep{
@@ -204,7 +204,7 @@ func TestAccApiGatewayApiConfig_apigatewayApiConfigGrpcFullExample(t *testing.T)
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
 		CheckDestroy:             testAccCheckApiGatewayApiConfigDestroyProducer(t),
 		Steps: []resource.TestStep{

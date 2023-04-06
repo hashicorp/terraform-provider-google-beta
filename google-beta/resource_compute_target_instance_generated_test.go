@@ -31,7 +31,7 @@ func TestAccComputeTargetInstance_targetInstanceBasicExample(t *testing.T) {
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckComputeTargetInstanceDestroyProducer(t),
 		Steps: []resource.TestStep{
@@ -86,7 +86,7 @@ func TestAccComputeTargetInstance_targetInstanceCustomNetworkExample(t *testing.
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
 		CheckDestroy:             testAccCheckComputeTargetInstanceDestroyProducer(t),
 		Steps: []resource.TestStep{

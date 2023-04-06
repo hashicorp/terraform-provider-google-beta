@@ -13,7 +13,7 @@ func TestAccDNSResponsePolicyRule_update(t *testing.T) {
 	responsePolicyRuleSuffix := RandString(t, 10)
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
 		CheckDestroy:             testAccCheckDNSResponsePolicyRuleDestroyProducer(t),
 		Steps: []resource.TestStep{
@@ -43,7 +43,7 @@ func TestAccDNSResponsePolicyRuleBehavior_update(t *testing.T) {
 	responsePolicyRuleSuffix := RandString(t, 10)
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
 		CheckDestroy:             testAccCheckDNSResponsePolicyRuleDestroyProducer(t),
 		Steps: []resource.TestStep{

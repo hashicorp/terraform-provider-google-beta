@@ -19,7 +19,7 @@ func testAccCloudIdentityGroupMembership_updateTest(t *testing.T) {
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckCloudIdentityGroupMembershipDestroyProducer(t),
 		Steps: []resource.TestStep{
@@ -125,7 +125,7 @@ func testAccCloudIdentityGroupMembership_importTest(t *testing.T) {
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckCloudIdentityGroupMembershipDestroyProducer(t),
 		Steps: []resource.TestStep{
@@ -203,7 +203,7 @@ func testAccCloudIdentityGroupMembership_membershipDoesNotExistTest(t *testing.T
 	context["member_id"] = sa.Email
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckCloudIdentityGroupMembershipDestroyProducer(t),
 		Steps: []resource.TestStep{
@@ -266,7 +266,7 @@ func testAccCloudIdentityGroupMembership_cloudIdentityGroupMembershipWithMemberK
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckCloudIdentityGroupMembershipDestroyProducer(t),
 		Steps: []resource.TestStep{
@@ -335,7 +335,7 @@ func testAccCloudIdentityGroupMembership_cloudIdentityGroupMembershipUserWithMem
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckCloudIdentityGroupMembershipDestroyProducer(t),
 		Steps: []resource.TestStep{
@@ -393,7 +393,7 @@ func testAccCloudIdentityGroupMembership_cloudIdentityGroupMembershipExampleTest
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckCloudIdentityGroupMembershipDestroyProducer(t),
 		Steps: []resource.TestStep{
@@ -463,7 +463,7 @@ func testAccCloudIdentityGroupMembership_cloudIdentityGroupMembershipUserExample
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckCloudIdentityGroupMembershipDestroyProducer(t),
 		Steps: []resource.TestStep{

@@ -31,7 +31,7 @@ func TestAccServiceDirectoryNamespace_serviceDirectoryNamespaceBasicExample(t *t
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
 		CheckDestroy:             testAccCheckServiceDirectoryNamespaceDestroyProducer(t),
 		Steps: []resource.TestStep{

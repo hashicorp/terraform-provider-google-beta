@@ -31,7 +31,7 @@ func TestAccComputeGlobalForwardingRule_externalTcpProxyLbMigBackendExample(t *t
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
 		CheckDestroy:             testAccCheckComputeGlobalForwardingRuleDestroyProducer(t),
 		Steps: []resource.TestStep{
@@ -204,7 +204,7 @@ func TestAccComputeGlobalForwardingRule_externalHttpLbMigBackendCustomHeaderExam
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
 		CheckDestroy:             testAccCheckComputeGlobalForwardingRuleDestroyProducer(t),
 		Steps: []resource.TestStep{
@@ -389,7 +389,7 @@ func TestAccComputeGlobalForwardingRule_globalForwardingRuleHttpExample(t *testi
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckComputeGlobalForwardingRuleDestroyProducer(t),
 		Steps: []resource.TestStep{
@@ -467,7 +467,7 @@ func TestAccComputeGlobalForwardingRule_globalForwardingRuleInternalExample(t *t
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
 		CheckDestroy:             testAccCheckComputeGlobalForwardingRuleDestroyProducer(t),
 		Steps: []resource.TestStep{
@@ -604,7 +604,7 @@ func TestAccComputeGlobalForwardingRule_globalForwardingRuleExternalManagedExamp
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckComputeGlobalForwardingRuleDestroyProducer(t),
 		Steps: []resource.TestStep{
@@ -675,7 +675,7 @@ func TestAccComputeGlobalForwardingRule_globalForwardingRuleHybridExample(t *tes
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckComputeGlobalForwardingRuleDestroyProducer(t),
 		Steps: []resource.TestStep{
@@ -836,7 +836,7 @@ func TestAccComputeGlobalForwardingRule_privateServiceConnectGoogleApisExample(t
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
 		CheckDestroy:             testAccCheckComputeGlobalForwardingRuleDestroyProducer(t),
 		Steps: []resource.TestStep{
