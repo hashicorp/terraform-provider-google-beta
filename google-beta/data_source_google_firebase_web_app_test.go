@@ -23,7 +23,7 @@ func TestAccDataSourceGoogleFirebaseWebApp(t *testing.T) {
 			{
 				Config: testAccDataSourceGoogleFirebaseWebApp(context),
 				Check: resource.ComposeTestCheckFunc(
-					checkDataSourceStateMatchesResourceStateWithIgnores(
+					CheckDataSourceStateMatchesResourceStateWithIgnores(
 						resourceName,
 						"google_firebase_web_app.my_app",
 						map[string]struct{}{

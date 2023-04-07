@@ -105,7 +105,7 @@ func resourceNetworkSecurityGatewaySecurityPoliciesCreate(d *schema.ResourceData
 		obj["description"] = descriptionProp
 	}
 
-	url, err := replaceVars(d, config, "{{NetworkSecurityBasePath}}projects/{{project}}/locations/{{location}}/gatewaySecurityPolicies?gatewaySecurityPolicyId={{name}}")
+	url, err := ReplaceVars(d, config, "{{NetworkSecurityBasePath}}projects/{{project}}/locations/{{location}}/gatewaySecurityPolicies?gatewaySecurityPolicyId={{name}}")
 	if err != nil {
 		return err
 	}
@@ -130,7 +130,7 @@ func resourceNetworkSecurityGatewaySecurityPoliciesCreate(d *schema.ResourceData
 	}
 
 	// Store the ID now
-	id, err := replaceVars(d, config, "projects/{{project}}/locations/{{location}}/gatewaySecurityPolicies/{{name}}")
+	id, err := ReplaceVars(d, config, "projects/{{project}}/locations/{{location}}/gatewaySecurityPolicies/{{name}}")
 	if err != nil {
 		return fmt.Errorf("Error constructing id: %s", err)
 	}
@@ -158,7 +158,7 @@ func resourceNetworkSecurityGatewaySecurityPoliciesRead(d *schema.ResourceData, 
 		return err
 	}
 
-	url, err := replaceVars(d, config, "{{NetworkSecurityBasePath}}projects/{{project}}/locations/{{location}}/gatewaySecurityPolicies/{{name}}")
+	url, err := ReplaceVars(d, config, "{{NetworkSecurityBasePath}}projects/{{project}}/locations/{{location}}/gatewaySecurityPolicies/{{name}}")
 	if err != nil {
 		return err
 	}
@@ -224,7 +224,7 @@ func resourceNetworkSecurityGatewaySecurityPoliciesUpdate(d *schema.ResourceData
 		obj["description"] = descriptionProp
 	}
 
-	url, err := replaceVars(d, config, "{{NetworkSecurityBasePath}}projects/{{project}}/locations/{{location}}/gatewaySecurityPolicies/{{name}}")
+	url, err := ReplaceVars(d, config, "{{NetworkSecurityBasePath}}projects/{{project}}/locations/{{location}}/gatewaySecurityPolicies/{{name}}")
 	if err != nil {
 		return err
 	}
@@ -235,9 +235,9 @@ func resourceNetworkSecurityGatewaySecurityPoliciesUpdate(d *schema.ResourceData
 	if d.HasChange("description") {
 		updateMask = append(updateMask, "description")
 	}
-	// updateMask is a URL parameter but not present in the schema, so replaceVars
+	// updateMask is a URL parameter but not present in the schema, so ReplaceVars
 	// won't set it
-	url, err = addQueryParams(url, map[string]string{"updateMask": strings.Join(updateMask, ",")})
+	url, err = AddQueryParams(url, map[string]string{"updateMask": strings.Join(updateMask, ",")})
 	if err != nil {
 		return err
 	}
@@ -281,7 +281,7 @@ func resourceNetworkSecurityGatewaySecurityPoliciesDelete(d *schema.ResourceData
 	}
 	billingProject = project
 
-	url, err := replaceVars(d, config, "{{NetworkSecurityBasePath}}projects/{{project}}/locations/{{location}}/gatewaySecurityPolicies/{{name}}")
+	url, err := ReplaceVars(d, config, "{{NetworkSecurityBasePath}}projects/{{project}}/locations/{{location}}/gatewaySecurityPolicies/{{name}}")
 	if err != nil {
 		return err
 	}
@@ -313,7 +313,7 @@ func resourceNetworkSecurityGatewaySecurityPoliciesDelete(d *schema.ResourceData
 
 func resourceNetworkSecurityGatewaySecurityPoliciesImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	config := meta.(*Config)
-	if err := parseImportId([]string{
+	if err := ParseImportId([]string{
 		"projects/(?P<project>[^/]+)/locations/(?P<location>[^/]+)/gatewaySecurityPolicies/(?P<name>[^/]+)",
 		"(?P<project>[^/]+)/(?P<location>[^/]+)/(?P<name>[^/]+)",
 		"(?P<location>[^/]+)/(?P<name>[^/]+)",
@@ -322,7 +322,7 @@ func resourceNetworkSecurityGatewaySecurityPoliciesImport(d *schema.ResourceData
 	}
 
 	// Replace import id for the resource id
-	id, err := replaceVars(d, config, "projects/{{project}}/locations/{{location}}/gatewaySecurityPolicies/{{name}}")
+	id, err := ReplaceVars(d, config, "projects/{{project}}/locations/{{location}}/gatewaySecurityPolicies/{{name}}")
 	if err != nil {
 		return nil, fmt.Errorf("Error constructing id: %s", err)
 	}
