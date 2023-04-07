@@ -24,15 +24,15 @@ import (
 )
 
 func init() {
-	resource.AddTestSweepers("NetworkSecurityGatewaySecurityPoliciesRule", &resource.Sweeper{
-		Name: "NetworkSecurityGatewaySecurityPoliciesRule",
-		F:    testSweepNetworkSecurityGatewaySecurityPoliciesRule,
+	resource.AddTestSweepers("NetworkSecurityGatewaySecurityPolicyRule", &resource.Sweeper{
+		Name: "NetworkSecurityGatewaySecurityPolicyRule",
+		F:    testSweepNetworkSecurityGatewaySecurityPolicyRule,
 	})
 }
 
 // At the time of writing, the CI only passes us-central1 as the region
-func testSweepNetworkSecurityGatewaySecurityPoliciesRule(region string) error {
-	resourceName := "NetworkSecurityGatewaySecurityPoliciesRule"
+func testSweepNetworkSecurityGatewaySecurityPolicyRule(region string) error {
+	resourceName := "NetworkSecurityGatewaySecurityPolicyRule"
 	log.Printf("[INFO][SWEEPER_LOG] Starting sweeper for %s", resourceName)
 
 	config, err := SharedConfigForRegion(region)
@@ -74,7 +74,7 @@ func testSweepNetworkSecurityGatewaySecurityPoliciesRule(region string) error {
 		return nil
 	}
 
-	resourceList, ok := res["gatewaySecurityPoliciesRules"]
+	resourceList, ok := res["gatewaySecurityPolicyRules"]
 	if !ok {
 		log.Printf("[INFO][SWEEPER_LOG] Nothing found in response.")
 		return nil

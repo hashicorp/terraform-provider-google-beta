@@ -24,15 +24,15 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func ResourceNetworkSecurityGatewaySecurityPolicies() *schema.Resource {
+func ResourceNetworkSecurityGatewaySecurityPolicy() *schema.Resource {
 	return &schema.Resource{
-		Create: resourceNetworkSecurityGatewaySecurityPoliciesCreate,
-		Read:   resourceNetworkSecurityGatewaySecurityPoliciesRead,
-		Update: resourceNetworkSecurityGatewaySecurityPoliciesUpdate,
-		Delete: resourceNetworkSecurityGatewaySecurityPoliciesDelete,
+		Create: resourceNetworkSecurityGatewaySecurityPolicyCreate,
+		Read:   resourceNetworkSecurityGatewaySecurityPolicyRead,
+		Update: resourceNetworkSecurityGatewaySecurityPolicyUpdate,
+		Delete: resourceNetworkSecurityGatewaySecurityPolicyDelete,
 
 		Importer: &schema.ResourceImporter{
-			State: resourceNetworkSecurityGatewaySecurityPoliciesImport,
+			State: resourceNetworkSecurityGatewaySecurityPolicyImport,
 		},
 
 		Timeouts: &schema.ResourceTimeout{
@@ -90,7 +90,7 @@ Examples: "2014-10-02T15:01:23Z" and "2014-10-02T15:01:23.045123456Z".`,
 	}
 }
 
-func resourceNetworkSecurityGatewaySecurityPoliciesCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceNetworkSecurityGatewaySecurityPolicyCreate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
@@ -98,7 +98,7 @@ func resourceNetworkSecurityGatewaySecurityPoliciesCreate(d *schema.ResourceData
 	}
 
 	obj := make(map[string]interface{})
-	descriptionProp, err := expandNetworkSecurityGatewaySecurityPoliciesDescription(d.Get("description"), d, config)
+	descriptionProp, err := expandNetworkSecurityGatewaySecurityPolicyDescription(d.Get("description"), d, config)
 	if err != nil {
 		return err
 	} else if v, ok := d.GetOkExists("description"); !isEmptyValue(reflect.ValueOf(descriptionProp)) && (ok || !reflect.DeepEqual(v, descriptionProp)) {
@@ -110,12 +110,12 @@ func resourceNetworkSecurityGatewaySecurityPoliciesCreate(d *schema.ResourceData
 		return err
 	}
 
-	log.Printf("[DEBUG] Creating new GatewaySecurityPolicies: %#v", obj)
+	log.Printf("[DEBUG] Creating new GatewaySecurityPolicy: %#v", obj)
 	billingProject := ""
 
 	project, err := getProject(d, config)
 	if err != nil {
-		return fmt.Errorf("Error fetching project for GatewaySecurityPolicies: %s", err)
+		return fmt.Errorf("Error fetching project for GatewaySecurityPolicy: %s", err)
 	}
 	billingProject = project
 
@@ -126,7 +126,7 @@ func resourceNetworkSecurityGatewaySecurityPoliciesCreate(d *schema.ResourceData
 
 	res, err := SendRequestWithTimeout(config, "POST", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutCreate))
 	if err != nil {
-		return fmt.Errorf("Error creating GatewaySecurityPolicies: %s", err)
+		return fmt.Errorf("Error creating GatewaySecurityPolicy: %s", err)
 	}
 
 	// Store the ID now
@@ -137,21 +137,21 @@ func resourceNetworkSecurityGatewaySecurityPoliciesCreate(d *schema.ResourceData
 	d.SetId(id)
 
 	err = NetworkSecurityOperationWaitTime(
-		config, res, project, "Creating GatewaySecurityPolicies", userAgent,
+		config, res, project, "Creating GatewaySecurityPolicy", userAgent,
 		d.Timeout(schema.TimeoutCreate))
 
 	if err != nil {
 		// The resource didn't actually create
 		d.SetId("")
-		return fmt.Errorf("Error waiting to create GatewaySecurityPolicies: %s", err)
+		return fmt.Errorf("Error waiting to create GatewaySecurityPolicy: %s", err)
 	}
 
-	log.Printf("[DEBUG] Finished creating GatewaySecurityPolicies %q: %#v", d.Id(), res)
+	log.Printf("[DEBUG] Finished creating GatewaySecurityPolicy %q: %#v", d.Id(), res)
 
-	return resourceNetworkSecurityGatewaySecurityPoliciesRead(d, meta)
+	return resourceNetworkSecurityGatewaySecurityPolicyRead(d, meta)
 }
 
-func resourceNetworkSecurityGatewaySecurityPoliciesRead(d *schema.ResourceData, meta interface{}) error {
+func resourceNetworkSecurityGatewaySecurityPolicyRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
@@ -167,7 +167,7 @@ func resourceNetworkSecurityGatewaySecurityPoliciesRead(d *schema.ResourceData, 
 
 	project, err := getProject(d, config)
 	if err != nil {
-		return fmt.Errorf("Error fetching project for GatewaySecurityPolicies: %s", err)
+		return fmt.Errorf("Error fetching project for GatewaySecurityPolicy: %s", err)
 	}
 	billingProject = project
 
@@ -178,30 +178,30 @@ func resourceNetworkSecurityGatewaySecurityPoliciesRead(d *schema.ResourceData, 
 
 	res, err := SendRequest(config, "GET", billingProject, url, userAgent, nil)
 	if err != nil {
-		return handleNotFoundError(err, d, fmt.Sprintf("NetworkSecurityGatewaySecurityPolicies %q", d.Id()))
+		return handleNotFoundError(err, d, fmt.Sprintf("NetworkSecurityGatewaySecurityPolicy %q", d.Id()))
 	}
 
 	if err := d.Set("project", project); err != nil {
-		return fmt.Errorf("Error reading GatewaySecurityPolicies: %s", err)
+		return fmt.Errorf("Error reading GatewaySecurityPolicy: %s", err)
 	}
 
-	if err := d.Set("self_link", flattenNetworkSecurityGatewaySecurityPoliciesSelfLink(res["selfLink"], d, config)); err != nil {
-		return fmt.Errorf("Error reading GatewaySecurityPolicies: %s", err)
+	if err := d.Set("self_link", flattenNetworkSecurityGatewaySecurityPolicySelfLink(res["selfLink"], d, config)); err != nil {
+		return fmt.Errorf("Error reading GatewaySecurityPolicy: %s", err)
 	}
-	if err := d.Set("create_time", flattenNetworkSecurityGatewaySecurityPoliciesCreateTime(res["createTime"], d, config)); err != nil {
-		return fmt.Errorf("Error reading GatewaySecurityPolicies: %s", err)
+	if err := d.Set("create_time", flattenNetworkSecurityGatewaySecurityPolicyCreateTime(res["createTime"], d, config)); err != nil {
+		return fmt.Errorf("Error reading GatewaySecurityPolicy: %s", err)
 	}
-	if err := d.Set("update_time", flattenNetworkSecurityGatewaySecurityPoliciesUpdateTime(res["updateTime"], d, config)); err != nil {
-		return fmt.Errorf("Error reading GatewaySecurityPolicies: %s", err)
+	if err := d.Set("update_time", flattenNetworkSecurityGatewaySecurityPolicyUpdateTime(res["updateTime"], d, config)); err != nil {
+		return fmt.Errorf("Error reading GatewaySecurityPolicy: %s", err)
 	}
-	if err := d.Set("description", flattenNetworkSecurityGatewaySecurityPoliciesDescription(res["description"], d, config)); err != nil {
-		return fmt.Errorf("Error reading GatewaySecurityPolicies: %s", err)
+	if err := d.Set("description", flattenNetworkSecurityGatewaySecurityPolicyDescription(res["description"], d, config)); err != nil {
+		return fmt.Errorf("Error reading GatewaySecurityPolicy: %s", err)
 	}
 
 	return nil
 }
 
-func resourceNetworkSecurityGatewaySecurityPoliciesUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceNetworkSecurityGatewaySecurityPolicyUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
@@ -212,12 +212,12 @@ func resourceNetworkSecurityGatewaySecurityPoliciesUpdate(d *schema.ResourceData
 
 	project, err := getProject(d, config)
 	if err != nil {
-		return fmt.Errorf("Error fetching project for GatewaySecurityPolicies: %s", err)
+		return fmt.Errorf("Error fetching project for GatewaySecurityPolicy: %s", err)
 	}
 	billingProject = project
 
 	obj := make(map[string]interface{})
-	descriptionProp, err := expandNetworkSecurityGatewaySecurityPoliciesDescription(d.Get("description"), d, config)
+	descriptionProp, err := expandNetworkSecurityGatewaySecurityPolicyDescription(d.Get("description"), d, config)
 	if err != nil {
 		return err
 	} else if v, ok := d.GetOkExists("description"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, descriptionProp)) {
@@ -229,7 +229,7 @@ func resourceNetworkSecurityGatewaySecurityPoliciesUpdate(d *schema.ResourceData
 		return err
 	}
 
-	log.Printf("[DEBUG] Updating GatewaySecurityPolicies %q: %#v", d.Id(), obj)
+	log.Printf("[DEBUG] Updating GatewaySecurityPolicy %q: %#v", d.Id(), obj)
 	updateMask := []string{}
 
 	if d.HasChange("description") {
@@ -250,23 +250,23 @@ func resourceNetworkSecurityGatewaySecurityPoliciesUpdate(d *schema.ResourceData
 	res, err := SendRequestWithTimeout(config, "PATCH", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutUpdate))
 
 	if err != nil {
-		return fmt.Errorf("Error updating GatewaySecurityPolicies %q: %s", d.Id(), err)
+		return fmt.Errorf("Error updating GatewaySecurityPolicy %q: %s", d.Id(), err)
 	} else {
-		log.Printf("[DEBUG] Finished updating GatewaySecurityPolicies %q: %#v", d.Id(), res)
+		log.Printf("[DEBUG] Finished updating GatewaySecurityPolicy %q: %#v", d.Id(), res)
 	}
 
 	err = NetworkSecurityOperationWaitTime(
-		config, res, project, "Updating GatewaySecurityPolicies", userAgent,
+		config, res, project, "Updating GatewaySecurityPolicy", userAgent,
 		d.Timeout(schema.TimeoutUpdate))
 
 	if err != nil {
 		return err
 	}
 
-	return resourceNetworkSecurityGatewaySecurityPoliciesRead(d, meta)
+	return resourceNetworkSecurityGatewaySecurityPolicyRead(d, meta)
 }
 
-func resourceNetworkSecurityGatewaySecurityPoliciesDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceNetworkSecurityGatewaySecurityPolicyDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
@@ -277,7 +277,7 @@ func resourceNetworkSecurityGatewaySecurityPoliciesDelete(d *schema.ResourceData
 
 	project, err := getProject(d, config)
 	if err != nil {
-		return fmt.Errorf("Error fetching project for GatewaySecurityPolicies: %s", err)
+		return fmt.Errorf("Error fetching project for GatewaySecurityPolicy: %s", err)
 	}
 	billingProject = project
 
@@ -287,7 +287,7 @@ func resourceNetworkSecurityGatewaySecurityPoliciesDelete(d *schema.ResourceData
 	}
 
 	var obj map[string]interface{}
-	log.Printf("[DEBUG] Deleting GatewaySecurityPolicies %q", d.Id())
+	log.Printf("[DEBUG] Deleting GatewaySecurityPolicy %q", d.Id())
 
 	// err == nil indicates that the billing_project value was found
 	if bp, err := getBillingProject(d, config); err == nil {
@@ -296,22 +296,22 @@ func resourceNetworkSecurityGatewaySecurityPoliciesDelete(d *schema.ResourceData
 
 	res, err := SendRequestWithTimeout(config, "DELETE", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutDelete))
 	if err != nil {
-		return handleNotFoundError(err, d, "GatewaySecurityPolicies")
+		return handleNotFoundError(err, d, "GatewaySecurityPolicy")
 	}
 
 	err = NetworkSecurityOperationWaitTime(
-		config, res, project, "Deleting GatewaySecurityPolicies", userAgent,
+		config, res, project, "Deleting GatewaySecurityPolicy", userAgent,
 		d.Timeout(schema.TimeoutDelete))
 
 	if err != nil {
 		return err
 	}
 
-	log.Printf("[DEBUG] Finished deleting GatewaySecurityPolicies %q: %#v", d.Id(), res)
+	log.Printf("[DEBUG] Finished deleting GatewaySecurityPolicy %q: %#v", d.Id(), res)
 	return nil
 }
 
-func resourceNetworkSecurityGatewaySecurityPoliciesImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceNetworkSecurityGatewaySecurityPolicyImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	config := meta.(*Config)
 	if err := parseImportId([]string{
 		"projects/(?P<project>[^/]+)/locations/(?P<location>[^/]+)/gatewaySecurityPolicies/(?P<name>[^/]+)",
@@ -331,22 +331,22 @@ func resourceNetworkSecurityGatewaySecurityPoliciesImport(d *schema.ResourceData
 	return []*schema.ResourceData{d}, nil
 }
 
-func flattenNetworkSecurityGatewaySecurityPoliciesSelfLink(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkSecurityGatewaySecurityPolicySelfLink(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenNetworkSecurityGatewaySecurityPoliciesCreateTime(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkSecurityGatewaySecurityPolicyCreateTime(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenNetworkSecurityGatewaySecurityPoliciesUpdateTime(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkSecurityGatewaySecurityPolicyUpdateTime(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenNetworkSecurityGatewaySecurityPoliciesDescription(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkSecurityGatewaySecurityPolicyDescription(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func expandNetworkSecurityGatewaySecurityPoliciesDescription(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkSecurityGatewaySecurityPolicyDescription(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }

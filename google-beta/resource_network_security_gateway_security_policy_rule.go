@@ -24,15 +24,15 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func ResourceNetworkSecurityGatewaySecurityPoliciesRule() *schema.Resource {
+func ResourceNetworkSecurityGatewaySecurityPolicyRule() *schema.Resource {
 	return &schema.Resource{
-		Create: resourceNetworkSecurityGatewaySecurityPoliciesRuleCreate,
-		Read:   resourceNetworkSecurityGatewaySecurityPoliciesRuleRead,
-		Update: resourceNetworkSecurityGatewaySecurityPoliciesRuleUpdate,
-		Delete: resourceNetworkSecurityGatewaySecurityPoliciesRuleDelete,
+		Create: resourceNetworkSecurityGatewaySecurityPolicyRuleCreate,
+		Read:   resourceNetworkSecurityGatewaySecurityPolicyRuleRead,
+		Update: resourceNetworkSecurityGatewaySecurityPolicyRuleUpdate,
+		Delete: resourceNetworkSecurityGatewaySecurityPolicyRuleDelete,
 
 		Importer: &schema.ResourceImporter{
-			State: resourceNetworkSecurityGatewaySecurityPoliciesRuleImport,
+			State: resourceNetworkSecurityGatewaySecurityPolicyRuleImport,
 		},
 
 		Timeouts: &schema.ResourceTimeout{
@@ -128,7 +128,7 @@ Examples: "2014-10-02T15:01:23Z" and "2014-10-02T15:01:23.045123456Z".`,
 	}
 }
 
-func resourceNetworkSecurityGatewaySecurityPoliciesRuleCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceNetworkSecurityGatewaySecurityPolicyRuleCreate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
@@ -136,43 +136,43 @@ func resourceNetworkSecurityGatewaySecurityPoliciesRuleCreate(d *schema.Resource
 	}
 
 	obj := make(map[string]interface{})
-	enabledProp, err := expandNetworkSecurityGatewaySecurityPoliciesRuleEnabled(d.Get("enabled"), d, config)
+	enabledProp, err := expandNetworkSecurityGatewaySecurityPolicyRuleEnabled(d.Get("enabled"), d, config)
 	if err != nil {
 		return err
 	} else if v, ok := d.GetOkExists("enabled"); !isEmptyValue(reflect.ValueOf(enabledProp)) && (ok || !reflect.DeepEqual(v, enabledProp)) {
 		obj["enabled"] = enabledProp
 	}
-	priorityProp, err := expandNetworkSecurityGatewaySecurityPoliciesRulePriority(d.Get("priority"), d, config)
+	priorityProp, err := expandNetworkSecurityGatewaySecurityPolicyRulePriority(d.Get("priority"), d, config)
 	if err != nil {
 		return err
 	} else if v, ok := d.GetOkExists("priority"); !isEmptyValue(reflect.ValueOf(priorityProp)) && (ok || !reflect.DeepEqual(v, priorityProp)) {
 		obj["priority"] = priorityProp
 	}
-	descriptionProp, err := expandNetworkSecurityGatewaySecurityPoliciesRuleDescription(d.Get("description"), d, config)
+	descriptionProp, err := expandNetworkSecurityGatewaySecurityPolicyRuleDescription(d.Get("description"), d, config)
 	if err != nil {
 		return err
 	} else if v, ok := d.GetOkExists("description"); !isEmptyValue(reflect.ValueOf(descriptionProp)) && (ok || !reflect.DeepEqual(v, descriptionProp)) {
 		obj["description"] = descriptionProp
 	}
-	sessionMatcherProp, err := expandNetworkSecurityGatewaySecurityPoliciesRuleSessionMatcher(d.Get("session_matcher"), d, config)
+	sessionMatcherProp, err := expandNetworkSecurityGatewaySecurityPolicyRuleSessionMatcher(d.Get("session_matcher"), d, config)
 	if err != nil {
 		return err
 	} else if v, ok := d.GetOkExists("session_matcher"); !isEmptyValue(reflect.ValueOf(sessionMatcherProp)) && (ok || !reflect.DeepEqual(v, sessionMatcherProp)) {
 		obj["sessionMatcher"] = sessionMatcherProp
 	}
-	applicationMatcherProp, err := expandNetworkSecurityGatewaySecurityPoliciesRuleApplicationMatcher(d.Get("application_matcher"), d, config)
+	applicationMatcherProp, err := expandNetworkSecurityGatewaySecurityPolicyRuleApplicationMatcher(d.Get("application_matcher"), d, config)
 	if err != nil {
 		return err
 	} else if v, ok := d.GetOkExists("application_matcher"); !isEmptyValue(reflect.ValueOf(applicationMatcherProp)) && (ok || !reflect.DeepEqual(v, applicationMatcherProp)) {
 		obj["applicationMatcher"] = applicationMatcherProp
 	}
-	tlsInspectionEnabledProp, err := expandNetworkSecurityGatewaySecurityPoliciesRuleTlsInspectionEnabled(d.Get("tls_inspection_enabled"), d, config)
+	tlsInspectionEnabledProp, err := expandNetworkSecurityGatewaySecurityPolicyRuleTlsInspectionEnabled(d.Get("tls_inspection_enabled"), d, config)
 	if err != nil {
 		return err
 	} else if v, ok := d.GetOkExists("tls_inspection_enabled"); !isEmptyValue(reflect.ValueOf(tlsInspectionEnabledProp)) && (ok || !reflect.DeepEqual(v, tlsInspectionEnabledProp)) {
 		obj["tlsInspectionEnabled"] = tlsInspectionEnabledProp
 	}
-	basicProfileProp, err := expandNetworkSecurityGatewaySecurityPoliciesRuleBasicProfile(d.Get("basic_profile"), d, config)
+	basicProfileProp, err := expandNetworkSecurityGatewaySecurityPolicyRuleBasicProfile(d.Get("basic_profile"), d, config)
 	if err != nil {
 		return err
 	} else if v, ok := d.GetOkExists("basic_profile"); !isEmptyValue(reflect.ValueOf(basicProfileProp)) && (ok || !reflect.DeepEqual(v, basicProfileProp)) {
@@ -184,12 +184,12 @@ func resourceNetworkSecurityGatewaySecurityPoliciesRuleCreate(d *schema.Resource
 		return err
 	}
 
-	log.Printf("[DEBUG] Creating new GatewaySecurityPoliciesRule: %#v", obj)
+	log.Printf("[DEBUG] Creating new GatewaySecurityPolicyRule: %#v", obj)
 	billingProject := ""
 
 	project, err := getProject(d, config)
 	if err != nil {
-		return fmt.Errorf("Error fetching project for GatewaySecurityPoliciesRule: %s", err)
+		return fmt.Errorf("Error fetching project for GatewaySecurityPolicyRule: %s", err)
 	}
 	billingProject = project
 
@@ -200,7 +200,7 @@ func resourceNetworkSecurityGatewaySecurityPoliciesRuleCreate(d *schema.Resource
 
 	res, err := SendRequestWithTimeout(config, "POST", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutCreate))
 	if err != nil {
-		return fmt.Errorf("Error creating GatewaySecurityPoliciesRule: %s", err)
+		return fmt.Errorf("Error creating GatewaySecurityPolicyRule: %s", err)
 	}
 
 	// Store the ID now
@@ -211,21 +211,21 @@ func resourceNetworkSecurityGatewaySecurityPoliciesRuleCreate(d *schema.Resource
 	d.SetId(id)
 
 	err = NetworkSecurityOperationWaitTime(
-		config, res, project, "Creating GatewaySecurityPoliciesRule", userAgent,
+		config, res, project, "Creating GatewaySecurityPolicyRule", userAgent,
 		d.Timeout(schema.TimeoutCreate))
 
 	if err != nil {
 		// The resource didn't actually create
 		d.SetId("")
-		return fmt.Errorf("Error waiting to create GatewaySecurityPoliciesRule: %s", err)
+		return fmt.Errorf("Error waiting to create GatewaySecurityPolicyRule: %s", err)
 	}
 
-	log.Printf("[DEBUG] Finished creating GatewaySecurityPoliciesRule %q: %#v", d.Id(), res)
+	log.Printf("[DEBUG] Finished creating GatewaySecurityPolicyRule %q: %#v", d.Id(), res)
 
-	return resourceNetworkSecurityGatewaySecurityPoliciesRuleRead(d, meta)
+	return resourceNetworkSecurityGatewaySecurityPolicyRuleRead(d, meta)
 }
 
-func resourceNetworkSecurityGatewaySecurityPoliciesRuleRead(d *schema.ResourceData, meta interface{}) error {
+func resourceNetworkSecurityGatewaySecurityPolicyRuleRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
@@ -241,7 +241,7 @@ func resourceNetworkSecurityGatewaySecurityPoliciesRuleRead(d *schema.ResourceDa
 
 	project, err := getProject(d, config)
 	if err != nil {
-		return fmt.Errorf("Error fetching project for GatewaySecurityPoliciesRule: %s", err)
+		return fmt.Errorf("Error fetching project for GatewaySecurityPolicyRule: %s", err)
 	}
 	billingProject = project
 
@@ -252,48 +252,48 @@ func resourceNetworkSecurityGatewaySecurityPoliciesRuleRead(d *schema.ResourceDa
 
 	res, err := SendRequest(config, "GET", billingProject, url, userAgent, nil)
 	if err != nil {
-		return handleNotFoundError(err, d, fmt.Sprintf("NetworkSecurityGatewaySecurityPoliciesRule %q", d.Id()))
+		return handleNotFoundError(err, d, fmt.Sprintf("NetworkSecurityGatewaySecurityPolicyRule %q", d.Id()))
 	}
 
 	if err := d.Set("project", project); err != nil {
-		return fmt.Errorf("Error reading GatewaySecurityPoliciesRule: %s", err)
+		return fmt.Errorf("Error reading GatewaySecurityPolicyRule: %s", err)
 	}
 
-	if err := d.Set("self_link", flattenNetworkSecurityGatewaySecurityPoliciesRuleSelfLink(res["selfLink"], d, config)); err != nil {
-		return fmt.Errorf("Error reading GatewaySecurityPoliciesRule: %s", err)
+	if err := d.Set("self_link", flattenNetworkSecurityGatewaySecurityPolicyRuleSelfLink(res["selfLink"], d, config)); err != nil {
+		return fmt.Errorf("Error reading GatewaySecurityPolicyRule: %s", err)
 	}
-	if err := d.Set("create_time", flattenNetworkSecurityGatewaySecurityPoliciesRuleCreateTime(res["createTime"], d, config)); err != nil {
-		return fmt.Errorf("Error reading GatewaySecurityPoliciesRule: %s", err)
+	if err := d.Set("create_time", flattenNetworkSecurityGatewaySecurityPolicyRuleCreateTime(res["createTime"], d, config)); err != nil {
+		return fmt.Errorf("Error reading GatewaySecurityPolicyRule: %s", err)
 	}
-	if err := d.Set("update_time", flattenNetworkSecurityGatewaySecurityPoliciesRuleUpdateTime(res["updateTime"], d, config)); err != nil {
-		return fmt.Errorf("Error reading GatewaySecurityPoliciesRule: %s", err)
+	if err := d.Set("update_time", flattenNetworkSecurityGatewaySecurityPolicyRuleUpdateTime(res["updateTime"], d, config)); err != nil {
+		return fmt.Errorf("Error reading GatewaySecurityPolicyRule: %s", err)
 	}
-	if err := d.Set("enabled", flattenNetworkSecurityGatewaySecurityPoliciesRuleEnabled(res["enabled"], d, config)); err != nil {
-		return fmt.Errorf("Error reading GatewaySecurityPoliciesRule: %s", err)
+	if err := d.Set("enabled", flattenNetworkSecurityGatewaySecurityPolicyRuleEnabled(res["enabled"], d, config)); err != nil {
+		return fmt.Errorf("Error reading GatewaySecurityPolicyRule: %s", err)
 	}
-	if err := d.Set("priority", flattenNetworkSecurityGatewaySecurityPoliciesRulePriority(res["priority"], d, config)); err != nil {
-		return fmt.Errorf("Error reading GatewaySecurityPoliciesRule: %s", err)
+	if err := d.Set("priority", flattenNetworkSecurityGatewaySecurityPolicyRulePriority(res["priority"], d, config)); err != nil {
+		return fmt.Errorf("Error reading GatewaySecurityPolicyRule: %s", err)
 	}
-	if err := d.Set("description", flattenNetworkSecurityGatewaySecurityPoliciesRuleDescription(res["description"], d, config)); err != nil {
-		return fmt.Errorf("Error reading GatewaySecurityPoliciesRule: %s", err)
+	if err := d.Set("description", flattenNetworkSecurityGatewaySecurityPolicyRuleDescription(res["description"], d, config)); err != nil {
+		return fmt.Errorf("Error reading GatewaySecurityPolicyRule: %s", err)
 	}
-	if err := d.Set("session_matcher", flattenNetworkSecurityGatewaySecurityPoliciesRuleSessionMatcher(res["sessionMatcher"], d, config)); err != nil {
-		return fmt.Errorf("Error reading GatewaySecurityPoliciesRule: %s", err)
+	if err := d.Set("session_matcher", flattenNetworkSecurityGatewaySecurityPolicyRuleSessionMatcher(res["sessionMatcher"], d, config)); err != nil {
+		return fmt.Errorf("Error reading GatewaySecurityPolicyRule: %s", err)
 	}
-	if err := d.Set("application_matcher", flattenNetworkSecurityGatewaySecurityPoliciesRuleApplicationMatcher(res["applicationMatcher"], d, config)); err != nil {
-		return fmt.Errorf("Error reading GatewaySecurityPoliciesRule: %s", err)
+	if err := d.Set("application_matcher", flattenNetworkSecurityGatewaySecurityPolicyRuleApplicationMatcher(res["applicationMatcher"], d, config)); err != nil {
+		return fmt.Errorf("Error reading GatewaySecurityPolicyRule: %s", err)
 	}
-	if err := d.Set("tls_inspection_enabled", flattenNetworkSecurityGatewaySecurityPoliciesRuleTlsInspectionEnabled(res["tlsInspectionEnabled"], d, config)); err != nil {
-		return fmt.Errorf("Error reading GatewaySecurityPoliciesRule: %s", err)
+	if err := d.Set("tls_inspection_enabled", flattenNetworkSecurityGatewaySecurityPolicyRuleTlsInspectionEnabled(res["tlsInspectionEnabled"], d, config)); err != nil {
+		return fmt.Errorf("Error reading GatewaySecurityPolicyRule: %s", err)
 	}
-	if err := d.Set("basic_profile", flattenNetworkSecurityGatewaySecurityPoliciesRuleBasicProfile(res["basicProfile"], d, config)); err != nil {
-		return fmt.Errorf("Error reading GatewaySecurityPoliciesRule: %s", err)
+	if err := d.Set("basic_profile", flattenNetworkSecurityGatewaySecurityPolicyRuleBasicProfile(res["basicProfile"], d, config)); err != nil {
+		return fmt.Errorf("Error reading GatewaySecurityPolicyRule: %s", err)
 	}
 
 	return nil
 }
 
-func resourceNetworkSecurityGatewaySecurityPoliciesRuleUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceNetworkSecurityGatewaySecurityPolicyRuleUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
@@ -304,48 +304,48 @@ func resourceNetworkSecurityGatewaySecurityPoliciesRuleUpdate(d *schema.Resource
 
 	project, err := getProject(d, config)
 	if err != nil {
-		return fmt.Errorf("Error fetching project for GatewaySecurityPoliciesRule: %s", err)
+		return fmt.Errorf("Error fetching project for GatewaySecurityPolicyRule: %s", err)
 	}
 	billingProject = project
 
 	obj := make(map[string]interface{})
-	enabledProp, err := expandNetworkSecurityGatewaySecurityPoliciesRuleEnabled(d.Get("enabled"), d, config)
+	enabledProp, err := expandNetworkSecurityGatewaySecurityPolicyRuleEnabled(d.Get("enabled"), d, config)
 	if err != nil {
 		return err
 	} else if v, ok := d.GetOkExists("enabled"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, enabledProp)) {
 		obj["enabled"] = enabledProp
 	}
-	priorityProp, err := expandNetworkSecurityGatewaySecurityPoliciesRulePriority(d.Get("priority"), d, config)
+	priorityProp, err := expandNetworkSecurityGatewaySecurityPolicyRulePriority(d.Get("priority"), d, config)
 	if err != nil {
 		return err
 	} else if v, ok := d.GetOkExists("priority"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, priorityProp)) {
 		obj["priority"] = priorityProp
 	}
-	descriptionProp, err := expandNetworkSecurityGatewaySecurityPoliciesRuleDescription(d.Get("description"), d, config)
+	descriptionProp, err := expandNetworkSecurityGatewaySecurityPolicyRuleDescription(d.Get("description"), d, config)
 	if err != nil {
 		return err
 	} else if v, ok := d.GetOkExists("description"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, descriptionProp)) {
 		obj["description"] = descriptionProp
 	}
-	sessionMatcherProp, err := expandNetworkSecurityGatewaySecurityPoliciesRuleSessionMatcher(d.Get("session_matcher"), d, config)
+	sessionMatcherProp, err := expandNetworkSecurityGatewaySecurityPolicyRuleSessionMatcher(d.Get("session_matcher"), d, config)
 	if err != nil {
 		return err
 	} else if v, ok := d.GetOkExists("session_matcher"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, sessionMatcherProp)) {
 		obj["sessionMatcher"] = sessionMatcherProp
 	}
-	applicationMatcherProp, err := expandNetworkSecurityGatewaySecurityPoliciesRuleApplicationMatcher(d.Get("application_matcher"), d, config)
+	applicationMatcherProp, err := expandNetworkSecurityGatewaySecurityPolicyRuleApplicationMatcher(d.Get("application_matcher"), d, config)
 	if err != nil {
 		return err
 	} else if v, ok := d.GetOkExists("application_matcher"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, applicationMatcherProp)) {
 		obj["applicationMatcher"] = applicationMatcherProp
 	}
-	tlsInspectionEnabledProp, err := expandNetworkSecurityGatewaySecurityPoliciesRuleTlsInspectionEnabled(d.Get("tls_inspection_enabled"), d, config)
+	tlsInspectionEnabledProp, err := expandNetworkSecurityGatewaySecurityPolicyRuleTlsInspectionEnabled(d.Get("tls_inspection_enabled"), d, config)
 	if err != nil {
 		return err
 	} else if v, ok := d.GetOkExists("tls_inspection_enabled"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, tlsInspectionEnabledProp)) {
 		obj["tlsInspectionEnabled"] = tlsInspectionEnabledProp
 	}
-	basicProfileProp, err := expandNetworkSecurityGatewaySecurityPoliciesRuleBasicProfile(d.Get("basic_profile"), d, config)
+	basicProfileProp, err := expandNetworkSecurityGatewaySecurityPolicyRuleBasicProfile(d.Get("basic_profile"), d, config)
 	if err != nil {
 		return err
 	} else if v, ok := d.GetOkExists("basic_profile"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, basicProfileProp)) {
@@ -357,7 +357,7 @@ func resourceNetworkSecurityGatewaySecurityPoliciesRuleUpdate(d *schema.Resource
 		return err
 	}
 
-	log.Printf("[DEBUG] Updating GatewaySecurityPoliciesRule %q: %#v", d.Id(), obj)
+	log.Printf("[DEBUG] Updating GatewaySecurityPolicyRule %q: %#v", d.Id(), obj)
 	updateMask := []string{}
 
 	if d.HasChange("enabled") {
@@ -402,23 +402,23 @@ func resourceNetworkSecurityGatewaySecurityPoliciesRuleUpdate(d *schema.Resource
 	res, err := SendRequestWithTimeout(config, "PATCH", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutUpdate))
 
 	if err != nil {
-		return fmt.Errorf("Error updating GatewaySecurityPoliciesRule %q: %s", d.Id(), err)
+		return fmt.Errorf("Error updating GatewaySecurityPolicyRule %q: %s", d.Id(), err)
 	} else {
-		log.Printf("[DEBUG] Finished updating GatewaySecurityPoliciesRule %q: %#v", d.Id(), res)
+		log.Printf("[DEBUG] Finished updating GatewaySecurityPolicyRule %q: %#v", d.Id(), res)
 	}
 
 	err = NetworkSecurityOperationWaitTime(
-		config, res, project, "Updating GatewaySecurityPoliciesRule", userAgent,
+		config, res, project, "Updating GatewaySecurityPolicyRule", userAgent,
 		d.Timeout(schema.TimeoutUpdate))
 
 	if err != nil {
 		return err
 	}
 
-	return resourceNetworkSecurityGatewaySecurityPoliciesRuleRead(d, meta)
+	return resourceNetworkSecurityGatewaySecurityPolicyRuleRead(d, meta)
 }
 
-func resourceNetworkSecurityGatewaySecurityPoliciesRuleDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceNetworkSecurityGatewaySecurityPolicyRuleDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
@@ -429,7 +429,7 @@ func resourceNetworkSecurityGatewaySecurityPoliciesRuleDelete(d *schema.Resource
 
 	project, err := getProject(d, config)
 	if err != nil {
-		return fmt.Errorf("Error fetching project for GatewaySecurityPoliciesRule: %s", err)
+		return fmt.Errorf("Error fetching project for GatewaySecurityPolicyRule: %s", err)
 	}
 	billingProject = project
 
@@ -439,7 +439,7 @@ func resourceNetworkSecurityGatewaySecurityPoliciesRuleDelete(d *schema.Resource
 	}
 
 	var obj map[string]interface{}
-	log.Printf("[DEBUG] Deleting GatewaySecurityPoliciesRule %q", d.Id())
+	log.Printf("[DEBUG] Deleting GatewaySecurityPolicyRule %q", d.Id())
 
 	// err == nil indicates that the billing_project value was found
 	if bp, err := getBillingProject(d, config); err == nil {
@@ -448,22 +448,22 @@ func resourceNetworkSecurityGatewaySecurityPoliciesRuleDelete(d *schema.Resource
 
 	res, err := SendRequestWithTimeout(config, "DELETE", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutDelete))
 	if err != nil {
-		return handleNotFoundError(err, d, "GatewaySecurityPoliciesRule")
+		return handleNotFoundError(err, d, "GatewaySecurityPolicyRule")
 	}
 
 	err = NetworkSecurityOperationWaitTime(
-		config, res, project, "Deleting GatewaySecurityPoliciesRule", userAgent,
+		config, res, project, "Deleting GatewaySecurityPolicyRule", userAgent,
 		d.Timeout(schema.TimeoutDelete))
 
 	if err != nil {
 		return err
 	}
 
-	log.Printf("[DEBUG] Finished deleting GatewaySecurityPoliciesRule %q: %#v", d.Id(), res)
+	log.Printf("[DEBUG] Finished deleting GatewaySecurityPolicyRule %q: %#v", d.Id(), res)
 	return nil
 }
 
-func resourceNetworkSecurityGatewaySecurityPoliciesRuleImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceNetworkSecurityGatewaySecurityPolicyRuleImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	config := meta.(*Config)
 	if err := parseImportId([]string{
 		"projects/(?P<project>[^/]+)/locations/(?P<location>[^/]+)/gatewaySecurityPolicies/(?P<gateway_security_policy>[^/]+)/rules/(?P<name>[^/]+)",
@@ -483,23 +483,23 @@ func resourceNetworkSecurityGatewaySecurityPoliciesRuleImport(d *schema.Resource
 	return []*schema.ResourceData{d}, nil
 }
 
-func flattenNetworkSecurityGatewaySecurityPoliciesRuleSelfLink(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkSecurityGatewaySecurityPolicyRuleSelfLink(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenNetworkSecurityGatewaySecurityPoliciesRuleCreateTime(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkSecurityGatewaySecurityPolicyRuleCreateTime(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenNetworkSecurityGatewaySecurityPoliciesRuleUpdateTime(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkSecurityGatewaySecurityPolicyRuleUpdateTime(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenNetworkSecurityGatewaySecurityPoliciesRuleEnabled(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkSecurityGatewaySecurityPolicyRuleEnabled(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenNetworkSecurityGatewaySecurityPoliciesRulePriority(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkSecurityGatewaySecurityPolicyRulePriority(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := StringToFixed64(strVal); err == nil {
@@ -516,50 +516,50 @@ func flattenNetworkSecurityGatewaySecurityPoliciesRulePriority(v interface{}, d 
 	return v // let terraform core handle it otherwise
 }
 
-func flattenNetworkSecurityGatewaySecurityPoliciesRuleDescription(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkSecurityGatewaySecurityPolicyRuleDescription(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenNetworkSecurityGatewaySecurityPoliciesRuleSessionMatcher(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkSecurityGatewaySecurityPolicyRuleSessionMatcher(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenNetworkSecurityGatewaySecurityPoliciesRuleApplicationMatcher(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkSecurityGatewaySecurityPolicyRuleApplicationMatcher(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenNetworkSecurityGatewaySecurityPoliciesRuleTlsInspectionEnabled(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkSecurityGatewaySecurityPolicyRuleTlsInspectionEnabled(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func flattenNetworkSecurityGatewaySecurityPoliciesRuleBasicProfile(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkSecurityGatewaySecurityPolicyRuleBasicProfile(v interface{}, d *schema.ResourceData, config *Config) interface{} {
 	return v
 }
 
-func expandNetworkSecurityGatewaySecurityPoliciesRuleEnabled(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkSecurityGatewaySecurityPolicyRuleEnabled(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkSecurityGatewaySecurityPoliciesRulePriority(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkSecurityGatewaySecurityPolicyRulePriority(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkSecurityGatewaySecurityPoliciesRuleDescription(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkSecurityGatewaySecurityPolicyRuleDescription(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkSecurityGatewaySecurityPoliciesRuleSessionMatcher(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkSecurityGatewaySecurityPolicyRuleSessionMatcher(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkSecurityGatewaySecurityPoliciesRuleApplicationMatcher(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkSecurityGatewaySecurityPolicyRuleApplicationMatcher(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkSecurityGatewaySecurityPoliciesRuleTlsInspectionEnabled(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkSecurityGatewaySecurityPolicyRuleTlsInspectionEnabled(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkSecurityGatewaySecurityPoliciesRuleBasicProfile(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkSecurityGatewaySecurityPolicyRuleBasicProfile(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
 	return v, nil
 }
