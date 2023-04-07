@@ -23,7 +23,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
-func TestAccNetworkSecurityGatewaySecurityPoliciesRule_networkSecurityGatewaySecurityPoliciesRulesBasicExample(t *testing.T) {
+func TestAccNetworkSecurityGatewaySecurityPolicyRule_networkSecurityGatewaySecurityPolicyRulesBasicExample(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
@@ -33,13 +33,13 @@ func TestAccNetworkSecurityGatewaySecurityPoliciesRule_networkSecurityGatewaySec
 	VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
-		CheckDestroy:             testAccCheckNetworkSecurityGatewaySecurityPoliciesRuleDestroyProducer(t),
+		CheckDestroy:             testAccCheckNetworkSecurityGatewaySecurityPolicyRuleDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccNetworkSecurityGatewaySecurityPoliciesRule_networkSecurityGatewaySecurityPoliciesRulesBasicExample(context),
+				Config: testAccNetworkSecurityGatewaySecurityPolicyRule_networkSecurityGatewaySecurityPolicyRulesBasicExample(context),
 			},
 			{
-				ResourceName:            "google_network_security_gateway_security_policies_rule.default",
+				ResourceName:            "google_network_security_gateway_security_policy_rule.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"name", "location", "gateway_security_policy"},
@@ -48,20 +48,20 @@ func TestAccNetworkSecurityGatewaySecurityPoliciesRule_networkSecurityGatewaySec
 	})
 }
 
-func testAccNetworkSecurityGatewaySecurityPoliciesRule_networkSecurityGatewaySecurityPoliciesRulesBasicExample(context map[string]interface{}) string {
+func testAccNetworkSecurityGatewaySecurityPolicyRule_networkSecurityGatewaySecurityPolicyRulesBasicExample(context map[string]interface{}) string {
 	return Nprintf(`
-resource "google_network_security_gateway_security_policies" "default" {
+resource "google_network_security_gateway_security_policy" "default" {
   provider    = google-beta
   name        = "tf-test-my-gateway-security-policy%{random_suffix}"
   location    = "us-central1"
   description = "gateway security policy created to be used as reference by the rule."
 }
 
-resource "google_network_security_gateway_security_policies_rule" "default" {
+resource "google_network_security_gateway_security_policy_rule" "default" {
   provider                = google-beta
   name                    = "tf-test-my-gateway-security-policy-rule%{random_suffix}"
   location                = "us-central1"
-  gateway_security_policy = google_network_security_gateway_security_policies.default.name
+  gateway_security_policy = google_network_security_gateway_security_policy.default.name
   enabled                 = true  
   description             = "my description"
   priority                = 0
@@ -71,7 +71,7 @@ resource "google_network_security_gateway_security_policies_rule" "default" {
 `, context)
 }
 
-func TestAccNetworkSecurityGatewaySecurityPoliciesRule_networkSecurityGatewaySecurityPoliciesRulesAdvancedExample(t *testing.T) {
+func TestAccNetworkSecurityGatewaySecurityPolicyRule_networkSecurityGatewaySecurityPolicyRulesAdvancedExample(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
@@ -81,13 +81,13 @@ func TestAccNetworkSecurityGatewaySecurityPoliciesRule_networkSecurityGatewaySec
 	VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
-		CheckDestroy:             testAccCheckNetworkSecurityGatewaySecurityPoliciesRuleDestroyProducer(t),
+		CheckDestroy:             testAccCheckNetworkSecurityGatewaySecurityPolicyRuleDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccNetworkSecurityGatewaySecurityPoliciesRule_networkSecurityGatewaySecurityPoliciesRulesAdvancedExample(context),
+				Config: testAccNetworkSecurityGatewaySecurityPolicyRule_networkSecurityGatewaySecurityPolicyRulesAdvancedExample(context),
 			},
 			{
-				ResourceName:            "google_network_security_gateway_security_policies_rule.default",
+				ResourceName:            "google_network_security_gateway_security_policy_rule.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"name", "location", "gateway_security_policy"},
@@ -96,20 +96,20 @@ func TestAccNetworkSecurityGatewaySecurityPoliciesRule_networkSecurityGatewaySec
 	})
 }
 
-func testAccNetworkSecurityGatewaySecurityPoliciesRule_networkSecurityGatewaySecurityPoliciesRulesAdvancedExample(context map[string]interface{}) string {
+func testAccNetworkSecurityGatewaySecurityPolicyRule_networkSecurityGatewaySecurityPolicyRulesAdvancedExample(context map[string]interface{}) string {
 	return Nprintf(`
-resource "google_network_security_gateway_security_policies" "default" {
+resource "google_network_security_gateway_security_policy" "default" {
   provider    = google-beta
   name        = "tf-test-my-gateway-security-policy%{random_suffix}"
   location    = "us-central1"
   description = "gateway security policy created to be used as reference by the rule."
 }
 
-resource "google_network_security_gateway_security_policies_rule" "default" {
+resource "google_network_security_gateway_security_policy_rule" "default" {
   provider                = google-beta
   name                    = "tf-test-my-gateway-security-policy-rule%{random_suffix}"
   location                = "us-central1"
-  gateway_security_policy = google_network_security_gateway_security_policies.default.name
+  gateway_security_policy = google_network_security_gateway_security_policy.default.name
   enabled                 = true  
   description             = "my description"
   priority                = 0
@@ -121,10 +121,10 @@ resource "google_network_security_gateway_security_policies_rule" "default" {
 `, context)
 }
 
-func testAccCheckNetworkSecurityGatewaySecurityPoliciesRuleDestroyProducer(t *testing.T) func(s *terraform.State) error {
+func testAccCheckNetworkSecurityGatewaySecurityPolicyRuleDestroyProducer(t *testing.T) func(s *terraform.State) error {
 	return func(s *terraform.State) error {
 		for name, rs := range s.RootModule().Resources {
-			if rs.Type != "google_network_security_gateway_security_policies_rule" {
+			if rs.Type != "google_network_security_gateway_security_policy_rule" {
 				continue
 			}
 			if strings.HasPrefix(name, "data.") {
@@ -146,7 +146,7 @@ func testAccCheckNetworkSecurityGatewaySecurityPoliciesRuleDestroyProducer(t *te
 
 			_, err = SendRequest(config, "GET", billingProject, url, config.UserAgent, nil)
 			if err == nil {
-				return fmt.Errorf("NetworkSecurityGatewaySecurityPoliciesRule still exists at %s", url)
+				return fmt.Errorf("NetworkSecurityGatewaySecurityPolicyRule still exists at %s", url)
 			}
 		}
 
