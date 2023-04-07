@@ -5,12 +5,12 @@ BREAKING CHANGES:
 
 FEATURES:
 * **New Data Source:** `google_firebase_android_app_config` ([#5425](https://github.com/hashicorp/terraform-provider-google-beta/pull/5425))
-* **New Resource:** `google_apigee_keystore_aliases_pkcs` ([#5411](https://github.com/hashicorp/terraform-provider-google-beta/pull/5411))
-* **New Resource:** `google_apigee_env_keystore_alias_self_signed_cert` ([#5394](https://github.com/hashicorp/terraform-provider-google-beta/pull/5394))
+* **New Resource:** `google_apigee_keystores_aliases_pkcs12` ([#5411](https://github.com/hashicorp/terraform-provider-google-beta/pull/5411))
+* **New Resource:** `google_apigee_keystores_aliases_self_signed_cert` ([#5394](https://github.com/hashicorp/terraform-provider-google-beta/pull/5394))
 * **New Resource:** `google_network_security_url_lists` ([#5439](https://github.com/hashicorp/terraform-provider-google-beta/pull/5439))
 * **New Resource:** `google_network_services_mesh` ([#5393](https://github.com/hashicorp/terraform-provider-google-beta/pull/5393))
-* **New Resource:** `google_network_security_gateway_security_policies` (beta) ([#5434](https://github.com/hashicorp/terraform-provider-google-beta/pull/5434))
-* **New Resource:** `google_network_security_gateway_security_policies_rule` (beta) ([#5434](https://github.com/hashicorp/terraform-provider-google-beta/pull/5434))
+* **New Resource:** `google_network_security_gateway_security_policy` (beta) ([#5434](https://github.com/hashicorp/terraform-provider-google-beta/pull/5434))
+* **New Resource:** `google_network_security_gateway_security_policy_rule` (beta) ([#5434](https://github.com/hashicorp/terraform-provider-google-beta/pull/5434))
 
 IMPROVEMENTS:
 * alloydb: added update support for `initial_user` and `automated_backup_policy.weekly_schedule` to `google_alloydb_cluster` ([#5420](https://github.com/hashicorp/terraform-provider-google-beta/pull/5420))
