@@ -4,7 +4,7 @@ BREAKING CHANGES:
 * cloudrunv2: set a default value of 3 for `max_retries` in `google_cloud_run_v2_job`. This should match the API's existing default, but may show a diff at plan time in limited circumstances as drift is now detected ([#5432](https://github.com/hashicorp/terraform-provider-google-beta/pull/5432))
 
 FEATURES:
-* **New Data Source:** `firebase_android_app_config` ([#5425](https://github.com/hashicorp/terraform-provider-google-beta/pull/5425))
+* **New Data Source:** `google_firebase_android_app_config` ([#5425](https://github.com/hashicorp/terraform-provider-google-beta/pull/5425))
 * **New Resource:** `google_apigee_keystore_aliases_pkcs` ([#5411](https://github.com/hashicorp/terraform-provider-google-beta/pull/5411))
 * **New Resource:** `google_apigee_env_keystore_alias_self_signed_cert` ([#5394](https://github.com/hashicorp/terraform-provider-google-beta/pull/5394))
 * **New Resource:** `google_network_security_url_lists` ([#5439](https://github.com/hashicorp/terraform-provider-google-beta/pull/5439))
@@ -21,8 +21,8 @@ IMPROVEMENTS:
 * compute: added support for `stack_type` to `google_compute_ha_vpn_gateway` ([#5395](https://github.com/hashicorp/terraform-provider-google-beta/pull/5395))
 * container: added support for `ephemeral_storage_local_ssd_config` to `google_container_cluster.node_config`, `google_container_cluster.node_pools.node_config`, `google_container_node_pool.node_config` ([#5400](https://github.com/hashicorp/terraform-provider-google-beta/pull/5400))
 * dlp: Changed `dictionary`, `regex`, `regex.group_indexes` and `large_custom_dictionary` fields in `google_data_loss_prevention_stored_info_type` to be update-in-place ([#5428](https://github.com/hashicorp/terraform-provider-google-beta/pull/5428))
-* network_services: increased the max count for `route_rule` to 200 on `google_network_services_edge_cache_service` ([#5433](https://github.com/hashicorp/terraform-provider-google-beta/pull/5433))
 * logging: added support for `disabled` to `google_logging_metric` ([#5423](https://github.com/hashicorp/terraform-provider-google-beta/pull/5423))
+* networkservices: increased the max count for `route_rule` to 200 on `google_network_services_edge_cache_service` ([#5433](https://github.com/hashicorp/terraform-provider-google-beta/pull/5433))
 * storagetransfer: added support for 'last_modified_since' and 'last_modified_before' fields to 'google_storage_transfer_job' resource ([#5398](https://github.com/hashicorp/terraform-provider-google-beta/pull/5398))
 
 BUG FIXES:
