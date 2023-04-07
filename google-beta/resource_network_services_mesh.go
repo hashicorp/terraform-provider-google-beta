@@ -120,7 +120,7 @@ func resourceNetworkServicesMeshCreate(d *schema.ResourceData, meta interface{})
 		obj["interceptionPort"] = interceptionPortProp
 	}
 
-	url, err := replaceVars(d, config, "{{NetworkServicesBasePath}}projects/{{project}}/locations/global/meshes?meshId={{name}}")
+	url, err := ReplaceVars(d, config, "{{NetworkServicesBasePath}}projects/{{project}}/locations/global/meshes?meshId={{name}}")
 	if err != nil {
 		return err
 	}
@@ -145,7 +145,7 @@ func resourceNetworkServicesMeshCreate(d *schema.ResourceData, meta interface{})
 	}
 
 	// Store the ID now
-	id, err := replaceVars(d, config, "projects/{{project}}/locations/global/meshes/{{name}}")
+	id, err := ReplaceVars(d, config, "projects/{{project}}/locations/global/meshes/{{name}}")
 	if err != nil {
 		return fmt.Errorf("Error constructing id: %s", err)
 	}
@@ -173,7 +173,7 @@ func resourceNetworkServicesMeshRead(d *schema.ResourceData, meta interface{}) e
 		return err
 	}
 
-	url, err := replaceVars(d, config, "{{NetworkServicesBasePath}}projects/{{project}}/locations/global/meshes/{{name}}")
+	url, err := ReplaceVars(d, config, "{{NetworkServicesBasePath}}projects/{{project}}/locations/global/meshes/{{name}}")
 	if err != nil {
 		return err
 	}
@@ -257,7 +257,7 @@ func resourceNetworkServicesMeshUpdate(d *schema.ResourceData, meta interface{})
 		obj["interceptionPort"] = interceptionPortProp
 	}
 
-	url, err := replaceVars(d, config, "{{NetworkServicesBasePath}}projects/{{project}}/locations/global/meshes/{{name}}")
+	url, err := ReplaceVars(d, config, "{{NetworkServicesBasePath}}projects/{{project}}/locations/global/meshes/{{name}}")
 	if err != nil {
 		return err
 	}
@@ -276,9 +276,9 @@ func resourceNetworkServicesMeshUpdate(d *schema.ResourceData, meta interface{})
 	if d.HasChange("interception_port") {
 		updateMask = append(updateMask, "interceptionPort")
 	}
-	// updateMask is a URL parameter but not present in the schema, so replaceVars
+	// updateMask is a URL parameter but not present in the schema, so ReplaceVars
 	// won't set it
-	url, err = addQueryParams(url, map[string]string{"updateMask": strings.Join(updateMask, ",")})
+	url, err = AddQueryParams(url, map[string]string{"updateMask": strings.Join(updateMask, ",")})
 	if err != nil {
 		return err
 	}
@@ -322,7 +322,7 @@ func resourceNetworkServicesMeshDelete(d *schema.ResourceData, meta interface{})
 	}
 	billingProject = project
 
-	url, err := replaceVars(d, config, "{{NetworkServicesBasePath}}projects/{{project}}/locations/global/meshes/{{name}}")
+	url, err := ReplaceVars(d, config, "{{NetworkServicesBasePath}}projects/{{project}}/locations/global/meshes/{{name}}")
 	if err != nil {
 		return err
 	}
@@ -354,7 +354,7 @@ func resourceNetworkServicesMeshDelete(d *schema.ResourceData, meta interface{})
 
 func resourceNetworkServicesMeshImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	config := meta.(*Config)
-	if err := parseImportId([]string{
+	if err := ParseImportId([]string{
 		"projects/(?P<project>[^/]+)/locations/global/meshes/(?P<name>[^/]+)",
 		"(?P<project>[^/]+)/(?P<name>[^/]+)",
 		"(?P<name>[^/]+)",
@@ -363,7 +363,7 @@ func resourceNetworkServicesMeshImport(d *schema.ResourceData, meta interface{})
 	}
 
 	// Replace import id for the resource id
-	id, err := replaceVars(d, config, "projects/{{project}}/locations/global/meshes/{{name}}")
+	id, err := ReplaceVars(d, config, "projects/{{project}}/locations/global/meshes/{{name}}")
 	if err != nil {
 		return nil, fmt.Errorf("Error constructing id: %s", err)
 	}

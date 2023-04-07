@@ -179,7 +179,7 @@ func resourceNetworkSecurityGatewaySecurityPoliciesRuleCreate(d *schema.Resource
 		obj["basicProfile"] = basicProfileProp
 	}
 
-	url, err := replaceVars(d, config, "{{NetworkSecurityBasePath}}projects/{{project}}/locations/{{location}}/gatewaySecurityPolicies/{{gateway_security_policy}}/rules?gatewaySecurityPolicyRuleId={{name}}")
+	url, err := ReplaceVars(d, config, "{{NetworkSecurityBasePath}}projects/{{project}}/locations/{{location}}/gatewaySecurityPolicies/{{gateway_security_policy}}/rules?gatewaySecurityPolicyRuleId={{name}}")
 	if err != nil {
 		return err
 	}
@@ -204,7 +204,7 @@ func resourceNetworkSecurityGatewaySecurityPoliciesRuleCreate(d *schema.Resource
 	}
 
 	// Store the ID now
-	id, err := replaceVars(d, config, "projects/{{project}}/locations/{{location}}/gatewaySecurityPolicies/{{gateway_security_policy}}/rules/{{name}}")
+	id, err := ReplaceVars(d, config, "projects/{{project}}/locations/{{location}}/gatewaySecurityPolicies/{{gateway_security_policy}}/rules/{{name}}")
 	if err != nil {
 		return fmt.Errorf("Error constructing id: %s", err)
 	}
@@ -232,7 +232,7 @@ func resourceNetworkSecurityGatewaySecurityPoliciesRuleRead(d *schema.ResourceDa
 		return err
 	}
 
-	url, err := replaceVars(d, config, "{{NetworkSecurityBasePath}}projects/{{project}}/locations/{{location}}/gatewaySecurityPolicies/{{gateway_security_policy}}/rules/{{name}}")
+	url, err := ReplaceVars(d, config, "{{NetworkSecurityBasePath}}projects/{{project}}/locations/{{location}}/gatewaySecurityPolicies/{{gateway_security_policy}}/rules/{{name}}")
 	if err != nil {
 		return err
 	}
@@ -352,7 +352,7 @@ func resourceNetworkSecurityGatewaySecurityPoliciesRuleUpdate(d *schema.Resource
 		obj["basicProfile"] = basicProfileProp
 	}
 
-	url, err := replaceVars(d, config, "{{NetworkSecurityBasePath}}projects/{{project}}/locations/{{location}}/gatewaySecurityPolicies/{{gateway_security_policy}}/rules/{{name}}")
+	url, err := ReplaceVars(d, config, "{{NetworkSecurityBasePath}}projects/{{project}}/locations/{{location}}/gatewaySecurityPolicies/{{gateway_security_policy}}/rules/{{name}}")
 	if err != nil {
 		return err
 	}
@@ -387,9 +387,9 @@ func resourceNetworkSecurityGatewaySecurityPoliciesRuleUpdate(d *schema.Resource
 	if d.HasChange("basic_profile") {
 		updateMask = append(updateMask, "basicProfile")
 	}
-	// updateMask is a URL parameter but not present in the schema, so replaceVars
+	// updateMask is a URL parameter but not present in the schema, so ReplaceVars
 	// won't set it
-	url, err = addQueryParams(url, map[string]string{"updateMask": strings.Join(updateMask, ",")})
+	url, err = AddQueryParams(url, map[string]string{"updateMask": strings.Join(updateMask, ",")})
 	if err != nil {
 		return err
 	}
@@ -433,7 +433,7 @@ func resourceNetworkSecurityGatewaySecurityPoliciesRuleDelete(d *schema.Resource
 	}
 	billingProject = project
 
-	url, err := replaceVars(d, config, "{{NetworkSecurityBasePath}}projects/{{project}}/locations/{{location}}/gatewaySecurityPolicies/{{gateway_security_policy}}/rules/{{name}}")
+	url, err := ReplaceVars(d, config, "{{NetworkSecurityBasePath}}projects/{{project}}/locations/{{location}}/gatewaySecurityPolicies/{{gateway_security_policy}}/rules/{{name}}")
 	if err != nil {
 		return err
 	}
@@ -465,7 +465,7 @@ func resourceNetworkSecurityGatewaySecurityPoliciesRuleDelete(d *schema.Resource
 
 func resourceNetworkSecurityGatewaySecurityPoliciesRuleImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	config := meta.(*Config)
-	if err := parseImportId([]string{
+	if err := ParseImportId([]string{
 		"projects/(?P<project>[^/]+)/locations/(?P<location>[^/]+)/gatewaySecurityPolicies/(?P<gateway_security_policy>[^/]+)/rules/(?P<name>[^/]+)",
 		"(?P<project>[^/]+)/(?P<location>[^/]+)/(?P<gateway_security_policy>[^/]+)/(?P<name>[^/]+)",
 		"(?P<location>[^/]+)/(?P<gateway_security_policy>[^/]+)/(?P<name>[^/]+)",
@@ -474,7 +474,7 @@ func resourceNetworkSecurityGatewaySecurityPoliciesRuleImport(d *schema.Resource
 	}
 
 	// Replace import id for the resource id
-	id, err := replaceVars(d, config, "projects/{{project}}/locations/{{location}}/gatewaySecurityPolicies/{{gateway_security_policy}}/rules/{{name}}")
+	id, err := ReplaceVars(d, config, "projects/{{project}}/locations/{{location}}/gatewaySecurityPolicies/{{gateway_security_policy}}/rules/{{name}}")
 	if err != nil {
 		return nil, fmt.Errorf("Error constructing id: %s", err)
 	}
