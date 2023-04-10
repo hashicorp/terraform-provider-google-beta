@@ -26,7 +26,7 @@ IMPROVEMENTS:
 * storagetransfer: added support for 'last_modified_since' and 'last_modified_before' fields to 'google_storage_transfer_job' resource ([#5398](https://github.com/hashicorp/terraform-provider-google-beta/pull/5398))
 
 BUG FIXES:
-* bigquery: fixed the import logic in`google_bigquery_capacity_commitment` ([#5435](https://github.com/hashicorp/terraform-provider-google-beta/pull/5435))
+* bigquery: fixed the import logic in `google_bigquery_capacity_commitment` ([#5435](https://github.com/hashicorp/terraform-provider-google-beta/pull/5435))
 * cloudrunv2: fixed the bug where setting `max_retries` to 0 in `google_cloud_run_v2_job` was not respected. ([#5432](https://github.com/hashicorp/terraform-provider-google-beta/pull/5432))
 * container: fixed a bug creating a diff adding a `stack_type` when GKE omitted `stackType` in API responses from older GKE clusters ([#5429](https://github.com/hashicorp/terraform-provider-google-beta/pull/5429))
 * dataproc: fixed validation of `optional_components` ([#5410](https://github.com/hashicorp/terraform-provider-google-beta/pull/5410))
