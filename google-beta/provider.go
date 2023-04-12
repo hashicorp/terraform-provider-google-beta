@@ -788,9 +788,9 @@ func Provider() *schema.Provider {
 	return provider
 }
 
-// Generated resources: 318
+// Generated resources: 319
 // Generated IAM resources: 213
-// Total generated resources: 531
+// Total generated resources: 532
 func ResourceMap() map[string]*schema.Resource {
 	resourceMap, _ := ResourceMapWithErrors()
 	return resourceMap
@@ -1219,6 +1219,7 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_network_services_edge_cache_origin":                    ResourceNetworkServicesEdgeCacheOrigin(),
 			"google_network_services_edge_cache_service":                   ResourceNetworkServicesEdgeCacheService(),
 			"google_network_services_gateway":                              ResourceNetworkServicesGateway(),
+			"google_network_services_http_route":                           ResourceNetworkServicesHttpRoute(),
 			"google_network_services_mesh":                                 ResourceNetworkServicesMesh(),
 			"google_notebooks_environment":                                 ResourceNotebooksEnvironment(),
 			"google_notebooks_instance":                                    ResourceNotebooksInstance(),
