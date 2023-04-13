@@ -506,7 +506,7 @@ var DefaultBasePaths = map[string]string{
 	TPUBasePathKey:                  "https://tpu.googleapis.com/v1/",
 	VertexAIBasePathKey:             "https://{{region}}-aiplatform.googleapis.com/v1beta1/",
 	VPCAccessBasePathKey:            "https://vpcaccess.googleapis.com/v1beta1/",
-	WorkflowsBasePathKey:            "https://workflows.googleapis.com/v1beta/",
+	WorkflowsBasePathKey:            "https://workflows.googleapis.com/v1/",
 	WorkstationsBasePathKey:         "https://workstations.googleapis.com/v1beta/",
 	CloudBillingBasePathKey:         "https://cloudbilling.googleapis.com/v1/",
 	ComposerBasePathKey:             "https://composer.googleapis.com/v1beta1/",

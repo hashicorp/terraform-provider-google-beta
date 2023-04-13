@@ -61,7 +61,7 @@ func testSweepWorkflowsWorkflow(region string) error {
 		},
 	}
 
-	listTemplate := strings.Split("https://workflows.googleapis.com/v1beta/projects/{{project}}/locations/{{region}}/workflows", "?")[0]
+	listTemplate := strings.Split("https://workflows.googleapis.com/v1/projects/{{project}}/locations/{{region}}/workflows", "?")[0]
 	listUrl, err := ReplaceVars(d, config, listTemplate)
 	if err != nil {
 		log.Printf("[INFO][SWEEPER_LOG] error preparing sweeper list url: %s", err)
@@ -99,7 +99,7 @@ func testSweepWorkflowsWorkflow(region string) error {
 			continue
 		}
 
-		deleteTemplate := "https://workflows.googleapis.com/v1beta/projects/{{project}}/locations/{{region}}/workflows/{{name}}"
+		deleteTemplate := "https://workflows.googleapis.com/v1/projects/{{project}}/locations/{{region}}/workflows/{{name}}"
 		deleteUrl, err := ReplaceVars(d, config, deleteTemplate)
 		if err != nil {
 			log.Printf("[INFO][SWEEPER_LOG] error preparing delete url: %s", err)
