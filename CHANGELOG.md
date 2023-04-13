@@ -14,7 +14,6 @@ IMPROVEMENTS:
 
 BUG FIXES:
 * cloudidentity: fixed immutability issue on `initialGroupConfig` field for resource `google_cloud_identity_group` ([#5456](https://github.com/hashicorp/terraform-provider-google-beta/pull/5456))
-* metastore: fix datasource doc location ([#5444](https://github.com/hashicorp/terraform-provider-google-beta/pull/5444))
 * provider: fixed an error resulting from leaving `batching.send_after` unspecified and `batching` specified ([#5460](https://github.com/hashicorp/terraform-provider-google-beta/pull/5460))
 * provider: fixed bug where `credentials` field could not be set as an empty string ([#5466](https://github.com/hashicorp/terraform-provider-google-beta/pull/5466))
 * vertex: increased the default timeout for `google_vertex_ai_index` to 180m ([#5450](https://github.com/hashicorp/terraform-provider-google-beta/pull/5450))
