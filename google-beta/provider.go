@@ -788,9 +788,9 @@ func Provider() *schema.Provider {
 	return provider
 }
 
-// Generated resources: 321
+// Generated resources: 323
 // Generated IAM resources: 213
-// Total generated resources: 534
+// Total generated resources: 536
 func ResourceMap() map[string]*schema.Resource {
 	resourceMap, _ := ResourceMapWithErrors()
 	return resourceMap
@@ -994,6 +994,8 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_compute_organization_security_policy_rule":             ResourceComputeOrganizationSecurityPolicyRule(),
 			"google_compute_packet_mirroring":                              ResourceComputePacketMirroring(),
 			"google_compute_per_instance_config":                           ResourceComputePerInstanceConfig(),
+			"google_compute_public_advertised_prefix":                      ResourceComputePublicAdvertisedPrefix(),
+			"google_compute_public_delegated_prefix":                       ResourceComputePublicDelegatedPrefix(),
 			"google_compute_region_autoscaler":                             ResourceComputeRegionAutoscaler(),
 			"google_compute_region_backend_service":                        ResourceComputeRegionBackendService(),
 			"google_compute_region_backend_service_iam_binding":            ResourceIamBinding(ComputeRegionBackendServiceIamSchema, ComputeRegionBackendServiceIamUpdaterProducer, ComputeRegionBackendServiceIdParseFunc),
