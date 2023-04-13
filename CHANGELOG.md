@@ -7,7 +7,7 @@ FEATURES:
 
 IMPROVEMENTS:
 * cloudasset: added `OS_INVENTORY` value to `content_type` for `google_cloud_asset_*_feed` ([#5465](https://github.com/hashicorp/terraform-provider-google-beta/pull/5465))
-* clouddeploy: added fields for resource `google_clouddeploy_delivery_pipeline` ([#5451](https://github.com/hashicorp/terraform-provider-google-beta/pull/5451))
+* clouddeploy: added canary deployment fields for resource `google_clouddeploy_delivery_pipeline` ([#5451](https://github.com/hashicorp/terraform-provider-google-beta/pull/5451))
 * compute: supported region instance template in`source_instance_template` field of `google_compute_instance_from_template` resource ([#5467](https://github.com/hashicorp/terraform-provider-google-beta/pull/5467))
 * container: added `pod_cidr_overprovision_config` field to `google_container_cluster` and  `google_container_node_pool` resources. ([#5468](https://github.com/hashicorp/terraform-provider-google-beta/pull/5468))
 * orgpolicy: accepted variable cases for booleans such as true, True, and TRUE in `google_org_policy_policy` ([#5443](https://github.com/hashicorp/terraform-provider-google-beta/pull/5443))
