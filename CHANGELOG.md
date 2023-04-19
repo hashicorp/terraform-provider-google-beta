@@ -1,24 +1,29 @@
 ## 4.63.0 (Unreleased)
 
+## 4.62.1 (April 19, 2023)
+
+BUG FIXES:
+* compute: fixed a diff that occurred when `stack_type` was unset on `google_compute_ha_vpn_gateway` ([#5479](https://github.com/hashicorp/terraform-provider-google-beta/pull/5479))
+
 ## 4.62.0 (April 17, 2023)
 
 FEATURES:
-* **New Data Source:** `google_compute_region_instance_template` ([#14280](https://github.com/hashicorp/terraform-provider-google/pull/14280))
-* **New Resource:** `google_compute_region_instance_template` ([#14280](https://github.com/hashicorp/terraform-provider-google/pull/14280))
-* **New Resource:** `google_logging_linked_dataset` ([#14261](https://github.com/hashicorp/terraform-provider-google/pull/14261))
+* **New Data Source:** `google_compute_region_instance_template` ([#5467](https://github.com/hashicorp/terraform-provider-google-beta/pull/5467))
+* **New Resource:** `google_compute_region_instance_template` ([#5467](https://github.com/hashicorp/terraform-provider-google-beta/pull/5467))
+* **New Resource:** `google_logging_linked_dataset` ([#5459](https://github.com/hashicorp/terraform-provider-google-beta/pull/5459))
 
 IMPROVEMENTS:
-* cloudasset: added `OS_INVENTORY` value to `content_type` for `google_cloud_asset_*_feed` ([#14277](https://github.com/hashicorp/terraform-provider-google/pull/14277))
-* clouddeploy: added canary deployment fields for resource `google_clouddeploy_delivery_pipeline` ([#14249](https://github.com/hashicorp/terraform-provider-google/pull/14249))
-* compute: supported region instance template in`source_instance_template` field of `google_compute_instance_from_template` resource ([#14280](https://github.com/hashicorp/terraform-provider-google/pull/14280))
-* container: added `pod_cidr_overprovision_config` field to `google_container_cluster` and  `google_container_node_pool` resources. ([#14281](https://github.com/hashicorp/terraform-provider-google/pull/14281))
-* orgpolicy: accepted variable cases for booleans such as true, True, and TRUE in `google_org_policy_policy` ([#14240](https://github.com/hashicorp/terraform-provider-google/pull/14240))
+* cloudasset: added `OS_INVENTORY` value to `content_type` for `google_cloud_asset_*_feed` ([#5465](https://github.com/hashicorp/terraform-provider-google-beta/pull/5465))
+* clouddeploy: added canary deployment fields for resource `google_clouddeploy_delivery_pipeline` ([#5451](https://github.com/hashicorp/terraform-provider-google-beta/pull/5451))
+* compute: supported region instance template in`source_instance_template` field of `google_compute_instance_from_template` resource ([#5467](https://github.com/hashicorp/terraform-provider-google-beta/pull/5467))
+* container: added `pod_cidr_overprovision_config` field to `google_container_cluster` and  `google_container_node_pool` resources. ([#5468](https://github.com/hashicorp/terraform-provider-google-beta/pull/5468))
+* orgpolicy: accepted variable cases for booleans such as true, True, and TRUE in `google_org_policy_policy` ([#5443](https://github.com/hashicorp/terraform-provider-google-beta/pull/5443))
 
 BUG FIXES:
-* cloudidentity: fixed immutability issue on `initialGroupConfig` field for resource `google_cloud_identity_group` ([#14257](https://github.com/hashicorp/terraform-provider-google/pull/14257))
-* provider: fixed an error resulting from leaving `batching.send_after` unspecified and `batching` specified ([#14263](https://github.com/hashicorp/terraform-provider-google/pull/14263))
-* provider: fixed bug where `credentials` field could not be set as an empty string ([#14279](https://github.com/hashicorp/terraform-provider-google/pull/14279))
-* vertex: increased the default timeout for `google_vertex_ai_index` to 180m ([#14248](https://github.com/hashicorp/terraform-provider-google/pull/14248))
+* cloudidentity: fixed immutability issue on `initialGroupConfig` field for resource `google_cloud_identity_group` ([#5456](https://github.com/hashicorp/terraform-provider-google-beta/pull/5456))
+* provider: fixed an error resulting from leaving `batching.send_after` unspecified and `batching` specified ([#5460](https://github.com/hashicorp/terraform-provider-google-beta/pull/5460))
+* provider: fixed bug where `credentials` field could not be set as an empty string ([#5466](https://github.com/hashicorp/terraform-provider-google-beta/pull/5466))
+* vertex: increased the default timeout for `google_vertex_ai_index` to 180m ([#5450](https://github.com/hashicorp/terraform-provider-google-beta/pull/5450))
 
 ## 4.61.0 (April 10, 2023)
 
