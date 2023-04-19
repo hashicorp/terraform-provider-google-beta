@@ -790,8 +790,8 @@ func Provider() *schema.Provider {
 }
 
 // Generated resources: 324
-// Generated IAM resources: 213
-// Total generated resources: 537
+// Generated IAM resources: 219
+// Total generated resources: 543
 func ResourceMap() map[string]*schema.Resource {
 	resourceMap, _ := ResourceMapWithErrors()
 	return resourceMap
@@ -1335,8 +1335,14 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_vpc_access_connector":                                  ResourceVPCAccessConnector(),
 			"google_workflows_workflow":                                    ResourceWorkflowsWorkflow(),
 			"google_workstations_workstation":                              ResourceWorkstationsWorkstation(),
+			"google_workstations_workstation_iam_binding":                  ResourceIamBinding(WorkstationsWorkstationIamSchema, WorkstationsWorkstationIamUpdaterProducer, WorkstationsWorkstationIdParseFunc),
+			"google_workstations_workstation_iam_member":                   ResourceIamMember(WorkstationsWorkstationIamSchema, WorkstationsWorkstationIamUpdaterProducer, WorkstationsWorkstationIdParseFunc),
+			"google_workstations_workstation_iam_policy":                   ResourceIamPolicy(WorkstationsWorkstationIamSchema, WorkstationsWorkstationIamUpdaterProducer, WorkstationsWorkstationIdParseFunc),
 			"google_workstations_workstation_cluster":                      ResourceWorkstationsWorkstationCluster(),
 			"google_workstations_workstation_config":                       ResourceWorkstationsWorkstationConfig(),
+			"google_workstations_workstation_config_iam_binding":           ResourceIamBinding(WorkstationsWorkstationConfigIamSchema, WorkstationsWorkstationConfigIamUpdaterProducer, WorkstationsWorkstationConfigIdParseFunc),
+			"google_workstations_workstation_config_iam_member":            ResourceIamMember(WorkstationsWorkstationConfigIamSchema, WorkstationsWorkstationConfigIamUpdaterProducer, WorkstationsWorkstationConfigIdParseFunc),
+			"google_workstations_workstation_config_iam_policy":            ResourceIamPolicy(WorkstationsWorkstationConfigIamSchema, WorkstationsWorkstationConfigIamUpdaterProducer, WorkstationsWorkstationConfigIdParseFunc),
 		},
 		map[string]*schema.Resource{
 			// ####### START handwritten resources ###########
