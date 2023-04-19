@@ -492,11 +492,6 @@ resource "google_cloud_run_service" "default" {
 
   name     = "tf-test-cloudrun-srv%{random_suffix}"
   location = "us-central1"
-  metadata {
-    annotations = {
-      "run.googleapis.com/launch-stage" = "BETA"
-    }
-  }
 
   template {
     spec {
