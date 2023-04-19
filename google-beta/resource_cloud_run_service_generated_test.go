@@ -469,7 +469,7 @@ func TestAccCloudRunService_cloudRunServiceProbesExample(t *testing.T) {
 
 	VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckCloudRunServiceDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -488,8 +488,6 @@ func TestAccCloudRunService_cloudRunServiceProbesExample(t *testing.T) {
 func testAccCloudRunService_cloudRunServiceProbesExample(context map[string]interface{}) string {
 	return Nprintf(`
 resource "google_cloud_run_service" "default" {
-  provider = google-beta
-
   name     = "tf-test-cloudrun-srv%{random_suffix}"
   location = "us-central1"
 
