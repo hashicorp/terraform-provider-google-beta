@@ -59,6 +59,12 @@ func ResourceComputeGlobalForwardingRule() *schema.Resource {
 				Description:      "The URL of the target resource to receive the matched traffic. For regional forwarding rules, this target must live in the same region as the forwarding rule. For global forwarding rules, this target must be a global load balancing resource. The forwarded traffic must be of a type appropriate to the target object. For `INTERNAL_SELF_MANAGED` load balancing, only `targetHttpProxy` is valid, not `targetHttpsProxy`.",
 			},
 
+			"allow_psc_global_access": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Description: "This is used in PSC consumer ForwardingRule to control whether the PSC endpoint can be accessed from another region.",
+			},
+
 			"description": {
 				Type:        schema.TypeString,
 				Optional:    true,
@@ -140,6 +146,20 @@ func ResourceComputeGlobalForwardingRule() *schema.Resource {
 				Description:      "The project this resource belongs in.",
 			},
 
+			"source_ip_ranges": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				ForceNew:    true,
+				Description: "If not empty, this Forwarding Rule will only forward the traffic when the source IP address matches one of the IP addresses or CIDR ranges set here. Note that a Forwarding Rule can only have up to 64 source IP ranges, and this field can only be used with a regional Forwarding Rule whose scheme is EXTERNAL. Each sourceIpRange entry should be either an IP address (for example, 1.2.3.4) or a CIDR range (for example, 1.2.3.0/24).",
+				Elem:        &schema.Schema{Type: schema.TypeString},
+			},
+
+			"base_forwarding_rule": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "[Output Only] The URL for the corresponding base Forwarding Rule. By base Forwarding Rule, we mean the Forwarding Rule that has the same IP address, protocol, and port settings with the current Forwarding Rule, but without sourceIPRanges specified. Always empty if the current Forwarding Rule does not have sourceIPRanges specified.",
+			},
+
 			"label_fingerprint": {
 				Type:        schema.TypeString,
 				Computed:    true,
@@ -218,18 +238,20 @@ func resourceComputeGlobalForwardingRuleCreate(d *schema.ResourceData, meta inte
 	}
 
 	obj := &compute.ForwardingRule{
-		Name:                dcl.String(d.Get("name").(string)),
-		Target:              dcl.String(d.Get("target").(string)),
-		Description:         dcl.String(d.Get("description").(string)),
-		IPAddress:           dcl.StringOrNil(d.Get("ip_address").(string)),
-		IPProtocol:          compute.ForwardingRuleIPProtocolEnumRef(d.Get("ip_protocol").(string)),
-		IPVersion:           compute.ForwardingRuleIPVersionEnumRef(d.Get("ip_version").(string)),
-		Labels:              checkStringMap(d.Get("labels")),
-		LoadBalancingScheme: compute.ForwardingRuleLoadBalancingSchemeEnumRef(d.Get("load_balancing_scheme").(string)),
-		MetadataFilter:      expandComputeGlobalForwardingRuleMetadataFilterArray(d.Get("metadata_filters")),
-		Network:             dcl.StringOrNil(d.Get("network").(string)),
-		PortRange:           dcl.String(d.Get("port_range").(string)),
-		Project:             dcl.String(project),
+		Name:                 dcl.String(d.Get("name").(string)),
+		Target:               dcl.String(d.Get("target").(string)),
+		AllowPscGlobalAccess: dcl.Bool(d.Get("allow_psc_global_access").(bool)),
+		Description:          dcl.String(d.Get("description").(string)),
+		IPAddress:            dcl.StringOrNil(d.Get("ip_address").(string)),
+		IPProtocol:           compute.ForwardingRuleIPProtocolEnumRef(d.Get("ip_protocol").(string)),
+		IPVersion:            compute.ForwardingRuleIPVersionEnumRef(d.Get("ip_version").(string)),
+		Labels:               checkStringMap(d.Get("labels")),
+		LoadBalancingScheme:  compute.ForwardingRuleLoadBalancingSchemeEnumRef(d.Get("load_balancing_scheme").(string)),
+		MetadataFilter:       expandComputeGlobalForwardingRuleMetadataFilterArray(d.Get("metadata_filters")),
+		Network:              dcl.StringOrNil(d.Get("network").(string)),
+		PortRange:            dcl.String(d.Get("port_range").(string)),
+		Project:              dcl.String(project),
+		SourceIPRanges:       expandStringArray(d.Get("source_ip_ranges")),
 	}
 
 	id, err := obj.ID()
@@ -277,18 +299,20 @@ func resourceComputeGlobalForwardingRuleRead(d *schema.ResourceData, meta interf
 	}
 
 	obj := &compute.ForwardingRule{
-		Name:                dcl.String(d.Get("name").(string)),
-		Target:              dcl.String(d.Get("target").(string)),
-		Description:         dcl.String(d.Get("description").(string)),
-		IPAddress:           dcl.StringOrNil(d.Get("ip_address").(string)),
-		IPProtocol:          compute.ForwardingRuleIPProtocolEnumRef(d.Get("ip_protocol").(string)),
-		IPVersion:           compute.ForwardingRuleIPVersionEnumRef(d.Get("ip_version").(string)),
-		Labels:              checkStringMap(d.Get("labels")),
-		LoadBalancingScheme: compute.ForwardingRuleLoadBalancingSchemeEnumRef(d.Get("load_balancing_scheme").(string)),
-		MetadataFilter:      expandComputeGlobalForwardingRuleMetadataFilterArray(d.Get("metadata_filters")),
-		Network:             dcl.StringOrNil(d.Get("network").(string)),
-		PortRange:           dcl.String(d.Get("port_range").(string)),
-		Project:             dcl.String(project),
+		Name:                 dcl.String(d.Get("name").(string)),
+		Target:               dcl.String(d.Get("target").(string)),
+		AllowPscGlobalAccess: dcl.Bool(d.Get("allow_psc_global_access").(bool)),
+		Description:          dcl.String(d.Get("description").(string)),
+		IPAddress:            dcl.StringOrNil(d.Get("ip_address").(string)),
+		IPProtocol:           compute.ForwardingRuleIPProtocolEnumRef(d.Get("ip_protocol").(string)),
+		IPVersion:            compute.ForwardingRuleIPVersionEnumRef(d.Get("ip_version").(string)),
+		Labels:               checkStringMap(d.Get("labels")),
+		LoadBalancingScheme:  compute.ForwardingRuleLoadBalancingSchemeEnumRef(d.Get("load_balancing_scheme").(string)),
+		MetadataFilter:       expandComputeGlobalForwardingRuleMetadataFilterArray(d.Get("metadata_filters")),
+		Network:              dcl.StringOrNil(d.Get("network").(string)),
+		PortRange:            dcl.String(d.Get("port_range").(string)),
+		Project:              dcl.String(project),
+		SourceIPRanges:       expandStringArray(d.Get("source_ip_ranges")),
 	}
 
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
@@ -318,6 +342,9 @@ func resourceComputeGlobalForwardingRuleRead(d *schema.ResourceData, meta interf
 	}
 	if err = d.Set("target", res.Target); err != nil {
 		return fmt.Errorf("error setting target in state: %s", err)
+	}
+	if err = d.Set("allow_psc_global_access", res.AllowPscGlobalAccess); err != nil {
+		return fmt.Errorf("error setting allow_psc_global_access in state: %s", err)
 	}
 	if err = d.Set("description", res.Description); err != nil {
 		return fmt.Errorf("error setting description in state: %s", err)
@@ -349,6 +376,12 @@ func resourceComputeGlobalForwardingRuleRead(d *schema.ResourceData, meta interf
 	if err = d.Set("project", res.Project); err != nil {
 		return fmt.Errorf("error setting project in state: %s", err)
 	}
+	if err = d.Set("source_ip_ranges", res.SourceIPRanges); err != nil {
+		return fmt.Errorf("error setting source_ip_ranges in state: %s", err)
+	}
+	if err = d.Set("base_forwarding_rule", res.BaseForwardingRule); err != nil {
+		return fmt.Errorf("error setting base_forwarding_rule in state: %s", err)
+	}
 	if err = d.Set("label_fingerprint", res.LabelFingerprint); err != nil {
 		return fmt.Errorf("error setting label_fingerprint in state: %s", err)
 	}
@@ -372,18 +405,20 @@ func resourceComputeGlobalForwardingRuleUpdate(d *schema.ResourceData, meta inte
 	}
 
 	obj := &compute.ForwardingRule{
-		Name:                dcl.String(d.Get("name").(string)),
-		Target:              dcl.String(d.Get("target").(string)),
-		Description:         dcl.String(d.Get("description").(string)),
-		IPAddress:           dcl.StringOrNil(d.Get("ip_address").(string)),
-		IPProtocol:          compute.ForwardingRuleIPProtocolEnumRef(d.Get("ip_protocol").(string)),
-		IPVersion:           compute.ForwardingRuleIPVersionEnumRef(d.Get("ip_version").(string)),
-		Labels:              checkStringMap(d.Get("labels")),
-		LoadBalancingScheme: compute.ForwardingRuleLoadBalancingSchemeEnumRef(d.Get("load_balancing_scheme").(string)),
-		MetadataFilter:      expandComputeGlobalForwardingRuleMetadataFilterArray(d.Get("metadata_filters")),
-		Network:             dcl.StringOrNil(d.Get("network").(string)),
-		PortRange:           dcl.String(d.Get("port_range").(string)),
-		Project:             dcl.String(project),
+		Name:                 dcl.String(d.Get("name").(string)),
+		Target:               dcl.String(d.Get("target").(string)),
+		AllowPscGlobalAccess: dcl.Bool(d.Get("allow_psc_global_access").(bool)),
+		Description:          dcl.String(d.Get("description").(string)),
+		IPAddress:            dcl.StringOrNil(d.Get("ip_address").(string)),
+		IPProtocol:           compute.ForwardingRuleIPProtocolEnumRef(d.Get("ip_protocol").(string)),
+		IPVersion:            compute.ForwardingRuleIPVersionEnumRef(d.Get("ip_version").(string)),
+		Labels:               checkStringMap(d.Get("labels")),
+		LoadBalancingScheme:  compute.ForwardingRuleLoadBalancingSchemeEnumRef(d.Get("load_balancing_scheme").(string)),
+		MetadataFilter:       expandComputeGlobalForwardingRuleMetadataFilterArray(d.Get("metadata_filters")),
+		Network:              dcl.StringOrNil(d.Get("network").(string)),
+		PortRange:            dcl.String(d.Get("port_range").(string)),
+		Project:              dcl.String(project),
+		SourceIPRanges:       expandStringArray(d.Get("source_ip_ranges")),
 	}
 	directive := UpdateDirective
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
@@ -426,18 +461,20 @@ func resourceComputeGlobalForwardingRuleDelete(d *schema.ResourceData, meta inte
 	}
 
 	obj := &compute.ForwardingRule{
-		Name:                dcl.String(d.Get("name").(string)),
-		Target:              dcl.String(d.Get("target").(string)),
-		Description:         dcl.String(d.Get("description").(string)),
-		IPAddress:           dcl.StringOrNil(d.Get("ip_address").(string)),
-		IPProtocol:          compute.ForwardingRuleIPProtocolEnumRef(d.Get("ip_protocol").(string)),
-		IPVersion:           compute.ForwardingRuleIPVersionEnumRef(d.Get("ip_version").(string)),
-		Labels:              checkStringMap(d.Get("labels")),
-		LoadBalancingScheme: compute.ForwardingRuleLoadBalancingSchemeEnumRef(d.Get("load_balancing_scheme").(string)),
-		MetadataFilter:      expandComputeGlobalForwardingRuleMetadataFilterArray(d.Get("metadata_filters")),
-		Network:             dcl.StringOrNil(d.Get("network").(string)),
-		PortRange:           dcl.String(d.Get("port_range").(string)),
-		Project:             dcl.String(project),
+		Name:                 dcl.String(d.Get("name").(string)),
+		Target:               dcl.String(d.Get("target").(string)),
+		AllowPscGlobalAccess: dcl.Bool(d.Get("allow_psc_global_access").(bool)),
+		Description:          dcl.String(d.Get("description").(string)),
+		IPAddress:            dcl.StringOrNil(d.Get("ip_address").(string)),
+		IPProtocol:           compute.ForwardingRuleIPProtocolEnumRef(d.Get("ip_protocol").(string)),
+		IPVersion:            compute.ForwardingRuleIPVersionEnumRef(d.Get("ip_version").(string)),
+		Labels:               checkStringMap(d.Get("labels")),
+		LoadBalancingScheme:  compute.ForwardingRuleLoadBalancingSchemeEnumRef(d.Get("load_balancing_scheme").(string)),
+		MetadataFilter:       expandComputeGlobalForwardingRuleMetadataFilterArray(d.Get("metadata_filters")),
+		Network:              dcl.StringOrNil(d.Get("network").(string)),
+		PortRange:            dcl.String(d.Get("port_range").(string)),
+		Project:              dcl.String(project),
+		SourceIPRanges:       expandStringArray(d.Get("source_ip_ranges")),
 	}
 
 	log.Printf("[DEBUG] Deleting ForwardingRule %q", d.Id())
