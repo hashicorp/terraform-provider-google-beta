@@ -790,9 +790,9 @@ func Provider() *schema.Provider {
 	return provider
 }
 
-// Generated resources: 324
+// Generated resources: 325
 // Generated IAM resources: 219
-// Total generated resources: 543
+// Total generated resources: 544
 func ResourceMap() map[string]*schema.Resource {
 	resourceMap, _ := ResourceMapWithErrors()
 	return resourceMap
@@ -1228,6 +1228,7 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_network_services_http_route":                           ResourceNetworkServicesHttpRoute(),
 			"google_network_services_mesh":                                 ResourceNetworkServicesMesh(),
 			"google_network_services_tcp_route":                            ResourceNetworkServicesTcpRoute(),
+			"google_network_services_tls_route":                            ResourceNetworkServicesTlsRoute(),
 			"google_notebooks_environment":                                 ResourceNotebooksEnvironment(),
 			"google_notebooks_instance":                                    ResourceNotebooksInstance(),
 			"google_notebooks_instance_iam_binding":                        ResourceIamBinding(NotebooksInstanceIamSchema, NotebooksInstanceIamUpdaterProducer, NotebooksInstanceIdParseFunc),
