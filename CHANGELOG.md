@@ -1,5 +1,37 @@
 ## 4.63.0 (Unreleased)
 
+UNKNOWN CHANGELOG TYPE:
+* Apigee sharedflow doc fix ([#5503](https://github.com/hashicorp/terraform-provider-google-beta/pull/5503))
+* Make weeklySchedule (under automatedBackupPolicy) optional for AlloyDB cluster ([#5495](https://github.com/hashicorp/terraform-provider-google-beta/pull/5495))
+* Update tests for Composer 1 & 2 with node_config, also Update docs for Composer 2 ([#5483](https://github.com/hashicorp/terraform-provider-google-beta/pull/5483))
+NOTES:
+* alloydb: changed `location` from `optional` to `required` for `google_alloydb_cluster`. `location` had previously been marked as optional, but operations failed if it was omitted, and there was no way for `location` to be inherited from the provider configuration or from an environment variable. This means there was no way to have a working configuration without `location` specified. ([#5492](https://github.com/hashicorp/terraform-provider-google-beta/pull/5492))
+* workflows: updated api version from v1beta1 to v1 (beta) ([#5482](https://github.com/hashicorp/terraform-provider-google-beta/pull/5482))
+
+FEATURES:
+* **New Resource:** `google_compute_public_advertised_prefix` ([#5476](https://github.com/hashicorp/terraform-provider-google-beta/pull/5476))
+* **New Resource:** `google_compute_public_delegated_prefix` ([#5476](https://github.com/hashicorp/terraform-provider-google-beta/pull/5476))
+* **New Resource:** `google_compute_region_commitment` ([#5473](https://github.com/hashicorp/terraform-provider-google-beta/pull/5473))
+* **New Resource:** `google_network_services_http_route` ([#5471](https://github.com/hashicorp/terraform-provider-google-beta/pull/5471))
+* **New Resource:** `google_networkservices_tcp_route` (beta) ([#5497](https://github.com/hashicorp/terraform-provider-google-beta/pull/5497))
+* **New Resource:** accessContextManager: added fine grained resource `google_access_context_manager_ingress_policy` ([#5474](https://github.com/hashicorp/terraform-provider-google-beta/pull/5474))
+
+IMPROVEMENTS:
+* dlp: added `inspect_job.actions.job_notification_emails` and `inspect_job.actions.deidentify`  fields to `google_data_loss_prevention_job_trigger` resource ([#5477](https://github.com/hashicorp/terraform-provider-google-beta/pull/5477))
+* dlp: added `triggers.manual` and `inspect_job.storage_config.hybrid_options` to `google_data_loss_prevention_job_trigger` ([#5490](https://github.com/hashicorp/terraform-provider-google-beta/pull/5490))
+* iamworkforcepool: added `oidc.web_sso_config` field to `google_iam_workforce_pool_provider` ([#5491](https://github.com/hashicorp/terraform-provider-google-beta/pull/5491))
+* updated the docs for project parented tags. ([#5504](https://github.com/hashicorp/terraform-provider-google-beta/pull/5504))
+
+BUG FIXES:
+* alloydb: changed `location` from `optional` to `required` for `google_alloydb_backup`. `location` had previously been marked as optional, but operations failed if it was omitted, and there was no way for `location` to be inherited from the provider configuration or from an environment variable. This means there was no way to have a working configuration without `location` specified. ([#5494](https://github.com/hashicorp/terraform-provider-google-beta/pull/5494))
+* alloydb: changed `location` from `optional` to `required` for `google_alloydb_cluster`. `location` had previously been marked as optional, but operations failed if it was omitted, and there was no way for `location` to be inherited from the provider configuration or from an environment variable. This means there was no way to have a working configuration without `location` specified. ([#5492](https://github.com/hashicorp/terraform-provider-google-beta/pull/5492))
+* compute: fixed a diff that occurred when `stack_type` was unset on `google_compute_ha_vpn_gateway` ([#5479](https://github.com/hashicorp/terraform-provider-google-beta/pull/5479))
+* compute: fixed an issue with TTLs being sent when `USE_ORIGIN_HEADERS` is set ([#5488](https://github.com/hashicorp/terraform-provider-google-beta/pull/5488))
+* compute: fixed can't update a instance with local ssd when stopping is needed on `google_compute_instance` ([#5489](https://github.com/hashicorp/terraform-provider-google-beta/pull/5489))
+* compute: fixed can't update a instance with local ssd when stopping is needed on `google_compute_instance` (revert) ([#5502](https://github.com/hashicorp/terraform-provider-google-beta/pull/5502))
+* networkservices: increased default timeouts for `google_network_services_edge_cache_keyset` to 60m (from 30m) ([#5481](https://github.com/hashicorp/terraform-provider-google-beta/pull/5481))
+* sql: fixed an issue that prevented setting `enable_private_path_for_google_cloud_services` to `false` ([#5484](https://github.com/hashicorp/terraform-provider-google-beta/pull/5484))
+
 ## 4.62.0 (April 17, 2023)
 
 FEATURES:
