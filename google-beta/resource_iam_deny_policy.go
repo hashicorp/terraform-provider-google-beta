@@ -21,6 +21,7 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
 func ResourceIAM2DenyPolicy() *schema.Resource {
@@ -162,7 +163,7 @@ For example, you could add a Google group to the deniedPrincipals, then exclude 
 }
 
 func resourceIAM2DenyPolicyCreate(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -229,7 +230,7 @@ func resourceIAM2DenyPolicyCreate(d *schema.ResourceData, meta interface{}) erro
 }
 
 func resourceIAM2DenyPolicyRead(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -266,7 +267,7 @@ func resourceIAM2DenyPolicyRead(d *schema.ResourceData, meta interface{}) error 
 }
 
 func resourceIAM2DenyPolicyUpdate(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -326,7 +327,7 @@ func resourceIAM2DenyPolicyUpdate(d *schema.ResourceData, meta interface{}) erro
 }
 
 func resourceIAM2DenyPolicyDelete(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -365,7 +366,7 @@ func resourceIAM2DenyPolicyDelete(d *schema.ResourceData, meta interface{}) erro
 }
 
 func resourceIAM2DenyPolicyImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	if err := ParseImportId([]string{
 		"(?P<parent>[^/]+)/(?P<name>[^/]+)",
 	}, d, config); err != nil {
@@ -382,15 +383,15 @@ func resourceIAM2DenyPolicyImport(d *schema.ResourceData, meta interface{}) ([]*
 	return []*schema.ResourceData{d}, nil
 }
 
-func flattenIAM2DenyPolicyDisplayName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenIAM2DenyPolicyDisplayName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenIAM2DenyPolicyEtag(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenIAM2DenyPolicyEtag(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenIAM2DenyPolicyRules(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenIAM2DenyPolicyRules(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return v
 	}
@@ -409,11 +410,11 @@ func flattenIAM2DenyPolicyRules(v interface{}, d *schema.ResourceData, config *C
 	}
 	return transformed
 }
-func flattenIAM2DenyPolicyRulesDescription(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenIAM2DenyPolicyRulesDescription(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenIAM2DenyPolicyRulesDenyRule(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenIAM2DenyPolicyRulesDenyRule(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -434,23 +435,23 @@ func flattenIAM2DenyPolicyRulesDenyRule(v interface{}, d *schema.ResourceData, c
 		flattenIAM2DenyPolicyRulesDenyRuleDenialCondition(original["denialCondition"], d, config)
 	return []interface{}{transformed}
 }
-func flattenIAM2DenyPolicyRulesDenyRuleDeniedPrincipals(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenIAM2DenyPolicyRulesDenyRuleDeniedPrincipals(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenIAM2DenyPolicyRulesDenyRuleExceptionPrincipals(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenIAM2DenyPolicyRulesDenyRuleExceptionPrincipals(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenIAM2DenyPolicyRulesDenyRuleDeniedPermissions(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenIAM2DenyPolicyRulesDenyRuleDeniedPermissions(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenIAM2DenyPolicyRulesDenyRuleExceptionPermissions(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenIAM2DenyPolicyRulesDenyRuleExceptionPermissions(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenIAM2DenyPolicyRulesDenyRuleDenialCondition(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenIAM2DenyPolicyRulesDenyRuleDenialCondition(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -469,31 +470,31 @@ func flattenIAM2DenyPolicyRulesDenyRuleDenialCondition(v interface{}, d *schema.
 		flattenIAM2DenyPolicyRulesDenyRuleDenialConditionLocation(original["location"], d, config)
 	return []interface{}{transformed}
 }
-func flattenIAM2DenyPolicyRulesDenyRuleDenialConditionExpression(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenIAM2DenyPolicyRulesDenyRuleDenialConditionExpression(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenIAM2DenyPolicyRulesDenyRuleDenialConditionTitle(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenIAM2DenyPolicyRulesDenyRuleDenialConditionTitle(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenIAM2DenyPolicyRulesDenyRuleDenialConditionDescription(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenIAM2DenyPolicyRulesDenyRuleDenialConditionDescription(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenIAM2DenyPolicyRulesDenyRuleDenialConditionLocation(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenIAM2DenyPolicyRulesDenyRuleDenialConditionLocation(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func expandIAM2DenyPolicyDisplayName(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandIAM2DenyPolicyDisplayName(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandIAM2DenyPolicyEtag(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandIAM2DenyPolicyEtag(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandIAM2DenyPolicyRules(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandIAM2DenyPolicyRules(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
 	for _, raw := range l {
@@ -522,11 +523,11 @@ func expandIAM2DenyPolicyRules(v interface{}, d TerraformResourceData, config *C
 	return req, nil
 }
 
-func expandIAM2DenyPolicyRulesDescription(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandIAM2DenyPolicyRulesDescription(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandIAM2DenyPolicyRulesDenyRule(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandIAM2DenyPolicyRulesDenyRule(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -573,23 +574,23 @@ func expandIAM2DenyPolicyRulesDenyRule(v interface{}, d TerraformResourceData, c
 	return transformed, nil
 }
 
-func expandIAM2DenyPolicyRulesDenyRuleDeniedPrincipals(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandIAM2DenyPolicyRulesDenyRuleDeniedPrincipals(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandIAM2DenyPolicyRulesDenyRuleExceptionPrincipals(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandIAM2DenyPolicyRulesDenyRuleExceptionPrincipals(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandIAM2DenyPolicyRulesDenyRuleDeniedPermissions(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandIAM2DenyPolicyRulesDenyRuleDeniedPermissions(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandIAM2DenyPolicyRulesDenyRuleExceptionPermissions(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandIAM2DenyPolicyRulesDenyRuleExceptionPermissions(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandIAM2DenyPolicyRulesDenyRuleDenialCondition(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandIAM2DenyPolicyRulesDenyRuleDenialCondition(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -629,18 +630,18 @@ func expandIAM2DenyPolicyRulesDenyRuleDenialCondition(v interface{}, d Terraform
 	return transformed, nil
 }
 
-func expandIAM2DenyPolicyRulesDenyRuleDenialConditionExpression(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandIAM2DenyPolicyRulesDenyRuleDenialConditionExpression(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandIAM2DenyPolicyRulesDenyRuleDenialConditionTitle(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandIAM2DenyPolicyRulesDenyRuleDenialConditionTitle(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandIAM2DenyPolicyRulesDenyRuleDenialConditionDescription(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandIAM2DenyPolicyRulesDenyRuleDenialConditionDescription(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandIAM2DenyPolicyRulesDenyRuleDenialConditionLocation(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandIAM2DenyPolicyRulesDenyRuleDenialConditionLocation(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }

@@ -21,6 +21,7 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
 func ResourceComputeMachineImage() *schema.Resource {
@@ -131,7 +132,7 @@ customer-supplied encryption key that protects this resource.`,
 }
 
 func resourceComputeMachineImageCreate(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -216,7 +217,7 @@ func resourceComputeMachineImageCreate(d *schema.ResourceData, meta interface{})
 }
 
 func resourceComputeMachineImageRead(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -275,7 +276,7 @@ func resourceComputeMachineImageRead(d *schema.ResourceData, meta interface{}) e
 }
 
 func resourceComputeMachineImageDelete(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -320,7 +321,7 @@ func resourceComputeMachineImageDelete(d *schema.ResourceData, meta interface{})
 }
 
 func resourceComputeMachineImageImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	if err := ParseImportId([]string{
 		"projects/(?P<project>[^/]+)/global/machineImages/(?P<name>[^/]+)",
 		"(?P<project>[^/]+)/(?P<name>[^/]+)",
@@ -339,30 +340,30 @@ func resourceComputeMachineImageImport(d *schema.ResourceData, meta interface{})
 	return []*schema.ResourceData{d}, nil
 }
 
-func flattenComputeMachineImageName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenComputeMachineImageName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenComputeMachineImageDescription(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenComputeMachineImageDescription(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenComputeMachineImageSourceInstance(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenComputeMachineImageSourceInstance(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return v
 	}
 	return ConvertSelfLinkToV1(v.(string))
 }
 
-func flattenComputeMachineImageStorageLocations(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenComputeMachineImageStorageLocations(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenComputeMachineImageGuestFlush(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenComputeMachineImageGuestFlush(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenComputeMachineImageMachineImageEncryptionKey(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenComputeMachineImageMachineImageEncryptionKey(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -381,31 +382,31 @@ func flattenComputeMachineImageMachineImageEncryptionKey(v interface{}, d *schem
 		flattenComputeMachineImageMachineImageEncryptionKeyKmsKeyServiceAccount(original["kmsKeyServiceAccount"], d, config)
 	return []interface{}{transformed}
 }
-func flattenComputeMachineImageMachineImageEncryptionKeyRawKey(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenComputeMachineImageMachineImageEncryptionKeyRawKey(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenComputeMachineImageMachineImageEncryptionKeySha256(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenComputeMachineImageMachineImageEncryptionKeySha256(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenComputeMachineImageMachineImageEncryptionKeyKmsKeyName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenComputeMachineImageMachineImageEncryptionKeyKmsKeyName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenComputeMachineImageMachineImageEncryptionKeyKmsKeyServiceAccount(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenComputeMachineImageMachineImageEncryptionKeyKmsKeyServiceAccount(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func expandComputeMachineImageName(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandComputeMachineImageName(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandComputeMachineImageDescription(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandComputeMachineImageDescription(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandComputeMachineImageSourceInstance(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandComputeMachineImageSourceInstance(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	f, err := parseZonalFieldValue("instances", v.(string), "project", "zone", d, config, true)
 	if err != nil {
 		return nil, fmt.Errorf("Invalid value for source_instance: %s", err)
@@ -413,11 +414,11 @@ func expandComputeMachineImageSourceInstance(v interface{}, d TerraformResourceD
 	return f.RelativeLink(), nil
 }
 
-func expandComputeMachineImageGuestFlush(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandComputeMachineImageGuestFlush(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandComputeMachineImageMachineImageEncryptionKey(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandComputeMachineImageMachineImageEncryptionKey(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -457,18 +458,18 @@ func expandComputeMachineImageMachineImageEncryptionKey(v interface{}, d Terrafo
 	return transformed, nil
 }
 
-func expandComputeMachineImageMachineImageEncryptionKeyRawKey(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandComputeMachineImageMachineImageEncryptionKeyRawKey(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandComputeMachineImageMachineImageEncryptionKeySha256(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandComputeMachineImageMachineImageEncryptionKeySha256(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandComputeMachineImageMachineImageEncryptionKeyKmsKeyName(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandComputeMachineImageMachineImageEncryptionKeyKmsKeyName(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandComputeMachineImageMachineImageEncryptionKeyKmsKeyServiceAccount(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandComputeMachineImageMachineImageEncryptionKeyKmsKeyServiceAccount(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }

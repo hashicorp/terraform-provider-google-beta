@@ -23,6 +23,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
 func ResourceApiGatewayApiConfig() *schema.Resource {
@@ -243,7 +244,7 @@ If multiple files are specified, the files are merged with the following rules: 
 }
 
 func resourceApiGatewayApiConfigCreate(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -349,7 +350,7 @@ func resourceApiGatewayApiConfigCreate(d *schema.ResourceData, meta interface{})
 }
 
 func resourceApiGatewayApiConfigRead(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -405,7 +406,7 @@ func resourceApiGatewayApiConfigRead(d *schema.ResourceData, meta interface{}) e
 }
 
 func resourceApiGatewayApiConfigUpdate(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -515,7 +516,7 @@ func resourceApiGatewayApiConfigUpdate(d *schema.ResourceData, meta interface{})
 }
 
 func resourceApiGatewayApiConfigDelete(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -560,7 +561,7 @@ func resourceApiGatewayApiConfigDelete(d *schema.ResourceData, meta interface{})
 }
 
 func resourceApiGatewayApiConfigImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	if err := ParseImportId([]string{
 		"projects/(?P<project>[^/]+)/locations/global/apis/(?P<api>[^/]+)/configs/(?P<api_config_id>[^/]+)",
 		"(?P<project>[^/]+)/(?P<api>[^/]+)/(?P<api_config_id>[^/]+)",
@@ -579,23 +580,23 @@ func resourceApiGatewayApiConfigImport(d *schema.ResourceData, meta interface{})
 	return []*schema.ResourceData{d}, nil
 }
 
-func flattenApiGatewayApiConfigName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenApiGatewayApiConfigName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenApiGatewayApiConfigDisplayName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenApiGatewayApiConfigDisplayName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenApiGatewayApiConfigServiceConfigId(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenApiGatewayApiConfigServiceConfigId(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenApiGatewayApiConfigLabels(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenApiGatewayApiConfigLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenApiGatewayApiConfigOpenapiDocuments(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenApiGatewayApiConfigOpenapiDocuments(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return v
 	}
@@ -613,7 +614,7 @@ func flattenApiGatewayApiConfigOpenapiDocuments(v interface{}, d *schema.Resourc
 	}
 	return transformed
 }
-func flattenApiGatewayApiConfigOpenapiDocumentsDocument(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenApiGatewayApiConfigOpenapiDocumentsDocument(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -628,15 +629,15 @@ func flattenApiGatewayApiConfigOpenapiDocumentsDocument(v interface{}, d *schema
 		flattenApiGatewayApiConfigOpenapiDocumentsDocumentContents(original["contents"], d, config)
 	return []interface{}{transformed}
 }
-func flattenApiGatewayApiConfigOpenapiDocumentsDocumentPath(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenApiGatewayApiConfigOpenapiDocumentsDocumentPath(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenApiGatewayApiConfigOpenapiDocumentsDocumentContents(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenApiGatewayApiConfigOpenapiDocumentsDocumentContents(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenApiGatewayApiConfigManagedServiceConfigs(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenApiGatewayApiConfigManagedServiceConfigs(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return v
 	}
@@ -655,19 +656,19 @@ func flattenApiGatewayApiConfigManagedServiceConfigs(v interface{}, d *schema.Re
 	}
 	return transformed
 }
-func flattenApiGatewayApiConfigManagedServiceConfigsPath(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenApiGatewayApiConfigManagedServiceConfigsPath(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenApiGatewayApiConfigManagedServiceConfigsContents(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenApiGatewayApiConfigManagedServiceConfigsContents(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func expandApiGatewayApiConfigDisplayName(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandApiGatewayApiConfigDisplayName(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandApiGatewayApiConfigLabels(v interface{}, d TerraformResourceData, config *Config) (map[string]string, error) {
+func expandApiGatewayApiConfigLabels(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
 	if v == nil {
 		return map[string]string{}, nil
 	}
@@ -678,7 +679,7 @@ func expandApiGatewayApiConfigLabels(v interface{}, d TerraformResourceData, con
 	return m, nil
 }
 
-func expandApiGatewayApiConfigGatewayConfig(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandApiGatewayApiConfigGatewayConfig(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -697,7 +698,7 @@ func expandApiGatewayApiConfigGatewayConfig(v interface{}, d TerraformResourceDa
 	return transformed, nil
 }
 
-func expandApiGatewayApiConfigGatewayConfigBackendConfig(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandApiGatewayApiConfigGatewayConfigBackendConfig(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -716,11 +717,11 @@ func expandApiGatewayApiConfigGatewayConfigBackendConfig(v interface{}, d Terraf
 	return transformed, nil
 }
 
-func expandApiGatewayApiConfigGatewayConfigBackendConfigGoogleServiceAccount(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandApiGatewayApiConfigGatewayConfigBackendConfigGoogleServiceAccount(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandApiGatewayApiConfigOpenapiDocuments(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandApiGatewayApiConfigOpenapiDocuments(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
 	for _, raw := range l {
@@ -742,7 +743,7 @@ func expandApiGatewayApiConfigOpenapiDocuments(v interface{}, d TerraformResourc
 	return req, nil
 }
 
-func expandApiGatewayApiConfigOpenapiDocumentsDocument(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandApiGatewayApiConfigOpenapiDocumentsDocument(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -768,15 +769,15 @@ func expandApiGatewayApiConfigOpenapiDocumentsDocument(v interface{}, d Terrafor
 	return transformed, nil
 }
 
-func expandApiGatewayApiConfigOpenapiDocumentsDocumentPath(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandApiGatewayApiConfigOpenapiDocumentsDocumentPath(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandApiGatewayApiConfigOpenapiDocumentsDocumentContents(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandApiGatewayApiConfigOpenapiDocumentsDocumentContents(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandApiGatewayApiConfigGrpcServices(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandApiGatewayApiConfigGrpcServices(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
 	for _, raw := range l {
@@ -805,7 +806,7 @@ func expandApiGatewayApiConfigGrpcServices(v interface{}, d TerraformResourceDat
 	return req, nil
 }
 
-func expandApiGatewayApiConfigGrpcServicesFileDescriptorSet(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandApiGatewayApiConfigGrpcServicesFileDescriptorSet(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -831,15 +832,15 @@ func expandApiGatewayApiConfigGrpcServicesFileDescriptorSet(v interface{}, d Ter
 	return transformed, nil
 }
 
-func expandApiGatewayApiConfigGrpcServicesFileDescriptorSetPath(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandApiGatewayApiConfigGrpcServicesFileDescriptorSetPath(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandApiGatewayApiConfigGrpcServicesFileDescriptorSetContents(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandApiGatewayApiConfigGrpcServicesFileDescriptorSetContents(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandApiGatewayApiConfigGrpcServicesSource(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandApiGatewayApiConfigGrpcServicesSource(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
 	for _, raw := range l {
@@ -868,15 +869,15 @@ func expandApiGatewayApiConfigGrpcServicesSource(v interface{}, d TerraformResou
 	return req, nil
 }
 
-func expandApiGatewayApiConfigGrpcServicesSourcePath(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandApiGatewayApiConfigGrpcServicesSourcePath(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandApiGatewayApiConfigGrpcServicesSourceContents(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandApiGatewayApiConfigGrpcServicesSourceContents(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandApiGatewayApiConfigManagedServiceConfigs(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandApiGatewayApiConfigManagedServiceConfigs(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
 	for _, raw := range l {
@@ -905,11 +906,11 @@ func expandApiGatewayApiConfigManagedServiceConfigs(v interface{}, d TerraformRe
 	return req, nil
 }
 
-func expandApiGatewayApiConfigManagedServiceConfigsPath(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandApiGatewayApiConfigManagedServiceConfigsPath(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandApiGatewayApiConfigManagedServiceConfigsContents(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandApiGatewayApiConfigManagedServiceConfigsContents(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 

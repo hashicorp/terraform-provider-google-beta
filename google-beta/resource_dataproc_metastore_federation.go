@@ -22,6 +22,7 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
 func ResourceDataprocMetastoreFederation() *schema.Resource {
@@ -129,7 +130,7 @@ and hyphens (-). Cannot begin or end with underscore or hyphen. Must consist of 
 }
 
 func resourceDataprocMetastoreFederationCreate(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -202,7 +203,7 @@ func resourceDataprocMetastoreFederationCreate(d *schema.ResourceData, meta inte
 }
 
 func resourceDataprocMetastoreFederationRead(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -264,7 +265,7 @@ func resourceDataprocMetastoreFederationRead(d *schema.ResourceData, meta interf
 }
 
 func resourceDataprocMetastoreFederationUpdate(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -339,7 +340,7 @@ func resourceDataprocMetastoreFederationUpdate(d *schema.ResourceData, meta inte
 }
 
 func resourceDataprocMetastoreFederationDelete(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -384,7 +385,7 @@ func resourceDataprocMetastoreFederationDelete(d *schema.ResourceData, meta inte
 }
 
 func resourceDataprocMetastoreFederationImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	if err := ParseImportId([]string{
 		"projects/(?P<project>[^/]+)/locations/(?P<location>[^/]+)/federations/(?P<federation_id>[^/]+)",
 		"(?P<project>[^/]+)/(?P<location>[^/]+)/(?P<federation_id>[^/]+)",
@@ -403,35 +404,35 @@ func resourceDataprocMetastoreFederationImport(d *schema.ResourceData, meta inte
 	return []*schema.ResourceData{d}, nil
 }
 
-func flattenDataprocMetastoreFederationName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenDataprocMetastoreFederationName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenDataprocMetastoreFederationLabels(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenDataprocMetastoreFederationLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenDataprocMetastoreFederationEndpointUri(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenDataprocMetastoreFederationEndpointUri(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenDataprocMetastoreFederationState(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenDataprocMetastoreFederationState(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenDataprocMetastoreFederationStateMessage(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenDataprocMetastoreFederationStateMessage(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenDataprocMetastoreFederationUid(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenDataprocMetastoreFederationUid(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenDataprocMetastoreFederationVersion(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenDataprocMetastoreFederationVersion(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenDataprocMetastoreFederationBackendMetastores(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenDataprocMetastoreFederationBackendMetastores(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return v
 	}
@@ -447,15 +448,15 @@ func flattenDataprocMetastoreFederationBackendMetastores(v interface{}, d *schem
 	}
 	return transformed
 }
-func flattenDataprocMetastoreFederationBackendMetastoresName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenDataprocMetastoreFederationBackendMetastoresName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenDataprocMetastoreFederationBackendMetastoresMetastoreType(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenDataprocMetastoreFederationBackendMetastoresMetastoreType(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func expandDataprocMetastoreFederationLabels(v interface{}, d TerraformResourceData, config *Config) (map[string]string, error) {
+func expandDataprocMetastoreFederationLabels(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
 	if v == nil {
 		return map[string]string{}, nil
 	}
@@ -466,11 +467,11 @@ func expandDataprocMetastoreFederationLabels(v interface{}, d TerraformResourceD
 	return m, nil
 }
 
-func expandDataprocMetastoreFederationVersion(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandDataprocMetastoreFederationVersion(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandDataprocMetastoreFederationBackendMetastores(v interface{}, d TerraformResourceData, config *Config) (map[string]interface{}, error) {
+func expandDataprocMetastoreFederationBackendMetastores(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (map[string]interface{}, error) {
 	if v == nil {
 		return map[string]interface{}{}, nil
 	}
@@ -502,10 +503,10 @@ func expandDataprocMetastoreFederationBackendMetastores(v interface{}, d Terrafo
 	return m, nil
 }
 
-func expandDataprocMetastoreFederationBackendMetastoresName(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandDataprocMetastoreFederationBackendMetastoresName(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandDataprocMetastoreFederationBackendMetastoresMetastoreType(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandDataprocMetastoreFederationBackendMetastoresMetastoreType(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }

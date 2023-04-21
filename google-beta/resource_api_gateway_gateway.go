@@ -22,6 +22,7 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
 func ResourceApiGatewayGateway() *schema.Resource {
@@ -96,7 +97,7 @@ When changing api configs please ensure the new config is a new resource and the
 }
 
 func resourceApiGatewayGatewayCreate(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -179,7 +180,7 @@ func resourceApiGatewayGatewayCreate(d *schema.ResourceData, meta interface{}) e
 }
 
 func resourceApiGatewayGatewayRead(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -232,7 +233,7 @@ func resourceApiGatewayGatewayRead(d *schema.ResourceData, meta interface{}) err
 }
 
 func resourceApiGatewayGatewayUpdate(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -317,7 +318,7 @@ func resourceApiGatewayGatewayUpdate(d *schema.ResourceData, meta interface{}) e
 }
 
 func resourceApiGatewayGatewayDelete(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -362,7 +363,7 @@ func resourceApiGatewayGatewayDelete(d *schema.ResourceData, meta interface{}) e
 }
 
 func resourceApiGatewayGatewayImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	if err := ParseImportId([]string{
 		"projects/(?P<project>[^/]+)/locations/(?P<region>[^/]+)/gateways/(?P<gateway_id>[^/]+)",
 		"(?P<project>[^/]+)/(?P<region>[^/]+)/(?P<gateway_id>[^/]+)",
@@ -382,35 +383,35 @@ func resourceApiGatewayGatewayImport(d *schema.ResourceData, meta interface{}) (
 	return []*schema.ResourceData{d}, nil
 }
 
-func flattenApiGatewayGatewayName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenApiGatewayGatewayName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenApiGatewayGatewayDisplayName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenApiGatewayGatewayDisplayName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenApiGatewayGatewayApiConfig(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenApiGatewayGatewayApiConfig(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenApiGatewayGatewayDefaultHostname(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenApiGatewayGatewayDefaultHostname(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenApiGatewayGatewayLabels(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenApiGatewayGatewayLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func expandApiGatewayGatewayDisplayName(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandApiGatewayGatewayDisplayName(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandApiGatewayGatewayApiConfig(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandApiGatewayGatewayApiConfig(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandApiGatewayGatewayLabels(v interface{}, d TerraformResourceData, config *Config) (map[string]string, error) {
+func expandApiGatewayGatewayLabels(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
 	if v == nil {
 		return map[string]string{}, nil
 	}

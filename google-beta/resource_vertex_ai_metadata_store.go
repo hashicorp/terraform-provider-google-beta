@@ -21,6 +21,7 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
 func ResourceVertexAIMetadataStore() *schema.Resource {
@@ -112,7 +113,7 @@ Has the form: projects/my-project/locations/my-region/keyRings/my-kr/cryptoKeys/
 }
 
 func resourceVertexAIMetadataStoreCreate(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -189,7 +190,7 @@ func resourceVertexAIMetadataStoreCreate(d *schema.ResourceData, meta interface{
 }
 
 func resourceVertexAIMetadataStoreRead(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -242,7 +243,7 @@ func resourceVertexAIMetadataStoreRead(d *schema.ResourceData, meta interface{})
 }
 
 func resourceVertexAIMetadataStoreDelete(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -287,7 +288,7 @@ func resourceVertexAIMetadataStoreDelete(d *schema.ResourceData, meta interface{
 }
 
 func resourceVertexAIMetadataStoreImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	if err := ParseImportId([]string{
 		"projects/(?P<project>[^/]+)/locations/(?P<region>[^/]+)/metadataStores/(?P<name>[^/]+)",
 		"(?P<project>[^/]+)/(?P<region>[^/]+)/(?P<name>[^/]+)",
@@ -307,19 +308,19 @@ func resourceVertexAIMetadataStoreImport(d *schema.ResourceData, meta interface{
 	return []*schema.ResourceData{d}, nil
 }
 
-func flattenVertexAIMetadataStoreDescription(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenVertexAIMetadataStoreDescription(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenVertexAIMetadataStoreCreateTime(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenVertexAIMetadataStoreCreateTime(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenVertexAIMetadataStoreUpdateTime(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenVertexAIMetadataStoreUpdateTime(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenVertexAIMetadataStoreEncryptionSpec(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenVertexAIMetadataStoreEncryptionSpec(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -332,11 +333,11 @@ func flattenVertexAIMetadataStoreEncryptionSpec(v interface{}, d *schema.Resourc
 		flattenVertexAIMetadataStoreEncryptionSpecKmsKeyName(original["kmsKeyName"], d, config)
 	return []interface{}{transformed}
 }
-func flattenVertexAIMetadataStoreEncryptionSpecKmsKeyName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenVertexAIMetadataStoreEncryptionSpecKmsKeyName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenVertexAIMetadataStoreState(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenVertexAIMetadataStoreState(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -349,15 +350,15 @@ func flattenVertexAIMetadataStoreState(v interface{}, d *schema.ResourceData, co
 		flattenVertexAIMetadataStoreStateDiskUtilizationBytes(original["diskUtilizationBytes"], d, config)
 	return []interface{}{transformed}
 }
-func flattenVertexAIMetadataStoreStateDiskUtilizationBytes(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenVertexAIMetadataStoreStateDiskUtilizationBytes(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func expandVertexAIMetadataStoreDescription(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandVertexAIMetadataStoreDescription(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandVertexAIMetadataStoreEncryptionSpec(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandVertexAIMetadataStoreEncryptionSpec(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -376,6 +377,6 @@ func expandVertexAIMetadataStoreEncryptionSpec(v interface{}, d TerraformResourc
 	return transformed, nil
 }
 
-func expandVertexAIMetadataStoreEncryptionSpecKmsKeyName(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandVertexAIMetadataStoreEncryptionSpecKmsKeyName(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }

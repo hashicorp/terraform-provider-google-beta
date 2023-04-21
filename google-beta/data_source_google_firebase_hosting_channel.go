@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
 func DataSourceGoogleFirebaseHostingChannel() *schema.Resource {
@@ -20,7 +21,7 @@ func DataSourceGoogleFirebaseHostingChannel() *schema.Resource {
 }
 
 func dataSourceGoogleFirebaseHostingChannelRead(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 
 	id, err := ReplaceVars(d, config, "sites/{{site_id}}/channels/{{channel_id}}")
 	if err != nil {

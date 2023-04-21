@@ -21,6 +21,7 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
 func ResourceOSConfigGuestPolicies() *schema.Resource {
@@ -874,7 +875,7 @@ Example: "2014-10-02T15:01:23.045123456Z".`,
 }
 
 func resourceOSConfigGuestPoliciesCreate(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -973,7 +974,7 @@ func resourceOSConfigGuestPoliciesCreate(d *schema.ResourceData, meta interface{
 }
 
 func resourceOSConfigGuestPoliciesRead(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -1038,7 +1039,7 @@ func resourceOSConfigGuestPoliciesRead(d *schema.ResourceData, meta interface{})
 }
 
 func resourceOSConfigGuestPoliciesUpdate(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -1114,7 +1115,7 @@ func resourceOSConfigGuestPoliciesUpdate(d *schema.ResourceData, meta interface{
 }
 
 func resourceOSConfigGuestPoliciesDelete(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -1151,7 +1152,7 @@ func resourceOSConfigGuestPoliciesDelete(d *schema.ResourceData, meta interface{
 }
 
 func resourceOSConfigGuestPoliciesImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	if err := ParseImportId([]string{
 		"projects/(?P<project>[^/]+)/guestPolicies/(?P<guest_policy_id>[^/]+)",
 		"(?P<project>[^/]+)/(?P<guest_policy_id>[^/]+)",
@@ -1170,15 +1171,15 @@ func resourceOSConfigGuestPoliciesImport(d *schema.ResourceData, meta interface{
 	return []*schema.ResourceData{d}, nil
 }
 
-func flattenOSConfigGuestPoliciesName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenOSConfigGuestPoliciesDescription(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesDescription(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenOSConfigGuestPoliciesAssignment(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesAssignment(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -1199,7 +1200,7 @@ func flattenOSConfigGuestPoliciesAssignment(v interface{}, d *schema.ResourceDat
 		flattenOSConfigGuestPoliciesAssignmentOsTypes(original["osTypes"], d, config)
 	return []interface{}{transformed}
 }
-func flattenOSConfigGuestPoliciesAssignmentGroupLabels(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesAssignmentGroupLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return v
 	}
@@ -1217,23 +1218,23 @@ func flattenOSConfigGuestPoliciesAssignmentGroupLabels(v interface{}, d *schema.
 	}
 	return transformed
 }
-func flattenOSConfigGuestPoliciesAssignmentGroupLabelsLabels(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesAssignmentGroupLabelsLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenOSConfigGuestPoliciesAssignmentZones(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesAssignmentZones(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenOSConfigGuestPoliciesAssignmentInstances(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesAssignmentInstances(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenOSConfigGuestPoliciesAssignmentInstanceNamePrefixes(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesAssignmentInstanceNamePrefixes(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenOSConfigGuestPoliciesAssignmentOsTypes(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesAssignmentOsTypes(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return v
 	}
@@ -1253,19 +1254,19 @@ func flattenOSConfigGuestPoliciesAssignmentOsTypes(v interface{}, d *schema.Reso
 	}
 	return transformed
 }
-func flattenOSConfigGuestPoliciesAssignmentOsTypesOsShortName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesAssignmentOsTypesOsShortName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenOSConfigGuestPoliciesAssignmentOsTypesOsVersion(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesAssignmentOsTypesOsVersion(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenOSConfigGuestPoliciesAssignmentOsTypesOsArchitecture(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesAssignmentOsTypesOsArchitecture(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenOSConfigGuestPoliciesPackages(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesPackages(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return v
 	}
@@ -1285,19 +1286,19 @@ func flattenOSConfigGuestPoliciesPackages(v interface{}, d *schema.ResourceData,
 	}
 	return transformed
 }
-func flattenOSConfigGuestPoliciesPackagesName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesPackagesName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenOSConfigGuestPoliciesPackagesDesiredState(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesPackagesDesiredState(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenOSConfigGuestPoliciesPackagesManager(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesPackagesManager(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenOSConfigGuestPoliciesPackageRepositories(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesPackageRepositories(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return v
 	}
@@ -1318,7 +1319,7 @@ func flattenOSConfigGuestPoliciesPackageRepositories(v interface{}, d *schema.Re
 	}
 	return transformed
 }
-func flattenOSConfigGuestPoliciesPackageRepositoriesApt(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesPackageRepositoriesApt(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -1339,27 +1340,27 @@ func flattenOSConfigGuestPoliciesPackageRepositoriesApt(v interface{}, d *schema
 		flattenOSConfigGuestPoliciesPackageRepositoriesAptGpgKey(original["gpgKey"], d, config)
 	return []interface{}{transformed}
 }
-func flattenOSConfigGuestPoliciesPackageRepositoriesAptArchiveType(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesPackageRepositoriesAptArchiveType(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenOSConfigGuestPoliciesPackageRepositoriesAptUri(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesPackageRepositoriesAptUri(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenOSConfigGuestPoliciesPackageRepositoriesAptDistribution(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesPackageRepositoriesAptDistribution(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenOSConfigGuestPoliciesPackageRepositoriesAptComponents(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesPackageRepositoriesAptComponents(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenOSConfigGuestPoliciesPackageRepositoriesAptGpgKey(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesPackageRepositoriesAptGpgKey(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenOSConfigGuestPoliciesPackageRepositoriesYum(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesPackageRepositoriesYum(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -1378,23 +1379,23 @@ func flattenOSConfigGuestPoliciesPackageRepositoriesYum(v interface{}, d *schema
 		flattenOSConfigGuestPoliciesPackageRepositoriesYumGpgKeys(original["gpgKeys"], d, config)
 	return []interface{}{transformed}
 }
-func flattenOSConfigGuestPoliciesPackageRepositoriesYumId(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesPackageRepositoriesYumId(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenOSConfigGuestPoliciesPackageRepositoriesYumDisplayName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesPackageRepositoriesYumDisplayName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenOSConfigGuestPoliciesPackageRepositoriesYumBaseUrl(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesPackageRepositoriesYumBaseUrl(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenOSConfigGuestPoliciesPackageRepositoriesYumGpgKeys(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesPackageRepositoriesYumGpgKeys(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenOSConfigGuestPoliciesPackageRepositoriesZypper(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesPackageRepositoriesZypper(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -1413,23 +1414,23 @@ func flattenOSConfigGuestPoliciesPackageRepositoriesZypper(v interface{}, d *sch
 		flattenOSConfigGuestPoliciesPackageRepositoriesZypperGpgKeys(original["gpgKeys"], d, config)
 	return []interface{}{transformed}
 }
-func flattenOSConfigGuestPoliciesPackageRepositoriesZypperId(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesPackageRepositoriesZypperId(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenOSConfigGuestPoliciesPackageRepositoriesZypperDisplayName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesPackageRepositoriesZypperDisplayName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenOSConfigGuestPoliciesPackageRepositoriesZypperBaseUrl(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesPackageRepositoriesZypperBaseUrl(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenOSConfigGuestPoliciesPackageRepositoriesZypperGpgKeys(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesPackageRepositoriesZypperGpgKeys(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenOSConfigGuestPoliciesPackageRepositoriesGoo(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesPackageRepositoriesGoo(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -1444,15 +1445,15 @@ func flattenOSConfigGuestPoliciesPackageRepositoriesGoo(v interface{}, d *schema
 		flattenOSConfigGuestPoliciesPackageRepositoriesGooUrl(original["url"], d, config)
 	return []interface{}{transformed}
 }
-func flattenOSConfigGuestPoliciesPackageRepositoriesGooName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesPackageRepositoriesGooName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenOSConfigGuestPoliciesPackageRepositoriesGooUrl(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesPackageRepositoriesGooUrl(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenOSConfigGuestPoliciesRecipes(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesRecipes(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return v
 	}
@@ -1475,15 +1476,15 @@ func flattenOSConfigGuestPoliciesRecipes(v interface{}, d *schema.ResourceData, 
 	}
 	return transformed
 }
-func flattenOSConfigGuestPoliciesRecipesName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesRecipesName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenOSConfigGuestPoliciesRecipesVersion(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesRecipesVersion(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenOSConfigGuestPoliciesRecipesArtifacts(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesRecipesArtifacts(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return v
 	}
@@ -1504,15 +1505,15 @@ func flattenOSConfigGuestPoliciesRecipesArtifacts(v interface{}, d *schema.Resou
 	}
 	return transformed
 }
-func flattenOSConfigGuestPoliciesRecipesArtifactsId(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesRecipesArtifactsId(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenOSConfigGuestPoliciesRecipesArtifactsAllowInsecure(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesRecipesArtifactsAllowInsecure(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenOSConfigGuestPoliciesRecipesArtifactsRemote(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesRecipesArtifactsRemote(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -1527,15 +1528,15 @@ func flattenOSConfigGuestPoliciesRecipesArtifactsRemote(v interface{}, d *schema
 		flattenOSConfigGuestPoliciesRecipesArtifactsRemoteCheckSum(original["checkSum"], d, config)
 	return []interface{}{transformed}
 }
-func flattenOSConfigGuestPoliciesRecipesArtifactsRemoteUri(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesRecipesArtifactsRemoteUri(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenOSConfigGuestPoliciesRecipesArtifactsRemoteCheckSum(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesRecipesArtifactsRemoteCheckSum(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenOSConfigGuestPoliciesRecipesArtifactsGcs(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesRecipesArtifactsGcs(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -1552,15 +1553,15 @@ func flattenOSConfigGuestPoliciesRecipesArtifactsGcs(v interface{}, d *schema.Re
 		flattenOSConfigGuestPoliciesRecipesArtifactsGcsGeneration(original["generation"], d, config)
 	return []interface{}{transformed}
 }
-func flattenOSConfigGuestPoliciesRecipesArtifactsGcsBucket(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesRecipesArtifactsGcsBucket(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenOSConfigGuestPoliciesRecipesArtifactsGcsObject(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesRecipesArtifactsGcsObject(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenOSConfigGuestPoliciesRecipesArtifactsGcsGeneration(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesRecipesArtifactsGcsGeneration(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := StringToFixed64(strVal); err == nil {
@@ -1577,7 +1578,7 @@ func flattenOSConfigGuestPoliciesRecipesArtifactsGcsGeneration(v interface{}, d 
 	return v // let terraform core handle it otherwise
 }
 
-func flattenOSConfigGuestPoliciesRecipesInstallSteps(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesRecipesInstallSteps(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return v
 	}
@@ -1601,7 +1602,7 @@ func flattenOSConfigGuestPoliciesRecipesInstallSteps(v interface{}, d *schema.Re
 	}
 	return transformed
 }
-func flattenOSConfigGuestPoliciesRecipesInstallStepsFileCopy(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesRecipesInstallStepsFileCopy(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -1620,23 +1621,23 @@ func flattenOSConfigGuestPoliciesRecipesInstallStepsFileCopy(v interface{}, d *s
 		flattenOSConfigGuestPoliciesRecipesInstallStepsFileCopyPermissions(original["permissions"], d, config)
 	return []interface{}{transformed}
 }
-func flattenOSConfigGuestPoliciesRecipesInstallStepsFileCopyArtifactId(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesRecipesInstallStepsFileCopyArtifactId(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenOSConfigGuestPoliciesRecipesInstallStepsFileCopyDestination(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesRecipesInstallStepsFileCopyDestination(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenOSConfigGuestPoliciesRecipesInstallStepsFileCopyOverwrite(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesRecipesInstallStepsFileCopyOverwrite(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenOSConfigGuestPoliciesRecipesInstallStepsFileCopyPermissions(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesRecipesInstallStepsFileCopyPermissions(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenOSConfigGuestPoliciesRecipesInstallStepsArchiveExtraction(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesRecipesInstallStepsArchiveExtraction(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -1653,19 +1654,19 @@ func flattenOSConfigGuestPoliciesRecipesInstallStepsArchiveExtraction(v interfac
 		flattenOSConfigGuestPoliciesRecipesInstallStepsArchiveExtractionType(original["type"], d, config)
 	return []interface{}{transformed}
 }
-func flattenOSConfigGuestPoliciesRecipesInstallStepsArchiveExtractionArtifactId(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesRecipesInstallStepsArchiveExtractionArtifactId(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenOSConfigGuestPoliciesRecipesInstallStepsArchiveExtractionDestination(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesRecipesInstallStepsArchiveExtractionDestination(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenOSConfigGuestPoliciesRecipesInstallStepsArchiveExtractionType(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesRecipesInstallStepsArchiveExtractionType(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenOSConfigGuestPoliciesRecipesInstallStepsMsiInstallation(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesRecipesInstallStepsMsiInstallation(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -1682,19 +1683,19 @@ func flattenOSConfigGuestPoliciesRecipesInstallStepsMsiInstallation(v interface{
 		flattenOSConfigGuestPoliciesRecipesInstallStepsMsiInstallationAllowedExitCodes(original["allowedExitCodes"], d, config)
 	return []interface{}{transformed}
 }
-func flattenOSConfigGuestPoliciesRecipesInstallStepsMsiInstallationArtifactId(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesRecipesInstallStepsMsiInstallationArtifactId(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenOSConfigGuestPoliciesRecipesInstallStepsMsiInstallationFlags(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesRecipesInstallStepsMsiInstallationFlags(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenOSConfigGuestPoliciesRecipesInstallStepsMsiInstallationAllowedExitCodes(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesRecipesInstallStepsMsiInstallationAllowedExitCodes(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenOSConfigGuestPoliciesRecipesInstallStepsDpkgInstallation(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesRecipesInstallStepsDpkgInstallation(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -1707,11 +1708,11 @@ func flattenOSConfigGuestPoliciesRecipesInstallStepsDpkgInstallation(v interface
 		flattenOSConfigGuestPoliciesRecipesInstallStepsDpkgInstallationArtifactId(original["artifactId"], d, config)
 	return []interface{}{transformed}
 }
-func flattenOSConfigGuestPoliciesRecipesInstallStepsDpkgInstallationArtifactId(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesRecipesInstallStepsDpkgInstallationArtifactId(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenOSConfigGuestPoliciesRecipesInstallStepsRpmInstallation(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesRecipesInstallStepsRpmInstallation(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -1724,11 +1725,11 @@ func flattenOSConfigGuestPoliciesRecipesInstallStepsRpmInstallation(v interface{
 		flattenOSConfigGuestPoliciesRecipesInstallStepsRpmInstallationArtifactId(original["artifactId"], d, config)
 	return []interface{}{transformed}
 }
-func flattenOSConfigGuestPoliciesRecipesInstallStepsRpmInstallationArtifactId(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesRecipesInstallStepsRpmInstallationArtifactId(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenOSConfigGuestPoliciesRecipesInstallStepsFileExec(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesRecipesInstallStepsFileExec(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -1747,23 +1748,23 @@ func flattenOSConfigGuestPoliciesRecipesInstallStepsFileExec(v interface{}, d *s
 		flattenOSConfigGuestPoliciesRecipesInstallStepsFileExecLocalPath(original["localPath"], d, config)
 	return []interface{}{transformed}
 }
-func flattenOSConfigGuestPoliciesRecipesInstallStepsFileExecArgs(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesRecipesInstallStepsFileExecArgs(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenOSConfigGuestPoliciesRecipesInstallStepsFileExecAllowedExitCodes(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesRecipesInstallStepsFileExecAllowedExitCodes(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenOSConfigGuestPoliciesRecipesInstallStepsFileExecArtifactId(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesRecipesInstallStepsFileExecArtifactId(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenOSConfigGuestPoliciesRecipesInstallStepsFileExecLocalPath(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesRecipesInstallStepsFileExecLocalPath(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenOSConfigGuestPoliciesRecipesInstallStepsScriptRun(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesRecipesInstallStepsScriptRun(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -1780,19 +1781,19 @@ func flattenOSConfigGuestPoliciesRecipesInstallStepsScriptRun(v interface{}, d *
 		flattenOSConfigGuestPoliciesRecipesInstallStepsScriptRunInterpreter(original["interpreter"], d, config)
 	return []interface{}{transformed}
 }
-func flattenOSConfigGuestPoliciesRecipesInstallStepsScriptRunScript(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesRecipesInstallStepsScriptRunScript(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenOSConfigGuestPoliciesRecipesInstallStepsScriptRunAllowedExitCodes(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesRecipesInstallStepsScriptRunAllowedExitCodes(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenOSConfigGuestPoliciesRecipesInstallStepsScriptRunInterpreter(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesRecipesInstallStepsScriptRunInterpreter(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenOSConfigGuestPoliciesRecipesUpdateSteps(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesRecipesUpdateSteps(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return v
 	}
@@ -1816,7 +1817,7 @@ func flattenOSConfigGuestPoliciesRecipesUpdateSteps(v interface{}, d *schema.Res
 	}
 	return transformed
 }
-func flattenOSConfigGuestPoliciesRecipesUpdateStepsFileCopy(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesRecipesUpdateStepsFileCopy(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -1835,23 +1836,23 @@ func flattenOSConfigGuestPoliciesRecipesUpdateStepsFileCopy(v interface{}, d *sc
 		flattenOSConfigGuestPoliciesRecipesUpdateStepsFileCopyPermissions(original["permissions"], d, config)
 	return []interface{}{transformed}
 }
-func flattenOSConfigGuestPoliciesRecipesUpdateStepsFileCopyArtifactId(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesRecipesUpdateStepsFileCopyArtifactId(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenOSConfigGuestPoliciesRecipesUpdateStepsFileCopyDestination(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesRecipesUpdateStepsFileCopyDestination(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenOSConfigGuestPoliciesRecipesUpdateStepsFileCopyOverwrite(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesRecipesUpdateStepsFileCopyOverwrite(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenOSConfigGuestPoliciesRecipesUpdateStepsFileCopyPermissions(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesRecipesUpdateStepsFileCopyPermissions(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenOSConfigGuestPoliciesRecipesUpdateStepsArchiveExtraction(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesRecipesUpdateStepsArchiveExtraction(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -1868,19 +1869,19 @@ func flattenOSConfigGuestPoliciesRecipesUpdateStepsArchiveExtraction(v interface
 		flattenOSConfigGuestPoliciesRecipesUpdateStepsArchiveExtractionType(original["type"], d, config)
 	return []interface{}{transformed}
 }
-func flattenOSConfigGuestPoliciesRecipesUpdateStepsArchiveExtractionArtifactId(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesRecipesUpdateStepsArchiveExtractionArtifactId(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenOSConfigGuestPoliciesRecipesUpdateStepsArchiveExtractionDestination(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesRecipesUpdateStepsArchiveExtractionDestination(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenOSConfigGuestPoliciesRecipesUpdateStepsArchiveExtractionType(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesRecipesUpdateStepsArchiveExtractionType(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenOSConfigGuestPoliciesRecipesUpdateStepsMsiInstallation(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesRecipesUpdateStepsMsiInstallation(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -1897,19 +1898,19 @@ func flattenOSConfigGuestPoliciesRecipesUpdateStepsMsiInstallation(v interface{}
 		flattenOSConfigGuestPoliciesRecipesUpdateStepsMsiInstallationAllowedExitCodes(original["allowedExitCodes"], d, config)
 	return []interface{}{transformed}
 }
-func flattenOSConfigGuestPoliciesRecipesUpdateStepsMsiInstallationArtifactId(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesRecipesUpdateStepsMsiInstallationArtifactId(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenOSConfigGuestPoliciesRecipesUpdateStepsMsiInstallationFlags(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesRecipesUpdateStepsMsiInstallationFlags(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenOSConfigGuestPoliciesRecipesUpdateStepsMsiInstallationAllowedExitCodes(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesRecipesUpdateStepsMsiInstallationAllowedExitCodes(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenOSConfigGuestPoliciesRecipesUpdateStepsDpkgInstallation(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesRecipesUpdateStepsDpkgInstallation(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -1922,11 +1923,11 @@ func flattenOSConfigGuestPoliciesRecipesUpdateStepsDpkgInstallation(v interface{
 		flattenOSConfigGuestPoliciesRecipesUpdateStepsDpkgInstallationArtifactId(original["artifactId"], d, config)
 	return []interface{}{transformed}
 }
-func flattenOSConfigGuestPoliciesRecipesUpdateStepsDpkgInstallationArtifactId(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesRecipesUpdateStepsDpkgInstallationArtifactId(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenOSConfigGuestPoliciesRecipesUpdateStepsRpmInstallation(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesRecipesUpdateStepsRpmInstallation(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -1939,11 +1940,11 @@ func flattenOSConfigGuestPoliciesRecipesUpdateStepsRpmInstallation(v interface{}
 		flattenOSConfigGuestPoliciesRecipesUpdateStepsRpmInstallationArtifactId(original["artifactId"], d, config)
 	return []interface{}{transformed}
 }
-func flattenOSConfigGuestPoliciesRecipesUpdateStepsRpmInstallationArtifactId(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesRecipesUpdateStepsRpmInstallationArtifactId(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenOSConfigGuestPoliciesRecipesUpdateStepsFileExec(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesRecipesUpdateStepsFileExec(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -1962,23 +1963,23 @@ func flattenOSConfigGuestPoliciesRecipesUpdateStepsFileExec(v interface{}, d *sc
 		flattenOSConfigGuestPoliciesRecipesUpdateStepsFileExecLocalPath(original["localPath"], d, config)
 	return []interface{}{transformed}
 }
-func flattenOSConfigGuestPoliciesRecipesUpdateStepsFileExecArgs(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesRecipesUpdateStepsFileExecArgs(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenOSConfigGuestPoliciesRecipesUpdateStepsFileExecAllowedExitCodes(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesRecipesUpdateStepsFileExecAllowedExitCodes(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenOSConfigGuestPoliciesRecipesUpdateStepsFileExecArtifactId(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesRecipesUpdateStepsFileExecArtifactId(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenOSConfigGuestPoliciesRecipesUpdateStepsFileExecLocalPath(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesRecipesUpdateStepsFileExecLocalPath(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenOSConfigGuestPoliciesRecipesUpdateStepsScriptRun(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesRecipesUpdateStepsScriptRun(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -1995,39 +1996,39 @@ func flattenOSConfigGuestPoliciesRecipesUpdateStepsScriptRun(v interface{}, d *s
 		flattenOSConfigGuestPoliciesRecipesUpdateStepsScriptRunInterpreter(original["interpreter"], d, config)
 	return []interface{}{transformed}
 }
-func flattenOSConfigGuestPoliciesRecipesUpdateStepsScriptRunScript(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesRecipesUpdateStepsScriptRunScript(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenOSConfigGuestPoliciesRecipesUpdateStepsScriptRunAllowedExitCodes(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesRecipesUpdateStepsScriptRunAllowedExitCodes(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenOSConfigGuestPoliciesRecipesUpdateStepsScriptRunInterpreter(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesRecipesUpdateStepsScriptRunInterpreter(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenOSConfigGuestPoliciesRecipesDesiredState(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesRecipesDesiredState(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenOSConfigGuestPoliciesCreateTime(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesCreateTime(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenOSConfigGuestPoliciesUpdateTime(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesUpdateTime(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenOSConfigGuestPoliciesEtag(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOSConfigGuestPoliciesEtag(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func expandOSConfigGuestPoliciesDescription(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesDescription(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesAssignment(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesAssignment(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -2074,7 +2075,7 @@ func expandOSConfigGuestPoliciesAssignment(v interface{}, d TerraformResourceDat
 	return transformed, nil
 }
 
-func expandOSConfigGuestPoliciesAssignmentGroupLabels(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesAssignmentGroupLabels(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
 	for _, raw := range l {
@@ -2096,7 +2097,7 @@ func expandOSConfigGuestPoliciesAssignmentGroupLabels(v interface{}, d Terraform
 	return req, nil
 }
 
-func expandOSConfigGuestPoliciesAssignmentGroupLabelsLabels(v interface{}, d TerraformResourceData, config *Config) (map[string]string, error) {
+func expandOSConfigGuestPoliciesAssignmentGroupLabelsLabels(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
 	if v == nil {
 		return map[string]string{}, nil
 	}
@@ -2107,19 +2108,19 @@ func expandOSConfigGuestPoliciesAssignmentGroupLabelsLabels(v interface{}, d Ter
 	return m, nil
 }
 
-func expandOSConfigGuestPoliciesAssignmentZones(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesAssignmentZones(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesAssignmentInstances(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesAssignmentInstances(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesAssignmentInstanceNamePrefixes(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesAssignmentInstanceNamePrefixes(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesAssignmentOsTypes(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesAssignmentOsTypes(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
 	for _, raw := range l {
@@ -2155,19 +2156,19 @@ func expandOSConfigGuestPoliciesAssignmentOsTypes(v interface{}, d TerraformReso
 	return req, nil
 }
 
-func expandOSConfigGuestPoliciesAssignmentOsTypesOsShortName(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesAssignmentOsTypesOsShortName(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesAssignmentOsTypesOsVersion(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesAssignmentOsTypesOsVersion(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesAssignmentOsTypesOsArchitecture(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesAssignmentOsTypesOsArchitecture(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesPackages(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesPackages(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
 	for _, raw := range l {
@@ -2203,19 +2204,19 @@ func expandOSConfigGuestPoliciesPackages(v interface{}, d TerraformResourceData,
 	return req, nil
 }
 
-func expandOSConfigGuestPoliciesPackagesName(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesPackagesName(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesPackagesDesiredState(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesPackagesDesiredState(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesPackagesManager(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesPackagesManager(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesPackageRepositories(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesPackageRepositories(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
 	for _, raw := range l {
@@ -2258,7 +2259,7 @@ func expandOSConfigGuestPoliciesPackageRepositories(v interface{}, d TerraformRe
 	return req, nil
 }
 
-func expandOSConfigGuestPoliciesPackageRepositoriesApt(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesPackageRepositoriesApt(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -2305,27 +2306,27 @@ func expandOSConfigGuestPoliciesPackageRepositoriesApt(v interface{}, d Terrafor
 	return transformed, nil
 }
 
-func expandOSConfigGuestPoliciesPackageRepositoriesAptArchiveType(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesPackageRepositoriesAptArchiveType(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesPackageRepositoriesAptUri(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesPackageRepositoriesAptUri(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesPackageRepositoriesAptDistribution(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesPackageRepositoriesAptDistribution(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesPackageRepositoriesAptComponents(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesPackageRepositoriesAptComponents(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesPackageRepositoriesAptGpgKey(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesPackageRepositoriesAptGpgKey(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesPackageRepositoriesYum(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesPackageRepositoriesYum(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -2365,23 +2366,23 @@ func expandOSConfigGuestPoliciesPackageRepositoriesYum(v interface{}, d Terrafor
 	return transformed, nil
 }
 
-func expandOSConfigGuestPoliciesPackageRepositoriesYumId(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesPackageRepositoriesYumId(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesPackageRepositoriesYumDisplayName(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesPackageRepositoriesYumDisplayName(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesPackageRepositoriesYumBaseUrl(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesPackageRepositoriesYumBaseUrl(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesPackageRepositoriesYumGpgKeys(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesPackageRepositoriesYumGpgKeys(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesPackageRepositoriesZypper(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesPackageRepositoriesZypper(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -2421,23 +2422,23 @@ func expandOSConfigGuestPoliciesPackageRepositoriesZypper(v interface{}, d Terra
 	return transformed, nil
 }
 
-func expandOSConfigGuestPoliciesPackageRepositoriesZypperId(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesPackageRepositoriesZypperId(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesPackageRepositoriesZypperDisplayName(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesPackageRepositoriesZypperDisplayName(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesPackageRepositoriesZypperBaseUrl(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesPackageRepositoriesZypperBaseUrl(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesPackageRepositoriesZypperGpgKeys(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesPackageRepositoriesZypperGpgKeys(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesPackageRepositoriesGoo(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesPackageRepositoriesGoo(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -2463,15 +2464,15 @@ func expandOSConfigGuestPoliciesPackageRepositoriesGoo(v interface{}, d Terrafor
 	return transformed, nil
 }
 
-func expandOSConfigGuestPoliciesPackageRepositoriesGooName(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesPackageRepositoriesGooName(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesPackageRepositoriesGooUrl(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesPackageRepositoriesGooUrl(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipes(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipes(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
 	for _, raw := range l {
@@ -2528,15 +2529,15 @@ func expandOSConfigGuestPoliciesRecipes(v interface{}, d TerraformResourceData, 
 	return req, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesName(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesName(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesVersion(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesVersion(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesArtifacts(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesArtifacts(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
 	for _, raw := range l {
@@ -2579,15 +2580,15 @@ func expandOSConfigGuestPoliciesRecipesArtifacts(v interface{}, d TerraformResou
 	return req, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesArtifactsId(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesArtifactsId(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesArtifactsAllowInsecure(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesArtifactsAllowInsecure(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesArtifactsRemote(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesArtifactsRemote(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -2613,15 +2614,15 @@ func expandOSConfigGuestPoliciesRecipesArtifactsRemote(v interface{}, d Terrafor
 	return transformed, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesArtifactsRemoteUri(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesArtifactsRemoteUri(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesArtifactsRemoteCheckSum(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesArtifactsRemoteCheckSum(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesArtifactsGcs(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesArtifactsGcs(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -2654,19 +2655,19 @@ func expandOSConfigGuestPoliciesRecipesArtifactsGcs(v interface{}, d TerraformRe
 	return transformed, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesArtifactsGcsBucket(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesArtifactsGcsBucket(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesArtifactsGcsObject(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesArtifactsGcsObject(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesArtifactsGcsGeneration(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesArtifactsGcsGeneration(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesInstallSteps(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesInstallSteps(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
 	for _, raw := range l {
@@ -2730,7 +2731,7 @@ func expandOSConfigGuestPoliciesRecipesInstallSteps(v interface{}, d TerraformRe
 	return req, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesInstallStepsFileCopy(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesInstallStepsFileCopy(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -2770,23 +2771,23 @@ func expandOSConfigGuestPoliciesRecipesInstallStepsFileCopy(v interface{}, d Ter
 	return transformed, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesInstallStepsFileCopyArtifactId(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesInstallStepsFileCopyArtifactId(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesInstallStepsFileCopyDestination(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesInstallStepsFileCopyDestination(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesInstallStepsFileCopyOverwrite(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesInstallStepsFileCopyOverwrite(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesInstallStepsFileCopyPermissions(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesInstallStepsFileCopyPermissions(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesInstallStepsArchiveExtraction(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesInstallStepsArchiveExtraction(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -2819,19 +2820,19 @@ func expandOSConfigGuestPoliciesRecipesInstallStepsArchiveExtraction(v interface
 	return transformed, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesInstallStepsArchiveExtractionArtifactId(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesInstallStepsArchiveExtractionArtifactId(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesInstallStepsArchiveExtractionDestination(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesInstallStepsArchiveExtractionDestination(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesInstallStepsArchiveExtractionType(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesInstallStepsArchiveExtractionType(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesInstallStepsMsiInstallation(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesInstallStepsMsiInstallation(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -2864,19 +2865,19 @@ func expandOSConfigGuestPoliciesRecipesInstallStepsMsiInstallation(v interface{}
 	return transformed, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesInstallStepsMsiInstallationArtifactId(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesInstallStepsMsiInstallationArtifactId(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesInstallStepsMsiInstallationFlags(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesInstallStepsMsiInstallationFlags(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesInstallStepsMsiInstallationAllowedExitCodes(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesInstallStepsMsiInstallationAllowedExitCodes(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesInstallStepsDpkgInstallation(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesInstallStepsDpkgInstallation(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -2895,11 +2896,11 @@ func expandOSConfigGuestPoliciesRecipesInstallStepsDpkgInstallation(v interface{
 	return transformed, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesInstallStepsDpkgInstallationArtifactId(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesInstallStepsDpkgInstallationArtifactId(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesInstallStepsRpmInstallation(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesInstallStepsRpmInstallation(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -2918,11 +2919,11 @@ func expandOSConfigGuestPoliciesRecipesInstallStepsRpmInstallation(v interface{}
 	return transformed, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesInstallStepsRpmInstallationArtifactId(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesInstallStepsRpmInstallationArtifactId(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesInstallStepsFileExec(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesInstallStepsFileExec(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -2962,23 +2963,23 @@ func expandOSConfigGuestPoliciesRecipesInstallStepsFileExec(v interface{}, d Ter
 	return transformed, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesInstallStepsFileExecArgs(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesInstallStepsFileExecArgs(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesInstallStepsFileExecAllowedExitCodes(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesInstallStepsFileExecAllowedExitCodes(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesInstallStepsFileExecArtifactId(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesInstallStepsFileExecArtifactId(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesInstallStepsFileExecLocalPath(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesInstallStepsFileExecLocalPath(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesInstallStepsScriptRun(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesInstallStepsScriptRun(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -3011,19 +3012,19 @@ func expandOSConfigGuestPoliciesRecipesInstallStepsScriptRun(v interface{}, d Te
 	return transformed, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesInstallStepsScriptRunScript(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesInstallStepsScriptRunScript(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesInstallStepsScriptRunAllowedExitCodes(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesInstallStepsScriptRunAllowedExitCodes(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesInstallStepsScriptRunInterpreter(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesInstallStepsScriptRunInterpreter(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesUpdateSteps(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesUpdateSteps(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
 	for _, raw := range l {
@@ -3087,7 +3088,7 @@ func expandOSConfigGuestPoliciesRecipesUpdateSteps(v interface{}, d TerraformRes
 	return req, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesUpdateStepsFileCopy(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesUpdateStepsFileCopy(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -3127,23 +3128,23 @@ func expandOSConfigGuestPoliciesRecipesUpdateStepsFileCopy(v interface{}, d Terr
 	return transformed, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesUpdateStepsFileCopyArtifactId(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesUpdateStepsFileCopyArtifactId(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesUpdateStepsFileCopyDestination(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesUpdateStepsFileCopyDestination(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesUpdateStepsFileCopyOverwrite(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesUpdateStepsFileCopyOverwrite(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesUpdateStepsFileCopyPermissions(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesUpdateStepsFileCopyPermissions(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesUpdateStepsArchiveExtraction(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesUpdateStepsArchiveExtraction(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -3176,19 +3177,19 @@ func expandOSConfigGuestPoliciesRecipesUpdateStepsArchiveExtraction(v interface{
 	return transformed, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesUpdateStepsArchiveExtractionArtifactId(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesUpdateStepsArchiveExtractionArtifactId(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesUpdateStepsArchiveExtractionDestination(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesUpdateStepsArchiveExtractionDestination(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesUpdateStepsArchiveExtractionType(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesUpdateStepsArchiveExtractionType(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesUpdateStepsMsiInstallation(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesUpdateStepsMsiInstallation(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -3221,19 +3222,19 @@ func expandOSConfigGuestPoliciesRecipesUpdateStepsMsiInstallation(v interface{},
 	return transformed, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesUpdateStepsMsiInstallationArtifactId(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesUpdateStepsMsiInstallationArtifactId(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesUpdateStepsMsiInstallationFlags(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesUpdateStepsMsiInstallationFlags(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesUpdateStepsMsiInstallationAllowedExitCodes(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesUpdateStepsMsiInstallationAllowedExitCodes(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesUpdateStepsDpkgInstallation(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesUpdateStepsDpkgInstallation(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -3252,11 +3253,11 @@ func expandOSConfigGuestPoliciesRecipesUpdateStepsDpkgInstallation(v interface{}
 	return transformed, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesUpdateStepsDpkgInstallationArtifactId(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesUpdateStepsDpkgInstallationArtifactId(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesUpdateStepsRpmInstallation(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesUpdateStepsRpmInstallation(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -3275,11 +3276,11 @@ func expandOSConfigGuestPoliciesRecipesUpdateStepsRpmInstallation(v interface{},
 	return transformed, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesUpdateStepsRpmInstallationArtifactId(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesUpdateStepsRpmInstallationArtifactId(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesUpdateStepsFileExec(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesUpdateStepsFileExec(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -3319,23 +3320,23 @@ func expandOSConfigGuestPoliciesRecipesUpdateStepsFileExec(v interface{}, d Terr
 	return transformed, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesUpdateStepsFileExecArgs(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesUpdateStepsFileExecArgs(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesUpdateStepsFileExecAllowedExitCodes(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesUpdateStepsFileExecAllowedExitCodes(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesUpdateStepsFileExecArtifactId(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesUpdateStepsFileExecArtifactId(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesUpdateStepsFileExecLocalPath(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesUpdateStepsFileExecLocalPath(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesUpdateStepsScriptRun(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesUpdateStepsScriptRun(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -3368,22 +3369,22 @@ func expandOSConfigGuestPoliciesRecipesUpdateStepsScriptRun(v interface{}, d Ter
 	return transformed, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesUpdateStepsScriptRunScript(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesUpdateStepsScriptRunScript(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesUpdateStepsScriptRunAllowedExitCodes(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesUpdateStepsScriptRunAllowedExitCodes(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesUpdateStepsScriptRunInterpreter(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesUpdateStepsScriptRunInterpreter(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesDesiredState(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesDesiredState(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesEtag(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesEtag(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }

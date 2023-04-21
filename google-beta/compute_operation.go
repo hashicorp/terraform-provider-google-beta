@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 	"io"
 	"log"
 	"time"
@@ -97,7 +98,7 @@ func (w *ComputeOperationWaiter) TargetStates() []string {
 	return []string{"DONE"}
 }
 
-func ComputeOperationWaitTime(config *Config, res interface{}, project, activity, userAgent string, timeout time.Duration) error {
+func ComputeOperationWaitTime(config *transport_tpg.Config, res interface{}, project, activity, userAgent string, timeout time.Duration) error {
 	op := &compute.Operation{}
 	err := Convert(res, op)
 	if err != nil {
@@ -106,7 +107,7 @@ func ComputeOperationWaitTime(config *Config, res interface{}, project, activity
 
 	w := &ComputeOperationWaiter{
 		Service: config.NewComputeClient(userAgent),
-		Context: config.context,
+		Context: config.Context,
 		Op:      op,
 		Project: project,
 	}
@@ -117,7 +118,7 @@ func ComputeOperationWaitTime(config *Config, res interface{}, project, activity
 	return OperationWait(w, activity, timeout, config.PollInterval)
 }
 
-func ComputeOrgOperationWaitTimeWithResponse(config *Config, res interface{}, response *map[string]interface{}, parent, activity, userAgent string, timeout time.Duration) error {
+func ComputeOrgOperationWaitTimeWithResponse(config *transport_tpg.Config, res interface{}, response *map[string]interface{}, parent, activity, userAgent string, timeout time.Duration) error {
 	op := &compute.Operation{}
 	err := Convert(res, op)
 	if err != nil {

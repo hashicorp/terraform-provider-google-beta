@@ -22,6 +22,7 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
 func ResourceFirebaseHostingChannel() *schema.Resource {
@@ -97,7 +98,7 @@ sites/SITE_ID/channels/CHANNEL_ID`,
 }
 
 func resourceFirebaseHostingChannelCreate(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -163,7 +164,7 @@ func resourceFirebaseHostingChannelCreate(d *schema.ResourceData, meta interface
 }
 
 func resourceFirebaseHostingChannelRead(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -203,7 +204,7 @@ func resourceFirebaseHostingChannelRead(d *schema.ResourceData, meta interface{}
 }
 
 func resourceFirebaseHostingChannelUpdate(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -274,7 +275,7 @@ func resourceFirebaseHostingChannelUpdate(d *schema.ResourceData, meta interface
 }
 
 func resourceFirebaseHostingChannelDelete(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -305,7 +306,7 @@ func resourceFirebaseHostingChannelDelete(d *schema.ResourceData, meta interface
 }
 
 func resourceFirebaseHostingChannelImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	if err := ParseImportId([]string{
 		"sites/(?P<site_id>[^/]+)/channels/(?P<channel_id>[^/]+)",
 		"(?P<site_id>[^/]+)/(?P<channel_id>[^/]+)",
@@ -323,11 +324,11 @@ func resourceFirebaseHostingChannelImport(d *schema.ResourceData, meta interface
 	return []*schema.ResourceData{d}, nil
 }
 
-func flattenFirebaseHostingChannelName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenFirebaseHostingChannelName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenFirebaseHostingChannelRetainedReleaseCount(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenFirebaseHostingChannelRetainedReleaseCount(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := StringToFixed64(strVal); err == nil {
@@ -344,19 +345,19 @@ func flattenFirebaseHostingChannelRetainedReleaseCount(v interface{}, d *schema.
 	return v // let terraform core handle it otherwise
 }
 
-func flattenFirebaseHostingChannelLabels(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenFirebaseHostingChannelLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenFirebaseHostingChannelExpireTime(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenFirebaseHostingChannelExpireTime(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func expandFirebaseHostingChannelRetainedReleaseCount(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandFirebaseHostingChannelRetainedReleaseCount(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandFirebaseHostingChannelLabels(v interface{}, d TerraformResourceData, config *Config) (map[string]string, error) {
+func expandFirebaseHostingChannelLabels(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
 	if v == nil {
 		return map[string]string{}, nil
 	}
@@ -367,10 +368,10 @@ func expandFirebaseHostingChannelLabels(v interface{}, d TerraformResourceData, 
 	return m, nil
 }
 
-func expandFirebaseHostingChannelExpireTime(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandFirebaseHostingChannelExpireTime(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandFirebaseHostingChannelTtl(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandFirebaseHostingChannelTtl(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }

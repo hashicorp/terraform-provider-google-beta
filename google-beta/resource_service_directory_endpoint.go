@@ -23,6 +23,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
+	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
 func ResourceServiceDirectoryEndpoint() *schema.Resource {
@@ -97,7 +98,7 @@ range of [0, 65535]. If unspecified, the default is 0.`,
 }
 
 func resourceServiceDirectoryEndpointCreate(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -163,7 +164,7 @@ func resourceServiceDirectoryEndpointCreate(d *schema.ResourceData, meta interfa
 }
 
 func resourceServiceDirectoryEndpointRead(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -206,7 +207,7 @@ func resourceServiceDirectoryEndpointRead(d *schema.ResourceData, meta interface
 }
 
 func resourceServiceDirectoryEndpointUpdate(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -277,7 +278,7 @@ func resourceServiceDirectoryEndpointUpdate(d *schema.ResourceData, meta interfa
 }
 
 func resourceServiceDirectoryEndpointDelete(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -308,7 +309,7 @@ func resourceServiceDirectoryEndpointDelete(d *schema.ResourceData, meta interfa
 }
 
 func resourceServiceDirectoryEndpointImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 
 	// current import_formats cannot import fields with forward slashes in their value
 	if err := ParseImportId([]string{"(?P<name>.+)"}, d, config); err != nil {
@@ -365,15 +366,15 @@ func resourceServiceDirectoryEndpointImport(d *schema.ResourceData, meta interfa
 	return []*schema.ResourceData{d}, nil
 }
 
-func flattenServiceDirectoryEndpointName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenServiceDirectoryEndpointName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenServiceDirectoryEndpointAddress(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenServiceDirectoryEndpointAddress(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenServiceDirectoryEndpointPort(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenServiceDirectoryEndpointPort(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := StringToFixed64(strVal); err == nil {
@@ -390,23 +391,23 @@ func flattenServiceDirectoryEndpointPort(v interface{}, d *schema.ResourceData, 
 	return v // let terraform core handle it otherwise
 }
 
-func flattenServiceDirectoryEndpointMetadata(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenServiceDirectoryEndpointMetadata(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenServiceDirectoryEndpointNetwork(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenServiceDirectoryEndpointNetwork(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func expandServiceDirectoryEndpointAddress(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandServiceDirectoryEndpointAddress(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandServiceDirectoryEndpointPort(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandServiceDirectoryEndpointPort(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandServiceDirectoryEndpointMetadata(v interface{}, d TerraformResourceData, config *Config) (map[string]string, error) {
+func expandServiceDirectoryEndpointMetadata(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
 	if v == nil {
 		return map[string]string{}, nil
 	}
@@ -417,6 +418,6 @@ func expandServiceDirectoryEndpointMetadata(v interface{}, d TerraformResourceDa
 	return m, nil
 }
 
-func expandServiceDirectoryEndpointNetwork(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandServiceDirectoryEndpointNetwork(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }

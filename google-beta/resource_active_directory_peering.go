@@ -21,6 +21,7 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
 func ResourceActiveDirectoryPeering() *schema.Resource {
@@ -88,7 +89,7 @@ func ResourceActiveDirectoryPeering() *schema.Resource {
 }
 
 func resourceActiveDirectoryPeeringCreate(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -181,7 +182,7 @@ func resourceActiveDirectoryPeeringCreate(d *schema.ResourceData, meta interface
 }
 
 func resourceActiveDirectoryPeeringRead(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -231,7 +232,7 @@ func resourceActiveDirectoryPeeringRead(d *schema.ResourceData, meta interface{}
 }
 
 func resourceActiveDirectoryPeeringUpdate(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -291,7 +292,7 @@ func resourceActiveDirectoryPeeringUpdate(d *schema.ResourceData, meta interface
 }
 
 func resourceActiveDirectoryPeeringDelete(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -335,23 +336,23 @@ func resourceActiveDirectoryPeeringDelete(d *schema.ResourceData, meta interface
 	return nil
 }
 
-func flattenActiveDirectoryPeeringName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenActiveDirectoryPeeringName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenActiveDirectoryPeeringLabels(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenActiveDirectoryPeeringLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenActiveDirectoryPeeringAuthorizedNetwork(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenActiveDirectoryPeeringAuthorizedNetwork(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenActiveDirectoryPeeringDomainResource(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenActiveDirectoryPeeringDomainResource(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func expandActiveDirectoryPeeringLabels(v interface{}, d TerraformResourceData, config *Config) (map[string]string, error) {
+func expandActiveDirectoryPeeringLabels(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
 	if v == nil {
 		return map[string]string{}, nil
 	}
@@ -362,14 +363,14 @@ func expandActiveDirectoryPeeringLabels(v interface{}, d TerraformResourceData, 
 	return m, nil
 }
 
-func expandActiveDirectoryPeeringAuthorizedNetwork(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandActiveDirectoryPeeringAuthorizedNetwork(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandActiveDirectoryPeeringDomainResource(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandActiveDirectoryPeeringDomainResource(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandActiveDirectoryPeeringStatusMessage(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandActiveDirectoryPeeringStatusMessage(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }

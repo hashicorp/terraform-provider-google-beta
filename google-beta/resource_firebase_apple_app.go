@@ -22,6 +22,7 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
 func ResourceFirebaseAppleApp() *schema.Resource {
@@ -94,7 +95,7 @@ serving traffic. Set to 'DELETE' to delete the Apple. Defaults to 'DELETE'.`,
 }
 
 func resourceFirebaseAppleAppCreate(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -187,7 +188,7 @@ func resourceFirebaseAppleAppCreate(d *schema.ResourceData, meta interface{}) er
 }
 
 func resourceFirebaseAppleAppRead(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -249,7 +250,7 @@ func resourceFirebaseAppleAppRead(d *schema.ResourceData, meta interface{}) erro
 }
 
 func resourceFirebaseAppleAppUpdate(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -336,7 +337,7 @@ func resourceFirebaseAppleAppUpdate(d *schema.ResourceData, meta interface{}) er
 }
 
 func resourceFirebaseAppleAppDelete(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -395,7 +396,7 @@ func resourceFirebaseAppleAppDelete(d *schema.ResourceData, meta interface{}) er
 
 func resourceFirebaseAppleAppImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 
 	// current import_formats can't import fields with forward slashes in their value
 	if err := ParseImportId([]string{"(?P<project>[^ ]+) (?P<name>[^ ]+)", "(?P<name>[^ ]+)"}, d, config); err != nil {
@@ -405,42 +406,42 @@ func resourceFirebaseAppleAppImport(d *schema.ResourceData, meta interface{}) ([
 	return []*schema.ResourceData{d}, nil
 }
 
-func flattenFirebaseAppleAppName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenFirebaseAppleAppName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenFirebaseAppleAppDisplayName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenFirebaseAppleAppDisplayName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenFirebaseAppleAppAppId(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenFirebaseAppleAppAppId(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenFirebaseAppleAppBundleId(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenFirebaseAppleAppBundleId(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenFirebaseAppleAppAppStoreId(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenFirebaseAppleAppAppStoreId(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenFirebaseAppleAppTeamId(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenFirebaseAppleAppTeamId(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func expandFirebaseAppleAppDisplayName(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandFirebaseAppleAppDisplayName(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandFirebaseAppleAppBundleId(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandFirebaseAppleAppBundleId(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandFirebaseAppleAppAppStoreId(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandFirebaseAppleAppAppStoreId(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandFirebaseAppleAppTeamId(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandFirebaseAppleAppTeamId(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }

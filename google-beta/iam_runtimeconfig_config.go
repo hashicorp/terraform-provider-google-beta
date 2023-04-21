@@ -20,6 +20,8 @@ import (
 	"github.com/hashicorp/errwrap"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"google.golang.org/api/cloudresourcemanager/v1"
+
+	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
 var RuntimeConfigConfigIamSchema = map[string]*schema.Schema{
@@ -41,10 +43,10 @@ type RuntimeConfigConfigIamUpdater struct {
 	project string
 	config  string
 	d       TerraformResourceData
-	Config  *Config
+	Config  *transport_tpg.Config
 }
 
-func RuntimeConfigConfigIamUpdaterProducer(d TerraformResourceData, config *Config) (ResourceIamUpdater, error) {
+func RuntimeConfigConfigIamUpdaterProducer(d TerraformResourceData, config *transport_tpg.Config) (ResourceIamUpdater, error) {
 	values := make(map[string]string)
 
 	project, _ := getProject(d, config)
@@ -85,7 +87,7 @@ func RuntimeConfigConfigIamUpdaterProducer(d TerraformResourceData, config *Conf
 	return u, nil
 }
 
-func RuntimeConfigConfigIdParseFunc(d *schema.ResourceData, config *Config) error {
+func RuntimeConfigConfigIdParseFunc(d *schema.ResourceData, config *transport_tpg.Config) error {
 	values := make(map[string]string)
 
 	project, _ := getProject(d, config)

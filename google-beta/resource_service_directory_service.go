@@ -22,6 +22,7 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
 func ResourceServiceDirectoryService() *schema.Resource {
@@ -76,7 +77,7 @@ format 'projects/*/locations/*/namespaces/*/services/*'.`,
 }
 
 func resourceServiceDirectoryServiceCreate(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -124,7 +125,7 @@ func resourceServiceDirectoryServiceCreate(d *schema.ResourceData, meta interfac
 }
 
 func resourceServiceDirectoryServiceRead(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -158,7 +159,7 @@ func resourceServiceDirectoryServiceRead(d *schema.ResourceData, meta interface{
 }
 
 func resourceServiceDirectoryServiceUpdate(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -209,7 +210,7 @@ func resourceServiceDirectoryServiceUpdate(d *schema.ResourceData, meta interfac
 }
 
 func resourceServiceDirectoryServiceDelete(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -240,7 +241,7 @@ func resourceServiceDirectoryServiceDelete(d *schema.ResourceData, meta interfac
 }
 
 func resourceServiceDirectoryServiceImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 
 	// current import_formats cannot import fields with forward slashes in their value
 	if err := ParseImportId([]string{"(?P<name>.+)"}, d, config); err != nil {
@@ -297,15 +298,15 @@ func resourceServiceDirectoryServiceImport(d *schema.ResourceData, meta interfac
 	return []*schema.ResourceData{d}, nil
 }
 
-func flattenServiceDirectoryServiceName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenServiceDirectoryServiceName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenServiceDirectoryServiceMetadata(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenServiceDirectoryServiceMetadata(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func expandServiceDirectoryServiceMetadata(v interface{}, d TerraformResourceData, config *Config) (map[string]string, error) {
+func expandServiceDirectoryServiceMetadata(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
 	if v == nil {
 		return map[string]string{}, nil
 	}

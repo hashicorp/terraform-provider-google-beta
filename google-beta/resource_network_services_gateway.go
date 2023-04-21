@@ -22,6 +22,7 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
 func ResourceNetworkServicesGateway() *schema.Resource {
@@ -124,7 +125,7 @@ If empty, TLS termination is disabled.`,
 }
 
 func resourceNetworkServicesGatewayCreate(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -215,7 +216,7 @@ func resourceNetworkServicesGatewayCreate(d *schema.ResourceData, meta interface
 }
 
 func resourceNetworkServicesGatewayRead(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -280,7 +281,7 @@ func resourceNetworkServicesGatewayRead(d *schema.ResourceData, meta interface{}
 }
 
 func resourceNetworkServicesGatewayUpdate(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -375,7 +376,7 @@ func resourceNetworkServicesGatewayUpdate(d *schema.ResourceData, meta interface
 }
 
 func resourceNetworkServicesGatewayDelete(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -420,7 +421,7 @@ func resourceNetworkServicesGatewayDelete(d *schema.ResourceData, meta interface
 }
 
 func resourceNetworkServicesGatewayImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	if err := ParseImportId([]string{
 		"projects/(?P<project>[^/]+)/locations/(?P<location>[^/]+)/gateways/(?P<name>[^/]+)",
 		"(?P<project>[^/]+)/(?P<location>[^/]+)/(?P<name>[^/]+)",
@@ -439,43 +440,43 @@ func resourceNetworkServicesGatewayImport(d *schema.ResourceData, meta interface
 	return []*schema.ResourceData{d}, nil
 }
 
-func flattenNetworkServicesGatewaySelfLink(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesGatewaySelfLink(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenNetworkServicesGatewayCreateTime(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesGatewayCreateTime(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenNetworkServicesGatewayUpdateTime(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesGatewayUpdateTime(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenNetworkServicesGatewayLabels(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesGatewayLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenNetworkServicesGatewayDescription(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesGatewayDescription(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenNetworkServicesGatewayType(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesGatewayType(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenNetworkServicesGatewayPorts(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesGatewayPorts(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenNetworkServicesGatewayScope(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesGatewayScope(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenNetworkServicesGatewayServerTlsPolicy(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesGatewayServerTlsPolicy(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func expandNetworkServicesGatewayLabels(v interface{}, d TerraformResourceData, config *Config) (map[string]string, error) {
+func expandNetworkServicesGatewayLabels(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
 	if v == nil {
 		return map[string]string{}, nil
 	}
@@ -486,22 +487,22 @@ func expandNetworkServicesGatewayLabels(v interface{}, d TerraformResourceData, 
 	return m, nil
 }
 
-func expandNetworkServicesGatewayDescription(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkServicesGatewayDescription(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesGatewayType(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkServicesGatewayType(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesGatewayPorts(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkServicesGatewayPorts(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesGatewayScope(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkServicesGatewayScope(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesGatewayServerTlsPolicy(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkServicesGatewayServerTlsPolicy(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }

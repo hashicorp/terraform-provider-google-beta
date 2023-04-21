@@ -22,6 +22,7 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
 func ResourceNetworkSecurityGatewaySecurityPolicyRule() *schema.Resource {
@@ -129,7 +130,7 @@ Examples: "2014-10-02T15:01:23Z" and "2014-10-02T15:01:23.045123456Z".`,
 }
 
 func resourceNetworkSecurityGatewaySecurityPolicyRuleCreate(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -226,7 +227,7 @@ func resourceNetworkSecurityGatewaySecurityPolicyRuleCreate(d *schema.ResourceDa
 }
 
 func resourceNetworkSecurityGatewaySecurityPolicyRuleRead(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -294,7 +295,7 @@ func resourceNetworkSecurityGatewaySecurityPolicyRuleRead(d *schema.ResourceData
 }
 
 func resourceNetworkSecurityGatewaySecurityPolicyRuleUpdate(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -419,7 +420,7 @@ func resourceNetworkSecurityGatewaySecurityPolicyRuleUpdate(d *schema.ResourceDa
 }
 
 func resourceNetworkSecurityGatewaySecurityPolicyRuleDelete(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -464,7 +465,7 @@ func resourceNetworkSecurityGatewaySecurityPolicyRuleDelete(d *schema.ResourceDa
 }
 
 func resourceNetworkSecurityGatewaySecurityPolicyRuleImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	if err := ParseImportId([]string{
 		"projects/(?P<project>[^/]+)/locations/(?P<location>[^/]+)/gatewaySecurityPolicies/(?P<gateway_security_policy>[^/]+)/rules/(?P<name>[^/]+)",
 		"(?P<project>[^/]+)/(?P<location>[^/]+)/(?P<gateway_security_policy>[^/]+)/(?P<name>[^/]+)",
@@ -483,23 +484,23 @@ func resourceNetworkSecurityGatewaySecurityPolicyRuleImport(d *schema.ResourceDa
 	return []*schema.ResourceData{d}, nil
 }
 
-func flattenNetworkSecurityGatewaySecurityPolicyRuleSelfLink(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkSecurityGatewaySecurityPolicyRuleSelfLink(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenNetworkSecurityGatewaySecurityPolicyRuleCreateTime(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkSecurityGatewaySecurityPolicyRuleCreateTime(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenNetworkSecurityGatewaySecurityPolicyRuleUpdateTime(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkSecurityGatewaySecurityPolicyRuleUpdateTime(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenNetworkSecurityGatewaySecurityPolicyRuleEnabled(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkSecurityGatewaySecurityPolicyRuleEnabled(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenNetworkSecurityGatewaySecurityPolicyRulePriority(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkSecurityGatewaySecurityPolicyRulePriority(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := StringToFixed64(strVal); err == nil {
@@ -516,50 +517,50 @@ func flattenNetworkSecurityGatewaySecurityPolicyRulePriority(v interface{}, d *s
 	return v // let terraform core handle it otherwise
 }
 
-func flattenNetworkSecurityGatewaySecurityPolicyRuleDescription(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkSecurityGatewaySecurityPolicyRuleDescription(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenNetworkSecurityGatewaySecurityPolicyRuleSessionMatcher(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkSecurityGatewaySecurityPolicyRuleSessionMatcher(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenNetworkSecurityGatewaySecurityPolicyRuleApplicationMatcher(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkSecurityGatewaySecurityPolicyRuleApplicationMatcher(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenNetworkSecurityGatewaySecurityPolicyRuleTlsInspectionEnabled(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkSecurityGatewaySecurityPolicyRuleTlsInspectionEnabled(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenNetworkSecurityGatewaySecurityPolicyRuleBasicProfile(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkSecurityGatewaySecurityPolicyRuleBasicProfile(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func expandNetworkSecurityGatewaySecurityPolicyRuleEnabled(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkSecurityGatewaySecurityPolicyRuleEnabled(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkSecurityGatewaySecurityPolicyRulePriority(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkSecurityGatewaySecurityPolicyRulePriority(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkSecurityGatewaySecurityPolicyRuleDescription(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkSecurityGatewaySecurityPolicyRuleDescription(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkSecurityGatewaySecurityPolicyRuleSessionMatcher(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkSecurityGatewaySecurityPolicyRuleSessionMatcher(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkSecurityGatewaySecurityPolicyRuleApplicationMatcher(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkSecurityGatewaySecurityPolicyRuleApplicationMatcher(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkSecurityGatewaySecurityPolicyRuleTlsInspectionEnabled(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkSecurityGatewaySecurityPolicyRuleTlsInspectionEnabled(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkSecurityGatewaySecurityPolicyRuleBasicProfile(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkSecurityGatewaySecurityPolicyRuleBasicProfile(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }

@@ -22,6 +22,7 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
 func ResourceWorkstationsWorkstationCluster() *schema.Resource {
@@ -181,7 +182,7 @@ May be sent on update and delete requests to ensure that the client has an up-to
 }
 
 func resourceWorkstationsWorkstationClusterCreate(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -278,7 +279,7 @@ func resourceWorkstationsWorkstationClusterCreate(d *schema.ResourceData, meta i
 }
 
 func resourceWorkstationsWorkstationClusterRead(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -352,7 +353,7 @@ func resourceWorkstationsWorkstationClusterRead(d *schema.ResourceData, meta int
 }
 
 func resourceWorkstationsWorkstationClusterUpdate(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -457,7 +458,7 @@ func resourceWorkstationsWorkstationClusterUpdate(d *schema.ResourceData, meta i
 }
 
 func resourceWorkstationsWorkstationClusterDelete(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -502,7 +503,7 @@ func resourceWorkstationsWorkstationClusterDelete(d *schema.ResourceData, meta i
 }
 
 func resourceWorkstationsWorkstationClusterImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	if err := ParseImportId([]string{
 		"projects/(?P<project>[^/]+)/locations/(?P<location>[^/]+)/workstationClusters/(?P<workstation_cluster_id>[^/]+)",
 		"(?P<project>[^/]+)/(?P<location>[^/]+)/(?P<workstation_cluster_id>[^/]+)",
@@ -521,47 +522,47 @@ func resourceWorkstationsWorkstationClusterImport(d *schema.ResourceData, meta i
 	return []*schema.ResourceData{d}, nil
 }
 
-func flattenWorkstationsWorkstationClusterName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenWorkstationsWorkstationClusterName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenWorkstationsWorkstationClusterUid(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenWorkstationsWorkstationClusterUid(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenWorkstationsWorkstationClusterLabels(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenWorkstationsWorkstationClusterLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenWorkstationsWorkstationClusterNetwork(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenWorkstationsWorkstationClusterNetwork(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenWorkstationsWorkstationClusterSubnetwork(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenWorkstationsWorkstationClusterSubnetwork(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenWorkstationsWorkstationClusterDisplayName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenWorkstationsWorkstationClusterDisplayName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenWorkstationsWorkstationClusterDegraded(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenWorkstationsWorkstationClusterDegraded(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenWorkstationsWorkstationClusterAnnotations(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenWorkstationsWorkstationClusterAnnotations(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenWorkstationsWorkstationClusterEtag(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenWorkstationsWorkstationClusterEtag(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenWorkstationsWorkstationClusterCreateTime(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenWorkstationsWorkstationClusterCreateTime(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenWorkstationsWorkstationClusterPrivateClusterConfig(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenWorkstationsWorkstationClusterPrivateClusterConfig(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -578,19 +579,19 @@ func flattenWorkstationsWorkstationClusterPrivateClusterConfig(v interface{}, d 
 		flattenWorkstationsWorkstationClusterPrivateClusterConfigServiceAttachmentUri(original["serviceAttachmentUri"], d, config)
 	return []interface{}{transformed}
 }
-func flattenWorkstationsWorkstationClusterPrivateClusterConfigEnablePrivateEndpoint(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenWorkstationsWorkstationClusterPrivateClusterConfigEnablePrivateEndpoint(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenWorkstationsWorkstationClusterPrivateClusterConfigClusterHostname(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenWorkstationsWorkstationClusterPrivateClusterConfigClusterHostname(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenWorkstationsWorkstationClusterPrivateClusterConfigServiceAttachmentUri(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenWorkstationsWorkstationClusterPrivateClusterConfigServiceAttachmentUri(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenWorkstationsWorkstationClusterConditions(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenWorkstationsWorkstationClusterConditions(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return v
 	}
@@ -610,7 +611,7 @@ func flattenWorkstationsWorkstationClusterConditions(v interface{}, d *schema.Re
 	}
 	return transformed
 }
-func flattenWorkstationsWorkstationClusterConditionsCode(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenWorkstationsWorkstationClusterConditionsCode(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := StringToFixed64(strVal); err == nil {
@@ -627,15 +628,15 @@ func flattenWorkstationsWorkstationClusterConditionsCode(v interface{}, d *schem
 	return v // let terraform core handle it otherwise
 }
 
-func flattenWorkstationsWorkstationClusterConditionsMessage(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenWorkstationsWorkstationClusterConditionsMessage(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenWorkstationsWorkstationClusterConditionsDetails(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenWorkstationsWorkstationClusterConditionsDetails(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func expandWorkstationsWorkstationClusterLabels(v interface{}, d TerraformResourceData, config *Config) (map[string]string, error) {
+func expandWorkstationsWorkstationClusterLabels(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
 	if v == nil {
 		return map[string]string{}, nil
 	}
@@ -646,19 +647,19 @@ func expandWorkstationsWorkstationClusterLabels(v interface{}, d TerraformResour
 	return m, nil
 }
 
-func expandWorkstationsWorkstationClusterNetwork(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandWorkstationsWorkstationClusterNetwork(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandWorkstationsWorkstationClusterSubnetwork(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandWorkstationsWorkstationClusterSubnetwork(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandWorkstationsWorkstationClusterDisplayName(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandWorkstationsWorkstationClusterDisplayName(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandWorkstationsWorkstationClusterAnnotations(v interface{}, d TerraformResourceData, config *Config) (map[string]string, error) {
+func expandWorkstationsWorkstationClusterAnnotations(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
 	if v == nil {
 		return map[string]string{}, nil
 	}
@@ -669,11 +670,11 @@ func expandWorkstationsWorkstationClusterAnnotations(v interface{}, d TerraformR
 	return m, nil
 }
 
-func expandWorkstationsWorkstationClusterEtag(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandWorkstationsWorkstationClusterEtag(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandWorkstationsWorkstationClusterPrivateClusterConfig(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandWorkstationsWorkstationClusterPrivateClusterConfig(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -706,14 +707,14 @@ func expandWorkstationsWorkstationClusterPrivateClusterConfig(v interface{}, d T
 	return transformed, nil
 }
 
-func expandWorkstationsWorkstationClusterPrivateClusterConfigEnablePrivateEndpoint(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandWorkstationsWorkstationClusterPrivateClusterConfigEnablePrivateEndpoint(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandWorkstationsWorkstationClusterPrivateClusterConfigClusterHostname(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandWorkstationsWorkstationClusterPrivateClusterConfigClusterHostname(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandWorkstationsWorkstationClusterPrivateClusterConfigServiceAttachmentUri(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandWorkstationsWorkstationClusterPrivateClusterConfigServiceAttachmentUri(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }

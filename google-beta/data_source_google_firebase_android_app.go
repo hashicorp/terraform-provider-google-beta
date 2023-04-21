@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
 func DataSourceGoogleFirebaseAndroidApp() *schema.Resource {
@@ -23,7 +24,7 @@ func DataSourceGoogleFirebaseAndroidApp() *schema.Resource {
 }
 
 func dataSourceGoogleFirebaseAndroidAppRead(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	appId := d.Get("app_id")
 	project, err := getProject(d, config)
 	if err != nil {

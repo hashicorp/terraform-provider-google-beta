@@ -2,6 +2,7 @@ package google
 
 import (
 	"fmt"
+	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -546,7 +547,7 @@ func TestDnsManagedZoneImport_parseImportId(t *testing.T) {
 	cases := map[string]struct {
 		ImportId             string
 		IdRegexes            []string
-		Config               *Config
+		Config               *transport_tpg.Config
 		ExpectedSchemaValues map[string]interface{}
 		ExpectError          bool
 	}{
@@ -577,7 +578,7 @@ func TestDnsManagedZoneImport_parseImportId(t *testing.T) {
 		"short id with default project and region": {
 			IdRegexes: zoneRegexes,
 			ImportId:  "my-zone",
-			Config: &Config{
+			Config: &transport_tpg.Config{
 				Project: "default-project",
 			},
 			ExpectedSchemaValues: map[string]interface{}{
@@ -594,7 +595,7 @@ func TestDnsManagedZoneImport_parseImportId(t *testing.T) {
 		}
 		config := tc.Config
 		if config == nil {
-			config = &Config{}
+			config = &transport_tpg.Config{}
 		}
 		//
 		if err := ParseImportId(tc.IdRegexes, d, config); err == nil {

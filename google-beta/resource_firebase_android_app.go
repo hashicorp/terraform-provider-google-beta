@@ -22,6 +22,7 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
 func ResourceFirebaseAndroidApp() *schema.Resource {
@@ -107,7 +108,7 @@ serving traffic. Set to 'DELETE' to delete the AndroidApp. Defaults to 'DELETE'.
 }
 
 func resourceFirebaseAndroidAppCreate(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -206,7 +207,7 @@ func resourceFirebaseAndroidAppCreate(d *schema.ResourceData, meta interface{}) 
 }
 
 func resourceFirebaseAndroidAppRead(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -271,7 +272,7 @@ func resourceFirebaseAndroidAppRead(d *schema.ResourceData, meta interface{}) er
 }
 
 func resourceFirebaseAndroidAppUpdate(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -368,7 +369,7 @@ func resourceFirebaseAndroidAppUpdate(d *schema.ResourceData, meta interface{}) 
 }
 
 func resourceFirebaseAndroidAppDelete(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -427,7 +428,7 @@ func resourceFirebaseAndroidAppDelete(d *schema.ResourceData, meta interface{}) 
 
 func resourceFirebaseAndroidAppImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 
 	// current import_formats can't import fields with forward slashes in their value
 	if err := ParseImportId([]string{"(?P<project>[^ ]+) (?P<name>[^ ]+)", "(?P<name>[^ ]+)"}, d, config); err != nil {
@@ -437,50 +438,50 @@ func resourceFirebaseAndroidAppImport(d *schema.ResourceData, meta interface{}) 
 	return []*schema.ResourceData{d}, nil
 }
 
-func flattenFirebaseAndroidAppName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenFirebaseAndroidAppName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenFirebaseAndroidAppDisplayName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenFirebaseAndroidAppDisplayName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenFirebaseAndroidAppAppId(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenFirebaseAndroidAppAppId(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenFirebaseAndroidAppPackageName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenFirebaseAndroidAppPackageName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenFirebaseAndroidAppSha1Hashes(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenFirebaseAndroidAppSha1Hashes(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenFirebaseAndroidAppSha256Hashes(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenFirebaseAndroidAppSha256Hashes(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenFirebaseAndroidAppEtag(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenFirebaseAndroidAppEtag(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func expandFirebaseAndroidAppDisplayName(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandFirebaseAndroidAppDisplayName(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandFirebaseAndroidAppPackageName(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandFirebaseAndroidAppPackageName(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandFirebaseAndroidAppSha1Hashes(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandFirebaseAndroidAppSha1Hashes(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandFirebaseAndroidAppSha256Hashes(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandFirebaseAndroidAppSha256Hashes(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandFirebaseAndroidAppEtag(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandFirebaseAndroidAppEtag(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }

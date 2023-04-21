@@ -20,6 +20,7 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
 func ResourceFirebaseStorageBucket() *schema.Resource {
@@ -61,7 +62,7 @@ func ResourceFirebaseStorageBucket() *schema.Resource {
 }
 
 func resourceFirebaseStorageBucketCreate(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -109,7 +110,7 @@ func resourceFirebaseStorageBucketCreate(d *schema.ResourceData, meta interface{
 }
 
 func resourceFirebaseStorageBucketRead(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -150,7 +151,7 @@ func resourceFirebaseStorageBucketRead(d *schema.ResourceData, meta interface{})
 }
 
 func resourceFirebaseStorageBucketDelete(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -187,7 +188,7 @@ func resourceFirebaseStorageBucketDelete(d *schema.ResourceData, meta interface{
 }
 
 func resourceFirebaseStorageBucketImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	if err := ParseImportId([]string{
 		"projects/(?P<project>[^/]+)/buckets/(?P<bucket_id>[^/]+)",
 		"(?P<project>[^/]+)/(?P<bucket_id>[^/]+)",
@@ -206,6 +207,6 @@ func resourceFirebaseStorageBucketImport(d *schema.ResourceData, meta interface{
 	return []*schema.ResourceData{d}, nil
 }
 
-func flattenFirebaseStorageBucketName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenFirebaseStorageBucketName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }

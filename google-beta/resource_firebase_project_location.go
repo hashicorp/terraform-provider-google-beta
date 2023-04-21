@@ -21,6 +21,7 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
 func ResourceFirebaseProjectLocation() *schema.Resource {
@@ -58,7 +59,7 @@ resource locations.`,
 }
 
 func resourceFirebaseProjectLocationCreate(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -119,7 +120,7 @@ func resourceFirebaseProjectLocationCreate(d *schema.ResourceData, meta interfac
 }
 
 func resourceFirebaseProjectLocationRead(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -181,7 +182,7 @@ func resourceFirebaseProjectLocationDelete(d *schema.ResourceData, meta interfac
 }
 
 func resourceFirebaseProjectLocationImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	if err := ParseImportId([]string{
 		"projects/(?P<project>[^/]+)",
 		"(?P<project>[^/]+)",
@@ -199,11 +200,11 @@ func resourceFirebaseProjectLocationImport(d *schema.ResourceData, meta interfac
 	return []*schema.ResourceData{d}, nil
 }
 
-func flattenNestedFirebaseProjectLocationLocationId(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNestedFirebaseProjectLocationLocationId(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func expandNestedFirebaseProjectLocationLocationId(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNestedFirebaseProjectLocationLocationId(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 

@@ -22,6 +22,7 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
 func suppressGkeHubEndpointSelfLinkDiff(_, old, new string, _ *schema.ResourceData) bool {
@@ -139,7 +140,7 @@ this can be '"//container.googleapis.com/${google_container_cluster.my-cluster.i
 }
 
 func resourceGKEHubMembershipCreate(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -232,7 +233,7 @@ func resourceGKEHubMembershipCreate(d *schema.ResourceData, meta interface{}) er
 }
 
 func resourceGKEHubMembershipRead(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -285,7 +286,7 @@ func resourceGKEHubMembershipRead(d *schema.ResourceData, meta interface{}) erro
 }
 
 func resourceGKEHubMembershipUpdate(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -370,7 +371,7 @@ func resourceGKEHubMembershipUpdate(d *schema.ResourceData, meta interface{}) er
 }
 
 func resourceGKEHubMembershipDelete(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -415,7 +416,7 @@ func resourceGKEHubMembershipDelete(d *schema.ResourceData, meta interface{}) er
 }
 
 func resourceGKEHubMembershipImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	if err := ParseImportId([]string{
 		"projects/(?P<project>[^/]+)/locations/global/memberships/(?P<membership_id>[^/]+)",
 		"(?P<project>[^/]+)/(?P<membership_id>[^/]+)",
@@ -434,19 +435,19 @@ func resourceGKEHubMembershipImport(d *schema.ResourceData, meta interface{}) ([
 	return []*schema.ResourceData{d}, nil
 }
 
-func flattenGKEHubMembershipName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenGKEHubMembershipName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenGKEHubMembershipDescription(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenGKEHubMembershipDescription(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenGKEHubMembershipLabels(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenGKEHubMembershipLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenGKEHubMembershipEndpoint(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenGKEHubMembershipEndpoint(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -459,7 +460,7 @@ func flattenGKEHubMembershipEndpoint(v interface{}, d *schema.ResourceData, conf
 		flattenGKEHubMembershipEndpointGkeCluster(original["gkeCluster"], d, config)
 	return []interface{}{transformed}
 }
-func flattenGKEHubMembershipEndpointGkeCluster(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenGKEHubMembershipEndpointGkeCluster(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -472,11 +473,11 @@ func flattenGKEHubMembershipEndpointGkeCluster(v interface{}, d *schema.Resource
 		flattenGKEHubMembershipEndpointGkeClusterResourceLink(original["resourceLink"], d, config)
 	return []interface{}{transformed}
 }
-func flattenGKEHubMembershipEndpointGkeClusterResourceLink(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenGKEHubMembershipEndpointGkeClusterResourceLink(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenGKEHubMembershipAuthority(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenGKEHubMembershipAuthority(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -489,15 +490,15 @@ func flattenGKEHubMembershipAuthority(v interface{}, d *schema.ResourceData, con
 		flattenGKEHubMembershipAuthorityIssuer(original["issuer"], d, config)
 	return []interface{}{transformed}
 }
-func flattenGKEHubMembershipAuthorityIssuer(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenGKEHubMembershipAuthorityIssuer(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func expandGKEHubMembershipDescription(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandGKEHubMembershipDescription(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandGKEHubMembershipLabels(v interface{}, d TerraformResourceData, config *Config) (map[string]string, error) {
+func expandGKEHubMembershipLabels(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
 	if v == nil {
 		return map[string]string{}, nil
 	}
@@ -508,7 +509,7 @@ func expandGKEHubMembershipLabels(v interface{}, d TerraformResourceData, config
 	return m, nil
 }
 
-func expandGKEHubMembershipEndpoint(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandGKEHubMembershipEndpoint(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -527,7 +528,7 @@ func expandGKEHubMembershipEndpoint(v interface{}, d TerraformResourceData, conf
 	return transformed, nil
 }
 
-func expandGKEHubMembershipEndpointGkeCluster(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandGKEHubMembershipEndpointGkeCluster(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -546,7 +547,7 @@ func expandGKEHubMembershipEndpointGkeCluster(v interface{}, d TerraformResource
 	return transformed, nil
 }
 
-func expandGKEHubMembershipEndpointGkeClusterResourceLink(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandGKEHubMembershipEndpointGkeClusterResourceLink(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	if strings.HasPrefix(v.(string), "//") {
 		return v, nil
 	} else {
@@ -555,7 +556,7 @@ func expandGKEHubMembershipEndpointGkeClusterResourceLink(v interface{}, d Terra
 	}
 }
 
-func expandGKEHubMembershipAuthority(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandGKEHubMembershipAuthority(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -574,6 +575,6 @@ func expandGKEHubMembershipAuthority(v interface{}, d TerraformResourceData, con
 	return transformed, nil
 }
 
-func expandGKEHubMembershipAuthorityIssuer(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandGKEHubMembershipAuthorityIssuer(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
