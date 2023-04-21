@@ -17,10 +17,12 @@ package google
 import (
 	"fmt"
 	"time"
+
+	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
 type NetworkSecurityOperationWaiter struct {
-	Config    *Config
+	Config    *transport_tpg.Config
 	UserAgent string
 	Project   string
 	CommonOperationWaiter
@@ -36,7 +38,7 @@ func (w *NetworkSecurityOperationWaiter) QueryOp() (interface{}, error) {
 	return SendRequest(w.Config, "GET", w.Project, url, w.UserAgent, nil)
 }
 
-func createNetworkSecurityWaiter(config *Config, op map[string]interface{}, project, activity, userAgent string) (*NetworkSecurityOperationWaiter, error) {
+func createNetworkSecurityWaiter(config *transport_tpg.Config, op map[string]interface{}, project, activity, userAgent string) (*NetworkSecurityOperationWaiter, error) {
 	w := &NetworkSecurityOperationWaiter{
 		Config:    config,
 		UserAgent: userAgent,
@@ -48,7 +50,7 @@ func createNetworkSecurityWaiter(config *Config, op map[string]interface{}, proj
 	return w, nil
 }
 
-func NetworkSecurityOperationWaitTime(config *Config, op map[string]interface{}, project, activity, userAgent string, timeout time.Duration) error {
+func NetworkSecurityOperationWaitTime(config *transport_tpg.Config, op map[string]interface{}, project, activity, userAgent string, timeout time.Duration) error {
 	if val, ok := op["name"]; !ok || val == "" {
 		// This was a synchronous call - there is no operation to wait for.
 		return nil

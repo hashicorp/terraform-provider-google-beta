@@ -20,6 +20,8 @@ import (
 	"github.com/hashicorp/errwrap"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"google.golang.org/api/cloudresourcemanager/v1"
+
+	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
 var ServiceDirectoryNamespaceIamSchema = map[string]*schema.Schema{
@@ -34,10 +36,10 @@ var ServiceDirectoryNamespaceIamSchema = map[string]*schema.Schema{
 type ServiceDirectoryNamespaceIamUpdater struct {
 	name   string
 	d      TerraformResourceData
-	Config *Config
+	Config *transport_tpg.Config
 }
 
-func ServiceDirectoryNamespaceIamUpdaterProducer(d TerraformResourceData, config *Config) (ResourceIamUpdater, error) {
+func ServiceDirectoryNamespaceIamUpdaterProducer(d TerraformResourceData, config *transport_tpg.Config) (ResourceIamUpdater, error) {
 	values := make(map[string]string)
 
 	if v, ok := d.GetOk("name"); ok {
@@ -67,7 +69,7 @@ func ServiceDirectoryNamespaceIamUpdaterProducer(d TerraformResourceData, config
 	return u, nil
 }
 
-func ServiceDirectoryNamespaceIdParseFunc(d *schema.ResourceData, config *Config) error {
+func ServiceDirectoryNamespaceIdParseFunc(d *schema.ResourceData, config *transport_tpg.Config) error {
 	values := make(map[string]string)
 
 	m, err := getImportIdQualifiers([]string{"projects/(?P<project>[^/]+)/locations/(?P<location>[^/]+)/namespaces/(?P<namespace_id>[^/]+)", "(?P<project>[^/]+)/(?P<location>[^/]+)/(?P<namespace_id>[^/]+)", "(?P<location>[^/]+)/(?P<namespace_id>[^/]+)"}, d, config, d.Id())

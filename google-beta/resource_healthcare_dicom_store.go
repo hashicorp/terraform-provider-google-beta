@@ -22,6 +22,7 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
 func ResourceHealthcareDicomStore() *schema.Resource {
@@ -131,7 +132,7 @@ streamConfigs is an array, so you can specify multiple BigQuery destinations. Yo
 }
 
 func resourceHealthcareDicomStoreCreate(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -194,7 +195,7 @@ func resourceHealthcareDicomStoreCreate(d *schema.ResourceData, meta interface{}
 }
 
 func resourceHealthcareDicomStoreRead(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -246,7 +247,7 @@ func resourceHealthcareDicomStoreRead(d *schema.ResourceData, meta interface{}) 
 }
 
 func resourceHealthcareDicomStoreUpdate(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -317,7 +318,7 @@ func resourceHealthcareDicomStoreUpdate(d *schema.ResourceData, meta interface{}
 }
 
 func resourceHealthcareDicomStoreDelete(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -349,7 +350,7 @@ func resourceHealthcareDicomStoreDelete(d *schema.ResourceData, meta interface{}
 
 func resourceHealthcareDicomStoreImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 
 	dicomStoreId, err := ParseHealthcareDicomStoreId(d.Id(), config)
 	if err != nil {
@@ -366,15 +367,15 @@ func resourceHealthcareDicomStoreImport(d *schema.ResourceData, meta interface{}
 	return []*schema.ResourceData{d}, nil
 }
 
-func flattenHealthcareDicomStoreName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenHealthcareDicomStoreName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenHealthcareDicomStoreLabels(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenHealthcareDicomStoreLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenHealthcareDicomStoreNotificationConfig(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenHealthcareDicomStoreNotificationConfig(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -387,11 +388,11 @@ func flattenHealthcareDicomStoreNotificationConfig(v interface{}, d *schema.Reso
 		flattenHealthcareDicomStoreNotificationConfigPubsubTopic(original["pubsubTopic"], d, config)
 	return []interface{}{transformed}
 }
-func flattenHealthcareDicomStoreNotificationConfigPubsubTopic(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenHealthcareDicomStoreNotificationConfigPubsubTopic(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenHealthcareDicomStoreStreamConfigs(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenHealthcareDicomStoreStreamConfigs(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return v
 	}
@@ -409,7 +410,7 @@ func flattenHealthcareDicomStoreStreamConfigs(v interface{}, d *schema.ResourceD
 	}
 	return transformed
 }
-func flattenHealthcareDicomStoreStreamConfigsBigqueryDestination(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenHealthcareDicomStoreStreamConfigsBigqueryDestination(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -422,15 +423,15 @@ func flattenHealthcareDicomStoreStreamConfigsBigqueryDestination(v interface{}, 
 		flattenHealthcareDicomStoreStreamConfigsBigqueryDestinationTableUri(original["tableUri"], d, config)
 	return []interface{}{transformed}
 }
-func flattenHealthcareDicomStoreStreamConfigsBigqueryDestinationTableUri(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenHealthcareDicomStoreStreamConfigsBigqueryDestinationTableUri(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func expandHealthcareDicomStoreName(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandHealthcareDicomStoreName(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandHealthcareDicomStoreLabels(v interface{}, d TerraformResourceData, config *Config) (map[string]string, error) {
+func expandHealthcareDicomStoreLabels(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
 	if v == nil {
 		return map[string]string{}, nil
 	}
@@ -441,7 +442,7 @@ func expandHealthcareDicomStoreLabels(v interface{}, d TerraformResourceData, co
 	return m, nil
 }
 
-func expandHealthcareDicomStoreNotificationConfig(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandHealthcareDicomStoreNotificationConfig(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -460,11 +461,11 @@ func expandHealthcareDicomStoreNotificationConfig(v interface{}, d TerraformReso
 	return transformed, nil
 }
 
-func expandHealthcareDicomStoreNotificationConfigPubsubTopic(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandHealthcareDicomStoreNotificationConfigPubsubTopic(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandHealthcareDicomStoreStreamConfigs(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandHealthcareDicomStoreStreamConfigs(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
 	for _, raw := range l {
@@ -486,7 +487,7 @@ func expandHealthcareDicomStoreStreamConfigs(v interface{}, d TerraformResourceD
 	return req, nil
 }
 
-func expandHealthcareDicomStoreStreamConfigsBigqueryDestination(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandHealthcareDicomStoreStreamConfigsBigqueryDestination(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -505,7 +506,7 @@ func expandHealthcareDicomStoreStreamConfigsBigqueryDestination(v interface{}, d
 	return transformed, nil
 }
 
-func expandHealthcareDicomStoreStreamConfigsBigqueryDestinationTableUri(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandHealthcareDicomStoreStreamConfigsBigqueryDestinationTableUri(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 

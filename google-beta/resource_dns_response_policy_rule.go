@@ -21,6 +21,7 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
 func ResourceDNSResponsePolicyRule() *schema.Resource {
@@ -122,7 +123,7 @@ resolvers.`,
 }
 
 func resourceDNSResponsePolicyRuleCreate(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -191,7 +192,7 @@ func resourceDNSResponsePolicyRuleCreate(d *schema.ResourceData, meta interface{
 }
 
 func resourceDNSResponsePolicyRuleRead(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -241,7 +242,7 @@ func resourceDNSResponsePolicyRuleRead(d *schema.ResourceData, meta interface{})
 }
 
 func resourceDNSResponsePolicyRuleUpdate(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -299,7 +300,7 @@ func resourceDNSResponsePolicyRuleUpdate(d *schema.ResourceData, meta interface{
 }
 
 func resourceDNSResponsePolicyRuleDelete(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -336,7 +337,7 @@ func resourceDNSResponsePolicyRuleDelete(d *schema.ResourceData, meta interface{
 }
 
 func resourceDNSResponsePolicyRuleImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	if err := ParseImportId([]string{
 		"projects/(?P<project>[^/]+)/responsePolicies/(?P<response_policy>[^/]+)/rules/(?P<rule_name>[^/]+)",
 		"(?P<project>[^/]+)/(?P<response_policy>[^/]+)/(?P<rule_name>[^/]+)",
@@ -355,15 +356,15 @@ func resourceDNSResponsePolicyRuleImport(d *schema.ResourceData, meta interface{
 	return []*schema.ResourceData{d}, nil
 }
 
-func flattenDNSResponsePolicyRuleRuleName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenDNSResponsePolicyRuleRuleName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenDNSResponsePolicyRuleDnsName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenDNSResponsePolicyRuleDnsName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenDNSResponsePolicyRuleLocalData(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenDNSResponsePolicyRuleLocalData(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -376,7 +377,7 @@ func flattenDNSResponsePolicyRuleLocalData(v interface{}, d *schema.ResourceData
 		flattenDNSResponsePolicyRuleLocalDataLocalDatas(original["localDatas"], d, config)
 	return []interface{}{transformed}
 }
-func flattenDNSResponsePolicyRuleLocalDataLocalDatas(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenDNSResponsePolicyRuleLocalDataLocalDatas(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return v
 	}
@@ -397,15 +398,15 @@ func flattenDNSResponsePolicyRuleLocalDataLocalDatas(v interface{}, d *schema.Re
 	}
 	return transformed
 }
-func flattenDNSResponsePolicyRuleLocalDataLocalDatasName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenDNSResponsePolicyRuleLocalDataLocalDatasName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenDNSResponsePolicyRuleLocalDataLocalDatasType(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenDNSResponsePolicyRuleLocalDataLocalDatasType(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenDNSResponsePolicyRuleLocalDataLocalDatasTtl(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenDNSResponsePolicyRuleLocalDataLocalDatasTtl(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := StringToFixed64(strVal); err == nil {
@@ -422,23 +423,23 @@ func flattenDNSResponsePolicyRuleLocalDataLocalDatasTtl(v interface{}, d *schema
 	return v // let terraform core handle it otherwise
 }
 
-func flattenDNSResponsePolicyRuleLocalDataLocalDatasRrdatas(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenDNSResponsePolicyRuleLocalDataLocalDatasRrdatas(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenDNSResponsePolicyRuleBehavior(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenDNSResponsePolicyRuleBehavior(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func expandDNSResponsePolicyRuleRuleName(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandDNSResponsePolicyRuleRuleName(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandDNSResponsePolicyRuleDnsName(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandDNSResponsePolicyRuleDnsName(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandDNSResponsePolicyRuleLocalData(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandDNSResponsePolicyRuleLocalData(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -457,7 +458,7 @@ func expandDNSResponsePolicyRuleLocalData(v interface{}, d TerraformResourceData
 	return transformed, nil
 }
 
-func expandDNSResponsePolicyRuleLocalDataLocalDatas(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandDNSResponsePolicyRuleLocalDataLocalDatas(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
 	for _, raw := range l {
@@ -500,22 +501,22 @@ func expandDNSResponsePolicyRuleLocalDataLocalDatas(v interface{}, d TerraformRe
 	return req, nil
 }
 
-func expandDNSResponsePolicyRuleLocalDataLocalDatasName(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandDNSResponsePolicyRuleLocalDataLocalDatasName(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandDNSResponsePolicyRuleLocalDataLocalDatasType(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandDNSResponsePolicyRuleLocalDataLocalDatasType(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandDNSResponsePolicyRuleLocalDataLocalDatasTtl(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandDNSResponsePolicyRuleLocalDataLocalDatasTtl(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandDNSResponsePolicyRuleLocalDataLocalDatasRrdatas(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandDNSResponsePolicyRuleLocalDataLocalDatasRrdatas(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandDNSResponsePolicyRuleBehavior(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandDNSResponsePolicyRuleBehavior(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }

@@ -21,6 +21,7 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
 func ResourceComputeOrganizationSecurityPolicyRule() *schema.Resource {
@@ -195,7 +196,7 @@ instances that are applied with this rule.`,
 }
 
 func resourceComputeOrganizationSecurityPolicyRuleCreate(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -313,7 +314,7 @@ func resourceComputeOrganizationSecurityPolicyRuleCreate(d *schema.ResourceData,
 }
 
 func resourceComputeOrganizationSecurityPolicyRuleRead(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -368,7 +369,7 @@ func resourceComputeOrganizationSecurityPolicyRuleRead(d *schema.ResourceData, m
 }
 
 func resourceComputeOrganizationSecurityPolicyRuleUpdate(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -480,7 +481,7 @@ func resourceComputeOrganizationSecurityPolicyRuleUpdate(d *schema.ResourceData,
 }
 
 func resourceComputeOrganizationSecurityPolicyRuleDelete(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -536,7 +537,7 @@ func resourceComputeOrganizationSecurityPolicyRuleDelete(d *schema.ResourceData,
 }
 
 func resourceComputeOrganizationSecurityPolicyRuleImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	if err := ParseImportId([]string{
 		"(?P<policy_id>.+)/priority/(?P<priority>[^/]+)",
 	}, d, config); err != nil {
@@ -553,11 +554,11 @@ func resourceComputeOrganizationSecurityPolicyRuleImport(d *schema.ResourceData,
 	return []*schema.ResourceData{d}, nil
 }
 
-func flattenComputeOrganizationSecurityPolicyRuleDescription(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenComputeOrganizationSecurityPolicyRuleDescription(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenComputeOrganizationSecurityPolicyRulePriority(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenComputeOrganizationSecurityPolicyRulePriority(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := StringToFixed64(strVal); err == nil {
@@ -574,7 +575,7 @@ func flattenComputeOrganizationSecurityPolicyRulePriority(v interface{}, d *sche
 	return v // let terraform core handle it otherwise
 }
 
-func flattenComputeOrganizationSecurityPolicyRuleMatch(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenComputeOrganizationSecurityPolicyRuleMatch(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -591,15 +592,15 @@ func flattenComputeOrganizationSecurityPolicyRuleMatch(v interface{}, d *schema.
 		flattenComputeOrganizationSecurityPolicyRuleMatchConfig(original["config"], d, config)
 	return []interface{}{transformed}
 }
-func flattenComputeOrganizationSecurityPolicyRuleMatchDescription(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenComputeOrganizationSecurityPolicyRuleMatchDescription(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenComputeOrganizationSecurityPolicyRuleMatchVersionedExpr(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenComputeOrganizationSecurityPolicyRuleMatchVersionedExpr(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenComputeOrganizationSecurityPolicyRuleMatchConfig(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenComputeOrganizationSecurityPolicyRuleMatchConfig(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -616,15 +617,15 @@ func flattenComputeOrganizationSecurityPolicyRuleMatchConfig(v interface{}, d *s
 		flattenComputeOrganizationSecurityPolicyRuleMatchConfigLayer4Config(original["layer4Configs"], d, config)
 	return []interface{}{transformed}
 }
-func flattenComputeOrganizationSecurityPolicyRuleMatchConfigSrcIpRanges(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenComputeOrganizationSecurityPolicyRuleMatchConfigSrcIpRanges(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenComputeOrganizationSecurityPolicyRuleMatchConfigDestIpRanges(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenComputeOrganizationSecurityPolicyRuleMatchConfigDestIpRanges(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenComputeOrganizationSecurityPolicyRuleMatchConfigLayer4Config(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenComputeOrganizationSecurityPolicyRuleMatchConfigLayer4Config(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return v
 	}
@@ -643,47 +644,47 @@ func flattenComputeOrganizationSecurityPolicyRuleMatchConfigLayer4Config(v inter
 	}
 	return transformed
 }
-func flattenComputeOrganizationSecurityPolicyRuleMatchConfigLayer4ConfigIpProtocol(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenComputeOrganizationSecurityPolicyRuleMatchConfigLayer4ConfigIpProtocol(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenComputeOrganizationSecurityPolicyRuleMatchConfigLayer4ConfigPorts(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenComputeOrganizationSecurityPolicyRuleMatchConfigLayer4ConfigPorts(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenComputeOrganizationSecurityPolicyRuleAction(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenComputeOrganizationSecurityPolicyRuleAction(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenComputeOrganizationSecurityPolicyRulePreview(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenComputeOrganizationSecurityPolicyRulePreview(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenComputeOrganizationSecurityPolicyRuleDirection(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenComputeOrganizationSecurityPolicyRuleDirection(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenComputeOrganizationSecurityPolicyRuleTargetResources(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenComputeOrganizationSecurityPolicyRuleTargetResources(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenComputeOrganizationSecurityPolicyRuleEnableLogging(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenComputeOrganizationSecurityPolicyRuleEnableLogging(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenComputeOrganizationSecurityPolicyRuleTargetServiceAccounts(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenComputeOrganizationSecurityPolicyRuleTargetServiceAccounts(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func expandComputeOrganizationSecurityPolicyRuleDescription(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandComputeOrganizationSecurityPolicyRuleDescription(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandComputeOrganizationSecurityPolicyRulePriority(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandComputeOrganizationSecurityPolicyRulePriority(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandComputeOrganizationSecurityPolicyRuleMatch(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandComputeOrganizationSecurityPolicyRuleMatch(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -716,15 +717,15 @@ func expandComputeOrganizationSecurityPolicyRuleMatch(v interface{}, d Terraform
 	return transformed, nil
 }
 
-func expandComputeOrganizationSecurityPolicyRuleMatchDescription(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandComputeOrganizationSecurityPolicyRuleMatchDescription(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandComputeOrganizationSecurityPolicyRuleMatchVersionedExpr(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandComputeOrganizationSecurityPolicyRuleMatchVersionedExpr(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandComputeOrganizationSecurityPolicyRuleMatchConfig(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandComputeOrganizationSecurityPolicyRuleMatchConfig(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -757,15 +758,15 @@ func expandComputeOrganizationSecurityPolicyRuleMatchConfig(v interface{}, d Ter
 	return transformed, nil
 }
 
-func expandComputeOrganizationSecurityPolicyRuleMatchConfigSrcIpRanges(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandComputeOrganizationSecurityPolicyRuleMatchConfigSrcIpRanges(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandComputeOrganizationSecurityPolicyRuleMatchConfigDestIpRanges(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandComputeOrganizationSecurityPolicyRuleMatchConfigDestIpRanges(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandComputeOrganizationSecurityPolicyRuleMatchConfigLayer4Config(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandComputeOrganizationSecurityPolicyRuleMatchConfigLayer4Config(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
 	for _, raw := range l {
@@ -794,34 +795,34 @@ func expandComputeOrganizationSecurityPolicyRuleMatchConfigLayer4Config(v interf
 	return req, nil
 }
 
-func expandComputeOrganizationSecurityPolicyRuleMatchConfigLayer4ConfigIpProtocol(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandComputeOrganizationSecurityPolicyRuleMatchConfigLayer4ConfigIpProtocol(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandComputeOrganizationSecurityPolicyRuleMatchConfigLayer4ConfigPorts(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandComputeOrganizationSecurityPolicyRuleMatchConfigLayer4ConfigPorts(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandComputeOrganizationSecurityPolicyRuleAction(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandComputeOrganizationSecurityPolicyRuleAction(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandComputeOrganizationSecurityPolicyRulePreview(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandComputeOrganizationSecurityPolicyRulePreview(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandComputeOrganizationSecurityPolicyRuleDirection(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandComputeOrganizationSecurityPolicyRuleDirection(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandComputeOrganizationSecurityPolicyRuleTargetResources(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandComputeOrganizationSecurityPolicyRuleTargetResources(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandComputeOrganizationSecurityPolicyRuleEnableLogging(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandComputeOrganizationSecurityPolicyRuleEnableLogging(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandComputeOrganizationSecurityPolicyRuleTargetServiceAccounts(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandComputeOrganizationSecurityPolicyRuleTargetServiceAccounts(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }

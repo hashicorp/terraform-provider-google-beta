@@ -22,6 +22,7 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
 func ResourceDNSResponsePolicy() *schema.Resource {
@@ -99,7 +100,7 @@ This should be formatted like
 }
 
 func resourceDNSResponsePolicyCreate(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -168,7 +169,7 @@ func resourceDNSResponsePolicyCreate(d *schema.ResourceData, meta interface{}) e
 }
 
 func resourceDNSResponsePolicyRead(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -218,7 +219,7 @@ func resourceDNSResponsePolicyRead(d *schema.ResourceData, meta interface{}) err
 }
 
 func resourceDNSResponsePolicyUpdate(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -276,7 +277,7 @@ func resourceDNSResponsePolicyUpdate(d *schema.ResourceData, meta interface{}) e
 }
 
 func resourceDNSResponsePolicyDelete(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -344,7 +345,7 @@ func resourceDNSResponsePolicyDelete(d *schema.ResourceData, meta interface{}) e
 }
 
 func resourceDNSResponsePolicyImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	if err := ParseImportId([]string{
 		"projects/(?P<project>[^/]+)/responsePolicies/(?P<response_policy_name>[^/]+)",
 		"(?P<project>[^/]+)/(?P<response_policy_name>[^/]+)",
@@ -363,15 +364,15 @@ func resourceDNSResponsePolicyImport(d *schema.ResourceData, meta interface{}) (
 	return []*schema.ResourceData{d}, nil
 }
 
-func flattenDNSResponsePolicyResponsePolicyName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenDNSResponsePolicyResponsePolicyName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenDNSResponsePolicyDescription(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenDNSResponsePolicyDescription(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenDNSResponsePolicyNetworks(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenDNSResponsePolicyNetworks(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return v
 	}
@@ -389,11 +390,11 @@ func flattenDNSResponsePolicyNetworks(v interface{}, d *schema.ResourceData, con
 	}
 	return transformed
 }
-func flattenDNSResponsePolicyNetworksNetworkUrl(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenDNSResponsePolicyNetworksNetworkUrl(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenDNSResponsePolicyGkeClusters(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenDNSResponsePolicyGkeClusters(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return v
 	}
@@ -411,19 +412,19 @@ func flattenDNSResponsePolicyGkeClusters(v interface{}, d *schema.ResourceData, 
 	}
 	return transformed
 }
-func flattenDNSResponsePolicyGkeClustersGkeClusterName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenDNSResponsePolicyGkeClustersGkeClusterName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func expandDNSResponsePolicyResponsePolicyName(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandDNSResponsePolicyResponsePolicyName(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandDNSResponsePolicyDescription(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandDNSResponsePolicyDescription(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandDNSResponsePolicyNetworks(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandDNSResponsePolicyNetworks(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
 	for _, raw := range l {
@@ -445,7 +446,7 @@ func expandDNSResponsePolicyNetworks(v interface{}, d TerraformResourceData, con
 	return req, nil
 }
 
-func expandDNSResponsePolicyNetworksNetworkUrl(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandDNSResponsePolicyNetworksNetworkUrl(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	if v == nil || v.(string) == "" {
 		return "", nil
 	} else if strings.HasPrefix(v.(string), "https://") {
@@ -458,7 +459,7 @@ func expandDNSResponsePolicyNetworksNetworkUrl(v interface{}, d TerraformResourc
 	return ConvertSelfLinkToV1(url), nil
 }
 
-func expandDNSResponsePolicyGkeClusters(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandDNSResponsePolicyGkeClusters(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
 	for _, raw := range l {
@@ -480,6 +481,6 @@ func expandDNSResponsePolicyGkeClusters(v interface{}, d TerraformResourceData, 
 	return req, nil
 }
 
-func expandDNSResponsePolicyGkeClustersGkeClusterName(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandDNSResponsePolicyGkeClustersGkeClusterName(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }

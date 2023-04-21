@@ -22,6 +22,7 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
 func ResourceComputeTargetInstance() *schema.Resource {
@@ -114,7 +115,7 @@ Currently only NO_NAT (default value) is supported. Default value: "NO_NAT" Poss
 }
 
 func resourceComputeTargetInstanceCreate(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -205,7 +206,7 @@ func resourceComputeTargetInstanceCreate(d *schema.ResourceData, meta interface{
 }
 
 func resourceComputeTargetInstanceRead(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -267,7 +268,7 @@ func resourceComputeTargetInstanceRead(d *schema.ResourceData, meta interface{})
 }
 
 func resourceComputeTargetInstanceDelete(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -312,7 +313,7 @@ func resourceComputeTargetInstanceDelete(d *schema.ResourceData, meta interface{
 }
 
 func resourceComputeTargetInstanceImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	if err := ParseImportId([]string{
 		"projects/(?P<project>[^/]+)/zones/(?P<zone>[^/]+)/targetInstances/(?P<name>[^/]+)",
 		"(?P<project>[^/]+)/(?P<zone>[^/]+)/(?P<name>[^/]+)",
@@ -332,53 +333,53 @@ func resourceComputeTargetInstanceImport(d *schema.ResourceData, meta interface{
 	return []*schema.ResourceData{d}, nil
 }
 
-func flattenComputeTargetInstanceName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenComputeTargetInstanceName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenComputeTargetInstanceCreationTimestamp(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenComputeTargetInstanceCreationTimestamp(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenComputeTargetInstanceNetwork(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenComputeTargetInstanceNetwork(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenComputeTargetInstanceDescription(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenComputeTargetInstanceDescription(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenComputeTargetInstanceInstance(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenComputeTargetInstanceInstance(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return v
 	}
 	return ConvertSelfLinkToV1(v.(string))
 }
 
-func flattenComputeTargetInstanceNatPolicy(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenComputeTargetInstanceNatPolicy(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenComputeTargetInstanceZone(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenComputeTargetInstanceZone(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return v
 	}
 	return ConvertSelfLinkToV1(v.(string))
 }
 
-func expandComputeTargetInstanceName(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandComputeTargetInstanceName(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandComputeTargetInstanceNetwork(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandComputeTargetInstanceNetwork(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandComputeTargetInstanceDescription(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandComputeTargetInstanceDescription(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandComputeTargetInstanceInstance(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandComputeTargetInstanceInstance(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	// This method returns a full self link from a partial self link.
 	if v == nil || v.(string) == "" {
 		// It does not try to construct anything from empty.
@@ -411,11 +412,11 @@ func expandComputeTargetInstanceInstance(v interface{}, d TerraformResourceData,
 	return url + v.(string), nil
 }
 
-func expandComputeTargetInstanceNatPolicy(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandComputeTargetInstanceNatPolicy(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandComputeTargetInstanceZone(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandComputeTargetInstanceZone(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	f, err := parseGlobalFieldValue("zones", v.(string), "project", d, config, true)
 	if err != nil {
 		return nil, fmt.Errorf("Invalid value for zone: %s", err)

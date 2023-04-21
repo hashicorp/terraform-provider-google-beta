@@ -20,6 +20,8 @@ import (
 	"github.com/hashicorp/errwrap"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"google.golang.org/api/cloudresourcemanager/v1"
+
+	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
 var ComputeRegionBackendServiceIamSchema = map[string]*schema.Schema{
@@ -48,10 +50,10 @@ type ComputeRegionBackendServiceIamUpdater struct {
 	region  string
 	name    string
 	d       TerraformResourceData
-	Config  *Config
+	Config  *transport_tpg.Config
 }
 
-func ComputeRegionBackendServiceIamUpdaterProducer(d TerraformResourceData, config *Config) (ResourceIamUpdater, error) {
+func ComputeRegionBackendServiceIamUpdaterProducer(d TerraformResourceData, config *transport_tpg.Config) (ResourceIamUpdater, error) {
 	values := make(map[string]string)
 
 	project, _ := getProject(d, config)
@@ -103,7 +105,7 @@ func ComputeRegionBackendServiceIamUpdaterProducer(d TerraformResourceData, conf
 	return u, nil
 }
 
-func ComputeRegionBackendServiceIdParseFunc(d *schema.ResourceData, config *Config) error {
+func ComputeRegionBackendServiceIdParseFunc(d *schema.ResourceData, config *transport_tpg.Config) error {
 	values := make(map[string]string)
 
 	project, _ := getProject(d, config)

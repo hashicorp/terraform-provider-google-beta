@@ -22,6 +22,7 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
 func ResourceNetworkServicesMesh() *schema.Resource {
@@ -94,7 +95,7 @@ deployments.`,
 }
 
 func resourceNetworkServicesMeshCreate(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -167,7 +168,7 @@ func resourceNetworkServicesMeshCreate(d *schema.ResourceData, meta interface{})
 }
 
 func resourceNetworkServicesMeshRead(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -223,7 +224,7 @@ func resourceNetworkServicesMeshRead(d *schema.ResourceData, meta interface{}) e
 }
 
 func resourceNetworkServicesMeshUpdate(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -308,7 +309,7 @@ func resourceNetworkServicesMeshUpdate(d *schema.ResourceData, meta interface{})
 }
 
 func resourceNetworkServicesMeshDelete(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -353,7 +354,7 @@ func resourceNetworkServicesMeshDelete(d *schema.ResourceData, meta interface{})
 }
 
 func resourceNetworkServicesMeshImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	if err := ParseImportId([]string{
 		"projects/(?P<project>[^/]+)/locations/global/meshes/(?P<name>[^/]+)",
 		"(?P<project>[^/]+)/(?P<name>[^/]+)",
@@ -372,27 +373,27 @@ func resourceNetworkServicesMeshImport(d *schema.ResourceData, meta interface{})
 	return []*schema.ResourceData{d}, nil
 }
 
-func flattenNetworkServicesMeshSelfLink(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesMeshSelfLink(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenNetworkServicesMeshCreateTime(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesMeshCreateTime(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenNetworkServicesMeshUpdateTime(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesMeshUpdateTime(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenNetworkServicesMeshLabels(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesMeshLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenNetworkServicesMeshDescription(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesMeshDescription(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenNetworkServicesMeshInterceptionPort(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesMeshInterceptionPort(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := StringToFixed64(strVal); err == nil {
@@ -409,7 +410,7 @@ func flattenNetworkServicesMeshInterceptionPort(v interface{}, d *schema.Resourc
 	return v // let terraform core handle it otherwise
 }
 
-func expandNetworkServicesMeshLabels(v interface{}, d TerraformResourceData, config *Config) (map[string]string, error) {
+func expandNetworkServicesMeshLabels(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
 	if v == nil {
 		return map[string]string{}, nil
 	}
@@ -420,10 +421,10 @@ func expandNetworkServicesMeshLabels(v interface{}, d TerraformResourceData, con
 	return m, nil
 }
 
-func expandNetworkServicesMeshDescription(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkServicesMeshDescription(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesMeshInterceptionPort(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkServicesMeshInterceptionPort(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }

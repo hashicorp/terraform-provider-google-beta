@@ -22,6 +22,7 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
 func ResourceWorkstationsWorkstation() *schema.Resource {
@@ -122,7 +123,7 @@ To send traffic to a different port, clients may prefix the host with the destin
 }
 
 func resourceWorkstationsWorkstationCreate(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -195,7 +196,7 @@ func resourceWorkstationsWorkstationCreate(d *schema.ResourceData, meta interfac
 }
 
 func resourceWorkstationsWorkstationRead(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -257,7 +258,7 @@ func resourceWorkstationsWorkstationRead(d *schema.ResourceData, meta interface{
 }
 
 func resourceWorkstationsWorkstationUpdate(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -342,7 +343,7 @@ func resourceWorkstationsWorkstationUpdate(d *schema.ResourceData, meta interfac
 }
 
 func resourceWorkstationsWorkstationDelete(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -387,7 +388,7 @@ func resourceWorkstationsWorkstationDelete(d *schema.ResourceData, meta interfac
 }
 
 func resourceWorkstationsWorkstationImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	if err := ParseImportId([]string{
 		"projects/(?P<project>[^/]+)/locations/(?P<location>[^/]+)/workstationClusters/(?P<workstation_cluster_id>[^/]+)/workstationConfigs/(?P<workstation_config_id>[^/]+)/workstations/(?P<workstation_id>[^/]+)",
 		"(?P<project>[^/]+)/(?P<location>[^/]+)/(?P<workstation_cluster_id>[^/]+)/(?P<workstation_config_id>[^/]+)/(?P<workstation_id>[^/]+)",
@@ -406,43 +407,43 @@ func resourceWorkstationsWorkstationImport(d *schema.ResourceData, meta interfac
 	return []*schema.ResourceData{d}, nil
 }
 
-func flattenWorkstationsWorkstationName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenWorkstationsWorkstationName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenWorkstationsWorkstationUid(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenWorkstationsWorkstationUid(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenWorkstationsWorkstationDisplayName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenWorkstationsWorkstationDisplayName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenWorkstationsWorkstationLabels(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenWorkstationsWorkstationLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenWorkstationsWorkstationAnnotations(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenWorkstationsWorkstationAnnotations(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenWorkstationsWorkstationCreateTime(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenWorkstationsWorkstationCreateTime(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenWorkstationsWorkstationHost(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenWorkstationsWorkstationHost(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenWorkstationsWorkstationState(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenWorkstationsWorkstationState(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func expandWorkstationsWorkstationDisplayName(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandWorkstationsWorkstationDisplayName(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandWorkstationsWorkstationLabels(v interface{}, d TerraformResourceData, config *Config) (map[string]string, error) {
+func expandWorkstationsWorkstationLabels(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
 	if v == nil {
 		return map[string]string{}, nil
 	}
@@ -453,7 +454,7 @@ func expandWorkstationsWorkstationLabels(v interface{}, d TerraformResourceData,
 	return m, nil
 }
 
-func expandWorkstationsWorkstationAnnotations(v interface{}, d TerraformResourceData, config *Config) (map[string]string, error) {
+func expandWorkstationsWorkstationAnnotations(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
 	if v == nil {
 		return map[string]string{}, nil
 	}

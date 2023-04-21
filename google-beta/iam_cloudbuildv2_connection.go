@@ -20,6 +20,8 @@ import (
 	"github.com/hashicorp/errwrap"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"google.golang.org/api/cloudresourcemanager/v1"
+
+	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
 var Cloudbuildv2ConnectionIamSchema = map[string]*schema.Schema{
@@ -48,10 +50,10 @@ type Cloudbuildv2ConnectionIamUpdater struct {
 	location string
 	name     string
 	d        TerraformResourceData
-	Config   *Config
+	Config   *transport_tpg.Config
 }
 
-func Cloudbuildv2ConnectionIamUpdaterProducer(d TerraformResourceData, config *Config) (ResourceIamUpdater, error) {
+func Cloudbuildv2ConnectionIamUpdaterProducer(d TerraformResourceData, config *transport_tpg.Config) (ResourceIamUpdater, error) {
 	values := make(map[string]string)
 
 	project, _ := getProject(d, config)
@@ -103,7 +105,7 @@ func Cloudbuildv2ConnectionIamUpdaterProducer(d TerraformResourceData, config *C
 	return u, nil
 }
 
-func Cloudbuildv2ConnectionIdParseFunc(d *schema.ResourceData, config *Config) error {
+func Cloudbuildv2ConnectionIdParseFunc(d *schema.ResourceData, config *transport_tpg.Config) error {
 	values := make(map[string]string)
 
 	project, _ := getProject(d, config)

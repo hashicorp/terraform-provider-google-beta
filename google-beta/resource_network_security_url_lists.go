@@ -22,6 +22,7 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
 func ResourceNetworkSecurityUrlLists() *schema.Resource {
@@ -92,7 +93,7 @@ Examples: '2014-10-02T15:01:23Z' and '2014-10-02T15:01:23.045123456Z'.`,
 }
 
 func resourceNetworkSecurityUrlListsCreate(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -159,7 +160,7 @@ func resourceNetworkSecurityUrlListsCreate(d *schema.ResourceData, meta interfac
 }
 
 func resourceNetworkSecurityUrlListsRead(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -209,7 +210,7 @@ func resourceNetworkSecurityUrlListsRead(d *schema.ResourceData, meta interface{
 }
 
 func resourceNetworkSecurityUrlListsUpdate(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -284,7 +285,7 @@ func resourceNetworkSecurityUrlListsUpdate(d *schema.ResourceData, meta interfac
 }
 
 func resourceNetworkSecurityUrlListsDelete(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -329,7 +330,7 @@ func resourceNetworkSecurityUrlListsDelete(d *schema.ResourceData, meta interfac
 }
 
 func resourceNetworkSecurityUrlListsImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	if err := ParseImportId([]string{
 		"projects/(?P<project>[^/]+)/locations/(?P<location>[^/]+)/urlLists/(?P<name>[^/]+)",
 		"(?P<project>[^/]+)/(?P<location>[^/]+)/(?P<name>[^/]+)",
@@ -348,26 +349,26 @@ func resourceNetworkSecurityUrlListsImport(d *schema.ResourceData, meta interfac
 	return []*schema.ResourceData{d}, nil
 }
 
-func flattenNetworkSecurityUrlListsCreateTime(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkSecurityUrlListsCreateTime(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenNetworkSecurityUrlListsUpdateTime(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkSecurityUrlListsUpdateTime(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenNetworkSecurityUrlListsDescription(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkSecurityUrlListsDescription(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenNetworkSecurityUrlListsValues(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkSecurityUrlListsValues(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func expandNetworkSecurityUrlListsDescription(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkSecurityUrlListsDescription(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkSecurityUrlListsValues(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkSecurityUrlListsValues(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }

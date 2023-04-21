@@ -21,6 +21,7 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
 func ResourceComputeOrganizationSecurityPolicyAssociation() *schema.Resource {
@@ -68,7 +69,7 @@ func ResourceComputeOrganizationSecurityPolicyAssociation() *schema.Resource {
 }
 
 func resourceComputeOrganizationSecurityPolicyAssociationCreate(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -144,7 +145,7 @@ func resourceComputeOrganizationSecurityPolicyAssociationCreate(d *schema.Resour
 }
 
 func resourceComputeOrganizationSecurityPolicyAssociationRead(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -181,7 +182,7 @@ func resourceComputeOrganizationSecurityPolicyAssociationRead(d *schema.Resource
 }
 
 func resourceComputeOrganizationSecurityPolicyAssociationDelete(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -237,7 +238,7 @@ func resourceComputeOrganizationSecurityPolicyAssociationDelete(d *schema.Resour
 }
 
 func resourceComputeOrganizationSecurityPolicyAssociationImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	if err := ParseImportId([]string{
 		"(?P<policy_id>.+)/association/(?P<name>[^/]+)",
 	}, d, config); err != nil {
@@ -254,22 +255,22 @@ func resourceComputeOrganizationSecurityPolicyAssociationImport(d *schema.Resour
 	return []*schema.ResourceData{d}, nil
 }
 
-func flattenComputeOrganizationSecurityPolicyAssociationName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenComputeOrganizationSecurityPolicyAssociationName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenComputeOrganizationSecurityPolicyAssociationAttachmentId(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenComputeOrganizationSecurityPolicyAssociationAttachmentId(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenComputeOrganizationSecurityPolicyAssociationDisplayName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenComputeOrganizationSecurityPolicyAssociationDisplayName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func expandComputeOrganizationSecurityPolicyAssociationName(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandComputeOrganizationSecurityPolicyAssociationName(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandComputeOrganizationSecurityPolicyAssociationAttachmentId(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandComputeOrganizationSecurityPolicyAssociationAttachmentId(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }

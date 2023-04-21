@@ -22,6 +22,7 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
 func ResourceNetworkServicesTcpRoute() *schema.Resource {
@@ -173,7 +174,7 @@ The attached Mesh should be of a type SIDECAR`,
 }
 
 func resourceNetworkServicesTcpRouteCreate(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -258,7 +259,7 @@ func resourceNetworkServicesTcpRouteCreate(d *schema.ResourceData, meta interfac
 }
 
 func resourceNetworkServicesTcpRouteRead(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -320,7 +321,7 @@ func resourceNetworkServicesTcpRouteRead(d *schema.ResourceData, meta interface{
 }
 
 func resourceNetworkServicesTcpRouteUpdate(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -425,7 +426,7 @@ func resourceNetworkServicesTcpRouteUpdate(d *schema.ResourceData, meta interfac
 }
 
 func resourceNetworkServicesTcpRouteDelete(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -470,7 +471,7 @@ func resourceNetworkServicesTcpRouteDelete(d *schema.ResourceData, meta interfac
 }
 
 func resourceNetworkServicesTcpRouteImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	if err := ParseImportId([]string{
 		"projects/(?P<project>[^/]+)/locations/global/tcpRoutes/(?P<name>[^/]+)",
 		"(?P<project>[^/]+)/(?P<name>[^/]+)",
@@ -489,35 +490,35 @@ func resourceNetworkServicesTcpRouteImport(d *schema.ResourceData, meta interfac
 	return []*schema.ResourceData{d}, nil
 }
 
-func flattenNetworkServicesTcpRouteSelfLink(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesTcpRouteSelfLink(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenNetworkServicesTcpRouteCreateTime(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesTcpRouteCreateTime(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenNetworkServicesTcpRouteUpdateTime(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesTcpRouteUpdateTime(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenNetworkServicesTcpRouteLabels(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesTcpRouteLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenNetworkServicesTcpRouteDescription(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesTcpRouteDescription(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenNetworkServicesTcpRouteMeshes(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesTcpRouteMeshes(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenNetworkServicesTcpRouteGateways(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesTcpRouteGateways(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenNetworkServicesTcpRouteRules(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesTcpRouteRules(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return v
 	}
@@ -536,7 +537,7 @@ func flattenNetworkServicesTcpRouteRules(v interface{}, d *schema.ResourceData, 
 	}
 	return transformed
 }
-func flattenNetworkServicesTcpRouteRulesMatches(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesTcpRouteRulesMatches(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return v
 	}
@@ -555,15 +556,15 @@ func flattenNetworkServicesTcpRouteRulesMatches(v interface{}, d *schema.Resourc
 	}
 	return transformed
 }
-func flattenNetworkServicesTcpRouteRulesMatchesAddress(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesTcpRouteRulesMatchesAddress(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenNetworkServicesTcpRouteRulesMatchesPort(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesTcpRouteRulesMatchesPort(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenNetworkServicesTcpRouteRulesAction(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesTcpRouteRulesAction(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -578,7 +579,7 @@ func flattenNetworkServicesTcpRouteRulesAction(v interface{}, d *schema.Resource
 		flattenNetworkServicesTcpRouteRulesActionOriginalDestination(original["originalDestination"], d, config)
 	return []interface{}{transformed}
 }
-func flattenNetworkServicesTcpRouteRulesActionDestinations(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesTcpRouteRulesActionDestinations(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return v
 	}
@@ -597,11 +598,11 @@ func flattenNetworkServicesTcpRouteRulesActionDestinations(v interface{}, d *sch
 	}
 	return transformed
 }
-func flattenNetworkServicesTcpRouteRulesActionDestinationsServiceName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesTcpRouteRulesActionDestinationsServiceName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenNetworkServicesTcpRouteRulesActionDestinationsWeight(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesTcpRouteRulesActionDestinationsWeight(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := StringToFixed64(strVal); err == nil {
@@ -618,11 +619,11 @@ func flattenNetworkServicesTcpRouteRulesActionDestinationsWeight(v interface{}, 
 	return v // let terraform core handle it otherwise
 }
 
-func flattenNetworkServicesTcpRouteRulesActionOriginalDestination(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesTcpRouteRulesActionOriginalDestination(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func expandNetworkServicesTcpRouteLabels(v interface{}, d TerraformResourceData, config *Config) (map[string]string, error) {
+func expandNetworkServicesTcpRouteLabels(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
 	if v == nil {
 		return map[string]string{}, nil
 	}
@@ -633,19 +634,19 @@ func expandNetworkServicesTcpRouteLabels(v interface{}, d TerraformResourceData,
 	return m, nil
 }
 
-func expandNetworkServicesTcpRouteDescription(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkServicesTcpRouteDescription(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesTcpRouteMeshes(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkServicesTcpRouteMeshes(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesTcpRouteGateways(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkServicesTcpRouteGateways(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesTcpRouteRules(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkServicesTcpRouteRules(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
 	for _, raw := range l {
@@ -674,7 +675,7 @@ func expandNetworkServicesTcpRouteRules(v interface{}, d TerraformResourceData, 
 	return req, nil
 }
 
-func expandNetworkServicesTcpRouteRulesMatches(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkServicesTcpRouteRulesMatches(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
 	for _, raw := range l {
@@ -703,15 +704,15 @@ func expandNetworkServicesTcpRouteRulesMatches(v interface{}, d TerraformResourc
 	return req, nil
 }
 
-func expandNetworkServicesTcpRouteRulesMatchesAddress(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkServicesTcpRouteRulesMatchesAddress(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesTcpRouteRulesMatchesPort(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkServicesTcpRouteRulesMatchesPort(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesTcpRouteRulesAction(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkServicesTcpRouteRulesAction(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -737,7 +738,7 @@ func expandNetworkServicesTcpRouteRulesAction(v interface{}, d TerraformResource
 	return transformed, nil
 }
 
-func expandNetworkServicesTcpRouteRulesActionDestinations(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkServicesTcpRouteRulesActionDestinations(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
 	for _, raw := range l {
@@ -766,14 +767,14 @@ func expandNetworkServicesTcpRouteRulesActionDestinations(v interface{}, d Terra
 	return req, nil
 }
 
-func expandNetworkServicesTcpRouteRulesActionDestinationsServiceName(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkServicesTcpRouteRulesActionDestinationsServiceName(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesTcpRouteRulesActionDestinationsWeight(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkServicesTcpRouteRulesActionDestinationsWeight(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesTcpRouteRulesActionOriginalDestination(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkServicesTcpRouteRulesActionOriginalDestination(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }

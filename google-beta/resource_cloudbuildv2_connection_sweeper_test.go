@@ -22,6 +22,7 @@ import (
 
 	cloudbuildv2 "github.com/GoogleCloudPlatform/declarative-resource-client-library/services/google/cloudbuildv2/beta"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
 func init() {
@@ -58,7 +59,7 @@ func testSweepCloudbuildv2Connection(region string) error {
 		"billing_account": billingId,
 	}
 
-	client := NewDCLCloudbuildv2Client(config, config.UserAgent, "", 0)
+	client := transport_tpg.NewDCLCloudbuildv2Client(config, config.UserAgent, "", 0)
 	err = client.DeleteAllConnection(context.Background(), d["project"], d["location"], isDeletableCloudbuildv2Connection)
 	if err != nil {
 		return err

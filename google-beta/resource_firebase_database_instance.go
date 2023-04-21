@@ -21,9 +21,10 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
-func enableRTDB(config *Config, d *schema.ResourceData, project string, billingProject string, userAgent string) error {
+func enableRTDB(config *transport_tpg.Config, d *schema.ResourceData, project string, billingProject string, userAgent string) error {
 	url, err := ReplaceVars(d, config, "{{FirebaseDatabaseBasePath}}projects/{{project}}/locations/{{region}}/instances/{{instance_id}}:reenable")
 	if err != nil {
 		return err
@@ -38,7 +39,7 @@ func enableRTDB(config *Config, d *schema.ResourceData, project string, billingP
 	return nil
 }
 
-func disableRTDB(config *Config, d *schema.ResourceData, project string, billingProject string, userAgent string) error {
+func disableRTDB(config *transport_tpg.Config, d *schema.ResourceData, project string, billingProject string, userAgent string) error {
 	url, err := ReplaceVars(d, config, "{{FirebaseDatabaseBasePath}}projects/{{project}}/locations/{{region}}/instances/{{instance_id}}:disable")
 	if err != nil {
 		return err
@@ -133,7 +134,7 @@ Learn more about using project identifiers in Google's [AIP 2510 standard](https
 }
 
 func resourceFirebaseDatabaseInstanceCreate(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -195,7 +196,7 @@ func resourceFirebaseDatabaseInstanceCreate(d *schema.ResourceData, meta interfa
 }
 
 func resourceFirebaseDatabaseInstanceRead(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -263,7 +264,7 @@ func resourceFirebaseDatabaseInstanceRead(d *schema.ResourceData, meta interface
 }
 
 func resourceFirebaseDatabaseInstanceUpdate(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -330,7 +331,7 @@ func resourceFirebaseDatabaseInstanceUpdate(d *schema.ResourceData, meta interfa
 }
 
 func resourceFirebaseDatabaseInstanceDelete(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -379,7 +380,7 @@ func resourceFirebaseDatabaseInstanceDelete(d *schema.ResourceData, meta interfa
 }
 
 func resourceFirebaseDatabaseInstanceImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	if err := ParseImportId([]string{
 		"projects/(?P<project>[^/]+)/locations/(?P<region>[^/]+)/instances/(?P<instance_id>[^/]+)",
 		"(?P<project>[^/]+)/(?P<region>[^/]+)/(?P<instance_id>[^/]+)",
@@ -404,23 +405,23 @@ func resourceFirebaseDatabaseInstanceImport(d *schema.ResourceData, meta interfa
 	return []*schema.ResourceData{d}, nil
 }
 
-func flattenFirebaseDatabaseInstanceName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenFirebaseDatabaseInstanceName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenFirebaseDatabaseInstanceDatabaseUrl(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenFirebaseDatabaseInstanceDatabaseUrl(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenFirebaseDatabaseInstanceType(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenFirebaseDatabaseInstanceType(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenFirebaseDatabaseInstanceState(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenFirebaseDatabaseInstanceState(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func expandFirebaseDatabaseInstanceType(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandFirebaseDatabaseInstanceType(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 

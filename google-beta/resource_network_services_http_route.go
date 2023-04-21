@@ -22,6 +22,7 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
 func ResourceNetworkServicesHttpRoute() *schema.Resource {
@@ -596,7 +597,7 @@ The attached Mesh should be of a type SIDECAR.`,
 }
 
 func resourceNetworkServicesHttpRouteCreate(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -687,7 +688,7 @@ func resourceNetworkServicesHttpRouteCreate(d *schema.ResourceData, meta interfa
 }
 
 func resourceNetworkServicesHttpRouteRead(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -752,7 +753,7 @@ func resourceNetworkServicesHttpRouteRead(d *schema.ResourceData, meta interface
 }
 
 func resourceNetworkServicesHttpRouteUpdate(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -867,7 +868,7 @@ func resourceNetworkServicesHttpRouteUpdate(d *schema.ResourceData, meta interfa
 }
 
 func resourceNetworkServicesHttpRouteDelete(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -912,7 +913,7 @@ func resourceNetworkServicesHttpRouteDelete(d *schema.ResourceData, meta interfa
 }
 
 func resourceNetworkServicesHttpRouteImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	if err := ParseImportId([]string{
 		"projects/(?P<project>[^/]+)/locations/global/httpRoutes/(?P<name>[^/]+)",
 		"(?P<project>[^/]+)/(?P<name>[^/]+)",
@@ -931,39 +932,39 @@ func resourceNetworkServicesHttpRouteImport(d *schema.ResourceData, meta interfa
 	return []*schema.ResourceData{d}, nil
 }
 
-func flattenNetworkServicesHttpRouteSelfLink(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesHttpRouteSelfLink(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenNetworkServicesHttpRouteCreateTime(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesHttpRouteCreateTime(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenNetworkServicesHttpRouteUpdateTime(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesHttpRouteUpdateTime(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenNetworkServicesHttpRouteLabels(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesHttpRouteLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenNetworkServicesHttpRouteDescription(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesHttpRouteDescription(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenNetworkServicesHttpRouteHostnames(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesHttpRouteHostnames(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenNetworkServicesHttpRouteMeshes(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesHttpRouteMeshes(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenNetworkServicesHttpRouteGateways(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesHttpRouteGateways(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenNetworkServicesHttpRouteRules(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesHttpRouteRules(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return v
 	}
@@ -982,7 +983,7 @@ func flattenNetworkServicesHttpRouteRules(v interface{}, d *schema.ResourceData,
 	}
 	return transformed
 }
-func flattenNetworkServicesHttpRouteRulesMatches(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesHttpRouteRulesMatches(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return v
 	}
@@ -1005,23 +1006,23 @@ func flattenNetworkServicesHttpRouteRulesMatches(v interface{}, d *schema.Resour
 	}
 	return transformed
 }
-func flattenNetworkServicesHttpRouteRulesMatchesIgnoreCase(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesHttpRouteRulesMatchesIgnoreCase(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenNetworkServicesHttpRouteRulesMatchesFullPathMatch(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesHttpRouteRulesMatchesFullPathMatch(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenNetworkServicesHttpRouteRulesMatchesPrefixMatch(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesHttpRouteRulesMatchesPrefixMatch(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenNetworkServicesHttpRouteRulesMatchesRegexMatch(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesHttpRouteRulesMatchesRegexMatch(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenNetworkServicesHttpRouteRulesMatchesQueryParameters(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesHttpRouteRulesMatchesQueryParameters(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return v
 	}
@@ -1042,23 +1043,23 @@ func flattenNetworkServicesHttpRouteRulesMatchesQueryParameters(v interface{}, d
 	}
 	return transformed
 }
-func flattenNetworkServicesHttpRouteRulesMatchesQueryParametersQueryParameter(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesHttpRouteRulesMatchesQueryParametersQueryParameter(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenNetworkServicesHttpRouteRulesMatchesQueryParametersExactMatch(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesHttpRouteRulesMatchesQueryParametersExactMatch(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenNetworkServicesHttpRouteRulesMatchesQueryParametersRegexMatch(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesHttpRouteRulesMatchesQueryParametersRegexMatch(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenNetworkServicesHttpRouteRulesMatchesQueryParametersPresentMatch(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesHttpRouteRulesMatchesQueryParametersPresentMatch(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenNetworkServicesHttpRouteRulesMatchesHeaders(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesHttpRouteRulesMatchesHeaders(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return v
 	}
@@ -1083,35 +1084,35 @@ func flattenNetworkServicesHttpRouteRulesMatchesHeaders(v interface{}, d *schema
 	}
 	return transformed
 }
-func flattenNetworkServicesHttpRouteRulesMatchesHeadersHeader(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesHttpRouteRulesMatchesHeadersHeader(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenNetworkServicesHttpRouteRulesMatchesHeadersInvertMatch(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesHttpRouteRulesMatchesHeadersInvertMatch(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenNetworkServicesHttpRouteRulesMatchesHeadersExactMatch(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesHttpRouteRulesMatchesHeadersExactMatch(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenNetworkServicesHttpRouteRulesMatchesHeadersRegexMatch(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesHttpRouteRulesMatchesHeadersRegexMatch(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenNetworkServicesHttpRouteRulesMatchesHeadersPrefixMatch(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesHttpRouteRulesMatchesHeadersPrefixMatch(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenNetworkServicesHttpRouteRulesMatchesHeadersPresentMatch(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesHttpRouteRulesMatchesHeadersPresentMatch(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenNetworkServicesHttpRouteRulesMatchesHeadersSuffixMatch(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesHttpRouteRulesMatchesHeadersSuffixMatch(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenNetworkServicesHttpRouteRulesMatchesHeadersRangeMatch(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesHttpRouteRulesMatchesHeadersRangeMatch(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -1126,7 +1127,7 @@ func flattenNetworkServicesHttpRouteRulesMatchesHeadersRangeMatch(v interface{},
 		flattenNetworkServicesHttpRouteRulesMatchesHeadersRangeMatchEnd(original["end"], d, config)
 	return []interface{}{transformed}
 }
-func flattenNetworkServicesHttpRouteRulesMatchesHeadersRangeMatchStart(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesHttpRouteRulesMatchesHeadersRangeMatchStart(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := StringToFixed64(strVal); err == nil {
@@ -1143,7 +1144,7 @@ func flattenNetworkServicesHttpRouteRulesMatchesHeadersRangeMatchStart(v interfa
 	return v // let terraform core handle it otherwise
 }
 
-func flattenNetworkServicesHttpRouteRulesMatchesHeadersRangeMatchEnd(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesHttpRouteRulesMatchesHeadersRangeMatchEnd(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := StringToFixed64(strVal); err == nil {
@@ -1160,7 +1161,7 @@ func flattenNetworkServicesHttpRouteRulesMatchesHeadersRangeMatchEnd(v interface
 	return v // let terraform core handle it otherwise
 }
 
-func flattenNetworkServicesHttpRouteRulesAction(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesHttpRouteRulesAction(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -1191,7 +1192,7 @@ func flattenNetworkServicesHttpRouteRulesAction(v interface{}, d *schema.Resourc
 		flattenNetworkServicesHttpRouteRulesActionCorsPolicy(original["corsPolicy"], d, config)
 	return []interface{}{transformed}
 }
-func flattenNetworkServicesHttpRouteRulesActionDestinations(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesHttpRouteRulesActionDestinations(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return v
 	}
@@ -1210,11 +1211,11 @@ func flattenNetworkServicesHttpRouteRulesActionDestinations(v interface{}, d *sc
 	}
 	return transformed
 }
-func flattenNetworkServicesHttpRouteRulesActionDestinationsServiceName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesHttpRouteRulesActionDestinationsServiceName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenNetworkServicesHttpRouteRulesActionDestinationsWeight(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesHttpRouteRulesActionDestinationsWeight(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := StringToFixed64(strVal); err == nil {
@@ -1231,7 +1232,7 @@ func flattenNetworkServicesHttpRouteRulesActionDestinationsWeight(v interface{},
 	return v // let terraform core handle it otherwise
 }
 
-func flattenNetworkServicesHttpRouteRulesActionRedirect(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesHttpRouteRulesActionRedirect(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -1256,31 +1257,31 @@ func flattenNetworkServicesHttpRouteRulesActionRedirect(v interface{}, d *schema
 		flattenNetworkServicesHttpRouteRulesActionRedirectPortRedirect(original["portRedirect"], d, config)
 	return []interface{}{transformed}
 }
-func flattenNetworkServicesHttpRouteRulesActionRedirectHostRedirect(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesHttpRouteRulesActionRedirectHostRedirect(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenNetworkServicesHttpRouteRulesActionRedirectPathRedirect(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesHttpRouteRulesActionRedirectPathRedirect(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenNetworkServicesHttpRouteRulesActionRedirectPrefixRewrite(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesHttpRouteRulesActionRedirectPrefixRewrite(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenNetworkServicesHttpRouteRulesActionRedirectResponseCode(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesHttpRouteRulesActionRedirectResponseCode(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenNetworkServicesHttpRouteRulesActionRedirectHttpsRedirect(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesHttpRouteRulesActionRedirectHttpsRedirect(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenNetworkServicesHttpRouteRulesActionRedirectStripQuery(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesHttpRouteRulesActionRedirectStripQuery(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenNetworkServicesHttpRouteRulesActionRedirectPortRedirect(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesHttpRouteRulesActionRedirectPortRedirect(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := StringToFixed64(strVal); err == nil {
@@ -1297,7 +1298,7 @@ func flattenNetworkServicesHttpRouteRulesActionRedirectPortRedirect(v interface{
 	return v // let terraform core handle it otherwise
 }
 
-func flattenNetworkServicesHttpRouteRulesActionFaultInjectionPolicy(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesHttpRouteRulesActionFaultInjectionPolicy(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -1312,7 +1313,7 @@ func flattenNetworkServicesHttpRouteRulesActionFaultInjectionPolicy(v interface{
 		flattenNetworkServicesHttpRouteRulesActionFaultInjectionPolicyAbort(original["abort"], d, config)
 	return []interface{}{transformed}
 }
-func flattenNetworkServicesHttpRouteRulesActionFaultInjectionPolicyDelay(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesHttpRouteRulesActionFaultInjectionPolicyDelay(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -1327,11 +1328,11 @@ func flattenNetworkServicesHttpRouteRulesActionFaultInjectionPolicyDelay(v inter
 		flattenNetworkServicesHttpRouteRulesActionFaultInjectionPolicyDelayPercentage(original["percentage"], d, config)
 	return []interface{}{transformed}
 }
-func flattenNetworkServicesHttpRouteRulesActionFaultInjectionPolicyDelayFixedDelay(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesHttpRouteRulesActionFaultInjectionPolicyDelayFixedDelay(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenNetworkServicesHttpRouteRulesActionFaultInjectionPolicyDelayPercentage(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesHttpRouteRulesActionFaultInjectionPolicyDelayPercentage(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := StringToFixed64(strVal); err == nil {
@@ -1348,7 +1349,7 @@ func flattenNetworkServicesHttpRouteRulesActionFaultInjectionPolicyDelayPercenta
 	return v // let terraform core handle it otherwise
 }
 
-func flattenNetworkServicesHttpRouteRulesActionFaultInjectionPolicyAbort(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesHttpRouteRulesActionFaultInjectionPolicyAbort(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -1363,7 +1364,7 @@ func flattenNetworkServicesHttpRouteRulesActionFaultInjectionPolicyAbort(v inter
 		flattenNetworkServicesHttpRouteRulesActionFaultInjectionPolicyAbortPercentage(original["percentage"], d, config)
 	return []interface{}{transformed}
 }
-func flattenNetworkServicesHttpRouteRulesActionFaultInjectionPolicyAbortHttpStatus(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesHttpRouteRulesActionFaultInjectionPolicyAbortHttpStatus(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := StringToFixed64(strVal); err == nil {
@@ -1380,7 +1381,7 @@ func flattenNetworkServicesHttpRouteRulesActionFaultInjectionPolicyAbortHttpStat
 	return v // let terraform core handle it otherwise
 }
 
-func flattenNetworkServicesHttpRouteRulesActionFaultInjectionPolicyAbortPercentage(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesHttpRouteRulesActionFaultInjectionPolicyAbortPercentage(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := StringToFixed64(strVal); err == nil {
@@ -1397,7 +1398,7 @@ func flattenNetworkServicesHttpRouteRulesActionFaultInjectionPolicyAbortPercenta
 	return v // let terraform core handle it otherwise
 }
 
-func flattenNetworkServicesHttpRouteRulesActionRequestHeaderModifier(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesHttpRouteRulesActionRequestHeaderModifier(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -1414,19 +1415,19 @@ func flattenNetworkServicesHttpRouteRulesActionRequestHeaderModifier(v interface
 		flattenNetworkServicesHttpRouteRulesActionRequestHeaderModifierRemove(original["remove"], d, config)
 	return []interface{}{transformed}
 }
-func flattenNetworkServicesHttpRouteRulesActionRequestHeaderModifierSet(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesHttpRouteRulesActionRequestHeaderModifierSet(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenNetworkServicesHttpRouteRulesActionRequestHeaderModifierAdd(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesHttpRouteRulesActionRequestHeaderModifierAdd(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenNetworkServicesHttpRouteRulesActionRequestHeaderModifierRemove(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesHttpRouteRulesActionRequestHeaderModifierRemove(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenNetworkServicesHttpRouteRulesActionResponseHeaderModifier(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesHttpRouteRulesActionResponseHeaderModifier(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -1443,19 +1444,19 @@ func flattenNetworkServicesHttpRouteRulesActionResponseHeaderModifier(v interfac
 		flattenNetworkServicesHttpRouteRulesActionResponseHeaderModifierRemove(original["remove"], d, config)
 	return []interface{}{transformed}
 }
-func flattenNetworkServicesHttpRouteRulesActionResponseHeaderModifierSet(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesHttpRouteRulesActionResponseHeaderModifierSet(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenNetworkServicesHttpRouteRulesActionResponseHeaderModifierAdd(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesHttpRouteRulesActionResponseHeaderModifierAdd(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenNetworkServicesHttpRouteRulesActionResponseHeaderModifierRemove(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesHttpRouteRulesActionResponseHeaderModifierRemove(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenNetworkServicesHttpRouteRulesActionUrlRewrite(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesHttpRouteRulesActionUrlRewrite(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -1470,19 +1471,19 @@ func flattenNetworkServicesHttpRouteRulesActionUrlRewrite(v interface{}, d *sche
 		flattenNetworkServicesHttpRouteRulesActionUrlRewriteHostRewrite(original["hostRewrite"], d, config)
 	return []interface{}{transformed}
 }
-func flattenNetworkServicesHttpRouteRulesActionUrlRewritePathPrefixRewrite(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesHttpRouteRulesActionUrlRewritePathPrefixRewrite(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenNetworkServicesHttpRouteRulesActionUrlRewriteHostRewrite(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesHttpRouteRulesActionUrlRewriteHostRewrite(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenNetworkServicesHttpRouteRulesActionTimeout(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesHttpRouteRulesActionTimeout(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenNetworkServicesHttpRouteRulesActionRetryPolicy(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesHttpRouteRulesActionRetryPolicy(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -1499,11 +1500,11 @@ func flattenNetworkServicesHttpRouteRulesActionRetryPolicy(v interface{}, d *sch
 		flattenNetworkServicesHttpRouteRulesActionRetryPolicyPerTryTimeout(original["perTryTimeout"], d, config)
 	return []interface{}{transformed}
 }
-func flattenNetworkServicesHttpRouteRulesActionRetryPolicyRetryConditions(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesHttpRouteRulesActionRetryPolicyRetryConditions(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenNetworkServicesHttpRouteRulesActionRetryPolicyNumRetries(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesHttpRouteRulesActionRetryPolicyNumRetries(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := StringToFixed64(strVal); err == nil {
@@ -1520,11 +1521,11 @@ func flattenNetworkServicesHttpRouteRulesActionRetryPolicyNumRetries(v interface
 	return v // let terraform core handle it otherwise
 }
 
-func flattenNetworkServicesHttpRouteRulesActionRetryPolicyPerTryTimeout(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesHttpRouteRulesActionRetryPolicyPerTryTimeout(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenNetworkServicesHttpRouteRulesActionRequestMirrorPolicy(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesHttpRouteRulesActionRequestMirrorPolicy(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -1537,7 +1538,7 @@ func flattenNetworkServicesHttpRouteRulesActionRequestMirrorPolicy(v interface{}
 		flattenNetworkServicesHttpRouteRulesActionRequestMirrorPolicyDestination(original["destination"], d, config)
 	return []interface{}{transformed}
 }
-func flattenNetworkServicesHttpRouteRulesActionRequestMirrorPolicyDestination(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesHttpRouteRulesActionRequestMirrorPolicyDestination(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -1552,11 +1553,11 @@ func flattenNetworkServicesHttpRouteRulesActionRequestMirrorPolicyDestination(v 
 		flattenNetworkServicesHttpRouteRulesActionRequestMirrorPolicyDestinationWeight(original["weight"], d, config)
 	return []interface{}{transformed}
 }
-func flattenNetworkServicesHttpRouteRulesActionRequestMirrorPolicyDestinationServiceName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesHttpRouteRulesActionRequestMirrorPolicyDestinationServiceName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenNetworkServicesHttpRouteRulesActionRequestMirrorPolicyDestinationWeight(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesHttpRouteRulesActionRequestMirrorPolicyDestinationWeight(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := StringToFixed64(strVal); err == nil {
@@ -1573,7 +1574,7 @@ func flattenNetworkServicesHttpRouteRulesActionRequestMirrorPolicyDestinationWei
 	return v // let terraform core handle it otherwise
 }
 
-func flattenNetworkServicesHttpRouteRulesActionCorsPolicy(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesHttpRouteRulesActionCorsPolicy(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -1600,39 +1601,39 @@ func flattenNetworkServicesHttpRouteRulesActionCorsPolicy(v interface{}, d *sche
 		flattenNetworkServicesHttpRouteRulesActionCorsPolicyDisabled(original["disabled"], d, config)
 	return []interface{}{transformed}
 }
-func flattenNetworkServicesHttpRouteRulesActionCorsPolicyAllowOrigins(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesHttpRouteRulesActionCorsPolicyAllowOrigins(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenNetworkServicesHttpRouteRulesActionCorsPolicyAllowOriginRegexes(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesHttpRouteRulesActionCorsPolicyAllowOriginRegexes(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenNetworkServicesHttpRouteRulesActionCorsPolicyAllowMethods(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesHttpRouteRulesActionCorsPolicyAllowMethods(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenNetworkServicesHttpRouteRulesActionCorsPolicyAllowHeaders(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesHttpRouteRulesActionCorsPolicyAllowHeaders(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenNetworkServicesHttpRouteRulesActionCorsPolicyExposeHeaders(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesHttpRouteRulesActionCorsPolicyExposeHeaders(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenNetworkServicesHttpRouteRulesActionCorsPolicyMaxAge(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesHttpRouteRulesActionCorsPolicyMaxAge(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenNetworkServicesHttpRouteRulesActionCorsPolicyAllowCredentials(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesHttpRouteRulesActionCorsPolicyAllowCredentials(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenNetworkServicesHttpRouteRulesActionCorsPolicyDisabled(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNetworkServicesHttpRouteRulesActionCorsPolicyDisabled(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func expandNetworkServicesHttpRouteLabels(v interface{}, d TerraformResourceData, config *Config) (map[string]string, error) {
+func expandNetworkServicesHttpRouteLabels(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
 	if v == nil {
 		return map[string]string{}, nil
 	}
@@ -1643,23 +1644,23 @@ func expandNetworkServicesHttpRouteLabels(v interface{}, d TerraformResourceData
 	return m, nil
 }
 
-func expandNetworkServicesHttpRouteDescription(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteDescription(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteHostnames(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteHostnames(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteMeshes(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteMeshes(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteGateways(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteGateways(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRules(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRules(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
 	for _, raw := range l {
@@ -1688,7 +1689,7 @@ func expandNetworkServicesHttpRouteRules(v interface{}, d TerraformResourceData,
 	return req, nil
 }
 
-func expandNetworkServicesHttpRouteRulesMatches(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesMatches(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
 	for _, raw := range l {
@@ -1745,23 +1746,23 @@ func expandNetworkServicesHttpRouteRulesMatches(v interface{}, d TerraformResour
 	return req, nil
 }
 
-func expandNetworkServicesHttpRouteRulesMatchesIgnoreCase(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesMatchesIgnoreCase(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesMatchesFullPathMatch(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesMatchesFullPathMatch(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesMatchesPrefixMatch(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesMatchesPrefixMatch(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesMatchesRegexMatch(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesMatchesRegexMatch(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesMatchesQueryParameters(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesMatchesQueryParameters(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
 	for _, raw := range l {
@@ -1804,23 +1805,23 @@ func expandNetworkServicesHttpRouteRulesMatchesQueryParameters(v interface{}, d 
 	return req, nil
 }
 
-func expandNetworkServicesHttpRouteRulesMatchesQueryParametersQueryParameter(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesMatchesQueryParametersQueryParameter(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesMatchesQueryParametersExactMatch(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesMatchesQueryParametersExactMatch(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesMatchesQueryParametersRegexMatch(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesMatchesQueryParametersRegexMatch(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesMatchesQueryParametersPresentMatch(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesMatchesQueryParametersPresentMatch(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesMatchesHeaders(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesMatchesHeaders(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
 	for _, raw := range l {
@@ -1891,35 +1892,35 @@ func expandNetworkServicesHttpRouteRulesMatchesHeaders(v interface{}, d Terrafor
 	return req, nil
 }
 
-func expandNetworkServicesHttpRouteRulesMatchesHeadersHeader(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesMatchesHeadersHeader(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesMatchesHeadersInvertMatch(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesMatchesHeadersInvertMatch(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesMatchesHeadersExactMatch(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesMatchesHeadersExactMatch(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesMatchesHeadersRegexMatch(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesMatchesHeadersRegexMatch(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesMatchesHeadersPrefixMatch(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesMatchesHeadersPrefixMatch(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesMatchesHeadersPresentMatch(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesMatchesHeadersPresentMatch(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesMatchesHeadersSuffixMatch(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesMatchesHeadersSuffixMatch(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesMatchesHeadersRangeMatch(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesMatchesHeadersRangeMatch(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -1945,15 +1946,15 @@ func expandNetworkServicesHttpRouteRulesMatchesHeadersRangeMatch(v interface{}, 
 	return transformed, nil
 }
 
-func expandNetworkServicesHttpRouteRulesMatchesHeadersRangeMatchStart(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesMatchesHeadersRangeMatchStart(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesMatchesHeadersRangeMatchEnd(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesMatchesHeadersRangeMatchEnd(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesAction(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesAction(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -2035,7 +2036,7 @@ func expandNetworkServicesHttpRouteRulesAction(v interface{}, d TerraformResourc
 	return transformed, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionDestinations(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesActionDestinations(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
 	for _, raw := range l {
@@ -2064,15 +2065,15 @@ func expandNetworkServicesHttpRouteRulesActionDestinations(v interface{}, d Terr
 	return req, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionDestinationsServiceName(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesActionDestinationsServiceName(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionDestinationsWeight(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesActionDestinationsWeight(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionRedirect(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesActionRedirect(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -2133,35 +2134,35 @@ func expandNetworkServicesHttpRouteRulesActionRedirect(v interface{}, d Terrafor
 	return transformed, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionRedirectHostRedirect(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesActionRedirectHostRedirect(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionRedirectPathRedirect(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesActionRedirectPathRedirect(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionRedirectPrefixRewrite(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesActionRedirectPrefixRewrite(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionRedirectResponseCode(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesActionRedirectResponseCode(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionRedirectHttpsRedirect(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesActionRedirectHttpsRedirect(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionRedirectStripQuery(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesActionRedirectStripQuery(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionRedirectPortRedirect(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesActionRedirectPortRedirect(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionFaultInjectionPolicy(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesActionFaultInjectionPolicy(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -2187,7 +2188,7 @@ func expandNetworkServicesHttpRouteRulesActionFaultInjectionPolicy(v interface{}
 	return transformed, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionFaultInjectionPolicyDelay(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesActionFaultInjectionPolicyDelay(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -2213,15 +2214,15 @@ func expandNetworkServicesHttpRouteRulesActionFaultInjectionPolicyDelay(v interf
 	return transformed, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionFaultInjectionPolicyDelayFixedDelay(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesActionFaultInjectionPolicyDelayFixedDelay(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionFaultInjectionPolicyDelayPercentage(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesActionFaultInjectionPolicyDelayPercentage(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionFaultInjectionPolicyAbort(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesActionFaultInjectionPolicyAbort(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -2247,15 +2248,15 @@ func expandNetworkServicesHttpRouteRulesActionFaultInjectionPolicyAbort(v interf
 	return transformed, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionFaultInjectionPolicyAbortHttpStatus(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesActionFaultInjectionPolicyAbortHttpStatus(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionFaultInjectionPolicyAbortPercentage(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesActionFaultInjectionPolicyAbortPercentage(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionRequestHeaderModifier(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesActionRequestHeaderModifier(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -2288,7 +2289,7 @@ func expandNetworkServicesHttpRouteRulesActionRequestHeaderModifier(v interface{
 	return transformed, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionRequestHeaderModifierSet(v interface{}, d TerraformResourceData, config *Config) (map[string]string, error) {
+func expandNetworkServicesHttpRouteRulesActionRequestHeaderModifierSet(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
 	if v == nil {
 		return map[string]string{}, nil
 	}
@@ -2299,7 +2300,7 @@ func expandNetworkServicesHttpRouteRulesActionRequestHeaderModifierSet(v interfa
 	return m, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionRequestHeaderModifierAdd(v interface{}, d TerraformResourceData, config *Config) (map[string]string, error) {
+func expandNetworkServicesHttpRouteRulesActionRequestHeaderModifierAdd(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
 	if v == nil {
 		return map[string]string{}, nil
 	}
@@ -2310,11 +2311,11 @@ func expandNetworkServicesHttpRouteRulesActionRequestHeaderModifierAdd(v interfa
 	return m, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionRequestHeaderModifierRemove(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesActionRequestHeaderModifierRemove(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionResponseHeaderModifier(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesActionResponseHeaderModifier(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -2347,7 +2348,7 @@ func expandNetworkServicesHttpRouteRulesActionResponseHeaderModifier(v interface
 	return transformed, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionResponseHeaderModifierSet(v interface{}, d TerraformResourceData, config *Config) (map[string]string, error) {
+func expandNetworkServicesHttpRouteRulesActionResponseHeaderModifierSet(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
 	if v == nil {
 		return map[string]string{}, nil
 	}
@@ -2358,7 +2359,7 @@ func expandNetworkServicesHttpRouteRulesActionResponseHeaderModifierSet(v interf
 	return m, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionResponseHeaderModifierAdd(v interface{}, d TerraformResourceData, config *Config) (map[string]string, error) {
+func expandNetworkServicesHttpRouteRulesActionResponseHeaderModifierAdd(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
 	if v == nil {
 		return map[string]string{}, nil
 	}
@@ -2369,11 +2370,11 @@ func expandNetworkServicesHttpRouteRulesActionResponseHeaderModifierAdd(v interf
 	return m, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionResponseHeaderModifierRemove(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesActionResponseHeaderModifierRemove(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionUrlRewrite(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesActionUrlRewrite(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -2399,19 +2400,19 @@ func expandNetworkServicesHttpRouteRulesActionUrlRewrite(v interface{}, d Terraf
 	return transformed, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionUrlRewritePathPrefixRewrite(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesActionUrlRewritePathPrefixRewrite(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionUrlRewriteHostRewrite(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesActionUrlRewriteHostRewrite(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionTimeout(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesActionTimeout(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionRetryPolicy(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesActionRetryPolicy(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -2444,19 +2445,19 @@ func expandNetworkServicesHttpRouteRulesActionRetryPolicy(v interface{}, d Terra
 	return transformed, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionRetryPolicyRetryConditions(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesActionRetryPolicyRetryConditions(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionRetryPolicyNumRetries(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesActionRetryPolicyNumRetries(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionRetryPolicyPerTryTimeout(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesActionRetryPolicyPerTryTimeout(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionRequestMirrorPolicy(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesActionRequestMirrorPolicy(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -2475,7 +2476,7 @@ func expandNetworkServicesHttpRouteRulesActionRequestMirrorPolicy(v interface{},
 	return transformed, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionRequestMirrorPolicyDestination(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesActionRequestMirrorPolicyDestination(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -2501,15 +2502,15 @@ func expandNetworkServicesHttpRouteRulesActionRequestMirrorPolicyDestination(v i
 	return transformed, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionRequestMirrorPolicyDestinationServiceName(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesActionRequestMirrorPolicyDestinationServiceName(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionRequestMirrorPolicyDestinationWeight(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesActionRequestMirrorPolicyDestinationWeight(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionCorsPolicy(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesActionCorsPolicy(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -2577,34 +2578,34 @@ func expandNetworkServicesHttpRouteRulesActionCorsPolicy(v interface{}, d Terraf
 	return transformed, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionCorsPolicyAllowOrigins(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesActionCorsPolicyAllowOrigins(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionCorsPolicyAllowOriginRegexes(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesActionCorsPolicyAllowOriginRegexes(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionCorsPolicyAllowMethods(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesActionCorsPolicyAllowMethods(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionCorsPolicyAllowHeaders(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesActionCorsPolicyAllowHeaders(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionCorsPolicyExposeHeaders(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesActionCorsPolicyExposeHeaders(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionCorsPolicyMaxAge(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesActionCorsPolicyMaxAge(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionCorsPolicyAllowCredentials(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesActionCorsPolicyAllowCredentials(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionCorsPolicyDisabled(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesActionCorsPolicyDisabled(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }

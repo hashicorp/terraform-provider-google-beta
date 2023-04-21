@@ -21,6 +21,7 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
 func ResourceComputeRegionPerInstanceConfig() *schema.Resource {
@@ -235,7 +236,7 @@ deleted from the instance group. Default value: "NEVER" Possible values: ["NEVER
 }
 
 func resourceComputeRegionPerInstanceConfigCreate(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -314,7 +315,7 @@ func resourceComputeRegionPerInstanceConfigCreate(d *schema.ResourceData, meta i
 }
 
 func resourceComputeRegionPerInstanceConfigRead(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -394,7 +395,7 @@ func resourceComputeRegionPerInstanceConfigRead(d *schema.ResourceData, meta int
 }
 
 func resourceComputeRegionPerInstanceConfigUpdate(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -506,7 +507,7 @@ func resourceComputeRegionPerInstanceConfigUpdate(d *schema.ResourceData, meta i
 }
 
 func resourceComputeRegionPerInstanceConfigDelete(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -592,7 +593,7 @@ func resourceComputeRegionPerInstanceConfigDelete(d *schema.ResourceData, meta i
 }
 
 func resourceComputeRegionPerInstanceConfigImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	if err := ParseImportId([]string{
 		"projects/(?P<project>[^/]+)/regions/(?P<region>[^/]+)/instanceGroupManagers/(?P<region_instance_group_manager>[^/]+)/(?P<name>[^/]+)",
 		"(?P<project>[^/]+)/(?P<region>[^/]+)/(?P<region_instance_group_manager>[^/]+)/(?P<name>[^/]+)",
@@ -623,11 +624,11 @@ func resourceComputeRegionPerInstanceConfigImport(d *schema.ResourceData, meta i
 	return []*schema.ResourceData{d}, nil
 }
 
-func flattenNestedComputeRegionPerInstanceConfigName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNestedComputeRegionPerInstanceConfigName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenNestedComputeRegionPerInstanceConfigPreservedState(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNestedComputeRegionPerInstanceConfigPreservedState(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -646,11 +647,11 @@ func flattenNestedComputeRegionPerInstanceConfigPreservedState(v interface{}, d 
 		flattenNestedComputeRegionPerInstanceConfigPreservedStateExternalIp(original["externalIPs"], d, config)
 	return []interface{}{transformed}
 }
-func flattenNestedComputeRegionPerInstanceConfigPreservedStateMetadata(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNestedComputeRegionPerInstanceConfigPreservedStateMetadata(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenNestedComputeRegionPerInstanceConfigPreservedStateDisk(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNestedComputeRegionPerInstanceConfigPreservedStateDisk(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return v
 	}
@@ -672,7 +673,7 @@ func flattenNestedComputeRegionPerInstanceConfigPreservedStateDisk(v interface{}
 	return transformed
 }
 
-func flattenNestedComputeRegionPerInstanceConfigPreservedStateInternalIp(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNestedComputeRegionPerInstanceConfigPreservedStateInternalIp(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return v
 	}
@@ -688,11 +689,11 @@ func flattenNestedComputeRegionPerInstanceConfigPreservedStateInternalIp(v inter
 	}
 	return transformed
 }
-func flattenNestedComputeRegionPerInstanceConfigPreservedStateInternalIpAutoDelete(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNestedComputeRegionPerInstanceConfigPreservedStateInternalIpAutoDelete(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenNestedComputeRegionPerInstanceConfigPreservedStateInternalIpIpAddress(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNestedComputeRegionPerInstanceConfigPreservedStateInternalIpIpAddress(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -705,14 +706,14 @@ func flattenNestedComputeRegionPerInstanceConfigPreservedStateInternalIpIpAddres
 		flattenNestedComputeRegionPerInstanceConfigPreservedStateInternalIpIpAddressAddress(original["address"], d, config)
 	return []interface{}{transformed}
 }
-func flattenNestedComputeRegionPerInstanceConfigPreservedStateInternalIpIpAddressAddress(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNestedComputeRegionPerInstanceConfigPreservedStateInternalIpIpAddressAddress(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return v
 	}
 	return ConvertSelfLinkToV1(v.(string))
 }
 
-func flattenNestedComputeRegionPerInstanceConfigPreservedStateExternalIp(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNestedComputeRegionPerInstanceConfigPreservedStateExternalIp(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return v
 	}
@@ -728,11 +729,11 @@ func flattenNestedComputeRegionPerInstanceConfigPreservedStateExternalIp(v inter
 	}
 	return transformed
 }
-func flattenNestedComputeRegionPerInstanceConfigPreservedStateExternalIpAutoDelete(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNestedComputeRegionPerInstanceConfigPreservedStateExternalIpAutoDelete(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenNestedComputeRegionPerInstanceConfigPreservedStateExternalIpIpAddress(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNestedComputeRegionPerInstanceConfigPreservedStateExternalIpIpAddress(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -745,18 +746,18 @@ func flattenNestedComputeRegionPerInstanceConfigPreservedStateExternalIpIpAddres
 		flattenNestedComputeRegionPerInstanceConfigPreservedStateExternalIpIpAddressAddress(original["address"], d, config)
 	return []interface{}{transformed}
 }
-func flattenNestedComputeRegionPerInstanceConfigPreservedStateExternalIpIpAddressAddress(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenNestedComputeRegionPerInstanceConfigPreservedStateExternalIpIpAddressAddress(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return v
 	}
 	return ConvertSelfLinkToV1(v.(string))
 }
 
-func expandNestedComputeRegionPerInstanceConfigName(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNestedComputeRegionPerInstanceConfigName(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNestedComputeRegionPerInstanceConfigPreservedState(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNestedComputeRegionPerInstanceConfigPreservedState(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -796,7 +797,7 @@ func expandNestedComputeRegionPerInstanceConfigPreservedState(v interface{}, d T
 	return transformed, nil
 }
 
-func expandNestedComputeRegionPerInstanceConfigPreservedStateMetadata(v interface{}, d TerraformResourceData, config *Config) (map[string]string, error) {
+func expandNestedComputeRegionPerInstanceConfigPreservedStateMetadata(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
 	if v == nil {
 		return map[string]string{}, nil
 	}
@@ -807,7 +808,7 @@ func expandNestedComputeRegionPerInstanceConfigPreservedStateMetadata(v interfac
 	return m, nil
 }
 
-func expandNestedComputeRegionPerInstanceConfigPreservedStateDisk(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNestedComputeRegionPerInstanceConfigPreservedStateDisk(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	if v == nil {
 		return map[string]interface{}{}, nil
 	}
@@ -837,7 +838,7 @@ func expandNestedComputeRegionPerInstanceConfigPreservedStateDisk(v interface{},
 	return req, nil
 }
 
-func expandNestedComputeRegionPerInstanceConfigPreservedStateInternalIp(v interface{}, d TerraformResourceData, config *Config) (map[string]interface{}, error) {
+func expandNestedComputeRegionPerInstanceConfigPreservedStateInternalIp(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (map[string]interface{}, error) {
 	if v == nil {
 		return map[string]interface{}{}, nil
 	}
@@ -869,11 +870,11 @@ func expandNestedComputeRegionPerInstanceConfigPreservedStateInternalIp(v interf
 	return m, nil
 }
 
-func expandNestedComputeRegionPerInstanceConfigPreservedStateInternalIpAutoDelete(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNestedComputeRegionPerInstanceConfigPreservedStateInternalIpAutoDelete(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNestedComputeRegionPerInstanceConfigPreservedStateInternalIpIpAddress(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNestedComputeRegionPerInstanceConfigPreservedStateInternalIpIpAddress(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -892,7 +893,7 @@ func expandNestedComputeRegionPerInstanceConfigPreservedStateInternalIpIpAddress
 	return transformed, nil
 }
 
-func expandNestedComputeRegionPerInstanceConfigPreservedStateInternalIpIpAddressAddress(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNestedComputeRegionPerInstanceConfigPreservedStateInternalIpIpAddressAddress(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	f, err := parseRegionalFieldValue("addresses", v.(string), "project", "region", "zone", d, config, true)
 	if err != nil {
 		return nil, fmt.Errorf("Invalid value for address: %s", err)
@@ -900,7 +901,7 @@ func expandNestedComputeRegionPerInstanceConfigPreservedStateInternalIpIpAddress
 	return f.RelativeLink(), nil
 }
 
-func expandNestedComputeRegionPerInstanceConfigPreservedStateExternalIp(v interface{}, d TerraformResourceData, config *Config) (map[string]interface{}, error) {
+func expandNestedComputeRegionPerInstanceConfigPreservedStateExternalIp(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (map[string]interface{}, error) {
 	if v == nil {
 		return map[string]interface{}{}, nil
 	}
@@ -932,11 +933,11 @@ func expandNestedComputeRegionPerInstanceConfigPreservedStateExternalIp(v interf
 	return m, nil
 }
 
-func expandNestedComputeRegionPerInstanceConfigPreservedStateExternalIpAutoDelete(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNestedComputeRegionPerInstanceConfigPreservedStateExternalIpAutoDelete(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNestedComputeRegionPerInstanceConfigPreservedStateExternalIpIpAddress(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNestedComputeRegionPerInstanceConfigPreservedStateExternalIpIpAddress(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -955,7 +956,7 @@ func expandNestedComputeRegionPerInstanceConfigPreservedStateExternalIpIpAddress
 	return transformed, nil
 }
 
-func expandNestedComputeRegionPerInstanceConfigPreservedStateExternalIpIpAddressAddress(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandNestedComputeRegionPerInstanceConfigPreservedStateExternalIpIpAddressAddress(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	f, err := parseRegionalFieldValue("addresses", v.(string), "project", "region", "zone", d, config, true)
 	if err != nil {
 		return nil, fmt.Errorf("Invalid value for address: %s", err)
@@ -1005,11 +1006,11 @@ func flattenNestedComputeRegionPerInstanceConfig(d *schema.ResourceData, meta in
 }
 
 func resourceComputeRegionPerInstanceConfigFindNestedObjectInList(d *schema.ResourceData, meta interface{}, items []interface{}) (index int, item map[string]interface{}, err error) {
-	expectedName, err := expandNestedComputeRegionPerInstanceConfigName(d.Get("name"), d, meta.(*Config))
+	expectedName, err := expandNestedComputeRegionPerInstanceConfigName(d.Get("name"), d, meta.(*transport_tpg.Config))
 	if err != nil {
 		return -1, nil, err
 	}
-	expectedFlattenedName := flattenNestedComputeRegionPerInstanceConfigName(expectedName, d, meta.(*Config))
+	expectedFlattenedName := flattenNestedComputeRegionPerInstanceConfigName(expectedName, d, meta.(*transport_tpg.Config))
 
 	// Search list for this resource.
 	for idx, itemRaw := range items {
@@ -1018,7 +1019,7 @@ func resourceComputeRegionPerInstanceConfigFindNestedObjectInList(d *schema.Reso
 		}
 		item := itemRaw.(map[string]interface{})
 
-		itemName := flattenNestedComputeRegionPerInstanceConfigName(item["name"], d, meta.(*Config))
+		itemName := flattenNestedComputeRegionPerInstanceConfigName(item["name"], d, meta.(*transport_tpg.Config))
 		// isEmptyValue check so that if one is nil and the other is "", that's considered a match
 		if !(isEmptyValue(reflect.ValueOf(itemName)) && isEmptyValue(reflect.ValueOf(expectedFlattenedName))) && !reflect.DeepEqual(itemName, expectedFlattenedName) {
 			log.Printf("[DEBUG] Skipping item with name= %#v, looking for %#v)", itemName, expectedFlattenedName)

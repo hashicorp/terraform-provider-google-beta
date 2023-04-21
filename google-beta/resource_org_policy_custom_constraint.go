@@ -21,6 +21,7 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
 func ResourceOrgPolicyCustomConstraint() *schema.Resource {
@@ -104,7 +105,7 @@ func ResourceOrgPolicyCustomConstraint() *schema.Resource {
 }
 
 func resourceOrgPolicyCustomConstraintCreate(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -185,7 +186,7 @@ func resourceOrgPolicyCustomConstraintCreate(d *schema.ResourceData, meta interf
 }
 
 func resourceOrgPolicyCustomConstraintRead(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -237,7 +238,7 @@ func resourceOrgPolicyCustomConstraintRead(d *schema.ResourceData, meta interfac
 }
 
 func resourceOrgPolicyCustomConstraintUpdate(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -306,7 +307,7 @@ func resourceOrgPolicyCustomConstraintUpdate(d *schema.ResourceData, meta interf
 }
 
 func resourceOrgPolicyCustomConstraintDelete(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -337,7 +338,7 @@ func resourceOrgPolicyCustomConstraintDelete(d *schema.ResourceData, meta interf
 }
 
 func resourceOrgPolicyCustomConstraintImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	if err := ParseImportId([]string{
 		"(?P<parent>.+)/customConstraints/(?P<name>[^/]+)",
 	}, d, config); err != nil {
@@ -354,66 +355,66 @@ func resourceOrgPolicyCustomConstraintImport(d *schema.ResourceData, meta interf
 	return []*schema.ResourceData{d}, nil
 }
 
-func flattenOrgPolicyCustomConstraintName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOrgPolicyCustomConstraintName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return v
 	}
 	return NameFromSelfLinkStateFunc(v)
 }
 
-func flattenOrgPolicyCustomConstraintDisplayName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOrgPolicyCustomConstraintDisplayName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenOrgPolicyCustomConstraintDescription(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOrgPolicyCustomConstraintDescription(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenOrgPolicyCustomConstraintCondition(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOrgPolicyCustomConstraintCondition(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenOrgPolicyCustomConstraintActionType(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOrgPolicyCustomConstraintActionType(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenOrgPolicyCustomConstraintMethodTypes(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOrgPolicyCustomConstraintMethodTypes(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenOrgPolicyCustomConstraintResourceTypes(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOrgPolicyCustomConstraintResourceTypes(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenOrgPolicyCustomConstraintUpdateTime(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenOrgPolicyCustomConstraintUpdateTime(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func expandOrgPolicyCustomConstraintName(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOrgPolicyCustomConstraintName(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return ReplaceVars(d, config, "{{parent}}/customConstraints/{{name}}")
 }
 
-func expandOrgPolicyCustomConstraintDisplayName(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOrgPolicyCustomConstraintDisplayName(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOrgPolicyCustomConstraintDescription(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOrgPolicyCustomConstraintDescription(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOrgPolicyCustomConstraintCondition(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOrgPolicyCustomConstraintCondition(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOrgPolicyCustomConstraintActionType(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOrgPolicyCustomConstraintActionType(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOrgPolicyCustomConstraintMethodTypes(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOrgPolicyCustomConstraintMethodTypes(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOrgPolicyCustomConstraintResourceTypes(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandOrgPolicyCustomConstraintResourceTypes(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 

@@ -22,6 +22,7 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
 func ResourceFirebaseHostingVersion() *schema.Resource {
@@ -177,7 +178,7 @@ sites/SITE_ID/versions/VERSION_ID`,
 }
 
 func resourceFirebaseHostingVersionCreate(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -257,7 +258,7 @@ func resourceFirebaseHostingVersionCreate(d *schema.ResourceData, meta interface
 }
 
 func resourceFirebaseHostingVersionRead(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -312,7 +313,7 @@ func resourceFirebaseHostingVersionDelete(d *schema.ResourceData, meta interface
 }
 
 func resourceFirebaseHostingVersionImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	if err := ParseImportId([]string{
 		"sites/(?P<site_id>[^/]+)/versions/(?P<version_id>[^/]+)",
 		"(?P<site_id>[^/]+)/(?P<version_id>[^/]+)",
@@ -330,11 +331,11 @@ func resourceFirebaseHostingVersionImport(d *schema.ResourceData, meta interface
 	return []*schema.ResourceData{d}, nil
 }
 
-func flattenFirebaseHostingVersionName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenFirebaseHostingVersionName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenFirebaseHostingVersionConfig(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenFirebaseHostingVersionConfig(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -349,7 +350,7 @@ func flattenFirebaseHostingVersionConfig(v interface{}, d *schema.ResourceData, 
 		flattenFirebaseHostingVersionConfigRedirects(original["redirects"], d, config)
 	return []interface{}{transformed}
 }
-func flattenFirebaseHostingVersionConfigRewrites(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenFirebaseHostingVersionConfigRewrites(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return v
 	}
@@ -370,19 +371,19 @@ func flattenFirebaseHostingVersionConfigRewrites(v interface{}, d *schema.Resour
 	}
 	return transformed
 }
-func flattenFirebaseHostingVersionConfigRewritesGlob(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenFirebaseHostingVersionConfigRewritesGlob(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenFirebaseHostingVersionConfigRewritesRegex(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenFirebaseHostingVersionConfigRewritesRegex(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenFirebaseHostingVersionConfigRewritesFunction(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenFirebaseHostingVersionConfigRewritesFunction(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenFirebaseHostingVersionConfigRewritesRun(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenFirebaseHostingVersionConfigRewritesRun(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -397,15 +398,15 @@ func flattenFirebaseHostingVersionConfigRewritesRun(v interface{}, d *schema.Res
 		flattenFirebaseHostingVersionConfigRewritesRunRegion(original["region"], d, config)
 	return []interface{}{transformed}
 }
-func flattenFirebaseHostingVersionConfigRewritesRunServiceId(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenFirebaseHostingVersionConfigRewritesRunServiceId(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenFirebaseHostingVersionConfigRewritesRunRegion(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenFirebaseHostingVersionConfigRewritesRunRegion(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenFirebaseHostingVersionConfigRedirects(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenFirebaseHostingVersionConfigRedirects(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return v
 	}
@@ -426,15 +427,15 @@ func flattenFirebaseHostingVersionConfigRedirects(v interface{}, d *schema.Resou
 	}
 	return transformed
 }
-func flattenFirebaseHostingVersionConfigRedirectsGlob(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenFirebaseHostingVersionConfigRedirectsGlob(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenFirebaseHostingVersionConfigRedirectsRegex(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenFirebaseHostingVersionConfigRedirectsRegex(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenFirebaseHostingVersionConfigRedirectsStatusCode(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenFirebaseHostingVersionConfigRedirectsStatusCode(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := StringToFixed64(strVal); err == nil {
@@ -451,11 +452,11 @@ func flattenFirebaseHostingVersionConfigRedirectsStatusCode(v interface{}, d *sc
 	return v // let terraform core handle it otherwise
 }
 
-func flattenFirebaseHostingVersionConfigRedirectsLocation(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenFirebaseHostingVersionConfigRedirectsLocation(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func expandFirebaseHostingVersionConfig(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandFirebaseHostingVersionConfig(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -481,7 +482,7 @@ func expandFirebaseHostingVersionConfig(v interface{}, d TerraformResourceData, 
 	return transformed, nil
 }
 
-func expandFirebaseHostingVersionConfigRewrites(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandFirebaseHostingVersionConfigRewrites(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
 	for _, raw := range l {
@@ -524,19 +525,19 @@ func expandFirebaseHostingVersionConfigRewrites(v interface{}, d TerraformResour
 	return req, nil
 }
 
-func expandFirebaseHostingVersionConfigRewritesGlob(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandFirebaseHostingVersionConfigRewritesGlob(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandFirebaseHostingVersionConfigRewritesRegex(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandFirebaseHostingVersionConfigRewritesRegex(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandFirebaseHostingVersionConfigRewritesFunction(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandFirebaseHostingVersionConfigRewritesFunction(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandFirebaseHostingVersionConfigRewritesRun(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandFirebaseHostingVersionConfigRewritesRun(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -562,15 +563,15 @@ func expandFirebaseHostingVersionConfigRewritesRun(v interface{}, d TerraformRes
 	return transformed, nil
 }
 
-func expandFirebaseHostingVersionConfigRewritesRunServiceId(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandFirebaseHostingVersionConfigRewritesRunServiceId(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandFirebaseHostingVersionConfigRewritesRunRegion(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandFirebaseHostingVersionConfigRewritesRunRegion(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandFirebaseHostingVersionConfigRedirects(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandFirebaseHostingVersionConfigRedirects(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
 	for _, raw := range l {
@@ -613,19 +614,19 @@ func expandFirebaseHostingVersionConfigRedirects(v interface{}, d TerraformResou
 	return req, nil
 }
 
-func expandFirebaseHostingVersionConfigRedirectsGlob(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandFirebaseHostingVersionConfigRedirectsGlob(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandFirebaseHostingVersionConfigRedirectsRegex(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandFirebaseHostingVersionConfigRedirectsRegex(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandFirebaseHostingVersionConfigRedirectsStatusCode(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandFirebaseHostingVersionConfigRedirectsStatusCode(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandFirebaseHostingVersionConfigRedirectsLocation(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandFirebaseHostingVersionConfigRedirectsLocation(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 

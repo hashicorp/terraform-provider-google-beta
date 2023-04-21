@@ -22,6 +22,7 @@ import (
 
 	osconfig "github.com/GoogleCloudPlatform/declarative-resource-client-library/services/google/osconfig/beta"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
 func init() {
@@ -58,7 +59,7 @@ func testSweepOsConfigOsPolicyAssignment(region string) error {
 		"billing_account": billingId,
 	}
 
-	client := NewDCLOsConfigClient(config, config.UserAgent, "", 0)
+	client := transport_tpg.NewDCLOsConfigClient(config, config.UserAgent, "", 0)
 	err = client.DeleteAllOSPolicyAssignment(context.Background(), d["project"], d["location"], isDeletableOsConfigOsPolicyAssignment)
 	if err != nil {
 		return err

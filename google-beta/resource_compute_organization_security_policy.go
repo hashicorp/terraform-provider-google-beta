@@ -21,6 +21,7 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
 func ResourceComputeOrganizationSecurityPolicy() *schema.Resource {
@@ -86,7 +87,7 @@ updates of this resource.`,
 }
 
 func resourceComputeOrganizationSecurityPolicyCreate(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -182,7 +183,7 @@ func resourceComputeOrganizationSecurityPolicyCreate(d *schema.ResourceData, met
 }
 
 func resourceComputeOrganizationSecurityPolicyRead(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -228,7 +229,7 @@ func resourceComputeOrganizationSecurityPolicyRead(d *schema.ResourceData, meta 
 }
 
 func resourceComputeOrganizationSecurityPolicyUpdate(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -284,7 +285,7 @@ func resourceComputeOrganizationSecurityPolicyUpdate(d *schema.ResourceData, met
 }
 
 func resourceComputeOrganizationSecurityPolicyDelete(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -326,7 +327,7 @@ func resourceComputeOrganizationSecurityPolicyDelete(d *schema.ResourceData, met
 }
 
 func resourceComputeOrganizationSecurityPolicyImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	if err := ParseImportId([]string{
 		"locations/global/securityPolicies/(?P<policy_id>[^/]+)",
 		"(?P<policy_id>[^/]+)",
@@ -344,46 +345,46 @@ func resourceComputeOrganizationSecurityPolicyImport(d *schema.ResourceData, met
 	return []*schema.ResourceData{d}, nil
 }
 
-func flattenComputeOrganizationSecurityPolicyDisplayName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenComputeOrganizationSecurityPolicyDisplayName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenComputeOrganizationSecurityPolicyDescription(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenComputeOrganizationSecurityPolicyDescription(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenComputeOrganizationSecurityPolicyFingerprint(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenComputeOrganizationSecurityPolicyFingerprint(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenComputeOrganizationSecurityPolicyPolicyId(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenComputeOrganizationSecurityPolicyPolicyId(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenComputeOrganizationSecurityPolicyType(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenComputeOrganizationSecurityPolicyType(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenComputeOrganizationSecurityPolicyParent(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenComputeOrganizationSecurityPolicyParent(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func expandComputeOrganizationSecurityPolicyDisplayName(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandComputeOrganizationSecurityPolicyDisplayName(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandComputeOrganizationSecurityPolicyDescription(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandComputeOrganizationSecurityPolicyDescription(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandComputeOrganizationSecurityPolicyFingerprint(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandComputeOrganizationSecurityPolicyFingerprint(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandComputeOrganizationSecurityPolicyType(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandComputeOrganizationSecurityPolicyType(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandComputeOrganizationSecurityPolicyParent(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandComputeOrganizationSecurityPolicyParent(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }

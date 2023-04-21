@@ -21,6 +21,7 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
 func ResourceFirebaseHostingRelease() *schema.Resource {
@@ -99,7 +100,7 @@ sites/SITE_ID/channels/CHANNEL_ID/releases/RELEASE_ID`,
 }
 
 func resourceFirebaseHostingReleaseCreate(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -160,7 +161,7 @@ func resourceFirebaseHostingReleaseCreate(d *schema.ResourceData, meta interface
 }
 
 func resourceFirebaseHostingReleaseRead(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -218,7 +219,7 @@ func resourceFirebaseHostingReleaseDelete(d *schema.ResourceData, meta interface
 }
 
 func resourceFirebaseHostingReleaseImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	if err := ParseImportId([]string{
 		"sites/(?P<site_id>[^/]+)/channels/(?P<channel_id>[^/]+)/releases/(?P<release_id>[^/]+)",
 		"sites/(?P<site_id>[^/]+)/releases/(?P<release_id>[^/]+)",
@@ -238,23 +239,23 @@ func resourceFirebaseHostingReleaseImport(d *schema.ResourceData, meta interface
 	return []*schema.ResourceData{d}, nil
 }
 
-func flattenFirebaseHostingReleaseName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenFirebaseHostingReleaseName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenFirebaseHostingReleaseType(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenFirebaseHostingReleaseType(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenFirebaseHostingReleaseMessage(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenFirebaseHostingReleaseMessage(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func expandFirebaseHostingReleaseType(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandFirebaseHostingReleaseType(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandFirebaseHostingReleaseMessage(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandFirebaseHostingReleaseMessage(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 

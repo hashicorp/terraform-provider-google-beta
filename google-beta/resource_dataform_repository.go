@@ -21,6 +21,7 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
 func ResourceDataformRepository() *schema.Resource {
@@ -95,7 +96,7 @@ func ResourceDataformRepository() *schema.Resource {
 }
 
 func resourceDataformRepositoryCreate(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -152,7 +153,7 @@ func resourceDataformRepositoryCreate(d *schema.ResourceData, meta interface{}) 
 }
 
 func resourceDataformRepositoryRead(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -196,7 +197,7 @@ func resourceDataformRepositoryRead(d *schema.ResourceData, meta interface{}) er
 }
 
 func resourceDataformRepositoryUpdate(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -242,7 +243,7 @@ func resourceDataformRepositoryUpdate(d *schema.ResourceData, meta interface{}) 
 }
 
 func resourceDataformRepositoryDelete(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -279,7 +280,7 @@ func resourceDataformRepositoryDelete(d *schema.ResourceData, meta interface{}) 
 }
 
 func resourceDataformRepositoryImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	if err := ParseImportId([]string{
 		"projects/(?P<project>[^/]+)/locations/(?P<region>[^/]+)/repositories/(?P<name>[^/]+)",
 		"(?P<project>[^/]+)/(?P<region>[^/]+)/(?P<name>[^/]+)",
@@ -299,14 +300,14 @@ func resourceDataformRepositoryImport(d *schema.ResourceData, meta interface{}) 
 	return []*schema.ResourceData{d}, nil
 }
 
-func flattenDataformRepositoryName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenDataformRepositoryName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return v
 	}
 	return NameFromSelfLinkStateFunc(v)
 }
 
-func flattenDataformRepositoryGitRemoteSettings(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenDataformRepositoryGitRemoteSettings(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -325,27 +326,27 @@ func flattenDataformRepositoryGitRemoteSettings(v interface{}, d *schema.Resourc
 		flattenDataformRepositoryGitRemoteSettingsTokenStatus(original["tokenStatus"], d, config)
 	return []interface{}{transformed}
 }
-func flattenDataformRepositoryGitRemoteSettingsUrl(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenDataformRepositoryGitRemoteSettingsUrl(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenDataformRepositoryGitRemoteSettingsDefaultBranch(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenDataformRepositoryGitRemoteSettingsDefaultBranch(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenDataformRepositoryGitRemoteSettingsAuthenticationTokenSecretVersion(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenDataformRepositoryGitRemoteSettingsAuthenticationTokenSecretVersion(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenDataformRepositoryGitRemoteSettingsTokenStatus(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenDataformRepositoryGitRemoteSettingsTokenStatus(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func expandDataformRepositoryName(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandDataformRepositoryName(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandDataformRepositoryGitRemoteSettings(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandDataformRepositoryGitRemoteSettings(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -385,18 +386,18 @@ func expandDataformRepositoryGitRemoteSettings(v interface{}, d TerraformResourc
 	return transformed, nil
 }
 
-func expandDataformRepositoryGitRemoteSettingsUrl(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandDataformRepositoryGitRemoteSettingsUrl(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandDataformRepositoryGitRemoteSettingsDefaultBranch(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandDataformRepositoryGitRemoteSettingsDefaultBranch(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandDataformRepositoryGitRemoteSettingsAuthenticationTokenSecretVersion(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandDataformRepositoryGitRemoteSettingsAuthenticationTokenSecretVersion(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandDataformRepositoryGitRemoteSettingsTokenStatus(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandDataformRepositoryGitRemoteSettingsTokenStatus(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }

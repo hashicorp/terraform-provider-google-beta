@@ -22,6 +22,7 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
 func ResourceWorkstationsWorkstationConfig() *schema.Resource {
@@ -379,7 +380,7 @@ May be sent on update and delete requests to ensure that the client has an up-to
 }
 
 func resourceWorkstationsWorkstationConfigCreate(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -482,7 +483,7 @@ func resourceWorkstationsWorkstationConfigCreate(d *schema.ResourceData, meta in
 }
 
 func resourceWorkstationsWorkstationConfigRead(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -559,7 +560,7 @@ func resourceWorkstationsWorkstationConfigRead(d *schema.ResourceData, meta inte
 }
 
 func resourceWorkstationsWorkstationConfigUpdate(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -684,7 +685,7 @@ func resourceWorkstationsWorkstationConfigUpdate(d *schema.ResourceData, meta in
 }
 
 func resourceWorkstationsWorkstationConfigDelete(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -729,7 +730,7 @@ func resourceWorkstationsWorkstationConfigDelete(d *schema.ResourceData, meta in
 }
 
 func resourceWorkstationsWorkstationConfigImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	if err := ParseImportId([]string{
 		"projects/(?P<project>[^/]+)/locations/(?P<location>[^/]+)/workstationClusters/(?P<workstation_cluster_id>[^/]+)/workstationConfigs/(?P<workstation_config_id>[^/]+)",
 		"(?P<project>[^/]+)/(?P<location>[^/]+)/(?P<workstation_cluster_id>[^/]+)/(?P<workstation_config_id>[^/]+)",
@@ -748,35 +749,35 @@ func resourceWorkstationsWorkstationConfigImport(d *schema.ResourceData, meta in
 	return []*schema.ResourceData{d}, nil
 }
 
-func flattenWorkstationsWorkstationConfigName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenWorkstationsWorkstationConfigName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenWorkstationsWorkstationConfigUid(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenWorkstationsWorkstationConfigUid(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenWorkstationsWorkstationConfigDisplayName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenWorkstationsWorkstationConfigDisplayName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenWorkstationsWorkstationConfigLabels(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenWorkstationsWorkstationConfigLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenWorkstationsWorkstationConfigAnnotations(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenWorkstationsWorkstationConfigAnnotations(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenWorkstationsWorkstationConfigEtag(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenWorkstationsWorkstationConfigEtag(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenWorkstationsWorkstationConfigCreateTime(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenWorkstationsWorkstationConfigCreateTime(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenWorkstationsWorkstationConfigHost(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenWorkstationsWorkstationConfigHost(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -789,7 +790,7 @@ func flattenWorkstationsWorkstationConfigHost(v interface{}, d *schema.ResourceD
 		flattenWorkstationsWorkstationConfigHostGceInstance(original["gceInstance"], d, config)
 	return []interface{}{transformed}
 }
-func flattenWorkstationsWorkstationConfigHostGceInstance(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenWorkstationsWorkstationConfigHostGceInstance(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -816,15 +817,15 @@ func flattenWorkstationsWorkstationConfigHostGceInstance(v interface{}, d *schem
 		flattenWorkstationsWorkstationConfigHostGceInstanceConfidentialInstanceConfig(original["confidentialInstanceConfig"], d, config)
 	return []interface{}{transformed}
 }
-func flattenWorkstationsWorkstationConfigHostGceInstanceMachineType(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenWorkstationsWorkstationConfigHostGceInstanceMachineType(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenWorkstationsWorkstationConfigHostGceInstanceServiceAccount(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenWorkstationsWorkstationConfigHostGceInstanceServiceAccount(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenWorkstationsWorkstationConfigHostGceInstancePoolSize(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenWorkstationsWorkstationConfigHostGceInstancePoolSize(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := StringToFixed64(strVal); err == nil {
@@ -841,7 +842,7 @@ func flattenWorkstationsWorkstationConfigHostGceInstancePoolSize(v interface{}, 
 	return v // let terraform core handle it otherwise
 }
 
-func flattenWorkstationsWorkstationConfigHostGceInstanceBootDiskSizeGb(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenWorkstationsWorkstationConfigHostGceInstanceBootDiskSizeGb(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := StringToFixed64(strVal); err == nil {
@@ -858,15 +859,15 @@ func flattenWorkstationsWorkstationConfigHostGceInstanceBootDiskSizeGb(v interfa
 	return v // let terraform core handle it otherwise
 }
 
-func flattenWorkstationsWorkstationConfigHostGceInstanceTags(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenWorkstationsWorkstationConfigHostGceInstanceTags(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenWorkstationsWorkstationConfigHostGceInstanceDisablePublicIpAddresses(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenWorkstationsWorkstationConfigHostGceInstanceDisablePublicIpAddresses(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenWorkstationsWorkstationConfigHostGceInstanceShieldedInstanceConfig(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenWorkstationsWorkstationConfigHostGceInstanceShieldedInstanceConfig(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -883,19 +884,19 @@ func flattenWorkstationsWorkstationConfigHostGceInstanceShieldedInstanceConfig(v
 		flattenWorkstationsWorkstationConfigHostGceInstanceShieldedInstanceConfigEnableIntegrityMonitoring(original["enableIntegrityMonitoring"], d, config)
 	return []interface{}{transformed}
 }
-func flattenWorkstationsWorkstationConfigHostGceInstanceShieldedInstanceConfigEnableSecureBoot(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenWorkstationsWorkstationConfigHostGceInstanceShieldedInstanceConfigEnableSecureBoot(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenWorkstationsWorkstationConfigHostGceInstanceShieldedInstanceConfigEnableVtpm(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenWorkstationsWorkstationConfigHostGceInstanceShieldedInstanceConfigEnableVtpm(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenWorkstationsWorkstationConfigHostGceInstanceShieldedInstanceConfigEnableIntegrityMonitoring(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenWorkstationsWorkstationConfigHostGceInstanceShieldedInstanceConfigEnableIntegrityMonitoring(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenWorkstationsWorkstationConfigHostGceInstanceConfidentialInstanceConfig(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenWorkstationsWorkstationConfigHostGceInstanceConfidentialInstanceConfig(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -908,11 +909,11 @@ func flattenWorkstationsWorkstationConfigHostGceInstanceConfidentialInstanceConf
 		flattenWorkstationsWorkstationConfigHostGceInstanceConfidentialInstanceConfigEnableConfidentialCompute(original["enableConfidentialCompute"], d, config)
 	return []interface{}{transformed}
 }
-func flattenWorkstationsWorkstationConfigHostGceInstanceConfidentialInstanceConfigEnableConfidentialCompute(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenWorkstationsWorkstationConfigHostGceInstanceConfidentialInstanceConfigEnableConfidentialCompute(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenWorkstationsWorkstationConfigPersistentDirectories(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenWorkstationsWorkstationConfigPersistentDirectories(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return v
 	}
@@ -931,11 +932,11 @@ func flattenWorkstationsWorkstationConfigPersistentDirectories(v interface{}, d 
 	}
 	return transformed
 }
-func flattenWorkstationsWorkstationConfigPersistentDirectoriesMountPath(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenWorkstationsWorkstationConfigPersistentDirectoriesMountPath(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenWorkstationsWorkstationConfigPersistentDirectoriesGcePd(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenWorkstationsWorkstationConfigPersistentDirectoriesGcePd(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -954,15 +955,15 @@ func flattenWorkstationsWorkstationConfigPersistentDirectoriesGcePd(v interface{
 		flattenWorkstationsWorkstationConfigPersistentDirectoriesGcePdReclaimPolicy(original["reclaimPolicy"], d, config)
 	return []interface{}{transformed}
 }
-func flattenWorkstationsWorkstationConfigPersistentDirectoriesGcePdFsType(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenWorkstationsWorkstationConfigPersistentDirectoriesGcePdFsType(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenWorkstationsWorkstationConfigPersistentDirectoriesGcePdDiskType(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenWorkstationsWorkstationConfigPersistentDirectoriesGcePdDiskType(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenWorkstationsWorkstationConfigPersistentDirectoriesGcePdSizeGb(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenWorkstationsWorkstationConfigPersistentDirectoriesGcePdSizeGb(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := StringToFixed64(strVal); err == nil {
@@ -979,11 +980,11 @@ func flattenWorkstationsWorkstationConfigPersistentDirectoriesGcePdSizeGb(v inte
 	return v // let terraform core handle it otherwise
 }
 
-func flattenWorkstationsWorkstationConfigPersistentDirectoriesGcePdReclaimPolicy(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenWorkstationsWorkstationConfigPersistentDirectoriesGcePdReclaimPolicy(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenWorkstationsWorkstationConfigContainer(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenWorkstationsWorkstationConfigContainer(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -1006,27 +1007,27 @@ func flattenWorkstationsWorkstationConfigContainer(v interface{}, d *schema.Reso
 		flattenWorkstationsWorkstationConfigContainerRunAsUser(original["runAsUser"], d, config)
 	return []interface{}{transformed}
 }
-func flattenWorkstationsWorkstationConfigContainerImage(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenWorkstationsWorkstationConfigContainerImage(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenWorkstationsWorkstationConfigContainerCommand(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenWorkstationsWorkstationConfigContainerCommand(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenWorkstationsWorkstationConfigContainerArgs(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenWorkstationsWorkstationConfigContainerArgs(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenWorkstationsWorkstationConfigContainerWorkingDir(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenWorkstationsWorkstationConfigContainerWorkingDir(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenWorkstationsWorkstationConfigContainerEnv(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenWorkstationsWorkstationConfigContainerEnv(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenWorkstationsWorkstationConfigContainerRunAsUser(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenWorkstationsWorkstationConfigContainerRunAsUser(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := StringToFixed64(strVal); err == nil {
@@ -1043,7 +1044,7 @@ func flattenWorkstationsWorkstationConfigContainerRunAsUser(v interface{}, d *sc
 	return v // let terraform core handle it otherwise
 }
 
-func flattenWorkstationsWorkstationConfigEncryptionKey(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenWorkstationsWorkstationConfigEncryptionKey(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -1058,19 +1059,19 @@ func flattenWorkstationsWorkstationConfigEncryptionKey(v interface{}, d *schema.
 		flattenWorkstationsWorkstationConfigEncryptionKeyKmsKeyServiceAccount(original["kmsKeyServiceAccount"], d, config)
 	return []interface{}{transformed}
 }
-func flattenWorkstationsWorkstationConfigEncryptionKeyKmsKey(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenWorkstationsWorkstationConfigEncryptionKeyKmsKey(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenWorkstationsWorkstationConfigEncryptionKeyKmsKeyServiceAccount(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenWorkstationsWorkstationConfigEncryptionKeyKmsKeyServiceAccount(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenWorkstationsWorkstationConfigDegraded(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenWorkstationsWorkstationConfigDegraded(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenWorkstationsWorkstationConfigConditions(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenWorkstationsWorkstationConfigConditions(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return v
 	}
@@ -1090,7 +1091,7 @@ func flattenWorkstationsWorkstationConfigConditions(v interface{}, d *schema.Res
 	}
 	return transformed
 }
-func flattenWorkstationsWorkstationConfigConditionsCode(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenWorkstationsWorkstationConfigConditionsCode(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := StringToFixed64(strVal); err == nil {
@@ -1107,19 +1108,19 @@ func flattenWorkstationsWorkstationConfigConditionsCode(v interface{}, d *schema
 	return v // let terraform core handle it otherwise
 }
 
-func flattenWorkstationsWorkstationConfigConditionsMessage(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenWorkstationsWorkstationConfigConditionsMessage(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenWorkstationsWorkstationConfigConditionsDetails(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenWorkstationsWorkstationConfigConditionsDetails(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func expandWorkstationsWorkstationConfigDisplayName(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandWorkstationsWorkstationConfigDisplayName(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandWorkstationsWorkstationConfigLabels(v interface{}, d TerraformResourceData, config *Config) (map[string]string, error) {
+func expandWorkstationsWorkstationConfigLabels(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
 	if v == nil {
 		return map[string]string{}, nil
 	}
@@ -1130,7 +1131,7 @@ func expandWorkstationsWorkstationConfigLabels(v interface{}, d TerraformResourc
 	return m, nil
 }
 
-func expandWorkstationsWorkstationConfigAnnotations(v interface{}, d TerraformResourceData, config *Config) (map[string]string, error) {
+func expandWorkstationsWorkstationConfigAnnotations(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
 	if v == nil {
 		return map[string]string{}, nil
 	}
@@ -1141,11 +1142,11 @@ func expandWorkstationsWorkstationConfigAnnotations(v interface{}, d TerraformRe
 	return m, nil
 }
 
-func expandWorkstationsWorkstationConfigEtag(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandWorkstationsWorkstationConfigEtag(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandWorkstationsWorkstationConfigHost(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandWorkstationsWorkstationConfigHost(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -1164,7 +1165,7 @@ func expandWorkstationsWorkstationConfigHost(v interface{}, d TerraformResourceD
 	return transformed, nil
 }
 
-func expandWorkstationsWorkstationConfigHostGceInstance(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandWorkstationsWorkstationConfigHostGceInstance(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -1232,31 +1233,31 @@ func expandWorkstationsWorkstationConfigHostGceInstance(v interface{}, d Terrafo
 	return transformed, nil
 }
 
-func expandWorkstationsWorkstationConfigHostGceInstanceMachineType(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandWorkstationsWorkstationConfigHostGceInstanceMachineType(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandWorkstationsWorkstationConfigHostGceInstanceServiceAccount(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandWorkstationsWorkstationConfigHostGceInstanceServiceAccount(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandWorkstationsWorkstationConfigHostGceInstancePoolSize(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandWorkstationsWorkstationConfigHostGceInstancePoolSize(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandWorkstationsWorkstationConfigHostGceInstanceBootDiskSizeGb(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandWorkstationsWorkstationConfigHostGceInstanceBootDiskSizeGb(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandWorkstationsWorkstationConfigHostGceInstanceTags(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandWorkstationsWorkstationConfigHostGceInstanceTags(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandWorkstationsWorkstationConfigHostGceInstanceDisablePublicIpAddresses(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandWorkstationsWorkstationConfigHostGceInstanceDisablePublicIpAddresses(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandWorkstationsWorkstationConfigHostGceInstanceShieldedInstanceConfig(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandWorkstationsWorkstationConfigHostGceInstanceShieldedInstanceConfig(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -1289,19 +1290,19 @@ func expandWorkstationsWorkstationConfigHostGceInstanceShieldedInstanceConfig(v 
 	return transformed, nil
 }
 
-func expandWorkstationsWorkstationConfigHostGceInstanceShieldedInstanceConfigEnableSecureBoot(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandWorkstationsWorkstationConfigHostGceInstanceShieldedInstanceConfigEnableSecureBoot(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandWorkstationsWorkstationConfigHostGceInstanceShieldedInstanceConfigEnableVtpm(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandWorkstationsWorkstationConfigHostGceInstanceShieldedInstanceConfigEnableVtpm(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandWorkstationsWorkstationConfigHostGceInstanceShieldedInstanceConfigEnableIntegrityMonitoring(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandWorkstationsWorkstationConfigHostGceInstanceShieldedInstanceConfigEnableIntegrityMonitoring(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandWorkstationsWorkstationConfigHostGceInstanceConfidentialInstanceConfig(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandWorkstationsWorkstationConfigHostGceInstanceConfidentialInstanceConfig(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -1320,11 +1321,11 @@ func expandWorkstationsWorkstationConfigHostGceInstanceConfidentialInstanceConfi
 	return transformed, nil
 }
 
-func expandWorkstationsWorkstationConfigHostGceInstanceConfidentialInstanceConfigEnableConfidentialCompute(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandWorkstationsWorkstationConfigHostGceInstanceConfidentialInstanceConfigEnableConfidentialCompute(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandWorkstationsWorkstationConfigPersistentDirectories(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandWorkstationsWorkstationConfigPersistentDirectories(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
 	for _, raw := range l {
@@ -1353,11 +1354,11 @@ func expandWorkstationsWorkstationConfigPersistentDirectories(v interface{}, d T
 	return req, nil
 }
 
-func expandWorkstationsWorkstationConfigPersistentDirectoriesMountPath(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandWorkstationsWorkstationConfigPersistentDirectoriesMountPath(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandWorkstationsWorkstationConfigPersistentDirectoriesGcePd(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandWorkstationsWorkstationConfigPersistentDirectoriesGcePd(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -1397,23 +1398,23 @@ func expandWorkstationsWorkstationConfigPersistentDirectoriesGcePd(v interface{}
 	return transformed, nil
 }
 
-func expandWorkstationsWorkstationConfigPersistentDirectoriesGcePdFsType(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandWorkstationsWorkstationConfigPersistentDirectoriesGcePdFsType(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandWorkstationsWorkstationConfigPersistentDirectoriesGcePdDiskType(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandWorkstationsWorkstationConfigPersistentDirectoriesGcePdDiskType(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandWorkstationsWorkstationConfigPersistentDirectoriesGcePdSizeGb(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandWorkstationsWorkstationConfigPersistentDirectoriesGcePdSizeGb(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandWorkstationsWorkstationConfigPersistentDirectoriesGcePdReclaimPolicy(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandWorkstationsWorkstationConfigPersistentDirectoriesGcePdReclaimPolicy(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandWorkstationsWorkstationConfigContainer(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandWorkstationsWorkstationConfigContainer(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -1467,23 +1468,23 @@ func expandWorkstationsWorkstationConfigContainer(v interface{}, d TerraformReso
 	return transformed, nil
 }
 
-func expandWorkstationsWorkstationConfigContainerImage(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandWorkstationsWorkstationConfigContainerImage(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandWorkstationsWorkstationConfigContainerCommand(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandWorkstationsWorkstationConfigContainerCommand(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandWorkstationsWorkstationConfigContainerArgs(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandWorkstationsWorkstationConfigContainerArgs(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandWorkstationsWorkstationConfigContainerWorkingDir(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandWorkstationsWorkstationConfigContainerWorkingDir(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandWorkstationsWorkstationConfigContainerEnv(v interface{}, d TerraformResourceData, config *Config) (map[string]string, error) {
+func expandWorkstationsWorkstationConfigContainerEnv(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
 	if v == nil {
 		return map[string]string{}, nil
 	}
@@ -1494,11 +1495,11 @@ func expandWorkstationsWorkstationConfigContainerEnv(v interface{}, d TerraformR
 	return m, nil
 }
 
-func expandWorkstationsWorkstationConfigContainerRunAsUser(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandWorkstationsWorkstationConfigContainerRunAsUser(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandWorkstationsWorkstationConfigEncryptionKey(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandWorkstationsWorkstationConfigEncryptionKey(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -1524,10 +1525,10 @@ func expandWorkstationsWorkstationConfigEncryptionKey(v interface{}, d Terraform
 	return transformed, nil
 }
 
-func expandWorkstationsWorkstationConfigEncryptionKeyKmsKey(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandWorkstationsWorkstationConfigEncryptionKeyKmsKey(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandWorkstationsWorkstationConfigEncryptionKeyKmsKeyServiceAccount(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandWorkstationsWorkstationConfigEncryptionKeyKmsKeyServiceAccount(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }

@@ -20,6 +20,8 @@ import (
 	"github.com/hashicorp/errwrap"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"google.golang.org/api/cloudresourcemanager/v1"
+
+	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
 var VertexAIFeaturestoreIamSchema = map[string]*schema.Schema{
@@ -48,10 +50,10 @@ type VertexAIFeaturestoreIamUpdater struct {
 	region       string
 	featurestore string
 	d            TerraformResourceData
-	Config       *Config
+	Config       *transport_tpg.Config
 }
 
-func VertexAIFeaturestoreIamUpdaterProducer(d TerraformResourceData, config *Config) (ResourceIamUpdater, error) {
+func VertexAIFeaturestoreIamUpdaterProducer(d TerraformResourceData, config *transport_tpg.Config) (ResourceIamUpdater, error) {
 	values := make(map[string]string)
 
 	project, _ := getProject(d, config)
@@ -103,7 +105,7 @@ func VertexAIFeaturestoreIamUpdaterProducer(d TerraformResourceData, config *Con
 	return u, nil
 }
 
-func VertexAIFeaturestoreIdParseFunc(d *schema.ResourceData, config *Config) error {
+func VertexAIFeaturestoreIdParseFunc(d *schema.ResourceData, config *transport_tpg.Config) error {
 	values := make(map[string]string)
 
 	project, _ := getProject(d, config)

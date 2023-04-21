@@ -23,6 +23,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
+	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
 func ResourceSecurityScannerScanConfig() *schema.Resource {
@@ -200,7 +201,7 @@ which means the scan will be scheduled to start immediately.`,
 }
 
 func resourceSecurityScannerScanConfigCreate(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -320,7 +321,7 @@ func resourceSecurityScannerScanConfigCreate(d *schema.ResourceData, meta interf
 }
 
 func resourceSecurityScannerScanConfigRead(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -388,7 +389,7 @@ func resourceSecurityScannerScanConfigRead(d *schema.ResourceData, meta interfac
 }
 
 func resourceSecurityScannerScanConfigUpdate(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -525,7 +526,7 @@ func resourceSecurityScannerScanConfigUpdate(d *schema.ResourceData, meta interf
 }
 
 func resourceSecurityScannerScanConfigDelete(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -563,7 +564,7 @@ func resourceSecurityScannerScanConfigDelete(d *schema.ResourceData, meta interf
 
 func resourceSecurityScannerScanConfigImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 
 	// current import_formats can't import fields with forward slashes in their value
 	if err := ParseImportId([]string{"(?P<project>[^ ]+) (?P<name>[^ ]+)", "(?P<name>[^ ]+)"}, d, config); err != nil {
@@ -573,15 +574,15 @@ func resourceSecurityScannerScanConfigImport(d *schema.ResourceData, meta interf
 	return []*schema.ResourceData{d}, nil
 }
 
-func flattenSecurityScannerScanConfigName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenSecurityScannerScanConfigName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenSecurityScannerScanConfigDisplayName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenSecurityScannerScanConfigDisplayName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenSecurityScannerScanConfigMaxQps(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenSecurityScannerScanConfigMaxQps(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := StringToFixed64(strVal); err == nil {
@@ -598,11 +599,11 @@ func flattenSecurityScannerScanConfigMaxQps(v interface{}, d *schema.ResourceDat
 	return v // let terraform core handle it otherwise
 }
 
-func flattenSecurityScannerScanConfigStartingUrls(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenSecurityScannerScanConfigStartingUrls(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenSecurityScannerScanConfigAuthentication(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenSecurityScannerScanConfigAuthentication(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -617,7 +618,7 @@ func flattenSecurityScannerScanConfigAuthentication(v interface{}, d *schema.Res
 		flattenSecurityScannerScanConfigAuthenticationCustomAccount(original["customAccount"], d, config)
 	return []interface{}{transformed}
 }
-func flattenSecurityScannerScanConfigAuthenticationGoogleAccount(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenSecurityScannerScanConfigAuthenticationGoogleAccount(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -632,15 +633,15 @@ func flattenSecurityScannerScanConfigAuthenticationGoogleAccount(v interface{}, 
 		flattenSecurityScannerScanConfigAuthenticationGoogleAccountPassword(original["password"], d, config)
 	return []interface{}{transformed}
 }
-func flattenSecurityScannerScanConfigAuthenticationGoogleAccountUsername(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenSecurityScannerScanConfigAuthenticationGoogleAccountUsername(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenSecurityScannerScanConfigAuthenticationGoogleAccountPassword(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenSecurityScannerScanConfigAuthenticationGoogleAccountPassword(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return d.Get("authentication.0.custom_account.0.password")
 }
 
-func flattenSecurityScannerScanConfigAuthenticationCustomAccount(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenSecurityScannerScanConfigAuthenticationCustomAccount(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -657,27 +658,27 @@ func flattenSecurityScannerScanConfigAuthenticationCustomAccount(v interface{}, 
 		flattenSecurityScannerScanConfigAuthenticationCustomAccountLoginUrl(original["loginUrl"], d, config)
 	return []interface{}{transformed}
 }
-func flattenSecurityScannerScanConfigAuthenticationCustomAccountUsername(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenSecurityScannerScanConfigAuthenticationCustomAccountUsername(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenSecurityScannerScanConfigAuthenticationCustomAccountPassword(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenSecurityScannerScanConfigAuthenticationCustomAccountPassword(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return d.Get("authentication.0.google_account.0.password")
 }
 
-func flattenSecurityScannerScanConfigAuthenticationCustomAccountLoginUrl(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenSecurityScannerScanConfigAuthenticationCustomAccountLoginUrl(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenSecurityScannerScanConfigUserAgent(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenSecurityScannerScanConfigUserAgent(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenSecurityScannerScanConfigBlacklistPatterns(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenSecurityScannerScanConfigBlacklistPatterns(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenSecurityScannerScanConfigSchedule(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenSecurityScannerScanConfigSchedule(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -692,11 +693,11 @@ func flattenSecurityScannerScanConfigSchedule(v interface{}, d *schema.ResourceD
 		flattenSecurityScannerScanConfigScheduleIntervalDurationDays(original["intervalDurationDays"], d, config)
 	return []interface{}{transformed}
 }
-func flattenSecurityScannerScanConfigScheduleScheduleTime(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenSecurityScannerScanConfigScheduleScheduleTime(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenSecurityScannerScanConfigScheduleIntervalDurationDays(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenSecurityScannerScanConfigScheduleIntervalDurationDays(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := StringToFixed64(strVal); err == nil {
@@ -713,27 +714,27 @@ func flattenSecurityScannerScanConfigScheduleIntervalDurationDays(v interface{},
 	return v // let terraform core handle it otherwise
 }
 
-func flattenSecurityScannerScanConfigTargetPlatforms(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenSecurityScannerScanConfigTargetPlatforms(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenSecurityScannerScanConfigExportToSecurityCommandCenter(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenSecurityScannerScanConfigExportToSecurityCommandCenter(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func expandSecurityScannerScanConfigDisplayName(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandSecurityScannerScanConfigDisplayName(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandSecurityScannerScanConfigMaxQps(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandSecurityScannerScanConfigMaxQps(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandSecurityScannerScanConfigStartingUrls(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandSecurityScannerScanConfigStartingUrls(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandSecurityScannerScanConfigAuthentication(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandSecurityScannerScanConfigAuthentication(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -759,7 +760,7 @@ func expandSecurityScannerScanConfigAuthentication(v interface{}, d TerraformRes
 	return transformed, nil
 }
 
-func expandSecurityScannerScanConfigAuthenticationGoogleAccount(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandSecurityScannerScanConfigAuthenticationGoogleAccount(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -785,15 +786,15 @@ func expandSecurityScannerScanConfigAuthenticationGoogleAccount(v interface{}, d
 	return transformed, nil
 }
 
-func expandSecurityScannerScanConfigAuthenticationGoogleAccountUsername(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandSecurityScannerScanConfigAuthenticationGoogleAccountUsername(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandSecurityScannerScanConfigAuthenticationGoogleAccountPassword(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandSecurityScannerScanConfigAuthenticationGoogleAccountPassword(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandSecurityScannerScanConfigAuthenticationCustomAccount(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandSecurityScannerScanConfigAuthenticationCustomAccount(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -826,27 +827,27 @@ func expandSecurityScannerScanConfigAuthenticationCustomAccount(v interface{}, d
 	return transformed, nil
 }
 
-func expandSecurityScannerScanConfigAuthenticationCustomAccountUsername(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandSecurityScannerScanConfigAuthenticationCustomAccountUsername(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandSecurityScannerScanConfigAuthenticationCustomAccountPassword(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandSecurityScannerScanConfigAuthenticationCustomAccountPassword(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandSecurityScannerScanConfigAuthenticationCustomAccountLoginUrl(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandSecurityScannerScanConfigAuthenticationCustomAccountLoginUrl(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandSecurityScannerScanConfigUserAgent(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandSecurityScannerScanConfigUserAgent(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandSecurityScannerScanConfigBlacklistPatterns(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandSecurityScannerScanConfigBlacklistPatterns(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandSecurityScannerScanConfigSchedule(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandSecurityScannerScanConfigSchedule(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -872,18 +873,18 @@ func expandSecurityScannerScanConfigSchedule(v interface{}, d TerraformResourceD
 	return transformed, nil
 }
 
-func expandSecurityScannerScanConfigScheduleScheduleTime(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandSecurityScannerScanConfigScheduleScheduleTime(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandSecurityScannerScanConfigScheduleIntervalDurationDays(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandSecurityScannerScanConfigScheduleIntervalDurationDays(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandSecurityScannerScanConfigTargetPlatforms(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandSecurityScannerScanConfigTargetPlatforms(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandSecurityScannerScanConfigExportToSecurityCommandCenter(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandSecurityScannerScanConfigExportToSecurityCommandCenter(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }

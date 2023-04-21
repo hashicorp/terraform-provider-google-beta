@@ -22,6 +22,7 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
 func ResourceServiceDirectoryNamespace() *schema.Resource {
@@ -83,7 +84,7 @@ in the format 'projects/*/locations/*/namespaces/*'.`,
 }
 
 func resourceServiceDirectoryNamespaceCreate(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -137,7 +138,7 @@ func resourceServiceDirectoryNamespaceCreate(d *schema.ResourceData, meta interf
 }
 
 func resourceServiceDirectoryNamespaceRead(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -181,7 +182,7 @@ func resourceServiceDirectoryNamespaceRead(d *schema.ResourceData, meta interfac
 }
 
 func resourceServiceDirectoryNamespaceUpdate(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -238,7 +239,7 @@ func resourceServiceDirectoryNamespaceUpdate(d *schema.ResourceData, meta interf
 }
 
 func resourceServiceDirectoryNamespaceDelete(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -275,7 +276,7 @@ func resourceServiceDirectoryNamespaceDelete(d *schema.ResourceData, meta interf
 }
 
 func resourceServiceDirectoryNamespaceImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 
 	// current import_formats cannot import fields with forward slashes in their value
 	if err := ParseImportId([]string{"(?P<name>.+)"}, d, config); err != nil {
@@ -341,15 +342,15 @@ func resourceServiceDirectoryNamespaceImport(d *schema.ResourceData, meta interf
 	return []*schema.ResourceData{d}, nil
 }
 
-func flattenServiceDirectoryNamespaceName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenServiceDirectoryNamespaceName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenServiceDirectoryNamespaceLabels(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenServiceDirectoryNamespaceLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func expandServiceDirectoryNamespaceLabels(v interface{}, d TerraformResourceData, config *Config) (map[string]string, error) {
+func expandServiceDirectoryNamespaceLabels(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
 	if v == nil {
 		return map[string]string{}, nil
 	}

@@ -22,6 +22,7 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
 func ResourceFirebaseHostingSite() *schema.Resource {
@@ -84,7 +85,7 @@ Learn more about using project identifiers in Google's
 }
 
 func resourceFirebaseHostingSiteCreate(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -138,7 +139,7 @@ func resourceFirebaseHostingSiteCreate(d *schema.ResourceData, meta interface{})
 }
 
 func resourceFirebaseHostingSiteRead(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -185,7 +186,7 @@ func resourceFirebaseHostingSiteRead(d *schema.ResourceData, meta interface{}) e
 }
 
 func resourceFirebaseHostingSiteUpdate(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -242,7 +243,7 @@ func resourceFirebaseHostingSiteUpdate(d *schema.ResourceData, meta interface{})
 }
 
 func resourceFirebaseHostingSiteDelete(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -279,7 +280,7 @@ func resourceFirebaseHostingSiteDelete(d *schema.ResourceData, meta interface{})
 }
 
 func resourceFirebaseHostingSiteImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	if err := ParseImportId([]string{
 		"projects/(?P<project>[^/]+)/sites/(?P<site_id>[^/]+)",
 		"(?P<project>[^/]+)/(?P<site_id>[^/]+)",
@@ -299,18 +300,18 @@ func resourceFirebaseHostingSiteImport(d *schema.ResourceData, meta interface{})
 	return []*schema.ResourceData{d}, nil
 }
 
-func flattenFirebaseHostingSiteName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenFirebaseHostingSiteName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenFirebaseHostingSiteAppId(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenFirebaseHostingSiteAppId(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenFirebaseHostingSiteDefaultUrl(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenFirebaseHostingSiteDefaultUrl(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func expandFirebaseHostingSiteAppId(v interface{}, d TerraformResourceData, config *Config) (interface{}, error) {
+func expandFirebaseHostingSiteAppId(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }

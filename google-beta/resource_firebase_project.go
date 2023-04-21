@@ -20,9 +20,10 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
-func getExistingFirebaseProjectId(config *Config, d *schema.ResourceData, billingProject string, userAgent string) (string, error) {
+func getExistingFirebaseProjectId(config *transport_tpg.Config, d *schema.ResourceData, billingProject string, userAgent string) (string, error) {
 	url, err := ReplaceVars(d, config, "{{FirebaseBasePath}}projects/{{project}}")
 	if err != nil {
 		return "", err
@@ -82,7 +83,7 @@ func ResourceFirebaseProject() *schema.Resource {
 }
 
 func resourceFirebaseProjectCreate(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -148,7 +149,7 @@ func resourceFirebaseProjectCreate(d *schema.ResourceData, meta interface{}) err
 }
 
 func resourceFirebaseProjectRead(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -201,7 +202,7 @@ func resourceFirebaseProjectDelete(d *schema.ResourceData, meta interface{}) err
 }
 
 func resourceFirebaseProjectImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-	config := meta.(*Config)
+	config := meta.(*transport_tpg.Config)
 	if err := ParseImportId([]string{
 		"projects/(?P<project>[^/]+)",
 		"(?P<project>[^/]+)",
@@ -219,10 +220,10 @@ func resourceFirebaseProjectImport(d *schema.ResourceData, meta interface{}) ([]
 	return []*schema.ResourceData{d}, nil
 }
 
-func flattenFirebaseProjectProjectNumber(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenFirebaseProjectProjectNumber(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenFirebaseProjectDisplayName(v interface{}, d *schema.ResourceData, config *Config) interface{} {
+func flattenFirebaseProjectDisplayName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
