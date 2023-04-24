@@ -15,7 +15,7 @@ FEATURES:
 IMPROVEMENTS:
 * dlp: added `inspect_job.actions.job_notification_emails` and `inspect_job.actions.deidentify`  fields to `google_data_loss_prevention_job_trigger` resource ([#5477](https://github.com/hashicorp/terraform-provider-google-beta/pull/5477))
 * dlp: added `triggers.manual` and `inspect_job.storage_config.hybrid_options` to `google_data_loss_prevention_job_trigger` ([#5490](https://github.com/hashicorp/terraform-provider-google-beta/pull/5490))
-* iamworkforcepool: added `oidc.web_sso_config` field to `google_iam_workforce_pool_provider` ([#5491](https://github.com/hashicorp/terraform-provider-google-beta/pull/5491))
+* iam: added `oidc.web_sso_config` field to `google_iam_workforce_pool_provider` ([#5491](https://github.com/hashicorp/terraform-provider-google-beta/pull/5491))
 
 BUG FIXES:
 * alloydb: changed `weekly_schedule` (under `automated_backup_policy`) from required to optional for `google_alloydb_cluster` ([#5495](https://github.com/hashicorp/terraform-provider-google-beta/pull/5495))
