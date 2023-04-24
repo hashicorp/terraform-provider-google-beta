@@ -801,9 +801,9 @@ func Provider() *schema.Provider {
 	return provider
 }
 
-// Generated resources: 329
+// Generated resources: 330
 // Generated IAM resources: 219
-// Total generated resources: 548
+// Total generated resources: 549
 func ResourceMap() map[string]*schema.Resource {
 	resourceMap, _ := ResourceMapWithErrors()
 	return resourceMap
@@ -1232,6 +1232,7 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_monitoring_slo":                                        ResourceMonitoringSlo(),
 			"google_monitoring_uptime_check_config":                        ResourceMonitoringUptimeCheckConfig(),
 			"google_network_management_connectivity_test":                  ResourceNetworkManagementConnectivityTest(),
+			"google_network_security_address_group":                        ResourceNetworkSecurityAddressGroup(),
 			"google_network_security_gateway_security_policy":              ResourceNetworkSecurityGatewaySecurityPolicy(),
 			"google_network_security_gateway_security_policy_rule":         ResourceNetworkSecurityGatewaySecurityPolicyRule(),
 			"google_network_security_url_lists":                            ResourceNetworkSecurityUrlLists(),
