@@ -1,5 +1,28 @@
 ## 4.63.0 (Unreleased)
 
+NOTES:
+* alloydb: changed `location` from `optional` to `required` for `google_alloydb_cluster` and `google_alloydb_backup` resources. `location` had previously been marked as optional, but operations failed if it was omitted, and there was no way for `location` to be inherited from the provider configuration or from an environment variable. This means there was no way to have a working configuration without `location` specified. ([#5492](https://github.com/hashicorp/terraform-provider-google-beta/pull/5492), [#5494](https://github.com/hashicorp/terraform-provider-google-beta/pull/5494))
+* workflows: updated api version from v1beta1 to v1 (beta) ([#5482](https://github.com/hashicorp/terraform-provider-google-beta/pull/5482))
+
+FEATURES:
+* **New Resource:** `google_access_context_manager_ingress_policy` ([#5474](https://github.com/hashicorp/terraform-provider-google-beta/pull/5474))
+* **New Resource:** `google_compute_public_advertised_prefix` ([#5476](https://github.com/hashicorp/terraform-provider-google-beta/pull/5476))
+* **New Resource:** `google_compute_public_delegated_prefix` ([#5476](https://github.com/hashicorp/terraform-provider-google-beta/pull/5476))
+* **New Resource:** `google_compute_region_commitment` ([#5473](https://github.com/hashicorp/terraform-provider-google-beta/pull/5473))
+* **New Resource:** `google_network_services_http_route` ([#5471](https://github.com/hashicorp/terraform-provider-google-beta/pull/5471))
+* **New Resource:** `google_network_services_tcp_route` (beta) ([#5497](https://github.com/hashicorp/terraform-provider-google-beta/pull/5497))
+
+IMPROVEMENTS:
+* dlp: added `inspect_job.actions.job_notification_emails` and `inspect_job.actions.deidentify`  fields to `google_data_loss_prevention_job_trigger` resource ([#5477](https://github.com/hashicorp/terraform-provider-google-beta/pull/5477))
+* dlp: added `triggers.manual` and `inspect_job.storage_config.hybrid_options` to `google_data_loss_prevention_job_trigger` ([#5490](https://github.com/hashicorp/terraform-provider-google-beta/pull/5490))
+* iam: added `oidc.web_sso_config` field to `google_iam_workforce_pool_provider` ([#5491](https://github.com/hashicorp/terraform-provider-google-beta/pull/5491))
+
+BUG FIXES:
+* alloydb: changed `weekly_schedule` (under `automated_backup_policy`) from required to optional for `google_alloydb_cluster` ([#5495](https://github.com/hashicorp/terraform-provider-google-beta/pull/5495))
+* compute: fixed an issue with TTLs being sent when `USE_ORIGIN_HEADERS` is set in `google_compute_backend_bucket` ([#5488](https://github.com/hashicorp/terraform-provider-google-beta/pull/5488))
+* networkservices: increased default timeouts for `google_network_services_edge_cache_keyset` to 60m (from 30m) ([#5481](https://github.com/hashicorp/terraform-provider-google-beta/pull/5481))
+* sql: fixed an issue that prevented setting `enable_private_path_for_google_cloud_services` to `false` in `google_sql_database_instance`([#5484](https://github.com/hashicorp/terraform-provider-google-beta/pull/5484))
+
 ## 4.62.0 (April 17, 2023)
 
 FEATURES:
