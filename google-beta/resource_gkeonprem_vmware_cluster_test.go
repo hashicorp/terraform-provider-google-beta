@@ -7,8 +7,6 @@ import (
 )
 
 func TestAccGkeonpremVmwareCluster_vmwareClusterUpdateBasic(t *testing.T) {
-	// VCR fails to handle batched project services
-	SkipIfVcr(t)
 	t.Parallel()
 
 	context := map[string]interface{}{}
@@ -39,8 +37,6 @@ func TestAccGkeonpremVmwareCluster_vmwareClusterUpdateBasic(t *testing.T) {
 }
 
 func TestAccGkeonpremVmwareCluster_vmwareClusterUpdateF5Lb(t *testing.T) {
-	// VCR fails to handle batched project services
-	SkipIfVcr(t)
 	t.Parallel()
 
 	context := map[string]interface{}{}
