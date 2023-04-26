@@ -63,6 +63,59 @@ resource "google_compute_disk" "default" {
 `, context)
 }
 
+func TestAccComputeDisk_diskAsyncExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"random_suffix": RandString(t, 10),
+	}
+
+	VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckComputeDiskDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeDisk_diskAsyncExample(context),
+			},
+			{
+				ResourceName:            "google_compute_disk.primary",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"interface", "type", "zone", "snapshot"},
+			},
+		},
+	})
+}
+
+func testAccComputeDisk_diskAsyncExample(context map[string]interface{}) string {
+	return Nprintf(`
+resource "google_compute_disk" "primary" {
+  provider = google-beta
+
+  name  = "tf-test-async-test-disk%{random_suffix}"
+  type  = "pd-ssd"
+  zone  = "us-central1-a"
+
+  physical_block_size_bytes = 4096
+}
+
+resource "google_compute_disk" "secondary" {
+  provider = google-beta
+
+  name  = "tf-test-async-secondary-test-disk%{random_suffix}"
+  type  = "pd-ssd"
+  zone  = "us-east1-c"
+
+  async_primary_disk {
+    disk = google_compute_disk.primary.id
+  }
+
+  physical_block_size_bytes = 4096
+}
+`, context)
+}
+
 func testAccCheckComputeDiskDestroyProducer(t *testing.T) func(s *terraform.State) error {
 	return func(s *terraform.State) error {
 		for name, rs := range s.RootModule().Resources {
