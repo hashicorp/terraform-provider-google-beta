@@ -56,10 +56,10 @@ func ResourceNetworkServicesMesh() *schema.Resource {
 			"interception_port": {
 				Type:     schema.TypeInt,
 				Optional: true,
-				Description: `Optional. If set to a valid TCP port (1-65535), instructs the SIDECAR proxy to listen on the 
-specified port of localhost (127.0.0.1) address. The SIDECAR proxy will expect all traffic to 
-be redirected to this port regardless of its actual ip:port destination. If unset, a port 
-'15001' is used as the interception port. This will is applicable only for sidecar proxy 
+				Description: `Optional. If set to a valid TCP port (1-65535), instructs the SIDECAR proxy to listen on the
+specified port of localhost (127.0.0.1) address. The SIDECAR proxy will expect all traffic to
+be redirected to this port regardless of its actual ip:port destination. If unset, a port
+'15001' is used as the interception port. This will is applicable only for sidecar proxy
 deployments.`,
 			},
 			"labels": {
