@@ -168,7 +168,7 @@ func Cloudbuildv2ConnectionGithubConfigAuthorizerCredentialSchema() *schema.Reso
 			"username": {
 				Type:        schema.TypeString,
 				Computed:    true,
-				Description: "The username associated to this token.",
+				Description: "Output only. The username associated to this token.",
 			},
 		},
 	}
