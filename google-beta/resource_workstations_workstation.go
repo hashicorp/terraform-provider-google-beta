@@ -92,8 +92,8 @@ func ResourceWorkstationsWorkstation() *schema.Resource {
 			"host": {
 				Type:     schema.TypeString,
 				Computed: true,
-				Description: `Host to which clients can send HTTPS traffic that will be received by the workstation. 
-Authorized traffic will be received to the workstation as HTTP on port 80. 
+				Description: `Host to which clients can send HTTPS traffic that will be received by the workstation.
+Authorized traffic will be received to the workstation as HTTP on port 80.
 To send traffic to a different port, clients may prefix the host with the destination port in the format "{port}-{host}".`,
 			},
 			"name": {

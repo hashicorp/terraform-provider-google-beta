@@ -355,7 +355,7 @@ If the encryption key is revoked, the workstation session will automatically be 
 			"etag": {
 				Type:     schema.TypeString,
 				Computed: true,
-				Description: `Checksum computed by the server. 
+				Description: `Checksum computed by the server.
 May be sent on update and delete requests to ensure that the client has an up-to-date value before proceeding.`,
 			},
 			"name": {
