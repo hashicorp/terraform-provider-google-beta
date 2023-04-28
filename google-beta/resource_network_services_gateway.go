@@ -53,7 +53,7 @@ func ResourceNetworkServicesGateway() *schema.Resource {
 				Required: true,
 				ForceNew: true,
 				Description: `One or more port numbers (1-65535), on which the Gateway will receive traffic.
-The proxy binds to the specified ports. Gateways of type 'SECURE_WEB_GATEWAY' are 
+The proxy binds to the specified ports. Gateways of type 'SECURE_WEB_GATEWAY' are
 limited to 1 port. Gateways of type 'OPEN_MESH' listen on 0.0.0.0 and support multiple ports.`,
 				Elem: &schema.Schema{
 					Type: schema.TypeInt,
@@ -64,7 +64,7 @@ limited to 1 port. Gateways of type 'OPEN_MESH' listen on 0.0.0.0 and support mu
 				Required: true,
 				Description: `Immutable. Scope determines how configuration across multiple Gateway instances are merged.
 The configuration for multiple Gateway instances with the same scope will be merged as presented as
-a single coniguration to the proxy/load balancer. 
+a single coniguration to the proxy/load balancer.
 Max length 64 characters. Scope should start with a letter and can only have letters, numbers, hyphens.`,
 			},
 			"type": {

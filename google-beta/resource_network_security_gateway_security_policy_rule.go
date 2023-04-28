@@ -96,7 +96,7 @@ rule should match the pattern: (^a-z?$).`,
 			"tls_inspection_enabled": {
 				Type:     schema.TypeBool,
 				Optional: true,
-				Description: `Flag to enable TLS inspection of traffic matching on. Can only be true if the 
+				Description: `Flag to enable TLS inspection of traffic matching on. Can only be true if the
 parent GatewaySecurityPolicy references a TLSInspectionConfig.`,
 			},
 			"create_time": {
