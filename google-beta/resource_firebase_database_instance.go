@@ -76,7 +76,7 @@ func ResourceFirebaseDatabaseInstance() *schema.Resource {
 				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: true,
-				Description: `The globally unique identifier of the Firebase Realtime Database instance. 
+				Description: `The globally unique identifier of the Firebase Realtime Database instance.
 Instance IDs cannot be reused after deletion.`,
 			},
 			"region": {
