@@ -22,6 +22,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/verify"
 )
 
 func ResourceOSConfigGuestPolicies() *schema.Resource {
@@ -139,7 +140,7 @@ Zonal targeting is uncommon and is supported to facilitate the management of cha
 			"guest_policy_id": {
 				Type:         schema.TypeString,
 				Required:     true,
-				ValidateFunc: validateRegexp(`(?:(?:[-a-z0-9]{1,63}\.)*(?:[a-z](?:[-a-z0-9]{0,61}[a-z0-9])?):)?(?:[0-9]{1,19}|(?:[a-z0-9](?:[-a-z0-9]{0,61}[a-z0-9])?))`),
+				ValidateFunc: verify.ValidateRegexp(`(?:(?:[-a-z0-9]{1,63}\.)*(?:[a-z](?:[-a-z0-9]{0,61}[a-z0-9])?):)?(?:[0-9]{1,19}|(?:[a-z0-9](?:[-a-z0-9]{0,61}[a-z0-9])?))`),
 				Description: `The logical name of the guest policy in the project with the following restrictions:
 * Must contain only lowercase letters, numbers, and hyphens.
 * Must start with a letter.
@@ -938,7 +939,7 @@ func resourceOSConfigGuestPoliciesCreate(d *schema.ResourceData, meta interface{
 		billingProject = bp
 	}
 
-	res, err := SendRequestWithTimeout(config, "POST", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutCreate))
+	res, err := transport_tpg.SendRequestWithTimeout(config, "POST", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutCreate))
 	if err != nil {
 		return fmt.Errorf("Error creating GuestPolicies: %s", err)
 	}
@@ -998,9 +999,9 @@ func resourceOSConfigGuestPoliciesRead(d *schema.ResourceData, meta interface{})
 		billingProject = bp
 	}
 
-	res, err := SendRequest(config, "GET", billingProject, url, userAgent, nil)
+	res, err := transport_tpg.SendRequest(config, "GET", billingProject, url, userAgent, nil)
 	if err != nil {
-		return handleNotFoundError(err, d, fmt.Sprintf("OSConfigGuestPolicies %q", d.Id()))
+		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("OSConfigGuestPolicies %q", d.Id()))
 	}
 
 	if err := d.Set("project", project); err != nil {
@@ -1103,7 +1104,7 @@ func resourceOSConfigGuestPoliciesUpdate(d *schema.ResourceData, meta interface{
 		billingProject = bp
 	}
 
-	res, err := SendRequestWithTimeout(config, "PATCH", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutUpdate))
+	res, err := transport_tpg.SendRequestWithTimeout(config, "PATCH", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutUpdate))
 
 	if err != nil {
 		return fmt.Errorf("Error updating GuestPolicies %q: %s", d.Id(), err)
@@ -1142,9 +1143,9 @@ func resourceOSConfigGuestPoliciesDelete(d *schema.ResourceData, meta interface{
 		billingProject = bp
 	}
 
-	res, err := SendRequestWithTimeout(config, "DELETE", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutDelete))
+	res, err := transport_tpg.SendRequestWithTimeout(config, "DELETE", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutDelete))
 	if err != nil {
-		return handleNotFoundError(err, d, "GuestPolicies")
+		return transport_tpg.HandleNotFoundError(err, d, "GuestPolicies")
 	}
 
 	log.Printf("[DEBUG] Finished deleting GuestPolicies %q: %#v", d.Id(), res)

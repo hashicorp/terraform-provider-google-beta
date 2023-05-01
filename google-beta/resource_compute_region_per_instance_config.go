@@ -287,7 +287,7 @@ func resourceComputeRegionPerInstanceConfigCreate(d *schema.ResourceData, meta i
 		billingProject = bp
 	}
 
-	res, err := SendRequestWithTimeout(config, "POST", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutCreate))
+	res, err := transport_tpg.SendRequestWithTimeout(config, "POST", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutCreate))
 	if err != nil {
 		return fmt.Errorf("Error creating RegionPerInstanceConfig: %s", err)
 	}
@@ -339,9 +339,9 @@ func resourceComputeRegionPerInstanceConfigRead(d *schema.ResourceData, meta int
 		billingProject = bp
 	}
 
-	res, err := SendRequest(config, "POST", billingProject, url, userAgent, nil)
+	res, err := transport_tpg.SendRequest(config, "POST", billingProject, url, userAgent, nil)
 	if err != nil {
-		return handleNotFoundError(err, d, fmt.Sprintf("ComputeRegionPerInstanceConfig %q", d.Id()))
+		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("ComputeRegionPerInstanceConfig %q", d.Id()))
 	}
 
 	res, err = flattenNestedComputeRegionPerInstanceConfig(d, meta, res)
@@ -447,7 +447,7 @@ func resourceComputeRegionPerInstanceConfigUpdate(d *schema.ResourceData, meta i
 		billingProject = bp
 	}
 
-	res, err := SendRequestWithTimeout(config, "POST", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutUpdate))
+	res, err := transport_tpg.SendRequestWithTimeout(config, "POST", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutUpdate))
 
 	if err != nil {
 		return fmt.Errorf("Error updating RegionPerInstanceConfig %q: %s", d.Id(), err)
@@ -490,7 +490,7 @@ func resourceComputeRegionPerInstanceConfigUpdate(d *schema.ResourceData, meta i
 	}
 
 	log.Printf("[DEBUG] Applying updates to PerInstanceConfig %q: %#v", d.Id(), obj)
-	res, err = SendRequestWithTimeout(config, "POST", project, url, userAgent, obj, d.Timeout(schema.TimeoutUpdate))
+	res, err = transport_tpg.SendRequestWithTimeout(config, "POST", project, url, userAgent, obj, d.Timeout(schema.TimeoutUpdate))
 
 	if err != nil {
 		return fmt.Errorf("Error updating PerInstanceConfig %q: %s", d.Id(), err)
@@ -536,9 +536,9 @@ func resourceComputeRegionPerInstanceConfigDelete(d *schema.ResourceData, meta i
 	}
 	log.Printf("[DEBUG] Deleting RegionPerInstanceConfig %q", d.Id())
 
-	res, err := SendRequestWithTimeout(config, "POST", project, url, userAgent, obj, d.Timeout(schema.TimeoutDelete))
+	res, err := transport_tpg.SendRequestWithTimeout(config, "POST", project, url, userAgent, obj, d.Timeout(schema.TimeoutDelete))
 	if err != nil {
-		return handleNotFoundError(err, d, "RegionPerInstanceConfig")
+		return transport_tpg.HandleNotFoundError(err, d, "RegionPerInstanceConfig")
 	}
 
 	err = ComputeOperationWaitTime(
@@ -567,7 +567,7 @@ func resourceComputeRegionPerInstanceConfigDelete(d *schema.ResourceData, meta i
 		}
 
 		log.Printf("[DEBUG] Applying updates to PerInstanceConfig %q: %#v", d.Id(), obj)
-		res, err = SendRequestWithTimeout(config, "POST", project, url, userAgent, obj, d.Timeout(schema.TimeoutUpdate))
+		res, err = transport_tpg.SendRequestWithTimeout(config, "POST", project, url, userAgent, obj, d.Timeout(schema.TimeoutUpdate))
 
 		if err != nil {
 			return fmt.Errorf("Error updating PerInstanceConfig %q: %s", d.Id(), err)

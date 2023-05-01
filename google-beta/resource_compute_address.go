@@ -22,6 +22,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/verify"
 )
 
 func ResourceComputeAddress() *schema.Resource {
@@ -46,7 +47,7 @@ func ResourceComputeAddress() *schema.Resource {
 				Type:         schema.TypeString,
 				Required:     true,
 				ForceNew:     true,
-				ValidateFunc: validateRegexp(`^(?:[a-z](?:[-a-z0-9]{0,61}[a-z0-9])?)$`),
+				ValidateFunc: verify.ValidateRegexp(`^(?:[a-z](?:[-a-z0-9]{0,61}[a-z0-9])?)$`),
 				Description: `Name of the resource. The name must be 1-63 characters long, and
 comply with RFC1035. Specifically, the name must be 1-63 characters
 long and match the regular expression '[a-z]([-a-z0-9]*[a-z0-9])?'
@@ -290,7 +291,7 @@ func resourceComputeAddressCreate(d *schema.ResourceData, meta interface{}) erro
 		billingProject = bp
 	}
 
-	res, err := SendRequestWithTimeout(config, "POST", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutCreate))
+	res, err := transport_tpg.SendRequestWithTimeout(config, "POST", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutCreate))
 	if err != nil {
 		return fmt.Errorf("Error creating Address: %s", err)
 	}
@@ -333,7 +334,7 @@ func resourceComputeAddressCreate(d *schema.ResourceData, meta interface{}) erro
 		if err != nil {
 			return err
 		}
-		res, err = SendRequest(config, "POST", project, url, userAgent, obj)
+		res, err = transport_tpg.SendRequest(config, "POST", project, url, userAgent, obj)
 		if err != nil {
 			return fmt.Errorf("Error adding labels to ComputeAddress %q: %s", d.Id(), err)
 		}
@@ -378,9 +379,9 @@ func resourceComputeAddressRead(d *schema.ResourceData, meta interface{}) error 
 		billingProject = bp
 	}
 
-	res, err := SendRequest(config, "GET", billingProject, url, userAgent, nil)
+	res, err := transport_tpg.SendRequest(config, "GET", billingProject, url, userAgent, nil)
 	if err != nil {
-		return handleNotFoundError(err, d, fmt.Sprintf("ComputeAddress %q", d.Id()))
+		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("ComputeAddress %q", d.Id()))
 	}
 
 	if err := d.Set("project", project); err != nil {
@@ -479,7 +480,7 @@ func resourceComputeAddressUpdate(d *schema.ResourceData, meta interface{}) erro
 			billingProject = bp
 		}
 
-		res, err := SendRequestWithTimeout(config, "POST", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutUpdate))
+		res, err := transport_tpg.SendRequestWithTimeout(config, "POST", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutUpdate))
 		if err != nil {
 			return fmt.Errorf("Error updating Address %q: %s", d.Id(), err)
 		} else {
@@ -527,9 +528,9 @@ func resourceComputeAddressDelete(d *schema.ResourceData, meta interface{}) erro
 		billingProject = bp
 	}
 
-	res, err := SendRequestWithTimeout(config, "DELETE", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutDelete))
+	res, err := transport_tpg.SendRequestWithTimeout(config, "DELETE", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutDelete))
 	if err != nil {
-		return handleNotFoundError(err, d, "Address")
+		return transport_tpg.HandleNotFoundError(err, d, "Address")
 	}
 
 	err = ComputeOperationWaitTime(

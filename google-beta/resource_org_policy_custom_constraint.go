@@ -168,7 +168,7 @@ func resourceOrgPolicyCustomConstraintCreate(d *schema.ResourceData, meta interf
 		billingProject = bp
 	}
 
-	res, err := SendRequestWithTimeout(config, "POST", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutCreate))
+	res, err := transport_tpg.SendRequestWithTimeout(config, "POST", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutCreate))
 	if err != nil {
 		return fmt.Errorf("Error creating CustomConstraint: %s", err)
 	}
@@ -204,9 +204,9 @@ func resourceOrgPolicyCustomConstraintRead(d *schema.ResourceData, meta interfac
 		billingProject = bp
 	}
 
-	res, err := SendRequest(config, "GET", billingProject, url, userAgent, nil)
+	res, err := transport_tpg.SendRequest(config, "GET", billingProject, url, userAgent, nil)
 	if err != nil {
-		return handleNotFoundError(err, d, fmt.Sprintf("OrgPolicyCustomConstraint %q", d.Id()))
+		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("OrgPolicyCustomConstraint %q", d.Id()))
 	}
 
 	if err := d.Set("name", flattenOrgPolicyCustomConstraintName(res["name"], d, config)); err != nil {
@@ -295,7 +295,7 @@ func resourceOrgPolicyCustomConstraintUpdate(d *schema.ResourceData, meta interf
 		billingProject = bp
 	}
 
-	res, err := SendRequestWithTimeout(config, "PATCH", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutUpdate))
+	res, err := transport_tpg.SendRequestWithTimeout(config, "PATCH", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutUpdate))
 
 	if err != nil {
 		return fmt.Errorf("Error updating CustomConstraint %q: %s", d.Id(), err)
@@ -328,9 +328,9 @@ func resourceOrgPolicyCustomConstraintDelete(d *schema.ResourceData, meta interf
 		billingProject = bp
 	}
 
-	res, err := SendRequestWithTimeout(config, "DELETE", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutDelete))
+	res, err := transport_tpg.SendRequestWithTimeout(config, "DELETE", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutDelete))
 	if err != nil {
-		return handleNotFoundError(err, d, "CustomConstraint")
+		return transport_tpg.HandleNotFoundError(err, d, "CustomConstraint")
 	}
 
 	log.Printf("[DEBUG] Finished deleting CustomConstraint %q: %#v", d.Id(), res)

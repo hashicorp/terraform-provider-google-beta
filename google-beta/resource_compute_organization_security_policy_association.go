@@ -102,7 +102,7 @@ func resourceComputeOrganizationSecurityPolicyAssociationCreate(d *schema.Resour
 		billingProject = bp
 	}
 
-	res, err := SendRequestWithTimeout(config, "POST", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutCreate))
+	res, err := transport_tpg.SendRequestWithTimeout(config, "POST", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutCreate))
 	if err != nil {
 		return fmt.Errorf("Error creating OrganizationSecurityPolicyAssociation: %s", err)
 	}
@@ -122,9 +122,9 @@ func resourceComputeOrganizationSecurityPolicyAssociationCreate(d *schema.Resour
 		return err
 	}
 
-	policyRes, err := SendRequest(config, "GET", "", url, userAgent, nil)
+	policyRes, err := transport_tpg.SendRequest(config, "GET", "", url, userAgent, nil)
 	if err != nil {
-		return handleNotFoundError(err, d, fmt.Sprintf("ComputeOrganizationSecurityPolicy %q", d.Get("policy_id")))
+		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("ComputeOrganizationSecurityPolicy %q", d.Get("policy_id")))
 	}
 
 	parent := flattenComputeOrganizationSecurityPolicyParent(policyRes["parent"], d, config)
@@ -163,9 +163,9 @@ func resourceComputeOrganizationSecurityPolicyAssociationRead(d *schema.Resource
 		billingProject = bp
 	}
 
-	res, err := SendRequest(config, "GET", billingProject, url, userAgent, nil)
+	res, err := transport_tpg.SendRequest(config, "GET", billingProject, url, userAgent, nil)
 	if err != nil {
-		return handleNotFoundError(transformSecurityPolicyAssociationReadError(err), d, fmt.Sprintf("ComputeOrganizationSecurityPolicyAssociation %q", d.Id()))
+		return transport_tpg.HandleNotFoundError(transformSecurityPolicyAssociationReadError(err), d, fmt.Sprintf("ComputeOrganizationSecurityPolicyAssociation %q", d.Id()))
 	}
 
 	if err := d.Set("name", flattenComputeOrganizationSecurityPolicyAssociationName(res["name"], d, config)); err != nil {
@@ -203,9 +203,9 @@ func resourceComputeOrganizationSecurityPolicyAssociationDelete(d *schema.Resour
 		billingProject = bp
 	}
 
-	res, err := SendRequestWithTimeout(config, "POST", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutDelete))
+	res, err := transport_tpg.SendRequestWithTimeout(config, "POST", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutDelete))
 	if err != nil {
-		return handleNotFoundError(err, d, "OrganizationSecurityPolicyAssociation")
+		return transport_tpg.HandleNotFoundError(err, d, "OrganizationSecurityPolicyAssociation")
 	}
 
 	// `parent` is needed to poll the asynchronous operations but its available only on the policy.
@@ -216,9 +216,9 @@ func resourceComputeOrganizationSecurityPolicyAssociationDelete(d *schema.Resour
 		return err
 	}
 
-	policyRes, err := SendRequest(config, "GET", "", url, userAgent, nil)
+	policyRes, err := transport_tpg.SendRequest(config, "GET", "", url, userAgent, nil)
 	if err != nil {
-		return handleNotFoundError(err, d, fmt.Sprintf("ComputeOrganizationSecurityPolicy %q", d.Get("policy_id")))
+		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("ComputeOrganizationSecurityPolicy %q", d.Get("policy_id")))
 	}
 
 	parent := flattenComputeOrganizationSecurityPolicyParent(policyRes["parent"], d, config)

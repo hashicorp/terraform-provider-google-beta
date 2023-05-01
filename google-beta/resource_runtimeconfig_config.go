@@ -2,8 +2,10 @@ package google
 
 import (
 	"fmt"
-	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 	"regexp"
+
+	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/verify"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	runtimeconfig "google.golang.org/api/runtimeconfig/v1beta1"
@@ -27,7 +29,7 @@ func ResourceRuntimeconfigConfig() *schema.Resource {
 				Type:         schema.TypeString,
 				Required:     true,
 				ForceNew:     true,
-				ValidateFunc: validateRegexp("[0-9A-Za-z](?:[_.A-Za-z0-9-]{0,62}[_.A-Za-z0-9])?"),
+				ValidateFunc: verify.ValidateRegexp("[0-9A-Za-z](?:[_.A-Za-z0-9-]{0,62}[_.A-Za-z0-9])?"),
 				Description:  `The name of the runtime config.`,
 			},
 
@@ -91,7 +93,7 @@ func resourceRuntimeconfigConfigRead(d *schema.ResourceData, meta interface{}) e
 	fullName := d.Id()
 	runConfig, err := config.NewRuntimeconfigClient(userAgent).Projects.Configs.Get(fullName).Do()
 	if err != nil {
-		return handleNotFoundError(err, d, fmt.Sprintf("RuntimeConfig %q", d.Id()))
+		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("RuntimeConfig %q", d.Id()))
 	}
 
 	project, name, err := resourceRuntimeconfigParseFullName(runConfig.Name)

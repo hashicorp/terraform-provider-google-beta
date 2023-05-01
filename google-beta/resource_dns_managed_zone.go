@@ -490,7 +490,7 @@ func resourceDNSManagedZoneCreate(d *schema.ResourceData, meta interface{}) erro
 		billingProject = bp
 	}
 
-	res, err := SendRequestWithTimeout(config, "POST", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutCreate))
+	res, err := transport_tpg.SendRequestWithTimeout(config, "POST", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutCreate))
 	if err != nil {
 		return fmt.Errorf("Error creating ManagedZone: %s", err)
 	}
@@ -532,9 +532,9 @@ func resourceDNSManagedZoneRead(d *schema.ResourceData, meta interface{}) error 
 		billingProject = bp
 	}
 
-	res, err := SendRequest(config, "GET", billingProject, url, userAgent, nil)
+	res, err := transport_tpg.SendRequest(config, "GET", billingProject, url, userAgent, nil)
 	if err != nil {
-		return handleNotFoundError(err, d, fmt.Sprintf("DNSManagedZone %q", d.Id()))
+		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("DNSManagedZone %q", d.Id()))
 	}
 
 	// Explicitly set virtual fields to default values if unset
@@ -702,7 +702,7 @@ func resourceDNSManagedZoneUpdate(d *schema.ResourceData, meta interface{}) erro
 		billingProject = bp
 	}
 
-	res, err := SendRequestWithTimeout(config, "PUT", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutUpdate))
+	res, err := transport_tpg.SendRequestWithTimeout(config, "PUT", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutUpdate))
 
 	if err != nil {
 		return fmt.Errorf("Error updating ManagedZone %q: %s", d.Id(), err)
@@ -811,9 +811,9 @@ func resourceDNSManagedZoneDelete(d *schema.ResourceData, meta interface{}) erro
 		billingProject = bp
 	}
 
-	res, err := SendRequestWithTimeout(config, "DELETE", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutDelete))
+	res, err := transport_tpg.SendRequestWithTimeout(config, "DELETE", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutDelete))
 	if err != nil {
-		return handleNotFoundError(err, d, "ManagedZone")
+		return transport_tpg.HandleNotFoundError(err, d, "ManagedZone")
 	}
 
 	log.Printf("[DEBUG] Finished deleting ManagedZone %q: %#v", d.Id(), res)
