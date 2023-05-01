@@ -22,6 +22,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
@@ -33,7 +34,7 @@ func TestAccNetworkServicesTlsRoute_networkServicesTlsRouteBasicExample(t *testi
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { AccTestPreCheck(t) },
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
 		CheckDestroy:             testAccCheckNetworkServicesTlsRouteDestroyProducer(t),
 		Steps: []resource.TestStep{
@@ -94,7 +95,7 @@ func TestAccNetworkServicesTlsRoute_networkServicesTlsRouteMeshBasicExample(t *t
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { AccTestPreCheck(t) },
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
 		CheckDestroy:             testAccCheckNetworkServicesTlsRouteDestroyProducer(t),
 		Steps: []resource.TestStep{
@@ -168,7 +169,7 @@ func TestAccNetworkServicesTlsRoute_networkServicesTlsRouteGatewayBasicExample(t
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { AccTestPreCheck(t) },
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
 		CheckDestroy:             testAccCheckNetworkServicesTlsRouteDestroyProducer(t),
 		Steps: []resource.TestStep{
@@ -248,7 +249,7 @@ func testAccCheckNetworkServicesTlsRouteDestroyProducer(t *testing.T) func(s *te
 
 			config := GoogleProviderConfig(t)
 
-			url, err := replaceVarsForTest(config, rs, "{{NetworkServicesBasePath}}projects/{{project}}/locations/global/tlsRoutes/{{name}}")
+			url, err := acctest.ReplaceVarsForTest(config, rs, "{{NetworkServicesBasePath}}projects/{{project}}/locations/global/tlsRoutes/{{name}}")
 			if err != nil {
 				return err
 			}

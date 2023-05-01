@@ -2,6 +2,7 @@ package google
 
 import (
 	"fmt"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"strings"
 	"testing"
 
@@ -17,7 +18,7 @@ func TestAccVertexAIMetadataStore_vertexAiMetadataStoreExample(t *testing.T) {
 	name := fmt.Sprintf("tf-test-%s", RandString(t, 10))
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { AccTestPreCheck(t) },
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckVertexAIMetadataStoreDestroyProducer(t),
 		Steps: []resource.TestStep{
@@ -59,7 +60,7 @@ func testAccCheckVertexAIMetadataStoreDestroyProducer(t *testing.T) func(s *terr
 
 			config := GoogleProviderConfig(t)
 
-			url, err := replaceVarsForTest(config, rs, "{{VertexAIBasePath}}{{name}}")
+			url, err := acctest.ReplaceVarsForTest(config, rs, "{{VertexAIBasePath}}{{name}}")
 			if err != nil {
 				return err
 			}

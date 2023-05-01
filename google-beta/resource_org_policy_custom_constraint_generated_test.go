@@ -22,6 +22,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
@@ -29,12 +30,12 @@ func TestAccOrgPolicyCustomConstraint_orgPolicyCustomConstraintBasicExample(t *t
 	t.Parallel()
 
 	context := map[string]interface{}{
-		"org_id":        GetTestOrgFromEnv(t),
+		"org_id":        acctest.GetTestOrgFromEnv(t),
 		"random_suffix": RandString(t, 10),
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { AccTestPreCheck(t) },
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
 		CheckDestroy:             testAccCheckOrgPolicyCustomConstraintDestroyProducer(t),
 		Steps: []resource.TestStep{
@@ -71,12 +72,12 @@ func TestAccOrgPolicyCustomConstraint_orgPolicyCustomConstraintFullExample(t *te
 	t.Parallel()
 
 	context := map[string]interface{}{
-		"org_id":        GetTestOrgTargetFromEnv(t),
+		"org_id":        acctest.GetTestOrgTargetFromEnv(t),
 		"random_suffix": RandString(t, 10),
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { AccTestPreCheck(t) },
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
 		CheckDestroy:             testAccCheckOrgPolicyCustomConstraintDestroyProducer(t),
 		Steps: []resource.TestStep{
@@ -136,7 +137,7 @@ func testAccCheckOrgPolicyCustomConstraintDestroyProducer(t *testing.T) func(s *
 
 			config := GoogleProviderConfig(t)
 
-			url, err := replaceVarsForTest(config, rs, "{{OrgPolicyBasePath}}{{parent}}/customConstraints/{{name}}")
+			url, err := acctest.ReplaceVarsForTest(config, rs, "{{OrgPolicyBasePath}}{{parent}}/customConstraints/{{name}}")
 			if err != nil {
 				return err
 			}
