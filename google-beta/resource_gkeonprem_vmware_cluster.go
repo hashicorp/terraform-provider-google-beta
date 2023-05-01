@@ -957,7 +957,7 @@ func resourceGkeonpremVmwareClusterCreate(d *schema.ResourceData, meta interface
 		billingProject = bp
 	}
 
-	res, err := SendRequestWithTimeout(config, "POST", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutCreate))
+	res, err := transport_tpg.SendRequestWithTimeout(config, "POST", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutCreate))
 	if err != nil {
 		return fmt.Errorf("Error creating VmwareCluster: %s", err)
 	}
@@ -1017,9 +1017,9 @@ func resourceGkeonpremVmwareClusterRead(d *schema.ResourceData, meta interface{}
 		billingProject = bp
 	}
 
-	res, err := SendRequest(config, "GET", billingProject, url, userAgent, nil)
+	res, err := transport_tpg.SendRequest(config, "GET", billingProject, url, userAgent, nil)
 	if err != nil {
-		return handleNotFoundError(err, d, fmt.Sprintf("GkeonpremVmwareCluster %q", d.Id()))
+		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("GkeonpremVmwareCluster %q", d.Id()))
 	}
 
 	if err := d.Set("project", project); err != nil {
@@ -1267,7 +1267,7 @@ func resourceGkeonpremVmwareClusterUpdate(d *schema.ResourceData, meta interface
 	}
 	// updateMask is a URL parameter but not present in the schema, so ReplaceVars
 	// won't set it
-	url, err = AddQueryParams(url, map[string]string{"updateMask": strings.Join(updateMask, ",")})
+	url, err = transport_tpg.AddQueryParams(url, map[string]string{"updateMask": strings.Join(updateMask, ",")})
 	if err != nil {
 		return err
 	}
@@ -1277,7 +1277,7 @@ func resourceGkeonpremVmwareClusterUpdate(d *schema.ResourceData, meta interface
 		billingProject = bp
 	}
 
-	res, err := SendRequestWithTimeout(config, "PATCH", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutUpdate))
+	res, err := transport_tpg.SendRequestWithTimeout(config, "PATCH", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutUpdate))
 
 	if err != nil {
 		return fmt.Errorf("Error updating VmwareCluster %q: %s", d.Id(), err)
@@ -1324,9 +1324,9 @@ func resourceGkeonpremVmwareClusterDelete(d *schema.ResourceData, meta interface
 		billingProject = bp
 	}
 
-	res, err := SendRequestWithTimeout(config, "DELETE", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutDelete))
+	res, err := transport_tpg.SendRequestWithTimeout(config, "DELETE", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutDelete))
 	if err != nil {
-		return handleNotFoundError(err, d, "VmwareCluster")
+		return transport_tpg.HandleNotFoundError(err, d, "VmwareCluster")
 	}
 
 	err = GkeonpremOperationWaitTime(

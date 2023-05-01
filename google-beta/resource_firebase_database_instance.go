@@ -30,7 +30,7 @@ func enableRTDB(config *transport_tpg.Config, d *schema.ResourceData, project st
 		return err
 	}
 
-	res, err := SendRequest(config, "POST", billingProject, url, userAgent, nil)
+	res, err := transport_tpg.SendRequest(config, "POST", billingProject, url, userAgent, nil)
 	if err != nil {
 		return fmt.Errorf("Error reenabling firebase_database_instance %q: %s", d.Id(), err)
 	} else {
@@ -45,7 +45,7 @@ func disableRTDB(config *transport_tpg.Config, d *schema.ResourceData, project s
 		return err
 	}
 
-	res, err := SendRequest(config, "POST", billingProject, url, userAgent, nil)
+	res, err := transport_tpg.SendRequest(config, "POST", billingProject, url, userAgent, nil)
 	if err != nil {
 		return fmt.Errorf("Error disabling firebase_database_instance %q: %s", d.Id(), err)
 	} else {
@@ -167,7 +167,7 @@ func resourceFirebaseDatabaseInstanceCreate(d *schema.ResourceData, meta interfa
 		billingProject = bp
 	}
 
-	res, err := SendRequestWithTimeout(config, "POST", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutCreate))
+	res, err := transport_tpg.SendRequestWithTimeout(config, "POST", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutCreate))
 	if err != nil {
 		return fmt.Errorf("Error creating Instance: %s", err)
 	}
@@ -220,9 +220,9 @@ func resourceFirebaseDatabaseInstanceRead(d *schema.ResourceData, meta interface
 		billingProject = bp
 	}
 
-	res, err := SendRequest(config, "GET", billingProject, url, userAgent, nil)
+	res, err := transport_tpg.SendRequest(config, "GET", billingProject, url, userAgent, nil)
 	if err != nil {
-		return handleNotFoundError(err, d, fmt.Sprintf("FirebaseDatabaseInstance %q", d.Id()))
+		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("FirebaseDatabaseInstance %q", d.Id()))
 	}
 
 	res, err = resourceFirebaseDatabaseInstanceDecoder(d, meta, res)
@@ -319,7 +319,7 @@ func resourceFirebaseDatabaseInstanceUpdate(d *schema.ResourceData, meta interfa
 		billingProject = bp
 	}
 
-	res, err := SendRequestWithTimeout(config, "PUT", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutUpdate))
+	res, err := transport_tpg.SendRequestWithTimeout(config, "PUT", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutUpdate))
 
 	if err != nil {
 		return fmt.Errorf("Error updating Instance %q: %s", d.Id(), err)
@@ -370,9 +370,9 @@ func resourceFirebaseDatabaseInstanceDelete(d *schema.ResourceData, meta interfa
 		billingProject = bp
 	}
 
-	res, err := SendRequestWithTimeout(config, "DELETE", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutDelete))
+	res, err := transport_tpg.SendRequestWithTimeout(config, "DELETE", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutDelete))
 	if err != nil {
-		return handleNotFoundError(err, d, "Instance")
+		return transport_tpg.HandleNotFoundError(err, d, "Instance")
 	}
 
 	log.Printf("[DEBUG] Finished deleting Instance %q: %#v", d.Id(), res)

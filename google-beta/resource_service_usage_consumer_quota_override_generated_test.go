@@ -21,6 +21,8 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+
+	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
 func TestAccServiceUsageConsumerQuotaOverride_consumerQuotaOverrideExample(t *testing.T) {
@@ -240,7 +242,7 @@ func testAccCheckServiceUsageConsumerQuotaOverrideDestroyProducer(t *testing.T) 
 				billingProject = config.BillingProject
 			}
 
-			res, err := SendRequest(config, "GET", billingProject, url, config.UserAgent, nil)
+			res, err := transport_tpg.SendRequest(config, "GET", billingProject, url, config.UserAgent, nil)
 			if err == nil {
 				// Sometimes the API returns an empty response instead of erroring, treat empty as nonexistent
 				if len(res) != 0 {

@@ -4,13 +4,14 @@ import (
 	"context"
 	"encoding/base64"
 	"fmt"
-	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 	"hash/crc32"
 	"regexp"
 	"strconv"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/verify"
 	"google.golang.org/api/cloudkms/v1"
 )
 
@@ -25,7 +26,7 @@ func DataSourceGoogleKmsSecretAsymmetric() *schema.Resource {
 			"crypto_key_version": {
 				Type:         schema.TypeString,
 				Description:  "The fully qualified KMS crypto key version name",
-				ValidateFunc: validateRegexp(cryptoKeyVersionRegexp.String()),
+				ValidateFunc: verify.ValidateRegexp(cryptoKeyVersionRegexp.String()),
 				Required:     true,
 			},
 			"ciphertext": {

@@ -455,7 +455,7 @@ func resourceWorkstationsWorkstationConfigCreate(d *schema.ResourceData, meta in
 		billingProject = bp
 	}
 
-	res, err := SendRequestWithTimeout(config, "POST", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutCreate))
+	res, err := transport_tpg.SendRequestWithTimeout(config, "POST", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutCreate))
 	if err != nil {
 		return fmt.Errorf("Error creating WorkstationConfig: %s", err)
 	}
@@ -507,9 +507,9 @@ func resourceWorkstationsWorkstationConfigRead(d *schema.ResourceData, meta inte
 		billingProject = bp
 	}
 
-	res, err := SendRequest(config, "GET", billingProject, url, userAgent, nil)
+	res, err := transport_tpg.SendRequest(config, "GET", billingProject, url, userAgent, nil)
 	if err != nil {
-		return handleNotFoundError(err, d, fmt.Sprintf("WorkstationsWorkstationConfig %q", d.Id()))
+		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("WorkstationsWorkstationConfig %q", d.Id()))
 	}
 
 	if err := d.Set("project", project); err != nil {
@@ -655,7 +655,7 @@ func resourceWorkstationsWorkstationConfigUpdate(d *schema.ResourceData, meta in
 	}
 	// updateMask is a URL parameter but not present in the schema, so ReplaceVars
 	// won't set it
-	url, err = AddQueryParams(url, map[string]string{"updateMask": strings.Join(updateMask, ",")})
+	url, err = transport_tpg.AddQueryParams(url, map[string]string{"updateMask": strings.Join(updateMask, ",")})
 	if err != nil {
 		return err
 	}
@@ -665,7 +665,7 @@ func resourceWorkstationsWorkstationConfigUpdate(d *schema.ResourceData, meta in
 		billingProject = bp
 	}
 
-	res, err := SendRequestWithTimeout(config, "PATCH", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutUpdate))
+	res, err := transport_tpg.SendRequestWithTimeout(config, "PATCH", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutUpdate))
 
 	if err != nil {
 		return fmt.Errorf("Error updating WorkstationConfig %q: %s", d.Id(), err)
@@ -712,9 +712,9 @@ func resourceWorkstationsWorkstationConfigDelete(d *schema.ResourceData, meta in
 		billingProject = bp
 	}
 
-	res, err := SendRequestWithTimeout(config, "DELETE", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutDelete))
+	res, err := transport_tpg.SendRequestWithTimeout(config, "DELETE", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutDelete))
 	if err != nil {
-		return handleNotFoundError(err, d, "WorkstationConfig")
+		return transport_tpg.HandleNotFoundError(err, d, "WorkstationConfig")
 	}
 
 	err = WorkstationsOperationWaitTime(
