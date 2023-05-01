@@ -1210,13 +1210,13 @@ func testAccComputeForwardingRule_forwardingRuleVpcPscExample(context map[string
 	return Nprintf(`
 // Forwarding rule for VPC private service connect
 resource "google_compute_forwarding_rule" "default" {
-  provider              = google-beta
-  name                  = "tf-test-psc-endpoint%{random_suffix}"
-  region                = "us-central1"
-  load_balancing_scheme = ""
-  target                = google_compute_service_attachment.producer_service_attachment.id
-  network               = google_compute_network.consumer_net.name
-  ip_address            = google_compute_address.consumer_address.id
+  provider                = google-beta
+  name                    = "tf-test-psc-endpoint%{random_suffix}"
+  region                  = "us-central1"
+  load_balancing_scheme   = ""
+  target                  = google_compute_service_attachment.producer_service_attachment.id
+  network                 = google_compute_network.consumer_net.name
+  ip_address              = google_compute_address.consumer_address.id
   allow_psc_global_access = true
 }
 
@@ -1237,8 +1237,8 @@ resource "google_compute_subnetwork" "consumer_subnet" {
 }
 
 resource "google_compute_address" "consumer_address" {
+  provider      = google-beta
   name         = "tf-test-website-ip%{random_suffix}-1"
-  provider     = google-beta
   region       = "us-central1"
   subnetwork   = google_compute_subnetwork.consumer_subnet.id
   address_type = "INTERNAL"
@@ -1281,8 +1281,6 @@ resource "google_compute_service_attachment" "producer_service_attachment" {
   connection_preference = "ACCEPT_AUTOMATIC"
   nat_subnets           = [google_compute_subnetwork.psc_producer_subnet.name]
   target_service        = google_compute_forwarding_rule.producer_target_service.id
-
-
 }
 
 resource "google_compute_forwarding_rule" "producer_target_service" {
@@ -1295,8 +1293,6 @@ resource "google_compute_forwarding_rule" "producer_target_service" {
   all_ports             = true
   network               = google_compute_network.producer_net.name
   subnetwork            = google_compute_subnetwork.producer_subnet.name
-
-
 }
 
 resource "google_compute_region_backend_service" "producer_service_backend" {
@@ -1329,17 +1325,17 @@ func TestAccComputeForwardingRule_forwardingRuleRegionalSteeringExample(t *testi
 
 	VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckComputeForwardingRuleDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccComputeForwardingRule_forwardingRuleRegionalSteeringExample(context),
 			},
 			{
-				ResourceName:            "google_compute_forwarding_rule.default",
+				ResourceName:            "google_compute_forwarding_rule.steering",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"backend_service", "network", "subnetwork", "region", "port_range", "target", "ip_address"},
+				ImportStateVerifyIgnore: []string{"backend_service", "network", "subnetwork", "region"},
 			},
 		},
 	})
@@ -1347,46 +1343,32 @@ func TestAccComputeForwardingRule_forwardingRuleRegionalSteeringExample(t *testi
 
 func testAccComputeForwardingRule_forwardingRuleRegionalSteeringExample(context map[string]interface{}) string {
 	return Nprintf(`
-// Forwarding rule for VPC private service connect
-resource "google_compute_forwarding_rule" "default" {
-  provider              = google-beta
-  name                  = "tf-test-steering-rule%{random_suffix}"
-  region                = "us-central1"
-  ip_address            = google_compute_address.address.id
-  backend_service       = google_compute_region_backend_service.backend_service.id
-  network_tier = "PREMIUM"
-  description = "A test steering forwarding rule"
-  ip_protocol = "TCP"
+resource "google_compute_forwarding_rule" "steering" {
+  name = "tf-test-steering-rule%{random_suffix}"
+  region = "us-central1"
+  ip_address = google_compute_address.basic.self_link
+  backend_service = google_compute_region_backend_service.external.self_link
   load_balancing_scheme = "EXTERNAL"
-  port_range = "80-81"
   source_ip_ranges = ["34.121.88.0/24", "35.187.239.137"]
-  depends_on = [google_compute_forwarding_rule.external_forwarding_rule]
+  depends_on = [google_compute_forwarding_rule.external]
 }
 
-resource "google_compute_address" "address" {
-  name         = "tf-test-website-ip%{random_suffix}-1"
-  provider     = google-beta
-  region       = "us-central1"
+resource "google_compute_address" "basic" {
+  name = "tf-test-website-ip%{random_suffix}"
+  region = "us-central1"
 }
 
-resource "google_compute_forwarding_rule" "external_forwarding_rule" {
-  provider = google-beta
-  name     = "tf-test-forwarding-rule%{random_suffix}"
-  region                = "us-central1"
-  ip_address            = google_compute_address.address.id
-  backend_service       = google_compute_region_backend_service.backend_service.id
-  network_tier = "PREMIUM"
-  description = "A test steering forwarding rule"
-  ip_protocol = "TCP"
+resource "google_compute_region_backend_service" "external" {
+  name = "tf-test-service-backend%{random_suffix}"
+  region = "us-central1"
   load_balancing_scheme = "EXTERNAL"
-  port_range = "80-81"
 }
 
-resource "google_compute_region_backend_service" "backend_service" {
-  provider = google-beta
-  name     = "tf-test-service-backend%{random_suffix}"
-  region   = "us-central1"
-
+resource "google_compute_forwarding_rule" "external" {
+  name = "tf-test-external-forwarding-rule%{random_suffix}"
+  region = "us-central1"
+  ip_address = google_compute_address.basic.self_link
+  backend_service = google_compute_region_backend_service.external.self_link
   load_balancing_scheme = "EXTERNAL"
 }
 `, context)
