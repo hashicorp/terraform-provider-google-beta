@@ -195,7 +195,7 @@ Package repositories are only configured if the corresponding package manager(s)
 									"archive_type": {
 										Type:         schema.TypeString,
 										Optional:     true,
-										ValidateFunc: validateEnum([]string{"DEB", "DEB_SRC", ""}),
+										ValidateFunc: verify.ValidateEnum([]string{"DEB", "DEB_SRC", ""}),
 										Description:  `Type of archive files in this repository. The default behavior is DEB. Default value: "DEB" Possible values: ["DEB", "DEB_SRC"]`,
 										Default:      "DEB",
 									},
@@ -314,13 +314,13 @@ by checking the package name and the manager(s) that the package targets.`,
 						"desired_state": {
 							Type:         schema.TypeString,
 							Optional:     true,
-							ValidateFunc: validateEnum([]string{"INSTALLED", "UPDATED", "REMOVED", ""}),
+							ValidateFunc: verify.ValidateEnum([]string{"INSTALLED", "UPDATED", "REMOVED", ""}),
 							Description:  `The desiredState the agent should maintain for this package. The default is to ensure the package is installed. Possible values: ["INSTALLED", "UPDATED", "REMOVED"]`,
 						},
 						"manager": {
 							Type:         schema.TypeString,
 							Optional:     true,
-							ValidateFunc: validateEnum([]string{"ANY", "APT", "YUM", "ZYPPER", "GOO", ""}),
+							ValidateFunc: verify.ValidateEnum([]string{"ANY", "APT", "YUM", "ZYPPER", "GOO", ""}),
 							Description: `Type of package manager that can be used to install this package. If a system does not have the package manager,
 the package is not installed or removed no error message is returned. By default, or if you specify ANY,
 the agent attempts to install and remove this package using the default package manager.
@@ -421,7 +421,7 @@ of the steps.`,
 						"desired_state": {
 							Type:         schema.TypeString,
 							Optional:     true,
-							ValidateFunc: validateEnum([]string{"INSTALLED", "UPDATED", "REMOVED", ""}),
+							ValidateFunc: verify.ValidateEnum([]string{"INSTALLED", "UPDATED", "REMOVED", ""}),
 							Description: `Default is INSTALLED. The desired state the agent should maintain for this recipe.
 
 INSTALLED: The software recipe is installed on the instance but won't be updated to new versions.
@@ -452,7 +452,7 @@ Any steps taken (including partially completed steps) are not rolled back.`,
 												"type": {
 													Type:         schema.TypeString,
 													Required:     true,
-													ValidateFunc: validateEnum([]string{"TAR", "TAR_GZIP", "TAR_BZIP", "TAR_LZMA", "TAR_XZ", "ZIP"}),
+													ValidateFunc: verify.ValidateEnum([]string{"TAR", "TAR_GZIP", "TAR_BZIP", "TAR_LZMA", "TAR_XZ", "ZIP"}),
 													Description:  `The type of the archive to extract. Possible values: ["TAR", "TAR_GZIP", "TAR_BZIP", "TAR_LZMA", "TAR_XZ", "ZIP"]`,
 												},
 												"destination": {
@@ -623,7 +623,7 @@ read, write, and execute: 7 read and execute: 5 read and write: 6 read only: 4`,
 												"interpreter": {
 													Type:         schema.TypeString,
 													Optional:     true,
-													ValidateFunc: validateEnum([]string{"SHELL", "POWERSHELL", ""}),
+													ValidateFunc: verify.ValidateEnum([]string{"SHELL", "POWERSHELL", ""}),
 													Description: `The script interpreter to use to run the script. If no interpreter is specified the script is executed directly,
 which likely only succeed for scripts with shebang lines. Possible values: ["SHELL", "POWERSHELL"]`,
 												},
@@ -655,7 +655,7 @@ Any steps taken (including partially completed steps) are not rolled back.`,
 												"type": {
 													Type:         schema.TypeString,
 													Required:     true,
-													ValidateFunc: validateEnum([]string{"TAR", "TAR_GZIP", "TAR_BZIP", "TAR_LZMA", "TAR_XZ", "ZIP"}),
+													ValidateFunc: verify.ValidateEnum([]string{"TAR", "TAR_GZIP", "TAR_BZIP", "TAR_LZMA", "TAR_XZ", "ZIP"}),
 													Description:  `The type of the archive to extract. Possible values: ["TAR", "TAR_GZIP", "TAR_BZIP", "TAR_LZMA", "TAR_XZ", "ZIP"]`,
 												},
 												"destination": {
@@ -829,7 +829,7 @@ read, write, and execute: 7 read and execute: 5 read and write: 6 read only: 4`,
 												"interpreter": {
 													Type:         schema.TypeString,
 													Optional:     true,
-													ValidateFunc: validateEnum([]string{"SHELL", "POWERSHELL", ""}),
+													ValidateFunc: verify.ValidateEnum([]string{"SHELL", "POWERSHELL", ""}),
 													Description: `The script interpreter to use to run the script. If no interpreter is specified the script is executed directly,
 which likely only succeed for scripts with shebang lines. Possible values: ["SHELL", "POWERSHELL"]`,
 												},

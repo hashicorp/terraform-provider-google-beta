@@ -6,7 +6,6 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
-	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 	"log"
 	"strconv"
 	"strings"
@@ -18,6 +17,9 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/mitchellh/hashstructure"
+
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
+	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 
 	compute "google.golang.org/api/compute/v0.beta"
 )
@@ -342,7 +344,7 @@ func ResourceComputeInstance() *schema.Resource {
 									"ip_cidr_range": {
 										Type:             schema.TypeString,
 										Required:         true,
-										DiffSuppressFunc: IpCidrRangeDiffSuppress,
+										DiffSuppressFunc: tpgresource.IpCidrRangeDiffSuppress,
 										Description:      `The IP CIDR range represented by this alias IP range.`,
 									},
 									"subnetwork_range_name": {
@@ -614,7 +616,7 @@ func ResourceComputeInstance() *schema.Resource {
 							Optional:         true,
 							AtLeastOneOf:     schedulingKeys,
 							Elem:             instanceSchedulingNodeAffinitiesElemSchema(),
-							DiffSuppressFunc: EmptyOrDefaultStringSuppress(""),
+							DiffSuppressFunc: tpgresource.EmptyOrDefaultStringSuppress(""),
 							Description:      `Specifies node affinities or anti-affinities to determine which sole-tenant nodes your instances and managed instance groups will use as host systems.`,
 						},
 
@@ -739,7 +741,7 @@ be from 0 to 999,999,999 inclusive.`,
 				// Since this block is used by the API based on which
 				// image being used, the field needs to be marked as Computed.
 				Computed:         true,
-				DiffSuppressFunc: EmptyOrDefaultStringSuppress(""),
+				DiffSuppressFunc: tpgresource.EmptyOrDefaultStringSuppress(""),
 				Description:      `The shielded vm config being used by the instance.`,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{

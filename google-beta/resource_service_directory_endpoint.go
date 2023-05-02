@@ -24,6 +24,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/verify"
 )
 
 func ResourceServiceDirectoryEndpoint() *schema.Resource {
@@ -48,7 +49,7 @@ func ResourceServiceDirectoryEndpoint() *schema.Resource {
 				Type:         schema.TypeString,
 				Required:     true,
 				ForceNew:     true,
-				ValidateFunc: validateRFC1035Name(2, 63),
+				ValidateFunc: verify.ValidateRFC1035Name(2, 63),
 				Description: `The Resource ID must be 1-63 characters long, including digits,
 lowercase letters or the hyphen character.`,
 			},
@@ -61,7 +62,7 @@ lowercase letters or the hyphen character.`,
 			"address": {
 				Type:         schema.TypeString,
 				Optional:     true,
-				ValidateFunc: validateIpAddress,
+				ValidateFunc: verify.ValidateIpAddress,
 				Description:  `IPv4 or IPv6 address of the endpoint.`,
 			},
 			"metadata": {

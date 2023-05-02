@@ -6,6 +6,7 @@ import (
 	"log"
 	"strings"
 
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 
 	"github.com/davecgh/go-spew/spew"
@@ -24,7 +25,7 @@ var iamBindingSchema = map[string]*schema.Schema{
 		Required: true,
 		Elem: &schema.Schema{
 			Type:             schema.TypeString,
-			DiffSuppressFunc: CaseDiffSuppress,
+			DiffSuppressFunc: tpgresource.CaseDiffSuppress,
 			ValidateFunc:     validateIAMMember,
 		},
 		Set: func(v interface{}) int {

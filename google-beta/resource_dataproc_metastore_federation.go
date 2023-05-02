@@ -23,6 +23,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/verify"
 )
 
 func ResourceDataprocMetastoreFederation() *schema.Resource {
@@ -56,7 +57,7 @@ func ResourceDataprocMetastoreFederation() *schema.Resource {
 						"metastore_type": {
 							Type:         schema.TypeString,
 							Required:     true,
-							ValidateFunc: validateEnum([]string{"METASTORE_TYPE_UNSPECIFIED", "DATAPROC_METASTORE", "BIGQUERY"}),
+							ValidateFunc: verify.ValidateEnum([]string{"METASTORE_TYPE_UNSPECIFIED", "DATAPROC_METASTORE", "BIGQUERY"}),
 							Description:  `The type of the backend metastore. Possible values: ["METASTORE_TYPE_UNSPECIFIED", "DATAPROC_METASTORE", "BIGQUERY"]`,
 						},
 						"name": {

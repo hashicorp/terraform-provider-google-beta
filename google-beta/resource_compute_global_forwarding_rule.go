@@ -21,7 +21,9 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/verify"
 )
 
 func ResourceComputeGlobalForwardingRule() *schema.Resource {
@@ -83,7 +85,7 @@ For Private Service Connect forwarding rules that forward traffic to managed ser
 				Computed:         true,
 				Optional:         true,
 				ForceNew:         true,
-				DiffSuppressFunc: InternalIpDiffSuppress,
+				DiffSuppressFunc: tpgresource.InternalIpDiffSuppress,
 				Description: `IP address for which this forwarding rule accepts traffic. When a client
 sends traffic to this IP address, the forwarding rule directs the traffic
 to the referenced 'target'.
@@ -130,8 +132,8 @@ address number.`,
 				Computed:         true,
 				Optional:         true,
 				ForceNew:         true,
-				ValidateFunc:     validateEnum([]string{"TCP", "UDP", "ESP", "AH", "SCTP", "ICMP", ""}),
-				DiffSuppressFunc: CaseDiffSuppress,
+				ValidateFunc:     verify.ValidateEnum([]string{"TCP", "UDP", "ESP", "AH", "SCTP", "ICMP", ""}),
+				DiffSuppressFunc: tpgresource.CaseDiffSuppress,
 				Description: `The IP protocol to which this rule applies.
 
 For protocol forwarding, valid
@@ -160,7 +162,7 @@ you create the resource.`,
 				Type:         schema.TypeString,
 				Optional:     true,
 				ForceNew:     true,
-				ValidateFunc: validateEnum([]string{"IPV4", "IPV6", ""}),
+				ValidateFunc: verify.ValidateEnum([]string{"IPV4", "IPV6", ""}),
 				Description:  `The IP Version that will be used by this global forwarding rule. Possible values: ["IPV4", "IPV6"]`,
 			},
 			"labels": {
@@ -173,7 +175,7 @@ you create the resource.`,
 				Type:         schema.TypeString,
 				Optional:     true,
 				ForceNew:     true,
-				ValidateFunc: validateEnum([]string{"EXTERNAL", "EXTERNAL_MANAGED", "INTERNAL_SELF_MANAGED", ""}),
+				ValidateFunc: verify.ValidateEnum([]string{"EXTERNAL", "EXTERNAL_MANAGED", "INTERNAL_SELF_MANAGED", ""}),
 				Description: `Specifies the forwarding rule type.
 
 For more information about forwarding rules, refer to
@@ -236,7 +238,7 @@ length of 1024 characters.`,
 							Type:         schema.TypeString,
 							Required:     true,
 							ForceNew:     true,
-							ValidateFunc: validateEnum([]string{"MATCH_ANY", "MATCH_ALL"}),
+							ValidateFunc: verify.ValidateEnum([]string{"MATCH_ANY", "MATCH_ALL"}),
 							Description: `Specifies how individual filterLabel matches within the list of
 filterLabels contribute towards the overall metadataFilter match.
 
@@ -269,7 +271,7 @@ APIs, a network must be provided.`,
 				Type:             schema.TypeString,
 				Optional:         true,
 				ForceNew:         true,
-				DiffSuppressFunc: PortRangeDiffSuppress,
+				DiffSuppressFunc: tpgresource.PortRangeDiffSuppress,
 				Description: `This field can only be used:
 
 * If 'IPProtocol' is one of TCP, UDP, or SCTP.

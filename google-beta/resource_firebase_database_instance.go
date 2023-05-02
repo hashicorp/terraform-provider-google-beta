@@ -22,6 +22,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/verify"
 )
 
 func enableRTDB(config *transport_tpg.Config, d *schema.ResourceData, project string, billingProject string, userAgent string) error {
@@ -90,7 +91,7 @@ Check all [available regions](https://firebase.google.com/docs/projects/location
 				Type:         schema.TypeString,
 				Optional:     true,
 				ForceNew:     true,
-				ValidateFunc: validateEnum([]string{"DEFAULT_DATABASE", "USER_DATABASE", ""}),
+				ValidateFunc: verify.ValidateEnum([]string{"DEFAULT_DATABASE", "USER_DATABASE", ""}),
 				Description: `The database type.
 Each project can create one default Firebase Realtime Database, which cannot be deleted once created.
 Creating user Databases is only available for projects on the Blaze plan.

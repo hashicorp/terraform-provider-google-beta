@@ -23,6 +23,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/verify"
 )
 
 func ResourceServiceDirectoryService() *schema.Resource {
@@ -52,7 +53,7 @@ func ResourceServiceDirectoryService() *schema.Resource {
 				Type:         schema.TypeString,
 				Required:     true,
 				ForceNew:     true,
-				ValidateFunc: validateRFC1035Name(2, 63),
+				ValidateFunc: verify.ValidateRFC1035Name(2, 63),
 				Description: `The Resource ID must be 1-63 characters long, including digits,
 lowercase letters or the hyphen character.`,
 			},

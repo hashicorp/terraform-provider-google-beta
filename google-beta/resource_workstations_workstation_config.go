@@ -23,6 +23,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/verify"
 )
 
 func ResourceWorkstationsWorkstationConfig() *schema.Resource {
@@ -295,7 +296,7 @@ If the encryption key is revoked, the workstation session will automatically be 
 									"reclaim_policy": {
 										Type:         schema.TypeString,
 										Optional:     true,
-										ValidateFunc: validateEnum([]string{"RECLAIM_POLICY_UNSPECIFIED", "DELETE", "RETAIN", ""}),
+										ValidateFunc: verify.ValidateEnum([]string{"RECLAIM_POLICY_UNSPECIFIED", "DELETE", "RETAIN", ""}),
 										Description:  `What should happen to the disk after the workstation is deleted. Defaults to DELETE. Possible values: ["RECLAIM_POLICY_UNSPECIFIED", "DELETE", "RETAIN"]`,
 									},
 									"size_gb": {

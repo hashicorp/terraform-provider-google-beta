@@ -3,7 +3,6 @@ package google
 import (
 	"context"
 	"fmt"
-	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 	"log"
 
 	"time"
@@ -11,6 +10,10 @@ import (
 	"github.com/hashicorp/errwrap"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
+
+	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/verify"
+
 	compute "google.golang.org/api/compute/v0.beta"
 )
 
@@ -36,7 +39,7 @@ func ResourceComputeSecurityPolicy() *schema.Resource {
 				Type:         schema.TypeString,
 				Required:     true,
 				ForceNew:     true,
-				ValidateFunc: validateGCEName,
+				ValidateFunc: verify.ValidateGCEName,
 				Description:  `The name of the security policy.`,
 			},
 

@@ -7,12 +7,12 @@ import (
 	"strings"
 	"time"
 
-	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
-	"github.com/hashicorp/terraform-provider-google-beta/google-beta/verify"
-
 	"github.com/hashicorp/go-version"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
+
+	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/verify"
 
 	composer "google.golang.org/api/composer/v1beta1"
 )
@@ -149,7 +149,7 @@ func ResourceComposerEnvironment() *schema.Resource {
 				Type:         schema.TypeString,
 				Required:     true,
 				ForceNew:     true,
-				ValidateFunc: validateGCEName,
+				ValidateFunc: verify.ValidateGCEName,
 				Description:  `Name of the environment.`,
 			},
 			"region": {
@@ -2287,7 +2287,7 @@ func compareServiceAccountEmailToLink(_, old, new string, _ *schema.ResourceData
 func validateServiceAccountRelativeNameOrEmail(v interface{}, k string) (ws []string, errors []error) {
 	value := v.(string)
 
-	serviceAccountRe := "(" + strings.Join(PossibleServiceAccountNames, "|") + ")"
+	serviceAccountRe := "(" + strings.Join(verify.PossibleServiceAccountNames, "|") + ")"
 	if strings.HasPrefix(value, "projects/") {
 		serviceAccountRe = fmt.Sprintf("projects/(.+)/serviceAccounts/%s", serviceAccountRe)
 	}

@@ -24,6 +24,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/verify"
 )
 
 func ResourceSecurityScannerScanConfig() *schema.Resource {
@@ -133,7 +134,7 @@ https://cloud.google.com/security-scanner/docs/excluded-urls`,
 			"export_to_security_command_center": {
 				Type:         schema.TypeString,
 				Optional:     true,
-				ValidateFunc: validateEnum([]string{"ENABLED", "DISABLED", ""}),
+				ValidateFunc: verify.ValidateEnum([]string{"ENABLED", "DISABLED", ""}),
 				Description:  `Controls export of scan configurations and results to Cloud Security Command Center. Default value: "ENABLED" Possible values: ["ENABLED", "DISABLED"]`,
 				Default:      "ENABLED",
 			},
@@ -173,13 +174,13 @@ which means the scan will be scheduled to start immediately.`,
 				Description: `Set of Cloud Platforms targeted by the scan. If empty, APP_ENGINE will be used as a default. Possible values: ["APP_ENGINE", "COMPUTE"]`,
 				Elem: &schema.Schema{
 					Type:         schema.TypeString,
-					ValidateFunc: validateEnum([]string{"APP_ENGINE", "COMPUTE"}),
+					ValidateFunc: verify.ValidateEnum([]string{"APP_ENGINE", "COMPUTE"}),
 				},
 			},
 			"user_agent": {
 				Type:         schema.TypeString,
 				Optional:     true,
-				ValidateFunc: validateEnum([]string{"USER_AGENT_UNSPECIFIED", "CHROME_LINUX", "CHROME_ANDROID", "SAFARI_IPHONE", ""}),
+				ValidateFunc: verify.ValidateEnum([]string{"USER_AGENT_UNSPECIFIED", "CHROME_LINUX", "CHROME_ANDROID", "SAFARI_IPHONE", ""}),
 				Description:  `Type of the user agents used for scanning Default value: "CHROME_LINUX" Possible values: ["USER_AGENT_UNSPECIFIED", "CHROME_LINUX", "CHROME_ANDROID", "SAFARI_IPHONE"]`,
 				Default:      "CHROME_LINUX",
 			},

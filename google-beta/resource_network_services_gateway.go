@@ -23,6 +23,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/verify"
 )
 
 func ResourceNetworkServicesGateway() *schema.Resource {
@@ -71,7 +72,7 @@ Max length 64 characters. Scope should start with a letter and can only have let
 				Type:         schema.TypeString,
 				Required:     true,
 				ForceNew:     true,
-				ValidateFunc: validateEnum([]string{"TYPE_UNSPECIFIED", "OPEN_MESH", "SECURE_WEB_GATEWAY"}),
+				ValidateFunc: verify.ValidateEnum([]string{"TYPE_UNSPECIFIED", "OPEN_MESH", "SECURE_WEB_GATEWAY"}),
 				Description:  `Immutable. The type of the customer-managed gateway. Possible values are: * OPEN_MESH * SECURE_WEB_GATEWAY. Possible values: ["TYPE_UNSPECIFIED", "OPEN_MESH", "SECURE_WEB_GATEWAY"]`,
 			},
 			"description": {

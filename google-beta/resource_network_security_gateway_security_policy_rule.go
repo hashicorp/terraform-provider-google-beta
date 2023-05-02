@@ -23,6 +23,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/verify"
 )
 
 func ResourceNetworkSecurityGatewaySecurityPolicyRule() *schema.Resource {
@@ -46,7 +47,7 @@ func ResourceNetworkSecurityGatewaySecurityPolicyRule() *schema.Resource {
 			"basic_profile": {
 				Type:         schema.TypeString,
 				Required:     true,
-				ValidateFunc: validateEnum([]string{"BASIC_PROFILE_UNSPECIFIED", "ALLOW", "DENY"}),
+				ValidateFunc: verify.ValidateEnum([]string{"BASIC_PROFILE_UNSPECIFIED", "ALLOW", "DENY"}),
 				Description:  `Profile which tells what the primitive action should be. Possible values are: * ALLOW * DENY. Possible values: ["BASIC_PROFILE_UNSPECIFIED", "ALLOW", "DENY"]`,
 			},
 			"enabled": {

@@ -3,13 +3,15 @@ package google
 import (
 	"context"
 	"fmt"
-	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 	"os"
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-provider-google-beta/version"
+
+	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/verify"
 
 	googleoauth "golang.org/x/oauth2/google"
 )
@@ -92,7 +94,7 @@ func Provider() *schema.Provider {
 						"send_after": {
 							Type:         schema.TypeString,
 							Optional:     true,
-							ValidateFunc: validateNonNegativeDuration(),
+							ValidateFunc: verify.ValidateNonNegativeDuration(),
 						},
 						"enable_batching": {
 							Type:     schema.TypeBool,

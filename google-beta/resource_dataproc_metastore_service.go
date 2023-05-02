@@ -23,6 +23,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/verify"
 )
 
 func ResourceDataprocMetastoreService() *schema.Resource {
@@ -55,7 +56,7 @@ and hyphens (-). Cannot begin or end with underscore or hyphen. Must consist of 
 				Type:         schema.TypeString,
 				Optional:     true,
 				ForceNew:     true,
-				ValidateFunc: validateEnum([]string{"MYSQL", "SPANNER", ""}),
+				ValidateFunc: verify.ValidateEnum([]string{"MYSQL", "SPANNER", ""}),
 				Description:  `The database type that the Metastore service stores its data. Default value: "MYSQL" Possible values: ["MYSQL", "SPANNER"]`,
 				Default:      "MYSQL",
 			},
@@ -132,7 +133,7 @@ The mappings override system defaults (some keys cannot be overridden)`,
 							Type:         schema.TypeString,
 							Optional:     true,
 							ForceNew:     true,
-							ValidateFunc: validateEnum([]string{"THRIFT", "GRPC", ""}),
+							ValidateFunc: verify.ValidateEnum([]string{"THRIFT", "GRPC", ""}),
 							Description:  `The protocol to use for the metastore service endpoint. If unspecified, defaults to 'THRIFT'. Default value: "THRIFT" Possible values: ["THRIFT", "GRPC"]`,
 							Default:      "THRIFT",
 						},
@@ -202,7 +203,7 @@ Maintenance window is not needed for services with the 'SPANNER' database type.`
 						"day_of_week": {
 							Type:         schema.TypeString,
 							Required:     true,
-							ValidateFunc: validateEnum([]string{"MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"}),
+							ValidateFunc: verify.ValidateEnum([]string{"MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"}),
 							Description:  `The day of week, when the window starts. Possible values: ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"]`,
 						},
 						"hour_of_day": {
@@ -291,7 +292,7 @@ There must be at least one IP address available in the subnet's primary range. T
 				Type:         schema.TypeString,
 				Optional:     true,
 				ForceNew:     true,
-				ValidateFunc: validateEnum([]string{"CANARY", "STABLE", ""}),
+				ValidateFunc: verify.ValidateEnum([]string{"CANARY", "STABLE", ""}),
 				Description:  `The release channel of the service. If unspecified, defaults to 'STABLE'. Default value: "STABLE" Possible values: ["CANARY", "STABLE"]`,
 				Default:      "STABLE",
 			},
@@ -306,7 +307,7 @@ There must be at least one IP address available in the subnet's primary range. T
 						"log_format": {
 							Type:         schema.TypeString,
 							Optional:     true,
-							ValidateFunc: validateEnum([]string{"LEGACY", "JSON", ""}),
+							ValidateFunc: verify.ValidateEnum([]string{"LEGACY", "JSON", ""}),
 							Description:  `The output format of the Dataproc Metastore service's logs. Default value: "JSON" Possible values: ["LEGACY", "JSON"]`,
 							Default:      "JSON",
 						},
@@ -317,7 +318,7 @@ There must be at least one IP address available in the subnet's primary range. T
 				Type:         schema.TypeString,
 				Computed:     true,
 				Optional:     true,
-				ValidateFunc: validateEnum([]string{"DEVELOPER", "ENTERPRISE", ""}),
+				ValidateFunc: verify.ValidateEnum([]string{"DEVELOPER", "ENTERPRISE", ""}),
 				Description:  `The tier of the service. Possible values: ["DEVELOPER", "ENTERPRISE"]`,
 			},
 			"artifact_gcs_uri": {
