@@ -43,6 +43,12 @@ func ResourceFirebaseAppleApp() *schema.Resource {
 		},
 
 		Schema: map[string]*schema.Schema{
+			"bundle_id": {
+				Type:        schema.TypeString,
+				Required:    true,
+				ForceNew:    true,
+				Description: `The canonical bundle ID of the Apple app as it would appear in the Apple AppStore.`,
+			},
 			"display_name": {
 				Type:        schema.TypeString,
 				Required:    true,
@@ -52,11 +58,6 @@ func ResourceFirebaseAppleApp() *schema.Resource {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: `The automatically generated Apple ID assigned to the Apple app by Apple in the Apple App Store.`,
-			},
-			"bundle_id": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				Description: `The canonical bundle ID of the Apple app as it would appear in the Apple AppStore.`,
 			},
 			"team_id": {
 				Type:        schema.TypeString,
@@ -271,12 +272,6 @@ func resourceFirebaseAppleAppUpdate(d *schema.ResourceData, meta interface{}) er
 	} else if v, ok := d.GetOkExists("display_name"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, displayNameProp)) {
 		obj["displayName"] = displayNameProp
 	}
-	bundleIdProp, err := expandFirebaseAppleAppBundleId(d.Get("bundle_id"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("bundle_id"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, bundleIdProp)) {
-		obj["bundleId"] = bundleIdProp
-	}
 	appStoreIdProp, err := expandFirebaseAppleAppAppStoreId(d.Get("app_store_id"), d, config)
 	if err != nil {
 		return err
@@ -300,10 +295,6 @@ func resourceFirebaseAppleAppUpdate(d *schema.ResourceData, meta interface{}) er
 
 	if d.HasChange("display_name") {
 		updateMask = append(updateMask, "displayName")
-	}
-
-	if d.HasChange("bundle_id") {
-		updateMask = append(updateMask, "bundleId")
 	}
 
 	if d.HasChange("app_store_id") {
