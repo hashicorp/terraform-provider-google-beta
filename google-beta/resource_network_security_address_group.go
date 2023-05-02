@@ -38,9 +38,9 @@ func ResourceNetworkSecurityAddressGroup() *schema.Resource {
 		},
 
 		Timeouts: &schema.ResourceTimeout{
-			Create: schema.DefaultTimeout(30 * time.Minute),
-			Update: schema.DefaultTimeout(30 * time.Minute),
-			Delete: schema.DefaultTimeout(30 * time.Minute),
+			Create: schema.DefaultTimeout(20 * time.Minute),
+			Update: schema.DefaultTimeout(20 * time.Minute),
+			Delete: schema.DefaultTimeout(20 * time.Minute),
 		},
 
 		Schema: map[string]*schema.Schema{
@@ -49,10 +49,16 @@ func ResourceNetworkSecurityAddressGroup() *schema.Resource {
 				Required:    true,
 				Description: `Capacity of the Address Group.`,
 			},
+			"location": {
+				Type:     schema.TypeString,
+				Required: true,
+				Description: `The location of the gateway security policy.
+The default value is 'global'.`,
+			},
 			"name": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: `Name of the AddressGroup resource. It matches pattern projects/*/locations/{location}/addressGroups/<addressGroup>.`,
+				Description: `Name of the AddressGroup resource.`,
 			},
 			"type": {
 				Type:         schema.TypeString,
@@ -80,12 +86,11 @@ func ResourceNetworkSecurityAddressGroup() *schema.Resource {
 An object containing a list of "key": value pairs. Example: { "name": "wrench", "mass": "1.3kg", "count": "3" }.`,
 				Elem: &schema.Schema{Type: schema.TypeString},
 			},
-			"location": {
-				Type:     schema.TypeString,
-				Optional: true,
-				Description: `The location of the gateway security policy.
-The default value is 'global'.`,
-				Default: "global",
+			"parent": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				ForceNew:    true,
+				Description: `The name of the parent this address group belongs to. Format: organizations/{organization_id} or projects/{project_id}.`,
 			},
 			"create_time": {
 				Type:     schema.TypeString,
@@ -100,12 +105,6 @@ Examples: "2014-10-02T15:01:23Z" and "2014-10-02T15:01:23.045123456Z"`,
 				Description: `The timestamp when the resource was updated.
 A timestamp in RFC3339 UTC "Zulu" format, with nanosecond resolution and up to nine fractional digits.
 Examples: "2014-10-02T15:01:23Z" and "2014-10-02T15:01:23.045123456Z".`,
-			},
-			"project": {
-				Type:     schema.TypeString,
-				Optional: true,
-				Computed: true,
-				ForceNew: true,
 			},
 		},
 		UseJSONNumber: true,
@@ -151,19 +150,13 @@ func resourceNetworkSecurityAddressGroupCreate(d *schema.ResourceData, meta inte
 		obj["capacity"] = capacityProp
 	}
 
-	url, err := ReplaceVars(d, config, "{{NetworkSecurityBasePath}}projects/{{project}}/locations/{{location}}/addressGroups?addressGroupId={{name}}")
+	url, err := ReplaceVars(d, config, "{{NetworkSecurityBasePath}}{{parent}}/locations/{{location}}/addressGroups?addressGroupId={{name}}")
 	if err != nil {
 		return err
 	}
 
 	log.Printf("[DEBUG] Creating new AddressGroup: %#v", obj)
 	billingProject := ""
-
-	project, err := getProject(d, config)
-	if err != nil {
-		return fmt.Errorf("Error fetching project for AddressGroup: %s", err)
-	}
-	billingProject = project
 
 	// err == nil indicates that the billing_project value was found
 	if bp, err := getBillingProject(d, config); err == nil {
@@ -176,14 +169,14 @@ func resourceNetworkSecurityAddressGroupCreate(d *schema.ResourceData, meta inte
 	}
 
 	// Store the ID now
-	id, err := ReplaceVars(d, config, "projects/{{project}}/locations/{{location}}/addressGroups/{{name}}")
+	id, err := ReplaceVars(d, config, "{{parent}}/locations/{{location}}/addressGroups/{{name}}")
 	if err != nil {
 		return fmt.Errorf("Error constructing id: %s", err)
 	}
 	d.SetId(id)
 
-	err = NetworkSecurityOperationWaitTime(
-		config, res, project, "Creating AddressGroup", userAgent,
+	err = NetworkSecurityAddressGroupOperationWaitTime(
+		config, res, "Creating AddressGroup", userAgent,
 		d.Timeout(schema.TimeoutCreate))
 
 	if err != nil {
@@ -204,18 +197,12 @@ func resourceNetworkSecurityAddressGroupRead(d *schema.ResourceData, meta interf
 		return err
 	}
 
-	url, err := ReplaceVars(d, config, "{{NetworkSecurityBasePath}}projects/{{project}}/locations/{{location}}/addressGroups/{{name}}")
+	url, err := ReplaceVars(d, config, "{{NetworkSecurityBasePath}}{{parent}}/locations/{{location}}/addressGroups/{{name}}")
 	if err != nil {
 		return err
 	}
 
 	billingProject := ""
-
-	project, err := getProject(d, config)
-	if err != nil {
-		return fmt.Errorf("Error fetching project for AddressGroup: %s", err)
-	}
-	billingProject = project
 
 	// err == nil indicates that the billing_project value was found
 	if bp, err := getBillingProject(d, config); err == nil {
@@ -225,10 +212,6 @@ func resourceNetworkSecurityAddressGroupRead(d *schema.ResourceData, meta interf
 	res, err := transport_tpg.SendRequest(config, "GET", billingProject, url, userAgent, nil)
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("NetworkSecurityAddressGroup %q", d.Id()))
-	}
-
-	if err := d.Set("project", project); err != nil {
-		return fmt.Errorf("Error reading AddressGroup: %s", err)
 	}
 
 	if err := d.Set("description", flattenNetworkSecurityAddressGroupDescription(res["description"], d, config)); err != nil {
@@ -265,12 +248,6 @@ func resourceNetworkSecurityAddressGroupUpdate(d *schema.ResourceData, meta inte
 
 	billingProject := ""
 
-	project, err := getProject(d, config)
-	if err != nil {
-		return fmt.Errorf("Error fetching project for AddressGroup: %s", err)
-	}
-	billingProject = project
-
 	obj := make(map[string]interface{})
 	descriptionProp, err := expandNetworkSecurityAddressGroupDescription(d.Get("description"), d, config)
 	if err != nil {
@@ -303,7 +280,7 @@ func resourceNetworkSecurityAddressGroupUpdate(d *schema.ResourceData, meta inte
 		obj["capacity"] = capacityProp
 	}
 
-	url, err := ReplaceVars(d, config, "{{NetworkSecurityBasePath}}projects/{{project}}/locations/{{location}}/addressGroups/{{name}}")
+	url, err := ReplaceVars(d, config, "{{NetworkSecurityBasePath}}{{parent}}/locations/{{location}}/addressGroups/{{name}}")
 	if err != nil {
 		return err
 	}
@@ -350,14 +327,13 @@ func resourceNetworkSecurityAddressGroupUpdate(d *schema.ResourceData, meta inte
 		log.Printf("[DEBUG] Finished updating AddressGroup %q: %#v", d.Id(), res)
 	}
 
-	err = NetworkSecurityOperationWaitTime(
-		config, res, project, "Updating AddressGroup", userAgent,
+	err = NetworkSecurityAddressGroupOperationWaitTime(
+		config, res, "Updating AddressGroup", userAgent,
 		d.Timeout(schema.TimeoutUpdate))
 
 	if err != nil {
 		return err
 	}
-
 	return resourceNetworkSecurityAddressGroupRead(d, meta)
 }
 
@@ -370,13 +346,7 @@ func resourceNetworkSecurityAddressGroupDelete(d *schema.ResourceData, meta inte
 
 	billingProject := ""
 
-	project, err := getProject(d, config)
-	if err != nil {
-		return fmt.Errorf("Error fetching project for AddressGroup: %s", err)
-	}
-	billingProject = project
-
-	url, err := ReplaceVars(d, config, "{{NetworkSecurityBasePath}}projects/{{project}}/locations/{{location}}/addressGroups/{{name}}")
+	url, err := ReplaceVars(d, config, "{{NetworkSecurityBasePath}}{{parent}}/locations/{{location}}/addressGroups/{{name}}")
 	if err != nil {
 		return err
 	}
@@ -394,8 +364,8 @@ func resourceNetworkSecurityAddressGroupDelete(d *schema.ResourceData, meta inte
 		return transport_tpg.HandleNotFoundError(err, d, "AddressGroup")
 	}
 
-	err = NetworkSecurityOperationWaitTime(
-		config, res, project, "Deleting AddressGroup", userAgent,
+	err = NetworkSecurityAddressGroupOperationWaitTime(
+		config, res, "Deleting AddressGroup", userAgent,
 		d.Timeout(schema.TimeoutDelete))
 
 	if err != nil {
@@ -409,15 +379,13 @@ func resourceNetworkSecurityAddressGroupDelete(d *schema.ResourceData, meta inte
 func resourceNetworkSecurityAddressGroupImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	config := meta.(*transport_tpg.Config)
 	if err := ParseImportId([]string{
-		"projects/(?P<project>[^/]+)/locations/(?P<location>[^/]+)/addressGroups/(?P<name>[^/]+)",
-		"(?P<project>[^/]+)/(?P<location>[^/]+)/(?P<name>[^/]+)",
-		"(?P<location>[^/]+)/(?P<name>[^/]+)",
+		"(?P<parent>.+)/locations/(?P<location>[^/]+)/addressGroups/(?P<name>[^/]+)",
 	}, d, config); err != nil {
 		return nil, err
 	}
 
 	// Replace import id for the resource id
-	id, err := ReplaceVars(d, config, "projects/{{project}}/locations/{{location}}/addressGroups/{{name}}")
+	id, err := ReplaceVars(d, config, "{{parent}}/locations/{{location}}/addressGroups/{{name}}")
 	if err != nil {
 		return nil, fmt.Errorf("Error constructing id: %s", err)
 	}

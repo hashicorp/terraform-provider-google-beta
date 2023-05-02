@@ -30,6 +30,7 @@ func TestAccNetworkSecurityAddressGroup_networkSecurityAddressGroupsBasicExample
 	t.Parallel()
 
 	context := map[string]interface{}{
+		"project":       acctest.GetTestProjectFromEnv(),
 		"random_suffix": RandString(t, 10),
 	}
 
@@ -45,7 +46,7 @@ func TestAccNetworkSecurityAddressGroup_networkSecurityAddressGroupsBasicExample
 				ResourceName:            "google_network_security_address_group.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"name", "location"},
+				ImportStateVerifyIgnore: []string{"parent", "name", "location"},
 			},
 		},
 	})
@@ -56,6 +57,47 @@ func testAccNetworkSecurityAddressGroup_networkSecurityAddressGroupsBasicExample
 resource "google_network_security_address_group" "default" {
   provider    = google-beta
   name        = "tf-test-my-address-groups%{random_suffix}"
+  parent      = "projects/%{project}"
+  location    = "us-central1"
+  type        = "IPV4"
+  capacity    = "100"
+  items       = ["208.80.154.224/32"]
+}
+`, context)
+}
+
+func TestAccNetworkSecurityAddressGroup_networkSecurityAddressGroupsOrganizationBasicExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"org_id":        acctest.GetTestOrgFromEnv(t),
+		"random_suffix": RandString(t, 10),
+	}
+
+	VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckNetworkSecurityAddressGroupDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccNetworkSecurityAddressGroup_networkSecurityAddressGroupsOrganizationBasicExample(context),
+			},
+			{
+				ResourceName:            "google_network_security_address_group.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"parent", "name", "location"},
+			},
+		},
+	})
+}
+
+func testAccNetworkSecurityAddressGroup_networkSecurityAddressGroupsOrganizationBasicExample(context map[string]interface{}) string {
+	return Nprintf(`
+resource "google_network_security_address_group" "default" {
+  provider    = google-beta
+  name        = "tf-test-my-address-groups%{random_suffix}"
+  parent      = "organizations/%{org_id}"
   location    = "us-central1"
   type        = "IPV4"
   capacity    = "100"
@@ -68,6 +110,7 @@ func TestAccNetworkSecurityAddressGroup_networkSecurityAddressGroupsAdvancedExam
 	t.Parallel()
 
 	context := map[string]interface{}{
+		"project":       acctest.GetTestProjectFromEnv(),
 		"random_suffix": RandString(t, 10),
 	}
 
@@ -83,7 +126,7 @@ func TestAccNetworkSecurityAddressGroup_networkSecurityAddressGroupsAdvancedExam
 				ResourceName:            "google_network_security_address_group.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"name", "location"},
+				ImportStateVerifyIgnore: []string{"parent", "name", "location"},
 			},
 		},
 	})
@@ -94,6 +137,7 @@ func testAccNetworkSecurityAddressGroup_networkSecurityAddressGroupsAdvancedExam
 resource "google_network_security_address_group" "default" {
   provider    = google-beta
   name        = "tf-test-my-address-groups%{random_suffix}"
+  parent      = "projects/%{project}"
   location    = "us-central1"
   description = "my description"
   type        = "IPV4"
@@ -115,7 +159,7 @@ func testAccCheckNetworkSecurityAddressGroupDestroyProducer(t *testing.T) func(s
 
 			config := GoogleProviderConfig(t)
 
-			url, err := acctest.ReplaceVarsForTest(config, rs, "{{NetworkSecurityBasePath}}projects/{{project}}/locations/{{location}}/addressGroups/{{name}}")
+			url, err := acctest.ReplaceVarsForTest(config, rs, "{{NetworkSecurityBasePath}}{{parent}}/locations/{{location}}/addressGroups/{{name}}")
 			if err != nil {
 				return err
 			}
