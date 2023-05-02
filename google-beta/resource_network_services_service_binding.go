@@ -50,7 +50,7 @@ func ResourceNetworkServicesServiceBinding() *schema.Resource {
 				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: true,
-				Description: `The full Service Directory Service name of the format 
+				Description: `The full Service Directory Service name of the format
 projects/*/locations/*/namespaces/*/services/*`,
 			},
 			"description": {
