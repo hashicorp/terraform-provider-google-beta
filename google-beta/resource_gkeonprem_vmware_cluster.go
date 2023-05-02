@@ -334,8 +334,8 @@ IngressVIP must be included in the pools.`,
 												"addresses": {
 													Type:     schema.TypeList,
 													Required: true,
-													Description: `The addresses that are part of this pool. Each address 
-must be either in the CIDR form (1.2.3.0/24) or range 
+													Description: `The addresses that are part of this pool. Each address
+must be either in the CIDR form (1.2.3.0/24) or range
 form (1.2.3.1-1.2.3.5).`,
 													Elem: &schema.Schema{
 														Type: schema.TypeString,
@@ -400,7 +400,7 @@ those special IP addresses.`,
 						"pod_address_cidr_blocks": {
 							Type:     schema.TypeList,
 							Required: true,
-							Description: `All pods in the cluster are assigned an RFC1918 IPv4 address from these ranges. 
+							Description: `All pods in the cluster are assigned an RFC1918 IPv4 address from these ranges.
 Only a single range is supported. This field cannot be changed after creation.`,
 							Elem: &schema.Schema{
 								Type: schema.TypeString,
@@ -409,8 +409,8 @@ Only a single range is supported. This field cannot be changed after creation.`,
 						"service_address_cidr_blocks": {
 							Type:     schema.TypeList,
 							Required: true,
-							Description: `All services in the cluster are assigned an RFC1918 IPv4 address 
-from these ranges. Only a single range is supported.. This field 
+							Description: `All services in the cluster are assigned an RFC1918 IPv4 address
+from these ranges. Only a single range is supported.. This field
 cannot be changed after creation.`,
 							Elem: &schema.Schema{
 								Type: schema.TypeString,
@@ -477,7 +477,7 @@ cannot be changed after creation.`,
 									"enabled": {
 										Type:     schema.TypeBool,
 										Required: true,
-										Description: `enabled is a flag to mark if DHCP IP allocation is 
+										Description: `enabled is a flag to mark if DHCP IP allocation is
 used for VMware user clusters.`,
 									},
 								},
