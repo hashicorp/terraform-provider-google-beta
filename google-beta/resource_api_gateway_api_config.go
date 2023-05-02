@@ -24,6 +24,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/verify"
 )
 
 func ResourceApiGatewayApiConfig() *schema.Resource {
@@ -113,7 +114,7 @@ $ protoc --include_imports --include_source_info test.proto -o out.pb`,
 										Type:         schema.TypeString,
 										Required:     true,
 										ForceNew:     true,
-										ValidateFunc: validateBase64String,
+										ValidateFunc: verify.ValidateBase64String,
 										Description:  `Base64 encoded content of the file.`,
 									},
 									"path": {
@@ -135,7 +136,7 @@ $ protoc --include_imports --include_source_info test.proto -o out.pb`,
 										Type:         schema.TypeString,
 										Required:     true,
 										ForceNew:     true,
-										ValidateFunc: validateBase64String,
+										ValidateFunc: verify.ValidateBase64String,
 										Description:  `Base64 encoded content of the file.`,
 									},
 									"path": {
@@ -198,7 +199,7 @@ If multiple files are specified, the files are merged with the following rules: 
 										Type:         schema.TypeString,
 										Required:     true,
 										ForceNew:     true,
-										ValidateFunc: validateBase64String,
+										ValidateFunc: verify.ValidateBase64String,
 										Description:  `Base64 encoded content of the file.`,
 									},
 									"path": {

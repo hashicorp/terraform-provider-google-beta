@@ -23,6 +23,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/verify"
 )
 
 func ResourceNetworkServicesEndpointPolicy() *schema.Resource {
@@ -60,7 +61,7 @@ func ResourceNetworkServicesEndpointPolicy() *schema.Resource {
 									"metadata_label_match_criteria": {
 										Type:         schema.TypeString,
 										Required:     true,
-										ValidateFunc: validateEnum([]string{"MATCH_ANY", "MATCH_ALL"}),
+										ValidateFunc: verify.ValidateEnum([]string{"MATCH_ANY", "MATCH_ALL"}),
 										Description:  `Specifies how matching should be done. Possible values: ["MATCH_ANY", "MATCH_ALL"]`,
 									},
 									"metadata_labels": {
@@ -97,7 +98,7 @@ func ResourceNetworkServicesEndpointPolicy() *schema.Resource {
 			"type": {
 				Type:         schema.TypeString,
 				Required:     true,
-				ValidateFunc: validateEnum([]string{"SIDECAR_PROXY", "GRPC_SERVER"}),
+				ValidateFunc: verify.ValidateEnum([]string{"SIDECAR_PROXY", "GRPC_SERVER"}),
 				Description:  `The type of endpoint policy. This is primarily used to validate the configuration. Possible values: ["SIDECAR_PROXY", "GRPC_SERVER"]`,
 			},
 			"authorization_policy": {

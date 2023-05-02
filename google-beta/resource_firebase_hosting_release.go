@@ -22,6 +22,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/verify"
 )
 
 func ResourceFirebaseHostingRelease() *schema.Resource {
@@ -65,7 +66,7 @@ belong to the default "live" channel`,
 				Computed:     true,
 				Optional:     true,
 				ForceNew:     true,
-				ValidateFunc: validateEnum([]string{"DEPLOY", "ROLLBACK", "SITE_DISABLE", ""}),
+				ValidateFunc: verify.ValidateEnum([]string{"DEPLOY", "ROLLBACK", "SITE_DISABLE", ""}),
 				Description: `The type of the release; indicates what happened to the content of the site. There is no need to specify
 'DEPLOY' or 'ROLLBACK' type if a 'version_name' is provided.
 DEPLOY: A version was uploaded to Firebase Hosting and released. Output only.

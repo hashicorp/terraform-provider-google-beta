@@ -5,6 +5,9 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
+
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
+
 	container "google.golang.org/api/container/v1beta1"
 )
 
@@ -137,7 +140,7 @@ func schemaNodeConfig() *schema.Schema {
 					Type:             schema.TypeString,
 					Optional:         true,
 					Computed:         true,
-					DiffSuppressFunc: CaseDiffSuppress,
+					DiffSuppressFunc: tpgresource.CaseDiffSuppress,
 					Description:      `The image type to use for this node. Note that for a given image type, the latest version of it will be used.`,
 				},
 

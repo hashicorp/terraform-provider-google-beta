@@ -23,6 +23,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/verify"
 )
 
 func ResourceNetworkServicesGrpcRoute() *schema.Resource {
@@ -157,7 +158,7 @@ func ResourceNetworkServicesGrpcRoute() *schema.Resource {
 													Description: `Specifies one or more conditions when this retry policy applies. Possible values: ["connect-failure", "refused-stream", "cancelled", "deadline-exceeded", "resource-exhausted", "unavailable"]`,
 													Elem: &schema.Schema{
 														Type:         schema.TypeString,
-														ValidateFunc: validateEnum([]string{"connect-failure", "refused-stream", "cancelled", "deadline-exceeded", "resource-exhausted", "unavailable"}),
+														ValidateFunc: verify.ValidateEnum([]string{"connect-failure", "refused-stream", "cancelled", "deadline-exceeded", "resource-exhausted", "unavailable"}),
 													},
 												},
 											},
@@ -196,7 +197,7 @@ func ResourceNetworkServicesGrpcRoute() *schema.Resource {
 												"type": {
 													Type:         schema.TypeString,
 													Optional:     true,
-													ValidateFunc: validateEnum([]string{"TYPE_UNSPECIFIED", "EXACT", "REGULAR_EXPRESSION", ""}),
+													ValidateFunc: verify.ValidateEnum([]string{"TYPE_UNSPECIFIED", "EXACT", "REGULAR_EXPRESSION", ""}),
 													Description:  `The type of match. Default value: "EXACT" Possible values: ["TYPE_UNSPECIFIED", "EXACT", "REGULAR_EXPRESSION"]`,
 													Default:      "EXACT",
 												},

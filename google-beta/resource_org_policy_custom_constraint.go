@@ -22,6 +22,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/verify"
 )
 
 func ResourceOrgPolicyCustomConstraint() *schema.Resource {
@@ -45,7 +46,7 @@ func ResourceOrgPolicyCustomConstraint() *schema.Resource {
 			"action_type": {
 				Type:         schema.TypeString,
 				Required:     true,
-				ValidateFunc: validateEnum([]string{"ALLOW", "DENY"}),
+				ValidateFunc: verify.ValidateEnum([]string{"ALLOW", "DENY"}),
 				Description:  `The action to take if the condition is met. Possible values: ["ALLOW", "DENY"]`,
 			},
 			"condition": {

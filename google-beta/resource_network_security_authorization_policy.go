@@ -23,6 +23,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/verify"
 )
 
 func ResourceNetworkSecurityAuthorizationPolicy() *schema.Resource {
@@ -46,7 +47,7 @@ func ResourceNetworkSecurityAuthorizationPolicy() *schema.Resource {
 			"action": {
 				Type:         schema.TypeString,
 				Required:     true,
-				ValidateFunc: validateEnum([]string{"ALLOW", "DENY"}),
+				ValidateFunc: verify.ValidateEnum([]string{"ALLOW", "DENY"}),
 				Description:  `The action to take when a rule match is found. Possible values are "ALLOW" or "DENY". Possible values: ["ALLOW", "DENY"]`,
 			},
 			"name": {

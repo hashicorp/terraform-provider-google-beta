@@ -23,6 +23,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/customdiff"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 	"google.golang.org/api/googleapi"
 )
@@ -144,7 +145,7 @@ encryption key that protects this resource.`,
 				Optional:         true,
 				Deprecated:       "This field is no longer in use, disk interfaces will be automatically determined on attachment. To resolve this issue, remove this field from your config.",
 				ForceNew:         true,
-				DiffSuppressFunc: AlwaysDiffSuppress,
+				DiffSuppressFunc: tpgresource.AlwaysDiffSuppress,
 				Description:      `Specifies the disk interface to use for attaching this disk, which is either SCSI or NVME. The default is SCSI.`,
 				Default:          "SCSI",
 			},

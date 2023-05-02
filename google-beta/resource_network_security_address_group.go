@@ -23,6 +23,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/verify"
 )
 
 func ResourceNetworkSecurityAddressGroup() *schema.Resource {
@@ -56,7 +57,7 @@ func ResourceNetworkSecurityAddressGroup() *schema.Resource {
 			"type": {
 				Type:         schema.TypeString,
 				Required:     true,
-				ValidateFunc: validateEnum([]string{"IPV4", "IPV6"}),
+				ValidateFunc: verify.ValidateEnum([]string{"IPV4", "IPV6"}),
 				Description:  `The type of the Address Group. Possible values are "IPV4" or "IPV6". Possible values: ["IPV4", "IPV6"]`,
 			},
 			"description": {

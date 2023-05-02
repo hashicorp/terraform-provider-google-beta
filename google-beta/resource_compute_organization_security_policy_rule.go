@@ -22,6 +22,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/verify"
 )
 
 func ResourceComputeOrganizationSecurityPolicyRule() *schema.Resource {
@@ -125,7 +126,7 @@ INGRESS rules.`,
 						"versioned_expr": {
 							Type:         schema.TypeString,
 							Optional:     true,
-							ValidateFunc: validateEnum([]string{"FIREWALL", ""}),
+							ValidateFunc: verify.ValidateEnum([]string{"FIREWALL", ""}),
 							Description: `Preconfigured versioned expression. For organization security policy rules,
 the only supported type is "FIREWALL". Default value: "FIREWALL" Possible values: ["FIREWALL"]`,
 							Default: "FIREWALL",
@@ -155,7 +156,7 @@ highest priority and 2147483647 is the lowest prority.`,
 			"direction": {
 				Type:         schema.TypeString,
 				Optional:     true,
-				ValidateFunc: validateEnum([]string{"INGRESS", "EGRESS", ""}),
+				ValidateFunc: verify.ValidateEnum([]string{"INGRESS", "EGRESS", ""}),
 				Description:  `The direction in which this rule applies. If unspecified an INGRESS rule is created. Possible values: ["INGRESS", "EGRESS"]`,
 			},
 			"enable_logging": {

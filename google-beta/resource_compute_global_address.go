@@ -21,7 +21,9 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/verify"
 )
 
 func ResourceComputeGlobalAddress() *schema.Resource {
@@ -67,8 +69,8 @@ address or omitted to allow GCP to choose a valid one for you.`,
 				Type:             schema.TypeString,
 				Optional:         true,
 				ForceNew:         true,
-				ValidateFunc:     validateEnum([]string{"EXTERNAL", "INTERNAL", ""}),
-				DiffSuppressFunc: EmptyOrDefaultStringSuppress("EXTERNAL"),
+				ValidateFunc:     verify.ValidateEnum([]string{"EXTERNAL", "INTERNAL", ""}),
+				DiffSuppressFunc: tpgresource.EmptyOrDefaultStringSuppress("EXTERNAL"),
 				Description: `The type of the address to reserve.
 
 * EXTERNAL indicates public/external single IP address.
@@ -85,8 +87,8 @@ address or omitted to allow GCP to choose a valid one for you.`,
 				Type:             schema.TypeString,
 				Optional:         true,
 				ForceNew:         true,
-				ValidateFunc:     validateEnum([]string{"IPV4", "IPV6", ""}),
-				DiffSuppressFunc: EmptyOrDefaultStringSuppress("IPV4"),
+				ValidateFunc:     verify.ValidateEnum([]string{"IPV4", "IPV6", ""}),
+				DiffSuppressFunc: tpgresource.EmptyOrDefaultStringSuppress("IPV4"),
 				Description:      `The IP Version that will be used by this address. The default value is 'IPV4'. Possible values: ["IPV4", "IPV6"]`,
 			},
 			"labels": {

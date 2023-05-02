@@ -23,6 +23,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/verify"
 )
 
 func ResourceHealthcareFhirStore() *schema.Resource {
@@ -216,7 +217,7 @@ value 2. The maximum depth allowed is 5.`,
 												"schema_type": {
 													Type:         schema.TypeString,
 													Optional:     true,
-													ValidateFunc: validateEnum([]string{"ANALYTICS", "ANALYTICS_V2", "LOSSLESS", ""}),
+													ValidateFunc: verify.ValidateEnum([]string{"ANALYTICS", "ANALYTICS_V2", "LOSSLESS", ""}),
 													Description: `Specifies the output schema type.
  * ANALYTICS: Analytics schema defined by the FHIR community.
   See https://github.com/FHIR/sql-on-fhir/blob/master/sql-on-fhir.md.
@@ -247,7 +248,7 @@ an empty list as an intent to stream all the supported resource types in this FH
 				Type:         schema.TypeString,
 				Optional:     true,
 				ForceNew:     true,
-				ValidateFunc: validateEnum([]string{"DSTU2", "STU3", "R4", ""}),
+				ValidateFunc: verify.ValidateEnum([]string{"DSTU2", "STU3", "R4", ""}),
 				Description:  `The FHIR specification version. Default value: "STU3" Possible values: ["DSTU2", "STU3", "R4"]`,
 				Default:      "STU3",
 			},
