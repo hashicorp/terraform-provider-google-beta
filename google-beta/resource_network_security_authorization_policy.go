@@ -77,14 +77,14 @@ The default value is 'global'.`,
 			"rules": {
 				Type:     schema.TypeList,
 				Optional: true,
-				Description: `List of rules to match. Note that at least one of the rules must match in order for the action specified in the 'action' field to be taken. 
+				Description: `List of rules to match. Note that at least one of the rules must match in order for the action specified in the 'action' field to be taken.
 A rule is a match if there is a matching source and destination. If left blank, the action specified in the action field will be applied on every request.`,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"destinations": {
 							Type:     schema.TypeList,
 							Optional: true,
-							Description: `List of attributes for the traffic destination. All of the destinations must match. A destination is a match if a request matches all the specified hosts, ports, methods and headers. 
+							Description: `List of attributes for the traffic destination. All of the destinations must match. A destination is a match if a request matches all the specified hosts, ports, methods and headers.
 If not set, the action specified in the 'action' field will be applied without any rule checks for the destination.`,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
@@ -115,7 +115,7 @@ If not set, the action specified in the 'action' field will be applied without a
 									"http_header_match": {
 										Type:     schema.TypeList,
 										Optional: true,
-										Description: `Match against key:value pair in http header. Provides a flexible match based on HTTP headers, for potentially advanced use cases. At least one header should match. 
+										Description: `Match against key:value pair in http header. Provides a flexible match based on HTTP headers, for potentially advanced use cases. At least one header should match.
 Avoid using header matches to make authorization decisions unless there is a strong guarantee that requests arrive through a trusted client or proxy.`,
 										MaxItems: 1,
 										Elem: &schema.Resource{
@@ -139,14 +139,14 @@ Avoid using header matches to make authorization decisions unless there is a str
 						"sources": {
 							Type:     schema.TypeList,
 							Optional: true,
-							Description: `List of attributes for the traffic source. All of the sources must match. A source is a match if both principals and ipBlocks match. 
+							Description: `List of attributes for the traffic source. All of the sources must match. A source is a match if both principals and ipBlocks match.
 If not set, the action specified in the 'action' field will be applied without any rule checks for the source.`,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"ip_blocks": {
 										Type:     schema.TypeList,
 										Optional: true,
-										Description: `List of CIDR ranges to match based on source IP address. At least one IP block should match. Single IP (e.g., "1.2.3.4") and CIDR (e.g., "1.2.3.0/24") are supported. Authorization based on source IP alone should be avoided. 
+										Description: `List of CIDR ranges to match based on source IP address. At least one IP block should match. Single IP (e.g., "1.2.3.4") and CIDR (e.g., "1.2.3.0/24") are supported. Authorization based on source IP alone should be avoided.
 The IP addresses of any load balancers or proxies should be considered untrusted.`,
 										Elem: &schema.Schema{
 											Type: schema.TypeString,
@@ -155,7 +155,7 @@ The IP addresses of any load balancers or proxies should be considered untrusted
 									"principals": {
 										Type:     schema.TypeList,
 										Optional: true,
-										Description: `List of peer identities to match for authorization. At least one principal should match. Each peer can be an exact match, or a prefix match (example, "namespace/*") or a suffix match (example, "*/service-account") or a presence match "*". 
+										Description: `List of peer identities to match for authorization. At least one principal should match. Each peer can be an exact match, or a prefix match (example, "namespace/*") or a suffix match (example, "*/service-account") or a presence match "*".
 Authorization based on the principal name without certificate validation (configured by ServerTlsPolicy resource) is considered insecure.`,
 										Elem: &schema.Schema{
 											Type: schema.TypeString,
