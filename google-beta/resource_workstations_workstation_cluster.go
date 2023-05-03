@@ -61,7 +61,7 @@ Must be part of the subnetwork specified for this cluster.`,
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
-				Description: `The ID of the workstation cluster.`,
+				Description: `ID to use for the workstation cluster.`,
 			},
 			"annotations": {
 				Type:        schema.TypeMap,
@@ -110,7 +110,7 @@ To access workstations in the cluster, create a new DNS zone mapping this domain
 							Type:     schema.TypeString,
 							Computed: true,
 							Description: `Service attachment URI for the workstation cluster.
-The service attachemnt is created when private endpoint is enabled.
+The service attachment is created when private endpoint is enabled.
 To access workstations in the cluster, configure access to the managed service using (Private Service Connect)[https://cloud.google.com/vpc/docs/configure-private-service-connect-services].`,
 						},
 					},
@@ -146,7 +146,7 @@ To access workstations in the cluster, configure access to the managed service u
 			"create_time": {
 				Type:        schema.TypeString,
 				Computed:    true,
-				Description: `Time the Instance was created in UTC.`,
+				Description: `Time when this resource was created.`,
 			},
 			"degraded": {
 				Type:     schema.TypeBool,

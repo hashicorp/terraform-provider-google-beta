@@ -155,7 +155,7 @@ resource "google_workstations_workstation_config" "default" {
   workstation_config_id  = "tf-test-workstation-config%{random_suffix}"
   workstation_cluster_id = google_workstations_workstation_cluster.default.workstation_cluster_id
   location   		         = "us-central1"
-  
+
   host {
     gce_instance {
       machine_type                = "e2-standard-4"
@@ -214,7 +214,7 @@ resource "google_workstations_workstation_config" "default" {
   workstation_config_id  = "tf-test-workstation-config%{random_suffix}"
   workstation_cluster_id = google_workstations_workstation_cluster.default.workstation_cluster_id
   location   		         = "us-central1"
-  
+
   host {
     gce_instance {
       machine_type                = "e2-standard-4"
@@ -280,7 +280,7 @@ resource "google_workstations_workstation_config" "default" {
   workstation_config_id  = "tf-test-workstation-config%{random_suffix}"
   workstation_cluster_id = google_workstations_workstation_cluster.default.workstation_cluster_id
   location   		         = "us-central1"
-  
+
   host {
     gce_instance {
       machine_type                = "e2-standard-4"
@@ -342,7 +342,7 @@ resource "google_workstations_workstation_config" "default" {
   workstation_config_id  = "tf-test-workstation-config%{random_suffix}"
   workstation_cluster_id = google_workstations_workstation_cluster.default.workstation_cluster_id
   location   		         = "us-central1"
-  
+
   host {
     gce_instance {
       machine_type                = "e2-standard-4"
@@ -401,7 +401,7 @@ resource "google_workstations_workstation_config" "default" {
   workstation_config_id  = "tf-test-workstation-config%{random_suffix}"
   workstation_cluster_id = google_workstations_workstation_cluster.default.workstation_cluster_id
   location   		         = "us-central1"
-  
+
   host {
     gce_instance {
       machine_type                = "e2-standard-4"

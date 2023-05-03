@@ -54,13 +54,13 @@ func ResourceWorkstationsWorkstationConfig() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
-				Description: `The name of the workstation cluster.`,
+				Description: `The ID of the parent workstation cluster.`,
 			},
 			"workstation_config_id": {
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
-				Description: `The ID of the workstation cluster config.`,
+				Description: `The ID to be assigned to the workstation cluster config.`,
 			},
 			"annotations": {
 				Type:        schema.TypeMap,
@@ -103,7 +103,7 @@ The elements are of the form "KEY=VALUE" for the environment variable "KEY" bein
 							Type:        schema.TypeString,
 							Computed:    true,
 							Optional:    true,
-							Description: `Docker image defining the container. This image must be accessible by the config"s service account.`,
+							Description: `Docker image defining the container. This image must be accessible by the config's service account.`,
 						},
 						"run_as_user": {
 							Type:        schema.TypeInt,
@@ -126,6 +126,7 @@ The elements are of the form "KEY=VALUE" for the environment variable "KEY" bein
 			"encryption_key": {
 				Type:     schema.TypeList,
 				Optional: true,
+				ForceNew: true,
 				Description: `Encrypts resources of this workstation configuration using a customer-managed encryption key.
 
 If specified, the boot disk of the Compute Engine instance and the persistent disk are encrypted using this encryption key. If this field is not set, the disks are encrypted using a generated key. Customer-managed encryption keys do not protect disk metadata.
@@ -151,7 +152,6 @@ If the encryption key is revoked, the workstation session will automatically be 
 				Type:        schema.TypeList,
 				Computed:    true,
 				Optional:    true,
-				ForceNew:    true,
 				Description: `Runtime host for a workstation.`,
 				MaxItems:    1,
 				Elem: &schema.Resource{
@@ -160,8 +160,7 @@ If the encryption key is revoked, the workstation session will automatically be 
 							Type:        schema.TypeList,
 							Computed:    true,
 							Optional:    true,
-							ForceNew:    true,
-							Description: `Specifies a Compute Engine instance as the host.`,
+							Description: `A runtime using a Compute Engine instance.`,
 							MaxItems:    1,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
@@ -174,8 +173,8 @@ If the encryption key is revoked, the workstation session will automatically be 
 									},
 									"confidential_instance_config": {
 										Type:        schema.TypeList,
+										Computed:    true,
 										Optional:    true,
-										ForceNew:    true,
 										Description: `A set of Compute Engine Confidential VM instance options.`,
 										MaxItems:    1,
 										Elem: &schema.Resource{
@@ -183,7 +182,6 @@ If the encryption key is revoked, the workstation session will automatically be 
 												"enable_confidential_compute": {
 													Type:        schema.TypeBool,
 													Optional:    true,
-													ForceNew:    true,
 													Description: `Whether the instance has confidential compute enabled.`,
 												},
 											},
@@ -192,21 +190,18 @@ If the encryption key is revoked, the workstation session will automatically be 
 									"disable_public_ip_addresses": {
 										Type:        schema.TypeBool,
 										Optional:    true,
-										ForceNew:    true,
 										Description: `Whether instances have no public IP address.`,
 									},
 									"machine_type": {
 										Type:        schema.TypeString,
 										Computed:    true,
 										Optional:    true,
-										ForceNew:    true,
 										Description: `The name of a Compute Engine machine type.`,
 									},
 									"pool_size": {
 										Type:        schema.TypeInt,
 										Computed:    true,
 										Optional:    true,
-										ForceNew:    true,
 										Description: `Number of instances to pool for faster workstation startup.`,
 									},
 									"service_account": {
@@ -218,8 +213,8 @@ If the encryption key is revoked, the workstation session will automatically be 
 									},
 									"shielded_instance_config": {
 										Type:        schema.TypeList,
+										Computed:    true,
 										Optional:    true,
-										ForceNew:    true,
 										Description: `A set of Compute Engine Shielded instance options.`,
 										MaxItems:    1,
 										Elem: &schema.Resource{
@@ -227,19 +222,16 @@ If the encryption key is revoked, the workstation session will automatically be 
 												"enable_integrity_monitoring": {
 													Type:        schema.TypeBool,
 													Optional:    true,
-													ForceNew:    true,
 													Description: `Whether the instance has integrity monitoring enabled.`,
 												},
 												"enable_secure_boot": {
 													Type:        schema.TypeBool,
 													Optional:    true,
-													ForceNew:    true,
 													Description: `Whether the instance has Secure Boot enabled.`,
 												},
 												"enable_vtpm": {
 													Type:        schema.TypeBool,
 													Optional:    true,
-													ForceNew:    true,
 													Description: `Whether the instance has the vTPM enabled.`,
 												},
 											},
@@ -248,7 +240,6 @@ If the encryption key is revoked, the workstation session will automatically be 
 									"tags": {
 										Type:        schema.TypeList,
 										Optional:    true,
-										ForceNew:    true,
 										Description: `Network tags to add to the Compute Engine machines backing the Workstations.`,
 										Elem: &schema.Schema{
 											Type: schema.TypeString,
@@ -270,6 +261,7 @@ If the encryption key is revoked, the workstation session will automatically be 
 				Type:        schema.TypeList,
 				Computed:    true,
 				Optional:    true,
+				ForceNew:    true,
 				Description: `Directories to persist across workstation sessions.`,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -277,6 +269,7 @@ If the encryption key is revoked, the workstation session will automatically be 
 							Type:        schema.TypeList,
 							Computed:    true,
 							Optional:    true,
+							ForceNew:    true,
 							Description: `PersistentDirectory backed by a Compute Engine regional persistent disk.`,
 							MaxItems:    1,
 							Elem: &schema.Resource{
@@ -285,24 +278,28 @@ If the encryption key is revoked, the workstation session will automatically be 
 										Type:        schema.TypeString,
 										Computed:    true,
 										Optional:    true,
+										ForceNew:    true,
 										Description: `Type of the disk to use.`,
 									},
 									"fs_type": {
 										Type:        schema.TypeString,
 										Computed:    true,
 										Optional:    true,
+										ForceNew:    true,
 										Description: `Type of file system that the disk should be formatted with. The workstation image must support this file system type. Must be empty if sourceSnapshot is set.`,
 									},
 									"reclaim_policy": {
 										Type:         schema.TypeString,
 										Optional:     true,
-										ValidateFunc: verify.ValidateEnum([]string{"RECLAIM_POLICY_UNSPECIFIED", "DELETE", "RETAIN", ""}),
-										Description:  `What should happen to the disk after the workstation is deleted. Defaults to DELETE. Possible values: ["RECLAIM_POLICY_UNSPECIFIED", "DELETE", "RETAIN"]`,
+										ForceNew:     true,
+										ValidateFunc: verify.ValidateEnum([]string{"DELETE", "RETAIN", ""}),
+										Description:  `What should happen to the disk after the workstation is deleted. Defaults to DELETE. Possible values: ["DELETE", "RETAIN"]`,
 									},
 									"size_gb": {
 										Type:        schema.TypeInt,
 										Computed:    true,
 										Optional:    true,
+										ForceNew:    true,
 										Description: `Size of the disk in GB. Must be empty if sourceSnapshot is set.`,
 									},
 								},
@@ -310,7 +307,9 @@ If the encryption key is revoked, the workstation session will automatically be 
 						},
 						"mount_path": {
 							Type:        schema.TypeString,
+							Computed:    true,
 							Optional:    true,
+							ForceNew:    true,
 							Description: `Location of this directory in the running workstation.`,
 						},
 					},
@@ -346,7 +345,7 @@ If the encryption key is revoked, the workstation session will automatically be 
 			"create_time": {
 				Type:        schema.TypeString,
 				Computed:    true,
-				Description: `Time the Instance was created in UTC.`,
+				Description: `Time when this resource was created.`,
 			},
 			"degraded": {
 				Type:        schema.TypeBool,
@@ -600,23 +599,17 @@ func resourceWorkstationsWorkstationConfigUpdate(d *schema.ResourceData, meta in
 	} else if v, ok := d.GetOkExists("etag"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, etagProp)) {
 		obj["etag"] = etagProp
 	}
-	persistentDirectoriesProp, err := expandWorkstationsWorkstationConfigPersistentDirectories(d.Get("persistent_directories"), d, config)
+	hostProp, err := expandWorkstationsWorkstationConfigHost(d.Get("host"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("persistent_directories"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, persistentDirectoriesProp)) {
-		obj["persistentDirectories"] = persistentDirectoriesProp
+	} else if v, ok := d.GetOkExists("host"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, hostProp)) {
+		obj["host"] = hostProp
 	}
 	containerProp, err := expandWorkstationsWorkstationConfigContainer(d.Get("container"), d, config)
 	if err != nil {
 		return err
 	} else if v, ok := d.GetOkExists("container"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, containerProp)) {
 		obj["container"] = containerProp
-	}
-	encryptionKeyProp, err := expandWorkstationsWorkstationConfigEncryptionKey(d.Get("encryption_key"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("encryption_key"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, encryptionKeyProp)) {
-		obj["encryptionKey"] = encryptionKeyProp
 	}
 
 	url, err := ReplaceVars(d, config, "{{WorkstationsBasePath}}projects/{{project}}/locations/{{location}}/workstationClusters/{{workstation_cluster_id}}/workstationConfigs/{{workstation_config_id}}")
@@ -643,16 +636,24 @@ func resourceWorkstationsWorkstationConfigUpdate(d *schema.ResourceData, meta in
 		updateMask = append(updateMask, "etag")
 	}
 
-	if d.HasChange("persistent_directories") {
-		updateMask = append(updateMask, "persistentDirectories")
+	if d.HasChange("host") {
+		updateMask = append(updateMask, "host.gceInstance.machineType",
+			"host.gceInstance.poolSize",
+			"host.gceInstance.tags",
+			"host.gceInstance.disablePublicIpAddresses",
+			"host.gceInstance.shieldedInstanceConfig.enableSecureBoot",
+			"host.gceInstance.shieldedInstanceConfig.enableVtpm",
+			"host.gceInstance.shieldedInstanceConfig.enableIntegrityMonitoring",
+			"host.gceInstance.confidentialInstanceConfig.enableConfidentialCompute")
 	}
 
 	if d.HasChange("container") {
-		updateMask = append(updateMask, "container")
-	}
-
-	if d.HasChange("encryption_key") {
-		updateMask = append(updateMask, "encryptionKey")
+		updateMask = append(updateMask, "container.image",
+			"container.command",
+			"container.args",
+			"container.workingDir",
+			"container.env",
+			"container.runAsUser")
 	}
 	// updateMask is a URL parameter but not present in the schema, so ReplaceVars
 	// won't set it
@@ -869,49 +870,47 @@ func flattenWorkstationsWorkstationConfigHostGceInstanceDisablePublicIpAddresses
 }
 
 func flattenWorkstationsWorkstationConfigHostGceInstanceShieldedInstanceConfig(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
-	if v == nil {
-		return nil
-	}
-	original := v.(map[string]interface{})
-	if len(original) == 0 {
-		return nil
-	}
 	transformed := make(map[string]interface{})
-	transformed["enable_secure_boot"] =
-		flattenWorkstationsWorkstationConfigHostGceInstanceShieldedInstanceConfigEnableSecureBoot(original["enableSecureBoot"], d, config)
-	transformed["enable_vtpm"] =
-		flattenWorkstationsWorkstationConfigHostGceInstanceShieldedInstanceConfigEnableVtpm(original["enableVtpm"], d, config)
-	transformed["enable_integrity_monitoring"] =
-		flattenWorkstationsWorkstationConfigHostGceInstanceShieldedInstanceConfigEnableIntegrityMonitoring(original["enableIntegrityMonitoring"], d, config)
+
+	// Defaults for when no value is provided by API.
+	transformed["enable_secure_boot"] = false
+	transformed["enable_vtpm"] = false
+	transformed["enable_integrity_monitoring"] = false
+
+	if v == nil {
+		return []interface{}{transformed}
+	}
+
+	original := v.(map[string]interface{})
+	if original["enableSecureBoot"] != nil {
+		transformed["enable_secure_boot"] = original["enableSecureBoot"]
+	}
+	if original["enableVtpm"] != nil {
+		transformed["enable_vtpm"] = original["enableVtpm"]
+	}
+	if original["enableIntegrityMonitoring"] != nil {
+		transformed["enable_integrity_monitoring"] = original["enableIntegrityMonitoring"]
+	}
+
 	return []interface{}{transformed}
-}
-func flattenWorkstationsWorkstationConfigHostGceInstanceShieldedInstanceConfigEnableSecureBoot(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
-	return v
-}
-
-func flattenWorkstationsWorkstationConfigHostGceInstanceShieldedInstanceConfigEnableVtpm(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
-	return v
-}
-
-func flattenWorkstationsWorkstationConfigHostGceInstanceShieldedInstanceConfigEnableIntegrityMonitoring(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
-	return v
 }
 
 func flattenWorkstationsWorkstationConfigHostGceInstanceConfidentialInstanceConfig(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
-	if v == nil {
-		return nil
-	}
-	original := v.(map[string]interface{})
-	if len(original) == 0 {
-		return nil
-	}
 	transformed := make(map[string]interface{})
-	transformed["enable_confidential_compute"] =
-		flattenWorkstationsWorkstationConfigHostGceInstanceConfidentialInstanceConfigEnableConfidentialCompute(original["enableConfidentialCompute"], d, config)
+
+	// Defaults for when no value is provided by API.
+	transformed["enable_confidential_compute"] = false
+
+	if v == nil {
+		return []interface{}{transformed}
+	}
+
+	original := v.(map[string]interface{})
+	if original["enableConfidentialCompute"] != nil {
+		transformed["enable_confidential_compute"] = original["enableConfidentialCompute"]
+	}
+
 	return []interface{}{transformed}
-}
-func flattenWorkstationsWorkstationConfigHostGceInstanceConfidentialInstanceConfigEnableConfidentialCompute(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
-	return v
 }
 
 func flattenWorkstationsWorkstationConfigPersistentDirectories(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -1270,21 +1269,21 @@ func expandWorkstationsWorkstationConfigHostGceInstanceShieldedInstanceConfig(v 
 	transformedEnableSecureBoot, err := expandWorkstationsWorkstationConfigHostGceInstanceShieldedInstanceConfigEnableSecureBoot(original["enable_secure_boot"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedEnableSecureBoot); val.IsValid() && !isEmptyValue(val) {
+	} else {
 		transformed["enableSecureBoot"] = transformedEnableSecureBoot
 	}
 
 	transformedEnableVtpm, err := expandWorkstationsWorkstationConfigHostGceInstanceShieldedInstanceConfigEnableVtpm(original["enable_vtpm"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedEnableVtpm); val.IsValid() && !isEmptyValue(val) {
+	} else {
 		transformed["enableVtpm"] = transformedEnableVtpm
 	}
 
 	transformedEnableIntegrityMonitoring, err := expandWorkstationsWorkstationConfigHostGceInstanceShieldedInstanceConfigEnableIntegrityMonitoring(original["enable_integrity_monitoring"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedEnableIntegrityMonitoring); val.IsValid() && !isEmptyValue(val) {
+	} else {
 		transformed["enableIntegrityMonitoring"] = transformedEnableIntegrityMonitoring
 	}
 
@@ -1315,7 +1314,7 @@ func expandWorkstationsWorkstationConfigHostGceInstanceConfidentialInstanceConfi
 	transformedEnableConfidentialCompute, err := expandWorkstationsWorkstationConfigHostGceInstanceConfidentialInstanceConfigEnableConfidentialCompute(original["enable_confidential_compute"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedEnableConfidentialCompute); val.IsValid() && !isEmptyValue(val) {
+	} else {
 		transformed["enableConfidentialCompute"] = transformedEnableConfidentialCompute
 	}
 
@@ -1448,7 +1447,7 @@ func expandWorkstationsWorkstationConfigContainer(v interface{}, d TerraformReso
 	transformedWorkingDir, err := expandWorkstationsWorkstationConfigContainerWorkingDir(original["working_dir"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedWorkingDir); val.IsValid() && !isEmptyValue(val) {
+	} else {
 		transformed["workingDir"] = transformedWorkingDir
 	}
 
