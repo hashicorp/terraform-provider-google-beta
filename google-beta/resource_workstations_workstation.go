@@ -47,19 +47,19 @@ func ResourceWorkstationsWorkstation() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
-				Description: `The location where the workstation cluster config should reside.`,
+				Description: `The location where the workstation parent resources reside.`,
 			},
 			"workstation_cluster_id": {
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
-				Description: `The name of the workstation cluster.`,
+				Description: `The ID of the parent workstation cluster.`,
 			},
 			"workstation_config_id": {
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
-				Description: `The ID of the workstation cluster config.`,
+				Description: `The ID of the parent workstation cluster config.`,
 			},
 			"workstation_id": {
 				Type:        schema.TypeString,
@@ -87,7 +87,7 @@ func ResourceWorkstationsWorkstation() *schema.Resource {
 			"create_time": {
 				Type:        schema.TypeString,
 				Computed:    true,
-				Description: `Time the Instance was created in UTC.`,
+				Description: `Time when this resource was created.`,
 			},
 			"host": {
 				Type:     schema.TypeString,
@@ -99,7 +99,7 @@ To send traffic to a different port, clients may prefix the host with the destin
 			"name": {
 				Type:        schema.TypeString,
 				Computed:    true,
-				Description: `The name of the cluster resource.`,
+				Description: `Full name of this resource.`,
 			},
 			"state": {
 				Type:        schema.TypeString,
@@ -109,7 +109,7 @@ To send traffic to a different port, clients may prefix the host with the destin
 			"uid": {
 				Type:        schema.TypeString,
 				Computed:    true,
-				Description: `The system-generated UID of the resource.`,
+				Description: `A system-assigned unique identified for this resource.`,
 			},
 			"project": {
 				Type:     schema.TypeString,
