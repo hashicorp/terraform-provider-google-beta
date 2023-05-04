@@ -21,6 +21,8 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
@@ -326,7 +328,7 @@ func flattenMLEngineModelName(v interface{}, d *schema.ResourceData, config *tra
 	if v == nil {
 		return v
 	}
-	return NameFromSelfLinkStateFunc(v)
+	return tpgresource.NameFromSelfLinkStateFunc(v)
 }
 
 func flattenMLEngineModelDescription(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {

@@ -3,8 +3,10 @@ package google
 import (
 	"encoding/json"
 	"fmt"
-	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 	"time"
+
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
+	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 
 	cloudresourcemanager "google.golang.org/api/cloudresourcemanager/v1"
 )
@@ -67,7 +69,7 @@ func (w *gkeonpremOperationWaiter) IsRetryable(error) bool {
 }
 
 func (w *gkeonpremOperationWaiter) SetOp(op interface{}) error {
-	if err := Convert(op, &w.Op); err != nil {
+	if err := tpgresource.Convert(op, &w.Op); err != nil {
 		return err
 	}
 	return nil

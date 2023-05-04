@@ -3,8 +3,10 @@ package google
 import (
 	"encoding/json"
 	"fmt"
-	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 	"time"
+
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
+	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
 type VertexAIOperationWaiter struct {
@@ -19,7 +21,7 @@ func (w *VertexAIOperationWaiter) QueryOp() (interface{}, error) {
 		return nil, fmt.Errorf("Cannot query operation, it's unset or nil.")
 	}
 
-	region := GetRegionFromRegionalSelfLink(w.CommonOperationWaiter.Op.Name)
+	region := tpgresource.GetRegionFromRegionalSelfLink(w.CommonOperationWaiter.Op.Name)
 
 	// Returns the proper get.
 	url := fmt.Sprintf("https://%s-aiplatform.googleapis.com/v1beta1/%s", region, w.CommonOperationWaiter.Op.Name)

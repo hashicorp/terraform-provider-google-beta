@@ -21,6 +21,8 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
@@ -382,7 +384,7 @@ func flattenNestedServiceUsageConsumerQuotaOverrideName(v interface{}, d *schema
 	if v == nil {
 		return v
 	}
-	return NameFromSelfLinkStateFunc(v)
+	return tpgresource.NameFromSelfLinkStateFunc(v)
 }
 
 func expandNestedServiceUsageConsumerQuotaOverrideOverrideValue(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {

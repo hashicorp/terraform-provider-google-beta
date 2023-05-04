@@ -22,6 +22,8 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
@@ -46,7 +48,7 @@ func ResourceApiGatewayGateway() *schema.Resource {
 			"api_config": {
 				Type:             schema.TypeString,
 				Required:         true,
-				DiffSuppressFunc: compareResourceNames,
+				DiffSuppressFunc: tpgresource.CompareResourceNames,
 				Description: `Resource name of the API Config for this Gateway. Format: projects/{project}/locations/global/apis/{api}/configs/{apiConfig}.
 When changing api configs please ensure the new config is a new resource and the lifecycle rule 'create_before_destroy' is set.`,
 			},

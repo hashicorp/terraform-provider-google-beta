@@ -21,6 +21,8 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/verify"
 )
@@ -650,7 +652,7 @@ func flattenNestedComputePerInstanceConfigPreservedStateDisk(v interface{}, d *s
 	transformed := make([]interface{}, 0, len(disks))
 	for devName, deleteRuleRaw := range disks {
 		diskObj := deleteRuleRaw.(map[string]interface{})
-		source, err := getRelativePath(diskObj["source"].(string))
+		source, err := tpgresource.GetRelativePath(diskObj["source"].(string))
 		if err != nil {
 			source = diskObj["source"].(string)
 		}
@@ -701,7 +703,7 @@ func flattenNestedComputePerInstanceConfigPreservedStateInternalIpIpAddressAddre
 	if v == nil {
 		return v
 	}
-	return ConvertSelfLinkToV1(v.(string))
+	return tpgresource.ConvertSelfLinkToV1(v.(string))
 }
 
 func flattenNestedComputePerInstanceConfigPreservedStateExternalIp(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -741,7 +743,7 @@ func flattenNestedComputePerInstanceConfigPreservedStateExternalIpIpAddressAddre
 	if v == nil {
 		return v
 	}
-	return ConvertSelfLinkToV1(v.(string))
+	return tpgresource.ConvertSelfLinkToV1(v.(string))
 }
 
 func expandNestedComputePerInstanceConfigName(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {

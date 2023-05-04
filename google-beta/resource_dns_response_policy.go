@@ -22,6 +22,8 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
@@ -80,7 +82,7 @@ This should be specified in the format like
 						"network_url": {
 							Type:             schema.TypeString,
 							Required:         true,
-							DiffSuppressFunc: compareSelfLinkOrResourceName,
+							DiffSuppressFunc: tpgresource.CompareSelfLinkOrResourceName,
 							Description: `The fully qualified URL of the VPC network to bind to.
 This should be formatted like
 'https://www.googleapis.com/compute/v1/projects/{project}/global/networks/{network}'`,
@@ -456,7 +458,7 @@ func expandDNSResponsePolicyNetworksNetworkUrl(v interface{}, d TerraformResourc
 	if err != nil {
 		return "", err
 	}
-	return ConvertSelfLinkToV1(url), nil
+	return tpgresource.ConvertSelfLinkToV1(url), nil
 }
 
 func expandDNSResponsePolicyGkeClusters(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
