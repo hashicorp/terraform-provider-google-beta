@@ -21,6 +21,8 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/verify"
 )
@@ -152,7 +154,7 @@ func resourceFirebaseHostingReleaseCreate(d *schema.ResourceData, meta interface
 	// Store the name as ID
 	d.SetId(res["name"].(string))
 
-	if err = d.Set("release_id", GetResourceNameFromSelfLink(res["name"].(string))); err != nil {
+	if err = d.Set("release_id", tpgresource.GetResourceNameFromSelfLink(res["name"].(string))); err != nil {
 		return fmt.Errorf("Error setting release_id: %s", err)
 	}
 
@@ -261,7 +263,7 @@ func expandFirebaseHostingReleaseMessage(v interface{}, d TerraformResourceData,
 }
 
 func resourceFirebaseHostingReleaseDecoder(d *schema.ResourceData, meta interface{}, res map[string]interface{}) (map[string]interface{}, error) {
-	if err := d.Set("release_id", GetResourceNameFromSelfLink(res["name"].(string))); err != nil {
+	if err := d.Set("release_id", tpgresource.GetResourceNameFromSelfLink(res["name"].(string))); err != nil {
 		return nil, err
 	}
 

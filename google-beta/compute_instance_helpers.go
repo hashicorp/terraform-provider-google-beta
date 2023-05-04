@@ -2,8 +2,10 @@ package google
 
 import (
 	"fmt"
-	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 	"reflect"
+
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
+	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
@@ -155,14 +157,14 @@ func expandComputeMaxRunDuration(v interface{}) (*compute.Duration, error) {
 	transformedNanos, err := expandComputeMaxRunDurationNanos(original["nanos"])
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedNanos); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedNanos); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		duration.Nanos = int64(transformedNanos.(int))
 	}
 
 	transformedSeconds, err := expandComputeMaxRunDurationSeconds(original["seconds"])
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedSeconds); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedSeconds); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		duration.Seconds = int64(transformedSeconds.(int))
 	}
 
@@ -266,8 +268,8 @@ func flattenNetworkInterfaces(d *schema.ResourceData, config *transport_tpg.Conf
 
 		flattened[i] = map[string]interface{}{
 			"network_ip":         iface.NetworkIP,
-			"network":            ConvertSelfLinkToV1(iface.Network),
-			"subnetwork":         ConvertSelfLinkToV1(iface.Subnetwork),
+			"network":            tpgresource.ConvertSelfLinkToV1(iface.Network),
+			"subnetwork":         tpgresource.ConvertSelfLinkToV1(iface.Subnetwork),
 			"subnetwork_project": subnet.Project,
 			"access_config":      ac,
 			"alias_ip_range":     flattenAliasIpRange(iface.AliasIpRanges),
@@ -367,7 +369,7 @@ func flattenServiceAccounts(serviceAccounts []*compute.ServiceAccount) []map[str
 	for i, serviceAccount := range serviceAccounts {
 		result[i] = map[string]interface{}{
 			"email":  serviceAccount.Email,
-			"scopes": schema.NewSet(stringScopeHashcode, convertStringArrToInterface(serviceAccount.Scopes)),
+			"scopes": schema.NewSet(tpgresource.StringScopeHashcode, convertStringArrToInterface(serviceAccount.Scopes)),
 		}
 	}
 	return result
@@ -380,7 +382,7 @@ func expandServiceAccounts(configs []interface{}) []*compute.ServiceAccount {
 
 		accounts[i] = &compute.ServiceAccount{
 			Email:  data["email"].(string),
-			Scopes: canonicalizeServiceScopes(convertStringSet(data["scopes"].(*schema.Set))),
+			Scopes: tpgresource.CanonicalizeServiceScopes(convertStringSet(data["scopes"].(*schema.Set))),
 		}
 
 		if accounts[i].Email == "" {

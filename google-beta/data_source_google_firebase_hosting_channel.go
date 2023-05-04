@@ -4,15 +4,16 @@ import (
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
 func DataSourceGoogleFirebaseHostingChannel() *schema.Resource {
 	// Generate datasource schema from resource
-	dsSchema := datasourceSchemaFromResourceSchema(ResourceFirebaseHostingChannel().Schema)
+	dsSchema := tpgresource.DatasourceSchemaFromResourceSchema(ResourceFirebaseHostingChannel().Schema)
 
 	// Set 'Required' schema elements
-	addRequiredFieldsToSchema(dsSchema, "site_id", "channel_id")
+	tpgresource.AddRequiredFieldsToSchema(dsSchema, "site_id", "channel_id")
 
 	return &schema.Resource{
 		Read:   dataSourceGoogleFirebaseHostingChannelRead,

@@ -22,6 +22,8 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/verify"
 
@@ -633,7 +635,7 @@ or serverless NEG as a backend.`,
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
-				Set: selfLinkRelativePathHash,
+				Set: tpgresource.SelfLinkRelativePathHash,
 			},
 			"iap": {
 				Type:        schema.TypeList,
@@ -1011,7 +1013,7 @@ func computeRegionBackendServiceBackendSchema() *schema.Resource {
 			"group": {
 				Type:             schema.TypeString,
 				Required:         true,
-				DiffSuppressFunc: compareSelfLinkRelativePaths,
+				DiffSuppressFunc: tpgresource.CompareSelfLinkRelativePaths,
 				Description: `The fully-qualified URL of an Instance Group or Network Endpoint
 Group resource. In case of instance group this defines the list
 of instances that serve traffic. Member virtual machine
@@ -1491,7 +1493,7 @@ func resourceComputeRegionBackendServiceRead(d *schema.ResourceData, meta interf
 	if err := d.Set("region", flattenComputeRegionBackendServiceRegion(res["region"], d, config)); err != nil {
 		return fmt.Errorf("Error reading RegionBackendService: %s", err)
 	}
-	if err := d.Set("self_link", ConvertSelfLinkToV1(res["selfLink"].(string))); err != nil {
+	if err := d.Set("self_link", tpgresource.ConvertSelfLinkToV1(res["selfLink"].(string))); err != nil {
 		return fmt.Errorf("Error reading RegionBackendService: %s", err)
 	}
 
@@ -1833,7 +1835,7 @@ func flattenComputeRegionBackendServiceBackendGroup(v interface{}, d *schema.Res
 	if v == nil {
 		return v
 	}
-	return ConvertSelfLinkToV1(v.(string))
+	return tpgresource.ConvertSelfLinkToV1(v.(string))
 }
 
 func flattenComputeRegionBackendServiceBackendMaxConnections(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -2492,7 +2494,7 @@ func flattenComputeRegionBackendServiceHealthChecks(v interface{}, d *schema.Res
 	if v == nil {
 		return v
 	}
-	return convertAndMapStringArr(v.([]interface{}), ConvertSelfLinkToV1)
+	return convertAndMapStringArr(v.([]interface{}), tpgresource.ConvertSelfLinkToV1)
 }
 
 func flattenComputeRegionBackendServiceIap(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -2918,7 +2920,7 @@ func flattenComputeRegionBackendServiceNetwork(v interface{}, d *schema.Resource
 	if v == nil {
 		return v
 	}
-	return ConvertSelfLinkToV1(v.(string))
+	return tpgresource.ConvertSelfLinkToV1(v.(string))
 }
 
 func flattenComputeRegionBackendServiceSubsetting(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -2942,7 +2944,7 @@ func flattenComputeRegionBackendServiceRegion(v interface{}, d *schema.ResourceD
 	if v == nil {
 		return v
 	}
-	return NameFromSelfLinkStateFunc(v)
+	return tpgresource.NameFromSelfLinkStateFunc(v)
 }
 
 func expandComputeRegionBackendServiceAffinityCookieTtlSec(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {

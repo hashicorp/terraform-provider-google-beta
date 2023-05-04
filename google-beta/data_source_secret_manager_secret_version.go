@@ -3,9 +3,11 @@ package google
 import (
 	"encoding/base64"
 	"fmt"
-	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 	"log"
 	"regexp"
+
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
+	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -22,7 +24,7 @@ func DataSourceSecretManagerSecretVersion() *schema.Resource {
 			"secret": {
 				Type:             schema.TypeString,
 				Required:         true,
-				DiffSuppressFunc: compareSelfLinkOrResourceName,
+				DiffSuppressFunc: tpgresource.CompareSelfLinkOrResourceName,
 			},
 			"version": {
 				Type:     schema.TypeString,

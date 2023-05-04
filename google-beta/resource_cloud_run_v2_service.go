@@ -21,6 +21,8 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/verify"
 )
@@ -47,7 +49,7 @@ func ResourceCloudRunV2Service() *schema.Resource {
 				Type:             schema.TypeString,
 				Required:         true,
 				ForceNew:         true,
-				DiffSuppressFunc: compareSelfLinkOrResourceName,
+				DiffSuppressFunc: tpgresource.CompareSelfLinkOrResourceName,
 				Description:      `Name of the Service.`,
 			},
 			"template": {

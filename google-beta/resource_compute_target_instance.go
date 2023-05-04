@@ -22,6 +22,8 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/verify"
 )
@@ -46,7 +48,7 @@ func ResourceComputeTargetInstance() *schema.Resource {
 				Type:             schema.TypeString,
 				Required:         true,
 				ForceNew:         true,
-				DiffSuppressFunc: compareSelfLinkOrResourceName,
+				DiffSuppressFunc: tpgresource.CompareSelfLinkOrResourceName,
 				Description: `The Compute instance VM handling traffic for this target instance.
 Accepts the instance self-link, relative path
 (e.g. 'projects/project/zones/zone/instances/instance') or name. If
@@ -261,7 +263,7 @@ func resourceComputeTargetInstanceRead(d *schema.ResourceData, meta interface{})
 	if err := d.Set("zone", flattenComputeTargetInstanceZone(res["zone"], d, config)); err != nil {
 		return fmt.Errorf("Error reading TargetInstance: %s", err)
 	}
-	if err := d.Set("self_link", ConvertSelfLinkToV1(res["selfLink"].(string))); err != nil {
+	if err := d.Set("self_link", tpgresource.ConvertSelfLinkToV1(res["selfLink"].(string))); err != nil {
 		return fmt.Errorf("Error reading TargetInstance: %s", err)
 	}
 
@@ -354,7 +356,7 @@ func flattenComputeTargetInstanceInstance(v interface{}, d *schema.ResourceData,
 	if v == nil {
 		return v
 	}
-	return ConvertSelfLinkToV1(v.(string))
+	return tpgresource.ConvertSelfLinkToV1(v.(string))
 }
 
 func flattenComputeTargetInstanceNatPolicy(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -365,7 +367,7 @@ func flattenComputeTargetInstanceZone(v interface{}, d *schema.ResourceData, con
 	if v == nil {
 		return v
 	}
-	return ConvertSelfLinkToV1(v.(string))
+	return tpgresource.ConvertSelfLinkToV1(v.(string))
 }
 
 func expandComputeTargetInstanceName(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {

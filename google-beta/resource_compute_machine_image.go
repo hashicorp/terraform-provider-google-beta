@@ -21,6 +21,8 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
@@ -268,7 +270,7 @@ func resourceComputeMachineImageRead(d *schema.ResourceData, meta interface{}) e
 	if err := d.Set("machine_image_encryption_key", flattenComputeMachineImageMachineImageEncryptionKey(res["machineImageEncryptionKey"], d, config)); err != nil {
 		return fmt.Errorf("Error reading MachineImage: %s", err)
 	}
-	if err := d.Set("self_link", ConvertSelfLinkToV1(res["selfLink"].(string))); err != nil {
+	if err := d.Set("self_link", tpgresource.ConvertSelfLinkToV1(res["selfLink"].(string))); err != nil {
 		return fmt.Errorf("Error reading MachineImage: %s", err)
 	}
 
@@ -352,7 +354,7 @@ func flattenComputeMachineImageSourceInstance(v interface{}, d *schema.ResourceD
 	if v == nil {
 		return v
 	}
-	return ConvertSelfLinkToV1(v.(string))
+	return tpgresource.ConvertSelfLinkToV1(v.(string))
 }
 
 func flattenComputeMachineImageStorageLocations(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {

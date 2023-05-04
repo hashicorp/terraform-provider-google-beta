@@ -3,8 +3,10 @@ package google
 import (
 	"bytes"
 	"fmt"
-	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 	"time"
+
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
+	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 
 	compute "google.golang.org/api/compute/v0.beta"
 )
@@ -31,7 +33,7 @@ func (w *DeploymentManagerOperationWaiter) QueryOp() (interface{}, error) {
 		return nil, err
 	}
 	op := &compute.Operation{}
-	if err := Convert(resp, op); err != nil {
+	if err := tpgresource.Convert(resp, op); err != nil {
 		return nil, fmt.Errorf("could not convert response to operation: %v", err)
 	}
 	return op, nil
@@ -39,7 +41,7 @@ func (w *DeploymentManagerOperationWaiter) QueryOp() (interface{}, error) {
 
 func DeploymentManagerOperationWaitTime(config *transport_tpg.Config, resp interface{}, project, activity, userAgent string, timeout time.Duration) error {
 	op := &compute.Operation{}
-	err := Convert(resp, op)
+	err := tpgresource.Convert(resp, op)
 	if err != nil {
 		return err
 	}

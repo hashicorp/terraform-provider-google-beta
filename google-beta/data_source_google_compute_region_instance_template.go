@@ -3,8 +3,10 @@ package google
 import (
 	"encoding/json"
 	"fmt"
-	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 	"sort"
+
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
+	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
@@ -13,7 +15,7 @@ import (
 
 func DataSourceGoogleComputeRegionInstanceTemplate() *schema.Resource {
 	// Generate datasource schema from resource
-	dsSchema := datasourceSchemaFromResourceSchema(ResourceComputeRegionInstanceTemplate().Schema)
+	dsSchema := tpgresource.DatasourceSchemaFromResourceSchema(ResourceComputeRegionInstanceTemplate().Schema)
 
 	dsSchema["filter"] = &schema.Schema{
 		Type:     schema.TypeString,
@@ -25,7 +27,7 @@ func DataSourceGoogleComputeRegionInstanceTemplate() *schema.Resource {
 	}
 
 	// Set 'Optional' schema elements
-	addOptionalFieldsToSchema(dsSchema, "name", "filter", "most_recent", "region", "project")
+	tpgresource.AddOptionalFieldsToSchema(dsSchema, "name", "filter", "most_recent", "region", "project")
 
 	dsSchema["name"].ExactlyOneOf = []string{"name", "filter"}
 	dsSchema["filter"].ExactlyOneOf = []string{"name", "filter"}

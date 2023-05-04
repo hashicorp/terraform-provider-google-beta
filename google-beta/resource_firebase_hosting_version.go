@@ -22,6 +22,8 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
@@ -223,7 +225,7 @@ func resourceFirebaseHostingVersionCreate(d *schema.ResourceData, meta interface
 	// Store the name as ID
 	d.SetId(res["name"].(string))
 
-	if err = d.Set("version_id", GetResourceNameFromSelfLink(res["name"].(string))); err != nil {
+	if err = d.Set("version_id", tpgresource.GetResourceNameFromSelfLink(res["name"].(string))); err != nil {
 		return fmt.Errorf("Error setting version_id: %s", err)
 	}
 
@@ -631,7 +633,7 @@ func expandFirebaseHostingVersionConfigRedirectsLocation(v interface{}, d Terraf
 }
 
 func resourceFirebaseHostingVersionDecoder(d *schema.ResourceData, meta interface{}, res map[string]interface{}) (map[string]interface{}, error) {
-	if err := d.Set("version_id", GetResourceNameFromSelfLink(res["name"].(string))); err != nil {
+	if err := d.Set("version_id", tpgresource.GetResourceNameFromSelfLink(res["name"].(string))); err != nil {
 		return nil, err
 	}
 

@@ -22,6 +22,8 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/verify"
 )
@@ -319,7 +321,7 @@ func resourceComputeRegionSslPolicyRead(d *schema.ResourceData, meta interface{}
 	if err := d.Set("region", flattenComputeRegionSslPolicyRegion(res["region"], d, config)); err != nil {
 		return fmt.Errorf("Error reading RegionSslPolicy: %s", err)
 	}
-	if err := d.Set("self_link", ConvertSelfLinkToV1(res["selfLink"].(string))); err != nil {
+	if err := d.Set("self_link", tpgresource.ConvertSelfLinkToV1(res["selfLink"].(string))); err != nil {
 		return fmt.Errorf("Error reading RegionSslPolicy: %s", err)
 	}
 
@@ -506,7 +508,7 @@ func flattenComputeRegionSslPolicyRegion(v interface{}, d *schema.ResourceData, 
 	if v == nil {
 		return v
 	}
-	return ConvertSelfLinkToV1(v.(string))
+	return tpgresource.ConvertSelfLinkToV1(v.(string))
 }
 
 func expandComputeRegionSslPolicyDescription(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {

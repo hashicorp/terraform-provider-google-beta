@@ -7,6 +7,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
@@ -27,11 +28,11 @@ func replaceVarsForFrameworkTest(prov *frameworkProvider, rs *terraform.Resource
 	}
 
 	if strings.Contains(linkTmpl, "{{region}}") {
-		region = GetResourceNameFromSelfLink(rs.Primary.Attributes["region"])
+		region = tpgresource.GetResourceNameFromSelfLink(rs.Primary.Attributes["region"])
 	}
 
 	if strings.Contains(linkTmpl, "{{zone}}") {
-		zone = GetResourceNameFromSelfLink(rs.Primary.Attributes["zone"])
+		zone = tpgresource.GetResourceNameFromSelfLink(rs.Primary.Attributes["zone"])
 	}
 
 	replaceFunc := func(s string) string {

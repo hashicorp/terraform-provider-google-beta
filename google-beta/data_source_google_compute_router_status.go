@@ -4,12 +4,13 @@ import (
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 	"google.golang.org/api/compute/v0.beta"
 )
 
 func DataSourceGoogleComputeRouterStatus() *schema.Resource {
-	routeElemSchema := datasourceSchemaFromResourceSchema(ResourceComputeRoute().Schema)
+	routeElemSchema := tpgresource.DatasourceSchemaFromResourceSchema(ResourceComputeRoute().Schema)
 
 	return &schema.Resource{
 		Read: dataSourceComputeRouterStatusRead,

@@ -24,6 +24,8 @@ import (
 
 	"github.com/hashicorp/errwrap"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/verify"
 
@@ -63,7 +65,7 @@ func resourceGoogleComputeBackendServiceBackendHash(v interface{}) int {
 	m := v.(map[string]interface{})
 	log.Printf("[DEBUG] hashing %v", m)
 
-	if group, err := getRelativePath(m["group"].(string)); err != nil {
+	if group, err := tpgresource.GetRelativePath(m["group"].(string)); err != nil {
 		log.Printf("[WARN] Error on retrieving relative path of instance group: %s", err)
 		buf.WriteString(fmt.Sprintf("%s-", m["group"].(string)))
 	} else {
@@ -173,8 +175,8 @@ func resourceGoogleComputeBackendServiceBackendHash(v interface{}) int {
 		buf.WriteString(fmt.Sprintf("%v-", v.(bool)))
 	}
 
-	log.Printf("[DEBUG] computed hash value of %v from %v", hashcode(buf.String()), buf.String())
-	return hashcode(buf.String())
+	log.Printf("[DEBUG] computed hash value of %v from %v", tpgresource.Hashcode(buf.String()), buf.String())
+	return tpgresource.Hashcode(buf.String())
 }
 
 func ResourceComputeBackendService() *schema.Resource {
@@ -619,7 +621,7 @@ responses.`,
 			"edge_security_policy": {
 				Type:             schema.TypeString,
 				Optional:         true,
-				DiffSuppressFunc: compareSelfLinkOrResourceName,
+				DiffSuppressFunc: tpgresource.CompareSelfLinkOrResourceName,
 				Description:      `The resource URL for the edge security policy associated with this backend service.`,
 			},
 			"enable_cdn": {
@@ -643,7 +645,7 @@ For internal load balancing, a URL to a HealthCheck resource must be specified i
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
-				Set: selfLinkRelativePathHash,
+				Set: tpgresource.SelfLinkRelativePathHash,
 			},
 			"iap": {
 				Type:        schema.TypeList,
@@ -1039,7 +1041,7 @@ types and may result in errors if used with the GA API. Possible values: ["HTTP"
 			"security_policy": {
 				Type:             schema.TypeString,
 				Optional:         true,
-				DiffSuppressFunc: compareSelfLinkOrResourceName,
+				DiffSuppressFunc: tpgresource.CompareSelfLinkOrResourceName,
 				Description:      `The security policy associated with this backend service.`,
 			},
 			"security_settings": {
@@ -1125,7 +1127,7 @@ func computeBackendServiceBackendSchema() *schema.Resource {
 			"group": {
 				Type:             schema.TypeString,
 				Required:         true,
-				DiffSuppressFunc: compareSelfLinkRelativePaths,
+				DiffSuppressFunc: tpgresource.CompareSelfLinkRelativePaths,
 				Description: `The fully-qualified URL of an Instance Group or Network Endpoint
 Group resource. In case of instance group this defines the list
 of instances that serve traffic. Member virtual machine
@@ -1657,7 +1659,7 @@ func resourceComputeBackendServiceRead(d *schema.ResourceData, meta interface{})
 	if err := d.Set("log_config", flattenComputeBackendServiceLogConfig(res["logConfig"], d, config)); err != nil {
 		return fmt.Errorf("Error reading BackendService: %s", err)
 	}
-	if err := d.Set("self_link", ConvertSelfLinkToV1(res["selfLink"].(string))); err != nil {
+	if err := d.Set("self_link", tpgresource.ConvertSelfLinkToV1(res["selfLink"].(string))); err != nil {
 		return fmt.Errorf("Error reading BackendService: %s", err)
 	}
 
@@ -2043,7 +2045,7 @@ func flattenComputeBackendServiceBackendGroup(v interface{}, d *schema.ResourceD
 	if v == nil {
 		return v
 	}
-	return ConvertSelfLinkToV1(v.(string))
+	return tpgresource.ConvertSelfLinkToV1(v.(string))
 }
 
 func flattenComputeBackendServiceBackendMaxConnections(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -2721,7 +2723,7 @@ func flattenComputeBackendServiceHealthChecks(v interface{}, d *schema.ResourceD
 	if v == nil {
 		return v
 	}
-	return convertAndMapStringArr(v.([]interface{}), ConvertSelfLinkToV1)
+	return convertAndMapStringArr(v.([]interface{}), tpgresource.ConvertSelfLinkToV1)
 }
 
 func flattenComputeBackendServiceGeneratedId(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -3160,7 +3162,7 @@ func flattenComputeBackendServiceSecuritySettingsClientTlsPolicy(v interface{}, 
 	if v == nil {
 		return v
 	}
-	return ConvertSelfLinkToV1(v.(string))
+	return tpgresource.ConvertSelfLinkToV1(v.(string))
 }
 
 func flattenComputeBackendServiceSecuritySettingsSubjectAltNames(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {

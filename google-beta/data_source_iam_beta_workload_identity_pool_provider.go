@@ -2,6 +2,8 @@ package google
 
 import (
 	"fmt"
+
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -9,10 +11,10 @@ import (
 
 func DataSourceIAMBetaWorkloadIdentityPoolProvider() *schema.Resource {
 
-	dsSchema := datasourceSchemaFromResourceSchema(ResourceIAMBetaWorkloadIdentityPoolProvider().Schema)
-	addRequiredFieldsToSchema(dsSchema, "workload_identity_pool_id")
-	addRequiredFieldsToSchema(dsSchema, "workload_identity_pool_provider_id")
-	addOptionalFieldsToSchema(dsSchema, "project")
+	dsSchema := tpgresource.DatasourceSchemaFromResourceSchema(ResourceIAMBetaWorkloadIdentityPoolProvider().Schema)
+	tpgresource.AddRequiredFieldsToSchema(dsSchema, "workload_identity_pool_id")
+	tpgresource.AddRequiredFieldsToSchema(dsSchema, "workload_identity_pool_provider_id")
+	tpgresource.AddOptionalFieldsToSchema(dsSchema, "project")
 
 	return &schema.Resource{
 		Read:   dataSourceIAMBetaWorkloadIdentityPoolProviderRead,

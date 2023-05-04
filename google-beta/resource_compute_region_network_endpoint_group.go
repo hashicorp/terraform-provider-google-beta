@@ -21,6 +21,8 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/verify"
 )
@@ -469,7 +471,7 @@ func resourceComputeRegionNetworkEndpointGroupRead(d *schema.ResourceData, meta 
 	if err := d.Set("region", flattenComputeRegionNetworkEndpointGroupRegion(res["region"], d, config)); err != nil {
 		return fmt.Errorf("Error reading RegionNetworkEndpointGroup: %s", err)
 	}
-	if err := d.Set("self_link", ConvertSelfLinkToV1(res["selfLink"].(string))); err != nil {
+	if err := d.Set("self_link", tpgresource.ConvertSelfLinkToV1(res["selfLink"].(string))); err != nil {
 		return fmt.Errorf("Error reading RegionNetworkEndpointGroup: %s", err)
 	}
 
@@ -562,14 +564,14 @@ func flattenComputeRegionNetworkEndpointGroupNetwork(v interface{}, d *schema.Re
 	if v == nil {
 		return v
 	}
-	return ConvertSelfLinkToV1(v.(string))
+	return tpgresource.ConvertSelfLinkToV1(v.(string))
 }
 
 func flattenComputeRegionNetworkEndpointGroupSubnetwork(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return v
 	}
-	return ConvertSelfLinkToV1(v.(string))
+	return tpgresource.ConvertSelfLinkToV1(v.(string))
 }
 
 func flattenComputeRegionNetworkEndpointGroupCloudRun(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -686,7 +688,7 @@ func flattenComputeRegionNetworkEndpointGroupRegion(v interface{}, d *schema.Res
 	if v == nil {
 		return v
 	}
-	return ConvertSelfLinkToV1(v.(string))
+	return tpgresource.ConvertSelfLinkToV1(v.(string))
 }
 
 func expandComputeRegionNetworkEndpointGroupName(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
