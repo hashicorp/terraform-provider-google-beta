@@ -804,9 +804,9 @@ func Provider() *schema.Provider {
 	return provider
 }
 
-// Generated resources: 335
+// Generated resources: 336
 // Generated IAM resources: 219
-// Total generated resources: 554
+// Total generated resources: 555
 func ResourceMap() map[string]*schema.Resource {
 	resourceMap, _ := ResourceMapWithErrors()
 	return resourceMap
@@ -1166,6 +1166,7 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_gke_hub_membership_iam_binding":                        ResourceIamBinding(GKEHubMembershipIamSchema, GKEHubMembershipIamUpdaterProducer, GKEHubMembershipIdParseFunc),
 			"google_gke_hub_membership_iam_member":                         ResourceIamMember(GKEHubMembershipIamSchema, GKEHubMembershipIamUpdaterProducer, GKEHubMembershipIdParseFunc),
 			"google_gke_hub_membership_iam_policy":                         ResourceIamPolicy(GKEHubMembershipIamSchema, GKEHubMembershipIamUpdaterProducer, GKEHubMembershipIdParseFunc),
+			"google_gkeonprem_bare_metal_cluster":                          ResourceGkeonpremBareMetalCluster(),
 			"google_gkeonprem_vmware_cluster":                              ResourceGkeonpremVmwareCluster(),
 			"google_gkeonprem_vmware_node_pool":                            ResourceGkeonpremVmwareNodePool(),
 			"google_healthcare_consent_store":                              ResourceHealthcareConsentStore(),
