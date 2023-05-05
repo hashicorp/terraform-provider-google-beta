@@ -2379,7 +2379,7 @@ func TestAccComputeInstance_spotVM_maxRunDuration_update(t *testing.T) {
 func TestComputeInstance_networkIPCustomizedDiff(t *testing.T) {
 	t.Parallel()
 
-	d := &ResourceDiffMock{
+	d := &acctest.ResourceDiffMock{
 		Before: map[string]interface{}{
 			"network_interface.#": 0,
 		},
@@ -2478,7 +2478,7 @@ func TestComputeInstance_networkIPCustomizedDiff(t *testing.T) {
 	}
 
 	for tn, tc := range cases {
-		d := &ResourceDiffMock{
+		d := &acctest.ResourceDiffMock{
 			Before: map[string]interface{}{
 				"network_interface.#":                    1,
 				"network_interface.0.network":            tc.Before.Network,
