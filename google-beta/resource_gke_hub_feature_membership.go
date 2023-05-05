@@ -416,8 +416,8 @@ func resourceGkeHubFeatureMembershipCreate(d *schema.ResourceData, meta interfac
 	if err != nil {
 		return err
 	}
-	mutexKV.Lock(lockName)
-	defer mutexKV.Unlock(lockName)
+	transport_tpg.MutexStore.Lock(lockName)
+	defer transport_tpg.MutexStore.Unlock(lockName)
 
 	id, err := replaceVarsForId(d, config, "projects/{{project}}/locations/{{location}}/features/{{feature}}/membershipId/{{membership}}")
 	if err != nil {
@@ -534,8 +534,8 @@ func resourceGkeHubFeatureMembershipUpdate(d *schema.ResourceData, meta interfac
 	if err != nil {
 		return err
 	}
-	mutexKV.Lock(lockName)
-	defer mutexKV.Unlock(lockName)
+	transport_tpg.MutexStore.Lock(lockName)
+	defer transport_tpg.MutexStore.Unlock(lockName)
 
 	directive := UpdateDirective
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
@@ -589,8 +589,8 @@ func resourceGkeHubFeatureMembershipDelete(d *schema.ResourceData, meta interfac
 	if err != nil {
 		return err
 	}
-	mutexKV.Lock(lockName)
-	defer mutexKV.Unlock(lockName)
+	transport_tpg.MutexStore.Lock(lockName)
+	defer transport_tpg.MutexStore.Unlock(lockName)
 
 	log.Printf("[DEBUG] Deleting FeatureMembership %q", d.Id())
 	userAgent, err := generateUserAgentString(d, config.UserAgent)

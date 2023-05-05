@@ -268,8 +268,8 @@ func resourceComputeRegionPerInstanceConfigCreate(d *schema.ResourceData, meta i
 	if err != nil {
 		return err
 	}
-	mutexKV.Lock(lockName)
-	defer mutexKV.Unlock(lockName)
+	transport_tpg.MutexStore.Lock(lockName)
+	defer transport_tpg.MutexStore.Unlock(lockName)
 
 	url, err := ReplaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/regions/{{region}}/instanceGroupManagers/{{region_instance_group_manager}}/createInstances")
 	if err != nil {
@@ -435,8 +435,8 @@ func resourceComputeRegionPerInstanceConfigUpdate(d *schema.ResourceData, meta i
 	if err != nil {
 		return err
 	}
-	mutexKV.Lock(lockName)
-	defer mutexKV.Unlock(lockName)
+	transport_tpg.MutexStore.Lock(lockName)
+	defer transport_tpg.MutexStore.Unlock(lockName)
 
 	url, err := ReplaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/regions/{{region}}/instanceGroupManagers/{{region_instance_group_manager}}/updatePerInstanceConfigs")
 	if err != nil {
@@ -525,8 +525,8 @@ func resourceComputeRegionPerInstanceConfigDelete(d *schema.ResourceData, meta i
 	if err != nil {
 		return err
 	}
-	mutexKV.Lock(lockName)
-	defer mutexKV.Unlock(lockName)
+	transport_tpg.MutexStore.Lock(lockName)
+	defer transport_tpg.MutexStore.Unlock(lockName)
 
 	url, err := ReplaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/regions/{{region}}/instanceGroupManagers/{{region_instance_group_manager}}/deletePerInstanceConfigs")
 	if err != nil {

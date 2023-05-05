@@ -2146,8 +2146,8 @@ func resourceContainerClusterCreate(d *schema.ResourceData, meta interface{}) er
 		Cluster: cluster,
 	}
 
-	mutexKV.Lock(containerClusterMutexKey(project, location, clusterName))
-	defer mutexKV.Unlock(containerClusterMutexKey(project, location, clusterName))
+	transport_tpg.MutexStore.Lock(containerClusterMutexKey(project, location, clusterName))
+	defer transport_tpg.MutexStore.Unlock(containerClusterMutexKey(project, location, clusterName))
 
 	parent := fmt.Sprintf("projects/%s/locations/%s", project, location)
 	var op *container.Operation
@@ -2594,7 +2594,7 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 		}
 
 		updateF := updateFunc(req, "updating GKE cluster master authorized networks")
-		if err := lockedCall(lockKey, updateF); err != nil {
+		if err := transport_tpg.LockedCall(lockKey, updateF); err != nil {
 			return err
 		}
 		log.Printf("[INFO] GKE cluster %s master authorized networks config has been updated", d.Id())
@@ -2610,7 +2610,7 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 
 			updateF := updateFunc(req, "updating GKE cluster addons")
 			// Call update serially.
-			if err := lockedCall(lockKey, updateF); err != nil {
+			if err := transport_tpg.LockedCall(lockKey, updateF); err != nil {
 				return err
 			}
 
@@ -2626,7 +2626,7 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 
 		updateF := updateFunc(req, "updating GKE cluster autoscaling")
 		// Call update serially.
-		if err := lockedCall(lockKey, updateF); err != nil {
+		if err := transport_tpg.LockedCall(lockKey, updateF); err != nil {
 			return err
 		}
 
@@ -2646,7 +2646,7 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 
 		updateF := updateFunc(req, "updating GKE binary authorization")
 		// Call update serially.
-		if err := lockedCall(lockKey, updateF); err != nil {
+		if err := transport_tpg.LockedCall(lockKey, updateF); err != nil {
 			return err
 		}
 
@@ -2664,7 +2664,7 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 
 		updateF := updateFunc(req, "updating enable private endpoint")
 		// Call update serially.
-		if err := lockedCall(lockKey, updateF); err != nil {
+		if err := transport_tpg.LockedCall(lockKey, updateF); err != nil {
 			return err
 		}
 
@@ -2684,7 +2684,7 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 
 		updateF := updateFunc(req, "updating master global access config")
 		// Call update serially.
-		if err := lockedCall(lockKey, updateF); err != nil {
+		if err := transport_tpg.LockedCall(lockKey, updateF); err != nil {
 			return err
 		}
 
@@ -2700,7 +2700,7 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 
 		updateF := updateFunc(req, "updating GKE binary authorization")
 		// Call update serially.
-		if err := lockedCall(lockKey, updateF); err != nil {
+		if err := transport_tpg.LockedCall(lockKey, updateF); err != nil {
 			return err
 		}
 
@@ -2720,7 +2720,7 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 
 		updateF := updateFunc(req, "updating GKE shielded nodes")
 		// Call update serially.
-		if err := lockedCall(lockKey, updateF); err != nil {
+		if err := transport_tpg.LockedCall(lockKey, updateF); err != nil {
 			return err
 		}
 
@@ -2752,7 +2752,7 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 		}
 
 		// Call update serially.
-		if err := lockedCall(lockKey, updateF); err != nil {
+		if err := transport_tpg.LockedCall(lockKey, updateF); err != nil {
 			return err
 		}
 
@@ -2788,7 +2788,7 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 		}
 
 		// Call update serially.
-		if err := lockedCall(lockKey, updateF); err != nil {
+		if err := transport_tpg.LockedCall(lockKey, updateF); err != nil {
 			return err
 		}
 
@@ -2820,7 +2820,7 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 		}
 
 		// Call update serially.
-		if err := lockedCall(lockKey, updateF); err != nil {
+		if err := transport_tpg.LockedCall(lockKey, updateF); err != nil {
 			return err
 		}
 
@@ -2857,7 +2857,7 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 		}
 
 		// Call update serially.
-		if err := lockedCall(lockKey, updateF); err != nil {
+		if err := transport_tpg.LockedCall(lockKey, updateF); err != nil {
 			return err
 		}
 
@@ -2874,7 +2874,7 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 
 		updateF := updateFunc(req, "updating cost management config")
 		// Call update serially.
-		if err := lockedCall(lockKey, updateF); err != nil {
+		if err := transport_tpg.LockedCall(lockKey, updateF); err != nil {
 			return err
 		}
 
@@ -2889,7 +2889,7 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 		}
 		updateF := updateFunc(req, "updating GKE cluster authenticator groups config")
 		// Call update serially.
-		if err := lockedCall(lockKey, updateF); err != nil {
+		if err := transport_tpg.LockedCall(lockKey, updateF); err != nil {
 			return err
 		}
 
@@ -2921,7 +2921,7 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 		}
 
 		// Call update serially.
-		if err := lockedCall(lockKey, updateF); err != nil {
+		if err := transport_tpg.LockedCall(lockKey, updateF); err != nil {
 			return err
 		}
 
@@ -2950,7 +2950,7 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 		}
 
 		// Call update serially.
-		if err := lockedCall(lockKey, updateF); err != nil {
+		if err := transport_tpg.LockedCall(lockKey, updateF); err != nil {
 			return err
 		}
 
@@ -2980,7 +2980,7 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 
 		updateF := updateFunc(req, "updating GKE cluster node locations")
 		// Call update serially.
-		if err := lockedCall(lockKey, updateF); err != nil {
+		if err := transport_tpg.LockedCall(lockKey, updateF); err != nil {
 			return err
 		}
 
@@ -2996,7 +2996,7 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 
 			updateF := updateFunc(req, "updating GKE cluster node locations")
 			// Call update serially.
-			if err := lockedCall(lockKey, updateF); err != nil {
+			if err := transport_tpg.LockedCall(lockKey, updateF); err != nil {
 				return err
 			}
 		}
@@ -3030,7 +3030,7 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 		}
 
 		// Call update serially.
-		if err := lockedCall(lockKey, updateF); err != nil {
+		if err := transport_tpg.LockedCall(lockKey, updateF); err != nil {
 			return err
 		}
 
@@ -3063,7 +3063,7 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 		}
 
 		// Call update serially.
-		if err := lockedCall(lockKey, updateF); err != nil {
+		if err := transport_tpg.LockedCall(lockKey, updateF); err != nil {
 			return err
 		}
 
@@ -3095,7 +3095,7 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 		}
 
 		// Call update serially.
-		if err := lockedCall(lockKey, updateF); err != nil {
+		if err := transport_tpg.LockedCall(lockKey, updateF); err != nil {
 			return err
 		}
 
@@ -3140,7 +3140,7 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 
 			updateF := updateFunc(req, "updating GKE master version")
 			// Call update serially.
-			if err := lockedCall(lockKey, updateF); err != nil {
+			if err := transport_tpg.LockedCall(lockKey, updateF); err != nil {
 				return err
 			}
 			log.Printf("[INFO] GKE cluster %s: master has been updated to %s", d.Id(), ver)
@@ -3164,7 +3164,7 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 					}
 					updateF := updateFunc(req, "updating GKE default node pool node version")
 					// Call update serially.
-					if err := lockedCall(lockKey, updateF); err != nil {
+					if err := transport_tpg.LockedCall(lockKey, updateF); err != nil {
 						return err
 					}
 					log.Printf("[INFO] GKE cluster %s: default node pool has been updated to %s", d.Id(),
@@ -3204,7 +3204,7 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 			}
 
 			// Call update serially.
-			if err := lockedCall(lockKey, updateF); err != nil {
+			if err := transport_tpg.LockedCall(lockKey, updateF); err != nil {
 				return err
 			}
 
@@ -3237,7 +3237,7 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 		}
 
 		// Call update serially.
-		if err := lockedCall(lockKey, updateF); err != nil {
+		if err := transport_tpg.LockedCall(lockKey, updateF); err != nil {
 			return err
 		}
 
@@ -3254,7 +3254,7 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 
 			updateF := updateFunc(req, "updating GKE cluster vertical pod autoscaling")
 			// Call update serially.
-			if err := lockedCall(lockKey, updateF); err != nil {
+			if err := transport_tpg.LockedCall(lockKey, updateF); err != nil {
 				return err
 			}
 
@@ -3283,7 +3283,7 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 			// Wait until it's updated
 			return ContainerOperationWait(config, op, project, location, "updating GKE cluster service externalips config", userAgent, d.Timeout(schema.TimeoutUpdate))
 		}
-		if err := lockedCall(lockKey, updateF); err != nil {
+		if err := transport_tpg.LockedCall(lockKey, updateF); err != nil {
 			return err
 		}
 		log.Printf("[INFO] GKE cluster %s service externalips config  has been updated", d.Id())
@@ -3310,7 +3310,7 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 			// Wait until it's updated
 			return ContainerOperationWait(config, op, project, location, "updating GKE cluster mesh certificates config", userAgent, d.Timeout(schema.TimeoutUpdate))
 		}
-		if err := lockedCall(lockKey, updateF); err != nil {
+		if err := transport_tpg.LockedCall(lockKey, updateF); err != nil {
 			return err
 		}
 		log.Printf("[INFO] GKE cluster %s mesh certificates config has been updated", d.Id())
@@ -3337,7 +3337,7 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 			// Wait until it's updated
 			return ContainerOperationWait(config, op, project, location, "updating GKE cluster database encryption config", userAgent, d.Timeout(schema.TimeoutUpdate))
 		}
-		if err := lockedCall(lockKey, updateF); err != nil {
+		if err := transport_tpg.LockedCall(lockKey, updateF); err != nil {
 			return err
 		}
 		log.Printf("[INFO] GKE cluster %s database encryption config has been updated", d.Id())
@@ -3364,7 +3364,7 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 			// Wait until it's updated
 			return ContainerOperationWait(config, op, project, location, "updating GKE cluster pod security policy config", userAgent, d.Timeout(schema.TimeoutUpdate))
 		}
-		if err := lockedCall(lockKey, updateF); err != nil {
+		if err := transport_tpg.LockedCall(lockKey, updateF); err != nil {
 			return err
 		}
 		log.Printf("[INFO] GKE cluster %s pod security policy config has been updated", d.Id())
@@ -3390,7 +3390,7 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 
 		updateF := updateFunc(req, "updating GKE cluster workload identity config")
 		// Call update serially.
-		if err := lockedCall(lockKey, updateF); err != nil {
+		if err := transport_tpg.LockedCall(lockKey, updateF); err != nil {
 			return err
 		}
 
@@ -3413,7 +3413,7 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 
 		updateF := updateFunc(req, "updating GKE cluster identity service config")
 		// Call update serially.
-		if err := lockedCall(lockKey, updateF); err != nil {
+		if err := transport_tpg.LockedCall(lockKey, updateF); err != nil {
 			return err
 		}
 
@@ -3428,7 +3428,7 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 		}
 		updateF := updateFunc(req, "updating GKE cluster logging config")
 		// Call update serially.
-		if err := lockedCall(lockKey, updateF); err != nil {
+		if err := transport_tpg.LockedCall(lockKey, updateF); err != nil {
 			return err
 		}
 
@@ -3443,7 +3443,7 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 		}
 		updateF := updateFunc(req, "updating GKE cluster monitoring config")
 		// Call update serially.
-		if err := lockedCall(lockKey, updateF); err != nil {
+		if err := transport_tpg.LockedCall(lockKey, updateF); err != nil {
 			return err
 		}
 
@@ -3473,7 +3473,7 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 		}
 
 		// Call update serially.
-		if err := lockedCall(lockKey, updateF); err != nil {
+		if err := transport_tpg.LockedCall(lockKey, updateF); err != nil {
 			return err
 		}
 	}
@@ -3519,7 +3519,7 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 			// Wait until it's updated
 			return ContainerOperationWait(config, op, project, location, "updating GKE cluster resource usage export config", userAgent, d.Timeout(schema.TimeoutUpdate))
 		}
-		if err := lockedCall(lockKey, updateF); err != nil {
+		if err := transport_tpg.LockedCall(lockKey, updateF); err != nil {
 			return err
 		}
 		log.Printf("[INFO] GKE cluster %s resource usage export config has been updated", d.Id())
@@ -3535,7 +3535,7 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 
 			updateF := updateFunc(req, "updating GKE Gateway API")
 			// Call update serially.
-			if err := lockedCall(lockKey, updateF); err != nil {
+			if err := transport_tpg.LockedCall(lockKey, updateF); err != nil {
 				return err
 			}
 
@@ -3558,7 +3558,7 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 
 			updateF := updateFunc(req, "updating GKE cluster desired node pool logging configuration defaults.")
 			// Call update serially.
-			if err := lockedCall(lockKey, updateF); err != nil {
+			if err := transport_tpg.LockedCall(lockKey, updateF); err != nil {
 				return err
 			}
 
@@ -3579,7 +3579,7 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 
 			updateF := updateFunc(req, "updating GKE cluster desired gcfs config.")
 			// Call update serially.
-			if err := lockedCall(lockKey, updateF); err != nil {
+			if err := transport_tpg.LockedCall(lockKey, updateF); err != nil {
 				return err
 			}
 
@@ -3601,7 +3601,7 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 
 		updateF := updateFunc(req, "updating GKE cluster node pool auto config network tags")
 		// Call update serially.
-		if err := lockedCall(lockKey, updateF); err != nil {
+		if err := transport_tpg.LockedCall(lockKey, updateF); err != nil {
 			return err
 		}
 
@@ -3635,7 +3635,7 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 		}
 
 		// Call update serially.
-		if err := lockedCall(lockKey, updateF); err != nil {
+		if err := transport_tpg.LockedCall(lockKey, updateF); err != nil {
 			return err
 		}
 
@@ -3653,7 +3653,7 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 			},
 		}
 		updateF := updateFunc(req, "updating GKE cluster master protect_config")
-		if err := lockedCall(lockKey, updateF); err != nil {
+		if err := transport_tpg.LockedCall(lockKey, updateF); err != nil {
 			return err
 		}
 
@@ -3691,8 +3691,8 @@ func resourceContainerClusterDelete(d *schema.ResourceData, meta interface{}) er
 	}
 
 	log.Printf("[DEBUG] Deleting GKE cluster %s", d.Get("name").(string))
-	mutexKV.Lock(containerClusterMutexKey(project, location, clusterName))
-	defer mutexKV.Unlock(containerClusterMutexKey(project, location, clusterName))
+	transport_tpg.MutexStore.Lock(containerClusterMutexKey(project, location, clusterName))
+	defer transport_tpg.MutexStore.Unlock(containerClusterMutexKey(project, location, clusterName))
 
 	var op *container.Operation
 	var count = 0
