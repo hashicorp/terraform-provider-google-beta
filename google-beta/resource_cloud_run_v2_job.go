@@ -451,6 +451,28 @@ A duration in seconds with up to nine fractional digits, ending with 's'. Exampl
 														},
 													},
 												},
+												"empty_dir": {
+													Type:        schema.TypeList,
+													Optional:    true,
+													Description: `Ephemeral storage used as a shared volume.`,
+													MaxItems:    1,
+													Elem: &schema.Resource{
+														Schema: map[string]*schema.Schema{
+															"medium": {
+																Type:         schema.TypeString,
+																Optional:     true,
+																ValidateFunc: verify.ValidateEnum([]string{"MEMORY", ""}),
+																Description:  `The different types of medium supported for EmptyDir. Default value: "MEMORY" Possible values: ["MEMORY"]`,
+																Default:      "MEMORY",
+															},
+															"size_limit": {
+																Type:        schema.TypeString,
+																Optional:    true,
+																Description: `Limit on the storage usable by this EmptyDir volume. The size limit is also applicable for memory medium. The maximum usage on memory medium EmptyDir would be the minimum value between the SizeLimit specified here and the sum of memory limits of all containers in a pod. This field's values are of the 'Quantity' k8s type: https://kubernetes.io/docs/reference/kubernetes-api/common-definitions/quantity/. The default is nil which means that the limit is undefined. More info: http://kubernetes.io/docs/user-guide/volumes#emptydir.`,
+															},
+														},
+													},
+												},
 												"secret": {
 													Type:        schema.TypeList,
 													Optional:    true,
@@ -1770,6 +1792,7 @@ func flattenCloudRunV2JobTemplateTemplateVolumes(v interface{}, d *schema.Resour
 			"name":               flattenCloudRunV2JobTemplateTemplateVolumesName(original["name"], d, config),
 			"secret":             flattenCloudRunV2JobTemplateTemplateVolumesSecret(original["secret"], d, config),
 			"cloud_sql_instance": flattenCloudRunV2JobTemplateTemplateVolumesCloudSqlInstance(original["cloudSqlInstance"], d, config),
+			"empty_dir":          flattenCloudRunV2JobTemplateTemplateVolumesEmptyDir(original["emptyDir"], d, config),
 		})
 	}
 	return transformed
@@ -1875,6 +1898,29 @@ func flattenCloudRunV2JobTemplateTemplateVolumesCloudSqlInstance(v interface{}, 
 	return []interface{}{transformed}
 }
 func flattenCloudRunV2JobTemplateTemplateVolumesCloudSqlInstanceInstances(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenCloudRunV2JobTemplateTemplateVolumesEmptyDir(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["medium"] =
+		flattenCloudRunV2JobTemplateTemplateVolumesEmptyDirMedium(original["medium"], d, config)
+	transformed["size_limit"] =
+		flattenCloudRunV2JobTemplateTemplateVolumesEmptyDirSizeLimit(original["sizeLimit"], d, config)
+	return []interface{}{transformed}
+}
+func flattenCloudRunV2JobTemplateTemplateVolumesEmptyDirMedium(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenCloudRunV2JobTemplateTemplateVolumesEmptyDirSizeLimit(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
@@ -2976,6 +3022,13 @@ func expandCloudRunV2JobTemplateTemplateVolumes(v interface{}, d tpgresource.Ter
 			transformed["cloudSqlInstance"] = transformedCloudSqlInstance
 		}
 
+		transformedEmptyDir, err := expandCloudRunV2JobTemplateTemplateVolumesEmptyDir(original["empty_dir"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedEmptyDir); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["emptyDir"] = transformedEmptyDir
+		}
+
 		req = append(req, transformed)
 	}
 	return req, nil
@@ -3094,6 +3147,40 @@ func expandCloudRunV2JobTemplateTemplateVolumesCloudSqlInstance(v interface{}, d
 }
 
 func expandCloudRunV2JobTemplateTemplateVolumesCloudSqlInstanceInstances(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandCloudRunV2JobTemplateTemplateVolumesEmptyDir(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedMedium, err := expandCloudRunV2JobTemplateTemplateVolumesEmptyDirMedium(original["medium"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedMedium); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["medium"] = transformedMedium
+	}
+
+	transformedSizeLimit, err := expandCloudRunV2JobTemplateTemplateVolumesEmptyDirSizeLimit(original["size_limit"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedSizeLimit); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["sizeLimit"] = transformedSizeLimit
+	}
+
+	return transformed, nil
+}
+
+func expandCloudRunV2JobTemplateTemplateVolumesEmptyDirMedium(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandCloudRunV2JobTemplateTemplateVolumesEmptyDirSizeLimit(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 

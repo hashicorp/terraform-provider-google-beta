@@ -341,6 +341,66 @@ resource "google_secret_manager_secret_iam_member" "secret-access" {
 `, context)
 }
 
+func TestAccCloudRunV2Job_cloudrunv2JobEmptydirExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"random_suffix": RandString(t, 10),
+	}
+
+	VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckCloudRunV2JobDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudRunV2Job_cloudrunv2JobEmptydirExample(context),
+			},
+			{
+				ResourceName:            "google_cloud_run_v2_job.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"name", "location"},
+			},
+		},
+	})
+}
+
+func testAccCloudRunV2Job_cloudrunv2JobEmptydirExample(context map[string]interface{}) string {
+	return Nprintf(`
+resource "google_cloud_run_v2_job" "default" {
+  provider = google-beta
+  name     = "tf-test-cloudrun-job%{random_suffix}"
+  location = "us-central1"
+  launch_stage = "BETA"
+  template {
+    template {
+      containers {
+        image = "us-docker.pkg.dev/cloudrun/container/hello"
+	volume_mounts {
+	  name = "empty-dir-volume"
+	  mount_path = "/mnt"
+	}
+      }
+      volumes {
+        name = "empty-dir-volume"
+	empty_dir {
+	  medium = "MEMORY"
+	  size_limit = "128Mi"
+	}
+      }
+    }
+  }
+
+  lifecycle {
+    ignore_changes = [
+      launch_stage,
+    ]
+  }
+}
+`, context)
+}
+
 func testAccCheckCloudRunV2JobDestroyProducer(t *testing.T) func(s *terraform.State) error {
 	return func(s *terraform.State) error {
 		for name, rs := range s.RootModule().Resources {
