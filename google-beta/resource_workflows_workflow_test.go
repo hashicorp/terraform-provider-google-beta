@@ -3,8 +3,9 @@ package google
 import (
 	"context"
 	"fmt"
-	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"testing"
+
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"

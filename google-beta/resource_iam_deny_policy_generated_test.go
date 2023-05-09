@@ -23,6 +23,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
@@ -114,7 +115,7 @@ func testAccCheckIAM2DenyPolicyDestroyProducer(t *testing.T) func(s *terraform.S
 
 			config := GoogleProviderConfig(t)
 
-			url, err := acctest.ReplaceVarsForTest(config, rs, "{{IAM2BasePath}}policies/{{parent}}/denypolicies/{{name}}")
+			url, err := tpgresource.ReplaceVarsForTest(config, rs, "{{IAM2BasePath}}policies/{{parent}}/denypolicies/{{name}}")
 			if err != nil {
 				return err
 			}

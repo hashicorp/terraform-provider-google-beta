@@ -23,6 +23,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/verify"
 )
@@ -382,7 +383,7 @@ May be sent on update and delete requests to ensure that the client has an up-to
 
 func resourceWorkstationsWorkstationConfigCreate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*transport_tpg.Config)
-	userAgent, err := generateUserAgentString(d, config.UserAgent)
+	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
 	}
@@ -391,53 +392,53 @@ func resourceWorkstationsWorkstationConfigCreate(d *schema.ResourceData, meta in
 	displayNameProp, err := expandWorkstationsWorkstationConfigDisplayName(d.Get("display_name"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("display_name"); !isEmptyValue(reflect.ValueOf(displayNameProp)) && (ok || !reflect.DeepEqual(v, displayNameProp)) {
+	} else if v, ok := d.GetOkExists("display_name"); !tpgresource.IsEmptyValue(reflect.ValueOf(displayNameProp)) && (ok || !reflect.DeepEqual(v, displayNameProp)) {
 		obj["displayName"] = displayNameProp
 	}
 	labelsProp, err := expandWorkstationsWorkstationConfigLabels(d.Get("labels"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("labels"); !isEmptyValue(reflect.ValueOf(labelsProp)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
+	} else if v, ok := d.GetOkExists("labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(labelsProp)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
 		obj["labels"] = labelsProp
 	}
 	annotationsProp, err := expandWorkstationsWorkstationConfigAnnotations(d.Get("annotations"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("annotations"); !isEmptyValue(reflect.ValueOf(annotationsProp)) && (ok || !reflect.DeepEqual(v, annotationsProp)) {
+	} else if v, ok := d.GetOkExists("annotations"); !tpgresource.IsEmptyValue(reflect.ValueOf(annotationsProp)) && (ok || !reflect.DeepEqual(v, annotationsProp)) {
 		obj["annotations"] = annotationsProp
 	}
 	etagProp, err := expandWorkstationsWorkstationConfigEtag(d.Get("etag"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("etag"); !isEmptyValue(reflect.ValueOf(etagProp)) && (ok || !reflect.DeepEqual(v, etagProp)) {
+	} else if v, ok := d.GetOkExists("etag"); !tpgresource.IsEmptyValue(reflect.ValueOf(etagProp)) && (ok || !reflect.DeepEqual(v, etagProp)) {
 		obj["etag"] = etagProp
 	}
 	hostProp, err := expandWorkstationsWorkstationConfigHost(d.Get("host"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("host"); !isEmptyValue(reflect.ValueOf(hostProp)) && (ok || !reflect.DeepEqual(v, hostProp)) {
+	} else if v, ok := d.GetOkExists("host"); !tpgresource.IsEmptyValue(reflect.ValueOf(hostProp)) && (ok || !reflect.DeepEqual(v, hostProp)) {
 		obj["host"] = hostProp
 	}
 	persistentDirectoriesProp, err := expandWorkstationsWorkstationConfigPersistentDirectories(d.Get("persistent_directories"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("persistent_directories"); !isEmptyValue(reflect.ValueOf(persistentDirectoriesProp)) && (ok || !reflect.DeepEqual(v, persistentDirectoriesProp)) {
+	} else if v, ok := d.GetOkExists("persistent_directories"); !tpgresource.IsEmptyValue(reflect.ValueOf(persistentDirectoriesProp)) && (ok || !reflect.DeepEqual(v, persistentDirectoriesProp)) {
 		obj["persistentDirectories"] = persistentDirectoriesProp
 	}
 	containerProp, err := expandWorkstationsWorkstationConfigContainer(d.Get("container"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("container"); !isEmptyValue(reflect.ValueOf(containerProp)) && (ok || !reflect.DeepEqual(v, containerProp)) {
+	} else if v, ok := d.GetOkExists("container"); !tpgresource.IsEmptyValue(reflect.ValueOf(containerProp)) && (ok || !reflect.DeepEqual(v, containerProp)) {
 		obj["container"] = containerProp
 	}
 	encryptionKeyProp, err := expandWorkstationsWorkstationConfigEncryptionKey(d.Get("encryption_key"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("encryption_key"); !isEmptyValue(reflect.ValueOf(encryptionKeyProp)) && (ok || !reflect.DeepEqual(v, encryptionKeyProp)) {
+	} else if v, ok := d.GetOkExists("encryption_key"); !tpgresource.IsEmptyValue(reflect.ValueOf(encryptionKeyProp)) && (ok || !reflect.DeepEqual(v, encryptionKeyProp)) {
 		obj["encryptionKey"] = encryptionKeyProp
 	}
 
-	url, err := ReplaceVars(d, config, "{{WorkstationsBasePath}}projects/{{project}}/locations/{{location}}/workstationClusters/{{workstation_cluster_id}}/workstationConfigs?workstationConfigId={{workstation_config_id}}")
+	url, err := tpgresource.ReplaceVars(d, config, "{{WorkstationsBasePath}}projects/{{project}}/locations/{{location}}/workstationClusters/{{workstation_cluster_id}}/workstationConfigs?workstationConfigId={{workstation_config_id}}")
 	if err != nil {
 		return err
 	}
@@ -445,14 +446,14 @@ func resourceWorkstationsWorkstationConfigCreate(d *schema.ResourceData, meta in
 	log.Printf("[DEBUG] Creating new WorkstationConfig: %#v", obj)
 	billingProject := ""
 
-	project, err := getProject(d, config)
+	project, err := tpgresource.GetProject(d, config)
 	if err != nil {
 		return fmt.Errorf("Error fetching project for WorkstationConfig: %s", err)
 	}
 	billingProject = project
 
 	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
+	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
@@ -462,7 +463,7 @@ func resourceWorkstationsWorkstationConfigCreate(d *schema.ResourceData, meta in
 	}
 
 	// Store the ID now
-	id, err := ReplaceVars(d, config, "projects/{{project}}/locations/{{location}}/workstationClusters/{{workstation_cluster_id}}/workstationConfigs/{{workstation_config_id}}")
+	id, err := tpgresource.ReplaceVars(d, config, "projects/{{project}}/locations/{{location}}/workstationClusters/{{workstation_cluster_id}}/workstationConfigs/{{workstation_config_id}}")
 	if err != nil {
 		return fmt.Errorf("Error constructing id: %s", err)
 	}
@@ -485,26 +486,26 @@ func resourceWorkstationsWorkstationConfigCreate(d *schema.ResourceData, meta in
 
 func resourceWorkstationsWorkstationConfigRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*transport_tpg.Config)
-	userAgent, err := generateUserAgentString(d, config.UserAgent)
+	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
 	}
 
-	url, err := ReplaceVars(d, config, "{{WorkstationsBasePath}}projects/{{project}}/locations/{{location}}/workstationClusters/{{workstation_cluster_id}}/workstationConfigs/{{workstation_config_id}}")
+	url, err := tpgresource.ReplaceVars(d, config, "{{WorkstationsBasePath}}projects/{{project}}/locations/{{location}}/workstationClusters/{{workstation_cluster_id}}/workstationConfigs/{{workstation_config_id}}")
 	if err != nil {
 		return err
 	}
 
 	billingProject := ""
 
-	project, err := getProject(d, config)
+	project, err := tpgresource.GetProject(d, config)
 	if err != nil {
 		return fmt.Errorf("Error fetching project for WorkstationConfig: %s", err)
 	}
 	billingProject = project
 
 	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
+	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
@@ -562,14 +563,14 @@ func resourceWorkstationsWorkstationConfigRead(d *schema.ResourceData, meta inte
 
 func resourceWorkstationsWorkstationConfigUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*transport_tpg.Config)
-	userAgent, err := generateUserAgentString(d, config.UserAgent)
+	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
 	}
 
 	billingProject := ""
 
-	project, err := getProject(d, config)
+	project, err := tpgresource.GetProject(d, config)
 	if err != nil {
 		return fmt.Errorf("Error fetching project for WorkstationConfig: %s", err)
 	}
@@ -579,41 +580,41 @@ func resourceWorkstationsWorkstationConfigUpdate(d *schema.ResourceData, meta in
 	displayNameProp, err := expandWorkstationsWorkstationConfigDisplayName(d.Get("display_name"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("display_name"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, displayNameProp)) {
+	} else if v, ok := d.GetOkExists("display_name"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, displayNameProp)) {
 		obj["displayName"] = displayNameProp
 	}
 	labelsProp, err := expandWorkstationsWorkstationConfigLabels(d.Get("labels"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("labels"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
+	} else if v, ok := d.GetOkExists("labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
 		obj["labels"] = labelsProp
 	}
 	annotationsProp, err := expandWorkstationsWorkstationConfigAnnotations(d.Get("annotations"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("annotations"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, annotationsProp)) {
+	} else if v, ok := d.GetOkExists("annotations"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, annotationsProp)) {
 		obj["annotations"] = annotationsProp
 	}
 	etagProp, err := expandWorkstationsWorkstationConfigEtag(d.Get("etag"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("etag"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, etagProp)) {
+	} else if v, ok := d.GetOkExists("etag"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, etagProp)) {
 		obj["etag"] = etagProp
 	}
 	hostProp, err := expandWorkstationsWorkstationConfigHost(d.Get("host"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("host"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, hostProp)) {
+	} else if v, ok := d.GetOkExists("host"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, hostProp)) {
 		obj["host"] = hostProp
 	}
 	containerProp, err := expandWorkstationsWorkstationConfigContainer(d.Get("container"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("container"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, containerProp)) {
+	} else if v, ok := d.GetOkExists("container"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, containerProp)) {
 		obj["container"] = containerProp
 	}
 
-	url, err := ReplaceVars(d, config, "{{WorkstationsBasePath}}projects/{{project}}/locations/{{location}}/workstationClusters/{{workstation_cluster_id}}/workstationConfigs/{{workstation_config_id}}")
+	url, err := tpgresource.ReplaceVars(d, config, "{{WorkstationsBasePath}}projects/{{project}}/locations/{{location}}/workstationClusters/{{workstation_cluster_id}}/workstationConfigs/{{workstation_config_id}}")
 	if err != nil {
 		return err
 	}
@@ -664,7 +665,7 @@ func resourceWorkstationsWorkstationConfigUpdate(d *schema.ResourceData, meta in
 	}
 
 	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
+	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
@@ -689,20 +690,20 @@ func resourceWorkstationsWorkstationConfigUpdate(d *schema.ResourceData, meta in
 
 func resourceWorkstationsWorkstationConfigDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*transport_tpg.Config)
-	userAgent, err := generateUserAgentString(d, config.UserAgent)
+	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
 	}
 
 	billingProject := ""
 
-	project, err := getProject(d, config)
+	project, err := tpgresource.GetProject(d, config)
 	if err != nil {
 		return fmt.Errorf("Error fetching project for WorkstationConfig: %s", err)
 	}
 	billingProject = project
 
-	url, err := ReplaceVars(d, config, "{{WorkstationsBasePath}}projects/{{project}}/locations/{{location}}/workstationClusters/{{workstation_cluster_id}}/workstationConfigs/{{workstation_config_id}}")
+	url, err := tpgresource.ReplaceVars(d, config, "{{WorkstationsBasePath}}projects/{{project}}/locations/{{location}}/workstationClusters/{{workstation_cluster_id}}/workstationConfigs/{{workstation_config_id}}")
 	if err != nil {
 		return err
 	}
@@ -711,7 +712,7 @@ func resourceWorkstationsWorkstationConfigDelete(d *schema.ResourceData, meta in
 	log.Printf("[DEBUG] Deleting WorkstationConfig %q", d.Id())
 
 	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
+	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
@@ -743,7 +744,7 @@ func resourceWorkstationsWorkstationConfigImport(d *schema.ResourceData, meta in
 	}
 
 	// Replace import id for the resource id
-	id, err := ReplaceVars(d, config, "projects/{{project}}/locations/{{location}}/workstationClusters/{{workstation_cluster_id}}/workstationConfigs/{{workstation_config_id}}")
+	id, err := tpgresource.ReplaceVars(d, config, "projects/{{project}}/locations/{{location}}/workstationClusters/{{workstation_cluster_id}}/workstationConfigs/{{workstation_config_id}}")
 	if err != nil {
 		return nil, fmt.Errorf("Error constructing id: %s", err)
 	}
@@ -1117,11 +1118,11 @@ func flattenWorkstationsWorkstationConfigConditionsDetails(v interface{}, d *sch
 	return v
 }
 
-func expandWorkstationsWorkstationConfigDisplayName(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandWorkstationsWorkstationConfigDisplayName(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandWorkstationsWorkstationConfigLabels(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
+func expandWorkstationsWorkstationConfigLabels(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
 	if v == nil {
 		return map[string]string{}, nil
 	}
@@ -1132,7 +1133,7 @@ func expandWorkstationsWorkstationConfigLabels(v interface{}, d TerraformResourc
 	return m, nil
 }
 
-func expandWorkstationsWorkstationConfigAnnotations(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
+func expandWorkstationsWorkstationConfigAnnotations(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
 	if v == nil {
 		return map[string]string{}, nil
 	}
@@ -1143,11 +1144,11 @@ func expandWorkstationsWorkstationConfigAnnotations(v interface{}, d TerraformRe
 	return m, nil
 }
 
-func expandWorkstationsWorkstationConfigEtag(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandWorkstationsWorkstationConfigEtag(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandWorkstationsWorkstationConfigHost(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandWorkstationsWorkstationConfigHost(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -1159,14 +1160,14 @@ func expandWorkstationsWorkstationConfigHost(v interface{}, d TerraformResourceD
 	transformedGceInstance, err := expandWorkstationsWorkstationConfigHostGceInstance(original["gce_instance"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedGceInstance); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedGceInstance); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["gceInstance"] = transformedGceInstance
 	}
 
 	return transformed, nil
 }
 
-func expandWorkstationsWorkstationConfigHostGceInstance(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandWorkstationsWorkstationConfigHostGceInstance(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -1178,87 +1179,87 @@ func expandWorkstationsWorkstationConfigHostGceInstance(v interface{}, d Terrafo
 	transformedMachineType, err := expandWorkstationsWorkstationConfigHostGceInstanceMachineType(original["machine_type"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedMachineType); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedMachineType); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["machineType"] = transformedMachineType
 	}
 
 	transformedServiceAccount, err := expandWorkstationsWorkstationConfigHostGceInstanceServiceAccount(original["service_account"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedServiceAccount); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedServiceAccount); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["serviceAccount"] = transformedServiceAccount
 	}
 
 	transformedPoolSize, err := expandWorkstationsWorkstationConfigHostGceInstancePoolSize(original["pool_size"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedPoolSize); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedPoolSize); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["poolSize"] = transformedPoolSize
 	}
 
 	transformedBootDiskSizeGb, err := expandWorkstationsWorkstationConfigHostGceInstanceBootDiskSizeGb(original["boot_disk_size_gb"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedBootDiskSizeGb); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedBootDiskSizeGb); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["bootDiskSizeGb"] = transformedBootDiskSizeGb
 	}
 
 	transformedTags, err := expandWorkstationsWorkstationConfigHostGceInstanceTags(original["tags"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedTags); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedTags); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["tags"] = transformedTags
 	}
 
 	transformedDisablePublicIpAddresses, err := expandWorkstationsWorkstationConfigHostGceInstanceDisablePublicIpAddresses(original["disable_public_ip_addresses"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedDisablePublicIpAddresses); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedDisablePublicIpAddresses); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["disablePublicIpAddresses"] = transformedDisablePublicIpAddresses
 	}
 
 	transformedShieldedInstanceConfig, err := expandWorkstationsWorkstationConfigHostGceInstanceShieldedInstanceConfig(original["shielded_instance_config"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedShieldedInstanceConfig); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedShieldedInstanceConfig); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["shieldedInstanceConfig"] = transformedShieldedInstanceConfig
 	}
 
 	transformedConfidentialInstanceConfig, err := expandWorkstationsWorkstationConfigHostGceInstanceConfidentialInstanceConfig(original["confidential_instance_config"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedConfidentialInstanceConfig); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedConfidentialInstanceConfig); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["confidentialInstanceConfig"] = transformedConfidentialInstanceConfig
 	}
 
 	return transformed, nil
 }
 
-func expandWorkstationsWorkstationConfigHostGceInstanceMachineType(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandWorkstationsWorkstationConfigHostGceInstanceMachineType(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandWorkstationsWorkstationConfigHostGceInstanceServiceAccount(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandWorkstationsWorkstationConfigHostGceInstanceServiceAccount(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandWorkstationsWorkstationConfigHostGceInstancePoolSize(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandWorkstationsWorkstationConfigHostGceInstancePoolSize(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandWorkstationsWorkstationConfigHostGceInstanceBootDiskSizeGb(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandWorkstationsWorkstationConfigHostGceInstanceBootDiskSizeGb(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandWorkstationsWorkstationConfigHostGceInstanceTags(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandWorkstationsWorkstationConfigHostGceInstanceTags(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandWorkstationsWorkstationConfigHostGceInstanceDisablePublicIpAddresses(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandWorkstationsWorkstationConfigHostGceInstanceDisablePublicIpAddresses(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandWorkstationsWorkstationConfigHostGceInstanceShieldedInstanceConfig(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandWorkstationsWorkstationConfigHostGceInstanceShieldedInstanceConfig(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -1291,19 +1292,19 @@ func expandWorkstationsWorkstationConfigHostGceInstanceShieldedInstanceConfig(v 
 	return transformed, nil
 }
 
-func expandWorkstationsWorkstationConfigHostGceInstanceShieldedInstanceConfigEnableSecureBoot(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandWorkstationsWorkstationConfigHostGceInstanceShieldedInstanceConfigEnableSecureBoot(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandWorkstationsWorkstationConfigHostGceInstanceShieldedInstanceConfigEnableVtpm(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandWorkstationsWorkstationConfigHostGceInstanceShieldedInstanceConfigEnableVtpm(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandWorkstationsWorkstationConfigHostGceInstanceShieldedInstanceConfigEnableIntegrityMonitoring(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandWorkstationsWorkstationConfigHostGceInstanceShieldedInstanceConfigEnableIntegrityMonitoring(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandWorkstationsWorkstationConfigHostGceInstanceConfidentialInstanceConfig(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandWorkstationsWorkstationConfigHostGceInstanceConfidentialInstanceConfig(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -1322,11 +1323,11 @@ func expandWorkstationsWorkstationConfigHostGceInstanceConfidentialInstanceConfi
 	return transformed, nil
 }
 
-func expandWorkstationsWorkstationConfigHostGceInstanceConfidentialInstanceConfigEnableConfidentialCompute(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandWorkstationsWorkstationConfigHostGceInstanceConfidentialInstanceConfigEnableConfidentialCompute(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandWorkstationsWorkstationConfigPersistentDirectories(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandWorkstationsWorkstationConfigPersistentDirectories(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
 	for _, raw := range l {
@@ -1339,14 +1340,14 @@ func expandWorkstationsWorkstationConfigPersistentDirectories(v interface{}, d T
 		transformedMountPath, err := expandWorkstationsWorkstationConfigPersistentDirectoriesMountPath(original["mount_path"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedMountPath); val.IsValid() && !isEmptyValue(val) {
+		} else if val := reflect.ValueOf(transformedMountPath); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 			transformed["mountPath"] = transformedMountPath
 		}
 
 		transformedGcePd, err := expandWorkstationsWorkstationConfigPersistentDirectoriesGcePd(original["gce_pd"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedGcePd); val.IsValid() && !isEmptyValue(val) {
+		} else if val := reflect.ValueOf(transformedGcePd); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 			transformed["gcePd"] = transformedGcePd
 		}
 
@@ -1355,11 +1356,11 @@ func expandWorkstationsWorkstationConfigPersistentDirectories(v interface{}, d T
 	return req, nil
 }
 
-func expandWorkstationsWorkstationConfigPersistentDirectoriesMountPath(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandWorkstationsWorkstationConfigPersistentDirectoriesMountPath(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandWorkstationsWorkstationConfigPersistentDirectoriesGcePd(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandWorkstationsWorkstationConfigPersistentDirectoriesGcePd(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -1371,51 +1372,51 @@ func expandWorkstationsWorkstationConfigPersistentDirectoriesGcePd(v interface{}
 	transformedFsType, err := expandWorkstationsWorkstationConfigPersistentDirectoriesGcePdFsType(original["fs_type"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedFsType); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedFsType); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["fsType"] = transformedFsType
 	}
 
 	transformedDiskType, err := expandWorkstationsWorkstationConfigPersistentDirectoriesGcePdDiskType(original["disk_type"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedDiskType); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedDiskType); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["diskType"] = transformedDiskType
 	}
 
 	transformedSizeGb, err := expandWorkstationsWorkstationConfigPersistentDirectoriesGcePdSizeGb(original["size_gb"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedSizeGb); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedSizeGb); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["sizeGb"] = transformedSizeGb
 	}
 
 	transformedReclaimPolicy, err := expandWorkstationsWorkstationConfigPersistentDirectoriesGcePdReclaimPolicy(original["reclaim_policy"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedReclaimPolicy); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedReclaimPolicy); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["reclaimPolicy"] = transformedReclaimPolicy
 	}
 
 	return transformed, nil
 }
 
-func expandWorkstationsWorkstationConfigPersistentDirectoriesGcePdFsType(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandWorkstationsWorkstationConfigPersistentDirectoriesGcePdFsType(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandWorkstationsWorkstationConfigPersistentDirectoriesGcePdDiskType(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandWorkstationsWorkstationConfigPersistentDirectoriesGcePdDiskType(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandWorkstationsWorkstationConfigPersistentDirectoriesGcePdSizeGb(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandWorkstationsWorkstationConfigPersistentDirectoriesGcePdSizeGb(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandWorkstationsWorkstationConfigPersistentDirectoriesGcePdReclaimPolicy(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandWorkstationsWorkstationConfigPersistentDirectoriesGcePdReclaimPolicy(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandWorkstationsWorkstationConfigContainer(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandWorkstationsWorkstationConfigContainer(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -1427,21 +1428,21 @@ func expandWorkstationsWorkstationConfigContainer(v interface{}, d TerraformReso
 	transformedImage, err := expandWorkstationsWorkstationConfigContainerImage(original["image"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedImage); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedImage); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["image"] = transformedImage
 	}
 
 	transformedCommand, err := expandWorkstationsWorkstationConfigContainerCommand(original["command"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedCommand); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedCommand); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["command"] = transformedCommand
 	}
 
 	transformedArgs, err := expandWorkstationsWorkstationConfigContainerArgs(original["args"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedArgs); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedArgs); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["args"] = transformedArgs
 	}
 
@@ -1455,37 +1456,37 @@ func expandWorkstationsWorkstationConfigContainer(v interface{}, d TerraformReso
 	transformedEnv, err := expandWorkstationsWorkstationConfigContainerEnv(original["env"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedEnv); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedEnv); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["env"] = transformedEnv
 	}
 
 	transformedRunAsUser, err := expandWorkstationsWorkstationConfigContainerRunAsUser(original["run_as_user"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedRunAsUser); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedRunAsUser); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["runAsUser"] = transformedRunAsUser
 	}
 
 	return transformed, nil
 }
 
-func expandWorkstationsWorkstationConfigContainerImage(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandWorkstationsWorkstationConfigContainerImage(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandWorkstationsWorkstationConfigContainerCommand(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandWorkstationsWorkstationConfigContainerCommand(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandWorkstationsWorkstationConfigContainerArgs(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandWorkstationsWorkstationConfigContainerArgs(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandWorkstationsWorkstationConfigContainerWorkingDir(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandWorkstationsWorkstationConfigContainerWorkingDir(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandWorkstationsWorkstationConfigContainerEnv(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
+func expandWorkstationsWorkstationConfigContainerEnv(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
 	if v == nil {
 		return map[string]string{}, nil
 	}
@@ -1496,11 +1497,11 @@ func expandWorkstationsWorkstationConfigContainerEnv(v interface{}, d TerraformR
 	return m, nil
 }
 
-func expandWorkstationsWorkstationConfigContainerRunAsUser(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandWorkstationsWorkstationConfigContainerRunAsUser(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandWorkstationsWorkstationConfigEncryptionKey(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandWorkstationsWorkstationConfigEncryptionKey(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -1512,24 +1513,24 @@ func expandWorkstationsWorkstationConfigEncryptionKey(v interface{}, d Terraform
 	transformedKmsKey, err := expandWorkstationsWorkstationConfigEncryptionKeyKmsKey(original["kms_key"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedKmsKey); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedKmsKey); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["kmsKey"] = transformedKmsKey
 	}
 
 	transformedKmsKeyServiceAccount, err := expandWorkstationsWorkstationConfigEncryptionKeyKmsKeyServiceAccount(original["kms_key_service_account"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedKmsKeyServiceAccount); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedKmsKeyServiceAccount); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["kmsKeyServiceAccount"] = transformedKmsKeyServiceAccount
 	}
 
 	return transformed, nil
 }
 
-func expandWorkstationsWorkstationConfigEncryptionKeyKmsKey(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandWorkstationsWorkstationConfigEncryptionKeyKmsKey(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandWorkstationsWorkstationConfigEncryptionKeyKmsKeyServiceAccount(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandWorkstationsWorkstationConfigEncryptionKeyKmsKeyServiceAccount(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }

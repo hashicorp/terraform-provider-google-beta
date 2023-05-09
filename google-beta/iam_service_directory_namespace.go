@@ -36,11 +36,11 @@ var ServiceDirectoryNamespaceIamSchema = map[string]*schema.Schema{
 
 type ServiceDirectoryNamespaceIamUpdater struct {
 	name   string
-	d      TerraformResourceData
+	d      tpgresource.TerraformResourceData
 	Config *transport_tpg.Config
 }
 
-func ServiceDirectoryNamespaceIamUpdaterProducer(d TerraformResourceData, config *transport_tpg.Config) (ResourceIamUpdater, error) {
+func ServiceDirectoryNamespaceIamUpdaterProducer(d tpgresource.TerraformResourceData, config *transport_tpg.Config) (ResourceIamUpdater, error) {
 	values := make(map[string]string)
 
 	if v, ok := d.GetOk("name"); ok {
@@ -102,7 +102,7 @@ func (u *ServiceDirectoryNamespaceIamUpdater) GetResourceIamPolicy() (*cloudreso
 
 	var obj map[string]interface{}
 
-	userAgent, err := generateUserAgentString(u.d, u.Config.UserAgent)
+	userAgent, err := tpgresource.GenerateUserAgentString(u.d, u.Config.UserAgent)
 	if err != nil {
 		return nil, err
 	}
@@ -135,7 +135,7 @@ func (u *ServiceDirectoryNamespaceIamUpdater) SetResourceIamPolicy(policy *cloud
 		return err
 	}
 
-	userAgent, err := generateUserAgentString(u.d, u.Config.UserAgent)
+	userAgent, err := tpgresource.GenerateUserAgentString(u.d, u.Config.UserAgent)
 	if err != nil {
 		return err
 	}
@@ -150,7 +150,7 @@ func (u *ServiceDirectoryNamespaceIamUpdater) SetResourceIamPolicy(policy *cloud
 
 func (u *ServiceDirectoryNamespaceIamUpdater) qualifyNamespaceUrl(methodIdentifier string) (string, error) {
 	urlTemplate := fmt.Sprintf("{{ServiceDirectoryBasePath}}%s:%s", fmt.Sprintf("%s", u.name), methodIdentifier)
-	url, err := ReplaceVars(u.d, u.Config, urlTemplate)
+	url, err := tpgresource.ReplaceVars(u.d, u.Config, urlTemplate)
 	if err != nil {
 		return "", err
 	}

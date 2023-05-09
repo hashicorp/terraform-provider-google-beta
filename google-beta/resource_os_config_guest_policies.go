@@ -22,6 +22,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/verify"
 )
@@ -878,7 +879,7 @@ Example: "2014-10-02T15:01:23.045123456Z".`,
 
 func resourceOSConfigGuestPoliciesCreate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*transport_tpg.Config)
-	userAgent, err := generateUserAgentString(d, config.UserAgent)
+	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
 	}
@@ -887,41 +888,41 @@ func resourceOSConfigGuestPoliciesCreate(d *schema.ResourceData, meta interface{
 	descriptionProp, err := expandOSConfigGuestPoliciesDescription(d.Get("description"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("description"); !isEmptyValue(reflect.ValueOf(descriptionProp)) && (ok || !reflect.DeepEqual(v, descriptionProp)) {
+	} else if v, ok := d.GetOkExists("description"); !tpgresource.IsEmptyValue(reflect.ValueOf(descriptionProp)) && (ok || !reflect.DeepEqual(v, descriptionProp)) {
 		obj["description"] = descriptionProp
 	}
 	assignmentProp, err := expandOSConfigGuestPoliciesAssignment(d.Get("assignment"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("assignment"); !isEmptyValue(reflect.ValueOf(assignmentProp)) && (ok || !reflect.DeepEqual(v, assignmentProp)) {
+	} else if v, ok := d.GetOkExists("assignment"); !tpgresource.IsEmptyValue(reflect.ValueOf(assignmentProp)) && (ok || !reflect.DeepEqual(v, assignmentProp)) {
 		obj["assignment"] = assignmentProp
 	}
 	packagesProp, err := expandOSConfigGuestPoliciesPackages(d.Get("packages"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("packages"); !isEmptyValue(reflect.ValueOf(packagesProp)) && (ok || !reflect.DeepEqual(v, packagesProp)) {
+	} else if v, ok := d.GetOkExists("packages"); !tpgresource.IsEmptyValue(reflect.ValueOf(packagesProp)) && (ok || !reflect.DeepEqual(v, packagesProp)) {
 		obj["packages"] = packagesProp
 	}
 	packageRepositoriesProp, err := expandOSConfigGuestPoliciesPackageRepositories(d.Get("package_repositories"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("package_repositories"); !isEmptyValue(reflect.ValueOf(packageRepositoriesProp)) && (ok || !reflect.DeepEqual(v, packageRepositoriesProp)) {
+	} else if v, ok := d.GetOkExists("package_repositories"); !tpgresource.IsEmptyValue(reflect.ValueOf(packageRepositoriesProp)) && (ok || !reflect.DeepEqual(v, packageRepositoriesProp)) {
 		obj["packageRepositories"] = packageRepositoriesProp
 	}
 	recipesProp, err := expandOSConfigGuestPoliciesRecipes(d.Get("recipes"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("recipes"); !isEmptyValue(reflect.ValueOf(recipesProp)) && (ok || !reflect.DeepEqual(v, recipesProp)) {
+	} else if v, ok := d.GetOkExists("recipes"); !tpgresource.IsEmptyValue(reflect.ValueOf(recipesProp)) && (ok || !reflect.DeepEqual(v, recipesProp)) {
 		obj["recipes"] = recipesProp
 	}
 	etagProp, err := expandOSConfigGuestPoliciesEtag(d.Get("etag"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("etag"); !isEmptyValue(reflect.ValueOf(etagProp)) && (ok || !reflect.DeepEqual(v, etagProp)) {
+	} else if v, ok := d.GetOkExists("etag"); !tpgresource.IsEmptyValue(reflect.ValueOf(etagProp)) && (ok || !reflect.DeepEqual(v, etagProp)) {
 		obj["etag"] = etagProp
 	}
 
-	url, err := ReplaceVars(d, config, "{{OSConfigBasePath}}projects/{{project}}/guestPolicies?guestPolicyId={{guest_policy_id}}")
+	url, err := tpgresource.ReplaceVars(d, config, "{{OSConfigBasePath}}projects/{{project}}/guestPolicies?guestPolicyId={{guest_policy_id}}")
 	if err != nil {
 		return err
 	}
@@ -929,14 +930,14 @@ func resourceOSConfigGuestPoliciesCreate(d *schema.ResourceData, meta interface{
 	log.Printf("[DEBUG] Creating new GuestPolicies: %#v", obj)
 	billingProject := ""
 
-	project, err := getProject(d, config)
+	project, err := tpgresource.GetProject(d, config)
 	if err != nil {
 		return fmt.Errorf("Error fetching project for GuestPolicies: %s", err)
 	}
 	billingProject = project
 
 	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
+	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
@@ -946,7 +947,7 @@ func resourceOSConfigGuestPoliciesCreate(d *schema.ResourceData, meta interface{
 	}
 
 	// Store the ID now
-	id, err := ReplaceVars(d, config, "projects/{{project}}/guestPolicies/{{guest_policy_id}}")
+	id, err := tpgresource.ReplaceVars(d, config, "projects/{{project}}/guestPolicies/{{guest_policy_id}}")
 	if err != nil {
 		return fmt.Errorf("Error constructing id: %s", err)
 	}
@@ -977,26 +978,26 @@ func resourceOSConfigGuestPoliciesCreate(d *schema.ResourceData, meta interface{
 
 func resourceOSConfigGuestPoliciesRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*transport_tpg.Config)
-	userAgent, err := generateUserAgentString(d, config.UserAgent)
+	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
 	}
 
-	url, err := ReplaceVars(d, config, "{{OSConfigBasePath}}projects/{{project}}/guestPolicies/{{guest_policy_id}}")
+	url, err := tpgresource.ReplaceVars(d, config, "{{OSConfigBasePath}}projects/{{project}}/guestPolicies/{{guest_policy_id}}")
 	if err != nil {
 		return err
 	}
 
 	billingProject := ""
 
-	project, err := getProject(d, config)
+	project, err := tpgresource.GetProject(d, config)
 	if err != nil {
 		return fmt.Errorf("Error fetching project for GuestPolicies: %s", err)
 	}
 	billingProject = project
 
 	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
+	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
@@ -1042,14 +1043,14 @@ func resourceOSConfigGuestPoliciesRead(d *schema.ResourceData, meta interface{})
 
 func resourceOSConfigGuestPoliciesUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*transport_tpg.Config)
-	userAgent, err := generateUserAgentString(d, config.UserAgent)
+	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
 	}
 
 	billingProject := ""
 
-	project, err := getProject(d, config)
+	project, err := tpgresource.GetProject(d, config)
 	if err != nil {
 		return fmt.Errorf("Error fetching project for GuestPolicies: %s", err)
 	}
@@ -1059,41 +1060,41 @@ func resourceOSConfigGuestPoliciesUpdate(d *schema.ResourceData, meta interface{
 	descriptionProp, err := expandOSConfigGuestPoliciesDescription(d.Get("description"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("description"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, descriptionProp)) {
+	} else if v, ok := d.GetOkExists("description"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, descriptionProp)) {
 		obj["description"] = descriptionProp
 	}
 	assignmentProp, err := expandOSConfigGuestPoliciesAssignment(d.Get("assignment"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("assignment"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, assignmentProp)) {
+	} else if v, ok := d.GetOkExists("assignment"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, assignmentProp)) {
 		obj["assignment"] = assignmentProp
 	}
 	packagesProp, err := expandOSConfigGuestPoliciesPackages(d.Get("packages"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("packages"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, packagesProp)) {
+	} else if v, ok := d.GetOkExists("packages"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, packagesProp)) {
 		obj["packages"] = packagesProp
 	}
 	packageRepositoriesProp, err := expandOSConfigGuestPoliciesPackageRepositories(d.Get("package_repositories"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("package_repositories"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, packageRepositoriesProp)) {
+	} else if v, ok := d.GetOkExists("package_repositories"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, packageRepositoriesProp)) {
 		obj["packageRepositories"] = packageRepositoriesProp
 	}
 	recipesProp, err := expandOSConfigGuestPoliciesRecipes(d.Get("recipes"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("recipes"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, recipesProp)) {
+	} else if v, ok := d.GetOkExists("recipes"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, recipesProp)) {
 		obj["recipes"] = recipesProp
 	}
 	etagProp, err := expandOSConfigGuestPoliciesEtag(d.Get("etag"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("etag"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, etagProp)) {
+	} else if v, ok := d.GetOkExists("etag"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, etagProp)) {
 		obj["etag"] = etagProp
 	}
 
-	url, err := ReplaceVars(d, config, "{{OSConfigBasePath}}projects/{{project}}/guestPolicies/{{guest_policy_id}}")
+	url, err := tpgresource.ReplaceVars(d, config, "{{OSConfigBasePath}}projects/{{project}}/guestPolicies/{{guest_policy_id}}")
 	if err != nil {
 		return err
 	}
@@ -1101,7 +1102,7 @@ func resourceOSConfigGuestPoliciesUpdate(d *schema.ResourceData, meta interface{
 	log.Printf("[DEBUG] Updating GuestPolicies %q: %#v", d.Id(), obj)
 
 	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
+	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
@@ -1118,20 +1119,20 @@ func resourceOSConfigGuestPoliciesUpdate(d *schema.ResourceData, meta interface{
 
 func resourceOSConfigGuestPoliciesDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*transport_tpg.Config)
-	userAgent, err := generateUserAgentString(d, config.UserAgent)
+	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
 	}
 
 	billingProject := ""
 
-	project, err := getProject(d, config)
+	project, err := tpgresource.GetProject(d, config)
 	if err != nil {
 		return fmt.Errorf("Error fetching project for GuestPolicies: %s", err)
 	}
 	billingProject = project
 
-	url, err := ReplaceVars(d, config, "{{OSConfigBasePath}}projects/{{project}}/guestPolicies/{{guest_policy_id}}")
+	url, err := tpgresource.ReplaceVars(d, config, "{{OSConfigBasePath}}projects/{{project}}/guestPolicies/{{guest_policy_id}}")
 	if err != nil {
 		return err
 	}
@@ -1140,7 +1141,7 @@ func resourceOSConfigGuestPoliciesDelete(d *schema.ResourceData, meta interface{
 	log.Printf("[DEBUG] Deleting GuestPolicies %q", d.Id())
 
 	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
+	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
@@ -1164,7 +1165,7 @@ func resourceOSConfigGuestPoliciesImport(d *schema.ResourceData, meta interface{
 	}
 
 	// Replace import id for the resource id
-	id, err := ReplaceVars(d, config, "projects/{{project}}/guestPolicies/{{guest_policy_id}}")
+	id, err := tpgresource.ReplaceVars(d, config, "projects/{{project}}/guestPolicies/{{guest_policy_id}}")
 	if err != nil {
 		return nil, fmt.Errorf("Error constructing id: %s", err)
 	}
@@ -2026,11 +2027,11 @@ func flattenOSConfigGuestPoliciesEtag(v interface{}, d *schema.ResourceData, con
 	return v
 }
 
-func expandOSConfigGuestPoliciesDescription(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesDescription(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesAssignment(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesAssignment(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -2042,42 +2043,42 @@ func expandOSConfigGuestPoliciesAssignment(v interface{}, d TerraformResourceDat
 	transformedGroupLabels, err := expandOSConfigGuestPoliciesAssignmentGroupLabels(original["group_labels"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedGroupLabels); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedGroupLabels); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["groupLabels"] = transformedGroupLabels
 	}
 
 	transformedZones, err := expandOSConfigGuestPoliciesAssignmentZones(original["zones"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedZones); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedZones); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["zones"] = transformedZones
 	}
 
 	transformedInstances, err := expandOSConfigGuestPoliciesAssignmentInstances(original["instances"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedInstances); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedInstances); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["instances"] = transformedInstances
 	}
 
 	transformedInstanceNamePrefixes, err := expandOSConfigGuestPoliciesAssignmentInstanceNamePrefixes(original["instance_name_prefixes"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedInstanceNamePrefixes); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedInstanceNamePrefixes); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["instanceNamePrefixes"] = transformedInstanceNamePrefixes
 	}
 
 	transformedOsTypes, err := expandOSConfigGuestPoliciesAssignmentOsTypes(original["os_types"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedOsTypes); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedOsTypes); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["osTypes"] = transformedOsTypes
 	}
 
 	return transformed, nil
 }
 
-func expandOSConfigGuestPoliciesAssignmentGroupLabels(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesAssignmentGroupLabels(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
 	for _, raw := range l {
@@ -2090,7 +2091,7 @@ func expandOSConfigGuestPoliciesAssignmentGroupLabels(v interface{}, d Terraform
 		transformedLabels, err := expandOSConfigGuestPoliciesAssignmentGroupLabelsLabels(original["labels"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedLabels); val.IsValid() && !isEmptyValue(val) {
+		} else if val := reflect.ValueOf(transformedLabels); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 			transformed["labels"] = transformedLabels
 		}
 
@@ -2099,7 +2100,7 @@ func expandOSConfigGuestPoliciesAssignmentGroupLabels(v interface{}, d Terraform
 	return req, nil
 }
 
-func expandOSConfigGuestPoliciesAssignmentGroupLabelsLabels(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
+func expandOSConfigGuestPoliciesAssignmentGroupLabelsLabels(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
 	if v == nil {
 		return map[string]string{}, nil
 	}
@@ -2110,19 +2111,19 @@ func expandOSConfigGuestPoliciesAssignmentGroupLabelsLabels(v interface{}, d Ter
 	return m, nil
 }
 
-func expandOSConfigGuestPoliciesAssignmentZones(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesAssignmentZones(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesAssignmentInstances(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesAssignmentInstances(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesAssignmentInstanceNamePrefixes(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesAssignmentInstanceNamePrefixes(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesAssignmentOsTypes(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesAssignmentOsTypes(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
 	for _, raw := range l {
@@ -2135,21 +2136,21 @@ func expandOSConfigGuestPoliciesAssignmentOsTypes(v interface{}, d TerraformReso
 		transformedOsShortName, err := expandOSConfigGuestPoliciesAssignmentOsTypesOsShortName(original["os_short_name"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedOsShortName); val.IsValid() && !isEmptyValue(val) {
+		} else if val := reflect.ValueOf(transformedOsShortName); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 			transformed["osShortName"] = transformedOsShortName
 		}
 
 		transformedOsVersion, err := expandOSConfigGuestPoliciesAssignmentOsTypesOsVersion(original["os_version"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedOsVersion); val.IsValid() && !isEmptyValue(val) {
+		} else if val := reflect.ValueOf(transformedOsVersion); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 			transformed["osVersion"] = transformedOsVersion
 		}
 
 		transformedOsArchitecture, err := expandOSConfigGuestPoliciesAssignmentOsTypesOsArchitecture(original["os_architecture"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedOsArchitecture); val.IsValid() && !isEmptyValue(val) {
+		} else if val := reflect.ValueOf(transformedOsArchitecture); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 			transformed["osArchitecture"] = transformedOsArchitecture
 		}
 
@@ -2158,19 +2159,19 @@ func expandOSConfigGuestPoliciesAssignmentOsTypes(v interface{}, d TerraformReso
 	return req, nil
 }
 
-func expandOSConfigGuestPoliciesAssignmentOsTypesOsShortName(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesAssignmentOsTypesOsShortName(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesAssignmentOsTypesOsVersion(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesAssignmentOsTypesOsVersion(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesAssignmentOsTypesOsArchitecture(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesAssignmentOsTypesOsArchitecture(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesPackages(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesPackages(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
 	for _, raw := range l {
@@ -2183,21 +2184,21 @@ func expandOSConfigGuestPoliciesPackages(v interface{}, d TerraformResourceData,
 		transformedName, err := expandOSConfigGuestPoliciesPackagesName(original["name"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedName); val.IsValid() && !isEmptyValue(val) {
+		} else if val := reflect.ValueOf(transformedName); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 			transformed["name"] = transformedName
 		}
 
 		transformedDesiredState, err := expandOSConfigGuestPoliciesPackagesDesiredState(original["desired_state"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedDesiredState); val.IsValid() && !isEmptyValue(val) {
+		} else if val := reflect.ValueOf(transformedDesiredState); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 			transformed["desiredState"] = transformedDesiredState
 		}
 
 		transformedManager, err := expandOSConfigGuestPoliciesPackagesManager(original["manager"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedManager); val.IsValid() && !isEmptyValue(val) {
+		} else if val := reflect.ValueOf(transformedManager); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 			transformed["manager"] = transformedManager
 		}
 
@@ -2206,19 +2207,19 @@ func expandOSConfigGuestPoliciesPackages(v interface{}, d TerraformResourceData,
 	return req, nil
 }
 
-func expandOSConfigGuestPoliciesPackagesName(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesPackagesName(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesPackagesDesiredState(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesPackagesDesiredState(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesPackagesManager(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesPackagesManager(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesPackageRepositories(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesPackageRepositories(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
 	for _, raw := range l {
@@ -2231,28 +2232,28 @@ func expandOSConfigGuestPoliciesPackageRepositories(v interface{}, d TerraformRe
 		transformedApt, err := expandOSConfigGuestPoliciesPackageRepositoriesApt(original["apt"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedApt); val.IsValid() && !isEmptyValue(val) {
+		} else if val := reflect.ValueOf(transformedApt); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 			transformed["apt"] = transformedApt
 		}
 
 		transformedYum, err := expandOSConfigGuestPoliciesPackageRepositoriesYum(original["yum"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedYum); val.IsValid() && !isEmptyValue(val) {
+		} else if val := reflect.ValueOf(transformedYum); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 			transformed["yum"] = transformedYum
 		}
 
 		transformedZypper, err := expandOSConfigGuestPoliciesPackageRepositoriesZypper(original["zypper"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedZypper); val.IsValid() && !isEmptyValue(val) {
+		} else if val := reflect.ValueOf(transformedZypper); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 			transformed["zypper"] = transformedZypper
 		}
 
 		transformedGoo, err := expandOSConfigGuestPoliciesPackageRepositoriesGoo(original["goo"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedGoo); val.IsValid() && !isEmptyValue(val) {
+		} else if val := reflect.ValueOf(transformedGoo); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 			transformed["goo"] = transformedGoo
 		}
 
@@ -2261,7 +2262,7 @@ func expandOSConfigGuestPoliciesPackageRepositories(v interface{}, d TerraformRe
 	return req, nil
 }
 
-func expandOSConfigGuestPoliciesPackageRepositoriesApt(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesPackageRepositoriesApt(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -2273,62 +2274,62 @@ func expandOSConfigGuestPoliciesPackageRepositoriesApt(v interface{}, d Terrafor
 	transformedArchiveType, err := expandOSConfigGuestPoliciesPackageRepositoriesAptArchiveType(original["archive_type"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedArchiveType); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedArchiveType); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["archiveType"] = transformedArchiveType
 	}
 
 	transformedUri, err := expandOSConfigGuestPoliciesPackageRepositoriesAptUri(original["uri"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedUri); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedUri); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["uri"] = transformedUri
 	}
 
 	transformedDistribution, err := expandOSConfigGuestPoliciesPackageRepositoriesAptDistribution(original["distribution"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedDistribution); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedDistribution); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["distribution"] = transformedDistribution
 	}
 
 	transformedComponents, err := expandOSConfigGuestPoliciesPackageRepositoriesAptComponents(original["components"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedComponents); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedComponents); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["components"] = transformedComponents
 	}
 
 	transformedGpgKey, err := expandOSConfigGuestPoliciesPackageRepositoriesAptGpgKey(original["gpg_key"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedGpgKey); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedGpgKey); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["gpgKey"] = transformedGpgKey
 	}
 
 	return transformed, nil
 }
 
-func expandOSConfigGuestPoliciesPackageRepositoriesAptArchiveType(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesPackageRepositoriesAptArchiveType(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesPackageRepositoriesAptUri(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesPackageRepositoriesAptUri(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesPackageRepositoriesAptDistribution(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesPackageRepositoriesAptDistribution(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesPackageRepositoriesAptComponents(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesPackageRepositoriesAptComponents(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesPackageRepositoriesAptGpgKey(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesPackageRepositoriesAptGpgKey(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesPackageRepositoriesYum(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesPackageRepositoriesYum(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -2340,51 +2341,51 @@ func expandOSConfigGuestPoliciesPackageRepositoriesYum(v interface{}, d Terrafor
 	transformedId, err := expandOSConfigGuestPoliciesPackageRepositoriesYumId(original["id"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedId); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedId); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["id"] = transformedId
 	}
 
 	transformedDisplayName, err := expandOSConfigGuestPoliciesPackageRepositoriesYumDisplayName(original["display_name"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedDisplayName); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedDisplayName); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["displayName"] = transformedDisplayName
 	}
 
 	transformedBaseUrl, err := expandOSConfigGuestPoliciesPackageRepositoriesYumBaseUrl(original["base_url"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedBaseUrl); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedBaseUrl); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["baseUrl"] = transformedBaseUrl
 	}
 
 	transformedGpgKeys, err := expandOSConfigGuestPoliciesPackageRepositoriesYumGpgKeys(original["gpg_keys"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedGpgKeys); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedGpgKeys); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["gpgKeys"] = transformedGpgKeys
 	}
 
 	return transformed, nil
 }
 
-func expandOSConfigGuestPoliciesPackageRepositoriesYumId(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesPackageRepositoriesYumId(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesPackageRepositoriesYumDisplayName(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesPackageRepositoriesYumDisplayName(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesPackageRepositoriesYumBaseUrl(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesPackageRepositoriesYumBaseUrl(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesPackageRepositoriesYumGpgKeys(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesPackageRepositoriesYumGpgKeys(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesPackageRepositoriesZypper(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesPackageRepositoriesZypper(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -2396,51 +2397,51 @@ func expandOSConfigGuestPoliciesPackageRepositoriesZypper(v interface{}, d Terra
 	transformedId, err := expandOSConfigGuestPoliciesPackageRepositoriesZypperId(original["id"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedId); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedId); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["id"] = transformedId
 	}
 
 	transformedDisplayName, err := expandOSConfigGuestPoliciesPackageRepositoriesZypperDisplayName(original["display_name"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedDisplayName); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedDisplayName); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["displayName"] = transformedDisplayName
 	}
 
 	transformedBaseUrl, err := expandOSConfigGuestPoliciesPackageRepositoriesZypperBaseUrl(original["base_url"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedBaseUrl); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedBaseUrl); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["baseUrl"] = transformedBaseUrl
 	}
 
 	transformedGpgKeys, err := expandOSConfigGuestPoliciesPackageRepositoriesZypperGpgKeys(original["gpg_keys"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedGpgKeys); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedGpgKeys); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["gpgKeys"] = transformedGpgKeys
 	}
 
 	return transformed, nil
 }
 
-func expandOSConfigGuestPoliciesPackageRepositoriesZypperId(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesPackageRepositoriesZypperId(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesPackageRepositoriesZypperDisplayName(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesPackageRepositoriesZypperDisplayName(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesPackageRepositoriesZypperBaseUrl(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesPackageRepositoriesZypperBaseUrl(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesPackageRepositoriesZypperGpgKeys(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesPackageRepositoriesZypperGpgKeys(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesPackageRepositoriesGoo(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesPackageRepositoriesGoo(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -2452,29 +2453,29 @@ func expandOSConfigGuestPoliciesPackageRepositoriesGoo(v interface{}, d Terrafor
 	transformedName, err := expandOSConfigGuestPoliciesPackageRepositoriesGooName(original["name"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedName); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedName); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["name"] = transformedName
 	}
 
 	transformedUrl, err := expandOSConfigGuestPoliciesPackageRepositoriesGooUrl(original["url"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedUrl); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedUrl); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["url"] = transformedUrl
 	}
 
 	return transformed, nil
 }
 
-func expandOSConfigGuestPoliciesPackageRepositoriesGooName(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesPackageRepositoriesGooName(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesPackageRepositoriesGooUrl(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesPackageRepositoriesGooUrl(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipes(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipes(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
 	for _, raw := range l {
@@ -2487,42 +2488,42 @@ func expandOSConfigGuestPoliciesRecipes(v interface{}, d TerraformResourceData, 
 		transformedName, err := expandOSConfigGuestPoliciesRecipesName(original["name"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedName); val.IsValid() && !isEmptyValue(val) {
+		} else if val := reflect.ValueOf(transformedName); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 			transformed["name"] = transformedName
 		}
 
 		transformedVersion, err := expandOSConfigGuestPoliciesRecipesVersion(original["version"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedVersion); val.IsValid() && !isEmptyValue(val) {
+		} else if val := reflect.ValueOf(transformedVersion); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 			transformed["version"] = transformedVersion
 		}
 
 		transformedArtifacts, err := expandOSConfigGuestPoliciesRecipesArtifacts(original["artifacts"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedArtifacts); val.IsValid() && !isEmptyValue(val) {
+		} else if val := reflect.ValueOf(transformedArtifacts); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 			transformed["artifacts"] = transformedArtifacts
 		}
 
 		transformedInstallSteps, err := expandOSConfigGuestPoliciesRecipesInstallSteps(original["install_steps"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedInstallSteps); val.IsValid() && !isEmptyValue(val) {
+		} else if val := reflect.ValueOf(transformedInstallSteps); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 			transformed["installSteps"] = transformedInstallSteps
 		}
 
 		transformedUpdateSteps, err := expandOSConfigGuestPoliciesRecipesUpdateSteps(original["update_steps"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedUpdateSteps); val.IsValid() && !isEmptyValue(val) {
+		} else if val := reflect.ValueOf(transformedUpdateSteps); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 			transformed["updateSteps"] = transformedUpdateSteps
 		}
 
 		transformedDesiredState, err := expandOSConfigGuestPoliciesRecipesDesiredState(original["desired_state"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedDesiredState); val.IsValid() && !isEmptyValue(val) {
+		} else if val := reflect.ValueOf(transformedDesiredState); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 			transformed["desiredState"] = transformedDesiredState
 		}
 
@@ -2531,15 +2532,15 @@ func expandOSConfigGuestPoliciesRecipes(v interface{}, d TerraformResourceData, 
 	return req, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesName(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesName(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesVersion(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesVersion(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesArtifacts(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesArtifacts(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
 	for _, raw := range l {
@@ -2552,28 +2553,28 @@ func expandOSConfigGuestPoliciesRecipesArtifacts(v interface{}, d TerraformResou
 		transformedId, err := expandOSConfigGuestPoliciesRecipesArtifactsId(original["id"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedId); val.IsValid() && !isEmptyValue(val) {
+		} else if val := reflect.ValueOf(transformedId); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 			transformed["id"] = transformedId
 		}
 
 		transformedAllowInsecure, err := expandOSConfigGuestPoliciesRecipesArtifactsAllowInsecure(original["allow_insecure"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedAllowInsecure); val.IsValid() && !isEmptyValue(val) {
+		} else if val := reflect.ValueOf(transformedAllowInsecure); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 			transformed["allowInsecure"] = transformedAllowInsecure
 		}
 
 		transformedRemote, err := expandOSConfigGuestPoliciesRecipesArtifactsRemote(original["remote"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedRemote); val.IsValid() && !isEmptyValue(val) {
+		} else if val := reflect.ValueOf(transformedRemote); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 			transformed["remote"] = transformedRemote
 		}
 
 		transformedGcs, err := expandOSConfigGuestPoliciesRecipesArtifactsGcs(original["gcs"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedGcs); val.IsValid() && !isEmptyValue(val) {
+		} else if val := reflect.ValueOf(transformedGcs); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 			transformed["gcs"] = transformedGcs
 		}
 
@@ -2582,15 +2583,15 @@ func expandOSConfigGuestPoliciesRecipesArtifacts(v interface{}, d TerraformResou
 	return req, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesArtifactsId(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesArtifactsId(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesArtifactsAllowInsecure(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesArtifactsAllowInsecure(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesArtifactsRemote(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesArtifactsRemote(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -2602,29 +2603,29 @@ func expandOSConfigGuestPoliciesRecipesArtifactsRemote(v interface{}, d Terrafor
 	transformedUri, err := expandOSConfigGuestPoliciesRecipesArtifactsRemoteUri(original["uri"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedUri); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedUri); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["uri"] = transformedUri
 	}
 
 	transformedCheckSum, err := expandOSConfigGuestPoliciesRecipesArtifactsRemoteCheckSum(original["check_sum"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedCheckSum); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedCheckSum); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["checkSum"] = transformedCheckSum
 	}
 
 	return transformed, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesArtifactsRemoteUri(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesArtifactsRemoteUri(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesArtifactsRemoteCheckSum(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesArtifactsRemoteCheckSum(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesArtifactsGcs(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesArtifactsGcs(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -2636,40 +2637,40 @@ func expandOSConfigGuestPoliciesRecipesArtifactsGcs(v interface{}, d TerraformRe
 	transformedBucket, err := expandOSConfigGuestPoliciesRecipesArtifactsGcsBucket(original["bucket"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedBucket); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedBucket); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["bucket"] = transformedBucket
 	}
 
 	transformedObject, err := expandOSConfigGuestPoliciesRecipesArtifactsGcsObject(original["object"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedObject); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedObject); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["object"] = transformedObject
 	}
 
 	transformedGeneration, err := expandOSConfigGuestPoliciesRecipesArtifactsGcsGeneration(original["generation"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedGeneration); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedGeneration); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["generation"] = transformedGeneration
 	}
 
 	return transformed, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesArtifactsGcsBucket(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesArtifactsGcsBucket(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesArtifactsGcsObject(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesArtifactsGcsObject(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesArtifactsGcsGeneration(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesArtifactsGcsGeneration(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesInstallSteps(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesInstallSteps(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
 	for _, raw := range l {
@@ -2682,49 +2683,49 @@ func expandOSConfigGuestPoliciesRecipesInstallSteps(v interface{}, d TerraformRe
 		transformedFileCopy, err := expandOSConfigGuestPoliciesRecipesInstallStepsFileCopy(original["file_copy"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedFileCopy); val.IsValid() && !isEmptyValue(val) {
+		} else if val := reflect.ValueOf(transformedFileCopy); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 			transformed["fileCopy"] = transformedFileCopy
 		}
 
 		transformedArchiveExtraction, err := expandOSConfigGuestPoliciesRecipesInstallStepsArchiveExtraction(original["archive_extraction"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedArchiveExtraction); val.IsValid() && !isEmptyValue(val) {
+		} else if val := reflect.ValueOf(transformedArchiveExtraction); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 			transformed["archiveExtraction"] = transformedArchiveExtraction
 		}
 
 		transformedMsiInstallation, err := expandOSConfigGuestPoliciesRecipesInstallStepsMsiInstallation(original["msi_installation"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedMsiInstallation); val.IsValid() && !isEmptyValue(val) {
+		} else if val := reflect.ValueOf(transformedMsiInstallation); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 			transformed["msiInstallation"] = transformedMsiInstallation
 		}
 
 		transformedDpkgInstallation, err := expandOSConfigGuestPoliciesRecipesInstallStepsDpkgInstallation(original["dpkg_installation"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedDpkgInstallation); val.IsValid() && !isEmptyValue(val) {
+		} else if val := reflect.ValueOf(transformedDpkgInstallation); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 			transformed["dpkgInstallation"] = transformedDpkgInstallation
 		}
 
 		transformedRpmInstallation, err := expandOSConfigGuestPoliciesRecipesInstallStepsRpmInstallation(original["rpm_installation"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedRpmInstallation); val.IsValid() && !isEmptyValue(val) {
+		} else if val := reflect.ValueOf(transformedRpmInstallation); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 			transformed["rpmInstallation"] = transformedRpmInstallation
 		}
 
 		transformedFileExec, err := expandOSConfigGuestPoliciesRecipesInstallStepsFileExec(original["file_exec"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedFileExec); val.IsValid() && !isEmptyValue(val) {
+		} else if val := reflect.ValueOf(transformedFileExec); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 			transformed["fileExec"] = transformedFileExec
 		}
 
 		transformedScriptRun, err := expandOSConfigGuestPoliciesRecipesInstallStepsScriptRun(original["script_run"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedScriptRun); val.IsValid() && !isEmptyValue(val) {
+		} else if val := reflect.ValueOf(transformedScriptRun); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 			transformed["scriptRun"] = transformedScriptRun
 		}
 
@@ -2733,7 +2734,7 @@ func expandOSConfigGuestPoliciesRecipesInstallSteps(v interface{}, d TerraformRe
 	return req, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesInstallStepsFileCopy(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesInstallStepsFileCopy(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -2745,51 +2746,51 @@ func expandOSConfigGuestPoliciesRecipesInstallStepsFileCopy(v interface{}, d Ter
 	transformedArtifactId, err := expandOSConfigGuestPoliciesRecipesInstallStepsFileCopyArtifactId(original["artifact_id"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedArtifactId); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedArtifactId); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["artifactId"] = transformedArtifactId
 	}
 
 	transformedDestination, err := expandOSConfigGuestPoliciesRecipesInstallStepsFileCopyDestination(original["destination"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedDestination); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedDestination); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["destination"] = transformedDestination
 	}
 
 	transformedOverwrite, err := expandOSConfigGuestPoliciesRecipesInstallStepsFileCopyOverwrite(original["overwrite"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedOverwrite); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedOverwrite); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["overwrite"] = transformedOverwrite
 	}
 
 	transformedPermissions, err := expandOSConfigGuestPoliciesRecipesInstallStepsFileCopyPermissions(original["permissions"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedPermissions); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedPermissions); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["permissions"] = transformedPermissions
 	}
 
 	return transformed, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesInstallStepsFileCopyArtifactId(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesInstallStepsFileCopyArtifactId(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesInstallStepsFileCopyDestination(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesInstallStepsFileCopyDestination(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesInstallStepsFileCopyOverwrite(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesInstallStepsFileCopyOverwrite(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesInstallStepsFileCopyPermissions(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesInstallStepsFileCopyPermissions(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesInstallStepsArchiveExtraction(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesInstallStepsArchiveExtraction(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -2801,40 +2802,40 @@ func expandOSConfigGuestPoliciesRecipesInstallStepsArchiveExtraction(v interface
 	transformedArtifactId, err := expandOSConfigGuestPoliciesRecipesInstallStepsArchiveExtractionArtifactId(original["artifact_id"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedArtifactId); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedArtifactId); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["artifactId"] = transformedArtifactId
 	}
 
 	transformedDestination, err := expandOSConfigGuestPoliciesRecipesInstallStepsArchiveExtractionDestination(original["destination"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedDestination); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedDestination); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["destination"] = transformedDestination
 	}
 
 	transformedType, err := expandOSConfigGuestPoliciesRecipesInstallStepsArchiveExtractionType(original["type"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedType); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedType); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["type"] = transformedType
 	}
 
 	return transformed, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesInstallStepsArchiveExtractionArtifactId(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesInstallStepsArchiveExtractionArtifactId(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesInstallStepsArchiveExtractionDestination(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesInstallStepsArchiveExtractionDestination(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesInstallStepsArchiveExtractionType(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesInstallStepsArchiveExtractionType(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesInstallStepsMsiInstallation(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesInstallStepsMsiInstallation(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -2846,40 +2847,40 @@ func expandOSConfigGuestPoliciesRecipesInstallStepsMsiInstallation(v interface{}
 	transformedArtifactId, err := expandOSConfigGuestPoliciesRecipesInstallStepsMsiInstallationArtifactId(original["artifact_id"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedArtifactId); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedArtifactId); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["artifactId"] = transformedArtifactId
 	}
 
 	transformedFlags, err := expandOSConfigGuestPoliciesRecipesInstallStepsMsiInstallationFlags(original["flags"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedFlags); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedFlags); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["flags"] = transformedFlags
 	}
 
 	transformedAllowedExitCodes, err := expandOSConfigGuestPoliciesRecipesInstallStepsMsiInstallationAllowedExitCodes(original["allowed_exit_codes"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedAllowedExitCodes); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedAllowedExitCodes); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["allowedExitCodes"] = transformedAllowedExitCodes
 	}
 
 	return transformed, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesInstallStepsMsiInstallationArtifactId(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesInstallStepsMsiInstallationArtifactId(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesInstallStepsMsiInstallationFlags(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesInstallStepsMsiInstallationFlags(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesInstallStepsMsiInstallationAllowedExitCodes(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesInstallStepsMsiInstallationAllowedExitCodes(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesInstallStepsDpkgInstallation(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesInstallStepsDpkgInstallation(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -2891,18 +2892,18 @@ func expandOSConfigGuestPoliciesRecipesInstallStepsDpkgInstallation(v interface{
 	transformedArtifactId, err := expandOSConfigGuestPoliciesRecipesInstallStepsDpkgInstallationArtifactId(original["artifact_id"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedArtifactId); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedArtifactId); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["artifactId"] = transformedArtifactId
 	}
 
 	return transformed, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesInstallStepsDpkgInstallationArtifactId(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesInstallStepsDpkgInstallationArtifactId(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesInstallStepsRpmInstallation(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesInstallStepsRpmInstallation(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -2914,18 +2915,18 @@ func expandOSConfigGuestPoliciesRecipesInstallStepsRpmInstallation(v interface{}
 	transformedArtifactId, err := expandOSConfigGuestPoliciesRecipesInstallStepsRpmInstallationArtifactId(original["artifact_id"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedArtifactId); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedArtifactId); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["artifactId"] = transformedArtifactId
 	}
 
 	return transformed, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesInstallStepsRpmInstallationArtifactId(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesInstallStepsRpmInstallationArtifactId(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesInstallStepsFileExec(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesInstallStepsFileExec(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -2937,51 +2938,51 @@ func expandOSConfigGuestPoliciesRecipesInstallStepsFileExec(v interface{}, d Ter
 	transformedArgs, err := expandOSConfigGuestPoliciesRecipesInstallStepsFileExecArgs(original["args"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedArgs); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedArgs); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["args"] = transformedArgs
 	}
 
 	transformedAllowedExitCodes, err := expandOSConfigGuestPoliciesRecipesInstallStepsFileExecAllowedExitCodes(original["allowed_exit_codes"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedAllowedExitCodes); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedAllowedExitCodes); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["allowedExitCodes"] = transformedAllowedExitCodes
 	}
 
 	transformedArtifactId, err := expandOSConfigGuestPoliciesRecipesInstallStepsFileExecArtifactId(original["artifact_id"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedArtifactId); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedArtifactId); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["artifactId"] = transformedArtifactId
 	}
 
 	transformedLocalPath, err := expandOSConfigGuestPoliciesRecipesInstallStepsFileExecLocalPath(original["local_path"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedLocalPath); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedLocalPath); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["localPath"] = transformedLocalPath
 	}
 
 	return transformed, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesInstallStepsFileExecArgs(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesInstallStepsFileExecArgs(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesInstallStepsFileExecAllowedExitCodes(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesInstallStepsFileExecAllowedExitCodes(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesInstallStepsFileExecArtifactId(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesInstallStepsFileExecArtifactId(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesInstallStepsFileExecLocalPath(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesInstallStepsFileExecLocalPath(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesInstallStepsScriptRun(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesInstallStepsScriptRun(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -2993,40 +2994,40 @@ func expandOSConfigGuestPoliciesRecipesInstallStepsScriptRun(v interface{}, d Te
 	transformedScript, err := expandOSConfigGuestPoliciesRecipesInstallStepsScriptRunScript(original["script"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedScript); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedScript); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["script"] = transformedScript
 	}
 
 	transformedAllowedExitCodes, err := expandOSConfigGuestPoliciesRecipesInstallStepsScriptRunAllowedExitCodes(original["allowed_exit_codes"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedAllowedExitCodes); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedAllowedExitCodes); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["allowedExitCodes"] = transformedAllowedExitCodes
 	}
 
 	transformedInterpreter, err := expandOSConfigGuestPoliciesRecipesInstallStepsScriptRunInterpreter(original["interpreter"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedInterpreter); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedInterpreter); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["interpreter"] = transformedInterpreter
 	}
 
 	return transformed, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesInstallStepsScriptRunScript(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesInstallStepsScriptRunScript(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesInstallStepsScriptRunAllowedExitCodes(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesInstallStepsScriptRunAllowedExitCodes(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesInstallStepsScriptRunInterpreter(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesInstallStepsScriptRunInterpreter(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesUpdateSteps(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesUpdateSteps(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
 	for _, raw := range l {
@@ -3039,49 +3040,49 @@ func expandOSConfigGuestPoliciesRecipesUpdateSteps(v interface{}, d TerraformRes
 		transformedFileCopy, err := expandOSConfigGuestPoliciesRecipesUpdateStepsFileCopy(original["file_copy"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedFileCopy); val.IsValid() && !isEmptyValue(val) {
+		} else if val := reflect.ValueOf(transformedFileCopy); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 			transformed["fileCopy"] = transformedFileCopy
 		}
 
 		transformedArchiveExtraction, err := expandOSConfigGuestPoliciesRecipesUpdateStepsArchiveExtraction(original["archive_extraction"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedArchiveExtraction); val.IsValid() && !isEmptyValue(val) {
+		} else if val := reflect.ValueOf(transformedArchiveExtraction); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 			transformed["archiveExtraction"] = transformedArchiveExtraction
 		}
 
 		transformedMsiInstallation, err := expandOSConfigGuestPoliciesRecipesUpdateStepsMsiInstallation(original["msi_installation"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedMsiInstallation); val.IsValid() && !isEmptyValue(val) {
+		} else if val := reflect.ValueOf(transformedMsiInstallation); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 			transformed["msiInstallation"] = transformedMsiInstallation
 		}
 
 		transformedDpkgInstallation, err := expandOSConfigGuestPoliciesRecipesUpdateStepsDpkgInstallation(original["dpkg_installation"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedDpkgInstallation); val.IsValid() && !isEmptyValue(val) {
+		} else if val := reflect.ValueOf(transformedDpkgInstallation); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 			transformed["dpkgInstallation"] = transformedDpkgInstallation
 		}
 
 		transformedRpmInstallation, err := expandOSConfigGuestPoliciesRecipesUpdateStepsRpmInstallation(original["rpm_installation"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedRpmInstallation); val.IsValid() && !isEmptyValue(val) {
+		} else if val := reflect.ValueOf(transformedRpmInstallation); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 			transformed["rpmInstallation"] = transformedRpmInstallation
 		}
 
 		transformedFileExec, err := expandOSConfigGuestPoliciesRecipesUpdateStepsFileExec(original["file_exec"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedFileExec); val.IsValid() && !isEmptyValue(val) {
+		} else if val := reflect.ValueOf(transformedFileExec); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 			transformed["fileExec"] = transformedFileExec
 		}
 
 		transformedScriptRun, err := expandOSConfigGuestPoliciesRecipesUpdateStepsScriptRun(original["script_run"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedScriptRun); val.IsValid() && !isEmptyValue(val) {
+		} else if val := reflect.ValueOf(transformedScriptRun); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 			transformed["scriptRun"] = transformedScriptRun
 		}
 
@@ -3090,7 +3091,7 @@ func expandOSConfigGuestPoliciesRecipesUpdateSteps(v interface{}, d TerraformRes
 	return req, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesUpdateStepsFileCopy(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesUpdateStepsFileCopy(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -3102,51 +3103,51 @@ func expandOSConfigGuestPoliciesRecipesUpdateStepsFileCopy(v interface{}, d Terr
 	transformedArtifactId, err := expandOSConfigGuestPoliciesRecipesUpdateStepsFileCopyArtifactId(original["artifact_id"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedArtifactId); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedArtifactId); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["artifactId"] = transformedArtifactId
 	}
 
 	transformedDestination, err := expandOSConfigGuestPoliciesRecipesUpdateStepsFileCopyDestination(original["destination"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedDestination); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedDestination); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["destination"] = transformedDestination
 	}
 
 	transformedOverwrite, err := expandOSConfigGuestPoliciesRecipesUpdateStepsFileCopyOverwrite(original["overwrite"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedOverwrite); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedOverwrite); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["overwrite"] = transformedOverwrite
 	}
 
 	transformedPermissions, err := expandOSConfigGuestPoliciesRecipesUpdateStepsFileCopyPermissions(original["permissions"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedPermissions); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedPermissions); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["permissions"] = transformedPermissions
 	}
 
 	return transformed, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesUpdateStepsFileCopyArtifactId(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesUpdateStepsFileCopyArtifactId(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesUpdateStepsFileCopyDestination(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesUpdateStepsFileCopyDestination(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesUpdateStepsFileCopyOverwrite(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesUpdateStepsFileCopyOverwrite(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesUpdateStepsFileCopyPermissions(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesUpdateStepsFileCopyPermissions(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesUpdateStepsArchiveExtraction(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesUpdateStepsArchiveExtraction(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -3158,40 +3159,40 @@ func expandOSConfigGuestPoliciesRecipesUpdateStepsArchiveExtraction(v interface{
 	transformedArtifactId, err := expandOSConfigGuestPoliciesRecipesUpdateStepsArchiveExtractionArtifactId(original["artifact_id"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedArtifactId); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedArtifactId); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["artifactId"] = transformedArtifactId
 	}
 
 	transformedDestination, err := expandOSConfigGuestPoliciesRecipesUpdateStepsArchiveExtractionDestination(original["destination"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedDestination); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedDestination); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["destination"] = transformedDestination
 	}
 
 	transformedType, err := expandOSConfigGuestPoliciesRecipesUpdateStepsArchiveExtractionType(original["type"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedType); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedType); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["type"] = transformedType
 	}
 
 	return transformed, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesUpdateStepsArchiveExtractionArtifactId(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesUpdateStepsArchiveExtractionArtifactId(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesUpdateStepsArchiveExtractionDestination(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesUpdateStepsArchiveExtractionDestination(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesUpdateStepsArchiveExtractionType(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesUpdateStepsArchiveExtractionType(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesUpdateStepsMsiInstallation(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesUpdateStepsMsiInstallation(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -3203,40 +3204,40 @@ func expandOSConfigGuestPoliciesRecipesUpdateStepsMsiInstallation(v interface{},
 	transformedArtifactId, err := expandOSConfigGuestPoliciesRecipesUpdateStepsMsiInstallationArtifactId(original["artifact_id"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedArtifactId); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedArtifactId); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["artifactId"] = transformedArtifactId
 	}
 
 	transformedFlags, err := expandOSConfigGuestPoliciesRecipesUpdateStepsMsiInstallationFlags(original["flags"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedFlags); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedFlags); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["flags"] = transformedFlags
 	}
 
 	transformedAllowedExitCodes, err := expandOSConfigGuestPoliciesRecipesUpdateStepsMsiInstallationAllowedExitCodes(original["allowed_exit_codes"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedAllowedExitCodes); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedAllowedExitCodes); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["allowedExitCodes"] = transformedAllowedExitCodes
 	}
 
 	return transformed, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesUpdateStepsMsiInstallationArtifactId(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesUpdateStepsMsiInstallationArtifactId(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesUpdateStepsMsiInstallationFlags(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesUpdateStepsMsiInstallationFlags(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesUpdateStepsMsiInstallationAllowedExitCodes(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesUpdateStepsMsiInstallationAllowedExitCodes(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesUpdateStepsDpkgInstallation(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesUpdateStepsDpkgInstallation(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -3248,18 +3249,18 @@ func expandOSConfigGuestPoliciesRecipesUpdateStepsDpkgInstallation(v interface{}
 	transformedArtifactId, err := expandOSConfigGuestPoliciesRecipesUpdateStepsDpkgInstallationArtifactId(original["artifact_id"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedArtifactId); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedArtifactId); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["artifactId"] = transformedArtifactId
 	}
 
 	return transformed, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesUpdateStepsDpkgInstallationArtifactId(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesUpdateStepsDpkgInstallationArtifactId(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesUpdateStepsRpmInstallation(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesUpdateStepsRpmInstallation(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -3271,18 +3272,18 @@ func expandOSConfigGuestPoliciesRecipesUpdateStepsRpmInstallation(v interface{},
 	transformedArtifactId, err := expandOSConfigGuestPoliciesRecipesUpdateStepsRpmInstallationArtifactId(original["artifact_id"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedArtifactId); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedArtifactId); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["artifactId"] = transformedArtifactId
 	}
 
 	return transformed, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesUpdateStepsRpmInstallationArtifactId(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesUpdateStepsRpmInstallationArtifactId(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesUpdateStepsFileExec(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesUpdateStepsFileExec(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -3294,51 +3295,51 @@ func expandOSConfigGuestPoliciesRecipesUpdateStepsFileExec(v interface{}, d Terr
 	transformedArgs, err := expandOSConfigGuestPoliciesRecipesUpdateStepsFileExecArgs(original["args"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedArgs); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedArgs); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["args"] = transformedArgs
 	}
 
 	transformedAllowedExitCodes, err := expandOSConfigGuestPoliciesRecipesUpdateStepsFileExecAllowedExitCodes(original["allowed_exit_codes"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedAllowedExitCodes); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedAllowedExitCodes); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["allowedExitCodes"] = transformedAllowedExitCodes
 	}
 
 	transformedArtifactId, err := expandOSConfigGuestPoliciesRecipesUpdateStepsFileExecArtifactId(original["artifact_id"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedArtifactId); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedArtifactId); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["artifactId"] = transformedArtifactId
 	}
 
 	transformedLocalPath, err := expandOSConfigGuestPoliciesRecipesUpdateStepsFileExecLocalPath(original["local_path"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedLocalPath); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedLocalPath); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["localPath"] = transformedLocalPath
 	}
 
 	return transformed, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesUpdateStepsFileExecArgs(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesUpdateStepsFileExecArgs(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesUpdateStepsFileExecAllowedExitCodes(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesUpdateStepsFileExecAllowedExitCodes(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesUpdateStepsFileExecArtifactId(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesUpdateStepsFileExecArtifactId(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesUpdateStepsFileExecLocalPath(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesUpdateStepsFileExecLocalPath(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesUpdateStepsScriptRun(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesUpdateStepsScriptRun(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -3350,43 +3351,43 @@ func expandOSConfigGuestPoliciesRecipesUpdateStepsScriptRun(v interface{}, d Ter
 	transformedScript, err := expandOSConfigGuestPoliciesRecipesUpdateStepsScriptRunScript(original["script"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedScript); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedScript); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["script"] = transformedScript
 	}
 
 	transformedAllowedExitCodes, err := expandOSConfigGuestPoliciesRecipesUpdateStepsScriptRunAllowedExitCodes(original["allowed_exit_codes"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedAllowedExitCodes); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedAllowedExitCodes); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["allowedExitCodes"] = transformedAllowedExitCodes
 	}
 
 	transformedInterpreter, err := expandOSConfigGuestPoliciesRecipesUpdateStepsScriptRunInterpreter(original["interpreter"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedInterpreter); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedInterpreter); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["interpreter"] = transformedInterpreter
 	}
 
 	return transformed, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesUpdateStepsScriptRunScript(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesUpdateStepsScriptRunScript(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesUpdateStepsScriptRunAllowedExitCodes(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesUpdateStepsScriptRunAllowedExitCodes(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesUpdateStepsScriptRunInterpreter(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesUpdateStepsScriptRunInterpreter(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesRecipesDesiredState(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesRecipesDesiredState(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandOSConfigGuestPoliciesEtag(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandOSConfigGuestPoliciesEtag(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }

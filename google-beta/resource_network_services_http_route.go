@@ -23,6 +23,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
@@ -599,7 +600,7 @@ The attached Mesh should be of a type SIDECAR.`,
 
 func resourceNetworkServicesHttpRouteCreate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*transport_tpg.Config)
-	userAgent, err := generateUserAgentString(d, config.UserAgent)
+	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
 	}
@@ -608,19 +609,19 @@ func resourceNetworkServicesHttpRouteCreate(d *schema.ResourceData, meta interfa
 	labelsProp, err := expandNetworkServicesHttpRouteLabels(d.Get("labels"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("labels"); !isEmptyValue(reflect.ValueOf(labelsProp)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
+	} else if v, ok := d.GetOkExists("labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(labelsProp)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
 		obj["labels"] = labelsProp
 	}
 	descriptionProp, err := expandNetworkServicesHttpRouteDescription(d.Get("description"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("description"); !isEmptyValue(reflect.ValueOf(descriptionProp)) && (ok || !reflect.DeepEqual(v, descriptionProp)) {
+	} else if v, ok := d.GetOkExists("description"); !tpgresource.IsEmptyValue(reflect.ValueOf(descriptionProp)) && (ok || !reflect.DeepEqual(v, descriptionProp)) {
 		obj["description"] = descriptionProp
 	}
 	hostnamesProp, err := expandNetworkServicesHttpRouteHostnames(d.Get("hostnames"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("hostnames"); !isEmptyValue(reflect.ValueOf(hostnamesProp)) && (ok || !reflect.DeepEqual(v, hostnamesProp)) {
+	} else if v, ok := d.GetOkExists("hostnames"); !tpgresource.IsEmptyValue(reflect.ValueOf(hostnamesProp)) && (ok || !reflect.DeepEqual(v, hostnamesProp)) {
 		obj["hostnames"] = hostnamesProp
 	}
 	meshesProp, err := expandNetworkServicesHttpRouteMeshes(d.Get("meshes"), d, config)
@@ -642,7 +643,7 @@ func resourceNetworkServicesHttpRouteCreate(d *schema.ResourceData, meta interfa
 		obj["rules"] = rulesProp
 	}
 
-	url, err := ReplaceVars(d, config, "{{NetworkServicesBasePath}}projects/{{project}}/locations/global/httpRoutes?httpRouteId={{name}}")
+	url, err := tpgresource.ReplaceVars(d, config, "{{NetworkServicesBasePath}}projects/{{project}}/locations/global/httpRoutes?httpRouteId={{name}}")
 	if err != nil {
 		return err
 	}
@@ -650,14 +651,14 @@ func resourceNetworkServicesHttpRouteCreate(d *schema.ResourceData, meta interfa
 	log.Printf("[DEBUG] Creating new HttpRoute: %#v", obj)
 	billingProject := ""
 
-	project, err := getProject(d, config)
+	project, err := tpgresource.GetProject(d, config)
 	if err != nil {
 		return fmt.Errorf("Error fetching project for HttpRoute: %s", err)
 	}
 	billingProject = project
 
 	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
+	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
@@ -667,7 +668,7 @@ func resourceNetworkServicesHttpRouteCreate(d *schema.ResourceData, meta interfa
 	}
 
 	// Store the ID now
-	id, err := ReplaceVars(d, config, "projects/{{project}}/locations/global/httpRoutes/{{name}}")
+	id, err := tpgresource.ReplaceVars(d, config, "projects/{{project}}/locations/global/httpRoutes/{{name}}")
 	if err != nil {
 		return fmt.Errorf("Error constructing id: %s", err)
 	}
@@ -690,26 +691,26 @@ func resourceNetworkServicesHttpRouteCreate(d *schema.ResourceData, meta interfa
 
 func resourceNetworkServicesHttpRouteRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*transport_tpg.Config)
-	userAgent, err := generateUserAgentString(d, config.UserAgent)
+	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
 	}
 
-	url, err := ReplaceVars(d, config, "{{NetworkServicesBasePath}}projects/{{project}}/locations/global/httpRoutes/{{name}}")
+	url, err := tpgresource.ReplaceVars(d, config, "{{NetworkServicesBasePath}}projects/{{project}}/locations/global/httpRoutes/{{name}}")
 	if err != nil {
 		return err
 	}
 
 	billingProject := ""
 
-	project, err := getProject(d, config)
+	project, err := tpgresource.GetProject(d, config)
 	if err != nil {
 		return fmt.Errorf("Error fetching project for HttpRoute: %s", err)
 	}
 	billingProject = project
 
 	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
+	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
@@ -755,14 +756,14 @@ func resourceNetworkServicesHttpRouteRead(d *schema.ResourceData, meta interface
 
 func resourceNetworkServicesHttpRouteUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*transport_tpg.Config)
-	userAgent, err := generateUserAgentString(d, config.UserAgent)
+	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
 	}
 
 	billingProject := ""
 
-	project, err := getProject(d, config)
+	project, err := tpgresource.GetProject(d, config)
 	if err != nil {
 		return fmt.Errorf("Error fetching project for HttpRoute: %s", err)
 	}
@@ -772,19 +773,19 @@ func resourceNetworkServicesHttpRouteUpdate(d *schema.ResourceData, meta interfa
 	labelsProp, err := expandNetworkServicesHttpRouteLabels(d.Get("labels"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("labels"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
+	} else if v, ok := d.GetOkExists("labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
 		obj["labels"] = labelsProp
 	}
 	descriptionProp, err := expandNetworkServicesHttpRouteDescription(d.Get("description"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("description"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, descriptionProp)) {
+	} else if v, ok := d.GetOkExists("description"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, descriptionProp)) {
 		obj["description"] = descriptionProp
 	}
 	hostnamesProp, err := expandNetworkServicesHttpRouteHostnames(d.Get("hostnames"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("hostnames"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, hostnamesProp)) {
+	} else if v, ok := d.GetOkExists("hostnames"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, hostnamesProp)) {
 		obj["hostnames"] = hostnamesProp
 	}
 	meshesProp, err := expandNetworkServicesHttpRouteMeshes(d.Get("meshes"), d, config)
@@ -806,7 +807,7 @@ func resourceNetworkServicesHttpRouteUpdate(d *schema.ResourceData, meta interfa
 		obj["rules"] = rulesProp
 	}
 
-	url, err := ReplaceVars(d, config, "{{NetworkServicesBasePath}}projects/{{project}}/locations/global/httpRoutes/{{name}}")
+	url, err := tpgresource.ReplaceVars(d, config, "{{NetworkServicesBasePath}}projects/{{project}}/locations/global/httpRoutes/{{name}}")
 	if err != nil {
 		return err
 	}
@@ -845,7 +846,7 @@ func resourceNetworkServicesHttpRouteUpdate(d *schema.ResourceData, meta interfa
 	}
 
 	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
+	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
@@ -870,20 +871,20 @@ func resourceNetworkServicesHttpRouteUpdate(d *schema.ResourceData, meta interfa
 
 func resourceNetworkServicesHttpRouteDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*transport_tpg.Config)
-	userAgent, err := generateUserAgentString(d, config.UserAgent)
+	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
 	}
 
 	billingProject := ""
 
-	project, err := getProject(d, config)
+	project, err := tpgresource.GetProject(d, config)
 	if err != nil {
 		return fmt.Errorf("Error fetching project for HttpRoute: %s", err)
 	}
 	billingProject = project
 
-	url, err := ReplaceVars(d, config, "{{NetworkServicesBasePath}}projects/{{project}}/locations/global/httpRoutes/{{name}}")
+	url, err := tpgresource.ReplaceVars(d, config, "{{NetworkServicesBasePath}}projects/{{project}}/locations/global/httpRoutes/{{name}}")
 	if err != nil {
 		return err
 	}
@@ -892,7 +893,7 @@ func resourceNetworkServicesHttpRouteDelete(d *schema.ResourceData, meta interfa
 	log.Printf("[DEBUG] Deleting HttpRoute %q", d.Id())
 
 	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
+	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
@@ -924,7 +925,7 @@ func resourceNetworkServicesHttpRouteImport(d *schema.ResourceData, meta interfa
 	}
 
 	// Replace import id for the resource id
-	id, err := ReplaceVars(d, config, "projects/{{project}}/locations/global/httpRoutes/{{name}}")
+	id, err := tpgresource.ReplaceVars(d, config, "projects/{{project}}/locations/global/httpRoutes/{{name}}")
 	if err != nil {
 		return nil, fmt.Errorf("Error constructing id: %s", err)
 	}
@@ -1634,7 +1635,7 @@ func flattenNetworkServicesHttpRouteRulesActionCorsPolicyDisabled(v interface{},
 	return v
 }
 
-func expandNetworkServicesHttpRouteLabels(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
+func expandNetworkServicesHttpRouteLabels(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
 	if v == nil {
 		return map[string]string{}, nil
 	}
@@ -1645,23 +1646,23 @@ func expandNetworkServicesHttpRouteLabels(v interface{}, d TerraformResourceData
 	return m, nil
 }
 
-func expandNetworkServicesHttpRouteDescription(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteDescription(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteHostnames(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteHostnames(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteMeshes(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteMeshes(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteGateways(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteGateways(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRules(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRules(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
 	for _, raw := range l {
@@ -1690,7 +1691,7 @@ func expandNetworkServicesHttpRouteRules(v interface{}, d TerraformResourceData,
 	return req, nil
 }
 
-func expandNetworkServicesHttpRouteRulesMatches(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesMatches(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
 	for _, raw := range l {
@@ -1710,35 +1711,35 @@ func expandNetworkServicesHttpRouteRulesMatches(v interface{}, d TerraformResour
 		transformedFullPathMatch, err := expandNetworkServicesHttpRouteRulesMatchesFullPathMatch(original["full_path_match"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedFullPathMatch); val.IsValid() && !isEmptyValue(val) {
+		} else if val := reflect.ValueOf(transformedFullPathMatch); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 			transformed["fullPathMatch"] = transformedFullPathMatch
 		}
 
 		transformedPrefixMatch, err := expandNetworkServicesHttpRouteRulesMatchesPrefixMatch(original["prefix_match"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedPrefixMatch); val.IsValid() && !isEmptyValue(val) {
+		} else if val := reflect.ValueOf(transformedPrefixMatch); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 			transformed["prefixMatch"] = transformedPrefixMatch
 		}
 
 		transformedRegexMatch, err := expandNetworkServicesHttpRouteRulesMatchesRegexMatch(original["regex_match"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedRegexMatch); val.IsValid() && !isEmptyValue(val) {
+		} else if val := reflect.ValueOf(transformedRegexMatch); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 			transformed["regexMatch"] = transformedRegexMatch
 		}
 
 		transformedQueryParameters, err := expandNetworkServicesHttpRouteRulesMatchesQueryParameters(original["query_parameters"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedQueryParameters); val.IsValid() && !isEmptyValue(val) {
+		} else if val := reflect.ValueOf(transformedQueryParameters); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 			transformed["queryParameters"] = transformedQueryParameters
 		}
 
 		transformedHeaders, err := expandNetworkServicesHttpRouteRulesMatchesHeaders(original["headers"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedHeaders); val.IsValid() && !isEmptyValue(val) {
+		} else if val := reflect.ValueOf(transformedHeaders); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 			transformed["headers"] = transformedHeaders
 		}
 
@@ -1747,23 +1748,23 @@ func expandNetworkServicesHttpRouteRulesMatches(v interface{}, d TerraformResour
 	return req, nil
 }
 
-func expandNetworkServicesHttpRouteRulesMatchesIgnoreCase(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesMatchesIgnoreCase(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesMatchesFullPathMatch(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesMatchesFullPathMatch(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesMatchesPrefixMatch(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesMatchesPrefixMatch(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesMatchesRegexMatch(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesMatchesRegexMatch(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesMatchesQueryParameters(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesMatchesQueryParameters(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
 	for _, raw := range l {
@@ -1776,28 +1777,28 @@ func expandNetworkServicesHttpRouteRulesMatchesQueryParameters(v interface{}, d 
 		transformedQueryParameter, err := expandNetworkServicesHttpRouteRulesMatchesQueryParametersQueryParameter(original["query_parameter"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedQueryParameter); val.IsValid() && !isEmptyValue(val) {
+		} else if val := reflect.ValueOf(transformedQueryParameter); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 			transformed["queryParameter"] = transformedQueryParameter
 		}
 
 		transformedExactMatch, err := expandNetworkServicesHttpRouteRulesMatchesQueryParametersExactMatch(original["exact_match"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedExactMatch); val.IsValid() && !isEmptyValue(val) {
+		} else if val := reflect.ValueOf(transformedExactMatch); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 			transformed["exactMatch"] = transformedExactMatch
 		}
 
 		transformedRegexMatch, err := expandNetworkServicesHttpRouteRulesMatchesQueryParametersRegexMatch(original["regex_match"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedRegexMatch); val.IsValid() && !isEmptyValue(val) {
+		} else if val := reflect.ValueOf(transformedRegexMatch); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 			transformed["regexMatch"] = transformedRegexMatch
 		}
 
 		transformedPresentMatch, err := expandNetworkServicesHttpRouteRulesMatchesQueryParametersPresentMatch(original["present_match"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedPresentMatch); val.IsValid() && !isEmptyValue(val) {
+		} else if val := reflect.ValueOf(transformedPresentMatch); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 			transformed["presentMatch"] = transformedPresentMatch
 		}
 
@@ -1806,23 +1807,23 @@ func expandNetworkServicesHttpRouteRulesMatchesQueryParameters(v interface{}, d 
 	return req, nil
 }
 
-func expandNetworkServicesHttpRouteRulesMatchesQueryParametersQueryParameter(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesMatchesQueryParametersQueryParameter(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesMatchesQueryParametersExactMatch(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesMatchesQueryParametersExactMatch(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesMatchesQueryParametersRegexMatch(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesMatchesQueryParametersRegexMatch(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesMatchesQueryParametersPresentMatch(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesMatchesQueryParametersPresentMatch(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesMatchesHeaders(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesMatchesHeaders(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
 	for _, raw := range l {
@@ -1835,7 +1836,7 @@ func expandNetworkServicesHttpRouteRulesMatchesHeaders(v interface{}, d Terrafor
 		transformedHeader, err := expandNetworkServicesHttpRouteRulesMatchesHeadersHeader(original["header"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedHeader); val.IsValid() && !isEmptyValue(val) {
+		} else if val := reflect.ValueOf(transformedHeader); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 			transformed["header"] = transformedHeader
 		}
 
@@ -1849,42 +1850,42 @@ func expandNetworkServicesHttpRouteRulesMatchesHeaders(v interface{}, d Terrafor
 		transformedExactMatch, err := expandNetworkServicesHttpRouteRulesMatchesHeadersExactMatch(original["exact_match"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedExactMatch); val.IsValid() && !isEmptyValue(val) {
+		} else if val := reflect.ValueOf(transformedExactMatch); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 			transformed["exactMatch"] = transformedExactMatch
 		}
 
 		transformedRegexMatch, err := expandNetworkServicesHttpRouteRulesMatchesHeadersRegexMatch(original["regex_match"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedRegexMatch); val.IsValid() && !isEmptyValue(val) {
+		} else if val := reflect.ValueOf(transformedRegexMatch); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 			transformed["regexMatch"] = transformedRegexMatch
 		}
 
 		transformedPrefixMatch, err := expandNetworkServicesHttpRouteRulesMatchesHeadersPrefixMatch(original["prefix_match"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedPrefixMatch); val.IsValid() && !isEmptyValue(val) {
+		} else if val := reflect.ValueOf(transformedPrefixMatch); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 			transformed["prefixMatch"] = transformedPrefixMatch
 		}
 
 		transformedPresentMatch, err := expandNetworkServicesHttpRouteRulesMatchesHeadersPresentMatch(original["present_match"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedPresentMatch); val.IsValid() && !isEmptyValue(val) {
+		} else if val := reflect.ValueOf(transformedPresentMatch); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 			transformed["presentMatch"] = transformedPresentMatch
 		}
 
 		transformedSuffixMatch, err := expandNetworkServicesHttpRouteRulesMatchesHeadersSuffixMatch(original["suffix_match"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedSuffixMatch); val.IsValid() && !isEmptyValue(val) {
+		} else if val := reflect.ValueOf(transformedSuffixMatch); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 			transformed["suffixMatch"] = transformedSuffixMatch
 		}
 
 		transformedRangeMatch, err := expandNetworkServicesHttpRouteRulesMatchesHeadersRangeMatch(original["range_match"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedRangeMatch); val.IsValid() && !isEmptyValue(val) {
+		} else if val := reflect.ValueOf(transformedRangeMatch); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 			transformed["rangeMatch"] = transformedRangeMatch
 		}
 
@@ -1893,35 +1894,35 @@ func expandNetworkServicesHttpRouteRulesMatchesHeaders(v interface{}, d Terrafor
 	return req, nil
 }
 
-func expandNetworkServicesHttpRouteRulesMatchesHeadersHeader(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesMatchesHeadersHeader(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesMatchesHeadersInvertMatch(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesMatchesHeadersInvertMatch(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesMatchesHeadersExactMatch(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesMatchesHeadersExactMatch(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesMatchesHeadersRegexMatch(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesMatchesHeadersRegexMatch(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesMatchesHeadersPrefixMatch(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesMatchesHeadersPrefixMatch(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesMatchesHeadersPresentMatch(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesMatchesHeadersPresentMatch(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesMatchesHeadersSuffixMatch(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesMatchesHeadersSuffixMatch(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesMatchesHeadersRangeMatch(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesMatchesHeadersRangeMatch(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -1933,29 +1934,29 @@ func expandNetworkServicesHttpRouteRulesMatchesHeadersRangeMatch(v interface{}, 
 	transformedStart, err := expandNetworkServicesHttpRouteRulesMatchesHeadersRangeMatchStart(original["start"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedStart); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedStart); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["start"] = transformedStart
 	}
 
 	transformedEnd, err := expandNetworkServicesHttpRouteRulesMatchesHeadersRangeMatchEnd(original["end"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedEnd); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedEnd); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["end"] = transformedEnd
 	}
 
 	return transformed, nil
 }
 
-func expandNetworkServicesHttpRouteRulesMatchesHeadersRangeMatchStart(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesMatchesHeadersRangeMatchStart(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesMatchesHeadersRangeMatchEnd(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesMatchesHeadersRangeMatchEnd(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesAction(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesAction(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -1967,77 +1968,77 @@ func expandNetworkServicesHttpRouteRulesAction(v interface{}, d TerraformResourc
 	transformedDestinations, err := expandNetworkServicesHttpRouteRulesActionDestinations(original["destinations"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedDestinations); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedDestinations); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["destinations"] = transformedDestinations
 	}
 
 	transformedRedirect, err := expandNetworkServicesHttpRouteRulesActionRedirect(original["redirect"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedRedirect); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedRedirect); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["redirect"] = transformedRedirect
 	}
 
 	transformedFaultInjectionPolicy, err := expandNetworkServicesHttpRouteRulesActionFaultInjectionPolicy(original["fault_injection_policy"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedFaultInjectionPolicy); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedFaultInjectionPolicy); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["faultInjectionPolicy"] = transformedFaultInjectionPolicy
 	}
 
 	transformedRequestHeaderModifier, err := expandNetworkServicesHttpRouteRulesActionRequestHeaderModifier(original["request_header_modifier"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedRequestHeaderModifier); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedRequestHeaderModifier); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["requestHeaderModifier"] = transformedRequestHeaderModifier
 	}
 
 	transformedResponseHeaderModifier, err := expandNetworkServicesHttpRouteRulesActionResponseHeaderModifier(original["response_header_modifier"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedResponseHeaderModifier); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedResponseHeaderModifier); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["responseHeaderModifier"] = transformedResponseHeaderModifier
 	}
 
 	transformedUrlRewrite, err := expandNetworkServicesHttpRouteRulesActionUrlRewrite(original["url_rewrite"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedUrlRewrite); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedUrlRewrite); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["urlRewrite"] = transformedUrlRewrite
 	}
 
 	transformedTimeout, err := expandNetworkServicesHttpRouteRulesActionTimeout(original["timeout"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedTimeout); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedTimeout); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["timeout"] = transformedTimeout
 	}
 
 	transformedRetryPolicy, err := expandNetworkServicesHttpRouteRulesActionRetryPolicy(original["retry_policy"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedRetryPolicy); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedRetryPolicy); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["retryPolicy"] = transformedRetryPolicy
 	}
 
 	transformedRequestMirrorPolicy, err := expandNetworkServicesHttpRouteRulesActionRequestMirrorPolicy(original["request_mirror_policy"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedRequestMirrorPolicy); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedRequestMirrorPolicy); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["requestMirrorPolicy"] = transformedRequestMirrorPolicy
 	}
 
 	transformedCorsPolicy, err := expandNetworkServicesHttpRouteRulesActionCorsPolicy(original["cors_policy"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedCorsPolicy); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedCorsPolicy); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["corsPolicy"] = transformedCorsPolicy
 	}
 
 	return transformed, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionDestinations(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesActionDestinations(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
 	for _, raw := range l {
@@ -2050,14 +2051,14 @@ func expandNetworkServicesHttpRouteRulesActionDestinations(v interface{}, d Terr
 		transformedServiceName, err := expandNetworkServicesHttpRouteRulesActionDestinationsServiceName(original["service_name"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedServiceName); val.IsValid() && !isEmptyValue(val) {
+		} else if val := reflect.ValueOf(transformedServiceName); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 			transformed["serviceName"] = transformedServiceName
 		}
 
 		transformedWeight, err := expandNetworkServicesHttpRouteRulesActionDestinationsWeight(original["weight"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedWeight); val.IsValid() && !isEmptyValue(val) {
+		} else if val := reflect.ValueOf(transformedWeight); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 			transformed["weight"] = transformedWeight
 		}
 
@@ -2066,15 +2067,15 @@ func expandNetworkServicesHttpRouteRulesActionDestinations(v interface{}, d Terr
 	return req, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionDestinationsServiceName(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesActionDestinationsServiceName(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionDestinationsWeight(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesActionDestinationsWeight(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionRedirect(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesActionRedirect(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -2086,84 +2087,84 @@ func expandNetworkServicesHttpRouteRulesActionRedirect(v interface{}, d Terrafor
 	transformedHostRedirect, err := expandNetworkServicesHttpRouteRulesActionRedirectHostRedirect(original["host_redirect"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedHostRedirect); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedHostRedirect); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["hostRedirect"] = transformedHostRedirect
 	}
 
 	transformedPathRedirect, err := expandNetworkServicesHttpRouteRulesActionRedirectPathRedirect(original["path_redirect"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedPathRedirect); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedPathRedirect); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["pathRedirect"] = transformedPathRedirect
 	}
 
 	transformedPrefixRewrite, err := expandNetworkServicesHttpRouteRulesActionRedirectPrefixRewrite(original["prefix_rewrite"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedPrefixRewrite); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedPrefixRewrite); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["prefixRewrite"] = transformedPrefixRewrite
 	}
 
 	transformedResponseCode, err := expandNetworkServicesHttpRouteRulesActionRedirectResponseCode(original["response_code"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedResponseCode); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedResponseCode); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["responseCode"] = transformedResponseCode
 	}
 
 	transformedHttpsRedirect, err := expandNetworkServicesHttpRouteRulesActionRedirectHttpsRedirect(original["https_redirect"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedHttpsRedirect); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedHttpsRedirect); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["httpsRedirect"] = transformedHttpsRedirect
 	}
 
 	transformedStripQuery, err := expandNetworkServicesHttpRouteRulesActionRedirectStripQuery(original["strip_query"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedStripQuery); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedStripQuery); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["stripQuery"] = transformedStripQuery
 	}
 
 	transformedPortRedirect, err := expandNetworkServicesHttpRouteRulesActionRedirectPortRedirect(original["port_redirect"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedPortRedirect); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedPortRedirect); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["portRedirect"] = transformedPortRedirect
 	}
 
 	return transformed, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionRedirectHostRedirect(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesActionRedirectHostRedirect(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionRedirectPathRedirect(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesActionRedirectPathRedirect(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionRedirectPrefixRewrite(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesActionRedirectPrefixRewrite(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionRedirectResponseCode(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesActionRedirectResponseCode(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionRedirectHttpsRedirect(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesActionRedirectHttpsRedirect(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionRedirectStripQuery(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesActionRedirectStripQuery(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionRedirectPortRedirect(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesActionRedirectPortRedirect(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionFaultInjectionPolicy(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesActionFaultInjectionPolicy(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -2175,21 +2176,21 @@ func expandNetworkServicesHttpRouteRulesActionFaultInjectionPolicy(v interface{}
 	transformedDelay, err := expandNetworkServicesHttpRouteRulesActionFaultInjectionPolicyDelay(original["delay"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedDelay); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedDelay); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["delay"] = transformedDelay
 	}
 
 	transformedAbort, err := expandNetworkServicesHttpRouteRulesActionFaultInjectionPolicyAbort(original["abort"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedAbort); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedAbort); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["abort"] = transformedAbort
 	}
 
 	return transformed, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionFaultInjectionPolicyDelay(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesActionFaultInjectionPolicyDelay(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -2201,7 +2202,7 @@ func expandNetworkServicesHttpRouteRulesActionFaultInjectionPolicyDelay(v interf
 	transformedFixedDelay, err := expandNetworkServicesHttpRouteRulesActionFaultInjectionPolicyDelayFixedDelay(original["fixed_delay"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedFixedDelay); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedFixedDelay); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["fixedDelay"] = transformedFixedDelay
 	}
 
@@ -2215,15 +2216,15 @@ func expandNetworkServicesHttpRouteRulesActionFaultInjectionPolicyDelay(v interf
 	return transformed, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionFaultInjectionPolicyDelayFixedDelay(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesActionFaultInjectionPolicyDelayFixedDelay(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionFaultInjectionPolicyDelayPercentage(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesActionFaultInjectionPolicyDelayPercentage(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionFaultInjectionPolicyAbort(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesActionFaultInjectionPolicyAbort(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -2235,7 +2236,7 @@ func expandNetworkServicesHttpRouteRulesActionFaultInjectionPolicyAbort(v interf
 	transformedHttpStatus, err := expandNetworkServicesHttpRouteRulesActionFaultInjectionPolicyAbortHttpStatus(original["http_status"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedHttpStatus); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedHttpStatus); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["httpStatus"] = transformedHttpStatus
 	}
 
@@ -2249,15 +2250,15 @@ func expandNetworkServicesHttpRouteRulesActionFaultInjectionPolicyAbort(v interf
 	return transformed, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionFaultInjectionPolicyAbortHttpStatus(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesActionFaultInjectionPolicyAbortHttpStatus(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionFaultInjectionPolicyAbortPercentage(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesActionFaultInjectionPolicyAbortPercentage(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionRequestHeaderModifier(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesActionRequestHeaderModifier(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -2269,28 +2270,28 @@ func expandNetworkServicesHttpRouteRulesActionRequestHeaderModifier(v interface{
 	transformedSet, err := expandNetworkServicesHttpRouteRulesActionRequestHeaderModifierSet(original["set"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedSet); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedSet); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["set"] = transformedSet
 	}
 
 	transformedAdd, err := expandNetworkServicesHttpRouteRulesActionRequestHeaderModifierAdd(original["add"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedAdd); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedAdd); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["add"] = transformedAdd
 	}
 
 	transformedRemove, err := expandNetworkServicesHttpRouteRulesActionRequestHeaderModifierRemove(original["remove"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedRemove); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedRemove); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["remove"] = transformedRemove
 	}
 
 	return transformed, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionRequestHeaderModifierSet(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
+func expandNetworkServicesHttpRouteRulesActionRequestHeaderModifierSet(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
 	if v == nil {
 		return map[string]string{}, nil
 	}
@@ -2301,7 +2302,7 @@ func expandNetworkServicesHttpRouteRulesActionRequestHeaderModifierSet(v interfa
 	return m, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionRequestHeaderModifierAdd(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
+func expandNetworkServicesHttpRouteRulesActionRequestHeaderModifierAdd(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
 	if v == nil {
 		return map[string]string{}, nil
 	}
@@ -2312,11 +2313,11 @@ func expandNetworkServicesHttpRouteRulesActionRequestHeaderModifierAdd(v interfa
 	return m, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionRequestHeaderModifierRemove(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesActionRequestHeaderModifierRemove(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionResponseHeaderModifier(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesActionResponseHeaderModifier(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -2328,28 +2329,28 @@ func expandNetworkServicesHttpRouteRulesActionResponseHeaderModifier(v interface
 	transformedSet, err := expandNetworkServicesHttpRouteRulesActionResponseHeaderModifierSet(original["set"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedSet); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedSet); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["set"] = transformedSet
 	}
 
 	transformedAdd, err := expandNetworkServicesHttpRouteRulesActionResponseHeaderModifierAdd(original["add"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedAdd); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedAdd); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["add"] = transformedAdd
 	}
 
 	transformedRemove, err := expandNetworkServicesHttpRouteRulesActionResponseHeaderModifierRemove(original["remove"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedRemove); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedRemove); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["remove"] = transformedRemove
 	}
 
 	return transformed, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionResponseHeaderModifierSet(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
+func expandNetworkServicesHttpRouteRulesActionResponseHeaderModifierSet(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
 	if v == nil {
 		return map[string]string{}, nil
 	}
@@ -2360,7 +2361,7 @@ func expandNetworkServicesHttpRouteRulesActionResponseHeaderModifierSet(v interf
 	return m, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionResponseHeaderModifierAdd(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
+func expandNetworkServicesHttpRouteRulesActionResponseHeaderModifierAdd(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
 	if v == nil {
 		return map[string]string{}, nil
 	}
@@ -2371,11 +2372,11 @@ func expandNetworkServicesHttpRouteRulesActionResponseHeaderModifierAdd(v interf
 	return m, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionResponseHeaderModifierRemove(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesActionResponseHeaderModifierRemove(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionUrlRewrite(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesActionUrlRewrite(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -2387,33 +2388,33 @@ func expandNetworkServicesHttpRouteRulesActionUrlRewrite(v interface{}, d Terraf
 	transformedPathPrefixRewrite, err := expandNetworkServicesHttpRouteRulesActionUrlRewritePathPrefixRewrite(original["path_prefix_rewrite"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedPathPrefixRewrite); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedPathPrefixRewrite); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["pathPrefixRewrite"] = transformedPathPrefixRewrite
 	}
 
 	transformedHostRewrite, err := expandNetworkServicesHttpRouteRulesActionUrlRewriteHostRewrite(original["host_rewrite"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedHostRewrite); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedHostRewrite); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["hostRewrite"] = transformedHostRewrite
 	}
 
 	return transformed, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionUrlRewritePathPrefixRewrite(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesActionUrlRewritePathPrefixRewrite(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionUrlRewriteHostRewrite(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesActionUrlRewriteHostRewrite(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionTimeout(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesActionTimeout(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionRetryPolicy(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesActionRetryPolicy(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -2425,40 +2426,40 @@ func expandNetworkServicesHttpRouteRulesActionRetryPolicy(v interface{}, d Terra
 	transformedRetryConditions, err := expandNetworkServicesHttpRouteRulesActionRetryPolicyRetryConditions(original["retry_conditions"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedRetryConditions); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedRetryConditions); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["retryConditions"] = transformedRetryConditions
 	}
 
 	transformedNumRetries, err := expandNetworkServicesHttpRouteRulesActionRetryPolicyNumRetries(original["num_retries"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedNumRetries); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedNumRetries); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["numRetries"] = transformedNumRetries
 	}
 
 	transformedPerTryTimeout, err := expandNetworkServicesHttpRouteRulesActionRetryPolicyPerTryTimeout(original["per_try_timeout"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedPerTryTimeout); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedPerTryTimeout); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["perTryTimeout"] = transformedPerTryTimeout
 	}
 
 	return transformed, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionRetryPolicyRetryConditions(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesActionRetryPolicyRetryConditions(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionRetryPolicyNumRetries(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesActionRetryPolicyNumRetries(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionRetryPolicyPerTryTimeout(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesActionRetryPolicyPerTryTimeout(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionRequestMirrorPolicy(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesActionRequestMirrorPolicy(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -2470,14 +2471,14 @@ func expandNetworkServicesHttpRouteRulesActionRequestMirrorPolicy(v interface{},
 	transformedDestination, err := expandNetworkServicesHttpRouteRulesActionRequestMirrorPolicyDestination(original["destination"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedDestination); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedDestination); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["destination"] = transformedDestination
 	}
 
 	return transformed, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionRequestMirrorPolicyDestination(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesActionRequestMirrorPolicyDestination(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -2489,29 +2490,29 @@ func expandNetworkServicesHttpRouteRulesActionRequestMirrorPolicyDestination(v i
 	transformedServiceName, err := expandNetworkServicesHttpRouteRulesActionRequestMirrorPolicyDestinationServiceName(original["service_name"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedServiceName); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedServiceName); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["serviceName"] = transformedServiceName
 	}
 
 	transformedWeight, err := expandNetworkServicesHttpRouteRulesActionRequestMirrorPolicyDestinationWeight(original["weight"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedWeight); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedWeight); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["weight"] = transformedWeight
 	}
 
 	return transformed, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionRequestMirrorPolicyDestinationServiceName(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesActionRequestMirrorPolicyDestinationServiceName(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionRequestMirrorPolicyDestinationWeight(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesActionRequestMirrorPolicyDestinationWeight(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionCorsPolicy(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesActionCorsPolicy(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -2523,90 +2524,90 @@ func expandNetworkServicesHttpRouteRulesActionCorsPolicy(v interface{}, d Terraf
 	transformedAllowOrigins, err := expandNetworkServicesHttpRouteRulesActionCorsPolicyAllowOrigins(original["allow_origins"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedAllowOrigins); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedAllowOrigins); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["allowOrigins"] = transformedAllowOrigins
 	}
 
 	transformedAllowOriginRegexes, err := expandNetworkServicesHttpRouteRulesActionCorsPolicyAllowOriginRegexes(original["allow_origin_regexes"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedAllowOriginRegexes); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedAllowOriginRegexes); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["allowOriginRegexes"] = transformedAllowOriginRegexes
 	}
 
 	transformedAllowMethods, err := expandNetworkServicesHttpRouteRulesActionCorsPolicyAllowMethods(original["allow_methods"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedAllowMethods); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedAllowMethods); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["allowMethods"] = transformedAllowMethods
 	}
 
 	transformedAllowHeaders, err := expandNetworkServicesHttpRouteRulesActionCorsPolicyAllowHeaders(original["allow_headers"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedAllowHeaders); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedAllowHeaders); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["allowHeaders"] = transformedAllowHeaders
 	}
 
 	transformedExposeHeaders, err := expandNetworkServicesHttpRouteRulesActionCorsPolicyExposeHeaders(original["expose_headers"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedExposeHeaders); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedExposeHeaders); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["exposeHeaders"] = transformedExposeHeaders
 	}
 
 	transformedMaxAge, err := expandNetworkServicesHttpRouteRulesActionCorsPolicyMaxAge(original["max_age"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedMaxAge); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedMaxAge); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["maxAge"] = transformedMaxAge
 	}
 
 	transformedAllowCredentials, err := expandNetworkServicesHttpRouteRulesActionCorsPolicyAllowCredentials(original["allow_credentials"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedAllowCredentials); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedAllowCredentials); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["allowCredentials"] = transformedAllowCredentials
 	}
 
 	transformedDisabled, err := expandNetworkServicesHttpRouteRulesActionCorsPolicyDisabled(original["disabled"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedDisabled); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedDisabled); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["disabled"] = transformedDisabled
 	}
 
 	return transformed, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionCorsPolicyAllowOrigins(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesActionCorsPolicyAllowOrigins(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionCorsPolicyAllowOriginRegexes(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesActionCorsPolicyAllowOriginRegexes(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionCorsPolicyAllowMethods(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesActionCorsPolicyAllowMethods(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionCorsPolicyAllowHeaders(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesActionCorsPolicyAllowHeaders(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionCorsPolicyExposeHeaders(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesActionCorsPolicyExposeHeaders(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionCorsPolicyMaxAge(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesActionCorsPolicyMaxAge(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionCorsPolicyAllowCredentials(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesActionCorsPolicyAllowCredentials(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesHttpRouteRulesActionCorsPolicyDisabled(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesHttpRouteRulesActionCorsPolicyDisabled(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }

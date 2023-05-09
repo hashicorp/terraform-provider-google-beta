@@ -43,11 +43,11 @@ var RuntimeConfigConfigIamSchema = map[string]*schema.Schema{
 type RuntimeConfigConfigIamUpdater struct {
 	project string
 	config  string
-	d       TerraformResourceData
+	d       tpgresource.TerraformResourceData
 	Config  *transport_tpg.Config
 }
 
-func RuntimeConfigConfigIamUpdaterProducer(d TerraformResourceData, config *transport_tpg.Config) (ResourceIamUpdater, error) {
+func RuntimeConfigConfigIamUpdaterProducer(d tpgresource.TerraformResourceData, config *transport_tpg.Config) (ResourceIamUpdater, error) {
 	values := make(map[string]string)
 
 	project, _ := getProject(d, config)
@@ -124,13 +124,13 @@ func (u *RuntimeConfigConfigIamUpdater) GetResourceIamPolicy() (*cloudresourcema
 		return nil, err
 	}
 
-	project, err := getProject(u.d, u.Config)
+	project, err := tpgresource.GetProject(u.d, u.Config)
 	if err != nil {
 		return nil, err
 	}
 	var obj map[string]interface{}
 
-	userAgent, err := generateUserAgentString(u.d, u.Config.UserAgent)
+	userAgent, err := tpgresource.GenerateUserAgentString(u.d, u.Config.UserAgent)
 	if err != nil {
 		return nil, err
 	}
@@ -162,12 +162,12 @@ func (u *RuntimeConfigConfigIamUpdater) SetResourceIamPolicy(policy *cloudresour
 	if err != nil {
 		return err
 	}
-	project, err := getProject(u.d, u.Config)
+	project, err := tpgresource.GetProject(u.d, u.Config)
 	if err != nil {
 		return err
 	}
 
-	userAgent, err := generateUserAgentString(u.d, u.Config.UserAgent)
+	userAgent, err := tpgresource.GenerateUserAgentString(u.d, u.Config.UserAgent)
 	if err != nil {
 		return err
 	}
@@ -182,7 +182,7 @@ func (u *RuntimeConfigConfigIamUpdater) SetResourceIamPolicy(policy *cloudresour
 
 func (u *RuntimeConfigConfigIamUpdater) qualifyConfigUrl(methodIdentifier string) (string, error) {
 	urlTemplate := fmt.Sprintf("{{RuntimeConfigBasePath}}%s:%s", fmt.Sprintf("projects/%s/configs/%s", u.project, u.config), methodIdentifier)
-	url, err := ReplaceVars(u.d, u.Config, urlTemplate)
+	url, err := tpgresource.ReplaceVars(u.d, u.Config, urlTemplate)
 	if err != nil {
 		return "", err
 	}

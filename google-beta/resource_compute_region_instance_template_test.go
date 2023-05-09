@@ -210,7 +210,7 @@ func TestComputeRegionInstanceTemplate_scratchDiskSizeCustomizeDiff(t *testing.T
 	}
 
 	for tn, tc := range cases {
-		d := &acctest.ResourceDiffMock{
+		d := &tpgresource.ResourceDiffMock{
 			After: map[string]interface{}{
 				"disk.#":              1,
 				"disk.0.type":         tc.Typee,
@@ -1298,7 +1298,7 @@ func testAccCheckComputeRegionInstanceTemplateDestroyProducer(t *testing.T) func
 			splits := strings.Split(rs.Primary.ID, "/")
 			name := splits[len(splits)-1]
 
-			url, err := acctest.ReplaceVarsForTest(config, rs, "{{ComputeBasePath}}projects/{{project}}/regions/{{region}}/instanceTemplates/"+name)
+			url, err := tpgresource.ReplaceVarsForTest(config, rs, "{{ComputeBasePath}}projects/{{project}}/regions/{{region}}/instanceTemplates/"+name)
 			if err != nil {
 				return err
 			}
@@ -1344,7 +1344,7 @@ func testAccCheckComputeRegionInstanceTemplateExistsInProject(t *testing.T, n, p
 		splits := strings.Split(rs.Primary.ID, "/")
 		templateName := splits[len(splits)-1]
 
-		url, err := acctest.ReplaceVarsForTest(config, rs, "{{ComputeBasePath}}projects/{{project}}/regions/{{region}}/instanceTemplates/"+templateName)
+		url, err := tpgresource.ReplaceVarsForTest(config, rs, "{{ComputeBasePath}}projects/{{project}}/regions/{{region}}/instanceTemplates/"+templateName)
 
 		billingProject := ""
 

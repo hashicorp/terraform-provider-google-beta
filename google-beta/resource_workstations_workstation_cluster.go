@@ -23,6 +23,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
@@ -184,7 +185,7 @@ May be sent on update and delete requests to ensure that the client has an up-to
 
 func resourceWorkstationsWorkstationClusterCreate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*transport_tpg.Config)
-	userAgent, err := generateUserAgentString(d, config.UserAgent)
+	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
 	}
@@ -193,47 +194,47 @@ func resourceWorkstationsWorkstationClusterCreate(d *schema.ResourceData, meta i
 	labelsProp, err := expandWorkstationsWorkstationClusterLabels(d.Get("labels"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("labels"); !isEmptyValue(reflect.ValueOf(labelsProp)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
+	} else if v, ok := d.GetOkExists("labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(labelsProp)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
 		obj["labels"] = labelsProp
 	}
 	networkProp, err := expandWorkstationsWorkstationClusterNetwork(d.Get("network"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("network"); !isEmptyValue(reflect.ValueOf(networkProp)) && (ok || !reflect.DeepEqual(v, networkProp)) {
+	} else if v, ok := d.GetOkExists("network"); !tpgresource.IsEmptyValue(reflect.ValueOf(networkProp)) && (ok || !reflect.DeepEqual(v, networkProp)) {
 		obj["network"] = networkProp
 	}
 	subnetworkProp, err := expandWorkstationsWorkstationClusterSubnetwork(d.Get("subnetwork"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("subnetwork"); !isEmptyValue(reflect.ValueOf(subnetworkProp)) && (ok || !reflect.DeepEqual(v, subnetworkProp)) {
+	} else if v, ok := d.GetOkExists("subnetwork"); !tpgresource.IsEmptyValue(reflect.ValueOf(subnetworkProp)) && (ok || !reflect.DeepEqual(v, subnetworkProp)) {
 		obj["subnetwork"] = subnetworkProp
 	}
 	displayNameProp, err := expandWorkstationsWorkstationClusterDisplayName(d.Get("display_name"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("display_name"); !isEmptyValue(reflect.ValueOf(displayNameProp)) && (ok || !reflect.DeepEqual(v, displayNameProp)) {
+	} else if v, ok := d.GetOkExists("display_name"); !tpgresource.IsEmptyValue(reflect.ValueOf(displayNameProp)) && (ok || !reflect.DeepEqual(v, displayNameProp)) {
 		obj["displayName"] = displayNameProp
 	}
 	annotationsProp, err := expandWorkstationsWorkstationClusterAnnotations(d.Get("annotations"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("annotations"); !isEmptyValue(reflect.ValueOf(annotationsProp)) && (ok || !reflect.DeepEqual(v, annotationsProp)) {
+	} else if v, ok := d.GetOkExists("annotations"); !tpgresource.IsEmptyValue(reflect.ValueOf(annotationsProp)) && (ok || !reflect.DeepEqual(v, annotationsProp)) {
 		obj["annotations"] = annotationsProp
 	}
 	etagProp, err := expandWorkstationsWorkstationClusterEtag(d.Get("etag"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("etag"); !isEmptyValue(reflect.ValueOf(etagProp)) && (ok || !reflect.DeepEqual(v, etagProp)) {
+	} else if v, ok := d.GetOkExists("etag"); !tpgresource.IsEmptyValue(reflect.ValueOf(etagProp)) && (ok || !reflect.DeepEqual(v, etagProp)) {
 		obj["etag"] = etagProp
 	}
 	privateClusterConfigProp, err := expandWorkstationsWorkstationClusterPrivateClusterConfig(d.Get("private_cluster_config"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("private_cluster_config"); !isEmptyValue(reflect.ValueOf(privateClusterConfigProp)) && (ok || !reflect.DeepEqual(v, privateClusterConfigProp)) {
+	} else if v, ok := d.GetOkExists("private_cluster_config"); !tpgresource.IsEmptyValue(reflect.ValueOf(privateClusterConfigProp)) && (ok || !reflect.DeepEqual(v, privateClusterConfigProp)) {
 		obj["privateClusterConfig"] = privateClusterConfigProp
 	}
 
-	url, err := ReplaceVars(d, config, "{{WorkstationsBasePath}}projects/{{project}}/locations/{{location}}/workstationClusters?workstationClusterId={{workstation_cluster_id}}")
+	url, err := tpgresource.ReplaceVars(d, config, "{{WorkstationsBasePath}}projects/{{project}}/locations/{{location}}/workstationClusters?workstationClusterId={{workstation_cluster_id}}")
 	if err != nil {
 		return err
 	}
@@ -241,14 +242,14 @@ func resourceWorkstationsWorkstationClusterCreate(d *schema.ResourceData, meta i
 	log.Printf("[DEBUG] Creating new WorkstationCluster: %#v", obj)
 	billingProject := ""
 
-	project, err := getProject(d, config)
+	project, err := tpgresource.GetProject(d, config)
 	if err != nil {
 		return fmt.Errorf("Error fetching project for WorkstationCluster: %s", err)
 	}
 	billingProject = project
 
 	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
+	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
@@ -258,7 +259,7 @@ func resourceWorkstationsWorkstationClusterCreate(d *schema.ResourceData, meta i
 	}
 
 	// Store the ID now
-	id, err := ReplaceVars(d, config, "projects/{{project}}/locations/{{location}}/workstationClusters/{{workstation_cluster_id}}")
+	id, err := tpgresource.ReplaceVars(d, config, "projects/{{project}}/locations/{{location}}/workstationClusters/{{workstation_cluster_id}}")
 	if err != nil {
 		return fmt.Errorf("Error constructing id: %s", err)
 	}
@@ -281,26 +282,26 @@ func resourceWorkstationsWorkstationClusterCreate(d *schema.ResourceData, meta i
 
 func resourceWorkstationsWorkstationClusterRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*transport_tpg.Config)
-	userAgent, err := generateUserAgentString(d, config.UserAgent)
+	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
 	}
 
-	url, err := ReplaceVars(d, config, "{{WorkstationsBasePath}}projects/{{project}}/locations/{{location}}/workstationClusters/{{workstation_cluster_id}}")
+	url, err := tpgresource.ReplaceVars(d, config, "{{WorkstationsBasePath}}projects/{{project}}/locations/{{location}}/workstationClusters/{{workstation_cluster_id}}")
 	if err != nil {
 		return err
 	}
 
 	billingProject := ""
 
-	project, err := getProject(d, config)
+	project, err := tpgresource.GetProject(d, config)
 	if err != nil {
 		return fmt.Errorf("Error fetching project for WorkstationCluster: %s", err)
 	}
 	billingProject = project
 
 	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
+	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
@@ -355,14 +356,14 @@ func resourceWorkstationsWorkstationClusterRead(d *schema.ResourceData, meta int
 
 func resourceWorkstationsWorkstationClusterUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*transport_tpg.Config)
-	userAgent, err := generateUserAgentString(d, config.UserAgent)
+	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
 	}
 
 	billingProject := ""
 
-	project, err := getProject(d, config)
+	project, err := tpgresource.GetProject(d, config)
 	if err != nil {
 		return fmt.Errorf("Error fetching project for WorkstationCluster: %s", err)
 	}
@@ -372,35 +373,35 @@ func resourceWorkstationsWorkstationClusterUpdate(d *schema.ResourceData, meta i
 	labelsProp, err := expandWorkstationsWorkstationClusterLabels(d.Get("labels"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("labels"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
+	} else if v, ok := d.GetOkExists("labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
 		obj["labels"] = labelsProp
 	}
 	displayNameProp, err := expandWorkstationsWorkstationClusterDisplayName(d.Get("display_name"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("display_name"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, displayNameProp)) {
+	} else if v, ok := d.GetOkExists("display_name"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, displayNameProp)) {
 		obj["displayName"] = displayNameProp
 	}
 	annotationsProp, err := expandWorkstationsWorkstationClusterAnnotations(d.Get("annotations"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("annotations"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, annotationsProp)) {
+	} else if v, ok := d.GetOkExists("annotations"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, annotationsProp)) {
 		obj["annotations"] = annotationsProp
 	}
 	etagProp, err := expandWorkstationsWorkstationClusterEtag(d.Get("etag"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("etag"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, etagProp)) {
+	} else if v, ok := d.GetOkExists("etag"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, etagProp)) {
 		obj["etag"] = etagProp
 	}
 	privateClusterConfigProp, err := expandWorkstationsWorkstationClusterPrivateClusterConfig(d.Get("private_cluster_config"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("private_cluster_config"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, privateClusterConfigProp)) {
+	} else if v, ok := d.GetOkExists("private_cluster_config"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, privateClusterConfigProp)) {
 		obj["privateClusterConfig"] = privateClusterConfigProp
 	}
 
-	url, err := ReplaceVars(d, config, "{{WorkstationsBasePath}}projects/{{project}}/locations/{{location}}/workstationClusters/{{workstation_cluster_id}}")
+	url, err := tpgresource.ReplaceVars(d, config, "{{WorkstationsBasePath}}projects/{{project}}/locations/{{location}}/workstationClusters/{{workstation_cluster_id}}")
 	if err != nil {
 		return err
 	}
@@ -435,7 +436,7 @@ func resourceWorkstationsWorkstationClusterUpdate(d *schema.ResourceData, meta i
 	}
 
 	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
+	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
@@ -460,20 +461,20 @@ func resourceWorkstationsWorkstationClusterUpdate(d *schema.ResourceData, meta i
 
 func resourceWorkstationsWorkstationClusterDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*transport_tpg.Config)
-	userAgent, err := generateUserAgentString(d, config.UserAgent)
+	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
 	}
 
 	billingProject := ""
 
-	project, err := getProject(d, config)
+	project, err := tpgresource.GetProject(d, config)
 	if err != nil {
 		return fmt.Errorf("Error fetching project for WorkstationCluster: %s", err)
 	}
 	billingProject = project
 
-	url, err := ReplaceVars(d, config, "{{WorkstationsBasePath}}projects/{{project}}/locations/{{location}}/workstationClusters/{{workstation_cluster_id}}")
+	url, err := tpgresource.ReplaceVars(d, config, "{{WorkstationsBasePath}}projects/{{project}}/locations/{{location}}/workstationClusters/{{workstation_cluster_id}}")
 	if err != nil {
 		return err
 	}
@@ -482,7 +483,7 @@ func resourceWorkstationsWorkstationClusterDelete(d *schema.ResourceData, meta i
 	log.Printf("[DEBUG] Deleting WorkstationCluster %q", d.Id())
 
 	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
+	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
@@ -514,7 +515,7 @@ func resourceWorkstationsWorkstationClusterImport(d *schema.ResourceData, meta i
 	}
 
 	// Replace import id for the resource id
-	id, err := ReplaceVars(d, config, "projects/{{project}}/locations/{{location}}/workstationClusters/{{workstation_cluster_id}}")
+	id, err := tpgresource.ReplaceVars(d, config, "projects/{{project}}/locations/{{location}}/workstationClusters/{{workstation_cluster_id}}")
 	if err != nil {
 		return nil, fmt.Errorf("Error constructing id: %s", err)
 	}
@@ -637,7 +638,7 @@ func flattenWorkstationsWorkstationClusterConditionsDetails(v interface{}, d *sc
 	return v
 }
 
-func expandWorkstationsWorkstationClusterLabels(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
+func expandWorkstationsWorkstationClusterLabels(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
 	if v == nil {
 		return map[string]string{}, nil
 	}
@@ -648,19 +649,19 @@ func expandWorkstationsWorkstationClusterLabels(v interface{}, d TerraformResour
 	return m, nil
 }
 
-func expandWorkstationsWorkstationClusterNetwork(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandWorkstationsWorkstationClusterNetwork(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandWorkstationsWorkstationClusterSubnetwork(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandWorkstationsWorkstationClusterSubnetwork(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandWorkstationsWorkstationClusterDisplayName(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandWorkstationsWorkstationClusterDisplayName(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandWorkstationsWorkstationClusterAnnotations(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
+func expandWorkstationsWorkstationClusterAnnotations(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
 	if v == nil {
 		return map[string]string{}, nil
 	}
@@ -671,11 +672,11 @@ func expandWorkstationsWorkstationClusterAnnotations(v interface{}, d TerraformR
 	return m, nil
 }
 
-func expandWorkstationsWorkstationClusterEtag(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandWorkstationsWorkstationClusterEtag(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandWorkstationsWorkstationClusterPrivateClusterConfig(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandWorkstationsWorkstationClusterPrivateClusterConfig(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -687,35 +688,35 @@ func expandWorkstationsWorkstationClusterPrivateClusterConfig(v interface{}, d T
 	transformedEnablePrivateEndpoint, err := expandWorkstationsWorkstationClusterPrivateClusterConfigEnablePrivateEndpoint(original["enable_private_endpoint"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedEnablePrivateEndpoint); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedEnablePrivateEndpoint); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["enablePrivateEndpoint"] = transformedEnablePrivateEndpoint
 	}
 
 	transformedClusterHostname, err := expandWorkstationsWorkstationClusterPrivateClusterConfigClusterHostname(original["cluster_hostname"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedClusterHostname); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedClusterHostname); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["clusterHostname"] = transformedClusterHostname
 	}
 
 	transformedServiceAttachmentUri, err := expandWorkstationsWorkstationClusterPrivateClusterConfigServiceAttachmentUri(original["service_attachment_uri"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedServiceAttachmentUri); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedServiceAttachmentUri); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["serviceAttachmentUri"] = transformedServiceAttachmentUri
 	}
 
 	return transformed, nil
 }
 
-func expandWorkstationsWorkstationClusterPrivateClusterConfigEnablePrivateEndpoint(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandWorkstationsWorkstationClusterPrivateClusterConfigEnablePrivateEndpoint(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandWorkstationsWorkstationClusterPrivateClusterConfigClusterHostname(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandWorkstationsWorkstationClusterPrivateClusterConfigClusterHostname(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandWorkstationsWorkstationClusterPrivateClusterConfigServiceAttachmentUri(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandWorkstationsWorkstationClusterPrivateClusterConfigServiceAttachmentUri(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }

@@ -23,6 +23,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
@@ -166,7 +167,7 @@ The attached Mesh should be of a type SIDECAR`,
 
 func resourceNetworkServicesTlsRouteCreate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*transport_tpg.Config)
-	userAgent, err := generateUserAgentString(d, config.UserAgent)
+	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
 	}
@@ -175,7 +176,7 @@ func resourceNetworkServicesTlsRouteCreate(d *schema.ResourceData, meta interfac
 	descriptionProp, err := expandNetworkServicesTlsRouteDescription(d.Get("description"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("description"); !isEmptyValue(reflect.ValueOf(descriptionProp)) && (ok || !reflect.DeepEqual(v, descriptionProp)) {
+	} else if v, ok := d.GetOkExists("description"); !tpgresource.IsEmptyValue(reflect.ValueOf(descriptionProp)) && (ok || !reflect.DeepEqual(v, descriptionProp)) {
 		obj["description"] = descriptionProp
 	}
 	meshesProp, err := expandNetworkServicesTlsRouteMeshes(d.Get("meshes"), d, config)
@@ -197,7 +198,7 @@ func resourceNetworkServicesTlsRouteCreate(d *schema.ResourceData, meta interfac
 		obj["rules"] = rulesProp
 	}
 
-	url, err := ReplaceVars(d, config, "{{NetworkServicesBasePath}}projects/{{project}}/locations/global/tlsRoutes?tlsRouteId={{name}}")
+	url, err := tpgresource.ReplaceVars(d, config, "{{NetworkServicesBasePath}}projects/{{project}}/locations/global/tlsRoutes?tlsRouteId={{name}}")
 	if err != nil {
 		return err
 	}
@@ -205,14 +206,14 @@ func resourceNetworkServicesTlsRouteCreate(d *schema.ResourceData, meta interfac
 	log.Printf("[DEBUG] Creating new TlsRoute: %#v", obj)
 	billingProject := ""
 
-	project, err := getProject(d, config)
+	project, err := tpgresource.GetProject(d, config)
 	if err != nil {
 		return fmt.Errorf("Error fetching project for TlsRoute: %s", err)
 	}
 	billingProject = project
 
 	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
+	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
@@ -222,7 +223,7 @@ func resourceNetworkServicesTlsRouteCreate(d *schema.ResourceData, meta interfac
 	}
 
 	// Store the ID now
-	id, err := ReplaceVars(d, config, "projects/{{project}}/locations/global/tlsRoutes/{{name}}")
+	id, err := tpgresource.ReplaceVars(d, config, "projects/{{project}}/locations/global/tlsRoutes/{{name}}")
 	if err != nil {
 		return fmt.Errorf("Error constructing id: %s", err)
 	}
@@ -245,26 +246,26 @@ func resourceNetworkServicesTlsRouteCreate(d *schema.ResourceData, meta interfac
 
 func resourceNetworkServicesTlsRouteRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*transport_tpg.Config)
-	userAgent, err := generateUserAgentString(d, config.UserAgent)
+	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
 	}
 
-	url, err := ReplaceVars(d, config, "{{NetworkServicesBasePath}}projects/{{project}}/locations/global/tlsRoutes/{{name}}")
+	url, err := tpgresource.ReplaceVars(d, config, "{{NetworkServicesBasePath}}projects/{{project}}/locations/global/tlsRoutes/{{name}}")
 	if err != nil {
 		return err
 	}
 
 	billingProject := ""
 
-	project, err := getProject(d, config)
+	project, err := tpgresource.GetProject(d, config)
 	if err != nil {
 		return fmt.Errorf("Error fetching project for TlsRoute: %s", err)
 	}
 	billingProject = project
 
 	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
+	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
@@ -304,14 +305,14 @@ func resourceNetworkServicesTlsRouteRead(d *schema.ResourceData, meta interface{
 
 func resourceNetworkServicesTlsRouteUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*transport_tpg.Config)
-	userAgent, err := generateUserAgentString(d, config.UserAgent)
+	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
 	}
 
 	billingProject := ""
 
-	project, err := getProject(d, config)
+	project, err := tpgresource.GetProject(d, config)
 	if err != nil {
 		return fmt.Errorf("Error fetching project for TlsRoute: %s", err)
 	}
@@ -321,7 +322,7 @@ func resourceNetworkServicesTlsRouteUpdate(d *schema.ResourceData, meta interfac
 	descriptionProp, err := expandNetworkServicesTlsRouteDescription(d.Get("description"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("description"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, descriptionProp)) {
+	} else if v, ok := d.GetOkExists("description"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, descriptionProp)) {
 		obj["description"] = descriptionProp
 	}
 	meshesProp, err := expandNetworkServicesTlsRouteMeshes(d.Get("meshes"), d, config)
@@ -343,7 +344,7 @@ func resourceNetworkServicesTlsRouteUpdate(d *schema.ResourceData, meta interfac
 		obj["rules"] = rulesProp
 	}
 
-	url, err := ReplaceVars(d, config, "{{NetworkServicesBasePath}}projects/{{project}}/locations/global/tlsRoutes/{{name}}")
+	url, err := tpgresource.ReplaceVars(d, config, "{{NetworkServicesBasePath}}projects/{{project}}/locations/global/tlsRoutes/{{name}}")
 	if err != nil {
 		return err
 	}
@@ -374,7 +375,7 @@ func resourceNetworkServicesTlsRouteUpdate(d *schema.ResourceData, meta interfac
 	}
 
 	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
+	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
@@ -399,20 +400,20 @@ func resourceNetworkServicesTlsRouteUpdate(d *schema.ResourceData, meta interfac
 
 func resourceNetworkServicesTlsRouteDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*transport_tpg.Config)
-	userAgent, err := generateUserAgentString(d, config.UserAgent)
+	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
 	}
 
 	billingProject := ""
 
-	project, err := getProject(d, config)
+	project, err := tpgresource.GetProject(d, config)
 	if err != nil {
 		return fmt.Errorf("Error fetching project for TlsRoute: %s", err)
 	}
 	billingProject = project
 
-	url, err := ReplaceVars(d, config, "{{NetworkServicesBasePath}}projects/{{project}}/locations/global/tlsRoutes/{{name}}")
+	url, err := tpgresource.ReplaceVars(d, config, "{{NetworkServicesBasePath}}projects/{{project}}/locations/global/tlsRoutes/{{name}}")
 	if err != nil {
 		return err
 	}
@@ -421,7 +422,7 @@ func resourceNetworkServicesTlsRouteDelete(d *schema.ResourceData, meta interfac
 	log.Printf("[DEBUG] Deleting TlsRoute %q", d.Id())
 
 	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
+	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
@@ -453,7 +454,7 @@ func resourceNetworkServicesTlsRouteImport(d *schema.ResourceData, meta interfac
 	}
 
 	// Replace import id for the resource id
-	id, err := ReplaceVars(d, config, "projects/{{project}}/locations/global/tlsRoutes/{{name}}")
+	id, err := tpgresource.ReplaceVars(d, config, "projects/{{project}}/locations/global/tlsRoutes/{{name}}")
 	if err != nil {
 		return nil, fmt.Errorf("Error constructing id: %s", err)
 	}
@@ -585,19 +586,19 @@ func flattenNetworkServicesTlsRouteRulesActionDestinationsWeight(v interface{}, 
 	return v // let terraform core handle it otherwise
 }
 
-func expandNetworkServicesTlsRouteDescription(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesTlsRouteDescription(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesTlsRouteMeshes(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesTlsRouteMeshes(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesTlsRouteGateways(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesTlsRouteGateways(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesTlsRouteRules(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesTlsRouteRules(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
 	for _, raw := range l {
@@ -610,14 +611,14 @@ func expandNetworkServicesTlsRouteRules(v interface{}, d TerraformResourceData, 
 		transformedMatches, err := expandNetworkServicesTlsRouteRulesMatches(original["matches"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedMatches); val.IsValid() && !isEmptyValue(val) {
+		} else if val := reflect.ValueOf(transformedMatches); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 			transformed["matches"] = transformedMatches
 		}
 
 		transformedAction, err := expandNetworkServicesTlsRouteRulesAction(original["action"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedAction); val.IsValid() && !isEmptyValue(val) {
+		} else if val := reflect.ValueOf(transformedAction); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 			transformed["action"] = transformedAction
 		}
 
@@ -626,7 +627,7 @@ func expandNetworkServicesTlsRouteRules(v interface{}, d TerraformResourceData, 
 	return req, nil
 }
 
-func expandNetworkServicesTlsRouteRulesMatches(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesTlsRouteRulesMatches(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
 	for _, raw := range l {
@@ -655,15 +656,15 @@ func expandNetworkServicesTlsRouteRulesMatches(v interface{}, d TerraformResourc
 	return req, nil
 }
 
-func expandNetworkServicesTlsRouteRulesMatchesSniHost(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesTlsRouteRulesMatchesSniHost(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesTlsRouteRulesMatchesAlpn(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesTlsRouteRulesMatchesAlpn(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesTlsRouteRulesAction(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesTlsRouteRulesAction(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -675,14 +676,14 @@ func expandNetworkServicesTlsRouteRulesAction(v interface{}, d TerraformResource
 	transformedDestinations, err := expandNetworkServicesTlsRouteRulesActionDestinations(original["destinations"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedDestinations); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedDestinations); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["destinations"] = transformedDestinations
 	}
 
 	return transformed, nil
 }
 
-func expandNetworkServicesTlsRouteRulesActionDestinations(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesTlsRouteRulesActionDestinations(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
 	for _, raw := range l {
@@ -695,14 +696,14 @@ func expandNetworkServicesTlsRouteRulesActionDestinations(v interface{}, d Terra
 		transformedServiceName, err := expandNetworkServicesTlsRouteRulesActionDestinationsServiceName(original["service_name"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedServiceName); val.IsValid() && !isEmptyValue(val) {
+		} else if val := reflect.ValueOf(transformedServiceName); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 			transformed["serviceName"] = transformedServiceName
 		}
 
 		transformedWeight, err := expandNetworkServicesTlsRouteRulesActionDestinationsWeight(original["weight"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedWeight); val.IsValid() && !isEmptyValue(val) {
+		} else if val := reflect.ValueOf(transformedWeight); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 			transformed["weight"] = transformedWeight
 		}
 
@@ -711,10 +712,10 @@ func expandNetworkServicesTlsRouteRulesActionDestinations(v interface{}, d Terra
 	return req, nil
 }
 
-func expandNetworkServicesTlsRouteRulesActionDestinationsServiceName(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesTlsRouteRulesActionDestinationsServiceName(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesTlsRouteRulesActionDestinationsWeight(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesTlsRouteRulesActionDestinationsWeight(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }

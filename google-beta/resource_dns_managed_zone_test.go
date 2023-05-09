@@ -3,6 +3,7 @@ package google
 import (
 	"fmt"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 	"testing"
 
@@ -590,7 +591,7 @@ func TestDnsManagedZoneImport_parseImportId(t *testing.T) {
 	}
 
 	for tn, tc := range cases {
-		d := &acctest.ResourceDataMock{
+		d := &tpgresource.ResourceDataMock{
 			FieldsInSchema: make(map[string]interface{}),
 		}
 		d.SetId(tc.ImportId)

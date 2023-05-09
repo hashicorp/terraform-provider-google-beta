@@ -62,11 +62,11 @@ type WorkstationsWorkstationIamUpdater struct {
 	workstationClusterId string
 	workstationConfigId  string
 	workstationId        string
-	d                    TerraformResourceData
+	d                    tpgresource.TerraformResourceData
 	Config               *transport_tpg.Config
 }
 
-func WorkstationsWorkstationIamUpdaterProducer(d TerraformResourceData, config *transport_tpg.Config) (ResourceIamUpdater, error) {
+func WorkstationsWorkstationIamUpdaterProducer(d tpgresource.TerraformResourceData, config *transport_tpg.Config) (ResourceIamUpdater, error) {
 	values := make(map[string]string)
 
 	project, _ := getProject(d, config)
@@ -178,13 +178,13 @@ func (u *WorkstationsWorkstationIamUpdater) GetResourceIamPolicy() (*cloudresour
 		return nil, err
 	}
 
-	project, err := getProject(u.d, u.Config)
+	project, err := tpgresource.GetProject(u.d, u.Config)
 	if err != nil {
 		return nil, err
 	}
 	var obj map[string]interface{}
 
-	userAgent, err := generateUserAgentString(u.d, u.Config.UserAgent)
+	userAgent, err := tpgresource.GenerateUserAgentString(u.d, u.Config.UserAgent)
 	if err != nil {
 		return nil, err
 	}
@@ -216,12 +216,12 @@ func (u *WorkstationsWorkstationIamUpdater) SetResourceIamPolicy(policy *cloudre
 	if err != nil {
 		return err
 	}
-	project, err := getProject(u.d, u.Config)
+	project, err := tpgresource.GetProject(u.d, u.Config)
 	if err != nil {
 		return err
 	}
 
-	userAgent, err := generateUserAgentString(u.d, u.Config.UserAgent)
+	userAgent, err := tpgresource.GenerateUserAgentString(u.d, u.Config.UserAgent)
 	if err != nil {
 		return err
 	}
@@ -236,7 +236,7 @@ func (u *WorkstationsWorkstationIamUpdater) SetResourceIamPolicy(policy *cloudre
 
 func (u *WorkstationsWorkstationIamUpdater) qualifyWorkstationUrl(methodIdentifier string) (string, error) {
 	urlTemplate := fmt.Sprintf("{{WorkstationsBasePath}}%s:%s", fmt.Sprintf("projects/%s/locations/%s/workstationClusters/%s/workstationConfigs/%s/workstations/%s", u.project, u.location, u.workstationClusterId, u.workstationConfigId, u.workstationId), methodIdentifier)
-	url, err := ReplaceVars(u.d, u.Config, urlTemplate)
+	url, err := tpgresource.ReplaceVars(u.d, u.Config, urlTemplate)
 	if err != nil {
 		return "", err
 	}

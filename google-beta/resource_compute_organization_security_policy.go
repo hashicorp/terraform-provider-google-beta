@@ -22,6 +22,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/verify"
 )
@@ -90,7 +91,7 @@ updates of this resource.`,
 
 func resourceComputeOrganizationSecurityPolicyCreate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*transport_tpg.Config)
-	userAgent, err := generateUserAgentString(d, config.UserAgent)
+	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
 	}
@@ -99,35 +100,35 @@ func resourceComputeOrganizationSecurityPolicyCreate(d *schema.ResourceData, met
 	displayNameProp, err := expandComputeOrganizationSecurityPolicyDisplayName(d.Get("display_name"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("display_name"); !isEmptyValue(reflect.ValueOf(displayNameProp)) && (ok || !reflect.DeepEqual(v, displayNameProp)) {
+	} else if v, ok := d.GetOkExists("display_name"); !tpgresource.IsEmptyValue(reflect.ValueOf(displayNameProp)) && (ok || !reflect.DeepEqual(v, displayNameProp)) {
 		obj["displayName"] = displayNameProp
 	}
 	descriptionProp, err := expandComputeOrganizationSecurityPolicyDescription(d.Get("description"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("description"); !isEmptyValue(reflect.ValueOf(descriptionProp)) && (ok || !reflect.DeepEqual(v, descriptionProp)) {
+	} else if v, ok := d.GetOkExists("description"); !tpgresource.IsEmptyValue(reflect.ValueOf(descriptionProp)) && (ok || !reflect.DeepEqual(v, descriptionProp)) {
 		obj["description"] = descriptionProp
 	}
 	fingerprintProp, err := expandComputeOrganizationSecurityPolicyFingerprint(d.Get("fingerprint"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("fingerprint"); !isEmptyValue(reflect.ValueOf(fingerprintProp)) && (ok || !reflect.DeepEqual(v, fingerprintProp)) {
+	} else if v, ok := d.GetOkExists("fingerprint"); !tpgresource.IsEmptyValue(reflect.ValueOf(fingerprintProp)) && (ok || !reflect.DeepEqual(v, fingerprintProp)) {
 		obj["fingerprint"] = fingerprintProp
 	}
 	typeProp, err := expandComputeOrganizationSecurityPolicyType(d.Get("type"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("type"); !isEmptyValue(reflect.ValueOf(typeProp)) && (ok || !reflect.DeepEqual(v, typeProp)) {
+	} else if v, ok := d.GetOkExists("type"); !tpgresource.IsEmptyValue(reflect.ValueOf(typeProp)) && (ok || !reflect.DeepEqual(v, typeProp)) {
 		obj["type"] = typeProp
 	}
 	parentProp, err := expandComputeOrganizationSecurityPolicyParent(d.Get("parent"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("parent"); !isEmptyValue(reflect.ValueOf(parentProp)) && (ok || !reflect.DeepEqual(v, parentProp)) {
+	} else if v, ok := d.GetOkExists("parent"); !tpgresource.IsEmptyValue(reflect.ValueOf(parentProp)) && (ok || !reflect.DeepEqual(v, parentProp)) {
 		obj["parent"] = parentProp
 	}
 
-	url, err := ReplaceVars(d, config, "{{ComputeBasePath}}locations/global/securityPolicies?parentId={{parent}}")
+	url, err := tpgresource.ReplaceVars(d, config, "{{ComputeBasePath}}locations/global/securityPolicies?parentId={{parent}}")
 	if err != nil {
 		return err
 	}
@@ -136,7 +137,7 @@ func resourceComputeOrganizationSecurityPolicyCreate(d *schema.ResourceData, met
 	billingProject := ""
 
 	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
+	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
@@ -146,7 +147,7 @@ func resourceComputeOrganizationSecurityPolicyCreate(d *schema.ResourceData, met
 	}
 
 	// Store the ID now
-	id, err := ReplaceVars(d, config, "locations/global/securityPolicies/{{policy_id}}")
+	id, err := tpgresource.ReplaceVars(d, config, "locations/global/securityPolicies/{{policy_id}}")
 	if err != nil {
 		return fmt.Errorf("Error constructing id: %s", err)
 	}
@@ -173,7 +174,7 @@ func resourceComputeOrganizationSecurityPolicyCreate(d *schema.ResourceData, met
 	}
 
 	// Store the ID now.
-	id, err = ReplaceVars(d, config, "locations/global/securityPolicies/{{policy_id}}")
+	id, err = tpgresource.ReplaceVars(d, config, "locations/global/securityPolicies/{{policy_id}}")
 	if err != nil {
 		return fmt.Errorf("Error constructing id: %s", err)
 	}
@@ -186,12 +187,12 @@ func resourceComputeOrganizationSecurityPolicyCreate(d *schema.ResourceData, met
 
 func resourceComputeOrganizationSecurityPolicyRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*transport_tpg.Config)
-	userAgent, err := generateUserAgentString(d, config.UserAgent)
+	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
 	}
 
-	url, err := ReplaceVars(d, config, "{{ComputeBasePath}}locations/global/securityPolicies/{{policy_id}}")
+	url, err := tpgresource.ReplaceVars(d, config, "{{ComputeBasePath}}locations/global/securityPolicies/{{policy_id}}")
 	if err != nil {
 		return err
 	}
@@ -199,7 +200,7 @@ func resourceComputeOrganizationSecurityPolicyRead(d *schema.ResourceData, meta 
 	billingProject := ""
 
 	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
+	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
@@ -232,7 +233,7 @@ func resourceComputeOrganizationSecurityPolicyRead(d *schema.ResourceData, meta 
 
 func resourceComputeOrganizationSecurityPolicyUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*transport_tpg.Config)
-	userAgent, err := generateUserAgentString(d, config.UserAgent)
+	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
 	}
@@ -243,17 +244,17 @@ func resourceComputeOrganizationSecurityPolicyUpdate(d *schema.ResourceData, met
 	descriptionProp, err := expandComputeOrganizationSecurityPolicyDescription(d.Get("description"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("description"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, descriptionProp)) {
+	} else if v, ok := d.GetOkExists("description"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, descriptionProp)) {
 		obj["description"] = descriptionProp
 	}
 	fingerprintProp, err := expandComputeOrganizationSecurityPolicyFingerprint(d.Get("fingerprint"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("fingerprint"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, fingerprintProp)) {
+	} else if v, ok := d.GetOkExists("fingerprint"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, fingerprintProp)) {
 		obj["fingerprint"] = fingerprintProp
 	}
 
-	url, err := ReplaceVars(d, config, "{{ComputeBasePath}}locations/global/securityPolicies/{{policy_id}}")
+	url, err := tpgresource.ReplaceVars(d, config, "{{ComputeBasePath}}locations/global/securityPolicies/{{policy_id}}")
 	if err != nil {
 		return err
 	}
@@ -261,7 +262,7 @@ func resourceComputeOrganizationSecurityPolicyUpdate(d *schema.ResourceData, met
 	log.Printf("[DEBUG] Updating OrganizationSecurityPolicy %q: %#v", d.Id(), obj)
 
 	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
+	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
@@ -288,14 +289,14 @@ func resourceComputeOrganizationSecurityPolicyUpdate(d *schema.ResourceData, met
 
 func resourceComputeOrganizationSecurityPolicyDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*transport_tpg.Config)
-	userAgent, err := generateUserAgentString(d, config.UserAgent)
+	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
 	}
 
 	billingProject := ""
 
-	url, err := ReplaceVars(d, config, "{{ComputeBasePath}}locations/global/securityPolicies/{{policy_id}}")
+	url, err := tpgresource.ReplaceVars(d, config, "{{ComputeBasePath}}locations/global/securityPolicies/{{policy_id}}")
 	if err != nil {
 		return err
 	}
@@ -304,7 +305,7 @@ func resourceComputeOrganizationSecurityPolicyDelete(d *schema.ResourceData, met
 	log.Printf("[DEBUG] Deleting OrganizationSecurityPolicy %q", d.Id())
 
 	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
+	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
@@ -338,7 +339,7 @@ func resourceComputeOrganizationSecurityPolicyImport(d *schema.ResourceData, met
 	}
 
 	// Replace import id for the resource id
-	id, err := ReplaceVars(d, config, "locations/global/securityPolicies/{{policy_id}}")
+	id, err := tpgresource.ReplaceVars(d, config, "locations/global/securityPolicies/{{policy_id}}")
 	if err != nil {
 		return nil, fmt.Errorf("Error constructing id: %s", err)
 	}
@@ -371,22 +372,22 @@ func flattenComputeOrganizationSecurityPolicyParent(v interface{}, d *schema.Res
 	return v
 }
 
-func expandComputeOrganizationSecurityPolicyDisplayName(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandComputeOrganizationSecurityPolicyDisplayName(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandComputeOrganizationSecurityPolicyDescription(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandComputeOrganizationSecurityPolicyDescription(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandComputeOrganizationSecurityPolicyFingerprint(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandComputeOrganizationSecurityPolicyFingerprint(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandComputeOrganizationSecurityPolicyType(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandComputeOrganizationSecurityPolicyType(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandComputeOrganizationSecurityPolicyParent(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandComputeOrganizationSecurityPolicyParent(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }

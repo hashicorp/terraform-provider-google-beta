@@ -23,6 +23,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
@@ -354,7 +355,7 @@ func testAccCheckDataLossPreventionDeidentifyTemplateDestroyProducer(t *testing.
 
 			config := GoogleProviderConfig(t)
 
-			url, err := acctest.ReplaceVarsForTest(config, rs, "{{DataLossPreventionBasePath}}{{parent}}/deidentifyTemplates/{{name}}")
+			url, err := tpgresource.ReplaceVarsForTest(config, rs, "{{DataLossPreventionBasePath}}{{parent}}/deidentifyTemplates/{{name}}")
 			if err != nil {
 				return err
 			}

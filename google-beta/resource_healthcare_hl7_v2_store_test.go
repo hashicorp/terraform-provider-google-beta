@@ -3,6 +3,7 @@ package google
 import (
 	"fmt"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 	"path"
 	"testing"
@@ -256,7 +257,7 @@ func testAccCheckGoogleHealthcareHl7V2StoreUpdate(t *testing.T, pubsubTopic stri
 
 			config := GoogleProviderConfig(t)
 
-			gcpResourceUri, err := acctest.ReplaceVarsForTest(config, rs, "{{dataset}}/hl7V2Stores/{{name}}")
+			gcpResourceUri, err := tpgresource.ReplaceVarsForTest(config, rs, "{{dataset}}/hl7V2Stores/{{name}}")
 			if err != nil {
 				return err
 			}

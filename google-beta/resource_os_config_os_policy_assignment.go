@@ -27,6 +27,7 @@ import (
 	dcl "github.com/GoogleCloudPlatform/declarative-resource-client-library/dcl"
 	osconfig "github.com/GoogleCloudPlatform/declarative-resource-client-library/services/google/osconfig/beta"
 
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
@@ -1341,18 +1342,18 @@ func resourceOsConfigOsPolicyAssignmentCreate(d *schema.ResourceData, meta inter
 	}
 	d.SetId(id)
 	directive := CreateDirective
-	userAgent, err := generateUserAgentString(d, config.UserAgent)
+	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
 	}
 	billingProject := project
 	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
+	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 	client := transport_tpg.NewDCLOsConfigClient(config, userAgent, billingProject, d.Timeout(schema.TimeoutCreate))
 	client.Config.BasePath = strings.ReplaceAll(client.Config.BasePath, "v1beta", "v1")
-	if bp, err := ReplaceVars(d, config, client.Config.BasePath); err != nil {
+	if bp, err := tpgresource.ReplaceVars(d, config, client.Config.BasePath); err != nil {
 		d.SetId("")
 		return fmt.Errorf("Could not format %q: %w", client.Config.BasePath, err)
 	} else {
@@ -1391,18 +1392,18 @@ func resourceOsConfigOsPolicyAssignmentRead(d *schema.ResourceData, meta interfa
 		SkipAwaitRollout: dcl.Bool(d.Get("skip_await_rollout").(bool)),
 	}
 
-	userAgent, err := generateUserAgentString(d, config.UserAgent)
+	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
 	}
 	billingProject := project
 	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
+	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 	client := transport_tpg.NewDCLOsConfigClient(config, userAgent, billingProject, d.Timeout(schema.TimeoutRead))
 	client.Config.BasePath = strings.ReplaceAll(client.Config.BasePath, "v1beta", "v1")
-	if bp, err := ReplaceVars(d, config, client.Config.BasePath); err != nil {
+	if bp, err := tpgresource.ReplaceVars(d, config, client.Config.BasePath); err != nil {
 		d.SetId("")
 		return fmt.Errorf("Could not format %q: %w", client.Config.BasePath, err)
 	} else {
@@ -1495,19 +1496,19 @@ func resourceOsConfigOsPolicyAssignmentUpdate(d *schema.ResourceData, meta inter
 	}
 	directive := UpdateDirective
 	directive = append(directive, dcl.WithStateHint(old))
-	userAgent, err := generateUserAgentString(d, config.UserAgent)
+	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
 	}
 
 	billingProject := ""
 	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
+	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 	client := transport_tpg.NewDCLOsConfigClient(config, userAgent, billingProject, d.Timeout(schema.TimeoutUpdate))
 	client.Config.BasePath = strings.ReplaceAll(client.Config.BasePath, "v1beta", "v1")
-	if bp, err := ReplaceVars(d, config, client.Config.BasePath); err != nil {
+	if bp, err := tpgresource.ReplaceVars(d, config, client.Config.BasePath); err != nil {
 		d.SetId("")
 		return fmt.Errorf("Could not format %q: %w", client.Config.BasePath, err)
 	} else {
@@ -1547,18 +1548,18 @@ func resourceOsConfigOsPolicyAssignmentDelete(d *schema.ResourceData, meta inter
 	}
 
 	log.Printf("[DEBUG] Deleting OSPolicyAssignment %q", d.Id())
-	userAgent, err := generateUserAgentString(d, config.UserAgent)
+	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
 	}
 	billingProject := project
 	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
+	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 	client := transport_tpg.NewDCLOsConfigClient(config, userAgent, billingProject, d.Timeout(schema.TimeoutDelete))
 	client.Config.BasePath = strings.ReplaceAll(client.Config.BasePath, "v1beta", "v1")
-	if bp, err := ReplaceVars(d, config, client.Config.BasePath); err != nil {
+	if bp, err := tpgresource.ReplaceVars(d, config, client.Config.BasePath); err != nil {
 		d.SetId("")
 		return fmt.Errorf("Could not format %q: %w", client.Config.BasePath, err)
 	} else {

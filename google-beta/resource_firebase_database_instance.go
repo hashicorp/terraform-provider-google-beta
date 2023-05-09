@@ -22,12 +22,13 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/verify"
 )
 
 func enableRTDB(config *transport_tpg.Config, d *schema.ResourceData, project string, billingProject string, userAgent string) error {
-	url, err := ReplaceVars(d, config, "{{FirebaseDatabaseBasePath}}projects/{{project}}/locations/{{region}}/instances/{{instance_id}}:reenable")
+	url, err := tpgresource.ReplaceVars(d, config, "{{FirebaseDatabaseBasePath}}projects/{{project}}/locations/{{region}}/instances/{{instance_id}}:reenable")
 	if err != nil {
 		return err
 	}
@@ -42,7 +43,7 @@ func enableRTDB(config *transport_tpg.Config, d *schema.ResourceData, project st
 }
 
 func disableRTDB(config *transport_tpg.Config, d *schema.ResourceData, project string, billingProject string, userAgent string) error {
-	url, err := ReplaceVars(d, config, "{{FirebaseDatabaseBasePath}}projects/{{project}}/locations/{{region}}/instances/{{instance_id}}:disable")
+	url, err := tpgresource.ReplaceVars(d, config, "{{FirebaseDatabaseBasePath}}projects/{{project}}/locations/{{region}}/instances/{{instance_id}}:disable")
 	if err != nil {
 		return err
 	}
@@ -137,7 +138,7 @@ Learn more about using project identifiers in Google's [AIP 2510 standard](https
 
 func resourceFirebaseDatabaseInstanceCreate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*transport_tpg.Config)
-	userAgent, err := generateUserAgentString(d, config.UserAgent)
+	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
 	}
@@ -146,11 +147,11 @@ func resourceFirebaseDatabaseInstanceCreate(d *schema.ResourceData, meta interfa
 	typeProp, err := expandFirebaseDatabaseInstanceType(d.Get("type"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("type"); !isEmptyValue(reflect.ValueOf(typeProp)) && (ok || !reflect.DeepEqual(v, typeProp)) {
+	} else if v, ok := d.GetOkExists("type"); !tpgresource.IsEmptyValue(reflect.ValueOf(typeProp)) && (ok || !reflect.DeepEqual(v, typeProp)) {
 		obj["type"] = typeProp
 	}
 
-	url, err := ReplaceVars(d, config, "{{FirebaseDatabaseBasePath}}projects/{{project}}/locations/{{region}}/instances?databaseId={{instance_id}}")
+	url, err := tpgresource.ReplaceVars(d, config, "{{FirebaseDatabaseBasePath}}projects/{{project}}/locations/{{region}}/instances?databaseId={{instance_id}}")
 	if err != nil {
 		return err
 	}
@@ -158,14 +159,14 @@ func resourceFirebaseDatabaseInstanceCreate(d *schema.ResourceData, meta interfa
 	log.Printf("[DEBUG] Creating new Instance: %#v", obj)
 	billingProject := ""
 
-	project, err := getProject(d, config)
+	project, err := tpgresource.GetProject(d, config)
 	if err != nil {
 		return fmt.Errorf("Error fetching project for Instance: %s", err)
 	}
 	billingProject = project
 
 	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
+	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
@@ -178,7 +179,7 @@ func resourceFirebaseDatabaseInstanceCreate(d *schema.ResourceData, meta interfa
 	}
 
 	// Store the ID now
-	id, err := ReplaceVars(d, config, "projects/{{project}}/locations/{{region}}/instances/{{instance_id}}")
+	id, err := tpgresource.ReplaceVars(d, config, "projects/{{project}}/locations/{{region}}/instances/{{instance_id}}")
 	if err != nil {
 		return fmt.Errorf("Error constructing id: %s", err)
 	}
@@ -199,26 +200,26 @@ func resourceFirebaseDatabaseInstanceCreate(d *schema.ResourceData, meta interfa
 
 func resourceFirebaseDatabaseInstanceRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*transport_tpg.Config)
-	userAgent, err := generateUserAgentString(d, config.UserAgent)
+	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
 	}
 
-	url, err := ReplaceVars(d, config, "{{FirebaseDatabaseBasePath}}projects/{{project}}/locations/{{region}}/instances/{{instance_id}}")
+	url, err := tpgresource.ReplaceVars(d, config, "{{FirebaseDatabaseBasePath}}projects/{{project}}/locations/{{region}}/instances/{{instance_id}}")
 	if err != nil {
 		return err
 	}
 
 	billingProject := ""
 
-	project, err := getProject(d, config)
+	project, err := tpgresource.GetProject(d, config)
 	if err != nil {
 		return fmt.Errorf("Error fetching project for Instance: %s", err)
 	}
 	billingProject = project
 
 	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
+	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
@@ -267,14 +268,14 @@ func resourceFirebaseDatabaseInstanceRead(d *schema.ResourceData, meta interface
 
 func resourceFirebaseDatabaseInstanceUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*transport_tpg.Config)
-	userAgent, err := generateUserAgentString(d, config.UserAgent)
+	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
 	}
 
 	billingProject := ""
 
-	project, err := getProject(d, config)
+	project, err := tpgresource.GetProject(d, config)
 	if err != nil {
 		return fmt.Errorf("Error fetching project for Instance: %s", err)
 	}
@@ -284,11 +285,11 @@ func resourceFirebaseDatabaseInstanceUpdate(d *schema.ResourceData, meta interfa
 	typeProp, err := expandFirebaseDatabaseInstanceType(d.Get("type"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("type"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, typeProp)) {
+	} else if v, ok := d.GetOkExists("type"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, typeProp)) {
 		obj["type"] = typeProp
 	}
 
-	url, err := ReplaceVars(d, config, "{{FirebaseDatabaseBasePath}}projects/{{project}}/locations/{{region}}/instances/{{instance_id}}")
+	url, err := tpgresource.ReplaceVars(d, config, "{{FirebaseDatabaseBasePath}}projects/{{project}}/locations/{{region}}/instances/{{instance_id}}")
 	if err != nil {
 		return err
 	}
@@ -317,7 +318,7 @@ func resourceFirebaseDatabaseInstanceUpdate(d *schema.ResourceData, meta interfa
 	// end of customized code
 
 	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
+	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
@@ -334,20 +335,20 @@ func resourceFirebaseDatabaseInstanceUpdate(d *schema.ResourceData, meta interfa
 
 func resourceFirebaseDatabaseInstanceDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*transport_tpg.Config)
-	userAgent, err := generateUserAgentString(d, config.UserAgent)
+	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
 	}
 
 	billingProject := ""
 
-	project, err := getProject(d, config)
+	project, err := tpgresource.GetProject(d, config)
 	if err != nil {
 		return fmt.Errorf("Error fetching project for Instance: %s", err)
 	}
 	billingProject = project
 
-	url, err := ReplaceVars(d, config, "{{FirebaseDatabaseBasePath}}projects/{{project}}/locations/{{region}}/instances/{{instance_id}}")
+	url, err := tpgresource.ReplaceVars(d, config, "{{FirebaseDatabaseBasePath}}projects/{{project}}/locations/{{region}}/instances/{{instance_id}}")
 	if err != nil {
 		return err
 	}
@@ -368,7 +369,7 @@ func resourceFirebaseDatabaseInstanceDelete(d *schema.ResourceData, meta interfa
 	log.Printf("[DEBUG] Deleting Instance %q", d.Id())
 
 	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
+	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
@@ -393,7 +394,7 @@ func resourceFirebaseDatabaseInstanceImport(d *schema.ResourceData, meta interfa
 	}
 
 	// Replace import id for the resource id
-	id, err := ReplaceVars(d, config, "projects/{{project}}/locations/{{region}}/instances/{{instance_id}}")
+	id, err := tpgresource.ReplaceVars(d, config, "projects/{{project}}/locations/{{region}}/instances/{{instance_id}}")
 	if err != nil {
 		return nil, fmt.Errorf("Error constructing id: %s", err)
 	}
@@ -423,7 +424,7 @@ func flattenFirebaseDatabaseInstanceState(v interface{}, d *schema.ResourceData,
 	return v
 }
 
-func expandFirebaseDatabaseInstanceType(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandFirebaseDatabaseInstanceType(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 

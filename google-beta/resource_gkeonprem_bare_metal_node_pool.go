@@ -23,6 +23,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/verify"
 )
@@ -276,7 +277,7 @@ indicate real problems requiring user intervention.`,
 
 func resourceGkeonpremBareMetalNodePoolCreate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*transport_tpg.Config)
-	userAgent, err := generateUserAgentString(d, config.UserAgent)
+	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
 	}
@@ -285,23 +286,23 @@ func resourceGkeonpremBareMetalNodePoolCreate(d *schema.ResourceData, meta inter
 	displayNameProp, err := expandGkeonpremBareMetalNodePoolDisplayName(d.Get("display_name"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("display_name"); !isEmptyValue(reflect.ValueOf(displayNameProp)) && (ok || !reflect.DeepEqual(v, displayNameProp)) {
+	} else if v, ok := d.GetOkExists("display_name"); !tpgresource.IsEmptyValue(reflect.ValueOf(displayNameProp)) && (ok || !reflect.DeepEqual(v, displayNameProp)) {
 		obj["displayName"] = displayNameProp
 	}
 	annotationsProp, err := expandGkeonpremBareMetalNodePoolAnnotations(d.Get("annotations"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("annotations"); !isEmptyValue(reflect.ValueOf(annotationsProp)) && (ok || !reflect.DeepEqual(v, annotationsProp)) {
+	} else if v, ok := d.GetOkExists("annotations"); !tpgresource.IsEmptyValue(reflect.ValueOf(annotationsProp)) && (ok || !reflect.DeepEqual(v, annotationsProp)) {
 		obj["annotations"] = annotationsProp
 	}
 	nodePoolConfigProp, err := expandGkeonpremBareMetalNodePoolNodePoolConfig(d.Get("node_pool_config"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("node_pool_config"); !isEmptyValue(reflect.ValueOf(nodePoolConfigProp)) && (ok || !reflect.DeepEqual(v, nodePoolConfigProp)) {
+	} else if v, ok := d.GetOkExists("node_pool_config"); !tpgresource.IsEmptyValue(reflect.ValueOf(nodePoolConfigProp)) && (ok || !reflect.DeepEqual(v, nodePoolConfigProp)) {
 		obj["nodePoolConfig"] = nodePoolConfigProp
 	}
 
-	url, err := ReplaceVars(d, config, "{{GkeonpremBasePath}}projects/{{project}}/locations/{{location}}/bareMetalClusters/{{bare_metal_cluster}}/bareMetalNodePools?bare_metal_node_pool_id={{name}}")
+	url, err := tpgresource.ReplaceVars(d, config, "{{GkeonpremBasePath}}projects/{{project}}/locations/{{location}}/bareMetalClusters/{{bare_metal_cluster}}/bareMetalNodePools?bare_metal_node_pool_id={{name}}")
 	if err != nil {
 		return err
 	}
@@ -309,14 +310,14 @@ func resourceGkeonpremBareMetalNodePoolCreate(d *schema.ResourceData, meta inter
 	log.Printf("[DEBUG] Creating new BareMetalNodePool: %#v", obj)
 	billingProject := ""
 
-	project, err := getProject(d, config)
+	project, err := tpgresource.GetProject(d, config)
 	if err != nil {
 		return fmt.Errorf("Error fetching project for BareMetalNodePool: %s", err)
 	}
 	billingProject = project
 
 	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
+	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
@@ -326,7 +327,7 @@ func resourceGkeonpremBareMetalNodePoolCreate(d *schema.ResourceData, meta inter
 	}
 
 	// Store the ID now
-	id, err := ReplaceVars(d, config, "projects/{{project}}/locations/{{location}}/bareMetalClusters/{{bare_metal_cluster}}/bareMetalNodePools/{{name}}")
+	id, err := tpgresource.ReplaceVars(d, config, "projects/{{project}}/locations/{{location}}/bareMetalClusters/{{bare_metal_cluster}}/bareMetalNodePools/{{name}}")
 	if err != nil {
 		return fmt.Errorf("Error constructing id: %s", err)
 	}
@@ -344,7 +345,7 @@ func resourceGkeonpremBareMetalNodePoolCreate(d *schema.ResourceData, meta inter
 	}
 
 	// This may have caused the ID to update - update it if so.
-	id, err = ReplaceVars(d, config, "projects/{{project}}/locations/{{location}}/bareMetalClusters/{{bare_metal_cluster}}/bareMetalNodePools/{{name}}")
+	id, err = tpgresource.ReplaceVars(d, config, "projects/{{project}}/locations/{{location}}/bareMetalClusters/{{bare_metal_cluster}}/bareMetalNodePools/{{name}}")
 	if err != nil {
 		return fmt.Errorf("Error constructing id: %s", err)
 	}
@@ -357,26 +358,26 @@ func resourceGkeonpremBareMetalNodePoolCreate(d *schema.ResourceData, meta inter
 
 func resourceGkeonpremBareMetalNodePoolRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*transport_tpg.Config)
-	userAgent, err := generateUserAgentString(d, config.UserAgent)
+	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
 	}
 
-	url, err := ReplaceVars(d, config, "{{GkeonpremBasePath}}projects/{{project}}/locations/{{location}}/bareMetalClusters/{{bare_metal_cluster}}/bareMetalNodePools/{{name}}")
+	url, err := tpgresource.ReplaceVars(d, config, "{{GkeonpremBasePath}}projects/{{project}}/locations/{{location}}/bareMetalClusters/{{bare_metal_cluster}}/bareMetalNodePools/{{name}}")
 	if err != nil {
 		return err
 	}
 
 	billingProject := ""
 
-	project, err := getProject(d, config)
+	project, err := tpgresource.GetProject(d, config)
 	if err != nil {
 		return fmt.Errorf("Error fetching project for BareMetalNodePool: %s", err)
 	}
 	billingProject = project
 
 	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
+	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
@@ -428,14 +429,14 @@ func resourceGkeonpremBareMetalNodePoolRead(d *schema.ResourceData, meta interfa
 
 func resourceGkeonpremBareMetalNodePoolUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*transport_tpg.Config)
-	userAgent, err := generateUserAgentString(d, config.UserAgent)
+	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
 	}
 
 	billingProject := ""
 
-	project, err := getProject(d, config)
+	project, err := tpgresource.GetProject(d, config)
 	if err != nil {
 		return fmt.Errorf("Error fetching project for BareMetalNodePool: %s", err)
 	}
@@ -445,23 +446,23 @@ func resourceGkeonpremBareMetalNodePoolUpdate(d *schema.ResourceData, meta inter
 	displayNameProp, err := expandGkeonpremBareMetalNodePoolDisplayName(d.Get("display_name"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("display_name"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, displayNameProp)) {
+	} else if v, ok := d.GetOkExists("display_name"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, displayNameProp)) {
 		obj["displayName"] = displayNameProp
 	}
 	annotationsProp, err := expandGkeonpremBareMetalNodePoolAnnotations(d.Get("annotations"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("annotations"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, annotationsProp)) {
+	} else if v, ok := d.GetOkExists("annotations"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, annotationsProp)) {
 		obj["annotations"] = annotationsProp
 	}
 	nodePoolConfigProp, err := expandGkeonpremBareMetalNodePoolNodePoolConfig(d.Get("node_pool_config"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("node_pool_config"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, nodePoolConfigProp)) {
+	} else if v, ok := d.GetOkExists("node_pool_config"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, nodePoolConfigProp)) {
 		obj["nodePoolConfig"] = nodePoolConfigProp
 	}
 
-	url, err := ReplaceVars(d, config, "{{GkeonpremBasePath}}projects/{{project}}/locations/{{location}}/bareMetalClusters/{{bare_metal_cluster}}/bareMetalNodePools/{{name}}")
+	url, err := tpgresource.ReplaceVars(d, config, "{{GkeonpremBasePath}}projects/{{project}}/locations/{{location}}/bareMetalClusters/{{bare_metal_cluster}}/bareMetalNodePools/{{name}}")
 	if err != nil {
 		return err
 	}
@@ -488,7 +489,7 @@ func resourceGkeonpremBareMetalNodePoolUpdate(d *schema.ResourceData, meta inter
 	}
 
 	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
+	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
@@ -513,20 +514,20 @@ func resourceGkeonpremBareMetalNodePoolUpdate(d *schema.ResourceData, meta inter
 
 func resourceGkeonpremBareMetalNodePoolDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*transport_tpg.Config)
-	userAgent, err := generateUserAgentString(d, config.UserAgent)
+	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
 	}
 
 	billingProject := ""
 
-	project, err := getProject(d, config)
+	project, err := tpgresource.GetProject(d, config)
 	if err != nil {
 		return fmt.Errorf("Error fetching project for BareMetalNodePool: %s", err)
 	}
 	billingProject = project
 
-	url, err := ReplaceVars(d, config, "{{GkeonpremBasePath}}projects/{{project}}/locations/{{location}}/bareMetalClusters/{{bare_metal_cluster}}/bareMetalNodePools/{{name}}")
+	url, err := tpgresource.ReplaceVars(d, config, "{{GkeonpremBasePath}}projects/{{project}}/locations/{{location}}/bareMetalClusters/{{bare_metal_cluster}}/bareMetalNodePools/{{name}}")
 	if err != nil {
 		return err
 	}
@@ -535,7 +536,7 @@ func resourceGkeonpremBareMetalNodePoolDelete(d *schema.ResourceData, meta inter
 	log.Printf("[DEBUG] Deleting BareMetalNodePool %q", d.Id())
 
 	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
+	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
@@ -567,7 +568,7 @@ func resourceGkeonpremBareMetalNodePoolImport(d *schema.ResourceData, meta inter
 	}
 
 	// Replace import id for the resource id
-	id, err := ReplaceVars(d, config, "projects/{{project}}/locations/{{location}}/bareMetalClusters/{{bare_metal_cluster}}/bareMetalNodePools/{{name}}")
+	id, err := tpgresource.ReplaceVars(d, config, "projects/{{project}}/locations/{{location}}/bareMetalClusters/{{bare_metal_cluster}}/bareMetalNodePools/{{name}}")
 	if err != nil {
 		return nil, fmt.Errorf("Error constructing id: %s", err)
 	}
@@ -759,11 +760,11 @@ func flattenGkeonpremBareMetalNodePoolEtag(v interface{}, d *schema.ResourceData
 	return v
 }
 
-func expandGkeonpremBareMetalNodePoolDisplayName(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandGkeonpremBareMetalNodePoolDisplayName(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandGkeonpremBareMetalNodePoolAnnotations(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
+func expandGkeonpremBareMetalNodePoolAnnotations(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
 	if v == nil {
 		return map[string]string{}, nil
 	}
@@ -774,7 +775,7 @@ func expandGkeonpremBareMetalNodePoolAnnotations(v interface{}, d TerraformResou
 	return m, nil
 }
 
-func expandGkeonpremBareMetalNodePoolNodePoolConfig(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandGkeonpremBareMetalNodePoolNodePoolConfig(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -786,35 +787,35 @@ func expandGkeonpremBareMetalNodePoolNodePoolConfig(v interface{}, d TerraformRe
 	transformedNodeConfigs, err := expandGkeonpremBareMetalNodePoolNodePoolConfigNodeConfigs(original["node_configs"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedNodeConfigs); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedNodeConfigs); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["nodeConfigs"] = transformedNodeConfigs
 	}
 
 	transformedOperatingSystem, err := expandGkeonpremBareMetalNodePoolNodePoolConfigOperatingSystem(original["operating_system"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedOperatingSystem); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedOperatingSystem); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["operatingSystem"] = transformedOperatingSystem
 	}
 
 	transformedTaints, err := expandGkeonpremBareMetalNodePoolNodePoolConfigTaints(original["taints"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedTaints); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedTaints); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["taints"] = transformedTaints
 	}
 
 	transformedLabels, err := expandGkeonpremBareMetalNodePoolNodePoolConfigLabels(original["labels"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedLabels); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedLabels); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["labels"] = transformedLabels
 	}
 
 	return transformed, nil
 }
 
-func expandGkeonpremBareMetalNodePoolNodePoolConfigNodeConfigs(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandGkeonpremBareMetalNodePoolNodePoolConfigNodeConfigs(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
 	for _, raw := range l {
@@ -827,14 +828,14 @@ func expandGkeonpremBareMetalNodePoolNodePoolConfigNodeConfigs(v interface{}, d 
 		transformedNodeIp, err := expandGkeonpremBareMetalNodePoolNodePoolConfigNodeConfigsNodeIp(original["node_ip"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedNodeIp); val.IsValid() && !isEmptyValue(val) {
+		} else if val := reflect.ValueOf(transformedNodeIp); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 			transformed["nodeIp"] = transformedNodeIp
 		}
 
 		transformedLabels, err := expandGkeonpremBareMetalNodePoolNodePoolConfigNodeConfigsLabels(original["labels"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedLabels); val.IsValid() && !isEmptyValue(val) {
+		} else if val := reflect.ValueOf(transformedLabels); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 			transformed["labels"] = transformedLabels
 		}
 
@@ -843,11 +844,11 @@ func expandGkeonpremBareMetalNodePoolNodePoolConfigNodeConfigs(v interface{}, d 
 	return req, nil
 }
 
-func expandGkeonpremBareMetalNodePoolNodePoolConfigNodeConfigsNodeIp(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandGkeonpremBareMetalNodePoolNodePoolConfigNodeConfigsNodeIp(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandGkeonpremBareMetalNodePoolNodePoolConfigNodeConfigsLabels(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
+func expandGkeonpremBareMetalNodePoolNodePoolConfigNodeConfigsLabels(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
 	if v == nil {
 		return map[string]string{}, nil
 	}
@@ -858,11 +859,11 @@ func expandGkeonpremBareMetalNodePoolNodePoolConfigNodeConfigsLabels(v interface
 	return m, nil
 }
 
-func expandGkeonpremBareMetalNodePoolNodePoolConfigOperatingSystem(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandGkeonpremBareMetalNodePoolNodePoolConfigOperatingSystem(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandGkeonpremBareMetalNodePoolNodePoolConfigTaints(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandGkeonpremBareMetalNodePoolNodePoolConfigTaints(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
 	for _, raw := range l {
@@ -875,21 +876,21 @@ func expandGkeonpremBareMetalNodePoolNodePoolConfigTaints(v interface{}, d Terra
 		transformedKey, err := expandGkeonpremBareMetalNodePoolNodePoolConfigTaintsKey(original["key"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedKey); val.IsValid() && !isEmptyValue(val) {
+		} else if val := reflect.ValueOf(transformedKey); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 			transformed["key"] = transformedKey
 		}
 
 		transformedValue, err := expandGkeonpremBareMetalNodePoolNodePoolConfigTaintsValue(original["value"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedValue); val.IsValid() && !isEmptyValue(val) {
+		} else if val := reflect.ValueOf(transformedValue); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 			transformed["value"] = transformedValue
 		}
 
 		transformedEffect, err := expandGkeonpremBareMetalNodePoolNodePoolConfigTaintsEffect(original["effect"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedEffect); val.IsValid() && !isEmptyValue(val) {
+		} else if val := reflect.ValueOf(transformedEffect); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 			transformed["effect"] = transformedEffect
 		}
 
@@ -898,19 +899,19 @@ func expandGkeonpremBareMetalNodePoolNodePoolConfigTaints(v interface{}, d Terra
 	return req, nil
 }
 
-func expandGkeonpremBareMetalNodePoolNodePoolConfigTaintsKey(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandGkeonpremBareMetalNodePoolNodePoolConfigTaintsKey(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandGkeonpremBareMetalNodePoolNodePoolConfigTaintsValue(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandGkeonpremBareMetalNodePoolNodePoolConfigTaintsValue(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandGkeonpremBareMetalNodePoolNodePoolConfigTaintsEffect(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandGkeonpremBareMetalNodePoolNodePoolConfigTaintsEffect(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandGkeonpremBareMetalNodePoolNodePoolConfigLabels(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
+func expandGkeonpremBareMetalNodePoolNodePoolConfigLabels(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
 	if v == nil {
 		return map[string]string{}, nil
 	}

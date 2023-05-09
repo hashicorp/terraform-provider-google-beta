@@ -104,7 +104,7 @@ sites/SITE_ID/channels/CHANNEL_ID/releases/RELEASE_ID`,
 
 func resourceFirebaseHostingReleaseCreate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*transport_tpg.Config)
-	userAgent, err := generateUserAgentString(d, config.UserAgent)
+	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
 	}
@@ -113,17 +113,17 @@ func resourceFirebaseHostingReleaseCreate(d *schema.ResourceData, meta interface
 	typeProp, err := expandFirebaseHostingReleaseType(d.Get("type"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("type"); !isEmptyValue(reflect.ValueOf(typeProp)) && (ok || !reflect.DeepEqual(v, typeProp)) {
+	} else if v, ok := d.GetOkExists("type"); !tpgresource.IsEmptyValue(reflect.ValueOf(typeProp)) && (ok || !reflect.DeepEqual(v, typeProp)) {
 		obj["type"] = typeProp
 	}
 	messageProp, err := expandFirebaseHostingReleaseMessage(d.Get("message"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("message"); !isEmptyValue(reflect.ValueOf(messageProp)) && (ok || !reflect.DeepEqual(v, messageProp)) {
+	} else if v, ok := d.GetOkExists("message"); !tpgresource.IsEmptyValue(reflect.ValueOf(messageProp)) && (ok || !reflect.DeepEqual(v, messageProp)) {
 		obj["message"] = messageProp
 	}
 
-	url, err := ReplaceVars(d, config, "{{FirebaseHostingBasePath}}sites/{{site_id}}/channels/{{channel_id}}/releases?versionName={{version_name}}")
+	url, err := tpgresource.ReplaceVars(d, config, "{{FirebaseHostingBasePath}}sites/{{site_id}}/channels/{{channel_id}}/releases?versionName={{version_name}}")
 	if err != nil {
 		return err
 	}
@@ -132,7 +132,7 @@ func resourceFirebaseHostingReleaseCreate(d *schema.ResourceData, meta interface
 	billingProject := ""
 
 	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
+	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
@@ -145,7 +145,7 @@ func resourceFirebaseHostingReleaseCreate(d *schema.ResourceData, meta interface
 	}
 
 	// Store the ID now
-	id, err := ReplaceVars(d, config, "sites/{{site_id}}/channels/{{channel_id}}/releases/{{release_id}}")
+	id, err := tpgresource.ReplaceVars(d, config, "sites/{{site_id}}/channels/{{channel_id}}/releases/{{release_id}}")
 	if err != nil {
 		return fmt.Errorf("Error constructing id: %s", err)
 	}
@@ -165,12 +165,12 @@ func resourceFirebaseHostingReleaseCreate(d *schema.ResourceData, meta interface
 
 func resourceFirebaseHostingReleaseRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*transport_tpg.Config)
-	userAgent, err := generateUserAgentString(d, config.UserAgent)
+	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
 	}
 
-	url, err := ReplaceVars(d, config, "{{FirebaseHostingBasePath}}sites/{{site_id}}/channels/{{channel_id}}/releases/{{release_id}}")
+	url, err := tpgresource.ReplaceVars(d, config, "{{FirebaseHostingBasePath}}sites/{{site_id}}/channels/{{channel_id}}/releases/{{release_id}}")
 	if err != nil {
 		return err
 	}
@@ -178,7 +178,7 @@ func resourceFirebaseHostingReleaseRead(d *schema.ResourceData, meta interface{}
 	billingProject := ""
 
 	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
+	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
@@ -233,7 +233,7 @@ func resourceFirebaseHostingReleaseImport(d *schema.ResourceData, meta interface
 	}
 
 	// Replace import id for the resource id
-	id, err := ReplaceVars(d, config, "sites/{{site_id}}/channels/{{channel_id}}/releases/{{release_id}}")
+	id, err := tpgresource.ReplaceVars(d, config, "sites/{{site_id}}/channels/{{channel_id}}/releases/{{release_id}}")
 	if err != nil {
 		return nil, fmt.Errorf("Error constructing id: %s", err)
 	}
@@ -254,11 +254,11 @@ func flattenFirebaseHostingReleaseMessage(v interface{}, d *schema.ResourceData,
 	return v
 }
 
-func expandFirebaseHostingReleaseType(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandFirebaseHostingReleaseType(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandFirebaseHostingReleaseMessage(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandFirebaseHostingReleaseMessage(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
