@@ -117,7 +117,7 @@ func ComputeOperationWaitTime(config *transport_tpg.Config, res interface{}, pro
 	if err := w.SetOp(op); err != nil {
 		return err
 	}
-	return OperationWait(w, activity, timeout, config.PollInterval)
+	return tpgresource.OperationWait(w, activity, timeout, config.PollInterval)
 }
 
 func ComputeOrgOperationWaitTimeWithResponse(config *transport_tpg.Config, res interface{}, response *map[string]interface{}, parent, activity, userAgent string, timeout time.Duration) error {
@@ -136,7 +136,7 @@ func ComputeOrgOperationWaitTimeWithResponse(config *transport_tpg.Config, res i
 	if err := w.SetOp(op); err != nil {
 		return err
 	}
-	if err := OperationWait(w, activity, timeout, config.PollInterval); err != nil {
+	if err := tpgresource.OperationWait(w, activity, timeout, config.PollInterval); err != nil {
 		return err
 	}
 	e, err := json.Marshal(w.Op)
