@@ -3888,8 +3888,11 @@ resource "google_container_cluster" "primary" {
       auth     = "AUTH_MUTUAL_TLS"
     }
     kalm_config {
-	  enabled = false
-	}
+      enabled = false
+    }
+    gcs_fuse_csi_driver_config {
+      enabled = false
+    }
   }
 }
 `, projectID, clusterName)
@@ -3946,9 +3949,12 @@ resource "google_container_cluster" "primary" {
       disabled = false
       auth     = "AUTH_NONE"
     }
-	kalm_config {
-	  enabled = true
-	}
+    kalm_config {
+      enabled = true
+    }
+    gcs_fuse_csi_driver_config {
+      enabled = true
+    }
   }
 }
 `, projectID, clusterName)
