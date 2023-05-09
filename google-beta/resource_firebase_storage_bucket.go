@@ -21,6 +21,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
@@ -64,14 +65,14 @@ func ResourceFirebaseStorageBucket() *schema.Resource {
 
 func resourceFirebaseStorageBucketCreate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*transport_tpg.Config)
-	userAgent, err := generateUserAgentString(d, config.UserAgent)
+	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
 	}
 
 	obj := make(map[string]interface{})
 
-	url, err := ReplaceVars(d, config, "{{FirebaseStorageBasePath}}projects/{{project}}/buckets/{{bucket_id}}:addFirebase")
+	url, err := tpgresource.ReplaceVars(d, config, "{{FirebaseStorageBasePath}}projects/{{project}}/buckets/{{bucket_id}}:addFirebase")
 	if err != nil {
 		return err
 	}
@@ -79,14 +80,14 @@ func resourceFirebaseStorageBucketCreate(d *schema.ResourceData, meta interface{
 	log.Printf("[DEBUG] Creating new Bucket: %#v", obj)
 	billingProject := ""
 
-	project, err := getProject(d, config)
+	project, err := tpgresource.GetProject(d, config)
 	if err != nil {
 		return fmt.Errorf("Error fetching project for Bucket: %s", err)
 	}
 	billingProject = project
 
 	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
+	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
@@ -99,7 +100,7 @@ func resourceFirebaseStorageBucketCreate(d *schema.ResourceData, meta interface{
 	}
 
 	// Store the ID now
-	id, err := ReplaceVars(d, config, "projects/{{project}}/buckets/{{bucket_id}}")
+	id, err := tpgresource.ReplaceVars(d, config, "projects/{{project}}/buckets/{{bucket_id}}")
 	if err != nil {
 		return fmt.Errorf("Error constructing id: %s", err)
 	}
@@ -112,26 +113,26 @@ func resourceFirebaseStorageBucketCreate(d *schema.ResourceData, meta interface{
 
 func resourceFirebaseStorageBucketRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*transport_tpg.Config)
-	userAgent, err := generateUserAgentString(d, config.UserAgent)
+	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
 	}
 
-	url, err := ReplaceVars(d, config, "{{FirebaseStorageBasePath}}projects/{{project}}/buckets/{{bucket_id}}")
+	url, err := tpgresource.ReplaceVars(d, config, "{{FirebaseStorageBasePath}}projects/{{project}}/buckets/{{bucket_id}}")
 	if err != nil {
 		return err
 	}
 
 	billingProject := ""
 
-	project, err := getProject(d, config)
+	project, err := tpgresource.GetProject(d, config)
 	if err != nil {
 		return fmt.Errorf("Error fetching project for Bucket: %s", err)
 	}
 	billingProject = project
 
 	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
+	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
@@ -153,20 +154,20 @@ func resourceFirebaseStorageBucketRead(d *schema.ResourceData, meta interface{})
 
 func resourceFirebaseStorageBucketDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*transport_tpg.Config)
-	userAgent, err := generateUserAgentString(d, config.UserAgent)
+	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
 	}
 
 	billingProject := ""
 
-	project, err := getProject(d, config)
+	project, err := tpgresource.GetProject(d, config)
 	if err != nil {
 		return fmt.Errorf("Error fetching project for Bucket: %s", err)
 	}
 	billingProject = project
 
-	url, err := ReplaceVars(d, config, "{{FirebaseStorageBasePath}}projects/{{project}}/buckets/{{bucket_id}}:removeFirebase")
+	url, err := tpgresource.ReplaceVars(d, config, "{{FirebaseStorageBasePath}}projects/{{project}}/buckets/{{bucket_id}}:removeFirebase")
 	if err != nil {
 		return err
 	}
@@ -175,7 +176,7 @@ func resourceFirebaseStorageBucketDelete(d *schema.ResourceData, meta interface{
 	log.Printf("[DEBUG] Deleting Bucket %q", d.Id())
 
 	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
+	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
@@ -199,7 +200,7 @@ func resourceFirebaseStorageBucketImport(d *schema.ResourceData, meta interface{
 	}
 
 	// Replace import id for the resource id
-	id, err := ReplaceVars(d, config, "projects/{{project}}/buckets/{{bucket_id}}")
+	id, err := tpgresource.ReplaceVars(d, config, "projects/{{project}}/buckets/{{bucket_id}}")
 	if err != nil {
 		return nil, fmt.Errorf("Error constructing id: %s", err)
 	}

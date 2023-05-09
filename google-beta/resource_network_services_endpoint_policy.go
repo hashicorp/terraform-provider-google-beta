@@ -23,6 +23,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/verify"
 )
@@ -169,7 +170,7 @@ func ResourceNetworkServicesEndpointPolicy() *schema.Resource {
 
 func resourceNetworkServicesEndpointPolicyCreate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*transport_tpg.Config)
-	userAgent, err := generateUserAgentString(d, config.UserAgent)
+	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
 	}
@@ -178,53 +179,53 @@ func resourceNetworkServicesEndpointPolicyCreate(d *schema.ResourceData, meta in
 	labelsProp, err := expandNetworkServicesEndpointPolicyLabels(d.Get("labels"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("labels"); !isEmptyValue(reflect.ValueOf(labelsProp)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
+	} else if v, ok := d.GetOkExists("labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(labelsProp)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
 		obj["labels"] = labelsProp
 	}
 	descriptionProp, err := expandNetworkServicesEndpointPolicyDescription(d.Get("description"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("description"); !isEmptyValue(reflect.ValueOf(descriptionProp)) && (ok || !reflect.DeepEqual(v, descriptionProp)) {
+	} else if v, ok := d.GetOkExists("description"); !tpgresource.IsEmptyValue(reflect.ValueOf(descriptionProp)) && (ok || !reflect.DeepEqual(v, descriptionProp)) {
 		obj["description"] = descriptionProp
 	}
 	authorizationPolicyProp, err := expandNetworkServicesEndpointPolicyAuthorizationPolicy(d.Get("authorization_policy"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("authorization_policy"); !isEmptyValue(reflect.ValueOf(authorizationPolicyProp)) && (ok || !reflect.DeepEqual(v, authorizationPolicyProp)) {
+	} else if v, ok := d.GetOkExists("authorization_policy"); !tpgresource.IsEmptyValue(reflect.ValueOf(authorizationPolicyProp)) && (ok || !reflect.DeepEqual(v, authorizationPolicyProp)) {
 		obj["authorizationPolicy"] = authorizationPolicyProp
 	}
 	serverTlsPolicyProp, err := expandNetworkServicesEndpointPolicyServerTlsPolicy(d.Get("server_tls_policy"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("server_tls_policy"); !isEmptyValue(reflect.ValueOf(serverTlsPolicyProp)) && (ok || !reflect.DeepEqual(v, serverTlsPolicyProp)) {
+	} else if v, ok := d.GetOkExists("server_tls_policy"); !tpgresource.IsEmptyValue(reflect.ValueOf(serverTlsPolicyProp)) && (ok || !reflect.DeepEqual(v, serverTlsPolicyProp)) {
 		obj["serverTlsPolicy"] = serverTlsPolicyProp
 	}
 	clientTlsPolicyProp, err := expandNetworkServicesEndpointPolicyClientTlsPolicy(d.Get("client_tls_policy"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("client_tls_policy"); !isEmptyValue(reflect.ValueOf(clientTlsPolicyProp)) && (ok || !reflect.DeepEqual(v, clientTlsPolicyProp)) {
+	} else if v, ok := d.GetOkExists("client_tls_policy"); !tpgresource.IsEmptyValue(reflect.ValueOf(clientTlsPolicyProp)) && (ok || !reflect.DeepEqual(v, clientTlsPolicyProp)) {
 		obj["clientTlsPolicy"] = clientTlsPolicyProp
 	}
 	typeProp, err := expandNetworkServicesEndpointPolicyType(d.Get("type"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("type"); !isEmptyValue(reflect.ValueOf(typeProp)) && (ok || !reflect.DeepEqual(v, typeProp)) {
+	} else if v, ok := d.GetOkExists("type"); !tpgresource.IsEmptyValue(reflect.ValueOf(typeProp)) && (ok || !reflect.DeepEqual(v, typeProp)) {
 		obj["type"] = typeProp
 	}
 	trafficPortSelectorProp, err := expandNetworkServicesEndpointPolicyTrafficPortSelector(d.Get("traffic_port_selector"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("traffic_port_selector"); !isEmptyValue(reflect.ValueOf(trafficPortSelectorProp)) && (ok || !reflect.DeepEqual(v, trafficPortSelectorProp)) {
+	} else if v, ok := d.GetOkExists("traffic_port_selector"); !tpgresource.IsEmptyValue(reflect.ValueOf(trafficPortSelectorProp)) && (ok || !reflect.DeepEqual(v, trafficPortSelectorProp)) {
 		obj["trafficPortSelector"] = trafficPortSelectorProp
 	}
 	endpointMatcherProp, err := expandNetworkServicesEndpointPolicyEndpointMatcher(d.Get("endpoint_matcher"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("endpoint_matcher"); !isEmptyValue(reflect.ValueOf(endpointMatcherProp)) && (ok || !reflect.DeepEqual(v, endpointMatcherProp)) {
+	} else if v, ok := d.GetOkExists("endpoint_matcher"); !tpgresource.IsEmptyValue(reflect.ValueOf(endpointMatcherProp)) && (ok || !reflect.DeepEqual(v, endpointMatcherProp)) {
 		obj["endpointMatcher"] = endpointMatcherProp
 	}
 
-	url, err := ReplaceVars(d, config, "{{NetworkServicesBasePath}}projects/{{project}}/locations/global/endpointPolicies?endpointPolicyId={{name}}")
+	url, err := tpgresource.ReplaceVars(d, config, "{{NetworkServicesBasePath}}projects/{{project}}/locations/global/endpointPolicies?endpointPolicyId={{name}}")
 	if err != nil {
 		return err
 	}
@@ -232,14 +233,14 @@ func resourceNetworkServicesEndpointPolicyCreate(d *schema.ResourceData, meta in
 	log.Printf("[DEBUG] Creating new EndpointPolicy: %#v", obj)
 	billingProject := ""
 
-	project, err := getProject(d, config)
+	project, err := tpgresource.GetProject(d, config)
 	if err != nil {
 		return fmt.Errorf("Error fetching project for EndpointPolicy: %s", err)
 	}
 	billingProject = project
 
 	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
+	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
@@ -249,7 +250,7 @@ func resourceNetworkServicesEndpointPolicyCreate(d *schema.ResourceData, meta in
 	}
 
 	// Store the ID now
-	id, err := ReplaceVars(d, config, "projects/{{project}}/locations/global/endpointPolicies/{{name}}")
+	id, err := tpgresource.ReplaceVars(d, config, "projects/{{project}}/locations/global/endpointPolicies/{{name}}")
 	if err != nil {
 		return fmt.Errorf("Error constructing id: %s", err)
 	}
@@ -272,26 +273,26 @@ func resourceNetworkServicesEndpointPolicyCreate(d *schema.ResourceData, meta in
 
 func resourceNetworkServicesEndpointPolicyRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*transport_tpg.Config)
-	userAgent, err := generateUserAgentString(d, config.UserAgent)
+	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
 	}
 
-	url, err := ReplaceVars(d, config, "{{NetworkServicesBasePath}}projects/{{project}}/locations/global/endpointPolicies/{{name}}")
+	url, err := tpgresource.ReplaceVars(d, config, "{{NetworkServicesBasePath}}projects/{{project}}/locations/global/endpointPolicies/{{name}}")
 	if err != nil {
 		return err
 	}
 
 	billingProject := ""
 
-	project, err := getProject(d, config)
+	project, err := tpgresource.GetProject(d, config)
 	if err != nil {
 		return fmt.Errorf("Error fetching project for EndpointPolicy: %s", err)
 	}
 	billingProject = project
 
 	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
+	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
@@ -340,14 +341,14 @@ func resourceNetworkServicesEndpointPolicyRead(d *schema.ResourceData, meta inte
 
 func resourceNetworkServicesEndpointPolicyUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*transport_tpg.Config)
-	userAgent, err := generateUserAgentString(d, config.UserAgent)
+	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
 	}
 
 	billingProject := ""
 
-	project, err := getProject(d, config)
+	project, err := tpgresource.GetProject(d, config)
 	if err != nil {
 		return fmt.Errorf("Error fetching project for EndpointPolicy: %s", err)
 	}
@@ -357,53 +358,53 @@ func resourceNetworkServicesEndpointPolicyUpdate(d *schema.ResourceData, meta in
 	labelsProp, err := expandNetworkServicesEndpointPolicyLabels(d.Get("labels"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("labels"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
+	} else if v, ok := d.GetOkExists("labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
 		obj["labels"] = labelsProp
 	}
 	descriptionProp, err := expandNetworkServicesEndpointPolicyDescription(d.Get("description"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("description"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, descriptionProp)) {
+	} else if v, ok := d.GetOkExists("description"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, descriptionProp)) {
 		obj["description"] = descriptionProp
 	}
 	authorizationPolicyProp, err := expandNetworkServicesEndpointPolicyAuthorizationPolicy(d.Get("authorization_policy"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("authorization_policy"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, authorizationPolicyProp)) {
+	} else if v, ok := d.GetOkExists("authorization_policy"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, authorizationPolicyProp)) {
 		obj["authorizationPolicy"] = authorizationPolicyProp
 	}
 	serverTlsPolicyProp, err := expandNetworkServicesEndpointPolicyServerTlsPolicy(d.Get("server_tls_policy"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("server_tls_policy"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, serverTlsPolicyProp)) {
+	} else if v, ok := d.GetOkExists("server_tls_policy"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, serverTlsPolicyProp)) {
 		obj["serverTlsPolicy"] = serverTlsPolicyProp
 	}
 	clientTlsPolicyProp, err := expandNetworkServicesEndpointPolicyClientTlsPolicy(d.Get("client_tls_policy"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("client_tls_policy"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, clientTlsPolicyProp)) {
+	} else if v, ok := d.GetOkExists("client_tls_policy"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, clientTlsPolicyProp)) {
 		obj["clientTlsPolicy"] = clientTlsPolicyProp
 	}
 	typeProp, err := expandNetworkServicesEndpointPolicyType(d.Get("type"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("type"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, typeProp)) {
+	} else if v, ok := d.GetOkExists("type"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, typeProp)) {
 		obj["type"] = typeProp
 	}
 	trafficPortSelectorProp, err := expandNetworkServicesEndpointPolicyTrafficPortSelector(d.Get("traffic_port_selector"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("traffic_port_selector"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, trafficPortSelectorProp)) {
+	} else if v, ok := d.GetOkExists("traffic_port_selector"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, trafficPortSelectorProp)) {
 		obj["trafficPortSelector"] = trafficPortSelectorProp
 	}
 	endpointMatcherProp, err := expandNetworkServicesEndpointPolicyEndpointMatcher(d.Get("endpoint_matcher"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("endpoint_matcher"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, endpointMatcherProp)) {
+	} else if v, ok := d.GetOkExists("endpoint_matcher"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, endpointMatcherProp)) {
 		obj["endpointMatcher"] = endpointMatcherProp
 	}
 
-	url, err := ReplaceVars(d, config, "{{NetworkServicesBasePath}}projects/{{project}}/locations/global/endpointPolicies/{{name}}")
+	url, err := tpgresource.ReplaceVars(d, config, "{{NetworkServicesBasePath}}projects/{{project}}/locations/global/endpointPolicies/{{name}}")
 	if err != nil {
 		return err
 	}
@@ -450,7 +451,7 @@ func resourceNetworkServicesEndpointPolicyUpdate(d *schema.ResourceData, meta in
 	}
 
 	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
+	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
@@ -475,20 +476,20 @@ func resourceNetworkServicesEndpointPolicyUpdate(d *schema.ResourceData, meta in
 
 func resourceNetworkServicesEndpointPolicyDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*transport_tpg.Config)
-	userAgent, err := generateUserAgentString(d, config.UserAgent)
+	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
 	}
 
 	billingProject := ""
 
-	project, err := getProject(d, config)
+	project, err := tpgresource.GetProject(d, config)
 	if err != nil {
 		return fmt.Errorf("Error fetching project for EndpointPolicy: %s", err)
 	}
 	billingProject = project
 
-	url, err := ReplaceVars(d, config, "{{NetworkServicesBasePath}}projects/{{project}}/locations/global/endpointPolicies/{{name}}")
+	url, err := tpgresource.ReplaceVars(d, config, "{{NetworkServicesBasePath}}projects/{{project}}/locations/global/endpointPolicies/{{name}}")
 	if err != nil {
 		return err
 	}
@@ -497,7 +498,7 @@ func resourceNetworkServicesEndpointPolicyDelete(d *schema.ResourceData, meta in
 	log.Printf("[DEBUG] Deleting EndpointPolicy %q", d.Id())
 
 	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
+	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
@@ -529,7 +530,7 @@ func resourceNetworkServicesEndpointPolicyImport(d *schema.ResourceData, meta in
 	}
 
 	// Replace import id for the resource id
-	id, err := ReplaceVars(d, config, "projects/{{project}}/locations/global/endpointPolicies/{{name}}")
+	id, err := tpgresource.ReplaceVars(d, config, "projects/{{project}}/locations/global/endpointPolicies/{{name}}")
 	if err != nil {
 		return nil, fmt.Errorf("Error constructing id: %s", err)
 	}
@@ -646,7 +647,7 @@ func flattenNetworkServicesEndpointPolicyEndpointMatcherMetadataLabelMatcherMeta
 	return v
 }
 
-func expandNetworkServicesEndpointPolicyLabels(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
+func expandNetworkServicesEndpointPolicyLabels(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
 	if v == nil {
 		return map[string]string{}, nil
 	}
@@ -657,27 +658,27 @@ func expandNetworkServicesEndpointPolicyLabels(v interface{}, d TerraformResourc
 	return m, nil
 }
 
-func expandNetworkServicesEndpointPolicyDescription(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesEndpointPolicyDescription(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesEndpointPolicyAuthorizationPolicy(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesEndpointPolicyAuthorizationPolicy(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesEndpointPolicyServerTlsPolicy(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesEndpointPolicyServerTlsPolicy(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesEndpointPolicyClientTlsPolicy(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesEndpointPolicyClientTlsPolicy(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesEndpointPolicyType(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesEndpointPolicyType(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesEndpointPolicyTrafficPortSelector(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesEndpointPolicyTrafficPortSelector(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -689,18 +690,18 @@ func expandNetworkServicesEndpointPolicyTrafficPortSelector(v interface{}, d Ter
 	transformedPorts, err := expandNetworkServicesEndpointPolicyTrafficPortSelectorPorts(original["ports"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedPorts); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedPorts); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["ports"] = transformedPorts
 	}
 
 	return transformed, nil
 }
 
-func expandNetworkServicesEndpointPolicyTrafficPortSelectorPorts(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesEndpointPolicyTrafficPortSelectorPorts(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesEndpointPolicyEndpointMatcher(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesEndpointPolicyEndpointMatcher(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -712,14 +713,14 @@ func expandNetworkServicesEndpointPolicyEndpointMatcher(v interface{}, d Terrafo
 	transformedMetadataLabelMatcher, err := expandNetworkServicesEndpointPolicyEndpointMatcherMetadataLabelMatcher(original["metadata_label_matcher"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedMetadataLabelMatcher); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedMetadataLabelMatcher); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["metadataLabelMatcher"] = transformedMetadataLabelMatcher
 	}
 
 	return transformed, nil
 }
 
-func expandNetworkServicesEndpointPolicyEndpointMatcherMetadataLabelMatcher(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesEndpointPolicyEndpointMatcherMetadataLabelMatcher(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -731,25 +732,25 @@ func expandNetworkServicesEndpointPolicyEndpointMatcherMetadataLabelMatcher(v in
 	transformedMetadataLabelMatchCriteria, err := expandNetworkServicesEndpointPolicyEndpointMatcherMetadataLabelMatcherMetadataLabelMatchCriteria(original["metadata_label_match_criteria"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedMetadataLabelMatchCriteria); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedMetadataLabelMatchCriteria); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["metadataLabelMatchCriteria"] = transformedMetadataLabelMatchCriteria
 	}
 
 	transformedMetadataLabels, err := expandNetworkServicesEndpointPolicyEndpointMatcherMetadataLabelMatcherMetadataLabels(original["metadata_labels"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedMetadataLabels); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedMetadataLabels); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["metadataLabels"] = transformedMetadataLabels
 	}
 
 	return transformed, nil
 }
 
-func expandNetworkServicesEndpointPolicyEndpointMatcherMetadataLabelMatcherMetadataLabelMatchCriteria(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesEndpointPolicyEndpointMatcherMetadataLabelMatcherMetadataLabelMatchCriteria(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesEndpointPolicyEndpointMatcherMetadataLabelMatcherMetadataLabels(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesEndpointPolicyEndpointMatcherMetadataLabelMatcherMetadataLabels(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
 	for _, raw := range l {
@@ -762,14 +763,14 @@ func expandNetworkServicesEndpointPolicyEndpointMatcherMetadataLabelMatcherMetad
 		transformedLabelName, err := expandNetworkServicesEndpointPolicyEndpointMatcherMetadataLabelMatcherMetadataLabelsLabelName(original["label_name"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedLabelName); val.IsValid() && !isEmptyValue(val) {
+		} else if val := reflect.ValueOf(transformedLabelName); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 			transformed["labelName"] = transformedLabelName
 		}
 
 		transformedLabelValue, err := expandNetworkServicesEndpointPolicyEndpointMatcherMetadataLabelMatcherMetadataLabelsLabelValue(original["label_value"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedLabelValue); val.IsValid() && !isEmptyValue(val) {
+		} else if val := reflect.ValueOf(transformedLabelValue); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 			transformed["labelValue"] = transformedLabelValue
 		}
 
@@ -778,10 +779,10 @@ func expandNetworkServicesEndpointPolicyEndpointMatcherMetadataLabelMatcherMetad
 	return req, nil
 }
 
-func expandNetworkServicesEndpointPolicyEndpointMatcherMetadataLabelMatcherMetadataLabelsLabelName(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesEndpointPolicyEndpointMatcherMetadataLabelMatcherMetadataLabelsLabelName(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesEndpointPolicyEndpointMatcherMetadataLabelMatcherMetadataLabelsLabelValue(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesEndpointPolicyEndpointMatcherMetadataLabelMatcherMetadataLabelsLabelValue(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }

@@ -23,6 +23,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
@@ -179,7 +180,7 @@ The default value is 'global'.`,
 
 func resourceNetworkSecurityClientTlsPolicyCreate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*transport_tpg.Config)
-	userAgent, err := generateUserAgentString(d, config.UserAgent)
+	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
 	}
@@ -188,35 +189,35 @@ func resourceNetworkSecurityClientTlsPolicyCreate(d *schema.ResourceData, meta i
 	labelsProp, err := expandNetworkSecurityClientTlsPolicyLabels(d.Get("labels"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("labels"); !isEmptyValue(reflect.ValueOf(labelsProp)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
+	} else if v, ok := d.GetOkExists("labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(labelsProp)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
 		obj["labels"] = labelsProp
 	}
 	descriptionProp, err := expandNetworkSecurityClientTlsPolicyDescription(d.Get("description"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("description"); !isEmptyValue(reflect.ValueOf(descriptionProp)) && (ok || !reflect.DeepEqual(v, descriptionProp)) {
+	} else if v, ok := d.GetOkExists("description"); !tpgresource.IsEmptyValue(reflect.ValueOf(descriptionProp)) && (ok || !reflect.DeepEqual(v, descriptionProp)) {
 		obj["description"] = descriptionProp
 	}
 	sniProp, err := expandNetworkSecurityClientTlsPolicySni(d.Get("sni"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("sni"); !isEmptyValue(reflect.ValueOf(sniProp)) && (ok || !reflect.DeepEqual(v, sniProp)) {
+	} else if v, ok := d.GetOkExists("sni"); !tpgresource.IsEmptyValue(reflect.ValueOf(sniProp)) && (ok || !reflect.DeepEqual(v, sniProp)) {
 		obj["sni"] = sniProp
 	}
 	clientCertificateProp, err := expandNetworkSecurityClientTlsPolicyClientCertificate(d.Get("client_certificate"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("client_certificate"); !isEmptyValue(reflect.ValueOf(clientCertificateProp)) && (ok || !reflect.DeepEqual(v, clientCertificateProp)) {
+	} else if v, ok := d.GetOkExists("client_certificate"); !tpgresource.IsEmptyValue(reflect.ValueOf(clientCertificateProp)) && (ok || !reflect.DeepEqual(v, clientCertificateProp)) {
 		obj["clientCertificate"] = clientCertificateProp
 	}
 	serverValidationCaProp, err := expandNetworkSecurityClientTlsPolicyServerValidationCa(d.Get("server_validation_ca"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("server_validation_ca"); !isEmptyValue(reflect.ValueOf(serverValidationCaProp)) && (ok || !reflect.DeepEqual(v, serverValidationCaProp)) {
+	} else if v, ok := d.GetOkExists("server_validation_ca"); !tpgresource.IsEmptyValue(reflect.ValueOf(serverValidationCaProp)) && (ok || !reflect.DeepEqual(v, serverValidationCaProp)) {
 		obj["serverValidationCa"] = serverValidationCaProp
 	}
 
-	url, err := ReplaceVars(d, config, "{{NetworkSecurityBasePath}}projects/{{project}}/locations/{{location}}/clientTlsPolicies?clientTlsPolicyId={{name}}")
+	url, err := tpgresource.ReplaceVars(d, config, "{{NetworkSecurityBasePath}}projects/{{project}}/locations/{{location}}/clientTlsPolicies?clientTlsPolicyId={{name}}")
 	if err != nil {
 		return err
 	}
@@ -224,14 +225,14 @@ func resourceNetworkSecurityClientTlsPolicyCreate(d *schema.ResourceData, meta i
 	log.Printf("[DEBUG] Creating new ClientTlsPolicy: %#v", obj)
 	billingProject := ""
 
-	project, err := getProject(d, config)
+	project, err := tpgresource.GetProject(d, config)
 	if err != nil {
 		return fmt.Errorf("Error fetching project for ClientTlsPolicy: %s", err)
 	}
 	billingProject = project
 
 	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
+	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
@@ -241,7 +242,7 @@ func resourceNetworkSecurityClientTlsPolicyCreate(d *schema.ResourceData, meta i
 	}
 
 	// Store the ID now
-	id, err := ReplaceVars(d, config, "projects/{{project}}/locations/{{location}}/clientTlsPolicies/{{name}}")
+	id, err := tpgresource.ReplaceVars(d, config, "projects/{{project}}/locations/{{location}}/clientTlsPolicies/{{name}}")
 	if err != nil {
 		return fmt.Errorf("Error constructing id: %s", err)
 	}
@@ -264,26 +265,26 @@ func resourceNetworkSecurityClientTlsPolicyCreate(d *schema.ResourceData, meta i
 
 func resourceNetworkSecurityClientTlsPolicyRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*transport_tpg.Config)
-	userAgent, err := generateUserAgentString(d, config.UserAgent)
+	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
 	}
 
-	url, err := ReplaceVars(d, config, "{{NetworkSecurityBasePath}}projects/{{project}}/locations/{{location}}/clientTlsPolicies/{{name}}")
+	url, err := tpgresource.ReplaceVars(d, config, "{{NetworkSecurityBasePath}}projects/{{project}}/locations/{{location}}/clientTlsPolicies/{{name}}")
 	if err != nil {
 		return err
 	}
 
 	billingProject := ""
 
-	project, err := getProject(d, config)
+	project, err := tpgresource.GetProject(d, config)
 	if err != nil {
 		return fmt.Errorf("Error fetching project for ClientTlsPolicy: %s", err)
 	}
 	billingProject = project
 
 	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
+	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
@@ -323,14 +324,14 @@ func resourceNetworkSecurityClientTlsPolicyRead(d *schema.ResourceData, meta int
 
 func resourceNetworkSecurityClientTlsPolicyUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*transport_tpg.Config)
-	userAgent, err := generateUserAgentString(d, config.UserAgent)
+	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
 	}
 
 	billingProject := ""
 
-	project, err := getProject(d, config)
+	project, err := tpgresource.GetProject(d, config)
 	if err != nil {
 		return fmt.Errorf("Error fetching project for ClientTlsPolicy: %s", err)
 	}
@@ -340,35 +341,35 @@ func resourceNetworkSecurityClientTlsPolicyUpdate(d *schema.ResourceData, meta i
 	labelsProp, err := expandNetworkSecurityClientTlsPolicyLabels(d.Get("labels"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("labels"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
+	} else if v, ok := d.GetOkExists("labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
 		obj["labels"] = labelsProp
 	}
 	descriptionProp, err := expandNetworkSecurityClientTlsPolicyDescription(d.Get("description"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("description"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, descriptionProp)) {
+	} else if v, ok := d.GetOkExists("description"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, descriptionProp)) {
 		obj["description"] = descriptionProp
 	}
 	sniProp, err := expandNetworkSecurityClientTlsPolicySni(d.Get("sni"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("sni"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, sniProp)) {
+	} else if v, ok := d.GetOkExists("sni"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, sniProp)) {
 		obj["sni"] = sniProp
 	}
 	clientCertificateProp, err := expandNetworkSecurityClientTlsPolicyClientCertificate(d.Get("client_certificate"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("client_certificate"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, clientCertificateProp)) {
+	} else if v, ok := d.GetOkExists("client_certificate"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, clientCertificateProp)) {
 		obj["clientCertificate"] = clientCertificateProp
 	}
 	serverValidationCaProp, err := expandNetworkSecurityClientTlsPolicyServerValidationCa(d.Get("server_validation_ca"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("server_validation_ca"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, serverValidationCaProp)) {
+	} else if v, ok := d.GetOkExists("server_validation_ca"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, serverValidationCaProp)) {
 		obj["serverValidationCa"] = serverValidationCaProp
 	}
 
-	url, err := ReplaceVars(d, config, "{{NetworkSecurityBasePath}}projects/{{project}}/locations/{{location}}/clientTlsPolicies/{{name}}")
+	url, err := tpgresource.ReplaceVars(d, config, "{{NetworkSecurityBasePath}}projects/{{project}}/locations/{{location}}/clientTlsPolicies/{{name}}")
 	if err != nil {
 		return err
 	}
@@ -403,7 +404,7 @@ func resourceNetworkSecurityClientTlsPolicyUpdate(d *schema.ResourceData, meta i
 	}
 
 	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
+	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
@@ -428,20 +429,20 @@ func resourceNetworkSecurityClientTlsPolicyUpdate(d *schema.ResourceData, meta i
 
 func resourceNetworkSecurityClientTlsPolicyDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*transport_tpg.Config)
-	userAgent, err := generateUserAgentString(d, config.UserAgent)
+	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
 	}
 
 	billingProject := ""
 
-	project, err := getProject(d, config)
+	project, err := tpgresource.GetProject(d, config)
 	if err != nil {
 		return fmt.Errorf("Error fetching project for ClientTlsPolicy: %s", err)
 	}
 	billingProject = project
 
-	url, err := ReplaceVars(d, config, "{{NetworkSecurityBasePath}}projects/{{project}}/locations/{{location}}/clientTlsPolicies/{{name}}")
+	url, err := tpgresource.ReplaceVars(d, config, "{{NetworkSecurityBasePath}}projects/{{project}}/locations/{{location}}/clientTlsPolicies/{{name}}")
 	if err != nil {
 		return err
 	}
@@ -450,7 +451,7 @@ func resourceNetworkSecurityClientTlsPolicyDelete(d *schema.ResourceData, meta i
 	log.Printf("[DEBUG] Deleting ClientTlsPolicy %q", d.Id())
 
 	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
+	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
@@ -482,7 +483,7 @@ func resourceNetworkSecurityClientTlsPolicyImport(d *schema.ResourceData, meta i
 	}
 
 	// Replace import id for the resource id
-	id, err := ReplaceVars(d, config, "projects/{{project}}/locations/{{location}}/clientTlsPolicies/{{name}}")
+	id, err := tpgresource.ReplaceVars(d, config, "projects/{{project}}/locations/{{location}}/clientTlsPolicies/{{name}}")
 	if err != nil {
 		return nil, fmt.Errorf("Error constructing id: %s", err)
 	}
@@ -613,7 +614,7 @@ func flattenNetworkSecurityClientTlsPolicyServerValidationCaCertificateProviderI
 	return v
 }
 
-func expandNetworkSecurityClientTlsPolicyLabels(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
+func expandNetworkSecurityClientTlsPolicyLabels(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
 	if v == nil {
 		return map[string]string{}, nil
 	}
@@ -624,15 +625,15 @@ func expandNetworkSecurityClientTlsPolicyLabels(v interface{}, d TerraformResour
 	return m, nil
 }
 
-func expandNetworkSecurityClientTlsPolicyDescription(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkSecurityClientTlsPolicyDescription(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkSecurityClientTlsPolicySni(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkSecurityClientTlsPolicySni(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkSecurityClientTlsPolicyClientCertificate(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkSecurityClientTlsPolicyClientCertificate(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -644,21 +645,21 @@ func expandNetworkSecurityClientTlsPolicyClientCertificate(v interface{}, d Terr
 	transformedGrpcEndpoint, err := expandNetworkSecurityClientTlsPolicyClientCertificateGrpcEndpoint(original["grpc_endpoint"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedGrpcEndpoint); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedGrpcEndpoint); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["grpcEndpoint"] = transformedGrpcEndpoint
 	}
 
 	transformedCertificateProviderInstance, err := expandNetworkSecurityClientTlsPolicyClientCertificateCertificateProviderInstance(original["certificate_provider_instance"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedCertificateProviderInstance); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedCertificateProviderInstance); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["certificateProviderInstance"] = transformedCertificateProviderInstance
 	}
 
 	return transformed, nil
 }
 
-func expandNetworkSecurityClientTlsPolicyClientCertificateGrpcEndpoint(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkSecurityClientTlsPolicyClientCertificateGrpcEndpoint(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -670,18 +671,18 @@ func expandNetworkSecurityClientTlsPolicyClientCertificateGrpcEndpoint(v interfa
 	transformedTargetUri, err := expandNetworkSecurityClientTlsPolicyClientCertificateGrpcEndpointTargetUri(original["target_uri"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedTargetUri); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedTargetUri); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["targetUri"] = transformedTargetUri
 	}
 
 	return transformed, nil
 }
 
-func expandNetworkSecurityClientTlsPolicyClientCertificateGrpcEndpointTargetUri(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkSecurityClientTlsPolicyClientCertificateGrpcEndpointTargetUri(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkSecurityClientTlsPolicyClientCertificateCertificateProviderInstance(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkSecurityClientTlsPolicyClientCertificateCertificateProviderInstance(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -693,18 +694,18 @@ func expandNetworkSecurityClientTlsPolicyClientCertificateCertificateProviderIns
 	transformedPluginInstance, err := expandNetworkSecurityClientTlsPolicyClientCertificateCertificateProviderInstancePluginInstance(original["plugin_instance"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedPluginInstance); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedPluginInstance); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["pluginInstance"] = transformedPluginInstance
 	}
 
 	return transformed, nil
 }
 
-func expandNetworkSecurityClientTlsPolicyClientCertificateCertificateProviderInstancePluginInstance(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkSecurityClientTlsPolicyClientCertificateCertificateProviderInstancePluginInstance(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkSecurityClientTlsPolicyServerValidationCa(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkSecurityClientTlsPolicyServerValidationCa(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
 	for _, raw := range l {
@@ -717,14 +718,14 @@ func expandNetworkSecurityClientTlsPolicyServerValidationCa(v interface{}, d Ter
 		transformedGrpcEndpoint, err := expandNetworkSecurityClientTlsPolicyServerValidationCaGrpcEndpoint(original["grpc_endpoint"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedGrpcEndpoint); val.IsValid() && !isEmptyValue(val) {
+		} else if val := reflect.ValueOf(transformedGrpcEndpoint); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 			transformed["grpcEndpoint"] = transformedGrpcEndpoint
 		}
 
 		transformedCertificateProviderInstance, err := expandNetworkSecurityClientTlsPolicyServerValidationCaCertificateProviderInstance(original["certificate_provider_instance"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedCertificateProviderInstance); val.IsValid() && !isEmptyValue(val) {
+		} else if val := reflect.ValueOf(transformedCertificateProviderInstance); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 			transformed["certificateProviderInstance"] = transformedCertificateProviderInstance
 		}
 
@@ -733,7 +734,7 @@ func expandNetworkSecurityClientTlsPolicyServerValidationCa(v interface{}, d Ter
 	return req, nil
 }
 
-func expandNetworkSecurityClientTlsPolicyServerValidationCaGrpcEndpoint(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkSecurityClientTlsPolicyServerValidationCaGrpcEndpoint(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -745,18 +746,18 @@ func expandNetworkSecurityClientTlsPolicyServerValidationCaGrpcEndpoint(v interf
 	transformedTargetUri, err := expandNetworkSecurityClientTlsPolicyServerValidationCaGrpcEndpointTargetUri(original["target_uri"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedTargetUri); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedTargetUri); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["targetUri"] = transformedTargetUri
 	}
 
 	return transformed, nil
 }
 
-func expandNetworkSecurityClientTlsPolicyServerValidationCaGrpcEndpointTargetUri(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkSecurityClientTlsPolicyServerValidationCaGrpcEndpointTargetUri(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkSecurityClientTlsPolicyServerValidationCaCertificateProviderInstance(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkSecurityClientTlsPolicyServerValidationCaCertificateProviderInstance(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -768,13 +769,13 @@ func expandNetworkSecurityClientTlsPolicyServerValidationCaCertificateProviderIn
 	transformedPluginInstance, err := expandNetworkSecurityClientTlsPolicyServerValidationCaCertificateProviderInstancePluginInstance(original["plugin_instance"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedPluginInstance); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedPluginInstance); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["pluginInstance"] = transformedPluginInstance
 	}
 
 	return transformed, nil
 }
 
-func expandNetworkSecurityClientTlsPolicyServerValidationCaCertificateProviderInstancePluginInstance(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkSecurityClientTlsPolicyServerValidationCaCertificateProviderInstancePluginInstance(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }

@@ -1,10 +1,11 @@
 package google
 
 import (
-	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"log"
 	"strings"
 	"testing"
+
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"

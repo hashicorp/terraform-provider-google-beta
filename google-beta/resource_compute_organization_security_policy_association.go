@@ -22,6 +22,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
@@ -71,7 +72,7 @@ func ResourceComputeOrganizationSecurityPolicyAssociation() *schema.Resource {
 
 func resourceComputeOrganizationSecurityPolicyAssociationCreate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*transport_tpg.Config)
-	userAgent, err := generateUserAgentString(d, config.UserAgent)
+	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
 	}
@@ -80,17 +81,17 @@ func resourceComputeOrganizationSecurityPolicyAssociationCreate(d *schema.Resour
 	nameProp, err := expandComputeOrganizationSecurityPolicyAssociationName(d.Get("name"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("name"); !isEmptyValue(reflect.ValueOf(nameProp)) && (ok || !reflect.DeepEqual(v, nameProp)) {
+	} else if v, ok := d.GetOkExists("name"); !tpgresource.IsEmptyValue(reflect.ValueOf(nameProp)) && (ok || !reflect.DeepEqual(v, nameProp)) {
 		obj["name"] = nameProp
 	}
 	attachmentIdProp, err := expandComputeOrganizationSecurityPolicyAssociationAttachmentId(d.Get("attachment_id"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("attachment_id"); !isEmptyValue(reflect.ValueOf(attachmentIdProp)) && (ok || !reflect.DeepEqual(v, attachmentIdProp)) {
+	} else if v, ok := d.GetOkExists("attachment_id"); !tpgresource.IsEmptyValue(reflect.ValueOf(attachmentIdProp)) && (ok || !reflect.DeepEqual(v, attachmentIdProp)) {
 		obj["attachmentId"] = attachmentIdProp
 	}
 
-	url, err := ReplaceVars(d, config, "{{ComputeBasePath}}{{policy_id}}/addAssociation")
+	url, err := tpgresource.ReplaceVars(d, config, "{{ComputeBasePath}}{{policy_id}}/addAssociation")
 	if err != nil {
 		return err
 	}
@@ -99,7 +100,7 @@ func resourceComputeOrganizationSecurityPolicyAssociationCreate(d *schema.Resour
 	billingProject := ""
 
 	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
+	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
@@ -109,7 +110,7 @@ func resourceComputeOrganizationSecurityPolicyAssociationCreate(d *schema.Resour
 	}
 
 	// Store the ID now
-	id, err := ReplaceVars(d, config, "{{policy_id}}/association/{{name}}")
+	id, err := tpgresource.ReplaceVars(d, config, "{{policy_id}}/association/{{name}}")
 	if err != nil {
 		return fmt.Errorf("Error constructing id: %s", err)
 	}
@@ -118,7 +119,7 @@ func resourceComputeOrganizationSecurityPolicyAssociationCreate(d *schema.Resour
 	// `parent` is needed to poll the asynchronous operations but its available only on the policy.
 
 	policyUrl := fmt.Sprintf("{{ComputeBasePath}}%s", d.Get("policy_id"))
-	url, err = ReplaceVars(d, config, policyUrl)
+	url, err = tpgresource.ReplaceVars(d, config, policyUrl)
 	if err != nil {
 		return err
 	}
@@ -147,12 +148,12 @@ func resourceComputeOrganizationSecurityPolicyAssociationCreate(d *schema.Resour
 
 func resourceComputeOrganizationSecurityPolicyAssociationRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*transport_tpg.Config)
-	userAgent, err := generateUserAgentString(d, config.UserAgent)
+	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
 	}
 
-	url, err := ReplaceVars(d, config, "{{ComputeBasePath}}{{policy_id}}/getAssociation?name={{name}}")
+	url, err := tpgresource.ReplaceVars(d, config, "{{ComputeBasePath}}{{policy_id}}/getAssociation?name={{name}}")
 	if err != nil {
 		return err
 	}
@@ -160,7 +161,7 @@ func resourceComputeOrganizationSecurityPolicyAssociationRead(d *schema.Resource
 	billingProject := ""
 
 	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
+	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
@@ -184,14 +185,14 @@ func resourceComputeOrganizationSecurityPolicyAssociationRead(d *schema.Resource
 
 func resourceComputeOrganizationSecurityPolicyAssociationDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*transport_tpg.Config)
-	userAgent, err := generateUserAgentString(d, config.UserAgent)
+	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
 	}
 
 	billingProject := ""
 
-	url, err := ReplaceVars(d, config, "{{ComputeBasePath}}{{policy_id}}/removeAssociation?name={{name}}")
+	url, err := tpgresource.ReplaceVars(d, config, "{{ComputeBasePath}}{{policy_id}}/removeAssociation?name={{name}}")
 	if err != nil {
 		return err
 	}
@@ -200,7 +201,7 @@ func resourceComputeOrganizationSecurityPolicyAssociationDelete(d *schema.Resour
 	log.Printf("[DEBUG] Deleting OrganizationSecurityPolicyAssociation %q", d.Id())
 
 	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
+	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
@@ -212,7 +213,7 @@ func resourceComputeOrganizationSecurityPolicyAssociationDelete(d *schema.Resour
 	// `parent` is needed to poll the asynchronous operations but its available only on the policy.
 
 	policyUrl := fmt.Sprintf("{{ComputeBasePath}}%s", d.Get("policy_id"))
-	url, err = ReplaceVars(d, config, policyUrl)
+	url, err = tpgresource.ReplaceVars(d, config, policyUrl)
 	if err != nil {
 		return err
 	}
@@ -247,7 +248,7 @@ func resourceComputeOrganizationSecurityPolicyAssociationImport(d *schema.Resour
 	}
 
 	// Replace import id for the resource id
-	id, err := ReplaceVars(d, config, "{{policy_id}}/association/{{name}}")
+	id, err := tpgresource.ReplaceVars(d, config, "{{policy_id}}/association/{{name}}")
 	if err != nil {
 		return nil, fmt.Errorf("Error constructing id: %s", err)
 	}
@@ -268,10 +269,10 @@ func flattenComputeOrganizationSecurityPolicyAssociationDisplayName(v interface{
 	return v
 }
 
-func expandComputeOrganizationSecurityPolicyAssociationName(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandComputeOrganizationSecurityPolicyAssociationName(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandComputeOrganizationSecurityPolicyAssociationAttachmentId(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandComputeOrganizationSecurityPolicyAssociationAttachmentId(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }

@@ -23,6 +23,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/verify"
 )
@@ -191,7 +192,7 @@ Authorization based on the principal name without certificate validation (config
 
 func resourceNetworkSecurityAuthorizationPolicyCreate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*transport_tpg.Config)
-	userAgent, err := generateUserAgentString(d, config.UserAgent)
+	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
 	}
@@ -200,29 +201,29 @@ func resourceNetworkSecurityAuthorizationPolicyCreate(d *schema.ResourceData, me
 	labelsProp, err := expandNetworkSecurityAuthorizationPolicyLabels(d.Get("labels"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("labels"); !isEmptyValue(reflect.ValueOf(labelsProp)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
+	} else if v, ok := d.GetOkExists("labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(labelsProp)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
 		obj["labels"] = labelsProp
 	}
 	descriptionProp, err := expandNetworkSecurityAuthorizationPolicyDescription(d.Get("description"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("description"); !isEmptyValue(reflect.ValueOf(descriptionProp)) && (ok || !reflect.DeepEqual(v, descriptionProp)) {
+	} else if v, ok := d.GetOkExists("description"); !tpgresource.IsEmptyValue(reflect.ValueOf(descriptionProp)) && (ok || !reflect.DeepEqual(v, descriptionProp)) {
 		obj["description"] = descriptionProp
 	}
 	actionProp, err := expandNetworkSecurityAuthorizationPolicyAction(d.Get("action"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("action"); !isEmptyValue(reflect.ValueOf(actionProp)) && (ok || !reflect.DeepEqual(v, actionProp)) {
+	} else if v, ok := d.GetOkExists("action"); !tpgresource.IsEmptyValue(reflect.ValueOf(actionProp)) && (ok || !reflect.DeepEqual(v, actionProp)) {
 		obj["action"] = actionProp
 	}
 	rulesProp, err := expandNetworkSecurityAuthorizationPolicyRules(d.Get("rules"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("rules"); !isEmptyValue(reflect.ValueOf(rulesProp)) && (ok || !reflect.DeepEqual(v, rulesProp)) {
+	} else if v, ok := d.GetOkExists("rules"); !tpgresource.IsEmptyValue(reflect.ValueOf(rulesProp)) && (ok || !reflect.DeepEqual(v, rulesProp)) {
 		obj["rules"] = rulesProp
 	}
 
-	url, err := ReplaceVars(d, config, "{{NetworkSecurityBasePath}}projects/{{project}}/locations/{{location}}/authorizationPolicies?authorizationPolicyId={{name}}")
+	url, err := tpgresource.ReplaceVars(d, config, "{{NetworkSecurityBasePath}}projects/{{project}}/locations/{{location}}/authorizationPolicies?authorizationPolicyId={{name}}")
 	if err != nil {
 		return err
 	}
@@ -230,14 +231,14 @@ func resourceNetworkSecurityAuthorizationPolicyCreate(d *schema.ResourceData, me
 	log.Printf("[DEBUG] Creating new AuthorizationPolicy: %#v", obj)
 	billingProject := ""
 
-	project, err := getProject(d, config)
+	project, err := tpgresource.GetProject(d, config)
 	if err != nil {
 		return fmt.Errorf("Error fetching project for AuthorizationPolicy: %s", err)
 	}
 	billingProject = project
 
 	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
+	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
@@ -247,7 +248,7 @@ func resourceNetworkSecurityAuthorizationPolicyCreate(d *schema.ResourceData, me
 	}
 
 	// Store the ID now
-	id, err := ReplaceVars(d, config, "projects/{{project}}/locations/{{location}}/authorizationPolicies/{{name}}")
+	id, err := tpgresource.ReplaceVars(d, config, "projects/{{project}}/locations/{{location}}/authorizationPolicies/{{name}}")
 	if err != nil {
 		return fmt.Errorf("Error constructing id: %s", err)
 	}
@@ -270,26 +271,26 @@ func resourceNetworkSecurityAuthorizationPolicyCreate(d *schema.ResourceData, me
 
 func resourceNetworkSecurityAuthorizationPolicyRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*transport_tpg.Config)
-	userAgent, err := generateUserAgentString(d, config.UserAgent)
+	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
 	}
 
-	url, err := ReplaceVars(d, config, "{{NetworkSecurityBasePath}}projects/{{project}}/locations/{{location}}/authorizationPolicies/{{name}}")
+	url, err := tpgresource.ReplaceVars(d, config, "{{NetworkSecurityBasePath}}projects/{{project}}/locations/{{location}}/authorizationPolicies/{{name}}")
 	if err != nil {
 		return err
 	}
 
 	billingProject := ""
 
-	project, err := getProject(d, config)
+	project, err := tpgresource.GetProject(d, config)
 	if err != nil {
 		return fmt.Errorf("Error fetching project for AuthorizationPolicy: %s", err)
 	}
 	billingProject = project
 
 	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
+	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
@@ -326,14 +327,14 @@ func resourceNetworkSecurityAuthorizationPolicyRead(d *schema.ResourceData, meta
 
 func resourceNetworkSecurityAuthorizationPolicyUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*transport_tpg.Config)
-	userAgent, err := generateUserAgentString(d, config.UserAgent)
+	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
 	}
 
 	billingProject := ""
 
-	project, err := getProject(d, config)
+	project, err := tpgresource.GetProject(d, config)
 	if err != nil {
 		return fmt.Errorf("Error fetching project for AuthorizationPolicy: %s", err)
 	}
@@ -343,29 +344,29 @@ func resourceNetworkSecurityAuthorizationPolicyUpdate(d *schema.ResourceData, me
 	labelsProp, err := expandNetworkSecurityAuthorizationPolicyLabels(d.Get("labels"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("labels"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
+	} else if v, ok := d.GetOkExists("labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
 		obj["labels"] = labelsProp
 	}
 	descriptionProp, err := expandNetworkSecurityAuthorizationPolicyDescription(d.Get("description"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("description"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, descriptionProp)) {
+	} else if v, ok := d.GetOkExists("description"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, descriptionProp)) {
 		obj["description"] = descriptionProp
 	}
 	actionProp, err := expandNetworkSecurityAuthorizationPolicyAction(d.Get("action"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("action"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, actionProp)) {
+	} else if v, ok := d.GetOkExists("action"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, actionProp)) {
 		obj["action"] = actionProp
 	}
 	rulesProp, err := expandNetworkSecurityAuthorizationPolicyRules(d.Get("rules"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("rules"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, rulesProp)) {
+	} else if v, ok := d.GetOkExists("rules"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, rulesProp)) {
 		obj["rules"] = rulesProp
 	}
 
-	url, err := ReplaceVars(d, config, "{{NetworkSecurityBasePath}}projects/{{project}}/locations/{{location}}/authorizationPolicies/{{name}}")
+	url, err := tpgresource.ReplaceVars(d, config, "{{NetworkSecurityBasePath}}projects/{{project}}/locations/{{location}}/authorizationPolicies/{{name}}")
 	if err != nil {
 		return err
 	}
@@ -396,7 +397,7 @@ func resourceNetworkSecurityAuthorizationPolicyUpdate(d *schema.ResourceData, me
 	}
 
 	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
+	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
@@ -421,20 +422,20 @@ func resourceNetworkSecurityAuthorizationPolicyUpdate(d *schema.ResourceData, me
 
 func resourceNetworkSecurityAuthorizationPolicyDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*transport_tpg.Config)
-	userAgent, err := generateUserAgentString(d, config.UserAgent)
+	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
 	}
 
 	billingProject := ""
 
-	project, err := getProject(d, config)
+	project, err := tpgresource.GetProject(d, config)
 	if err != nil {
 		return fmt.Errorf("Error fetching project for AuthorizationPolicy: %s", err)
 	}
 	billingProject = project
 
-	url, err := ReplaceVars(d, config, "{{NetworkSecurityBasePath}}projects/{{project}}/locations/{{location}}/authorizationPolicies/{{name}}")
+	url, err := tpgresource.ReplaceVars(d, config, "{{NetworkSecurityBasePath}}projects/{{project}}/locations/{{location}}/authorizationPolicies/{{name}}")
 	if err != nil {
 		return err
 	}
@@ -443,7 +444,7 @@ func resourceNetworkSecurityAuthorizationPolicyDelete(d *schema.ResourceData, me
 	log.Printf("[DEBUG] Deleting AuthorizationPolicy %q", d.Id())
 
 	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
+	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
@@ -475,7 +476,7 @@ func resourceNetworkSecurityAuthorizationPolicyImport(d *schema.ResourceData, me
 	}
 
 	// Replace import id for the resource id
-	id, err := ReplaceVars(d, config, "projects/{{project}}/locations/{{location}}/authorizationPolicies/{{name}}")
+	id, err := tpgresource.ReplaceVars(d, config, "projects/{{project}}/locations/{{location}}/authorizationPolicies/{{name}}")
 	if err != nil {
 		return nil, fmt.Errorf("Error constructing id: %s", err)
 	}
@@ -606,7 +607,7 @@ func flattenNetworkSecurityAuthorizationPolicyRulesDestinationsHttpHeaderMatchRe
 	return v
 }
 
-func expandNetworkSecurityAuthorizationPolicyLabels(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
+func expandNetworkSecurityAuthorizationPolicyLabels(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
 	if v == nil {
 		return map[string]string{}, nil
 	}
@@ -617,15 +618,15 @@ func expandNetworkSecurityAuthorizationPolicyLabels(v interface{}, d TerraformRe
 	return m, nil
 }
 
-func expandNetworkSecurityAuthorizationPolicyDescription(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkSecurityAuthorizationPolicyDescription(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkSecurityAuthorizationPolicyAction(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkSecurityAuthorizationPolicyAction(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkSecurityAuthorizationPolicyRules(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkSecurityAuthorizationPolicyRules(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
 	for _, raw := range l {
@@ -638,14 +639,14 @@ func expandNetworkSecurityAuthorizationPolicyRules(v interface{}, d TerraformRes
 		transformedSources, err := expandNetworkSecurityAuthorizationPolicyRulesSources(original["sources"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedSources); val.IsValid() && !isEmptyValue(val) {
+		} else if val := reflect.ValueOf(transformedSources); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 			transformed["sources"] = transformedSources
 		}
 
 		transformedDestinations, err := expandNetworkSecurityAuthorizationPolicyRulesDestinations(original["destinations"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedDestinations); val.IsValid() && !isEmptyValue(val) {
+		} else if val := reflect.ValueOf(transformedDestinations); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 			transformed["destinations"] = transformedDestinations
 		}
 
@@ -654,7 +655,7 @@ func expandNetworkSecurityAuthorizationPolicyRules(v interface{}, d TerraformRes
 	return req, nil
 }
 
-func expandNetworkSecurityAuthorizationPolicyRulesSources(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkSecurityAuthorizationPolicyRulesSources(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
 	for _, raw := range l {
@@ -667,14 +668,14 @@ func expandNetworkSecurityAuthorizationPolicyRulesSources(v interface{}, d Terra
 		transformedPrincipals, err := expandNetworkSecurityAuthorizationPolicyRulesSourcesPrincipals(original["principals"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedPrincipals); val.IsValid() && !isEmptyValue(val) {
+		} else if val := reflect.ValueOf(transformedPrincipals); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 			transformed["principals"] = transformedPrincipals
 		}
 
 		transformedIpBlocks, err := expandNetworkSecurityAuthorizationPolicyRulesSourcesIpBlocks(original["ip_blocks"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedIpBlocks); val.IsValid() && !isEmptyValue(val) {
+		} else if val := reflect.ValueOf(transformedIpBlocks); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 			transformed["ipBlocks"] = transformedIpBlocks
 		}
 
@@ -683,15 +684,15 @@ func expandNetworkSecurityAuthorizationPolicyRulesSources(v interface{}, d Terra
 	return req, nil
 }
 
-func expandNetworkSecurityAuthorizationPolicyRulesSourcesPrincipals(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkSecurityAuthorizationPolicyRulesSourcesPrincipals(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkSecurityAuthorizationPolicyRulesSourcesIpBlocks(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkSecurityAuthorizationPolicyRulesSourcesIpBlocks(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkSecurityAuthorizationPolicyRulesDestinations(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkSecurityAuthorizationPolicyRulesDestinations(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
 	for _, raw := range l {
@@ -704,28 +705,28 @@ func expandNetworkSecurityAuthorizationPolicyRulesDestinations(v interface{}, d 
 		transformedHosts, err := expandNetworkSecurityAuthorizationPolicyRulesDestinationsHosts(original["hosts"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedHosts); val.IsValid() && !isEmptyValue(val) {
+		} else if val := reflect.ValueOf(transformedHosts); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 			transformed["hosts"] = transformedHosts
 		}
 
 		transformedPorts, err := expandNetworkSecurityAuthorizationPolicyRulesDestinationsPorts(original["ports"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedPorts); val.IsValid() && !isEmptyValue(val) {
+		} else if val := reflect.ValueOf(transformedPorts); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 			transformed["ports"] = transformedPorts
 		}
 
 		transformedMethods, err := expandNetworkSecurityAuthorizationPolicyRulesDestinationsMethods(original["methods"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedMethods); val.IsValid() && !isEmptyValue(val) {
+		} else if val := reflect.ValueOf(transformedMethods); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 			transformed["methods"] = transformedMethods
 		}
 
 		transformedHttpHeaderMatch, err := expandNetworkSecurityAuthorizationPolicyRulesDestinationsHttpHeaderMatch(original["http_header_match"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedHttpHeaderMatch); val.IsValid() && !isEmptyValue(val) {
+		} else if val := reflect.ValueOf(transformedHttpHeaderMatch); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 			transformed["httpHeaderMatch"] = transformedHttpHeaderMatch
 		}
 
@@ -734,19 +735,19 @@ func expandNetworkSecurityAuthorizationPolicyRulesDestinations(v interface{}, d 
 	return req, nil
 }
 
-func expandNetworkSecurityAuthorizationPolicyRulesDestinationsHosts(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkSecurityAuthorizationPolicyRulesDestinationsHosts(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkSecurityAuthorizationPolicyRulesDestinationsPorts(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkSecurityAuthorizationPolicyRulesDestinationsPorts(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkSecurityAuthorizationPolicyRulesDestinationsMethods(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkSecurityAuthorizationPolicyRulesDestinationsMethods(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkSecurityAuthorizationPolicyRulesDestinationsHttpHeaderMatch(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkSecurityAuthorizationPolicyRulesDestinationsHttpHeaderMatch(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -758,24 +759,24 @@ func expandNetworkSecurityAuthorizationPolicyRulesDestinationsHttpHeaderMatch(v 
 	transformedHeaderName, err := expandNetworkSecurityAuthorizationPolicyRulesDestinationsHttpHeaderMatchHeaderName(original["header_name"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedHeaderName); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedHeaderName); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["headerName"] = transformedHeaderName
 	}
 
 	transformedRegexMatch, err := expandNetworkSecurityAuthorizationPolicyRulesDestinationsHttpHeaderMatchRegexMatch(original["regex_match"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedRegexMatch); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedRegexMatch); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["regexMatch"] = transformedRegexMatch
 	}
 
 	return transformed, nil
 }
 
-func expandNetworkSecurityAuthorizationPolicyRulesDestinationsHttpHeaderMatchHeaderName(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkSecurityAuthorizationPolicyRulesDestinationsHttpHeaderMatchHeaderName(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkSecurityAuthorizationPolicyRulesDestinationsHttpHeaderMatchRegexMatch(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkSecurityAuthorizationPolicyRulesDestinationsHttpHeaderMatchRegexMatch(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }

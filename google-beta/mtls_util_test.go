@@ -1,9 +1,10 @@
 package google
 
 import (
-	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 	"strings"
 	"testing"
+
+	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
 func TestUnitMtls_urlSwitching(t *testing.T) {

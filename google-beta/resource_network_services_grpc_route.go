@@ -23,6 +23,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/verify"
 )
@@ -292,7 +293,7 @@ func ResourceNetworkServicesGrpcRoute() *schema.Resource {
 
 func resourceNetworkServicesGrpcRouteCreate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*transport_tpg.Config)
-	userAgent, err := generateUserAgentString(d, config.UserAgent)
+	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
 	}
@@ -301,41 +302,41 @@ func resourceNetworkServicesGrpcRouteCreate(d *schema.ResourceData, meta interfa
 	labelsProp, err := expandNetworkServicesGrpcRouteLabels(d.Get("labels"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("labels"); !isEmptyValue(reflect.ValueOf(labelsProp)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
+	} else if v, ok := d.GetOkExists("labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(labelsProp)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
 		obj["labels"] = labelsProp
 	}
 	descriptionProp, err := expandNetworkServicesGrpcRouteDescription(d.Get("description"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("description"); !isEmptyValue(reflect.ValueOf(descriptionProp)) && (ok || !reflect.DeepEqual(v, descriptionProp)) {
+	} else if v, ok := d.GetOkExists("description"); !tpgresource.IsEmptyValue(reflect.ValueOf(descriptionProp)) && (ok || !reflect.DeepEqual(v, descriptionProp)) {
 		obj["description"] = descriptionProp
 	}
 	hostnamesProp, err := expandNetworkServicesGrpcRouteHostnames(d.Get("hostnames"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("hostnames"); !isEmptyValue(reflect.ValueOf(hostnamesProp)) && (ok || !reflect.DeepEqual(v, hostnamesProp)) {
+	} else if v, ok := d.GetOkExists("hostnames"); !tpgresource.IsEmptyValue(reflect.ValueOf(hostnamesProp)) && (ok || !reflect.DeepEqual(v, hostnamesProp)) {
 		obj["hostnames"] = hostnamesProp
 	}
 	meshesProp, err := expandNetworkServicesGrpcRouteMeshes(d.Get("meshes"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("meshes"); !isEmptyValue(reflect.ValueOf(meshesProp)) && (ok || !reflect.DeepEqual(v, meshesProp)) {
+	} else if v, ok := d.GetOkExists("meshes"); !tpgresource.IsEmptyValue(reflect.ValueOf(meshesProp)) && (ok || !reflect.DeepEqual(v, meshesProp)) {
 		obj["meshes"] = meshesProp
 	}
 	gatewaysProp, err := expandNetworkServicesGrpcRouteGateways(d.Get("gateways"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("gateways"); !isEmptyValue(reflect.ValueOf(gatewaysProp)) && (ok || !reflect.DeepEqual(v, gatewaysProp)) {
+	} else if v, ok := d.GetOkExists("gateways"); !tpgresource.IsEmptyValue(reflect.ValueOf(gatewaysProp)) && (ok || !reflect.DeepEqual(v, gatewaysProp)) {
 		obj["gateways"] = gatewaysProp
 	}
 	rulesProp, err := expandNetworkServicesGrpcRouteRules(d.Get("rules"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("rules"); !isEmptyValue(reflect.ValueOf(rulesProp)) && (ok || !reflect.DeepEqual(v, rulesProp)) {
+	} else if v, ok := d.GetOkExists("rules"); !tpgresource.IsEmptyValue(reflect.ValueOf(rulesProp)) && (ok || !reflect.DeepEqual(v, rulesProp)) {
 		obj["rules"] = rulesProp
 	}
 
-	url, err := ReplaceVars(d, config, "{{NetworkServicesBasePath}}projects/{{project}}/locations/global/grpcRoutes?grpcRouteId={{name}}")
+	url, err := tpgresource.ReplaceVars(d, config, "{{NetworkServicesBasePath}}projects/{{project}}/locations/global/grpcRoutes?grpcRouteId={{name}}")
 	if err != nil {
 		return err
 	}
@@ -343,14 +344,14 @@ func resourceNetworkServicesGrpcRouteCreate(d *schema.ResourceData, meta interfa
 	log.Printf("[DEBUG] Creating new GrpcRoute: %#v", obj)
 	billingProject := ""
 
-	project, err := getProject(d, config)
+	project, err := tpgresource.GetProject(d, config)
 	if err != nil {
 		return fmt.Errorf("Error fetching project for GrpcRoute: %s", err)
 	}
 	billingProject = project
 
 	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
+	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
@@ -360,7 +361,7 @@ func resourceNetworkServicesGrpcRouteCreate(d *schema.ResourceData, meta interfa
 	}
 
 	// Store the ID now
-	id, err := ReplaceVars(d, config, "projects/{{project}}/locations/global/grpcRoutes/{{name}}")
+	id, err := tpgresource.ReplaceVars(d, config, "projects/{{project}}/locations/global/grpcRoutes/{{name}}")
 	if err != nil {
 		return fmt.Errorf("Error constructing id: %s", err)
 	}
@@ -383,26 +384,26 @@ func resourceNetworkServicesGrpcRouteCreate(d *schema.ResourceData, meta interfa
 
 func resourceNetworkServicesGrpcRouteRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*transport_tpg.Config)
-	userAgent, err := generateUserAgentString(d, config.UserAgent)
+	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
 	}
 
-	url, err := ReplaceVars(d, config, "{{NetworkServicesBasePath}}projects/{{project}}/locations/global/grpcRoutes/{{name}}")
+	url, err := tpgresource.ReplaceVars(d, config, "{{NetworkServicesBasePath}}projects/{{project}}/locations/global/grpcRoutes/{{name}}")
 	if err != nil {
 		return err
 	}
 
 	billingProject := ""
 
-	project, err := getProject(d, config)
+	project, err := tpgresource.GetProject(d, config)
 	if err != nil {
 		return fmt.Errorf("Error fetching project for GrpcRoute: %s", err)
 	}
 	billingProject = project
 
 	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
+	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
@@ -448,14 +449,14 @@ func resourceNetworkServicesGrpcRouteRead(d *schema.ResourceData, meta interface
 
 func resourceNetworkServicesGrpcRouteUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*transport_tpg.Config)
-	userAgent, err := generateUserAgentString(d, config.UserAgent)
+	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
 	}
 
 	billingProject := ""
 
-	project, err := getProject(d, config)
+	project, err := tpgresource.GetProject(d, config)
 	if err != nil {
 		return fmt.Errorf("Error fetching project for GrpcRoute: %s", err)
 	}
@@ -465,41 +466,41 @@ func resourceNetworkServicesGrpcRouteUpdate(d *schema.ResourceData, meta interfa
 	labelsProp, err := expandNetworkServicesGrpcRouteLabels(d.Get("labels"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("labels"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
+	} else if v, ok := d.GetOkExists("labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
 		obj["labels"] = labelsProp
 	}
 	descriptionProp, err := expandNetworkServicesGrpcRouteDescription(d.Get("description"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("description"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, descriptionProp)) {
+	} else if v, ok := d.GetOkExists("description"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, descriptionProp)) {
 		obj["description"] = descriptionProp
 	}
 	hostnamesProp, err := expandNetworkServicesGrpcRouteHostnames(d.Get("hostnames"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("hostnames"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, hostnamesProp)) {
+	} else if v, ok := d.GetOkExists("hostnames"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, hostnamesProp)) {
 		obj["hostnames"] = hostnamesProp
 	}
 	meshesProp, err := expandNetworkServicesGrpcRouteMeshes(d.Get("meshes"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("meshes"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, meshesProp)) {
+	} else if v, ok := d.GetOkExists("meshes"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, meshesProp)) {
 		obj["meshes"] = meshesProp
 	}
 	gatewaysProp, err := expandNetworkServicesGrpcRouteGateways(d.Get("gateways"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("gateways"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, gatewaysProp)) {
+	} else if v, ok := d.GetOkExists("gateways"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, gatewaysProp)) {
 		obj["gateways"] = gatewaysProp
 	}
 	rulesProp, err := expandNetworkServicesGrpcRouteRules(d.Get("rules"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("rules"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, rulesProp)) {
+	} else if v, ok := d.GetOkExists("rules"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, rulesProp)) {
 		obj["rules"] = rulesProp
 	}
 
-	url, err := ReplaceVars(d, config, "{{NetworkServicesBasePath}}projects/{{project}}/locations/global/grpcRoutes/{{name}}")
+	url, err := tpgresource.ReplaceVars(d, config, "{{NetworkServicesBasePath}}projects/{{project}}/locations/global/grpcRoutes/{{name}}")
 	if err != nil {
 		return err
 	}
@@ -538,7 +539,7 @@ func resourceNetworkServicesGrpcRouteUpdate(d *schema.ResourceData, meta interfa
 	}
 
 	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
+	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
@@ -563,20 +564,20 @@ func resourceNetworkServicesGrpcRouteUpdate(d *schema.ResourceData, meta interfa
 
 func resourceNetworkServicesGrpcRouteDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*transport_tpg.Config)
-	userAgent, err := generateUserAgentString(d, config.UserAgent)
+	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
 	}
 
 	billingProject := ""
 
-	project, err := getProject(d, config)
+	project, err := tpgresource.GetProject(d, config)
 	if err != nil {
 		return fmt.Errorf("Error fetching project for GrpcRoute: %s", err)
 	}
 	billingProject = project
 
-	url, err := ReplaceVars(d, config, "{{NetworkServicesBasePath}}projects/{{project}}/locations/global/grpcRoutes/{{name}}")
+	url, err := tpgresource.ReplaceVars(d, config, "{{NetworkServicesBasePath}}projects/{{project}}/locations/global/grpcRoutes/{{name}}")
 	if err != nil {
 		return err
 	}
@@ -585,7 +586,7 @@ func resourceNetworkServicesGrpcRouteDelete(d *schema.ResourceData, meta interfa
 	log.Printf("[DEBUG] Deleting GrpcRoute %q", d.Id())
 
 	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
+	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
@@ -617,7 +618,7 @@ func resourceNetworkServicesGrpcRouteImport(d *schema.ResourceData, meta interfa
 	}
 
 	// Replace import id for the resource id
-	id, err := ReplaceVars(d, config, "projects/{{project}}/locations/global/grpcRoutes/{{name}}")
+	id, err := tpgresource.ReplaceVars(d, config, "projects/{{project}}/locations/global/grpcRoutes/{{name}}")
 	if err != nil {
 		return nil, fmt.Errorf("Error constructing id: %s", err)
 	}
@@ -956,7 +957,7 @@ func flattenNetworkServicesGrpcRouteRulesActionRetryPolicyNumRetries(v interface
 	return v // let terraform core handle it otherwise
 }
 
-func expandNetworkServicesGrpcRouteLabels(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
+func expandNetworkServicesGrpcRouteLabels(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
 	if v == nil {
 		return map[string]string{}, nil
 	}
@@ -967,23 +968,23 @@ func expandNetworkServicesGrpcRouteLabels(v interface{}, d TerraformResourceData
 	return m, nil
 }
 
-func expandNetworkServicesGrpcRouteDescription(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesGrpcRouteDescription(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesGrpcRouteHostnames(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesGrpcRouteHostnames(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesGrpcRouteMeshes(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesGrpcRouteMeshes(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesGrpcRouteGateways(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesGrpcRouteGateways(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesGrpcRouteRules(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesGrpcRouteRules(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
 	for _, raw := range l {
@@ -996,14 +997,14 @@ func expandNetworkServicesGrpcRouteRules(v interface{}, d TerraformResourceData,
 		transformedMatches, err := expandNetworkServicesGrpcRouteRulesMatches(original["matches"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedMatches); val.IsValid() && !isEmptyValue(val) {
+		} else if val := reflect.ValueOf(transformedMatches); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 			transformed["matches"] = transformedMatches
 		}
 
 		transformedAction, err := expandNetworkServicesGrpcRouteRulesAction(original["action"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedAction); val.IsValid() && !isEmptyValue(val) {
+		} else if val := reflect.ValueOf(transformedAction); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 			transformed["action"] = transformedAction
 		}
 
@@ -1012,7 +1013,7 @@ func expandNetworkServicesGrpcRouteRules(v interface{}, d TerraformResourceData,
 	return req, nil
 }
 
-func expandNetworkServicesGrpcRouteRulesMatches(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesGrpcRouteRulesMatches(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
 	for _, raw := range l {
@@ -1025,14 +1026,14 @@ func expandNetworkServicesGrpcRouteRulesMatches(v interface{}, d TerraformResour
 		transformedHeaders, err := expandNetworkServicesGrpcRouteRulesMatchesHeaders(original["headers"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedHeaders); val.IsValid() && !isEmptyValue(val) {
+		} else if val := reflect.ValueOf(transformedHeaders); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 			transformed["headers"] = transformedHeaders
 		}
 
 		transformedMethod, err := expandNetworkServicesGrpcRouteRulesMatchesMethod(original["method"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedMethod); val.IsValid() && !isEmptyValue(val) {
+		} else if val := reflect.ValueOf(transformedMethod); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 			transformed["method"] = transformedMethod
 		}
 
@@ -1041,7 +1042,7 @@ func expandNetworkServicesGrpcRouteRulesMatches(v interface{}, d TerraformResour
 	return req, nil
 }
 
-func expandNetworkServicesGrpcRouteRulesMatchesHeaders(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesGrpcRouteRulesMatchesHeaders(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
 	for _, raw := range l {
@@ -1054,21 +1055,21 @@ func expandNetworkServicesGrpcRouteRulesMatchesHeaders(v interface{}, d Terrafor
 		transformedKey, err := expandNetworkServicesGrpcRouteRulesMatchesHeadersKey(original["key"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedKey); val.IsValid() && !isEmptyValue(val) {
+		} else if val := reflect.ValueOf(transformedKey); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 			transformed["key"] = transformedKey
 		}
 
 		transformedValue, err := expandNetworkServicesGrpcRouteRulesMatchesHeadersValue(original["value"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedValue); val.IsValid() && !isEmptyValue(val) {
+		} else if val := reflect.ValueOf(transformedValue); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 			transformed["value"] = transformedValue
 		}
 
 		transformedType, err := expandNetworkServicesGrpcRouteRulesMatchesHeadersType(original["type"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedType); val.IsValid() && !isEmptyValue(val) {
+		} else if val := reflect.ValueOf(transformedType); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 			transformed["type"] = transformedType
 		}
 
@@ -1077,19 +1078,19 @@ func expandNetworkServicesGrpcRouteRulesMatchesHeaders(v interface{}, d Terrafor
 	return req, nil
 }
 
-func expandNetworkServicesGrpcRouteRulesMatchesHeadersKey(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesGrpcRouteRulesMatchesHeadersKey(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesGrpcRouteRulesMatchesHeadersValue(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesGrpcRouteRulesMatchesHeadersValue(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesGrpcRouteRulesMatchesHeadersType(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesGrpcRouteRulesMatchesHeadersType(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesGrpcRouteRulesMatchesMethod(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesGrpcRouteRulesMatchesMethod(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -1101,40 +1102,40 @@ func expandNetworkServicesGrpcRouteRulesMatchesMethod(v interface{}, d Terraform
 	transformedGrpcService, err := expandNetworkServicesGrpcRouteRulesMatchesMethodGrpcService(original["grpc_service"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedGrpcService); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedGrpcService); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["grpcService"] = transformedGrpcService
 	}
 
 	transformedGrpcMethod, err := expandNetworkServicesGrpcRouteRulesMatchesMethodGrpcMethod(original["grpc_method"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedGrpcMethod); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedGrpcMethod); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["grpcMethod"] = transformedGrpcMethod
 	}
 
 	transformedCaseSensitive, err := expandNetworkServicesGrpcRouteRulesMatchesMethodCaseSensitive(original["case_sensitive"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedCaseSensitive); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedCaseSensitive); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["caseSensitive"] = transformedCaseSensitive
 	}
 
 	return transformed, nil
 }
 
-func expandNetworkServicesGrpcRouteRulesMatchesMethodGrpcService(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesGrpcRouteRulesMatchesMethodGrpcService(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesGrpcRouteRulesMatchesMethodGrpcMethod(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesGrpcRouteRulesMatchesMethodGrpcMethod(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesGrpcRouteRulesMatchesMethodCaseSensitive(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesGrpcRouteRulesMatchesMethodCaseSensitive(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesGrpcRouteRulesAction(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesGrpcRouteRulesAction(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -1146,35 +1147,35 @@ func expandNetworkServicesGrpcRouteRulesAction(v interface{}, d TerraformResourc
 	transformedDestinations, err := expandNetworkServicesGrpcRouteRulesActionDestinations(original["destinations"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedDestinations); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedDestinations); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["destinations"] = transformedDestinations
 	}
 
 	transformedFaultInjectionPolicy, err := expandNetworkServicesGrpcRouteRulesActionFaultInjectionPolicy(original["fault_injection_policy"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedFaultInjectionPolicy); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedFaultInjectionPolicy); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["faultInjectionPolicy"] = transformedFaultInjectionPolicy
 	}
 
 	transformedTimeout, err := expandNetworkServicesGrpcRouteRulesActionTimeout(original["timeout"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedTimeout); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedTimeout); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["timeout"] = transformedTimeout
 	}
 
 	transformedRetryPolicy, err := expandNetworkServicesGrpcRouteRulesActionRetryPolicy(original["retry_policy"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedRetryPolicy); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedRetryPolicy); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["retryPolicy"] = transformedRetryPolicy
 	}
 
 	return transformed, nil
 }
 
-func expandNetworkServicesGrpcRouteRulesActionDestinations(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesGrpcRouteRulesActionDestinations(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
 	for _, raw := range l {
@@ -1187,14 +1188,14 @@ func expandNetworkServicesGrpcRouteRulesActionDestinations(v interface{}, d Terr
 		transformedServiceName, err := expandNetworkServicesGrpcRouteRulesActionDestinationsServiceName(original["service_name"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedServiceName); val.IsValid() && !isEmptyValue(val) {
+		} else if val := reflect.ValueOf(transformedServiceName); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 			transformed["serviceName"] = transformedServiceName
 		}
 
 		transformedWeight, err := expandNetworkServicesGrpcRouteRulesActionDestinationsWeight(original["weight"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedWeight); val.IsValid() && !isEmptyValue(val) {
+		} else if val := reflect.ValueOf(transformedWeight); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 			transformed["weight"] = transformedWeight
 		}
 
@@ -1203,15 +1204,15 @@ func expandNetworkServicesGrpcRouteRulesActionDestinations(v interface{}, d Terr
 	return req, nil
 }
 
-func expandNetworkServicesGrpcRouteRulesActionDestinationsServiceName(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesGrpcRouteRulesActionDestinationsServiceName(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesGrpcRouteRulesActionDestinationsWeight(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesGrpcRouteRulesActionDestinationsWeight(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesGrpcRouteRulesActionFaultInjectionPolicy(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesGrpcRouteRulesActionFaultInjectionPolicy(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -1223,21 +1224,21 @@ func expandNetworkServicesGrpcRouteRulesActionFaultInjectionPolicy(v interface{}
 	transformedDelay, err := expandNetworkServicesGrpcRouteRulesActionFaultInjectionPolicyDelay(original["delay"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedDelay); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedDelay); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["delay"] = transformedDelay
 	}
 
 	transformedAbort, err := expandNetworkServicesGrpcRouteRulesActionFaultInjectionPolicyAbort(original["abort"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedAbort); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedAbort); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["abort"] = transformedAbort
 	}
 
 	return transformed, nil
 }
 
-func expandNetworkServicesGrpcRouteRulesActionFaultInjectionPolicyDelay(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesGrpcRouteRulesActionFaultInjectionPolicyDelay(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -1249,29 +1250,29 @@ func expandNetworkServicesGrpcRouteRulesActionFaultInjectionPolicyDelay(v interf
 	transformedFixedDelay, err := expandNetworkServicesGrpcRouteRulesActionFaultInjectionPolicyDelayFixedDelay(original["fixed_delay"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedFixedDelay); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedFixedDelay); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["fixedDelay"] = transformedFixedDelay
 	}
 
 	transformedPercentage, err := expandNetworkServicesGrpcRouteRulesActionFaultInjectionPolicyDelayPercentage(original["percentage"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedPercentage); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedPercentage); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["percentage"] = transformedPercentage
 	}
 
 	return transformed, nil
 }
 
-func expandNetworkServicesGrpcRouteRulesActionFaultInjectionPolicyDelayFixedDelay(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesGrpcRouteRulesActionFaultInjectionPolicyDelayFixedDelay(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesGrpcRouteRulesActionFaultInjectionPolicyDelayPercentage(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesGrpcRouteRulesActionFaultInjectionPolicyDelayPercentage(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesGrpcRouteRulesActionFaultInjectionPolicyAbort(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesGrpcRouteRulesActionFaultInjectionPolicyAbort(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -1283,33 +1284,33 @@ func expandNetworkServicesGrpcRouteRulesActionFaultInjectionPolicyAbort(v interf
 	transformedHttpStatus, err := expandNetworkServicesGrpcRouteRulesActionFaultInjectionPolicyAbortHttpStatus(original["http_status"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedHttpStatus); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedHttpStatus); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["httpStatus"] = transformedHttpStatus
 	}
 
 	transformedPercentage, err := expandNetworkServicesGrpcRouteRulesActionFaultInjectionPolicyAbortPercentage(original["percentage"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedPercentage); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedPercentage); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["percentage"] = transformedPercentage
 	}
 
 	return transformed, nil
 }
 
-func expandNetworkServicesGrpcRouteRulesActionFaultInjectionPolicyAbortHttpStatus(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesGrpcRouteRulesActionFaultInjectionPolicyAbortHttpStatus(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesGrpcRouteRulesActionFaultInjectionPolicyAbortPercentage(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesGrpcRouteRulesActionFaultInjectionPolicyAbortPercentage(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesGrpcRouteRulesActionTimeout(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesGrpcRouteRulesActionTimeout(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesGrpcRouteRulesActionRetryPolicy(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesGrpcRouteRulesActionRetryPolicy(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -1321,24 +1322,24 @@ func expandNetworkServicesGrpcRouteRulesActionRetryPolicy(v interface{}, d Terra
 	transformedRetryConditions, err := expandNetworkServicesGrpcRouteRulesActionRetryPolicyRetryConditions(original["retry_conditions"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedRetryConditions); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedRetryConditions); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["retryConditions"] = transformedRetryConditions
 	}
 
 	transformedNumRetries, err := expandNetworkServicesGrpcRouteRulesActionRetryPolicyNumRetries(original["num_retries"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedNumRetries); val.IsValid() && !isEmptyValue(val) {
+	} else if val := reflect.ValueOf(transformedNumRetries); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["numRetries"] = transformedNumRetries
 	}
 
 	return transformed, nil
 }
 
-func expandNetworkServicesGrpcRouteRulesActionRetryPolicyRetryConditions(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesGrpcRouteRulesActionRetryPolicyRetryConditions(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandNetworkServicesGrpcRouteRulesActionRetryPolicyNumRetries(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandNetworkServicesGrpcRouteRulesActionRetryPolicyNumRetries(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }

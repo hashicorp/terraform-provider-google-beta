@@ -103,7 +103,7 @@ This should be formatted like
 
 func resourceDNSResponsePolicyCreate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*transport_tpg.Config)
-	userAgent, err := generateUserAgentString(d, config.UserAgent)
+	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
 	}
@@ -112,29 +112,29 @@ func resourceDNSResponsePolicyCreate(d *schema.ResourceData, meta interface{}) e
 	responsePolicyNameProp, err := expandDNSResponsePolicyResponsePolicyName(d.Get("response_policy_name"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("response_policy_name"); !isEmptyValue(reflect.ValueOf(responsePolicyNameProp)) && (ok || !reflect.DeepEqual(v, responsePolicyNameProp)) {
+	} else if v, ok := d.GetOkExists("response_policy_name"); !tpgresource.IsEmptyValue(reflect.ValueOf(responsePolicyNameProp)) && (ok || !reflect.DeepEqual(v, responsePolicyNameProp)) {
 		obj["responsePolicyName"] = responsePolicyNameProp
 	}
 	descriptionProp, err := expandDNSResponsePolicyDescription(d.Get("description"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("description"); !isEmptyValue(reflect.ValueOf(descriptionProp)) && (ok || !reflect.DeepEqual(v, descriptionProp)) {
+	} else if v, ok := d.GetOkExists("description"); !tpgresource.IsEmptyValue(reflect.ValueOf(descriptionProp)) && (ok || !reflect.DeepEqual(v, descriptionProp)) {
 		obj["description"] = descriptionProp
 	}
 	networksProp, err := expandDNSResponsePolicyNetworks(d.Get("networks"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("networks"); !isEmptyValue(reflect.ValueOf(networksProp)) && (ok || !reflect.DeepEqual(v, networksProp)) {
+	} else if v, ok := d.GetOkExists("networks"); !tpgresource.IsEmptyValue(reflect.ValueOf(networksProp)) && (ok || !reflect.DeepEqual(v, networksProp)) {
 		obj["networks"] = networksProp
 	}
 	gkeClustersProp, err := expandDNSResponsePolicyGkeClusters(d.Get("gke_clusters"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("gke_clusters"); !isEmptyValue(reflect.ValueOf(gkeClustersProp)) && (ok || !reflect.DeepEqual(v, gkeClustersProp)) {
+	} else if v, ok := d.GetOkExists("gke_clusters"); !tpgresource.IsEmptyValue(reflect.ValueOf(gkeClustersProp)) && (ok || !reflect.DeepEqual(v, gkeClustersProp)) {
 		obj["gkeClusters"] = gkeClustersProp
 	}
 
-	url, err := ReplaceVars(d, config, "{{DNSBasePath}}projects/{{project}}/responsePolicies")
+	url, err := tpgresource.ReplaceVars(d, config, "{{DNSBasePath}}projects/{{project}}/responsePolicies")
 	if err != nil {
 		return err
 	}
@@ -142,14 +142,14 @@ func resourceDNSResponsePolicyCreate(d *schema.ResourceData, meta interface{}) e
 	log.Printf("[DEBUG] Creating new ResponsePolicy: %#v", obj)
 	billingProject := ""
 
-	project, err := getProject(d, config)
+	project, err := tpgresource.GetProject(d, config)
 	if err != nil {
 		return fmt.Errorf("Error fetching project for ResponsePolicy: %s", err)
 	}
 	billingProject = project
 
 	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
+	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
@@ -159,7 +159,7 @@ func resourceDNSResponsePolicyCreate(d *schema.ResourceData, meta interface{}) e
 	}
 
 	// Store the ID now
-	id, err := ReplaceVars(d, config, "projects/{{project}}/responsePolicies/{{response_policy_name}}")
+	id, err := tpgresource.ReplaceVars(d, config, "projects/{{project}}/responsePolicies/{{response_policy_name}}")
 	if err != nil {
 		return fmt.Errorf("Error constructing id: %s", err)
 	}
@@ -172,26 +172,26 @@ func resourceDNSResponsePolicyCreate(d *schema.ResourceData, meta interface{}) e
 
 func resourceDNSResponsePolicyRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*transport_tpg.Config)
-	userAgent, err := generateUserAgentString(d, config.UserAgent)
+	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
 	}
 
-	url, err := ReplaceVars(d, config, "{{DNSBasePath}}projects/{{project}}/responsePolicies/{{response_policy_name}}")
+	url, err := tpgresource.ReplaceVars(d, config, "{{DNSBasePath}}projects/{{project}}/responsePolicies/{{response_policy_name}}")
 	if err != nil {
 		return err
 	}
 
 	billingProject := ""
 
-	project, err := getProject(d, config)
+	project, err := tpgresource.GetProject(d, config)
 	if err != nil {
 		return fmt.Errorf("Error fetching project for ResponsePolicy: %s", err)
 	}
 	billingProject = project
 
 	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
+	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
@@ -222,14 +222,14 @@ func resourceDNSResponsePolicyRead(d *schema.ResourceData, meta interface{}) err
 
 func resourceDNSResponsePolicyUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*transport_tpg.Config)
-	userAgent, err := generateUserAgentString(d, config.UserAgent)
+	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
 	}
 
 	billingProject := ""
 
-	project, err := getProject(d, config)
+	project, err := tpgresource.GetProject(d, config)
 	if err != nil {
 		return fmt.Errorf("Error fetching project for ResponsePolicy: %s", err)
 	}
@@ -239,23 +239,23 @@ func resourceDNSResponsePolicyUpdate(d *schema.ResourceData, meta interface{}) e
 	descriptionProp, err := expandDNSResponsePolicyDescription(d.Get("description"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("description"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, descriptionProp)) {
+	} else if v, ok := d.GetOkExists("description"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, descriptionProp)) {
 		obj["description"] = descriptionProp
 	}
 	networksProp, err := expandDNSResponsePolicyNetworks(d.Get("networks"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("networks"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, networksProp)) {
+	} else if v, ok := d.GetOkExists("networks"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, networksProp)) {
 		obj["networks"] = networksProp
 	}
 	gkeClustersProp, err := expandDNSResponsePolicyGkeClusters(d.Get("gke_clusters"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("gke_clusters"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, gkeClustersProp)) {
+	} else if v, ok := d.GetOkExists("gke_clusters"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, gkeClustersProp)) {
 		obj["gkeClusters"] = gkeClustersProp
 	}
 
-	url, err := ReplaceVars(d, config, "{{DNSBasePath}}projects/{{project}}/responsePolicies/{{response_policy_name}}")
+	url, err := tpgresource.ReplaceVars(d, config, "{{DNSBasePath}}projects/{{project}}/responsePolicies/{{response_policy_name}}")
 	if err != nil {
 		return err
 	}
@@ -263,7 +263,7 @@ func resourceDNSResponsePolicyUpdate(d *schema.ResourceData, meta interface{}) e
 	log.Printf("[DEBUG] Updating ResponsePolicy %q: %#v", d.Id(), obj)
 
 	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
+	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
@@ -280,20 +280,20 @@ func resourceDNSResponsePolicyUpdate(d *schema.ResourceData, meta interface{}) e
 
 func resourceDNSResponsePolicyDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*transport_tpg.Config)
-	userAgent, err := generateUserAgentString(d, config.UserAgent)
+	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
 	}
 
 	billingProject := ""
 
-	project, err := getProject(d, config)
+	project, err := tpgresource.GetProject(d, config)
 	if err != nil {
 		return fmt.Errorf("Error fetching project for ResponsePolicy: %s", err)
 	}
 	billingProject = project
 
-	url, err := ReplaceVars(d, config, "{{DNSBasePath}}projects/{{project}}/responsePolicies/{{response_policy_name}}")
+	url, err := tpgresource.ReplaceVars(d, config, "{{DNSBasePath}}projects/{{project}}/responsePolicies/{{response_policy_name}}")
 	if err != nil {
 		return err
 	}
@@ -304,7 +304,7 @@ func resourceDNSResponsePolicyDelete(d *schema.ResourceData, meta interface{}) e
 		patched := make(map[string]interface{})
 		patched["gkeClusters"] = nil
 
-		url, err := ReplaceVars(d, config, "{{DNSBasePath}}projects/{{project}}/responsePolicies/{{response_policy_name}}")
+		url, err := tpgresource.ReplaceVars(d, config, "{{DNSBasePath}}projects/{{project}}/responsePolicies/{{response_policy_name}}")
 		if err != nil {
 			return err
 		}
@@ -320,7 +320,7 @@ func resourceDNSResponsePolicyDelete(d *schema.ResourceData, meta interface{}) e
 		patched := make(map[string]interface{})
 		patched["networks"] = nil
 
-		url, err := ReplaceVars(d, config, "{{DNSBasePath}}projects/{{project}}/responsePolicies/{{response_policy_name}}")
+		url, err := tpgresource.ReplaceVars(d, config, "{{DNSBasePath}}projects/{{project}}/responsePolicies/{{response_policy_name}}")
 		if err != nil {
 			return err
 		}
@@ -333,7 +333,7 @@ func resourceDNSResponsePolicyDelete(d *schema.ResourceData, meta interface{}) e
 	log.Printf("[DEBUG] Deleting ResponsePolicy %q", d.Id())
 
 	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
+	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
@@ -357,7 +357,7 @@ func resourceDNSResponsePolicyImport(d *schema.ResourceData, meta interface{}) (
 	}
 
 	// Replace import id for the resource id
-	id, err := ReplaceVars(d, config, "projects/{{project}}/responsePolicies/{{response_policy_name}}")
+	id, err := tpgresource.ReplaceVars(d, config, "projects/{{project}}/responsePolicies/{{response_policy_name}}")
 	if err != nil {
 		return nil, fmt.Errorf("Error constructing id: %s", err)
 	}
@@ -418,15 +418,15 @@ func flattenDNSResponsePolicyGkeClustersGkeClusterName(v interface{}, d *schema.
 	return v
 }
 
-func expandDNSResponsePolicyResponsePolicyName(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandDNSResponsePolicyResponsePolicyName(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandDNSResponsePolicyDescription(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandDNSResponsePolicyDescription(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandDNSResponsePolicyNetworks(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandDNSResponsePolicyNetworks(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
 	for _, raw := range l {
@@ -439,7 +439,7 @@ func expandDNSResponsePolicyNetworks(v interface{}, d TerraformResourceData, con
 		transformedNetworkUrl, err := expandDNSResponsePolicyNetworksNetworkUrl(original["network_url"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedNetworkUrl); val.IsValid() && !isEmptyValue(val) {
+		} else if val := reflect.ValueOf(transformedNetworkUrl); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 			transformed["networkUrl"] = transformedNetworkUrl
 		}
 
@@ -448,20 +448,20 @@ func expandDNSResponsePolicyNetworks(v interface{}, d TerraformResourceData, con
 	return req, nil
 }
 
-func expandDNSResponsePolicyNetworksNetworkUrl(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandDNSResponsePolicyNetworksNetworkUrl(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	if v == nil || v.(string) == "" {
 		return "", nil
 	} else if strings.HasPrefix(v.(string), "https://") {
 		return v, nil
 	}
-	url, err := ReplaceVars(d, config, "{{ComputeBasePath}}"+v.(string))
+	url, err := tpgresource.ReplaceVars(d, config, "{{ComputeBasePath}}"+v.(string))
 	if err != nil {
 		return "", err
 	}
 	return tpgresource.ConvertSelfLinkToV1(url), nil
 }
 
-func expandDNSResponsePolicyGkeClusters(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandDNSResponsePolicyGkeClusters(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
 	for _, raw := range l {
@@ -474,7 +474,7 @@ func expandDNSResponsePolicyGkeClusters(v interface{}, d TerraformResourceData, 
 		transformedGkeClusterName, err := expandDNSResponsePolicyGkeClustersGkeClusterName(original["gke_cluster_name"], d, config)
 		if err != nil {
 			return nil, err
-		} else if val := reflect.ValueOf(transformedGkeClusterName); val.IsValid() && !isEmptyValue(val) {
+		} else if val := reflect.ValueOf(transformedGkeClusterName); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 			transformed["gkeClusterName"] = transformedGkeClusterName
 		}
 
@@ -483,6 +483,6 @@ func expandDNSResponsePolicyGkeClusters(v interface{}, d TerraformResourceData, 
 	return req, nil
 }
 
-func expandDNSResponsePolicyGkeClustersGkeClusterName(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandDNSResponsePolicyGkeClustersGkeClusterName(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }

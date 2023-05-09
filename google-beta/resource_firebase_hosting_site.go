@@ -23,6 +23,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
@@ -87,7 +88,7 @@ Learn more about using project identifiers in Google's
 
 func resourceFirebaseHostingSiteCreate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*transport_tpg.Config)
-	userAgent, err := generateUserAgentString(d, config.UserAgent)
+	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
 	}
@@ -96,11 +97,11 @@ func resourceFirebaseHostingSiteCreate(d *schema.ResourceData, meta interface{})
 	appIdProp, err := expandFirebaseHostingSiteAppId(d.Get("app_id"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("app_id"); !isEmptyValue(reflect.ValueOf(appIdProp)) && (ok || !reflect.DeepEqual(v, appIdProp)) {
+	} else if v, ok := d.GetOkExists("app_id"); !tpgresource.IsEmptyValue(reflect.ValueOf(appIdProp)) && (ok || !reflect.DeepEqual(v, appIdProp)) {
 		obj["appId"] = appIdProp
 	}
 
-	url, err := ReplaceVars(d, config, "{{FirebaseHostingBasePath}}projects/{{project}}/sites?siteId={{site_id}}")
+	url, err := tpgresource.ReplaceVars(d, config, "{{FirebaseHostingBasePath}}projects/{{project}}/sites?siteId={{site_id}}")
 	if err != nil {
 		return err
 	}
@@ -108,14 +109,14 @@ func resourceFirebaseHostingSiteCreate(d *schema.ResourceData, meta interface{})
 	log.Printf("[DEBUG] Creating new Site: %#v", obj)
 	billingProject := ""
 
-	project, err := getProject(d, config)
+	project, err := tpgresource.GetProject(d, config)
 	if err != nil {
 		return fmt.Errorf("Error fetching project for Site: %s", err)
 	}
 	billingProject = project
 
 	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
+	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
@@ -128,7 +129,7 @@ func resourceFirebaseHostingSiteCreate(d *schema.ResourceData, meta interface{})
 	}
 
 	// Store the ID now
-	id, err := ReplaceVars(d, config, "projects/{{project}}/sites/{{site_id}}")
+	id, err := tpgresource.ReplaceVars(d, config, "projects/{{project}}/sites/{{site_id}}")
 	if err != nil {
 		return fmt.Errorf("Error constructing id: %s", err)
 	}
@@ -141,26 +142,26 @@ func resourceFirebaseHostingSiteCreate(d *schema.ResourceData, meta interface{})
 
 func resourceFirebaseHostingSiteRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*transport_tpg.Config)
-	userAgent, err := generateUserAgentString(d, config.UserAgent)
+	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
 	}
 
-	url, err := ReplaceVars(d, config, "{{FirebaseHostingBasePath}}projects/{{project}}/sites/{{site_id}}")
+	url, err := tpgresource.ReplaceVars(d, config, "{{FirebaseHostingBasePath}}projects/{{project}}/sites/{{site_id}}")
 	if err != nil {
 		return err
 	}
 
 	billingProject := ""
 
-	project, err := getProject(d, config)
+	project, err := tpgresource.GetProject(d, config)
 	if err != nil {
 		return fmt.Errorf("Error fetching project for Site: %s", err)
 	}
 	billingProject = project
 
 	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
+	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
@@ -188,14 +189,14 @@ func resourceFirebaseHostingSiteRead(d *schema.ResourceData, meta interface{}) e
 
 func resourceFirebaseHostingSiteUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*transport_tpg.Config)
-	userAgent, err := generateUserAgentString(d, config.UserAgent)
+	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
 	}
 
 	billingProject := ""
 
-	project, err := getProject(d, config)
+	project, err := tpgresource.GetProject(d, config)
 	if err != nil {
 		return fmt.Errorf("Error fetching project for Site: %s", err)
 	}
@@ -205,11 +206,11 @@ func resourceFirebaseHostingSiteUpdate(d *schema.ResourceData, meta interface{})
 	appIdProp, err := expandFirebaseHostingSiteAppId(d.Get("app_id"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("app_id"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, appIdProp)) {
+	} else if v, ok := d.GetOkExists("app_id"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, appIdProp)) {
 		obj["appId"] = appIdProp
 	}
 
-	url, err := ReplaceVars(d, config, "{{FirebaseHostingBasePath}}projects/{{project}}/sites/{{site_id}}")
+	url, err := tpgresource.ReplaceVars(d, config, "{{FirebaseHostingBasePath}}projects/{{project}}/sites/{{site_id}}")
 	if err != nil {
 		return err
 	}
@@ -228,7 +229,7 @@ func resourceFirebaseHostingSiteUpdate(d *schema.ResourceData, meta interface{})
 	}
 
 	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
+	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
@@ -245,20 +246,20 @@ func resourceFirebaseHostingSiteUpdate(d *schema.ResourceData, meta interface{})
 
 func resourceFirebaseHostingSiteDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*transport_tpg.Config)
-	userAgent, err := generateUserAgentString(d, config.UserAgent)
+	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
 	}
 
 	billingProject := ""
 
-	project, err := getProject(d, config)
+	project, err := tpgresource.GetProject(d, config)
 	if err != nil {
 		return fmt.Errorf("Error fetching project for Site: %s", err)
 	}
 	billingProject = project
 
-	url, err := ReplaceVars(d, config, "{{FirebaseHostingBasePath}}projects/{{project}}/sites/{{site_id}}")
+	url, err := tpgresource.ReplaceVars(d, config, "{{FirebaseHostingBasePath}}projects/{{project}}/sites/{{site_id}}")
 	if err != nil {
 		return err
 	}
@@ -267,7 +268,7 @@ func resourceFirebaseHostingSiteDelete(d *schema.ResourceData, meta interface{})
 	log.Printf("[DEBUG] Deleting Site %q", d.Id())
 
 	// err == nil indicates that the billing_project value was found
-	if bp, err := getBillingProject(d, config); err == nil {
+	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
@@ -292,7 +293,7 @@ func resourceFirebaseHostingSiteImport(d *schema.ResourceData, meta interface{})
 	}
 
 	// Replace import id for the resource id
-	id, err := ReplaceVars(d, config, "projects/{{project}}/sites/{{site_id}}")
+	id, err := tpgresource.ReplaceVars(d, config, "projects/{{project}}/sites/{{site_id}}")
 	if err != nil {
 		return nil, fmt.Errorf("Error constructing id: %s", err)
 	}
@@ -313,6 +314,6 @@ func flattenFirebaseHostingSiteDefaultUrl(v interface{}, d *schema.ResourceData,
 	return v
 }
 
-func expandFirebaseHostingSiteAppId(v interface{}, d TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandFirebaseHostingSiteAppId(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }

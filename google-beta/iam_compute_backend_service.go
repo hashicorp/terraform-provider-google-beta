@@ -43,11 +43,11 @@ var ComputeBackendServiceIamSchema = map[string]*schema.Schema{
 type ComputeBackendServiceIamUpdater struct {
 	project string
 	name    string
-	d       TerraformResourceData
+	d       tpgresource.TerraformResourceData
 	Config  *transport_tpg.Config
 }
 
-func ComputeBackendServiceIamUpdaterProducer(d TerraformResourceData, config *transport_tpg.Config) (ResourceIamUpdater, error) {
+func ComputeBackendServiceIamUpdaterProducer(d tpgresource.TerraformResourceData, config *transport_tpg.Config) (ResourceIamUpdater, error) {
 	values := make(map[string]string)
 
 	project, _ := getProject(d, config)
@@ -124,7 +124,7 @@ func (u *ComputeBackendServiceIamUpdater) GetResourceIamPolicy() (*cloudresource
 		return nil, err
 	}
 
-	project, err := getProject(u.d, u.Config)
+	project, err := tpgresource.GetProject(u.d, u.Config)
 	if err != nil {
 		return nil, err
 	}
@@ -134,7 +134,7 @@ func (u *ComputeBackendServiceIamUpdater) GetResourceIamPolicy() (*cloudresource
 		return nil, err
 	}
 
-	userAgent, err := generateUserAgentString(u.d, u.Config.UserAgent)
+	userAgent, err := tpgresource.GenerateUserAgentString(u.d, u.Config.UserAgent)
 	if err != nil {
 		return nil, err
 	}
@@ -166,12 +166,12 @@ func (u *ComputeBackendServiceIamUpdater) SetResourceIamPolicy(policy *cloudreso
 	if err != nil {
 		return err
 	}
-	project, err := getProject(u.d, u.Config)
+	project, err := tpgresource.GetProject(u.d, u.Config)
 	if err != nil {
 		return err
 	}
 
-	userAgent, err := generateUserAgentString(u.d, u.Config.UserAgent)
+	userAgent, err := tpgresource.GenerateUserAgentString(u.d, u.Config.UserAgent)
 	if err != nil {
 		return err
 	}
@@ -186,7 +186,7 @@ func (u *ComputeBackendServiceIamUpdater) SetResourceIamPolicy(policy *cloudreso
 
 func (u *ComputeBackendServiceIamUpdater) qualifyBackendServiceUrl(methodIdentifier string) (string, error) {
 	urlTemplate := fmt.Sprintf("{{ComputeBasePath}}%s/%s", fmt.Sprintf("projects/%s/global/backendServices/%s", u.project, u.name), methodIdentifier)
-	url, err := ReplaceVars(u.d, u.Config, urlTemplate)
+	url, err := tpgresource.ReplaceVars(u.d, u.Config, urlTemplate)
 	if err != nil {
 		return "", err
 	}

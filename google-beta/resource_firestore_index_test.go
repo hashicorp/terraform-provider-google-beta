@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 )
 
 func TestUnitFirestoreIndex_firestoreIFieldsDiffSuppress(t *testing.T) {
@@ -92,7 +92,7 @@ var firestoreIndexDiffSuppressTestCases = []FirestoreIndexDiffSuppressTestCase{
 }
 
 func (tc *FirestoreIndexDiffSuppressTestCase) Test(t *testing.T) {
-	mockResourceDiff := &acctest.ResourceDiffMock{
+	mockResourceDiff := &tpgresource.ResourceDiffMock{
 		Before: tc.Before,
 		After:  tc.After,
 	}
