@@ -1291,20 +1291,8 @@ func TestAccComputeInstance_private_image_family(t *testing.T) {
 		},
 	})
 }
+
 func TestAccComputeInstance_networkPerformanceConfig(t *testing.T) {
-	// This test /should/ be passing but the reason it's failing
-	// is very non-obvious and requires further investigation
-	//
-	// It's been failing in teamcity for > 90d so there is no
-	// starting point or obvious reason to potentially pivot off
-	//
-	// For whoever decides to investigate this. It looks like
-	// at the time the failure is due to a failure to start
-	// the compute instance after a config update. This results
-	// in it /unable to find the resource/ as the start operation
-	// never completes successful. I suspect a bad configuration
-	// but am unsure.
-	acctest.SkipIfVcr(t)
 	t.Parallel()
 
 	var instance compute.Instance
@@ -1328,6 +1316,7 @@ func TestAccComputeInstance_networkPerformanceConfig(t *testing.T) {
 		},
 	})
 }
+
 func TestAccComputeInstance_forceChangeMachineTypeManually(t *testing.T) {
 	t.Parallel()
 
