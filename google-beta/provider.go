@@ -807,9 +807,9 @@ func Provider() *schema.Provider {
 	return provider
 }
 
-// Generated resources: 339
+// Generated resources: 340
 // Generated IAM resources: 219
-// Total generated resources: 558
+// Total generated resources: 559
 func ResourceMap() map[string]*schema.Resource {
 	resourceMap, _ := ResourceMapWithErrors()
 	return resourceMap
@@ -1247,6 +1247,7 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_network_security_client_tls_policy":                    ResourceNetworkSecurityClientTlsPolicy(),
 			"google_network_security_gateway_security_policy":              ResourceNetworkSecurityGatewaySecurityPolicy(),
 			"google_network_security_gateway_security_policy_rule":         ResourceNetworkSecurityGatewaySecurityPolicyRule(),
+			"google_network_security_server_tls_policy":                    ResourceNetworkSecurityServerTlsPolicy(),
 			"google_network_security_tls_inspection_policy":                ResourceNetworkSecurityTlsInspectionPolicy(),
 			"google_network_security_url_lists":                            ResourceNetworkSecurityUrlLists(),
 			"google_network_services_edge_cache_keyset":                    ResourceNetworkServicesEdgeCacheKeyset(),
