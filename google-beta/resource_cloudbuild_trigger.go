@@ -1180,7 +1180,7 @@ Format: projects/{project}/locations/{location}/githubEnterpriseConfigs/{id}. pr
 						"repository": {
 							Type:     schema.TypeString,
 							Optional: true,
-							Description: `The qualified resource name of the Repo API repository. 
+							Description: `The qualified resource name of the Repo API repository.
 Either uri or repository can be specified and is required.`,
 						},
 						"uri": {
