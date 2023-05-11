@@ -58,7 +58,7 @@ func VertexAIFeaturestoreEntitytypeIamUpdaterProducer(d tpgresource.TerraformRes
 	}
 
 	// We may have gotten either a long or short name, so attempt to parse long name if possible
-	m, err := getImportIdQualifiers([]string{"(?P<featurestore>.+)/entityTypes/(?P<entitytype>[^/]+)", "(?P<entitytype>[^/]+)"}, d, config, d.Get("entitytype").(string))
+	m, err := tpgresource.GetImportIdQualifiers([]string{"(?P<featurestore>.+)/entityTypes/(?P<entitytype>[^/]+)", "(?P<entitytype>[^/]+)"}, d, config, d.Get("entitytype").(string))
 	if err != nil {
 		return nil, err
 	}
@@ -87,7 +87,7 @@ func VertexAIFeaturestoreEntitytypeIamUpdaterProducer(d tpgresource.TerraformRes
 func VertexAIFeaturestoreEntitytypeIdParseFunc(d *schema.ResourceData, config *transport_tpg.Config) error {
 	values := make(map[string]string)
 
-	m, err := getImportIdQualifiers([]string{"(?P<featurestore>.+)/entityTypes/(?P<entitytype>[^/]+)", "(?P<entitytype>[^/]+)"}, d, config, d.Id())
+	m, err := tpgresource.GetImportIdQualifiers([]string{"(?P<featurestore>.+)/entityTypes/(?P<entitytype>[^/]+)", "(?P<entitytype>[^/]+)"}, d, config, d.Id())
 	if err != nil {
 		return err
 	}

@@ -212,12 +212,12 @@ func resourceGkeHubFeatureCreate(d *schema.ResourceData, meta interface{}) error
 
 	obj := &gkehub.Feature{
 		Location: dcl.String(d.Get("location").(string)),
-		Labels:   checkStringMap(d.Get("labels")),
+		Labels:   tpgresource.CheckStringMap(d.Get("labels")),
 		Name:     dcl.String(d.Get("name").(string)),
 		Project:  dcl.String(project),
 		Spec:     expandGkeHubFeatureSpec(d.Get("spec")),
 	}
-	lockName, err := replaceVarsForId(d, config, "{{project}}/{{location}}/{{feature}}")
+	lockName, err := tpgresource.ReplaceVarsForId(d, config, "{{project}}/{{location}}/{{feature}}")
 	if err != nil {
 		return err
 	}
@@ -270,7 +270,7 @@ func resourceGkeHubFeatureRead(d *schema.ResourceData, meta interface{}) error {
 
 	obj := &gkehub.Feature{
 		Location: dcl.String(d.Get("location").(string)),
-		Labels:   checkStringMap(d.Get("labels")),
+		Labels:   tpgresource.CheckStringMap(d.Get("labels")),
 		Name:     dcl.String(d.Get("name").(string)),
 		Project:  dcl.String(project),
 		Spec:     expandGkeHubFeatureSpec(d.Get("spec")),
@@ -340,12 +340,12 @@ func resourceGkeHubFeatureUpdate(d *schema.ResourceData, meta interface{}) error
 
 	obj := &gkehub.Feature{
 		Location: dcl.String(d.Get("location").(string)),
-		Labels:   checkStringMap(d.Get("labels")),
+		Labels:   tpgresource.CheckStringMap(d.Get("labels")),
 		Name:     dcl.String(d.Get("name").(string)),
 		Project:  dcl.String(project),
 		Spec:     expandGkeHubFeatureSpec(d.Get("spec")),
 	}
-	lockName, err := replaceVarsForId(d, config, "{{project}}/{{location}}/{{feature}}")
+	lockName, err := tpgresource.ReplaceVarsForId(d, config, "{{project}}/{{location}}/{{feature}}")
 	if err != nil {
 		return err
 	}
@@ -394,12 +394,12 @@ func resourceGkeHubFeatureDelete(d *schema.ResourceData, meta interface{}) error
 
 	obj := &gkehub.Feature{
 		Location: dcl.String(d.Get("location").(string)),
-		Labels:   checkStringMap(d.Get("labels")),
+		Labels:   tpgresource.CheckStringMap(d.Get("labels")),
 		Name:     dcl.String(d.Get("name").(string)),
 		Project:  dcl.String(project),
 		Spec:     expandGkeHubFeatureSpec(d.Get("spec")),
 	}
-	lockName, err := replaceVarsForId(d, config, "{{project}}/{{location}}/{{feature}}")
+	lockName, err := tpgresource.ReplaceVarsForId(d, config, "{{project}}/{{location}}/{{feature}}")
 	if err != nil {
 		return err
 	}
@@ -434,7 +434,7 @@ func resourceGkeHubFeatureDelete(d *schema.ResourceData, meta interface{}) error
 func resourceGkeHubFeatureImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	config := meta.(*transport_tpg.Config)
 
-	if err := ParseImportId([]string{
+	if err := tpgresource.ParseImportId([]string{
 		"projects/(?P<project>[^/]+)/locations/(?P<location>[^/]+)/features/(?P<name>[^/]+)",
 		"(?P<project>[^/]+)/(?P<location>[^/]+)/(?P<name>[^/]+)",
 		"(?P<location>[^/]+)/(?P<name>[^/]+)",
@@ -443,7 +443,7 @@ func resourceGkeHubFeatureImport(d *schema.ResourceData, meta interface{}) ([]*s
 	}
 
 	// Replace import id for the resource id
-	id, err := replaceVarsForId(d, config, "projects/{{project}}/locations/{{location}}/features/{{name}}")
+	id, err := tpgresource.ReplaceVarsForId(d, config, "projects/{{project}}/locations/{{location}}/features/{{name}}")
 	if err != nil {
 		return nil, fmt.Errorf("Error constructing id: %s", err)
 	}

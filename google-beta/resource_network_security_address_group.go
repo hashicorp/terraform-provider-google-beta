@@ -380,7 +380,7 @@ func resourceNetworkSecurityAddressGroupDelete(d *schema.ResourceData, meta inte
 
 func resourceNetworkSecurityAddressGroupImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	config := meta.(*transport_tpg.Config)
-	if err := ParseImportId([]string{
+	if err := tpgresource.ParseImportId([]string{
 		"(?P<parent>.+)/locations/(?P<location>[^/]+)/addressGroups/(?P<name>[^/]+)",
 	}, d, config); err != nil {
 		return nil, err

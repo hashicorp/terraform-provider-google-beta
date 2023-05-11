@@ -391,7 +391,7 @@ func resourceWorkstationsWorkstationDelete(d *schema.ResourceData, meta interfac
 
 func resourceWorkstationsWorkstationImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	config := meta.(*transport_tpg.Config)
-	if err := ParseImportId([]string{
+	if err := tpgresource.ParseImportId([]string{
 		"projects/(?P<project>[^/]+)/locations/(?P<location>[^/]+)/workstationClusters/(?P<workstation_cluster_id>[^/]+)/workstationConfigs/(?P<workstation_config_id>[^/]+)/workstations/(?P<workstation_id>[^/]+)",
 		"(?P<project>[^/]+)/(?P<location>[^/]+)/(?P<workstation_cluster_id>[^/]+)/(?P<workstation_config_id>[^/]+)/(?P<workstation_id>[^/]+)",
 		"(?P<location>[^/]+)/(?P<workstation_cluster_id>[^/]+)/(?P<workstation_config_id>[^/]+)/(?P<workstation_id>[^/]+)",

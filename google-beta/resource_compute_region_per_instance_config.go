@@ -597,7 +597,7 @@ func resourceComputeRegionPerInstanceConfigDelete(d *schema.ResourceData, meta i
 
 func resourceComputeRegionPerInstanceConfigImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	config := meta.(*transport_tpg.Config)
-	if err := ParseImportId([]string{
+	if err := tpgresource.ParseImportId([]string{
 		"projects/(?P<project>[^/]+)/regions/(?P<region>[^/]+)/instanceGroupManagers/(?P<region_instance_group_manager>[^/]+)/(?P<name>[^/]+)",
 		"(?P<project>[^/]+)/(?P<region>[^/]+)/(?P<region_instance_group_manager>[^/]+)/(?P<name>[^/]+)",
 		"(?P<region>[^/]+)/(?P<region_instance_group_manager>[^/]+)/(?P<name>[^/]+)",
@@ -864,7 +864,7 @@ func expandNestedComputeRegionPerInstanceConfigPreservedStateInternalIp(v interf
 			transformed["ipAddress"] = transformedIpAddress
 		}
 
-		transformedInterfaceName, err := expandString(original["interface_name"], d, config)
+		transformedInterfaceName, err := tpgresource.ExpandString(original["interface_name"], d, config)
 		if err != nil {
 			return nil, err
 		}
@@ -927,7 +927,7 @@ func expandNestedComputeRegionPerInstanceConfigPreservedStateExternalIp(v interf
 			transformed["ipAddress"] = transformedIpAddress
 		}
 
-		transformedInterfaceName, err := expandString(original["interface_name"], d, config)
+		transformedInterfaceName, err := tpgresource.ExpandString(original["interface_name"], d, config)
 		if err != nil {
 			return nil, err
 		}

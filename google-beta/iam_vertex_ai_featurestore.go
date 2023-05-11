@@ -76,7 +76,7 @@ func VertexAIFeaturestoreIamUpdaterProducer(d tpgresource.TerraformResourceData,
 	}
 
 	// We may have gotten either a long or short name, so attempt to parse long name if possible
-	m, err := getImportIdQualifiers([]string{"projects/(?P<project>[^/]+)/locations/(?P<region>[^/]+)/featurestores/(?P<featurestore>[^/]+)", "(?P<project>[^/]+)/(?P<region>[^/]+)/(?P<featurestore>[^/]+)", "(?P<region>[^/]+)/(?P<featurestore>[^/]+)", "(?P<featurestore>[^/]+)"}, d, config, d.Get("featurestore").(string))
+	m, err := tpgresource.GetImportIdQualifiers([]string{"projects/(?P<project>[^/]+)/locations/(?P<region>[^/]+)/featurestores/(?P<featurestore>[^/]+)", "(?P<project>[^/]+)/(?P<region>[^/]+)/(?P<featurestore>[^/]+)", "(?P<region>[^/]+)/(?P<featurestore>[^/]+)", "(?P<featurestore>[^/]+)"}, d, config, d.Get("featurestore").(string))
 	if err != nil {
 		return nil, err
 	}
@@ -119,7 +119,7 @@ func VertexAIFeaturestoreIdParseFunc(d *schema.ResourceData, config *transport_t
 		values["region"] = region
 	}
 
-	m, err := getImportIdQualifiers([]string{"projects/(?P<project>[^/]+)/locations/(?P<region>[^/]+)/featurestores/(?P<featurestore>[^/]+)", "(?P<project>[^/]+)/(?P<region>[^/]+)/(?P<featurestore>[^/]+)", "(?P<region>[^/]+)/(?P<featurestore>[^/]+)", "(?P<featurestore>[^/]+)"}, d, config, d.Id())
+	m, err := tpgresource.GetImportIdQualifiers([]string{"projects/(?P<project>[^/]+)/locations/(?P<region>[^/]+)/featurestores/(?P<featurestore>[^/]+)", "(?P<project>[^/]+)/(?P<region>[^/]+)/(?P<featurestore>[^/]+)", "(?P<region>[^/]+)/(?P<featurestore>[^/]+)", "(?P<featurestore>[^/]+)"}, d, config, d.Id())
 	if err != nil {
 		return err
 	}

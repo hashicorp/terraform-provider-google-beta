@@ -502,9 +502,9 @@ func resourceClouddeployDeliveryPipelineCreate(d *schema.ResourceData, meta inte
 	obj := &clouddeploy.DeliveryPipeline{
 		Location:       dcl.String(d.Get("location").(string)),
 		Name:           dcl.String(d.Get("name").(string)),
-		Annotations:    checkStringMap(d.Get("annotations")),
+		Annotations:    tpgresource.CheckStringMap(d.Get("annotations")),
 		Description:    dcl.String(d.Get("description").(string)),
-		Labels:         checkStringMap(d.Get("labels")),
+		Labels:         tpgresource.CheckStringMap(d.Get("labels")),
 		Project:        dcl.String(project),
 		SerialPipeline: expandClouddeployDeliveryPipelineSerialPipeline(d.Get("serial_pipeline")),
 		Suspended:      dcl.Bool(d.Get("suspended").(bool)),
@@ -557,9 +557,9 @@ func resourceClouddeployDeliveryPipelineRead(d *schema.ResourceData, meta interf
 	obj := &clouddeploy.DeliveryPipeline{
 		Location:       dcl.String(d.Get("location").(string)),
 		Name:           dcl.String(d.Get("name").(string)),
-		Annotations:    checkStringMap(d.Get("annotations")),
+		Annotations:    tpgresource.CheckStringMap(d.Get("annotations")),
 		Description:    dcl.String(d.Get("description").(string)),
-		Labels:         checkStringMap(d.Get("labels")),
+		Labels:         tpgresource.CheckStringMap(d.Get("labels")),
 		Project:        dcl.String(project),
 		SerialPipeline: expandClouddeployDeliveryPipelineSerialPipeline(d.Get("serial_pipeline")),
 		Suspended:      dcl.Bool(d.Get("suspended").(bool)),
@@ -639,9 +639,9 @@ func resourceClouddeployDeliveryPipelineUpdate(d *schema.ResourceData, meta inte
 	obj := &clouddeploy.DeliveryPipeline{
 		Location:       dcl.String(d.Get("location").(string)),
 		Name:           dcl.String(d.Get("name").(string)),
-		Annotations:    checkStringMap(d.Get("annotations")),
+		Annotations:    tpgresource.CheckStringMap(d.Get("annotations")),
 		Description:    dcl.String(d.Get("description").(string)),
-		Labels:         checkStringMap(d.Get("labels")),
+		Labels:         tpgresource.CheckStringMap(d.Get("labels")),
 		Project:        dcl.String(project),
 		SerialPipeline: expandClouddeployDeliveryPipelineSerialPipeline(d.Get("serial_pipeline")),
 		Suspended:      dcl.Bool(d.Get("suspended").(bool)),
@@ -689,9 +689,9 @@ func resourceClouddeployDeliveryPipelineDelete(d *schema.ResourceData, meta inte
 	obj := &clouddeploy.DeliveryPipeline{
 		Location:       dcl.String(d.Get("location").(string)),
 		Name:           dcl.String(d.Get("name").(string)),
-		Annotations:    checkStringMap(d.Get("annotations")),
+		Annotations:    tpgresource.CheckStringMap(d.Get("annotations")),
 		Description:    dcl.String(d.Get("description").(string)),
-		Labels:         checkStringMap(d.Get("labels")),
+		Labels:         tpgresource.CheckStringMap(d.Get("labels")),
 		Project:        dcl.String(project),
 		SerialPipeline: expandClouddeployDeliveryPipelineSerialPipeline(d.Get("serial_pipeline")),
 		Suspended:      dcl.Bool(d.Get("suspended").(bool)),
@@ -725,7 +725,7 @@ func resourceClouddeployDeliveryPipelineDelete(d *schema.ResourceData, meta inte
 func resourceClouddeployDeliveryPipelineImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	config := meta.(*transport_tpg.Config)
 
-	if err := ParseImportId([]string{
+	if err := tpgresource.ParseImportId([]string{
 		"projects/(?P<project>[^/]+)/locations/(?P<location>[^/]+)/deliveryPipelines/(?P<name>[^/]+)",
 		"(?P<project>[^/]+)/(?P<location>[^/]+)/(?P<name>[^/]+)",
 		"(?P<location>[^/]+)/(?P<name>[^/]+)",
@@ -734,7 +734,7 @@ func resourceClouddeployDeliveryPipelineImport(d *schema.ResourceData, meta inte
 	}
 
 	// Replace import id for the resource id
-	id, err := replaceVarsForId(d, config, "projects/{{project}}/locations/{{location}}/deliveryPipelines/{{name}}")
+	id, err := tpgresource.ReplaceVarsForId(d, config, "projects/{{project}}/locations/{{location}}/deliveryPipelines/{{name}}")
 	if err != nil {
 		return nil, fmt.Errorf("Error constructing id: %s", err)
 	}

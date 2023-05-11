@@ -384,7 +384,7 @@ func resourceFirebaseDatabaseInstanceDelete(d *schema.ResourceData, meta interfa
 
 func resourceFirebaseDatabaseInstanceImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	config := meta.(*transport_tpg.Config)
-	if err := ParseImportId([]string{
+	if err := tpgresource.ParseImportId([]string{
 		"projects/(?P<project>[^/]+)/locations/(?P<region>[^/]+)/instances/(?P<instance_id>[^/]+)",
 		"(?P<project>[^/]+)/(?P<region>[^/]+)/(?P<instance_id>[^/]+)",
 		"(?P<region>[^/]+)/(?P<instance_id>[^/]+)",

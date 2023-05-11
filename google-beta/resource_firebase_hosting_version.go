@@ -316,7 +316,7 @@ func resourceFirebaseHostingVersionDelete(d *schema.ResourceData, meta interface
 
 func resourceFirebaseHostingVersionImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	config := meta.(*transport_tpg.Config)
-	if err := ParseImportId([]string{
+	if err := tpgresource.ParseImportId([]string{
 		"sites/(?P<site_id>[^/]+)/versions/(?P<version_id>[^/]+)",
 		"(?P<site_id>[^/]+)/(?P<version_id>[^/]+)",
 	}, d, config); err != nil {

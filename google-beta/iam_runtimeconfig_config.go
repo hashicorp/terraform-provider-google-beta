@@ -62,7 +62,7 @@ func RuntimeConfigConfigIamUpdaterProducer(d tpgresource.TerraformResourceData, 
 	}
 
 	// We may have gotten either a long or short name, so attempt to parse long name if possible
-	m, err := getImportIdQualifiers([]string{"projects/(?P<project>[^/]+)/configs/(?P<config>[^/]+)", "(?P<project>[^/]+)/(?P<config>[^/]+)", "(?P<config>[^/]+)"}, d, config, d.Get("config").(string))
+	m, err := tpgresource.GetImportIdQualifiers([]string{"projects/(?P<project>[^/]+)/configs/(?P<config>[^/]+)", "(?P<project>[^/]+)/(?P<config>[^/]+)", "(?P<config>[^/]+)"}, d, config, d.Get("config").(string))
 	if err != nil {
 		return nil, err
 	}
@@ -96,7 +96,7 @@ func RuntimeConfigConfigIdParseFunc(d *schema.ResourceData, config *transport_tp
 		values["project"] = project
 	}
 
-	m, err := getImportIdQualifiers([]string{"projects/(?P<project>[^/]+)/configs/(?P<config>[^/]+)", "(?P<project>[^/]+)/(?P<config>[^/]+)", "(?P<config>[^/]+)"}, d, config, d.Id())
+	m, err := tpgresource.GetImportIdQualifiers([]string{"projects/(?P<project>[^/]+)/configs/(?P<config>[^/]+)", "(?P<project>[^/]+)/(?P<config>[^/]+)", "(?P<config>[^/]+)"}, d, config, d.Id())
 	if err != nil {
 		return err
 	}

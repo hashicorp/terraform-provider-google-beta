@@ -241,7 +241,7 @@ func resourceComputeOrganizationSecurityPolicyAssociationDelete(d *schema.Resour
 
 func resourceComputeOrganizationSecurityPolicyAssociationImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	config := meta.(*transport_tpg.Config)
-	if err := ParseImportId([]string{
+	if err := tpgresource.ParseImportId([]string{
 		"(?P<policy_id>.+)/association/(?P<name>[^/]+)",
 	}, d, config); err != nil {
 		return nil, err

@@ -559,7 +559,7 @@ func resourceGkeonpremBareMetalNodePoolDelete(d *schema.ResourceData, meta inter
 
 func resourceGkeonpremBareMetalNodePoolImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	config := meta.(*transport_tpg.Config)
-	if err := ParseImportId([]string{
+	if err := tpgresource.ParseImportId([]string{
 		"projects/(?P<project>[^/]+)/locations/(?P<location>[^/]+)/bareMetalClusters/(?P<bare_metal_cluster>[^/]+)/bareMetalNodePools/(?P<name>[^/]+)",
 		"(?P<project>[^/]+)/(?P<location>[^/]+)/(?P<bare_metal_cluster>[^/]+)/(?P<name>[^/]+)",
 		"(?P<location>[^/]+)/(?P<bare_metal_cluster>[^/]+)/(?P<name>[^/]+)",
