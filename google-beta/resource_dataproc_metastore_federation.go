@@ -389,7 +389,7 @@ func resourceDataprocMetastoreFederationDelete(d *schema.ResourceData, meta inte
 
 func resourceDataprocMetastoreFederationImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	config := meta.(*transport_tpg.Config)
-	if err := ParseImportId([]string{
+	if err := tpgresource.ParseImportId([]string{
 		"projects/(?P<project>[^/]+)/locations/(?P<location>[^/]+)/federations/(?P<federation_id>[^/]+)",
 		"(?P<project>[^/]+)/(?P<location>[^/]+)/(?P<federation_id>[^/]+)",
 		"(?P<location>[^/]+)/(?P<federation_id>[^/]+)",
@@ -497,7 +497,7 @@ func expandDataprocMetastoreFederationBackendMetastores(v interface{}, d tpgreso
 			transformed["metastoreType"] = transformedMetastoreType
 		}
 
-		transformedRank, err := expandString(original["rank"], d, config)
+		transformedRank, err := tpgresource.ExpandString(original["rank"], d, config)
 		if err != nil {
 			return nil, err
 		}

@@ -280,7 +280,7 @@ func resourceCloudbuildv2ConnectionCreate(d *schema.ResourceData, meta interface
 	obj := &cloudbuildv2.Connection{
 		Location:               dcl.String(d.Get("location").(string)),
 		Name:                   dcl.String(d.Get("name").(string)),
-		Annotations:            checkStringMap(d.Get("annotations")),
+		Annotations:            tpgresource.CheckStringMap(d.Get("annotations")),
 		Disabled:               dcl.Bool(d.Get("disabled").(bool)),
 		GithubConfig:           expandCloudbuildv2ConnectionGithubConfig(d.Get("github_config")),
 		GithubEnterpriseConfig: expandCloudbuildv2ConnectionGithubEnterpriseConfig(d.Get("github_enterprise_config")),
@@ -334,7 +334,7 @@ func resourceCloudbuildv2ConnectionRead(d *schema.ResourceData, meta interface{}
 	obj := &cloudbuildv2.Connection{
 		Location:               dcl.String(d.Get("location").(string)),
 		Name:                   dcl.String(d.Get("name").(string)),
-		Annotations:            checkStringMap(d.Get("annotations")),
+		Annotations:            tpgresource.CheckStringMap(d.Get("annotations")),
 		Disabled:               dcl.Bool(d.Get("disabled").(bool)),
 		GithubConfig:           expandCloudbuildv2ConnectionGithubConfig(d.Get("github_config")),
 		GithubEnterpriseConfig: expandCloudbuildv2ConnectionGithubEnterpriseConfig(d.Get("github_enterprise_config")),
@@ -412,7 +412,7 @@ func resourceCloudbuildv2ConnectionUpdate(d *schema.ResourceData, meta interface
 	obj := &cloudbuildv2.Connection{
 		Location:               dcl.String(d.Get("location").(string)),
 		Name:                   dcl.String(d.Get("name").(string)),
-		Annotations:            checkStringMap(d.Get("annotations")),
+		Annotations:            tpgresource.CheckStringMap(d.Get("annotations")),
 		Disabled:               dcl.Bool(d.Get("disabled").(bool)),
 		GithubConfig:           expandCloudbuildv2ConnectionGithubConfig(d.Get("github_config")),
 		GithubEnterpriseConfig: expandCloudbuildv2ConnectionGithubEnterpriseConfig(d.Get("github_enterprise_config")),
@@ -461,7 +461,7 @@ func resourceCloudbuildv2ConnectionDelete(d *schema.ResourceData, meta interface
 	obj := &cloudbuildv2.Connection{
 		Location:               dcl.String(d.Get("location").(string)),
 		Name:                   dcl.String(d.Get("name").(string)),
-		Annotations:            checkStringMap(d.Get("annotations")),
+		Annotations:            tpgresource.CheckStringMap(d.Get("annotations")),
 		Disabled:               dcl.Bool(d.Get("disabled").(bool)),
 		GithubConfig:           expandCloudbuildv2ConnectionGithubConfig(d.Get("github_config")),
 		GithubEnterpriseConfig: expandCloudbuildv2ConnectionGithubEnterpriseConfig(d.Get("github_enterprise_config")),
@@ -496,7 +496,7 @@ func resourceCloudbuildv2ConnectionDelete(d *schema.ResourceData, meta interface
 func resourceCloudbuildv2ConnectionImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	config := meta.(*transport_tpg.Config)
 
-	if err := ParseImportId([]string{
+	if err := tpgresource.ParseImportId([]string{
 		"projects/(?P<project>[^/]+)/locations/(?P<location>[^/]+)/connections/(?P<name>[^/]+)",
 		"(?P<project>[^/]+)/(?P<location>[^/]+)/(?P<name>[^/]+)",
 		"(?P<location>[^/]+)/(?P<name>[^/]+)",
@@ -505,7 +505,7 @@ func resourceCloudbuildv2ConnectionImport(d *schema.ResourceData, meta interface
 	}
 
 	// Replace import id for the resource id
-	id, err := replaceVarsForId(d, config, "projects/{{project}}/locations/{{location}}/connections/{{name}}")
+	id, err := tpgresource.ReplaceVarsForId(d, config, "projects/{{project}}/locations/{{location}}/connections/{{name}}")
 	if err != nil {
 		return nil, fmt.Errorf("Error constructing id: %s", err)
 	}

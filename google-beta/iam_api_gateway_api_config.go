@@ -72,7 +72,7 @@ func ApiGatewayApiConfigIamUpdaterProducer(d tpgresource.TerraformResourceData, 
 	}
 
 	// We may have gotten either a long or short name, so attempt to parse long name if possible
-	m, err := getImportIdQualifiers([]string{"projects/(?P<project>[^/]+)/locations/global/apis/(?P<api>[^/]+)/configs/(?P<api_config>[^/]+)", "(?P<project>[^/]+)/(?P<api>[^/]+)/(?P<api_config>[^/]+)", "(?P<api>[^/]+)/(?P<api_config>[^/]+)", "(?P<api_config>[^/]+)"}, d, config, d.Get("api_config").(string))
+	m, err := tpgresource.GetImportIdQualifiers([]string{"projects/(?P<project>[^/]+)/locations/global/apis/(?P<api>[^/]+)/configs/(?P<api_config>[^/]+)", "(?P<project>[^/]+)/(?P<api>[^/]+)/(?P<api_config>[^/]+)", "(?P<api>[^/]+)/(?P<api_config>[^/]+)", "(?P<api_config>[^/]+)"}, d, config, d.Get("api_config").(string))
 	if err != nil {
 		return nil, err
 	}
@@ -110,7 +110,7 @@ func ApiGatewayApiConfigIdParseFunc(d *schema.ResourceData, config *transport_tp
 		values["project"] = project
 	}
 
-	m, err := getImportIdQualifiers([]string{"projects/(?P<project>[^/]+)/locations/global/apis/(?P<api>[^/]+)/configs/(?P<api_config>[^/]+)", "(?P<project>[^/]+)/(?P<api>[^/]+)/(?P<api_config>[^/]+)", "(?P<api>[^/]+)/(?P<api_config>[^/]+)", "(?P<api_config>[^/]+)"}, d, config, d.Id())
+	m, err := tpgresource.GetImportIdQualifiers([]string{"projects/(?P<project>[^/]+)/locations/global/apis/(?P<api>[^/]+)/configs/(?P<api_config>[^/]+)", "(?P<project>[^/]+)/(?P<api>[^/]+)/(?P<api_config>[^/]+)", "(?P<api>[^/]+)/(?P<api_config>[^/]+)", "(?P<api_config>[^/]+)"}, d, config, d.Id())
 	if err != nil {
 		return err
 	}

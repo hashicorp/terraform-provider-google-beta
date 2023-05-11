@@ -1156,7 +1156,7 @@ func resourceOSConfigGuestPoliciesDelete(d *schema.ResourceData, meta interface{
 
 func resourceOSConfigGuestPoliciesImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	config := meta.(*transport_tpg.Config)
-	if err := ParseImportId([]string{
+	if err := tpgresource.ParseImportId([]string{
 		"projects/(?P<project>[^/]+)/guestPolicies/(?P<guest_policy_id>[^/]+)",
 		"(?P<project>[^/]+)/(?P<guest_policy_id>[^/]+)",
 		"(?P<guest_policy_id>[^/]+)",

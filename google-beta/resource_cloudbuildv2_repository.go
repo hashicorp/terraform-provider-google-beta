@@ -125,7 +125,7 @@ func resourceCloudbuildv2RepositoryCreate(d *schema.ResourceData, meta interface
 		Name:        dcl.String(d.Get("name").(string)),
 		Connection:  dcl.String(d.Get("parent_connection").(string)),
 		RemoteUri:   dcl.String(d.Get("remote_uri").(string)),
-		Annotations: checkStringMap(d.Get("annotations")),
+		Annotations: tpgresource.CheckStringMap(d.Get("annotations")),
 		Location:    dcl.StringOrNil(d.Get("location").(string)),
 		Project:     dcl.String(project),
 	}
@@ -178,7 +178,7 @@ func resourceCloudbuildv2RepositoryRead(d *schema.ResourceData, meta interface{}
 		Name:        dcl.String(d.Get("name").(string)),
 		Connection:  dcl.String(d.Get("parent_connection").(string)),
 		RemoteUri:   dcl.String(d.Get("remote_uri").(string)),
-		Annotations: checkStringMap(d.Get("annotations")),
+		Annotations: tpgresource.CheckStringMap(d.Get("annotations")),
 		Location:    dcl.StringOrNil(d.Get("location").(string)),
 		Project:     dcl.String(project),
 	}
@@ -247,7 +247,7 @@ func resourceCloudbuildv2RepositoryDelete(d *schema.ResourceData, meta interface
 		Name:        dcl.String(d.Get("name").(string)),
 		Connection:  dcl.String(d.Get("parent_connection").(string)),
 		RemoteUri:   dcl.String(d.Get("remote_uri").(string)),
-		Annotations: checkStringMap(d.Get("annotations")),
+		Annotations: tpgresource.CheckStringMap(d.Get("annotations")),
 		Location:    dcl.StringOrNil(d.Get("location").(string)),
 		Project:     dcl.String(project),
 	}
@@ -280,7 +280,7 @@ func resourceCloudbuildv2RepositoryDelete(d *schema.ResourceData, meta interface
 func resourceCloudbuildv2RepositoryImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	config := meta.(*transport_tpg.Config)
 
-	if err := ParseImportId([]string{
+	if err := tpgresource.ParseImportId([]string{
 		"projects/(?P<project>[^/]+)/locations/(?P<location>[^/]+)/connections/(?P<parent_connection>[^/]+)/repositories/(?P<name>[^/]+)",
 		"(?P<project>[^/]+)/(?P<location>[^/]+)/(?P<parent_connection>[^/]+)/(?P<name>[^/]+)",
 		"(?P<location>[^/]+)/(?P<parent_connection>[^/]+)/(?P<name>[^/]+)",
@@ -289,7 +289,7 @@ func resourceCloudbuildv2RepositoryImport(d *schema.ResourceData, meta interface
 	}
 
 	// Replace import id for the resource id
-	id, err := replaceVarsForId(d, config, "projects/{{project}}/locations/{{location}}/connections/{{parent_connection}}/repositories/{{name}}")
+	id, err := tpgresource.ReplaceVarsForId(d, config, "projects/{{project}}/locations/{{location}}/connections/{{parent_connection}}/repositories/{{name}}")
 	if err != nil {
 		return nil, fmt.Errorf("Error constructing id: %s", err)
 	}

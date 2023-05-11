@@ -262,7 +262,7 @@ func resourceNetworkServicesServiceBindingDelete(d *schema.ResourceData, meta in
 
 func resourceNetworkServicesServiceBindingImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	config := meta.(*transport_tpg.Config)
-	if err := ParseImportId([]string{
+	if err := tpgresource.ParseImportId([]string{
 		"projects/(?P<project>[^/]+)/locations/global/serviceBindings/(?P<name>[^/]+)",
 		"(?P<project>[^/]+)/(?P<name>[^/]+)",
 		"(?P<name>[^/]+)",

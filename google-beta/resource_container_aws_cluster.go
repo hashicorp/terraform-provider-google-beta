@@ -604,7 +604,7 @@ func resourceContainerAwsClusterCreate(d *schema.ResourceData, meta interface{})
 		Location:      dcl.String(d.Get("location").(string)),
 		Name:          dcl.String(d.Get("name").(string)),
 		Networking:    expandContainerAwsClusterNetworking(d.Get("networking")),
-		Annotations:   checkStringMap(d.Get("annotations")),
+		Annotations:   tpgresource.CheckStringMap(d.Get("annotations")),
 		Description:   dcl.String(d.Get("description").(string)),
 		LoggingConfig: expandContainerAwsClusterLoggingConfig(d.Get("logging_config")),
 		Project:       dcl.String(project),
@@ -662,7 +662,7 @@ func resourceContainerAwsClusterRead(d *schema.ResourceData, meta interface{}) e
 		Location:      dcl.String(d.Get("location").(string)),
 		Name:          dcl.String(d.Get("name").(string)),
 		Networking:    expandContainerAwsClusterNetworking(d.Get("networking")),
-		Annotations:   checkStringMap(d.Get("annotations")),
+		Annotations:   tpgresource.CheckStringMap(d.Get("annotations")),
 		Description:   dcl.String(d.Get("description").(string)),
 		LoggingConfig: expandContainerAwsClusterLoggingConfig(d.Get("logging_config")),
 		Project:       dcl.String(project),
@@ -765,7 +765,7 @@ func resourceContainerAwsClusterUpdate(d *schema.ResourceData, meta interface{})
 		Location:      dcl.String(d.Get("location").(string)),
 		Name:          dcl.String(d.Get("name").(string)),
 		Networking:    expandContainerAwsClusterNetworking(d.Get("networking")),
-		Annotations:   checkStringMap(d.Get("annotations")),
+		Annotations:   tpgresource.CheckStringMap(d.Get("annotations")),
 		Description:   dcl.String(d.Get("description").(string)),
 		LoggingConfig: expandContainerAwsClusterLoggingConfig(d.Get("logging_config")),
 		Project:       dcl.String(project),
@@ -818,7 +818,7 @@ func resourceContainerAwsClusterDelete(d *schema.ResourceData, meta interface{})
 		Location:      dcl.String(d.Get("location").(string)),
 		Name:          dcl.String(d.Get("name").(string)),
 		Networking:    expandContainerAwsClusterNetworking(d.Get("networking")),
-		Annotations:   checkStringMap(d.Get("annotations")),
+		Annotations:   tpgresource.CheckStringMap(d.Get("annotations")),
 		Description:   dcl.String(d.Get("description").(string)),
 		LoggingConfig: expandContainerAwsClusterLoggingConfig(d.Get("logging_config")),
 		Project:       dcl.String(project),
@@ -852,7 +852,7 @@ func resourceContainerAwsClusterDelete(d *schema.ResourceData, meta interface{})
 func resourceContainerAwsClusterImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	config := meta.(*transport_tpg.Config)
 
-	if err := ParseImportId([]string{
+	if err := tpgresource.ParseImportId([]string{
 		"projects/(?P<project>[^/]+)/locations/(?P<location>[^/]+)/awsClusters/(?P<name>[^/]+)",
 		"(?P<project>[^/]+)/(?P<location>[^/]+)/(?P<name>[^/]+)",
 		"(?P<location>[^/]+)/(?P<name>[^/]+)",
@@ -861,7 +861,7 @@ func resourceContainerAwsClusterImport(d *schema.ResourceData, meta interface{})
 	}
 
 	// Replace import id for the resource id
-	id, err := replaceVarsForId(d, config, "projects/{{project}}/locations/{{location}}/awsClusters/{{name}}")
+	id, err := tpgresource.ReplaceVarsForId(d, config, "projects/{{project}}/locations/{{location}}/awsClusters/{{name}}")
 	if err != nil {
 		return nil, fmt.Errorf("Error constructing id: %s", err)
 	}
@@ -974,7 +974,7 @@ func expandContainerAwsClusterControlPlane(o interface{}) *containeraws.ClusterC
 		RootVolume:                expandContainerAwsClusterControlPlaneRootVolume(obj["root_volume"]),
 		SecurityGroupIds:          expandStringArray(obj["security_group_ids"]),
 		SshConfig:                 expandContainerAwsClusterControlPlaneSshConfig(obj["ssh_config"]),
-		Tags:                      checkStringMap(obj["tags"]),
+		Tags:                      tpgresource.CheckStringMap(obj["tags"]),
 	}
 }
 
