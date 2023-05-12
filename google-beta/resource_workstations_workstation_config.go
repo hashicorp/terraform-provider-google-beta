@@ -304,6 +304,12 @@ If the encryption key is revoked, the workstation session will automatically be 
 										ForceNew:    true,
 										Description: `Size of the disk in GB. Must be empty if sourceSnapshot is set.`,
 									},
+									"source_snapshot": {
+										Type:        schema.TypeString,
+										Optional:    true,
+										ForceNew:    true,
+										Description: `The snapshot to use as the source for the disk. This can be the snapshot's 'self_link', 'id', or a string in the format of 'projects/{project}/global/snapshots/{snapshot}'. If set, sizeGb and fsType must be empty.`,
+									},
 								},
 							},
 						},
@@ -955,6 +961,8 @@ func flattenWorkstationsWorkstationConfigPersistentDirectoriesGcePd(v interface{
 		flattenWorkstationsWorkstationConfigPersistentDirectoriesGcePdSizeGb(original["sizeGb"], d, config)
 	transformed["reclaim_policy"] =
 		flattenWorkstationsWorkstationConfigPersistentDirectoriesGcePdReclaimPolicy(original["reclaimPolicy"], d, config)
+	transformed["source_snapshot"] =
+		flattenWorkstationsWorkstationConfigPersistentDirectoriesGcePdSourceSnapshot(original["sourceSnapshot"], d, config)
 	return []interface{}{transformed}
 }
 func flattenWorkstationsWorkstationConfigPersistentDirectoriesGcePdFsType(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -983,6 +991,10 @@ func flattenWorkstationsWorkstationConfigPersistentDirectoriesGcePdSizeGb(v inte
 }
 
 func flattenWorkstationsWorkstationConfigPersistentDirectoriesGcePdReclaimPolicy(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenWorkstationsWorkstationConfigPersistentDirectoriesGcePdSourceSnapshot(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
@@ -1397,6 +1409,13 @@ func expandWorkstationsWorkstationConfigPersistentDirectoriesGcePd(v interface{}
 		transformed["reclaimPolicy"] = transformedReclaimPolicy
 	}
 
+	transformedSourceSnapshot, err := expandWorkstationsWorkstationConfigPersistentDirectoriesGcePdSourceSnapshot(original["source_snapshot"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedSourceSnapshot); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["sourceSnapshot"] = transformedSourceSnapshot
+	}
+
 	return transformed, nil
 }
 
@@ -1413,6 +1432,10 @@ func expandWorkstationsWorkstationConfigPersistentDirectoriesGcePdSizeGb(v inter
 }
 
 func expandWorkstationsWorkstationConfigPersistentDirectoriesGcePdReclaimPolicy(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandWorkstationsWorkstationConfigPersistentDirectoriesGcePdSourceSnapshot(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
