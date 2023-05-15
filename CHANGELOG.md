@@ -1,4 +1,33 @@
-## 4.65.0 (Unreleased)
+## 4.66.0 (Unreleased)
+
+## 4.65.0 (May 15, 2023)
+
+FEATURES:
+* **New Data Source:** `google_datastream_static_ips` ([#5587](https://github.com/hashicorp/terraform-provider-google-beta/pull/5587))
+* **New Resource:** `google_compute_disk_async_replication` ([#5588](https://github.com/hashicorp/terraform-provider-google-beta/pull/5588))
+* **New Resource:** `google_firestore_field` ([#5603](https://github.com/hashicorp/terraform-provider-google-beta/pull/5603))
+* **New Resource:** `google_gkeonprem_bare_metal_cluster` ([#5594](https://github.com/hashicorp/terraform-provider-google-beta/pull/5594))
+* **New Resource:** `google_gkeonprem_bare_metal_node_pool` ([#5602](https://github.com/hashicorp/terraform-provider-google-beta/pull/5602))
+* **New Resource:** `google_network_security_tls_inspection_policy` ([#5615](https://github.com/hashicorp/terraform-provider-google-beta/pull/5615))
+
+IMPROVEMENTS:
+* bigquery: added general field `load.parquet_options` to `google_bigquery_job` ([#5592](https://github.com/hashicorp/terraform-provider-google-beta/pull/5592))
+* cloudbuild: added `allow_failure` and `allow_exit_codes` to `build.step` in `google_cloudbuild_trigger` resource ([#5593](https://github.com/hashicorp/terraform-provider-google-beta/pull/5593))
+* cloudbuild: added `git_file_source.repository` and `source_to_build.repository` fields to `google_cloudbuild_trigger` resource (beta) ([#5597](https://github.com/hashicorp/terraform-provider-google-beta/pull/5597))
+* cloudrunv2: added `template.containers.depends_on` and `template.volumes.empty_dir` to `google_cloud_run_v2_service`. ([#5613](https://github.com/hashicorp/terraform-provider-google-beta/pull/5613))
+* cloudrunv2: added `template.template.volumes.empty_dir` to `google_cloud_run_v2_job`. ([#5613](https://github.com/hashicorp/terraform-provider-google-beta/pull/5613))
+* compute: added enumeration values `SEV_SNP_CAPABLE`, `SUSPEND_RESUME_COMPATIBLE`, `TDX_CAPABLE` for the `guest_os_features` of `google_compute_image` ([#5604](https://github.com/hashicorp/terraform-provider-google-beta/pull/5604))
+* compute: added support for `stack_type` to `google_compute_network_peering` ([#5601](https://github.com/hashicorp/terraform-provider-google-beta/pull/5601))
+* container: added `gcs_fuse_csi_driver_config` to `google_container_cluster` resource. ([#5616](https://github.com/hashicorp/terraform-provider-google-beta/pull/5616))
+* dlp: added `publish_to_stackdriver` field to `google_data_loss_prevention_job_trigger` resource ([#5610](https://github.com/hashicorp/terraform-provider-google-beta/pull/5610))
+* network_security: added `tls_inspection_policy` field to `google_network_security_gateway_security_policy` ([#5615](https://github.com/hashicorp/terraform-provider-google-beta/pull/5615))
+
+BUG FIXES:
+* certificatemanager: fixed an issue where `self_managed.pem_certificate` and `self_managed.pem_certificate` can't be updated on `google_certificate_manager_certificate` ([#5606](https://github.com/hashicorp/terraform-provider-google-beta/pull/5606))
+* compute: fixed crash on `terraform destroy -refresh=false` for instance group managers with `wait_for_instances = "true"` if the instance group manager was not found ([#5614](https://github.com/hashicorp/terraform-provider-google-beta/pull/5614))
+* container: fixed node auto-provisioning not working when `auto_provisioning_defaults.management` is not provided on `google_container_cluster` ([#5605](https://github.com/hashicorp/terraform-provider-google-beta/pull/5605))
+* provider: fixed an issue where mtls transports were not used consistently ([#5618](https://github.com/hashicorp/terraform-provider-google-beta/pull/5618))
+
 ## 4.64.0 (May 8, 2023)
 
 FEATURES:
