@@ -10,6 +10,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-provider-google-beta/version"
 
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/runtimeconfig"
+
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/verify"
 
@@ -762,8 +764,8 @@ func Provider() *schema.Provider {
 			"google_project_service":                              DataSourceGoogleProjectService(),
 			"google_pubsub_subscription":                          DataSourceGooglePubsubSubscription(),
 			"google_pubsub_topic":                                 DataSourceGooglePubsubTopic(),
-			"google_runtimeconfig_config":                         DataSourceGoogleRuntimeconfigConfig(),
-			"google_runtimeconfig_variable":                       DataSourceGoogleRuntimeconfigVariable(),
+			"google_runtimeconfig_config":                         runtimeconfig.DataSourceGoogleRuntimeconfigConfig(),
+			"google_runtimeconfig_variable":                       runtimeconfig.DataSourceGoogleRuntimeconfigVariable(),
 			"google_secret_manager_secret":                        DataSourceSecretManagerSecret(),
 			"google_secret_manager_secret_version":                DataSourceSecretManagerSecretVersion(),
 			"google_secret_manager_secret_version_access":         DataSourceSecretManagerSecretVersionAccess(),
@@ -1451,8 +1453,8 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_project_iam_custom_role":                ResourceGoogleProjectIamCustomRole(),
 			"google_project_organization_policy":            ResourceGoogleProjectOrganizationPolicy(),
 			"google_project_usage_export_bucket":            ResourceProjectUsageBucket(),
-			"google_runtimeconfig_config":                   ResourceRuntimeconfigConfig(),
-			"google_runtimeconfig_variable":                 ResourceRuntimeconfigVariable(),
+			"google_runtimeconfig_config":                   runtimeconfig.ResourceRuntimeconfigConfig(),
+			"google_runtimeconfig_variable":                 runtimeconfig.ResourceRuntimeconfigVariable(),
 			"google_service_account":                        ResourceGoogleServiceAccount(),
 			"google_service_account_key":                    ResourceGoogleServiceAccountKey(),
 			"google_service_networking_peered_dns_domain":   ResourceGoogleServiceNetworkingPeeredDNSDomain(),

@@ -1,10 +1,12 @@
-package google
+package runtimeconfig_test
 
 import (
 	"fmt"
-	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"testing"
 	"time"
+
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
@@ -16,16 +18,16 @@ func TestAccRuntimeconfigVariable_basic(t *testing.T) {
 
 	var variable runtimeconfig.Variable
 
-	varName := fmt.Sprintf("variable-test-%s", RandString(t, 10))
+	varName := fmt.Sprintf("variable-test-%s", google.RandString(t, 10))
 	varText := "this is my test value"
 
-	VcrTest(t, resource.TestCase{
+	google.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
+		ProtoV5ProviderFactories: google.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckRuntimeconfigVariableDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccRuntimeconfigVariable_basicText(RandString(t, 10), varName, varText),
+				Config: testAccRuntimeconfigVariable_basicText(google.RandString(t, 10), varName, varText),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckRuntimeconfigVariableExists(
 						t, "google_runtimeconfig_variable.foobar", &variable),
@@ -47,14 +49,14 @@ func TestAccRuntimeconfigVariable_basicUpdate(t *testing.T) {
 
 	var variable runtimeconfig.Variable
 
-	configName := fmt.Sprintf("some-name-%s", RandString(t, 10))
-	varName := fmt.Sprintf("variable-test-%s", RandString(t, 10))
+	configName := fmt.Sprintf("some-name-%s", google.RandString(t, 10))
+	varName := fmt.Sprintf("variable-test-%s", google.RandString(t, 10))
 	varText := "this is my test value"
 	varText2 := "this is my updated value"
 
-	VcrTest(t, resource.TestCase{
+	google.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
+		ProtoV5ProviderFactories: google.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckRuntimeconfigVariableDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -81,16 +83,16 @@ func TestAccRuntimeconfigVariable_basicValue(t *testing.T) {
 
 	var variable runtimeconfig.Variable
 
-	varName := fmt.Sprintf("variable-test-%s", RandString(t, 10))
+	varName := fmt.Sprintf("variable-test-%s", google.RandString(t, 10))
 	varValue := "Zm9vYmFyCg=="
 
-	VcrTest(t, resource.TestCase{
+	google.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
+		ProtoV5ProviderFactories: google.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckRuntimeconfigVariableDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccRuntimeconfigVariable_basicValue(RandString(t, 10), varName, varValue),
+				Config: testAccRuntimeconfigVariable_basicValue(google.RandString(t, 10), varName, varValue),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckRuntimeconfigVariableExists(
 						t, "google_runtimeconfig_variable.foobar", &variable),
@@ -118,7 +120,7 @@ func testAccCheckRuntimeconfigVariableExists(t *testing.T, resourceName string, 
 			return fmt.Errorf("No ID is set")
 		}
 
-		config := GoogleProviderConfig(t)
+		config := google.GoogleProviderConfig(t)
 
 		found, err := config.NewRuntimeconfigClient(config.UserAgent).Projects.Configs.Variables.Get(rs.Primary.ID).Do()
 		if err != nil {
@@ -177,7 +179,7 @@ func testAccCheckRuntimeconfigVariableValue(variable *runtimeconfig.Variable, va
 
 func testAccCheckRuntimeconfigVariableDestroyProducer(t *testing.T) func(s *terraform.State) error {
 	return func(s *terraform.State) error {
-		config := GoogleProviderConfig(t)
+		config := google.GoogleProviderConfig(t)
 
 		for _, rs := range s.RootModule().Resources {
 			if rs.Type != "google_runtimeconfig_variable" {

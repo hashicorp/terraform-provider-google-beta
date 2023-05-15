@@ -1,4 +1,4 @@
-package google
+package runtimeconfig
 
 import (
 	"fmt"
@@ -9,25 +9,26 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func DataSourceGoogleRuntimeconfigConfig() *schema.Resource {
+func DataSourceGoogleRuntimeconfigVariable() *schema.Resource {
 
-	dsSchema := tpgresource.DatasourceSchemaFromResourceSchema(ResourceRuntimeconfigConfig().Schema)
+	dsSchema := tpgresource.DatasourceSchemaFromResourceSchema(ResourceRuntimeconfigVariable().Schema)
 	tpgresource.AddRequiredFieldsToSchema(dsSchema, "name")
+	tpgresource.AddRequiredFieldsToSchema(dsSchema, "parent")
 	tpgresource.AddOptionalFieldsToSchema(dsSchema, "project")
 
 	return &schema.Resource{
-		Read:   dataSourceGoogleRuntimeconfigConfigRead,
+		Read:   dataSourceGoogleRuntimeconfigVariableRead,
 		Schema: dsSchema,
 	}
 }
 
-func dataSourceGoogleRuntimeconfigConfigRead(d *schema.ResourceData, meta interface{}) error {
+func dataSourceGoogleRuntimeconfigVariableRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*transport_tpg.Config)
 
-	id, err := tpgresource.ReplaceVars(d, config, "projects/{{project}}/configs/{{name}}")
+	id, err := tpgresource.ReplaceVars(d, config, "projects/{{project}}/configs/{{parent}}/variables/{{name}}")
 	if err != nil {
 		return fmt.Errorf("Error constructing id: %s", err)
 	}
 	d.SetId(id)
-	return resourceRuntimeconfigConfigRead(d, meta)
+	return resourceRuntimeconfigVariableRead(d, meta)
 }
