@@ -155,7 +155,7 @@ func resourceFirebaseAppleAppCreate(d *schema.ResourceData, meta interface{}) er
 	}
 
 	// Store the ID now
-	id, err := tpgresource.ReplaceVars(d, config, "{{name}}")
+	id, err := tpgresource.ReplaceVars(d, config, "projects/{{project}}/iosApps/{{app_id}}")
 	if err != nil {
 		return fmt.Errorf("Error constructing id: %s", err)
 	}
@@ -177,9 +177,12 @@ func resourceFirebaseAppleAppCreate(d *schema.ResourceData, meta interface{}) er
 	if err := d.Set("name", flattenFirebaseAppleAppName(opRes["name"], d, config)); err != nil {
 		return err
 	}
+	if err := d.Set("app_id", flattenFirebaseAppleAppAppId(opRes["appId"], d, config)); err != nil {
+		return err
+	}
 
 	// This may have caused the ID to update - update it if so.
-	id, err = tpgresource.ReplaceVars(d, config, "{{name}}")
+	id, err = tpgresource.ReplaceVars(d, config, "projects/{{project}}/iosApps/{{app_id}}")
 	if err != nil {
 		return fmt.Errorf("Error constructing id: %s", err)
 	}
@@ -197,7 +200,7 @@ func resourceFirebaseAppleAppRead(d *schema.ResourceData, meta interface{}) erro
 		return err
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{FirebaseBasePath}}{{name}}")
+	url, err := tpgresource.ReplaceVars(d, config, "{{FirebaseBasePath}}projects/{{project}}/iosApps/{{app_id}}")
 	if err != nil {
 		return err
 	}
@@ -287,7 +290,7 @@ func resourceFirebaseAppleAppUpdate(d *schema.ResourceData, meta interface{}) er
 		obj["teamId"] = teamIdProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{FirebaseBasePath}}{{name}}")
+	url, err := tpgresource.ReplaceVars(d, config, "{{FirebaseBasePath}}projects/{{project}}/iosApps/{{app_id}}")
 	if err != nil {
 		return err
 	}
@@ -388,12 +391,27 @@ func resourceFirebaseAppleAppDelete(d *schema.ResourceData, meta interface{}) er
 }
 
 func resourceFirebaseAppleAppImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-
 	config := meta.(*transport_tpg.Config)
-
-	// current import_formats can't import fields with forward slashes in their value
-	if err := tpgresource.ParseImportId([]string{"(?P<project>[^ ]+) (?P<name>[^ ]+)", "(?P<name>[^ ]+)"}, d, config); err != nil {
+	if err := tpgresource.ParseImportId([]string{
+		"(?P<project>[^/]+) projects/(?P<project>[^/]+)/iosApps/(?P<app_id>[^/]+)",
+		"projects/(?P<project>[^/]+)/iosApps/(?P<app_id>[^/]+)",
+		"(?P<project>[^/]+)/(?P<project>[^/]+)/(?P<app_id>[^/]+)",
+		"iosApps/(?P<app_id>[^/]+)",
+		"(?P<app_id>[^/]+)",
+	}, d, config); err != nil {
 		return nil, err
+	}
+
+	// Replace import id for the resource id
+	id, err := tpgresource.ReplaceVars(d, config, "projects/{{project}}/iosApps/{{app_id}}")
+	if err != nil {
+		return nil, fmt.Errorf("Error constructing id: %s", err)
+	}
+	d.SetId(id)
+
+	// Explicitly set virtual fields to default values on import
+	if err := d.Set("deletion_policy", "DELETE"); err != nil {
+		return nil, fmt.Errorf("Error setting deletion_policy: %s", err)
 	}
 
 	return []*schema.ResourceData{d}, nil
