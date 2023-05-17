@@ -120,7 +120,7 @@ func testAccCheckFirebaseAppleAppDestroyProducer(t *testing.T) func(s *terraform
 
 			config := GoogleProviderConfig(t)
 
-			url, err := tpgresource.ReplaceVarsForTest(config, rs, "{{FirebaseBasePath}}{{name}}")
+			url, err := tpgresource.ReplaceVarsForTest(config, rs, "{{FirebaseBasePath}}projects/{{project}}/iosApps/{{app_id}}")
 			if err != nil {
 				return err
 			}
