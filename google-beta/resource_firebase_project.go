@@ -31,7 +31,13 @@ func getExistingFirebaseProjectId(config *transport_tpg.Config, d *schema.Resour
 		return "", err
 	}
 
-	_, err = transport_tpg.SendRequest(config, "GET", billingProject, url, userAgent, nil)
+	_, err = transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
+		Config:    config,
+		Method:    "GET",
+		Project:   billingProject,
+		RawURL:    url,
+		UserAgent: userAgent,
+	})
 	if err == nil {
 		id, err := tpgresource.ReplaceVars(d, config, "projects/{{project}}")
 		if err != nil {
@@ -123,7 +129,15 @@ func resourceFirebaseProjectCreate(d *schema.ResourceData, meta interface{}) err
 		d.SetId(existingId)
 		return resourceFirebaseProjectRead(d, meta)
 	}
-	res, err := transport_tpg.SendRequestWithTimeout(config, "POST", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutCreate))
+	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
+		Config:    config,
+		Method:    "POST",
+		Project:   billingProject,
+		RawURL:    url,
+		UserAgent: userAgent,
+		Body:      obj,
+		Timeout:   d.Timeout(schema.TimeoutCreate),
+	})
 	if err != nil {
 		return fmt.Errorf("Error creating Project: %s", err)
 	}
@@ -175,7 +189,13 @@ func resourceFirebaseProjectRead(d *schema.ResourceData, meta interface{}) error
 		billingProject = bp
 	}
 
-	res, err := transport_tpg.SendRequest(config, "GET", billingProject, url, userAgent, nil)
+	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
+		Config:    config,
+		Method:    "GET",
+		Project:   billingProject,
+		RawURL:    url,
+		UserAgent: userAgent,
+	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("FirebaseProject %q", d.Id()))
 	}
