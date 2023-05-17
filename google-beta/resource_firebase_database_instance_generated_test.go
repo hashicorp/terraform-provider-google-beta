@@ -186,7 +186,13 @@ func testAccCheckFirebaseDatabaseInstanceDestroyProducer(t *testing.T) func(s *t
 				billingProject = config.BillingProject
 			}
 
-			res, err := transport_tpg.SendRequest(config, "GET", billingProject, url, config.UserAgent, nil)
+			res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
+				Config:    config,
+				Method:    "GET",
+				Project:   billingProject,
+				RawURL:    url,
+				UserAgent: config.UserAgent,
+			})
 			if err != nil {
 				return err // RTDB only supports soft-delete.
 			}

@@ -964,7 +964,15 @@ func resourceComputeRegionInstanceTemplateCreate(d *schema.ResourceData, meta in
 		return err
 	}
 
-	op, err := transport_tpg.SendRequestWithTimeout(config, "POST", project, url, userAgent, instanceTemplate, d.Timeout(schema.TimeoutCreate))
+	op, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
+		Config:    config,
+		Method:    "POST",
+		Project:   project,
+		RawURL:    url,
+		UserAgent: userAgent,
+		Body:      instanceTemplate,
+		Timeout:   d.Timeout(schema.TimeoutCreate),
+	})
 	if err != nil {
 		return fmt.Errorf("Error creating RegionInstanceTemplate: %s", err)
 	}
@@ -1000,7 +1008,13 @@ func resourceComputeRegionInstanceTemplateRead(d *schema.ResourceData, meta inte
 		return err
 	}
 
-	instanceTemplate, err := transport_tpg.SendRequest(config, "GET", project, url, userAgent, nil)
+	instanceTemplate, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
+		Config:    config,
+		Method:    "GET",
+		Project:   project,
+		RawURL:    url,
+		UserAgent: userAgent,
+	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("ComputeRegionInstanceTemplate %q", d.Id()))
 	}
@@ -1192,7 +1206,15 @@ func resourceComputeRegionInstanceTemplateDelete(d *schema.ResourceData, meta in
 
 	var obj map[string]interface{}
 
-	op, err := transport_tpg.SendRequestWithTimeout(config, "DELETE", project, url, userAgent, obj, d.Timeout(schema.TimeoutDelete))
+	op, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
+		Config:    config,
+		Method:    "DELETE",
+		Project:   project,
+		RawURL:    url,
+		UserAgent: userAgent,
+		Body:      obj,
+		Timeout:   d.Timeout(schema.TimeoutDelete),
+	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, "RegionInstanceTemplate")
 	}

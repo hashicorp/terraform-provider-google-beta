@@ -244,7 +244,13 @@ func testAccCheckServiceUsageConsumerQuotaOverrideDestroyProducer(t *testing.T) 
 				billingProject = config.BillingProject
 			}
 
-			res, err := transport_tpg.SendRequest(config, "GET", billingProject, url, config.UserAgent, nil)
+			res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
+				Config:    config,
+				Method:    "GET",
+				Project:   billingProject,
+				RawURL:    url,
+				UserAgent: config.UserAgent,
+			})
 			if err == nil {
 				// Sometimes the API returns an empty response instead of erroring, treat empty as nonexistent
 				if len(res) != 0 {

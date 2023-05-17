@@ -274,7 +274,15 @@ func resourceComputeOrganizationSecurityPolicyRuleCreate(d *schema.ResourceData,
 		billingProject = bp
 	}
 
-	res, err := transport_tpg.SendRequestWithTimeout(config, "POST", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutCreate))
+	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
+		Config:    config,
+		Method:    "POST",
+		Project:   billingProject,
+		RawURL:    url,
+		UserAgent: userAgent,
+		Body:      obj,
+		Timeout:   d.Timeout(schema.TimeoutCreate),
+	})
 	if err != nil {
 		return fmt.Errorf("Error creating OrganizationSecurityPolicyRule: %s", err)
 	}
@@ -294,7 +302,12 @@ func resourceComputeOrganizationSecurityPolicyRuleCreate(d *schema.ResourceData,
 		return err
 	}
 
-	policyRes, err := transport_tpg.SendRequest(config, "GET", "", url, userAgent, nil)
+	policyRes, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
+		Config:    config,
+		Method:    "GET",
+		RawURL:    url,
+		UserAgent: userAgent,
+	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("ComputeOrganizationSecurityPolicy %q", d.Get("policy_id")))
 	}
@@ -335,7 +348,13 @@ func resourceComputeOrganizationSecurityPolicyRuleRead(d *schema.ResourceData, m
 		billingProject = bp
 	}
 
-	res, err := transport_tpg.SendRequest(config, "GET", billingProject, url, userAgent, nil)
+	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
+		Config:    config,
+		Method:    "GET",
+		Project:   billingProject,
+		RawURL:    url,
+		UserAgent: userAgent,
+	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("ComputeOrganizationSecurityPolicyRule %q", d.Id()))
 	}
@@ -448,7 +467,15 @@ func resourceComputeOrganizationSecurityPolicyRuleUpdate(d *schema.ResourceData,
 		billingProject = bp
 	}
 
-	res, err := transport_tpg.SendRequestWithTimeout(config, "POST", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutUpdate))
+	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
+		Config:    config,
+		Method:    "POST",
+		Project:   billingProject,
+		RawURL:    url,
+		UserAgent: userAgent,
+		Body:      obj,
+		Timeout:   d.Timeout(schema.TimeoutUpdate),
+	})
 
 	if err != nil {
 		return fmt.Errorf("Error updating OrganizationSecurityPolicyRule %q: %s", d.Id(), err)
@@ -464,7 +491,12 @@ func resourceComputeOrganizationSecurityPolicyRuleUpdate(d *schema.ResourceData,
 		return err
 	}
 
-	policyRes, err := transport_tpg.SendRequest(config, "GET", "", url, userAgent, nil)
+	policyRes, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
+		Config:    config,
+		Method:    "GET",
+		RawURL:    url,
+		UserAgent: userAgent,
+	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("ComputeOrganizationSecurityPolicy %q", d.Get("policy_id")))
 	}
@@ -505,7 +537,15 @@ func resourceComputeOrganizationSecurityPolicyRuleDelete(d *schema.ResourceData,
 		billingProject = bp
 	}
 
-	res, err := transport_tpg.SendRequestWithTimeout(config, "POST", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutDelete))
+	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
+		Config:    config,
+		Method:    "POST",
+		Project:   billingProject,
+		RawURL:    url,
+		UserAgent: userAgent,
+		Body:      obj,
+		Timeout:   d.Timeout(schema.TimeoutDelete),
+	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, "OrganizationSecurityPolicyRule")
 	}
@@ -518,7 +558,12 @@ func resourceComputeOrganizationSecurityPolicyRuleDelete(d *schema.ResourceData,
 		return err
 	}
 
-	policyRes, err := transport_tpg.SendRequest(config, "GET", "", url, userAgent, nil)
+	policyRes, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
+		Config:    config,
+		Method:    "GET",
+		RawURL:    url,
+		UserAgent: userAgent,
+	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("ComputeOrganizationSecurityPolicy %q", d.Get("policy_id")))
 	}
