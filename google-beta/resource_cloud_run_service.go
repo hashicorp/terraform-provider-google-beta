@@ -157,12 +157,10 @@ responsible for materializing the container image from source.`,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"containers": {
-										Type:     schema.TypeList,
-										Computed: true,
-										Optional: true,
-										Description: `Container defines the unit of execution for this Revision.
-In the context of a Revision, we disallow a number of the fields of
-this Container, including: name, ports, and volumeMounts.`,
+										Type:        schema.TypeList,
+										Computed:    true,
+										Optional:    true,
+										Description: `Containers defines the unit of execution for this Revision.`,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"image": {
@@ -384,6 +382,12 @@ Must be smaller than period_seconds.`,
 															},
 														},
 													},
+												},
+												"name": {
+													Type:        schema.TypeString,
+													Computed:    true,
+													Optional:    true,
+													Description: `Name of the container`,
 												},
 												"ports": {
 													Type:        schema.TypeList,
@@ -641,9 +645,29 @@ will use the project's default service account.`,
 													Required:    true,
 													Description: `Volume's name.`,
 												},
+												"empty_dir": {
+													Type:        schema.TypeList,
+													Optional:    true,
+													Description: `Ephemeral storage which can be backed by real disks (HD, SSD), network storage or memory (i.e. tmpfs). For now only in memory (tmpfs) is supported. It is ephemeral in the sense that when the sandbox is taken down, the data is destroyed with it (it does not persist across sandbox runs).`,
+													MaxItems:    1,
+													Elem: &schema.Resource{
+														Schema: map[string]*schema.Schema{
+															"medium": {
+																Type:        schema.TypeString,
+																Optional:    true,
+																Description: `The medium on which the data is stored. The default is "" which means to use the node's default medium. Must be an empty string (default) or Memory.`,
+															},
+															"size_limit": {
+																Type:        schema.TypeString,
+																Optional:    true,
+																Description: `Limit on the storage usable by this EmptyDir volume. The size limit is also applicable for memory medium. The maximum usage on memory medium EmptyDir would be the minimum value between the SizeLimit specified here and the sum of memory limits of all containers in a pod. This field's values are of the 'Quantity' k8s type: https://kubernetes.io/docs/reference/kubernetes-api/common-definitions/quantity/. The default is nil which means that the limit is undefined. More info: http://kubernetes.io/docs/user-guide/volumes#emptydir.`,
+															},
+														},
+													},
+												},
 												"secret": {
 													Type:     schema.TypeList,
-													Required: true,
+													Optional: true,
 													Description: `The secret's value will be presented as the content of a file whose
 name is defined in the item path. If no items are defined, the name of
 the file is the secret_name.`,
@@ -1649,6 +1673,7 @@ func flattenCloudRunServiceSpecTemplateSpecContainers(v interface{}, d *schema.R
 			continue
 		}
 		transformed = append(transformed, map[string]interface{}{
+			"name":           flattenCloudRunServiceSpecTemplateSpecContainersName(original["name"], d, config),
 			"working_dir":    flattenCloudRunServiceSpecTemplateSpecContainersWorkingDir(original["workingDir"], d, config),
 			"args":           flattenCloudRunServiceSpecTemplateSpecContainersArgs(original["args"], d, config),
 			"env_from":       flattenCloudRunServiceSpecTemplateSpecContainersEnvFrom(original["envFrom"], d, config),
@@ -1664,6 +1689,10 @@ func flattenCloudRunServiceSpecTemplateSpecContainers(v interface{}, d *schema.R
 	}
 	return transformed
 }
+func flattenCloudRunServiceSpecTemplateSpecContainersName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
 func flattenCloudRunServiceSpecTemplateSpecContainersWorkingDir(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
@@ -2387,8 +2416,9 @@ func flattenCloudRunServiceSpecTemplateSpecVolumes(v interface{}, d *schema.Reso
 			continue
 		}
 		transformed = append(transformed, map[string]interface{}{
-			"name":   flattenCloudRunServiceSpecTemplateSpecVolumesName(original["name"], d, config),
-			"secret": flattenCloudRunServiceSpecTemplateSpecVolumesSecret(original["secret"], d, config),
+			"name":      flattenCloudRunServiceSpecTemplateSpecVolumesName(original["name"], d, config),
+			"secret":    flattenCloudRunServiceSpecTemplateSpecVolumesSecret(original["secret"], d, config),
+			"empty_dir": flattenCloudRunServiceSpecTemplateSpecVolumesEmptyDir(original["emptyDir"], d, config),
 		})
 	}
 	return transformed
@@ -2478,6 +2508,29 @@ func flattenCloudRunServiceSpecTemplateSpecVolumesSecretItemsMode(v interface{},
 	}
 
 	return v // let terraform core handle it otherwise
+}
+
+func flattenCloudRunServiceSpecTemplateSpecVolumesEmptyDir(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["medium"] =
+		flattenCloudRunServiceSpecTemplateSpecVolumesEmptyDirMedium(original["medium"], d, config)
+	transformed["size_limit"] =
+		flattenCloudRunServiceSpecTemplateSpecVolumesEmptyDirSizeLimit(original["sizeLimit"], d, config)
+	return []interface{}{transformed}
+}
+func flattenCloudRunServiceSpecTemplateSpecVolumesEmptyDirMedium(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenCloudRunServiceSpecTemplateSpecVolumesEmptyDirSizeLimit(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
 }
 
 func flattenCloudRunServiceSpecTemplateSpecServingState(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -2940,6 +2993,13 @@ func expandCloudRunServiceSpecTemplateSpecContainers(v interface{}, d tpgresourc
 		original := raw.(map[string]interface{})
 		transformed := make(map[string]interface{})
 
+		transformedName, err := expandCloudRunServiceSpecTemplateSpecContainersName(original["name"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedName); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["name"] = transformedName
+		}
+
 		transformedWorkingDir, err := expandCloudRunServiceSpecTemplateSpecContainersWorkingDir(original["working_dir"], d, config)
 		if err != nil {
 			return nil, err
@@ -3020,6 +3080,10 @@ func expandCloudRunServiceSpecTemplateSpecContainers(v interface{}, d tpgresourc
 		req = append(req, transformed)
 	}
 	return req, nil
+}
+
+func expandCloudRunServiceSpecTemplateSpecContainersName(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
 }
 
 func expandCloudRunServiceSpecTemplateSpecContainersWorkingDir(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
@@ -3870,6 +3934,13 @@ func expandCloudRunServiceSpecTemplateSpecVolumes(v interface{}, d tpgresource.T
 			transformed["secret"] = transformedSecret
 		}
 
+		transformedEmptyDir, err := expandCloudRunServiceSpecTemplateSpecVolumesEmptyDir(original["empty_dir"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedEmptyDir); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["emptyDir"] = transformedEmptyDir
+		}
+
 		req = append(req, transformed)
 	}
 	return req, nil
@@ -3965,6 +4036,40 @@ func expandCloudRunServiceSpecTemplateSpecVolumesSecretItemsPath(v interface{}, 
 }
 
 func expandCloudRunServiceSpecTemplateSpecVolumesSecretItemsMode(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandCloudRunServiceSpecTemplateSpecVolumesEmptyDir(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedMedium, err := expandCloudRunServiceSpecTemplateSpecVolumesEmptyDirMedium(original["medium"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedMedium); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["medium"] = transformedMedium
+	}
+
+	transformedSizeLimit, err := expandCloudRunServiceSpecTemplateSpecVolumesEmptyDirSizeLimit(original["size_limit"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedSizeLimit); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["sizeLimit"] = transformedSizeLimit
+	}
+
+	return transformed, nil
+}
+
+func expandCloudRunServiceSpecTemplateSpecVolumesEmptyDirMedium(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandCloudRunServiceSpecTemplateSpecVolumesEmptyDirSizeLimit(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
