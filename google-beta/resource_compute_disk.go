@@ -28,6 +28,7 @@ import (
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/verify"
 )
 
 // diffsupress for beta and to check change in source_disk attribute
@@ -393,6 +394,16 @@ encryption key that protects this resource.`,
 					},
 				},
 			},
+			"guest_os_features": {
+				Type:     schema.TypeSet,
+				Computed: true,
+				Optional: true,
+				ForceNew: true,
+				Description: `A list of features to enable on the guest operating system.
+Applicable only for bootable disks.`,
+				Elem: computeDiskGuestOsFeaturesSchema(),
+				// Default schema.HashSchema is used.
+			},
 			"image": {
 				Type:             schema.TypeString,
 				Optional:         true,
@@ -422,6 +433,17 @@ These images can be referred by family name here.`,
 				Optional:    true,
 				Description: `Labels to apply to this disk.  A list of key->value pairs.`,
 				Elem:        &schema.Schema{Type: schema.TypeString},
+			},
+			"licenses": {
+				Type:        schema.TypeList,
+				Computed:    true,
+				Optional:    true,
+				ForceNew:    true,
+				Description: `Any applicable license URI.`,
+				Elem: &schema.Schema{
+					Type:             schema.TypeString,
+					DiffSuppressFunc: compareSelfLinkOrResourceName,
+				},
 			},
 			"multi_writer": {
 				Type:        schema.TypeBool,
@@ -688,6 +710,20 @@ project/zones/zone/instances/instance`,
 	}
 }
 
+func computeDiskGuestOsFeaturesSchema() *schema.Resource {
+	return &schema.Resource{
+		Schema: map[string]*schema.Schema{
+			"type": {
+				Type:         schema.TypeString,
+				Required:     true,
+				ForceNew:     true,
+				ValidateFunc: verify.ValidateEnum([]string{"MULTI_IP_SUBNET", "SECURE_BOOT", "SEV_CAPABLE", "UEFI_COMPATIBLE", "VIRTIO_SCSI_MULTIQUEUE", "WINDOWS", "GVNIC", "SEV_LIVE_MIGRATABLE", "SEV_SNP_CAPABLE", "SUSPEND_RESUME_COMPATIBLE", "TDX_CAPABLE"}),
+				Description:  `The type of supported feature. Read [Enabling guest operating system features](https://cloud.google.com/compute/docs/images/create-delete-deprecate-private-images#guest-os-features) to see a list of available options. Possible values: ["MULTI_IP_SUBNET", "SECURE_BOOT", "SEV_CAPABLE", "UEFI_COMPATIBLE", "VIRTIO_SCSI_MULTIQUEUE", "WINDOWS", "GVNIC", "SEV_LIVE_MIGRATABLE", "SEV_SNP_CAPABLE", "SUSPEND_RESUME_COMPATIBLE", "TDX_CAPABLE"]`,
+			},
+		},
+	}
+}
+
 func resourceComputeDiskCreate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*transport_tpg.Config)
 	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
@@ -773,6 +809,18 @@ func resourceComputeDiskCreate(d *schema.ResourceData, meta interface{}) error {
 		return err
 	} else if v, ok := d.GetOkExists("async_primary_disk"); !tpgresource.IsEmptyValue(reflect.ValueOf(asyncPrimaryDiskProp)) && (ok || !reflect.DeepEqual(v, asyncPrimaryDiskProp)) {
 		obj["asyncPrimaryDisk"] = asyncPrimaryDiskProp
+	}
+	guestOsFeaturesProp, err := expandComputeDiskGuestOsFeatures(d.Get("guest_os_features"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("guest_os_features"); !tpgresource.IsEmptyValue(reflect.ValueOf(guestOsFeaturesProp)) && (ok || !reflect.DeepEqual(v, guestOsFeaturesProp)) {
+		obj["guestOsFeatures"] = guestOsFeaturesProp
+	}
+	licensesProp, err := expandComputeDiskLicenses(d.Get("licenses"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("licenses"); !tpgresource.IsEmptyValue(reflect.ValueOf(licensesProp)) && (ok || !reflect.DeepEqual(v, licensesProp)) {
+		obj["licenses"] = licensesProp
 	}
 	zoneProp, err := expandComputeDiskZone(d.Get("zone"), d, config)
 	if err != nil {
@@ -968,6 +1016,12 @@ func resourceComputeDiskRead(d *schema.ResourceData, meta interface{}) error {
 		return fmt.Errorf("Error reading Disk: %s", err)
 	}
 	if err := d.Set("async_primary_disk", flattenComputeDiskAsyncPrimaryDisk(res["asyncPrimaryDisk"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Disk: %s", err)
+	}
+	if err := d.Set("guest_os_features", flattenComputeDiskGuestOsFeatures(res["guestOsFeatures"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Disk: %s", err)
+	}
+	if err := d.Set("licenses", flattenComputeDiskLicenses(res["licenses"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Disk: %s", err)
 	}
 	if err := d.Set("zone", flattenComputeDiskZone(res["zone"], d, config)); err != nil {
@@ -1378,6 +1432,35 @@ func flattenComputeDiskAsyncPrimaryDiskDisk(v interface{}, d *schema.ResourceDat
 	return v
 }
 
+func flattenComputeDiskGuestOsFeatures(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return v
+	}
+	l := v.([]interface{})
+	transformed := schema.NewSet(schema.HashResource(computeDiskGuestOsFeaturesSchema()), []interface{}{})
+	for _, raw := range l {
+		original := raw.(map[string]interface{})
+		if len(original) < 1 {
+			// Do not include empty json objects coming back from the api
+			continue
+		}
+		transformed.Add(map[string]interface{}{
+			"type": flattenComputeDiskGuestOsFeaturesType(original["type"], d, config),
+		})
+	}
+	return transformed
+}
+func flattenComputeDiskGuestOsFeaturesType(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenComputeDiskLicenses(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return v
+	}
+	return convertAndMapStringArr(v.([]interface{}), tpgresource.ConvertSelfLinkToV1)
+}
+
 func flattenComputeDiskZone(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return v
@@ -1603,6 +1686,49 @@ func expandComputeDiskAsyncPrimaryDisk(v interface{}, d tpgresource.TerraformRes
 
 func expandComputeDiskAsyncPrimaryDiskDisk(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
+}
+
+func expandComputeDiskGuestOsFeatures(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	v = v.(*schema.Set).List()
+	l := v.([]interface{})
+	req := make([]interface{}, 0, len(l))
+	for _, raw := range l {
+		if raw == nil {
+			continue
+		}
+		original := raw.(map[string]interface{})
+		transformed := make(map[string]interface{})
+
+		transformedType, err := expandComputeDiskGuestOsFeaturesType(original["type"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedType); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["type"] = transformedType
+		}
+
+		req = append(req, transformed)
+	}
+	return req, nil
+}
+
+func expandComputeDiskGuestOsFeaturesType(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeDiskLicenses(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	req := make([]interface{}, 0, len(l))
+	for _, raw := range l {
+		if raw == nil {
+			return nil, fmt.Errorf("Invalid value for licenses: nil")
+		}
+		f, err := tpgresource.ParseGlobalFieldValue("licenses", raw.(string), "project", d, config, true)
+		if err != nil {
+			return nil, fmt.Errorf("Invalid value for licenses: %s", err)
+		}
+		req = append(req, f.RelativeLink())
+	}
+	return req, nil
 }
 
 func expandComputeDiskZone(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
