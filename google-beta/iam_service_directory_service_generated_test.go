@@ -79,6 +79,7 @@ func TestAccServiceDirectoryServiceIamPolicyGenerated(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testAccServiceDirectoryServiceIamPolicy_basicGenerated(context),
+				Check:  resource.TestCheckResourceAttrSet("data.google_service_directory_service_iam_policy.foo", "policy_data"),
 			},
 			{
 				Config: testAccServiceDirectoryServiceIamPolicy_emptyBinding(context),
@@ -146,6 +147,14 @@ resource "google_service_directory_service_iam_policy" "foo" {
   provider = google-beta
   name = google_service_directory_service.example.name
   policy_data = data.google_iam_policy.foo.policy_data
+}
+
+data "google_service_directory_service_iam_policy" "foo" {
+  provider = google-beta
+  name = google_service_directory_service.example.name
+  depends_on = [
+    google_service_directory_service_iam_policy.foo
+  ]
 }
 `, context)
 }

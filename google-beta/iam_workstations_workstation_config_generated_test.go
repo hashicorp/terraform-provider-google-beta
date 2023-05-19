@@ -98,6 +98,7 @@ func TestAccWorkstationsWorkstationConfigIamPolicyGenerated(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testAccWorkstationsWorkstationConfigIamPolicy_basicGenerated(context),
+				Check:  resource.TestCheckResourceAttrSet("data.google_workstations_workstation_config_iam_policy.foo", "policy_data"),
 			},
 			{
 				ResourceName:      "google_workstations_workstation_config_iam_policy.foo",
@@ -239,6 +240,17 @@ resource "google_workstations_workstation_config_iam_policy" "foo" {
   workstation_cluster_id = google_workstations_workstation_config.default.workstation_cluster_id
   workstation_config_id = google_workstations_workstation_config.default.workstation_config_id
   policy_data = data.google_iam_policy.foo.policy_data
+}
+
+data "google_workstations_workstation_config_iam_policy" "foo" {
+  provider = google-beta
+  project = google_workstations_workstation_config.default.project
+  location = google_workstations_workstation_config.default.location
+  workstation_cluster_id = google_workstations_workstation_config.default.workstation_cluster_id
+  workstation_config_id = google_workstations_workstation_config.default.workstation_config_id
+  depends_on = [
+    google_workstations_workstation_config_iam_policy.foo
+  ]
 }
 `, context)
 }

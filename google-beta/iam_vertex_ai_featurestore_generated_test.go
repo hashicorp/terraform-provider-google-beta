@@ -110,6 +110,7 @@ func TestAccVertexAIFeaturestoreIamPolicyGenerated(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testAccVertexAIFeaturestoreIamPolicy_basicGenerated(context),
+				Check:  resource.TestCheckResourceAttrSet("data.google_vertex_ai_featurestore_iam_policy.foo", "policy_data"),
 			},
 			{
 				ResourceName:      "google_vertex_ai_featurestore_iam_policy.foo",
@@ -186,6 +187,15 @@ resource "google_vertex_ai_featurestore_iam_policy" "foo" {
   region = google_vertex_ai_featurestore.featurestore.region
   featurestore = google_vertex_ai_featurestore.featurestore.name
   policy_data = data.google_iam_policy.foo.policy_data
+}
+
+data "google_vertex_ai_featurestore_iam_policy" "foo" {
+  project = google_vertex_ai_featurestore.featurestore.project
+  region = google_vertex_ai_featurestore.featurestore.region
+  featurestore = google_vertex_ai_featurestore.featurestore.name
+  depends_on = [
+    google_vertex_ai_featurestore_iam_policy.foo
+  ]
 }
 `, context)
 }
