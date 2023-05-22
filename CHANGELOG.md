@@ -1,4 +1,6 @@
-## 4.66.0 (Unreleased)
+## 4.67.0 (Unreleased)
+
+## 4.66.0 (May 22, 2023)
 
 NOTE:
 * Upgraded to Go 1.19.9 ([#5623](https://github.com/hashicorp/terraform-provider-google-beta/pull/5623))
