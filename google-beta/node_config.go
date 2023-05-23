@@ -917,7 +917,7 @@ func flattenNodeConfig(c *container.NodeConfig) []map[string]interface{} {
 	})
 
 	if len(c.OauthScopes) > 0 {
-		config[0]["oauth_scopes"] = schema.NewSet(tpgresource.StringScopeHashcode, convertStringArrToInterface(c.OauthScopes))
+		config[0]["oauth_scopes"] = schema.NewSet(tpgresource.StringScopeHashcode, tpgresource.ConvertStringArrToInterface(c.OauthScopes))
 	}
 
 	return config
