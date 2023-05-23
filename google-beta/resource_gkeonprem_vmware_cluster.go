@@ -545,15 +545,16 @@ used for VMware user clusters.`,
 													Description: `The node's network configurations used by the VMware User Cluster.`,
 													Elem: &schema.Resource{
 														Schema: map[string]*schema.Schema{
-															"hostname": {
-																Type:        schema.TypeString,
-																Required:    true,
-																Description: `Hostname of the machine. VM's name will be used if this field is empty.`,
-															},
 															"ip": {
 																Type:        schema.TypeString,
 																Required:    true,
 																Description: `IP could be an IP address (like 1.2.3.4) or a CIDR (like 1.2.3.0/24).`,
+															},
+															"hostname": {
+																Type:        schema.TypeString,
+																Computed:    true,
+																Optional:    true,
+																Description: `Hostname of the machine. VM's name will be used if this field is empty.`,
 															},
 														},
 													},
