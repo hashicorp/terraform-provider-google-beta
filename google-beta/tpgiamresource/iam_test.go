@@ -1,4 +1,4 @@
-package google
+package tpgiamresource
 
 import (
 	"reflect"
@@ -249,9 +249,9 @@ func TestIamMergeBindings(t *testing.T) {
 
 	for _, tc := range testCases {
 		got := MergeBindings(tc.input)
-		if !compareBindings(got, tc.expect) {
+		if !CompareBindings(got, tc.expect) {
 			t.Errorf("Unexpected value for MergeBindings(%s).\nActual: %s\nExpected: %s\n",
-				debugPrintBindings(tc.input), debugPrintBindings(got), debugPrintBindings(tc.expect))
+				DebugPrintBindings(tc.input), DebugPrintBindings(got), DebugPrintBindings(tc.expect))
 		}
 	}
 }
@@ -361,9 +361,9 @@ func TestIamFilterBindingsWithRoleAndCondition(t *testing.T) {
 
 	for _, tc := range testCases {
 		got := filterBindingsWithRoleAndCondition(tc.input, tc.role, &cloudresourcemanager.Expr{Title: tc.conditionTitle})
-		if !compareBindings(got, tc.expect) {
+		if !CompareBindings(got, tc.expect) {
 			t.Errorf("Got unexpected value for removeAllBindingsWithRole(%s, %s).\nActual: %s\nExpected: %s",
-				debugPrintBindings(tc.input), tc.role, debugPrintBindings(got), debugPrintBindings(tc.expect))
+				DebugPrintBindings(tc.input), tc.role, DebugPrintBindings(got), DebugPrintBindings(tc.expect))
 		}
 	}
 }
@@ -567,9 +567,9 @@ func TestIamSubtractFromBindings(t *testing.T) {
 
 	for _, tc := range testCases {
 		got := subtractFromBindings(tc.input, tc.remove...)
-		if !compareBindings(got, tc.expect) {
+		if !CompareBindings(got, tc.expect) {
 			t.Errorf("Unexpected value for subtractFromBindings(%s, %s).\nActual: %s\nExpected: %s\n",
-				debugPrintBindings(tc.input), debugPrintBindings(tc.remove), debugPrintBindings(got), debugPrintBindings(tc.expect))
+				DebugPrintBindings(tc.input), DebugPrintBindings(tc.remove), DebugPrintBindings(got), DebugPrintBindings(tc.expect))
 		}
 	}
 }
@@ -781,7 +781,7 @@ func TestIamCreateIamBindingsMap(t *testing.T) {
 		got := createIamBindingsMap(tc.input)
 		if !reflect.DeepEqual(got, tc.expect) {
 			t.Errorf("Unexpected value for createIamBindingsMap(%s).\nActual: %#v\nExpected: %#v\n",
-				debugPrintBindings(tc.input), got, tc.expect)
+				DebugPrintBindings(tc.input), got, tc.expect)
 		}
 	}
 }
@@ -916,9 +916,9 @@ func TestIamListFromIamBindingMap(t *testing.T) {
 
 	for _, tc := range testCases {
 		got := listFromIamBindingMap(tc.input)
-		if !compareBindings(got, tc.expect) {
+		if !CompareBindings(got, tc.expect) {
 			t.Errorf("Unexpected value for subtractFromBindings(%v).\nActual: %#v\nExpected: %#v\n",
-				tc.input, debugPrintBindings(got), debugPrintBindings(tc.expect))
+				tc.input, DebugPrintBindings(got), DebugPrintBindings(tc.expect))
 		}
 	}
 }
@@ -1065,9 +1065,9 @@ func TestIamRemoveAllAuditConfigsWithService(t *testing.T) {
 
 	for _, tc := range testCases {
 		got := removeAllAuditConfigsWithService(tc.input, tc.service)
-		if !compareAuditConfigs(got, tc.expect) {
+		if !CompareAuditConfigs(got, tc.expect) {
 			t.Errorf("Got unexpected value for removeAllAuditConfigsWithService(%s, %s).\nActual: %s\nExpected: %s",
-				debugPrintAuditConfigs(tc.input), tc.service, debugPrintAuditConfigs(got), debugPrintAuditConfigs(tc.expect))
+				DebugPrintAuditConfigs(tc.input), tc.service, DebugPrintAuditConfigs(got), DebugPrintAuditConfigs(tc.expect))
 		}
 	}
 }
@@ -1213,7 +1213,7 @@ func TestIamCreateIamAuditConfigsMap(t *testing.T) {
 		got := createIamAuditConfigsMap(tc.input)
 		if !reflect.DeepEqual(got, tc.expect) {
 			t.Errorf("Unexpected value for createIamAuditConfigsMap(%s).\nActual: %#v\nExpected: %#v\n",
-				debugPrintAuditConfigs(tc.input), got, tc.expect)
+				DebugPrintAuditConfigs(tc.input), got, tc.expect)
 		}
 	}
 }
@@ -1317,9 +1317,9 @@ func TestIamListFromIamAuditConfigsMap(t *testing.T) {
 
 	for _, tc := range testCases {
 		got := listFromIamAuditConfigMap(tc.input)
-		if !compareAuditConfigs(got, tc.expect) {
+		if !CompareAuditConfigs(got, tc.expect) {
 			t.Errorf("Unexpected value for listFromIamAuditConfigMap(%+v).\nActual: %s\nExpected: %s\n",
-				tc.input, debugPrintAuditConfigs(got), debugPrintAuditConfigs(tc.expect))
+				tc.input, DebugPrintAuditConfigs(got), DebugPrintAuditConfigs(tc.expect))
 		}
 	}
 }

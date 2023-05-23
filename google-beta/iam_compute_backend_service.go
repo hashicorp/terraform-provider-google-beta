@@ -21,6 +21,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"google.golang.org/api/cloudresourcemanager/v1"
 
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgiamresource"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
@@ -47,7 +48,7 @@ type ComputeBackendServiceIamUpdater struct {
 	Config  *transport_tpg.Config
 }
 
-func ComputeBackendServiceIamUpdaterProducer(d tpgresource.TerraformResourceData, config *transport_tpg.Config) (ResourceIamUpdater, error) {
+func ComputeBackendServiceIamUpdaterProducer(d tpgresource.TerraformResourceData, config *transport_tpg.Config) (tpgiamresource.ResourceIamUpdater, error) {
 	values := make(map[string]string)
 
 	project, _ := getProject(d, config)
@@ -129,7 +130,7 @@ func (u *ComputeBackendServiceIamUpdater) GetResourceIamPolicy() (*cloudresource
 		return nil, err
 	}
 	var obj map[string]interface{}
-	url, err = transport_tpg.AddQueryParams(url, map[string]string{"optionsRequestedPolicyVersion": fmt.Sprintf("%d", IamPolicyVersion)})
+	url, err = transport_tpg.AddQueryParams(url, map[string]string{"optionsRequestedPolicyVersion": fmt.Sprintf("%d", tpgiamresource.IamPolicyVersion)})
 	if err != nil {
 		return nil, err
 	}

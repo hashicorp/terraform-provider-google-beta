@@ -3,6 +3,7 @@ package google
 import (
 	"fmt"
 
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgiamresource"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 	healthcare "google.golang.org/api/healthcare/v1"
@@ -26,7 +27,7 @@ type HealthcareFhirStoreIamUpdater struct {
 	Config     *transport_tpg.Config
 }
 
-func NewHealthcareFhirStoreIamUpdater(d tpgresource.TerraformResourceData, config *transport_tpg.Config) (ResourceIamUpdater, error) {
+func NewHealthcareFhirStoreIamUpdater(d tpgresource.TerraformResourceData, config *transport_tpg.Config) (tpgiamresource.ResourceIamUpdater, error) {
 	fhirStore := d.Get("fhir_store_id").(string)
 	fhirStoreId, err := ParseHealthcareFhirStoreId(fhirStore, config)
 
