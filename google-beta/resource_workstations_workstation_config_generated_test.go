@@ -90,6 +90,9 @@ resource "google_workstations_workstation_config" "default" {
   workstation_cluster_id = google_workstations_workstation_cluster.default.workstation_cluster_id
   location   		         = "us-central1"
 
+  idle_timeout = "600s"
+  running_timeout = "21600s"
+
   host {
     gce_instance {
       machine_type                = "e2-standard-4"

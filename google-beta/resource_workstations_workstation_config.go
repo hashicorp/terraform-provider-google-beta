@@ -253,6 +253,13 @@ If the encryption key is revoked, the workstation session will automatically be 
 					},
 				},
 			},
+			"idle_timeout": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Description: `How long to wait before automatically stopping an instance that hasn't recently received any user traffic. A value of 0 indicates that this instance should never time out from idleness. Defaults to 20 minutes.
+A duration in seconds with up to nine fractional digits, ending with 's'. Example: "3.5s".`,
+				Default: "1200s",
+			},
 			"labels": {
 				Type:        schema.TypeMap,
 				Optional:    true,
@@ -322,6 +329,13 @@ If the encryption key is revoked, the workstation session will automatically be 
 						},
 					},
 				},
+			},
+			"running_timeout": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Description: `How long to wait before automatically stopping a workstation after it was started. A value of 0 indicates that workstations using this configuration should never time out from running duration. Must be greater than 0 and less than 24 hours if 'encryption_key' is set. Defaults to 12 hours.
+A duration in seconds with up to nine fractional digits, ending with 's'. Example: "3.5s".`,
+				Default: "43200s",
 			},
 			"conditions": {
 				Type:        schema.TypeList,
@@ -418,6 +432,18 @@ func resourceWorkstationsWorkstationConfigCreate(d *schema.ResourceData, meta in
 		return err
 	} else if v, ok := d.GetOkExists("etag"); !tpgresource.IsEmptyValue(reflect.ValueOf(etagProp)) && (ok || !reflect.DeepEqual(v, etagProp)) {
 		obj["etag"] = etagProp
+	}
+	idleTimeoutProp, err := expandWorkstationsWorkstationConfigIdleTimeout(d.Get("idle_timeout"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("idle_timeout"); !tpgresource.IsEmptyValue(reflect.ValueOf(idleTimeoutProp)) && (ok || !reflect.DeepEqual(v, idleTimeoutProp)) {
+		obj["idleTimeout"] = idleTimeoutProp
+	}
+	runningTimeoutProp, err := expandWorkstationsWorkstationConfigRunningTimeout(d.Get("running_timeout"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("running_timeout"); !tpgresource.IsEmptyValue(reflect.ValueOf(runningTimeoutProp)) && (ok || !reflect.DeepEqual(v, runningTimeoutProp)) {
+		obj["runningTimeout"] = runningTimeoutProp
 	}
 	hostProp, err := expandWorkstationsWorkstationConfigHost(d.Get("host"), d, config)
 	if err != nil {
@@ -559,6 +585,12 @@ func resourceWorkstationsWorkstationConfigRead(d *schema.ResourceData, meta inte
 	if err := d.Set("create_time", flattenWorkstationsWorkstationConfigCreateTime(res["createTime"], d, config)); err != nil {
 		return fmt.Errorf("Error reading WorkstationConfig: %s", err)
 	}
+	if err := d.Set("idle_timeout", flattenWorkstationsWorkstationConfigIdleTimeout(res["idleTimeout"], d, config)); err != nil {
+		return fmt.Errorf("Error reading WorkstationConfig: %s", err)
+	}
+	if err := d.Set("running_timeout", flattenWorkstationsWorkstationConfigRunningTimeout(res["runningTimeout"], d, config)); err != nil {
+		return fmt.Errorf("Error reading WorkstationConfig: %s", err)
+	}
 	if err := d.Set("host", flattenWorkstationsWorkstationConfigHost(res["host"], d, config)); err != nil {
 		return fmt.Errorf("Error reading WorkstationConfig: %s", err)
 	}
@@ -621,6 +653,18 @@ func resourceWorkstationsWorkstationConfigUpdate(d *schema.ResourceData, meta in
 	} else if v, ok := d.GetOkExists("etag"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, etagProp)) {
 		obj["etag"] = etagProp
 	}
+	idleTimeoutProp, err := expandWorkstationsWorkstationConfigIdleTimeout(d.Get("idle_timeout"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("idle_timeout"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, idleTimeoutProp)) {
+		obj["idleTimeout"] = idleTimeoutProp
+	}
+	runningTimeoutProp, err := expandWorkstationsWorkstationConfigRunningTimeout(d.Get("running_timeout"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("running_timeout"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, runningTimeoutProp)) {
+		obj["runningTimeout"] = runningTimeoutProp
+	}
 	hostProp, err := expandWorkstationsWorkstationConfigHost(d.Get("host"), d, config)
 	if err != nil {
 		return err
@@ -656,6 +700,14 @@ func resourceWorkstationsWorkstationConfigUpdate(d *schema.ResourceData, meta in
 
 	if d.HasChange("etag") {
 		updateMask = append(updateMask, "etag")
+	}
+
+	if d.HasChange("idle_timeout") {
+		updateMask = append(updateMask, "idleTimeout")
+	}
+
+	if d.HasChange("running_timeout") {
+		updateMask = append(updateMask, "runningTimeout")
 	}
 
 	if d.HasChange("host") {
@@ -814,6 +866,14 @@ func flattenWorkstationsWorkstationConfigEtag(v interface{}, d *schema.ResourceD
 }
 
 func flattenWorkstationsWorkstationConfigCreateTime(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenWorkstationsWorkstationConfigIdleTimeout(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenWorkstationsWorkstationConfigRunningTimeout(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
@@ -1187,6 +1247,14 @@ func expandWorkstationsWorkstationConfigAnnotations(v interface{}, d tpgresource
 }
 
 func expandWorkstationsWorkstationConfigEtag(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandWorkstationsWorkstationConfigIdleTimeout(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandWorkstationsWorkstationConfigRunningTimeout(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
