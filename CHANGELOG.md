@@ -1,23 +1,24 @@
 ## 4.67.0 (Unreleased)
 FEATURES:
 * **New Data Source:** `google_**_iam_policy` ([#5661](https://github.com/hashicorp/terraform-provider-google-beta/pull/5661))
-* **New Data Source:** google_vertex_ai_index ([#5649](https://github.com/hashicorp/terraform-provider-google-beta/pull/5649))
+* **New Data Source:** `google_vertex_ai_index` ([#5649](https://github.com/hashicorp/terraform-provider-google-beta/pull/5649))
 
 IMPROVEMENTS:
-* cloudrun: Added beta field `template.spec.columes.empty_dir` to `google_cloud_run_service` ([#5654](https://github.com/hashicorp/terraform-provider-google-beta/pull/5654))
-* cloudrun: Added field `template.spec.containers.name` to `google_cloud_run_service` ([#5654](https://github.com/hashicorp/terraform-provider-google-beta/pull/5654))
+* cloudrun: added beta field `template.spec.columes.empty_dir` to `google_cloud_run_service` ([#5654](https://github.com/hashicorp/terraform-provider-google-beta/pull/5654))
+* cloudrun: added field `template.spec.containers.name` to `google_cloud_run_service` ([#5654](https://github.com/hashicorp/terraform-provider-google-beta/pull/5654))
 * compute: added `guest_os_features` and `licenses` fields to `google_compute_disk` and `google_compute_region_disk` ([#5659](https://github.com/hashicorp/terraform-provider-google-beta/pull/5659))
 * datastream: added `mysql_source_config.max_concurrent_backfill_tasks` field to `google_datastream_stream` resource ([#5648](https://github.com/hashicorp/terraform-provider-google-beta/pull/5648))
 * firebase: added additional import formats for app resources, removed the need to supply duplicate projects in some cases ([#5647](https://github.com/hashicorp/terraform-provider-google-beta/pull/5647))
 * notebooks: added update-in-place support for `google_notebooks_instance.metadata` field ([#5655](https://github.com/hashicorp/terraform-provider-google-beta/pull/5655))
-* privateca: added support for encoding_format on CaPool ([#5662](https://github.com/hashicorp/terraform-provider-google-beta/pull/5662))
+* privateca: added support for encoding_format on `google_privateca_ca_pool` ([#5662](https://github.com/hashicorp/terraform-provider-google-beta/pull/5662))
 
 BUG FIXES:
 * apigee: increased `google_apigee_organization` timeout defaults to 45m from 20m ([#5652](https://github.com/hashicorp/terraform-provider-google-beta/pull/5652))
 * cloudrun: fixed an issues where the system annotation "run.googleapis.com/operation-id" and "run.googleapis.com/ingress" may cause permadiffs for `metadata.annotation` in `google_cloud_run_service` ([#5651](https://github.com/hashicorp/terraform-provider-google-beta/pull/5651))
 * container: fixed a crash when all zero values are specified `google_container_node_pool.upgrade_settings.blue_green_settings.standard_rollout_policy` subfields ([#5671](https://github.com/hashicorp/terraform-provider-google-beta/pull/5671))
 * gkeonprem: updated `hostname` field of ip_block from required to optional from resource `google_gkeonprem_vmware_cluster` ([#5670](https://github.com/hashicorp/terraform-provider-google-beta/pull/5670))
-* provider: fixed an issue where mtls transports were not used consistently ([#5645](https://github.com/hashicorp/terraform-provider-google-beta/pull/5645))
+* serviceusage: added retries to handle internal error: type: "googleapis.com" subject: "160009" when activating services ([#5685](https://github.com/hashicorp/terraform-provider-google-beta/pull/5685))
+* cloudresourcemanager: added retries to handle internal error: type: "googleapis.com" subject: "160009" ([#5685](https://github.com/hashicorp/terraform-provider-google-beta/pull/5685))
 
 ## 4.66.0 (May 22, 2023)
 
