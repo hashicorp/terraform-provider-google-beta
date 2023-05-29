@@ -69,6 +69,10 @@ func ResourceBigtableGCPolicy() *schema.Resource {
 		Update:        resourceBigtableGCPolicyUpsert,
 		CustomizeDiff: resourceBigtableGCPolicyCustomizeDiff,
 
+		Timeouts: &schema.ResourceTimeout{
+			Create: schema.DefaultTimeout(20 * time.Minute),
+		},
+
 		Schema: map[string]*schema.Schema{
 			"instance_name": {
 				Type:             schema.TypeString,
