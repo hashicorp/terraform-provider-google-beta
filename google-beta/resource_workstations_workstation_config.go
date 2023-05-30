@@ -273,7 +273,6 @@ A duration in seconds with up to nine fractional digits, ending with 's'. Exampl
 				Type:        schema.TypeList,
 				Computed:    true,
 				Optional:    true,
-				ForceNew:    true,
 				Description: `Directories to persist across workstation sessions.`,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -281,8 +280,7 @@ A duration in seconds with up to nine fractional digits, ending with 's'. Exampl
 							Type:        schema.TypeList,
 							Computed:    true,
 							Optional:    true,
-							ForceNew:    true,
-							Description: `PersistentDirectory backed by a Compute Engine regional persistent disk.`,
+							Description: `A directory to persist across workstation sessions, backed by a Compute Engine regional persistent disk. Can only be updated if not empty during creation.`,
 							MaxItems:    1,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
@@ -291,34 +289,33 @@ A duration in seconds with up to nine fractional digits, ending with 's'. Exampl
 										Computed:    true,
 										Optional:    true,
 										ForceNew:    true,
-										Description: `Type of the disk to use.`,
+										Description: `The type of the persistent disk for the home directory. Defaults to 'pd-standard'.`,
 									},
 									"fs_type": {
 										Type:        schema.TypeString,
 										Computed:    true,
 										Optional:    true,
 										ForceNew:    true,
-										Description: `Type of file system that the disk should be formatted with. The workstation image must support this file system type. Must be empty if sourceSnapshot is set.`,
+										Description: `Type of file system that the disk should be formatted with. The workstation image must support this file system type. Must be empty if 'sourceSnapshot' is set. Defaults to 'ext4'.`,
 									},
 									"reclaim_policy": {
 										Type:         schema.TypeString,
 										Optional:     true,
-										ForceNew:     true,
 										ValidateFunc: verify.ValidateEnum([]string{"DELETE", "RETAIN", ""}),
-										Description:  `What should happen to the disk after the workstation is deleted. Defaults to DELETE. Possible values: ["DELETE", "RETAIN"]`,
+										Description:  `Whether the persistent disk should be deleted when the workstation is deleted. Valid values are 'DELETE' and 'RETAIN'. Defaults to 'DELETE'. Possible values: ["DELETE", "RETAIN"]`,
 									},
 									"size_gb": {
-										Type:        schema.TypeInt,
-										Computed:    true,
-										Optional:    true,
-										ForceNew:    true,
-										Description: `Size of the disk in GB. Must be empty if sourceSnapshot is set.`,
+										Type:     schema.TypeInt,
+										Computed: true,
+										Optional: true,
+										ForceNew: true,
+										Description: `The GB capacity of a persistent home directory for each workstation created with this configuration. Must be empty if 'sourceSnapshot' is set.
+Valid values are '10', '50', '100', '200', '500', or '1000'. Defaults to '200'. If less than '200' GB, the 'diskType' must be 'pd-balanced' or 'pd-ssd'.`,
 									},
 									"source_snapshot": {
 										Type:        schema.TypeString,
 										Optional:    true,
-										ForceNew:    true,
-										Description: `The snapshot to use as the source for the disk. This can be the snapshot's 'self_link', 'id', or a string in the format of 'projects/{project}/global/snapshots/{snapshot}'. If set, sizeGb and fsType must be empty.`,
+										Description: `Name of the snapshot to use as the source for the disk. This can be the snapshot's 'self_link', 'id', or a string in the format of 'projects/{project}/global/snapshots/{snapshot}'. If set, 'sizeGb' and 'fsType' must be empty. Can only be updated if it has an existing value.`,
 									},
 								},
 							},
@@ -674,6 +671,12 @@ func resourceWorkstationsWorkstationConfigUpdate(d *schema.ResourceData, meta in
 	} else if v, ok := d.GetOkExists("host"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, hostProp)) {
 		obj["host"] = hostProp
 	}
+	persistentDirectoriesProp, err := expandWorkstationsWorkstationConfigPersistentDirectories(d.Get("persistent_directories"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("persistent_directories"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, persistentDirectoriesProp)) {
+		obj["persistentDirectories"] = persistentDirectoriesProp
+	}
 	containerProp, err := expandWorkstationsWorkstationConfigContainer(d.Get("container"), d, config)
 	if err != nil {
 		return err
@@ -722,6 +725,10 @@ func resourceWorkstationsWorkstationConfigUpdate(d *schema.ResourceData, meta in
 			"host.gceInstance.shieldedInstanceConfig.enableVtpm",
 			"host.gceInstance.shieldedInstanceConfig.enableIntegrityMonitoring",
 			"host.gceInstance.confidentialInstanceConfig.enableConfidentialCompute")
+	}
+
+	if d.HasChange("persistent_directories") {
+		updateMask = append(updateMask, "persistentDirectories")
 	}
 
 	if d.HasChange("container") {
