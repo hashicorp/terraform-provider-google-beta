@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/sql"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgiamresource"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
@@ -652,7 +653,7 @@ func BootstrapSharedSQLInstanceBackupRun(t *testing.T) string {
 		if err != nil {
 			t.Fatalf("Error, failed to create instance %s: %s", bootstrapInstance.Name, err)
 		}
-		err = SqlAdminOperationWaitTime(config, op, project, "Create Instance", config.UserAgent, time.Duration(40)*time.Minute)
+		err = sql.SqlAdminOperationWaitTime(config, op, project, "Create Instance", config.UserAgent, time.Duration(40)*time.Minute)
 		if err != nil {
 			t.Fatalf("Error, failed to create instance %s: %s", bootstrapInstance.Name, err)
 		}
@@ -678,7 +679,7 @@ func BootstrapSharedSQLInstanceBackupRun(t *testing.T) string {
 		if err != nil {
 			t.Fatalf("Error, failed to create instance backup: %s", err)
 		}
-		err = SqlAdminOperationWaitTime(config, op, project, "Backup Instance", config.UserAgent, time.Duration(20)*time.Minute)
+		err = sql.SqlAdminOperationWaitTime(config, op, project, "Backup Instance", config.UserAgent, time.Duration(20)*time.Minute)
 		if err != nil {
 			t.Fatalf("Error, failed to create instance backup: %s", err)
 		}
