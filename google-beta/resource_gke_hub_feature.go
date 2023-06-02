@@ -127,12 +127,80 @@ func ResourceGkeHubFeature() *schema.Resource {
 func GkeHubFeatureSpecSchema() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
+			"fleetobservability": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: "Fleet Observability spec.",
+				MaxItems:    1,
+				Elem:        GkeHubFeatureSpecFleetobservabilitySchema(),
+			},
+
 			"multiclusteringress": {
 				Type:        schema.TypeList,
 				Optional:    true,
 				Description: "Multicluster Ingress-specific spec.",
 				MaxItems:    1,
 				Elem:        GkeHubFeatureSpecMulticlusteringressSchema(),
+			},
+		},
+	}
+}
+
+func GkeHubFeatureSpecFleetobservabilitySchema() *schema.Resource {
+	return &schema.Resource{
+		Schema: map[string]*schema.Schema{
+			"logging_config": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: "Fleet Observability Logging-specific spec.",
+				MaxItems:    1,
+				Elem:        GkeHubFeatureSpecFleetobservabilityLoggingConfigSchema(),
+			},
+		},
+	}
+}
+
+func GkeHubFeatureSpecFleetobservabilityLoggingConfigSchema() *schema.Resource {
+	return &schema.Resource{
+		Schema: map[string]*schema.Schema{
+			"default_config": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: "Specified if applying the default routing config to logs not specified in other configs.",
+				MaxItems:    1,
+				Elem:        GkeHubFeatureSpecFleetobservabilityLoggingConfigDefaultConfigSchema(),
+			},
+
+			"fleet_scope_logs_config": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: "Specified if applying the routing config to all logs for all fleet scopes.",
+				MaxItems:    1,
+				Elem:        GkeHubFeatureSpecFleetobservabilityLoggingConfigFleetScopeLogsConfigSchema(),
+			},
+		},
+	}
+}
+
+func GkeHubFeatureSpecFleetobservabilityLoggingConfigDefaultConfigSchema() *schema.Resource {
+	return &schema.Resource{
+		Schema: map[string]*schema.Schema{
+			"mode": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "The logs routing mode Possible values: MODE_UNSPECIFIED, COPY, MOVE",
+			},
+		},
+	}
+}
+
+func GkeHubFeatureSpecFleetobservabilityLoggingConfigFleetScopeLogsConfigSchema() *schema.Resource {
+	return &schema.Resource{
+		Schema: map[string]*schema.Schema{
+			"mode": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "The logs routing mode Possible values: MODE_UNSPECIFIED, COPY, MOVE",
 			},
 		},
 	}
@@ -465,6 +533,7 @@ func expandGkeHubFeatureSpec(o interface{}) *gkehub.FeatureSpec {
 	}
 	obj := objArr[0].(map[string]interface{})
 	return &gkehub.FeatureSpec{
+		Fleetobservability:  expandGkeHubFeatureSpecFleetobservability(obj["fleetobservability"]),
 		Multiclusteringress: expandGkeHubFeatureSpecMulticlusteringress(obj["multiclusteringress"]),
 	}
 }
@@ -474,7 +543,114 @@ func flattenGkeHubFeatureSpec(obj *gkehub.FeatureSpec) interface{} {
 		return nil
 	}
 	transformed := map[string]interface{}{
+		"fleetobservability":  flattenGkeHubFeatureSpecFleetobservability(obj.Fleetobservability),
 		"multiclusteringress": flattenGkeHubFeatureSpecMulticlusteringress(obj.Multiclusteringress),
+	}
+
+	return []interface{}{transformed}
+
+}
+
+func expandGkeHubFeatureSpecFleetobservability(o interface{}) *gkehub.FeatureSpecFleetobservability {
+	if o == nil {
+		return gkehub.EmptyFeatureSpecFleetobservability
+	}
+	objArr := o.([]interface{})
+	if len(objArr) == 0 || objArr[0] == nil {
+		return gkehub.EmptyFeatureSpecFleetobservability
+	}
+	obj := objArr[0].(map[string]interface{})
+	return &gkehub.FeatureSpecFleetobservability{
+		LoggingConfig: expandGkeHubFeatureSpecFleetobservabilityLoggingConfig(obj["logging_config"]),
+	}
+}
+
+func flattenGkeHubFeatureSpecFleetobservability(obj *gkehub.FeatureSpecFleetobservability) interface{} {
+	if obj == nil || obj.Empty() {
+		return nil
+	}
+	transformed := map[string]interface{}{
+		"logging_config": flattenGkeHubFeatureSpecFleetobservabilityLoggingConfig(obj.LoggingConfig),
+	}
+
+	return []interface{}{transformed}
+
+}
+
+func expandGkeHubFeatureSpecFleetobservabilityLoggingConfig(o interface{}) *gkehub.FeatureSpecFleetobservabilityLoggingConfig {
+	if o == nil {
+		return gkehub.EmptyFeatureSpecFleetobservabilityLoggingConfig
+	}
+	objArr := o.([]interface{})
+	if len(objArr) == 0 || objArr[0] == nil {
+		return gkehub.EmptyFeatureSpecFleetobservabilityLoggingConfig
+	}
+	obj := objArr[0].(map[string]interface{})
+	return &gkehub.FeatureSpecFleetobservabilityLoggingConfig{
+		DefaultConfig:        expandGkeHubFeatureSpecFleetobservabilityLoggingConfigDefaultConfig(obj["default_config"]),
+		FleetScopeLogsConfig: expandGkeHubFeatureSpecFleetobservabilityLoggingConfigFleetScopeLogsConfig(obj["fleet_scope_logs_config"]),
+	}
+}
+
+func flattenGkeHubFeatureSpecFleetobservabilityLoggingConfig(obj *gkehub.FeatureSpecFleetobservabilityLoggingConfig) interface{} {
+	if obj == nil || obj.Empty() {
+		return nil
+	}
+	transformed := map[string]interface{}{
+		"default_config":          flattenGkeHubFeatureSpecFleetobservabilityLoggingConfigDefaultConfig(obj.DefaultConfig),
+		"fleet_scope_logs_config": flattenGkeHubFeatureSpecFleetobservabilityLoggingConfigFleetScopeLogsConfig(obj.FleetScopeLogsConfig),
+	}
+
+	return []interface{}{transformed}
+
+}
+
+func expandGkeHubFeatureSpecFleetobservabilityLoggingConfigDefaultConfig(o interface{}) *gkehub.FeatureSpecFleetobservabilityLoggingConfigDefaultConfig {
+	if o == nil {
+		return gkehub.EmptyFeatureSpecFleetobservabilityLoggingConfigDefaultConfig
+	}
+	objArr := o.([]interface{})
+	if len(objArr) == 0 || objArr[0] == nil {
+		return gkehub.EmptyFeatureSpecFleetobservabilityLoggingConfigDefaultConfig
+	}
+	obj := objArr[0].(map[string]interface{})
+	return &gkehub.FeatureSpecFleetobservabilityLoggingConfigDefaultConfig{
+		Mode: gkehub.FeatureSpecFleetobservabilityLoggingConfigDefaultConfigModeEnumRef(obj["mode"].(string)),
+	}
+}
+
+func flattenGkeHubFeatureSpecFleetobservabilityLoggingConfigDefaultConfig(obj *gkehub.FeatureSpecFleetobservabilityLoggingConfigDefaultConfig) interface{} {
+	if obj == nil || obj.Empty() {
+		return nil
+	}
+	transformed := map[string]interface{}{
+		"mode": obj.Mode,
+	}
+
+	return []interface{}{transformed}
+
+}
+
+func expandGkeHubFeatureSpecFleetobservabilityLoggingConfigFleetScopeLogsConfig(o interface{}) *gkehub.FeatureSpecFleetobservabilityLoggingConfigFleetScopeLogsConfig {
+	if o == nil {
+		return gkehub.EmptyFeatureSpecFleetobservabilityLoggingConfigFleetScopeLogsConfig
+	}
+	objArr := o.([]interface{})
+	if len(objArr) == 0 || objArr[0] == nil {
+		return gkehub.EmptyFeatureSpecFleetobservabilityLoggingConfigFleetScopeLogsConfig
+	}
+	obj := objArr[0].(map[string]interface{})
+	return &gkehub.FeatureSpecFleetobservabilityLoggingConfigFleetScopeLogsConfig{
+		Mode: gkehub.FeatureSpecFleetobservabilityLoggingConfigFleetScopeLogsConfigModeEnumRef(obj["mode"].(string)),
+	}
+}
+
+func flattenGkeHubFeatureSpecFleetobservabilityLoggingConfigFleetScopeLogsConfig(obj *gkehub.FeatureSpecFleetobservabilityLoggingConfigFleetScopeLogsConfig) interface{} {
+	if obj == nil || obj.Empty() {
+		return nil
+	}
+	transformed := map[string]interface{}{
+		"mode": obj.Mode,
 	}
 
 	return []interface{}{transformed}
