@@ -925,9 +925,9 @@ func DatasourceMapWithErrors() (map[string]*schema.Resource, error) {
 		})
 }
 
-// Generated resources: 341
+// Generated resources: 342
 // Generated IAM resources: 222
-// Total generated resources: 563
+// Total generated resources: 564
 func ResourceMap() map[string]*schema.Resource {
 	resourceMap, _ := ResourceMapWithErrors()
 	return resourceMap
@@ -1035,6 +1035,7 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_binary_authorization_attestor_iam_policy":              tpgiamresource.ResourceIamPolicy(BinaryAuthorizationAttestorIamSchema, BinaryAuthorizationAttestorIamUpdaterProducer, BinaryAuthorizationAttestorIdParseFunc),
 			"google_binary_authorization_policy":                           ResourceBinaryAuthorizationPolicy(),
 			"google_certificate_manager_certificate":                       ResourceCertificateManagerCertificate(),
+			"google_certificate_manager_certificate_issuance_config":       ResourceCertificateManagerCertificateIssuanceConfig(),
 			"google_certificate_manager_certificate_map":                   ResourceCertificateManagerCertificateMap(),
 			"google_certificate_manager_certificate_map_entry":             ResourceCertificateManagerCertificateMapEntry(),
 			"google_certificate_manager_dns_authorization":                 ResourceCertificateManagerDnsAuthorization(),
