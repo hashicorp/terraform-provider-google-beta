@@ -1,4 +1,22 @@
-## 4.68.0 (Unreleased)
+## 4.69.0 (Unreleased)
+
+## 4.68.0 (June 5, 2023)
+
+FEATURES:
+* **New Resource:** `google_container_analysis_note_iam_*` ([#5676](https://github.com/hashicorp/terraform-provider-google-beta/pull/5676))
+
+IMPROVEMENTS:
+* dlp: added `included_fields` and `excluded_fields` fields to `google_data_loss_prevention_job_trigger` ([#5687](https://github.com/hashicorp/terraform-provider-google-beta/pull/5687))
+* dns: added `regionalL7ilb` enum support to the `routing_policy.load_balancer_type` field in `google_dns_record_set` ([#5678](https://github.com/hashicorp/terraform-provider-google-beta/pull/5678))
+* workstations: added `idle_timeout` and `running_timeout` fields in `google_workstations_workstation_config` ([#5673](https://github.com/hashicorp/terraform-provider-google-beta/pull/5673))
+* workstations: added update support for `persistent_directories.reclaim_policy` and `persistent_directories.source_snapshot` fields in `google_workstations_workstation_config` ([#5695](https://github.com/hashicorp/terraform-provider-google-beta/pull/5695))
+
+BUG FIXES:
+* accesscontextmanager: fixed incorrect validations for `spec` and `status` in `google_access_context_manager_service_perimeter` ([#5675](https://github.com/hashicorp/terraform-provider-google-beta/pull/5675))
+* alloydb: increased timeouts for `google_alloydb_instance` from 20m to 40m ([#5681](https://github.com/hashicorp/terraform-provider-google-beta/pull/5681))
+* apigee: fixed bug where updating `config_bundle` in `google_apigee_sharedflow` that's attached to `google_apigee_sharedflow_deployment` causes an error ([#5683](https://github.com/hashicorp/terraform-provider-google-beta/pull/5683))
+* compute: increased timeout for `compute_security_policy` from 4m to 8m ([#5680](https://github.com/hashicorp/terraform-provider-google-beta/pull/5680))
+* dataproc: fixed crash when reading `google_dataproc_cluster.virtual_cluster_config` ([#5689](https://github.com/hashicorp/terraform-provider-google-beta/pull/5689))
 
 ## 4.67.0 (May 30, 2023)
 
