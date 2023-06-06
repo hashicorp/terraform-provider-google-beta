@@ -56,7 +56,7 @@ func TestAccNetworkServicesEndpointPolicy_networkServicesEndpointPolicyBasicExam
 }
 
 func testAccNetworkServicesEndpointPolicy_networkServicesEndpointPolicyBasicExample(context map[string]interface{}) string {
-	return Nprintf(`
+	return tpgresource.Nprintf(`
 resource "google_network_services_endpoint_policy" "default" {
   provider               = google-beta
   name                   = "tf-test-my-endpoint-policy%{random_suffix}"
@@ -108,7 +108,7 @@ func TestAccNetworkServicesEndpointPolicy_networkServicesEndpointPolicyEmptyMatc
 }
 
 func testAccNetworkServicesEndpointPolicy_networkServicesEndpointPolicyEmptyMatchExample(context map[string]interface{}) string {
-	return Nprintf(`
+	return tpgresource.Nprintf(`
 resource "google_network_services_endpoint_policy" "default" {
   provider               = google-beta
   name                   = "tf-test-my-endpoint-policy%{random_suffix}"

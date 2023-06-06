@@ -56,7 +56,7 @@ func TestAccNetworkSecurityTlsInspectionPolicy_networkSecurityTlsInspectionPolic
 }
 
 func testAccNetworkSecurityTlsInspectionPolicy_networkSecurityTlsInspectionPolicyBasicExample(context map[string]interface{}) string {
-	return Nprintf(`
+	return tpgresource.Nprintf(`
 resource "google_privateca_ca_pool" "default" {
   provider = google-beta
   name      = "tf-test-my-basic-ca-pool%{random_suffix}"

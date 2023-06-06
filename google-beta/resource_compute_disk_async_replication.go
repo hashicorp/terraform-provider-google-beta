@@ -37,7 +37,7 @@ func ResourceComputeDiskAsyncReplication() *schema.Resource {
 				Required:         true,
 				ForceNew:         true,
 				Description:      `Primary disk for asynchronous replication.`,
-				DiffSuppressFunc: compareSelfLinkOrResourceName,
+				DiffSuppressFunc: tpgresource.CompareSelfLinkOrResourceName,
 			},
 			"secondary_disk": {
 				Type:        schema.TypeList,
@@ -52,7 +52,7 @@ func ResourceComputeDiskAsyncReplication() *schema.Resource {
 							Required:         true,
 							ForceNew:         true,
 							Description:      `Secondary disk for asynchronous replication.`,
-							DiffSuppressFunc: compareSelfLinkOrResourceName,
+							DiffSuppressFunc: tpgresource.CompareSelfLinkOrResourceName,
 						},
 						"state": {
 							Type:        schema.TypeString,

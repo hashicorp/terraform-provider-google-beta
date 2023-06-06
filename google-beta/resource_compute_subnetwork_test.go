@@ -10,6 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
+	tpgcompute "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/compute"
 
 	compute "google.golang.org/api/compute/v0.beta"
 )
@@ -44,7 +45,7 @@ func TestIsShrinkageIpCidr(t *testing.T) {
 	}
 
 	for tn, tc := range cases {
-		if IsShrinkageIpCidr(context.Background(), tc.Old, tc.New, nil) != tc.Shrinkage {
+		if tpgcompute.IsShrinkageIpCidr(context.Background(), tc.Old, tc.New, nil) != tc.Shrinkage {
 			t.Errorf("%s failed: Shrinkage should be %t", tn, tc.Shrinkage)
 		}
 	}

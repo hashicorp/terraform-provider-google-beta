@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/privateca"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/sql"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgiamresource"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
@@ -741,7 +742,7 @@ func BootstrapSharedCaPoolInLocation(t *testing.T, location string) string {
 
 		log.Printf("[DEBUG] Waiting for CA pool creation to finish")
 		var opRes map[string]interface{}
-		err = PrivatecaOperationWaitTimeWithResponse(
+		err = privateca.PrivatecaOperationWaitTimeWithResponse(
 			config, res, &opRes, project, "Creating CA pool", config.UserAgent,
 			4*time.Minute)
 		if err != nil {

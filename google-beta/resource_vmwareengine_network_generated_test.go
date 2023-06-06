@@ -63,7 +63,7 @@ func TestAccVmwareengineNetwork_vmwareEngineNetworkLegacyExample(t *testing.T) {
 }
 
 func testAccVmwareengineNetwork_vmwareEngineNetworkLegacyExample(context map[string]interface{}) string {
-	return Nprintf(`
+	return tpgresource.Nprintf(`
 resource "google_vmwareengine_network" "vmw-engine-network" {
   provider    = google-beta
   project     = google_project_service.acceptance.project

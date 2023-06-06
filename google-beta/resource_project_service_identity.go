@@ -7,6 +7,7 @@ import (
 	"log"
 	"time"
 
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/serviceusage"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 
@@ -83,7 +84,7 @@ func resourceProjectServiceIdentityCreate(d *schema.ResourceData, meta interface
 	}
 
 	var opRes map[string]interface{}
-	err = ServiceUsageOperationWaitTimeWithResponse(
+	err = serviceusage.ServiceUsageOperationWaitTimeWithResponse(
 		config, res, &opRes, billingProject, "Creating Service Identity", userAgent,
 		d.Timeout(schema.TimeoutCreate))
 	if err != nil {

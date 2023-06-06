@@ -56,7 +56,7 @@ func TestAccNetworkServicesHttpRoute_networkServicesHttpRouteBasicExample(t *tes
 }
 
 func testAccNetworkServicesHttpRoute_networkServicesHttpRouteBasicExample(context map[string]interface{}) string {
-	return Nprintf(`
+	return tpgresource.Nprintf(`
 resource "google_network_services_http_route" "default" {
   provider               = google-beta
   name                   = "tf-test-my-http-route%{random_suffix}"
@@ -104,7 +104,7 @@ func TestAccNetworkServicesHttpRoute_networkServicesHttpRouteMatchesAndActionsEx
 }
 
 func testAccNetworkServicesHttpRoute_networkServicesHttpRouteMatchesAndActionsExample(context map[string]interface{}) string {
-	return Nprintf(`
+	return tpgresource.Nprintf(`
 resource "google_network_services_http_route" "default" {
   provider               = google-beta
   name                   = "tf-test-my-http-route%{random_suffix}"
@@ -218,7 +218,7 @@ func TestAccNetworkServicesHttpRoute_networkServicesHttpRouteActionsExample(t *t
 }
 
 func testAccNetworkServicesHttpRoute_networkServicesHttpRouteActionsExample(context map[string]interface{}) string {
-	return Nprintf(`
+	return tpgresource.Nprintf(`
 resource "google_network_services_http_route" "default" {
   provider               = google-beta
   name                   = "tf-test-my-http-route%{random_suffix}"
@@ -305,7 +305,7 @@ func TestAccNetworkServicesHttpRoute_networkServicesHttpRouteMeshBasicExample(t 
 }
 
 func testAccNetworkServicesHttpRoute_networkServicesHttpRouteMeshBasicExample(context map[string]interface{}) string {
-	return Nprintf(`
+	return tpgresource.Nprintf(`
 resource "google_network_services_mesh" "default" {
   provider    = google-beta
   name        = "tf-test-my-http-route%{random_suffix}"

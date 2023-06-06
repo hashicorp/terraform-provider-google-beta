@@ -4,13 +4,15 @@ package google
 
 import (
 	"fmt"
-	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"reflect"
 	"sort"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/kms"
 )
 
 const DEFAULT_KMS_TEST_LOCATION = "us-central1"
@@ -25,7 +27,7 @@ func TestAccKmsKeyRingIamBinding(t *testing.T) {
 	roleId := "roles/cloudkms.cryptoKeyDecrypter"
 	keyRingName := fmt.Sprintf("tf-test-%s", RandString(t, 10))
 
-	keyRingId := &KmsKeyRingId{
+	keyRingId := &kms.KmsKeyRingId{
 		Project:  projectId,
 		Location: DEFAULT_KMS_TEST_LOCATION,
 		Name:     keyRingName,
@@ -77,7 +79,7 @@ func TestAccKmsKeyRingIamBinding_withCondition(t *testing.T) {
 	keyRingName := fmt.Sprintf("tf-test-%s", RandString(t, 10))
 	conditionTitle := "expires_after_2019_12_31"
 
-	keyRingId := &KmsKeyRingId{
+	keyRingId := &kms.KmsKeyRingId{
 		Project:  projectId,
 		Location: DEFAULT_KMS_TEST_LOCATION,
 		Name:     keyRingName,
@@ -110,7 +112,7 @@ func TestAccKmsKeyRingIamMember(t *testing.T) {
 	roleId := "roles/cloudkms.cryptoKeyEncrypter"
 	keyRingName := fmt.Sprintf("tf-test-%s", RandString(t, 10))
 
-	keyRingId := &KmsKeyRingId{
+	keyRingId := &kms.KmsKeyRingId{
 		Project:  projectId,
 		Location: DEFAULT_KMS_TEST_LOCATION,
 		Name:     keyRingName,
@@ -148,7 +150,7 @@ func TestAccKmsKeyRingIamMember_withCondition(t *testing.T) {
 	keyRingName := fmt.Sprintf("tf-test-%s", RandString(t, 10))
 	conditionTitle := "expires_after_2019_12_31"
 
-	keyRingId := &KmsKeyRingId{
+	keyRingId := &kms.KmsKeyRingId{
 		Project:  projectId,
 		Location: DEFAULT_KMS_TEST_LOCATION,
 		Name:     keyRingName,
@@ -181,7 +183,7 @@ func TestAccKmsKeyRingIamPolicy(t *testing.T) {
 	roleId := "roles/cloudkms.cryptoKeyEncrypter"
 	keyRingName := fmt.Sprintf("tf-test-%s", RandString(t, 10))
 
-	keyRingId := &KmsKeyRingId{
+	keyRingId := &kms.KmsKeyRingId{
 		Project:  projectId,
 		Location: DEFAULT_KMS_TEST_LOCATION,
 		Name:     keyRingName,
@@ -218,7 +220,7 @@ func TestAccKmsKeyRingIamPolicy_withCondition(t *testing.T) {
 	keyRingName := fmt.Sprintf("tf-test-%s", RandString(t, 10))
 	conditionTitle := "expires_after_2019_12_31"
 
-	keyRingId := &KmsKeyRingId{
+	keyRingId := &kms.KmsKeyRingId{
 		Project:  projectId,
 		Location: DEFAULT_KMS_TEST_LOCATION,
 		Name:     keyRingName,

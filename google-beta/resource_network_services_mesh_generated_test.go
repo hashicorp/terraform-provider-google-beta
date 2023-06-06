@@ -56,7 +56,7 @@ func TestAccNetworkServicesMesh_networkServicesMeshBasicExample(t *testing.T) {
 }
 
 func testAccNetworkServicesMesh_networkServicesMeshBasicExample(context map[string]interface{}) string {
-	return Nprintf(`
+	return tpgresource.Nprintf(`
 resource "google_network_services_mesh" "default" {
   provider    = google-beta
   name        = "tf-test-my-mesh%{random_suffix}"
@@ -95,7 +95,7 @@ func TestAccNetworkServicesMesh_networkServicesMeshNoPortExample(t *testing.T) {
 }
 
 func testAccNetworkServicesMesh_networkServicesMeshNoPortExample(context map[string]interface{}) string {
-	return Nprintf(`
+	return tpgresource.Nprintf(`
 resource "google_network_services_mesh" "default" {
   provider    = google-beta
   name        = "tf-test-my-mesh-noport%{random_suffix}"

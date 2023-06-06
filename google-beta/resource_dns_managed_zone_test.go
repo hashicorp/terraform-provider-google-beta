@@ -5,6 +5,7 @@ package google
 import (
 	"fmt"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
+	tpgdns "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/dns"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 	"testing"
@@ -270,7 +271,7 @@ func testAccCheckManagedZoneCreateRRs(t *testing.T, zoneSuffix string, project s
 			return fmt.Errorf("Error creating DNS RecordSet: %s", err)
 		}
 
-		w := &DnsChangeWaiter{
+		w := &tpgdns.DnsChangeWaiter{
 			Service:     config.NewDnsClient(config.UserAgent),
 			Change:      chg,
 			Project:     project,

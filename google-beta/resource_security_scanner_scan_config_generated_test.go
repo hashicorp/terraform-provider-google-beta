@@ -55,7 +55,7 @@ func TestAccSecurityScannerScanConfig_scanConfigBasicExample(t *testing.T) {
 }
 
 func testAccSecurityScannerScanConfig_scanConfigBasicExample(context map[string]interface{}) string {
-	return Nprintf(`
+	return tpgresource.Nprintf(`
 resource "google_compute_address" "scanner_static_ip" {
   provider = google-beta
   name     = "tf-test-scan-basic-static-ip%{random_suffix}"
