@@ -56,7 +56,7 @@ func TestAccComputeForwardingRule_internalHttpLbWithMigBackendExample(t *testing
 }
 
 func testAccComputeForwardingRule_internalHttpLbWithMigBackendExample(context map[string]interface{}) string {
-	return Nprintf(`
+	return tpgresource.Nprintf(`
 # Internal HTTP load balancer with a managed instance group backend
 
 # VPC network
@@ -275,7 +275,7 @@ func TestAccComputeForwardingRule_internalTcpUdpLbWithMigBackendExample(t *testi
 }
 
 func testAccComputeForwardingRule_internalTcpUdpLbWithMigBackendExample(context map[string]interface{}) string {
-	return Nprintf(`
+	return tpgresource.Nprintf(`
 # Internal TCP/UDP load balancer with a managed instance group backend
 
 # VPC
@@ -483,7 +483,7 @@ func TestAccComputeForwardingRule_forwardingRuleExternallbExample(t *testing.T) 
 }
 
 func testAccComputeForwardingRule_forwardingRuleExternallbExample(context map[string]interface{}) string {
-	return Nprintf(`
+	return tpgresource.Nprintf(`
 // Forwarding rule for External Network Load Balancing using Backend Services
 resource "google_compute_forwarding_rule" "default" {
   provider              = google-beta
@@ -539,7 +539,7 @@ func TestAccComputeForwardingRule_forwardingRuleGlobalInternallbExample(t *testi
 }
 
 func testAccComputeForwardingRule_forwardingRuleGlobalInternallbExample(context map[string]interface{}) string {
-	return Nprintf(`
+	return tpgresource.Nprintf(`
 // Forwarding rule for Internal Load Balancing
 resource "google_compute_forwarding_rule" "default" {
   name                  = "tf-test-website-forwarding-rule%{random_suffix}"
@@ -603,7 +603,7 @@ func TestAccComputeForwardingRule_forwardingRuleBasicExample(t *testing.T) {
 }
 
 func testAccComputeForwardingRule_forwardingRuleBasicExample(context map[string]interface{}) string {
-	return Nprintf(`
+	return tpgresource.Nprintf(`
 resource "google_compute_forwarding_rule" "default" {
   name       = "tf-test-website-forwarding-rule%{random_suffix}"
   target     = google_compute_target_pool.default.id
@@ -642,7 +642,7 @@ func TestAccComputeForwardingRule_forwardingRuleL3DefaultExample(t *testing.T) {
 }
 
 func testAccComputeForwardingRule_forwardingRuleL3DefaultExample(context map[string]interface{}) string {
-	return Nprintf(`
+	return tpgresource.Nprintf(`
 resource "google_compute_forwarding_rule" "fwd_rule" {
   provider        = google-beta
   name            = "tf-test-l3-forwarding-rule%{random_suffix}"
@@ -698,7 +698,7 @@ func TestAccComputeForwardingRule_forwardingRuleInternallbExample(t *testing.T) 
 }
 
 func testAccComputeForwardingRule_forwardingRuleInternallbExample(context map[string]interface{}) string {
-	return Nprintf(`
+	return tpgresource.Nprintf(`
 // Forwarding rule for Internal Load Balancing
 resource "google_compute_forwarding_rule" "default" {
   name   = "tf-test-website-forwarding-rule%{random_suffix}"
@@ -767,7 +767,7 @@ func TestAccComputeForwardingRule_forwardingRuleHttpLbExample(t *testing.T) {
 }
 
 func testAccComputeForwardingRule_forwardingRuleHttpLbExample(context map[string]interface{}) string {
-	return Nprintf(`
+	return tpgresource.Nprintf(`
 // Forwarding rule for Internal Load Balancing
 resource "google_compute_forwarding_rule" "default" {
   provider = google-beta
@@ -986,7 +986,7 @@ func TestAccComputeForwardingRule_forwardingRuleRegionalHttpXlbExample(t *testin
 }
 
 func testAccComputeForwardingRule_forwardingRuleRegionalHttpXlbExample(context map[string]interface{}) string {
-	return Nprintf(`
+	return tpgresource.Nprintf(`
 // Forwarding rule for Regional External Load Balancing
 resource "google_compute_forwarding_rule" "default" {
   provider = google-beta
@@ -1212,7 +1212,7 @@ func TestAccComputeForwardingRule_forwardingRuleVpcPscExample(t *testing.T) {
 }
 
 func testAccComputeForwardingRule_forwardingRuleVpcPscExample(context map[string]interface{}) string {
-	return Nprintf(`
+	return tpgresource.Nprintf(`
 // Forwarding rule for VPC private service connect
 resource "google_compute_forwarding_rule" "default" {
   name                    = "tf-test-psc-endpoint%{random_suffix}"
@@ -1336,7 +1336,7 @@ func TestAccComputeForwardingRule_forwardingRuleRegionalSteeringExample(t *testi
 }
 
 func testAccComputeForwardingRule_forwardingRuleRegionalSteeringExample(context map[string]interface{}) string {
-	return Nprintf(`
+	return tpgresource.Nprintf(`
 resource "google_compute_forwarding_rule" "steering" {
   name = "tf-test-steering-rule%{random_suffix}"
   region = "us-central1"

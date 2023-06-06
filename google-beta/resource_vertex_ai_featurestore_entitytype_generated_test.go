@@ -59,7 +59,7 @@ func TestAccVertexAIFeaturestoreEntitytype_vertexAiFeaturestoreEntitytypeExample
 }
 
 func testAccVertexAIFeaturestoreEntitytype_vertexAiFeaturestoreEntitytypeExample(context map[string]interface{}) string {
-	return Nprintf(`
+	return tpgresource.Nprintf(`
 resource "google_vertex_ai_featurestore" "featurestore" {
   name     = "terraform%{random_suffix}"
   labels = {
@@ -131,7 +131,7 @@ func TestAccVertexAIFeaturestoreEntitytype_vertexAiFeaturestoreEntitytypeWithBet
 }
 
 func testAccVertexAIFeaturestoreEntitytype_vertexAiFeaturestoreEntitytypeWithBetaFieldsExample(context map[string]interface{}) string {
-	return Nprintf(`
+	return tpgresource.Nprintf(`
 resource "google_vertex_ai_featurestore" "featurestore" {
   provider = google-beta
   name     = "terraform2%{random_suffix}"

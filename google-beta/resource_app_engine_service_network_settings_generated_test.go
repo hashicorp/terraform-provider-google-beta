@@ -23,6 +23,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 )
 
 func TestAccAppEngineServiceNetworkSettings_appEngineServiceNetworkSettingsExample(t *testing.T) {
@@ -49,7 +50,7 @@ func TestAccAppEngineServiceNetworkSettings_appEngineServiceNetworkSettingsExamp
 }
 
 func testAccAppEngineServiceNetworkSettings_appEngineServiceNetworkSettingsExample(context map[string]interface{}) string {
-	return Nprintf(`
+	return tpgresource.Nprintf(`
 resource "google_storage_bucket" "bucket" {
 	name     = "tf-test-appengine-static-content%{random_suffix}"
   location = "US"

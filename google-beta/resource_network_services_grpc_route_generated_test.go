@@ -56,7 +56,7 @@ func TestAccNetworkServicesGrpcRoute_networkServicesGrpcRouteBasicExample(t *tes
 }
 
 func testAccNetworkServicesGrpcRoute_networkServicesGrpcRouteBasicExample(context map[string]interface{}) string {
-	return Nprintf(`
+	return tpgresource.Nprintf(`
 resource "google_network_services_grpc_route" "default" {
   provider               = google-beta
   name                   = "tf-test-my-grpc-route%{random_suffix}"
@@ -109,7 +109,7 @@ func TestAccNetworkServicesGrpcRoute_networkServicesGrpcRouteMatchesAndActionsEx
 }
 
 func testAccNetworkServicesGrpcRoute_networkServicesGrpcRouteMatchesAndActionsExample(context map[string]interface{}) string {
-	return Nprintf(`
+	return tpgresource.Nprintf(`
 resource "google_network_services_grpc_route" "default" {
   provider               = google-beta
   name                   = "tf-test-my-grpc-route%{random_suffix}"
@@ -183,7 +183,7 @@ func TestAccNetworkServicesGrpcRoute_networkServicesGrpcRouteActionsExample(t *t
 }
 
 func testAccNetworkServicesGrpcRoute_networkServicesGrpcRouteActionsExample(context map[string]interface{}) string {
-	return Nprintf(`
+	return tpgresource.Nprintf(`
 resource "google_network_services_grpc_route" "default" {
   provider               = google-beta
   name                   = "tf-test-my-grpc-route%{random_suffix}"

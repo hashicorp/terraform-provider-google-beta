@@ -56,7 +56,7 @@ func TestAccNetworkServicesGateway_networkServicesGatewayBasicExample(t *testing
 }
 
 func testAccNetworkServicesGateway_networkServicesGatewayBasicExample(context map[string]interface{}) string {
-	return Nprintf(`
+	return tpgresource.Nprintf(`
 resource "google_network_services_gateway" "default" {
   provider = google-beta
   name     = "tf-test-my-gateway%{random_suffix}"
@@ -93,7 +93,7 @@ func TestAccNetworkServicesGateway_networkServicesGatewayAdvancedExample(t *test
 }
 
 func testAccNetworkServicesGateway_networkServicesGatewayAdvancedExample(context map[string]interface{}) string {
-	return Nprintf(`
+	return tpgresource.Nprintf(`
 resource "google_network_services_gateway" "default" {
   provider    = google-beta
   name        = "tf-test-my-gateway%{random_suffix}"
@@ -134,7 +134,7 @@ func TestAccNetworkServicesGateway_networkServicesGatewaySecureWebProxyExample(t
 }
 
 func testAccNetworkServicesGateway_networkServicesGatewaySecureWebProxyExample(context map[string]interface{}) string {
-	return Nprintf(`
+	return tpgresource.Nprintf(`
 resource "google_certificate_manager_certificate" "default" {
   provider    = google-beta
   name        = "tf-test-my-certificate%{random_suffix}"
@@ -233,7 +233,7 @@ func TestAccNetworkServicesGateway_networkServicesGatewayMultipleSwpSameNetworkE
 }
 
 func testAccNetworkServicesGateway_networkServicesGatewayMultipleSwpSameNetworkExample(context map[string]interface{}) string {
-	return Nprintf(`
+	return tpgresource.Nprintf(`
 resource "google_certificate_manager_certificate" "default" {
   provider    = google-beta
   name        = "tf-test-my-certificate%{random_suffix}"

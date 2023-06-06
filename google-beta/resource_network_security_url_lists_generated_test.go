@@ -56,7 +56,7 @@ func TestAccNetworkSecurityUrlLists_networkSecurityUrlListsBasicExample(t *testi
 }
 
 func testAccNetworkSecurityUrlLists_networkSecurityUrlListsBasicExample(context map[string]interface{}) string {
-	return Nprintf(`
+	return tpgresource.Nprintf(`
 resource "google_network_security_url_lists" "default" {
   provider    = google-beta
   name        = "tf-test-my-url-lists%{random_suffix}"
@@ -92,7 +92,7 @@ func TestAccNetworkSecurityUrlLists_networkSecurityUrlListsAdvancedExample(t *te
 }
 
 func testAccNetworkSecurityUrlLists_networkSecurityUrlListsAdvancedExample(context map[string]interface{}) string {
-	return Nprintf(`
+	return tpgresource.Nprintf(`
 resource "google_network_security_url_lists" "default" {
   provider    = google-beta
   name        = "tf-test-my-url-lists%{random_suffix}"

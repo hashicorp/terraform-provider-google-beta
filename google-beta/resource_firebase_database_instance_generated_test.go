@@ -57,7 +57,7 @@ func TestAccFirebaseDatabaseInstance_firebaseDatabaseInstanceBasicExample(t *tes
 }
 
 func testAccFirebaseDatabaseInstance_firebaseDatabaseInstanceBasicExample(context map[string]interface{}) string {
-	return Nprintf(`
+	return tpgresource.Nprintf(`
 resource "google_firebase_database_instance" "basic" {
   provider = google-beta
   project  = "%{project_id}"
@@ -94,7 +94,7 @@ func TestAccFirebaseDatabaseInstance_firebaseDatabaseInstanceFullExample(t *test
 }
 
 func testAccFirebaseDatabaseInstance_firebaseDatabaseInstanceFullExample(context map[string]interface{}) string {
-	return Nprintf(`
+	return tpgresource.Nprintf(`
 resource "google_firebase_database_instance" "full" {
   provider = google-beta
   project  = "%{project_id}"
@@ -133,7 +133,7 @@ func TestAccFirebaseDatabaseInstance_firebaseDatabaseInstanceDefaultDatabaseExam
 }
 
 func testAccFirebaseDatabaseInstance_firebaseDatabaseInstanceDefaultDatabaseExample(context map[string]interface{}) string {
-	return Nprintf(`
+	return tpgresource.Nprintf(`
 resource "google_project" "default" {
   provider = google-beta
   project_id = "tf-test-rtdb-project%{random_suffix}"

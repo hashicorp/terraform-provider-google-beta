@@ -56,7 +56,7 @@ func TestAccServiceDirectoryEndpoint_serviceDirectoryEndpointBasicExample(t *tes
 }
 
 func testAccServiceDirectoryEndpoint_serviceDirectoryEndpointBasicExample(context map[string]interface{}) string {
-	return Nprintf(`
+	return tpgresource.Nprintf(`
 resource "google_service_directory_namespace" "example" {
   provider     = google-beta
   namespace_id = "tf-test-example-namespace%{random_suffix}"
@@ -111,7 +111,7 @@ func TestAccServiceDirectoryEndpoint_serviceDirectoryEndpointWithNetworkExample(
 }
 
 func testAccServiceDirectoryEndpoint_serviceDirectoryEndpointWithNetworkExample(context map[string]interface{}) string {
-	return Nprintf(`
+	return tpgresource.Nprintf(`
 data "google_project" "project" {
   provider  = google-beta
 }

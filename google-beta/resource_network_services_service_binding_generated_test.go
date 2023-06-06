@@ -56,7 +56,7 @@ func TestAccNetworkServicesServiceBinding_networkServicesServiceBindingBasicExam
 }
 
 func testAccNetworkServicesServiceBinding_networkServicesServiceBindingBasicExample(context map[string]interface{}) string {
-	return Nprintf(`
+	return tpgresource.Nprintf(`
 resource "google_service_directory_namespace" "default" {
   provider     = google-beta
   namespace_id = "tf-test-my-namespace%{random_suffix}"

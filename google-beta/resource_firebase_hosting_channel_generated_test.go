@@ -57,7 +57,7 @@ func TestAccFirebaseHostingChannel_firebasehostingChannelBasicExample(t *testing
 }
 
 func testAccFirebaseHostingChannel_firebasehostingChannelBasicExample(context map[string]interface{}) string {
-	return Nprintf(`
+	return tpgresource.Nprintf(`
 resource "google_firebase_hosting_site" "default" {
   provider = google-beta
   project  = "%{project_id}"
@@ -99,7 +99,7 @@ func TestAccFirebaseHostingChannel_firebasehostingChannelFullExample(t *testing.
 }
 
 func testAccFirebaseHostingChannel_firebasehostingChannelFullExample(context map[string]interface{}) string {
-	return Nprintf(`
+	return tpgresource.Nprintf(`
 resource "google_firebase_hosting_site" "default" {
   provider = google-beta
   project  = "%{project_id}"

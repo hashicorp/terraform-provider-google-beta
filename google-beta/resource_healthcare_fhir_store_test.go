@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/healthcare"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 
@@ -52,7 +53,7 @@ func TestAccHealthcareFhirStoreIdParsing(t *testing.T) {
 	}
 
 	for tn, tc := range cases {
-		fhirStoreId, err := ParseHealthcareFhirStoreId(tc.ImportId, tc.Config)
+		fhirStoreId, err := healthcare.ParseHealthcareFhirStoreId(tc.ImportId, tc.Config)
 
 		if tc.ExpectedError && err == nil {
 			t.Fatalf("bad: %s, expected an error", tn)

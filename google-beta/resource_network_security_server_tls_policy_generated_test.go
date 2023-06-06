@@ -56,7 +56,7 @@ func TestAccNetworkSecurityServerTlsPolicy_networkSecurityServerTlsPolicyBasicEx
 }
 
 func testAccNetworkSecurityServerTlsPolicy_networkSecurityServerTlsPolicyBasicExample(context map[string]interface{}) string {
-	return Nprintf(`
+	return tpgresource.Nprintf(`
 resource "google_network_security_server_tls_policy" "default" {
   provider               = google-beta
   name                   = "tf-test-my-server-tls-policy%{random_suffix}"
@@ -117,7 +117,7 @@ func TestAccNetworkSecurityServerTlsPolicy_networkSecurityServerTlsPolicyAdvance
 }
 
 func testAccNetworkSecurityServerTlsPolicy_networkSecurityServerTlsPolicyAdvancedExample(context map[string]interface{}) string {
-	return Nprintf(`
+	return tpgresource.Nprintf(`
 resource "google_network_security_server_tls_policy" "default" {
   provider               = google-beta
   name                   = "tf-test-my-server-tls-policy%{random_suffix}"
@@ -160,7 +160,7 @@ func TestAccNetworkSecurityServerTlsPolicy_networkSecurityServerTlsPolicyServerC
 }
 
 func testAccNetworkSecurityServerTlsPolicy_networkSecurityServerTlsPolicyServerCertExample(context map[string]interface{}) string {
-	return Nprintf(`
+	return tpgresource.Nprintf(`
 resource "google_network_security_server_tls_policy" "default" {
   provider               = google-beta
   name                   = "tf-test-my-server-tls-policy%{random_suffix}"

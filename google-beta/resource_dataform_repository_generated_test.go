@@ -56,7 +56,7 @@ func TestAccDataformRepository_dataformRepositoryExample(t *testing.T) {
 }
 
 func testAccDataformRepository_dataformRepositoryExample(context map[string]interface{}) string {
-	return Nprintf(`
+	return tpgresource.Nprintf(`
 resource "google_sourcerepo_repository" "git_repository" {
   provider = google-beta
   name = "my/repository%{random_suffix}"

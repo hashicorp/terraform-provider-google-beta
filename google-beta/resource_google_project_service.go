@@ -10,6 +10,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
+	tpgserviceusage "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/serviceusage"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/verify"
@@ -291,7 +292,7 @@ func disableServiceUsageProjectService(service, project string, d *schema.Resour
 				return err
 			}
 			// Wait for the operation to complete
-			waitErr := serviceUsageOperationWait(config, sop, billingProject, "api to disable", userAgent, d.Timeout(schema.TimeoutDelete))
+			waitErr := tpgserviceusage.ServiceUsageOperationWait(config, sop, billingProject, "api to disable", userAgent, d.Timeout(schema.TimeoutDelete))
 			if waitErr != nil {
 				return waitErr
 			}

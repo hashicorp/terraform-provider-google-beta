@@ -56,7 +56,7 @@ func TestAccWorkstationsWorkstationConfig_workstationConfigBasicExample(t *testi
 }
 
 func testAccWorkstationsWorkstationConfig_workstationConfigBasicExample(context map[string]interface{}) string {
-	return Nprintf(`
+	return tpgresource.Nprintf(`
 resource "google_compute_network" "default" {
   provider                = google-beta
   name                    = "tf-test-workstation-cluster%{random_suffix}"
@@ -133,7 +133,7 @@ func TestAccWorkstationsWorkstationConfig_workstationConfigContainerExample(t *t
 }
 
 func testAccWorkstationsWorkstationConfig_workstationConfigContainerExample(context map[string]interface{}) string {
-	return Nprintf(`
+	return tpgresource.Nprintf(`
 resource "google_compute_network" "default" {
   provider                = google-beta
   name                    = "tf-test-workstation-cluster%{random_suffix}"
@@ -215,7 +215,7 @@ func TestAccWorkstationsWorkstationConfig_workstationConfigPersistentDirectories
 }
 
 func testAccWorkstationsWorkstationConfig_workstationConfigPersistentDirectoriesExample(context map[string]interface{}) string {
-	return Nprintf(`
+	return tpgresource.Nprintf(`
 resource "google_compute_network" "default" {
   provider                = google-beta
   name                    = "tf-test-workstation-cluster%{random_suffix}"
@@ -303,7 +303,7 @@ func TestAccWorkstationsWorkstationConfig_workstationConfigSourceSnapshotExample
 }
 
 func testAccWorkstationsWorkstationConfig_workstationConfigSourceSnapshotExample(context map[string]interface{}) string {
-	return Nprintf(`
+	return tpgresource.Nprintf(`
 resource "google_compute_network" "default" {
   provider                = google-beta
   name                    = "tf-test-workstation-cluster%{random_suffix}"
@@ -385,7 +385,7 @@ func TestAccWorkstationsWorkstationConfig_workstationConfigShieldedInstanceConfi
 }
 
 func testAccWorkstationsWorkstationConfig_workstationConfigShieldedInstanceConfigExample(context map[string]interface{}) string {
-	return Nprintf(`
+	return tpgresource.Nprintf(`
 resource "google_compute_network" "default" {
   provider                = google-beta
   name                    = "tf-test-workstation-cluster%{random_suffix}"
@@ -463,7 +463,7 @@ func TestAccWorkstationsWorkstationConfig_workstationConfigEncryptionKeyExample(
 }
 
 func testAccWorkstationsWorkstationConfig_workstationConfigEncryptionKeyExample(context map[string]interface{}) string {
-	return Nprintf(`
+	return tpgresource.Nprintf(`
 resource "google_compute_network" "default" {
   provider                = google-beta
   name                    = "tf-test-workstation-cluster%{random_suffix}"
