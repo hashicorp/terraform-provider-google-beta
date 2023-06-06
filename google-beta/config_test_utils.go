@@ -121,6 +121,7 @@ func configureTestBasePaths(c *transport_tpg.Config, url string) {
 	c.TagsBasePath = url
 	c.TPUBasePath = url
 	c.VertexAIBasePath = url
+	c.VmwareengineBasePath = url
 	c.VPCAccessBasePath = url
 	c.WorkflowsBasePath = url
 	c.WorkstationsBasePath = url
