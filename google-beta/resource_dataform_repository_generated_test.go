@@ -87,6 +87,12 @@ resource "google_dataform_repository" "dataform_respository" {
       default_branch = "main"
       authentication_token_secret_version = google_secret_manager_secret_version.secret_version.id
   }
+
+  workspace_compilation_overrides {
+    default_database = "database"
+    schema_suffix = "_suffix"
+    table_prefix = "prefix_"
+  }
 }
 `, context)
 }
