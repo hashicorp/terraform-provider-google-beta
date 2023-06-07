@@ -89,6 +89,31 @@ func ResourceDataformRepository() *schema.Resource {
 				ForceNew:    true,
 				Description: `A reference to the region`,
 			},
+			"workspace_compilation_overrides": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: `Optional. If set, fields of workspaceCompilationOverrides override the default compilation settings that are specified in dataform.json when creating workspace-scoped compilation results.`,
+				MaxItems:    1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"default_database": {
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: `Optional. The default database (Google Cloud project ID).`,
+						},
+						"schema_suffix": {
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: `Optional. The suffix that should be appended to all schema (BigQuery dataset ID) names.`,
+						},
+						"table_prefix": {
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: `Optional. The prefix that should be prepended to all table names.`,
+						},
+					},
+				},
+			},
 			"project": {
 				Type:     schema.TypeString,
 				Optional: true,
@@ -119,6 +144,12 @@ func resourceDataformRepositoryCreate(d *schema.ResourceData, meta interface{}) 
 		return err
 	} else if v, ok := d.GetOkExists("git_remote_settings"); !tpgresource.IsEmptyValue(reflect.ValueOf(gitRemoteSettingsProp)) && (ok || !reflect.DeepEqual(v, gitRemoteSettingsProp)) {
 		obj["gitRemoteSettings"] = gitRemoteSettingsProp
+	}
+	workspaceCompilationOverridesProp, err := expandDataformRepositoryWorkspaceCompilationOverrides(d.Get("workspace_compilation_overrides"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("workspace_compilation_overrides"); !tpgresource.IsEmptyValue(reflect.ValueOf(workspaceCompilationOverridesProp)) && (ok || !reflect.DeepEqual(v, workspaceCompilationOverridesProp)) {
+		obj["workspaceCompilationOverrides"] = workspaceCompilationOverridesProp
 	}
 
 	url, err := tpgresource.ReplaceVars(d, config, "{{DataformBasePath}}projects/{{project}}/locations/{{region}}/repositories?repositoryId={{name}}")
@@ -211,6 +242,9 @@ func resourceDataformRepositoryRead(d *schema.ResourceData, meta interface{}) er
 	if err := d.Set("git_remote_settings", flattenDataformRepositoryGitRemoteSettings(res["gitRemoteSettings"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Repository: %s", err)
 	}
+	if err := d.Set("workspace_compilation_overrides", flattenDataformRepositoryWorkspaceCompilationOverrides(res["workspaceCompilationOverrides"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Repository: %s", err)
+	}
 
 	return nil
 }
@@ -236,6 +270,12 @@ func resourceDataformRepositoryUpdate(d *schema.ResourceData, meta interface{}) 
 		return err
 	} else if v, ok := d.GetOkExists("git_remote_settings"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, gitRemoteSettingsProp)) {
 		obj["gitRemoteSettings"] = gitRemoteSettingsProp
+	}
+	workspaceCompilationOverridesProp, err := expandDataformRepositoryWorkspaceCompilationOverrides(d.Get("workspace_compilation_overrides"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("workspace_compilation_overrides"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, workspaceCompilationOverridesProp)) {
+		obj["workspaceCompilationOverrides"] = workspaceCompilationOverridesProp
 	}
 
 	url, err := tpgresource.ReplaceVars(d, config, "{{DataformBasePath}}projects/{{project}}/locations/{{region}}/repositories/{{name}}")
@@ -377,6 +417,35 @@ func flattenDataformRepositoryGitRemoteSettingsTokenStatus(v interface{}, d *sch
 	return v
 }
 
+func flattenDataformRepositoryWorkspaceCompilationOverrides(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["default_database"] =
+		flattenDataformRepositoryWorkspaceCompilationOverridesDefaultDatabase(original["defaultDatabase"], d, config)
+	transformed["schema_suffix"] =
+		flattenDataformRepositoryWorkspaceCompilationOverridesSchemaSuffix(original["schemaSuffix"], d, config)
+	transformed["table_prefix"] =
+		flattenDataformRepositoryWorkspaceCompilationOverridesTablePrefix(original["tablePrefix"], d, config)
+	return []interface{}{transformed}
+}
+func flattenDataformRepositoryWorkspaceCompilationOverridesDefaultDatabase(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenDataformRepositoryWorkspaceCompilationOverridesSchemaSuffix(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenDataformRepositoryWorkspaceCompilationOverridesTablePrefix(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
 func expandDataformRepositoryName(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
@@ -434,5 +503,50 @@ func expandDataformRepositoryGitRemoteSettingsAuthenticationTokenSecretVersion(v
 }
 
 func expandDataformRepositoryGitRemoteSettingsTokenStatus(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandDataformRepositoryWorkspaceCompilationOverrides(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedDefaultDatabase, err := expandDataformRepositoryWorkspaceCompilationOverridesDefaultDatabase(original["default_database"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedDefaultDatabase); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["defaultDatabase"] = transformedDefaultDatabase
+	}
+
+	transformedSchemaSuffix, err := expandDataformRepositoryWorkspaceCompilationOverridesSchemaSuffix(original["schema_suffix"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedSchemaSuffix); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["schemaSuffix"] = transformedSchemaSuffix
+	}
+
+	transformedTablePrefix, err := expandDataformRepositoryWorkspaceCompilationOverridesTablePrefix(original["table_prefix"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedTablePrefix); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["tablePrefix"] = transformedTablePrefix
+	}
+
+	return transformed, nil
+}
+
+func expandDataformRepositoryWorkspaceCompilationOverridesDefaultDatabase(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandDataformRepositoryWorkspaceCompilationOverridesSchemaSuffix(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandDataformRepositoryWorkspaceCompilationOverridesTablePrefix(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
