@@ -1,23 +1,31 @@
 ## 4.69.0 (Unreleased)
 
 FEATURES:
+* **New Data Source:** `google_vmwareengine_network` ([#5725](https://github.com/hashicorp/terraform-provider-google-beta/pull/5725))
 * **New Resource:** `google_access_context_manager_service_perimeter_egress_policy` ([#5723](https://github.com/hashicorp/terraform-provider-google-beta/pull/5723))
 * **New Resource:** `google_access_context_manager_service_perimeter_ingress_policy` ([#5723](https://github.com/hashicorp/terraform-provider-google-beta/pull/5723))
 * **New Resource:** `google_certificate_manager_certificate_issuance_config` ([#5712](https://github.com/hashicorp/terraform-provider-google-beta/pull/5712))
 * **New Resource:** `google_dataplex_datascan` ([#5707](https://github.com/hashicorp/terraform-provider-google-beta/pull/5707))
+* **New Resource:** `google_dataplex_datascan_iam_*` ([#5731](https://github.com/hashicorp/terraform-provider-google-beta/pull/5731))
+* **New Resource:** `google_vmwareengine_network` ([#5725](https://github.com/hashicorp/terraform-provider-google-beta/pull/5725))
 
 IMPROVEMENTS:
 * billing: added `lookup_projects` to `google_billing_account` datasource that skips reading the list of associated projects ([#5721](https://github.com/hashicorp/terraform-provider-google-beta/pull/5721))
+* dlp: added `info_type_transformations` block in the `record_transformations` field to `google_data_loss_prevention_deidentify_template` resource. ([#5729](https://github.com/hashicorp/terraform-provider-google-beta/pull/5729))
 * dlp: added `redact_config`, `fixed_size_bucketing_config`, `bucketing_config`, `time_part_config` and `date_shift_config`  fields to `google_data_loss_prevention_deidentify_template` resource ([#5711](https://github.com/hashicorp/terraform-provider-google-beta/pull/5711))
 * dlp: added `stored_info_type_id` field to `google_data_loss_prevention_stored_info_type` resource ([#5708](https://github.com/hashicorp/terraform-provider-google-beta/pull/5708))
+* dlp: added `template_id` field to `google_data_loss_prevention_deidentify_template` and `google_data_loss_prevention_inspect_template` ([#5726](https://github.com/hashicorp/terraform-provider-google-beta/pull/5726))
 * dlp: changed `actions` field from required to optional in `google_data_loss_prevention_job_trigger` resource ([#5716](https://github.com/hashicorp/terraform-provider-google-beta/pull/5716))
 * gkehub: added field `fleet_observability` to `google_gke_hub_feature` ([#5715](https://github.com/hashicorp/terraform-provider-google-beta/pull/5715))
 * kms: removed validation for `purpose` in `google_kms_crypto_key` to allow newly added values for the field ([#5713](https://github.com/hashicorp/terraform-provider-google-beta/pull/5713))
 * networkservices: added necessary fields to `google_network_services_gateway` to make it compatible with secure web proxy ([#5701](https://github.com/hashicorp/terraform-provider-google-beta/pull/5701))
+* pubsub: Allowed `schema_settings` of `google_pubsub_topic` to change without deleting and recreating the resource ([#5724](https://github.com/hashicorp/terraform-provider-google-beta/pull/5724))
+* vertexai: Increased `google_vertex_ai_metadata_store` creation timeout to 40 minutes. (beta) ([#5728](https://github.com/hashicorp/terraform-provider-google-beta/pull/5728))
 
 BUG FIXES:
 * tags: fixed providing `projects/<project_id` to `parent` causing recreation on `google_tags_tag_key` ([#5718](https://github.com/hashicorp/terraform-provider-google-beta/pull/5718))
 * networkservices: fixed a bug where modifying non-updatable fields `scope` in `google_network_services_gateway` would fail with API errors; now updating them will recreate the resource ([#5701](https://github.com/hashicorp/terraform-provider-google-beta/pull/5701))
+
 
 ## 4.68.0 (June 5, 2023)
 
