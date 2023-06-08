@@ -16,7 +16,7 @@ IMPROVEMENTS:
 * networkservices: added necessary fields to `google_network_services_gateway` to make it compatible with secure web proxy ([#5701](https://github.com/hashicorp/terraform-provider-google-beta/pull/5701))
 
 BUG FIXES:
-* Tags: fixed providing `projects/<project_id` to `parent` causing recreation on `google_tags_tag_key` ([#5718](https://github.com/hashicorp/terraform-provider-google-beta/pull/5718))
+* tags: fixed providing `projects/<project_id` to `parent` causing recreation on `google_tags_tag_key` ([#5718](https://github.com/hashicorp/terraform-provider-google-beta/pull/5718))
 * networkservices: fixed a bug where modifying non-updatable fields `scope` in `google_network_services_gateway` would fail with API errors; now updating them will recreate the resource ([#5701](https://github.com/hashicorp/terraform-provider-google-beta/pull/5701))
 
 ## 4.68.0 (June 5, 2023)
