@@ -19,12 +19,12 @@ IMPROVEMENTS:
 * gkehub: added field `fleet_observability` to `google_gke_hub_feature` ([#5715](https://github.com/hashicorp/terraform-provider-google-beta/pull/5715))
 * kms: removed validation for `purpose` in `google_kms_crypto_key` to allow newly added values for the field ([#5713](https://github.com/hashicorp/terraform-provider-google-beta/pull/5713))
 * networkservices: added necessary fields to `google_network_services_gateway` to make it compatible with secure web proxy ([#5701](https://github.com/hashicorp/terraform-provider-google-beta/pull/5701))
-* pubsub: Allowed `schema_settings` of `google_pubsub_topic` to change without deleting and recreating the resource ([#5724](https://github.com/hashicorp/terraform-provider-google-beta/pull/5724))
-* vertexai: Increased `google_vertex_ai_metadata_store` creation timeout to 40 minutes. (beta) ([#5728](https://github.com/hashicorp/terraform-provider-google-beta/pull/5728))
+* pubsub: allowed `schema_settings` of `google_pubsub_topic` to change without deleting and recreating the resource ([#5724](https://github.com/hashicorp/terraform-provider-google-beta/pull/5724))
+* vertexai: Increased `google_vertex_ai_metadata_store` creation timeout to 40 minutes ([#5728](https://github.com/hashicorp/terraform-provider-google-beta/pull/5728))
 
 BUG FIXES:
-* tags: fixed providing `projects/<project_id` to `parent` causing recreation on `google_tags_tag_key` ([#5718](https://github.com/hashicorp/terraform-provider-google-beta/pull/5718))
 * networkservices: fixed a bug where modifying non-updatable fields `scope` in `google_network_services_gateway` would fail with API errors; now updating them will recreate the resource ([#5701](https://github.com/hashicorp/terraform-provider-google-beta/pull/5701))
+* tags: fixed providing `projects/<project_id` to `parent` causing recreation on `google_tags_tag_key` ([#5718](https://github.com/hashicorp/terraform-provider-google-beta/pull/5718))
 
 
 ## 4.68.0 (June 5, 2023)
