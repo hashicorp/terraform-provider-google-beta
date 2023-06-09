@@ -1033,9 +1033,9 @@ func DatasourceMapWithErrors() (map[string]*schema.Resource, error) {
 		})
 }
 
-// Generated resources: 346
+// Generated resources: 347
 // Generated IAM resources: 225
-// Total generated resources: 571
+// Total generated resources: 572
 func ResourceMap() map[string]*schema.Resource {
 	resourceMap, _ := ResourceMapWithErrors()
 	return resourceMap
@@ -1235,6 +1235,7 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_compute_network":                                         compute.ResourceComputeNetwork(),
 			"google_compute_network_endpoint":                                compute.ResourceComputeNetworkEndpoint(),
 			"google_compute_network_endpoint_group":                          compute.ResourceComputeNetworkEndpointGroup(),
+			"google_compute_network_endpoints":                               compute.ResourceComputeNetworkEndpoints(),
 			"google_compute_network_peering_routes_config":                   compute.ResourceComputeNetworkPeeringRoutesConfig(),
 			"google_compute_node_group":                                      compute.ResourceComputeNodeGroup(),
 			"google_compute_node_template":                                   compute.ResourceComputeNodeTemplate(),
