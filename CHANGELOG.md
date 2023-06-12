@@ -1,4 +1,11 @@
-## 4.69.0 (Unreleased)
+## 4.70.0 (Unreleased)
+
+## 4.69.1 (June 12, 2023)
+
+NOTE:
+* Added a new user guide to the provider documentation ([#5768](https://github.com/hashicorp/terraform-provider-google-beta/pull/5768))
+
+## 4.69.0 (June 12, 2023)
 
 FEATURES:
 * **New Data Source:** `google_vmwareengine_network` ([#5725](https://github.com/hashicorp/terraform-provider-google-beta/pull/5725))
