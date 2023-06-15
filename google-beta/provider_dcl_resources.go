@@ -74,7 +74,6 @@ var dclResources = map[string]*schema.Resource{
 	"google_eventarc_trigger":                                   eventarc.ResourceEventarcTrigger(),
 	"google_firebaserules_release":                              firebaserules.ResourceFirebaserulesRelease(),
 	"google_firebaserules_ruleset":                              firebaserules.ResourceFirebaserulesRuleset(),
-	"google_gke_hub_feature":                                    gkehub.ResourceGkeHubFeature(),
 	"google_gke_hub_feature_membership":                         gkehub.ResourceGkeHubFeatureMembership(),
 	"google_monitoring_monitored_project":                       monitoring.ResourceMonitoringMonitoredProject(),
 	"google_network_connectivity_hub":                           networkconnectivity.ResourceNetworkConnectivityHub(),
