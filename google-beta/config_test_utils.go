@@ -82,6 +82,7 @@ func configureTestBasePaths(c *transport_tpg.Config, url string) {
 	c.GameServicesBasePath = url
 	c.GKEBackupBasePath = url
 	c.GKEHubBasePath = url
+	c.GKEHub2BasePath = url
 	c.GkeonpremBasePath = url
 	c.HealthcareBasePath = url
 	c.IAM2BasePath = url

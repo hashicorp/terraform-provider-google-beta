@@ -117,6 +117,7 @@ type frameworkProvider struct {
 	GameServicesBasePath             string
 	GKEBackupBasePath                string
 	GKEHubBasePath                   string
+	GKEHub2BasePath                  string
 	GkeonpremBasePath                string
 	HealthcareBasePath               string
 	IAM2BasePath                     string
@@ -583,6 +584,12 @@ func (p *frameworkProvider) Schema(_ context.Context, _ provider.SchemaRequest, 
 				},
 			},
 			"gke_hub_custom_endpoint": &schema.StringAttribute{
+				Optional: true,
+				Validators: []validator.String{
+					transport_tpg.CustomEndpointValidator(),
+				},
+			},
+			"gke_hub2_custom_endpoint": &schema.StringAttribute{
 				Optional: true,
 				Validators: []validator.String{
 					transport_tpg.CustomEndpointValidator(),
