@@ -133,7 +133,7 @@ func ResourceCloudRunService() *schema.Resource {
 				Description: `Name must be unique within a Google Cloud project and region.
 Is required when creating resources. Name is primarily intended
 for creation idempotence and configuration definition. Cannot be updated.
-More info: http://kubernetes.io/docs/user-guide/identifiers#names`,
+More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names`,
 			},
 			"template": {
 				Type:     schema.TypeList,
@@ -663,7 +663,7 @@ will use the project's default service account.`,
 															"size_limit": {
 																Type:        schema.TypeString,
 																Optional:    true,
-																Description: `Limit on the storage usable by this EmptyDir volume. The size limit is also applicable for memory medium. The maximum usage on memory medium EmptyDir would be the minimum value between the SizeLimit specified here and the sum of memory limits of all containers in a pod. This field's values are of the 'Quantity' k8s type: https://kubernetes.io/docs/reference/kubernetes-api/common-definitions/quantity/. The default is nil which means that the limit is undefined. More info: http://kubernetes.io/docs/user-guide/volumes#emptydir.`,
+																Description: `Limit on the storage usable by this EmptyDir volume. The size limit is also applicable for memory medium. The maximum usage on memory medium EmptyDir would be the minimum value between the SizeLimit specified here and the sum of memory limits of all containers in a pod. This field's values are of the 'Quantity' k8s type: https://kubernetes.io/docs/reference/kubernetes-api/common-definitions/quantity/. The default is nil which means that the limit is undefined. More info: https://kubernetes.io/docs/concepts/storage/volumes/#emptydir.`,
 															},
 														},
 													},
@@ -772,7 +772,7 @@ annotation key.`,
 										DiffSuppressFunc: cloudrunTemplateAnnotationDiffSuppress,
 										Description: `Annotations is a key value map stored with a resource that
 may be set by external tools to store and retrieve arbitrary metadata. More
-info: http://kubernetes.io/docs/user-guide/annotations
+info: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations
 
 **Note**: The Cloud Run API may add additional annotations that were not provided in your config.
 If terraform plan shows a diff where a server-side annotation is added, you can add it to your config
@@ -924,7 +924,7 @@ and annotations.`,
 							DiffSuppressFunc: cloudrunAnnotationDiffSuppress,
 							Description: `Annotations is a key value map stored with a resource that
 may be set by external tools to store and retrieve arbitrary metadata. More
-info: http://kubernetes.io/docs/user-guide/annotations
+info: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations
 
 **Note**: The Cloud Run API may add additional annotations that were not provided in your config.
 If terraform plan shows a diff where a server-side annotation is added, you can add it to your config
