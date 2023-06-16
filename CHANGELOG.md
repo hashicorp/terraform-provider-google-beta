@@ -6,11 +6,11 @@ FEATURES:
 * **New Resource:** `vertex_ai_index_endpoint` ([#5738](https://github.com/hashicorp/terraform-provider-google-beta/pull/5738))
 
 IMPROVEMENTS:
-* bigtable: added timeout support for bigtable admin operations ([#5752](https://github.com/hashicorp/terraform-provider-google-beta/pull/5752))
+* bigtable: added 20 minutes timeout support to `google_bigtable_gc_policy` ([#5752](https://github.com/hashicorp/terraform-provider-google-beta/pull/5752))
 * cloudfunctions2: added `url` output field to `google_cloudfunctions2_function` ([#5745](https://github.com/hashicorp/terraform-provider-google-beta/pull/5745))
 * compute: added field `network_attachment` to `google_compute_instance_template` ([#5761](https://github.com/hashicorp/terraform-provider-google-beta/pull/5761))
-* compute: added error details for Compute Operation with quota exceeded errors. ([#5763](https://github.com/hashicorp/terraform-provider-google-beta/pull/5763))
-* compute: added pathTemplateMatch and pathTemplateRewrite to routeRules in UrlMap. ([#5760](https://github.com/hashicorp/terraform-provider-google-beta/pull/5760))
+* compute: surfaced additional information about quota exceeded errors for compute resources. ([#5763](https://github.com/hashicorp/terraform-provider-google-beta/pull/5763))
+* compute: added `path_template_match` and `path_template_rewrite` to `google_compute_url_map`. ([#5760](https://github.com/hashicorp/terraform-provider-google-beta/pull/5760))
 * container: added `sole_tenant_config` to `node_config` in `google_container_node_pool` and `google_container_cluster` ([#5774](https://github.com/hashicorp/terraform-provider-google-beta/pull/5774))
 * dataform: added field `workspace_compilation_overrides` to resource `google_dataform_repository` (beta) ([#5736](https://github.com/hashicorp/terraform-provider-google-beta/pull/5736))
 * dlp: added `crypto_hash_config` to `google_data_loss_prevention_deidentify_template` ([#5757](https://github.com/hashicorp/terraform-provider-google-beta/pull/5757))
@@ -19,13 +19,13 @@ IMPROVEMENTS:
 * dlp: added multiple `sensitivity_score` field to `google_data_loss_prevention_deidentify_template` resource ([#5764](https://github.com/hashicorp/terraform-provider-google-beta/pull/5764))
 * dlp: added multiple `sensitivity_score` field to `google_data_loss_prevention_inspect_template` resource ([#5758](https://github.com/hashicorp/terraform-provider-google-beta/pull/5758))
 * dlp: added multiple `sensitivity_score` field to `google_data_loss_prevention_job_trigger` resource ([#5765](https://github.com/hashicorp/terraform-provider-google-beta/pull/5765))
-* pubsub: Allowed `definition` of `google_pubsub_schema` to change without deleting and recreating the resource by using schema revisions (https://cloud.google.com/pubsub/docs/schemas#commit-schema-revision) ([#5750](https://github.com/hashicorp/terraform-provider-google-beta/pull/5750))
-* sql: added `POSTGRES_15` to available version docs ([#5772](https://github.com/hashicorp/terraform-provider-google-beta/pull/5772))
+* pubsub: allowed `definition` field of `google_pubsub_schema` updatable. (https://cloud.google.com/pubsub/docs/schemas#commit-schema-revision) ([#5750](https://github.com/hashicorp/terraform-provider-google-beta/pull/5750))
+* sql: added `POSTGRES_15` to version docs for `database_version` field to `google_sql_database_instance` ([#5772](https://github.com/hashicorp/terraform-provider-google-beta/pull/5772))
 * vpcaccess: Added `connected_projects` attribute to resource `google_vpc_access_connector`. ([#5734](https://github.com/hashicorp/terraform-provider-google-beta/pull/5734))
 
 BUG FIXES:
-* filestore: fixed an issue causing 429 errors to be retried ([#5744](https://github.com/hashicorp/terraform-provider-google-beta/pull/5744))
-* vertexai: made `google_vertex_ai_featurestore_entitytype_feature` always use regional corresponding to parent's region ([#5739](https://github.com/hashicorp/terraform-provider-google-beta/pull/5739))
+* filestore: fixed an issue on multiple resources where non-retryable quota errors were considered retryable ([#5744](https://github.com/hashicorp/terraform-provider-google-beta/pull/5744))
+* vertexai: made `google_vertex_ai_featurestore_entitytype_feature` always use region corresponding to parent's region ([#5739](https://github.com/hashicorp/terraform-provider-google-beta/pull/5739))
 
 ## 4.69.1 (June 12, 2023)
 
