@@ -23,16 +23,16 @@ fun buildConfigurationsForPackages(packages: Map<String, String>, providerName :
         if (packageName == "services") {
             buildConfigurationsForPackages(services, providerName, path+"/"+packageName, environment, config)
             continue
+        } else {
+            var defaultTestConfig = testConfiguration()
+
+            var package = packageDetails(packageName, displayName, environment)
+            var buildConfig = package.buildConfiguration(providerName, path, runNightly, testConfig.startHour, testConfig.parallelism, testConfig.daysOfWeek, testConfig.daysOfMonth)
+
+            buildConfig.params.ConfigureGoogleSpecificTestParameters(environment, config)
+
+            list.add(buildConfig)
         }
-
-        var defaultTestConfig = testConfiguration()
-
-        var package = packageDetails(packageName, displayName, environment)
-        var buildConfig = package.buildConfiguration(providerName, path, runNightly, testConfig.startHour, testConfig.parallelism, testConfig.daysOfWeek, testConfig.daysOfMonth)
-
-        buildConfig.params.ConfigureGoogleSpecificTestParameters(environment, config)
-
-        list.add(buildConfig)
     }
 
     return list
