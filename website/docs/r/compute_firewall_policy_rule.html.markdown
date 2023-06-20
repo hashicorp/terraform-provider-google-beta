@@ -15,19 +15,23 @@
 # ----------------------------------------------------------------------------
 subcategory: "Compute Engine"
 description: |-
-  The Compute FirewallPolicyRule resource
+  Specific rules to add to a hierarchical firewall policy
 ---
 
-# google_compute_firewall_policy_rule
+# google\_compute\_firewall\_policy\_rule
 
-The Compute FirewallPolicyRule resource
+Hierarchical firewall policy rules let you create and enforce a consistent firewall policy across your organization. Rules can explicitly allow or deny connections or delegate evaluation to lower level policies.
 
-## Example Usage - basic_fir_sec_rule_addr_groups
+For more information see the [official documentation](https://cloud.google.com/vpc/docs/using-firewall-policies#create-rules)
+
+## Example Usage
+
 ```hcl
 resource "google_network_security_address_group" "basic_global_networksecurity_address_group" {
   provider = google-beta
+
   name        = "policy"
-  parent      = "organizations/123456789"
+  parent      = "organizations/12345"
   description = "Sample global networksecurity_address_group"
   location    = "global"
   items       = ["208.80.154.224/32"]
@@ -35,47 +39,32 @@ resource "google_network_security_address_group" "basic_global_networksecurity_a
   capacity    = 100
 }
 
-resource "google_folder" "folder" {
-  provider     = google-beta
-  display_name = "policy"
-  parent       = "organizations/123456789"
-}
-
 resource "google_compute_firewall_policy" "default" {
-  provider    = google-beta
-  parent      = google_folder.folder.id
-  short_name  = "policy"
-  description = "Resource created for Terraform acceptance testing"
+  parent      = "organizations/12345"
+  short_name  = "my-policy"
+  description = "Example Resource"
 }
 
-resource "google_compute_firewall_policy_rule" "primary" {
-  provider        = google-beta
-  firewall_policy = google_compute_firewall_policy.default.name
-  description     = "Resource created for Terraform acceptance testing"
-  priority        = 9000
-  enable_logging  = true
-  action          = "allow"
-  direction       = "EGRESS"
-  disabled        = false
+resource "google_compute_firewall_policy_rule" "default" {
+  firewall_policy = google_compute_firewall_policy.default.id
+  description = "Example Resource"
+  priority = 9000
+  enable_logging = true
+  action = "allow"
+  direction = "EGRESS"
+  disabled = false
   match {
     layer4_configs {
       ip_protocol = "tcp"
-      ports = [8080]
-    }
-    layer4_configs {
-      ip_protocol = "udp"
-      ports = [22]
+      ports = [80, 8080]
     }
     dest_ip_ranges = ["11.100.0.1/32"]
-    dest_fqdns = []
+    dest_fqdns = ["google.com"]
     dest_region_codes = ["US"]
-    dest_threat_intelligences = ["iplist-known-malicious-ips"]
-    src_address_groups = []
+    dest_threat_intelligences = ["iplist-public-clouds"]
     dest_address_groups = [google_network_security_address_group.basic_global_networksecurity_address_group.id]
   }
-  target_service_accounts = ["my@service-account.com"]
 }
-
 ```
 
 ## Argument Reference
@@ -84,7 +73,7 @@ The following arguments are supported:
 
 * `action` -
   (Required)
-  The Action to perform when the client connection triggers the rule. Valid actions are "allow", "deny" and "goto_next".
+  The Action to perform when the client connection triggers the rule. Can currently be either "allow" or "deny()" where valid values for status are 403, 404, and 502.
   
 * `direction` -
   (Required)
@@ -96,7 +85,7 @@ The following arguments are supported:
   
 * `match` -
   (Required)
-  A match condition that incoming traffic is evaluated against. If it evaluates to true, the corresponding 'action' is enforced.
+  A match condition that incoming traffic is evaluated against. If it evaluates to true, the corresponding 'action' is enforced. Structure is [documented below](#nested_match).
   
 * `priority` -
   (Required)
@@ -104,53 +93,53 @@ The following arguments are supported:
   
 
 
-The `match` block supports:
-    
-* `dest_address_groups` -
-  (Optional)
+<a name="nested_match"></a>The `match` block supports:
+
+* `dest_address_groups` - 
+  (Optional) 
   Address groups which should be matched against the traffic destination. Maximum number of destination address groups is 10. Destination address groups is only supported in Egress rules.
-    
-* `dest_fqdns` -
+
+* `dest_fqdns` - 
   (Optional)
   Domain names that will be used to match against the resolved domain name of destination of traffic. Can only be specified if DIRECTION is egress.
     
 * `dest_ip_ranges` -
   (Optional)
-  CIDR IP address range. Maximum number of destination CIDR IP ranges allowed is 256.
-    
-* `dest_region_codes` -
-  (Optional)
+  CIDR IP address range. Maximum number of destination CIDR IP ranges allowed is 5000.
+   
+* `dest_region_codes` - 
+  (Optional) 
   The Unicode country codes whose IP addresses will be used to match against the source of traffic. Can only be specified if DIRECTION is egress.
-    
-* `dest_threat_intelligences` -
-  (Optional)
+
+* `dest_threat_intelligences` - 
+  (Optional) 
   Name of the Google Cloud Threat Intelligence list.
     
 * `layer4_configs` -
   (Required)
-  Pairs of IP protocols and ports that the rule should match.
+  Pairs of IP protocols and ports that the rule should match. Structure is [documented below](#nested_layer4_configs).
     
-* `src_address_groups` -
-  (Optional)
+* `src_address_groups` - 
+  (Optional) 
   Address groups which should be matched against the traffic source. Maximum number of source address groups is 10. Source address groups is only supported in Ingress rules.
-    
-* `src_fqdns` -
+
+* `src_fqdns` - 
   (Optional)
   Domain names that will be used to match against the resolved domain name of source of traffic. Can only be specified if DIRECTION is ingress.
-    
-* `src_ip_ranges` -
-  (Optional)
-  CIDR IP address range. Maximum number of source CIDR IP ranges allowed is 256.
-    
-* `src_region_codes` -
-  (Optional)
+
+* `src_ip_ranges` - 
+  (Optional) 
+  CIDR IP address range. Maximum number of source CIDR IP ranges allowed is 5000.
+
+* `src_region_codes` - 
+  (Optional) 
   The Unicode country codes whose IP addresses will be used to match against the source of traffic. Can only be specified if DIRECTION is ingress.
-    
-* `src_threat_intelligences` -
+
+* `src_threat_intelligences` - 
   (Optional)
   Name of the Google Cloud Threat Intelligence list.
     
-The `layer4_configs` block supports:
+<a name="nested_layer4_configs"></a>The `layer4_configs` block supports:
     
 * `ip_protocol` -
   (Required)
@@ -199,7 +188,7 @@ In addition to the arguments listed above, the following computed attributes are
 ## Timeouts
 
 This resource provides the following
-[Timeouts](https://developer.hashicorp.com/terraform/plugin/sdkv2/resources/retries-and-customizable-timeouts) configuration options:
+[Timeouts](https://developer.hashicorp.com/terraform/plugin/sdkv2/resources/retries-and-customizable-timeouts) configuration options: configuration options:
 
 - `create` - Default is 20 minutes.
 - `update` - Default is 20 minutes.
