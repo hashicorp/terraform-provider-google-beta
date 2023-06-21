@@ -2,7 +2,8 @@
 
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
 import jetbrains.buildServer.configs.kotlin.v2019_2.Project
-import jetbrains.buildServer.configs.kotlin.v2019_2.projectFeatures.VersionedSettings
+import jetbrains.buildServer.configs.kotlin.v2019_2.projectFeatures
+import jetbrains.buildServer.configs.kotlin.v2019_2.projectFeatures.versionedSettings
 
 const val providerName = "google-beta"
 
@@ -15,7 +16,7 @@ fun GoogleBeta(environment: String, configuration : ClientConfiguration) : Proje
             buildType(buildConfiguration)
         }
 
-        features(vs)
+        features(feat)
     }
 }
 
@@ -46,6 +47,10 @@ class testConfiguration(parallelism: Int = defaultParallelism, startHour: Int = 
     var daysOfWeek = daysOfWeek
     var daysOfMonth = daysOfMonth
 }
+
+object feat : ProjectFeatures({
+    versionedSettings(vs)
+})
 
 object vs : VersionedSettings({
     storeSecureParamsOutsideOfVcs = true
