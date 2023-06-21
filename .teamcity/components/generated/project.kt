@@ -3,7 +3,7 @@
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
 import jetbrains.buildServer.configs.kotlin.v2019_2.Project
 import jetbrains.buildServer.configs.kotlin.v2019_2.ProjectFeatures
-import jetbrains.buildServer.configs.kotlin.v2019_2.ProjectFeatures.VersionedSettings
+import jetbrains.buildServer.configs.kotlin.v2019_2.projectFeatures.VersionedSettings
 
 const val providerName = "google-beta"
 
@@ -49,7 +49,7 @@ class testConfiguration(parallelism: Int = defaultParallelism, startHour: Int = 
 }
 
 object feat : ProjectFeatures({
-    versionedSettings(vs)
+    feature(vs)
 })
 
 object vs : VersionedSettings({
