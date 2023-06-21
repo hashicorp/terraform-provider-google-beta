@@ -22,12 +22,11 @@ fun buildConfigurationsForPackages(packages: Map<String, String>, providerName :
     packages.forEach { (packageName, displayName) ->
         if (packageName == "services") {
             buildConfigurationsForPackages(services, providerName, path+"/"+packageName, environment, config)
-            continue
         } else {
             var defaultTestConfig = testConfiguration()
 
             var package = packageDetails(packageName, displayName, environment)
-            var buildConfig = package.buildConfiguration(providerName, path, runNightly, testConfig.startHour, testConfig.parallelism, testConfig.daysOfWeek, testConfig.daysOfMonth)
+            var buildConfig = package.buildConfiguration(providerName, path, true, testConfig.startHour, testConfig.parallelism, testConfig.daysOfWeek, testConfig.daysOfMonth)
 
             buildConfig.params.ConfigureGoogleSpecificTestParameters(environment, config)
 
@@ -38,11 +37,9 @@ fun buildConfigurationsForPackages(packages: Map<String, String>, providerName :
     return list
 }
 
-class testConfiguration(parallelism: Int = defaultParallelism, startHour: Int = defaultStartHour, daysOfWeek: String = defaultDaysOfWeek, daysOfMonth: String = defaultDaysOfMonth, useAltSubscription: Boolean = false, useDevTestSubscription: Boolean = false) {
+class testConfiguration(parallelism: Int = defaultParallelism, startHour: Int = defaultStartHour, daysOfWeek: String = defaultDaysOfWeek, daysOfMonth: String = defaultDaysOfMonth) {
     var parallelism = parallelism
     var startHour = startHour
     var daysOfWeek = daysOfWeek
     var daysOfMonth = daysOfMonth
-    var useAltSubscription = useAltSubscription
-    var useDevTestSubscription = useDevTestSubscription
 }
