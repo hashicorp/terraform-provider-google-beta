@@ -2,8 +2,8 @@
 
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
 import jetbrains.buildServer.configs.kotlin.v2019_2.Project
-import jetbrains.buildServer.configs.kotlin.v2019_2.projectFeatures
-import jetbrains.buildServer.configs.kotlin.v2019_2.projectFeatures.versionedSettings
+import jetbrains.buildServer.configs.kotlin.v2019_2.ProjectFeatures
+import jetbrains.buildServer.configs.kotlin.v2019_2.ProjectFeatures.VersionedSettings
 
 const val providerName = "google-beta"
 
