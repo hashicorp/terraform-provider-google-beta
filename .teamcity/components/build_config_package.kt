@@ -39,7 +39,7 @@ class packageDetails(name: String, displayName: String, environment: String) {
                 TerraformCoreBinaryTesting()
                 TerraformShouldPanicForSchemaErrors()
                 ReadOnlySettings()
-                WorkingDirectory(packageName)
+                WorkingDirectory(path, packageName)
             }
 
             triggers {
