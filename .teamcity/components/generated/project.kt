@@ -15,7 +15,7 @@ fun GoogleBeta(environment: String, configuration : ClientConfiguration) : Proje
             buildType(buildConfiguration)
         }
 
-        versionedSettings(vs)
+        features(vs)
     }
 }
 
