@@ -97,7 +97,7 @@ fun ParametrizedWithType.TerraformShouldPanicForSchemaErrors() {
 }
 
 fun ParametrizedWithType.WorkingDirectory(path : String, packageName: String) {
-    text("PACKAGE_PATH", packagePath(path, packageName), "", "The path at which to run - automatically updated", ParameterDisplay.HIDDEN)
+    text("PACKAGE_PATH", servicePath(path, packageName), "", "The path at which to run - automatically updated", ParameterDisplay.HIDDEN)
 }
 
 fun ParametrizedWithType.hiddenVariable(name: String, value: String, description: String) {

@@ -26,7 +26,7 @@ fun buildConfigurationsForPackages(packages: Map<String, String>, providerName :
             var defaultTestConfig = testConfiguration()
 
             var pkg = packageDetails(packageName, displayName, environment)
-            var buildConfig = pkg.buildConfiguration(providerName, path, true, testConfig.startHour, testConfig.parallelism, testConfig.daysOfWeek, testConfig.daysOfMonth)
+            var buildConfig = pkg.buildConfiguration(providerName, path, true, defaultTestConfig.startHour, defaultTestConfig.parallelism, defaultTestConfig.daysOfWeek, defaultTestConfig.daysOfMonth)
 
             buildConfig.params.ConfigureGoogleSpecificTestParameters(environment, config)
 
