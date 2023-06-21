@@ -16,7 +16,12 @@ fun GoogleBeta(environment: String, configuration : ClientConfiguration) : Proje
             buildType(buildConfiguration)
         }
 
-        features(feat)
+        features{
+            versionedSettings{
+                storeSecureParamsOutsideOfVcs = true
+                allowEditingOfProjectSettings = true
+            }
+        }
     }
 }
 
@@ -47,12 +52,3 @@ class testConfiguration(parallelism: Int = defaultParallelism, startHour: Int = 
     var daysOfWeek = daysOfWeek
     var daysOfMonth = daysOfMonth
 }
-
-object feat : ProjectFeatures({
-    feature(vs)
-})
-
-object vs : VersionedSettings({
-    storeSecureParamsOutsideOfVcs = true
-    allowEditingOfProjectSettings = true
-})
