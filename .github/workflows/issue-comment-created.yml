@@ -14,7 +14,6 @@ jobs:
       - uses: actions/github-script@v6
         env:
           REMOVE_LABEL: "waiting-response"
-
         with:
           script: |
             const { REMOVE_LABEL } = process.env
