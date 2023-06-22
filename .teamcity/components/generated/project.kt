@@ -2,8 +2,6 @@
 
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
 import jetbrains.buildServer.configs.kotlin.v2019_2.Project
-import jetbrains.buildServer.configs.kotlin.v2019_2.ProjectFeatures
-import jetbrains.buildServer.configs.kotlin.v2019_2.projectFeatures.VersionedSettings
 
 const val providerName = "google-beta"
 
@@ -14,13 +12,6 @@ fun GoogleBeta(environment: String, configuration : ClientConfiguration) : Proje
         var buildConfigs = buildConfigurationsForPackages(packages, providerName, "google-beta", environment, configuration)
         buildConfigs.forEach { buildConfiguration ->
             buildType(buildConfiguration)
-        }
-
-        features{
-            versionedSettings{
-                storeSecureParamsOutsideOfVcs = true
-                allowEditingOfProjectSettings = true
-            }
         }
     }
 }
