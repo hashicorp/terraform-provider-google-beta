@@ -1,3 +1,6 @@
+// Copyright (c) HashiCorp, Inc.
+// SPDX-License-Identifier: MPL-2.0
+
 // ----------------------------------------------------------------------------
 //
 //     ***     AUTO GENERATED CODE    ***    Type: MMv1     ***
@@ -18,6 +21,8 @@ import (
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 )
 
 func TestAccApiGatewayGatewayIamBindingGenerated(t *testing.T) {
@@ -29,7 +34,7 @@ func TestAccApiGatewayGatewayIamBindingGenerated(t *testing.T) {
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { AccTestPreCheck(t) },
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
 		Steps: []resource.TestStep{
 			{
@@ -52,7 +57,7 @@ func TestAccApiGatewayGatewayIamMemberGenerated(t *testing.T) {
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { AccTestPreCheck(t) },
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
 		Steps: []resource.TestStep{
 			{
@@ -72,11 +77,12 @@ func TestAccApiGatewayGatewayIamPolicyGenerated(t *testing.T) {
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { AccTestPreCheck(t) },
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccApiGatewayGatewayIamPolicy_basicGenerated(context),
+				Check:  resource.TestCheckResourceAttrSet("data.google_api_gateway_gateway_iam_policy.foo", "policy_data"),
 			},
 			{
 				Config: testAccApiGatewayGatewayIamPolicy_emptyBinding(context),
@@ -168,6 +174,16 @@ resource "google_api_gateway_gateway_iam_policy" "foo" {
   region = google_api_gateway_gateway.api_gw.region
   gateway = google_api_gateway_gateway.api_gw.gateway_id
   policy_data = data.google_iam_policy.foo.policy_data
+}
+
+data "google_api_gateway_gateway_iam_policy" "foo" {
+  provider = google-beta
+  project = google_api_gateway_gateway.api_gw.project
+  region = google_api_gateway_gateway.api_gw.region
+  gateway = google_api_gateway_gateway.api_gw.gateway_id
+  depends_on = [
+    google_api_gateway_gateway_iam_policy.foo
+  ]
 }
 `, context)
 }

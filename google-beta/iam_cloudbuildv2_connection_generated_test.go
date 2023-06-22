@@ -1,3 +1,6 @@
+// Copyright (c) HashiCorp, Inc.
+// SPDX-License-Identifier: MPL-2.0
+
 // ----------------------------------------------------------------------------
 //
 //     ***     AUTO GENERATED CODE    ***    Type: MMv1     ***
@@ -18,6 +21,8 @@ import (
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 )
 
 func TestAccCloudbuildv2ConnectionIamBindingGenerated(t *testing.T) {
@@ -29,7 +34,7 @@ func TestAccCloudbuildv2ConnectionIamBindingGenerated(t *testing.T) {
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { AccTestPreCheck(t) },
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
 		Steps: []resource.TestStep{
 			{
@@ -52,7 +57,7 @@ func TestAccCloudbuildv2ConnectionIamMemberGenerated(t *testing.T) {
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { AccTestPreCheck(t) },
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
 		Steps: []resource.TestStep{
 			{
@@ -72,11 +77,12 @@ func TestAccCloudbuildv2ConnectionIamPolicyGenerated(t *testing.T) {
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { AccTestPreCheck(t) },
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudbuildv2ConnectionIamPolicy_basicGenerated(context),
+				Check:  resource.TestCheckResourceAttrSet("data.google_cloudbuildv2_connection_iam_policy.foo", "policy_data"),
 			},
 			{
 				Config: testAccCloudbuildv2ConnectionIamPolicy_emptyBinding(context),
@@ -142,6 +148,16 @@ resource "google_cloudbuildv2_connection_iam_policy" "foo" {
   location = google_cloudbuildv2_connection.my-connection.location
   name = google_cloudbuildv2_connection.my-connection.name
   policy_data = data.google_iam_policy.foo.policy_data
+}
+
+data "google_cloudbuildv2_connection_iam_policy" "foo" {
+  provider = google-beta
+  project = google_cloudbuildv2_connection.my-connection.project
+  location = google_cloudbuildv2_connection.my-connection.location
+  name = google_cloudbuildv2_connection.my-connection.name
+  depends_on = [
+    google_cloudbuildv2_connection_iam_policy.foo
+  ]
 }
 `, context)
 }

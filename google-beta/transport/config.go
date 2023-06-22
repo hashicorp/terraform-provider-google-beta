@@ -1,3 +1,5 @@
+// Copyright (c) HashiCorp, Inc.
+// SPDX-License-Identifier: MPL-2.0
 package transport
 
 import (
@@ -23,6 +25,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/api/option"
+
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/verify"
 
 	"golang.org/x/oauth2"
 	googleoauth "golang.org/x/oauth2/google"
@@ -238,6 +242,8 @@ type Config struct {
 	GameServicesBasePath             string
 	GKEBackupBasePath                string
 	GKEHubBasePath                   string
+	GKEHub2BasePath                  string
+	GkeonpremBasePath                string
 	HealthcareBasePath               string
 	IAM2BasePath                     string
 	IAMBetaBasePath                  string
@@ -276,6 +282,7 @@ type Config struct {
 	TagsBasePath                     string
 	TPUBasePath                      string
 	VertexAIBasePath                 string
+	VmwareengineBasePath             string
 	VPCAccessBasePath                string
 	WorkflowsBasePath                string
 	WorkstationsBasePath             string
@@ -359,6 +366,8 @@ const FirestoreBasePathKey = "Firestore"
 const GameServicesBasePathKey = "GameServices"
 const GKEBackupBasePathKey = "GKEBackup"
 const GKEHubBasePathKey = "GKEHub"
+const GKEHub2BasePathKey = "GKEHub2"
+const GkeonpremBasePathKey = "Gkeonprem"
 const HealthcareBasePathKey = "Healthcare"
 const IAM2BasePathKey = "IAM2"
 const IAMBetaBasePathKey = "IAMBeta"
@@ -397,6 +406,7 @@ const StorageTransferBasePathKey = "StorageTransfer"
 const TagsBasePathKey = "Tags"
 const TPUBasePathKey = "TPU"
 const VertexAIBasePathKey = "VertexAI"
+const VmwareengineBasePathKey = "Vmwareengine"
 const VPCAccessBasePathKey = "VPCAccess"
 const WorkflowsBasePathKey = "Workflows"
 const WorkstationsBasePathKey = "Workstations"
@@ -474,6 +484,8 @@ var DefaultBasePaths = map[string]string{
 	GameServicesBasePathKey:             "https://gameservices.googleapis.com/v1beta/",
 	GKEBackupBasePathKey:                "https://gkebackup.googleapis.com/v1/",
 	GKEHubBasePathKey:                   "https://gkehub.googleapis.com/v1beta1/",
+	GKEHub2BasePathKey:                  "https://gkehub.googleapis.com/v1beta/",
+	GkeonpremBasePathKey:                "https://gkeonprem.googleapis.com/v1/",
 	HealthcareBasePathKey:               "https://healthcare.googleapis.com/v1beta1/",
 	IAM2BasePathKey:                     "https://iam.googleapis.com/v2beta/",
 	IAMBetaBasePathKey:                  "https://iam.googleapis.com/v1beta/",
@@ -512,6 +524,7 @@ var DefaultBasePaths = map[string]string{
 	TagsBasePathKey:                     "https://cloudresourcemanager.googleapis.com/v3/",
 	TPUBasePathKey:                      "https://tpu.googleapis.com/v1/",
 	VertexAIBasePathKey:                 "https://{{region}}-aiplatform.googleapis.com/v1beta1/",
+	VmwareengineBasePathKey:             "https://vmwareengine.googleapis.com/v1/",
 	VPCAccessBasePathKey:                "https://vpcaccess.googleapis.com/v1beta1/",
 	WorkflowsBasePathKey:                "https://workflows.googleapis.com/v1/",
 	WorkstationsBasePathKey:             "https://workstations.googleapis.com/v1beta/",
@@ -888,6 +901,16 @@ func HandleSDKDefaults(d *schema.ResourceData) error {
 			"GOOGLE_GKE_HUB_CUSTOM_ENDPOINT",
 		}, DefaultBasePaths[GKEHubBasePathKey]))
 	}
+	if d.Get("gke_hub2_custom_endpoint") == "" {
+		d.Set("gke_hub2_custom_endpoint", MultiEnvDefault([]string{
+			"GOOGLE_GKE_HUB2_CUSTOM_ENDPOINT",
+		}, DefaultBasePaths[GKEHub2BasePathKey]))
+	}
+	if d.Get("gkeonprem_custom_endpoint") == "" {
+		d.Set("gkeonprem_custom_endpoint", MultiEnvDefault([]string{
+			"GOOGLE_GKEONPREM_CUSTOM_ENDPOINT",
+		}, DefaultBasePaths[GkeonpremBasePathKey]))
+	}
 	if d.Get("healthcare_custom_endpoint") == "" {
 		d.Set("healthcare_custom_endpoint", MultiEnvDefault([]string{
 			"GOOGLE_HEALTHCARE_CUSTOM_ENDPOINT",
@@ -1077,6 +1100,11 @@ func HandleSDKDefaults(d *schema.ResourceData) error {
 		d.Set("vertex_ai_custom_endpoint", MultiEnvDefault([]string{
 			"GOOGLE_VERTEX_AI_CUSTOM_ENDPOINT",
 		}, DefaultBasePaths[VertexAIBasePathKey]))
+	}
+	if d.Get("vmwareengine_custom_endpoint") == "" {
+		d.Set("vmwareengine_custom_endpoint", MultiEnvDefault([]string{
+			"GOOGLE_VMWAREENGINE_CUSTOM_ENDPOINT",
+		}, DefaultBasePaths[VmwareengineBasePathKey]))
 	}
 	if d.Get("vpc_access_custom_endpoint") == "" {
 		d.Set("vpc_access_custom_endpoint", MultiEnvDefault([]string{
@@ -1875,7 +1903,7 @@ type StaticTokenSource struct {
 // instead.
 func (c *Config) GetCredentials(clientScopes []string, initialCredentialsOnly bool) (googleoauth.Credentials, error) {
 	if c.AccessToken != "" {
-		contents, _, err := PathOrContents(c.AccessToken)
+		contents, _, err := verify.PathOrContents(c.AccessToken)
 		if err != nil {
 			return googleoauth.Credentials{}, fmt.Errorf("Error loading access token: %s", err)
 		}
@@ -1898,7 +1926,7 @@ func (c *Config) GetCredentials(clientScopes []string, initialCredentialsOnly bo
 	}
 
 	if c.Credentials != "" {
-		contents, _, err := PathOrContents(c.Credentials)
+		contents, _, err := verify.PathOrContents(c.Credentials)
 		if err != nil {
 			return googleoauth.Credentials{}, fmt.Errorf("error loading credentials: %s", err)
 		}
@@ -1912,7 +1940,7 @@ func (c *Config) GetCredentials(clientScopes []string, initialCredentialsOnly bo
 			return *creds, nil
 		}
 
-		creds, err := googleoauth.CredentialsFromJSON(c.Context, []byte(contents), clientScopes...)
+		creds, err := transport.Creds(c.Context, option.WithCredentialsJSON([]byte(contents)), option.WithScopes(clientScopes...))
 		if err != nil {
 			return googleoauth.Credentials{}, fmt.Errorf("unable to parse credentials from '%s': %s", contents, err)
 		}
@@ -1934,14 +1962,12 @@ func (c *Config) GetCredentials(clientScopes []string, initialCredentialsOnly bo
 
 	log.Printf("[INFO] Authenticating using DefaultClient...")
 	log.Printf("[INFO]   -- Scopes: %s", clientScopes)
-	defaultTS, err := googleoauth.DefaultTokenSource(context.Background(), clientScopes...)
+	creds, err := transport.Creds(context.Background(), option.WithScopes(clientScopes...))
 	if err != nil {
 		return googleoauth.Credentials{}, fmt.Errorf("Attempted to load application default credentials since neither `credentials` nor `access_token` was set in the provider block.  No credentials loaded. To use your gcloud credentials, run 'gcloud auth application-default login'.  Original error: %w", err)
 	}
 
-	return googleoauth.Credentials{
-		TokenSource: defaultTS,
-	}, err
+	return *creds, nil
 }
 
 // Remove the `/{{version}}/` from a base path if present.
@@ -2014,6 +2040,8 @@ func ConfigureBasePaths(c *Config) {
 	c.GameServicesBasePath = DefaultBasePaths[GameServicesBasePathKey]
 	c.GKEBackupBasePath = DefaultBasePaths[GKEBackupBasePathKey]
 	c.GKEHubBasePath = DefaultBasePaths[GKEHubBasePathKey]
+	c.GKEHub2BasePath = DefaultBasePaths[GKEHub2BasePathKey]
+	c.GkeonpremBasePath = DefaultBasePaths[GkeonpremBasePathKey]
 	c.HealthcareBasePath = DefaultBasePaths[HealthcareBasePathKey]
 	c.IAM2BasePath = DefaultBasePaths[IAM2BasePathKey]
 	c.IAMBetaBasePath = DefaultBasePaths[IAMBetaBasePathKey]
@@ -2052,6 +2080,7 @@ func ConfigureBasePaths(c *Config) {
 	c.TagsBasePath = DefaultBasePaths[TagsBasePathKey]
 	c.TPUBasePath = DefaultBasePaths[TPUBasePathKey]
 	c.VertexAIBasePath = DefaultBasePaths[VertexAIBasePathKey]
+	c.VmwareengineBasePath = DefaultBasePaths[VmwareengineBasePathKey]
 	c.VPCAccessBasePath = DefaultBasePaths[VPCAccessBasePathKey]
 	c.WorkflowsBasePath = DefaultBasePaths[WorkflowsBasePathKey]
 	c.WorkstationsBasePath = DefaultBasePaths[WorkstationsBasePathKey]
@@ -2079,7 +2108,13 @@ func GetCurrentUserEmail(config *Config, userAgent string) (string, error) {
 
 	// See https://github.com/golang/oauth2/issues/306 for a recommendation to do this from a Go maintainer
 	// URL retrieved from https://accounts.google.com/.well-known/openid-configuration
-	res, err := SendRequest(config, "GET", "NO_BILLING_PROJECT_OVERRIDE", "https://openidconnect.googleapis.com/v1/userinfo", userAgent, nil)
+	res, err := SendRequest(SendRequestOptions{
+		Config:    config,
+		Method:    "GET",
+		Project:   "NO_BILLING_PROJECT_OVERRIDE",
+		RawURL:    "https://openidconnect.googleapis.com/v1/userinfo",
+		UserAgent: userAgent,
+	})
 
 	if err != nil {
 		return "", fmt.Errorf("error retrieving userinfo for your provider credentials. have you enabled the 'https://www.googleapis.com/auth/userinfo.email' scope? error: %s", err)

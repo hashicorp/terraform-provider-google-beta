@@ -1,3 +1,6 @@
+// Copyright (c) HashiCorp, Inc.
+// SPDX-License-Identifier: MPL-2.0
+
 // ----------------------------------------------------------------------------
 //
 //     ***     AUTO GENERATED CODE    ***    Type: MMv1     ***
@@ -18,6 +21,8 @@ import (
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 )
 
 func TestAccApiGatewayApiConfigIamBindingGenerated(t *testing.T) {
@@ -29,7 +34,7 @@ func TestAccApiGatewayApiConfigIamBindingGenerated(t *testing.T) {
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { AccTestPreCheck(t) },
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
 		Steps: []resource.TestStep{
 			{
@@ -52,7 +57,7 @@ func TestAccApiGatewayApiConfigIamMemberGenerated(t *testing.T) {
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { AccTestPreCheck(t) },
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
 		Steps: []resource.TestStep{
 			{
@@ -72,11 +77,12 @@ func TestAccApiGatewayApiConfigIamPolicyGenerated(t *testing.T) {
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { AccTestPreCheck(t) },
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccApiGatewayApiConfigIamPolicy_basicGenerated(context),
+				Check:  resource.TestCheckResourceAttrSet("data.google_api_gateway_api_config_iam_policy.foo", "policy_data"),
 			},
 			{
 				Config: testAccApiGatewayApiConfigIamPolicy_emptyBinding(context),
@@ -154,6 +160,15 @@ resource "google_api_gateway_api_config_iam_policy" "foo" {
   api = google_api_gateway_api_config.api_cfg.api
   api_config = google_api_gateway_api_config.api_cfg.api_config_id
   policy_data = data.google_iam_policy.foo.policy_data
+}
+
+data "google_api_gateway_api_config_iam_policy" "foo" {
+  provider = google-beta
+  api = google_api_gateway_api_config.api_cfg.api
+  api_config = google_api_gateway_api_config.api_cfg.api_config_id
+  depends_on = [
+    google_api_gateway_api_config_iam_policy.foo
+  ]
 }
 `, context)
 }

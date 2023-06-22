@@ -1,3 +1,5 @@
+// Copyright (c) HashiCorp, Inc.
+// SPDX-License-Identifier: MPL-2.0
 package google
 
 import (
@@ -6,59 +8,24 @@ import (
 	"testing"
 	"time"
 
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/resourcemanager"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
-
-func TestProjectServiceServiceValidateFunc(t *testing.T) {
-	cases := map[string]struct {
-		val                   interface{}
-		ExpectValidationError bool
-	}{
-		"ignoredProjectService": {
-			val:                   "dataproc-control.googleapis.com",
-			ExpectValidationError: true,
-		},
-		"bannedProjectService": {
-			val:                   "bigquery-json.googleapis.com",
-			ExpectValidationError: true,
-		},
-		"third party API": {
-			val:                   "whatever.example.com",
-			ExpectValidationError: false,
-		},
-		"not a domain": {
-			val:                   "monitoring",
-			ExpectValidationError: true,
-		},
-		"not a string": {
-			val:                   5,
-			ExpectValidationError: true,
-		},
-	}
-
-	for tn, tc := range cases {
-		_, errs := validateProjectServiceService(tc.val, "service")
-		if tc.ExpectValidationError && len(errs) == 0 {
-			t.Errorf("bad: %s, %q passed validation but was expected to fail", tn, tc.val)
-		}
-		if !tc.ExpectValidationError && len(errs) > 0 {
-			t.Errorf("bad: %s, %q failed validation but was expected to pass. errs: %q", tn, tc.val, errs)
-		}
-	}
-}
 
 // Test that services can be enabled and disabled on a project
 func TestAccProjectService_basic(t *testing.T) {
 	t.Parallel()
 	// Multiple fine-grained resources
-	SkipIfVcr(t)
+	acctest.SkipIfVcr(t)
 
-	org := GetTestOrgFromEnv(t)
+	org := acctest.GetTestOrgFromEnv(t)
 	pid := fmt.Sprintf("tf-test-%d", RandInt(t))
 	services := []string{"iam.googleapis.com", "cloudresourcemanager.googleapis.com"}
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { AccTestPreCheck(t) },
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
 		Steps: []resource.TestStep{
 			{
@@ -106,16 +73,16 @@ func TestAccProjectService_basic(t *testing.T) {
 
 func TestAccProjectService_disableDependentServices(t *testing.T) {
 	// Multiple fine-grained resources
-	SkipIfVcr(t)
+	acctest.SkipIfVcr(t)
 	t.Parallel()
 
-	org := GetTestOrgFromEnv(t)
-	billingId := GetTestBillingAccountFromEnv(t)
+	org := acctest.GetTestOrgFromEnv(t)
+	billingId := acctest.GetTestBillingAccountFromEnv(t)
 	pid := fmt.Sprintf("tf-test-%d", RandInt(t))
 	services := []string{"cloudbuild.googleapis.com", "containerregistry.googleapis.com"}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { AccTestPreCheck(t) },
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
 		Steps: []resource.TestStep{
 			{
@@ -151,11 +118,11 @@ func TestAccProjectService_disableDependentServices(t *testing.T) {
 func TestAccProjectService_handleNotFound(t *testing.T) {
 	t.Parallel()
 
-	org := GetTestOrgFromEnv(t)
+	org := acctest.GetTestOrgFromEnv(t)
 	pid := fmt.Sprintf("tf-test-%d", RandInt(t))
 	service := "iam.googleapis.com"
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { AccTestPreCheck(t) },
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
 		Steps: []resource.TestStep{
 			{
@@ -176,19 +143,19 @@ func TestAccProjectService_handleNotFound(t *testing.T) {
 func TestAccProjectService_renamedService(t *testing.T) {
 	t.Parallel()
 
-	if len(renamedServices) == 0 {
+	if len(resourcemanager.RenamedServices) == 0 {
 		t.Skip()
 	}
 
 	var newName string
-	for _, new := range renamedServices {
+	for _, new := range resourcemanager.RenamedServices {
 		newName = new
 	}
 
-	org := GetTestOrgFromEnv(t)
+	org := acctest.GetTestOrgFromEnv(t)
 	pid := fmt.Sprintf("tf-test-%d", RandInt(t))
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { AccTestPreCheck(t) },
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
 		Steps: []resource.TestStep{
 			{

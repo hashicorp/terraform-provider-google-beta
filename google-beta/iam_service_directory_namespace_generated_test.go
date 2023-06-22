@@ -1,3 +1,6 @@
+// Copyright (c) HashiCorp, Inc.
+// SPDX-License-Identifier: MPL-2.0
+
 // ----------------------------------------------------------------------------
 //
 //     ***     AUTO GENERATED CODE    ***    Type: MMv1     ***
@@ -18,6 +21,8 @@ import (
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 )
 
 func TestAccServiceDirectoryNamespaceIamBindingGenerated(t *testing.T) {
@@ -29,7 +34,7 @@ func TestAccServiceDirectoryNamespaceIamBindingGenerated(t *testing.T) {
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { AccTestPreCheck(t) },
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
 		Steps: []resource.TestStep{
 			{
@@ -52,7 +57,7 @@ func TestAccServiceDirectoryNamespaceIamMemberGenerated(t *testing.T) {
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { AccTestPreCheck(t) },
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
 		Steps: []resource.TestStep{
 			{
@@ -72,11 +77,12 @@ func TestAccServiceDirectoryNamespaceIamPolicyGenerated(t *testing.T) {
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { AccTestPreCheck(t) },
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccServiceDirectoryNamespaceIamPolicy_basicGenerated(context),
+				Check:  resource.TestCheckResourceAttrSet("data.google_service_directory_namespace_iam_policy.foo", "policy_data"),
 			},
 			{
 				Config: testAccServiceDirectoryNamespaceIamPolicy_emptyBinding(context),
@@ -132,6 +138,14 @@ resource "google_service_directory_namespace_iam_policy" "foo" {
   provider = google-beta
   name = google_service_directory_namespace.example.name
   policy_data = data.google_iam_policy.foo.policy_data
+}
+
+data "google_service_directory_namespace_iam_policy" "foo" {
+  provider = google-beta
+  name = google_service_directory_namespace.example.name
+  depends_on = [
+    google_service_directory_namespace_iam_policy.foo
+  ]
 }
 `, context)
 }

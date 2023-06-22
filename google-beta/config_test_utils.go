@@ -1,3 +1,5 @@
+// Copyright (c) HashiCorp, Inc.
+// SPDX-License-Identifier: MPL-2.0
 package google
 
 import (
@@ -80,6 +82,8 @@ func configureTestBasePaths(c *transport_tpg.Config, url string) {
 	c.GameServicesBasePath = url
 	c.GKEBackupBasePath = url
 	c.GKEHubBasePath = url
+	c.GKEHub2BasePath = url
+	c.GkeonpremBasePath = url
 	c.HealthcareBasePath = url
 	c.IAM2BasePath = url
 	c.IAMBetaBasePath = url
@@ -118,6 +122,7 @@ func configureTestBasePaths(c *transport_tpg.Config, url string) {
 	c.TagsBasePath = url
 	c.TPUBasePath = url
 	c.VertexAIBasePath = url
+	c.VmwareengineBasePath = url
 	c.VPCAccessBasePath = url
 	c.WorkflowsBasePath = url
 	c.WorkstationsBasePath = url

@@ -1,9 +1,12 @@
+// Copyright (c) HashiCorp, Inc.
+// SPDX-License-Identifier: MPL-2.0
 package google
 
 import (
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 )
 
 func TestAccCloudRunV2Job_cloudrunv2JobFullUpdate(t *testing.T) {
@@ -14,7 +17,7 @@ func TestAccCloudRunV2Job_cloudrunv2JobFullUpdate(t *testing.T) {
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { AccTestPreCheck(t) },
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckCloudRunV2JobDestroyProducer(t),
 		Steps: []resource.TestStep{
@@ -45,9 +48,11 @@ func testAccCloudRunV2Job_cloudrunv2JobFull(context map[string]interface{}) stri
   resource "google_cloud_run_v2_job" "default" {
     name     = "tf-test-cloudrun-job%{random_suffix}"
     location = "us-central1"
-    launch_stage = "BETA"
     labels = {
       label-1 = "value-1"
+    }
+    annotations = {
+      job-annotation-1 = "job-value-1"
     }
     client = "client-1"
     client_version = "client-version-1"
@@ -55,6 +60,9 @@ func testAccCloudRunV2Job_cloudrunv2JobFull(context map[string]interface{}) stri
     template {
       labels = {
         label-1 = "value-1"
+      }
+      annotations = {
+        temp-annotation-1 = "temp-value-1"
       }
       parallelism = 4
       task_count = 4
@@ -108,7 +116,6 @@ func testAccCloudRunV2Job_cloudrunv2JobFullUpdate(context map[string]interface{}
 resource "google_cloud_run_v2_job" "default" {
   name     = "tf-test-cloudrun-job%{random_suffix}"
   location = "us-central1"
-  launch_stage = "BETA"
   binary_authorization {
     use_default = true
     breakglass_justification = "Some justification"
@@ -116,12 +123,18 @@ resource "google_cloud_run_v2_job" "default" {
   labels = {
     label-1 = "value-update"
   }
+  annotations = {
+    job-annotation-1 = "job-value-update"
+  }
   client = "client-update"
   client_version = "client-version-update"
   
   template {
     labels = {
       label-1 = "value-update"
+    }
+    annotations = {
+      temp-annotation-1 = "temp-value-update"
     }
     parallelism = 2
     task_count = 8

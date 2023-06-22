@@ -1,3 +1,6 @@
+// Copyright (c) HashiCorp, Inc.
+// SPDX-License-Identifier: MPL-2.0
+
 // ----------------------------------------------------------------------------
 //
 //     ***     AUTO GENERATED CODE    ***    Type: MMv1     ***
@@ -19,6 +22,8 @@ import (
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 )
 
 func TestAccWorkstationsWorkstationConfigIamBindingGenerated(t *testing.T) {
@@ -30,7 +35,7 @@ func TestAccWorkstationsWorkstationConfigIamBindingGenerated(t *testing.T) {
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { AccTestPreCheck(t) },
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
 		Steps: []resource.TestStep{
 			{
@@ -38,7 +43,7 @@ func TestAccWorkstationsWorkstationConfigIamBindingGenerated(t *testing.T) {
 			},
 			{
 				ResourceName:      "google_workstations_workstation_config_iam_binding.foo",
-				ImportStateId:     fmt.Sprintf("projects/%s/locations/%s/workstationClusters/%s/workstationConfigs/%s roles/viewer", GetTestProjectFromEnv(), GetTestRegionFromEnv(), fmt.Sprintf("tf-test-workstation-cluster%s", context["random_suffix"]), fmt.Sprintf("tf-test-workstation-config%s", context["random_suffix"])),
+				ImportStateId:     fmt.Sprintf("projects/%s/locations/%s/workstationClusters/%s/workstationConfigs/%s roles/viewer", acctest.GetTestProjectFromEnv(), acctest.GetTestRegionFromEnv(), fmt.Sprintf("tf-test-workstation-cluster%s", context["random_suffix"]), fmt.Sprintf("tf-test-workstation-config%s", context["random_suffix"])),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
@@ -48,7 +53,7 @@ func TestAccWorkstationsWorkstationConfigIamBindingGenerated(t *testing.T) {
 			},
 			{
 				ResourceName:      "google_workstations_workstation_config_iam_binding.foo",
-				ImportStateId:     fmt.Sprintf("projects/%s/locations/%s/workstationClusters/%s/workstationConfigs/%s roles/viewer", GetTestProjectFromEnv(), GetTestRegionFromEnv(), fmt.Sprintf("tf-test-workstation-cluster%s", context["random_suffix"]), fmt.Sprintf("tf-test-workstation-config%s", context["random_suffix"])),
+				ImportStateId:     fmt.Sprintf("projects/%s/locations/%s/workstationClusters/%s/workstationConfigs/%s roles/viewer", acctest.GetTestProjectFromEnv(), acctest.GetTestRegionFromEnv(), fmt.Sprintf("tf-test-workstation-cluster%s", context["random_suffix"]), fmt.Sprintf("tf-test-workstation-config%s", context["random_suffix"])),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
@@ -65,7 +70,7 @@ func TestAccWorkstationsWorkstationConfigIamMemberGenerated(t *testing.T) {
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { AccTestPreCheck(t) },
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
 		Steps: []resource.TestStep{
 			{
@@ -74,7 +79,7 @@ func TestAccWorkstationsWorkstationConfigIamMemberGenerated(t *testing.T) {
 			},
 			{
 				ResourceName:      "google_workstations_workstation_config_iam_member.foo",
-				ImportStateId:     fmt.Sprintf("projects/%s/locations/%s/workstationClusters/%s/workstationConfigs/%s roles/viewer user:admin@hashicorptest.com", GetTestProjectFromEnv(), GetTestRegionFromEnv(), fmt.Sprintf("tf-test-workstation-cluster%s", context["random_suffix"]), fmt.Sprintf("tf-test-workstation-config%s", context["random_suffix"])),
+				ImportStateId:     fmt.Sprintf("projects/%s/locations/%s/workstationClusters/%s/workstationConfigs/%s roles/viewer user:admin@hashicorptest.com", acctest.GetTestProjectFromEnv(), acctest.GetTestRegionFromEnv(), fmt.Sprintf("tf-test-workstation-cluster%s", context["random_suffix"]), fmt.Sprintf("tf-test-workstation-config%s", context["random_suffix"])),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
@@ -91,15 +96,16 @@ func TestAccWorkstationsWorkstationConfigIamPolicyGenerated(t *testing.T) {
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { AccTestPreCheck(t) },
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccWorkstationsWorkstationConfigIamPolicy_basicGenerated(context),
+				Check:  resource.TestCheckResourceAttrSet("data.google_workstations_workstation_config_iam_policy.foo", "policy_data"),
 			},
 			{
 				ResourceName:      "google_workstations_workstation_config_iam_policy.foo",
-				ImportStateId:     fmt.Sprintf("projects/%s/locations/%s/workstationClusters/%s/workstationConfigs/%s", GetTestProjectFromEnv(), GetTestRegionFromEnv(), fmt.Sprintf("tf-test-workstation-cluster%s", context["random_suffix"]), fmt.Sprintf("tf-test-workstation-config%s", context["random_suffix"])),
+				ImportStateId:     fmt.Sprintf("projects/%s/locations/%s/workstationClusters/%s/workstationConfigs/%s", acctest.GetTestProjectFromEnv(), acctest.GetTestRegionFromEnv(), fmt.Sprintf("tf-test-workstation-cluster%s", context["random_suffix"]), fmt.Sprintf("tf-test-workstation-config%s", context["random_suffix"])),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
@@ -108,7 +114,7 @@ func TestAccWorkstationsWorkstationConfigIamPolicyGenerated(t *testing.T) {
 			},
 			{
 				ResourceName:      "google_workstations_workstation_config_iam_policy.foo",
-				ImportStateId:     fmt.Sprintf("projects/%s/locations/%s/workstationClusters/%s/workstationConfigs/%s", GetTestProjectFromEnv(), GetTestRegionFromEnv(), fmt.Sprintf("tf-test-workstation-cluster%s", context["random_suffix"]), fmt.Sprintf("tf-test-workstation-config%s", context["random_suffix"])),
+				ImportStateId:     fmt.Sprintf("projects/%s/locations/%s/workstationClusters/%s/workstationConfigs/%s", acctest.GetTestProjectFromEnv(), acctest.GetTestRegionFromEnv(), fmt.Sprintf("tf-test-workstation-cluster%s", context["random_suffix"]), fmt.Sprintf("tf-test-workstation-config%s", context["random_suffix"])),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
@@ -153,7 +159,10 @@ resource "google_workstations_workstation_config" "default" {
   workstation_config_id  = "tf-test-workstation-config%{random_suffix}"
   workstation_cluster_id = google_workstations_workstation_cluster.default.workstation_cluster_id
   location   		         = "us-central1"
-  
+
+  idle_timeout = "600s"
+  running_timeout = "21600s"
+
   host {
     gce_instance {
       machine_type                = "e2-standard-4"
@@ -212,7 +221,10 @@ resource "google_workstations_workstation_config" "default" {
   workstation_config_id  = "tf-test-workstation-config%{random_suffix}"
   workstation_cluster_id = google_workstations_workstation_cluster.default.workstation_cluster_id
   location   		         = "us-central1"
-  
+
+  idle_timeout = "600s"
+  running_timeout = "21600s"
+
   host {
     gce_instance {
       machine_type                = "e2-standard-4"
@@ -237,6 +249,17 @@ resource "google_workstations_workstation_config_iam_policy" "foo" {
   workstation_cluster_id = google_workstations_workstation_config.default.workstation_cluster_id
   workstation_config_id = google_workstations_workstation_config.default.workstation_config_id
   policy_data = data.google_iam_policy.foo.policy_data
+}
+
+data "google_workstations_workstation_config_iam_policy" "foo" {
+  provider = google-beta
+  project = google_workstations_workstation_config.default.project
+  location = google_workstations_workstation_config.default.location
+  workstation_cluster_id = google_workstations_workstation_config.default.workstation_cluster_id
+  workstation_config_id = google_workstations_workstation_config.default.workstation_config_id
+  depends_on = [
+    google_workstations_workstation_config_iam_policy.foo
+  ]
 }
 `, context)
 }
@@ -278,7 +301,10 @@ resource "google_workstations_workstation_config" "default" {
   workstation_config_id  = "tf-test-workstation-config%{random_suffix}"
   workstation_cluster_id = google_workstations_workstation_cluster.default.workstation_cluster_id
   location   		         = "us-central1"
-  
+
+  idle_timeout = "600s"
+  running_timeout = "21600s"
+
   host {
     gce_instance {
       machine_type                = "e2-standard-4"
@@ -340,7 +366,10 @@ resource "google_workstations_workstation_config" "default" {
   workstation_config_id  = "tf-test-workstation-config%{random_suffix}"
   workstation_cluster_id = google_workstations_workstation_cluster.default.workstation_cluster_id
   location   		         = "us-central1"
-  
+
+  idle_timeout = "600s"
+  running_timeout = "21600s"
+
   host {
     gce_instance {
       machine_type                = "e2-standard-4"
@@ -399,7 +428,10 @@ resource "google_workstations_workstation_config" "default" {
   workstation_config_id  = "tf-test-workstation-config%{random_suffix}"
   workstation_cluster_id = google_workstations_workstation_cluster.default.workstation_cluster_id
   location   		         = "us-central1"
-  
+
+  idle_timeout = "600s"
+  running_timeout = "21600s"
+
   host {
     gce_instance {
       machine_type                = "e2-standard-4"
