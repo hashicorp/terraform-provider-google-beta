@@ -37,7 +37,6 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/monitoring"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/networkconnectivity"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/orgpolicy"
-	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/osconfig"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/privateca"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/recaptchaenterprise"
 )
@@ -79,7 +78,6 @@ var dclResources = map[string]*schema.Resource{
 	"google_network_connectivity_hub":                           networkconnectivity.ResourceNetworkConnectivityHub(),
 	"google_network_connectivity_spoke":                         networkconnectivity.ResourceNetworkConnectivitySpoke(),
 	"google_org_policy_policy":                                  orgpolicy.ResourceOrgPolicyPolicy(),
-	"google_os_config_os_policy_assignment":                     osconfig.ResourceOsConfigOsPolicyAssignment(),
 	"google_privateca_certificate_template":                     privateca.ResourcePrivatecaCertificateTemplate(),
 	"google_recaptcha_enterprise_key":                           recaptchaenterprise.ResourceRecaptchaEnterpriseKey(),
 }
