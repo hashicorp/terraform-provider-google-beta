@@ -24,6 +24,7 @@ import (
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/fwmodels"
+	tpgprovider "github.com/hashicorp/terraform-provider-google-beta/google-beta/provider"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 
@@ -434,7 +435,7 @@ func configureApiClient(ctx context.Context, p *FrameworkProvider, diags *fwDiag
 
 // GetSDKProvider gets the SDK provider with an overwritten configure function to be called by MuxedProviders
 func GetSDKProvider(testName string) *schema.Provider {
-	prov := Provider()
+	prov := tpgprovider.Provider()
 	if acctest.IsVcrEnabled() {
 		old := prov.ConfigureContextFunc
 		prov.ConfigureContextFunc = func(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
