@@ -1,6 +1,6 @@
 // Copyright (c) HashiCorp, Inc.
 // SPDX-License-Identifier: MPL-2.0
-package google
+package fwtransport
 
 import (
 	"fmt"
@@ -22,11 +22,11 @@ import (
 // of those "projects" as well. You can find out if this is required by looking at
 // the basePath value in the client library file.
 
-func (p *frameworkProvider) NewDnsClient(userAgent string, diags *diag.Diagnostics) *dns.Service {
+func (p *FrameworkProviderConfig) NewDnsClient(userAgent string, diags *diag.Diagnostics) *dns.Service {
 	dnsClientBasePath := transport_tpg.RemoveBasePathVersion(p.DNSBasePath)
 	dnsClientBasePath = strings.ReplaceAll(dnsClientBasePath, "/dns/", "")
-	tflog.Info(p.context, fmt.Sprintf("Instantiating Google Cloud DNS client for path %s", dnsClientBasePath))
-	clientDns, err := dns.NewService(p.context, option.WithHTTPClient(p.client))
+	tflog.Info(p.Context, fmt.Sprintf("Instantiating Google Cloud DNS client for path %s", dnsClientBasePath))
+	clientDns, err := dns.NewService(p.Context, option.WithHTTPClient(p.Client))
 	if err != nil {
 		diags.AddWarning("error creating client dns", err.Error())
 		return nil
@@ -37,11 +37,11 @@ func (p *frameworkProvider) NewDnsClient(userAgent string, diags *diag.Diagnosti
 	return clientDns
 }
 
-func (p *frameworkProvider) NewFirebaseClient(userAgent string, diags *diag.Diagnostics) *firebase.Service {
+func (p *FrameworkProviderConfig) NewFirebaseClient(userAgent string, diags *diag.Diagnostics) *firebase.Service {
 	firebaseClientBasePath := transport_tpg.RemoveBasePathVersion(p.FirebaseBasePath)
 	firebaseClientBasePath = strings.ReplaceAll(firebaseClientBasePath, "/firebase/", "")
-	tflog.Info(p.context, fmt.Sprintf("Instantiating Google Cloud firebase client for path %s", firebaseClientBasePath))
-	clientFirebase, err := firebase.NewService(p.context, option.WithHTTPClient(p.client))
+	tflog.Info(p.Context, fmt.Sprintf("Instantiating Google Cloud firebase client for path %s", firebaseClientBasePath))
+	clientFirebase, err := firebase.NewService(p.Context, option.WithHTTPClient(p.Client))
 	if err != nil {
 		diags.AddWarning("error creating client firebase", err.Error())
 		return nil
