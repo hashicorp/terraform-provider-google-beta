@@ -1048,9 +1048,9 @@ func DatasourceMapWithErrors() (map[string]*schema.Resource, error) {
 		})
 }
 
-// Generated resources: 350
+// Generated resources: 352
 // Generated IAM resources: 228
-// Total generated resources: 578
+// Total generated resources: 580
 func ResourceMap() map[string]*schema.Resource {
 	resourceMap, _ := ResourceMapWithErrors()
 	return resourceMap
@@ -1248,6 +1248,7 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_compute_machine_image_iam_policy":                        tpgiamresource.ResourceIamPolicy(compute.ComputeMachineImageIamSchema, compute.ComputeMachineImageIamUpdaterProducer, compute.ComputeMachineImageIdParseFunc),
 			"google_compute_managed_ssl_certificate":                         compute.ResourceComputeManagedSslCertificate(),
 			"google_compute_network":                                         compute.ResourceComputeNetwork(),
+			"google_compute_network_edge_security_service":                   compute.ResourceComputeNetworkEdgeSecurityService(),
 			"google_compute_network_endpoint":                                compute.ResourceComputeNetworkEndpoint(),
 			"google_compute_network_endpoint_group":                          compute.ResourceComputeNetworkEndpointGroup(),
 			"google_compute_network_endpoints":                               compute.ResourceComputeNetworkEndpoints(),
@@ -1275,6 +1276,7 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_compute_region_health_check":                             compute.ResourceComputeRegionHealthCheck(),
 			"google_compute_region_network_endpoint_group":                   compute.ResourceComputeRegionNetworkEndpointGroup(),
 			"google_compute_region_per_instance_config":                      compute.ResourceComputeRegionPerInstanceConfig(),
+			"google_compute_region_security_policy":                          compute.ResourceComputeRegionSecurityPolicy(),
 			"google_compute_region_ssl_certificate":                          compute.ResourceComputeRegionSslCertificate(),
 			"google_compute_region_ssl_policy":                               compute.ResourceComputeRegionSslPolicy(),
 			"google_compute_region_target_http_proxy":                        compute.ResourceComputeRegionTargetHttpProxy(),
