@@ -92,6 +92,7 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/osconfig"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/oslogin"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/privateca"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/publicca"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/pubsub"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/pubsublite"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/redis"
@@ -630,6 +631,11 @@ func Provider() *schema.Provider {
 				Optional:     true,
 				ValidateFunc: transport_tpg.ValidateCustomEndpoint,
 			},
+			"public_ca_custom_endpoint": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: transport_tpg.ValidateCustomEndpoint,
+			},
 			"pubsub_custom_endpoint": {
 				Type:         schema.TypeString,
 				Optional:     true,
@@ -1042,9 +1048,9 @@ func DatasourceMapWithErrors() (map[string]*schema.Resource, error) {
 		})
 }
 
-// Generated resources: 352
+// Generated resources: 353
 // Generated IAM resources: 228
-// Total generated resources: 580
+// Total generated resources: 581
 func ResourceMap() map[string]*schema.Resource {
 	resourceMap, _ := ResourceMapWithErrors()
 	return resourceMap
@@ -1536,6 +1542,7 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_privateca_certificate_template_iam_binding":              tpgiamresource.ResourceIamBinding(privateca.PrivatecaCertificateTemplateIamSchema, privateca.PrivatecaCertificateTemplateIamUpdaterProducer, privateca.PrivatecaCertificateTemplateIdParseFunc),
 			"google_privateca_certificate_template_iam_member":               tpgiamresource.ResourceIamMember(privateca.PrivatecaCertificateTemplateIamSchema, privateca.PrivatecaCertificateTemplateIamUpdaterProducer, privateca.PrivatecaCertificateTemplateIdParseFunc),
 			"google_privateca_certificate_template_iam_policy":               tpgiamresource.ResourceIamPolicy(privateca.PrivatecaCertificateTemplateIamSchema, privateca.PrivatecaCertificateTemplateIamUpdaterProducer, privateca.PrivatecaCertificateTemplateIdParseFunc),
+			"google_public_ca_external_account_key":                          publicca.ResourcePublicCAExternalAccountKey(),
 			"google_pubsub_schema":                                           pubsub.ResourcePubsubSchema(),
 			"google_pubsub_subscription":                                     pubsub.ResourcePubsubSubscription(),
 			"google_pubsub_topic":                                            pubsub.ResourcePubsubTopic(),
@@ -1958,6 +1965,7 @@ func providerConfigure(ctx context.Context, d *schema.ResourceData, p *schema.Pr
 	config.OSConfigBasePath = d.Get("os_config_custom_endpoint").(string)
 	config.OSLoginBasePath = d.Get("os_login_custom_endpoint").(string)
 	config.PrivatecaBasePath = d.Get("privateca_custom_endpoint").(string)
+	config.PublicCABasePath = d.Get("public_ca_custom_endpoint").(string)
 	config.PubsubBasePath = d.Get("pubsub_custom_endpoint").(string)
 	config.PubsubLiteBasePath = d.Get("pubsub_lite_custom_endpoint").(string)
 	config.RedisBasePath = d.Get("redis_custom_endpoint").(string)
