@@ -487,7 +487,16 @@ the supported values for the caller's project.`,
 				Computed: true,
 				Optional: true,
 				Description: `Indicates how many IOPS must be provisioned for the disk.
-Note: Update currently only supported by hyperdisk skus, allowing for an update of IOPS every 4 hours`,
+Note: Updating currently is only supported by hyperdisk skus without the need to delete and recreate the disk, hyperdisk
+allows for an update of IOPS every 4 hours. To update your hyperdisk more frequently, you'll need to manually delete and recreate it`,
+			},
+			"provisioned_throughput": {
+				Type:     schema.TypeInt,
+				Computed: true,
+				Optional: true,
+				Description: `Indicates how much Throughput must be provisioned for the disk.
+Note: Updating currently is only supported by hyperdisk skus without the need to delete and recreate the disk, hyperdisk
+allows for an update of Throughput every 4 hours. To update your hyperdisk more frequently, you'll need to manually delete and recreate it`,
 			},
 			"resource_policies": {
 				Type:     schema.TypeList,
@@ -824,6 +833,12 @@ func resourceComputeDiskCreate(d *schema.ResourceData, meta interface{}) error {
 	} else if v, ok := d.GetOkExists("provisioned_iops"); !tpgresource.IsEmptyValue(reflect.ValueOf(provisionedIopsProp)) && (ok || !reflect.DeepEqual(v, provisionedIopsProp)) {
 		obj["provisionedIops"] = provisionedIopsProp
 	}
+	provisionedThroughputProp, err := expandComputeDiskProvisionedThroughput(d.Get("provisioned_throughput"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("provisioned_throughput"); !tpgresource.IsEmptyValue(reflect.ValueOf(provisionedThroughputProp)) && (ok || !reflect.DeepEqual(v, provisionedThroughputProp)) {
+		obj["provisionedThroughput"] = provisionedThroughputProp
+	}
 	asyncPrimaryDiskProp, err := expandComputeDiskAsyncPrimaryDisk(d.Get("async_primary_disk"), d, config)
 	if err != nil {
 		return err
@@ -1035,6 +1050,9 @@ func resourceComputeDiskRead(d *schema.ResourceData, meta interface{}) error {
 	if err := d.Set("provisioned_iops", flattenComputeDiskProvisionedIops(res["provisionedIops"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Disk: %s", err)
 	}
+	if err := d.Set("provisioned_throughput", flattenComputeDiskProvisionedThroughput(res["provisionedThroughput"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Disk: %s", err)
+	}
 	if err := d.Set("async_primary_disk", flattenComputeDiskAsyncPrimaryDisk(res["asyncPrimaryDisk"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Disk: %s", err)
 	}
@@ -1205,6 +1223,53 @@ func resourceComputeDiskUpdate(d *schema.ResourceData, meta interface{}) error {
 		}
 
 		url, err := tpgresource.ReplaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/zones/{{zone}}/disks/{{name}}?paths=provisionedIops")
+		if err != nil {
+			return err
+		}
+
+		// err == nil indicates that the billing_project value was found
+		if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
+			billingProject = bp
+		}
+
+		res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
+			Config:    config,
+			Method:    "PATCH",
+			Project:   billingProject,
+			RawURL:    url,
+			UserAgent: userAgent,
+			Body:      obj,
+			Timeout:   d.Timeout(schema.TimeoutUpdate),
+		})
+		if err != nil {
+			return fmt.Errorf("Error updating Disk %q: %s", d.Id(), err)
+		} else {
+			log.Printf("[DEBUG] Finished updating Disk %q: %#v", d.Id(), res)
+		}
+
+		err = ComputeOperationWaitTime(
+			config, res, project, "Updating Disk", userAgent,
+			d.Timeout(schema.TimeoutUpdate))
+		if err != nil {
+			return err
+		}
+	}
+	if d.HasChange("provisioned_throughput") {
+		obj := make(map[string]interface{})
+
+		provisionedThroughputProp, err := expandComputeDiskProvisionedThroughput(d.Get("provisioned_throughput"), d, config)
+		if err != nil {
+			return err
+		} else if v, ok := d.GetOkExists("provisioned_throughput"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, provisionedThroughputProp)) {
+			obj["provisionedThroughput"] = provisionedThroughputProp
+		}
+
+		obj, err = resourceComputeDiskUpdateEncoder(d, meta, obj)
+		if err != nil {
+			return err
+		}
+
+		url, err := tpgresource.ReplaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/zones/{{zone}}/disks/{{name}}?paths=provisionedThroughput")
 		if err != nil {
 			return err
 		}
@@ -1492,6 +1557,23 @@ func flattenComputeDiskProvisionedIops(v interface{}, d *schema.ResourceData, co
 	return v // let terraform core handle it otherwise
 }
 
+func flattenComputeDiskProvisionedThroughput(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	// Handles the string fixed64 format
+	if strVal, ok := v.(string); ok {
+		if intVal, err := tpgresource.StringToFixed64(strVal); err == nil {
+			return intVal
+		}
+	}
+
+	// number values are represented as float64
+	if floatVal, ok := v.(float64); ok {
+		intVal := int(floatVal)
+		return intVal
+	}
+
+	return v // let terraform core handle it otherwise
+}
+
 func flattenComputeDiskAsyncPrimaryDisk(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return nil
@@ -1739,6 +1821,10 @@ func expandComputeDiskMultiWriter(v interface{}, d tpgresource.TerraformResource
 }
 
 func expandComputeDiskProvisionedIops(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeDiskProvisionedThroughput(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
@@ -2046,7 +2132,7 @@ func resourceComputeDiskEncoder(d *schema.ResourceData, meta interface{}, obj ma
 
 func resourceComputeDiskUpdateEncoder(d *schema.ResourceData, meta interface{}, obj map[string]interface{}) (map[string]interface{}, error) {
 
-	if d.HasChange("provisioned_iops") && strings.Contains(d.Get("type").(string), "hyperdisk") {
+	if (d.HasChange("provisioned_iops") && strings.Contains(d.Get("type").(string), "hyperdisk")) || (d.HasChange("provisioned_throughput") && strings.Contains(d.Get("type").(string), "hyperdisk")) {
 		nameProp := d.Get("name")
 		if v, ok := d.GetOkExists("name"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, nameProp)) {
 			obj["name"] = nameProp
