@@ -413,7 +413,6 @@ func resourceGkeonpremVmwareNodePoolCreate(d *schema.ResourceData, meta interfac
 		config, res, &opRes, project, "Creating VmwareNodePool", userAgent,
 		d.Timeout(schema.TimeoutCreate))
 	if err != nil {
-
 		return fmt.Errorf("Error waiting to create VmwareNodePool: %s", err)
 	}
 

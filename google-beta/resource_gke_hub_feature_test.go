@@ -67,7 +67,7 @@ resource "time_sleep" "wait_for_gkehub_enablement" {
   create_duration = "150s"
   depends_on = [google_project_service.gkehub]
 }
-  
+
 resource "google_gke_hub_feature" "feature" {
   name = "fleetobservability"
   location = "global"
@@ -76,7 +76,7 @@ resource "google_gke_hub_feature" "feature" {
     fleetobservability {
       logging_config {
         default_config {
-	  mode = "MOVE"
+    mode = "MOVE"
         }
         fleet_scope_logs_config {
           mode = "COPY"
@@ -105,7 +105,7 @@ resource "google_gke_hub_feature" "feature" {
     fleetobservability {
       logging_config {
         default_config {
-	  mode = "MOVE"
+    mode = "MOVE"
         }
       }
     }
@@ -363,9 +363,10 @@ func TestAccGKEHubFeature_gkehubFeatureMcsd(t *testing.T) {
 				Config: testAccGKEHubFeature_gkehubFeatureMcsd(context),
 			},
 			{
-				ResourceName:      "google_gke_hub_feature.feature",
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            "google_gke_hub_feature.feature",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"project"},
 			},
 			{
 				Config: testAccGKEHubFeature_gkehubFeatureMcsdUpdate(context),
@@ -384,7 +385,7 @@ func testAccGKEHubFeature_gkehubFeatureMcsd(context map[string]interface{}) stri
 resource "google_gke_hub_feature" "feature" {
   name = "multiclusterservicediscovery"
   location = "global"
-  project = google_project.project.project_id
+  project = "projects/${google_project.project.project_id}"
   labels = {
     foo = "bar"
   }

@@ -21,6 +21,7 @@ import (
 	"fmt"
 	"log"
 	"reflect"
+	"strings"
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -437,6 +438,7 @@ func resourceComputeGlobalForwardingRuleCreate(d *schema.ResourceData, meta inte
 	if err != nil {
 		return err
 	}
+	url = strings.ReplaceAll(url, "projects/projects/", "projects/")
 
 	log.Printf("[DEBUG] Creating new GlobalForwardingRule: %#v", obj)
 	billingProject := ""
@@ -445,7 +447,7 @@ func resourceComputeGlobalForwardingRuleCreate(d *schema.ResourceData, meta inte
 	if err != nil {
 		return fmt.Errorf("Error fetching project for GlobalForwardingRule: %s", err)
 	}
-	billingProject = project
+	billingProject = strings.TrimPrefix(project, "projects/")
 
 	// err == nil indicates that the billing_project value was found
 	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
@@ -470,6 +472,7 @@ func resourceComputeGlobalForwardingRuleCreate(d *schema.ResourceData, meta inte
 	if err != nil {
 		return fmt.Errorf("Error constructing id: %s", err)
 	}
+	id = strings.ReplaceAll(id, "projects/projects/", "projects/")
 	d.SetId(id)
 
 	err = ComputeOperationWaitTime(
@@ -541,6 +544,7 @@ func resourceComputeGlobalForwardingRuleRead(d *schema.ResourceData, meta interf
 	if err != nil {
 		return err
 	}
+	url = strings.ReplaceAll(url, "projects/projects/", "projects/")
 
 	billingProject := ""
 
@@ -548,7 +552,7 @@ func resourceComputeGlobalForwardingRuleRead(d *schema.ResourceData, meta interf
 	if err != nil {
 		return fmt.Errorf("Error fetching project for GlobalForwardingRule: %s", err)
 	}
-	billingProject = project
+	billingProject = strings.TrimPrefix(project, "projects/")
 
 	// err == nil indicates that the billing_project value was found
 	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
@@ -641,7 +645,7 @@ func resourceComputeGlobalForwardingRuleUpdate(d *schema.ResourceData, meta inte
 	if err != nil {
 		return fmt.Errorf("Error fetching project for GlobalForwardingRule: %s", err)
 	}
-	billingProject = project
+	billingProject = strings.TrimPrefix(project, "projects/")
 
 	d.Partial(true)
 
@@ -665,6 +669,7 @@ func resourceComputeGlobalForwardingRuleUpdate(d *schema.ResourceData, meta inte
 		if err != nil {
 			return err
 		}
+		url = strings.ReplaceAll(url, "projects/projects/", "projects/")
 
 		// err == nil indicates that the billing_project value was found
 		if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
@@ -707,6 +712,7 @@ func resourceComputeGlobalForwardingRuleUpdate(d *schema.ResourceData, meta inte
 		if err != nil {
 			return err
 		}
+		url = strings.ReplaceAll(url, "projects/projects/", "projects/")
 
 		// err == nil indicates that the billing_project value was found
 		if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
@@ -754,12 +760,13 @@ func resourceComputeGlobalForwardingRuleDelete(d *schema.ResourceData, meta inte
 	if err != nil {
 		return fmt.Errorf("Error fetching project for GlobalForwardingRule: %s", err)
 	}
-	billingProject = project
+	billingProject = strings.TrimPrefix(project, "projects/")
 
 	url, err := tpgresource.ReplaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/global/forwardingRules/{{name}}")
 	if err != nil {
 		return err
 	}
+	url = strings.ReplaceAll(url, "projects/projects/", "projects/")
 
 	var obj map[string]interface{}
 	log.Printf("[DEBUG] Deleting GlobalForwardingRule %q", d.Id())
@@ -809,6 +816,7 @@ func resourceComputeGlobalForwardingRuleImport(d *schema.ResourceData, meta inte
 	if err != nil {
 		return nil, fmt.Errorf("Error constructing id: %s", err)
 	}
+	id = strings.ReplaceAll(id, "projects/projects/", "projects/")
 	d.SetId(id)
 
 	return []*schema.ResourceData{d}, nil
