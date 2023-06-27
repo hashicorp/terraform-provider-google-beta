@@ -1071,6 +1071,33 @@ func ResourceContainerCluster() *schema.Resource {
 				},
 			},
 
+			"security_posture_config": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				MaxItems:    1,
+				Computed:    true,
+				Description: `Defines the config needed to enable/disable features for the Security Posture API`,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"mode": {
+							Type:             schema.TypeString,
+							Optional:         true,
+							Computed:         true,
+							ValidateFunc:     validation.StringInSlice([]string{"DISABLED", "BASIC", "MODE_UNSPECIFIED"}, false),
+							Description:      `Sets the mode of the Kubernetes security posture API's off-cluster features. Available options include DISABLED and BASIC.`,
+							DiffSuppressFunc: tpgresource.EmptyOrDefaultStringSuppress("MODE_UNSPECIFIED"),
+						},
+						"vulnerability_mode": {
+							Type:             schema.TypeString,
+							Optional:         true,
+							Computed:         true,
+							ValidateFunc:     validation.StringInSlice([]string{"VULNERABILITY_DISABLED", "VULNERABILITY_BASIC", "VULNERABILITY_MODE_UNSPECIFIED"}, false),
+							Description:      `Sets the mode of the Kubernetes security posture API's workload vulnerability scanning. Available options include VULNERABILITY_DISABLED and VULNERABILITY_BASIC.`,
+							DiffSuppressFunc: tpgresource.EmptyOrDefaultStringSuppress("VULNERABILITY_MODE_UNSPECIFIED"),
+						},
+					},
+				},
+			},
 			"monitoring_config": {
 				Type:        schema.TypeList,
 				Optional:    true,
@@ -2163,6 +2190,10 @@ func resourceContainerClusterCreate(d *schema.ResourceData, meta interface{}) er
 		return err
 	}
 
+	if v, ok := d.GetOk("security_posture_config"); ok {
+		cluster.SecurityPostureConfig = expandSecurityPostureConfig(v)
+	}
+
 	req := &container.CreateClusterRequest{
 		Cluster: cluster,
 	}
@@ -2554,6 +2585,10 @@ func resourceContainerClusterRead(d *schema.ResourceData, meta interface{}) erro
 	}
 
 	if err := d.Set("node_pool_defaults", flattenNodePoolDefaults(cluster.NodePoolDefaults)); err != nil {
+		return err
+	}
+
+	if err := d.Set("security_posture_config", flattenSecurityPostureConfig(cluster.SecurityPostureConfig)); err != nil {
 		return err
 	}
 
@@ -3612,6 +3647,20 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 		}
 	}
 
+	if d.HasChange("security_posture_config") {
+		req := &container.UpdateClusterRequest{
+			Update: &container.ClusterUpdate{
+				DesiredSecurityPostureConfig: expandSecurityPostureConfig(d.Get("security_posture_config")),
+			},
+		}
+		updateF := updateFunc(req, "updating GKE cluster master Security Posture Config")
+		if err := transport_tpg.LockedCall(lockKey, updateF); err != nil {
+			return err
+		}
+
+		log.Printf("[INFO] GKE cluster %s Security Posture Config has been updated to %#v", d.Id(), req.Update.DesiredSecurityPostureConfig)
+	}
+
 	if d.HasChange("node_pool_auto_config.0.network_tags.0.tags") {
 		tags := d.Get("node_pool_auto_config.0.network_tags.0.tags").([]interface{})
 
@@ -4319,6 +4368,36 @@ func flattenProtectConfigWorkloadConfig(wc *container.WorkloadConfig) []map[stri
 
 	result := make(map[string]interface{})
 	result["audit_mode"] = wc.AuditMode
+
+	return []map[string]interface{}{result}
+}
+
+func expandSecurityPostureConfig(configured interface{}) *container.SecurityPostureConfig {
+	l := configured.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil
+	}
+
+	spc := &container.SecurityPostureConfig{}
+	spConfig := l[0].(map[string]interface{})
+	if v, ok := spConfig["mode"]; ok {
+		spc.Mode = v.(string)
+	}
+
+	if v, ok := spConfig["vulnerability_mode"]; ok {
+		spc.VulnerabilityMode = v.(string)
+	}
+	return spc
+}
+
+func flattenSecurityPostureConfig(spc *container.SecurityPostureConfig) []map[string]interface{} {
+	if spc == nil {
+		return nil
+	}
+	result := make(map[string]interface{})
+
+	result["mode"] = spc.Mode
+	result["vulnerability_mode"] = spc.VulnerabilityMode
 
 	return []map[string]interface{}{result}
 }
