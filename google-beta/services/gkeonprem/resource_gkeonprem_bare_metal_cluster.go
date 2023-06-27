@@ -1303,7 +1303,6 @@ func resourceGkeonpremBareMetalClusterCreate(d *schema.ResourceData, meta interf
 		config, res, &opRes, project, "Creating BareMetalCluster", userAgent,
 		d.Timeout(schema.TimeoutCreate))
 	if err != nil {
-
 		return fmt.Errorf("Error waiting to create BareMetalCluster: %s", err)
 	}
 

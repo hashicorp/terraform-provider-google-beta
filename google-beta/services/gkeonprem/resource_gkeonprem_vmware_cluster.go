@@ -990,7 +990,6 @@ func resourceGkeonpremVmwareClusterCreate(d *schema.ResourceData, meta interface
 		config, res, &opRes, project, "Creating VmwareCluster", userAgent,
 		d.Timeout(schema.TimeoutCreate))
 	if err != nil {
-
 		return fmt.Errorf("Error waiting to create VmwareCluster: %s", err)
 	}
 

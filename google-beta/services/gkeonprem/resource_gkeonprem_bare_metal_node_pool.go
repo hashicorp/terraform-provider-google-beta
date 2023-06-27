@@ -351,7 +351,6 @@ func resourceGkeonpremBareMetalNodePoolCreate(d *schema.ResourceData, meta inter
 		config, res, &opRes, project, "Creating BareMetalNodePool", userAgent,
 		d.Timeout(schema.TimeoutCreate))
 	if err != nil {
-
 		return fmt.Errorf("Error waiting to create BareMetalNodePool: %s", err)
 	}
 
