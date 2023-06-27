@@ -1,7 +1,7 @@
 // this file is auto-generated with mmv1, any changes made here will be overwritten
 
-import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
-import jetbrains.buildServer.configs.kotlin.v2019_2.Project
+import jetbrains.buildServer.configs.kotlin.BuildType
+import jetbrains.buildServer.configs.kotlin.Project
 
 const val providerName = "google-beta"
 
