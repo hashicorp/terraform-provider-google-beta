@@ -21,7 +21,7 @@ fun buildConfigurationsForPackages(packages: Map<String, String>, providerName :
 
     packages.forEach { (packageName, displayName) ->
         if (packageName == "services") {
-            serviceList = buildConfigurationsForPackages(services, providerName, path+"/"+packageName, environment, config)
+            var serviceList = buildConfigurationsForPackages(services, providerName, path+"/"+packageName, environment, config)
             list.addAll(serviceList)
         } else {
             var defaultTestConfig = testConfiguration()
