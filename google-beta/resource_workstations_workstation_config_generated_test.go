@@ -465,13 +465,15 @@ func TestAccWorkstationsWorkstationConfig_workstationConfigEncryptionKeyExample(
 func testAccWorkstationsWorkstationConfig_workstationConfigEncryptionKeyExample(context map[string]interface{}) string {
 	return tpgresource.Nprintf(`
 resource "google_compute_network" "default" {
-  provider                = google-beta
+  provider = google-beta
+
   name                    = "tf-test-workstation-cluster%{random_suffix}"
   auto_create_subnetworks = false
 }
 
 resource "google_compute_subnetwork" "default" {
-  provider      = google-beta
+  provider = google-beta
+
   name          = "tf-test-workstation-cluster%{random_suffix}"
   ip_cidr_range = "10.0.0.0/24"
   region        = "us-central1"
@@ -479,7 +481,8 @@ resource "google_compute_subnetwork" "default" {
 }
 
 resource "google_workstations_workstation_cluster" "default" {
-  provider               = google-beta
+  provider = google-beta
+
   workstation_cluster_id = "tf-test-workstation-cluster%{random_suffix}"
   network                = google_compute_network.default.id
   subnetwork             = google_compute_subnetwork.default.id
@@ -495,25 +498,29 @@ resource "google_workstations_workstation_cluster" "default" {
 }
 
 resource "google_kms_key_ring" "default" {
-  name     = "tf-test-workstation-cluster%{random_suffix}"
-  location = "global"
   provider = google-beta
+
+  name     = "tf-test-workstation-cluster%{random_suffix}"
+  location = "us-central1"
 }
 
 resource "google_kms_crypto_key" "default" {
+  provider = google-beta
+
   name            = "tf-test-workstation-cluster%{random_suffix}"
   key_ring        = google_kms_key_ring.default.id
-  provider        = google-beta
 }
 
 resource "google_service_account" "default" {
+  provider = google-beta
+
   account_id   = "tf-test-my-account%{random_suffix}"
   display_name = "Service Account"
-  provider = google-beta
 }
 
 resource "google_workstations_workstation_config" "default" {
   provider               = google-beta
+
   workstation_config_id  = "tf-test-workstation-config%{random_suffix}"
   workstation_cluster_id = google_workstations_workstation_cluster.default.workstation_cluster_id
   location   		         = "us-central1"
