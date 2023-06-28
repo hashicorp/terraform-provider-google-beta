@@ -111,7 +111,7 @@ fun ParametrizedWithType.hiddenPasswordVariable(name: String, value: String, des
 fun Triggers.RunNightly(nightlyTestsEnabled: Boolean, startHour: Int, daysOfWeek: String, daysOfMonth: String) {
     schedule{
         enabled = nightlyTestsEnabled
-        branchFilter = "+:refs/heads/main"
+        branchFilter = "+:refs/heads/megan_tc_config"
 
         schedulingPolicy = cron {
             hours = startHour.toString()

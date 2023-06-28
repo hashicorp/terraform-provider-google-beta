@@ -8,6 +8,6 @@ object providerRepository : GitVcsRoot({
     agentCleanPolicy = AgentCleanPolicy.ON_BRANCH_CHANGE
     agentCleanFilesPolicy = AgentCleanFilesPolicy.ALL_UNTRACKED
     branchSpec = "+:*"
-    branch = "refs/heads/main"
+    branch = "refs/heads/megan_tc_config"
     authMethod = anonymous()
 })
