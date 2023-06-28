@@ -4,11 +4,11 @@ package google
 
 import (
 	"fmt"
-	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
-	"testing"
-
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
+	"testing"
 )
 
 func TestAccDataSourceGoogleFirebaseAppleAppConfig(t *testing.T) {
@@ -17,7 +17,7 @@ func TestAccDataSourceGoogleFirebaseAppleAppConfig(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
-		"project_id":   acctest.GetTestProjectFromEnv(),
+		"project_id":   envvar.GetTestProjectFromEnv(),
 		"bundle_id":    "apple.app." + RandString(t, 5),
 		"display_name": "tf-test Display Name AppleAppConfig DataSource",
 		"app_store_id": 12345,

@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
@@ -19,9 +20,9 @@ func TestAccDatasourceGoogleServiceAccountKey_basic(t *testing.T) {
 	account := fmt.Sprintf("tf-test-%d", RandInt(t))
 	serviceAccountName := fmt.Sprintf(
 		"projects/%s/serviceAccounts/%s@%s.iam.gserviceaccount.com",
-		acctest.GetTestProjectFromEnv(),
+		envvar.GetTestProjectFromEnv(),
 		account,
-		acctest.GetTestProjectFromEnv(),
+		envvar.GetTestProjectFromEnv(),
 	)
 
 	VcrTest(t, resource.TestCase{

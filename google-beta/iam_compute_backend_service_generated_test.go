@@ -25,6 +25,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
 )
 
 func TestAccComputeBackendServiceIamBindingGenerated(t *testing.T) {
@@ -49,7 +50,7 @@ func TestAccComputeBackendServiceIamBindingGenerated(t *testing.T) {
 			},
 			{
 				ResourceName:      "google_compute_backend_service_iam_binding.foo",
-				ImportStateId:     fmt.Sprintf("projects/%s/global/backendServices/%s roles/compute.admin", acctest.GetTestProjectFromEnv(), fmt.Sprintf("tf-test-backend-service%s", context["random_suffix"])),
+				ImportStateId:     fmt.Sprintf("projects/%s/global/backendServices/%s roles/compute.admin", envvar.GetTestProjectFromEnv(), fmt.Sprintf("tf-test-backend-service%s", context["random_suffix"])),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
@@ -59,7 +60,7 @@ func TestAccComputeBackendServiceIamBindingGenerated(t *testing.T) {
 			},
 			{
 				ResourceName:      "google_compute_backend_service_iam_binding.foo",
-				ImportStateId:     fmt.Sprintf("projects/%s/global/backendServices/%s roles/compute.admin", acctest.GetTestProjectFromEnv(), fmt.Sprintf("tf-test-backend-service%s", context["random_suffix"])),
+				ImportStateId:     fmt.Sprintf("projects/%s/global/backendServices/%s roles/compute.admin", envvar.GetTestProjectFromEnv(), fmt.Sprintf("tf-test-backend-service%s", context["random_suffix"])),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
@@ -90,7 +91,7 @@ func TestAccComputeBackendServiceIamMemberGenerated(t *testing.T) {
 			},
 			{
 				ResourceName:      "google_compute_backend_service_iam_member.foo",
-				ImportStateId:     fmt.Sprintf("projects/%s/global/backendServices/%s roles/compute.admin user:admin@hashicorptest.com", acctest.GetTestProjectFromEnv(), fmt.Sprintf("tf-test-backend-service%s", context["random_suffix"])),
+				ImportStateId:     fmt.Sprintf("projects/%s/global/backendServices/%s roles/compute.admin user:admin@hashicorptest.com", envvar.GetTestProjectFromEnv(), fmt.Sprintf("tf-test-backend-service%s", context["random_suffix"])),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
@@ -121,7 +122,7 @@ func TestAccComputeBackendServiceIamPolicyGenerated(t *testing.T) {
 			},
 			{
 				ResourceName:      "google_compute_backend_service_iam_policy.foo",
-				ImportStateId:     fmt.Sprintf("projects/%s/global/backendServices/%s", acctest.GetTestProjectFromEnv(), fmt.Sprintf("tf-test-backend-service%s", context["random_suffix"])),
+				ImportStateId:     fmt.Sprintf("projects/%s/global/backendServices/%s", envvar.GetTestProjectFromEnv(), fmt.Sprintf("tf-test-backend-service%s", context["random_suffix"])),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
@@ -130,7 +131,7 @@ func TestAccComputeBackendServiceIamPolicyGenerated(t *testing.T) {
 			},
 			{
 				ResourceName:      "google_compute_backend_service_iam_policy.foo",
-				ImportStateId:     fmt.Sprintf("projects/%s/global/backendServices/%s", acctest.GetTestProjectFromEnv(), fmt.Sprintf("tf-test-backend-service%s", context["random_suffix"])),
+				ImportStateId:     fmt.Sprintf("projects/%s/global/backendServices/%s", envvar.GetTestProjectFromEnv(), fmt.Sprintf("tf-test-backend-service%s", context["random_suffix"])),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
@@ -160,7 +161,7 @@ func TestAccComputeBackendServiceIamBindingGenerated_withCondition(t *testing.T)
 			},
 			{
 				ResourceName:      "google_compute_backend_service_iam_binding.foo",
-				ImportStateId:     fmt.Sprintf("projects/%s/global/backendServices/%s roles/compute.admin %s", acctest.GetTestProjectFromEnv(), fmt.Sprintf("tf-test-backend-service%s", context["random_suffix"]), context["condition_title"]),
+				ImportStateId:     fmt.Sprintf("projects/%s/global/backendServices/%s roles/compute.admin %s", envvar.GetTestProjectFromEnv(), fmt.Sprintf("tf-test-backend-service%s", context["random_suffix"]), context["condition_title"]),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
@@ -192,19 +193,19 @@ func TestAccComputeBackendServiceIamBindingGenerated_withAndWithoutCondition(t *
 			},
 			{
 				ResourceName:      "google_compute_backend_service_iam_binding.foo",
-				ImportStateId:     fmt.Sprintf("projects/%s/global/backendServices/%s roles/compute.admin", acctest.GetTestProjectFromEnv(), fmt.Sprintf("tf-test-backend-service%s", context["random_suffix"])),
+				ImportStateId:     fmt.Sprintf("projects/%s/global/backendServices/%s roles/compute.admin", envvar.GetTestProjectFromEnv(), fmt.Sprintf("tf-test-backend-service%s", context["random_suffix"])),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
 			{
 				ResourceName:      "google_compute_backend_service_iam_binding.foo2",
-				ImportStateId:     fmt.Sprintf("projects/%s/global/backendServices/%s roles/compute.admin %s", acctest.GetTestProjectFromEnv(), fmt.Sprintf("tf-test-backend-service%s", context["random_suffix"]), context["condition_title"]),
+				ImportStateId:     fmt.Sprintf("projects/%s/global/backendServices/%s roles/compute.admin %s", envvar.GetTestProjectFromEnv(), fmt.Sprintf("tf-test-backend-service%s", context["random_suffix"]), context["condition_title"]),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
 			{
 				ResourceName:      "google_compute_backend_service_iam_binding.foo3",
-				ImportStateId:     fmt.Sprintf("projects/%s/global/backendServices/%s roles/compute.admin %s", acctest.GetTestProjectFromEnv(), fmt.Sprintf("tf-test-backend-service%s", context["random_suffix"]), context["condition_title_no_desc"]),
+				ImportStateId:     fmt.Sprintf("projects/%s/global/backendServices/%s roles/compute.admin %s", envvar.GetTestProjectFromEnv(), fmt.Sprintf("tf-test-backend-service%s", context["random_suffix"]), context["condition_title_no_desc"]),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
@@ -234,7 +235,7 @@ func TestAccComputeBackendServiceIamMemberGenerated_withCondition(t *testing.T) 
 			},
 			{
 				ResourceName:      "google_compute_backend_service_iam_member.foo",
-				ImportStateId:     fmt.Sprintf("projects/%s/global/backendServices/%s roles/compute.admin user:admin@hashicorptest.com %s", acctest.GetTestProjectFromEnv(), fmt.Sprintf("tf-test-backend-service%s", context["random_suffix"]), context["condition_title"]),
+				ImportStateId:     fmt.Sprintf("projects/%s/global/backendServices/%s roles/compute.admin user:admin@hashicorptest.com %s", envvar.GetTestProjectFromEnv(), fmt.Sprintf("tf-test-backend-service%s", context["random_suffix"]), context["condition_title"]),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
@@ -266,19 +267,19 @@ func TestAccComputeBackendServiceIamMemberGenerated_withAndWithoutCondition(t *t
 			},
 			{
 				ResourceName:      "google_compute_backend_service_iam_member.foo",
-				ImportStateId:     fmt.Sprintf("projects/%s/global/backendServices/%s roles/compute.admin user:admin@hashicorptest.com", acctest.GetTestProjectFromEnv(), fmt.Sprintf("tf-test-backend-service%s", context["random_suffix"])),
+				ImportStateId:     fmt.Sprintf("projects/%s/global/backendServices/%s roles/compute.admin user:admin@hashicorptest.com", envvar.GetTestProjectFromEnv(), fmt.Sprintf("tf-test-backend-service%s", context["random_suffix"])),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
 			{
 				ResourceName:      "google_compute_backend_service_iam_member.foo2",
-				ImportStateId:     fmt.Sprintf("projects/%s/global/backendServices/%s roles/compute.admin user:admin@hashicorptest.com %s", acctest.GetTestProjectFromEnv(), fmt.Sprintf("tf-test-backend-service%s", context["random_suffix"]), context["condition_title"]),
+				ImportStateId:     fmt.Sprintf("projects/%s/global/backendServices/%s roles/compute.admin user:admin@hashicorptest.com %s", envvar.GetTestProjectFromEnv(), fmt.Sprintf("tf-test-backend-service%s", context["random_suffix"]), context["condition_title"]),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
 			{
 				ResourceName:      "google_compute_backend_service_iam_member.foo3",
-				ImportStateId:     fmt.Sprintf("projects/%s/global/backendServices/%s roles/compute.admin user:admin@hashicorptest.com %s", acctest.GetTestProjectFromEnv(), fmt.Sprintf("tf-test-backend-service%s", context["random_suffix"]), context["condition_title_no_desc"]),
+				ImportStateId:     fmt.Sprintf("projects/%s/global/backendServices/%s roles/compute.admin user:admin@hashicorptest.com %s", envvar.GetTestProjectFromEnv(), fmt.Sprintf("tf-test-backend-service%s", context["random_suffix"]), context["condition_title_no_desc"]),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
@@ -318,7 +319,7 @@ func TestAccComputeBackendServiceIamPolicyGenerated_withCondition(t *testing.T) 
 			},
 			{
 				ResourceName:      "google_compute_backend_service_iam_policy.foo",
-				ImportStateId:     fmt.Sprintf("projects/%s/global/backendServices/%s", acctest.GetTestProjectFromEnv(), fmt.Sprintf("tf-test-backend-service%s", context["random_suffix"])),
+				ImportStateId:     fmt.Sprintf("projects/%s/global/backendServices/%s", envvar.GetTestProjectFromEnv(), fmt.Sprintf("tf-test-backend-service%s", context["random_suffix"])),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},

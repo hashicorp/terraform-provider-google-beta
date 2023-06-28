@@ -17,6 +17,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
 )
 
 func TestAccKmsSecretAsymmetricBasic(t *testing.T) {
@@ -24,8 +25,8 @@ func TestAccKmsSecretAsymmetricBasic(t *testing.T) {
 	acctest.SkipIfVcr(t)
 	t.Parallel()
 
-	projectOrg := acctest.GetTestOrgFromEnv(t)
-	projectBillingAccount := acctest.GetTestBillingAccountFromEnv(t)
+	projectOrg := envvar.GetTestOrgFromEnv(t)
+	projectBillingAccount := envvar.GetTestBillingAccountFromEnv(t)
 
 	projectID := "tf-test-" + RandString(t, 10)
 	keyRingName := fmt.Sprintf("tf-test-%s", RandString(t, 10))

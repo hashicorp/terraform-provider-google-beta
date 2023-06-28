@@ -10,6 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
 )
 
 func TestAccComputeSecurityPolicy_basic(t *testing.T) {
@@ -396,7 +397,7 @@ func TestAccComputeSecurityPolicy_EnforceOnKeyUpdates(t *testing.T) {
 func TestAccComputeSecurityPolicy_withRecaptchaOptionsConfig(t *testing.T) {
 	t.Parallel()
 
-	project := acctest.GetTestProjectFromEnv()
+	project := envvar.GetTestProjectFromEnv()
 	spName := fmt.Sprintf("tf-test-%s", RandString(t, 10))
 
 	VcrTest(t, resource.TestCase{
