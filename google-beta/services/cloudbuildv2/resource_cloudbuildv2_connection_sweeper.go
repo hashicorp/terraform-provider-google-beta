@@ -24,7 +24,7 @@ import (
 	"testing"
 
 	cloudbuildv2 "github.com/GoogleCloudPlatform/declarative-resource-client-library/services/google/cloudbuildv2/beta"
-	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/sweeper"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
@@ -36,7 +36,7 @@ func init() {
 func testSweepCloudbuildv2Connection(region string) error {
 	log.Print("[INFO][SWEEPER_LOG] Starting sweeper for Cloudbuildv2Connection")
 
-	config, err := acctest.SharedConfigForRegion(region)
+	config, err := sweeper.SharedConfigForRegion(region)
 	if err != nil {
 		log.Printf("[INFO][SWEEPER_LOG] error getting shared config for region: %s", err)
 		return err
@@ -49,7 +49,7 @@ func testSweepCloudbuildv2Connection(region string) error {
 	}
 
 	t := &testing.T{}
-	billingId := acctest.GetTestBillingAccountFromEnv(t)
+	billingId := envvar.GetTestBillingAccountFromEnv(t)
 
 	// Setup variables to be used for Delete arguments.
 	d := map[string]string{
@@ -69,5 +69,5 @@ func testSweepCloudbuildv2Connection(region string) error {
 }
 
 func isDeletableCloudbuildv2Connection(r *cloudbuildv2.Connection) bool {
-	return acctest.IsSweepableTestResource(*r.Name)
+	return sweeper.IsSweepableTestResource(*r.Name)
 }

@@ -5,6 +5,7 @@ package google
 import (
 	"fmt"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -13,7 +14,7 @@ import (
 func TestAccFirestoreDatabase_update(t *testing.T) {
 	t.Parallel()
 
-	orgId := acctest.GetTestOrgFromEnv(t)
+	orgId := envvar.GetTestOrgFromEnv(t)
 	randomSuffix := RandString(t, 10)
 
 	VcrTest(t, resource.TestCase{

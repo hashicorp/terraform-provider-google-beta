@@ -24,6 +24,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
 )
 
 func TestAccVertexAIFeaturestoreEntitytypeIamBindingGenerated(t *testing.T) {
@@ -32,8 +33,8 @@ func TestAccVertexAIFeaturestoreEntitytypeIamBindingGenerated(t *testing.T) {
 	context := map[string]interface{}{
 		"random_suffix":   RandString(t, 10),
 		"role":            "roles/viewer",
-		"org_id":          acctest.GetTestOrgFromEnv(t),
-		"billing_account": acctest.GetTestBillingAccountFromEnv(t),
+		"org_id":          envvar.GetTestOrgFromEnv(t),
+		"billing_account": envvar.GetTestBillingAccountFromEnv(t),
 
 		"kms_key_name": BootstrapKMSKeyInLocation(t, "us-central1").CryptoKey.Name,
 	}
@@ -47,7 +48,7 @@ func TestAccVertexAIFeaturestoreEntitytypeIamBindingGenerated(t *testing.T) {
 			},
 			{
 				ResourceName:      "google_vertex_ai_featurestore_entitytype_iam_binding.foo",
-				ImportStateId:     fmt.Sprintf("%s/entityTypes/%s roles/viewer", fmt.Sprintf("projects/%s/locations/%s/featurestores/%s", acctest.GetTestProjectFromEnv(), acctest.GetTestRegionFromEnv(), fmt.Sprintf("terraform%s", context["random_suffix"])), fmt.Sprintf("terraform%s", context["random_suffix"])),
+				ImportStateId:     fmt.Sprintf("%s/entityTypes/%s roles/viewer", fmt.Sprintf("projects/%s/locations/%s/featurestores/%s", envvar.GetTestProjectFromEnv(), envvar.GetTestRegionFromEnv(), fmt.Sprintf("terraform%s", context["random_suffix"])), fmt.Sprintf("terraform%s", context["random_suffix"])),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
@@ -57,7 +58,7 @@ func TestAccVertexAIFeaturestoreEntitytypeIamBindingGenerated(t *testing.T) {
 			},
 			{
 				ResourceName:      "google_vertex_ai_featurestore_entitytype_iam_binding.foo",
-				ImportStateId:     fmt.Sprintf("%s/entityTypes/%s roles/viewer", fmt.Sprintf("projects/%s/locations/%s/featurestores/%s", acctest.GetTestProjectFromEnv(), acctest.GetTestRegionFromEnv(), fmt.Sprintf("terraform%s", context["random_suffix"])), fmt.Sprintf("terraform%s", context["random_suffix"])),
+				ImportStateId:     fmt.Sprintf("%s/entityTypes/%s roles/viewer", fmt.Sprintf("projects/%s/locations/%s/featurestores/%s", envvar.GetTestProjectFromEnv(), envvar.GetTestRegionFromEnv(), fmt.Sprintf("terraform%s", context["random_suffix"])), fmt.Sprintf("terraform%s", context["random_suffix"])),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
@@ -71,8 +72,8 @@ func TestAccVertexAIFeaturestoreEntitytypeIamMemberGenerated(t *testing.T) {
 	context := map[string]interface{}{
 		"random_suffix":   RandString(t, 10),
 		"role":            "roles/viewer",
-		"org_id":          acctest.GetTestOrgFromEnv(t),
-		"billing_account": acctest.GetTestBillingAccountFromEnv(t),
+		"org_id":          envvar.GetTestOrgFromEnv(t),
+		"billing_account": envvar.GetTestBillingAccountFromEnv(t),
 
 		"kms_key_name": BootstrapKMSKeyInLocation(t, "us-central1").CryptoKey.Name,
 	}
@@ -87,7 +88,7 @@ func TestAccVertexAIFeaturestoreEntitytypeIamMemberGenerated(t *testing.T) {
 			},
 			{
 				ResourceName:      "google_vertex_ai_featurestore_entitytype_iam_member.foo",
-				ImportStateId:     fmt.Sprintf("%s/entityTypes/%s roles/viewer user:admin@hashicorptest.com", fmt.Sprintf("projects/%s/locations/%s/featurestores/%s", acctest.GetTestProjectFromEnv(), acctest.GetTestRegionFromEnv(), fmt.Sprintf("terraform%s", context["random_suffix"])), fmt.Sprintf("terraform%s", context["random_suffix"])),
+				ImportStateId:     fmt.Sprintf("%s/entityTypes/%s roles/viewer user:admin@hashicorptest.com", fmt.Sprintf("projects/%s/locations/%s/featurestores/%s", envvar.GetTestProjectFromEnv(), envvar.GetTestRegionFromEnv(), fmt.Sprintf("terraform%s", context["random_suffix"])), fmt.Sprintf("terraform%s", context["random_suffix"])),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
@@ -101,8 +102,8 @@ func TestAccVertexAIFeaturestoreEntitytypeIamPolicyGenerated(t *testing.T) {
 	context := map[string]interface{}{
 		"random_suffix":   RandString(t, 10),
 		"role":            "roles/viewer",
-		"org_id":          acctest.GetTestOrgFromEnv(t),
-		"billing_account": acctest.GetTestBillingAccountFromEnv(t),
+		"org_id":          envvar.GetTestOrgFromEnv(t),
+		"billing_account": envvar.GetTestBillingAccountFromEnv(t),
 
 		"kms_key_name": BootstrapKMSKeyInLocation(t, "us-central1").CryptoKey.Name,
 	}
@@ -117,7 +118,7 @@ func TestAccVertexAIFeaturestoreEntitytypeIamPolicyGenerated(t *testing.T) {
 			},
 			{
 				ResourceName:      "google_vertex_ai_featurestore_entitytype_iam_policy.foo",
-				ImportStateId:     fmt.Sprintf("%s/entityTypes/%s", fmt.Sprintf("projects/%s/locations/%s/featurestores/%s", acctest.GetTestProjectFromEnv(), acctest.GetTestRegionFromEnv(), fmt.Sprintf("terraform%s", context["random_suffix"])), fmt.Sprintf("terraform%s", context["random_suffix"])),
+				ImportStateId:     fmt.Sprintf("%s/entityTypes/%s", fmt.Sprintf("projects/%s/locations/%s/featurestores/%s", envvar.GetTestProjectFromEnv(), envvar.GetTestRegionFromEnv(), fmt.Sprintf("terraform%s", context["random_suffix"])), fmt.Sprintf("terraform%s", context["random_suffix"])),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
@@ -126,7 +127,7 @@ func TestAccVertexAIFeaturestoreEntitytypeIamPolicyGenerated(t *testing.T) {
 			},
 			{
 				ResourceName:      "google_vertex_ai_featurestore_entitytype_iam_policy.foo",
-				ImportStateId:     fmt.Sprintf("%s/entityTypes/%s", fmt.Sprintf("projects/%s/locations/%s/featurestores/%s", acctest.GetTestProjectFromEnv(), acctest.GetTestRegionFromEnv(), fmt.Sprintf("terraform%s", context["random_suffix"])), fmt.Sprintf("terraform%s", context["random_suffix"])),
+				ImportStateId:     fmt.Sprintf("%s/entityTypes/%s", fmt.Sprintf("projects/%s/locations/%s/featurestores/%s", envvar.GetTestProjectFromEnv(), envvar.GetTestRegionFromEnv(), fmt.Sprintf("terraform%s", context["random_suffix"])), fmt.Sprintf("terraform%s", context["random_suffix"])),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},

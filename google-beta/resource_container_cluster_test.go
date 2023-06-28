@@ -12,6 +12,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
 )
 
 func TestAccContainerCluster_basic(t *testing.T) {
@@ -38,7 +39,7 @@ func TestAccContainerCluster_basic(t *testing.T) {
 			},
 			{
 				ResourceName:      "google_container_cluster.primary",
-				ImportStateId:     fmt.Sprintf("%s/us-central1-a/%s", acctest.GetTestProjectFromEnv(), clusterName),
+				ImportStateId:     fmt.Sprintf("%s/us-central1-a/%s", envvar.GetTestProjectFromEnv(), clusterName),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
@@ -111,7 +112,7 @@ func TestAccContainerCluster_withAddons(t *testing.T) {
 	t.Parallel()
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", RandString(t, 10))
-	pid := acctest.GetTestProjectFromEnv()
+	pid := envvar.GetTestProjectFromEnv()
 
 	VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -345,7 +346,7 @@ func TestAccContainerCluster_withMasterAuthConfig_NoCert(t *testing.T) {
 func TestAccContainerCluster_withAuthenticatorGroupsConfig(t *testing.T) {
 	t.Parallel()
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", RandString(t, 10))
-	orgDomain := acctest.GetTestOrgDomainFromEnv(t)
+	orgDomain := envvar.GetTestOrgDomainFromEnv(t)
 	VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
@@ -2362,7 +2363,7 @@ func TestAccContainerCluster_withShieldedNodes(t *testing.T) {
 func TestAccContainerCluster_withAutopilot(t *testing.T) {
 	t.Parallel()
 
-	pid := acctest.GetTestProjectFromEnv()
+	pid := envvar.GetTestProjectFromEnv()
 	containerNetName := fmt.Sprintf("tf-test-container-net-%s", RandString(t, 10))
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", RandString(t, 10))
 
@@ -2387,7 +2388,7 @@ func TestAccContainerCluster_withAutopilot(t *testing.T) {
 func TestAccContainerClusterCustomServiceAccount_withAutopilot(t *testing.T) {
 	t.Parallel()
 
-	pid := acctest.GetTestProjectFromEnv()
+	pid := envvar.GetTestProjectFromEnv()
 	containerNetName := fmt.Sprintf("tf-test-container-net-%s", RandString(t, 10))
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", RandString(t, 10))
 	serviceAccountName := fmt.Sprintf("tf-test-sa-%s", RandString(t, 10))
@@ -2422,7 +2423,7 @@ func TestAccContainerClusterCustomServiceAccount_withAutopilot(t *testing.T) {
 func TestAccContainerCluster_errorAutopilotLocation(t *testing.T) {
 	t.Parallel()
 
-	pid := acctest.GetTestProjectFromEnv()
+	pid := envvar.GetTestProjectFromEnv()
 	containerNetName := fmt.Sprintf("tf-test-container-net-%s", RandString(t, 10))
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", RandString(t, 10))
 
@@ -2442,7 +2443,7 @@ func TestAccContainerCluster_errorAutopilotLocation(t *testing.T) {
 func TestAccContainerCluster_withAutopilotNetworkTags(t *testing.T) {
 	t.Parallel()
 
-	pid := acctest.GetTestProjectFromEnv()
+	pid := envvar.GetTestProjectFromEnv()
 	containerNetName := fmt.Sprintf("tf-test-container-net-%s", RandString(t, 10))
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", RandString(t, 10))
 
@@ -2468,7 +2469,7 @@ func TestAccContainerCluster_withWorkloadIdentityConfig(t *testing.T) {
 	t.Parallel()
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", RandString(t, 10))
-	pid := acctest.GetTestProjectFromEnv()
+	pid := envvar.GetTestProjectFromEnv()
 
 	VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -2768,8 +2769,8 @@ func TestAccContainerCluster_sharedVpc(t *testing.T) {
 	t.Parallel()
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", RandString(t, 10))
-	org := acctest.GetTestOrgFromEnv(t)
-	billingId := acctest.GetTestBillingAccountFromEnv(t)
+	org := envvar.GetTestOrgFromEnv(t)
+	billingId := envvar.GetTestBillingAccountFromEnv(t)
 	projectName := fmt.Sprintf("tf-test-%s", RandString(t, 10))
 	suffix := RandString(t, 10)
 
@@ -3177,7 +3178,7 @@ func TestAccContainerCluster_withExternalIpsConfig(t *testing.T) {
 	t.Parallel()
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", RandString(t, 10))
-	pid := acctest.GetTestProjectFromEnv()
+	pid := envvar.GetTestProjectFromEnv()
 
 	VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -3208,7 +3209,7 @@ func TestAccContainerCluster_withMeshCertificatesConfig(t *testing.T) {
 	t.Parallel()
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", RandString(t, 10))
-	pid := acctest.GetTestProjectFromEnv()
+	pid := envvar.GetTestProjectFromEnv()
 
 	VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -3250,7 +3251,7 @@ func TestAccContainerCluster_withCostManagementConfig(t *testing.T) {
 	t.Parallel()
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", RandString(t, 10))
-	pid := acctest.GetTestProjectFromEnv()
+	pid := envvar.GetTestProjectFromEnv()
 
 	VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -4562,7 +4563,7 @@ func TestAccContainerCluster_failedCreation(t *testing.T) {
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", RandString(t, 10))
 
-	project := BootstrapProject(t, "tf-fail-cluster-", acctest.GetTestBillingAccountFromEnv(t), []string{"container.googleapis.com"})
+	project := BootstrapProject(t, "tf-fail-cluster-", envvar.GetTestBillingAccountFromEnv(t), []string{"container.googleapis.com"})
 	RemoveContainerServiceAgentRoleFromContainerEngineRobot(t, project)
 
 	VcrTest(t, resource.TestCase{

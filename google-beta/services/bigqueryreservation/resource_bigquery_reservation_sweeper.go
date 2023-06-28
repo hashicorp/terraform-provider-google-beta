@@ -7,10 +7,8 @@ import (
 	"log"
 	"strings"
 
-	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
-
-	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/sweeper"
+	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
 // This will sweep BigqueryReservation Reservation and Assignment resources
@@ -23,7 +21,7 @@ func testSweepBigqueryReservation(region string) error {
 	resourceName := "BigqueryReservation"
 	log.Printf("[INFO][SWEEPER_LOG] Starting sweeper for %s", resourceName)
 
-	config, err := acctest.SharedConfigForRegion(region)
+	config, err := sweeper.SharedConfigForRegion(region)
 	if err != nil {
 		log.Printf("[INFO][SWEEPER_LOG] error getting shared config for region: %s", err)
 		return err
@@ -69,7 +67,7 @@ func testSweepBigqueryReservation(region string) error {
 		reservationNameParts := strings.Split(reservationName, "/")
 		reservationShortName := reservationNameParts[len(reservationNameParts)-1]
 		// Increment count and skip if resource is not sweepable.
-		if !acctest.IsSweepableTestResource(reservationShortName) {
+		if !sweeper.IsSweepableTestResource(reservationShortName) {
 			nonPrefixCount++
 			continue
 		}

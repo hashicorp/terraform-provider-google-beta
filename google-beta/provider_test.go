@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/provider"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -100,8 +101,8 @@ func TestAccProviderUserProjectOverride(t *testing.T) {
 	acctest.SkipIfVcr(t)
 	t.Parallel()
 
-	org := acctest.GetTestOrgFromEnv(t)
-	billing := acctest.GetTestBillingAccountFromEnv(t)
+	org := envvar.GetTestOrgFromEnv(t)
+	billing := envvar.GetTestBillingAccountFromEnv(t)
 	pid := "tf-test-" + RandString(t, 10)
 	topicName := "tf-test-topic-" + RandString(t, 10)
 
@@ -142,8 +143,8 @@ func TestAccProviderIndirectUserProjectOverride(t *testing.T) {
 	acctest.SkipIfVcr(t)
 	t.Parallel()
 
-	org := acctest.GetTestOrgFromEnv(t)
-	billing := acctest.GetTestBillingAccountFromEnv(t)
+	org := envvar.GetTestOrgFromEnv(t)
+	billing := envvar.GetTestBillingAccountFromEnv(t)
 	pid := "tf-test-" + RandString(t, 10)
 
 	config := BootstrapConfig(t)

@@ -24,6 +24,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
 )
 
 func TestAccWorkstationsWorkstationConfigIamBindingGenerated(t *testing.T) {
@@ -43,7 +44,7 @@ func TestAccWorkstationsWorkstationConfigIamBindingGenerated(t *testing.T) {
 			},
 			{
 				ResourceName:      "google_workstations_workstation_config_iam_binding.foo",
-				ImportStateId:     fmt.Sprintf("projects/%s/locations/%s/workstationClusters/%s/workstationConfigs/%s roles/viewer", acctest.GetTestProjectFromEnv(), acctest.GetTestRegionFromEnv(), fmt.Sprintf("tf-test-workstation-cluster%s", context["random_suffix"]), fmt.Sprintf("tf-test-workstation-config%s", context["random_suffix"])),
+				ImportStateId:     fmt.Sprintf("projects/%s/locations/%s/workstationClusters/%s/workstationConfigs/%s roles/viewer", envvar.GetTestProjectFromEnv(), envvar.GetTestRegionFromEnv(), fmt.Sprintf("tf-test-workstation-cluster%s", context["random_suffix"]), fmt.Sprintf("tf-test-workstation-config%s", context["random_suffix"])),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
@@ -53,7 +54,7 @@ func TestAccWorkstationsWorkstationConfigIamBindingGenerated(t *testing.T) {
 			},
 			{
 				ResourceName:      "google_workstations_workstation_config_iam_binding.foo",
-				ImportStateId:     fmt.Sprintf("projects/%s/locations/%s/workstationClusters/%s/workstationConfigs/%s roles/viewer", acctest.GetTestProjectFromEnv(), acctest.GetTestRegionFromEnv(), fmt.Sprintf("tf-test-workstation-cluster%s", context["random_suffix"]), fmt.Sprintf("tf-test-workstation-config%s", context["random_suffix"])),
+				ImportStateId:     fmt.Sprintf("projects/%s/locations/%s/workstationClusters/%s/workstationConfigs/%s roles/viewer", envvar.GetTestProjectFromEnv(), envvar.GetTestRegionFromEnv(), fmt.Sprintf("tf-test-workstation-cluster%s", context["random_suffix"]), fmt.Sprintf("tf-test-workstation-config%s", context["random_suffix"])),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
@@ -79,7 +80,7 @@ func TestAccWorkstationsWorkstationConfigIamMemberGenerated(t *testing.T) {
 			},
 			{
 				ResourceName:      "google_workstations_workstation_config_iam_member.foo",
-				ImportStateId:     fmt.Sprintf("projects/%s/locations/%s/workstationClusters/%s/workstationConfigs/%s roles/viewer user:admin@hashicorptest.com", acctest.GetTestProjectFromEnv(), acctest.GetTestRegionFromEnv(), fmt.Sprintf("tf-test-workstation-cluster%s", context["random_suffix"]), fmt.Sprintf("tf-test-workstation-config%s", context["random_suffix"])),
+				ImportStateId:     fmt.Sprintf("projects/%s/locations/%s/workstationClusters/%s/workstationConfigs/%s roles/viewer user:admin@hashicorptest.com", envvar.GetTestProjectFromEnv(), envvar.GetTestRegionFromEnv(), fmt.Sprintf("tf-test-workstation-cluster%s", context["random_suffix"]), fmt.Sprintf("tf-test-workstation-config%s", context["random_suffix"])),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
@@ -105,7 +106,7 @@ func TestAccWorkstationsWorkstationConfigIamPolicyGenerated(t *testing.T) {
 			},
 			{
 				ResourceName:      "google_workstations_workstation_config_iam_policy.foo",
-				ImportStateId:     fmt.Sprintf("projects/%s/locations/%s/workstationClusters/%s/workstationConfigs/%s", acctest.GetTestProjectFromEnv(), acctest.GetTestRegionFromEnv(), fmt.Sprintf("tf-test-workstation-cluster%s", context["random_suffix"]), fmt.Sprintf("tf-test-workstation-config%s", context["random_suffix"])),
+				ImportStateId:     fmt.Sprintf("projects/%s/locations/%s/workstationClusters/%s/workstationConfigs/%s", envvar.GetTestProjectFromEnv(), envvar.GetTestRegionFromEnv(), fmt.Sprintf("tf-test-workstation-cluster%s", context["random_suffix"]), fmt.Sprintf("tf-test-workstation-config%s", context["random_suffix"])),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
@@ -114,7 +115,7 @@ func TestAccWorkstationsWorkstationConfigIamPolicyGenerated(t *testing.T) {
 			},
 			{
 				ResourceName:      "google_workstations_workstation_config_iam_policy.foo",
-				ImportStateId:     fmt.Sprintf("projects/%s/locations/%s/workstationClusters/%s/workstationConfigs/%s", acctest.GetTestProjectFromEnv(), acctest.GetTestRegionFromEnv(), fmt.Sprintf("tf-test-workstation-cluster%s", context["random_suffix"]), fmt.Sprintf("tf-test-workstation-config%s", context["random_suffix"])),
+				ImportStateId:     fmt.Sprintf("projects/%s/locations/%s/workstationClusters/%s/workstationConfigs/%s", envvar.GetTestProjectFromEnv(), envvar.GetTestRegionFromEnv(), fmt.Sprintf("tf-test-workstation-cluster%s", context["random_suffix"]), fmt.Sprintf("tf-test-workstation-config%s", context["random_suffix"])),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},

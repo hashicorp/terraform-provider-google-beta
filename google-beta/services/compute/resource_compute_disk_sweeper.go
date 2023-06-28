@@ -6,7 +6,6 @@ import (
 	"context"
 	"log"
 
-	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/sweeper"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
@@ -21,7 +20,7 @@ func testSweepDisk(region string) error {
 	resourceName := "ComputeDisk"
 	log.Printf("[INFO][SWEEPER_LOG] Starting sweeper for %s", resourceName)
 
-	config, err := acctest.SharedConfigForRegion(region)
+	config, err := sweeper.SharedConfigForRegion(region)
 	if err != nil {
 		log.Printf("[INFO][SWEEPER_LOG] error getting shared config for region: %s", err)
 		return err
@@ -68,7 +67,7 @@ func testSweepDisk(region string) error {
 
 			id := obj["name"].(string)
 			// Increment count and skip if resource is not sweepable.
-			if !acctest.IsSweepableTestResource(id) {
+			if !sweeper.IsSweepableTestResource(id) {
 				nonPrefixCount++
 				continue
 			}

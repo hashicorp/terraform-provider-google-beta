@@ -8,6 +8,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
 )
 
 func TestAccComputeFirewallPolicyRule_update(t *testing.T) {
@@ -15,7 +16,7 @@ func TestAccComputeFirewallPolicyRule_update(t *testing.T) {
 
 	context := map[string]interface{}{
 		"random_suffix": RandString(t, 10),
-		"org_name":      fmt.Sprintf("organizations/%s", acctest.GetTestOrgFromEnv(t)),
+		"org_name":      fmt.Sprintf("organizations/%s", envvar.GetTestOrgFromEnv(t)),
 	}
 
 	VcrTest(t, resource.TestCase{
@@ -271,7 +272,7 @@ func TestAccComputeFirewallPolicyRule_multipleRules(t *testing.T) {
 
 	context := map[string]interface{}{
 		"random_suffix": RandString(t, 10),
-		"org_name":      fmt.Sprintf("organizations/%s", acctest.GetTestOrgFromEnv(t)),
+		"org_name":      fmt.Sprintf("organizations/%s", envvar.GetTestOrgFromEnv(t)),
 	}
 
 	VcrTest(t, resource.TestCase{

@@ -11,6 +11,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/privateca"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 )
@@ -19,8 +20,8 @@ func TestAccPrivatecaCaPoolIamMemberAllAuthenticatedUsersCasing(t *testing.T) {
 	t.Parallel()
 
 	capool := "tf-test-pool-iam-" + RandString(t, 10)
-	project := acctest.GetTestProjectFromEnv()
-	region := acctest.GetTestRegionFromEnv()
+	project := envvar.GetTestProjectFromEnv()
+	region := envvar.GetTestRegionFromEnv()
 
 	VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },

@@ -8,6 +8,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
 )
 
 func TestAccDataSourceMonitoringService_AppEngine(t *testing.T) {
@@ -23,7 +24,7 @@ func TestAccDataSourceMonitoringService_AppEngine(t *testing.T) {
 					resource.TestCheckResourceAttr(
 						"data.google_monitoring_app_engine_service.default",
 						"telemetry.0.resource_name",
-						fmt.Sprintf("//appengine.googleapis.com/apps/%s/services/default", acctest.GetTestProjectFromEnv()),
+						fmt.Sprintf("//appengine.googleapis.com/apps/%s/services/default", envvar.GetTestProjectFromEnv()),
 					),
 				),
 			},

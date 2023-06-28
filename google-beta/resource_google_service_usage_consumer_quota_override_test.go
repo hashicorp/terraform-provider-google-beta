@@ -3,9 +3,11 @@
 package google
 
 import (
-	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"regexp"
 	"testing"
+
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
@@ -14,7 +16,7 @@ func TestAccServiceUsageConsumerQuotaOverride_consumerQuotaOverrideCustomIncorre
 	t.Parallel()
 
 	context := map[string]interface{}{
-		"org_id":        acctest.GetTestOrgFromEnv(t),
+		"org_id":        envvar.GetTestOrgFromEnv(t),
 		"random_suffix": RandString(t, 10),
 	}
 

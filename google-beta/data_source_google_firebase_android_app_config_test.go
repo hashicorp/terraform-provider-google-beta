@@ -4,11 +4,11 @@ package google
 
 import (
 	"fmt"
-	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
-	"testing"
-
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
+	"testing"
 )
 
 func TestAccDataSourceGoogleFirebaseAndroidAppConfig(t *testing.T) {
@@ -17,7 +17,7 @@ func TestAccDataSourceGoogleFirebaseAndroidAppConfig(t *testing.T) {
 	acctest.SkipIfVcr(t)
 
 	context := map[string]interface{}{
-		"project_id":   acctest.GetTestProjectFromEnv(),
+		"project_id":   envvar.GetTestProjectFromEnv(),
 		"package_name": "android.app." + RandString(t, 5),
 		"display_name": "tf-test Display Name AndroidAppConfig DataSource",
 	}

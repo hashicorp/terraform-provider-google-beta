@@ -4,6 +4,7 @@ package google
 
 import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -12,7 +13,7 @@ import (
 func TestAccFirebaseAndroidApp_update(t *testing.T) {
 	t.Parallel()
 	context := map[string]interface{}{
-		"project_id":    acctest.GetTestProjectFromEnv(),
+		"project_id":    envvar.GetTestProjectFromEnv(),
 		"package_name":  "android.package.app" + RandString(t, 4),
 		"random_suffix": RandString(t, 10),
 		"display_name":  "tf-test Display Name N",
