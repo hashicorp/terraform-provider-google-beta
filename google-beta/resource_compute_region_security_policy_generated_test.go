@@ -56,7 +56,7 @@ func TestAccComputeRegionSecurityPolicy_regionSecurityPolicyBasicExample(t *test
 }
 
 func testAccComputeRegionSecurityPolicy_regionSecurityPolicyBasicExample(context map[string]interface{}) string {
-	return tpgresource.Nprintf(`
+	return acctest.Nprintf(`
 resource "google_compute_region_security_policy" "region-sec-policy-basic" {
   provider    = google-beta
 
@@ -93,7 +93,7 @@ func TestAccComputeRegionSecurityPolicy_regionSecurityPolicyWithDdosProtectionCo
 }
 
 func testAccComputeRegionSecurityPolicy_regionSecurityPolicyWithDdosProtectionConfigExample(context map[string]interface{}) string {
-	return tpgresource.Nprintf(`
+	return acctest.Nprintf(`
 resource "google_compute_region_security_policy" "region-sec-policy-ddos-protection" {
   provider    = google-beta  
 

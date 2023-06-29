@@ -24,7 +24,6 @@ import (
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
-	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 )
 
 func TestAccFirebaseProjectLocation_firebaseProjectLocationBasicExample(t *testing.T) {
@@ -52,7 +51,7 @@ func TestAccFirebaseProjectLocation_firebaseProjectLocationBasicExample(t *testi
 }
 
 func testAccFirebaseProjectLocation_firebaseProjectLocationBasicExample(context map[string]interface{}) string {
-	return tpgresource.Nprintf(`
+	return acctest.Nprintf(`
 resource "google_project" "default" {
   provider = google-beta
 

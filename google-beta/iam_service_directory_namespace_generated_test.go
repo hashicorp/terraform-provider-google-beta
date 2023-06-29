@@ -92,7 +92,7 @@ func TestAccServiceDirectoryNamespaceIamPolicyGenerated(t *testing.T) {
 }
 
 func testAccServiceDirectoryNamespaceIamMember_basicGenerated(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_service_directory_namespace" "example" {
   provider     = google-beta
   namespace_id = "tf-test-example-namespace%{random_suffix}"
@@ -114,7 +114,7 @@ resource "google_service_directory_namespace_iam_member" "foo" {
 }
 
 func testAccServiceDirectoryNamespaceIamPolicy_basicGenerated(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_service_directory_namespace" "example" {
   provider     = google-beta
   namespace_id = "tf-test-example-namespace%{random_suffix}"
@@ -151,7 +151,7 @@ data "google_service_directory_namespace_iam_policy" "foo" {
 }
 
 func testAccServiceDirectoryNamespaceIamPolicy_emptyBinding(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_service_directory_namespace" "example" {
   provider     = google-beta
   namespace_id = "tf-test-example-namespace%{random_suffix}"
@@ -176,7 +176,7 @@ resource "google_service_directory_namespace_iam_policy" "foo" {
 }
 
 func testAccServiceDirectoryNamespaceIamBinding_basicGenerated(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_service_directory_namespace" "example" {
   provider     = google-beta
   namespace_id = "tf-test-example-namespace%{random_suffix}"
@@ -198,7 +198,7 @@ resource "google_service_directory_namespace_iam_binding" "foo" {
 }
 
 func testAccServiceDirectoryNamespaceIamBinding_updateGenerated(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_service_directory_namespace" "example" {
   provider     = google-beta
   namespace_id = "tf-test-example-namespace%{random_suffix}"

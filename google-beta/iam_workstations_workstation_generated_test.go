@@ -124,7 +124,7 @@ func TestAccWorkstationsWorkstationIamPolicyGenerated(t *testing.T) {
 }
 
 func testAccWorkstationsWorkstationIamMember_basicGenerated(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_compute_network" "default" {
   provider                = google-beta
   name                    = "tf-test-workstation-cluster%{random_suffix}"
@@ -200,7 +200,7 @@ resource "google_workstations_workstation_iam_member" "foo" {
 }
 
 func testAccWorkstationsWorkstationIamPolicy_basicGenerated(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_compute_network" "default" {
   provider                = google-beta
   name                    = "tf-test-workstation-cluster%{random_suffix}"
@@ -295,7 +295,7 @@ data "google_workstations_workstation_iam_policy" "foo" {
 }
 
 func testAccWorkstationsWorkstationIamPolicy_emptyBinding(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_compute_network" "default" {
   provider                = google-beta
   name                    = "tf-test-workstation-cluster%{random_suffix}"
@@ -374,7 +374,7 @@ resource "google_workstations_workstation_iam_policy" "foo" {
 }
 
 func testAccWorkstationsWorkstationIamBinding_basicGenerated(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_compute_network" "default" {
   provider                = google-beta
   name                    = "tf-test-workstation-cluster%{random_suffix}"
@@ -450,7 +450,7 @@ resource "google_workstations_workstation_iam_binding" "foo" {
 }
 
 func testAccWorkstationsWorkstationIamBinding_updateGenerated(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_compute_network" "default" {
   provider                = google-beta
   name                    = "tf-test-workstation-cluster%{random_suffix}"

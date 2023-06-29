@@ -44,7 +44,7 @@ func TestAccWorkstationsWorkstation_update(t *testing.T) {
 }
 
 func testAccWorkstationsWorkstation_basic(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_compute_network" "default" {
   name                    = "tf-test-workstation-cluster%{random_suffix}"
   auto_create_subnetworks = false
@@ -92,7 +92,7 @@ resource "google_workstations_workstation" "default" {
 }
 
 func testAccWorkstationsWorkstation_modified(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_compute_network" "default" {
   name                    = "tf-test-workstation-cluster%{random_suffix}"
   auto_create_subnetworks = false

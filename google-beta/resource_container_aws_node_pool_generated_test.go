@@ -124,7 +124,7 @@ func TestAccContainerAwsNodePool_BetaBasicHandWritten(t *testing.T) {
 }
 
 func testAccContainerAwsNodePool_BasicHandWritten(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 data "google_container_aws_versions" "versions" {
   project = "%{project_name}"
   location = "us-west1"
@@ -281,7 +281,7 @@ resource "google_container_aws_node_pool" "primary" {
 }
 
 func testAccContainerAwsNodePool_BasicHandWrittenUpdate0(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 data "google_container_aws_versions" "versions" {
   project = "%{project_name}"
   location = "us-west1"
@@ -437,7 +437,7 @@ resource "google_container_aws_node_pool" "primary" {
 }
 
 func testAccContainerAwsNodePool_BetaBasicHandWritten(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 data "google_container_aws_versions" "versions" {
   provider = google-beta
   project = "%{project_name}"
@@ -603,7 +603,7 @@ resource "google_container_aws_node_pool" "primary" {
 }
 
 func testAccContainerAwsNodePool_BetaBasicHandWrittenUpdate0(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 data "google_container_aws_versions" "versions" {
   provider = google-beta
   project = "%{project_name}"

@@ -59,7 +59,7 @@ func TestAccIAM2DenyPolicy_iamDenyPolicyBasicExample(t *testing.T) {
 }
 
 func testAccIAM2DenyPolicy_iamDenyPolicyBasicExample(context map[string]interface{}) string {
-	return tpgresource.Nprintf(`
+	return acctest.Nprintf(`
 resource "google_project" "project" {
   provider        = google-beta
   project_id      = "tf-test%{random_suffix}"

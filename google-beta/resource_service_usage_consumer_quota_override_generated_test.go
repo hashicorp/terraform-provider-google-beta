@@ -58,7 +58,7 @@ func TestAccServiceUsageConsumerQuotaOverride_consumerQuotaOverrideExample(t *te
 }
 
 func testAccServiceUsageConsumerQuotaOverride_consumerQuotaOverrideExample(context map[string]interface{}) string {
-	return tpgresource.Nprintf(`
+	return acctest.Nprintf(`
 resource "google_project" "my_project" {
   provider   = google-beta
   name       = "tf-test-project"
@@ -105,7 +105,7 @@ func TestAccServiceUsageConsumerQuotaOverride_consumerQuotaOverrideZeroValueExam
 }
 
 func testAccServiceUsageConsumerQuotaOverride_consumerQuotaOverrideZeroValueExample(context map[string]interface{}) string {
-	return tpgresource.Nprintf(`
+	return acctest.Nprintf(`
 resource "google_project" "my_project" {
   provider   = google-beta
   name       = "tf-test-project"
@@ -152,7 +152,7 @@ func TestAccServiceUsageConsumerQuotaOverride_regionConsumerQuotaOverrideExample
 }
 
 func testAccServiceUsageConsumerQuotaOverride_regionConsumerQuotaOverrideExample(context map[string]interface{}) string {
-	return tpgresource.Nprintf(`
+	return acctest.Nprintf(`
 resource "google_project" "my_project" {
   provider   = google-beta
   name       = "tf-test-project"
@@ -202,7 +202,7 @@ func TestAccServiceUsageConsumerQuotaOverride_consumerQuotaOverrideCustomDimensi
 }
 
 func testAccServiceUsageConsumerQuotaOverride_consumerQuotaOverrideCustomDimensionExample(context map[string]interface{}) string {
-	return tpgresource.Nprintf(`
+	return acctest.Nprintf(`
 resource "google_project" "my_project" {
   provider   = google-beta
   name       = "tf-test-project"

@@ -56,7 +56,7 @@ func TestAccGkeonpremBareMetalCluster_gkeonpremBareMetalClusterBasicExample(t *t
 }
 
 func testAccGkeonpremBareMetalCluster_gkeonpremBareMetalClusterBasicExample(context map[string]interface{}) string {
-	return tpgresource.Nprintf(`
+	return acctest.Nprintf(`
 resource "google_gkeonprem_bare_metal_cluster" "cluster-basic" {
   provider = google-beta
   name = "cluster-basic%{random_suffix}"
@@ -158,7 +158,7 @@ func TestAccGkeonpremBareMetalCluster_gkeonpremBareMetalClusterManuallbExample(t
 }
 
 func testAccGkeonpremBareMetalCluster_gkeonpremBareMetalClusterManuallbExample(context map[string]interface{}) string {
-	return tpgresource.Nprintf(`
+	return acctest.Nprintf(`
 resource "google_gkeonprem_bare_metal_cluster" "cluster-manuallb" {
   provider = google-beta
   name = "cluster-manuallb%{random_suffix}"
@@ -245,7 +245,7 @@ func TestAccGkeonpremBareMetalCluster_gkeonpremBareMetalClusterBgplbExample(t *t
 }
 
 func testAccGkeonpremBareMetalCluster_gkeonpremBareMetalClusterBgplbExample(context map[string]interface{}) string {
-	return tpgresource.Nprintf(`
+	return acctest.Nprintf(`
 resource "google_gkeonprem_bare_metal_cluster" "cluster-bgplb" {
   provider = google-beta
   name = "cluster-bgplb%{random_suffix}"

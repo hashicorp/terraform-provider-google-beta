@@ -27,7 +27,6 @@ import (
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
-	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 )
 
 func TestAccComputeOrganizationSecurityPolicyAssociation_organizationSecurityPolicyAssociationBasicExample(t *testing.T) {
@@ -57,7 +56,7 @@ func TestAccComputeOrganizationSecurityPolicyAssociation_organizationSecurityPol
 }
 
 func testAccComputeOrganizationSecurityPolicyAssociation_organizationSecurityPolicyAssociationBasicExample(context map[string]interface{}) string {
-	return tpgresource.Nprintf(`
+	return acctest.Nprintf(`
 resource "google_folder" "security_policy_target" {
   provider     = google-beta
   display_name = "tf-test-secpol-%{random_suffix}"

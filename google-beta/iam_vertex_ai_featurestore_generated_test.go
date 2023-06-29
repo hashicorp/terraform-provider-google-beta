@@ -136,7 +136,7 @@ func TestAccVertexAIFeaturestoreIamPolicyGenerated(t *testing.T) {
 }
 
 func testAccVertexAIFeaturestoreIamMember_basicGenerated(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_vertex_ai_featurestore" "featurestore" {
   name     = "terraform%{random_suffix}"
   labels = {
@@ -163,7 +163,7 @@ resource "google_vertex_ai_featurestore_iam_member" "foo" {
 }
 
 func testAccVertexAIFeaturestoreIamPolicy_basicGenerated(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_vertex_ai_featurestore" "featurestore" {
   name     = "terraform%{random_suffix}"
   labels = {
@@ -205,7 +205,7 @@ data "google_vertex_ai_featurestore_iam_policy" "foo" {
 }
 
 func testAccVertexAIFeaturestoreIamPolicy_emptyBinding(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_vertex_ai_featurestore" "featurestore" {
   name     = "terraform%{random_suffix}"
   labels = {
@@ -234,7 +234,7 @@ resource "google_vertex_ai_featurestore_iam_policy" "foo" {
 }
 
 func testAccVertexAIFeaturestoreIamBinding_basicGenerated(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_vertex_ai_featurestore" "featurestore" {
   name     = "terraform%{random_suffix}"
   labels = {
@@ -261,7 +261,7 @@ resource "google_vertex_ai_featurestore_iam_binding" "foo" {
 }
 
 func testAccVertexAIFeaturestoreIamBinding_updateGenerated(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_vertex_ai_featurestore" "featurestore" {
   name     = "terraform%{random_suffix}"
   labels = {

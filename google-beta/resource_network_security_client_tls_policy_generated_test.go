@@ -56,7 +56,7 @@ func TestAccNetworkSecurityClientTlsPolicy_networkSecurityClientTlsPolicyBasicEx
 }
 
 func testAccNetworkSecurityClientTlsPolicy_networkSecurityClientTlsPolicyBasicExample(context map[string]interface{}) string {
-	return tpgresource.Nprintf(`
+	return acctest.Nprintf(`
 resource "google_network_security_client_tls_policy" "default" {
   provider               = google-beta
   name                   = "tf-test-my-client-tls-policy%{random_suffix}"
@@ -95,7 +95,7 @@ func TestAccNetworkSecurityClientTlsPolicy_networkSecurityClientTlsPolicyAdvance
 }
 
 func testAccNetworkSecurityClientTlsPolicy_networkSecurityClientTlsPolicyAdvancedExample(context map[string]interface{}) string {
-	return tpgresource.Nprintf(`
+	return acctest.Nprintf(`
 resource "google_network_security_client_tls_policy" "default" {
   provider               = google-beta
   name                   = "tf-test-my-client-tls-policy%{random_suffix}"

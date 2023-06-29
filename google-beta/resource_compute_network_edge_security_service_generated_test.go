@@ -58,7 +58,7 @@ func TestAccComputeNetworkEdgeSecurityService_computeNetworkEdgeSecurityServiceB
 }
 
 func testAccComputeNetworkEdgeSecurityService_computeNetworkEdgeSecurityServiceBasicExample(context map[string]interface{}) string {
-	return tpgresource.Nprintf(`
+	return acctest.Nprintf(`
 resource "google_compute_network_edge_security_service" "default" {
   provider     = google-beta  
 

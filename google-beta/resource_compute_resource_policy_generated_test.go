@@ -56,7 +56,7 @@ func TestAccComputeResourcePolicy_resourcePolicyBasicExample(t *testing.T) {
 }
 
 func testAccComputeResourcePolicy_resourcePolicyBasicExample(context map[string]interface{}) string {
-	return tpgresource.Nprintf(`
+	return acctest.Nprintf(`
 resource "google_compute_resource_policy" "foo" {
   name   = "tf-test-gce-policy%{random_suffix}"
   region = "us-central1"
@@ -98,7 +98,7 @@ func TestAccComputeResourcePolicy_resourcePolicyFullExample(t *testing.T) {
 }
 
 func testAccComputeResourcePolicy_resourcePolicyFullExample(context map[string]interface{}) string {
-	return tpgresource.Nprintf(`
+	return acctest.Nprintf(`
 resource "google_compute_resource_policy" "bar" {
   name   = "tf-test-gce-policy%{random_suffix}"
   region = "us-central1"
@@ -151,7 +151,7 @@ func TestAccComputeResourcePolicy_resourcePolicyPlacementPolicyExample(t *testin
 }
 
 func testAccComputeResourcePolicy_resourcePolicyPlacementPolicyExample(context map[string]interface{}) string {
-	return tpgresource.Nprintf(`
+	return acctest.Nprintf(`
 resource "google_compute_resource_policy" "baz" {
   name   = "tf-test-gce-policy%{random_suffix}"
   region = "us-central1"
@@ -189,7 +189,7 @@ func TestAccComputeResourcePolicy_resourcePolicyPlacementPolicyMaxDistanceExampl
 }
 
 func testAccComputeResourcePolicy_resourcePolicyPlacementPolicyMaxDistanceExample(context map[string]interface{}) string {
-	return tpgresource.Nprintf(`
+	return acctest.Nprintf(`
 resource "google_compute_resource_policy" "baz" {
   name   = "tf-test-gce-policy%{random_suffix}"
   region = "us-central1"
@@ -229,7 +229,7 @@ func TestAccComputeResourcePolicy_resourcePolicyInstanceSchedulePolicyExample(t 
 }
 
 func testAccComputeResourcePolicy_resourcePolicyInstanceSchedulePolicyExample(context map[string]interface{}) string {
-	return tpgresource.Nprintf(`
+	return acctest.Nprintf(`
 resource "google_compute_resource_policy" "hourly" {
   name   = "tf-test-gce-policy%{random_suffix}"
   region = "us-central1"
@@ -273,7 +273,7 @@ func TestAccComputeResourcePolicy_resourcePolicySnapshotScheduleChainNameExample
 }
 
 func testAccComputeResourcePolicy_resourcePolicySnapshotScheduleChainNameExample(context map[string]interface{}) string {
-	return tpgresource.Nprintf(`
+	return acctest.Nprintf(`
 resource "google_compute_resource_policy" "hourly" {
   name   = "tf-test-gce-policy%{random_suffix}"
   region = "us-central1"
@@ -328,7 +328,7 @@ func TestAccComputeResourcePolicy_resourcePolicyConsistencyGroupExample(t *testi
 }
 
 func testAccComputeResourcePolicy_resourcePolicyConsistencyGroupExample(context map[string]interface{}) string {
-	return tpgresource.Nprintf(`
+	return acctest.Nprintf(`
 resource "google_compute_resource_policy" "cgroup" {
   provider = google-beta
 

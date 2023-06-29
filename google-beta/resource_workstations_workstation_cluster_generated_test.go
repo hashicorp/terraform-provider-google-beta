@@ -56,7 +56,7 @@ func TestAccWorkstationsWorkstationCluster_workstationClusterBasicExample(t *tes
 }
 
 func testAccWorkstationsWorkstationCluster_workstationClusterBasicExample(context map[string]interface{}) string {
-	return tpgresource.Nprintf(`
+	return acctest.Nprintf(`
 resource "google_workstations_workstation_cluster" "default" {
   provider               = google-beta
   workstation_cluster_id = "tf-test-workstation-cluster%{random_suffix}"
@@ -119,7 +119,7 @@ func TestAccWorkstationsWorkstationCluster_workstationClusterPrivateExample(t *t
 }
 
 func testAccWorkstationsWorkstationCluster_workstationClusterPrivateExample(context map[string]interface{}) string {
-	return tpgresource.Nprintf(`
+	return acctest.Nprintf(`
 resource "google_workstations_workstation_cluster" "default" {
   provider               = google-beta
   workstation_cluster_id = "tf-test-workstation-cluster-private%{random_suffix}"

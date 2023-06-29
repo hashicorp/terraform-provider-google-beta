@@ -56,7 +56,7 @@ func TestAccNetworkSecurityAuthorizationPolicy_networkSecurityAuthorizationPolic
 }
 
 func testAccNetworkSecurityAuthorizationPolicy_networkSecurityAuthorizationPolicyBasicExample(context map[string]interface{}) string {
-	return tpgresource.Nprintf(`
+	return acctest.Nprintf(`
 resource "google_network_security_authorization_policy" "default" {
   provider               = google-beta
   name                   = "tf-test-my-authorization-policy%{random_suffix}"
@@ -101,7 +101,7 @@ func TestAccNetworkSecurityAuthorizationPolicy_networkSecurityAuthorizationPolic
 }
 
 func testAccNetworkSecurityAuthorizationPolicy_networkSecurityAuthorizationPolicyDestinationsExample(context map[string]interface{}) string {
-	return tpgresource.Nprintf(`
+	return acctest.Nprintf(`
 resource "google_network_security_authorization_policy" "default" {
   provider               = google-beta
   name                   = "tf-test-my-authorization-policy%{random_suffix}"

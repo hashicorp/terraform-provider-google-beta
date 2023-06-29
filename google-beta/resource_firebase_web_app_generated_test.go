@@ -60,7 +60,7 @@ func TestAccFirebaseWebApp_firebaseWebAppBasicExample(t *testing.T) {
 }
 
 func testAccFirebaseWebApp_firebaseWebAppBasicExample(context map[string]interface{}) string {
-	return tpgresource.Nprintf(`
+	return acctest.Nprintf(`
 resource "google_project" "default" {
 	provider = google-beta
 

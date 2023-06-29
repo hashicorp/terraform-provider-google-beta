@@ -92,7 +92,7 @@ func TestAccCloudbuildv2ConnectionIamPolicyGenerated(t *testing.T) {
 }
 
 func testAccCloudbuildv2ConnectionIamMember_basicGenerated(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_cloudbuildv2_connection" "my-connection" {
   provider = google-beta
   location = "us-central1"
@@ -119,7 +119,7 @@ resource "google_cloudbuildv2_connection_iam_member" "foo" {
 }
 
 func testAccCloudbuildv2ConnectionIamPolicy_basicGenerated(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_cloudbuildv2_connection" "my-connection" {
   provider = google-beta
   location = "us-central1"
@@ -163,7 +163,7 @@ data "google_cloudbuildv2_connection_iam_policy" "foo" {
 }
 
 func testAccCloudbuildv2ConnectionIamPolicy_emptyBinding(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_cloudbuildv2_connection" "my-connection" {
   provider = google-beta
   location = "us-central1"
@@ -193,7 +193,7 @@ resource "google_cloudbuildv2_connection_iam_policy" "foo" {
 }
 
 func testAccCloudbuildv2ConnectionIamBinding_basicGenerated(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_cloudbuildv2_connection" "my-connection" {
   provider = google-beta
   location = "us-central1"
@@ -220,7 +220,7 @@ resource "google_cloudbuildv2_connection_iam_binding" "foo" {
 }
 
 func testAccCloudbuildv2ConnectionIamBinding_updateGenerated(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_cloudbuildv2_connection" "my-connection" {
   provider = google-beta
   location = "us-central1"

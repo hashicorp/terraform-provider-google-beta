@@ -56,7 +56,7 @@ func TestAccComputeVpnTunnel_vpnTunnelBasicExample(t *testing.T) {
 }
 
 func testAccComputeVpnTunnel_vpnTunnelBasicExample(context map[string]interface{}) string {
-	return tpgresource.Nprintf(`
+	return acctest.Nprintf(`
 resource "google_compute_vpn_tunnel" "tunnel1" {
   name          = "tf-test-tunnel-1%{random_suffix}"
   peer_ip       = "15.0.0.120"
@@ -146,7 +146,7 @@ func TestAccComputeVpnTunnel_vpnTunnelBetaExample(t *testing.T) {
 }
 
 func testAccComputeVpnTunnel_vpnTunnelBetaExample(context map[string]interface{}) string {
-	return tpgresource.Nprintf(`
+	return acctest.Nprintf(`
 resource "google_compute_vpn_tunnel" "tunnel1" {
   provider      = %{provider_name}
   name          = "tf-test-tunnel-1%{random_suffix}"

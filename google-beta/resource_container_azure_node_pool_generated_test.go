@@ -112,7 +112,7 @@ func TestAccContainerAzureNodePool_BetaBasicHandWritten(t *testing.T) {
 }
 
 func testAccContainerAzureNodePool_BasicHandWritten(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 data "google_container_azure_versions" "versions" {
   project = "%{project_name}"
   location = "us-west1"
@@ -213,7 +213,7 @@ resource "google_container_azure_node_pool" "primary" {
 }
 
 func testAccContainerAzureNodePool_BasicHandWrittenUpdate0(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 data "google_container_azure_versions" "versions" {
   project = "%{project_name}"
   location = "us-west1"
@@ -315,7 +315,7 @@ resource "google_container_azure_node_pool" "primary" {
 }
 
 func testAccContainerAzureNodePool_BetaBasicHandWritten(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 data "google_container_azure_versions" "versions" {
   project = "%{project_name}"
   location = "us-west1"
@@ -422,7 +422,7 @@ resource "google_container_azure_node_pool" "primary" {
 }
 
 func testAccContainerAzureNodePool_BetaBasicHandWrittenUpdate0(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 data "google_container_azure_versions" "versions" {
   provider = google-beta
   project = "%{project_name}"

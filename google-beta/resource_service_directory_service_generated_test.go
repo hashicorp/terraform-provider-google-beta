@@ -56,7 +56,7 @@ func TestAccServiceDirectoryService_serviceDirectoryServiceBasicExample(t *testi
 }
 
 func testAccServiceDirectoryService_serviceDirectoryServiceBasicExample(context map[string]interface{}) string {
-	return tpgresource.Nprintf(`
+	return acctest.Nprintf(`
 resource "google_service_directory_namespace" "example" {
   provider     = google-beta
   namespace_id = "tf-test-example-namespace%{random_suffix}"

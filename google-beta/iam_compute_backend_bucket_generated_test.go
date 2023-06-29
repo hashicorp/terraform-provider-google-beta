@@ -124,7 +124,7 @@ func TestAccComputeBackendBucketIamPolicyGenerated(t *testing.T) {
 }
 
 func testAccComputeBackendBucketIamMember_basicGenerated(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_compute_backend_bucket" "image_backend" {
   name        = "tf-test-image-backend-bucket%{random_suffix}"
   description = "Contains beautiful images"
@@ -147,7 +147,7 @@ resource "google_compute_backend_bucket_iam_member" "foo" {
 }
 
 func testAccComputeBackendBucketIamPolicy_basicGenerated(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_compute_backend_bucket" "image_backend" {
   name        = "tf-test-image-backend-bucket%{random_suffix}"
   description = "Contains beautiful images"
@@ -184,7 +184,7 @@ data "google_compute_backend_bucket_iam_policy" "foo" {
 }
 
 func testAccComputeBackendBucketIamPolicy_emptyBinding(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_compute_backend_bucket" "image_backend" {
   name        = "tf-test-image-backend-bucket%{random_suffix}"
   description = "Contains beautiful images"
@@ -209,7 +209,7 @@ resource "google_compute_backend_bucket_iam_policy" "foo" {
 }
 
 func testAccComputeBackendBucketIamBinding_basicGenerated(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_compute_backend_bucket" "image_backend" {
   name        = "tf-test-image-backend-bucket%{random_suffix}"
   description = "Contains beautiful images"
@@ -232,7 +232,7 @@ resource "google_compute_backend_bucket_iam_binding" "foo" {
 }
 
 func testAccComputeBackendBucketIamBinding_updateGenerated(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_compute_backend_bucket" "image_backend" {
   name        = "tf-test-image-backend-bucket%{random_suffix}"
   description = "Contains beautiful images"

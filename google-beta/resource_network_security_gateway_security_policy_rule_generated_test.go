@@ -56,7 +56,7 @@ func TestAccNetworkSecurityGatewaySecurityPolicyRule_networkSecurityGatewaySecur
 }
 
 func testAccNetworkSecurityGatewaySecurityPolicyRule_networkSecurityGatewaySecurityPolicyRulesBasicExample(context map[string]interface{}) string {
-	return tpgresource.Nprintf(`
+	return acctest.Nprintf(`
 resource "google_network_security_gateway_security_policy" "default" {
   provider    = google-beta
   name        = "tf-test-my-gateway-security-policy%{random_suffix}"
@@ -104,7 +104,7 @@ func TestAccNetworkSecurityGatewaySecurityPolicyRule_networkSecurityGatewaySecur
 }
 
 func testAccNetworkSecurityGatewaySecurityPolicyRule_networkSecurityGatewaySecurityPolicyRulesAdvancedExample(context map[string]interface{}) string {
-	return tpgresource.Nprintf(`
+	return acctest.Nprintf(`
 resource "google_network_security_gateway_security_policy" "default" {
   provider    = google-beta
   name        = "tf-test-my-gateway-security-policy%{random_suffix}"

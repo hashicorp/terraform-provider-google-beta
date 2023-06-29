@@ -56,7 +56,7 @@ func TestAccComputeTargetHttpProxy_targetHttpProxyBasicExample(t *testing.T) {
 }
 
 func testAccComputeTargetHttpProxy_targetHttpProxyBasicExample(context map[string]interface{}) string {
-	return tpgresource.Nprintf(`
+	return acctest.Nprintf(`
 resource "google_compute_target_http_proxy" "default" {
   name    = "tf-test-test-proxy%{random_suffix}"
   url_map = google_compute_url_map.default.id
@@ -126,7 +126,7 @@ func TestAccComputeTargetHttpProxy_targetHttpProxyHttpKeepAliveTimeoutExample(t 
 }
 
 func testAccComputeTargetHttpProxy_targetHttpProxyHttpKeepAliveTimeoutExample(context map[string]interface{}) string {
-	return tpgresource.Nprintf(`
+	return acctest.Nprintf(`
 resource "google_compute_target_http_proxy" "default" {
   provider                    = google-beta
   name                        = "tf-test-test-http-keep-alive-timeout-proxy%{random_suffix}"
@@ -202,7 +202,7 @@ func TestAccComputeTargetHttpProxy_targetHttpProxyHttpsRedirectExample(t *testin
 }
 
 func testAccComputeTargetHttpProxy_targetHttpProxyHttpsRedirectExample(context map[string]interface{}) string {
-	return tpgresource.Nprintf(`
+	return acctest.Nprintf(`
 resource "google_compute_target_http_proxy" "default" {
   name    = "tf-test-test-https-redirect-proxy%{random_suffix}"
   url_map = google_compute_url_map.default.id
