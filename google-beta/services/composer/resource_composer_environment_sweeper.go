@@ -6,7 +6,6 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/sweeper"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 
@@ -27,7 +26,7 @@ func init() {
  * rate-limited, for now just warn instead of returning actual errors.
  */
 func testSweepComposerResources(region string) error {
-	config, err := acctest.SharedConfigForRegion(region)
+	config, err := sweeper.SharedConfigForRegion(region)
 	if err != nil {
 		return fmt.Errorf("error getting shared config for region: %s", err)
 	}
