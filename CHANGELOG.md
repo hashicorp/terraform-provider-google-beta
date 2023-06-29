@@ -1,4 +1,24 @@
-## 4.71.0 (Unreleased)
+## 4.72.0 (Unreleased)
+
+## 4.71.0 (June 27, 2023)
+
+FEATURES:
+* **New Resource:** `google_gke_hub_feature_iam_*` ([#5782](https://github.com/hashicorp/terraform-provider-google-beta/pull/5782))
+* **New Resource:** `google_gke_hub_feature` ([#5782](https://github.com/hashicorp/terraform-provider-google-beta/pull/5782))
+* **New Resource:** `google_vmwareengine_cluster` ([#5784](https://github.com/hashicorp/terraform-provider-google-beta/pull/5784))
+* **New Resource:** `google_vmwareengine_private_cloud` ([#5784](https://github.com/hashicorp/terraform-provider-google-beta/pull/5784))
+
+IMPROVEMENTS:
+* apigee: added output-only field `apigee_project_id` to resource `google_apigee_organization` ([#5781](https://github.com/hashicorp/terraform-provider-google-beta/pull/5781))
+* bigtable: increased default timeout for instance operations to 1 hour in resoure `google_bigtable_instance` ([#5779](https://github.com/hashicorp/terraform-provider-google-beta/pull/5779))
+* composer: added field `resilience_mode` to resource `google_composer_environment` ([#5790](https://github.com/hashicorp/terraform-provider-google-beta/pull/5790))
+* compute: added support for `params.resource_manager_tags` and `boot_disk.initialize_params.resource_manager_tags` to resource `google_compute_instance` ([#5787](https://github.com/hashicorp/terraform-provider-google-beta/pull/5787))
+* bigquerydatatransfer: made field `service_account_name` mutable in resource `google_bigquery_data_transfer_config` ([#5777](https://github.com/hashicorp/terraform-provider-google-beta/pull/5777))
+* iambeta: added field `jwks_json` to resource `google_iam_workload_identity_pool_provider` ([#5789](https://github.com/hashicorp/terraform-provider-google-beta/pull/5789))
+
+BUG FIXES:
+* bigtable: validated that `cluster_id` values are unique within resource `google_bigtable_instance` ([#5778](https://github.com/hashicorp/terraform-provider-google-beta/pull/5778))
+* storage: fixed a bug that caused a permadiff when the `autoclass.enabled` field was explicitly set to false in resource `google_storage_bucket` ([#5776](https://github.com/hashicorp/terraform-provider-google-beta/pull/5776))
 
 ## 4.70.0 (June 20, 2023)
 
