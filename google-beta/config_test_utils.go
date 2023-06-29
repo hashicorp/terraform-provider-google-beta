@@ -76,6 +76,7 @@ func configureTestBasePaths(c *transport_tpg.Config, url string) {
 	c.FilestoreBasePath = url
 	c.FirebaseBasePath = url
 	c.FirebaseDatabaseBasePath = url
+	c.FirebaseExtensionsBasePath = url
 	c.FirebaseHostingBasePath = url
 	c.FirebaseStorageBasePath = url
 	c.FirestoreBasePath = url

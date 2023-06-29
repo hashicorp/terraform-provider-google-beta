@@ -65,6 +65,7 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/filestore"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/firebase"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/firebasedatabase"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/firebaseextensions"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/firebasehosting"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/firebasestorage"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/firestore"
@@ -492,6 +493,11 @@ func Provider() *schema.Provider {
 				ValidateFunc: transport_tpg.ValidateCustomEndpoint,
 			},
 			"firebase_database_custom_endpoint": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: transport_tpg.ValidateCustomEndpoint,
+			},
+			"firebase_extensions_custom_endpoint": {
 				Type:         schema.TypeString,
 				Optional:     true,
 				ValidateFunc: transport_tpg.ValidateCustomEndpoint,
@@ -1048,9 +1054,9 @@ func DatasourceMapWithErrors() (map[string]*schema.Resource, error) {
 		})
 }
 
-// Generated resources: 353
+// Generated resources: 354
 // Generated IAM resources: 228
-// Total generated resources: 581
+// Total generated resources: 582
 func ResourceMap() map[string]*schema.Resource {
 	resourceMap, _ := ResourceMapWithErrors()
 	return resourceMap
@@ -1402,6 +1408,7 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_firebase_project_location":                               firebase.ResourceFirebaseProjectLocation(),
 			"google_firebase_web_app":                                        firebase.ResourceFirebaseWebApp(),
 			"google_firebase_database_instance":                              firebasedatabase.ResourceFirebaseDatabaseInstance(),
+			"google_firebase_extensions_instance":                            firebaseextensions.ResourceFirebaseExtensionsInstance(),
 			"google_firebase_hosting_channel":                                firebasehosting.ResourceFirebaseHostingChannel(),
 			"google_firebase_hosting_release":                                firebasehosting.ResourceFirebaseHostingRelease(),
 			"google_firebase_hosting_site":                                   firebasehosting.ResourceFirebaseHostingSite(),
@@ -1938,6 +1945,7 @@ func providerConfigure(ctx context.Context, d *schema.ResourceData, p *schema.Pr
 	config.FilestoreBasePath = d.Get("filestore_custom_endpoint").(string)
 	config.FirebaseBasePath = d.Get("firebase_custom_endpoint").(string)
 	config.FirebaseDatabaseBasePath = d.Get("firebase_database_custom_endpoint").(string)
+	config.FirebaseExtensionsBasePath = d.Get("firebase_extensions_custom_endpoint").(string)
 	config.FirebaseHostingBasePath = d.Get("firebase_hosting_custom_endpoint").(string)
 	config.FirebaseStorageBasePath = d.Get("firebase_storage_custom_endpoint").(string)
 	config.FirestoreBasePath = d.Get("firestore_custom_endpoint").(string)
