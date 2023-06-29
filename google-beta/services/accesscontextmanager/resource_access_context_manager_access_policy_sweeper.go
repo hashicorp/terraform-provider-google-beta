@@ -8,7 +8,7 @@ import (
 	"log"
 	neturl "net/url"
 
-	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/sweeper"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
@@ -18,7 +18,7 @@ func init() {
 }
 
 func testSweepAccessContextManagerPolicies(region string) error {
-	config, err := acctest.SharedConfigForRegion(region)
+	config, err := sweeper.SharedConfigForRegion(region)
 	if err != nil {
 		log.Fatalf("error getting shared config for region %q: %s", region, err)
 	}
@@ -28,7 +28,7 @@ func testSweepAccessContextManagerPolicies(region string) error {
 		log.Fatalf("error loading and validating shared config for region %q: %s", region, err)
 	}
 
-	testOrg := acctest.GetTestOrgFromEnv(nil)
+	testOrg := envvar.GetTestOrgFromEnv(nil)
 	if testOrg == "" {
 		log.Printf("test org not set for test environment, skip sweep")
 		return nil
