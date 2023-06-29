@@ -1,16 +1,12 @@
 ## 4.72.0 (Unreleased)
 
-NKNOWN CHANGELOG TYPE:
-* Add annotations support for v2 Cloud Run Job resource ([#5795](https://github.com/hashicorp/terraform-provider-google-beta/pull/5795))
-* SEC-090: Automated trusted workflow pinning (2023-04-21) ([#5529](https://github.com/hashicorp/terraform-provider-google-beta/pull/5529))
-* Update issue-comment-created.yml to use new action ([#5793](https://github.com/hashicorp/terraform-provider-google-beta/pull/5793))
-
 FEATURES:
 * **New Resource:** `google_certificate_manager_public_ca_external_account_key` ([#5813](https://github.com/hashicorp/terraform-provider-google-beta/pull/5813))
 * **New Resource:** `google_compute_network_edge_security_service` (beta) ([#5808](https://github.com/hashicorp/terraform-provider-google-beta/pull/5808))
 * **New Resource:** `google_compute_region_security_policy` (beta) ([#5808](https://github.com/hashicorp/terraform-provider-google-beta/pull/5808))
 
 IMPROVEMENTS:
+* cloudrunv2: added annotations support to google_cloud_run_v2_job ([#5795](https://github.com/hashicorp/terraform-provider-google-beta/pull/5795))
 * compute: added `provisioned_throughput` field to `google_compute_disk` used by `hyperdisk-throughput` pd type ([#5814](https://github.com/hashicorp/terraform-provider-google-beta/pull/5814))
 * compute: added field `httpKeepAliveTimeoutSec` to resource `google_compute_target_http_proxy` (beta) ([#5818](https://github.com/hashicorp/terraform-provider-google-beta/pull/5818))
 * compute: added field `httpKeepAliveTimeoutSec` to resource `google_compute_target_https_proxy` (beta) ([#5818](https://github.com/hashicorp/terraform-provider-google-beta/pull/5818))
@@ -18,7 +14,7 @@ IMPROVEMENTS:
 * logging: added support for `locked` to `google_logging_project_bucket_config` ([#5811](https://github.com/hashicorp/terraform-provider-google-beta/pull/5811))
 
 BUG FIXES:
-* Fixed incorrect code block in the description of container_cluster resource. ([#5806](https://github.com/hashicorp/terraform-provider-google-beta/pull/5806))
+* container: fixed incorrect code block in the description of `google_container_cluster` ([#5806](https://github.com/hashicorp/terraform-provider-google-beta/pull/5806))
 * bigquery: fixed an issue where api default value for `edition` field of `google_bigquery_reservation` was not handled ([#5800](https://github.com/hashicorp/terraform-provider-google-beta/pull/5800))
 * cloudfunction2: fixed permadiffs of some fields of `service_config` in `google_cloudfunctions2_function` resource ([#5810](https://github.com/hashicorp/terraform-provider-google-beta/pull/5810))
 * compute: fixed an issue with setting project field to long form in `google_compute_forwarding_rule` and `google_compute_global_forwarding_rule` ([#5820](https://github.com/hashicorp/terraform-provider-google-beta/pull/5820))
