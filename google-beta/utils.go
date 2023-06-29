@@ -9,6 +9,7 @@ import (
 	"regexp"
 	"time"
 
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 
@@ -220,9 +221,9 @@ func lockedCall(lockKey string, f func() error) error {
 // since that would require us to generate a very particular ordering of arguments.
 //
 // Deprecated: For backward compatibility Nprintf is still working,
-// but all new code should use Nprintf in the tpgresource package instead.
+// but all new code should use Nprintf in the acctest package instead.
 func Nprintf(format string, params map[string]interface{}) string {
-	return tpgresource.Nprintf(format, params)
+	return acctest.Nprintf(format, params)
 }
 
 // serviceAccountFQN will attempt to generate the fully qualified name in the format of:

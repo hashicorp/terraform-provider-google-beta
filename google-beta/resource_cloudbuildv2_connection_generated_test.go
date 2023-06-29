@@ -189,7 +189,7 @@ func TestAccCloudbuildv2Connection_GithubConnection(t *testing.T) {
 }
 
 func testAccCloudbuildv2Connection_GheCompleteConnection(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_cloudbuildv2_connection" "primary" {
   location    = "%{region}"
   name        = "tf-test-connection%{random_suffix}"
@@ -212,7 +212,7 @@ resource "google_cloudbuildv2_connection" "primary" {
 }
 
 func testAccCloudbuildv2Connection_GheConnection(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_cloudbuildv2_connection" "primary" {
   location    = "%{region}"
   name        = "tf-test-connection%{random_suffix}"
@@ -230,7 +230,7 @@ resource "google_cloudbuildv2_connection" "primary" {
 }
 
 func testAccCloudbuildv2Connection_GheConnectionUpdate0(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_cloudbuildv2_connection" "primary" {
   location    = "%{region}"
   name        = "tf-test-connection%{random_suffix}"
@@ -253,7 +253,7 @@ resource "google_cloudbuildv2_connection" "primary" {
 }
 
 func testAccCloudbuildv2Connection_GhePrivConnection(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_cloudbuildv2_connection" "primary" {
   location    = "%{region}"
   name        = "tf-test-connection%{random_suffix}"
@@ -277,7 +277,7 @@ resource "google_cloudbuildv2_connection" "primary" {
 }
 
 func testAccCloudbuildv2Connection_GhePrivUpdateConnection(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_cloudbuildv2_connection" "primary" {
   location    = "%{region}"
   name        = "tf-test-connection%{random_suffix}"
@@ -295,7 +295,7 @@ resource "google_cloudbuildv2_connection" "primary" {
 }
 
 func testAccCloudbuildv2Connection_GhePrivUpdateConnectionUpdate0(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_cloudbuildv2_connection" "primary" {
   location    = "%{region}"
   name        = "tf-test-connection%{random_suffix}"
@@ -319,7 +319,7 @@ resource "google_cloudbuildv2_connection" "primary" {
 }
 
 func testAccCloudbuildv2Connection_GithubConnection(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_cloudbuildv2_connection" "primary" {
   location = "%{region}"
   name     = "tf-test-connection%{random_suffix}"
@@ -346,7 +346,7 @@ resource "google_cloudbuildv2_connection" "primary" {
 }
 
 func testAccCloudbuildv2Connection_GithubConnectionUpdate0(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_cloudbuildv2_connection" "primary" {
   location = "%{region}"
   name     = "tf-test-connection%{random_suffix}"

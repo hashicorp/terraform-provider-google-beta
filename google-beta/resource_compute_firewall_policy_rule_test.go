@@ -68,7 +68,7 @@ func TestAccComputeFirewallPolicyRule_update(t *testing.T) {
 }
 
 func testAccComputeFirewallPolicyRule_start(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_service_account" "service_account" {
   account_id = "tf-test-sa-%{random_suffix}"
 }
@@ -132,7 +132,7 @@ resource "google_compute_firewall_policy_rule" "default" {
 }
 
 func testAccComputeFirewallPolicyRule_update(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_service_account" "service_account" {
   account_id = "tf-test-sa-%{random_suffix}"
 }
@@ -203,7 +203,7 @@ resource "google_compute_firewall_policy_rule" "default" {
 }
 
 func testAccComputeFirewallPolicyRule_removeConfigs(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_service_account" "service_account" {
   account_id = "tf-test-sa-%{random_suffix}"
 }
@@ -314,7 +314,7 @@ func TestAccComputeFirewallPolicyRule_multipleRules(t *testing.T) {
 }
 
 func testAccComputeFirewallPolicyRule_multiple(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_folder" "folder" {
   display_name = "tf-test-folder-%{random_suffix}"
   parent       = "%{org_name}"
@@ -384,7 +384,7 @@ resource "google_compute_firewall_policy_rule" "rule2" {
 }
 
 func testAccComputeFirewallPolicyRule_multipleAdd(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_folder" "folder" {
   display_name = "tf-test-folder-%{random_suffix}"
   parent       = "%{org_name}"
@@ -474,7 +474,7 @@ resource "google_compute_firewall_policy_rule" "rule3" {
 }
 
 func testAccComputeFirewallPolicyRule_multipleRemove(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_folder" "folder" {
   display_name = "tf-test-folder-%{random_suffix}"
   parent       = "%{org_name}"

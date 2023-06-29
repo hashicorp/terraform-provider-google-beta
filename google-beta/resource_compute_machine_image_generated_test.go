@@ -56,7 +56,7 @@ func TestAccComputeMachineImage_machineImageBasicExample(t *testing.T) {
 }
 
 func testAccComputeMachineImage_machineImageBasicExample(context map[string]interface{}) string {
-	return tpgresource.Nprintf(`
+	return acctest.Nprintf(`
 resource "google_compute_instance" "vm" {
   provider     = google-beta
   name         = "tf-test-my-vm%{random_suffix}"
@@ -108,7 +108,7 @@ func TestAccComputeMachineImage_computeMachineImageKmsExample(t *testing.T) {
 }
 
 func testAccComputeMachineImage_computeMachineImageKmsExample(context map[string]interface{}) string {
-	return tpgresource.Nprintf(`
+	return acctest.Nprintf(`
 resource "google_compute_instance" "vm" {
   provider     = google-beta
   name         = "tf-test-my-vm%{random_suffix}"

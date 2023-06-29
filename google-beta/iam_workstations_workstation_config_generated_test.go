@@ -124,7 +124,7 @@ func TestAccWorkstationsWorkstationConfigIamPolicyGenerated(t *testing.T) {
 }
 
 func testAccWorkstationsWorkstationConfigIamMember_basicGenerated(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_compute_network" "default" {
   provider                = google-beta
   name                    = "tf-test-workstation-cluster%{random_suffix}"
@@ -186,7 +186,7 @@ resource "google_workstations_workstation_config_iam_member" "foo" {
 }
 
 func testAccWorkstationsWorkstationConfigIamPolicy_basicGenerated(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_compute_network" "default" {
   provider                = google-beta
   name                    = "tf-test-workstation-cluster%{random_suffix}"
@@ -266,7 +266,7 @@ data "google_workstations_workstation_config_iam_policy" "foo" {
 }
 
 func testAccWorkstationsWorkstationConfigIamPolicy_emptyBinding(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_compute_network" "default" {
   provider                = google-beta
   name                    = "tf-test-workstation-cluster%{random_suffix}"
@@ -331,7 +331,7 @@ resource "google_workstations_workstation_config_iam_policy" "foo" {
 }
 
 func testAccWorkstationsWorkstationConfigIamBinding_basicGenerated(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_compute_network" "default" {
   provider                = google-beta
   name                    = "tf-test-workstation-cluster%{random_suffix}"
@@ -393,7 +393,7 @@ resource "google_workstations_workstation_config_iam_binding" "foo" {
 }
 
 func testAccWorkstationsWorkstationConfigIamBinding_updateGenerated(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_compute_network" "default" {
   provider                = google-beta
   name                    = "tf-test-workstation-cluster%{random_suffix}"

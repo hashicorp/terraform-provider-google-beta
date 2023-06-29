@@ -56,7 +56,7 @@ func TestAccGkeonpremBareMetalNodePool_gkeonpremBareMetalNodePoolBasicExample(t 
 }
 
 func testAccGkeonpremBareMetalNodePool_gkeonpremBareMetalNodePoolBasicExample(context map[string]interface{}) string {
-	return tpgresource.Nprintf(`
+	return acctest.Nprintf(`
 resource "google_gkeonprem_bare_metal_cluster" "default-basic" {
   provider = google-beta
   name = "default-basic"
@@ -169,7 +169,7 @@ func TestAccGkeonpremBareMetalNodePool_gkeonpremBareMetalNodePoolFullExample(t *
 }
 
 func testAccGkeonpremBareMetalNodePool_gkeonpremBareMetalNodePoolFullExample(context map[string]interface{}) string {
-	return tpgresource.Nprintf(`
+	return acctest.Nprintf(`
 resource "google_gkeonprem_bare_metal_cluster" "default-full" {
   provider = google-beta
   name = "default-full"

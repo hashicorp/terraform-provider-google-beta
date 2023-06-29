@@ -170,7 +170,7 @@ func TestAccComputeRegionPerInstanceConfig_statefulIps(t *testing.T) {
 }
 
 func testAccComputeRegionPerInstanceConfig_statefulBasic(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_compute_region_per_instance_config" "default" {
 	region_instance_group_manager = google_compute_region_instance_group_manager.rigm.name
 	name = "%{config_name}"
@@ -185,7 +185,7 @@ resource "google_compute_region_per_instance_config" "default" {
 }
 
 func testAccComputeRegionPerInstanceConfig_update(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_compute_region_per_instance_config" "default" {
 	region_instance_group_manager = google_compute_region_instance_group_manager.rigm.name
 	name = "%{config_name}"
@@ -201,7 +201,7 @@ resource "google_compute_region_per_instance_config" "default" {
 }
 
 func testAccComputeRegionPerInstanceConfig_statefulModified(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_compute_region_per_instance_config" "default" {
 	region = google_compute_region_instance_group_manager.rigm.region
 	region_instance_group_manager = google_compute_region_instance_group_manager.rigm.name
@@ -217,7 +217,7 @@ resource "google_compute_region_per_instance_config" "default" {
 }
 
 func testAccComputeRegionPerInstanceConfig_statefulAdditional(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_compute_region_per_instance_config" "default" {
 	region = google_compute_region_instance_group_manager.rigm.region
 	region_instance_group_manager = google_compute_region_instance_group_manager.rigm.name
@@ -297,7 +297,7 @@ resource "google_compute_disk" "disk2" {
 }
 
 func testAccComputeRegionPerInstanceConfig_rigm(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 data "google_compute_image" "my_image" {
   family  = "debian-11"
   project = "debian-cloud"
@@ -347,7 +347,7 @@ resource "google_compute_region_instance_group_manager" "rigm" {
 `, context)
 }
 func testAccComputeRegionPerInstanceConfig_statefulIpsBasic(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_compute_network" "default" {
   name = "%{network}"
 }
@@ -423,7 +423,7 @@ resource "google_compute_disk" "disk1" {
 }
 
 func testAccComputeRegionPerInstanceConfig_statefulIpsUpdate(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_compute_network" "default" {
   name = "%{network}"
 }

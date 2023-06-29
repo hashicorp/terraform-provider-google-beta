@@ -74,7 +74,7 @@ func TestAccRegionInstanceTemplateDatasource_filter_mostRecent(t *testing.T) {
 }
 
 func testAccRegionInstanceTemplate_name(project, suffix string) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_compute_region_instance_template" "default" {
   name        = "tf-test-template-%{suffix}"
   description = "Example template."
@@ -99,7 +99,7 @@ data "google_compute_region_instance_template" "default" {
 }
 
 func testAccRegionInstanceTemplate_filter(project, suffix string) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_compute_region_instance_template" "a" {
   name        = "tf-test-template-a-%{suffix}"
   description = "Example template."
@@ -159,7 +159,7 @@ data "google_compute_region_instance_template" "default" {
 }
 
 func testAccRegionInstanceTemplate_filter_mostRecent(project, suffix string) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_compute_region_instance_template" "a" {
   name        = "tf-test-template-%{suffix}-a"
   description = "tf-test-instance-template"

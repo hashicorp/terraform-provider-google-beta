@@ -56,7 +56,7 @@ func TestAccApiGatewayApi_apigatewayApiBasicExample(t *testing.T) {
 }
 
 func testAccApiGatewayApi_apigatewayApiBasicExample(context map[string]interface{}) string {
-	return tpgresource.Nprintf(`
+	return acctest.Nprintf(`
 resource "google_api_gateway_api" "api" {
   provider = google-beta
   api_id = "tf-test-my-api%{random_suffix}"
@@ -90,7 +90,7 @@ func TestAccApiGatewayApi_apigatewayApiFullExample(t *testing.T) {
 }
 
 func testAccApiGatewayApi_apigatewayApiFullExample(context map[string]interface{}) string {
-	return tpgresource.Nprintf(`
+	return acctest.Nprintf(`
 resource "google_api_gateway_api" "api" {
   provider = google-beta
   api_id = "tf-test-my-api%{random_suffix}"

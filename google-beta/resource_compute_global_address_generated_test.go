@@ -56,7 +56,7 @@ func TestAccComputeGlobalAddress_globalAddressBasicExample(t *testing.T) {
 }
 
 func testAccComputeGlobalAddress_globalAddressBasicExample(context map[string]interface{}) string {
-	return tpgresource.Nprintf(`
+	return acctest.Nprintf(`
 resource "google_compute_global_address" "default" {
   name = "tf-test-global-appserver-ip%{random_suffix}"
 }
@@ -89,7 +89,7 @@ func TestAccComputeGlobalAddress_globalAddressPrivateServicesConnectExample(t *t
 }
 
 func testAccComputeGlobalAddress_globalAddressPrivateServicesConnectExample(context map[string]interface{}) string {
-	return tpgresource.Nprintf(`
+	return acctest.Nprintf(`
 resource "google_compute_global_address" "default" {
   provider      = google-beta
   name          = "tf-test-global-psconnect-ip%{random_suffix}"

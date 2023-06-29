@@ -204,7 +204,7 @@ func TestAccClouddeployDeliveryPipeline_VerifyDeliveryPipeline(t *testing.T) {
 }
 
 func testAccClouddeployDeliveryPipeline_CanaryDeliveryPipeline(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_clouddeploy_delivery_pipeline" "primary" {
   location = "%{region}"
   name     = "tf-test-pipeline%{random_suffix}"
@@ -243,7 +243,7 @@ resource "google_clouddeploy_delivery_pipeline" "primary" {
 }
 
 func testAccClouddeployDeliveryPipeline_CanaryDeliveryPipelineUpdate0(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_clouddeploy_delivery_pipeline" "primary" {
   location = "%{region}"
   name     = "tf-test-pipeline%{random_suffix}"
@@ -331,7 +331,7 @@ resource "google_clouddeploy_delivery_pipeline" "primary" {
 }
 
 func testAccClouddeployDeliveryPipeline_CanaryServiceNetworkingDeliveryPipeline(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_clouddeploy_delivery_pipeline" "primary" {
   location = "%{region}"
   name     = "tf-test-pipeline%{random_suffix}"
@@ -370,7 +370,7 @@ resource "google_clouddeploy_delivery_pipeline" "primary" {
 }
 
 func testAccClouddeployDeliveryPipeline_CanaryServiceNetworkingDeliveryPipelineUpdate0(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_clouddeploy_delivery_pipeline" "primary" {
   location = "%{region}"
   name     = "tf-test-pipeline%{random_suffix}"
@@ -423,7 +423,7 @@ resource "google_clouddeploy_delivery_pipeline" "primary" {
 }
 
 func testAccClouddeployDeliveryPipeline_CanaryrunDeliveryPipeline(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_clouddeploy_delivery_pipeline" "primary" {
   location = "%{region}"
   name     = "tf-test-pipeline%{random_suffix}"
@@ -462,7 +462,7 @@ resource "google_clouddeploy_delivery_pipeline" "primary" {
 }
 
 func testAccClouddeployDeliveryPipeline_CanaryrunDeliveryPipelineUpdate0(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_clouddeploy_delivery_pipeline" "primary" {
   location = "%{region}"
   name     = "tf-test-pipeline%{random_suffix}"
@@ -512,7 +512,7 @@ resource "google_clouddeploy_delivery_pipeline" "primary" {
 }
 
 func testAccClouddeployDeliveryPipeline_DeliveryPipeline(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_clouddeploy_delivery_pipeline" "primary" {
   location = "%{region}"
   name     = "tf-test-pipeline%{random_suffix}"
@@ -551,7 +551,7 @@ resource "google_clouddeploy_delivery_pipeline" "primary" {
 }
 
 func testAccClouddeployDeliveryPipeline_DeliveryPipelineUpdate0(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_clouddeploy_delivery_pipeline" "primary" {
   location = "%{region}"
   name     = "tf-test-pipeline%{random_suffix}"
@@ -592,7 +592,7 @@ resource "google_clouddeploy_delivery_pipeline" "primary" {
 }
 
 func testAccClouddeployDeliveryPipeline_VerifyDeliveryPipeline(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_clouddeploy_delivery_pipeline" "primary" {
   location = "%{region}"
   name     = "tf-test-pipeline%{random_suffix}"
@@ -631,7 +631,7 @@ resource "google_clouddeploy_delivery_pipeline" "primary" {
 }
 
 func testAccClouddeployDeliveryPipeline_VerifyDeliveryPipelineUpdate0(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_clouddeploy_delivery_pipeline" "primary" {
   location = "%{region}"
   name     = "tf-test-pipeline%{random_suffix}"

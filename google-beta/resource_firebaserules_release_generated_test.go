@@ -93,7 +93,7 @@ func TestAccFirebaserulesRelease_StorageReleaseHandWritten(t *testing.T) {
 }
 
 func testAccFirebaserulesRelease_FirestoreReleaseHandWritten(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_firebaserules_release" "primary" {
   name         = "cloud.firestore"
   ruleset_name = "projects/%{project_name}/rulesets/${google_firebaserules_ruleset.firestore.name}"
@@ -121,7 +121,7 @@ resource "google_firebaserules_ruleset" "firestore" {
 }
 
 func testAccFirebaserulesRelease_FirestoreReleaseHandWrittenUpdate0(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_firebaserules_release" "primary" {
   name         = "cloud.firestore"
   ruleset_name = "projects/%{project_name}/rulesets/${google_firebaserules_ruleset.firestore.name}"
@@ -149,7 +149,7 @@ resource "google_firebaserules_ruleset" "firestore" {
 }
 
 func testAccFirebaserulesRelease_StorageReleaseHandWritten(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_firebaserules_release" "primary" {
   provider     = google-beta
   name         = "firebase.storage/${google_storage_bucket.bucket.name}"

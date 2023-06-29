@@ -56,7 +56,7 @@ func TestAccWorkstationsWorkstation_workstationBasicExample(t *testing.T) {
 }
 
 func testAccWorkstationsWorkstation_workstationBasicExample(context map[string]interface{}) string {
-	return tpgresource.Nprintf(`
+	return acctest.Nprintf(`
 resource "google_compute_network" "default" {
   provider                = google-beta
   name                    = "tf-test-workstation-cluster%{random_suffix}"

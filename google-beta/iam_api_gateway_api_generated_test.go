@@ -124,7 +124,7 @@ func TestAccApiGatewayApiIamPolicyGenerated(t *testing.T) {
 }
 
 func testAccApiGatewayApiIamMember_basicGenerated(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_api_gateway_api" "api" {
   provider = google-beta
   api_id = "tf-test-my-api%{random_suffix}"
@@ -141,7 +141,7 @@ resource "google_api_gateway_api_iam_member" "foo" {
 }
 
 func testAccApiGatewayApiIamPolicy_basicGenerated(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_api_gateway_api" "api" {
   provider = google-beta
   api_id = "tf-test-my-api%{random_suffix}"
@@ -174,7 +174,7 @@ data "google_api_gateway_api_iam_policy" "foo" {
 }
 
 func testAccApiGatewayApiIamPolicy_emptyBinding(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_api_gateway_api" "api" {
   provider = google-beta
   api_id = "tf-test-my-api%{random_suffix}"
@@ -194,7 +194,7 @@ resource "google_api_gateway_api_iam_policy" "foo" {
 }
 
 func testAccApiGatewayApiIamBinding_basicGenerated(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_api_gateway_api" "api" {
   provider = google-beta
   api_id = "tf-test-my-api%{random_suffix}"
@@ -211,7 +211,7 @@ resource "google_api_gateway_api_iam_binding" "foo" {
 }
 
 func testAccApiGatewayApiIamBinding_updateGenerated(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_api_gateway_api" "api" {
   provider = google-beta
   api_id = "tf-test-my-api%{random_suffix}"

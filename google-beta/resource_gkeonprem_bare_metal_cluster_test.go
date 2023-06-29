@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 )
 
 func TestAccGkeonpremBareMetalCluster_bareMetalClusterUpdateBasic(t *testing.T) {
@@ -99,7 +100,7 @@ func TestAccGkeonpremBareMetalCluster_bareMetalClusterUpdateBgpLb(t *testing.T) 
 }
 
 func testAccGkeonpremBareMetalCluster_bareMetalClusterUpdateMetalLbStart(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 
   resource "google_gkeonprem_bare_metal_cluster" "cluster-metallb" {
     provider = google-beta
@@ -175,7 +176,7 @@ func testAccGkeonpremBareMetalCluster_bareMetalClusterUpdateMetalLbStart(context
 }
 
 func testAccGkeonpremBareMetalCluster_bareMetalClusterUpdateMetalLb(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 
   resource "google_gkeonprem_bare_metal_cluster" "cluster-metallb" {
     provider = google-beta
@@ -249,7 +250,7 @@ func testAccGkeonpremBareMetalCluster_bareMetalClusterUpdateMetalLb(context map[
 }
 
 func testAccGkeonpremBareMetalCluster_bareMetalClusterUpdateManualLbStart(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 
   resource "google_gkeonprem_bare_metal_cluster" "cluster-manuallb" {
     provider = google-beta
@@ -323,7 +324,7 @@ func testAccGkeonpremBareMetalCluster_bareMetalClusterUpdateManualLbStart(contex
 }
 
 func testAccGkeonpremBareMetalCluster_bareMetalClusterUpdateManualLb(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 
   resource "google_gkeonprem_bare_metal_cluster" "cluster-manuallb" {
     provider = google-beta
@@ -386,7 +387,7 @@ func testAccGkeonpremBareMetalCluster_bareMetalClusterUpdateManualLb(context map
 }
 
 func testAccGkeonpremBareMetalCluster_bareMetalClusterUpdateBgpLbStart(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 
   resource "google_gkeonprem_bare_metal_cluster" "cluster-bgplb" {
     provider = google-beta
@@ -471,7 +472,7 @@ func testAccGkeonpremBareMetalCluster_bareMetalClusterUpdateBgpLbStart(context m
 }
 
 func testAccGkeonpremBareMetalCluster_bareMetalClusterUpdateBgpLb(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 
   resource "google_gkeonprem_bare_metal_cluster" "cluster-bgplb" {
     provider = google-beta

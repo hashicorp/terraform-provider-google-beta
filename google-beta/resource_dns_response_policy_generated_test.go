@@ -55,7 +55,7 @@ func TestAccDNSResponsePolicy_dnsResponsePolicyBasicExample(t *testing.T) {
 }
 
 func testAccDNSResponsePolicy_dnsResponsePolicyBasicExample(context map[string]interface{}) string {
-	return tpgresource.Nprintf(`
+	return acctest.Nprintf(`
 resource "google_compute_network" "network-1" {
   provider = google-beta
 

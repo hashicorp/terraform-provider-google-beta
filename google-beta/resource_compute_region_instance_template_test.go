@@ -3054,7 +3054,7 @@ resource "google_compute_region_instance_template" "foobar" {
 }
 
 func testAccComputeRegionInstanceTemplate_sourceSnapshotEncryptionKey(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 data "google_kms_key_ring" "ring" {
   name     = "%{kms_ring_name}"
   location = "us-central1"
@@ -3122,7 +3122,7 @@ resource "google_compute_region_instance_template" "template" {
 }
 
 func testAccComputeRegionInstanceTemplate_sourceImageEncryptionKey(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 data "google_kms_key_ring" "ring" {
   name     = "%{kms_ring_name}"
   location = "us-central1"

@@ -59,7 +59,7 @@ func TestAccFirebaseAppleApp_firebaseAppleAppBasicExample(t *testing.T) {
 }
 
 func testAccFirebaseAppleApp_firebaseAppleAppBasicExample(context map[string]interface{}) string {
-	return tpgresource.Nprintf(`
+	return acctest.Nprintf(`
 resource "google_firebase_apple_app" "default" {
   provider = google-beta
   project = "%{project_id}"
@@ -100,7 +100,7 @@ func TestAccFirebaseAppleApp_firebaseAppleAppFullExample(t *testing.T) {
 }
 
 func testAccFirebaseAppleApp_firebaseAppleAppFullExample(context map[string]interface{}) string {
-	return tpgresource.Nprintf(`
+	return acctest.Nprintf(`
 resource "google_firebase_apple_app" "full" {
   provider = google-beta
   project = "%{project_id}"

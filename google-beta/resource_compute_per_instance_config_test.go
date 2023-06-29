@@ -172,7 +172,7 @@ func TestAccComputePerInstanceConfig_statefulIps(t *testing.T) {
 }
 
 func testAccComputePerInstanceConfig_statefulBasic(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_compute_per_instance_config" "default" {
 	instance_group_manager = google_compute_instance_group_manager.igm.name
 	name = "%{config_name}"
@@ -187,7 +187,7 @@ resource "google_compute_per_instance_config" "default" {
 }
 
 func testAccComputePerInstanceConfig_update(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_compute_per_instance_config" "default" {
 	instance_group_manager = google_compute_instance_group_manager.igm.name
 	name = "%{config_name}"
@@ -203,7 +203,7 @@ resource "google_compute_per_instance_config" "default" {
 }
 
 func testAccComputePerInstanceConfig_statefulModified(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_compute_per_instance_config" "default" {
 	zone = google_compute_instance_group_manager.igm.zone
 	instance_group_manager = google_compute_instance_group_manager.igm.name
@@ -219,7 +219,7 @@ resource "google_compute_per_instance_config" "default" {
 }
 
 func testAccComputePerInstanceConfig_statefulAdditional(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_compute_per_instance_config" "default" {
 	zone = google_compute_instance_group_manager.igm.zone
 	instance_group_manager = google_compute_instance_group_manager.igm.name
@@ -299,7 +299,7 @@ resource "google_compute_disk" "disk2" {
 }
 
 func testAccComputePerInstanceConfig_igm(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 data "google_compute_image" "my_image" {
   family  = "debian-11"
   project = "debian-cloud"
@@ -342,7 +342,7 @@ resource "google_compute_instance_group_manager" "igm" {
 }
 
 func testAccComputePerInstanceConfig_statefulIpsBasic(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_compute_network" "default" {
   name = "%{network}"
 }
@@ -417,7 +417,7 @@ resource "google_compute_disk" "disk1" {
 }
 
 func testAccComputePerInstanceConfig_statefulIpsUpdate(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_compute_network" "default" {
   name = "%{network}"
 }

@@ -60,7 +60,7 @@ func TestAccVertexAIFeaturestore_vertexAiFeaturestoreExample(t *testing.T) {
 }
 
 func testAccVertexAIFeaturestore_vertexAiFeaturestoreExample(context map[string]interface{}) string {
-	return tpgresource.Nprintf(`
+	return acctest.Nprintf(`
 resource "google_vertex_ai_featurestore" "featurestore" {
   name     = "terraform%{random_suffix}"
   labels = {
@@ -107,7 +107,7 @@ func TestAccVertexAIFeaturestore_vertexAiFeaturestoreWithBetaFieldsExample(t *te
 }
 
 func testAccVertexAIFeaturestore_vertexAiFeaturestoreWithBetaFieldsExample(context map[string]interface{}) string {
-	return tpgresource.Nprintf(`
+	return acctest.Nprintf(`
 resource "google_vertex_ai_featurestore" "featurestore" {
   provider = google-beta
   name     = "terraform2%{random_suffix}"
@@ -156,7 +156,7 @@ func TestAccVertexAIFeaturestore_vertexAiFeaturestoreScalingExample(t *testing.T
 }
 
 func testAccVertexAIFeaturestore_vertexAiFeaturestoreScalingExample(context map[string]interface{}) string {
-	return tpgresource.Nprintf(`
+	return acctest.Nprintf(`
 resource "google_vertex_ai_featurestore" "featurestore" {
   name     = "terraform3%{random_suffix}"
   labels = {

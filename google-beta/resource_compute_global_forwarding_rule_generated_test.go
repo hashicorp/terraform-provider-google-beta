@@ -57,7 +57,7 @@ func TestAccComputeGlobalForwardingRule_externalTcpProxyLbMigBackendExample(t *t
 }
 
 func testAccComputeGlobalForwardingRule_externalTcpProxyLbMigBackendExample(context map[string]interface{}) string {
-	return tpgresource.Nprintf(`
+	return acctest.Nprintf(`
 # External TCP proxy load balancer with managed instance group backend
 
 # VPC
@@ -230,7 +230,7 @@ func TestAccComputeGlobalForwardingRule_externalHttpLbMigBackendCustomHeaderExam
 }
 
 func testAccComputeGlobalForwardingRule_externalHttpLbMigBackendCustomHeaderExample(context map[string]interface{}) string {
-	return tpgresource.Nprintf(`
+	return acctest.Nprintf(`
 # External HTTP load balancer with a CDN-enabled managed instance group backend
 # and custom request and response headers
 
@@ -415,7 +415,7 @@ func TestAccComputeGlobalForwardingRule_globalForwardingRuleHttpExample(t *testi
 }
 
 func testAccComputeGlobalForwardingRule_globalForwardingRuleHttpExample(context map[string]interface{}) string {
-	return tpgresource.Nprintf(`
+	return acctest.Nprintf(`
 resource "google_compute_global_forwarding_rule" "default" {
   name       = "tf-test-global-rule%{random_suffix}"
   target     = google_compute_target_http_proxy.default.id
@@ -493,7 +493,7 @@ func TestAccComputeGlobalForwardingRule_globalForwardingRuleInternalExample(t *t
 }
 
 func testAccComputeGlobalForwardingRule_globalForwardingRuleInternalExample(context map[string]interface{}) string {
-	return tpgresource.Nprintf(`
+	return acctest.Nprintf(`
 resource "google_compute_global_forwarding_rule" "default" {
   provider              = google-beta
   name                  = "tf-test-global-rule%{random_suffix}"
@@ -630,7 +630,7 @@ func TestAccComputeGlobalForwardingRule_globalForwardingRuleExternalManagedExamp
 }
 
 func testAccComputeGlobalForwardingRule_globalForwardingRuleExternalManagedExample(context map[string]interface{}) string {
-	return tpgresource.Nprintf(`
+	return acctest.Nprintf(`
 resource "google_compute_global_forwarding_rule" "default" {
   name                  = "tf-test-global-rule%{random_suffix}"
   target                = google_compute_target_http_proxy.default.id
@@ -701,7 +701,7 @@ func TestAccComputeGlobalForwardingRule_globalForwardingRuleHybridExample(t *tes
 }
 
 func testAccComputeGlobalForwardingRule_globalForwardingRuleHybridExample(context map[string]interface{}) string {
-	return tpgresource.Nprintf(`
+	return acctest.Nprintf(`
 // Roughly mirrors https://cloud.google.com/load-balancing/docs/https/setting-up-ext-https-hybrid
 variable "subnetwork_cidr" {
   default = "10.0.0.0/24"
@@ -862,7 +862,7 @@ func TestAccComputeGlobalForwardingRule_privateServiceConnectGoogleApisExample(t
 }
 
 func testAccComputeGlobalForwardingRule_privateServiceConnectGoogleApisExample(context map[string]interface{}) string {
-	return tpgresource.Nprintf(`
+	return acctest.Nprintf(`
 resource "google_compute_network" "network" {
   provider      = google-beta
   project       = "%{project}"

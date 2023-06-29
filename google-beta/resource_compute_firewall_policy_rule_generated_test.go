@@ -70,7 +70,7 @@ func TestAccComputeFirewallPolicyRule_BasicFirSecRuleAddrGroupsHandWritten(t *te
 }
 
 func testAccComputeFirewallPolicyRule_BasicFirSecRuleAddrGroupsHandWritten(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_network_security_address_group" "basic_global_networksecurity_address_group" {
   provider = google-beta
   name        = "tf-test-policy%{random_suffix}"
@@ -127,7 +127,7 @@ resource "google_compute_firewall_policy_rule" "primary" {
 }
 
 func testAccComputeFirewallPolicyRule_BasicFirSecRuleAddrGroupsHandWrittenUpdate0(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_network_security_address_group" "basic_global_networksecurity_address_group" {
   provider    = google-beta
   name        = "tf-test-policy%{random_suffix}"

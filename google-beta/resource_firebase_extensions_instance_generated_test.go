@@ -59,7 +59,7 @@ func TestAccFirebaseExtensionsInstance_firebaseExtentionsInstanceResizeImageExam
 }
 
 func testAccFirebaseExtensionsInstance_firebaseExtentionsInstanceResizeImageExample(context map[string]interface{}) string {
-	return tpgresource.Nprintf(`
+	return acctest.Nprintf(`
 resource "google_storage_bucket" "images" {
   provider                    = google-beta
   project                     = "%{project_id}"

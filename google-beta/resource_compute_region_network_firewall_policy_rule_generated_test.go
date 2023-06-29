@@ -71,7 +71,7 @@ func TestAccComputeRegionNetworkFirewallPolicyRule_RegionalNetSecRuleHandWritten
 }
 
 func testAccComputeRegionNetworkFirewallPolicyRule_RegionalNetSecRuleHandWritten(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_network_security_address_group" "basic_regional_networksecurity_address_group" {
   provider = google-beta
 
@@ -156,7 +156,7 @@ resource "google_tags_tag_value" "basic_value" {
 }
 
 func testAccComputeRegionNetworkFirewallPolicyRule_RegionalNetSecRuleHandWrittenUpdate0(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_network_security_address_group" "basic_regional_networksecurity_address_group" {
   provider = google-beta
 

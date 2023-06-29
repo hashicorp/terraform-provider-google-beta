@@ -58,7 +58,7 @@ func TestAccNetworkSecurityAddressGroup_networkSecurityAddressGroupsBasicExample
 }
 
 func testAccNetworkSecurityAddressGroup_networkSecurityAddressGroupsBasicExample(context map[string]interface{}) string {
-	return tpgresource.Nprintf(`
+	return acctest.Nprintf(`
 resource "google_network_security_address_group" "default" {
   provider    = google-beta
   name        = "tf-test-my-address-groups%{random_suffix}"
@@ -98,7 +98,7 @@ func TestAccNetworkSecurityAddressGroup_networkSecurityAddressGroupsOrganization
 }
 
 func testAccNetworkSecurityAddressGroup_networkSecurityAddressGroupsOrganizationBasicExample(context map[string]interface{}) string {
-	return tpgresource.Nprintf(`
+	return acctest.Nprintf(`
 resource "google_network_security_address_group" "default" {
   provider    = google-beta
   name        = "tf-test-my-address-groups%{random_suffix}"
@@ -138,7 +138,7 @@ func TestAccNetworkSecurityAddressGroup_networkSecurityAddressGroupsAdvancedExam
 }
 
 func testAccNetworkSecurityAddressGroup_networkSecurityAddressGroupsAdvancedExample(context map[string]interface{}) string {
-	return tpgresource.Nprintf(`
+	return acctest.Nprintf(`
 resource "google_network_security_address_group" "default" {
   provider    = google-beta
   name        = "tf-test-my-address-groups%{random_suffix}"

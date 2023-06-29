@@ -56,7 +56,7 @@ func TestAccApiGatewayApiConfig_apigatewayApiConfigBasicExample(t *testing.T) {
 }
 
 func testAccApiGatewayApiConfig_apigatewayApiConfigBasicExample(context map[string]interface{}) string {
-	return tpgresource.Nprintf(`
+	return acctest.Nprintf(`
 resource "google_api_gateway_api" "api_cfg" {
   provider = google-beta
   api_id = "tf-test-my-api%{random_suffix}"
@@ -106,7 +106,7 @@ func TestAccApiGatewayApiConfig_apigatewayApiConfigFullExample(t *testing.T) {
 }
 
 func testAccApiGatewayApiConfig_apigatewayApiConfigFullExample(context map[string]interface{}) string {
-	return tpgresource.Nprintf(`
+	return acctest.Nprintf(`
 resource "google_api_gateway_api" "api_cfg" {
   provider = google-beta
   api_id = "tf-test-my-api%{random_suffix}"
@@ -157,7 +157,7 @@ func TestAccApiGatewayApiConfig_apigatewayApiConfigGrpcExample(t *testing.T) {
 }
 
 func testAccApiGatewayApiConfig_apigatewayApiConfigGrpcExample(context map[string]interface{}) string {
-	return tpgresource.Nprintf(`
+	return acctest.Nprintf(`
 resource "google_api_gateway_api" "api_cfg" {
   provider = google-beta
   api_id = "tf-test-my-api%{random_suffix}"
@@ -229,7 +229,7 @@ func TestAccApiGatewayApiConfig_apigatewayApiConfigGrpcFullExample(t *testing.T)
 }
 
 func testAccApiGatewayApiConfig_apigatewayApiConfigGrpcFullExample(context map[string]interface{}) string {
-	return tpgresource.Nprintf(`
+	return acctest.Nprintf(`
 resource "google_api_gateway_api" "api_cfg" {
   provider = google-beta
   api_id = "tf-test-my-api%{random_suffix}"

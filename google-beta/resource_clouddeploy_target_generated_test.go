@@ -160,7 +160,7 @@ func TestAccClouddeployTarget_Target(t *testing.T) {
 }
 
 func testAccClouddeployTarget_MultiTarget(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_clouddeploy_target" "primary" {
   location = "%{region}"
   name     = "tf-test-target%{random_suffix}"
@@ -197,7 +197,7 @@ resource "google_clouddeploy_target" "primary" {
 }
 
 func testAccClouddeployTarget_MultiTargetUpdate0(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_clouddeploy_target" "primary" {
   location = "%{region}"
   name     = "tf-test-target%{random_suffix}"
@@ -229,7 +229,7 @@ resource "google_clouddeploy_target" "primary" {
 }
 
 func testAccClouddeployTarget_RunTarget(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_clouddeploy_target" "primary" {
   location = "%{region}"
   name     = "tf-test-target%{random_suffix}"
@@ -266,7 +266,7 @@ resource "google_clouddeploy_target" "primary" {
 }
 
 func testAccClouddeployTarget_RunTargetUpdate0(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_clouddeploy_target" "primary" {
   location = "%{region}"
   name     = "tf-test-target%{random_suffix}"
@@ -300,7 +300,7 @@ resource "google_clouddeploy_target" "primary" {
 }
 
 func testAccClouddeployTarget_Target(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_clouddeploy_target" "primary" {
   location = "%{region}"
   name     = "tf-test-target%{random_suffix}"
@@ -332,7 +332,7 @@ resource "google_clouddeploy_target" "primary" {
 }
 
 func testAccClouddeployTarget_TargetUpdate0(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_clouddeploy_target" "primary" {
   location = "%{region}"
   name     = "tf-test-target%{random_suffix}"
@@ -365,7 +365,7 @@ resource "google_clouddeploy_target" "primary" {
 }
 
 func testAccClouddeployTarget_TargetUpdate1(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_clouddeploy_target" "primary" {
   location = "%{region}"
   name     = "tf-test-target%{random_suffix}"
@@ -404,7 +404,7 @@ resource "google_clouddeploy_target" "primary" {
 }
 
 func testAccClouddeployTarget_TargetUpdate2(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_clouddeploy_target" "primary" {
   location = "%{region}"
   name     = "tf-test-target%{random_suffix}"
@@ -450,7 +450,7 @@ resource "google_clouddeploy_target" "primary" {
 }
 
 func testAccClouddeployTarget_TargetUpdate3(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_clouddeploy_target" "primary" {
   location = "%{region}"
   name     = "tf-test-target%{random_suffix}"

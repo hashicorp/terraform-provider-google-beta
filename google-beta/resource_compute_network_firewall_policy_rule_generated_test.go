@@ -70,7 +70,7 @@ func TestAccComputeNetworkFirewallPolicyRule_GlobalNetSecRuleHandWritten(t *test
 }
 
 func testAccComputeNetworkFirewallPolicyRule_GlobalNetSecRuleHandWritten(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_network_security_address_group" "basic_global_networksecurity_address_group" {
   provider = google-beta
 
@@ -152,7 +152,7 @@ resource "google_tags_tag_value" "basic_value" {
 }
 
 func testAccComputeNetworkFirewallPolicyRule_GlobalNetSecRuleHandWrittenUpdate0(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_network_security_address_group" "basic_global_networksecurity_address_group" {
   provider = google-beta
 

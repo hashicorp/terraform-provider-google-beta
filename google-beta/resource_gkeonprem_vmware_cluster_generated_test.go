@@ -56,7 +56,7 @@ func TestAccGkeonpremVmwareCluster_gkeonpremVmwareClusterBasicExample(t *testing
 }
 
 func testAccGkeonpremVmwareCluster_gkeonpremVmwareClusterBasicExample(context map[string]interface{}) string {
-	return tpgresource.Nprintf(`
+	return acctest.Nprintf(`
 resource "google_gkeonprem_vmware_cluster" "cluster-basic" {
   provider = google-beta
   name = "cluster-basic%{random_suffix}"
@@ -127,7 +127,7 @@ func TestAccGkeonpremVmwareCluster_gkeonpremVmwareClusterF5lbExample(t *testing.
 }
 
 func testAccGkeonpremVmwareCluster_gkeonpremVmwareClusterF5lbExample(context map[string]interface{}) string {
-	return tpgresource.Nprintf(`
+	return acctest.Nprintf(`
 resource "google_gkeonprem_vmware_cluster" "cluster-f5lb" {
   provider = google-beta  
   name = "cluster-f5lb%{random_suffix}"
@@ -223,7 +223,7 @@ func TestAccGkeonpremVmwareCluster_gkeonpremVmwareClusterManuallbExample(t *test
 }
 
 func testAccGkeonpremVmwareCluster_gkeonpremVmwareClusterManuallbExample(context map[string]interface{}) string {
-	return tpgresource.Nprintf(`
+	return acctest.Nprintf(`
 resource "google_gkeonprem_vmware_cluster" "cluster-manuallb" {
   provider = google-beta
   name = "cluster-manuallb%{random_suffix}"

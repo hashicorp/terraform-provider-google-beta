@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 )
 
 func TestAccGkeonpremBareMetalNodePool_bareMetalNodePoolUpdate(t *testing.T) {
@@ -39,7 +40,7 @@ func TestAccGkeonpremBareMetalNodePool_bareMetalNodePoolUpdate(t *testing.T) {
 }
 
 func testAccGkeonpremBareMetalNodePool_bareMetalNodePoolUpdateStart(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 
   resource "google_gkeonprem_bare_metal_cluster" "cluster" {
     provider = google-beta
@@ -131,7 +132,7 @@ func testAccGkeonpremBareMetalNodePool_bareMetalNodePoolUpdateStart(context map[
 }
 
 func testAccGkeonpremBareMetalNodePool_bareMetalNodePoolUpdate(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 
   resource "google_gkeonprem_bare_metal_cluster" "cluster" {
     provider = google-beta

@@ -87,7 +87,7 @@ func TestAccCloudbuildv2Repository_GithubRepository(t *testing.T) {
 }
 
 func testAccCloudbuildv2Repository_GheRepository(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_cloudbuildv2_repository" "primary" {
   name              = "tf-test-repository%{random_suffix}"
   parent_connection = google_cloudbuildv2_connection.ghe_complete.name
@@ -123,7 +123,7 @@ resource "google_cloudbuildv2_connection" "ghe_complete" {
 }
 
 func testAccCloudbuildv2Repository_GithubRepository(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_cloudbuildv2_repository" "primary" {
   name              = "tf-test-repository%{random_suffix}"
   parent_connection = google_cloudbuildv2_connection.github_update.name

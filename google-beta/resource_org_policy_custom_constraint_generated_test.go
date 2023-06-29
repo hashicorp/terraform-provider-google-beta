@@ -58,7 +58,7 @@ func TestAccOrgPolicyCustomConstraint_orgPolicyCustomConstraintBasicExample(t *t
 }
 
 func testAccOrgPolicyCustomConstraint_orgPolicyCustomConstraintBasicExample(context map[string]interface{}) string {
-	return tpgresource.Nprintf(`
+	return acctest.Nprintf(`
 resource "google_org_policy_custom_constraint" "constraint" {
   provider = google-beta
 
@@ -100,7 +100,7 @@ func TestAccOrgPolicyCustomConstraint_orgPolicyCustomConstraintFullExample(t *te
 }
 
 func testAccOrgPolicyCustomConstraint_orgPolicyCustomConstraintFullExample(context map[string]interface{}) string {
-	return tpgresource.Nprintf(`
+	return acctest.Nprintf(`
 resource "google_org_policy_custom_constraint" "constraint" {
   provider = google-beta
 

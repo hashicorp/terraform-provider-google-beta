@@ -56,7 +56,7 @@ func TestAccGkeonpremVmwareNodePool_gkeonpremVmwareNodePoolBasicExample(t *testi
 }
 
 func testAccGkeonpremVmwareNodePool_gkeonpremVmwareNodePoolBasicExample(context map[string]interface{}) string {
-	return tpgresource.Nprintf(`
+	return acctest.Nprintf(`
 resource "google_gkeonprem_vmware_cluster" "default-basic" {
   provider = google-beta
   location = "us-west1"
@@ -136,7 +136,7 @@ func TestAccGkeonpremVmwareNodePool_gkeonpremVmwareNodePoolFullExample(t *testin
 }
 
 func testAccGkeonpremVmwareNodePool_gkeonpremVmwareNodePoolFullExample(context map[string]interface{}) string {
-	return tpgresource.Nprintf(`
+	return acctest.Nprintf(`
 resource "google_gkeonprem_vmware_cluster" "default-full" {
   provider = google-beta
   location = "us-west1"

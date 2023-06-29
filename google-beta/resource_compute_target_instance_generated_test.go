@@ -56,7 +56,7 @@ func TestAccComputeTargetInstance_targetInstanceBasicExample(t *testing.T) {
 }
 
 func testAccComputeTargetInstance_targetInstanceBasicExample(context map[string]interface{}) string {
-	return tpgresource.Nprintf(`
+	return acctest.Nprintf(`
 resource "google_compute_target_instance" "default" {
   name     = "target%{random_suffix}"
   instance = google_compute_instance.target-vm.id
@@ -111,7 +111,7 @@ func TestAccComputeTargetInstance_targetInstanceCustomNetworkExample(t *testing.
 }
 
 func testAccComputeTargetInstance_targetInstanceCustomNetworkExample(context map[string]interface{}) string {
-	return tpgresource.Nprintf(`
+	return acctest.Nprintf(`
 resource "google_compute_target_instance" "custom_network" {
   provider = google-beta
   name     = "tf-test-custom-network%{random_suffix}"

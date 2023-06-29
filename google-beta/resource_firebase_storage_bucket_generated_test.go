@@ -58,7 +58,7 @@ func TestAccFirebaseStorageBucket_firebasestorageBucketBasicExample(t *testing.T
 }
 
 func testAccFirebaseStorageBucket_firebasestorageBucketBasicExample(context map[string]interface{}) string {
-	return tpgresource.Nprintf(`
+	return acctest.Nprintf(`
 resource "google_storage_bucket" "default" {
   provider                    = google-beta
   name                        = "tf_test_test_bucket%{random_suffix}"

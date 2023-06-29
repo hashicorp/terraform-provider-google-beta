@@ -301,7 +301,7 @@ func TestAccComputeMachineImageIamPolicyGenerated_withCondition(t *testing.T) {
 	}
 
 	// Test should have 2 bindings: one with a description and one without. Any < chars are converted to a unicode character by the API.
-	expectedPolicyData := Nprintf(`{"bindings":[{"condition":{"description":"%{condition_desc}","expression":"%{condition_expr}","title":"%{condition_title}"},"members":["user:admin@hashicorptest.com"],"role":"%{role}"},{"condition":{"expression":"%{condition_expr}","title":"%{condition_title}-no-description"},"members":["user:admin@hashicorptest.com"],"role":"%{role}"}]}`, context)
+	expectedPolicyData := acctest.Nprintf(`{"bindings":[{"condition":{"description":"%{condition_desc}","expression":"%{condition_expr}","title":"%{condition_title}"},"members":["user:admin@hashicorptest.com"],"role":"%{role}"},{"condition":{"expression":"%{condition_expr}","title":"%{condition_title}-no-description"},"members":["user:admin@hashicorptest.com"],"role":"%{role}"}]}`, context)
 	expectedPolicyData = strings.Replace(expectedPolicyData, "<", "\\u003c", -1)
 
 	VcrTest(t, resource.TestCase{
@@ -328,7 +328,7 @@ func TestAccComputeMachineImageIamPolicyGenerated_withCondition(t *testing.T) {
 }
 
 func testAccComputeMachineImageIamMember_basicGenerated(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_compute_instance" "vm" {
   provider     = google-beta
   name         = "tf-test-my-vm%{random_suffix}"
@@ -362,7 +362,7 @@ resource "google_compute_machine_image_iam_member" "foo" {
 }
 
 func testAccComputeMachineImageIamPolicy_basicGenerated(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_compute_instance" "vm" {
   provider     = google-beta
   name         = "tf-test-my-vm%{random_suffix}"
@@ -412,7 +412,7 @@ data "google_compute_machine_image_iam_policy" "foo" {
 }
 
 func testAccComputeMachineImageIamPolicy_emptyBinding(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_compute_instance" "vm" {
   provider     = google-beta
   name         = "tf-test-my-vm%{random_suffix}"
@@ -449,7 +449,7 @@ resource "google_compute_machine_image_iam_policy" "foo" {
 }
 
 func testAccComputeMachineImageIamBinding_basicGenerated(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_compute_instance" "vm" {
   provider     = google-beta
   name         = "tf-test-my-vm%{random_suffix}"
@@ -483,7 +483,7 @@ resource "google_compute_machine_image_iam_binding" "foo" {
 }
 
 func testAccComputeMachineImageIamBinding_updateGenerated(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_compute_instance" "vm" {
   provider     = google-beta
   name         = "tf-test-my-vm%{random_suffix}"
@@ -517,7 +517,7 @@ resource "google_compute_machine_image_iam_binding" "foo" {
 }
 
 func testAccComputeMachineImageIamBinding_withConditionGenerated(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_compute_instance" "vm" {
   provider     = google-beta
   name         = "tf-test-my-vm%{random_suffix}"
@@ -556,7 +556,7 @@ resource "google_compute_machine_image_iam_binding" "foo" {
 }
 
 func testAccComputeMachineImageIamBinding_withAndWithoutConditionGenerated(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_compute_instance" "vm" {
   provider     = google-beta
   name         = "tf-test-my-vm%{random_suffix}"
@@ -617,7 +617,7 @@ resource "google_compute_machine_image_iam_binding" "foo3" {
 }
 
 func testAccComputeMachineImageIamMember_withConditionGenerated(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_compute_instance" "vm" {
   provider     = google-beta
   name         = "tf-test-my-vm%{random_suffix}"
@@ -656,7 +656,7 @@ resource "google_compute_machine_image_iam_member" "foo" {
 }
 
 func testAccComputeMachineImageIamMember_withAndWithoutConditionGenerated(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_compute_instance" "vm" {
   provider     = google-beta
   name         = "tf-test-my-vm%{random_suffix}"
@@ -717,7 +717,7 @@ resource "google_compute_machine_image_iam_member" "foo3" {
 }
 
 func testAccComputeMachineImageIamPolicy_withConditionGenerated(context map[string]interface{}) string {
-	return Nprintf(`
+	return acctest.Nprintf(`
 resource "google_compute_instance" "vm" {
   provider     = google-beta
   name         = "tf-test-my-vm%{random_suffix}"
