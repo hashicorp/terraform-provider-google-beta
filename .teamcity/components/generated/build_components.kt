@@ -54,7 +54,7 @@ fun BuildSteps.RunAcceptanceTests(path : String, packageName: String) {
 
     step(ScriptBuildStep{
         name = "Pre-Sweeper"
-        scriptContent = "go test -v \"%PACKAGE_PATH%\" -sweep="%SWEEPER_REGIONS%"  -sweep-allow-failures -sweep-run="%SWEEP_RUN%" -timeout 30m"
+        scriptContent = "go test -v \"%PACKAGE_PATH%\" -sweep=\"%SWEEPER_REGIONS%\"  -sweep-allow-failures -sweep-run=\"%SWEEP_RUN%\" -timeout 30m"
     })
 
     if (useTeamCityGoTest) {
@@ -79,7 +79,7 @@ fun BuildSteps.RunAcceptanceTests(path : String, packageName: String) {
 
     step(ScriptBuildStep{
         name = "Post-Sweeper"
-        scriptContent = "go test -v \"%PACKAGE_PATH%\" -sweep="%SWEEPER_REGIONS%"  -sweep-allow-failures -sweep-run="%SWEEP_RUN%" -timeout 30m"
+        scriptContent = "go test -v \"%PACKAGE_PATH%\" -sweep=\"%SWEEPER_REGIONS%\"  -sweep-allow-failures -sweep-run=\"%SWEEP_RUN%\" -timeout 30m"
     })
 }
 
