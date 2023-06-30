@@ -85,7 +85,7 @@ func TestAccComputeMachineImage_computeMachineImageKmsExample(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
-		"policyChanged": BootstrapPSARole(t, "service-", "compute-system", "roles/cloudkms.cryptoKeyEncrypterDecrypter"),
+		"policyChanged": acctest.BootstrapPSARole(t, "service-", "compute-system", "roles/cloudkms.cryptoKeyEncrypterDecrypter"),
 		"random_suffix": RandString(t, 10),
 	}
 

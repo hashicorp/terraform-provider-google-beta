@@ -36,7 +36,7 @@ func TestAccVertexAIFeaturestoreEntitytypeIamBindingGenerated(t *testing.T) {
 		"org_id":          envvar.GetTestOrgFromEnv(t),
 		"billing_account": envvar.GetTestBillingAccountFromEnv(t),
 
-		"kms_key_name": BootstrapKMSKeyInLocation(t, "us-central1").CryptoKey.Name,
+		"kms_key_name": acctest.BootstrapKMSKeyInLocation(t, "us-central1").CryptoKey.Name,
 	}
 
 	VcrTest(t, resource.TestCase{
@@ -75,7 +75,7 @@ func TestAccVertexAIFeaturestoreEntitytypeIamMemberGenerated(t *testing.T) {
 		"org_id":          envvar.GetTestOrgFromEnv(t),
 		"billing_account": envvar.GetTestBillingAccountFromEnv(t),
 
-		"kms_key_name": BootstrapKMSKeyInLocation(t, "us-central1").CryptoKey.Name,
+		"kms_key_name": acctest.BootstrapKMSKeyInLocation(t, "us-central1").CryptoKey.Name,
 	}
 
 	VcrTest(t, resource.TestCase{
@@ -105,7 +105,7 @@ func TestAccVertexAIFeaturestoreEntitytypeIamPolicyGenerated(t *testing.T) {
 		"org_id":          envvar.GetTestOrgFromEnv(t),
 		"billing_account": envvar.GetTestBillingAccountFromEnv(t),
 
-		"kms_key_name": BootstrapKMSKeyInLocation(t, "us-central1").CryptoKey.Name,
+		"kms_key_name": acctest.BootstrapKMSKeyInLocation(t, "us-central1").CryptoKey.Name,
 	}
 
 	VcrTest(t, resource.TestCase{
