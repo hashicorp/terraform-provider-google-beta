@@ -52,6 +52,11 @@ fun BuildSteps.RunAcceptanceTests(path : String, packageName: String) {
         scriptContent = "if [ -d \"%s/tests\" ]; then echo \"%s\"; fi".format(packagePath, withTestsDirectoryPath)
     })
 
+    step(ScriptBuildStep{
+        name = "Pre-Sweeper"
+        scriptContent = "go test -v \"%PACKAGE_PATH%\" -sweep="%SWEEPER_REGIONS%"  -sweep-allow-failures -sweep-run="%SWEEP_RUN%" -timeout 30m"
+    })
+
     if (useTeamCityGoTest) {
         step(ScriptBuildStep {
             name = "Run Tests"
@@ -71,6 +76,11 @@ fun BuildSteps.RunAcceptanceTests(path : String, packageName: String) {
             workingDir = "%PACKAGE_PATH%"
         })
     }
+
+    step(ScriptBuildStep{
+        name = "Post-Sweeper"
+        scriptContent = "go test -v \"%PACKAGE_PATH%\" -sweep="%SWEEPER_REGIONS%"  -sweep-allow-failures -sweep-run="%SWEEP_RUN%" -timeout 30m"
+    })
 }
 
 fun ParametrizedWithType.TerraformAcceptanceTestParameters(parallelism : Int, prefix : String, timeout: String) {
