@@ -83,10 +83,12 @@ fun BuildSteps.RunAcceptanceTests(path : String, packageName: String) {
     })
 }
 
-fun ParametrizedWithType.TerraformAcceptanceTestParameters(parallelism : Int, prefix : String, timeout: String) {
+fun ParametrizedWithType.TerraformAcceptanceTestParameters(parallelism : Int, prefix : String, timeout: String, sweeperRegions: String, sweepRun: String) {
     text("PARALLELISM", "%d".format(parallelism))
     text("TEST_PREFIX", prefix)
     text("TIMEOUT", timeout)
+    text("SWEEPER_REGIONS", sweeperRegions)
+    text("SWEEP_RUN", sweepRun)
 }
 
 fun ParametrizedWithType.ReadOnlySettings() {
