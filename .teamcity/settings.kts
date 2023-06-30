@@ -18,7 +18,9 @@ var serviceAccount = DslContext.getParameter("serviceAccount", "")
 var zone = DslContext.getParameter("zone", "")
 var credentials = DslContext.getParameter("credentials", "")
 var environment = DslContext.getParameter("environment", "public")
+var firestoreProject = DslContext.getParameter("firestoreProject", "")
+var identityUser = DslContext.getParameter("identityUser", "")
 
-var clientConfig = ClientConfiguration(custId, org, org2, billingAccount, billingAccount2, masterBillingAccount, project, orgDomain, projectNumber, region, serviceAccount, zone, credentials)
+var clientConfig = ClientConfiguration(custId, org, org2, billingAccount, billingAccount2, masterBillingAccount, credentials, project, orgDomain, projectNumber, region, serviceAccount, zone, firestoreProject, identityUser)
 
 project(GoogleBeta(environment, clientConfig))
