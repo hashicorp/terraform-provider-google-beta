@@ -79,7 +79,7 @@ func TestAccComputeDisk_diskAsyncExample(t *testing.T) {
 
 	VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckComputeDiskDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -98,8 +98,6 @@ func TestAccComputeDisk_diskAsyncExample(t *testing.T) {
 func testAccComputeDisk_diskAsyncExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_disk" "primary" {
-  provider = google-beta
-
   name  = "tf-test-async-test-disk%{random_suffix}"
   type  = "pd-ssd"
   zone  = "us-central1-a"
@@ -108,8 +106,6 @@ resource "google_compute_disk" "primary" {
 }
 
 resource "google_compute_disk" "secondary" {
-  provider = google-beta
-
   name  = "tf-test-async-secondary-test-disk%{random_suffix}"
   type  = "pd-ssd"
   zone  = "us-east1-c"
