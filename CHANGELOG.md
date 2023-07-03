@@ -8,8 +8,8 @@ FEATURES:
 IMPROVEMENTS:
 * cloudrunv2: added annotations support to google_cloud_run_v2_job ([#5795](https://github.com/hashicorp/terraform-provider-google-beta/pull/5795))
 * compute: added `provisioned_throughput` field to `google_compute_disk` used by `hyperdisk-throughput` pd type ([#5814](https://github.com/hashicorp/terraform-provider-google-beta/pull/5814))
-* compute: added field `httpKeepAliveTimeoutSec` to resource `google_compute_target_http_proxy` ([#5818](https://github.com/hashicorp/terraform-provider-google-beta/pull/5818))
-* compute: added field `httpKeepAliveTimeoutSec` to resource `google_compute_target_https_proxy` ([#5818](https://github.com/hashicorp/terraform-provider-google-beta/pull/5818))
+* compute: added field `http_keep_alive_timeout_sec` to resource `google_compute_target_http_proxy` ([#5818](https://github.com/hashicorp/terraform-provider-google-beta/pull/5818))
+* compute: added field `http_keep_alive_timeout_sec` to resource `google_compute_target_https_proxy` ([#5818](https://github.com/hashicorp/terraform-provider-google-beta/pull/5818))
 * container: added field `security_posture_config` to resource `google_container_cluster` ([#5821](https://github.com/hashicorp/terraform-provider-google-beta/pull/5821))
 * logging: added support for `locked` to `google_logging_project_bucket_config` ([#5811](https://github.com/hashicorp/terraform-provider-google-beta/pull/5811))
 
