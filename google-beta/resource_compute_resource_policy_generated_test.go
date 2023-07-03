@@ -311,7 +311,7 @@ func TestAccComputeResourcePolicy_resourcePolicyConsistencyGroupExample(t *testi
 
 	VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckComputeResourcePolicyDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -330,8 +330,6 @@ func TestAccComputeResourcePolicy_resourcePolicyConsistencyGroupExample(t *testi
 func testAccComputeResourcePolicy_resourcePolicyConsistencyGroupExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_resource_policy" "cgroup" {
-  provider = google-beta
-
   name   = "tf-test-gce-policy%{random_suffix}"
   region = "europe-west1"
   disk_consistency_group_policy {
