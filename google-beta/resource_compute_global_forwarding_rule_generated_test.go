@@ -50,7 +50,7 @@ func TestAccComputeGlobalForwardingRule_externalTcpProxyLbMigBackendExample(t *t
 				ResourceName:            "google_compute_global_forwarding_rule.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"network", "port_range", "target", "ip_address"},
+				ImportStateVerifyIgnore: []string{"network", "no_automate_dns_zone", "port_range", "target", "ip_address"},
 			},
 		},
 	})
@@ -223,7 +223,7 @@ func TestAccComputeGlobalForwardingRule_externalHttpLbMigBackendCustomHeaderExam
 				ResourceName:            "google_compute_global_forwarding_rule.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"network", "port_range", "target", "ip_address"},
+				ImportStateVerifyIgnore: []string{"network", "no_automate_dns_zone", "port_range", "target", "ip_address"},
 			},
 		},
 	})
@@ -408,7 +408,7 @@ func TestAccComputeGlobalForwardingRule_globalForwardingRuleHttpExample(t *testi
 				ResourceName:            "google_compute_global_forwarding_rule.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"network", "port_range", "target"},
+				ImportStateVerifyIgnore: []string{"network", "no_automate_dns_zone", "port_range", "target"},
 			},
 		},
 	})
@@ -486,7 +486,7 @@ func TestAccComputeGlobalForwardingRule_globalForwardingRuleInternalExample(t *t
 				ResourceName:            "google_compute_global_forwarding_rule.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"network", "port_range", "target"},
+				ImportStateVerifyIgnore: []string{"network", "no_automate_dns_zone", "port_range", "target"},
 			},
 		},
 	})
@@ -623,7 +623,7 @@ func TestAccComputeGlobalForwardingRule_globalForwardingRuleExternalManagedExamp
 				ResourceName:            "google_compute_global_forwarding_rule.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"network", "port_range", "target"},
+				ImportStateVerifyIgnore: []string{"network", "no_automate_dns_zone", "port_range", "target"},
 			},
 		},
 	})
@@ -694,7 +694,7 @@ func TestAccComputeGlobalForwardingRule_globalForwardingRuleHybridExample(t *tes
 				ResourceName:            "google_compute_global_forwarding_rule.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"network", "port_range", "target"},
+				ImportStateVerifyIgnore: []string{"network", "no_automate_dns_zone", "port_range", "target"},
 			},
 		},
 	})
@@ -855,7 +855,7 @@ func TestAccComputeGlobalForwardingRule_privateServiceConnectGoogleApisExample(t
 				ResourceName:            "google_compute_global_forwarding_rule.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"network", "ip_address"},
+				ImportStateVerifyIgnore: []string{"network", "no_automate_dns_zone", "ip_address"},
 			},
 		},
 	})
@@ -898,6 +898,74 @@ resource "google_compute_global_forwarding_rule" "default" {
   network       = google_compute_network.network.id
   ip_address    = google_compute_global_address.default.id
   load_balancing_scheme = ""
+}
+`, context)
+}
+
+func TestAccComputeGlobalForwardingRule_privateServiceConnectGoogleApisNoAutomateDnsExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"project":       envvar.GetTestProjectFromEnv(),
+		"random_suffix": RandString(t, 10),
+	}
+
+	VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckComputeGlobalForwardingRuleDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeGlobalForwardingRule_privateServiceConnectGoogleApisNoAutomateDnsExample(context),
+			},
+			{
+				ResourceName:            "google_compute_global_forwarding_rule.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"network", "no_automate_dns_zone", "ip_address"},
+			},
+		},
+	})
+}
+
+func testAccComputeGlobalForwardingRule_privateServiceConnectGoogleApisNoAutomateDnsExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_compute_network" "network" {
+  provider      = google-beta
+  project       = "%{project}"
+  name          = "tf-test-my-network%{random_suffix}"
+  auto_create_subnetworks = false
+}
+
+resource "google_compute_subnetwork" "vpc_subnetwork" {
+  provider                 = google-beta
+  project                  = google_compute_network.network.project
+  name                     = "tf-test-my-subnetwork%{random_suffix}"
+  ip_cidr_range            = "10.2.0.0/16"
+  region                   = "us-central1"
+  network                  = google_compute_network.network.id
+  private_ip_google_access = true
+}
+
+resource "google_compute_global_address" "default" {
+  provider      = google-beta
+  project       = google_compute_network.network.project
+  name          = "tf-test-global-psconnect-ip%{random_suffix}"
+  address_type  = "INTERNAL"
+  purpose       = "PRIVATE_SERVICE_CONNECT"
+  network       = google_compute_network.network.id
+  address       = "100.100.100.106"
+}
+
+resource "google_compute_global_forwarding_rule" "default" {
+  provider      = google-beta
+  project       = google_compute_network.network.project
+  name          = "globalrule%{random_suffix}"
+  target        = "all-apis"
+  network       = google_compute_network.network.id
+  ip_address    = google_compute_global_address.default.id
+  load_balancing_scheme = ""
+  no_automate_dns_zone  = false
 }
 `, context)
 }
