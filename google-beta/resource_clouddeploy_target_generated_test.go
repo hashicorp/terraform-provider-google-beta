@@ -171,7 +171,8 @@ resource "google_clouddeploy_target" "primary" {
     my_second_annotation = "example-annotation-2"
   }
 
-  description = "multi-target description"
+  deploy_parameters = {}
+  description       = "multi-target description"
 
   execution_configs {
     usages            = ["RENDER", "DEPLOY"]
@@ -208,7 +209,8 @@ resource "google_clouddeploy_target" "primary" {
     my_third_annotation = "example-annotation-3"
   }
 
-  description = "updated mutli-target description"
+  deploy_parameters = {}
+  description       = "updated mutli-target description"
 
   labels = {
     my_second_label = "example-label-2"
@@ -240,7 +242,8 @@ resource "google_clouddeploy_target" "primary" {
     my_second_annotation = "example-annotation-2"
   }
 
-  description = "basic description"
+  deploy_parameters = {}
+  description       = "basic description"
 
   execution_configs {
     usages            = ["RENDER", "DEPLOY"]
@@ -279,7 +282,8 @@ resource "google_clouddeploy_target" "primary" {
     my_third_annotation = "example-annotation-3"
   }
 
-  description = "basic description"
+  deploy_parameters = {}
+  description       = "basic description"
 
   labels = {
     my_first_label = "example-label-1"
@@ -311,7 +315,8 @@ resource "google_clouddeploy_target" "primary" {
     my_second_annotation = "example-annotation-2"
   }
 
-  description = "basic description"
+  deploy_parameters = {}
+  description       = "basic description"
 
   gke {
     cluster = "projects/%{project_name}/locations/%{region}/clusters/example-cluster-name"
@@ -343,7 +348,8 @@ resource "google_clouddeploy_target" "primary" {
     my_third_annotation = "example-annotation-3"
   }
 
-  description = "updated description"
+  deploy_parameters = {}
+  description       = "updated description"
 
   gke {
     cluster     = "projects/%{project_name}/locations/%{region}/clusters/different-example-cluster-name"
@@ -376,7 +382,8 @@ resource "google_clouddeploy_target" "primary" {
     my_third_annotation = "example-annotation-3"
   }
 
-  description = "updated description"
+  deploy_parameters = {}
+  description       = "updated description"
 
   execution_configs {
     usages           = ["RENDER", "DEPLOY"]
@@ -415,7 +422,8 @@ resource "google_clouddeploy_target" "primary" {
     my_third_annotation = "example-annotation-3"
   }
 
-  description = "updated description"
+  deploy_parameters = {}
+  description       = "updated description"
 
   execution_configs {
     usages           = ["RENDER"]
@@ -461,7 +469,8 @@ resource "google_clouddeploy_target" "primary" {
     my_third_annotation = "example-annotation-3"
   }
 
-  description = "updated description"
+  deploy_parameters = {}
+  description       = "updated description"
 
   execution_configs {
     usages           = ["RENDER"]

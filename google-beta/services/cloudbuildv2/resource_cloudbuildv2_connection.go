@@ -85,7 +85,7 @@ func ResourceCloudbuildv2Connection() *schema.Resource {
 				Description:   "Configuration for connections to github.com.",
 				MaxItems:      1,
 				Elem:          Cloudbuildv2ConnectionGithubConfigSchema(),
-				ConflictsWith: []string{"github_enterprise_config"},
+				ConflictsWith: []string{"github_enterprise_config", "gitlab_config"},
 			},
 
 			"github_enterprise_config": {
@@ -94,7 +94,16 @@ func ResourceCloudbuildv2Connection() *schema.Resource {
 				Description:   "Configuration for connections to an instance of GitHub Enterprise.",
 				MaxItems:      1,
 				Elem:          Cloudbuildv2ConnectionGithubEnterpriseConfigSchema(),
-				ConflictsWith: []string{"github_config"},
+				ConflictsWith: []string{"github_config", "gitlab_config"},
+			},
+
+			"gitlab_config": {
+				Type:          schema.TypeList,
+				Optional:      true,
+				Description:   "Configuration for connections to gitlab.com or an instance of GitLab Enterprise.",
+				MaxItems:      1,
+				Elem:          Cloudbuildv2ConnectionGitlabConfigSchema(),
+				ConflictsWith: []string{"github_config", "github_enterprise_config"},
 			},
 
 			"project": {
@@ -250,6 +259,113 @@ func Cloudbuildv2ConnectionGithubEnterpriseConfigServiceDirectoryConfigSchema() 
 	}
 }
 
+func Cloudbuildv2ConnectionGitlabConfigSchema() *schema.Resource {
+	return &schema.Resource{
+		Schema: map[string]*schema.Schema{
+			"authorizer_credential": {
+				Type:        schema.TypeList,
+				Required:    true,
+				Description: "Required. A GitLab personal access token with the `api` scope access.",
+				MaxItems:    1,
+				Elem:        Cloudbuildv2ConnectionGitlabConfigAuthorizerCredentialSchema(),
+			},
+
+			"read_authorizer_credential": {
+				Type:        schema.TypeList,
+				Required:    true,
+				Description: "Required. A GitLab personal access token with the minimum `read_api` scope access.",
+				MaxItems:    1,
+				Elem:        Cloudbuildv2ConnectionGitlabConfigReadAuthorizerCredentialSchema(),
+			},
+
+			"webhook_secret_secret_version": {
+				Type:             schema.TypeString,
+				Required:         true,
+				DiffSuppressFunc: tpgresource.CompareSelfLinkOrResourceName,
+				Description:      "Required. Immutable. SecretManager resource containing the webhook secret of a GitLab Enterprise project, formatted as `projects/*/secrets/*/versions/*`.",
+			},
+
+			"host_uri": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Optional:    true,
+				Description: "The URI of the GitLab Enterprise host this connection is for. If not specified, the default value is https://gitlab.com.",
+			},
+
+			"service_directory_config": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: "Configuration for using Service Directory to privately connect to a GitLab Enterprise server. This should only be set if the GitLab Enterprise server is hosted on-premises and not reachable by public internet. If this field is left empty, calls to the GitLab Enterprise server will be made over the public internet.",
+				MaxItems:    1,
+				Elem:        Cloudbuildv2ConnectionGitlabConfigServiceDirectoryConfigSchema(),
+			},
+
+			"ssl_ca": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "SSL certificate to use for requests to GitLab Enterprise.",
+			},
+
+			"server_version": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "Output only. Version of the GitLab Enterprise server running on the `host_uri`.",
+			},
+		},
+	}
+}
+
+func Cloudbuildv2ConnectionGitlabConfigAuthorizerCredentialSchema() *schema.Resource {
+	return &schema.Resource{
+		Schema: map[string]*schema.Schema{
+			"user_token_secret_version": {
+				Type:             schema.TypeString,
+				Required:         true,
+				DiffSuppressFunc: tpgresource.CompareSelfLinkOrResourceName,
+				Description:      "Required. A SecretManager resource containing the user token that authorizes the Cloud Build connection. Format: `projects/*/secrets/*/versions/*`.",
+			},
+
+			"username": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "Output only. The username associated to this token.",
+			},
+		},
+	}
+}
+
+func Cloudbuildv2ConnectionGitlabConfigReadAuthorizerCredentialSchema() *schema.Resource {
+	return &schema.Resource{
+		Schema: map[string]*schema.Schema{
+			"user_token_secret_version": {
+				Type:             schema.TypeString,
+				Required:         true,
+				DiffSuppressFunc: tpgresource.CompareSelfLinkOrResourceName,
+				Description:      "Required. A SecretManager resource containing the user token that authorizes the Cloud Build connection. Format: `projects/*/secrets/*/versions/*`.",
+			},
+
+			"username": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "Output only. The username associated to this token.",
+			},
+		},
+	}
+}
+
+func Cloudbuildv2ConnectionGitlabConfigServiceDirectoryConfigSchema() *schema.Resource {
+	return &schema.Resource{
+		Schema: map[string]*schema.Schema{
+			"service": {
+				Type:             schema.TypeString,
+				Required:         true,
+				DiffSuppressFunc: tpgresource.CompareSelfLinkOrResourceName,
+				Description:      "Required. The Service Directory service name. Format: projects/{project}/locations/{location}/namespaces/{namespace}/services/{service}.",
+			},
+		},
+	}
+}
+
 func Cloudbuildv2ConnectionInstallationStateSchema() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
@@ -288,6 +404,7 @@ func resourceCloudbuildv2ConnectionCreate(d *schema.ResourceData, meta interface
 		Disabled:               dcl.Bool(d.Get("disabled").(bool)),
 		GithubConfig:           expandCloudbuildv2ConnectionGithubConfig(d.Get("github_config")),
 		GithubEnterpriseConfig: expandCloudbuildv2ConnectionGithubEnterpriseConfig(d.Get("github_enterprise_config")),
+		GitlabConfig:           expandCloudbuildv2ConnectionGitlabConfig(d.Get("gitlab_config")),
 		Project:                dcl.String(project),
 	}
 
@@ -342,6 +459,7 @@ func resourceCloudbuildv2ConnectionRead(d *schema.ResourceData, meta interface{}
 		Disabled:               dcl.Bool(d.Get("disabled").(bool)),
 		GithubConfig:           expandCloudbuildv2ConnectionGithubConfig(d.Get("github_config")),
 		GithubEnterpriseConfig: expandCloudbuildv2ConnectionGithubEnterpriseConfig(d.Get("github_enterprise_config")),
+		GitlabConfig:           expandCloudbuildv2ConnectionGitlabConfig(d.Get("gitlab_config")),
 		Project:                dcl.String(project),
 	}
 
@@ -385,6 +503,9 @@ func resourceCloudbuildv2ConnectionRead(d *schema.ResourceData, meta interface{}
 	if err = d.Set("github_enterprise_config", flattenCloudbuildv2ConnectionGithubEnterpriseConfig(res.GithubEnterpriseConfig)); err != nil {
 		return fmt.Errorf("error setting github_enterprise_config in state: %s", err)
 	}
+	if err = d.Set("gitlab_config", flattenCloudbuildv2ConnectionGitlabConfig(res.GitlabConfig)); err != nil {
+		return fmt.Errorf("error setting gitlab_config in state: %s", err)
+	}
 	if err = d.Set("project", res.Project); err != nil {
 		return fmt.Errorf("error setting project in state: %s", err)
 	}
@@ -420,6 +541,7 @@ func resourceCloudbuildv2ConnectionUpdate(d *schema.ResourceData, meta interface
 		Disabled:               dcl.Bool(d.Get("disabled").(bool)),
 		GithubConfig:           expandCloudbuildv2ConnectionGithubConfig(d.Get("github_config")),
 		GithubEnterpriseConfig: expandCloudbuildv2ConnectionGithubEnterpriseConfig(d.Get("github_enterprise_config")),
+		GitlabConfig:           expandCloudbuildv2ConnectionGitlabConfig(d.Get("gitlab_config")),
 		Project:                dcl.String(project),
 	}
 	directive := tpgdclresource.UpdateDirective
@@ -469,6 +591,7 @@ func resourceCloudbuildv2ConnectionDelete(d *schema.ResourceData, meta interface
 		Disabled:               dcl.Bool(d.Get("disabled").(bool)),
 		GithubConfig:           expandCloudbuildv2ConnectionGithubConfig(d.Get("github_config")),
 		GithubEnterpriseConfig: expandCloudbuildv2ConnectionGithubEnterpriseConfig(d.Get("github_enterprise_config")),
+		GitlabConfig:           expandCloudbuildv2ConnectionGitlabConfig(d.Get("gitlab_config")),
 		Project:                dcl.String(project),
 	}
 
@@ -628,6 +751,123 @@ func expandCloudbuildv2ConnectionGithubEnterpriseConfigServiceDirectoryConfig(o 
 }
 
 func flattenCloudbuildv2ConnectionGithubEnterpriseConfigServiceDirectoryConfig(obj *cloudbuildv2.ConnectionGithubEnterpriseConfigServiceDirectoryConfig) interface{} {
+	if obj == nil || obj.Empty() {
+		return nil
+	}
+	transformed := map[string]interface{}{
+		"service": obj.Service,
+	}
+
+	return []interface{}{transformed}
+
+}
+
+func expandCloudbuildv2ConnectionGitlabConfig(o interface{}) *cloudbuildv2.ConnectionGitlabConfig {
+	if o == nil {
+		return cloudbuildv2.EmptyConnectionGitlabConfig
+	}
+	objArr := o.([]interface{})
+	if len(objArr) == 0 || objArr[0] == nil {
+		return cloudbuildv2.EmptyConnectionGitlabConfig
+	}
+	obj := objArr[0].(map[string]interface{})
+	return &cloudbuildv2.ConnectionGitlabConfig{
+		AuthorizerCredential:       expandCloudbuildv2ConnectionGitlabConfigAuthorizerCredential(obj["authorizer_credential"]),
+		ReadAuthorizerCredential:   expandCloudbuildv2ConnectionGitlabConfigReadAuthorizerCredential(obj["read_authorizer_credential"]),
+		WebhookSecretSecretVersion: dcl.String(obj["webhook_secret_secret_version"].(string)),
+		HostUri:                    dcl.StringOrNil(obj["host_uri"].(string)),
+		ServiceDirectoryConfig:     expandCloudbuildv2ConnectionGitlabConfigServiceDirectoryConfig(obj["service_directory_config"]),
+		SslCa:                      dcl.String(obj["ssl_ca"].(string)),
+	}
+}
+
+func flattenCloudbuildv2ConnectionGitlabConfig(obj *cloudbuildv2.ConnectionGitlabConfig) interface{} {
+	if obj == nil || obj.Empty() {
+		return nil
+	}
+	transformed := map[string]interface{}{
+		"authorizer_credential":         flattenCloudbuildv2ConnectionGitlabConfigAuthorizerCredential(obj.AuthorizerCredential),
+		"read_authorizer_credential":    flattenCloudbuildv2ConnectionGitlabConfigReadAuthorizerCredential(obj.ReadAuthorizerCredential),
+		"webhook_secret_secret_version": obj.WebhookSecretSecretVersion,
+		"host_uri":                      obj.HostUri,
+		"service_directory_config":      flattenCloudbuildv2ConnectionGitlabConfigServiceDirectoryConfig(obj.ServiceDirectoryConfig),
+		"ssl_ca":                        obj.SslCa,
+		"server_version":                obj.ServerVersion,
+	}
+
+	return []interface{}{transformed}
+
+}
+
+func expandCloudbuildv2ConnectionGitlabConfigAuthorizerCredential(o interface{}) *cloudbuildv2.ConnectionGitlabConfigAuthorizerCredential {
+	if o == nil {
+		return cloudbuildv2.EmptyConnectionGitlabConfigAuthorizerCredential
+	}
+	objArr := o.([]interface{})
+	if len(objArr) == 0 || objArr[0] == nil {
+		return cloudbuildv2.EmptyConnectionGitlabConfigAuthorizerCredential
+	}
+	obj := objArr[0].(map[string]interface{})
+	return &cloudbuildv2.ConnectionGitlabConfigAuthorizerCredential{
+		UserTokenSecretVersion: dcl.String(obj["user_token_secret_version"].(string)),
+	}
+}
+
+func flattenCloudbuildv2ConnectionGitlabConfigAuthorizerCredential(obj *cloudbuildv2.ConnectionGitlabConfigAuthorizerCredential) interface{} {
+	if obj == nil || obj.Empty() {
+		return nil
+	}
+	transformed := map[string]interface{}{
+		"user_token_secret_version": obj.UserTokenSecretVersion,
+		"username":                  obj.Username,
+	}
+
+	return []interface{}{transformed}
+
+}
+
+func expandCloudbuildv2ConnectionGitlabConfigReadAuthorizerCredential(o interface{}) *cloudbuildv2.ConnectionGitlabConfigReadAuthorizerCredential {
+	if o == nil {
+		return cloudbuildv2.EmptyConnectionGitlabConfigReadAuthorizerCredential
+	}
+	objArr := o.([]interface{})
+	if len(objArr) == 0 || objArr[0] == nil {
+		return cloudbuildv2.EmptyConnectionGitlabConfigReadAuthorizerCredential
+	}
+	obj := objArr[0].(map[string]interface{})
+	return &cloudbuildv2.ConnectionGitlabConfigReadAuthorizerCredential{
+		UserTokenSecretVersion: dcl.String(obj["user_token_secret_version"].(string)),
+	}
+}
+
+func flattenCloudbuildv2ConnectionGitlabConfigReadAuthorizerCredential(obj *cloudbuildv2.ConnectionGitlabConfigReadAuthorizerCredential) interface{} {
+	if obj == nil || obj.Empty() {
+		return nil
+	}
+	transformed := map[string]interface{}{
+		"user_token_secret_version": obj.UserTokenSecretVersion,
+		"username":                  obj.Username,
+	}
+
+	return []interface{}{transformed}
+
+}
+
+func expandCloudbuildv2ConnectionGitlabConfigServiceDirectoryConfig(o interface{}) *cloudbuildv2.ConnectionGitlabConfigServiceDirectoryConfig {
+	if o == nil {
+		return cloudbuildv2.EmptyConnectionGitlabConfigServiceDirectoryConfig
+	}
+	objArr := o.([]interface{})
+	if len(objArr) == 0 || objArr[0] == nil {
+		return cloudbuildv2.EmptyConnectionGitlabConfigServiceDirectoryConfig
+	}
+	obj := objArr[0].(map[string]interface{})
+	return &cloudbuildv2.ConnectionGitlabConfigServiceDirectoryConfig{
+		Service: dcl.String(obj["service"].(string)),
+	}
+}
+
+func flattenCloudbuildv2ConnectionGitlabConfigServiceDirectoryConfig(obj *cloudbuildv2.ConnectionGitlabConfigServiceDirectoryConfig) interface{} {
 	if obj == nil || obj.Empty() {
 		return nil
 	}

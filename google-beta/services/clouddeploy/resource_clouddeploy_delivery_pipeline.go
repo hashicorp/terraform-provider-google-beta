@@ -159,6 +159,13 @@ func ClouddeployDeliveryPipelineSerialPipelineSchema() *schema.Resource {
 func ClouddeployDeliveryPipelineSerialPipelineStagesSchema() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
+			"deploy_parameters": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: "Optional. The deploy parameters to use for the target in this stage.",
+				Elem:        ClouddeployDeliveryPipelineSerialPipelineStagesDeployParametersSchema(),
+			},
+
 			"profiles": {
 				Type:        schema.TypeList,
 				Optional:    true,
@@ -178,6 +185,26 @@ func ClouddeployDeliveryPipelineSerialPipelineStagesSchema() *schema.Resource {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "The target_id to which this stage points. This field refers exclusively to the last segment of a target name. For example, this field would just be `my-target` (rather than `projects/project/locations/location/targets/my-target`). The location of the `Target` is inferred to be the same as the location of the `DeliveryPipeline` that contains this `Stage`.",
+			},
+		},
+	}
+}
+
+func ClouddeployDeliveryPipelineSerialPipelineStagesDeployParametersSchema() *schema.Resource {
+	return &schema.Resource{
+		Schema: map[string]*schema.Schema{
+			"values": {
+				Type:        schema.TypeMap,
+				Required:    true,
+				Description: "Required. Values are deploy parameters in key-value pairs.",
+				Elem:        &schema.Schema{Type: schema.TypeString},
+			},
+
+			"match_target_labels": {
+				Type:        schema.TypeMap,
+				Optional:    true,
+				Description: "Optional. Deploy parameters are applied to targets with match labels. If unspecified, deploy parameters are applied to all targets (including child targets of a multi-target).",
+				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
 		},
 	}
@@ -391,6 +418,12 @@ func ClouddeployDeliveryPipelineSerialPipelineStagesStrategyCanaryRuntimeConfigK
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "Required. Name of the Kubernetes Service.",
+			},
+
+			"disable_pod_overprovisioning": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Description: "Optional. Whether to disable Pod overprovisioning. If Pod overprovisioning is disabled then Cloud Deploy will limit the number of total Pods used for the deployment strategy to the number of Pods the Deployment has on the cluster.",
 			},
 		},
 	}
@@ -798,9 +831,10 @@ func expandClouddeployDeliveryPipelineSerialPipelineStages(o interface{}) *cloud
 
 	obj := o.(map[string]interface{})
 	return &clouddeploy.DeliveryPipelineSerialPipelineStages{
-		Profiles: tpgdclresource.ExpandStringArray(obj["profiles"]),
-		Strategy: expandClouddeployDeliveryPipelineSerialPipelineStagesStrategy(obj["strategy"]),
-		TargetId: dcl.String(obj["target_id"].(string)),
+		DeployParameters: expandClouddeployDeliveryPipelineSerialPipelineStagesDeployParametersArray(obj["deploy_parameters"]),
+		Profiles:         tpgdclresource.ExpandStringArray(obj["profiles"]),
+		Strategy:         expandClouddeployDeliveryPipelineSerialPipelineStagesStrategy(obj["strategy"]),
+		TargetId:         dcl.String(obj["target_id"].(string)),
 	}
 }
 
@@ -823,9 +857,67 @@ func flattenClouddeployDeliveryPipelineSerialPipelineStages(obj *clouddeploy.Del
 		return nil
 	}
 	transformed := map[string]interface{}{
-		"profiles":  obj.Profiles,
-		"strategy":  flattenClouddeployDeliveryPipelineSerialPipelineStagesStrategy(obj.Strategy),
-		"target_id": obj.TargetId,
+		"deploy_parameters": flattenClouddeployDeliveryPipelineSerialPipelineStagesDeployParametersArray(obj.DeployParameters),
+		"profiles":          obj.Profiles,
+		"strategy":          flattenClouddeployDeliveryPipelineSerialPipelineStagesStrategy(obj.Strategy),
+		"target_id":         obj.TargetId,
+	}
+
+	return transformed
+
+}
+func expandClouddeployDeliveryPipelineSerialPipelineStagesDeployParametersArray(o interface{}) []clouddeploy.DeliveryPipelineSerialPipelineStagesDeployParameters {
+	if o == nil {
+		return make([]clouddeploy.DeliveryPipelineSerialPipelineStagesDeployParameters, 0)
+	}
+
+	objs := o.([]interface{})
+	if len(objs) == 0 || objs[0] == nil {
+		return make([]clouddeploy.DeliveryPipelineSerialPipelineStagesDeployParameters, 0)
+	}
+
+	items := make([]clouddeploy.DeliveryPipelineSerialPipelineStagesDeployParameters, 0, len(objs))
+	for _, item := range objs {
+		i := expandClouddeployDeliveryPipelineSerialPipelineStagesDeployParameters(item)
+		items = append(items, *i)
+	}
+
+	return items
+}
+
+func expandClouddeployDeliveryPipelineSerialPipelineStagesDeployParameters(o interface{}) *clouddeploy.DeliveryPipelineSerialPipelineStagesDeployParameters {
+	if o == nil {
+		return clouddeploy.EmptyDeliveryPipelineSerialPipelineStagesDeployParameters
+	}
+
+	obj := o.(map[string]interface{})
+	return &clouddeploy.DeliveryPipelineSerialPipelineStagesDeployParameters{
+		Values:            tpgresource.CheckStringMap(obj["values"]),
+		MatchTargetLabels: tpgresource.CheckStringMap(obj["match_target_labels"]),
+	}
+}
+
+func flattenClouddeployDeliveryPipelineSerialPipelineStagesDeployParametersArray(objs []clouddeploy.DeliveryPipelineSerialPipelineStagesDeployParameters) []interface{} {
+	if objs == nil {
+		return nil
+	}
+
+	items := []interface{}{}
+	for _, item := range objs {
+		i := flattenClouddeployDeliveryPipelineSerialPipelineStagesDeployParameters(&item)
+		items = append(items, i)
+	}
+
+	return items
+}
+
+func flattenClouddeployDeliveryPipelineSerialPipelineStagesDeployParameters(obj *clouddeploy.DeliveryPipelineSerialPipelineStagesDeployParameters) interface{} {
+	if obj == nil || obj.Empty() {
+		return nil
+	}
+	transformed := map[string]interface{}{
+		"values":              obj.Values,
+		"match_target_labels": obj.MatchTargetLabels,
 	}
 
 	return transformed
@@ -1127,8 +1219,9 @@ func expandClouddeployDeliveryPipelineSerialPipelineStagesStrategyCanaryRuntimeC
 	}
 	obj := objArr[0].(map[string]interface{})
 	return &clouddeploy.DeliveryPipelineSerialPipelineStagesStrategyCanaryRuntimeConfigKubernetesServiceNetworking{
-		Deployment: dcl.String(obj["deployment"].(string)),
-		Service:    dcl.String(obj["service"].(string)),
+		Deployment:                 dcl.String(obj["deployment"].(string)),
+		Service:                    dcl.String(obj["service"].(string)),
+		DisablePodOverprovisioning: dcl.Bool(obj["disable_pod_overprovisioning"].(bool)),
 	}
 }
 
@@ -1137,8 +1230,9 @@ func flattenClouddeployDeliveryPipelineSerialPipelineStagesStrategyCanaryRuntime
 		return nil
 	}
 	transformed := map[string]interface{}{
-		"deployment": obj.Deployment,
-		"service":    obj.Service,
+		"deployment":                   obj.Deployment,
+		"service":                      obj.Service,
+		"disable_pod_overprovisioning": obj.DisablePodOverprovisioning,
 	}
 
 	return []interface{}{transformed}

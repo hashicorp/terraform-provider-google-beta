@@ -82,6 +82,13 @@ func ResourceClouddeployTarget() *schema.Resource {
 				ConflictsWith: []string{"gke", "run", "multi_target"},
 			},
 
+			"deploy_parameters": {
+				Type:        schema.TypeMap,
+				Optional:    true,
+				Description: "Optional. The deploy parameters to use for this target.",
+				Elem:        &schema.Schema{Type: schema.TypeString},
+			},
+
 			"description": {
 				Type:        schema.TypeString,
 				Optional:    true,
@@ -288,6 +295,7 @@ func resourceClouddeployTargetCreate(d *schema.ResourceData, meta interface{}) e
 		Name:             dcl.String(d.Get("name").(string)),
 		Annotations:      tpgresource.CheckStringMap(d.Get("annotations")),
 		AnthosCluster:    expandClouddeployTargetAnthosCluster(d.Get("anthos_cluster")),
+		DeployParameters: tpgresource.CheckStringMap(d.Get("deploy_parameters")),
 		Description:      dcl.String(d.Get("description").(string)),
 		ExecutionConfigs: expandClouddeployTargetExecutionConfigsArray(d.Get("execution_configs")),
 		Gke:              expandClouddeployTargetGke(d.Get("gke")),
@@ -347,6 +355,7 @@ func resourceClouddeployTargetRead(d *schema.ResourceData, meta interface{}) err
 		Name:             dcl.String(d.Get("name").(string)),
 		Annotations:      tpgresource.CheckStringMap(d.Get("annotations")),
 		AnthosCluster:    expandClouddeployTargetAnthosCluster(d.Get("anthos_cluster")),
+		DeployParameters: tpgresource.CheckStringMap(d.Get("deploy_parameters")),
 		Description:      dcl.String(d.Get("description").(string)),
 		ExecutionConfigs: expandClouddeployTargetExecutionConfigsArray(d.Get("execution_configs")),
 		Gke:              expandClouddeployTargetGke(d.Get("gke")),
@@ -390,6 +399,9 @@ func resourceClouddeployTargetRead(d *schema.ResourceData, meta interface{}) err
 	}
 	if err = d.Set("anthos_cluster", flattenClouddeployTargetAnthosCluster(res.AnthosCluster)); err != nil {
 		return fmt.Errorf("error setting anthos_cluster in state: %s", err)
+	}
+	if err = d.Set("deploy_parameters", res.DeployParameters); err != nil {
+		return fmt.Errorf("error setting deploy_parameters in state: %s", err)
 	}
 	if err = d.Set("description", res.Description); err != nil {
 		return fmt.Errorf("error setting description in state: %s", err)
@@ -445,6 +457,7 @@ func resourceClouddeployTargetUpdate(d *schema.ResourceData, meta interface{}) e
 		Name:             dcl.String(d.Get("name").(string)),
 		Annotations:      tpgresource.CheckStringMap(d.Get("annotations")),
 		AnthosCluster:    expandClouddeployTargetAnthosCluster(d.Get("anthos_cluster")),
+		DeployParameters: tpgresource.CheckStringMap(d.Get("deploy_parameters")),
 		Description:      dcl.String(d.Get("description").(string)),
 		ExecutionConfigs: expandClouddeployTargetExecutionConfigsArray(d.Get("execution_configs")),
 		Gke:              expandClouddeployTargetGke(d.Get("gke")),
@@ -499,6 +512,7 @@ func resourceClouddeployTargetDelete(d *schema.ResourceData, meta interface{}) e
 		Name:             dcl.String(d.Get("name").(string)),
 		Annotations:      tpgresource.CheckStringMap(d.Get("annotations")),
 		AnthosCluster:    expandClouddeployTargetAnthosCluster(d.Get("anthos_cluster")),
+		DeployParameters: tpgresource.CheckStringMap(d.Get("deploy_parameters")),
 		Description:      dcl.String(d.Get("description").(string)),
 		ExecutionConfigs: expandClouddeployTargetExecutionConfigsArray(d.Get("execution_configs")),
 		Gke:              expandClouddeployTargetGke(d.Get("gke")),
