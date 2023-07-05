@@ -14,9 +14,9 @@ func TestAccGkeonpremBareMetalCluster_bareMetalClusterUpdateBasic(t *testing.T) 
 
 	context := map[string]interface{}{}
 
-	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
 		CheckDestroy:             testAccCheckGkeonpremBareMetalClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -44,9 +44,9 @@ func TestAccGkeonpremBareMetalCluster_bareMetalClusterUpdateManualLb(t *testing.
 
 	context := map[string]interface{}{}
 
-	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
 		CheckDestroy:             testAccCheckGkeonpremBareMetalClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -74,9 +74,9 @@ func TestAccGkeonpremBareMetalCluster_bareMetalClusterUpdateBgpLb(t *testing.T) 
 
 	context := map[string]interface{}{}
 
-	VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
 		CheckDestroy:             testAccCheckGkeonpremBareMetalClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
