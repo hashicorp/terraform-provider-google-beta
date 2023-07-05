@@ -37,12 +37,12 @@ func TestAccFirebaseExtensionsInstance_firebaseExtentionsInstanceResizeImageExam
 	context := map[string]interface{}{
 		"project_id":    envvar.GetTestProjectFromEnv(),
 		"location":      "us-central1",
-		"random_suffix": RandString(t, 10),
+		"random_suffix": acctest.RandString(t, 10),
 	}
 
-	VcrTest(t, resource.TestCase{
+	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
 		CheckDestroy:             testAccCheckFirebaseExtensionsInstanceDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -120,7 +120,7 @@ func testAccCheckFirebaseExtensionsInstanceDestroyProducer(t *testing.T) func(s 
 				continue
 			}
 
-			config := GoogleProviderConfig(t)
+			config := acctest.GoogleProviderConfig(t)
 
 			url, err := tpgresource.ReplaceVarsForTest(config, rs, "{{FirebaseExtensionsBasePath}}projects/{{project}}/instances/{{instance_id}}")
 			if err != nil {
