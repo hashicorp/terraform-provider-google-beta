@@ -1,4 +1,9 @@
-## 4.72.0 (Unreleased)
+## 4.72.1 (Unreleased)
+
+BUG FIXES:
+* compute: fixed an issue in `google_compute_instance_template` where initialize params stopped the `disk.disk_size_gb` field being used ([#5849](https://github.com/hashicorp/terraform-provider-google-beta/pull/5849))
+
+## 4.72.0 (July 3, 2023)
 
 FEATURES:
 * **New Resource:** `google_certificate_manager_public_ca_external_account_key` ([#5813](https://github.com/hashicorp/terraform-provider-google-beta/pull/5813))
