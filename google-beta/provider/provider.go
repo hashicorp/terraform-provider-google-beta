@@ -1054,9 +1054,9 @@ func DatasourceMapWithErrors() (map[string]*schema.Resource, error) {
 		})
 }
 
-// Generated resources: 355
+// Generated resources: 356
 // Generated IAM resources: 228
-// Total generated resources: 583
+// Total generated resources: 584
 func ResourceMap() map[string]*schema.Resource {
 	resourceMap, _ := ResourceMapWithErrors()
 	return resourceMap
@@ -1435,6 +1435,7 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_gke_hub_feature_iam_binding":                             tpgiamresource.ResourceIamBinding(gkehub2.GKEHub2FeatureIamSchema, gkehub2.GKEHub2FeatureIamUpdaterProducer, gkehub2.GKEHub2FeatureIdParseFunc),
 			"google_gke_hub_feature_iam_member":                              tpgiamresource.ResourceIamMember(gkehub2.GKEHub2FeatureIamSchema, gkehub2.GKEHub2FeatureIamUpdaterProducer, gkehub2.GKEHub2FeatureIdParseFunc),
 			"google_gke_hub_feature_iam_policy":                              tpgiamresource.ResourceIamPolicy(gkehub2.GKEHub2FeatureIamSchema, gkehub2.GKEHub2FeatureIamUpdaterProducer, gkehub2.GKEHub2FeatureIdParseFunc),
+			"google_gkeonprem_bare_metal_admin_cluster":                      gkeonprem.ResourceGkeonpremBareMetalAdminCluster(),
 			"google_gkeonprem_bare_metal_cluster":                            gkeonprem.ResourceGkeonpremBareMetalCluster(),
 			"google_gkeonprem_bare_metal_node_pool":                          gkeonprem.ResourceGkeonpremBareMetalNodePool(),
 			"google_gkeonprem_vmware_cluster":                                gkeonprem.ResourceGkeonpremVmwareCluster(),
