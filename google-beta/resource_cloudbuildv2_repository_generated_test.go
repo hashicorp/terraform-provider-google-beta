@@ -43,9 +43,8 @@ func TestAccCloudbuildv2Repository_GheRepository(t *testing.T) {
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck: func() { acctest.AccTestPreCheck(t) },
-
-		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckCloudbuildv2RepositoryDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -69,9 +68,8 @@ func TestAccCloudbuildv2Repository_GithubRepository(t *testing.T) {
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck: func() { acctest.AccTestPreCheck(t) },
-
-		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckCloudbuildv2RepositoryDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -94,9 +92,8 @@ func TestAccCloudbuildv2Repository_GitlabRepository(t *testing.T) {
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck: func() { acctest.AccTestPreCheck(t) },
-
-		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckCloudbuildv2RepositoryDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -119,9 +116,8 @@ func TestAccCloudbuildv2Repository_GleRepository(t *testing.T) {
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck: func() { acctest.AccTestPreCheck(t) },
-
-		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckCloudbuildv2RepositoryDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -149,8 +145,8 @@ resource "google_cloudbuildv2_repository" "primary" {
 
   location = "%{region}"
   project  = "%{project_name}"
-  provider          = google-beta
 }
+
 resource "google_cloudbuildv2_connection" "ghe_complete" {
   location    = "%{region}"
   name        = "tf-test-connection%{random_suffix}"
@@ -166,8 +162,8 @@ resource "google_cloudbuildv2_connection" "ghe_complete" {
   }
 
   project = "%{project_name}"
-  provider    = google-beta
 }
+
 
 `, context)
 }
@@ -181,8 +177,8 @@ resource "google_cloudbuildv2_repository" "primary" {
   annotations       = {}
   location          = "%{region}"
   project           = "%{project_name}"
-  provider          = google-beta
 }
+
 resource "google_cloudbuildv2_connection" "github_update" {
   location = "%{region}"
   name     = "tf-test-connection%{random_suffix}"
@@ -204,8 +200,8 @@ resource "google_cloudbuildv2_connection" "github_update" {
   }
 
   project = "%{project_name}"
-  provider = google-beta
 }
+
 
 `, context)
 }
@@ -223,8 +219,8 @@ resource "google_cloudbuildv2_repository" "primary" {
 
   location = "us-west1"
   project  = "%{project_name}"
-  provider          = google-beta
 }
+
 resource "google_cloudbuildv2_connection" "gitlab" {
   location    = "us-west1"
   name        = "tf-test-connection%{random_suffix}"
@@ -243,8 +239,8 @@ resource "google_cloudbuildv2_connection" "gitlab" {
   }
 
   project = "%{project_name}"
-  provider    = google-beta
 }
+
 
 `, context)
 }
@@ -262,8 +258,8 @@ resource "google_cloudbuildv2_repository" "primary" {
 
   location = "us-west1"
   project  = "%{project_name}"
-  provider          = google-beta
 }
+
 resource "google_cloudbuildv2_connection" "gle" {
   location    = "us-west1"
   name        = "tf-test-connection%{random_suffix}"
@@ -283,8 +279,8 @@ resource "google_cloudbuildv2_connection" "gle" {
   }
 
   project = "%{project_name}"
-  provider    = google-beta
 }
+
 
 `, context)
 }

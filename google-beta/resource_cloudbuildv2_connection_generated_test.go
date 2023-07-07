@@ -43,9 +43,8 @@ func TestAccCloudbuildv2Connection_GheCompleteConnection(t *testing.T) {
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck: func() { acctest.AccTestPreCheck(t) },
-
-		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckCloudbuildv2ConnectionDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -69,9 +68,8 @@ func TestAccCloudbuildv2Connection_GheConnection(t *testing.T) {
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck: func() { acctest.AccTestPreCheck(t) },
-
-		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckCloudbuildv2ConnectionDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -103,9 +101,8 @@ func TestAccCloudbuildv2Connection_GhePrivConnection(t *testing.T) {
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck: func() { acctest.AccTestPreCheck(t) },
-
-		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckCloudbuildv2ConnectionDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -129,9 +126,8 @@ func TestAccCloudbuildv2Connection_GhePrivUpdateConnection(t *testing.T) {
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck: func() { acctest.AccTestPreCheck(t) },
-
-		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckCloudbuildv2ConnectionDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -163,9 +159,8 @@ func TestAccCloudbuildv2Connection_GithubConnection(t *testing.T) {
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck: func() { acctest.AccTestPreCheck(t) },
-
-		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckCloudbuildv2ConnectionDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -196,9 +191,8 @@ func TestAccCloudbuildv2Connection_GitlabConnection(t *testing.T) {
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck: func() { acctest.AccTestPreCheck(t) },
-
-		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckCloudbuildv2ConnectionDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -221,9 +215,8 @@ func TestAccCloudbuildv2Connection_GleConnection(t *testing.T) {
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck: func() { acctest.AccTestPreCheck(t) },
-
-		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckCloudbuildv2ConnectionDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -254,9 +247,8 @@ func TestAccCloudbuildv2Connection_GleOldConnection(t *testing.T) {
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck: func() { acctest.AccTestPreCheck(t) },
-
-		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckCloudbuildv2ConnectionDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -287,9 +279,8 @@ func TestAccCloudbuildv2Connection_GlePrivConnection(t *testing.T) {
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck: func() { acctest.AccTestPreCheck(t) },
-
-		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckCloudbuildv2ConnectionDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -312,9 +303,8 @@ func TestAccCloudbuildv2Connection_GlePrivUpdateConnection(t *testing.T) {
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck: func() { acctest.AccTestPreCheck(t) },
-
-		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckCloudbuildv2ConnectionDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -354,8 +344,8 @@ resource "google_cloudbuildv2_connection" "primary" {
   }
 
   project = "%{project_name}"
-  provider    = google-beta
 }
+
 
 `, context)
 }
@@ -372,8 +362,8 @@ resource "google_cloudbuildv2_connection" "primary" {
   }
 
   project = "%{project_name}"
-  provider    = google-beta
 }
+
 
 `, context)
 }
@@ -395,8 +385,8 @@ resource "google_cloudbuildv2_connection" "primary" {
   }
 
   project = "%{project_name}"
-  provider    = google-beta
 }
+
 
 `, context)
 }
@@ -419,8 +409,8 @@ resource "google_cloudbuildv2_connection" "primary" {
   }
 
   project = "%{project_name}"
-  provider    = google-beta
 }
+
 
 `, context)
 }
@@ -437,8 +427,8 @@ resource "google_cloudbuildv2_connection" "primary" {
   }
 
   project = "%{project_name}"
-  provider    = google-beta
 }
+
 
 `, context)
 }
@@ -461,8 +451,8 @@ resource "google_cloudbuildv2_connection" "primary" {
   }
 
   project = "%{project_name}"
-  provider    = google-beta
 }
+
 
 `, context)
 }
@@ -488,8 +478,8 @@ resource "google_cloudbuildv2_connection" "primary" {
   }
 
   project = "%{project_name}"
-  provider = google-beta
 }
+
 
 `, context)
 }
@@ -517,8 +507,8 @@ resource "google_cloudbuildv2_connection" "primary" {
   }
 
   project = "%{project_name}"
-  provider = google-beta
 }
+
 
 `, context)
 }
@@ -543,8 +533,8 @@ resource "google_cloudbuildv2_connection" "primary" {
   }
 
   project = "%{project_name}"
-  provider    = google-beta
 }
+
 
 `, context)
 }
@@ -570,8 +560,8 @@ resource "google_cloudbuildv2_connection" "primary" {
   }
 
   project = "%{project_name}"
-  provider    = google-beta
 }
+
 
 `, context)
 }
@@ -597,8 +587,8 @@ resource "google_cloudbuildv2_connection" "primary" {
   }
 
   project = "%{project_name}"
-  provider    = google-beta
 }
+
 
 `, context)
 }
@@ -624,8 +614,8 @@ resource "google_cloudbuildv2_connection" "primary" {
   }
 
   project = "%{project_name}"
-  provider    = google-beta
 }
+
 
 `, context)
 }
@@ -651,8 +641,8 @@ resource "google_cloudbuildv2_connection" "primary" {
   }
 
   project = "%{project_name}"
-  provider    = google-beta
 }
+
 
 `, context)
 }
@@ -684,8 +674,8 @@ resource "google_cloudbuildv2_connection" "primary" {
   }
 
   project = "%{project_name}"
-  provider    = google-beta
 }
+
 
 `, context)
 }
@@ -711,8 +701,8 @@ resource "google_cloudbuildv2_connection" "primary" {
   }
 
   project = "%{project_name}"
-  provider    = google-beta
 }
+
 
 `, context)
 }
@@ -744,8 +734,8 @@ resource "google_cloudbuildv2_connection" "primary" {
   }
 
   project = "%{project_name}"
-  provider    = google-beta
 }
+
 
 `, context)
 }
