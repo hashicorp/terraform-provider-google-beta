@@ -457,7 +457,7 @@ func TestAccCloudBuildTrigger_cloudbuildTriggerRepoExample(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckCloudBuildTriggerDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -476,7 +476,6 @@ func TestAccCloudBuildTrigger_cloudbuildTriggerRepoExample(t *testing.T) {
 func testAccCloudBuildTrigger_cloudbuildTriggerRepoExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_cloudbuildv2_connection" "my-connection" {
-  provider = google-beta
   location = "us-central1"
   name = "my-connection"
 
@@ -489,14 +488,12 @@ resource "google_cloudbuildv2_connection" "my-connection" {
 }
 
 resource "google_cloudbuildv2_repository" "my-repository" {
-  provider = google-beta
   name = "my-repo"
   parent_connection = google_cloudbuildv2_connection.my-connection.id
   remote_uri = "%{repo_uri}"
 }
 
 resource "google_cloudbuild_trigger" "repo-trigger" {
-  provider = google-beta
   location = "us-central1"
 
   repository_event_config {
@@ -808,7 +805,7 @@ func TestAccCloudBuildTrigger_cloudbuildTriggerPubsubWithRepoExample(t *testing.
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckCloudBuildTriggerDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -827,7 +824,6 @@ func TestAccCloudBuildTrigger_cloudbuildTriggerPubsubWithRepoExample(t *testing.
 func testAccCloudBuildTrigger_cloudbuildTriggerPubsubWithRepoExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_cloudbuildv2_connection" "my-connection" {
-  provider = google-beta
   location = "us-central1"
   name = "my-connection"
 
@@ -840,19 +836,16 @@ resource "google_cloudbuildv2_connection" "my-connection" {
 }
 
 resource "google_cloudbuildv2_repository" "my-repository" {
-  provider = google-beta
   name = "my-repo"
   parent_connection = google_cloudbuildv2_connection.my-connection.id
   remote_uri = "%{repo_uri}"
 }
 
 resource "google_pubsub_topic" "mytopic" {
-  provider = google-beta
   name = "mytopic"
 }
 
 resource "google_cloudbuild_trigger" "pubsub-with-repo-trigger" {
-  provider = google-beta
   name = "pubsub-with-repo-trigger"
   location = "us-central1"
 

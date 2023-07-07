@@ -35,7 +35,7 @@ func TestAccCloudbuildv2ConnectionIamBindingGenerated(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudbuildv2ConnectionIamBinding_basicGenerated(context),
@@ -58,7 +58,7 @@ func TestAccCloudbuildv2ConnectionIamMemberGenerated(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		Steps: []resource.TestStep{
 			{
 				// Test Iam Member creation (no update for member, no need to test)
@@ -78,7 +78,7 @@ func TestAccCloudbuildv2ConnectionIamPolicyGenerated(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudbuildv2ConnectionIamPolicy_basicGenerated(context),
@@ -94,7 +94,6 @@ func TestAccCloudbuildv2ConnectionIamPolicyGenerated(t *testing.T) {
 func testAccCloudbuildv2ConnectionIamMember_basicGenerated(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_cloudbuildv2_connection" "my-connection" {
-  provider = google-beta
   location = "us-central1"
   name = "tf-test-tf-test-connection%{random_suffix}"
 
@@ -108,7 +107,6 @@ resource "google_cloudbuildv2_connection" "my-connection" {
 }
 
 resource "google_cloudbuildv2_connection_iam_member" "foo" {
-  provider = google-beta
   project = google_cloudbuildv2_connection.my-connection.project
   location = google_cloudbuildv2_connection.my-connection.location
   name = google_cloudbuildv2_connection.my-connection.name
@@ -121,7 +119,6 @@ resource "google_cloudbuildv2_connection_iam_member" "foo" {
 func testAccCloudbuildv2ConnectionIamPolicy_basicGenerated(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_cloudbuildv2_connection" "my-connection" {
-  provider = google-beta
   location = "us-central1"
   name = "tf-test-tf-test-connection%{random_suffix}"
 
@@ -135,7 +132,6 @@ resource "google_cloudbuildv2_connection" "my-connection" {
 }
 
 data "google_iam_policy" "foo" {
-  provider = google-beta
   binding {
     role = "%{role}"
     members = ["user:admin@hashicorptest.com"]
@@ -143,7 +139,6 @@ data "google_iam_policy" "foo" {
 }
 
 resource "google_cloudbuildv2_connection_iam_policy" "foo" {
-  provider = google-beta
   project = google_cloudbuildv2_connection.my-connection.project
   location = google_cloudbuildv2_connection.my-connection.location
   name = google_cloudbuildv2_connection.my-connection.name
@@ -151,7 +146,6 @@ resource "google_cloudbuildv2_connection_iam_policy" "foo" {
 }
 
 data "google_cloudbuildv2_connection_iam_policy" "foo" {
-  provider = google-beta
   project = google_cloudbuildv2_connection.my-connection.project
   location = google_cloudbuildv2_connection.my-connection.location
   name = google_cloudbuildv2_connection.my-connection.name
@@ -165,7 +159,6 @@ data "google_cloudbuildv2_connection_iam_policy" "foo" {
 func testAccCloudbuildv2ConnectionIamPolicy_emptyBinding(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_cloudbuildv2_connection" "my-connection" {
-  provider = google-beta
   location = "us-central1"
   name = "tf-test-tf-test-connection%{random_suffix}"
 
@@ -179,11 +172,9 @@ resource "google_cloudbuildv2_connection" "my-connection" {
 }
 
 data "google_iam_policy" "foo" {
-  provider = google-beta
 }
 
 resource "google_cloudbuildv2_connection_iam_policy" "foo" {
-  provider = google-beta
   project = google_cloudbuildv2_connection.my-connection.project
   location = google_cloudbuildv2_connection.my-connection.location
   name = google_cloudbuildv2_connection.my-connection.name
@@ -195,7 +186,6 @@ resource "google_cloudbuildv2_connection_iam_policy" "foo" {
 func testAccCloudbuildv2ConnectionIamBinding_basicGenerated(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_cloudbuildv2_connection" "my-connection" {
-  provider = google-beta
   location = "us-central1"
   name = "tf-test-tf-test-connection%{random_suffix}"
 
@@ -209,7 +199,6 @@ resource "google_cloudbuildv2_connection" "my-connection" {
 }
 
 resource "google_cloudbuildv2_connection_iam_binding" "foo" {
-  provider = google-beta
   project = google_cloudbuildv2_connection.my-connection.project
   location = google_cloudbuildv2_connection.my-connection.location
   name = google_cloudbuildv2_connection.my-connection.name
@@ -222,7 +211,6 @@ resource "google_cloudbuildv2_connection_iam_binding" "foo" {
 func testAccCloudbuildv2ConnectionIamBinding_updateGenerated(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_cloudbuildv2_connection" "my-connection" {
-  provider = google-beta
   location = "us-central1"
   name = "tf-test-tf-test-connection%{random_suffix}"
 
@@ -236,7 +224,6 @@ resource "google_cloudbuildv2_connection" "my-connection" {
 }
 
 resource "google_cloudbuildv2_connection_iam_binding" "foo" {
-  provider = google-beta
   project = google_cloudbuildv2_connection.my-connection.project
   location = google_cloudbuildv2_connection.my-connection.location
   name = google_cloudbuildv2_connection.my-connection.name
