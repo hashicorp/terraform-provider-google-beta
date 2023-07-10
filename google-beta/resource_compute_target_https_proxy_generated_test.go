@@ -118,7 +118,7 @@ func TestAccComputeTargetHttpsProxy_targetHttpsProxyHttpKeepAliveTimeoutExample(
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckComputeTargetHttpsProxyDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -137,22 +137,19 @@ func TestAccComputeTargetHttpsProxy_targetHttpsProxyHttpKeepAliveTimeoutExample(
 func testAccComputeTargetHttpsProxy_targetHttpsProxyHttpKeepAliveTimeoutExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_target_https_proxy" "default" {
-  provider                    = google-beta
   name                        = "tf-test-test-http-keep-alive-timeout-proxy%{random_suffix}"
-  http_keep_alive_timeout_sec = 120
+  http_keep_alive_timeout_sec = 610
   url_map                     = google_compute_url_map.default.id
   ssl_certificates            = [google_compute_ssl_certificate.default.id]
 }
 
 resource "google_compute_ssl_certificate" "default" {
-  provider    = google-beta
   name        = "tf-test-my-certificate%{random_suffix}"
   private_key = file("test-fixtures/ssl_cert/test.key")
   certificate = file("test-fixtures/ssl_cert/test.crt")
 }
 
 resource "google_compute_url_map" "default" {
-  provider   = google-beta
   name        = "tf-test-url-map%{random_suffix}"
   description = "a description"
 
@@ -175,7 +172,6 @@ resource "google_compute_url_map" "default" {
 }
 
 resource "google_compute_backend_service" "default" {
-  provider              = google-beta
   name                  = "tf-test-backend-service%{random_suffix}"
   port_name             = "http"
   protocol              = "HTTP"
@@ -186,7 +182,6 @@ resource "google_compute_backend_service" "default" {
 }
 
 resource "google_compute_http_health_check" "default" {
-  provider           = google-beta
   name               = "tf-test-http-health-check%{random_suffix}"
   request_path       = "/"
   check_interval_sec = 1
