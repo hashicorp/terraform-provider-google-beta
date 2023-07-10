@@ -8,7 +8,7 @@ BUG FIXES:
 ## 4.72.0 (July 3, 2023)
 
 FEATURES:
-* **New Resource:** `google_certificate_manager_public_ca_external_account_key` ([#5813](https://github.com/hashicorp/terraform-provider-google-beta/pull/5813))
+* **New Resource:** `google_public_ca_external_account_key` ([#5813](https://github.com/hashicorp/terraform-provider-google-beta/pull/5813))
 * **New Resource:** `google_compute_network_edge_security_service` (beta) ([#5808](https://github.com/hashicorp/terraform-provider-google-beta/pull/5808))
 * **New Resource:** `google_compute_region_security_policy` ([#5808](https://github.com/hashicorp/terraform-provider-google-beta/pull/5808))
 
