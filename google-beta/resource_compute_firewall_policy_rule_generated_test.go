@@ -33,7 +33,7 @@ import (
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
-func TestAccComputeFirewallPolicyRule_BasicFirSecRuleAddrGroupsHandWritten(t *testing.T) {
+func TestAccComputeFirewallPolicyRule_BasicFirSecRuleHandWritten(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
@@ -44,13 +44,12 @@ func TestAccComputeFirewallPolicyRule_BasicFirSecRuleAddrGroupsHandWritten(t *te
 	}
 
 	VcrTest(t, resource.TestCase{
-		PreCheck: func() { acctest.AccTestPreCheck(t) },
-
-		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckComputeFirewallPolicyRuleDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccComputeFirewallPolicyRule_BasicFirSecRuleAddrGroupsHandWritten(context),
+				Config: testAccComputeFirewallPolicyRule_BasicFirSecRuleHandWritten(context),
 			},
 			{
 				ResourceName:      "google_compute_firewall_policy_rule.primary",
@@ -58,7 +57,7 @@ func TestAccComputeFirewallPolicyRule_BasicFirSecRuleAddrGroupsHandWritten(t *te
 				ImportStateVerify: true,
 			},
 			{
-				Config: testAccComputeFirewallPolicyRule_BasicFirSecRuleAddrGroupsHandWrittenUpdate0(context),
+				Config: testAccComputeFirewallPolicyRule_BasicFirSecRuleHandWrittenUpdate0(context),
 			},
 			{
 				ResourceName:      "google_compute_firewall_policy_rule.primary",
@@ -69,10 +68,9 @@ func TestAccComputeFirewallPolicyRule_BasicFirSecRuleAddrGroupsHandWritten(t *te
 	})
 }
 
-func testAccComputeFirewallPolicyRule_BasicFirSecRuleAddrGroupsHandWritten(context map[string]interface{}) string {
+func testAccComputeFirewallPolicyRule_BasicFirSecRuleHandWritten(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_network_security_address_group" "basic_global_networksecurity_address_group" {
-  provider = google-beta
   name        = "tf-test-policy%{random_suffix}"
   parent      = "organizations/%{org_id}"
   description = "Sample global networksecurity_address_group"
@@ -83,20 +81,17 @@ resource "google_network_security_address_group" "basic_global_networksecurity_a
 }
 
 resource "google_folder" "folder" {
-  provider     = google-beta
   display_name = "tf-test-policy%{random_suffix}"
   parent       = "organizations/%{org_id}"
 }
 
 resource "google_compute_firewall_policy" "default" {
-  provider    = google-beta
   parent      = google_folder.folder.id
   short_name  = "tf-test-policy%{random_suffix}"
   description = "Resource created for Terraform acceptance testing"
 }
 
 resource "google_compute_firewall_policy_rule" "primary" {
-  provider        = google-beta
   firewall_policy = google_compute_firewall_policy.default.name
   description     = "Resource created for Terraform acceptance testing"
   priority        = 9000
@@ -126,10 +121,9 @@ resource "google_compute_firewall_policy_rule" "primary" {
 `, context)
 }
 
-func testAccComputeFirewallPolicyRule_BasicFirSecRuleAddrGroupsHandWrittenUpdate0(context map[string]interface{}) string {
+func testAccComputeFirewallPolicyRule_BasicFirSecRuleHandWrittenUpdate0(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_network_security_address_group" "basic_global_networksecurity_address_group" {
-  provider    = google-beta
   name        = "tf-test-policy%{random_suffix}"
   parent      = "organizations/%{org_id}"
   description = "Sample global networksecurity_address_group"
@@ -140,20 +134,17 @@ resource "google_network_security_address_group" "basic_global_networksecurity_a
 }
 
 resource "google_folder" "folder" {
-  provider     = google-beta
   display_name = "tf-test-policy%{random_suffix}"
   parent       = "organizations/%{org_id}"
 }
 
 resource "google_compute_firewall_policy" "default" {
-  provider    = google-beta
   parent      = google_folder.folder.id
   short_name  = "tf-test-policy%{random_suffix}"
   description = "Resource created for Terraform acceptance testing"
 }
 
 resource "google_compute_firewall_policy_rule" "primary" {
-  provider        = google-beta
   firewall_policy = google_compute_firewall_policy.default.name
   description     = "Resource created for Terraform acceptance testing - Updated"
   priority        = 9000
