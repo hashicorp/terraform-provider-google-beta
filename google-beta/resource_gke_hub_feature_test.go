@@ -29,7 +29,7 @@ func TestAccGKEHubFeature_gkehubFeatureFleetObservability(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckGKEHubFeatureDestroyProducer(t),
 		ExternalProviders: map[string]resource.ExternalProvider{
 			"time": {},
@@ -64,7 +64,7 @@ func TestAccGKEHubFeature_gkehubFeatureFleetObservability(t *testing.T) {
 }
 
 func testAccGKEHubFeature_gkehubFeatureFleetObservability(context map[string]interface{}) string {
-	return gkeHubFeatureProjectSetup(context) + acctest.Nprintf(`
+	return gkeHubFeatureProjectSetupForGA(context) + acctest.Nprintf(`
 resource "time_sleep" "wait_for_gkehub_enablement" {
   create_duration = "150s"
   depends_on = [google_project_service.gkehub]
@@ -87,13 +87,12 @@ resource "google_gke_hub_feature" "feature" {
     }
   }
   depends_on = [time_sleep.wait_for_gkehub_enablement]
-  provider = google-beta
 }
 `, context)
 }
 
 func testAccGKEHubFeature_gkehubFeatureFleetObservabilityUpdate1(context map[string]interface{}) string {
-	return gkeHubFeatureProjectSetup(context) + acctest.Nprintf(`
+	return gkeHubFeatureProjectSetupForGA(context) + acctest.Nprintf(`
 resource "time_sleep" "wait_for_gkehub_enablement" {
   create_duration = "150s"
   depends_on = [google_project_service.gkehub]
@@ -113,13 +112,12 @@ resource "google_gke_hub_feature" "feature" {
     }
   }
   depends_on = [time_sleep.wait_for_gkehub_enablement]
-  provider = google-beta
 }
 `, context)
 }
 
 func testAccGKEHubFeature_gkehubFeatureFleetObservabilityUpdate2(context map[string]interface{}) string {
-	return gkeHubFeatureProjectSetup(context) + acctest.Nprintf(`
+	return gkeHubFeatureProjectSetupForGA(context) + acctest.Nprintf(`
 resource "time_sleep" "wait_for_gkehub_enablement" {
   create_duration = "150s"
   depends_on = [google_project_service.gkehub]
@@ -139,7 +137,6 @@ resource "google_gke_hub_feature" "feature" {
     }
   }
   depends_on = [time_sleep.wait_for_gkehub_enablement]
-  provider = google-beta
 }
 `, context)
 }
