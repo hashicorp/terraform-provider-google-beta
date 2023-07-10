@@ -1,4 +1,20 @@
-## 4.73.0 (Unreleased)
+## 4.74.0 (Unreleased)
+
+## 4.73.0 (July 10, 2023)
+
+FEATURES:
+* **New Resource:** `google_firebase_extensions_instance` ([#5832](https://github.com/hashicorp/terraform-provider-google-beta/pull/5832))
+
+IMPROVEMENTS:
+* compute: added the `no_automate_dns_zone` field to `google_compute_forwarding_rule`. ([#5842](https://github.com/hashicorp/terraform-provider-google-beta/pull/5842))
+* compute: promoted `google_compute_disk_async_replication` resource to GA. ([#5843](https://github.com/hashicorp/terraform-provider-google-beta/pull/5843))
+* compute: promoted `async_primary_disk` field in `google_compute_disk` resource to GA. ([#5843](https://github.com/hashicorp/terraform-provider-google-beta/pull/5843))
+* compute: promoted `async_primary_disk` field in `google_compute_region_disk` resource to GA. ([#5843](https://github.com/hashicorp/terraform-provider-google-beta/pull/5843))
+* compute: promoted `disk_consistency_group_policy` field in `google_compute_resource_policy` resource to GA. ([#5843](https://github.com/hashicorp/terraform-provider-google-beta/pull/5843))
+* resourcemanager: fixed handling of `google_service_account_id_token` when authenticated with GCE metadata credentials ([#5825](https://github.com/hashicorp/terraform-provider-google-beta/pull/5825))
+
+BUG FIXES:
+* networkservices: increased default timeout for `google_network_services_edge_cache_keyset` to 90m ([#5839](https://github.com/hashicorp/terraform-provider-google-beta/pull/5839))
 
 ## 4.72.1 (July 6, 2023)
 
