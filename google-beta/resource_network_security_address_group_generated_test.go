@@ -41,7 +41,7 @@ func TestAccNetworkSecurityAddressGroup_networkSecurityAddressGroupsBasicExample
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckNetworkSecurityAddressGroupDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -60,7 +60,6 @@ func TestAccNetworkSecurityAddressGroup_networkSecurityAddressGroupsBasicExample
 func testAccNetworkSecurityAddressGroup_networkSecurityAddressGroupsBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_network_security_address_group" "default" {
-  provider    = google-beta
   name        = "tf-test-my-address-groups%{random_suffix}"
   parent      = "projects/%{project}"
   location    = "us-central1"
@@ -81,7 +80,7 @@ func TestAccNetworkSecurityAddressGroup_networkSecurityAddressGroupsOrganization
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckNetworkSecurityAddressGroupDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -100,7 +99,6 @@ func TestAccNetworkSecurityAddressGroup_networkSecurityAddressGroupsOrganization
 func testAccNetworkSecurityAddressGroup_networkSecurityAddressGroupsOrganizationBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_network_security_address_group" "default" {
-  provider    = google-beta
   name        = "tf-test-my-address-groups%{random_suffix}"
   parent      = "organizations/%{org_id}"
   location    = "us-central1"
@@ -121,7 +119,7 @@ func TestAccNetworkSecurityAddressGroup_networkSecurityAddressGroupsAdvancedExam
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckNetworkSecurityAddressGroupDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -140,7 +138,6 @@ func TestAccNetworkSecurityAddressGroup_networkSecurityAddressGroupsAdvancedExam
 func testAccNetworkSecurityAddressGroup_networkSecurityAddressGroupsAdvancedExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_network_security_address_group" "default" {
-  provider    = google-beta
   name        = "tf-test-my-address-groups%{random_suffix}"
   parent      = "projects/%{project}"
   location    = "us-central1"
