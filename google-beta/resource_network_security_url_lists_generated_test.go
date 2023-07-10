@@ -39,7 +39,7 @@ func TestAccNetworkSecurityUrlLists_networkSecurityUrlListsBasicExample(t *testi
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckNetworkSecurityUrlListsDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -58,7 +58,6 @@ func TestAccNetworkSecurityUrlLists_networkSecurityUrlListsBasicExample(t *testi
 func testAccNetworkSecurityUrlLists_networkSecurityUrlListsBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_network_security_url_lists" "default" {
-  provider    = google-beta
   name        = "tf-test-my-url-lists%{random_suffix}"
   location    = "us-central1"
   values = ["www.example.com"]
@@ -75,7 +74,7 @@ func TestAccNetworkSecurityUrlLists_networkSecurityUrlListsAdvancedExample(t *te
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckNetworkSecurityUrlListsDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -94,7 +93,6 @@ func TestAccNetworkSecurityUrlLists_networkSecurityUrlListsAdvancedExample(t *te
 func testAccNetworkSecurityUrlLists_networkSecurityUrlListsAdvancedExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_network_security_url_lists" "default" {
-  provider    = google-beta
   name        = "tf-test-my-url-lists%{random_suffix}"
   location    = "us-central1"
   description = "my description"
