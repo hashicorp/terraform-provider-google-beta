@@ -109,7 +109,7 @@ func TestAccComputeTargetHttpProxy_targetHttpProxyHttpKeepAliveTimeoutExample(t 
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckComputeTargetHttpProxyDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -128,14 +128,12 @@ func TestAccComputeTargetHttpProxy_targetHttpProxyHttpKeepAliveTimeoutExample(t 
 func testAccComputeTargetHttpProxy_targetHttpProxyHttpKeepAliveTimeoutExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_target_http_proxy" "default" {
-  provider                    = google-beta
   name                        = "tf-test-test-http-keep-alive-timeout-proxy%{random_suffix}"
-  http_keep_alive_timeout_sec = 120
+  http_keep_alive_timeout_sec = 610
   url_map                     = google_compute_url_map.default.id
 }
 
 resource "google_compute_url_map" "default" {
-  provider        = google-beta
   name            = "tf-test-url-map%{random_suffix}"
   default_service = google_compute_backend_service.default.id
 
@@ -156,7 +154,6 @@ resource "google_compute_url_map" "default" {
 }
 
 resource "google_compute_backend_service" "default" {
-  provider              = google-beta
   name                  = "tf-test-backend-service%{random_suffix}"
   port_name             = "http"
   protocol              = "HTTP"
@@ -167,7 +164,6 @@ resource "google_compute_backend_service" "default" {
 }
 
 resource "google_compute_http_health_check" "default" {
-  provider           = google-beta
   name               = "tf-test-http-health-check%{random_suffix}"
   request_path       = "/"
   check_interval_sec = 1
