@@ -39,7 +39,7 @@ func TestAccNetworkSecurityGatewaySecurityPolicy_networkSecurityGatewaySecurityP
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckNetworkSecurityGatewaySecurityPolicyDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -58,7 +58,6 @@ func TestAccNetworkSecurityGatewaySecurityPolicy_networkSecurityGatewaySecurityP
 func testAccNetworkSecurityGatewaySecurityPolicy_networkSecurityGatewaySecurityPolicyBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_network_security_gateway_security_policy" "default" {
-  provider    = google-beta
   name        = "tf-test-my-gateway-security-policy%{random_suffix}"
   location    = "us-central1"
   description = "my description"

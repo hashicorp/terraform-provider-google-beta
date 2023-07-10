@@ -39,7 +39,7 @@ func TestAccNetworkSecurityGatewaySecurityPolicyRule_networkSecurityGatewaySecur
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckNetworkSecurityGatewaySecurityPolicyRuleDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -58,14 +58,12 @@ func TestAccNetworkSecurityGatewaySecurityPolicyRule_networkSecurityGatewaySecur
 func testAccNetworkSecurityGatewaySecurityPolicyRule_networkSecurityGatewaySecurityPolicyRulesBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_network_security_gateway_security_policy" "default" {
-  provider    = google-beta
   name        = "tf-test-my-gateway-security-policy%{random_suffix}"
   location    = "us-central1"
   description = "gateway security policy created to be used as reference by the rule."
 }
 
 resource "google_network_security_gateway_security_policy_rule" "default" {
-  provider                = google-beta
   name                    = "tf-test-my-gateway-security-policy-rule%{random_suffix}"
   location                = "us-central1"
   gateway_security_policy = google_network_security_gateway_security_policy.default.name
@@ -87,7 +85,7 @@ func TestAccNetworkSecurityGatewaySecurityPolicyRule_networkSecurityGatewaySecur
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckNetworkSecurityGatewaySecurityPolicyRuleDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -106,14 +104,12 @@ func TestAccNetworkSecurityGatewaySecurityPolicyRule_networkSecurityGatewaySecur
 func testAccNetworkSecurityGatewaySecurityPolicyRule_networkSecurityGatewaySecurityPolicyRulesAdvancedExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_network_security_gateway_security_policy" "default" {
-  provider    = google-beta
   name        = "tf-test-my-gateway-security-policy%{random_suffix}"
   location    = "us-central1"
   description = "gateway security policy created to be used as reference by the rule."
 }
 
 resource "google_network_security_gateway_security_policy_rule" "default" {
-  provider                = google-beta
   name                    = "tf-test-my-gateway-security-policy-rule%{random_suffix}"
   location                = "us-central1"
   gateway_security_policy = google_network_security_gateway_security_policy.default.name

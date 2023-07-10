@@ -39,7 +39,7 @@ func TestAccNetworkServicesGateway_networkServicesGatewayBasicExample(t *testing
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckNetworkServicesGatewayDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -58,7 +58,6 @@ func TestAccNetworkServicesGateway_networkServicesGatewayBasicExample(t *testing
 func testAccNetworkServicesGateway_networkServicesGatewayBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_network_services_gateway" "default" {
-  provider = google-beta
   name     = "tf-test-my-gateway%{random_suffix}"
   scope    = "default-scope-basic"
   type     = "OPEN_MESH"
@@ -76,7 +75,7 @@ func TestAccNetworkServicesGateway_networkServicesGatewayAdvancedExample(t *test
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckNetworkServicesGatewayDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -95,7 +94,6 @@ func TestAccNetworkServicesGateway_networkServicesGatewayAdvancedExample(t *test
 func testAccNetworkServicesGateway_networkServicesGatewayAdvancedExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_network_services_gateway" "default" {
-  provider    = google-beta
   name        = "tf-test-my-gateway%{random_suffix}"
   labels      = {
     foo = "bar"
@@ -117,7 +115,7 @@ func TestAccNetworkServicesGateway_networkServicesGatewaySecureWebProxyExample(t
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckNetworkServicesGatewayDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -136,7 +134,6 @@ func TestAccNetworkServicesGateway_networkServicesGatewaySecureWebProxyExample(t
 func testAccNetworkServicesGateway_networkServicesGatewaySecureWebProxyExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_certificate_manager_certificate" "default" {
-  provider    = google-beta
   name        = "tf-test-my-certificate%{random_suffix}"
   location    = "us-central1"
   self_managed {
@@ -146,14 +143,12 @@ resource "google_certificate_manager_certificate" "default" {
 }
 
 resource "google_compute_network" "default" {
-  provider                = google-beta
   name                    = "tf-test-my-network%{random_suffix}"
   routing_mode            = "REGIONAL"
   auto_create_subnetworks = false
 }
 
 resource "google_compute_subnetwork" "default" {
-  provider      = google-beta
   name          = "tf-test-my-subnetwork-name%{random_suffix}"
   purpose       = "PRIVATE"
   ip_cidr_range = "10.128.0.0/20"
@@ -163,7 +158,6 @@ resource "google_compute_subnetwork" "default" {
 }
 
 resource "google_compute_subnetwork" "proxyonlysubnet" {
-  provider      = google-beta
   name          = "tf-test-my-proxy-only-subnetwork%{random_suffix}"
   purpose       = "REGIONAL_MANAGED_PROXY"
   ip_cidr_range = "192.168.0.0/23"
@@ -173,13 +167,11 @@ resource "google_compute_subnetwork" "proxyonlysubnet" {
 }
 
 resource "google_network_security_gateway_security_policy" "default" {
-  provider    = google-beta
   name        = "tf-test-my-policy-name%{random_suffix}"
   location    = "us-central1"
 }
 
 resource "google_network_security_gateway_security_policy_rule" "default" {
-  provider                = google-beta
   name                    = "tf-test-my-policyrule-name%{random_suffix}"
   location                = "us-central1"
   gateway_security_policy = google_network_security_gateway_security_policy.default.name
@@ -190,7 +182,6 @@ resource "google_network_security_gateway_security_policy_rule" "default" {
 }
 
 resource "google_network_services_gateway" "default" {
-  provider                             = google-beta
   name                                 = "tf-test-my-gateway1%{random_suffix}"
   location                             = "us-central1"
   addresses                            = ["10.128.0.99"]
@@ -216,7 +207,7 @@ func TestAccNetworkServicesGateway_networkServicesGatewayMultipleSwpSameNetworkE
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckNetworkServicesGatewayDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -235,7 +226,6 @@ func TestAccNetworkServicesGateway_networkServicesGatewayMultipleSwpSameNetworkE
 func testAccNetworkServicesGateway_networkServicesGatewayMultipleSwpSameNetworkExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_certificate_manager_certificate" "default" {
-  provider    = google-beta
   name        = "tf-test-my-certificate%{random_suffix}"
   location    = "us-south1"
   self_managed {
@@ -245,14 +235,12 @@ resource "google_certificate_manager_certificate" "default" {
 }
 
 resource "google_compute_network" "default" {
-  provider                = google-beta
   name                    = "tf-test-my-network%{random_suffix}"
   routing_mode            = "REGIONAL"
   auto_create_subnetworks = false
 }
 
 resource "google_compute_subnetwork" "default" {
-  provider      = google-beta
   name          = "tf-test-my-subnetwork-name%{random_suffix}"
   purpose       = "PRIVATE"
   ip_cidr_range = "10.128.0.0/20"
@@ -262,7 +250,6 @@ resource "google_compute_subnetwork" "default" {
 }
 
 resource "google_compute_subnetwork" "proxyonlysubnet" {
-  provider      = google-beta
   name          = "tf-test-my-proxy-only-subnetwork%{random_suffix}"
   purpose       = "REGIONAL_MANAGED_PROXY"
   ip_cidr_range = "192.168.0.0/23"
@@ -272,13 +259,11 @@ resource "google_compute_subnetwork" "proxyonlysubnet" {
 }
 
 resource "google_network_security_gateway_security_policy" "default" {
-  provider    = google-beta
   name        = "tf-test-my-policy-name%{random_suffix}"
   location    = "us-south1"
 }
 
 resource "google_network_security_gateway_security_policy_rule" "default" {
-  provider                = google-beta
   name                    = "tf-test-my-policyrule-name%{random_suffix}"
   location                = "us-south1"
   gateway_security_policy = google_network_security_gateway_security_policy.default.name
@@ -289,7 +274,6 @@ resource "google_network_security_gateway_security_policy_rule" "default" {
 }
 
 resource "google_network_services_gateway" "default" {
-  provider                             = google-beta
   name                                 = "tf-test-my-gateway1%{random_suffix}"
   location                             = "us-south1"
   addresses                            = ["10.128.0.99"]
@@ -305,7 +289,6 @@ resource "google_network_services_gateway" "default" {
 }
 
 resource "google_network_services_gateway" "gateway2" {
-  provider                             = google-beta
   name                                 = "tf-test-my-gateway2%{random_suffix}"
   location                             = "us-south1"
   addresses                            = ["10.128.0.98"]
