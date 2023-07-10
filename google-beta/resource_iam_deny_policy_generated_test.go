@@ -62,8 +62,8 @@ func testAccIAM2DenyPolicy_iamDenyPolicyBasicExample(context map[string]interfac
 	return acctest.Nprintf(`
 resource "google_project" "project" {
   provider        = google-beta
-  project_id      = "tf-test%{random_suffix}"
-  name            = "tf-test%{random_suffix}"
+  project_id      = "tf-test-my-project%{random_suffix}"
+  name            = "tf-test-my-project%{random_suffix}"
   org_id          = "%{org_id}"
   billing_account = "%{billing_account}"
 }

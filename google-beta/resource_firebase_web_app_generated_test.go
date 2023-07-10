@@ -64,8 +64,8 @@ func testAccFirebaseWebApp_firebaseWebAppBasicExample(context map[string]interfa
 resource "google_project" "default" {
 	provider = google-beta
 
-	project_id = "tf-test%{random_suffix}"
-	name       = "tf-test%{random_suffix}"
+	project_id = "tf-test-my-project%{random_suffix}"
+	name       = "tf-test-my-project%{random_suffix}"
 	org_id     = "%{org_id}"
 
 	labels = {
