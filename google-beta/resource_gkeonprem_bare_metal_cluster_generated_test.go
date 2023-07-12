@@ -59,7 +59,7 @@ func testAccGkeonpremBareMetalCluster_gkeonpremBareMetalClusterBasicExample(cont
 	return acctest.Nprintf(`
 resource "google_gkeonprem_bare_metal_cluster" "cluster-basic" {
   provider = google-beta
-  name = "cluster-basic%{random_suffix}"
+  name = "tf-test-my-cluster%{random_suffix}"
   location = "us-west1"
   admin_cluster_membership = "projects/870316890899/locations/global/memberships/gkeonprem-terraform-test"
   bare_metal_version = "1.12.3"
@@ -161,7 +161,7 @@ func testAccGkeonpremBareMetalCluster_gkeonpremBareMetalClusterManuallbExample(c
 	return acctest.Nprintf(`
 resource "google_gkeonprem_bare_metal_cluster" "cluster-manuallb" {
   provider = google-beta
-  name = "cluster-manuallb%{random_suffix}"
+  name = "tf-test-cluster-manuallb%{random_suffix}"
   location = "us-west1"
   admin_cluster_membership = "projects/870316890899/locations/global/memberships/gkeonprem-terraform-test"
   bare_metal_version = "1.12.3"
@@ -248,7 +248,7 @@ func testAccGkeonpremBareMetalCluster_gkeonpremBareMetalClusterBgplbExample(cont
 	return acctest.Nprintf(`
 resource "google_gkeonprem_bare_metal_cluster" "cluster-bgplb" {
   provider = google-beta
-  name = "cluster-bgplb%{random_suffix}"
+  name = "tf-test-cluster-bgplb%{random_suffix}"
   location = "us-west1"
   admin_cluster_membership = "projects/870316890899/locations/global/memberships/gkeonprem-terraform-test"
   bare_metal_version = "1.12.3"

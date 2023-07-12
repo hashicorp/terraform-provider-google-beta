@@ -59,7 +59,7 @@ func testAccGkeonpremBareMetalAdminCluster_gkeonpremBareMetalAdminClusterBasicEx
 	return acctest.Nprintf(`
 resource "google_gkeonprem_bare_metal_admin_cluster" "admin-cluster-basic" {
   provider = google-beta
-  name = "basic%{random_suffix}"
+  name = "tf-test-my-cluster%{random_suffix}"
   location = "us-west1"
   bare_metal_version = "1.13.4"
   network_config {
@@ -148,7 +148,7 @@ func testAccGkeonpremBareMetalAdminCluster_gkeonpremBareMetalAdminClusterFullExa
 	return acctest.Nprintf(`
 resource "google_gkeonprem_bare_metal_admin_cluster" "admin-cluster-basic" {
   provider = google-beta
-  name = "basic%{random_suffix}"
+  name = "tf-test-my-cluster%{random_suffix}"
   location = "us-west1"
   description = "test description"
   bare_metal_version = "1.13.4"

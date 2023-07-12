@@ -59,7 +59,7 @@ func testAccGkeonpremVmwareCluster_gkeonpremVmwareClusterBasicExample(context ma
 	return acctest.Nprintf(`
 resource "google_gkeonprem_vmware_cluster" "cluster-basic" {
   provider = google-beta
-  name = "cluster-basic%{random_suffix}"
+  name = "tf-test-cluster-basic%{random_suffix}"
   location = "us-west1"
   admin_cluster_membership = "projects/870316890899/locations/global/memberships/gkeonprem-terraform-test"
   description = "test cluster"
@@ -130,7 +130,7 @@ func testAccGkeonpremVmwareCluster_gkeonpremVmwareClusterF5lbExample(context map
 	return acctest.Nprintf(`
 resource "google_gkeonprem_vmware_cluster" "cluster-f5lb" {
   provider = google-beta  
-  name = "cluster-f5lb%{random_suffix}"
+  name = "tf-test-cluster-f5lb%{random_suffix}"
   location = "us-west1"
   admin_cluster_membership = "projects/870316890899/locations/global/memberships/gkeonprem-terraform-test"
   description = "test cluster"
@@ -226,7 +226,7 @@ func testAccGkeonpremVmwareCluster_gkeonpremVmwareClusterManuallbExample(context
 	return acctest.Nprintf(`
 resource "google_gkeonprem_vmware_cluster" "cluster-manuallb" {
   provider = google-beta
-  name = "cluster-manuallb%{random_suffix}"
+  name = "tf-test-cluster-manuallb%{random_suffix}"
   location = "us-west1"
   admin_cluster_membership = "projects/870316890899/locations/global/memberships/gkeonprem-terraform-test"
   description = "test cluster"
