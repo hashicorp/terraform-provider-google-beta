@@ -59,8 +59,8 @@ func testAccGkeonpremVmwareNodePool_gkeonpremVmwareNodePoolBasicExample(context 
 	return acctest.Nprintf(`
 resource "google_gkeonprem_vmware_cluster" "default-basic" {
   provider = google-beta
+  name = "tf-test-my-cluster%{random_suffix}"
   location = "us-west1"
-  name = "default-basic"
   admin_cluster_membership = "projects/870316890899/locations/global/memberships/gkeonprem-terraform-test"
   description = "test cluster"
   on_prem_version = "1.13.1-gke.35"
@@ -98,8 +98,8 @@ resource "google_gkeonprem_vmware_cluster" "default-basic" {
 
 resource "google_gkeonprem_vmware_node_pool" "nodepool-basic" {
   provider = google-beta
+  name = "tf-test-my-nodepool%{random_suffix}"
   location = "us-west1"
-  name = "np-nodepool%{random_suffix}"
   vmware_cluster = google_gkeonprem_vmware_cluster.default-basic.name
   config {
     replicas = 3
@@ -139,8 +139,8 @@ func testAccGkeonpremVmwareNodePool_gkeonpremVmwareNodePoolFullExample(context m
 	return acctest.Nprintf(`
 resource "google_gkeonprem_vmware_cluster" "default-full" {
   provider = google-beta
+  name = "tf-test-my-cluster%{random_suffix}"
   location = "us-west1"
-  name = "default-full"
   admin_cluster_membership = "projects/870316890899/locations/global/memberships/gkeonprem-terraform-test"
   description = "test cluster"
   on_prem_version = "1.13.1-gke.35"
@@ -178,8 +178,8 @@ resource "google_gkeonprem_vmware_cluster" "default-full" {
 
 resource "google_gkeonprem_vmware_node_pool" "nodepool-full" {
   provider = google-beta
+  name = "tf-test-my-nodepool%{random_suffix}"
   location = "us-west1"
-  name = "np-nodepool%{random_suffix}"
   vmware_cluster = google_gkeonprem_vmware_cluster.default-full.name
   annotations = {}
   config {

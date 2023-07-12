@@ -12,7 +12,9 @@ import (
 func TestAccGkeonpremVmwareNodePool_vmwareNodePoolUpdate(t *testing.T) {
 	t.Parallel()
 
-	context := map[string]interface{}{}
+	context := map[string]interface{}{
+		"random_suffix": acctest.RandString(t, 10),
+	}
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -43,8 +45,9 @@ func testAccGkeonpremVmwareNodePool_vmwareNodePoolUpdateStart(context map[string
 	return acctest.Nprintf(`
 
   resource "google_gkeonprem_vmware_cluster" "cluster" {
-    provider = google-beta  
-    name = "cluster"
+    provider = google-beta
+
+    name = "tf-test-cluster-%{random_suffix}"
     location = "us-west1"
     admin_cluster_membership = "projects/870316890899/locations/global/memberships/gkeonprem-terraform-test"
     description = "test cluster"
@@ -86,8 +89,9 @@ func testAccGkeonpremVmwareNodePool_vmwareNodePoolUpdateStart(context map[string
 
   resource "google_gkeonprem_vmware_node_pool" "nodepool" {
     provider = google-beta
+
+    name = "tf-test-nodepool-%{random_suffix}"
     location = "us-west1"
-    name = "nodepool"
     vmware_cluster = google_gkeonprem_vmware_cluster.cluster.name
     annotations = {}
     config {
@@ -116,8 +120,9 @@ func testAccGkeonpremVmwareNodePool_vmwareNodePoolUpdate(context map[string]inte
 	return acctest.Nprintf(`
 
   resource "google_gkeonprem_vmware_cluster" "cluster" {
-    provider = google-beta  
-    name = "cluster"
+    provider = google-beta
+
+    name = "tf-test-cluster-%{random_suffix}"
     location = "us-west1"
     admin_cluster_membership = "projects/870316890899/locations/global/memberships/gkeonprem-terraform-test"
     description = "test cluster"
@@ -159,8 +164,9 @@ func testAccGkeonpremVmwareNodePool_vmwareNodePoolUpdate(context map[string]inte
 
   resource "google_gkeonprem_vmware_node_pool" "nodepool" {
     provider = google-beta
+
+    name = "tf-test-nodepool-%{random_suffix}"
     location = "us-west1"
-    name = "nodepool"
     vmware_cluster = google_gkeonprem_vmware_cluster.cluster.name
     annotations = {}
     config {

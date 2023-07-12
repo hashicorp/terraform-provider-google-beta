@@ -12,7 +12,9 @@ import (
 func TestAccGkeonpremBareMetalNodePool_bareMetalNodePoolUpdate(t *testing.T) {
 	t.Parallel()
 
-	context := map[string]interface{}{}
+	context := map[string]interface{}{
+		"random_suffix": acctest.RandString(t, 10),
+	}
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -44,7 +46,8 @@ func testAccGkeonpremBareMetalNodePool_bareMetalNodePoolUpdateStart(context map[
 
   resource "google_gkeonprem_bare_metal_cluster" "cluster" {
     provider = google-beta
-    name = "cluster"
+
+    name = "tf-test-cluster-%{random_suffix}"
     location = "us-west1"
     admin_cluster_membership = "projects/870316890899/locations/global/memberships/gkeonprem-terraform-test"
     bare_metal_version = "1.12.3"
@@ -115,8 +118,9 @@ func testAccGkeonpremBareMetalNodePool_bareMetalNodePoolUpdateStart(context map[
 
   resource "google_gkeonprem_bare_metal_node_pool" "nodepool" {
     provider = google-beta
+
+    name = "tf-test-nodepool-%{random_suffix}"
     location = "us-west1"
-    name = "nodepool"
     bare_metal_cluster = google_gkeonprem_bare_metal_cluster.cluster.name
     annotations = {}
     node_pool_config {
@@ -136,7 +140,8 @@ func testAccGkeonpremBareMetalNodePool_bareMetalNodePoolUpdate(context map[strin
 
   resource "google_gkeonprem_bare_metal_cluster" "cluster" {
     provider = google-beta
-    name = "cluster"
+
+    name = "tf-test-cluster-%{random_suffix}"
     location = "us-west1"
     admin_cluster_membership = "projects/870316890899/locations/global/memberships/gkeonprem-terraform-test"
     bare_metal_version = "1.12.3"
@@ -207,8 +212,9 @@ func testAccGkeonpremBareMetalNodePool_bareMetalNodePoolUpdate(context map[strin
 
   resource "google_gkeonprem_bare_metal_node_pool" "nodepool" {
     provider = google-beta
+
+    name = "tf-test-nodepool-%{random_suffix}"
     location = "us-west1"
-    name = "nodepool"
     bare_metal_cluster = google_gkeonprem_bare_metal_cluster.cluster.name
     annotations = {}
     node_pool_config {
