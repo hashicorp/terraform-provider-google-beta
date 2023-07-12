@@ -1,4 +1,9 @@
-## 4.73.0 (Unreleased)
+## 4.73.1 (July 13, 2023)
+
+BUG FIXES:
+* monitoring: fixed an issue causing `google_monitoring_monitored_project` to appear to be deleted
+
+## 4.73.0 (July 10, 2023)
 
 FEATURES:
 * **New Resource:** `google_firebase_extensions_instance` ([#5832](https://github.com/hashicorp/terraform-provider-google-beta/pull/5832))
