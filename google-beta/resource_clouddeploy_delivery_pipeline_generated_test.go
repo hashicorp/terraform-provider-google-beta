@@ -227,6 +227,14 @@ resource "google_clouddeploy_delivery_pipeline" "primary" {
 
   serial_pipeline {
     stages {
+      deploy_parameters {
+        values = {
+          deployParameterKey = "deployParameterValue"
+        }
+
+        match_target_labels = {}
+      }
+
       profiles  = ["example-profile-one", "example-profile-two"]
       target_id = "example-target-one"
     }
@@ -354,6 +362,14 @@ resource "google_clouddeploy_delivery_pipeline" "primary" {
 
   serial_pipeline {
     stages {
+      deploy_parameters {
+        values = {
+          deployParameterKey = "deployParameterValue"
+        }
+
+        match_target_labels = {}
+      }
+
       profiles  = ["example-profile-one", "example-profile-two"]
       target_id = "example-target-one"
     }
@@ -446,6 +462,14 @@ resource "google_clouddeploy_delivery_pipeline" "primary" {
 
   serial_pipeline {
     stages {
+      deploy_parameters {
+        values = {
+          deployParameterKey = "deployParameterValue"
+        }
+
+        match_target_labels = {}
+      }
+
       profiles  = ["example-profile-one", "example-profile-two"]
       target_id = "example-target-one"
     }
@@ -535,6 +559,14 @@ resource "google_clouddeploy_delivery_pipeline" "primary" {
 
   serial_pipeline {
     stages {
+      deploy_parameters {
+        values = {
+          deployParameterKey = "deployParameterValue"
+        }
+
+        match_target_labels = {}
+      }
+
       profiles  = ["example-profile-one", "example-profile-two"]
       target_id = "example-target-one"
     }
@@ -615,6 +647,14 @@ resource "google_clouddeploy_delivery_pipeline" "primary" {
 
   serial_pipeline {
     stages {
+      deploy_parameters {
+        values = {
+          deployParameterKey = "deployParameterValue"
+        }
+
+        match_target_labels = {}
+      }
+
       profiles  = ["example-profile-one", "example-profile-two"]
       target_id = "example-target-one"
     }
