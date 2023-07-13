@@ -1,4 +1,4 @@
-## 4.73.1 (July 13, 2023)
+## 4.73.1 (Unreleased)
 
 BUG FIXES:
 * monitoring: fixed an issue causing `google_monitoring_monitored_project` to appear to be deleted
