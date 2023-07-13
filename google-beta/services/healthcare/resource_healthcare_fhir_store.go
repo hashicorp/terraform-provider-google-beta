@@ -65,6 +65,13 @@ func ResourceHealthcareFhirStore() *schema.Resource {
 
 ** Changing this property may recreate the FHIR store (removing all data) **`,
 			},
+			"complex_data_type_reference_parsing": {
+				Type:         schema.TypeString,
+				Computed:     true,
+				Optional:     true,
+				ValidateFunc: verify.ValidateEnum([]string{"COMPLEX_DATA_TYPE_REFERENCE_PARSING_UNSPECIFIED", "DISABLED", "ENABLED", ""}),
+				Description:  `Enable parsing of references within complex FHIR data types such as Extensions. If this value is set to ENABLED, then features like referential integrity and Bundle reference rewriting apply to all references. If this flag has not been specified the behavior of the FHIR store will not change, references in complex data types will not be parsed. New stores will have this value set to ENABLED by default after a notification period. Warning: turning on this flag causes processing existing resources to fail if they contain references to non-existent resources. Possible values: ["COMPLEX_DATA_TYPE_REFERENCE_PARSING_UNSPECIFIED", "DISABLED", "ENABLED"]`,
+			},
 			"disable_referential_integrity": {
 				Type:     schema.TypeBool,
 				Optional: true,
@@ -287,6 +294,12 @@ func resourceHealthcareFhirStoreCreate(d *schema.ResourceData, meta interface{})
 	} else if v, ok := d.GetOkExists("version"); !tpgresource.IsEmptyValue(reflect.ValueOf(versionProp)) && (ok || !reflect.DeepEqual(v, versionProp)) {
 		obj["version"] = versionProp
 	}
+	complexDataTypeReferenceParsingProp, err := expandHealthcareFhirStoreComplexDataTypeReferenceParsing(d.Get("complex_data_type_reference_parsing"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("complex_data_type_reference_parsing"); !tpgresource.IsEmptyValue(reflect.ValueOf(complexDataTypeReferenceParsingProp)) && (ok || !reflect.DeepEqual(v, complexDataTypeReferenceParsingProp)) {
+		obj["complexDataTypeReferenceParsing"] = complexDataTypeReferenceParsingProp
+	}
 	enableUpdateCreateProp, err := expandHealthcareFhirStoreEnableUpdateCreate(d.Get("enable_update_create"), d, config)
 	if err != nil {
 		return err
@@ -422,6 +435,9 @@ func resourceHealthcareFhirStoreRead(d *schema.ResourceData, meta interface{}) e
 	if err := d.Set("version", flattenHealthcareFhirStoreVersion(res["version"], d, config)); err != nil {
 		return fmt.Errorf("Error reading FhirStore: %s", err)
 	}
+	if err := d.Set("complex_data_type_reference_parsing", flattenHealthcareFhirStoreComplexDataTypeReferenceParsing(res["complexDataTypeReferenceParsing"], d, config)); err != nil {
+		return fmt.Errorf("Error reading FhirStore: %s", err)
+	}
 	if err := d.Set("enable_update_create", flattenHealthcareFhirStoreEnableUpdateCreate(res["enableUpdateCreate"], d, config)); err != nil {
 		return fmt.Errorf("Error reading FhirStore: %s", err)
 	}
@@ -460,6 +476,12 @@ func resourceHealthcareFhirStoreUpdate(d *schema.ResourceData, meta interface{})
 	billingProject := ""
 
 	obj := make(map[string]interface{})
+	complexDataTypeReferenceParsingProp, err := expandHealthcareFhirStoreComplexDataTypeReferenceParsing(d.Get("complex_data_type_reference_parsing"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("complex_data_type_reference_parsing"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, complexDataTypeReferenceParsingProp)) {
+		obj["complexDataTypeReferenceParsing"] = complexDataTypeReferenceParsingProp
+	}
 	enableUpdateCreateProp, err := expandHealthcareFhirStoreEnableUpdateCreate(d.Get("enable_update_create"), d, config)
 	if err != nil {
 		return err
@@ -498,6 +520,10 @@ func resourceHealthcareFhirStoreUpdate(d *schema.ResourceData, meta interface{})
 
 	log.Printf("[DEBUG] Updating FhirStore %q: %#v", d.Id(), obj)
 	updateMask := []string{}
+
+	if d.HasChange("complex_data_type_reference_parsing") {
+		updateMask = append(updateMask, "complexDataTypeReferenceParsing")
+	}
 
 	if d.HasChange("enable_update_create") {
 		updateMask = append(updateMask, "enableUpdateCreate")
@@ -612,6 +638,10 @@ func flattenHealthcareFhirStoreName(v interface{}, d *schema.ResourceData, confi
 }
 
 func flattenHealthcareFhirStoreVersion(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenHealthcareFhirStoreComplexDataTypeReferenceParsing(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
@@ -762,6 +792,10 @@ func expandHealthcareFhirStoreName(v interface{}, d tpgresource.TerraformResourc
 }
 
 func expandHealthcareFhirStoreVersion(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandHealthcareFhirStoreComplexDataTypeReferenceParsing(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
