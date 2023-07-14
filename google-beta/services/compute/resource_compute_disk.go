@@ -415,6 +415,14 @@ encryption key that protects this resource.`,
 					},
 				},
 			},
+			"enable_confidential_compute": {
+				Type:     schema.TypeBool,
+				Computed: true,
+				Optional: true,
+				ForceNew: true,
+				Description: `Whether this disk is using confidential compute mode.
+Note: Only supported on hyperdisk skus, disk_encryption_key is required when setting to true`,
+			},
 			"guest_os_features": {
 				Type:     schema.TypeSet,
 				Computed: true,
@@ -822,6 +830,12 @@ func resourceComputeDiskCreate(d *schema.ResourceData, meta interface{}) error {
 	} else if v, ok := d.GetOkExists("resource_policies"); !tpgresource.IsEmptyValue(reflect.ValueOf(resourcePoliciesProp)) && (ok || !reflect.DeepEqual(v, resourcePoliciesProp)) {
 		obj["resourcePolicies"] = resourcePoliciesProp
 	}
+	enableConfidentialComputeProp, err := expandComputeDiskEnableConfidentialCompute(d.Get("enable_confidential_compute"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("enable_confidential_compute"); !tpgresource.IsEmptyValue(reflect.ValueOf(enableConfidentialComputeProp)) && (ok || !reflect.DeepEqual(v, enableConfidentialComputeProp)) {
+		obj["enableConfidentialCompute"] = enableConfidentialComputeProp
+	}
 	multiWriterProp, err := expandComputeDiskMultiWriter(d.Get("multi_writer"), d, config)
 	if err != nil {
 		return err
@@ -1043,6 +1057,9 @@ func resourceComputeDiskRead(d *schema.ResourceData, meta interface{}) error {
 		return fmt.Errorf("Error reading Disk: %s", err)
 	}
 	if err := d.Set("resource_policies", flattenComputeDiskResourcePolicies(res["resourcePolicies"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Disk: %s", err)
+	}
+	if err := d.Set("enable_confidential_compute", flattenComputeDiskEnableConfidentialCompute(res["enableConfidentialCompute"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Disk: %s", err)
 	}
 	if err := d.Set("multi_writer", flattenComputeDiskMultiWriter(res["multiWriter"], d, config)); err != nil {
@@ -1537,6 +1554,10 @@ func flattenComputeDiskResourcePolicies(v interface{}, d *schema.ResourceData, c
 	return tpgresource.ConvertAndMapStringArr(v.([]interface{}), tpgresource.ConvertSelfLinkToV1)
 }
 
+func flattenComputeDiskEnableConfidentialCompute(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
 func flattenComputeDiskMultiWriter(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
@@ -1815,6 +1836,10 @@ func expandComputeDiskResourcePolicies(v interface{}, d tpgresource.TerraformRes
 		req = append(req, f.RelativeLink())
 	}
 	return req, nil
+}
+
+func expandComputeDiskEnableConfidentialCompute(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
 }
 
 func expandComputeDiskMultiWriter(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
