@@ -253,6 +253,7 @@ type Config struct {
 	IdentityPlatformBasePath         string
 	KMSBasePath                      string
 	LoggingBasePath                  string
+	LookerBasePath                   string
 	MemcacheBasePath                 string
 	MLEngineBasePath                 string
 	MonitoringBasePath               string
@@ -379,6 +380,7 @@ const IapBasePathKey = "Iap"
 const IdentityPlatformBasePathKey = "IdentityPlatform"
 const KMSBasePathKey = "KMS"
 const LoggingBasePathKey = "Logging"
+const LookerBasePathKey = "Looker"
 const MemcacheBasePathKey = "Memcache"
 const MLEngineBasePathKey = "MLEngine"
 const MonitoringBasePathKey = "Monitoring"
@@ -499,6 +501,7 @@ var DefaultBasePaths = map[string]string{
 	IdentityPlatformBasePathKey:         "https://identitytoolkit.googleapis.com/v2/",
 	KMSBasePathKey:                      "https://cloudkms.googleapis.com/v1/",
 	LoggingBasePathKey:                  "https://logging.googleapis.com/v2/",
+	LookerBasePathKey:                   "https://looker.googleapis.com/v1/",
 	MemcacheBasePathKey:                 "https://memcache.googleapis.com/v1beta2/",
 	MLEngineBasePathKey:                 "https://ml.googleapis.com/v1/",
 	MonitoringBasePathKey:               "https://monitoring.googleapis.com/",
@@ -961,6 +964,11 @@ func HandleSDKDefaults(d *schema.ResourceData) error {
 		d.Set("logging_custom_endpoint", MultiEnvDefault([]string{
 			"GOOGLE_LOGGING_CUSTOM_ENDPOINT",
 		}, DefaultBasePaths[LoggingBasePathKey]))
+	}
+	if d.Get("looker_custom_endpoint") == "" {
+		d.Set("looker_custom_endpoint", MultiEnvDefault([]string{
+			"GOOGLE_LOOKER_CUSTOM_ENDPOINT",
+		}, DefaultBasePaths[LookerBasePathKey]))
 	}
 	if d.Get("memcache_custom_endpoint") == "" {
 		d.Set("memcache_custom_endpoint", MultiEnvDefault([]string{
@@ -2067,6 +2075,7 @@ func ConfigureBasePaths(c *Config) {
 	c.IdentityPlatformBasePath = DefaultBasePaths[IdentityPlatformBasePathKey]
 	c.KMSBasePath = DefaultBasePaths[KMSBasePathKey]
 	c.LoggingBasePath = DefaultBasePaths[LoggingBasePathKey]
+	c.LookerBasePath = DefaultBasePaths[LookerBasePathKey]
 	c.MemcacheBasePath = DefaultBasePaths[MemcacheBasePathKey]
 	c.MLEngineBasePath = DefaultBasePaths[MLEngineBasePathKey]
 	c.MonitoringBasePath = DefaultBasePaths[MonitoringBasePathKey]
