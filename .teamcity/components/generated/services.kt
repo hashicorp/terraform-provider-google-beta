@@ -76,6 +76,7 @@ var services = mapOf(
         "identityplatform" to "Identityplatform",
         "kms" to "Kms",
         "logging" to "Logging",
+        "looker" to "Looker",
         "memcache" to "Memcache",
         "mlengine" to "Mlengine",
         "monitoring" to "Monitoring",
