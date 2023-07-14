@@ -662,49 +662,6 @@ func TestAccComputeDisk_pdExtremeImplicitProvisionedIops(t *testing.T) {
 	})
 }
 
-func TestAccComputeDisk_resourcePolicies(t *testing.T) {
-	t.Parallel()
-
-	diskName := fmt.Sprintf("tf-test-%s", acctest.RandString(t, 10))
-	policyName := fmt.Sprintf("tf-test-policy-%s", acctest.RandString(t, 10))
-
-	acctest.VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
-		Steps: []resource.TestStep{
-			{
-				Config: testAccComputeDisk_resourcePolicies(diskName, policyName),
-			},
-			{
-				ResourceName:      "google_compute_disk.foobar",
-				ImportState:       true,
-				ImportStateVerify: true,
-			},
-		},
-	})
-}
-
-func TestAccComputeDisk_multiWriter(t *testing.T) {
-	t.Parallel()
-	instanceName := fmt.Sprintf("tf-test-%s", acctest.RandString(t, 10))
-	diskName := fmt.Sprintf("tf-testd-%s", acctest.RandString(t, 10))
-
-	acctest.VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
-		Steps: []resource.TestStep{
-			{
-				Config: testAccComputeDisk_multiWriter(instanceName, diskName, true),
-			},
-			{
-				ResourceName:      "google_compute_disk.foobar",
-				ImportState:       true,
-				ImportStateVerify: true,
-			},
-		},
-	})
-}
-
 func testAccCheckComputeDiskExists(t *testing.T, n, p string, disk *compute.Disk) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[n]
@@ -1016,6 +973,23 @@ resource "google_compute_instance_group_manager" "manager" {
 `, diskName, mgrName)
 }
 
+func testAccComputeDisk_pdHyperDiskEnableConfidentialCompute(context map[string]interface{}) string {
+	return Nprintf(`
+	resource "google_compute_disk" "foobar" {
+		name                        = "tf-test-ecc-%{random_suffix}"
+		size                        = %{disk_size}
+		type                        = "hyperdisk-balanced"
+		zone                        = "us-central1-a"
+		enable_confidential_compute = %{confidential_compute}
+
+		disk_encryption_key {
+			kms_key_self_link       = "%{kms}"
+		}
+
+	}
+`, context)
+}
+
 func testAccComputeDisk_pdHyperDiskProvisionedIopsLifeCycle(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 	resource "google_compute_disk" "foobar" {
@@ -1053,80 +1027,6 @@ resource "google_compute_disk" "foobar" {
   size = 1
 }
 `, diskName)
-}
-
-func testAccComputeDisk_resourcePolicies(diskName, policyName string) string {
-	return fmt.Sprintf(`
-data "google_compute_image" "my_image" {
-  family  = "debian-11"
-  project = "debian-cloud"
-}
-
-resource "google_compute_resource_policy" "foo" {
-  name     = "%s"
-  region   = "us-central1"
-  snapshot_schedule_policy {
-    schedule {
-      daily_schedule {
-        days_in_cycle = 1
-        start_time    = "04:00"
-      }
-    }
-  }
-}
-
-resource "google_compute_disk" "foobar" {
-  name     = "%s"
-  image    = data.google_compute_image.my_image.self_link
-  size     = 50
-  type     = "pd-ssd"
-  zone     = "us-central1-a"
-  resource_policies = [google_compute_resource_policy.foo.self_link]
-}
-`, policyName, diskName)
-}
-
-func testAccComputeDisk_multiWriter(instance string, diskName string, enableMultiwriter bool) string {
-	return fmt.Sprintf(`
-data "google_compute_image" "my_image" {
-  family  = "debian-11"
-  project = "debian-cloud"
-}
-
-resource "google_compute_disk" "foobar" {
-  name         = "%s"
-  size         = 10
-  type         = "pd-ssd"
-	zone         = "us-central1-a"
-	multi_writer  = %t
-}
-
-resource "google_compute_instance" "foobar" {
-  name           = "%s"
-  machine_type   = "n2-standard-2"
-  zone           = "us-central1-a"
-  can_ip_forward = false
-	tags           = ["foo", "bar"]
-
-  boot_disk {
-    initialize_params {
-      image = data.google_compute_image.my_image.self_link
-    }
-	}
-
-	attached_disk {
-    source = google_compute_disk.foobar.name
-  }
-
-  network_interface {
-    network = "default"
-  }
-
-  metadata = {
-    foo = "bar"
-  }
-}
-`, diskName, enableMultiwriter, instance)
 }
 
 func testAccComputeDisk_diskClone(diskName, refSelector string) string {
