@@ -1,5 +1,27 @@
 ## 4.74.0 (Unreleased)
 
+IMPROVEMENTS:
+
+* bigquery: added `storage_billing_model` argument to `google_bigquery_dataset` ([#5868](https://github.com/hashicorp/terraform-provider-google-beta/pull/5868))
+* bigquery: added `external_data_configuration.metadata_cache_mode` and `external_data_configuration.object_metadata` to `google_bigquery_table` ([#5856](https://github.com/hashicorp/terraform-provider-google-beta/pull/5856))
+* bigquery: made `external_data_configuration.source_fomat` optional in `google_bigquery_table` ([#5856](https://github.com/hashicorp/terraform-provider-google-beta/pull/5856))
+* certificatemanager: added `issuance_config` field to `google_certificate_manager_certificate` resource ([#5860](https://github.com/hashicorp/terraform-provider-google-beta/pull/5860))
+* cloudbuildv2: added `gitlab_config` field to `google_cloudbuildv2_connection` resource ([#5848](https://github.com/hashicorp/terraform-provider-google-beta/pull/5848))
+* compute: added field `http_keep_alive_timeout_sec` to resource `google_compute_target_http_proxy` ([#5864](https://github.com/hashicorp/terraform-provider-google-beta/pull/5864))
+* compute: added field `http_keep_alive_timeout_sec` to resource `google_compute_target_https_proxy` ([#5864](https://github.com/hashicorp/terraform-provider-google-beta/pull/5864))
+* compute: added support for updating labels in `google_compute_external_vpn_gateway` ([#5875](https://github.com/hashicorp/terraform-provider-google-beta/pull/5875))
+* container: added field `tpu_topology` under `placement_policy` in resource `google_container_node_pool` ([#5871](https://github.com/hashicorp/terraform-provider-google-beta/pull/5871))
+* iamworkforcepool: added `oidc.client_secret` field to `google_iam_workforce_pool_provider` and new enum values `CODE` and `MERGE_ID_TOKEN_OVER_USER_INFO_CLAIMS` to `oidc.web_sso_config.response_type` and `oidc.web_sso_config.assertion_claims_behavior` respectively ([#5853](https://github.com/hashicorp/terraform-provider-google-beta/pull/5853))
+* sql: added `settings.data_cache_config` to `sql_database_instance` resource. ([#5869](https://github.com/hashicorp/terraform-provider-google-beta/pull/5869))
+* sql: added `settings.edition` field to `sql_database_instance` resource. ([#5869](https://github.com/hashicorp/terraform-provider-google-beta/pull/5869))
+* vertexai: supported`shard_size` in `google_vertex_ai_index` ([#5874](https://github.com/hashicorp/terraform-provider-google-beta/pull/5874))
+
+BUG FIXES:
+* compute: made `google_compute_router_peer.peer_ip_address` optional ([#5855](https://github.com/hashicorp/terraform-provider-google-beta/pull/5855))
+* redis: fixed issue with `google_redis_instance` populating output-only field `maintenance_schedule`. ([#5852](https://github.com/hashicorp/terraform-provider-google-beta/pull/5852))
+* orgpolicy: fixed forcing recreation on imported state for `google_org_policy_policy` ([#5873](https://github.com/hashicorp/terraform-provider-google-beta/pull/5873))
+* osconfig: fixed validation of file resource `state` fields in `google_os_config_os_policy_assignment` ([#5863](https://github.com/hashicorp/terraform-provider-google-beta/pull/5863))
+
 ## 4.73.2 (July 17, 2023)
 
 BUG FIXES:
