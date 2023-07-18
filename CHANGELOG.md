@@ -11,7 +11,6 @@ IMPROVEMENTS:
 * compute: added field `http_keep_alive_timeout_sec` to resource `google_compute_target_https_proxy` ([#5864](https://github.com/hashicorp/terraform-provider-google-beta/pull/5864))
 * compute: added support for updating labels in `google_compute_external_vpn_gateway` ([#5875](https://github.com/hashicorp/terraform-provider-google-beta/pull/5875))
 * container: added field `tpu_topology` under `placement_policy` in resource `google_container_node_pool` ([#5871](https://github.com/hashicorp/terraform-provider-google-beta/pull/5871))
-* container: made `monitoring_config.enable_components` optional in `google_container_cluster` ([#5872](https://github.com/hashicorp/terraform-provider-google-beta/pull/5872))
 * gkehub: promoted the `google_gke_hub_feature` resource's `fleetobservability` block to GA. ([#5861](https://github.com/hashicorp/terraform-provider-google-beta/pull/5861))
 * iamworkforcepool: added `oidc.client_secret` field to `google_iam_workforce_pool_provider` and new enum values `CODE` and `MERGE_ID_TOKEN_OVER_USER_INFO_CLAIMS` to `oidc.web_sso_config.response_type` and `oidc.web_sso_config.assertion_claims_behavior` respectively ([#5853](https://github.com/hashicorp/terraform-provider-google-beta/pull/5853))
 * sql: added `settings.data_cache_config` to `sql_database_instance` resource. ([#5869](https://github.com/hashicorp/terraform-provider-google-beta/pull/5869))
