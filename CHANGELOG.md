@@ -1,15 +1,5 @@
 ## 4.74.0 (Unreleased)
 
-FEATURES:
-* **New Resource:** `google_cloudbuildv2_connection` (ga) ([#5857](https://github.com/hashicorp/terraform-provider-google-beta/pull/5857))
-* **New Resource:** `google_cloudbuildv2_repository` (ga) ([#5857](https://github.com/hashicorp/terraform-provider-google-beta/pull/5857))
-* **New Resource:** `google_gkeonprem_bare_metal_admin_cluster` ([#5858](https://github.com/hashicorp/terraform-provider-google-beta/pull/5858))
-* **New Resource:** `google_network_security_address_group` (ga) ([#5865](https://github.com/hashicorp/terraform-provider-google-beta/pull/5865))
-* **New Resource:** `google_network_security_gateway_security_policy_rule` (ga) ([#5866](https://github.com/hashicorp/terraform-provider-google-beta/pull/5866))
-* **New Resource:** `google_network_security_gateway_security_policy` (ga) ([#5866](https://github.com/hashicorp/terraform-provider-google-beta/pull/5866))
-* **New Resource:** `google_network_security_url_lists` (ga) ([#5866](https://github.com/hashicorp/terraform-provider-google-beta/pull/5866))
-* **New Resource:** `google_network_services_gateway` (ga) ([#5866](https://github.com/hashicorp/terraform-provider-google-beta/pull/5866))
-
 IMPROVEMENTS:
 
 * bigquery: added `storage_billing_model` argument to `google_bigquery_dataset` ([#5868](https://github.com/hashicorp/terraform-provider-google-beta/pull/5868))
