@@ -24,6 +24,16 @@ BUG FIXES:
 * orgpolicy: fixed forcing recreation on imported state for `google_org_policy_policy` ([#5873](https://github.com/hashicorp/terraform-provider-google-beta/pull/5873))
 * osconfig: fixed validation of file resource `state` fields in `google_os_config_os_policy_assignment` ([#5863](https://github.com/hashicorp/terraform-provider-google-beta/pull/5863))
 
+## 4.73.2 (July 17, 2023)
+
+BUG FIXES:
+* monitoring: fixed an issue which occurred when `name` field of `google_monitoring_monitored_project` was long-form
+
+## 4.73.1 (July 13, 2023)
+
+BUG FIXES:
+* monitoring: fixed an issue causing `google_monitoring_monitored_project` to appear to be deleted
+
 ## 4.73.0 (July 10, 2023)
 
 FEATURES:
