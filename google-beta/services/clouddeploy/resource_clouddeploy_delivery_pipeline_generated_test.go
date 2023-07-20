@@ -16,7 +16,7 @@
 //
 // ----------------------------------------------------------------------------
 
-package google
+package clouddeploy_test
 
 import (
 	"context"
@@ -39,13 +39,13 @@ func TestAccClouddeployDeliveryPipeline_CanaryDeliveryPipeline(t *testing.T) {
 	context := map[string]interface{}{
 		"project_name":  envvar.GetTestProjectFromEnv(),
 		"region":        envvar.GetTestRegionFromEnv(),
-		"random_suffix": RandString(t, 10),
+		"random_suffix": acctest.RandString(t, 10),
 	}
 
-	VcrTest(t, resource.TestCase{
+	acctest.VcrTest(t, resource.TestCase{
 		PreCheck: func() { acctest.AccTestPreCheck(t) },
 
-		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
 		CheckDestroy:             testAccCheckClouddeployDeliveryPipelineDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -73,13 +73,13 @@ func TestAccClouddeployDeliveryPipeline_CanaryServiceNetworkingDeliveryPipeline(
 	context := map[string]interface{}{
 		"project_name":  envvar.GetTestProjectFromEnv(),
 		"region":        envvar.GetTestRegionFromEnv(),
-		"random_suffix": RandString(t, 10),
+		"random_suffix": acctest.RandString(t, 10),
 	}
 
-	VcrTest(t, resource.TestCase{
+	acctest.VcrTest(t, resource.TestCase{
 		PreCheck: func() { acctest.AccTestPreCheck(t) },
 
-		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
 		CheckDestroy:             testAccCheckClouddeployDeliveryPipelineDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -107,13 +107,13 @@ func TestAccClouddeployDeliveryPipeline_CanaryrunDeliveryPipeline(t *testing.T) 
 	context := map[string]interface{}{
 		"project_name":  envvar.GetTestProjectFromEnv(),
 		"region":        envvar.GetTestRegionFromEnv(),
-		"random_suffix": RandString(t, 10),
+		"random_suffix": acctest.RandString(t, 10),
 	}
 
-	VcrTest(t, resource.TestCase{
+	acctest.VcrTest(t, resource.TestCase{
 		PreCheck: func() { acctest.AccTestPreCheck(t) },
 
-		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
 		CheckDestroy:             testAccCheckClouddeployDeliveryPipelineDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -141,12 +141,12 @@ func TestAccClouddeployDeliveryPipeline_DeliveryPipeline(t *testing.T) {
 	context := map[string]interface{}{
 		"project_name":  envvar.GetTestProjectFromEnv(),
 		"region":        envvar.GetTestRegionFromEnv(),
-		"random_suffix": RandString(t, 10),
+		"random_suffix": acctest.RandString(t, 10),
 	}
 
-	VcrTest(t, resource.TestCase{
+	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckClouddeployDeliveryPipelineDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -174,13 +174,13 @@ func TestAccClouddeployDeliveryPipeline_VerifyDeliveryPipeline(t *testing.T) {
 	context := map[string]interface{}{
 		"project_name":  envvar.GetTestProjectFromEnv(),
 		"region":        envvar.GetTestRegionFromEnv(),
-		"random_suffix": RandString(t, 10),
+		"random_suffix": acctest.RandString(t, 10),
 	}
 
-	VcrTest(t, resource.TestCase{
+	acctest.VcrTest(t, resource.TestCase{
 		PreCheck: func() { acctest.AccTestPreCheck(t) },
 
-		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
 		CheckDestroy:             testAccCheckClouddeployDeliveryPipelineDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -726,7 +726,7 @@ func testAccCheckClouddeployDeliveryPipelineDestroyProducer(t *testing.T) func(s
 				continue
 			}
 
-			config := GoogleProviderConfig(t)
+			config := acctest.GoogleProviderConfig(t)
 
 			billingProject := ""
 			if config.BillingProject != "" {
