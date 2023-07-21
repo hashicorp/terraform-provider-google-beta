@@ -6,6 +6,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"strings"
 
 	"time"
 
@@ -274,7 +275,6 @@ func ResourceComputeSecurityPolicy() *schema.Resource {
 									"enforce_on_key_configs": {
 										Type:        schema.TypeList,
 										Description: `Enforce On Key Config of this security policy`,
-										ForceNew:    true,
 										Optional:    true,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
@@ -765,13 +765,19 @@ func resourceComputeSecurityPolicyUpdate(d *schema.ResourceData, meta interface{
 
 		oPriorities := map[int64]bool{}
 		nPriorities := map[int64]bool{}
+		oRules := make(map[int64]map[string]interface{})
+		nRules := make(map[int64]map[string]interface{})
+
 		for _, rule := range oSet.List() {
 			oPriorities[int64(rule.(map[string]interface{})["priority"].(int))] = true
+			oRules[int64(rule.(map[string]interface{})["priority"].(int))] = rule.(map[string]interface{})
 		}
 
 		for _, rule := range nSet.List() {
+			nRules[int64(rule.(map[string]interface{})["priority"].(int))] = rule.(map[string]interface{})
 			priority := int64(rule.(map[string]interface{})["priority"].(int))
 			nPriorities[priority] = true
+
 			if !oPriorities[priority] {
 				client := config.NewComputeClient(userAgent)
 
@@ -787,10 +793,40 @@ func resourceComputeSecurityPolicyUpdate(d *schema.ResourceData, meta interface{
 					return err
 				}
 			} else if !oSet.Contains(rule) {
+
+				oMap := make(map[string]interface{})
+				nMap := make(map[string]interface{})
+
+				updateMask := []string{}
+
+				if oRules[priority]["rate_limit_options"] != nil {
+					for _, oValue := range oRules[priority]["rate_limit_options"].([]interface{}) {
+						oMap = oValue.(map[string]interface{})
+					}
+				}
+
+				if nRules[priority]["rate_limit_options"] != nil {
+					for _, nValue := range nRules[priority]["rate_limit_options"].([]interface{}) {
+						nMap = nValue.(map[string]interface{})
+					}
+				}
+
+				if fmt.Sprintf("%v", oMap["enforce_on_key"]) != fmt.Sprintf("%v", nMap["enforce_on_key"]) {
+					updateMask = append(updateMask, "rate_limit_options.enforce_on_key")
+				}
+
+				if fmt.Sprintf("%v", oMap["enforce_on_key_configs"]) != fmt.Sprintf("%v", nMap["enforce_on_key_configs"]) {
+					updateMask = append(updateMask, "rate_limit_options.enforce_on_key_configs")
+				}
+
+				if fmt.Sprintf("%v", oMap["enforce_on_key_name"]) != fmt.Sprintf("%v", nMap["enforce_on_key_name"]) {
+					updateMask = append(updateMask, "rate_limit_options.enforce_on_key_name")
+				}
+
 				client := config.NewComputeClient(userAgent)
 
 				// If the rule is in new, and its priority is in old, but its hash is different than the one in old, update it.
-				op, err := client.SecurityPolicies.PatchRule(project, sp, expandSecurityPolicyRule(rule)).Priority(priority).Do()
+				op, err := client.SecurityPolicies.PatchRule(project, sp, expandSecurityPolicyRule(rule)).Priority(priority).UpdateMask(strings.Join(updateMask, ",")).Do()
 
 				if err != nil {
 					return errwrap.Wrapf(fmt.Sprintf("Error updating SecurityPolicy %q: {{err}}", sp), err)
