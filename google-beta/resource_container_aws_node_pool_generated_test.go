@@ -16,7 +16,7 @@
 //
 // ----------------------------------------------------------------------------
 
-package containeraws_test
+package google
 
 import (
 	"context"
@@ -48,12 +48,12 @@ func TestAccContainerAwsNodePool_BasicHandWritten(t *testing.T) {
 		"project_name":   envvar.GetTestProjectFromEnv(),
 		"project_number": envvar.GetTestProjectNumberFromEnv(),
 		"service_acct":   envvar.GetTestServiceAccountFromEnv(t),
-		"random_suffix":  acctest.RandString(t, 10),
+		"random_suffix":  RandString(t, 10),
 	}
 
-	acctest.VcrTest(t, resource.TestCase{
+	VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckContainerAwsNodePoolDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -92,13 +92,13 @@ func TestAccContainerAwsNodePool_BetaBasicHandWritten(t *testing.T) {
 		"project_name":   envvar.GetTestProjectFromEnv(),
 		"project_number": envvar.GetTestProjectNumberFromEnv(),
 		"service_acct":   envvar.GetTestServiceAccountFromEnv(t),
-		"random_suffix":  acctest.RandString(t, 10),
+		"random_suffix":  RandString(t, 10),
 	}
 
-	acctest.VcrTest(t, resource.TestCase{
+	VcrTest(t, resource.TestCase{
 		PreCheck: func() { acctest.AccTestPreCheck(t) },
 
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: ProtoV5ProviderBetaFactories(t),
 		CheckDestroy:             testAccCheckContainerAwsNodePoolDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -777,7 +777,7 @@ func testAccCheckContainerAwsNodePoolDestroyProducer(t *testing.T) func(s *terra
 				continue
 			}
 
-			config := acctest.GoogleProviderConfig(t)
+			config := GoogleProviderConfig(t)
 
 			billingProject := ""
 			if config.BillingProject != "" {
