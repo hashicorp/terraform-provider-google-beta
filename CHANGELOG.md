@@ -1,4 +1,26 @@
-## 4.75.0 (Unreleased)
+## 4.76.0 (Unreleased)
+
+## 4.75.0 (July 24, 2023)
+
+FEATURES:
+* **New Resource:** `google_looker_instance` ([#5903](https://github.com/hashicorp/terraform-provider-google-beta/pull/5903))
+
+IMPROVEMENTS:
+* apigee: added `disable_vpc_peering` field to `google_apigee_organization` resource ([#5901](https://github.com/hashicorp/terraform-provider-google-beta/pull/5901))
+* bigquery: added `external_data_configuration.json_options` and `external_data_configuration.parquet_options` fields to `google_bigquery_table` ([#5906](https://github.com/hashicorp/terraform-provider-google-beta/pull/5906))
+* bigtable: added `change_stream_retention` field to `google_bigtable_table.table` resource ([#5880](https://github.com/hashicorp/terraform-provider-google-beta/pull/5880))
+* compute: added `most_recent` argument to `google_compute_image` datasource ([#5902](https://github.com/hashicorp/terraform-provider-google-beta/pull/5902))
+* compute: added field `enable_confidential_compute` for `google_compute_disk` resource ([#5897](https://github.com/hashicorp/terraform-provider-google-beta/pull/5897))
+* container: added `gpu_driver_installation_config.gpu_driver_version` field to `google_container_node_pool` ([#5899](https://github.com/hashicorp/terraform-provider-google-beta/pull/5899))
+* gkebackup: added `state` and `state_reason` output-only fields to `google_gkebackup_backupplan` resource ([#5909](https://github.com/hashicorp/terraform-provider-google-beta/pull/5909))
+* healthcare: added `complex_data_type_reference_parsing ` field to `google_healthcare_fhir_store` resource ([#5884](https://github.com/hashicorp/terraform-provider-google-beta/pull/5884))
+* networkservices: increased max_size to 20 for both `included_query_parameters` and `excluded_query_parameters` on `google_network_services_edge_cache_service` ([#5889](https://github.com/hashicorp/terraform-provider-google-beta/pull/5889))
+* vpcaccess: added support for updates to `google_vpc_access_connector` resource ([#5894](https://github.com/hashicorp/terraform-provider-google-beta/pull/5894))
+
+BUG FIXES:
+* alloydb: fixed `google_alloydb_cluster` handling of automated backup policy midnight start time ([#5913](https://github.com/hashicorp/terraform-provider-google-beta/pull/5913))
+* compute: fixed logic when unsetting `google_compute_instance.min_cpu_platform` and switching to a `machine_type` that does not support `min_cpu_platform` at the same time ([#5911](https://github.com/hashicorp/terraform-provider-google-beta/pull/5911))
+* tags: fixed race condition when modifying `google_tags_location_tag_binding` ([#5904](https://github.com/hashicorp/terraform-provider-google-beta/pull/5904))
 
 ## 4.74.0 (July 18, 2023)
 
