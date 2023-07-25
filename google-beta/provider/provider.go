@@ -1012,6 +1012,7 @@ func DatasourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_iap_tunnel_instance_iam_policy":                  tpgiamresource.DataSourceIamPolicy(iap.IapTunnelInstanceIamSchema, iap.IapTunnelInstanceIamUpdaterProducer),
 			"google_iap_web_iam_policy":                              tpgiamresource.DataSourceIamPolicy(iap.IapWebIamSchema, iap.IapWebIamUpdaterProducer),
 			"google_iap_web_backend_service_iam_policy":              tpgiamresource.DataSourceIamPolicy(iap.IapWebBackendServiceIamSchema, iap.IapWebBackendServiceIamUpdaterProducer),
+			"google_iap_web_region_backend_service_iam_policy":       tpgiamresource.DataSourceIamPolicy(iap.IapWebRegionBackendServiceIamSchema, iap.IapWebRegionBackendServiceIamUpdaterProducer),
 			"google_iap_web_type_app_engine_iam_policy":              tpgiamresource.DataSourceIamPolicy(iap.IapWebTypeAppEngineIamSchema, iap.IapWebTypeAppEngineIamUpdaterProducer),
 			"google_iap_web_type_compute_iam_policy":                 tpgiamresource.DataSourceIamPolicy(iap.IapWebTypeComputeIamSchema, iap.IapWebTypeComputeIamUpdaterProducer),
 			"google_notebooks_instance_iam_policy":                   tpgiamresource.DataSourceIamPolicy(notebooks.NotebooksInstanceIamSchema, notebooks.NotebooksInstanceIamUpdaterProducer),
@@ -1062,8 +1063,8 @@ func DatasourceMapWithErrors() (map[string]*schema.Resource, error) {
 }
 
 // Generated resources: 358
-// Generated IAM resources: 231
-// Total generated resources: 589
+// Generated IAM resources: 234
+// Total generated resources: 592
 func ResourceMap() map[string]*schema.Resource {
 	resourceMap, _ := ResourceMapWithErrors()
 	return resourceMap
@@ -1485,6 +1486,9 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_iap_web_backend_service_iam_binding":                     tpgiamresource.ResourceIamBinding(iap.IapWebBackendServiceIamSchema, iap.IapWebBackendServiceIamUpdaterProducer, iap.IapWebBackendServiceIdParseFunc),
 			"google_iap_web_backend_service_iam_member":                      tpgiamresource.ResourceIamMember(iap.IapWebBackendServiceIamSchema, iap.IapWebBackendServiceIamUpdaterProducer, iap.IapWebBackendServiceIdParseFunc),
 			"google_iap_web_backend_service_iam_policy":                      tpgiamresource.ResourceIamPolicy(iap.IapWebBackendServiceIamSchema, iap.IapWebBackendServiceIamUpdaterProducer, iap.IapWebBackendServiceIdParseFunc),
+			"google_iap_web_region_backend_service_iam_binding":              tpgiamresource.ResourceIamBinding(iap.IapWebRegionBackendServiceIamSchema, iap.IapWebRegionBackendServiceIamUpdaterProducer, iap.IapWebRegionBackendServiceIdParseFunc),
+			"google_iap_web_region_backend_service_iam_member":               tpgiamresource.ResourceIamMember(iap.IapWebRegionBackendServiceIamSchema, iap.IapWebRegionBackendServiceIamUpdaterProducer, iap.IapWebRegionBackendServiceIdParseFunc),
+			"google_iap_web_region_backend_service_iam_policy":               tpgiamresource.ResourceIamPolicy(iap.IapWebRegionBackendServiceIamSchema, iap.IapWebRegionBackendServiceIamUpdaterProducer, iap.IapWebRegionBackendServiceIdParseFunc),
 			"google_iap_web_type_app_engine_iam_binding":                     tpgiamresource.ResourceIamBinding(iap.IapWebTypeAppEngineIamSchema, iap.IapWebTypeAppEngineIamUpdaterProducer, iap.IapWebTypeAppEngineIdParseFunc),
 			"google_iap_web_type_app_engine_iam_member":                      tpgiamresource.ResourceIamMember(iap.IapWebTypeAppEngineIamSchema, iap.IapWebTypeAppEngineIamUpdaterProducer, iap.IapWebTypeAppEngineIdParseFunc),
 			"google_iap_web_type_app_engine_iam_policy":                      tpgiamresource.ResourceIamPolicy(iap.IapWebTypeAppEngineIamSchema, iap.IapWebTypeAppEngineIamUpdaterProducer, iap.IapWebTypeAppEngineIdParseFunc),
