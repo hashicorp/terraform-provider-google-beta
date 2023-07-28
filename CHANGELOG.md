@@ -7,7 +7,7 @@ FEATURES:
 * **New Resource:** `google_iap_web_region_backend_service_iam_policy` ([#5944](https://github.com/hashicorp/terraform-provider-google-beta/pull/5944))
 
 IMPROVEMENTS:
-* Compute: added `security_policy` field to `google_compute_region_backend_service` resource ([#5924](https://github.com/hashicorp/terraform-provider-google-beta/pull/5924))
+* compute: added `security_policy` field to `google_compute_region_backend_service` resource ([#5924](https://github.com/hashicorp/terraform-provider-google-beta/pull/5924))
 * cloudrun: added `status.traffic` output fields to `google_cloud_run_service` resource ([#5943](https://github.com/hashicorp/terraform-provider-google-beta/pull/5943))
 * cloudrunv2: added field `custom_audiences` to resource `google_cloud_run_v2_service ` ([#5935](https://github.com/hashicorp/terraform-provider-google-beta/pull/5935))
 * composer: added support for updating `resilience_mode` in `google_composer_environment` ([#5921](https://github.com/hashicorp/terraform-provider-google-beta/pull/5921))
