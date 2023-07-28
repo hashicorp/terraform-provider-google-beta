@@ -232,6 +232,7 @@ type Config struct {
 	DialogflowCXBasePath             string
 	DNSBasePath                      string
 	DocumentAIBasePath               string
+	DocumentAIWarehouseBasePath      string
 	EssentialContactsBasePath        string
 	FilestoreBasePath                string
 	FirebaseBasePath                 string
@@ -359,6 +360,7 @@ const DialogflowBasePathKey = "Dialogflow"
 const DialogflowCXBasePathKey = "DialogflowCX"
 const DNSBasePathKey = "DNS"
 const DocumentAIBasePathKey = "DocumentAI"
+const DocumentAIWarehouseBasePathKey = "DocumentAIWarehouse"
 const EssentialContactsBasePathKey = "EssentialContacts"
 const FilestoreBasePathKey = "Filestore"
 const FirebaseBasePathKey = "Firebase"
@@ -480,6 +482,7 @@ var DefaultBasePaths = map[string]string{
 	DialogflowCXBasePathKey:             "https://{{location}}-dialogflow.googleapis.com/v3/",
 	DNSBasePathKey:                      "https://dns.googleapis.com/dns/v1beta2/",
 	DocumentAIBasePathKey:               "https://{{location}}-documentai.googleapis.com/v1/",
+	DocumentAIWarehouseBasePathKey:      "https://contentwarehouse.googleapis.com/v1/",
 	EssentialContactsBasePathKey:        "https://essentialcontacts.googleapis.com/v1/",
 	FilestoreBasePathKey:                "https://file.googleapis.com/v1beta1/",
 	FirebaseBasePathKey:                 "https://firebase.googleapis.com/v1beta1/",
@@ -859,6 +862,11 @@ func HandleSDKDefaults(d *schema.ResourceData) error {
 		d.Set("document_ai_custom_endpoint", MultiEnvDefault([]string{
 			"GOOGLE_DOCUMENT_AI_CUSTOM_ENDPOINT",
 		}, DefaultBasePaths[DocumentAIBasePathKey]))
+	}
+	if d.Get("document_ai_warehouse_custom_endpoint") == "" {
+		d.Set("document_ai_warehouse_custom_endpoint", MultiEnvDefault([]string{
+			"GOOGLE_DOCUMENT_AI_WAREHOUSE_CUSTOM_ENDPOINT",
+		}, DefaultBasePaths[DocumentAIWarehouseBasePathKey]))
 	}
 	if d.Get("essential_contacts_custom_endpoint") == "" {
 		d.Set("essential_contacts_custom_endpoint", MultiEnvDefault([]string{
@@ -2054,6 +2062,7 @@ func ConfigureBasePaths(c *Config) {
 	c.DialogflowCXBasePath = DefaultBasePaths[DialogflowCXBasePathKey]
 	c.DNSBasePath = DefaultBasePaths[DNSBasePathKey]
 	c.DocumentAIBasePath = DefaultBasePaths[DocumentAIBasePathKey]
+	c.DocumentAIWarehouseBasePath = DefaultBasePaths[DocumentAIWarehouseBasePathKey]
 	c.EssentialContactsBasePath = DefaultBasePaths[EssentialContactsBasePathKey]
 	c.FilestoreBasePath = DefaultBasePaths[FilestoreBasePathKey]
 	c.FirebaseBasePath = DefaultBasePaths[FirebaseBasePathKey]
