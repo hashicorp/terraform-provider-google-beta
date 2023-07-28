@@ -26,7 +26,7 @@ BUG FIXES:
 * artifactregistry: fixed reading back maven_config state in `google_artifact_registry_repository` ([#5936](https://github.com/hashicorp/terraform-provider-google-beta/pull/5936))
 * cloud_tasks: suppressed time-unit permadiffs on `google_cloud_tasks_queue` min and max backoff settings ([#5920](https://github.com/hashicorp/terraform-provider-google-beta/pull/5920))
 * cloudrun: fixed the bug where default system labels set in `service.spec.template.metadata.labels` were treated as a diff. ([#5953](https://github.com/hashicorp/terraform-provider-google-beta/pull/5953))
-* compute: fixed wrongly trigger recreation on changes of `enforce_on_key_configs` on `google_compute_security_policy` ([#5928](https://github.com/hashicorp/terraform-provider-google-beta/pull/5928))
+* compute: fixed wrongly triggered recreation on changes of `enforce_on_key_configs` on `google_compute_security_policy` ([#5928](https://github.com/hashicorp/terraform-provider-google-beta/pull/5928))
 * monitoring: fixed an issue in `google_monitoring_monitored_project` where project numbers were not accepted for `name` ([#5955](https://github.com/hashicorp/terraform-provider-google-beta/pull/5955))
 
 ## 4.75.1 (July 27, 2023)
