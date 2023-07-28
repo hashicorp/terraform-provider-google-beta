@@ -169,6 +169,25 @@ If the encryption key is revoked, the workstation session will automatically be 
 							MaxItems:    1,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
+									"accelerators": {
+										Type:        schema.TypeList,
+										Optional:    true,
+										Description: "A list of the type and count of accelerator cards attached to the instance.",
+										Elem: &schema.Resource{
+											Schema: []map[string]*schema.Schema{
+												"type": {
+													Type:        schema.TypeString,
+													Optional:    false,
+													Description: "Type of accelerator resource to attach to the instance, for example, 'nvidia-tesla-p100'.",
+												},
+												"count": {
+													Type:        schema.TypeInt,
+													Optional:    false,
+													Description: "Number of accelerator cards exposed to the instance.",
+												},
+											},
+										},
+									},
 									"boot_disk_size_gb": {
 										Type:        schema.TypeInt,
 										Computed:    true,
