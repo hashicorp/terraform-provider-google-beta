@@ -3266,3 +3266,55 @@ resource "google_container_node_pool" "with_tpu_topology" {
 }
 `, cluster, np1, np2, tpuTopology)
 }
+
+func TestAccContainerNodePool_withHostMaintenancePolicy(t *testing.T) {
+	t.Parallel()
+
+	cluster := fmt.Sprintf("tf-test-cluster-%s", RandString(t, 10))
+	np := fmt.Sprintf("tf-test-np-%s", RandString(t, 10))
+
+	VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckContainerNodePoolDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccContainerNodePool_withHostMaintenancePolicy(cluster, np),
+			},
+			{
+				ResourceName:      "google_container_node_pool.np",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
+func testAccContainerNodePool_withHostMaintenancePolicy(cluster, np string) string {
+	return fmt.Sprintf(`
+resource "google_container_cluster" "cluster" {
+  name               = "%s"
+  location           = "asia-east1-c"
+  initial_node_count = 1
+  node_config {
+    host_maintenance_policy {
+		maintenance_interval = "PERIODIC"
+	}
+    machine_type = "n2-standard-2"
+  }
+}
+
+resource "google_container_node_pool" "np" {
+  name               = "%s"
+  location           = "asia-east1-c"
+  cluster            = google_container_cluster.cluster.name
+  initial_node_count = 1
+  node_config {
+    host_maintenance_policy {
+		maintenance_interval = "PERIODIC"
+	}
+    machine_type = "n2-standard-2"
+  }
+}
+`, cluster, np)
+}
