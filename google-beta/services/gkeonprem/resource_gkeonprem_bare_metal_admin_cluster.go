@@ -43,9 +43,9 @@ func ResourceGkeonpremBareMetalAdminCluster() *schema.Resource {
 		},
 
 		Timeouts: &schema.ResourceTimeout{
-			Create: schema.DefaultTimeout(20 * time.Minute),
-			Update: schema.DefaultTimeout(20 * time.Minute),
-			Delete: schema.DefaultTimeout(20 * time.Minute),
+			Create: schema.DefaultTimeout(60 * time.Minute),
+			Update: schema.DefaultTimeout(60 * time.Minute),
+			Delete: schema.DefaultTimeout(60 * time.Minute),
 		},
 
 		Schema: map[string]*schema.Schema{
@@ -839,9 +839,6 @@ func resourceGkeonpremBareMetalAdminClusterCreate(d *schema.ResourceData, meta i
 		config, res, &opRes, project, "Creating BareMetalAdminCluster", userAgent,
 		d.Timeout(schema.TimeoutCreate))
 	if err != nil {
-		// The resource didn't actually create
-		d.SetId("")
-
 		return fmt.Errorf("Error waiting to create BareMetalAdminCluster: %s", err)
 	}
 
