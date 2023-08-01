@@ -242,6 +242,7 @@ func flattenScheduling(resp *compute.Scheduling) []map[string]interface{} {
 	if resp.MaintenanceInterval != "" {
 		schedulingMap["maintenance_interval"] = resp.MaintenanceInterval
 	}
+
 	if resp.LocalSsdRecoveryTimeout != nil {
 		schedulingMap["local_ssd_recovery_timeout"] = flattenComputeLocalSsdRecoveryTimeout(resp.LocalSsdRecoveryTimeout)
 	}
@@ -268,6 +269,7 @@ func flattenComputeMaxRunDuration(v *compute.Duration) []interface{} {
 	transformed["seconds"] = v.Seconds
 	return []interface{}{transformed}
 }
+
 func flattenComputeLocalSsdRecoveryTimeout(v *compute.Duration) []interface{} {
 	if v == nil {
 		return nil
