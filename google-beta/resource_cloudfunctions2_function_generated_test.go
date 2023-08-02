@@ -764,6 +764,153 @@ resource "google_cloudfunctions2_function" "function" {
 `, context)
 }
 
+func TestAccCloudfunctions2function_cloudfunctions2CmekExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"project":       envvar.GetTestProjectFromEnv(),
+		"kms_key_name":  BootstrapKMSKeyInLocation(t, "us-central1").CryptoKey.Name,
+		"zip_path":      "./test-fixtures/cloudfunctions2/function-source.zip",
+		"location":      "us-central1",
+		"random_suffix": acctest.RandString(t, 10),
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckCloudfunctions2functionDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudfunctions2function_cloudfunctions2CmekExample(context),
+			},
+			{
+				ResourceName:            "google_cloudfunctions2_function.function",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"location", "build_config.0.source.0.storage_source.0.object", "build_config.0.source.0.storage_source.0.bucket"},
+			},
+		},
+	})
+}
+
+func testAccCloudfunctions2function_cloudfunctions2CmekExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+locals {
+  project = "%{project}" # Google Cloud Platform Project ID
+}
+
+data "google_project" "project" {
+  provider = google-beta
+}
+
+resource "google_storage_bucket" "bucket" {
+  provider = google-beta
+
+  name     = "${local.project}-tf-test-gcf-source%{random_suffix}"  # Every bucket name must be globally unique
+  location = "US"
+  uniform_bucket_level_access = true
+}
+ 
+resource "google_storage_bucket_object" "object" {
+  provider = google-beta
+
+  name   = "function-source.zip"
+  bucket = google_storage_bucket.bucket.name
+  source = "%{zip_path}"  # Add path to the zipped function source code
+}
+
+resource "google_project_service_identity" "ea_sa" {
+  provider = google-beta
+
+  project = data.google_project.project.project_id
+  service = "eventarc.googleapis.com"
+}
+
+resource "google_artifact_registry_repository" "unencoded-ar-repo" {
+  provider = google-beta
+
+  repository_id = "tf-test-ar-repo%{random_suffix}"
+  location = "us-central1"
+  format = "DOCKER"
+}
+
+resource "google_artifact_registry_repository_iam_binding" "binding" {
+  provider = google-beta
+
+  location = google_artifact_registry_repository.encoded-ar-repo.location
+  repository = google_artifact_registry_repository.encoded-ar-repo.name
+  role = "roles/artifactregistry.admin"
+  members = [
+    "serviceAccount:service-${data.google_project.project.number}@gcf-admin-robot.iam.gserviceaccount.com",
+  ]
+}
+
+resource "google_kms_crypto_key_iam_binding" "gcf_cmek_keyuser" {
+  provider = google-beta
+
+  crypto_key_id = "%{kms_key_name}"
+  role          = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
+
+  members = [
+    "serviceAccount:service-${data.google_project.project.number}@gcf-admin-robot.iam.gserviceaccount.com",
+    "serviceAccount:service-${data.google_project.project.number}@gcp-sa-artifactregistry.iam.gserviceaccount.com",
+    "serviceAccount:service-${data.google_project.project.number}@gs-project-accounts.iam.gserviceaccount.com",
+    "serviceAccount:service-${data.google_project.project.number}@serverless-robot-prod.iam.gserviceaccount.com",
+    "serviceAccount:${google_project_service_identity.ea_sa.email}",
+  ]
+
+  depends_on = [
+    google_project_service_identity.ea_sa
+  ]
+}
+
+resource "google_artifact_registry_repository" "encoded-ar-repo" {
+  provider = google-beta
+
+  location = "us-central1"
+  repository_id = "tf-test-cmek-repo%{random_suffix}"
+  format = "DOCKER"
+  kms_key_name = "%{kms_key_name}"
+  depends_on = [
+    google_kms_crypto_key_iam_binding.gcf_cmek_keyuser
+  ]
+}
+
+resource "google_cloudfunctions2_function" "function" {
+  provider = google-beta
+
+  name = "tf-test-function-cmek%{random_suffix}"
+  location = "us-central1"
+  description = "CMEK function"
+  kms_key_name = "%{kms_key_name}"
+
+  build_config {
+    runtime = "nodejs16"
+    entry_point = "helloHttp"  # Set the entry point
+    docker_repository = google_artifact_registry_repository.encoded-ar-repo.id
+
+    source {
+      storage_source {
+        bucket = google_storage_bucket.bucket.name
+        object = google_storage_bucket_object.object.name
+      }
+    }
+  }
+
+  service_config {
+    max_instance_count  = 1
+    available_memory    = "256M"
+    timeout_seconds     = 60
+  }
+
+  depends_on = [
+    google_kms_crypto_key_iam_binding.gcf_cmek_keyuser
+  ]
+
+}
+`, context)
+}
+
 func testAccCheckCloudfunctions2functionDestroyProducer(t *testing.T) func(s *terraform.State) error {
 	return func(s *terraform.State) error {
 		for name, rs := range s.RootModule().Resources {
