@@ -181,6 +181,15 @@ full FHIR resource. When a resource change is too large or during heavy traffic,
 sent. Clients should always check the "payloadType" label from a Pub/Sub message to determine whether
 it needs to fetch the full resource as a separate operation.`,
 						},
+						"send_previous_resource_on_delete": {
+							Type:     schema.TypeBool,
+							Optional: true,
+							Description: `Whether to send full FHIR resource to this Pub/Sub topic for deleting FHIR resource. Note that setting this to
+true does not guarantee that all previous resources will be sent in the format of full FHIR resource. When a
+resource change is too large or during heavy traffic, only the resource name will be sent. Clients should always
+check the "payloadType" label from a Pub/Sub message to determine whether it needs to fetch the full previous
+resource as a separate operation.`,
+						},
 					},
 				},
 			},
@@ -819,8 +828,9 @@ func flattenHealthcareFhirStoreNotificationConfigs(v interface{}, d *schema.Reso
 			continue
 		}
 		transformed = append(transformed, map[string]interface{}{
-			"pubsub_topic":       flattenHealthcareFhirStoreNotificationConfigsPubsubTopic(original["pubsubTopic"], d, config),
-			"send_full_resource": flattenHealthcareFhirStoreNotificationConfigsSendFullResource(original["sendFullResource"], d, config),
+			"pubsub_topic":                     flattenHealthcareFhirStoreNotificationConfigsPubsubTopic(original["pubsubTopic"], d, config),
+			"send_full_resource":               flattenHealthcareFhirStoreNotificationConfigsSendFullResource(original["sendFullResource"], d, config),
+			"send_previous_resource_on_delete": flattenHealthcareFhirStoreNotificationConfigsSendPreviousResourceOnDelete(original["sendPreviousResourceOnDelete"], d, config),
 		})
 	}
 	return transformed
@@ -830,6 +840,10 @@ func flattenHealthcareFhirStoreNotificationConfigsPubsubTopic(v interface{}, d *
 }
 
 func flattenHealthcareFhirStoreNotificationConfigsSendFullResource(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenHealthcareFhirStoreNotificationConfigsSendPreviousResourceOnDelete(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
@@ -1057,6 +1071,13 @@ func expandHealthcareFhirStoreNotificationConfigs(v interface{}, d tpgresource.T
 			transformed["sendFullResource"] = transformedSendFullResource
 		}
 
+		transformedSendPreviousResourceOnDelete, err := expandHealthcareFhirStoreNotificationConfigsSendPreviousResourceOnDelete(original["send_previous_resource_on_delete"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedSendPreviousResourceOnDelete); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["sendPreviousResourceOnDelete"] = transformedSendPreviousResourceOnDelete
+		}
+
 		req = append(req, transformed)
 	}
 	return req, nil
@@ -1067,6 +1088,10 @@ func expandHealthcareFhirStoreNotificationConfigsPubsubTopic(v interface{}, d tp
 }
 
 func expandHealthcareFhirStoreNotificationConfigsSendFullResource(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandHealthcareFhirStoreNotificationConfigsSendPreviousResourceOnDelete(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
