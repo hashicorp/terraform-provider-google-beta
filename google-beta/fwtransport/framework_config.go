@@ -82,6 +82,7 @@ type FrameworkProviderConfig struct {
 	ComputeBasePath                  string
 	ContainerAnalysisBasePath        string
 	ContainerAttachedBasePath        string
+	CoreBillingBasePath              string
 	DatabaseMigrationServiceBasePath string
 	DataCatalogBasePath              string
 	DataformBasePath                 string
@@ -233,6 +234,7 @@ func (p *FrameworkProviderConfig) LoadAndValidateFramework(ctx context.Context, 
 	p.ComputeBasePath = data.ComputeCustomEndpoint.ValueString()
 	p.ContainerAnalysisBasePath = data.ContainerAnalysisCustomEndpoint.ValueString()
 	p.ContainerAttachedBasePath = data.ContainerAttachedCustomEndpoint.ValueString()
+	p.CoreBillingBasePath = data.CoreBillingCustomEndpoint.ValueString()
 	p.DatabaseMigrationServiceBasePath = data.DatabaseMigrationServiceCustomEndpoint.ValueString()
 	p.DataCatalogBasePath = data.DataCatalogCustomEndpoint.ValueString()
 	p.DataformBasePath = data.DataformCustomEndpoint.ValueString()
@@ -699,6 +701,14 @@ func (p *FrameworkProviderConfig) HandleDefaults(ctx context.Context, data *fwmo
 		}, transport_tpg.DefaultBasePaths[transport_tpg.ContainerAttachedBasePathKey])
 		if customEndpoint != nil {
 			data.ContainerAttachedCustomEndpoint = types.StringValue(customEndpoint.(string))
+		}
+	}
+	if data.CoreBillingCustomEndpoint.IsNull() {
+		customEndpoint := transport_tpg.MultiEnvDefault([]string{
+			"GOOGLE_CORE_BILLING_CUSTOM_ENDPOINT",
+		}, transport_tpg.DefaultBasePaths[transport_tpg.CoreBillingBasePathKey])
+		if customEndpoint != nil {
+			data.CoreBillingCustomEndpoint = types.StringValue(customEndpoint.(string))
 		}
 	}
 	if data.DatabaseMigrationServiceCustomEndpoint.IsNull() {
