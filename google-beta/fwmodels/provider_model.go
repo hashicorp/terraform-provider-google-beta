@@ -58,6 +58,7 @@ type ProviderModel struct {
 	ComputeCustomEndpoint                  types.String `tfsdk:"compute_custom_endpoint"`
 	ContainerAnalysisCustomEndpoint        types.String `tfsdk:"container_analysis_custom_endpoint"`
 	ContainerAttachedCustomEndpoint        types.String `tfsdk:"container_attached_custom_endpoint"`
+	CoreBillingCustomEndpoint              types.String `tfsdk:"core_billing_custom_endpoint"`
 	DatabaseMigrationServiceCustomEndpoint types.String `tfsdk:"database_migration_service_custom_endpoint"`
 	DataCatalogCustomEndpoint              types.String `tfsdk:"data_catalog_custom_endpoint"`
 	DataformCustomEndpoint                 types.String `tfsdk:"dataform_custom_endpoint"`

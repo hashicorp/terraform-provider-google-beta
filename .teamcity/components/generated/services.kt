@@ -47,6 +47,7 @@ var services = mapOf(
         "containerattached" to "Containerattached",
         "containeraws" to "Containeraws",
         "containerazure" to "Containerazure",
+        "corebilling" to "Corebilling",
         "databasemigrationservice" to "Databasemigrationservice",
         "datacatalog" to "Datacatalog",
         "dataflow" to "Dataflow",

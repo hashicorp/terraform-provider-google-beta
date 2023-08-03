@@ -41,6 +41,7 @@ import (
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/compute"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/containeranalysis"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/containerattached"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/corebilling"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/databasemigrationservice"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/datacatalog"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/dataform"
