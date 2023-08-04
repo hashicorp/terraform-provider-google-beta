@@ -1,4 +1,35 @@
-## 4.76.0 (Unreleased)
+## 4.77.0 (Unreleased)
+
+## 4.76.0 (July 31, 2023)
+
+FEATURES:
+* **New Resource:** `google_dataplex_task` ([#5914](https://github.com/hashicorp/terraform-provider-google-beta/pull/5914))
+* **New Resource:** `google_iap_web_region_backend_service_iam_binding` ([#5944](https://github.com/hashicorp/terraform-provider-google-beta/pull/5944))
+* **New Resource:** `google_iap_web_region_backend_service_iam_member` ([#5944](https://github.com/hashicorp/terraform-provider-google-beta/pull/5944))
+* **New Resource:** `google_iap_web_region_backend_service_iam_policy` ([#5944](https://github.com/hashicorp/terraform-provider-google-beta/pull/5944))
+
+IMPROVEMENTS:
+* compute: added `security_policy` field to `google_compute_region_backend_service` resource ([#5924](https://github.com/hashicorp/terraform-provider-google-beta/pull/5924))
+* cloudrun: added `status.traffic` output fields to `google_cloud_run_service` resource ([#5943](https://github.com/hashicorp/terraform-provider-google-beta/pull/5943))
+* cloudrunv2: added field `custom_audiences` to resource `google_cloud_run_v2_service ` ([#5935](https://github.com/hashicorp/terraform-provider-google-beta/pull/5935))
+* composer: added support for updating `resilience_mode` in `google_composer_environment` ([#5921](https://github.com/hashicorp/terraform-provider-google-beta/pull/5921))
+* compute: added `reconcile_connections` for `google_compute_service_attachment`. ([#5945](https://github.com/hashicorp/terraform-provider-google-beta/pull/5945))
+* container : added `gcs_fuse_csi_driver_config` field to `addons_config` in `google_container_cluster` resource. ([#5946](https://github.com/hashicorp/terraform-provider-google-beta/pull/5946))
+* container: added `allow_net_admin` field to `google_container_cluster` resource ([#5940](https://github.com/hashicorp/terraform-provider-google-beta/pull/5940))
+* container: added multi-NIC network for `google_container_cluster` and `google_container_node_pool`. ([#5949](https://github.com/hashicorp/terraform-provider-google-beta/pull/5949))
+* container: allowed user to set up to 20 maintenance exclusions for `google_container_cluster` resource ([#5947](https://github.com/hashicorp/terraform-provider-google-beta/pull/5947))
+* healthcare: added `last_updated_partition_config` field to `google_healthcare_fhir_store` resource ([#5937](https://github.com/hashicorp/terraform-provider-google-beta/pull/5937))
+* monitoring: added `condition_prometheus_query_language` field to `google_monitoring_alert_policy` resource ([#5952](https://github.com/hashicorp/terraform-provider-google-beta/pull/5952))
+* networkservices: made `scope` field optional in `google_network_services_gateway` resource ([#5939](https://github.com/hashicorp/terraform-provider-google-beta/pull/5939))
+* spanner: added `enable_drop_protection` to `google_spanner_database` resource([#5942](https://github.com/hashicorp/terraform-provider-google-beta/pull/5942))
+
+BUG FIXES:
+* alloydb: fixed permadiffs when setting 0 as start time (midnight) for `automated_backup_policy` in `google_alloydb_cluster` resource ([#5913](https://github.com/hashicorp/terraform-provider-google-beta/pull/5913))
+* artifactregistry: fixed reading back maven_config state in `google_artifact_registry_repository` ([#5936](https://github.com/hashicorp/terraform-provider-google-beta/pull/5936))
+* cloudtasks: suppressed time-unit permadiffs on `google_cloud_tasks_queue` min and max backoff settings ([#5920](https://github.com/hashicorp/terraform-provider-google-beta/pull/5920))
+* cloudrun: fixed the bug where default system labels set in `service.spec.template.metadata.labels` were treated as a diff. ([#5953](https://github.com/hashicorp/terraform-provider-google-beta/pull/5953))
+* compute: fixed wrongly triggered recreation on changes of `enforce_on_key_configs` on `google_compute_security_policy` ([#5928](https://github.com/hashicorp/terraform-provider-google-beta/pull/5928))
+* monitoring: fixed an issue in `google_monitoring_monitored_project` where project numbers were not accepted for `name` ([#5955](https://github.com/hashicorp/terraform-provider-google-beta/pull/5955))
 
 ## 4.75.1 (July 27, 2023)
 
