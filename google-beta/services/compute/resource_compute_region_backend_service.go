@@ -455,6 +455,11 @@ unhealthy backends regardless of protocol and session affinity. It is
 generally not recommended to use this mode overriding the default. Default value: "DEFAULT_FOR_PROTOCOL" Possible values: ["DEFAULT_FOR_PROTOCOL", "NEVER_PERSIST", "ALWAYS_PERSIST"]`,
 							Default: "DEFAULT_FOR_PROTOCOL",
 						},
+						"enable_strong_affinity": {
+							Type:        schema.TypeBool,
+							Optional:    true,
+							Description: `Enable Strong Session Affinity for Network Load Balancing. This option is not available publicly.`,
+						},
 						"idle_timeout_sec": {
 							Type:     schema.TypeInt,
 							Computed: true,
@@ -2989,6 +2994,8 @@ func flattenComputeRegionBackendServiceConnectionTrackingPolicy(v interface{}, d
 		flattenComputeRegionBackendServiceConnectionTrackingPolicyTrackingMode(original["trackingMode"], d, config)
 	transformed["connection_persistence_on_unhealthy_backends"] =
 		flattenComputeRegionBackendServiceConnectionTrackingPolicyConnectionPersistenceOnUnhealthyBackends(original["connectionPersistenceOnUnhealthyBackends"], d, config)
+	transformed["enable_strong_affinity"] =
+		flattenComputeRegionBackendServiceConnectionTrackingPolicyEnableStrongAffinity(original["enableStrongAffinity"], d, config)
 	return []interface{}{transformed}
 }
 func flattenComputeRegionBackendServiceConnectionTrackingPolicyIdleTimeoutSec(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -3013,6 +3020,10 @@ func flattenComputeRegionBackendServiceConnectionTrackingPolicyTrackingMode(v in
 }
 
 func flattenComputeRegionBackendServiceConnectionTrackingPolicyConnectionPersistenceOnUnhealthyBackends(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenComputeRegionBackendServiceConnectionTrackingPolicyEnableStrongAffinity(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
@@ -4057,6 +4068,13 @@ func expandComputeRegionBackendServiceConnectionTrackingPolicy(v interface{}, d 
 		transformed["connectionPersistenceOnUnhealthyBackends"] = transformedConnectionPersistenceOnUnhealthyBackends
 	}
 
+	transformedEnableStrongAffinity, err := expandComputeRegionBackendServiceConnectionTrackingPolicyEnableStrongAffinity(original["enable_strong_affinity"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedEnableStrongAffinity); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["enableStrongAffinity"] = transformedEnableStrongAffinity
+	}
+
 	return transformed, nil
 }
 
@@ -4069,6 +4087,10 @@ func expandComputeRegionBackendServiceConnectionTrackingPolicyTrackingMode(v int
 }
 
 func expandComputeRegionBackendServiceConnectionTrackingPolicyConnectionPersistenceOnUnhealthyBackends(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeRegionBackendServiceConnectionTrackingPolicyEnableStrongAffinity(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 

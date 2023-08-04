@@ -1057,6 +1057,37 @@ func TestAccComputeInstanceTemplate_spot_maxRunDuration(t *testing.T) {
 	})
 }
 
+func TestAccComputeInstanceTemplate_localSsdRecoveryTimeout(t *testing.T) {
+	t.Parallel()
+
+	var instanceTemplate compute.InstanceTemplate
+	var expectedLocalSsdRecoveryTimeout = compute.Duration{}
+	expectedLocalSsdRecoveryTimeout.Nanos = 0
+	expectedLocalSsdRecoveryTimeout.Seconds = 3600
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckComputeInstanceTemplateDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeInstanceTemplate_localSsdRecoveryTimeout(RandString(t, 10)),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckComputeInstanceTemplateExists(
+						t, "google_compute_instance_template.foobar", &instanceTemplate),
+					testAccCheckComputeInstanceTemplateAutomaticRestart(&instanceTemplate, false),
+					testAccCheckComputeInstanceTemplateLocalSsdRecoveryTimeout(&instanceTemplate, expectedLocalSsdRecoveryTimeout),
+				),
+			},
+			{
+				ResourceName:      "google_compute_instance_template.foobar",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
 func TestAccComputeInstanceTemplate_sourceSnapshotEncryptionKey(t *testing.T) {
 	t.Parallel()
 
@@ -1359,6 +1390,15 @@ func testAccCheckComputeInstanceTemplateMaxRunDuration(instanceTemplate *compute
 			return fmt.Errorf("gExpected instance_termination_action: %#v; got %#v", instance_max_run_duration_want, instanceTemplate.Properties.Scheduling.MaxRunDuration)
 		}
 
+		return nil
+	}
+}
+
+func testAccCheckComputeInstanceTemplateLocalSsdRecoveryTimeout(instanceTemplate *compute.InstanceTemplate, instance_local_ssd_recovery_timeout_want compute.Duration) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		if !reflect.DeepEqual(*instanceTemplate.Properties.Scheduling.LocalSsdRecoveryTimeout, instance_local_ssd_recovery_timeout_want) {
+			return fmt.Errorf("gExpected LocalSsdRecoveryTimeout: %#v; got %#v", instance_local_ssd_recovery_timeout_want, instanceTemplate.Properties.Scheduling.LocalSsdRecoveryTimeout)
+		}
 		return nil
 	}
 }
@@ -3152,6 +3192,48 @@ resource "google_compute_instance_template" "foobar" {
 	seconds = 60
     }
 
+  }
+
+  metadata = {
+    foo = "bar"
+  }
+
+  service_account {
+    scopes = ["userinfo-email", "compute-ro", "storage-ro"]
+  }
+}
+`, suffix)
+}
+
+func testAccComputeInstanceTemplate_localSsdRecoveryTimeout(suffix string) string {
+	return fmt.Sprintf(`
+data "google_compute_image" "my_image" {
+  family  = "debian-11"
+  project = "debian-cloud"
+}
+
+resource "google_compute_instance_template" "foobar" {
+  name           = "tf-test-instance-template-%s"
+  machine_type   = "e2-medium"
+  can_ip_forward = false
+  tags           = ["foo", "bar"]
+
+  disk {
+    source_image = data.google_compute_image.my_image.self_link
+    auto_delete  = true
+    boot         = true
+  }
+
+  network_interface {
+    network = "default"
+  }
+
+  scheduling {
+    automatic_restart = false
+    local_ssd_recovery_timeout {
+		nanos = 0
+		seconds = 3600
+    }
   }
 
   metadata = {

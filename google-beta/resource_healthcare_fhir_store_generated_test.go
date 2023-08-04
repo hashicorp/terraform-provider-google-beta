@@ -136,6 +136,10 @@ resource "google_healthcare_fhir_store" "default" {
       dataset_uri = "bq://${google_bigquery_dataset.bq_dataset.project}.${google_bigquery_dataset.bq_dataset.dataset_id}"
       schema_config {
         recursive_structure_depth = 3
+        last_updated_partition_config {
+          type = "HOUR"
+          expiration_ms = 1000000
+        }
       }
     }
   }
@@ -260,8 +264,9 @@ resource "google_healthcare_fhir_store" "default" {
   }
 
   notification_configs {
-    pubsub_topic       = "${google_pubsub_topic.topic.id}"
-    send_full_resource = true
+    pubsub_topic                     = "${google_pubsub_topic.topic.id}"
+    send_full_resource               = true
+    send_previous_resource_on_delete = true
   }
 }
 
