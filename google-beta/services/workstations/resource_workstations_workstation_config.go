@@ -169,6 +169,25 @@ If the encryption key is revoked, the workstation session will automatically be 
 							MaxItems:    1,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
+									"accelerators": {
+										Type:        schema.TypeList,
+										Optional:    true,
+										Description: `An accelerator card attached to the instance.`,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"count": {
+													Type:        schema.TypeInt,
+													Required:    true,
+													Description: `Number of accelerator cards exposed to the instance.`,
+												},
+												"type": {
+													Type:        schema.TypeString,
+													Required:    true,
+													Description: `Type of accelerator resource to attach to the instance, for example, "nvidia-tesla-p100".`,
+												},
+											},
+										},
+									},
 									"boot_disk_size_gb": {
 										Type:        schema.TypeInt,
 										Computed:    true,
@@ -925,6 +944,8 @@ func flattenWorkstationsWorkstationConfigHostGceInstance(v interface{}, d *schem
 		flattenWorkstationsWorkstationConfigHostGceInstanceShieldedInstanceConfig(original["shieldedInstanceConfig"], d, config)
 	transformed["confidential_instance_config"] =
 		flattenWorkstationsWorkstationConfigHostGceInstanceConfidentialInstanceConfig(original["confidentialInstanceConfig"], d, config)
+	transformed["accelerators"] =
+		flattenWorkstationsWorkstationConfigHostGceInstanceAccelerators(original["accelerators"], d, config)
 	return []interface{}{transformed}
 }
 func flattenWorkstationsWorkstationConfigHostGceInstanceMachineType(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -1019,6 +1040,46 @@ func flattenWorkstationsWorkstationConfigHostGceInstanceConfidentialInstanceConf
 	}
 
 	return []interface{}{transformed}
+}
+
+func flattenWorkstationsWorkstationConfigHostGceInstanceAccelerators(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return v
+	}
+	l := v.([]interface{})
+	transformed := make([]interface{}, 0, len(l))
+	for _, raw := range l {
+		original := raw.(map[string]interface{})
+		if len(original) < 1 {
+			// Do not include empty json objects coming back from the api
+			continue
+		}
+		transformed = append(transformed, map[string]interface{}{
+			"type":  flattenWorkstationsWorkstationConfigHostGceInstanceAcceleratorsType(original["type"], d, config),
+			"count": flattenWorkstationsWorkstationConfigHostGceInstanceAcceleratorsCount(original["count"], d, config),
+		})
+	}
+	return transformed
+}
+func flattenWorkstationsWorkstationConfigHostGceInstanceAcceleratorsType(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenWorkstationsWorkstationConfigHostGceInstanceAcceleratorsCount(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	// Handles the string fixed64 format
+	if strVal, ok := v.(string); ok {
+		if intVal, err := tpgresource.StringToFixed64(strVal); err == nil {
+			return intVal
+		}
+	}
+
+	// number values are represented as float64
+	if floatVal, ok := v.(float64); ok {
+		intVal := int(floatVal)
+		return intVal
+	}
+
+	return v // let terraform core handle it otherwise
 }
 
 func flattenWorkstationsWorkstationConfigPersistentDirectories(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -1352,6 +1413,13 @@ func expandWorkstationsWorkstationConfigHostGceInstance(v interface{}, d tpgreso
 		transformed["confidentialInstanceConfig"] = transformedConfidentialInstanceConfig
 	}
 
+	transformedAccelerators, err := expandWorkstationsWorkstationConfigHostGceInstanceAccelerators(original["accelerators"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedAccelerators); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["accelerators"] = transformedAccelerators
+	}
+
 	return transformed, nil
 }
 
@@ -1444,6 +1512,43 @@ func expandWorkstationsWorkstationConfigHostGceInstanceConfidentialInstanceConfi
 }
 
 func expandWorkstationsWorkstationConfigHostGceInstanceConfidentialInstanceConfigEnableConfidentialCompute(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandWorkstationsWorkstationConfigHostGceInstanceAccelerators(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	req := make([]interface{}, 0, len(l))
+	for _, raw := range l {
+		if raw == nil {
+			continue
+		}
+		original := raw.(map[string]interface{})
+		transformed := make(map[string]interface{})
+
+		transformedType, err := expandWorkstationsWorkstationConfigHostGceInstanceAcceleratorsType(original["type"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedType); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["type"] = transformedType
+		}
+
+		transformedCount, err := expandWorkstationsWorkstationConfigHostGceInstanceAcceleratorsCount(original["count"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedCount); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["count"] = transformedCount
+		}
+
+		req = append(req, transformed)
+	}
+	return req, nil
+}
+
+func expandWorkstationsWorkstationConfigHostGceInstanceAcceleratorsType(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandWorkstationsWorkstationConfigHostGceInstanceAcceleratorsCount(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
