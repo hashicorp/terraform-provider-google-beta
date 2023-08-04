@@ -35,7 +35,6 @@ func TestAccFirebaseAndroidApp_firebaseAndroidAppBasicExample(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
-		"org_id":        envvar.GetTestOrgFromEnv(t),
 		"project_id":    envvar.GetTestProjectFromEnv(),
 		"package_name":  "android.package.app" + acctest.RandString(t, 4),
 		"display_name":  "tf-test Display Name Basic",

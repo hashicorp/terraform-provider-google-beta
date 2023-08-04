@@ -76,10 +76,10 @@ projects/projectId/webApps/appId`,
 			"deletion_policy": {
 				Type:     schema.TypeString,
 				Optional: true,
-				Default:  "ABANDON",
+				Default:  "DELETE",
 				Description: `Set to 'ABANDON' to allow the WebApp to be untracked from terraform state
 rather than deleted upon 'terraform destroy'. This is useful becaue the WebApp may be
-serving traffic. Set to 'DELETE' to delete the WebApp. Default to 'ABANDON'`,
+serving traffic. Set to 'DELETE' to delete the WebApp. Default to 'DELETE'`,
 			},
 			"project": {
 				Type:     schema.TypeString,
@@ -216,7 +216,7 @@ func resourceFirebaseWebAppRead(d *schema.ResourceData, meta interface{}) error 
 
 	// Explicitly set virtual fields to default values if unset
 	if _, ok := d.GetOkExists("deletion_policy"); !ok {
-		if err := d.Set("deletion_policy", "ABANDON"); err != nil {
+		if err := d.Set("deletion_policy", "DELETE"); err != nil {
 			return fmt.Errorf("Error setting deletion_policy: %s", err)
 		}
 	}
@@ -391,7 +391,7 @@ func resourceFirebaseWebAppImport(d *schema.ResourceData, meta interface{}) ([]*
 	d.SetId(id)
 
 	// Explicitly set virtual fields to default values on import
-	if err := d.Set("deletion_policy", "ABANDON"); err != nil {
+	if err := d.Set("deletion_policy", "DELETE"); err != nil {
 		return nil, fmt.Errorf("Error setting deletion_policy: %s", err)
 	}
 
