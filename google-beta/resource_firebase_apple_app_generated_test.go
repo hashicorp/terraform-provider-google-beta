@@ -35,7 +35,6 @@ func TestAccFirebaseAppleApp_firebaseAppleAppBasicExample(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
-		"org_id":        envvar.GetTestOrgFromEnv(t),
 		"project_id":    envvar.GetTestProjectFromEnv(),
 		"display_name":  "tf-test Display Name Basic",
 		"random_suffix": acctest.RandString(t, 10),
@@ -73,7 +72,6 @@ func TestAccFirebaseAppleApp_firebaseAppleAppFullExample(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
-		"org_id":        envvar.GetTestOrgFromEnv(t),
 		"project_id":    envvar.GetTestProjectFromEnv(),
 		"app_store_id":  12345,
 		"team_id":       9987654321,

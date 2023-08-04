@@ -100,7 +100,6 @@ resource "google_firebase_web_app" "default" {
   provider = google-beta
   project  = "%{project_id}"
   display_name = "%{display_name}"
-  deletion_policy = "DELETE"
 }
 
 resource "google_firebase_hosting_site" "full" {
