@@ -1,4 +1,77 @@
-## 4.76.0 (Unreleased)
+## 4.78.0 (Unreleased)
+## 4.77.0 (August 7, 2023)
+
+NOTES:
+* vpcaccess: reverted the ability to update the number of instances for resource `google_vpc_access_connector` ([#5957](https://github.com/hashicorp/terraform-provider-google-beta/pull/5957))
+
+FEATURES:
+* **New Resource:** `google_document_ai_warehouse_document_schema` ([#5965](https://github.com/hashicorp/terraform-provider-google-beta/pull/5965))
+* **New Resource:** `google_document_ai_warehouse_location` ([#5965](https://github.com/hashicorp/terraform-provider-google-beta/pull/5965))
+
+IMPROVEMENTS:
+* alloydb: added `continuous_backup_config` and `continuous_backup_info` fields to `cluster` resource ([#5996](https://github.com/hashicorp/terraform-provider-google-beta/pull/5996))
+* cloudbuild: removed the validation function for the values of `machine_type` field on the `google_cloudbuild_trigger` resource ([#5985](https://github.com/hashicorp/terraform-provider-google-beta/pull/5985))
+* compute: added future_limit in quota exceeded error details for compute resources. ([#5982](https://github.com/hashicorp/terraform-provider-google-beta/pull/5982))
+* compute: added `enable_strong_affinity` field to `google_compute_region_backend_service` (beta) ([#5962](https://github.com/hashicorp/terraform-provider-google-beta/pull/5962))
+* compute: added `ipv6_endpoint_type` and `ip_version` to `google_compute_address` ([#5986](https://github.com/hashicorp/terraform-provider-google-beta/pull/5986))
+* compute: added `network_interface.ipv6_access_config.external_ipv6_prefix_length` to `google_compute_instance` ([#5986](https://github.com/hashicorp/terraform-provider-google-beta/pull/5986))
+* compute: added `network_interface.ipv6_access_config.name` to `google_compute_instance` ([#5986](https://github.com/hashicorp/terraform-provider-google-beta/pull/5986))
+* compute: added a new type `GLOBAL_MANAGED_PROXY` for the field `purpose` in the resource `google_compute_subnetwork` ([#5981](https://github.com/hashicorp/terraform-provider-google-beta/pull/5981))
+* compute: added protocol type: UNSPECIFIED in `google_compute_backend_service` as per [release note](https://cloud.google.com/load-balancing/docs/release-notes#July_24_2023) ([#5967](https://github.com/hashicorp/terraform-provider-google-beta/pull/5967))
+* compute: added `local_ssd_recovery_timeout` field to `google_compute_instance` resource ([#5968](https://github.com/hashicorp/terraform-provider-google-beta/pull/5968))
+* compute: added `local_ssd_recovery_timeout` field to `google_compute_instance_template` resource ([#5968](https://github.com/hashicorp/terraform-provider-google-beta/pull/5968))
+* compute: added `local_ssd_recovery_timeout` field to `google_compute_regional_instance_template` resource ([#5968](https://github.com/hashicorp/terraform-provider-google-beta/pull/5968))
+* compute: made `network_interface.ipv6_access_config.external_ipv6` configurable in `google_compute_instance` ([#5986](https://github.com/hashicorp/terraform-provider-google-beta/pull/5986))
+* container: added `enable_k8s_beta_apis.enabled_apis` field to `google_container_cluster` ([#5961](https://github.com/hashicorp/terraform-provider-google-beta/pull/5961))
+* container: added `node_config.host_maintenance_policy` field to `google_container_cluster` and `google_container_node_pool` ([#5983](https://github.com/hashicorp/terraform-provider-google-beta/pull/5983))
+* container: added `placement_policy.policy_name` field to `google_container_node_pool` resource ([#5994](https://github.com/hashicorp/terraform-provider-google-beta/pull/5994))
+* container: unsuppressed `private_cluster_config` when `master_global_access_config` is set in `google_container_cluster` ([#5995](https://github.com/hashicorp/terraform-provider-google-beta/pull/5995))
+* container: allowed `enabled_private_endpoint` to be settable on creation for PSC-based clusters ([#5989](https://github.com/hashicorp/terraform-provider-google-beta/pull/5989))
+* gkeonprem: added taint on failed resource creation for `google_gkeonprem_bare_metal_admin_cluster` ([#5990](https://github.com/hashicorp/terraform-provider-google-beta/pull/5990))
+* gkeonprem: increased timeout for resources `google_gkeonprem_bare_metal_cluster` and `google_gkeonprem_bare_metal_admin_cluster` ([#5990](https://github.com/hashicorp/terraform-provider-google-beta/pull/5990))
+* identityplayform: added support for `blocking_functions` `quota` and `authorized_domains` in `google_identity_platform_config` ([#5964](https://github.com/hashicorp/terraform-provider-google-beta/pull/5964))
+* monitoring: added update support for `period` in `google_monitoring_uptime_check_config` ([#5959](https://github.com/hashicorp/terraform-provider-google-beta/pull/5959))
+* pubsub: added `no_wrapper` field to `google_pubsub_subscription` resource ([#5972](https://github.com/hashicorp/terraform-provider-google-beta/pull/5972))
+* workstations: added `accelerators` field to `google_workstations_workstation_config` resource ([#5991](https://github.com/hashicorp/terraform-provider-google-beta/pull/5991))
+
+BUG FIXES:
+* bigquery: fixed a bug in update support for several fields in `google_bigquery_data_transfer_config` ([#5987](https://github.com/hashicorp/terraform-provider-google-beta/pull/5987))
+* cloudfunctions2: fixed an issue where `google_cloudfunctions2_function.build_config.source.storage_source.generation` created a diff when not set in config ([#5992](https://github.com/hashicorp/terraform-provider-google-beta/pull/5992))
+* firebasedatabase: fixed empty `database_url` output attribute ([#5988](https://github.com/hashicorp/terraform-provider-google-beta/pull/5988))
+* monitoring: fixed an issue in `google_monitoring_monitored_project` where project numbers were not accepted for `name` ([#5955](https://github.com/hashicorp/terraform-provider-google-beta/pull/5955))
+* vpcaccess: reverted new behaviour introduced by resource `google_vpc_access_connector` in `4.75.0`. `min_throughput` and `max_throughput` fields lost their default value, and customers could not make deployment due to that change. ([#5957](https://github.com/hashicorp/terraform-provider-google-beta/pull/5957))
+
+## 4.76.0 (July 31, 2023)
+
+FEATURES:
+* **New Resource:** `google_dataplex_task` ([#5914](https://github.com/hashicorp/terraform-provider-google-beta/pull/5914))
+* **New Resource:** `google_iap_web_region_backend_service_iam_binding` ([#5944](https://github.com/hashicorp/terraform-provider-google-beta/pull/5944))
+* **New Resource:** `google_iap_web_region_backend_service_iam_member` ([#5944](https://github.com/hashicorp/terraform-provider-google-beta/pull/5944))
+* **New Resource:** `google_iap_web_region_backend_service_iam_policy` ([#5944](https://github.com/hashicorp/terraform-provider-google-beta/pull/5944))
+
+IMPROVEMENTS:
+* compute: added `security_policy` field to `google_compute_region_backend_service` resource ([#5924](https://github.com/hashicorp/terraform-provider-google-beta/pull/5924))
+* cloudrun: added `status.traffic` output fields to `google_cloud_run_service` resource ([#5943](https://github.com/hashicorp/terraform-provider-google-beta/pull/5943))
+* cloudrunv2: added field `custom_audiences` to resource `google_cloud_run_v2_service ` ([#5935](https://github.com/hashicorp/terraform-provider-google-beta/pull/5935))
+* composer: added support for updating `resilience_mode` in `google_composer_environment` ([#5921](https://github.com/hashicorp/terraform-provider-google-beta/pull/5921))
+* compute: added `reconcile_connections` for `google_compute_service_attachment`. ([#5945](https://github.com/hashicorp/terraform-provider-google-beta/pull/5945))
+* container : added `gcs_fuse_csi_driver_config` field to `addons_config` in `google_container_cluster` resource. ([#5946](https://github.com/hashicorp/terraform-provider-google-beta/pull/5946))
+* container: added `allow_net_admin` field to `google_container_cluster` resource ([#5940](https://github.com/hashicorp/terraform-provider-google-beta/pull/5940))
+* container: added multi-NIC network for `google_container_cluster` and `google_container_node_pool`. ([#5949](https://github.com/hashicorp/terraform-provider-google-beta/pull/5949))
+* container: allowed user to set up to 20 maintenance exclusions for `google_container_cluster` resource ([#5947](https://github.com/hashicorp/terraform-provider-google-beta/pull/5947))
+* healthcare: added `last_updated_partition_config` field to `google_healthcare_fhir_store` resource ([#5937](https://github.com/hashicorp/terraform-provider-google-beta/pull/5937))
+* monitoring: added `condition_prometheus_query_language` field to `google_monitoring_alert_policy` resource ([#5952](https://github.com/hashicorp/terraform-provider-google-beta/pull/5952))
+* networkservices: made `scope` field optional in `google_network_services_gateway` resource ([#5939](https://github.com/hashicorp/terraform-provider-google-beta/pull/5939))
+* spanner: added `enable_drop_protection` to `google_spanner_database` resource([#5942](https://github.com/hashicorp/terraform-provider-google-beta/pull/5942))
+
+BUG FIXES:
+* alloydb: fixed permadiffs when setting 0 as start time (midnight) for `automated_backup_policy` in `google_alloydb_cluster` resource ([#5913](https://github.com/hashicorp/terraform-provider-google-beta/pull/5913))
+* artifactregistry: fixed reading back maven_config state in `google_artifact_registry_repository` ([#5936](https://github.com/hashicorp/terraform-provider-google-beta/pull/5936))
+* cloudtasks: suppressed time-unit permadiffs on `google_cloud_tasks_queue` min and max backoff settings ([#5920](https://github.com/hashicorp/terraform-provider-google-beta/pull/5920))
+* cloudrun: fixed the bug where default system labels set in `service.spec.template.metadata.labels` were treated as a diff. ([#5953](https://github.com/hashicorp/terraform-provider-google-beta/pull/5953))
+* compute: fixed wrongly triggered recreation on changes of `enforce_on_key_configs` on `google_compute_security_policy` ([#5928](https://github.com/hashicorp/terraform-provider-google-beta/pull/5928))
+* monitoring: fixed an issue in `google_monitoring_monitored_project` where project numbers were not accepted for `name` ([#5955](https://github.com/hashicorp/terraform-provider-google-beta/pull/5955))
+
 
 ## 4.75.1 (July 27, 2023)
 
