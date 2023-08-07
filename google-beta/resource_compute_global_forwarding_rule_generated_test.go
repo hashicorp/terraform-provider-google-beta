@@ -50,7 +50,7 @@ func TestAccComputeGlobalForwardingRule_externalTcpProxyLbMigBackendExample(t *t
 				ResourceName:            "google_compute_global_forwarding_rule.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"network", "no_automate_dns_zone", "port_range", "target", "ip_address"},
+				ImportStateVerifyIgnore: []string{"network", "subnetwork", "no_automate_dns_zone", "port_range", "target", "ip_address"},
 			},
 		},
 	})
@@ -223,7 +223,7 @@ func TestAccComputeGlobalForwardingRule_externalHttpLbMigBackendCustomHeaderExam
 				ResourceName:            "google_compute_global_forwarding_rule.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"network", "no_automate_dns_zone", "port_range", "target", "ip_address"},
+				ImportStateVerifyIgnore: []string{"network", "subnetwork", "no_automate_dns_zone", "port_range", "target", "ip_address"},
 			},
 		},
 	})
@@ -408,7 +408,7 @@ func TestAccComputeGlobalForwardingRule_globalForwardingRuleHttpExample(t *testi
 				ResourceName:            "google_compute_global_forwarding_rule.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"network", "no_automate_dns_zone", "port_range", "target"},
+				ImportStateVerifyIgnore: []string{"network", "subnetwork", "no_automate_dns_zone", "port_range", "target"},
 			},
 		},
 	})
@@ -486,7 +486,7 @@ func TestAccComputeGlobalForwardingRule_globalForwardingRuleInternalExample(t *t
 				ResourceName:            "google_compute_global_forwarding_rule.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"network", "no_automate_dns_zone", "port_range", "target"},
+				ImportStateVerifyIgnore: []string{"network", "subnetwork", "no_automate_dns_zone", "port_range", "target"},
 			},
 		},
 	})
@@ -623,7 +623,7 @@ func TestAccComputeGlobalForwardingRule_globalForwardingRuleExternalManagedExamp
 				ResourceName:            "google_compute_global_forwarding_rule.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"network", "no_automate_dns_zone", "port_range", "target"},
+				ImportStateVerifyIgnore: []string{"network", "subnetwork", "no_automate_dns_zone", "port_range", "target"},
 			},
 		},
 	})
@@ -694,7 +694,7 @@ func TestAccComputeGlobalForwardingRule_globalForwardingRuleHybridExample(t *tes
 				ResourceName:            "google_compute_global_forwarding_rule.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"network", "no_automate_dns_zone", "port_range", "target"},
+				ImportStateVerifyIgnore: []string{"network", "subnetwork", "no_automate_dns_zone", "port_range", "target"},
 			},
 		},
 	})
@@ -835,6 +835,219 @@ resource "google_compute_global_forwarding_rule" "default" {
 `, context)
 }
 
+func TestAccComputeGlobalForwardingRule_globalInternalHttpLbWithMigBackendExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"random_suffix": acctest.RandString(t, 10),
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckComputeGlobalForwardingRuleDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeGlobalForwardingRule_globalInternalHttpLbWithMigBackendExample(context),
+			},
+			{
+				ResourceName:            "google_compute_global_forwarding_rule.google_compute_forwarding_rule",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"network", "subnetwork", "no_automate_dns_zone", "port_range", "target"},
+			},
+		},
+	})
+}
+
+func testAccComputeGlobalForwardingRule_globalInternalHttpLbWithMigBackendExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+# Global Internal HTTP load balancer with a managed instance group backend
+
+# VPC network
+resource "google_compute_network" "gilb_network" {
+  name                    = "tf-test-l7-gilb-network%{random_suffix}"
+  provider                = google-beta
+  auto_create_subnetworks = false
+}
+
+# proxy-only subnet
+resource "google_compute_subnetwork" "proxy_subnet" {
+  name          = "tf-test-l7-gilb-proxy-subnet%{random_suffix}"
+  provider      = google-beta
+  ip_cidr_range = "10.0.0.0/24"
+  region        = "europe-west1"
+  purpose       = "GLOBAL_MANAGED_PROXY"
+  role          = "ACTIVE"
+  network       = google_compute_network.gilb_network.id
+}
+
+# backend subnet
+resource "google_compute_subnetwork" "gilb_subnet" {
+  name          = "tf-test-l7-gilb-subnet%{random_suffix}"
+  provider      = google-beta
+  ip_cidr_range = "10.0.1.0/24"
+  region        = "europe-west1"
+  network       = google_compute_network.gilb_network.id
+}
+
+# forwarding rule
+resource "google_compute_global_forwarding_rule" "google_compute_forwarding_rule" {
+  name                  = "tf-test-l7-gilb-forwarding-rule%{random_suffix}"
+  provider              = google-beta
+  depends_on            = [google_compute_subnetwork.proxy_subnet]
+  ip_protocol           = "TCP"
+  load_balancing_scheme = "INTERNAL_MANAGED"
+  port_range            = "80"
+  target                = google_compute_target_http_proxy.default.id
+  network               = google_compute_network.gilb_network.id
+  subnetwork            = google_compute_subnetwork.gilb_subnet.id
+}
+
+# HTTP target proxy
+resource "google_compute_target_http_proxy" "default" {
+  name     = "tf-test-l7-gilb-target-http-proxy%{random_suffix}"
+  provider = google-beta
+  url_map  = google_compute_url_map.default.id
+}
+
+# URL map
+resource "google_compute_url_map" "default" {
+  name            = "tf-test-l7-gilb-url-map%{random_suffix}"
+  provider        = google-beta
+  default_service = google_compute_backend_service.default.id
+}
+
+# backend service
+resource "google_compute_backend_service" "default" {
+  name                  = "tf-test-l7-gilb-backend-subnet%{random_suffix}"
+  provider              = google-beta
+  protocol              = "HTTP"
+  load_balancing_scheme = "INTERNAL_MANAGED"
+  timeout_sec           = 10
+  health_checks         = [google_compute_health_check.default.id]
+  backend {
+    group           = google_compute_instance_group_manager.mig.instance_group
+    balancing_mode  = "UTILIZATION"
+    capacity_scaler = 1.0
+  }
+}
+
+# instance template
+resource "google_compute_instance_template" "instance_template" {
+  name         = "tf-test-l7-gilb-mig-template%{random_suffix}"
+  provider     = google-beta
+  machine_type = "e2-small"
+  tags         = ["http-server"]
+
+  network_interface {
+    network    = google_compute_network.gilb_network.id
+    subnetwork = google_compute_subnetwork.gilb_subnet.id
+    access_config {
+      # add external ip to fetch packages
+    }
+  }
+  disk {
+    source_image = "debian-cloud/debian-10"
+    auto_delete  = true
+    boot         = true
+  }
+
+  # install nginx and serve a simple web page
+  metadata = {
+    startup-script = <<-EOF1
+      #! /bin/bash
+      set -euo pipefail
+
+      export DEBIAN_FRONTEND=noninteractive
+      apt-get update
+      apt-get install -y nginx-light jq
+
+      NAME=$(curl -H "Metadata-Flavor: Google" "http://metadata.google.internal/computeMetadata/v1/instance/hostname")
+      IP=$(curl -H "Metadata-Flavor: Google" "http://metadata.google.internal/computeMetadata/v1/instance/network-interfaces/0/ip")
+      METADATA=$(curl -f -H "Metadata-Flavor: Google" "http://metadata.google.internal/computeMetadata/v1/instance/attributes/?recursive=True" | jq 'del(.["startup-script"])')
+
+      cat <<EOF > /var/www/html/index.html
+      <pre>
+      Name: $NAME
+      IP: $IP
+      Metadata: $METADATA
+      </pre>
+      EOF
+    EOF1
+  }
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+# health check
+resource "google_compute_health_check" "default" {
+  name     = "tf-test-l7-gilb-hc%{random_suffix}"
+  provider = google-beta
+  http_health_check {
+    port_specification = "USE_SERVING_PORT"
+  }
+}
+
+# MIG
+resource "google_compute_instance_group_manager" "mig" {
+  name     = "tf-test-l7-gilb-mig1%{random_suffix}"
+  provider = google-beta
+  zone = "europe-west1-b"
+  version {
+    instance_template = google_compute_instance_template.instance_template.id
+    name              = "primary"
+  }
+  base_instance_name = "vm"
+  target_size        = 2
+}
+
+# allow all access from IAP and health check ranges
+resource "google_compute_firewall" "fw-iap" {
+  name          = "tf-test-l7-gilb-fw-allow-iap-hc%{random_suffix}"
+  provider      = google-beta
+  direction     = "INGRESS"
+  network       = google_compute_network.gilb_network.id
+  source_ranges = ["130.211.0.0/22", "35.191.0.0/16", "35.235.240.0/20"]
+  allow {
+    protocol = "tcp"
+  }
+}
+
+# allow http from proxy subnet to backends
+resource "google_compute_firewall" "fw-gilb-to-backends" {
+  name          = "tf-test-l7-gilb-fw-allow-gilb-to-backends%{random_suffix}"
+  provider      = google-beta
+  direction     = "INGRESS"
+  network       = google_compute_network.gilb_network.id
+  source_ranges = ["10.0.0.0/24"]
+  target_tags   = ["http-server"]
+  allow {
+    protocol = "tcp"
+    ports    = ["80", "443", "8080"]
+  }
+}
+
+# test instance
+resource "google_compute_instance" "vm-test" {
+  name         = "tf-test-l7-gilb-test-vm%{random_suffix}"
+  provider     = google-beta
+  zone         = "europe-west1-b"
+  machine_type = "e2-small"
+  network_interface {
+    network    = google_compute_network.gilb_network.id
+    subnetwork = google_compute_subnetwork.gilb_subnet.id
+  }
+  boot_disk {
+    initialize_params {
+      image = "debian-cloud/debian-10"
+    }
+  }
+}
+`, context)
+}
+
 func TestAccComputeGlobalForwardingRule_privateServiceConnectGoogleApisExample(t *testing.T) {
 	t.Parallel()
 
@@ -855,7 +1068,7 @@ func TestAccComputeGlobalForwardingRule_privateServiceConnectGoogleApisExample(t
 				ResourceName:            "google_compute_global_forwarding_rule.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"network", "no_automate_dns_zone", "ip_address"},
+				ImportStateVerifyIgnore: []string{"network", "subnetwork", "no_automate_dns_zone", "ip_address"},
 			},
 		},
 	})
@@ -922,7 +1135,7 @@ func TestAccComputeGlobalForwardingRule_privateServiceConnectGoogleApisNoAutomat
 				ResourceName:            "google_compute_global_forwarding_rule.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"network", "no_automate_dns_zone", "ip_address"},
+				ImportStateVerifyIgnore: []string{"network", "subnetwork", "no_automate_dns_zone", "ip_address"},
 			},
 		},
 	})
