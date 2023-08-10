@@ -189,6 +189,14 @@ func TestAccComputeSecurityPolicy_withAdvancedOptionsConfig(t *testing.T) {
 				ImportStateVerify: true,
 			},
 			{
+				Config: testAccComputeSecurityPolicy_withAdvancedOptionsConfig_update(spName),
+			},
+			{
+				ResourceName:      "google_compute_security_policy.policy",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+			{
 				Config: testAccComputeSecurityPolicy_basic(spName),
 			},
 			{
@@ -1069,6 +1077,36 @@ resource "google_compute_security_policy" "policy" {
       ]
     }
     log_level    = "VERBOSE"
+        user_ip_request_headers = [
+      "True-Client-IP", 
+      "x-custom-ip"
+    ]
+    
+  }
+}
+`, spName)
+}
+
+func testAccComputeSecurityPolicy_withAdvancedOptionsConfig_update(spName string) string {
+	return fmt.Sprintf(`
+resource "google_compute_security_policy" "policy" {
+  name        = "%s"
+  description = "updated description changing the user_ip"
+
+  advanced_options_config {
+    json_parsing = "STANDARD"
+    json_custom_config {
+      content_types = [
+        "application/json",
+        "application/vnd.api+json",
+        "application/vnd.collection+json",
+        "application/vnd.hyper+json"
+      ]
+    }
+    log_level    = "VERBOSE"
+	user_ip_request_headers = [
+	  "x-custom-ip",
+	]
   }
 }
 `, spName)
