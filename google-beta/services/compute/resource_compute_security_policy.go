@@ -454,6 +454,12 @@ func ResourceComputeSecurityPolicy() *schema.Resource {
 							ValidateFunc: validation.StringInSlice([]string{"NORMAL", "VERBOSE"}, false),
 							Description:  `Logging level. Supported values include: "NORMAL", "VERBOSE".`,
 						},
+						"user_ip_request_headers": {
+							Type:        schema.TypeSet,
+							Optional:    true,
+							Description: `An optional list of case-insensitive request header names to use for resolving the callers client IP address.`,
+							Elem:        &schema.Schema{Type: schema.TypeString},
+						},
 					},
 				},
 			},
@@ -1110,9 +1116,10 @@ func expandSecurityPolicyAdvancedOptionsConfig(configured []interface{}) *comput
 
 	data := configured[0].(map[string]interface{})
 	return &compute.SecurityPolicyAdvancedOptionsConfig{
-		JsonParsing:      data["json_parsing"].(string),
-		JsonCustomConfig: expandSecurityPolicyAdvancedOptionsConfigJsonCustomConfig(data["json_custom_config"].([]interface{})),
-		LogLevel:         data["log_level"].(string),
+		JsonParsing:          data["json_parsing"].(string),
+		JsonCustomConfig:     expandSecurityPolicyAdvancedOptionsConfigJsonCustomConfig(data["json_custom_config"].([]interface{})),
+		LogLevel:             data["log_level"].(string),
+		UserIpRequestHeaders: tpgresource.ConvertStringArr(data["user_ip_request_headers"].(*schema.Set).List()),
 	}
 }
 
@@ -1122,9 +1129,10 @@ func flattenSecurityPolicyAdvancedOptionsConfig(conf *compute.SecurityPolicyAdva
 	}
 
 	data := map[string]interface{}{
-		"json_parsing":       conf.JsonParsing,
-		"json_custom_config": flattenSecurityPolicyAdvancedOptionsConfigJsonCustomConfig(conf.JsonCustomConfig),
-		"log_level":          conf.LogLevel,
+		"json_parsing":            conf.JsonParsing,
+		"json_custom_config":      flattenSecurityPolicyAdvancedOptionsConfigJsonCustomConfig(conf.JsonCustomConfig),
+		"log_level":               conf.LogLevel,
+		"user_ip_request_headers": schema.NewSet(schema.HashString, tpgresource.ConvertStringArrToInterface(conf.UserIpRequestHeaders)),
 	}
 
 	return []map[string]interface{}{data}
