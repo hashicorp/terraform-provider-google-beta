@@ -217,6 +217,7 @@ type Config struct {
 	ComputeBasePath                  string
 	ContainerAnalysisBasePath        string
 	ContainerAttachedBasePath        string
+	CoreBillingBasePath              string
 	DatabaseMigrationServiceBasePath string
 	DataCatalogBasePath              string
 	DataformBasePath                 string
@@ -346,6 +347,7 @@ const CloudTasksBasePathKey = "CloudTasks"
 const ComputeBasePathKey = "Compute"
 const ContainerAnalysisBasePathKey = "ContainerAnalysis"
 const ContainerAttachedBasePathKey = "ContainerAttached"
+const CoreBillingBasePathKey = "CoreBilling"
 const DatabaseMigrationServiceBasePathKey = "DatabaseMigrationService"
 const DataCatalogBasePathKey = "DataCatalog"
 const DataformBasePathKey = "Dataform"
@@ -469,6 +471,7 @@ var DefaultBasePaths = map[string]string{
 	ComputeBasePathKey:                  "https://compute.googleapis.com/compute/beta/",
 	ContainerAnalysisBasePathKey:        "https://containeranalysis.googleapis.com/v1beta1/",
 	ContainerAttachedBasePathKey:        "https://{{location}}-gkemulticloud.googleapis.com/v1/",
+	CoreBillingBasePathKey:              "https://cloudbilling.googleapis.com/v1/",
 	DatabaseMigrationServiceBasePathKey: "https://datamigration.googleapis.com/v1/",
 	DataCatalogBasePathKey:              "https://datacatalog.googleapis.com/v1beta1/",
 	DataformBasePathKey:                 "https://dataform.googleapis.com/v1beta1/",
@@ -790,6 +793,11 @@ func HandleSDKDefaults(d *schema.ResourceData) error {
 		d.Set("container_attached_custom_endpoint", MultiEnvDefault([]string{
 			"GOOGLE_CONTAINER_ATTACHED_CUSTOM_ENDPOINT",
 		}, DefaultBasePaths[ContainerAttachedBasePathKey]))
+	}
+	if d.Get("core_billing_custom_endpoint") == "" {
+		d.Set("core_billing_custom_endpoint", MultiEnvDefault([]string{
+			"GOOGLE_CORE_BILLING_CUSTOM_ENDPOINT",
+		}, DefaultBasePaths[CoreBillingBasePathKey]))
 	}
 	if d.Get("database_migration_service_custom_endpoint") == "" {
 		d.Set("database_migration_service_custom_endpoint", MultiEnvDefault([]string{
@@ -2055,6 +2063,7 @@ func ConfigureBasePaths(c *Config) {
 	c.ComputeBasePath = DefaultBasePaths[ComputeBasePathKey]
 	c.ContainerAnalysisBasePath = DefaultBasePaths[ContainerAnalysisBasePathKey]
 	c.ContainerAttachedBasePath = DefaultBasePaths[ContainerAttachedBasePathKey]
+	c.CoreBillingBasePath = DefaultBasePaths[CoreBillingBasePathKey]
 	c.DatabaseMigrationServiceBasePath = DefaultBasePaths[DatabaseMigrationServiceBasePathKey]
 	c.DataCatalogBasePath = DefaultBasePaths[DataCatalogBasePathKey]
 	c.DataformBasePath = DefaultBasePaths[DataformBasePathKey]

@@ -57,6 +57,7 @@ func configureTestBasePaths(c *transport_tpg.Config, url string) {
 	c.ComputeBasePath = url
 	c.ContainerAnalysisBasePath = url
 	c.ContainerAttachedBasePath = url
+	c.CoreBillingBasePath = url
 	c.DatabaseMigrationServiceBasePath = url
 	c.DataCatalogBasePath = url
 	c.DataformBasePath = url
