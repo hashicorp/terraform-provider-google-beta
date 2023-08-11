@@ -31,6 +31,7 @@ func configureTestBasePaths(c *transport_tpg.Config, url string) {
 	c.ApigeeBasePath = url
 	c.AppEngineBasePath = url
 	c.ArtifactRegistryBasePath = url
+	c.BackupDRBasePath = url
 	c.BeyondcorpBasePath = url
 	c.BigQueryBasePath = url
 	c.BigqueryAnalyticsHubBasePath = url
