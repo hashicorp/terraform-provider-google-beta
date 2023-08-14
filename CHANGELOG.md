@@ -12,7 +12,7 @@ IMPROVEMENTS:
 * cloudfunctionsv2: added support for GCF Gen2 CMEK ([#6004](https://github.com/hashicorp/terraform-provider-google-beta/pull/6004))
 * cloudidentity: added field `type` to `google_cloud_identity_group_memberships` ([#6013](https://github.com/hashicorp/terraform-provider-google-beta/pull/6013))
 * compute: added `subnetwork` field to the resource `google_compute_global_forwarding_rule` ([#6026](https://github.com/hashicorp/terraform-provider-google-beta/pull/6026))
-* compute: added support for INTERNAL_MANAGED to the field  `load_balancing_scheme` in the resource `google_compute_backend_service` ([#6026](https://github.com/hashicorp/terraform-provider-google-beta/pull/6026))
+* compute: added support for `INTERNAL_MANAGED` to the field  `load_balancing_scheme` in the resource `google_compute_backend_service` ([#6026](https://github.com/hashicorp/terraform-provider-google-beta/pull/6026))
 * compute: added support for INTERNAL_MANAGED to the field  `load_balancing_scheme` in the resource `google_compute_global_forwarding_rule` ([#6026](https://github.com/hashicorp/terraform-provider-google-beta/pull/6026))
 * compute: added support for `ip_version` to `google_compute_forwarding_rule` ([#6006](https://github.com/hashicorp/terraform-provider-google-beta/pull/6006))
 * container: marked `master_ipv4_cidr_block` as not required when `private_endpoint_subnetwork` is provided for `google_container_cluster` ([#6025](https://github.com/hashicorp/terraform-provider-google-beta/pull/6025))
