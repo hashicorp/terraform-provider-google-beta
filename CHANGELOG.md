@@ -18,7 +18,7 @@ IMPROVEMENTS:
 * container: marked `master_ipv4_cidr_block` as not required when `private_endpoint_subnetwork` is provided for `google_container_cluster` ([#6025](https://github.com/hashicorp/terraform-provider-google-beta/pull/6025))
 * container: added support for `advanced_datapath_observability_config` to `google_container_cluster` ([#6027](https://github.com/hashicorp/terraform-provider-google-beta/pull/6027))
 * healthcare: added `send_previous_resource_on_delete` field to `notification_configs` of `google_healthcare_fhir_store` ([#5999](https://github.com/hashicorp/terraform-provider-google-beta/pull/5999))
-* pubsub: added `CloudStorageConfig` field to `google_pubsub_subscription` resource ([#6024](https://github.com/hashicorp/terraform-provider-google-beta/pull/6024))
+* pubsub: added `cloud_storage_config` field to `google_pubsub_subscription` resource ([#6024](https://github.com/hashicorp/terraform-provider-google-beta/pull/6024))
 * secretmanager: added `annotations` field to `google_secret_manager_secret` resource ([#6007](https://github.com/hashicorp/terraform-provider-google-beta/pull/6007))
 * workstations: added `private_cluster_config.allowed_projects` arguments to `google_workstations_workstation_cluster` ([#6021](https://github.com/hashicorp/terraform-provider-google-beta/pull/6021))
 
