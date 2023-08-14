@@ -6,6 +6,7 @@ FEATURES:
 * **New Resource:** `google_network_connectivity_service_connection_policy` ([#6000](https://github.com/hashicorp/terraform-provider-google-beta/pull/6000))
 
 IMPROVEMENTS:
+* alloydb: added `continuous_backup_config` and `continuous_backup_info` fields to `cluster` resource ([#5996](https://github.com/hashicorp/terraform-provider-google-beta/pull/5996))
 * bigquery: added `external_data_configuration.file_set_spec_type` to `google_bigquery_table` ([#6017](https://github.com/hashicorp/terraform-provider-google-beta/pull/6017))
 * bigquery: added `max_staleness` to `google_bigquery_table` ([#6010](https://github.com/hashicorp/terraform-provider-google-beta/pull/6010))
 * billingbudget: added `resource_ancestors` field to `google_billing_budget` resource ([#6008](https://github.com/hashicorp/terraform-provider-google-beta/pull/6008))
