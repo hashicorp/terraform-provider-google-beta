@@ -102,10 +102,13 @@ used for deciding which type of endpoint this address can be used after
 the external IPv6 address reservation. Possible values: ["VM", "NETLB"]`,
 			},
 			"labels": {
-				Type:        schema.TypeMap,
-				Optional:    true,
-				Description: `Labels to apply to this address.  A list of key->value pairs.`,
-				Elem:        &schema.Schema{Type: schema.TypeString},
+				Type:     schema.TypeMap,
+				Optional: true,
+				Description: `Labels to apply to this address.  A list of key->value pairs.
+
+**Note**: This field is non-authoritative, and will only manage the labels present in your configuration.
+Please refer to the field 'effective_labels' for all of the labels present on the resource.`,
+				Elem: &schema.Schema{Type: schema.TypeString},
 			},
 			"network": {
 				Type:             schema.TypeString,
@@ -183,6 +186,12 @@ GCE_ENDPOINT/DNS_RESOLVER purposes.`,
 				Type:        schema.TypeString,
 				Computed:    true,
 				Description: `Creation timestamp in RFC3339 text format.`,
+			},
+			"effective_labels": {
+				Type:        schema.TypeMap,
+				Computed:    true,
+				Description: `All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.`,
+				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
 			"label_fingerprint": {
 				Type:     schema.TypeString,
@@ -396,6 +405,10 @@ func resourceComputeAddressCreate(d *schema.ResourceData, meta interface{}) erro
 			return err
 		}
 
+		// Set back the labels field, as it is needed to decide the value of "labels" in the state in the read function.
+		if err := d.Set("labels", v); err != nil {
+			return fmt.Errorf("Error setting back labels: %s", err)
+		}
 	}
 
 	log.Printf("[DEBUG] Finished creating Address %q: %#v", d.Id(), res)
@@ -486,6 +499,9 @@ func resourceComputeAddressRead(d *schema.ResourceData, meta interface{}) error 
 		return fmt.Errorf("Error reading Address: %s", err)
 	}
 	if err := d.Set("ipv6_endpoint_type", flattenComputeAddressIpv6EndpointType(res["ipv6EndpointType"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Address: %s", err)
+	}
+	if err := d.Set("effective_labels", flattenComputeAddressEffectiveLabels(res["labels"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Address: %s", err)
 	}
 	if err := d.Set("region", flattenComputeAddressRegion(res["region"], d, config)); err != nil {
@@ -687,7 +703,18 @@ func flattenComputeAddressUsers(v interface{}, d *schema.ResourceData, config *t
 }
 
 func flattenComputeAddressLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
-	return v
+	if v == nil {
+		return v
+	}
+
+	transformed := make(map[string]interface{})
+	if l, ok := d.GetOkExists("labels"); ok {
+		for k := range l.(map[string]interface{}) {
+			transformed[k] = v.(map[string]interface{})[k]
+		}
+	}
+
+	return transformed
 }
 
 func flattenComputeAddressLabelFingerprint(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -723,6 +750,10 @@ func flattenComputeAddressIpVersion(v interface{}, d *schema.ResourceData, confi
 }
 
 func flattenComputeAddressIpv6EndpointType(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenComputeAddressEffectiveLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
