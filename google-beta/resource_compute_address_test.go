@@ -20,11 +20,10 @@ func TestAccComputeAddress_networkTier(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testAccComputeAddress_networkTier(acctest.RandString(t, 10)),
-			},
-			{
-				ResourceName:      "google_compute_address.foobar",
-				ImportState:       true,
-				ImportStateVerify: true,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckNoResourceAttr("google_compute_address.foobar", "labels.%"),
+					resource.TestCheckNoResourceAttr("google_compute_address.foobar", "effective_labels.%"),
+				),
 			},
 		},
 	})
@@ -58,6 +57,147 @@ func TestAccComputeAddress_internal(t *testing.T) {
 			},
 		},
 	})
+}
+
+func TestAccComputeAddress_networkTier_withLabels(t *testing.T) {
+	t.Parallel()
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckComputeAddressDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeAddress_networkTier(acctest.RandString(t, 10)),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckNoResourceAttr("google_compute_address.foobar", "labels.%"),
+					resource.TestCheckNoResourceAttr("google_compute_address.foobar", "effective_labels.%"),
+				),
+			},
+			{
+				ResourceName:      "google_compute_address.foobar",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+			{
+				Config: testAccComputeAddress_networkTier_withLabels(acctest.RandString(t, 10)),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("google_compute_address.foobar", "labels.%", "2"),
+					resource.TestCheckResourceAttr("google_compute_address.foobar", "labels.env", "foo"),
+					resource.TestCheckResourceAttr("google_compute_address.foobar", "labels.default_expiration_ms", "3600000"),
+
+					resource.TestCheckResourceAttr("google_compute_address.foobar", "effective_labels.%", "2"),
+					resource.TestCheckResourceAttr("google_compute_address.foobar", "effective_labels.env", "foo"),
+					resource.TestCheckResourceAttr("google_compute_address.foobar", "effective_labels.default_expiration_ms", "3600000"),
+				),
+			},
+			{
+				ResourceName:      "google_compute_address.foobar",
+				ImportState:       true,
+				ImportStateVerify: true,
+				// The labels field in the state is decided by the configuration.
+				// During importing, the configuration is unavailable, so the labels field in the state after importing is empty.
+				ImportStateVerifyIgnore: []string{"labels"},
+			},
+			{
+				Config: testAccComputeAddress_networkTier_withLabelsUpdate(acctest.RandString(t, 10)),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("google_compute_address.foobar", "labels.%", "2"),
+					resource.TestCheckResourceAttr("google_compute_address.foobar", "labels.env", "bar"),
+					resource.TestCheckResourceAttr("google_compute_address.foobar", "labels.default_expiration_ms", "7200000"),
+
+					resource.TestCheckResourceAttr("google_compute_address.foobar", "effective_labels.%", "2"),
+					resource.TestCheckResourceAttr("google_compute_address.foobar", "effective_labels.env", "bar"),
+					resource.TestCheckResourceAttr("google_compute_address.foobar", "effective_labels.default_expiration_ms", "7200000"),
+				),
+			},
+			{
+				ResourceName:            "google_compute_address.foobar",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"labels"},
+			},
+			{
+				Config: testAccComputeAddress_networkTier(acctest.RandString(t, 10)),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckNoResourceAttr("google_compute_address.foobar", "labels.%"),
+					resource.TestCheckNoResourceAttr("google_compute_address.foobar", "effective_labels.%"),
+				),
+			},
+			{
+				ResourceName:      "google_compute_address.foobar",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
+func TestAccComputeAddress_networkTier_withProvider5(t *testing.T) {
+	acctest.SkipIfVcr(t)
+	t.Parallel()
+
+	oldVersion := map[string]resource.ExternalProvider{
+		"google": {
+			VersionConstraint: "4.75.0", // a version that doesn't separate user defined labels and system labels
+			Source:            "registry.terraform.io/hashicorp/google",
+		},
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck: func() { acctest.AccTestPreCheck(t) },
+		Steps: []resource.TestStep{
+			{
+				Config:            testAccComputeAddress_networkTier(acctest.RandString(t, 10)),
+				ExternalProviders: oldVersion,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckNoResourceAttr("google_compute_address.foobar", "labels.%"),
+					resource.TestCheckNoResourceAttr("google_compute_address.foobar", "effective_labels.%"),
+				),
+			},
+			{
+				Config:                   testAccComputeAddress_networkTier_withLabels(acctest.RandString(t, 10)),
+				ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("google_compute_address.foobar", "labels.%", "2"),
+					resource.TestCheckResourceAttr("google_compute_address.foobar", "labels.env", "foo"),
+					resource.TestCheckResourceAttr("google_compute_address.foobar", "labels.default_expiration_ms", "3600000"),
+
+					resource.TestCheckResourceAttr("google_compute_address.foobar", "effective_labels.%", "2"),
+					resource.TestCheckResourceAttr("google_compute_address.foobar", "effective_labels.env", "foo"),
+					resource.TestCheckResourceAttr("google_compute_address.foobar", "effective_labels.default_expiration_ms", "3600000"),
+				),
+			},
+		},
+	})
+}
+
+func testAccComputeAddress_networkTier_withLabels(i string) string {
+	return fmt.Sprintf(`
+resource "google_compute_address" "foobar" {
+  name         = "tf-test-address-%s"
+  network_tier = "STANDARD"
+
+  labels = {
+	env                   = "foo"
+    default_expiration_ms = 3600000
+  }
+}
+`, i)
+}
+
+func testAccComputeAddress_networkTier_withLabelsUpdate(i string) string {
+	return fmt.Sprintf(`
+resource "google_compute_address" "foobar" {
+  name         = "tf-test-address-%s"
+  network_tier = "STANDARD"
+
+  labels = {
+	env                   = "bar"
+    default_expiration_ms = 7200000
+  }
+}
+`, i)
 }
 
 func testAccComputeAddress_internal(i string) string {

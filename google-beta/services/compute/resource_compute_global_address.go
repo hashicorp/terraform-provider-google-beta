@@ -318,6 +318,10 @@ func resourceComputeGlobalAddressCreate(d *schema.ResourceData, meta interface{}
 			return err
 		}
 
+		// Set back the labels field, as it is needed to decide the value of "labels" in the state in the read function.
+		if err := d.Set("labels", v); err != nil {
+			return fmt.Errorf("Error setting back labels: %s", err)
+		}
 	}
 
 	log.Printf("[DEBUG] Finished creating GlobalAddress %q: %#v", d.Id(), res)
