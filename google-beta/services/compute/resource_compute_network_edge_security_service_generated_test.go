@@ -63,7 +63,7 @@ resource "google_compute_network_edge_security_service" "default" {
   provider     = google-beta  
 
   name         = "tf-test-my-edge-security-service%{random_suffix}"
-  region       = "asia-southeast1"
+  region       = "us-east1"
   description  = "My basic resource"
 }
 `, context)
