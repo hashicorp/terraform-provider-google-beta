@@ -108,6 +108,57 @@ resource "google_compute_region_security_policy" "region-sec-policy-ddos-protect
 `, context)
 }
 
+func TestAccComputeRegionSecurityPolicy_regionSecurityPolicyWithUserDefinedFieldsExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"random_suffix": acctest.RandString(t, 10),
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckComputeRegionSecurityPolicyDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeRegionSecurityPolicy_regionSecurityPolicyWithUserDefinedFieldsExample(context),
+			},
+			{
+				ResourceName:            "google_compute_region_security_policy.region-sec-policy-user-defined-fields",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"region"},
+			},
+		},
+	})
+}
+
+func testAccComputeRegionSecurityPolicy_regionSecurityPolicyWithUserDefinedFieldsExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_compute_region_security_policy" "region-sec-policy-user-defined-fields" {
+  provider    = google-beta  
+
+  name        = "tf-test-my-sec-policy-user-defined-fields%{random_suffix}"
+  description = "with user defined fields"
+  type        = "CLOUD_ARMOR_NETWORK"
+  user_defined_fields {
+    name = "SIG1_AT_0"
+    base = "UDP"
+    offset = 8
+    size = 2
+    mask = "0x8F00"
+  }
+  user_defined_fields {
+    name = "SIG2_AT_8"
+    base = "UDP"
+    offset = 16
+    size = 4
+    mask = "0xFFFFFFFF"
+  }
+}
+`, context)
+}
+
 func testAccCheckComputeRegionSecurityPolicyDestroyProducer(t *testing.T) func(s *terraform.State) error {
 	return func(s *terraform.State) error {
 		for name, rs := range s.RootModule().Resources {
