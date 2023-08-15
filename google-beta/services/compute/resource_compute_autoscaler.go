@@ -197,6 +197,7 @@ one TimeSeries for the autoscaled group or for each of the instances
 (if you are using gce_instance resource type). If multiple
 TimeSeries are returned upon the query execution, the autoscaler
 will sum their respective values to obtain its scaling value.`,
+										Default: "resource.type = gce_instance",
 									},
 									"single_instance_assignment": {
 										Type:     schema.TypeFloat,

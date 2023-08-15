@@ -1,0 +1,3 @@
+```release-note:bug
+compute: added default value to `metric.filter` in the resource `google_compute_autoscaler` (beta)
+```
