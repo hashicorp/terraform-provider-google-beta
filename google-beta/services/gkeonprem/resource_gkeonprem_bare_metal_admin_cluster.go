@@ -1181,7 +1181,7 @@ func resourceGkeonpremBareMetalAdminClusterDelete(d *schema.ResourceData, meta i
 	}
 	billingProject = project
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{GkeonpremBasePath}}projects/{{project}}/locations/{{location}}/bareMetalAdminClusters/{{name}}:unenroll")
+	url, err := tpgresource.ReplaceVars(d, config, "{{GkeonpremBasePath}}projects/{{project}}/locations/{{location}}/bareMetalAdminClusters/{{name}}:unenroll?ignore_errors=true")
 	if err != nil {
 		return err
 	}
