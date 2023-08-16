@@ -44,6 +44,10 @@ func ResourceFirebaseProjectLocation() *schema.Resource {
 			Delete: schema.DefaultTimeout(20 * time.Minute),
 		},
 
+		DeprecationMessage: "Instead of using `google_firebase_project_location`, explicitly configure " +
+			"`google_app_engine_application.location_id` and `google_firestore_database.location_id`" +
+			"instead",
+
 		Schema: map[string]*schema.Schema{
 			"location_id": {
 				Type:     schema.TypeString,
