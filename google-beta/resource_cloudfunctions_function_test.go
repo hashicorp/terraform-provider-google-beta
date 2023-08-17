@@ -85,7 +85,7 @@ func TestAccCloudFunctionsFunction_basic(t *testing.T) {
 				ResourceName:            funcResourceName,
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"build_environment_variables"},
+				ImportStateVerifyIgnore: []string{"build_environment_variables", "labels"},
 			},
 		},
 	})
@@ -122,7 +122,7 @@ func TestAccCloudFunctionsFunction_update(t *testing.T) {
 				ResourceName:            funcResourceName,
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"build_environment_variables"},
+				ImportStateVerifyIgnore: []string{"build_environment_variables", "labels"},
 			},
 			{
 				Config: testAccCloudFunctionsFunction_updated(functionName, bucketName, zipFileUpdatePath, random_suffix),
@@ -155,7 +155,7 @@ func TestAccCloudFunctionsFunction_update(t *testing.T) {
 				ResourceName:            funcResourceName,
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"build_environment_variables"},
+				ImportStateVerifyIgnore: []string{"build_environment_variables", "labels"},
 			},
 		},
 	})
@@ -426,7 +426,7 @@ func TestAccCloudFunctionsFunction_vpcConnector(t *testing.T) {
 				ResourceName:            funcResourceName,
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"build_environment_variables"},
+				ImportStateVerifyIgnore: []string{"build_environment_variables", "labels"},
 			},
 			{
 				Config: testAccCloudFunctionsFunction_vpcConnector(projectNumber, networkName, functionName, bucketName, zipFilePath, "10.20.0.0/28", vpcConnectorName+"-update"),
@@ -435,7 +435,7 @@ func TestAccCloudFunctionsFunction_vpcConnector(t *testing.T) {
 				ResourceName:            funcResourceName,
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"build_environment_variables"},
+				ImportStateVerifyIgnore: []string{"build_environment_variables", "labels"},
 			},
 		},
 	})
