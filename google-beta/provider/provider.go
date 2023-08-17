@@ -1086,9 +1086,9 @@ func DatasourceMapWithErrors() (map[string]*schema.Resource, error) {
 		})
 }
 
-// Generated resources: 366
+// Generated resources: 367
 // Generated IAM resources: 234
-// Total generated resources: 600
+// Total generated resources: 601
 func ResourceMap() map[string]*schema.Resource {
 	resourceMap, _ := ResourceMapWithErrors()
 	return resourceMap
@@ -1378,6 +1378,7 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_data_catalog_taxonomy_iam_policy":                        tpgiamresource.ResourceIamPolicy(datacatalog.DataCatalogTaxonomyIamSchema, datacatalog.DataCatalogTaxonomyIamUpdaterProducer, datacatalog.DataCatalogTaxonomyIdParseFunc),
 			"google_dataform_repository":                                     dataform.ResourceDataformRepository(),
 			"google_dataform_repository_release_config":                      dataform.ResourceDataformRepositoryReleaseConfig(),
+			"google_dataform_repository_workflow_config":                     dataform.ResourceDataformRepositoryWorkflowConfig(),
 			"google_data_fusion_instance":                                    datafusion.ResourceDataFusionInstance(),
 			"google_data_fusion_instance_iam_binding":                        tpgiamresource.ResourceIamBinding(datafusion.DataFusionInstanceIamSchema, datafusion.DataFusionInstanceIamUpdaterProducer, datafusion.DataFusionInstanceIdParseFunc),
 			"google_data_fusion_instance_iam_member":                         tpgiamresource.ResourceIamMember(datafusion.DataFusionInstanceIamSchema, datafusion.DataFusionInstanceIamUpdaterProducer, datafusion.DataFusionInstanceIdParseFunc),
