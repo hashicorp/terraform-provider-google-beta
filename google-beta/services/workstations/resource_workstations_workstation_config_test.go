@@ -253,6 +253,15 @@ func TestAccWorkstationsWorkstationConfig_update(t *testing.T) {
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"etag"},
 			},
+			{
+				Config: testAccWorkstationsWorkstationConfig_workstationConfigBasicExample(context),
+			},
+			{
+				ResourceName:            "google_workstations_workstation_cluster.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"etag"},
+			},
 		},
 	})
 }
@@ -293,14 +302,19 @@ resource "google_workstations_workstation_config" "default" {
 
   host {
     gce_instance {
-      machine_type                = "e2-standard-4"
-      boot_disk_size_gb           = 35
-      disable_public_ip_addresses = true
+      machine_type                 = "n1-standard-4"
+      boot_disk_size_gb            = 35
+      disable_public_ip_addresses  = true
+      enable_nested_virtualization = true
     }
   }
 
   labels = {
 	foo = "bar"
+  }
+
+  lifecycle {
+    prevent_destroy = true
   }
 }
 `, context)
