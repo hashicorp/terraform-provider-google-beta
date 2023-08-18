@@ -66,7 +66,6 @@ import (
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/firebasehosting"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/firebasestorage"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/firestore"
-	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/gameservices"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/gkebackup"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/gkehub"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/gkehub2"
