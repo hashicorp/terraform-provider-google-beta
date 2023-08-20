@@ -22,7 +22,7 @@ func TestAccIAM2DenyPolicy_iamDenyPolicyUpdate(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckIAM2DenyPolicyDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -66,7 +66,7 @@ func TestAccIAM2DenyPolicy_iamDenyPolicyFolderParent(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckIAM2DenyPolicyDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -94,7 +94,6 @@ func TestAccIAM2DenyPolicy_iamDenyPolicyFolderParent(t *testing.T) {
 func testAccIAM2DenyPolicy_iamDenyPolicyUpdate(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_project" "project" {
-  provider        = google-beta
   project_id      = "tf-test%{random_suffix}"
   name            = "tf-test%{random_suffix}"
   org_id          = "%{org_id}"
@@ -102,7 +101,6 @@ resource "google_project" "project" {
 }
 
 resource "google_iam_deny_policy" "example" {
-  provider = google-beta
   parent   = urlencode("cloudresourcemanager.googleapis.com/projects/${google_project.project.project_id}")
   name     = "tf-test-my-deny-policy%{random_suffix}"
   display_name = "A deny rule"
@@ -132,7 +130,6 @@ resource "google_iam_deny_policy" "example" {
 }
 
 resource "google_service_account" "test-account" {
-  provider = google-beta
   account_id   = "tf-test-deny-account%{random_suffix}"
   display_name = "Test Service Account"
   project      = google_project.project.project_id
@@ -143,7 +140,6 @@ resource "google_service_account" "test-account" {
 func testAccIAM2DenyPolicy_iamDenyPolicyUpdate2(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_project" "project" {
-  provider        = google-beta
   project_id      = "tf-test%{random_suffix}"
   name            = "tf-test%{random_suffix}"
   org_id          = "%{org_id}"
@@ -151,7 +147,6 @@ resource "google_project" "project" {
 }
 
 resource "google_iam_deny_policy" "example" {
-  provider = google-beta
   parent   = urlencode("cloudresourcemanager.googleapis.com/projects/${google_project.project.project_id}")
   name     = "tf-test-my-deny-policy%{random_suffix}"
   display_name = "A deny rule"
@@ -171,7 +166,6 @@ resource "google_iam_deny_policy" "example" {
 }
 
 resource "google_service_account" "test-account" {
-  provider = google-beta
   account_id   = "tf-test-deny-account%{random_suffix}"
   display_name = "Test Service Account"
   project      = google_project.project.project_id
@@ -182,7 +176,6 @@ resource "google_service_account" "test-account" {
 func testAccIAM2DenyPolicy_iamDenyPolicyFolder(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_iam_deny_policy" "example" {
-  provider = google-beta
   parent   = urlencode("cloudresourcemanager.googleapis.com/${google_folder.folder.id}")
   name     = "tf-test-my-deny-policy%{random_suffix}"
   display_name = "A deny rule"
@@ -200,7 +193,6 @@ resource "google_iam_deny_policy" "example" {
 }
 
 resource "google_folder" "folder" {
-  provider = google-beta
   display_name = "tf-test-%{random_suffix}"
   parent       = "organizations/%{org_id}"
 }
@@ -210,7 +202,6 @@ resource "google_folder" "folder" {
 func testAccIAM2DenyPolicy_iamDenyPolicyFolderUpdate(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_iam_deny_policy" "example" {
-  provider = google-beta
   parent   = urlencode("cloudresourcemanager.googleapis.com/${google_folder.folder.id}")
   name     = "tf-test-my-deny-policy%{random_suffix}"
   display_name = "A deny rule"
@@ -224,7 +215,6 @@ resource "google_iam_deny_policy" "example" {
 }
 
 resource "google_folder" "folder" {
-  provider = google-beta
   display_name = "tf-test-%{random_suffix}"
   parent       = "organizations/%{org_id}"
 }

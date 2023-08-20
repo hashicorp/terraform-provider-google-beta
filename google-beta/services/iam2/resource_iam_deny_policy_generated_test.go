@@ -42,7 +42,7 @@ func TestAccIAM2DenyPolicy_iamDenyPolicyBasicExample(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckIAM2DenyPolicyDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -61,7 +61,6 @@ func TestAccIAM2DenyPolicy_iamDenyPolicyBasicExample(t *testing.T) {
 func testAccIAM2DenyPolicy_iamDenyPolicyBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_project" "project" {
-  provider        = google-beta
   project_id      = "tf-test-my-project%{random_suffix}"
   name            = "tf-test-my-project%{random_suffix}"
   org_id          = "%{org_id}"
@@ -69,7 +68,6 @@ resource "google_project" "project" {
 }
 
 resource "google_iam_deny_policy" "example" {
-  provider = google-beta
   parent   = urlencode("cloudresourcemanager.googleapis.com/projects/${google_project.project.project_id}")
   name     = "tf-test-my-deny-policy%{random_suffix}"
   display_name = "A deny rule"
@@ -99,7 +97,6 @@ resource "google_iam_deny_policy" "example" {
 }
 
 resource "google_service_account" "test-account" {
-  provider = google-beta
   account_id   = "tf-test-svc-acc%{random_suffix}"
   display_name = "Test Service Account"
   project      = google_project.project.project_id
