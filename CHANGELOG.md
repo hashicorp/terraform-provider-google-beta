@@ -12,7 +12,7 @@ IMPROVEMENTS:
 * compute: added `advanced_options_config.user_ip_request_headers` field to `google_compute_security_policy` resource ([#6048](https://github.com/hashicorp/terraform-provider-google-beta/pull/6048))
 * compute: added `user_defined_fields` field to `google_compute_region_security_policy` resource ([#6086](https://github.com/hashicorp/terraform-provider-google-beta/pull/6086))
 * databasemigrationservice: added `edition` field to `google_database_migration_service_connection_profile` resource ([#6074](https://github.com/hashicorp/terraform-provider-google-beta/pull/6074))
-* dns: added `globalL7ilb` enum support to the `routing_policy.load_balancer_type` field in `google_dns_record_set` resource ([#6084](https://github.com/hashicorp/terraform-provider-google-beta/pull/6084))
+* dns: allowed `globalL7ilb` value for the `routing_policy.load_balancer_type` field in `google_dns_record_set` resource ([#6084](https://github.com/hashicorp/terraform-provider-google-beta/pull/6084))
 * gkeonprem: added `control_plane_node.vsphere_config.storage_policy_name` and `vcenter.storage_policy_name` fields to `google_gkeonprem_vmware_cluster` resource ([#6072](https://github.com/hashicorp/terraform-provider-google-beta/pull/6072))
 * healthcare: added `default_search_handling_strict` field to `google_healthcare_fhir_store` resource ([#6078](https://github.com/hashicorp/terraform-provider-google-beta/pull/6078))
 * metastore: added `scaling_config` field to `google_dataproc_metastore_service` resource ([#6052](https://github.com/hashicorp/terraform-provider-google-beta/pull/6052))
