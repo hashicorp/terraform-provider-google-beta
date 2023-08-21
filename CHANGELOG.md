@@ -20,10 +20,9 @@ IMPROVEMENTS:
 
 BUG FIXES:
 * alloydb: changed `backup_window`, `enabled` and `location` fields to default to API value when unset in `google_alloydb_cluster` resource ([#6036](https://github.com/hashicorp/terraform-provider-google-beta/pull/6036))
-* containeraws: added diff suppression for case changes of enum values in `google_container_aws_cluster` and `google_container_aws_node_pool` resources ([#6060](https://github.com/hashicorp/terraform-provider-google-beta/pull/6060))
+* containeraws: fixed permadiffs on `google_container_aws_cluster` and `google_container_aws_node_pool` resources ([#6060](https://github.com/hashicorp/terraform-provider-google-beta/pull/6060))
 * dataplex: fixed a bug when importing `google_dataplex_datascan` after running a job ([#6047](https://github.com/hashicorp/terraform-provider-google-beta/pull/6047))
 * dns: changed `private_visibility_config.networks` from `required` to requiring at least one of `private_visibility_config.networks` or `private_visibility_config.gke_clusters` in `google_dns_managed_zone` resource ([#6035](https://github.com/hashicorp/terraform-provider-google-beta/pull/6035))
-* eventarc: added required field `event_data_content_type` to `google_eventarc_trigger` resource ([#6032](https://github.com/hashicorp/terraform-provider-google-beta/pull/6032))
 
 ## 4.78.0 (August 15, 2023)
 
