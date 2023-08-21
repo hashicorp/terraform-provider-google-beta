@@ -19,7 +19,7 @@ IMPROVEMENTS:
 * secretmanager: added `version_aliases` field to `google_secret_manager_secret` resource ([#6058](https://github.com/hashicorp/terraform-provider-google-beta/pull/6058))
 
 BUG FIXES:
-* alloydb: changed `backup_window`, `enabled` and `location` fields to default to API value when unset in `google_alloydb_cluster` resource ([#6036](https://github.com/hashicorp/terraform-provider-google-beta/pull/6036))
+* alloydb: fixed a permadiff on `google_alloydb_cluster` when `backup_window`, `enabled` or `location` fields are unset ([#6036](https://github.com/hashicorp/terraform-provider-google-beta/pull/6036))
 * containeraws: fixed permadiffs on `google_container_aws_cluster` and `google_container_aws_node_pool` resources ([#6060](https://github.com/hashicorp/terraform-provider-google-beta/pull/6060))
 * dataplex: fixed a bug when importing `google_dataplex_datascan` after running a job ([#6047](https://github.com/hashicorp/terraform-provider-google-beta/pull/6047))
 * dns: changed `private_visibility_config.networks` from `required` to requiring at least one of `private_visibility_config.networks` or `private_visibility_config.gke_clusters` in `google_dns_managed_zone` resource ([#6035](https://github.com/hashicorp/terraform-provider-google-beta/pull/6035))
