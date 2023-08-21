@@ -108,6 +108,21 @@ resource "google_firebase_apple_app" "full" {
   bundle_id = "apple.app.12345%{random_suffix}"
   app_store_id = "%{app_store_id}"
   team_id = "%{team_id}"
+  api_key_id = google_apikeys_key.apple.uid
+}
+
+resource "google_apikeys_key" "apple" {
+  provider = google-beta
+
+  name         = "tf-test-api-key%{random_suffix}"
+  display_name = "%{display_name}"
+  project = "%{project_id}"
+  
+  restrictions {
+    ios_key_restrictions {
+      allowed_bundle_ids = ["apple.app.12345%{random_suffix}"]
+    }
+  }
 }
 `, context)
 }
