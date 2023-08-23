@@ -160,7 +160,8 @@ type ProviderModel struct {
 	EventarcCustomEndpoint             types.String `tfsdk:"eventarc_custom_endpoint"`
 	FirebaserulesCustomEndpoint        types.String `tfsdk:"firebaserules_custom_endpoint"`
 	RecaptchaEnterpriseCustomEndpoint  types.String `tfsdk:"recaptcha_enterprise_custom_endpoint"`
-	GkehubFeatureCustomEndpoint        types.String `tfsdk:"gkehub_feature_custom_endpoint"`
+
+	GkehubFeatureCustomEndpoint types.String `tfsdk:"gkehub_feature_custom_endpoint"`
 }
 
 type ProviderBatching struct {

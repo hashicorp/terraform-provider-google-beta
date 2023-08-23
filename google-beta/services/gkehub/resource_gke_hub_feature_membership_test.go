@@ -32,7 +32,7 @@ func TestAccGKEHubFeatureMembership_gkehubFeatureAcmUpdate(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckGKEHubFeatureDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -99,7 +99,6 @@ resource "google_gke_hub_feature" "feature" {
   labels = {
     foo = "bar"
   }
-  provider = google-beta
   depends_on = [google_project_service.mci, google_project_service.container, google_project_service.container, google_project_service.gkehub]
 }
 
@@ -118,7 +117,6 @@ resource "google_gke_hub_feature_membership" "feature_member_1" {
       }
     }
   }
-  provider = google-beta
 }
 
 resource "google_gke_hub_feature_membership" "feature_member_2" {
@@ -136,7 +134,6 @@ resource "google_gke_hub_feature_membership" "feature_member_2" {
       }
     }
   }
-  provider = google-beta
 }
 `, context)
 }
@@ -151,7 +148,6 @@ resource "google_gke_hub_feature" "feature" {
   labels = {
     foo = "changed"
   }
-  provider = google-beta
   depends_on = [google_project_service.mci, google_project_service.container, google_project_service.container, google_project_service.gkehub]
 }
 
@@ -170,7 +166,6 @@ resource "google_gke_hub_feature_membership" "feature_member_1" {
       }
     }
   }
-  provider = google-beta
 }
 
 resource "google_gke_hub_feature_membership" "feature_member_2" {
@@ -194,7 +189,6 @@ resource "google_gke_hub_feature_membership" "feature_member_2" {
       template_library_installed = true
     }
   }
-  provider = google-beta
 }
 `, context)
 }
@@ -209,7 +203,6 @@ resource "google_gke_hub_feature" "feature" {
   labels = {
     foo = "changed"
   }
-  provider = google-beta
   depends_on = [google_project_service.mci, google_project_service.container, google_project_service.container, google_project_service.gkehub]
 }
 
@@ -239,7 +232,6 @@ resource "google_gke_hub_feature_membership" "feature_member_2" {
       enabled = true
     }
   }
-  provider = google-beta
 }
 
 resource "google_gke_hub_feature_membership" "feature_member_3" {
@@ -268,7 +260,6 @@ resource "google_gke_hub_feature_membership" "feature_member_3" {
       enabled = false
     }
   }
-  provider = google-beta
 }
 
 resource "google_gke_hub_feature_membership" "feature_member_4" {
@@ -288,7 +279,6 @@ resource "google_gke_hub_feature_membership" "feature_member_4" {
       }
     }
   }
-  provider = google-beta
 }
 
 
@@ -306,7 +296,6 @@ resource "google_gke_hub_feature" "feature" {
   labels = {
     foo = "changed"
   }
-  provider = google-beta
   depends_on = [google_project_service.mci, google_project_service.container, google_project_service.container, google_project_service.gkehub]
 }
 
@@ -324,7 +313,6 @@ resource "google_gke_hub_feature_membership" "feature_member_3" {
       template_library_installed = true
     }
   }
-  provider = google-beta
 }
 `, context)
 }
@@ -342,7 +330,7 @@ func TestAccGKEHubFeatureMembership_gkehubFeatureAcmAllFields(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckGKEHubFeatureDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -400,7 +388,6 @@ resource "google_container_cluster" "primary" {
   name               = "tf-test-cl%{random_suffix}"
   location           = "us-central1-a"
   initial_node_count = 1
-  provider = google-beta
   depends_on = [google_project_service.mci, google_project_service.container, google_project_service.container, google_project_service.gkehub]
 }
 
@@ -413,7 +400,6 @@ resource "google_gke_hub_membership" "membership" {
     }
   }
   description = "test resource."
-  provider = google-beta
 }
 
 resource "google_gke_hub_feature" "feature" {
@@ -424,7 +410,6 @@ resource "google_gke_hub_feature" "feature" {
   labels = {
     foo = "bar"
   }
-  provider = google-beta
   depends_on = [google_project_service.mci, google_project_service.container, google_project_service.container, google_project_service.gkehub]
 }
 
@@ -455,7 +440,6 @@ resource "google_gke_hub_feature_membership" "feature_member" {
       log_denies_enabled = true
     }
   }
-  provider = google-beta
 }
 `, context)
 }
@@ -467,7 +451,6 @@ resource "google_container_cluster" "primary" {
   name               = "tf-test-cl%{random_suffix}"
   location           = "us-central1-a"
   initial_node_count = 1
-  provider = google-beta
   depends_on = [google_project_service.mci, google_project_service.container, google_project_service.container, google_project_service.gkehub]
 }
 
@@ -480,7 +463,6 @@ resource "google_gke_hub_membership" "membership" {
     }
   }
   description = "test resource."
-  provider = google-beta
 }
 
 resource "google_gke_hub_feature" "feature" {
@@ -491,7 +473,6 @@ resource "google_gke_hub_feature" "feature" {
   labels = {
     foo = "bar"
   }
-  provider = google-beta
   depends_on = [google_project_service.mci, google_project_service.container, google_project_service.container, google_project_service.gkehub]
 }
 
@@ -523,7 +504,6 @@ resource "google_gke_hub_feature_membership" "feature_member" {
       log_denies_enabled = true
     }
   }
-  provider = google-beta
 }
 `, context)
 }
@@ -535,7 +515,6 @@ resource "google_container_cluster" "primary" {
   name               = "tf-test-cl%{random_suffix}"
   location           = "us-central1-a"
   initial_node_count = 1
-  provider = google-beta
   depends_on = [google_project_service.mci, google_project_service.container, google_project_service.container, google_project_service.gkehub, google_project_service.acm]
 }
 
@@ -548,7 +527,6 @@ resource "google_gke_hub_membership" "membership" {
     }
   }
   description = "test resource."
-  provider = google-beta
 }
 
 resource "google_gke_hub_feature" "feature" {
@@ -559,14 +537,12 @@ resource "google_gke_hub_feature" "feature" {
   labels = {
     foo = "bar"
   }
-  provider = google-beta
   depends_on = [google_project_service.mci, google_project_service.container, google_project_service.container, google_project_service.gkehub]
 }
 
 resource "google_service_account" "feature_sa" {
   project = google_project.project.project_id
   account_id = "feature-sa"
-  provider = google-beta
 }
 
 resource "google_gke_hub_feature_membership" "feature_member" {
@@ -583,7 +559,6 @@ resource "google_gke_hub_feature_membership" "feature_member" {
       }
     }
   }
-  provider = google-beta
 }
 `, context)
 }
@@ -601,7 +576,7 @@ func TestAccGKEHubFeatureMembership_gkehubFeatureAcmOci(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckGKEHubFeatureDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -651,14 +626,12 @@ resource "google_gke_hub_feature" "feature" {
   labels = {
     foo = "bar"
   }
-  provider = google-beta
   depends_on = [google_project_service.container, google_project_service.gkehub]
 }
 
 resource "google_service_account" "feature_sa" {
   project = google_project.project.project_id
   account_id = "feature-sa"
-  provider = google-beta
 }
 
 resource "google_gke_hub_feature_membership" "feature_member" {
@@ -688,7 +661,6 @@ resource "google_gke_hub_feature_membership" "feature_member" {
       log_denies_enabled = true
     }
   }
-  provider = google-beta
 }
 `, context)
 }
@@ -703,14 +675,12 @@ resource "google_gke_hub_feature" "feature" {
   labels = {
     foo = "bar"
   }
-  provider = google-beta
   depends_on = [google_project_service.container, google_project_service.gkehub]
 }
 
 resource "google_service_account" "feature_sa" {
   project = google_project.project.project_id
   account_id = "feature-sa"
-  provider = google-beta
 }
 
 resource "google_gke_hub_feature_membership" "feature_member" {
@@ -740,7 +710,6 @@ resource "google_gke_hub_feature_membership" "feature_member" {
       log_denies_enabled = true
     }
   }
-  provider = google-beta
 }
 `, context)
 }
@@ -755,14 +724,12 @@ resource "google_gke_hub_feature" "feature" {
   labels = {
     foo = "bar"
   }
-  provider = google-beta
   depends_on = [google_project_service.container, google_project_service.gkehub]
 }
 
 resource "google_service_account" "feature_sa" {
   project = google_project.project.project_id
   account_id = "feature-sa"
-  provider = google-beta
 }
 
 resource "google_gke_hub_feature_membership" "feature_member" {
@@ -781,7 +748,6 @@ resource "google_gke_hub_feature_membership" "feature_member" {
       log_denies_enabled = true
     }
   }
-  provider = google-beta
 }
 `, context)
 }
@@ -799,7 +765,7 @@ func TestAccGKEHubFeatureMembership_gkehubFeatureMesh(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckGKEHubFeatureDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -846,7 +812,6 @@ resource "google_container_cluster" "primary" {
   name               = "tf-test-cl%{random_suffix}"
   location           = "us-central1-a"
   initial_node_count = 1
-  provider = google-beta
   depends_on = [google_project_service.container, google_project_service.gkehub]
 }
 
@@ -859,7 +824,6 @@ resource "google_gke_hub_membership" "membership" {
     }
   }
   description = "test resource."
-  provider = google-beta
 }
 
 resource "google_gke_hub_feature" "feature" {
@@ -870,14 +834,12 @@ resource "google_gke_hub_feature" "feature" {
   labels = {
     foo = "bar"
   }
-  provider = google-beta
   depends_on = [google_project_service.container, google_project_service.gkehub, google_project_service.mesh]
 }
 
 resource "google_service_account" "feature_sa" {
   project = google_project.project.project_id
   account_id = "feature-sa"
-  provider = google-beta
 }
 
 resource "google_gke_hub_feature_membership" "feature_member" {
@@ -889,7 +851,6 @@ resource "google_gke_hub_feature_membership" "feature_member" {
     management = "MANAGEMENT_AUTOMATIC"
     control_plane = "AUTOMATIC"
   }
-  provider = google-beta
 }
 `, context)
 }
@@ -901,7 +862,6 @@ resource "google_container_cluster" "primary" {
   name               = "tf-test-cl%{random_suffix}"
   location           = "us-central1-a"
   initial_node_count = 1
-  provider = google-beta
   depends_on = [google_project_service.container, google_project_service.gkehub]
 }
 
@@ -914,7 +874,6 @@ resource "google_gke_hub_membership" "membership" {
     }
   }
   description = "test resource."
-  provider = google-beta
 }
 
 resource "google_gke_hub_feature" "feature" {
@@ -925,14 +884,12 @@ resource "google_gke_hub_feature" "feature" {
   labels = {
     foo = "bar"
   }
-  provider = google-beta
   depends_on = [google_project_service.container, google_project_service.gkehub, google_project_service.mesh]
 }
 
 resource "google_service_account" "feature_sa" {
   project = google_project.project.project_id
   account_id = "feature-sa"
-  provider = google-beta
 }
 
 resource "google_gke_hub_feature_membership" "feature_member" {
@@ -943,7 +900,6 @@ resource "google_gke_hub_feature_membership" "feature_member" {
   mesh {
     management = "MANAGEMENT_MANUAL"
   }
-  provider = google-beta
 }
 `, context)
 }
@@ -955,7 +911,6 @@ resource "google_container_cluster" "primary" {
   name               = "tf-test-cl%{random_suffix}"
   location           = "us-central1-a"
   initial_node_count = 1
-  provider = google-beta
   depends_on = [google_project_service.container, google_project_service.gkehub]
 }
 
@@ -968,7 +923,6 @@ resource "google_gke_hub_membership" "membership" {
     }
   }
   description = "test resource."
-  provider = google-beta
 }
 
 resource "google_gke_hub_feature" "feature" {
@@ -979,14 +933,12 @@ resource "google_gke_hub_feature" "feature" {
   labels = {
     foo = "bar"
   }
-  provider = google-beta
   depends_on = [google_project_service.container, google_project_service.gkehub, google_project_service.mesh]
 }
 
 resource "google_service_account" "feature_sa" {
   project = google_project.project.project_id
   account_id = "feature-sa"
-  provider = google-beta
 }
 
 resource "google_gke_hub_feature_membership" "feature_member" {
@@ -997,7 +949,6 @@ resource "google_gke_hub_feature_membership" "feature_member" {
   mesh {
     control_plane = "MANUAL"
   }
-  provider = google-beta
 }
 `, context)
 }
@@ -1009,7 +960,6 @@ resource "google_container_cluster" "primary" {
   location           = "us-central1-a"
   initial_node_count = 1
   project = google_project.project.project_id
-  provider = google-beta
   depends_on = [google_project_service.container, google_project_service.container, google_project_service.gkehub]
 }
 
@@ -1018,7 +968,6 @@ resource "google_container_cluster" "secondary" {
   location           = "us-central1-a"
   initial_node_count = 1
   project = google_project.project.project_id
-  provider = google-beta
   depends_on = [google_project_service.container, google_project_service.container, google_project_service.gkehub]
 }
 
@@ -1027,7 +976,6 @@ resource "google_container_cluster" "tertiary" {
   location           = "us-central1-a"
   initial_node_count = 1
   project = google_project.project.project_id
-  provider = google-beta
   depends_on = [google_project_service.container, google_project_service.container, google_project_service.gkehub]
 }
 
@@ -1037,7 +985,6 @@ resource "google_container_cluster" "quarternary" {
   location           = "us-central1-a"
   initial_node_count = 1
   project = google_project.project.project_id
-  provider = google-beta
   depends_on = [google_project_service.container, google_project_service.container, google_project_service.gkehub]
 }
 
@@ -1050,7 +997,6 @@ resource "google_gke_hub_membership" "membership" {
     }
   }
   description = "test resource."
-  provider = google-beta
 }
 
 resource "google_gke_hub_membership" "membership_second" {
@@ -1062,7 +1008,6 @@ resource "google_gke_hub_membership" "membership_second" {
     }
   }
   description = "test resource."
-  provider = google-beta
 }
 
 resource "google_gke_hub_membership" "membership_third" {
@@ -1074,7 +1019,6 @@ resource "google_gke_hub_membership" "membership_third" {
     }
   }
   description = "test resource."
-  provider = google-beta
 }
 
 resource "google_gke_hub_membership" "membership_fourth" {
@@ -1086,7 +1030,6 @@ resource "google_gke_hub_membership" "membership_fourth" {
     }
   }
   description = "test resource."
-  provider = google-beta
 }
 `, context)
 }
@@ -1098,7 +1041,6 @@ resource "google_compute_network" "testnetwork" {
     project                 = google_project.project.project_id
     name                    = "testnetwork"
     auto_create_subnetworks = true
-    provider = google-beta
     depends_on = [google_project_service.compute]
 }
 
@@ -1108,7 +1050,6 @@ resource "google_container_cluster" "container_acmoci" {
   initial_node_count = 1
   network = google_compute_network.testnetwork.self_link
   project = google_project.project.project_id
-  provider = google-beta
   depends_on = [google_project_service.container, google_project_service.container, google_project_service.gkehub]
 }
 
@@ -1121,7 +1062,6 @@ resource "google_gke_hub_membership" "membership_acmoci" {
     }
   }
   description = "test resource."
-  provider = google-beta
 }
 `, context)
 }
@@ -1173,52 +1113,44 @@ resource "google_project" "project" {
   project_id      = "tf-test-gkehub%{random_suffix}"
   org_id          = "%{org_id}"
   billing_account = "%{billing_account}"
-  provider        = google-beta
 }
 
 resource "google_project_service" "mesh" {
   project = google_project.project.project_id
   service = "meshconfig.googleapis.com"
-  provider = google-beta
 }
 
 resource "google_project_service" "mci" {
   project = google_project.project.project_id
   service = "multiclusteringress.googleapis.com"
-  provider = google-beta
 }
 
 resource "google_project_service" "acm" {
   project = google_project.project.project_id
   service = "anthosconfigmanagement.googleapis.com"
-  provider = google-beta
 }
 
 resource "google_project_service" "mcsd" {
   project = google_project.project.project_id
   service = "multiclusterservicediscovery.googleapis.com"
-  provider = google-beta
 }
 
 resource "google_project_service" "compute" {
   project = google_project.project.project_id
   service = "compute.googleapis.com"
   disable_on_destroy = false
-  provider = google-beta
 }
 
 resource "google_project_service" "container" {
   project = google_project.project.project_id
   service = "container.googleapis.com"
   disable_on_destroy = false
-  provider = google-beta
 }
 
 resource "google_project_service" "gkehub" {
   project = google_project.project.project_id
   service = "gkehub.googleapis.com"
   disable_on_destroy = false
-  provider = google-beta
 }
 `, context)
 }
