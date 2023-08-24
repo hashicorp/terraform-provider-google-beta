@@ -385,11 +385,12 @@ func ContainerAwsClusterControlPlaneInstancePlacementSchema() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
 			"tenancy": {
-				Type:        schema.TypeString,
-				Computed:    true,
-				Optional:    true,
-				ForceNew:    true,
-				Description: "The tenancy for the instance. Possible values: TENANCY_UNSPECIFIED, DEFAULT, DEDICATED, HOST",
+				Type:             schema.TypeString,
+				Computed:         true,
+				Optional:         true,
+				ForceNew:         true,
+				DiffSuppressFunc: tpgresource.CompareCaseInsensitive,
+				Description:      "The tenancy for the instance. Possible values: TENANCY_UNSPECIFIED, DEFAULT, DEDICATED, HOST",
 			},
 		},
 	}
@@ -430,11 +431,12 @@ func ContainerAwsClusterControlPlaneMainVolumeSchema() *schema.Resource {
 			},
 
 			"volume_type": {
-				Type:        schema.TypeString,
-				Computed:    true,
-				Optional:    true,
-				ForceNew:    true,
-				Description: "Optional. Type of the EBS volume. When unspecified, it defaults to GP2 volume. Possible values: VOLUME_TYPE_UNSPECIFIED, GP2, GP3",
+				Type:             schema.TypeString,
+				Computed:         true,
+				Optional:         true,
+				ForceNew:         true,
+				DiffSuppressFunc: tpgresource.CompareCaseInsensitive,
+				Description:      "Optional. Type of the EBS volume. When unspecified, it defaults to GP2 volume. Possible values: VOLUME_TYPE_UNSPECIFIED, GP2, GP3",
 			},
 		},
 	}
@@ -489,10 +491,11 @@ func ContainerAwsClusterControlPlaneRootVolumeSchema() *schema.Resource {
 			},
 
 			"volume_type": {
-				Type:        schema.TypeString,
-				Computed:    true,
-				Optional:    true,
-				Description: "Optional. Type of the EBS volume. When unspecified, it defaults to GP2 volume. Possible values: VOLUME_TYPE_UNSPECIFIED, GP2, GP3",
+				Type:             schema.TypeString,
+				Computed:         true,
+				Optional:         true,
+				DiffSuppressFunc: tpgresource.CompareCaseInsensitive,
+				Description:      "Optional. Type of the EBS volume. When unspecified, it defaults to GP2 volume. Possible values: VOLUME_TYPE_UNSPECIFIED, GP2, GP3",
 			},
 		},
 	}
@@ -585,11 +588,12 @@ func ContainerAwsClusterLoggingConfigComponentConfigSchema() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
 			"enable_components": {
-				Type:        schema.TypeList,
-				Computed:    true,
-				Optional:    true,
-				Description: "Components of the logging configuration to be enabled.",
-				Elem:        &schema.Schema{Type: schema.TypeString},
+				Type:             schema.TypeList,
+				Computed:         true,
+				Optional:         true,
+				DiffSuppressFunc: tpgresource.CompareCaseInsensitive,
+				Description:      "Components of the logging configuration to be enabled.",
+				Elem:             &schema.Schema{Type: schema.TypeString},
 			},
 		},
 	}
