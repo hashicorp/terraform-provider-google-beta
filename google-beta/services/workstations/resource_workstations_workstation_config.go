@@ -216,6 +216,13 @@ If the encryption key is revoked, the workstation session will automatically be 
 										Optional:    true,
 										Description: `Whether instances have no public IP address.`,
 									},
+									"enable_nested_virtualization": {
+										Type:     schema.TypeBool,
+										Optional: true,
+										Description: `Whether to enable nested virtualization on the Compute Engine VMs backing the Workstations.
+
+See https://cloud.google.com/workstations/docs/reference/rest/v1beta/projects.locations.workstationClusters.workstationConfigs#GceInstance.FIELDS.enable_nested_virtualization`,
+									},
 									"machine_type": {
 										Type:        schema.TypeString,
 										Computed:    true,
@@ -740,6 +747,7 @@ func resourceWorkstationsWorkstationConfigUpdate(d *schema.ResourceData, meta in
 			"host.gceInstance.poolSize",
 			"host.gceInstance.tags",
 			"host.gceInstance.disablePublicIpAddresses",
+			"host.gceInstance.enableNestedVirtualization",
 			"host.gceInstance.shieldedInstanceConfig.enableSecureBoot",
 			"host.gceInstance.shieldedInstanceConfig.enableVtpm",
 			"host.gceInstance.shieldedInstanceConfig.enableIntegrityMonitoring",
@@ -940,6 +948,8 @@ func flattenWorkstationsWorkstationConfigHostGceInstance(v interface{}, d *schem
 		flattenWorkstationsWorkstationConfigHostGceInstanceTags(original["tags"], d, config)
 	transformed["disable_public_ip_addresses"] =
 		flattenWorkstationsWorkstationConfigHostGceInstanceDisablePublicIpAddresses(original["disablePublicIpAddresses"], d, config)
+	transformed["enable_nested_virtualization"] =
+		flattenWorkstationsWorkstationConfigHostGceInstanceEnableNestedVirtualization(original["enableNestedVirtualization"], d, config)
 	transformed["shielded_instance_config"] =
 		flattenWorkstationsWorkstationConfigHostGceInstanceShieldedInstanceConfig(original["shieldedInstanceConfig"], d, config)
 	transformed["confidential_instance_config"] =
@@ -995,6 +1005,10 @@ func flattenWorkstationsWorkstationConfigHostGceInstanceTags(v interface{}, d *s
 }
 
 func flattenWorkstationsWorkstationConfigHostGceInstanceDisablePublicIpAddresses(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenWorkstationsWorkstationConfigHostGceInstanceEnableNestedVirtualization(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
@@ -1399,6 +1413,13 @@ func expandWorkstationsWorkstationConfigHostGceInstance(v interface{}, d tpgreso
 		transformed["disablePublicIpAddresses"] = transformedDisablePublicIpAddresses
 	}
 
+	transformedEnableNestedVirtualization, err := expandWorkstationsWorkstationConfigHostGceInstanceEnableNestedVirtualization(original["enable_nested_virtualization"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedEnableNestedVirtualization); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["enableNestedVirtualization"] = transformedEnableNestedVirtualization
+	}
+
 	transformedShieldedInstanceConfig, err := expandWorkstationsWorkstationConfigHostGceInstanceShieldedInstanceConfig(original["shielded_instance_config"], d, config)
 	if err != nil {
 		return nil, err
@@ -1444,6 +1465,10 @@ func expandWorkstationsWorkstationConfigHostGceInstanceTags(v interface{}, d tpg
 }
 
 func expandWorkstationsWorkstationConfigHostGceInstanceDisablePublicIpAddresses(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandWorkstationsWorkstationConfigHostGceInstanceEnableNestedVirtualization(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 

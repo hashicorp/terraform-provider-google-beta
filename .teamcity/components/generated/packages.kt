@@ -17,11 +17,6 @@ var packages = mapOf(
         "displayName" to "Environment Variables",
         "path" to "./google-beta/envvar"
     ),
-    "fwmodels" to mapOf(
-        "name" to "fwmodels",
-        "displayName" to "Framework Models",
-        "path" to "./google-beta/fwmodels"
-    ),
     "fwprovider" to mapOf(
         "name" to "fwprovider",
         "displayName" to "Framework Provider",
@@ -58,6 +53,6 @@ var sweepers = mapOf(
     "sweeper" to mapOf(
         "name" to "sweeper",
         "displayName" to "Sweeper",
-        "path" to "./google-beta"
+        "path" to "./google-beta/sweeper"
     )
 )

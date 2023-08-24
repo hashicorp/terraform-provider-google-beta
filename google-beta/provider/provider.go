@@ -20,6 +20,7 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/apigee"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/appengine"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/artifactregistry"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/backupdr"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/beyondcorp"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/bigquery"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/bigqueryanalyticshub"
@@ -271,6 +272,11 @@ func Provider() *schema.Provider {
 				ValidateFunc: transport_tpg.ValidateCustomEndpoint,
 			},
 			"artifact_registry_custom_endpoint": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: transport_tpg.ValidateCustomEndpoint,
+			},
+			"backup_dr_custom_endpoint": {
 				Type:         schema.TypeString,
 				Optional:     true,
 				ValidateFunc: transport_tpg.ValidateCustomEndpoint,
@@ -942,6 +948,7 @@ func DatasourceMapWithErrors() (map[string]*schema.Resource, error) {
 		"google_spanner_instance":                             spanner.DataSourceSpannerInstance(),
 		"google_sql_ca_certs":                                 sql.DataSourceGoogleSQLCaCerts(),
 		"google_sql_tiers":                                    sql.DataSourceGoogleSQLTiers(),
+		"google_sql_database_instance_latest_recovery_time":   sql.DataSourceSqlDatabaseInstanceLatestRecoveryTime(),
 		"google_sql_backup_run":                               sql.DataSourceSqlBackupRun(),
 		"google_sql_databases":                                sql.DataSourceSqlDatabases(),
 		"google_sql_database":                                 sql.DataSourceSqlDatabase(),
@@ -1073,9 +1080,9 @@ func DatasourceMapWithErrors() (map[string]*schema.Resource, error) {
 		})
 }
 
-// Generated resources: 358
+// Generated resources: 364
 // Generated IAM resources: 234
-// Total generated resources: 592
+// Total generated resources: 598
 func ResourceMap() map[string]*schema.Resource {
 	resourceMap, _ := ResourceMapWithErrors()
 	return resourceMap
@@ -1148,6 +1155,7 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_artifact_registry_repository_iam_binding":                tpgiamresource.ResourceIamBinding(artifactregistry.ArtifactRegistryRepositoryIamSchema, artifactregistry.ArtifactRegistryRepositoryIamUpdaterProducer, artifactregistry.ArtifactRegistryRepositoryIdParseFunc),
 			"google_artifact_registry_repository_iam_member":                 tpgiamresource.ResourceIamMember(artifactregistry.ArtifactRegistryRepositoryIamSchema, artifactregistry.ArtifactRegistryRepositoryIamUpdaterProducer, artifactregistry.ArtifactRegistryRepositoryIdParseFunc),
 			"google_artifact_registry_repository_iam_policy":                 tpgiamresource.ResourceIamPolicy(artifactregistry.ArtifactRegistryRepositoryIamSchema, artifactregistry.ArtifactRegistryRepositoryIamUpdaterProducer, artifactregistry.ArtifactRegistryRepositoryIdParseFunc),
+			"google_backup_dr_management_server":                             backupdr.ResourceBackupDRManagementServer(),
 			"google_beyondcorp_app_connection":                               beyondcorp.ResourceBeyondcorpAppConnection(),
 			"google_beyondcorp_app_connector":                                beyondcorp.ResourceBeyondcorpAppConnector(),
 			"google_beyondcorp_app_gateway":                                  beyondcorp.ResourceBeyondcorpAppGateway(),
@@ -1175,6 +1183,7 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_bigquery_datapolicy_data_policy_iam_member":              tpgiamresource.ResourceIamMember(bigquerydatapolicy.BigqueryDatapolicyDataPolicyIamSchema, bigquerydatapolicy.BigqueryDatapolicyDataPolicyIamUpdaterProducer, bigquerydatapolicy.BigqueryDatapolicyDataPolicyIdParseFunc),
 			"google_bigquery_datapolicy_data_policy_iam_policy":              tpgiamresource.ResourceIamPolicy(bigquerydatapolicy.BigqueryDatapolicyDataPolicyIamSchema, bigquerydatapolicy.BigqueryDatapolicyDataPolicyIamUpdaterProducer, bigquerydatapolicy.BigqueryDatapolicyDataPolicyIdParseFunc),
 			"google_bigquery_data_transfer_config":                           bigquerydatatransfer.ResourceBigqueryDataTransferConfig(),
+			"google_bigquery_bi_reservation":                                 bigqueryreservation.ResourceBigqueryReservationBiReservation(),
 			"google_bigquery_capacity_commitment":                            bigqueryreservation.ResourceBigqueryReservationCapacityCommitment(),
 			"google_bigquery_reservation":                                    bigqueryreservation.ResourceBigqueryReservationReservation(),
 			"google_bigtable_app_profile":                                    bigtable.ResourceBigtableAppProfile(),
@@ -1189,6 +1198,7 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_certificate_manager_certificate_map":                     certificatemanager.ResourceCertificateManagerCertificateMap(),
 			"google_certificate_manager_certificate_map_entry":               certificatemanager.ResourceCertificateManagerCertificateMapEntry(),
 			"google_certificate_manager_dns_authorization":                   certificatemanager.ResourceCertificateManagerDnsAuthorization(),
+			"google_certificate_manager_trust_config":                        certificatemanager.ResourceCertificateManagerTrustConfig(),
 			"google_cloud_asset_folder_feed":                                 cloudasset.ResourceCloudAssetFolderFeed(),
 			"google_cloud_asset_organization_feed":                           cloudasset.ResourceCloudAssetOrganizationFeed(),
 			"google_cloud_asset_project_feed":                                cloudasset.ResourceCloudAssetProjectFeed(),
@@ -1302,6 +1312,7 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_compute_region_network_endpoint_group":                   compute.ResourceComputeRegionNetworkEndpointGroup(),
 			"google_compute_region_per_instance_config":                      compute.ResourceComputeRegionPerInstanceConfig(),
 			"google_compute_region_security_policy":                          compute.ResourceComputeRegionSecurityPolicy(),
+			"google_compute_region_security_policy_rule":                     compute.ResourceComputeRegionSecurityPolicyRule(),
 			"google_compute_region_ssl_certificate":                          compute.ResourceComputeRegionSslCertificate(),
 			"google_compute_region_ssl_policy":                               compute.ResourceComputeRegionSslPolicy(),
 			"google_compute_region_target_http_proxy":                        compute.ResourceComputeRegionTargetHttpProxy(),
@@ -1362,6 +1373,7 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_data_catalog_taxonomy_iam_policy":                        tpgiamresource.ResourceIamPolicy(datacatalog.DataCatalogTaxonomyIamSchema, datacatalog.DataCatalogTaxonomyIamUpdaterProducer, datacatalog.DataCatalogTaxonomyIdParseFunc),
 			"google_dataform_repository":                                     dataform.ResourceDataformRepository(),
 			"google_dataform_repository_release_config":                      dataform.ResourceDataformRepositoryReleaseConfig(),
+			"google_dataform_repository_workflow_config":                     dataform.ResourceDataformRepositoryWorkflowConfig(),
 			"google_data_fusion_instance":                                    datafusion.ResourceDataFusionInstance(),
 			"google_data_fusion_instance_iam_binding":                        tpgiamresource.ResourceIamBinding(datafusion.DataFusionInstanceIamSchema, datafusion.DataFusionInstanceIamUpdaterProducer, datafusion.DataFusionInstanceIdParseFunc),
 			"google_data_fusion_instance_iam_member":                         tpgiamresource.ResourceIamMember(datafusion.DataFusionInstanceIamSchema, datafusion.DataFusionInstanceIamUpdaterProducer, datafusion.DataFusionInstanceIdParseFunc),
@@ -1457,6 +1469,7 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_gke_hub_feature_iam_binding":                             tpgiamresource.ResourceIamBinding(gkehub2.GKEHub2FeatureIamSchema, gkehub2.GKEHub2FeatureIamUpdaterProducer, gkehub2.GKEHub2FeatureIdParseFunc),
 			"google_gke_hub_feature_iam_member":                              tpgiamresource.ResourceIamMember(gkehub2.GKEHub2FeatureIamSchema, gkehub2.GKEHub2FeatureIamUpdaterProducer, gkehub2.GKEHub2FeatureIdParseFunc),
 			"google_gke_hub_feature_iam_policy":                              tpgiamresource.ResourceIamPolicy(gkehub2.GKEHub2FeatureIamSchema, gkehub2.GKEHub2FeatureIamUpdaterProducer, gkehub2.GKEHub2FeatureIdParseFunc),
+			"google_gke_hub_membership_rbac_role_binding":                    gkehub2.ResourceGKEHub2MembershipRBACRoleBinding(),
 			"google_gkeonprem_bare_metal_admin_cluster":                      gkeonprem.ResourceGkeonpremBareMetalAdminCluster(),
 			"google_gkeonprem_bare_metal_cluster":                            gkeonprem.ResourceGkeonpremBareMetalCluster(),
 			"google_gkeonprem_bare_metal_node_pool":                          gkeonprem.ResourceGkeonpremBareMetalNodePool(),
@@ -1929,6 +1942,7 @@ func providerConfigure(ctx context.Context, d *schema.ResourceData, p *schema.Pr
 	config.ApigeeBasePath = d.Get("apigee_custom_endpoint").(string)
 	config.AppEngineBasePath = d.Get("app_engine_custom_endpoint").(string)
 	config.ArtifactRegistryBasePath = d.Get("artifact_registry_custom_endpoint").(string)
+	config.BackupDRBasePath = d.Get("backup_dr_custom_endpoint").(string)
 	config.BeyondcorpBasePath = d.Get("beyondcorp_custom_endpoint").(string)
 	config.BigQueryBasePath = d.Get("big_query_custom_endpoint").(string)
 	config.BigqueryAnalyticsHubBasePath = d.Get("bigquery_analytics_hub_custom_endpoint").(string)
