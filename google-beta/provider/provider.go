@@ -1093,9 +1093,9 @@ func DatasourceMapWithErrors() (map[string]*schema.Resource, error) {
 		})
 }
 
-// Generated resources: 371
+// Generated resources: 372
 // Generated IAM resources: 234
-// Total generated resources: 605
+// Total generated resources: 606
 func ResourceMap() map[string]*schema.Resource {
 	resourceMap, _ := ResourceMapWithErrors()
 	return resourceMap
@@ -1297,6 +1297,7 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_compute_machine_image_iam_policy":                        tpgiamresource.ResourceIamPolicy(compute.ComputeMachineImageIamSchema, compute.ComputeMachineImageIamUpdaterProducer, compute.ComputeMachineImageIdParseFunc),
 			"google_compute_managed_ssl_certificate":                         compute.ResourceComputeManagedSslCertificate(),
 			"google_compute_network":                                         compute.ResourceComputeNetwork(),
+			"google_compute_network_attachment":                              compute.ResourceComputeNetworkAttachment(),
 			"google_compute_network_edge_security_service":                   compute.ResourceComputeNetworkEdgeSecurityService(),
 			"google_compute_network_endpoint":                                compute.ResourceComputeNetworkEndpoint(),
 			"google_compute_network_endpoint_group":                          compute.ResourceComputeNetworkEndpointGroup(),
