@@ -58,6 +58,7 @@ type FrameworkProviderConfig struct {
 	ArtifactRegistryBasePath         string
 	BackupDRBasePath                 string
 	BeyondcorpBasePath               string
+	BiglakeBasePath                  string
 	BigQueryBasePath                 string
 	BigqueryAnalyticsHubBasePath     string
 	BigqueryConnectionBasePath       string
@@ -210,6 +211,7 @@ func (p *FrameworkProviderConfig) LoadAndValidateFramework(ctx context.Context, 
 	p.ArtifactRegistryBasePath = data.ArtifactRegistryCustomEndpoint.ValueString()
 	p.BackupDRBasePath = data.BackupDRCustomEndpoint.ValueString()
 	p.BeyondcorpBasePath = data.BeyondcorpCustomEndpoint.ValueString()
+	p.BiglakeBasePath = data.BiglakeCustomEndpoint.ValueString()
 	p.BigQueryBasePath = data.BigQueryCustomEndpoint.ValueString()
 	p.BigqueryAnalyticsHubBasePath = data.BigqueryAnalyticsHubCustomEndpoint.ValueString()
 	p.BigqueryConnectionBasePath = data.BigqueryConnectionCustomEndpoint.ValueString()
@@ -509,6 +511,14 @@ func (p *FrameworkProviderConfig) HandleDefaults(ctx context.Context, data *fwmo
 		}, transport_tpg.DefaultBasePaths[transport_tpg.BeyondcorpBasePathKey])
 		if customEndpoint != nil {
 			data.BeyondcorpCustomEndpoint = types.StringValue(customEndpoint.(string))
+		}
+	}
+	if data.BiglakeCustomEndpoint.IsNull() {
+		customEndpoint := transport_tpg.MultiEnvDefault([]string{
+			"GOOGLE_BIGLAKE_CUSTOM_ENDPOINT",
+		}, transport_tpg.DefaultBasePaths[transport_tpg.BiglakeBasePathKey])
+		if customEndpoint != nil {
+			data.BiglakeCustomEndpoint = types.StringValue(customEndpoint.(string))
 		}
 	}
 	if data.BigQueryCustomEndpoint.IsNull() {

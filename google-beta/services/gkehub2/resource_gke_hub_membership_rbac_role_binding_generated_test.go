@@ -41,7 +41,7 @@ func TestAccGKEHub2MembershipRBACRoleBinding_gkehubMembershipRbacRoleBindingBasi
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
 		CheckDestroy:             testAccCheckGKEHub2MembershipRBACRoleBindingDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -60,23 +60,26 @@ func TestAccGKEHub2MembershipRBACRoleBinding_gkehubMembershipRbacRoleBindingBasi
 func testAccGKEHub2MembershipRBACRoleBinding_gkehubMembershipRbacRoleBindingBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_container_cluster" "primary" {
+  provider = google-beta
   name               = "basiccluster%{random_suffix}"
   location           = "us-central1-a"
   initial_node_count = 1
 }
 
 resource "google_gke_hub_membership" "membershiprbacrolebinding" {
+  provider = google-beta
   membership_id = "tf-test-membership%{random_suffix}"
   endpoint {
     gke_cluster {
       resource_link = "//container.googleapis.com/${google_container_cluster.primary.id}"
     }
   }
-  
+
   depends_on = [google_container_cluster.primary]
 }
 
 resource "google_gke_hub_membership_rbac_role_binding" "membershiprbacrolebinding" {
+  provider = google-beta
   membership_rbac_role_binding_id = "tf-test-membership-rbac-role-binding%{random_suffix}"
   membership_id = "tf-test-membership%{random_suffix}"
   user = "service-${data.google_project.project.number}@gcp-sa-anthossupport.iam.gserviceaccount.com"
@@ -87,7 +90,9 @@ resource "google_gke_hub_membership_rbac_role_binding" "membershiprbacrolebindin
   depends_on = [google_gke_hub_membership.membershiprbacrolebinding]
 }
 
-data "google_project" "project" {}
+data "google_project" "project" {
+  provider = google-beta
+}
 `, context)
 }
 
