@@ -66,6 +66,11 @@ var services = mapOf(
         "displayName" to "Beyondcorp",
         "path" to "./google-beta/services/beyondcorp"
     ),
+    "biglake" to mapOf(
+        "name" to "biglake",
+        "displayName" to "Biglake",
+        "path" to "./google-beta/services/biglake"
+    ),
     "bigquery" to mapOf(
         "name" to "bigquery",
         "displayName" to "Bigquery",
