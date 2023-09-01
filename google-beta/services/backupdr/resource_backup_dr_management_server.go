@@ -23,6 +23,7 @@ import (
 	"reflect"
 	"time"
 
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/customdiff"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
@@ -44,6 +45,10 @@ func ResourceBackupDRManagementServer() *schema.Resource {
 			Create: schema.DefaultTimeout(40 * time.Minute),
 			Delete: schema.DefaultTimeout(40 * time.Minute),
 		},
+
+		CustomizeDiff: customdiff.All(
+			tpgresource.DefaultProviderProject,
+		),
 
 		Schema: map[string]*schema.Schema{
 			"location": {

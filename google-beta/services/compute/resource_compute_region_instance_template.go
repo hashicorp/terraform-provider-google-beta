@@ -30,6 +30,8 @@ func ResourceComputeRegionInstanceTemplate() *schema.Resource {
 		},
 		SchemaVersion: 1,
 		CustomizeDiff: customdiff.All(
+			tpgresource.DefaultProviderProject,
+			tpgresource.DefaultProviderRegion,
 			resourceComputeInstanceTemplateSourceImageCustomizeDiff,
 			resourceComputeInstanceTemplateScratchDiskCustomizeDiff,
 			resourceComputeInstanceTemplateBootDiskCustomizeDiff,

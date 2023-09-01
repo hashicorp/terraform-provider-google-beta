@@ -23,6 +23,7 @@ import (
 	"reflect"
 	"time"
 
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/customdiff"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
@@ -46,6 +47,11 @@ func ResourceComputeRegionAutoscaler() *schema.Resource {
 			Update: schema.DefaultTimeout(20 * time.Minute),
 			Delete: schema.DefaultTimeout(20 * time.Minute),
 		},
+
+		CustomizeDiff: customdiff.All(
+			tpgresource.DefaultProviderProject,
+			tpgresource.DefaultProviderRegion,
+		),
 
 		Schema: map[string]*schema.Schema{
 			"autoscaling_policy": {
@@ -565,6 +571,14 @@ func resourceComputeRegionAutoscalerRead(d *schema.ResourceData, meta interface{
 		return fmt.Errorf("Error reading RegionAutoscaler: %s", err)
 	}
 
+	region, err := tpgresource.GetRegion(d, config)
+	if err != nil {
+		return err
+	}
+	if err := d.Set("region", region); err != nil {
+		return fmt.Errorf("Error reading RegionAutoscaler: %s", err)
+	}
+
 	if err := d.Set("creation_timestamp", flattenComputeRegionAutoscalerCreationTimestamp(res["creationTimestamp"], d, config)); err != nil {
 		return fmt.Errorf("Error reading RegionAutoscaler: %s", err)
 	}
@@ -578,9 +592,6 @@ func resourceComputeRegionAutoscalerRead(d *schema.ResourceData, meta interface{
 		return fmt.Errorf("Error reading RegionAutoscaler: %s", err)
 	}
 	if err := d.Set("target", flattenComputeRegionAutoscalerTarget(res["target"], d, config)); err != nil {
-		return fmt.Errorf("Error reading RegionAutoscaler: %s", err)
-	}
-	if err := d.Set("region", flattenComputeRegionAutoscalerRegion(res["region"], d, config)); err != nil {
 		return fmt.Errorf("Error reading RegionAutoscaler: %s", err)
 	}
 	if err := d.Set("self_link", tpgresource.ConvertSelfLinkToV1(res["selfLink"].(string))); err != nil {
@@ -1168,13 +1179,6 @@ func flattenComputeRegionAutoscalerAutoscalingPolicyScalingSchedulesDescription(
 
 func flattenComputeRegionAutoscalerTarget(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
-}
-
-func flattenComputeRegionAutoscalerRegion(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
-	if v == nil {
-		return v
-	}
-	return tpgresource.ConvertSelfLinkToV1(v.(string))
 }
 
 func expandComputeRegionAutoscalerName(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
