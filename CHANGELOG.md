@@ -3,15 +3,15 @@
 FEATURES:
 * **New Resource:** `google_biglake_catalog` ([#6152](https://github.com/hashicorp/terraform-provider-google-beta/pull/6152))
 * **New Resource:** `google_redis_cluster` ([#6158](https://github.com/hashicorp/terraform-provider-google-beta/pull/6158))
-* **New Resource:** google_biglake_database ([#6161](https://github.com/hashicorp/terraform-provider-google-beta/pull/6161))
-* **New Resource:** google_compute_network_attachment ([#6159](https://github.com/hashicorp/terraform-provider-google-beta/pull/6159))
+* **New Resource:** `google_biglake_database` ([#6161](https://github.com/hashicorp/terraform-provider-google-beta/pull/6161))
+* **New Resource:** `google_compute_network_attachment` ([#6159](https://github.com/hashicorp/terraform-provider-google-beta/pull/6159))
 
 IMPROVEMENTS:
-* cloudrunv2: Changed `template.volumes.secret.items.mode` field in `google_cloud_run_v2_job` resource to a non-required field. ([#6154](https://github.com/hashicorp/terraform-provider-google-beta/pull/6154))
-* cloudrunv2: Changed `template.volumes.secret.items.mode` field in `google_cloud_run_v2_service` resource to a non-required field. ([#6154](https://github.com/hashicorp/terraform-provider-google-beta/pull/6154))
+* compute: made the field `distribution_policy_target_shape` of `google_compute_region_instance_group_manager` not cause recreation of the resource. ([#6156](https://github.com/hashicorp/terraform-provider-google-beta/pull/6156))
 * compute: promoted the `ssl_policy` field on the `google_compute_region_target_https_proxy` resource to GA. ([#6138](https://github.com/hashicorp/terraform-provider-google-beta/pull/6138))
 * container: added `enable_fqdn_network_policy` field to `google_container_cluster` ([#6157](https://github.com/hashicorp/terraform-provider-google-beta/pull/6157))
 * container: added `node_config.confidential_compute` field to `google_container_node_pool` resource ([#6166](https://github.com/hashicorp/terraform-provider-google-beta/pull/6166))
+* datastream: made `password` mutable in `google_datastream_connection_profile` not cause recreation of the resource. ([#6140](https://github.com/hashicorp/terraform-provider-google-beta/pull/6140))
 * dialogflowcx: added `response_type`, `channel`, `payload`, `conversation_success`, `output_audio_text`, `live_agent_handoff`, `play_audo`, `telephony_transfer_call`, `reprompt_event_handlers`, `set_parameter_actions`, and `conditional_cases` fields to `google_dialogflow_cx_page` resource ([#6168](https://github.com/hashicorp/terraform-provider-google-beta/pull/6168))
 * dialogflowcx: added `response_type`, `channel`, `payload`, `conversation_success`, `output_audio_text`, `live_agent_handoff`, `play_audo`, `telephony_transfer_call`, `set_parameter_actions`, and `conditional_cases` fields to `google_dialogflow_cx_flow` resource ([#6168](https://github.com/hashicorp/terraform-provider-google-beta/pull/6168))
 * gkehub: added `Namespace`, `Scope`, `MembershipBinding`, `MembershipRBACRoleBinding`, `ScopeRBACRoleBinding` resources ([#6170](https://github.com/hashicorp/terraform-provider-google-beta/pull/6170))
@@ -21,11 +21,11 @@ IMPROVEMENTS:
 * monitoring: added `synthetic_monitor` to `google_monitoring_uptime_check_config` resource ([#6148](https://github.com/hashicorp/terraform-provider-google-beta/pull/6148))
 
 BUG FIXES:
-* compute: removed ForceNew on `distribution_policy_target_shape` of `google_compute_region_instance_group_manager` ([#6156](https://github.com/hashicorp/terraform-provider-google-beta/pull/6156))
-* datastream: made `password` mutable in `google_datastream_connection_profile` resource. ([#6140](https://github.com/hashicorp/terraform-provider-google-beta/pull/6140))
-* filestore: fixed a bug causing premadiff on `reserved_ip_range` field in `google_filestore_instance` ([#6143](https://github.com/hashicorp/terraform-provider-google-beta/pull/6143))
+* cloudrunv2: changed `template.volumes.secret.items.mode` field in `google_cloud_run_v2_job` resource to a non-required field. ([#6154](https://github.com/hashicorp/terraform-provider-google-beta/pull/6154))
+* cloudrunv2: changed `template.volumes.secret.items.mode` field in `google_cloud_run_v2_service` resource to a non-required field. ([#6154](https://github.com/hashicorp/terraform-provider-google-beta/pull/6154))
+* filestore: fixed a bug causing permadiff on `reserved_ip_range` field in `google_filestore_instance` ([#6143](https://github.com/hashicorp/terraform-provider-google-beta/pull/6143))
 * identityplatform: fixed a permadiff on `authorized_domains` in `google_identity_platform_config` resource ([#6137](https://github.com/hashicorp/terraform-provider-google-beta/pull/6137))
-* provider: Improved error message when resource creation fails to to invalid API response ([#6149](https://github.com/hashicorp/terraform-provider-google-beta/pull/6149))
+* provider: improved error message when resource creation fails to to invalid API response ([#6149](https://github.com/hashicorp/terraform-provider-google-beta/pull/6149))
 
 
 ## 4.80.0 (August 28, 2023)
