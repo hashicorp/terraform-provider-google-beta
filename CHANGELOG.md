@@ -5,7 +5,6 @@ FEATURES:
 * **New Resource:** `google_redis_cluster` ([#6158](https://github.com/hashicorp/terraform-provider-google-beta/pull/6158))
 * **New Resource:** `google_biglake_database` ([#6161](https://github.com/hashicorp/terraform-provider-google-beta/pull/6161))
 * **New Resource:** `google_compute_network_attachment` ([#6159](https://github.com/hashicorp/terraform-provider-google-beta/pull/6159))
-* **New Resource:** `google_compute_network_attachment` ([#6159](https://github.com/hashicorp/terraform-provider-google-beta/pull/6159))
 * **New Resource:** `google_gke_hub_membership_binding` ([#6170](https://github.com/hashicorp/terraform-provider-google-beta/pull/6170))
 * **New Resource:** `google_gke_hub_namespace` ([#6170](https://github.com/hashicorp/terraform-provider-google-beta/pull/6170))
 * **New Resource:** `google_gke_hub_scope` ([#6170](https://github.com/hashicorp/terraform-provider-google-beta/pull/6170))
