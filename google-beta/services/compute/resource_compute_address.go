@@ -49,6 +49,7 @@ func ResourceComputeAddress() *schema.Resource {
 		},
 
 		CustomizeDiff: customdiff.All(
+			tpgresource.SetTerraformLabelsDiff,
 			tpgresource.DefaultProviderProject,
 		),
 
@@ -204,6 +205,13 @@ GCE_ENDPOINT/DNS_RESOLVER purposes.`,
 				Description: `The fingerprint used for optimistic locking of this resource.  Used
 internally during updates.`,
 			},
+			"terraform_labels": {
+				Type:     schema.TypeMap,
+				Computed: true,
+				Description: `The combination of labels configured directly on the resource
+ and default labels configured on the provider.`,
+				Elem: &schema.Schema{Type: schema.TypeString},
+			},
 			"users": {
 				Type:        schema.TypeList,
 				Computed:    true,
@@ -277,12 +285,6 @@ func resourceComputeAddressCreate(d *schema.ResourceData, meta interface{}) erro
 	} else if v, ok := d.GetOkExists("subnetwork"); !tpgresource.IsEmptyValue(reflect.ValueOf(subnetworkProp)) && (ok || !reflect.DeepEqual(v, subnetworkProp)) {
 		obj["subnetwork"] = subnetworkProp
 	}
-	labelsProp, err := expandComputeAddressLabels(d.Get("labels"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(labelsProp)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
-		obj["labels"] = labelsProp
-	}
 	labelFingerprintProp, err := expandComputeAddressLabelFingerprint(d.Get("label_fingerprint"), d, config)
 	if err != nil {
 		return err
@@ -312,6 +314,12 @@ func resourceComputeAddressCreate(d *schema.ResourceData, meta interface{}) erro
 		return err
 	} else if v, ok := d.GetOkExists("ipv6_endpoint_type"); !tpgresource.IsEmptyValue(reflect.ValueOf(ipv6EndpointTypeProp)) && (ok || !reflect.DeepEqual(v, ipv6EndpointTypeProp)) {
 		obj["ipv6EndpointType"] = ipv6EndpointTypeProp
+	}
+	labelsProp, err := expandComputeAddressTerraformLabels(d.Get("terraform_labels"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("terraform_labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(labelsProp)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
+		obj["labels"] = labelsProp
 	}
 	regionProp, err := expandComputeAddressRegion(d.Get("region"), d, config)
 	if err != nil {
@@ -369,7 +377,8 @@ func resourceComputeAddressCreate(d *schema.ResourceData, meta interface{}) erro
 		return fmt.Errorf("Error waiting to create Address: %s", err)
 	}
 
-	if v, ok := d.GetOkExists("labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
+	if v, ok := d.GetOkExists("terraform_labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
+		labels := d.Get("labels")
 		// Labels cannot be set in a create.  We'll have to set them here.
 		err = resourceComputeAddressRead(d, meta)
 		if err != nil {
@@ -377,8 +386,8 @@ func resourceComputeAddressCreate(d *schema.ResourceData, meta interface{}) erro
 		}
 
 		obj := make(map[string]interface{})
-		// d.Get("labels") will have been overridden by the Read call.
-		labelsProp, err := expandComputeAddressLabels(v, d, config)
+		// d.Get("terraform_labels") will have been overridden by the Read call.
+		labelsProp, err := expandComputeAddressTerraformLabels(v, d, config)
 		if err != nil {
 			return err
 		}
@@ -411,8 +420,13 @@ func resourceComputeAddressCreate(d *schema.ResourceData, meta interface{}) erro
 		}
 
 		// Set back the labels field, as it is needed to decide the value of "labels" in the state in the read function.
-		if err := d.Set("labels", v); err != nil {
+		if err := d.Set("labels", labels); err != nil {
 			return fmt.Errorf("Error setting back labels: %s", err)
+		}
+
+		// Set back the terraform_labels field, as it is needed to decide the value of "terraform_labels" in the state in the read function.
+		if err := d.Set("terraform_labels", v); err != nil {
+			return fmt.Errorf("Error setting back terraform_labels: %s", err)
 		}
 	}
 
@@ -506,6 +520,9 @@ func resourceComputeAddressRead(d *schema.ResourceData, meta interface{}) error 
 	if err := d.Set("ipv6_endpoint_type", flattenComputeAddressIpv6EndpointType(res["ipv6EndpointType"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Address: %s", err)
 	}
+	if err := d.Set("terraform_labels", flattenComputeAddressTerraformLabels(res["labels"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Address: %s", err)
+	}
 	if err := d.Set("effective_labels", flattenComputeAddressEffectiveLabels(res["labels"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Address: %s", err)
 	}
@@ -536,20 +553,20 @@ func resourceComputeAddressUpdate(d *schema.ResourceData, meta interface{}) erro
 
 	d.Partial(true)
 
-	if d.HasChange("labels") || d.HasChange("label_fingerprint") {
+	if d.HasChange("label_fingerprint") || d.HasChange("terraform_labels") {
 		obj := make(map[string]interface{})
 
-		labelsProp, err := expandComputeAddressLabels(d.Get("labels"), d, config)
-		if err != nil {
-			return err
-		} else if v, ok := d.GetOkExists("labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
-			obj["labels"] = labelsProp
-		}
 		labelFingerprintProp, err := expandComputeAddressLabelFingerprint(d.Get("label_fingerprint"), d, config)
 		if err != nil {
 			return err
 		} else if v, ok := d.GetOkExists("label_fingerprint"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, labelFingerprintProp)) {
 			obj["labelFingerprint"] = labelFingerprintProp
+		}
+		labelsProp, err := expandComputeAddressTerraformLabels(d.Get("terraform_labels"), d, config)
+		if err != nil {
+			return err
+		} else if v, ok := d.GetOkExists("terraform_labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
+			obj["labels"] = labelsProp
 		}
 
 		url, err := tpgresource.ReplaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/regions/{{region}}/addresses/{{name}}/setLabels")
@@ -758,6 +775,21 @@ func flattenComputeAddressIpv6EndpointType(v interface{}, d *schema.ResourceData
 	return v
 }
 
+func flattenComputeAddressTerraformLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return v
+	}
+
+	transformed := make(map[string]interface{})
+	if l, ok := d.GetOkExists("terraform_labels"); ok {
+		for k := range l.(map[string]interface{}) {
+			transformed[k] = v.(map[string]interface{})[k]
+		}
+	}
+
+	return transformed
+}
+
 func flattenComputeAddressEffectiveLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
@@ -801,17 +833,6 @@ func expandComputeAddressSubnetwork(v interface{}, d tpgresource.TerraformResour
 	return f.RelativeLink(), nil
 }
 
-func expandComputeAddressLabels(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
-	if v == nil {
-		return map[string]string{}, nil
-	}
-	m := make(map[string]string)
-	for k, val := range v.(map[string]interface{}) {
-		m[k] = val.(string)
-	}
-	return m, nil
-}
-
 func expandComputeAddressLabelFingerprint(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
@@ -834,6 +855,17 @@ func expandComputeAddressIpVersion(v interface{}, d tpgresource.TerraformResourc
 
 func expandComputeAddressIpv6EndpointType(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
+}
+
+func expandComputeAddressTerraformLabels(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
+	if v == nil {
+		return map[string]string{}, nil
+	}
+	m := make(map[string]string)
+	for k, val := range v.(map[string]interface{}) {
+		m[k] = val.(string)
+	}
+	return m, nil
 }
 
 func expandComputeAddressRegion(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
