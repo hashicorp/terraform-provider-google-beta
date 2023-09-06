@@ -211,7 +211,6 @@ type Config struct {
 	Cloudfunctions2BasePath          string
 	CloudIdentityBasePath            string
 	CloudIdsBasePath                 string
-	CloudIotBasePath                 string
 	CloudRunBasePath                 string
 	CloudRunV2BasePath               string
 	CloudSchedulerBasePath           string
@@ -342,7 +341,6 @@ const CloudFunctionsBasePathKey = "CloudFunctions"
 const Cloudfunctions2BasePathKey = "Cloudfunctions2"
 const CloudIdentityBasePathKey = "CloudIdentity"
 const CloudIdsBasePathKey = "CloudIds"
-const CloudIotBasePathKey = "CloudIot"
 const CloudRunBasePathKey = "CloudRun"
 const CloudRunV2BasePathKey = "CloudRunV2"
 const CloudSchedulerBasePathKey = "CloudScheduler"
@@ -467,7 +465,6 @@ var DefaultBasePaths = map[string]string{
 	Cloudfunctions2BasePathKey:          "https://cloudfunctions.googleapis.com/v2beta/",
 	CloudIdentityBasePathKey:            "https://cloudidentity.googleapis.com/v1beta1/",
 	CloudIdsBasePathKey:                 "https://ids.googleapis.com/v1/",
-	CloudIotBasePathKey:                 "https://cloudiot.googleapis.com/v1/",
 	CloudRunBasePathKey:                 "https://{{location}}-run.googleapis.com/",
 	CloudRunV2BasePathKey:               "https://run.googleapis.com/v2/",
 	CloudSchedulerBasePathKey:           "https://cloudscheduler.googleapis.com/v1/",
@@ -766,11 +763,6 @@ func HandleSDKDefaults(d *schema.ResourceData) error {
 		d.Set("cloud_ids_custom_endpoint", MultiEnvDefault([]string{
 			"GOOGLE_CLOUD_IDS_CUSTOM_ENDPOINT",
 		}, DefaultBasePaths[CloudIdsBasePathKey]))
-	}
-	if d.Get("cloud_iot_custom_endpoint") == "" {
-		d.Set("cloud_iot_custom_endpoint", MultiEnvDefault([]string{
-			"GOOGLE_CLOUD_IOT_CUSTOM_ENDPOINT",
-		}, DefaultBasePaths[CloudIotBasePathKey]))
 	}
 	if d.Get("cloud_run_custom_endpoint") == "" {
 		d.Set("cloud_run_custom_endpoint", MultiEnvDefault([]string{
@@ -2065,7 +2057,6 @@ func ConfigureBasePaths(c *Config) {
 	c.Cloudfunctions2BasePath = DefaultBasePaths[Cloudfunctions2BasePathKey]
 	c.CloudIdentityBasePath = DefaultBasePaths[CloudIdentityBasePathKey]
 	c.CloudIdsBasePath = DefaultBasePaths[CloudIdsBasePathKey]
-	c.CloudIotBasePath = DefaultBasePaths[CloudIotBasePathKey]
 	c.CloudRunBasePath = DefaultBasePaths[CloudRunBasePathKey]
 	c.CloudRunV2BasePath = DefaultBasePaths[CloudRunV2BasePathKey]
 	c.CloudSchedulerBasePath = DefaultBasePaths[CloudSchedulerBasePathKey]

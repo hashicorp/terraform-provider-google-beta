@@ -76,7 +76,6 @@ type FrameworkProviderConfig struct {
 	Cloudfunctions2BasePath          string
 	CloudIdentityBasePath            string
 	CloudIdsBasePath                 string
-	CloudIotBasePath                 string
 	CloudRunBasePath                 string
 	CloudRunV2BasePath               string
 	CloudSchedulerBasePath           string
@@ -229,7 +228,6 @@ func (p *FrameworkProviderConfig) LoadAndValidateFramework(ctx context.Context, 
 	p.Cloudfunctions2BasePath = data.Cloudfunctions2CustomEndpoint.ValueString()
 	p.CloudIdentityBasePath = data.CloudIdentityCustomEndpoint.ValueString()
 	p.CloudIdsBasePath = data.CloudIdsCustomEndpoint.ValueString()
-	p.CloudIotBasePath = data.CloudIotCustomEndpoint.ValueString()
 	p.CloudRunBasePath = data.CloudRunCustomEndpoint.ValueString()
 	p.CloudRunV2BasePath = data.CloudRunV2CustomEndpoint.ValueString()
 	p.CloudSchedulerBasePath = data.CloudSchedulerCustomEndpoint.ValueString()
@@ -655,14 +653,6 @@ func (p *FrameworkProviderConfig) HandleDefaults(ctx context.Context, data *fwmo
 		}, transport_tpg.DefaultBasePaths[transport_tpg.CloudIdsBasePathKey])
 		if customEndpoint != nil {
 			data.CloudIdsCustomEndpoint = types.StringValue(customEndpoint.(string))
-		}
-	}
-	if data.CloudIotCustomEndpoint.IsNull() {
-		customEndpoint := transport_tpg.MultiEnvDefault([]string{
-			"GOOGLE_CLOUD_IOT_CUSTOM_ENDPOINT",
-		}, transport_tpg.DefaultBasePaths[transport_tpg.CloudIotBasePathKey])
-		if customEndpoint != nil {
-			data.CloudIotCustomEndpoint = types.StringValue(customEndpoint.(string))
 		}
 	}
 	if data.CloudRunCustomEndpoint.IsNull() {
