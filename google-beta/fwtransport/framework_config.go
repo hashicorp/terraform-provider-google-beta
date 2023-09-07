@@ -315,6 +315,7 @@ func (p *FrameworkProviderConfig) LoadAndValidateFramework(ctx context.Context, 
 	p.WorkstationsBasePath = data.WorkstationsCustomEndpoint.ValueString()
 
 	p.Context = ctx
+	p.BillingProject = data.BillingProject
 	p.Project = data.Project
 	p.Region = data.Region
 	p.Zone = data.Zone
