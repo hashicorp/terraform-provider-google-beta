@@ -49,7 +49,7 @@ func ResourceComputeGlobalAddress() *schema.Resource {
 		},
 
 		CustomizeDiff: customdiff.All(
-			tpgresource.SetTerraformLabelsDiff,
+			tpgresource.SetLabelsDiff,
 			tpgresource.DefaultProviderProject,
 		),
 
@@ -240,10 +240,10 @@ func resourceComputeGlobalAddressCreate(d *schema.ResourceData, meta interface{}
 	} else if v, ok := d.GetOkExists("network"); !tpgresource.IsEmptyValue(reflect.ValueOf(networkProp)) && (ok || !reflect.DeepEqual(v, networkProp)) {
 		obj["network"] = networkProp
 	}
-	labelsProp, err := expandComputeGlobalAddressTerraformLabels(d.Get("terraform_labels"), d, config)
+	labelsProp, err := expandComputeGlobalAddressEffectiveLabels(d.Get("effective_labels"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("terraform_labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(labelsProp)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
+	} else if v, ok := d.GetOkExists("effective_labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(labelsProp)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
 		obj["labels"] = labelsProp
 	}
 
@@ -296,8 +296,10 @@ func resourceComputeGlobalAddressCreate(d *schema.ResourceData, meta interface{}
 		return fmt.Errorf("Error waiting to create GlobalAddress: %s", err)
 	}
 
-	if v, ok := d.GetOkExists("terraform_labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
+	if v, ok := d.GetOkExists("effective_labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
 		labels := d.Get("labels")
+		terraformLables := d.Get("terraform_labels")
+
 		// Labels cannot be set in a create.  We'll have to set them here.
 		err = resourceComputeGlobalAddressRead(d, meta)
 		if err != nil {
@@ -305,8 +307,8 @@ func resourceComputeGlobalAddressCreate(d *schema.ResourceData, meta interface{}
 		}
 
 		obj := make(map[string]interface{})
-		// d.Get("terraform_labels") will have been overridden by the Read call.
-		labelsProp, err := expandComputeGlobalAddressTerraformLabels(v, d, config)
+		// d.Get("effective_labels") will have been overridden by the Read call.
+		labelsProp, err := expandComputeGlobalAddressEffectiveLabels(v, d, config)
 		if err != nil {
 			return err
 		}
@@ -344,8 +346,13 @@ func resourceComputeGlobalAddressCreate(d *schema.ResourceData, meta interface{}
 		}
 
 		// Set back the terraform_labels field, as it is needed to decide the value of "terraform_labels" in the state in the read function.
-		if err := d.Set("terraform_labels", v); err != nil {
+		if err := d.Set("terraform_labels", terraformLables); err != nil {
 			return fmt.Errorf("Error setting back terraform_labels: %s", err)
+		}
+
+		// Set back the effective_labels field, as it is needed to decide the value of "effective_labels" in the state in the read function.
+		if err := d.Set("effective_labels", v); err != nil {
+			return fmt.Errorf("Error setting back effective_labels: %s", err)
 		}
 	}
 
@@ -457,7 +464,7 @@ func resourceComputeGlobalAddressUpdate(d *schema.ResourceData, meta interface{}
 
 	d.Partial(true)
 
-	if d.HasChange("label_fingerprint") || d.HasChange("terraform_labels") {
+	if d.HasChange("label_fingerprint") || d.HasChange("effective_labels") {
 		obj := make(map[string]interface{})
 
 		labelFingerprintProp, err := expandComputeGlobalAddressLabelFingerprint(d.Get("label_fingerprint"), d, config)
@@ -466,10 +473,10 @@ func resourceComputeGlobalAddressUpdate(d *schema.ResourceData, meta interface{}
 		} else if v, ok := d.GetOkExists("label_fingerprint"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, labelFingerprintProp)) {
 			obj["labelFingerprint"] = labelFingerprintProp
 		}
-		labelsProp, err := expandComputeGlobalAddressTerraformLabels(d.Get("terraform_labels"), d, config)
+		labelsProp, err := expandComputeGlobalAddressEffectiveLabels(d.Get("effective_labels"), d, config)
 		if err != nil {
 			return err
-		} else if v, ok := d.GetOkExists("terraform_labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
+		} else if v, ok := d.GetOkExists("effective_labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
 			obj["labels"] = labelsProp
 		}
 
@@ -714,7 +721,7 @@ func expandComputeGlobalAddressNetwork(v interface{}, d tpgresource.TerraformRes
 	return f.RelativeLink(), nil
 }
 
-func expandComputeGlobalAddressTerraformLabels(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
+func expandComputeGlobalAddressEffectiveLabels(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
 	if v == nil {
 		return map[string]string{}, nil
 	}
