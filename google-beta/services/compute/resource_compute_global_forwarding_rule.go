@@ -50,7 +50,7 @@ func ResourceComputeGlobalForwardingRule() *schema.Resource {
 		},
 
 		CustomizeDiff: customdiff.All(
-			tpgresource.SetTerraformLabelsDiff,
+			tpgresource.SetLabelsDiff,
 			tpgresource.DefaultProviderProject,
 		),
 
@@ -478,10 +478,10 @@ func resourceComputeGlobalForwardingRuleCreate(d *schema.ResourceData, meta inte
 	} else if v, ok := d.GetOkExists("no_automate_dns_zone"); ok || !reflect.DeepEqual(v, noAutomateDnsZoneProp) {
 		obj["noAutomateDnsZone"] = noAutomateDnsZoneProp
 	}
-	labelsProp, err := expandComputeGlobalForwardingRuleTerraformLabels(d.Get("terraform_labels"), d, config)
+	labelsProp, err := expandComputeGlobalForwardingRuleEffectiveLabels(d.Get("effective_labels"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("terraform_labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(labelsProp)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
+	} else if v, ok := d.GetOkExists("effective_labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(labelsProp)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
 		obj["labels"] = labelsProp
 	}
 
@@ -536,8 +536,10 @@ func resourceComputeGlobalForwardingRuleCreate(d *schema.ResourceData, meta inte
 		return fmt.Errorf("Error waiting to create GlobalForwardingRule: %s", err)
 	}
 
-	if v, ok := d.GetOkExists("terraform_labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
+	if v, ok := d.GetOkExists("effective_labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
 		labels := d.Get("labels")
+		terraformLables := d.Get("terraform_labels")
+
 		// Labels cannot be set in a create.  We'll have to set them here.
 		err = resourceComputeGlobalForwardingRuleRead(d, meta)
 		if err != nil {
@@ -545,8 +547,8 @@ func resourceComputeGlobalForwardingRuleCreate(d *schema.ResourceData, meta inte
 		}
 
 		obj := make(map[string]interface{})
-		// d.Get("terraform_labels") will have been overridden by the Read call.
-		labelsProp, err := expandComputeGlobalForwardingRuleTerraformLabels(v, d, config)
+		// d.Get("effective_labels") will have been overridden by the Read call.
+		labelsProp, err := expandComputeGlobalForwardingRuleEffectiveLabels(v, d, config)
 		if err != nil {
 			return err
 		}
@@ -584,8 +586,13 @@ func resourceComputeGlobalForwardingRuleCreate(d *schema.ResourceData, meta inte
 		}
 
 		// Set back the terraform_labels field, as it is needed to decide the value of "terraform_labels" in the state in the read function.
-		if err := d.Set("terraform_labels", v); err != nil {
+		if err := d.Set("terraform_labels", terraformLables); err != nil {
 			return fmt.Errorf("Error setting back terraform_labels: %s", err)
+		}
+
+		// Set back the effective_labels field, as it is needed to decide the value of "effective_labels" in the state in the read function.
+		if err := d.Set("effective_labels", v); err != nil {
+			return fmt.Errorf("Error setting back effective_labels: %s", err)
 		}
 	}
 
@@ -719,7 +726,7 @@ func resourceComputeGlobalForwardingRuleUpdate(d *schema.ResourceData, meta inte
 
 	d.Partial(true)
 
-	if d.HasChange("label_fingerprint") || d.HasChange("terraform_labels") {
+	if d.HasChange("label_fingerprint") || d.HasChange("effective_labels") {
 		obj := make(map[string]interface{})
 
 		labelFingerprintProp, err := expandComputeGlobalForwardingRuleLabelFingerprint(d.Get("label_fingerprint"), d, config)
@@ -728,10 +735,10 @@ func resourceComputeGlobalForwardingRuleUpdate(d *schema.ResourceData, meta inte
 		} else if v, ok := d.GetOkExists("label_fingerprint"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, labelFingerprintProp)) {
 			obj["labelFingerprint"] = labelFingerprintProp
 		}
-		labelsProp, err := expandComputeGlobalForwardingRuleTerraformLabels(d.Get("terraform_labels"), d, config)
+		labelsProp, err := expandComputeGlobalForwardingRuleEffectiveLabels(d.Get("effective_labels"), d, config)
 		if err != nil {
 			return err
-		} else if v, ok := d.GetOkExists("terraform_labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
+		} else if v, ok := d.GetOkExists("effective_labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
 			obj["labels"] = labelsProp
 		}
 
@@ -1180,7 +1187,7 @@ func expandComputeGlobalForwardingRuleNoAutomateDnsZone(v interface{}, d tpgreso
 	return v, nil
 }
 
-func expandComputeGlobalForwardingRuleTerraformLabels(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
+func expandComputeGlobalForwardingRuleEffectiveLabels(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
 	if v == nil {
 		return map[string]string{}, nil
 	}
