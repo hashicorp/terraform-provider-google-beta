@@ -1094,9 +1094,9 @@ func DatasourceMapWithErrors() (map[string]*schema.Resource, error) {
 		})
 }
 
-// Generated resources: 378
+// Generated resources: 379
 // Generated IAM resources: 237
-// Total generated resources: 615
+// Total generated resources: 616
 func ResourceMap() map[string]*schema.Resource {
 	resourceMap, _ := ResourceMapWithErrors()
 	return resourceMap
@@ -1158,6 +1158,7 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_apigee_nat_address":                                      apigee.ResourceApigeeNatAddress(),
 			"google_apigee_organization":                                     apigee.ResourceApigeeOrganization(),
 			"google_apigee_sync_authorization":                               apigee.ResourceApigeeSyncAuthorization(),
+			"google_apigee_target_server":                                    apigee.ResourceApigeeTargetServer(),
 			"google_app_engine_application_url_dispatch_rules":               appengine.ResourceAppEngineApplicationUrlDispatchRules(),
 			"google_app_engine_domain_mapping":                               appengine.ResourceAppEngineDomainMapping(),
 			"google_app_engine_firewall_rule":                                appengine.ResourceAppEngineFirewallRule(),
