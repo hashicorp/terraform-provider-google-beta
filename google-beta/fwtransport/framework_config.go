@@ -90,6 +90,7 @@ type FrameworkProviderConfig struct {
 	DataformBasePath                 string
 	DataFusionBasePath               string
 	DataLossPreventionBasePath       string
+	DataPipelineBasePath             string
 	DataplexBasePath                 string
 	DataprocBasePath                 string
 	DataprocMetastoreBasePath        string
@@ -244,6 +245,7 @@ func (p *FrameworkProviderConfig) LoadAndValidateFramework(ctx context.Context, 
 	p.DataformBasePath = data.DataformCustomEndpoint.ValueString()
 	p.DataFusionBasePath = data.DataFusionCustomEndpoint.ValueString()
 	p.DataLossPreventionBasePath = data.DataLossPreventionCustomEndpoint.ValueString()
+	p.DataPipelineBasePath = data.DataPipelineCustomEndpoint.ValueString()
 	p.DataplexBasePath = data.DataplexCustomEndpoint.ValueString()
 	p.DataprocBasePath = data.DataprocCustomEndpoint.ValueString()
 	p.DataprocMetastoreBasePath = data.DataprocMetastoreCustomEndpoint.ValueString()
@@ -771,6 +773,14 @@ func (p *FrameworkProviderConfig) HandleDefaults(ctx context.Context, data *fwmo
 		}, transport_tpg.DefaultBasePaths[transport_tpg.DataLossPreventionBasePathKey])
 		if customEndpoint != nil {
 			data.DataLossPreventionCustomEndpoint = types.StringValue(customEndpoint.(string))
+		}
+	}
+	if data.DataPipelineCustomEndpoint.IsNull() {
+		customEndpoint := transport_tpg.MultiEnvDefault([]string{
+			"GOOGLE_DATA_PIPELINE_CUSTOM_ENDPOINT",
+		}, transport_tpg.DefaultBasePaths[transport_tpg.DataPipelineBasePathKey])
+		if customEndpoint != nil {
+			data.DataPipelineCustomEndpoint = types.StringValue(customEndpoint.(string))
 		}
 	}
 	if data.DataplexCustomEndpoint.IsNull() {
