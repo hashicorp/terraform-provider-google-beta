@@ -4,12 +4,11 @@ IMPROVEMENTS:
 * compute: added update support for field `enable_proxy_protocol` in `google_compute_service_attachment` resource ([#6192](https://github.com/hashicorp/terraform-provider-google-beta/pull/6192))
 * compute: added update support for field `reconcile_connections` in `google_compute_service_attachment` resource ([#6187](https://github.com/hashicorp/terraform-provider-google-beta/pull/6187))
 * compute: added update support for field `allowPscGlobalAccess` in `google_compute_forwarding_rule` resource ([#6179](https://github.com/hashicorp/terraform-provider-google-beta/pull/6179))
-* compute: promoted `google_compute_region_instance_template` to GA ([#6190](https://github.com/hashicorp/terraform-provider-google-beta/pull/6190))
 * container: added additional options for field `monitoring_config.enable_components` in `google_container_cluster` resource ([#6198](https://github.com/hashicorp/terraform-provider-google-beta/pull/6198))
 * gkehub: added `labels` field to `google_gke_hub_scope_rbac_role_binding` resource ([#6200](https://github.com/hashicorp/terraform-provider-google-beta/pull/6200))
-* logging: supported in-place update for field `unique_writer_identity` in `google_logging_project_sink` resource ([#6193](https://github.com/hashicorp/terraform-provider-google-beta/pull/6193))
+* logging: added in-place update support for field `unique_writer_identity` in `google_logging_project_sink` resource ([#6193](https://github.com/hashicorp/terraform-provider-google-beta/pull/6193))
 * networkconnectivity: added `psc_connections.error.details` field to `google_network_connectivity_service_connection_policy` resource ([#6197](https://github.com/hashicorp/terraform-provider-google-beta/pull/6197))
-* secretmanager: supported in-place update for `replication.user_managed.replicas.customer_managed_encryption` field in `google_secret_manager_secret` resource ([#6177](https://github.com/hashicorp/terraform-provider-google-beta/pull/6177))
+* secretmanager: added in-place update support for field `replication.user_managed.replicas.customer_managed_encryption` in `google_secret_manager_secret` resource ([#6177](https://github.com/hashicorp/terraform-provider-google-beta/pull/6177))
 
 BUG FIXES:
 * bigquery: fixed an error from updating immutable `params` of `google_bigquery_data_transfer_config` ([#6195](https://github.com/hashicorp/terraform-provider-google-beta/pull/6195))
