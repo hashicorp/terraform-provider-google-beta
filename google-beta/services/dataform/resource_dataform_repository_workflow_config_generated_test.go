@@ -67,7 +67,7 @@ resource "google_secret_manager_secret" "secret" {
   secret_id = "tf_test_my_secret%{random_suffix}"
 
   replication {
-    automatic = true
+    auto {}
   }
 }
 
