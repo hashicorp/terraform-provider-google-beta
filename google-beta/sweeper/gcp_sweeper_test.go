@@ -127,6 +127,7 @@ import (
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/container"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/containeraws"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/containerazure"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/dataflow"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/eventarc"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/firebase"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/firebaserules"
