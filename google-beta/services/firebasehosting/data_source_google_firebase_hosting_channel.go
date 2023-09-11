@@ -32,5 +32,13 @@ func dataSourceGoogleFirebaseHostingChannelRead(d *schema.ResourceData, meta int
 	}
 	d.SetId(id)
 
-	return resourceFirebaseHostingChannelRead(d, meta)
+	err = resourceFirebaseHostingChannelRead(d, meta)
+	if err != nil {
+		return err
+	}
+
+	if d.Id() == "" {
+		return fmt.Errorf("%s not found", id)
+	}
+	return nil
 }
