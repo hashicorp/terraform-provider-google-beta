@@ -111,6 +111,7 @@ import (
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/spanner"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/sql"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/storage"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/storageinsights"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/storagetransfer"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/tags"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/tpu"

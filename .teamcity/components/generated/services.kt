@@ -586,6 +586,11 @@ var services = mapOf(
         "displayName" to "Storage",
         "path" to "./google-beta/services/storage"
     ),
+    "storageinsights" to mapOf(
+        "name" to "storageinsights",
+        "displayName" to "Storageinsights",
+        "path" to "./google-beta/services/storageinsights"
+    ),
     "storagetransfer" to mapOf(
         "name" to "storagetransfer",
         "displayName" to "Storagetransfer",
