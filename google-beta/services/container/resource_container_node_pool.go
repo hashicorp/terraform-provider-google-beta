@@ -573,9 +573,11 @@ func resourceContainerNodePoolCreate(d *schema.ResourceData, meta interface{}) e
 		operation, err = clusterNodePoolsCreateCall.Do()
 
 		if err != nil {
-			if tpgresource.IsFailedPreconditionError(err) {
+			if tpgresource.IsFailedPreconditionError(err) || tpgresource.IsQuotaError(err) {
 				// We get failed precondition errors if the cluster is updating
 				// while we try to add the node pool.
+				// We get quota errors if there the number of running concurrent
+				// operations reaches the quota.
 				return resource.RetryableError(err)
 			}
 			return resource.NonRetryableError(err)
@@ -778,9 +780,11 @@ func resourceContainerNodePoolDelete(d *schema.ResourceData, meta interface{}) e
 		operation, err = clusterNodePoolsDeleteCall.Do()
 
 		if err != nil {
-			if tpgresource.IsFailedPreconditionError(err) {
+			if tpgresource.IsFailedPreconditionError(err) || tpgresource.IsQuotaError(err) {
 				// We get failed precondition errors if the cluster is updating
 				// while we try to delete the node pool.
+				// We get quota errors if there the number of running concurrent
+				// operations reaches the quota.
 				return resource.RetryableError(err)
 			}
 			return resource.NonRetryableError(err)
@@ -1324,7 +1328,7 @@ func nodePoolUpdate(d *schema.ResourceData, meta interface{}, nodePoolInfo *Node
 				timeout)
 		}
 
-		if err := tpgresource.RetryWhileIncompatibleOperation(timeout, npLockKey, updateF); err != nil {
+		if err := retryWhileIncompatibleOperation(timeout, npLockKey, updateF); err != nil {
 			return err
 		}
 		log.Printf("[INFO] Updated autoscaling in Node Pool %s", d.Id())
@@ -1362,7 +1366,7 @@ func nodePoolUpdate(d *schema.ResourceData, meta interface{}, nodePoolInfo *Node
 						timeout)
 				}
 
-				if err := tpgresource.RetryWhileIncompatibleOperation(timeout, npLockKey, updateF); err != nil {
+				if err := retryWhileIncompatibleOperation(timeout, npLockKey, updateF); err != nil {
 					return err
 				}
 
@@ -1416,7 +1420,7 @@ func nodePoolUpdate(d *schema.ResourceData, meta interface{}, nodePoolInfo *Node
 					timeout)
 			}
 
-			if err := tpgresource.RetryWhileIncompatibleOperation(timeout, npLockKey, updateF); err != nil {
+			if err := retryWhileIncompatibleOperation(timeout, npLockKey, updateF); err != nil {
 				return err
 			}
 			log.Printf("[INFO] Updated tags for node pool %s", name)
@@ -1453,7 +1457,7 @@ func nodePoolUpdate(d *schema.ResourceData, meta interface{}, nodePoolInfo *Node
 			}
 
 			// Call update serially.
-			if err := tpgresource.RetryWhileIncompatibleOperation(timeout, npLockKey, updateF); err != nil {
+			if err := retryWhileIncompatibleOperation(timeout, npLockKey, updateF); err != nil {
 				return err
 			}
 
@@ -1491,7 +1495,7 @@ func nodePoolUpdate(d *schema.ResourceData, meta interface{}, nodePoolInfo *Node
 			}
 
 			// Call update serially.
-			if err := tpgresource.RetryWhileIncompatibleOperation(timeout, npLockKey, updateF); err != nil {
+			if err := retryWhileIncompatibleOperation(timeout, npLockKey, updateF); err != nil {
 				return err
 			}
 
@@ -1523,7 +1527,7 @@ func nodePoolUpdate(d *schema.ResourceData, meta interface{}, nodePoolInfo *Node
 					timeout)
 			}
 
-			if err := tpgresource.RetryWhileIncompatibleOperation(timeout, npLockKey, updateF); err != nil {
+			if err := retryWhileIncompatibleOperation(timeout, npLockKey, updateF); err != nil {
 				return err
 			}
 			log.Printf("[INFO] Updated image type in Node Pool %s", d.Id())
@@ -1557,7 +1561,7 @@ func nodePoolUpdate(d *schema.ResourceData, meta interface{}, nodePoolInfo *Node
 					timeout)
 			}
 
-			if err := tpgresource.RetryWhileIncompatibleOperation(timeout, npLockKey, updateF); err != nil {
+			if err := retryWhileIncompatibleOperation(timeout, npLockKey, updateF); err != nil {
 				return err
 			}
 			log.Printf("[INFO] Updated workload_metadata_config for node pool %s", name)
@@ -1590,7 +1594,7 @@ func nodePoolUpdate(d *schema.ResourceData, meta interface{}, nodePoolInfo *Node
 					timeout)
 			}
 
-			if err := tpgresource.RetryWhileIncompatibleOperation(timeout, npLockKey, updateF); err != nil {
+			if err := retryWhileIncompatibleOperation(timeout, npLockKey, updateF); err != nil {
 				return err
 			}
 
@@ -1623,7 +1627,7 @@ func nodePoolUpdate(d *schema.ResourceData, meta interface{}, nodePoolInfo *Node
 					timeout)
 			}
 
-			if err := tpgresource.RetryWhileIncompatibleOperation(timeout, npLockKey, updateF); err != nil {
+			if err := retryWhileIncompatibleOperation(timeout, npLockKey, updateF); err != nil {
 				return err
 			}
 
@@ -1654,7 +1658,7 @@ func nodePoolUpdate(d *schema.ResourceData, meta interface{}, nodePoolInfo *Node
 				nodePoolInfo.location, "updating GKE node pool size", userAgent,
 				timeout)
 		}
-		if err := tpgresource.RetryWhileIncompatibleOperation(timeout, npLockKey, updateF); err != nil {
+		if err := retryWhileIncompatibleOperation(timeout, npLockKey, updateF); err != nil {
 			return err
 		}
 		log.Printf("[INFO] GKE node pool %s size has been updated to %d", name, newSize)
@@ -1689,7 +1693,7 @@ func nodePoolUpdate(d *schema.ResourceData, meta interface{}, nodePoolInfo *Node
 				nodePoolInfo.location, "updating GKE node pool management", userAgent, timeout)
 		}
 
-		if err := tpgresource.RetryWhileIncompatibleOperation(timeout, npLockKey, updateF); err != nil {
+		if err := retryWhileIncompatibleOperation(timeout, npLockKey, updateF); err != nil {
 			return err
 		}
 		log.Printf("[INFO] Updated management in Node Pool %s", name)
@@ -1716,7 +1720,7 @@ func nodePoolUpdate(d *schema.ResourceData, meta interface{}, nodePoolInfo *Node
 				nodePoolInfo.project,
 				nodePoolInfo.location, "updating GKE node pool version", userAgent, timeout)
 		}
-		if err := tpgresource.RetryWhileIncompatibleOperation(timeout, npLockKey, updateF); err != nil {
+		if err := retryWhileIncompatibleOperation(timeout, npLockKey, updateF); err != nil {
 			return err
 		}
 		log.Printf("[INFO] Updated version in Node Pool %s", name)
@@ -1741,7 +1745,7 @@ func nodePoolUpdate(d *schema.ResourceData, meta interface{}, nodePoolInfo *Node
 			return ContainerOperationWait(config, op, nodePoolInfo.project, nodePoolInfo.location, "updating GKE node pool node locations", userAgent, timeout)
 		}
 
-		if err := tpgresource.RetryWhileIncompatibleOperation(timeout, npLockKey, updateF); err != nil {
+		if err := retryWhileIncompatibleOperation(timeout, npLockKey, updateF); err != nil {
 			return err
 		}
 		log.Printf("[INFO] Updated node locations in Node Pool %s", name)
@@ -1821,7 +1825,7 @@ func nodePoolUpdate(d *schema.ResourceData, meta interface{}, nodePoolInfo *Node
 			// Wait until it's updated
 			return ContainerOperationWait(config, op, nodePoolInfo.project, nodePoolInfo.location, "updating GKE node pool upgrade settings", userAgent, timeout)
 		}
-		if err := tpgresource.RetryWhileIncompatibleOperation(timeout, npLockKey, updateF); err != nil {
+		if err := retryWhileIncompatibleOperation(timeout, npLockKey, updateF); err != nil {
 			return err
 		}
 		log.Printf("[INFO] Updated upgrade settings in Node Pool %s", name)
@@ -1852,7 +1856,7 @@ func nodePoolUpdate(d *schema.ResourceData, meta interface{}, nodePoolInfo *Node
 					timeout)
 			}
 
-			if err := tpgresource.RetryWhileIncompatibleOperation(timeout, npLockKey, updateF); err != nil {
+			if err := retryWhileIncompatibleOperation(timeout, npLockKey, updateF); err != nil {
 				return err
 			}
 
@@ -1902,4 +1906,22 @@ func containerNodePoolAwaitRestingState(config *transport_tpg.Config, name, proj
 	})
 
 	return state, err
+}
+
+// Retries an operation while the canonical error code is FAILED_PRECONDTION
+// or RESOURCE_EXHAUSTED which indicates there is an incompatible operation
+// already running on the cluster or there are the number of allowed
+// concurrent operations running on the cluster. These errors can be safely
+// retried until the incompatible operation completes, and the newly
+// requested operation can begin.
+func retryWhileIncompatibleOperation(timeout time.Duration, lockKey string, f func() error) error {
+	return resource.Retry(timeout, func() *resource.RetryError {
+		if err := transport_tpg.LockedCall(lockKey, f); err != nil {
+			if tpgresource.IsFailedPreconditionError(err) || tpgresource.IsQuotaError(err) {
+				return resource.RetryableError(err)
+			}
+			return resource.NonRetryableError(err)
+		}
+		return nil
+	})
 }
