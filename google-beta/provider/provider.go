@@ -116,6 +116,7 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/spanner"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/sql"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/storage"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/storageinsights"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/storagetransfer"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/tags"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/tpu"
@@ -759,6 +760,11 @@ func Provider() *schema.Provider {
 				Optional:     true,
 				ValidateFunc: transport_tpg.ValidateCustomEndpoint,
 			},
+			"storage_insights_custom_endpoint": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: transport_tpg.ValidateCustomEndpoint,
+			},
 			"storage_transfer_custom_endpoint": {
 				Type:         schema.TypeString,
 				Optional:     true,
@@ -1100,9 +1106,9 @@ func DatasourceMapWithErrors() (map[string]*schema.Resource, error) {
 		})
 }
 
-// Generated resources: 381
+// Generated resources: 382
 // Generated IAM resources: 237
-// Total generated resources: 618
+// Total generated resources: 619
 func ResourceMap() map[string]*schema.Resource {
 	resourceMap, _ := ResourceMapWithErrors()
 	return resourceMap
@@ -1689,6 +1695,7 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_storage_default_object_access_control":                   storage.ResourceStorageDefaultObjectAccessControl(),
 			"google_storage_hmac_key":                                        storage.ResourceStorageHmacKey(),
 			"google_storage_object_access_control":                           storage.ResourceStorageObjectAccessControl(),
+			"google_storage_insights_report_config":                          storageinsights.ResourceStorageInsightsReportConfig(),
 			"google_storage_transfer_agent_pool":                             storagetransfer.ResourceStorageTransferAgentPool(),
 			"google_tags_tag_binding":                                        tags.ResourceTagsTagBinding(),
 			"google_tags_tag_key":                                            tags.ResourceTagsTagKey(),
@@ -2078,6 +2085,7 @@ func ProviderConfigure(ctx context.Context, d *schema.ResourceData, p *schema.Pr
 	config.SpannerBasePath = d.Get("spanner_custom_endpoint").(string)
 	config.SQLBasePath = d.Get("sql_custom_endpoint").(string)
 	config.StorageBasePath = d.Get("storage_custom_endpoint").(string)
+	config.StorageInsightsBasePath = d.Get("storage_insights_custom_endpoint").(string)
 	config.StorageTransferBasePath = d.Get("storage_transfer_custom_endpoint").(string)
 	config.TagsBasePath = d.Get("tags_custom_endpoint").(string)
 	config.TPUBasePath = d.Get("tpu_custom_endpoint").(string)
