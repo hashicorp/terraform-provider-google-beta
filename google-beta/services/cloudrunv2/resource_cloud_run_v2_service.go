@@ -558,12 +558,13 @@ A duration in seconds with up to nine fractional digits, ending with 's'. Exampl
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"instances": {
-													Type:        schema.TypeList,
+													Type:        schema.TypeSet,
 													Optional:    true,
 													Description: `The Cloud SQL instance connection names, as can be found in https://console.cloud.google.com/sql/instances. Visit https://cloud.google.com/sql/docs/mysql/connect-run for more information on how to connect Cloud SQL and Cloud Run. Format: {project}:{location}:{instance}`,
 													Elem: &schema.Schema{
 														Type: schema.TypeString,
 													},
+													Set: schema.HashString,
 												},
 											},
 										},
@@ -2436,7 +2437,10 @@ func flattenCloudRunV2ServiceTemplateVolumesCloudSqlInstance(v interface{}, d *s
 	return []interface{}{transformed}
 }
 func flattenCloudRunV2ServiceTemplateVolumesCloudSqlInstanceInstances(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
-	return v
+	if v == nil {
+		return v
+	}
+	return schema.NewSet(schema.HashString, v.([]interface{}))
 }
 
 func flattenCloudRunV2ServiceTemplateVolumesEmptyDir(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -3935,6 +3939,7 @@ func expandCloudRunV2ServiceTemplateVolumesCloudSqlInstance(v interface{}, d tpg
 }
 
 func expandCloudRunV2ServiceTemplateVolumesCloudSqlInstanceInstances(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	v = v.(*schema.Set).List()
 	return v, nil
 }
 
