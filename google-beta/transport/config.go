@@ -291,6 +291,7 @@ type Config struct {
 	StorageTransferBasePath          string
 	TagsBasePath                     string
 	TPUBasePath                      string
+	TpuV2BasePath                    string
 	VertexAIBasePath                 string
 	VmwareengineBasePath             string
 	VPCAccessBasePath                string
@@ -425,6 +426,7 @@ const StorageInsightsBasePathKey = "StorageInsights"
 const StorageTransferBasePathKey = "StorageTransfer"
 const TagsBasePathKey = "Tags"
 const TPUBasePathKey = "TPU"
+const TpuV2BasePathKey = "TpuV2"
 const VertexAIBasePathKey = "VertexAI"
 const VmwareengineBasePathKey = "Vmwareengine"
 const VPCAccessBasePathKey = "VPCAccess"
@@ -553,6 +555,7 @@ var DefaultBasePaths = map[string]string{
 	StorageTransferBasePathKey:          "https://storagetransfer.googleapis.com/v1/",
 	TagsBasePathKey:                     "https://cloudresourcemanager.googleapis.com/v3/",
 	TPUBasePathKey:                      "https://tpu.googleapis.com/v1/",
+	TpuV2BasePathKey:                    "https://tpu.googleapis.com/v2/",
 	VertexAIBasePathKey:                 "https://{{region}}-aiplatform.googleapis.com/v1beta1/",
 	VmwareengineBasePathKey:             "https://vmwareengine.googleapis.com/v1/",
 	VPCAccessBasePathKey:                "https://vpcaccess.googleapis.com/v1beta1/",
@@ -1175,6 +1178,11 @@ func HandleSDKDefaults(d *schema.ResourceData) error {
 		d.Set("tpu_custom_endpoint", MultiEnvDefault([]string{
 			"GOOGLE_TPU_CUSTOM_ENDPOINT",
 		}, DefaultBasePaths[TPUBasePathKey]))
+	}
+	if d.Get("tpu_v2_custom_endpoint") == "" {
+		d.Set("tpu_v2_custom_endpoint", MultiEnvDefault([]string{
+			"GOOGLE_TPU_V2_CUSTOM_ENDPOINT",
+		}, DefaultBasePaths[TpuV2BasePathKey]))
 	}
 	if d.Get("vertex_ai_custom_endpoint") == "" {
 		d.Set("vertex_ai_custom_endpoint", MultiEnvDefault([]string{
@@ -2169,6 +2177,7 @@ func ConfigureBasePaths(c *Config) {
 	c.StorageTransferBasePath = DefaultBasePaths[StorageTransferBasePathKey]
 	c.TagsBasePath = DefaultBasePaths[TagsBasePathKey]
 	c.TPUBasePath = DefaultBasePaths[TPUBasePathKey]
+	c.TpuV2BasePath = DefaultBasePaths[TpuV2BasePathKey]
 	c.VertexAIBasePath = DefaultBasePaths[VertexAIBasePathKey]
 	c.VmwareengineBasePath = DefaultBasePaths[VmwareengineBasePathKey]
 	c.VPCAccessBasePath = DefaultBasePaths[VPCAccessBasePathKey]

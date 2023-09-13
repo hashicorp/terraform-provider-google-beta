@@ -120,6 +120,7 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/storagetransfer"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/tags"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/tpu"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/tpuv2"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/vertexai"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/vmwareengine"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/vpcaccess"
@@ -780,6 +781,11 @@ func Provider() *schema.Provider {
 				Optional:     true,
 				ValidateFunc: transport_tpg.ValidateCustomEndpoint,
 			},
+			"tpu_v2_custom_endpoint": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: transport_tpg.ValidateCustomEndpoint,
+			},
 			"vertex_ai_custom_endpoint": {
 				Type:         schema.TypeString,
 				Optional:     true,
@@ -989,6 +995,8 @@ func DatasourceMapWithErrors() (map[string]*schema.Resource, error) {
 		"google_tags_tag_key":                                 tags.DataSourceGoogleTagsTagKey(),
 		"google_tags_tag_value":                               tags.DataSourceGoogleTagsTagValue(),
 		"google_tpu_tensorflow_versions":                      tpu.DataSourceTpuTensorflowVersions(),
+		"google_tpu_v2_runtime_versions":                      tpuv2.DataSourceTpuV2RuntimeVersions(),
+		"google_tpu_v2_accelerator_types":                     tpuv2.DataSourceTpuV2AcceleratorTypes(),
 		"google_vpc_access_connector":                         vpcaccess.DataSourceVPCAccessConnector(),
 		"google_redis_instance":                               redis.DataSourceGoogleRedisInstance(),
 		"google_vertex_ai_index":                              vertexai.DataSourceVertexAIIndex(),
@@ -1106,9 +1114,9 @@ func DatasourceMapWithErrors() (map[string]*schema.Resource, error) {
 		})
 }
 
-// Generated resources: 382
+// Generated resources: 383
 // Generated IAM resources: 237
-// Total generated resources: 619
+// Total generated resources: 620
 func ResourceMap() map[string]*schema.Resource {
 	resourceMap, _ := ResourceMapWithErrors()
 	return resourceMap
@@ -1707,6 +1715,7 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_tags_tag_value_iam_member":                               tpgiamresource.ResourceIamMember(tags.TagsTagValueIamSchema, tags.TagsTagValueIamUpdaterProducer, tags.TagsTagValueIdParseFunc),
 			"google_tags_tag_value_iam_policy":                               tpgiamresource.ResourceIamPolicy(tags.TagsTagValueIamSchema, tags.TagsTagValueIamUpdaterProducer, tags.TagsTagValueIdParseFunc),
 			"google_tpu_node":                                                tpu.ResourceTPUNode(),
+			"google_tpu_v2_vm":                                               tpuv2.ResourceTpuV2Vm(),
 			"google_vertex_ai_dataset":                                       vertexai.ResourceVertexAIDataset(),
 			"google_vertex_ai_endpoint":                                      vertexai.ResourceVertexAIEndpoint(),
 			"google_vertex_ai_featurestore":                                  vertexai.ResourceVertexAIFeaturestore(),
@@ -2089,6 +2098,7 @@ func ProviderConfigure(ctx context.Context, d *schema.ResourceData, p *schema.Pr
 	config.StorageTransferBasePath = d.Get("storage_transfer_custom_endpoint").(string)
 	config.TagsBasePath = d.Get("tags_custom_endpoint").(string)
 	config.TPUBasePath = d.Get("tpu_custom_endpoint").(string)
+	config.TpuV2BasePath = d.Get("tpu_v2_custom_endpoint").(string)
 	config.VertexAIBasePath = d.Get("vertex_ai_custom_endpoint").(string)
 	config.VmwareengineBasePath = d.Get("vmwareengine_custom_endpoint").(string)
 	config.VPCAccessBasePath = d.Get("vpc_access_custom_endpoint").(string)

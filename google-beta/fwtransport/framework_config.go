@@ -156,6 +156,7 @@ type FrameworkProviderConfig struct {
 	StorageTransferBasePath          string
 	TagsBasePath                     string
 	TPUBasePath                      string
+	TpuV2BasePath                    string
 	VertexAIBasePath                 string
 	VmwareengineBasePath             string
 	VPCAccessBasePath                string
@@ -307,6 +308,7 @@ func (p *FrameworkProviderConfig) LoadAndValidateFramework(ctx context.Context, 
 	p.StorageTransferBasePath = data.StorageTransferCustomEndpoint.ValueString()
 	p.TagsBasePath = data.TagsCustomEndpoint.ValueString()
 	p.TPUBasePath = data.TPUCustomEndpoint.ValueString()
+	p.TpuV2BasePath = data.TpuV2CustomEndpoint.ValueString()
 	p.VertexAIBasePath = data.VertexAICustomEndpoint.ValueString()
 	p.VmwareengineBasePath = data.VmwareengineCustomEndpoint.ValueString()
 	p.VPCAccessBasePath = data.VPCAccessCustomEndpoint.ValueString()
@@ -1299,6 +1301,14 @@ func (p *FrameworkProviderConfig) HandleDefaults(ctx context.Context, data *fwmo
 		}, transport_tpg.DefaultBasePaths[transport_tpg.TPUBasePathKey])
 		if customEndpoint != nil {
 			data.TPUCustomEndpoint = types.StringValue(customEndpoint.(string))
+		}
+	}
+	if data.TpuV2CustomEndpoint.IsNull() {
+		customEndpoint := transport_tpg.MultiEnvDefault([]string{
+			"GOOGLE_TPU_V2_CUSTOM_ENDPOINT",
+		}, transport_tpg.DefaultBasePaths[transport_tpg.TpuV2BasePathKey])
+		if customEndpoint != nil {
+			data.TpuV2CustomEndpoint = types.StringValue(customEndpoint.(string))
 		}
 	}
 	if data.VertexAICustomEndpoint.IsNull() {
