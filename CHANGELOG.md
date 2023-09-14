@@ -18,7 +18,6 @@ BUG FIXES:
 * dns: fixed hash function for `network_url` in `google_dns_managed_zone` and `google_dns_policy` resources to make sure that the private DNS zone or DNS policy can be attatched to all of the networks in different projects, even though the network name is the same across of those projects ([#6199](https://github.com/hashicorp/terraform-provider-google-beta/pull/6199))
 * servicedirectory: made `location` immutable as updating this field in `google_service_directory_namespace` resource ([#6182](https://github.com/hashicorp/terraform-provider-google-beta/pull/6182))
 
-
 ## 4.81.0 (September 05, 2023)
 FEATURES:
 * **New Resource:** `google_biglake_catalog` ([#6152](https://github.com/hashicorp/terraform-provider-google-beta/pull/6152))
