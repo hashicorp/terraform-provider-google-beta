@@ -1,4 +1,22 @@
-## 4.82.0 (Unreleased)
+## 4.83.0 (Unreleased)
+
+## 4.82.0 (September 11, 2023)
+
+IMPROVEMENTS:
+* compute: added in-place update support for field `enable_proxy_protocol` in `google_compute_service_attachment` resource ([#6192](https://github.com/hashicorp/terraform-provider-google-beta/pull/6192))
+* compute: added in-place update support for field `reconcile_connections` in `google_compute_service_attachment` resource ([#6187](https://github.com/hashicorp/terraform-provider-google-beta/pull/6187))
+* compute: added in-place update support for field `allowPscGlobalAccess` in `google_compute_forwarding_rule` resource ([#6179](https://github.com/hashicorp/terraform-provider-google-beta/pull/6179))
+* container: added additional options for field `monitoring_config.enable_components` in `google_container_cluster` resource ([#6198](https://github.com/hashicorp/terraform-provider-google-beta/pull/6198))
+* gkehub: added `labels` field to `google_gke_hub_scope_rbac_role_binding` resource ([#6200](https://github.com/hashicorp/terraform-provider-google-beta/pull/6200))
+* logging: added in-place update support for field `unique_writer_identity` in `google_logging_project_sink` resource ([#6193](https://github.com/hashicorp/terraform-provider-google-beta/pull/6193))
+* networkconnectivity: added `psc_connections.error.details` field to `google_network_connectivity_service_connection_policy` resource ([#6197](https://github.com/hashicorp/terraform-provider-google-beta/pull/6197))
+* secretmanager: added in-place update support for field `replication.user_managed.replicas.customer_managed_encryption` in `google_secret_manager_secret` resource ([#6177](https://github.com/hashicorp/terraform-provider-google-beta/pull/6177))
+
+BUG FIXES:
+* bigquery: made `params.destination_table_name_template` and `params.data_path` immutable as updating these fields if value of `data_source_id` is `amazon_s3` in `google_bigquery_data_transfer_config` resource ([#6195](https://github.com/hashicorp/terraform-provider-google-beta/pull/6195))
+* compute: fixed a crash when empty is given to `all_instances_config` in `google_compute_region_instance_group_manager` resource ([#6191](https://github.com/hashicorp/terraform-provider-google-beta/pull/6191))
+* dns: fixed hash function for `network_url` in `google_dns_managed_zone` and `google_dns_policy` resources to make sure that the private DNS zone or DNS policy can be attatched to all of the networks in different projects, even though the network name is the same across of those projects ([#6199](https://github.com/hashicorp/terraform-provider-google-beta/pull/6199))
+* servicedirectory: made `location` immutable as updating this field in `google_service_directory_namespace` resource ([#6182](https://github.com/hashicorp/terraform-provider-google-beta/pull/6182))
 
 
 ## 4.81.0 (September 05, 2023)
