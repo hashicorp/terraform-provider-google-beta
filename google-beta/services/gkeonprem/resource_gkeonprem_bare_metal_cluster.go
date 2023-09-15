@@ -50,6 +50,7 @@ func ResourceGkeonpremBareMetalCluster() *schema.Resource {
 		},
 
 		CustomizeDiff: customdiff.All(
+			tpgresource.SetAnnotationsDiff,
 			tpgresource.DefaultProviderProject,
 		),
 
@@ -787,7 +788,6 @@ automatically created during cluster creation.`,
 			},
 			"annotations": {
 				Type:     schema.TypeMap,
-				Computed: true,
 				Optional: true,
 				Description: `Annotations on the Bare Metal User Cluster.
 This field has the same restrictions as Kubernetes annotations.
@@ -1000,6 +1000,12 @@ Examples: ["127.0.0.1", "example.com", ".corp", "localhost"].`,
 				Type:        schema.TypeString,
 				Computed:    true,
 				Description: `The time the cluster was deleted, in RFC3339 text format.`,
+			},
+			"effective_annotations": {
+				Type:        schema.TypeMap,
+				Computed:    true,
+				Description: `All of annotations (key/value pairs) present on the resource in GCP, including the annotations configured through Terraform, other clients and services.`,
+				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
 			"endpoint": {
 				Type:        schema.TypeString,
@@ -1222,12 +1228,6 @@ func resourceGkeonpremBareMetalClusterCreate(d *schema.ResourceData, meta interf
 	} else if v, ok := d.GetOkExists("bare_metal_version"); !tpgresource.IsEmptyValue(reflect.ValueOf(bareMetalVersionProp)) && (ok || !reflect.DeepEqual(v, bareMetalVersionProp)) {
 		obj["bareMetalVersion"] = bareMetalVersionProp
 	}
-	annotationsProp, err := expandGkeonpremBareMetalClusterAnnotations(d.Get("annotations"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("annotations"); !tpgresource.IsEmptyValue(reflect.ValueOf(annotationsProp)) && (ok || !reflect.DeepEqual(v, annotationsProp)) {
-		obj["annotations"] = annotationsProp
-	}
 	networkConfigProp, err := expandGkeonpremBareMetalClusterNetworkConfig(d.Get("network_config"), d, config)
 	if err != nil {
 		return err
@@ -1305,6 +1305,12 @@ func resourceGkeonpremBareMetalClusterCreate(d *schema.ResourceData, meta interf
 		return err
 	} else if v, ok := d.GetOkExists("upgrade_policy"); !tpgresource.IsEmptyValue(reflect.ValueOf(upgradePolicyProp)) && (ok || !reflect.DeepEqual(v, upgradePolicyProp)) {
 		obj["upgradePolicy"] = upgradePolicyProp
+	}
+	annotationsProp, err := expandGkeonpremBareMetalClusterEffectiveAnnotations(d.Get("effective_annotations"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("effective_annotations"); !tpgresource.IsEmptyValue(reflect.ValueOf(annotationsProp)) && (ok || !reflect.DeepEqual(v, annotationsProp)) {
+		obj["annotations"] = annotationsProp
 	}
 
 	url, err := tpgresource.ReplaceVars(d, config, "{{GkeonpremBasePath}}projects/{{project}}/locations/{{location}}/bareMetalClusters?bare_metal_cluster_id={{name}}")
@@ -1495,6 +1501,9 @@ func resourceGkeonpremBareMetalClusterRead(d *schema.ResourceData, meta interfac
 	if err := d.Set("validation_check", flattenGkeonpremBareMetalClusterValidationCheck(res["validationCheck"], d, config)); err != nil {
 		return fmt.Errorf("Error reading BareMetalCluster: %s", err)
 	}
+	if err := d.Set("effective_annotations", flattenGkeonpremBareMetalClusterEffectiveAnnotations(res["annotations"], d, config)); err != nil {
+		return fmt.Errorf("Error reading BareMetalCluster: %s", err)
+	}
 
 	return nil
 }
@@ -1526,12 +1535,6 @@ func resourceGkeonpremBareMetalClusterUpdate(d *schema.ResourceData, meta interf
 		return err
 	} else if v, ok := d.GetOkExists("bare_metal_version"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, bareMetalVersionProp)) {
 		obj["bareMetalVersion"] = bareMetalVersionProp
-	}
-	annotationsProp, err := expandGkeonpremBareMetalClusterAnnotations(d.Get("annotations"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("annotations"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, annotationsProp)) {
-		obj["annotations"] = annotationsProp
 	}
 	networkConfigProp, err := expandGkeonpremBareMetalClusterNetworkConfig(d.Get("network_config"), d, config)
 	if err != nil {
@@ -1611,6 +1614,12 @@ func resourceGkeonpremBareMetalClusterUpdate(d *schema.ResourceData, meta interf
 	} else if v, ok := d.GetOkExists("upgrade_policy"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, upgradePolicyProp)) {
 		obj["upgradePolicy"] = upgradePolicyProp
 	}
+	annotationsProp, err := expandGkeonpremBareMetalClusterEffectiveAnnotations(d.Get("effective_annotations"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("effective_annotations"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, annotationsProp)) {
+		obj["annotations"] = annotationsProp
+	}
 
 	url, err := tpgresource.ReplaceVars(d, config, "{{GkeonpremBasePath}}projects/{{project}}/locations/{{location}}/bareMetalClusters/{{name}}")
 	if err != nil {
@@ -1626,10 +1635,6 @@ func resourceGkeonpremBareMetalClusterUpdate(d *schema.ResourceData, meta interf
 
 	if d.HasChange("bare_metal_version") {
 		updateMask = append(updateMask, "bareMetalVersion")
-	}
-
-	if d.HasChange("annotations") {
-		updateMask = append(updateMask, "annotations")
 	}
 
 	if d.HasChange("network_config") {
@@ -1682,6 +1687,10 @@ func resourceGkeonpremBareMetalClusterUpdate(d *schema.ResourceData, meta interf
 
 	if d.HasChange("upgrade_policy") {
 		updateMask = append(updateMask, "upgradePolicy")
+	}
+
+	if d.HasChange("effective_annotations") {
+		updateMask = append(updateMask, "annotations")
 	}
 	// updateMask is a URL parameter but not present in the schema, so ReplaceVars
 	// won't set it
@@ -1808,7 +1817,18 @@ func flattenGkeonpremBareMetalClusterBareMetalVersion(v interface{}, d *schema.R
 }
 
 func flattenGkeonpremBareMetalClusterAnnotations(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
-	return v
+	if v == nil {
+		return v
+	}
+
+	transformed := make(map[string]interface{})
+	if l, ok := d.GetOkExists("annotations"); ok {
+		for k := range l.(map[string]interface{}) {
+			transformed[k] = v.(map[string]interface{})[k]
+		}
+	}
+
+	return transformed
 }
 
 func flattenGkeonpremBareMetalClusterNetworkConfig(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -3044,6 +3064,10 @@ func flattenGkeonpremBareMetalClusterValidationCheckScenario(v interface{}, d *s
 	return v
 }
 
+func flattenGkeonpremBareMetalClusterEffectiveAnnotations(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
 func expandGkeonpremBareMetalClusterAdminClusterMembership(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
@@ -3054,17 +3078,6 @@ func expandGkeonpremBareMetalClusterDescription(v interface{}, d tpgresource.Ter
 
 func expandGkeonpremBareMetalClusterBareMetalVersion(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
-}
-
-func expandGkeonpremBareMetalClusterAnnotations(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
-	if v == nil {
-		return map[string]string{}, nil
-	}
-	m := make(map[string]string)
-	for k, val := range v.(map[string]interface{}) {
-		m[k] = val.(string)
-	}
-	return m, nil
 }
 
 func expandGkeonpremBareMetalClusterNetworkConfig(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
@@ -4559,4 +4572,15 @@ func expandGkeonpremBareMetalClusterUpgradePolicy(v interface{}, d tpgresource.T
 
 func expandGkeonpremBareMetalClusterUpgradePolicyPolicy(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
+}
+
+func expandGkeonpremBareMetalClusterEffectiveAnnotations(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
+	if v == nil {
+		return map[string]string{}, nil
+	}
+	m := make(map[string]string)
+	for k, val := range v.(map[string]interface{}) {
+		m[k] = val.(string)
+	}
+	return m, nil
 }

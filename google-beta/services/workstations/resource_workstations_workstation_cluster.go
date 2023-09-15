@@ -49,6 +49,7 @@ func ResourceWorkstationsWorkstationCluster() *schema.Resource {
 		},
 
 		CustomizeDiff: customdiff.All(
+			tpgresource.SetAnnotationsDiff,
 			tpgresource.DefaultProviderProject,
 		),
 
@@ -174,6 +175,12 @@ To access workstations in the cluster, configure access to the managed service u
 				Description: `Whether this resource is in degraded mode, in which case it may require user action to restore full functionality.
 Details can be found in the conditions field.`,
 			},
+			"effective_annotations": {
+				Type:        schema.TypeMap,
+				Computed:    true,
+				Description: `All of annotations (key/value pairs) present on the resource in GCP, including the annotations configured through Terraform, other clients and services.`,
+				Elem:        &schema.Schema{Type: schema.TypeString},
+			},
 			"etag": {
 				Type:     schema.TypeString,
 				Computed: true,
@@ -233,12 +240,6 @@ func resourceWorkstationsWorkstationClusterCreate(d *schema.ResourceData, meta i
 	} else if v, ok := d.GetOkExists("display_name"); !tpgresource.IsEmptyValue(reflect.ValueOf(displayNameProp)) && (ok || !reflect.DeepEqual(v, displayNameProp)) {
 		obj["displayName"] = displayNameProp
 	}
-	annotationsProp, err := expandWorkstationsWorkstationClusterAnnotations(d.Get("annotations"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("annotations"); !tpgresource.IsEmptyValue(reflect.ValueOf(annotationsProp)) && (ok || !reflect.DeepEqual(v, annotationsProp)) {
-		obj["annotations"] = annotationsProp
-	}
 	etagProp, err := expandWorkstationsWorkstationClusterEtag(d.Get("etag"), d, config)
 	if err != nil {
 		return err
@@ -250,6 +251,12 @@ func resourceWorkstationsWorkstationClusterCreate(d *schema.ResourceData, meta i
 		return err
 	} else if v, ok := d.GetOkExists("private_cluster_config"); !tpgresource.IsEmptyValue(reflect.ValueOf(privateClusterConfigProp)) && (ok || !reflect.DeepEqual(v, privateClusterConfigProp)) {
 		obj["privateClusterConfig"] = privateClusterConfigProp
+	}
+	annotationsProp, err := expandWorkstationsWorkstationClusterEffectiveAnnotations(d.Get("effective_annotations"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("effective_annotations"); !tpgresource.IsEmptyValue(reflect.ValueOf(annotationsProp)) && (ok || !reflect.DeepEqual(v, annotationsProp)) {
+		obj["annotations"] = annotationsProp
 	}
 
 	url, err := tpgresource.ReplaceVars(d, config, "{{WorkstationsBasePath}}projects/{{project}}/locations/{{location}}/workstationClusters?workstationClusterId={{workstation_cluster_id}}")
@@ -382,6 +389,9 @@ func resourceWorkstationsWorkstationClusterRead(d *schema.ResourceData, meta int
 	if err := d.Set("conditions", flattenWorkstationsWorkstationClusterConditions(res["conditions"], d, config)); err != nil {
 		return fmt.Errorf("Error reading WorkstationCluster: %s", err)
 	}
+	if err := d.Set("effective_annotations", flattenWorkstationsWorkstationClusterEffectiveAnnotations(res["annotations"], d, config)); err != nil {
+		return fmt.Errorf("Error reading WorkstationCluster: %s", err)
+	}
 
 	return nil
 }
@@ -414,12 +424,6 @@ func resourceWorkstationsWorkstationClusterUpdate(d *schema.ResourceData, meta i
 	} else if v, ok := d.GetOkExists("display_name"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, displayNameProp)) {
 		obj["displayName"] = displayNameProp
 	}
-	annotationsProp, err := expandWorkstationsWorkstationClusterAnnotations(d.Get("annotations"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("annotations"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, annotationsProp)) {
-		obj["annotations"] = annotationsProp
-	}
 	etagProp, err := expandWorkstationsWorkstationClusterEtag(d.Get("etag"), d, config)
 	if err != nil {
 		return err
@@ -431,6 +435,12 @@ func resourceWorkstationsWorkstationClusterUpdate(d *schema.ResourceData, meta i
 		return err
 	} else if v, ok := d.GetOkExists("private_cluster_config"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, privateClusterConfigProp)) {
 		obj["privateClusterConfig"] = privateClusterConfigProp
+	}
+	annotationsProp, err := expandWorkstationsWorkstationClusterEffectiveAnnotations(d.Get("effective_annotations"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("effective_annotations"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, annotationsProp)) {
+		obj["annotations"] = annotationsProp
 	}
 
 	url, err := tpgresource.ReplaceVars(d, config, "{{WorkstationsBasePath}}projects/{{project}}/locations/{{location}}/workstationClusters/{{workstation_cluster_id}}")
@@ -449,16 +459,16 @@ func resourceWorkstationsWorkstationClusterUpdate(d *schema.ResourceData, meta i
 		updateMask = append(updateMask, "displayName")
 	}
 
-	if d.HasChange("annotations") {
-		updateMask = append(updateMask, "annotations")
-	}
-
 	if d.HasChange("etag") {
 		updateMask = append(updateMask, "etag")
 	}
 
 	if d.HasChange("private_cluster_config") {
 		updateMask = append(updateMask, "privateClusterConfig")
+	}
+
+	if d.HasChange("effective_annotations") {
+		updateMask = append(updateMask, "annotations")
 	}
 	// updateMask is a URL parameter but not present in the schema, so ReplaceVars
 	// won't set it
@@ -601,7 +611,18 @@ func flattenWorkstationsWorkstationClusterDegraded(v interface{}, d *schema.Reso
 }
 
 func flattenWorkstationsWorkstationClusterAnnotations(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
-	return v
+	if v == nil {
+		return v
+	}
+
+	transformed := make(map[string]interface{})
+	if l, ok := d.GetOkExists("annotations"); ok {
+		for k := range l.(map[string]interface{}) {
+			transformed[k] = v.(map[string]interface{})[k]
+		}
+	}
+
+	return transformed
 }
 
 func flattenWorkstationsWorkstationClusterEtag(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -692,6 +713,10 @@ func flattenWorkstationsWorkstationClusterConditionsDetails(v interface{}, d *sc
 	return v
 }
 
+func flattenWorkstationsWorkstationClusterEffectiveAnnotations(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
 func expandWorkstationsWorkstationClusterLabels(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
 	if v == nil {
 		return map[string]string{}, nil
@@ -713,17 +738,6 @@ func expandWorkstationsWorkstationClusterSubnetwork(v interface{}, d tpgresource
 
 func expandWorkstationsWorkstationClusterDisplayName(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
-}
-
-func expandWorkstationsWorkstationClusterAnnotations(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
-	if v == nil {
-		return map[string]string{}, nil
-	}
-	m := make(map[string]string)
-	for k, val := range v.(map[string]interface{}) {
-		m[k] = val.(string)
-	}
-	return m, nil
 }
 
 func expandWorkstationsWorkstationClusterEtag(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
@@ -784,4 +798,15 @@ func expandWorkstationsWorkstationClusterPrivateClusterConfigServiceAttachmentUr
 
 func expandWorkstationsWorkstationClusterPrivateClusterConfigAllowedProjects(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
+}
+
+func expandWorkstationsWorkstationClusterEffectiveAnnotations(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
+	if v == nil {
+		return map[string]string{}, nil
+	}
+	m := make(map[string]string)
+	for k, val := range v.(map[string]interface{}) {
+		m[k] = val.(string)
+	}
+	return m, nil
 }
