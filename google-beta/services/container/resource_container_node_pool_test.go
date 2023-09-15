@@ -3369,7 +3369,7 @@ resource "google_container_node_pool" "np" {
 
 func TestAccContainerNodePool_tpuTopology(t *testing.T) {
 	t.Parallel()
-	acctest.SkipIfVcr(t)
+	t.Skip("https://github.com/hashicorp/terraform-provider-google/issues/15254#issuecomment-1646277473")
 
 	cluster := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	np1 := fmt.Sprintf("tf-test-nodepool-%s", acctest.RandString(t, 10))
