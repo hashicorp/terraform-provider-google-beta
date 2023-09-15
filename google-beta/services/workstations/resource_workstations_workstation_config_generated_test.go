@@ -49,7 +49,7 @@ func TestAccWorkstationsWorkstationConfig_workstationConfigBasicExample(t *testi
 				ResourceName:            "google_workstations_workstation_config.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"annotations", "workstation_config_id", "workstation_cluster_id", "location"},
+				ImportStateVerifyIgnore: []string{"workstation_config_id", "workstation_cluster_id", "location", "annotations"},
 			},
 		},
 	})
@@ -130,7 +130,7 @@ func TestAccWorkstationsWorkstationConfig_workstationConfigContainerExample(t *t
 				ResourceName:            "google_workstations_workstation_config.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"annotations", "workstation_config_id", "workstation_cluster_id", "location"},
+				ImportStateVerifyIgnore: []string{"workstation_config_id", "workstation_cluster_id", "location", "annotations"},
 			},
 		},
 	})
@@ -213,7 +213,7 @@ func TestAccWorkstationsWorkstationConfig_workstationConfigPersistentDirectories
 				ResourceName:            "google_workstations_workstation_config.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"annotations", "workstation_config_id", "workstation_cluster_id", "location"},
+				ImportStateVerifyIgnore: []string{"workstation_config_id", "workstation_cluster_id", "location", "annotations"},
 			},
 		},
 	})
@@ -301,7 +301,7 @@ func TestAccWorkstationsWorkstationConfig_workstationConfigSourceSnapshotExample
 				ResourceName:            "google_workstations_workstation_config.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"annotations", "workstation_config_id", "workstation_cluster_id", "location"},
+				ImportStateVerifyIgnore: []string{"workstation_config_id", "workstation_cluster_id", "location", "annotations"},
 			},
 		},
 	})
@@ -383,7 +383,7 @@ func TestAccWorkstationsWorkstationConfig_workstationConfigShieldedInstanceConfi
 				ResourceName:            "google_workstations_workstation_config.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"annotations", "workstation_config_id", "workstation_cluster_id", "location"},
+				ImportStateVerifyIgnore: []string{"workstation_config_id", "workstation_cluster_id", "location", "annotations"},
 			},
 		},
 	})
@@ -461,7 +461,7 @@ func TestAccWorkstationsWorkstationConfig_workstationConfigAcceleratorsExample(t
 				ResourceName:            "google_workstations_workstation_config.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"annotations", "workstation_config_id", "workstation_cluster_id", "location"},
+				ImportStateVerifyIgnore: []string{"workstation_config_id", "workstation_cluster_id", "location", "annotations"},
 			},
 		},
 	})
@@ -539,7 +539,7 @@ func TestAccWorkstationsWorkstationConfig_workstationConfigEncryptionKeyExample(
 				ResourceName:            "google_workstations_workstation_config.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"annotations", "workstation_config_id", "workstation_cluster_id", "location"},
+				ImportStateVerifyIgnore: []string{"workstation_config_id", "workstation_cluster_id", "location", "annotations"},
 			},
 		},
 	})
