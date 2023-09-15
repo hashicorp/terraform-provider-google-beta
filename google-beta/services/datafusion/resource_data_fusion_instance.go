@@ -72,6 +72,7 @@ func ResourceDataFusionInstance() *schema.Resource {
 		},
 
 		CustomizeDiff: customdiff.All(
+			tpgresource.SetLabelsDiff,
 			tpgresource.DefaultProviderProject,
 			tpgresource.DefaultProviderRegion,
 		),
@@ -274,6 +275,12 @@ able to access the public internet.`,
 				Computed:    true,
 				Description: `The time the instance was created in RFC3339 UTC "Zulu" format, accurate to nanoseconds.`,
 			},
+			"effective_labels": {
+				Type:        schema.TypeMap,
+				Computed:    true,
+				Description: `All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.`,
+				Elem:        &schema.Schema{Type: schema.TypeString},
+			},
 			"gcs_bucket": {
 				Type:        schema.TypeString,
 				Computed:    true,
@@ -315,6 +322,13 @@ able to access the public internet.`,
 				Type:        schema.TypeString,
 				Computed:    true,
 				Description: `The name of the tenant project.`,
+			},
+			"terraform_labels": {
+				Type:     schema.TypeMap,
+				Computed: true,
+				Description: `The combination of labels configured directly on the resource
+ and default labels configured on the provider.`,
+				Elem: &schema.Schema{Type: schema.TypeString},
 			},
 			"update_time": {
 				Type:        schema.TypeString,
@@ -376,12 +390,6 @@ func resourceDataFusionInstanceCreate(d *schema.ResourceData, meta interface{}) 
 	} else if v, ok := d.GetOkExists("enable_rbac"); !tpgresource.IsEmptyValue(reflect.ValueOf(enableRbacProp)) && (ok || !reflect.DeepEqual(v, enableRbacProp)) {
 		obj["enableRbac"] = enableRbacProp
 	}
-	labelsProp, err := expandDataFusionInstanceLabels(d.Get("labels"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(labelsProp)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
-		obj["labels"] = labelsProp
-	}
 	optionsProp, err := expandDataFusionInstanceOptions(d.Get("options"), d, config)
 	if err != nil {
 		return err
@@ -441,6 +449,12 @@ func resourceDataFusionInstanceCreate(d *schema.ResourceData, meta interface{}) 
 		return err
 	} else if v, ok := d.GetOkExists("accelerators"); !tpgresource.IsEmptyValue(reflect.ValueOf(acceleratorsProp)) && (ok || !reflect.DeepEqual(v, acceleratorsProp)) {
 		obj["accelerators"] = acceleratorsProp
+	}
+	labelsProp, err := expandDataFusionInstanceEffectiveLabels(d.Get("effective_labels"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("effective_labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(labelsProp)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
+		obj["labels"] = labelsProp
 	}
 
 	url, err := tpgresource.ReplaceVars(d, config, "{{DataFusionBasePath}}projects/{{project}}/locations/{{region}}/instances?instanceId={{name}}")
@@ -640,6 +654,12 @@ func resourceDataFusionInstanceRead(d *schema.ResourceData, meta interface{}) er
 	if err := d.Set("accelerators", flattenDataFusionInstanceAccelerators(res["accelerators"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Instance: %s", err)
 	}
+	if err := d.Set("terraform_labels", flattenDataFusionInstanceTerraformLabels(res["labels"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Instance: %s", err)
+	}
+	if err := d.Set("effective_labels", flattenDataFusionInstanceEffectiveLabels(res["labels"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Instance: %s", err)
+	}
 
 	return nil
 }
@@ -678,12 +698,6 @@ func resourceDataFusionInstanceUpdate(d *schema.ResourceData, meta interface{}) 
 	} else if v, ok := d.GetOkExists("enable_rbac"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, enableRbacProp)) {
 		obj["enableRbac"] = enableRbacProp
 	}
-	labelsProp, err := expandDataFusionInstanceLabels(d.Get("labels"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
-		obj["labels"] = labelsProp
-	}
 	versionProp, err := expandDataFusionInstanceVersion(d.Get("version"), d, config)
 	if err != nil {
 		return err
@@ -701,6 +715,12 @@ func resourceDataFusionInstanceUpdate(d *schema.ResourceData, meta interface{}) 
 		return err
 	} else if v, ok := d.GetOkExists("accelerators"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, acceleratorsProp)) {
 		obj["accelerators"] = acceleratorsProp
+	}
+	labelsProp, err := expandDataFusionInstanceEffectiveLabels(d.Get("effective_labels"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("effective_labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
+		obj["labels"] = labelsProp
 	}
 
 	url, err := tpgresource.ReplaceVars(d, config, "{{DataFusionBasePath}}projects/{{project}}/locations/{{region}}/instances/{{name}}")
@@ -865,7 +885,18 @@ func flattenDataFusionInstanceEnableRbac(v interface{}, d *schema.ResourceData, 
 }
 
 func flattenDataFusionInstanceLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
-	return v
+	if v == nil {
+		return v
+	}
+
+	transformed := make(map[string]interface{})
+	if l, ok := d.GetOkExists("labels"); ok {
+		for k := range l.(map[string]interface{}) {
+			transformed[k] = v.(map[string]interface{})[k]
+		}
+	}
+
+	return transformed
 }
 
 func flattenDataFusionInstanceOptions(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -1022,6 +1053,25 @@ func flattenDataFusionInstanceAcceleratorsState(v interface{}, d *schema.Resourc
 	return v
 }
 
+func flattenDataFusionInstanceTerraformLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return v
+	}
+
+	transformed := make(map[string]interface{})
+	if l, ok := d.GetOkExists("terraform_labels"); ok {
+		for k := range l.(map[string]interface{}) {
+			transformed[k] = v.(map[string]interface{})[k]
+		}
+	}
+
+	return transformed
+}
+
+func flattenDataFusionInstanceEffectiveLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
 func expandDataFusionInstanceName(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return tpgresource.ReplaceVars(d, config, "projects/{{project}}/locations/{{region}}/instances/{{name}}")
 }
@@ -1044,17 +1094,6 @@ func expandDataFusionInstanceEnableStackdriverMonitoring(v interface{}, d tpgres
 
 func expandDataFusionInstanceEnableRbac(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
-}
-
-func expandDataFusionInstanceLabels(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
-	if v == nil {
-		return map[string]string{}, nil
-	}
-	m := make(map[string]string)
-	for k, val := range v.(map[string]interface{}) {
-		m[k] = val.(string)
-	}
-	return m, nil
 }
 
 func expandDataFusionInstanceOptions(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
@@ -1214,4 +1253,15 @@ func expandDataFusionInstanceAcceleratorsAcceleratorType(v interface{}, d tpgres
 
 func expandDataFusionInstanceAcceleratorsState(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
+}
+
+func expandDataFusionInstanceEffectiveLabels(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
+	if v == nil {
+		return map[string]string{}, nil
+	}
+	m := make(map[string]string)
+	for k, val := range v.(map[string]interface{}) {
+		m[k] = val.(string)
+	}
+	return m, nil
 }

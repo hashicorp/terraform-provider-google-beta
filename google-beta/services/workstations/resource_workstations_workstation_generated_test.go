@@ -49,7 +49,7 @@ func TestAccWorkstationsWorkstation_workstationBasicExample(t *testing.T) {
 				ResourceName:            "google_workstations_workstation.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"annotations", "workstation_id", "workstation_config_id", "workstation_cluster_id", "location"},
+				ImportStateVerifyIgnore: []string{"workstation_id", "workstation_config_id", "workstation_cluster_id", "location", "annotations"},
 			},
 		},
 	})

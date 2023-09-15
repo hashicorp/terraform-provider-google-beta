@@ -49,7 +49,7 @@ func TestAccApiGatewayApiConfig_apigatewayApiConfigBasicExample(t *testing.T) {
 				ResourceName:            "google_api_gateway_api_config.api_cfg",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"gateway_config", "grpc_services", "api", "api_config_id"},
+				ImportStateVerifyIgnore: []string{"gateway_config", "grpc_services", "api", "api_config_id", "labels", "terraform_labels"},
 			},
 		},
 	})
@@ -99,7 +99,7 @@ func TestAccApiGatewayApiConfig_apigatewayApiConfigFullExample(t *testing.T) {
 				ResourceName:            "google_api_gateway_api_config.api_cfg",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"gateway_config", "grpc_services", "api", "api_config_id"},
+				ImportStateVerifyIgnore: []string{"gateway_config", "grpc_services", "api", "api_config_id", "labels", "terraform_labels"},
 			},
 		},
 	})
@@ -150,7 +150,7 @@ func TestAccApiGatewayApiConfig_apigatewayApiConfigGrpcExample(t *testing.T) {
 				ResourceName:            "google_api_gateway_api_config.api_cfg",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"gateway_config", "grpc_services", "api", "api_config_id", "grpc_services.0.file_descriptor_set"},
+				ImportStateVerifyIgnore: []string{"gateway_config", "grpc_services", "api", "api_config_id", "grpc_services.0.file_descriptor_set", "labels", "terraform_labels"},
 			},
 		},
 	})
@@ -222,7 +222,7 @@ func TestAccApiGatewayApiConfig_apigatewayApiConfigGrpcFullExample(t *testing.T)
 				ResourceName:            "google_api_gateway_api_config.api_cfg",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"gateway_config", "grpc_services", "api", "api_config_id"},
+				ImportStateVerifyIgnore: []string{"gateway_config", "grpc_services", "api", "api_config_id", "labels", "terraform_labels"},
 			},
 		},
 	})

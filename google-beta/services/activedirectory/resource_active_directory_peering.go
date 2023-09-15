@@ -44,6 +44,7 @@ func ResourceActiveDirectoryPeering() *schema.Resource {
 		},
 
 		CustomizeDiff: customdiff.All(
+			tpgresource.SetLabelsDiff,
 			tpgresource.DefaultProviderProject,
 		),
 
@@ -82,10 +83,23 @@ func ResourceActiveDirectoryPeering() *schema.Resource {
 				Optional:    true,
 				Description: `Additional information about the current status of this peering, if available.`,
 			},
+			"effective_labels": {
+				Type:        schema.TypeMap,
+				Computed:    true,
+				Description: `All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.`,
+				Elem:        &schema.Schema{Type: schema.TypeString},
+			},
 			"name": {
 				Type:        schema.TypeString,
 				Computed:    true,
 				Description: `Unique name of the peering in this scope including projects and location using the form: projects/{projectId}/locations/global/peerings/{peeringId}.`,
+			},
+			"terraform_labels": {
+				Type:     schema.TypeMap,
+				Computed: true,
+				Description: `The combination of labels configured directly on the resource
+ and default labels configured on the provider.`,
+				Elem: &schema.Schema{Type: schema.TypeString},
 			},
 			"project": {
 				Type:     schema.TypeString,
@@ -106,12 +120,6 @@ func resourceActiveDirectoryPeeringCreate(d *schema.ResourceData, meta interface
 	}
 
 	obj := make(map[string]interface{})
-	labelsProp, err := expandActiveDirectoryPeeringLabels(d.Get("labels"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(labelsProp)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
-		obj["labels"] = labelsProp
-	}
 	authorizedNetworkProp, err := expandActiveDirectoryPeeringAuthorizedNetwork(d.Get("authorized_network"), d, config)
 	if err != nil {
 		return err
@@ -129,6 +137,12 @@ func resourceActiveDirectoryPeeringCreate(d *schema.ResourceData, meta interface
 		return err
 	} else if v, ok := d.GetOkExists("status_message"); !tpgresource.IsEmptyValue(reflect.ValueOf(statusMessageProp)) && (ok || !reflect.DeepEqual(v, statusMessageProp)) {
 		obj["statusMessage"] = statusMessageProp
+	}
+	labelsProp, err := expandActiveDirectoryPeeringEffectiveLabels(d.Get("effective_labels"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("effective_labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(labelsProp)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
+		obj["labels"] = labelsProp
 	}
 
 	url, err := tpgresource.ReplaceVars(d, config, "{{ActiveDirectoryBasePath}}projects/{{project}}/locations/global/peerings?peeringId={{peering_id}}")
@@ -251,6 +265,12 @@ func resourceActiveDirectoryPeeringRead(d *schema.ResourceData, meta interface{}
 	if err := d.Set("domain_resource", flattenActiveDirectoryPeeringDomainResource(res["domainResource"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Peering: %s", err)
 	}
+	if err := d.Set("terraform_labels", flattenActiveDirectoryPeeringTerraformLabels(res["labels"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Peering: %s", err)
+	}
+	if err := d.Set("effective_labels", flattenActiveDirectoryPeeringEffectiveLabels(res["labels"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Peering: %s", err)
+	}
 
 	return nil
 }
@@ -271,17 +291,17 @@ func resourceActiveDirectoryPeeringUpdate(d *schema.ResourceData, meta interface
 	billingProject = project
 
 	obj := make(map[string]interface{})
-	labelsProp, err := expandActiveDirectoryPeeringLabels(d.Get("labels"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
-		obj["labels"] = labelsProp
-	}
 	statusMessageProp, err := expandActiveDirectoryPeeringStatusMessage(d.Get("status_message"), d, config)
 	if err != nil {
 		return err
 	} else if v, ok := d.GetOkExists("status_message"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, statusMessageProp)) {
 		obj["statusMessage"] = statusMessageProp
+	}
+	labelsProp, err := expandActiveDirectoryPeeringEffectiveLabels(d.Get("effective_labels"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("effective_labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
+		obj["labels"] = labelsProp
 	}
 
 	url, err := tpgresource.ReplaceVars(d, config, "{{ActiveDirectoryBasePath}}{{name}}")
@@ -381,7 +401,18 @@ func flattenActiveDirectoryPeeringName(v interface{}, d *schema.ResourceData, co
 }
 
 func flattenActiveDirectoryPeeringLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
-	return v
+	if v == nil {
+		return v
+	}
+
+	transformed := make(map[string]interface{})
+	if l, ok := d.GetOkExists("labels"); ok {
+		for k := range l.(map[string]interface{}) {
+			transformed[k] = v.(map[string]interface{})[k]
+		}
+	}
+
+	return transformed
 }
 
 func flattenActiveDirectoryPeeringAuthorizedNetwork(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -392,15 +423,23 @@ func flattenActiveDirectoryPeeringDomainResource(v interface{}, d *schema.Resour
 	return v
 }
 
-func expandActiveDirectoryPeeringLabels(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
+func flattenActiveDirectoryPeeringTerraformLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
-		return map[string]string{}, nil
+		return v
 	}
-	m := make(map[string]string)
-	for k, val := range v.(map[string]interface{}) {
-		m[k] = val.(string)
+
+	transformed := make(map[string]interface{})
+	if l, ok := d.GetOkExists("terraform_labels"); ok {
+		for k := range l.(map[string]interface{}) {
+			transformed[k] = v.(map[string]interface{})[k]
+		}
 	}
-	return m, nil
+
+	return transformed
+}
+
+func flattenActiveDirectoryPeeringEffectiveLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
 }
 
 func expandActiveDirectoryPeeringAuthorizedNetwork(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
@@ -413,4 +452,15 @@ func expandActiveDirectoryPeeringDomainResource(v interface{}, d tpgresource.Ter
 
 func expandActiveDirectoryPeeringStatusMessage(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
+}
+
+func expandActiveDirectoryPeeringEffectiveLabels(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
+	if v == nil {
+		return map[string]string{}, nil
+	}
+	m := make(map[string]string)
+	for k, val := range v.(map[string]interface{}) {
+		m[k] = val.(string)
+	}
+	return m, nil
 }
