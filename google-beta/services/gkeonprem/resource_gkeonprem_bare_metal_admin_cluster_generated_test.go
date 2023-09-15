@@ -49,7 +49,7 @@ func TestAccGkeonpremBareMetalAdminCluster_gkeonpremBareMetalAdminClusterBasicEx
 				ResourceName:            "google_gkeonprem_bare_metal_admin_cluster.admin-cluster-basic",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"name", "location"},
+				ImportStateVerifyIgnore: []string{"annotations", "name", "location"},
 			},
 		},
 	})
@@ -138,7 +138,7 @@ func TestAccGkeonpremBareMetalAdminCluster_gkeonpremBareMetalAdminClusterFullExa
 				ResourceName:            "google_gkeonprem_bare_metal_admin_cluster.admin-cluster-basic",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"name", "location"},
+				ImportStateVerifyIgnore: []string{"annotations", "name", "location"},
 			},
 		},
 	})
@@ -152,7 +152,9 @@ resource "google_gkeonprem_bare_metal_admin_cluster" "admin-cluster-basic" {
   location = "us-west1"
   description = "test description"
   bare_metal_version = "1.13.4"
-  annotations = {}
+  annotations = {
+    env = "test"
+  }
   network_config {
     island_mode_cidr {
       service_address_cidr_blocks = ["172.26.0.0/16"]

@@ -164,6 +164,10 @@ resource "google_workstations_workstation_config" "default" {
   idle_timeout = "600s"
   running_timeout = "21600s"
 
+  annotations = {
+    label-one = "value-one"
+  }
+
   host {
     gce_instance {
       machine_type                = "e2-standard-4"
@@ -225,6 +229,10 @@ resource "google_workstations_workstation_config" "default" {
 
   idle_timeout = "600s"
   running_timeout = "21600s"
+
+  annotations = {
+    label-one = "value-one"
+  }
 
   host {
     gce_instance {
@@ -306,6 +314,10 @@ resource "google_workstations_workstation_config" "default" {
   idle_timeout = "600s"
   running_timeout = "21600s"
 
+  annotations = {
+    label-one = "value-one"
+  }
+
   host {
     gce_instance {
       machine_type                = "e2-standard-4"
@@ -371,6 +383,10 @@ resource "google_workstations_workstation_config" "default" {
   idle_timeout = "600s"
   running_timeout = "21600s"
 
+  annotations = {
+    label-one = "value-one"
+  }
+
   host {
     gce_instance {
       machine_type                = "e2-standard-4"
@@ -432,6 +448,10 @@ resource "google_workstations_workstation_config" "default" {
 
   idle_timeout = "600s"
   running_timeout = "21600s"
+
+  annotations = {
+    label-one = "value-one"
+  }
 
   host {
     gce_instance {

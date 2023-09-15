@@ -50,6 +50,7 @@ func ResourceGkeonpremVmwareNodePool() *schema.Resource {
 		},
 
 		CustomizeDiff: customdiff.All(
+			tpgresource.SetAnnotationsDiff,
 			tpgresource.DefaultProviderProject,
 		),
 
@@ -194,7 +195,6 @@ and conflicts should be avoided.`,
 			},
 			"annotations": {
 				Type:     schema.TypeMap,
-				Computed: true,
 				Optional: true,
 				Description: `Annotations on the node Pool.
 This field has the same restrictions as Kubernetes annotations.
@@ -240,6 +240,12 @@ with dashes (-), underscores (_), dots (.), and alphanumerics between.`,
 				Type:        schema.TypeString,
 				Computed:    true,
 				Description: `The time the cluster was deleted, in RFC3339 text format.`,
+			},
+			"effective_annotations": {
+				Type:        schema.TypeMap,
+				Computed:    true,
+				Description: `All of annotations (key/value pairs) present on the resource in GCP, including the annotations configured through Terraform, other clients and services.`,
+				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
 			"etag": {
 				Type:     schema.TypeString,
@@ -353,12 +359,6 @@ func resourceGkeonpremVmwareNodePoolCreate(d *schema.ResourceData, meta interfac
 	} else if v, ok := d.GetOkExists("display_name"); !tpgresource.IsEmptyValue(reflect.ValueOf(displayNameProp)) && (ok || !reflect.DeepEqual(v, displayNameProp)) {
 		obj["displayName"] = displayNameProp
 	}
-	annotationsProp, err := expandGkeonpremVmwareNodePoolAnnotations(d.Get("annotations"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("annotations"); !tpgresource.IsEmptyValue(reflect.ValueOf(annotationsProp)) && (ok || !reflect.DeepEqual(v, annotationsProp)) {
-		obj["annotations"] = annotationsProp
-	}
 	nodePoolAutoscalingProp, err := expandGkeonpremVmwareNodePoolNodePoolAutoscaling(d.Get("node_pool_autoscaling"), d, config)
 	if err != nil {
 		return err
@@ -370,6 +370,12 @@ func resourceGkeonpremVmwareNodePoolCreate(d *schema.ResourceData, meta interfac
 		return err
 	} else if v, ok := d.GetOkExists("config"); !tpgresource.IsEmptyValue(reflect.ValueOf(configProp)) && (ok || !reflect.DeepEqual(v, configProp)) {
 		obj["config"] = configProp
+	}
+	annotationsProp, err := expandGkeonpremVmwareNodePoolEffectiveAnnotations(d.Get("effective_annotations"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("effective_annotations"); !tpgresource.IsEmptyValue(reflect.ValueOf(annotationsProp)) && (ok || !reflect.DeepEqual(v, annotationsProp)) {
+		obj["annotations"] = annotationsProp
 	}
 
 	url, err := tpgresource.ReplaceVars(d, config, "{{GkeonpremBasePath}}projects/{{project}}/locations/{{location}}/vmwareClusters/{{vmware_cluster}}/vmwareNodePools?vmware_node_pool_id={{name}}")
@@ -512,6 +518,9 @@ func resourceGkeonpremVmwareNodePoolRead(d *schema.ResourceData, meta interface{
 	if err := d.Set("on_prem_version", flattenGkeonpremVmwareNodePoolOnPremVersion(res["onPremVersion"], d, config)); err != nil {
 		return fmt.Errorf("Error reading VmwareNodePool: %s", err)
 	}
+	if err := d.Set("effective_annotations", flattenGkeonpremVmwareNodePoolEffectiveAnnotations(res["annotations"], d, config)); err != nil {
+		return fmt.Errorf("Error reading VmwareNodePool: %s", err)
+	}
 
 	return nil
 }
@@ -538,12 +547,6 @@ func resourceGkeonpremVmwareNodePoolUpdate(d *schema.ResourceData, meta interfac
 	} else if v, ok := d.GetOkExists("display_name"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, displayNameProp)) {
 		obj["displayName"] = displayNameProp
 	}
-	annotationsProp, err := expandGkeonpremVmwareNodePoolAnnotations(d.Get("annotations"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("annotations"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, annotationsProp)) {
-		obj["annotations"] = annotationsProp
-	}
 	nodePoolAutoscalingProp, err := expandGkeonpremVmwareNodePoolNodePoolAutoscaling(d.Get("node_pool_autoscaling"), d, config)
 	if err != nil {
 		return err
@@ -555,6 +558,12 @@ func resourceGkeonpremVmwareNodePoolUpdate(d *schema.ResourceData, meta interfac
 		return err
 	} else if v, ok := d.GetOkExists("config"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, configProp)) {
 		obj["config"] = configProp
+	}
+	annotationsProp, err := expandGkeonpremVmwareNodePoolEffectiveAnnotations(d.Get("effective_annotations"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("effective_annotations"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, annotationsProp)) {
+		obj["annotations"] = annotationsProp
 	}
 
 	url, err := tpgresource.ReplaceVars(d, config, "{{GkeonpremBasePath}}projects/{{project}}/locations/{{location}}/vmwareClusters/{{vmware_cluster}}/vmwareNodePools/{{name}}")
@@ -569,16 +578,16 @@ func resourceGkeonpremVmwareNodePoolUpdate(d *schema.ResourceData, meta interfac
 		updateMask = append(updateMask, "displayName")
 	}
 
-	if d.HasChange("annotations") {
-		updateMask = append(updateMask, "annotations")
-	}
-
 	if d.HasChange("node_pool_autoscaling") {
 		updateMask = append(updateMask, "nodePoolAutoscaling")
 	}
 
 	if d.HasChange("config") {
 		updateMask = append(updateMask, "config")
+	}
+
+	if d.HasChange("effective_annotations") {
+		updateMask = append(updateMask, "annotations")
 	}
 	// updateMask is a URL parameter but not present in the schema, so ReplaceVars
 	// won't set it
@@ -697,7 +706,18 @@ func flattenGkeonpremVmwareNodePoolDisplayName(v interface{}, d *schema.Resource
 }
 
 func flattenGkeonpremVmwareNodePoolAnnotations(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
-	return v
+	if v == nil {
+		return v
+	}
+
+	transformed := make(map[string]interface{})
+	if l, ok := d.GetOkExists("annotations"); ok {
+		for k := range l.(map[string]interface{}) {
+			transformed[k] = v.(map[string]interface{})[k]
+		}
+	}
+
+	return transformed
 }
 
 func flattenGkeonpremVmwareNodePoolNodePoolAutoscaling(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -1035,19 +1055,12 @@ func flattenGkeonpremVmwareNodePoolOnPremVersion(v interface{}, d *schema.Resour
 	return v
 }
 
-func expandGkeonpremVmwareNodePoolDisplayName(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
-	return v, nil
+func flattenGkeonpremVmwareNodePoolEffectiveAnnotations(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
 }
 
-func expandGkeonpremVmwareNodePoolAnnotations(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
-	if v == nil {
-		return map[string]string{}, nil
-	}
-	m := make(map[string]string)
-	for k, val := range v.(map[string]interface{}) {
-		m[k] = val.(string)
-	}
-	return m, nil
+func expandGkeonpremVmwareNodePoolDisplayName(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
 }
 
 func expandGkeonpremVmwareNodePoolNodePoolAutoscaling(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
@@ -1318,4 +1331,15 @@ func expandGkeonpremVmwareNodePoolConfigVsphereConfigTagsTag(v interface{}, d tp
 
 func expandGkeonpremVmwareNodePoolConfigEnableLoadBalancer(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
+}
+
+func expandGkeonpremVmwareNodePoolEffectiveAnnotations(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
+	if v == nil {
+		return map[string]string{}, nil
+	}
+	m := make(map[string]string)
+	for k, val := range v.(map[string]interface{}) {
+		m[k] = val.(string)
+	}
+	return m, nil
 }
