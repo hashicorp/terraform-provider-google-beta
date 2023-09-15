@@ -8,10 +8,9 @@ FEATURES:
 * **New Resource:** `google_data_pipeline_pipeline` ([#6236](https://github.com/hashicorp/terraform-provider-google-beta/pull/6236))
 * **New Resource:** `google_dialogflow_cx_test_case` ([#6249](https://github.com/hashicorp/terraform-provider-google-beta/pull/6249))
 * **New Resource:** `google_storage_insights_report_config` ([#6253](https://github.com/hashicorp/terraform-provider-google-beta/pull/6253))
-* **New Resource:** google_apigee_target_server ([#6215](https://github.com/hashicorp/terraform-provider-google-beta/pull/6215))
+* **New Resource:** `google_apigee_target_server` ([#6215](https://github.com/hashicorp/terraform-provider-google-beta/pull/6215))
 
 IMPROVEMENTS:
-* GKEHUB: added `labels` fields to `google_gke_hub_membership_binding` resource ([#6216](https://github.com/hashicorp/terraform-provider-google-beta/pull/6216))
 * bigquery: added `allow_non_incremental_definition` to `google_bigquery_table` resource ([#6248](https://github.com/hashicorp/terraform-provider-google-beta/pull/6248))
 * bigquery: added `table_constraints` field to `google_bigquery_table` resource ([#6250](https://github.com/hashicorp/terraform-provider-google-beta/pull/6250))
 * compute: added internal IPV6 support for `google_compute_address` and `google_compute_instance` resources ([#6232](https://github.com/hashicorp/terraform-provider-google-beta/pull/6232))
@@ -19,6 +18,7 @@ IMPROVEMENTS:
 * firestore: added `point_in_time_recovery_enablement` field to `google_firestore_database` resource ([#6239](https://github.com/hashicorp/terraform-provider-google-beta/pull/6239))
 * firestore: added `update_time` and `uid` fields to `google_firestore_database` resource ([#6257](https://github.com/hashicorp/terraform-provider-google-beta/pull/6257))
 * gkehub2: added `labels`, `namespace_labels` fields to `google_gke_hub_namespace` resource ([#6202](https://github.com/hashicorp/terraform-provider-google-beta/pull/6202))
+* gkehub: added `labels` fields to `google_gke_hub_membership_binding` resource ([#6216](https://github.com/hashicorp/terraform-provider-google-beta/pull/6216))
 * gkehub: added `labels` fields to `google_gke_hub_scope` resource ([#6243](https://github.com/hashicorp/terraform-provider-google-beta/pull/6243))
 * gkeonprem: added `upgrade_policy` and `binary_authorization` fields in `google_gkeonprem_bare_metal_cluster` resource (beta) ([#6224](https://github.com/hashicorp/terraform-provider-google-beta/pull/6224))
 * gkeonprem: added `upgrade_policy` field in `google_gkeonprem_vmware_cluster` resource (beta) ([#6224](https://github.com/hashicorp/terraform-provider-google-beta/pull/6224))
@@ -29,8 +29,8 @@ IMPROVEMENTS:
 * workstations: added `env` field to `google_workstations_workstation` resource (beta) ([#6258](https://github.com/hashicorp/terraform-provider-google-beta/pull/6258))
 
 BUG FIXES:
-* bigquerydatatransfer: fixed a bug when importing 'location' of 'google_bigquery_data_transfer_config' ([#6203](https://github.com/hashicorp/terraform-provider-google-beta/pull/6203))
-* container: fix a bug where `additional_pod_network_configs` was not sent correctly in `google_container_node_pool` ([#6211](https://github.com/hashicorp/terraform-provider-google-beta/pull/6211))
+* bigquerydatatransfer: fixed a bug when importing `location` of `google_bigquery_data_transfer_config` ([#6203](https://github.com/hashicorp/terraform-provider-google-beta/pull/6203))
+* container: fixed a bug where `additional_pod_network_configs` was not sent correctly in `google_container_node_pool` ([#6211](https://github.com/hashicorp/terraform-provider-google-beta/pull/6211))
 * container: fixed concurrent ops' quota-error to be retriable in `google_container_node_pool ` ([#6254](https://github.com/hashicorp/terraform-provider-google-beta/pull/6254))
 * pipeline: fixed issue where certain `google_dataflow_job` instances would crash the provider ([#6255](https://github.com/hashicorp/terraform-provider-google-beta/pull/6255))
 * provider: fixed a bug where `user_project_override` would not be not used correctly when provisioning resources implemented using the plugin framework. Currently there are no resources implemented this way, so no-one should have been impacted. ([#6230](https://github.com/hashicorp/terraform-provider-google-beta/pull/6230))
