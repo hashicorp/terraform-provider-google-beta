@@ -50,6 +50,7 @@ func ResourceNetworkSecurityAuthorizationPolicy() *schema.Resource {
 		},
 
 		CustomizeDiff: customdiff.All(
+			tpgresource.SetLabelsDiff,
 			tpgresource.DefaultProviderProject,
 		),
 
@@ -182,6 +183,19 @@ Authorization based on the principal name without certificate validation (config
 				Computed:    true,
 				Description: `Time the AuthorizationPolicy was created in UTC.`,
 			},
+			"effective_labels": {
+				Type:        schema.TypeMap,
+				Computed:    true,
+				Description: `All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.`,
+				Elem:        &schema.Schema{Type: schema.TypeString},
+			},
+			"terraform_labels": {
+				Type:     schema.TypeMap,
+				Computed: true,
+				Description: `The combination of labels configured directly on the resource
+ and default labels configured on the provider.`,
+				Elem: &schema.Schema{Type: schema.TypeString},
+			},
 			"update_time": {
 				Type:        schema.TypeString,
 				Computed:    true,
@@ -206,12 +220,6 @@ func resourceNetworkSecurityAuthorizationPolicyCreate(d *schema.ResourceData, me
 	}
 
 	obj := make(map[string]interface{})
-	labelsProp, err := expandNetworkSecurityAuthorizationPolicyLabels(d.Get("labels"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(labelsProp)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
-		obj["labels"] = labelsProp
-	}
 	descriptionProp, err := expandNetworkSecurityAuthorizationPolicyDescription(d.Get("description"), d, config)
 	if err != nil {
 		return err
@@ -229,6 +237,12 @@ func resourceNetworkSecurityAuthorizationPolicyCreate(d *schema.ResourceData, me
 		return err
 	} else if v, ok := d.GetOkExists("rules"); !tpgresource.IsEmptyValue(reflect.ValueOf(rulesProp)) && (ok || !reflect.DeepEqual(v, rulesProp)) {
 		obj["rules"] = rulesProp
+	}
+	labelsProp, err := expandNetworkSecurityAuthorizationPolicyEffectiveLabels(d.Get("effective_labels"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("effective_labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(labelsProp)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
+		obj["labels"] = labelsProp
 	}
 
 	url, err := tpgresource.ReplaceVars(d, config, "{{NetworkSecurityBasePath}}projects/{{project}}/locations/{{location}}/authorizationPolicies?authorizationPolicyId={{name}}")
@@ -343,6 +357,12 @@ func resourceNetworkSecurityAuthorizationPolicyRead(d *schema.ResourceData, meta
 	if err := d.Set("rules", flattenNetworkSecurityAuthorizationPolicyRules(res["rules"], d, config)); err != nil {
 		return fmt.Errorf("Error reading AuthorizationPolicy: %s", err)
 	}
+	if err := d.Set("terraform_labels", flattenNetworkSecurityAuthorizationPolicyTerraformLabels(res["labels"], d, config)); err != nil {
+		return fmt.Errorf("Error reading AuthorizationPolicy: %s", err)
+	}
+	if err := d.Set("effective_labels", flattenNetworkSecurityAuthorizationPolicyEffectiveLabels(res["labels"], d, config)); err != nil {
+		return fmt.Errorf("Error reading AuthorizationPolicy: %s", err)
+	}
 
 	return nil
 }
@@ -363,12 +383,6 @@ func resourceNetworkSecurityAuthorizationPolicyUpdate(d *schema.ResourceData, me
 	billingProject = project
 
 	obj := make(map[string]interface{})
-	labelsProp, err := expandNetworkSecurityAuthorizationPolicyLabels(d.Get("labels"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
-		obj["labels"] = labelsProp
-	}
 	descriptionProp, err := expandNetworkSecurityAuthorizationPolicyDescription(d.Get("description"), d, config)
 	if err != nil {
 		return err
@@ -387,6 +401,12 @@ func resourceNetworkSecurityAuthorizationPolicyUpdate(d *schema.ResourceData, me
 	} else if v, ok := d.GetOkExists("rules"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, rulesProp)) {
 		obj["rules"] = rulesProp
 	}
+	labelsProp, err := expandNetworkSecurityAuthorizationPolicyEffectiveLabels(d.Get("effective_labels"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("effective_labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
+		obj["labels"] = labelsProp
+	}
 
 	url, err := tpgresource.ReplaceVars(d, config, "{{NetworkSecurityBasePath}}projects/{{project}}/locations/{{location}}/authorizationPolicies/{{name}}")
 	if err != nil {
@@ -395,10 +415,6 @@ func resourceNetworkSecurityAuthorizationPolicyUpdate(d *schema.ResourceData, me
 
 	log.Printf("[DEBUG] Updating AuthorizationPolicy %q: %#v", d.Id(), obj)
 	updateMask := []string{}
-
-	if d.HasChange("labels") {
-		updateMask = append(updateMask, "labels")
-	}
 
 	if d.HasChange("description") {
 		updateMask = append(updateMask, "description")
@@ -410,6 +426,10 @@ func resourceNetworkSecurityAuthorizationPolicyUpdate(d *schema.ResourceData, me
 
 	if d.HasChange("rules") {
 		updateMask = append(updateMask, "rules")
+	}
+
+	if d.HasChange("effective_labels") {
+		updateMask = append(updateMask, "labels")
 	}
 	// updateMask is a URL parameter but not present in the schema, so ReplaceVars
 	// won't set it
@@ -532,7 +552,18 @@ func flattenNetworkSecurityAuthorizationPolicyUpdateTime(v interface{}, d *schem
 }
 
 func flattenNetworkSecurityAuthorizationPolicyLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
-	return v
+	if v == nil {
+		return v
+	}
+
+	transformed := make(map[string]interface{})
+	if l, ok := d.GetOkExists("labels"); ok {
+		for k := range l.(map[string]interface{}) {
+			transformed[k] = v.(map[string]interface{})[k]
+		}
+	}
+
+	return transformed
 }
 
 func flattenNetworkSecurityAuthorizationPolicyDescription(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -645,15 +676,23 @@ func flattenNetworkSecurityAuthorizationPolicyRulesDestinationsHttpHeaderMatchRe
 	return v
 }
 
-func expandNetworkSecurityAuthorizationPolicyLabels(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
+func flattenNetworkSecurityAuthorizationPolicyTerraformLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
-		return map[string]string{}, nil
+		return v
 	}
-	m := make(map[string]string)
-	for k, val := range v.(map[string]interface{}) {
-		m[k] = val.(string)
+
+	transformed := make(map[string]interface{})
+	if l, ok := d.GetOkExists("terraform_labels"); ok {
+		for k := range l.(map[string]interface{}) {
+			transformed[k] = v.(map[string]interface{})[k]
+		}
 	}
-	return m, nil
+
+	return transformed
+}
+
+func flattenNetworkSecurityAuthorizationPolicyEffectiveLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
 }
 
 func expandNetworkSecurityAuthorizationPolicyDescription(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
@@ -817,4 +856,15 @@ func expandNetworkSecurityAuthorizationPolicyRulesDestinationsHttpHeaderMatchHea
 
 func expandNetworkSecurityAuthorizationPolicyRulesDestinationsHttpHeaderMatchRegexMatch(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
+}
+
+func expandNetworkSecurityAuthorizationPolicyEffectiveLabels(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
+	if v == nil {
+		return map[string]string{}, nil
+	}
+	m := make(map[string]string)
+	for k, val := range v.(map[string]interface{}) {
+		m[k] = val.(string)
+	}
+	return m, nil
 }

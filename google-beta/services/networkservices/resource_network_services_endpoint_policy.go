@@ -50,6 +50,7 @@ func ResourceNetworkServicesEndpointPolicy() *schema.Resource {
 		},
 
 		CustomizeDiff: customdiff.All(
+			tpgresource.SetLabelsDiff,
 			tpgresource.DefaultProviderProject,
 		),
 
@@ -160,6 +161,19 @@ func ResourceNetworkServicesEndpointPolicy() *schema.Resource {
 				Computed:    true,
 				Description: `Time the TcpRoute was created in UTC.`,
 			},
+			"effective_labels": {
+				Type:        schema.TypeMap,
+				Computed:    true,
+				Description: `All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.`,
+				Elem:        &schema.Schema{Type: schema.TypeString},
+			},
+			"terraform_labels": {
+				Type:     schema.TypeMap,
+				Computed: true,
+				Description: `The combination of labels configured directly on the resource
+ and default labels configured on the provider.`,
+				Elem: &schema.Schema{Type: schema.TypeString},
+			},
 			"update_time": {
 				Type:        schema.TypeString,
 				Computed:    true,
@@ -184,12 +198,6 @@ func resourceNetworkServicesEndpointPolicyCreate(d *schema.ResourceData, meta in
 	}
 
 	obj := make(map[string]interface{})
-	labelsProp, err := expandNetworkServicesEndpointPolicyLabels(d.Get("labels"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(labelsProp)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
-		obj["labels"] = labelsProp
-	}
 	descriptionProp, err := expandNetworkServicesEndpointPolicyDescription(d.Get("description"), d, config)
 	if err != nil {
 		return err
@@ -231,6 +239,12 @@ func resourceNetworkServicesEndpointPolicyCreate(d *schema.ResourceData, meta in
 		return err
 	} else if v, ok := d.GetOkExists("endpoint_matcher"); !tpgresource.IsEmptyValue(reflect.ValueOf(endpointMatcherProp)) && (ok || !reflect.DeepEqual(v, endpointMatcherProp)) {
 		obj["endpointMatcher"] = endpointMatcherProp
+	}
+	labelsProp, err := expandNetworkServicesEndpointPolicyEffectiveLabels(d.Get("effective_labels"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("effective_labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(labelsProp)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
+		obj["labels"] = labelsProp
 	}
 
 	url, err := tpgresource.ReplaceVars(d, config, "{{NetworkServicesBasePath}}projects/{{project}}/locations/global/endpointPolicies?endpointPolicyId={{name}}")
@@ -357,6 +371,12 @@ func resourceNetworkServicesEndpointPolicyRead(d *schema.ResourceData, meta inte
 	if err := d.Set("endpoint_matcher", flattenNetworkServicesEndpointPolicyEndpointMatcher(res["endpointMatcher"], d, config)); err != nil {
 		return fmt.Errorf("Error reading EndpointPolicy: %s", err)
 	}
+	if err := d.Set("terraform_labels", flattenNetworkServicesEndpointPolicyTerraformLabels(res["labels"], d, config)); err != nil {
+		return fmt.Errorf("Error reading EndpointPolicy: %s", err)
+	}
+	if err := d.Set("effective_labels", flattenNetworkServicesEndpointPolicyEffectiveLabels(res["labels"], d, config)); err != nil {
+		return fmt.Errorf("Error reading EndpointPolicy: %s", err)
+	}
 
 	return nil
 }
@@ -377,12 +397,6 @@ func resourceNetworkServicesEndpointPolicyUpdate(d *schema.ResourceData, meta in
 	billingProject = project
 
 	obj := make(map[string]interface{})
-	labelsProp, err := expandNetworkServicesEndpointPolicyLabels(d.Get("labels"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
-		obj["labels"] = labelsProp
-	}
 	descriptionProp, err := expandNetworkServicesEndpointPolicyDescription(d.Get("description"), d, config)
 	if err != nil {
 		return err
@@ -425,6 +439,12 @@ func resourceNetworkServicesEndpointPolicyUpdate(d *schema.ResourceData, meta in
 	} else if v, ok := d.GetOkExists("endpoint_matcher"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, endpointMatcherProp)) {
 		obj["endpointMatcher"] = endpointMatcherProp
 	}
+	labelsProp, err := expandNetworkServicesEndpointPolicyEffectiveLabels(d.Get("effective_labels"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("effective_labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
+		obj["labels"] = labelsProp
+	}
 
 	url, err := tpgresource.ReplaceVars(d, config, "{{NetworkServicesBasePath}}projects/{{project}}/locations/global/endpointPolicies/{{name}}")
 	if err != nil {
@@ -433,10 +453,6 @@ func resourceNetworkServicesEndpointPolicyUpdate(d *schema.ResourceData, meta in
 
 	log.Printf("[DEBUG] Updating EndpointPolicy %q: %#v", d.Id(), obj)
 	updateMask := []string{}
-
-	if d.HasChange("labels") {
-		updateMask = append(updateMask, "labels")
-	}
 
 	if d.HasChange("description") {
 		updateMask = append(updateMask, "description")
@@ -464,6 +480,10 @@ func resourceNetworkServicesEndpointPolicyUpdate(d *schema.ResourceData, meta in
 
 	if d.HasChange("endpoint_matcher") {
 		updateMask = append(updateMask, "endpointMatcher")
+	}
+
+	if d.HasChange("effective_labels") {
+		updateMask = append(updateMask, "labels")
 	}
 	// updateMask is a URL parameter but not present in the schema, so ReplaceVars
 	// won't set it
@@ -586,7 +606,18 @@ func flattenNetworkServicesEndpointPolicyUpdateTime(v interface{}, d *schema.Res
 }
 
 func flattenNetworkServicesEndpointPolicyLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
-	return v
+	if v == nil {
+		return v
+	}
+
+	transformed := make(map[string]interface{})
+	if l, ok := d.GetOkExists("labels"); ok {
+		for k := range l.(map[string]interface{}) {
+			transformed[k] = v.(map[string]interface{})[k]
+		}
+	}
+
+	return transformed
 }
 
 func flattenNetworkServicesEndpointPolicyDescription(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -685,15 +716,23 @@ func flattenNetworkServicesEndpointPolicyEndpointMatcherMetadataLabelMatcherMeta
 	return v
 }
 
-func expandNetworkServicesEndpointPolicyLabels(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
+func flattenNetworkServicesEndpointPolicyTerraformLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
-		return map[string]string{}, nil
+		return v
 	}
-	m := make(map[string]string)
-	for k, val := range v.(map[string]interface{}) {
-		m[k] = val.(string)
+
+	transformed := make(map[string]interface{})
+	if l, ok := d.GetOkExists("terraform_labels"); ok {
+		for k := range l.(map[string]interface{}) {
+			transformed[k] = v.(map[string]interface{})[k]
+		}
 	}
-	return m, nil
+
+	return transformed
+}
+
+func flattenNetworkServicesEndpointPolicyEffectiveLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
 }
 
 func expandNetworkServicesEndpointPolicyDescription(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
@@ -823,4 +862,15 @@ func expandNetworkServicesEndpointPolicyEndpointMatcherMetadataLabelMatcherMetad
 
 func expandNetworkServicesEndpointPolicyEndpointMatcherMetadataLabelMatcherMetadataLabelsLabelValue(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
+}
+
+func expandNetworkServicesEndpointPolicyEffectiveLabels(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
+	if v == nil {
+		return map[string]string{}, nil
+	}
+	m := make(map[string]string)
+	for k, val := range v.(map[string]interface{}) {
+		m[k] = val.(string)
+	}
+	return m, nil
 }

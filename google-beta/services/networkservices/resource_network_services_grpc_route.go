@@ -50,6 +50,7 @@ func ResourceNetworkServicesGrpcRoute() *schema.Resource {
 		},
 
 		CustomizeDiff: customdiff.All(
+			tpgresource.SetLabelsDiff,
 			tpgresource.DefaultProviderProject,
 		),
 
@@ -278,10 +279,23 @@ func ResourceNetworkServicesGrpcRoute() *schema.Resource {
 				Computed:    true,
 				Description: `Time the GrpcRoute was created in UTC.`,
 			},
+			"effective_labels": {
+				Type:        schema.TypeMap,
+				Computed:    true,
+				Description: `All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.`,
+				Elem:        &schema.Schema{Type: schema.TypeString},
+			},
 			"self_link": {
 				Type:        schema.TypeString,
 				Computed:    true,
 				Description: `Server-defined URL of this resource.`,
+			},
+			"terraform_labels": {
+				Type:     schema.TypeMap,
+				Computed: true,
+				Description: `The combination of labels configured directly on the resource
+ and default labels configured on the provider.`,
+				Elem: &schema.Schema{Type: schema.TypeString},
 			},
 			"update_time": {
 				Type:        schema.TypeString,
@@ -307,12 +321,6 @@ func resourceNetworkServicesGrpcRouteCreate(d *schema.ResourceData, meta interfa
 	}
 
 	obj := make(map[string]interface{})
-	labelsProp, err := expandNetworkServicesGrpcRouteLabels(d.Get("labels"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(labelsProp)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
-		obj["labels"] = labelsProp
-	}
 	descriptionProp, err := expandNetworkServicesGrpcRouteDescription(d.Get("description"), d, config)
 	if err != nil {
 		return err
@@ -342,6 +350,12 @@ func resourceNetworkServicesGrpcRouteCreate(d *schema.ResourceData, meta interfa
 		return err
 	} else if v, ok := d.GetOkExists("rules"); !tpgresource.IsEmptyValue(reflect.ValueOf(rulesProp)) && (ok || !reflect.DeepEqual(v, rulesProp)) {
 		obj["rules"] = rulesProp
+	}
+	labelsProp, err := expandNetworkServicesGrpcRouteEffectiveLabels(d.Get("effective_labels"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("effective_labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(labelsProp)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
+		obj["labels"] = labelsProp
 	}
 
 	url, err := tpgresource.ReplaceVars(d, config, "{{NetworkServicesBasePath}}projects/{{project}}/locations/global/grpcRoutes?grpcRouteId={{name}}")
@@ -465,6 +479,12 @@ func resourceNetworkServicesGrpcRouteRead(d *schema.ResourceData, meta interface
 	if err := d.Set("rules", flattenNetworkServicesGrpcRouteRules(res["rules"], d, config)); err != nil {
 		return fmt.Errorf("Error reading GrpcRoute: %s", err)
 	}
+	if err := d.Set("terraform_labels", flattenNetworkServicesGrpcRouteTerraformLabels(res["labels"], d, config)); err != nil {
+		return fmt.Errorf("Error reading GrpcRoute: %s", err)
+	}
+	if err := d.Set("effective_labels", flattenNetworkServicesGrpcRouteEffectiveLabels(res["labels"], d, config)); err != nil {
+		return fmt.Errorf("Error reading GrpcRoute: %s", err)
+	}
 
 	return nil
 }
@@ -485,12 +505,6 @@ func resourceNetworkServicesGrpcRouteUpdate(d *schema.ResourceData, meta interfa
 	billingProject = project
 
 	obj := make(map[string]interface{})
-	labelsProp, err := expandNetworkServicesGrpcRouteLabels(d.Get("labels"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
-		obj["labels"] = labelsProp
-	}
 	descriptionProp, err := expandNetworkServicesGrpcRouteDescription(d.Get("description"), d, config)
 	if err != nil {
 		return err
@@ -521,6 +535,12 @@ func resourceNetworkServicesGrpcRouteUpdate(d *schema.ResourceData, meta interfa
 	} else if v, ok := d.GetOkExists("rules"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, rulesProp)) {
 		obj["rules"] = rulesProp
 	}
+	labelsProp, err := expandNetworkServicesGrpcRouteEffectiveLabels(d.Get("effective_labels"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("effective_labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
+		obj["labels"] = labelsProp
+	}
 
 	url, err := tpgresource.ReplaceVars(d, config, "{{NetworkServicesBasePath}}projects/{{project}}/locations/global/grpcRoutes/{{name}}")
 	if err != nil {
@@ -529,10 +549,6 @@ func resourceNetworkServicesGrpcRouteUpdate(d *schema.ResourceData, meta interfa
 
 	log.Printf("[DEBUG] Updating GrpcRoute %q: %#v", d.Id(), obj)
 	updateMask := []string{}
-
-	if d.HasChange("labels") {
-		updateMask = append(updateMask, "labels")
-	}
 
 	if d.HasChange("description") {
 		updateMask = append(updateMask, "description")
@@ -552,6 +568,10 @@ func resourceNetworkServicesGrpcRouteUpdate(d *schema.ResourceData, meta interfa
 
 	if d.HasChange("rules") {
 		updateMask = append(updateMask, "rules")
+	}
+
+	if d.HasChange("effective_labels") {
+		updateMask = append(updateMask, "labels")
 	}
 	// updateMask is a URL parameter but not present in the schema, so ReplaceVars
 	// won't set it
@@ -678,7 +698,18 @@ func flattenNetworkServicesGrpcRouteUpdateTime(v interface{}, d *schema.Resource
 }
 
 func flattenNetworkServicesGrpcRouteLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
-	return v
+	if v == nil {
+		return v
+	}
+
+	transformed := make(map[string]interface{})
+	if l, ok := d.GetOkExists("labels"); ok {
+		for k := range l.(map[string]interface{}) {
+			transformed[k] = v.(map[string]interface{})[k]
+		}
+	}
+
+	return transformed
 }
 
 func flattenNetworkServicesGrpcRouteDescription(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -995,15 +1026,23 @@ func flattenNetworkServicesGrpcRouteRulesActionRetryPolicyNumRetries(v interface
 	return v // let terraform core handle it otherwise
 }
 
-func expandNetworkServicesGrpcRouteLabels(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
+func flattenNetworkServicesGrpcRouteTerraformLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
-		return map[string]string{}, nil
+		return v
 	}
-	m := make(map[string]string)
-	for k, val := range v.(map[string]interface{}) {
-		m[k] = val.(string)
+
+	transformed := make(map[string]interface{})
+	if l, ok := d.GetOkExists("terraform_labels"); ok {
+		for k := range l.(map[string]interface{}) {
+			transformed[k] = v.(map[string]interface{})[k]
+		}
 	}
-	return m, nil
+
+	return transformed
+}
+
+func flattenNetworkServicesGrpcRouteEffectiveLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
 }
 
 func expandNetworkServicesGrpcRouteDescription(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
@@ -1380,4 +1419,15 @@ func expandNetworkServicesGrpcRouteRulesActionRetryPolicyRetryConditions(v inter
 
 func expandNetworkServicesGrpcRouteRulesActionRetryPolicyNumRetries(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
+}
+
+func expandNetworkServicesGrpcRouteEffectiveLabels(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
+	if v == nil {
+		return map[string]string{}, nil
+	}
+	m := make(map[string]string)
+	for k, val := range v.(map[string]interface{}) {
+		m[k] = val.(string)
+	}
+	return m, nil
 }
