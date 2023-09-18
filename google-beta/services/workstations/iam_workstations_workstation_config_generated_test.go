@@ -168,6 +168,10 @@ resource "google_workstations_workstation_config" "default" {
     label-one = "value-one"
   }
 
+  labels = {
+    "label" = "key"
+  }
+
   host {
     gce_instance {
       machine_type                = "e2-standard-4"
@@ -232,6 +236,10 @@ resource "google_workstations_workstation_config" "default" {
 
   annotations = {
     label-one = "value-one"
+  }
+
+  labels = {
+    "label" = "key"
   }
 
   host {
@@ -318,6 +326,10 @@ resource "google_workstations_workstation_config" "default" {
     label-one = "value-one"
   }
 
+  labels = {
+    "label" = "key"
+  }
+
   host {
     gce_instance {
       machine_type                = "e2-standard-4"
@@ -387,6 +399,10 @@ resource "google_workstations_workstation_config" "default" {
     label-one = "value-one"
   }
 
+  labels = {
+    "label" = "key"
+  }
+
   host {
     gce_instance {
       machine_type                = "e2-standard-4"
@@ -451,6 +467,10 @@ resource "google_workstations_workstation_config" "default" {
 
   annotations = {
     label-one = "value-one"
+  }
+
+  labels = {
+    "label" = "key"
   }
 
   host {

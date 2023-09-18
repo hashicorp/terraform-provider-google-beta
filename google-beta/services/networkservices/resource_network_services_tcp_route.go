@@ -49,6 +49,7 @@ func ResourceNetworkServicesTcpRoute() *schema.Resource {
 		},
 
 		CustomizeDiff: customdiff.All(
+			tpgresource.SetLabelsDiff,
 			tpgresource.DefaultProviderProject,
 		),
 
@@ -162,10 +163,23 @@ The attached Mesh should be of a type SIDECAR`,
 				Computed:    true,
 				Description: `Time the TcpRoute was created in UTC.`,
 			},
+			"effective_labels": {
+				Type:        schema.TypeMap,
+				Computed:    true,
+				Description: `All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.`,
+				Elem:        &schema.Schema{Type: schema.TypeString},
+			},
 			"self_link": {
 				Type:        schema.TypeString,
 				Computed:    true,
 				Description: `Server-defined URL of this resource.`,
+			},
+			"terraform_labels": {
+				Type:     schema.TypeMap,
+				Computed: true,
+				Description: `The combination of labels configured directly on the resource
+ and default labels configured on the provider.`,
+				Elem: &schema.Schema{Type: schema.TypeString},
 			},
 			"update_time": {
 				Type:        schema.TypeString,
@@ -191,12 +205,6 @@ func resourceNetworkServicesTcpRouteCreate(d *schema.ResourceData, meta interfac
 	}
 
 	obj := make(map[string]interface{})
-	labelsProp, err := expandNetworkServicesTcpRouteLabels(d.Get("labels"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(labelsProp)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
-		obj["labels"] = labelsProp
-	}
 	descriptionProp, err := expandNetworkServicesTcpRouteDescription(d.Get("description"), d, config)
 	if err != nil {
 		return err
@@ -220,6 +228,12 @@ func resourceNetworkServicesTcpRouteCreate(d *schema.ResourceData, meta interfac
 		return err
 	} else if v, ok := d.GetOkExists("rules"); ok || !reflect.DeepEqual(v, rulesProp) {
 		obj["rules"] = rulesProp
+	}
+	labelsProp, err := expandNetworkServicesTcpRouteEffectiveLabels(d.Get("effective_labels"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("effective_labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(labelsProp)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
+		obj["labels"] = labelsProp
 	}
 
 	url, err := tpgresource.ReplaceVars(d, config, "{{NetworkServicesBasePath}}projects/{{project}}/locations/global/tcpRoutes?tcpRouteId={{name}}")
@@ -340,6 +354,12 @@ func resourceNetworkServicesTcpRouteRead(d *schema.ResourceData, meta interface{
 	if err := d.Set("rules", flattenNetworkServicesTcpRouteRules(res["rules"], d, config)); err != nil {
 		return fmt.Errorf("Error reading TcpRoute: %s", err)
 	}
+	if err := d.Set("terraform_labels", flattenNetworkServicesTcpRouteTerraformLabels(res["labels"], d, config)); err != nil {
+		return fmt.Errorf("Error reading TcpRoute: %s", err)
+	}
+	if err := d.Set("effective_labels", flattenNetworkServicesTcpRouteEffectiveLabels(res["labels"], d, config)); err != nil {
+		return fmt.Errorf("Error reading TcpRoute: %s", err)
+	}
 
 	return nil
 }
@@ -360,12 +380,6 @@ func resourceNetworkServicesTcpRouteUpdate(d *schema.ResourceData, meta interfac
 	billingProject = project
 
 	obj := make(map[string]interface{})
-	labelsProp, err := expandNetworkServicesTcpRouteLabels(d.Get("labels"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
-		obj["labels"] = labelsProp
-	}
 	descriptionProp, err := expandNetworkServicesTcpRouteDescription(d.Get("description"), d, config)
 	if err != nil {
 		return err
@@ -390,6 +404,12 @@ func resourceNetworkServicesTcpRouteUpdate(d *schema.ResourceData, meta interfac
 	} else if v, ok := d.GetOkExists("rules"); ok || !reflect.DeepEqual(v, rulesProp) {
 		obj["rules"] = rulesProp
 	}
+	labelsProp, err := expandNetworkServicesTcpRouteEffectiveLabels(d.Get("effective_labels"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("effective_labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
+		obj["labels"] = labelsProp
+	}
 
 	url, err := tpgresource.ReplaceVars(d, config, "{{NetworkServicesBasePath}}projects/{{project}}/locations/global/tcpRoutes/{{name}}")
 	if err != nil {
@@ -398,10 +418,6 @@ func resourceNetworkServicesTcpRouteUpdate(d *schema.ResourceData, meta interfac
 
 	log.Printf("[DEBUG] Updating TcpRoute %q: %#v", d.Id(), obj)
 	updateMask := []string{}
-
-	if d.HasChange("labels") {
-		updateMask = append(updateMask, "labels")
-	}
 
 	if d.HasChange("description") {
 		updateMask = append(updateMask, "description")
@@ -417,6 +433,10 @@ func resourceNetworkServicesTcpRouteUpdate(d *schema.ResourceData, meta interfac
 
 	if d.HasChange("rules") {
 		updateMask = append(updateMask, "rules")
+	}
+
+	if d.HasChange("effective_labels") {
+		updateMask = append(updateMask, "labels")
 	}
 	// updateMask is a URL parameter but not present in the schema, so ReplaceVars
 	// won't set it
@@ -543,7 +563,18 @@ func flattenNetworkServicesTcpRouteUpdateTime(v interface{}, d *schema.ResourceD
 }
 
 func flattenNetworkServicesTcpRouteLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
-	return v
+	if v == nil {
+		return v
+	}
+
+	transformed := make(map[string]interface{})
+	if l, ok := d.GetOkExists("labels"); ok {
+		for k := range l.(map[string]interface{}) {
+			transformed[k] = v.(map[string]interface{})[k]
+		}
+	}
+
+	return transformed
 }
 
 func flattenNetworkServicesTcpRouteDescription(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -663,15 +694,23 @@ func flattenNetworkServicesTcpRouteRulesActionOriginalDestination(v interface{},
 	return v
 }
 
-func expandNetworkServicesTcpRouteLabels(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
+func flattenNetworkServicesTcpRouteTerraformLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
-		return map[string]string{}, nil
+		return v
 	}
-	m := make(map[string]string)
-	for k, val := range v.(map[string]interface{}) {
-		m[k] = val.(string)
+
+	transformed := make(map[string]interface{})
+	if l, ok := d.GetOkExists("terraform_labels"); ok {
+		for k := range l.(map[string]interface{}) {
+			transformed[k] = v.(map[string]interface{})[k]
+		}
 	}
-	return m, nil
+
+	return transformed
+}
+
+func flattenNetworkServicesTcpRouteEffectiveLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
 }
 
 func expandNetworkServicesTcpRouteDescription(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
@@ -817,4 +856,15 @@ func expandNetworkServicesTcpRouteRulesActionDestinationsWeight(v interface{}, d
 
 func expandNetworkServicesTcpRouteRulesActionOriginalDestination(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
+}
+
+func expandNetworkServicesTcpRouteEffectiveLabels(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
+	if v == nil {
+		return map[string]string{}, nil
+	}
+	m := make(map[string]string)
+	for k, val := range v.(map[string]interface{}) {
+		m[k] = val.(string)
+	}
+	return m, nil
 }

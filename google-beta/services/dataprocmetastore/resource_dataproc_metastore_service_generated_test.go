@@ -49,7 +49,7 @@ func TestAccDataprocMetastoreService_dataprocMetastoreServiceBasicExample(t *tes
 				ResourceName:            "google_dataproc_metastore_service.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"service_id", "location"},
+				ImportStateVerifyIgnore: []string{"service_id", "location", "labels", "terraform_labels"},
 			},
 		},
 	})
@@ -70,6 +70,10 @@ resource "google_dataproc_metastore_service" "default" {
 
   hive_metastore_config {
     version = "2.3.6"
+  }
+
+  labels = {
+    env = "test"
   }
 }
 `, context)
@@ -94,7 +98,7 @@ func TestAccDataprocMetastoreService_dataprocMetastoreServiceCmekTestExample(t *
 				ResourceName:            "google_dataproc_metastore_service.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"service_id", "location"},
+				ImportStateVerifyIgnore: []string{"service_id", "location", "labels", "terraform_labels"},
 			},
 		},
 	})
@@ -165,7 +169,7 @@ func TestAccDataprocMetastoreService_dataprocMetastoreServiceAuxExample(t *testi
 				ResourceName:            "google_dataproc_metastore_service.aux",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"service_id", "location"},
+				ImportStateVerifyIgnore: []string{"service_id", "location", "labels", "terraform_labels"},
 			},
 		},
 	})
@@ -209,7 +213,7 @@ func TestAccDataprocMetastoreService_dataprocMetastoreServiceMetadataExample(t *
 				ResourceName:            "google_dataproc_metastore_service.metadata",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"service_id", "location"},
+				ImportStateVerifyIgnore: []string{"service_id", "location", "labels", "terraform_labels"},
 			},
 		},
 	})
@@ -255,7 +259,7 @@ func TestAccDataprocMetastoreService_dataprocMetastoreServiceTelemetryExample(t 
 				ResourceName:            "google_dataproc_metastore_service.telemetry",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"service_id", "location"},
+				ImportStateVerifyIgnore: []string{"service_id", "location", "labels", "terraform_labels"},
 			},
 		},
 	})
@@ -299,7 +303,7 @@ func TestAccDataprocMetastoreService_dataprocMetastoreServiceDpms2Example(t *tes
 				ResourceName:            "google_dataproc_metastore_service.dpms2",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"service_id", "location"},
+				ImportStateVerifyIgnore: []string{"service_id", "location", "labels", "terraform_labels"},
 			},
 		},
 	})
@@ -345,7 +349,7 @@ func TestAccDataprocMetastoreService_dataprocMetastoreServiceDpms2ScalingFactorE
 				ResourceName:            "google_dataproc_metastore_service.dpms2_scaling_factor",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"service_id", "location"},
+				ImportStateVerifyIgnore: []string{"service_id", "location", "labels", "terraform_labels"},
 			},
 		},
 	})
@@ -391,7 +395,7 @@ func TestAccDataprocMetastoreService_dataprocMetastoreServiceDpms2ScalingFactorL
 				ResourceName:            "google_dataproc_metastore_service.dpms2_scaling_factor_lt1",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"service_id", "location"},
+				ImportStateVerifyIgnore: []string{"service_id", "location", "labels", "terraform_labels"},
 			},
 		},
 	})

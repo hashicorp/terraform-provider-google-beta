@@ -24,17 +24,19 @@ func TestAccNetworkServicesMesh_update(t *testing.T) {
 				Config: testAccNetworkServicesMesh_basic(meshName),
 			},
 			{
-				ResourceName:      "google_network_services_mesh.foobar",
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            "google_network_services_mesh.foobar",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"labels", "terraform_labels"},
 			},
 			{
 				Config: testAccNetworkServicesMesh_update(meshName),
 			},
 			{
-				ResourceName:      "google_network_services_mesh.foobar",
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            "google_network_services_mesh.foobar",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"labels", "terraform_labels"},
 			},
 		},
 	})

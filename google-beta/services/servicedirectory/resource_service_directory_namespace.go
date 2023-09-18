@@ -50,6 +50,7 @@ func ResourceServiceDirectoryNamespace() *schema.Resource {
 		},
 
 		CustomizeDiff: customdiff.All(
+			tpgresource.SetLabelsDiff,
 			tpgresource.DefaultProviderProject,
 		),
 
@@ -78,11 +79,24 @@ labels can be associated with a given resource. Label keys and values can
 be no longer than 63 characters.`,
 				Elem: &schema.Schema{Type: schema.TypeString},
 			},
+			"effective_labels": {
+				Type:        schema.TypeMap,
+				Computed:    true,
+				Description: `All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.`,
+				Elem:        &schema.Schema{Type: schema.TypeString},
+			},
 			"name": {
 				Type:     schema.TypeString,
 				Computed: true,
 				Description: `The resource name for the namespace
 in the format 'projects/*/locations/*/namespaces/*'.`,
+			},
+			"terraform_labels": {
+				Type:     schema.TypeMap,
+				Computed: true,
+				Description: `The combination of labels configured directly on the resource
+ and default labels configured on the provider.`,
+				Elem: &schema.Schema{Type: schema.TypeString},
 			},
 			"project": {
 				Type:     schema.TypeString,
@@ -103,10 +117,10 @@ func resourceServiceDirectoryNamespaceCreate(d *schema.ResourceData, meta interf
 	}
 
 	obj := make(map[string]interface{})
-	labelsProp, err := expandServiceDirectoryNamespaceLabels(d.Get("labels"), d, config)
+	labelsProp, err := expandServiceDirectoryNamespaceEffectiveLabels(d.Get("effective_labels"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(labelsProp)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
+	} else if v, ok := d.GetOkExists("effective_labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(labelsProp)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
 		obj["labels"] = labelsProp
 	}
 
@@ -203,6 +217,12 @@ func resourceServiceDirectoryNamespaceRead(d *schema.ResourceData, meta interfac
 	if err := d.Set("labels", flattenServiceDirectoryNamespaceLabels(res["labels"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Namespace: %s", err)
 	}
+	if err := d.Set("terraform_labels", flattenServiceDirectoryNamespaceTerraformLabels(res["labels"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Namespace: %s", err)
+	}
+	if err := d.Set("effective_labels", flattenServiceDirectoryNamespaceEffectiveLabels(res["labels"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Namespace: %s", err)
+	}
 
 	return nil
 }
@@ -223,10 +243,10 @@ func resourceServiceDirectoryNamespaceUpdate(d *schema.ResourceData, meta interf
 	billingProject = project
 
 	obj := make(map[string]interface{})
-	labelsProp, err := expandServiceDirectoryNamespaceLabels(d.Get("labels"), d, config)
+	labelsProp, err := expandServiceDirectoryNamespaceEffectiveLabels(d.Get("effective_labels"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
+	} else if v, ok := d.GetOkExists("effective_labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
 		obj["labels"] = labelsProp
 	}
 
@@ -238,7 +258,7 @@ func resourceServiceDirectoryNamespaceUpdate(d *schema.ResourceData, meta interf
 	log.Printf("[DEBUG] Updating Namespace %q: %#v", d.Id(), obj)
 	updateMask := []string{}
 
-	if d.HasChange("labels") {
+	if d.HasChange("effective_labels") {
 		updateMask = append(updateMask, "labels")
 	}
 	// updateMask is a URL parameter but not present in the schema, so ReplaceVars
@@ -389,10 +409,40 @@ func flattenServiceDirectoryNamespaceName(v interface{}, d *schema.ResourceData,
 }
 
 func flattenServiceDirectoryNamespaceLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return v
+	}
+
+	transformed := make(map[string]interface{})
+	if l, ok := d.GetOkExists("labels"); ok {
+		for k := range l.(map[string]interface{}) {
+			transformed[k] = v.(map[string]interface{})[k]
+		}
+	}
+
+	return transformed
+}
+
+func flattenServiceDirectoryNamespaceTerraformLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return v
+	}
+
+	transformed := make(map[string]interface{})
+	if l, ok := d.GetOkExists("terraform_labels"); ok {
+		for k := range l.(map[string]interface{}) {
+			transformed[k] = v.(map[string]interface{})[k]
+		}
+	}
+
+	return transformed
+}
+
+func flattenServiceDirectoryNamespaceEffectiveLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func expandServiceDirectoryNamespaceLabels(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
+func expandServiceDirectoryNamespaceEffectiveLabels(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
 	if v == nil {
 		return map[string]string{}, nil
 	}

@@ -46,6 +46,7 @@ func ResourceNetworkServicesServiceBinding() *schema.Resource {
 		},
 
 		CustomizeDiff: customdiff.All(
+			tpgresource.SetLabelsDiff,
 			tpgresource.DefaultProviderProject,
 		),
 
@@ -81,6 +82,20 @@ projects/*/locations/*/namespaces/*/services/*`,
 				Computed:    true,
 				Description: `Time the ServiceBinding was created in UTC.`,
 			},
+			"effective_labels": {
+				Type:        schema.TypeMap,
+				Computed:    true,
+				ForceNew:    true,
+				Description: `All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.`,
+				Elem:        &schema.Schema{Type: schema.TypeString},
+			},
+			"terraform_labels": {
+				Type:     schema.TypeMap,
+				Computed: true,
+				Description: `The combination of labels configured directly on the resource
+ and default labels configured on the provider.`,
+				Elem: &schema.Schema{Type: schema.TypeString},
+			},
 			"update_time": {
 				Type:        schema.TypeString,
 				Computed:    true,
@@ -105,12 +120,6 @@ func resourceNetworkServicesServiceBindingCreate(d *schema.ResourceData, meta in
 	}
 
 	obj := make(map[string]interface{})
-	labelsProp, err := expandNetworkServicesServiceBindingLabels(d.Get("labels"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(labelsProp)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
-		obj["labels"] = labelsProp
-	}
 	descriptionProp, err := expandNetworkServicesServiceBindingDescription(d.Get("description"), d, config)
 	if err != nil {
 		return err
@@ -122,6 +131,12 @@ func resourceNetworkServicesServiceBindingCreate(d *schema.ResourceData, meta in
 		return err
 	} else if v, ok := d.GetOkExists("service"); !tpgresource.IsEmptyValue(reflect.ValueOf(serviceProp)) && (ok || !reflect.DeepEqual(v, serviceProp)) {
 		obj["service"] = serviceProp
+	}
+	labelsProp, err := expandNetworkServicesServiceBindingEffectiveLabels(d.Get("effective_labels"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("effective_labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(labelsProp)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
+		obj["labels"] = labelsProp
 	}
 
 	url, err := tpgresource.ReplaceVars(d, config, "{{NetworkServicesBasePath}}projects/{{project}}/locations/global/serviceBindings?serviceBindingId={{name}}")
@@ -233,6 +248,12 @@ func resourceNetworkServicesServiceBindingRead(d *schema.ResourceData, meta inte
 	if err := d.Set("service", flattenNetworkServicesServiceBindingService(res["service"], d, config)); err != nil {
 		return fmt.Errorf("Error reading ServiceBinding: %s", err)
 	}
+	if err := d.Set("terraform_labels", flattenNetworkServicesServiceBindingTerraformLabels(res["labels"], d, config)); err != nil {
+		return fmt.Errorf("Error reading ServiceBinding: %s", err)
+	}
+	if err := d.Set("effective_labels", flattenNetworkServicesServiceBindingEffectiveLabels(res["labels"], d, config)); err != nil {
+		return fmt.Errorf("Error reading ServiceBinding: %s", err)
+	}
 
 	return nil
 }
@@ -319,7 +340,18 @@ func flattenNetworkServicesServiceBindingUpdateTime(v interface{}, d *schema.Res
 }
 
 func flattenNetworkServicesServiceBindingLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
-	return v
+	if v == nil {
+		return v
+	}
+
+	transformed := make(map[string]interface{})
+	if l, ok := d.GetOkExists("labels"); ok {
+		for k := range l.(map[string]interface{}) {
+			transformed[k] = v.(map[string]interface{})[k]
+		}
+	}
+
+	return transformed
 }
 
 func flattenNetworkServicesServiceBindingDescription(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -330,15 +362,23 @@ func flattenNetworkServicesServiceBindingService(v interface{}, d *schema.Resour
 	return v
 }
 
-func expandNetworkServicesServiceBindingLabels(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
+func flattenNetworkServicesServiceBindingTerraformLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
-		return map[string]string{}, nil
+		return v
 	}
-	m := make(map[string]string)
-	for k, val := range v.(map[string]interface{}) {
-		m[k] = val.(string)
+
+	transformed := make(map[string]interface{})
+	if l, ok := d.GetOkExists("terraform_labels"); ok {
+		for k := range l.(map[string]interface{}) {
+			transformed[k] = v.(map[string]interface{})[k]
+		}
 	}
-	return m, nil
+
+	return transformed
+}
+
+func flattenNetworkServicesServiceBindingEffectiveLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
 }
 
 func expandNetworkServicesServiceBindingDescription(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
@@ -347,4 +387,15 @@ func expandNetworkServicesServiceBindingDescription(v interface{}, d tpgresource
 
 func expandNetworkServicesServiceBindingService(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
+}
+
+func expandNetworkServicesServiceBindingEffectiveLabels(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
+	if v == nil {
+		return map[string]string{}, nil
+	}
+	m := make(map[string]string)
+	for k, val := range v.(map[string]interface{}) {
+		m[k] = val.(string)
+	}
+	return m, nil
 }
