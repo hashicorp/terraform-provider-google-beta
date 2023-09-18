@@ -316,6 +316,11 @@ var services = mapOf(
         "displayName" to "Documentaiwarehouse",
         "path" to "./google-beta/services/documentaiwarehouse"
     ),
+    "edgenetwork" to mapOf(
+        "name" to "edgenetwork",
+        "displayName" to "Edgenetwork",
+        "path" to "./google-beta/services/edgenetwork"
+    ),
     "essentialcontacts" to mapOf(
         "name" to "essentialcontacts",
         "displayName" to "Essentialcontacts",
