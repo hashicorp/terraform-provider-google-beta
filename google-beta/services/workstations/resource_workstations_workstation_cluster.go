@@ -49,6 +49,7 @@ func ResourceWorkstationsWorkstationCluster() *schema.Resource {
 		},
 
 		CustomizeDiff: customdiff.All(
+			tpgresource.SetLabelsDiff,
 			tpgresource.SetAnnotationsDiff,
 			tpgresource.DefaultProviderProject,
 		),
@@ -181,6 +182,12 @@ Details can be found in the conditions field.`,
 				Description: `All of annotations (key/value pairs) present on the resource in GCP, including the annotations configured through Terraform, other clients and services.`,
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
+			"effective_labels": {
+				Type:        schema.TypeMap,
+				Computed:    true,
+				Description: `All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.`,
+				Elem:        &schema.Schema{Type: schema.TypeString},
+			},
 			"etag": {
 				Type:     schema.TypeString,
 				Computed: true,
@@ -191,6 +198,13 @@ May be sent on update and delete requests to ensure that the client has an up-to
 				Type:        schema.TypeString,
 				Computed:    true,
 				Description: `The name of the cluster resource.`,
+			},
+			"terraform_labels": {
+				Type:     schema.TypeMap,
+				Computed: true,
+				Description: `The combination of labels configured directly on the resource
+ and default labels configured on the provider.`,
+				Elem: &schema.Schema{Type: schema.TypeString},
 			},
 			"uid": {
 				Type:        schema.TypeString,
@@ -216,12 +230,6 @@ func resourceWorkstationsWorkstationClusterCreate(d *schema.ResourceData, meta i
 	}
 
 	obj := make(map[string]interface{})
-	labelsProp, err := expandWorkstationsWorkstationClusterLabels(d.Get("labels"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(labelsProp)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
-		obj["labels"] = labelsProp
-	}
 	networkProp, err := expandWorkstationsWorkstationClusterNetwork(d.Get("network"), d, config)
 	if err != nil {
 		return err
@@ -251,6 +259,12 @@ func resourceWorkstationsWorkstationClusterCreate(d *schema.ResourceData, meta i
 		return err
 	} else if v, ok := d.GetOkExists("private_cluster_config"); !tpgresource.IsEmptyValue(reflect.ValueOf(privateClusterConfigProp)) && (ok || !reflect.DeepEqual(v, privateClusterConfigProp)) {
 		obj["privateClusterConfig"] = privateClusterConfigProp
+	}
+	labelsProp, err := expandWorkstationsWorkstationClusterEffectiveLabels(d.Get("effective_labels"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("effective_labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(labelsProp)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
+		obj["labels"] = labelsProp
 	}
 	annotationsProp, err := expandWorkstationsWorkstationClusterEffectiveAnnotations(d.Get("effective_annotations"), d, config)
 	if err != nil {
@@ -389,6 +403,12 @@ func resourceWorkstationsWorkstationClusterRead(d *schema.ResourceData, meta int
 	if err := d.Set("conditions", flattenWorkstationsWorkstationClusterConditions(res["conditions"], d, config)); err != nil {
 		return fmt.Errorf("Error reading WorkstationCluster: %s", err)
 	}
+	if err := d.Set("terraform_labels", flattenWorkstationsWorkstationClusterTerraformLabels(res["labels"], d, config)); err != nil {
+		return fmt.Errorf("Error reading WorkstationCluster: %s", err)
+	}
+	if err := d.Set("effective_labels", flattenWorkstationsWorkstationClusterEffectiveLabels(res["labels"], d, config)); err != nil {
+		return fmt.Errorf("Error reading WorkstationCluster: %s", err)
+	}
 	if err := d.Set("effective_annotations", flattenWorkstationsWorkstationClusterEffectiveAnnotations(res["annotations"], d, config)); err != nil {
 		return fmt.Errorf("Error reading WorkstationCluster: %s", err)
 	}
@@ -412,12 +432,6 @@ func resourceWorkstationsWorkstationClusterUpdate(d *schema.ResourceData, meta i
 	billingProject = project
 
 	obj := make(map[string]interface{})
-	labelsProp, err := expandWorkstationsWorkstationClusterLabels(d.Get("labels"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
-		obj["labels"] = labelsProp
-	}
 	displayNameProp, err := expandWorkstationsWorkstationClusterDisplayName(d.Get("display_name"), d, config)
 	if err != nil {
 		return err
@@ -436,6 +450,12 @@ func resourceWorkstationsWorkstationClusterUpdate(d *schema.ResourceData, meta i
 	} else if v, ok := d.GetOkExists("private_cluster_config"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, privateClusterConfigProp)) {
 		obj["privateClusterConfig"] = privateClusterConfigProp
 	}
+	labelsProp, err := expandWorkstationsWorkstationClusterEffectiveLabels(d.Get("effective_labels"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("effective_labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
+		obj["labels"] = labelsProp
+	}
 	annotationsProp, err := expandWorkstationsWorkstationClusterEffectiveAnnotations(d.Get("effective_annotations"), d, config)
 	if err != nil {
 		return err
@@ -451,10 +471,6 @@ func resourceWorkstationsWorkstationClusterUpdate(d *schema.ResourceData, meta i
 	log.Printf("[DEBUG] Updating WorkstationCluster %q: %#v", d.Id(), obj)
 	updateMask := []string{}
 
-	if d.HasChange("labels") {
-		updateMask = append(updateMask, "labels")
-	}
-
 	if d.HasChange("display_name") {
 		updateMask = append(updateMask, "displayName")
 	}
@@ -465,6 +481,10 @@ func resourceWorkstationsWorkstationClusterUpdate(d *schema.ResourceData, meta i
 
 	if d.HasChange("private_cluster_config") {
 		updateMask = append(updateMask, "privateClusterConfig")
+	}
+
+	if d.HasChange("effective_labels") {
+		updateMask = append(updateMask, "labels")
 	}
 
 	if d.HasChange("effective_annotations") {
@@ -591,7 +611,18 @@ func flattenWorkstationsWorkstationClusterUid(v interface{}, d *schema.ResourceD
 }
 
 func flattenWorkstationsWorkstationClusterLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
-	return v
+	if v == nil {
+		return v
+	}
+
+	transformed := make(map[string]interface{})
+	if l, ok := d.GetOkExists("labels"); ok {
+		for k := range l.(map[string]interface{}) {
+			transformed[k] = v.(map[string]interface{})[k]
+		}
+	}
+
+	return transformed
 }
 
 func flattenWorkstationsWorkstationClusterNetwork(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -713,19 +744,27 @@ func flattenWorkstationsWorkstationClusterConditionsDetails(v interface{}, d *sc
 	return v
 }
 
-func flattenWorkstationsWorkstationClusterEffectiveAnnotations(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+func flattenWorkstationsWorkstationClusterTerraformLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return v
+	}
+
+	transformed := make(map[string]interface{})
+	if l, ok := d.GetOkExists("terraform_labels"); ok {
+		for k := range l.(map[string]interface{}) {
+			transformed[k] = v.(map[string]interface{})[k]
+		}
+	}
+
+	return transformed
+}
+
+func flattenWorkstationsWorkstationClusterEffectiveLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func expandWorkstationsWorkstationClusterLabels(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
-	if v == nil {
-		return map[string]string{}, nil
-	}
-	m := make(map[string]string)
-	for k, val := range v.(map[string]interface{}) {
-		m[k] = val.(string)
-	}
-	return m, nil
+func flattenWorkstationsWorkstationClusterEffectiveAnnotations(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
 }
 
 func expandWorkstationsWorkstationClusterNetwork(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
@@ -798,6 +837,17 @@ func expandWorkstationsWorkstationClusterPrivateClusterConfigServiceAttachmentUr
 
 func expandWorkstationsWorkstationClusterPrivateClusterConfigAllowedProjects(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
+}
+
+func expandWorkstationsWorkstationClusterEffectiveLabels(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
+	if v == nil {
+		return map[string]string{}, nil
+	}
+	m := make(map[string]string)
+	for k, val := range v.(map[string]interface{}) {
+		m[k] = val.(string)
+	}
+	return m, nil
 }
 
 func expandWorkstationsWorkstationClusterEffectiveAnnotations(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
