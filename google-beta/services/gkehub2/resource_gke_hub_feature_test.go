@@ -230,7 +230,7 @@ func TestAccGKEHubFeature_gkehubFeatureMciUpdate(t *testing.T) {
 				ResourceName:            "google_gke_hub_feature.feature",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"update_time"},
+				ImportStateVerifyIgnore: []string{"update_time", "labels", "terraform_labels"},
 			},
 		},
 	})
@@ -365,15 +365,16 @@ func TestAccGKEHubFeature_gkehubFeatureMcsd(t *testing.T) {
 				ResourceName:            "google_gke_hub_feature.feature",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"project"},
+				ImportStateVerifyIgnore: []string{"project", "labels", "terraform_labels"},
 			},
 			{
 				Config: testAccGKEHubFeature_gkehubFeatureMcsdUpdate(context),
 			},
 			{
-				ResourceName:      "google_gke_hub_feature.feature",
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            "google_gke_hub_feature.feature",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"labels", "terraform_labels"},
 			},
 		},
 	})
