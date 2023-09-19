@@ -1,4 +1,46 @@
-## 4.83.0 (Unreleased)
+## 4.84.0 (Unreleased)
+
+## 4.83.0 (September 18, 2023)
+
+DEPRECATIONS:
+* secretmanager: deprecated `automatic` field on `google_secret_manager_secret`. Use `auto` instead. ([#6237](https://github.com/hashicorp/terraform-provider-google-beta/pull/6237))
+
+FEATURES:
+* **New Resource:** `google_biglake_table` ([#6205](https://github.com/hashicorp/terraform-provider-google-beta/pull/6205))
+* **New Resource:** `google_data_pipeline_pipeline` ([#6236](https://github.com/hashicorp/terraform-provider-google-beta/pull/6236))
+* **New Resource:** `google_dialogflow_cx_test_case` ([#6249](https://github.com/hashicorp/terraform-provider-google-beta/pull/6249))
+* **New Resource:** `google_storage_insights_report_config` ([#6253](https://github.com/hashicorp/terraform-provider-google-beta/pull/6253))
+* **New Resource:** `google_apigee_target_server` ([#6215](https://github.com/hashicorp/terraform-provider-google-beta/pull/6215))
+
+IMPROVEMENTS:
+* bigquery: added `allow_non_incremental_definition` to `google_bigquery_table` resource ([#6248](https://github.com/hashicorp/terraform-provider-google-beta/pull/6248))
+* bigquery: added `table_constraints` field to `google_bigquery_table` resource ([#6250](https://github.com/hashicorp/terraform-provider-google-beta/pull/6250))
+* compute: added internal IPV6 support for `google_compute_address` and `google_compute_instance` resources ([#6232](https://github.com/hashicorp/terraform-provider-google-beta/pull/6232))
+* containerattached: added `binary_authorization` field to `google_container_attached_cluster` resource ([#6256](https://github.com/hashicorp/terraform-provider-google-beta/pull/6256))
+* containeraws: added update support for `config.instance_type` in `container_aws_node_pool` ([#6282](https://github.com/hashicorp/terraform-provider-google-beta/pull/6282))
+* firestore: added `point_in_time_recovery_enablement` field to `google_firestore_database` resource ([#6239](https://github.com/hashicorp/terraform-provider-google-beta/pull/6239))
+* firestore: added `update_time` and `uid` fields to `google_firestore_database` resource ([#6257](https://github.com/hashicorp/terraform-provider-google-beta/pull/6257))
+* gkehub2: added `labels`, `namespace_labels` fields to `google_gke_hub_namespace` resource ([#6202](https://github.com/hashicorp/terraform-provider-google-beta/pull/6202))
+* gkehub: added `labels` fields to `google_gke_hub_membership_binding` resource ([#6216](https://github.com/hashicorp/terraform-provider-google-beta/pull/6216))
+* gkehub: added `labels` fields to `google_gke_hub_scope` resource ([#6243](https://github.com/hashicorp/terraform-provider-google-beta/pull/6243))
+* gkeonprem: added `upgrade_policy` and `binary_authorization` fields in `google_gkeonprem_bare_metal_cluster` resource (beta) ([#6224](https://github.com/hashicorp/terraform-provider-google-beta/pull/6224))
+* gkeonprem: added `upgrade_policy` field in `google_gkeonprem_vmware_cluster` resource (beta) ([#6224](https://github.com/hashicorp/terraform-provider-google-beta/pull/6224))
+* secretmanager: added `auto` field to `google_secret_manager_secret` resource ([#6237](https://github.com/hashicorp/terraform-provider-google-beta/pull/6237))
+* secretmanager: added `deletion_policy` field to `google_secret_manager_secret_version` resource ([#6252](https://github.com/hashicorp/terraform-provider-google-beta/pull/6252))
+* storage: supported in-place update for `autoclass` field in `google_storage_bucket` resource ([#6233](https://github.com/hashicorp/terraform-provider-google-beta/pull/6233))
+* vertexai: added `public_endpoint_enabled` to `google_vertex_ai_index_endpoint` ([#6208](https://github.com/hashicorp/terraform-provider-google-beta/pull/6208))
+* workstations: added `env` field to `google_workstations_workstation` resource (beta) ([#6258](https://github.com/hashicorp/terraform-provider-google-beta/pull/6258))
+
+BUG FIXES:
+* bigquerydatatransfer: fixed a bug when importing `location` of `google_bigquery_data_transfer_config` ([#6203](https://github.com/hashicorp/terraform-provider-google-beta/pull/6203))
+* container: fixed a bug where `additional_pod_network_configs` was not sent correctly in `google_container_node_pool` ([#6211](https://github.com/hashicorp/terraform-provider-google-beta/pull/6211))
+* container: fixed concurrent ops' quota-error to be retriable in `google_container_node_pool ` ([#6254](https://github.com/hashicorp/terraform-provider-google-beta/pull/6254))
+* eventarc: resolved permadiff on `event_content_type` in `eventarc_trigger`, the field will now default to a value returned by the API when not set in configuration ([#6282](https://github.com/hashicorp/terraform-provider-google-beta/pull/6282))
+* pipeline: fixed issue where certain `google_dataflow_job` instances would crash the provider ([#6255](https://github.com/hashicorp/terraform-provider-google-beta/pull/6255))
+* provider: fixed a bug where `user_project_override` would not be not used correctly when provisioning resources implemented using the plugin framework. Currently there are no resources implemented this way, so no-one should have been impacted. ([#6230](https://github.com/hashicorp/terraform-provider-google-beta/pull/6230))
+* pubsub: fixed issue where setting `no_wrapper.write_metadata` to false wasn't passed to the API for `google_pubsub_subscription` ([#6219](https://github.com/hashicorp/terraform-provider-google-beta/pull/6219))
+* serviceaccount: added retries for reads after `google_service_account` creation if 403 Forbidden is returned. ([#6221](https://github.com/hashicorp/terraform-provider-google-beta/pull/6221))
+* storage: fixed the failure in building a plan when a `content` value is expected on `google_storage_bucket_object_content` ([#6204](https://github.com/hashicorp/terraform-provider-google-beta/pull/6204)
 
 ## 4.82.0 (September 11, 2023)
 
