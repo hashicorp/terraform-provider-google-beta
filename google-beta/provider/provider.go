@@ -65,6 +65,7 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/dns"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/documentai"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/documentaiwarehouse"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/edgenetwork"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/essentialcontacts"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/filestore"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/firebase"
@@ -118,6 +119,7 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/storagetransfer"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/tags"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/tpu"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/tpuv2"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/vertexai"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/vmwareengine"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/vpcaccess"
@@ -509,6 +511,11 @@ func Provider() *schema.Provider {
 				Optional:     true,
 				ValidateFunc: transport_tpg.ValidateCustomEndpoint,
 			},
+			"edgenetwork_custom_endpoint": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: transport_tpg.ValidateCustomEndpoint,
+			},
 			"essential_contacts_custom_endpoint": {
 				Type:         schema.TypeString,
 				Optional:     true,
@@ -774,6 +781,11 @@ func Provider() *schema.Provider {
 				Optional:     true,
 				ValidateFunc: transport_tpg.ValidateCustomEndpoint,
 			},
+			"tpu_v2_custom_endpoint": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: transport_tpg.ValidateCustomEndpoint,
+			},
 			"vertex_ai_custom_endpoint": {
 				Type:         schema.TypeString,
 				Optional:     true,
@@ -982,6 +994,8 @@ func DatasourceMapWithErrors() (map[string]*schema.Resource, error) {
 		"google_tags_tag_key":                                 tags.DataSourceGoogleTagsTagKey(),
 		"google_tags_tag_value":                               tags.DataSourceGoogleTagsTagValue(),
 		"google_tpu_tensorflow_versions":                      tpu.DataSourceTpuTensorflowVersions(),
+		"google_tpu_v2_runtime_versions":                      tpuv2.DataSourceTpuV2RuntimeVersions(),
+		"google_tpu_v2_accelerator_types":                     tpuv2.DataSourceTpuV2AcceleratorTypes(),
 		"google_vpc_access_connector":                         vpcaccess.DataSourceVPCAccessConnector(),
 		"google_redis_instance":                               redis.DataSourceGoogleRedisInstance(),
 		"google_vertex_ai_index":                              vertexai.DataSourceVertexAIIndex(),
@@ -1038,6 +1052,7 @@ func DatasourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_dataproc_metastore_service_iam_policy":           tpgiamresource.DataSourceIamPolicy(dataprocmetastore.DataprocMetastoreServiceIamSchema, dataprocmetastore.DataprocMetastoreServiceIamUpdaterProducer),
 			"google_dns_managed_zone_iam_policy":                     tpgiamresource.DataSourceIamPolicy(dns.DNSManagedZoneIamSchema, dns.DNSManagedZoneIamUpdaterProducer),
 			"google_gke_backup_backup_plan_iam_policy":               tpgiamresource.DataSourceIamPolicy(gkebackup.GKEBackupBackupPlanIamSchema, gkebackup.GKEBackupBackupPlanIamUpdaterProducer),
+			"google_gke_backup_restore_plan_iam_policy":              tpgiamresource.DataSourceIamPolicy(gkebackup.GKEBackupRestorePlanIamSchema, gkebackup.GKEBackupRestorePlanIamUpdaterProducer),
 			"google_gke_hub_membership_iam_policy":                   tpgiamresource.DataSourceIamPolicy(gkehub.GKEHubMembershipIamSchema, gkehub.GKEHubMembershipIamUpdaterProducer),
 			"google_gke_hub_feature_iam_policy":                      tpgiamresource.DataSourceIamPolicy(gkehub2.GKEHub2FeatureIamSchema, gkehub2.GKEHub2FeatureIamUpdaterProducer),
 			"google_gke_hub_scope_iam_policy":                        tpgiamresource.DataSourceIamPolicy(gkehub2.GKEHub2ScopeIamSchema, gkehub2.GKEHub2ScopeIamUpdaterProducer),
@@ -1098,9 +1113,9 @@ func DatasourceMapWithErrors() (map[string]*schema.Resource, error) {
 		})
 }
 
-// Generated resources: 374
-// Generated IAM resources: 234
-// Total generated resources: 608
+// Generated resources: 380
+// Generated IAM resources: 237
+// Total generated resources: 617
 func ResourceMap() map[string]*schema.Resource {
 	resourceMap, _ := ResourceMapWithErrors()
 	return resourceMap
@@ -1174,6 +1189,7 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_artifact_registry_repository_iam_binding":                tpgiamresource.ResourceIamBinding(artifactregistry.ArtifactRegistryRepositoryIamSchema, artifactregistry.ArtifactRegistryRepositoryIamUpdaterProducer, artifactregistry.ArtifactRegistryRepositoryIdParseFunc),
 			"google_artifact_registry_repository_iam_member":                 tpgiamresource.ResourceIamMember(artifactregistry.ArtifactRegistryRepositoryIamSchema, artifactregistry.ArtifactRegistryRepositoryIamUpdaterProducer, artifactregistry.ArtifactRegistryRepositoryIdParseFunc),
 			"google_artifact_registry_repository_iam_policy":                 tpgiamresource.ResourceIamPolicy(artifactregistry.ArtifactRegistryRepositoryIamSchema, artifactregistry.ArtifactRegistryRepositoryIamUpdaterProducer, artifactregistry.ArtifactRegistryRepositoryIdParseFunc),
+			"google_artifact_registry_vpcsc_config":                          artifactregistry.ResourceArtifactRegistryVPCSCConfig(),
 			"google_backup_dr_management_server":                             backupdr.ResourceBackupDRManagementServer(),
 			"google_beyondcorp_app_connection":                               beyondcorp.ResourceBeyondcorpAppConnection(),
 			"google_beyondcorp_app_connector":                                beyondcorp.ResourceBeyondcorpAppConnector(),
@@ -1444,6 +1460,7 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_dialogflow_cx_flow":                                      dialogflowcx.ResourceDialogflowCXFlow(),
 			"google_dialogflow_cx_intent":                                    dialogflowcx.ResourceDialogflowCXIntent(),
 			"google_dialogflow_cx_page":                                      dialogflowcx.ResourceDialogflowCXPage(),
+			"google_dialogflow_cx_security_settings":                         dialogflowcx.ResourceDialogflowCXSecuritySettings(),
 			"google_dialogflow_cx_test_case":                                 dialogflowcx.ResourceDialogflowCXTestCase(),
 			"google_dialogflow_cx_webhook":                                   dialogflowcx.ResourceDialogflowCXWebhook(),
 			"google_dns_managed_zone":                                        dns.ResourceDNSManagedZone(),
@@ -1457,6 +1474,8 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_document_ai_processor_default_version":                   documentai.ResourceDocumentAIProcessorDefaultVersion(),
 			"google_document_ai_warehouse_document_schema":                   documentaiwarehouse.ResourceDocumentAIWarehouseDocumentSchema(),
 			"google_document_ai_warehouse_location":                          documentaiwarehouse.ResourceDocumentAIWarehouseLocation(),
+			"google_edgenetwork_network":                                     edgenetwork.ResourceEdgenetworkNetwork(),
+			"google_edgenetwork_subnet":                                      edgenetwork.ResourceEdgenetworkSubnet(),
 			"google_essential_contacts_contact":                              essentialcontacts.ResourceEssentialContactsContact(),
 			"google_filestore_backup":                                        filestore.ResourceFilestoreBackup(),
 			"google_filestore_instance":                                      filestore.ResourceFilestoreInstance(),
@@ -1480,6 +1499,10 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_gke_backup_backup_plan_iam_binding":                      tpgiamresource.ResourceIamBinding(gkebackup.GKEBackupBackupPlanIamSchema, gkebackup.GKEBackupBackupPlanIamUpdaterProducer, gkebackup.GKEBackupBackupPlanIdParseFunc),
 			"google_gke_backup_backup_plan_iam_member":                       tpgiamresource.ResourceIamMember(gkebackup.GKEBackupBackupPlanIamSchema, gkebackup.GKEBackupBackupPlanIamUpdaterProducer, gkebackup.GKEBackupBackupPlanIdParseFunc),
 			"google_gke_backup_backup_plan_iam_policy":                       tpgiamresource.ResourceIamPolicy(gkebackup.GKEBackupBackupPlanIamSchema, gkebackup.GKEBackupBackupPlanIamUpdaterProducer, gkebackup.GKEBackupBackupPlanIdParseFunc),
+			"google_gke_backup_restore_plan":                                 gkebackup.ResourceGKEBackupRestorePlan(),
+			"google_gke_backup_restore_plan_iam_binding":                     tpgiamresource.ResourceIamBinding(gkebackup.GKEBackupRestorePlanIamSchema, gkebackup.GKEBackupRestorePlanIamUpdaterProducer, gkebackup.GKEBackupRestorePlanIdParseFunc),
+			"google_gke_backup_restore_plan_iam_member":                      tpgiamresource.ResourceIamMember(gkebackup.GKEBackupRestorePlanIamSchema, gkebackup.GKEBackupRestorePlanIamUpdaterProducer, gkebackup.GKEBackupRestorePlanIdParseFunc),
+			"google_gke_backup_restore_plan_iam_policy":                      tpgiamresource.ResourceIamPolicy(gkebackup.GKEBackupRestorePlanIamSchema, gkebackup.GKEBackupRestorePlanIamUpdaterProducer, gkebackup.GKEBackupRestorePlanIdParseFunc),
 			"google_gke_hub_membership":                                      gkehub.ResourceGKEHubMembership(),
 			"google_gke_hub_membership_iam_binding":                          tpgiamresource.ResourceIamBinding(gkehub.GKEHubMembershipIamSchema, gkehub.GKEHubMembershipIamUpdaterProducer, gkehub.GKEHubMembershipIdParseFunc),
 			"google_gke_hub_membership_iam_member":                           tpgiamresource.ResourceIamMember(gkehub.GKEHubMembershipIamSchema, gkehub.GKEHubMembershipIamUpdaterProducer, gkehub.GKEHubMembershipIdParseFunc),
@@ -1688,6 +1711,7 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_tags_tag_value_iam_member":                               tpgiamresource.ResourceIamMember(tags.TagsTagValueIamSchema, tags.TagsTagValueIamUpdaterProducer, tags.TagsTagValueIdParseFunc),
 			"google_tags_tag_value_iam_policy":                               tpgiamresource.ResourceIamPolicy(tags.TagsTagValueIamSchema, tags.TagsTagValueIamUpdaterProducer, tags.TagsTagValueIdParseFunc),
 			"google_tpu_node":                                                tpu.ResourceTPUNode(),
+			"google_tpu_v2_vm":                                               tpuv2.ResourceTpuV2Vm(),
 			"google_vertex_ai_dataset":                                       vertexai.ResourceVertexAIDataset(),
 			"google_vertex_ai_endpoint":                                      vertexai.ResourceVertexAIEndpoint(),
 			"google_vertex_ai_featurestore":                                  vertexai.ResourceVertexAIFeaturestore(),
@@ -2022,6 +2046,7 @@ func ProviderConfigure(ctx context.Context, d *schema.ResourceData, p *schema.Pr
 	config.DNSBasePath = d.Get("dns_custom_endpoint").(string)
 	config.DocumentAIBasePath = d.Get("document_ai_custom_endpoint").(string)
 	config.DocumentAIWarehouseBasePath = d.Get("document_ai_warehouse_custom_endpoint").(string)
+	config.EdgenetworkBasePath = d.Get("edgenetwork_custom_endpoint").(string)
 	config.EssentialContactsBasePath = d.Get("essential_contacts_custom_endpoint").(string)
 	config.FilestoreBasePath = d.Get("filestore_custom_endpoint").(string)
 	config.FirebaseBasePath = d.Get("firebase_custom_endpoint").(string)
@@ -2075,6 +2100,7 @@ func ProviderConfigure(ctx context.Context, d *schema.ResourceData, p *schema.Pr
 	config.StorageTransferBasePath = d.Get("storage_transfer_custom_endpoint").(string)
 	config.TagsBasePath = d.Get("tags_custom_endpoint").(string)
 	config.TPUBasePath = d.Get("tpu_custom_endpoint").(string)
+	config.TpuV2BasePath = d.Get("tpu_v2_custom_endpoint").(string)
 	config.VertexAIBasePath = d.Get("vertex_ai_custom_endpoint").(string)
 	config.VmwareengineBasePath = d.Get("vmwareengine_custom_endpoint").(string)
 	config.VPCAccessBasePath = d.Get("vpc_access_custom_endpoint").(string)
