@@ -19,7 +19,7 @@ IMPROVEMENTS:
 * cloudrunv2: added fields `network_interfaces` to resource `google_cloud_run_v2_job` to support Direct VPC egress. ([#6287](https://github.com/hashicorp/terraform-provider-google-beta/pull/6287))
 * cloudrunv2: added fields `network_interfaces` to resource `google_cloud_run_v2_service` to support Direct VPC egress. ([#6287](https://github.com/hashicorp/terraform-provider-google-beta/pull/6287))
 * compute: updated the `autoscaling_policy.mode` to accept `ONLY_SCALE_OUT` on `google_compute_autoscaler` ([#6304](https://github.com/hashicorp/terraform-provider-google-beta/pull/6304))
-* compute: Added `server_tls_policy` argument to `target_https_proxy` resource ([#6269](https://github.com/hashicorp/terraform-provider-google-beta/pull/6269))
+* compute: added `server_tls_policy` argument to `target_https_proxy` resource ([#6269](https://github.com/hashicorp/terraform-provider-google-beta/pull/6269))
 * compute: added `member` attribute to `google_compute_default_service_account` datasource ([#6311](https://github.com/hashicorp/terraform-provider-google-beta/pull/6311))
 * compute: added output field `internal_ipv6_prefix` to `google_compute_subnetwork` resource ([#6306](https://github.com/hashicorp/terraform-provider-google-beta/pull/6306))
 * container: added `node_config.fast_socket` field to `google_container_node_pool` ([#6289](https://github.com/hashicorp/terraform-provider-google-beta/pull/6289))
