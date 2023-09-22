@@ -1,0 +1,9 @@
+```release-note:bug
+`dataflow`: fixed permadiff when SdkPipeline values are supplied via parameters. 
+```
+```release-note:bug
+`dataflow`: fixed max_workers read value permanently displaying as 0.
+```
+```release-note:bug
+`dataflow`: fixed issue causing error message when max_workers and num_workers were supplied via parameters.
+```
