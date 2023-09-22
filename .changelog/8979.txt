@@ -1,0 +1,3 @@
+```release-note:bug
+workstations: fixed in-place updates of `host.gceInstance.accelerators` in `workstation_config`
+```

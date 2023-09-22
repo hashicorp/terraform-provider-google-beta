@@ -751,7 +751,8 @@ func resourceWorkstationsWorkstationConfigUpdate(d *schema.ResourceData, meta in
 			"host.gceInstance.shieldedInstanceConfig.enableSecureBoot",
 			"host.gceInstance.shieldedInstanceConfig.enableVtpm",
 			"host.gceInstance.shieldedInstanceConfig.enableIntegrityMonitoring",
-			"host.gceInstance.confidentialInstanceConfig.enableConfidentialCompute")
+			"host.gceInstance.confidentialInstanceConfig.enableConfidentialCompute",
+			"host.gceInstance.accelerators")
 	}
 
 	if d.HasChange("persistent_directories") {
