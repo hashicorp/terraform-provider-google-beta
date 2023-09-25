@@ -262,6 +262,52 @@ resource "google_compute_network" "custom-test" {
 `, context)
 }
 
+func TestAccComputeSubnetwork_subnetworkPurposePrivateNatExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"random_suffix": acctest.RandString(t, 10),
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckComputeSubnetworkDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeSubnetwork_subnetworkPurposePrivateNatExample(context),
+			},
+			{
+				ResourceName:            "google_compute_subnetwork.subnetwork-purpose-private-nat",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"network", "region"},
+			},
+		},
+	})
+}
+
+func testAccComputeSubnetwork_subnetworkPurposePrivateNatExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_compute_subnetwork" "subnetwork-purpose-private-nat" {
+  provider         = google-beta
+
+  name             = "tf-test-subnet-purpose-test-subnetwork%{random_suffix}"
+  region           = "us-west2"
+  ip_cidr_range    = "192.168.1.0/24"
+  purpose          = "PRIVATE_NAT"
+  network          = google_compute_network.custom-test.id
+}
+
+resource "google_compute_network" "custom-test" {
+  provider                = google-beta
+
+  name                    = "tf-test-subnet-purpose-test-network%{random_suffix}"
+  auto_create_subnetworks = false
+}
+`, context)
+}
+
 func testAccCheckComputeSubnetworkDestroyProducer(t *testing.T) func(s *terraform.State) error {
 	return func(s *terraform.State) error {
 		for name, rs := range s.RootModule().Resources {
