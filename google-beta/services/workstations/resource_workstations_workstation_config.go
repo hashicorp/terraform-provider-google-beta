@@ -297,10 +297,13 @@ A duration in seconds with up to nine fractional digits, ending with 's'. Exampl
 				Default: "1200s",
 			},
 			"labels": {
-				Type:        schema.TypeMap,
-				Optional:    true,
-				Description: `Client-specified labels that are applied to the resource and that are also propagated to the underlying Compute Engine resources.`,
-				Elem:        &schema.Schema{Type: schema.TypeString},
+				Type:     schema.TypeMap,
+				Optional: true,
+				Description: `Client-specified labels that are applied to the resource and that are also propagated to the underlying Compute Engine resources.
+
+**Note**: This field is non-authoritative, and will only manage the labels present in your configuration.
+Please refer to the field 'effective_labels' for all of the labels present on the resource.`,
+				Elem: &schema.Schema{Type: schema.TypeString},
 			},
 			"persistent_directories": {
 				Type:        schema.TypeList,

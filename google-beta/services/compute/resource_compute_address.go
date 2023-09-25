@@ -112,6 +112,7 @@ the external IPv6 address reservation. Possible values: ["VM", "NETLB"]`,
 				Optional: true,
 				Description: `Labels to apply to this address.  A list of key->value pairs.
 
+
 **Note**: This field is non-authoritative, and will only manage the labels present in your configuration.
 Please refer to the field 'effective_labels' for all of the labels present on the resource.`,
 				Elem: &schema.Schema{Type: schema.TypeString},

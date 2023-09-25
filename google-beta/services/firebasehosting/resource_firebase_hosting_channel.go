@@ -75,10 +75,13 @@ set directly or via the 'ttl' field.`,
 				ConflictsWith: []string{"ttl"},
 			},
 			"labels": {
-				Type:        schema.TypeMap,
-				Optional:    true,
-				Description: `Text labels used for extra metadata and/or filtering`,
-				Elem:        &schema.Schema{Type: schema.TypeString},
+				Type:     schema.TypeMap,
+				Optional: true,
+				Description: `Text labels used for extra metadata and/or filtering
+
+**Note**: This field is non-authoritative, and will only manage the labels present in your configuration.
+Please refer to the field 'effective_labels' for all of the labels present on the resource.`,
+				Elem: &schema.Schema{Type: schema.TypeString},
 			},
 			"retained_release_count": {
 				Type:     schema.TypeInt,
