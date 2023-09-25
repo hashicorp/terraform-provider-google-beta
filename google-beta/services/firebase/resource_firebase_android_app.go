@@ -499,11 +499,11 @@ func resourceFirebaseAndroidAppDelete(d *schema.ResourceData, meta interface{}) 
 func resourceFirebaseAndroidAppImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	config := meta.(*transport_tpg.Config)
 	if err := tpgresource.ParseImportId([]string{
-		"(?P<project>[^/]+) projects/(?P<project>[^/]+)/androidApps/(?P<app_id>[^/]+)",
-		"projects/(?P<project>[^/]+)/androidApps/(?P<app_id>[^/]+)",
-		"(?P<project>[^/]+)/(?P<project>[^/]+)/(?P<app_id>[^/]+)",
-		"androidApps/(?P<app_id>[^/]+)",
-		"(?P<app_id>[^/]+)",
+		"^(?P<project>[^/]+) projects/(?P<project>[^/]+)/androidApps/(?P<app_id>[^/]+)$",
+		"^projects/(?P<project>[^/]+)/androidApps/(?P<app_id>[^/]+)$",
+		"^(?P<project>[^/]+)/(?P<project>[^/]+)/(?P<app_id>[^/]+)$",
+		"^androidApps/(?P<app_id>[^/]+)$",
+		"^(?P<app_id>[^/]+)$",
 	}, d, config); err != nil {
 		return nil, err
 	}

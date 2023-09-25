@@ -390,9 +390,9 @@ func resourceServiceUsageConsumerQuotaOverrideDelete(d *schema.ResourceData, met
 func resourceServiceUsageConsumerQuotaOverrideImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	config := meta.(*transport_tpg.Config)
 	if err := tpgresource.ParseImportId([]string{
-		"projects/(?P<project>[^/]+)/services/(?P<service>[^/]+)/consumerQuotaMetrics/(?P<metric>[^/]+)/limits/(?P<limit>[^/]+)/consumerOverrides/(?P<name>[^/]+)",
-		"services/(?P<service>[^/]+)/consumerQuotaMetrics/(?P<metric>[^/]+)/limits/(?P<limit>[^/]+)/consumerOverrides/(?P<name>[^/]+)",
-		"(?P<service>[^/]+)/(?P<metric>[^/]+)/(?P<limit>[^/]+)/(?P<name>[^/]+)",
+		"^projects/(?P<project>[^/]+)/services/(?P<service>[^/]+)/consumerQuotaMetrics/(?P<metric>[^/]+)/limits/(?P<limit>[^/]+)/consumerOverrides/(?P<name>[^/]+)$",
+		"^services/(?P<service>[^/]+)/consumerQuotaMetrics/(?P<metric>[^/]+)/limits/(?P<limit>[^/]+)/consumerOverrides/(?P<name>[^/]+)$",
+		"^(?P<service>[^/]+)/(?P<metric>[^/]+)/(?P<limit>[^/]+)/(?P<name>[^/]+)$",
 	}, d, config); err != nil {
 		return nil, err
 	}

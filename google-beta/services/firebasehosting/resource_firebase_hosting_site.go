@@ -322,10 +322,10 @@ func resourceFirebaseHostingSiteDelete(d *schema.ResourceData, meta interface{})
 func resourceFirebaseHostingSiteImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	config := meta.(*transport_tpg.Config)
 	if err := tpgresource.ParseImportId([]string{
-		"projects/(?P<project>[^/]+)/sites/(?P<site_id>[^/]+)",
-		"(?P<project>[^/]+)/(?P<site_id>[^/]+)",
-		"sites/(?P<site_id>[^/]+)",
-		"(?P<site_id>[^/]+)",
+		"^projects/(?P<project>[^/]+)/sites/(?P<site_id>[^/]+)$",
+		"^(?P<project>[^/]+)/(?P<site_id>[^/]+)$",
+		"^sites/(?P<site_id>[^/]+)$",
+		"^(?P<site_id>[^/]+)$",
 	}, d, config); err != nil {
 		return nil, err
 	}
