@@ -128,10 +128,13 @@ func ResourceNetworkServicesEndpointPolicy() *schema.Resource {
 				Description: `A free-text description of the resource. Max length 1024 characters.`,
 			},
 			"labels": {
-				Type:        schema.TypeMap,
-				Optional:    true,
-				Description: `Set of label tags associated with the TcpRoute resource.`,
-				Elem:        &schema.Schema{Type: schema.TypeString},
+				Type:     schema.TypeMap,
+				Optional: true,
+				Description: `Set of label tags associated with the TcpRoute resource.
+
+**Note**: This field is non-authoritative, and will only manage the labels present in your configuration.
+Please refer to the field 'effective_labels' for all of the labels present on the resource.`,
+				Elem: &schema.Schema{Type: schema.TypeString},
 			},
 			"server_tls_policy": {
 				Type:        schema.TypeString,
