@@ -38,7 +38,7 @@ BUG FIXES:
 * bigquery: update documentation for `google_bigquery_table.time_partitioning.expiration_ms` ([#6290](https://github.com/hashicorp/terraform-provider-google-beta/pull/6290))
 * bigtable: added a read timeout to `google_bigtable_instance` ([#6276](https://github.com/hashicorp/terraform-provider-google-beta/pull/6276))
 * bigtable: improved regional reliability when instance overlaps a downed region in the resource `google_bigtable_instance` ([#6313](https://github.com/hashicorp/terraform-provider-google-beta/pull/6313))
-* eventarc: field `event_data_content_type` in `google_eventarc_trigger` now marked as computed ([#6282](https://github.com/hashicorp/terraform-provider-google-beta/pull/6282))
+* eventarc: resolved permadiff on `google_eventarc_trigger.event_data_content_type` by defaulting to the value returned by the API if not set in the configuration. ([#6282](https://github.com/hashicorp/terraform-provider-google-beta/pull/6282))
 * identityplatform: fixed a potential perma-diff for `sign_in` in `google_identity_platform_config` resource ([#6317](https://github.com/hashicorp/terraform-provider-google-beta/pull/6317))
 * monitoring: fixed scaling issues when deploying terraform changes with many `google_monitoring_monitored_project` ([#6259](https://github.com/hashicorp/terraform-provider-google-beta/pull/6259))
 * monitoring: fixed validation of `service_id` on `google_monitoring_custom_service` and `slo_id` on `google_monitoring_slo` ([#6266](https://github.com/hashicorp/terraform-provider-google-beta/pull/6266))
