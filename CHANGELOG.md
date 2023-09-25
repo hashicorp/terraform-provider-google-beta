@@ -15,7 +15,7 @@ FEATURES:
 * **New Resource:** `google_edgenetwork_subnet` ([#6305](https://github.com/hashicorp/terraform-provider-google-beta/pull/6305))
 
 IMPROVEMENTS:
-* alloydb: added `network_config` field to support named IP ranges on `google_alloydb_cluster` ([#6297](https://github.com/hashicorp/terraform-provider-google-beta/pull/6297))
+* alloydb: added `network_config` field to support named IP ranges on `google_alloydb_cluster`. ([#6297](https://github.com/hashicorp/terraform-provider-google-beta/pull/6297))
 * cloudrunv2: added fields `network_interfaces` to resource `google_cloud_run_v2_job` to support Direct VPC egress. ([#6287](https://github.com/hashicorp/terraform-provider-google-beta/pull/6287))
 * cloudrunv2: added fields `network_interfaces` to resource `google_cloud_run_v2_service` to support Direct VPC egress. ([#6287](https://github.com/hashicorp/terraform-provider-google-beta/pull/6287))
 * compute: updated the `autoscaling_policy.mode` to accept `ONLY_SCALE_OUT` on `google_compute_autoscaler` ([#6304](https://github.com/hashicorp/terraform-provider-google-beta/pull/6304))
@@ -35,7 +35,7 @@ IMPROVEMENTS:
 * workstations: added `env` field to `google_workstations_workstation` resource ([#6258](https://github.com/hashicorp/terraform-provider-google-beta/pull/6258))
 
 BUG FIXES:
-* bigquery: update documentation for `google_bigquery_table.time_partitioning.expiration_ms` ([#6290](https://github.com/hashicorp/terraform-provider-google-beta/pull/6290))
+* bigquery: updated documentation for `google_bigquery_table.time_partitioning.expiration_ms` ([#6290](https://github.com/hashicorp/terraform-provider-google-beta/pull/6290))
 * bigtable: added a read timeout to `google_bigtable_instance` ([#6276](https://github.com/hashicorp/terraform-provider-google-beta/pull/6276))
 * bigtable: improved regional reliability when instance overlaps a downed region in the resource `google_bigtable_instance` ([#6313](https://github.com/hashicorp/terraform-provider-google-beta/pull/6313))
 * eventarc: resolved permadiff on `google_eventarc_trigger.event_data_content_type` by defaulting to the value returned by the API if not set in the configuration. ([#6282](https://github.com/hashicorp/terraform-provider-google-beta/pull/6282))
