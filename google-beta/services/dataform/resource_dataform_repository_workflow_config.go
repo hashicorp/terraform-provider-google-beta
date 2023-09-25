@@ -461,10 +461,10 @@ func resourceDataformRepositoryWorkflowConfigDelete(d *schema.ResourceData, meta
 func resourceDataformRepositoryWorkflowConfigImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	config := meta.(*transport_tpg.Config)
 	if err := tpgresource.ParseImportId([]string{
-		"projects/(?P<project>[^/]+)/locations/(?P<region>[^/]+)/repositories/(?P<repository>[^/]+)/workflowConfigs/(?P<name>[^/]+)",
-		"(?P<project>[^/]+)/(?P<region>[^/]+)/(?P<repository>[^/]+)/(?P<name>[^/]+)",
-		"(?P<region>[^/]+)/(?P<repository>[^/]+)/(?P<name>[^/]+)",
-		"(?P<repository>[^/]+)/(?P<name>[^/]+)",
+		"^projects/(?P<project>[^/]+)/locations/(?P<region>[^/]+)/repositories/(?P<repository>[^/]+)/workflowConfigs/(?P<name>[^/]+)$",
+		"^(?P<project>[^/]+)/(?P<region>[^/]+)/(?P<repository>[^/]+)/(?P<name>[^/]+)$",
+		"^(?P<region>[^/]+)/(?P<repository>[^/]+)/(?P<name>[^/]+)$",
+		"^(?P<repository>[^/]+)/(?P<name>[^/]+)$",
 	}, d, config); err != nil {
 		return nil, err
 	}

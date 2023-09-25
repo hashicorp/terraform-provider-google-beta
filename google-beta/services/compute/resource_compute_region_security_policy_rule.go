@@ -589,10 +589,10 @@ func resourceComputeRegionSecurityPolicyRuleDelete(d *schema.ResourceData, meta 
 func resourceComputeRegionSecurityPolicyRuleImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	config := meta.(*transport_tpg.Config)
 	if err := tpgresource.ParseImportId([]string{
-		"projects/(?P<project>[^/]+)/regions/(?P<region>[^/]+)/securityPolicies/(?P<security_policy>[^/]+)/priority/(?P<priority>[^/]+)",
-		"(?P<project>[^/]+)/(?P<region>[^/]+)/(?P<security_policy>[^/]+)/(?P<priority>[^/]+)",
-		"(?P<region>[^/]+)/(?P<security_policy>[^/]+)/(?P<priority>[^/]+)",
-		"(?P<security_policy>[^/]+)/(?P<priority>[^/]+)",
+		"^projects/(?P<project>[^/]+)/regions/(?P<region>[^/]+)/securityPolicies/(?P<security_policy>[^/]+)/priority/(?P<priority>[^/]+)$",
+		"^(?P<project>[^/]+)/(?P<region>[^/]+)/(?P<security_policy>[^/]+)/(?P<priority>[^/]+)$",
+		"^(?P<region>[^/]+)/(?P<security_policy>[^/]+)/(?P<priority>[^/]+)$",
+		"^(?P<security_policy>[^/]+)/(?P<priority>[^/]+)$",
 	}, d, config); err != nil {
 		return nil, err
 	}

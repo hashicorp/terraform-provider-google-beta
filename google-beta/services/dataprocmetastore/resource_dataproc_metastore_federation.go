@@ -448,9 +448,9 @@ func resourceDataprocMetastoreFederationDelete(d *schema.ResourceData, meta inte
 func resourceDataprocMetastoreFederationImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	config := meta.(*transport_tpg.Config)
 	if err := tpgresource.ParseImportId([]string{
-		"projects/(?P<project>[^/]+)/locations/(?P<location>[^/]+)/federations/(?P<federation_id>[^/]+)",
-		"(?P<project>[^/]+)/(?P<location>[^/]+)/(?P<federation_id>[^/]+)",
-		"(?P<location>[^/]+)/(?P<federation_id>[^/]+)",
+		"^projects/(?P<project>[^/]+)/locations/(?P<location>[^/]+)/federations/(?P<federation_id>[^/]+)$",
+		"^(?P<project>[^/]+)/(?P<location>[^/]+)/(?P<federation_id>[^/]+)$",
+		"^(?P<location>[^/]+)/(?P<federation_id>[^/]+)$",
 	}, d, config); err != nil {
 		return nil, err
 	}

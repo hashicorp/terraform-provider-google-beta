@@ -458,11 +458,11 @@ func resourceFirebaseAppleAppDelete(d *schema.ResourceData, meta interface{}) er
 func resourceFirebaseAppleAppImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	config := meta.(*transport_tpg.Config)
 	if err := tpgresource.ParseImportId([]string{
-		"(?P<project>[^/]+) projects/(?P<project>[^/]+)/iosApps/(?P<app_id>[^/]+)",
-		"projects/(?P<project>[^/]+)/iosApps/(?P<app_id>[^/]+)",
-		"(?P<project>[^/]+)/(?P<project>[^/]+)/(?P<app_id>[^/]+)",
-		"iosApps/(?P<app_id>[^/]+)",
-		"(?P<app_id>[^/]+)",
+		"^(?P<project>[^/]+) projects/(?P<project>[^/]+)/iosApps/(?P<app_id>[^/]+)$",
+		"^projects/(?P<project>[^/]+)/iosApps/(?P<app_id>[^/]+)$",
+		"^(?P<project>[^/]+)/(?P<project>[^/]+)/(?P<app_id>[^/]+)$",
+		"^iosApps/(?P<app_id>[^/]+)$",
+		"^(?P<app_id>[^/]+)$",
 	}, d, config); err != nil {
 		return nil, err
 	}

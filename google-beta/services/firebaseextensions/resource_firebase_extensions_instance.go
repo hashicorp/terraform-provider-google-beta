@@ -592,9 +592,9 @@ func resourceFirebaseExtensionsInstanceDelete(d *schema.ResourceData, meta inter
 func resourceFirebaseExtensionsInstanceImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	config := meta.(*transport_tpg.Config)
 	if err := tpgresource.ParseImportId([]string{
-		"projects/(?P<project>[^/]+)/instances/(?P<instance_id>[^/]+)",
-		"(?P<project>[^/]+)/(?P<instance_id>[^/]+)",
-		"(?P<instance_id>[^/]+)",
+		"^projects/(?P<project>[^/]+)/instances/(?P<instance_id>[^/]+)$",
+		"^(?P<project>[^/]+)/(?P<instance_id>[^/]+)$",
+		"^(?P<instance_id>[^/]+)$",
 	}, d, config); err != nil {
 		return nil, err
 	}
