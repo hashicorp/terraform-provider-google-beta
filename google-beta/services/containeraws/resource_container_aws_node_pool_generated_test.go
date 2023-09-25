@@ -1009,6 +1009,13 @@ resource "google_container_aws_node_pool" "primary" {
     label-one = "value-one"
   }
 
+  update_settings {
+    surge_settings {
+      max_surge = 1
+      max_unavailable = 0
+    }
+  }
+
   project = "%{project_name}"
 }
 
@@ -1176,6 +1183,13 @@ resource "google_container_aws_node_pool" "primary" {
 
   annotations = {
     label-two = "value-two"
+  }
+
+  update_settings {
+    surge_settings {
+      max_surge = 1
+      max_unavailable = 0
+    }
   }
 
   project = "%{project_name}"
