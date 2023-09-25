@@ -111,6 +111,15 @@ func ResourceContainerAwsCluster() *schema.Resource {
 				Elem:        ContainerAwsClusterNetworkingSchema(),
 			},
 
+			"binary_authorization": {
+				Type:        schema.TypeList,
+				Computed:    true,
+				Optional:    true,
+				Description: "Configuration options for the Binary Authorization feature.",
+				MaxItems:    1,
+				Elem:        ContainerAwsClusterBinaryAuthorizationSchema(),
+			},
+
 			"description": {
 				Type:        schema.TypeString,
 				Optional:    true,
@@ -574,6 +583,19 @@ func ContainerAwsClusterNetworkingSchema() *schema.Resource {
 	}
 }
 
+func ContainerAwsClusterBinaryAuthorizationSchema() *schema.Resource {
+	return &schema.Resource{
+		Schema: map[string]*schema.Schema{
+			"evaluation_mode": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Optional:    true,
+				Description: "Mode of operation for Binary Authorization policy evaluation. Possible values: DISABLED, PROJECT_SINGLETON_POLICY_ENFORCE",
+			},
+		},
+	}
+}
+
 func ContainerAwsClusterLoggingConfigSchema() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
@@ -636,17 +658,18 @@ func resourceContainerAwsClusterCreate(d *schema.ResourceData, meta interface{})
 	}
 
 	obj := &containeraws.Cluster{
-		Authorization: expandContainerAwsClusterAuthorization(d.Get("authorization")),
-		AwsRegion:     dcl.String(d.Get("aws_region").(string)),
-		ControlPlane:  expandContainerAwsClusterControlPlane(d.Get("control_plane")),
-		Fleet:         expandContainerAwsClusterFleet(d.Get("fleet")),
-		Location:      dcl.String(d.Get("location").(string)),
-		Name:          dcl.String(d.Get("name").(string)),
-		Networking:    expandContainerAwsClusterNetworking(d.Get("networking")),
-		Description:   dcl.String(d.Get("description").(string)),
-		Annotations:   tpgresource.CheckStringMap(d.Get("effective_annotations")),
-		LoggingConfig: expandContainerAwsClusterLoggingConfig(d.Get("logging_config")),
-		Project:       dcl.String(project),
+		Authorization:       expandContainerAwsClusterAuthorization(d.Get("authorization")),
+		AwsRegion:           dcl.String(d.Get("aws_region").(string)),
+		ControlPlane:        expandContainerAwsClusterControlPlane(d.Get("control_plane")),
+		Fleet:               expandContainerAwsClusterFleet(d.Get("fleet")),
+		Location:            dcl.String(d.Get("location").(string)),
+		Name:                dcl.String(d.Get("name").(string)),
+		Networking:          expandContainerAwsClusterNetworking(d.Get("networking")),
+		BinaryAuthorization: expandContainerAwsClusterBinaryAuthorization(d.Get("binary_authorization")),
+		Description:         dcl.String(d.Get("description").(string)),
+		Annotations:         tpgresource.CheckStringMap(d.Get("effective_annotations")),
+		LoggingConfig:       expandContainerAwsClusterLoggingConfig(d.Get("logging_config")),
+		Project:             dcl.String(project),
 	}
 
 	id, err := obj.ID()
@@ -694,17 +717,18 @@ func resourceContainerAwsClusterRead(d *schema.ResourceData, meta interface{}) e
 	}
 
 	obj := &containeraws.Cluster{
-		Authorization: expandContainerAwsClusterAuthorization(d.Get("authorization")),
-		AwsRegion:     dcl.String(d.Get("aws_region").(string)),
-		ControlPlane:  expandContainerAwsClusterControlPlane(d.Get("control_plane")),
-		Fleet:         expandContainerAwsClusterFleet(d.Get("fleet")),
-		Location:      dcl.String(d.Get("location").(string)),
-		Name:          dcl.String(d.Get("name").(string)),
-		Networking:    expandContainerAwsClusterNetworking(d.Get("networking")),
-		Description:   dcl.String(d.Get("description").(string)),
-		Annotations:   tpgresource.CheckStringMap(d.Get("effective_annotations")),
-		LoggingConfig: expandContainerAwsClusterLoggingConfig(d.Get("logging_config")),
-		Project:       dcl.String(project),
+		Authorization:       expandContainerAwsClusterAuthorization(d.Get("authorization")),
+		AwsRegion:           dcl.String(d.Get("aws_region").(string)),
+		ControlPlane:        expandContainerAwsClusterControlPlane(d.Get("control_plane")),
+		Fleet:               expandContainerAwsClusterFleet(d.Get("fleet")),
+		Location:            dcl.String(d.Get("location").(string)),
+		Name:                dcl.String(d.Get("name").(string)),
+		Networking:          expandContainerAwsClusterNetworking(d.Get("networking")),
+		BinaryAuthorization: expandContainerAwsClusterBinaryAuthorization(d.Get("binary_authorization")),
+		Description:         dcl.String(d.Get("description").(string)),
+		Annotations:         tpgresource.CheckStringMap(d.Get("effective_annotations")),
+		LoggingConfig:       expandContainerAwsClusterLoggingConfig(d.Get("logging_config")),
+		Project:             dcl.String(project),
 	}
 
 	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
@@ -749,6 +773,9 @@ func resourceContainerAwsClusterRead(d *schema.ResourceData, meta interface{}) e
 	}
 	if err = d.Set("networking", flattenContainerAwsClusterNetworking(res.Networking)); err != nil {
 		return fmt.Errorf("error setting networking in state: %s", err)
+	}
+	if err = d.Set("binary_authorization", flattenContainerAwsClusterBinaryAuthorization(res.BinaryAuthorization)); err != nil {
+		return fmt.Errorf("error setting binary_authorization in state: %s", err)
 	}
 	if err = d.Set("description", res.Description); err != nil {
 		return fmt.Errorf("error setting description in state: %s", err)
@@ -800,17 +827,18 @@ func resourceContainerAwsClusterUpdate(d *schema.ResourceData, meta interface{})
 	}
 
 	obj := &containeraws.Cluster{
-		Authorization: expandContainerAwsClusterAuthorization(d.Get("authorization")),
-		AwsRegion:     dcl.String(d.Get("aws_region").(string)),
-		ControlPlane:  expandContainerAwsClusterControlPlane(d.Get("control_plane")),
-		Fleet:         expandContainerAwsClusterFleet(d.Get("fleet")),
-		Location:      dcl.String(d.Get("location").(string)),
-		Name:          dcl.String(d.Get("name").(string)),
-		Networking:    expandContainerAwsClusterNetworking(d.Get("networking")),
-		Description:   dcl.String(d.Get("description").(string)),
-		Annotations:   tpgresource.CheckStringMap(d.Get("effective_annotations")),
-		LoggingConfig: expandContainerAwsClusterLoggingConfig(d.Get("logging_config")),
-		Project:       dcl.String(project),
+		Authorization:       expandContainerAwsClusterAuthorization(d.Get("authorization")),
+		AwsRegion:           dcl.String(d.Get("aws_region").(string)),
+		ControlPlane:        expandContainerAwsClusterControlPlane(d.Get("control_plane")),
+		Fleet:               expandContainerAwsClusterFleet(d.Get("fleet")),
+		Location:            dcl.String(d.Get("location").(string)),
+		Name:                dcl.String(d.Get("name").(string)),
+		Networking:          expandContainerAwsClusterNetworking(d.Get("networking")),
+		BinaryAuthorization: expandContainerAwsClusterBinaryAuthorization(d.Get("binary_authorization")),
+		Description:         dcl.String(d.Get("description").(string)),
+		Annotations:         tpgresource.CheckStringMap(d.Get("effective_annotations")),
+		LoggingConfig:       expandContainerAwsClusterLoggingConfig(d.Get("logging_config")),
+		Project:             dcl.String(project),
 	}
 	directive := tpgdclresource.UpdateDirective
 	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
@@ -853,17 +881,18 @@ func resourceContainerAwsClusterDelete(d *schema.ResourceData, meta interface{})
 	}
 
 	obj := &containeraws.Cluster{
-		Authorization: expandContainerAwsClusterAuthorization(d.Get("authorization")),
-		AwsRegion:     dcl.String(d.Get("aws_region").(string)),
-		ControlPlane:  expandContainerAwsClusterControlPlane(d.Get("control_plane")),
-		Fleet:         expandContainerAwsClusterFleet(d.Get("fleet")),
-		Location:      dcl.String(d.Get("location").(string)),
-		Name:          dcl.String(d.Get("name").(string)),
-		Networking:    expandContainerAwsClusterNetworking(d.Get("networking")),
-		Description:   dcl.String(d.Get("description").(string)),
-		Annotations:   tpgresource.CheckStringMap(d.Get("effective_annotations")),
-		LoggingConfig: expandContainerAwsClusterLoggingConfig(d.Get("logging_config")),
-		Project:       dcl.String(project),
+		Authorization:       expandContainerAwsClusterAuthorization(d.Get("authorization")),
+		AwsRegion:           dcl.String(d.Get("aws_region").(string)),
+		ControlPlane:        expandContainerAwsClusterControlPlane(d.Get("control_plane")),
+		Fleet:               expandContainerAwsClusterFleet(d.Get("fleet")),
+		Location:            dcl.String(d.Get("location").(string)),
+		Name:                dcl.String(d.Get("name").(string)),
+		Networking:          expandContainerAwsClusterNetworking(d.Get("networking")),
+		BinaryAuthorization: expandContainerAwsClusterBinaryAuthorization(d.Get("binary_authorization")),
+		Description:         dcl.String(d.Get("description").(string)),
+		Annotations:         tpgresource.CheckStringMap(d.Get("effective_annotations")),
+		LoggingConfig:       expandContainerAwsClusterLoggingConfig(d.Get("logging_config")),
+		Project:             dcl.String(project),
 	}
 
 	log.Printf("[DEBUG] Deleting Cluster %q", d.Id())
@@ -1326,6 +1355,32 @@ func flattenContainerAwsClusterNetworking(obj *containeraws.ClusterNetworking) i
 		"service_address_cidr_blocks":     obj.ServiceAddressCidrBlocks,
 		"vpc_id":                          obj.VPCId,
 		"per_node_pool_sg_rules_disabled": obj.PerNodePoolSgRulesDisabled,
+	}
+
+	return []interface{}{transformed}
+
+}
+
+func expandContainerAwsClusterBinaryAuthorization(o interface{}) *containeraws.ClusterBinaryAuthorization {
+	if o == nil {
+		return nil
+	}
+	objArr := o.([]interface{})
+	if len(objArr) == 0 || objArr[0] == nil {
+		return nil
+	}
+	obj := objArr[0].(map[string]interface{})
+	return &containeraws.ClusterBinaryAuthorization{
+		EvaluationMode: containeraws.ClusterBinaryAuthorizationEvaluationModeEnumRef(obj["evaluation_mode"].(string)),
+	}
+}
+
+func flattenContainerAwsClusterBinaryAuthorization(obj *containeraws.ClusterBinaryAuthorization) interface{} {
+	if obj == nil || obj.Empty() {
+		return nil
+	}
+	transformed := map[string]interface{}{
+		"evaluation_mode": obj.EvaluationMode,
 	}
 
 	return []interface{}{transformed}

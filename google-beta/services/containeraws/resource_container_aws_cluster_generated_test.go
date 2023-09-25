@@ -898,6 +898,10 @@ resource "google_container_aws_cluster" "primary" {
 
   aws_region = "%{aws_region}"
 
+  binary_authorization {
+    evaluation_mode = "PROJECT_SINGLETON_POLICY_ENFORCE"
+  }
+
   control_plane {
     aws_services_authentication {
       role_arn          = "arn:aws:iam::%{aws_acct_id}:role/%{byo_prefix}-1p-dev-oneplatform"
