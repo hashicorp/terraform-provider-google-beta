@@ -17,6 +17,7 @@ project {
     "scripts/**",
     "google-beta/**/test-fixtures/**",
     "META.d/*.yml",
+    "META.d/*.yaml",
     ".golangci.yml",
     ".goreleaser.yml",
   ]
