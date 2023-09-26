@@ -5986,7 +5986,7 @@ resource "google_compute_node_group" "nodes" {
   name = "%s"
   zone = "us-central1-a"
 
-  size          = 1
+  initial_size          = 1
   node_template = google_compute_node_template.nodetmpl.self_link
 }
 `, instance, nodeTemplate, nodeGroup)
@@ -6055,7 +6055,7 @@ resource "google_compute_node_group" "nodes" {
   name = "%s"
   zone = "us-central1-a"
 
-  size          = 1
+  initial_size          = 1
   node_template = google_compute_node_template.nodetmpl.self_link
 }
 `, instance, nodeTemplate, nodeGroup)
@@ -6124,7 +6124,7 @@ resource "google_compute_node_group" "nodes" {
   name = "%s"
   zone = "us-central1-a"
 
-  size          = 1
+  initial_size          = 1
   node_template = google_compute_node_template.nodetmpl.self_link
 }
 `, instance, nodeTemplate, nodeGroup)
@@ -6187,7 +6187,7 @@ resource "google_compute_node_group" "nodes" {
   name = "%s"
   zone = "us-central1-a"
 
-  size          = 1
+  initial_size          = 1
   node_template = google_compute_node_template.nodetmpl.self_link
 }
 `, instance, nodeTemplate, nodeGroup)
