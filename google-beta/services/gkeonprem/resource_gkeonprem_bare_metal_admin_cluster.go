@@ -46,7 +46,7 @@ func ResourceGkeonpremBareMetalAdminCluster() *schema.Resource {
 		Timeouts: &schema.ResourceTimeout{
 			Create: schema.DefaultTimeout(60 * time.Minute),
 			Update: schema.DefaultTimeout(60 * time.Minute),
-			Delete: schema.DefaultTimeout(60 * time.Minute),
+			Delete: schema.DefaultTimeout(20 * time.Minute),
 		},
 
 		CustomizeDiff: customdiff.All(
@@ -1182,55 +1182,11 @@ func resourceGkeonpremBareMetalAdminClusterUpdate(d *schema.ResourceData, meta i
 }
 
 func resourceGkeonpremBareMetalAdminClusterDelete(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*transport_tpg.Config)
-	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
-	if err != nil {
-		return err
-	}
+	log.Printf("[WARNING] Gkeonprem BareMetalAdminCluster resources"+
+		" cannot be deleted from Google Cloud. The resource %s will be removed from Terraform"+
+		" state, but will still be present on Google Cloud.", d.Id())
+	d.SetId("")
 
-	billingProject := ""
-
-	project, err := tpgresource.GetProject(d, config)
-	if err != nil {
-		return fmt.Errorf("Error fetching project for BareMetalAdminCluster: %s", err)
-	}
-	billingProject = project
-
-	url, err := tpgresource.ReplaceVars(d, config, "{{GkeonpremBasePath}}projects/{{project}}/locations/{{location}}/bareMetalAdminClusters/{{name}}:unenroll?ignore_errors=true")
-	if err != nil {
-		return err
-	}
-
-	var obj map[string]interface{}
-	log.Printf("[DEBUG] Deleting BareMetalAdminCluster %q", d.Id())
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
-		Config:    config,
-		Method:    "DELETE",
-		Project:   billingProject,
-		RawURL:    url,
-		UserAgent: userAgent,
-		Body:      obj,
-		Timeout:   d.Timeout(schema.TimeoutDelete),
-	})
-	if err != nil {
-		return transport_tpg.HandleNotFoundError(err, d, "BareMetalAdminCluster")
-	}
-
-	err = GkeonpremOperationWaitTime(
-		config, res, project, "Deleting BareMetalAdminCluster", userAgent,
-		d.Timeout(schema.TimeoutDelete))
-
-	if err != nil {
-		return err
-	}
-
-	log.Printf("[DEBUG] Finished deleting BareMetalAdminCluster %q: %#v", d.Id(), res)
 	return nil
 }
 
