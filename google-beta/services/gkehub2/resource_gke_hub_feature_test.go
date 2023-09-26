@@ -244,6 +244,7 @@ resource "google_container_cluster" "primary" {
   location           = "us-central1-a"
   initial_node_count = 1
   project = google_project.project.project_id
+  deletion_protection = false
   depends_on = [google_project_service.mci, google_project_service.container, google_project_service.container, google_project_service.gkehub]
 }
 
@@ -252,6 +253,7 @@ resource "google_container_cluster" "secondary" {
   location           = "us-central1-a"
   initial_node_count = 1
   project = google_project.project.project_id
+  deletion_protection = false
   depends_on = [google_project_service.mci, google_project_service.container, google_project_service.container, google_project_service.gkehub]
 }
 
@@ -295,6 +297,7 @@ resource "google_container_cluster" "primary" {
   location           = "us-central1-a"
   initial_node_count = 1
   project = google_project.project.project_id
+  deletion_protection = false
   depends_on = [google_project_service.mci, google_project_service.container, google_project_service.container, google_project_service.gkehub]
 }
 
@@ -303,6 +306,7 @@ resource "google_container_cluster" "secondary" {
   location           = "us-central1-a"
   initial_node_count = 1
   project = google_project.project.project_id
+  deletion_protection = false
   depends_on = [google_project_service.mci, google_project_service.container, google_project_service.container, google_project_service.gkehub]
 }
 
