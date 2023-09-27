@@ -135,6 +135,11 @@ The elements are of the form "KEY=VALUE" for the environment variable "KEY" bein
 				Optional:    true,
 				Description: `Human-readable name for this resource.`,
 			},
+			"enable_audit_agent": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Description: `Whether to enable Linux 'auditd' logging on the workstation. When enabled, a service account must also be specified that has 'logging.buckets.write' permission on the project. Operating system audit logging is distinct from Cloud Audit Logs.`,
+			},
 			"encryption_key": {
 				Type:     schema.TypeList,
 				Optional: true,
@@ -248,6 +253,15 @@ See https://cloud.google.com/workstations/docs/reference/rest/v1beta/projects.lo
 										Optional:    true,
 										ForceNew:    true,
 										Description: `Email address of the service account that will be used on VM instances used to support this config. This service account must have permission to pull the specified container image. If not set, VMs will run without a service account, in which case the image must be publicly accessible.`,
+									},
+									"service_account_scopes": {
+										Type:        schema.TypeList,
+										Computed:    true,
+										Optional:    true,
+										Description: `Scopes to grant to the service_account. Various scopes are automatically added based on feature usage. When specified, users of workstations under this configuration must have 'iam.serviceAccounts.actAs' on the service account.`,
+										Elem: &schema.Schema{
+											Type: schema.TypeString,
+										},
 									},
 									"shielded_instance_config": {
 										Type:        schema.TypeList,
@@ -364,6 +378,17 @@ Valid values are '10', '50', '100', '200', '500', or '1000'. Defaults to '200'. 
 							Description: `Location of this directory in the running workstation.`,
 						},
 					},
+				},
+			},
+			"replica_zones": {
+				Type:     schema.TypeList,
+				Computed: true,
+				Optional: true,
+				ForceNew: true,
+				Description: `Specifies the zones used to replicate the VM and disk resources within the region. If set, exactly two zones within the workstation cluster's region must be specified—for example, '['us-central1-a', 'us-central1-f']'.
+If this field is empty, two default zones within the region are used. Immutable after the workstation configuration is created.`,
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
 				},
 			},
 			"running_timeout": {
@@ -487,6 +512,18 @@ func resourceWorkstationsWorkstationConfigCreate(d *schema.ResourceData, meta in
 		return err
 	} else if v, ok := d.GetOkExists("running_timeout"); !tpgresource.IsEmptyValue(reflect.ValueOf(runningTimeoutProp)) && (ok || !reflect.DeepEqual(v, runningTimeoutProp)) {
 		obj["runningTimeout"] = runningTimeoutProp
+	}
+	replicaZonesProp, err := expandWorkstationsWorkstationConfigReplicaZones(d.Get("replica_zones"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("replica_zones"); !tpgresource.IsEmptyValue(reflect.ValueOf(replicaZonesProp)) && (ok || !reflect.DeepEqual(v, replicaZonesProp)) {
+		obj["replicaZones"] = replicaZonesProp
+	}
+	enableAuditAgentProp, err := expandWorkstationsWorkstationConfigEnableAuditAgent(d.Get("enable_audit_agent"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("enable_audit_agent"); !tpgresource.IsEmptyValue(reflect.ValueOf(enableAuditAgentProp)) && (ok || !reflect.DeepEqual(v, enableAuditAgentProp)) {
+		obj["enableAuditAgent"] = enableAuditAgentProp
 	}
 	hostProp, err := expandWorkstationsWorkstationConfigHost(d.Get("host"), d, config)
 	if err != nil {
@@ -646,6 +683,9 @@ func resourceWorkstationsWorkstationConfigRead(d *schema.ResourceData, meta inte
 	if err := d.Set("running_timeout", flattenWorkstationsWorkstationConfigRunningTimeout(res["runningTimeout"], d, config)); err != nil {
 		return fmt.Errorf("Error reading WorkstationConfig: %s", err)
 	}
+	if err := d.Set("replica_zones", flattenWorkstationsWorkstationConfigReplicaZones(res["replicaZones"], d, config)); err != nil {
+		return fmt.Errorf("Error reading WorkstationConfig: %s", err)
+	}
 	if err := d.Set("host", flattenWorkstationsWorkstationConfigHost(res["host"], d, config)); err != nil {
 		return fmt.Errorf("Error reading WorkstationConfig: %s", err)
 	}
@@ -717,6 +757,12 @@ func resourceWorkstationsWorkstationConfigUpdate(d *schema.ResourceData, meta in
 	} else if v, ok := d.GetOkExists("running_timeout"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, runningTimeoutProp)) {
 		obj["runningTimeout"] = runningTimeoutProp
 	}
+	enableAuditAgentProp, err := expandWorkstationsWorkstationConfigEnableAuditAgent(d.Get("enable_audit_agent"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("enable_audit_agent"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, enableAuditAgentProp)) {
+		obj["enableAuditAgent"] = enableAuditAgentProp
+	}
 	hostProp, err := expandWorkstationsWorkstationConfigHost(d.Get("host"), d, config)
 	if err != nil {
 		return err
@@ -772,16 +818,22 @@ func resourceWorkstationsWorkstationConfigUpdate(d *schema.ResourceData, meta in
 		updateMask = append(updateMask, "runningTimeout")
 	}
 
+	if d.HasChange("enable_audit_agent") {
+		updateMask = append(updateMask, "enableAuditAgent")
+	}
+
 	if d.HasChange("host") {
 		updateMask = append(updateMask, "host.gceInstance.machineType",
 			"host.gceInstance.poolSize",
 			"host.gceInstance.tags",
+			"host.gceInstance.serviceAccountScopes",
 			"host.gceInstance.disablePublicIpAddresses",
 			"host.gceInstance.enableNestedVirtualization",
 			"host.gceInstance.shieldedInstanceConfig.enableSecureBoot",
 			"host.gceInstance.shieldedInstanceConfig.enableVtpm",
 			"host.gceInstance.shieldedInstanceConfig.enableIntegrityMonitoring",
-			"host.gceInstance.confidentialInstanceConfig.enableConfidentialCompute")
+			"host.gceInstance.confidentialInstanceConfig.enableConfidentialCompute",
+			"host.gceInstance.accelerators")
 	}
 
 	if d.HasChange("persistent_directories") {
@@ -974,6 +1026,10 @@ func flattenWorkstationsWorkstationConfigRunningTimeout(v interface{}, d *schema
 	return v
 }
 
+func flattenWorkstationsWorkstationConfigReplicaZones(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
 func flattenWorkstationsWorkstationConfigHost(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return nil
@@ -1000,6 +1056,8 @@ func flattenWorkstationsWorkstationConfigHostGceInstance(v interface{}, d *schem
 		flattenWorkstationsWorkstationConfigHostGceInstanceMachineType(original["machineType"], d, config)
 	transformed["service_account"] =
 		flattenWorkstationsWorkstationConfigHostGceInstanceServiceAccount(original["serviceAccount"], d, config)
+	transformed["service_account_scopes"] =
+		flattenWorkstationsWorkstationConfigHostGceInstanceServiceAccountScopes(original["serviceAccountScopes"], d, config)
 	transformed["pool_size"] =
 		flattenWorkstationsWorkstationConfigHostGceInstancePoolSize(original["poolSize"], d, config)
 	transformed["boot_disk_size_gb"] =
@@ -1023,6 +1081,10 @@ func flattenWorkstationsWorkstationConfigHostGceInstanceMachineType(v interface{
 }
 
 func flattenWorkstationsWorkstationConfigHostGceInstanceServiceAccount(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenWorkstationsWorkstationConfigHostGceInstanceServiceAccountScopes(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
@@ -1404,6 +1466,14 @@ func expandWorkstationsWorkstationConfigRunningTimeout(v interface{}, d tpgresou
 	return v, nil
 }
 
+func expandWorkstationsWorkstationConfigReplicaZones(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandWorkstationsWorkstationConfigEnableAuditAgent(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
 func expandWorkstationsWorkstationConfigHost(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
@@ -1444,6 +1514,13 @@ func expandWorkstationsWorkstationConfigHostGceInstance(v interface{}, d tpgreso
 		return nil, err
 	} else if val := reflect.ValueOf(transformedServiceAccount); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["serviceAccount"] = transformedServiceAccount
+	}
+
+	transformedServiceAccountScopes, err := expandWorkstationsWorkstationConfigHostGceInstanceServiceAccountScopes(original["service_account_scopes"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedServiceAccountScopes); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["serviceAccountScopes"] = transformedServiceAccountScopes
 	}
 
 	transformedPoolSize, err := expandWorkstationsWorkstationConfigHostGceInstancePoolSize(original["pool_size"], d, config)
@@ -1510,6 +1587,10 @@ func expandWorkstationsWorkstationConfigHostGceInstanceMachineType(v interface{}
 }
 
 func expandWorkstationsWorkstationConfigHostGceInstanceServiceAccount(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandWorkstationsWorkstationConfigHostGceInstanceServiceAccountScopes(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 

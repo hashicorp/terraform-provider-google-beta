@@ -294,6 +294,9 @@ func flattenAccessConfigs(accessConfigs []*compute.AccessConfig) ([]map[string]i
 		if natIP == "" {
 			natIP = ac.NatIP
 		}
+		if ac.SecurityPolicy != "" {
+			flattened[i]["security_policy"] = ac.SecurityPolicy
+		}
 	}
 	return flattened, natIP
 }
@@ -308,6 +311,9 @@ func flattenIpv6AccessConfigs(ipv6AccessConfigs []*compute.AccessConfig) []map[s
 		flattened[i]["external_ipv6"] = ac.ExternalIpv6
 		flattened[i]["external_ipv6_prefix_length"] = strconv.FormatInt(ac.ExternalIpv6PrefixLength, 10)
 		flattened[i]["name"] = ac.Name
+		if ac.SecurityPolicy != "" {
+			flattened[i]["security_policy"] = ac.SecurityPolicy
+		}
 	}
 	return flattened
 }
@@ -356,6 +362,13 @@ func flattenNetworkInterfaces(d *schema.ResourceData, config *transport_tpg.Conf
 				return nil, "", "", "", err
 			}
 			flattened[i]["network_attachment"] = networkAttachment
+		}
+
+		// the security_policy for a network_interface is found in one of its accessConfigs.
+		if len(iface.AccessConfigs) > 0 && iface.AccessConfigs[0].SecurityPolicy != "" {
+			flattened[i]["security_policy"] = iface.AccessConfigs[0].SecurityPolicy
+		} else if len(iface.Ipv6AccessConfigs) > 0 && iface.Ipv6AccessConfigs[0].SecurityPolicy != "" {
+			flattened[i]["security_policy"] = iface.Ipv6AccessConfigs[0].SecurityPolicy
 		}
 	}
 	return flattened, region, internalIP, externalIP, nil
@@ -423,15 +436,6 @@ func expandNetworkInterfaces(d tpgresource.TerraformResourceData, config *transp
 		// Checks if networkAttachment is not specified in resource, network or subnetwork have to be specifed.
 		if networkAttachment == "" && network == "" && subnetwork == "" {
 			return nil, fmt.Errorf("exactly one of network, subnetwork, or network_attachment must be provided")
-		}
-
-		if networkAttachment != "" {
-			if network != "" {
-				return nil, fmt.Errorf("Cannot have a network provided with networkAttachment given that networkAttachment is associated with a network already")
-			}
-			if subnetwork != "" {
-				return nil, fmt.Errorf("Cannot have a subnetwork provided with networkAttachment given that networkAttachment is associated with a subnetwork already")
-			}
 		}
 
 		nf, err := tpgresource.ParseNetworkFieldValue(network, d, config)
