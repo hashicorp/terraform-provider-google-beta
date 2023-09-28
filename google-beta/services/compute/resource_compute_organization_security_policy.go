@@ -365,8 +365,8 @@ func resourceComputeOrganizationSecurityPolicyDelete(d *schema.ResourceData, met
 func resourceComputeOrganizationSecurityPolicyImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	config := meta.(*transport_tpg.Config)
 	if err := tpgresource.ParseImportId([]string{
-		"locations/global/securityPolicies/(?P<policy_id>[^/]+)",
-		"(?P<policy_id>[^/]+)",
+		"^locations/global/securityPolicies/(?P<policy_id>[^/]+)$",
+		"^(?P<policy_id>[^/]+)$",
 	}, d, config); err != nil {
 		return nil, err
 	}

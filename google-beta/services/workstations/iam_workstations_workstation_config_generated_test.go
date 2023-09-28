@@ -165,6 +165,13 @@ resource "google_workstations_workstation_config" "default" {
   running_timeout = "21600s"
 
   replica_zones = ["us-central1-a", "us-central1-b"]
+  annotations = {
+    label-one = "value-one"
+  }
+
+  labels = {
+    "label" = "key"
+  }
 
   host {
     gce_instance {
@@ -229,6 +236,13 @@ resource "google_workstations_workstation_config" "default" {
   running_timeout = "21600s"
 
   replica_zones = ["us-central1-a", "us-central1-b"]
+  annotations = {
+    label-one = "value-one"
+  }
+
+  labels = {
+    "label" = "key"
+  }
 
   host {
     gce_instance {
@@ -311,6 +325,13 @@ resource "google_workstations_workstation_config" "default" {
   running_timeout = "21600s"
 
   replica_zones = ["us-central1-a", "us-central1-b"]
+  annotations = {
+    label-one = "value-one"
+  }
+
+  labels = {
+    "label" = "key"
+  }
 
   host {
     gce_instance {
@@ -378,6 +399,13 @@ resource "google_workstations_workstation_config" "default" {
   running_timeout = "21600s"
 
   replica_zones = ["us-central1-a", "us-central1-b"]
+  annotations = {
+    label-one = "value-one"
+  }
+
+  labels = {
+    "label" = "key"
+  }
 
   host {
     gce_instance {
@@ -442,6 +470,13 @@ resource "google_workstations_workstation_config" "default" {
   running_timeout = "21600s"
 
   replica_zones = ["us-central1-a", "us-central1-b"]
+  annotations = {
+    label-one = "value-one"
+  }
+
+  labels = {
+    "label" = "key"
+  }
 
   host {
     gce_instance {

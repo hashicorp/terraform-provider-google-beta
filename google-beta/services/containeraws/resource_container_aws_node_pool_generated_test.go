@@ -63,7 +63,7 @@ func TestAccContainerAwsNodePool_BasicHandWritten(t *testing.T) {
 				ResourceName:            "google_container_aws_node_pool.primary",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"fleet.0.project", "management.#", "management.0.%", "management.0.auto_repair"},
+				ImportStateVerifyIgnore: []string{"fleet.0.project", "management.#", "management.0.%", "management.0.auto_repair", "annotations"},
 			},
 			{
 				Config: testAccContainerAwsNodePool_BasicHandWrittenUpdate0(context),
@@ -72,7 +72,7 @@ func TestAccContainerAwsNodePool_BasicHandWritten(t *testing.T) {
 				ResourceName:            "google_container_aws_node_pool.primary",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"fleet.0.project", "management.#", "management.0.%", "management.0.auto_repair"},
+				ImportStateVerifyIgnore: []string{"fleet.0.project", "management.#", "management.0.%", "management.0.auto_repair", "annotations"},
 			},
 		},
 	})
@@ -107,7 +107,7 @@ func TestAccContainerAwsNodePool_BasicEnumHandWritten(t *testing.T) {
 				ResourceName:            "google_container_aws_node_pool.primary",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"fleet.0.project", "management.#", "management.0.%", "management.0.auto_repair"},
+				ImportStateVerifyIgnore: []string{"fleet.0.project", "management.#", "management.0.%", "management.0.auto_repair", "annotations"},
 			},
 			{
 				Config: testAccContainerAwsNodePool_BasicEnumHandWrittenUpdate0(context),
@@ -116,7 +116,7 @@ func TestAccContainerAwsNodePool_BasicEnumHandWritten(t *testing.T) {
 				ResourceName:            "google_container_aws_node_pool.primary",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"fleet.0.project", "management.#", "management.0.%", "management.0.auto_repair"},
+				ImportStateVerifyIgnore: []string{"fleet.0.project", "management.#", "management.0.%", "management.0.auto_repair", "annotations"},
 			},
 		},
 	})
@@ -152,7 +152,7 @@ func TestAccContainerAwsNodePool_BetaBasicHandWritten(t *testing.T) {
 				ResourceName:            "google_container_aws_node_pool.primary",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"fleet.0.project", "management.#", "management.0.%", "management.0.auto_repair"},
+				ImportStateVerifyIgnore: []string{"fleet.0.project", "management.#", "management.0.%", "management.0.auto_repair", "annotations"},
 			},
 			{
 				Config: testAccContainerAwsNodePool_BetaBasicHandWrittenUpdate0(context),
@@ -161,7 +161,7 @@ func TestAccContainerAwsNodePool_BetaBasicHandWritten(t *testing.T) {
 				ResourceName:            "google_container_aws_node_pool.primary",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"fleet.0.project", "management.#", "management.0.%", "management.0.auto_repair"},
+				ImportStateVerifyIgnore: []string{"fleet.0.project", "management.#", "management.0.%", "management.0.auto_repair", "annotations"},
 			},
 		},
 	})
@@ -197,7 +197,7 @@ func TestAccContainerAwsNodePool_BetaBasicEnumHandWritten(t *testing.T) {
 				ResourceName:            "google_container_aws_node_pool.primary",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"fleet.0.project", "management.#", "management.0.%", "management.0.auto_repair"},
+				ImportStateVerifyIgnore: []string{"fleet.0.project", "management.#", "management.0.%", "management.0.auto_repair", "annotations"},
 			},
 			{
 				Config: testAccContainerAwsNodePool_BetaBasicEnumHandWrittenUpdate0(context),
@@ -206,7 +206,7 @@ func TestAccContainerAwsNodePool_BetaBasicEnumHandWritten(t *testing.T) {
 				ResourceName:            "google_container_aws_node_pool.primary",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"fleet.0.project", "management.#", "management.0.%", "management.0.auto_repair"},
+				ImportStateVerifyIgnore: []string{"fleet.0.project", "management.#", "management.0.%", "management.0.auto_repair", "annotations"},
 			},
 		},
 	})
@@ -1009,6 +1009,13 @@ resource "google_container_aws_node_pool" "primary" {
     label-one = "value-one"
   }
 
+  update_settings {
+    surge_settings {
+      max_surge = 1
+      max_unavailable = 0
+    }
+  }
+
   project = "%{project_name}"
 }
 
@@ -1176,6 +1183,13 @@ resource "google_container_aws_node_pool" "primary" {
 
   annotations = {
     label-two = "value-two"
+  }
+
+  update_settings {
+    surge_settings {
+      max_surge = 1
+      max_unavailable = 0
+    }
   }
 
   project = "%{project_name}"

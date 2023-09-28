@@ -24,17 +24,19 @@ func TestAccNetworkSecurityAuthorizationPolicy_update(t *testing.T) {
 				Config: testAccNetworkSecurityAuthorizationPolicy_basic(authorizationPolicyName),
 			},
 			{
-				ResourceName:      "google_network_security_authorization_policy.foobar",
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            "google_network_security_authorization_policy.foobar",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"labels", "terraform_labels"},
 			},
 			{
 				Config: testAccNetworkSecurityAuthorizationPolicy_update(authorizationPolicyName),
 			},
 			{
-				ResourceName:      "google_network_security_authorization_policy.foobar",
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            "google_network_security_authorization_policy.foobar",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"labels", "terraform_labels"},
 			},
 		},
 	})

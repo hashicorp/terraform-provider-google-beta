@@ -18,16 +18,11 @@
 package gkeonprem_test
 
 import (
-	"fmt"
-	"strings"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
-	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
-	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
 func TestAccGkeonpremBareMetalAdminCluster_gkeonpremBareMetalAdminClusterBasicExample(t *testing.T) {
@@ -40,7 +35,6 @@ func TestAccGkeonpremBareMetalAdminCluster_gkeonpremBareMetalAdminClusterBasicEx
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
-		CheckDestroy:             testAccCheckGkeonpremBareMetalAdminClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccGkeonpremBareMetalAdminCluster_gkeonpremBareMetalAdminClusterBasicExample(context),
@@ -49,7 +43,7 @@ func TestAccGkeonpremBareMetalAdminCluster_gkeonpremBareMetalAdminClusterBasicEx
 				ResourceName:            "google_gkeonprem_bare_metal_admin_cluster.admin-cluster-basic",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"name", "location"},
+				ImportStateVerifyIgnore: []string{"name", "location", "annotations"},
 			},
 		},
 	})
@@ -129,7 +123,6 @@ func TestAccGkeonpremBareMetalAdminCluster_gkeonpremBareMetalAdminClusterFullExa
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
-		CheckDestroy:             testAccCheckGkeonpremBareMetalAdminClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccGkeonpremBareMetalAdminCluster_gkeonpremBareMetalAdminClusterFullExample(context),
@@ -138,7 +131,7 @@ func TestAccGkeonpremBareMetalAdminCluster_gkeonpremBareMetalAdminClusterFullExa
 				ResourceName:            "google_gkeonprem_bare_metal_admin_cluster.admin-cluster-basic",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"name", "location"},
+				ImportStateVerifyIgnore: []string{"name", "location", "annotations"},
 			},
 		},
 	})
@@ -152,7 +145,9 @@ resource "google_gkeonprem_bare_metal_admin_cluster" "admin-cluster-basic" {
   location = "us-west1"
   description = "test description"
   bare_metal_version = "1.13.4"
-  annotations = {}
+  annotations = {
+    env = "test"
+  }
   network_config {
     island_mode_cidr {
       service_address_cidr_blocks = ["172.26.0.0/16"]
@@ -237,43 +232,4 @@ resource "google_gkeonprem_bare_metal_admin_cluster" "admin-cluster-basic" {
   }
 }
 `, context)
-}
-
-func testAccCheckGkeonpremBareMetalAdminClusterDestroyProducer(t *testing.T) func(s *terraform.State) error {
-	return func(s *terraform.State) error {
-		for name, rs := range s.RootModule().Resources {
-			if rs.Type != "google_gkeonprem_bare_metal_admin_cluster" {
-				continue
-			}
-			if strings.HasPrefix(name, "data.") {
-				continue
-			}
-
-			config := acctest.GoogleProviderConfig(t)
-
-			url, err := tpgresource.ReplaceVarsForTest(config, rs, "{{GkeonpremBasePath}}projects/{{project}}/locations/{{location}}/bareMetalAdminClusters/{{name}}")
-			if err != nil {
-				return err
-			}
-
-			billingProject := ""
-
-			if config.BillingProject != "" {
-				billingProject = config.BillingProject
-			}
-
-			_, err = transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
-				Config:    config,
-				Method:    "GET",
-				Project:   billingProject,
-				RawURL:    url,
-				UserAgent: config.UserAgent,
-			})
-			if err == nil {
-				return fmt.Errorf("GkeonpremBareMetalAdminCluster still exists at %s", url)
-			}
-		}
-
-		return nil
-	}
 }

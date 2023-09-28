@@ -23,6 +23,7 @@ import (
 	"reflect"
 	"time"
 
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/customdiff"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
@@ -46,6 +47,11 @@ func ResourceComputeAutoscaler() *schema.Resource {
 			Update: schema.DefaultTimeout(20 * time.Minute),
 			Delete: schema.DefaultTimeout(20 * time.Minute),
 		},
+
+		CustomizeDiff: customdiff.All(
+			tpgresource.DefaultProviderProject,
+			tpgresource.DefaultProviderZone,
+		),
 
 		Schema: map[string]*schema.Schema{
 			"autoscaling_policy": {
@@ -197,6 +203,7 @@ one TimeSeries for the autoscaled group or for each of the instances
 (if you are using gce_instance resource type). If multiple
 TimeSeries are returned upon the query execution, the autoscaler
 will sum their respective values to obtain its scaling value.`,
+										Default: "resource.type = gce_instance",
 									},
 									"single_instance_assignment": {
 										Type:     schema.TypeFloat,
@@ -565,6 +572,14 @@ func resourceComputeAutoscalerRead(d *schema.ResourceData, meta interface{}) err
 		return fmt.Errorf("Error reading Autoscaler: %s", err)
 	}
 
+	zone, err := tpgresource.GetZone(d, config)
+	if err != nil {
+		return err
+	}
+	if err := d.Set("zone", zone); err != nil {
+		return fmt.Errorf("Error reading Autoscaler: %s", err)
+	}
+
 	if err := d.Set("creation_timestamp", flattenComputeAutoscalerCreationTimestamp(res["creationTimestamp"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Autoscaler: %s", err)
 	}
@@ -578,9 +593,6 @@ func resourceComputeAutoscalerRead(d *schema.ResourceData, meta interface{}) err
 		return fmt.Errorf("Error reading Autoscaler: %s", err)
 	}
 	if err := d.Set("target", flattenComputeAutoscalerTarget(res["target"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Autoscaler: %s", err)
-	}
-	if err := d.Set("zone", flattenComputeAutoscalerZone(res["zone"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Autoscaler: %s", err)
 	}
 	if err := d.Set("self_link", tpgresource.ConvertSelfLinkToV1(res["selfLink"].(string))); err != nil {
@@ -732,10 +744,10 @@ func resourceComputeAutoscalerDelete(d *schema.ResourceData, meta interface{}) e
 func resourceComputeAutoscalerImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	config := meta.(*transport_tpg.Config)
 	if err := tpgresource.ParseImportId([]string{
-		"projects/(?P<project>[^/]+)/zones/(?P<zone>[^/]+)/autoscalers/(?P<name>[^/]+)",
-		"(?P<project>[^/]+)/(?P<zone>[^/]+)/(?P<name>[^/]+)",
-		"(?P<zone>[^/]+)/(?P<name>[^/]+)",
-		"(?P<name>[^/]+)",
+		"^projects/(?P<project>[^/]+)/zones/(?P<zone>[^/]+)/autoscalers/(?P<name>[^/]+)$",
+		"^(?P<project>[^/]+)/(?P<zone>[^/]+)/(?P<name>[^/]+)$",
+		"^(?P<zone>[^/]+)/(?P<name>[^/]+)$",
+		"^(?P<name>[^/]+)$",
 	}, d, config); err != nil {
 		return nil, err
 	}
@@ -1167,13 +1179,6 @@ func flattenComputeAutoscalerAutoscalingPolicyScalingSchedulesDescription(v inte
 }
 
 func flattenComputeAutoscalerTarget(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
-	if v == nil {
-		return v
-	}
-	return tpgresource.ConvertSelfLinkToV1(v.(string))
-}
-
-func flattenComputeAutoscalerZone(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return v
 	}

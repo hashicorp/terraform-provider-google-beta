@@ -59,7 +59,7 @@ func TestAccContainerAzureCluster_BasicHandWritten(t *testing.T) {
 				ResourceName:            "google_container_azure_cluster.primary",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"fleet.0.project"},
+				ImportStateVerifyIgnore: []string{"fleet.0.project", "annotations"},
 			},
 			{
 				Config: testAccContainerAzureCluster_BasicHandWrittenUpdate0(context),
@@ -68,7 +68,7 @@ func TestAccContainerAzureCluster_BasicHandWritten(t *testing.T) {
 				ResourceName:            "google_container_azure_cluster.primary",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"fleet.0.project"},
+				ImportStateVerifyIgnore: []string{"fleet.0.project", "annotations"},
 			},
 		},
 	})
@@ -100,7 +100,7 @@ func TestAccContainerAzureCluster_BetaBasicHandWritten(t *testing.T) {
 				ResourceName:            "google_container_azure_cluster.primary",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"fleet.0.project"},
+				ImportStateVerifyIgnore: []string{"fleet.0.project", "annotations"},
 			},
 			{
 				Config: testAccContainerAzureCluster_BetaBasicHandWrittenUpdate0(context),
@@ -109,7 +109,7 @@ func TestAccContainerAzureCluster_BetaBasicHandWritten(t *testing.T) {
 				ResourceName:            "google_container_azure_cluster.primary",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"fleet.0.project"},
+				ImportStateVerifyIgnore: []string{"fleet.0.project", "annotations"},
 			},
 		},
 	})
@@ -141,7 +141,7 @@ func TestAccContainerAzureCluster_BetaBasicEnumHandWritten(t *testing.T) {
 				ResourceName:            "google_container_azure_cluster.primary",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"fleet.0.project"},
+				ImportStateVerifyIgnore: []string{"fleet.0.project", "annotations"},
 			},
 			{
 				Config: testAccContainerAzureCluster_BetaBasicEnumHandWrittenUpdate0(context),
@@ -150,7 +150,7 @@ func TestAccContainerAzureCluster_BetaBasicEnumHandWritten(t *testing.T) {
 				ResourceName:            "google_container_azure_cluster.primary",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"fleet.0.project"},
+				ImportStateVerifyIgnore: []string{"fleet.0.project", "annotations"},
 			},
 		},
 	})

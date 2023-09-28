@@ -23,6 +23,7 @@ import (
 	"reflect"
 	"time"
 
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/customdiff"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
@@ -45,6 +46,10 @@ func ResourceServiceUsageConsumerQuotaOverride() *schema.Resource {
 			Update: schema.DefaultTimeout(20 * time.Minute),
 			Delete: schema.DefaultTimeout(20 * time.Minute),
 		},
+
+		CustomizeDiff: customdiff.All(
+			tpgresource.DefaultProviderProject,
+		),
 
 		Schema: map[string]*schema.Schema{
 			"limit": {
@@ -385,9 +390,9 @@ func resourceServiceUsageConsumerQuotaOverrideDelete(d *schema.ResourceData, met
 func resourceServiceUsageConsumerQuotaOverrideImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	config := meta.(*transport_tpg.Config)
 	if err := tpgresource.ParseImportId([]string{
-		"projects/(?P<project>[^/]+)/services/(?P<service>[^/]+)/consumerQuotaMetrics/(?P<metric>[^/]+)/limits/(?P<limit>[^/]+)/consumerOverrides/(?P<name>[^/]+)",
-		"services/(?P<service>[^/]+)/consumerQuotaMetrics/(?P<metric>[^/]+)/limits/(?P<limit>[^/]+)/consumerOverrides/(?P<name>[^/]+)",
-		"(?P<service>[^/]+)/(?P<metric>[^/]+)/(?P<limit>[^/]+)/(?P<name>[^/]+)",
+		"^projects/(?P<project>[^/]+)/services/(?P<service>[^/]+)/consumerQuotaMetrics/(?P<metric>[^/]+)/limits/(?P<limit>[^/]+)/consumerOverrides/(?P<name>[^/]+)$",
+		"^services/(?P<service>[^/]+)/consumerQuotaMetrics/(?P<metric>[^/]+)/limits/(?P<limit>[^/]+)/consumerOverrides/(?P<name>[^/]+)$",
+		"^(?P<service>[^/]+)/(?P<metric>[^/]+)/(?P<limit>[^/]+)/(?P<name>[^/]+)$",
 	}, d, config); err != nil {
 		return nil, err
 	}

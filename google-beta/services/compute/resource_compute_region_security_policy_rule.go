@@ -24,6 +24,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/customdiff"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
@@ -47,6 +48,10 @@ func ResourceComputeRegionSecurityPolicyRule() *schema.Resource {
 			Update: schema.DefaultTimeout(20 * time.Minute),
 			Delete: schema.DefaultTimeout(20 * time.Minute),
 		},
+
+		CustomizeDiff: customdiff.All(
+			tpgresource.DefaultProviderProject,
+		),
 
 		Schema: map[string]*schema.Schema{
 			"action": {
@@ -584,10 +589,10 @@ func resourceComputeRegionSecurityPolicyRuleDelete(d *schema.ResourceData, meta 
 func resourceComputeRegionSecurityPolicyRuleImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	config := meta.(*transport_tpg.Config)
 	if err := tpgresource.ParseImportId([]string{
-		"projects/(?P<project>[^/]+)/regions/(?P<region>[^/]+)/securityPolicies/(?P<security_policy>[^/]+)/priority/(?P<priority>[^/]+)",
-		"(?P<project>[^/]+)/(?P<region>[^/]+)/(?P<security_policy>[^/]+)/(?P<priority>[^/]+)",
-		"(?P<region>[^/]+)/(?P<security_policy>[^/]+)/(?P<priority>[^/]+)",
-		"(?P<security_policy>[^/]+)/(?P<priority>[^/]+)",
+		"^projects/(?P<project>[^/]+)/regions/(?P<region>[^/]+)/securityPolicies/(?P<security_policy>[^/]+)/priority/(?P<priority>[^/]+)$",
+		"^(?P<project>[^/]+)/(?P<region>[^/]+)/(?P<security_policy>[^/]+)/(?P<priority>[^/]+)$",
+		"^(?P<region>[^/]+)/(?P<security_policy>[^/]+)/(?P<priority>[^/]+)$",
+		"^(?P<security_policy>[^/]+)/(?P<priority>[^/]+)$",
 	}, d, config); err != nil {
 		return nil, err
 	}

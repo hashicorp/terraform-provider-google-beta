@@ -52,17 +52,19 @@ func TestAccClouddeployDeliveryPipeline_CanaryDeliveryPipeline(t *testing.T) {
 				Config: testAccClouddeployDeliveryPipeline_CanaryDeliveryPipeline(context),
 			},
 			{
-				ResourceName:      "google_clouddeploy_delivery_pipeline.primary",
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            "google_clouddeploy_delivery_pipeline.primary",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"labels", "terraform_labels", "annotations"},
 			},
 			{
 				Config: testAccClouddeployDeliveryPipeline_CanaryDeliveryPipelineUpdate0(context),
 			},
 			{
-				ResourceName:      "google_clouddeploy_delivery_pipeline.primary",
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            "google_clouddeploy_delivery_pipeline.primary",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"labels", "terraform_labels", "annotations"},
 			},
 		},
 	})
@@ -86,17 +88,19 @@ func TestAccClouddeployDeliveryPipeline_CanaryServiceNetworkingDeliveryPipeline(
 				Config: testAccClouddeployDeliveryPipeline_CanaryServiceNetworkingDeliveryPipeline(context),
 			},
 			{
-				ResourceName:      "google_clouddeploy_delivery_pipeline.primary",
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            "google_clouddeploy_delivery_pipeline.primary",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"labels", "terraform_labels", "annotations"},
 			},
 			{
 				Config: testAccClouddeployDeliveryPipeline_CanaryServiceNetworkingDeliveryPipelineUpdate0(context),
 			},
 			{
-				ResourceName:      "google_clouddeploy_delivery_pipeline.primary",
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            "google_clouddeploy_delivery_pipeline.primary",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"labels", "terraform_labels", "annotations"},
 			},
 		},
 	})
@@ -120,17 +124,19 @@ func TestAccClouddeployDeliveryPipeline_CanaryrunDeliveryPipeline(t *testing.T) 
 				Config: testAccClouddeployDeliveryPipeline_CanaryrunDeliveryPipeline(context),
 			},
 			{
-				ResourceName:      "google_clouddeploy_delivery_pipeline.primary",
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            "google_clouddeploy_delivery_pipeline.primary",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"labels", "terraform_labels", "annotations"},
 			},
 			{
 				Config: testAccClouddeployDeliveryPipeline_CanaryrunDeliveryPipelineUpdate0(context),
 			},
 			{
-				ResourceName:      "google_clouddeploy_delivery_pipeline.primary",
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            "google_clouddeploy_delivery_pipeline.primary",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"labels", "terraform_labels", "annotations"},
 			},
 		},
 	})
@@ -153,17 +159,19 @@ func TestAccClouddeployDeliveryPipeline_DeliveryPipeline(t *testing.T) {
 				Config: testAccClouddeployDeliveryPipeline_DeliveryPipeline(context),
 			},
 			{
-				ResourceName:      "google_clouddeploy_delivery_pipeline.primary",
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            "google_clouddeploy_delivery_pipeline.primary",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"labels", "terraform_labels", "annotations"},
 			},
 			{
 				Config: testAccClouddeployDeliveryPipeline_DeliveryPipelineUpdate0(context),
 			},
 			{
-				ResourceName:      "google_clouddeploy_delivery_pipeline.primary",
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            "google_clouddeploy_delivery_pipeline.primary",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"labels", "terraform_labels", "annotations"},
 			},
 		},
 	})
@@ -187,17 +195,19 @@ func TestAccClouddeployDeliveryPipeline_VerifyDeliveryPipeline(t *testing.T) {
 				Config: testAccClouddeployDeliveryPipeline_VerifyDeliveryPipeline(context),
 			},
 			{
-				ResourceName:      "google_clouddeploy_delivery_pipeline.primary",
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            "google_clouddeploy_delivery_pipeline.primary",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"labels", "terraform_labels", "annotations"},
 			},
 			{
 				Config: testAccClouddeployDeliveryPipeline_VerifyDeliveryPipelineUpdate0(context),
 			},
 			{
-				ResourceName:      "google_clouddeploy_delivery_pipeline.primary",
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            "google_clouddeploy_delivery_pipeline.primary",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"labels", "terraform_labels", "annotations"},
 			},
 		},
 	})
@@ -206,24 +216,10 @@ func TestAccClouddeployDeliveryPipeline_VerifyDeliveryPipeline(t *testing.T) {
 func testAccClouddeployDeliveryPipeline_CanaryDeliveryPipeline(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_clouddeploy_delivery_pipeline" "primary" {
-  location = "%{region}"
-  name     = "tf-test-pipeline%{random_suffix}"
-
-  annotations = {
-    my_first_annotation = "example-annotation-1"
-
-    my_second_annotation = "example-annotation-2"
-  }
-
+  location    = "%{region}"
+  name        = "tf-test-pipeline%{random_suffix}"
   description = "basic description"
-
-  labels = {
-    my_first_label = "example-label-1"
-
-    my_second_label = "example-label-2"
-  }
-
-  project = "%{project_name}"
+  project     = "%{project_name}"
 
   serial_pipeline {
     stages {
@@ -244,7 +240,19 @@ resource "google_clouddeploy_delivery_pipeline" "primary" {
       target_id = "example-target-two"
     }
   }
-  provider = google-beta
+
+  annotations = {
+    my_first_annotation = "example-annotation-1"
+
+    my_second_annotation = "example-annotation-2"
+  }
+
+  labels = {
+    my_first_label = "example-label-1"
+
+    my_second_label = "example-label-2"
+  }
+  provider    = google-beta
 }
 
 `, context)
@@ -253,24 +261,10 @@ resource "google_clouddeploy_delivery_pipeline" "primary" {
 func testAccClouddeployDeliveryPipeline_CanaryDeliveryPipelineUpdate0(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_clouddeploy_delivery_pipeline" "primary" {
-  location = "%{region}"
-  name     = "tf-test-pipeline%{random_suffix}"
-
-  annotations = {
-    my_second_annotation = "updated-example-annotation-2"
-
-    my_third_annotation = "example-annotation-3"
-  }
-
+  location    = "%{region}"
+  name        = "tf-test-pipeline%{random_suffix}"
   description = "updated description"
-
-  labels = {
-    my_second_label = "updated-example-label-2"
-
-    my_third_label = "example-label-3"
-  }
-
-  project = "%{project_name}"
+  project     = "%{project_name}"
 
   serial_pipeline {
     stages {
@@ -332,7 +326,19 @@ resource "google_clouddeploy_delivery_pipeline" "primary" {
       target_id = "example-target-three"
     }
   }
-  provider = google-beta
+
+  annotations = {
+    my_second_annotation = "updated-example-annotation-2"
+
+    my_third_annotation = "example-annotation-3"
+  }
+
+  labels = {
+    my_second_label = "updated-example-label-2"
+
+    my_third_label = "example-label-3"
+  }
+  provider    = google-beta
 }
 
 `, context)
@@ -341,24 +347,10 @@ resource "google_clouddeploy_delivery_pipeline" "primary" {
 func testAccClouddeployDeliveryPipeline_CanaryServiceNetworkingDeliveryPipeline(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_clouddeploy_delivery_pipeline" "primary" {
-  location = "%{region}"
-  name     = "tf-test-pipeline%{random_suffix}"
-
-  annotations = {
-    my_first_annotation = "example-annotation-1"
-
-    my_second_annotation = "example-annotation-2"
-  }
-
+  location    = "%{region}"
+  name        = "tf-test-pipeline%{random_suffix}"
   description = "basic description"
-
-  labels = {
-    my_first_label = "example-label-1"
-
-    my_second_label = "example-label-2"
-  }
-
-  project = "%{project_name}"
+  project     = "%{project_name}"
 
   serial_pipeline {
     stages {
@@ -379,7 +371,19 @@ resource "google_clouddeploy_delivery_pipeline" "primary" {
       target_id = "example-target-two"
     }
   }
-  provider = google-beta
+
+  annotations = {
+    my_first_annotation = "example-annotation-1"
+
+    my_second_annotation = "example-annotation-2"
+  }
+
+  labels = {
+    my_first_label = "example-label-1"
+
+    my_second_label = "example-label-2"
+  }
+  provider    = google-beta
 }
 
 `, context)
@@ -388,24 +392,10 @@ resource "google_clouddeploy_delivery_pipeline" "primary" {
 func testAccClouddeployDeliveryPipeline_CanaryServiceNetworkingDeliveryPipelineUpdate0(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_clouddeploy_delivery_pipeline" "primary" {
-  location = "%{region}"
-  name     = "tf-test-pipeline%{random_suffix}"
-
-  annotations = {
-    my_second_annotation = "updated-example-annotation-2"
-
-    my_third_annotation = "example-annotation-3"
-  }
-
+  location    = "%{region}"
+  name        = "tf-test-pipeline%{random_suffix}"
   description = "updated description"
-
-  labels = {
-    my_second_label = "updated-example-label-2"
-
-    my_third_label = "example-label-3"
-  }
-
-  project = "%{project_name}"
+  project     = "%{project_name}"
 
   serial_pipeline {
     stages {
@@ -432,7 +422,19 @@ resource "google_clouddeploy_delivery_pipeline" "primary" {
       target_id = "example-target-two"
     }
   }
-  provider = google-beta
+
+  annotations = {
+    my_second_annotation = "updated-example-annotation-2"
+
+    my_third_annotation = "example-annotation-3"
+  }
+
+  labels = {
+    my_second_label = "updated-example-label-2"
+
+    my_third_label = "example-label-3"
+  }
+  provider    = google-beta
 }
 
 `, context)
@@ -441,24 +443,10 @@ resource "google_clouddeploy_delivery_pipeline" "primary" {
 func testAccClouddeployDeliveryPipeline_CanaryrunDeliveryPipeline(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_clouddeploy_delivery_pipeline" "primary" {
-  location = "%{region}"
-  name     = "tf-test-pipeline%{random_suffix}"
-
-  annotations = {
-    my_first_annotation = "example-annotation-1"
-
-    my_second_annotation = "example-annotation-2"
-  }
-
+  location    = "%{region}"
+  name        = "tf-test-pipeline%{random_suffix}"
   description = "basic description"
-
-  labels = {
-    my_first_label = "example-label-1"
-
-    my_second_label = "example-label-2"
-  }
-
-  project = "%{project_name}"
+  project     = "%{project_name}"
 
   serial_pipeline {
     stages {
@@ -479,7 +467,19 @@ resource "google_clouddeploy_delivery_pipeline" "primary" {
       target_id = "example-target-two"
     }
   }
-  provider = google-beta
+
+  annotations = {
+    my_first_annotation = "example-annotation-1"
+
+    my_second_annotation = "example-annotation-2"
+  }
+
+  labels = {
+    my_first_label = "example-label-1"
+
+    my_second_label = "example-label-2"
+  }
+  provider    = google-beta
 }
 
 `, context)
@@ -488,24 +488,10 @@ resource "google_clouddeploy_delivery_pipeline" "primary" {
 func testAccClouddeployDeliveryPipeline_CanaryrunDeliveryPipelineUpdate0(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_clouddeploy_delivery_pipeline" "primary" {
-  location = "%{region}"
-  name     = "tf-test-pipeline%{random_suffix}"
-
-  annotations = {
-    my_second_annotation = "updated-example-annotation-2"
-
-    my_third_annotation = "example-annotation-3"
-  }
-
+  location    = "%{region}"
+  name        = "tf-test-pipeline%{random_suffix}"
   description = "updated description"
-
-  labels = {
-    my_second_label = "updated-example-label-2"
-
-    my_third_label = "example-label-3"
-  }
-
-  project = "%{project_name}"
+  project     = "%{project_name}"
 
   serial_pipeline {
     stages {
@@ -529,7 +515,19 @@ resource "google_clouddeploy_delivery_pipeline" "primary" {
       target_id = "example-target-two"
     }
   }
-  provider = google-beta
+
+  annotations = {
+    my_second_annotation = "updated-example-annotation-2"
+
+    my_third_annotation = "example-annotation-3"
+  }
+
+  labels = {
+    my_second_label = "updated-example-label-2"
+
+    my_third_label = "example-label-3"
+  }
+  provider    = google-beta
 }
 
 `, context)
@@ -538,24 +536,10 @@ resource "google_clouddeploy_delivery_pipeline" "primary" {
 func testAccClouddeployDeliveryPipeline_DeliveryPipeline(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_clouddeploy_delivery_pipeline" "primary" {
-  location = "%{region}"
-  name     = "tf-test-pipeline%{random_suffix}"
-
-  annotations = {
-    my_first_annotation = "example-annotation-1"
-
-    my_second_annotation = "example-annotation-2"
-  }
-
+  location    = "%{region}"
+  name        = "tf-test-pipeline%{random_suffix}"
   description = "basic description"
-
-  labels = {
-    my_first_label = "example-label-1"
-
-    my_second_label = "example-label-2"
-  }
-
-  project = "%{project_name}"
+  project     = "%{project_name}"
 
   serial_pipeline {
     stages {
@@ -576,6 +560,18 @@ resource "google_clouddeploy_delivery_pipeline" "primary" {
       target_id = "example-target-two"
     }
   }
+
+  annotations = {
+    my_first_annotation = "example-annotation-1"
+
+    my_second_annotation = "example-annotation-2"
+  }
+
+  labels = {
+    my_first_label = "example-label-1"
+
+    my_second_label = "example-label-2"
+  }
 }
 
 
@@ -585,24 +581,10 @@ resource "google_clouddeploy_delivery_pipeline" "primary" {
 func testAccClouddeployDeliveryPipeline_DeliveryPipelineUpdate0(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_clouddeploy_delivery_pipeline" "primary" {
-  location = "%{region}"
-  name     = "tf-test-pipeline%{random_suffix}"
-
-  annotations = {
-    my_second_annotation = "updated-example-annotation-2"
-
-    my_third_annotation = "example-annotation-3"
-  }
-
+  location    = "%{region}"
+  name        = "tf-test-pipeline%{random_suffix}"
   description = "updated description"
-
-  labels = {
-    my_second_label = "updated-example-label-2"
-
-    my_third_label = "example-label-3"
-  }
-
-  project = "%{project_name}"
+  project     = "%{project_name}"
 
   serial_pipeline {
     stages {
@@ -617,6 +599,18 @@ resource "google_clouddeploy_delivery_pipeline" "primary" {
   }
 
   suspended = true
+
+  annotations = {
+    my_second_annotation = "updated-example-annotation-2"
+
+    my_third_annotation = "example-annotation-3"
+  }
+
+  labels = {
+    my_second_label = "updated-example-label-2"
+
+    my_third_label = "example-label-3"
+  }
 }
 
 
@@ -626,24 +620,10 @@ resource "google_clouddeploy_delivery_pipeline" "primary" {
 func testAccClouddeployDeliveryPipeline_VerifyDeliveryPipeline(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_clouddeploy_delivery_pipeline" "primary" {
-  location = "%{region}"
-  name     = "tf-test-pipeline%{random_suffix}"
-
-  annotations = {
-    my_first_annotation = "example-annotation-1"
-
-    my_second_annotation = "example-annotation-2"
-  }
-
+  location    = "%{region}"
+  name        = "tf-test-pipeline%{random_suffix}"
   description = "basic description"
-
-  labels = {
-    my_first_label = "example-label-1"
-
-    my_second_label = "example-label-2"
-  }
-
-  project = "%{project_name}"
+  project     = "%{project_name}"
 
   serial_pipeline {
     stages {
@@ -664,7 +644,19 @@ resource "google_clouddeploy_delivery_pipeline" "primary" {
       target_id = "example-target-two"
     }
   }
-  provider = google-beta
+
+  annotations = {
+    my_first_annotation = "example-annotation-1"
+
+    my_second_annotation = "example-annotation-2"
+  }
+
+  labels = {
+    my_first_label = "example-label-1"
+
+    my_second_label = "example-label-2"
+  }
+  provider    = google-beta
 }
 
 `, context)
@@ -673,24 +665,10 @@ resource "google_clouddeploy_delivery_pipeline" "primary" {
 func testAccClouddeployDeliveryPipeline_VerifyDeliveryPipelineUpdate0(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_clouddeploy_delivery_pipeline" "primary" {
-  location = "%{region}"
-  name     = "tf-test-pipeline%{random_suffix}"
-
-  annotations = {
-    my_second_annotation = "updated-example-annotation-2"
-
-    my_third_annotation = "example-annotation-3"
-  }
-
+  location    = "%{region}"
+  name        = "tf-test-pipeline%{random_suffix}"
   description = "updated description"
-
-  labels = {
-    my_second_label = "updated-example-label-2"
-
-    my_third_label = "example-label-3"
-  }
-
-  project = "%{project_name}"
+  project     = "%{project_name}"
 
   serial_pipeline {
     stages {
@@ -710,7 +688,19 @@ resource "google_clouddeploy_delivery_pipeline" "primary" {
       target_id = "example-target-three"
     }
   }
-  provider = google-beta
+
+  annotations = {
+    my_second_annotation = "updated-example-annotation-2"
+
+    my_third_annotation = "example-annotation-3"
+  }
+
+  labels = {
+    my_second_label = "updated-example-label-2"
+
+    my_third_label = "example-label-3"
+  }
+  provider    = google-beta
 }
 
 `, context)

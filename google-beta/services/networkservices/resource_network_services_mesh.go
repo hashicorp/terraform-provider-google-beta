@@ -24,6 +24,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/customdiff"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
@@ -47,6 +48,11 @@ func ResourceNetworkServicesMesh() *schema.Resource {
 			Delete: schema.DefaultTimeout(30 * time.Minute),
 		},
 
+		CustomizeDiff: customdiff.All(
+			tpgresource.SetLabelsDiff,
+			tpgresource.DefaultProviderProject,
+		),
+
 		Schema: map[string]*schema.Schema{
 			"name": {
 				Type:        schema.TypeString,
@@ -68,20 +74,36 @@ be redirected to this port regardless of its actual ip:port destination. If unse
 deployments.`,
 			},
 			"labels": {
-				Type:        schema.TypeMap,
-				Optional:    true,
-				Description: `Set of label tags associated with the Mesh resource.`,
-				Elem:        &schema.Schema{Type: schema.TypeString},
+				Type:     schema.TypeMap,
+				Optional: true,
+				Description: `Set of label tags associated with the Mesh resource.
+
+**Note**: This field is non-authoritative, and will only manage the labels present in your configuration.
+Please refer to the field 'effective_labels' for all of the labels present on the resource.`,
+				Elem: &schema.Schema{Type: schema.TypeString},
 			},
 			"create_time": {
 				Type:        schema.TypeString,
 				Computed:    true,
 				Description: `Time the Mesh was created in UTC.`,
 			},
+			"effective_labels": {
+				Type:        schema.TypeMap,
+				Computed:    true,
+				Description: `All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.`,
+				Elem:        &schema.Schema{Type: schema.TypeString},
+			},
 			"self_link": {
 				Type:        schema.TypeString,
 				Computed:    true,
 				Description: `Server-defined URL of this resource.`,
+			},
+			"terraform_labels": {
+				Type:     schema.TypeMap,
+				Computed: true,
+				Description: `The combination of labels configured directly on the resource
+ and default labels configured on the provider.`,
+				Elem: &schema.Schema{Type: schema.TypeString},
 			},
 			"update_time": {
 				Type:        schema.TypeString,
@@ -107,12 +129,6 @@ func resourceNetworkServicesMeshCreate(d *schema.ResourceData, meta interface{})
 	}
 
 	obj := make(map[string]interface{})
-	labelsProp, err := expandNetworkServicesMeshLabels(d.Get("labels"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(labelsProp)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
-		obj["labels"] = labelsProp
-	}
 	descriptionProp, err := expandNetworkServicesMeshDescription(d.Get("description"), d, config)
 	if err != nil {
 		return err
@@ -124,6 +140,12 @@ func resourceNetworkServicesMeshCreate(d *schema.ResourceData, meta interface{})
 		return err
 	} else if v, ok := d.GetOkExists("interception_port"); !tpgresource.IsEmptyValue(reflect.ValueOf(interceptionPortProp)) && (ok || !reflect.DeepEqual(v, interceptionPortProp)) {
 		obj["interceptionPort"] = interceptionPortProp
+	}
+	labelsProp, err := expandNetworkServicesMeshEffectiveLabels(d.Get("effective_labels"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("effective_labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(labelsProp)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
+		obj["labels"] = labelsProp
 	}
 
 	url, err := tpgresource.ReplaceVars(d, config, "{{NetworkServicesBasePath}}projects/{{project}}/locations/global/meshes?meshId={{name}}")
@@ -238,6 +260,12 @@ func resourceNetworkServicesMeshRead(d *schema.ResourceData, meta interface{}) e
 	if err := d.Set("interception_port", flattenNetworkServicesMeshInterceptionPort(res["interceptionPort"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Mesh: %s", err)
 	}
+	if err := d.Set("terraform_labels", flattenNetworkServicesMeshTerraformLabels(res["labels"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Mesh: %s", err)
+	}
+	if err := d.Set("effective_labels", flattenNetworkServicesMeshEffectiveLabels(res["labels"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Mesh: %s", err)
+	}
 
 	return nil
 }
@@ -258,12 +286,6 @@ func resourceNetworkServicesMeshUpdate(d *schema.ResourceData, meta interface{})
 	billingProject = project
 
 	obj := make(map[string]interface{})
-	labelsProp, err := expandNetworkServicesMeshLabels(d.Get("labels"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
-		obj["labels"] = labelsProp
-	}
 	descriptionProp, err := expandNetworkServicesMeshDescription(d.Get("description"), d, config)
 	if err != nil {
 		return err
@@ -276,6 +298,12 @@ func resourceNetworkServicesMeshUpdate(d *schema.ResourceData, meta interface{})
 	} else if v, ok := d.GetOkExists("interception_port"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, interceptionPortProp)) {
 		obj["interceptionPort"] = interceptionPortProp
 	}
+	labelsProp, err := expandNetworkServicesMeshEffectiveLabels(d.Get("effective_labels"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("effective_labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
+		obj["labels"] = labelsProp
+	}
 
 	url, err := tpgresource.ReplaceVars(d, config, "{{NetworkServicesBasePath}}projects/{{project}}/locations/global/meshes/{{name}}")
 	if err != nil {
@@ -285,16 +313,16 @@ func resourceNetworkServicesMeshUpdate(d *schema.ResourceData, meta interface{})
 	log.Printf("[DEBUG] Updating Mesh %q: %#v", d.Id(), obj)
 	updateMask := []string{}
 
-	if d.HasChange("labels") {
-		updateMask = append(updateMask, "labels")
-	}
-
 	if d.HasChange("description") {
 		updateMask = append(updateMask, "description")
 	}
 
 	if d.HasChange("interception_port") {
 		updateMask = append(updateMask, "interceptionPort")
+	}
+
+	if d.HasChange("effective_labels") {
+		updateMask = append(updateMask, "labels")
 	}
 	// updateMask is a URL parameter but not present in the schema, so ReplaceVars
 	// won't set it
@@ -391,9 +419,9 @@ func resourceNetworkServicesMeshDelete(d *schema.ResourceData, meta interface{})
 func resourceNetworkServicesMeshImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	config := meta.(*transport_tpg.Config)
 	if err := tpgresource.ParseImportId([]string{
-		"projects/(?P<project>[^/]+)/locations/global/meshes/(?P<name>[^/]+)",
-		"(?P<project>[^/]+)/(?P<name>[^/]+)",
-		"(?P<name>[^/]+)",
+		"^projects/(?P<project>[^/]+)/locations/global/meshes/(?P<name>[^/]+)$",
+		"^(?P<project>[^/]+)/(?P<name>[^/]+)$",
+		"^(?P<name>[^/]+)$",
 	}, d, config); err != nil {
 		return nil, err
 	}
@@ -421,7 +449,18 @@ func flattenNetworkServicesMeshUpdateTime(v interface{}, d *schema.ResourceData,
 }
 
 func flattenNetworkServicesMeshLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
-	return v
+	if v == nil {
+		return v
+	}
+
+	transformed := make(map[string]interface{})
+	if l, ok := d.GetOkExists("labels"); ok {
+		for k := range l.(map[string]interface{}) {
+			transformed[k] = v.(map[string]interface{})[k]
+		}
+	}
+
+	return transformed
 }
 
 func flattenNetworkServicesMeshDescription(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -445,15 +484,23 @@ func flattenNetworkServicesMeshInterceptionPort(v interface{}, d *schema.Resourc
 	return v // let terraform core handle it otherwise
 }
 
-func expandNetworkServicesMeshLabels(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
+func flattenNetworkServicesMeshTerraformLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
-		return map[string]string{}, nil
+		return v
 	}
-	m := make(map[string]string)
-	for k, val := range v.(map[string]interface{}) {
-		m[k] = val.(string)
+
+	transformed := make(map[string]interface{})
+	if l, ok := d.GetOkExists("terraform_labels"); ok {
+		for k := range l.(map[string]interface{}) {
+			transformed[k] = v.(map[string]interface{})[k]
+		}
 	}
-	return m, nil
+
+	return transformed
+}
+
+func flattenNetworkServicesMeshEffectiveLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
 }
 
 func expandNetworkServicesMeshDescription(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
@@ -462,4 +509,15 @@ func expandNetworkServicesMeshDescription(v interface{}, d tpgresource.Terraform
 
 func expandNetworkServicesMeshInterceptionPort(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
+}
+
+func expandNetworkServicesMeshEffectiveLabels(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
+	if v == nil {
+		return map[string]string{}, nil
+	}
+	m := make(map[string]string)
+	for k, val := range v.(map[string]interface{}) {
+		m[k] = val.(string)
+	}
+	return m, nil
 }

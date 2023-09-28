@@ -24,6 +24,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/customdiff"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
@@ -46,6 +47,11 @@ func ResourceGkeonpremVmwareCluster() *schema.Resource {
 			Update: schema.DefaultTimeout(60 * time.Minute),
 			Delete: schema.DefaultTimeout(60 * time.Minute),
 		},
+
+		CustomizeDiff: customdiff.All(
+			tpgresource.SetAnnotationsDiff,
+			tpgresource.DefaultProviderProject,
+		),
 
 		Schema: map[string]*schema.Schema{
 			"admin_cluster_membership": {
@@ -143,7 +149,6 @@ control plane for this VMware User Cluster (default: 8192 MB memory).`,
 			},
 			"annotations": {
 				Type:     schema.TypeMap,
-				Computed: true,
 				Optional: true,
 				Description: `Annotations on the VMware User Cluster.
 This field has the same restrictions as Kubernetes annotations.
@@ -635,6 +640,12 @@ Enabled by default.`,
 				Computed:    true,
 				Description: `The time at which VMware User Cluster was deleted.`,
 			},
+			"effective_annotations": {
+				Type:        schema.TypeMap,
+				Computed:    true,
+				Description: `All of annotations (key/value pairs) present on the resource in GCP, including the annotations configured through Terraform, other clients and services.`,
+				Elem:        &schema.Schema{Type: schema.TypeString},
+			},
 			"endpoint": {
 				Type:        schema.TypeString,
 				Computed:    true,
@@ -902,12 +913,6 @@ func resourceGkeonpremVmwareClusterCreate(d *schema.ResourceData, meta interface
 	} else if v, ok := d.GetOkExists("on_prem_version"); !tpgresource.IsEmptyValue(reflect.ValueOf(onPremVersionProp)) && (ok || !reflect.DeepEqual(v, onPremVersionProp)) {
 		obj["onPremVersion"] = onPremVersionProp
 	}
-	annotationsProp, err := expandGkeonpremVmwareClusterAnnotations(d.Get("annotations"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("annotations"); !tpgresource.IsEmptyValue(reflect.ValueOf(annotationsProp)) && (ok || !reflect.DeepEqual(v, annotationsProp)) {
-		obj["annotations"] = annotationsProp
-	}
 	controlPlaneNodeProp, err := expandGkeonpremVmwareClusterControlPlaneNode(d.Get("control_plane_node"), d, config)
 	if err != nil {
 		return err
@@ -973,6 +978,12 @@ func resourceGkeonpremVmwareClusterCreate(d *schema.ResourceData, meta interface
 		return err
 	} else if v, ok := d.GetOkExists("upgrade_policy"); !tpgresource.IsEmptyValue(reflect.ValueOf(upgradePolicyProp)) && (ok || !reflect.DeepEqual(v, upgradePolicyProp)) {
 		obj["upgradePolicy"] = upgradePolicyProp
+	}
+	annotationsProp, err := expandGkeonpremVmwareClusterEffectiveAnnotations(d.Get("effective_annotations"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("effective_annotations"); !tpgresource.IsEmptyValue(reflect.ValueOf(annotationsProp)) && (ok || !reflect.DeepEqual(v, annotationsProp)) {
+		obj["annotations"] = annotationsProp
 	}
 
 	url, err := tpgresource.ReplaceVars(d, config, "{{GkeonpremBasePath}}projects/{{project}}/locations/{{location}}/vmwareClusters?vmware_cluster_id={{name}}")
@@ -1160,6 +1171,9 @@ func resourceGkeonpremVmwareClusterRead(d *schema.ResourceData, meta interface{}
 	if err := d.Set("status", flattenGkeonpremVmwareClusterStatus(res["status"], d, config)); err != nil {
 		return fmt.Errorf("Error reading VmwareCluster: %s", err)
 	}
+	if err := d.Set("effective_annotations", flattenGkeonpremVmwareClusterEffectiveAnnotations(res["annotations"], d, config)); err != nil {
+		return fmt.Errorf("Error reading VmwareCluster: %s", err)
+	}
 
 	return nil
 }
@@ -1191,12 +1205,6 @@ func resourceGkeonpremVmwareClusterUpdate(d *schema.ResourceData, meta interface
 		return err
 	} else if v, ok := d.GetOkExists("on_prem_version"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, onPremVersionProp)) {
 		obj["onPremVersion"] = onPremVersionProp
-	}
-	annotationsProp, err := expandGkeonpremVmwareClusterAnnotations(d.Get("annotations"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("annotations"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, annotationsProp)) {
-		obj["annotations"] = annotationsProp
 	}
 	controlPlaneNodeProp, err := expandGkeonpremVmwareClusterControlPlaneNode(d.Get("control_plane_node"), d, config)
 	if err != nil {
@@ -1264,6 +1272,12 @@ func resourceGkeonpremVmwareClusterUpdate(d *schema.ResourceData, meta interface
 	} else if v, ok := d.GetOkExists("upgrade_policy"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, upgradePolicyProp)) {
 		obj["upgradePolicy"] = upgradePolicyProp
 	}
+	annotationsProp, err := expandGkeonpremVmwareClusterEffectiveAnnotations(d.Get("effective_annotations"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("effective_annotations"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, annotationsProp)) {
+		obj["annotations"] = annotationsProp
+	}
 
 	url, err := tpgresource.ReplaceVars(d, config, "{{GkeonpremBasePath}}projects/{{project}}/locations/{{location}}/vmwareClusters/{{name}}")
 	if err != nil {
@@ -1279,10 +1293,6 @@ func resourceGkeonpremVmwareClusterUpdate(d *schema.ResourceData, meta interface
 
 	if d.HasChange("on_prem_version") {
 		updateMask = append(updateMask, "onPremVersion")
-	}
-
-	if d.HasChange("annotations") {
-		updateMask = append(updateMask, "annotations")
 	}
 
 	if d.HasChange("control_plane_node") {
@@ -1327,6 +1337,10 @@ func resourceGkeonpremVmwareClusterUpdate(d *schema.ResourceData, meta interface
 
 	if d.HasChange("upgrade_policy") {
 		updateMask = append(updateMask, "upgradePolicy")
+	}
+
+	if d.HasChange("effective_annotations") {
+		updateMask = append(updateMask, "annotations")
 	}
 	// updateMask is a URL parameter but not present in the schema, so ReplaceVars
 	// won't set it
@@ -1423,9 +1437,9 @@ func resourceGkeonpremVmwareClusterDelete(d *schema.ResourceData, meta interface
 func resourceGkeonpremVmwareClusterImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	config := meta.(*transport_tpg.Config)
 	if err := tpgresource.ParseImportId([]string{
-		"projects/(?P<project>[^/]+)/locations/(?P<location>[^/]+)/vmwareClusters/(?P<name>[^/]+)",
-		"(?P<project>[^/]+)/(?P<location>[^/]+)/(?P<name>[^/]+)",
-		"(?P<location>[^/]+)/(?P<name>[^/]+)",
+		"^projects/(?P<project>[^/]+)/locations/(?P<location>[^/]+)/vmwareClusters/(?P<name>[^/]+)$",
+		"^(?P<project>[^/]+)/(?P<location>[^/]+)/(?P<name>[^/]+)$",
+		"^(?P<location>[^/]+)/(?P<name>[^/]+)$",
 	}, d, config); err != nil {
 		return nil, err
 	}
@@ -1453,7 +1467,18 @@ func flattenGkeonpremVmwareClusterOnPremVersion(v interface{}, d *schema.Resourc
 }
 
 func flattenGkeonpremVmwareClusterAnnotations(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
-	return v
+	if v == nil {
+		return v
+	}
+
+	transformed := make(map[string]interface{})
+	if l, ok := d.GetOkExists("annotations"); ok {
+		for k := range l.(map[string]interface{}) {
+			transformed[k] = v.(map[string]interface{})[k]
+		}
+	}
+
+	return transformed
 }
 
 func flattenGkeonpremVmwareClusterControlPlaneNode(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -2385,6 +2410,10 @@ func flattenGkeonpremVmwareClusterStatusConditionsState(v interface{}, d *schema
 	return v
 }
 
+func flattenGkeonpremVmwareClusterEffectiveAnnotations(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
 func expandGkeonpremVmwareClusterAdminClusterMembership(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
@@ -2395,17 +2424,6 @@ func expandGkeonpremVmwareClusterDescription(v interface{}, d tpgresource.Terraf
 
 func expandGkeonpremVmwareClusterOnPremVersion(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
-}
-
-func expandGkeonpremVmwareClusterAnnotations(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
-	if v == nil {
-		return map[string]string{}, nil
-	}
-	m := make(map[string]string)
-	for k, val := range v.(map[string]interface{}) {
-		m[k] = val.(string)
-	}
-	return m, nil
 }
 
 func expandGkeonpremVmwareClusterControlPlaneNode(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
@@ -3303,4 +3321,15 @@ func expandGkeonpremVmwareClusterUpgradePolicy(v interface{}, d tpgresource.Terr
 
 func expandGkeonpremVmwareClusterUpgradePolicyControlPlaneOnly(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
+}
+
+func expandGkeonpremVmwareClusterEffectiveAnnotations(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
+	if v == nil {
+		return map[string]string{}, nil
+	}
+	m := make(map[string]string)
+	for k, val := range v.(map[string]interface{}) {
+		m[k] = val.(string)
+	}
+	return m, nil
 }

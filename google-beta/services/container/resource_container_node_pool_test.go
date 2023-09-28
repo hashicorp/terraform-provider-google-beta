@@ -216,7 +216,7 @@ func TestAccContainerNodePool_withNodeConfig(t *testing.T) {
 				ImportStateVerify: true,
 				// autoscaling.# = 0 is equivalent to no autoscaling at all,
 				// but will still cause an import diff
-				ImportStateVerifyIgnore: []string{"autoscaling.#"},
+				ImportStateVerifyIgnore: []string{"autoscaling.#", "node_config.0.taint"},
 			},
 			{
 				Config: testAccContainerNodePool_withNodeConfigUpdate(cluster, nodePool),
@@ -227,7 +227,7 @@ func TestAccContainerNodePool_withNodeConfig(t *testing.T) {
 				ImportStateVerify: true,
 				// autoscaling.# = 0 is equivalent to no autoscaling at all,
 				// but will still cause an import diff
-				ImportStateVerifyIgnore: []string{"autoscaling.#"},
+				ImportStateVerifyIgnore: []string{"autoscaling.#", "node_config.0.taint"},
 			},
 		},
 	})
@@ -360,32 +360,6 @@ func TestAccContainerNodePool_withSandboxConfig(t *testing.T) {
 				ResourceName:      "google_container_node_pool.with_sandbox_config",
 				ImportState:       true,
 				ImportStateVerify: true,
-			},
-			{
-				// GKE sets automatic labels and taints on nodes. This makes
-				// sure we ignore the automatic ones and keep our own.
-				Config: testAccContainerNodePool_withSandboxConfig(cluster, np),
-				// When we use PlanOnly without ExpectNonEmptyPlan, we're
-				// guaranteeing that the computed fields of the resources don't
-				// force an unintentional change to the plan. That is, we
-				// expect this part of the test to pass only if the plan
-				// doesn't change.
-				PlanOnly: true,
-			},
-			{
-				// Now we'll modify the taints, which should force a change to
-				// the plan. We make sure we don't over-suppress and end up
-				// eliminating the labels or taints we asked for. This will
-				// destroy and recreate the node pool as taints are immutable.
-				Config: testAccContainerNodePool_withSandboxConfig_changeTaints(cluster, np),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("google_container_node_pool.with_sandbox_config",
-						"node_config.0.labels.test.terraform.io/gke-sandbox", "true"),
-					resource.TestCheckResourceAttr("google_container_node_pool.with_sandbox_config",
-						"node_config.0.taint.0.key", "test.terraform.io/gke-sandbox"),
-					resource.TestCheckResourceAttr("google_container_node_pool.with_sandbox_config",
-						"node_config.0.taint.1.key", "test.terraform.io/gke-sandbox-amended"),
-				),
 			},
 		},
 	})
@@ -549,7 +523,7 @@ func TestAccContainerNodePool_withMultiNicNetworkConfig(t *testing.T) {
 				ResourceName:            "google_container_cluster.cluster",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"network_config.0.create_pod_range"},
+				ImportStateVerifyIgnore: []string{"network_config.0.create_pod_range", "deletion_protection"},
 			},
 		},
 	})
@@ -626,6 +600,7 @@ resource "google_container_cluster" "cluster" {
     cluster_secondary_range_name  = google_compute_subnetwork.container_subnetwork.secondary_ip_range[0].range_name
     services_secondary_range_name = google_compute_subnetwork.container_subnetwork.secondary_ip_range[1].range_name
   }
+  deletion_protection = false
 }
 
 resource "google_container_node_pool" "with_enable_private_nodes" {
@@ -1287,6 +1262,7 @@ resource "google_container_cluster" "cluster" {
   name               = "%s"
   location           = "us-central1-a"
   initial_node_count = 1
+  deletion_protection = false
 }
 
 resource "google_container_node_pool" "np" {
@@ -1341,6 +1317,7 @@ resource "google_container_cluster" "cluster" {
   location           = "us-central1-a"
   min_master_version = data.google_container_engine_versions.central1a.latest_master_version
   initial_node_count = 1
+  deletion_protection = false
 }
 
 resource "google_container_node_pool" "np" {
@@ -1395,6 +1372,7 @@ resource "google_container_cluster" "cluster" {
   location           = "us-central1-a"
   min_master_version = data.google_container_engine_versions.central1a.latest_master_version
   initial_node_count = 1
+  deletion_protection = false
 }
 
 resource "google_container_node_pool" "np" {
@@ -1442,6 +1420,7 @@ resource "google_container_cluster" "cluster" {
   name               = "%s"
   location           = "us-central1-a"
   initial_node_count = 1
+  deletion_protection = false
 }
 
 resource "google_container_node_pool" "np" {
@@ -1490,6 +1469,7 @@ resource "google_container_cluster" "cluster" {
   name               = "%s"
   location           = "us-central1-a"
   initial_node_count = 1
+  deletion_protection = false
 }
 
 resource "google_container_node_pool" "np" {
@@ -1555,6 +1535,7 @@ resource "google_container_cluster" "cluster" {
   location           = "us-central1-f"
   initial_node_count = 1
   min_master_version = "1.25"
+  deletion_protection = false
 }
 
 resource "google_container_node_pool" "np" {
@@ -1596,9 +1577,10 @@ func TestAccContainerNodePool_compactPlacement(t *testing.T) {
 				Config: testAccContainerNodePool_compactPlacement(cluster, np, "COMPACT"),
 			},
 			{
-				ResourceName:      "google_container_cluster.cluster",
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            "google_container_cluster.cluster",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"deletion_protection"},
 			},
 		},
 	})
@@ -1610,6 +1592,7 @@ resource "google_container_cluster" "cluster" {
   name               = "%s"
   location           = "us-central1-a"
   initial_node_count = 1
+  deletion_protection = false
 }
 
 resource "google_container_node_pool" "np" {
@@ -1663,6 +1646,7 @@ resource "google_container_cluster" "cluster" {
   name               = "%s"
   location           = "us-central1-a"
   initial_node_count = 1
+  deletion_protection = false
 }
 
 resource "google_compute_resource_policy" "policy" {
@@ -1705,9 +1689,10 @@ func TestAccContainerNodePool_threadsPerCore(t *testing.T) {
 				Config: testAccContainerNodePool_threadsPerCore(cluster, np, 1),
 			},
 			{
-				ResourceName:      "google_container_cluster.cluster",
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            "google_container_cluster.cluster",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"deletion_protection"},
 			},
 		},
 	})
@@ -1719,6 +1704,7 @@ resource "google_container_cluster" "cluster" {
   name               = "%s"
   location           = "us-central1-a"
   initial_node_count = 1
+  deletion_protection = false
 
   node_config {
     machine_type = "c2-standard-4"
@@ -1791,6 +1777,7 @@ resource "google_container_cluster" "cluster" {
   name               = "%s"
   location           = "us-central1-a"
   initial_node_count = 3
+  deletion_protection = false
 }
 
 resource "google_container_node_pool" "np" {
@@ -1809,6 +1796,7 @@ resource "google_container_cluster" "with_logging_variant" {
   name               = "%s"
   location           = "us-central1-a"
   initial_node_count = 1
+  deletion_protection = false
 }
 
 resource "google_container_node_pool" "with_logging_variant" {
@@ -1834,6 +1822,7 @@ resource "google_container_cluster" "cluster" {
   name               = "%s"
   location           = "us-central1-a"
   initial_node_count = 3
+  deletion_protection = false
 }
 
 resource "google_container_node_pool" "np" {
@@ -1890,6 +1879,7 @@ resource "google_container_cluster" "cluster" {
 
   master_authorized_networks_config {
   }
+  deletion_protection = false
 }
 
 resource "google_container_node_pool" "np" {
@@ -1948,6 +1938,7 @@ resource "google_container_cluster" "cluster" {
 
   master_authorized_networks_config {
   }
+  deletion_protection = false
 }
 
 resource "google_container_node_pool" "np" {
@@ -1966,6 +1957,7 @@ resource "google_container_cluster" "cluster" {
   name               = "%s"
   location           = "us-central1"
   initial_node_count = 3
+  deletion_protection = false
 }
 
 resource "google_container_node_pool" "np" {
@@ -1983,6 +1975,7 @@ resource "google_container_cluster" "cluster" {
   name               = "%s"
   location           = "us-central1-a"
   initial_node_count = 3
+  deletion_protection = false
 }
 
 resource "google_container_node_pool" "np" {
@@ -2000,6 +1993,7 @@ resource "google_container_cluster" "cluster" {
   name               = "%s"
   location           = "us-central1-a"
   initial_node_count = 3
+  deletion_protection = false
 }
 
 resource "google_container_node_pool" "np" {
@@ -2016,6 +2010,7 @@ resource "google_container_cluster" "cluster" {
   name               = "%s"
   location           = "us-central1"
   initial_node_count = 3
+  deletion_protection = false
 }
 
 resource "google_container_node_pool" "np" {
@@ -2038,6 +2033,7 @@ resource "google_container_cluster" "cluster" {
   location           = "us-central1"
   initial_node_count = 3
   min_master_version = "1.27"
+  deletion_protection = false
 }
 
 resource "google_container_node_pool" "np" {
@@ -2061,6 +2057,7 @@ resource "google_container_cluster" "cluster" {
   location           = "us-central1"
   initial_node_count = 3
   min_master_version = "1.27"
+  deletion_protection = false
 }
 
 resource "google_container_node_pool" "np" {
@@ -2089,6 +2086,7 @@ resource "google_container_cluster" "cluster" {
   location           = "us-central1"
   initial_node_count = 3
   min_master_version = "1.27"
+  deletion_protection = false
 }
 
 resource "google_container_node_pool" "np" {
@@ -2107,6 +2105,7 @@ resource "google_container_cluster" "cluster" {
   name               = "%s"
   location           = "us-central1-a"
   initial_node_count = 3
+  deletion_protection = false
 }
 
 resource "google_container_node_pool" "np" {
@@ -2128,6 +2127,7 @@ resource "google_container_cluster" "cluster" {
   name               = "%s"
   location           = "us-central1-a"
   initial_node_count = 3
+  deletion_protection = false
 }
 
 resource "google_container_node_pool" "np" {
@@ -2154,6 +2154,7 @@ resource "google_container_cluster" "cluster" {
     "us-central1-b",
     "us-central1-c",
   ]
+  deletion_protection = false
 }
 
 resource "google_container_node_pool" "np" {
@@ -2176,6 +2177,7 @@ resource "google_container_cluster" "cluster" {
     "us-central1-b",
     "us-central1-c",
   ]
+  deletion_protection = false
 }
 
 resource "google_container_node_pool" "np" {
@@ -2196,6 +2198,7 @@ resource "google_container_cluster" "cluster" {
   release_channel {
 	  channel = "UNSPECIFIED"
   }
+  deletion_protection = false
 }
 
 resource "google_container_node_pool" "np_with_management" {
@@ -2221,6 +2224,7 @@ resource "google_container_cluster" "cluster" {
   name               = "%s"
   location           = "us-central1-a"
   initial_node_count = 1
+  deletion_protection = false
 }
 
 resource "google_container_node_pool" "np_with_node_config" {
@@ -2275,6 +2279,7 @@ resource "google_container_cluster" "cluster" {
   name               = "%s"
   location           = "us-central1-a"
   initial_node_count = 1
+  deletion_protection = false
 }
 
 resource "google_container_node_pool" "np_with_node_config" {
@@ -2336,6 +2341,7 @@ resource "google_container_cluster" "cluster" {
   location           = "us-central1-a"
   initial_node_count = 1
   min_master_version = data.google_container_engine_versions.central1a.latest_master_version
+  deletion_protection = false
 }
 
 resource "google_container_node_pool" "with_reservation_affinity" {
@@ -2368,6 +2374,7 @@ resource "google_container_cluster" "cluster" {
   location           = "us-central1-a"
   initial_node_count = 1
   min_master_version = data.google_container_engine_versions.central1a.latest_master_version
+  deletion_protection = false
 }
 
 resource "google_compute_reservation" "gce_reservation" {
@@ -2418,6 +2425,7 @@ resource "google_container_cluster" "cluster" {
   location           = "us-central1-a"
   initial_node_count = 1
   min_master_version = data.google_container_engine_versions.central1a.latest_master_version
+  deletion_protection = false
 }
 
 resource "google_container_node_pool" "with_workload_metadata_config" {
@@ -2459,6 +2467,7 @@ resource "google_container_cluster" "cluster" {
   workload_identity_config {
     workload_pool = "${data.google_project.project.project_id}.svc.id.goog"
   }
+  deletion_protection = false
 }
 
 resource "google_container_node_pool" "with_workload_metadata_config" {
@@ -2491,6 +2500,7 @@ resource "google_container_cluster" "cluster" {
   location           = "us-central1-a"
   initial_node_count = 1
   min_master_version = data.google_container_engine_versions.central1a.latest_master_version
+  deletion_protection = false
 }
 
 resource "google_container_node_pool" "with_sandbox_config" {
@@ -2508,63 +2518,6 @@ resource "google_container_node_pool" "with_sandbox_config" {
 
     labels = {
       "test.terraform.io/gke-sandbox" = "true"
-    }
-
-    taint {
-      key    = "test.terraform.io/gke-sandbox"
-      value  = "true"
-      effect = "NO_SCHEDULE"
-    }
-
-    oauth_scopes = [
-      "https://www.googleapis.com/auth/logging.write",
-      "https://www.googleapis.com/auth/monitoring",
-    ]
-  }
-}
-`, cluster, np)
-}
-
-func testAccContainerNodePool_withSandboxConfig_changeTaints(cluster, np string) string {
-	return fmt.Sprintf(`
-data "google_container_engine_versions" "central1a" {
-  location = "us-central1-a"
-}
-
-resource "google_container_cluster" "cluster" {
-  name               = "%s"
-  location           = "us-central1-a"
-  initial_node_count = 1
-  min_master_version = data.google_container_engine_versions.central1a.latest_master_version
-}
-
-resource "google_container_node_pool" "with_sandbox_config" {
-  name               = "%s"
-  location           = "us-central1-a"
-  cluster            = google_container_cluster.cluster.name
-  initial_node_count = 1
-  node_config {
-    machine_type = "n1-standard-1"  // can't be e2 because of gvisor
-    image_type = "COS_CONTAINERD"
-
-    sandbox_config {
-      sandbox_type = "gvisor"
-    }
-
-    labels = {
-      "test.terraform.io/gke-sandbox" = "true"
-    }
-
-    taint {
-      key    = "test.terraform.io/gke-sandbox"
-      value  = "true"
-      effect = "NO_SCHEDULE"
-    }
-
-    taint {
-      key    = "test.terraform.io/gke-sandbox-amended"
-      value  = "also-true"
-      effect = "NO_SCHEDULE"
     }
 
     oauth_scopes = [
@@ -2587,6 +2540,7 @@ resource "google_container_cluster" "cluster" {
   location           = "us-central1-a"
   initial_node_count = 1
   min_master_version = data.google_container_engine_versions.central1a.latest_master_version
+  deletion_protection = false
 }
 
 # cpu_manager_policy & cpu_cfs_quota_period cannot be blank if cpu_cfs_quota is set to true
@@ -2608,6 +2562,7 @@ resource "google_container_node_pool" "with_kubelet_config" {
       "https://www.googleapis.com/auth/logging.write",
       "https://www.googleapis.com/auth/monitoring",
     ]
+    logging_variant = "DEFAULT"
   }
 }
 `, cluster, np, policy, quota, period, podPidsLimit)
@@ -2647,6 +2602,7 @@ resource "google_container_cluster" "cluster" {
   location           = "us-central1-a"
   initial_node_count = 1
   min_master_version = data.google_container_engine_versions.central1a.latest_master_version
+  deletion_protection = false
 }
 
 resource "google_container_node_pool" "with_linux_node_config" {
@@ -2717,6 +2673,7 @@ resource "google_container_cluster" "cluster" {
   release_channel {
 	channel = "RAPID"
   }
+  deletion_protection = false
 }
 
 resource "google_container_node_pool" "with_manual_pod_cidr" {
@@ -2853,6 +2810,7 @@ resource "google_container_cluster" "cluster" {
   }
   enable_multi_networking = true
   datapath_provider = "ADVANCED_DATAPATH"
+  deletion_protection = false
 }
 
 resource "google_container_node_pool" "with_multi_nic" {
@@ -2912,6 +2870,7 @@ resource "google_container_cluster" "cluster" {
   location           = "us-central1-a"
   initial_node_count = 1
   min_master_version = data.google_container_engine_versions.central1a.latest_master_version
+  deletion_protection = false
 }
 
 resource "google_container_node_pool" "with_boot_disk_kms_key" {
@@ -2968,6 +2927,7 @@ resource "google_container_cluster" "cluster" {
   location           = "us-central1"
   initial_node_count = 1
   min_master_version = "${data.google_container_engine_versions.central1.latest_master_version}"
+  deletion_protection = false
 }
 
 resource "google_container_node_pool" "with_upgrade_settings" {
@@ -2991,6 +2951,7 @@ resource "google_container_cluster" "cluster" {
   location           = "us-central1-c"
   initial_node_count = 1
   min_master_version = data.google_container_engine_versions.central1c.latest_master_version
+  deletion_protection = false
 }
 
 resource "google_container_node_pool" "np_with_gpu" {
@@ -3040,6 +3001,7 @@ resource "google_container_cluster" "cluster" {
   name               = "%s"
   location           = "us-central1-a"
   initial_node_count = 1
+  deletion_protection = false
 }
 
 resource "google_container_node_pool" "np_with_node_config_scope_alias" {
@@ -3067,6 +3029,7 @@ resource "google_container_cluster" "cluster" {
   location           = "us-central1-a"
   initial_node_count = 1
   min_master_version = data.google_container_engine_versions.central1a.latest_master_version
+  deletion_protection = false
 }
 
 resource "google_container_node_pool" "np" {
@@ -3091,6 +3054,7 @@ resource "google_container_cluster" "cluster" {
   location           = "us-central1-a"
   initial_node_count = 1
   min_master_version = data.google_container_engine_versions.central1a.latest_master_version
+  deletion_protection = false
 }
 
 resource "google_container_node_pool" "np" {
@@ -3110,6 +3074,7 @@ resource "google_container_cluster" "cluster" {
   name               = "%s"
   location           = "us-central1-f"
   initial_node_count = 3
+  deletion_protection = false
 }
 
 resource "google_container_node_pool" "np" {
@@ -3135,6 +3100,7 @@ resource "google_container_cluster" "cluster" {
   name               = "%s"
   location           = "us-central1-f"
   initial_node_count = 3
+  deletion_protection = false
 }
 
 resource "google_container_node_pool" "np" {
@@ -3156,6 +3122,7 @@ resource "google_container_cluster" "cluster" {
   name               = "%s"
   location           = "us-central1-f"
   initial_node_count = 3
+  deletion_protection = false
 }
 
 resource "google_container_node_pool" "np" {
@@ -3181,6 +3148,7 @@ resource "google_container_cluster" "cluster" {
   name               = "%s"
   location           = "us-central1-f"
   initial_node_count = 3
+  deletion_protection = false
 }
 
 resource "google_container_node_pool" "np" {
@@ -3211,6 +3179,7 @@ resource "google_container_cluster" "cluster" {
   name               = "%s"
   location           = "us-central1-f"
   initial_node_count = 3
+  deletion_protection = false
 }
 
 resource "google_container_node_pool" "np" {
@@ -3246,6 +3215,7 @@ resource "google_container_cluster" "cluster" {
   name               = "%s"
   location           = "us-central1-a"
   initial_node_count = 1
+  deletion_protection = false
 }
 
 resource "google_container_node_pool" "np" {
@@ -3269,6 +3239,7 @@ resource "google_container_cluster" "cluster" {
   name               = "%s"
   location           = "us-central1-a"
   initial_node_count = 3
+  deletion_protection = false
 }
 
 resource "google_container_node_pool" "np1" {
@@ -3293,6 +3264,7 @@ resource "google_container_cluster" "cluster" {
   name               = "%s"
   location           = "us-central1-a"
   initial_node_count = 3
+  deletion_protection = false
 }
 
 resource "google_container_node_pool" "np1" {
@@ -3328,7 +3300,7 @@ resource "google_compute_node_template" "soletenant-tmpl" {
 resource "google_compute_node_group" "nodes" {
   name        = "tf-test-soletenant-group"
   zone        = "us-central1-a"
-  size          = 1
+  initial_size	= 1
   node_template = google_compute_node_template.soletenant-tmpl.id
 }
 
@@ -3337,6 +3309,7 @@ resource "google_container_cluster" "cluster" {
   location           = "us-central1-a"
   initial_node_count = 1
   min_master_version = data.google_container_engine_versions.central1a.latest_master_version
+  deletion_protection = false
 }
 
 resource "google_container_node_pool" "with_sole_tenant_config" {
@@ -3413,6 +3386,7 @@ resource "google_container_cluster" "cluster" {
     }
     machine_type = "n2-standard-2"
   }
+  deletion_protection = false
 }
 
 resource "google_container_node_pool" "np" {
@@ -3442,6 +3416,7 @@ resource "google_container_cluster" "cluster" {
     }
     machine_type = "n2-standard-2"
   }
+  deletion_protection = false
 }
 
 resource "google_container_node_pool" "np" {
@@ -3496,6 +3471,7 @@ resource "google_container_cluster" "cluster" {
   name               = "%s"
   location           = "us-central2-b"
   initial_node_count = 1
+  deletion_protection = false
 }
 
 resource "google_container_node_pool" "regular_pool" {
@@ -3563,6 +3539,7 @@ resource "google_container_cluster" "cluster" {
 	}
     machine_type = "n2-standard-2"
   }
+  deletion_protection = false
 }
 
 resource "google_container_node_pool" "np" {

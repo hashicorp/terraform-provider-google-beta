@@ -22,6 +22,7 @@ type ProviderModel struct {
 	UserProjectOverride                types.Bool   `tfsdk:"user_project_override"`
 	RequestTimeout                     types.String `tfsdk:"request_timeout"`
 	RequestReason                      types.String `tfsdk:"request_reason"`
+	DefaultLabels                      types.Map    `tfsdk:"default_labels"`
 
 	// Generated Products
 	AccessApprovalCustomEndpoint           types.String `tfsdk:"access_approval_custom_endpoint"`
@@ -52,7 +53,6 @@ type ProviderModel struct {
 	Cloudfunctions2CustomEndpoint          types.String `tfsdk:"cloudfunctions2_custom_endpoint"`
 	CloudIdentityCustomEndpoint            types.String `tfsdk:"cloud_identity_custom_endpoint"`
 	CloudIdsCustomEndpoint                 types.String `tfsdk:"cloud_ids_custom_endpoint"`
-	CloudIotCustomEndpoint                 types.String `tfsdk:"cloud_iot_custom_endpoint"`
 	CloudRunCustomEndpoint                 types.String `tfsdk:"cloud_run_custom_endpoint"`
 	CloudRunV2CustomEndpoint               types.String `tfsdk:"cloud_run_v2_custom_endpoint"`
 	CloudSchedulerCustomEndpoint           types.String `tfsdk:"cloud_scheduler_custom_endpoint"`
@@ -87,7 +87,6 @@ type ProviderModel struct {
 	FirebaseHostingCustomEndpoint          types.String `tfsdk:"firebase_hosting_custom_endpoint"`
 	FirebaseStorageCustomEndpoint          types.String `tfsdk:"firebase_storage_custom_endpoint"`
 	FirestoreCustomEndpoint                types.String `tfsdk:"firestore_custom_endpoint"`
-	GameServicesCustomEndpoint             types.String `tfsdk:"game_services_custom_endpoint"`
 	GKEBackupCustomEndpoint                types.String `tfsdk:"gke_backup_custom_endpoint"`
 	GKEHubCustomEndpoint                   types.String `tfsdk:"gke_hub_custom_endpoint"`
 	GKEHub2CustomEndpoint                  types.String `tfsdk:"gke_hub2_custom_endpoint"`

@@ -24,6 +24,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/customdiff"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
@@ -47,6 +48,11 @@ func ResourceDataprocMetastoreFederation() *schema.Resource {
 			Update: schema.DefaultTimeout(20 * time.Minute),
 			Delete: schema.DefaultTimeout(20 * time.Minute),
 		},
+
+		CustomizeDiff: customdiff.All(
+			tpgresource.SetLabelsDiff,
+			tpgresource.DefaultProviderProject,
+		),
 
 		Schema: map[string]*schema.Schema{
 			"backend_metastores": {
@@ -88,16 +94,25 @@ and hyphens (-). Cannot begin or end with underscore or hyphen. Must consist of 
 				Description: `The Apache Hive metastore version of the federation. All backend metastore versions must be compatible with the federation version.`,
 			},
 			"labels": {
-				Type:        schema.TypeMap,
-				Optional:    true,
-				Description: `User-defined labels for the metastore federation.`,
-				Elem:        &schema.Schema{Type: schema.TypeString},
+				Type:     schema.TypeMap,
+				Optional: true,
+				Description: `User-defined labels for the metastore federation.
+
+**Note**: This field is non-authoritative, and will only manage the labels present in your configuration.
+Please refer to the field 'effective_labels' for all of the labels present on the resource.`,
+				Elem: &schema.Schema{Type: schema.TypeString},
 			},
 			"location": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				ForceNew:    true,
 				Description: `The location where the metastore federation should reside.`,
+			},
+			"effective_labels": {
+				Type:        schema.TypeMap,
+				Computed:    true,
+				Description: `All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.`,
+				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
 			"endpoint_uri": {
 				Type:        schema.TypeString,
@@ -118,6 +133,13 @@ and hyphens (-). Cannot begin or end with underscore or hyphen. Must consist of 
 				Type:        schema.TypeString,
 				Computed:    true,
 				Description: `Additional information about the current state of the metastore federation, if available.`,
+			},
+			"terraform_labels": {
+				Type:     schema.TypeMap,
+				Computed: true,
+				Description: `The combination of labels configured directly on the resource
+ and default labels configured on the provider.`,
+				Elem: &schema.Schema{Type: schema.TypeString},
 			},
 			"uid": {
 				Type:        schema.TypeString,
@@ -143,12 +165,6 @@ func resourceDataprocMetastoreFederationCreate(d *schema.ResourceData, meta inte
 	}
 
 	obj := make(map[string]interface{})
-	labelsProp, err := expandDataprocMetastoreFederationLabels(d.Get("labels"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(labelsProp)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
-		obj["labels"] = labelsProp
-	}
 	versionProp, err := expandDataprocMetastoreFederationVersion(d.Get("version"), d, config)
 	if err != nil {
 		return err
@@ -160,6 +176,12 @@ func resourceDataprocMetastoreFederationCreate(d *schema.ResourceData, meta inte
 		return err
 	} else if v, ok := d.GetOkExists("backend_metastores"); !tpgresource.IsEmptyValue(reflect.ValueOf(backendMetastoresProp)) && (ok || !reflect.DeepEqual(v, backendMetastoresProp)) {
 		obj["backendMetastores"] = backendMetastoresProp
+	}
+	labelsProp, err := expandDataprocMetastoreFederationEffectiveLabels(d.Get("effective_labels"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("effective_labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(labelsProp)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
+		obj["labels"] = labelsProp
 	}
 
 	url, err := tpgresource.ReplaceVars(d, config, "{{DataprocMetastoreBasePath}}projects/{{project}}/locations/{{location}}/federations?federationId={{federation_id}}")
@@ -280,6 +302,12 @@ func resourceDataprocMetastoreFederationRead(d *schema.ResourceData, meta interf
 	if err := d.Set("backend_metastores", flattenDataprocMetastoreFederationBackendMetastores(res["backendMetastores"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Federation: %s", err)
 	}
+	if err := d.Set("terraform_labels", flattenDataprocMetastoreFederationTerraformLabels(res["labels"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Federation: %s", err)
+	}
+	if err := d.Set("effective_labels", flattenDataprocMetastoreFederationEffectiveLabels(res["labels"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Federation: %s", err)
+	}
 
 	return nil
 }
@@ -300,17 +328,17 @@ func resourceDataprocMetastoreFederationUpdate(d *schema.ResourceData, meta inte
 	billingProject = project
 
 	obj := make(map[string]interface{})
-	labelsProp, err := expandDataprocMetastoreFederationLabels(d.Get("labels"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
-		obj["labels"] = labelsProp
-	}
 	backendMetastoresProp, err := expandDataprocMetastoreFederationBackendMetastores(d.Get("backend_metastores"), d, config)
 	if err != nil {
 		return err
 	} else if v, ok := d.GetOkExists("backend_metastores"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, backendMetastoresProp)) {
 		obj["backendMetastores"] = backendMetastoresProp
+	}
+	labelsProp, err := expandDataprocMetastoreFederationEffectiveLabels(d.Get("effective_labels"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("effective_labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
+		obj["labels"] = labelsProp
 	}
 
 	url, err := tpgresource.ReplaceVars(d, config, "{{DataprocMetastoreBasePath}}projects/{{project}}/locations/{{location}}/federations/{{federation_id}}")
@@ -321,12 +349,12 @@ func resourceDataprocMetastoreFederationUpdate(d *schema.ResourceData, meta inte
 	log.Printf("[DEBUG] Updating Federation %q: %#v", d.Id(), obj)
 	updateMask := []string{}
 
-	if d.HasChange("labels") {
-		updateMask = append(updateMask, "labels")
-	}
-
 	if d.HasChange("backend_metastores") {
 		updateMask = append(updateMask, "backendMetastores")
+	}
+
+	if d.HasChange("effective_labels") {
+		updateMask = append(updateMask, "labels")
 	}
 	// updateMask is a URL parameter but not present in the schema, so ReplaceVars
 	// won't set it
@@ -423,9 +451,9 @@ func resourceDataprocMetastoreFederationDelete(d *schema.ResourceData, meta inte
 func resourceDataprocMetastoreFederationImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	config := meta.(*transport_tpg.Config)
 	if err := tpgresource.ParseImportId([]string{
-		"projects/(?P<project>[^/]+)/locations/(?P<location>[^/]+)/federations/(?P<federation_id>[^/]+)",
-		"(?P<project>[^/]+)/(?P<location>[^/]+)/(?P<federation_id>[^/]+)",
-		"(?P<location>[^/]+)/(?P<federation_id>[^/]+)",
+		"^projects/(?P<project>[^/]+)/locations/(?P<location>[^/]+)/federations/(?P<federation_id>[^/]+)$",
+		"^(?P<project>[^/]+)/(?P<location>[^/]+)/(?P<federation_id>[^/]+)$",
+		"^(?P<location>[^/]+)/(?P<federation_id>[^/]+)$",
 	}, d, config); err != nil {
 		return nil, err
 	}
@@ -445,7 +473,18 @@ func flattenDataprocMetastoreFederationName(v interface{}, d *schema.ResourceDat
 }
 
 func flattenDataprocMetastoreFederationLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
-	return v
+	if v == nil {
+		return v
+	}
+
+	transformed := make(map[string]interface{})
+	if l, ok := d.GetOkExists("labels"); ok {
+		for k := range l.(map[string]interface{}) {
+			transformed[k] = v.(map[string]interface{})[k]
+		}
+	}
+
+	return transformed
 }
 
 func flattenDataprocMetastoreFederationEndpointUri(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -492,15 +531,23 @@ func flattenDataprocMetastoreFederationBackendMetastoresMetastoreType(v interfac
 	return v
 }
 
-func expandDataprocMetastoreFederationLabels(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
+func flattenDataprocMetastoreFederationTerraformLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
-		return map[string]string{}, nil
+		return v
 	}
-	m := make(map[string]string)
-	for k, val := range v.(map[string]interface{}) {
-		m[k] = val.(string)
+
+	transformed := make(map[string]interface{})
+	if l, ok := d.GetOkExists("terraform_labels"); ok {
+		for k := range l.(map[string]interface{}) {
+			transformed[k] = v.(map[string]interface{})[k]
+		}
 	}
-	return m, nil
+
+	return transformed
+}
+
+func flattenDataprocMetastoreFederationEffectiveLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
 }
 
 func expandDataprocMetastoreFederationVersion(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
@@ -545,4 +592,15 @@ func expandDataprocMetastoreFederationBackendMetastoresName(v interface{}, d tpg
 
 func expandDataprocMetastoreFederationBackendMetastoresMetastoreType(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
+}
+
+func expandDataprocMetastoreFederationEffectiveLabels(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
+	if v == nil {
+		return map[string]string{}, nil
+	}
+	m := make(map[string]string)
+	for k, val := range v.(map[string]interface{}) {
+		m[k] = val.(string)
+	}
+	return m, nil
 }

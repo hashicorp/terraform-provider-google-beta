@@ -23,6 +23,7 @@ import (
 	"reflect"
 	"time"
 
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/customdiff"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
@@ -45,6 +46,10 @@ func ResourceDataformRepositoryReleaseConfig() *schema.Resource {
 			Update: schema.DefaultTimeout(20 * time.Minute),
 			Delete: schema.DefaultTimeout(20 * time.Minute),
 		},
+
+		CustomizeDiff: customdiff.All(
+			tpgresource.DefaultProviderProject,
+		),
 
 		Schema: map[string]*schema.Schema{
 			"git_commitish": {
@@ -448,10 +453,10 @@ func resourceDataformRepositoryReleaseConfigDelete(d *schema.ResourceData, meta 
 func resourceDataformRepositoryReleaseConfigImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	config := meta.(*transport_tpg.Config)
 	if err := tpgresource.ParseImportId([]string{
-		"projects/(?P<project>[^/]+)/locations/(?P<region>[^/]+)/repositories/(?P<repository>[^/]+)/releaseConfigs/(?P<name>[^/]+)",
-		"(?P<project>[^/]+)/(?P<region>[^/]+)/(?P<repository>[^/]+)/(?P<name>[^/]+)",
-		"(?P<region>[^/]+)/(?P<repository>[^/]+)/(?P<name>[^/]+)",
-		"(?P<repository>[^/]+)/(?P<name>[^/]+)",
+		"^projects/(?P<project>[^/]+)/locations/(?P<region>[^/]+)/repositories/(?P<repository>[^/]+)/releaseConfigs/(?P<name>[^/]+)$",
+		"^(?P<project>[^/]+)/(?P<region>[^/]+)/(?P<repository>[^/]+)/(?P<name>[^/]+)$",
+		"^(?P<region>[^/]+)/(?P<repository>[^/]+)/(?P<name>[^/]+)$",
+		"^(?P<repository>[^/]+)/(?P<name>[^/]+)$",
 	}, d, config); err != nil {
 		return nil, err
 	}
