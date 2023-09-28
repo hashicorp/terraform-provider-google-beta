@@ -237,8 +237,10 @@ func TestAccComputeInstanceFromTemplate_overrideScratchDisk(t *testing.T) {
 					testAccCheckComputeInstanceExists(t, resourceName, &instance),
 
 					// Check that fields were set based on the template
-					resource.TestCheckResourceAttr(resourceName, "scratch_disk.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scratch_disk.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "scratch_disk.0.interface", "NVME"),
+					resource.TestCheckResourceAttr(resourceName, "scratch_disk.1.interface", "NVME"),
+					resource.TestCheckResourceAttr(resourceName, "scratch_disk.1.device_name", "override-local-ssd"),
 				),
 			},
 		},
@@ -388,6 +390,14 @@ resource "google_compute_instance_template" "foobar" {
   }
 
   disk {
+    device_name  = "test-local-ssd"
+    disk_type    = "local-ssd"
+    type         = "SCRATCH"
+    interface    = "NVME"
+    disk_size_gb = 375
+  }
+
+  disk {
     source_image = data.google_compute_image.my_image.self_link
     auto_delete  = true
     disk_size_gb = 100
@@ -455,6 +465,14 @@ resource "google_compute_instance_template" "foobar" {
   }
 
   disk {
+    disk_type    = "local-ssd"
+    type         = "SCRATCH"
+    interface    = "NVME"
+    disk_size_gb = 375
+  }
+
+  disk {
+    device_name  = "test-local-ssd"
     disk_type    = "local-ssd"
     type         = "SCRATCH"
     interface    = "NVME"
@@ -533,6 +551,14 @@ resource "google_compute_instance_template" "foobar" {
   }
 
   disk {
+    disk_type    = "local-ssd"
+    type         = "SCRATCH"
+    interface    = "NVME"
+    disk_size_gb = 375
+  }
+
+  disk {
+    device_name  = "test-local-ssd"
     disk_type    = "local-ssd"
     type         = "SCRATCH"
     interface    = "NVME"
@@ -631,6 +657,14 @@ resource "google_compute_region_instance_template" "foobar" {
     disk_size_gb = 375
   }
 
+  disk {
+    device_name  = "test-local-ssd"
+    disk_type    = "local-ssd"
+    type         = "SCRATCH"
+    interface    = "NVME"
+    disk_size_gb = 375
+  }
+
   network_interface {
     network = "default"
   }
@@ -690,6 +724,14 @@ resource "google_compute_instance_template" "foobar" {
   }
 
   disk {
+    disk_type    = "local-ssd"
+    type         = "SCRATCH"
+    interface    = "NVME"
+    disk_size_gb = 375
+  }
+
+  disk {
+    device_name  = "test-local-ssd"
     disk_type    = "local-ssd"
     type         = "SCRATCH"
     interface    = "NVME"
@@ -911,6 +953,16 @@ resource "google_compute_instance_template" "template" {
     boot         = false
   }
 
+  disk {
+    device_name  = "test-local-ssd"
+    type         = "SCRATCH"
+    disk_type    = "local-ssd"
+    disk_size_gb = 375
+    interface    = "SCSI"
+    auto_delete  = true
+    boot         = false
+  }
+
   network_interface {
     network = "default"
   }
@@ -925,6 +977,11 @@ resource "google_compute_instance_from_template" "inst" {
   // Overrides
   scratch_disk {
     interface = "NVME"
+  }
+
+  scratch_disk {
+    device_name = "override-local-ssd"
+    interface   = "NVME"
   }
 }
 `, templateDisk, overrideDisk, template, instance)
