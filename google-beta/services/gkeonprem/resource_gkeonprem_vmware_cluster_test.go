@@ -25,17 +25,19 @@ func TestAccGkeonpremVmwareCluster_vmwareClusterUpdateBasic(t *testing.T) {
 				Config: testAccGkeonpremVmwareCluster_vmwareClusterUpdateMetalLbStart(context),
 			},
 			{
-				ResourceName:      "google_gkeonprem_vmware_cluster.cluster",
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            "google_gkeonprem_vmware_cluster.cluster",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"annotations"},
 			},
 			{
 				Config: testAccGkeonpremVmwareCluster_vmwareClusterUpdateMetalLb(context),
 			},
 			{
-				ResourceName:      "google_gkeonprem_vmware_cluster.cluster",
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            "google_gkeonprem_vmware_cluster.cluster",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"annotations"},
 			},
 		},
 	})
@@ -118,7 +120,9 @@ func testAccGkeonpremVmwareCluster_vmwareClusterUpdateMetalLbStart(context map[s
     admin_cluster_membership = "projects/870316890899/locations/global/memberships/gkeonprem-terraform-test"
     description = "test cluster"
     on_prem_version = "1.13.1-gke.35"
-    annotations = {}
+    annotations = {
+      env = "test"
+    }
     network_config {
       service_address_cidr_blocks = ["10.96.0.0/12"]
       pod_address_cidr_blocks = ["192.168.0.0/16"]
@@ -166,7 +170,9 @@ func testAccGkeonpremVmwareCluster_vmwareClusterUpdateMetalLb(context map[string
     admin_cluster_membership = "projects/870316890899/locations/global/memberships/gkeonprem-terraform-test"
     description = "test cluster updated"
     on_prem_version = "1.13.1-gke.36"
-    annotations = {}
+    annotations = {
+      env = "test-update"
+    }
     network_config {
       service_address_cidr_blocks = ["10.96.0.0/16"]
       pod_address_cidr_blocks = ["192.168.0.0/20"]

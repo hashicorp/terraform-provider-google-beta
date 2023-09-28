@@ -24,6 +24,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/customdiff"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
@@ -45,8 +46,13 @@ func ResourceGkeonpremBareMetalAdminCluster() *schema.Resource {
 		Timeouts: &schema.ResourceTimeout{
 			Create: schema.DefaultTimeout(60 * time.Minute),
 			Update: schema.DefaultTimeout(60 * time.Minute),
-			Delete: schema.DefaultTimeout(60 * time.Minute),
+			Delete: schema.DefaultTimeout(20 * time.Minute),
 		},
+
+		CustomizeDiff: customdiff.All(
+			tpgresource.SetAnnotationsDiff,
+			tpgresource.DefaultProviderProject,
+		),
 
 		Schema: map[string]*schema.Schema{
 			"location": {
@@ -511,6 +517,12 @@ automatically created during cluster creation.`,
 				Computed:    true,
 				Description: `The time the cluster was deleted, in RFC3339 text format.`,
 			},
+			"effective_annotations": {
+				Type:        schema.TypeMap,
+				Computed:    true,
+				Description: `All of annotations (key/value pairs) present on the resource in GCP, including the annotations configured through Terraform, other clients and services.`,
+				Elem:        &schema.Schema{Type: schema.TypeString},
+			},
 			"endpoint": {
 				Type:        schema.TypeString,
 				Computed:    true,
@@ -726,12 +738,6 @@ func resourceGkeonpremBareMetalAdminClusterCreate(d *schema.ResourceData, meta i
 	} else if v, ok := d.GetOkExists("bare_metal_version"); !tpgresource.IsEmptyValue(reflect.ValueOf(bareMetalVersionProp)) && (ok || !reflect.DeepEqual(v, bareMetalVersionProp)) {
 		obj["bareMetalVersion"] = bareMetalVersionProp
 	}
-	annotationsProp, err := expandGkeonpremBareMetalAdminClusterAnnotations(d.Get("annotations"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("annotations"); !tpgresource.IsEmptyValue(reflect.ValueOf(annotationsProp)) && (ok || !reflect.DeepEqual(v, annotationsProp)) {
-		obj["annotations"] = annotationsProp
-	}
 	networkConfigProp, err := expandGkeonpremBareMetalAdminClusterNetworkConfig(d.Get("network_config"), d, config)
 	if err != nil {
 		return err
@@ -791,6 +797,12 @@ func resourceGkeonpremBareMetalAdminClusterCreate(d *schema.ResourceData, meta i
 		return err
 	} else if v, ok := d.GetOkExists("security_config"); !tpgresource.IsEmptyValue(reflect.ValueOf(securityConfigProp)) && (ok || !reflect.DeepEqual(v, securityConfigProp)) {
 		obj["securityConfig"] = securityConfigProp
+	}
+	annotationsProp, err := expandGkeonpremBareMetalAdminClusterEffectiveAnnotations(d.Get("effective_annotations"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("effective_annotations"); !tpgresource.IsEmptyValue(reflect.ValueOf(annotationsProp)) && (ok || !reflect.DeepEqual(v, annotationsProp)) {
+		obj["annotations"] = annotationsProp
 	}
 
 	url, err := tpgresource.ReplaceVars(d, config, "{{GkeonpremBasePath}}projects/{{project}}/locations/{{location}}/bareMetalAdminClusters?bare_metal_admin_cluster_id={{name}}")
@@ -969,6 +981,9 @@ func resourceGkeonpremBareMetalAdminClusterRead(d *schema.ResourceData, meta int
 	if err := d.Set("security_config", flattenGkeonpremBareMetalAdminClusterSecurityConfig(res["securityConfig"], d, config)); err != nil {
 		return fmt.Errorf("Error reading BareMetalAdminCluster: %s", err)
 	}
+	if err := d.Set("effective_annotations", flattenGkeonpremBareMetalAdminClusterEffectiveAnnotations(res["annotations"], d, config)); err != nil {
+		return fmt.Errorf("Error reading BareMetalAdminCluster: %s", err)
+	}
 
 	return nil
 }
@@ -1000,12 +1015,6 @@ func resourceGkeonpremBareMetalAdminClusterUpdate(d *schema.ResourceData, meta i
 		return err
 	} else if v, ok := d.GetOkExists("bare_metal_version"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, bareMetalVersionProp)) {
 		obj["bareMetalVersion"] = bareMetalVersionProp
-	}
-	annotationsProp, err := expandGkeonpremBareMetalAdminClusterAnnotations(d.Get("annotations"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("annotations"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, annotationsProp)) {
-		obj["annotations"] = annotationsProp
 	}
 	networkConfigProp, err := expandGkeonpremBareMetalAdminClusterNetworkConfig(d.Get("network_config"), d, config)
 	if err != nil {
@@ -1067,6 +1076,12 @@ func resourceGkeonpremBareMetalAdminClusterUpdate(d *schema.ResourceData, meta i
 	} else if v, ok := d.GetOkExists("security_config"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, securityConfigProp)) {
 		obj["securityConfig"] = securityConfigProp
 	}
+	annotationsProp, err := expandGkeonpremBareMetalAdminClusterEffectiveAnnotations(d.Get("effective_annotations"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("effective_annotations"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, annotationsProp)) {
+		obj["annotations"] = annotationsProp
+	}
 
 	url, err := tpgresource.ReplaceVars(d, config, "{{GkeonpremBasePath}}projects/{{project}}/locations/{{location}}/bareMetalAdminClusters/{{name}}")
 	if err != nil {
@@ -1082,10 +1097,6 @@ func resourceGkeonpremBareMetalAdminClusterUpdate(d *schema.ResourceData, meta i
 
 	if d.HasChange("bare_metal_version") {
 		updateMask = append(updateMask, "bareMetalVersion")
-	}
-
-	if d.HasChange("annotations") {
-		updateMask = append(updateMask, "annotations")
 	}
 
 	if d.HasChange("network_config") {
@@ -1127,6 +1138,10 @@ func resourceGkeonpremBareMetalAdminClusterUpdate(d *schema.ResourceData, meta i
 	if d.HasChange("security_config") {
 		updateMask = append(updateMask, "securityConfig")
 	}
+
+	if d.HasChange("effective_annotations") {
+		updateMask = append(updateMask, "annotations")
+	}
 	// updateMask is a URL parameter but not present in the schema, so ReplaceVars
 	// won't set it
 	url, err = transport_tpg.AddQueryParams(url, map[string]string{"updateMask": strings.Join(updateMask, ",")})
@@ -1167,64 +1182,20 @@ func resourceGkeonpremBareMetalAdminClusterUpdate(d *schema.ResourceData, meta i
 }
 
 func resourceGkeonpremBareMetalAdminClusterDelete(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*transport_tpg.Config)
-	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
-	if err != nil {
-		return err
-	}
+	log.Printf("[WARNING] Gkeonprem BareMetalAdminCluster resources"+
+		" cannot be deleted from Google Cloud. The resource %s will be removed from Terraform"+
+		" state, but will still be present on Google Cloud.", d.Id())
+	d.SetId("")
 
-	billingProject := ""
-
-	project, err := tpgresource.GetProject(d, config)
-	if err != nil {
-		return fmt.Errorf("Error fetching project for BareMetalAdminCluster: %s", err)
-	}
-	billingProject = project
-
-	url, err := tpgresource.ReplaceVars(d, config, "{{GkeonpremBasePath}}projects/{{project}}/locations/{{location}}/bareMetalAdminClusters/{{name}}:unenroll?ignore_errors=true")
-	if err != nil {
-		return err
-	}
-
-	var obj map[string]interface{}
-	log.Printf("[DEBUG] Deleting BareMetalAdminCluster %q", d.Id())
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
-	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
-		Config:    config,
-		Method:    "DELETE",
-		Project:   billingProject,
-		RawURL:    url,
-		UserAgent: userAgent,
-		Body:      obj,
-		Timeout:   d.Timeout(schema.TimeoutDelete),
-	})
-	if err != nil {
-		return transport_tpg.HandleNotFoundError(err, d, "BareMetalAdminCluster")
-	}
-
-	err = GkeonpremOperationWaitTime(
-		config, res, project, "Deleting BareMetalAdminCluster", userAgent,
-		d.Timeout(schema.TimeoutDelete))
-
-	if err != nil {
-		return err
-	}
-
-	log.Printf("[DEBUG] Finished deleting BareMetalAdminCluster %q: %#v", d.Id(), res)
 	return nil
 }
 
 func resourceGkeonpremBareMetalAdminClusterImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	config := meta.(*transport_tpg.Config)
 	if err := tpgresource.ParseImportId([]string{
-		"projects/(?P<project>[^/]+)/locations/(?P<location>[^/]+)/bareMetalAdminClusters/(?P<name>[^/]+)",
-		"(?P<project>[^/]+)/(?P<location>[^/]+)/(?P<name>[^/]+)",
-		"(?P<location>[^/]+)/(?P<name>[^/]+)",
+		"^projects/(?P<project>[^/]+)/locations/(?P<location>[^/]+)/bareMetalAdminClusters/(?P<name>[^/]+)$",
+		"^(?P<project>[^/]+)/(?P<location>[^/]+)/(?P<name>[^/]+)$",
+		"^(?P<location>[^/]+)/(?P<name>[^/]+)$",
 	}, d, config); err != nil {
 		return nil, err
 	}
@@ -1284,7 +1255,18 @@ func flattenGkeonpremBareMetalAdminClusterEtag(v interface{}, d *schema.Resource
 }
 
 func flattenGkeonpremBareMetalAdminClusterAnnotations(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
-	return v
+	if v == nil {
+		return v
+	}
+
+	transformed := make(map[string]interface{})
+	if l, ok := d.GetOkExists("annotations"); ok {
+		for k := range l.(map[string]interface{}) {
+			transformed[k] = v.(map[string]interface{})[k]
+		}
+	}
+
+	return transformed
 }
 
 func flattenGkeonpremBareMetalAdminClusterNetworkConfig(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -1948,23 +1930,16 @@ func flattenGkeonpremBareMetalAdminClusterSecurityConfigAuthorizationAdminUsersU
 	return v
 }
 
+func flattenGkeonpremBareMetalAdminClusterEffectiveAnnotations(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
 func expandGkeonpremBareMetalAdminClusterDescription(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
 func expandGkeonpremBareMetalAdminClusterBareMetalVersion(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
-}
-
-func expandGkeonpremBareMetalAdminClusterAnnotations(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
-	if v == nil {
-		return map[string]string{}, nil
-	}
-	m := make(map[string]string)
-	for k, val := range v.(map[string]interface{}) {
-		m[k] = val.(string)
-	}
-	return m, nil
 }
 
 func expandGkeonpremBareMetalAdminClusterNetworkConfig(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
@@ -2663,4 +2638,15 @@ func expandGkeonpremBareMetalAdminClusterSecurityConfigAuthorizationAdminUsers(v
 
 func expandGkeonpremBareMetalAdminClusterSecurityConfigAuthorizationAdminUsersUsername(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
+}
+
+func expandGkeonpremBareMetalAdminClusterEffectiveAnnotations(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
+	if v == nil {
+		return map[string]string{}, nil
+	}
+	m := make(map[string]string)
+	for k, val := range v.(map[string]interface{}) {
+		m[k] = val.(string)
+	}
+	return m, nil
 }

@@ -25,6 +25,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/customdiff"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
@@ -48,6 +49,10 @@ func ResourceVertexAIFeaturestoreEntitytype() *schema.Resource {
 			Delete: schema.DefaultTimeout(20 * time.Minute),
 		},
 
+		CustomizeDiff: customdiff.All(
+			tpgresource.SetLabelsDiff,
+		),
+
 		Schema: map[string]*schema.Schema{
 			"featurestore": {
 				Type:        schema.TypeString,
@@ -61,10 +66,14 @@ func ResourceVertexAIFeaturestoreEntitytype() *schema.Resource {
 				Description: `Optional. Description of the EntityType.`,
 			},
 			"labels": {
-				Type:        schema.TypeMap,
-				Optional:    true,
-				Description: `A set of key/value label pairs to assign to this EntityType.`,
-				Elem:        &schema.Schema{Type: schema.TypeString},
+				Type:     schema.TypeMap,
+				Optional: true,
+				Description: `A set of key/value label pairs to assign to this EntityType.
+
+
+**Note**: This field is non-authoritative, and will only manage the labels present in your configuration.
+Please refer to the field 'effective_labels' for all of the labels present on the resource.`,
+				Elem: &schema.Schema{Type: schema.TypeString},
 			},
 			"monitoring_config": {
 				Type:     schema.TypeList,
@@ -189,10 +198,23 @@ If both FeaturestoreMonitoringConfig.SnapshotAnalysis.monitoring_interval_days a
 				Computed:    true,
 				Description: `The timestamp of when the featurestore was created in RFC3339 UTC "Zulu" format, with nanosecond resolution and up to nine fractional digits.`,
 			},
+			"effective_labels": {
+				Type:        schema.TypeMap,
+				Computed:    true,
+				Description: `All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.`,
+				Elem:        &schema.Schema{Type: schema.TypeString},
+			},
 			"etag": {
 				Type:        schema.TypeString,
 				Computed:    true,
 				Description: `Used to perform consistent read-modify-write updates.`,
+			},
+			"terraform_labels": {
+				Type:     schema.TypeMap,
+				Computed: true,
+				Description: `The combination of labels configured directly on the resource
+ and default labels configured on the provider.`,
+				Elem: &schema.Schema{Type: schema.TypeString},
 			},
 			"update_time": {
 				Type:        schema.TypeString,
@@ -224,12 +246,6 @@ func resourceVertexAIFeaturestoreEntitytypeCreate(d *schema.ResourceData, meta i
 	} else if v, ok := d.GetOkExists("description"); !tpgresource.IsEmptyValue(reflect.ValueOf(descriptionProp)) && (ok || !reflect.DeepEqual(v, descriptionProp)) {
 		obj["description"] = descriptionProp
 	}
-	labelsProp, err := expandVertexAIFeaturestoreEntitytypeLabels(d.Get("labels"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(labelsProp)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
-		obj["labels"] = labelsProp
-	}
 	monitoringConfigProp, err := expandVertexAIFeaturestoreEntitytypeMonitoringConfig(d.Get("monitoring_config"), d, config)
 	if err != nil {
 		return err
@@ -241,6 +257,12 @@ func resourceVertexAIFeaturestoreEntitytypeCreate(d *schema.ResourceData, meta i
 		return err
 	} else if v, ok := d.GetOkExists("offline_storage_ttl_days"); !tpgresource.IsEmptyValue(reflect.ValueOf(offlineStorageTtlDaysProp)) && (ok || !reflect.DeepEqual(v, offlineStorageTtlDaysProp)) {
 		obj["offlineStorageTtlDays"] = offlineStorageTtlDaysProp
+	}
+	labelsProp, err := expandVertexAIFeaturestoreEntitytypeEffectiveLabels(d.Get("effective_labels"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("effective_labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(labelsProp)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
+		obj["labels"] = labelsProp
 	}
 
 	obj, err = resourceVertexAIFeaturestoreEntitytypeEncoder(d, meta, obj)
@@ -363,6 +385,12 @@ func resourceVertexAIFeaturestoreEntitytypeRead(d *schema.ResourceData, meta int
 	if err := d.Set("offline_storage_ttl_days", flattenVertexAIFeaturestoreEntitytypeOfflineStorageTtlDays(res["offlineStorageTtlDays"], d, config)); err != nil {
 		return fmt.Errorf("Error reading FeaturestoreEntitytype: %s", err)
 	}
+	if err := d.Set("terraform_labels", flattenVertexAIFeaturestoreEntitytypeTerraformLabels(res["labels"], d, config)); err != nil {
+		return fmt.Errorf("Error reading FeaturestoreEntitytype: %s", err)
+	}
+	if err := d.Set("effective_labels", flattenVertexAIFeaturestoreEntitytypeEffectiveLabels(res["labels"], d, config)); err != nil {
+		return fmt.Errorf("Error reading FeaturestoreEntitytype: %s", err)
+	}
 
 	return nil
 }
@@ -383,12 +411,6 @@ func resourceVertexAIFeaturestoreEntitytypeUpdate(d *schema.ResourceData, meta i
 	} else if v, ok := d.GetOkExists("description"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, descriptionProp)) {
 		obj["description"] = descriptionProp
 	}
-	labelsProp, err := expandVertexAIFeaturestoreEntitytypeLabels(d.Get("labels"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
-		obj["labels"] = labelsProp
-	}
 	monitoringConfigProp, err := expandVertexAIFeaturestoreEntitytypeMonitoringConfig(d.Get("monitoring_config"), d, config)
 	if err != nil {
 		return err
@@ -400,6 +422,12 @@ func resourceVertexAIFeaturestoreEntitytypeUpdate(d *schema.ResourceData, meta i
 		return err
 	} else if v, ok := d.GetOkExists("offline_storage_ttl_days"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, offlineStorageTtlDaysProp)) {
 		obj["offlineStorageTtlDays"] = offlineStorageTtlDaysProp
+	}
+	labelsProp, err := expandVertexAIFeaturestoreEntitytypeEffectiveLabels(d.Get("effective_labels"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("effective_labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
+		obj["labels"] = labelsProp
 	}
 
 	obj, err = resourceVertexAIFeaturestoreEntitytypeEncoder(d, meta, obj)
@@ -419,16 +447,16 @@ func resourceVertexAIFeaturestoreEntitytypeUpdate(d *schema.ResourceData, meta i
 		updateMask = append(updateMask, "description")
 	}
 
-	if d.HasChange("labels") {
-		updateMask = append(updateMask, "labels")
-	}
-
 	if d.HasChange("monitoring_config") {
 		updateMask = append(updateMask, "monitoringConfig")
 	}
 
 	if d.HasChange("offline_storage_ttl_days") {
 		updateMask = append(updateMask, "offlineStorageTtlDays")
+	}
+
+	if d.HasChange("effective_labels") {
+		updateMask = append(updateMask, "labels")
 	}
 	// updateMask is a URL parameter but not present in the schema, so ReplaceVars
 	// won't set it
@@ -556,7 +584,18 @@ func flattenVertexAIFeaturestoreEntitytypeUpdateTime(v interface{}, d *schema.Re
 }
 
 func flattenVertexAIFeaturestoreEntitytypeLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
-	return v
+	if v == nil {
+		return v
+	}
+
+	transformed := make(map[string]interface{})
+	if l, ok := d.GetOkExists("labels"); ok {
+		for k := range l.(map[string]interface{}) {
+			transformed[k] = v.(map[string]interface{})[k]
+		}
+	}
+
+	return transformed
 }
 
 func flattenVertexAIFeaturestoreEntitytypeMonitoringConfig(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -713,19 +752,27 @@ func flattenVertexAIFeaturestoreEntitytypeOfflineStorageTtlDays(v interface{}, d
 	return v // let terraform core handle it otherwise
 }
 
-func expandVertexAIFeaturestoreEntitytypeDescription(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
-	return v, nil
+func flattenVertexAIFeaturestoreEntitytypeTerraformLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return v
+	}
+
+	transformed := make(map[string]interface{})
+	if l, ok := d.GetOkExists("terraform_labels"); ok {
+		for k := range l.(map[string]interface{}) {
+			transformed[k] = v.(map[string]interface{})[k]
+		}
+	}
+
+	return transformed
 }
 
-func expandVertexAIFeaturestoreEntitytypeLabels(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
-	if v == nil {
-		return map[string]string{}, nil
-	}
-	m := make(map[string]string)
-	for k, val := range v.(map[string]interface{}) {
-		m[k] = val.(string)
-	}
-	return m, nil
+func flattenVertexAIFeaturestoreEntitytypeEffectiveLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func expandVertexAIFeaturestoreEntitytypeDescription(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
 }
 
 func expandVertexAIFeaturestoreEntitytypeMonitoringConfig(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
@@ -906,6 +953,17 @@ func expandVertexAIFeaturestoreEntitytypeMonitoringConfigCategoricalThresholdCon
 
 func expandVertexAIFeaturestoreEntitytypeOfflineStorageTtlDays(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
+}
+
+func expandVertexAIFeaturestoreEntitytypeEffectiveLabels(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
+	if v == nil {
+		return map[string]string{}, nil
+	}
+	m := make(map[string]string)
+	for k, val := range v.(map[string]interface{}) {
+		m[k] = val.(string)
+	}
+	return m, nil
 }
 
 func resourceVertexAIFeaturestoreEntitytypeEncoder(d *schema.ResourceData, meta interface{}, obj map[string]interface{}) (map[string]interface{}, error) {

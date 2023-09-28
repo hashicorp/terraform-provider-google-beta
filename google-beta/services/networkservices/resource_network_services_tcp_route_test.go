@@ -26,17 +26,19 @@ func TestAccNetworkServicesTcpRoute_update(t *testing.T) {
 				Config: testAccNetworkServicesTcpRoute_basic(tcpServiceName, tcpHealthCheckName, tcpRouteName),
 			},
 			{
-				ResourceName:      "google_network_services_tcp_route.foobar",
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            "google_network_services_tcp_route.foobar",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"labels", "terraform_labels"},
 			},
 			{
 				Config: testAccNetworkServicesTcpRoute_update(tcpServiceName, tcpHealthCheckName, tcpRouteName),
 			},
 			{
-				ResourceName:      "google_network_services_tcp_route.foobar",
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            "google_network_services_tcp_route.foobar",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"labels", "terraform_labels"},
 			},
 		},
 	})

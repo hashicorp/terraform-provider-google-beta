@@ -25,17 +25,19 @@ func TestAccGkeonpremVmwareNodePool_vmwareNodePoolUpdate(t *testing.T) {
 				Config: testAccGkeonpremVmwareNodePool_vmwareNodePoolUpdateStart(context),
 			},
 			{
-				ResourceName:      "google_gkeonprem_vmware_node_pool.nodepool",
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            "google_gkeonprem_vmware_node_pool.nodepool",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"annotations"},
 			},
 			{
 				Config: testAccGkeonpremVmwareNodePool_vmwareNodePoolUpdate(context),
 			},
 			{
-				ResourceName:      "google_gkeonprem_vmware_node_pool.nodepool",
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            "google_gkeonprem_vmware_node_pool.nodepool",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"annotations"},
 			},
 		},
 	})
@@ -93,7 +95,9 @@ func testAccGkeonpremVmwareNodePool_vmwareNodePoolUpdateStart(context map[string
     name = "tf-test-nodepool-%{random_suffix}"
     location = "us-west1"
     vmware_cluster = google_gkeonprem_vmware_cluster.cluster.name
-    annotations = {}
+    annotations = {
+      env = "test"
+    }
     config {
         cpus = 4
         memory_mb = 8196
@@ -168,7 +172,9 @@ func testAccGkeonpremVmwareNodePool_vmwareNodePoolUpdate(context map[string]inte
     name = "tf-test-nodepool-%{random_suffix}"
     location = "us-west1"
     vmware_cluster = google_gkeonprem_vmware_cluster.cluster.name
-    annotations = {}
+    annotations = {
+      env = "test-update"
+    }
     config {
         cpus = 5
         memory_mb = 4096

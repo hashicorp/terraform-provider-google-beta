@@ -24,6 +24,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/customdiff"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
@@ -46,6 +47,10 @@ func ResourceFirebaseAppleApp() *schema.Resource {
 			Update: schema.DefaultTimeout(20 * time.Minute),
 			Delete: schema.DefaultTimeout(20 * time.Minute),
 		},
+
+		CustomizeDiff: customdiff.All(
+			tpgresource.DefaultProviderProject,
+		),
 
 		Schema: map[string]*schema.Schema{
 			"bundle_id": {
@@ -453,11 +458,11 @@ func resourceFirebaseAppleAppDelete(d *schema.ResourceData, meta interface{}) er
 func resourceFirebaseAppleAppImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	config := meta.(*transport_tpg.Config)
 	if err := tpgresource.ParseImportId([]string{
-		"(?P<project>[^/]+) projects/(?P<project>[^/]+)/iosApps/(?P<app_id>[^/]+)",
-		"projects/(?P<project>[^/]+)/iosApps/(?P<app_id>[^/]+)",
-		"(?P<project>[^/]+)/(?P<project>[^/]+)/(?P<app_id>[^/]+)",
-		"iosApps/(?P<app_id>[^/]+)",
-		"(?P<app_id>[^/]+)",
+		"^(?P<project>[^/]+) projects/(?P<project>[^/]+)/iosApps/(?P<app_id>[^/]+)$",
+		"^projects/(?P<project>[^/]+)/iosApps/(?P<app_id>[^/]+)$",
+		"^(?P<project>[^/]+)/(?P<project>[^/]+)/(?P<app_id>[^/]+)$",
+		"^iosApps/(?P<app_id>[^/]+)$",
+		"^(?P<app_id>[^/]+)$",
 	}, d, config); err != nil {
 		return nil, err
 	}

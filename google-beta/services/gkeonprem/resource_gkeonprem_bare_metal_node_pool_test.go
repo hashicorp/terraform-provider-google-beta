@@ -25,17 +25,19 @@ func TestAccGkeonpremBareMetalNodePool_bareMetalNodePoolUpdate(t *testing.T) {
 				Config: testAccGkeonpremBareMetalNodePool_bareMetalNodePoolUpdateStart(context),
 			},
 			{
-				ResourceName:      "google_gkeonprem_bare_metal_node_pool.nodepool",
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            "google_gkeonprem_bare_metal_node_pool.nodepool",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"annotations"},
 			},
 			{
 				Config: testAccGkeonpremBareMetalNodePool_bareMetalNodePoolUpdate(context),
 			},
 			{
-				ResourceName:      "google_gkeonprem_bare_metal_node_pool.nodepool",
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            "google_gkeonprem_bare_metal_node_pool.nodepool",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"annotations"},
 			},
 		},
 	})
@@ -122,7 +124,9 @@ func testAccGkeonpremBareMetalNodePool_bareMetalNodePoolUpdateStart(context map[
     name = "tf-test-nodepool-%{random_suffix}"
     location = "us-west1"
     bare_metal_cluster = google_gkeonprem_bare_metal_cluster.cluster.name
-    annotations = {}
+    annotations = {
+      env = "test"
+    }
     node_pool_config {
       operating_system = "LINUX"
       labels = {}
@@ -216,7 +220,9 @@ func testAccGkeonpremBareMetalNodePool_bareMetalNodePoolUpdate(context map[strin
     name = "tf-test-nodepool-%{random_suffix}"
     location = "us-west1"
     bare_metal_cluster = google_gkeonprem_bare_metal_cluster.cluster.name
-    annotations = {}
+    annotations = {
+      env = "test-update"
+    }
     node_pool_config {
       operating_system = "LINUX"
       labels = {}

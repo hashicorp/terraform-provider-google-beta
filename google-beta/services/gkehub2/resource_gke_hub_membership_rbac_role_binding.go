@@ -23,6 +23,7 @@ import (
 	"reflect"
 	"time"
 
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/customdiff"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
@@ -44,6 +45,10 @@ func ResourceGKEHub2MembershipRBACRoleBinding() *schema.Resource {
 			Create: schema.DefaultTimeout(20 * time.Minute),
 			Delete: schema.DefaultTimeout(20 * time.Minute),
 		},
+
+		CustomizeDiff: customdiff.All(
+			tpgresource.DefaultProviderProject,
+		),
 
 		Schema: map[string]*schema.Schema{
 			"location": {
@@ -354,9 +359,9 @@ func resourceGKEHub2MembershipRBACRoleBindingDelete(d *schema.ResourceData, meta
 func resourceGKEHub2MembershipRBACRoleBindingImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	config := meta.(*transport_tpg.Config)
 	if err := tpgresource.ParseImportId([]string{
-		"projects/(?P<project>[^/]+)/locations/(?P<location>[^/]+)/memberships/(?P<membership_id>[^/]+)/rbacrolebindings/(?P<membership_rbac_role_binding_id>[^/]+)",
-		"(?P<project>[^/]+)/(?P<location>[^/]+)/(?P<membership_id>[^/]+)/(?P<membership_rbac_role_binding_id>[^/]+)",
-		"(?P<location>[^/]+)/(?P<membership_id>[^/]+)/(?P<membership_rbac_role_binding_id>[^/]+)",
+		"^projects/(?P<project>[^/]+)/locations/(?P<location>[^/]+)/memberships/(?P<membership_id>[^/]+)/rbacrolebindings/(?P<membership_rbac_role_binding_id>[^/]+)$",
+		"^(?P<project>[^/]+)/(?P<location>[^/]+)/(?P<membership_id>[^/]+)/(?P<membership_rbac_role_binding_id>[^/]+)$",
+		"^(?P<location>[^/]+)/(?P<membership_id>[^/]+)/(?P<membership_rbac_role_binding_id>[^/]+)$",
 	}, d, config); err != nil {
 		return nil, err
 	}

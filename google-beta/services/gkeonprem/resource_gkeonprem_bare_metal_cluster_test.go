@@ -25,17 +25,19 @@ func TestAccGkeonpremBareMetalCluster_bareMetalClusterUpdateBasic(t *testing.T) 
 				Config: testAccGkeonpremBareMetalCluster_bareMetalClusterUpdateMetalLbStart(context),
 			},
 			{
-				ResourceName:      "google_gkeonprem_bare_metal_cluster.cluster-metallb",
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            "google_gkeonprem_bare_metal_cluster.cluster-metallb",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"annotations"},
 			},
 			{
 				Config: testAccGkeonpremBareMetalCluster_bareMetalClusterUpdateMetalLb(context),
 			},
 			{
-				ResourceName:      "google_gkeonprem_bare_metal_cluster.cluster-metallb",
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            "google_gkeonprem_bare_metal_cluster.cluster-metallb",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"annotations"},
 			},
 		},
 	})
@@ -112,6 +114,9 @@ func testAccGkeonpremBareMetalCluster_bareMetalClusterUpdateMetalLbStart(context
     provider = google-beta
     name = "cluster-metallb%{random_suffix}"
     location = "us-west1"
+    annotations = {
+      env = "test"
+    }
     admin_cluster_membership = "projects/870316890899/locations/global/memberships/gkeonprem-terraform-test"
     bare_metal_version = "1.12.3"
     network_config {
@@ -188,6 +193,9 @@ func testAccGkeonpremBareMetalCluster_bareMetalClusterUpdateMetalLb(context map[
     provider = google-beta
     name = "cluster-metallb%{random_suffix}"
     location = "us-west1"
+    annotations = {
+      env = "test-update"
+    }
     admin_cluster_membership = "projects/870316890899/locations/global/memberships/gkeonprem-terraform-test"
     bare_metal_version = "1.12.3"
     network_config {

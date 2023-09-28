@@ -230,7 +230,7 @@ func TestAccGKEHubFeature_gkehubFeatureMciUpdate(t *testing.T) {
 				ResourceName:            "google_gke_hub_feature.feature",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"update_time"},
+				ImportStateVerifyIgnore: []string{"update_time", "labels", "terraform_labels"},
 			},
 		},
 	})
@@ -244,6 +244,7 @@ resource "google_container_cluster" "primary" {
   location           = "us-central1-a"
   initial_node_count = 1
   project = google_project.project.project_id
+  deletion_protection = false
   depends_on = [google_project_service.mci, google_project_service.container, google_project_service.container, google_project_service.gkehub]
 }
 
@@ -252,6 +253,7 @@ resource "google_container_cluster" "secondary" {
   location           = "us-central1-a"
   initial_node_count = 1
   project = google_project.project.project_id
+  deletion_protection = false
   depends_on = [google_project_service.mci, google_project_service.container, google_project_service.container, google_project_service.gkehub]
 }
 
@@ -295,6 +297,7 @@ resource "google_container_cluster" "primary" {
   location           = "us-central1-a"
   initial_node_count = 1
   project = google_project.project.project_id
+  deletion_protection = false
   depends_on = [google_project_service.mci, google_project_service.container, google_project_service.container, google_project_service.gkehub]
 }
 
@@ -303,6 +306,7 @@ resource "google_container_cluster" "secondary" {
   location           = "us-central1-a"
   initial_node_count = 1
   project = google_project.project.project_id
+  deletion_protection = false
   depends_on = [google_project_service.mci, google_project_service.container, google_project_service.container, google_project_service.gkehub]
 }
 
@@ -365,15 +369,16 @@ func TestAccGKEHubFeature_gkehubFeatureMcsd(t *testing.T) {
 				ResourceName:            "google_gke_hub_feature.feature",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"project"},
+				ImportStateVerifyIgnore: []string{"project", "labels", "terraform_labels"},
 			},
 			{
 				Config: testAccGKEHubFeature_gkehubFeatureMcsdUpdate(context),
 			},
 			{
-				ResourceName:      "google_gke_hub_feature.feature",
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            "google_gke_hub_feature.feature",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"labels", "terraform_labels"},
 			},
 		},
 	})

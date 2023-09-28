@@ -24,17 +24,19 @@ func TestAccNetworkSecurityClientTlsPolicy_update(t *testing.T) {
 				Config: testAccNetworkSecurityClientTlsPolicy_basic(clientTlsPolicyName),
 			},
 			{
-				ResourceName:      "google_network_security_client_tls_policy.foobar",
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            "google_network_security_client_tls_policy.foobar",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"labels", "terraform_labels"},
 			},
 			{
 				Config: testAccNetworkSecurityClientTlsPolicy_update(clientTlsPolicyName),
 			},
 			{
-				ResourceName:      "google_network_security_client_tls_policy.foobar",
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            "google_network_security_client_tls_policy.foobar",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"labels", "terraform_labels"},
 			},
 		},
 	})

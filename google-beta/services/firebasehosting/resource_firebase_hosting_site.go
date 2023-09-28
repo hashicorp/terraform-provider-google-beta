@@ -24,6 +24,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/customdiff"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
@@ -46,6 +47,10 @@ func ResourceFirebaseHostingSite() *schema.Resource {
 			Update: schema.DefaultTimeout(20 * time.Minute),
 			Delete: schema.DefaultTimeout(20 * time.Minute),
 		},
+
+		CustomizeDiff: customdiff.All(
+			tpgresource.DefaultProviderProject,
+		),
 
 		Schema: map[string]*schema.Schema{
 			"app_id": {
@@ -317,10 +322,10 @@ func resourceFirebaseHostingSiteDelete(d *schema.ResourceData, meta interface{})
 func resourceFirebaseHostingSiteImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	config := meta.(*transport_tpg.Config)
 	if err := tpgresource.ParseImportId([]string{
-		"projects/(?P<project>[^/]+)/sites/(?P<site_id>[^/]+)",
-		"(?P<project>[^/]+)/(?P<site_id>[^/]+)",
-		"sites/(?P<site_id>[^/]+)",
-		"(?P<site_id>[^/]+)",
+		"^projects/(?P<project>[^/]+)/sites/(?P<site_id>[^/]+)$",
+		"^(?P<project>[^/]+)/(?P<site_id>[^/]+)$",
+		"^sites/(?P<site_id>[^/]+)$",
+		"^(?P<site_id>[^/]+)$",
 	}, d, config); err != nil {
 		return nil, err
 	}

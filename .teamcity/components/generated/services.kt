@@ -161,11 +161,6 @@ var services = mapOf(
         "displayName" to "Cloudids",
         "path" to "./google-beta/services/cloudids"
     ),
-    "cloudiot" to mapOf(
-        "name" to "cloudiot",
-        "displayName" to "Cloudiot",
-        "path" to "./google-beta/services/cloudiot"
-    ),
     "cloudrun" to mapOf(
         "name" to "cloudrun",
         "displayName" to "Cloudrun",
@@ -370,11 +365,6 @@ var services = mapOf(
         "name" to "firestore",
         "displayName" to "Firestore",
         "path" to "./google-beta/services/firestore"
-    ),
-    "gameservices" to mapOf(
-        "name" to "gameservices",
-        "displayName" to "Gameservices",
-        "path" to "./google-beta/services/gameservices"
     ),
     "gkebackup" to mapOf(
         "name" to "gkebackup",

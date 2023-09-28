@@ -49,7 +49,7 @@ func TestAccHealthcareDicomStore_healthcareDicomStoreBasicExample(t *testing.T) 
 				ResourceName:            "google_healthcare_dicom_store.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"self_link", "dataset"},
+				ImportStateVerifyIgnore: []string{"self_link", "dataset", "labels", "terraform_labels"},
 			},
 		},
 	})
@@ -101,7 +101,7 @@ func TestAccHealthcareDicomStore_healthcareDicomStoreBqStreamExample(t *testing.
 				ResourceName:            "google_healthcare_dicom_store.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"self_link", "dataset"},
+				ImportStateVerifyIgnore: []string{"self_link", "dataset", "labels", "terraform_labels"},
 			},
 		},
 	})

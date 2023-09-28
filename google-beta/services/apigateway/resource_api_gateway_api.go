@@ -24,6 +24,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/customdiff"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
@@ -47,6 +48,11 @@ func ResourceApiGatewayApi() *schema.Resource {
 			Delete: schema.DefaultTimeout(20 * time.Minute),
 		},
 
+		CustomizeDiff: customdiff.All(
+			tpgresource.SetLabelsDiff,
+			tpgresource.DefaultProviderProject,
+		),
+
 		Schema: map[string]*schema.Schema{
 			"api_id": {
 				Type:        schema.TypeString,
@@ -61,10 +67,14 @@ func ResourceApiGatewayApi() *schema.Resource {
 				Description: `A user-visible name for the API.`,
 			},
 			"labels": {
-				Type:        schema.TypeMap,
-				Optional:    true,
-				Description: `Resource labels to represent user-provided metadata.`,
-				Elem:        &schema.Schema{Type: schema.TypeString},
+				Type:     schema.TypeMap,
+				Optional: true,
+				Description: `Resource labels to represent user-provided metadata.
+
+
+**Note**: This field is non-authoritative, and will only manage the labels present in your configuration.
+Please refer to the field 'effective_labels' for all of the labels present on the resource.`,
+				Elem: &schema.Schema{Type: schema.TypeString},
 			},
 			"managed_service": {
 				Type:     schema.TypeString,
@@ -79,10 +89,23 @@ If not specified, a new Service will automatically be created in the same projec
 				Computed:    true,
 				Description: `Creation timestamp in RFC3339 text format.`,
 			},
+			"effective_labels": {
+				Type:        schema.TypeMap,
+				Computed:    true,
+				Description: `All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.`,
+				Elem:        &schema.Schema{Type: schema.TypeString},
+			},
 			"name": {
 				Type:        schema.TypeString,
 				Computed:    true,
 				Description: `The resource name of the API. Format 'projects/{{project}}/locations/global/apis/{{apiId}}'`,
+			},
+			"terraform_labels": {
+				Type:     schema.TypeMap,
+				Computed: true,
+				Description: `The combination of labels configured directly on the resource
+ and default labels configured on the provider.`,
+				Elem: &schema.Schema{Type: schema.TypeString},
 			},
 			"project": {
 				Type:     schema.TypeString,
@@ -115,10 +138,10 @@ func resourceApiGatewayApiCreate(d *schema.ResourceData, meta interface{}) error
 	} else if v, ok := d.GetOkExists("managed_service"); !tpgresource.IsEmptyValue(reflect.ValueOf(managedServiceProp)) && (ok || !reflect.DeepEqual(v, managedServiceProp)) {
 		obj["managedService"] = managedServiceProp
 	}
-	labelsProp, err := expandApiGatewayApiLabels(d.Get("labels"), d, config)
+	labelsProp, err := expandApiGatewayApiEffectiveLabels(d.Get("effective_labels"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(labelsProp)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
+	} else if v, ok := d.GetOkExists("effective_labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(labelsProp)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
 		obj["labels"] = labelsProp
 	}
 
@@ -241,6 +264,12 @@ func resourceApiGatewayApiRead(d *schema.ResourceData, meta interface{}) error {
 	if err := d.Set("labels", flattenApiGatewayApiLabels(res["labels"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Api: %s", err)
 	}
+	if err := d.Set("terraform_labels", flattenApiGatewayApiTerraformLabels(res["labels"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Api: %s", err)
+	}
+	if err := d.Set("effective_labels", flattenApiGatewayApiEffectiveLabels(res["labels"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Api: %s", err)
+	}
 
 	return nil
 }
@@ -267,10 +296,10 @@ func resourceApiGatewayApiUpdate(d *schema.ResourceData, meta interface{}) error
 	} else if v, ok := d.GetOkExists("display_name"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, displayNameProp)) {
 		obj["displayName"] = displayNameProp
 	}
-	labelsProp, err := expandApiGatewayApiLabels(d.Get("labels"), d, config)
+	labelsProp, err := expandApiGatewayApiEffectiveLabels(d.Get("effective_labels"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
+	} else if v, ok := d.GetOkExists("effective_labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
 		obj["labels"] = labelsProp
 	}
 
@@ -286,7 +315,7 @@ func resourceApiGatewayApiUpdate(d *schema.ResourceData, meta interface{}) error
 		updateMask = append(updateMask, "displayName")
 	}
 
-	if d.HasChange("labels") {
+	if d.HasChange("effective_labels") {
 		updateMask = append(updateMask, "labels")
 	}
 	// updateMask is a URL parameter but not present in the schema, so ReplaceVars
@@ -384,9 +413,9 @@ func resourceApiGatewayApiDelete(d *schema.ResourceData, meta interface{}) error
 func resourceApiGatewayApiImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	config := meta.(*transport_tpg.Config)
 	if err := tpgresource.ParseImportId([]string{
-		"projects/(?P<project>[^/]+)/locations/global/apis/(?P<api_id>[^/]+)",
-		"(?P<project>[^/]+)/(?P<api_id>[^/]+)",
-		"(?P<api_id>[^/]+)",
+		"^projects/(?P<project>[^/]+)/locations/global/apis/(?P<api_id>[^/]+)$",
+		"^(?P<project>[^/]+)/(?P<api_id>[^/]+)$",
+		"^(?P<api_id>[^/]+)$",
 	}, d, config); err != nil {
 		return nil, err
 	}
@@ -418,6 +447,36 @@ func flattenApiGatewayApiCreateTime(v interface{}, d *schema.ResourceData, confi
 }
 
 func flattenApiGatewayApiLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return v
+	}
+
+	transformed := make(map[string]interface{})
+	if l, ok := d.GetOkExists("labels"); ok {
+		for k := range l.(map[string]interface{}) {
+			transformed[k] = v.(map[string]interface{})[k]
+		}
+	}
+
+	return transformed
+}
+
+func flattenApiGatewayApiTerraformLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return v
+	}
+
+	transformed := make(map[string]interface{})
+	if l, ok := d.GetOkExists("terraform_labels"); ok {
+		for k := range l.(map[string]interface{}) {
+			transformed[k] = v.(map[string]interface{})[k]
+		}
+	}
+
+	return transformed
+}
+
+func flattenApiGatewayApiEffectiveLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
@@ -429,7 +488,7 @@ func expandApiGatewayApiManagedService(v interface{}, d tpgresource.TerraformRes
 	return v, nil
 }
 
-func expandApiGatewayApiLabels(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
+func expandApiGatewayApiEffectiveLabels(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
 	if v == nil {
 		return map[string]string{}, nil
 	}

@@ -44,9 +44,10 @@ func TestAccComputeInstanceTemplate_basic(t *testing.T) {
 				),
 			},
 			{
-				ResourceName:      "google_compute_instance_template.foobar",
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            "google_compute_instance_template.foobar",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"labels", "terraform_labels"},
 			},
 		},
 	})
@@ -70,9 +71,10 @@ func TestAccComputeInstanceTemplate_imageShorthand(t *testing.T) {
 				),
 			},
 			{
-				ResourceName:      "google_compute_instance_template.foobar",
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            "google_compute_instance_template.foobar",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"labels", "terraform_labels"},
 			},
 		},
 	})
@@ -125,9 +127,10 @@ func TestAccComputeInstanceTemplate_maintenance_interval(t *testing.T) {
 				),
 			},
 			{
-				ResourceName:      "google_compute_instance_template.foobar",
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            "google_compute_instance_template.foobar",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"labels", "terraform_labels"},
 			},
 			{
 				Config: testAccComputeInstanceTemplate_basic(acctest.RandString(t, 10)),
@@ -600,9 +603,10 @@ func TestAccComputeInstanceTemplate_EncryptKMS(t *testing.T) {
 				),
 			},
 			{
-				ResourceName:      "google_compute_instance_template.foobar",
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            "google_compute_instance_template.foobar",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"labels", "terraform_labels"},
 			},
 		},
 	})
@@ -929,9 +933,10 @@ func TestAccComputeInstanceTemplate_diskResourcePolicies(t *testing.T) {
 				),
 			},
 			{
-				ResourceName:      "google_compute_instance_template.foobar",
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            "google_compute_instance_template.foobar",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"labels", "terraform_labels"},
 			},
 		},
 	})
@@ -1006,9 +1011,10 @@ func TestAccComputeInstanceTemplate_managedEnvoy(t *testing.T) {
 				),
 			},
 			{
-				ResourceName:      "google_compute_instance_template.foobar",
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            "google_compute_instance_template.foobar",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"labels", "terraform_labels"},
 			},
 		},
 	})
@@ -1705,7 +1711,6 @@ resource "google_compute_image" "foobar" {
   }
   labels = {
     my-label    = "my-label-value"
-    empty-label = ""
   }
   timeouts {
     create = "5m"

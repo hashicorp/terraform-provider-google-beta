@@ -24,6 +24,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/customdiff"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
@@ -47,6 +48,10 @@ func ResourceHealthcareFhirStore() *schema.Resource {
 			Update: schema.DefaultTimeout(20 * time.Minute),
 			Delete: schema.DefaultTimeout(20 * time.Minute),
 		},
+
+		CustomizeDiff: customdiff.All(
+			tpgresource.SetLabelsDiff,
+		),
 
 		Schema: map[string]*schema.Schema{
 			"dataset": {
@@ -140,7 +145,11 @@ bytes, and must conform to the following PCRE regular expression: [\p{Ll}\p{Lo}\
 No more than 64 labels can be associated with a given store.
 
 An object containing a list of "key": value pairs.
-Example: { "name": "wrench", "mass": "1.3kg", "count": "3" }.`,
+Example: { "name": "wrench", "mass": "1.3kg", "count": "3" }.
+
+
+**Note**: This field is non-authoritative, and will only manage the labels present in your configuration.
+Please refer to the field 'effective_labels' for all of the labels present on the resource.`,
 				Elem: &schema.Schema{Type: schema.TypeString},
 			},
 			"notification_config": {
@@ -301,10 +310,23 @@ an empty list as an intent to stream all the supported resource types in this FH
 				Description:  `The FHIR specification version. Default value: "STU3" Possible values: ["DSTU2", "STU3", "R4"]`,
 				Default:      "STU3",
 			},
+			"effective_labels": {
+				Type:        schema.TypeMap,
+				Computed:    true,
+				Description: `All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.`,
+				Elem:        &schema.Schema{Type: schema.TypeString},
+			},
 			"self_link": {
 				Type:        schema.TypeString,
 				Computed:    true,
 				Description: `The fully qualified name of this dataset`,
+			},
+			"terraform_labels": {
+				Type:     schema.TypeMap,
+				Computed: true,
+				Description: `The combination of labels configured directly on the resource
+ and default labels configured on the provider.`,
+				Elem: &schema.Schema{Type: schema.TypeString},
 			},
 		},
 		UseJSONNumber: true,
@@ -361,12 +383,6 @@ func resourceHealthcareFhirStoreCreate(d *schema.ResourceData, meta interface{})
 	} else if v, ok := d.GetOkExists("enable_history_import"); !tpgresource.IsEmptyValue(reflect.ValueOf(enableHistoryImportProp)) && (ok || !reflect.DeepEqual(v, enableHistoryImportProp)) {
 		obj["enableHistoryImport"] = enableHistoryImportProp
 	}
-	labelsProp, err := expandHealthcareFhirStoreLabels(d.Get("labels"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(labelsProp)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
-		obj["labels"] = labelsProp
-	}
 	notificationConfigProp, err := expandHealthcareFhirStoreNotificationConfig(d.Get("notification_config"), d, config)
 	if err != nil {
 		return err
@@ -390,6 +406,12 @@ func resourceHealthcareFhirStoreCreate(d *schema.ResourceData, meta interface{})
 		return err
 	} else if v, ok := d.GetOkExists("notification_configs"); !tpgresource.IsEmptyValue(reflect.ValueOf(notificationConfigsProp)) && (ok || !reflect.DeepEqual(v, notificationConfigsProp)) {
 		obj["notificationConfigs"] = notificationConfigsProp
+	}
+	labelsProp, err := expandHealthcareFhirStoreEffectiveLabels(d.Get("effective_labels"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("effective_labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(labelsProp)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
+		obj["labels"] = labelsProp
 	}
 
 	url, err := tpgresource.ReplaceVars(d, config, "{{HealthcareBasePath}}{{dataset}}/fhirStores?fhirStoreId={{name}}")
@@ -508,6 +530,12 @@ func resourceHealthcareFhirStoreRead(d *schema.ResourceData, meta interface{}) e
 	if err := d.Set("notification_configs", flattenHealthcareFhirStoreNotificationConfigs(res["notificationConfigs"], d, config)); err != nil {
 		return fmt.Errorf("Error reading FhirStore: %s", err)
 	}
+	if err := d.Set("terraform_labels", flattenHealthcareFhirStoreTerraformLabels(res["labels"], d, config)); err != nil {
+		return fmt.Errorf("Error reading FhirStore: %s", err)
+	}
+	if err := d.Set("effective_labels", flattenHealthcareFhirStoreEffectiveLabels(res["labels"], d, config)); err != nil {
+		return fmt.Errorf("Error reading FhirStore: %s", err)
+	}
 
 	return nil
 }
@@ -534,12 +562,6 @@ func resourceHealthcareFhirStoreUpdate(d *schema.ResourceData, meta interface{})
 	} else if v, ok := d.GetOkExists("enable_update_create"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, enableUpdateCreateProp)) {
 		obj["enableUpdateCreate"] = enableUpdateCreateProp
 	}
-	labelsProp, err := expandHealthcareFhirStoreLabels(d.Get("labels"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
-		obj["labels"] = labelsProp
-	}
 	notificationConfigProp, err := expandHealthcareFhirStoreNotificationConfig(d.Get("notification_config"), d, config)
 	if err != nil {
 		return err
@@ -564,6 +586,12 @@ func resourceHealthcareFhirStoreUpdate(d *schema.ResourceData, meta interface{})
 	} else if v, ok := d.GetOkExists("notification_configs"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, notificationConfigsProp)) {
 		obj["notificationConfigs"] = notificationConfigsProp
 	}
+	labelsProp, err := expandHealthcareFhirStoreEffectiveLabels(d.Get("effective_labels"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("effective_labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
+		obj["labels"] = labelsProp
+	}
 
 	url, err := tpgresource.ReplaceVars(d, config, "{{HealthcareBasePath}}{{dataset}}/fhirStores/{{name}}")
 	if err != nil {
@@ -581,10 +609,6 @@ func resourceHealthcareFhirStoreUpdate(d *schema.ResourceData, meta interface{})
 		updateMask = append(updateMask, "enableUpdateCreate")
 	}
 
-	if d.HasChange("labels") {
-		updateMask = append(updateMask, "labels")
-	}
-
 	if d.HasChange("notification_config") {
 		updateMask = append(updateMask, "notificationConfig")
 	}
@@ -599,6 +623,10 @@ func resourceHealthcareFhirStoreUpdate(d *schema.ResourceData, meta interface{})
 
 	if d.HasChange("notification_configs") {
 		updateMask = append(updateMask, "notificationConfigs")
+	}
+
+	if d.HasChange("effective_labels") {
+		updateMask = append(updateMask, "labels")
 	}
 	// updateMask is a URL parameter but not present in the schema, so ReplaceVars
 	// won't set it
@@ -718,7 +746,18 @@ func flattenHealthcareFhirStoreEnableHistoryImport(v interface{}, d *schema.Reso
 }
 
 func flattenHealthcareFhirStoreLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
-	return v
+	if v == nil {
+		return v
+	}
+
+	transformed := make(map[string]interface{})
+	if l, ok := d.GetOkExists("labels"); ok {
+		for k := range l.(map[string]interface{}) {
+			transformed[k] = v.(map[string]interface{})[k]
+		}
+	}
+
+	return transformed
 }
 
 func flattenHealthcareFhirStoreNotificationConfig(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -877,6 +916,25 @@ func flattenHealthcareFhirStoreNotificationConfigsSendPreviousResourceOnDelete(v
 	return v
 }
 
+func flattenHealthcareFhirStoreTerraformLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return v
+	}
+
+	transformed := make(map[string]interface{})
+	if l, ok := d.GetOkExists("terraform_labels"); ok {
+		for k := range l.(map[string]interface{}) {
+			transformed[k] = v.(map[string]interface{})[k]
+		}
+	}
+
+	return transformed
+}
+
+func flattenHealthcareFhirStoreEffectiveLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
 func expandHealthcareFhirStoreName(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
@@ -903,17 +961,6 @@ func expandHealthcareFhirStoreDisableResourceVersioning(v interface{}, d tpgreso
 
 func expandHealthcareFhirStoreEnableHistoryImport(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
-}
-
-func expandHealthcareFhirStoreLabels(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
-	if v == nil {
-		return map[string]string{}, nil
-	}
-	m := make(map[string]string)
-	for k, val := range v.(map[string]interface{}) {
-		m[k] = val.(string)
-	}
-	return m, nil
 }
 
 func expandHealthcareFhirStoreNotificationConfig(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
@@ -1127,6 +1174,17 @@ func expandHealthcareFhirStoreNotificationConfigsSendFullResource(v interface{},
 
 func expandHealthcareFhirStoreNotificationConfigsSendPreviousResourceOnDelete(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
+}
+
+func expandHealthcareFhirStoreEffectiveLabels(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
+	if v == nil {
+		return map[string]string{}, nil
+	}
+	m := make(map[string]string)
+	for k, val := range v.(map[string]interface{}) {
+		m[k] = val.(string)
+	}
+	return m, nil
 }
 
 func resourceHealthcareFhirStoreDecoder(d *schema.ResourceData, meta interface{}, res map[string]interface{}) (map[string]interface{}, error) {

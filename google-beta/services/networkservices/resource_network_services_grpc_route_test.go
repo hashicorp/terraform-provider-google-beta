@@ -24,17 +24,19 @@ func TestAccNetworkServicesGrpcRoute_update(t *testing.T) {
 				Config: testAccNetworkServicesGrpcRoute_basic(grpcRouteName),
 			},
 			{
-				ResourceName:      "google_network_services_grpc_route.foobar",
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            "google_network_services_grpc_route.foobar",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"labels", "terraform_labels"},
 			},
 			{
 				Config: testAccNetworkServicesGrpcRoute_update(grpcRouteName),
 			},
 			{
-				ResourceName:      "google_network_services_grpc_route.foobar",
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            "google_network_services_grpc_route.foobar",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"labels", "terraform_labels"},
 			},
 		},
 	})

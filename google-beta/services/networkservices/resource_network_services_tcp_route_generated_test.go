@@ -49,7 +49,7 @@ func TestAccNetworkServicesTcpRoute_networkServicesTcpRouteBasicExample(t *testi
 				ResourceName:            "google_network_services_tcp_route.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"name"},
+				ImportStateVerifyIgnore: []string{"name", "labels", "terraform_labels"},
 			},
 		},
 	})
@@ -114,7 +114,7 @@ func TestAccNetworkServicesTcpRoute_networkServicesTcpRouteActionsExample(t *tes
 				ResourceName:            "google_network_services_tcp_route.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"name"},
+				ImportStateVerifyIgnore: []string{"name", "labels", "terraform_labels"},
 			},
 		},
 	})
@@ -175,7 +175,7 @@ func TestAccNetworkServicesTcpRoute_networkServicesTcpRouteMeshBasicExample(t *t
 				ResourceName:            "google_network_services_tcp_route.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"name"},
+				ImportStateVerifyIgnore: []string{"name", "labels", "terraform_labels"},
 			},
 		},
 	})
@@ -253,7 +253,7 @@ func TestAccNetworkServicesTcpRoute_networkServicesTcpRouteGatewayBasicExample(t
 				ResourceName:            "google_network_services_tcp_route.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"name"},
+				ImportStateVerifyIgnore: []string{"name", "labels", "terraform_labels"},
 			},
 		},
 	})

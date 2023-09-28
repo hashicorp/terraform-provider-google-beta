@@ -24,6 +24,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/customdiff"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
@@ -46,6 +47,10 @@ func ResourceFirebaseWebApp() *schema.Resource {
 			Update: schema.DefaultTimeout(20 * time.Minute),
 			Delete: schema.DefaultTimeout(20 * time.Minute),
 		},
+
+		CustomizeDiff: customdiff.All(
+			tpgresource.DefaultProviderProject,
+		),
 
 		Schema: map[string]*schema.Schema{
 			"display_name": {
@@ -84,10 +89,10 @@ projects/projectId/webApps/appId`,
 			"deletion_policy": {
 				Type:     schema.TypeString,
 				Optional: true,
-				Default:  "ABANDON",
+				Default:  "DELETE",
 				Description: `Set to 'ABANDON' to allow the WebApp to be untracked from terraform state
 rather than deleted upon 'terraform destroy'. This is useful becaue the WebApp may be
-serving traffic. Set to 'DELETE' to delete the WebApp. Default to 'ABANDON'`,
+serving traffic. Set to 'DELETE' to delete the WebApp. Default to 'DELETE'`,
 			},
 			"project": {
 				Type:     schema.TypeString,
@@ -230,7 +235,7 @@ func resourceFirebaseWebAppRead(d *schema.ResourceData, meta interface{}) error 
 
 	// Explicitly set virtual fields to default values if unset
 	if _, ok := d.GetOkExists("deletion_policy"); !ok {
-		if err := d.Set("deletion_policy", "ABANDON"); err != nil {
+		if err := d.Set("deletion_policy", "DELETE"); err != nil {
 			return fmt.Errorf("Error setting deletion_policy: %s", err)
 		}
 	}
@@ -401,11 +406,11 @@ func resourceFirebaseWebAppDelete(d *schema.ResourceData, meta interface{}) erro
 func resourceFirebaseWebAppImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	config := meta.(*transport_tpg.Config)
 	if err := tpgresource.ParseImportId([]string{
-		"(?P<project>[^/]+) projects/(?P<project>[^/]+)/webApps/(?P<app_id>[^/]+)",
-		"projects/(?P<project>[^/]+)/webApps/(?P<app_id>[^/]+)",
-		"(?P<project>[^/]+)/(?P<project>[^/]+)/(?P<app_id>[^/]+)",
-		"webApps/(?P<app_id>[^/]+)",
-		"(?P<app_id>[^/]+)",
+		"^(?P<project>[^/]+) projects/(?P<project>[^/]+)/webApps/(?P<app_id>[^/]+)$",
+		"^projects/(?P<project>[^/]+)/webApps/(?P<app_id>[^/]+)$",
+		"^(?P<project>[^/]+)/(?P<project>[^/]+)/(?P<app_id>[^/]+)$",
+		"^webApps/(?P<app_id>[^/]+)$",
+		"^(?P<app_id>[^/]+)$",
 	}, d, config); err != nil {
 		return nil, err
 	}
@@ -418,7 +423,7 @@ func resourceFirebaseWebAppImport(d *schema.ResourceData, meta interface{}) ([]*
 	d.SetId(id)
 
 	// Explicitly set virtual fields to default values on import
-	if err := d.Set("deletion_policy", "ABANDON"); err != nil {
+	if err := d.Set("deletion_policy", "DELETE"); err != nil {
 		return nil, fmt.Errorf("Error setting deletion_policy: %s", err)
 	}
 

@@ -24,6 +24,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/customdiff"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
@@ -46,6 +47,11 @@ func ResourceNetworkSecurityClientTlsPolicy() *schema.Resource {
 			Update: schema.DefaultTimeout(30 * time.Minute),
 			Delete: schema.DefaultTimeout(30 * time.Minute),
 		},
+
+		CustomizeDiff: customdiff.All(
+			tpgresource.SetLabelsDiff,
+			tpgresource.DefaultProviderProject,
+		),
 
 		Schema: map[string]*schema.Schema{
 			"name": {
@@ -102,10 +108,13 @@ func ResourceNetworkSecurityClientTlsPolicy() *schema.Resource {
 				Description: `A free-text description of the resource. Max length 1024 characters.`,
 			},
 			"labels": {
-				Type:        schema.TypeMap,
-				Optional:    true,
-				Description: `Set of label tags associated with the ClientTlsPolicy resource.`,
-				Elem:        &schema.Schema{Type: schema.TypeString},
+				Type:     schema.TypeMap,
+				Optional: true,
+				Description: `Set of label tags associated with the ClientTlsPolicy resource.
+
+**Note**: This field is non-authoritative, and will only manage the labels present in your configuration.
+Please refer to the field 'effective_labels' for all of the labels present on the resource.`,
+				Elem: &schema.Schema{Type: schema.TypeString},
 			},
 			"location": {
 				Type:     schema.TypeString,
@@ -165,6 +174,19 @@ The default value is 'global'.`,
 				Computed:    true,
 				Description: `Time the ClientTlsPolicy was created in UTC.`,
 			},
+			"effective_labels": {
+				Type:        schema.TypeMap,
+				Computed:    true,
+				Description: `All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.`,
+				Elem:        &schema.Schema{Type: schema.TypeString},
+			},
+			"terraform_labels": {
+				Type:     schema.TypeMap,
+				Computed: true,
+				Description: `The combination of labels configured directly on the resource
+ and default labels configured on the provider.`,
+				Elem: &schema.Schema{Type: schema.TypeString},
+			},
 			"update_time": {
 				Type:        schema.TypeString,
 				Computed:    true,
@@ -189,12 +211,6 @@ func resourceNetworkSecurityClientTlsPolicyCreate(d *schema.ResourceData, meta i
 	}
 
 	obj := make(map[string]interface{})
-	labelsProp, err := expandNetworkSecurityClientTlsPolicyLabels(d.Get("labels"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(labelsProp)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
-		obj["labels"] = labelsProp
-	}
 	descriptionProp, err := expandNetworkSecurityClientTlsPolicyDescription(d.Get("description"), d, config)
 	if err != nil {
 		return err
@@ -218,6 +234,12 @@ func resourceNetworkSecurityClientTlsPolicyCreate(d *schema.ResourceData, meta i
 		return err
 	} else if v, ok := d.GetOkExists("server_validation_ca"); !tpgresource.IsEmptyValue(reflect.ValueOf(serverValidationCaProp)) && (ok || !reflect.DeepEqual(v, serverValidationCaProp)) {
 		obj["serverValidationCa"] = serverValidationCaProp
+	}
+	labelsProp, err := expandNetworkSecurityClientTlsPolicyEffectiveLabels(d.Get("effective_labels"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("effective_labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(labelsProp)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
+		obj["labels"] = labelsProp
 	}
 
 	url, err := tpgresource.ReplaceVars(d, config, "{{NetworkSecurityBasePath}}projects/{{project}}/locations/{{location}}/clientTlsPolicies?clientTlsPolicyId={{name}}")
@@ -335,6 +357,12 @@ func resourceNetworkSecurityClientTlsPolicyRead(d *schema.ResourceData, meta int
 	if err := d.Set("server_validation_ca", flattenNetworkSecurityClientTlsPolicyServerValidationCa(res["serverValidationCa"], d, config)); err != nil {
 		return fmt.Errorf("Error reading ClientTlsPolicy: %s", err)
 	}
+	if err := d.Set("terraform_labels", flattenNetworkSecurityClientTlsPolicyTerraformLabels(res["labels"], d, config)); err != nil {
+		return fmt.Errorf("Error reading ClientTlsPolicy: %s", err)
+	}
+	if err := d.Set("effective_labels", flattenNetworkSecurityClientTlsPolicyEffectiveLabels(res["labels"], d, config)); err != nil {
+		return fmt.Errorf("Error reading ClientTlsPolicy: %s", err)
+	}
 
 	return nil
 }
@@ -355,12 +383,6 @@ func resourceNetworkSecurityClientTlsPolicyUpdate(d *schema.ResourceData, meta i
 	billingProject = project
 
 	obj := make(map[string]interface{})
-	labelsProp, err := expandNetworkSecurityClientTlsPolicyLabels(d.Get("labels"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
-		obj["labels"] = labelsProp
-	}
 	descriptionProp, err := expandNetworkSecurityClientTlsPolicyDescription(d.Get("description"), d, config)
 	if err != nil {
 		return err
@@ -385,6 +407,12 @@ func resourceNetworkSecurityClientTlsPolicyUpdate(d *schema.ResourceData, meta i
 	} else if v, ok := d.GetOkExists("server_validation_ca"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, serverValidationCaProp)) {
 		obj["serverValidationCa"] = serverValidationCaProp
 	}
+	labelsProp, err := expandNetworkSecurityClientTlsPolicyEffectiveLabels(d.Get("effective_labels"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("effective_labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
+		obj["labels"] = labelsProp
+	}
 
 	url, err := tpgresource.ReplaceVars(d, config, "{{NetworkSecurityBasePath}}projects/{{project}}/locations/{{location}}/clientTlsPolicies/{{name}}")
 	if err != nil {
@@ -393,10 +421,6 @@ func resourceNetworkSecurityClientTlsPolicyUpdate(d *schema.ResourceData, meta i
 
 	log.Printf("[DEBUG] Updating ClientTlsPolicy %q: %#v", d.Id(), obj)
 	updateMask := []string{}
-
-	if d.HasChange("labels") {
-		updateMask = append(updateMask, "labels")
-	}
 
 	if d.HasChange("description") {
 		updateMask = append(updateMask, "description")
@@ -412,6 +436,10 @@ func resourceNetworkSecurityClientTlsPolicyUpdate(d *schema.ResourceData, meta i
 
 	if d.HasChange("server_validation_ca") {
 		updateMask = append(updateMask, "serverValidationCa")
+	}
+
+	if d.HasChange("effective_labels") {
+		updateMask = append(updateMask, "labels")
 	}
 	// updateMask is a URL parameter but not present in the schema, so ReplaceVars
 	// won't set it
@@ -508,9 +536,9 @@ func resourceNetworkSecurityClientTlsPolicyDelete(d *schema.ResourceData, meta i
 func resourceNetworkSecurityClientTlsPolicyImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	config := meta.(*transport_tpg.Config)
 	if err := tpgresource.ParseImportId([]string{
-		"projects/(?P<project>[^/]+)/locations/(?P<location>[^/]+)/clientTlsPolicies/(?P<name>[^/]+)",
-		"(?P<project>[^/]+)/(?P<location>[^/]+)/(?P<name>[^/]+)",
-		"(?P<location>[^/]+)/(?P<name>[^/]+)",
+		"^projects/(?P<project>[^/]+)/locations/(?P<location>[^/]+)/clientTlsPolicies/(?P<name>[^/]+)$",
+		"^(?P<project>[^/]+)/(?P<location>[^/]+)/(?P<name>[^/]+)$",
+		"^(?P<location>[^/]+)/(?P<name>[^/]+)$",
 	}, d, config); err != nil {
 		return nil, err
 	}
@@ -534,7 +562,18 @@ func flattenNetworkSecurityClientTlsPolicyUpdateTime(v interface{}, d *schema.Re
 }
 
 func flattenNetworkSecurityClientTlsPolicyLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
-	return v
+	if v == nil {
+		return v
+	}
+
+	transformed := make(map[string]interface{})
+	if l, ok := d.GetOkExists("labels"); ok {
+		for k := range l.(map[string]interface{}) {
+			transformed[k] = v.(map[string]interface{})[k]
+		}
+	}
+
+	return transformed
 }
 
 func flattenNetworkSecurityClientTlsPolicyDescription(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -647,15 +686,23 @@ func flattenNetworkSecurityClientTlsPolicyServerValidationCaCertificateProviderI
 	return v
 }
 
-func expandNetworkSecurityClientTlsPolicyLabels(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
+func flattenNetworkSecurityClientTlsPolicyTerraformLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
-		return map[string]string{}, nil
+		return v
 	}
-	m := make(map[string]string)
-	for k, val := range v.(map[string]interface{}) {
-		m[k] = val.(string)
+
+	transformed := make(map[string]interface{})
+	if l, ok := d.GetOkExists("terraform_labels"); ok {
+		for k := range l.(map[string]interface{}) {
+			transformed[k] = v.(map[string]interface{})[k]
+		}
 	}
-	return m, nil
+
+	return transformed
+}
+
+func flattenNetworkSecurityClientTlsPolicyEffectiveLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
 }
 
 func expandNetworkSecurityClientTlsPolicyDescription(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
@@ -811,4 +858,15 @@ func expandNetworkSecurityClientTlsPolicyServerValidationCaCertificateProviderIn
 
 func expandNetworkSecurityClientTlsPolicyServerValidationCaCertificateProviderInstancePluginInstance(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
+}
+
+func expandNetworkSecurityClientTlsPolicyEffectiveLabels(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
+	if v == nil {
+		return map[string]string{}, nil
+	}
+	m := make(map[string]string)
+	for k, val := range v.(map[string]interface{}) {
+		m[k] = val.(string)
+	}
+	return m, nil
 }

@@ -63,7 +63,7 @@ func TestAccContainerAwsCluster_BasicHandWritten(t *testing.T) {
 				ResourceName:            "google_container_aws_cluster.primary",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"fleet.0.project"},
+				ImportStateVerifyIgnore: []string{"fleet.0.project", "annotations"},
 			},
 			{
 				Config: testAccContainerAwsCluster_BasicHandWrittenUpdate0(context),
@@ -72,7 +72,7 @@ func TestAccContainerAwsCluster_BasicHandWritten(t *testing.T) {
 				ResourceName:            "google_container_aws_cluster.primary",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"fleet.0.project"},
+				ImportStateVerifyIgnore: []string{"fleet.0.project", "annotations"},
 			},
 		},
 	})
@@ -107,7 +107,7 @@ func TestAccContainerAwsCluster_BasicEnumHandWritten(t *testing.T) {
 				ResourceName:            "google_container_aws_cluster.primary",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"fleet.0.project"},
+				ImportStateVerifyIgnore: []string{"fleet.0.project", "annotations"},
 			},
 			{
 				Config: testAccContainerAwsCluster_BasicEnumHandWrittenUpdate0(context),
@@ -116,7 +116,7 @@ func TestAccContainerAwsCluster_BasicEnumHandWritten(t *testing.T) {
 				ResourceName:            "google_container_aws_cluster.primary",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"fleet.0.project"},
+				ImportStateVerifyIgnore: []string{"fleet.0.project", "annotations"},
 			},
 		},
 	})
@@ -152,7 +152,7 @@ func TestAccContainerAwsCluster_BetaBasicHandWritten(t *testing.T) {
 				ResourceName:            "google_container_aws_cluster.primary",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"fleet.0.project"},
+				ImportStateVerifyIgnore: []string{"fleet.0.project", "annotations"},
 			},
 			{
 				Config: testAccContainerAwsCluster_BetaBasicHandWrittenUpdate0(context),
@@ -161,7 +161,7 @@ func TestAccContainerAwsCluster_BetaBasicHandWritten(t *testing.T) {
 				ResourceName:            "google_container_aws_cluster.primary",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"fleet.0.project"},
+				ImportStateVerifyIgnore: []string{"fleet.0.project", "annotations"},
 			},
 		},
 	})
@@ -197,7 +197,7 @@ func TestAccContainerAwsCluster_BetaBasicEnumHandWritten(t *testing.T) {
 				ResourceName:            "google_container_aws_cluster.primary",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"fleet.0.project"},
+				ImportStateVerifyIgnore: []string{"fleet.0.project", "annotations"},
 			},
 			{
 				Config: testAccContainerAwsCluster_BetaBasicEnumHandWrittenUpdate0(context),
@@ -206,7 +206,7 @@ func TestAccContainerAwsCluster_BetaBasicEnumHandWritten(t *testing.T) {
 				ResourceName:            "google_container_aws_cluster.primary",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"fleet.0.project"},
+				ImportStateVerifyIgnore: []string{"fleet.0.project", "annotations"},
 			},
 		},
 	})
@@ -897,6 +897,10 @@ resource "google_container_aws_cluster" "primary" {
   }
 
   aws_region = "%{aws_region}"
+
+  binary_authorization {
+    evaluation_mode = "PROJECT_SINGLETON_POLICY_ENFORCE"
+  }
 
   control_plane {
     aws_services_authentication {

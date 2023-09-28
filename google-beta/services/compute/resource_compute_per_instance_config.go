@@ -23,6 +23,7 @@ import (
 	"reflect"
 	"time"
 
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/customdiff"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
@@ -46,6 +47,11 @@ func ResourceComputePerInstanceConfig() *schema.Resource {
 			Update: schema.DefaultTimeout(20 * time.Minute),
 			Delete: schema.DefaultTimeout(20 * time.Minute),
 		},
+
+		CustomizeDiff: customdiff.All(
+			tpgresource.DefaultProviderProject,
+			tpgresource.DefaultProviderZone,
+		),
 
 		Schema: map[string]*schema.Schema{
 			"instance_group_manager": {
@@ -158,6 +164,7 @@ func ResourceComputePerInstanceConfig() *schema.Resource {
 			},
 			"zone": {
 				Type:             schema.TypeString,
+				Computed:         true,
 				Optional:         true,
 				ForceNew:         true,
 				DiffSuppressFunc: tpgresource.CompareSelfLinkOrResourceName,
@@ -392,6 +399,14 @@ func resourceComputePerInstanceConfigRead(d *schema.ResourceData, meta interface
 		}
 	}
 	if err := d.Set("project", project); err != nil {
+		return fmt.Errorf("Error reading PerInstanceConfig: %s", err)
+	}
+
+	zone, err := tpgresource.GetZone(d, config)
+	if err != nil {
+		return err
+	}
+	if err := d.Set("zone", zone); err != nil {
 		return fmt.Errorf("Error reading PerInstanceConfig: %s", err)
 	}
 
@@ -637,10 +652,10 @@ func resourceComputePerInstanceConfigDelete(d *schema.ResourceData, meta interfa
 func resourceComputePerInstanceConfigImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	config := meta.(*transport_tpg.Config)
 	if err := tpgresource.ParseImportId([]string{
-		"projects/(?P<project>[^/]+)/zones/(?P<zone>[^/]+)/instanceGroupManagers/(?P<instance_group_manager>[^/]+)/(?P<name>[^/]+)",
-		"(?P<project>[^/]+)/(?P<zone>[^/]+)/(?P<instance_group_manager>[^/]+)/(?P<name>[^/]+)",
-		"(?P<zone>[^/]+)/(?P<instance_group_manager>[^/]+)/(?P<name>[^/]+)",
-		"(?P<instance_group_manager>[^/]+)/(?P<name>[^/]+)",
+		"^projects/(?P<project>[^/]+)/zones/(?P<zone>[^/]+)/instanceGroupManagers/(?P<instance_group_manager>[^/]+)/(?P<name>[^/]+)$",
+		"^(?P<project>[^/]+)/(?P<zone>[^/]+)/(?P<instance_group_manager>[^/]+)/(?P<name>[^/]+)$",
+		"^(?P<zone>[^/]+)/(?P<instance_group_manager>[^/]+)/(?P<name>[^/]+)$",
+		"^(?P<instance_group_manager>[^/]+)/(?P<name>[^/]+)$",
 	}, d, config); err != nil {
 		return nil, err
 	}
