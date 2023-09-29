@@ -75,10 +75,13 @@ func ResourceWorkstationsWorkstationConfig() *schema.Resource {
 				Description: `The ID to be assigned to the workstation cluster config.`,
 			},
 			"annotations": {
-				Type:        schema.TypeMap,
-				Optional:    true,
-				Description: `Client-specified annotations. This is distinct from labels.`,
-				Elem:        &schema.Schema{Type: schema.TypeString},
+				Type:     schema.TypeMap,
+				Optional: true,
+				Description: `Client-specified annotations. This is distinct from labels.
+
+**Note**: This field is non-authoritative, and will only manage the annotations present in your configuration.
+Please refer to the field 'effective_annotations' for all of the annotations present on the resource.`,
+				Elem: &schema.Schema{Type: schema.TypeString},
 			},
 			"container": {
 				Type:        schema.TypeList,

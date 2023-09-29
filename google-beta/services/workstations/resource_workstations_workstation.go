@@ -80,10 +80,13 @@ func ResourceWorkstationsWorkstation() *schema.Resource {
 				Description: `ID to use for the workstation.`,
 			},
 			"annotations": {
-				Type:        schema.TypeMap,
-				Optional:    true,
-				Description: `Client-specified annotations. This is distinct from labels.`,
-				Elem:        &schema.Schema{Type: schema.TypeString},
+				Type:     schema.TypeMap,
+				Optional: true,
+				Description: `Client-specified annotations. This is distinct from labels.
+
+**Note**: This field is non-authoritative, and will only manage the annotations present in your configuration.
+Please refer to the field 'effective_annotations' for all of the annotations present on the resource.`,
+				Elem: &schema.Schema{Type: schema.TypeString},
 			},
 			"display_name": {
 				Type:        schema.TypeString,
