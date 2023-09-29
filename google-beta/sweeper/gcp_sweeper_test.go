@@ -60,6 +60,7 @@ import (
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/dns"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/documentai"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/documentaiwarehouse"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/edgecontainer"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/edgenetwork"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/essentialcontacts"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/filestore"

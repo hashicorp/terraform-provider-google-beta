@@ -65,6 +65,7 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/dns"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/documentai"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/documentaiwarehouse"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/edgecontainer"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/edgenetwork"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/essentialcontacts"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/filestore"
@@ -511,6 +512,11 @@ func Provider() *schema.Provider {
 				ValidateFunc: transport_tpg.ValidateCustomEndpoint,
 			},
 			"document_ai_warehouse_custom_endpoint": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: transport_tpg.ValidateCustomEndpoint,
+			},
+			"edgecontainer_custom_endpoint": {
 				Type:         schema.TypeString,
 				Optional:     true,
 				ValidateFunc: transport_tpg.ValidateCustomEndpoint,
@@ -1118,9 +1124,9 @@ func DatasourceMapWithErrors() (map[string]*schema.Resource, error) {
 		})
 }
 
-// Generated resources: 383
+// Generated resources: 386
 // Generated IAM resources: 237
-// Total generated resources: 620
+// Total generated resources: 623
 func ResourceMap() map[string]*schema.Resource {
 	resourceMap, _ := ResourceMapWithErrors()
 	return resourceMap
@@ -1479,6 +1485,9 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_document_ai_processor_default_version":                   documentai.ResourceDocumentAIProcessorDefaultVersion(),
 			"google_document_ai_warehouse_document_schema":                   documentaiwarehouse.ResourceDocumentAIWarehouseDocumentSchema(),
 			"google_document_ai_warehouse_location":                          documentaiwarehouse.ResourceDocumentAIWarehouseLocation(),
+			"google_edgecontainer_cluster":                                   edgecontainer.ResourceEdgecontainerCluster(),
+			"google_edgecontainer_node_pool":                                 edgecontainer.ResourceEdgecontainerNodePool(),
+			"google_edgecontainer_vpn_connection":                            edgecontainer.ResourceEdgecontainerVpnConnection(),
 			"google_edgenetwork_network":                                     edgenetwork.ResourceEdgenetworkNetwork(),
 			"google_edgenetwork_subnet":                                      edgenetwork.ResourceEdgenetworkSubnet(),
 			"google_essential_contacts_contact":                              essentialcontacts.ResourceEssentialContactsContact(),
@@ -2054,6 +2063,7 @@ func ProviderConfigure(ctx context.Context, d *schema.ResourceData, p *schema.Pr
 	config.DNSBasePath = d.Get("dns_custom_endpoint").(string)
 	config.DocumentAIBasePath = d.Get("document_ai_custom_endpoint").(string)
 	config.DocumentAIWarehouseBasePath = d.Get("document_ai_warehouse_custom_endpoint").(string)
+	config.EdgecontainerBasePath = d.Get("edgecontainer_custom_endpoint").(string)
 	config.EdgenetworkBasePath = d.Get("edgenetwork_custom_endpoint").(string)
 	config.EssentialContactsBasePath = d.Get("essential_contacts_custom_endpoint").(string)
 	config.FilestoreBasePath = d.Get("filestore_custom_endpoint").(string)
