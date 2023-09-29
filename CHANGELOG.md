@@ -2,6 +2,11 @@
 
 NOTES:
 * provider: some provider default values are now shown at plan-time ([#6395](https://github.com/hashicorp/terraform-provider-google-beta/pull/6395))
+* provider: default labels configured on the provider through the new `default_labels` field are now supported. The default labels configured on the provider will be applied to all of the resources with standard `labels` field.
+* provider: three label-related fields are now in all of the resources with standard `labels` field. `labels` field is non-authoritative and only manages the labels defined by the users on the resource through Terraform. The new output-only `terraform_labels` field merges the labels defined by the users on the resource through Terraform and the default labels configured on the provider. The new output-only `effective_labels` field lists all of labels present on the resource in GCP, including the labels configured through Terraform, the system, and other clients.
+* provider: two annotation-related fields are now in all of the resources with standard `annotations` field. The `annotations` field is non-authoritative and only manages the annotations defined by the users on the resource through Terraform. The new output-only `effective_annotations` field lists all of annotations present on the resource in GCP, including the annotations configured through Terraform, the system, and other clients.
+* provider: three fields `labels`, `terraform_labels`, and `effective_labels` are now present in most resource-based datasources. All three fields have all of labels present on the resource in GCP including the labels configured through Terraform, the system, and other clients, equivalent to `effective_labels` on the resource.
+* provider: both `annotations` and `effective_annotations` are now present in most resource-based datasources. Both fields have all of annotations present on the resource in GCP including the annotations configured through Terraform, the system, and other clients, equivalent to `effective_annotations` on the resource.
 
 BREAKING CHANGES:
 * provider: added provider-level validation so these fields are not set as empty strings in a user's config: `credentials`, `access_token`, `impersonate_service_account`, `project`, `billing_project`, `region`, `zone` ([#6395](https://github.com/hashicorp/terraform-provider-google-beta/pull/6395))
@@ -25,6 +30,7 @@ BREAKING CHANGES:
 * compute: retyped `consumer_accept_lists` to a SET from an ARRAY type for `google_compute_service_attachment ([#6395](https://github.com/hashicorp/terraform-provider-google-beta/pull/6395))
 * container: added `deletion_protection` to `google_container_cluster` which is enabled to `true` by default. When enabled, this field prevents Terraform from deleting the resource. ([#6395](https://github.com/hashicorp/terraform-provider-google-beta/pull/6395))
 * container: changed `management.auto_repair` and `management.auto_upgrade` defaults to true in `google_container_node_pool` ([#6395](https://github.com/hashicorp/terraform-provider-google-beta/pull/6395))
+* container: made `networking_mode` default to `VPC_NATIVE` for newly created `google_container_cluster` resources ([#6402](https://github.com/hashicorp/terraform-provider-google-beta/pull/6402))
 * container: removed `enable_binary_authorization` in `google_container_cluster` ([#6395](https://github.com/hashicorp/terraform-provider-google-beta/pull/6395))
 * container: removed default for `logging_variant` in `google_container_node_pool` ([#6395](https://github.com/hashicorp/terraform-provider-google-beta/pull/6395))
 * container: removed default value in `network_policy.provider` in `google_container_cluster` ([#6395](https://github.com/hashicorp/terraform-provider-google-beta/pull/6395))
@@ -50,8 +56,9 @@ FEATURES:
 * **New Resource:** `google_scc_organization_custom_module` ([#6390](https://github.com/hashicorp/terraform-provider-google-beta/pull/6390))
 
 IMPROVEMENTS:
+* alloydb: added additional fields to `google_alloydb_instance` and `google_alloydb_backup` ([#6363](https://github.com/hashicorp/terraform-provider-google-beta/pull/6363))
 * artifactregistry: added support for remote APT and YUM repositories to `google_artifact_registry_repository` ([#6362](https://github.com/hashicorp/terraform-provider-google-beta/pull/6362))
-* baremetal: make delete a noop for the resource `google_bare_metal_admin_cluster` to better align with actual behavior ([#6395](https://github.com/hashicorp/terraform-provider-google-beta/pull/6395))
+* baremetal: made delete a noop for the resource `google_bare_metal_admin_cluster` to better align with actual behavior ([#6395](https://github.com/hashicorp/terraform-provider-google-beta/pull/6395))
 * bigtable: added `state` output attribute to `google_bigtable_instance` clusters ([#6353](https://github.com/hashicorp/terraform-provider-google-beta/pull/6353))
 * compute: `google_compute_node_group` made mutable ([#6395](https://github.com/hashicorp/terraform-provider-google-beta/pull/6395))
 * compute: added `network_interface.security_policy` field to `google_compute_instance` resource (beta) ([#6343](https://github.com/hashicorp/terraform-provider-google-beta/pull/6343))
