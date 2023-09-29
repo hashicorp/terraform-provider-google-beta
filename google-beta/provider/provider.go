@@ -1124,9 +1124,9 @@ func DatasourceMapWithErrors() (map[string]*schema.Resource, error) {
 		})
 }
 
-// Generated resources: 386
+// Generated resources: 387
 // Generated IAM resources: 237
-// Total generated resources: 623
+// Total generated resources: 624
 func ResourceMap() map[string]*schema.Resource {
 	resourceMap, _ := ResourceMapWithErrors()
 	return resourceMap
@@ -1501,6 +1501,7 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_firebase_database_instance":                              firebasedatabase.ResourceFirebaseDatabaseInstance(),
 			"google_firebase_extensions_instance":                            firebaseextensions.ResourceFirebaseExtensionsInstance(),
 			"google_firebase_hosting_channel":                                firebasehosting.ResourceFirebaseHostingChannel(),
+			"google_firebase_hosting_custom_domain":                          firebasehosting.ResourceFirebaseHostingCustomDomain(),
 			"google_firebase_hosting_release":                                firebasehosting.ResourceFirebaseHostingRelease(),
 			"google_firebase_hosting_site":                                   firebasehosting.ResourceFirebaseHostingSite(),
 			"google_firebase_hosting_version":                                firebasehosting.ResourceFirebaseHostingVersion(),
