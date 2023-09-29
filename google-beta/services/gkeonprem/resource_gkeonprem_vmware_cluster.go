@@ -628,6 +628,57 @@ Enabled by default.`,
 					},
 				},
 			},
+			"vcenter": {
+				Type:     schema.TypeList,
+				Optional: true,
+				Description: `VmwareVCenterConfig specifies vCenter config for the user cluster.
+Inherited from the admin cluster.`,
+				MaxItems: 1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"ca_cert_data": {
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: `Contains the vCenter CA certificate public key for SSL verification.`,
+						},
+						"cluster": {
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: `The name of the vCenter cluster for the user cluster.`,
+						},
+						"datacenter": {
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: `The name of the vCenter datacenter for the user cluster.`,
+						},
+						"datastore": {
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: `The name of the vCenter datastore for the user cluster.`,
+						},
+						"folder": {
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: `The name of the vCenter folder for the user cluster.`,
+						},
+						"resource_pool": {
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: `The name of the vCenter resource pool for the user cluster.`,
+						},
+						"storage_policy_name": {
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: `The name of the vCenter storage policy for the user cluster.`,
+						},
+						"address": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: `The vCenter IP address.`,
+						},
+					},
+				},
+			},
 			"vm_tracking_enabled": {
 				Type:        schema.TypeBool,
 				Computed:    true,
@@ -830,56 +881,6 @@ indicate real problems requiring user intervention.`,
 					},
 				},
 			},
-			"vcenter": {
-				Type:     schema.TypeList,
-				Computed: true,
-				Description: `VmwareVCenterConfig specifies vCenter config for the user cluster.
-Inherited from the admin cluster.`,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"address": {
-							Type:        schema.TypeString,
-							Computed:    true,
-							Description: `The vCenter IP address.`,
-						},
-						"ca_cert_data": {
-							Type:        schema.TypeString,
-							Computed:    true,
-							Description: `Contains the vCenter CA certificate public key for SSL verification.`,
-						},
-						"cluster": {
-							Type:        schema.TypeString,
-							Computed:    true,
-							Description: `The name of the vCenter cluster for the user cluster.`,
-						},
-						"datacenter": {
-							Type:        schema.TypeString,
-							Computed:    true,
-							Description: `The name of the vCenter datacenter for the user cluster.`,
-						},
-						"datastore": {
-							Type:        schema.TypeString,
-							Computed:    true,
-							Description: `The name of the vCenter datastore for the user cluster.`,
-						},
-						"folder": {
-							Type:        schema.TypeString,
-							Computed:    true,
-							Description: `The name of the vCenter folder for the user cluster.`,
-						},
-						"resource_pool": {
-							Type:        schema.TypeString,
-							Computed:    true,
-							Description: `The name of the vCenter resource pool for the user cluster.`,
-						},
-						"storage_policy_name": {
-							Type:        schema.TypeString,
-							Computed:    true,
-							Description: `The name of the vCenter storage policy for the user cluster.`,
-						},
-					},
-				},
-			},
 			"project": {
 				Type:     schema.TypeString,
 				Optional: true,
@@ -982,6 +983,12 @@ func resourceGkeonpremVmwareClusterCreate(d *schema.ResourceData, meta interface
 		return err
 	} else if v, ok := d.GetOkExists("upgrade_policy"); !tpgresource.IsEmptyValue(reflect.ValueOf(upgradePolicyProp)) && (ok || !reflect.DeepEqual(v, upgradePolicyProp)) {
 		obj["upgradePolicy"] = upgradePolicyProp
+	}
+	vcenterProp, err := expandGkeonpremVmwareClusterVcenter(d.Get("vcenter"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("vcenter"); !tpgresource.IsEmptyValue(reflect.ValueOf(vcenterProp)) && (ok || !reflect.DeepEqual(v, vcenterProp)) {
+		obj["vcenter"] = vcenterProp
 	}
 	annotationsProp, err := expandGkeonpremVmwareClusterEffectiveAnnotations(d.Get("effective_annotations"), d, config)
 	if err != nil {
@@ -1276,6 +1283,12 @@ func resourceGkeonpremVmwareClusterUpdate(d *schema.ResourceData, meta interface
 	} else if v, ok := d.GetOkExists("upgrade_policy"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, upgradePolicyProp)) {
 		obj["upgradePolicy"] = upgradePolicyProp
 	}
+	vcenterProp, err := expandGkeonpremVmwareClusterVcenter(d.Get("vcenter"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("vcenter"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, vcenterProp)) {
+		obj["vcenter"] = vcenterProp
+	}
 	annotationsProp, err := expandGkeonpremVmwareClusterEffectiveAnnotations(d.Get("effective_annotations"), d, config)
 	if err != nil {
 		return err
@@ -1341,6 +1354,10 @@ func resourceGkeonpremVmwareClusterUpdate(d *schema.ResourceData, meta interface
 
 	if d.HasChange("upgrade_policy") {
 		updateMask = append(updateMask, "upgradePolicy")
+	}
+
+	if d.HasChange("vcenter") {
+		updateMask = append(updateMask, "vcenter")
 	}
 
 	if d.HasChange("effective_annotations") {
@@ -3324,6 +3341,106 @@ func expandGkeonpremVmwareClusterUpgradePolicy(v interface{}, d tpgresource.Terr
 }
 
 func expandGkeonpremVmwareClusterUpgradePolicyControlPlaneOnly(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandGkeonpremVmwareClusterVcenter(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedResourcePool, err := expandGkeonpremVmwareClusterVcenterResourcePool(original["resource_pool"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedResourcePool); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["resourcePool"] = transformedResourcePool
+	}
+
+	transformedDatastore, err := expandGkeonpremVmwareClusterVcenterDatastore(original["datastore"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedDatastore); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["datastore"] = transformedDatastore
+	}
+
+	transformedDatacenter, err := expandGkeonpremVmwareClusterVcenterDatacenter(original["datacenter"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedDatacenter); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["datacenter"] = transformedDatacenter
+	}
+
+	transformedCluster, err := expandGkeonpremVmwareClusterVcenterCluster(original["cluster"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedCluster); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["cluster"] = transformedCluster
+	}
+
+	transformedFolder, err := expandGkeonpremVmwareClusterVcenterFolder(original["folder"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedFolder); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["folder"] = transformedFolder
+	}
+
+	transformedCaCertData, err := expandGkeonpremVmwareClusterVcenterCaCertData(original["ca_cert_data"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedCaCertData); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["caCertData"] = transformedCaCertData
+	}
+
+	transformedAddress, err := expandGkeonpremVmwareClusterVcenterAddress(original["address"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedAddress); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["address"] = transformedAddress
+	}
+
+	transformedStoragePolicyName, err := expandGkeonpremVmwareClusterVcenterStoragePolicyName(original["storage_policy_name"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedStoragePolicyName); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["storagePolicyName"] = transformedStoragePolicyName
+	}
+
+	return transformed, nil
+}
+
+func expandGkeonpremVmwareClusterVcenterResourcePool(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandGkeonpremVmwareClusterVcenterDatastore(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandGkeonpremVmwareClusterVcenterDatacenter(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandGkeonpremVmwareClusterVcenterCluster(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandGkeonpremVmwareClusterVcenterFolder(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandGkeonpremVmwareClusterVcenterCaCertData(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandGkeonpremVmwareClusterVcenterAddress(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandGkeonpremVmwareClusterVcenterStoragePolicyName(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
