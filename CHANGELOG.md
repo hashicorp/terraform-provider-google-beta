@@ -1,5 +1,7 @@
 ## 5.0.0 (Unreleased)
 
+[Terraform Google Provider 5.0.0 Upgrade Guide](https://registry.terraform.io/providers/hashicorp/google/latest/docs/guides/version_5_upgrade)
+
 NOTES:
 * provider: some provider default values are now shown at plan-time ([#6188](https://github.com/hashicorp/terraform-provider-google-beta/pull/6188))
 
