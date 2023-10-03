@@ -18,6 +18,7 @@
 package gkehub
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"reflect"
@@ -58,6 +59,15 @@ func ResourceGKEHubMembership() *schema.Resource {
 			Delete: schema.DefaultTimeout(20 * time.Minute),
 		},
 
+		SchemaVersion: 1,
+
+		StateUpgraders: []schema.StateUpgrader{
+			{
+				Type:    resourceGKEHubMembershipResourceV0().CoreConfigSchema().ImpliedType(),
+				Upgrade: ResourceGKEHubMembershipUpgradeV0,
+				Version: 0,
+			},
+		},
 		CustomizeDiff: customdiff.All(
 			tpgresource.SetLabelsDiff,
 			tpgresource.DefaultProviderProject,
@@ -138,6 +148,14 @@ this can be '"//container.googleapis.com/${google_container_cluster.my-cluster.i
 Please refer to the field 'effective_labels' for all of the labels present on the resource.`,
 				Elem: &schema.Schema{Type: schema.TypeString},
 			},
+			"location": {
+				Type:     schema.TypeString,
+				Optional: true,
+				ForceNew: true,
+				Description: `Location of the membership.
+The default value is 'global'.`,
+				Default: "global",
+			},
 			"effective_labels": {
 				Type:        schema.TypeMap,
 				Computed:    true,
@@ -200,7 +218,7 @@ func resourceGKEHubMembershipCreate(d *schema.ResourceData, meta interface{}) er
 		obj["labels"] = labelsProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{GKEHubBasePath}}projects/{{project}}/locations/global/memberships?membershipId={{membership_id}}")
+	url, err := tpgresource.ReplaceVars(d, config, "{{GKEHubBasePath}}projects/{{project}}/locations/{{location}}/memberships?membershipId={{membership_id}}")
 	if err != nil {
 		return err
 	}
@@ -233,7 +251,7 @@ func resourceGKEHubMembershipCreate(d *schema.ResourceData, meta interface{}) er
 	}
 
 	// Store the ID now
-	id, err := tpgresource.ReplaceVars(d, config, "projects/{{project}}/locations/global/memberships/{{membership_id}}")
+	id, err := tpgresource.ReplaceVars(d, config, "projects/{{project}}/locations/{{location}}/memberships/{{membership_id}}")
 	if err != nil {
 		return fmt.Errorf("Error constructing id: %s", err)
 	}
@@ -257,7 +275,7 @@ func resourceGKEHubMembershipCreate(d *schema.ResourceData, meta interface{}) er
 	}
 
 	// This may have caused the ID to update - update it if so.
-	id, err = tpgresource.ReplaceVars(d, config, "projects/{{project}}/locations/global/memberships/{{membership_id}}")
+	id, err = tpgresource.ReplaceVars(d, config, "projects/{{project}}/locations/{{location}}/memberships/{{membership_id}}")
 	if err != nil {
 		return fmt.Errorf("Error constructing id: %s", err)
 	}
@@ -275,7 +293,7 @@ func resourceGKEHubMembershipRead(d *schema.ResourceData, meta interface{}) erro
 		return err
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{GKEHubBasePath}}projects/{{project}}/locations/global/memberships/{{membership_id}}")
+	url, err := tpgresource.ReplaceVars(d, config, "{{GKEHubBasePath}}projects/{{project}}/locations/{{location}}/memberships/{{membership_id}}")
 	if err != nil {
 		return err
 	}
@@ -368,7 +386,7 @@ func resourceGKEHubMembershipUpdate(d *schema.ResourceData, meta interface{}) er
 		obj["labels"] = labelsProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{GKEHubBasePath}}projects/{{project}}/locations/global/memberships/{{membership_id}}")
+	url, err := tpgresource.ReplaceVars(d, config, "{{GKEHubBasePath}}projects/{{project}}/locations/{{location}}/memberships/{{membership_id}}")
 	if err != nil {
 		return err
 	}
@@ -441,7 +459,7 @@ func resourceGKEHubMembershipDelete(d *schema.ResourceData, meta interface{}) er
 	}
 	billingProject = project
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{GKEHubBasePath}}projects/{{project}}/locations/global/memberships/{{membership_id}}")
+	url, err := tpgresource.ReplaceVars(d, config, "{{GKEHubBasePath}}projects/{{project}}/locations/{{location}}/memberships/{{membership_id}}")
 	if err != nil {
 		return err
 	}
@@ -482,15 +500,15 @@ func resourceGKEHubMembershipDelete(d *schema.ResourceData, meta interface{}) er
 func resourceGKEHubMembershipImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	config := meta.(*transport_tpg.Config)
 	if err := tpgresource.ParseImportId([]string{
-		"^projects/(?P<project>[^/]+)/locations/global/memberships/(?P<membership_id>[^/]+)$",
-		"^(?P<project>[^/]+)/(?P<membership_id>[^/]+)$",
-		"^(?P<membership_id>[^/]+)$",
+		"^projects/(?P<project>[^/]+)/locations/(?P<location>[^/]+)/memberships/(?P<membership_id>[^/]+)$",
+		"^(?P<project>[^/]+)/(?P<location>[^/]+)/(?P<membership_id>[^/]+)$",
+		"^(?P<location>[^/]+)/(?P<membership_id>[^/]+)$",
 	}, d, config); err != nil {
 		return nil, err
 	}
 
 	// Replace import id for the resource id
-	id, err := tpgresource.ReplaceVars(d, config, "projects/{{project}}/locations/global/memberships/{{membership_id}}")
+	id, err := tpgresource.ReplaceVars(d, config, "projects/{{project}}/locations/{{location}}/memberships/{{membership_id}}")
 	if err != nil {
 		return nil, fmt.Errorf("Error constructing id: %s", err)
 	}
@@ -671,4 +689,96 @@ func expandGKEHubMembershipEffectiveLabels(v interface{}, d tpgresource.Terrafor
 		m[k] = val.(string)
 	}
 	return m, nil
+}
+
+func resourceGKEHubMembershipResourceV0() *schema.Resource {
+	return &schema.Resource{
+		Schema: map[string]*schema.Schema{
+			"membership_id": {
+				Type:        schema.TypeString,
+				Required:    true,
+				ForceNew:    true,
+				Description: `The client-provided identifier of the membership.`,
+			},
+			"authority": {
+				Type:     schema.TypeList,
+				Optional: true,
+				Description: `Authority encodes how Google will recognize identities from this Membership.
+See the workload identity documentation for more details:
+https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity`,
+				MaxItems: 1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"issuer": {
+							Type:     schema.TypeString,
+							Required: true,
+							ForceNew: true,
+							Description: `A JSON Web Token (JWT) issuer URI. 'issuer' must start with 'https://' and // be a valid
+with length <2000 characters. For example: 'https://container.googleapis.com/v1/projects/my-project/locations/us-west1/clusters/my-cluster' (must be 'locations' rather than 'zones'). If the cluster is provisioned with Terraform, this is '"https://container.googleapis.com/v1/${google_container_cluster.my-cluster.id}"'.`,
+						},
+					},
+				},
+			},
+			"endpoint": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				ForceNew:    true,
+				Description: `If this Membership is a Kubernetes API server hosted on GKE, this is a self link to its GCP resource.`,
+				MaxItems:    1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"gke_cluster": {
+							Type:        schema.TypeList,
+							Optional:    true,
+							ForceNew:    true,
+							Description: `If this Membership is a Kubernetes API server hosted on GKE, this is a self link to its GCP resource.`,
+							MaxItems:    1,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"resource_link": {
+										Type:             schema.TypeString,
+										Required:         true,
+										ForceNew:         true,
+										DiffSuppressFunc: suppressGkeHubEndpointSelfLinkDiff,
+										Description: `Self-link of the GCP resource for the GKE cluster.
+For example: '//container.googleapis.com/projects/my-project/zones/us-west1-a/clusters/my-cluster'.
+It can be at the most 1000 characters in length. If the cluster is provisioned with Terraform,
+this can be '"//container.googleapis.com/${google_container_cluster.my-cluster.id}"' or
+'google_container_cluster.my-cluster.id'.`,
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+			"labels": {
+				Type:        schema.TypeMap,
+				Optional:    true,
+				Description: `Labels to apply to this membership.`,
+				Elem:        &schema.Schema{Type: schema.TypeString},
+			},
+			"name": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: `The unique identifier of the membership.`,
+			},
+			"project": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Computed: true,
+				ForceNew: true,
+			},
+		},
+	}
+}
+
+func ResourceGKEHubMembershipUpgradeV0(_ context.Context, rawState map[string]interface{}, meta interface{}) (map[string]interface{}, error) {
+	log.Printf("[DEBUG] Attributes before migration: %#v", rawState)
+
+	// Version 0 didn't support location. Default it to global.
+	rawState["location"] = "global"
+
+	log.Printf("[DEBUG] Attributes after migration: %#v", rawState)
+	return rawState, nil
 }
