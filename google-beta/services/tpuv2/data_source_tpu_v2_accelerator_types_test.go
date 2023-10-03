@@ -18,7 +18,7 @@ func TestAccTpuV2AcceleratorTypes_basic(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccTpuV2AcceleratorTypesConfig,
@@ -66,5 +66,7 @@ func testAccCheckTpuV2AcceleratorTypes(n string) resource.TestCheckFunc {
 }
 
 const testAccTpuV2AcceleratorTypesConfig = `
-data "google_tpu_v2_accelerator_types" "available" {}
+data "google_tpu_v2_accelerator_types" "available" {
+	provider = google-beta
+}
 `

@@ -18,7 +18,7 @@ func TestAccTpuV2RuntimeVersions_basic(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccTpuV2RuntimeVersionsConfig,
@@ -66,5 +66,7 @@ func testAccCheckTpuV2RuntimeVersions(n string) resource.TestCheckFunc {
 }
 
 const testAccTpuV2RuntimeVersionsConfig = `
-data "google_tpu_v2_runtime_versions" "available" {}
+data "google_tpu_v2_runtime_versions" "available" {
+	provider = google-beta
+}
 `
