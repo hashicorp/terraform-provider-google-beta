@@ -8,7 +8,10 @@ default: build
 build: lint
 	go install
 
-test: lint
+test: lint testnolint
+
+# Used in CI to prevent lint failures from being interpreted as test failures
+testnolint:
 	go test $(TESTARGS) -timeout=30s $(TEST)
 
 testacc: lint
@@ -45,5 +48,5 @@ endif
 docscheck:
 	@sh -c "'$(CURDIR)/scripts/docscheck.sh'"
 
-.PHONY: build test testacc fmt fmtcheck vet lint  errcheck test-compile website website-test docscheck
+.PHONY: build test testnolint testacc fmt fmtcheck vet lint  errcheck test-compile website website-test docscheck
 
