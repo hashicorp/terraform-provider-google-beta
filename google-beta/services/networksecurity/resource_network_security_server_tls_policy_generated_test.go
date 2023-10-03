@@ -179,6 +179,77 @@ resource "google_network_security_server_tls_policy" "default" {
 `, context)
 }
 
+func TestAccNetworkSecurityServerTlsPolicy_networkSecurityServerTlsPolicyMtlsExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"random_suffix": acctest.RandString(t, 10),
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckNetworkSecurityServerTlsPolicyDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccNetworkSecurityServerTlsPolicy_networkSecurityServerTlsPolicyMtlsExample(context),
+			},
+			{
+				ResourceName:            "google_network_security_server_tls_policy.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"name", "location", "labels", "terraform_labels"},
+			},
+		},
+	})
+}
+
+func testAccNetworkSecurityServerTlsPolicy_networkSecurityServerTlsPolicyMtlsExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+data "google_project" "project" {
+  provider = google-beta
+}
+
+resource "google_network_security_server_tls_policy" "default" {
+  provider = google-beta
+  name     = "tf-test-my-server-tls-policy%{random_suffix}"
+
+  description = "my description"
+  location    = "global"
+  allow_open  = "false"
+
+  mtls_policy {
+    client_validation_mode         = "REJECT_INVALID"
+    client_validation_trust_config = "projects/${data.google_project.project.number}/locations/global/trustConfigs/${google_certificate_manager_trust_config.default.name}"
+  }
+
+  labels = {
+    foo = "bar"
+  }
+}
+
+resource "google_certificate_manager_trust_config" "default" {
+  provider    = google-beta
+  name        = "tf-test-my-trust-config%{random_suffix}"
+  description = "sample trust config description"
+  location    = "global"
+
+  trust_stores {
+    trust_anchors {
+      pem_certificate = file("test-fixtures/ca_cert.pem")
+    }
+    intermediate_cas {
+      pem_certificate = file("test-fixtures/ca_cert.pem")
+    }
+  }
+
+  labels = {
+    foo = "bar"
+  }
+}
+`, context)
+}
+
 func testAccCheckNetworkSecurityServerTlsPolicyDestroyProducer(t *testing.T) func(s *terraform.State) error {
 	return func(s *terraform.State) error {
 		for name, rs := range s.RootModule().Resources {
