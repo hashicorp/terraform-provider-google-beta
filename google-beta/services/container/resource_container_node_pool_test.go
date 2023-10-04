@@ -366,6 +366,7 @@ func TestAccContainerNodePool_withSandboxConfig(t *testing.T) {
 }
 
 func TestAccContainerNodePool_withKubeletConfig(t *testing.T) {
+	t.Skipf("Skipping test %s due to https://github.com/hashicorp/terraform-provider-google/issues/16064", t.Name())
 	t.Parallel()
 
 	cluster := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
@@ -684,6 +685,7 @@ func TestAccContainerNodePool_withBootDiskKmsKey(t *testing.T) {
 }
 
 func TestAccContainerNodePool_withUpgradeSettings(t *testing.T) {
+	t.Skipf("Skipping test %s due to https://github.com/hashicorp/terraform-provider-google/issues/16064", t.Name())
 	t.Parallel()
 
 	cluster := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
