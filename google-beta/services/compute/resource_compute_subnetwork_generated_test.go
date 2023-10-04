@@ -308,6 +308,52 @@ resource "google_compute_network" "custom-test" {
 `, context)
 }
 
+func TestAccComputeSubnetwork_subnetworkCidrOverlapExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"random_suffix": acctest.RandString(t, 10),
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckComputeSubnetworkDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeSubnetwork_subnetworkCidrOverlapExample(context),
+			},
+			{
+				ResourceName:            "google_compute_subnetwork.subnetwork-cidr-overlap",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"network", "region"},
+			},
+		},
+	})
+}
+
+func testAccComputeSubnetwork_subnetworkCidrOverlapExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_compute_subnetwork" "subnetwork-cidr-overlap" {
+  provider = google-beta
+
+  name                             = "tf-test-subnet-cidr-overlap%{random_suffix}"
+  region                           = "us-west2"
+  ip_cidr_range                    = "192.168.1.0/24"
+  allow_subnet_cidr_routes_overlap = true
+  network                          = google_compute_network.net-cidr-overlap.id
+}
+
+resource "google_compute_network" "net-cidr-overlap" {
+  provider                = google-beta
+
+  name                    = "tf-test-net-cidr-overlap%{random_suffix}"
+  auto_create_subnetworks = false
+}
+`, context)
+}
+
 func testAccCheckComputeSubnetworkDestroyProducer(t *testing.T) func(s *terraform.State) error {
 	return func(s *terraform.State) error {
 		for name, rs := range s.RootModule().Resources {
