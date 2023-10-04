@@ -137,27 +137,19 @@ func TestAccComputeAddress_networkTier_withProvider5(t *testing.T) {
 	acctest.SkipIfVcr(t)
 	t.Parallel()
 
-	oldVersion := map[string]resource.ExternalProvider{
-		"google": {
-			VersionConstraint: "4.75.0", // a version that doesn't separate user defined labels and system labels
-			Source:            "registry.terraform.io/hashicorp/google",
-		},
-	}
-
 	acctest.VcrTest(t, resource.TestCase{
-		PreCheck: func() { acctest.AccTestPreCheck(t) },
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		Steps: []resource.TestStep{
 			{
-				Config:            testAccComputeAddress_networkTier(acctest.RandString(t, 10)),
-				ExternalProviders: oldVersion,
+				Config: testAccComputeAddress_networkTier(acctest.RandString(t, 10)),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckNoResourceAttr("google_compute_address.foobar", "labels.%"),
 					resource.TestCheckNoResourceAttr("google_compute_address.foobar", "effective_labels.%"),
 				),
 			},
 			{
-				Config:                   testAccComputeAddress_networkTier_withLabels(acctest.RandString(t, 10)),
-				ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+				Config: testAccComputeAddress_networkTier_withLabels(acctest.RandString(t, 10)),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("google_compute_address.foobar", "labels.%", "2"),
 					resource.TestCheckResourceAttr("google_compute_address.foobar", "labels.env", "foo"),
