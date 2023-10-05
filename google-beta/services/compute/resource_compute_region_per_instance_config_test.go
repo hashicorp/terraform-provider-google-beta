@@ -128,6 +128,7 @@ func TestAccComputeRegionPerInstanceConfig_update(t *testing.T) {
 		},
 	})
 }
+
 func TestAccComputeRegionPerInstanceConfig_statefulIps(t *testing.T) {
 	t.Parallel()
 
@@ -346,6 +347,7 @@ resource "google_compute_region_instance_group_manager" "rigm" {
 }
 `, context)
 }
+
 func testAccComputeRegionPerInstanceConfig_statefulIpsBasic(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_network" "default" {
