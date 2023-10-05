@@ -1273,6 +1273,7 @@ func flattenStatefulPolicy(statefulPolicy *compute.StatefulPolicy) []map[string]
 	}
 	return result
 }
+
 func flattenStatefulPolicyStatefulInternalIps(statefulPolicy *compute.StatefulPolicy) []map[string]interface{} {
 	if statefulPolicy == nil || statefulPolicy.PreservedState == nil || statefulPolicy.PreservedState.InternalIPs == nil {
 		return make([]map[string]interface{}, 0, 0)
@@ -1304,6 +1305,7 @@ func flattenStatefulPolicyStatefulExternalIps(statefulPolicy *compute.StatefulPo
 	}
 	return result
 }
+
 func flattenUpdatePolicy(updatePolicy *compute.InstanceGroupManagerUpdatePolicy) []map[string]interface{} {
 	results := []map[string]interface{}{}
 	if updatePolicy != nil {

@@ -1419,7 +1419,7 @@ resource "google_compute_region_instance_group_manager" "igm-basic" {
     device_name = "stateful-disk"
     delete_rule = "NEVER"
   }
-    stateful_internal_ip {
+  stateful_internal_ip {
     interface_name = "nic0"
     delete_rule = "ON_PERMANENT_INSTANCE_DELETION"
   }
@@ -1433,7 +1433,7 @@ resource "google_compute_region_instance_group_manager" "igm-basic" {
     interface_name = "nic1"
     delete_rule = "NEVER"
   }
-  }
+}
 `, network, template, igm)
 }
 
@@ -1498,7 +1498,7 @@ resource "google_compute_region_instance_group_manager" "igm-basic" {
     device_name = "stateful-disk2"
     delete_rule = "ON_PERMANENT_INSTANCE_DELETION"
   }
-    stateful_internal_ip {
+  stateful_internal_ip {
     interface_name = "nic0"
     delete_rule = "ON_PERMANENT_INSTANCE_DELETION"
   }
@@ -1507,8 +1507,7 @@ resource "google_compute_region_instance_group_manager" "igm-basic" {
     interface_name = "nic0"
     delete_rule = "NEVER"
   }
-
-  }
+}
 `, network, template, igm)
 }
 
