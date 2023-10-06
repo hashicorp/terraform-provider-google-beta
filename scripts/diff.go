@@ -10,6 +10,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	googleOld "github.com/hashicorp/terraform-provider-clean-google-beta/google-beta/provider"
+	// "github.com/hashicorp/terraform-provider-google-beta/google-beta/provider" will be replaced with corresponding package based on the version when generating the provider package
 	google "github.com/hashicorp/terraform-provider-google-beta/google-beta/provider"
 )
 
