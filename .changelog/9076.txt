@@ -1,0 +1,3 @@
+```release-note:bug
+securitypolicy: fixed a bug where setting `advanced_options_config.user_ip_request_headers` field with empty value was not cleaning the list (beta)
+```
