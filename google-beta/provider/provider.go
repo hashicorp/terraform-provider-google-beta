@@ -978,6 +978,7 @@ func DatasourceMapWithErrors() (map[string]*schema.Resource, error) {
 		"google_runtimeconfig_config":                         runtimeconfig.DataSourceGoogleRuntimeconfigConfig(),
 		"google_runtimeconfig_variable":                       runtimeconfig.DataSourceGoogleRuntimeconfigVariable(),
 		"google_secret_manager_secret":                        secretmanager.DataSourceSecretManagerSecret(),
+		"google_secret_manager_secrets":                       secretmanager.DataSourceSecretManagerSecrets(),
 		"google_secret_manager_secret_version":                secretmanager.DataSourceSecretManagerSecretVersion(),
 		"google_secret_manager_secret_version_access":         secretmanager.DataSourceSecretManagerSecretVersionAccess(),
 		"google_service_account":                              resourcemanager.DataSourceGoogleServiceAccount(),
