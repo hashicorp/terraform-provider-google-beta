@@ -683,6 +683,33 @@ func resourceComputeRouterNatCreate(d *schema.ResourceData, meta interface{}) er
 		billingProject = bp
 	}
 
+	// validates if the field action.source_nat_active_ranges is filled when the type is PRIVATE.
+	natType := d.Get("type").(string)
+	if natType == "PRIVATE" {
+		rules := d.Get("rules").(*schema.Set)
+		for _, rule := range rules.List() {
+			objRule := rule.(map[string]interface{})
+			actions := objRule["action"].([]interface{})
+
+			containAction := len(actions) != 0 && actions[0] != nil
+			containActiveRange := true
+
+			if containAction {
+				action := actions[0].(map[string]interface{})
+				sourceNatActiveRanges := action["source_nat_active_ranges"]
+				if sourceNatActiveRanges != nil {
+					sourceNatActiveRangesSet := sourceNatActiveRanges.(*schema.Set)
+					if len(sourceNatActiveRangesSet.List()) == 0 {
+						containActiveRange = false
+					}
+				}
+			}
+
+			if !containAction || !containActiveRange {
+				return fmt.Errorf("The rule for PRIVATE nat type must contain an action with source_nat_active_ranges set")
+			}
+		}
+	}
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "PATCH",
@@ -954,6 +981,33 @@ func resourceComputeRouterNatUpdate(d *schema.ResourceData, meta interface{}) er
 	}
 
 	log.Printf("[DEBUG] Updating RouterNat %q: %#v", d.Id(), obj)
+	// validates if the field action.source_nat_active_ranges is filled when the type is PRIVATE.
+	natType := d.Get("type").(string)
+	if natType == "PRIVATE" {
+		rules := d.Get("rules").(*schema.Set)
+		for _, rule := range rules.List() {
+			objRule := rule.(map[string]interface{})
+			actions := objRule["action"].([]interface{})
+
+			containAction := len(actions) != 0 && actions[0] != nil
+			containActiveRange := true
+
+			if containAction {
+				action := actions[0].(map[string]interface{})
+				sourceNatActiveRanges := action["source_nat_active_ranges"]
+				if sourceNatActiveRanges != nil {
+					sourceNatActiveRangesSet := sourceNatActiveRanges.(*schema.Set)
+					if len(sourceNatActiveRangesSet.List()) == 0 {
+						containActiveRange = false
+					}
+				}
+			}
+
+			if !containAction || !containActiveRange {
+				return fmt.Errorf("The rule for PRIVATE nat type must contain an action with source_nat_active_ranges set")
+			}
+		}
+	}
 
 	obj, err = resourceComputeRouterNatPatchUpdateEncoder(d, meta, obj)
 	if err != nil {
