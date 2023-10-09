@@ -726,6 +726,8 @@ func resourceComputeSecurityPolicyUpdate(d *schema.ResourceData, meta interface{
 		Fingerprint: d.Get("fingerprint").(string),
 	}
 
+	updateMask := []string{}
+
 	if d.HasChange("type") {
 		securityPolicy.Type = d.Get("type").(string)
 		securityPolicy.ForceSendFields = append(securityPolicy.ForceSendFields, "Type")
@@ -739,6 +741,11 @@ func resourceComputeSecurityPolicyUpdate(d *schema.ResourceData, meta interface{
 	if d.HasChange("advanced_options_config") {
 		securityPolicy.AdvancedOptionsConfig = expandSecurityPolicyAdvancedOptionsConfig(d.Get("advanced_options_config").([]interface{}))
 		securityPolicy.ForceSendFields = append(securityPolicy.ForceSendFields, "AdvancedOptionsConfig", "advancedOptionsConfig.jsonParsing", "advancedOptionsConfig.jsonCustomConfig", "advancedOptionsConfig.logLevel")
+		securityPolicy.ForceSendFields = append(securityPolicy.ForceSendFields, "advanceOptionConfig.userIpRequestHeaders")
+		if len(securityPolicy.AdvancedOptionsConfig.UserIpRequestHeaders) == 0 {
+			// to clean this list we must send the updateMask of this field on the request.
+			updateMask = append(updateMask, "advanced_options_config.user_ip_request_headers")
+		}
 	}
 
 	if d.HasChange("adaptive_protection_config") {
@@ -755,7 +762,7 @@ func resourceComputeSecurityPolicyUpdate(d *schema.ResourceData, meta interface{
 	if len(securityPolicy.ForceSendFields) > 0 {
 		client := config.NewComputeClient(userAgent)
 
-		op, err := client.SecurityPolicies.Patch(project, sp, securityPolicy).Do()
+		op, err := client.SecurityPolicies.Patch(project, sp, securityPolicy).UpdateMask(strings.Join(updateMask, ",")).Do()
 
 		if err != nil {
 			return errwrap.Wrapf(fmt.Sprintf("Error updating SecurityPolicy %q: {{err}}", sp), err)
