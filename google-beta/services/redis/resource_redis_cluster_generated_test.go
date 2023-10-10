@@ -39,7 +39,7 @@ func TestAccRedisCluster_redisClusterHaExample(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckRedisClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -58,7 +58,6 @@ func TestAccRedisCluster_redisClusterHaExample(t *testing.T) {
 func testAccRedisCluster_redisClusterHaExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_redis_cluster" "cluster-ha" {
-  provider       = google-beta
   name           = "tf-test-ha-cluster%{random_suffix}"
   shard_count    = 3
   psc_configs {
@@ -74,7 +73,6 @@ resource "google_redis_cluster" "cluster-ha" {
 }
 
 resource "google_network_connectivity_service_connection_policy" "default" {
-  provider = google-beta
   name = "mypolicy%{random_suffix}"
   location = "us-central1"
   service_class = "gcp-memorystore-redis"
@@ -86,7 +84,6 @@ resource "google_network_connectivity_service_connection_policy" "default" {
 }
 
 resource "google_compute_subnetwork" "producer_subnet" {
-  provider      = google-beta
   name          = "mysubnet%{random_suffix}"
   ip_cidr_range = "10.0.0.248/29"
   region        = "us-central1"
@@ -94,7 +91,6 @@ resource "google_compute_subnetwork" "producer_subnet" {
 }
 
 resource "google_compute_network" "producer_net" {
-  provider                = google-beta
   name                    = "mynetwork%{random_suffix}"
   auto_create_subnetworks = false
 }
