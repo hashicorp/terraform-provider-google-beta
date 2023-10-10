@@ -65,11 +65,6 @@ func ResourceDataformRepository() *schema.Resource {
 				MaxItems:    1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"authentication_token_secret_version": {
-							Type:        schema.TypeString,
-							Required:    true,
-							Description: `The name of the Secret Manager secret version to use as an authentication token for Git operations. Must be in the format projects/*/secrets/*/versions/*.`,
-						},
 						"default_branch": {
 							Type:        schema.TypeString,
 							Required:    true,
@@ -79,6 +74,33 @@ func ResourceDataformRepository() *schema.Resource {
 							Type:        schema.TypeString,
 							Required:    true,
 							Description: `The Git remote's URL.`,
+						},
+						"authentication_token_secret_version": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							Description:  `The name of the Secret Manager secret version to use as an authentication token for Git operations. This secret is for assigning with HTTPS only(for SSH use 'ssh_authentication_config'). Must be in the format projects/*/secrets/*/versions/*.`,
+							ExactlyOneOf: []string{"git_remote_settings.0.authentication_token_secret_version", "git_remote_settings.0.ssh_authentication_config"},
+						},
+						"ssh_authentication_config": {
+							Type:        schema.TypeList,
+							Optional:    true,
+							Description: `Authentication fields for remote uris using SSH protocol.`,
+							MaxItems:    1,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"host_public_key": {
+										Type:        schema.TypeString,
+										Required:    true,
+										Description: `Content of a public SSH key to verify an identity of a remote Git host.`,
+									},
+									"user_private_key_secret_version": {
+										Type:        schema.TypeString,
+										Required:    true,
+										Description: `The name of the Secret Manager secret version to use as a ssh private key for Git operations. Must be in the format projects/*/secrets/*/versions/*.`,
+									},
+								},
+							},
+							ExactlyOneOf: []string{"git_remote_settings.0.authentication_token_secret_version", "git_remote_settings.0.ssh_authentication_config"},
 						},
 						"token_status": {
 							Type:        schema.TypeString,
@@ -94,27 +116,32 @@ func ResourceDataformRepository() *schema.Resource {
 				ForceNew:    true,
 				Description: `A reference to the region`,
 			},
+			"service_account": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: `The service account to run workflow invocations under.`,
+			},
 			"workspace_compilation_overrides": {
 				Type:        schema.TypeList,
 				Optional:    true,
-				Description: `Optional. If set, fields of workspaceCompilationOverrides override the default compilation settings that are specified in dataform.json when creating workspace-scoped compilation results.`,
+				Description: `If set, fields of workspaceCompilationOverrides override the default compilation settings that are specified in dataform.json when creating workspace-scoped compilation results.`,
 				MaxItems:    1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"default_database": {
 							Type:        schema.TypeString,
 							Optional:    true,
-							Description: `Optional. The default database (Google Cloud project ID).`,
+							Description: `The default database (Google Cloud project ID).`,
 						},
 						"schema_suffix": {
 							Type:        schema.TypeString,
 							Optional:    true,
-							Description: `Optional. The suffix that should be appended to all schema (BigQuery dataset ID) names.`,
+							Description: `The suffix that should be appended to all schema (BigQuery dataset ID) names.`,
 						},
 						"table_prefix": {
 							Type:        schema.TypeString,
 							Optional:    true,
-							Description: `Optional. The prefix that should be prepended to all table names.`,
+							Description: `The prefix that should be prepended to all table names.`,
 						},
 					},
 				},
@@ -155,6 +182,12 @@ func resourceDataformRepositoryCreate(d *schema.ResourceData, meta interface{}) 
 		return err
 	} else if v, ok := d.GetOkExists("workspace_compilation_overrides"); !tpgresource.IsEmptyValue(reflect.ValueOf(workspaceCompilationOverridesProp)) && (ok || !reflect.DeepEqual(v, workspaceCompilationOverridesProp)) {
 		obj["workspaceCompilationOverrides"] = workspaceCompilationOverridesProp
+	}
+	serviceAccountProp, err := expandDataformRepositoryServiceAccount(d.Get("service_account"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("service_account"); !tpgresource.IsEmptyValue(reflect.ValueOf(serviceAccountProp)) && (ok || !reflect.DeepEqual(v, serviceAccountProp)) {
+		obj["serviceAccount"] = serviceAccountProp
 	}
 
 	url, err := tpgresource.ReplaceVars(d, config, "{{DataformBasePath}}projects/{{project}}/locations/{{region}}/repositories?repositoryId={{name}}")
@@ -250,6 +283,9 @@ func resourceDataformRepositoryRead(d *schema.ResourceData, meta interface{}) er
 	if err := d.Set("workspace_compilation_overrides", flattenDataformRepositoryWorkspaceCompilationOverrides(res["workspaceCompilationOverrides"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Repository: %s", err)
 	}
+	if err := d.Set("service_account", flattenDataformRepositoryServiceAccount(res["serviceAccount"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Repository: %s", err)
+	}
 
 	return nil
 }
@@ -281,6 +317,12 @@ func resourceDataformRepositoryUpdate(d *schema.ResourceData, meta interface{}) 
 		return err
 	} else if v, ok := d.GetOkExists("workspace_compilation_overrides"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, workspaceCompilationOverridesProp)) {
 		obj["workspaceCompilationOverrides"] = workspaceCompilationOverridesProp
+	}
+	serviceAccountProp, err := expandDataformRepositoryServiceAccount(d.Get("service_account"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("service_account"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, serviceAccountProp)) {
+		obj["serviceAccount"] = serviceAccountProp
 	}
 
 	url, err := tpgresource.ReplaceVars(d, config, "{{DataformBasePath}}projects/{{project}}/locations/{{region}}/repositories/{{name}}")
@@ -402,6 +444,8 @@ func flattenDataformRepositoryGitRemoteSettings(v interface{}, d *schema.Resourc
 		flattenDataformRepositoryGitRemoteSettingsDefaultBranch(original["defaultBranch"], d, config)
 	transformed["authentication_token_secret_version"] =
 		flattenDataformRepositoryGitRemoteSettingsAuthenticationTokenSecretVersion(original["authenticationTokenSecretVersion"], d, config)
+	transformed["ssh_authentication_config"] =
+		flattenDataformRepositoryGitRemoteSettingsSshAuthenticationConfig(original["sshAuthenticationConfig"], d, config)
 	transformed["token_status"] =
 		flattenDataformRepositoryGitRemoteSettingsTokenStatus(original["tokenStatus"], d, config)
 	return []interface{}{transformed}
@@ -415,6 +459,29 @@ func flattenDataformRepositoryGitRemoteSettingsDefaultBranch(v interface{}, d *s
 }
 
 func flattenDataformRepositoryGitRemoteSettingsAuthenticationTokenSecretVersion(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenDataformRepositoryGitRemoteSettingsSshAuthenticationConfig(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["user_private_key_secret_version"] =
+		flattenDataformRepositoryGitRemoteSettingsSshAuthenticationConfigUserPrivateKeySecretVersion(original["userPrivateKeySecretVersion"], d, config)
+	transformed["host_public_key"] =
+		flattenDataformRepositoryGitRemoteSettingsSshAuthenticationConfigHostPublicKey(original["hostPublicKey"], d, config)
+	return []interface{}{transformed}
+}
+func flattenDataformRepositoryGitRemoteSettingsSshAuthenticationConfigUserPrivateKeySecretVersion(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenDataformRepositoryGitRemoteSettingsSshAuthenticationConfigHostPublicKey(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
@@ -448,6 +515,10 @@ func flattenDataformRepositoryWorkspaceCompilationOverridesSchemaSuffix(v interf
 }
 
 func flattenDataformRepositoryWorkspaceCompilationOverridesTablePrefix(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenDataformRepositoryServiceAccount(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
@@ -485,6 +556,13 @@ func expandDataformRepositoryGitRemoteSettings(v interface{}, d tpgresource.Terr
 		transformed["authenticationTokenSecretVersion"] = transformedAuthenticationTokenSecretVersion
 	}
 
+	transformedSshAuthenticationConfig, err := expandDataformRepositoryGitRemoteSettingsSshAuthenticationConfig(original["ssh_authentication_config"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedSshAuthenticationConfig); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["sshAuthenticationConfig"] = transformedSshAuthenticationConfig
+	}
+
 	transformedTokenStatus, err := expandDataformRepositoryGitRemoteSettingsTokenStatus(original["token_status"], d, config)
 	if err != nil {
 		return nil, err
@@ -504,6 +582,40 @@ func expandDataformRepositoryGitRemoteSettingsDefaultBranch(v interface{}, d tpg
 }
 
 func expandDataformRepositoryGitRemoteSettingsAuthenticationTokenSecretVersion(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandDataformRepositoryGitRemoteSettingsSshAuthenticationConfig(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedUserPrivateKeySecretVersion, err := expandDataformRepositoryGitRemoteSettingsSshAuthenticationConfigUserPrivateKeySecretVersion(original["user_private_key_secret_version"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedUserPrivateKeySecretVersion); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["userPrivateKeySecretVersion"] = transformedUserPrivateKeySecretVersion
+	}
+
+	transformedHostPublicKey, err := expandDataformRepositoryGitRemoteSettingsSshAuthenticationConfigHostPublicKey(original["host_public_key"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedHostPublicKey); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["hostPublicKey"] = transformedHostPublicKey
+	}
+
+	return transformed, nil
+}
+
+func expandDataformRepositoryGitRemoteSettingsSshAuthenticationConfigUserPrivateKeySecretVersion(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandDataformRepositoryGitRemoteSettingsSshAuthenticationConfigHostPublicKey(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
@@ -553,5 +665,9 @@ func expandDataformRepositoryWorkspaceCompilationOverridesSchemaSuffix(v interfa
 }
 
 func expandDataformRepositoryWorkspaceCompilationOverridesTablePrefix(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandDataformRepositoryServiceAccount(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
