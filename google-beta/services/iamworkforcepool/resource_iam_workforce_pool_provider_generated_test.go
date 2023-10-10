@@ -262,7 +262,7 @@ func TestAccIAMWorkforcePoolWorkforcePoolProvider_iamWorkforcePoolProviderOidcUp
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckIAMWorkforcePoolWorkforcePoolProviderDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -281,16 +281,12 @@ func TestAccIAMWorkforcePoolWorkforcePoolProvider_iamWorkforcePoolProviderOidcUp
 func testAccIAMWorkforcePoolWorkforcePoolProvider_iamWorkforcePoolProviderOidcUploadKeyExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_iam_workforce_pool" "pool" {
-  provider = google-beta
-
   workforce_pool_id = "tf-test-example-pool%{random_suffix}"
   parent            = "organizations/%{org_id}"
   location          = "global"
 }
 
 resource "google_iam_workforce_pool_provider" "example" {
-  provider = google-beta
-
   workforce_pool_id  = google_iam_workforce_pool.pool.workforce_pool_id
   location           = google_iam_workforce_pool.pool.location
   provider_id        = "tf-test-example-prvdr%{random_suffix}"
