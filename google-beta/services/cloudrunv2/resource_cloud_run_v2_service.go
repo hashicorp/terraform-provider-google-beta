@@ -1107,11 +1107,11 @@ func resourceCloudRunV2ServiceCreate(d *schema.ResourceData, meta interface{}) e
 	} else if v, ok := d.GetOkExists("binary_authorization"); !tpgresource.IsEmptyValue(reflect.ValueOf(binaryAuthorizationProp)) && (ok || !reflect.DeepEqual(v, binaryAuthorizationProp)) {
 		obj["binaryAuthorization"] = binaryAuthorizationProp
 	}
-	custom_audiencesProp, err := expandCloudRunV2ServiceCustomAudiences(d.Get("custom_audiences"), d, config)
+	customAudiencesProp, err := expandCloudRunV2ServiceCustomAudiences(d.Get("custom_audiences"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("custom_audiences"); !tpgresource.IsEmptyValue(reflect.ValueOf(custom_audiencesProp)) && (ok || !reflect.DeepEqual(v, custom_audiencesProp)) {
-		obj["custom_audiences"] = custom_audiencesProp
+	} else if v, ok := d.GetOkExists("custom_audiences"); !tpgresource.IsEmptyValue(reflect.ValueOf(customAudiencesProp)) && (ok || !reflect.DeepEqual(v, customAudiencesProp)) {
+		obj["customAudiences"] = customAudiencesProp
 	}
 	templateProp, err := expandCloudRunV2ServiceTemplate(d.Get("template"), d, config)
 	if err != nil {
@@ -1290,7 +1290,7 @@ func resourceCloudRunV2ServiceRead(d *schema.ResourceData, meta interface{}) err
 	if err := d.Set("binary_authorization", flattenCloudRunV2ServiceBinaryAuthorization(res["binaryAuthorization"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Service: %s", err)
 	}
-	if err := d.Set("custom_audiences", flattenCloudRunV2ServiceCustomAudiences(res["custom_audiences"], d, config)); err != nil {
+	if err := d.Set("custom_audiences", flattenCloudRunV2ServiceCustomAudiences(res["customAudiences"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Service: %s", err)
 	}
 	if err := d.Set("template", flattenCloudRunV2ServiceTemplate(res["template"], d, config)); err != nil {
@@ -1391,11 +1391,11 @@ func resourceCloudRunV2ServiceUpdate(d *schema.ResourceData, meta interface{}) e
 	} else if v, ok := d.GetOkExists("binary_authorization"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, binaryAuthorizationProp)) {
 		obj["binaryAuthorization"] = binaryAuthorizationProp
 	}
-	custom_audiencesProp, err := expandCloudRunV2ServiceCustomAudiences(d.Get("custom_audiences"), d, config)
+	customAudiencesProp, err := expandCloudRunV2ServiceCustomAudiences(d.Get("custom_audiences"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("custom_audiences"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, custom_audiencesProp)) {
-		obj["custom_audiences"] = custom_audiencesProp
+	} else if v, ok := d.GetOkExists("custom_audiences"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, customAudiencesProp)) {
+		obj["customAudiences"] = customAudiencesProp
 	}
 	templateProp, err := expandCloudRunV2ServiceTemplate(d.Get("template"), d, config)
 	if err != nil {
