@@ -41,7 +41,7 @@ func TestAccOrgPolicyCustomConstraint_orgPolicyCustomConstraintBasicExample(t *t
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckOrgPolicyCustomConstraintDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -60,7 +60,6 @@ func TestAccOrgPolicyCustomConstraint_orgPolicyCustomConstraintBasicExample(t *t
 func testAccOrgPolicyCustomConstraint_orgPolicyCustomConstraintBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_org_policy_custom_constraint" "constraint" {
-  provider = google-beta
 
   name         = "custom.disableGkeAutoUpgrade"
   parent       = "organizations/%{org_id}"
@@ -83,7 +82,7 @@ func TestAccOrgPolicyCustomConstraint_orgPolicyCustomConstraintFullExample(t *te
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckOrgPolicyCustomConstraintDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -102,7 +101,6 @@ func TestAccOrgPolicyCustomConstraint_orgPolicyCustomConstraintFullExample(t *te
 func testAccOrgPolicyCustomConstraint_orgPolicyCustomConstraintFullExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_org_policy_custom_constraint" "constraint" {
-  provider = google-beta
 
   name         = "custom.disableGkeAutoUpgrade"
   parent       = "organizations/%{org_id}"
@@ -116,7 +114,6 @@ resource "google_org_policy_custom_constraint" "constraint" {
 }
 
 resource "google_org_policy_policy" "bool" {
-  provider = google-beta
 
   name   = "organizations/%{org_id}/policies/${google_org_policy_custom_constraint.constraint.name}"
   parent = "organizations/%{org_id}"
