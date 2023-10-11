@@ -1125,9 +1125,9 @@ func DatasourceMapWithErrors() (map[string]*schema.Resource, error) {
 		})
 }
 
-// Generated resources: 391
+// Generated resources: 393
 // Generated IAM resources: 237
-// Total generated resources: 628
+// Total generated resources: 630
 func ResourceMap() map[string]*schema.Resource {
 	resourceMap, _ := ResourceMapWithErrors()
 	return resourceMap
@@ -1471,11 +1471,13 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_dialogflow_intent":                                       dialogflow.ResourceDialogflowIntent(),
 			"google_dialogflow_cx_agent":                                     dialogflowcx.ResourceDialogflowCXAgent(),
 			"google_dialogflow_cx_entity_type":                               dialogflowcx.ResourceDialogflowCXEntityType(),
+			"google_dialogflow_cx_environment":                               dialogflowcx.ResourceDialogflowCXEnvironment(),
 			"google_dialogflow_cx_flow":                                      dialogflowcx.ResourceDialogflowCXFlow(),
 			"google_dialogflow_cx_intent":                                    dialogflowcx.ResourceDialogflowCXIntent(),
 			"google_dialogflow_cx_page":                                      dialogflowcx.ResourceDialogflowCXPage(),
 			"google_dialogflow_cx_security_settings":                         dialogflowcx.ResourceDialogflowCXSecuritySettings(),
 			"google_dialogflow_cx_test_case":                                 dialogflowcx.ResourceDialogflowCXTestCase(),
+			"google_dialogflow_cx_version":                                   dialogflowcx.ResourceDialogflowCXVersion(),
 			"google_dialogflow_cx_webhook":                                   dialogflowcx.ResourceDialogflowCXWebhook(),
 			"google_dns_managed_zone":                                        dns.ResourceDNSManagedZone(),
 			"google_dns_managed_zone_iam_binding":                            tpgiamresource.ResourceIamBinding(dns.DNSManagedZoneIamSchema, dns.DNSManagedZoneIamUpdaterProducer, dns.DNSManagedZoneIdParseFunc),
@@ -1806,8 +1808,6 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_dataflow_flex_template_job":             dataflow.ResourceDataflowFlexTemplateJob(),
 			"google_dataproc_cluster":                       dataproc.ResourceDataprocCluster(),
 			"google_dataproc_job":                           dataproc.ResourceDataprocJob(),
-			"google_dialogflow_cx_version":                  dialogflowcx.ResourceDialogflowCXVersion(),
-			"google_dialogflow_cx_environment":              dialogflowcx.ResourceDialogflowCXEnvironment(),
 			"google_dns_record_set":                         dns.ResourceDnsRecordSet(),
 			"google_endpoints_service":                      servicemanagement.ResourceEndpointsService(),
 			"google_folder":                                 resourcemanager.ResourceGoogleFolder(),
