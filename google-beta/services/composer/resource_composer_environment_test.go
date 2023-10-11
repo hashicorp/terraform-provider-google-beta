@@ -1669,12 +1669,12 @@ resource "google_composer_environment" "test" {
           min_count   = 2
           max_count   = 5
         }
-								triggerer {
-					cpu         = 0.5
-					memory_gb   = 2.0
-					count   		= 1
-				}
-				      }
+		triggerer {
+		  cpu         = 0.5
+		  memory_gb   = 2.0
+		  count   		= 1
+		}
+      }
       environment_size = "ENVIRONMENT_SIZE_MEDIUM"
       private_environment_config {
         enable_private_endpoint                 = true
@@ -2057,12 +2057,12 @@ resource "google_composer_environment" "test" {
           min_count   = 3
           max_count   = 6
         }
-								triggerer {
-					cpu         = 2.25
-					memory_gb   = 4
-					count   		= 1
-				}
-				      }
+		triggerer {
+		  cpu         = 0.75
+		  memory_gb   = 2
+		  count   	  = 1
+		}
+      }
       environment_size = "ENVIRONMENT_SIZE_LARGE"
       private_environment_config {
         enable_private_endpoint                 = true
