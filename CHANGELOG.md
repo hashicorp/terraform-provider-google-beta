@@ -1,5 +1,34 @@
 ## 5.2.0 (Unreleased)
 
+FEATURES:
+* **New Data Source:** `google_secret_manager_secrets` ([#6463](https://github.com/hashicorp/terraform-provider-google-beta/pull/6463))
+* **New Resource:** `google_alloydb_user` ([#6454](https://github.com/hashicorp/terraform-provider-google-beta/pull/6454))
+* **New Resource:** `google_firestore_backup_schedule` ([#6465](https://github.com/hashicorp/terraform-provider-google-beta/pull/6465))
+* **New Resource:** `google_redis_cluster` (GA) ([#6479](https://github.com/hashicorp/terraform-provider-google-beta/pull/6479))
+
+IMPROVEMENTS:
+* alloydb: added `cluster_type` and `secondary_config` fields to support secondary clusters in `google_alloydb_cluster` resource. ([#6474](https://github.com/hashicorp/terraform-provider-google-beta/pull/6474))
+* compute: add `recreate_closed_psc` flag to recreate the PSC Consumer forwarding rule if the `psc_connection_status` is closed on `google_compute_forwarding_rule`. ([#6468](https://github.com/hashicorp/terraform-provider-google-beta/pull/6468))
+* compute: added `INTERNET_IP_PORT`, `INTERNET_FQDN_PORT`, `SERVERLESS`, and `PRIVATE_SERVICE_CONNECT` as acceptable values for the `network_endpoint_type` field for the `resource_compute_network_endpoint_group` resource ([#6472](https://github.com/hashicorp/terraform-provider-google-beta/pull/6472))
+* compute: added `SEV_LIVE_MIGRATABLE_V2` to `guest_os_features` enum on `google_compute_image` resource. ([#6466](https://github.com/hashicorp/terraform-provider-google-beta/pull/6466))
+* compute: added `allow_subnet_cidr_routes_overlap` field to `google_compute_subnetwork` resource ([#6445](https://github.com/hashicorp/terraform-provider-google-beta/pull/6445))
+* compute: added `labels`, `effective_labels`, `terraform_labels`, and `label_fingerprint` to `google_compute_address` (GA) ([#6447](https://github.com/hashicorp/terraform-provider-google-beta/pull/6447))
+* compute: added validation while setting empty rule.action.source_nat_active_ranges to `google_compute_router_nat` resource (beta) ([#6467](https://github.com/hashicorp/terraform-provider-google-beta/pull/6467))
+* compute: promoted `internal_ip` and `external_ip` fields in resources `google_compute_instance_group_manager` and `google_compute_region_instance_group_manager` to GA ([#6453](https://github.com/hashicorp/terraform-provider-google-beta/pull/6453))
+* compute: promoted `internal_ip` and `external_ip` fields in resources `google_compute_per_instance_config` and `google_compute_region_per_instance_config` to GA ([#6453](https://github.com/hashicorp/terraform-provider-google-beta/pull/6453))
+* dataform: added `ssh_authentication_config` and `service_account` to `google_dataform_repository` resource ([#6480](https://github.com/hashicorp/terraform-provider-google-beta/pull/6480))
+* iamworkforcepool: promoted field `oidc.jwks_json` in resource `google_iam_workforce_pool` to GA ([#6476](https://github.com/hashicorp/terraform-provider-google-beta/pull/6476))
+
+BUG FIXES:
+* Add new field `certificateManagerCertificates` in the resource `ComputeTargetHttpsProxy` ([#6460](https://github.com/hashicorp/terraform-provider-google-beta/pull/6460))
+* alloydb: added `client_connection_config` field to `google_alloydb_instance` resource ([#6478](https://github.com/hashicorp/terraform-provider-google-beta/pull/6478))
+* bigquery: removed mutual exclusivity checks for view, materialized view, and schema for the Table resource. ([#6471](https://github.com/hashicorp/terraform-provider-google-beta/pull/6471))
+* compute: fixed `google_compute_global_address` can't be created when default_network_tier set to STANDARD ([#6456](https://github.com/hashicorp/terraform-provider-google-beta/pull/6456))
+* compute: fixed a false permadiff on `ip_address` when it is set to ipv6 on `google_compute_forwarding_rule` ([#6444](https://github.com/hashicorp/terraform-provider-google-beta/pull/6444))
+* provider: fixed the bug that update request is sent to services when updateMask is empty ([#6443](https://github.com/hashicorp/terraform-provider-google-beta/pull/6443))
+* securitypolicy: fixed a bug where setting `advanced_options_config.user_ip_request_headers` field with empty value was not cleaning the list (beta) ([#6470](https://github.com/hashicorp/terraform-provider-google-beta/pull/6470))
+
+
 ## 5.1.0 (Oct 9, 2023)
 
 FEATURES:
