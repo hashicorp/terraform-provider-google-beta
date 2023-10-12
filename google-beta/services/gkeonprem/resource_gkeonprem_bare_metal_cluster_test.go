@@ -18,7 +18,7 @@ func TestAccGkeonpremBareMetalCluster_bareMetalClusterUpdateBasic(t *testing.T) 
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckGkeonpremBareMetalClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -52,7 +52,7 @@ func TestAccGkeonpremBareMetalCluster_bareMetalClusterUpdateManualLb(t *testing.
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckGkeonpremBareMetalClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -84,7 +84,7 @@ func TestAccGkeonpremBareMetalCluster_bareMetalClusterUpdateBgpLb(t *testing.T) 
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckGkeonpremBareMetalClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -111,7 +111,6 @@ func testAccGkeonpremBareMetalCluster_bareMetalClusterUpdateMetalLbStart(context
 	return acctest.Nprintf(`
 
   resource "google_gkeonprem_bare_metal_cluster" "cluster-metallb" {
-    provider = google-beta
     name = "cluster-metallb%{random_suffix}"
     location = "us-west1"
     annotations = {
@@ -190,7 +189,6 @@ func testAccGkeonpremBareMetalCluster_bareMetalClusterUpdateMetalLb(context map[
 	return acctest.Nprintf(`
 
   resource "google_gkeonprem_bare_metal_cluster" "cluster-metallb" {
-    provider = google-beta
     name = "cluster-metallb%{random_suffix}"
     location = "us-west1"
     annotations = {
@@ -267,7 +265,6 @@ func testAccGkeonpremBareMetalCluster_bareMetalClusterUpdateManualLbStart(contex
 	return acctest.Nprintf(`
 
   resource "google_gkeonprem_bare_metal_cluster" "cluster-manuallb" {
-    provider = google-beta
     name = "cluster-manuallb%{random_suffix}"
     location = "us-west1"
     admin_cluster_membership = "projects/870316890899/locations/global/memberships/gkeonprem-terraform-test"
@@ -347,7 +344,6 @@ func testAccGkeonpremBareMetalCluster_bareMetalClusterUpdateManualLb(context map
 	return acctest.Nprintf(`
 
   resource "google_gkeonprem_bare_metal_cluster" "cluster-manuallb" {
-    provider = google-beta
     name = "cluster-manuallb%{random_suffix}"
     location = "us-west1"
     admin_cluster_membership = "projects/870316890899/locations/global/memberships/gkeonprem-terraform-test"
@@ -416,7 +412,6 @@ func testAccGkeonpremBareMetalCluster_bareMetalClusterUpdateBgpLbStart(context m
 	return acctest.Nprintf(`
 
   resource "google_gkeonprem_bare_metal_cluster" "cluster-bgplb" {
-    provider = google-beta
     name = "cluster-bgplb%{random_suffix}"
     location = "us-west1"
     admin_cluster_membership = "projects/870316890899/locations/global/memberships/gkeonprem-terraform-test"
@@ -501,7 +496,6 @@ func testAccGkeonpremBareMetalCluster_bareMetalClusterUpdateBgpLb(context map[st
 	return acctest.Nprintf(`
 
   resource "google_gkeonprem_bare_metal_cluster" "cluster-bgplb" {
-    provider = google-beta
     name = "cluster-bgplb%{random_suffix}"
     location = "us-west1"
     admin_cluster_membership = "projects/870316890899/locations/global/memberships/gkeonprem-terraform-test"

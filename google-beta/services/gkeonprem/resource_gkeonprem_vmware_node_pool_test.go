@@ -18,7 +18,7 @@ func TestAccGkeonpremVmwareNodePool_vmwareNodePoolUpdate(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckGkeonpremVmwareNodePoolDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -47,8 +47,6 @@ func testAccGkeonpremVmwareNodePool_vmwareNodePoolUpdateStart(context map[string
 	return acctest.Nprintf(`
 
   resource "google_gkeonprem_vmware_cluster" "cluster" {
-    provider = google-beta
-
     name = "tf-test-cluster-%{random_suffix}"
     location = "us-west1"
     admin_cluster_membership = "projects/870316890899/locations/global/memberships/gkeonprem-terraform-test"
@@ -90,8 +88,6 @@ func testAccGkeonpremVmwareNodePool_vmwareNodePoolUpdateStart(context map[string
   }
 
   resource "google_gkeonprem_vmware_node_pool" "nodepool" {
-    provider = google-beta
-
     name = "tf-test-nodepool-%{random_suffix}"
     location = "us-west1"
     vmware_cluster = google_gkeonprem_vmware_cluster.cluster.name
@@ -124,8 +120,6 @@ func testAccGkeonpremVmwareNodePool_vmwareNodePoolUpdate(context map[string]inte
 	return acctest.Nprintf(`
 
   resource "google_gkeonprem_vmware_cluster" "cluster" {
-    provider = google-beta
-
     name = "tf-test-cluster-%{random_suffix}"
     location = "us-west1"
     admin_cluster_membership = "projects/870316890899/locations/global/memberships/gkeonprem-terraform-test"
@@ -167,8 +161,6 @@ func testAccGkeonpremVmwareNodePool_vmwareNodePoolUpdate(context map[string]inte
   }
 
   resource "google_gkeonprem_vmware_node_pool" "nodepool" {
-    provider = google-beta
-
     name = "tf-test-nodepool-%{random_suffix}"
     location = "us-west1"
     vmware_cluster = google_gkeonprem_vmware_cluster.cluster.name

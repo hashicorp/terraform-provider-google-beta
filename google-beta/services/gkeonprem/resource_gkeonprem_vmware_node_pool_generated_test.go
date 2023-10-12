@@ -39,7 +39,7 @@ func TestAccGkeonpremVmwareNodePool_gkeonpremVmwareNodePoolBasicExample(t *testi
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckGkeonpremVmwareNodePoolDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -58,7 +58,6 @@ func TestAccGkeonpremVmwareNodePool_gkeonpremVmwareNodePoolBasicExample(t *testi
 func testAccGkeonpremVmwareNodePool_gkeonpremVmwareNodePoolBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_gkeonprem_vmware_cluster" "default-basic" {
-  provider = google-beta
   name = "tf-test-my-cluster%{random_suffix}"
   location = "us-west1"
   admin_cluster_membership = "projects/870316890899/locations/global/memberships/gkeonprem-terraform-test"
@@ -97,7 +96,6 @@ resource "google_gkeonprem_vmware_cluster" "default-basic" {
 }
 
 resource "google_gkeonprem_vmware_node_pool" "nodepool-basic" {
-  provider = google-beta
   name = "tf-test-my-nodepool%{random_suffix}"
   location = "us-west1"
   vmware_cluster = google_gkeonprem_vmware_cluster.default-basic.name
@@ -119,7 +117,7 @@ func TestAccGkeonpremVmwareNodePool_gkeonpremVmwareNodePoolFullExample(t *testin
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckGkeonpremVmwareNodePoolDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -138,7 +136,6 @@ func TestAccGkeonpremVmwareNodePool_gkeonpremVmwareNodePoolFullExample(t *testin
 func testAccGkeonpremVmwareNodePool_gkeonpremVmwareNodePoolFullExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_gkeonprem_vmware_cluster" "default-full" {
-  provider = google-beta
   name = "tf-test-my-cluster%{random_suffix}"
   location = "us-west1"
   admin_cluster_membership = "projects/870316890899/locations/global/memberships/gkeonprem-terraform-test"
@@ -177,7 +174,6 @@ resource "google_gkeonprem_vmware_cluster" "default-full" {
 }
 
 resource "google_gkeonprem_vmware_node_pool" "nodepool-full" {
-  provider = google-beta
   name = "tf-test-my-nodepool%{random_suffix}"
   location = "us-west1"
   vmware_cluster = google_gkeonprem_vmware_cluster.default-full.name
