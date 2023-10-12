@@ -18,7 +18,7 @@ func TestAccGkeonpremVmwareCluster_vmwareClusterUpdateBasic(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckGkeonpremVmwareClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -52,7 +52,7 @@ func TestAccGkeonpremVmwareCluster_vmwareClusterUpdateF5Lb(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckGkeonpremVmwareClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -86,7 +86,7 @@ func TestAccGkeonpremVmwareCluster_vmwareClusterUpdateManualLb(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckGkeonpremVmwareClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -113,8 +113,6 @@ func testAccGkeonpremVmwareCluster_vmwareClusterUpdateMetalLbStart(context map[s
 	return acctest.Nprintf(`
 
   resource "google_gkeonprem_vmware_cluster" "cluster" {
-    provider = google-beta
-
     name = "tf-test-cluster-%{random_suffix}"
     location = "us-west1"
     admin_cluster_membership = "projects/870316890899/locations/global/memberships/gkeonprem-terraform-test"
@@ -163,8 +161,6 @@ func testAccGkeonpremVmwareCluster_vmwareClusterUpdateMetalLb(context map[string
 	return acctest.Nprintf(`
 
   resource "google_gkeonprem_vmware_cluster" "cluster" {
-    provider = google-beta
-
     name = "tf-test-cluster-%{random_suffix}"
     location = "us-west1"
     admin_cluster_membership = "projects/870316890899/locations/global/memberships/gkeonprem-terraform-test"
@@ -213,8 +209,6 @@ func testAccGkeonpremVmwareCluster_vmwareClusterUpdateF5LbStart(context map[stri
 	return acctest.Nprintf(`
 
   resource "google_gkeonprem_vmware_cluster" "cluster" {
-    provider = google-beta
-
     name = "tf-test-cluster-%{random_suffix}"
     location = "us-west1"
     admin_cluster_membership = "projects/870316890899/locations/global/memberships/gkeonprem-terraform-test"
@@ -262,8 +256,6 @@ func testAccGkeonpremVmwareCluster_vmwareClusterUpdateF5lb(context map[string]in
 	return acctest.Nprintf(`
 
   resource "google_gkeonprem_vmware_cluster" "cluster" {
-    provider = google-beta
-
     name = "tf-test-cluster-%{random_suffix}"
     location = "us-west1"
     admin_cluster_membership = "projects/870316890899/locations/global/memberships/gkeonprem-terraform-test"
@@ -311,8 +303,6 @@ func testAccGkeonpremVmwareCluster_vmwareClusterUpdateManualLbStart(context map[
 	return acctest.Nprintf(`
 
   resource "google_gkeonprem_vmware_cluster" "cluster" {
-    provider = google-beta
-
     name = "tf-test-cluster-%{random_suffix}"
     location = "us-west1"
     admin_cluster_membership = "projects/870316890899/locations/global/memberships/gkeonprem-terraform-test"
@@ -405,8 +395,6 @@ func testAccGkeonpremVmwareCluster_vmwareClusterUpdateManualLb(context map[strin
 	return acctest.Nprintf(`
 
   resource "google_gkeonprem_vmware_cluster" "cluster" {
-    provider = google-beta
-
     name = "tf-test-cluster-%{random_suffix}"
     location = "us-west1"
     admin_cluster_membership = "projects/870316890899/locations/global/memberships/gkeonprem-terraform-test"

@@ -39,7 +39,7 @@ func TestAccGkeonpremBareMetalNodePool_gkeonpremBareMetalNodePoolBasicExample(t 
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckGkeonpremBareMetalNodePoolDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -58,7 +58,6 @@ func TestAccGkeonpremBareMetalNodePool_gkeonpremBareMetalNodePoolBasicExample(t 
 func testAccGkeonpremBareMetalNodePool_gkeonpremBareMetalNodePoolBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_gkeonprem_bare_metal_cluster" "default-basic" {
-  provider = google-beta
   name = "tf-test-my-cluster%{random_suffix}"
   location = "us-west1"
   admin_cluster_membership = "projects/870316890899/locations/global/memberships/gkeonprem-terraform-test"
@@ -129,7 +128,6 @@ resource "google_gkeonprem_bare_metal_cluster" "default-basic" {
 }
 
 resource "google_gkeonprem_bare_metal_node_pool" "nodepool-basic" {
-  provider = google-beta
   name =  "tf-test-my-nodepool%{random_suffix}"
   bare_metal_cluster =  google_gkeonprem_bare_metal_cluster.default-basic.name
   location = "us-west1"
@@ -152,7 +150,7 @@ func TestAccGkeonpremBareMetalNodePool_gkeonpremBareMetalNodePoolFullExample(t *
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckGkeonpremBareMetalNodePoolDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -171,7 +169,6 @@ func TestAccGkeonpremBareMetalNodePool_gkeonpremBareMetalNodePoolFullExample(t *
 func testAccGkeonpremBareMetalNodePool_gkeonpremBareMetalNodePoolFullExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_gkeonprem_bare_metal_cluster" "default-full" {
-  provider = google-beta
   name = "tf-test-my-cluster%{random_suffix}"
   location = "us-west1"
   admin_cluster_membership = "projects/870316890899/locations/global/memberships/gkeonprem-terraform-test"
@@ -242,7 +239,6 @@ resource "google_gkeonprem_bare_metal_cluster" "default-full" {
 }
 
 resource "google_gkeonprem_bare_metal_node_pool" "nodepool-full" {
-  provider = google-beta
   name =  "tf-test-my-nodepool%{random_suffix}"
   display_name = "test-name"
   bare_metal_cluster =  google_gkeonprem_bare_metal_cluster.default-full.name
