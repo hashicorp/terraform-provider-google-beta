@@ -18,7 +18,7 @@ BUG FIXES:
 * bigquery: removed mutual exclusivity checks for `view`, `materialized_view`, and `schema` for the `google_bigquery_table` resource ([#6471](https://github.com/hashicorp/terraform-provider-google-beta/pull/6471))
 * compute: added `certificate_manager_certificates` field to `google_compute_target_https_proxy` resource ([#6460](https://github.com/hashicorp/terraform-provider-google-beta/pull/6460))
 * compute: added validation to prevent setting empty `rule.action.source_nat_active_ranges` to `google_compute_router_nat` resource ([#6467](https://github.com/hashicorp/terraform-provider-google-beta/pull/6467))
-* compute: fixed external `google_compute_global_address` can't be created when `network_tier` in `google_compute_project_default_network_tier` is set to `STANDARD` ([#6456](https://github.com/hashicorp/terraform-provider-google-beta/pull/6456))
+* compute: fixed an issue where external `google_compute_global_address` can't be created when `network_tier` in `google_compute_project_default_network_tier` is set to `STANDARD` ([#6456](https://github.com/hashicorp/terraform-provider-google-beta/pull/6456))
 * compute: fixed a false permadiff on `ip_address` when it is set to ipv6 on `google_compute_forwarding_rule` ([#6444](https://github.com/hashicorp/terraform-provider-google-beta/pull/6444))
 * provider: fixed the bug that update request is sent to services when updateMask is empty ([#6443](https://github.com/hashicorp/terraform-provider-google-beta/pull/6443))
 * securitypolicy: fixed a bug where setting `advanced_options_config.user_ip_request_headers` field with empty value was not cleaning the list ([#6470](https://github.com/hashicorp/terraform-provider-google-beta/pull/6470))
