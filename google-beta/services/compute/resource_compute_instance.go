@@ -43,7 +43,6 @@ var (
 		"boot_disk.0.initialize_params.0.image",
 		"boot_disk.0.initialize_params.0.labels",
 		"boot_disk.0.initialize_params.0.resource_manager_tags",
-		"boot_disk.0.initialize_params.0.enable_confidential_compute",
 	}
 
 	schedulingKeys = []string{
@@ -236,13 +235,6 @@ func ResourceComputeInstance() *schema.Resource {
 										AtLeastOneOf: initializeParamsKeys,
 										ForceNew:     true,
 										Description:  `A map of resource manager tags. Resource manager tag keys and values have the same definition as resource manager tags. Keys must be in the format tagKeys/{tag_key_id}, and values are in the format tagValues/456. The field is ignored (both PUT & PATCH) when empty.`,
-									},
-									"enable_confidential_compute": {
-										Type:         schema.TypeBool,
-										Optional:     true,
-										AtLeastOneOf: initializeParamsKeys,
-										ForceNew:     true,
-										Description:  `A flag to enble confidential compute mode on boot disk`,
 									},
 								},
 							},
@@ -2710,10 +2702,6 @@ func expandBootDisk(d *schema.ResourceData, config *transport_tpg.Config, projec
 			disk.InitializeParams.DiskSizeGb = int64(v.(int))
 		}
 
-		if v, ok := d.GetOk("boot_disk.0.initialize_params.0.enable_confidential_compute"); ok {
-			disk.InitializeParams.EnableConfidentialCompute = v.(bool)
-		}
-
 		if v, ok := d.GetOk("boot_disk.0.initialize_params.0.type"); ok {
 			diskTypeName := v.(string)
 			diskType, err := readDiskType(config, d, diskTypeName)
@@ -2775,11 +2763,10 @@ func flattenBootDisk(d *schema.ResourceData, disk *compute.AttachedDisk, config 
 			"type": tpgresource.GetResourceNameFromSelfLink(diskDetails.Type),
 			// If the config specifies a family name that doesn't match the image name, then
 			// the diff won't be properly suppressed. See DiffSuppressFunc for this field.
-			"image":                       diskDetails.SourceImage,
-			"size":                        diskDetails.SizeGb,
-			"labels":                      diskDetails.Labels,
-			"resource_manager_tags":       d.Get("boot_disk.0.initialize_params.0.resource_manager_tags"),
-			"enable_confidential_compute": diskDetails.EnableConfidentialCompute,
+			"image":                 diskDetails.SourceImage,
+			"size":                  diskDetails.SizeGb,
+			"labels":                diskDetails.Labels,
+			"resource_manager_tags": d.Get("boot_disk.0.initialize_params.0.resource_manager_tags"),
 		}}
 	}
 
