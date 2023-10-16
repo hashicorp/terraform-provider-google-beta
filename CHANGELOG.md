@@ -1,4 +1,29 @@
-## 5.2.0 (Unreleased)
+## 5.3.0 (Unreleased)
+
+## 5.2.0 (Oct 16, 2023)
+
+FEATURES:
+* **New Data Source:** `google_secret_manager_secrets` ([#6463](https://github.com/hashicorp/terraform-provider-google-beta/pull/6463))
+* **New Resource:** `google_alloydb_user` ([#6454](https://github.com/hashicorp/terraform-provider-google-beta/pull/6454))
+* **New Resource:** `google_firestore_backup_schedule` ([#6465](https://github.com/hashicorp/terraform-provider-google-beta/pull/6465))
+
+IMPROVEMENTS:
+* alloydb: added `cluster_type` and `secondary_config` fields to support secondary clusters in `google_alloydb_cluster` resource. ([#6474](https://github.com/hashicorp/terraform-provider-google-beta/pull/6474))
+* compute: added `recreate_closed_psc` flag to support recreating the PSC Consumer forwarding rule if the `psc_connection_status` is closed on `google_compute_forwarding_rule`. ([#6468](https://github.com/hashicorp/terraform-provider-google-beta/pull/6468))
+* compute: added `INTERNET_IP_PORT`, `INTERNET_FQDN_PORT`, `SERVERLESS`, and `PRIVATE_SERVICE_CONNECT` as acceptable values for the `network_endpoint_type` field for the `resource_compute_network_endpoint_group` resource ([#6472](https://github.com/hashicorp/terraform-provider-google-beta/pull/6472))
+* compute: added `SEV_LIVE_MIGRATABLE_V2` to `guest_os_features` enum on `google_compute_image` resource. ([#6466](https://github.com/hashicorp/terraform-provider-google-beta/pull/6466))
+* compute: added `allow_subnet_cidr_routes_overlap` field to `google_compute_subnetwork` resource ([#6445](https://github.com/hashicorp/terraform-provider-google-beta/pull/6445))
+* dataform: added `ssh_authentication_config` and `service_account` to `google_dataform_repository` resource ([#6480](https://github.com/hashicorp/terraform-provider-google-beta/pull/6480))
+
+BUG FIXES:
+* alloydb: added `client_connection_config` field to `google_alloydb_instance` resource ([#6478](https://github.com/hashicorp/terraform-provider-google-beta/pull/6478))
+* bigquery: removed mutual exclusivity checks for `view`, `materialized_view`, and `schema` for the `google_bigquery_table` resource ([#6471](https://github.com/hashicorp/terraform-provider-google-beta/pull/6471))
+* compute: added `certificate_manager_certificates` field to `google_compute_target_https_proxy` resource ([#6460](https://github.com/hashicorp/terraform-provider-google-beta/pull/6460))
+* compute: added validation to prevent setting empty `rule.action.source_nat_active_ranges` to `google_compute_router_nat` resource ([#6467](https://github.com/hashicorp/terraform-provider-google-beta/pull/6467))
+* compute: fixed an issue where external `google_compute_global_address` can't be created when `network_tier` in `google_compute_project_default_network_tier` is set to `STANDARD` ([#6456](https://github.com/hashicorp/terraform-provider-google-beta/pull/6456))
+* compute: fixed a false permadiff on `ip_address` when it is set to ipv6 on `google_compute_forwarding_rule` ([#6444](https://github.com/hashicorp/terraform-provider-google-beta/pull/6444))
+* provider: fixed a bug where an update request was sent to services when updateMask is empty ([#6443](https://github.com/hashicorp/terraform-provider-google-beta/pull/6443))
+* securitypolicy: fixed a bug where setting `advanced_options_config.user_ip_request_headers` field with empty value was not cleaning the list ([#6470](https://github.com/hashicorp/terraform-provider-google-beta/pull/6470))
 
 ## 5.1.0 (Oct 9, 2023)
 
