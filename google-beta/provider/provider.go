@@ -888,6 +888,7 @@ func DatasourceMapWithErrors() (map[string]*schema.Resource, error) {
 		"google_cloud_asset_resources_search_all":             cloudasset.DataSourceGoogleCloudAssetResourcesSearchAll(),
 		"google_cloud_identity_groups":                        cloudidentity.DataSourceGoogleCloudIdentityGroups(),
 		"google_cloud_identity_group_memberships":             cloudidentity.DataSourceGoogleCloudIdentityGroupMemberships(),
+		"google_cloud_identity_group_lookup":                  cloudidentity.DataSourceGoogleCloudIdentityGroupLookup(),
 		"google_cloud_run_locations":                          cloudrun.DataSourceGoogleCloudRunLocations(),
 		"google_cloud_run_service":                            cloudrun.DataSourceGoogleCloudRunService(),
 		"google_cloud_run_v2_job":                             cloudrunv2.DataSourceGoogleCloudRunV2Job(),
