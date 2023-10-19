@@ -7,7 +7,6 @@ FEATURES:
 * **New Data Source:** `google_cloud_run_v2_job` ([#6508](https://github.com/hashicorp/terraform-provider-google-beta/pull/6508))
 * **New Data Source:** `google_cloud_run_v2_service` ([#6527](https://github.com/hashicorp/terraform-provider-google-beta/pull/6527))
 * **New Data Source:** `google_compute_networks` ([#6498](https://github.com/hashicorp/terraform-provider-google-beta/pull/6498))
-* **New Resource:** `google_org_policy_custom_constraint` (GA) ([#6488](https://github.com/hashicorp/terraform-provider-google-beta/pull/6488))
 
 IMPROVEMENTS:
 * cloudidentity: added `additional_group_keys` attribute to `google_cloud_identity_group` resource ([#6504](https://github.com/hashicorp/terraform-provider-google-beta/pull/6504))
