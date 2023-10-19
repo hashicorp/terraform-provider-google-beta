@@ -31,11 +31,12 @@ import (
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
-func TestAccBackupDRManagementServer_backupDrManagementServerExample(t *testing.T) {
+func TestAccBackupDRManagementServer_backupDrManagementServerTestExample(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
 		"project":       envvar.GetTestProjectFromEnv(),
+		"network_name":  acctest.BootstrapSharedServiceNetworkingConnection(t, "vpc-network-1"),
 		"random_suffix": acctest.RandString(t, 10),
 	}
 
@@ -45,7 +46,7 @@ func TestAccBackupDRManagementServer_backupDrManagementServerExample(t *testing.
 		CheckDestroy:             testAccCheckBackupDRManagementServerDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccBackupDRManagementServer_backupDrManagementServerExample(context),
+				Config: testAccBackupDRManagementServer_backupDrManagementServerTestExample(context),
 			},
 			{
 				ResourceName:            "google_backup_dr_management_server.ms-console",
@@ -57,27 +58,11 @@ func TestAccBackupDRManagementServer_backupDrManagementServerExample(t *testing.
 	})
 }
 
-func testAccBackupDRManagementServer_backupDrManagementServerExample(context map[string]interface{}) string {
+func testAccBackupDRManagementServer_backupDrManagementServerTestExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
-resource "google_compute_network" "default" {
+data "google_compute_network" "default" {
   provider = google-beta
-  name = "tf-test-vpc-network%{random_suffix}"
-}
-
-resource "google_compute_global_address" "private_ip_address" {
-  provider = google-beta
-  name          = "tf-test-vpc-network%{random_suffix}"
-  address_type  = "INTERNAL"
-  purpose       = "VPC_PEERING"
-  prefix_length = 20
-  network       = google_compute_network.default.id
-}
-
-resource "google_service_networking_connection" "default" {
-  provider = google-beta
-  network                 = google_compute_network.default.id
-  service                 = "servicenetworking.googleapis.com"
-  reserved_peering_ranges = [google_compute_global_address.private_ip_address.name]
+  name = "%{network_name}"
 }
 
 resource "google_backup_dr_management_server" "ms-console" {
@@ -86,10 +71,9 @@ resource "google_backup_dr_management_server" "ms-console" {
   name     = "tf-test-ms-console%{random_suffix}"
   type     = "BACKUP_RESTORE" 
   networks {
-    network      = google_compute_network.default.id
+    network      = data.google_compute_network.default.id
     peering_mode = "PRIVATE_SERVICE_ACCESS"
   }
-  depends_on = [ google_service_networking_connection.default ]
 }
 `, context)
 }
