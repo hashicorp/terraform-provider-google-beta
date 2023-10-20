@@ -1137,9 +1137,9 @@ func DatasourceMapWithErrors() (map[string]*schema.Resource, error) {
 		})
 }
 
-// Generated resources: 393
+// Generated resources: 394
 // Generated IAM resources: 240
-// Total generated resources: 633
+// Total generated resources: 634
 func ResourceMap() map[string]*schema.Resource {
 	resourceMap, _ := ResourceMapWithErrors()
 	return resourceMap
@@ -1630,6 +1630,7 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_monitoring_custom_service":                               monitoring.ResourceMonitoringService(),
 			"google_monitoring_slo":                                          monitoring.ResourceMonitoringSlo(),
 			"google_monitoring_uptime_check_config":                          monitoring.ResourceMonitoringUptimeCheckConfig(),
+			"google_network_connectivity_policy_based_route":                 networkconnectivity.ResourceNetworkConnectivityPolicyBasedRoute(),
 			"google_network_connectivity_service_connection_policy":          networkconnectivity.ResourceNetworkConnectivityServiceConnectionPolicy(),
 			"google_network_management_connectivity_test":                    networkmanagement.ResourceNetworkManagementConnectivityTest(),
 			"google_network_security_address_group":                          networksecurity.ResourceNetworkSecurityAddressGroup(),
