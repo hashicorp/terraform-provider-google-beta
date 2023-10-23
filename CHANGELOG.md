@@ -1,5 +1,35 @@
 ## 5.3.0 (Unreleased)
 
+DEPRECATIONS:
+* bigquery: deprecated `time_partitioning.require_partition_filter` in favor of new top level field `require_partition_filter` in resource `google_bigquery_table` ([#6496](https://github.com/hashicorp/terraform-provider-google-beta/pull/6496))
+
+FEATURES:
+* **New Data Source:** `google_cloud_run_v2_job` ([#6508](https://github.com/hashicorp/terraform-provider-google-beta/pull/6508))
+* **New Data Source:** `google_cloud_run_v2_service` ([#6527](https://github.com/hashicorp/terraform-provider-google-beta/pull/6527))
+* **New Data Source:** `google_compute_networks` ([#6498](https://github.com/hashicorp/terraform-provider-google-beta/pull/6498))
+
+IMPROVEMENTS:
+* cloudidentity: added `additional_group_keys` attribute to `google_cloud_identity_group` resource ([#6504](https://github.com/hashicorp/terraform-provider-google-beta/pull/6504))
+* compute: added `enable_confidential_compute` field under `boot_disk.0.initialize_params` in `google_compute_instance` ([#6528](https://github.com/hashicorp/terraform-provider-google-beta/pull/6528))
+* compute: added `internal_ipv6_range` to `google_compute_network` data source and `internal_ipv6_prefix` field to `data.google_compute_subnetwork` data source ([#6514](https://github.com/hashicorp/terraform-provider-google-beta/pull/6514))
+* container: added support for `security_posture_config.vulnerability_mode` value `VULNERABILITY_ENTERPRISE` in `google_container_cluster` ([#6520](https://github.com/hashicorp/terraform-provider-google-beta/pull/6520))
+* dataform: added `ssh_authentication_config` and `service_account` to `google_dataform_repository` resource ([#6480](https://github.com/hashicorp/terraform-provider-google-beta/pull/6480))
+* dataproc: added `min_num_instances` field to `google_dataproc_cluster` resource ([#6503](https://github.com/hashicorp/terraform-provider-google-beta/pull/6503))
+* logging: added `custom_writer_identity` field to `google_logging_project_sink` ([#6486](https://github.com/hashicorp/terraform-provider-google-beta/pull/6486))
+* secretmanager: made `ttl` field mutable in `google_secret_manager_secret` ([#6521](https://github.com/hashicorp/terraform-provider-google-beta/pull/6521))
+* storage: added `terminal_storage_class` to the `autoclass` field in `google_storage_bucket` resource ([#6519](https://github.com/hashicorp/terraform-provider-google-beta/pull/6519))
+
+BUG FIXES:
+* bigquerydatatransfer: fixed an error when updating `google_bigquery_data_transfer_config` related to incorrect update masks ([#6516](https://github.com/hashicorp/terraform-provider-google-beta/pull/6516))
+* cloudrunv2: fixed a bug where `google_cloud_run_v2_service.custom_audiences` could not be set or updated properly ([#6482](https://github.com/hashicorp/terraform-provider-google-beta/pull/6482))
+* compute: fixed an error during the deletion when post was set to 0 on `google_compute_global_network_endpoint` ([#6523](https://github.com/hashicorp/terraform-provider-google-beta/pull/6523))
+* compute: fixed an issue with TTLs being sent for `google_compute_backend_service` when `cache_mode` is set to `USE_ORIGIN_HEADERS` ([#6499](https://github.com/hashicorp/terraform-provider-google-beta/pull/6499))
+* container: fixed an issue where empty `autoscaling` block would crash the provider for `google_container_node_pool` ([#6483](https://github.com/hashicorp/terraform-provider-google-beta/pull/6483))
+* dataflow: fixed a bug where resource updates returns an error if only `labels` has changes for batch `google_dataflow_job` and `google_dataflow_flex_template_job` ([#6502](https://github.com/hashicorp/terraform-provider-google-beta/pull/6502))
+* dialogflowcx: fixed updating `google_dialogflow_cx_version`; updates will no longer time out. ([#6484](https://github.com/hashicorp/terraform-provider-google-beta/pull/6484))
+* sql: fixed a bug where adding the `edition` field to a `google_sql_database_instance` resource that already existed and used ENTERPRISE edition resulted in a permant diff in plans ([#6485](https://github.com/hashicorp/terraform-provider-google-beta/pull/6485))
+* sql: removed host validation to support IP address and DNS address in host in `google_sql_source_representation_instance` resource ([#6493](https://github.com/hashicorp/terraform-provider-google-beta/pull/6493))
+
 ## 5.2.0 (Oct 16, 2023)
 
 FEATURES:
