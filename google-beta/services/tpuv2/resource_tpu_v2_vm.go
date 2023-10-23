@@ -18,6 +18,7 @@
 package tpuv2
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"reflect"
@@ -63,6 +64,21 @@ func normalizeScopes(scopes []string) []string {
 	return result
 }
 
+// For backwards compatibility, we need to maintain original behavior where `accelerator_type`
+// defaults "v2-8" when nothing is set. However, if the newly introduced `accelerator_config` field
+// is set, then use that value instead of the `accelerator_type` default.
+func acceleratorTypeCustomizeDiff(_ context.Context, diff *schema.ResourceDiff, v interface{}) error {
+	_, isTypeSet := diff.GetOk("accelerator_type")
+	_, isConfigSet := diff.GetOk("accelerator_config")
+	if !isTypeSet && !isConfigSet {
+		if err := diff.SetNew("accelerator_type", "v2-8"); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 func ResourceTpuV2Vm() *schema.Resource {
 	return &schema.Resource{
 		Create: resourceTpuV2VmCreate,
@@ -81,6 +97,7 @@ func ResourceTpuV2Vm() *schema.Resource {
 		},
 
 		CustomizeDiff: customdiff.All(
+			acceleratorTypeCustomizeDiff,
 			tpgresource.SetLabelsDiff,
 			tpgresource.DefaultProviderProject,
 		),
@@ -98,12 +115,41 @@ func ResourceTpuV2Vm() *schema.Resource {
 				ForceNew:    true,
 				Description: `Runtime version for the TPU.`,
 			},
+			"accelerator_config": {
+				Type:     schema.TypeList,
+				Computed: true,
+				Optional: true,
+				ForceNew: true,
+				Description: `The AccleratorConfig for the TPU Node. 'accelerator_config' cannot be used at the same time
+as 'accelerator_type'. If neither is specified, 'accelerator_type' defaults to 'v2-8'.`,
+				MaxItems: 1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"topology": {
+							Type:        schema.TypeString,
+							Required:    true,
+							ForceNew:    true,
+							Description: `Topology of TPU in chips.`,
+						},
+						"type": {
+							Type:         schema.TypeString,
+							Required:     true,
+							ForceNew:     true,
+							ValidateFunc: verify.ValidateEnum([]string{"V2", "V3", "V4"}),
+							Description:  `Type of TPU. Possible values: ["V2", "V3", "V4"]`,
+						},
+					},
+				},
+				ConflictsWith: []string{"accelerator_type"},
+			},
 			"accelerator_type": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				ForceNew:    true,
-				Description: `TPU accelerator type for the TPU. If not specified, this defaults to 'v2-8'.`,
-				Default:     "v2-8",
+				Type:     schema.TypeString,
+				Computed: true,
+				Optional: true,
+				ForceNew: true,
+				Description: `TPU accelerator type for the TPU. 'accelerator_type' cannot be used at the same time as
+'accelerator_config'. If neither is specified, 'accelerator_type' defaults to 'v2-8'.`,
+				ConflictsWith: []string{"accelerator_config"},
 			},
 			"cidr_block": {
 				Type:     schema.TypeString,
@@ -478,6 +524,12 @@ func resourceTpuV2VmCreate(d *schema.ResourceData, meta interface{}) error {
 	} else if v, ok := d.GetOkExists("shielded_instance_config"); !tpgresource.IsEmptyValue(reflect.ValueOf(shieldedInstanceConfigProp)) && (ok || !reflect.DeepEqual(v, shieldedInstanceConfigProp)) {
 		obj["shieldedInstanceConfig"] = shieldedInstanceConfigProp
 	}
+	acceleratorConfigProp, err := expandTpuV2VmAcceleratorConfig(d.Get("accelerator_config"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("accelerator_config"); !tpgresource.IsEmptyValue(reflect.ValueOf(acceleratorConfigProp)) && (ok || !reflect.DeepEqual(v, acceleratorConfigProp)) {
+		obj["acceleratorConfig"] = acceleratorConfigProp
+	}
 	metadataProp, err := expandTpuV2VmMetadata(d.Get("metadata"), d, config)
 	if err != nil {
 		return err
@@ -633,6 +685,9 @@ func resourceTpuV2VmRead(d *schema.ResourceData, meta interface{}) error {
 		return fmt.Errorf("Error reading Vm: %s", err)
 	}
 	if err := d.Set("shielded_instance_config", flattenTpuV2VmShieldedInstanceConfig(res["shieldedInstanceConfig"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Vm: %s", err)
+	}
+	if err := d.Set("accelerator_config", flattenTpuV2VmAcceleratorConfig(res["acceleratorConfig"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Vm: %s", err)
 	}
 	if err := d.Set("labels", flattenTpuV2VmLabels(res["labels"], d, config)); err != nil {
@@ -1016,6 +1071,29 @@ func flattenTpuV2VmShieldedInstanceConfigEnableSecureBoot(v interface{}, d *sche
 	return v
 }
 
+func flattenTpuV2VmAcceleratorConfig(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["type"] =
+		flattenTpuV2VmAcceleratorConfigType(original["type"], d, config)
+	transformed["topology"] =
+		flattenTpuV2VmAcceleratorConfigTopology(original["topology"], d, config)
+	return []interface{}{transformed}
+}
+func flattenTpuV2VmAcceleratorConfigType(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenTpuV2VmAcceleratorConfigTopology(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
 func flattenTpuV2VmLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return v
@@ -1378,6 +1456,40 @@ func expandTpuV2VmShieldedInstanceConfig(v interface{}, d tpgresource.TerraformR
 }
 
 func expandTpuV2VmShieldedInstanceConfigEnableSecureBoot(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandTpuV2VmAcceleratorConfig(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedType, err := expandTpuV2VmAcceleratorConfigType(original["type"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedType); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["type"] = transformedType
+	}
+
+	transformedTopology, err := expandTpuV2VmAcceleratorConfigTopology(original["topology"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedTopology); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["topology"] = transformedTopology
+	}
+
+	return transformed, nil
+}
+
+func expandTpuV2VmAcceleratorConfigType(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandTpuV2VmAcceleratorConfigTopology(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
