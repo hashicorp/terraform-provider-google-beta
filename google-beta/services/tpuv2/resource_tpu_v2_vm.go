@@ -29,7 +29,39 @@ import (
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/verify"
 )
+
+// Suppress unremovable default scope values from GCP.
+func tpuServiceAccountAddedScopesSuppress(k, old, new string, d *schema.ResourceData) bool {
+	if strings.Contains(k, "scope.#") && (new == "0" || new == "") && old != new {
+		return false
+	}
+
+	// Get changes for service_account.xx.scope
+	b := strings.Split(k, ".")
+	o, n := d.GetChange(strings.TrimSuffix(k, "."+b[len(b)-1]))
+	if o == nil || n == nil {
+		return false
+	}
+
+	oList := normalizeScopes(tpgresource.ConvertStringArr(o.([]interface{})))
+	nList := normalizeScopes(tpgresource.ConvertStringArr(n.([]interface{})))
+
+	return reflect.DeepEqual(oList, nList)
+}
+
+// Normalize the scopes by filtering out the `https://www.googleapis.com/auth/pubsub` scope during
+// comparison
+func normalizeScopes(scopes []string) []string {
+	var result []string
+	for _, s := range scopes {
+		if s != "https://www.googleapis.com/auth/pubsub" {
+			result = append(result, s)
+		}
+	}
+	return result
+}
 
 func ResourceTpuV2Vm() *schema.Resource {
 	return &schema.Resource{
@@ -49,6 +81,7 @@ func ResourceTpuV2Vm() *schema.Resource {
 		},
 
 		CustomizeDiff: customdiff.All(
+			tpgresource.SetLabelsDiff,
 			tpgresource.DefaultProviderProject,
 		),
 
@@ -72,10 +105,186 @@ func ResourceTpuV2Vm() *schema.Resource {
 				Description: `TPU accelerator type for the TPU. If not specified, this defaults to 'v2-8'.`,
 				Default:     "v2-8",
 			},
+			"cidr_block": {
+				Type:     schema.TypeString,
+				Computed: true,
+				Optional: true,
+				ForceNew: true,
+				Description: `The CIDR block that the TPU node will use when selecting an IP address. This CIDR block must
+be a /29 block; the Compute Engine networks API forbids a smaller block, and using a larger
+block would be wasteful (a node can only consume one IP address). Errors will occur if the
+CIDR block has already been used for a currently existing TPU node, the CIDR block conflicts
+with any subnetworks in the user's provided network, or the provided network is peered with
+another network that is using that CIDR block.`,
+			},
+			"data_disks": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: `The additional data disks for the Node.`,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"source_disk": {
+							Type:     schema.TypeString,
+							Required: true,
+							Description: `Specifies the full path to an existing disk. For example:
+"projects/my-project/zones/us-central1-c/disks/my-disk".`,
+						},
+						"mode": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: verify.ValidateEnum([]string{"READ_WRITE", "READ_ONLY", ""}),
+							Description: `The mode in which to attach this disk. If not specified, the default is READ_WRITE
+mode. Only applicable to dataDisks. Default value: "READ_WRITE" Possible values: ["READ_WRITE", "READ_ONLY"]`,
+							Default: "READ_WRITE",
+						},
+					},
+				},
+			},
 			"description": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: `Text description of the TPU.`,
+			},
+			"labels": {
+				Type:     schema.TypeMap,
+				Optional: true,
+				Description: `Resource labels to represent user-provided metadata.
+
+**Note**: This field is non-authoritative, and will only manage the labels present in your configuration.
+Please refer to the field 'effective_labels' for all of the labels present on the resource.`,
+				Elem: &schema.Schema{Type: schema.TypeString},
+			},
+			"metadata": {
+				Type:        schema.TypeMap,
+				Optional:    true,
+				Description: `Custom metadata to apply to the TPU Node. Can set startup-script and shutdown-script.`,
+				Elem:        &schema.Schema{Type: schema.TypeString},
+			},
+			"network_config": {
+				Type:        schema.TypeList,
+				Computed:    true,
+				Optional:    true,
+				ForceNew:    true,
+				Description: `Network configurations for the TPU node.`,
+				MaxItems:    1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"can_ip_forward": {
+							Type:     schema.TypeBool,
+							Optional: true,
+							ForceNew: true,
+							Description: `Allows the TPU node to send and receive packets with non-matching destination or source
+IPs. This is required if you plan to use the TPU workers to forward routes.`,
+						},
+						"enable_external_ips": {
+							Type:     schema.TypeBool,
+							Optional: true,
+							ForceNew: true,
+							Description: `Indicates that external IP addresses would be associated with the TPU workers. If set to
+false, the specified subnetwork or network should have Private Google Access enabled.`,
+						},
+						"network": {
+							Type:     schema.TypeString,
+							Computed: true,
+							Optional: true,
+							ForceNew: true,
+							Description: `The name of the network for the TPU node. It must be a preexisting Google Compute Engine
+network. If both network and subnetwork are specified, the given subnetwork must belong
+to the given network. If network is not specified, it will be looked up from the
+subnetwork if one is provided, or otherwise use "default".`,
+						},
+						"subnetwork": {
+							Type:     schema.TypeString,
+							Computed: true,
+							Optional: true,
+							ForceNew: true,
+							Description: `The name of the subnetwork for the TPU node. It must be a preexisting Google Compute
+Engine subnetwork. If both network and subnetwork are specified, the given subnetwork
+must belong to the given network. If subnetwork is not specified, the subnetwork with the
+same name as the network will be used.`,
+						},
+					},
+				},
+			},
+			"scheduling_config": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				ForceNew:    true,
+				Description: `The scheduling options for this node.`,
+				MaxItems:    1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"preemptible": {
+							Type:        schema.TypeBool,
+							Optional:    true,
+							ForceNew:    true,
+							Description: `Defines whether the node is preemptible.`,
+						},
+						"reserved": {
+							Type:        schema.TypeBool,
+							Optional:    true,
+							ForceNew:    true,
+							Description: `Whether the node is created under a reservation.`,
+						},
+					},
+				},
+			},
+			"service_account": {
+				Type:     schema.TypeList,
+				Computed: true,
+				Optional: true,
+				ForceNew: true,
+				Description: `The Google Cloud Platform Service Account to be used by the TPU node VMs. If None is
+specified, the default compute service account will be used.`,
+				MaxItems: 1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"email": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Optional:    true,
+							ForceNew:    true,
+							Description: `Email address of the service account. If empty, default Compute service account will be used.`,
+						},
+						"scope": {
+							Type:             schema.TypeList,
+							Computed:         true,
+							Optional:         true,
+							ForceNew:         true,
+							DiffSuppressFunc: tpuServiceAccountAddedScopesSuppress,
+							Description: `The list of scopes to be made available for this service account. If empty, access to all
+Cloud APIs will be allowed.`,
+							Elem: &schema.Schema{
+								Type: schema.TypeString,
+							},
+						},
+					},
+				},
+			},
+			"shielded_instance_config": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				ForceNew:    true,
+				Description: `Shielded Instance options.`,
+				MaxItems:    1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"enable_secure_boot": {
+							Type:        schema.TypeBool,
+							Required:    true,
+							ForceNew:    true,
+							Description: `Defines whether the instance has Secure Boot enabled.`,
+						},
+					},
+				},
+			},
+			"tags": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: `Tags to apply to the TPU Node. Tags are used to identify valid sources or targets for network firewalls.`,
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
 			},
 			"zone": {
 				Type:        schema.TypeString,
@@ -83,6 +292,112 @@ func ResourceTpuV2Vm() *schema.Resource {
 				Optional:    true,
 				ForceNew:    true,
 				Description: `The GCP location for the TPU. If it is not provided, the provider zone is used.`,
+			},
+			"api_version": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: `The API version that created this Node.`,
+			},
+			"effective_labels": {
+				Type:        schema.TypeMap,
+				Computed:    true,
+				Description: `All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.`,
+				Elem:        &schema.Schema{Type: schema.TypeString},
+			},
+			"health": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: `The health status of the TPU node.`,
+			},
+			"health_description": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: `If this field is populated, it contains a description of why the TPU Node is unhealthy.`,
+			},
+			"multislice_node": {
+				Type:        schema.TypeBool,
+				Computed:    true,
+				Description: `Whether the Node belongs to a Multislice group.`,
+			},
+			"network_endpoints": {
+				Type:     schema.TypeList,
+				Computed: true,
+				Description: `The network endpoints where TPU workers can be accessed and sent work. It is recommended that
+runtime clients of the node reach out to the 0th entry in this map first.`,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"access_config": {
+							Type:        schema.TypeList,
+							Computed:    true,
+							Description: `The access config for the TPU worker.`,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"external_ip": {
+										Type:        schema.TypeString,
+										Computed:    true,
+										Description: `An external IP address associated with the TPU worker.`,
+									},
+								},
+							},
+						},
+						"ip_address": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: `The internal IP address of this network endpoint.`,
+						},
+						"port": {
+							Type:        schema.TypeInt,
+							Computed:    true,
+							Description: `The port of this network endpoint.`,
+						},
+					},
+				},
+			},
+			"queued_resource": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: `The qualified name of the QueuedResource that requested this Node.`,
+			},
+			"state": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: `The current state for the TPU Node.`,
+			},
+			"symptoms": {
+				Type:        schema.TypeList,
+				Computed:    true,
+				Description: `The Symptoms that have occurred to the TPU Node.`,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"create_time": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: `Timestamp when the Symptom is created.`,
+						},
+						"details": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: `Detailed information of the current Symptom.`,
+						},
+						"symptom_type": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: `Type of the Symptom.`,
+						},
+						"worker_id": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: `A string used to uniquely distinguish a worker within a TPU node.`,
+						},
+					},
+				},
+			},
+			"terraform_labels": {
+				Type:     schema.TypeMap,
+				Computed: true,
+				Description: `The combination of labels configured directly on the resource
+ and default labels configured on the provider.`,
+				Elem: &schema.Schema{Type: schema.TypeString},
 			},
 			"project": {
 				Type:     schema.TypeString,
@@ -126,6 +441,60 @@ func resourceTpuV2VmCreate(d *schema.ResourceData, meta interface{}) error {
 		return err
 	} else if v, ok := d.GetOkExists("description"); !tpgresource.IsEmptyValue(reflect.ValueOf(descriptionProp)) && (ok || !reflect.DeepEqual(v, descriptionProp)) {
 		obj["description"] = descriptionProp
+	}
+	cidrBlockProp, err := expandTpuV2VmCidrBlock(d.Get("cidr_block"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("cidr_block"); !tpgresource.IsEmptyValue(reflect.ValueOf(cidrBlockProp)) && (ok || !reflect.DeepEqual(v, cidrBlockProp)) {
+		obj["cidrBlock"] = cidrBlockProp
+	}
+	networkConfigProp, err := expandTpuV2VmNetworkConfig(d.Get("network_config"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("network_config"); !tpgresource.IsEmptyValue(reflect.ValueOf(networkConfigProp)) && (ok || !reflect.DeepEqual(v, networkConfigProp)) {
+		obj["networkConfig"] = networkConfigProp
+	}
+	serviceAccountProp, err := expandTpuV2VmServiceAccount(d.Get("service_account"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("service_account"); !tpgresource.IsEmptyValue(reflect.ValueOf(serviceAccountProp)) && (ok || !reflect.DeepEqual(v, serviceAccountProp)) {
+		obj["serviceAccount"] = serviceAccountProp
+	}
+	schedulingConfigProp, err := expandTpuV2VmSchedulingConfig(d.Get("scheduling_config"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("scheduling_config"); !tpgresource.IsEmptyValue(reflect.ValueOf(schedulingConfigProp)) && (ok || !reflect.DeepEqual(v, schedulingConfigProp)) {
+		obj["schedulingConfig"] = schedulingConfigProp
+	}
+	dataDisksProp, err := expandTpuV2VmDataDisks(d.Get("data_disks"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("data_disks"); !tpgresource.IsEmptyValue(reflect.ValueOf(dataDisksProp)) && (ok || !reflect.DeepEqual(v, dataDisksProp)) {
+		obj["dataDisks"] = dataDisksProp
+	}
+	shieldedInstanceConfigProp, err := expandTpuV2VmShieldedInstanceConfig(d.Get("shielded_instance_config"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("shielded_instance_config"); !tpgresource.IsEmptyValue(reflect.ValueOf(shieldedInstanceConfigProp)) && (ok || !reflect.DeepEqual(v, shieldedInstanceConfigProp)) {
+		obj["shieldedInstanceConfig"] = shieldedInstanceConfigProp
+	}
+	metadataProp, err := expandTpuV2VmMetadata(d.Get("metadata"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("metadata"); !tpgresource.IsEmptyValue(reflect.ValueOf(metadataProp)) && (ok || !reflect.DeepEqual(v, metadataProp)) {
+		obj["metadata"] = metadataProp
+	}
+	tagsProp, err := expandTpuV2VmTags(d.Get("tags"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("tags"); !tpgresource.IsEmptyValue(reflect.ValueOf(tagsProp)) && (ok || !reflect.DeepEqual(v, tagsProp)) {
+		obj["tags"] = tagsProp
+	}
+	labelsProp, err := expandTpuV2VmEffectiveLabels(d.Get("effective_labels"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("effective_labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(labelsProp)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
+		obj["labels"] = labelsProp
 	}
 
 	url, err := tpgresource.ReplaceVars(d, config, "{{TpuV2BasePath}}projects/{{project}}/locations/{{zone}}/nodes?nodeId={{name}}")
@@ -248,6 +617,63 @@ func resourceTpuV2VmRead(d *schema.ResourceData, meta interface{}) error {
 	if err := d.Set("description", flattenTpuV2VmDescription(res["description"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Vm: %s", err)
 	}
+	if err := d.Set("cidr_block", flattenTpuV2VmCidrBlock(res["cidrBlock"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Vm: %s", err)
+	}
+	if err := d.Set("network_config", flattenTpuV2VmNetworkConfig(res["networkConfig"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Vm: %s", err)
+	}
+	if err := d.Set("service_account", flattenTpuV2VmServiceAccount(res["serviceAccount"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Vm: %s", err)
+	}
+	if err := d.Set("scheduling_config", flattenTpuV2VmSchedulingConfig(res["schedulingConfig"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Vm: %s", err)
+	}
+	if err := d.Set("data_disks", flattenTpuV2VmDataDisks(res["dataDisks"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Vm: %s", err)
+	}
+	if err := d.Set("shielded_instance_config", flattenTpuV2VmShieldedInstanceConfig(res["shieldedInstanceConfig"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Vm: %s", err)
+	}
+	if err := d.Set("labels", flattenTpuV2VmLabels(res["labels"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Vm: %s", err)
+	}
+	if err := d.Set("metadata", flattenTpuV2VmMetadata(res["metadata"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Vm: %s", err)
+	}
+	if err := d.Set("tags", flattenTpuV2VmTags(res["tags"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Vm: %s", err)
+	}
+	if err := d.Set("state", flattenTpuV2VmState(res["state"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Vm: %s", err)
+	}
+	if err := d.Set("health", flattenTpuV2VmHealth(res["health"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Vm: %s", err)
+	}
+	if err := d.Set("health_description", flattenTpuV2VmHealthDescription(res["healthDescription"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Vm: %s", err)
+	}
+	if err := d.Set("api_version", flattenTpuV2VmApiVersion(res["apiVersion"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Vm: %s", err)
+	}
+	if err := d.Set("queued_resource", flattenTpuV2VmQueuedResource(res["queuedResource"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Vm: %s", err)
+	}
+	if err := d.Set("multislice_node", flattenTpuV2VmMultisliceNode(res["multisliceNode"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Vm: %s", err)
+	}
+	if err := d.Set("network_endpoints", flattenTpuV2VmNetworkEndpoints(res["networkEndpoints"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Vm: %s", err)
+	}
+	if err := d.Set("symptoms", flattenTpuV2VmSymptoms(res["symptoms"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Vm: %s", err)
+	}
+	if err := d.Set("terraform_labels", flattenTpuV2VmTerraformLabels(res["labels"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Vm: %s", err)
+	}
+	if err := d.Set("effective_labels", flattenTpuV2VmEffectiveLabels(res["labels"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Vm: %s", err)
+	}
 
 	return nil
 }
@@ -274,6 +700,30 @@ func resourceTpuV2VmUpdate(d *schema.ResourceData, meta interface{}) error {
 	} else if v, ok := d.GetOkExists("description"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, descriptionProp)) {
 		obj["description"] = descriptionProp
 	}
+	dataDisksProp, err := expandTpuV2VmDataDisks(d.Get("data_disks"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("data_disks"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, dataDisksProp)) {
+		obj["dataDisks"] = dataDisksProp
+	}
+	metadataProp, err := expandTpuV2VmMetadata(d.Get("metadata"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("metadata"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, metadataProp)) {
+		obj["metadata"] = metadataProp
+	}
+	tagsProp, err := expandTpuV2VmTags(d.Get("tags"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("tags"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, tagsProp)) {
+		obj["tags"] = tagsProp
+	}
+	labelsProp, err := expandTpuV2VmEffectiveLabels(d.Get("effective_labels"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("effective_labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
+		obj["labels"] = labelsProp
+	}
 
 	url, err := tpgresource.ReplaceVars(d, config, "{{TpuV2BasePath}}projects/{{project}}/locations/{{zone}}/nodes/{{name}}")
 	if err != nil {
@@ -285,6 +735,22 @@ func resourceTpuV2VmUpdate(d *schema.ResourceData, meta interface{}) error {
 
 	if d.HasChange("description") {
 		updateMask = append(updateMask, "description")
+	}
+
+	if d.HasChange("data_disks") {
+		updateMask = append(updateMask, "dataDisks")
+	}
+
+	if d.HasChange("metadata") {
+		updateMask = append(updateMask, "metadata")
+	}
+
+	if d.HasChange("tags") {
+		updateMask = append(updateMask, "tags")
+	}
+
+	if d.HasChange("effective_labels") {
+		updateMask = append(updateMask, "labels")
 	}
 	// updateMask is a URL parameter but not present in the schema, so ReplaceVars
 	// won't set it
@@ -421,6 +887,296 @@ func flattenTpuV2VmDescription(v interface{}, d *schema.ResourceData, config *tr
 	return v
 }
 
+func flattenTpuV2VmCidrBlock(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenTpuV2VmNetworkConfig(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["network"] =
+		flattenTpuV2VmNetworkConfigNetwork(original["network"], d, config)
+	transformed["subnetwork"] =
+		flattenTpuV2VmNetworkConfigSubnetwork(original["subnetwork"], d, config)
+	transformed["enable_external_ips"] =
+		flattenTpuV2VmNetworkConfigEnableExternalIps(original["enableExternalIps"], d, config)
+	transformed["can_ip_forward"] =
+		flattenTpuV2VmNetworkConfigCanIpForward(original["canIpForward"], d, config)
+	return []interface{}{transformed}
+}
+func flattenTpuV2VmNetworkConfigNetwork(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenTpuV2VmNetworkConfigSubnetwork(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenTpuV2VmNetworkConfigEnableExternalIps(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenTpuV2VmNetworkConfigCanIpForward(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenTpuV2VmServiceAccount(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["email"] =
+		flattenTpuV2VmServiceAccountEmail(original["email"], d, config)
+	transformed["scope"] =
+		flattenTpuV2VmServiceAccountScope(original["scope"], d, config)
+	return []interface{}{transformed}
+}
+func flattenTpuV2VmServiceAccountEmail(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenTpuV2VmServiceAccountScope(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenTpuV2VmSchedulingConfig(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["preemptible"] =
+		flattenTpuV2VmSchedulingConfigPreemptible(original["preemptible"], d, config)
+	transformed["reserved"] =
+		flattenTpuV2VmSchedulingConfigReserved(original["reserved"], d, config)
+	return []interface{}{transformed}
+}
+func flattenTpuV2VmSchedulingConfigPreemptible(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenTpuV2VmSchedulingConfigReserved(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenTpuV2VmDataDisks(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return v
+	}
+	l := v.([]interface{})
+	transformed := make([]interface{}, 0, len(l))
+	for _, raw := range l {
+		original := raw.(map[string]interface{})
+		if len(original) < 1 {
+			// Do not include empty json objects coming back from the api
+			continue
+		}
+		transformed = append(transformed, map[string]interface{}{
+			"source_disk": flattenTpuV2VmDataDisksSourceDisk(original["sourceDisk"], d, config),
+			"mode":        flattenTpuV2VmDataDisksMode(original["mode"], d, config),
+		})
+	}
+	return transformed
+}
+func flattenTpuV2VmDataDisksSourceDisk(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenTpuV2VmDataDisksMode(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenTpuV2VmShieldedInstanceConfig(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["enable_secure_boot"] =
+		flattenTpuV2VmShieldedInstanceConfigEnableSecureBoot(original["enableSecureBoot"], d, config)
+	return []interface{}{transformed}
+}
+func flattenTpuV2VmShieldedInstanceConfigEnableSecureBoot(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenTpuV2VmLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return v
+	}
+
+	transformed := make(map[string]interface{})
+	if l, ok := d.GetOkExists("labels"); ok {
+		for k := range l.(map[string]interface{}) {
+			transformed[k] = v.(map[string]interface{})[k]
+		}
+	}
+
+	return transformed
+}
+
+func flattenTpuV2VmMetadata(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenTpuV2VmTags(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenTpuV2VmState(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenTpuV2VmHealth(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenTpuV2VmHealthDescription(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenTpuV2VmApiVersion(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenTpuV2VmQueuedResource(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenTpuV2VmMultisliceNode(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenTpuV2VmNetworkEndpoints(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return v
+	}
+	l := v.([]interface{})
+	transformed := make([]interface{}, 0, len(l))
+	for _, raw := range l {
+		original := raw.(map[string]interface{})
+		if len(original) < 1 {
+			// Do not include empty json objects coming back from the api
+			continue
+		}
+		transformed = append(transformed, map[string]interface{}{
+			"ip_address":    flattenTpuV2VmNetworkEndpointsIpAddress(original["ipAddress"], d, config),
+			"port":          flattenTpuV2VmNetworkEndpointsPort(original["port"], d, config),
+			"access_config": flattenTpuV2VmNetworkEndpointsAccessConfig(original["accessConfig"], d, config),
+		})
+	}
+	return transformed
+}
+func flattenTpuV2VmNetworkEndpointsIpAddress(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenTpuV2VmNetworkEndpointsPort(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	// Handles the string fixed64 format
+	if strVal, ok := v.(string); ok {
+		if intVal, err := tpgresource.StringToFixed64(strVal); err == nil {
+			return intVal
+		}
+	}
+
+	// number values are represented as float64
+	if floatVal, ok := v.(float64); ok {
+		intVal := int(floatVal)
+		return intVal
+	}
+
+	return v // let terraform core handle it otherwise
+}
+
+func flattenTpuV2VmNetworkEndpointsAccessConfig(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["external_ip"] =
+		flattenTpuV2VmNetworkEndpointsAccessConfigExternalIp(original["externalIp"], d, config)
+	return []interface{}{transformed}
+}
+func flattenTpuV2VmNetworkEndpointsAccessConfigExternalIp(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenTpuV2VmSymptoms(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return v
+	}
+	l := v.([]interface{})
+	transformed := make([]interface{}, 0, len(l))
+	for _, raw := range l {
+		original := raw.(map[string]interface{})
+		if len(original) < 1 {
+			// Do not include empty json objects coming back from the api
+			continue
+		}
+		transformed = append(transformed, map[string]interface{}{
+			"create_time":  flattenTpuV2VmSymptomsCreateTime(original["createTime"], d, config),
+			"symptom_type": flattenTpuV2VmSymptomsSymptomType(original["symptomType"], d, config),
+			"details":      flattenTpuV2VmSymptomsDetails(original["details"], d, config),
+			"worker_id":    flattenTpuV2VmSymptomsWorkerId(original["workerId"], d, config),
+		})
+	}
+	return transformed
+}
+func flattenTpuV2VmSymptomsCreateTime(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenTpuV2VmSymptomsSymptomType(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenTpuV2VmSymptomsDetails(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenTpuV2VmSymptomsWorkerId(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenTpuV2VmTerraformLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return v
+	}
+
+	transformed := make(map[string]interface{})
+	if l, ok := d.GetOkExists("terraform_labels"); ok {
+		for k := range l.(map[string]interface{}) {
+			transformed[k] = v.(map[string]interface{})[k]
+		}
+	}
+
+	return transformed
+}
+
+func flattenTpuV2VmEffectiveLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
 func expandTpuV2VmName(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
@@ -435,4 +1191,218 @@ func expandTpuV2VmAcceleratorType(v interface{}, d tpgresource.TerraformResource
 
 func expandTpuV2VmDescription(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
+}
+
+func expandTpuV2VmCidrBlock(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandTpuV2VmNetworkConfig(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedNetwork, err := expandTpuV2VmNetworkConfigNetwork(original["network"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedNetwork); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["network"] = transformedNetwork
+	}
+
+	transformedSubnetwork, err := expandTpuV2VmNetworkConfigSubnetwork(original["subnetwork"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedSubnetwork); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["subnetwork"] = transformedSubnetwork
+	}
+
+	transformedEnableExternalIps, err := expandTpuV2VmNetworkConfigEnableExternalIps(original["enable_external_ips"], d, config)
+	if err != nil {
+		return nil, err
+	} else {
+		transformed["enableExternalIps"] = transformedEnableExternalIps
+	}
+
+	transformedCanIpForward, err := expandTpuV2VmNetworkConfigCanIpForward(original["can_ip_forward"], d, config)
+	if err != nil {
+		return nil, err
+	} else {
+		transformed["canIpForward"] = transformedCanIpForward
+	}
+
+	return transformed, nil
+}
+
+func expandTpuV2VmNetworkConfigNetwork(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandTpuV2VmNetworkConfigSubnetwork(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandTpuV2VmNetworkConfigEnableExternalIps(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandTpuV2VmNetworkConfigCanIpForward(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandTpuV2VmServiceAccount(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedEmail, err := expandTpuV2VmServiceAccountEmail(original["email"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedEmail); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["email"] = transformedEmail
+	}
+
+	transformedScope, err := expandTpuV2VmServiceAccountScope(original["scope"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedScope); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["scope"] = transformedScope
+	}
+
+	return transformed, nil
+}
+
+func expandTpuV2VmServiceAccountEmail(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandTpuV2VmServiceAccountScope(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandTpuV2VmSchedulingConfig(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedPreemptible, err := expandTpuV2VmSchedulingConfigPreemptible(original["preemptible"], d, config)
+	if err != nil {
+		return nil, err
+	} else {
+		transformed["preemptible"] = transformedPreemptible
+	}
+
+	transformedReserved, err := expandTpuV2VmSchedulingConfigReserved(original["reserved"], d, config)
+	if err != nil {
+		return nil, err
+	} else {
+		transformed["reserved"] = transformedReserved
+	}
+
+	return transformed, nil
+}
+
+func expandTpuV2VmSchedulingConfigPreemptible(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandTpuV2VmSchedulingConfigReserved(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandTpuV2VmDataDisks(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	req := make([]interface{}, 0, len(l))
+	for _, raw := range l {
+		if raw == nil {
+			continue
+		}
+		original := raw.(map[string]interface{})
+		transformed := make(map[string]interface{})
+
+		transformedSourceDisk, err := expandTpuV2VmDataDisksSourceDisk(original["source_disk"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedSourceDisk); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["sourceDisk"] = transformedSourceDisk
+		}
+
+		transformedMode, err := expandTpuV2VmDataDisksMode(original["mode"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedMode); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["mode"] = transformedMode
+		}
+
+		req = append(req, transformed)
+	}
+	return req, nil
+}
+
+func expandTpuV2VmDataDisksSourceDisk(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandTpuV2VmDataDisksMode(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandTpuV2VmShieldedInstanceConfig(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedEnableSecureBoot, err := expandTpuV2VmShieldedInstanceConfigEnableSecureBoot(original["enable_secure_boot"], d, config)
+	if err != nil {
+		return nil, err
+	} else {
+		transformed["enableSecureBoot"] = transformedEnableSecureBoot
+	}
+
+	return transformed, nil
+}
+
+func expandTpuV2VmShieldedInstanceConfigEnableSecureBoot(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandTpuV2VmMetadata(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
+	if v == nil {
+		return map[string]string{}, nil
+	}
+	m := make(map[string]string)
+	for k, val := range v.(map[string]interface{}) {
+		m[k] = val.(string)
+	}
+	return m, nil
+}
+
+func expandTpuV2VmTags(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandTpuV2VmEffectiveLabels(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
+	if v == nil {
+		return map[string]string{}, nil
+	}
+	m := make(map[string]string)
+	for k, val := range v.(map[string]interface{}) {
+		m[k] = val.(string)
+	}
+	return m, nil
 }
