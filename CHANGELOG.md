@@ -11,8 +11,8 @@ FEATURES:
 IMPROVEMENTS:
 * cloudidentity: added `additional_group_keys` attribute to `google_cloud_identity_group` resource ([#6504](https://github.com/hashicorp/terraform-provider-google-beta/pull/6504))
 * compute: added `enable_confidential_compute` field under `boot_disk.0.initialize_params` in `google_compute_instance` ([#6528](https://github.com/hashicorp/terraform-provider-google-beta/pull/6528))
-* compute: added `internal_ipv6_range` to `data.google_compute_network` data source and `internal_ipv6_prefix` field to `data.google_compute_subnetwork` data source ([#6514](https://github.com/hashicorp/terraform-provider-google-beta/pull/6514))
-* container: added support for `security_posture_config.vulnerability_mode` value "VULNERABILITY_ENTERPRISE" in `google_container_cluster` ([#6520](https://github.com/hashicorp/terraform-provider-google-beta/pull/6520))
+* compute: added `internal_ipv6_range` to `google_compute_network` data source and `internal_ipv6_prefix` field to `data.google_compute_subnetwork` data source ([#6514](https://github.com/hashicorp/terraform-provider-google-beta/pull/6514))
+* container: added support for `security_posture_config.vulnerability_mode` value `VULNERABILITY_ENTERPRISE` in `google_container_cluster` ([#6520](https://github.com/hashicorp/terraform-provider-google-beta/pull/6520))
 * dataform: added `ssh_authentication_config` and `service_account` to `google_dataform_repository` resource ([#6480](https://github.com/hashicorp/terraform-provider-google-beta/pull/6480))
 * dataproc: added `min_num_instances` field to `google_dataproc_cluster` resource ([#6503](https://github.com/hashicorp/terraform-provider-google-beta/pull/6503))
 * logging: added `custom_writer_identity` field to `google_logging_project_sink` ([#6486](https://github.com/hashicorp/terraform-provider-google-beta/pull/6486))
