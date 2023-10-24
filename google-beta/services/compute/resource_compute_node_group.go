@@ -112,6 +112,15 @@ than or equal to max-nodes. The default value is 0.`,
 				Optional:    true,
 				Description: `The initial number of nodes in the node group. One of 'initial_size' or 'autoscaling_policy' must be configured on resource creation.`,
 			},
+			"maintenance_interval": {
+				Type:         schema.TypeString,
+				Computed:     true,
+				Optional:     true,
+				ValidateFunc: verify.ValidateEnum([]string{"AS_NEEDED", "RECURRENT", ""}),
+				Description: `Specifies the frequency of planned maintenance events. Set to one of the following:
+  - AS_NEEDED: Hosts are eligible to receive infrastructure and hypervisor updates as they become available.
+  - RECURRENT: Hosts receive planned infrastructure and hypervisor updates on a periodic basis, but not more frequently than every 28 days. This minimizes the number of planned maintenance operations on individual hosts and reduces the frequency of disruptions, both live migrations and terminations, on individual VMs. Possible values: ["AS_NEEDED", "RECURRENT"]`,
+			},
 			"maintenance_policy": {
 				Type:        schema.TypeString,
 				Optional:    true,
@@ -255,6 +264,12 @@ func resourceComputeNodeGroupCreate(d *schema.ResourceData, meta interface{}) er
 	} else if v, ok := d.GetOkExists("share_settings"); !tpgresource.IsEmptyValue(reflect.ValueOf(shareSettingsProp)) && (ok || !reflect.DeepEqual(v, shareSettingsProp)) {
 		obj["shareSettings"] = shareSettingsProp
 	}
+	maintenanceIntervalProp, err := expandComputeNodeGroupMaintenanceInterval(d.Get("maintenance_interval"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("maintenance_interval"); !tpgresource.IsEmptyValue(reflect.ValueOf(maintenanceIntervalProp)) && (ok || !reflect.DeepEqual(v, maintenanceIntervalProp)) {
+		obj["maintenanceInterval"] = maintenanceIntervalProp
+	}
 	zoneProp, err := expandComputeNodeGroupZone(d.Get("zone"), d, config)
 	if err != nil {
 		return err
@@ -395,6 +410,9 @@ func resourceComputeNodeGroupRead(d *schema.ResourceData, meta interface{}) erro
 	if err := d.Set("share_settings", flattenComputeNodeGroupShareSettings(res["shareSettings"], d, config)); err != nil {
 		return fmt.Errorf("Error reading NodeGroup: %s", err)
 	}
+	if err := d.Set("maintenance_interval", flattenComputeNodeGroupMaintenanceInterval(res["maintenanceInterval"], d, config)); err != nil {
+		return fmt.Errorf("Error reading NodeGroup: %s", err)
+	}
 	if err := d.Set("zone", flattenComputeNodeGroupZone(res["zone"], d, config)); err != nil {
 		return fmt.Errorf("Error reading NodeGroup: %s", err)
 	}
@@ -457,6 +475,12 @@ func resourceComputeNodeGroupUpdate(d *schema.ResourceData, meta interface{}) er
 	} else if v, ok := d.GetOkExists("share_settings"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, shareSettingsProp)) {
 		obj["shareSettings"] = shareSettingsProp
 	}
+	maintenanceIntervalProp, err := expandComputeNodeGroupMaintenanceInterval(d.Get("maintenance_interval"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("maintenance_interval"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, maintenanceIntervalProp)) {
+		obj["maintenanceInterval"] = maintenanceIntervalProp
+	}
 	zoneProp, err := expandComputeNodeGroupZone(d.Get("zone"), d, config)
 	if err != nil {
 		return err
@@ -494,6 +518,10 @@ func resourceComputeNodeGroupUpdate(d *schema.ResourceData, meta interface{}) er
 
 	if d.HasChange("share_settings") {
 		updateMask = append(updateMask, "shareSettings")
+	}
+
+	if d.HasChange("maintenance_interval") {
+		updateMask = append(updateMask, "maintenanceInterval")
 	}
 
 	if d.HasChange("zone") {
@@ -811,6 +839,10 @@ func flattenComputeNodeGroupShareSettingsProjectMapProjectId(v interface{}, d *s
 	return v
 }
 
+func flattenComputeNodeGroupMaintenanceInterval(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
 func flattenComputeNodeGroupZone(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return v
@@ -962,6 +994,10 @@ func expandComputeNodeGroupShareSettingsProjectMap(v interface{}, d tpgresource.
 }
 
 func expandComputeNodeGroupShareSettingsProjectMapProjectId(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeNodeGroupMaintenanceInterval(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
