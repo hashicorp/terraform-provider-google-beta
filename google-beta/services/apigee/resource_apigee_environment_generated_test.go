@@ -223,7 +223,7 @@ resource "google_apigee_environment" "apigee_environment" {
 `, context)
 }
 
-func TestAccApigeeEnvironment_apigeeEnvironmentNodeconfigTestExample(t *testing.T) {
+func TestAccApigeeEnvironment_apigeeEnvironmentTypeTestExample(t *testing.T) {
 	acctest.SkipIfVcr(t)
 	t.Parallel()
 
@@ -239,7 +239,7 @@ func TestAccApigeeEnvironment_apigeeEnvironmentNodeconfigTestExample(t *testing.
 		CheckDestroy:             testAccCheckApigeeEnvironmentDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccApigeeEnvironment_apigeeEnvironmentNodeconfigTestExample(context),
+				Config: testAccApigeeEnvironment_apigeeEnvironmentTypeTestExample(context),
 			},
 			{
 				ResourceName:            "google_apigee_environment.apigee_environment",
@@ -251,7 +251,7 @@ func TestAccApigeeEnvironment_apigeeEnvironmentNodeconfigTestExample(t *testing.
 	})
 }
 
-func testAccApigeeEnvironment_apigeeEnvironmentNodeconfigTestExample(context map[string]interface{}) string {
+func testAccApigeeEnvironment_apigeeEnvironmentTypeTestExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_project" "project" {
   provider = google-beta
@@ -375,10 +375,7 @@ resource "google_apigee_environment" "apigee_environment" {
   name         = "tf-test%{random_suffix}"
   description  = "Apigee Environment"
   display_name = "tf-test%{random_suffix}"
-  node_config {
-    min_node_count = "3"
-    max_node_count = "5"
-  }
+  type         = "COMPREHENSIVE"
 }
 `, context)
 }
