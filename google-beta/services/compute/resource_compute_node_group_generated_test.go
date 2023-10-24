@@ -75,6 +75,54 @@ resource "google_compute_node_group" "nodes" {
 `, context)
 }
 
+func TestAccComputeNodeGroup_nodeGroupMaintenanceIntervalExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"random_suffix": acctest.RandString(t, 10),
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckComputeNodeGroupDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeNodeGroup_nodeGroupMaintenanceIntervalExample(context),
+			},
+			{
+				ResourceName:            "google_compute_node_group.nodes",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"node_template", "initial_size", "zone"},
+			},
+		},
+	})
+}
+
+func testAccComputeNodeGroup_nodeGroupMaintenanceIntervalExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_compute_node_template" "soletenant-tmpl" {
+  provider  = google-beta
+  name      = "tf-test-soletenant-tmpl%{random_suffix}"
+  region    = "us-central1"
+  node_type = "c2-node-60-240"
+}
+
+resource "google_compute_node_group" "nodes" {
+  provider    = google-beta
+  name        = "tf-test-soletenant-group%{random_suffix}"
+  zone        = "us-central1-a"
+  description = "example google_compute_node_group for Terraform Google Provider"
+
+  initial_size          = 1
+  node_template = google_compute_node_template.soletenant-tmpl.id
+
+  maintenance_interval  = "RECURRENT"
+}
+`, context)
+}
+
 func TestAccComputeNodeGroup_nodeGroupAutoscalingPolicyExample(t *testing.T) {
 	t.Parallel()
 
