@@ -1,0 +1,3 @@
+```release-note:bug
+compute: fixed the error when `maintenance_interval` is updated on `google_compute_instance_template`
+```
