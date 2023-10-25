@@ -688,6 +688,7 @@ be from 0 to 999,999,999 inclusive.`,
 						"maintenance_interval": {
 							Type:        schema.TypeString,
 							Optional:    true,
+							ForceNew:    true,
 							Description: `Specifies the frequency of planned maintenance events. The accepted values are: PERIODIC`,
 						},
 						"local_ssd_recovery_timeout": {
