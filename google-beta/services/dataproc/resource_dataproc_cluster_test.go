@@ -106,6 +106,45 @@ func TestAccDataprocCluster_basic(t *testing.T) {
 	})
 }
 
+func TestAccDataprocVirtualCluster_basic(t *testing.T) {
+	t.Parallel()
+
+	var cluster dataproc.Cluster
+	rnd := acctest.RandString(t, 10)
+	pid := envvar.GetTestProjectFromEnv()
+	version := "3.1-dataproc-7"
+	networkName := acctest.BootstrapSharedTestNetwork(t, "gke-cluster")
+	subnetworkName := acctest.BootstrapSubnet(t, "gke-cluster", networkName)
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckDataprocClusterDestroy(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccDataprocVirtualCluster_basic(pid, rnd, networkName, subnetworkName),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckDataprocClusterExists(t, "google_dataproc_cluster.virtual_cluster", &cluster),
+
+					// Expect 1 dataproc on gke instances with computed values
+					resource.TestCheckResourceAttr("google_dataproc_cluster.virtual_cluster", "virtual_cluster_config.#", "1"),
+					resource.TestCheckResourceAttr("google_dataproc_cluster.virtual_cluster", "virtual_cluster_config.0.kubernetes_cluster_config.#", "1"),
+					resource.TestCheckResourceAttrSet("google_dataproc_cluster.virtual_cluster", "virtual_cluster_config.0.kubernetes_cluster_config.0.kubernetes_namespace"),
+					resource.TestCheckResourceAttr("google_dataproc_cluster.virtual_cluster", "virtual_cluster_config.0.kubernetes_cluster_config.0.kubernetes_software_config.#", "1"),
+					resource.TestCheckResourceAttr("google_dataproc_cluster.virtual_cluster", "virtual_cluster_config.0.kubernetes_cluster_config.0.kubernetes_software_config.0.component_version.SPARK", version),
+
+					resource.TestCheckResourceAttr("google_dataproc_cluster.virtual_cluster", "virtual_cluster_config.0.kubernetes_cluster_config.0.gke_cluster_config.#", "1"),
+					resource.TestCheckResourceAttrSet("google_dataproc_cluster.virtual_cluster", "virtual_cluster_config.0.kubernetes_cluster_config.0.gke_cluster_config.0.gke_cluster_target"),
+					resource.TestCheckResourceAttr("google_dataproc_cluster.virtual_cluster", "virtual_cluster_config.0.kubernetes_cluster_config.0.gke_cluster_config.0.node_pool_target.#", "1"),
+					resource.TestCheckResourceAttrSet("google_dataproc_cluster.virtual_cluster", "virtual_cluster_config.0.kubernetes_cluster_config.0.gke_cluster_config.0.node_pool_target.0.node_pool"),
+					resource.TestCheckResourceAttr("google_dataproc_cluster.virtual_cluster", "virtual_cluster_config.0.kubernetes_cluster_config.0.gke_cluster_config.0.node_pool_target.0.roles.#", "1"),
+					testAccCheckDataprocGkeClusterNodePoolsHaveRoles(&cluster, "DEFAULT"),
+				),
+			},
+		},
+	})
+}
+
 func TestAccDataprocCluster_withAccelerators(t *testing.T) {
 	t.Parallel()
 
@@ -1212,6 +1251,68 @@ resource "google_dataproc_cluster" "basic" {
   region = "us-central1"
 }
 `, rnd)
+}
+
+func testAccDataprocVirtualCluster_basic(projectID, rnd, networkName, subnetworkName string) string {
+	return fmt.Sprintf(`
+data "google_project" "project" {
+  project_id = "%s"
+}
+
+resource "google_container_cluster" "primary" {
+  name     = "tf-test-gke-%s"
+  location = "us-central1-a"
+  network    = "%s"
+  subnetwork    = "%s"
+
+  initial_node_count = 1
+
+  workload_identity_config {
+    workload_pool = "${data.google_project.project.project_id}.svc.id.goog"
+  }
+  deletion_protection = false
+}
+
+resource "google_project_iam_binding" "workloadidentity" {
+  project = "%s"
+  role    = "roles/iam.workloadIdentityUser"
+
+  members = [
+    "serviceAccount:${data.google_project.project.project_id}.svc.id.goog[tf-test-dproc-%s/agent]",
+    "serviceAccount:${data.google_project.project.project_id}.svc.id.goog[tf-test-dproc-%s/spark-driver]",
+    "serviceAccount:${data.google_project.project.project_id}.svc.id.goog[tf-test-dproc-%s/spark-executor]",
+  ]
+}
+
+resource "google_dataproc_cluster" "virtual_cluster" {
+	depends_on = [
+	  google_project_iam_binding.workloadidentity
+	]
+  
+	name   	= "tf-test-dproc-%s"
+	region  = "us-central1"
+  
+	virtual_cluster_config {
+	  kubernetes_cluster_config {
+		kubernetes_namespace = "tf-test-dproc-%s"
+		kubernetes_software_config {
+		  component_version = {
+			"SPARK": "3.1-dataproc-7",
+		  }
+		}
+		gke_cluster_config {
+		  gke_cluster_target = google_container_cluster.primary.id
+		  node_pool_target {
+			node_pool = "tf-test-gke-np-%s"
+			roles = [
+			  "DEFAULT"
+			]
+		  }
+		} 
+	  }
+	}
+  }
+`, projectID, rnd, networkName, subnetworkName, projectID, rnd, rnd, rnd, rnd, rnd, rnd)
 }
 
 func testAccCheckDataprocGkeClusterNodePoolsHaveRoles(cluster *dataproc.Cluster, roles ...string) func(s *terraform.State) error {
