@@ -18,6 +18,8 @@ func TestAccContainerNodePool_basic(t *testing.T) {
 
 	cluster := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	np := fmt.Sprintf("tf-test-nodepool-%s", acctest.RandString(t, 10))
+	networkName := acctest.BootstrapSharedTestNetwork(t, "gke-cluster")
+	subnetworkName := acctest.BootstrapSubnet(t, "gke-cluster", networkName)
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -25,7 +27,7 @@ func TestAccContainerNodePool_basic(t *testing.T) {
 		CheckDestroy:             testAccCheckContainerNodePoolDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccContainerNodePool_basic(cluster, np),
+				Config: testAccContainerNodePool_basic(cluster, np, networkName, subnetworkName),
 			},
 			{
 				ResourceName:      "google_container_node_pool.np",
@@ -41,6 +43,8 @@ func TestAccContainerNodePool_basicWithClusterId(t *testing.T) {
 
 	cluster := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	np := fmt.Sprintf("tf-test-nodepool-%s", acctest.RandString(t, 10))
+	networkName := acctest.BootstrapSharedTestNetwork(t, "gke-cluster")
+	subnetworkName := acctest.BootstrapSubnet(t, "gke-cluster", networkName)
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -48,7 +52,7 @@ func TestAccContainerNodePool_basicWithClusterId(t *testing.T) {
 		CheckDestroy:             testAccCheckContainerNodePoolDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccContainerNodePool_basicWithClusterId(cluster, np),
+				Config: testAccContainerNodePool_basicWithClusterId(cluster, np, networkName, subnetworkName),
 			},
 			{
 				ResourceName:            "google_container_node_pool.np",
@@ -114,6 +118,8 @@ func TestAccContainerNodePool_namePrefix(t *testing.T) {
 	t.Parallel()
 
 	cluster := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
+	networkName := acctest.BootstrapSharedTestNetwork(t, "gke-cluster")
+	subnetworkName := acctest.BootstrapSubnet(t, "gke-cluster", networkName)
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -121,7 +127,7 @@ func TestAccContainerNodePool_namePrefix(t *testing.T) {
 		CheckDestroy:             testAccCheckContainerNodePoolDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccContainerNodePool_namePrefix(cluster, "tf-np-"),
+				Config: testAccContainerNodePool_namePrefix(cluster, "tf-np-", networkName, subnetworkName),
 			},
 			{
 				ResourceName:            "google_container_node_pool.np",
@@ -139,6 +145,8 @@ func TestAccContainerNodePool_noName(t *testing.T) {
 	t.Parallel()
 
 	cluster := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
+	networkName := acctest.BootstrapSharedTestNetwork(t, "gke-cluster")
+	subnetworkName := acctest.BootstrapSubnet(t, "gke-cluster", networkName)
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -146,7 +154,7 @@ func TestAccContainerNodePool_noName(t *testing.T) {
 		CheckDestroy:             testAccCheckContainerNodePoolDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccContainerNodePool_noName(cluster),
+				Config: testAccContainerNodePool_noName(cluster, networkName, subnetworkName),
 			},
 			{
 				ResourceName:      "google_container_node_pool.np",
@@ -162,6 +170,8 @@ func TestAccContainerNodePool_withLoggingVariantUpdates(t *testing.T) {
 
 	cluster := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	nodePool := fmt.Sprintf("tf-test-nodepool-%s", acctest.RandString(t, 10))
+	networkName := acctest.BootstrapSharedTestNetwork(t, "gke-cluster")
+	subnetworkName := acctest.BootstrapSubnet(t, "gke-cluster", networkName)
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -169,7 +179,7 @@ func TestAccContainerNodePool_withLoggingVariantUpdates(t *testing.T) {
 		CheckDestroy:             testAccCheckContainerNodePoolDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccContainerNodePool_withLoggingVariant(cluster, nodePool, "DEFAULT"),
+				Config: testAccContainerNodePool_withLoggingVariant(cluster, nodePool, "DEFAULT", networkName, subnetworkName),
 			},
 			{
 				ResourceName:      "google_container_node_pool.with_logging_variant",
@@ -177,7 +187,7 @@ func TestAccContainerNodePool_withLoggingVariantUpdates(t *testing.T) {
 				ImportStateVerify: true,
 			},
 			{
-				Config: testAccContainerNodePool_withLoggingVariant(cluster, nodePool, "MAX_THROUGHPUT"),
+				Config: testAccContainerNodePool_withLoggingVariant(cluster, nodePool, "MAX_THROUGHPUT", networkName, subnetworkName),
 			},
 			{
 				ResourceName:      "google_container_node_pool.with_logging_variant",
@@ -185,7 +195,7 @@ func TestAccContainerNodePool_withLoggingVariantUpdates(t *testing.T) {
 				ImportStateVerify: true,
 			},
 			{
-				Config: testAccContainerNodePool_withLoggingVariant(cluster, nodePool, "DEFAULT"),
+				Config: testAccContainerNodePool_withLoggingVariant(cluster, nodePool, "DEFAULT", networkName, subnetworkName),
 			},
 			{
 				ResourceName:      "google_container_node_pool.with_logging_variant",
@@ -201,6 +211,8 @@ func TestAccContainerNodePool_withNodeConfig(t *testing.T) {
 
 	cluster := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	nodePool := fmt.Sprintf("tf-test-nodepool-%s", acctest.RandString(t, 10))
+	networkName := acctest.BootstrapSharedTestNetwork(t, "gke-cluster")
+	subnetworkName := acctest.BootstrapSubnet(t, "gke-cluster", networkName)
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -208,7 +220,7 @@ func TestAccContainerNodePool_withNodeConfig(t *testing.T) {
 		CheckDestroy:             testAccCheckContainerNodePoolDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccContainerNodePool_withNodeConfig(cluster, nodePool),
+				Config: testAccContainerNodePool_withNodeConfig(cluster, nodePool, networkName, subnetworkName),
 			},
 			{
 				ResourceName:      "google_container_node_pool.np_with_node_config",
@@ -219,7 +231,7 @@ func TestAccContainerNodePool_withNodeConfig(t *testing.T) {
 				ImportStateVerifyIgnore: []string{"autoscaling.#", "node_config.0.taint"},
 			},
 			{
-				Config: testAccContainerNodePool_withNodeConfigUpdate(cluster, nodePool),
+				Config: testAccContainerNodePool_withNodeConfigUpdate(cluster, nodePool, networkName, subnetworkName),
 			},
 			{
 				ResourceName:      "google_container_node_pool.np_with_node_config",
@@ -238,6 +250,8 @@ func TestAccContainerNodePool_withTaintsUpdate(t *testing.T) {
 
 	cluster := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	nodePool := fmt.Sprintf("tf-test-nodepool-%s", acctest.RandString(t, 10))
+	networkName := acctest.BootstrapSharedTestNetwork(t, "gke-cluster")
+	subnetworkName := acctest.BootstrapSubnet(t, "gke-cluster", networkName)
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -245,7 +259,7 @@ func TestAccContainerNodePool_withTaintsUpdate(t *testing.T) {
 		CheckDestroy:             testAccCheckContainerNodePoolDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccContainerNodePool_basic(cluster, nodePool),
+				Config: testAccContainerNodePool_basic(cluster, nodePool, networkName, subnetworkName),
 			},
 			{
 				ResourceName:      "google_container_node_pool.np",
@@ -253,7 +267,7 @@ func TestAccContainerNodePool_withTaintsUpdate(t *testing.T) {
 				ImportStateVerify: true,
 			},
 			{
-				Config: testAccContainerNodePool_withTaintsUpdate(cluster, nodePool),
+				Config: testAccContainerNodePool_withTaintsUpdate(cluster, nodePool, networkName, subnetworkName),
 			},
 			{
 				ResourceName:      "google_container_node_pool.np",
@@ -272,6 +286,8 @@ func TestAccContainerNodePool_withReservationAffinity(t *testing.T) {
 
 	cluster := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	np := fmt.Sprintf("tf-test-np-%s", acctest.RandString(t, 10))
+	networkName := acctest.BootstrapSharedTestNetwork(t, "gke-cluster")
+	subnetworkName := acctest.BootstrapSubnet(t, "gke-cluster", networkName)
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -279,7 +295,7 @@ func TestAccContainerNodePool_withReservationAffinity(t *testing.T) {
 		CheckDestroy:             testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccContainerNodePool_withReservationAffinity(cluster, np),
+				Config: testAccContainerNodePool_withReservationAffinity(cluster, np, networkName, subnetworkName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("google_container_node_pool.with_reservation_affinity",
 						"node_config.0.reservation_affinity.#", "1"),
@@ -302,6 +318,8 @@ func TestAccContainerNodePool_withReservationAffinitySpecific(t *testing.T) {
 	cluster := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	reservation := fmt.Sprintf("tf-test-reservation-%s", acctest.RandString(t, 10))
 	np := fmt.Sprintf("tf-test-np-%s", acctest.RandString(t, 10))
+	networkName := acctest.BootstrapSharedTestNetwork(t, "gke-cluster")
+	subnetworkName := acctest.BootstrapSubnet(t, "gke-cluster", networkName)
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -309,7 +327,7 @@ func TestAccContainerNodePool_withReservationAffinitySpecific(t *testing.T) {
 		CheckDestroy:             testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccContainerNodePool_withReservationAffinitySpecific(cluster, reservation, np),
+				Config: testAccContainerNodePool_withReservationAffinitySpecific(cluster, reservation, np, networkName, subnetworkName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("google_container_node_pool.with_reservation_affinity",
 						"node_config.0.reservation_affinity.#", "1"),
@@ -338,6 +356,8 @@ func TestAccContainerNodePool_withWorkloadIdentityConfig(t *testing.T) {
 	pid := envvar.GetTestProjectFromEnv()
 	cluster := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	np := fmt.Sprintf("tf-test-np-%s", acctest.RandString(t, 10))
+	networkName := acctest.BootstrapSharedTestNetwork(t, "gke-cluster")
+	subnetworkName := acctest.BootstrapSubnet(t, "gke-cluster", networkName)
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -345,7 +365,7 @@ func TestAccContainerNodePool_withWorkloadIdentityConfig(t *testing.T) {
 		CheckDestroy:             testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccContainerNodePool_withWorkloadMetadataConfig(cluster, np),
+				Config: testAccContainerNodePool_withWorkloadMetadataConfig(cluster, np, networkName, subnetworkName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("google_container_node_pool.with_workload_metadata_config",
 						"node_config.0.workload_metadata_config.0.mode", "GCE_METADATA"),
@@ -357,7 +377,7 @@ func TestAccContainerNodePool_withWorkloadIdentityConfig(t *testing.T) {
 				ImportStateVerify: true,
 			},
 			{
-				Config: testAccContainerNodePool_withWorkloadMetadataConfig_gkeMetadata(pid, cluster, np),
+				Config: testAccContainerNodePool_withWorkloadMetadataConfig_gkeMetadata(pid, cluster, np, networkName, subnetworkName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("google_container_node_pool.with_workload_metadata_config",
 						"node_config.0.workload_metadata_config.0.mode", "GKE_METADATA"),
@@ -377,6 +397,8 @@ func TestAccContainerNodePool_withSandboxConfig(t *testing.T) {
 
 	cluster := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	np := fmt.Sprintf("tf-test-np-%s", acctest.RandString(t, 10))
+	networkName := acctest.BootstrapSharedTestNetwork(t, "gke-cluster")
+	subnetworkName := acctest.BootstrapSubnet(t, "gke-cluster", networkName)
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -384,7 +406,7 @@ func TestAccContainerNodePool_withSandboxConfig(t *testing.T) {
 		CheckDestroy:             testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccContainerNodePool_withSandboxConfig(cluster, np),
+				Config: testAccContainerNodePool_withSandboxConfig(cluster, np, networkName, subnetworkName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("google_container_node_pool.with_sandbox_config",
 						"node_config.0.sandbox_config.0.sandbox_type", "gvisor"),
@@ -405,6 +427,8 @@ func TestAccContainerNodePool_withKubeletConfig(t *testing.T) {
 
 	cluster := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	np := fmt.Sprintf("tf-test-np-%s", acctest.RandString(t, 10))
+	networkName := acctest.BootstrapSharedTestNetwork(t, "gke-cluster")
+	subnetworkName := acctest.BootstrapSubnet(t, "gke-cluster", networkName)
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -412,7 +436,7 @@ func TestAccContainerNodePool_withKubeletConfig(t *testing.T) {
 		CheckDestroy:             testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccContainerNodePool_withKubeletConfig(cluster, np, "static", "100us", true, 2048),
+				Config: testAccContainerNodePool_withKubeletConfig(cluster, np, "static", "100us", networkName, subnetworkName, true, 2048),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("google_container_node_pool.with_kubelet_config",
 						"node_config.0.kubelet_config.0.cpu_cfs_quota", "true"),
@@ -426,7 +450,7 @@ func TestAccContainerNodePool_withKubeletConfig(t *testing.T) {
 				ImportStateVerify: true,
 			},
 			{
-				Config: testAccContainerNodePool_withKubeletConfig(cluster, np, "", "", false, 1024),
+				Config: testAccContainerNodePool_withKubeletConfig(cluster, np, "", "", networkName, subnetworkName, false, 1024),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("google_container_node_pool.with_kubelet_config",
 						"node_config.0.kubelet_config.0.cpu_cfs_quota", "false"),
@@ -448,6 +472,8 @@ func TestAccContainerNodePool_withInvalidKubeletCpuManagerPolicy(t *testing.T) {
 
 	cluster := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	np := fmt.Sprintf("tf-test-np-%s", acctest.RandString(t, 10))
+	networkName := acctest.BootstrapSharedTestNetwork(t, "gke-cluster")
+	subnetworkName := acctest.BootstrapSubnet(t, "gke-cluster", networkName)
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -455,7 +481,7 @@ func TestAccContainerNodePool_withInvalidKubeletCpuManagerPolicy(t *testing.T) {
 		CheckDestroy:             testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config:      testAccContainerNodePool_withKubeletConfig(cluster, np, "dontexist", "100us", true, 1024),
+				Config:      testAccContainerNodePool_withKubeletConfig(cluster, np, "dontexist", "100us", networkName, subnetworkName, true, 1024),
 				ExpectError: regexp.MustCompile(`.*to be one of \[static none \].*`),
 			},
 		},
@@ -467,6 +493,8 @@ func TestAccContainerNodePool_withLinuxNodeConfig(t *testing.T) {
 
 	cluster := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	np := fmt.Sprintf("tf-test-np-%s", acctest.RandString(t, 10))
+	networkName := acctest.BootstrapSharedTestNetwork(t, "gke-cluster")
+	subnetworkName := acctest.BootstrapSubnet(t, "gke-cluster", networkName)
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -475,7 +503,7 @@ func TestAccContainerNodePool_withLinuxNodeConfig(t *testing.T) {
 		Steps: []resource.TestStep{
 			// Create a node pool with empty `linux_node_config.sysctls`.
 			{
-				Config: testAccContainerNodePool_withLinuxNodeConfig(cluster, np, ""),
+				Config: testAccContainerNodePool_withLinuxNodeConfig(cluster, np, "", networkName, subnetworkName),
 			},
 			{
 				ResourceName:      "google_container_node_pool.with_linux_node_config",
@@ -483,7 +511,7 @@ func TestAccContainerNodePool_withLinuxNodeConfig(t *testing.T) {
 				ImportStateVerify: true,
 			},
 			{
-				Config: testAccContainerNodePool_withLinuxNodeConfig(cluster, np, "1000 20000 100000"),
+				Config: testAccContainerNodePool_withLinuxNodeConfig(cluster, np, "1000 20000 100000", networkName, subnetworkName),
 			},
 			{
 				ResourceName:      "google_container_node_pool.with_linux_node_config",
@@ -492,7 +520,7 @@ func TestAccContainerNodePool_withLinuxNodeConfig(t *testing.T) {
 			},
 			// Perform an update.
 			{
-				Config: testAccContainerNodePool_withLinuxNodeConfig(cluster, np, "1000 20000 200000"),
+				Config: testAccContainerNodePool_withLinuxNodeConfig(cluster, np, "1000 20000 200000", networkName, subnetworkName),
 			},
 			{
 				ResourceName:      "google_container_node_pool.with_linux_node_config",
@@ -508,6 +536,8 @@ func TestAccContainerNodePool_withCgroupMode(t *testing.T) {
 
 	cluster := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	np := fmt.Sprintf("tf-test-np-%s", acctest.RandString(t, 10))
+	networkName := acctest.BootstrapSharedTestNetwork(t, "gke-cluster")
+	subnetworkName := acctest.BootstrapSubnet(t, "gke-cluster", networkName)
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -515,7 +545,7 @@ func TestAccContainerNodePool_withCgroupMode(t *testing.T) {
 		CheckDestroy:             testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccContainerNodePool_withCgroupMode(cluster, np, "CGROUP_MODE_V2"),
+				Config: testAccContainerNodePool_withCgroupMode(cluster, np, "CGROUP_MODE_V2", networkName, subnetworkName),
 			},
 			{
 				ResourceName:      "google_container_node_pool.np",
@@ -524,7 +554,7 @@ func TestAccContainerNodePool_withCgroupMode(t *testing.T) {
 			},
 			// Perform an update.
 			{
-				Config: testAccContainerNodePool_withCgroupMode(cluster, np, "CGROUP_MODE_UNSPECIFIED"),
+				Config: testAccContainerNodePool_withCgroupMode(cluster, np, "CGROUP_MODE_UNSPECIFIED", networkName, subnetworkName),
 			},
 			{
 				ResourceName:      "google_container_node_pool.np",
@@ -696,6 +726,8 @@ func TestAccContainerNodePool_withBootDiskKmsKey(t *testing.T) {
 
 	cluster := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	np := fmt.Sprintf("tf-test-np-%s", acctest.RandString(t, 10))
+	networkName := acctest.BootstrapSharedTestNetwork(t, "gke-cluster")
+	subnetworkName := acctest.BootstrapSubnet(t, "gke-cluster", networkName)
 
 	if acctest.BootstrapPSARole(t, "service-", "compute-system", "roles/cloudkms.cryptoKeyEncrypterDecrypter") {
 		t.Fatal("Stopping the test because a role was added to the policy.")
@@ -707,7 +739,7 @@ func TestAccContainerNodePool_withBootDiskKmsKey(t *testing.T) {
 		CheckDestroy:             testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccContainerNodePool_withBootDiskKmsKey(cluster, np),
+				Config: testAccContainerNodePool_withBootDiskKmsKey(cluster, np, networkName, subnetworkName),
 			},
 			{
 				ResourceName:      "google_container_node_pool.with_boot_disk_kms_key",
@@ -724,6 +756,8 @@ func TestAccContainerNodePool_withUpgradeSettings(t *testing.T) {
 
 	cluster := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	np := fmt.Sprintf("tf-test-np-%s", acctest.RandString(t, 10))
+	networkName := acctest.BootstrapSharedTestNetwork(t, "gke-cluster")
+	subnetworkName := acctest.BootstrapSubnet(t, "gke-cluster", networkName)
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -731,7 +765,7 @@ func TestAccContainerNodePool_withUpgradeSettings(t *testing.T) {
 		CheckDestroy:             testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccContainerNodePool_withUpgradeSettings(cluster, np, 2, 3, "SURGE", "", 0, 0.0, ""),
+				Config: testAccContainerNodePool_withUpgradeSettings(cluster, np, networkName, subnetworkName, 2, 3, "SURGE", "", 0, 0.0, ""),
 			},
 			{
 				ResourceName:      "google_container_node_pool.with_upgrade_settings",
@@ -739,7 +773,7 @@ func TestAccContainerNodePool_withUpgradeSettings(t *testing.T) {
 				ImportStateVerify: true,
 			},
 			{
-				Config: testAccContainerNodePool_withUpgradeSettings(cluster, np, 2, 1, "SURGE", "", 0, 0.0, ""),
+				Config: testAccContainerNodePool_withUpgradeSettings(cluster, np, networkName, subnetworkName, 2, 1, "SURGE", "", 0, 0.0, ""),
 			},
 			{
 				ResourceName:      "google_container_node_pool.with_upgrade_settings",
@@ -747,7 +781,7 @@ func TestAccContainerNodePool_withUpgradeSettings(t *testing.T) {
 				ImportStateVerify: true,
 			},
 			{
-				Config: testAccContainerNodePool_withUpgradeSettings(cluster, np, 1, 1, "SURGE", "", 0, 0.0, ""),
+				Config: testAccContainerNodePool_withUpgradeSettings(cluster, np, networkName, subnetworkName, 1, 1, "SURGE", "", 0, 0.0, ""),
 			},
 			{
 				ResourceName:      "google_container_node_pool.with_upgrade_settings",
@@ -755,7 +789,7 @@ func TestAccContainerNodePool_withUpgradeSettings(t *testing.T) {
 				ImportStateVerify: true,
 			},
 			{
-				Config: testAccContainerNodePool_withUpgradeSettings(cluster, np, 0, 0, "BLUE_GREEN", "100s", 1, 0.0, "0s"),
+				Config: testAccContainerNodePool_withUpgradeSettings(cluster, np, networkName, subnetworkName, 0, 0, "BLUE_GREEN", "100s", 1, 0.0, "0s"),
 			},
 			{
 				ResourceName:      "google_container_node_pool.with_upgrade_settings",
@@ -763,7 +797,7 @@ func TestAccContainerNodePool_withUpgradeSettings(t *testing.T) {
 				ImportStateVerify: true,
 			},
 			{
-				Config: testAccContainerNodePool_withUpgradeSettings(cluster, np, 0, 0, "BLUE_GREEN", "100s", 0, 0.5, "1s"),
+				Config: testAccContainerNodePool_withUpgradeSettings(cluster, np, networkName, subnetworkName, 0, 0, "BLUE_GREEN", "100s", 0, 0.5, "1s"),
 			},
 			{
 				ResourceName:      "google_container_node_pool.with_upgrade_settings",
@@ -779,6 +813,8 @@ func TestAccContainerNodePool_withGPU(t *testing.T) {
 
 	cluster := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	np := fmt.Sprintf("tf-test-np-%s", acctest.RandString(t, 10))
+	networkName := acctest.BootstrapSharedTestNetwork(t, "gke-cluster")
+	subnetworkName := acctest.BootstrapSubnet(t, "gke-cluster", networkName)
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -786,7 +822,7 @@ func TestAccContainerNodePool_withGPU(t *testing.T) {
 		CheckDestroy:             testAccCheckContainerNodePoolDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccContainerNodePool_withGPU(cluster, np),
+				Config: testAccContainerNodePool_withGPU(cluster, np, networkName, subnetworkName),
 			},
 			{
 				ResourceName:      "google_container_node_pool.np_with_gpu",
@@ -802,6 +838,9 @@ func TestAccContainerNodePool_withManagement(t *testing.T) {
 
 	cluster := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	nodePool := fmt.Sprintf("tf-test-nodepool-%s", acctest.RandString(t, 10))
+	networkName := acctest.BootstrapSharedTestNetwork(t, "gke-cluster")
+	subnetworkName := acctest.BootstrapSubnet(t, "gke-cluster", networkName)
+
 	management := `
 	management {
 		auto_repair = "false"
@@ -814,7 +853,7 @@ func TestAccContainerNodePool_withManagement(t *testing.T) {
 		CheckDestroy:             testAccCheckContainerNodePoolDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccContainerNodePool_withManagement(cluster, nodePool, ""),
+				Config: testAccContainerNodePool_withManagement(cluster, nodePool, "", networkName, subnetworkName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(
 						"google_container_node_pool.np_with_management", "management.#", "1"),
@@ -830,7 +869,7 @@ func TestAccContainerNodePool_withManagement(t *testing.T) {
 				ImportStateVerify: true,
 			},
 			{
-				Config: testAccContainerNodePool_withManagement(cluster, nodePool, management),
+				Config: testAccContainerNodePool_withManagement(cluster, nodePool, management, networkName, subnetworkName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(
 						"google_container_node_pool.np_with_management", "management.#", "1"),
@@ -854,6 +893,8 @@ func TestAccContainerNodePool_withNodeConfigScopeAlias(t *testing.T) {
 
 	cluster := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	np := fmt.Sprintf("tf-test-np-%s", acctest.RandString(t, 10))
+	networkName := acctest.BootstrapSharedTestNetwork(t, "gke-cluster")
+	subnetworkName := acctest.BootstrapSubnet(t, "gke-cluster", networkName)
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -861,7 +902,7 @@ func TestAccContainerNodePool_withNodeConfigScopeAlias(t *testing.T) {
 		CheckDestroy:             testAccCheckContainerNodePoolDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccContainerNodePool_withNodeConfigScopeAlias(cluster, np),
+				Config: testAccContainerNodePool_withNodeConfigScopeAlias(cluster, np, networkName, subnetworkName),
 			},
 			{
 				ResourceName:      "google_container_node_pool.np_with_node_config_scope_alias",
@@ -878,6 +919,8 @@ func TestAccContainerNodePool_regionalAutoscaling(t *testing.T) {
 
 	cluster := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	np := fmt.Sprintf("tf-test-nodepool-%s", acctest.RandString(t, 10))
+	networkName := acctest.BootstrapSharedTestNetwork(t, "gke-cluster")
+	subnetworkName := acctest.BootstrapSubnet(t, "gke-cluster", networkName)
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -885,7 +928,7 @@ func TestAccContainerNodePool_regionalAutoscaling(t *testing.T) {
 		CheckDestroy:             testAccCheckContainerNodePoolDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccContainerNodePool_regionalAutoscaling(cluster, np),
+				Config: testAccContainerNodePool_regionalAutoscaling(cluster, np, networkName, subnetworkName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("google_container_node_pool.np", "autoscaling.0.min_node_count", "1"),
 					resource.TestCheckResourceAttr("google_container_node_pool.np", "autoscaling.0.max_node_count", "3"),
@@ -897,7 +940,7 @@ func TestAccContainerNodePool_regionalAutoscaling(t *testing.T) {
 				ImportStateVerify: true,
 			},
 			{
-				Config: testAccContainerNodePool_updateAutoscaling(cluster, np),
+				Config: testAccContainerNodePool_updateAutoscaling(cluster, np, networkName, subnetworkName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("google_container_node_pool.np", "autoscaling.0.min_node_count", "0"),
 					resource.TestCheckResourceAttr("google_container_node_pool.np", "autoscaling.0.max_node_count", "5"),
@@ -909,7 +952,7 @@ func TestAccContainerNodePool_regionalAutoscaling(t *testing.T) {
 				ImportStateVerify: true,
 			},
 			{
-				Config: testAccContainerNodePool_basic(cluster, np),
+				Config: testAccContainerNodePool_basic(cluster, np, networkName, subnetworkName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckNoResourceAttr("google_container_node_pool.np", "autoscaling.0.min_node_count"),
 					resource.TestCheckNoResourceAttr("google_container_node_pool.np", "autoscaling.0.max_node_count"),
@@ -933,6 +976,8 @@ func TestAccContainerNodePool_totalSize(t *testing.T) {
 
 	cluster := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	np := fmt.Sprintf("tf-test-nodepool-%s", acctest.RandString(t, 10))
+	networkName := acctest.BootstrapSharedTestNetwork(t, "gke-cluster")
+	subnetworkName := acctest.BootstrapSubnet(t, "gke-cluster", networkName)
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -940,7 +985,7 @@ func TestAccContainerNodePool_totalSize(t *testing.T) {
 		CheckDestroy:             testAccCheckContainerNodePoolDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccContainerNodePool_totalSize(cluster, np),
+				Config: testAccContainerNodePool_totalSize(cluster, np, networkName, subnetworkName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("google_container_node_pool.np", "autoscaling.0.total_min_node_count", "4"),
 					resource.TestCheckResourceAttr("google_container_node_pool.np", "autoscaling.0.total_max_node_count", "12"),
@@ -953,7 +998,7 @@ func TestAccContainerNodePool_totalSize(t *testing.T) {
 				ImportStateVerify: true,
 			},
 			{
-				Config: testAccContainerNodePool_updateTotalSize(cluster, np),
+				Config: testAccContainerNodePool_updateTotalSize(cluster, np, networkName, subnetworkName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("google_container_node_pool.np", "autoscaling.0.total_min_node_count", "2"),
 					resource.TestCheckResourceAttr("google_container_node_pool.np", "autoscaling.0.total_max_node_count", "22"),
@@ -966,7 +1011,7 @@ func TestAccContainerNodePool_totalSize(t *testing.T) {
 				ImportStateVerify: true,
 			},
 			{
-				Config: testAccContainerNodePool_basicTotalSize(cluster, np),
+				Config: testAccContainerNodePool_basicTotalSize(cluster, np, networkName, subnetworkName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckNoResourceAttr("google_container_node_pool.np", "autoscaling.0.min_node_count"),
 					resource.TestCheckNoResourceAttr("google_container_node_pool.np", "autoscaling.0.max_node_count"),
@@ -989,6 +1034,8 @@ func TestAccContainerNodePool_autoscaling(t *testing.T) {
 
 	cluster := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	np := fmt.Sprintf("tf-test-nodepool-%s", acctest.RandString(t, 10))
+	networkName := acctest.BootstrapSharedTestNetwork(t, "gke-cluster")
+	subnetworkName := acctest.BootstrapSubnet(t, "gke-cluster", networkName)
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -996,7 +1043,7 @@ func TestAccContainerNodePool_autoscaling(t *testing.T) {
 		CheckDestroy:             testAccCheckContainerNodePoolDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccContainerNodePool_autoscaling(cluster, np),
+				Config: testAccContainerNodePool_autoscaling(cluster, np, networkName, subnetworkName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("google_container_node_pool.np", "autoscaling.0.min_node_count", "1"),
 					resource.TestCheckResourceAttr("google_container_node_pool.np", "autoscaling.0.max_node_count", "3"),
@@ -1008,7 +1055,7 @@ func TestAccContainerNodePool_autoscaling(t *testing.T) {
 				ImportStateVerify: true,
 			},
 			{
-				Config: testAccContainerNodePool_updateAutoscaling(cluster, np),
+				Config: testAccContainerNodePool_updateAutoscaling(cluster, np, networkName, subnetworkName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("google_container_node_pool.np", "autoscaling.0.min_node_count", "0"),
 					resource.TestCheckResourceAttr("google_container_node_pool.np", "autoscaling.0.max_node_count", "5"),
@@ -1020,7 +1067,7 @@ func TestAccContainerNodePool_autoscaling(t *testing.T) {
 				ImportStateVerify: true,
 			},
 			{
-				Config: testAccContainerNodePool_basic(cluster, np),
+				Config: testAccContainerNodePool_basic(cluster, np, networkName, subnetworkName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckNoResourceAttr("google_container_node_pool.np", "autoscaling.0.min_node_count"),
 					resource.TestCheckNoResourceAttr("google_container_node_pool.np", "autoscaling.0.max_node_count"),
@@ -1043,6 +1090,8 @@ func TestAccContainerNodePool_resize(t *testing.T) {
 
 	cluster := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	np := fmt.Sprintf("tf-test-nodepool-%s", acctest.RandString(t, 10))
+	networkName := acctest.BootstrapSharedTestNetwork(t, "gke-cluster")
+	subnetworkName := acctest.BootstrapSubnet(t, "gke-cluster", networkName)
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -1050,7 +1099,7 @@ func TestAccContainerNodePool_resize(t *testing.T) {
 		CheckDestroy:             testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccContainerNodePool_additionalZones(cluster, np),
+				Config: testAccContainerNodePool_additionalZones(cluster, np, networkName, subnetworkName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("google_container_node_pool.np", "node_count", "2"),
 				),
@@ -1061,7 +1110,7 @@ func TestAccContainerNodePool_resize(t *testing.T) {
 				ImportStateVerify: true,
 			},
 			{
-				Config: testAccContainerNodePool_resize(cluster, np),
+				Config: testAccContainerNodePool_resize(cluster, np, networkName, subnetworkName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("google_container_node_pool.np", "node_count", "3"),
 				),
@@ -1079,6 +1128,8 @@ func TestAccContainerNodePool_version(t *testing.T) {
 	t.Parallel()
 	cluster := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	np := fmt.Sprintf("tf-test-nodepool-%s", acctest.RandString(t, 10))
+	networkName := acctest.BootstrapSharedTestNetwork(t, "gke-cluster")
+	subnetworkName := acctest.BootstrapSubnet(t, "gke-cluster", networkName)
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -1086,7 +1137,7 @@ func TestAccContainerNodePool_version(t *testing.T) {
 		CheckDestroy:             testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccContainerNodePool_version(cluster, np),
+				Config: testAccContainerNodePool_version(cluster, np, networkName, subnetworkName),
 			},
 			{
 				ResourceName:      "google_container_node_pool.np",
@@ -1094,7 +1145,7 @@ func TestAccContainerNodePool_version(t *testing.T) {
 				ImportStateVerify: true,
 			},
 			{
-				Config: testAccContainerNodePool_updateVersion(cluster, np),
+				Config: testAccContainerNodePool_updateVersion(cluster, np, networkName, subnetworkName),
 			},
 			{
 				ResourceName:      "google_container_node_pool.np",
@@ -1102,7 +1153,7 @@ func TestAccContainerNodePool_version(t *testing.T) {
 				ImportStateVerify: true,
 			},
 			{
-				Config: testAccContainerNodePool_version(cluster, np),
+				Config: testAccContainerNodePool_version(cluster, np, networkName, subnetworkName),
 			},
 			{
 				ResourceName:      "google_container_node_pool.np",
@@ -1118,6 +1169,8 @@ func TestAccContainerNodePool_regionalClusters(t *testing.T) {
 
 	cluster := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	np := fmt.Sprintf("tf-test-nodepool-%s", acctest.RandString(t, 10))
+	networkName := acctest.BootstrapSharedTestNetwork(t, "gke-cluster")
+	subnetworkName := acctest.BootstrapSubnet(t, "gke-cluster", networkName)
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -1125,7 +1178,7 @@ func TestAccContainerNodePool_regionalClusters(t *testing.T) {
 		CheckDestroy:             testAccCheckContainerNodePoolDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccContainerNodePool_regionalClusters(cluster, np),
+				Config: testAccContainerNodePool_regionalClusters(cluster, np, networkName, subnetworkName),
 			},
 			{
 				ResourceName:      "google_container_node_pool.np",
@@ -1141,6 +1194,8 @@ func TestAccContainerNodePool_012_ConfigModeAttr(t *testing.T) {
 
 	cluster := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	np := fmt.Sprintf("tf-test-nodepool-%s", acctest.RandString(t, 10))
+	networkName := acctest.BootstrapSharedTestNetwork(t, "gke-cluster")
+	subnetworkName := acctest.BootstrapSubnet(t, "gke-cluster", networkName)
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -1148,7 +1203,7 @@ func TestAccContainerNodePool_012_ConfigModeAttr(t *testing.T) {
 		CheckDestroy:             testAccCheckContainerNodePoolDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccContainerNodePool_012_ConfigModeAttr1(cluster, np),
+				Config: testAccContainerNodePool_012_ConfigModeAttr1(cluster, np, networkName, subnetworkName),
 			},
 			{
 				ResourceName:      "google_container_node_pool.np",
@@ -1156,7 +1211,7 @@ func TestAccContainerNodePool_012_ConfigModeAttr(t *testing.T) {
 				ImportStateVerify: true,
 			},
 			{
-				Config: testAccContainerNodePool_012_ConfigModeAttr2(cluster, np),
+				Config: testAccContainerNodePool_012_ConfigModeAttr2(cluster, np, networkName, subnetworkName),
 			},
 			{
 				ResourceName:      "google_container_node_pool.np",
@@ -1172,6 +1227,8 @@ func TestAccContainerNodePool_EmptyGuestAccelerator(t *testing.T) {
 
 	cluster := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	np := fmt.Sprintf("tf-test-nodepool-%s", acctest.RandString(t, 10))
+	networkName := acctest.BootstrapSharedTestNetwork(t, "gke-cluster")
+	subnetworkName := acctest.BootstrapSubnet(t, "gke-cluster", networkName)
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -1180,7 +1237,7 @@ func TestAccContainerNodePool_EmptyGuestAccelerator(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				// Test alternative way to specify an empty node pool
-				Config: testAccContainerNodePool_EmptyGuestAccelerator(cluster, np),
+				Config: testAccContainerNodePool_EmptyGuestAccelerator(cluster, np, networkName, subnetworkName),
 			},
 			{
 				ResourceName:      "google_container_node_pool.np",
@@ -1189,7 +1246,7 @@ func TestAccContainerNodePool_EmptyGuestAccelerator(t *testing.T) {
 			},
 			{
 				// Test alternative way to specify an empty node pool
-				Config: testAccContainerNodePool_PartialEmptyGuestAccelerator(cluster, np, 1),
+				Config: testAccContainerNodePool_PartialEmptyGuestAccelerator(cluster, np, networkName, subnetworkName, 1),
 			},
 			{
 				ResourceName:      "google_container_node_pool.np",
@@ -1198,13 +1255,13 @@ func TestAccContainerNodePool_EmptyGuestAccelerator(t *testing.T) {
 			},
 			{
 				// Assert that changes in count from 1 result in a diff
-				Config:             testAccContainerNodePool_PartialEmptyGuestAccelerator(cluster, np, 2),
+				Config:             testAccContainerNodePool_PartialEmptyGuestAccelerator(cluster, np, networkName, subnetworkName, 2),
 				ExpectNonEmptyPlan: true,
 				PlanOnly:           true,
 			},
 			{
 				// Assert that adding another accelerator block will also result in a diff
-				Config:             testAccContainerNodePool_PartialEmptyGuestAccelerator2(cluster, np),
+				Config:             testAccContainerNodePool_PartialEmptyGuestAccelerator2(cluster, np, networkName, subnetworkName),
 				ExpectNonEmptyPlan: true,
 				PlanOnly:           true,
 			},
@@ -1217,6 +1274,8 @@ func TestAccContainerNodePool_shieldedInstanceConfig(t *testing.T) {
 
 	cluster := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	np := fmt.Sprintf("tf-test-nodepool-%s", acctest.RandString(t, 10))
+	networkName := acctest.BootstrapSharedTestNetwork(t, "gke-cluster")
+	subnetworkName := acctest.BootstrapSubnet(t, "gke-cluster", networkName)
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -1224,7 +1283,7 @@ func TestAccContainerNodePool_shieldedInstanceConfig(t *testing.T) {
 		CheckDestroy:             testAccCheckContainerNodePoolDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccContainerNodePool_shieldedInstanceConfig(cluster, np),
+				Config: testAccContainerNodePool_shieldedInstanceConfig(cluster, np, networkName, subnetworkName),
 			},
 			{
 				ResourceName:            "google_container_node_pool.np",
@@ -1242,6 +1301,8 @@ func TestAccContainerNodePool_concurrent(t *testing.T) {
 	cluster := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	np1 := fmt.Sprintf("tf-test-nodepool-%s", acctest.RandString(t, 10))
 	np2 := fmt.Sprintf("tf-test-nodepool-%s", acctest.RandString(t, 10))
+	networkName := acctest.BootstrapSharedTestNetwork(t, "gke-cluster")
+	subnetworkName := acctest.BootstrapSubnet(t, "gke-cluster", networkName)
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -1249,7 +1310,7 @@ func TestAccContainerNodePool_concurrent(t *testing.T) {
 		CheckDestroy:             testAccCheckContainerNodePoolDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccContainerNodePool_concurrentCreate(cluster, np1, np2),
+				Config: testAccContainerNodePool_concurrentCreate(cluster, np1, np2, networkName, subnetworkName),
 			},
 			{
 				ResourceName:      "google_container_node_pool.np1",
@@ -1262,7 +1323,7 @@ func TestAccContainerNodePool_concurrent(t *testing.T) {
 				ImportStateVerify: true,
 			},
 			{
-				Config: testAccContainerNodePool_concurrentUpdate(cluster, np1, np2),
+				Config: testAccContainerNodePool_concurrentUpdate(cluster, np1, np2, networkName, subnetworkName),
 			},
 			{
 				ResourceName:      "google_container_node_pool.np1",
@@ -1283,6 +1344,8 @@ func TestAccContainerNodePool_withSoleTenantConfig(t *testing.T) {
 
 	cluster := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	np := fmt.Sprintf("tf-test-np-%s", acctest.RandString(t, 10))
+	networkName := acctest.BootstrapSharedTestNetwork(t, "gke-cluster")
+	subnetworkName := acctest.BootstrapSubnet(t, "gke-cluster", networkName)
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -1290,7 +1353,7 @@ func TestAccContainerNodePool_withSoleTenantConfig(t *testing.T) {
 		CheckDestroy:             testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccContainerNodePool_withSoleTenantConfig(cluster, np),
+				Config: testAccContainerNodePool_withSoleTenantConfig(cluster, np, networkName, subnetworkName),
 			},
 			{
 				ResourceName:      "google_container_node_pool.with_sole_tenant_config",
@@ -1306,6 +1369,8 @@ func TestAccContainerNodePool_ephemeralStorageConfig(t *testing.T) {
 
 	cluster := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	np := fmt.Sprintf("tf-test-nodepool-%s", acctest.RandString(t, 10))
+	networkName := acctest.BootstrapSharedTestNetwork(t, "gke-cluster")
+	subnetworkName := acctest.BootstrapSubnet(t, "gke-cluster", networkName)
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -1313,7 +1378,7 @@ func TestAccContainerNodePool_ephemeralStorageConfig(t *testing.T) {
 		CheckDestroy:             testAccCheckContainerNodePoolDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccContainerNodePool_ephemeralStorageConfig(cluster, np),
+				Config: testAccContainerNodePool_ephemeralStorageConfig(cluster, np, networkName, subnetworkName),
 			},
 			{
 				ResourceName:      "google_container_node_pool.np",
@@ -1324,13 +1389,15 @@ func TestAccContainerNodePool_ephemeralStorageConfig(t *testing.T) {
 	})
 }
 
-func testAccContainerNodePool_ephemeralStorageConfig(cluster, np string) string {
+func testAccContainerNodePool_ephemeralStorageConfig(cluster, np, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 resource "google_container_cluster" "cluster" {
   name               = "%s"
   location           = "us-central1-a"
   initial_node_count = 1
   deletion_protection = false
+  network    = "%s"
+  subnetwork    = "%s"
 }
 
 resource "google_container_node_pool" "np" {
@@ -1346,7 +1413,7 @@ resource "google_container_node_pool" "np" {
     }
   }
 }
-`, cluster, np)
+`, cluster, networkName, subnetworkName, np)
 }
 
 func TestAccContainerNodePool_ephemeralStorageLocalSsdConfig(t *testing.T) {
@@ -1354,6 +1421,8 @@ func TestAccContainerNodePool_ephemeralStorageLocalSsdConfig(t *testing.T) {
 
 	cluster := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	np := fmt.Sprintf("tf-test-nodepool-%s", acctest.RandString(t, 10))
+	networkName := acctest.BootstrapSharedTestNetwork(t, "gke-cluster")
+	subnetworkName := acctest.BootstrapSubnet(t, "gke-cluster", networkName)
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -1361,7 +1430,7 @@ func TestAccContainerNodePool_ephemeralStorageLocalSsdConfig(t *testing.T) {
 		CheckDestroy:             testAccCheckContainerNodePoolDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccContainerNodePool_ephemeralStorageLocalSsdConfig(cluster, np),
+				Config: testAccContainerNodePool_ephemeralStorageLocalSsdConfig(cluster, np, networkName, subnetworkName),
 			},
 			{
 				ResourceName:      "google_container_node_pool.np",
@@ -1372,7 +1441,7 @@ func TestAccContainerNodePool_ephemeralStorageLocalSsdConfig(t *testing.T) {
 	})
 }
 
-func testAccContainerNodePool_ephemeralStorageLocalSsdConfig(cluster, np string) string {
+func testAccContainerNodePool_ephemeralStorageLocalSsdConfig(cluster, np, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 data "google_container_engine_versions" "central1a" {
 	location       = "us-central1-a"
@@ -1386,6 +1455,8 @@ resource "google_container_cluster" "cluster" {
   min_master_version = data.google_container_engine_versions.central1a.latest_master_version
   initial_node_count = 1
   deletion_protection = false
+  network    = "%s"
+  subnetwork    = "%s"
 }
 
 resource "google_container_node_pool" "np" {
@@ -1401,7 +1472,7 @@ resource "google_container_node_pool" "np" {
     }
   }
 }
-`, cluster, np)
+`, cluster, networkName, subnetworkName, np)
 }
 
 func TestAccContainerNodePool_localNvmeSsdBlockConfig(t *testing.T) {
@@ -1409,6 +1480,8 @@ func TestAccContainerNodePool_localNvmeSsdBlockConfig(t *testing.T) {
 
 	cluster := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	np := fmt.Sprintf("tf-test-nodepool-%s", acctest.RandString(t, 10))
+	networkName := acctest.BootstrapSharedTestNetwork(t, "gke-cluster")
+	subnetworkName := acctest.BootstrapSubnet(t, "gke-cluster", networkName)
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -1416,7 +1489,7 @@ func TestAccContainerNodePool_localNvmeSsdBlockConfig(t *testing.T) {
 		CheckDestroy:             testAccCheckContainerNodePoolDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccContainerNodePool_localNvmeSsdBlockConfig(cluster, np),
+				Config: testAccContainerNodePool_localNvmeSsdBlockConfig(cluster, np, networkName, subnetworkName),
 			},
 			{
 				ResourceName:      "google_container_node_pool.np",
@@ -1427,7 +1500,7 @@ func TestAccContainerNodePool_localNvmeSsdBlockConfig(t *testing.T) {
 	})
 }
 
-func testAccContainerNodePool_localNvmeSsdBlockConfig(cluster, np string) string {
+func testAccContainerNodePool_localNvmeSsdBlockConfig(cluster, np, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 data "google_container_engine_versions" "central1a" {
 	location       = "us-central1-a"
@@ -1441,6 +1514,8 @@ resource "google_container_cluster" "cluster" {
   min_master_version = data.google_container_engine_versions.central1a.latest_master_version
   initial_node_count = 1
   deletion_protection = false
+  network    = "%s"
+  subnetwork    = "%s"
 }
 
 resource "google_container_node_pool" "np" {
@@ -1456,7 +1531,7 @@ resource "google_container_node_pool" "np" {
     }
   }
 }
-`, cluster, np)
+`, cluster, networkName, subnetworkName, np)
 }
 
 func TestAccContainerNodePool_gcfsConfig(t *testing.T) {
@@ -1464,6 +1539,8 @@ func TestAccContainerNodePool_gcfsConfig(t *testing.T) {
 
 	cluster := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	np := fmt.Sprintf("tf-test-nodepool-%s", acctest.RandString(t, 10))
+	networkName := acctest.BootstrapSharedTestNetwork(t, "gke-cluster")
+	subnetworkName := acctest.BootstrapSubnet(t, "gke-cluster", networkName)
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -1471,7 +1548,7 @@ func TestAccContainerNodePool_gcfsConfig(t *testing.T) {
 		CheckDestroy:             testAccCheckContainerNodePoolDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccContainerNodePool_gcfsConfig(cluster, np),
+				Config: testAccContainerNodePool_gcfsConfig(cluster, np, networkName, subnetworkName),
 			},
 			{
 				ResourceName:      "google_container_node_pool.np",
@@ -1482,13 +1559,15 @@ func TestAccContainerNodePool_gcfsConfig(t *testing.T) {
 	})
 }
 
-func testAccContainerNodePool_gcfsConfig(cluster, np string) string {
+func testAccContainerNodePool_gcfsConfig(cluster, np, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 resource "google_container_cluster" "cluster" {
   name               = "%s"
   location           = "us-central1-a"
   initial_node_count = 1
   deletion_protection = false
+  network    = "%s"
+  subnetwork    = "%s"
 }
 
 resource "google_container_node_pool" "np" {
@@ -1505,7 +1584,7 @@ resource "google_container_node_pool" "np" {
     }
   }
 }
-`, cluster, np)
+`, cluster, networkName, subnetworkName, np)
 }
 
 func TestAccContainerNodePool_gvnic(t *testing.T) {
@@ -1513,6 +1592,8 @@ func TestAccContainerNodePool_gvnic(t *testing.T) {
 
 	cluster := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	np := fmt.Sprintf("tf-test-nodepool-%s", acctest.RandString(t, 10))
+	networkName := acctest.BootstrapSharedTestNetwork(t, "gke-cluster")
+	subnetworkName := acctest.BootstrapSubnet(t, "gke-cluster", networkName)
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -1520,7 +1601,7 @@ func TestAccContainerNodePool_gvnic(t *testing.T) {
 		CheckDestroy:             testAccCheckContainerNodePoolDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccContainerNodePool_gvnic(cluster, np),
+				Config: testAccContainerNodePool_gvnic(cluster, np, networkName, subnetworkName),
 			},
 			{
 				ResourceName:      "google_container_node_pool.np",
@@ -1531,13 +1612,15 @@ func TestAccContainerNodePool_gvnic(t *testing.T) {
 	})
 }
 
-func testAccContainerNodePool_gvnic(cluster, np string) string {
+func testAccContainerNodePool_gvnic(cluster, np, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 resource "google_container_cluster" "cluster" {
   name               = "%s"
   location           = "us-central1-a"
   initial_node_count = 1
   deletion_protection = false
+  network    = "%s"
+  subnetwork    = "%s"
 }
 
 resource "google_container_node_pool" "np" {
@@ -1554,7 +1637,7 @@ resource "google_container_node_pool" "np" {
     }
   }
 }
-`, cluster, np)
+`, cluster, networkName, subnetworkName, np)
 }
 
 func TestAccContainerNodePool_fastSocket(t *testing.T) {
@@ -1562,6 +1645,8 @@ func TestAccContainerNodePool_fastSocket(t *testing.T) {
 
 	cluster := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	np := fmt.Sprintf("tf-test-nodepool-%s", acctest.RandString(t, 10))
+	networkName := acctest.BootstrapSharedTestNetwork(t, "gke-cluster")
+	subnetworkName := acctest.BootstrapSubnet(t, "gke-cluster", networkName)
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -1569,7 +1654,7 @@ func TestAccContainerNodePool_fastSocket(t *testing.T) {
 		CheckDestroy:             testAccCheckContainerNodePoolDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccContainerNodePool_fastSocket(cluster, np, true),
+				Config: testAccContainerNodePool_fastSocket(cluster, np, networkName, subnetworkName, true),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("google_container_node_pool.np",
 						"node_config.0.fast_socket.0.enabled", "true"),
@@ -1581,7 +1666,7 @@ func TestAccContainerNodePool_fastSocket(t *testing.T) {
 				ImportStateVerify: true,
 			},
 			{
-				Config: testAccContainerNodePool_fastSocket(cluster, np, false),
+				Config: testAccContainerNodePool_fastSocket(cluster, np, networkName, subnetworkName, false),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("google_container_node_pool.np",
 						"node_config.0.fast_socket.0.enabled", "false"),
@@ -1596,7 +1681,7 @@ func TestAccContainerNodePool_fastSocket(t *testing.T) {
 	})
 }
 
-func testAccContainerNodePool_fastSocket(cluster, np string, enabled bool) string {
+func testAccContainerNodePool_fastSocket(cluster, np, networkName, subnetworkName string, enabled bool) string {
 	return fmt.Sprintf(`
 resource "google_container_cluster" "cluster" {
   name               = "%s"
@@ -1604,6 +1689,8 @@ resource "google_container_cluster" "cluster" {
   initial_node_count = 1
   min_master_version = "1.25"
   deletion_protection = false
+  network    = "%s"
+  subnetwork    = "%s"
 }
 
 resource "google_container_node_pool" "np" {
@@ -1627,7 +1714,7 @@ resource "google_container_node_pool" "np" {
     }
   }
 }
-`, cluster, np, enabled)
+`, cluster, networkName, subnetworkName, np, enabled)
 }
 
 func TestAccContainerNodePool_compactPlacement(t *testing.T) {
@@ -1635,6 +1722,8 @@ func TestAccContainerNodePool_compactPlacement(t *testing.T) {
 
 	cluster := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	np := fmt.Sprintf("tf-test-nodepool-%s", acctest.RandString(t, 10))
+	networkName := acctest.BootstrapSharedTestNetwork(t, "gke-cluster")
+	subnetworkName := acctest.BootstrapSubnet(t, "gke-cluster", networkName)
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -1642,7 +1731,7 @@ func TestAccContainerNodePool_compactPlacement(t *testing.T) {
 		CheckDestroy:             testAccCheckContainerNodePoolDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccContainerNodePool_compactPlacement(cluster, np, "COMPACT"),
+				Config: testAccContainerNodePool_compactPlacement(cluster, np, "COMPACT", networkName, subnetworkName),
 			},
 			{
 				ResourceName:            "google_container_cluster.cluster",
@@ -1654,13 +1743,15 @@ func TestAccContainerNodePool_compactPlacement(t *testing.T) {
 	})
 }
 
-func testAccContainerNodePool_compactPlacement(cluster, np, placementType string) string {
+func testAccContainerNodePool_compactPlacement(cluster, np, placementType, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 resource "google_container_cluster" "cluster" {
   name               = "%s"
   location           = "us-central1-a"
   initial_node_count = 1
   deletion_protection = false
+  network    = "%s"
+  subnetwork    = "%s"
 }
 
 resource "google_container_node_pool" "np" {
@@ -1676,7 +1767,7 @@ resource "google_container_node_pool" "np" {
     type = "%s"
   }
 }
-`, cluster, np, placementType)
+`, cluster, networkName, subnetworkName, np, placementType)
 }
 
 func TestAccContainerNodePool_customPlacementPolicy(t *testing.T) {
@@ -1685,6 +1776,8 @@ func TestAccContainerNodePool_customPlacementPolicy(t *testing.T) {
 	cluster := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	np := fmt.Sprintf("tf-test-nodepool-%s", acctest.RandString(t, 10))
 	policy := fmt.Sprintf("tf-test-policy-%s", acctest.RandString(t, 10))
+	networkName := acctest.BootstrapSharedTestNetwork(t, "gke-cluster")
+	subnetworkName := acctest.BootstrapSubnet(t, "gke-cluster", networkName)
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -1692,7 +1785,7 @@ func TestAccContainerNodePool_customPlacementPolicy(t *testing.T) {
 		CheckDestroy:             testAccCheckContainerNodePoolDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccContainerNodePool_customPlacementPolicy(cluster, np, policy),
+				Config: testAccContainerNodePool_customPlacementPolicy(cluster, np, policy, networkName, subnetworkName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("google_container_node_pool.np", "node_config.0.machine_type", "c2-standard-4"),
 					resource.TestCheckResourceAttr("google_container_node_pool.np", "placement_policy.0.policy_name", policy),
@@ -1708,13 +1801,15 @@ func TestAccContainerNodePool_customPlacementPolicy(t *testing.T) {
 	})
 }
 
-func testAccContainerNodePool_customPlacementPolicy(cluster, np, policyName string) string {
+func testAccContainerNodePool_customPlacementPolicy(cluster, np, policyName, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 resource "google_container_cluster" "cluster" {
   name               = "%s"
   location           = "us-central1-a"
   initial_node_count = 1
   deletion_protection = false
+  network    = "%s"
+  subnetwork    = "%s"
 }
 
 resource "google_compute_resource_policy" "policy" {
@@ -1740,7 +1835,7 @@ resource "google_container_node_pool" "np" {
     policy_name = google_compute_resource_policy.policy.name
   }
 }
-`, cluster, policyName, np)
+`, cluster, networkName, subnetworkName, policyName, np)
 }
 
 func TestAccContainerNodePool_threadsPerCore(t *testing.T) {
@@ -1748,6 +1843,8 @@ func TestAccContainerNodePool_threadsPerCore(t *testing.T) {
 
 	cluster := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	np := fmt.Sprintf("tf-test-nodepool-%s", acctest.RandString(t, 10))
+	networkName := acctest.BootstrapSharedTestNetwork(t, "gke-cluster")
+	subnetworkName := acctest.BootstrapSubnet(t, "gke-cluster", networkName)
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -1755,7 +1852,7 @@ func TestAccContainerNodePool_threadsPerCore(t *testing.T) {
 		CheckDestroy:             testAccCheckContainerNodePoolDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccContainerNodePool_threadsPerCore(cluster, np, 1),
+				Config: testAccContainerNodePool_threadsPerCore(cluster, np, networkName, subnetworkName, 1),
 			},
 			{
 				ResourceName:            "google_container_cluster.cluster",
@@ -1767,13 +1864,15 @@ func TestAccContainerNodePool_threadsPerCore(t *testing.T) {
 	})
 }
 
-func testAccContainerNodePool_threadsPerCore(cluster, np string, threadsPerCore int) string {
+func testAccContainerNodePool_threadsPerCore(cluster, np, networkName, subnetworkName string, threadsPerCore int) string {
 	return fmt.Sprintf(`
 resource "google_container_cluster" "cluster" {
   name               = "%s"
   location           = "us-central1-a"
   initial_node_count = 1
   deletion_protection = false
+  network    = "%s"
+  subnetwork    = "%s"
 
   node_config {
     machine_type = "c2-standard-4"
@@ -1796,7 +1895,7 @@ resource "google_container_node_pool" "np" {
 	}
   }
 }
-`, cluster, threadsPerCore, np, threadsPerCore)
+`, cluster, networkName, subnetworkName, threadsPerCore, np, threadsPerCore)
 }
 
 func testAccCheckContainerNodePoolDestroyProducer(t *testing.T) func(s *terraform.State) error {
@@ -1835,7 +1934,7 @@ func testAccCheckContainerNodePoolDestroyProducer(t *testing.T) func(s *terrafor
 	}
 }
 
-func testAccContainerNodePool_basic(cluster, np string) string {
+func testAccContainerNodePool_basic(cluster, np, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 provider "google" {
   alias                 = "user-project-override"
@@ -1847,6 +1946,8 @@ resource "google_container_cluster" "cluster" {
   location           = "us-central1-a"
   initial_node_count = 3
   deletion_protection = false
+  network    = "%s"
+  subnetwork    = "%s"
 }
 
 resource "google_container_node_pool" "np" {
@@ -1856,16 +1957,18 @@ resource "google_container_node_pool" "np" {
   cluster            = google_container_cluster.cluster.name
   initial_node_count = 2
 }
-`, cluster, np)
+`, cluster, networkName, subnetworkName, np)
 }
 
-func testAccContainerNodePool_withLoggingVariant(cluster, np, loggingVariant string) string {
+func testAccContainerNodePool_withLoggingVariant(cluster, np, loggingVariant, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 resource "google_container_cluster" "with_logging_variant" {
   name               = "%s"
   location           = "us-central1-a"
   initial_node_count = 1
   deletion_protection = false
+  network    = "%s"
+  subnetwork    = "%s"
 }
 
 resource "google_container_node_pool" "with_logging_variant" {
@@ -1877,10 +1980,10 @@ resource "google_container_node_pool" "with_logging_variant" {
     logging_variant = "%s"
   }
 }
-`, cluster, np, loggingVariant)
+`, cluster, networkName, subnetworkName, np, loggingVariant)
 }
 
-func testAccContainerNodePool_basicWithClusterId(cluster, np string) string {
+func testAccContainerNodePool_basicWithClusterId(cluster, np, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 provider "google" {
   alias                 = "user-project-override"
@@ -1892,6 +1995,8 @@ resource "google_container_cluster" "cluster" {
   location           = "us-central1-a"
   initial_node_count = 3
   deletion_protection = false
+  network    = "%s"
+  subnetwork    = "%s"
 }
 
 resource "google_container_node_pool" "np" {
@@ -1900,7 +2005,7 @@ resource "google_container_node_pool" "np" {
   cluster            = google_container_cluster.cluster.id
   initial_node_count = 2
 }
-`, cluster, np)
+`, cluster, networkName, subnetworkName, np)
 }
 
 func testAccContainerNodePool_nodeLocations(cluster, np, network string) string {
@@ -2020,13 +2125,15 @@ resource "google_container_node_pool" "np" {
 `, network, cluster, np)
 }
 
-func testAccContainerNodePool_regionalClusters(cluster, np string) string {
+func testAccContainerNodePool_regionalClusters(cluster, np, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 resource "google_container_cluster" "cluster" {
   name               = "%s"
   location           = "us-central1"
   initial_node_count = 3
   deletion_protection = false
+  network    = "%s"
+  subnetwork    = "%s"
 }
 
 resource "google_container_node_pool" "np" {
@@ -2035,16 +2142,18 @@ resource "google_container_node_pool" "np" {
   location           = "us-central1"
   initial_node_count = 2
 }
-`, cluster, np)
+`, cluster, networkName, subnetworkName, np)
 }
 
-func testAccContainerNodePool_namePrefix(cluster, np string) string {
+func testAccContainerNodePool_namePrefix(cluster, np, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 resource "google_container_cluster" "cluster" {
   name               = "%s"
   location           = "us-central1-a"
   initial_node_count = 3
   deletion_protection = false
+  network    = "%s"
+  subnetwork    = "%s"
 }
 
 resource "google_container_node_pool" "np" {
@@ -2053,16 +2162,18 @@ resource "google_container_node_pool" "np" {
   cluster            = google_container_cluster.cluster.name
   initial_node_count = 2
 }
-`, cluster, np)
+`, cluster, networkName, subnetworkName, np)
 }
 
-func testAccContainerNodePool_noName(cluster string) string {
+func testAccContainerNodePool_noName(cluster, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 resource "google_container_cluster" "cluster" {
   name               = "%s"
   location           = "us-central1-a"
   initial_node_count = 3
   deletion_protection = false
+  network    = "%s"
+  subnetwork    = "%s"
 }
 
 resource "google_container_node_pool" "np" {
@@ -2070,16 +2181,18 @@ resource "google_container_node_pool" "np" {
   cluster            = google_container_cluster.cluster.name
   initial_node_count = 2
 }
-`, cluster)
+`, cluster, networkName, subnetworkName)
 }
 
-func testAccContainerNodePool_regionalAutoscaling(cluster, np string) string {
+func testAccContainerNodePool_regionalAutoscaling(cluster, np, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 resource "google_container_cluster" "cluster" {
   name               = "%s"
   location           = "us-central1"
   initial_node_count = 3
   deletion_protection = false
+  network    = "%s"
+  subnetwork    = "%s"
 }
 
 resource "google_container_node_pool" "np" {
@@ -2092,10 +2205,10 @@ resource "google_container_node_pool" "np" {
     max_node_count = 3
   }
 }
-`, cluster, np)
+`, cluster, networkName, subnetworkName, np)
 }
 
-func testAccContainerNodePool_totalSize(cluster, np string) string {
+func testAccContainerNodePool_totalSize(cluster, np, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 resource "google_container_cluster" "cluster" {
   name               = "%s"
@@ -2103,6 +2216,8 @@ resource "google_container_cluster" "cluster" {
   initial_node_count = 3
   min_master_version = "1.27"
   deletion_protection = false
+  network    = "%s"
+  subnetwork    = "%s"
 }
 
 resource "google_container_node_pool" "np" {
@@ -2116,10 +2231,10 @@ resource "google_container_node_pool" "np" {
     location_policy      = "BALANCED"
   }
 }
-`, cluster, np)
+`, cluster, networkName, subnetworkName, np)
 }
 
-func testAccContainerNodePool_updateTotalSize(cluster, np string) string {
+func testAccContainerNodePool_updateTotalSize(cluster, np, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 resource "google_container_cluster" "cluster" {
   name               = "%s"
@@ -2127,6 +2242,8 @@ resource "google_container_cluster" "cluster" {
   initial_node_count = 3
   min_master_version = "1.27"
   deletion_protection = false
+  network    = "%s"
+  subnetwork    = "%s"
 }
 
 resource "google_container_node_pool" "np" {
@@ -2140,10 +2257,10 @@ resource "google_container_node_pool" "np" {
     location_policy      = "ANY"
   }
 }
-`, cluster, np)
+`, cluster, networkName, subnetworkName, np)
 }
 
-func testAccContainerNodePool_basicTotalSize(cluster, np string) string {
+func testAccContainerNodePool_basicTotalSize(cluster, np, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 provider "google" {
   alias                 = "user-project-override"
@@ -2156,6 +2273,8 @@ resource "google_container_cluster" "cluster" {
   initial_node_count = 3
   min_master_version = "1.27"
   deletion_protection = false
+  network    = "%s"
+  subnetwork    = "%s"
 }
 
 resource "google_container_node_pool" "np" {
@@ -2165,16 +2284,18 @@ resource "google_container_node_pool" "np" {
   cluster            = google_container_cluster.cluster.name
   initial_node_count = 2
 }
-`, cluster, np)
+`, cluster, networkName, subnetworkName, np)
 }
 
-func testAccContainerNodePool_autoscaling(cluster, np string) string {
+func testAccContainerNodePool_autoscaling(cluster, np, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 resource "google_container_cluster" "cluster" {
   name               = "%s"
   location           = "us-central1-a"
   initial_node_count = 3
   deletion_protection = false
+  network    = "%s"
+  subnetwork    = "%s"
 }
 
 resource "google_container_node_pool" "np" {
@@ -2187,16 +2308,18 @@ resource "google_container_node_pool" "np" {
     max_node_count = 3
   }
 }
-`, cluster, np)
+`, cluster, networkName, subnetworkName, np)
 }
 
-func testAccContainerNodePool_updateAutoscaling(cluster, np string) string {
+func testAccContainerNodePool_updateAutoscaling(cluster, np, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 resource "google_container_cluster" "cluster" {
   name               = "%s"
   location           = "us-central1-a"
   initial_node_count = 3
   deletion_protection = false
+  network    = "%s"
+  subnetwork    = "%s"
 }
 
 resource "google_container_node_pool" "np" {
@@ -2209,10 +2332,10 @@ resource "google_container_node_pool" "np" {
     max_node_count = 5
   }
 }
-`, cluster, np)
+`, cluster, networkName, subnetworkName, np)
 }
 
-func testAccContainerNodePool_additionalZones(cluster, nodePool string) string {
+func testAccContainerNodePool_additionalZones(cluster, nodePool, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 resource "google_container_cluster" "cluster" {
   name               = "%s"
@@ -2224,6 +2347,8 @@ resource "google_container_cluster" "cluster" {
     "us-central1-c",
   ]
   deletion_protection = false
+  network    = "%s"
+  subnetwork    = "%s"
 }
 
 resource "google_container_node_pool" "np" {
@@ -2232,10 +2357,10 @@ resource "google_container_node_pool" "np" {
   cluster    = google_container_cluster.cluster.name
   node_count = 2
 }
-`, cluster, nodePool)
+`, cluster, networkName, subnetworkName, nodePool)
 }
 
-func testAccContainerNodePool_resize(cluster, nodePool string) string {
+func testAccContainerNodePool_resize(cluster, nodePool, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 resource "google_container_cluster" "cluster" {
   name               = "%s"
@@ -2247,6 +2372,8 @@ resource "google_container_cluster" "cluster" {
     "us-central1-c",
   ]
   deletion_protection = false
+  network    = "%s"
+  subnetwork    = "%s"
 }
 
 resource "google_container_node_pool" "np" {
@@ -2255,10 +2382,10 @@ resource "google_container_node_pool" "np" {
   cluster    = google_container_cluster.cluster.name
   node_count = 3
 }
-`, cluster, nodePool)
+`, cluster, networkName, subnetworkName, nodePool)
 }
 
-func testAccContainerNodePool_withManagement(cluster, nodePool, management string) string {
+func testAccContainerNodePool_withManagement(cluster, nodePool, management, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 resource "google_container_cluster" "cluster" {
   name               = "%s"
@@ -2268,6 +2395,8 @@ resource "google_container_cluster" "cluster" {
 	  channel = "UNSPECIFIED"
   }
   deletion_protection = false
+  network    = "%s"
+  subnetwork    = "%s"
 }
 
 resource "google_container_node_pool" "np_with_management" {
@@ -2284,16 +2413,18 @@ resource "google_container_node_pool" "np_with_management" {
     oauth_scopes = ["compute-rw", "storage-ro", "logging-write", "monitoring"]
   }
 }
-`, cluster, nodePool, management)
+`, cluster, networkName, subnetworkName, nodePool, management)
 }
 
-func testAccContainerNodePool_withNodeConfig(cluster, nodePool string) string {
+func testAccContainerNodePool_withNodeConfig(cluster, nodePool, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 resource "google_container_cluster" "cluster" {
   name               = "%s"
   location           = "us-central1-a"
   initial_node_count = 1
   deletion_protection = false
+  network    = "%s"
+  subnetwork    = "%s"
 }
 
 resource "google_container_node_pool" "np_with_node_config" {
@@ -2339,16 +2470,18 @@ resource "google_container_node_pool" "np_with_node_config" {
     }
   }
 }
-`, cluster, nodePool)
+`, cluster, networkName, subnetworkName, nodePool)
 }
 
-func testAccContainerNodePool_withNodeConfigUpdate(cluster, nodePool string) string {
+func testAccContainerNodePool_withNodeConfigUpdate(cluster, nodePool, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 resource "google_container_cluster" "cluster" {
   name               = "%s"
   location           = "us-central1-a"
   initial_node_count = 1
   deletion_protection = false
+  network    = "%s"
+  subnetwork    = "%s"
 }
 
 resource "google_container_node_pool" "np_with_node_config" {
@@ -2396,10 +2529,10 @@ resource "google_container_node_pool" "np_with_node_config" {
     }
   }
 }
-`, cluster, nodePool)
+`, cluster, networkName, subnetworkName, nodePool)
 }
 
-func testAccContainerNodePool_withTaintsUpdate(cluster, np string) string {
+func testAccContainerNodePool_withTaintsUpdate(cluster, np, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 provider "google" {
   alias                 = "user-project-override"
@@ -2411,6 +2544,8 @@ resource "google_container_cluster" "cluster" {
   location           = "us-central1-a"
   initial_node_count = 3
   deletion_protection = false
+  network    = "%s"
+  subnetwork    = "%s"
 }
 
 resource "google_container_node_pool" "np" {
@@ -2430,10 +2565,10 @@ resource "google_container_node_pool" "np" {
 
 
 }
-`, cluster, np)
+`, cluster, networkName, subnetworkName, np)
 }
 
-func testAccContainerNodePool_withReservationAffinity(cluster, np string) string {
+func testAccContainerNodePool_withReservationAffinity(cluster, np, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 data "google_container_engine_versions" "central1a" {
   location = "us-central1-a"
@@ -2445,6 +2580,8 @@ resource "google_container_cluster" "cluster" {
   initial_node_count = 1
   min_master_version = data.google_container_engine_versions.central1a.latest_master_version
   deletion_protection = false
+  network    = "%s"
+  subnetwork    = "%s"
 }
 
 resource "google_container_node_pool" "with_reservation_affinity" {
@@ -2463,10 +2600,10 @@ resource "google_container_node_pool" "with_reservation_affinity" {
     }
   }
 }
-`, cluster, np)
+`, cluster, networkName, subnetworkName, np)
 }
 
-func testAccContainerNodePool_withReservationAffinitySpecific(cluster, reservation, np string) string {
+func testAccContainerNodePool_withReservationAffinitySpecific(cluster, reservation, np, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 data "google_container_engine_versions" "central1a" {
   location = "us-central1-a"
@@ -2478,6 +2615,8 @@ resource "google_container_cluster" "cluster" {
   initial_node_count = 1
   min_master_version = data.google_container_engine_versions.central1a.latest_master_version
   deletion_protection = false
+  network    = "%s"
+  subnetwork    = "%s"
 }
 
 resource "google_compute_reservation" "gce_reservation" {
@@ -2514,10 +2653,10 @@ resource "google_container_node_pool" "with_reservation_affinity" {
     }
   }
 }
-`, cluster, reservation, np)
+`, cluster, networkName, subnetworkName, reservation, np)
 }
 
-func testAccContainerNodePool_withWorkloadMetadataConfig(cluster, np string) string {
+func testAccContainerNodePool_withWorkloadMetadataConfig(cluster, np, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 data "google_container_engine_versions" "central1a" {
   location = "us-central1-a"
@@ -2529,6 +2668,8 @@ resource "google_container_cluster" "cluster" {
   initial_node_count = 1
   min_master_version = data.google_container_engine_versions.central1a.latest_master_version
   deletion_protection = false
+  network    = "%s"
+  subnetwork    = "%s"
 }
 
 resource "google_container_node_pool" "with_workload_metadata_config" {
@@ -2548,10 +2689,10 @@ resource "google_container_node_pool" "with_workload_metadata_config" {
     }
   }
 }
-`, cluster, np)
+`, cluster, networkName, subnetworkName, np)
 }
 
-func testAccContainerNodePool_withWorkloadMetadataConfig_gkeMetadata(projectID, cluster, np string) string {
+func testAccContainerNodePool_withWorkloadMetadataConfig_gkeMetadata(projectID, cluster, np, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 data "google_project" "project" {
   project_id = "%s"
@@ -2571,6 +2712,8 @@ resource "google_container_cluster" "cluster" {
     workload_pool = "${data.google_project.project.project_id}.svc.id.goog"
   }
   deletion_protection = false
+  network    = "%s"
+  subnetwork    = "%s"
 }
 
 resource "google_container_node_pool" "with_workload_metadata_config" {
@@ -2589,10 +2732,10 @@ resource "google_container_node_pool" "with_workload_metadata_config" {
     }
   }
 }
-`, projectID, cluster, np)
+`, projectID, cluster, networkName, subnetworkName, np)
 }
 
-func testAccContainerNodePool_withSandboxConfig(cluster, np string) string {
+func testAccContainerNodePool_withSandboxConfig(cluster, np, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 data "google_container_engine_versions" "central1a" {
   location = "us-central1-a"
@@ -2604,6 +2747,8 @@ resource "google_container_cluster" "cluster" {
   initial_node_count = 1
   min_master_version = data.google_container_engine_versions.central1a.latest_master_version
   deletion_protection = false
+  network    = "%s"
+  subnetwork    = "%s"
 }
 
 resource "google_container_node_pool" "with_sandbox_config" {
@@ -2629,10 +2774,10 @@ resource "google_container_node_pool" "with_sandbox_config" {
     ]
   }
 }
-`, cluster, np)
+`, cluster, networkName, subnetworkName, np)
 }
 
-func testAccContainerNodePool_withKubeletConfig(cluster, np, policy, period string, quota bool, podPidsLimit int) string {
+func testAccContainerNodePool_withKubeletConfig(cluster, np, policy, period, networkName, subnetworkName string, quota bool, podPidsLimit int) string {
 	return fmt.Sprintf(`
 data "google_container_engine_versions" "central1a" {
   location = "us-central1-a"
@@ -2644,6 +2789,8 @@ resource "google_container_cluster" "cluster" {
   initial_node_count = 1
   min_master_version = data.google_container_engine_versions.central1a.latest_master_version
   deletion_protection = false
+  network    = "%s"
+  subnetwork    = "%s"
 }
 
 # cpu_manager_policy & cpu_cfs_quota_period cannot be blank if cpu_cfs_quota is set to true
@@ -2668,10 +2815,10 @@ resource "google_container_node_pool" "with_kubelet_config" {
     logging_variant = "DEFAULT"
   }
 }
-`, cluster, np, policy, quota, period, podPidsLimit)
+`, cluster, networkName, subnetworkName, np, policy, quota, period, podPidsLimit)
 }
 
-func testAccContainerNodePool_withLinuxNodeConfig(cluster, np string, tcpMem string) string {
+func testAccContainerNodePool_withLinuxNodeConfig(cluster, np, tcpMem, networkName, subnetworkName string) string {
 	linuxNodeConfig := `
     linux_node_config {
       sysctls = {}
@@ -2706,6 +2853,8 @@ resource "google_container_cluster" "cluster" {
   initial_node_count = 1
   min_master_version = data.google_container_engine_versions.central1a.latest_master_version
   deletion_protection = false
+  network    = "%s"
+  subnetwork    = "%s"
 }
 
 resource "google_container_node_pool" "with_linux_node_config" {
@@ -2722,10 +2871,10 @@ resource "google_container_node_pool" "with_linux_node_config" {
     ]
   }
 }
-`, cluster, np, linuxNodeConfig)
+`, cluster, networkName, subnetworkName, np, linuxNodeConfig)
 }
 
-func testAccContainerNodePool_withCgroupMode(cluster, np string, mode string) string {
+func testAccContainerNodePool_withCgroupMode(cluster, np, mode, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 data "google_container_engine_versions" "central1a" {
   location = "us-central1-a"
@@ -2737,6 +2886,8 @@ resource "google_container_cluster" "cluster" {
   initial_node_count  = 1
   min_master_version  = data.google_container_engine_versions.central1a.latest_master_version
   deletion_protection = false
+  network    = "%s"
+  subnetwork    = "%s"
 }
 
 resource "google_container_node_pool" "np" {
@@ -2755,7 +2906,7 @@ resource "google_container_node_pool" "np" {
     ]
   }
 }
-`, cluster, np, mode)
+`, cluster, networkName, subnetworkName, np, mode)
 }
 
 func testAccContainerNodePool_withNetworkConfig(cluster, np, network string) string {
@@ -2984,7 +3135,7 @@ resource "google_container_node_pool" "with_multi_nic" {
 `, network, network, network, network, network, network, cluster, np)
 }
 
-func testAccContainerNodePool_withBootDiskKmsKey(cluster, np string) string {
+func testAccContainerNodePool_withBootDiskKmsKey(cluster, np, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 data "google_container_engine_versions" "central1a" {
   location = "us-central1-a"
@@ -3007,6 +3158,8 @@ resource "google_container_cluster" "cluster" {
   initial_node_count = 1
   min_master_version = data.google_container_engine_versions.central1a.latest_master_version
   deletion_protection = false
+  network    = "%s"
+  subnetwork    = "%s"
 }
 
 resource "google_container_node_pool" "with_boot_disk_kms_key" {
@@ -3024,7 +3177,7 @@ resource "google_container_node_pool" "with_boot_disk_kms_key" {
     ]
   }
 }
-`, cluster, cluster, cluster, np)
+`, cluster, cluster, cluster, networkName, subnetworkName, np)
 }
 
 func makeUpgradeSettings(maxSurge int, maxUnavailable int, strategy string, nodePoolSoakDuration string, batchNodeCount int, batchPercentage float64, batchSoakDuration string) string {
@@ -3052,7 +3205,7 @@ upgrade_settings {
 `, maxSurge, maxUnavailable, strategy)
 }
 
-func testAccContainerNodePool_withUpgradeSettings(clusterName string, nodePoolName string, maxSurge int, maxUnavailable int, strategy string, nodePoolSoakDuration string, batchNodeCount int, batchPercentage float64, batchSoakDuration string) string {
+func testAccContainerNodePool_withUpgradeSettings(clusterName, nodePoolName, networkName, subnetworkName string, maxSurge int, maxUnavailable int, strategy string, nodePoolSoakDuration string, batchNodeCount int, batchPercentage float64, batchSoakDuration string) string {
 	return fmt.Sprintf(`
 data "google_container_engine_versions" "central1" {
   location = "us-central1"
@@ -3064,6 +3217,8 @@ resource "google_container_cluster" "cluster" {
   initial_node_count = 1
   min_master_version = "${data.google_container_engine_versions.central1.latest_master_version}"
   deletion_protection = false
+  network    = "%s"
+  subnetwork    = "%s"
 }
 
 resource "google_container_node_pool" "with_upgrade_settings" {
@@ -3073,10 +3228,10 @@ resource "google_container_node_pool" "with_upgrade_settings" {
   initial_node_count = 1
   %s
 }
-`, clusterName, nodePoolName, makeUpgradeSettings(maxSurge, maxUnavailable, strategy, nodePoolSoakDuration, batchNodeCount, batchPercentage, batchSoakDuration))
+`, clusterName, networkName, subnetworkName, nodePoolName, makeUpgradeSettings(maxSurge, maxUnavailable, strategy, nodePoolSoakDuration, batchNodeCount, batchPercentage, batchSoakDuration))
 }
 
-func testAccContainerNodePool_withGPU(cluster, np string) string {
+func testAccContainerNodePool_withGPU(cluster, np, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 data "google_container_engine_versions" "central1c" {
   location = "us-central1-c"
@@ -3088,6 +3243,8 @@ resource "google_container_cluster" "cluster" {
   initial_node_count = 1
   min_master_version = data.google_container_engine_versions.central1c.latest_master_version
   deletion_protection = false
+  network    = "%s"
+  subnetwork    = "%s"
 }
 
 resource "google_container_node_pool" "np_with_gpu" {
@@ -3128,16 +3285,18 @@ resource "google_container_node_pool" "np_with_gpu" {
     }
   }
 }
-`, cluster, np)
+`, cluster, networkName, subnetworkName, np)
 }
 
-func testAccContainerNodePool_withNodeConfigScopeAlias(cluster, np string) string {
+func testAccContainerNodePool_withNodeConfigScopeAlias(cluster, np, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 resource "google_container_cluster" "cluster" {
   name               = "%s"
   location           = "us-central1-a"
   initial_node_count = 1
   deletion_protection = false
+  network    = "%s"
+  subnetwork    = "%s"
 }
 
 resource "google_container_node_pool" "np_with_node_config_scope_alias" {
@@ -3151,10 +3310,10 @@ resource "google_container_node_pool" "np_with_node_config_scope_alias" {
     oauth_scopes = ["compute-rw", "storage-ro", "logging-write", "monitoring"]
   }
 }
-`, cluster, np)
+`, cluster, networkName, subnetworkName, np)
 }
 
-func testAccContainerNodePool_version(cluster, np string) string {
+func testAccContainerNodePool_version(cluster, np, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 data "google_container_engine_versions" "central1a" {
   location = "us-central1-a"
@@ -3166,6 +3325,8 @@ resource "google_container_cluster" "cluster" {
   initial_node_count = 1
   min_master_version = data.google_container_engine_versions.central1a.latest_master_version
   deletion_protection = false
+  network    = "%s"
+  subnetwork    = "%s"
 }
 
 resource "google_container_node_pool" "np" {
@@ -3176,10 +3337,10 @@ resource "google_container_node_pool" "np" {
 
   version = data.google_container_engine_versions.central1a.valid_node_versions[1]
 }
-`, cluster, np)
+`, cluster, networkName, subnetworkName, np)
 }
 
-func testAccContainerNodePool_updateVersion(cluster, np string) string {
+func testAccContainerNodePool_updateVersion(cluster, np, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 data "google_container_engine_versions" "central1a" {
   location = "us-central1-a"
@@ -3191,6 +3352,8 @@ resource "google_container_cluster" "cluster" {
   initial_node_count = 1
   min_master_version = data.google_container_engine_versions.central1a.latest_master_version
   deletion_protection = false
+  network    = "%s"
+  subnetwork    = "%s"
 }
 
 resource "google_container_node_pool" "np" {
@@ -3201,16 +3364,18 @@ resource "google_container_node_pool" "np" {
 
   version = data.google_container_engine_versions.central1a.valid_node_versions[0]
 }
-`, cluster, np)
+`, cluster, networkName, subnetworkName, np)
 }
 
-func testAccContainerNodePool_012_ConfigModeAttr1(cluster, np string) string {
+func testAccContainerNodePool_012_ConfigModeAttr1(cluster, np, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 resource "google_container_cluster" "cluster" {
   name               = "%s"
   location           = "us-central1-f"
   initial_node_count = 3
   deletion_protection = false
+  network    = "%s"
+  subnetwork    = "%s"
 }
 
 resource "google_container_node_pool" "np" {
@@ -3227,16 +3392,18 @@ resource "google_container_node_pool" "np" {
 	machine_type = "n1-highmem-4"
   }
 }
-`, cluster, np)
+`, cluster, networkName, subnetworkName, np)
 }
 
-func testAccContainerNodePool_012_ConfigModeAttr2(cluster, np string) string {
+func testAccContainerNodePool_012_ConfigModeAttr2(cluster, np, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 resource "google_container_cluster" "cluster" {
   name               = "%s"
   location           = "us-central1-f"
   initial_node_count = 3
   deletion_protection = false
+  network    = "%s"
+  subnetwork    = "%s"
 }
 
 resource "google_container_node_pool" "np" {
@@ -3249,16 +3416,18 @@ resource "google_container_node_pool" "np" {
     guest_accelerator = []
   }
 }
-`, cluster, np)
+`, cluster, networkName, subnetworkName, np)
 }
 
-func testAccContainerNodePool_EmptyGuestAccelerator(cluster, np string) string {
+func testAccContainerNodePool_EmptyGuestAccelerator(cluster, np, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 resource "google_container_cluster" "cluster" {
   name               = "%s"
   location           = "us-central1-f"
   initial_node_count = 3
   deletion_protection = false
+  network    = "%s"
+  subnetwork    = "%s"
 }
 
 resource "google_container_node_pool" "np" {
@@ -3275,16 +3444,18 @@ resource "google_container_node_pool" "np" {
 	machine_type = "n1-highmem-4"
   }
 }
-`, cluster, np)
+`, cluster, networkName, subnetworkName, np)
 }
 
-func testAccContainerNodePool_PartialEmptyGuestAccelerator(cluster, np string, count int) string {
+func testAccContainerNodePool_PartialEmptyGuestAccelerator(cluster, np, networkName, subnetworkName string, count int) string {
 	return fmt.Sprintf(`
 resource "google_container_cluster" "cluster" {
   name               = "%s"
   location           = "us-central1-f"
   initial_node_count = 3
   deletion_protection = false
+  network    = "%s"
+  subnetwork    = "%s"
 }
 
 resource "google_container_node_pool" "np" {
@@ -3306,16 +3477,18 @@ resource "google_container_node_pool" "np" {
 	machine_type = "n1-highmem-4"
   }
 }
-`, cluster, np, count)
+`, cluster, networkName, subnetworkName, np, count)
 }
 
-func testAccContainerNodePool_PartialEmptyGuestAccelerator2(cluster, np string) string {
+func testAccContainerNodePool_PartialEmptyGuestAccelerator2(cluster, np, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 resource "google_container_cluster" "cluster" {
   name               = "%s"
   location           = "us-central1-f"
   initial_node_count = 3
   deletion_protection = false
+  network    = "%s"
+  subnetwork    = "%s"
 }
 
 resource "google_container_node_pool" "np" {
@@ -3342,16 +3515,18 @@ resource "google_container_node_pool" "np" {
 	machine_type = "n1-highmem-4"
   }
 }
-`, cluster, np)
+`, cluster, networkName, subnetworkName, np)
 }
 
-func testAccContainerNodePool_shieldedInstanceConfig(cluster, np string) string {
+func testAccContainerNodePool_shieldedInstanceConfig(cluster, np, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 resource "google_container_cluster" "cluster" {
   name               = "%s"
   location           = "us-central1-a"
   initial_node_count = 1
   deletion_protection = false
+  network    = "%s"
+  subnetwork    = "%s"
 }
 
 resource "google_container_node_pool" "np" {
@@ -3366,16 +3541,18 @@ resource "google_container_node_pool" "np" {
     }
   }
 }
-`, cluster, np)
+`, cluster, networkName, subnetworkName, np)
 }
 
-func testAccContainerNodePool_concurrentCreate(cluster, np1, np2 string) string {
+func testAccContainerNodePool_concurrentCreate(cluster, np1, np2, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 resource "google_container_cluster" "cluster" {
   name               = "%s"
   location           = "us-central1-a"
   initial_node_count = 3
   deletion_protection = false
+  network    = "%s"
+  subnetwork    = "%s"
 }
 
 resource "google_container_node_pool" "np1" {
@@ -3391,16 +3568,18 @@ resource "google_container_node_pool" "np2" {
 	cluster            = google_container_cluster.cluster.name
 	initial_node_count = 2
   }
-`, cluster, np1, np2)
+`, cluster, networkName, subnetworkName, np1, np2)
 }
 
-func testAccContainerNodePool_concurrentUpdate(cluster, np1, np2 string) string {
+func testAccContainerNodePool_concurrentUpdate(cluster, np1, np2, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 resource "google_container_cluster" "cluster" {
   name               = "%s"
   location           = "us-central1-a"
   initial_node_count = 3
   deletion_protection = false
+  network    = "%s"
+  subnetwork    = "%s"
 }
 
 resource "google_container_node_pool" "np1" {
@@ -3418,10 +3597,10 @@ resource "google_container_node_pool" "np2" {
   initial_node_count = 2
   version            = "1.27.3-gke.1700"
 }
-`, cluster, np1, np2)
+`, cluster, networkName, subnetworkName, np1, np2)
 }
 
-func testAccContainerNodePool_withSoleTenantConfig(cluster, np string) string {
+func testAccContainerNodePool_withSoleTenantConfig(cluster, np, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 data "google_container_engine_versions" "central1a" {
   location = "us-central1-a"
@@ -3446,6 +3625,8 @@ resource "google_container_cluster" "cluster" {
   initial_node_count = 1
   min_master_version = data.google_container_engine_versions.central1a.latest_master_version
   deletion_protection = false
+  network    = "%s"
+  subnetwork    = "%s"
 }
 
 resource "google_container_node_pool" "with_sole_tenant_config" {
@@ -3468,7 +3649,7 @@ resource "google_container_node_pool" "with_sole_tenant_config" {
     ]
   }
 }
-`, cluster, np)
+`, cluster, networkName, subnetworkName, np)
 }
 
 func TestAccContainerNodePool_withConfidentialNodes(t *testing.T) {
@@ -3476,6 +3657,8 @@ func TestAccContainerNodePool_withConfidentialNodes(t *testing.T) {
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	np := fmt.Sprintf("tf-test-cluster-nodepool-%s", acctest.RandString(t, 10))
+	networkName := acctest.BootstrapSharedTestNetwork(t, "gke-cluster")
+	subnetworkName := acctest.BootstrapSubnet(t, "gke-cluster", networkName)
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -3483,7 +3666,7 @@ func TestAccContainerNodePool_withConfidentialNodes(t *testing.T) {
 		CheckDestroy:             testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccContainerNodePool_withConfidentialNodes(clusterName, np),
+				Config: testAccContainerNodePool_withConfidentialNodes(clusterName, np, networkName, subnetworkName),
 			},
 			{
 				ResourceName:      "google_container_node_pool.np",
@@ -3491,7 +3674,7 @@ func TestAccContainerNodePool_withConfidentialNodes(t *testing.T) {
 				ImportStateVerify: true,
 			},
 			{
-				Config: testAccContainerNodePool_disableConfidentialNodes(clusterName, np),
+				Config: testAccContainerNodePool_disableConfidentialNodes(clusterName, np, networkName, subnetworkName),
 			},
 			{
 				ResourceName:      "google_container_node_pool.np",
@@ -3499,7 +3682,7 @@ func TestAccContainerNodePool_withConfidentialNodes(t *testing.T) {
 				ImportStateVerify: true,
 			},
 			{
-				Config: testAccContainerNodePool_withConfidentialNodes(clusterName, np),
+				Config: testAccContainerNodePool_withConfidentialNodes(clusterName, np, networkName, subnetworkName),
 			},
 			{
 				ResourceName:      "google_container_node_pool.np",
@@ -3510,11 +3693,11 @@ func TestAccContainerNodePool_withConfidentialNodes(t *testing.T) {
 	})
 }
 
-func testAccContainerNodePool_withConfidentialNodes(clusterName string, np string) string {
+func testAccContainerNodePool_withConfidentialNodes(clusterName, np, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 resource "google_container_cluster" "cluster" {
   name               = "%s"
-  location           = "asia-east1-c"
+  location           = "us-central1-a"
   initial_node_count = 1
   node_config {
     confidential_nodes {
@@ -3523,11 +3706,13 @@ resource "google_container_cluster" "cluster" {
     machine_type = "n2-standard-2"
   }
   deletion_protection = false
+  network    = "%s"
+  subnetwork    = "%s"
 }
 
 resource "google_container_node_pool" "np" {
   name               = "%s"
-  location           = "asia-east1-c"
+  location           = "us-central1-a"
   cluster            = google_container_cluster.cluster.name
   initial_node_count = 1
   node_config {
@@ -3537,14 +3722,14 @@ resource "google_container_node_pool" "np" {
     }
   }
 }
-`, clusterName, np)
+`, clusterName, networkName, subnetworkName, np)
 }
 
-func testAccContainerNodePool_disableConfidentialNodes(clusterName string, np string) string {
+func testAccContainerNodePool_disableConfidentialNodes(clusterName, np, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 resource "google_container_cluster" "cluster" {
   name               = "%s"
-  location           = "asia-east1-c"
+  location           = "us-central1-a"
   initial_node_count = 1
   node_config {
     confidential_nodes {
@@ -3553,11 +3738,13 @@ resource "google_container_cluster" "cluster" {
     machine_type = "n2-standard-2"
   }
   deletion_protection = false
+  network    = "%s"
+  subnetwork    = "%s"
 }
 
 resource "google_container_node_pool" "np" {
   name               = "%s"
-  location           = "asia-east1-c"
+  location           = "us-central1-a"
   cluster            = google_container_cluster.cluster.name
   initial_node_count = 1
   node_config {
@@ -3567,7 +3754,7 @@ resource "google_container_node_pool" "np" {
     }
   }
 }
-`, clusterName, np)
+`, clusterName, networkName, subnetworkName, np)
 }
 
 func TestAccContainerNodePool_tpuTopology(t *testing.T) {
@@ -3577,6 +3764,8 @@ func TestAccContainerNodePool_tpuTopology(t *testing.T) {
 	cluster := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	np1 := fmt.Sprintf("tf-test-nodepool-%s", acctest.RandString(t, 10))
 	np2 := fmt.Sprintf("tf-test-nodepool-%s", acctest.RandString(t, 10))
+	networkName := acctest.BootstrapSharedTestNetwork(t, "gke-cluster")
+	subnetworkName := acctest.BootstrapSubnet(t, "gke-cluster", networkName)
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -3584,7 +3773,7 @@ func TestAccContainerNodePool_tpuTopology(t *testing.T) {
 		CheckDestroy:             testAccCheckContainerNodePoolDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccContainerNodePool_tpuTopology(cluster, np1, np2, "2x2x2"),
+				Config: testAccContainerNodePool_tpuTopology(cluster, np1, np2, "2x2x2", networkName, subnetworkName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("google_container_node_pool.regular_pool", "node_config.0.machine_type", "n1-standard-4"),
 					resource.TestCheckResourceAttr("google_container_node_pool.with_tpu_topology", "node_config.0.machine_type", "ct4p-hightpu-4t"),
@@ -3601,30 +3790,31 @@ func TestAccContainerNodePool_tpuTopology(t *testing.T) {
 	})
 }
 
-func testAccContainerNodePool_tpuTopology(cluster, np1, np2, tpuTopology string) string {
+func testAccContainerNodePool_tpuTopology(cluster, np1, np2, tpuTopology, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 resource "google_container_cluster" "cluster" {
   name               = "%s"
-  location           = "us-central2-b"
+  location           = "us-central1-a"
   initial_node_count = 1
   deletion_protection = false
+  network    = "%s"
+  subnetwork    = "%s"
 }
 
 resource "google_container_node_pool" "regular_pool" {
-	name               = "%s"
-	location           = "us-central2-b"
-	cluster            = google_container_cluster.cluster.name
-	initial_node_count = 1
+  name               = "%s"
+  location           = "us-central1-a"
+  cluster            = google_container_cluster.cluster.name
+  initial_node_count = 1
 
-	node_config {
-	  machine_type = "n1-standard-4"
-
-	}
+  node_config {
+    machine_type = "n1-standard-4"
   }
+}
 
 resource "google_container_node_pool" "with_tpu_topology" {
   name               = "%s"
-  location           = "us-central2-b"
+  location           = "us-central1-a"
   cluster            = google_container_cluster.cluster.name
   initial_node_count = 2
 
@@ -3633,11 +3823,11 @@ resource "google_container_node_pool" "with_tpu_topology" {
 
   }
   placement_policy {
-	type = "COMPACT"
-	tpu_topology = "%s"
+  type = "COMPACT"
+  tpu_topology = "%s"
   }
 }
-`, cluster, np1, np2, tpuTopology)
+`, cluster, networkName, subnetworkName, np1, np2, tpuTopology)
 }
 
 func TestAccContainerNodePool_withHostMaintenancePolicy(t *testing.T) {
@@ -3699,6 +3889,8 @@ func TestAccContainerNodePool_withConfidentialBootDisk(t *testing.T) {
 	cluster := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	np := fmt.Sprintf("tf-test-np-%s", acctest.RandString(t, 10))
 	kms := acctest.BootstrapKMSKeyInLocation(t, "us-central1")
+	networkName := acctest.BootstrapSharedTestNetwork(t, "gke-cluster")
+	subnetworkName := acctest.BootstrapSubnet(t, "gke-cluster", networkName)
 
 	if acctest.BootstrapPSARole(t, "service-", "compute-system", "roles/cloudkms.cryptoKeyEncrypterDecrypter") {
 		t.Fatal("Stopping the test because a role was added to the policy.")
@@ -3710,7 +3902,7 @@ func TestAccContainerNodePool_withConfidentialBootDisk(t *testing.T) {
 		CheckDestroy:             testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccContainerNodePool_withConfidentialBootDisk(cluster, np, kms.CryptoKey.Name),
+				Config: testAccContainerNodePool_withConfidentialBootDisk(cluster, np, kms.CryptoKey.Name, networkName, subnetworkName),
 			},
 			{
 				ResourceName:      "google_container_node_pool.with_confidential_boot_disk",
@@ -3721,38 +3913,40 @@ func TestAccContainerNodePool_withConfidentialBootDisk(t *testing.T) {
 	})
 }
 
-func testAccContainerNodePool_withConfidentialBootDisk(cluster, np string, kmsKeyName string) string {
+func testAccContainerNodePool_withConfidentialBootDisk(cluster, np string, kmsKeyName, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 data "google_container_engine_versions" "central1a" {
   location = "us-central1-a"
 }
 
 resource "google_container_cluster" "cluster" {
- name               = "%s"
- location           = "us-central1-a"
- initial_node_count = 1
- min_master_version = data.google_container_engine_versions.central1a.latest_master_version
- deletion_protection = false
+  name               = "%s"
+  location           = "us-central1-a"
+  initial_node_count = 1
+  min_master_version = data.google_container_engine_versions.central1a.latest_master_version
+  deletion_protection = false
+  network    = "%s"
+  subnetwork    = "%s"
 }
 
 resource "google_container_node_pool" "with_confidential_boot_disk" {
- name               = "%s"
- location           = "us-central1-a"
- cluster            = google_container_cluster.cluster.name
-  
-node_config {
- image_type = "COS_CONTAINERD"
- boot_disk_kms_key = "%s"
- oauth_scopes = [
+  name               = "%s"
+  location           = "us-central1-a"
+  cluster            = google_container_cluster.cluster.name
+    
+  node_config {
+    image_type = "COS_CONTAINERD"
+    boot_disk_kms_key = "%s"
+    oauth_scopes = [
       "https://www.googleapis.com/auth/logging.write",
       "https://www.googleapis.com/auth/monitoring",
     ]
- enable_confidential_storage = true
- machine_type = "n2-standard-2"
- disk_type = "hyperdisk-balanced"
+    enable_confidential_storage = true
+    machine_type = "n2-standard-2"
+    disk_type = "hyperdisk-balanced"
   }
 }
-`, cluster, np, kmsKeyName)
+`, cluster, networkName, subnetworkName, np, kmsKeyName)
 }
 
 func TestAccContainerNodePool_withoutConfidentialBootDisk(t *testing.T) {
@@ -3760,6 +3954,8 @@ func TestAccContainerNodePool_withoutConfidentialBootDisk(t *testing.T) {
 
 	cluster := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	np := fmt.Sprintf("tf-test-np-%s", acctest.RandString(t, 10))
+	networkName := acctest.BootstrapSharedTestNetwork(t, "gke-cluster")
+	subnetworkName := acctest.BootstrapSubnet(t, "gke-cluster", networkName)
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -3767,7 +3963,7 @@ func TestAccContainerNodePool_withoutConfidentialBootDisk(t *testing.T) {
 		CheckDestroy:             testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccContainerNodePool_withoutConfidentialBootDisk(cluster, np),
+				Config: testAccContainerNodePool_withoutConfidentialBootDisk(cluster, np, networkName, subnetworkName),
 			},
 			{
 				ResourceName:      "google_container_node_pool.without_confidential_boot_disk",
@@ -3778,35 +3974,37 @@ func TestAccContainerNodePool_withoutConfidentialBootDisk(t *testing.T) {
 	})
 }
 
-func testAccContainerNodePool_withoutConfidentialBootDisk(cluster, np string) string {
+func testAccContainerNodePool_withoutConfidentialBootDisk(cluster, np, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 data "google_container_engine_versions" "central1a" {
   location = "us-central1-a"
 }
 
 resource "google_container_cluster" "cluster" {
- name               = "%s"
- location           = "us-central1-a"
- initial_node_count = 1
- min_master_version = data.google_container_engine_versions.central1a.latest_master_version
- deletion_protection = false
+  name               = "%s"
+  location           = "us-central1-a"
+  initial_node_count = 1
+  min_master_version = data.google_container_engine_versions.central1a.latest_master_version
+  deletion_protection = false
+  network    = "%s"
+  subnetwork    = "%s"
 }
 
 resource "google_container_node_pool" "without_confidential_boot_disk" {
- name               = "%s"
- location           = "us-central1-a"
- cluster            = google_container_cluster.cluster.name
-  
- node_config {
-  image_type = "COS_CONTAINERD"
-  oauth_scopes = [
+  name               = "%s"
+  location           = "us-central1-a"
+  cluster            = google_container_cluster.cluster.name
+    
+  node_config {
+    image_type = "COS_CONTAINERD"
+    oauth_scopes = [
       "https://www.googleapis.com/auth/logging.write",
       "https://www.googleapis.com/auth/monitoring",
     ]
-  enable_confidential_storage = false
-  machine_type = "n2-standard-2"
-  disk_type = "pd-balanced"
+    enable_confidential_storage = false
+    machine_type = "n2-standard-2"
+    disk_type = "pd-balanced"
   }
 }
-`, cluster, np)
+`, cluster, networkName, subnetworkName, np)
 }
