@@ -27,19 +27,19 @@ IMPROVEMENTS:
 * dialogflowcx: added `advanced_settings` field to `google_dialogflow_cx_flow` resource ([#6543](https://github.com/hashicorp/terraform-provider-google-beta/pull/6543))
 * dialogflowcx: added `advanced_settings` fields to `google_dialogflow_cx_page` resource ([#6543](https://github.com/hashicorp/terraform-provider-google-beta/pull/6543))
 * dialogflowcx: added `advanced_settings`, `text_to_speech_settings`, `git_integration_settings` fields to `google_dialogflow_cx_agent` resource ([#6543](https://github.com/hashicorp/terraform-provider-google-beta/pull/6543))
-* redis: allow `replica_count` to be set to zero in the `google_redis_cluster` resource ([#6534](https://github.com/hashicorp/terraform-provider-google-beta/pull/6534))
-* sql: added `ssl_mode` field to `google_sql_database_instance` resource ([#6564](https://github.com/hashicorp/terraform-provider-google-beta/pull/6564))
-* tpuv2: added more fields to `google_tpu_v2_vm` resource, including `network_config`, `scheduling_config`, `shielded_instance_config`, `service_account` and `data_disks` ([#6555](https://github.com/hashicorp/terraform-provider-google-beta/pull/6555))
-* tpuv2: added`accelerator_config` field to `google_tpu_v2_vm` resource ([#6559](https://github.com/hashicorp/terraform-provider-google-beta/pull/6559))
+* tpuv2: added `cidr_block`, `labels`, `tags`, `network_config`, `scheduling_config`, `shielded_instance_config`, `service_account` and `data_disks` fields to `google_tpu_v2_vm` ([#6555](https://github.com/hashicorp/terraform-provider-google-beta/pull/6555))
+* tpuv2: added `accelerator_config` field to `google_tpu_v2_vm` resource ([#6559](https://github.com/hashicorp/terraform-provider-google-beta/pull/6559))
 
 BUG FIXES:
 * bigquery: fixed a bug when updating a `google_bigquery_dataset` that contained an `iamMember` access rule added out of band with Terraform ([#6550](https://github.com/hashicorp/terraform-provider-google-beta/pull/6550))
 * bigqueryreservation: fixed bug of incorrect resource recreation when `capacity_commitment_id` is unspecified in resource `google_bigquery_capacity_commitment` ([#6548](https://github.com/hashicorp/terraform-provider-google-beta/pull/6548))
-* cloudrunv2: set field `annotations` having all of annotations present on the resource in GCP in data source `google_cloud_run_v2_job` ([#6532](https://github.com/hashicorp/terraform-provider-google-beta/pull/6532))
-* cloudrunv2: set field `annotations` having all of annotations present on the resource in GCP in data source `google_cloud_run_v2_service` ([#6532](https://github.com/hashicorp/terraform-provider-google-beta/pull/6532))
-* cloudrunv2: set fields `labels` and `terraform_labels` having all of labels present on the resource in GCP in data source `google_cloud_run_v2_job` ([#6532](https://github.com/hashicorp/terraform-provider-google-beta/pull/6532))
-* cloudrunv2: set fields `labels` and `terraform_labels` having all of labels present on the resource in GCP in data source `google_cloud_run_v2_service` ([#6532](https://github.com/hashicorp/terraform-provider-google-beta/pull/6532))
+* cloudrunv2: made `annotations` field on the `google_cloud_run_v2_job` data source include all annotations present on the resource in GCP ([#6532](https://github.com/hashicorp/terraform-provider-google-beta/pull/6532))
+* cloudrunv2: made `annotations` field on the `google_cloud_run_v2_service` data source include all annotations present on the resource in GCP ([#6532](https://github.com/hashicorp/terraform-provider-google-beta/pull/6532))
+* cloudrunv2: made `labels` and `terraform labels` fields on the `google_cloud_run_v2_job` data source include all annotations present on the resource in GCP ([#6532](https://github.com/hashicorp/terraform-provider-google-beta/pull/6532))
+* cloudrunv2: made `labels` and `terraform labels` fields on the `google_cloud_run_v2_service` data source include all annotations present on the resource in GCP ([#6532](https://github.com/hashicorp/terraform-provider-google-beta/pull/6532))
 * edgecontainer: fixed an issue where the update endpoint for `google_edgecontainer_cluster` was incorrect. ([#6560](https://github.com/hashicorp/terraform-provider-google-beta/pull/6560))
+* redis: allow `replica_count` to be set to zero in the `google_redis_cluster` resource ([#6534](https://github.com/hashicorp/terraform-provider-google-beta/pull/6534))
+
 
 ## 5.3.0 (Oct 23, 2023)
 
