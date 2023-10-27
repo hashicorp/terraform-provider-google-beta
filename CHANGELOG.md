@@ -1,5 +1,8 @@
 ## 5.4.0 (Unreleased)
 
+DEPRECATIONS:
+* bigquery: deprecated `cloud_spanner.use_serverless_analytics` on `google_bigquery_connection`. Use `cloud_spanner.use_data_boost` instead. ([#6539](https://github.com/hashicorp/terraform-provider-google-beta/pull/6539))
+
 NOTES:
 * provider: added `universe_domain` attribute as a provider attribute ([#6551](https://github.com/hashicorp/terraform-provider-google-beta/pull/6551))
 
