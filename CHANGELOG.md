@@ -18,7 +18,7 @@ FEATURES:
 IMPROVEMENTS:
 * accesscontextmanager: added support for Access Context Manager's VPC Sub-segmentation feature ([#6553](https://github.com/hashicorp/terraform-provider-google-beta/pull/6553))
 * apigee: added support for type in `google_apigee_environment` ([#6562](https://github.com/hashicorp/terraform-provider-google-beta/pull/6562))
-* bigquery: added data boost and parallelism input options to `google_bigquery_connection` ([#6539](https://github.com/hashicorp/terraform-provider-google-beta/pull/6539))
+* bigquery: added `cloud_spanner.database_role`, `cloud_spanner.use_data_boost`, and `cloud_spanner.max_parallelism` fields to `google_bigquery_connection` ([#6539](https://github.com/hashicorp/terraform-provider-google-beta/pull/6539))
 * bigquery: added support for `iam_member` to `google_bigquery_dataset.access` ([#6550](https://github.com/hashicorp/terraform-provider-google-beta/pull/6550))
 * compute: added `maintenance_interval` field to `google_compute_node_group` resource ([#6561](https://github.com/hashicorp/terraform-provider-google-beta/pull/6561))
 * container: added `enable_confidential_storage` to `node_config` in `google_container_cluster` and `google_container_node_pool` ([#6531](https://github.com/hashicorp/terraform-provider-google-beta/pull/6531))
