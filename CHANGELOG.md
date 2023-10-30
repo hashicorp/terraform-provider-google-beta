@@ -1,4 +1,46 @@
-## 5.4.0 (Unreleased)
+## 5.5.0 (Unreleased)
+
+## 5.4.0 (Oct 30, 2023)
+
+DEPRECATIONS:
+* bigquery: deprecated `cloud_spanner.use_serverless_analytics` on `google_bigquery_connection`. Use `cloud_spanner.use_data_boost` instead. ([#6539](https://github.com/hashicorp/terraform-provider-google-beta/pull/6539))
+
+NOTES:
+* provider: added `universe_domain` attribute as a provider attribute ([#6551](https://github.com/hashicorp/terraform-provider-google-beta/pull/6551))
+
+BREAKING CHANGES:
+* cloudrunv2: marked `location` field as required in resource `google_cloud_run_v2_job`. Any configuration without `location` specified will cause resource creation fail ([#6540](https://github.com/hashicorp/terraform-provider-google-beta/pull/6540))
+* cloudrunv2: marked `location` field as required in resource `google_cloud_run_v2_service`. Any configuration without `location` specified will cause resource creation fail ([#6540](https://github.com/hashicorp/terraform-provider-google-beta/pull/6540))
+
+FEATURES:
+* **New Data Source:** `google_cloud_identity_group_lookup` ([#6530](https://github.com/hashicorp/terraform-provider-google-beta/pull/6530))
+* **New Resource:** `google_network_connectivity_policy_based_route` ([#6552](https://github.com/hashicorp/terraform-provider-google-beta/pull/6552))
+* **New Resource:** `google_pubsub_schema_iam_*` ([#6533](https://github.com/hashicorp/terraform-provider-google-beta/pull/6533))
+
+IMPROVEMENTS:
+* accesscontextmanager: added support for specifying `vpc_network_sources` to `google_access_context_manager_access_levels`, `google_access_context_manager_access_level`, and `google_access_context_manager_access_level_condition` ([#6553](https://github.com/hashicorp/terraform-provider-google-beta/pull/6553))
+* apigee: added support for `type` in `google_apigee_environment` ([#6562](https://github.com/hashicorp/terraform-provider-google-beta/pull/6562))
+* bigquery: added `cloud_spanner.database_role`, `cloud_spanner.use_data_boost`, and `cloud_spanner.max_parallelism` fields to `google_bigquery_connection` ([#6539](https://github.com/hashicorp/terraform-provider-google-beta/pull/6539))
+* bigquery: added support for `iam_member` to `google_bigquery_dataset.access` ([#6550](https://github.com/hashicorp/terraform-provider-google-beta/pull/6550))
+* compute: added `maintenance_interval` field to `google_compute_node_group` resource ([#6561](https://github.com/hashicorp/terraform-provider-google-beta/pull/6561))
+* container: added `enable_confidential_storage` to `node_config` in `google_container_cluster` and `google_container_node_pool` ([#6531](https://github.com/hashicorp/terraform-provider-google-beta/pull/6531))
+* container: added update support for `google_container_node_pool.node_config.taint` ([#6536](https://github.com/hashicorp/terraform-provider-google-beta/pull/6536))
+* containerattached: added `admin_groups` field to `google_container_attached_cluster` resource ([#6537](https://github.com/hashicorp/terraform-provider-google-beta/pull/6537))
+* dialogflowcx: added `advanced_settings` field to `google_dialogflow_cx_flow` resource ([#6543](https://github.com/hashicorp/terraform-provider-google-beta/pull/6543))
+* dialogflowcx: added `advanced_settings` fields to `google_dialogflow_cx_page` resource ([#6543](https://github.com/hashicorp/terraform-provider-google-beta/pull/6543))
+* dialogflowcx: added `advanced_settings`, `text_to_speech_settings`, `git_integration_settings` fields to `google_dialogflow_cx_agent` resource ([#6543](https://github.com/hashicorp/terraform-provider-google-beta/pull/6543))
+* tpuv2: added `cidr_block`, `labels`, `tags`, `network_config`, `scheduling_config`, `shielded_instance_config`, `service_account` and `data_disks` fields to `google_tpu_v2_vm` ([#6555](https://github.com/hashicorp/terraform-provider-google-beta/pull/6555))
+* tpuv2: added `accelerator_config` field to `google_tpu_v2_vm` resource ([#6559](https://github.com/hashicorp/terraform-provider-google-beta/pull/6559))
+
+BUG FIXES:
+* bigquery: fixed a bug when updating a `google_bigquery_dataset` that contained an `iamMember` access rule added out of band with Terraform ([#6550](https://github.com/hashicorp/terraform-provider-google-beta/pull/6550))
+* bigqueryreservation: fixed bug of incorrect resource recreation when `capacity_commitment_id` is unspecified in resource `google_bigquery_capacity_commitment` ([#6548](https://github.com/hashicorp/terraform-provider-google-beta/pull/6548))
+* cloudrunv2: made `annotations` field on the `google_cloud_run_v2_job` data source include all annotations present on the resource in GCP ([#6532](https://github.com/hashicorp/terraform-provider-google-beta/pull/6532))
+* cloudrunv2: made `annotations` field on the `google_cloud_run_v2_service` data source include all annotations present on the resource in GCP ([#6532](https://github.com/hashicorp/terraform-provider-google-beta/pull/6532))
+* cloudrunv2: made `labels` and `terraform labels` fields on the `google_cloud_run_v2_job` data source include all annotations present on the resource in GCP ([#6532](https://github.com/hashicorp/terraform-provider-google-beta/pull/6532))
+* cloudrunv2: made `labels` and `terraform labels` fields on the `google_cloud_run_v2_service` data source include all annotations present on the resource in GCP ([#6532](https://github.com/hashicorp/terraform-provider-google-beta/pull/6532))
+* edgecontainer: fixed an issue where the update endpoint for `google_edgecontainer_cluster` was incorrect. ([#6560](https://github.com/hashicorp/terraform-provider-google-beta/pull/6560))
+* redis: allow `replica_count` to be set to zero in the `google_redis_cluster` resource ([#6534](https://github.com/hashicorp/terraform-provider-google-beta/pull/6534))
 
 ## 5.3.0 (Oct 23, 2023)
 
