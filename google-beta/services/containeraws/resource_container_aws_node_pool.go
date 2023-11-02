@@ -146,7 +146,6 @@ func ResourceContainerAwsNodePool() *schema.Resource {
 				Type:        schema.TypeList,
 				Computed:    true,
 				Optional:    true,
-				ForceNew:    true,
 				Description: "Optional. Update settings control the speed and disruption of the node pool update.",
 				MaxItems:    1,
 				Elem:        ContainerAwsNodePoolUpdateSettingsSchema(),
@@ -423,7 +422,7 @@ func ContainerAwsNodePoolConfigRootVolumeSchema() *schema.Resource {
 				Type:        schema.TypeInt,
 				Computed:    true,
 				Optional:    true,
-				Description: "Optional. The throughput to provision for the volume, in MiB/s. Only valid if the volume type is GP3.",
+				Description: "Optional. The throughput to provision for the volume, in MiB/s. Only valid if the volume type is GP3. If volume type is gp3 and throughput is not specified, the throughput will defaults to 125.",
 			},
 
 			"volume_type": {
@@ -524,7 +523,6 @@ func ContainerAwsNodePoolUpdateSettingsSchema() *schema.Resource {
 				Type:        schema.TypeList,
 				Computed:    true,
 				Optional:    true,
-				ForceNew:    true,
 				Description: "Optional. Settings for surge update.",
 				MaxItems:    1,
 				Elem:        ContainerAwsNodePoolUpdateSettingsSurgeSettingsSchema(),
@@ -540,7 +538,6 @@ func ContainerAwsNodePoolUpdateSettingsSurgeSettingsSchema() *schema.Resource {
 				Type:        schema.TypeInt,
 				Computed:    true,
 				Optional:    true,
-				ForceNew:    true,
 				Description: "Optional. The maximum number of nodes that can be created beyond the current size of the node pool during the update process.",
 			},
 
@@ -548,7 +545,6 @@ func ContainerAwsNodePoolUpdateSettingsSurgeSettingsSchema() *schema.Resource {
 				Type:        schema.TypeInt,
 				Computed:    true,
 				Optional:    true,
-				ForceNew:    true,
 				Description: "Optional. The maximum number of nodes that can be simultaneously unavailable during the update process. A node is considered unavailable if its status is not Ready.",
 			},
 		},
