@@ -33,6 +33,42 @@ import (
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
+func TestAccAssuredWorkloadsWorkload_SovereignControlsWorkload(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"billing_acct":  envvar.GetTestBillingAccountFromEnv(t),
+		"org_id":        envvar.GetTestOrgFromEnv(t),
+		"random_suffix": acctest.RandString(t, 10),
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck: func() { acctest.AccTestPreCheck(t) },
+
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckAssuredWorkloadsWorkloadDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccAssuredWorkloadsWorkload_SovereignControlsWorkload(context),
+			},
+			{
+				ResourceName:            "google_assured_workloads_workload.primary",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"billing_account", "kms_settings", "resource_settings", "provisioned_resources_parent", "labels", "terraform_labels"},
+			},
+			{
+				Config: testAccAssuredWorkloadsWorkload_SovereignControlsWorkloadUpdate0(context),
+			},
+			{
+				ResourceName:            "google_assured_workloads_workload.primary",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"billing_account", "kms_settings", "resource_settings", "provisioned_resources_parent", "labels", "terraform_labels"},
+			},
+		},
+	})
+}
 func TestAccAssuredWorkloadsWorkload_BasicHandWritten(t *testing.T) {
 	t.Parallel()
 
@@ -97,6 +133,61 @@ func TestAccAssuredWorkloadsWorkload_FullHandWritten(t *testing.T) {
 	})
 }
 
+func testAccAssuredWorkloadsWorkload_SovereignControlsWorkload(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_assured_workloads_workload" "primary" {
+  compliance_regime         = "EU_REGIONS_AND_SUPPORT"
+  display_name              = "tf-test-display%{random_suffix}"
+  location                  = "europe-west9"
+  organization              = "%{org_id}"
+  billing_account           = "billingAccounts/%{billing_acct}"
+  enable_sovereign_controls = true
+
+  kms_settings {
+    next_rotation_time = "9999-10-02T15:01:23Z"
+    rotation_period    = "10368000s"
+  }
+
+  resource_settings {
+    resource_type = "CONSUMER_FOLDER"
+  }
+
+  resource_settings {
+    resource_type = "ENCRYPTION_KEYS_PROJECT"
+  }
+
+  resource_settings {
+    resource_id   = "tf-test-ring%{random_suffix}"
+    resource_type = "KEYRING"
+  }
+
+  labels = {
+    label-one = "value-one"
+  }
+  provider                  = google-beta
+}
+
+`, context)
+}
+
+func testAccAssuredWorkloadsWorkload_SovereignControlsWorkloadUpdate0(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_assured_workloads_workload" "primary" {
+  compliance_regime = "EU_REGIONS_AND_SUPPORT"
+  display_name      = "updated-example"
+  location          = "europe-west9"
+  organization      = "%{org_id}"
+  billing_account   = "billingAccounts/%{billing_acct}"
+
+  labels = {
+    label-two = "value-two-eu-regions-and-support"
+  }
+  provider          = google-beta
+}
+
+`, context)
+}
+
 func testAccAssuredWorkloadsWorkload_BasicHandWritten(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_assured_workloads_workload" "primary" {
@@ -109,6 +200,11 @@ resource "google_assured_workloads_workload" "primary" {
   provisioned_resources_parent = google_folder.folder1.name
   organization = "%{org_id}"
   location = "us-central1"
+  resource_settings {
+    resource_type = "CONSUMER_FOLDER"
+    display_name = "folder-display-name"
+  }
+  violation_notifications_enabled = true
 }
 
 resource "google_folder" "folder1" {
@@ -130,6 +226,11 @@ resource "google_assured_workloads_workload" "primary" {
   provisioned_resources_parent = google_folder.folder1.name
   organization = "%{org_id}"
   location = "us-central1"
+  resource_settings {
+    resource_type = "CONSUMER_FOLDER"
+    display_name = "folder-display-name"
+  }
+  violation_notifications_enabled = true
 }
 
 resource "google_folder" "folder1" {
@@ -180,14 +281,18 @@ func testAccCheckAssuredWorkloadsWorkloadDestroyProducer(t *testing.T) func(s *t
 			}
 
 			obj := &assuredworkloads.Workload{
-				BillingAccount:             dcl.String(rs.Primary.Attributes["billing_account"]),
-				ComplianceRegime:           assuredworkloads.WorkloadComplianceRegimeEnumRef(rs.Primary.Attributes["compliance_regime"]),
-				DisplayName:                dcl.String(rs.Primary.Attributes["display_name"]),
-				Location:                   dcl.String(rs.Primary.Attributes["location"]),
-				Organization:               dcl.String(rs.Primary.Attributes["organization"]),
-				ProvisionedResourcesParent: dcl.String(rs.Primary.Attributes["provisioned_resources_parent"]),
-				CreateTime:                 dcl.StringOrNil(rs.Primary.Attributes["create_time"]),
-				Name:                       dcl.StringOrNil(rs.Primary.Attributes["name"]),
+				ComplianceRegime:              assuredworkloads.WorkloadComplianceRegimeEnumRef(rs.Primary.Attributes["compliance_regime"]),
+				DisplayName:                   dcl.String(rs.Primary.Attributes["display_name"]),
+				Location:                      dcl.String(rs.Primary.Attributes["location"]),
+				Organization:                  dcl.String(rs.Primary.Attributes["organization"]),
+				BillingAccount:                dcl.String(rs.Primary.Attributes["billing_account"]),
+				EnableSovereignControls:       dcl.Bool(rs.Primary.Attributes["enable_sovereign_controls"] == "true"),
+				Partner:                       assuredworkloads.WorkloadPartnerEnumRef(rs.Primary.Attributes["partner"]),
+				ProvisionedResourcesParent:    dcl.String(rs.Primary.Attributes["provisioned_resources_parent"]),
+				ViolationNotificationsEnabled: dcl.Bool(rs.Primary.Attributes["violation_notifications_enabled"] == "true"),
+				CreateTime:                    dcl.StringOrNil(rs.Primary.Attributes["create_time"]),
+				KajEnrollmentState:            assuredworkloads.WorkloadKajEnrollmentStateEnumRef(rs.Primary.Attributes["kaj_enrollment_state"]),
+				Name:                          dcl.StringOrNil(rs.Primary.Attributes["name"]),
 			}
 
 			client := transport_tpg.NewDCLAssuredWorkloadsClient(config, config.UserAgent, billingProject, 0)
