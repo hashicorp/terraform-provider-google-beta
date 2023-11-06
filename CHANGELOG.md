@@ -1,5 +1,23 @@
 ## 5.5.0 (Unreleased)
 
+FEATURES:
+* **New Data Source:** `google_bigquery_dataset` ([#6570](https://github.com/hashicorp/terraform-provider-google-beta/pull/6570))
+
+IMPROVEMENTS:
+* alloydb: added `SECONDARY` as an option for `instance_type` field in `google_alloydb_instance` resource, to support creation of secondary instance inside a secondary cluster. ([#6583](https://github.com/hashicorp/terraform-provider-google-beta/pull/6583))
+* alloydb: added `deletion_policy` field to `google_alloydb_cluster` resource, to allow force-destroying instances along with their cluster. This is necessary to delete secondary instances, which cannot be deleted otherwise. ([#6583](https://github.com/hashicorp/terraform-provider-google-beta/pull/6583))
+* alloydb: added support to promote `google_alloydb_cluster` resources from secondary to primary ([#6589](https://github.com/hashicorp/terraform-provider-google-beta/pull/6589))
+* alloydb: increased default timeout on `google_alloydb_instance` to 120m from 40m ([#6583](https://github.com/hashicorp/terraform-provider-google-beta/pull/6583))
+* dataproc: added `instance_flexibility_policy` field ro `google_dataproc_cluster` resource ([#6593](https://github.com/hashicorp/terraform-provider-google-beta/pull/6593))
+* monitoring: added `subject` field to `google_monitoring_alert_policy` resource ([#6590](https://github.com/hashicorp/terraform-provider-google-beta/pull/6590))
+* storage: added `enable_object_retention` field to `google_storage_bucket` resource ([#6588](https://github.com/hashicorp/terraform-provider-google-beta/pull/6588))
+* storage: added `retention` field to `google_storage_bucket_object` resource ([#6588](https://github.com/hashicorp/terraform-provider-google-beta/pull/6588))
+* workflows: added `user_env_vars` field to `google_workflows_workflow` resource ([#6567](https://github.com/hashicorp/terraform-provider-google-beta/pull/6567))
+
+BUG FIXES:
+* compute: fixed an error when `maintenance_interval` is updated on `google_compute_instance_template` ([#6569](https://github.com/hashicorp/terraform-provider-google-beta/pull/6569))
+* firestore: fixed an issue with creation of multiple `google_firestore_field` resources ([#6572](https://github.com/hashicorp/terraform-provider-google-beta/pull/6572))
+
 ## 5.4.0 (Oct 30, 2023)
 
 DEPRECATIONS:
