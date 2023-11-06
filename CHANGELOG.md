@@ -15,8 +15,8 @@ IMPROVEMENTS:
 * workflows: added `user_env_vars` field to `google_workflows_workflow` resource ([#6567](https://github.com/hashicorp/terraform-provider-google-beta/pull/6567))
 
 BUG FIXES:
-* compute: fixed error when `maintenance_interval` is updated on `google_compute_instance_template` ([#6569](https://github.com/hashicorp/terraform-provider-google-beta/pull/6569))
-* firestore: fixed issue with creation of multiple `google_firestore_field` resources ([#6572](https://github.com/hashicorp/terraform-provider-google-beta/pull/6572))
+* compute: fixed an error when `maintenance_interval` is updated on `google_compute_instance_template` ([#6569](https://github.com/hashicorp/terraform-provider-google-beta/pull/6569))
+* firestore: fixed an issue with creation of multiple `google_firestore_field` resources ([#6572](https://github.com/hashicorp/terraform-provider-google-beta/pull/6572))
 
 ## 5.4.0 (Oct 30, 2023)
 
