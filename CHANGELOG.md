@@ -1,7 +1,7 @@
 ## 5.5.0 (Unreleased)
 
 FEATURES:
-* **New Data Source:** google_bigquery_dataset ([#6570](https://github.com/hashicorp/terraform-provider-google-beta/pull/6570))
+* **New Data Source:** `google_bigquery_dataset` ([#6570](https://github.com/hashicorp/terraform-provider-google-beta/pull/6570))
 
 IMPROVEMENTS:
 * alloydb: added `SECONDARY` as an option for `instance_type` field in `google_alloydb_instance` resource, to support creation of secondary instance inside a secondary cluster. ([#6583](https://github.com/hashicorp/terraform-provider-google-beta/pull/6583))
