@@ -160,6 +160,77 @@ resource "google_compute_subnetwork" "default" {
 `, context)
 }
 
+func TestAccWorkstationsWorkstationCluster_workstationClusterCustomDomainExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"random_suffix": acctest.RandString(t, 10),
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckWorkstationsWorkstationClusterDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccWorkstationsWorkstationCluster_workstationClusterCustomDomainExample(context),
+			},
+			{
+				ResourceName:            "google_workstations_workstation_cluster.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"workstation_cluster_id", "location", "labels", "annotations", "terraform_labels"},
+			},
+		},
+	})
+}
+
+func testAccWorkstationsWorkstationCluster_workstationClusterCustomDomainExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_workstations_workstation_cluster" "default" {
+  provider               = google-beta
+  workstation_cluster_id = "tf-test-workstation-cluster-custom-domain%{random_suffix}"
+  network                = google_compute_network.default.id
+  subnetwork             = google_compute_subnetwork.default.id
+  location               = "us-central1"
+
+  private_cluster_config {
+    enable_private_endpoint = true
+  }
+
+  domain_config {
+    domain = "workstations.example.com"
+  }
+
+  labels = {
+    "label" = "key"
+  }
+
+  annotations = {
+    label-one = "value-one"
+  }
+}
+
+data "google_project" "project" {
+  provider = google-beta
+}
+
+resource "google_compute_network" "default" {
+  provider                = google-beta
+  name                    = "tf-test-workstation-cluster-custom-domain%{random_suffix}"
+  auto_create_subnetworks = false
+}
+
+resource "google_compute_subnetwork" "default" {
+  provider = google-beta
+  name          = "tf-test-workstation-cluster-custom-domain%{random_suffix}"
+  ip_cidr_range = "10.0.0.0/24"
+  region        = "us-central1"
+  network       = google_compute_network.default.name
+}
+`, context)
+}
+
 func testAccCheckWorkstationsWorkstationClusterDestroyProducer(t *testing.T) func(s *terraform.State) error {
 	return func(s *terraform.State) error {
 		for name, rs := range s.RootModule().Resources {
