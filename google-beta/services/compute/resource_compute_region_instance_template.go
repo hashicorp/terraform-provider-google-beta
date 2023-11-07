@@ -24,6 +24,7 @@ func ResourceComputeRegionInstanceTemplate() *schema.Resource {
 	return &schema.Resource{
 		Create: resourceComputeRegionInstanceTemplateCreate,
 		Read:   resourceComputeRegionInstanceTemplateRead,
+		Update: resourceComputeRegionInstanceTemplateUpdate,
 		Delete: resourceComputeRegionInstanceTemplateDelete,
 		Importer: &schema.ResourceImporter{
 			State: resourceComputeRegionInstanceTemplateImportState,
@@ -348,6 +349,7 @@ Google Cloud KMS.`,
 			"metadata_fingerprint": {
 				Type:        schema.TypeString,
 				Computed:    true,
+				ForceNew:    true,
 				Description: `The unique fingerprint of the metadata.`,
 			},
 
@@ -413,6 +415,7 @@ Google Cloud KMS.`,
 						"name": {
 							Type:        schema.TypeString,
 							Computed:    true,
+							ForceNew:    true,
 							Description: `The name of the network_interface.`,
 						},
 						"nic_type": {
@@ -447,6 +450,7 @@ Google Cloud KMS.`,
 									"public_ptr_domain_name": {
 										Type:        schema.TypeString,
 										Computed:    true,
+										ForceNew:    true,
 										Description: `The DNS domain name for the public PTR record.The DNS domain name for the public PTR record.`,
 									},
 								},
@@ -481,6 +485,7 @@ Google Cloud KMS.`,
 							Type:         schema.TypeString,
 							Optional:     true,
 							Computed:     true,
+							ForceNew:     true,
 							ValidateFunc: validation.StringInSlice([]string{"IPV4_ONLY", "IPV4_IPV6", ""}, false),
 							Description:  `The stack type for this network interface to identify whether the IPv6 feature is enabled or not. If not specified, IPV4_ONLY will be used.`,
 						},
@@ -488,18 +493,21 @@ Google Cloud KMS.`,
 						"ipv6_access_type": {
 							Type:        schema.TypeString,
 							Computed:    true,
+							ForceNew:    true,
 							Description: `One of EXTERNAL, INTERNAL to indicate whether the IP can be accessed from the Internet. This field is always inherited from its subnetwork.`,
 						},
 
 						"ipv6_access_config": {
 							Type:        schema.TypeList,
 							Optional:    true,
+							ForceNew:    true,
 							Description: `An array of IPv6 access configurations for this interface. Currently, only one IPv6 access config, DIRECT_IPV6, is supported. If there is no ipv6AccessConfig specified, then this instance will have no external IPv6 Internet access.`,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"network_tier": {
 										Type:        schema.TypeString,
 										Required:    true,
+										ForceNew:    true,
 										Description: `The service-level to be provided for IPv6 traffic when the subnet has an external subnet. Only PREMIUM tier is valid for IPv6`,
 									},
 									// Possibly configurable- this was added so we don't break if it's inadvertently set
@@ -507,21 +515,25 @@ Google Cloud KMS.`,
 									"public_ptr_domain_name": {
 										Type:        schema.TypeString,
 										Computed:    true,
+										ForceNew:    true,
 										Description: `The domain name to be used when creating DNSv6 records for the external IPv6 ranges.`,
 									},
 									"external_ipv6": {
 										Type:        schema.TypeString,
 										Computed:    true,
+										ForceNew:    true,
 										Description: `The first IPv6 address of the external IPv6 range associated with this instance, prefix length is stored in externalIpv6PrefixLength in ipv6AccessConfig. The field is output only, an IPv6 address from a subnetwork associated with the instance will be allocated dynamically.`,
 									},
 									"external_ipv6_prefix_length": {
 										Type:        schema.TypeString,
 										Computed:    true,
+										ForceNew:    true,
 										Description: `The prefix length of the external IPv6 range.`,
 									},
 									"name": {
 										Type:        schema.TypeString,
 										Computed:    true,
+										ForceNew:    true,
 										Description: `The name of this access configuration.`,
 									},
 								},
@@ -531,12 +543,14 @@ Google Cloud KMS.`,
 							Type:        schema.TypeInt,
 							Optional:    true,
 							Computed:    true,
+							ForceNew:    true,
 							Description: `The prefix length of the primary internal IPv6 range.`,
 						},
 						"ipv6_address": {
 							Type:             schema.TypeString,
 							Optional:         true,
 							Computed:         true,
+							ForceNew:         true,
 							DiffSuppressFunc: ipv6RepresentationDiffSuppress,
 							Description:      `An IPv6 internal network address for this network interface. If not specified, Google Cloud will automatically assign an internal IPv6 address from the instance's subnetwork.`,
 						},
@@ -606,6 +620,7 @@ Google Cloud KMS.`,
 						"min_node_cpus": {
 							Type:         schema.TypeInt,
 							Optional:     true,
+							ForceNew:     true,
 							AtLeastOneOf: schedulingInstTemplateKeys,
 							Description:  `Minimum number of cpus for the instance.`,
 						},
@@ -654,11 +669,13 @@ be from 0 to 999,999,999 inclusive.`,
 						"maintenance_interval": {
 							Type:        schema.TypeString,
 							Optional:    true,
+							ForceNew:    true,
 							Description: `Specifies the frequency of planned maintenance events. The accepted values are: PERIODIC`,
 						},
 						"local_ssd_recovery_timeout": {
 							Type:     schema.TypeList,
 							Optional: true,
+							ForceNew: true,
 							Description: `Specifies the maximum amount of time a Local Ssd Vm should wait while
   recovery of the Local Ssd state is attempted. Its value should be in
   between 0 and 168 hours with hour granularity and the default value being 1
@@ -692,6 +709,7 @@ be from 0 to 999,999,999 inclusive.`,
 			"self_link": {
 				Type:        schema.TypeString,
 				Computed:    true,
+				ForceNew:    true,
 				Description: `The URI of the created resource.`,
 			},
 
@@ -861,13 +879,13 @@ be from 0 to 999,999,999 inclusive.`,
 			"tags_fingerprint": {
 				Type:        schema.TypeString,
 				Computed:    true,
+				ForceNew:    true,
 				Description: `The unique fingerprint of the tags.`,
 			},
 
 			"labels": {
 				Type:     schema.TypeMap,
 				Optional: true,
-				ForceNew: true,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 				Set:      schema.HashString,
 				Description: `A set of key/value label pairs to assign to instances created from this template,
@@ -1065,6 +1083,11 @@ func resourceComputeRegionInstanceTemplateCreate(d *schema.ResourceData, meta in
 		return err
 	}
 
+	return resourceComputeRegionInstanceTemplateRead(d, meta)
+}
+
+func resourceComputeRegionInstanceTemplateUpdate(d *schema.ResourceData, meta interface{}) error {
+	// Only the field "labels" and "terraform_labels" is mutable
 	return resourceComputeRegionInstanceTemplateRead(d, meta)
 }
 
