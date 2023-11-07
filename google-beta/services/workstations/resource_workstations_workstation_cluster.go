@@ -89,6 +89,22 @@ Please refer to the field 'effective_annotations' for all of the annotations pre
 				Optional:    true,
 				Description: `Human-readable name for this resource.`,
 			},
+			"domain_config": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: `Configuration options for a custom domain.`,
+				MaxItems:    1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"domain": {
+							Type:        schema.TypeString,
+							Required:    true,
+							ForceNew:    true,
+							Description: `Domain used by Workstations for HTTP ingress.`,
+						},
+					},
+				},
+			},
 			"labels": {
 				Type:     schema.TypeMap,
 				Optional: true,
@@ -266,6 +282,12 @@ func resourceWorkstationsWorkstationClusterCreate(d *schema.ResourceData, meta i
 	} else if v, ok := d.GetOkExists("private_cluster_config"); !tpgresource.IsEmptyValue(reflect.ValueOf(privateClusterConfigProp)) && (ok || !reflect.DeepEqual(v, privateClusterConfigProp)) {
 		obj["privateClusterConfig"] = privateClusterConfigProp
 	}
+	domainConfigProp, err := expandWorkstationsWorkstationClusterDomainConfig(d.Get("domain_config"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("domain_config"); !tpgresource.IsEmptyValue(reflect.ValueOf(domainConfigProp)) && (ok || !reflect.DeepEqual(v, domainConfigProp)) {
+		obj["domainConfig"] = domainConfigProp
+	}
 	labelsProp, err := expandWorkstationsWorkstationClusterEffectiveLabels(d.Get("effective_labels"), d, config)
 	if err != nil {
 		return err
@@ -406,6 +428,9 @@ func resourceWorkstationsWorkstationClusterRead(d *schema.ResourceData, meta int
 	if err := d.Set("private_cluster_config", flattenWorkstationsWorkstationClusterPrivateClusterConfig(res["privateClusterConfig"], d, config)); err != nil {
 		return fmt.Errorf("Error reading WorkstationCluster: %s", err)
 	}
+	if err := d.Set("domain_config", flattenWorkstationsWorkstationClusterDomainConfig(res["domainConfig"], d, config)); err != nil {
+		return fmt.Errorf("Error reading WorkstationCluster: %s", err)
+	}
 	if err := d.Set("conditions", flattenWorkstationsWorkstationClusterConditions(res["conditions"], d, config)); err != nil {
 		return fmt.Errorf("Error reading WorkstationCluster: %s", err)
 	}
@@ -456,6 +481,12 @@ func resourceWorkstationsWorkstationClusterUpdate(d *schema.ResourceData, meta i
 	} else if v, ok := d.GetOkExists("private_cluster_config"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, privateClusterConfigProp)) {
 		obj["privateClusterConfig"] = privateClusterConfigProp
 	}
+	domainConfigProp, err := expandWorkstationsWorkstationClusterDomainConfig(d.Get("domain_config"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("domain_config"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, domainConfigProp)) {
+		obj["domainConfig"] = domainConfigProp
+	}
 	labelsProp, err := expandWorkstationsWorkstationClusterEffectiveLabels(d.Get("effective_labels"), d, config)
 	if err != nil {
 		return err
@@ -487,6 +518,10 @@ func resourceWorkstationsWorkstationClusterUpdate(d *schema.ResourceData, meta i
 
 	if d.HasChange("private_cluster_config") {
 		updateMask = append(updateMask, "privateClusterConfig")
+	}
+
+	if d.HasChange("domain_config") {
+		updateMask = append(updateMask, "domainConfig")
 	}
 
 	if d.HasChange("effective_labels") {
@@ -708,6 +743,23 @@ func flattenWorkstationsWorkstationClusterPrivateClusterConfigAllowedProjects(v 
 	return v
 }
 
+func flattenWorkstationsWorkstationClusterDomainConfig(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["domain"] =
+		flattenWorkstationsWorkstationClusterDomainConfigDomain(original["domain"], d, config)
+	return []interface{}{transformed}
+}
+func flattenWorkstationsWorkstationClusterDomainConfigDomain(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
 func flattenWorkstationsWorkstationClusterConditions(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return v
@@ -845,6 +897,29 @@ func expandWorkstationsWorkstationClusterPrivateClusterConfigServiceAttachmentUr
 }
 
 func expandWorkstationsWorkstationClusterPrivateClusterConfigAllowedProjects(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandWorkstationsWorkstationClusterDomainConfig(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedDomain, err := expandWorkstationsWorkstationClusterDomainConfigDomain(original["domain"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedDomain); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["domain"] = transformedDomain
+	}
+
+	return transformed, nil
+}
+
+func expandWorkstationsWorkstationClusterDomainConfigDomain(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
