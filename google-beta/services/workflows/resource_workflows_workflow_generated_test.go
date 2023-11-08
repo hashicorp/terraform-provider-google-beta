@@ -64,76 +64,8 @@ resource "google_workflows_workflow" "example" {
   labels = {
     env = "test"
   }
-  source_contents = <<-EOF
-  # This is a sample workflow. You can replace it with your source code.
-  #
-  # This workflow does the following:
-  # - reads current time and date information from an external API and stores
-  #   the response in currentTime variable
-  # - retrieves a list of Wikipedia articles related to the day of the week
-  #   from currentTime
-  # - returns the list of articles as an output of the workflow
-  #
-  # Note: In Terraform you need to escape the $$ or it will cause errors.
-
-  - getCurrentTime:
-      call: http.get
-      args:
-          url: https://timeapi.io/api/Time/current/zone?timeZone=Europe/Amsterdam
-      result: currentTime
-  - readWikipedia:
-      call: http.get
-      args:
-          url: https://en.wikipedia.org/w/api.php
-          query:
-              action: opensearch
-              search: $${currentTime.body.dayOfWeek}
-      result: wikiResult
-  - returnOutput:
-      return: $${wikiResult.body[1]}
-EOF
-}
-`, context)
-}
-
-func TestAccWorkflowsWorkflow_workflowBetaExample(t *testing.T) {
-	t.Parallel()
-
-	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
-	}
-
-	acctest.VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
-		CheckDestroy:             testAccCheckWorkflowsWorkflowDestroyProducer(t),
-		Steps: []resource.TestStep{
-			{
-				Config: testAccWorkflowsWorkflow_workflowBetaExample(context),
-			},
-		},
-	})
-}
-
-func testAccWorkflowsWorkflow_workflowBetaExample(context map[string]interface{}) string {
-	return acctest.Nprintf(`
-resource "google_service_account" "test_account" {
-  provider     = google-beta
-  account_id   = "tf-test-my-account%{random_suffix}"
-  display_name = "Test Service Account"
-}
-
-resource "google_workflows_workflow" "example_beta" {
-  provider      = google-beta
-  name          = "tf_test_workflow_beta%{random_suffix}"
-  region        = "us-central1"
-  description   = "Magic"
-  service_account = google_service_account.test_account.id
-  labels = {
-    env = "test"
-  }
   user_env_vars = {
-    foo = "BAR"
+    url = "https://timeapi.io/api/Time/current/zone?timeZone=Europe/Amsterdam"
   }
   source_contents = <<-EOF
   # This is a sample workflow. You can replace it with your source code.
@@ -150,7 +82,7 @@ resource "google_workflows_workflow" "example_beta" {
   - getCurrentTime:
       call: http.get
       args:
-          url: https://timeapi.io/api/Time/current/zone?timeZone=Europe/Amsterdam
+          url: $${sys.get_env("url")}
       result: currentTime
   - readWikipedia:
       call: http.get
