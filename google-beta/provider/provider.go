@@ -1145,9 +1145,9 @@ func DatasourceMapWithErrors() (map[string]*schema.Resource, error) {
 		})
 }
 
-// Generated resources: 395
+// Generated resources: 396
 // Generated IAM resources: 240
-// Total generated resources: 635
+// Total generated resources: 636
 func ResourceMap() map[string]*schema.Resource {
 	resourceMap, _ := ResourceMapWithErrors()
 	return resourceMap
@@ -1342,6 +1342,7 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_compute_instance_iam_member":                             tpgiamresource.ResourceIamMember(compute.ComputeInstanceIamSchema, compute.ComputeInstanceIamUpdaterProducer, compute.ComputeInstanceIdParseFunc),
 			"google_compute_instance_iam_policy":                             tpgiamresource.ResourceIamPolicy(compute.ComputeInstanceIamSchema, compute.ComputeInstanceIamUpdaterProducer, compute.ComputeInstanceIdParseFunc),
 			"google_compute_instance_group_named_port":                       compute.ResourceComputeInstanceGroupNamedPort(),
+			"google_compute_instance_settings":                               compute.ResourceComputeInstanceSettings(),
 			"google_compute_interconnect_attachment":                         compute.ResourceComputeInterconnectAttachment(),
 			"google_compute_machine_image":                                   compute.ResourceComputeMachineImage(),
 			"google_compute_machine_image_iam_binding":                       tpgiamresource.ResourceIamBinding(compute.ComputeMachineImageIamSchema, compute.ComputeMachineImageIamUpdaterProducer, compute.ComputeMachineImageIdParseFunc),
