@@ -1,4 +1,38 @@
 ## 5.6.0 (Unreleased)
+UNKNOWN CHANGELOG TYPE:
+* Add connection resource of Integration Connectors. ([#6612](https://github.com/hashicorp/terraform-provider-google-beta/pull/6612))
+* Update 5.5.0 CHANGELOG.md in main branch ([#6604](https://github.com/hashicorp/terraform-provider-google-beta/pull/6604))
+
+FEATURES:
+* **New Data Source:** `google_backup_dr_management_server` (beta) ([#6596](https://github.com/hashicorp/terraform-provider-google-beta/pull/6596))
+* **New Resource:** `google_compute_instance_settings` ([#6615](https://github.com/hashicorp/terraform-provider-google-beta/pull/6615))
+
+IMPROVEMENTS:
+* `google_identity_platform_config`: Add Client config and Permissions ([#6611](https://github.com/hashicorp/terraform-provider-google-beta/pull/6611))
+* assuredworkloads: added `enable_sovereign_controls`, `partner`, `partner_permissions`, `violation_notifications_enabled`, and several other output-only fields to `google_assured_workloads_workloads` ([#6597](https://github.com/hashicorp/terraform-provider-google-beta/pull/6597))
+* composer: added `storage_config` to `google_composer_environment` ([#6606](https://github.com/hashicorp/terraform-provider-google-beta/pull/6606))
+* container: added `fleet` field to `google_container_cluster` resource ([#6610](https://github.com/hashicorp/terraform-provider-google-beta/pull/6610))
+* container: marked `binary_authorization.evaluation_mode` field as computed and optional in `google_container_cluster` resource ([#6610](https://github.com/hashicorp/terraform-provider-google-beta/pull/6610))
+* containeraws: added `admin_groups` to `google_container_aws_cluster` ([#6597](https://github.com/hashicorp/terraform-provider-google-beta/pull/6597))
+* containerazure: added `admin_groups` to `google_container_azure_cluster` ([#6597](https://github.com/hashicorp/terraform-provider-google-beta/pull/6597))
+* dataproc: added support for `instance_flexibility_policy` in `google_dataproc_cluster` ([#6593](https://github.com/hashicorp/terraform-provider-google-beta/pull/6593))
+* dialogflowcx: added `is_default_start_flow` field to `google_dialogflow_cx_flow` resource to allow management of default flow resources via Terraform ([#6600](https://github.com/hashicorp/terraform-provider-google-beta/pull/6600))
+* dialogflowcx: added `is_default_welcome_intent` and `is_default_negative_intent` fields to `google_dialogflow_cx_intent` resource to allow management of default intent resources via Terraform ([#6600](https://github.com/hashicorp/terraform-provider-google-beta/pull/6600))
+* gkehub: added `fleet_default_member_config` field to `google_gke_hub_feature` resource ([#6608](https://github.com/hashicorp/terraform-provider-google-beta/pull/6608))
+* gkehub: added `metrics_gcp_service_account_email` to `google_gke_hub_feature_membership` ([#6597](https://github.com/hashicorp/terraform-provider-google-beta/pull/6597))
+* logging: added `index_configs` field to `logging_bucket_config` resource ([#6598](https://github.com/hashicorp/terraform-provider-google-beta/pull/6598))
+* logging: added `index_configs` field to `logging_project_bucket_config` resource ([#6598](https://github.com/hashicorp/terraform-provider-google-beta/pull/6598))
+* monitoring: added `pings_count`, `user_labels`, and `custom_content_type` fields to `google_monitoring_uptime_check_config` resource ([#6594](https://github.com/hashicorp/terraform-provider-google-beta/pull/6594))
+* spanner: added `autoscaling_config` field to  `google_spanner_instance` ([#6616](https://github.com/hashicorp/terraform-provider-google-beta/pull/6616))
+* sql: update `google_sql_database_instance` to reflect that `data_cache_enabled` works for PostgresQL now, in addition to MYSQL ([#6595](https://github.com/hashicorp/terraform-provider-google-beta/pull/6595))
+* vertexai: added `private_service_connect_config` to `google_vertex_ai_index_endpoint` ([#6614](https://github.com/hashicorp/terraform-provider-google-beta/pull/6614))
+* workstations: add `domain_config` field to resource `google_workstations_workstation_cluster` (beta) ([#6609](https://github.com/hashicorp/terraform-provider-google-beta/pull/6609))
+
+BUG FIXES:
+* Deleted a broken test. ([#6601](https://github.com/hashicorp/terraform-provider-google-beta/pull/6601))
+* provider: made `terraform_labels` immutable in immutable resources to not block the upgrade. This will create a Terraform plan that recreates the resource on `4.X` -> `5.6.0` upgrade for affected resources. A mitigation to backfill the values during the upgrade is planned, and will release resource-by-resource. ([#6613](https://github.com/hashicorp/terraform-provider-google-beta/pull/6613))
+* pubsub: clarified the expected format for the `message_retention_duration` ([#6599](https://github.com/hashicorp/terraform-provider-google-beta/pull/6599))
+
 
 ## 5.5.0 (Nov 06, 2023)
 
