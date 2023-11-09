@@ -125,6 +125,13 @@ via BGP even if their destinations match existing subnet ranges.`,
 you create the resource. This field can be set only at resource
 creation time.`,
 			},
+			"external_ipv6_prefix": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Optional:    true,
+				ForceNew:    true,
+				Description: `The range of external IPv6 addresses that are owned by this subnetwork.`,
+			},
 			"ipv6_access_type": {
 				Type:         schema.TypeString,
 				Optional:     true,
@@ -292,11 +299,6 @@ If not specified IPV4_ONLY will be used. Possible values: ["IPV4_ONLY", "IPV4_IP
 				Computed:    true,
 				Description: `Creation timestamp in RFC3339 text format.`,
 			},
-			"external_ipv6_prefix": {
-				Type:        schema.TypeString,
-				Computed:    true,
-				Description: `The range of external IPv6 addresses that are owned by this subnetwork.`,
-			},
 			"gateway_address": {
 				Type:     schema.TypeString,
 				Computed: true,
@@ -461,6 +463,12 @@ func resourceComputeSubnetworkCreate(d *schema.ResourceData, meta interface{}) e
 		return err
 	} else if v, ok := d.GetOkExists("ipv6_access_type"); !tpgresource.IsEmptyValue(reflect.ValueOf(ipv6AccessTypeProp)) && (ok || !reflect.DeepEqual(v, ipv6AccessTypeProp)) {
 		obj["ipv6AccessType"] = ipv6AccessTypeProp
+	}
+	externalIpv6PrefixProp, err := expandComputeSubnetworkExternalIpv6Prefix(d.Get("external_ipv6_prefix"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("external_ipv6_prefix"); !tpgresource.IsEmptyValue(reflect.ValueOf(externalIpv6PrefixProp)) && (ok || !reflect.DeepEqual(v, externalIpv6PrefixProp)) {
+		obj["externalIpv6Prefix"] = externalIpv6PrefixProp
 	}
 	allowSubnetCidrRoutesOverlapProp, err := expandComputeSubnetworkAllowSubnetCidrRoutesOverlap(d.Get("allow_subnet_cidr_routes_overlap"), d, config)
 	if err != nil {
@@ -1337,6 +1345,10 @@ func expandComputeSubnetworkStackType(v interface{}, d tpgresource.TerraformReso
 }
 
 func expandComputeSubnetworkIpv6AccessType(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeSubnetworkExternalIpv6Prefix(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
