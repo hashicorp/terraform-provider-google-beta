@@ -25,6 +25,7 @@ IMPROVEMENTS:
 * monitoring: added `pings_count`, `user_labels`, and `custom_content_type` fields to `google_monitoring_uptime_check_config` resource ([#6594](https://github.com/hashicorp/terraform-provider-google-beta/pull/6594))
 * spanner: added `autoscaling_config` field to  `google_spanner_instance` ([#6616](https://github.com/hashicorp/terraform-provider-google-beta/pull/6616))
 * sql: update `google_sql_database_instance` to reflect that `data_cache_enabled` works for PostgresQL now, in addition to MYSQL ([#6595](https://github.com/hashicorp/terraform-provider-google-beta/pull/6595))
+* sql: added `ssl_mode` field to `google_sql_database_instance` resource ([#6579](https://github.com/hashicorp/terraform-provider-google-beta/pull/6579))
 * vertexai: added `private_service_connect_config` to `google_vertex_ai_index_endpoint` ([#6614](https://github.com/hashicorp/terraform-provider-google-beta/pull/6614))
 * workstations: add `domain_config` field to resource `google_workstations_workstation_cluster` (beta) ([#6609](https://github.com/hashicorp/terraform-provider-google-beta/pull/6609))
 
