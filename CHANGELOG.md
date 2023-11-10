@@ -1,14 +1,10 @@
 ## 5.6.0 (Unreleased)
-UNKNOWN CHANGELOG TYPE:
-* Add connection resource of Integration Connectors. ([#6612](https://github.com/hashicorp/terraform-provider-google-beta/pull/6612))
-* Update 5.5.0 CHANGELOG.md in main branch ([#6604](https://github.com/hashicorp/terraform-provider-google-beta/pull/6604))
-
 FEATURES:
-* **New Data Source:** `google_backup_dr_management_server` (beta) ([#6596](https://github.com/hashicorp/terraform-provider-google-beta/pull/6596))
+* **New Data Source:** `google_backup_dr_management_server` ([#6596](https://github.com/hashicorp/terraform-provider-google-beta/pull/6596))
 * **New Resource:** `google_compute_instance_settings` ([#6615](https://github.com/hashicorp/terraform-provider-google-beta/pull/6615))
+* **New Resource:** ``google_integration_connectors_connection`([#6612](https://github.com/hashicorp/terraform-provider-google-beta/pull/6612))
 
 IMPROVEMENTS:
-* `google_identity_platform_config`: Add Client config and Permissions ([#6611](https://github.com/hashicorp/terraform-provider-google-beta/pull/6611))
 * assuredworkloads: added `enable_sovereign_controls`, `partner`, `partner_permissions`, `violation_notifications_enabled`, and several other output-only fields to `google_assured_workloads_workloads` ([#6597](https://github.com/hashicorp/terraform-provider-google-beta/pull/6597))
 * composer: added `storage_config` to `google_composer_environment` ([#6606](https://github.com/hashicorp/terraform-provider-google-beta/pull/6606))
 * container: added `fleet` field to `google_container_cluster` resource ([#6610](https://github.com/hashicorp/terraform-provider-google-beta/pull/6610))
@@ -30,10 +26,7 @@ IMPROVEMENTS:
 * workstations: add `domain_config` field to resource `google_workstations_workstation_cluster` (beta) ([#6609](https://github.com/hashicorp/terraform-provider-google-beta/pull/6609))
 
 BUG FIXES:
-* Deleted a broken test. ([#6601](https://github.com/hashicorp/terraform-provider-google-beta/pull/6601))
 * provider: made `terraform_labels` immutable in immutable resources to not block the upgrade. This will create a Terraform plan that recreates the resource on `4.X` -> `5.6.0` upgrade for affected resources. A mitigation to backfill the values during the upgrade is planned, and will release resource-by-resource. ([#6613](https://github.com/hashicorp/terraform-provider-google-beta/pull/6613))
-* pubsub: clarified the expected format for the `message_retention_duration` ([#6599](https://github.com/hashicorp/terraform-provider-google-beta/pull/6599))
-
 
 ## 5.5.0 (Nov 06, 2023)
 
