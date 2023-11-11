@@ -2,7 +2,7 @@
 FEATURES:
 * **New Data Source:** `google_backup_dr_management_server` ([#6596](https://github.com/hashicorp/terraform-provider-google-beta/pull/6596))
 * **New Resource:** `google_compute_instance_settings` ([#6615](https://github.com/hashicorp/terraform-provider-google-beta/pull/6615))
-* **New Resource:** ``google_integration_connectors_connection`([#6612](https://github.com/hashicorp/terraform-provider-google-beta/pull/6612))
+* **New Resource:** `google_integration_connectors_connection`([#6612](https://github.com/hashicorp/terraform-provider-google-beta/pull/6612))
 
 IMPROVEMENTS:
 * assuredworkloads: added `enable_sovereign_controls`, `partner`, `partner_permissions`, `violation_notifications_enabled`, and several other output-only fields to `google_assured_workloads_workloads` ([#6597](https://github.com/hashicorp/terraform-provider-google-beta/pull/6597))
