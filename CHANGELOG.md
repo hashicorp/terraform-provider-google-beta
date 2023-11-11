@@ -8,7 +8,6 @@ IMPROVEMENTS:
 * assuredworkloads: added `enable_sovereign_controls`, `partner`, `partner_permissions`, `violation_notifications_enabled`, and several other output-only fields to `google_assured_workloads_workloads` ([#6597](https://github.com/hashicorp/terraform-provider-google-beta/pull/6597))
 * composer: added `storage_config` to `google_composer_environment` ([#6606](https://github.com/hashicorp/terraform-provider-google-beta/pull/6606))
 * container: added `fleet` field to `google_container_cluster` resource ([#6610](https://github.com/hashicorp/terraform-provider-google-beta/pull/6610))
-* container: marked `binary_authorization.evaluation_mode` field as computed and optional in `google_container_cluster` resource ([#6610](https://github.com/hashicorp/terraform-provider-google-beta/pull/6610))
 * containeraws: added `admin_groups` to `google_container_aws_cluster` ([#6597](https://github.com/hashicorp/terraform-provider-google-beta/pull/6597))
 * containerazure: added `admin_groups` to `google_container_azure_cluster` ([#6597](https://github.com/hashicorp/terraform-provider-google-beta/pull/6597))
 * dataproc: added support for `instance_flexibility_policy` in `google_dataproc_cluster` ([#6593](https://github.com/hashicorp/terraform-provider-google-beta/pull/6593))
