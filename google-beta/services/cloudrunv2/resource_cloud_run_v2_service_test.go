@@ -676,7 +676,7 @@ func TestAccCloudRunV2Service_cloudrunv2ServiceCustomAudienceUpdate(t *testing.T
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckCloudRunV2ServiceDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -713,7 +713,6 @@ func TestAccCloudRunV2Service_cloudrunv2ServiceCustomAudienceUpdate(t *testing.T
 func testAccCloudRunV2Service_cloudRunServiceUpdateWithoutCustomAudience(serviceName string) string {
 	return fmt.Sprintf(`
 resource "google_cloud_run_v2_service" "default" {
-  provider     = google-beta
   name         = "%s"
   location     = "us-central1"
 
@@ -732,10 +731,8 @@ resource "google_cloud_run_v2_service" "default" {
 func testAccCloudRunV2Service_cloudRunServiceUpdateWithCustomAudience(serviceName string, customAudience string) string {
 	return fmt.Sprintf(`
 resource "google_cloud_run_v2_service" "default" {
-  provider         = google-beta
   name             = "%s"
   location         = "us-central1"
-  launch_stage     = "BETA"
   custom_audiences = ["%s"]
 
   template {
