@@ -59,8 +59,10 @@ fun GoogleBeta(environment: String, projDescription: String, manualVcsRoot: Abso
         // Adding this allows custom builds to use alternative branches. E.g. testing release branches in the downstreams
 
         params {
+            // Controls the VCS root, and allows custom builds to point at different branches
             param("BRANCH_NAME", branchRef)
-            
+            // Skip the sweeper for project resources in the Beta tests only
+            param("env.SKIP_PROJECT_SWEEPER", 1)
             // Not used, but making `environment` a param makes the value visible to non-admins in TeamCity
             param("ENVIRONMENT", environment)
         }
