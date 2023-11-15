@@ -1072,6 +1072,7 @@ func DatasourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_data_catalog_policy_tag_iam_policy":              tpgiamresource.DataSourceIamPolicy(datacatalog.DataCatalogPolicyTagIamSchema, datacatalog.DataCatalogPolicyTagIamUpdaterProducer),
 			"google_data_catalog_tag_template_iam_policy":            tpgiamresource.DataSourceIamPolicy(datacatalog.DataCatalogTagTemplateIamSchema, datacatalog.DataCatalogTagTemplateIamUpdaterProducer),
 			"google_data_catalog_taxonomy_iam_policy":                tpgiamresource.DataSourceIamPolicy(datacatalog.DataCatalogTaxonomyIamSchema, datacatalog.DataCatalogTaxonomyIamUpdaterProducer),
+			"google_dataform_repository_iam_policy":                  tpgiamresource.DataSourceIamPolicy(dataform.DataformRepositoryIamSchema, dataform.DataformRepositoryIamUpdaterProducer),
 			"google_data_fusion_instance_iam_policy":                 tpgiamresource.DataSourceIamPolicy(datafusion.DataFusionInstanceIamSchema, datafusion.DataFusionInstanceIamUpdaterProducer),
 			"google_dataplex_asset_iam_policy":                       tpgiamresource.DataSourceIamPolicy(dataplex.DataplexAssetIamSchema, dataplex.DataplexAssetIamUpdaterProducer),
 			"google_dataplex_datascan_iam_policy":                    tpgiamresource.DataSourceIamPolicy(dataplex.DataplexDatascanIamSchema, dataplex.DataplexDatascanIamUpdaterProducer),
@@ -1146,8 +1147,8 @@ func DatasourceMapWithErrors() (map[string]*schema.Resource, error) {
 }
 
 // Generated resources: 396
-// Generated IAM resources: 240
-// Total generated resources: 636
+// Generated IAM resources: 243
+// Total generated resources: 639
 func ResourceMap() map[string]*schema.Resource {
 	resourceMap, _ := ResourceMapWithErrors()
 	return resourceMap
@@ -1441,6 +1442,9 @@ func ResourceMapWithErrors() (map[string]*schema.Resource, error) {
 			"google_data_catalog_taxonomy_iam_member":                        tpgiamresource.ResourceIamMember(datacatalog.DataCatalogTaxonomyIamSchema, datacatalog.DataCatalogTaxonomyIamUpdaterProducer, datacatalog.DataCatalogTaxonomyIdParseFunc),
 			"google_data_catalog_taxonomy_iam_policy":                        tpgiamresource.ResourceIamPolicy(datacatalog.DataCatalogTaxonomyIamSchema, datacatalog.DataCatalogTaxonomyIamUpdaterProducer, datacatalog.DataCatalogTaxonomyIdParseFunc),
 			"google_dataform_repository":                                     dataform.ResourceDataformRepository(),
+			"google_dataform_repository_iam_binding":                         tpgiamresource.ResourceIamBinding(dataform.DataformRepositoryIamSchema, dataform.DataformRepositoryIamUpdaterProducer, dataform.DataformRepositoryIdParseFunc),
+			"google_dataform_repository_iam_member":                          tpgiamresource.ResourceIamMember(dataform.DataformRepositoryIamSchema, dataform.DataformRepositoryIamUpdaterProducer, dataform.DataformRepositoryIdParseFunc),
+			"google_dataform_repository_iam_policy":                          tpgiamresource.ResourceIamPolicy(dataform.DataformRepositoryIamSchema, dataform.DataformRepositoryIamUpdaterProducer, dataform.DataformRepositoryIdParseFunc),
 			"google_dataform_repository_release_config":                      dataform.ResourceDataformRepositoryReleaseConfig(),
 			"google_dataform_repository_workflow_config":                     dataform.ResourceDataformRepositoryWorkflowConfig(),
 			"google_data_fusion_instance":                                    datafusion.ResourceDataFusionInstance(),
