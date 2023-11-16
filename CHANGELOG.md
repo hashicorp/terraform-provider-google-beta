@@ -1,5 +1,29 @@
 ## 5.7.0 (Unreleased)
 
+DEPRECATIONS:
+* gkehub: deprecated `config_management.binauthz` in `google_gke_hub_feature_membership` ([#6646](https://github.com/hashicorp/terraform-provider-google-beta/pull/6646))
+
+IMPROVEMENTS:
+* bigtable: added `standard_isolation` and `standard_isolation.priority` fields to `google_bigtable_app_profile` resource ([#6621](https://github.com/hashicorp/terraform-provider-google-beta/pull/6621))
+* containerattached: added `proxy_config` field to `google_container_attached_cluster` resource ([#6637](https://github.com/hashicorp/terraform-provider-google-beta/pull/6637))
+* gkehub: added `membership_location` field to `google_gke_hub_feature_membership` resource ([#6646](https://github.com/hashicorp/terraform-provider-google-beta/pull/6646))
+* logging: aqcuired and updated the `google_logging_project_sink`  resource that already exists at the desired location. These logging buckets cannot be removed so deleting this resource will remove the bucket config from your terraform state but will leave the logging bucket unchanged. ([#6632](https://github.com/hashicorp/terraform-provider-google-beta/pull/6632))
+* memcache: added `MEMCACHE_1_6_15` as a possible value for `memcache_version` in `google_memcache_instance` resource ([#6642](https://github.com/hashicorp/terraform-provider-google-beta/pull/6642))
+* monitoring: added error message to delete Alert Policies first on 400 response when deleting `google_monitoring_uptime_check_config` resource ([#6645](https://github.com/hashicorp/terraform-provider-google-beta/pull/6645))
+* spanner: added `autoscaling_config` field to  `google_spanner_instance` resource ([#6616](https://github.com/hashicorp/terraform-provider-google-beta/pull/6616))
+
+BUG FIXES:
+* compute: changed `external_ipv6_prefix` field to not be output only in `google_compute_subnetwork` resource ([#6619](https://github.com/hashicorp/terraform-provider-google-beta/pull/6619))
+* compute: fixed issue where `google_compute_attached_disk` would produce an error for certain zone configs ([#6620](https://github.com/hashicorp/terraform-provider-google-beta/pull/6620))
+* edgecontaienr: fixed update method of `google_edgecontainer_cluster` resource ([#6625](https://github.com/hashicorp/terraform-provider-google-beta/pull/6625))
+* provider: fixed an issue where universe domains would not overwrite API endpoints ([#6636](https://github.com/hashicorp/terraform-provider-google-beta/pull/6636))
+* resourcemanager: made `data_source_google_project_service` no longer return an error when the service is not enabled ([#6638](https://github.com/hashicorp/terraform-provider-google-beta/pull/6638))
+* sql: `ssl_mode` field is not stored in terraform state if it has never been used in `google_sql_database_instance` resource ([#6622](https://github.com/hashicorp/terraform-provider-google-beta/pull/6622))
+
+NOTES:
+* dataproc: backfilled `terraform_labels` field for resource `google_dataproc_workflow_template`, so the resource recreation won't happen during provider upgrade from `4.x` to `5.7` ([#6634](https://github.com/hashicorp/terraform-provider-google-beta/pull/6634))
+* provider: backfilled `terraform_labels` for some immutable resources, so the resource recreation won't happen during provider upgrade from 4.X to 5.7 ([#6635](https://github.com/hashicorp/terraform-provider-google-beta/pull/6635))
+
 ## 5.6.0 (Nov 13, 2023)
 
 FEATURES:
