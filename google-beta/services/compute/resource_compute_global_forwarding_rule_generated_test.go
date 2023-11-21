@@ -1111,6 +1111,10 @@ resource "google_compute_global_forwarding_rule" "default" {
   network       = google_compute_network.network.id
   ip_address    = google_compute_global_address.default.id
   load_balancing_scheme = ""
+  service_directory_registrations {
+    namespace                 = "sd-namespace"
+    service_directory_region  = "europe-west3"
+  }
 }
 `, context)
 }
