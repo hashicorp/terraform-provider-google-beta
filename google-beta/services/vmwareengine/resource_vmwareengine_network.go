@@ -70,8 +70,8 @@ func ResourceVmwareengineNetwork() *schema.Resource {
 				Type:         schema.TypeString,
 				Required:     true,
 				ForceNew:     true,
-				ValidateFunc: verify.ValidateEnum([]string{"LEGACY"}),
-				Description:  `VMware Engine network type. Possible values: ["LEGACY"]`,
+				ValidateFunc: verify.ValidateEnum([]string{"LEGACY", "STANDARD"}),
+				Description:  `VMware Engine network type. Possible values: ["LEGACY", "STANDARD"]`,
 			},
 			"description": {
 				Type:        schema.TypeString,
