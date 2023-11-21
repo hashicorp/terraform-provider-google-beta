@@ -461,6 +461,11 @@ var services = mapOf(
         "displayName" to "Monitoring",
         "path" to "./google-beta/services/monitoring"
     ),
+    "netapp" to mapOf(
+        "name" to "netapp",
+        "displayName" to "Netapp",
+        "path" to "./google-beta/services/netapp"
+    ),
     "networkconnectivity" to mapOf(
         "name" to "networkconnectivity",
         "displayName" to "Networkconnectivity",
