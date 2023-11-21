@@ -88,6 +88,7 @@ import (
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/migrationcenter"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/mlengine"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/monitoring"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/netapp"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/networkconnectivity"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/networkmanagement"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/networksecurity"
