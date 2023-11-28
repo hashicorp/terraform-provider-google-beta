@@ -15,7 +15,6 @@ func DataSourceVmwareenginePrivateCloud() *schema.Resource {
 	dsSchema := tpgresource.DatasourceSchemaFromResourceSchema(ResourceVmwareenginePrivateCloud().Schema)
 	tpgresource.AddRequiredFieldsToSchema(dsSchema, "name", "location")
 	tpgresource.AddOptionalFieldsToSchema(dsSchema, "project")
-
 	return &schema.Resource{
 		Read:   dataSourceVmwareenginePrivateCloudRead,
 		Schema: dsSchema,

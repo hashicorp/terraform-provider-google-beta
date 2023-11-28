@@ -9,7 +9,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
-
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
@@ -20,20 +19,20 @@ func TestAccVmwareenginePrivateCloud_vmwareEnginePrivateCloudUpdate(t *testing.T
 	t.Parallel()
 
 	context := map[string]interface{}{
-		"region":        "southamerica-east1",
+		"region":        "southamerica-west1",
 		"random_suffix": acctest.RandString(t, 10),
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckVmwareenginePrivateCloudDestroyProducer(t),
-		ExternalProviders: map[string]resource.ExternalProvider{
-			"time": {},
-		},
 		Steps: []resource.TestStep{
 			{
 				Config: testPrivateCloudUpdateConfig(context, "description1", 3),
+				Check: resource.ComposeTestCheckFunc(
+					acctest.CheckDataSourceStateMatchesResourceStateWithIgnores("data.google_vmwareengine_private_cloud.ds", "google_vmwareengine_private_cloud.vmw-engine-pc", map[string]struct{}{}),
+				),
 			},
 			{
 				ResourceName:            "google_vmwareengine_private_cloud.vmw-engine-pc",
@@ -69,17 +68,15 @@ func testPrivateCloudUpdateConfig(context map[string]interface{}, description st
 
 	return acctest.Nprintf(`
 resource "google_vmwareengine_network" "default-nw" {
-  provider          = google-beta
-  name              = "%{region}-default"
-  location          = "%{region}"
-  type              = "LEGACY"
+  name              = "tf-test-pc-nw-%{random_suffix}"
+  location          = "global"
+  type              = "STANDARD"
   description       = "PC network description."
 }
 
 resource "google_vmwareengine_private_cloud" "vmw-engine-pc" {
   location = "%{region}-a"
   name = "tf-test-sample-pc%{random_suffix}"
-  provider = google-beta
   description = "%{description}"
   network_config {
     management_cidr = "192.168.30.0/24"
@@ -94,6 +91,15 @@ resource "google_vmwareengine_private_cloud" "vmw-engine-pc" {
     }
   }
 }
+
+data "google_vmwareengine_private_cloud" ds {
+	location = "%{region}-a"
+	name = "tf-test-sample-pc%{random_suffix}"
+	depends_on = [
+   	google_vmwareengine_private_cloud.vmw-engine-pc,
+  ]
+}
+
 `, context)
 }
 

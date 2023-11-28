@@ -134,6 +134,11 @@ This cannot be changed once the PrivateCloud is created.`,
 Specify the name in the following form: projects/{project}/locations/{location}/vmwareEngineNetworks/{vmwareEngineNetworkId}
 where {project} can either be a project number or a project ID.`,
 						},
+						"dns_server_ip": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: `DNS Server IP of the Private Cloud.`,
+						},
 						"management_ip_address_layout_version": {
 							Type:     schema.TypeInt,
 							Computed: true,
@@ -702,6 +707,8 @@ func flattenVmwareenginePrivateCloudNetworkConfig(v interface{}, d *schema.Resou
 		flattenVmwareenginePrivateCloudNetworkConfigVmwareEngineNetworkCanonical(original["vmwareEngineNetworkCanonical"], d, config)
 	transformed["management_ip_address_layout_version"] =
 		flattenVmwareenginePrivateCloudNetworkConfigManagementIpAddressLayoutVersion(original["managementIpAddressLayoutVersion"], d, config)
+	transformed["dns_server_ip"] =
+		flattenVmwareenginePrivateCloudNetworkConfigDnsServerIp(original["dnsServerIp"], d, config)
 	return []interface{}{transformed}
 }
 func flattenVmwareenginePrivateCloudNetworkConfigManagementCidr(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -731,6 +738,10 @@ func flattenVmwareenginePrivateCloudNetworkConfigManagementIpAddressLayoutVersio
 	}
 
 	return v // let terraform core handle it otherwise
+}
+
+func flattenVmwareenginePrivateCloudNetworkConfigDnsServerIp(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
 }
 
 func flattenVmwareenginePrivateCloudManagementCluster(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -948,6 +959,13 @@ func expandVmwareenginePrivateCloudNetworkConfig(v interface{}, d tpgresource.Te
 		transformed["managementIpAddressLayoutVersion"] = transformedManagementIpAddressLayoutVersion
 	}
 
+	transformedDnsServerIp, err := expandVmwareenginePrivateCloudNetworkConfigDnsServerIp(original["dns_server_ip"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedDnsServerIp); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["dnsServerIp"] = transformedDnsServerIp
+	}
+
 	return transformed, nil
 }
 
@@ -964,6 +982,10 @@ func expandVmwareenginePrivateCloudNetworkConfigVmwareEngineNetworkCanonical(v i
 }
 
 func expandVmwareenginePrivateCloudNetworkConfigManagementIpAddressLayoutVersion(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandVmwareenginePrivateCloudNetworkConfigDnsServerIp(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
