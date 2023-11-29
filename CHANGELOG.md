@@ -52,7 +52,7 @@ BUG FIXES:
 
 NOTES:
 * dataproc: backfilled `terraform_labels` field for resource `google_dataproc_workflow_template`, so resource recreation won't happen during provider upgrade from `4.x` to `5.7` ([#16517](https://github.com/hashicorp/terraform-provider-google/pull/16517))
-* * provider: backfilled `terraform_labels` field for some immutable resources, so resource recreation won't happen during provider upgrade from `4.X` to `5.7` ([#16518](https://github.com/hashicorp/terraform-provider-google/pull/16518))
+* provider: backfilled `terraform_labels` field for some immutable resources, so resource recreation won't happen during provider upgrade from `4.X` to `5.7` ([#16518](https://github.com/hashicorp/terraform-provider-google/pull/16518))
 
 ## 5.6.0 (Nov 13, 2023)
 
