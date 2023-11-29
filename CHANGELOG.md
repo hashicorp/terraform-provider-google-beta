@@ -19,7 +19,6 @@ IMPROVEMENTS:
 * iam: added `allowedServices`, `disableProgrammaticSignin` fields to `google_iam_workforce_pool` resource ([#6666](https://github.com/hashicorp/terraform-provider-google-beta/pull/6666))
 * sql: added support for IAM GROUP authentication in the `type` field of `google_sql_user` ([#6674](https://github.com/hashicorp/terraform-provider-google-beta/pull/6674))
 * vmwareengine: added `STANDARD` type support to `google_vmwareengine_network` resource ([#6669](https://github.com/hashicorp/terraform-provider-google-beta/pull/6669))
-* vmwareengine: promoted `google_vmwareengine_private_cloud` resource to GA ([#6673](https://github.com/hashicorp/terraform-provider-google-beta/pull/6673))
 
 BUG FIXES:
 * compute: fixed a permadiff caused by issues with ipv6 diff suppression in `google_compute_forwarding_rule` and `google_compute_global_forwarding_rule` ([#6652](https://github.com/hashicorp/terraform-provider-google-beta/pull/6652))
