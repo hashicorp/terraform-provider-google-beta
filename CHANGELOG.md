@@ -1,5 +1,31 @@
 ## 5.7.0 (Unreleased)
 
+FEATURES:
+* **New Data Source:** `google_vmwareengine_network_peering` ([#6675](https://github.com/hashicorp/terraform-provider-google-beta/pull/6675))
+* **New Resource:** `google_dataform_repository_iam_*` (beta) ([#6648](https://github.com/hashicorp/terraform-provider-google-beta/pull/6648))
+* **New Resource:** `google_migration_center_group` ([#6651](https://github.com/hashicorp/terraform-provider-google-beta/pull/6651))
+* **New Resource:** `google_netapp_storage_pool` ([#6663](https://github.com/hashicorp/terraform-provider-google-beta/pull/6663))
+* **New Resource:** `google_vertex_ai_endpoint_iam_*` (beta) ([#6657](https://github.com/hashicorp/terraform-provider-google-beta/pull/6657))
+* **New Resource:** `google_vmwareengine_network_peering` ([#6675](https://github.com/hashicorp/terraform-provider-google-beta/pull/6675))
+
+IMPROVEMENTS:
+* artifactregistry: added `remote_repository_config.upstream_credentials` field to `google_artifact_registry_repository` resource ([#6658](https://github.com/hashicorp/terraform-provider-google-beta/pull/6658))
+* cloudbuild: added fields `build.artifacts.maven_artifacts`, `build.artifacts.npm_packages `, and `build.artifacts.python_packages ` to resource `google_cloudbuild_trigger` ([#6650](https://github.com/hashicorp/terraform-provider-google-beta/pull/6650)
+* composer: added `database_config.zone` field in `google_composer_environment` ([#6653](https://github.com/hashicorp/terraform-provider-google-beta/pull/6653))
+* compute: added field `service_directory_registrations` to resource `google_compute_global_forwarding_rule` ([#6667](https://github.com/hashicorp/terraform-provider-google-beta/pull/6667))
+* firestore: added virtual field `deletion_policy` to `google_firestore_database` ([#6664](https://github.com/hashicorp/terraform-provider-google-beta/pull/6664))
+* firestore: enabled database deletion upon destroy for `google_firestore_database` ([#6664](https://github.com/hashicorp/terraform-provider-google-beta/pull/6664))
+* gkehub2: added `policycontroller` field to `fleet_default_member_config` in `google_gke_hub_feature` ([#6649](https://github.com/hashicorp/terraform-provider-google-beta/pull/6649))
+* iam: added `allowedServices`, `disableProgrammaticSignin` fields to `google_iam_workforce_pool` resource ([#6666](https://github.com/hashicorp/terraform-provider-google-beta/pull/6666))
+* sql: added support for IAM GROUP authentication in the `type` field of `google_sql_user` ([#6674](https://github.com/hashicorp/terraform-provider-google-beta/pull/6674))
+* vmwareengine: added `STANDARD` type support to `google_vmwareengine_network` resource ([#6669](https://github.com/hashicorp/terraform-provider-google-beta/pull/6669))
+* vmwareengine: promoted `google_vmwareengine_private_cloud` resource to GA ([#6673](https://github.com/hashicorp/terraform-provider-google-beta/pull/6673))
+
+BUG FIXES:
+* compute: fixed a permadiff caused by issues with ipv6 diff suppression in `google_compute_forwarding_rule` and `google_compute_global_forwarding_rule` ([#6652](https://github.com/hashicorp/terraform-provider-google-beta/pull/6652))
+* firestore: fixed an issue where `google_firestore_database` could be deleted when `delete_protection_state` was `DELETE_PROTECTION_ENABLED` ([#6664](https://github.com/hashicorp/terraform-provider-google-beta/pull/6664))
+* firestore: made resource creation retry for 409 errors with the text "Aborted due to cross-transaction contention" in `google_firestore_index ` ([#6677](https://github.com/hashicorp/terraform-provider-google-beta/pull/6677))
+
 ## 5.6.0 (Nov 13, 2023)
 
 FEATURES:
