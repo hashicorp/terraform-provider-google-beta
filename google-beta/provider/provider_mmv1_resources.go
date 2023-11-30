@@ -288,6 +288,7 @@ var handwrittenDatasources = map[string]*schema.Resource{
 	"google_vmwareengine_cluster":                         vmwareengine.DataSourceVmwareengineCluster(),
 	"google_vmwareengine_network":                         vmwareengine.DataSourceVmwareengineNetwork(),
 	"google_vmwareengine_network_peering":                 vmwareengine.DataSourceVmwareengineNetworkPeering(),
+	"google_vmwareengine_network_policy":                  vmwareengine.DataSourceVmwareengineNetworkPolicy(),
 	"google_vmwareengine_private_cloud":                   vmwareengine.DataSourceVmwareenginePrivateCloud(),
 
 	// ####### END handwritten datasources ###########
@@ -406,9 +407,9 @@ var handwrittenIAMDatasources = map[string]*schema.Resource{
 }
 
 // Resources
-// Generated resources: 400
+// Generated resources: 401
 // Generated IAM resources: 249
-// Total generated resources: 649
+// Total generated resources: 650
 var generatedResources = map[string]*schema.Resource{
 	"google_folder_access_approval_settings":                         accessapproval.ResourceAccessApprovalFolderSettings(),
 	"google_organization_access_approval_settings":                   accessapproval.ResourceAccessApprovalOrganizationSettings(),
@@ -1047,6 +1048,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_vmwareengine_cluster":                                    vmwareengine.ResourceVmwareengineCluster(),
 	"google_vmwareengine_network":                                    vmwareengine.ResourceVmwareengineNetwork(),
 	"google_vmwareengine_network_peering":                            vmwareengine.ResourceVmwareengineNetworkPeering(),
+	"google_vmwareengine_network_policy":                             vmwareengine.ResourceVmwareengineNetworkPolicy(),
 	"google_vmwareengine_private_cloud":                              vmwareengine.ResourceVmwareenginePrivateCloud(),
 	"google_vpc_access_connector":                                    vpcaccess.ResourceVPCAccessConnector(),
 	"google_workflows_workflow":                                      workflows.ResourceWorkflowsWorkflow(),
