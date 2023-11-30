@@ -551,6 +551,11 @@ var services = mapOf(
         "displayName" to "Secretmanager",
         "path" to "./google-beta/services/secretmanager"
     ),
+    "securesourcemanager" to mapOf(
+        "name" to "securesourcemanager",
+        "displayName" to "Securesourcemanager",
+        "path" to "./google-beta/services/securesourcemanager"
+    ),
     "securitycenter" to mapOf(
         "name" to "securitycenter",
         "displayName" to "Securitycenter",
