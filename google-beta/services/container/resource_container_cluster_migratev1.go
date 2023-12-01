@@ -1769,7 +1769,6 @@ func resourceContainerClusterResourceV1() *schema.Resource {
 				Type:             schema.TypeList,
 				Optional:         true,
 				MaxItems:         1,
-				ForceNew:         true,
 				DiffSuppressFunc: suppressDiffForAutopilot,
 				Description:      `Configuration for Cloud DNS for Kubernetes Engine.`,
 				Elem: &schema.Resource{
