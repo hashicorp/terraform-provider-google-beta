@@ -3225,9 +3225,6 @@ func TestAccContainerCluster_withSoleTenantGroup(t *testing.T) {
 	})
 }
 
-// consider merging this test with TestAccContainerCluster_nodeAutoprovisioningDefaults
-// once the feature is GA
-
 func TestAccContainerCluster_withAutoscalingProfile(t *testing.T) {
 	t.Parallel()
 	clusterName := fmt.Sprintf("cluster-test-%s", acctest.RandString(t, 10))
