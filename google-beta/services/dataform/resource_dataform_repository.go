@@ -48,6 +48,7 @@ func ResourceDataformRepository() *schema.Resource {
 		},
 
 		CustomizeDiff: customdiff.All(
+			tpgresource.SetLabelsDiff,
 			tpgresource.DefaultProviderProject,
 		),
 
@@ -57,6 +58,11 @@ func ResourceDataformRepository() *schema.Resource {
 				Required:    true,
 				ForceNew:    true,
 				Description: `The repository's name.`,
+			},
+			"display_name": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: `Optional. The repository's user-friendly name.`,
 			},
 			"git_remote_settings": {
 				Type:        schema.TypeList,
@@ -110,6 +116,22 @@ func ResourceDataformRepository() *schema.Resource {
 					},
 				},
 			},
+			"labels": {
+				Type:     schema.TypeMap,
+				Optional: true,
+				Description: `Optional. Repository user labels.
+An object containing a list of "key": value pairs. Example: { "name": "wrench", "mass": "1.3kg", "count": "3" }.
+
+
+**Note**: This field is non-authoritative, and will only manage the labels present in your configuration.
+Please refer to the field 'effective_labels' for all of the labels present on the resource.`,
+				Elem: &schema.Schema{Type: schema.TypeString},
+			},
+			"npmrc_environment_variables_secret_version": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: `Optional. The name of the Secret Manager secret version to be used to interpolate variables into the .npmrc file for package installation operations. Must be in the format projects/*/secrets/*/versions/*. The file itself must be in a JSON format.`,
+			},
 			"region": {
 				Type:        schema.TypeString,
 				Optional:    true,
@@ -145,6 +167,19 @@ func ResourceDataformRepository() *schema.Resource {
 						},
 					},
 				},
+			},
+			"effective_labels": {
+				Type:        schema.TypeMap,
+				Computed:    true,
+				Description: `All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.`,
+				Elem:        &schema.Schema{Type: schema.TypeString},
+			},
+			"terraform_labels": {
+				Type:     schema.TypeMap,
+				Computed: true,
+				Description: `The combination of labels configured directly on the resource
+ and default labels configured on the provider.`,
+				Elem: &schema.Schema{Type: schema.TypeString},
 			},
 			"project": {
 				Type:     schema.TypeString,
@@ -188,6 +223,24 @@ func resourceDataformRepositoryCreate(d *schema.ResourceData, meta interface{}) 
 		return err
 	} else if v, ok := d.GetOkExists("service_account"); !tpgresource.IsEmptyValue(reflect.ValueOf(serviceAccountProp)) && (ok || !reflect.DeepEqual(v, serviceAccountProp)) {
 		obj["serviceAccount"] = serviceAccountProp
+	}
+	npmrcEnvironmentVariablesSecretVersionProp, err := expandDataformRepositoryNpmrcEnvironmentVariablesSecretVersion(d.Get("npmrc_environment_variables_secret_version"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("npmrc_environment_variables_secret_version"); !tpgresource.IsEmptyValue(reflect.ValueOf(npmrcEnvironmentVariablesSecretVersionProp)) && (ok || !reflect.DeepEqual(v, npmrcEnvironmentVariablesSecretVersionProp)) {
+		obj["npmrcEnvironmentVariablesSecretVersion"] = npmrcEnvironmentVariablesSecretVersionProp
+	}
+	displayNameProp, err := expandDataformRepositoryDisplayName(d.Get("display_name"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("display_name"); !tpgresource.IsEmptyValue(reflect.ValueOf(displayNameProp)) && (ok || !reflect.DeepEqual(v, displayNameProp)) {
+		obj["displayName"] = displayNameProp
+	}
+	labelsProp, err := expandDataformRepositoryEffectiveLabels(d.Get("effective_labels"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("effective_labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(labelsProp)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
+		obj["labels"] = labelsProp
 	}
 
 	url, err := tpgresource.ReplaceVars(d, config, "{{DataformBasePath}}projects/{{project}}/locations/{{region}}/repositories?repositoryId={{name}}")
@@ -286,6 +339,21 @@ func resourceDataformRepositoryRead(d *schema.ResourceData, meta interface{}) er
 	if err := d.Set("service_account", flattenDataformRepositoryServiceAccount(res["serviceAccount"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Repository: %s", err)
 	}
+	if err := d.Set("npmrc_environment_variables_secret_version", flattenDataformRepositoryNpmrcEnvironmentVariablesSecretVersion(res["npmrcEnvironmentVariablesSecretVersion"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Repository: %s", err)
+	}
+	if err := d.Set("display_name", flattenDataformRepositoryDisplayName(res["displayName"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Repository: %s", err)
+	}
+	if err := d.Set("labels", flattenDataformRepositoryLabels(res["labels"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Repository: %s", err)
+	}
+	if err := d.Set("terraform_labels", flattenDataformRepositoryTerraformLabels(res["labels"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Repository: %s", err)
+	}
+	if err := d.Set("effective_labels", flattenDataformRepositoryEffectiveLabels(res["labels"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Repository: %s", err)
+	}
 
 	return nil
 }
@@ -323,6 +391,24 @@ func resourceDataformRepositoryUpdate(d *schema.ResourceData, meta interface{}) 
 		return err
 	} else if v, ok := d.GetOkExists("service_account"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, serviceAccountProp)) {
 		obj["serviceAccount"] = serviceAccountProp
+	}
+	npmrcEnvironmentVariablesSecretVersionProp, err := expandDataformRepositoryNpmrcEnvironmentVariablesSecretVersion(d.Get("npmrc_environment_variables_secret_version"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("npmrc_environment_variables_secret_version"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, npmrcEnvironmentVariablesSecretVersionProp)) {
+		obj["npmrcEnvironmentVariablesSecretVersion"] = npmrcEnvironmentVariablesSecretVersionProp
+	}
+	displayNameProp, err := expandDataformRepositoryDisplayName(d.Get("display_name"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("display_name"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, displayNameProp)) {
+		obj["displayName"] = displayNameProp
+	}
+	labelsProp, err := expandDataformRepositoryEffectiveLabels(d.Get("effective_labels"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("effective_labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
+		obj["labels"] = labelsProp
 	}
 
 	url, err := tpgresource.ReplaceVars(d, config, "{{DataformBasePath}}projects/{{project}}/locations/{{region}}/repositories/{{name}}")
@@ -522,6 +608,48 @@ func flattenDataformRepositoryServiceAccount(v interface{}, d *schema.ResourceDa
 	return v
 }
 
+func flattenDataformRepositoryNpmrcEnvironmentVariablesSecretVersion(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenDataformRepositoryDisplayName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenDataformRepositoryLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return v
+	}
+
+	transformed := make(map[string]interface{})
+	if l, ok := d.GetOkExists("labels"); ok {
+		for k := range l.(map[string]interface{}) {
+			transformed[k] = v.(map[string]interface{})[k]
+		}
+	}
+
+	return transformed
+}
+
+func flattenDataformRepositoryTerraformLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return v
+	}
+
+	transformed := make(map[string]interface{})
+	if l, ok := d.GetOkExists("terraform_labels"); ok {
+		for k := range l.(map[string]interface{}) {
+			transformed[k] = v.(map[string]interface{})[k]
+		}
+	}
+
+	return transformed
+}
+
+func flattenDataformRepositoryEffectiveLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
 func expandDataformRepositoryName(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
@@ -670,4 +798,23 @@ func expandDataformRepositoryWorkspaceCompilationOverridesTablePrefix(v interfac
 
 func expandDataformRepositoryServiceAccount(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
+}
+
+func expandDataformRepositoryNpmrcEnvironmentVariablesSecretVersion(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandDataformRepositoryDisplayName(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandDataformRepositoryEffectiveLabels(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
+	if v == nil {
+		return map[string]string{}, nil
+	}
+	m := make(map[string]string)
+	for k, val := range v.(map[string]interface{}) {
+		m[k] = val.(string)
+	}
+	return m, nil
 }
