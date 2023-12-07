@@ -149,6 +149,12 @@ resource "google_secret_manager_secret_version" "secret_version" {
 resource "google_dataform_repository" "dataform_respository" {
   provider = google-beta
   name = "tf_test_dataform_repository%{random_suffix}"
+  display_name = "tf_test_dataform_repository%{random_suffix}"
+  npmrc_environment_variables_secret_version = google_secret_manager_secret_version.secret_version.id
+
+  labels = {
+    label_foo1 = "label-bar1"
+  }
 
   git_remote_settings {
       url = google_sourcerepo_repository.git_repository.url
@@ -200,6 +206,12 @@ resource "google_secret_manager_secret_version" "secret_version" {
 resource "google_dataform_repository" "dataform_respository" {
   provider = google-beta
   name = "tf_test_dataform_repository%{random_suffix}"
+  display_name = "tf_test_dataform_repository%{random_suffix}"
+  npmrc_environment_variables_secret_version = google_secret_manager_secret_version.secret_version.id
+
+  labels = {
+    label_foo1 = "label-bar1"
+  }
 
   git_remote_settings {
       url = google_sourcerepo_repository.git_repository.url
@@ -268,6 +280,12 @@ resource "google_secret_manager_secret_version" "secret_version" {
 resource "google_dataform_repository" "dataform_respository" {
   provider = google-beta
   name = "tf_test_dataform_repository%{random_suffix}"
+  display_name = "tf_test_dataform_repository%{random_suffix}"
+  npmrc_environment_variables_secret_version = google_secret_manager_secret_version.secret_version.id
+
+  labels = {
+    label_foo1 = "label-bar1"
+  }
 
   git_remote_settings {
       url = google_sourcerepo_repository.git_repository.url
@@ -322,6 +340,12 @@ resource "google_secret_manager_secret_version" "secret_version" {
 resource "google_dataform_repository" "dataform_respository" {
   provider = google-beta
   name = "tf_test_dataform_repository%{random_suffix}"
+  display_name = "tf_test_dataform_repository%{random_suffix}"
+  npmrc_environment_variables_secret_version = google_secret_manager_secret_version.secret_version.id
+
+  labels = {
+    label_foo1 = "label-bar1"
+  }
 
   git_remote_settings {
       url = google_sourcerepo_repository.git_repository.url
@@ -373,6 +397,12 @@ resource "google_secret_manager_secret_version" "secret_version" {
 resource "google_dataform_repository" "dataform_respository" {
   provider = google-beta
   name = "tf_test_dataform_repository%{random_suffix}"
+  display_name = "tf_test_dataform_repository%{random_suffix}"
+  npmrc_environment_variables_secret_version = google_secret_manager_secret_version.secret_version.id
+
+  labels = {
+    label_foo1 = "label-bar1"
+  }
 
   git_remote_settings {
       url = google_sourcerepo_repository.git_repository.url

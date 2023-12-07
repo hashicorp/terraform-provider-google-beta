@@ -49,7 +49,7 @@ func TestAccDataformRepository_dataformRepositoryExample(t *testing.T) {
 				ResourceName:            "google_dataform_repository.dataform_respository",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"region"},
+				ImportStateVerifyIgnore: []string{"region", "labels", "terraform_labels"},
 			},
 		},
 	})
@@ -81,6 +81,12 @@ resource "google_secret_manager_secret_version" "secret_version" {
 resource "google_dataform_repository" "dataform_respository" {
   provider = google-beta
   name = "tf_test_dataform_repository%{random_suffix}"
+  display_name = "tf_test_dataform_repository%{random_suffix}"
+  npmrc_environment_variables_secret_version = google_secret_manager_secret_version.secret_version.id
+
+  labels = {
+    label_foo1 = "label-bar1"
+  }
 
   git_remote_settings {
       url = google_sourcerepo_repository.git_repository.url
@@ -116,7 +122,7 @@ func TestAccDataformRepository_dataformRepositorySshExample(t *testing.T) {
 				ResourceName:            "google_dataform_repository.dataform_respository",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"region"},
+				ImportStateVerifyIgnore: []string{"region", "labels", "terraform_labels"},
 			},
 		},
 	})
