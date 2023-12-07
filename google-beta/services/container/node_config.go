@@ -67,7 +67,6 @@ func schemaNodeConfig() *schema.Schema {
 					Type:         schema.TypeInt,
 					Optional:     true,
 					Computed:     true,
-					ForceNew:     true,
 					ValidateFunc: validation.IntAtLeast(10),
 					Description:  `Size of the disk attached to each node, specified in GB. The smallest allowed disk size is 10GB.`,
 				},
@@ -76,7 +75,6 @@ func schemaNodeConfig() *schema.Schema {
 					Type:        schema.TypeString,
 					Optional:    true,
 					Computed:    true,
-					ForceNew:    true,
 					Description: `Type of the disk attached to each node. Such as pd-standard, pd-balanced or pd-ssd`,
 				},
 
@@ -274,7 +272,6 @@ func schemaNodeConfig() *schema.Schema {
 					Type:        schema.TypeString,
 					Optional:    true,
 					Computed:    true,
-					ForceNew:    true,
 					Description: `The name of a Google Compute Engine machine type.`,
 				},
 
