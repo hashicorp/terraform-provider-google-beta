@@ -527,7 +527,7 @@ var DefaultBasePaths = map[string]string{
 	GkeonpremBasePathKey:                "https://gkeonprem.googleapis.com/v1/",
 	HealthcareBasePathKey:               "https://healthcare.googleapis.com/v1beta1/",
 	IAM2BasePathKey:                     "https://iam.googleapis.com/v2beta/",
-	IAMBetaBasePathKey:                  "https://iam.googleapis.com/v1beta/",
+	IAMBetaBasePathKey:                  "https://iam.googleapis.com/v1/",
 	IAMWorkforcePoolBasePathKey:         "https://iam.googleapis.com/v1/",
 	IapBasePathKey:                      "https://iap.googleapis.com/v1/",
 	IdentityPlatformBasePathKey:         "https://identitytoolkit.googleapis.com/v2/",
