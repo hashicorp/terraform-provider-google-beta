@@ -192,6 +192,10 @@ resource "google_container_azure_node_pool" "primary" {
       owner = "mmv2"
     }
 
+    labels = {
+      key_one = "label_one"
+    }
+
     vm_size = "Standard_DS2_v2"
   }
 
@@ -296,6 +300,10 @@ resource "google_container_azure_node_pool" "primary" {
 
     tags = {
       owner = "mmv2"
+    }
+
+    labels = {
+      key_two = "label_two"
     }
 
     vm_size = "Standard_DS2_v2"
@@ -405,6 +413,10 @@ resource "google_container_azure_node_pool" "primary" {
 
     tags = {
       owner = "mmv2"
+    }
+
+    labels = {
+      key_one = "label_one"
     }
 
     vm_size = "Standard_DS2_v2"
@@ -517,6 +529,10 @@ resource "google_container_azure_node_pool" "primary" {
 
     tags = {
       owner = "mmv2"
+    }
+
+    labels = {
+      key_two = "label_two"
     }
 
     vm_size = "Standard_DS2_v2"
