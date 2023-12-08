@@ -11,7 +11,7 @@ FEATURES:
 * **New Resource:** `google_vmwareengine_network_policy` ([#6686](https://github.com/hashicorp/terraform-provider-google-beta/pull/6686))
 
 IMPROVEMENTS:
-* bigqueryconnection - added `spark` support to `google_bigquery_connection` resource ([#6708](https://github.com/hashicorp/terraform-provider-google-beta/pull/6708))
+* bigqueryconnection: added `spark` support to `google_bigquery_connection` resource ([#6708](https://github.com/hashicorp/terraform-provider-google-beta/pull/6708))
 * cloudidentity: added `expiry_detail` field to `google_cloud_identity_group_membership` resource ([#6689](https://github.com/hashicorp/terraform-provider-google-beta/pull/6689))
 * container: added `queued_provisioning` field to `google_container_node_pool` resource ([#6678](https://github.com/hashicorp/terraform-provider-google-beta/pull/6678))
 * container: promoted GKE Autoscaling Profiles to GA in the `cluster_autoscaling` block in `google_container_cluster` resource ([#6696](https://github.com/hashicorp/terraform-provider-google-beta/pull/6696))
