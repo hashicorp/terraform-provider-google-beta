@@ -646,6 +646,11 @@ var services = mapOf(
         "displayName" to "Vpcaccess",
         "path" to "./google-beta/services/vpcaccess"
     ),
+    "workbench" to mapOf(
+        "name" to "workbench",
+        "displayName" to "Workbench",
+        "path" to "./google-beta/services/workbench"
+    ),
     "workflows" to mapOf(
         "name" to "workflows",
         "displayName" to "Workflows",

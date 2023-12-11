@@ -121,6 +121,7 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/vertexai"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/vmwareengine"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/vpcaccess"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/workbench"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/workflows"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/workstations"
 
@@ -385,6 +386,7 @@ var generatedIAMDatasources = map[string]*schema.Resource{
 	"google_vertex_ai_endpoint_iam_policy":                   tpgiamresource.DataSourceIamPolicy(vertexai.VertexAIEndpointIamSchema, vertexai.VertexAIEndpointIamUpdaterProducer),
 	"google_vertex_ai_featurestore_iam_policy":               tpgiamresource.DataSourceIamPolicy(vertexai.VertexAIFeaturestoreIamSchema, vertexai.VertexAIFeaturestoreIamUpdaterProducer),
 	"google_vertex_ai_featurestore_entitytype_iam_policy":    tpgiamresource.DataSourceIamPolicy(vertexai.VertexAIFeaturestoreEntitytypeIamSchema, vertexai.VertexAIFeaturestoreEntitytypeIamUpdaterProducer),
+	"google_workbench_instance_iam_policy":                   tpgiamresource.DataSourceIamPolicy(workbench.WorkbenchInstanceIamSchema, workbench.WorkbenchInstanceIamUpdaterProducer),
 	"google_workstations_workstation_iam_policy":             tpgiamresource.DataSourceIamPolicy(workstations.WorkstationsWorkstationIamSchema, workstations.WorkstationsWorkstationIamUpdaterProducer),
 	"google_workstations_workstation_config_iam_policy":      tpgiamresource.DataSourceIamPolicy(workstations.WorkstationsWorkstationConfigIamSchema, workstations.WorkstationsWorkstationConfigIamUpdaterProducer),
 	// ####### END generated IAM datasources ###########
@@ -415,9 +417,9 @@ var handwrittenIAMDatasources = map[string]*schema.Resource{
 }
 
 // Resources
-// Generated resources: 403
-// Generated IAM resources: 249
-// Total generated resources: 652
+// Generated resources: 404
+// Generated IAM resources: 252
+// Total generated resources: 656
 var generatedResources = map[string]*schema.Resource{
 	"google_folder_access_approval_settings":                         accessapproval.ResourceAccessApprovalFolderSettings(),
 	"google_organization_access_approval_settings":                   accessapproval.ResourceAccessApprovalOrganizationSettings(),
@@ -1061,6 +1063,10 @@ var generatedResources = map[string]*schema.Resource{
 	"google_vmwareengine_private_cloud":                              vmwareengine.ResourceVmwareenginePrivateCloud(),
 	"google_vmwareengine_subnet":                                     vmwareengine.ResourceVmwareengineSubnet(),
 	"google_vpc_access_connector":                                    vpcaccess.ResourceVPCAccessConnector(),
+	"google_workbench_instance":                                      workbench.ResourceWorkbenchInstance(),
+	"google_workbench_instance_iam_binding":                          tpgiamresource.ResourceIamBinding(workbench.WorkbenchInstanceIamSchema, workbench.WorkbenchInstanceIamUpdaterProducer, workbench.WorkbenchInstanceIdParseFunc),
+	"google_workbench_instance_iam_member":                           tpgiamresource.ResourceIamMember(workbench.WorkbenchInstanceIamSchema, workbench.WorkbenchInstanceIamUpdaterProducer, workbench.WorkbenchInstanceIdParseFunc),
+	"google_workbench_instance_iam_policy":                           tpgiamresource.ResourceIamPolicy(workbench.WorkbenchInstanceIamSchema, workbench.WorkbenchInstanceIamUpdaterProducer, workbench.WorkbenchInstanceIdParseFunc),
 	"google_workflows_workflow":                                      workflows.ResourceWorkflowsWorkflow(),
 	"google_workstations_workstation":                                workstations.ResourceWorkstationsWorkstation(),
 	"google_workstations_workstation_iam_binding":                    tpgiamresource.ResourceIamBinding(workstations.WorkstationsWorkstationIamSchema, workstations.WorkstationsWorkstationIamUpdaterProducer, workstations.WorkstationsWorkstationIdParseFunc),
