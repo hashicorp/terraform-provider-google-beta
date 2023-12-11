@@ -765,6 +765,7 @@ resource "google_cloudfunctions2_function" "function" {
 }
 
 func TestAccCloudfunctions2function_cloudfunctions2CmekExample(t *testing.T) {
+	acctest.SkipIfVcr(t)
 	t.Parallel()
 
 	context := map[string]interface{}{
@@ -834,34 +835,58 @@ resource "google_artifact_registry_repository" "unencoded-ar-repo" {
   format = "DOCKER"
 }
 
-resource "google_artifact_registry_repository_iam_binding" "binding" {
+resource "google_artifact_registry_repository_iam_member" "member" {
   provider = google-beta
 
   location = google_artifact_registry_repository.encoded-ar-repo.location
   repository = google_artifact_registry_repository.encoded-ar-repo.name
   role = "roles/artifactregistry.admin"
-  members = [
-    "serviceAccount:service-${data.google_project.project.number}@gcf-admin-robot.iam.gserviceaccount.com",
-  ]
+  member = "serviceAccount:service-${data.google_project.project.number}@gcf-admin-robot.iam.gserviceaccount.com"
 }
 
-resource "google_kms_crypto_key_iam_binding" "gcf_cmek_keyuser" {
+resource "google_kms_crypto_key_iam_member" "gcf_cmek_keyuser_1" {
   provider = google-beta
 
   crypto_key_id = "%{kms_key_name}"
   role          = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
 
-  members = [
-    "serviceAccount:service-${data.google_project.project.number}@gcf-admin-robot.iam.gserviceaccount.com",
-    "serviceAccount:service-${data.google_project.project.number}@gcp-sa-artifactregistry.iam.gserviceaccount.com",
-    "serviceAccount:service-${data.google_project.project.number}@gs-project-accounts.iam.gserviceaccount.com",
-    "serviceAccount:service-${data.google_project.project.number}@serverless-robot-prod.iam.gserviceaccount.com",
-    "serviceAccount:${google_project_service_identity.ea_sa.email}",
-  ]
+  member = "serviceAccount:service-${data.google_project.project.number}@gcf-admin-robot.iam.gserviceaccount.com"
+}
 
-  depends_on = [
-    google_project_service_identity.ea_sa
-  ]
+resource "google_kms_crypto_key_iam_member" "gcf_cmek_keyuser_2" {
+  provider = google-beta
+
+  crypto_key_id = "%{kms_key_name}"
+  role          = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
+
+  member = "serviceAccount:service-${data.google_project.project.number}@gcp-sa-artifactregistry.iam.gserviceaccount.com"
+}
+
+resource "google_kms_crypto_key_iam_member" "gcf_cmek_keyuser_3" {
+  provider = google-beta
+
+  crypto_key_id = "%{kms_key_name}"
+  role          = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
+
+  member = "serviceAccount:service-${data.google_project.project.number}@gs-project-accounts.iam.gserviceaccount.com"
+}
+
+resource "google_kms_crypto_key_iam_member" "gcf_cmek_keyuser_4" {
+  provider = google-beta
+
+  crypto_key_id = "%{kms_key_name}"
+  role          = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
+
+  member = "serviceAccount:service-${data.google_project.project.number}@serverless-robot-prod.iam.gserviceaccount.com"
+}
+
+resource "google_kms_crypto_key_iam_member" "gcf_cmek_keyuser_5" {
+  provider = google-beta
+
+  crypto_key_id = "%{kms_key_name}"
+  role          = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
+
+  member = "serviceAccount:${google_project_service_identity.ea_sa.email}"
 }
 
 resource "google_artifact_registry_repository" "encoded-ar-repo" {
@@ -871,8 +896,13 @@ resource "google_artifact_registry_repository" "encoded-ar-repo" {
   repository_id = "tf-test-cmek-repo%{random_suffix}"
   format = "DOCKER"
   kms_key_name = "%{kms_key_name}"
+
   depends_on = [
-    google_kms_crypto_key_iam_binding.gcf_cmek_keyuser
+    google_kms_crypto_key_iam_member.gcf_cmek_keyuser_1,
+    google_kms_crypto_key_iam_member.gcf_cmek_keyuser_2,
+    google_kms_crypto_key_iam_member.gcf_cmek_keyuser_3,
+    google_kms_crypto_key_iam_member.gcf_cmek_keyuser_4,
+    google_kms_crypto_key_iam_member.gcf_cmek_keyuser_5,
   ]
 }
 
@@ -904,9 +934,12 @@ resource "google_cloudfunctions2_function" "function" {
   }
 
   depends_on = [
-    google_kms_crypto_key_iam_binding.gcf_cmek_keyuser
+    google_kms_crypto_key_iam_member.gcf_cmek_keyuser_1,
+    google_kms_crypto_key_iam_member.gcf_cmek_keyuser_2,
+    google_kms_crypto_key_iam_member.gcf_cmek_keyuser_3,
+    google_kms_crypto_key_iam_member.gcf_cmek_keyuser_4,
+    google_kms_crypto_key_iam_member.gcf_cmek_keyuser_5,
   ]
-
 }
 `, context)
 }
