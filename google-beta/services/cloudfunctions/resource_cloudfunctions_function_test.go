@@ -293,7 +293,9 @@ func TestAccCloudFunctionsFunction_dockerRepository(t *testing.T) {
 }
 
 func TestAccCloudFunctionsFunction_cmek(t *testing.T) {
+	acctest.SkipIfVcr(t)
 	t.Parallel()
+
 	kmsKey := acctest.BootstrapKMSKeyInLocation(t, "us-central1")
 	funcResourceName := "google_cloudfunctions_function.function"
 	arRepoName := fmt.Sprintf("tf-cmek-test-docker-repository-%s", acctest.RandString(t, 10))
@@ -1072,16 +1074,27 @@ resource "google_artifact_registry_repository_iam_binding" "binding" {
   ]
 }
 
-resource "google_kms_crypto_key_iam_binding" "gcf_cmek_keyuser" {
+resource "google_kms_crypto_key_iam_member" "gcf_cmek_keyuser_1" {
   crypto_key_id = "%s"
   role          = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
 
-  members = [
-    "serviceAccount:service-${data.google_project.project.number}@gcf-admin-robot.iam.gserviceaccount.com",
-    "serviceAccount:service-${data.google_project.project.number}@gcp-sa-artifactregistry.iam.gserviceaccount.com",
-    "serviceAccount:service-${data.google_project.project.number}@gs-project-accounts.iam.gserviceaccount.com",
-  ]
+  member = "serviceAccount:service-${data.google_project.project.number}@gcf-admin-robot.iam.gserviceaccount.com"
 }
+
+resource "google_kms_crypto_key_iam_member" "gcf_cmek_keyuser_2" {
+  crypto_key_id = "%s"
+  role          = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
+
+  member = "serviceAccount:service-${data.google_project.project.number}@gcp-sa-artifactregistry.iam.gserviceaccount.com"
+}
+
+resource "google_kms_crypto_key_iam_member" "gcf_cmek_keyuser_3" {
+  crypto_key_id = "%s"
+  role          = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
+
+  member = "serviceAccount:service-${data.google_project.project.number}@gs-project-accounts.iam.gserviceaccount.com"
+}
+
 
 resource "google_artifact_registry_repository" "encoded-ar-repo" {
   repository_id = "%s"
@@ -1089,7 +1102,9 @@ resource "google_artifact_registry_repository" "encoded-ar-repo" {
   location = "us-central1"
   format = "DOCKER"
   depends_on = [
-    google_kms_crypto_key_iam_binding.gcf_cmek_keyuser
+    google_kms_crypto_key_iam_member.gcf_cmek_keyuser_1,
+    google_kms_crypto_key_iam_member.gcf_cmek_keyuser_2,
+    google_kms_crypto_key_iam_member.gcf_cmek_keyuser_3,
   ]
 }
 
@@ -1117,7 +1132,7 @@ resource "google_cloudfunctions_function" "function" {
   timeout               = 61
   entry_point           = "helloGET"
 }
-`, kmsKey, arRepoName, kmsKey, bucketName, zipFilePath, functionName, kmsKey)
+`, kmsKey, kmsKey, kmsKey, arRepoName, kmsKey, bucketName, zipFilePath, functionName, kmsKey)
 }
 
 func testAccCloudFunctionsFunction_secretEnvVar(secretName, versionName, bucketName, functionName, versionNumber, zipFilePath, accountId string) string {
