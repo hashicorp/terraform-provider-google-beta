@@ -1,4 +1,4 @@
-# Terraform Provider for Google Cloud Platform (Beta)
+# Google Provider for Terraform (Beta)
 
 - Tutorials: [learn.hashicorp.com](https://learn.hashicorp.com/terraform?track=getting-started#getting-started)
 - Forum: [discuss.hashicorp.com](https://discuss.hashicorp.com/c/terraform-providers/tf-google/)
@@ -7,7 +7,7 @@
 - Mailing list: [Google Groups](http://groups.google.com/group/terraform-tool)
 - Issue tracker: [terraform-provider-google](https://github.com/hashicorp/terraform-provider-google/issues/new/choose)
 
-The Terraform Google provider beta is a plugin that allows [Terraform](https://www.terraform.io) to manage resources on Google Cloud Platform. This provider is maintained by the [Terraform team at Google](https://cloudplatform.googleblog.com/2017/03/partnering-on-open-source-Google-and-HashiCorp-engineers-on-managing-GCP-infrastructure.html) and the Terraform team at [HashiCorp](https://www.hashicorp.com/)
+The Google provider for Terraform (Beta) is a plugin that allows [Terraform](https://www.terraform.io) to manage resources on Google Cloud. This provider is maintained by the [Terraform team at Google](https://cloudplatform.googleblog.com/2017/03/partnering-on-open-source-Google-and-HashiCorp-engineers-on-managing-GCP-infrastructure.html) and the Terraform team at [HashiCorp](https://www.hashicorp.com/)
 
 This is the [`google-beta` provider](https://github.com/hashicorp/terraform-provider-google-beta) which contains all the features in [`google` provider](https://github.com/hashicorp/terraform-provider-google) as well as the preview features and features at a beta [launch stage](https://cloud.google.com/products#product-launch-stages). See [Provider Versions](https://registry.terraform.io/providers/hashicorp/google-beta/latest/docs/guides/provider_versions) for more details on how to use `google-beta`.
 
@@ -18,7 +18,7 @@ This is the [`google-beta` provider](https://github.com/hashicorp/terraform-prov
 
 ## Provider Usage
 
-Please see [instructions](https://registry.terraform.io/providers/hashicorp/google/latest/docs/guides/provider_reference) on how to configure the Google Provider.
+Please see [instructions](https://registry.terraform.io/providers/hashicorp/google/latest/docs/guides/provider_reference) on how to configure the Google provider.
 
 ### Upgrading the provider
 
