@@ -417,9 +417,9 @@ var handwrittenIAMDatasources = map[string]*schema.Resource{
 }
 
 // Resources
-// Generated resources: 404
+// Generated resources: 406
 // Generated IAM resources: 252
-// Total generated resources: 656
+// Total generated resources: 658
 var generatedResources = map[string]*schema.Resource{
 	"google_folder_access_approval_settings":                         accessapproval.ResourceAccessApprovalFolderSettings(),
 	"google_organization_access_approval_settings":                   accessapproval.ResourceAccessApprovalOrganizationSettings(),
@@ -892,9 +892,11 @@ var generatedResources = map[string]*schema.Resource{
 	"google_kms_key_ring":                                            kms.ResourceKMSKeyRing(),
 	"google_kms_key_ring_import_job":                                 kms.ResourceKMSKeyRingImportJob(),
 	"google_kms_secret_ciphertext":                                   kms.ResourceKMSSecretCiphertext(),
+	"google_logging_folder_settings":                                 logging.ResourceLoggingFolderSettings(),
 	"google_logging_linked_dataset":                                  logging.ResourceLoggingLinkedDataset(),
 	"google_logging_log_view":                                        logging.ResourceLoggingLogView(),
 	"google_logging_metric":                                          logging.ResourceLoggingMetric(),
+	"google_logging_organization_settings":                           logging.ResourceLoggingOrganizationSettings(),
 	"google_looker_instance":                                         looker.ResourceLookerInstance(),
 	"google_memcache_instance":                                       memcache.ResourceMemcacheInstance(),
 	"google_migration_center_group":                                  migrationcenter.ResourceMigrationCenterGroup(),
