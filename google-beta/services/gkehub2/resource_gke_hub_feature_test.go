@@ -459,7 +459,6 @@ resource "google_gke_hub_feature" "feature" {
   location = "global"
   fleet_default_member_config {
     configmanagement {
-      version = "1.16.0"
       config_sync {
         source_format = "hierarchy"
         git {
@@ -486,7 +485,6 @@ resource "google_gke_hub_feature" "feature" {
   location = "global"
   fleet_default_member_config {
     configmanagement {
-      version = "1.16.1"
       config_sync {
         source_format = "unstructured"
         oci {
