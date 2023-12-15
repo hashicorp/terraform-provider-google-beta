@@ -4283,6 +4283,44 @@ func TestAccContainerCluster_withFleetConfig(t *testing.T) {
 	})
 }
 
+func TestAccContainerCluster_withWorkloadALTSConfig(t *testing.T) {
+	t.Parallel()
+
+	networkName := "gke-cluster-alts"
+	subnetworkName := "gke-cluster-alts"
+	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
+	pid := envvar.GetTestProjectFromEnv()
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckContainerClusterDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccContainerCluster_withWorkloadALTSConfig(pid, networkName, subnetworkName, clusterName, true),
+			},
+			{
+				ResourceName:            "google_container_cluster.with_workload_alts_config",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"deletion_protection"},
+				Check: resource.TestCheckResourceAttr(
+					"google_container_cluster.with_workload_alts_config", "workload_alts_config.enable_alts", "true"),
+			},
+			{
+				Config: testAccContainerCluster_withWorkloadALTSConfig(pid, networkName, subnetworkName, clusterName, false),
+			},
+			{
+				ResourceName:            "google_container_cluster.with_workload_alts_config",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"deletion_protection"},
+				Check: resource.TestCheckResourceAttr(
+					"google_container_cluster.with_workload_alts_config", "workload_alts_config.enable_alts", "false"),
+			},
+		},
+	})
+}
+
 func testAccContainerCluster_withFleetConfig(name, projectID string) string {
 	return fmt.Sprintf(`
 resource "google_container_cluster" "primary" {
@@ -9205,4 +9243,41 @@ resource "google_container_cluster" "without_confidential_boot_disk" {
  deletion_protection = false
 }
 `, clusterName, npName)
+}
+
+func testAccContainerCluster_withWorkloadALTSConfig(projectID, name, networkName, subnetworkName string, enable bool) string {
+	return fmt.Sprintf(`
+	data "google_project" "project" {
+		provider = google-beta
+		project_id = "%s"
+	}
+	resource "google_compute_network" "network" {
+		provider                 = google-beta
+		name                     = "%s"
+		auto_create_subnetworks  = false
+		enable_ula_internal_ipv6 = true
+	}
+	resource "google_compute_subnetwork" "subnet" {
+		provider         = google-beta
+		name             = "%s"
+		network          = google_compute_network.network.id
+		ip_cidr_range    = "9.12.22.0/24"
+		region           = "us-central1"
+	}
+	resource "google_container_cluster" "with_workload_alts_config" {
+		provider = google-beta
+		name               = "%s"
+		location           = "us-central1-a"
+		initial_node_count = 1
+		network         = google_compute_network.network.name
+		subnetwork      = google_compute_subnetwork.subnet.name
+		workload_alts_config {
+			enable_alts = %v
+		}
+		workload_identity_config {
+			workload_pool = "${data.google_project.project.project_id}.svc.id.goog"
+		}
+		deletion_protection = false
+	}
+`, projectID, networkName, subnetworkName, name, enable)
 }
