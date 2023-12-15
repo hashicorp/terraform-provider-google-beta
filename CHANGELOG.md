@@ -16,7 +16,7 @@ IMPROVEMENTS:
 * compute: added `remove_instance_on_destroy` option to `google_compute_per_instance_config` resource ([#6724](https://github.com/hashicorp/terraform-provider-google-beta/pull/6724))
 * compute: added `remove_instance_on_destroy` option to `google_compute_region_per_instance_config` resource ([#6724](https://github.com/hashicorp/terraform-provider-google-beta/pull/6724))
 * container: added support for `network_performance_config.total_egress_bandwidth_tier` to support GKE tier 1 networking ([#6712](https://github.com/hashicorp/terraform-provider-google-beta/pull/6712))
-* container: added support for in-place update for `machineType`/`diskType`/`diskSizeGb` in `google_container_node_pool` resource ([#6722](https://github.com/hashicorp/terraform-provider-google-beta/pull/6722))
+* container: added support for in-place update for `machine_type`/`disk_type`/`disk_size_gb` in `google_container_node_pool` resource ([#6722](https://github.com/hashicorp/terraform-provider-google-beta/pull/6722))
 * containerazure: added `config.labels` to `google_container_azure_node_pool` ([#6732](https://github.com/hashicorp/terraform-provider-google-beta/pull/6732))
 * dataform: added `display_name`, `labels` and `npmrc_environment_variables_secret_version` fields to `google_dataform_repository` resource ([#6727](https://github.com/hashicorp/terraform-provider-google-beta/pull/6727))
 * monitoring: added `severity` field to `google_monitoring_alert_policy` resource ([#6741](https://github.com/hashicorp/terraform-provider-google-beta/pull/6741))
