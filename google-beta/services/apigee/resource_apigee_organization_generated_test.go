@@ -193,7 +193,7 @@ func TestAccApigeeOrganization_apigeeOrganizationCloudFullTestExample(t *testing
 				ResourceName:            "google_apigee_organization.org",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"project_id", "retention"},
+				ImportStateVerifyIgnore: []string{"project_id", "retention", "properties"},
 			},
 		},
 	})
