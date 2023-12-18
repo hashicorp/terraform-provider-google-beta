@@ -167,7 +167,7 @@ func TestAccDataprocMetastoreService_dataprocMetastoreServiceAuxExample(t *testi
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckDataprocMetastoreServiceDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -186,7 +186,6 @@ func TestAccDataprocMetastoreService_dataprocMetastoreServiceAuxExample(t *testi
 func testAccDataprocMetastoreService_dataprocMetastoreServiceAuxExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_dataproc_metastore_service" "aux" {
-  provider   = google-beta
   service_id = "tf-test-metastore-aux%{random_suffix}"
   location   = "us-central1"
   tier       = "DEVELOPER"
@@ -211,7 +210,7 @@ func TestAccDataprocMetastoreService_dataprocMetastoreServiceMetadataExample(t *
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckDataprocMetastoreServiceDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -230,7 +229,6 @@ func TestAccDataprocMetastoreService_dataprocMetastoreServiceMetadataExample(t *
 func testAccDataprocMetastoreService_dataprocMetastoreServiceMetadataExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_dataproc_metastore_service" "metadata" {
-  provider   = google-beta
   service_id = "tf-test-metastore-metadata%{random_suffix}"
   location   = "us-central1"
   tier       = "DEVELOPER"
