@@ -2590,6 +2590,7 @@ resource "google_composer_environment" "test" {
       service_account = google_service_account.test.name
     }
   }
+  depends_on = [google_project_iam_member.composer-worker]
 }
 
 // use a separate network to avoid conflicts with other tests running in parallel
@@ -2665,6 +2666,7 @@ resource "google_composer_environment" "test" {
       service_account = google_service_account.test.name
     }
   }
+  depends_on = [google_project_iam_member.composer-worker]
 }
 
 // use a separate network to avoid conflicts with other tests running in parallel
