@@ -417,9 +417,9 @@ var handwrittenIAMDatasources = map[string]*schema.Resource{
 }
 
 // Resources
-// Generated resources: 407
+// Generated resources: 409
 // Generated IAM resources: 252
-// Total generated resources: 659
+// Total generated resources: 661
 var generatedResources = map[string]*schema.Resource{
 	"google_folder_access_approval_settings":                         accessapproval.ResourceAccessApprovalFolderSettings(),
 	"google_organization_access_approval_settings":                   accessapproval.ResourceAccessApprovalOrganizationSettings(),
@@ -620,6 +620,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_compute_network_endpoint":                                compute.ResourceComputeNetworkEndpoint(),
 	"google_compute_network_endpoint_group":                          compute.ResourceComputeNetworkEndpointGroup(),
 	"google_compute_network_endpoints":                               compute.ResourceComputeNetworkEndpoints(),
+	"google_compute_network_firewall_policy":                         compute.ResourceComputeNetworkFirewallPolicy(),
 	"google_compute_network_peering_routes_config":                   compute.ResourceComputeNetworkPeeringRoutesConfig(),
 	"google_compute_node_group":                                      compute.ResourceComputeNodeGroup(),
 	"google_compute_node_template":                                   compute.ResourceComputeNodeTemplate(),
@@ -643,6 +644,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_compute_region_disk_resource_policy_attachment":          compute.ResourceComputeRegionDiskResourcePolicyAttachment(),
 	"google_compute_region_health_check":                             compute.ResourceComputeRegionHealthCheck(),
 	"google_compute_region_network_endpoint_group":                   compute.ResourceComputeRegionNetworkEndpointGroup(),
+	"google_compute_region_network_firewall_policy":                  compute.ResourceComputeRegionNetworkFirewallPolicy(),
 	"google_compute_region_per_instance_config":                      compute.ResourceComputeRegionPerInstanceConfig(),
 	"google_compute_region_security_policy":                          compute.ResourceComputeRegionSecurityPolicy(),
 	"google_compute_region_security_policy_rule":                     compute.ResourceComputeRegionSecurityPolicyRule(),
