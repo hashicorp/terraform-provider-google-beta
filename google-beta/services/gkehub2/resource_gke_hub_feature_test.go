@@ -207,6 +207,8 @@ func TestAccGKEHubFeature_gkehubFeatureMciUpdate(t *testing.T) {
 		"random_suffix":   acctest.RandString(t, 10),
 		"org_id":          envvar.GetTestOrgFromEnv(t),
 		"billing_account": envvar.GetTestBillingAccountFromEnv(t),
+		"network_name":    acctest.BootstrapSharedTestNetwork(t, "gke-cluster"),
+		"subnetwork_name": acctest.BootstrapSubnet(t, "gke-cluster", acctest.BootstrapSharedTestNetwork(t, "gke-cluster")),
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -245,6 +247,8 @@ resource "google_container_cluster" "primary" {
   initial_node_count = 1
   project = google_project.project.project_id
   deletion_protection = false
+  network       = "%{network_name}"
+  subnetwork    = "%{subnetwork_name}"
   depends_on = [google_project_service.mci, google_project_service.container, google_project_service.container, google_project_service.gkehub]
 }
 
@@ -254,6 +258,8 @@ resource "google_container_cluster" "secondary" {
   initial_node_count = 1
   project = google_project.project.project_id
   deletion_protection = false
+  network       = "%{network_name}"
+  subnetwork    = "%{subnetwork_name}"
   depends_on = [google_project_service.mci, google_project_service.container, google_project_service.container, google_project_service.gkehub]
 }
 
@@ -298,6 +304,8 @@ resource "google_container_cluster" "primary" {
   initial_node_count = 1
   project = google_project.project.project_id
   deletion_protection = false
+  network       = "%{network_name}"
+  subnetwork    = "%{subnetwork_name}"
   depends_on = [google_project_service.mci, google_project_service.container, google_project_service.container, google_project_service.gkehub]
 }
 
@@ -307,6 +315,8 @@ resource "google_container_cluster" "secondary" {
   initial_node_count = 1
   project = google_project.project.project_id
   deletion_protection = false
+  network       = "%{network_name}"
+  subnetwork    = "%{subnetwork_name}"
   depends_on = [google_project_service.mci, google_project_service.container, google_project_service.container, google_project_service.gkehub]
 }
 

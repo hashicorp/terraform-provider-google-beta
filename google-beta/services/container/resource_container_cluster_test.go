@@ -176,13 +176,16 @@ func TestAccContainerCluster_withAddons(t *testing.T) {
 func TestAccContainerCluster_withDeletionProtection(t *testing.T) {
 	t.Parallel()
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
+	networkName := acctest.BootstrapSharedTestNetwork(t, "gke-cluster")
+	subnetworkName := acctest.BootstrapSubnet(t, "gke-cluster", networkName)
+
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccContainerCluster_withDeletionProtection(clusterName, "false"),
+				Config: testAccContainerCluster_withDeletionProtection(clusterName, networkName, subnetworkName, "false"),
 			},
 			{
 				ResourceName:            "google_container_cluster.primary",
@@ -191,15 +194,15 @@ func TestAccContainerCluster_withDeletionProtection(t *testing.T) {
 				ImportStateVerifyIgnore: []string{"deletion_protection"},
 			},
 			{
-				Config: testAccContainerCluster_withDeletionProtection(clusterName, "true"),
+				Config: testAccContainerCluster_withDeletionProtection(clusterName, networkName, subnetworkName, "true"),
 			},
 			{
-				Config:      testAccContainerCluster_withDeletionProtection(clusterName, "true"),
+				Config:      testAccContainerCluster_withDeletionProtection(clusterName, networkName, subnetworkName, "true"),
 				Destroy:     true,
 				ExpectError: regexp.MustCompile("Cannot destroy cluster because deletion_protection is set to true. Set it to false to proceed with cluster deletion."),
 			},
 			{
-				Config: testAccContainerCluster_withDeletionProtection(clusterName, "false"),
+				Config: testAccContainerCluster_withDeletionProtection(clusterName, networkName, subnetworkName, "false"),
 			},
 		},
 	})
@@ -2047,6 +2050,8 @@ func TestAccContainerCluster_withNodePoolNamePrefix(t *testing.T) {
 	t.Parallel()
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
+	networkName := acctest.BootstrapSharedTestNetwork(t, "gke-cluster")
+	subnetworkName := acctest.BootstrapSubnet(t, "gke-cluster", networkName)
 	npNamePrefix := "tf-test-np-"
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -2055,7 +2060,7 @@ func TestAccContainerCluster_withNodePoolNamePrefix(t *testing.T) {
 		CheckDestroy:             testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccContainerCluster_withNodePoolNamePrefix(clusterName, npNamePrefix),
+				Config: testAccContainerCluster_withNodePoolNamePrefix(clusterName, npNamePrefix, networkName, subnetworkName),
 			},
 			{
 				ResourceName:            "google_container_cluster.with_node_pool_name_prefix",
@@ -2781,6 +2786,8 @@ func TestAccContainerCluster_withShieldedNodes(t *testing.T) {
 	t.Parallel()
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
+	networkName := acctest.BootstrapSharedTestNetwork(t, "gke-cluster")
+	subnetworkName := acctest.BootstrapSubnet(t, "gke-cluster", networkName)
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -2788,7 +2795,7 @@ func TestAccContainerCluster_withShieldedNodes(t *testing.T) {
 		CheckDestroy:             testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccContainerCluster_withShieldedNodes(clusterName, true),
+				Config: testAccContainerCluster_withShieldedNodes(clusterName, networkName, subnetworkName, true),
 			},
 			{
 				ResourceName:            "google_container_cluster.with_shielded_nodes",
@@ -2797,7 +2804,7 @@ func TestAccContainerCluster_withShieldedNodes(t *testing.T) {
 				ImportStateVerifyIgnore: []string{"deletion_protection"},
 			},
 			{
-				Config: testAccContainerCluster_withShieldedNodes(clusterName, false),
+				Config: testAccContainerCluster_withShieldedNodes(clusterName, networkName, subnetworkName, false),
 			},
 			{
 				ResourceName:            "google_container_cluster.with_shielded_nodes",
@@ -3348,6 +3355,8 @@ func TestAccContainerCluster_withBinaryAuthorizationEvaluationModeAutopilot(t *t
 	t.Parallel()
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
+	networkName := acctest.BootstrapSharedTestNetwork(t, "gke-cluster")
+	subnetworkName := acctest.BootstrapSubnet(t, "gke-cluster", networkName)
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -3355,7 +3364,7 @@ func TestAccContainerCluster_withBinaryAuthorizationEvaluationModeAutopilot(t *t
 		CheckDestroy:             testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccContainerCluster_withBinaryAuthorizationEvaluationMode(clusterName, true, "PROJECT_SINGLETON_POLICY_ENFORCE"),
+				Config: testAccContainerCluster_withBinaryAuthorizationEvaluationMode(clusterName, true, "PROJECT_SINGLETON_POLICY_ENFORCE", networkName, subnetworkName),
 			},
 			{
 				ResourceName:            "google_container_cluster.with_binary_authorization_evaluation_mode",
@@ -3364,7 +3373,7 @@ func TestAccContainerCluster_withBinaryAuthorizationEvaluationModeAutopilot(t *t
 				ImportStateVerifyIgnore: []string{"deletion_protection"},
 			},
 			{
-				Config: testAccContainerCluster_withBinaryAuthorizationEvaluationMode(clusterName, true, "DISABLED"),
+				Config: testAccContainerCluster_withBinaryAuthorizationEvaluationMode(clusterName, true, "DISABLED", networkName, subnetworkName),
 			},
 			{
 				ResourceName:            "google_container_cluster.with_binary_authorization_evaluation_mode",
@@ -3380,6 +3389,8 @@ func TestAccContainerCluster_withBinaryAuthorizationEvaluationModeClassic(t *tes
 	t.Parallel()
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
+	networkName := acctest.BootstrapSharedTestNetwork(t, "gke-cluster")
+	subnetworkName := acctest.BootstrapSubnet(t, "gke-cluster", networkName)
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -3387,7 +3398,7 @@ func TestAccContainerCluster_withBinaryAuthorizationEvaluationModeClassic(t *tes
 		CheckDestroy:             testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccContainerCluster_withBinaryAuthorizationEvaluationMode(clusterName, false, "PROJECT_SINGLETON_POLICY_ENFORCE"),
+				Config: testAccContainerCluster_withBinaryAuthorizationEvaluationMode(clusterName, false, "PROJECT_SINGLETON_POLICY_ENFORCE", networkName, subnetworkName),
 			},
 			{
 				ResourceName:            "google_container_cluster.with_binary_authorization_evaluation_mode",
@@ -3396,7 +3407,7 @@ func TestAccContainerCluster_withBinaryAuthorizationEvaluationModeClassic(t *tes
 				ImportStateVerifyIgnore: []string{"deletion_protection"},
 			},
 			{
-				Config: testAccContainerCluster_withBinaryAuthorizationEvaluationMode(clusterName, false, "DISABLED"),
+				Config: testAccContainerCluster_withBinaryAuthorizationEvaluationMode(clusterName, false, "DISABLED", networkName, subnetworkName),
 			},
 			{
 				ResourceName:            "google_container_cluster.with_binary_authorization_evaluation_mode",
@@ -3882,6 +3893,8 @@ func TestAccContainerCluster_withAdvancedDatapath(t *testing.T) {
 	t.Parallel()
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
+	networkName := acctest.BootstrapSharedTestNetwork(t, "gke-cluster")
+	subnetworkName := acctest.BootstrapSubnet(t, "gke-cluster", networkName)
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -3889,7 +3902,7 @@ func TestAccContainerCluster_withAdvancedDatapath(t *testing.T) {
 		CheckDestroy:             testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccContainerCluster_withDatapathProvider(clusterName, "ADVANCED_DATAPATH"),
+				Config: testAccContainerCluster_withDatapathProvider(clusterName, "ADVANCED_DATAPATH", networkName, subnetworkName),
 			},
 			{
 				ResourceName:            "google_container_cluster.primary",
@@ -4269,6 +4282,8 @@ func TestAccContainerCluster_withFleetConfig(t *testing.T) {
 	t.Parallel()
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
+	networkName := acctest.BootstrapSharedTestNetwork(t, "gke-cluster")
+	subnetworkName := acctest.BootstrapSubnet(t, "gke-cluster", networkName)
 	projectID := envvar.GetTestProjectFromEnv()
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -4277,7 +4292,7 @@ func TestAccContainerCluster_withFleetConfig(t *testing.T) {
 		CheckDestroy:             testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccContainerCluster_withFleetConfig(clusterName, projectID),
+				Config: testAccContainerCluster_withFleetConfig(clusterName, projectID, networkName, subnetworkName),
 			},
 			{
 				ResourceName:            "google_container_cluster.primary",
@@ -4286,11 +4301,11 @@ func TestAccContainerCluster_withFleetConfig(t *testing.T) {
 				ImportStateVerifyIgnore: []string{"min_master_version", "deletion_protection"},
 			},
 			{
-				Config:      testAccContainerCluster_withFleetConfig(clusterName, "random-project"),
+				Config:      testAccContainerCluster_withFleetConfig(clusterName, "random-project", networkName, subnetworkName),
 				ExpectError: regexp.MustCompile(`changing existing fleet host project is not supported`),
 			},
 			{
-				Config: testAccContainerCluster_DisableFleet(clusterName),
+				Config: testAccContainerCluster_DisableFleet(clusterName, networkName, subnetworkName),
 			},
 			{
 				ResourceName:            "google_container_cluster.primary",
@@ -4340,7 +4355,7 @@ func TestAccContainerCluster_withWorkloadALTSConfig(t *testing.T) {
 	})
 }
 
-func testAccContainerCluster_withFleetConfig(name, projectID string) string {
+func testAccContainerCluster_withFleetConfig(name, projectID, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 resource "google_container_cluster" "primary" {
   name               = "%s"
@@ -4352,19 +4367,23 @@ resource "google_container_cluster" "primary" {
   }
 
   deletion_protection = false
+  network    = "%s"
+  subnetwork    = "%s"
 }
-`, name, projectID)
+`, name, projectID, networkName, subnetworkName)
 }
 
-func testAccContainerCluster_DisableFleet(resource_name string) string {
+func testAccContainerCluster_DisableFleet(resource_name, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 resource "google_container_cluster" "primary" {
   name               = "%s"
   location           = "us-central1-a"
   initial_node_count = 1
   deletion_protection = false
+  network    = "%s"
+  subnetwork    = "%s"
 }
-`, resource_name)
+`, resource_name, networkName, subnetworkName)
 }
 
 func testAccContainerCluster_withIncompatibleMasterVersionNodeVersion(name string) string {
@@ -4456,13 +4475,16 @@ func TestAccContainerCluster_autopilot_net_admin(t *testing.T) {
 	t.Parallel()
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
+	networkName := acctest.BootstrapSharedTestNetwork(t, "gke-cluster")
+	subnetworkName := acctest.BootstrapSubnet(t, "gke-cluster", networkName)
+
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccContainerCluster_autopilot_net_admin(clusterName, true),
+				Config: testAccContainerCluster_autopilot_net_admin(clusterName, networkName, subnetworkName, true),
 			},
 			{
 				ResourceName:            "google_container_cluster.primary",
@@ -4471,7 +4493,7 @@ func TestAccContainerCluster_autopilot_net_admin(t *testing.T) {
 				ImportStateVerifyIgnore: []string{"min_master_version", "deletion_protection"},
 			},
 			{
-				Config: testAccContainerCluster_autopilot_net_admin(clusterName, false),
+				Config: testAccContainerCluster_autopilot_net_admin(clusterName, networkName, subnetworkName, false),
 			},
 			{
 				ResourceName:            "google_container_cluster.primary",
@@ -4480,7 +4502,7 @@ func TestAccContainerCluster_autopilot_net_admin(t *testing.T) {
 				ImportStateVerifyIgnore: []string{"min_master_version", "deletion_protection"},
 			},
 			{
-				Config: testAccContainerCluster_autopilot_net_admin(clusterName, true),
+				Config: testAccContainerCluster_autopilot_net_admin(clusterName, networkName, subnetworkName, true),
 			},
 			{
 				ResourceName:            "google_container_cluster.primary",
@@ -5141,7 +5163,7 @@ resource "google_container_cluster" "with_network_policy_enabled" {
 `, clusterName, networkName, subnetworkName)
 }
 
-func testAccContainerCluster_withDeletionProtection(clusterName string, deletionProtection string) string {
+func testAccContainerCluster_withDeletionProtection(clusterName, networkName, subnetworkName, deletionProtection string) string {
 	return fmt.Sprintf(`
 resource "google_container_cluster" "primary" {
   name               = "%s"
@@ -5149,8 +5171,10 @@ resource "google_container_cluster" "primary" {
   initial_node_count = 1
 
   deletion_protection = %s
+  network    = "%s"
+  subnetwork    = "%s"
 }
-`, clusterName, deletionProtection)
+`, clusterName, deletionProtection, networkName, subnetworkName)
 }
 
 func testAccContainerCluster_withReleaseChannelEnabled(clusterName, channel, networkName, subnetworkName string) string {
@@ -7021,7 +7045,7 @@ resource "google_container_cluster" "with_node_pool" {
 `, cluster, nodePool, networkName, subnetworkName)
 }
 
-func testAccContainerCluster_withNodePoolNamePrefix(cluster, npPrefix string) string {
+func testAccContainerCluster_withNodePoolNamePrefix(cluster, npPrefix, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 resource "google_container_cluster" "with_node_pool_name_prefix" {
   name     = "%s"
@@ -7032,8 +7056,10 @@ resource "google_container_cluster" "with_node_pool_name_prefix" {
     node_count  = 2
   }
   deletion_protection = false
+  network    = "%s"
+  subnetwork    = "%s"
 }
-`, cluster, npPrefix)
+`, cluster, npPrefix, networkName, subnetworkName)
 }
 
 func testAccContainerCluster_withNodePoolMultiple(cluster, npPrefix, networkName, subnetworkName string) string {
@@ -7745,7 +7771,7 @@ resource "google_container_cluster" "with_private_cluster" {
 `, clusterName, masterGlobalAccessEnabled, networkName, subnetworkName)
 }
 
-func testAccContainerCluster_withShieldedNodes(clusterName string, enabled bool) string {
+func testAccContainerCluster_withShieldedNodes(clusterName, networkName, subnetworkName string, enabled bool) string {
 	return fmt.Sprintf(`
 resource "google_container_cluster" "with_shielded_nodes" {
   name               = "%s"
@@ -7754,8 +7780,10 @@ resource "google_container_cluster" "with_shielded_nodes" {
 
   enable_shielded_nodes = %v
   deletion_protection = false
+  network    = "%s"
+  subnetwork    = "%s"
 }
-`, clusterName, enabled)
+`, clusterName, enabled, networkName, subnetworkName)
 }
 
 func testAccContainerCluster_withWorkloadIdentityConfigEnabled(projectID, clusterName, networkName, subnetworkName string) string {
@@ -7935,7 +7963,7 @@ resource "google_container_cluster" "with_binary_authorization_enabled_bool" {
 `, clusterName, enabled, networkName, subnetworkName)
 }
 
-func testAccContainerCluster_withBinaryAuthorizationEvaluationMode(clusterName string, autopilot_enabled bool, evaluation_mode string) string {
+func testAccContainerCluster_withBinaryAuthorizationEvaluationMode(clusterName string, autopilot_enabled bool, evaluation_mode, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 resource "google_container_cluster" "with_binary_authorization_evaluation_mode" {
   name               = "%s"
@@ -7949,8 +7977,10 @@ resource "google_container_cluster" "with_binary_authorization_evaluation_mode" 
     evaluation_mode = "%s"
   }
   deletion_protection = false
+  network    = "%s"
+  subnetwork    = "%s"
 }
-`, clusterName, autopilot_enabled, evaluation_mode)
+`, clusterName, autopilot_enabled, evaluation_mode, networkName, subnetworkName)
 }
 
 func testAccContainerCluster_withFlexiblePodCIDR(containerNetName string, clusterName string) string {
@@ -8227,7 +8257,7 @@ resource "google_container_cluster" "primary" {
 `, kmsData.KeyRing.Name, kmsData.CryptoKey.Name, clusterName, networkName, subnetworkName)
 }
 
-func testAccContainerCluster_withDatapathProvider(clusterName, datapathProvider string) string {
+func testAccContainerCluster_withDatapathProvider(clusterName, datapathProvider, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 resource "google_container_cluster" "primary" {
   name               = "%s"
@@ -8242,8 +8272,10 @@ resource "google_container_cluster" "primary" {
     channel = "RAPID"
   }
   deletion_protection = false
+  network    = "%s"
+  subnetwork    = "%s"
 }
-`, clusterName, datapathProvider)
+`, clusterName, datapathProvider, networkName, subnetworkName)
 }
 
 func testAccContainerCluster_withMasterAuthorizedNetworksDisabled(containerNetName string, clusterName string) string {
@@ -8961,7 +8993,7 @@ resource "google_container_cluster" "primary" {
 }`, name)
 }
 
-func testAccContainerCluster_autopilot_net_admin(name string, enabled bool) string {
+func testAccContainerCluster_autopilot_net_admin(name, networkName, subnetworkName string, enabled bool) string {
 	return fmt.Sprintf(`
 resource "google_container_cluster" "primary" {
   name             = "%s"
@@ -8970,7 +9002,10 @@ resource "google_container_cluster" "primary" {
   allow_net_admin  = %t
   min_master_version = 1.27
   deletion_protection = false
-}`, name, enabled)
+  network    = "%s"
+  subnetwork    = "%s"
+}
+`, name, enabled, networkName, subnetworkName)
 }
 
 func TestAccContainerCluster_customPlacementPolicy(t *testing.T) {
@@ -9127,6 +9162,8 @@ func TestAccContainerCluster_withConfidentialBootDisk(t *testing.T) {
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	npName := fmt.Sprintf("tf-test-node-pool-%s", acctest.RandString(t, 10))
 	kms := acctest.BootstrapKMSKeyInLocation(t, "us-central1")
+	networkName := acctest.BootstrapSharedTestNetwork(t, "gke-cluster")
+	subnetworkName := acctest.BootstrapSubnet(t, "gke-cluster", networkName)
 
 	if acctest.BootstrapPSARole(t, "service-", "compute-system", "roles/cloudkms.cryptoKeyEncrypterDecrypter") {
 		t.Fatal("Stopping the test because a role was added to the policy.")
@@ -9138,7 +9175,7 @@ func TestAccContainerCluster_withConfidentialBootDisk(t *testing.T) {
 		CheckDestroy:             testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccContainerCluster_withConfidentialBootDisk(clusterName, npName, kms.CryptoKey.Name),
+				Config: testAccContainerCluster_withConfidentialBootDisk(clusterName, npName, kms.CryptoKey.Name, networkName, subnetworkName),
 			},
 			{
 				ResourceName:            "google_container_cluster.with_confidential_boot_disk",
@@ -9150,31 +9187,33 @@ func TestAccContainerCluster_withConfidentialBootDisk(t *testing.T) {
 	})
 }
 
-func testAccContainerCluster_withConfidentialBootDisk(clusterName, npName, kmsKeyName string) string {
+func testAccContainerCluster_withConfidentialBootDisk(clusterName, npName, kmsKeyName, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 resource "google_container_cluster" "with_confidential_boot_disk" {
- name               = "%s"
- location           = "us-central1-a"
- release_channel {
- channel = "RAPID"
+  name               = "%s"
+  location           = "us-central1-a"
+  release_channel {
+  channel = "RAPID"
 }
- node_pool {
-  name = "%s"
-  initial_node_count = 1
-  node_config {
-  oauth_scopes = [
-    "https://www.googleapis.com/auth/cloud-platform",
-   ]
-  image_type = "COS_CONTAINERD"
-  boot_disk_kms_key = "%s"
-  machine_type = "n2-standard-2"
-  enable_confidential_storage = true
-  disk_type = "hyperdisk-balanced"
+  node_pool {
+    name = "%s"
+    initial_node_count = 1
+    node_config {
+    oauth_scopes = [
+      "https://www.googleapis.com/auth/cloud-platform",
+    ]
+    image_type = "COS_CONTAINERD"
+    boot_disk_kms_key = "%s"
+    machine_type = "n2-standard-2"
+    enable_confidential_storage = true
+    disk_type = "hyperdisk-balanced"
   }
 }
- deletion_protection = false
+  deletion_protection = false
+  network    = "%s"
+  subnetwork    = "%s"
 }
-`, clusterName, npName, kmsKeyName)
+`, clusterName, npName, kmsKeyName, networkName, subnetworkName)
 }
 
 func TestAccContainerCluster_withConfidentialBootDiskNodeConfig(t *testing.T) {
@@ -9182,6 +9221,8 @@ func TestAccContainerCluster_withConfidentialBootDiskNodeConfig(t *testing.T) {
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	kms := acctest.BootstrapKMSKeyInLocation(t, "us-central1")
+	networkName := acctest.BootstrapSharedTestNetwork(t, "gke-cluster")
+	subnetworkName := acctest.BootstrapSubnet(t, "gke-cluster", networkName)
 
 	if acctest.BootstrapPSARole(t, "service-", "compute-system", "roles/cloudkms.cryptoKeyEncrypterDecrypter") {
 		t.Fatal("Stopping the test because a role was added to the policy.")
@@ -9193,7 +9234,7 @@ func TestAccContainerCluster_withConfidentialBootDiskNodeConfig(t *testing.T) {
 		CheckDestroy:             testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccContainerCluster_withConfidentialBootDiskNodeConfig(clusterName, kms.CryptoKey.Name),
+				Config: testAccContainerCluster_withConfidentialBootDiskNodeConfig(clusterName, kms.CryptoKey.Name, networkName, subnetworkName),
 			},
 			{
 				ResourceName:            "google_container_cluster.with_confidential_boot_disk_node_config",
@@ -9205,28 +9246,30 @@ func TestAccContainerCluster_withConfidentialBootDiskNodeConfig(t *testing.T) {
 	})
 }
 
-func testAccContainerCluster_withConfidentialBootDiskNodeConfig(clusterName, kmsKeyName string) string {
+func testAccContainerCluster_withConfidentialBootDiskNodeConfig(clusterName, kmsKeyName, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 resource "google_container_cluster" "with_confidential_boot_disk_node_config" {
- name               = "%s"
- location           = "us-central1-a"
- initial_node_count = 1
- release_channel {
-   channel = "RAPID"
+  name               = "%s"
+  location           = "us-central1-a"
+  initial_node_count = 1
+  release_channel {
+    channel = "RAPID"
   }
- node_config {
-  oauth_scopes = [
-    "https://www.googleapis.com/auth/cloud-platform",
-  ]
- image_type = "COS_CONTAINERD"
- boot_disk_kms_key = "%s"
- machine_type = "n2-standard-2"
- enable_confidential_storage = true
- disk_type = "hyperdisk-balanced"
- }
-deletion_protection = false
+  node_config {
+    oauth_scopes = [
+      "https://www.googleapis.com/auth/cloud-platform",
+    ]
+    image_type = "COS_CONTAINERD"
+    boot_disk_kms_key = "%s"
+    machine_type = "n2-standard-2"
+    enable_confidential_storage = true
+    disk_type = "hyperdisk-balanced"
+  }
+  deletion_protection = false
+  network    = "%s"
+  subnetwork    = "%s"
 }
-`, clusterName, kmsKeyName)
+`, clusterName, kmsKeyName, networkName, subnetworkName)
 }
 
 func TestAccContainerCluster_withoutConfidentialBootDisk(t *testing.T) {
@@ -9234,6 +9277,8 @@ func TestAccContainerCluster_withoutConfidentialBootDisk(t *testing.T) {
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	npName := fmt.Sprintf("tf-test-cluster-nodepool-%s", acctest.RandString(t, 10))
+	networkName := acctest.BootstrapSharedTestNetwork(t, "gke-cluster")
+	subnetworkName := acctest.BootstrapSubnet(t, "gke-cluster", networkName)
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -9241,7 +9286,7 @@ func TestAccContainerCluster_withoutConfidentialBootDisk(t *testing.T) {
 		CheckDestroy:             testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccContainerCluster_withoutConfidentialBootDisk(clusterName, npName),
+				Config: testAccContainerCluster_withoutConfidentialBootDisk(clusterName, npName, networkName, subnetworkName),
 			},
 			{
 				ResourceName:            "google_container_cluster.without_confidential_boot_disk",
@@ -9252,30 +9297,32 @@ func TestAccContainerCluster_withoutConfidentialBootDisk(t *testing.T) {
 		},
 	})
 }
-func testAccContainerCluster_withoutConfidentialBootDisk(clusterName string, npName string) string {
+func testAccContainerCluster_withoutConfidentialBootDisk(clusterName, npName, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 resource "google_container_cluster" "without_confidential_boot_disk" {
- name               = "%s"
- location           = "us-central1-a"
- release_channel {
-   channel = "RAPID"
+  name               = "%s"
+  location           = "us-central1-a"
+  release_channel {
+    channel = "RAPID"
   }
- node_pool {
-  name = "%s"
-  initial_node_count = 1
-  node_config {
-  oauth_scopes = [
-   "https://www.googleapis.com/auth/cloud-platform",
-  ]
-  image_type = "COS_CONTAINERD"
-  machine_type = "n2-standard-2"
-  enable_confidential_storage = false
-  disk_type = "pd-balanced"
+  node_pool {
+    name = "%s"
+    initial_node_count = 1
+    node_config {
+      oauth_scopes = [
+       "https://www.googleapis.com/auth/cloud-platform",
+      ]
+      image_type = "COS_CONTAINERD"
+      machine_type = "n2-standard-2"
+      enable_confidential_storage = false
+      disk_type = "pd-balanced"
+    }
   }
+  deletion_protection = false
+  network    = "%s"
+  subnetwork    = "%s"
 }
- deletion_protection = false
-}
-`, clusterName, npName)
+`, clusterName, npName, networkName, subnetworkName)
 }
 
 func testAccContainerCluster_withWorkloadALTSConfig(projectID, name, networkName, subnetworkName string, enable bool) string {
