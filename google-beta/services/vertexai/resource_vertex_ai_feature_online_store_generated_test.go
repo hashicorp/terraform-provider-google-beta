@@ -49,7 +49,7 @@ func TestAccVertexAIFeatureOnlineStore_vertexAiFeatureOnlineStoreExample(t *test
 				ResourceName:            "google_vertex_ai_feature_online_store.feature_online_store",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"etag", "region", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"name", "etag", "region", "force_destroy", "labels", "terraform_labels"},
 			},
 		},
 	})
@@ -57,20 +57,121 @@ func TestAccVertexAIFeatureOnlineStore_vertexAiFeatureOnlineStoreExample(t *test
 
 func testAccVertexAIFeatureOnlineStore_vertexAiFeatureOnlineStoreExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
-resource google_vertex_ai_feature_online_store "feature_online_store" {
-    name = "tf_test_example_feature_online_store%{random_suffix}"
-    region = "us-central1"
-    labels = {
-        label-one = "value-one"
+resource "google_vertex_ai_feature_online_store" "feature_online_store" {
+  name = "tf_test_example_feature_online_store%{random_suffix}"
+  labels = {
+    foo = "bar"
+  }
+  region = "us-central1"
+  bigtable {
+    auto_scaling {
+      min_node_count         = 1
+      max_node_count         = 3
+      cpu_utilization_target = 50
     }
+  }
+}
+`, context)
+}
 
-    bigtable {
-        auto_scaling {
-            min_node_count = 1
-            max_node_count = 2
-            cpu_utilization_target = 60
-        }
+func TestAccVertexAIFeatureOnlineStore_vertexAiFeatureonlinestoreWithBetaFieldsOptimizedExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"random_suffix": acctest.RandString(t, 10),
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckVertexAIFeatureOnlineStoreDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccVertexAIFeatureOnlineStore_vertexAiFeatureonlinestoreWithBetaFieldsOptimizedExample(context),
+			},
+			{
+				ResourceName:            "google_vertex_ai_feature_online_store.featureonlinestore",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"name", "etag", "region", "force_destroy", "labels", "terraform_labels"},
+			},
+		},
+	})
+}
+
+func testAccVertexAIFeatureOnlineStore_vertexAiFeatureonlinestoreWithBetaFieldsOptimizedExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_vertex_ai_feature_online_store" "featureonlinestore" {
+  provider = google-beta
+  name     = "tf_test_example_feature_online_store_optimized%{random_suffix}"
+  labels = {
+    foo = "bar"
+  }
+  region = "us-central1"
+  optimized {}
+  dedicated_serving_endpoint {
+    private_service_connect_config {
+      enable_private_service_connect = true
+      project_allowlist              = [data.google_project.project.number]
     }
+  }
+}
+
+data "google_project" "project" {
+  provider = google-beta
+}
+`, context)
+}
+
+func TestAccVertexAIFeatureOnlineStore_vertexAiFeatureonlinestoreWithBetaFieldsBigtableExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"random_suffix": acctest.RandString(t, 10),
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckVertexAIFeatureOnlineStoreDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccVertexAIFeatureOnlineStore_vertexAiFeatureonlinestoreWithBetaFieldsBigtableExample(context),
+			},
+			{
+				ResourceName:            "google_vertex_ai_feature_online_store.featureonlinestore",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"name", "etag", "region", "force_destroy", "labels", "terraform_labels"},
+			},
+		},
+	})
+}
+
+func testAccVertexAIFeatureOnlineStore_vertexAiFeatureonlinestoreWithBetaFieldsBigtableExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_vertex_ai_feature_online_store" "featureonlinestore" {
+  provider = google-beta
+  name     = "tf_test_example_feature_online_store_beta_bigtable%{random_suffix}"
+  labels = {
+    foo = "bar"
+  }
+  region = "us-central1"
+  bigtable {
+    auto_scaling {
+      min_node_count         = 1
+      max_node_count         = 2
+      cpu_utilization_target = 80
+    }
+  }
+  embedding_management {
+    enabled = true
+  }
+  force_destroy = true
+}
+
+data "google_project" "project" {
+  provider = google-beta
 }
 `, context)
 }
