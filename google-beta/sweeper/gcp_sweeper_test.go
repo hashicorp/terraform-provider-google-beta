@@ -31,6 +31,7 @@ import (
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/cloudasset"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/cloudbuild"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/cloudbuildv2"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/clouddeploy"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/cloudfunctions"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/cloudfunctions2"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/cloudidentity"
