@@ -52,6 +52,7 @@ var (
 		"config.0.software_config.0.python_version",
 		"config.0.software_config.0.scheduler_count",
 		"config.0.software_config.0.cloud_data_lineage_integration",
+		"config.0.software_config.0.web_server_plugins_mode",
 	}
 
 	composerConfigKeys = []string{
@@ -80,6 +81,7 @@ var (
 		"config.0.workloads_config.0.triggerer",
 		"config.0.workloads_config.0.web_server",
 		"config.0.workloads_config.0.worker",
+		"config.0.workloads_config.0.dag_processor",
 	}
 
 	composerPrivateEnvironmentConfig = []string{
@@ -466,6 +468,15 @@ func ResourceComposerEnvironment() *schema.Resource {
 											},
 										},
 									},
+									"web_server_plugins_mode": {
+										Type:         schema.TypeString,
+										Optional:     true,
+										Computed:     true,
+										ForceNew:     false,
+										AtLeastOneOf: composerSoftwareConfigKeys,
+										ValidateFunc: validation.StringInSlice([]string{"ENABLED", "DISABLED"}, false),
+										Description:  `Should be either 'ENABLED' or 'DISABLED'. Defaults to 'ENABLED'. Used in Composer 3.`,
+									},
 								},
 							},
 						},
@@ -669,6 +680,7 @@ func ResourceComposerEnvironment() *schema.Resource {
 										Optional:     true,
 										AtLeastOneOf: workloadsConfigKeys,
 										ForceNew:     false,
+										Computed:     true,
 										Description:  `Configuration for resources used by Airflow schedulers.`,
 										MaxItems:     1,
 										Elem: &schema.Resource{
@@ -677,6 +689,7 @@ func ResourceComposerEnvironment() *schema.Resource {
 													Type:         schema.TypeFloat,
 													Optional:     true,
 													ForceNew:     false,
+													Computed:     true,
 													ValidateFunc: validation.FloatAtLeast(0),
 													Description:  `CPU request and limit for a single Airflow scheduler replica`,
 												},
@@ -684,6 +697,7 @@ func ResourceComposerEnvironment() *schema.Resource {
 													Type:         schema.TypeFloat,
 													Optional:     true,
 													ForceNew:     false,
+													Computed:     true,
 													ValidateFunc: validation.FloatAtLeast(0),
 													Description:  `Memory (GB) request and limit for a single Airflow scheduler replica.`,
 												},
@@ -691,6 +705,7 @@ func ResourceComposerEnvironment() *schema.Resource {
 													Type:         schema.TypeFloat,
 													Optional:     true,
 													ForceNew:     false,
+													Computed:     true,
 													ValidateFunc: validation.FloatAtLeast(0),
 													Description:  `Storage (GB) request and limit for a single Airflow scheduler replica.`,
 												},
@@ -698,6 +713,7 @@ func ResourceComposerEnvironment() *schema.Resource {
 													Type:         schema.TypeInt,
 													Optional:     true,
 													ForceNew:     false,
+													Computed:     true,
 													ValidateFunc: validation.IntAtLeast(0),
 													Description:  `The number of schedulers.`,
 												},
@@ -708,6 +724,7 @@ func ResourceComposerEnvironment() *schema.Resource {
 										Type:         schema.TypeList,
 										Optional:     true,
 										AtLeastOneOf: workloadsConfigKeys,
+										Computed:     true,
 										Description:  `Configuration for resources used by Airflow triggerers.`,
 										MaxItems:     1,
 										Elem: &schema.Resource{
@@ -738,6 +755,7 @@ func ResourceComposerEnvironment() *schema.Resource {
 										Optional:     true,
 										AtLeastOneOf: workloadsConfigKeys,
 										ForceNew:     false,
+										Computed:     true,
 										Description:  `Configuration for resources used by Airflow web server.`,
 										MaxItems:     1,
 										Elem: &schema.Resource{
@@ -746,6 +764,7 @@ func ResourceComposerEnvironment() *schema.Resource {
 													Type:         schema.TypeFloat,
 													Optional:     true,
 													ForceNew:     false,
+													Computed:     true,
 													ValidateFunc: validation.FloatAtLeast(0),
 													Description:  `CPU request and limit for Airflow web server.`,
 												},
@@ -753,6 +772,7 @@ func ResourceComposerEnvironment() *schema.Resource {
 													Type:         schema.TypeFloat,
 													Optional:     true,
 													ForceNew:     false,
+													Computed:     true,
 													ValidateFunc: validation.FloatAtLeast(0),
 													Description:  `Memory (GB) request and limit for Airflow web server.`,
 												},
@@ -760,6 +780,7 @@ func ResourceComposerEnvironment() *schema.Resource {
 													Type:         schema.TypeFloat,
 													Optional:     true,
 													ForceNew:     false,
+													Computed:     true,
 													ValidateFunc: validation.FloatAtLeast(0),
 													Description:  `Storage (GB) request and limit for Airflow web server.`,
 												},
@@ -771,6 +792,7 @@ func ResourceComposerEnvironment() *schema.Resource {
 										Optional:     true,
 										AtLeastOneOf: workloadsConfigKeys,
 										ForceNew:     false,
+										Computed:     true,
 										Description:  `Configuration for resources used by Airflow workers.`,
 										MaxItems:     1,
 										Elem: &schema.Resource{
@@ -779,6 +801,7 @@ func ResourceComposerEnvironment() *schema.Resource {
 													Type:         schema.TypeFloat,
 													Optional:     true,
 													ForceNew:     false,
+													Computed:     true,
 													ValidateFunc: validation.FloatAtLeast(0),
 													Description:  `CPU request and limit for a single Airflow worker replica.`,
 												},
@@ -786,6 +809,7 @@ func ResourceComposerEnvironment() *schema.Resource {
 													Type:         schema.TypeFloat,
 													Optional:     true,
 													ForceNew:     false,
+													Computed:     true,
 													ValidateFunc: validation.FloatAtLeast(0),
 													Description:  `Memory (GB) request and limit for a single Airflow worker replica.`,
 												},
@@ -793,6 +817,7 @@ func ResourceComposerEnvironment() *schema.Resource {
 													Type:         schema.TypeFloat,
 													Optional:     true,
 													ForceNew:     false,
+													Computed:     true,
 													ValidateFunc: validation.FloatAtLeast(0),
 													Description:  `Storage (GB) request and limit for a single Airflow worker replica.`,
 												},
@@ -800,6 +825,7 @@ func ResourceComposerEnvironment() *schema.Resource {
 													Type:         schema.TypeInt,
 													Optional:     true,
 													ForceNew:     false,
+													Computed:     true,
 													ValidateFunc: validation.IntAtLeast(0),
 													Description:  `Minimum number of workers for autoscaling.`,
 												},
@@ -807,8 +833,46 @@ func ResourceComposerEnvironment() *schema.Resource {
 													Type:         schema.TypeInt,
 													Optional:     true,
 													ForceNew:     false,
+													Computed:     true,
 													ValidateFunc: validation.IntAtLeast(0),
 													Description:  `Maximum number of workers for autoscaling.`,
+												},
+											},
+										},
+									},
+									"dag_processor": {
+										Type:         schema.TypeList,
+										Optional:     true,
+										AtLeastOneOf: workloadsConfigKeys,
+										ForceNew:     false,
+										Computed:     true,
+										Description:  `Configuration for resources used by DAG processor.`,
+										MaxItems:     1,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"cpu": {
+													Type:         schema.TypeFloat,
+													Optional:     true,
+													ForceNew:     false,
+													Computed:     true,
+													ValidateFunc: validation.FloatAtLeast(0),
+													Description:  `CPU request and limit for DAG processor.`,
+												},
+												"memory_gb": {
+													Type:         schema.TypeFloat,
+													Optional:     true,
+													ForceNew:     false,
+													Computed:     true,
+													ValidateFunc: validation.FloatAtLeast(0),
+													Description:  `Memory (GB) request and limit for DAG processor.`,
+												},
+												"storage_gb": {
+													Type:         schema.TypeFloat,
+													Optional:     true,
+													ForceNew:     false,
+													Computed:     true,
+													ValidateFunc: validation.FloatAtLeast(0),
+													Description:  `Storage (GB) request and limit for DAG processor.`,
 												},
 											},
 										},
@@ -1152,6 +1216,21 @@ func resourceComposerEnvironmentUpdate(d *schema.ResourceData, meta interface{})
 			}
 
 			err = resourceComposerEnvironmentPatchField("config.softwareConfig.pypiPackages", userAgent, patchObj, d, tfConfig)
+			if err != nil {
+				return err
+			}
+		}
+
+		if d.HasChange("config.0.software_config.0.web_server_plugins_mode") {
+			patchObj := &composer.Environment{
+				Config: &composer.EnvironmentConfig{
+					SoftwareConfig: &composer.SoftwareConfig{},
+				},
+			}
+			if config != nil && config.SoftwareConfig != nil {
+				patchObj.Config.SoftwareConfig.WebServerPluginsMode = config.SoftwareConfig.WebServerPluginsMode
+			}
+			err = resourceComposerEnvironmentPatchField("config.softwareConfig.webServerPluginsMode", userAgent, patchObj, d, tfConfig)
 			if err != nil {
 				return err
 			}
@@ -1516,11 +1595,13 @@ func flattenComposerEnvironmentConfigWorkloadsConfig(workloadsConfig *composer.W
 	transformedTriggerer := make(map[string]interface{})
 	transformedWebServer := make(map[string]interface{})
 	transformedWorker := make(map[string]interface{})
+	transformedDagProcessor := make(map[string]interface{})
 
 	wlCfgScheduler := workloadsConfig.Scheduler
 	wlCfgTriggerer := workloadsConfig.Triggerer
 	wlCfgWebServer := workloadsConfig.WebServer
 	wlCfgWorker := workloadsConfig.Worker
+	wlCfgDagProcessor := workloadsConfig.DagProcessor
 
 	if wlCfgScheduler == nil {
 		transformedScheduler = nil
@@ -1557,12 +1638,21 @@ func flattenComposerEnvironmentConfigWorkloadsConfig(workloadsConfig *composer.W
 		transformedWorker["max_count"] = wlCfgWorker.MaxCount
 	}
 
+	if wlCfgDagProcessor == nil {
+		transformedDagProcessor = nil
+	} else {
+		transformedDagProcessor["cpu"] = wlCfgDagProcessor.Cpu
+		transformedDagProcessor["memory_gb"] = wlCfgDagProcessor.MemoryGb
+		transformedDagProcessor["storage_gb"] = wlCfgDagProcessor.StorageGb
+	}
+
 	transformed["scheduler"] = []interface{}{transformedScheduler}
 	if transformedTriggerer != nil {
 		transformed["triggerer"] = []interface{}{transformedTriggerer}
 	}
 	transformed["web_server"] = []interface{}{transformedWebServer}
 	transformed["worker"] = []interface{}{transformedWorker}
+	transformed["dag_processor"] = []interface{}{transformedDagProcessor}
 
 	return []interface{}{transformed}
 }
@@ -1649,6 +1739,13 @@ func flattenComposerEnvironmentConfigSoftwareConfig(softwareCfg *composer.Softwa
 	transformed["env_variables"] = softwareCfg.EnvVariables
 	transformed["scheduler_count"] = softwareCfg.SchedulerCount
 	transformed["cloud_data_lineage_integration"] = flattenComposerEnvironmentConfigSoftwareConfigCloudDataLineageIntegration(softwareCfg.CloudDataLineageIntegration)
+	if softwareCfg.WebServerPluginsMode == "PLUGINS_DISABLED" {
+		transformed["web_server_plugins_mode"] = "DISABLED"
+	} else if softwareCfg.WebServerPluginsMode == "PLUGINS_ENABLED" {
+		transformed["web_server_plugins_mode"] = "ENABLED"
+	} else {
+		transformed["web_server_plugins_mode"] = softwareCfg.WebServerPluginsMode
+	}
 	return []interface{}{transformed}
 }
 
@@ -1967,6 +2064,17 @@ func expandComposerEnvironmentConfigWorkloadsConfig(v interface{}, d *schema.Res
 			transformedWorker.MinCount = int64(originalWorkerRaw["min_count"].(int))
 			transformedWorker.MaxCount = int64(originalWorkerRaw["max_count"].(int))
 			transformed.Worker = transformedWorker
+		}
+	}
+
+	if v, ok := original["dag_processor"]; ok {
+		if len(v.([]interface{})) > 0 && v.([]interface{})[0] != nil {
+			transformedDagProcessor := &composer.DagProcessorResource{}
+			originalDagProcessorRaw := v.([]interface{})[0].(map[string]interface{})
+			transformedDagProcessor.Cpu = originalDagProcessorRaw["cpu"].(float64)
+			transformedDagProcessor.MemoryGb = originalDagProcessorRaw["memory_gb"].(float64)
+			transformedDagProcessor.StorageGb = originalDagProcessorRaw["storage_gb"].(float64)
+			transformed.DagProcessor = transformedDagProcessor
 		}
 	}
 
@@ -2292,6 +2400,14 @@ func expandComposerEnvironmentConfigSoftwareConfig(v interface{}, d *schema.Reso
 		return nil, err
 	}
 	transformed.CloudDataLineageIntegration = transformedCloudDataLineageIntegration
+
+	if original["web_server_plugins_mode"].(string) == "DISABLED" {
+		transformed.WebServerPluginsMode = "PLUGINS_DISABLED"
+	} else if original["web_server_plugins_mode"].(string) == "ENABLED" {
+		transformed.WebServerPluginsMode = "PLUGINS_ENABLED"
+	} else {
+		transformed.WebServerPluginsMode = original["web_server_plugins_mode"].(string)
+	}
 
 	return transformed, nil
 }
