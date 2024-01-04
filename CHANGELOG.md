@@ -1,5 +1,50 @@
 ## 5.11.0 (Unreleased)
 
+NOTES:
+* compute: changed underlying actuation engine for `google_network_firewall_policy` and `google_region_network_firewall_policy`, there should be no user-facing impact ([#6776](https://github.com/hashicorp/terraform-provider-google-beta/pull/6776))
+DEPRECATIONS:
+* gkehub2: deprecated field `configmanagement.config_sync.oci.version` in `google_gke_hub_feature` resource ([#6764](https://github.com/hashicorp/terraform-provider-google-beta/pull/6764))
+
+FEATURES:
+* **New Data Source:** `google_compute_reservation` ([#6791](https://github.com/hashicorp/terraform-provider-google-beta/pull/6791))
+* **New Resource:** `google_clouddeploy_automation` ([#6794](https://github.com/hashicorp/terraform-provider-google-beta/pull/6794))
+* **New Resource:** `google_integration_connectors_endpoint_attachment` ([#6766](https://github.com/hashicorp/terraform-provider-google-beta/pull/6766))
+* **New Resource:** `google_logging_folder_settings` ([#6754](https://github.com/hashicorp/terraform-provider-google-beta/pull/6754))
+* **New Resource:** `google_logging_organization_settings` ([#6754](https://github.com/hashicorp/terraform-provider-google-beta/pull/6754))
+* **New Resource:** `google_netapp_active_directory` ([#6781](https://github.com/hashicorp/terraform-provider-google-beta/pull/6781))
+* **New Resource:** `google_vertex_ai_feature_online_store` ([#6779](https://github.com/hashicorp/terraform-provider-google-beta/pull/6779))
+* **New Resource:** `google_vertexai_feature_group` ([#6780](https://github.com/hashicorp/terraform-provider-google-beta/pull/6780))
+* **New Resource:** `google_netapp_backup_vault` ([#6793](https://github.com/hashicorp/terraform-provider-google-beta/pull/6793))
+
+IMPROVEMENTS:
+* bigqueryanalyticshub: added `restricted_export_config` field to `google_bigquery_analytics_hub_listing ` resource ([#6784](https://github.com/hashicorp/terraform-provider-google-beta/pull/6784))
+* composer: added support for `composer_internal_ipv4_cidr_block` field to `google_composer_environment` ([#6761](https://github.com/hashicorp/terraform-provider-google-beta/pull/6761))
+* composer: added support for creation and update for `config.software_config.web_server_plugins_mode`, `config.workloads_config` and `dag_processor` fields to `google_composer_environment`. ([#6797](https://github.com/hashicorp/terraform-provider-google-beta/pull/6797))
+* compute: added `provisioned_iops`and `provisioned_throughput` fields under `boot_disk.initialize_params` to `google_compute_instance` resource ([#6792](https://github.com/hashicorp/terraform-provider-google-beta/pull/6792))
+* compute: added `resource_manager_tags` and `disk.resource_manager_tags` for `google_compute_instance_template` ([#6798](https://github.com/hashicorp/terraform-provider-google-beta/pull/6798))
+* compute: added `resource_manager_tags` and `disk.resource_manager_tags` for `google_compute_region_instance_template` ([#6798](https://github.com/hashicorp/terraform-provider-google-beta/pull/6798))
+* container: added `workload_alts_config` field to `google_container_cluster` resource ([#6762](https://github.com/hashicorp/terraform-provider-google-beta/pull/6762))
+* dataproc: added `auxiliary_node_groups` field to `google_dataproc_cluster` resource ([#6753](https://github.com/hashicorp/terraform-provider-google-beta/pull/6753))
+* edgecontainer: increased default timeout on `google_edgecontainer_cluster`, `google_edgecontainer_node_pool` to 480m from 60m ([#6796](https://github.com/hashicorp/terraform-provider-google-beta/pull/6796))
+* gkehub2: added field `version` under `configmanagement` in `google_gke_hub_feature` resource ([#6764](https://github.com/hashicorp/terraform-provider-google-beta/pull/6764))
+* kms: added output-only field `primary` to `google_kms_crypto_key` ([#6782](https://github.com/hashicorp/terraform-provider-google-beta/pull/6782))
+* metastore: added `consumers.custom_routes_enabled` to google_dataproc_metastore_service ([#6767](https://github.com/hashicorp/terraform-provider-google-beta/pull/6767))
+* sql: added support for IAM GROUP authentication in the `type` field of `google_sql_user` ([#6787](https://github.com/hashicorp/terraform-provider-google-beta/pull/6787))
+* storagetransfer: made `name` field to be optional in resource `google_storage_transfer_job` so it can be provided by the users ([#6777](https://github.com/hashicorp/terraform-provider-google-beta/pull/6777))
+* vertexai: added `force_destroy` field to `google_vertex_ai_feature_online_store` resource ([#6789](https://github.com/hashicorp/terraform-provider-google-beta/pull/6789))
+* vertexai: added `optimized`, `dedicated_serving_endpoint` and `embedding_management` fields to `google_vertex_ai_feature_online_store` resource ([#6789](https://github.com/hashicorp/terraform-provider-google-beta/pull/6789))
+
+BUG FIXES:
+* container: added check that node_version and min_master_version are the same on create, when running terraform plan ([#6763](https://github.com/hashicorp/terraform-provider-google-beta/pull/6763))
+* container: fixed a bug where disable PDCSI addon `gce_persistent_disk_csi_driver_config ` during creation will result in permadiff in `google_container_cluster` resource ([#6751](https://github.com/hashicorp/terraform-provider-google-beta/pull/6751))
+* container: fixed an issue in which migrating from the deprecated Binauthz enablement bool to the new evaluation mode enum inadvertently caused two cluster update events, instead of none. ([#6785](https://github.com/hashicorp/terraform-provider-google-beta/pull/6785))
+* containerattached: fixed crash when updating a cluster to remove `admin_users` or `admin_groups` in `google_container_attached_cluster` ([#6786](https://github.com/hashicorp/terraform-provider-google-beta/pull/6786))
+* dialogflowcx: fixed a permadiff in the `git_integration_settings` field of `google_diagflow_cx_agent` ([#6756](https://github.com/hashicorp/terraform-provider-google-beta/pull/6756))
+* gkehub2: added field `version` under `configmanagement` instead of a child field `oci` in `google_gke_hub_feature` resource (revert) ([#6755](https://github.com/hashicorp/terraform-provider-google-beta/pull/6755))
+* gkehub: added field `version` under `configmanagement` instead of a child field `oci` in `google_gke_hub_feature` resource ([#6749](https://github.com/hashicorp/terraform-provider-google-beta/pull/6749))
+* monitoring: fixed the index out of range crash in `dashboard_json` perma-diffs for the resource `google_monitoring_dashboard` ([#6750](https://github.com/hashicorp/terraform-provider-google-beta/pull/6750))
+* vertexai: changed `region` field from required to optional in `google_vertex_ai_feature_online_store` resource ([#6789](https://github.com/hashicorp/terraform-provider-google-beta/pull/6789))
+
 ## 5.10.0 (Dec 18, 2023)
 
 FEATURES:
