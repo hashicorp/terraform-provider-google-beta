@@ -15,7 +15,7 @@ FEATURES:
 * **New Resource:** `google_logging_organization_settings` ([#6754](https://github.com/hashicorp/terraform-provider-google-beta/pull/6754))
 * **New Resource:** `google_netapp_active_directory` ([#6781](https://github.com/hashicorp/terraform-provider-google-beta/pull/6781))
 * **New Resource:** `google_vertex_ai_feature_online_store` ([#6779](https://github.com/hashicorp/terraform-provider-google-beta/pull/6779))
-* **New Resource:** `google_vertexai_feature_group` ([#6780](https://github.com/hashicorp/terraform-provider-google-beta/pull/6780))
+* **New Resource:** `google_vertex_ai_feature_group` ([#6780](https://github.com/hashicorp/terraform-provider-google-beta/pull/6780))
 * **New Resource:** `google_netapp_backup_vault` ([#6793](https://github.com/hashicorp/terraform-provider-google-beta/pull/6793))
 
 IMPROVEMENTS:
