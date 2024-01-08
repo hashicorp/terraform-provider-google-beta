@@ -39,7 +39,7 @@ BUG FIXES:
 * containerattached: fixed crash when updating a cluster to remove `admin_users` or `admin_groups` in `google_container_attached_cluster` ([#6786](https://github.com/hashicorp/terraform-provider-google-beta/pull/6786))
 * dialogflowcx: fixed a permadiff in the `git_integration_settings` field of `google_diagflow_cx_agent` ([#6756](https://github.com/hashicorp/terraform-provider-google-beta/pull/6756))
 * gkehub2: added field `version` under `configmanagement` in `google_gke_hub_feature` resource ([#6764](https://github.com/hashicorp/terraform-provider-google-beta/pull/6764))
-* monitoring: fixed the index out of range crash in `dashboard_json` perma-diffs for the resource `google_monitoring_dashboard` ([#6750](https://github.com/hashicorp/terraform-provider-google-beta/pull/6750))
+* monitoring: fixed the index out of range crash in `dashboard_json` for the resource `google_monitoring_dashboard` ([#6750](https://github.com/hashicorp/terraform-provider-google-beta/pull/6750))
 
 ## 5.10.0 (Dec 18, 2023)
 
