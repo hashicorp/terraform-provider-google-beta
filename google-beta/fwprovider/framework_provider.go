@@ -989,6 +989,7 @@ func (p *FrameworkProvider) DataSources(_ context.Context) []func() datasource.D
 		resourcemanager.NewGoogleClientConfigDataSource,
 		resourcemanager.NewGoogleClientOpenIDUserinfoDataSource,
 		dns.NewGoogleDnsManagedZoneDataSource,
+		dns.NewGoogleDnsManagedZonesDataSource,
 		dns.NewGoogleDnsRecordSetDataSource,
 		dns.NewGoogleDnsKeysDataSource,
 		firebase.NewGoogleFirebaseAndroidAppConfigDataSource,
