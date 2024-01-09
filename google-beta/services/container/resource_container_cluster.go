@@ -598,6 +598,12 @@ func ResourceContainerCluster() *schema.Resource {
 										ForceNew:    true,
 										Description: `The Customer Managed Encryption Key used to encrypt the boot disk attached to each node in the node pool.`,
 									},
+									"enable_confidential_storage": {
+										Type:        schema.TypeBool,
+										Optional:    true,
+										ForceNew:    true,
+										Description: `Enable confidential storage boot disk attached to each node in the node pool.`,
+									},
 									"shielded_instance_config": {
 										Type:        schema.TypeList,
 										Optional:    true,
@@ -4574,6 +4580,7 @@ func expandAutoProvisioningDefaults(configured interface{}, d *schema.ResourceDa
 		DiskType:        config["disk_type"].(string),
 		ImageType:       config["image_type"].(string),
 		BootDiskKmsKey:  config["boot_disk_kms_key"].(string),
+		EnableConfidentialStorage:  config["enable_confidential_storage"].(bool),
 		Management:      expandManagement(config["management"]),
 		UpgradeSettings: expandUpgradeSettings(config["upgrade_settings"]),
 	}
@@ -5810,6 +5817,7 @@ func flattenAutoProvisioningDefaults(a *container.AutoprovisioningNodePoolDefaul
 	r["image_type"] = a.ImageType
 	r["min_cpu_platform"] = a.MinCpuPlatform
 	r["boot_disk_kms_key"] = a.BootDiskKmsKey
+	r["enable_confidential_storage"] = a.EnableConfidentialStorage
 	r["shielded_instance_config"] = flattenShieldedInstanceConfig(a.ShieldedInstanceConfig)
 	r["management"] = flattenManagement(a.Management)
 	r["upgrade_settings"] = flattenUpgradeSettings(a.UpgradeSettings)

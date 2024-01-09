@@ -3566,7 +3566,7 @@ func TestAccContainerCluster_nodeAutoprovisioningDefaultsBootDiskKmsKey(t *testi
 		CheckDestroy:             testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccContainerCluster_autoprovisioningDefaultsBootDiskKmsKey(clusterName, kms.CryptoKey.Name, networkName, subnetworkName),
+				Config: testAccContainerCluster_autoprovisioningDefaultsBootDiskKmsKey(clusterName, kms.CryptoKey.Name, false, networkName, subnetworkName),
 			},
 			{
 				ResourceName:      "google_container_cluster.nap_boot_disk_kms_key",
@@ -3581,6 +3581,41 @@ func TestAccContainerCluster_nodeAutoprovisioningDefaultsBootDiskKmsKey(t *testi
 		},
 	})
 }
+
+func TestAccContainerCluster_nodeAutoprovisioningDefaultsEnableConfidentialStorage(t *testing.T) {
+	t.Parallel()
+
+	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
+	kms := acctest.BootstrapKMSKeyInLocation(t, "us-central1")
+	networkName := acctest.BootstrapSharedTestNetwork(t, "gke-cluster")
+	subnetworkName := acctest.BootstrapSubnet(t, "gke-cluster", networkName)
+
+	if acctest.BootstrapPSARole(t, "service-", "compute-system", "roles/cloudkms.cryptoKeyEncrypterDecrypter") {
+		t.Fatal("Stopping the test because a role was added to the policy.")
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckContainerClusterDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccContainerCluster_autoprovisioningDefaultsBootDiskKmsKey(clusterName, kms.CryptoKey.Name, true, networkName, subnetworkName),
+			},
+			{
+				ResourceName:      "google_container_cluster.nap_boot_disk_kms_key",
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateVerifyIgnore: []string{
+					"min_master_version",
+					"deletion_protection",
+					"node_pool", // cluster_autoscaling (node auto-provisioning) creates new node pools automatically
+				},
+			},
+		},
+	})
+}
+
 
 func TestAccContainerCluster_nodeAutoprovisioningDefaultsShieldedInstance(t *testing.T) {
 	t.Parallel()
@@ -6863,7 +6898,7 @@ resource "google_container_cluster" "with_autoprovisioning" {
 `, cluster, imageTypeCfg, networkName, subnetworkName)
 }
 
-func testAccContainerCluster_autoprovisioningDefaultsBootDiskKmsKey(clusterName, kmsKeyName, networkName, subnetworkName string) string {
+func testAccContainerCluster_autoprovisioningDefaultsBootDiskKmsKey(clusterName, kmsKeyName string, enableConfidentialStorage bool, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 resource "google_container_cluster" "nap_boot_disk_kms_key" {
   name               = "%s"
@@ -6884,6 +6919,7 @@ resource "google_container_cluster" "nap_boot_disk_kms_key" {
     }
     auto_provisioning_defaults {
 	  boot_disk_kms_key = "%s"
+	  enable_confidential_storage = "%t"
     }
   }
   deletion_protection = false
