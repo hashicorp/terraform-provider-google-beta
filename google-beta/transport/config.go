@@ -211,6 +211,7 @@ type Config struct {
 	CloudBuildBasePath               string
 	Cloudbuildv2BasePath             string
 	ClouddeployBasePath              string
+	ClouddomainsBasePath             string
 	CloudFunctionsBasePath           string
 	Cloudfunctions2BasePath          string
 	CloudIdentityBasePath            string
@@ -352,6 +353,7 @@ const CloudAssetBasePathKey = "CloudAsset"
 const CloudBuildBasePathKey = "CloudBuild"
 const Cloudbuildv2BasePathKey = "Cloudbuildv2"
 const ClouddeployBasePathKey = "Clouddeploy"
+const ClouddomainsBasePathKey = "Clouddomains"
 const CloudFunctionsBasePathKey = "CloudFunctions"
 const Cloudfunctions2BasePathKey = "Cloudfunctions2"
 const CloudIdentityBasePathKey = "CloudIdentity"
@@ -487,6 +489,7 @@ var DefaultBasePaths = map[string]string{
 	CloudBuildBasePathKey:               "https://cloudbuild.googleapis.com/v1/",
 	Cloudbuildv2BasePathKey:             "https://cloudbuild.googleapis.com/v2/",
 	ClouddeployBasePathKey:              "https://clouddeploy.googleapis.com/v1/",
+	ClouddomainsBasePathKey:             "https://domains.googleapis.com/v1beta1/",
 	CloudFunctionsBasePathKey:           "https://cloudfunctions.googleapis.com/v1/",
 	Cloudfunctions2BasePathKey:          "https://cloudfunctions.googleapis.com/v2beta/",
 	CloudIdentityBasePathKey:            "https://cloudidentity.googleapis.com/v1beta1/",
@@ -787,6 +790,11 @@ func SetEndpointDefaults(d *schema.ResourceData) error {
 		d.Set("clouddeploy_custom_endpoint", MultiEnvDefault([]string{
 			"GOOGLE_CLOUDDEPLOY_CUSTOM_ENDPOINT",
 		}, DefaultBasePaths[ClouddeployBasePathKey]))
+	}
+	if d.Get("clouddomains_custom_endpoint") == "" {
+		d.Set("clouddomains_custom_endpoint", MultiEnvDefault([]string{
+			"GOOGLE_CLOUDDOMAINS_CUSTOM_ENDPOINT",
+		}, DefaultBasePaths[ClouddomainsBasePathKey]))
 	}
 	if d.Get("cloud_functions_custom_endpoint") == "" {
 		d.Set("cloud_functions_custom_endpoint", MultiEnvDefault([]string{
@@ -2168,6 +2176,7 @@ func ConfigureBasePaths(c *Config) {
 	c.CloudBuildBasePath = DefaultBasePaths[CloudBuildBasePathKey]
 	c.Cloudbuildv2BasePath = DefaultBasePaths[Cloudbuildv2BasePathKey]
 	c.ClouddeployBasePath = DefaultBasePaths[ClouddeployBasePathKey]
+	c.ClouddomainsBasePath = DefaultBasePaths[ClouddomainsBasePathKey]
 	c.CloudFunctionsBasePath = DefaultBasePaths[CloudFunctionsBasePathKey]
 	c.Cloudfunctions2BasePath = DefaultBasePaths[Cloudfunctions2BasePathKey]
 	c.CloudIdentityBasePath = DefaultBasePaths[CloudIdentityBasePathKey]
