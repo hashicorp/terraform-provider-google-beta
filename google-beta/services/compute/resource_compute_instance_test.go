@@ -7053,7 +7053,7 @@ resource "google_kms_crypto_key_iam_member" "crypto_key" {
 
 resource "google_compute_instance" "foobar" {
   name         = "%{instance_name}"
-  machine_type = "n2-standard-2"
+  machine_type = "h3-standard-88"
   zone         = "%{zone}"
 
   boot_disk {
