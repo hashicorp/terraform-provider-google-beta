@@ -10,14 +10,14 @@ FEATURES:
 * **New Resource:** `google_vmwareengine_external_access_rule` ([#6811](https://github.com/hashicorp/terraform-provider-google-beta/pull/6811))
 
 IMPROVEMENTS:
+* compute: added `md5_authentication_key` field to `google_compute_router_peer` resource ([#6815](https://github.com/hashicorp/terraform-provider-google-beta/pull/6815))
 * compute: added in-place update support to `params.resource_manager_tags` field in `google_compute_instance` resource ([#6828](https://github.com/hashicorp/terraform-provider-google-beta/pull/6828))
 * compute: added in-place update support to `description` field in `google_compute_instance` resource ([#6804](https://github.com/hashicorp/terraform-provider-google-beta/pull/6804))
-* compute: added `md5_authentication_key` field to `google_compute_router_peer` resource ([#6815](https://github.com/hashicorp/terraform-provider-google-beta/pull/6815))
 * gkehub: added `policycontroller` field to `google_gke_hub_feature_membership` resource. Users can now configure a Policy Controller for individual memberships in the fleet. ([#6813](https://github.com/hashicorp/terraform-provider-google-beta/pull/6813))
 * gkehub2: added `clusterupgrade` field to `google_gke_hub_feature` resource ([#6836](https://github.com/hashicorp/terraform-provider-google-beta/pull/6836))
 * gkeonprem: added in-place update support to `vsphere_config` field and added `host_groups` field in `google_gkeonprem_vmware_node_pool` resource ([#6802](https://github.com/hashicorp/terraform-provider-google-beta/pull/6802))
 * iam: added `create_ignore_already_exists` field to `google_service_account` resource. If `ignore_create_already_exists` is set to true, resource creation would succeed when response error is 409 `ALREADY_EXISTS`. ([#6818](https://github.com/hashicorp/terraform-provider-google-beta/pull/6818))
-* service: added field `deletion_policy` to `google_service_networking_connection` ([#6830](https://github.com/hashicorp/terraform-provider-google-beta/pull/6830))
+* servicenetworking: added field `deletion_policy` to `google_service_networking_connection` ([#6830](https://github.com/hashicorp/terraform-provider-google-beta/pull/6830))
 * sql: set `replica_configuration`, `ca_cert`, and `server_ca_cert` fields to be sensitive in `google_sql_instance` and `google_sql_ssl_cert` resources ([#6823](https://github.com/hashicorp/terraform-provider-google-beta/pull/6823))
 
 BUG FIXES:
