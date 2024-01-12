@@ -13,7 +13,7 @@ IMPROVEMENTS:
 * compute: added `md5_authentication_key` field to `google_compute_router_peer` resource ([#6815](https://github.com/hashicorp/terraform-provider-google-beta/pull/6815))
 * compute: added in-place update support to `params.resource_manager_tags` field in `google_compute_instance` resource ([#6828](https://github.com/hashicorp/terraform-provider-google-beta/pull/6828))
 * compute: added in-place update support to `description` field in `google_compute_instance` resource ([#6804](https://github.com/hashicorp/terraform-provider-google-beta/pull/6804))
-* gkehub: added `policycontroller` field to `google_gke_hub_feature_membership` resource. Users can now configure a Policy Controller for individual memberships in the fleet. ([#6813](https://github.com/hashicorp/terraform-provider-google-beta/pull/6813))
+* gkehub: added `policycontroller` field to `google_gke_hub_feature_membership` resource ([#6813](https://github.com/hashicorp/terraform-provider-google-beta/pull/6813))
 * gkehub2: added `clusterupgrade` field to `google_gke_hub_feature` resource ([#6836](https://github.com/hashicorp/terraform-provider-google-beta/pull/6836))
 * gkeonprem: added in-place update support to `vsphere_config` field and added `host_groups` field in `google_gkeonprem_vmware_node_pool` resource ([#6802](https://github.com/hashicorp/terraform-provider-google-beta/pull/6802))
 * iam: added `create_ignore_already_exists` field to `google_service_account` resource. If `ignore_create_already_exists` is set to true, resource creation would succeed when response error is 409 `ALREADY_EXISTS`. ([#6818](https://github.com/hashicorp/terraform-provider-google-beta/pull/6818))
@@ -22,7 +22,7 @@ IMPROVEMENTS:
 
 BUG FIXES:
 * bigquery: fixed perma-diff of `encryption_configuration` when API returns an empty object on `google_bigquery_table` resource ([#6817](https://github.com/hashicorp/terraform-provider-google-beta/pull/6817))
-* compute: fixed an issue where it would wait indefinitely for the resource to become stable when `wait_for_instances` is set to true before deleting on `google_compute_instance_group_manager` and `google_compute_region_instance_group_manager` resources ([#6829](https://github.com/hashicorp/terraform-provider-google-beta/pull/6829))
+* compute: fixed an issue where the provider would `wait_for_instances` if set before deleting on `google_compute_instance_group_manager` and `google_compute_region_instance_group_manager` resources ([#6829](https://github.com/hashicorp/terraform-provider-google-beta/pull/6829))
 * compute: fixed perma-diff that reordered `stateful_external_ip` and `stateful_internal_ip` blocks on `google_compute_instance_group_manager` and `google_compute_region_instance_group_manager` resources ([#6810](https://github.com/hashicorp/terraform-provider-google-beta/pull/6810))
 * datapipeline: fixed perma-diff of `scheduler_service_account_email` when it's not explicitly specified in `google_data_pipeline_pipeline` resource ([#6814](https://github.com/hashicorp/terraform-provider-google-beta/pull/6814))
 * edgecontainer: fixed resource import on `google_edgecontainer_vpn_connection` resource ([#6834](https://github.com/hashicorp/terraform-provider-google-beta/pull/6834))
