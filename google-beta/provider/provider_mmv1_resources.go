@@ -57,6 +57,7 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/deploymentmanager"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/dialogflow"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/dialogflowcx"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/discoveryengine"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/dns"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/documentai"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/documentaiwarehouse"
@@ -422,9 +423,9 @@ var handwrittenIAMDatasources = map[string]*schema.Resource{
 }
 
 // Resources
-// Generated resources: 421
+// Generated resources: 422
 // Generated IAM resources: 252
-// Total generated resources: 673
+// Total generated resources: 674
 var generatedResources = map[string]*schema.Resource{
 	"google_folder_access_approval_settings":                         accessapproval.ResourceAccessApprovalFolderSettings(),
 	"google_organization_access_approval_settings":                   accessapproval.ResourceAccessApprovalOrganizationSettings(),
@@ -777,6 +778,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_dialogflow_cx_test_case":                                 dialogflowcx.ResourceDialogflowCXTestCase(),
 	"google_dialogflow_cx_version":                                   dialogflowcx.ResourceDialogflowCXVersion(),
 	"google_dialogflow_cx_webhook":                                   dialogflowcx.ResourceDialogflowCXWebhook(),
+	"google_discovery_engine_data_store":                             discoveryengine.ResourceDiscoveryEngineDataStore(),
 	"google_dns_managed_zone":                                        dns.ResourceDNSManagedZone(),
 	"google_dns_managed_zone_iam_binding":                            tpgiamresource.ResourceIamBinding(dns.DNSManagedZoneIamSchema, dns.DNSManagedZoneIamUpdaterProducer, dns.DNSManagedZoneIdParseFunc),
 	"google_dns_managed_zone_iam_member":                             tpgiamresource.ResourceIamMember(dns.DNSManagedZoneIamSchema, dns.DNSManagedZoneIamUpdaterProducer, dns.DNSManagedZoneIdParseFunc),
