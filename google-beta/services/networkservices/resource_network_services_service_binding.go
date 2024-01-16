@@ -35,6 +35,7 @@ func ResourceNetworkServicesServiceBinding() *schema.Resource {
 	return &schema.Resource{
 		Create: resourceNetworkServicesServiceBindingCreate,
 		Read:   resourceNetworkServicesServiceBindingRead,
+		Update: resourceNetworkServicesServiceBindingUpdate,
 		Delete: resourceNetworkServicesServiceBindingDelete,
 
 		Importer: &schema.ResourceImporter{
@@ -43,6 +44,7 @@ func ResourceNetworkServicesServiceBinding() *schema.Resource {
 
 		Timeouts: &schema.ResourceTimeout{
 			Create: schema.DefaultTimeout(10 * time.Minute),
+			Update: schema.DefaultTimeout(10 * time.Minute),
 			Delete: schema.DefaultTimeout(10 * time.Minute),
 		},
 
@@ -83,7 +85,6 @@ projects/*/locations/*/namespaces/*/services/*`,
 			"labels": {
 				Type:     schema.TypeMap,
 				Optional: true,
-				ForceNew: true,
 				Description: `Set of label tags associated with the ServiceBinding resource.
 
 **Note**: This field is non-authoritative, and will only manage the labels present in your configuration.
@@ -105,7 +106,6 @@ Please refer to the field 'effective_labels' for all of the labels present on th
 			"terraform_labels": {
 				Type:     schema.TypeMap,
 				Computed: true,
-				ForceNew: true,
 				Description: `The combination of labels configured directly on the resource
  and default labels configured on the provider.`,
 				Elem: &schema.Schema{Type: schema.TypeString},
@@ -270,6 +270,11 @@ func resourceNetworkServicesServiceBindingRead(d *schema.ResourceData, meta inte
 	}
 
 	return nil
+}
+
+func resourceNetworkServicesServiceBindingUpdate(d *schema.ResourceData, meta interface{}) error {
+	// Only the root field "labels" and "terraform_labels" are mutable
+	return resourceNetworkServicesServiceBindingRead(d, meta)
 }
 
 func resourceNetworkServicesServiceBindingDelete(d *schema.ResourceData, meta interface{}) error {
