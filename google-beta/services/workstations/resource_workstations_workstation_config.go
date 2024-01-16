@@ -133,6 +133,11 @@ The elements are of the form "KEY=VALUE" for the environment variable "KEY" bein
 					},
 				},
 			},
+			"disable_tcp_connections": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Description: `Disables support for plain TCP connections in the workstation. By default the service supports TCP connections via a websocket relay. Setting this option to true disables that relay, which prevents the usage of services that require plain tcp connections, such as ssh. When enabled, all communication must occur over https or wss.`,
+			},
 			"display_name": {
 				Type:        schema.TypeString,
 				Optional:    true,
@@ -552,6 +557,12 @@ func resourceWorkstationsWorkstationConfigCreate(d *schema.ResourceData, meta in
 	} else if v, ok := d.GetOkExists("encryption_key"); !tpgresource.IsEmptyValue(reflect.ValueOf(encryptionKeyProp)) && (ok || !reflect.DeepEqual(v, encryptionKeyProp)) {
 		obj["encryptionKey"] = encryptionKeyProp
 	}
+	disableTcpConnectionsProp, err := expandWorkstationsWorkstationConfigDisableTcpConnections(d.Get("disable_tcp_connections"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("disable_tcp_connections"); !tpgresource.IsEmptyValue(reflect.ValueOf(disableTcpConnectionsProp)) && (ok || !reflect.DeepEqual(v, disableTcpConnectionsProp)) {
+		obj["disableTcpConnections"] = disableTcpConnectionsProp
+	}
 	labelsProp, err := expandWorkstationsWorkstationConfigEffectiveLabels(d.Get("effective_labels"), d, config)
 	if err != nil {
 		return err
@@ -704,6 +715,9 @@ func resourceWorkstationsWorkstationConfigRead(d *schema.ResourceData, meta inte
 	if err := d.Set("degraded", flattenWorkstationsWorkstationConfigDegraded(res["degraded"], d, config)); err != nil {
 		return fmt.Errorf("Error reading WorkstationConfig: %s", err)
 	}
+	if err := d.Set("disable_tcp_connections", flattenWorkstationsWorkstationConfigDisableTcpConnections(res["disableTcpConnections"], d, config)); err != nil {
+		return fmt.Errorf("Error reading WorkstationConfig: %s", err)
+	}
 	if err := d.Set("conditions", flattenWorkstationsWorkstationConfigConditions(res["conditions"], d, config)); err != nil {
 		return fmt.Errorf("Error reading WorkstationConfig: %s", err)
 	}
@@ -784,6 +798,12 @@ func resourceWorkstationsWorkstationConfigUpdate(d *schema.ResourceData, meta in
 	} else if v, ok := d.GetOkExists("container"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, containerProp)) {
 		obj["container"] = containerProp
 	}
+	disableTcpConnectionsProp, err := expandWorkstationsWorkstationConfigDisableTcpConnections(d.Get("disable_tcp_connections"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("disable_tcp_connections"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, disableTcpConnectionsProp)) {
+		obj["disableTcpConnections"] = disableTcpConnectionsProp
+	}
 	labelsProp, err := expandWorkstationsWorkstationConfigEffectiveLabels(d.Get("effective_labels"), d, config)
 	if err != nil {
 		return err
@@ -850,6 +870,10 @@ func resourceWorkstationsWorkstationConfigUpdate(d *schema.ResourceData, meta in
 			"container.workingDir",
 			"container.env",
 			"container.runAsUser")
+	}
+
+	if d.HasChange("disable_tcp_connections") {
+		updateMask = append(updateMask, "disableTcpConnections")
 	}
 
 	if d.HasChange("effective_labels") {
@@ -1385,6 +1409,10 @@ func flattenWorkstationsWorkstationConfigEncryptionKeyKmsKeyServiceAccount(v int
 }
 
 func flattenWorkstationsWorkstationConfigDegraded(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenWorkstationsWorkstationConfigDisableTcpConnections(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
@@ -1941,6 +1969,10 @@ func expandWorkstationsWorkstationConfigEncryptionKeyKmsKey(v interface{}, d tpg
 }
 
 func expandWorkstationsWorkstationConfigEncryptionKeyKmsKeyServiceAccount(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandWorkstationsWorkstationConfigDisableTcpConnections(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
