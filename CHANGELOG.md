@@ -1,4 +1,35 @@
-## 5.12.0 (Unreleased)
+## 5.13.0 (Unreleased)
+
+## 5.12.0 (Jan 16, 2024)
+
+FEATURES:
+* **New Data Source:** `google_dns_managed_zones` ([#6835](https://github.com/hashicorp/terraform-provider-google-beta/pull/6835))
+* **New Data Source:** `google_filestore_instance` ([#6822](https://github.com/hashicorp/terraform-provider-google-beta/pull/6822))
+* **New Data Source:** `google_vmwareengine_external_access_rule` ([#6811](https://github.com/hashicorp/terraform-provider-google-beta/pull/6811))
+* **New Resource:** `google_clouddomains_registration` ([#6833](https://github.com/hashicorp/terraform-provider-google-beta/pull/6833))
+* **New Resource:** `google_netapp_kmsconfig` ([#6831](https://github.com/hashicorp/terraform-provider-google-beta/pull/6831))
+* **New Resource:** `google_vertex_ai_feature_online_store_featureview` ([#6821](https://github.com/hashicorp/terraform-provider-google-beta/pull/6821))
+* **New Resource:** `google_vmwareengine_external_access_rule` ([#6811](https://github.com/hashicorp/terraform-provider-google-beta/pull/6811))
+
+IMPROVEMENTS:
+* compute: added `md5_authentication_key` field to `google_compute_router_peer` resource ([#6815](https://github.com/hashicorp/terraform-provider-google-beta/pull/6815))
+* compute: added in-place update support to `params.resource_manager_tags` field in `google_compute_instance` resource ([#6828](https://github.com/hashicorp/terraform-provider-google-beta/pull/6828))
+* compute: added in-place update support to `description` field in `google_compute_instance` resource ([#6804](https://github.com/hashicorp/terraform-provider-google-beta/pull/6804))
+* gkehub: added `policycontroller` field to `google_gke_hub_feature_membership` resource ([#6813](https://github.com/hashicorp/terraform-provider-google-beta/pull/6813))
+* gkehub2: added `clusterupgrade` field to `google_gke_hub_feature` resource ([#6836](https://github.com/hashicorp/terraform-provider-google-beta/pull/6836))
+* gkeonprem: added in-place update support to `vsphere_config` field and added `host_groups` field in `google_gkeonprem_vmware_node_pool` resource ([#6802](https://github.com/hashicorp/terraform-provider-google-beta/pull/6802))
+* iam: added `create_ignore_already_exists` field to `google_service_account` resource. If `ignore_create_already_exists` is set to true, resource creation would succeed when response error is 409 `ALREADY_EXISTS`. ([#6818](https://github.com/hashicorp/terraform-provider-google-beta/pull/6818))
+* servicenetworking: added field `deletion_policy` to `google_service_networking_connection` ([#6830](https://github.com/hashicorp/terraform-provider-google-beta/pull/6830))
+* sql: set `replica_configuration`, `ca_cert`, and `server_ca_cert` fields to be sensitive in `google_sql_instance` and `google_sql_ssl_cert` resources ([#6823](https://github.com/hashicorp/terraform-provider-google-beta/pull/6823))
+
+BUG FIXES:
+* bigquery: fixed perma-diff of `encryption_configuration` when API returns an empty object on `google_bigquery_table` resource ([#6817](https://github.com/hashicorp/terraform-provider-google-beta/pull/6817))
+* compute: fixed an issue where the provider would `wait_for_instances` if set before deleting on `google_compute_instance_group_manager` and `google_compute_region_instance_group_manager` resources ([#6829](https://github.com/hashicorp/terraform-provider-google-beta/pull/6829))
+* compute: fixed perma-diff that reordered `stateful_external_ip` and `stateful_internal_ip` blocks on `google_compute_instance_group_manager` and `google_compute_region_instance_group_manager` resources ([#6810](https://github.com/hashicorp/terraform-provider-google-beta/pull/6810))
+* datapipeline: fixed perma-diff of `scheduler_service_account_email` when it's not explicitly specified in `google_data_pipeline_pipeline` resource ([#6814](https://github.com/hashicorp/terraform-provider-google-beta/pull/6814))
+* edgecontainer: fixed resource import on `google_edgecontainer_vpn_connection` resource ([#6834](https://github.com/hashicorp/terraform-provider-google-beta/pull/6834))
+* servicemanagement: fixed an issue where an inconsistent plan would be created when certain fields such as `openapi_config`, `grpc_config`, and `protoc_output_base64`, had computed values in `google_endpoints_service` resource ([#6832](https://github.com/hashicorp/terraform-provider-google-beta/pull/6832))
+* storage: fixed an issue where retry timeout wasn't being utilized when creating `google_storage_bucket` resource ([#6806](https://github.com/hashicorp/terraform-provider-google-beta/pull/6806))
 
 ## 5.11.0 (Jan 08, 2024)
 
