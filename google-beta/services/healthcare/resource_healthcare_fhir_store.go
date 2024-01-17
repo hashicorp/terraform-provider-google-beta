@@ -121,6 +121,12 @@ will fail with an error.
 
 ** This property can be changed manually in the Google Cloud Healthcare admin console without recreating the FHIR store **`,
 			},
+			"enable_history_modifications": {
+				Type:     schema.TypeBool,
+				Optional: true,
+				Description: `Whether to allow the ExecuteBundle API to accept history bundles, and directly insert and overwrite historical
+resource versions into the FHIR store. If set to false, using history bundles fails with an error.`,
+			},
 			"enable_update_create": {
 				Type:     schema.TypeBool,
 				Optional: true,
@@ -383,6 +389,12 @@ func resourceHealthcareFhirStoreCreate(d *schema.ResourceData, meta interface{})
 	} else if v, ok := d.GetOkExists("enable_history_import"); !tpgresource.IsEmptyValue(reflect.ValueOf(enableHistoryImportProp)) && (ok || !reflect.DeepEqual(v, enableHistoryImportProp)) {
 		obj["enableHistoryImport"] = enableHistoryImportProp
 	}
+	enableHistoryModificationsProp, err := expandHealthcareFhirStoreEnableHistoryModifications(d.Get("enable_history_modifications"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("enable_history_modifications"); !tpgresource.IsEmptyValue(reflect.ValueOf(enableHistoryModificationsProp)) && (ok || !reflect.DeepEqual(v, enableHistoryModificationsProp)) {
+		obj["enableHistoryModifications"] = enableHistoryModificationsProp
+	}
 	notificationConfigProp, err := expandHealthcareFhirStoreNotificationConfig(d.Get("notification_config"), d, config)
 	if err != nil {
 		return err
@@ -515,6 +527,9 @@ func resourceHealthcareFhirStoreRead(d *schema.ResourceData, meta interface{}) e
 	if err := d.Set("enable_history_import", flattenHealthcareFhirStoreEnableHistoryImport(res["enableHistoryImport"], d, config)); err != nil {
 		return fmt.Errorf("Error reading FhirStore: %s", err)
 	}
+	if err := d.Set("enable_history_modifications", flattenHealthcareFhirStoreEnableHistoryModifications(res["enableHistoryModifications"], d, config)); err != nil {
+		return fmt.Errorf("Error reading FhirStore: %s", err)
+	}
 	if err := d.Set("labels", flattenHealthcareFhirStoreLabels(res["labels"], d, config)); err != nil {
 		return fmt.Errorf("Error reading FhirStore: %s", err)
 	}
@@ -562,6 +577,12 @@ func resourceHealthcareFhirStoreUpdate(d *schema.ResourceData, meta interface{})
 	} else if v, ok := d.GetOkExists("enable_update_create"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, enableUpdateCreateProp)) {
 		obj["enableUpdateCreate"] = enableUpdateCreateProp
 	}
+	enableHistoryModificationsProp, err := expandHealthcareFhirStoreEnableHistoryModifications(d.Get("enable_history_modifications"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("enable_history_modifications"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, enableHistoryModificationsProp)) {
+		obj["enableHistoryModifications"] = enableHistoryModificationsProp
+	}
 	notificationConfigProp, err := expandHealthcareFhirStoreNotificationConfig(d.Get("notification_config"), d, config)
 	if err != nil {
 		return err
@@ -607,6 +628,10 @@ func resourceHealthcareFhirStoreUpdate(d *schema.ResourceData, meta interface{})
 
 	if d.HasChange("enable_update_create") {
 		updateMask = append(updateMask, "enableUpdateCreate")
+	}
+
+	if d.HasChange("enable_history_modifications") {
+		updateMask = append(updateMask, "enableHistoryModifications")
 	}
 
 	if d.HasChange("notification_config") {
@@ -746,6 +771,10 @@ func flattenHealthcareFhirStoreDisableResourceVersioning(v interface{}, d *schem
 }
 
 func flattenHealthcareFhirStoreEnableHistoryImport(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenHealthcareFhirStoreEnableHistoryModifications(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
@@ -964,6 +993,10 @@ func expandHealthcareFhirStoreDisableResourceVersioning(v interface{}, d tpgreso
 }
 
 func expandHealthcareFhirStoreEnableHistoryImport(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandHealthcareFhirStoreEnableHistoryModifications(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
