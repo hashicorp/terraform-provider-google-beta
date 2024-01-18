@@ -301,11 +301,6 @@ var services = mapOf(
         "displayName" to "Dialogflowcx",
         "path" to "./google-beta/services/dialogflowcx"
     ),
-    "discoveryengine" to mapOf(
-        "name" to "discoveryengine",
-        "displayName" to "Discoveryengine",
-        "path" to "./google-beta/services/discoveryengine"
-    ),
     "dns" to mapOf(
         "name" to "dns",
         "displayName" to "Dns",
