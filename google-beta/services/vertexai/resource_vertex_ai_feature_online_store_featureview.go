@@ -29,6 +29,7 @@ import (
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/verify"
 )
 
 func ResourceVertexAIFeatureOnlineStoreFeatureview() *schema.Resource {
@@ -122,6 +123,74 @@ To explicitly set a timezone to the cron tab, apply a prefix in the cron tab: "C
 					},
 				},
 			},
+			"vector_search_config": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				ForceNew:    true,
+				Description: `Configuration for vector search. It contains the required configurations to create an index from source data, so that approximate nearest neighbor (a.k.a ANN) algorithms search can be performed during online serving.`,
+				MaxItems:    1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"embedding_column": {
+							Type:        schema.TypeString,
+							Required:    true,
+							Description: `Column of embedding. This column contains the source data to create index for vector search.`,
+						},
+						"brute_force_config": {
+							Type:        schema.TypeList,
+							Optional:    true,
+							Description: `Configuration options for using brute force search, which simply implements the standard linear search in the database for each query. It is primarily meant for benchmarking and to generate the ground truth for approximate search.`,
+							MaxItems:    1,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{},
+							},
+							ExactlyOneOf: []string{},
+						},
+						"crowding_column": {
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: `Column of crowding. This column contains crowding attribute which is a constraint on a neighbor list produced by nearest neighbor search requiring that no more than some value k' of the k neighbors returned have the same value of crowdingAttribute.`,
+						},
+						"distance_measure_type": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: verify.ValidateEnum([]string{"SQUARED_L2_DISTANCE", "COSINE_DISTANCE", "DOT_PRODUCT_DISTANCE", ""}),
+							Description: `The distance measure used in nearest neighbor search.
+For details on allowed values, see the [API documentation](https://cloud.google.com/vertex-ai/docs/reference/rest/v1beta1/projects.locations.featureOnlineStores.featureViews#DistanceMeasureType). Possible values: ["SQUARED_L2_DISTANCE", "COSINE_DISTANCE", "DOT_PRODUCT_DISTANCE"]`,
+						},
+						"embedding_dimension": {
+							Type:        schema.TypeInt,
+							Optional:    true,
+							Description: `The number of dimensions of the input embedding.`,
+						},
+						"filter_columns": {
+							Type:        schema.TypeList,
+							Optional:    true,
+							Description: `Columns of features that are used to filter vector search results.`,
+							Elem: &schema.Schema{
+								Type: schema.TypeString,
+							},
+						},
+						"tree_ah_config": {
+							Type:        schema.TypeList,
+							Optional:    true,
+							Description: `Configuration options for the tree-AH algorithm (Shallow tree + Asymmetric Hashing). Please refer to this paper for more details: https://arxiv.org/abs/1908.10396`,
+							MaxItems:    1,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"leaf_node_embedding_count": {
+										Type:        schema.TypeString,
+										Computed:    true,
+										Optional:    true,
+										Description: `Number of embeddings on each leaf node. The default value is 1000 if not set.`,
+									},
+								},
+							},
+							ExactlyOneOf: []string{},
+						},
+					},
+				},
+			},
 			"create_time": {
 				Type:        schema.TypeString,
 				Computed:    true,
@@ -175,6 +244,12 @@ func resourceVertexAIFeatureOnlineStoreFeatureviewCreate(d *schema.ResourceData,
 		return err
 	} else if v, ok := d.GetOkExists("big_query_source"); !tpgresource.IsEmptyValue(reflect.ValueOf(bigQuerySourceProp)) && (ok || !reflect.DeepEqual(v, bigQuerySourceProp)) {
 		obj["bigQuerySource"] = bigQuerySourceProp
+	}
+	vectorSearchConfigProp, err := expandVertexAIFeatureOnlineStoreFeatureviewVectorSearchConfig(d.Get("vector_search_config"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("vector_search_config"); !tpgresource.IsEmptyValue(reflect.ValueOf(vectorSearchConfigProp)) && (ok || !reflect.DeepEqual(v, vectorSearchConfigProp)) {
+		obj["vectorSearchConfig"] = vectorSearchConfigProp
 	}
 	labelsProp, err := expandVertexAIFeatureOnlineStoreFeatureviewEffectiveLabels(d.Get("effective_labels"), d, config)
 	if err != nil {
@@ -300,6 +375,9 @@ func resourceVertexAIFeatureOnlineStoreFeatureviewRead(d *schema.ResourceData, m
 		return fmt.Errorf("Error reading FeatureOnlineStoreFeatureview: %s", err)
 	}
 	if err := d.Set("big_query_source", flattenVertexAIFeatureOnlineStoreFeatureviewBigQuerySource(res["bigQuerySource"], d, config)); err != nil {
+		return fmt.Errorf("Error reading FeatureOnlineStoreFeatureview: %s", err)
+	}
+	if err := d.Set("vector_search_config", flattenVertexAIFeatureOnlineStoreFeatureviewVectorSearchConfig(res["vectorSearchConfig"], d, config)); err != nil {
 		return fmt.Errorf("Error reading FeatureOnlineStoreFeatureview: %s", err)
 	}
 	if err := d.Set("terraform_labels", flattenVertexAIFeatureOnlineStoreFeatureviewTerraformLabels(res["labels"], d, config)); err != nil {
@@ -538,6 +616,89 @@ func flattenVertexAIFeatureOnlineStoreFeatureviewBigQuerySourceEntityIdColumns(v
 	return v
 }
 
+func flattenVertexAIFeatureOnlineStoreFeatureviewVectorSearchConfig(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["embedding_column"] =
+		flattenVertexAIFeatureOnlineStoreFeatureviewVectorSearchConfigEmbeddingColumn(original["embeddingColumn"], d, config)
+	transformed["filter_columns"] =
+		flattenVertexAIFeatureOnlineStoreFeatureviewVectorSearchConfigFilterColumns(original["filterColumns"], d, config)
+	transformed["crowding_column"] =
+		flattenVertexAIFeatureOnlineStoreFeatureviewVectorSearchConfigCrowdingColumn(original["crowdingColumn"], d, config)
+	transformed["distance_measure_type"] =
+		flattenVertexAIFeatureOnlineStoreFeatureviewVectorSearchConfigDistanceMeasureType(original["distanceMeasureType"], d, config)
+	transformed["tree_ah_config"] =
+		flattenVertexAIFeatureOnlineStoreFeatureviewVectorSearchConfigTreeAhConfig(original["treeAhConfig"], d, config)
+	transformed["brute_force_config"] =
+		flattenVertexAIFeatureOnlineStoreFeatureviewVectorSearchConfigBruteForceConfig(original["bruteForceConfig"], d, config)
+	transformed["embedding_dimension"] =
+		flattenVertexAIFeatureOnlineStoreFeatureviewVectorSearchConfigEmbeddingDimension(original["embeddingDimension"], d, config)
+	return []interface{}{transformed}
+}
+func flattenVertexAIFeatureOnlineStoreFeatureviewVectorSearchConfigEmbeddingColumn(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenVertexAIFeatureOnlineStoreFeatureviewVectorSearchConfigFilterColumns(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenVertexAIFeatureOnlineStoreFeatureviewVectorSearchConfigCrowdingColumn(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenVertexAIFeatureOnlineStoreFeatureviewVectorSearchConfigDistanceMeasureType(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenVertexAIFeatureOnlineStoreFeatureviewVectorSearchConfigTreeAhConfig(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["leaf_node_embedding_count"] =
+		flattenVertexAIFeatureOnlineStoreFeatureviewVectorSearchConfigTreeAhConfigLeafNodeEmbeddingCount(original["leafNodeEmbeddingCount"], d, config)
+	return []interface{}{transformed}
+}
+func flattenVertexAIFeatureOnlineStoreFeatureviewVectorSearchConfigTreeAhConfigLeafNodeEmbeddingCount(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenVertexAIFeatureOnlineStoreFeatureviewVectorSearchConfigBruteForceConfig(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	return []interface{}{transformed}
+}
+
+func flattenVertexAIFeatureOnlineStoreFeatureviewVectorSearchConfigEmbeddingDimension(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	// Handles the string fixed64 format
+	if strVal, ok := v.(string); ok {
+		if intVal, err := tpgresource.StringToFixed64(strVal); err == nil {
+			return intVal
+		}
+	}
+
+	// number values are represented as float64
+	if floatVal, ok := v.(float64); ok {
+		intVal := int(floatVal)
+		return intVal
+	}
+
+	return v // let terraform core handle it otherwise
+}
+
 func flattenVertexAIFeatureOnlineStoreFeatureviewTerraformLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return v
@@ -611,6 +772,125 @@ func expandVertexAIFeatureOnlineStoreFeatureviewBigQuerySourceUri(v interface{},
 }
 
 func expandVertexAIFeatureOnlineStoreFeatureviewBigQuerySourceEntityIdColumns(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandVertexAIFeatureOnlineStoreFeatureviewVectorSearchConfig(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedEmbeddingColumn, err := expandVertexAIFeatureOnlineStoreFeatureviewVectorSearchConfigEmbeddingColumn(original["embedding_column"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedEmbeddingColumn); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["embeddingColumn"] = transformedEmbeddingColumn
+	}
+
+	transformedFilterColumns, err := expandVertexAIFeatureOnlineStoreFeatureviewVectorSearchConfigFilterColumns(original["filter_columns"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedFilterColumns); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["filterColumns"] = transformedFilterColumns
+	}
+
+	transformedCrowdingColumn, err := expandVertexAIFeatureOnlineStoreFeatureviewVectorSearchConfigCrowdingColumn(original["crowding_column"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedCrowdingColumn); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["crowdingColumn"] = transformedCrowdingColumn
+	}
+
+	transformedDistanceMeasureType, err := expandVertexAIFeatureOnlineStoreFeatureviewVectorSearchConfigDistanceMeasureType(original["distance_measure_type"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedDistanceMeasureType); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["distanceMeasureType"] = transformedDistanceMeasureType
+	}
+
+	transformedTreeAhConfig, err := expandVertexAIFeatureOnlineStoreFeatureviewVectorSearchConfigTreeAhConfig(original["tree_ah_config"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedTreeAhConfig); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["treeAhConfig"] = transformedTreeAhConfig
+	}
+
+	transformedBruteForceConfig, err := expandVertexAIFeatureOnlineStoreFeatureviewVectorSearchConfigBruteForceConfig(original["brute_force_config"], d, config)
+	if err != nil {
+		return nil, err
+	} else {
+		transformed["bruteForceConfig"] = transformedBruteForceConfig
+	}
+
+	transformedEmbeddingDimension, err := expandVertexAIFeatureOnlineStoreFeatureviewVectorSearchConfigEmbeddingDimension(original["embedding_dimension"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedEmbeddingDimension); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["embeddingDimension"] = transformedEmbeddingDimension
+	}
+
+	return transformed, nil
+}
+
+func expandVertexAIFeatureOnlineStoreFeatureviewVectorSearchConfigEmbeddingColumn(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandVertexAIFeatureOnlineStoreFeatureviewVectorSearchConfigFilterColumns(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandVertexAIFeatureOnlineStoreFeatureviewVectorSearchConfigCrowdingColumn(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandVertexAIFeatureOnlineStoreFeatureviewVectorSearchConfigDistanceMeasureType(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandVertexAIFeatureOnlineStoreFeatureviewVectorSearchConfigTreeAhConfig(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedLeafNodeEmbeddingCount, err := expandVertexAIFeatureOnlineStoreFeatureviewVectorSearchConfigTreeAhConfigLeafNodeEmbeddingCount(original["leaf_node_embedding_count"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedLeafNodeEmbeddingCount); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["leafNodeEmbeddingCount"] = transformedLeafNodeEmbeddingCount
+	}
+
+	return transformed, nil
+}
+
+func expandVertexAIFeatureOnlineStoreFeatureviewVectorSearchConfigTreeAhConfigLeafNodeEmbeddingCount(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandVertexAIFeatureOnlineStoreFeatureviewVectorSearchConfigBruteForceConfig(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 {
+		return nil, nil
+	}
+
+	if l[0] == nil {
+		transformed := make(map[string]interface{})
+		return transformed, nil
+	}
+	transformed := make(map[string]interface{})
+
+	return transformed, nil
+}
+
+func expandVertexAIFeatureOnlineStoreFeatureviewVectorSearchConfigEmbeddingDimension(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 

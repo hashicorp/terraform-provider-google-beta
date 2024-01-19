@@ -129,6 +129,143 @@ data "google_project" "project" {
 `, context)
 }
 
+func TestAccVertexAIFeatureOnlineStoreFeatureview_vertexAiFeatureonlinestoreFeatureviewWithVectorSearchExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"random_suffix": acctest.RandString(t, 10),
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckVertexAIFeatureOnlineStoreFeatureviewDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccVertexAIFeatureOnlineStoreFeatureview_vertexAiFeatureonlinestoreFeatureviewWithVectorSearchExample(context),
+			},
+			{
+				ResourceName:            "google_vertex_ai_feature_online_store_featureview.featureview_vector_search",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"name", "feature_online_store", "region", "labels", "terraform_labels"},
+			},
+		},
+	})
+}
+
+func testAccVertexAIFeatureOnlineStoreFeatureview_vertexAiFeatureonlinestoreFeatureviewWithVectorSearchExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_vertex_ai_feature_online_store" "featureonlinestore" {
+  provider = google-beta
+  name     = "tf_test_example_feature_view_vector_search%{random_suffix}"
+  labels = {
+    foo = "bar"
+  }
+  region = "us-central1"
+  bigtable {
+    auto_scaling {
+      min_node_count         = 1
+      max_node_count         = 2
+      cpu_utilization_target = 80
+    }
+  }
+  embedding_management {
+    enabled = true
+  }
+}
+
+resource "google_bigquery_dataset" "tf-test-dataset" {
+  provider      = google-beta
+  dataset_id    = "tf_test_example_feature_view_vector_search%{random_suffix}"
+  friendly_name = "test"
+  description   = "This is a test description"
+  location      = "US"
+}
+
+resource "google_bigquery_table" "tf-test-table" {
+  provider            = google-beta
+  deletion_protection = false
+  dataset_id          = google_bigquery_dataset.tf-test-dataset.dataset_id
+  table_id            = "tf_test_example_feature_view_vector_search%{random_suffix}"
+  schema              = <<EOF
+[
+{
+  "name": "test_primary_id",
+  "mode": "NULLABLE",
+  "type": "STRING",
+  "description": "primary test id"
+},
+{
+  "name": "embedding",
+  "mode": "REPEATED",
+  "type": "FLOAT",
+  "description": "embedding column for primary_id column"
+},
+{
+  "name": "country",
+  "mode": "NULLABLE",
+  "type": "STRING",
+  "description": "country"
+},
+{
+  "name": "test_crowding_column",
+  "mode": "NULLABLE",
+  "type": "INTEGER",
+  "description": "test crowding column"
+},
+{
+  "name": "entity_id",
+  "mode": "NULLABLE",
+  "type": "STRING",
+  "description": "Test default entity_id"
+},
+{
+  "name": "test_entity_column",
+  "mode": "NULLABLE",
+  "type": "STRING",
+  "description": "test secondary entity column"
+},
+{
+  "name": "feature_timestamp",
+  "mode": "NULLABLE",
+  "type": "TIMESTAMP",
+  "description": "Default timestamp value"
+}
+]
+EOF
+}
+resource "google_vertex_ai_feature_online_store_featureview" "featureview_vector_search" {
+  provider             = google-beta
+  name                 = "tf_test_example_feature_view_vector_search%{random_suffix}"
+  region               = "us-central1"
+  feature_online_store = google_vertex_ai_feature_online_store.featureonlinestore.name
+  sync_config {
+    cron = "0 0 * * *"
+  }
+  big_query_source {
+    uri               = "bq://${google_bigquery_table.tf-test-table.project}.${google_bigquery_table.tf-test-table.dataset_id}.${google_bigquery_table.tf-test-table.table_id}"
+    entity_id_columns = ["test_entity_column"]
+
+  }
+  vector_search_config {
+    embedding_column      = "embedding"
+    filter_columns        = ["country"]
+    crowding_column       = "test_crowding_column"
+    distance_measure_type = "DOT_PRODUCT_DISTANCE"
+    tree_ah_config {
+      leaf_node_embedding_count = "1000"
+    }
+    embedding_dimension = "2"
+  }
+}
+
+data "google_project" "project" {
+  provider = google-beta
+}
+`, context)
+}
+
 func testAccCheckVertexAIFeatureOnlineStoreFeatureviewDestroyProducer(t *testing.T) func(s *terraform.State) error {
 	return func(s *terraform.State) error {
 		for name, rs := range s.RootModule().Resources {
