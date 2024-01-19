@@ -1,4 +1,37 @@
 ## 5.13.0 (Unreleased)
+NOTES:
+* cloudbuildv2: `google_cloudbuildv2_repository` now uses mmv1 engine instead of DCL ([#6843](https://github.com/hashicorp/terraform-provider-google-beta/pull/6843))
+* gkehub: updated beta api endpoint from v1beta1 to v1beta ([#6840](https://github.com/hashicorp/terraform-provider-google-beta/pull/6840))
+* provider: updated google.golang.org/api from v0.154.0 to v0.156.0 ([#6856](https://github.com/hashicorp/terraform-provider-google-beta/pull/6856))
+* provider: added support for in-place update for `labels` and `terraform_labels` fields in immutable resources ([#6857](https://github.com/hashicorp/terraform-provider-google-beta/pull/6857))
+
+FEATURES:
+* **New Resource:** `google_netapp_backup_policy` ([#6839](https://github.com/hashicorp/terraform-provider-google-beta/pull/6839))
+* **New Resource:** `google_netapp_volume` ([#6852](https://github.com/hashicorp/terraform-provider-google-beta/pull/6852))
+* **New Resource:** `google_network_security_address_group_iam_*` ([#6859](https://github.com/hashicorp/terraform-provider-google-beta/pull/6859))
+* **New Resource:** `google_network_security_security_profile` ([#6868](https://github.com/hashicorp/terraform-provider-google-beta/pull/6868))
+* **New Resource:** `google_vertex_ai_feature_group_feature` ([#6861](https://github.com/hashicorp/terraform-provider-google-beta/pull/6861))
+* **New Resource:** google_discovery_engine_data_store ([#6853](https://github.com/hashicorp/terraform-provider-google-beta/pull/6853))
+
+IMPROVEMENTS:
+* alloydb: allowed the `database_version` as an input on `google_alloydb_cluster` ([#6841](https://github.com/hashicorp/terraform-provider-google-beta/pull/6841))
+* bigquery: added `spark_options` field to `google_bigquery_routine` resource ([#6867](https://github.com/hashicorp/terraform-provider-google-beta/pull/6867))
+* bigquery: supported replica materialized view in resource_bigquery_table (beta) ([#6865](https://github.com/hashicorp/terraform-provider-google-beta/pull/6865))
+* cloudrunv2: added `nfs`, `gcs` fields to `google_cloud_run_v2_service.template.volumes` ([#6845](https://github.com/hashicorp/terraform-provider-google-beta/pull/6845))
+* cloudrunv2: added `tcpSocket` field to `google_cloud_run_v2.template.containers.liveness_probe`([#6845](https://github.com/hashicorp/terraform-provider-google-beta/pull/6845))
+* composer: added fields `enable_private_environment` and `enable_private_builds_only` to `google_composer_environment` ([#6870](https://github.com/hashicorp/terraform-provider-google-beta/pull/6870))
+* compute: added `enable_confidential_compute` field to `google_compute_instance.boot_disk.initialize_params` ([#6842](https://github.com/hashicorp/terraform-provider-google-beta/pull/6842))
+* compute: promoted `google_compute_disk.enable_confidential_compute` to GA ([#6842](https://github.com/hashicorp/terraform-provider-google-beta/pull/6842))
+* gkehub2: added `clusterupgrade` to `google_gke_hub_feature` resource. ([#6836](https://github.com/hashicorp/terraform-provider-google-beta/pull/6836))
+* healthcare: added `enable_history_modifications` field to `google_healthcare_fhir_store` resource (beta) ([#6864](https://github.com/hashicorp/terraform-provider-google-beta/pull/6864))
+* notebooks: allowed `machine_type` and `accelerator_config` to be updatable on `google_notebooks_runtime` ([#6854](https://github.com/hashicorp/terraform-provider-google-beta/pull/6854))
+* workstations: added `disable_tcp_connections` field to `google_workstations_workstation_config` resource ([#6863](https://github.com/hashicorp/terraform-provider-google-beta/pull/6863))
+
+BUG FIXES:
+* compute: fixed the bug that `max_ttl` is sent in API calls even it is removed from configuration when changing cache_mode to FORCE_CACHE_ALL in `google_compute_backend_bucket` ([#6847](https://github.com/hashicorp/terraform-provider-google-beta/pull/6847))
+* networkservices: fixed a perma-diff on `addresses` in `google_network_services_gateway` ([#6871](https://github.com/hashicorp/terraform-provider-google-beta/pull/6871))
+* provider: fixed `universe_domain` behavior to correctly throw an error when explicitly configured `domain_universe` values did not match credentials assumed to be in the default universe ([#6860](https://github.com/hashicorp/terraform-provider-google-beta/pull/6860))
+* spanner: fixed error when adding `autoscaling_config` to an existing `google_spanner_instance` ([#6869](https://github.com/hashicorp/terraform-provider-google-beta/pull/6869))
 
 ## 5.12.0 (Jan 16, 2024)
 
