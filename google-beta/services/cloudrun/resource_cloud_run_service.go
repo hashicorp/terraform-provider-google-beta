@@ -645,6 +645,38 @@ will use the project's default service account.`,
 													Required:    true,
 													Description: `Volume's name.`,
 												},
+												"csi": {
+													Type:        schema.TypeList,
+													Optional:    true,
+													Description: `A filesystem specified by the Container Storage Interface (CSI).`,
+													MaxItems:    1,
+													Elem: &schema.Resource{
+														Schema: map[string]*schema.Schema{
+															"driver": {
+																Type:     schema.TypeString,
+																Required: true,
+																Description: `Unique name representing the type of file system to be created. Cloud Run supports the following values:
+  * gcsfuse.run.googleapis.com: Mount a Google Cloud Storage bucket using GCSFuse. This driver requires the
+    run.googleapis.com/execution-environment annotation to be set to "gen2" and
+    run.googleapis.com/launch-stage set to "BETA" or "ALPHA".`,
+															},
+															"read_only": {
+																Type:        schema.TypeBool,
+																Computed:    true,
+																Optional:    true,
+																Description: `If true, all mounts created from this volume will be read-only.`,
+															},
+															"volume_attributes": {
+																Type:     schema.TypeMap,
+																Optional: true,
+																Description: `Driver-specific attributes. The following options are supported for available drivers:
+  * gcsfuse.run.googleapis.com
+    * bucketName: The name of the Cloud Storage Bucket that backs this volume. The Cloud Run Service identity must have access to this bucket.`,
+																Elem: &schema.Schema{Type: schema.TypeString},
+															},
+														},
+													},
+												},
 												"empty_dir": {
 													Type:        schema.TypeList,
 													Optional:    true,
@@ -2483,6 +2515,7 @@ func flattenCloudRunServiceSpecTemplateSpecVolumes(v interface{}, d *schema.Reso
 			"name":      flattenCloudRunServiceSpecTemplateSpecVolumesName(original["name"], d, config),
 			"secret":    flattenCloudRunServiceSpecTemplateSpecVolumesSecret(original["secret"], d, config),
 			"empty_dir": flattenCloudRunServiceSpecTemplateSpecVolumesEmptyDir(original["emptyDir"], d, config),
+			"csi":       flattenCloudRunServiceSpecTemplateSpecVolumesCsi(original["csi"], d, config),
 		})
 	}
 	return transformed
@@ -2594,6 +2627,35 @@ func flattenCloudRunServiceSpecTemplateSpecVolumesEmptyDirMedium(v interface{}, 
 }
 
 func flattenCloudRunServiceSpecTemplateSpecVolumesEmptyDirSizeLimit(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenCloudRunServiceSpecTemplateSpecVolumesCsi(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["driver"] =
+		flattenCloudRunServiceSpecTemplateSpecVolumesCsiDriver(original["driver"], d, config)
+	transformed["read_only"] =
+		flattenCloudRunServiceSpecTemplateSpecVolumesCsiReadOnly(original["readOnly"], d, config)
+	transformed["volume_attributes"] =
+		flattenCloudRunServiceSpecTemplateSpecVolumesCsiVolumeAttributes(original["volumeAttributes"], d, config)
+	return []interface{}{transformed}
+}
+func flattenCloudRunServiceSpecTemplateSpecVolumesCsiDriver(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenCloudRunServiceSpecTemplateSpecVolumesCsiReadOnly(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenCloudRunServiceSpecTemplateSpecVolumesCsiVolumeAttributes(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
@@ -4113,6 +4175,13 @@ func expandCloudRunServiceSpecTemplateSpecVolumes(v interface{}, d tpgresource.T
 			transformed["emptyDir"] = transformedEmptyDir
 		}
 
+		transformedCsi, err := expandCloudRunServiceSpecTemplateSpecVolumesCsi(original["csi"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedCsi); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["csi"] = transformedCsi
+		}
+
 		req = append(req, transformed)
 	}
 	return req, nil
@@ -4243,6 +4312,58 @@ func expandCloudRunServiceSpecTemplateSpecVolumesEmptyDirMedium(v interface{}, d
 
 func expandCloudRunServiceSpecTemplateSpecVolumesEmptyDirSizeLimit(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
+}
+
+func expandCloudRunServiceSpecTemplateSpecVolumesCsi(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedDriver, err := expandCloudRunServiceSpecTemplateSpecVolumesCsiDriver(original["driver"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedDriver); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["driver"] = transformedDriver
+	}
+
+	transformedReadOnly, err := expandCloudRunServiceSpecTemplateSpecVolumesCsiReadOnly(original["read_only"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedReadOnly); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["readOnly"] = transformedReadOnly
+	}
+
+	transformedVolumeAttributes, err := expandCloudRunServiceSpecTemplateSpecVolumesCsiVolumeAttributes(original["volume_attributes"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedVolumeAttributes); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["volumeAttributes"] = transformedVolumeAttributes
+	}
+
+	return transformed, nil
+}
+
+func expandCloudRunServiceSpecTemplateSpecVolumesCsiDriver(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandCloudRunServiceSpecTemplateSpecVolumesCsiReadOnly(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandCloudRunServiceSpecTemplateSpecVolumesCsiVolumeAttributes(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
+	if v == nil {
+		return map[string]string{}, nil
+	}
+	m := make(map[string]string)
+	for k, val := range v.(map[string]interface{}) {
+		m[k] = val.(string)
+	}
+	return m, nil
 }
 
 func expandCloudRunServiceSpecTemplateSpecServingState(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
