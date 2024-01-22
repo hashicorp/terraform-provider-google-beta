@@ -530,7 +530,7 @@ var DefaultBasePaths = map[string]string{
 	FirebaseStorageBasePathKey:          "https://firebasestorage.googleapis.com/v1beta/",
 	FirestoreBasePathKey:                "https://firestore.googleapis.com/v1/",
 	GKEBackupBasePathKey:                "https://gkebackup.googleapis.com/v1/",
-	GKEHubBasePathKey:                   "https://gkehub.googleapis.com/v1beta/",
+	GKEHubBasePathKey:                   "https://gkehub.googleapis.com/v1beta1/",
 	GKEHub2BasePathKey:                  "https://gkehub.googleapis.com/v1beta/",
 	GkeonpremBasePathKey:                "https://gkeonprem.googleapis.com/v1/",
 	HealthcareBasePathKey:               "https://healthcare.googleapis.com/v1beta1/",
