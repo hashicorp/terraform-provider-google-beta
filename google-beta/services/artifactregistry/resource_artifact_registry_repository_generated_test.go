@@ -363,7 +363,7 @@ func TestAccArtifactRegistryRepository_artifactRegistryRepositoryCleanupExample(
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckArtifactRegistryRepositoryDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -382,7 +382,6 @@ func TestAccArtifactRegistryRepository_artifactRegistryRepositoryCleanupExample(
 func testAccArtifactRegistryRepository_artifactRegistryRepositoryCleanupExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_artifact_registry_repository" "my-repo" {
-  provider      = google-beta
   location      = "us-central1"
   repository_id = "tf-test-my-repository%{random_suffix}"
   description   = "example docker repository with cleanup policies%{random_suffix}"
