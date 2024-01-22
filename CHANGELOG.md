@@ -1,6 +1,6 @@
 ## 5.13.0 (Unreleased)
 NOTES:
-* cloudbuildv2: `google_cloudbuildv2_repository` now uses mmv1 engine instead of DCL ([#6843](https://github.com/hashicorp/terraform-provider-google-beta/pull/6843))
+* cloudbuildv2: changed underlying actuation engine for `google_cloudbuildv2_repository`, there should be no user-facing impact ([#6843](https://github.com/hashicorp/terraform-provider-google-beta/pull/6843))
 * provider: updated google.golang.org/api from v0.154.0 to v0.156.0 ([#6856](https://github.com/hashicorp/terraform-provider-google-beta/pull/6856))
 * provider: added support for in-place update for `labels` and `terraform_labels` fields in immutable resources ([#6857](https://github.com/hashicorp/terraform-provider-google-beta/pull/6857))
 
@@ -19,7 +19,6 @@ IMPROVEMENTS:
 * cloudrunv2: added `tcpSocket` field to `google_cloud_run_v2.template.containers.liveness_probe`([#6845](https://github.com/hashicorp/terraform-provider-google-beta/pull/6845))
 * composer: added fields `enable_private_environment` and `enable_private_builds_only` to `google_composer_environment` ([#6870](https://github.com/hashicorp/terraform-provider-google-beta/pull/6870))
 * compute: added `enable_confidential_compute` field to `google_compute_instance.boot_disk.initialize_params` ([#6842](https://github.com/hashicorp/terraform-provider-google-beta/pull/6842))
-* compute: promoted `google_compute_disk.enable_confidential_compute` to GA ([#6842](https://github.com/hashicorp/terraform-provider-google-beta/pull/6842))
 * gkehub2: added `clusterupgrade` to `google_gke_hub_feature` resource. ([#6836](https://github.com/hashicorp/terraform-provider-google-beta/pull/6836))
 * healthcare: added `enable_history_modifications` field to `google_healthcare_fhir_store` resource (beta) ([#6864](https://github.com/hashicorp/terraform-provider-google-beta/pull/6864))
 * notebooks: allowed `machine_type` and `accelerator_config` to be updatable on `google_notebooks_runtime` ([#6854](https://github.com/hashicorp/terraform-provider-google-beta/pull/6854))
