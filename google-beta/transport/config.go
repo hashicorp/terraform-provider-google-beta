@@ -288,6 +288,7 @@ type Config struct {
 	SecretManagerBasePath            string
 	SecureSourceManagerBasePath      string
 	SecurityCenterBasePath           string
+	SecuritypostureBasePath          string
 	SecurityScannerBasePath          string
 	ServiceDirectoryBasePath         string
 	ServiceManagementBasePath        string
@@ -430,6 +431,7 @@ const RuntimeConfigBasePathKey = "RuntimeConfig"
 const SecretManagerBasePathKey = "SecretManager"
 const SecureSourceManagerBasePathKey = "SecureSourceManager"
 const SecurityCenterBasePathKey = "SecurityCenter"
+const SecuritypostureBasePathKey = "Securityposture"
 const SecurityScannerBasePathKey = "SecurityScanner"
 const ServiceDirectoryBasePathKey = "ServiceDirectory"
 const ServiceManagementBasePathKey = "ServiceManagement"
@@ -566,6 +568,7 @@ var DefaultBasePaths = map[string]string{
 	SecretManagerBasePathKey:            "https://secretmanager.googleapis.com/v1/",
 	SecureSourceManagerBasePathKey:      "https://securesourcemanager.googleapis.com/v1/",
 	SecurityCenterBasePathKey:           "https://securitycenter.googleapis.com/v1/",
+	SecuritypostureBasePathKey:          "https://securityposture.googleapis.com/v1/",
 	SecurityScannerBasePathKey:          "https://websecurityscanner.googleapis.com/v1beta/",
 	ServiceDirectoryBasePathKey:         "https://servicedirectory.googleapis.com/v1beta1/",
 	ServiceManagementBasePathKey:        "https://servicemanagement.googleapis.com/v1/",
@@ -1175,6 +1178,11 @@ func SetEndpointDefaults(d *schema.ResourceData) error {
 		d.Set("security_center_custom_endpoint", MultiEnvDefault([]string{
 			"GOOGLE_SECURITY_CENTER_CUSTOM_ENDPOINT",
 		}, DefaultBasePaths[SecurityCenterBasePathKey]))
+	}
+	if d.Get("securityposture_custom_endpoint") == "" {
+		d.Set("securityposture_custom_endpoint", MultiEnvDefault([]string{
+			"GOOGLE_SECURITYPOSTURE_CUSTOM_ENDPOINT",
+		}, DefaultBasePaths[SecuritypostureBasePathKey]))
 	}
 	if d.Get("security_scanner_custom_endpoint") == "" {
 		d.Set("security_scanner_custom_endpoint", MultiEnvDefault([]string{
@@ -2253,6 +2261,7 @@ func ConfigureBasePaths(c *Config) {
 	c.SecretManagerBasePath = DefaultBasePaths[SecretManagerBasePathKey]
 	c.SecureSourceManagerBasePath = DefaultBasePaths[SecureSourceManagerBasePathKey]
 	c.SecurityCenterBasePath = DefaultBasePaths[SecurityCenterBasePathKey]
+	c.SecuritypostureBasePath = DefaultBasePaths[SecuritypostureBasePathKey]
 	c.SecurityScannerBasePath = DefaultBasePaths[SecurityScannerBasePathKey]
 	c.ServiceDirectoryBasePath = DefaultBasePaths[ServiceDirectoryBasePathKey]
 	c.ServiceManagementBasePath = DefaultBasePaths[ServiceManagementBasePathKey]

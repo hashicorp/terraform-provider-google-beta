@@ -128,6 +128,7 @@ type ProviderModel struct {
 	SecretManagerCustomEndpoint            types.String `tfsdk:"secret_manager_custom_endpoint"`
 	SecureSourceManagerCustomEndpoint      types.String `tfsdk:"secure_source_manager_custom_endpoint"`
 	SecurityCenterCustomEndpoint           types.String `tfsdk:"security_center_custom_endpoint"`
+	SecuritypostureCustomEndpoint          types.String `tfsdk:"securityposture_custom_endpoint"`
 	SecurityScannerCustomEndpoint          types.String `tfsdk:"security_scanner_custom_endpoint"`
 	ServiceDirectoryCustomEndpoint         types.String `tfsdk:"service_directory_custom_endpoint"`
 	ServiceManagementCustomEndpoint        types.String `tfsdk:"service_management_custom_endpoint"`
