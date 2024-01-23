@@ -77,7 +77,7 @@ resource "google_firebase_extensions_instance" "resize_image" {
   instance_id = "tf-test-storage-resize-images%{random_suffix}"
   config {
     extension_ref = "firebase/storage-resize-images"
-    extension_version = "0.1.37"
+    extension_version = "0.2.2"
 
     # The following params apply to the firebase/storage-resize-images extension. 
     # Different extensions may have different params
@@ -90,18 +90,17 @@ resource "google_firebase_extensions_instance" "resize_image" {
       DO_BACKFILL          = false
       IMG_SIZES            = "200x200"
       IMG_BUCKET           = google_storage_bucket.images.name
-      LOCATION             = "%{location}"
     }
 
     system_params = {
+      "firebaseextensions.v1beta.function/location"                   = "%{location}"
       "firebaseextensions.v1beta.function/maxInstances"               = 3000
-      "firebaseextensions.v1beta.function/memory"                     = 256
       "firebaseextensions.v1beta.function/minInstances"               = 0
       "firebaseextensions.v1beta.function/vpcConnectorEgressSettings" = "VPC_CONNECTOR_EGRESS_SETTINGS_UNSPECIFIED"
     }
 
     allowed_event_types = [
-      "firebase.extensions.storage-resize-images.v1.complete"
+      "firebase.extensions.storage-resize-images.v1.onCompletion"
     ]
 
     eventarc_channel = "projects/%{project_id}/locations/%{location}/channels/firebase"
