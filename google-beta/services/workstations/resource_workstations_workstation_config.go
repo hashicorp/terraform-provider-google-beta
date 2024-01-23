@@ -388,6 +388,25 @@ Valid values are '10', '50', '100', '200', '500', or '1000'. Defaults to '200'. 
 					},
 				},
 			},
+			"readiness_checks": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: `Readiness checks to be performed on a workstation.`,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"path": {
+							Type:        schema.TypeString,
+							Required:    true,
+							Description: `Path to which the request should be sent.`,
+						},
+						"port": {
+							Type:        schema.TypeInt,
+							Required:    true,
+							Description: `Port to which the request should be sent.`,
+						},
+					},
+				},
+			},
 			"replica_zones": {
 				Type:     schema.TypeList,
 				Computed: true,
@@ -557,6 +576,12 @@ func resourceWorkstationsWorkstationConfigCreate(d *schema.ResourceData, meta in
 	} else if v, ok := d.GetOkExists("encryption_key"); !tpgresource.IsEmptyValue(reflect.ValueOf(encryptionKeyProp)) && (ok || !reflect.DeepEqual(v, encryptionKeyProp)) {
 		obj["encryptionKey"] = encryptionKeyProp
 	}
+	readinessChecksProp, err := expandWorkstationsWorkstationConfigReadinessChecks(d.Get("readiness_checks"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("readiness_checks"); !tpgresource.IsEmptyValue(reflect.ValueOf(readinessChecksProp)) && (ok || !reflect.DeepEqual(v, readinessChecksProp)) {
+		obj["readinessChecks"] = readinessChecksProp
+	}
 	disableTcpConnectionsProp, err := expandWorkstationsWorkstationConfigDisableTcpConnections(d.Get("disable_tcp_connections"), d, config)
 	if err != nil {
 		return err
@@ -712,6 +737,9 @@ func resourceWorkstationsWorkstationConfigRead(d *schema.ResourceData, meta inte
 	if err := d.Set("encryption_key", flattenWorkstationsWorkstationConfigEncryptionKey(res["encryptionKey"], d, config)); err != nil {
 		return fmt.Errorf("Error reading WorkstationConfig: %s", err)
 	}
+	if err := d.Set("readiness_checks", flattenWorkstationsWorkstationConfigReadinessChecks(res["readinessChecks"], d, config)); err != nil {
+		return fmt.Errorf("Error reading WorkstationConfig: %s", err)
+	}
 	if err := d.Set("degraded", flattenWorkstationsWorkstationConfigDegraded(res["degraded"], d, config)); err != nil {
 		return fmt.Errorf("Error reading WorkstationConfig: %s", err)
 	}
@@ -798,6 +826,12 @@ func resourceWorkstationsWorkstationConfigUpdate(d *schema.ResourceData, meta in
 	} else if v, ok := d.GetOkExists("container"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, containerProp)) {
 		obj["container"] = containerProp
 	}
+	readinessChecksProp, err := expandWorkstationsWorkstationConfigReadinessChecks(d.Get("readiness_checks"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("readiness_checks"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, readinessChecksProp)) {
+		obj["readinessChecks"] = readinessChecksProp
+	}
 	disableTcpConnectionsProp, err := expandWorkstationsWorkstationConfigDisableTcpConnections(d.Get("disable_tcp_connections"), d, config)
 	if err != nil {
 		return err
@@ -870,6 +904,10 @@ func resourceWorkstationsWorkstationConfigUpdate(d *schema.ResourceData, meta in
 			"container.workingDir",
 			"container.env",
 			"container.runAsUser")
+	}
+
+	if d.HasChange("readiness_checks") {
+		updateMask = append(updateMask, "readinessChecks")
 	}
 
 	if d.HasChange("disable_tcp_connections") {
@@ -1406,6 +1444,46 @@ func flattenWorkstationsWorkstationConfigEncryptionKeyKmsKey(v interface{}, d *s
 
 func flattenWorkstationsWorkstationConfigEncryptionKeyKmsKeyServiceAccount(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
+}
+
+func flattenWorkstationsWorkstationConfigReadinessChecks(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return v
+	}
+	l := v.([]interface{})
+	transformed := make([]interface{}, 0, len(l))
+	for _, raw := range l {
+		original := raw.(map[string]interface{})
+		if len(original) < 1 {
+			// Do not include empty json objects coming back from the api
+			continue
+		}
+		transformed = append(transformed, map[string]interface{}{
+			"path": flattenWorkstationsWorkstationConfigReadinessChecksPath(original["path"], d, config),
+			"port": flattenWorkstationsWorkstationConfigReadinessChecksPort(original["port"], d, config),
+		})
+	}
+	return transformed
+}
+func flattenWorkstationsWorkstationConfigReadinessChecksPath(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenWorkstationsWorkstationConfigReadinessChecksPort(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	// Handles the string fixed64 format
+	if strVal, ok := v.(string); ok {
+		if intVal, err := tpgresource.StringToFixed64(strVal); err == nil {
+			return intVal
+		}
+	}
+
+	// number values are represented as float64
+	if floatVal, ok := v.(float64); ok {
+		intVal := int(floatVal)
+		return intVal
+	}
+
+	return v // let terraform core handle it otherwise
 }
 
 func flattenWorkstationsWorkstationConfigDegraded(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -1969,6 +2047,43 @@ func expandWorkstationsWorkstationConfigEncryptionKeyKmsKey(v interface{}, d tpg
 }
 
 func expandWorkstationsWorkstationConfigEncryptionKeyKmsKeyServiceAccount(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandWorkstationsWorkstationConfigReadinessChecks(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	req := make([]interface{}, 0, len(l))
+	for _, raw := range l {
+		if raw == nil {
+			continue
+		}
+		original := raw.(map[string]interface{})
+		transformed := make(map[string]interface{})
+
+		transformedPath, err := expandWorkstationsWorkstationConfigReadinessChecksPath(original["path"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedPath); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["path"] = transformedPath
+		}
+
+		transformedPort, err := expandWorkstationsWorkstationConfigReadinessChecksPort(original["port"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedPort); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["port"] = transformedPort
+		}
+
+		req = append(req, transformed)
+	}
+	return req, nil
+}
+
+func expandWorkstationsWorkstationConfigReadinessChecksPath(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandWorkstationsWorkstationConfigReadinessChecksPort(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
