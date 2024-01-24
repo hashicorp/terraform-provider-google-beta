@@ -116,6 +116,11 @@ var services = mapOf(
         "displayName" to "Binaryauthorization",
         "path" to "./google-beta/services/binaryauthorization"
     ),
+    "blockchainnodeengine" to mapOf(
+        "name" to "blockchainnodeengine",
+        "displayName" to "Blockchainnodeengine",
+        "path" to "./google-beta/services/blockchainnodeengine"
+    ),
     "certificatemanager" to mapOf(
         "name" to "certificatemanager",
         "displayName" to "Certificatemanager",
