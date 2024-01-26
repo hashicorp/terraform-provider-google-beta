@@ -1,5 +1,25 @@
 ## 5.14.0 (Unreleased)
 
+FEATURES:
+* **New Resource:** `google_discovery_engine_data_store` ([#6892](https://github.com/hashicorp/terraform-provider-google-beta/pull/6892))
+* **New Resource:** `google_securityposture_posture_deployment` ([#6893](https://github.com/hashicorp/terraform-provider-google-beta/pull/6893))
+* **New Resource:** `google_securityposture_posture` ([#6890](https://github.com/hashicorp/terraform-provider-google-beta/pull/6890))
+
+IMPROVEMENTS:
+* cloudrun: added `template.spec.volumes.csi` field to `google_cloud_run_service` resource to support mounting Cloud Storage buckets using GCSFuse ([#6875](https://github.com/hashicorp/terraform-provider-google-beta/pull/6875))
+* composer: added `data_retention_config` field to `google_composer_environment` resource ([#6877](https://github.com/hashicorp/terraform-provider-google-beta/pull/6877))
+* compute: added `iap.enabled` field to `compute_backend_service` resource ([#6880](https://github.com/hashicorp/terraform-provider-google-beta/pull/6880))
+* logging: updated the `google_logging_project_bucket_config` resource to be created using the asynchronous create method ([#6883](https://github.com/hashicorp/terraform-provider-google-beta/pull/6883))
+* pubsub: added `use_table_schema` field to `google_pubsub_subscription` resource ([#6881](https://github.com/hashicorp/terraform-provider-google-beta/pull/6881))
+* vertexai: added `vector_search_config` field to `google_vertex_ai_feature_online_store_featureview` resource ([#6876](https://github.com/hashicorp/terraform-provider-google-beta/pull/6876))
+* workflows: added `call_log_level` field to `google_workflows_workflow` resource ([#6878](https://github.com/hashicorp/terraform-provider-google-beta/pull/6878))
+* workstations: added `readiness_checks` field to `google_workstations_workstation_config` resource ([#6895](https://github.com/hashicorp/terraform-provider-google-beta/pull/6895))
+
+BUG FIXES:
+* cloudfunctions2: fixed permadiff when `build_config.docker_repository` field is not specified on `google_cloudfunctions2_function` resource ([#6887](https://github.com/hashicorp/terraform-provider-google-beta/pull/6887))
+* compute: fixed error when `iap` field is unset for `google_compute_region_backend_service` resource ([#6886](https://github.com/hashicorp/terraform-provider-google-beta/pull/6886))
+* eventarc: fixed error when setting `destination.cloud_function` field on `google_eventarc_trigger` resource by making it output-only ([#6879](https://github.com/hashicorp/terraform-provider-google-beta/pull/6879))
+
 ## 5.13.0 (Jan 22, 2024)
 
 NOTES:
