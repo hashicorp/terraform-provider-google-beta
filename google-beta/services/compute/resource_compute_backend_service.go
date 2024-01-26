@@ -661,22 +661,14 @@ For internal load balancing, a URL to a HealthCheck resource must be specified i
 				MaxItems:    1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"enabled": {
-							Type:        schema.TypeBool,
-							Computed:    true,
-							Optional:    true,
-							Description: `Whether the serving infrastructure will authenticate and authorize all incoming requests.`,
-						},
 						"oauth2_client_id": {
 							Type:        schema.TypeString,
-							Computed:    true,
-							Optional:    true,
+							Required:    true,
 							Description: `OAuth2 Client ID for IAP`,
 						},
 						"oauth2_client_secret": {
 							Type:        schema.TypeString,
-							Computed:    true,
-							Optional:    true,
+							Required:    true,
 							Description: `OAuth2 Client Secret for IAP`,
 							Sensitive:   true,
 						},
@@ -2806,8 +2798,6 @@ func flattenComputeBackendServiceIap(v interface{}, d *schema.ResourceData, conf
 		flattenComputeBackendServiceIapOauth2ClientSecret(original["oauth2ClientSecret"], d, config)
 	transformed["oauth2_client_secret_sha256"] =
 		flattenComputeBackendServiceIapOauth2ClientSecretSha256(original["oauth2ClientSecretSha256"], d, config)
-	transformed["enabled"] =
-		flattenComputeBackendServiceIapEnabled(original["enabled"], d, config)
 	return []interface{}{transformed}
 }
 func flattenComputeBackendServiceIapOauth2ClientId(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -2819,10 +2809,6 @@ func flattenComputeBackendServiceIapOauth2ClientSecret(v interface{}, d *schema.
 }
 
 func flattenComputeBackendServiceIapOauth2ClientSecretSha256(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
-	return v
-}
-
-func flattenComputeBackendServiceIapEnabled(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
@@ -3973,13 +3959,6 @@ func expandComputeBackendServiceIap(v interface{}, d tpgresource.TerraformResour
 		transformed["oauth2ClientSecretSha256"] = transformedOauth2ClientSecretSha256
 	}
 
-	transformedEnabled, err := expandComputeBackendServiceIapEnabled(original["enabled"], d, config)
-	if err != nil {
-		return nil, err
-	} else if val := reflect.ValueOf(transformedEnabled); val.IsValid() && !tpgresource.IsEmptyValue(val) {
-		transformed["enabled"] = transformedEnabled
-	}
-
 	return transformed, nil
 }
 
@@ -3992,10 +3971,6 @@ func expandComputeBackendServiceIapOauth2ClientSecret(v interface{}, d tpgresour
 }
 
 func expandComputeBackendServiceIapOauth2ClientSecretSha256(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
-	return v, nil
-}
-
-func expandComputeBackendServiceIapEnabled(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
