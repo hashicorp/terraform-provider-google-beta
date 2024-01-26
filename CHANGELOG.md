@@ -8,7 +8,6 @@ FEATURES:
 IMPROVEMENTS:
 * cloudrun: added `template.spec.volumes.csi` field to `google_cloud_run_service` resource to support mounting Cloud Storage buckets using GCSFuse ([#6875](https://github.com/hashicorp/terraform-provider-google-beta/pull/6875))
 * composer: added `data_retention_config` field to `google_composer_environment` resource ([#6877](https://github.com/hashicorp/terraform-provider-google-beta/pull/6877))
-* compute: added `iap.enabled` field to `compute_backend_service` resource ([#6880](https://github.com/hashicorp/terraform-provider-google-beta/pull/6880))
 * logging: updated the `google_logging_project_bucket_config` resource to be created using the asynchronous create method ([#6883](https://github.com/hashicorp/terraform-provider-google-beta/pull/6883))
 * pubsub: added `use_table_schema` field to `google_pubsub_subscription` resource ([#6881](https://github.com/hashicorp/terraform-provider-google-beta/pull/6881))
 * vertexai: added `vector_search_config` field to `google_vertex_ai_feature_online_store_featureview` resource ([#6876](https://github.com/hashicorp/terraform-provider-google-beta/pull/6876))
