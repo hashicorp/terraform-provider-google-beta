@@ -542,7 +542,7 @@ func ContainerAzureClusterLoggingConfigComponentConfigSchema() *schema.Resource 
 				Type:             schema.TypeList,
 				Computed:         true,
 				Optional:         true,
-				DiffSuppressFunc: tpgresource.CompareCaseInsensitive,
+				DiffSuppressFunc: tpgresource.CaseDiffSuppress,
 				Description:      "Components of the logging configuration to be enabled.",
 				Elem:             &schema.Schema{Type: schema.TypeString},
 			},
