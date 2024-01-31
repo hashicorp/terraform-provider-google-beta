@@ -69,6 +69,7 @@ import (
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/essentialcontacts"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/filestore"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/firebase"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/firebaseappcheck"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/firebasedatabase"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/firebaseextensions"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/firebasehosting"

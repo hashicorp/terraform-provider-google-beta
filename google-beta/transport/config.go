@@ -248,6 +248,7 @@ type Config struct {
 	EssentialContactsBasePath        string
 	FilestoreBasePath                string
 	FirebaseBasePath                 string
+	FirebaseAppCheckBasePath         string
 	FirebaseDatabaseBasePath         string
 	FirebaseExtensionsBasePath       string
 	FirebaseHostingBasePath          string
@@ -393,6 +394,7 @@ const EdgenetworkBasePathKey = "Edgenetwork"
 const EssentialContactsBasePathKey = "EssentialContacts"
 const FilestoreBasePathKey = "Filestore"
 const FirebaseBasePathKey = "Firebase"
+const FirebaseAppCheckBasePathKey = "FirebaseAppCheck"
 const FirebaseDatabaseBasePathKey = "FirebaseDatabase"
 const FirebaseExtensionsBasePathKey = "FirebaseExtensions"
 const FirebaseHostingBasePathKey = "FirebaseHosting"
@@ -532,6 +534,7 @@ var DefaultBasePaths = map[string]string{
 	EssentialContactsBasePathKey:        "https://essentialcontacts.googleapis.com/v1/",
 	FilestoreBasePathKey:                "https://file.googleapis.com/v1beta1/",
 	FirebaseBasePathKey:                 "https://firebase.googleapis.com/v1beta1/",
+	FirebaseAppCheckBasePathKey:         "https://firebaseappcheck.googleapis.com/v1beta/",
 	FirebaseDatabaseBasePathKey:         "https://firebasedatabase.googleapis.com/v1beta/",
 	FirebaseExtensionsBasePathKey:       "https://firebaseextensions.googleapis.com/v1beta/",
 	FirebaseHostingBasePathKey:          "https://firebasehosting.googleapis.com/v1beta1/",
@@ -984,6 +987,11 @@ func SetEndpointDefaults(d *schema.ResourceData) error {
 		d.Set("firebase_custom_endpoint", MultiEnvDefault([]string{
 			"GOOGLE_FIREBASE_CUSTOM_ENDPOINT",
 		}, DefaultBasePaths[FirebaseBasePathKey]))
+	}
+	if d.Get("firebase_app_check_custom_endpoint") == "" {
+		d.Set("firebase_app_check_custom_endpoint", MultiEnvDefault([]string{
+			"GOOGLE_FIREBASE_APP_CHECK_CUSTOM_ENDPOINT",
+		}, DefaultBasePaths[FirebaseAppCheckBasePathKey]))
 	}
 	if d.Get("firebase_database_custom_endpoint") == "" {
 		d.Set("firebase_database_custom_endpoint", MultiEnvDefault([]string{
@@ -2237,6 +2245,7 @@ func ConfigureBasePaths(c *Config) {
 	c.EssentialContactsBasePath = DefaultBasePaths[EssentialContactsBasePathKey]
 	c.FilestoreBasePath = DefaultBasePaths[FilestoreBasePathKey]
 	c.FirebaseBasePath = DefaultBasePaths[FirebaseBasePathKey]
+	c.FirebaseAppCheckBasePath = DefaultBasePaths[FirebaseAppCheckBasePathKey]
 	c.FirebaseDatabaseBasePath = DefaultBasePaths[FirebaseDatabaseBasePathKey]
 	c.FirebaseExtensionsBasePath = DefaultBasePaths[FirebaseExtensionsBasePathKey]
 	c.FirebaseHostingBasePath = DefaultBasePaths[FirebaseHostingBasePathKey]
