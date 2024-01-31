@@ -88,6 +88,7 @@ type ProviderModel struct {
 	EssentialContactsCustomEndpoint        types.String `tfsdk:"essential_contacts_custom_endpoint"`
 	FilestoreCustomEndpoint                types.String `tfsdk:"filestore_custom_endpoint"`
 	FirebaseCustomEndpoint                 types.String `tfsdk:"firebase_custom_endpoint"`
+	FirebaseAppCheckCustomEndpoint         types.String `tfsdk:"firebase_app_check_custom_endpoint"`
 	FirebaseDatabaseCustomEndpoint         types.String `tfsdk:"firebase_database_custom_endpoint"`
 	FirebaseExtensionsCustomEndpoint       types.String `tfsdk:"firebase_extensions_custom_endpoint"`
 	FirebaseHostingCustomEndpoint          types.String `tfsdk:"firebase_hosting_custom_endpoint"`

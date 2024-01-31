@@ -67,6 +67,7 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/essentialcontacts"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/filestore"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/firebase"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/firebaseappcheck"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/firebasedatabase"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/firebaseextensions"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/firebasehosting"
@@ -427,9 +428,9 @@ var handwrittenIAMDatasources = map[string]*schema.Resource{
 }
 
 // Resources
-// Generated resources: 431
+// Generated resources: 432
 // Generated IAM resources: 255
-// Total generated resources: 686
+// Total generated resources: 687
 var generatedResources = map[string]*schema.Resource{
 	"google_folder_access_approval_settings":                         accessapproval.ResourceAccessApprovalFolderSettings(),
 	"google_organization_access_approval_settings":                   accessapproval.ResourceAccessApprovalOrganizationSettings(),
@@ -811,6 +812,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_firebase_apple_app":                                      firebase.ResourceFirebaseAppleApp(),
 	"google_firebase_project":                                        firebase.ResourceFirebaseProject(),
 	"google_firebase_web_app":                                        firebase.ResourceFirebaseWebApp(),
+	"google_firebase_app_check_service_config":                       firebaseappcheck.ResourceFirebaseAppCheckServiceConfig(),
 	"google_firebase_database_instance":                              firebasedatabase.ResourceFirebaseDatabaseInstance(),
 	"google_firebase_extensions_instance":                            firebaseextensions.ResourceFirebaseExtensionsInstance(),
 	"google_firebase_hosting_channel":                                firebasehosting.ResourceFirebaseHostingChannel(),
