@@ -18,6 +18,7 @@
 package firebasehosting
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"reflect"
@@ -26,6 +27,8 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/customdiff"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/structure"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
@@ -335,12 +338,11 @@ these issues to ensure your 'CustomDomain' behaves properly.`,
 							Description: `The status code, which should be an enum value of 'google.rpc.Code'`,
 						},
 						"details": {
-							Type:        schema.TypeList,
-							Optional:    true,
-							Description: `A list of messages that carry the error details.`,
-							Elem: &schema.Schema{
-								Type: schema.TypeMap,
-							},
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: validation.StringIsJSON,
+							StateFunc:    func(v interface{}) string { s, _ := structure.NormalizeJsonString(v); return s },
+							Description:  `A list of messages that carry the error details.`,
 						},
 						"message": {
 							Type:        schema.TypeString,
@@ -1121,7 +1123,15 @@ func flattenFirebaseHostingCustomDomainIssuesMessage(v interface{}, d *schema.Re
 }
 
 func flattenFirebaseHostingCustomDomainIssuesDetails(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
-	return v
+	if v == nil {
+		return nil
+	}
+	b, err := json.Marshal(v)
+	if err != nil {
+		// TODO: return error once https://github.com/GoogleCloudPlatform/magic-modules/issues/3257 is fixed.
+		log.Printf("[ERROR] failed to marshal schema to JSON: %v", err)
+	}
+	return string(b)
 }
 
 func flattenFirebaseHostingCustomDomainCert(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
