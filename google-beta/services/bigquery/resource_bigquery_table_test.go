@@ -1441,7 +1441,7 @@ func TestAccBigQueryTable_TableReplicationInfo_ConflictsWithView(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckBigQueryTableDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -1467,7 +1467,7 @@ func TestAccBigQueryTable_TableReplicationInfo_WithoutReplicationInterval(t *tes
 	replicationIntervalExpr := ""
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		ExternalProviders: map[string]resource.ExternalProvider{
 			"time": {},
 		},
@@ -1502,7 +1502,7 @@ func TestAccBigQueryTable_TableReplicationInfo_WithReplicationInterval(t *testin
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		ExternalProviders: map[string]resource.ExternalProvider{
 			"time": {},
 		},
@@ -3719,14 +3719,10 @@ resource "google_bigquery_table" "test" {
 func testAccBigQueryTableWithReplicationInfoAndView(datasetID, tableID string) string {
 	return fmt.Sprintf(`
 resource "google_bigquery_dataset" "test" {
-  provider = google-beta
-
   dataset_id = "%s"
 }
 
 resource "google_bigquery_table" "test" {
-  provider = google-beta
-
   deletion_protection = false
   table_id   = "%s"
   dataset_id = google_bigquery_dataset.test.dataset_id
@@ -3746,15 +3742,11 @@ resource "google_bigquery_table" "test" {
 func testAccBigQueryTableWithReplicationInfo(projectID, sourceDatasetID, sourceTableID, sourceMVID, replicaDatasetID, replicaMVID, sourceMVJobID, dropMVJobID, replicationIntervalExpr string) string {
 	return fmt.Sprintf(`
 resource "google_bigquery_dataset" "source" {
-  provider = google-beta
-
   dataset_id = "%s"
   location = "aws-us-east-1"
 }
 
 resource "google_bigquery_table" "source_table" {
-  provider = google-beta
-
   deletion_protection = false
   table_id   = "%s"
   dataset_id = google_bigquery_dataset.source.dataset_id
@@ -3771,8 +3763,6 @@ resource "google_bigquery_table" "source_table" {
 }
 
 resource "google_bigquery_job" "source_mv_job" {
-  provider = google-beta
-
   job_id = "%s"
 
   location = "aws-us-east-1"
@@ -3792,8 +3782,6 @@ resource "time_sleep" "wait_10_seconds" {
 }
 
 resource "google_bigquery_dataset_access" "access" {
-  provider = google-beta
-
   dataset_id    = google_bigquery_dataset.source.dataset_id
   view {
     project_id = "%s"
@@ -3805,15 +3793,11 @@ resource "google_bigquery_dataset_access" "access" {
 }
 
 resource "google_bigquery_dataset" "replica" {
-  provider = google-beta
-
   dataset_id = "%s"
   location = "us"
 }
 
 resource "google_bigquery_table" "replica_mv" {
-  provider = google-beta
-
   deletion_protection = false
   dataset_id = google_bigquery_dataset.replica.dataset_id
   table_id   = "%s"
@@ -3828,8 +3812,6 @@ resource "google_bigquery_table" "replica_mv" {
 }
 
 resource "google_bigquery_job" "drop_source_mv_job" {
-  provider = google-beta
-
   job_id = "%s"
 
   location = "aws-us-east-1"
