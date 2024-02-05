@@ -1,4 +1,49 @@
-## 5.14.0 (Unreleased)
+## 5.16.0 (Unreleased)
+
+## 5.15.0 (Feb 5, 2024)
+
+FEATURES:
+* **New Data Source:** `google_compute_machine_types` ([#6903](https://github.com/hashicorp/terraform-provider-google-beta/pull/6903))
+* **New Resource:** `google_blockchain_nodes` ([#6897](https://github.com/hashicorp/terraform-provider-google-beta/pull/6897))
+* **New Resource:** `google_compute_region_network_endpoint` ([#6913](https://github.com/hashicorp/terraform-provider-google-beta/pull/6913))
+* **New Resource:** `google_discovery_engine_chat_engine` ([#6918](https://github.com/hashicorp/terraform-provider-google-beta/pull/6918))
+* **New Resource:** `google_discovery_engine_search_engine` ([#6919](https://github.com/hashicorp/terraform-provider-google-beta/pull/6919))
+* **New Resource:** `google_netapp_volume_snapshot` ([#6914](https://github.com/hashicorp/terraform-provider-google-beta/pull/6914))
+
+IMPROVEMENTS:
+* compute: added `INTERNET_IP_PORT` and `INTERNET_FQDN_PORT` options for the `google_compute_region_network_endpoint_group` resource. ([#6913](https://github.com/hashicorp/terraform-provider-google-beta/pull/6913))
+* compute: added `creation_timestamp` to `google_compute_instance_group_manager` and `google_compute_region_instance_group_manager`. ([#6904](https://github.com/hashicorp/terraform-provider-google-beta/pull/6904))
+* compute: added `disk_id` attribute to `google_compute_disk` resource ([#6906](https://github.com/hashicorp/terraform-provider-google-beta/pull/6906))
+* compute: added `stack_type` attribute for `google_compute_interconnect_attachment` resource. ([#6915](https://github.com/hashicorp/terraform-provider-google-beta/pull/6915))
+* compute: updated the `google_compute_security_policy` resource's `json_parsing` field to accept the value `STANDARD_WITH_GRAPHQL` ([#6898](https://github.com/hashicorp/terraform-provider-google-beta/pull/6898))
+* memcache: added `reserved_ip_range_id` field to `google_memcache_instance` resource ([#6901](https://github.com/hashicorp/terraform-provider-google-beta/pull/6901))
+* netapp: added `deletion_policy` field to `google_netapp_volume` resource ([#6905](https://github.com/hashicorp/terraform-provider-google-beta/pull/6905))
+
+BUG FIXES:
+* alloydb: fixed an issue where `database_flags` in secondary `google_alloydb_instance` resources would cause a diff, as they are copied from the primary ([#6910](https://github.com/hashicorp/terraform-provider-google-beta/pull/6910))
+* filestore: made `google_filestore_instance.source_backup` field configurable ([#6899](https://github.com/hashicorp/terraform-provider-google-beta/pull/6899))
+* vmwareengine: fixed a bug to prevent recreation of existing [`google_vmwareengine_private_cloud`](https://registry.terraform.io/providers/hashicorp/google/latest/docs/data-sources/vmwareengine_private_cloud) resources when upgrading provider version from <5.10.0  ([#6911](https://github.com/hashicorp/terraform-provider-google-beta/pull/6911))
+
+## 5.14.0 (Jan 29, 2024)
+
+FEATURES:
+* **New Resource:** `google_discovery_engine_data_store` ([#6892](https://github.com/hashicorp/terraform-provider-google-beta/pull/6892))
+* **New Resource:** `google_securityposture_posture_deployment` ([#6893](https://github.com/hashicorp/terraform-provider-google-beta/pull/6893))
+* **New Resource:** `google_securityposture_posture` ([#6890](https://github.com/hashicorp/terraform-provider-google-beta/pull/6890))
+
+IMPROVEMENTS:
+* cloudrun: added `template.spec.volumes.csi` field to `google_cloud_run_service` resource to support mounting Cloud Storage buckets using GCSFuse ([#6875](https://github.com/hashicorp/terraform-provider-google-beta/pull/6875))
+* composer: added `data_retention_config` field to `google_composer_environment` resource ([#6877](https://github.com/hashicorp/terraform-provider-google-beta/pull/6877))
+* logging: updated the `google_logging_project_bucket_config` resource to be created using the asynchronous create method ([#6883](https://github.com/hashicorp/terraform-provider-google-beta/pull/6883))
+* pubsub: added `use_table_schema` field to `google_pubsub_subscription` resource ([#6881](https://github.com/hashicorp/terraform-provider-google-beta/pull/6881))
+* vertexai: added `vector_search_config` field to `google_vertex_ai_feature_online_store_featureview` resource ([#6876](https://github.com/hashicorp/terraform-provider-google-beta/pull/6876))
+* workflows: added `call_log_level` field to `google_workflows_workflow` resource ([#6878](https://github.com/hashicorp/terraform-provider-google-beta/pull/6878))
+* workstations: added `readiness_checks` field to `google_workstations_workstation_config` resource ([#6895](https://github.com/hashicorp/terraform-provider-google-beta/pull/6895))
+
+BUG FIXES:
+* cloudfunctions2: fixed permadiff when `build_config.docker_repository` field is not specified on `google_cloudfunctions2_function` resource ([#6887](https://github.com/hashicorp/terraform-provider-google-beta/pull/6887))
+* compute: fixed error when `iap` field is unset for `google_compute_region_backend_service` resource ([#6886](https://github.com/hashicorp/terraform-provider-google-beta/pull/6886))
+* eventarc: fixed error when setting `destination.cloud_function` field on `google_eventarc_trigger` resource by making it output-only ([#6879](https://github.com/hashicorp/terraform-provider-google-beta/pull/6879))
 
 ## 5.13.0 (Jan 22, 2024)
 
