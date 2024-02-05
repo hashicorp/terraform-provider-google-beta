@@ -12,15 +12,14 @@ IMPROVEMENTS:
 * compute: added `INTERNET_IP_PORT` and `INTERNET_FQDN_PORT` options for the `google_compute_region_network_endpoint_group` resource. ([#6913](https://github.com/hashicorp/terraform-provider-google-beta/pull/6913))
 * compute: added `creation_timestamp` to `google_compute_instance_group_manager` and `google_compute_region_instance_group_manager`. ([#6904](https://github.com/hashicorp/terraform-provider-google-beta/pull/6904))
 * compute: added `disk_id` attribute to `google_compute_disk` resource ([#6906](https://github.com/hashicorp/terraform-provider-google-beta/pull/6906))
-* compute: added `enabled` field to `compute_backend_service.iap` resource (revert) ([#6908](https://github.com/hashicorp/terraform-provider-google-beta/pull/6908))
 * compute: added `stack_type` attribute for `google_compute_interconnect_attachment` resource. ([#6915](https://github.com/hashicorp/terraform-provider-google-beta/pull/6915))
-* compute: updated the `google_compute_security_policy` resource's `json_parsing` field to accept the value STANDARD_WITH_GRAPHQL ([#6898](https://github.com/hashicorp/terraform-provider-google-beta/pull/6898))
+* compute: updated the `google_compute_security_policy` resource's `json_parsing` field to accept the value `STANDARD_WITH_GRAPHQL` ([#6898](https://github.com/hashicorp/terraform-provider-google-beta/pull/6898))
 * memcache: added `reserved_ip_range_id` field to `google_memcache_instance` resource ([#6901](https://github.com/hashicorp/terraform-provider-google-beta/pull/6901))
 * netapp: added `deletion_policy` field to `google_netapp_volume` resource ([#6905](https://github.com/hashicorp/terraform-provider-google-beta/pull/6905))
 
 BUG FIXES:
 * alloydb: fixed an issue where `database_flags` in secondary `google_alloydb_instance` resources would cause a diff, as they are copied from the primary ([#6910](https://github.com/hashicorp/terraform-provider-google-beta/pull/6910))
-* filestore: made source_backup field configurable ([#6899](https://github.com/hashicorp/terraform-provider-google-beta/pull/6899))
+* filestore: made `google_filestore_instance.source_backup` field configurable ([#6899](https://github.com/hashicorp/terraform-provider-google-beta/pull/6899))
 * vmwareengine: fixed a bug to prevent recreation of existing PCs when upgrading provider version from <5.10.0 ([#6911](https://github.com/hashicorp/terraform-provider-google-beta/pull/6911))
 
 ## 5.14.0 (Jan 29, 2024)
