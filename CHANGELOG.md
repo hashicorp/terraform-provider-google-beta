@@ -4,7 +4,7 @@
 
 FEATURES:
 * **New Data Source:** `google_compute_machine_types` ([#6903](https://github.com/hashicorp/terraform-provider-google-beta/pull/6903))
-* **New Resource:** `google_blockchain_nodes` ([#6897](https://github.com/hashicorp/terraform-provider-google-beta/pull/6897))
+* **New Resource:** `google_blockchain_node_engine_blockchain_nodes` ([#6897](https://github.com/hashicorp/terraform-provider-google-beta/pull/6897))
 * **New Resource:** `google_compute_region_network_endpoint` ([#6913](https://github.com/hashicorp/terraform-provider-google-beta/pull/6913))
 * **New Resource:** `google_discovery_engine_chat_engine` ([#6918](https://github.com/hashicorp/terraform-provider-google-beta/pull/6918))
 * **New Resource:** `google_discovery_engine_search_engine` ([#6919](https://github.com/hashicorp/terraform-provider-google-beta/pull/6919))
