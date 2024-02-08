@@ -24,7 +24,6 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/assuredworkloads"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/bigqueryreservation"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/cloudbuild"
-	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/cloudbuildv2"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/clouddeploy"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/compute"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/containeraws"
@@ -45,7 +44,6 @@ var dclResources = map[string]*schema.Resource{
 	"google_assured_workloads_workload":                         assuredworkloads.ResourceAssuredWorkloadsWorkload(),
 	"google_bigquery_reservation_assignment":                    bigqueryreservation.ResourceBigqueryReservationAssignment(),
 	"google_cloudbuild_worker_pool":                             cloudbuild.ResourceCloudbuildWorkerPool(),
-	"google_cloudbuildv2_connection":                            cloudbuildv2.ResourceCloudbuildv2Connection(),
 	"google_clouddeploy_delivery_pipeline":                      clouddeploy.ResourceClouddeployDeliveryPipeline(),
 	"google_clouddeploy_target":                                 clouddeploy.ResourceClouddeployTarget(),
 	"google_compute_firewall_policy":                            compute.ResourceComputeFirewallPolicy(),
