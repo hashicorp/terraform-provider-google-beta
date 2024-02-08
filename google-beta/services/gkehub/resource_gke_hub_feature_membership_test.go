@@ -1235,6 +1235,7 @@ resource "google_project" "project" {
 resource "google_project_service" "anthos" {
   project = google_project.project.project_id
   service = "anthos.googleapis.com"
+  disable_on_destroy = false
 }
 
 resource "google_project_service" "mesh" {
