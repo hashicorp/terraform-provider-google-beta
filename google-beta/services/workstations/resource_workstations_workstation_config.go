@@ -236,6 +236,11 @@ If the encryption key is revoked, the workstation session will automatically be 
 										Optional:    true,
 										Description: `Whether instances have no public IP address.`,
 									},
+									"disable_ssh": {
+										Type:        schema.TypeBool,
+										Optional:    true,
+										Description: `Whether to disable SSH access to the VM.`,
+									},
 									"enable_nested_virtualization": {
 										Type:     schema.TypeBool,
 										Optional: true,
@@ -890,7 +895,8 @@ func resourceWorkstationsWorkstationConfigUpdate(d *schema.ResourceData, meta in
 			"host.gceInstance.shieldedInstanceConfig.enableVtpm",
 			"host.gceInstance.shieldedInstanceConfig.enableIntegrityMonitoring",
 			"host.gceInstance.confidentialInstanceConfig.enableConfidentialCompute",
-			"host.gceInstance.accelerators")
+			"host.gceInstance.accelerators",
+			"host.gceInstance.disableSsh")
 	}
 
 	if d.HasChange("persistent_directories") {
@@ -1134,6 +1140,8 @@ func flattenWorkstationsWorkstationConfigHostGceInstance(v interface{}, d *schem
 		flattenWorkstationsWorkstationConfigHostGceInstanceTags(original["tags"], d, config)
 	transformed["disable_public_ip_addresses"] =
 		flattenWorkstationsWorkstationConfigHostGceInstanceDisablePublicIpAddresses(original["disablePublicIpAddresses"], d, config)
+	transformed["disable_ssh"] =
+		flattenWorkstationsWorkstationConfigHostGceInstanceDisableSsh(original["disableSsh"], d, config)
 	transformed["enable_nested_virtualization"] =
 		flattenWorkstationsWorkstationConfigHostGceInstanceEnableNestedVirtualization(original["enableNestedVirtualization"], d, config)
 	transformed["shielded_instance_config"] =
@@ -1195,6 +1203,10 @@ func flattenWorkstationsWorkstationConfigHostGceInstanceTags(v interface{}, d *s
 }
 
 func flattenWorkstationsWorkstationConfigHostGceInstanceDisablePublicIpAddresses(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenWorkstationsWorkstationConfigHostGceInstanceDisableSsh(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
@@ -1663,6 +1675,13 @@ func expandWorkstationsWorkstationConfigHostGceInstance(v interface{}, d tpgreso
 		transformed["disablePublicIpAddresses"] = transformedDisablePublicIpAddresses
 	}
 
+	transformedDisableSsh, err := expandWorkstationsWorkstationConfigHostGceInstanceDisableSsh(original["disable_ssh"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedDisableSsh); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["disableSsh"] = transformedDisableSsh
+	}
+
 	transformedEnableNestedVirtualization, err := expandWorkstationsWorkstationConfigHostGceInstanceEnableNestedVirtualization(original["enable_nested_virtualization"], d, config)
 	if err != nil {
 		return nil, err
@@ -1719,6 +1738,10 @@ func expandWorkstationsWorkstationConfigHostGceInstanceTags(v interface{}, d tpg
 }
 
 func expandWorkstationsWorkstationConfigHostGceInstanceDisablePublicIpAddresses(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandWorkstationsWorkstationConfigHostGceInstanceDisableSsh(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
