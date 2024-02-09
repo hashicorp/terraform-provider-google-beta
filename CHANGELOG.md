@@ -1,18 +1,14 @@
 ## 5.16.0 (Unreleased)
-
-UNKNOWN CHANGELOG TYPE:
-* Add Cloud Deploy Delivery Pipeline ([#6928](https://github.com/hashicorp/terraform-provider-google-beta/pull/6928))
-* Corrected name of google_blockchain_node_engine_blockchain_nodes ([#6936](https://github.com/hashicorp/terraform-provider-google-beta/pull/6936))
-* Update CHANGELOG.md for v5.14.0, v5.15.0 ([#6932](https://github.com/hashicorp/terraform-provider-google-beta/pull/6932))
-
+  
 FEATURES:
+* **New Resource:** `google_clouddeploy_delivery_pipeline_iam_*` ([#6928](https://github.com/hashicorp/terraform-provider-google-beta/pull/6928))
 * **New Resource:** `google_compute_instance_group_membership` ([#6933](https://github.com/hashicorp/terraform-provider-google-beta/pull/6933))
 * **New Resource:** `google_discovery_engine_search_engine` ([#6919](https://github.com/hashicorp/terraform-provider-google-beta/pull/6919))
 * **New Resource:** `google_firebase_app_check_service_config` ([#6921](https://github.com/hashicorp/terraform-provider-google-beta/pull/6921))
 
 IMPROVEMENTS:
-* bigquery: promoted support for replica mv in `resource_bigquery_table` to GA ([#6929](https://github.com/hashicorp/terraform-provider-google-beta/pull/6929))
-* compute: added `confidential_instance_config.confidential_instance_type` field to `google_compute_instance`,  `google_compute_instance_template`, and `google_compute_region_instance_template` resources (beta) ([#6934](https://github.com/hashicorp/terraform-provider-google-beta/pull/6934))
+* bigquery: promoted `table_replication_info` field on `resource_bigquery_table` resource to GA  ([#6929](https://github.com/hashicorp/terraform-provider-google-beta/pull/6929))
+* compute: added `confidential_instance_config.confidential_instance_type` field to `google_compute_instance`,  `google_compute_instance_template`, and `google_compute_region_instance_template` resources ([#6934](https://github.com/hashicorp/terraform-provider-google-beta/pull/6934))
 * networksecurity: remove unused custom code from `google_network_security_address_group` ([#6931](https://github.com/hashicorp/terraform-provider-google-beta/pull/6931))
 * provider: added an optional provider level label `goog-terraform-provisioned` to identify resources that were created by Terraform when viewing/editing these resources in other tools. ([#6924](https://github.com/hashicorp/terraform-provider-google-beta/pull/6924))
 
