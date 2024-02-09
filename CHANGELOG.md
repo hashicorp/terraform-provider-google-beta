@@ -9,7 +9,7 @@ FEATURES:
 IMPROVEMENTS:
 * bigquery: promoted `table_replication_info` field on `resource_bigquery_table` resource to GA  ([#6929](https://github.com/hashicorp/terraform-provider-google-beta/pull/6929))
 * compute: added `confidential_instance_config.confidential_instance_type` field to `google_compute_instance`,  `google_compute_instance_template`, and `google_compute_region_instance_template` resources ([#6934](https://github.com/hashicorp/terraform-provider-google-beta/pull/6934))
-* networksecurity: remove unused custom code from `google_network_security_address_group` ([#6931](https://github.com/hashicorp/terraform-provider-google-beta/pull/6931))
+* networksecurity: removed unused custom code from `google_network_security_address_group` ([#6931](https://github.com/hashicorp/terraform-provider-google-beta/pull/6931))
 * provider: added an optional provider level label `goog-terraform-provisioned` to identify resources that were created by Terraform when viewing/editing these resources in other tools. ([#6924](https://github.com/hashicorp/terraform-provider-google-beta/pull/6924))
 
 BUG FIXES:
