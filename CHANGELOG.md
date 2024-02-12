@@ -13,7 +13,7 @@ IMPROVEMENTS:
 * provider: added an optional provider level label `goog-terraform-provisioned` to identify resources that were created by Terraform when viewing/editing these resources in other tools. ([#6924](https://github.com/hashicorp/terraform-provider-google-beta/pull/6924))
 
 BUG FIXES:
-* firebasehosting: changed how the `issues.details` field in the `google_firebase_hosting_custom_domain` resource is specified, to avoid issues when retrieving the value from state ([#6926](https://github.com/hashicorp/terraform-provider-google-beta/pull/6926))
+* firebasehosting: fixed typing in `google_firebase_hosting_custom_domain` `issues.details` field ([#6926](https://github.com/hashicorp/terraform-provider-google-beta/pull/6926))
 
 ## 5.15.0 (Feb 5, 2024)
 
