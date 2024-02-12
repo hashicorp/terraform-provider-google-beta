@@ -1,4 +1,19 @@
 ## 5.16.0 (Unreleased)
+  
+FEATURES:
+* **New Resource:** `google_clouddeploy_delivery_pipeline_iam_*` ([#6928](https://github.com/hashicorp/terraform-provider-google-beta/pull/6928))
+* **New Resource:** `google_compute_instance_group_membership` ([#6933](https://github.com/hashicorp/terraform-provider-google-beta/pull/6933))
+* **New Resource:** `google_discovery_engine_search_engine` ([#6919](https://github.com/hashicorp/terraform-provider-google-beta/pull/6919))
+* **New Resource:** `google_firebase_app_check_service_config` ([#6921](https://github.com/hashicorp/terraform-provider-google-beta/pull/6921))
+
+IMPROVEMENTS:
+* bigquery: promoted `table_replication_info` field on `resource_bigquery_table` resource to GA  ([#6929](https://github.com/hashicorp/terraform-provider-google-beta/pull/6929))
+* compute: added `confidential_instance_config.confidential_instance_type` field to `google_compute_instance`,  `google_compute_instance_template`, and `google_compute_region_instance_template` resources ([#6934](https://github.com/hashicorp/terraform-provider-google-beta/pull/6934))
+* networksecurity: removed unused custom code from `google_network_security_address_group` ([#6931](https://github.com/hashicorp/terraform-provider-google-beta/pull/6931))
+* provider: added an optional provider level label `goog-terraform-provisioned` to identify resources that were created by Terraform when viewing/editing these resources in other tools. ([#6924](https://github.com/hashicorp/terraform-provider-google-beta/pull/6924))
+
+BUG FIXES:
+* firebasehosting: fixed typing in `google_firebase_hosting_custom_domain` `issues.details` field ([#6926](https://github.com/hashicorp/terraform-provider-google-beta/pull/6926))
 
 ## 5.15.0 (Feb 5, 2024)
 
