@@ -1095,11 +1095,10 @@ resource "google_compute_security_policy" "policy" {
       ]
     }
     log_level    = "VERBOSE"
-        user_ip_request_headers = [
+    user_ip_request_headers = [
       "True-Client-IP", 
       "x-custom-ip"
     ]
-    
   }
 }
 `, spName)
