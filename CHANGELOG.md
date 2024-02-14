@@ -9,8 +9,8 @@ DEPRECATIONS:
 FEATURES:
 * **New Resource:** `google_firebase_app_check_debug_token` ([#6953](https://github.com/hashicorp/terraform-provider-google-beta/pull/6953))
 * **New Resource:** `google_network_security_firewall_endpoint` (beta) ([#6940](https://github.com/hashicorp/terraform-provider-google-beta/pull/6940))
-* **New Resource:** google_clouddeploy_custom_target_type ([#6956](https://github.com/hashicorp/terraform-provider-google-beta/pull/6956))
-* **New Resource:** networksecurity: new `google_network_security_security_profile_group` resource ([#6961](https://github.com/hashicorp/terraform-provider-google-beta/pull/6961))
+* **New Resource:** `google_clouddeploy_custom_target_type` ([#6956](https://github.com/hashicorp/terraform-provider-google-beta/pull/6956))
+* **New Resource:** `google_network_security_security_profile_group` ([#6961](https://github.com/hashicorp/terraform-provider-google-beta/pull/6961))
 
 IMPROVEMENTS:
 * cloudasset: allowed overriding the billing project for `data.google_cloud_asset_resources_search_all` ([#6941](https://github.com/hashicorp/terraform-provider-google-beta/pull/6941))
@@ -21,7 +21,7 @@ IMPROVEMENTS:
 * eventarc: added support for `http_endpoint.uri` and `network_config.network_attachment` to `google_eventarc_trigger` ([#6951](https://github.com/hashicorp/terraform-provider-google-beta/pull/6951))
 * healthcare: added `reject_duplicate_message` field to `google_healthcare_hl7_v2_store ` resource ([#6964](https://github.com/hashicorp/terraform-provider-google-beta/pull/6964))
 * identityplatform: added `client`, `permissions`, `monitoring` and `mfa` fields to `google_identity_platform_config` ([#6944](https://github.com/hashicorp/terraform-provider-google-beta/pull/6944))
-* notebooks: made `google_notebooks_instance` wait for active state on creation and enable stopping/starting instances. ([#6965](https://github.com/hashicorp/terraform-provider-google-beta/pull/6965))
+* notebooks: made `google_notebooks_instance` wait for active state on creation and enable stopping/starting instances ([#6965](https://github.com/hashicorp/terraform-provider-google-beta/pull/6965))
 * vertexai: added `feature_registry_source` field to `google_vertex_ai_feature_online_store_featureview` resource ([#6962](https://github.com/hashicorp/terraform-provider-google-beta/pull/6962))
 * workbench: added `desired_state` field to `google_workbench_instance` resource ([#6966](https://github.com/hashicorp/terraform-provider-google-beta/pull/6966))
 * workstations: add support for `disable_ssh` in `google_workstations_workstation_config` (beta) ([#6947](https://github.com/hashicorp/terraform-provider-google-beta/pull/6947))
