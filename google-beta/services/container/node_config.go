@@ -664,6 +664,11 @@ func schemaNodeConfig() *schema.Schema {
 						},
 					},
 				},
+				"resource_manager_tags": {
+					Type:        schema.TypeMap,
+					Optional:    true,
+					Description: `A map of resource manager tags. Resource manager tag keys and values have the same definition as resource manager tags. Keys must be in the format tagKeys/{tag_key_id}, and values are in the format tagValues/456. The field is ignored (both PUT & PATCH) when empty.`,
+				},
 				"enable_confidential_storage": {
 					Type:        schema.TypeBool,
 					Optional:    true,
@@ -867,6 +872,10 @@ func expandNodeConfig(v interface{}) *container.NodeConfig {
 		nc.ResourceLabels = m
 	}
 
+	if v, ok := nodeConfig["resource_manager_tags"]; ok && len(v.(map[string]interface{})) > 0 {
+		nc.ResourceManagerTags = expandResourceManagerTags(v)
+	}
+
 	if v, ok := nodeConfig["tags"]; ok {
 		tagsList := v.([]interface{})
 		tags := []string{}
@@ -963,6 +972,19 @@ func expandNodeConfig(v interface{}) *container.NodeConfig {
 	}
 
 	return nc
+}
+
+func expandResourceManagerTags(v interface{}) *container.ResourceManagerTags {
+	rmts := make(map[string]string)
+
+	if v != nil {
+		rmts = tpgresource.ConvertStringMap(v.(map[string]interface{}))
+	}
+
+	return &container.ResourceManagerTags{
+		Tags:            rmts,
+		ForceSendFields: []string{"Tags"},
+	}
 }
 
 func expandWorkloadMetadataConfig(v interface{}) *container.WorkloadMetadataConfig {
@@ -1182,8 +1204,8 @@ func flattenNodeConfig(c *container.NodeConfig, v interface{}) []map[string]inte
 		"advanced_machine_features":          flattenAdvancedMachineFeaturesConfig(c.AdvancedMachineFeatures),
 		"sole_tenant_config":                 flattenSoleTenantConfig(c.SoleTenantConfig),
 		"fast_socket":                        flattenFastSocket(c.FastSocket),
-
-		"enable_confidential_storage": c.EnableConfidentialStorage,
+		"resource_manager_tags":              flattenResourceManagerTags(c.ResourceManagerTags),
+		"enable_confidential_storage":        c.EnableConfidentialStorage,
 	})
 
 	if len(c.OauthScopes) > 0 {
@@ -1191,6 +1213,19 @@ func flattenNodeConfig(c *container.NodeConfig, v interface{}) []map[string]inte
 	}
 
 	return config
+}
+
+func flattenResourceManagerTags(c *container.ResourceManagerTags) map[string]interface{} {
+	rmt := make(map[string]interface{})
+
+	if c != nil {
+		for k, v := range c.Tags {
+			rmt[k] = v
+		}
+
+	}
+
+	return rmt
 }
 
 func flattenAdvancedMachineFeaturesConfig(c *container.AdvancedMachineFeatures) []map[string]interface{} {
