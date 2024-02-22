@@ -1,4 +1,35 @@
-## 5.17.0 (Unreleased)
+## 5.18.0 (Unreleased)
+
+## 5.17.0 (Feb 20, 2024)
+
+NOTES:
+* cloudbuildv2: changed underlying actuation engine for `google_cloudbuildv2_connection`, there should be no user-facing impact ([#6943](https://github.com/hashicorp/terraform-provider-google-beta/pull/6943))
+
+DEPRECATIONS:
+* container: deprecated support for `relay_mode` field in `google_container_cluster.monitoring_config.advanced_datapath_observability_config` in favor of `enable_relay` field, `relay_mode` field will be removed a future major release ([#6960](https://github.com/hashicorp/terraform-provider-google-beta/pull/6960))
+
+FEATURES:
+* **New Resource:** `google_firebase_app_check_debug_token` ([#6953](https://github.com/hashicorp/terraform-provider-google-beta/pull/6953))
+* **New Resource:** `google_network_security_firewall_endpoint` ([#6940](https://github.com/hashicorp/terraform-provider-google-beta/pull/6940))
+* **New Resource:** `google_clouddeploy_custom_target_type` ([#6956](https://github.com/hashicorp/terraform-provider-google-beta/pull/6956))
+* **New Resource:** `google_network_security_security_profile_group` ([#6961](https://github.com/hashicorp/terraform-provider-google-beta/pull/6961))
+
+IMPROVEMENTS:
+* cloudasset: allowed overriding the billing project for the `google_cloud_asset_resources_search_all` datasource ([#6941](https://github.com/hashicorp/terraform-provider-google-beta/pull/6941))
+* clouddeploy: added support for `canary_revision_tags`, `prior_revision_tags`, `stable_revision_tags`, and `stable_cutback_duration` to `google_clouddeploy_delivery_pipeline` ([#6951](https://github.com/hashicorp/terraform-provider-google-beta/pull/6951))
+* cloudfunctions: added `version_id` on `google_cloudfunctions_function` ([#6968](https://github.com/hashicorp/terraform-provider-google-beta/pull/6968))
+* container: added support for `enable_relay` field to `google_container_cluster.monitoring_config.advanced_datapath_observability_config` ([#6960](https://github.com/hashicorp/terraform-provider-google-beta/pull/6960))
+* eventarc: added support for `http_endpoint.uri` and `network_config.network_attachment` to `google_eventarc_trigger` ([#6951](https://github.com/hashicorp/terraform-provider-google-beta/pull/6951))
+* healthcare: added `reject_duplicate_message` field to `google_healthcare_hl7_v2_store ` resource ([#6964](https://github.com/hashicorp/terraform-provider-google-beta/pull/6964))
+* identityplatform: added `client`, `permissions`, `monitoring` and `mfa` fields to `google_identity_platform_config` ([#6944](https://github.com/hashicorp/terraform-provider-google-beta/pull/6944))
+* notebooks: added `desired_state` field to `google_notebooks_instance` ([#6965](https://github.com/hashicorp/terraform-provider-google-beta/pull/6965))
+* vertexai: added `feature_registry_source` field to `google_vertex_ai_feature_online_store_featureview` resource ([#6962](https://github.com/hashicorp/terraform-provider-google-beta/pull/6962))
+* workbench: added `desired_state` field to `google_workbench_instance` resource ([#6966](https://github.com/hashicorp/terraform-provider-google-beta/pull/6966))
+* workstations: added support for `disable_ssh` in `google_workstations_workstation_config` ([#6947](https://github.com/hashicorp/terraform-provider-google-beta/pull/6947))
+
+BUG FIXES:
+* compute: made `resource_manager_tags` updatable on `google_compute_instance_template` and `google_compute_region_instance_template` ([#6958](https://github.com/hashicorp/terraform-provider-google-beta/pull/6958))
+* notebooks: prevented recreation of `google_notebooks_instance` when `kms_key` or `service_account_scopes` are changed server-side ([#6948](https://github.com/hashicorp/terraform-provider-google-beta/pull/6948))
 
 ## 5.16.0 (Feb 12, 2024)
 
