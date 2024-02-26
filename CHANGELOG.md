@@ -1,21 +1,20 @@
 ## 5.18.0 (Unreleased)
-UNKNOWN CHANGELOG TYPE:
-* App Check reCAPTCHA V3 and reCAPTCHA Enterprise providers ([#6989](https://github.com/hashicorp/terraform-provider-google-beta/pull/6989))
-* Delete unused GHA .github/workflows/issue-comment-created.yml ([#6995](https://github.com/hashicorp/terraform-provider-google-beta/pull/6995))
-* Remove unused GHAs from the TPGB repo ([#5798](https://github.com/hashicorp/terraform-provider-google-beta/pull/5798))
+
 BREAKING CHANGES:
 * securityposture: marked `policy_sets` and `policy_sets.policies` required in `google_securityposture_posture`. API validation already enforced this, so no resources could be provisioned without these ([#6981](https://github.com/hashicorp/terraform-provider-google-beta/pull/6981))
 
 FEATURES:
-* **New Data Source:** google_compute_forwarding_rules ([#6997](https://github.com/hashicorp/terraform-provider-google-beta/pull/6997))
+* **New Data Source:** `google_compute_forwarding_rules` ([#6997](https://github.com/hashicorp/terraform-provider-google-beta/pull/6997))
 * **New Resource:** `google_firebase_app_check_app_attest_config` ([#6971](https://github.com/hashicorp/terraform-provider-google-beta/pull/6971))
 * **New Resource:** `google_firebase_app_check_play_integrity_config` ([#6971](https://github.com/hashicorp/terraform-provider-google-beta/pull/6971))
+* **New Resource:** `google_firebase_app_check_recaptcha_enterprise_config` ([#6989](https://github.com/hashicorp/terraform-provider-google-beta/pull/6989))
+* **New Resource:** `google_firebase_app_check_recaptcha_v3_config` ([#6989](https://github.com/hashicorp/terraform-provider-google-beta/pull/6989))
 * **New Resource:** `google_migration_center_preference_set` ([#6974](https://github.com/hashicorp/terraform-provider-google-beta/pull/6974))
-* **New Resource:** google_netapp_volume_replication ([#7002](https://github.com/hashicorp/terraform-provider-google-beta/pull/7002))
+* **New Resource:** `google_netapp_volume_replication` ([#7002](https://github.com/hashicorp/terraform-provider-google-beta/pull/7002))
 
 IMPROVEMENTS:
-* Expose version_id on google_cloudfunctions_function ([#6968](https://github.com/hashicorp/terraform-provider-google-beta/pull/6968))
-* composer: support new version schema in composer 3 ([#7000](https://github.com/hashicorp/terraform-provider-google-beta/pull/7000))
+* cloudfunctions: added output-only `version_id` field on `google_cloudfunctions_function` ([#6968](https://github.com/hashicorp/terraform-provider-google-beta/pull/6968))
+* composer: support patch versions of airflow on `google_composer_environment` ([#7000](https://github.com/hashicorp/terraform-provider-google-beta/pull/7000))
 * compute: support updating `network_interface.stack_type` field on `google_compute_instance` resource. ([#6977](https://github.com/hashicorp/terraform-provider-google-beta/pull/6977))
 * container: added `node_config.resource_manager_tags` field to `google_container_cluster` resource ([#7001](https://github.com/hashicorp/terraform-provider-google-beta/pull/7001))
 * container: added `node_config.resource_manager_tags` field to `google_container_node_pool` resource ([#7001](https://github.com/hashicorp/terraform-provider-google-beta/pull/7001))
@@ -26,11 +25,10 @@ IMPROVEMENTS:
 * workbench: added `shielded_instance_config` field to `google_workbench_instance` resource ([#6984](https://github.com/hashicorp/terraform-provider-google-beta/pull/6984))
 
 BUG FIXES:
-* Fix issue that changes only in stateful_(internal|external)_ip will not trigger a Patch call in the GA provider for compute_(region_)instance_group_manager ([#6978](https://github.com/hashicorp/terraform-provider-google-beta/pull/6978))
 * bigquery: allowed users to set permissions for `principal`/`principalSets` (`iamMember`) in `google_bigquery_dataset_iam_member`. ([#6975](https://github.com/hashicorp/terraform-provider-google-beta/pull/6975))
 * cloudfunctions2: fixed an issue where not specifying `event_config.trigger_region` in `google_cloudfunctions2_function` resulted in a permanent diff. The field now pulls a default value from the API when unset. ([#6991](https://github.com/hashicorp/terraform-provider-google-beta/pull/6991))
-* compute: removed diff detection on `min_ports_per_vm` in `google_compute_router_nat` when the field is unset ([#6993](https://github.com/hashicorp/terraform-provider-google-beta/pull/6993))
-* dataflow: fixes potential nil-pointer error if a job's Environment field is nil when reading job information in `google_dataflow_job` ([#6999](https://github.com/hashicorp/terraform-provider-google-beta/pull/6999))
+* compute: fixed perma-diff on `min_ports_per_vm` in `google_compute_router_nat` when the field is unset by making the field default to the API-set value ([#6993](https://github.com/hashicorp/terraform-provider-google-beta/pull/6993))
+* dataflow: fixed crash in `google_dataflox_job` to return an error instead if a job's Environment field is nil when reading job information ([#6999](https://github.com/hashicorp/terraform-provider-google-beta/pull/6999))
 * notebooks: changed `tag` field to default to the API's value if not specified in `google_notebooks_instance` ([#6986](https://github.com/hashicorp/terraform-provider-google-beta/pull/6986))
 
 ## 5.17.0 (Feb 20, 2024)
