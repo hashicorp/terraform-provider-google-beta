@@ -1,4 +1,66 @@
-## 5.17.0 (Unreleased)
+## 5.18.0 (Unreleased)
+
+BREAKING CHANGES:
+* securityposture: marked `policy_sets` and `policy_sets.policies` required in `google_securityposture_posture`. API validation already enforced this, so no resources could be provisioned without these ([#6981](https://github.com/hashicorp/terraform-provider-google-beta/pull/6981))
+
+FEATURES:
+* **New Data Source:** `google_compute_forwarding_rules` ([#6997](https://github.com/hashicorp/terraform-provider-google-beta/pull/6997))
+* **New Resource:** `google_firebase_app_check_app_attest_config` ([#6971](https://github.com/hashicorp/terraform-provider-google-beta/pull/6971))
+* **New Resource:** `google_firebase_app_check_play_integrity_config` ([#6971](https://github.com/hashicorp/terraform-provider-google-beta/pull/6971))
+* **New Resource:** `google_firebase_app_check_recaptcha_enterprise_config` ([#6989](https://github.com/hashicorp/terraform-provider-google-beta/pull/6989))
+* **New Resource:** `google_firebase_app_check_recaptcha_v3_config` ([#6989](https://github.com/hashicorp/terraform-provider-google-beta/pull/6989))
+* **New Resource:** `google_migration_center_preference_set` ([#6974](https://github.com/hashicorp/terraform-provider-google-beta/pull/6974))
+* **New Resource:** `google_netapp_volume_replication` ([#7002](https://github.com/hashicorp/terraform-provider-google-beta/pull/7002))
+
+IMPROVEMENTS:
+* cloudfunctions: added output-only `version_id` field on `google_cloudfunctions_function` ([#6968](https://github.com/hashicorp/terraform-provider-google-beta/pull/6968))
+* composer: supported patch versions of airflow on `google_composer_environment` ([#7000](https://github.com/hashicorp/terraform-provider-google-beta/pull/7000))
+* compute: supported updating `network_interface.stack_type` field on `google_compute_instance` resource. ([#6977](https://github.com/hashicorp/terraform-provider-google-beta/pull/6977))
+* container: added `node_config.resource_manager_tags` field to `google_container_cluster` resource ([#7001](https://github.com/hashicorp/terraform-provider-google-beta/pull/7001))
+* container: added `node_config.resource_manager_tags` field to `google_container_node_pool` resource ([#7001](https://github.com/hashicorp/terraform-provider-google-beta/pull/7001))
+* container: added output-only fields `membership_id` and  `membership_location` under `fleet` in `google_container_cluster` resource ([#6983](https://github.com/hashicorp/terraform-provider-google-beta/pull/6983))
+* looker: added `custom_domain` field to `google_looker_instance ` resource ([#6979](https://github.com/hashicorp/terraform-provider-google-beta/pull/6979))
+* netapp: added field `restore_parameters` and output-only fields `state`, `state_details` and `create_time` to `google_netapp_volume` resource ([#6976](https://github.com/hashicorp/terraform-provider-google-beta/pull/6976))
+* workbench: added `container_image` field to `google_workbench_instance` resource ([#6988](https://github.com/hashicorp/terraform-provider-google-beta/pull/6988))
+* workbench: added `shielded_instance_config` field to `google_workbench_instance` resource ([#6984](https://github.com/hashicorp/terraform-provider-google-beta/pull/6984))
+
+BUG FIXES:
+* bigquery: allowed users to set permissions for `principal`/`principalSets` (`iamMember`) in `google_bigquery_dataset_iam_member`. ([#6975](https://github.com/hashicorp/terraform-provider-google-beta/pull/6975))
+* cloudfunctions2: fixed an issue where not specifying `event_config.trigger_region` in `google_cloudfunctions2_function` resulted in a permanent diff. The field now pulls a default value from the API when unset. ([#6991](https://github.com/hashicorp/terraform-provider-google-beta/pull/6991))
+* compute: fixed perma-diff on `min_ports_per_vm` in `google_compute_router_nat` when the field is unset by making the field default to the API-set value ([#6993](https://github.com/hashicorp/terraform-provider-google-beta/pull/6993))
+* dataflow: fixed crash in `google_dataflox_job` to return an error instead if a job's Environment field is nil when reading job information ([#6999](https://github.com/hashicorp/terraform-provider-google-beta/pull/6999))
+* notebooks: changed `tag` field to default to the API's value if not specified in `google_notebooks_instance` ([#6986](https://github.com/hashicorp/terraform-provider-google-beta/pull/6986))
+
+## 5.17.0 (Feb 20, 2024)
+
+NOTES:
+* cloudbuildv2: changed underlying actuation engine for `google_cloudbuildv2_connection`, there should be no user-facing impact ([#6943](https://github.com/hashicorp/terraform-provider-google-beta/pull/6943))
+
+DEPRECATIONS:
+* container: deprecated support for `relay_mode` field in `google_container_cluster.monitoring_config.advanced_datapath_observability_config` in favor of `enable_relay` field, `relay_mode` field will be removed a future major release ([#6960](https://github.com/hashicorp/terraform-provider-google-beta/pull/6960))
+
+FEATURES:
+* **New Resource:** `google_firebase_app_check_debug_token` ([#6953](https://github.com/hashicorp/terraform-provider-google-beta/pull/6953))
+* **New Resource:** `google_network_security_firewall_endpoint` ([#6940](https://github.com/hashicorp/terraform-provider-google-beta/pull/6940))
+* **New Resource:** `google_clouddeploy_custom_target_type` ([#6956](https://github.com/hashicorp/terraform-provider-google-beta/pull/6956))
+* **New Resource:** `google_network_security_security_profile_group` ([#6961](https://github.com/hashicorp/terraform-provider-google-beta/pull/6961))
+
+IMPROVEMENTS:
+* cloudasset: allowed overriding the billing project for the `google_cloud_asset_resources_search_all` datasource ([#6941](https://github.com/hashicorp/terraform-provider-google-beta/pull/6941))
+* clouddeploy: added support for `canary_revision_tags`, `prior_revision_tags`, `stable_revision_tags`, and `stable_cutback_duration` to `google_clouddeploy_delivery_pipeline` ([#6951](https://github.com/hashicorp/terraform-provider-google-beta/pull/6951))
+* cloudfunctions: added `version_id` on `google_cloudfunctions_function` ([#6968](https://github.com/hashicorp/terraform-provider-google-beta/pull/6968))
+* container: added support for `enable_relay` field to `google_container_cluster.monitoring_config.advanced_datapath_observability_config` ([#6960](https://github.com/hashicorp/terraform-provider-google-beta/pull/6960))
+* eventarc: added support for `http_endpoint.uri` and `network_config.network_attachment` to `google_eventarc_trigger` ([#6951](https://github.com/hashicorp/terraform-provider-google-beta/pull/6951))
+* healthcare: added `reject_duplicate_message` field to `google_healthcare_hl7_v2_store ` resource ([#6964](https://github.com/hashicorp/terraform-provider-google-beta/pull/6964))
+* identityplatform: added `client`, `permissions`, `monitoring` and `mfa` fields to `google_identity_platform_config` ([#6944](https://github.com/hashicorp/terraform-provider-google-beta/pull/6944))
+* notebooks: added `desired_state` field to `google_notebooks_instance` ([#6965](https://github.com/hashicorp/terraform-provider-google-beta/pull/6965))
+* vertexai: added `feature_registry_source` field to `google_vertex_ai_feature_online_store_featureview` resource ([#6962](https://github.com/hashicorp/terraform-provider-google-beta/pull/6962))
+* workbench: added `desired_state` field to `google_workbench_instance` resource ([#6966](https://github.com/hashicorp/terraform-provider-google-beta/pull/6966))
+* workstations: added support for `disable_ssh` in `google_workstations_workstation_config` ([#6947](https://github.com/hashicorp/terraform-provider-google-beta/pull/6947))
+
+BUG FIXES:
+* compute: made `resource_manager_tags` updatable on `google_compute_instance_template` and `google_compute_region_instance_template` ([#6958](https://github.com/hashicorp/terraform-provider-google-beta/pull/6958))
+* notebooks: prevented recreation of `google_notebooks_instance` when `kms_key` or `service_account_scopes` are changed server-side ([#6948](https://github.com/hashicorp/terraform-provider-google-beta/pull/6948))
 
 ## 5.16.0 (Feb 12, 2024)
 
