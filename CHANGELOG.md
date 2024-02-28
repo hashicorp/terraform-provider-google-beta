@@ -1,5 +1,28 @@
 ## 5.19.0 (Unreleased)
 
+UNKNOWN CHANGELOG TYPE:
+* Add location field in DNS authorization resource. ([#7006](https://github.com/hashicorp/terraform-provider-google-beta/pull/7006))
+* Add validations for Composer 2/3 only fields ([#7008](https://github.com/hashicorp/terraform-provider-google-beta/pull/7008))
+* Update CHANGELOG.md ([#7017](https://github.com/hashicorp/terraform-provider-google-beta/pull/7017))
+* Update CHANGELOG.md on main ([#7003](https://github.com/hashicorp/terraform-provider-google-beta/pull/7003))
+
+FEATURES:
+* **New Resource:** `google_clouddeploy_target_iam_*` ([#7012](https://github.com/hashicorp/terraform-provider-google-beta/pull/7012))
+
+IMPROVEMENTS:
+* bigquery: added `remote_function_options` field to `bigquery_routine` resource ([#7015](https://github.com/hashicorp/terraform-provider-google-beta/pull/7015))
+* clouddeploy: promoted `google_clouddeploy_automation` resource to GA ([#7026](https://github.com/hashicorp/terraform-provider-google-beta/pull/7026))
+* composer: added composer_network_attachment, modified network/subnetwork to work with composer 3, modified isComposer3 function to work with multiple types ([#7023](https://github.com/hashicorp/terraform-provider-google-beta/pull/7023))
+* compute: added `certificate_manager_certificates` field to `google_compute_region_target_https_proxy` resource ([#7010](https://github.com/hashicorp/terraform-provider-google-beta/pull/7010))
+* compute: promoted `all_instances_config` field in resources `google_compute_instance_group_manager` and `google_compute_region_instance_group_manager` to GA ([#7018](https://github.com/hashicorp/terraform-provider-google-beta/pull/7018))
+* compute: promoted `metric.single_instance_assignment` and `metric.filter` for `google_compute_region_autoscaler` to GA ([#7019](https://github.com/hashicorp/terraform-provider-google-beta/pull/7019))
+* container: promote `enable_confidential_storage` from `node_config` in `google_container_cluster` and `google_container_node_pool` to GA (ga) ([#7011](https://github.com/hashicorp/terraform-provider-google-beta/pull/7011))
+* gkehub2: added `namespace_labels` field to `google_gke_hub_scope` resource ([#7022](https://github.com/hashicorp/terraform-provider-google-beta/pull/7022))
+
+BUG FIXES:
+*  ([#7028](https://github.com/hashicorp/terraform-provider-google-beta/pull/7028))
+* resourcemanager: added a retry to deleting the default network when `auto_create_network` is false in `google_project` ([#7021](https://github.com/hashicorp/terraform-provider-google-beta/pull/7021))
+
 ## 5.18.0 (Feb 26, 2024)
 
 BREAKING CHANGES:
