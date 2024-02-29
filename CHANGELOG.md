@@ -6,7 +6,6 @@ FEATURES:
 IMPROVEMENTS:
 * bigquery: added `remote_function_options` field to `bigquery_routine` resource ([#7015](https://github.com/hashicorp/terraform-provider-google-beta/pull/7015))
 * certificatemanager: added `location` field to `google_certificate_manager_dns_authorization` resource ([#7006](https://github.com/hashicorp/terraform-provider-google-beta/pull/7006))
-* clouddeploy: promoted `google_clouddeploy_automation` resource to GA ([#7026](https://github.com/hashicorp/terraform-provider-google-beta/pull/7026))
 * composer: added `composer_network_attachment` and modified `network`/`subnetwork` to support composer 3 in `google_composer_environment`  ([#7023](https://github.com/hashicorp/terraform-provider-google-beta/pull/7023))
 * composer: added validations for composer 2/3 only fields in `google_composer_environment` ([#7008](https://github.com/hashicorp/terraform-provider-google-beta/pull/7008))
 * compute: added `certificate_manager_certificates` field to `google_compute_region_target_https_proxy` resource ([#7010](https://github.com/hashicorp/terraform-provider-google-beta/pull/7010))
