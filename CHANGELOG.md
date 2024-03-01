@@ -10,7 +10,6 @@ IMPROVEMENTS:
 * composer: added validations for composer 2/3 only fields in `google_composer_environment` ([#7008](https://github.com/hashicorp/terraform-provider-google-beta/pull/7008))
 * compute: added `certificate_manager_certificates` field to `google_compute_region_target_https_proxy` resource ([#7010](https://github.com/hashicorp/terraform-provider-google-beta/pull/7010))
 * compute: promoted `all_instances_config` field in resources `google_compute_instance_group_manager` and `google_compute_region_instance_group_manager` to GA ([#7018](https://github.com/hashicorp/terraform-provider-google-beta/pull/7018))
-* compute: promoted `metric.single_instance_assignment` and `metric.filter` for `google_compute_region_autoscaler` to GA ([#7019](https://github.com/hashicorp/terraform-provider-google-beta/pull/7019))
 * container: promoted `enable_confidential_storage` from `node_config` in `google_container_cluster` and `google_container_node_pool` to GA ([#7011](https://github.com/hashicorp/terraform-provider-google-beta/pull/7011))
 * gkehub2: added `namespace_labels` field to `google_gke_hub_scope` resource ([#7022](https://github.com/hashicorp/terraform-provider-google-beta/pull/7022))
 
