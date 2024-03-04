@@ -4,13 +4,11 @@ FEATURES:
 * **New Resource:** `google_clouddeploy_target_iam_*` ([#7012](https://github.com/hashicorp/terraform-provider-google-beta/pull/7012))
 
 IMPROVEMENTS:
-* bigquery: added `remote_function_options` field to `bigquery_routine` resource ([#7015](https://github.com/hashicorp/terraform-provider-google-beta/pull/7015))
+* bigquery: added `remote_function_options` field to `google_bigquery_routine` resource ([#7015](https://github.com/hashicorp/terraform-provider-google-beta/pull/7015))
 * certificatemanager: added `location` field to `google_certificate_manager_dns_authorization` resource ([#7006](https://github.com/hashicorp/terraform-provider-google-beta/pull/7006))
 * composer: added `composer_network_attachment` and modified `network`/`subnetwork` to support composer 3 in `google_composer_environment`  ([#7023](https://github.com/hashicorp/terraform-provider-google-beta/pull/7023))
 * composer: added validations for composer 2/3 only fields in `google_composer_environment` ([#7008](https://github.com/hashicorp/terraform-provider-google-beta/pull/7008))
 * compute: added `certificate_manager_certificates` field to `google_compute_region_target_https_proxy` resource ([#7010](https://github.com/hashicorp/terraform-provider-google-beta/pull/7010))
-* compute: promoted `all_instances_config` field in resources `google_compute_instance_group_manager` and `google_compute_region_instance_group_manager` to GA ([#7018](https://github.com/hashicorp/terraform-provider-google-beta/pull/7018))
-* container: promoted `enable_confidential_storage` from `node_config` in `google_container_cluster` and `google_container_node_pool` to GA ([#7011](https://github.com/hashicorp/terraform-provider-google-beta/pull/7011))
 * gkehub2: added `namespace_labels` field to `google_gke_hub_scope` resource ([#7022](https://github.com/hashicorp/terraform-provider-google-beta/pull/7022))
 
 BUG FIXES:
