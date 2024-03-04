@@ -37,7 +37,7 @@ func TestAccFirebaseAppCheckAppAttestConfig_firebaseAppCheckAppAttestConfigMinim
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		ExternalProviders: map[string]resource.ExternalProvider{
 			"random": {},
 			"time":   {},
@@ -59,8 +59,6 @@ func TestAccFirebaseAppCheckAppAttestConfig_firebaseAppCheckAppAttestConfigMinim
 func testAccFirebaseAppCheckAppAttestConfig_firebaseAppCheckAppAttestConfigMinimalExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_firebase_apple_app" "default" {
-  provider = google-beta
-
   project      = "%{project_id}"
   display_name = "Apple app"
   bundle_id    = "bundle.id.appattest%{random_suffix}"
@@ -75,8 +73,6 @@ resource "time_sleep" "wait_30s" {
 }
 
 resource "google_firebase_app_check_app_attest_config" "default" {
-  provider = google-beta
-
   project = "%{project_id}"
   app_id  = google_firebase_apple_app.default.app_id
 
@@ -104,7 +100,7 @@ func TestAccFirebaseAppCheckAppAttestConfig_firebaseAppCheckAppAttestConfigFullE
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		ExternalProviders: map[string]resource.ExternalProvider{
 			"random": {},
 			"time":   {},
@@ -126,8 +122,6 @@ func TestAccFirebaseAppCheckAppAttestConfig_firebaseAppCheckAppAttestConfigFullE
 func testAccFirebaseAppCheckAppAttestConfig_firebaseAppCheckAppAttestConfigFullExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_firebase_apple_app" "default" {
-  provider = google-beta
-
   project      = "%{project_id}"
   display_name = "Apple app"
   bundle_id    = "bundle.id.appattest%{random_suffix}"
@@ -142,8 +136,6 @@ resource "time_sleep" "wait_30s" {
 }
 
 resource "google_firebase_app_check_app_attest_config" "default" {
-  provider = google-beta
-
   project   = "%{project_id}"
   app_id    = google_firebase_apple_app.default.app_id
   token_ttl = "%{token_ttl}"
