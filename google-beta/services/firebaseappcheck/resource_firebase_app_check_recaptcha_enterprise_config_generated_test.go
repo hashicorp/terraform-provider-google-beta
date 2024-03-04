@@ -38,7 +38,7 @@ func TestAccFirebaseAppCheckRecaptchaEnterpriseConfig_firebaseAppCheckRecaptchaE
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		ExternalProviders: map[string]resource.ExternalProvider{
 			"random": {},
 			"time":   {},
@@ -60,8 +60,6 @@ func TestAccFirebaseAppCheckRecaptchaEnterpriseConfig_firebaseAppCheckRecaptchaE
 func testAccFirebaseAppCheckRecaptchaEnterpriseConfig_firebaseAppCheckRecaptchaEnterpriseConfigBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_firebase_web_app" "default" {
-  provider = google-beta
-
   project      = "%{project_id}"
   display_name = "Web App for reCAPTCHA Enterprise"
 }
@@ -74,8 +72,6 @@ resource "time_sleep" "wait_30s" {
 }
 
 resource "google_firebase_app_check_recaptcha_enterprise_config" "default" {
-  provider = google-beta
-
   project   = "%{project_id}"
   app_id    = google_firebase_web_app.default.app_id
   site_key  = "%{site_key}"
