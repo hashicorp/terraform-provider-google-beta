@@ -14,6 +14,7 @@ import (
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/apigateway"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/apigee"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/appengine"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/apphub"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/artifactregistry"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/backupdr"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/beyondcorp"
