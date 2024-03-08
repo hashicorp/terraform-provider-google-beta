@@ -195,6 +195,7 @@ type Config struct {
 	ApiGatewayBasePath               string
 	ApigeeBasePath                   string
 	AppEngineBasePath                string
+	ApphubBasePath                   string
 	ArtifactRegistryBasePath         string
 	BackupDRBasePath                 string
 	BeyondcorpBasePath               string
@@ -341,6 +342,7 @@ const AlloydbBasePathKey = "Alloydb"
 const ApiGatewayBasePathKey = "ApiGateway"
 const ApigeeBasePathKey = "Apigee"
 const AppEngineBasePathKey = "AppEngine"
+const ApphubBasePathKey = "Apphub"
 const ArtifactRegistryBasePathKey = "ArtifactRegistry"
 const BackupDRBasePathKey = "BackupDR"
 const BeyondcorpBasePathKey = "Beyondcorp"
@@ -481,6 +483,7 @@ var DefaultBasePaths = map[string]string{
 	ApiGatewayBasePathKey:               "https://apigateway.googleapis.com/v1beta/",
 	ApigeeBasePathKey:                   "https://apigee.googleapis.com/v1/",
 	AppEngineBasePathKey:                "https://appengine.googleapis.com/v1/",
+	ApphubBasePathKey:                   "https://apphub.googleapis.com/v1/",
 	ArtifactRegistryBasePathKey:         "https://artifactregistry.googleapis.com/v1/",
 	BackupDRBasePathKey:                 "https://backupdr.googleapis.com/v1/",
 	BeyondcorpBasePathKey:               "https://beyondcorp.googleapis.com/v1/",
@@ -719,6 +722,11 @@ func SetEndpointDefaults(d *schema.ResourceData) error {
 		d.Set("app_engine_custom_endpoint", MultiEnvDefault([]string{
 			"GOOGLE_APP_ENGINE_CUSTOM_ENDPOINT",
 		}, DefaultBasePaths[AppEngineBasePathKey]))
+	}
+	if d.Get("apphub_custom_endpoint") == "" {
+		d.Set("apphub_custom_endpoint", MultiEnvDefault([]string{
+			"GOOGLE_APPHUB_CUSTOM_ENDPOINT",
+		}, DefaultBasePaths[ApphubBasePathKey]))
 	}
 	if d.Get("artifact_registry_custom_endpoint") == "" {
 		d.Set("artifact_registry_custom_endpoint", MultiEnvDefault([]string{
@@ -2197,6 +2205,7 @@ func ConfigureBasePaths(c *Config) {
 	c.ApiGatewayBasePath = DefaultBasePaths[ApiGatewayBasePathKey]
 	c.ApigeeBasePath = DefaultBasePaths[ApigeeBasePathKey]
 	c.AppEngineBasePath = DefaultBasePaths[AppEngineBasePathKey]
+	c.ApphubBasePath = DefaultBasePaths[ApphubBasePathKey]
 	c.ArtifactRegistryBasePath = DefaultBasePaths[ArtifactRegistryBasePathKey]
 	c.BackupDRBasePath = DefaultBasePaths[BackupDRBasePathKey]
 	c.BeyondcorpBasePath = DefaultBasePaths[BeyondcorpBasePathKey]

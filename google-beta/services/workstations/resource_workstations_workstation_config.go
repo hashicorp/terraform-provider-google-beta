@@ -173,6 +173,61 @@ If the encryption key is revoked, the workstation session will automatically be 
 					},
 				},
 			},
+			"ephemeral_directories": {
+				Type:        schema.TypeList,
+				Computed:    true,
+				Optional:    true,
+				Description: `Ephemeral directories which won't persist across workstation sessions.`,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"gce_pd": {
+							Type:        schema.TypeList,
+							Computed:    true,
+							Optional:    true,
+							Description: `An EphemeralDirectory backed by a Compute Engine persistent disk.`,
+							MaxItems:    1,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"disk_type": {
+										Type:        schema.TypeString,
+										Computed:    true,
+										Optional:    true,
+										Description: `Type of the disk to use. Defaults to '"pd-standard"'.`,
+									},
+									"read_only": {
+										Type:        schema.TypeBool,
+										Optional:    true,
+										Description: `Whether the disk is read only. If true, the disk may be shared by multiple VMs and 'sourceSnapshot' must be set.`,
+									},
+									"source_image": {
+										Type:     schema.TypeString,
+										Optional: true,
+										Description: `Name of the disk image to use as the source for the disk.
+
+Must be empty 'sourceSnapshot' is set.
+Updating 'sourceImage' will update content in the ephemeral directory after the workstation is restarted.`,
+									},
+									"source_snapshot": {
+										Type:     schema.TypeString,
+										Optional: true,
+										Description: `Name of the snapshot to use as the source for the disk.
+
+Must be empty if 'sourceImage' is set.
+Must be empty if 'read_only' is false.
+Updating 'source_snapshot' will update content in the ephemeral directory after the workstation is restarted.`,
+									},
+								},
+							},
+						},
+						"mount_path": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Optional:    true,
+							Description: `Location of this directory in the running workstation.`,
+						},
+					},
+				},
+			},
 			"host": {
 				Type:        schema.TypeList,
 				Computed:    true,
@@ -569,6 +624,12 @@ func resourceWorkstationsWorkstationConfigCreate(d *schema.ResourceData, meta in
 	} else if v, ok := d.GetOkExists("persistent_directories"); !tpgresource.IsEmptyValue(reflect.ValueOf(persistentDirectoriesProp)) && (ok || !reflect.DeepEqual(v, persistentDirectoriesProp)) {
 		obj["persistentDirectories"] = persistentDirectoriesProp
 	}
+	ephemeralDirectoriesProp, err := expandWorkstationsWorkstationConfigEphemeralDirectories(d.Get("ephemeral_directories"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("ephemeral_directories"); !tpgresource.IsEmptyValue(reflect.ValueOf(ephemeralDirectoriesProp)) && (ok || !reflect.DeepEqual(v, ephemeralDirectoriesProp)) {
+		obj["ephemeralDirectories"] = ephemeralDirectoriesProp
+	}
 	containerProp, err := expandWorkstationsWorkstationConfigContainer(d.Get("container"), d, config)
 	if err != nil {
 		return err
@@ -736,6 +797,9 @@ func resourceWorkstationsWorkstationConfigRead(d *schema.ResourceData, meta inte
 	if err := d.Set("persistent_directories", flattenWorkstationsWorkstationConfigPersistentDirectories(res["persistentDirectories"], d, config)); err != nil {
 		return fmt.Errorf("Error reading WorkstationConfig: %s", err)
 	}
+	if err := d.Set("ephemeral_directories", flattenWorkstationsWorkstationConfigEphemeralDirectories(res["ephemeralDirectories"], d, config)); err != nil {
+		return fmt.Errorf("Error reading WorkstationConfig: %s", err)
+	}
 	if err := d.Set("container", flattenWorkstationsWorkstationConfigContainer(res["container"], d, config)); err != nil {
 		return fmt.Errorf("Error reading WorkstationConfig: %s", err)
 	}
@@ -825,6 +889,12 @@ func resourceWorkstationsWorkstationConfigUpdate(d *schema.ResourceData, meta in
 	} else if v, ok := d.GetOkExists("persistent_directories"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, persistentDirectoriesProp)) {
 		obj["persistentDirectories"] = persistentDirectoriesProp
 	}
+	ephemeralDirectoriesProp, err := expandWorkstationsWorkstationConfigEphemeralDirectories(d.Get("ephemeral_directories"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("ephemeral_directories"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, ephemeralDirectoriesProp)) {
+		obj["ephemeralDirectories"] = ephemeralDirectoriesProp
+	}
 	containerProp, err := expandWorkstationsWorkstationConfigContainer(d.Get("container"), d, config)
 	if err != nil {
 		return err
@@ -901,6 +971,10 @@ func resourceWorkstationsWorkstationConfigUpdate(d *schema.ResourceData, meta in
 
 	if d.HasChange("persistent_directories") {
 		updateMask = append(updateMask, "persistentDirectories")
+	}
+
+	if d.HasChange("ephemeral_directories") {
+		updateMask = append(updateMask, "ephemeralDirectories")
 	}
 
 	if d.HasChange("container") {
@@ -1372,6 +1446,64 @@ func flattenWorkstationsWorkstationConfigPersistentDirectoriesGcePdReclaimPolicy
 }
 
 func flattenWorkstationsWorkstationConfigPersistentDirectoriesGcePdSourceSnapshot(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenWorkstationsWorkstationConfigEphemeralDirectories(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return v
+	}
+	l := v.([]interface{})
+	transformed := make([]interface{}, 0, len(l))
+	for _, raw := range l {
+		original := raw.(map[string]interface{})
+		if len(original) < 1 {
+			// Do not include empty json objects coming back from the api
+			continue
+		}
+		transformed = append(transformed, map[string]interface{}{
+			"mount_path": flattenWorkstationsWorkstationConfigEphemeralDirectoriesMountPath(original["mountPath"], d, config),
+			"gce_pd":     flattenWorkstationsWorkstationConfigEphemeralDirectoriesGcePd(original["gcePd"], d, config),
+		})
+	}
+	return transformed
+}
+func flattenWorkstationsWorkstationConfigEphemeralDirectoriesMountPath(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenWorkstationsWorkstationConfigEphemeralDirectoriesGcePd(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["disk_type"] =
+		flattenWorkstationsWorkstationConfigEphemeralDirectoriesGcePdDiskType(original["diskType"], d, config)
+	transformed["source_snapshot"] =
+		flattenWorkstationsWorkstationConfigEphemeralDirectoriesGcePdSourceSnapshot(original["sourceSnapshot"], d, config)
+	transformed["source_image"] =
+		flattenWorkstationsWorkstationConfigEphemeralDirectoriesGcePdSourceImage(original["sourceImage"], d, config)
+	transformed["read_only"] =
+		flattenWorkstationsWorkstationConfigEphemeralDirectoriesGcePdReadOnly(original["readOnly"], d, config)
+	return []interface{}{transformed}
+}
+func flattenWorkstationsWorkstationConfigEphemeralDirectoriesGcePdDiskType(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenWorkstationsWorkstationConfigEphemeralDirectoriesGcePdSourceSnapshot(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenWorkstationsWorkstationConfigEphemeralDirectoriesGcePdSourceImage(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenWorkstationsWorkstationConfigEphemeralDirectoriesGcePdReadOnly(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
@@ -1951,6 +2083,95 @@ func expandWorkstationsWorkstationConfigPersistentDirectoriesGcePdReclaimPolicy(
 }
 
 func expandWorkstationsWorkstationConfigPersistentDirectoriesGcePdSourceSnapshot(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandWorkstationsWorkstationConfigEphemeralDirectories(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	req := make([]interface{}, 0, len(l))
+	for _, raw := range l {
+		if raw == nil {
+			continue
+		}
+		original := raw.(map[string]interface{})
+		transformed := make(map[string]interface{})
+
+		transformedMountPath, err := expandWorkstationsWorkstationConfigEphemeralDirectoriesMountPath(original["mount_path"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedMountPath); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["mountPath"] = transformedMountPath
+		}
+
+		transformedGcePd, err := expandWorkstationsWorkstationConfigEphemeralDirectoriesGcePd(original["gce_pd"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedGcePd); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["gcePd"] = transformedGcePd
+		}
+
+		req = append(req, transformed)
+	}
+	return req, nil
+}
+
+func expandWorkstationsWorkstationConfigEphemeralDirectoriesMountPath(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandWorkstationsWorkstationConfigEphemeralDirectoriesGcePd(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedDiskType, err := expandWorkstationsWorkstationConfigEphemeralDirectoriesGcePdDiskType(original["disk_type"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedDiskType); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["diskType"] = transformedDiskType
+	}
+
+	transformedSourceSnapshot, err := expandWorkstationsWorkstationConfigEphemeralDirectoriesGcePdSourceSnapshot(original["source_snapshot"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedSourceSnapshot); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["sourceSnapshot"] = transformedSourceSnapshot
+	}
+
+	transformedSourceImage, err := expandWorkstationsWorkstationConfigEphemeralDirectoriesGcePdSourceImage(original["source_image"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedSourceImage); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["sourceImage"] = transformedSourceImage
+	}
+
+	transformedReadOnly, err := expandWorkstationsWorkstationConfigEphemeralDirectoriesGcePdReadOnly(original["read_only"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedReadOnly); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["readOnly"] = transformedReadOnly
+	}
+
+	return transformed, nil
+}
+
+func expandWorkstationsWorkstationConfigEphemeralDirectoriesGcePdDiskType(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandWorkstationsWorkstationConfigEphemeralDirectoriesGcePdSourceSnapshot(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandWorkstationsWorkstationConfigEphemeralDirectoriesGcePdSourceImage(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandWorkstationsWorkstationConfigEphemeralDirectoriesGcePdReadOnly(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
