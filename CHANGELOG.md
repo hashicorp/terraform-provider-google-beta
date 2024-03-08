@@ -1,4 +1,20 @@
-## 5.19.0 (Unreleased)
+## 5.20.0 (Unreleased)
+
+## 5.19.0 (Mar 4, 2024)
+
+FEATURES:
+* **New Resource:** `google_clouddeploy_target_iam_*` ([#7012](https://github.com/hashicorp/terraform-provider-google-beta/pull/7012))
+
+IMPROVEMENTS:
+* bigquery: added `remote_function_options` field to `google_bigquery_routine` resource ([#7015](https://github.com/hashicorp/terraform-provider-google-beta/pull/7015))
+* certificatemanager: added `location` field to `google_certificate_manager_dns_authorization` resource ([#7006](https://github.com/hashicorp/terraform-provider-google-beta/pull/7006))
+* composer: added `composer_network_attachment` and modified `network`/`subnetwork` to support composer 3 in `google_composer_environment`  ([#7023](https://github.com/hashicorp/terraform-provider-google-beta/pull/7023))
+* composer: added validations for composer 2/3 only fields in `google_composer_environment` ([#7008](https://github.com/hashicorp/terraform-provider-google-beta/pull/7008))
+* compute: added `certificate_manager_certificates` field to `google_compute_region_target_https_proxy` resource ([#7010](https://github.com/hashicorp/terraform-provider-google-beta/pull/7010))
+* gkehub2: added `namespace_labels` field to `google_gke_hub_scope` resource ([#7022](https://github.com/hashicorp/terraform-provider-google-beta/pull/7022))
+
+BUG FIXES:
+* resourcemanager: added a retry to deleting the default network when `auto_create_network` is false in `google_project` ([#7021](https://github.com/hashicorp/terraform-provider-google-beta/pull/7021))
 
 ## 5.18.0 (Feb 26, 2024)
 
