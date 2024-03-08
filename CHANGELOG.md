@@ -11,7 +11,7 @@ IMPROVEMENTS:
 
 BUG FIXES:
 * artifactregistry: fixed permadiff when `google_artifact_repository.docker_config` field is unset ([#7044](https://github.com/hashicorp/terraform-provider-google-beta/pull/7044))
-* bigquery: corrected plan validation on `google_bigquery_dataset.dataset_id` ([#7032](https://github.com/hashicorp/terraform-provider-google-beta/pull/7032))
+* bigquery: corrected plan-time validation on `google_bigquery_dataset.dataset_id` ([#7032](https://github.com/hashicorp/terraform-provider-google-beta/pull/7032))
 * kms: fixed issue where `google_kms_crypto_key_version.attestation.cert_chains` properties were incorrectly set to type string ([#7045](https://github.com/hashicorp/terraform-provider-google-beta/pull/7045))
 
 ## 5.19.0 (Mar 4, 2024)
