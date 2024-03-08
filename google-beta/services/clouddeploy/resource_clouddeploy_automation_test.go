@@ -21,7 +21,7 @@ func TestAccClouddeployAutomation_update(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckClouddeployAutomationDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -49,7 +49,6 @@ func TestAccClouddeployAutomation_update(t *testing.T) {
 func testAccClouddeployAutomation_basic(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_clouddeploy_automation" "automation" {
-  provider = google-beta
   name     = "tf-test-cd-automation%{random_suffix}"
   location = "us-central1"
   delivery_pipeline = google_clouddeploy_delivery_pipeline.pipeline.name
@@ -70,7 +69,6 @@ resource "google_clouddeploy_automation" "automation" {
 }
 
 resource "google_clouddeploy_delivery_pipeline" "pipeline" {
-  provider = google-beta
   name = "tf-test-cd-pipeline%{random_suffix}"
   location = "us-central1"
   serial_pipeline  {
@@ -87,7 +85,6 @@ func testAccClouddeployAutomation_update(context map[string]interface{}) string 
 	return acctest.Nprintf(`
 
 resource "google_clouddeploy_automation" "automation" {
-  provider = google-beta
   name     = "tf-test-cd-automation%{random_suffix}"
   location = "us-central1"
   delivery_pipeline = google_clouddeploy_delivery_pipeline.pipeline.name
@@ -128,7 +125,6 @@ resource "google_clouddeploy_automation" "automation" {
 }
 
 resource "google_clouddeploy_delivery_pipeline" "pipeline" {
-  provider = google-beta
   name = "tf-test-cd-pipeline%{random_suffix}"
   location = "us-central1"
   serial_pipeline  {
