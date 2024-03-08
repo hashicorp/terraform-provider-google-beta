@@ -374,6 +374,7 @@ var generatedIAMDatasources = map[string]*schema.Resource{
 	"google_iap_app_engine_service_iam_policy":               tpgiamresource.DataSourceIamPolicy(iap.IapAppEngineServiceIamSchema, iap.IapAppEngineServiceIamUpdaterProducer),
 	"google_iap_app_engine_version_iam_policy":               tpgiamresource.DataSourceIamPolicy(iap.IapAppEngineVersionIamSchema, iap.IapAppEngineVersionIamUpdaterProducer),
 	"google_iap_tunnel_iam_policy":                           tpgiamresource.DataSourceIamPolicy(iap.IapTunnelIamSchema, iap.IapTunnelIamUpdaterProducer),
+	"google_iap_tunnel_dest_group_iam_policy":                tpgiamresource.DataSourceIamPolicy(iap.IapTunnelDestGroupIamSchema, iap.IapTunnelDestGroupIamUpdaterProducer),
 	"google_iap_tunnel_instance_iam_policy":                  tpgiamresource.DataSourceIamPolicy(iap.IapTunnelInstanceIamSchema, iap.IapTunnelInstanceIamUpdaterProducer),
 	"google_iap_web_iam_policy":                              tpgiamresource.DataSourceIamPolicy(iap.IapWebIamSchema, iap.IapWebIamUpdaterProducer),
 	"google_iap_web_backend_service_iam_policy":              tpgiamresource.DataSourceIamPolicy(iap.IapWebBackendServiceIamSchema, iap.IapWebBackendServiceIamUpdaterProducer),
@@ -433,9 +434,9 @@ var handwrittenIAMDatasources = map[string]*schema.Resource{
 }
 
 // Resources
-// Generated resources: 447
-// Generated IAM resources: 264
-// Total generated resources: 711
+// Generated resources: 448
+// Generated IAM resources: 267
+// Total generated resources: 715
 var generatedResources = map[string]*schema.Resource{
 	"google_folder_access_approval_settings":                         accessapproval.ResourceAccessApprovalFolderSettings(),
 	"google_organization_access_approval_settings":                   accessapproval.ResourceAccessApprovalOrganizationSettings(),
@@ -905,6 +906,10 @@ var generatedResources = map[string]*schema.Resource{
 	"google_iap_tunnel_iam_binding":                                  tpgiamresource.ResourceIamBinding(iap.IapTunnelIamSchema, iap.IapTunnelIamUpdaterProducer, iap.IapTunnelIdParseFunc),
 	"google_iap_tunnel_iam_member":                                   tpgiamresource.ResourceIamMember(iap.IapTunnelIamSchema, iap.IapTunnelIamUpdaterProducer, iap.IapTunnelIdParseFunc),
 	"google_iap_tunnel_iam_policy":                                   tpgiamresource.ResourceIamPolicy(iap.IapTunnelIamSchema, iap.IapTunnelIamUpdaterProducer, iap.IapTunnelIdParseFunc),
+	"google_iap_tunnel_dest_group":                                   iap.ResourceIapTunnelDestGroup(),
+	"google_iap_tunnel_dest_group_iam_binding":                       tpgiamresource.ResourceIamBinding(iap.IapTunnelDestGroupIamSchema, iap.IapTunnelDestGroupIamUpdaterProducer, iap.IapTunnelDestGroupIdParseFunc),
+	"google_iap_tunnel_dest_group_iam_member":                        tpgiamresource.ResourceIamMember(iap.IapTunnelDestGroupIamSchema, iap.IapTunnelDestGroupIamUpdaterProducer, iap.IapTunnelDestGroupIdParseFunc),
+	"google_iap_tunnel_dest_group_iam_policy":                        tpgiamresource.ResourceIamPolicy(iap.IapTunnelDestGroupIamSchema, iap.IapTunnelDestGroupIamUpdaterProducer, iap.IapTunnelDestGroupIdParseFunc),
 	"google_iap_tunnel_instance_iam_binding":                         tpgiamresource.ResourceIamBinding(iap.IapTunnelInstanceIamSchema, iap.IapTunnelInstanceIamUpdaterProducer, iap.IapTunnelInstanceIdParseFunc),
 	"google_iap_tunnel_instance_iam_member":                          tpgiamresource.ResourceIamMember(iap.IapTunnelInstanceIamSchema, iap.IapTunnelInstanceIamUpdaterProducer, iap.IapTunnelInstanceIdParseFunc),
 	"google_iap_tunnel_instance_iam_policy":                          tpgiamresource.ResourceIamPolicy(iap.IapTunnelInstanceIamSchema, iap.IapTunnelInstanceIamUpdaterProducer, iap.IapTunnelInstanceIdParseFunc),
