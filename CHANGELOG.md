@@ -13,7 +13,6 @@ IMPROVEMENTS:
 BUG FIXES:
 * artifactregistry: fixed `docker_config` permadiff ([#7044](https://github.com/hashicorp/terraform-provider-google-beta/pull/7044))
 * kms: fixed issue where `google_kms_crypto_key_version.attestation.cert_chains` properties were incorrectly set to type string ([#7045](https://github.com/hashicorp/terraform-provider-google-beta/pull/7045))
-* notebooks: fixed a bug where `google_notebooks_instance` labels were not able to be updated ([#7028](https://github.com/hashicorp/terraform-provider-google-beta/pull/7028))
 
 ## 5.19.0 (Mar 4, 2024)
 
