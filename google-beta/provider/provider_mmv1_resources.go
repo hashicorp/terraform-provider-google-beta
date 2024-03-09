@@ -434,9 +434,9 @@ var handwrittenIAMDatasources = map[string]*schema.Resource{
 }
 
 // Resources
-// Generated resources: 448
+// Generated resources: 449
 // Generated IAM resources: 267
-// Total generated resources: 715
+// Total generated resources: 716
 var generatedResources = map[string]*schema.Resource{
 	"google_folder_access_approval_settings":                         accessapproval.ResourceAccessApprovalFolderSettings(),
 	"google_organization_access_approval_settings":                   accessapproval.ResourceAccessApprovalOrganizationSettings(),
@@ -501,6 +501,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_app_engine_service_split_traffic":                        appengine.ResourceAppEngineServiceSplitTraffic(),
 	"google_app_engine_standard_app_version":                         appengine.ResourceAppEngineStandardAppVersion(),
 	"google_apphub_application":                                      apphub.ResourceApphubApplication(),
+	"google_apphub_service_project_attachment":                       apphub.ResourceApphubServiceProjectAttachment(),
 	"google_artifact_registry_repository":                            artifactregistry.ResourceArtifactRegistryRepository(),
 	"google_artifact_registry_repository_iam_binding":                tpgiamresource.ResourceIamBinding(artifactregistry.ArtifactRegistryRepositoryIamSchema, artifactregistry.ArtifactRegistryRepositoryIamUpdaterProducer, artifactregistry.ArtifactRegistryRepositoryIdParseFunc),
 	"google_artifact_registry_repository_iam_member":                 tpgiamresource.ResourceIamMember(artifactregistry.ArtifactRegistryRepositoryIamSchema, artifactregistry.ArtifactRegistryRepositoryIamUpdaterProducer, artifactregistry.ArtifactRegistryRepositoryIdParseFunc),
