@@ -1046,6 +1046,7 @@ func (p *FrameworkProvider) Resources(_ context.Context) []func() resource.Resou
 func (p *FrameworkProvider) Functions(_ context.Context) []func() function.Function {
 	return []func() function.Function{
 		functions.NewProjectFromIdFunction,
+		functions.NewRegionFromZoneFunction,
 		functions.NewLocationFromIdFunction,
 	}
 }
