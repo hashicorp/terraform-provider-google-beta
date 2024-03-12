@@ -1048,5 +1048,7 @@ func (p *FrameworkProvider) Functions(_ context.Context) []func() function.Funct
 		functions.NewProjectFromIdFunction,
 		functions.NewRegionFromZoneFunction,
 		functions.NewLocationFromIdFunction,
+		functions.NewRegionFromIdFunction,
+		functions.NewZoneFromIdFunction,
 	}
 }
