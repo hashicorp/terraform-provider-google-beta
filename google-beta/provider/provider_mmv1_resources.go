@@ -37,6 +37,7 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/cloudfunctions2"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/cloudidentity"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/cloudids"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/cloudquotas"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/cloudrun"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/cloudrunv2"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/cloudscheduler"
@@ -169,6 +170,7 @@ var handwrittenDatasources = map[string]*schema.Resource{
 	"google_cloud_identity_groups":                        cloudidentity.DataSourceGoogleCloudIdentityGroups(),
 	"google_cloud_identity_group_memberships":             cloudidentity.DataSourceGoogleCloudIdentityGroupMemberships(),
 	"google_cloud_identity_group_lookup":                  cloudidentity.DataSourceGoogleCloudIdentityGroupLookup(),
+	"google_cloud_quotas_quota_info":                      cloudquotas.DataSourceGoogleCloudQuotasQuotaInfo(),
 	"google_cloud_run_locations":                          cloudrun.DataSourceGoogleCloudRunLocations(),
 	"google_cloud_run_service":                            cloudrun.DataSourceGoogleCloudRunService(),
 	"google_cloud_run_v2_job":                             cloudrunv2.DataSourceGoogleCloudRunV2Job(),
