@@ -1,4 +1,29 @@
 ## 5.21.0 (Unreleased)
+
+FEATURES:
+* **New Data Source:** `google_apphub_discovered_service` ([#7080](https://github.com/hashicorp/terraform-provider-google-beta/pull/7080))
+* **New Data Source:** `google_apphub_discovered_workload` ([#7083](https://github.com/hashicorp/terraform-provider-google-beta/pull/7083))
+* **New Resource:** `google_apphub_workload` ([#7088](https://github.com/hashicorp/terraform-provider-google-beta/pull/7088))
+* **New Resource:** `google_firebase_app_check_device_check_config` ([#7062](https://github.com/hashicorp/terraform-provider-google-beta/pull/7062))
+* **New Resource:** `google_iap_tunnel_dest_group` ([#7072](https://github.com/hashicorp/terraform-provider-google-beta/pull/7072))
+* **New Resource:** `google_kms_ekm_connection` ([#7059](https://github.com/hashicorp/terraform-provider-google-beta/pull/7059))
+* **New Resource:** `google_apphub_application` ([#7051](https://github.com/hashicorp/terraform-provider-google-beta/pull/7051))
+* **New Resource:** `google_apphub_service_project_attachment` ([#7073](https://github.com/hashicorp/terraform-provider-google-beta/pull/7073))
+* **New Resource:** `google_cloud_quotas_quota_info` ([#7092](https://github.com/hashicorp/terraform-provider-google-beta/pull/7092))
+* **New Resource:** `google_network_security_firewall_endpoint_association` ([#7075](https://github.com/hashicorp/terraform-provider-google-beta/pull/7075))
+
+IMPROVEMENTS:
+* cloudrunv2: added support for `scaling.min_instance_count` in `google_cloud_run_v2_service`. ([#7053](https://github.com/hashicorp/terraform-provider-google-beta/pull/7053))
+* firestore: added `cmek_config` field to `google_firestore_database` resource ([#7054](https://github.com/hashicorp/terraform-provider-google-beta/pull/7054))
+* gkeonprem: allowed `vcenter_network` to be set in `google_gkeonprem_vmware_cluster`, previously it was output-only ([#7055](https://github.com/hashicorp/terraform-provider-google-beta/pull/7055))
+* storagetransferservice: added field `transfer_spec.azure_blob_storage_data_source.credentials_secret` to `google_storage_transfer_job` ([#7091](https://github.com/hashicorp/terraform-provider-google-beta/pull/7091))
+* workstations: added support for `ephemeral_directories` in `google_workstations_workstation_config` ([#7061](https://github.com/hashicorp/terraform-provider-google-beta/pull/7061))
+
+BUG FIXES:
+* compute: allowed sending empty values for `SERVERLESS` in `google_compute_region_network_endpoint_group` resource ([#7052](https://github.com/hashicorp/terraform-provider-google-beta/pull/7052))
+* notebooks: fixed an issue where default tags would cause a diff recreating `google_notebooks_instance` resources ([#7086](https://github.com/hashicorp/terraform-provider-google-beta/pull/7086))
+* storage: fixed an issue where two or more lifecycle rules with different values of `no_age` field always generates change in `google_storage_bucket` resource. ([#7060](https://github.com/hashicorp/terraform-provider-google-beta/pull/7060))
+
 ## 5.20.0 (Mar 11, 2024)
 
 FEATURES:
