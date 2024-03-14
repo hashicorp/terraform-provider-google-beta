@@ -58,6 +58,13 @@ func ResourceFirebaseAndroidApp() *schema.Resource {
 				Required:    true,
 				Description: `The user-assigned display name of the AndroidApp.`,
 			},
+			"package_name": {
+				Type:     schema.TypeString,
+				Required: true,
+				ForceNew: true,
+				Description: `The canonical package name of the Android app as would appear in the Google Play
+Developer Console.`,
+			},
 			"api_key_id": {
 				Type:     schema.TypeString,
 				Computed: true,
@@ -65,12 +72,6 @@ func ResourceFirebaseAndroidApp() *schema.Resource {
 				Description: `The globally unique, Google-assigned identifier (UID) for the Firebase API key associated with the AndroidApp.
 If apiKeyId is not set during creation, then Firebase automatically associates an apiKeyId with the AndroidApp.
 This auto-associated key may be an existing valid key or, if no valid key exists, a new one will be provisioned.`,
-			},
-			"package_name": {
-				Type:     schema.TypeString,
-				Optional: true,
-				Description: `Immutable. The canonical package name of the Android app as would appear in the Google Play
-Developer Console.`,
 			},
 			"sha1_hashes": {
 				Type:        schema.TypeList,
@@ -337,12 +338,6 @@ func resourceFirebaseAndroidAppUpdate(d *schema.ResourceData, meta interface{}) 
 	} else if v, ok := d.GetOkExists("display_name"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, displayNameProp)) {
 		obj["displayName"] = displayNameProp
 	}
-	packageNameProp, err := expandFirebaseAndroidAppPackageName(d.Get("package_name"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("package_name"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, packageNameProp)) {
-		obj["packageName"] = packageNameProp
-	}
 	sha1HashesProp, err := expandFirebaseAndroidAppSha1Hashes(d.Get("sha1_hashes"), d, config)
 	if err != nil {
 		return err
@@ -378,10 +373,6 @@ func resourceFirebaseAndroidAppUpdate(d *schema.ResourceData, meta interface{}) 
 
 	if d.HasChange("display_name") {
 		updateMask = append(updateMask, "displayName")
-	}
-
-	if d.HasChange("package_name") {
-		updateMask = append(updateMask, "packageName")
 	}
 
 	if d.HasChange("sha1_hashes") {
