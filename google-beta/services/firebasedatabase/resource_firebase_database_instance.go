@@ -397,6 +397,11 @@ func resourceFirebaseDatabaseInstanceDelete(d *schema.ResourceData, meta interfa
 
 	var obj map[string]interface{}
 
+	// err == nil indicates that the billing_project value was found
+	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
+		billingProject = bp
+	}
+
 	// start of customized code
 	if d.Get("state").(string) == "ACTIVE" {
 		if err := disableRTDB(config, d, project, billingProject, userAgent); err != nil {
@@ -408,13 +413,8 @@ func resourceFirebaseDatabaseInstanceDelete(d *schema.ResourceData, meta interfa
 		return nil
 	}
 	// end of customized code
+
 	log.Printf("[DEBUG] Deleting Instance %q", d.Id())
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "DELETE",
