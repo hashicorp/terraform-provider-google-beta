@@ -9,6 +9,7 @@ FEATURES:
 * **New Resource:** `google_iap_tunnel_dest_group` ([#7072](https://github.com/hashicorp/terraform-provider-google-beta/pull/7072))
 * **New Resource:** `google_kms_ekm_connection` ([#7059](https://github.com/hashicorp/terraform-provider-google-beta/pull/7059))
 * **New Resource:** `google_apphub_application` ([#7051](https://github.com/hashicorp/terraform-provider-google-beta/pull/7051))
+* **New Resource:** `google_apphub_service` ([#7090](https://github.com/hashicorp/terraform-provider-google-beta/pull/7090))
 * **New Resource:** `google_apphub_service_project_attachment` ([#7073](https://github.com/hashicorp/terraform-provider-google-beta/pull/7073))
 * **New Resource:** `google_cloud_quotas_quota_info` ([#7092](https://github.com/hashicorp/terraform-provider-google-beta/pull/7092))
 * **New Resource:** `google_network_security_firewall_endpoint_association` ([#7075](https://github.com/hashicorp/terraform-provider-google-beta/pull/7075))
