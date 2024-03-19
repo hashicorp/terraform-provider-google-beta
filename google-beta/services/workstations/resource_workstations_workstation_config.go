@@ -263,6 +263,44 @@ Updating 'source_snapshot' will update content in the ephemeral directory after 
 											},
 										},
 									},
+									"boost_configs": {
+										Type:        schema.TypeList,
+										Optional:    true,
+										Description: `A list of the boost configurations that workstations created using this workstation configuration are allowed to use.`,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"id": {
+													Type:        schema.TypeString,
+													Required:    true,
+													Description: `The id to be used for the boost config.`,
+												},
+												"accelerators": {
+													Type:        schema.TypeList,
+													Optional:    true,
+													Description: `An accelerator card attached to the boost instance.`,
+													Elem: &schema.Resource{
+														Schema: map[string]*schema.Schema{
+															"count": {
+																Type:        schema.TypeInt,
+																Required:    true,
+																Description: `Number of accelerator cards exposed to the instance.`,
+															},
+															"type": {
+																Type:        schema.TypeString,
+																Required:    true,
+																Description: `Type of accelerator resource to attach to the instance, for example, "nvidia-tesla-p100".`,
+															},
+														},
+													},
+												},
+												"machine_type": {
+													Type:        schema.TypeString,
+													Optional:    true,
+													Description: `The type of machine that boosted VM instances will use—for example, e2-standard-4. For more information about machine types that Cloud Workstations supports, see the list of available machine types https://cloud.google.com/workstations/docs/available-machine-types. Defaults to e2-standard-4.`,
+												},
+											},
+										},
+									},
 									"boot_disk_size_gb": {
 										Type:        schema.TypeInt,
 										Computed:    true,
@@ -966,6 +1004,7 @@ func resourceWorkstationsWorkstationConfigUpdate(d *schema.ResourceData, meta in
 			"host.gceInstance.shieldedInstanceConfig.enableIntegrityMonitoring",
 			"host.gceInstance.confidentialInstanceConfig.enableConfidentialCompute",
 			"host.gceInstance.accelerators",
+			"host.gceInstance.boostConfigs",
 			"host.gceInstance.disableSsh")
 	}
 
@@ -1224,6 +1263,8 @@ func flattenWorkstationsWorkstationConfigHostGceInstance(v interface{}, d *schem
 		flattenWorkstationsWorkstationConfigHostGceInstanceConfidentialInstanceConfig(original["confidentialInstanceConfig"], d, config)
 	transformed["accelerators"] =
 		flattenWorkstationsWorkstationConfigHostGceInstanceAccelerators(original["accelerators"], d, config)
+	transformed["boost_configs"] =
+		flattenWorkstationsWorkstationConfigHostGceInstanceBoostConfigs(original["boostConfigs"], d, config)
 	return []interface{}{transformed}
 }
 func flattenWorkstationsWorkstationConfigHostGceInstanceMachineType(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -1356,6 +1397,74 @@ func flattenWorkstationsWorkstationConfigHostGceInstanceAcceleratorsType(v inter
 }
 
 func flattenWorkstationsWorkstationConfigHostGceInstanceAcceleratorsCount(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	// Handles the string fixed64 format
+	if strVal, ok := v.(string); ok {
+		if intVal, err := tpgresource.StringToFixed64(strVal); err == nil {
+			return intVal
+		}
+	}
+
+	// number values are represented as float64
+	if floatVal, ok := v.(float64); ok {
+		intVal := int(floatVal)
+		return intVal
+	}
+
+	return v // let terraform core handle it otherwise
+}
+
+func flattenWorkstationsWorkstationConfigHostGceInstanceBoostConfigs(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return v
+	}
+	l := v.([]interface{})
+	transformed := make([]interface{}, 0, len(l))
+	for _, raw := range l {
+		original := raw.(map[string]interface{})
+		if len(original) < 1 {
+			// Do not include empty json objects coming back from the api
+			continue
+		}
+		transformed = append(transformed, map[string]interface{}{
+			"id":           flattenWorkstationsWorkstationConfigHostGceInstanceBoostConfigsId(original["id"], d, config),
+			"machine_type": flattenWorkstationsWorkstationConfigHostGceInstanceBoostConfigsMachineType(original["machineType"], d, config),
+			"accelerators": flattenWorkstationsWorkstationConfigHostGceInstanceBoostConfigsAccelerators(original["accelerators"], d, config),
+		})
+	}
+	return transformed
+}
+func flattenWorkstationsWorkstationConfigHostGceInstanceBoostConfigsId(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenWorkstationsWorkstationConfigHostGceInstanceBoostConfigsMachineType(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenWorkstationsWorkstationConfigHostGceInstanceBoostConfigsAccelerators(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return v
+	}
+	l := v.([]interface{})
+	transformed := make([]interface{}, 0, len(l))
+	for _, raw := range l {
+		original := raw.(map[string]interface{})
+		if len(original) < 1 {
+			// Do not include empty json objects coming back from the api
+			continue
+		}
+		transformed = append(transformed, map[string]interface{}{
+			"type":  flattenWorkstationsWorkstationConfigHostGceInstanceBoostConfigsAcceleratorsType(original["type"], d, config),
+			"count": flattenWorkstationsWorkstationConfigHostGceInstanceBoostConfigsAcceleratorsCount(original["count"], d, config),
+		})
+	}
+	return transformed
+}
+func flattenWorkstationsWorkstationConfigHostGceInstanceBoostConfigsAcceleratorsType(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenWorkstationsWorkstationConfigHostGceInstanceBoostConfigsAcceleratorsCount(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := tpgresource.StringToFixed64(strVal); err == nil {
@@ -1842,6 +1951,13 @@ func expandWorkstationsWorkstationConfigHostGceInstance(v interface{}, d tpgreso
 		transformed["accelerators"] = transformedAccelerators
 	}
 
+	transformedBoostConfigs, err := expandWorkstationsWorkstationConfigHostGceInstanceBoostConfigs(original["boost_configs"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedBoostConfigs); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["boostConfigs"] = transformedBoostConfigs
+	}
+
 	return transformed, nil
 }
 
@@ -1983,6 +2099,87 @@ func expandWorkstationsWorkstationConfigHostGceInstanceAcceleratorsType(v interf
 }
 
 func expandWorkstationsWorkstationConfigHostGceInstanceAcceleratorsCount(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandWorkstationsWorkstationConfigHostGceInstanceBoostConfigs(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	req := make([]interface{}, 0, len(l))
+	for _, raw := range l {
+		if raw == nil {
+			continue
+		}
+		original := raw.(map[string]interface{})
+		transformed := make(map[string]interface{})
+
+		transformedId, err := expandWorkstationsWorkstationConfigHostGceInstanceBoostConfigsId(original["id"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedId); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["id"] = transformedId
+		}
+
+		transformedMachineType, err := expandWorkstationsWorkstationConfigHostGceInstanceBoostConfigsMachineType(original["machine_type"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedMachineType); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["machineType"] = transformedMachineType
+		}
+
+		transformedAccelerators, err := expandWorkstationsWorkstationConfigHostGceInstanceBoostConfigsAccelerators(original["accelerators"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedAccelerators); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["accelerators"] = transformedAccelerators
+		}
+
+		req = append(req, transformed)
+	}
+	return req, nil
+}
+
+func expandWorkstationsWorkstationConfigHostGceInstanceBoostConfigsId(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandWorkstationsWorkstationConfigHostGceInstanceBoostConfigsMachineType(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandWorkstationsWorkstationConfigHostGceInstanceBoostConfigsAccelerators(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	req := make([]interface{}, 0, len(l))
+	for _, raw := range l {
+		if raw == nil {
+			continue
+		}
+		original := raw.(map[string]interface{})
+		transformed := make(map[string]interface{})
+
+		transformedType, err := expandWorkstationsWorkstationConfigHostGceInstanceBoostConfigsAcceleratorsType(original["type"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedType); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["type"] = transformedType
+		}
+
+		transformedCount, err := expandWorkstationsWorkstationConfigHostGceInstanceBoostConfigsAcceleratorsCount(original["count"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedCount); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["count"] = transformedCount
+		}
+
+		req = append(req, transformed)
+	}
+	return req, nil
+}
+
+func expandWorkstationsWorkstationConfigHostGceInstanceBoostConfigsAcceleratorsType(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandWorkstationsWorkstationConfigHostGceInstanceBoostConfigsAcceleratorsCount(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
