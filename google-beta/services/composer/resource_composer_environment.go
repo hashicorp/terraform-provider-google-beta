@@ -6,6 +6,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"net"
 	"regexp"
 	"strings"
 	"time"
@@ -362,11 +363,12 @@ func ResourceComposerEnvironment() *schema.Resource {
 										},
 									},
 									"composer_internal_ipv4_cidr_block": {
-										Type:        schema.TypeString,
-										Computed:    true,
-										Optional:    true,
-										ForceNew:    true,
-										Description: `IPv4 cidr range that will be used by Composer internal components.`,
+										Type:         schema.TypeString,
+										Computed:     true,
+										Optional:     true,
+										ForceNew:     true,
+										ValidateFunc: validateComposerInternalIpv4CidrBlock,
+										Description:  `IPv4 cidr range that will be used by Composer internal components.`,
 									},
 								},
 							},
@@ -935,6 +937,14 @@ func ResourceComposerEnvironment() *schema.Resource {
 													Computed:     true,
 													ValidateFunc: validation.FloatAtLeast(0),
 													Description:  `Storage (GB) request and limit for DAG processor.`,
+												},
+												"count": {
+													Type:         schema.TypeInt,
+													Optional:     true,
+													ForceNew:     false,
+													Computed:     true,
+													ValidateFunc: validation.IntBetween(0, 3),
+													Description:  `Number of DAG processors.`,
 												},
 											},
 										},
@@ -1838,6 +1848,7 @@ func flattenComposerEnvironmentConfigWorkloadsConfig(workloadsConfig *composer.W
 		transformedDagProcessor["cpu"] = wlCfgDagProcessor.Cpu
 		transformedDagProcessor["memory_gb"] = wlCfgDagProcessor.MemoryGb
 		transformedDagProcessor["storage_gb"] = wlCfgDagProcessor.StorageGb
+		transformedDagProcessor["count"] = wlCfgDagProcessor.Count
 	}
 
 	transformed["scheduler"] = []interface{}{transformedScheduler}
@@ -2330,6 +2341,7 @@ func expandComposerEnvironmentConfigWorkloadsConfig(v interface{}, d *schema.Res
 			transformedDagProcessor.Cpu = originalDagProcessorRaw["cpu"].(float64)
 			transformedDagProcessor.MemoryGb = originalDagProcessorRaw["memory_gb"].(float64)
 			transformedDagProcessor.StorageGb = originalDagProcessorRaw["storage_gb"].(float64)
+			transformedDagProcessor.Count = int64(originalDagProcessorRaw["count"].(int))
 			transformed.DagProcessor = transformedDagProcessor
 		}
 	}
@@ -3017,4 +3029,18 @@ func versionValidationCustomizeDiffFunc(ctx context.Context, d *schema.ResourceD
 		}
 	}
 	return nil
+}
+
+func validateComposerInternalIpv4CidrBlock(v any, k string) (warns []string, errs []error) {
+	cidr_range := v.(string)
+	_, ip_net, err := net.ParseCIDR(cidr_range)
+	if err != nil {
+		errs = append(errs, fmt.Errorf("Invalid CIDR range: %s", err))
+		return
+	}
+	ones, _ := ip_net.Mask.Size()
+	if ones != 20 {
+		errs = append(errs, fmt.Errorf("Composer Internal IPv4 CIDR range must have size /20"))
+	}
+	return
 }
