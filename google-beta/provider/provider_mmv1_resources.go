@@ -439,9 +439,9 @@ var handwrittenIAMDatasources = map[string]*schema.Resource{
 }
 
 // Resources
-// Generated resources: 453
+// Generated resources: 454
 // Generated IAM resources: 267
-// Total generated resources: 720
+// Total generated resources: 721
 var generatedResources = map[string]*schema.Resource{
 	"google_folder_access_approval_settings":                           accessapproval.ResourceAccessApprovalFolderSettings(),
 	"google_organization_access_approval_settings":                     accessapproval.ResourceAccessApprovalOrganizationSettings(),
@@ -595,6 +595,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_cloud_identity_group":                                      cloudidentity.ResourceCloudIdentityGroup(),
 	"google_cloud_identity_group_membership":                           cloudidentity.ResourceCloudIdentityGroupMembership(),
 	"google_cloud_ids_endpoint":                                        cloudids.ResourceCloudIdsEndpoint(),
+	"google_cloud_quotas_quota_preference":                             cloudquotas.ResourceCloudQuotasQuotaPreference(),
 	"google_cloud_run_domain_mapping":                                  cloudrun.ResourceCloudRunDomainMapping(),
 	"google_cloud_run_service":                                         cloudrun.ResourceCloudRunService(),
 	"google_cloud_run_service_iam_binding":                             tpgiamresource.ResourceIamBinding(cloudrun.CloudRunServiceIamSchema, cloudrun.CloudRunServiceIamUpdaterProducer, cloudrun.CloudRunServiceIdParseFunc),
