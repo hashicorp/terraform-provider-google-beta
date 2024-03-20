@@ -86,6 +86,7 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/iap"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/identityplatform"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/integrationconnectors"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/integrations"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/kms"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/logging"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/looker"
@@ -439,9 +440,9 @@ var handwrittenIAMDatasources = map[string]*schema.Resource{
 }
 
 // Resources
-// Generated resources: 454
+// Generated resources: 455
 // Generated IAM resources: 267
-// Total generated resources: 721
+// Total generated resources: 722
 var generatedResources = map[string]*schema.Resource{
 	"google_folder_access_approval_settings":                           accessapproval.ResourceAccessApprovalFolderSettings(),
 	"google_organization_access_approval_settings":                     accessapproval.ResourceAccessApprovalOrganizationSettings(),
@@ -949,6 +950,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_identity_platform_tenant_oauth_idp_config":                 identityplatform.ResourceIdentityPlatformTenantOauthIdpConfig(),
 	"google_integration_connectors_connection":                         integrationconnectors.ResourceIntegrationConnectorsConnection(),
 	"google_integration_connectors_endpoint_attachment":                integrationconnectors.ResourceIntegrationConnectorsEndpointAttachment(),
+	"google_integrations_client":                                       integrations.ResourceIntegrationsClient(),
 	"google_kms_crypto_key":                                            kms.ResourceKMSCryptoKey(),
 	"google_kms_crypto_key_version":                                    kms.ResourceKMSCryptoKeyVersion(),
 	"google_kms_ekm_connection":                                        kms.ResourceKMSEkmConnection(),
