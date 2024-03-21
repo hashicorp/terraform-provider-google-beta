@@ -1,8 +1,5 @@
 ## 5.22.0 (Unreleased)
 
-UNKNOWN CHANGELOG TYPE:
-* Add missed apphub service release note ([#7114](https://github.com/hashicorp/terraform-provider-google-beta/pull/7114))
-* Update CHANGELOG.md 5.21.0 ([#7112](https://github.com/hashicorp/terraform-provider-google-beta/pull/7112))
 BREAKING CHANGES:
 * networksecurity: added required field `billing_project_id` to `google_network_security_firewall_endpoint` resource. Any configuration without `billing_project_id` specified will cause resource creation fail (beta) ([#7124](https://github.com/hashicorp/terraform-provider-google-beta/pull/7124))
 
@@ -12,9 +9,9 @@ FEATURES:
 * **New Resource:** google_cloud_quotas_quota_info ([#7092](https://github.com/hashicorp/terraform-provider-google-beta/pull/7092))
 
 IMPROVEMENTS:
-* accesscontextmanager: support managing service perimeter dry run resources outside the perimeter via new resource `google_access_context_manager_service_perimeter_dry_run_resource` ([#7115](https://github.com/hashicorp/terraform-provider-google-beta/pull/7115))
+* accesscontextmanager: supported managing service perimeter dry run resources outside the perimeter via new resource `google_access_context_manager_service_perimeter_dry_run_resource` ([#7115](https://github.com/hashicorp/terraform-provider-google-beta/pull/7115))
 * cloudrunv2: added the validation to restrict number of ports to 1 to fail earlier than server-side validation ([#7103](https://github.com/hashicorp/terraform-provider-google-beta/pull/7103))
-* cloudrunv2: support mounting Cloud Storage buckets using GCSFuse in Jobs (beta). ([#7102](https://github.com/hashicorp/terraform-provider-google-beta/pull/7102))
+* cloudrunv2: supported mounting Cloud Storage buckets using GCSFuse in `google_cloud_run_v2_job` (beta). ([#7102](https://github.com/hashicorp/terraform-provider-google-beta/pull/7102))
 * composer: small fixes and enhancements after the bugbash. ([#7120](https://github.com/hashicorp/terraform-provider-google-beta/pull/7120))
 * compute: Added enumeration value `SEV_LIVE_MIGRATABLE_V2` for the `guest_os_features` of `google_compute_disk` ([#7123](https://github.com/hashicorp/terraform-provider-google-beta/pull/7123))
 * compute: added `status.all_instances_config.revision` field to `google_compute_instance_group_manager` and `google_compute_region_instance_group_manager` ([#7104](https://github.com/hashicorp/terraform-provider-google-beta/pull/7104))
