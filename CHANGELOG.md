@@ -12,7 +12,7 @@ IMPROVEMENTS:
 * accesscontextmanager: supported managing service perimeter dry run resources outside the perimeter via new resource `google_access_context_manager_service_perimeter_dry_run_resource` ([#7115](https://github.com/hashicorp/terraform-provider-google-beta/pull/7115))
 * cloudrunv2: added plan-time validation to restrict number of ports to 1 in `google_cloud_run_v2_service` ([#7103](https://github.com/hashicorp/terraform-provider-google-beta/pull/7103))
 * cloudrunv2: supported mounting Cloud Storage buckets using GCSFuse in `google_cloud_run_v2_job` ([#7102](https://github.com/hashicorp/terraform-provider-google-beta/pull/7102))
-* composer: added field `count` to validate number of DAG processors. ([#7120](https://github.com/hashicorp/terraform-provider-google-beta/pull/7120))
+* composer: added field `count` to validate number of DAG processors in `google_composer_environment` ([#7120](https://github.com/hashicorp/terraform-provider-google-beta/pull/7120))
 * compute: added enumeration value `SEV_LIVE_MIGRATABLE_V2` for the `guest_os_features` of `google_compute_disk` ([#7123](https://github.com/hashicorp/terraform-provider-google-beta/pull/7123))
 * compute: added `status.all_instances_config.revision` field to `google_compute_instance_group_manager` and `google_compute_region_instance_group_manager` ([#7104](https://github.com/hashicorp/terraform-provider-google-beta/pull/7104))
 * compute: added field `path_template_match` to resource `google_compute_region_url_map` ([#7094](https://github.com/hashicorp/terraform-provider-google-beta/pull/7094))
