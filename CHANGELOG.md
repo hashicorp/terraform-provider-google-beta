@@ -1,4 +1,31 @@
 ## 5.22.0 (Unreleased)
+
+BREAKING CHANGES:
+* networksecurity: added required field `billing_project_id` to `google_network_security_firewall_endpoint` resource. Any configuration without `billing_project_id` specified will cause resource creation fail (beta) ([#7124](https://github.com/hashicorp/terraform-provider-google-beta/pull/7124))
+
+FEATURES:
+* **New Data Source:** `google_cloud_quotas_quota_infos` ([#7116](https://github.com/hashicorp/terraform-provider-google-beta/pull/7116))
+* **New Resource:** `google_access_context_manager_service_perimeter_dry_run_resource` ([#7115](https://github.com/hashicorp/terraform-provider-google-beta/pull/7115))
+* **New Resource:** `google_cloud_quotas_quota_info` ([#7092](https://github.com/hashicorp/terraform-provider-google-beta/pull/7092))
+
+IMPROVEMENTS:
+* accesscontextmanager: supported managing service perimeter dry run resources outside the perimeter via new resource `google_access_context_manager_service_perimeter_dry_run_resource` ([#7115](https://github.com/hashicorp/terraform-provider-google-beta/pull/7115))
+* cloudrunv2: added plan-time validation to restrict number of ports to 1 in `google_cloud_run_v2_service` ([#7103](https://github.com/hashicorp/terraform-provider-google-beta/pull/7103))
+* cloudrunv2: supported mounting Cloud Storage buckets using GCSFuse in `google_cloud_run_v2_job` ([#7102](https://github.com/hashicorp/terraform-provider-google-beta/pull/7102))
+* composer: added field `count` to validate number of DAG processors in `google_composer_environment` ([#7120](https://github.com/hashicorp/terraform-provider-google-beta/pull/7120))
+* compute: added enumeration value `SEV_LIVE_MIGRATABLE_V2` for the `guest_os_features` of `google_compute_disk` ([#7123](https://github.com/hashicorp/terraform-provider-google-beta/pull/7123))
+* compute: added `status.all_instances_config.revision` field to `google_compute_instance_group_manager` and `google_compute_region_instance_group_manager` ([#7104](https://github.com/hashicorp/terraform-provider-google-beta/pull/7104))
+* compute: added field `path_template_match` to resource `google_compute_region_url_map` ([#7094](https://github.com/hashicorp/terraform-provider-google-beta/pull/7094))
+* compute: added field `path_template_rewrite` to resource `google_compute_region_url_map` ([#7094](https://github.com/hashicorp/terraform-provider-google-beta/pull/7094))
+* pubsub: added `ingestion_data_source_settings` field to `google_pubsub_topic` resource ([#7111](https://github.com/hashicorp/terraform-provider-google-beta/pull/7111))
+* storage: added 'soft_delete_policy' to 'google_storage_bucket' resource ([#7119](https://github.com/hashicorp/terraform-provider-google-beta/pull/7119))
+* workstations: added `host.gceInstance.boostConfig` to `google_workstations_workstation_config` ([#7122](https://github.com/hashicorp/terraform-provider-google-beta/pull/7122))
+
+BUG FIXES:
+* accesscontextmanager: fixed an issue with `access_context_manager_service_perimeter_ingress_policy` and `access_context_manager_service_perimeter_egress_policy` where updates could not be applied after initial creation. Any updates applied to these resources will now involve their recreation. To ensure that new policies are added before old ones are removed, add a `lifecycle` block with `create_before_destroy = true` to your resource configuration alongside other updates. ([#7105](https://github.com/hashicorp/terraform-provider-google-beta/pull/7105))
+* firebase: made the `google_firebase_android_app` resource's `package_name` field required and immutable. This prevents API errors encountered by users who attempted to update or leave that field unset in their configurations. ([#7100](https://github.com/hashicorp/terraform-provider-google-beta/pull/7100))
+* spanner: removed validation function for the field `version_retention_period` in the resource `google_spanner_database` and directly returned error from backend ([#7117](https://github.com/hashicorp/terraform-provider-google-beta/pull/7117))
+
 ## 5.21.0 (Mar 18, 2024)
 
 FEATURES:
