@@ -3141,6 +3141,7 @@ resource "google_composer_environment" "test" {
         cpu          = 1
         memory_gb    = 2.5
         storage_gb   = 2
+        count        = 1
       }
     }
     enable_private_environment = true
@@ -3184,6 +3185,7 @@ resource "google_composer_environment" "test" {
         cpu          = 2
         memory_gb    = 2
         storage_gb   = 1
+        count        = 2
       }
     }
     enable_private_environment = false
