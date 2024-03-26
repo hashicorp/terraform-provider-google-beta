@@ -1,5 +1,7 @@
 // Copyright (c) HashiCorp, Inc.
 // SPDX-License-Identifier: MPL-2.0
+// Copyright (c) HashiCorp, Inc.
+// SPDX-License-Identifier: MPL-2.0
 package firebaseappcheck_test
 
 import (
@@ -15,18 +17,21 @@ func TestAccFirebaseAppCheckServiceConfig_firebaseAppCheckServiceConfigUpdate(t 
 	t.Parallel()
 
 	context := map[string]interface{}{
-		"project_id":    envvar.GetTestProjectFromEnv(),
-		"service_id":    "identitytoolkit.googleapis.com",
+		"org_id":        envvar.GetTestOrgFromEnv(t),
 		"random_suffix": acctest.RandString(t, 10),
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
 		CheckDestroy:             testAccCheckFirebaseAppCheckServiceConfigDestroyProducer(t),
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"random": {},
+			"time":   {},
+		},
 		Steps: []resource.TestStep{
 			{
-				Config: testAccFirebaseAppCheckServiceConfig_firebaseAppCheckServiceConfigUnenforcedExample(context),
+				Config: testAccFirebaseAppCheckServiceConfig_firebaseAppCheckServiceConfigUpdate(context, "UNENFORCED"),
 			},
 			{
 				ResourceName:            "google_firebase_app_check_service_config.default",
@@ -35,7 +40,7 @@ func TestAccFirebaseAppCheckServiceConfig_firebaseAppCheckServiceConfigUpdate(t 
 				ImportStateVerifyIgnore: []string{"service_id"},
 			},
 			{
-				Config: testAccFirebaseAppCheckServiceConfig_firebaseAppCheckServiceConfigOffExample(context),
+				Config: testAccFirebaseAppCheckServiceConfig_firebaseAppCheckServiceConfigUpdate(context, "ENFORCED"),
 			},
 			{
 				ResourceName:            "google_firebase_app_check_service_config.default",
@@ -44,7 +49,7 @@ func TestAccFirebaseAppCheckServiceConfig_firebaseAppCheckServiceConfigUpdate(t 
 				ImportStateVerifyIgnore: []string{"service_id"},
 			},
 			{
-				Config: testAccFirebaseAppCheckServiceConfig_firebaseAppCheckServiceConfigEnforcedExample(context),
+				Config: testAccFirebaseAppCheckServiceConfig_firebaseAppCheckServiceConfigUpdate(context, ""),
 			},
 			{
 				ResourceName:            "google_firebase_app_check_service_config.default",
@@ -54,4 +59,76 @@ func TestAccFirebaseAppCheckServiceConfig_firebaseAppCheckServiceConfigUpdate(t 
 			},
 		},
 	})
+}
+
+func testAccFirebaseAppCheckServiceConfig_firebaseAppCheckServiceConfigUpdate(context map[string]interface{}, enforcementMode string) string {
+	context["enforcement_mode"] = enforcementMode
+	return acctest.Nprintf(`
+resource "google_project" "default" {
+  provider   = google-beta
+  project_id = "tf-test-appcheck%{random_suffix}"
+  name       = "tf-test-appcheck%{random_suffix}"
+  org_id     = "%{org_id}"
+  labels     = {
+    "firebase" = "enabled"
+  }
+}
+
+resource "google_project_service" "firebase" {
+  provider = google-beta
+  project  = google_project.default.project_id
+  service  = "firebase.googleapis.com"
+  disable_on_destroy = false
+}
+
+resource "google_project_service" "database" {
+  provider = google-beta
+  project  = google_project.default.project_id
+  service  = "firebasedatabase.googleapis.com"
+  disable_on_destroy = false
+}
+
+resource "google_project_service" "appcheck" {
+  provider = google-beta
+  project  = google_project.default.project_id
+  service  = "firebaseappcheck.googleapis.com"
+  disable_on_destroy = false
+}
+
+resource "google_firebase_project" "default" {
+  provider = google-beta
+  project  = google_project.default.project_id
+
+  depends_on = [
+    google_project_service.firebase,
+    google_project_service.database,
+    google_project_service.appcheck,
+  ]
+}
+
+# It takes a while for the new project to be ready for a database
+resource "time_sleep" "wait_30s" {
+  depends_on      = [google_firebase_project.default]
+  create_duration = "30s"
+}
+
+resource "google_firebase_database_instance" "default" {
+  provider = google-beta
+  project  = google_firebase_project.default.project
+  region   = "us-central1"
+  instance_id = "tf-test-appcheck%{random_suffix}-default-rtdb"
+  type     = "DEFAULT_DATABASE"
+
+  depends_on = [time_sleep.wait_30s]
+}
+
+resource "google_firebase_app_check_service_config" "default" {
+  provider = google-beta
+  project = google_firebase_project.default.project
+  service_id = "firebasedatabase.googleapis.com"
+  enforcement_mode = "%{enforcement_mode}"
+
+  depends_on = [google_firebase_database_instance.default]
+}
+`, context)
 }

@@ -30,7 +30,7 @@ import (
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
-func TestAccDataformRepository_dataformRepositoryExample(t *testing.T) {
+func TestAccDataformRepository_dataformRepositoryWithCloudsourceRepoExample(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
@@ -43,10 +43,10 @@ func TestAccDataformRepository_dataformRepositoryExample(t *testing.T) {
 		CheckDestroy:             testAccCheckDataformRepositoryDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccDataformRepository_dataformRepositoryExample(context),
+				Config: testAccDataformRepository_dataformRepositoryWithCloudsourceRepoExample(context),
 			},
 			{
-				ResourceName:            "google_dataform_repository.dataform_respository",
+				ResourceName:            "google_dataform_repository.dataform_repository",
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"region", "labels", "terraform_labels"},
@@ -55,7 +55,7 @@ func TestAccDataformRepository_dataformRepositoryExample(t *testing.T) {
 	})
 }
 
-func testAccDataformRepository_dataformRepositoryExample(context map[string]interface{}) string {
+func testAccDataformRepository_dataformRepositoryWithCloudsourceRepoExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_sourcerepo_repository" "git_repository" {
   provider = google-beta
@@ -78,7 +78,7 @@ resource "google_secret_manager_secret_version" "secret_version" {
   secret_data = "tf-test-secret-data%{random_suffix}"
 }
 
-resource "google_dataform_repository" "dataform_respository" {
+resource "google_dataform_repository" "dataform_repository" {
   provider = google-beta
   name = "tf_test_dataform_repository%{random_suffix}"
   display_name = "tf_test_dataform_repository%{random_suffix}"
@@ -103,7 +103,7 @@ resource "google_dataform_repository" "dataform_respository" {
 `, context)
 }
 
-func TestAccDataformRepository_dataformRepositorySshExample(t *testing.T) {
+func TestAccDataformRepository_dataformRepositoryWithCloudsourceRepoAndSshExample(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
@@ -116,10 +116,10 @@ func TestAccDataformRepository_dataformRepositorySshExample(t *testing.T) {
 		CheckDestroy:             testAccCheckDataformRepositoryDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccDataformRepository_dataformRepositorySshExample(context),
+				Config: testAccDataformRepository_dataformRepositoryWithCloudsourceRepoAndSshExample(context),
 			},
 			{
-				ResourceName:            "google_dataform_repository.dataform_respository",
+				ResourceName:            "google_dataform_repository.dataform_repository",
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"region", "labels", "terraform_labels"},
@@ -128,7 +128,7 @@ func TestAccDataformRepository_dataformRepositorySshExample(t *testing.T) {
 	})
 }
 
-func testAccDataformRepository_dataformRepositorySshExample(context map[string]interface{}) string {
+func testAccDataformRepository_dataformRepositoryWithCloudsourceRepoAndSshExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_sourcerepo_repository" "git_repository" {
   provider = google-beta
@@ -151,7 +151,7 @@ resource "google_secret_manager_secret_version" "secret_version" {
   secret_data = "tf-test-secret-data%{random_suffix}"
 }
 
-resource "google_dataform_repository" "dataform_respository" {
+resource "google_dataform_repository" "dataform_repository" {
   provider = google-beta
   name = "tf_test_dataform_repository%{random_suffix}"
 

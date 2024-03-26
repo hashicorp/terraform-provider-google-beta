@@ -146,7 +146,7 @@ resource "google_secret_manager_secret_version" "secret_version" {
   secret_data = "tf-test-secret-data%{random_suffix}"
 }
 
-resource "google_dataform_repository" "dataform_respository" {
+resource "google_dataform_repository" "dataform_repository" {
   provider = google-beta
   name = "tf_test_dataform_repository%{random_suffix}"
   display_name = "tf_test_dataform_repository%{random_suffix}"
@@ -171,9 +171,9 @@ resource "google_dataform_repository" "dataform_respository" {
 
 resource "google_dataform_repository_iam_member" "foo" {
   provider = google-beta
-  project = google_dataform_repository.dataform_respository.project
-  region = google_dataform_repository.dataform_respository.region
-  repository = google_dataform_repository.dataform_respository.name
+  project = google_dataform_repository.dataform_repository.project
+  region = google_dataform_repository.dataform_repository.region
+  repository = google_dataform_repository.dataform_repository.name
   role = "%{role}"
   member = "user:admin@hashicorptest.com"
 }
@@ -203,7 +203,7 @@ resource "google_secret_manager_secret_version" "secret_version" {
   secret_data = "tf-test-secret-data%{random_suffix}"
 }
 
-resource "google_dataform_repository" "dataform_respository" {
+resource "google_dataform_repository" "dataform_repository" {
   provider = google-beta
   name = "tf_test_dataform_repository%{random_suffix}"
   display_name = "tf_test_dataform_repository%{random_suffix}"
@@ -236,17 +236,17 @@ data "google_iam_policy" "foo" {
 
 resource "google_dataform_repository_iam_policy" "foo" {
   provider = google-beta
-  project = google_dataform_repository.dataform_respository.project
-  region = google_dataform_repository.dataform_respository.region
-  repository = google_dataform_repository.dataform_respository.name
+  project = google_dataform_repository.dataform_repository.project
+  region = google_dataform_repository.dataform_repository.region
+  repository = google_dataform_repository.dataform_repository.name
   policy_data = data.google_iam_policy.foo.policy_data
 }
 
 data "google_dataform_repository_iam_policy" "foo" {
   provider = google-beta
-  project = google_dataform_repository.dataform_respository.project
-  region = google_dataform_repository.dataform_respository.region
-  repository = google_dataform_repository.dataform_respository.name
+  project = google_dataform_repository.dataform_repository.project
+  region = google_dataform_repository.dataform_repository.region
+  repository = google_dataform_repository.dataform_repository.name
   depends_on = [
     google_dataform_repository_iam_policy.foo
   ]
@@ -277,7 +277,7 @@ resource "google_secret_manager_secret_version" "secret_version" {
   secret_data = "tf-test-secret-data%{random_suffix}"
 }
 
-resource "google_dataform_repository" "dataform_respository" {
+resource "google_dataform_repository" "dataform_repository" {
   provider = google-beta
   name = "tf_test_dataform_repository%{random_suffix}"
   display_name = "tf_test_dataform_repository%{random_suffix}"
@@ -306,9 +306,9 @@ data "google_iam_policy" "foo" {
 
 resource "google_dataform_repository_iam_policy" "foo" {
   provider = google-beta
-  project = google_dataform_repository.dataform_respository.project
-  region = google_dataform_repository.dataform_respository.region
-  repository = google_dataform_repository.dataform_respository.name
+  project = google_dataform_repository.dataform_repository.project
+  region = google_dataform_repository.dataform_repository.region
+  repository = google_dataform_repository.dataform_repository.name
   policy_data = data.google_iam_policy.foo.policy_data
 }
 `, context)
@@ -337,7 +337,7 @@ resource "google_secret_manager_secret_version" "secret_version" {
   secret_data = "tf-test-secret-data%{random_suffix}"
 }
 
-resource "google_dataform_repository" "dataform_respository" {
+resource "google_dataform_repository" "dataform_repository" {
   provider = google-beta
   name = "tf_test_dataform_repository%{random_suffix}"
   display_name = "tf_test_dataform_repository%{random_suffix}"
@@ -362,9 +362,9 @@ resource "google_dataform_repository" "dataform_respository" {
 
 resource "google_dataform_repository_iam_binding" "foo" {
   provider = google-beta
-  project = google_dataform_repository.dataform_respository.project
-  region = google_dataform_repository.dataform_respository.region
-  repository = google_dataform_repository.dataform_respository.name
+  project = google_dataform_repository.dataform_repository.project
+  region = google_dataform_repository.dataform_repository.region
+  repository = google_dataform_repository.dataform_repository.name
   role = "%{role}"
   members = ["user:admin@hashicorptest.com"]
 }
@@ -394,7 +394,7 @@ resource "google_secret_manager_secret_version" "secret_version" {
   secret_data = "tf-test-secret-data%{random_suffix}"
 }
 
-resource "google_dataform_repository" "dataform_respository" {
+resource "google_dataform_repository" "dataform_repository" {
   provider = google-beta
   name = "tf_test_dataform_repository%{random_suffix}"
   display_name = "tf_test_dataform_repository%{random_suffix}"
@@ -419,9 +419,9 @@ resource "google_dataform_repository" "dataform_respository" {
 
 resource "google_dataform_repository_iam_binding" "foo" {
   provider = google-beta
-  project = google_dataform_repository.dataform_respository.project
-  region = google_dataform_repository.dataform_respository.region
-  repository = google_dataform_repository.dataform_respository.name
+  project = google_dataform_repository.dataform_repository.project
+  region = google_dataform_repository.dataform_repository.region
+  repository = google_dataform_repository.dataform_repository.name
   role = "%{role}"
   members = ["user:admin@hashicorptest.com", "user:gterraformtest1@gmail.com"]
 }
