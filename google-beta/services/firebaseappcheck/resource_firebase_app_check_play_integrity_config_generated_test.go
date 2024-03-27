@@ -36,7 +36,7 @@ func TestAccFirebaseAppCheckPlayIntegrityConfig_firebaseAppCheckPlayIntegrityCon
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
 		ExternalProviders: map[string]resource.ExternalProvider{
 			"random": {},
 			"time":   {},
@@ -58,6 +58,8 @@ func TestAccFirebaseAppCheckPlayIntegrityConfig_firebaseAppCheckPlayIntegrityCon
 func testAccFirebaseAppCheckPlayIntegrityConfig_firebaseAppCheckPlayIntegrityConfigMinimalExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_firebase_android_app" "default" {
+  provider = google-beta
+
   project       = "%{project_id}"
   display_name  = "Play Integrity app"
   package_name  = "package.name.playintegrity%{random_suffix}"
@@ -73,6 +75,8 @@ resource "time_sleep" "wait_30s" {
 }
 
 resource "google_firebase_app_check_play_integrity_config" "default" {
+  provider = google-beta
+
   project = "%{project_id}"
   app_id  = google_firebase_android_app.default.app_id
 
@@ -99,7 +103,7 @@ func TestAccFirebaseAppCheckPlayIntegrityConfig_firebaseAppCheckPlayIntegrityCon
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
 		ExternalProviders: map[string]resource.ExternalProvider{
 			"random": {},
 			"time":   {},
@@ -121,6 +125,8 @@ func TestAccFirebaseAppCheckPlayIntegrityConfig_firebaseAppCheckPlayIntegrityCon
 func testAccFirebaseAppCheckPlayIntegrityConfig_firebaseAppCheckPlayIntegrityConfigFullExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_firebase_android_app" "default" {
+  provider = google-beta
+
   project       = "%{project_id}"
   display_name  = "Play Integrity app"
   package_name  = "package.name.playintegrity%{random_suffix}"
@@ -136,6 +142,8 @@ resource "time_sleep" "wait_30s" {
 }
 
 resource "google_firebase_app_check_play_integrity_config" "default" {
+  provider = google-beta
+
   project   = "%{project_id}"
   app_id    = google_firebase_android_app.default.app_id
   token_ttl = "%{token_ttl}"
