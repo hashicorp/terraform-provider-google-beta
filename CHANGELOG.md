@@ -1,23 +1,23 @@
 ## 5.23.0 (Unreleased)
 
 NOTES:
-* provider: introduced support for provider-defined functions. This feature is in Terraform v1.8.0+. ([#7153](https://github.com/hashicorp/terraform-provider-google-beta/pull/7153))
+* provider: introduced support for [provider-defined functions](https://developer.hashicorp.com/terraform/plugin/framework/functions). This feature is in Terraform v1.8.0+. ([#7153](https://github.com/hashicorp/terraform-provider-google-beta/pull/7153))
 
 DEPRECATIONS:
-* kms: `attestation.external_protection_level_options` has been deprecated in favor of `external_protection_level_options` in `google_kms_crypto_key_version` ([#7155](https://github.com/hashicorp/terraform-provider-google-beta/pull/7155))
+* kms: deprecated `attestation.external_protection_level_options` in favor of `external_protection_level_options` in `google_kms_crypto_key_version` ([#7155](https://github.com/hashicorp/terraform-provider-google-beta/pull/7155))
 
 FEATURES:
 * **New Data Source:** `google_apphub_application` ([#7143](https://github.com/hashicorp/terraform-provider-google-beta/pull/7143))
 * **New Resource:** `google_cloud_quotas_quota_preference` ([#7126](https://github.com/hashicorp/terraform-provider-google-beta/pull/7126))
 * **New Resource:** `google_vertex_ai_deployment_resource_pool` ([#7158](https://github.com/hashicorp/terraform-provider-google-beta/pull/7158))
-* **New Resource:** google_integrations_client ([#7129](https://github.com/hashicorp/terraform-provider-google-beta/pull/7129))
+* **New Resource:** `google_integrations_client` ([#7129](https://github.com/hashicorp/terraform-provider-google-beta/pull/7129))
 
 IMPROVEMENTS:
 * bigquery: added `dataGovernanceType` to `google_bigquery_routine` resource ([#7149](https://github.com/hashicorp/terraform-provider-google-beta/pull/7149))
 * bigquery: added support for `external_data_configuration.json_extension` to `google_bigquery_table` ([#7138](https://github.com/hashicorp/terraform-provider-google-beta/pull/7138))
 * compute: added `cloud_router_ipv6_address`, `customer_router_ipv6_address` fields to `google_compute_interconnect_attachment` resource ([#7151](https://github.com/hashicorp/terraform-provider-google-beta/pull/7151))
 * compute: added `generated_id` field to `google_compute_region_backend_service` resource ([#7128](https://github.com/hashicorp/terraform-provider-google-beta/pull/7128))
-* integrations: added deletion of `google_integrations_client` resource ([#7142](https://github.com/hashicorp/terraform-provider-google-beta/pull/7142))
+* integrations: added deletion support for `google_integrations_client` resource ([#7142](https://github.com/hashicorp/terraform-provider-google-beta/pull/7142))
 * kms: added `crypto_key_backend` field to `google_kms_crypto_key` resource ([#7155](https://github.com/hashicorp/terraform-provider-google-beta/pull/7155))
 * metastore: added `scheduled_backup` field to `google_dataproc_metastore_service` resource ([#7140](https://github.com/hashicorp/terraform-provider-google-beta/pull/7140))
 * provider: added provider-defined function `name_from_id` for retrieving the short-form name of a resource from its self link or id ([#7153](https://github.com/hashicorp/terraform-provider-google-beta/pull/7153))
