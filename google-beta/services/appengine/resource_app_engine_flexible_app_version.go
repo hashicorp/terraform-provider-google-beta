@@ -714,6 +714,13 @@ Modules API set_num_instances() you must use 'lifecycle.ignore_changes = ["manua
 								Type: schema.TypeString,
 							},
 						},
+						"instance_ip_mode": {
+							Type:        schema.TypeString,
+							Optional:    true,
+							ValidateFunc: verify.ValidateEnum([]string{"external", "internal", ""}),
+							Description: `Set to internal to prevent instances from receiving an ephemeral external IP address. Default value: "external". Possible values: ["external", "internal"]`,
+							Default:      "external",
+						},
 						"instance_tag": {
 							Type:        schema.TypeString,
 							Optional:    true,
@@ -1591,6 +1598,8 @@ func flattenAppEngineFlexibleAppVersionNetwork(v interface{}, d *schema.Resource
 	transformed := make(map[string]interface{})
 	transformed["forwarded_ports"] =
 		flattenAppEngineFlexibleAppVersionNetworkForwardedPorts(original["forwardedPorts"], d, config)
+	transformed["instance_ip_mode"] =
+		flattenAppEngineFlexibleAppVersionNetworkInstanceIpMode(original["instance_ip_mode"], d, config)
 	transformed["instance_tag"] =
 		flattenAppEngineFlexibleAppVersionNetworkInstanceTag(original["instanceTag"], d, config)
 	transformed["name"] =
@@ -1602,6 +1611,10 @@ func flattenAppEngineFlexibleAppVersionNetwork(v interface{}, d *schema.Resource
 	return []interface{}{transformed}
 }
 func flattenAppEngineFlexibleAppVersionNetworkForwardedPorts(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenAppEngineFlexibleAppVersionNetworkInstanceIpMode(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
@@ -2534,6 +2547,13 @@ func expandAppEngineFlexibleAppVersionNetwork(v interface{}, d tpgresource.Terra
 		transformed["forwardedPorts"] = transformedForwardedPorts
 	}
 
+	transformedInstanceIpMode, err := expandAppEngineFlexibleAppVersionNetworkInstanceIpMode(original["instance_ip_mode"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedInstanceIpMode); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["instanceIpMode"] = transformedInstanceIpMode
+	}
+	
 	transformedInstanceTag, err := expandAppEngineFlexibleAppVersionNetworkInstanceTag(original["instance_tag"], d, config)
 	if err != nil {
 		return nil, err
@@ -2566,6 +2586,10 @@ func expandAppEngineFlexibleAppVersionNetwork(v interface{}, d tpgresource.Terra
 }
 
 func expandAppEngineFlexibleAppVersionNetworkForwardedPorts(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandAppEngineFlexibleAppVersionNetworkInstanceIpMode(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
