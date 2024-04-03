@@ -75,6 +75,15 @@ func ResourceNetworkSecurityFirewallEndpointAssociation() *schema.Resource {
 				Required:    true,
 				Description: `The URL of the network that is being associated.`,
 			},
+			"disabled": {
+				Type:     schema.TypeBool,
+				Optional: true,
+				Description: `Whether the association is disabled. True indicates that traffic will not be intercepted.
+
+~> **Note:** The API will reject the request if this value is set to true when creating the resource,
+otherwise on an update the association can be disabled.`,
+				Default: false,
+			},
 			"labels": {
 				Type:     schema.TypeMap,
 				Optional: true,
@@ -167,6 +176,12 @@ func resourceNetworkSecurityFirewallEndpointAssociationCreate(d *schema.Resource
 	} else if v, ok := d.GetOkExists("tls_inspection_policy"); !tpgresource.IsEmptyValue(reflect.ValueOf(tlsInspectionPolicyProp)) && (ok || !reflect.DeepEqual(v, tlsInspectionPolicyProp)) {
 		obj["tlsInspectionPolicy"] = tlsInspectionPolicyProp
 	}
+	disabledProp, err := expandNetworkSecurityFirewallEndpointAssociationDisabled(d.Get("disabled"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("disabled"); !tpgresource.IsEmptyValue(reflect.ValueOf(disabledProp)) && (ok || !reflect.DeepEqual(v, disabledProp)) {
+		obj["disabled"] = disabledProp
+	}
 	labelsProp, err := expandNetworkSecurityFirewallEndpointAssociationEffectiveLabels(d.Get("effective_labels"), d, config)
 	if err != nil {
 		return err
@@ -174,7 +189,7 @@ func resourceNetworkSecurityFirewallEndpointAssociationCreate(d *schema.Resource
 		obj["labels"] = labelsProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{NetworkSecurityBasePath}}{{parent}}/locations/{{location}}/firewallEndpointAssociations?firewallEndpointId={{name}}")
+	url, err := tpgresource.ReplaceVars(d, config, "{{NetworkSecurityBasePath}}{{parent}}/locations/{{location}}/firewallEndpointAssociations?firewallEndpointAssociationId={{name}}")
 	if err != nil {
 		return err
 	}
@@ -264,6 +279,9 @@ func resourceNetworkSecurityFirewallEndpointAssociationRead(d *schema.ResourceDa
 	if err := d.Set("labels", flattenNetworkSecurityFirewallEndpointAssociationLabels(res["labels"], d, config)); err != nil {
 		return fmt.Errorf("Error reading FirewallEndpointAssociation: %s", err)
 	}
+	if err := d.Set("disabled", flattenNetworkSecurityFirewallEndpointAssociationDisabled(res["disabled"], d, config)); err != nil {
+		return fmt.Errorf("Error reading FirewallEndpointAssociation: %s", err)
+	}
 	if err := d.Set("self_link", flattenNetworkSecurityFirewallEndpointAssociationSelfLink(res["selfLink"], d, config)); err != nil {
 		return fmt.Errorf("Error reading FirewallEndpointAssociation: %s", err)
 	}
@@ -318,6 +336,12 @@ func resourceNetworkSecurityFirewallEndpointAssociationUpdate(d *schema.Resource
 	} else if v, ok := d.GetOkExists("tls_inspection_policy"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, tlsInspectionPolicyProp)) {
 		obj["tlsInspectionPolicy"] = tlsInspectionPolicyProp
 	}
+	disabledProp, err := expandNetworkSecurityFirewallEndpointAssociationDisabled(d.Get("disabled"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("disabled"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, disabledProp)) {
+		obj["disabled"] = disabledProp
+	}
 	labelsProp, err := expandNetworkSecurityFirewallEndpointAssociationEffectiveLabels(d.Get("effective_labels"), d, config)
 	if err != nil {
 		return err
@@ -343,6 +367,10 @@ func resourceNetworkSecurityFirewallEndpointAssociationUpdate(d *schema.Resource
 
 	if d.HasChange("tls_inspection_policy") {
 		updateMask = append(updateMask, "tlsInspectionPolicy")
+	}
+
+	if d.HasChange("disabled") {
+		updateMask = append(updateMask, "disabled")
 	}
 
 	if d.HasChange("effective_labels") {
@@ -483,6 +511,10 @@ func flattenNetworkSecurityFirewallEndpointAssociationLabels(v interface{}, d *s
 	return transformed
 }
 
+func flattenNetworkSecurityFirewallEndpointAssociationDisabled(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
 func flattenNetworkSecurityFirewallEndpointAssociationSelfLink(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
@@ -531,6 +563,10 @@ func expandNetworkSecurityFirewallEndpointAssociationNetwork(v interface{}, d tp
 }
 
 func expandNetworkSecurityFirewallEndpointAssociationTlsInspectionPolicy(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandNetworkSecurityFirewallEndpointAssociationDisabled(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
