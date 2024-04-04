@@ -1,8 +1,4 @@
 ## 5.24.0 (Unreleased)
-UNKNOWN CHANGELOG TYPE:
-* Fix bad resource in changelog (it's a datasource) ([#7167](https://github.com/hashicorp/terraform-provider-google-beta/pull/7167))
-* Update CHANGELOG.md 04-01-23 ([#7172](https://github.com/hashicorp/terraform-provider-google-beta/pull/7172))
-
 IMPROVEMENTS:
 * cloudrunv2: added `template.volumes.nfs` field to `google_cloud_run_v2_job` resource (beta) ([#7169](https://github.com/hashicorp/terraform-provider-google-beta/pull/7169))
 * container: added `enable_cilium_clusterwide_network_policy` field to `google_container_cluster` resource ([#7171](https://github.com/hashicorp/terraform-provider-google-beta/pull/7171))
