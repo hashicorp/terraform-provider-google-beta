@@ -682,7 +682,6 @@ func TestAccComputeRegionInstanceTemplate_ConfidentialInstanceConfigMain(t *test
 	t.Parallel()
 
 	var instanceTemplate compute.InstanceTemplate
-
 	var instanceTemplate2 compute.InstanceTemplate
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -695,12 +694,10 @@ func TestAccComputeRegionInstanceTemplate_ConfidentialInstanceConfigMain(t *test
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckComputeRegionInstanceTemplateExists(t, "google_compute_region_instance_template.foobar", &instanceTemplate),
 					testAccCheckComputeRegionInstanceTemplateHasConfidentialInstanceConfig(&instanceTemplate, true, "SEV"),
-
 					testAccCheckComputeRegionInstanceTemplateExists(t, "google_compute_region_instance_template.foobar2", &instanceTemplate2),
 					testAccCheckComputeRegionInstanceTemplateHasConfidentialInstanceConfig(&instanceTemplate2, true, ""),
 				),
 			},
-
 			{
 				Config: testAccComputeRegionInstanceTemplateConfidentialInstanceConfigNoEnable(acctest.RandString(t, 10), "AMD Milan", "SEV_SNP"),
 				Check: resource.ComposeTestCheckFunc(
@@ -1606,7 +1603,6 @@ func testAccCheckComputeRegionInstanceTemplateHasConfidentialInstanceConfig(inst
 		if instanceTemplate.Properties.ConfidentialInstanceConfig.EnableConfidentialCompute != EnableConfidentialCompute {
 			return fmt.Errorf("Wrong ConfidentialInstanceConfig EnableConfidentialCompute: expected %t, got, %t", EnableConfidentialCompute, instanceTemplate.Properties.ConfidentialInstanceConfig.EnableConfidentialCompute)
 		}
-
 		if instanceTemplate.Properties.ConfidentialInstanceConfig.ConfidentialInstanceType != ConfidentialInstanceType {
 			return fmt.Errorf("Wrong ConfidentialInstanceConfig ConfidentialInstanceType: expected %s, got, %s", ConfidentialInstanceType, instanceTemplate.Properties.ConfidentialInstanceConfig.ConfidentialInstanceType)
 		}
@@ -2753,9 +2749,7 @@ resource "google_compute_region_instance_template" "foobar" {
 
   confidential_instance_config {
     enable_confidential_compute       = true
-    
     confidential_instance_type        = %q
-    
   }
 
   scheduling {
@@ -2788,10 +2782,7 @@ resource "google_compute_region_instance_template" "foobar2" {
   }
 
 }
-
-
 `, suffix, confidentialInstanceType, suffix)
-
 }
 
 func testAccComputeRegionInstanceTemplateConfidentialInstanceConfigNoEnable(suffix string, minCpuPlatform, confidentialInstanceType string) string {
