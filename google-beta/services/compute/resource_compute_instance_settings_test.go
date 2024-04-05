@@ -19,7 +19,7 @@ func TestAccComputeInstanceSettings_update(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckComputeInstanceSettingsDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -57,7 +57,6 @@ func testAccComputeInstanceSettings_basic(context map[string]interface{}) string
 	return acctest.Nprintf(`
 
 resource "google_compute_instance_settings" "gce_instance_settings" {
-  provider = google-beta
   zone = "us-east7-b"
   metadata {
     items = {
@@ -73,7 +72,6 @@ func testAccComputeInstanceSettings_update(context map[string]interface{}) strin
 	return acctest.Nprintf(`
 
 resource "google_compute_instance_settings" "gce_instance_settings" {
-  provider = google-beta
   zone = "us-east7-b"
   metadata {
     items = {
@@ -90,7 +88,6 @@ func testAccComputeInstanceSettings_delete(context map[string]interface{}) strin
 	return acctest.Nprintf(`
 
 resource "google_compute_instance_settings" "gce_instance_settings" {
-  provider = google-beta
   zone = "us-east7-b"
   metadata {
     items = {
