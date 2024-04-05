@@ -11,7 +11,7 @@ IMPROVEMENTS:
 BUG FIXES:
 * appengine: fixed a crash in `google_app_engine_flexible_app_version` due to the `deployment` field not being returned by the API ([#7175](https://github.com/hashicorp/terraform-provider-google-beta/pull/7175))
 * bigquery: fixed a crash when `google_bigquery_table` had a `primary_key.columns` entry set to `""` ([#7166](https://github.com/hashicorp/terraform-provider-google-beta/pull/7166))
-* compute: Fixed update scenarios on `ComputeTargetHttpsProxy` and `ComputeRegionTargetHttpsProxy` resources. ([#7170](https://github.com/hashicorp/terraform-provider-google-beta/pull/7170))
+* compute: fixed update scenarios on `ComputeTargetHttpsProxy` and `ComputeRegionTargetHttpsProxy` resources. ([#7170](https://github.com/hashicorp/terraform-provider-google-beta/pull/7170))
 * dataflow: fixed an issue where the provider would crash when `enable_streaming_engine` is set as a `parameter` value in `google_dataflow_flex_template_job` ([#7160](https://github.com/hashicorp/terraform-provider-google-beta/pull/7160))
 
 ## 5.23.0 (Apr 01, 2023)
