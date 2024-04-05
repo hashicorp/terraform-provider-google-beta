@@ -1,6 +1,6 @@
 ## 5.24.0 (Unreleased)
 IMPROVEMENTS:
-* cloudrunv2: added `template.volumes.nfs` field to `google_cloud_run_v2_job` resource (beta) ([#7169](https://github.com/hashicorp/terraform-provider-google-beta/pull/7169))
+* cloudrunv2: added `template.volumes.nfs` field to `google_cloud_run_v2_job` resource ([#7169](https://github.com/hashicorp/terraform-provider-google-beta/pull/7169))
 * container: added `enable_cilium_clusterwide_network_policy` field to `google_container_cluster` resource ([#7171](https://github.com/hashicorp/terraform-provider-google-beta/pull/7171))
 * container: added `node_pool_auto_config.resource_manager_tags` field to `google_container_cluster` resource ([#7162](https://github.com/hashicorp/terraform-provider-google-beta/pull/7162))
 * gkeonprem: added `disable_bundled_ingress` field to `google_gkeonprem_vmware_cluster` resource ([#7163](https://github.com/hashicorp/terraform-provider-google-beta/pull/7163))
