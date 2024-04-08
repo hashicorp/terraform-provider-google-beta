@@ -5008,6 +5008,9 @@ resource "google_container_cluster" "primary" {
     gcs_fuse_csi_driver_config {
       enabled = false
     }
+    stateful_ha_config {
+      enabled = false
+    }
     istio_config {
       disabled = true
       auth     = "AUTH_MUTUAL_TLS"
@@ -5071,6 +5074,9 @@ resource "google_container_cluster" "primary" {
     enabled = true
   }
     gcs_fuse_csi_driver_config {
+      enabled = true
+    }
+    stateful_ha_config {
       enabled = true
     }
     istio_config {
