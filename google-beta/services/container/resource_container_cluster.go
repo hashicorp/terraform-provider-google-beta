@@ -77,6 +77,7 @@ var (
 		"addons_config.0.gke_backup_agent_config",
 		"addons_config.0.config_connector_config",
 		"addons_config.0.gcs_fuse_csi_driver_config",
+		"addons_config.0.stateful_ha_config",
 		"addons_config.0.istio_config",
 		"addons_config.0.kalm_config",
 	}
@@ -485,6 +486,23 @@ func ResourceContainerCluster() *schema.Resource {
 							AtLeastOneOf: addonsConfigKeys,
 							MaxItems:     1,
 							Description:  `The of the Config Connector addon.`,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"enabled": {
+										Type:     schema.TypeBool,
+										Required: true,
+									},
+								},
+							},
+						},
+						"stateful_ha_config": {
+							Type:          schema.TypeList,
+							Optional:      true,
+							Computed:      true,
+							AtLeastOneOf:  addonsConfigKeys,
+							MaxItems:      1,
+							Description:   `The status of the Stateful HA addon, which provides automatic configurable failover for stateful applications. Defaults to disabled; set enabled = true to enable.`,
+							ConflictsWith: []string{"enable_autopilot"},
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"enabled": {
@@ -4418,6 +4436,14 @@ func expandClusterAddonsConfig(configured interface{}) *container.AddonsConfig {
 		}
 	}
 
+	if v, ok := config["stateful_ha_config"]; ok && len(v.([]interface{})) > 0 {
+		addon := v.([]interface{})[0].(map[string]interface{})
+		ac.StatefulHaConfig = &container.StatefulHAConfig{
+			Enabled:         addon["enabled"].(bool),
+			ForceSendFields: []string{"Enabled"},
+		}
+	}
+
 	if v, ok := config["istio_config"]; ok && len(v.([]interface{})) > 0 {
 		addon := v.([]interface{})[0].(map[string]interface{})
 		ac.IstioConfig = &container.IstioConfig{
@@ -5581,6 +5607,13 @@ func flattenClusterAddonsConfig(c *container.AddonsConfig) []map[string]interfac
 			},
 		}
 	}
+	if c.StatefulHaConfig != nil {
+		result["stateful_ha_config"] = []map[string]interface{}{
+			{
+				"enabled": c.StatefulHaConfig.Enabled,
+			},
+		}
+	}
 
 	if c.IstioConfig != nil {
 		result["istio_config"] = []map[string]interface{}{
@@ -5598,6 +5631,7 @@ func flattenClusterAddonsConfig(c *container.AddonsConfig) []map[string]interfac
 			},
 		}
 	}
+
 	return []map[string]interface{}{result}
 }
 
