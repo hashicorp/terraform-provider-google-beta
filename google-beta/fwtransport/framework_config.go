@@ -149,6 +149,7 @@ type FrameworkProviderConfig struct {
 	OrgPolicyBasePath                string
 	OSConfigBasePath                 string
 	OSLoginBasePath                  string
+	ParallelstoreBasePath            string
 	PrivatecaBasePath                string
 	PublicCABasePath                 string
 	PubsubBasePath                   string
@@ -316,6 +317,7 @@ func (p *FrameworkProviderConfig) LoadAndValidateFramework(ctx context.Context, 
 	p.OrgPolicyBasePath = data.OrgPolicyCustomEndpoint.ValueString()
 	p.OSConfigBasePath = data.OSConfigCustomEndpoint.ValueString()
 	p.OSLoginBasePath = data.OSLoginCustomEndpoint.ValueString()
+	p.ParallelstoreBasePath = data.ParallelstoreCustomEndpoint.ValueString()
 	p.PrivatecaBasePath = data.PrivatecaCustomEndpoint.ValueString()
 	p.PublicCABasePath = data.PublicCACustomEndpoint.ValueString()
 	p.PubsubBasePath = data.PubsubCustomEndpoint.ValueString()
@@ -1255,6 +1257,14 @@ func (p *FrameworkProviderConfig) HandleDefaults(ctx context.Context, data *fwmo
 		}, transport_tpg.DefaultBasePaths[transport_tpg.OSLoginBasePathKey])
 		if customEndpoint != nil {
 			data.OSLoginCustomEndpoint = types.StringValue(customEndpoint.(string))
+		}
+	}
+	if data.ParallelstoreCustomEndpoint.IsNull() {
+		customEndpoint := transport_tpg.MultiEnvDefault([]string{
+			"GOOGLE_PARALLELSTORE_CUSTOM_ENDPOINT",
+		}, transport_tpg.DefaultBasePaths[transport_tpg.ParallelstoreBasePathKey])
+		if customEndpoint != nil {
+			data.ParallelstoreCustomEndpoint = types.StringValue(customEndpoint.(string))
 		}
 	}
 	if data.PrivatecaCustomEndpoint.IsNull() {
