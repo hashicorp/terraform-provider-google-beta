@@ -1,4 +1,19 @@
 ## 5.24.0 (Unreleased)
+IMPROVEMENTS:
+* cloudrunv2: added `template.volumes.nfs` field to `google_cloud_run_v2_job` resource ([#7169](https://github.com/hashicorp/terraform-provider-google-beta/pull/7169))
+* container: added `enable_cilium_clusterwide_network_policy` field to `google_container_cluster` resource ([#7171](https://github.com/hashicorp/terraform-provider-google-beta/pull/7171))
+* container: added `node_pool_auto_config.resource_manager_tags` field to `google_container_cluster` resource ([#7162](https://github.com/hashicorp/terraform-provider-google-beta/pull/7162))
+* gkeonprem: added `disable_bundled_ingress` field to `google_gkeonprem_vmware_cluster` resource ([#7163](https://github.com/hashicorp/terraform-provider-google-beta/pull/7163))
+* redis: added `node_type` and `precise_size_gb` fields to `google_redis_cluster` ([#7174](https://github.com/hashicorp/terraform-provider-google-beta/pull/7174))
+* storage: added `project_number` attribute to `google_storage_bucket` resource and data source ([#7164](https://github.com/hashicorp/terraform-provider-google-beta/pull/7164))
+* storage: added ability to provide `project` argument to `google_storage_bucket` data source. This will not impact reading the resource's data, instead this helps users avoid calls to the Compute API within the data source. ([#7164](https://github.com/hashicorp/terraform-provider-google-beta/pull/7164))
+
+BUG FIXES:
+* appengine: fixed a crash in `google_app_engine_flexible_app_version` due to the `deployment` field not being returned by the API ([#7175](https://github.com/hashicorp/terraform-provider-google-beta/pull/7175))
+* bigquery: fixed a crash when `google_bigquery_table` had a `primary_key.columns` entry set to `""` ([#7166](https://github.com/hashicorp/terraform-provider-google-beta/pull/7166))
+* compute: fixed update scenarios on `google_compute_region_target_https_proxy` and `google_compute_target_https_proxy` resources. ([#7170](https://github.com/hashicorp/terraform-provider-google-beta/pull/7170))
+* dataflow: fixed an issue where the provider would crash when `enable_streaming_engine` is set as a `parameter` value in `google_dataflow_flex_template_job` ([#7160](https://github.com/hashicorp/terraform-provider-google-beta/pull/7160))
+
 ## 5.23.0 (Apr 01, 2023)
 NOTES:
 * provider: introduced support for [provider-defined functions](https://developer.hashicorp.com/terraform/plugin/framework/functions). This feature is in Terraform v1.8.0+. ([#7153](https://github.com/hashicorp/terraform-provider-google-beta/pull/7153))
