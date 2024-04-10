@@ -163,8 +163,10 @@ func ResourceComposerEnvironment() *schema.Resource {
 			tpgresource.SetLabelsDiff,
 			customdiff.ForceNewIf("config.0.node_config.0.network", forceNewCustomDiff("config.0.node_config.0.network")),
 			customdiff.ForceNewIf("config.0.node_config.0.subnetwork", forceNewCustomDiff("config.0.node_config.0.subnetwork")),
-			customdiff.ValidateChange("config.0.software_config.0.image_version", imageVersionChangeValidationFunc),
-			versionValidationCustomizeDiffFunc,
+			customdiff.Sequence(
+				customdiff.ValidateChange("config.0.software_config.0.image_version", imageVersionChangeValidationFunc),
+				versionValidationCustomizeDiffFunc,
+			),
 		),
 
 		Schema: map[string]*schema.Schema{
