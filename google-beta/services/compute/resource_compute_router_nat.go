@@ -21,6 +21,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"net/http"
 	"reflect"
 	"strings"
 	"time"
@@ -704,6 +705,7 @@ func resourceComputeRouterNatCreate(d *schema.ResourceData, meta interface{}) er
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	// validates if the field action.source_nat_active_ranges is filled when the type is PRIVATE.
 	natType := d.Get("type").(string)
 	if natType == "PRIVATE" {
@@ -739,6 +741,7 @@ func resourceComputeRouterNatCreate(d *schema.ResourceData, meta interface{}) er
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutCreate),
+		Headers:   headers,
 	})
 	if err != nil {
 		return fmt.Errorf("Error creating RouterNat: %s", err)
@@ -791,12 +794,14 @@ func resourceComputeRouterNatRead(d *schema.ResourceData, meta interface{}) erro
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "GET",
 		Project:   billingProject,
 		RawURL:    url,
 		UserAgent: userAgent,
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("ComputeRouterNat %q", d.Id()))
@@ -1005,6 +1010,7 @@ func resourceComputeRouterNatUpdate(d *schema.ResourceData, meta interface{}) er
 	}
 
 	log.Printf("[DEBUG] Updating RouterNat %q: %#v", d.Id(), obj)
+	headers := make(http.Header)
 	// validates if the field action.source_nat_active_ranges is filled when the type is PRIVATE.
 	natType := d.Get("type").(string)
 	if natType == "PRIVATE" {
@@ -1051,6 +1057,7 @@ func resourceComputeRouterNatUpdate(d *schema.ResourceData, meta interface{}) er
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutUpdate),
+		Headers:   headers,
 	})
 
 	if err != nil {
@@ -1109,6 +1116,8 @@ func resourceComputeRouterNatDelete(d *schema.ResourceData, meta interface{}) er
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
+
 	log.Printf("[DEBUG] Deleting RouterNat %q", d.Id())
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
@@ -1118,6 +1127,7 @@ func resourceComputeRouterNatDelete(d *schema.ResourceData, meta interface{}) er
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutDelete),
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, "RouterNat")
