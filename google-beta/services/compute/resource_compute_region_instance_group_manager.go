@@ -526,6 +526,24 @@ func ResourceComputeRegionInstanceGroupManager() *schema.Resource {
 					},
 				},
 			},
+			"params": {
+				Type:        schema.TypeList,
+				MaxItems:    1,
+				Optional:    true,
+				ForceNew:    true,
+				Description: `Input only additional params for instance group manager creation.`,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"resource_manager_tags": {
+							Type:     schema.TypeMap,
+							Optional: true,
+							// This field is intentionally not updatable. The API overrides all existing tags on the field when updated.
+							ForceNew:    true,
+							Description: `Resource manager tags to bind to the managed instance group. The tags are key-value pairs. Keys must be in the format tagKeys/123 and values in the format tagValues/456.`,
+						},
+					},
+				},
+			},
 		},
 		UseJSONNumber: true,
 	}
@@ -563,6 +581,7 @@ func resourceComputeRegionInstanceGroupManagerCreate(d *schema.ResourceData, met
 		AllInstancesConfig:          expandAllInstancesConfig(nil, d.Get("all_instances_config").([]interface{})),
 		DistributionPolicy:          expandDistributionPolicy(d),
 		StatefulPolicy:              expandStatefulPolicy(d),
+		Params:                      expandInstanceGroupManagerParams(d),
 		// Force send TargetSize to allow size of 0.
 		ForceSendFields: []string{"TargetSize"},
 	}

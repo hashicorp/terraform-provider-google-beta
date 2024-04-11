@@ -342,6 +342,24 @@ func ResourceComputeInstanceGroupManager() *schema.Resource {
 					},
 				},
 			},
+			"params": {
+				Type:        schema.TypeList,
+				MaxItems:    1,
+				Optional:    true,
+				ForceNew:    true,
+				Description: `Input only additional params for instance group manager creation.`,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"resource_manager_tags": {
+							Type:     schema.TypeMap,
+							Optional: true,
+							// This field is intentionally not updatable. The API overrides all existing tags on the field when updated.
+							ForceNew:    true,
+							Description: `Resource manager tags to bind to the managed instance group. The tags are key-value pairs. Keys must be in the format tagKeys/123 and values in the format tagValues/456.`,
+						},
+					},
+				},
+			},
 			"wait_for_instances": {
 				Type:        schema.TypeBool,
 				Optional:    true,
@@ -589,6 +607,7 @@ func resourceComputeInstanceGroupManagerCreate(d *schema.ResourceData, meta inte
 		InstanceLifecyclePolicy:     expandInstanceLifecyclePolicy(d.Get("instance_lifecycle_policy").([]interface{})),
 		AllInstancesConfig:          expandAllInstancesConfig(nil, d.Get("all_instances_config").([]interface{})),
 		StatefulPolicy:              expandStatefulPolicy(d),
+		Params:                      expandInstanceGroupManagerParams(d),
 
 		// Force send TargetSize to allow a value of 0.
 		ForceSendFields: []string{"TargetSize"},
@@ -1249,6 +1268,16 @@ func expandUpdatePolicy(configured []interface{}) *compute.InstanceGroupManagerU
 		}
 	}
 	return updatePolicy
+}
+
+func expandInstanceGroupManagerParams(d *schema.ResourceData) *compute.InstanceGroupManagerParams {
+	params := &compute.InstanceGroupManagerParams{}
+
+	if _, ok := d.GetOk("params.0.resource_manager_tags"); ok {
+		params.ResourceManagerTags = tpgresource.ExpandStringMap(d, "params.0.resource_manager_tags")
+	}
+
+	return params
 }
 
 func flattenAutoHealingPolicies(autoHealingPolicies []*compute.InstanceGroupManagerAutoHealingPolicy) []map[string]interface{} {
