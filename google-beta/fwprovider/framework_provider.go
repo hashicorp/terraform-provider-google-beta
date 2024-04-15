@@ -19,7 +19,6 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/functions"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/fwmodels"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/fwtransport"
-	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/dns"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/firebase"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/resourcemanager"
 
@@ -1045,10 +1044,6 @@ func (p *FrameworkProvider) DataSources(_ context.Context) []func() datasource.D
 	return []func() datasource.DataSource{
 		resourcemanager.NewGoogleClientConfigDataSource,
 		resourcemanager.NewGoogleClientOpenIDUserinfoDataSource,
-		dns.NewGoogleDnsManagedZoneDataSource,
-		dns.NewGoogleDnsManagedZonesDataSource,
-		dns.NewGoogleDnsRecordSetDataSource,
-		dns.NewGoogleDnsKeysDataSource,
 		firebase.NewGoogleFirebaseAndroidAppConfigDataSource,
 		firebase.NewGoogleFirebaseAppleAppConfigDataSource,
 		firebase.NewGoogleFirebaseWebAppConfigDataSource,
