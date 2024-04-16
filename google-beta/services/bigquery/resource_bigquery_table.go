@@ -1307,6 +1307,12 @@ func ResourceBigQueryTable() *schema.Resource {
 					},
 				},
 			},
+			"resource_tags": {
+				Type:        schema.TypeMap,
+				Optional:    true,
+				Elem:        &schema.Schema{Type: schema.TypeString},
+				Description: `The tags attached to this table. Tag keys are globally unique. Tag key is expected to be in the namespaced format, for example "123456789012/environment" where 123456789012 is the ID of the parent organization or project resource for this tag key. Tag value is expected to be the short name, for example "Production".`,
+			},
 		},
 		UseJSONNumber: true,
 	}
@@ -1420,6 +1426,8 @@ func resourceTable(d *schema.ResourceData, meta interface{}) (*bigquery.Table, e
 
 		table.TableConstraints = tableConstraints
 	}
+
+	table.ResourceTags = tpgresource.ExpandStringMap(d, "resource_tags")
 
 	return table, nil
 }
@@ -1694,6 +1702,10 @@ func resourceBigQueryTableRead(d *schema.ResourceData, meta interface{}) error {
 		}
 	}
 
+	if err := d.Set("resource_tags", res.ResourceTags); err != nil {
+		return fmt.Errorf("Error setting resource tags: %s", err)
+	}
+
 	// TODO: Update when the Get API fields for TableReplicationInfo are available in the client library.
 	url, err := tpgresource.ReplaceVars(d, config, "{{BigQueryBasePath}}projects/{{project}}/datasets/{{dataset_id}}/tables/{{table_id}}")
 	if err != nil {
@@ -1774,6 +1786,10 @@ func resourceBigQueryTableColumnDrop(config *transport_tpg.Config, userAgent str
 		return err
 	}
 
+	if table.Schema == nil {
+		return nil
+	}
+
 	newTableFields := map[string]bool{}
 	for _, field := range table.Schema.Fields {
 		newTableFields[field.Name] = true
@@ -1809,8 +1825,18 @@ func resourceBigQueryTableColumnDrop(config *transport_tpg.Config, userAgent str
 
 func resourceBigQueryTableDelete(d *schema.ResourceData, meta interface{}) error {
 	if d.Get("deletion_protection").(bool) {
-		return fmt.Errorf("cannot destroy instance without setting deletion_protection=false and running `terraform apply`")
+		return fmt.Errorf("cannot destroy table %v without setting deletion_protection=false and running `terraform apply`", d.Id())
 	}
+	if v, ok := d.GetOk("resource_tags"); ok {
+		var resourceTags []string
+
+		for k, v := range v.(map[string]interface{}) {
+			resourceTags = append(resourceTags, fmt.Sprintf("%s:%s", k, v.(string)))
+		}
+
+		return fmt.Errorf("cannot destroy table %v without clearing the following resource tags: %v", d.Id(), resourceTags)
+	}
+
 	config := meta.(*transport_tpg.Config)
 	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
