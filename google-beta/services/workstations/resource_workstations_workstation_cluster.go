@@ -188,6 +188,12 @@ To access workstations in the cluster, configure access to the managed service u
 					},
 				},
 			},
+			"control_plane_ip": {
+				Type:     schema.TypeString,
+				Computed: true,
+				Description: `The private IP address of the control plane for this workstation cluster.
+Workstation VMs need access to this IP address to work with the service, so make sure that your firewall rules allow egress from the workstation VMs to this address.`,
+			},
 			"create_time": {
 				Type:        schema.TypeString,
 				Computed:    true,
@@ -413,6 +419,9 @@ func resourceWorkstationsWorkstationClusterRead(d *schema.ResourceData, meta int
 		return fmt.Errorf("Error reading WorkstationCluster: %s", err)
 	}
 	if err := d.Set("subnetwork", flattenWorkstationsWorkstationClusterSubnetwork(res["subnetwork"], d, config)); err != nil {
+		return fmt.Errorf("Error reading WorkstationCluster: %s", err)
+	}
+	if err := d.Set("control_plane_ip", flattenWorkstationsWorkstationClusterControlPlaneIp(res["controlPlaneIp"], d, config)); err != nil {
 		return fmt.Errorf("Error reading WorkstationCluster: %s", err)
 	}
 	if err := d.Set("display_name", flattenWorkstationsWorkstationClusterDisplayName(res["displayName"], d, config)); err != nil {
@@ -684,6 +693,10 @@ func flattenWorkstationsWorkstationClusterNetwork(v interface{}, d *schema.Resou
 }
 
 func flattenWorkstationsWorkstationClusterSubnetwork(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenWorkstationsWorkstationClusterControlPlaneIp(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
