@@ -130,6 +130,13 @@ request URL path, triggers Hosting to respond as if the service were given the s
 										Description:  `The user-supplied glob to match against the request URL path.`,
 										ExactlyOneOf: []string{},
 									},
+									"path": {
+										Type:         schema.TypeString,
+										Optional:     true,
+										ForceNew:     true,
+										Description:  `The URL path to rewrite the request to.`,
+										ExactlyOneOf: []string{},
+									},
 									"regex": {
 										Type:         schema.TypeString,
 										Optional:     true,
@@ -397,6 +404,7 @@ func flattenFirebaseHostingVersionConfigRewrites(v interface{}, d *schema.Resour
 		transformed = append(transformed, map[string]interface{}{
 			"glob":     flattenFirebaseHostingVersionConfigRewritesGlob(original["glob"], d, config),
 			"regex":    flattenFirebaseHostingVersionConfigRewritesRegex(original["regex"], d, config),
+			"path":     flattenFirebaseHostingVersionConfigRewritesPath(original["path"], d, config),
 			"function": flattenFirebaseHostingVersionConfigRewritesFunction(original["function"], d, config),
 			"run":      flattenFirebaseHostingVersionConfigRewritesRun(original["run"], d, config),
 		})
@@ -408,6 +416,10 @@ func flattenFirebaseHostingVersionConfigRewritesGlob(v interface{}, d *schema.Re
 }
 
 func flattenFirebaseHostingVersionConfigRewritesRegex(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenFirebaseHostingVersionConfigRewritesPath(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
@@ -538,6 +550,13 @@ func expandFirebaseHostingVersionConfigRewrites(v interface{}, d tpgresource.Ter
 			transformed["regex"] = transformedRegex
 		}
 
+		transformedPath, err := expandFirebaseHostingVersionConfigRewritesPath(original["path"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedPath); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["path"] = transformedPath
+		}
+
 		transformedFunction, err := expandFirebaseHostingVersionConfigRewritesFunction(original["function"], d, config)
 		if err != nil {
 			return nil, err
@@ -562,6 +581,10 @@ func expandFirebaseHostingVersionConfigRewritesGlob(v interface{}, d tpgresource
 }
 
 func expandFirebaseHostingVersionConfigRewritesRegex(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandFirebaseHostingVersionConfigRewritesPath(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
