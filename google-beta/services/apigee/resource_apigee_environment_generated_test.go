@@ -223,7 +223,7 @@ resource "google_apigee_environment" "apigee_environment" {
 `, context)
 }
 
-func TestAccApigeeEnvironment_apigeeEnvironmentTypeTestExample(t *testing.T) {
+func TestAccApigeeEnvironment_apigeeEnvironmentPatchUpdateTestExample(t *testing.T) {
 	acctest.SkipIfVcr(t)
 	t.Parallel()
 
@@ -239,7 +239,7 @@ func TestAccApigeeEnvironment_apigeeEnvironmentTypeTestExample(t *testing.T) {
 		CheckDestroy:             testAccCheckApigeeEnvironmentDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccApigeeEnvironment_apigeeEnvironmentTypeTestExample(context),
+				Config: testAccApigeeEnvironment_apigeeEnvironmentPatchUpdateTestExample(context),
 			},
 			{
 				ResourceName:            "google_apigee_environment.apigee_environment",
@@ -251,7 +251,7 @@ func TestAccApigeeEnvironment_apigeeEnvironmentTypeTestExample(t *testing.T) {
 	})
 }
 
-func testAccApigeeEnvironment_apigeeEnvironmentTypeTestExample(context map[string]interface{}) string {
+func testAccApigeeEnvironment_apigeeEnvironmentPatchUpdateTestExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_project" "project" {
   provider = google-beta
@@ -374,6 +374,7 @@ resource "google_apigee_environment" "apigee_environment" {
   description  = "Apigee Environment"
   display_name = "tf-test%{random_suffix}"
   type         = "COMPREHENSIVE"
+  forward_proxy_uri = "http://test:123"
 }
 `, context)
 }
