@@ -1,6 +1,33 @@
-## 5.25.0 (Unreleased)
+## 5.26.0 (Unreleased)
+
+## 5.25.0 (Apr 15, 2024)
+
+FEATURES:
+* **New Data Source:** `google_tags_tag_keys` ([#7196](https://github.com/hashicorp/terraform-provider-google-beta/pull/7196))
+* **New Data Source:** `google_tags_tag_values` ([#7196](https://github.com/hashicorp/terraform-provider-google-beta/pull/7196))
+* **New Resource:** `google_parallelstore_instance` ([#7209](https://github.com/hashicorp/terraform-provider-google-beta/pull/7209))
+
+IMPROVEMENTS:
+* bigquery: added in-place schema column drop support for `google_bigquery_table` resource ([#7193](https://github.com/hashicorp/terraform-provider-google-beta/pull/7193))
+* compute: added `endpoint_types` field to `google_compute_router_nat` resource ([#7190](https://github.com/hashicorp/terraform-provider-google-beta/pull/7190))
+* compute: added `enable_ipv4`, `ipv4_nexthop_address` and `peer_ipv4_nexthop_address` fields to `google_compute_router_peer` resource ([#7207](https://github.com/hashicorp/terraform-provider-google-beta/pull/7207))
+* compute: added `identifier_range` field to `google_compute_router` resource ([#7207](https://github.com/hashicorp/terraform-provider-google-beta/pull/7207))
+* compute: added `ip_version` field to `google_compute_router_interface` resource ([#7207](https://github.com/hashicorp/terraform-provider-google-beta/pull/7207))
+* compute: increased timeouts from 8 minutes to 20 minutes for `google_compute_security_policy` resource ([#7204](https://github.com/hashicorp/terraform-provider-google-beta/pull/7204))
+* container: added `stateful_ha_config` field to `google_container_cluster` resource ([#7206](https://github.com/hashicorp/terraform-provider-google-beta/pull/7206))
+* firestore: added `vector_config` field to `google_firestore_index` resource ([#7180](https://github.com/hashicorp/terraform-provider-google-beta/pull/7180))
+* gkebackup: added `backup_schedule.rpo_config` field to `google_gke_backup_backup_plan` resource ([#7211](https://github.com/hashicorp/terraform-provider-google-beta/pull/7211))
+* networksecurity: added `disabled` field to `google_network_security_firewall_endpoint_association` resource ([#7184](https://github.com/hashicorp/terraform-provider-google-beta/pull/7184))
+* sql: added `enable_google_ml_integration` field to `google_sql_database_instance` resource ([#7208](https://github.com/hashicorp/terraform-provider-google-beta/pull/7208))
+* storage: added labels validation to `google_storage_bucket` resource ([#7212](https://github.com/hashicorp/terraform-provider-google-beta/pull/7212))
+* vmwareengine: added `preferred_zone` and `secondary_zone` fields to `google_vmwareengine_private_cloud` resource ([#7210](https://github.com/hashicorp/terraform-provider-google-beta/pull/7210))
+
+BUG FIXES:
+* networksecurity: fixed an issue where `google_network_security_firewall_endpoint_association` resource could not be created due to a bad parameter ([#7184](https://github.com/hashicorp/terraform-provider-google-beta/pull/7184))
+* privateca: fixed permission issue by specifying signer certs chain when activating a sub-CA across regions for `google_privateca_certificate_authority` resource ([#7197](https://github.com/hashicorp/terraform-provider-google-beta/pull/7197))
 
 ## 5.24.0 (Apr 8, 2024)
+
 IMPROVEMENTS:
 * cloudrunv2: added `template.volumes.nfs` field to `google_cloud_run_v2_job` resource ([#7169](https://github.com/hashicorp/terraform-provider-google-beta/pull/7169))
 * container: added `enable_cilium_clusterwide_network_policy` field to `google_container_cluster` resource ([#7171](https://github.com/hashicorp/terraform-provider-google-beta/pull/7171))
