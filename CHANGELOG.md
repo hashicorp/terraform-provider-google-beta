@@ -12,7 +12,7 @@ IMPROVEMENTS:
 * composer: fixed validation on `google_composer_environment` resource so it will identify a disallowed upgrade to Composer 3 before attempting to provide feedback that's specific to using Composer 3 ([#7213](https://github.com/hashicorp/terraform-provider-google-beta/pull/7213))
 * compute: added `params.resource_manager_tags` field to `resource_compute_instance_group_manager` and `resource_compute_region_instance_group_manager` that enables to create these resources with tags (beta) ([#7226](https://github.com/hashicorp/terraform-provider-google-beta/pull/7226))
 * resourcemanager: added the field `api_method` to datasource `google_active_folder` so you can use either `SEARCH` or `LIST` to find your folder ([#7248](https://github.com/hashicorp/terraform-provider-google-beta/pull/7248))
-* storage: added labels validation to 'google_storage_bucket' resource ([#7212](https://github.com/hashicorp/terraform-provider-google-beta/pull/7212))
+* storage: added labels validation to `google_storage_bucket` resource ([#7212](https://github.com/hashicorp/terraform-provider-google-beta/pull/7212))
 * workstations: added output-only field `control_plane_ip` to `google_workstations_workstation_cluster` resource (beta) ([#7240](https://github.com/hashicorp/terraform-provider-google-beta/pull/7240))
 
 BUG FIXES:
