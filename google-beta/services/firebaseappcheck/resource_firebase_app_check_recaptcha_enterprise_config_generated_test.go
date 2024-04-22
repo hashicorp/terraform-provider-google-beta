@@ -59,6 +59,17 @@ func TestAccFirebaseAppCheckRecaptchaEnterpriseConfig_firebaseAppCheckRecaptchaE
 
 func testAccFirebaseAppCheckRecaptchaEnterpriseConfig_firebaseAppCheckRecaptchaEnterpriseConfigBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
+# Enables the reCAPTCHA Enterprise API
+resource "google_project_service" "recaptcha_enterprise" {
+  provider = google-beta
+
+  project = "%{project_id}"
+  service = "recaptchaenterprise.googleapis.com"
+
+  # Don't disable the service if the resource block is removed by accident.
+  disable_on_destroy = false
+}
+
 resource "google_firebase_web_app" "default" {
   provider = google-beta
 

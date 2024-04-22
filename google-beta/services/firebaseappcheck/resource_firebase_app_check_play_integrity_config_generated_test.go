@@ -57,6 +57,17 @@ func TestAccFirebaseAppCheckPlayIntegrityConfig_firebaseAppCheckPlayIntegrityCon
 
 func testAccFirebaseAppCheckPlayIntegrityConfig_firebaseAppCheckPlayIntegrityConfigMinimalExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
+# Enables the Play Integrity API
+resource "google_project_service" "play_integrity" {
+  provider = google-beta
+
+  project = "%{project_id}"
+  service = "playintegrity.googleapis.com"
+
+  # Don't disable the service if the resource block is removed by accident.
+  disable_on_destroy = false
+}
+
 resource "google_firebase_android_app" "default" {
   provider = google-beta
 
@@ -124,6 +135,17 @@ func TestAccFirebaseAppCheckPlayIntegrityConfig_firebaseAppCheckPlayIntegrityCon
 
 func testAccFirebaseAppCheckPlayIntegrityConfig_firebaseAppCheckPlayIntegrityConfigFullExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
+# Enables the Play Integrity API
+resource "google_project_service" "play_integrity" {
+  provider = google-beta
+
+  project = "%{project_id}"
+  service = "playintegrity.googleapis.com"
+
+  # Don't disable the service if the resource block is removed by accident.
+  disable_on_destroy = false
+}
+
 resource "google_firebase_android_app" "default" {
   provider = google-beta
 
