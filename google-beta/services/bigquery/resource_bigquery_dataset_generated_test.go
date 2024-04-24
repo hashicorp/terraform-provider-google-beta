@@ -410,7 +410,7 @@ resource "google_service_account" "bqowner" {
 `, context)
 }
 
-func TestAccBigQueryDataset_bigqueryDatasetExternalReferenceAwsExample(t *testing.T) {
+func TestAccBigQueryDataset_bigqueryDatasetExternalReferenceAwsTestExample(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
@@ -419,11 +419,11 @@ func TestAccBigQueryDataset_bigqueryDatasetExternalReferenceAwsExample(t *testin
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckBigQueryDatasetDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccBigQueryDataset_bigqueryDatasetExternalReferenceAwsExample(context),
+				Config: testAccBigQueryDataset_bigqueryDatasetExternalReferenceAwsTestExample(context),
 			},
 			{
 				ResourceName:            "google_bigquery_dataset.dataset",
@@ -435,10 +435,9 @@ func TestAccBigQueryDataset_bigqueryDatasetExternalReferenceAwsExample(t *testin
 	})
 }
 
-func testAccBigQueryDataset_bigqueryDatasetExternalReferenceAwsExample(context map[string]interface{}) string {
+func testAccBigQueryDataset_bigqueryDatasetExternalReferenceAwsTestExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_bigquery_dataset" "dataset" {
-  provider                    = google-beta
   dataset_id                  = "tf_test_example_dataset%{random_suffix}"
   friendly_name               = "test"
   description                 = "This is a test description"
