@@ -1,4 +1,30 @@
-## 5.26.0 (Unreleased)
+## 5.27.0 (Unreleased)
+
+## 5.26.0 (Apr 22, 2024)
+
+FEATURES:
+* **New Resource:** `google_project_iam_member_remove` ([#7242](https://github.com/hashicorp/terraform-provider-google-beta/pull/7242))
+
+IMPROVEMENTS:
+* apigee: added support for `api_consumer_data_location`, `api_consumer_data_encryption_key_name`, and `control_plane_encryption_key_name` in `google_apigee_organization` ([#7245](https://github.com/hashicorp/terraform-provider-google-beta/pull/7245))
+* artifactregistry: added `remote_repository_config.<facade>_repository.custom_repository.uri` field to `google_artifact_registry_repository` resource. ([#7230](https://github.com/hashicorp/terraform-provider-google-beta/pull/7230))
+* bigquery: added `resource_tags` field to `google_bigquery_table` resource ([#7247](https://github.com/hashicorp/terraform-provider-google-beta/pull/7247))
+* billing: added `ownership_scope` field to `google_billing_budget` resource ([#7239](https://github.com/hashicorp/terraform-provider-google-beta/pull/7239))
+* cloudfunctions2: added `build_config.service_account` field to `google_cloudfunctions2_function` resource ([#7231](https://github.com/hashicorp/terraform-provider-google-beta/pull/7231))
+* composer: fixed validation on `google_composer_environment` resource so it will identify a disallowed upgrade to Composer 3 before attempting to provide feedback that's specific to using Composer 3 ([#7213](https://github.com/hashicorp/terraform-provider-google-beta/pull/7213))
+* compute: added `params.resource_manager_tags` field to `resource_compute_instance_group_manager` and `resource_compute_region_instance_group_manager` that enables to create these resources with tags (beta) ([#7226](https://github.com/hashicorp/terraform-provider-google-beta/pull/7226))
+* resourcemanager: added the field `api_method` to datasource `google_active_folder` so you can use either `SEARCH` or `LIST` to find your folder ([#7248](https://github.com/hashicorp/terraform-provider-google-beta/pull/7248))
+* storage: added labels validation to `google_storage_bucket` resource ([#7212](https://github.com/hashicorp/terraform-provider-google-beta/pull/7212))
+* workstations: added output-only field `control_plane_ip` to `google_workstations_workstation_cluster` resource (beta) ([#7240](https://github.com/hashicorp/terraform-provider-google-beta/pull/7240))
+
+BUG FIXES:
+* apigee: fixed permadiff in ordering of `google_apigee_organization.properties.property`. ([#7234](https://github.com/hashicorp/terraform-provider-google-beta/pull/7234))
+* cloudrun: fixed the bug that computed `metadata.0.labels` and `metadata.0.annotations` fields don't appear in terraform plan when creating resource `google_cloud_run_service` and `google_cloud_run_domain_mapping` ([#7217](https://github.com/hashicorp/terraform-provider-google-beta/pull/7217))
+* dns: fixed bug where some methods of authentication didn't work when using `dns` data sources ([#7233](https://github.com/hashicorp/terraform-provider-google-beta/pull/7233))
+* iam: fixed a bug that prevented setting `create_ignore_already_exists` on existing resources in `google_service_account`. ([#7236](https://github.com/hashicorp/terraform-provider-google-beta/pull/7236))
+* sql: fixed issues with updating the `enable_google_ml_integration` field in `google_sql_database_instance` resource ([#7249](https://github.com/hashicorp/terraform-provider-google-beta/pull/7249))
+* storage: added validation to `name` field in `google_storage_bucket` resource ([#7237](https://github.com/hashicorp/terraform-provider-google-beta/pull/7237))
+* vmwareengine: fixed stretched cluster creation in `google_vmwareengine_private_cloud` ([#7246](https://github.com/hashicorp/terraform-provider-google-beta/pull/7246))
 
 ## 5.25.0 (Apr 15, 2024)
 
