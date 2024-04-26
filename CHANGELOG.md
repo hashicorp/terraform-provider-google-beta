@@ -18,7 +18,7 @@ IMPROVEMENTS:
 * firebasehosting: added `config.rewrites.path` field to `google_firebase_hosting_version` resource ([#7258](https://github.com/hashicorp/terraform-provider-google-beta/pull/7258))
 * logging: added `intercept_children` field to `google_logging_organization_sink` and `google_logging_folder_sink` resources ([#7279](https://github.com/hashicorp/terraform-provider-google-beta/pull/7279))
 * monitoring: added `service_agent_authentication` field to `google_monitoring_uptime_check_config` resource ([#7276](https://github.com/hashicorp/terraform-provider-google-beta/pull/7276))
-* privateca: added 'subject_key_id' field to `google_privateca_certificate` and `google_privateca_certificate_authority` resources ([#7273](https://github.com/hashicorp/terraform-provider-google-beta/pull/7273))
+* privateca: added `subject_key_id` field to `google_privateca_certificate` and `google_privateca_certificate_authority` resources ([#7273](https://github.com/hashicorp/terraform-provider-google-beta/pull/7273))
 * secretmanager: added `version_destroy_ttl` field to `google_secret_manager_secret` resource ([#7253](https://github.com/hashicorp/terraform-provider-google-beta/pull/7253))
 
 BUG FIXES:
