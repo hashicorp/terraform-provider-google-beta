@@ -10,8 +10,6 @@ FEATURES:
 
 IMPROVEMENTS:
 * alloydb: added `maintenance_update_policy` field to `google_alloydb_cluster` resource ([#7288](https://github.com/hashicorp/terraform-provider-google-beta/pull/7288))
-* bigquery: promoted `external_dataset_reference` in `bigquery_dataset` to GA ([#7284](https://github.com/hashicorp/terraform-provider-google-beta/pull/7284))
-* composer: promoted `config.0.software_config.0.image_version` in-place updates to GA in resource `google_composer_environment` ([#7303](https://github.com/hashicorp/terraform-provider-google-beta/pull/7303))
 * container: added `node_config.secondary_boot_disks` field to `google_container_node_pool` ([#7292](https://github.com/hashicorp/terraform-provider-google-beta/pull/7292))
 * integrations: added `create_sample_integrations` field to `google_integrations_client`, replacing deprecated field `create_sample_workflows`. ([#7285](https://github.com/hashicorp/terraform-provider-google-beta/pull/7285))
 * redis: added `redis_configs` field to `google_redis_cluster` resource ([#7289](https://github.com/hashicorp/terraform-provider-google-beta/pull/7289))
