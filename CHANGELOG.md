@@ -17,7 +17,7 @@ IMPROVEMENTS:
 * redis: added `redis_configs` field to `google_redis_cluster` resource ([#7289](https://github.com/hashicorp/terraform-provider-google-beta/pull/7289))
 
 BUG FIXES:
-* dns: fixed bug where the deletion of managed zones that have a SOA-Record set with terraform did not work ([#7305](https://github.com/hashicorp/terraform-provider-google-beta/pull/7305))
+* dns: fixed bug where the deletion of `google_dns_managed_zone` resources was blocked by any associated SOA-type `google_dns_record_set` resources ([#7305](https://github.com/hashicorp/terraform-provider-google-beta/pull/7305))
 * storage: fixed an issue where `google_storage_bucket_object` and `google_storage_bucket_objects` data sources would ignore custom endpoints ([#7287](https://github.com/hashicorp/terraform-provider-google-beta/pull/7287))
 
 ## 5.27.0 (Apr 30, 2024)
