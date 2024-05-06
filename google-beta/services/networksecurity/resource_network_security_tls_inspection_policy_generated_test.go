@@ -39,7 +39,7 @@ func TestAccNetworkSecurityTlsInspectionPolicy_networkSecurityTlsInspectionPolic
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckNetworkSecurityTlsInspectionPolicyDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -58,7 +58,6 @@ func TestAccNetworkSecurityTlsInspectionPolicy_networkSecurityTlsInspectionPolic
 func testAccNetworkSecurityTlsInspectionPolicy_networkSecurityTlsInspectionPolicyBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_privateca_ca_pool" "default" {
-  provider = google-beta
   name      = "tf-test-my-basic-ca-pool%{random_suffix}"
   location  = "us-central1"
   tier     = "DEVOPS"
@@ -82,22 +81,20 @@ resource "google_privateca_ca_pool" "default" {
   }
 }
 
-
 resource "google_privateca_certificate_authority" "default" {
-  provider = google-beta
-  pool = google_privateca_ca_pool.default.name
-  certificate_authority_id = "tf-test-my-basic-certificate-authority%{random_suffix}"
-  location = "us-central1"
-  lifetime = "86400s"
-  type = "SELF_SIGNED"
-  deletion_protection = false
-  skip_grace_period = true
+  pool                                   = google_privateca_ca_pool.default.name
+  certificate_authority_id               = "tf-test-my-basic-certificate-authority%{random_suffix}"
+  location                               = "us-central1"
+  lifetime                               = "86400s"
+  type                                   = "SELF_SIGNED"
+  deletion_protection                    = false
+  skip_grace_period                      = true
   ignore_active_certificates_on_deletion = true
   config {
     subject_config {
       subject {
         organization = "Test LLC"
-        common_name = "my-ca"
+        common_name  = "my-ca"
       }
     }
     x509_config {
@@ -107,7 +104,7 @@ resource "google_privateca_certificate_authority" "default" {
       key_usage {
         base_key_usage {
           cert_sign = true
-          crl_sign = true
+          crl_sign  = true
         }
         extended_key_usage {
           server_auth = false
@@ -121,26 +118,21 @@ resource "google_privateca_certificate_authority" "default" {
 }
 
 resource "google_project_service_identity" "ns_sa" {
-  provider = google-beta
-
   service = "networksecurity.googleapis.com"
 }
 
 resource "google_privateca_ca_pool_iam_member" "tls_inspection_permission" {
-  provider = google-beta
-
   ca_pool = google_privateca_ca_pool.default.id
-  role = "roles/privateca.certificateManager"
-  member = "serviceAccount:${google_project_service_identity.ns_sa.email}"
+  role    = "roles/privateca.certificateManager"
+  member  = "serviceAccount:${google_project_service_identity.ns_sa.email}"
 }
 
 resource "google_network_security_tls_inspection_policy" "default" {
-  provider = google-beta
-  name     = "tf-test-my-tls-inspection-policy%{random_suffix}"
-  location = "us-central1"
-  ca_pool  = google_privateca_ca_pool.default.id
+  name                  = "tf-test-my-tls-inspection-policy%{random_suffix}"
+  location              = "us-central1"
+  ca_pool               = google_privateca_ca_pool.default.id
   exclude_public_ca_set = false
-  depends_on = [google_privateca_ca_pool.default, google_privateca_certificate_authority.default, google_privateca_ca_pool_iam_member.tls_inspection_permission]
+  depends_on            = [google_privateca_ca_pool.default, google_privateca_certificate_authority.default, google_privateca_ca_pool_iam_member.tls_inspection_permission]
 }
 `, context)
 }
