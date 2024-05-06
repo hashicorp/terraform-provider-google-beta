@@ -6,7 +6,7 @@ DEPRECATIONS:
 FEATURES:
 * **New Data Source:** `google_storage_buckets` ([#7291](https://github.com/hashicorp/terraform-provider-google-beta/pull/7291))
 * **New Resource:** `google_compute_security_policy_rule` ([#7282](https://github.com/hashicorp/terraform-provider-google-beta/pull/7282))
-* **New Resource:** `google_privileged_access_manager_entitlement` (beta) ([#7283](https://github.com/hashicorp/terraform-provider-google-beta/pull/7283))
+* **New Resource:** `google_privileged_access_manager_entitlement` ([#7283](https://github.com/hashicorp/terraform-provider-google-beta/pull/7283))
 
 IMPROVEMENTS:
 * alloydb: added `maintenance_update_policy` field to `google_alloydb_cluster` resource ([#7288](https://github.com/hashicorp/terraform-provider-google-beta/pull/7288))
