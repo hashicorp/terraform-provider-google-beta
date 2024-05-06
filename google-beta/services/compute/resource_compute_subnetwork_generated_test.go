@@ -49,7 +49,7 @@ func TestAccComputeSubnetwork_subnetworkBasicExample(t *testing.T) {
 				ResourceName:            "google_compute_subnetwork.network-with-private-secondary-ip-ranges",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"network", "region"},
+				ImportStateVerifyIgnore: []string{"reserved_internal_range", "network", "region"},
 			},
 		},
 	})
@@ -94,7 +94,7 @@ func TestAccComputeSubnetwork_subnetworkLoggingConfigExample(t *testing.T) {
 				ResourceName:            "google_compute_subnetwork.subnet-with-logging",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"network", "region"},
+				ImportStateVerifyIgnore: []string{"reserved_internal_range", "network", "region"},
 			},
 		},
 	})
@@ -141,7 +141,7 @@ func TestAccComputeSubnetwork_subnetworkInternalL7lbExample(t *testing.T) {
 				ResourceName:            "google_compute_subnetwork.network-for-l7lb",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"network", "region"},
+				ImportStateVerifyIgnore: []string{"reserved_internal_range", "network", "region"},
 			},
 		},
 	})
@@ -188,7 +188,7 @@ func TestAccComputeSubnetwork_subnetworkIpv6Example(t *testing.T) {
 				ResourceName:            "google_compute_subnetwork.subnetwork-ipv6",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"network", "region"},
+				ImportStateVerifyIgnore: []string{"reserved_internal_range", "network", "region"},
 			},
 		},
 	})
@@ -234,7 +234,7 @@ func TestAccComputeSubnetwork_subnetworkInternalIpv6Example(t *testing.T) {
 				ResourceName:            "google_compute_subnetwork.subnetwork-internal-ipv6",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"network", "region"},
+				ImportStateVerifyIgnore: []string{"reserved_internal_range", "network", "region"},
 			},
 		},
 	})
@@ -281,7 +281,7 @@ func TestAccComputeSubnetwork_subnetworkPurposePrivateNatExample(t *testing.T) {
 				ResourceName:            "google_compute_subnetwork.subnetwork-purpose-private-nat",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"network", "region"},
+				ImportStateVerifyIgnore: []string{"reserved_internal_range", "network", "region"},
 			},
 		},
 	})
@@ -327,7 +327,7 @@ func TestAccComputeSubnetwork_subnetworkCidrOverlapExample(t *testing.T) {
 				ResourceName:            "google_compute_subnetwork.subnetwork-cidr-overlap",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"network", "region"},
+				ImportStateVerifyIgnore: []string{"reserved_internal_range", "network", "region"},
 			},
 		},
 	})
@@ -350,6 +350,61 @@ resource "google_compute_network" "net-cidr-overlap" {
 
   name                    = "tf-test-net-cidr-overlap%{random_suffix}"
   auto_create_subnetworks = false
+}
+`, context)
+}
+
+func TestAccComputeSubnetwork_subnetworkReservedInternalRangeExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"random_suffix": acctest.RandString(t, 10),
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckComputeSubnetworkDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeSubnetwork_subnetworkReservedInternalRangeExample(context),
+			},
+			{
+				ResourceName:            "google_compute_subnetwork.subnetwork-reserved-internal-range",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"reserved_internal_range", "network", "region"},
+			},
+		},
+	})
+}
+
+func testAccComputeSubnetwork_subnetworkReservedInternalRangeExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_compute_subnetwork" "subnetwork-reserved-internal-range" {
+  provider                = google-beta
+  name                    = "tf-test-subnetwork-reserved-internal-range%{random_suffix}"
+  region                  = "us-central1"
+  network                 = google_compute_network.default.id
+  reserved_internal_range = "networkconnectivity.googleapis.com/${google_network_connectivity_internal_range.reserved.id}"
+}
+
+resource "google_compute_network" "default" {
+  provider                = google-beta
+  name                    = "tf-test-network-reserved-internal-range%{random_suffix}"
+  auto_create_subnetworks = false
+}
+
+resource "google_network_connectivity_internal_range" "reserved" {
+  provider          = google-beta
+  name              = "reserved"
+  network           = google_compute_network.default.id
+  usage             = "FOR_VPC"
+  peering           = "FOR_SELF"
+  prefix_length     = 24
+  target_cidr_range = [
+    "10.0.0.0/8"
+  ]
 }
 `, context)
 }
