@@ -1579,7 +1579,7 @@ func TestAccBigQueryTable_ResourceTags(t *testing.T) {
 				ResourceName:            "google_bigquery_table.test",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"deletion_protection"},
+				ImportStateVerifyIgnore: []string{"deletion_protection", "allow_resource_tags_on_deletion"},
 			},
 			{
 				Config: testAccBigQueryTableWithResourceTagsUpdate(context),
@@ -1588,7 +1588,7 @@ func TestAccBigQueryTable_ResourceTags(t *testing.T) {
 				ResourceName:            "google_bigquery_table.test",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"deletion_protection"},
+				ImportStateVerifyIgnore: []string{"deletion_protection", "allow_resource_tags_on_deletion"},
 			},
 			// testAccBigQueryTableWithResourceTagsDestroy must be called at the end of this test to clear the resource tag bindings of the table before deletion.
 			{
@@ -1598,7 +1598,7 @@ func TestAccBigQueryTable_ResourceTags(t *testing.T) {
 				ResourceName:            "google_bigquery_table.test",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"deletion_protection"},
+				ImportStateVerifyIgnore: []string{"deletion_protection", "allow_resource_tags_on_deletion"},
 			},
 		},
 	})
@@ -3999,6 +3999,7 @@ resource "google_bigquery_table" "test" {
   provider = google-beta
 
   deletion_protection = false
+  allow_resource_tags_on_deletion = true
   dataset_id = "${google_bigquery_dataset.test.dataset_id}"
   table_id   = "%{table_id}"
   resource_tags = {
@@ -4048,6 +4049,7 @@ resource "google_bigquery_table" "test" {
   provider = google-beta
 
   deletion_protection = false
+  allow_resource_tags_on_deletion = true
   dataset_id = "${google_bigquery_dataset.test.dataset_id}"
   table_id   = "%{table_id}"
   resource_tags = {
@@ -4098,6 +4100,7 @@ resource "google_bigquery_table" "test" {
   provider = google-beta
 
   deletion_protection = false
+  allow_resource_tags_on_deletion = true
   dataset_id = "${google_bigquery_dataset.test.dataset_id}"
   table_id   = "%{table_id}"
   resource_tags = {}
