@@ -227,10 +227,280 @@ The above match condition matches packets with a source IP in 192.0.2.0/24 or 19
 					},
 				},
 			},
+			"preconfigured_waf_config": {
+				Type:     schema.TypeList,
+				Optional: true,
+				Description: `Preconfigured WAF configuration to be applied for the rule.
+If the rule does not evaluate preconfigured WAF rules, i.e., if evaluatePreconfiguredWaf() is not used, this field will have no effect.`,
+				MaxItems: 1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"exclusion": {
+							Type:        schema.TypeList,
+							Optional:    true,
+							Description: `An exclusion to apply during preconfigured WAF evaluation.`,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"target_rule_set": {
+										Type:        schema.TypeString,
+										Required:    true,
+										Description: `Target WAF rule set to apply the preconfigured WAF exclusion.`,
+									},
+									"request_cookie": {
+										Type:        schema.TypeList,
+										Optional:    true,
+										Description: `Request cookie whose value will be excluded from inspection during preconfigured WAF evaluation.`,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"operator": {
+													Type:         schema.TypeString,
+													Required:     true,
+													ValidateFunc: verify.ValidateEnum([]string{"CONTAINS", "ENDS_WITH", "EQUALS", "EQUALS_ANY", "STARTS_WITH"}),
+													Description: `You can specify an exact match or a partial match by using a field operator and a field value.
+Available options:
+EQUALS: The operator matches if the field value equals the specified value.
+STARTS_WITH: The operator matches if the field value starts with the specified value.
+ENDS_WITH: The operator matches if the field value ends with the specified value.
+CONTAINS: The operator matches if the field value contains the specified value.
+EQUALS_ANY: The operator matches if the field value is any value. Possible values: ["CONTAINS", "ENDS_WITH", "EQUALS", "EQUALS_ANY", "STARTS_WITH"]`,
+												},
+												"value": {
+													Type:     schema.TypeString,
+													Optional: true,
+													Description: `A request field matching the specified value will be excluded from inspection during preconfigured WAF evaluation.
+The field value must be given if the field operator is not EQUALS_ANY, and cannot be given if the field operator is EQUALS_ANY.`,
+												},
+											},
+										},
+									},
+									"request_header": {
+										Type:        schema.TypeList,
+										Optional:    true,
+										Description: `Request header whose value will be excluded from inspection during preconfigured WAF evaluation.`,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"operator": {
+													Type:         schema.TypeString,
+													Required:     true,
+													ValidateFunc: verify.ValidateEnum([]string{"CONTAINS", "ENDS_WITH", "EQUALS", "EQUALS_ANY", "STARTS_WITH"}),
+													Description: `You can specify an exact match or a partial match by using a field operator and a field value.
+Available options:
+EQUALS: The operator matches if the field value equals the specified value.
+STARTS_WITH: The operator matches if the field value starts with the specified value.
+ENDS_WITH: The operator matches if the field value ends with the specified value.
+CONTAINS: The operator matches if the field value contains the specified value.
+EQUALS_ANY: The operator matches if the field value is any value. Possible values: ["CONTAINS", "ENDS_WITH", "EQUALS", "EQUALS_ANY", "STARTS_WITH"]`,
+												},
+												"value": {
+													Type:     schema.TypeString,
+													Optional: true,
+													Description: `A request field matching the specified value will be excluded from inspection during preconfigured WAF evaluation.
+The field value must be given if the field operator is not EQUALS_ANY, and cannot be given if the field operator is EQUALS_ANY.`,
+												},
+											},
+										},
+									},
+									"request_query_param": {
+										Type:     schema.TypeList,
+										Optional: true,
+										Description: `Request query parameter whose value will be excluded from inspection during preconfigured WAF evaluation.
+Note that the parameter can be in the query string or in the POST body.`,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"operator": {
+													Type:         schema.TypeString,
+													Required:     true,
+													ValidateFunc: verify.ValidateEnum([]string{"CONTAINS", "ENDS_WITH", "EQUALS", "EQUALS_ANY", "STARTS_WITH"}),
+													Description: `You can specify an exact match or a partial match by using a field operator and a field value.
+Available options:
+EQUALS: The operator matches if the field value equals the specified value.
+STARTS_WITH: The operator matches if the field value starts with the specified value.
+ENDS_WITH: The operator matches if the field value ends with the specified value.
+CONTAINS: The operator matches if the field value contains the specified value.
+EQUALS_ANY: The operator matches if the field value is any value. Possible values: ["CONTAINS", "ENDS_WITH", "EQUALS", "EQUALS_ANY", "STARTS_WITH"]`,
+												},
+												"value": {
+													Type:     schema.TypeString,
+													Optional: true,
+													Description: `A request field matching the specified value will be excluded from inspection during preconfigured WAF evaluation.
+The field value must be given if the field operator is not EQUALS_ANY, and cannot be given if the field operator is EQUALS_ANY.`,
+												},
+											},
+										},
+									},
+									"request_uri": {
+										Type:     schema.TypeList,
+										Optional: true,
+										Description: `Request URI from the request line to be excluded from inspection during preconfigured WAF evaluation.
+When specifying this field, the query or fragment part should be excluded.`,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"operator": {
+													Type:         schema.TypeString,
+													Required:     true,
+													ValidateFunc: verify.ValidateEnum([]string{"CONTAINS", "ENDS_WITH", "EQUALS", "EQUALS_ANY", "STARTS_WITH"}),
+													Description: `You can specify an exact match or a partial match by using a field operator and a field value.
+Available options:
+EQUALS: The operator matches if the field value equals the specified value.
+STARTS_WITH: The operator matches if the field value starts with the specified value.
+ENDS_WITH: The operator matches if the field value ends with the specified value.
+CONTAINS: The operator matches if the field value contains the specified value.
+EQUALS_ANY: The operator matches if the field value is any value. Possible values: ["CONTAINS", "ENDS_WITH", "EQUALS", "EQUALS_ANY", "STARTS_WITH"]`,
+												},
+												"value": {
+													Type:     schema.TypeString,
+													Optional: true,
+													Description: `A request field matching the specified value will be excluded from inspection during preconfigured WAF evaluation.
+The field value must be given if the field operator is not EQUALS_ANY, and cannot be given if the field operator is EQUALS_ANY.`,
+												},
+											},
+										},
+									},
+									"target_rule_ids": {
+										Type:     schema.TypeList,
+										Optional: true,
+										Description: `A list of target rule IDs under the WAF rule set to apply the preconfigured WAF exclusion.
+If omitted, it refers to all the rule IDs under the WAF rule set.`,
+										Elem: &schema.Schema{
+											Type: schema.TypeString,
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			},
 			"preview": {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				Description: `If set to true, the specified action is not enforced.`,
+			},
+			"rate_limit_options": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: `Must be specified if the action is "rate_based_ban" or "throttle". Cannot be specified for any other actions.`,
+				MaxItems:    1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"ban_duration_sec": {
+							Type:     schema.TypeInt,
+							Optional: true,
+							Description: `Can only be specified if the action for the rule is "rate_based_ban".
+If specified, determines the time (in seconds) the traffic will continue to be banned by the rate limit after the rate falls below the threshold.`,
+						},
+						"ban_threshold": {
+							Type:     schema.TypeList,
+							Optional: true,
+							Description: `Can only be specified if the action for the rule is "rate_based_ban".
+If specified, the key will be banned for the configured 'banDurationSec' when the number of requests that exceed the 'rateLimitThreshold' also exceed this 'banThreshold'.`,
+							MaxItems: 1,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"count": {
+										Type:        schema.TypeInt,
+										Optional:    true,
+										Description: `Number of HTTP(S) requests for calculating the threshold.`,
+									},
+									"interval_sec": {
+										Type:        schema.TypeInt,
+										Optional:    true,
+										Description: `Interval over which the threshold is computed.`,
+									},
+								},
+							},
+						},
+						"conform_action": {
+							Type:     schema.TypeString,
+							Optional: true,
+							Description: `Action to take for requests that are under the configured rate limit threshold.
+Valid option is "allow" only.`,
+						},
+						"enforce_on_key": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: verify.ValidateEnum([]string{"ALL", "IP", "HTTP_HEADER", "XFF_IP", "HTTP_COOKIE", "HTTP_PATH", "SNI", "REGION_CODE", "TLS_JA3_FINGERPRINT", "USER_IP", ""}),
+							Description: `Determines the key to enforce the rateLimitThreshold on. Possible values are:
+* ALL: A single rate limit threshold is applied to all the requests matching this rule. This is the default value if "enforceOnKey" is not configured.
+* IP: The source IP address of the request is the key. Each IP has this limit enforced separately.
+* HTTP_HEADER: The value of the HTTP header whose name is configured under "enforceOnKeyName". The key value is truncated to the first 128 bytes of the header value. If no such header is present in the request, the key type defaults to ALL.
+* XFF_IP: The first IP address (i.e. the originating client IP address) specified in the list of IPs under X-Forwarded-For HTTP header. If no such header is present or the value is not a valid IP, the key defaults to the source IP address of the request i.e. key type IP.
+* HTTP_COOKIE: The value of the HTTP cookie whose name is configured under "enforceOnKeyName". The key value is truncated to the first 128 bytes of the cookie value. If no such cookie is present in the request, the key type defaults to ALL.
+* HTTP_PATH: The URL path of the HTTP request. The key value is truncated to the first 128 bytes.
+* SNI: Server name indication in the TLS session of the HTTPS request. The key value is truncated to the first 128 bytes. The key type defaults to ALL on a HTTP session.
+* REGION_CODE: The country/region from which the request originates.
+* TLS_JA3_FINGERPRINT: JA3 TLS/SSL fingerprint if the client connects using HTTPS, HTTP/2 or HTTP/3. If not available, the key type defaults to ALL.
+* USER_IP: The IP address of the originating client, which is resolved based on "userIpRequestHeaders" configured with the security policy. If there is no "userIpRequestHeaders" configuration or an IP address cannot be resolved from it, the key type defaults to IP. Possible values: ["ALL", "IP", "HTTP_HEADER", "XFF_IP", "HTTP_COOKIE", "HTTP_PATH", "SNI", "REGION_CODE", "TLS_JA3_FINGERPRINT", "USER_IP"]`,
+						},
+						"enforce_on_key_configs": {
+							Type:     schema.TypeList,
+							Optional: true,
+							Description: `If specified, any combination of values of enforceOnKeyType/enforceOnKeyName is treated as the key on which ratelimit threshold/action is enforced.
+You can specify up to 3 enforceOnKeyConfigs.
+If enforceOnKeyConfigs is specified, enforceOnKey must not be specified.`,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"enforce_on_key_name": {
+										Type:     schema.TypeString,
+										Optional: true,
+										Description: `Rate limit key name applicable only for the following key types:
+HTTP_HEADER -- Name of the HTTP header whose value is taken as the key value.
+HTTP_COOKIE -- Name of the HTTP cookie whose value is taken as the key value.`,
+									},
+									"enforce_on_key_type": {
+										Type:         schema.TypeString,
+										Optional:     true,
+										ValidateFunc: verify.ValidateEnum([]string{"ALL", "IP", "HTTP_HEADER", "XFF_IP", "HTTP_COOKIE", "HTTP_PATH", "SNI", "REGION_CODE", "TLS_JA3_FINGERPRINT", "USER_IP", ""}),
+										Description: `Determines the key to enforce the rateLimitThreshold on. Possible values are:
+* ALL: A single rate limit threshold is applied to all the requests matching this rule. This is the default value if "enforceOnKeyConfigs" is not configured.
+* IP: The source IP address of the request is the key. Each IP has this limit enforced separately.
+* HTTP_HEADER: The value of the HTTP header whose name is configured under "enforceOnKeyName". The key value is truncated to the first 128 bytes of the header value. If no such header is present in the request, the key type defaults to ALL.
+* XFF_IP: The first IP address (i.e. the originating client IP address) specified in the list of IPs under X-Forwarded-For HTTP header. If no such header is present or the value is not a valid IP, the key defaults to the source IP address of the request i.e. key type IP.
+* HTTP_COOKIE: The value of the HTTP cookie whose name is configured under "enforceOnKeyName". The key value is truncated to the first 128 bytes of the cookie value. If no such cookie is present in the request, the key type defaults to ALL.
+* HTTP_PATH: The URL path of the HTTP request. The key value is truncated to the first 128 bytes.
+* SNI: Server name indication in the TLS session of the HTTPS request. The key value is truncated to the first 128 bytes. The key type defaults to ALL on a HTTP session.
+* REGION_CODE: The country/region from which the request originates.
+* TLS_JA3_FINGERPRINT: JA3 TLS/SSL fingerprint if the client connects using HTTPS, HTTP/2 or HTTP/3. If not available, the key type defaults to ALL.
+* USER_IP: The IP address of the originating client, which is resolved based on "userIpRequestHeaders" configured with the security policy. If there is no "userIpRequestHeaders" configuration or an IP address cannot be resolved from it, the key type defaults to IP. Possible values: ["ALL", "IP", "HTTP_HEADER", "XFF_IP", "HTTP_COOKIE", "HTTP_PATH", "SNI", "REGION_CODE", "TLS_JA3_FINGERPRINT", "USER_IP"]`,
+									},
+								},
+							},
+						},
+						"enforce_on_key_name": {
+							Type:     schema.TypeString,
+							Optional: true,
+							Description: `Rate limit key name applicable only for the following key types:
+HTTP_HEADER -- Name of the HTTP header whose value is taken as the key value.
+HTTP_COOKIE -- Name of the HTTP cookie whose value is taken as the key value.`,
+						},
+						"exceed_action": {
+							Type:     schema.TypeString,
+							Optional: true,
+							Description: `Action to take for requests that are above the configured rate limit threshold, to deny with a specified HTTP response code.
+Valid options are deny(STATUS), where valid values for STATUS are 403, 404, 429, and 502.`,
+						},
+						"rate_limit_threshold": {
+							Type:        schema.TypeList,
+							Optional:    true,
+							Description: `Threshold at which to begin ratelimiting.`,
+							MaxItems:    1,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"count": {
+										Type:        schema.TypeInt,
+										Optional:    true,
+										Description: `Number of HTTP(S) requests for calculating the threshold.`,
+									},
+									"interval_sec": {
+										Type:        schema.TypeInt,
+										Optional:    true,
+										Description: `Interval over which the threshold is computed.`,
+									},
+								},
+							},
+						},
+					},
+				},
 			},
 			"project": {
 				Type:     schema.TypeString,
@@ -269,11 +539,23 @@ func resourceComputeRegionSecurityPolicyRuleCreate(d *schema.ResourceData, meta 
 	} else if v, ok := d.GetOkExists("match"); !tpgresource.IsEmptyValue(reflect.ValueOf(matchProp)) && (ok || !reflect.DeepEqual(v, matchProp)) {
 		obj["match"] = matchProp
 	}
+	preconfiguredWafConfigProp, err := expandComputeRegionSecurityPolicyRulePreconfiguredWafConfig(d.Get("preconfigured_waf_config"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("preconfigured_waf_config"); !tpgresource.IsEmptyValue(reflect.ValueOf(preconfiguredWafConfigProp)) && (ok || !reflect.DeepEqual(v, preconfiguredWafConfigProp)) {
+		obj["preconfiguredWafConfig"] = preconfiguredWafConfigProp
+	}
 	actionProp, err := expandComputeRegionSecurityPolicyRuleAction(d.Get("action"), d, config)
 	if err != nil {
 		return err
 	} else if v, ok := d.GetOkExists("action"); !tpgresource.IsEmptyValue(reflect.ValueOf(actionProp)) && (ok || !reflect.DeepEqual(v, actionProp)) {
 		obj["action"] = actionProp
+	}
+	rateLimitOptionsProp, err := expandComputeRegionSecurityPolicyRuleRateLimitOptions(d.Get("rate_limit_options"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("rate_limit_options"); !tpgresource.IsEmptyValue(reflect.ValueOf(rateLimitOptionsProp)) && (ok || !reflect.DeepEqual(v, rateLimitOptionsProp)) {
+		obj["rateLimitOptions"] = rateLimitOptionsProp
 	}
 	previewProp, err := expandComputeRegionSecurityPolicyRulePreview(d.Get("preview"), d, config)
 	if err != nil {
@@ -395,7 +677,13 @@ func resourceComputeRegionSecurityPolicyRuleRead(d *schema.ResourceData, meta in
 	if err := d.Set("match", flattenComputeRegionSecurityPolicyRuleMatch(res["match"], d, config)); err != nil {
 		return fmt.Errorf("Error reading RegionSecurityPolicyRule: %s", err)
 	}
+	if err := d.Set("preconfigured_waf_config", flattenComputeRegionSecurityPolicyRulePreconfiguredWafConfig(res["preconfiguredWafConfig"], d, config)); err != nil {
+		return fmt.Errorf("Error reading RegionSecurityPolicyRule: %s", err)
+	}
 	if err := d.Set("action", flattenComputeRegionSecurityPolicyRuleAction(res["action"], d, config)); err != nil {
+		return fmt.Errorf("Error reading RegionSecurityPolicyRule: %s", err)
+	}
+	if err := d.Set("rate_limit_options", flattenComputeRegionSecurityPolicyRuleRateLimitOptions(res["rateLimitOptions"], d, config)); err != nil {
 		return fmt.Errorf("Error reading RegionSecurityPolicyRule: %s", err)
 	}
 	if err := d.Set("preview", flattenComputeRegionSecurityPolicyRulePreview(res["preview"], d, config)); err != nil {
@@ -442,11 +730,23 @@ func resourceComputeRegionSecurityPolicyRuleUpdate(d *schema.ResourceData, meta 
 	} else if v, ok := d.GetOkExists("match"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, matchProp)) {
 		obj["match"] = matchProp
 	}
+	preconfiguredWafConfigProp, err := expandComputeRegionSecurityPolicyRulePreconfiguredWafConfig(d.Get("preconfigured_waf_config"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("preconfigured_waf_config"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, preconfiguredWafConfigProp)) {
+		obj["preconfiguredWafConfig"] = preconfiguredWafConfigProp
+	}
 	actionProp, err := expandComputeRegionSecurityPolicyRuleAction(d.Get("action"), d, config)
 	if err != nil {
 		return err
 	} else if v, ok := d.GetOkExists("action"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, actionProp)) {
 		obj["action"] = actionProp
+	}
+	rateLimitOptionsProp, err := expandComputeRegionSecurityPolicyRuleRateLimitOptions(d.Get("rate_limit_options"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("rate_limit_options"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, rateLimitOptionsProp)) {
+		obj["rateLimitOptions"] = rateLimitOptionsProp
 	}
 	previewProp, err := expandComputeRegionSecurityPolicyRulePreview(d.Get("preview"), d, config)
 	if err != nil {
@@ -482,8 +782,23 @@ func resourceComputeRegionSecurityPolicyRuleUpdate(d *schema.ResourceData, meta 
 		updateMask = append(updateMask, "match")
 	}
 
+	if d.HasChange("preconfigured_waf_config") {
+		updateMask = append(updateMask, "preconfiguredWafConfig")
+	}
+
 	if d.HasChange("action") {
 		updateMask = append(updateMask, "action")
+	}
+
+	if d.HasChange("rate_limit_options") {
+		updateMask = append(updateMask, "rateLimitOptions.rateLimitThreshold",
+			"rateLimitOptions.conformAction",
+			"rateLimitOptions.exceedAction",
+			"rateLimitOptions.enforceOnKey",
+			"rateLimitOptions.enforceOnKeyName",
+			"rateLimitOptions.enforceOnKeyConfigs",
+			"rateLimitOptions.banThreshold",
+			"rateLimitOptions.banDurationSec")
 	}
 
 	if d.HasChange("preview") {
@@ -677,8 +992,345 @@ func flattenComputeRegionSecurityPolicyRuleMatchConfigSrcIpRanges(v interface{},
 	return v
 }
 
+func flattenComputeRegionSecurityPolicyRulePreconfiguredWafConfig(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["exclusion"] =
+		flattenComputeRegionSecurityPolicyRulePreconfiguredWafConfigExclusion(original["exclusions"], d, config)
+	return []interface{}{transformed}
+}
+func flattenComputeRegionSecurityPolicyRulePreconfiguredWafConfigExclusion(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return v
+	}
+	l := v.([]interface{})
+	transformed := make([]interface{}, 0, len(l))
+	for _, raw := range l {
+		original := raw.(map[string]interface{})
+		if len(original) < 1 {
+			// Do not include empty json objects coming back from the api
+			continue
+		}
+		transformed = append(transformed, map[string]interface{}{
+			"target_rule_set":     flattenComputeRegionSecurityPolicyRulePreconfiguredWafConfigExclusionTargetRuleSet(original["targetRuleSet"], d, config),
+			"target_rule_ids":     flattenComputeRegionSecurityPolicyRulePreconfiguredWafConfigExclusionTargetRuleIds(original["targetRuleIds"], d, config),
+			"request_header":      flattenComputeRegionSecurityPolicyRulePreconfiguredWafConfigExclusionRequestHeader(original["requestHeadersToExclude"], d, config),
+			"request_cookie":      flattenComputeRegionSecurityPolicyRulePreconfiguredWafConfigExclusionRequestCookie(original["requestCookiesToExclude"], d, config),
+			"request_uri":         flattenComputeRegionSecurityPolicyRulePreconfiguredWafConfigExclusionRequestUri(original["requestUrisToExclude"], d, config),
+			"request_query_param": flattenComputeRegionSecurityPolicyRulePreconfiguredWafConfigExclusionRequestQueryParam(original["requestQueryParamsToExclude"], d, config),
+		})
+	}
+	return transformed
+}
+func flattenComputeRegionSecurityPolicyRulePreconfiguredWafConfigExclusionTargetRuleSet(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenComputeRegionSecurityPolicyRulePreconfiguredWafConfigExclusionTargetRuleIds(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenComputeRegionSecurityPolicyRulePreconfiguredWafConfigExclusionRequestHeader(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return v
+	}
+	l := v.([]interface{})
+	transformed := make([]interface{}, 0, len(l))
+	for _, raw := range l {
+		original := raw.(map[string]interface{})
+		if len(original) < 1 {
+			// Do not include empty json objects coming back from the api
+			continue
+		}
+		transformed = append(transformed, map[string]interface{}{
+			"operator": flattenComputeRegionSecurityPolicyRulePreconfiguredWafConfigExclusionRequestHeaderOperator(original["op"], d, config),
+			"value":    flattenComputeRegionSecurityPolicyRulePreconfiguredWafConfigExclusionRequestHeaderValue(original["val"], d, config),
+		})
+	}
+	return transformed
+}
+func flattenComputeRegionSecurityPolicyRulePreconfiguredWafConfigExclusionRequestHeaderOperator(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenComputeRegionSecurityPolicyRulePreconfiguredWafConfigExclusionRequestHeaderValue(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenComputeRegionSecurityPolicyRulePreconfiguredWafConfigExclusionRequestCookie(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return v
+	}
+	l := v.([]interface{})
+	transformed := make([]interface{}, 0, len(l))
+	for _, raw := range l {
+		original := raw.(map[string]interface{})
+		if len(original) < 1 {
+			// Do not include empty json objects coming back from the api
+			continue
+		}
+		transformed = append(transformed, map[string]interface{}{
+			"operator": flattenComputeRegionSecurityPolicyRulePreconfiguredWafConfigExclusionRequestCookieOperator(original["op"], d, config),
+			"value":    flattenComputeRegionSecurityPolicyRulePreconfiguredWafConfigExclusionRequestCookieValue(original["val"], d, config),
+		})
+	}
+	return transformed
+}
+func flattenComputeRegionSecurityPolicyRulePreconfiguredWafConfigExclusionRequestCookieOperator(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenComputeRegionSecurityPolicyRulePreconfiguredWafConfigExclusionRequestCookieValue(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenComputeRegionSecurityPolicyRulePreconfiguredWafConfigExclusionRequestUri(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return v
+	}
+	l := v.([]interface{})
+	transformed := make([]interface{}, 0, len(l))
+	for _, raw := range l {
+		original := raw.(map[string]interface{})
+		if len(original) < 1 {
+			// Do not include empty json objects coming back from the api
+			continue
+		}
+		transformed = append(transformed, map[string]interface{}{
+			"operator": flattenComputeRegionSecurityPolicyRulePreconfiguredWafConfigExclusionRequestUriOperator(original["op"], d, config),
+			"value":    flattenComputeRegionSecurityPolicyRulePreconfiguredWafConfigExclusionRequestUriValue(original["val"], d, config),
+		})
+	}
+	return transformed
+}
+func flattenComputeRegionSecurityPolicyRulePreconfiguredWafConfigExclusionRequestUriOperator(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenComputeRegionSecurityPolicyRulePreconfiguredWafConfigExclusionRequestUriValue(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenComputeRegionSecurityPolicyRulePreconfiguredWafConfigExclusionRequestQueryParam(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return v
+	}
+	l := v.([]interface{})
+	transformed := make([]interface{}, 0, len(l))
+	for _, raw := range l {
+		original := raw.(map[string]interface{})
+		if len(original) < 1 {
+			// Do not include empty json objects coming back from the api
+			continue
+		}
+		transformed = append(transformed, map[string]interface{}{
+			"operator": flattenComputeRegionSecurityPolicyRulePreconfiguredWafConfigExclusionRequestQueryParamOperator(original["op"], d, config),
+			"value":    flattenComputeRegionSecurityPolicyRulePreconfiguredWafConfigExclusionRequestQueryParamValue(original["val"], d, config),
+		})
+	}
+	return transformed
+}
+func flattenComputeRegionSecurityPolicyRulePreconfiguredWafConfigExclusionRequestQueryParamOperator(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenComputeRegionSecurityPolicyRulePreconfiguredWafConfigExclusionRequestQueryParamValue(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
 func flattenComputeRegionSecurityPolicyRuleAction(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
+}
+
+func flattenComputeRegionSecurityPolicyRuleRateLimitOptions(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["rate_limit_threshold"] =
+		flattenComputeRegionSecurityPolicyRuleRateLimitOptionsRateLimitThreshold(original["rateLimitThreshold"], d, config)
+	transformed["conform_action"] =
+		flattenComputeRegionSecurityPolicyRuleRateLimitOptionsConformAction(original["conformAction"], d, config)
+	transformed["exceed_action"] =
+		flattenComputeRegionSecurityPolicyRuleRateLimitOptionsExceedAction(original["exceedAction"], d, config)
+	transformed["enforce_on_key"] =
+		flattenComputeRegionSecurityPolicyRuleRateLimitOptionsEnforceOnKey(original["enforceOnKey"], d, config)
+	transformed["enforce_on_key_name"] =
+		flattenComputeRegionSecurityPolicyRuleRateLimitOptionsEnforceOnKeyName(original["enforceOnKeyName"], d, config)
+	transformed["enforce_on_key_configs"] =
+		flattenComputeRegionSecurityPolicyRuleRateLimitOptionsEnforceOnKeyConfigs(original["enforceOnKeyConfigs"], d, config)
+	transformed["ban_threshold"] =
+		flattenComputeRegionSecurityPolicyRuleRateLimitOptionsBanThreshold(original["banThreshold"], d, config)
+	transformed["ban_duration_sec"] =
+		flattenComputeRegionSecurityPolicyRuleRateLimitOptionsBanDurationSec(original["banDurationSec"], d, config)
+	return []interface{}{transformed}
+}
+func flattenComputeRegionSecurityPolicyRuleRateLimitOptionsRateLimitThreshold(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["count"] =
+		flattenComputeRegionSecurityPolicyRuleRateLimitOptionsRateLimitThresholdCount(original["count"], d, config)
+	transformed["interval_sec"] =
+		flattenComputeRegionSecurityPolicyRuleRateLimitOptionsRateLimitThresholdIntervalSec(original["intervalSec"], d, config)
+	return []interface{}{transformed}
+}
+func flattenComputeRegionSecurityPolicyRuleRateLimitOptionsRateLimitThresholdCount(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	// Handles the string fixed64 format
+	if strVal, ok := v.(string); ok {
+		if intVal, err := tpgresource.StringToFixed64(strVal); err == nil {
+			return intVal
+		}
+	}
+
+	// number values are represented as float64
+	if floatVal, ok := v.(float64); ok {
+		intVal := int(floatVal)
+		return intVal
+	}
+
+	return v // let terraform core handle it otherwise
+}
+
+func flattenComputeRegionSecurityPolicyRuleRateLimitOptionsRateLimitThresholdIntervalSec(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	// Handles the string fixed64 format
+	if strVal, ok := v.(string); ok {
+		if intVal, err := tpgresource.StringToFixed64(strVal); err == nil {
+			return intVal
+		}
+	}
+
+	// number values are represented as float64
+	if floatVal, ok := v.(float64); ok {
+		intVal := int(floatVal)
+		return intVal
+	}
+
+	return v // let terraform core handle it otherwise
+}
+
+func flattenComputeRegionSecurityPolicyRuleRateLimitOptionsConformAction(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenComputeRegionSecurityPolicyRuleRateLimitOptionsExceedAction(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenComputeRegionSecurityPolicyRuleRateLimitOptionsEnforceOnKey(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenComputeRegionSecurityPolicyRuleRateLimitOptionsEnforceOnKeyName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenComputeRegionSecurityPolicyRuleRateLimitOptionsEnforceOnKeyConfigs(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return v
+	}
+	l := v.([]interface{})
+	transformed := make([]interface{}, 0, len(l))
+	for _, raw := range l {
+		original := raw.(map[string]interface{})
+		if len(original) < 1 {
+			// Do not include empty json objects coming back from the api
+			continue
+		}
+		transformed = append(transformed, map[string]interface{}{
+			"enforce_on_key_type": flattenComputeRegionSecurityPolicyRuleRateLimitOptionsEnforceOnKeyConfigsEnforceOnKeyType(original["enforceOnKeyType"], d, config),
+			"enforce_on_key_name": flattenComputeRegionSecurityPolicyRuleRateLimitOptionsEnforceOnKeyConfigsEnforceOnKeyName(original["enforceOnKeyName"], d, config),
+		})
+	}
+	return transformed
+}
+func flattenComputeRegionSecurityPolicyRuleRateLimitOptionsEnforceOnKeyConfigsEnforceOnKeyType(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenComputeRegionSecurityPolicyRuleRateLimitOptionsEnforceOnKeyConfigsEnforceOnKeyName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenComputeRegionSecurityPolicyRuleRateLimitOptionsBanThreshold(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["count"] =
+		flattenComputeRegionSecurityPolicyRuleRateLimitOptionsBanThresholdCount(original["count"], d, config)
+	transformed["interval_sec"] =
+		flattenComputeRegionSecurityPolicyRuleRateLimitOptionsBanThresholdIntervalSec(original["intervalSec"], d, config)
+	return []interface{}{transformed}
+}
+func flattenComputeRegionSecurityPolicyRuleRateLimitOptionsBanThresholdCount(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	// Handles the string fixed64 format
+	if strVal, ok := v.(string); ok {
+		if intVal, err := tpgresource.StringToFixed64(strVal); err == nil {
+			return intVal
+		}
+	}
+
+	// number values are represented as float64
+	if floatVal, ok := v.(float64); ok {
+		intVal := int(floatVal)
+		return intVal
+	}
+
+	return v // let terraform core handle it otherwise
+}
+
+func flattenComputeRegionSecurityPolicyRuleRateLimitOptionsBanThresholdIntervalSec(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	// Handles the string fixed64 format
+	if strVal, ok := v.(string); ok {
+		if intVal, err := tpgresource.StringToFixed64(strVal); err == nil {
+			return intVal
+		}
+	}
+
+	// number values are represented as float64
+	if floatVal, ok := v.(float64); ok {
+		intVal := int(floatVal)
+		return intVal
+	}
+
+	return v // let terraform core handle it otherwise
+}
+
+func flattenComputeRegionSecurityPolicyRuleRateLimitOptionsBanDurationSec(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	// Handles the string fixed64 format
+	if strVal, ok := v.(string); ok {
+		if intVal, err := tpgresource.StringToFixed64(strVal); err == nil {
+			return intVal
+		}
+	}
+
+	// number values are represented as float64
+	if floatVal, ok := v.(float64); ok {
+		intVal := int(floatVal)
+		return intVal
+	}
+
+	return v // let terraform core handle it otherwise
 }
 
 func flattenComputeRegionSecurityPolicyRulePreview(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -828,7 +1480,432 @@ func expandComputeRegionSecurityPolicyRuleMatchConfigSrcIpRanges(v interface{}, 
 	return v, nil
 }
 
+func expandComputeRegionSecurityPolicyRulePreconfiguredWafConfig(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedExclusion, err := expandComputeRegionSecurityPolicyRulePreconfiguredWafConfigExclusion(original["exclusion"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedExclusion); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["exclusions"] = transformedExclusion
+	}
+
+	return transformed, nil
+}
+
+func expandComputeRegionSecurityPolicyRulePreconfiguredWafConfigExclusion(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	req := make([]interface{}, 0, len(l))
+	for _, raw := range l {
+		if raw == nil {
+			continue
+		}
+		original := raw.(map[string]interface{})
+		transformed := make(map[string]interface{})
+
+		transformedTargetRuleSet, err := expandComputeRegionSecurityPolicyRulePreconfiguredWafConfigExclusionTargetRuleSet(original["target_rule_set"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedTargetRuleSet); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["targetRuleSet"] = transformedTargetRuleSet
+		}
+
+		transformedTargetRuleIds, err := expandComputeRegionSecurityPolicyRulePreconfiguredWafConfigExclusionTargetRuleIds(original["target_rule_ids"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedTargetRuleIds); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["targetRuleIds"] = transformedTargetRuleIds
+		}
+
+		transformedRequestHeader, err := expandComputeRegionSecurityPolicyRulePreconfiguredWafConfigExclusionRequestHeader(original["request_header"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedRequestHeader); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["requestHeadersToExclude"] = transformedRequestHeader
+		}
+
+		transformedRequestCookie, err := expandComputeRegionSecurityPolicyRulePreconfiguredWafConfigExclusionRequestCookie(original["request_cookie"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedRequestCookie); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["requestCookiesToExclude"] = transformedRequestCookie
+		}
+
+		transformedRequestUri, err := expandComputeRegionSecurityPolicyRulePreconfiguredWafConfigExclusionRequestUri(original["request_uri"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedRequestUri); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["requestUrisToExclude"] = transformedRequestUri
+		}
+
+		transformedRequestQueryParam, err := expandComputeRegionSecurityPolicyRulePreconfiguredWafConfigExclusionRequestQueryParam(original["request_query_param"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedRequestQueryParam); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["requestQueryParamsToExclude"] = transformedRequestQueryParam
+		}
+
+		req = append(req, transformed)
+	}
+	return req, nil
+}
+
+func expandComputeRegionSecurityPolicyRulePreconfiguredWafConfigExclusionTargetRuleSet(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeRegionSecurityPolicyRulePreconfiguredWafConfigExclusionTargetRuleIds(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeRegionSecurityPolicyRulePreconfiguredWafConfigExclusionRequestHeader(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	req := make([]interface{}, 0, len(l))
+	for _, raw := range l {
+		if raw == nil {
+			continue
+		}
+		original := raw.(map[string]interface{})
+		transformed := make(map[string]interface{})
+
+		transformedOperator, err := expandComputeRegionSecurityPolicyRulePreconfiguredWafConfigExclusionRequestHeaderOperator(original["operator"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedOperator); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["op"] = transformedOperator
+		}
+
+		transformedValue, err := expandComputeRegionSecurityPolicyRulePreconfiguredWafConfigExclusionRequestHeaderValue(original["value"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedValue); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["val"] = transformedValue
+		}
+
+		req = append(req, transformed)
+	}
+	return req, nil
+}
+
+func expandComputeRegionSecurityPolicyRulePreconfiguredWafConfigExclusionRequestHeaderOperator(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeRegionSecurityPolicyRulePreconfiguredWafConfigExclusionRequestHeaderValue(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeRegionSecurityPolicyRulePreconfiguredWafConfigExclusionRequestCookie(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	req := make([]interface{}, 0, len(l))
+	for _, raw := range l {
+		if raw == nil {
+			continue
+		}
+		original := raw.(map[string]interface{})
+		transformed := make(map[string]interface{})
+
+		transformedOperator, err := expandComputeRegionSecurityPolicyRulePreconfiguredWafConfigExclusionRequestCookieOperator(original["operator"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedOperator); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["op"] = transformedOperator
+		}
+
+		transformedValue, err := expandComputeRegionSecurityPolicyRulePreconfiguredWafConfigExclusionRequestCookieValue(original["value"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedValue); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["val"] = transformedValue
+		}
+
+		req = append(req, transformed)
+	}
+	return req, nil
+}
+
+func expandComputeRegionSecurityPolicyRulePreconfiguredWafConfigExclusionRequestCookieOperator(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeRegionSecurityPolicyRulePreconfiguredWafConfigExclusionRequestCookieValue(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeRegionSecurityPolicyRulePreconfiguredWafConfigExclusionRequestUri(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	req := make([]interface{}, 0, len(l))
+	for _, raw := range l {
+		if raw == nil {
+			continue
+		}
+		original := raw.(map[string]interface{})
+		transformed := make(map[string]interface{})
+
+		transformedOperator, err := expandComputeRegionSecurityPolicyRulePreconfiguredWafConfigExclusionRequestUriOperator(original["operator"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedOperator); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["op"] = transformedOperator
+		}
+
+		transformedValue, err := expandComputeRegionSecurityPolicyRulePreconfiguredWafConfigExclusionRequestUriValue(original["value"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedValue); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["val"] = transformedValue
+		}
+
+		req = append(req, transformed)
+	}
+	return req, nil
+}
+
+func expandComputeRegionSecurityPolicyRulePreconfiguredWafConfigExclusionRequestUriOperator(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeRegionSecurityPolicyRulePreconfiguredWafConfigExclusionRequestUriValue(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeRegionSecurityPolicyRulePreconfiguredWafConfigExclusionRequestQueryParam(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	req := make([]interface{}, 0, len(l))
+	for _, raw := range l {
+		if raw == nil {
+			continue
+		}
+		original := raw.(map[string]interface{})
+		transformed := make(map[string]interface{})
+
+		transformedOperator, err := expandComputeRegionSecurityPolicyRulePreconfiguredWafConfigExclusionRequestQueryParamOperator(original["operator"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedOperator); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["op"] = transformedOperator
+		}
+
+		transformedValue, err := expandComputeRegionSecurityPolicyRulePreconfiguredWafConfigExclusionRequestQueryParamValue(original["value"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedValue); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["val"] = transformedValue
+		}
+
+		req = append(req, transformed)
+	}
+	return req, nil
+}
+
+func expandComputeRegionSecurityPolicyRulePreconfiguredWafConfigExclusionRequestQueryParamOperator(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeRegionSecurityPolicyRulePreconfiguredWafConfigExclusionRequestQueryParamValue(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
 func expandComputeRegionSecurityPolicyRuleAction(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeRegionSecurityPolicyRuleRateLimitOptions(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedRateLimitThreshold, err := expandComputeRegionSecurityPolicyRuleRateLimitOptionsRateLimitThreshold(original["rate_limit_threshold"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedRateLimitThreshold); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["rateLimitThreshold"] = transformedRateLimitThreshold
+	}
+
+	transformedConformAction, err := expandComputeRegionSecurityPolicyRuleRateLimitOptionsConformAction(original["conform_action"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedConformAction); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["conformAction"] = transformedConformAction
+	}
+
+	transformedExceedAction, err := expandComputeRegionSecurityPolicyRuleRateLimitOptionsExceedAction(original["exceed_action"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedExceedAction); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["exceedAction"] = transformedExceedAction
+	}
+
+	transformedEnforceOnKey, err := expandComputeRegionSecurityPolicyRuleRateLimitOptionsEnforceOnKey(original["enforce_on_key"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedEnforceOnKey); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["enforceOnKey"] = transformedEnforceOnKey
+	}
+
+	transformedEnforceOnKeyName, err := expandComputeRegionSecurityPolicyRuleRateLimitOptionsEnforceOnKeyName(original["enforce_on_key_name"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedEnforceOnKeyName); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["enforceOnKeyName"] = transformedEnforceOnKeyName
+	}
+
+	transformedEnforceOnKeyConfigs, err := expandComputeRegionSecurityPolicyRuleRateLimitOptionsEnforceOnKeyConfigs(original["enforce_on_key_configs"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedEnforceOnKeyConfigs); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["enforceOnKeyConfigs"] = transformedEnforceOnKeyConfigs
+	}
+
+	transformedBanThreshold, err := expandComputeRegionSecurityPolicyRuleRateLimitOptionsBanThreshold(original["ban_threshold"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedBanThreshold); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["banThreshold"] = transformedBanThreshold
+	}
+
+	transformedBanDurationSec, err := expandComputeRegionSecurityPolicyRuleRateLimitOptionsBanDurationSec(original["ban_duration_sec"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedBanDurationSec); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["banDurationSec"] = transformedBanDurationSec
+	}
+
+	return transformed, nil
+}
+
+func expandComputeRegionSecurityPolicyRuleRateLimitOptionsRateLimitThreshold(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedCount, err := expandComputeRegionSecurityPolicyRuleRateLimitOptionsRateLimitThresholdCount(original["count"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedCount); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["count"] = transformedCount
+	}
+
+	transformedIntervalSec, err := expandComputeRegionSecurityPolicyRuleRateLimitOptionsRateLimitThresholdIntervalSec(original["interval_sec"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedIntervalSec); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["intervalSec"] = transformedIntervalSec
+	}
+
+	return transformed, nil
+}
+
+func expandComputeRegionSecurityPolicyRuleRateLimitOptionsRateLimitThresholdCount(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeRegionSecurityPolicyRuleRateLimitOptionsRateLimitThresholdIntervalSec(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeRegionSecurityPolicyRuleRateLimitOptionsConformAction(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeRegionSecurityPolicyRuleRateLimitOptionsExceedAction(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeRegionSecurityPolicyRuleRateLimitOptionsEnforceOnKey(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeRegionSecurityPolicyRuleRateLimitOptionsEnforceOnKeyName(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeRegionSecurityPolicyRuleRateLimitOptionsEnforceOnKeyConfigs(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	req := make([]interface{}, 0, len(l))
+	for _, raw := range l {
+		if raw == nil {
+			continue
+		}
+		original := raw.(map[string]interface{})
+		transformed := make(map[string]interface{})
+
+		transformedEnforceOnKeyType, err := expandComputeRegionSecurityPolicyRuleRateLimitOptionsEnforceOnKeyConfigsEnforceOnKeyType(original["enforce_on_key_type"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedEnforceOnKeyType); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["enforceOnKeyType"] = transformedEnforceOnKeyType
+		}
+
+		transformedEnforceOnKeyName, err := expandComputeRegionSecurityPolicyRuleRateLimitOptionsEnforceOnKeyConfigsEnforceOnKeyName(original["enforce_on_key_name"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedEnforceOnKeyName); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["enforceOnKeyName"] = transformedEnforceOnKeyName
+		}
+
+		req = append(req, transformed)
+	}
+	return req, nil
+}
+
+func expandComputeRegionSecurityPolicyRuleRateLimitOptionsEnforceOnKeyConfigsEnforceOnKeyType(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeRegionSecurityPolicyRuleRateLimitOptionsEnforceOnKeyConfigsEnforceOnKeyName(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeRegionSecurityPolicyRuleRateLimitOptionsBanThreshold(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedCount, err := expandComputeRegionSecurityPolicyRuleRateLimitOptionsBanThresholdCount(original["count"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedCount); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["count"] = transformedCount
+	}
+
+	transformedIntervalSec, err := expandComputeRegionSecurityPolicyRuleRateLimitOptionsBanThresholdIntervalSec(original["interval_sec"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedIntervalSec); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["intervalSec"] = transformedIntervalSec
+	}
+
+	return transformed, nil
+}
+
+func expandComputeRegionSecurityPolicyRuleRateLimitOptionsBanThresholdCount(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeRegionSecurityPolicyRuleRateLimitOptionsBanThresholdIntervalSec(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeRegionSecurityPolicyRuleRateLimitOptionsBanDurationSec(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 

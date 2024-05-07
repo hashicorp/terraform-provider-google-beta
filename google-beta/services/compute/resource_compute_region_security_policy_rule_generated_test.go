@@ -157,6 +157,89 @@ resource "google_compute_region_security_policy_rule" "policy_rule_two" {
 `, context)
 }
 
+func TestAccComputeRegionSecurityPolicyRule_regionSecurityPolicyRuleWithPreconfiguredWafConfigExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"random_suffix": acctest.RandString(t, 10),
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckComputeRegionSecurityPolicyRuleDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeRegionSecurityPolicyRule_regionSecurityPolicyRuleWithPreconfiguredWafConfigExample(context),
+			},
+			{
+				ResourceName:            "google_compute_region_security_policy_rule.policy_rule",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"region", "security_policy"},
+			},
+		},
+	})
+}
+
+func testAccComputeRegionSecurityPolicyRule_regionSecurityPolicyRuleWithPreconfiguredWafConfigExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_compute_region_security_policy" "default" {
+  provider    = google-beta
+
+  region      = "asia-southeast1"
+  name        = "policyruletest%{random_suffix}"
+  description = "basic region security policy"
+  type        = "CLOUD_ARMOR"
+}
+
+resource "google_compute_region_security_policy_rule" "policy_rule" {
+  provider    = google-beta
+
+  region          = "asia-southeast1"
+  security_policy = google_compute_region_security_policy.default.name
+  description     = "new rule"
+  priority        = 100
+  match {
+    versioned_expr = "SRC_IPS_V1"
+    config {
+      src_ip_ranges = ["10.10.0.0/16"]
+    }
+  }
+  preconfigured_waf_config {
+    exclusion {
+      request_uri {
+        operator = "STARTS_WITH"
+        value = "/admin"
+      }
+      target_rule_set = "rce-stable"
+    }
+    exclusion {
+      request_query_param {
+        operator = "CONTAINS"
+        value = "password"
+      }
+      request_query_param {
+        operator = "STARTS_WITH"
+        value = "freeform"
+      }
+      request_query_param {
+        operator = "EQUALS"
+        value = "description"
+      }
+      target_rule_set = "xss-stable"
+      target_rule_ids = [
+        "owasp-crs-v030001-id941330-xss",
+        "owasp-crs-v030001-id941340-xss",
+      ]
+    }
+  }
+  action          = "allow"
+  preview         = true
+}
+`, context)
+}
+
 func testAccCheckComputeRegionSecurityPolicyRuleDestroyProducer(t *testing.T) func(s *terraform.State) error {
 	return func(s *terraform.State) error {
 		for name, rs := range s.RootModule().Resources {
