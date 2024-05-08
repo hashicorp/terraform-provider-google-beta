@@ -122,6 +122,21 @@ This field must be specified if versionedExpr is specified and cannot be specifi
 								},
 							},
 						},
+						"expr": {
+							Type:        schema.TypeList,
+							Optional:    true,
+							Description: `User defined CEVAL expression. A CEVAL expression is used to specify match criteria such as origin.ip, source.region_code and contents in the request header.`,
+							MaxItems:    1,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"expression": {
+										Type:        schema.TypeString,
+										Required:    true,
+										Description: `Textual representation of an expression in Common Expression Language syntax. The application context of the containing message determines which well-known feature set of CEL is supported.`,
+									},
+								},
+							},
+						},
 						"versioned_expr": {
 							Type:         schema.TypeString,
 							Optional:     true,
@@ -967,11 +982,30 @@ func flattenComputeRegionSecurityPolicyRuleMatch(v interface{}, d *schema.Resour
 	transformed := make(map[string]interface{})
 	transformed["versioned_expr"] =
 		flattenComputeRegionSecurityPolicyRuleMatchVersionedExpr(original["versionedExpr"], d, config)
+	transformed["expr"] =
+		flattenComputeRegionSecurityPolicyRuleMatchExpr(original["expr"], d, config)
 	transformed["config"] =
 		flattenComputeRegionSecurityPolicyRuleMatchConfig(original["config"], d, config)
 	return []interface{}{transformed}
 }
 func flattenComputeRegionSecurityPolicyRuleMatchVersionedExpr(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenComputeRegionSecurityPolicyRuleMatchExpr(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["expression"] =
+		flattenComputeRegionSecurityPolicyRuleMatchExprExpression(original["expression"], d, config)
+	return []interface{}{transformed}
+}
+func flattenComputeRegionSecurityPolicyRuleMatchExprExpression(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
@@ -1443,6 +1477,13 @@ func expandComputeRegionSecurityPolicyRuleMatch(v interface{}, d tpgresource.Ter
 		transformed["versionedExpr"] = transformedVersionedExpr
 	}
 
+	transformedExpr, err := expandComputeRegionSecurityPolicyRuleMatchExpr(original["expr"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedExpr); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["expr"] = transformedExpr
+	}
+
 	transformedConfig, err := expandComputeRegionSecurityPolicyRuleMatchConfig(original["config"], d, config)
 	if err != nil {
 		return nil, err
@@ -1454,6 +1495,29 @@ func expandComputeRegionSecurityPolicyRuleMatch(v interface{}, d tpgresource.Ter
 }
 
 func expandComputeRegionSecurityPolicyRuleMatchVersionedExpr(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeRegionSecurityPolicyRuleMatchExpr(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedExpression, err := expandComputeRegionSecurityPolicyRuleMatchExprExpression(original["expression"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedExpression); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["expression"] = transformedExpression
+	}
+
+	return transformed, nil
+}
+
+func expandComputeRegionSecurityPolicyRuleMatchExprExpression(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
