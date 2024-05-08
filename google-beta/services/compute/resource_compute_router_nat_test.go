@@ -466,6 +466,31 @@ func TestAccComputeRouterNat_withEndpointTypes(t *testing.T) {
 	})
 }
 
+func TestAccComputeRouterNat_AutoNetworkTier(t *testing.T) {
+	t.Parallel()
+
+	testId := acctest.RandString(t, 10)
+	routerName := fmt.Sprintf("tf-test-router-private-nat-%s", testId)
+	hubName := fmt.Sprintf("%s-hub", routerName)
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckComputeRouterNatDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeRouterNatWitAutoNetworkTier(routerName, hubName),
+			},
+			{
+				// implicitly full ImportStateId
+				ResourceName:      "google_compute_router_nat.foobar",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
 func TestAccComputeRouterNat_withPrivateNat(t *testing.T) {
 	t.Parallel()
 
@@ -1665,44 +1690,6 @@ resource "google_compute_router_nat" "foobar" {
 `, routerName, routerName, routerName, routerName)
 }
 
-func testAccComputeRouterNatPrivateType(routerName string) string {
-	return fmt.Sprintf(`
-resource "google_compute_network" "foobar" {
-  name                    = "%s-net"
-  auto_create_subnetworks = false
-}
-
-resource "google_compute_subnetwork" "foobar" {
-  name          = "%s-subnet"
-  network       = google_compute_network.foobar.self_link
-  ip_cidr_range = "10.0.0.0/16"
-  region        = "us-central1"
-  purpose          = "PRIVATE_NAT"
-}
-
-resource "google_compute_router" "foobar" {
-  name    = "%s"
-  region  = google_compute_subnetwork.foobar.region
-  network = google_compute_network.foobar.self_link
-}
-
-resource "google_compute_router_nat" "foobar" {
-  name                               = "%s"
-  router                             = google_compute_router.foobar.name
-  region                             = google_compute_router.foobar.region
-  source_subnetwork_ip_ranges_to_nat = "LIST_OF_SUBNETWORKS"
-  type = "PRIVATE" 
-  enable_dynamic_port_allocation = false
-  enable_endpoint_independent_mapping = false
-  min_ports_per_vm = 32
-  subnetwork {
-    name                    = google_compute_subnetwork.foobar.id
-    source_ip_ranges_to_nat = ["ALL_IP_RANGES"]
-  }
-}
-`, routerName, routerName, routerName, routerName)
-}
-
 func testAccComputeRouterNatBaseResourcesWithPrivateNatSubnetworks(routerName, hubName string) string {
 	return fmt.Sprintf(`
 resource "google_compute_network" "foobar" {
@@ -1771,6 +1758,44 @@ resource "google_compute_router" "foobar" {
 `, routerName, routerName, routerName, routerName, routerName, hubName, routerName, routerName)
 }
 
+func testAccComputeRouterNatPrivateType(routerName string) string {
+	return fmt.Sprintf(`
+resource "google_compute_network" "foobar" {
+  name                    = "%s-net"
+  auto_create_subnetworks = false
+}
+
+resource "google_compute_subnetwork" "foobar" {
+  name          = "%s-subnet"
+  network       = google_compute_network.foobar.self_link
+  ip_cidr_range = "10.0.0.0/16"
+  region        = "us-central1"
+  purpose          = "PRIVATE_NAT"
+}
+
+resource "google_compute_router" "foobar" {
+  name    = "%s"
+  region  = google_compute_subnetwork.foobar.region
+  network = google_compute_network.foobar.self_link
+}
+
+resource "google_compute_router_nat" "foobar" {
+  name                               = "%s"
+  router                             = google_compute_router.foobar.name
+  region                             = google_compute_router.foobar.region
+  source_subnetwork_ip_ranges_to_nat = "LIST_OF_SUBNETWORKS"
+  type = "PRIVATE"
+  enable_dynamic_port_allocation = false
+  enable_endpoint_independent_mapping = false
+  min_ports_per_vm = 32
+  subnetwork {
+    name                    = google_compute_subnetwork.foobar.id
+    source_ip_ranges_to_nat = ["ALL_IP_RANGES"]
+  }
+}
+`, routerName, routerName, routerName, routerName)
+}
+
 func testAccComputeRouterNatRulesBasic_privateNatOmitRules(routerName, hubName string) string {
 	return fmt.Sprintf(`
 %s
@@ -1780,7 +1805,7 @@ resource "google_compute_router_nat" "foobar" {
   router                              = google_compute_router.foobar.name
   region                              = google_compute_router.foobar.region
   source_subnetwork_ip_ranges_to_nat  = "LIST_OF_SUBNETWORKS"
-  type                                = "PRIVATE" 
+  type                                = "PRIVATE"
   enable_dynamic_port_allocation      = false
   enable_endpoint_independent_mapping = false
   min_ports_per_vm = 32
@@ -1801,7 +1826,7 @@ resource "google_compute_router_nat" "foobar" {
   router                              = google_compute_router.foobar.name
   region                              = google_compute_router.foobar.region
   source_subnetwork_ip_ranges_to_nat  = "LIST_OF_SUBNETWORKS"
-  type                                = "PRIVATE" 
+  type                                = "PRIVATE"
   enable_dynamic_port_allocation      = false
   enable_endpoint_independent_mapping = false
   min_ports_per_vm = 32
@@ -1832,7 +1857,7 @@ resource "google_compute_router_nat" "foobar" {
   router                              = google_compute_router.foobar.name
   region                              = google_compute_router.foobar.region
   source_subnetwork_ip_ranges_to_nat  = "LIST_OF_SUBNETWORKS"
-  type                                = "PRIVATE" 
+  type                                = "PRIVATE"
   enable_dynamic_port_allocation      = false
   enable_endpoint_independent_mapping = false
   min_ports_per_vm = 32
@@ -1860,7 +1885,7 @@ resource "google_compute_router_nat" "foobar" {
   router                              = google_compute_router.foobar.name
   region                              = google_compute_router.foobar.region
   source_subnetwork_ip_ranges_to_nat  = "LIST_OF_SUBNETWORKS"
-  type                                = "PRIVATE" 
+  type                                = "PRIVATE"
   enable_dynamic_port_allocation      = false
   enable_endpoint_independent_mapping = false
   min_ports_per_vm = 32
@@ -1879,4 +1904,20 @@ resource "google_compute_router_nat" "foobar" {
   }
 }
 `, testAccComputeRouterNatBaseResourcesWithPrivateNatSubnetworks(routerName, hubName), routerName, ruleNumber, ruleDescription, match)
+}
+
+func testAccComputeRouterNatWitAutoNetworkTier(routerName, hubName string) string {
+	return fmt.Sprintf(`
+%s
+
+resource "google_compute_router_nat" "foobar" {
+  name                                = "%s"
+  router                              = google_compute_router.foobar.name
+  region                              = google_compute_router.foobar.region
+
+  source_subnetwork_ip_ranges_to_nat = "ALL_SUBNETWORKS_ALL_IP_RANGES"
+  nat_ip_allocate_option             = "AUTO_ONLY"
+  auto_network_tier                  = "PREMIUM"
+}
+`, testAccComputeRouterNatBaseResourcesWithPrivateNatSubnetworks(routerName, hubName), routerName)
 }
