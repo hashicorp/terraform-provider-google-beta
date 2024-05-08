@@ -164,7 +164,7 @@ func TestAccComputeRouter_addAndUpdateIdentifierRangeBgp(t *testing.T) {
 	routerName := fmt.Sprintf("tf-test-router-%s", testId)
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckComputeRouterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -290,13 +290,11 @@ resource "google_compute_router" "foobar" {
 func testAccComputeRouter_addIdentifierRangeBgp(routerName string) string {
 	return fmt.Sprintf(`
 resource "google_compute_network" "foobar" {
-  provider = google-beta
   name                    = "%s-net"
   auto_create_subnetworks = false
 }
 
 resource "google_compute_router" "foobar" {
-  provider = google-beta
   name    = "%s"
   network = google_compute_network.foobar.name
   bgp {
@@ -319,13 +317,11 @@ resource "google_compute_router" "foobar" {
 func testAccComputeRouter_updateIdentifierRangeBgp(routerName string) string {
 	return fmt.Sprintf(`
 resource "google_compute_network" "foobar" {
-  provider = google-beta
   name                    = "%s-net"
   auto_create_subnetworks = false
 }
 
 resource "google_compute_router" "foobar" {
-  provider = google-beta
   name    = "%s"
   network = google_compute_network.foobar.name
   bgp {
