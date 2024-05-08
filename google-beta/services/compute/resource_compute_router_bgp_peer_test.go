@@ -215,7 +215,7 @@ func TestAccComputeRouterPeer_Ipv4BasicCreateUpdate(t *testing.T) {
 	resourceName := "google_compute_router_peer.foobar"
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckComputeRouterPeerDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -1548,13 +1548,11 @@ resource "google_compute_router_peer" "foobar" {
 
 func testAccComputeRouterPeerIpv4(routerName string) string {
 	return fmt.Sprintf(`resource "google_compute_network" "foobar" {
-    provider = google-beta
     name = "%s-net"
     auto_create_subnetworks = false
   }
   
   resource "google_compute_subnetwork" "foobar" {
-    provider = google-beta
     name          = "%s-subnet"
     network       = google_compute_network.foobar.self_link
     ip_cidr_range = "10.0.0.0/16"
@@ -1564,7 +1562,6 @@ func testAccComputeRouterPeerIpv4(routerName string) string {
   }
   
   resource "google_compute_ha_vpn_gateway" "foobar" {
-    provider = google-beta
     name    = "%s-gateway"
     network = google_compute_network.foobar.self_link
     region  = google_compute_subnetwork.foobar.region
@@ -1572,7 +1569,6 @@ func testAccComputeRouterPeerIpv4(routerName string) string {
   }
   
   resource "google_compute_external_vpn_gateway" "external_gateway" {
-    provider = google-beta
     name            = "%s-external-gateway"
     redundancy_type = "SINGLE_IP_INTERNALLY_REDUNDANT"
     description     = "An externally managed VPN gateway"
@@ -1583,7 +1579,6 @@ func testAccComputeRouterPeerIpv4(routerName string) string {
   }
   
   resource "google_compute_router" "foobar" {
-    provider = google-beta
     name    = "%s"
     region  = google_compute_subnetwork.foobar.region
     network = google_compute_network.foobar.self_link
@@ -1593,7 +1588,6 @@ func testAccComputeRouterPeerIpv4(routerName string) string {
   }
   
   resource "google_compute_vpn_tunnel" "foobar" {
-    provider = google-beta
     name               = "%s-tunnel"
     region             = google_compute_subnetwork.foobar.region
     vpn_gateway = google_compute_ha_vpn_gateway.foobar.id
@@ -1605,7 +1599,6 @@ func testAccComputeRouterPeerIpv4(routerName string) string {
   }
   
   resource "google_compute_router_interface" "foobar" {
-    provider = google-beta
     name       = "%s-interface"
     router     = google_compute_router.foobar.name
     region     = google_compute_router.foobar.region
@@ -1614,7 +1607,6 @@ func testAccComputeRouterPeerIpv4(routerName string) string {
   }
   
   resource "google_compute_router_peer" "foobar" {
-    provider = google-beta
     name                      = "%s-peer"
     router                    = google_compute_router.foobar.name
     region                    = google_compute_router.foobar.region
@@ -1634,13 +1626,11 @@ func testAccComputeRouterPeerIpv4(routerName string) string {
 
 func testAccComputeRouterPeerUpdateIpv4Address(routerName string) string {
 	return fmt.Sprintf(`resource "google_compute_network" "foobar" {
-    provider = google-beta
     name = "%s-net"
     auto_create_subnetworks = false
   }
   
   resource "google_compute_subnetwork" "foobar" {
-    provider = google-beta
     name          = "%s-subnet"
     network       = google_compute_network.foobar.self_link
     ip_cidr_range = "10.0.0.0/16"
@@ -1650,7 +1640,6 @@ func testAccComputeRouterPeerUpdateIpv4Address(routerName string) string {
   }
   
   resource "google_compute_ha_vpn_gateway" "foobar" {
-    provider = google-beta
     name    = "%s-gateway"
     network = google_compute_network.foobar.self_link
     region  = google_compute_subnetwork.foobar.region
@@ -1658,7 +1647,6 @@ func testAccComputeRouterPeerUpdateIpv4Address(routerName string) string {
   }
   
   resource "google_compute_external_vpn_gateway" "external_gateway" {
-    provider = google-beta
     name            = "%s-external-gateway"
     redundancy_type = "SINGLE_IP_INTERNALLY_REDUNDANT"
     description     = "An externally managed VPN gateway"
@@ -1669,7 +1657,6 @@ func testAccComputeRouterPeerUpdateIpv4Address(routerName string) string {
   }
   
   resource "google_compute_router" "foobar" {
-    provider = google-beta
     name    = "%s"
     region  = google_compute_subnetwork.foobar.region
     network = google_compute_network.foobar.self_link
@@ -1679,7 +1666,6 @@ func testAccComputeRouterPeerUpdateIpv4Address(routerName string) string {
   }
   
   resource "google_compute_vpn_tunnel" "foobar" {
-    provider = google-beta
     name               = "%s-tunnel"
     region             = google_compute_subnetwork.foobar.region
     vpn_gateway = google_compute_ha_vpn_gateway.foobar.id
@@ -1691,7 +1677,6 @@ func testAccComputeRouterPeerUpdateIpv4Address(routerName string) string {
   }
   
   resource "google_compute_router_interface" "foobar" {
-    provider = google-beta
     name       = "%s-interface"
     router     = google_compute_router.foobar.name
     region     = google_compute_router.foobar.region
@@ -1700,7 +1685,6 @@ func testAccComputeRouterPeerUpdateIpv4Address(routerName string) string {
   }
   
   resource "google_compute_router_peer" "foobar" {
-    provider = google-beta
     name                      = "%s-peer"
     router                    = google_compute_router.foobar.name
     region                    = google_compute_router.foobar.region

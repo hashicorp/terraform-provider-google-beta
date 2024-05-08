@@ -127,7 +127,7 @@ func TestAccComputeRouterInterface_withIPVersionV4(t *testing.T) {
 	routerName := fmt.Sprintf("tf-test-router-%s", acctest.RandString(t, 10))
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckComputeRouterInterfaceDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -150,7 +150,7 @@ func TestAccComputeRouterInterface_withIPVersionV6(t *testing.T) {
 	routerName := fmt.Sprintf("tf-test-router-%s", acctest.RandString(t, 10))
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckComputeRouterInterfaceDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -563,19 +563,16 @@ resource "google_compute_router_interface" "foobar" {
 func testAccComputeRouterInterfaceWithIpVersionIPV6(routerName string) string {
 	return fmt.Sprintf(`
 resource "google_compute_network" "foobar" {
-  provider = google-beta
   name = "%s-net"
 }
 
 resource "google_compute_subnetwork" "foobar" {
-  provider = google-beta
   name          = "%s-subnet"
   network       = google_compute_network.foobar.self_link
   ip_cidr_range = "10.0.0.0/16"
 }
 
 resource "google_compute_router" "foobar" {
-  provider = google-beta
   name    = "%s"
   network = google_compute_network.foobar.self_link
   bgp {
@@ -584,7 +581,6 @@ resource "google_compute_router" "foobar" {
 }
 
 resource "google_compute_router_interface" "foobar" {
-  provider = google-beta
   name     = "%s-interface"
   router   = google_compute_router.foobar.name
   region   = google_compute_router.foobar.region
@@ -597,19 +593,16 @@ resource "google_compute_router_interface" "foobar" {
 func testAccComputeRouterInterfaceWithIpVersionIPV4(routerName string) string {
 	return fmt.Sprintf(`
 resource "google_compute_network" "foobar" {
-  provider = google-beta
   name = "%s-net"
 }
 
 resource "google_compute_subnetwork" "foobar" {
-  provider = google-beta
   name          = "%s-subnet"
   network       = google_compute_network.foobar.self_link
   ip_cidr_range = "10.0.0.0/16"
 }
 
 resource "google_compute_router" "foobar" {
-  provider = google-beta
   name    = "%s"
   network = google_compute_network.foobar.self_link
   bgp {
@@ -618,7 +611,6 @@ resource "google_compute_router" "foobar" {
 }
 
 resource "google_compute_router_interface" "foobar" {
-  provider = google-beta
   name     = "%s-interface"
   router   = google_compute_router.foobar.name
   region   = google_compute_router.foobar.region
