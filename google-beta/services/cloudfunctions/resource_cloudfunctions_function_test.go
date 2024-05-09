@@ -644,6 +644,7 @@ func testAccCloudFunctionsFunction_basic(functionName string, bucketName string,
 resource "google_storage_bucket" "bucket" {
   name     = "%s"
   location = "US"
+  uniform_bucket_level_access = true
 }
 
 resource "google_storage_bucket_object" "archive" {
@@ -684,6 +685,7 @@ func testAccCloudFunctionsFunction_updated(functionName string, bucketName strin
 resource "google_storage_bucket" "bucket" {
   name     = "%s"
   location = "US"
+  uniform_bucket_level_access = true
 }
 
 resource "google_storage_bucket_object" "archive" {
@@ -737,6 +739,7 @@ func testAccCloudFunctionsFunction_buildworkerpool(functionName string, bucketNa
 resource "google_storage_bucket" "bucket" {
   name     = "%s"
   location = "US"
+  uniform_bucket_level_access = true
 }
 
 resource "google_storage_bucket_object" "archive" {
@@ -776,6 +779,7 @@ func testAccCloudFunctionsFunction_pubsub(functionName string, bucketName string
 resource "google_storage_bucket" "bucket" {
   name     = "%s"
   location = "US"
+  uniform_bucket_level_access = true
 }
 
 resource "google_storage_bucket_object" "archive" {
@@ -816,6 +820,7 @@ data "google_client_config" "current" {
 resource "google_storage_bucket" "bucket" {
   name     = "%s"
   location = "US"
+  uniform_bucket_level_access = true
 }
 
 resource "google_storage_bucket_object" "archive" {
@@ -849,6 +854,7 @@ func testAccCloudFunctionsFunction_bucketNoRetry(functionName string, bucketName
 resource "google_storage_bucket" "bucket" {
   name     = "%s"
   location = "US"
+  uniform_bucket_level_access = true
 }
 
 resource "google_storage_bucket_object" "archive" {
@@ -879,6 +885,7 @@ func testAccCloudFunctionsFunction_firestore(functionName string, bucketName str
 resource "google_storage_bucket" "bucket" {
   name     = "%s"
   location = "US"
+  uniform_bucket_level_access = true
 }
 
 resource "google_storage_bucket_object" "archive" {
@@ -928,6 +935,7 @@ func testAccCloudFunctionsFunction_serviceAccountEmail(functionName, bucketName,
 resource "google_storage_bucket" "bucket" {
   name     = "%s"
   location = "US"
+  uniform_bucket_level_access = true
 }
 
 resource "google_storage_bucket_object" "archive" {
@@ -979,6 +987,7 @@ resource "google_vpc_access_connector" "%s" {
 resource "google_storage_bucket" "bucket" {
   name     = "%s"
   location = "US"
+  uniform_bucket_level_access = true
 }
 
 resource "google_storage_bucket_object" "archive" {
@@ -1037,6 +1046,7 @@ resource "google_artifact_registry_repository_iam_binding" "binding" {
 resource "google_storage_bucket" "bucket" {
   name     = "%s"
   location = "US"
+  uniform_bucket_level_access = true
 }
 
 resource "google_storage_bucket_object" "archive" {
@@ -1117,6 +1127,7 @@ resource "google_artifact_registry_repository" "encoded-ar-repo" {
 resource "google_storage_bucket" "bucket" {
   name     = "%s"
   location = "US"
+  uniform_bucket_level_access = true
 }
 
 resource "google_storage_bucket_object" "archive" {
