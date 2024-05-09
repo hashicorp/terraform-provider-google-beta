@@ -1,4 +1,52 @@
-## 5.28.0 (Unreleased)
+## 5.29.0 (Unreleased)
+
+UNKNOWN CHANGELOG TYPE:
+* Update CHANGELOG.md on main to include v5.27.0 release notes ([#7312](https://github.com/hashicorp/terraform-provider-google-beta/pull/7312))
+NOTES:
+* compute: added documentation for md5_authentication_key field in google_compute_router_peer resource ([#7306](https://github.com/hashicorp/terraform-provider-google-beta/pull/7306))
+* dataflow: updated dataflow job docs with usage and an example for `service_account_email` ([#7323](https://github.com/hashicorp/terraform-provider-google-beta/pull/7323))
+
+FEATURES:
+* **New Resource:** `google_bigtable_authorized_view` ([#7310](https://github.com/hashicorp/terraform-provider-google-beta/pull/7310))
+* **New Resource:** `google_integration_connectors_managed_zone` ([#7320](https://github.com/hashicorp/terraform-provider-google-beta/pull/7320))
+* **New Resource:** `google_network_connectivity_regional_endpoint` ([#7313](https://github.com/hashicorp/terraform-provider-google-beta/pull/7313))
+
+IMPROVEMENTS:
+* clouddeploy: added `custom_target` field to  `google_clouddeploy_target` resource ([#7309](https://github.com/hashicorp/terraform-provider-google-beta/pull/7309))
+* clouddeploy: added `google_cloud_build_repo` to `custom_target_type` resource ([#7325](https://github.com/hashicorp/terraform-provider-google-beta/pull/7325))
+* compute: Added 'preconfiguredWafConfig' field to 'google_compute_region_security_policy_rule' resource; ([#7324](https://github.com/hashicorp/terraform-provider-google-beta/pull/7324))
+* compute: Added 'rateLimitOptions' field to 'google_compute_region_security_policy_rule' resource; ([#7324](https://github.com/hashicorp/terraform-provider-google-beta/pull/7324))
+* compute: added `security_profile_group`, `tls_inspect` to `google_compute_firewall_policy_rule` ([#7309](https://github.com/hashicorp/terraform-provider-google-beta/pull/7309))
+* compute: added `security_profile_group`, `tls_inspect` to `google_compute_network_firewall_policy_rule` ([#7309](https://github.com/hashicorp/terraform-provider-google-beta/pull/7309))
+* compute: added fields `reserved_internal_range` and `secondary_ip_ranges[].reserved_internal_range` to `google_compute_subnetwork` resource ([#7318](https://github.com/hashicorp/terraform-provider-google-beta/pull/7318))
+* container: added `additive_vpc_scope_dns_domain` field inside of the `dns_config` section of `google_container_cluster` resource ([#7321](https://github.com/hashicorp/terraform-provider-google-beta/pull/7321))
+* container: added `enable_nested_virtualization` field to `google_container_node_pool` and `google_container_cluster` resource. ([#7314](https://github.com/hashicorp/terraform-provider-google-beta/pull/7314))
+* iam: added `extra_attributes_oauth2_client` field to `google_iam_workforce_pool_provider` resource ([#7319](https://github.com/hashicorp/terraform-provider-google-beta/pull/7319))
+* networksecurity: promoted `google_network_security_security_profile`, `google_network_security_security_profile_group`, `google_network_security_firewall_endpoint`, and `google_network_security_firewall_endpoint_association` resources to GA. ([#7317](https://github.com/hashicorp/terraform-provider-google-beta/pull/7317))
+* privateca: added `maximum_lifetime` field to  `google_privateca_certificate_template` resource ([#7309](https://github.com/hashicorp/terraform-provider-google-beta/pull/7309))
+
+BUG FIXES:
+* bigquery: added `allow_resource_tags_on_deletion` to `google_bigquery_table` to allow deletion of table when it still has associated resource tags (beta) ([#7327](https://github.com/hashicorp/terraform-provider-google-beta/pull/7327))
+
+## 5.28.0 (May 6, 2024)
+
+DEPRECATIONS:
+* integrations: deprecated `create_sample_workflows` and `provision_gmek` fields in `google_integrations_client`. ([#7285](https://github.com/hashicorp/terraform-provider-google-beta/pull/7285))
+
+FEATURES:
+* **New Data Source:** `google_storage_buckets` ([#7291](https://github.com/hashicorp/terraform-provider-google-beta/pull/7291))
+* **New Resource:** `google_compute_security_policy_rule` ([#7282](https://github.com/hashicorp/terraform-provider-google-beta/pull/7282))
+* **New Resource:** `google_privileged_access_manager_entitlement` ([#7283](https://github.com/hashicorp/terraform-provider-google-beta/pull/7283))
+
+IMPROVEMENTS:
+* alloydb: added `maintenance_update_policy` field to `google_alloydb_cluster` resource ([#7288](https://github.com/hashicorp/terraform-provider-google-beta/pull/7288))
+* container: added `node_config.secondary_boot_disks` field to `google_container_node_pool` ([#7292](https://github.com/hashicorp/terraform-provider-google-beta/pull/7292))
+* integrations: added `create_sample_integrations` field to `google_integrations_client`, replacing deprecated field `create_sample_workflows`. ([#7285](https://github.com/hashicorp/terraform-provider-google-beta/pull/7285))
+* redis: added `redis_configs` field to `google_redis_cluster` resource ([#7289](https://github.com/hashicorp/terraform-provider-google-beta/pull/7289))
+
+BUG FIXES:
+* dns: fixed bug where the deletion of `google_dns_managed_zone` resources was blocked by any associated SOA-type `google_dns_record_set` resources ([#7305](https://github.com/hashicorp/terraform-provider-google-beta/pull/7305))
+* storage: fixed an issue where `google_storage_bucket_object` and `google_storage_bucket_objects` data sources would ignore custom endpoints ([#7287](https://github.com/hashicorp/terraform-provider-google-beta/pull/7287))
 
 ## 5.27.0 (Apr 30, 2024)
 
