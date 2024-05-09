@@ -51,7 +51,7 @@ func TestAccFirebaseAppCheckRecaptchaV3Config_firebaseAppCheckRecaptchaV3ConfigB
 				ResourceName:            "google_firebase_app_check_recaptcha_v3_config.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"site_secret", "app_id"},
+				ImportStateVerifyIgnore: []string{"app_id", "site_secret"},
 			},
 		},
 	})

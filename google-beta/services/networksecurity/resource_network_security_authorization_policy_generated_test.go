@@ -49,7 +49,7 @@ func TestAccNetworkSecurityAuthorizationPolicy_networkSecurityAuthorizationPolic
 				ResourceName:            "google_network_security_authorization_policy.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"name", "location", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"labels", "location", "name", "terraform_labels"},
 			},
 		},
 	})
@@ -94,7 +94,7 @@ func TestAccNetworkSecurityAuthorizationPolicy_networkSecurityAuthorizationPolic
 				ResourceName:            "google_network_security_authorization_policy.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"name", "location", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"labels", "location", "name", "terraform_labels"},
 			},
 		},
 	})

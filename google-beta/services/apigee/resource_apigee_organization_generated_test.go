@@ -53,7 +53,7 @@ func TestAccApigeeOrganization_apigeeOrganizationCloudBasicTestExample(t *testin
 				ResourceName:            "google_apigee_organization.org",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"project_id", "retention", "properties"},
+				ImportStateVerifyIgnore: []string{"project_id", "properties", "retention"},
 			},
 		},
 	})
@@ -139,7 +139,7 @@ func TestAccApigeeOrganization_apigeeOrganizationCloudBasicDisableVpcPeeringTest
 				ResourceName:            "google_apigee_organization.org",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"project_id", "retention", "properties"},
+				ImportStateVerifyIgnore: []string{"project_id", "properties", "retention"},
 			},
 		},
 	})
@@ -193,7 +193,7 @@ func TestAccApigeeOrganization_apigeeOrganizationCloudFullTestExample(t *testing
 				ResourceName:            "google_apigee_organization.org",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"project_id", "retention", "properties"},
+				ImportStateVerifyIgnore: []string{"project_id", "properties", "retention"},
 			},
 		},
 	})
@@ -349,7 +349,7 @@ func TestAccApigeeOrganization_apigeeOrganizationCloudFullDisableVpcPeeringTestE
 				ResourceName:            "google_apigee_organization.org",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"project_id", "retention", "properties"},
+				ImportStateVerifyIgnore: []string{"project_id", "properties", "retention"},
 			},
 		},
 	})

@@ -49,7 +49,7 @@ func TestAccNetworkServicesServiceBinding_networkServicesServiceBindingBasicExam
 				ResourceName:            "google_network_services_service_binding.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"name", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"labels", "name", "terraform_labels"},
 			},
 		},
 	})

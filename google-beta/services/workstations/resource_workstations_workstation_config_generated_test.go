@@ -49,7 +49,7 @@ func TestAccWorkstationsWorkstationConfig_workstationConfigBasicExample(t *testi
 				ResourceName:            "google_workstations_workstation_config.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"enable_audit_agent", "workstation_config_id", "workstation_cluster_id", "location", "labels", "annotations", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"annotations", "enable_audit_agent", "labels", "location", "terraform_labels", "workstation_cluster_id", "workstation_config_id"},
 			},
 		},
 	})
@@ -136,7 +136,7 @@ func TestAccWorkstationsWorkstationConfig_workstationConfigContainerExample(t *t
 				ResourceName:            "google_workstations_workstation_config.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"enable_audit_agent", "workstation_config_id", "workstation_cluster_id", "location", "labels", "annotations", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"annotations", "enable_audit_agent", "labels", "location", "terraform_labels", "workstation_cluster_id", "workstation_config_id"},
 			},
 		},
 	})
@@ -219,7 +219,7 @@ func TestAccWorkstationsWorkstationConfig_workstationConfigPersistentDirectories
 				ResourceName:            "google_workstations_workstation_config.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"enable_audit_agent", "workstation_config_id", "workstation_cluster_id", "location", "labels", "annotations", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"annotations", "enable_audit_agent", "labels", "location", "terraform_labels", "workstation_cluster_id", "workstation_config_id"},
 			},
 		},
 	})
@@ -307,7 +307,7 @@ func TestAccWorkstationsWorkstationConfig_workstationConfigSourceSnapshotExample
 				ResourceName:            "google_workstations_workstation_config.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"enable_audit_agent", "workstation_config_id", "workstation_cluster_id", "location", "labels", "annotations", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"annotations", "enable_audit_agent", "labels", "location", "terraform_labels", "workstation_cluster_id", "workstation_config_id"},
 			},
 		},
 	})
@@ -389,7 +389,7 @@ func TestAccWorkstationsWorkstationConfig_workstationConfigShieldedInstanceConfi
 				ResourceName:            "google_workstations_workstation_config.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"enable_audit_agent", "workstation_config_id", "workstation_cluster_id", "location", "labels", "annotations", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"annotations", "enable_audit_agent", "labels", "location", "terraform_labels", "workstation_cluster_id", "workstation_config_id"},
 			},
 		},
 	})
@@ -467,7 +467,7 @@ func TestAccWorkstationsWorkstationConfig_workstationConfigAcceleratorsExample(t
 				ResourceName:            "google_workstations_workstation_config.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"enable_audit_agent", "workstation_config_id", "workstation_cluster_id", "location", "labels", "annotations", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"annotations", "enable_audit_agent", "labels", "location", "terraform_labels", "workstation_cluster_id", "workstation_config_id"},
 			},
 		},
 	})
@@ -545,7 +545,7 @@ func TestAccWorkstationsWorkstationConfig_workstationConfigBoostExample(t *testi
 				ResourceName:            "google_workstations_workstation_config.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"enable_audit_agent", "workstation_config_id", "workstation_cluster_id", "location", "labels", "annotations", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"annotations", "enable_audit_agent", "labels", "location", "terraform_labels", "workstation_cluster_id", "workstation_config_id"},
 			},
 		},
 	})
@@ -631,7 +631,7 @@ func TestAccWorkstationsWorkstationConfig_workstationConfigEncryptionKeyExample(
 				ResourceName:            "google_workstations_workstation_config.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"enable_audit_agent", "workstation_config_id", "workstation_cluster_id", "location", "labels", "annotations", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"annotations", "enable_audit_agent", "labels", "location", "terraform_labels", "workstation_cluster_id", "workstation_config_id"},
 			},
 		},
 	})

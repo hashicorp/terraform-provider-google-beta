@@ -52,7 +52,7 @@ func TestAccFirestoreDatabase_firestoreDatabaseExample(t *testing.T) {
 				ResourceName:            "google_firestore_database.database",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"project", "etag", "deletion_policy"},
+				ImportStateVerifyIgnore: []string{"deletion_policy", "etag", "project"},
 			},
 		},
 	})
@@ -95,7 +95,7 @@ func TestAccFirestoreDatabase_firestoreCmekDatabaseExample(t *testing.T) {
 				ResourceName:            "google_firestore_database.database",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"project", "etag", "deletion_policy"},
+				ImportStateVerifyIgnore: []string{"deletion_policy", "etag", "project"},
 			},
 		},
 	})
@@ -177,7 +177,7 @@ func TestAccFirestoreDatabase_firestoreDatabaseInDatastoreModeExample(t *testing
 				ResourceName:            "google_firestore_database.datastore_mode_database",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"project", "etag", "deletion_policy"},
+				ImportStateVerifyIgnore: []string{"deletion_policy", "etag", "project"},
 			},
 		},
 	})
@@ -220,7 +220,7 @@ func TestAccFirestoreDatabase_firestoreCmekDatabaseInDatastoreModeExample(t *tes
 				ResourceName:            "google_firestore_database.database",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"project", "etag", "deletion_policy"},
+				ImportStateVerifyIgnore: []string{"deletion_policy", "etag", "project"},
 			},
 		},
 	})

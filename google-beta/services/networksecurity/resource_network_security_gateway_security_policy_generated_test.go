@@ -49,7 +49,7 @@ func TestAccNetworkSecurityGatewaySecurityPolicy_networkSecurityGatewaySecurityP
 				ResourceName:            "google_network_security_gateway_security_policy.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"tls_inspection_policy", "name", "location"},
+				ImportStateVerifyIgnore: []string{"location", "name", "tls_inspection_policy"},
 			},
 		},
 	})
@@ -84,7 +84,7 @@ func TestAccNetworkSecurityGatewaySecurityPolicy_networkSecurityGatewaySecurityP
 				ResourceName:            "google_network_security_gateway_security_policy.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"tls_inspection_policy", "name", "location"},
+				ImportStateVerifyIgnore: []string{"location", "name", "tls_inspection_policy"},
 			},
 		},
 	})

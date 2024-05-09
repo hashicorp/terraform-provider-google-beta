@@ -49,7 +49,7 @@ func TestAccServiceDirectoryEndpoint_serviceDirectoryEndpointBasicExample(t *tes
 				ResourceName:            "google_service_directory_endpoint.example",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"service", "endpoint_id"},
+				ImportStateVerifyIgnore: []string{"endpoint_id", "service"},
 			},
 		},
 	})
@@ -104,7 +104,7 @@ func TestAccServiceDirectoryEndpoint_serviceDirectoryEndpointWithNetworkExample(
 				ResourceName:            "google_service_directory_endpoint.example",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"service", "endpoint_id"},
+				ImportStateVerifyIgnore: []string{"endpoint_id", "service"},
 			},
 		},
 	})

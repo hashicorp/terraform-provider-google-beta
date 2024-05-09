@@ -91,7 +91,7 @@ func TestAccFirebaseAppleApp_firebaseAppleAppFullExample(t *testing.T) {
 				ResourceName:            "google_firebase_apple_app.full",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"project", "deletion_policy"},
+				ImportStateVerifyIgnore: []string{"deletion_policy", "project"},
 			},
 		},
 	})

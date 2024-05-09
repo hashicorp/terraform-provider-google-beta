@@ -49,7 +49,7 @@ func TestAccWorkstationsWorkstationCluster_workstationClusterBasicExample(t *tes
 				ResourceName:            "google_workstations_workstation_cluster.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"workstation_cluster_id", "location", "labels", "annotations", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"annotations", "labels", "location", "terraform_labels", "workstation_cluster_id"},
 			},
 		},
 	})
@@ -112,7 +112,7 @@ func TestAccWorkstationsWorkstationCluster_workstationClusterPrivateExample(t *t
 				ResourceName:            "google_workstations_workstation_cluster.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"workstation_cluster_id", "location", "labels", "annotations", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"annotations", "labels", "location", "terraform_labels", "workstation_cluster_id"},
 			},
 		},
 	})
@@ -179,7 +179,7 @@ func TestAccWorkstationsWorkstationCluster_workstationClusterCustomDomainExample
 				ResourceName:            "google_workstations_workstation_cluster.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"workstation_cluster_id", "location", "labels", "annotations", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"annotations", "labels", "location", "terraform_labels", "workstation_cluster_id"},
 			},
 		},
 	})

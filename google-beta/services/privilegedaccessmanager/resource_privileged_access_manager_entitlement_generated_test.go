@@ -51,7 +51,7 @@ func TestAccPrivilegedAccessManagerEntitlement_privilegedAccessManagerEntitlemen
 				ResourceName:            "google_privileged_access_manager_entitlement.tfentitlement",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"location", "entitlement_id", "parent"},
+				ImportStateVerifyIgnore: []string{"entitlement_id", "location", "parent"},
 			},
 		},
 	})
