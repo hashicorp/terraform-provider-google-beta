@@ -1,4 +1,24 @@
-## 5.28.0 (Unreleased)
+## 5.29.0 (Unreleased)
+
+## 5.28.0 (May 6, 2024)
+
+DEPRECATIONS:
+* integrations: deprecated `create_sample_workflows` and `provision_gmek` fields in `google_integrations_client`. ([#7285](https://github.com/hashicorp/terraform-provider-google-beta/pull/7285))
+
+FEATURES:
+* **New Data Source:** `google_storage_buckets` ([#7291](https://github.com/hashicorp/terraform-provider-google-beta/pull/7291))
+* **New Resource:** `google_compute_security_policy_rule` ([#7282](https://github.com/hashicorp/terraform-provider-google-beta/pull/7282))
+* **New Resource:** `google_privileged_access_manager_entitlement` ([#7283](https://github.com/hashicorp/terraform-provider-google-beta/pull/7283))
+
+IMPROVEMENTS:
+* alloydb: added `maintenance_update_policy` field to `google_alloydb_cluster` resource ([#7288](https://github.com/hashicorp/terraform-provider-google-beta/pull/7288))
+* container: added `node_config.secondary_boot_disks` field to `google_container_node_pool` ([#7292](https://github.com/hashicorp/terraform-provider-google-beta/pull/7292))
+* integrations: added `create_sample_integrations` field to `google_integrations_client`, replacing deprecated field `create_sample_workflows`. ([#7285](https://github.com/hashicorp/terraform-provider-google-beta/pull/7285))
+* redis: added `redis_configs` field to `google_redis_cluster` resource ([#7289](https://github.com/hashicorp/terraform-provider-google-beta/pull/7289))
+
+BUG FIXES:
+* dns: fixed bug where the deletion of `google_dns_managed_zone` resources was blocked by any associated SOA-type `google_dns_record_set` resources ([#7305](https://github.com/hashicorp/terraform-provider-google-beta/pull/7305))
+* storage: fixed an issue where `google_storage_bucket_object` and `google_storage_bucket_objects` data sources would ignore custom endpoints ([#7287](https://github.com/hashicorp/terraform-provider-google-beta/pull/7287))
 
 ## 5.27.0 (Apr 30, 2024)
 
