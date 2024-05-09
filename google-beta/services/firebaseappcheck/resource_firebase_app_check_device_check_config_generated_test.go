@@ -52,7 +52,7 @@ func TestAccFirebaseAppCheckDeviceCheckConfig_firebaseAppCheckDeviceCheckConfigF
 				ResourceName:            "google_firebase_app_check_device_check_config.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"private_key", "app_id"},
+				ImportStateVerifyIgnore: []string{"app_id", "private_key"},
 			},
 		},
 	})

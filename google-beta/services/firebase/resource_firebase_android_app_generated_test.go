@@ -53,7 +53,7 @@ func TestAccFirebaseAndroidApp_firebaseAndroidAppBasicExample(t *testing.T) {
 				ResourceName:            "google_firebase_android_app.basic",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"project", "deletion_policy"},
+				ImportStateVerifyIgnore: []string{"deletion_policy", "project"},
 			},
 		},
 	})
@@ -94,7 +94,7 @@ func TestAccFirebaseAndroidApp_firebaseAndroidAppCustomApiKeyExample(t *testing.
 				ResourceName:            "google_firebase_android_app.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"project", "deletion_policy"},
+				ImportStateVerifyIgnore: []string{"deletion_policy", "project"},
 			},
 		},
 	})

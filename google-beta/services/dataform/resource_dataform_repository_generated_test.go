@@ -49,7 +49,7 @@ func TestAccDataformRepository_dataformRepositoryWithCloudsourceRepoExample(t *t
 				ResourceName:            "google_dataform_repository.dataform_repository",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"region", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"labels", "region", "terraform_labels"},
 			},
 		},
 	})
@@ -122,7 +122,7 @@ func TestAccDataformRepository_dataformRepositoryWithCloudsourceRepoAndSshExampl
 				ResourceName:            "google_dataform_repository.dataform_repository",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"region", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"labels", "region", "terraform_labels"},
 			},
 		},
 	})

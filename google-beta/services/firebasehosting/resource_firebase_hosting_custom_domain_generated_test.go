@@ -53,7 +53,7 @@ func TestAccFirebaseHostingCustomDomain_firebasehostingCustomdomainBasicExample(
 				ResourceName:            "google_firebase_hosting_custom_domain.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"site_id", "custom_domain"},
+				ImportStateVerifyIgnore: []string{"custom_domain", "site_id"},
 			},
 		},
 	})
@@ -93,7 +93,7 @@ func TestAccFirebaseHostingCustomDomain_firebasehostingCustomdomainFullExample(t
 				ResourceName:            "google_firebase_hosting_custom_domain.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"site_id", "custom_domain"},
+				ImportStateVerifyIgnore: []string{"custom_domain", "site_id"},
 			},
 		},
 	})
@@ -143,7 +143,7 @@ func TestAccFirebaseHostingCustomDomain_firebasehostingCustomdomainCloudRunExamp
 				ResourceName:            "google_firebase_hosting_custom_domain.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"site_id", "custom_domain"},
+				ImportStateVerifyIgnore: []string{"custom_domain", "site_id"},
 			},
 		},
 	})

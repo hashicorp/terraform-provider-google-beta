@@ -49,7 +49,7 @@ func TestAccComputeGlobalAddress_globalAddressBasicExample(t *testing.T) {
 				ResourceName:            "google_compute_global_address.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"network", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"labels", "network", "terraform_labels"},
 			},
 		},
 	})
@@ -82,7 +82,7 @@ func TestAccComputeGlobalAddress_globalAddressPrivateServicesConnectExample(t *t
 				ResourceName:            "google_compute_global_address.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"network", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"labels", "network", "terraform_labels"},
 			},
 		},
 	})

@@ -45,7 +45,7 @@ func TestAccFirebaseHostingVersion_firebasehostingVersionRedirectExample(t *test
 				ResourceName:            "google_firebase_hosting_version.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"version_id", "site_id"},
+				ImportStateVerifyIgnore: []string{"site_id", "version_id"},
 			},
 		},
 	})
@@ -99,7 +99,7 @@ func TestAccFirebaseHostingVersion_firebasehostingVersionPathExample(t *testing.
 				ResourceName:            "google_firebase_hosting_version.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"version_id", "site_id"},
+				ImportStateVerifyIgnore: []string{"site_id", "version_id"},
 			},
 		},
 	})
@@ -152,7 +152,7 @@ func TestAccFirebaseHostingVersion_firebasehostingVersionCloudRunExample(t *test
 				ResourceName:            "google_firebase_hosting_version.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"version_id", "site_id"},
+				ImportStateVerifyIgnore: []string{"site_id", "version_id"},
 			},
 		},
 	})
@@ -225,7 +225,7 @@ func TestAccFirebaseHostingVersion_firebasehostingVersionCloudFunctionsExample(t
 				ResourceName:            "google_firebase_hosting_version.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"version_id", "site_id"},
+				ImportStateVerifyIgnore: []string{"site_id", "version_id"},
 			},
 		},
 	})

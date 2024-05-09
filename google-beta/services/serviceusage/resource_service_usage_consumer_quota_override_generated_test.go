@@ -51,7 +51,7 @@ func TestAccServiceUsageConsumerQuotaOverride_consumerQuotaOverrideExample(t *te
 				ResourceName:            "google_service_usage_consumer_quota_override.override",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"force", "service", "metric", "limit"},
+				ImportStateVerifyIgnore: []string{"force", "limit", "metric", "service"},
 			},
 		},
 	})
@@ -98,7 +98,7 @@ func TestAccServiceUsageConsumerQuotaOverride_consumerQuotaOverrideZeroValueExam
 				ResourceName:            "google_service_usage_consumer_quota_override.override",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"force", "service", "metric", "limit"},
+				ImportStateVerifyIgnore: []string{"force", "limit", "metric", "service"},
 			},
 		},
 	})
@@ -145,7 +145,7 @@ func TestAccServiceUsageConsumerQuotaOverride_regionConsumerQuotaOverrideExample
 				ResourceName:            "google_service_usage_consumer_quota_override.override",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"force", "service", "metric", "limit"},
+				ImportStateVerifyIgnore: []string{"force", "limit", "metric", "service"},
 			},
 		},
 	})
@@ -195,7 +195,7 @@ func TestAccServiceUsageConsumerQuotaOverride_consumerQuotaOverrideCustomDimensi
 				ResourceName:            "google_service_usage_consumer_quota_override.override",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"force", "service", "metric", "limit"},
+				ImportStateVerifyIgnore: []string{"force", "limit", "metric", "service"},
 			},
 		},
 	})

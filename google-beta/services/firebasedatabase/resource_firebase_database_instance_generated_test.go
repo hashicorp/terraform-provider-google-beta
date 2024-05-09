@@ -51,7 +51,7 @@ func TestAccFirebaseDatabaseInstance_firebaseDatabaseInstanceBasicExample(t *tes
 				ResourceName:            "google_firebase_database_instance.basic",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"region", "instance_id"},
+				ImportStateVerifyIgnore: []string{"instance_id", "region"},
 			},
 		},
 	})
@@ -88,7 +88,7 @@ func TestAccFirebaseDatabaseInstance_firebaseDatabaseInstanceFullExample(t *test
 				ResourceName:            "google_firebase_database_instance.full",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"region", "instance_id", "desired_state"},
+				ImportStateVerifyIgnore: []string{"desired_state", "instance_id", "region"},
 			},
 		},
 	})
@@ -127,7 +127,7 @@ func TestAccFirebaseDatabaseInstance_firebaseDatabaseInstanceDefaultDatabaseExam
 				ResourceName:            "google_firebase_database_instance.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"region", "instance_id"},
+				ImportStateVerifyIgnore: []string{"instance_id", "region"},
 			},
 		},
 	})
