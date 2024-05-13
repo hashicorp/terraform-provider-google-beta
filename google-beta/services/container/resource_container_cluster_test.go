@@ -2660,7 +2660,7 @@ func TestAccContainerCluster_stackType_withDualStack(t *testing.T) {
 				ResourceName:            resourceName,
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"min_master_version", "deletion_protection"},
+				ImportStateVerifyIgnore: []string{"deletion_protection"},
 			},
 		},
 	})
@@ -2688,7 +2688,7 @@ func TestAccContainerCluster_stackType_withSingleStack(t *testing.T) {
 				ResourceName:            resourceName,
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"min_master_version", "deletion_protection"},
+				ImportStateVerifyIgnore: []string{"deletion_protection"},
 			},
 		},
 	})
@@ -7875,7 +7875,6 @@ resource "google_container_cluster" "with_stack_type" {
     network    = google_compute_network.container_network.name
     subnetwork = google_compute_subnetwork.container_subnetwork.name
 
-    min_master_version = "1.25"
     initial_node_count = 1
     datapath_provider = "ADVANCED_DATAPATH"
     enable_l4_ilb_subsetting = true
@@ -7911,7 +7910,6 @@ resource "google_container_cluster" "with_stack_type" {
     network    = google_compute_network.container_network.name
     subnetwork = google_compute_subnetwork.container_subnetwork.name
 
-    min_master_version = "1.25"
     initial_node_count = 1
     enable_l4_ilb_subsetting = true
 
