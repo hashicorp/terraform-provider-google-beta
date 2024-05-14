@@ -1,4 +1,14 @@
-## 5.29.0 (Unreleased)
+## 5.30.0 (Unreleased)
+
+## 5.29.1 (May 14, 2024)
+
+BREAKING CHANGES:
+* compute: removed `secondary_ip_range.reserved_internal_range` field from `google_compute_subnetwork` ([7363](https://github.com/hashicorp/terraform-provider-google-beta/pull/7363))
+
+## 5.29.0 (May 13, 2024)
+
+BREAKING CHANGES:
+* compute: added required `reserved_internal_range` subfield to `reserved_internal_range` in `google_compute_subnetwork`. This field can be set to `null` as an equivalent to leaving it unspecified. Upgrading directly to 5.29.1 will avoid this issue.
 
 NOTES:
 * compute: added documentation for md5_authentication_key field in google_compute_router_peer resource. The field was introduced in [v5.12.0](https://github.com/hashicorp/terraform-provider-google-beta/releases/tag/v5.12.0), but documentation was unintentionally omitted at that time. ([#7306](https://github.com/hashicorp/terraform-provider-google-beta/pull/7306))
