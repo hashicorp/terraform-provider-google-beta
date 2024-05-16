@@ -490,7 +490,7 @@ var DefaultBasePaths = map[string]string{
 	AlloydbBasePathKey:                  "https://alloydb.googleapis.com/v1beta/",
 	ApiGatewayBasePathKey:               "https://apigateway.googleapis.com/v1beta/",
 	ApigeeBasePathKey:                   "https://apigee.googleapis.com/v1/",
-	AppEngineBasePathKey:                "https://appengine.googleapis.com/v1/",
+	AppEngineBasePathKey:                "https://appengine.googleapis.com/v1beta/",
 	ApphubBasePathKey:                   "https://apphub.googleapis.com/v1/",
 	ArtifactRegistryBasePathKey:         "https://artifactregistry.googleapis.com/v1/",
 	BackupDRBasePathKey:                 "https://backupdr.googleapis.com/v1/",
