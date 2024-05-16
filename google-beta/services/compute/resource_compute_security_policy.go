@@ -266,7 +266,7 @@ func ResourceComputeSecurityPolicy() *schema.Resource {
 										Type:         schema.TypeString,
 										Optional:     true,
 										Description:  `Determines the key to enforce the rateLimitThreshold on`,
-										ValidateFunc: validation.StringInSlice([]string{"ALL", "IP", "HTTP_HEADER", "XFF_IP", "HTTP_COOKIE", "HTTP_PATH", "SNI", "REGION_CODE", ""}, false),
+										ValidateFunc: validation.StringInSlice([]string{"ALL", "IP", "HTTP_HEADER", "XFF_IP", "HTTP_COOKIE", "HTTP_PATH", "SNI", "REGION_CODE", "TLS_JA3_FINGERPRINT", "USER_IP", ""}, false),
 									},
 
 									"enforce_on_key_name": {
@@ -285,7 +285,7 @@ func ResourceComputeSecurityPolicy() *schema.Resource {
 													Type:         schema.TypeString,
 													Optional:     true,
 													Description:  `Determines the key to enforce the rate_limit_threshold on`,
-													ValidateFunc: validation.StringInSlice([]string{"ALL", "IP", "HTTP_HEADER", "XFF_IP", "HTTP_COOKIE", "HTTP_PATH", "SNI", "REGION_CODE"}, false),
+													ValidateFunc: validation.StringInSlice([]string{"ALL", "IP", "HTTP_HEADER", "XFF_IP", "HTTP_COOKIE", "HTTP_PATH", "SNI", "REGION_CODE", "TLS_JA3_FINGERPRINT", "USER_IP"}, false),
 												},
 												"enforce_on_key_name": {
 													Type:        schema.TypeString,
