@@ -370,6 +370,14 @@ func TestAccComputeSecurityPolicy_withRateLimitOption_withMultipleEnforceOnKeyCo
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
+			{
+				Config: testAccComputeSecurityPolicy_withRateLimitOption_withMultipleEnforceOnKeyConfigs2(spName),
+			},
+			{
+				ResourceName:      "google_compute_security_policy.policy",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
 		},
 	})
 }
@@ -1346,7 +1354,7 @@ resource "google_compute_security_policy" "policy" {
 				src_ip_ranges = ["*"]
 			}
 		}
-		description = "default rule"
+		description = "default rule withEnforceOnKey"
 
 		rate_limit_options {
 			conform_action = "allow"
@@ -1384,7 +1392,7 @@ resource "google_compute_security_policy" "policy" {
 				src_ip_ranges = ["*"]
 			}
 		}
-		description = "default rule"
+		description = "default rule withoutRateLimitOptions"
 	}
 }
 `, spName)
@@ -1405,7 +1413,7 @@ resource "google_compute_security_policy" "policy" {
 				src_ip_ranges = ["*"]
 			}
 		}
-		description = "default rule"
+		description = "default rule withEnforceOnKeyName"
 
 		rate_limit_options {
 			conform_action = "allow"
@@ -1444,7 +1452,7 @@ resource "google_compute_security_policy" "policy" {
 				src_ip_ranges = ["*"]
 			}
 		}
-		description = "default rule"
+		description = "default rule withEnforceOnKeyConfigs"
 
 		rate_limit_options {
 			conform_action = "allow"
@@ -1485,7 +1493,7 @@ resource "google_compute_security_policy" "policy" {
 				src_ip_ranges = ["*"]
 			}
 		}
-		description = "default rule"
+		description = "default rule withMultipleEnforceOnKeyConfigs"
 
 		rate_limit_options {
 			conform_action = "allow"
@@ -1509,6 +1517,51 @@ resource "google_compute_security_policy" "policy" {
 
 			enforce_on_key_configs {
 				enforce_on_key_type = "REGION_CODE"
+			}
+		}
+	}
+}
+`, spName)
+}
+
+func testAccComputeSecurityPolicy_withRateLimitOption_withMultipleEnforceOnKeyConfigs2(spName string) string {
+	return fmt.Sprintf(`
+resource "google_compute_security_policy" "policy" {
+	name        = "%s"
+	description = "throttle rule with enforce_on_key_configs"
+
+	rule {
+		action   = "throttle"
+		priority = "2147483647"
+		match {
+			versioned_expr = "SRC_IPS_V1"
+			config {
+				src_ip_ranges = ["*"]
+			}
+		}
+		description = "default rule withMultipleEnforceOnKeyConfigs2"
+
+		rate_limit_options {
+			conform_action = "allow"
+			exceed_action = "deny(429)"
+
+			rate_limit_threshold {
+				count = 10
+				interval_sec = 60
+			}
+
+			enforce_on_key = ""
+
+			enforce_on_key_configs {
+				enforce_on_key_type = "REGION_CODE"
+			}
+
+			enforce_on_key_configs {
+				enforce_on_key_type = "TLS_JA3_FINGERPRINT"
+			}
+
+			enforce_on_key_configs {
+				enforce_on_key_type = "USER_IP"
 			}
 		}
 	}
