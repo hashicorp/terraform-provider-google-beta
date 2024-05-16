@@ -64,7 +64,7 @@ func testSweepAppEngineDomainMapping(region string) error {
 		},
 	}
 
-	listTemplate := strings.Split("https://appengine.googleapis.com/v1/apps/{{project}}/domainMappings", "?")[0]
+	listTemplate := strings.Split("https://appengine.googleapis.com/v1beta/apps/{{project}}/domainMappings", "?")[0]
 	listUrl, err := tpgresource.ReplaceVars(d, config, listTemplate)
 	if err != nil {
 		log.Printf("[INFO][SWEEPER_LOG] error preparing sweeper list url: %s", err)
@@ -108,7 +108,7 @@ func testSweepAppEngineDomainMapping(region string) error {
 			continue
 		}
 
-		deleteTemplate := "https://appengine.googleapis.com/v1/apps/{{project}}/domainMappings/{{domain_name}}"
+		deleteTemplate := "https://appengine.googleapis.com/v1beta/apps/{{project}}/domainMappings/{{domain_name}}"
 		deleteUrl, err := tpgresource.ReplaceVars(d, config, deleteTemplate)
 		if err != nil {
 			log.Printf("[INFO][SWEEPER_LOG] error preparing delete url: %s", err)
