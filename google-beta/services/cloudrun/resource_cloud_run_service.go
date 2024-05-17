@@ -698,6 +698,33 @@ will use the project's default service account.`,
 														},
 													},
 												},
+												"nfs": {
+													Type:     schema.TypeList,
+													Optional: true,
+													Description: `A filesystem backed by a Network File System share. This filesystem requires the
+run.googleapis.com/execution-environment annotation to be set to "gen2" and
+run.googleapis.com/launch-stage set to "BETA" or "ALPHA".`,
+													MaxItems: 1,
+													Elem: &schema.Resource{
+														Schema: map[string]*schema.Schema{
+															"path": {
+																Type:        schema.TypeString,
+																Required:    true,
+																Description: `Path exported by the NFS server`,
+															},
+															"server": {
+																Type:        schema.TypeString,
+																Required:    true,
+																Description: `IP address or hostname of the NFS server`,
+															},
+															"read_only": {
+																Type:        schema.TypeBool,
+																Optional:    true,
+																Description: `If true, mount the NFS volume as read only in all mounts. Defaults to false.`,
+															},
+														},
+													},
+												},
 												"secret": {
 													Type:     schema.TypeList,
 													Optional: true,
@@ -2526,6 +2553,7 @@ func flattenCloudRunServiceSpecTemplateSpecVolumes(v interface{}, d *schema.Reso
 			"secret":    flattenCloudRunServiceSpecTemplateSpecVolumesSecret(original["secret"], d, config),
 			"empty_dir": flattenCloudRunServiceSpecTemplateSpecVolumesEmptyDir(original["emptyDir"], d, config),
 			"csi":       flattenCloudRunServiceSpecTemplateSpecVolumesCsi(original["csi"], d, config),
+			"nfs":       flattenCloudRunServiceSpecTemplateSpecVolumesNfs(original["nfs"], d, config),
 		})
 	}
 	return transformed
@@ -2666,6 +2694,35 @@ func flattenCloudRunServiceSpecTemplateSpecVolumesCsiReadOnly(v interface{}, d *
 }
 
 func flattenCloudRunServiceSpecTemplateSpecVolumesCsiVolumeAttributes(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenCloudRunServiceSpecTemplateSpecVolumesNfs(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["server"] =
+		flattenCloudRunServiceSpecTemplateSpecVolumesNfsServer(original["server"], d, config)
+	transformed["path"] =
+		flattenCloudRunServiceSpecTemplateSpecVolumesNfsPath(original["path"], d, config)
+	transformed["read_only"] =
+		flattenCloudRunServiceSpecTemplateSpecVolumesNfsReadOnly(original["readOnly"], d, config)
+	return []interface{}{transformed}
+}
+func flattenCloudRunServiceSpecTemplateSpecVolumesNfsServer(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenCloudRunServiceSpecTemplateSpecVolumesNfsPath(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenCloudRunServiceSpecTemplateSpecVolumesNfsReadOnly(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
@@ -4192,6 +4249,13 @@ func expandCloudRunServiceSpecTemplateSpecVolumes(v interface{}, d tpgresource.T
 			transformed["csi"] = transformedCsi
 		}
 
+		transformedNfs, err := expandCloudRunServiceSpecTemplateSpecVolumesNfs(original["nfs"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedNfs); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["nfs"] = transformedNfs
+		}
+
 		req = append(req, transformed)
 	}
 	return req, nil
@@ -4374,6 +4438,51 @@ func expandCloudRunServiceSpecTemplateSpecVolumesCsiVolumeAttributes(v interface
 		m[k] = val.(string)
 	}
 	return m, nil
+}
+
+func expandCloudRunServiceSpecTemplateSpecVolumesNfs(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedServer, err := expandCloudRunServiceSpecTemplateSpecVolumesNfsServer(original["server"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedServer); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["server"] = transformedServer
+	}
+
+	transformedPath, err := expandCloudRunServiceSpecTemplateSpecVolumesNfsPath(original["path"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedPath); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["path"] = transformedPath
+	}
+
+	transformedReadOnly, err := expandCloudRunServiceSpecTemplateSpecVolumesNfsReadOnly(original["read_only"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedReadOnly); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["readOnly"] = transformedReadOnly
+	}
+
+	return transformed, nil
+}
+
+func expandCloudRunServiceSpecTemplateSpecVolumesNfsServer(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandCloudRunServiceSpecTemplateSpecVolumesNfsPath(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandCloudRunServiceSpecTemplateSpecVolumesNfsReadOnly(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
 }
 
 func expandCloudRunServiceSpecTemplateSpecServingState(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
