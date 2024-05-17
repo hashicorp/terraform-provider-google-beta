@@ -1,8 +1,5 @@
 ## 5.30.0 (Unreleased)
 
-BREAKING CHANGES:
-* compute: removed `secondary_ip_range.reserved_internal_range` field from `google_compute_subnetwork` ([#7363](https://github.com/hashicorp/terraform-provider-google-beta/pull/7363))
-
 FEATURES:
 * **New Data Source:** `google_cloud_asset_resources_search_all` ([#7361](https://github.com/hashicorp/terraform-provider-google-beta/pull/7361))
 * **New Resource:** `google_compute_interconnect` ([#7338](https://github.com/hashicorp/terraform-provider-google-beta/pull/7338))
