@@ -42,6 +42,39 @@ func TestAccComputeInstanceFromMachineImage_basic(t *testing.T) {
 	})
 }
 
+func TestAccComputeInstanceFromMachineImage_maxRunDuration(t *testing.T) {
+	t.Parallel()
+
+	var instance compute.Instance
+	instanceName := fmt.Sprintf("tf-test-%s", acctest.RandString(t, 10))
+	generatedInstanceName := fmt.Sprintf("tf-test-generated-%s", acctest.RandString(t, 10))
+	resourceName := "google_compute_instance_from_machine_image.foobar"
+	var expectedMaxRunDuration = compute.Duration{}
+	// Define in testAccComputeInstanceFromMachineImage_maxRunDuration
+	expectedMaxRunDuration.Nanos = 123
+	expectedMaxRunDuration.Seconds = 60
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckComputeInstanceFromMachineImageDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeInstanceFromMachineImage_maxRunDuration(instanceName, generatedInstanceName),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckComputeInstanceExists(t, resourceName, &instance),
+
+					// Check that fields were set based on the template
+					resource.TestCheckResourceAttr(resourceName, "machine_type", "n1-standard-1"),
+					resource.TestCheckResourceAttr(resourceName, "attached_disk.#", "0"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling.0.automatic_restart", "false"),
+					testAccCheckComputeInstanceMaxRunDuration(&instance, expectedMaxRunDuration),
+				),
+			},
+		},
+	})
+}
+
 func TestAccComputeInstanceFromMachineImage_localSsdRecoveryTimeout(t *testing.T) {
 	t.Parallel()
 
@@ -221,6 +254,66 @@ resource "google_compute_instance_from_machine_image" "foobar" {
   }
   scheduling {
     automatic_restart = false
+  }
+}
+`, instance, instance, newInstance)
+}
+
+func testAccComputeInstanceFromMachineImage_maxRunDuration(instance, newInstance string) string {
+	return fmt.Sprintf(`
+resource "google_compute_instance" "vm" {
+  provider     = google-beta
+
+  boot_disk {
+    initialize_params {
+      image = "debian-cloud/debian-10"
+    }
+  }
+
+  name         = "%s"
+  machine_type = "n1-standard-1"
+
+  network_interface {
+    network = "default"
+  }
+
+  metadata = {
+    foo = "bar"
+  }
+
+  scheduling {
+    automatic_restart = false
+  }
+
+}
+
+resource "google_compute_machine_image" "foobar" {
+  provider        = google-beta
+  name            = "%s"
+  source_instance = google_compute_instance.vm.self_link
+}
+
+resource "google_compute_instance_from_machine_image" "foobar" {
+  provider = google-beta
+  name = "%s"
+  zone = "us-central1-a"
+
+  source_machine_image = google_compute_machine_image.foobar.self_link
+
+  labels = {
+    my_key = "my_value"
+  }
+  scheduling {
+    automatic_restart = false
+    provisioning_model = "STANDARD"
+    instance_termination_action = "STOP"
+    max_run_duration {
+	nanos = 123
+	seconds = 60
+    }
+	on_instance_stop_action {
+		discard_local_ssd = true
+	}
   }
 }
 `, instance, instance, newInstance)

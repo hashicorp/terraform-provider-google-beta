@@ -1060,6 +1060,112 @@ func TestAccComputeInstanceTemplate_spot(t *testing.T) {
 	})
 }
 
+func TestAccComputeInstanceTemplate_spot_maxRunDuration_deleteTerminationAction(t *testing.T) {
+	t.Parallel()
+
+	var instanceTemplate compute.InstanceTemplate
+	var expectedMaxRunDuration = compute.Duration{}
+	// Define in testAccComputeInstanceTemplate_spot
+	expectedMaxRunDuration.Nanos = 123
+	expectedMaxRunDuration.Seconds = 60
+	var instanceTerminationAction = "DELETE"
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckComputeInstanceTemplateDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeInstanceTemplate_spot_maxRunDuration(acctest.RandString(t, 10), instanceTerminationAction),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckComputeInstanceTemplateExists(
+						t, "google_compute_instance_template.foobar", &instanceTemplate),
+					testAccCheckComputeInstanceTemplateAutomaticRestart(&instanceTemplate, false),
+					testAccCheckComputeInstanceTemplatePreemptible(&instanceTemplate, true),
+					testAccCheckComputeInstanceTemplateProvisioningModel(&instanceTemplate, "SPOT"),
+					testAccCheckComputeInstanceTemplateInstanceTerminationAction(&instanceTemplate, instanceTerminationAction),
+					testAccCheckComputeInstanceTemplateMaxRunDuration(&instanceTemplate, expectedMaxRunDuration),
+				),
+			},
+			{
+				ResourceName:      "google_compute_instance_template.foobar",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
+func TestAccComputeInstanceTemplate_spot_maxRunDuration_stopTerminationAction(t *testing.T) {
+	t.Parallel()
+
+	var instanceTemplate compute.InstanceTemplate
+	var expectedMaxRunDuration = compute.Duration{}
+	// Define in testAccComputeInstanceTemplate_spot
+	expectedMaxRunDuration.Nanos = 123
+	expectedMaxRunDuration.Seconds = 60
+	var instanceTerminationAction = "STOP"
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckComputeInstanceTemplateDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeInstanceTemplate_spot_maxRunDuration(acctest.RandString(t, 10), instanceTerminationAction),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckComputeInstanceTemplateExists(
+						t, "google_compute_instance_template.foobar", &instanceTemplate),
+					testAccCheckComputeInstanceTemplateAutomaticRestart(&instanceTemplate, false),
+					testAccCheckComputeInstanceTemplatePreemptible(&instanceTemplate, true),
+					testAccCheckComputeInstanceTemplateProvisioningModel(&instanceTemplate, "SPOT"),
+					testAccCheckComputeInstanceTemplateInstanceTerminationAction(&instanceTemplate, instanceTerminationAction),
+					testAccCheckComputeInstanceTemplateMaxRunDuration(&instanceTemplate, expectedMaxRunDuration),
+				),
+			},
+			{
+				ResourceName:      "google_compute_instance_template.foobar",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
+func TestAccComputeInstanceTemplate_maxRunDuration_onInstanceStopAction(t *testing.T) {
+	t.Parallel()
+
+	var instanceTemplate compute.InstanceTemplate
+	var expectedMaxRunDuration = compute.Duration{}
+	// Define in testAccComputeInstanceTemplate_maxRunDuration_onInstanceStopAction
+	expectedMaxRunDuration.Nanos = 123
+	expectedMaxRunDuration.Seconds = 600
+	var instanceTerminationAction = "STOP"
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckComputeInstanceTemplateDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeInstanceTemplate_maxRunDuration_onInstanceStopAction(acctest.RandString(t, 10)),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckComputeInstanceTemplateExists(
+						t, "google_compute_instance_template.foobar", &instanceTemplate),
+					testAccCheckComputeInstanceTemplateAutomaticRestart(&instanceTemplate, false),
+					testAccCheckComputeInstanceTemplateInstanceTerminationAction(&instanceTemplate, instanceTerminationAction),
+					testAccCheckComputeInstanceTemplateMaxRunDuration(&instanceTemplate, expectedMaxRunDuration),
+				),
+			},
+			{
+				ResourceName:      "google_compute_instance_template.foobar",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
 func TestAccComputeInstanceTemplate_spot_maxRunDuration(t *testing.T) {
 	t.Parallel()
 
@@ -1068,6 +1174,7 @@ func TestAccComputeInstanceTemplate_spot_maxRunDuration(t *testing.T) {
 	// Define in testAccComputeInstanceTemplate_spot
 	expectedMaxRunDuration.Nanos = 123
 	expectedMaxRunDuration.Seconds = 60
+	var instanceTerminationAction = "DELETE"
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -1075,14 +1182,14 @@ func TestAccComputeInstanceTemplate_spot_maxRunDuration(t *testing.T) {
 		CheckDestroy:             testAccCheckComputeInstanceTemplateDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccComputeInstanceTemplate_spot_maxRunDuration(acctest.RandString(t, 10)),
+				Config: testAccComputeInstanceTemplate_spot_maxRunDuration(acctest.RandString(t, 10), instanceTerminationAction),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckComputeInstanceTemplateExists(
 						t, "google_compute_instance_template.foobar", &instanceTemplate),
 					testAccCheckComputeInstanceTemplateAutomaticRestart(&instanceTemplate, false),
 					testAccCheckComputeInstanceTemplatePreemptible(&instanceTemplate, true),
 					testAccCheckComputeInstanceTemplateProvisioningModel(&instanceTemplate, "SPOT"),
-					testAccCheckComputeInstanceTemplateInstanceTerminationAction(&instanceTemplate, "DELETE"),
+					testAccCheckComputeInstanceTemplateInstanceTerminationAction(&instanceTemplate, instanceTerminationAction),
 					testAccCheckComputeInstanceTemplateMaxRunDuration(&instanceTemplate, expectedMaxRunDuration),
 				),
 			},
@@ -3560,7 +3667,7 @@ resource "google_compute_instance_template" "foobar" {
 `, suffix)
 }
 
-func testAccComputeInstanceTemplate_spot_maxRunDuration(suffix string) string {
+func testAccComputeInstanceTemplate_spot_maxRunDuration(suffix string, instanceTerminationAction string) string {
 	return fmt.Sprintf(`
 data "google_compute_image" "my_image" {
   family  = "debian-11"
@@ -3587,7 +3694,7 @@ resource "google_compute_instance_template" "foobar" {
     preemptible       = true
     automatic_restart = false
     provisioning_model = "SPOT"
-    instance_termination_action = "DELETE"
+    instance_termination_action = "%s"
     max_run_duration {
 	nanos = 123
 	seconds = 60
@@ -3597,6 +3704,54 @@ resource "google_compute_instance_template" "foobar" {
 
   metadata = {
     foo = "bar"
+  }
+
+  service_account {
+    scopes = ["userinfo-email", "compute-ro", "storage-ro"]
+  }
+}
+`, suffix, instanceTerminationAction)
+}
+
+func testAccComputeInstanceTemplate_maxRunDuration_onInstanceStopAction(suffix string) string {
+	return fmt.Sprintf(`
+data "google_compute_image" "my_image" {
+  family  = "debian-11"
+  project = "debian-cloud"
+}
+
+resource "google_compute_instance_template" "foobar" {
+  name           = "tf-test-instance-template-%s"
+  machine_type   = "e2-medium"
+  can_ip_forward = false
+  tags           = ["foo", "bar"]
+
+  disk {
+    source_image = data.google_compute_image.my_image.self_link
+    auto_delete  = true
+    boot         = true
+  }
+
+  network_interface {
+    network = "default"
+  }
+
+  scheduling {
+    automatic_restart = false
+    provisioning_model = "STANDARD"
+    instance_termination_action = "STOP"
+    max_run_duration {
+	nanos = 123
+	seconds = 600
+    }
+	on_instance_stop_action {
+		discard_local_ssd = true
+	}
+
+  }
+
+  metadata = {
+	foo = "bar"
   }
 
   service_account {
