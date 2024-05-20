@@ -49,6 +49,7 @@ data "google_iam_policy" "admin" {
 resource "google_pubsub_schema_iam_policy" "policy" {
   project = google_pubsub_schema.example.project
   schema = google_pubsub_schema.example.name
+
   policy_data = data.google_iam_policy.admin.policy_data
 }
 ```
@@ -59,6 +60,7 @@ resource "google_pubsub_schema_iam_policy" "policy" {
 resource "google_pubsub_schema_iam_binding" "binding" {
   project = google_pubsub_schema.example.project
   schema = google_pubsub_schema.example.name
+
   role = "roles/viewer"
   members = [
     "user:jane@example.com",
@@ -72,6 +74,7 @@ resource "google_pubsub_schema_iam_binding" "binding" {
 resource "google_pubsub_schema_iam_member" "member" {
   project = google_pubsub_schema.example.project
   schema = google_pubsub_schema.example.name
+
   role = "roles/viewer"
   member = "user:jane@example.com"
 }
