@@ -26,7 +26,7 @@ func TestAccComposerUserWorkloadsSecret_basic(t *testing.T) {
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
-		// CheckDestroy:               testAccComposerUserWorkloadsSecretDestroy(t),
+		CheckDestroy:             testAccComposerEnvironmentDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccComposerUserWorkloadsSecret_basic(envName, secretName, envvar.GetTestProjectFromEnv(), envvar.GetTestRegionFromEnv()),
@@ -52,6 +52,7 @@ func TestAccComposerUserWorkloadsSecret_update(t *testing.T) {
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccComposerEnvironmentDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccComposerUserWorkloadsSecret_basic(envName, secretName, envvar.GetTestProjectFromEnv(), envvar.GetTestRegionFromEnv()),
@@ -77,6 +78,7 @@ func TestAccComposerUserWorkloadsSecret_delete(t *testing.T) {
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccComposerEnvironmentDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccComposerUserWorkloadsSecret_basic(envName, secretName, envvar.GetTestProjectFromEnv(), envvar.GetTestRegionFromEnv()),
@@ -161,7 +163,7 @@ func testAccComposerUserWorkloadsSecretDestroyed(t *testing.T) func(s *terraform
 			if len(idTokens) != 8 {
 				return fmt.Errorf("Invalid ID %q, expected format projects/{project}/regions/{region}/environments/{environment}/userWorkloadsSecrets/{name}", rs.Primary.ID)
 			}
-			secretName := &composer.UserWorkloadsSecretsName{
+			secretName := &composer.UserWorkloadsSecretName{
 				Project:     idTokens[1],
 				Region:      idTokens[3],
 				Environment: idTokens[5],
