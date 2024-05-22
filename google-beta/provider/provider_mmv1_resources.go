@@ -455,9 +455,9 @@ var handwrittenIAMDatasources = map[string]*schema.Resource{
 }
 
 // Resources
-// Generated resources: 471
+// Generated resources: 472
 // Generated IAM resources: 273
-// Total generated resources: 744
+// Total generated resources: 745
 var generatedResources = map[string]*schema.Resource{
 	"google_folder_access_approval_settings":                           accessapproval.ResourceAccessApprovalFolderSettings(),
 	"google_organization_access_approval_settings":                     accessapproval.ResourceAccessApprovalOrganizationSettings(),
@@ -1068,6 +1068,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_privateca_ca_pool_iam_policy":                              tpgiamresource.ResourceIamPolicy(privateca.PrivatecaCaPoolIamSchema, privateca.PrivatecaCaPoolIamUpdaterProducer, privateca.PrivatecaCaPoolIdParseFunc),
 	"google_privateca_certificate":                                     privateca.ResourcePrivatecaCertificate(),
 	"google_privateca_certificate_authority":                           privateca.ResourcePrivatecaCertificateAuthority(),
+	"google_privateca_certificate_template":                            privateca.ResourcePrivatecaCertificateTemplate(),
 	"google_privateca_certificate_template_iam_binding":                tpgiamresource.ResourceIamBinding(privateca.PrivatecaCertificateTemplateIamSchema, privateca.PrivatecaCertificateTemplateIamUpdaterProducer, privateca.PrivatecaCertificateTemplateIdParseFunc),
 	"google_privateca_certificate_template_iam_member":                 tpgiamresource.ResourceIamMember(privateca.PrivatecaCertificateTemplateIamSchema, privateca.PrivatecaCertificateTemplateIamUpdaterProducer, privateca.PrivatecaCertificateTemplateIdParseFunc),
 	"google_privateca_certificate_template_iam_policy":                 tpgiamresource.ResourceIamPolicy(privateca.PrivatecaCertificateTemplateIamSchema, privateca.PrivatecaCertificateTemplateIamUpdaterProducer, privateca.PrivatecaCertificateTemplateIdParseFunc),
