@@ -40,7 +40,6 @@ import (
 	gkehub "github.com/GoogleCloudPlatform/declarative-resource-client-library/services/google/gkehub/beta"
 	networkconnectivity "github.com/GoogleCloudPlatform/declarative-resource-client-library/services/google/networkconnectivity/beta"
 	orgpolicy "github.com/GoogleCloudPlatform/declarative-resource-client-library/services/google/orgpolicy/beta"
-	privateca "github.com/GoogleCloudPlatform/declarative-resource-client-library/services/google/privateca/beta"
 	recaptchaenterprise "github.com/GoogleCloudPlatform/declarative-resource-client-library/services/google/recaptchaenterprise/beta"
 )
 
@@ -410,29 +409,6 @@ func NewDCLOrgPolicyClient(config *Config, userAgent, billingProject string, tim
 
 	dclConfig := dcl.NewConfig(configOptions...)
 	return orgpolicy.NewClient(dclConfig)
-}
-
-func NewDCLPrivatecaClient(config *Config, userAgent, billingProject string, timeout time.Duration) *privateca.Client {
-	configOptions := []dcl.ConfigOption{
-		dcl.WithHTTPClient(config.Client),
-		dcl.WithUserAgent(userAgent),
-		dcl.WithLogger(dclLogger{}),
-		dcl.WithBasePath(config.PrivatecaBasePath),
-	}
-
-	if timeout != 0 {
-		configOptions = append(configOptions, dcl.WithTimeout(timeout))
-	}
-
-	if config.UserProjectOverride {
-		configOptions = append(configOptions, dcl.WithUserProjectOverride())
-		if billingProject != "" {
-			configOptions = append(configOptions, dcl.WithBillingProject(billingProject))
-		}
-	}
-
-	dclConfig := dcl.NewConfig(configOptions...)
-	return privateca.NewClient(dclConfig)
 }
 
 func NewDCLRecaptchaEnterpriseClient(config *Config, userAgent, billingProject string, timeout time.Duration) *recaptchaenterprise.Client {
