@@ -403,6 +403,7 @@ var generatedIAMDatasources = map[string]*schema.Resource{
 	"google_iap_web_region_backend_service_iam_policy":       tpgiamresource.DataSourceIamPolicy(iap.IapWebRegionBackendServiceIamSchema, iap.IapWebRegionBackendServiceIamUpdaterProducer),
 	"google_iap_web_type_app_engine_iam_policy":              tpgiamresource.DataSourceIamPolicy(iap.IapWebTypeAppEngineIamSchema, iap.IapWebTypeAppEngineIamUpdaterProducer),
 	"google_iap_web_type_compute_iam_policy":                 tpgiamresource.DataSourceIamPolicy(iap.IapWebTypeComputeIamSchema, iap.IapWebTypeComputeIamUpdaterProducer),
+	"google_logging_log_view_iam_policy":                     tpgiamresource.DataSourceIamPolicy(logging.LoggingLogViewIamSchema, logging.LoggingLogViewIamUpdaterProducer),
 	"google_network_security_address_group_iam_policy":       tpgiamresource.DataSourceIamPolicy(networksecurity.NetworkSecurityProjectAddressGroupIamSchema, networksecurity.NetworkSecurityProjectAddressGroupIamUpdaterProducer),
 	"google_notebooks_instance_iam_policy":                   tpgiamresource.DataSourceIamPolicy(notebooks.NotebooksInstanceIamSchema, notebooks.NotebooksInstanceIamUpdaterProducer),
 	"google_notebooks_runtime_iam_policy":                    tpgiamresource.DataSourceIamPolicy(notebooks.NotebooksRuntimeIamSchema, notebooks.NotebooksRuntimeIamUpdaterProducer),
@@ -457,8 +458,8 @@ var handwrittenIAMDatasources = map[string]*schema.Resource{
 
 // Resources
 // Generated resources: 473
-// Generated IAM resources: 276
-// Total generated resources: 749
+// Generated IAM resources: 279
+// Total generated resources: 752
 var generatedResources = map[string]*schema.Resource{
 	"google_folder_access_approval_settings":                           accessapproval.ResourceAccessApprovalFolderSettings(),
 	"google_organization_access_approval_settings":                     accessapproval.ResourceAccessApprovalOrganizationSettings(),
@@ -995,6 +996,9 @@ var generatedResources = map[string]*schema.Resource{
 	"google_logging_folder_settings":                                   logging.ResourceLoggingFolderSettings(),
 	"google_logging_linked_dataset":                                    logging.ResourceLoggingLinkedDataset(),
 	"google_logging_log_view":                                          logging.ResourceLoggingLogView(),
+	"google_logging_log_view_iam_binding":                              tpgiamresource.ResourceIamBinding(logging.LoggingLogViewIamSchema, logging.LoggingLogViewIamUpdaterProducer, logging.LoggingLogViewIdParseFunc),
+	"google_logging_log_view_iam_member":                               tpgiamresource.ResourceIamMember(logging.LoggingLogViewIamSchema, logging.LoggingLogViewIamUpdaterProducer, logging.LoggingLogViewIdParseFunc),
+	"google_logging_log_view_iam_policy":                               tpgiamresource.ResourceIamPolicy(logging.LoggingLogViewIamSchema, logging.LoggingLogViewIamUpdaterProducer, logging.LoggingLogViewIdParseFunc),
 	"google_logging_metric":                                            logging.ResourceLoggingMetric(),
 	"google_logging_organization_settings":                             logging.ResourceLoggingOrganizationSettings(),
 	"google_looker_instance":                                           looker.ResourceLookerInstance(),
