@@ -1,7 +1,7 @@
 ## 5.31.1 (Unreleased)
 
 BUG FIXES:
-* iam: added a 10 second sleep when creating a 'google_service_account' to reduce eventual consistency errors. See https://github.com/hashicorp/terraform-provider-google/issues/18024 for more details ([#7427](https://github.com/hashicorp/terraform-provider-google-beta/pull/7427))
+* iam: added a 10 second sleep when creating a `google_service_account` to reduce eventual consistency errors. See https://github.com/hashicorp/terraform-provider-google/issues/18024 for more details ([#7427](https://github.com/hashicorp/terraform-provider-google-beta/pull/7427))
 
 ## 5.31.0 (May 28, 2024)
 
