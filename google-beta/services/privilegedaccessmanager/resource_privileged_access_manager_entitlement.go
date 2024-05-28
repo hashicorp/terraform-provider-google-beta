@@ -119,7 +119,7 @@ Format: calculate the time in seconds and concatenate it with 's' i.e. 2 hours =
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
-				Description: `Format: project/{project_id} or organization/{organization_number} or folder/{folder_number}`,
+				Description: `Format: projects/{project-id|project-number} or organizations/{organization-number} or folders/{folder-number}`,
 			},
 			"privileged_access": {
 				Type:        schema.TypeList,
