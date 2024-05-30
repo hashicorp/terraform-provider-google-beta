@@ -1,5 +1,25 @@
 ## 5.32.0 (Unreleased)
 
+NOTES:
+* privateca: `google_privateca_certificate_template` now uses mmv1 engine instead of DCL ([#7409](https://github.com/hashicorp/terraform-provider-google-beta/pull/7409))
+* sql: a new value `week5` is now supported for `setting.maintenance_window.update_track` field in `google_sql_database_instance` resource ([#7408](https://github.com/hashicorp/terraform-provider-google-beta/pull/7408))
+
+FEATURES:
+* **New Resource:** `google_dataplex_entry_type` ([#7412](https://github.com/hashicorp/terraform-provider-google-beta/pull/7412))
+* **New Resource:** `google_logging_log_view_iam_member` ([#7420](https://github.com/hashicorp/terraform-provider-google-beta/pull/7420))
+
+IMPROVEMENTS:
+* alloydb: added `psc_config` field to `google_alloydb_cluster` resource ([#7429](https://github.com/hashicorp/terraform-provider-google-beta/pull/7429))
+* alloydb: added `psc_instance_config` field to `google_alloydb_instance` resource ([#7429](https://github.com/hashicorp/terraform-provider-google-beta/pull/7429))
+* cloudrunv2: added `default_uri_disabled` field to `google_cloud_run_v2_service` resourceto ([#7422](https://github.com/hashicorp/terraform-provider-google-beta/pull/7422))
+* compute: added `NONE` to acceptable options for `update_policy.minimal_action` field in `google_compute_instance_group_manager` resource ([#7417](https://github.com/hashicorp/terraform-provider-google-beta/pull/7417))
+
+BUG FIXES:
+* cloudrunv2: added validation for `timeout` field to `google_cloud_run_v2_job`, `google_cloud_run_v2_service` resources ([#7426](https://github.com/hashicorp/terraform-provider-google-beta/pull/7426))
+* compute: fixed permadiff in ordering of `advertised_ip_ranges.range` field on `google_compute_router` resource ([#7411](https://github.com/hashicorp/terraform-provider-google-beta/pull/7411))
+* iam: added a 10 second sleep when creating `google_service_account` resource ([#7427](https://github.com/hashicorp/terraform-provider-google-beta/pull/7427))
+* storage: fixed `google_storage_bucket.lifecycle_rule.condition` block fields  `days_since_noncurrent_time` and `days_since_custom_time`  and `num_newer_versions` were not working for 0 value. ([#7414](https://github.com/hashicorp/terraform-provider-google-beta/pull/7414))
+
 ## 5.31.0 (May 28, 2024)
 
 FEATURES:
