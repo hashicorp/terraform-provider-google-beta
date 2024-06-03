@@ -1,8 +1,7 @@
 ## 5.32.0 (Unreleased)
 
 NOTES:
-* privateca: `google_privateca_certificate_template` now uses mmv1 engine instead of DCL ([#7409](https://github.com/hashicorp/terraform-provider-google-beta/pull/7409))
-* sql: a new value `week5` is now supported for `setting.maintenance_window.update_track` field in `google_sql_database_instance` resource ([#7408](https://github.com/hashicorp/terraform-provider-google-beta/pull/7408))
+* privateca: converted `google_privateca_certificate_template` to now use the MMv1 engine instead of DCL ([#7409](https://github.com/hashicorp/terraform-provider-google-beta/pull/7409))
 
 FEATURES:
 * **New Resource:** `google_dataplex_entry_type` ([#7412](https://github.com/hashicorp/terraform-provider-google-beta/pull/7412))
@@ -13,6 +12,7 @@ IMPROVEMENTS:
 * alloydb: added `psc_instance_config` field to `google_alloydb_instance` resource ([#7429](https://github.com/hashicorp/terraform-provider-google-beta/pull/7429))
 * cloudrunv2: added `default_uri_disabled` field to `google_cloud_run_v2_service` resourceto ([#7422](https://github.com/hashicorp/terraform-provider-google-beta/pull/7422))
 * compute: added `NONE` to acceptable options for `update_policy.minimal_action` field in `google_compute_instance_group_manager` resource ([#7417](https://github.com/hashicorp/terraform-provider-google-beta/pull/7417))
+* sql: updated support for a new value `week5` in field `setting.maintenance_window.update_track` in `google_sql_database_instance` resource ([#7408](https://github.com/hashicorp/terraform-provider-google-beta/pull/7408))
 
 BUG FIXES:
 * cloudrunv2: added validation for `timeout` field to `google_cloud_run_v2_job`, `google_cloud_run_v2_service` resources ([#7426](https://github.com/hashicorp/terraform-provider-google-beta/pull/7426))
