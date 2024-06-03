@@ -1474,6 +1474,22 @@ func ResourceContainerCluster() *schema.Resource {
 					},
 				},
 			},
+			"secret_manager_config": {
+				Type:             schema.TypeList,
+				Optional:         true,
+				Description:      `Configuration for the Secret Manager feature.`,
+				MaxItems:         1,
+				DiffSuppressFunc: SecretManagerCfgSuppress,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"enabled": {
+							Type:        schema.TypeBool,
+							Required:    true,
+							Description: `Enable the Secret manager csi component.`,
+						},
+					},
+				},
+			},
 
 			"project": {
 				Type:        schema.TypeString,
@@ -2237,6 +2253,7 @@ func resourceContainerClusterCreate(d *schema.ResourceData, meta interface{}) er
 		EnableKubernetesAlpha:   d.Get("enable_kubernetes_alpha").(bool),
 		IpAllocationPolicy:      ipAllocationBlock,
 		PodSecurityPolicyConfig: expandPodSecurityPolicyConfig(d.Get("pod_security_policy_config")),
+		SecretManagerConfig:     expandSecretManagerConfig(d.Get("secret_manager_config")),
 		Autoscaling:             expandClusterAutoscaling(d.Get("cluster_autoscaling"), d),
 		BinaryAuthorization:     expandBinaryAuthorization(d.Get("binary_authorization")),
 		Autopilot: &container.Autopilot{
@@ -2863,6 +2880,10 @@ func resourceContainerClusterRead(d *schema.ResourceData, meta interface{}) erro
 	}
 
 	if err := d.Set("cluster_telemetry", flattenClusterTelemetry(cluster.ClusterTelemetry)); err != nil {
+		return err
+	}
+
+	if err := d.Set("secret_manager_config", flattenSecretManagerConfig(cluster.SecretManagerConfig)); err != nil {
 		return err
 	}
 
@@ -3840,6 +3861,33 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 			return err
 		}
 		log.Printf("[INFO] GKE cluster %s pod security policy config has been updated", d.Id())
+	}
+
+	if d.HasChange("secret_manager_config") {
+		c := d.Get("secret_manager_config")
+		req := &container.UpdateClusterRequest{
+			Update: &container.ClusterUpdate{
+				DesiredSecretManagerConfig: expandSecretManagerConfig(c),
+			},
+		}
+
+		updateF := func() error {
+			name := containerClusterFullName(project, location, clusterName)
+			clusterUpdateCall := config.NewContainerClient(userAgent).Projects.Locations.Clusters.Update(name, req)
+			if config.UserProjectOverride {
+				clusterUpdateCall.Header().Add("X-Goog-User-Project", project)
+			}
+			op, err := clusterUpdateCall.Do()
+			if err != nil {
+				return err
+			}
+			// Wait until it's updated
+			return ContainerOperationWait(config, op, project, location, "updating secret manager csi driver config", userAgent, d.Timeout(schema.TimeoutUpdate))
+		}
+		if err := transport_tpg.LockedCall(lockKey, updateF); err != nil {
+			return err
+		}
+		log.Printf("[INFO] GKE cluster %s secret manager csi add-on has been updated", d.Id())
 	}
 
 	if d.HasChange("workload_identity_config") {
@@ -5199,6 +5247,19 @@ func expandPodSecurityPolicyConfig(configured interface{}) *container.PodSecurit
 	}
 }
 
+func expandSecretManagerConfig(configured interface{}) *container.SecretManagerConfig {
+	l := configured.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil
+	}
+
+	config := l[0].(map[string]interface{})
+	return &container.SecretManagerConfig{
+		Enabled:         config["enabled"].(bool),
+		ForceSendFields: []string{"Enabled"},
+	}
+}
+
 func expandDefaultMaxPodsConstraint(v interface{}) *container.MaxPodsConstraint {
 	if v == nil {
 		return nil
@@ -6050,6 +6111,21 @@ func flattenPodSecurityPolicyConfig(c *container.PodSecurityPolicyConfig) []map[
 	}
 }
 
+func flattenSecretManagerConfig(c *container.SecretManagerConfig) []map[string]interface{} {
+	if c == nil {
+		return []map[string]interface{}{
+			{
+				"enabled": false,
+			},
+		}
+	}
+	return []map[string]interface{}{
+		{
+			"enabled": c.Enabled,
+		},
+	}
+}
+
 func flattenResourceUsageExportConfig(c *container.ResourceUsageExportConfig) []map[string]interface{} {
 	if c == nil {
 		return nil
@@ -6482,6 +6558,20 @@ func containerClusterNetworkPolicyEmptyCustomizeDiff(_ context.Context, d *schem
 func podSecurityPolicyCfgSuppress(k, old, new string, r *schema.ResourceData) bool {
 	if k == "pod_security_policy_config.#" && old == "1" && new == "0" {
 		if v, ok := r.GetOk("pod_security_policy_config"); ok {
+			cfgList := v.([]interface{})
+			if len(cfgList) > 0 {
+				d := cfgList[0].(map[string]interface{})
+				// Suppress if old value was {enabled == false}
+				return !d["enabled"].(bool)
+			}
+		}
+	}
+	return false
+}
+
+func SecretManagerCfgSuppress(k, old, new string, r *schema.ResourceData) bool {
+	if k == "secret_manager_config.#" && old == "1" && new == "0" {
+		if v, ok := r.GetOk("secret_manager_config"); ok {
 			cfgList := v.([]interface{})
 			if len(cfgList) > 0 {
 				d := cfgList[0].(map[string]interface{})
