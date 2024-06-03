@@ -3,6 +3,7 @@
 package compute_test
 
 import (
+	"encoding/json"
 	"fmt"
 	"reflect"
 	"regexp"
@@ -18,6 +19,8 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 
 	compute "google.golang.org/api/compute/v0.beta"
+
+	"google.golang.org/api/googleapi"
 )
 
 const DEFAULT_MIN_CPU_TEST_VALUE = "Intel Haswell"
@@ -1233,6 +1236,40 @@ func TestAccComputeInstanceTemplate_localSsdRecoveryTimeout(t *testing.T) {
 	})
 }
 
+func TestAccComputeInstanceTemplate_partnerMetadata(t *testing.T) {
+	t.Parallel()
+
+	var instanceTemplate compute.InstanceTemplate
+	var namespace = "test.compute.googleapis.com"
+	expectedPartnerMetadata := make(map[string]compute.StructuredEntries)
+	expectedPartnerMetadata[namespace] = compute.StructuredEntries{
+		Entries: googleapi.RawMessage(`{"key1": "value1", "key2": 2,"key3": {"key31":"value31"}}`),
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckComputeInstanceTemplateDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeInstanceTemplate_partnerMetadata(acctest.RandString(t, 10)),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckComputeInstanceTemplateExists(
+						t, "google_compute_instance_template.foobar", &instanceTemplate),
+					testAccCheckComputeInstanceTemplatePartnerMetadata(&instanceTemplate, expectedPartnerMetadata),
+				),
+			},
+			{
+				ResourceName:            "google_compute_instance_template.foobar",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{fmt.Sprintf("partner_metadata.%s", namespace)},
+			},
+		},
+	})
+
+}
+
 func TestAccComputeInstanceTemplate_sourceSnapshotEncryptionKey(t *testing.T) {
 	t.Parallel()
 
@@ -1515,7 +1552,8 @@ func testAccCheckComputeInstanceTemplateExistsInProject(t *testing.T, n, p strin
 		splits := strings.Split(rs.Primary.ID, "/")
 		templateName := splits[len(splits)-1]
 		found, err := config.NewComputeClient(config.UserAgent).InstanceTemplates.Get(
-			p, templateName).Do()
+			p, templateName).View("FULL").Do()
+
 		if err != nil {
 			return err
 		}
@@ -1674,6 +1712,34 @@ func testAccCheckComputeInstanceTemplateLocalSsdRecoveryTimeout(instanceTemplate
 			return fmt.Errorf("gExpected LocalSsdRecoveryTimeout: %#v; got %#v", instance_local_ssd_recovery_timeout_want, instanceTemplate.Properties.Scheduling.LocalSsdRecoveryTimeout)
 		}
 		return nil
+	}
+}
+
+func testAccCheckComputeInstanceTemplatePartnerMetadata(instanceTemplate *compute.InstanceTemplate, expectedPartnerMetadata map[string]compute.StructuredEntries) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		if instanceTemplate == nil {
+			return fmt.Errorf("instance template is nil")
+		}
+		if instanceTemplate.Properties.PartnerMetadata == nil {
+			return fmt.Errorf("no partner metadata")
+		}
+		expectedPartnerMetadataMap := make(map[string]interface{})
+		acutalPartnerMetadataMap := make(map[string]interface{})
+		for key, value := range instanceTemplate.Properties.PartnerMetadata {
+			var jsonMap map[string]interface{}
+			json.Unmarshal(value.Entries, jsonMap)
+			acutalPartnerMetadataMap[key] = jsonMap
+		}
+		for key, value := range expectedPartnerMetadata {
+			var jsonMap map[string]interface{}
+			json.Unmarshal(value.Entries, jsonMap)
+			expectedPartnerMetadataMap[key] = jsonMap
+		}
+		if !reflect.DeepEqual(acutalPartnerMetadataMap, expectedPartnerMetadataMap) {
+			return fmt.Errorf("got the wrong instance partne metadata action: have: %+v; want: %+v", acutalPartnerMetadataMap, expectedPartnerMetadataMap)
+		}
+		return nil
+
 	}
 }
 
@@ -3794,6 +3860,48 @@ resource "google_compute_instance_template" "foobar" {
 
   metadata = {
     foo = "bar"
+  }
+
+  service_account {
+    scopes = ["userinfo-email", "compute-ro", "storage-ro"]
+  }
+}
+`, suffix)
+}
+
+func testAccComputeInstanceTemplate_partnerMetadata(suffix string) string {
+	return fmt.Sprintf(`
+data "google_compute_image" "my_image" {
+  family  = "debian-11"
+  project = "debian-cloud"
+}
+
+resource "google_compute_instance_template" "foobar" {
+  name           = "tf-test-instance-template-%s"
+  machine_type   = "e2-medium"
+  can_ip_forward = false
+  tags           = ["foo", "bar"]
+
+  disk {
+    source_image = data.google_compute_image.my_image.self_link
+    auto_delete  = true
+    boot         = true
+  }
+
+  network_interface {
+    network = "default"
+  }
+
+  partner_metadata = {
+  	"test.compute.googleapis.com" = jsonencode({ 
+  		entries = {
+  			key1 = "value1"
+  			key2 = 2
+  			key3 = {
+  				key31 = "value31"
+  			}
+  		}
+  	})
   }
 
   service_account {

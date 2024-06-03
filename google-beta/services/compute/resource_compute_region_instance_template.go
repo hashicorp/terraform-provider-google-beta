@@ -348,6 +348,15 @@ Google Cloud KMS.`,
 				Description: `Metadata key/value pairs to make available from within instances created from this template.`,
 			},
 
+			"partner_metadata": {
+				Type:                  schema.TypeMap,
+				Optional:              true,
+				DiffSuppressFunc:      ComparePartnerMetadataDiff,
+				DiffSuppressOnRefresh: true,
+				Elem:                  &schema.Schema{Type: schema.TypeString},
+				Description:           `Partner Metadata Map made available within the instance.`,
+			},
+
 			"metadata_startup_script": {
 				Type:        schema.TypeString,
 				Optional:    true,
@@ -1047,6 +1056,11 @@ func resourceComputeRegionInstanceTemplateCreate(d *schema.ResourceData, meta in
 		return err
 	}
 
+	PartnerMetadata, err := resourceInstancePartnerMetadata(d)
+	if err != nil {
+		return err
+	}
+
 	networks, err := expandNetworkInterfaces(d, config)
 	if err != nil {
 		return err
@@ -1074,6 +1088,7 @@ func resourceComputeRegionInstanceTemplateCreate(d *schema.ResourceData, meta in
 		MinCpuPlatform:             d.Get("min_cpu_platform").(string),
 		Disks:                      disks,
 		Metadata:                   metadata,
+		PartnerMetadata:            PartnerMetadata,
 		NetworkInterfaces:          networks,
 		NetworkPerformanceConfig:   networkPerformanceConfig,
 		Scheduling:                 scheduling,
@@ -1163,6 +1178,11 @@ func resourceComputeRegionInstanceTemplateRead(d *schema.ResourceData, meta inte
 		return err
 	}
 
+	url, err = transport_tpg.AddQueryParams(url, map[string]string{"view": "FULL"})
+	if err != nil {
+		return err
+	}
+
 	instanceTemplate, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "GET",
@@ -1209,6 +1229,16 @@ func resourceComputeRegionInstanceTemplateRead(d *schema.ResourceData, meta inte
 
 		if err = d.Set("metadata", _md); err != nil {
 			return fmt.Errorf("Error setting metadata: %s", err)
+		}
+	}
+
+	if instanceProperties.PartnerMetadata != nil {
+		partnerMetadata, err := flattenPartnerMetadata(instanceProperties.PartnerMetadata)
+		if err != nil {
+			return fmt.Errorf("Error parsing partner metadata: %s", err)
+		}
+		if err = d.Set("partner_metadata", partnerMetadata); err != nil {
+			return fmt.Errorf("Error setting partner metadata: %s", err)
 		}
 	}
 

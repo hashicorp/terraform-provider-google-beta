@@ -688,6 +688,15 @@ func ResourceComputeInstance() *schema.Resource {
 				Description: `Metadata key/value pairs made available within the instance.`,
 			},
 
+			"partner_metadata": {
+				Type:                  schema.TypeMap,
+				Optional:              true,
+				DiffSuppressFunc:      ComparePartnerMetadataDiff,
+				DiffSuppressOnRefresh: true,
+				Elem:                  &schema.Schema{Type: schema.TypeString},
+				Description:           `Partner Metadata Map made available within the instance.`,
+			},
+
 			"metadata_startup_script": {
 				Type:        schema.TypeString,
 				Optional:    true,
@@ -1175,7 +1184,7 @@ func getInstance(config *transport_tpg.Config, d *schema.ResourceData) (*compute
 	if err != nil {
 		return nil, err
 	}
-	instance, err := config.NewComputeClient(userAgent).Instances.Get(project, zone, d.Get("name").(string)).Do()
+	instance, err := config.NewComputeClient(userAgent).Instances.Get(project, zone, d.Get("name").(string)).View("FULL").Do()
 	if err != nil {
 		return nil, transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("Instance %s", d.Get("name").(string)))
 	}
@@ -1260,6 +1269,11 @@ func expandComputeInstance(project string, d *schema.ResourceData, config *trans
 		return nil, fmt.Errorf("Error creating metadata: %s", err)
 	}
 
+	PartnerMetadata, err := resourceInstancePartnerMetadata(d)
+	if err != nil {
+		return nil, fmt.Errorf("Error creating partner metadata: %s", err)
+	}
+
 	networkInterfaces, err := expandNetworkInterfaces(d, config)
 	if err != nil {
 		return nil, fmt.Errorf("Error creating network interfaces: %s", err)
@@ -1285,6 +1299,7 @@ func expandComputeInstance(project string, d *schema.ResourceData, config *trans
 		Disks:                      disks,
 		MachineType:                machineTypeUrl,
 		Metadata:                   metadata,
+		PartnerMetadata:            PartnerMetadata,
 		Name:                       d.Get("name").(string),
 		NetworkInterfaces:          networkInterfaces,
 		NetworkPerformanceConfig:   networkPerformanceConfig,
@@ -1457,6 +1472,17 @@ func resourceComputeInstanceRead(d *schema.ResourceData, meta interface{}) error
 	if err := d.Set("metadata_fingerprint", instance.Metadata.Fingerprint); err != nil {
 		return fmt.Errorf("Error setting metadata_fingerprint: %s", err)
 	}
+
+	if instance.PartnerMetadata != nil {
+		partnerMetadata, err := flattenPartnerMetadata(instance.PartnerMetadata)
+		if err != nil {
+			return fmt.Errorf("Error parsing partner metadata: %s", err)
+		}
+		if err = d.Set("partner_metadata", partnerMetadata); err != nil {
+			return fmt.Errorf("Error setting partner metadata: %s", err)
+		}
+	}
+
 	if err := d.Set("can_ip_forward", instance.CanIpForward); err != nil {
 		return fmt.Errorf("Error setting can_ip_forward: %s", err)
 	}
@@ -1779,6 +1805,35 @@ func resourceComputeInstanceUpdate(d *schema.ResourceData, meta interface{}) err
 					return opErr
 				}
 
+				return nil
+			},
+		})
+
+		if err != nil {
+			return err
+		}
+	}
+
+	if d.HasChange("partner_metadata") {
+		err = transport_tpg.Retry(transport_tpg.RetryOptions{
+			RetryFunc: func() error {
+				instance, err := config.NewComputeClient(userAgent).Instances.Get(project, zone, instance.Name).View("FULL").Do()
+				if err != nil {
+					return fmt.Errorf("Error retrieving partner_metadata: %s", err)
+				}
+				instance.Fingerprint = instance.Fingerprint
+				instance.PartnerMetadata = resourceInstancePatchPartnerMetadata(d, instance.PartnerMetadata)
+				instance.NullFields = []string{"partnerMetadata"}
+
+				op, err := config.NewComputeClient(userAgent).Instances.Update(project, zone, instance.Name, instance).Do()
+				if err != nil {
+					return fmt.Errorf("Error updating partner_metadata: %s", err)
+				}
+
+				opErr := ComputeOperationWaitTime(config, op, project, "partner metadata to update", userAgent, d.Timeout(schema.TimeoutUpdate))
+				if opErr != nil {
+					return opErr
+				}
 				return nil
 			},
 		})

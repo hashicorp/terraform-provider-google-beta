@@ -19,6 +19,7 @@ import (
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 
 	compute "google.golang.org/api/compute/v0.beta"
+	"google.golang.org/api/googleapi"
 )
 
 func TestAccComputeRegionInstanceTemplate_basic(t *testing.T) {
@@ -1111,6 +1112,40 @@ func TestAccComputeRegionInstanceTemplate_localSsdRecoveryTimeout(t *testing.T) 
 	})
 }
 
+func TestAccComputeRegionalInstanceTemplate_partnerMetadata(t *testing.T) {
+	t.Parallel()
+
+	var instanceTemplate compute.InstanceTemplate
+	var namespace = "test.compute.googleapis.com"
+	expectedPartnerMetadata := make(map[string]compute.StructuredEntries)
+	expectedPartnerMetadata[namespace] = compute.StructuredEntries{
+		Entries: googleapi.RawMessage(`{"key1": "value1", "key2": 2,"key3": {"key31":"value31"}}`),
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckComputeRegionInstanceTemplateDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeRegionalInstanceTemplate_partnerMetadata(acctest.RandString(t, 10)),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckComputeRegionInstanceTemplateExists(
+						t, "google_compute_region_instance_template.foobar", &instanceTemplate),
+					testAccCheckComputeRegionalInstanceTemplatePartnerMetadata(&instanceTemplate, expectedPartnerMetadata),
+				),
+			},
+			{
+				ResourceName:            "google_compute_region_instance_template.foobar",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{fmt.Sprintf("partner_metadata.%s", namespace)},
+			},
+		},
+	})
+
+}
+
 func TestAccComputeRegionInstanceTemplate_sourceSnapshotEncryptionKey(t *testing.T) {
 	t.Parallel()
 
@@ -1275,6 +1310,10 @@ func testAccCheckComputeRegionInstanceTemplateExistsInProject(t *testing.T, n, p
 
 		if config.BillingProject != "" {
 			billingProject = config.BillingProject
+		}
+		url, err = transport_tpg.AddQueryParams(url, map[string]string{"view": "FULL"})
+		if err != nil {
+			return err
 		}
 
 		found, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
@@ -1442,6 +1481,34 @@ func testAccCheckComputeRegionInstanceTemplateLocalSsdRecoveryTimeout(instanceTe
 		}
 
 		return nil
+	}
+}
+
+func testAccCheckComputeRegionalInstanceTemplatePartnerMetadata(instanceTemplate *compute.InstanceTemplate, expectedPartnerMetadata map[string]compute.StructuredEntries) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		if instanceTemplate == nil {
+			return fmt.Errorf("instance template is nil")
+		}
+		if instanceTemplate.Properties.PartnerMetadata == nil {
+			return fmt.Errorf("no partner metadata")
+		}
+		expectedPartnerMetadataMap := make(map[string]interface{})
+		acutalPartnerMetadataMap := make(map[string]interface{})
+		for key, value := range instanceTemplate.Properties.PartnerMetadata {
+			var jsonMap map[string]interface{}
+			json.Unmarshal(value.Entries, jsonMap)
+			acutalPartnerMetadataMap[key] = jsonMap
+		}
+		for key, value := range expectedPartnerMetadata {
+			var jsonMap map[string]interface{}
+			json.Unmarshal(value.Entries, jsonMap)
+			expectedPartnerMetadataMap[key] = jsonMap
+		}
+		if !reflect.DeepEqual(acutalPartnerMetadataMap, expectedPartnerMetadataMap) {
+			return fmt.Errorf("got the wrong instance partne metadata action: have: %+v; want: %+v", acutalPartnerMetadataMap, expectedPartnerMetadataMap)
+		}
+		return nil
+
 	}
 }
 
@@ -3390,6 +3457,49 @@ resource "google_compute_region_instance_template" "foobar" {
 
   metadata = {
     foo = "bar"
+  }
+
+  service_account {
+    scopes = ["userinfo-email", "compute-ro", "storage-ro"]
+  }
+}
+`, suffix)
+}
+
+func testAccComputeRegionalInstanceTemplate_partnerMetadata(suffix string) string {
+	return fmt.Sprintf(`
+data "google_compute_image" "my_image" {
+  family  = "debian-11"
+  project = "debian-cloud"
+}
+
+resource "google_compute_region_instance_template" "foobar" {
+  name           = "tf-test-instance-template-%s"
+  region      = "us-central1"
+  machine_type   = "e2-medium"
+  can_ip_forward = false
+  tags           = ["foo", "bar"]
+
+  disk {
+    source_image = data.google_compute_image.my_image.self_link
+    auto_delete  = true
+    boot         = true
+  }
+
+  network_interface {
+    network = "default"
+  }
+
+  partner_metadata = {
+  	"test.compute.googleapis.com" = jsonencode({ 
+  		entries = {
+  			key1 = "value1"
+  			key2 = 2
+  			key3 = {
+  				key31 = "value31"
+  			}
+  		}
+  	})
   }
 
   service_account {
