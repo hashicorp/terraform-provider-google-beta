@@ -117,6 +117,7 @@ import (
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/secretmanager"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/securesourcemanager"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/securitycenter"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/securitycentermanagement"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/securityposture"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/securityscanner"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/servicedirectory"
