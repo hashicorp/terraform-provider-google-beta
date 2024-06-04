@@ -294,10 +294,31 @@ Updating 'source_snapshot' will update content in the ephemeral directory after 
 														},
 													},
 												},
+												"boot_disk_size_gb": {
+													Type:        schema.TypeInt,
+													Computed:    true,
+													Optional:    true,
+													ForceNew:    true,
+													Description: `Size of the boot disk in GB. The minimum boot disk size is '30' GB. Defaults to '50' GB.`,
+												},
+												"enable_nested_virtualization": {
+													Type:     schema.TypeBool,
+													Computed: true,
+													Optional: true,
+													Description: `Whether to enable nested virtualization on the Compute Engine VMs backing boosted Workstations.
+
+See https://cloud.google.com/workstations/docs/reference/rest/v1beta/projects.locations.workstationClusters.workstationConfigs#GceInstance.FIELDS.enable_nested_virtualization`,
+												},
 												"machine_type": {
 													Type:        schema.TypeString,
 													Optional:    true,
 													Description: `The type of machine that boosted VM instances will use—for example, e2-standard-4. For more information about machine types that Cloud Workstations supports, see the list of available machine types https://cloud.google.com/workstations/docs/available-machine-types. Defaults to e2-standard-4.`,
+												},
+												"pool_size": {
+													Type:        schema.TypeInt,
+													Computed:    true,
+													Optional:    true,
+													Description: `Number of instances to pool for faster workstation boosting.`,
 												},
 											},
 										},
@@ -1436,9 +1457,12 @@ func flattenWorkstationsWorkstationConfigHostGceInstanceBoostConfigs(v interface
 			continue
 		}
 		transformed = append(transformed, map[string]interface{}{
-			"id":           flattenWorkstationsWorkstationConfigHostGceInstanceBoostConfigsId(original["id"], d, config),
-			"machine_type": flattenWorkstationsWorkstationConfigHostGceInstanceBoostConfigsMachineType(original["machineType"], d, config),
-			"accelerators": flattenWorkstationsWorkstationConfigHostGceInstanceBoostConfigsAccelerators(original["accelerators"], d, config),
+			"id":                           flattenWorkstationsWorkstationConfigHostGceInstanceBoostConfigsId(original["id"], d, config),
+			"machine_type":                 flattenWorkstationsWorkstationConfigHostGceInstanceBoostConfigsMachineType(original["machineType"], d, config),
+			"boot_disk_size_gb":            flattenWorkstationsWorkstationConfigHostGceInstanceBoostConfigsBootDiskSizeGb(original["bootDiskSizeGb"], d, config),
+			"enable_nested_virtualization": flattenWorkstationsWorkstationConfigHostGceInstanceBoostConfigsEnableNestedVirtualization(original["enableNestedVirtualization"], d, config),
+			"pool_size":                    flattenWorkstationsWorkstationConfigHostGceInstanceBoostConfigsPoolSize(original["poolSize"], d, config),
+			"accelerators":                 flattenWorkstationsWorkstationConfigHostGceInstanceBoostConfigsAccelerators(original["accelerators"], d, config),
 		})
 	}
 	return transformed
@@ -1449,6 +1473,44 @@ func flattenWorkstationsWorkstationConfigHostGceInstanceBoostConfigsId(v interfa
 
 func flattenWorkstationsWorkstationConfigHostGceInstanceBoostConfigsMachineType(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
+}
+
+func flattenWorkstationsWorkstationConfigHostGceInstanceBoostConfigsBootDiskSizeGb(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	// Handles the string fixed64 format
+	if strVal, ok := v.(string); ok {
+		if intVal, err := tpgresource.StringToFixed64(strVal); err == nil {
+			return intVal
+		}
+	}
+
+	// number values are represented as float64
+	if floatVal, ok := v.(float64); ok {
+		intVal := int(floatVal)
+		return intVal
+	}
+
+	return v // let terraform core handle it otherwise
+}
+
+func flattenWorkstationsWorkstationConfigHostGceInstanceBoostConfigsEnableNestedVirtualization(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenWorkstationsWorkstationConfigHostGceInstanceBoostConfigsPoolSize(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	// Handles the string fixed64 format
+	if strVal, ok := v.(string); ok {
+		if intVal, err := tpgresource.StringToFixed64(strVal); err == nil {
+			return intVal
+		}
+	}
+
+	// number values are represented as float64
+	if floatVal, ok := v.(float64); ok {
+		intVal := int(floatVal)
+		return intVal
+	}
+
+	return v // let terraform core handle it otherwise
 }
 
 func flattenWorkstationsWorkstationConfigHostGceInstanceBoostConfigsAccelerators(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -2136,6 +2198,27 @@ func expandWorkstationsWorkstationConfigHostGceInstanceBoostConfigs(v interface{
 			transformed["machineType"] = transformedMachineType
 		}
 
+		transformedBootDiskSizeGb, err := expandWorkstationsWorkstationConfigHostGceInstanceBoostConfigsBootDiskSizeGb(original["boot_disk_size_gb"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedBootDiskSizeGb); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["bootDiskSizeGb"] = transformedBootDiskSizeGb
+		}
+
+		transformedEnableNestedVirtualization, err := expandWorkstationsWorkstationConfigHostGceInstanceBoostConfigsEnableNestedVirtualization(original["enable_nested_virtualization"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedEnableNestedVirtualization); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["enableNestedVirtualization"] = transformedEnableNestedVirtualization
+		}
+
+		transformedPoolSize, err := expandWorkstationsWorkstationConfigHostGceInstanceBoostConfigsPoolSize(original["pool_size"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedPoolSize); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["poolSize"] = transformedPoolSize
+		}
+
 		transformedAccelerators, err := expandWorkstationsWorkstationConfigHostGceInstanceBoostConfigsAccelerators(original["accelerators"], d, config)
 		if err != nil {
 			return nil, err
@@ -2153,6 +2236,18 @@ func expandWorkstationsWorkstationConfigHostGceInstanceBoostConfigsId(v interfac
 }
 
 func expandWorkstationsWorkstationConfigHostGceInstanceBoostConfigsMachineType(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandWorkstationsWorkstationConfigHostGceInstanceBoostConfigsBootDiskSizeGb(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandWorkstationsWorkstationConfigHostGceInstanceBoostConfigsEnableNestedVirtualization(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandWorkstationsWorkstationConfigHostGceInstanceBoostConfigsPoolSize(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
