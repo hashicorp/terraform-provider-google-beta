@@ -144,8 +144,10 @@ func ResourceVertexAIFeatureOnlineStore() *schema.Resource {
 			},
 			"embedding_management": {
 				Type:        schema.TypeList,
+				Computed:    true,
 				Optional:    true,
-				Description: `The settings for embedding management in FeatureOnlineStore. Embedding management can only be used with BigTable.`,
+				Deprecated:  "`embedding_management` is deprecated. This field is no longer needed anymore and embedding management is automatically enabled when specifying Optimized storage type",
+				Description: `The settings for embedding management in FeatureOnlineStore. Embedding management can only be set for BigTable. It is enabled by default for optimized storagetype.`,
 				MaxItems:    1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
