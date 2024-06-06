@@ -183,6 +183,7 @@ var handwrittenDatasources = map[string]*schema.Resource{
 	"google_cloud_run_v2_job":                             cloudrunv2.DataSourceGoogleCloudRunV2Job(),
 	"google_cloud_run_v2_service":                         cloudrunv2.DataSourceGoogleCloudRunV2Service(),
 	"google_composer_environment":                         composer.DataSourceGoogleComposerEnvironment(),
+	"google_composer_user_workloads_secret":               composer.DataSourceGoogleComposerUserWorkloadsSecret(),
 	"google_composer_image_versions":                      composer.DataSourceGoogleComposerImageVersions(),
 	"google_compute_address":                              compute.DataSourceGoogleComputeAddress(),
 	"google_compute_addresses":                            compute.DataSourceGoogleComputeAddresses(),
