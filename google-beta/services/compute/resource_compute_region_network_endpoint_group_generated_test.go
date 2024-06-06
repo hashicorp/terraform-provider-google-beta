@@ -505,6 +505,58 @@ resource "google_compute_network" "default" {
 `, context)
 }
 
+func TestAccComputeRegionNetworkEndpointGroup_regionNetworkEndpointGroupPortmapExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"random_suffix": acctest.RandString(t, 10),
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckComputeRegionNetworkEndpointGroupDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeRegionNetworkEndpointGroup_regionNetworkEndpointGroupPortmapExample(context),
+			},
+			{
+				ResourceName:            "google_compute_region_network_endpoint_group.region_network_endpoint_group_portmap",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"network", "region", "subnetwork"},
+			},
+		},
+	})
+}
+
+func testAccComputeRegionNetworkEndpointGroup_regionNetworkEndpointGroupPortmapExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_compute_region_network_endpoint_group" "region_network_endpoint_group_portmap" {
+  name                  = "tf-test-portmap-neg%{random_suffix}"
+  region                = "us-central1"
+  network               = google_compute_network.default.id
+  subnetwork            = google_compute_subnetwork.default.id
+
+  network_endpoint_type = "GCE_VM_IP_PORTMAP"
+  provider           = google-beta
+}
+
+resource "google_compute_network" "default" {
+  name                    = "network%{random_suffix}"
+  provider           = google-beta
+}
+
+resource "google_compute_subnetwork" "default" {
+  name          = "subnetwork%{random_suffix}"
+  ip_cidr_range = "10.0.0.0/16"
+  region        = "us-central1"
+  network       = google_compute_network.default.id
+  provider           = google-beta
+}
+`, context)
+}
+
 func testAccCheckComputeRegionNetworkEndpointGroupDestroyProducer(t *testing.T) func(s *terraform.State) error {
 	return func(s *terraform.State) error {
 		for name, rs := range s.RootModule().Resources {
