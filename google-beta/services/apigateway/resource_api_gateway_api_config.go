@@ -26,7 +26,7 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/customdiff"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/id"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
@@ -1027,9 +1027,9 @@ func resourceApiGatewayApiConfigEncoder(d *schema.ResourceData, meta interface{}
 	if v, ok := d.GetOk("api_config_id"); ok {
 		apiConfigId = v.(string)
 	} else if v, ok := d.GetOk("api_config_id_prefix"); ok {
-		apiConfigId = resource.PrefixedUniqueId(v.(string))
+		apiConfigId = id.PrefixedUniqueId(v.(string))
 	} else {
-		apiConfigId = resource.UniqueId()
+		apiConfigId = id.UniqueId()
 	}
 
 	if err := d.Set("api_config_id", apiConfigId); err != nil {
