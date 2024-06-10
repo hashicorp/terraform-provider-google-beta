@@ -36,7 +36,7 @@ func TestAccFirebaseWebApp_firebaseWebAppBasicExample(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
-		"org_id":        envvar.GetTestOrgFromEnv(t),
+		"project_id":    envvar.GetTestProjectFromEnv(),
 		"display_name":  "tf-test Display Name Basic",
 		"random_suffix": acctest.RandString(t, 10),
 	}
@@ -61,30 +61,11 @@ func TestAccFirebaseWebApp_firebaseWebAppBasicExample(t *testing.T) {
 
 func testAccFirebaseWebApp_firebaseWebAppBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
-resource "google_project" "default" {
-	provider = google-beta
-
-	project_id = "tf-test-my-project%{random_suffix}"
-	name       = "tf-test-my-project%{random_suffix}"
-	org_id     = "%{org_id}"
-
-	labels = {
-		"firebase" = "enabled"
-	}
-}
-
-resource "google_firebase_project" "default" {
-	provider = google-beta
-	project  = google_project.default.project_id
-}
-
 resource "google_firebase_web_app" "basic" {
 	provider = google-beta
-	project = google_project.default.project_id
+	project = "%{project_id}"
 	display_name = "%{display_name}"
 	deletion_policy = "DELETE"
-
-	depends_on = [google_firebase_project.default]
 }
 
 data "google_firebase_web_app_config" "basic" {
