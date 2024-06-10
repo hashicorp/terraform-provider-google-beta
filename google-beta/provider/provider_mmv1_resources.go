@@ -42,6 +42,7 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/cloudrunv2"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/cloudscheduler"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/cloudtasks"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/composer"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/compute"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/containeranalysis"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/containerattached"
@@ -138,7 +139,6 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/workflows"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/workstations"
 
-	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/composer"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/container"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/containeraws"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/containerazure"
@@ -461,9 +461,9 @@ var handwrittenIAMDatasources = map[string]*schema.Resource{
 }
 
 // Resources
-// Generated resources: 482
+// Generated resources: 483
 // Generated IAM resources: 279
-// Total generated resources: 761
+// Total generated resources: 762
 var generatedResources = map[string]*schema.Resource{
 	"google_folder_access_approval_settings":                                     accessapproval.ResourceAccessApprovalFolderSettings(),
 	"google_organization_access_approval_settings":                               accessapproval.ResourceAccessApprovalOrganizationSettings(),
@@ -636,6 +636,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_cloud_tasks_queue_iam_binding":                                       tpgiamresource.ResourceIamBinding(cloudtasks.CloudTasksQueueIamSchema, cloudtasks.CloudTasksQueueIamUpdaterProducer, cloudtasks.CloudTasksQueueIdParseFunc),
 	"google_cloud_tasks_queue_iam_member":                                        tpgiamresource.ResourceIamMember(cloudtasks.CloudTasksQueueIamSchema, cloudtasks.CloudTasksQueueIamUpdaterProducer, cloudtasks.CloudTasksQueueIdParseFunc),
 	"google_cloud_tasks_queue_iam_policy":                                        tpgiamresource.ResourceIamPolicy(cloudtasks.CloudTasksQueueIamSchema, cloudtasks.CloudTasksQueueIamUpdaterProducer, cloudtasks.CloudTasksQueueIdParseFunc),
+	"google_composer_user_workloads_config_map":                                  composer.ResourceComposerUserWorkloadsConfigMap(),
 	"google_compute_address":                                                     compute.ResourceComputeAddress(),
 	"google_compute_autoscaler":                                                  compute.ResourceComputeAutoscaler(),
 	"google_compute_backend_bucket":                                              compute.ResourceComputeBackendBucket(),

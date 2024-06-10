@@ -44,6 +44,7 @@ import (
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/cloudrunv2"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/cloudscheduler"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/cloudtasks"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/composer"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/compute"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/containeranalysis"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/containerattached"
