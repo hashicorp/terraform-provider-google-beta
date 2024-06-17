@@ -1,5 +1,44 @@
 ## 5.34.0 (Unreleased)
 
+NOTES:
+* compute: Updated field description of `connection_draining_timeout_sec`, `balancing_mode` and `outlier_detection` in `google_compute_region_backend_service` and `google_compute_backend_service`  to inform that default values will be changed in 6.0.0 ([#7513](https://github.com/hashicorp/terraform-provider-google-beta/pull/7513))
+
+DEPRECATIONS:
+* vertexai: deprecated beta field `embedding_management` for `google_vertex_ai_feature_online_store` resource ([#7473](https://github.com/hashicorp/terraform-provider-google-beta/pull/7473))
+
+FEATURES:
+* **New Data Source:** `google_composer_user_workloads_config_map` (beta) ([#7519](https://github.com/hashicorp/terraform-provider-google-beta/pull/7519))
+* **New Data Source:** `google_composer_user_workloads_secret` (beta) ([#7474](https://github.com/hashicorp/terraform-provider-google-beta/pull/7474))
+* **New Resource:** `google_composer_user_workloads_config_map` (beta) ([#7497](https://github.com/hashicorp/terraform-provider-google-beta/pull/7497))
+* **New Resource:** `google_managed_kafka_cluster` (beta) ([#7477](https://github.com/hashicorp/terraform-provider-google-beta/pull/7477))
+* **New Resource:** `google_managed_kafka_topic` (beta) ([#7503](https://github.com/hashicorp/terraform-provider-google-beta/pull/7503))
+* **New Resource:** `google_netapp_backup` ([#7479](https://github.com/hashicorp/terraform-provider-google-beta/pull/7479))
+* **New Resource:** `google_network_services_service_lb_policies` ([#7463](https://github.com/hashicorp/terraform-provider-google-beta/pull/7463))
+* **New Resource:** `google_scc_management_folder_security_health_analytics_custom_module` ([#7483](https://github.com/hashicorp/terraform-provider-google-beta/pull/7483))
+* **New Resource:** `google_scc_management_organization_project_security_health_analytics_custom_module` ([#7489](https://github.com/hashicorp/terraform-provider-google-beta/pull/7489))
+* **New Resource:** `google_scc_management_organization_security_health_analytics_custom_module` ([#7493](https://github.com/hashicorp/terraform-provider-google-beta/pull/7493))
+
+IMPROVEMENTS:
+* alloydb: changed the resource `google_alloydb_instance` to be created directly with public IP enabled instead of creating the resource with public IP disabled and then enabling it ([#7469](https://github.com/hashicorp/terraform-provider-google-beta/pull/7469))
+* bigtable: added `automated_backup_configuration` field to `google_bigtable_table` resource ([#7468](https://github.com/hashicorp/terraform-provider-google-beta/pull/7468))
+* cloudbuildv2: added support for connecting to Bitbucket Data Center and Bitbucket Cloud with the `bitbucket_data_center_config` and `bitbucket_cloud_config` fields in `google_cloudbuildv2_connection` ([#7494](https://github.com/hashicorp/terraform-provider-google-beta/pull/7494))
+* compute: added support for Port Mapping NEG and endpoint. New NEG type is a regional type of `GCE_VM_IP_PORTMAP` that requires endpoints with `instance`, `port` and `client_destination_port` (beta) ([#7471](https://github.com/hashicorp/terraform-provider-google-beta/pull/7471))
+* compute: added update support to `ssl_policy` field in `google_compute_region_target_https_proxy` resource ([#7484](https://github.com/hashicorp/terraform-provider-google-beta/pull/7484))
+* compute: removed enum validation on `guest_os_features.type` in `google_compute_disk` to allow for new features to be used without provider update ([#7465](https://github.com/hashicorp/terraform-provider-google-beta/pull/7465))
+* compute: updated documentation of google_compute_target_https_proxy and google_compute_region_target_https_proxy ([#7481](https://github.com/hashicorp/terraform-provider-google-beta/pull/7481))
+* container: added support for `security_posture_config.mode` value "ENTERPRISE" in `resource_container_cluster` ([#7467](https://github.com/hashicorp/terraform-provider-google-beta/pull/7467))
+* discoveryengine: added `document_processing_config` field to `google_discovery_engine_data_store` resource ([#7475](https://github.com/hashicorp/terraform-provider-google-beta/pull/7475))
+* edgecontainer: added `maintenance_exclusions` field to `google_edgecontainer_cluster` resource ([#7490](https://github.com/hashicorp/terraform-provider-google-beta/pull/7490))
+* gkehub: added `prevent_drift` field to ConfigManagement `fleet_default_member_config` ([#7464](https://github.com/hashicorp/terraform-provider-google-beta/pull/7464))
+* netapp: added `administrators` field to `google_netapp_active_directory` resource ([#7466](https://github.com/hashicorp/terraform-provider-google-beta/pull/7466))
+* vertexai: promoted `optimized` field to GA for `google_vertex_ai_feature_online_store` resource ([#7473](https://github.com/hashicorp/terraform-provider-google-beta/pull/7473))
+* workbench: updated the metadata keys managed by the backend. ([#7488](https://github.com/hashicorp/terraform-provider-google-beta/pull/7488))
+
+BUG FIXES:
+* compute: fixed an issue where `google_compute_instance_group_manager` with a pending operation was incorrectly removed due to the operation no longer being present in the backend ([#7498](https://github.com/hashicorp/terraform-provider-google-beta/pull/7498))
+* compute: fixed issue where users could not create `google_compute_security_policy` resources with `layer_7_ddos_defense_config` explicitly disabled ([#7470](https://github.com/hashicorp/terraform-provider-google-beta/pull/7470))
+* workbench: fixed a bug in the `google_workbench_instance` resource where specifying a network in some scenarios would cause instance creation to fail ([#7518](https://github.com/hashicorp/terraform-provider-google-beta/pull/7518))
+
 ## 5.33.0 (June 10, 2024)
 
 DEPRECATIONS:
