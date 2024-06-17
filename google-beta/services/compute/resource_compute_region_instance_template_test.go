@@ -3357,7 +3357,7 @@ resource "google_compute_region_instance_template" "foobar" {
     automatic_restart = false
     provisioning_model = "SPOT"
     instance_termination_action = "DELETE"
-	    max_run_duration {
+    max_run_duration {
 	nanos = 123
 	seconds = 60
     }
