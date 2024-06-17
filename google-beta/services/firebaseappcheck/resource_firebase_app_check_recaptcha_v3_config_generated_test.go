@@ -31,8 +31,8 @@ func TestAccFirebaseAppCheckRecaptchaV3Config_firebaseAppCheckRecaptchaV3ConfigB
 
 	context := map[string]interface{}{
 		"project_id":    envvar.GetTestProjectFromEnv(),
-		"token_ttl":     "7200s",
 		"site_secret":   "6Lf9YnQpAAAAAC3-MHmdAllTbPwTZxpUw5d34YzX",
+		"token_ttl":     "7200s",
 		"random_suffix": acctest.RandString(t, 10),
 	}
 
