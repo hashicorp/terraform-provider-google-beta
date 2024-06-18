@@ -134,7 +134,6 @@ resource "google_healthcare_fhir_store" "default" {
   disable_resource_versioning   = false
   enable_history_import         = false
   version                       = "R4"
-
   enable_history_modifications = false
 }
 
@@ -160,7 +159,6 @@ resource "google_healthcare_fhir_store" "default" {
 	send_full_resource               = true
 	send_previous_resource_on_delete = true
   }
-
   enable_history_modifications = true
 
   labels = {
