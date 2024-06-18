@@ -1,0 +1,14 @@
+name: "TeamCity: Create empty branch off tip of main to aid nightly-testing"
+
+# To ensure nightly tests/builds run on the same commit, we checkout and create a new branch from main for TeamCity to run builds on
+
+on:
+    workflow_dispatch:
+    schedule:
+        - cron: '0 3 * * *' # 3AM UTC (-7)-> 8PM PST # teamcity builds are triggered @ 4AM UTC
+
+jobs:
+    # uses the same teamcity nightly workflow used in terraform-provider-google
+    # as well as the default value for DAYS_THRESHOLD
+    tpg-teamcity-nightly-workflow:
+        uses: hashicorp/terraform-provider-google/.github/workflows/teamcity-nightly-workflow.yaml@main
