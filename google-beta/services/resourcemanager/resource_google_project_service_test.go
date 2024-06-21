@@ -106,11 +106,37 @@ func TestAccProjectService_disableDependentServices(t *testing.T) {
 				ResourceName:            "google_project_service.test",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"disable_on_destroy"},
+				ImportStateVerifyIgnore: []string{"disable_on_destroy", "check_if_service_has_usage_on_destroy"},
 			},
 			{
 				Config:             testAccProjectService_dependencyRemoved(services, pid, org, billingId),
 				ExpectNonEmptyPlan: true,
+			},
+		},
+	})
+}
+
+func TestAccProjectService_checkUsageOfServices(t *testing.T) {
+	// Multiple fine-grained resources
+	acctest.SkipIfVcr(t)
+	t.Parallel()
+
+	org := envvar.GetTestOrgFromEnv(t)
+	pid := fmt.Sprintf("tf-test-%d", acctest.RandInt(t))
+	services := "bigquerystorage.googleapis.com"
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccProjectService_checkUsage(services, pid, org),
+			},
+			{
+				ResourceName:            "google_project_service.test",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"disable_on_destroy", "disable_dependent_services"},
 			},
 		},
 	})
@@ -166,7 +192,7 @@ func TestAccProjectService_renamedService(t *testing.T) {
 				ResourceName:            "google_project_service.test",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"disable_on_destroy", "disable_dependent_services"},
+				ImportStateVerifyIgnore: []string{"disable_on_destroy", "disable_dependent_services", "check_if_service_has_usage_on_destroy"},
 			},
 		},
 	})
@@ -322,6 +348,24 @@ resource "google_project_service" "test" {
   service = "%s"
 
   disable_dependent_services = true
+}
+`, pid, pid, org, service)
+}
+
+func testAccProjectService_checkUsage(service string, pid, org string) string {
+	return fmt.Sprintf(`
+resource "google_project" "acceptance" {
+  project_id = "%s"
+  name       = "%s"
+  org_id     = "%s"
+}
+
+resource "google_project_service" "test" {
+  project = google_project.acceptance.project_id
+  service = "%s"
+
+  check_if_service_has_usage_on_destroy = false
+
 }
 `, pid, pid, org, service)
 }
