@@ -74,7 +74,7 @@ resource "google_vertex_ai_feature_online_store" "feature_online_store" {
 `, context)
 }
 
-func TestAccVertexAIFeatureOnlineStore_vertexAiFeatureonlinestoreWithBetaFieldsOptimizedExample(t *testing.T) {
+func TestAccVertexAIFeatureOnlineStore_vertexAiFeatureonlinestoreWithOptimizedExample(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
@@ -83,11 +83,11 @@ func TestAccVertexAIFeatureOnlineStore_vertexAiFeatureonlinestoreWithBetaFieldsO
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckVertexAIFeatureOnlineStoreDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccVertexAIFeatureOnlineStore_vertexAiFeatureonlinestoreWithBetaFieldsOptimizedExample(context),
+				Config: testAccVertexAIFeatureOnlineStore_vertexAiFeatureonlinestoreWithOptimizedExample(context),
 			},
 			{
 				ResourceName:            "google_vertex_ai_feature_online_store.featureonlinestore",
@@ -99,10 +99,10 @@ func TestAccVertexAIFeatureOnlineStore_vertexAiFeatureonlinestoreWithBetaFieldsO
 	})
 }
 
-func testAccVertexAIFeatureOnlineStore_vertexAiFeatureonlinestoreWithBetaFieldsOptimizedExample(context map[string]interface{}) string {
+func testAccVertexAIFeatureOnlineStore_vertexAiFeatureonlinestoreWithOptimizedExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_vertex_ai_feature_online_store" "featureonlinestore" {
-  provider = google-beta
+  provider = google
   name     = "tf_test_example_feature_online_store_optimized%{random_suffix}"
   labels = {
     foo = "bar"
@@ -118,7 +118,7 @@ resource "google_vertex_ai_feature_online_store" "featureonlinestore" {
 }
 
 data "google_project" "project" {
-  provider = google-beta
+  provider = google
 }
 `, context)
 }
