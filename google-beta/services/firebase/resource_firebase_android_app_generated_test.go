@@ -36,8 +36,8 @@ func TestAccFirebaseAndroidApp_firebaseAndroidAppBasicExample(t *testing.T) {
 
 	context := map[string]interface{}{
 		"project_id":    envvar.GetTestProjectFromEnv(),
-		"package_name":  "android.package.app" + acctest.RandString(t, 4),
 		"display_name":  "tf-test Display Name Basic",
+		"package_name":  "android.package.app" + acctest.RandString(t, 4),
 		"random_suffix": acctest.RandString(t, 10),
 	}
 
@@ -77,8 +77,8 @@ func TestAccFirebaseAndroidApp_firebaseAndroidAppCustomApiKeyExample(t *testing.
 
 	context := map[string]interface{}{
 		"project_id":    envvar.GetTestProjectFromEnv(),
-		"package_name":  "android.package.app" + acctest.RandString(t, 4),
 		"display_name":  "tf-test Display Name",
+		"package_name":  "android.package.app" + acctest.RandString(t, 4),
 		"random_suffix": acctest.RandString(t, 10),
 	}
 

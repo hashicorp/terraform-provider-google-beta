@@ -35,14 +35,14 @@ func TestAccComputeNetworkAttachment_networkAttachmentBasicExample(t *testing.T)
 	t.Parallel()
 
 	context := map[string]interface{}{
-		"org_id":          envvar.GetTestOrgFromEnv(t),
 		"billing_account": envvar.GetTestBillingAccountFromEnv(t),
+		"org_id":          envvar.GetTestOrgFromEnv(t),
 		"random_suffix":   acctest.RandString(t, 10),
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckComputeNetworkAttachmentDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -61,7 +61,6 @@ func TestAccComputeNetworkAttachment_networkAttachmentBasicExample(t *testing.T)
 func testAccComputeNetworkAttachment_networkAttachmentBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_network_attachment" "default" {
-    provider = google-beta
     name = "tf-test-basic-network-attachment%{random_suffix}"
     region = "us-central1"
     description = "basic network attachment description"
@@ -81,13 +80,11 @@ resource "google_compute_network_attachment" "default" {
 }
 
 resource "google_compute_network" "default" {
-    provider = google-beta
     name = "tf-test-basic-network%{random_suffix}"
     auto_create_subnetworks = false
 }
 
 resource "google_compute_subnetwork" "default" {
-    provider = google-beta
     name = "tf-test-basic-subnetwork%{random_suffix}"
     region = "us-central1"
 
@@ -96,7 +93,6 @@ resource "google_compute_subnetwork" "default" {
 }
 
 resource "google_project" "rejected_producer_project" {
-    provider = google-beta
     project_id      = "tf-test-prj-rejected%{random_suffix}"
     name            = "tf-test-prj-rejected%{random_suffix}"
     org_id          = "%{org_id}"
@@ -104,7 +100,6 @@ resource "google_project" "rejected_producer_project" {
 }
 
 resource "google_project" "accepted_producer_project" {
-    provider = google-beta
     project_id      = "tf-test-prj-accepted%{random_suffix}"
     name            = "tf-test-prj-accepted%{random_suffix}"
     org_id          = "%{org_id}"
@@ -122,7 +117,7 @@ func TestAccComputeNetworkAttachment_networkAttachmentInstanceUsageExample(t *te
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckComputeNetworkAttachmentDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -141,13 +136,11 @@ func TestAccComputeNetworkAttachment_networkAttachmentInstanceUsageExample(t *te
 func testAccComputeNetworkAttachment_networkAttachmentInstanceUsageExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_network" "default" {
-    provider = google-beta
     name = "tf-test-basic-network%{random_suffix}"
     auto_create_subnetworks = false
 }
 
 resource "google_compute_subnetwork" "default" {
-    provider = google-beta
     name   = "tf-test-basic-subnetwork%{random_suffix}"
     region = "us-central1"
 
@@ -156,7 +149,6 @@ resource "google_compute_subnetwork" "default" {
 }
 
 resource "google_compute_network_attachment" "default" {
-    provider = google-beta
     name   = "tf-test-basic-network-attachment%{random_suffix}"
     region = "us-central1"
     description = "my basic network attachment"
@@ -166,7 +158,6 @@ resource "google_compute_network_attachment" "default" {
 }
 
 resource "google_compute_instance" "default" {
-    provider = google-beta
     name         = "tf-test-basic-instance%{random_suffix}"
     zone         = "us-central1-a"
     machine_type = "e2-micro"

@@ -33,8 +33,8 @@ func TestAccVertexAIFeaturestoreIamBindingGenerated(t *testing.T) {
 	context := map[string]interface{}{
 		"random_suffix":   acctest.RandString(t, 10),
 		"role":            "roles/viewer",
-		"org_id":          envvar.GetTestOrgFromEnv(t),
 		"billing_account": envvar.GetTestBillingAccountFromEnv(t),
+		"org_id":          envvar.GetTestOrgFromEnv(t),
 
 		"kms_key_name": acctest.BootstrapKMSKeyInLocation(t, "us-central1").CryptoKey.Name,
 	}
@@ -72,8 +72,8 @@ func TestAccVertexAIFeaturestoreIamMemberGenerated(t *testing.T) {
 	context := map[string]interface{}{
 		"random_suffix":   acctest.RandString(t, 10),
 		"role":            "roles/viewer",
-		"org_id":          envvar.GetTestOrgFromEnv(t),
 		"billing_account": envvar.GetTestBillingAccountFromEnv(t),
+		"org_id":          envvar.GetTestOrgFromEnv(t),
 
 		"kms_key_name": acctest.BootstrapKMSKeyInLocation(t, "us-central1").CryptoKey.Name,
 	}
@@ -102,8 +102,8 @@ func TestAccVertexAIFeaturestoreIamPolicyGenerated(t *testing.T) {
 	context := map[string]interface{}{
 		"random_suffix":   acctest.RandString(t, 10),
 		"role":            "roles/viewer",
-		"org_id":          envvar.GetTestOrgFromEnv(t),
 		"billing_account": envvar.GetTestBillingAccountFromEnv(t),
+		"org_id":          envvar.GetTestOrgFromEnv(t),
 
 		"kms_key_name": acctest.BootstrapKMSKeyInLocation(t, "us-central1").CryptoKey.Name,
 	}

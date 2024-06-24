@@ -74,8 +74,8 @@ func TestAccFirebaseAppleApp_firebaseAppleAppFullExample(t *testing.T) {
 	context := map[string]interface{}{
 		"project_id":    envvar.GetTestProjectFromEnv(),
 		"app_store_id":  12345,
-		"team_id":       9987654321,
 		"display_name":  "tf-test Display Name Full",
+		"team_id":       9987654321,
 		"random_suffix": acctest.RandString(t, 10),
 	}
 

@@ -31,6 +31,7 @@ import (
 )
 
 func TestAccTpuV2Vm_tpuV2VmBasicExample(t *testing.T) {
+	acctest.SkipIfVcr(t)
 	t.Parallel()
 
 	context := map[string]interface{}{
@@ -73,6 +74,7 @@ resource "google_tpu_v2_vm" "tpu" {
 }
 
 func TestAccTpuV2Vm_tpuV2VmFullExample(t *testing.T) {
+	acctest.SkipIfVcr(t)
 	t.Parallel()
 
 	context := map[string]interface{}{

@@ -11,5 +11,5 @@ on:
 jobs:
     # uses the same teamcity nightly workflow used in terraform-provider-google
     # as well as the default value for DAYS_THRESHOLD
-    tpg-nightly-workflow:
-        uses: BBBmau/terraform-provider-google/.github/workflows/teamcity-nightly-workflow.yaml@main
+    tpg-teamcity-nightly-workflow:
+        uses: hashicorp/terraform-provider-google/.github/workflows/teamcity-nightly-workflow.yaml@main

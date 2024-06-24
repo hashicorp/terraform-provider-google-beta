@@ -34,8 +34,8 @@ func TestAccComputeAutoscaler_autoscalerSingleInstanceExample(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
-		"provider_name":  "google-beta.us-central1",
 		"provider_alias": "alias  = \"us-central1\"",
+		"provider_name":  "google-beta.us-central1",
 		"random_suffix":  acctest.RandString(t, 10),
 	}
 
