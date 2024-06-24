@@ -168,6 +168,7 @@ type FrameworkProviderConfig struct {
 	SecurityScannerBasePath          string
 	ServiceDirectoryBasePath         string
 	ServiceManagementBasePath        string
+	ServiceNetworkingBasePath        string
 	ServiceUsageBasePath             string
 	SourceRepoBasePath               string
 	SpannerBasePath                  string
@@ -340,6 +341,7 @@ func (p *FrameworkProviderConfig) LoadAndValidateFramework(ctx context.Context, 
 	p.SecurityScannerBasePath = data.SecurityScannerCustomEndpoint.ValueString()
 	p.ServiceDirectoryBasePath = data.ServiceDirectoryCustomEndpoint.ValueString()
 	p.ServiceManagementBasePath = data.ServiceManagementCustomEndpoint.ValueString()
+	p.ServiceNetworkingBasePath = data.ServiceNetworkingCustomEndpoint.ValueString()
 	p.ServiceUsageBasePath = data.ServiceUsageCustomEndpoint.ValueString()
 	p.SourceRepoBasePath = data.SourceRepoCustomEndpoint.ValueString()
 	p.SpannerBasePath = data.SpannerCustomEndpoint.ValueString()
@@ -1417,6 +1419,14 @@ func (p *FrameworkProviderConfig) HandleDefaults(ctx context.Context, data *fwmo
 		}, transport_tpg.DefaultBasePaths[transport_tpg.ServiceManagementBasePathKey])
 		if customEndpoint != nil {
 			data.ServiceManagementCustomEndpoint = types.StringValue(customEndpoint.(string))
+		}
+	}
+	if data.ServiceNetworkingCustomEndpoint.IsNull() {
+		customEndpoint := transport_tpg.MultiEnvDefault([]string{
+			"GOOGLE_SERVICE_NETWORKING_CUSTOM_ENDPOINT",
+		}, transport_tpg.DefaultBasePaths[transport_tpg.ServiceNetworkingBasePathKey])
+		if customEndpoint != nil {
+			data.ServiceNetworkingCustomEndpoint = types.StringValue(customEndpoint.(string))
 		}
 	}
 	if data.ServiceUsageCustomEndpoint.IsNull() {

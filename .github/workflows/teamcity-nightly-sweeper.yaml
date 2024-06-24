@@ -1,6 +1,6 @@
 name: "TeamCity: Remove branches used for nightly test"
 
-# To ensure nightly tests/builds run on the same commit, we checkout and create a new branch from main for TeamCity to run builds on
+# TeamCity should use a newly created branches that matches the pattern `UTC-<YYYY-MM-DD>` and is the only branch matching that pattern. We rename past nightly test branches to avoid there being more than one `UTC-<YYYY-MM-DD>` branch (i.e. only one branch that matches the filter (+:UTC-*,-:UTC-nightly-tests*)). This workflow also removes renamed branches once they get past a certain age. 
 
 on:
     workflow_dispatch:
@@ -11,4 +11,4 @@ jobs:
     # uses the same teamcity nightly workflow used in terraform-provider-google
     # as well as the default value for DAYS_THRESHOLD
     tpg-teamcity-nightly-workflow:
-        uses: BBBmau/terraform-provider-google/.github/workflows/teamcity-nightly-sweeper.yaml@main
+        uses: hashicorp/terraform-provider-google/.github/workflows/teamcity-nightly-sweeper.yaml@main

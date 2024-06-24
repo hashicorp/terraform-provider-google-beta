@@ -122,6 +122,7 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/securityscanner"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/servicedirectory"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/servicemanagement"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/servicenetworking"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/serviceusage"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/sourcerepo"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/spanner"
@@ -143,7 +144,6 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/containeraws"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/containerazure"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/dataflow"
-	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/servicenetworking"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgiamresource"
 )
 
@@ -156,6 +156,7 @@ var handwrittenDatasources = map[string]*schema.Resource{
 	"google_active_folder":                                resourcemanager.DataSourceGoogleActiveFolder(),
 	"google_alloydb_locations":                            alloydb.DataSourceAlloydbLocations(),
 	"google_alloydb_supported_database_flags":             alloydb.DataSourceAlloydbSupportedDatabaseFlags(),
+	"google_artifact_registry_docker_image":               artifactregistry.DataSourceArtifactRegistryDockerImage(),
 	"google_artifact_registry_repository":                 artifactregistry.DataSourceArtifactRegistryRepository(),
 	"google_apphub_discovered_workload":                   apphub.DataSourceApphubDiscoveredWorkload(),
 	"google_app_engine_default_service_account":           appengine.DataSourceGoogleAppEngineDefaultServiceAccount(),
@@ -184,6 +185,7 @@ var handwrittenDatasources = map[string]*schema.Resource{
 	"google_cloud_run_v2_job":                             cloudrunv2.DataSourceGoogleCloudRunV2Job(),
 	"google_cloud_run_v2_service":                         cloudrunv2.DataSourceGoogleCloudRunV2Service(),
 	"google_composer_environment":                         composer.DataSourceGoogleComposerEnvironment(),
+	"google_composer_user_workloads_config_map":           composer.DataSourceGoogleComposerUserWorkloadsConfigMap(),
 	"google_composer_user_workloads_secret":               composer.DataSourceGoogleComposerUserWorkloadsSecret(),
 	"google_composer_image_versions":                      composer.DataSourceGoogleComposerImageVersions(),
 	"google_compute_address":                              compute.DataSourceGoogleComputeAddress(),
@@ -461,9 +463,9 @@ var handwrittenIAMDatasources = map[string]*schema.Resource{
 }
 
 // Resources
-// Generated resources: 483
+// Generated resources: 485
 // Generated IAM resources: 279
-// Total generated resources: 762
+// Total generated resources: 764
 var generatedResources = map[string]*schema.Resource{
 	"google_folder_access_approval_settings":                                     accessapproval.ResourceAccessApprovalFolderSettings(),
 	"google_organization_access_approval_settings":                               accessapproval.ResourceAccessApprovalOrganizationSettings(),
@@ -1009,6 +1011,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_logging_organization_settings":                                       logging.ResourceLoggingOrganizationSettings(),
 	"google_looker_instance":                                                     looker.ResourceLookerInstance(),
 	"google_managed_kafka_cluster":                                               managedkafka.ResourceManagedKafkaCluster(),
+	"google_managed_kafka_topic":                                                 managedkafka.ResourceManagedKafkaTopic(),
 	"google_memcache_instance":                                                   memcache.ResourceMemcacheInstance(),
 	"google_migration_center_group":                                              migrationcenter.ResourceMigrationCenterGroup(),
 	"google_migration_center_preference_set":                                     migrationcenter.ResourceMigrationCenterPreferenceSet(),
@@ -1151,6 +1154,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_endpoints_service_consumers_iam_binding":                             tpgiamresource.ResourceIamBinding(servicemanagement.ServiceManagementServiceConsumersIamSchema, servicemanagement.ServiceManagementServiceConsumersIamUpdaterProducer, servicemanagement.ServiceManagementServiceConsumersIdParseFunc),
 	"google_endpoints_service_consumers_iam_member":                              tpgiamresource.ResourceIamMember(servicemanagement.ServiceManagementServiceConsumersIamSchema, servicemanagement.ServiceManagementServiceConsumersIamUpdaterProducer, servicemanagement.ServiceManagementServiceConsumersIdParseFunc),
 	"google_endpoints_service_consumers_iam_policy":                              tpgiamresource.ResourceIamPolicy(servicemanagement.ServiceManagementServiceConsumersIamSchema, servicemanagement.ServiceManagementServiceConsumersIamUpdaterProducer, servicemanagement.ServiceManagementServiceConsumersIdParseFunc),
+	"google_service_networking_vpc_service_controls":                             servicenetworking.ResourceServiceNetworkingVPCServiceControls(),
 	"google_service_usage_consumer_quota_override":                               serviceusage.ResourceServiceUsageConsumerQuotaOverride(),
 	"google_sourcerepo_repository":                                               sourcerepo.ResourceSourceRepoRepository(),
 	"google_sourcerepo_repository_iam_binding":                                   tpgiamresource.ResourceIamBinding(sourcerepo.SourceRepoRepositoryIamSchema, sourcerepo.SourceRepoRepositoryIamUpdaterProducer, sourcerepo.SourceRepoRepositoryIdParseFunc),
