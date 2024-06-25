@@ -1103,6 +1103,54 @@ func TestAccComputeInstance_serviceAccount(t *testing.T) {
 	})
 }
 
+func TestAccComputeInstance_noServiceAccount(t *testing.T) {
+	t.Parallel()
+
+	var instance compute.Instance
+	var instanceName = fmt.Sprintf("tf-test-%s", acctest.RandString(t, 10))
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckComputeInstanceDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeInstance_noServiceAccount(instanceName),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckComputeInstanceExists(
+						t, "google_compute_instance.foobar", &instance),
+					testAccCheckComputeInstanceNoServiceAccount(&instance),
+				),
+			},
+			computeInstanceImportStep("us-central1-a", instanceName, []string{}),
+		},
+	})
+}
+
+func TestAccComputeInstance_serviceAccountEmail_0scopes(t *testing.T) {
+	t.Parallel()
+
+	var instance compute.Instance
+	var instanceName = fmt.Sprintf("tf-test-%s", acctest.RandString(t, 10))
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckComputeInstanceDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeInstance_serviceAccountEmail_0scopes(instanceName),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckComputeInstanceExists(
+						t, "google_compute_instance.foobar", &instance),
+					testAccCheckComputeInstanceMatchServiceAccount(&instance, "\\d+-compute@developer.gserviceaccount.com"),
+				),
+			},
+			computeInstanceImportStep("us-central1-a", instanceName, []string{}),
+		},
+	})
+}
+
 func TestAccComputeInstance_serviceAccount_updated(t *testing.T) {
 	t.Parallel()
 
@@ -1119,6 +1167,7 @@ func TestAccComputeInstance_serviceAccount_updated(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckComputeInstanceExists(
 						t, "google_compute_instance.foobar", &instance),
+					testAccCheckComputeInstanceNoServiceAccount(&instance),
 					testAccCheckComputeInstanceScopes(&instance, 0),
 				),
 			},
@@ -1128,6 +1177,7 @@ func TestAccComputeInstance_serviceAccount_updated(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckComputeInstanceExists(
 						t, "google_compute_instance.foobar", &instance),
+					testAccCheckComputeInstanceNoServiceAccount(&instance),
 					testAccCheckComputeInstanceScopes(&instance, 0),
 				),
 			},
@@ -1137,6 +1187,7 @@ func TestAccComputeInstance_serviceAccount_updated(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckComputeInstanceExists(
 						t, "google_compute_instance.foobar", &instance),
+					testAccCheckComputeInstanceMatchServiceAccount(&instance, "\\d+-compute@developer.gserviceaccount.com"),
 					testAccCheckComputeInstanceScopes(&instance, 0),
 				),
 			},
@@ -1146,6 +1197,7 @@ func TestAccComputeInstance_serviceAccount_updated(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckComputeInstanceExists(
 						t, "google_compute_instance.foobar", &instance),
+					testAccCheckComputeInstanceMatchServiceAccount(&instance, "\\d+-compute@developer.gserviceaccount.com"),
 					testAccCheckComputeInstanceScopes(&instance, 3),
 				),
 			},
@@ -1170,6 +1222,7 @@ func TestAccComputeInstance_serviceAccount_updated0to1to0scopes(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckComputeInstanceExists(
 						t, "google_compute_instance.foobar", &instance),
+					testAccCheckComputeInstanceNoServiceAccount(&instance),
 					testAccCheckComputeInstanceScopes(&instance, 0),
 				),
 			},
@@ -1179,6 +1232,7 @@ func TestAccComputeInstance_serviceAccount_updated0to1to0scopes(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckComputeInstanceExists(
 						t, "google_compute_instance.foobar", &instance),
+					testAccCheckComputeInstanceMatchServiceAccount(&instance, "\\d+-compute@developer.gserviceaccount.com"),
 					testAccCheckComputeInstanceScopes(&instance, 1),
 				),
 			},
@@ -1188,6 +1242,7 @@ func TestAccComputeInstance_serviceAccount_updated0to1to0scopes(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckComputeInstanceExists(
 						t, "google_compute_instance.foobar", &instance),
+					testAccCheckComputeInstanceNoServiceAccount(&instance),
 					testAccCheckComputeInstanceScopes(&instance, 0),
 				),
 			},
@@ -4047,6 +4102,30 @@ func testAccCheckComputeInstanceServiceAccount(instance *compute.Instance, scope
 	}
 }
 
+func testAccCheckComputeInstanceNoServiceAccount(instance *compute.Instance) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		if count := len(instance.ServiceAccounts); count != 0 {
+			return fmt.Errorf("Wrong number of ServiceAccounts: expected 0, got %d", count)
+		}
+		return nil
+	}
+}
+
+func testAccCheckComputeInstanceMatchServiceAccount(instance *compute.Instance, serviceAcctRegexp string) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		if count := len(instance.ServiceAccounts); count != 1 {
+			return fmt.Errorf("Wrong number of ServiceAccounts: expected 1, got %d", count)
+		}
+
+		email := instance.ServiceAccounts[0].Email
+		if !regexp.MustCompile(serviceAcctRegexp).MatchString(email) {
+			return fmt.Errorf("ServiceAccount email didn't match:\"%s\", got \"%s\"", serviceAcctRegexp, email)
+		}
+
+		return nil
+	}
+}
+
 func testAccCheckComputeInstanceScopes(instance *compute.Instance, scopeCount int) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 
@@ -6069,6 +6148,70 @@ resource "google_compute_instance" "foobar" {
       "storage-ro",
     ]
   }
+}
+`, instance)
+}
+
+func testAccComputeInstance_noServiceAccount(instance string) string {
+	return fmt.Sprintf(`
+data "google_compute_image" "my_image" {
+  family  = "debian-11"
+  project = "debian-cloud"
+}
+
+resource "google_compute_instance" "foobar" {
+  name         = "%s"
+  machine_type = "e2-medium"
+  zone         = "us-central1-a"
+
+  boot_disk {
+    initialize_params {
+      image = data.google_compute_image.my_image.self_link
+    }
+  }
+
+  network_interface {
+    network = "default"
+  }
+
+  service_account {
+	  scopes = []
+  }
+}
+`, instance)
+}
+
+func testAccComputeInstance_serviceAccountEmail_0scopes(instance string) string {
+	return fmt.Sprintf(`
+data "google_project" "project" {}
+
+data "google_compute_image" "my_image" {
+  family  = "debian-11"
+  project = "debian-cloud"
+}
+
+resource "google_compute_instance" "foobar" {
+  name         = "%s"
+  machine_type = "e2-medium"
+  zone         = "us-central1-a"
+
+  boot_disk {
+    initialize_params {
+      image = data.google_compute_image.my_image.self_link
+    }
+  }
+
+  network_interface {
+    network = "default"
+  }
+
+  service_account {
+    email = data.google_compute_default_service_account.default.email
+    scopes = []
+  }
+}
+
+data "google_compute_default_service_account" "default" {
 }
 `, instance)
 }
