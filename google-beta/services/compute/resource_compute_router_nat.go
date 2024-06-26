@@ -721,7 +721,6 @@ func resourceComputeRouterNatCreate(d *schema.ResourceData, meta interface{}) er
 	}
 
 	headers := make(http.Header)
-	// validates if the field action.source_nat_active_ranges is filled when the type is PRIVATE.
 	natType := d.Get("type").(string)
 	if natType == "PRIVATE" {
 		rules := d.Get("rules").(*schema.Set)
@@ -1035,7 +1034,6 @@ func resourceComputeRouterNatUpdate(d *schema.ResourceData, meta interface{}) er
 
 	log.Printf("[DEBUG] Updating RouterNat %q: %#v", d.Id(), obj)
 	headers := make(http.Header)
-	// validates if the field action.source_nat_active_ranges is filled when the type is PRIVATE.
 	natType := d.Get("type").(string)
 	if natType == "PRIVATE" {
 		rules := d.Get("rules").(*schema.Set)
