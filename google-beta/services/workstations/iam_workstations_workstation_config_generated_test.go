@@ -125,6 +125,24 @@ func TestAccWorkstationsWorkstationConfigIamPolicyGenerated(t *testing.T) {
 
 func testAccWorkstationsWorkstationConfigIamMember_basicGenerated(context map[string]interface{}) string {
 	return acctest.Nprintf(`
+resource "google_project" "project" {
+  project_id = ""
+  name       = ""
+  org_id     = ""
+}
+  
+resource "google_tags_tag_key" "tag_key1" {
+  provider = "google-beta"
+  parent = "organizations/"
+  short_name = "tf_test_tag_key1%{random_suffix}"
+}
+
+resource "google_tags_tag_value" "tag_value1" {
+  provider = "google-beta"
+  parent = "tagKeys/${google_tags_tag_key.tag_key1.name}"
+  short_name = "tf_test_tag_value1%{random_suffix}"
+}
+
 resource "google_compute_network" "default" {
   provider                = google-beta
   name                    = "tf-test-workstation-cluster%{random_suffix}"
@@ -179,6 +197,9 @@ resource "google_workstations_workstation_config" "default" {
       boot_disk_size_gb           = 35
       disable_public_ip_addresses = true
       disable_ssh                 = false
+      vm_tags = {
+        "tagKeys/${google_tags_tag_key.tag_key1.short_name}" = "tagValues/${google_tags_tag_value.tag_value1.short_name}"
+      }
     }
   }
 }
@@ -197,6 +218,24 @@ resource "google_workstations_workstation_config_iam_member" "foo" {
 
 func testAccWorkstationsWorkstationConfigIamPolicy_basicGenerated(context map[string]interface{}) string {
 	return acctest.Nprintf(`
+resource "google_project" "project" {
+  project_id = ""
+  name       = ""
+  org_id     = ""
+}
+  
+resource "google_tags_tag_key" "tag_key1" {
+  provider = "google-beta"
+  parent = "organizations/"
+  short_name = "tf_test_tag_key1%{random_suffix}"
+}
+
+resource "google_tags_tag_value" "tag_value1" {
+  provider = "google-beta"
+  parent = "tagKeys/${google_tags_tag_key.tag_key1.name}"
+  short_name = "tf_test_tag_value1%{random_suffix}"
+}
+
 resource "google_compute_network" "default" {
   provider                = google-beta
   name                    = "tf-test-workstation-cluster%{random_suffix}"
@@ -251,6 +290,9 @@ resource "google_workstations_workstation_config" "default" {
       boot_disk_size_gb           = 35
       disable_public_ip_addresses = true
       disable_ssh                 = false
+      vm_tags = {
+        "tagKeys/${google_tags_tag_key.tag_key1.short_name}" = "tagValues/${google_tags_tag_value.tag_value1.short_name}"
+      }
     }
   }
 }
@@ -287,6 +329,24 @@ data "google_workstations_workstation_config_iam_policy" "foo" {
 
 func testAccWorkstationsWorkstationConfigIamPolicy_emptyBinding(context map[string]interface{}) string {
 	return acctest.Nprintf(`
+resource "google_project" "project" {
+  project_id = ""
+  name       = ""
+  org_id     = ""
+}
+  
+resource "google_tags_tag_key" "tag_key1" {
+  provider = "google-beta"
+  parent = "organizations/"
+  short_name = "tf_test_tag_key1%{random_suffix}"
+}
+
+resource "google_tags_tag_value" "tag_value1" {
+  provider = "google-beta"
+  parent = "tagKeys/${google_tags_tag_key.tag_key1.name}"
+  short_name = "tf_test_tag_value1%{random_suffix}"
+}
+
 resource "google_compute_network" "default" {
   provider                = google-beta
   name                    = "tf-test-workstation-cluster%{random_suffix}"
@@ -341,6 +401,9 @@ resource "google_workstations_workstation_config" "default" {
       boot_disk_size_gb           = 35
       disable_public_ip_addresses = true
       disable_ssh                 = false
+      vm_tags = {
+        "tagKeys/${google_tags_tag_key.tag_key1.short_name}" = "tagValues/${google_tags_tag_value.tag_value1.short_name}"
+      }
     }
   }
 }
@@ -362,6 +425,24 @@ resource "google_workstations_workstation_config_iam_policy" "foo" {
 
 func testAccWorkstationsWorkstationConfigIamBinding_basicGenerated(context map[string]interface{}) string {
 	return acctest.Nprintf(`
+resource "google_project" "project" {
+  project_id = ""
+  name       = ""
+  org_id     = ""
+}
+  
+resource "google_tags_tag_key" "tag_key1" {
+  provider = "google-beta"
+  parent = "organizations/"
+  short_name = "tf_test_tag_key1%{random_suffix}"
+}
+
+resource "google_tags_tag_value" "tag_value1" {
+  provider = "google-beta"
+  parent = "tagKeys/${google_tags_tag_key.tag_key1.name}"
+  short_name = "tf_test_tag_value1%{random_suffix}"
+}
+
 resource "google_compute_network" "default" {
   provider                = google-beta
   name                    = "tf-test-workstation-cluster%{random_suffix}"
@@ -416,6 +497,9 @@ resource "google_workstations_workstation_config" "default" {
       boot_disk_size_gb           = 35
       disable_public_ip_addresses = true
       disable_ssh                 = false
+      vm_tags = {
+        "tagKeys/${google_tags_tag_key.tag_key1.short_name}" = "tagValues/${google_tags_tag_value.tag_value1.short_name}"
+      }
     }
   }
 }
@@ -434,6 +518,24 @@ resource "google_workstations_workstation_config_iam_binding" "foo" {
 
 func testAccWorkstationsWorkstationConfigIamBinding_updateGenerated(context map[string]interface{}) string {
 	return acctest.Nprintf(`
+resource "google_project" "project" {
+  project_id = ""
+  name       = ""
+  org_id     = ""
+}
+  
+resource "google_tags_tag_key" "tag_key1" {
+  provider = "google-beta"
+  parent = "organizations/"
+  short_name = "tf_test_tag_key1%{random_suffix}"
+}
+
+resource "google_tags_tag_value" "tag_value1" {
+  provider = "google-beta"
+  parent = "tagKeys/${google_tags_tag_key.tag_key1.name}"
+  short_name = "tf_test_tag_value1%{random_suffix}"
+}
+
 resource "google_compute_network" "default" {
   provider                = google-beta
   name                    = "tf-test-workstation-cluster%{random_suffix}"
@@ -488,6 +590,9 @@ resource "google_workstations_workstation_config" "default" {
       boot_disk_size_gb           = 35
       disable_public_ip_addresses = true
       disable_ssh                 = false
+      vm_tags = {
+        "tagKeys/${google_tags_tag_key.tag_key1.short_name}" = "tagValues/${google_tags_tag_value.tag_value1.short_name}"
+      }
     }
   }
 }

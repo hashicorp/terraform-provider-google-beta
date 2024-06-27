@@ -425,6 +425,16 @@ See https://cloud.google.com/workstations/docs/reference/rest/v1beta/projects.lo
 											Type: schema.TypeString,
 										},
 									},
+									"vm_tags": {
+										Type:     schema.TypeMap,
+										Optional: true,
+										Description: `Resource manager tags to be bound to the VM instances backing the Workstations.
+Tag keys and values have the same definition as
+https://cloud.google.com/resource-manager/docs/tags/tags-overview
+Keys must be in the format 'tagKeys/{tag_key_id}', and
+values are in the format 'tagValues/456'.`,
+										Elem: &schema.Schema{Type: schema.TypeString},
+									},
 								},
 							},
 						},
@@ -1032,7 +1042,8 @@ func resourceWorkstationsWorkstationConfigUpdate(d *schema.ResourceData, meta in
 			"host.gceInstance.confidentialInstanceConfig.enableConfidentialCompute",
 			"host.gceInstance.accelerators",
 			"host.gceInstance.boostConfigs",
-			"host.gceInstance.disableSsh")
+			"host.gceInstance.disableSsh",
+			"host.gceInstance.vmTags")
 	}
 
 	if d.HasChange("persistent_directories") {
@@ -1296,6 +1307,8 @@ func flattenWorkstationsWorkstationConfigHostGceInstance(v interface{}, d *schem
 		flattenWorkstationsWorkstationConfigHostGceInstanceAccelerators(original["accelerators"], d, config)
 	transformed["boost_configs"] =
 		flattenWorkstationsWorkstationConfigHostGceInstanceBoostConfigs(original["boostConfigs"], d, config)
+	transformed["vm_tags"] =
+		flattenWorkstationsWorkstationConfigHostGceInstanceVmTags(original["vmTags"], d, config)
 	return []interface{}{transformed}
 }
 func flattenWorkstationsWorkstationConfigHostGceInstanceMachineType(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -1551,6 +1564,10 @@ func flattenWorkstationsWorkstationConfigHostGceInstanceBoostConfigsAccelerators
 	}
 
 	return v // let terraform core handle it otherwise
+}
+
+func flattenWorkstationsWorkstationConfigHostGceInstanceVmTags(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
 }
 
 func flattenWorkstationsWorkstationConfigPersistentDirectories(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -2030,6 +2047,13 @@ func expandWorkstationsWorkstationConfigHostGceInstance(v interface{}, d tpgreso
 		transformed["boostConfigs"] = transformedBoostConfigs
 	}
 
+	transformedVmTags, err := expandWorkstationsWorkstationConfigHostGceInstanceVmTags(original["vm_tags"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedVmTags); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["vmTags"] = transformedVmTags
+	}
+
 	return transformed, nil
 }
 
@@ -2286,6 +2310,17 @@ func expandWorkstationsWorkstationConfigHostGceInstanceBoostConfigsAcceleratorsT
 
 func expandWorkstationsWorkstationConfigHostGceInstanceBoostConfigsAcceleratorsCount(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
+}
+
+func expandWorkstationsWorkstationConfigHostGceInstanceVmTags(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
+	if v == nil {
+		return map[string]string{}, nil
+	}
+	m := make(map[string]string)
+	for k, val := range v.(map[string]interface{}) {
+		m[k] = val.(string)
+	}
+	return m, nil
 }
 
 func expandWorkstationsWorkstationConfigPersistentDirectories(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
