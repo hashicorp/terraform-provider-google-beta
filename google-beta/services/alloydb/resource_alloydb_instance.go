@@ -203,7 +203,7 @@ true.`,
 									},
 								},
 							},
-							RequiredWith: []string{"network_config.0.enable_public_ip"},
+							RequiredWith: []string{},
 						},
 						"enable_public_ip": {
 							Type:     schema.TypeBool,
@@ -228,8 +228,7 @@ the same instance.`,
 							Description: `List of consumer projects that are allowed to create PSC endpoints to service-attachments to this instance.
 These should be specified as project numbers only.`,
 							Elem: &schema.Schema{
-								Type:         schema.TypeString,
-								ValidateFunc: verify.ValidateRegexp(`^\d+$`),
+								Type: schema.TypeString,
 							},
 						},
 						"psc_dns_name": {
@@ -361,7 +360,6 @@ endpoint for an end-user application.`,
 }
 
 func resourceAlloydbInstanceCreate(d *schema.ResourceData, meta interface{}) error {
-	var project string
 	config := meta.(*transport_tpg.Config)
 	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
@@ -489,7 +487,7 @@ func resourceAlloydbInstanceCreate(d *schema.ResourceData, meta interface{}) err
 	d.SetId(id)
 
 	err = AlloydbOperationWaitTime(
-		config, res, project, "Creating Instance", userAgent,
+		config, res, "Creating Instance", userAgent,
 		d.Timeout(schema.TimeoutCreate))
 
 	if err != nil {
@@ -609,7 +607,6 @@ func resourceAlloydbInstanceRead(d *schema.ResourceData, meta interface{}) error
 }
 
 func resourceAlloydbInstanceUpdate(d *schema.ResourceData, meta interface{}) error {
-	var project string
 	config := meta.(*transport_tpg.Config)
 	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
@@ -780,7 +777,7 @@ func resourceAlloydbInstanceUpdate(d *schema.ResourceData, meta interface{}) err
 		}
 
 		err = AlloydbOperationWaitTime(
-			config, res, project, "Updating Instance", userAgent,
+			config, res, "Updating Instance", userAgent,
 			d.Timeout(schema.TimeoutUpdate))
 
 		if err != nil {
@@ -792,7 +789,6 @@ func resourceAlloydbInstanceUpdate(d *schema.ResourceData, meta interface{}) err
 }
 
 func resourceAlloydbInstanceDelete(d *schema.ResourceData, meta interface{}) error {
-	var project string
 	config := meta.(*transport_tpg.Config)
 	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
@@ -849,7 +845,7 @@ func resourceAlloydbInstanceDelete(d *schema.ResourceData, meta interface{}) err
 	}
 
 	err = AlloydbOperationWaitTime(
-		config, res, project, "Deleting Instance", userAgent,
+		config, res, "Deleting Instance", userAgent,
 		d.Timeout(schema.TimeoutDelete))
 
 	if err != nil {
