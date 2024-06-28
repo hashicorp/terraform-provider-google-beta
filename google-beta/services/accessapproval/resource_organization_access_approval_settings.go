@@ -183,25 +183,7 @@ func resourceAccessApprovalOrganizationSettingsCreate(d *schema.ResourceData, me
 	}
 
 	headers := make(http.Header)
-	updateMask := []string{}
 
-	if d.HasChange("notification_emails") {
-		updateMask = append(updateMask, "notificationEmails")
-	}
-
-	if d.HasChange("enrolled_services") {
-		updateMask = append(updateMask, "enrolledServices")
-	}
-
-	if d.HasChange("active_key_version") {
-		updateMask = append(updateMask, "activeKeyVersion")
-	}
-	// updateMask is a URL parameter but not present in the schema, so ReplaceVars
-	// won't set it
-	url, err = transport_tpg.AddQueryParams(url, map[string]string{"updateMask": strings.Join(updateMask, ",")})
-	if err != nil {
-		return err
-	}
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "PATCH",
@@ -214,9 +196,6 @@ func resourceAccessApprovalOrganizationSettingsCreate(d *schema.ResourceData, me
 	})
 	if err != nil {
 		return fmt.Errorf("Error creating OrganizationSettings: %s", err)
-	}
-	if err := d.Set("name", flattenAccessApprovalOrganizationSettingsName(res["name"], d, config)); err != nil {
-		return fmt.Errorf(`Error setting computed identity field "name": %s`, err)
 	}
 
 	// Store the ID now
