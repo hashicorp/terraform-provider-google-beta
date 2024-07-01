@@ -1,4 +1,29 @@
-## 5.36.0 (Unreleased)
+## 5.37.0 (Unreleased)
+
+## 5.36.0 (July 1, 2024)
+
+FEATURES:
+* **New Resource:** `google_storage_managed_folder_iam` ([#7620](https://github.com/hashicorp/terraform-provider-google-beta/pull/7620))
+* **New Resource:** `google_storage_managed_folder` ([#7620](https://github.com/hashicorp/terraform-provider-google-beta/pull/7620))
+
+IMPROVEMENTS:
+* bigtable: added `ignore_warnings` field to `google_bigtable_gc_policy` resource ([#7571](https://github.com/hashicorp/terraform-provider-google-beta/pull/7571))
+* cloudfunctions2: added `build_config.automatic_update_policy` and `build_config.on_deploy_update_policy` to `google_cloudfunctions2_function` resource ([#7608](https://github.com/hashicorp/terraform-provider-google-beta/pull/7608))
+* compute: added `tls_early_data` field to `google_compute_target_https_proxy` resource ([#7588](https://github.com/hashicorp/terraform-provider-google-beta/pull/7588))
+* compute: added `custom_error_response_policy` and `default_custom_error_response_policy` fields to `google_compute_url_map` resource ([#7587](https://github.com/hashicorp/terraform-provider-google-beta/pull/7587))
+* datafusion: added `connection_type` and `private_service_connect_config` fields to `google_data_fusion_instance` resource ([#7598](https://github.com/hashicorp/terraform-provider-google-beta/pull/7598))
+* firebasehosting: added support for `google_firebase_hosting_site` resource to be used for an existing site without using import ([#7594](https://github.com/hashicorp/terraform-provider-google-beta/pull/7594))
+* healthcare: added `encryption_spec` field to `google_healthcare_dataset` resource ([#7601](https://github.com/hashicorp/terraform-provider-google-beta/pull/7601))
+* monitoring: added `links` field to `google_monitoring_alert_policy` resource ([#7616](https://github.com/hashicorp/terraform-provider-google-beta/pull/7616))
+* vertexai: added update support for `big_query.entity_id_columns` field on `google_vertex_ai_feature_group` resource ([#7572](https://github.com/hashicorp/terraform-provider-google-beta/pull/7572))
+
+BUG FIXES:
+* accesscontextmanager: fixed perma-diff caused by ordering of `service_perimeters` in `google_access_context_manager_service_perimeters` resource ([#7595](https://github.com/hashicorp/terraform-provider-google-beta/pull/7595))
+* compute: fixed a crash in `google_compute_reservation` resource when `share_settings` field has changes ([#7577](https://github.com/hashicorp/terraform-provider-google-beta/pull/7577))
+* compute: fixed issue in `google_compute_instance` resource where `service_account` is not set when specifying `service_account.email` and no `service_account.scopes` ([#7596](https://github.com/hashicorp/terraform-provider-google-beta/pull/7596))
+* gkehub2: fixed `google_gke_hub_feature` resource to allow `fleet_default_member_config` field to be unset ([#7568](https://github.com/hashicorp/terraform-provider-google-beta/pull/7568))
+* identityplatform: fixed perma-diff on `google_identity_platform_config` resource when `sms_region_config` is not set ([#7607](https://github.com/hashicorp/terraform-provider-google-beta/pull/7607))
+* logging: fixed perma-diff on `index_configs` in `google_logging_organization_bucket_config` resource ([#7579](https://github.com/hashicorp/terraform-provider-google-beta/pull/7579))
 
 ## 5.35.0 (June 24, 2024)
 
