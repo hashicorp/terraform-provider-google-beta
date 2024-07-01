@@ -3362,7 +3362,6 @@ resource "google_compute_region_instance_template" "foobar" {
 	nanos = 123
 	seconds = 60
     }
-
   }
 
   metadata = {
