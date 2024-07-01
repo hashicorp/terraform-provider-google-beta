@@ -31,8 +31,11 @@ func TestAccWorkstationsWorkstationConfigIamBindingGenerated(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
-		"role":          "roles/viewer",
+		"random_suffix":    acctest.RandString(t, 10),
+		"role":             "roles/viewer",
+		"key_short_name":   "tf-test-key-" + acctest.RandString(t, 10),
+		"value_short_name": "tf-test-value-" + acctest.RandString(t, 10),
+		"org_id":           envvar.GetTestOrgFromEnv(t),
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -66,8 +69,11 @@ func TestAccWorkstationsWorkstationConfigIamMemberGenerated(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
-		"role":          "roles/viewer",
+		"random_suffix":    acctest.RandString(t, 10),
+		"role":             "roles/viewer",
+		"key_short_name":   "tf-test-key-" + acctest.RandString(t, 10),
+		"value_short_name": "tf-test-value-" + acctest.RandString(t, 10),
+		"org_id":           envvar.GetTestOrgFromEnv(t),
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -92,8 +98,11 @@ func TestAccWorkstationsWorkstationConfigIamPolicyGenerated(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
-		"role":          "roles/viewer",
+		"random_suffix":    acctest.RandString(t, 10),
+		"role":             "roles/viewer",
+		"key_short_name":   "tf-test-key-" + acctest.RandString(t, 10),
+		"value_short_name": "tf-test-value-" + acctest.RandString(t, 10),
+		"org_id":           envvar.GetTestOrgFromEnv(t),
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -125,22 +134,16 @@ func TestAccWorkstationsWorkstationConfigIamPolicyGenerated(t *testing.T) {
 
 func testAccWorkstationsWorkstationConfigIamMember_basicGenerated(context map[string]interface{}) string {
 	return acctest.Nprintf(`
-resource "google_project" "project" {
-  project_id = ""
-  name       = ""
-  org_id     = ""
-}
-  
 resource "google_tags_tag_key" "tag_key1" {
-  provider = "google-beta"
-  parent = "organizations/"
-  short_name = "tf_test_tag_key1%{random_suffix}"
+  provider   = google-beta
+  parent     = "organizations/%{org_id}"
+  short_name = "%{key_short_name}"
 }
 
 resource "google_tags_tag_value" "tag_value1" {
-  provider = "google-beta"
-  parent = "tagKeys/${google_tags_tag_key.tag_key1.name}"
-  short_name = "tf_test_tag_value1%{random_suffix}"
+  provider   = google-beta
+  parent     = "tagKeys/${google_tags_tag_key.tag_key1.name}"
+  short_name = "%{value_short_name}"
 }
 
 resource "google_compute_network" "default" {
@@ -198,7 +201,7 @@ resource "google_workstations_workstation_config" "default" {
       disable_public_ip_addresses = true
       disable_ssh                 = false
       vm_tags = {
-        "tagKeys/${google_tags_tag_key.tag_key1.short_name}" = "tagValues/${google_tags_tag_value.tag_value1.short_name}"
+        "tagKeys/${google_tags_tag_key.tag_key1.name}" = "tagValues/${google_tags_tag_value.tag_value1.name}"
       }
     }
   }
@@ -218,22 +221,16 @@ resource "google_workstations_workstation_config_iam_member" "foo" {
 
 func testAccWorkstationsWorkstationConfigIamPolicy_basicGenerated(context map[string]interface{}) string {
 	return acctest.Nprintf(`
-resource "google_project" "project" {
-  project_id = ""
-  name       = ""
-  org_id     = ""
-}
-  
 resource "google_tags_tag_key" "tag_key1" {
-  provider = "google-beta"
-  parent = "organizations/"
-  short_name = "tf_test_tag_key1%{random_suffix}"
+  provider   = google-beta
+  parent     = "organizations/%{org_id}"
+  short_name = "%{key_short_name}"
 }
 
 resource "google_tags_tag_value" "tag_value1" {
-  provider = "google-beta"
-  parent = "tagKeys/${google_tags_tag_key.tag_key1.name}"
-  short_name = "tf_test_tag_value1%{random_suffix}"
+  provider   = google-beta
+  parent     = "tagKeys/${google_tags_tag_key.tag_key1.name}"
+  short_name = "%{value_short_name}"
 }
 
 resource "google_compute_network" "default" {
@@ -291,7 +288,7 @@ resource "google_workstations_workstation_config" "default" {
       disable_public_ip_addresses = true
       disable_ssh                 = false
       vm_tags = {
-        "tagKeys/${google_tags_tag_key.tag_key1.short_name}" = "tagValues/${google_tags_tag_value.tag_value1.short_name}"
+        "tagKeys/${google_tags_tag_key.tag_key1.name}" = "tagValues/${google_tags_tag_value.tag_value1.name}"
       }
     }
   }
@@ -329,22 +326,16 @@ data "google_workstations_workstation_config_iam_policy" "foo" {
 
 func testAccWorkstationsWorkstationConfigIamPolicy_emptyBinding(context map[string]interface{}) string {
 	return acctest.Nprintf(`
-resource "google_project" "project" {
-  project_id = ""
-  name       = ""
-  org_id     = ""
-}
-  
 resource "google_tags_tag_key" "tag_key1" {
-  provider = "google-beta"
-  parent = "organizations/"
-  short_name = "tf_test_tag_key1%{random_suffix}"
+  provider   = google-beta
+  parent     = "organizations/%{org_id}"
+  short_name = "%{key_short_name}"
 }
 
 resource "google_tags_tag_value" "tag_value1" {
-  provider = "google-beta"
-  parent = "tagKeys/${google_tags_tag_key.tag_key1.name}"
-  short_name = "tf_test_tag_value1%{random_suffix}"
+  provider   = google-beta
+  parent     = "tagKeys/${google_tags_tag_key.tag_key1.name}"
+  short_name = "%{value_short_name}"
 }
 
 resource "google_compute_network" "default" {
@@ -402,7 +393,7 @@ resource "google_workstations_workstation_config" "default" {
       disable_public_ip_addresses = true
       disable_ssh                 = false
       vm_tags = {
-        "tagKeys/${google_tags_tag_key.tag_key1.short_name}" = "tagValues/${google_tags_tag_value.tag_value1.short_name}"
+        "tagKeys/${google_tags_tag_key.tag_key1.name}" = "tagValues/${google_tags_tag_value.tag_value1.name}"
       }
     }
   }
@@ -425,22 +416,16 @@ resource "google_workstations_workstation_config_iam_policy" "foo" {
 
 func testAccWorkstationsWorkstationConfigIamBinding_basicGenerated(context map[string]interface{}) string {
 	return acctest.Nprintf(`
-resource "google_project" "project" {
-  project_id = ""
-  name       = ""
-  org_id     = ""
-}
-  
 resource "google_tags_tag_key" "tag_key1" {
-  provider = "google-beta"
-  parent = "organizations/"
-  short_name = "tf_test_tag_key1%{random_suffix}"
+  provider   = google-beta
+  parent     = "organizations/%{org_id}"
+  short_name = "%{key_short_name}"
 }
 
 resource "google_tags_tag_value" "tag_value1" {
-  provider = "google-beta"
-  parent = "tagKeys/${google_tags_tag_key.tag_key1.name}"
-  short_name = "tf_test_tag_value1%{random_suffix}"
+  provider   = google-beta
+  parent     = "tagKeys/${google_tags_tag_key.tag_key1.name}"
+  short_name = "%{value_short_name}"
 }
 
 resource "google_compute_network" "default" {
@@ -498,7 +483,7 @@ resource "google_workstations_workstation_config" "default" {
       disable_public_ip_addresses = true
       disable_ssh                 = false
       vm_tags = {
-        "tagKeys/${google_tags_tag_key.tag_key1.short_name}" = "tagValues/${google_tags_tag_value.tag_value1.short_name}"
+        "tagKeys/${google_tags_tag_key.tag_key1.name}" = "tagValues/${google_tags_tag_value.tag_value1.name}"
       }
     }
   }
@@ -518,22 +503,16 @@ resource "google_workstations_workstation_config_iam_binding" "foo" {
 
 func testAccWorkstationsWorkstationConfigIamBinding_updateGenerated(context map[string]interface{}) string {
 	return acctest.Nprintf(`
-resource "google_project" "project" {
-  project_id = ""
-  name       = ""
-  org_id     = ""
-}
-  
 resource "google_tags_tag_key" "tag_key1" {
-  provider = "google-beta"
-  parent = "organizations/"
-  short_name = "tf_test_tag_key1%{random_suffix}"
+  provider   = google-beta
+  parent     = "organizations/%{org_id}"
+  short_name = "%{key_short_name}"
 }
 
 resource "google_tags_tag_value" "tag_value1" {
-  provider = "google-beta"
-  parent = "tagKeys/${google_tags_tag_key.tag_key1.name}"
-  short_name = "tf_test_tag_value1%{random_suffix}"
+  provider   = google-beta
+  parent     = "tagKeys/${google_tags_tag_key.tag_key1.name}"
+  short_name = "%{value_short_name}"
 }
 
 resource "google_compute_network" "default" {
@@ -591,7 +570,7 @@ resource "google_workstations_workstation_config" "default" {
       disable_public_ip_addresses = true
       disable_ssh                 = false
       vm_tags = {
-        "tagKeys/${google_tags_tag_key.tag_key1.short_name}" = "tagValues/${google_tags_tag_value.tag_value1.short_name}"
+        "tagKeys/${google_tags_tag_key.tag_key1.name}" = "tagValues/${google_tags_tag_value.tag_value1.name}"
       }
     }
   }
