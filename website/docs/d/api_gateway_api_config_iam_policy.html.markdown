@@ -38,6 +38,7 @@ data "google_api_gateway_api_config_iam_policy" "policy" {
 
 The following arguments are supported:
 
+
 * `api` - (Required) The API to attach the config to.
  Used to find the parent resource to bind the IAM policy to
 
