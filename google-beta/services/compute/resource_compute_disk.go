@@ -51,6 +51,11 @@ func hyperDiskIopsUpdateDiffSupress(_ context.Context, d *schema.ResourceDiff, m
 	return nil
 }
 
+// Suppress all diffs, used for Disk.Interface which is a nonfunctional field
+func AlwaysDiffSuppress(_, _, _ string, _ *schema.ResourceData) bool {
+	return true
+}
+
 // diffsupress for beta and to check change in source_disk attribute
 func sourceDiskDiffSupress(_, old, new string, _ *schema.ResourceData) bool {
 	s1 := strings.TrimPrefix(old, "https://www.googleapis.com/compute/beta")
@@ -456,7 +461,7 @@ These images can be referred by family name here.`,
 				Optional:         true,
 				Deprecated:       "`interface` is deprecated and will be removed in a future major release. This field is no longer used and can be safely removed from your configurations; disk interfaces are automatically determined on attachment.",
 				ForceNew:         true,
-				DiffSuppressFunc: tpgresource.AlwaysDiffSuppress,
+				DiffSuppressFunc: AlwaysDiffSuppress,
 				Description:      `Specifies the disk interface to use for attaching this disk, which is either SCSI or NVME. The default is SCSI.`,
 				Default:          "SCSI",
 			},
