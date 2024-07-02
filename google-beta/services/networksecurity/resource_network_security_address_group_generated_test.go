@@ -149,6 +149,47 @@ resource "google_network_security_address_group" "default" {
 `, context)
 }
 
+func TestAccNetworkSecurityAddressGroup_networkSecurityAddressGroupsCloudArmorExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"project":       envvar.GetTestProjectFromEnv(),
+		"random_suffix": acctest.RandString(t, 10),
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckNetworkSecurityAddressGroupDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccNetworkSecurityAddressGroup_networkSecurityAddressGroupsCloudArmorExample(context),
+			},
+			{
+				ResourceName:            "google_network_security_address_group.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"labels", "location", "name", "parent", "terraform_labels"},
+			},
+		},
+	})
+}
+
+func testAccNetworkSecurityAddressGroup_networkSecurityAddressGroupsCloudArmorExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_network_security_address_group" "default" {
+  provider    = google-beta
+  name        = "tf-test-my-address-groups%{random_suffix}"
+  parent      = "projects/%{project}"
+  location    = "global"
+  type        = "IPV4"
+  capacity    = "100"
+  purpose     = ["CLOUD_ARMOR"]
+  items       = ["208.80.154.224/32"]
+}
+`, context)
+}
+
 func testAccCheckNetworkSecurityAddressGroupDestroyProducer(t *testing.T) func(s *terraform.State) error {
 	return func(s *terraform.State) error {
 		for name, rs := range s.RootModule().Resources {
