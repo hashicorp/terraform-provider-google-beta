@@ -23,7 +23,7 @@ IMPROVEMENTS:
 
 BUG FIXES:
 * compute: fixed a bug preventing the creation of `google_compute_autoscaler` and `google_compute_region_autoscaler` resources if both `autoscaling_policy.max_replicas` and `autoscaling_policy.min_replicas` were configured as zero. ([#7658](https://github.com/hashicorp/terraform-provider-google-beta/pull/7658))
-* resourcemanager: mitigated eventual concistency issues by adding a 10s wait after `google_service_account_key` resource creation ([#7629](https://github.com/hashicorp/terraform-provider-google-beta/pull/7629))
+* resourcemanager: mitigated eventual consistency issues by adding a 10s wait after `google_service_account_key` resource creation ([#7629](https://github.com/hashicorp/terraform-provider-google-beta/pull/7629))
 * vertexai: fixed issue where updating "metadata" field could fail in `google_vertex_ai_index` resource ([#7675](https://github.com/hashicorp/terraform-provider-google-beta/pull/7675))
 
 ## 5.36.0 (July 1, 2024)
