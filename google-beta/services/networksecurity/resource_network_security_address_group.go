@@ -109,6 +109,7 @@ Please refer to the field 'effective_labels' for all of the labels present on th
 			},
 			"purpose": {
 				Type:        schema.TypeList,
+				Computed:    true,
 				Optional:    true,
 				Description: `List of supported purposes of the Address Group. Possible values: ["DEFAULT", "CLOUD_ARMOR"]`,
 				Elem: &schema.Schema{
