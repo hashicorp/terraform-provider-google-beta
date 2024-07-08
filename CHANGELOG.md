@@ -1,7 +1,4 @@
-## 5.37.0 (Unreleased)
-
-NOTES:
-* orgpolicy: converted `google_org_policy_policy` now to use MMv1 engine instead of DCL ([#7678](https://github.com/hashicorp/terraform-provider-google-beta/pull/7678))
+## 5.37.0
 
 FEATURES:
 * **New Data Source:** `google_kms_crypto_keys` ([#7656](https://github.com/hashicorp/terraform-provider-google-beta/pull/7656))
