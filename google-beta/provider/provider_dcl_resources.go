@@ -33,7 +33,6 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/firebaserules"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/gkehub"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/networkconnectivity"
-	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/orgpolicy"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/recaptchaenterprise"
 )
 
@@ -67,6 +66,5 @@ var dclResources = map[string]*schema.Resource{
 	"google_gke_hub_feature_membership":                         gkehub.ResourceGkeHubFeatureMembership(),
 	"google_network_connectivity_hub":                           networkconnectivity.ResourceNetworkConnectivityHub(),
 	"google_network_connectivity_spoke":                         networkconnectivity.ResourceNetworkConnectivitySpoke(),
-	"google_org_policy_policy":                                  orgpolicy.ResourceOrgPolicyPolicy(),
 	"google_recaptcha_enterprise_key":                           recaptchaenterprise.ResourceRecaptchaEnterpriseKey(),
 }

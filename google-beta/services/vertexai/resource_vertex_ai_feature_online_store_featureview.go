@@ -121,6 +121,11 @@ func ResourceVertexAIFeatureOnlineStoreFeatureview() *schema.Resource {
 								},
 							},
 						},
+						"project_number": {
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: `The project number of the parent project of the feature Groups.`,
+						},
 					},
 				},
 				ConflictsWith: []string{"vector_search_config"},
@@ -692,6 +697,8 @@ func flattenVertexAIFeatureOnlineStoreFeatureviewFeatureRegistrySource(v interfa
 	transformed := make(map[string]interface{})
 	transformed["feature_groups"] =
 		flattenVertexAIFeatureOnlineStoreFeatureviewFeatureRegistrySourceFeatureGroups(original["featureGroups"], d, config)
+	transformed["project_number"] =
+		flattenVertexAIFeatureOnlineStoreFeatureviewFeatureRegistrySourceProjectNumber(original["projectNumber"], d, config)
 	return []interface{}{transformed}
 }
 func flattenVertexAIFeatureOnlineStoreFeatureviewFeatureRegistrySourceFeatureGroups(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -719,6 +726,10 @@ func flattenVertexAIFeatureOnlineStoreFeatureviewFeatureRegistrySourceFeatureGro
 
 func flattenVertexAIFeatureOnlineStoreFeatureviewFeatureRegistrySourceFeatureGroupsFeatureIds(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
+}
+
+func flattenVertexAIFeatureOnlineStoreFeatureviewFeatureRegistrySourceProjectNumber(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return d.Get("feature_registry_source.0.project_number")
 }
 
 func flattenVertexAIFeatureOnlineStoreFeatureviewVectorSearchConfig(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -896,6 +907,13 @@ func expandVertexAIFeatureOnlineStoreFeatureviewFeatureRegistrySource(v interfac
 		transformed["featureGroups"] = transformedFeatureGroups
 	}
 
+	transformedProjectNumber, err := expandVertexAIFeatureOnlineStoreFeatureviewFeatureRegistrySourceProjectNumber(original["project_number"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedProjectNumber); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["projectNumber"] = transformedProjectNumber
+	}
+
 	return transformed, nil
 }
 
@@ -933,6 +951,10 @@ func expandVertexAIFeatureOnlineStoreFeatureviewFeatureRegistrySourceFeatureGrou
 }
 
 func expandVertexAIFeatureOnlineStoreFeatureviewFeatureRegistrySourceFeatureGroupsFeatureIds(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandVertexAIFeatureOnlineStoreFeatureviewFeatureRegistrySourceProjectNumber(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 

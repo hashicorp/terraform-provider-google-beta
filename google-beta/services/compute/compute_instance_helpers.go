@@ -139,9 +139,6 @@ func expandScheduling(v interface{}) (*compute.Scheduling, error) {
 		scheduling.MaxRunDuration = transformedMaxRunDuration
 		scheduling.ForceSendFields = append(scheduling.ForceSendFields, "MaxRunDuration")
 	}
-	if v, ok := original["maintenance_interval"]; ok {
-		scheduling.MaintenanceInterval = v.(string)
-	}
 
 	if v, ok := original["on_instance_stop_action"]; ok {
 		transformedOnInstanceStopAction, err := expandComputeOnInstanceStopAction(v)
@@ -150,6 +147,9 @@ func expandScheduling(v interface{}) (*compute.Scheduling, error) {
 		}
 		scheduling.OnInstanceStopAction = transformedOnInstanceStopAction
 		scheduling.ForceSendFields = append(scheduling.ForceSendFields, "OnInstanceStopAction")
+	}
+	if v, ok := original["maintenance_interval"]; ok {
+		scheduling.MaintenanceInterval = v.(string)
 	}
 	if v, ok := original["local_ssd_recovery_timeout"]; ok {
 		transformedLocalSsdRecoveryTimeout, err := expandComputeLocalSsdRecoveryTimeout(v)
@@ -263,11 +263,13 @@ func flattenScheduling(resp *compute.Scheduling) []map[string]interface{} {
 	if resp.MaxRunDuration != nil {
 		schedulingMap["max_run_duration"] = flattenComputeMaxRunDuration(resp.MaxRunDuration)
 	}
-	if resp.MaintenanceInterval != "" {
-		schedulingMap["maintenance_interval"] = resp.MaintenanceInterval
-	}
+
 	if resp.OnInstanceStopAction != nil {
 		schedulingMap["on_instance_stop_action"] = flattenOnInstanceStopAction(resp.OnInstanceStopAction)
+	}
+
+	if resp.MaintenanceInterval != "" {
+		schedulingMap["maintenance_interval"] = resp.MaintenanceInterval
 	}
 
 	if resp.LocalSsdRecoveryTimeout != nil {
