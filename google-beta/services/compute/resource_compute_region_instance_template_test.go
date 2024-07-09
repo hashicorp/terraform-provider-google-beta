@@ -2091,8 +2091,8 @@ resource "google_compute_region_instance_template" "foobar" {
 func testAccComputeRegionInstanceTemplate_with375GbScratchDisk(suffix string) string {
 	return fmt.Sprintf(`
 data "google_compute_image" "my_image" {
-	family  = "centos-7"
-	project = "centos-cloud"
+	family  = "debian-12"
+	project = "debian-cloud"
 }
 resource "google_compute_region_instance_template" "foobar" {
   name           = "tf-test-instance-template-%s"
@@ -2120,8 +2120,8 @@ resource "google_compute_region_instance_template" "foobar" {
 func testAccComputeRegionInstanceTemplate_with18TbScratchDisk(suffix string) string {
 	return fmt.Sprintf(`
 data "google_compute_image" "my_image" {
-	family  = "centos-7"
-	project = "centos-cloud"
+	family  ="debian-12"
+	project = "debian-cloud"
 }
 
 resource "google_compute_region_instance_template" "foobar" {
@@ -2797,8 +2797,8 @@ resource "google_compute_region_instance_template" "foobar" {
 func testAccComputeRegionInstanceTemplate_shieldedVmConfig(suffix string, enableSecureBoot bool, enableVtpm bool, enableIntegrityMonitoring bool) string {
 	return fmt.Sprintf(`
 data "google_compute_image" "my_image" {
-  family  = "centos-7"
-  project = "centos-cloud"
+  family  = "debian-12"
+  project = "debian-cloud"
 }
 
 resource "google_compute_region_instance_template" "foobar" {
@@ -2988,8 +2988,8 @@ resource "google_compute_region_instance_template" "foobar" {
 func testAccComputeRegionInstanceTemplate_enableDisplay(suffix string) string {
 	return fmt.Sprintf(`
 data "google_compute_image" "my_image" {
-  family  = "centos-7"
-  project = "centos-cloud"
+  family  = "debian-12"
+  project = "debian-cloud"
 }
 
 resource "google_compute_region_instance_template" "foobar" {
@@ -3362,7 +3362,6 @@ resource "google_compute_region_instance_template" "foobar" {
 	nanos = 123
 	seconds = 60
     }
-
   }
 
   metadata = {
