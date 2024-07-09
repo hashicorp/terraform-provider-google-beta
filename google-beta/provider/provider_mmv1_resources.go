@@ -125,6 +125,7 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/servicemanagement"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/servicenetworking"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/serviceusage"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/siteverification"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/sourcerepo"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/spanner"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/sql"
@@ -301,6 +302,7 @@ var handwrittenDatasources = map[string]*schema.Resource{
 	"google_service_account_id_token":                     resourcemanager.DataSourceGoogleServiceAccountIdToken(),
 	"google_service_account_jwt":                          resourcemanager.DataSourceGoogleServiceAccountJwt(),
 	"google_service_account_key":                          resourcemanager.DataSourceGoogleServiceAccountKey(),
+	"google_site_verification_token":                      siteverification.DataSourceSiteVerificationToken(),
 	"google_sourcerepo_repository":                        sourcerepo.DataSourceGoogleSourceRepoRepository(),
 	"google_spanner_instance":                             spanner.DataSourceSpannerInstance(),
 	"google_sql_ca_certs":                                 sql.DataSourceGoogleSQLCaCerts(),
