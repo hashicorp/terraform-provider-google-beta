@@ -108,7 +108,7 @@ resource "google_gke_hub_feature_membership" "feature_member_1" {
   feature = google_gke_hub_feature.feature.name
   membership = google_gke_hub_membership.membership.membership_id
   configmanagement {
-    version = "1.15.1"
+    version = "1.18.2"
     config_sync {
       source_format = "hierarchy"
       git {
@@ -125,7 +125,7 @@ resource "google_gke_hub_feature_membership" "feature_member_2" {
   feature = google_gke_hub_feature.feature.name
   membership = google_gke_hub_membership.membership_second.membership_id
   configmanagement {
-    version = "1.15.1"
+    version = "1.18.2"
     config_sync {
       source_format = "hierarchy"
       git {
@@ -157,7 +157,7 @@ resource "google_gke_hub_feature_membership" "feature_member_1" {
   feature = google_gke_hub_feature.feature.name
   membership = google_gke_hub_membership.membership.membership_id
   configmanagement {
-    version = "1.15.1"
+    version = "1.18.2"
     config_sync {
       source_format = "hierarchy"
       git {
@@ -174,7 +174,7 @@ resource "google_gke_hub_feature_membership" "feature_member_2" {
   feature = google_gke_hub_feature.feature.name
   membership = google_gke_hub_membership.membership_second.membership_id
   configmanagement {
-    version = "1.15.1"
+    version = "1.18.2"
     config_sync {
       source_format = "hierarchy"
       git {
@@ -212,7 +212,7 @@ resource "google_gke_hub_feature_membership" "feature_member_2" {
   feature = google_gke_hub_feature.feature.name
   membership = google_gke_hub_membership.membership_second.membership_id
   configmanagement {
-    version = "1.15.1"
+    version = "1.18.2"
     config_sync {
       source_format = "unstructured"
       git {
@@ -240,7 +240,7 @@ resource "google_gke_hub_feature_membership" "feature_member_3" {
   feature = google_gke_hub_feature.feature.name
   membership = google_gke_hub_membership.membership_third.membership_id
   configmanagement {
-    version = "1.15.1"
+    version = "1.18.2"
     config_sync {
       source_format = "hierarchy"
       git {
@@ -268,7 +268,7 @@ resource "google_gke_hub_feature_membership" "feature_member_4" {
   feature = google_gke_hub_feature.feature.name
   membership = google_gke_hub_membership.membership_fourth.membership_id
   configmanagement {
-    version = "1.15.1"
+    version = "1.18.2"
     policy_controller {
       enabled = true
       audit_interval_seconds = "100"
@@ -305,7 +305,7 @@ resource "google_gke_hub_feature_membership" "feature_member_3" {
   feature = google_gke_hub_feature.feature.name
   membership = google_gke_hub_membership.membership_third.membership_id
   configmanagement {
-    version = "1.15.1"
+    version = "1.18.2"
     policy_controller {
       enabled = true
       audit_interval_seconds = "100"
@@ -420,7 +420,7 @@ resource "google_gke_hub_feature_membership" "feature_member" {
   feature = google_gke_hub_feature.feature.name
   membership = google_gke_hub_membership.membership.membership_id
   configmanagement {
-    version = "1.15.1"
+    version = "1.18.2"
     config_sync {
       git {
         sync_repo      = "https://github.com/hashicorp/terraform"
@@ -484,7 +484,7 @@ resource "google_gke_hub_feature_membership" "feature_member" {
   feature = google_gke_hub_feature.feature.name
   membership = google_gke_hub_membership.membership.membership_id
   configmanagement {
-    version = "1.15.1"
+    version = "1.18.2"
     config_sync {
       git {
         sync_repo      = "https://github.com/hashicorp/terraform"
@@ -554,7 +554,7 @@ resource "google_gke_hub_feature_membership" "feature_member" {
   feature = google_gke_hub_feature.feature.name
   membership = google_gke_hub_membership.membership.membership_id
   configmanagement {
-    version = "1.15.1"
+    version = "1.18.2"
     config_sync {
       git {
         sync_repo   = "https://github.com/hashicorp/terraform"
@@ -643,7 +643,7 @@ resource "google_gke_hub_feature_membership" "feature_member" {
   feature = google_gke_hub_feature.feature.name
   membership = google_gke_hub_membership.membership_acmoci.membership_id
   configmanagement {
-    version = "1.15.1"
+    version = "1.18.2"
     config_sync {
       source_format = "unstructured"
       oci {
@@ -692,7 +692,7 @@ resource "google_gke_hub_feature_membership" "feature_member" {
   feature = google_gke_hub_feature.feature.name
   membership = google_gke_hub_membership.membership_acmoci.membership_id
   configmanagement {
-    version = "1.15.1"
+    version = "1.18.2"
     config_sync {
       source_format = "hierarchy"
       oci {
@@ -741,7 +741,7 @@ resource "google_gke_hub_feature_membership" "feature_member" {
   feature = google_gke_hub_feature.feature.name
   membership = google_gke_hub_membership.membership_acmoci.membership_id
   configmanagement {
-    version = "1.15.1"
+    version = "1.18.2"
     policy_controller {
       enabled = true
       audit_interval_seconds = "100"
