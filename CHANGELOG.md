@@ -7,12 +7,12 @@ FEATURES:
 
 IMPROVEMENTS:
 * cloudkms: added `key_access_justifications_policy` field to `google_kms_crypto_key` resource ([#7693](https://github.com/hashicorp/terraform-provider-google-beta/pull/7693))
+* compute: made the `google_compute_resource_policy` resource updatable in-place ([#18673](https://github.com/hashicorp/terraform-provider-google/pull/18673))
 * vertexai: added `project_number` field to `google_vertex_ai_feature_online_store_featureview` resource ([#7680](https://github.com/hashicorp/terraform-provider-google-beta/pull/7680))
 
 BUG FIXES:
 * cloudfunctions2: fixed permadiffs on `service_config.environment_variables` field in `google_cloudfunctions2_function` resource ([#7684](https://github.com/hashicorp/terraform-provider-google-beta/pull/7684))
 * networksecurity: fixed permadiffs on `purpose` field in `google_network_security_address_group` resource ([#7687](https://github.com/hashicorp/terraform-provider-google-beta/pull/7687))
-* compute: made the `google_compute_resource_policy` resource updatable in-place ([#18673](https://github.com/hashicorp/terraform-provider-google/pull/18673))
 
 ## 5.37.0 (July 8, 2024)
 
