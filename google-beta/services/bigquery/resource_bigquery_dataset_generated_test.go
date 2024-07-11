@@ -460,7 +460,7 @@ func TestAccBigQueryDataset_bigqueryDatasetResourceTagsExample(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckBigQueryDatasetDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -479,36 +479,29 @@ func TestAccBigQueryDataset_bigqueryDatasetResourceTagsExample(t *testing.T) {
 func testAccBigQueryDataset_bigqueryDatasetResourceTagsExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 data "google_project" "project" {
-  provider = "google-beta"
 }
 
 resource "google_tags_tag_key" "tag_key1" {
-  provider = "google-beta"
   parent = "projects/${data.google_project.project.number}"
   short_name = "tf_test_tag_key1%{random_suffix}"
 }
 
 resource "google_tags_tag_value" "tag_value1" {
-  provider = "google-beta"
   parent = "tagKeys/${google_tags_tag_key.tag_key1.name}"
   short_name = "tf_test_tag_value1%{random_suffix}"
 }
 
 resource "google_tags_tag_key" "tag_key2" {
-  provider = "google-beta"
   parent = "projects/${data.google_project.project.number}"
   short_name = "tf_test_tag_key2%{random_suffix}"
 }
 
 resource "google_tags_tag_value" "tag_value2" {
-  provider = "google-beta"
   parent = "tagKeys/${google_tags_tag_key.tag_key2.name}"
   short_name = "tf_test_tag_value2%{random_suffix}"
 }
 
 resource "google_bigquery_dataset" "dataset" {
-  provider = google-beta
-
   dataset_id                  = "dataset%{random_suffix}"
   friendly_name               = "test"
   description                 = "This is a test description"
