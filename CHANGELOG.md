@@ -6,7 +6,7 @@ FEATURES:
 * **New Resource:** `google_scc_project_notification_config` ([#7698](https://github.com/hashicorp/terraform-provider-google-beta/pull/7698))
 
 IMPROVEMENTS:
-* cloudkms: added `key_access_justifications_policy` field to `google_kms_crypto_key` resource (beta) ([#7693](https://github.com/hashicorp/terraform-provider-google-beta/pull/7693))
+* cloudkms: added `key_access_justifications_policy` field to `google_kms_crypto_key` resource ([#7693](https://github.com/hashicorp/terraform-provider-google-beta/pull/7693))
 * vertexai: added `project_number` field to `google_vertex_ai_feature_online_store_featureview` resource ([#7680](https://github.com/hashicorp/terraform-provider-google-beta/pull/7680))
 
 BUG FIXES:
