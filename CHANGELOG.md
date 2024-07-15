@@ -1,3 +1,19 @@
+## 5.38.0 (Unreleased)
+
+FEATURES:
+* **New Data Source:** `google_gke_hub_membership_binding` ([#7696](https://github.com/hashicorp/terraform-provider-google-beta/pull/7696))
+* **New Data Source:** `google_site_verification_token` ([#7704](https://github.com/hashicorp/terraform-provider-google-beta/pull/7704))
+* **New Resource:** `google_scc_project_notification_config` ([#7698](https://github.com/hashicorp/terraform-provider-google-beta/pull/7698))
+
+IMPROVEMENTS:
+* cloudkms: added `key_access_justifications_policy` field to `google_kms_crypto_key` resource ([#7693](https://github.com/hashicorp/terraform-provider-google-beta/pull/7693))
+* compute: made the `google_compute_resource_policy` resource updatable in-place ([#18673](https://github.com/hashicorp/terraform-provider-google/pull/18673))
+* vertexai: added `project_number` field to `google_vertex_ai_feature_online_store_featureview` resource ([#7680](https://github.com/hashicorp/terraform-provider-google-beta/pull/7680))
+
+BUG FIXES:
+* cloudfunctions2: fixed permadiffs on `service_config.environment_variables` field in `google_cloudfunctions2_function` resource ([#7684](https://github.com/hashicorp/terraform-provider-google-beta/pull/7684))
+* networksecurity: fixed permadiffs on `purpose` field in `google_network_security_address_group` resource ([#7687](https://github.com/hashicorp/terraform-provider-google-beta/pull/7687))
+
 ## 5.37.0 (July 8, 2024)
 
 FEATURES:
@@ -22,7 +38,7 @@ BUG FIXES:
 * compute: fixed a bug preventing the creation of `google_compute_autoscaler` and `google_compute_region_autoscaler` resources if both `autoscaling_policy.max_replicas` and `autoscaling_policy.min_replicas` were configured as zero. ([#7658](https://github.com/hashicorp/terraform-provider-google-beta/pull/7658))
 * resourcemanager: mitigated eventual consistency issues by adding a 10s wait after `google_service_account_key` resource creation ([#7629](https://github.com/hashicorp/terraform-provider-google-beta/pull/7629))
 * vertexai: fixed issue where updating "metadata" field could fail in `google_vertex_ai_index` resource ([#7675](https://github.com/hashicorp/terraform-provider-google-beta/pull/7675))
-
+ 
 ## 5.36.0 (July 1, 2024)
 
 FEATURES:
