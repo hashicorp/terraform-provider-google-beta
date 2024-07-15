@@ -1,4 +1,20 @@
-## 5.38.0 (Unreleased)
+## 5.39.0 (Unreleased)
+
+## 5.38.0 (July 15, 2024)
+
+FEATURES:
+* **New Data Source:** `google_gke_hub_membership_binding` ([#7696](https://github.com/hashicorp/terraform-provider-google-beta/pull/7696))
+* **New Data Source:** `google_site_verification_token` ([#7704](https://github.com/hashicorp/terraform-provider-google-beta/pull/7704))
+* **New Resource:** `google_scc_project_notification_config` ([#7698](https://github.com/hashicorp/terraform-provider-google-beta/pull/7698))
+
+IMPROVEMENTS:
+* cloudkms: added `key_access_justifications_policy` field to `google_kms_crypto_key` resource ([#7693](https://github.com/hashicorp/terraform-provider-google-beta/pull/7693))
+* compute: made the `google_compute_resource_policy` resource updatable in-place ([#7692](https://github.com/hashicorp/terraform-provider-google-beta/pull/7692))
+* vertexai: added `project_number` field to `google_vertex_ai_feature_online_store_featureview` resource ([#7680](https://github.com/hashicorp/terraform-provider-google-beta/pull/7680))
+
+BUG FIXES:
+* cloudfunctions2: fixed permadiffs on `service_config.environment_variables` field in `google_cloudfunctions2_function` resource ([#7684](https://github.com/hashicorp/terraform-provider-google-beta/pull/7684))
+* networksecurity: fixed permadiffs on `purpose` field in `google_network_security_address_group` resource ([#7687](https://github.com/hashicorp/terraform-provider-google-beta/pull/7687))
 
 ## 5.37.0 (July 8, 2024)
 
