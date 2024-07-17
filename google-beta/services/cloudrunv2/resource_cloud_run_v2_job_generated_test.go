@@ -491,7 +491,7 @@ func TestAccCloudRunV2Job_cloudrunv2JobRunJobExample(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
 		CheckDestroy:             testAccCheckCloudRunV2JobDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -510,6 +510,7 @@ func TestAccCloudRunV2Job_cloudrunv2JobRunJobExample(t *testing.T) {
 func testAccCloudRunV2Job_cloudrunv2JobRunJobExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_cloud_run_v2_job" "default" {
+  provider = google-beta
   name     = "tf-test-cloudrun-job%{random_suffix}"
   location = "us-central1"
   start_execution_token = "start-once-created"

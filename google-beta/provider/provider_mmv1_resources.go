@@ -125,6 +125,7 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/servicemanagement"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/servicenetworking"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/serviceusage"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/siteverification"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/sourcerepo"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/spanner"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/sql"
@@ -301,6 +302,7 @@ var handwrittenDatasources = map[string]*schema.Resource{
 	"google_service_account_id_token":                     resourcemanager.DataSourceGoogleServiceAccountIdToken(),
 	"google_service_account_jwt":                          resourcemanager.DataSourceGoogleServiceAccountJwt(),
 	"google_service_account_key":                          resourcemanager.DataSourceGoogleServiceAccountKey(),
+	"google_site_verification_token":                      siteverification.DataSourceSiteVerificationToken(),
 	"google_sourcerepo_repository":                        sourcerepo.DataSourceGoogleSourceRepoRepository(),
 	"google_spanner_instance":                             spanner.DataSourceSpannerInstance(),
 	"google_sql_ca_certs":                                 sql.DataSourceGoogleSQLCaCerts(),
@@ -469,9 +471,9 @@ var handwrittenIAMDatasources = map[string]*schema.Resource{
 }
 
 // Resources
-// Generated resources: 490
+// Generated resources: 495
 // Generated IAM resources: 282
-// Total generated resources: 772
+// Total generated resources: 777
 var generatedResources = map[string]*schema.Resource{
 	"google_folder_access_approval_settings":                                     accessapproval.ResourceAccessApprovalFolderSettings(),
 	"google_organization_access_approval_settings":                               accessapproval.ResourceAccessApprovalOrganizationSettings(),
@@ -522,6 +524,8 @@ var generatedResources = map[string]*schema.Resource{
 	"google_apigee_environment_iam_binding":                                      tpgiamresource.ResourceIamBinding(apigee.ApigeeEnvironmentIamSchema, apigee.ApigeeEnvironmentIamUpdaterProducer, apigee.ApigeeEnvironmentIdParseFunc),
 	"google_apigee_environment_iam_member":                                       tpgiamresource.ResourceIamMember(apigee.ApigeeEnvironmentIamSchema, apigee.ApigeeEnvironmentIamUpdaterProducer, apigee.ApigeeEnvironmentIdParseFunc),
 	"google_apigee_environment_iam_policy":                                       tpgiamresource.ResourceIamPolicy(apigee.ApigeeEnvironmentIamSchema, apigee.ApigeeEnvironmentIamUpdaterProducer, apigee.ApigeeEnvironmentIdParseFunc),
+	"google_apigee_environment_keyvaluemaps":                                     apigee.ResourceApigeeEnvironmentKeyvaluemaps(),
+	"google_apigee_environment_keyvaluemaps_entries":                             apigee.ResourceApigeeEnvironmentKeyvaluemapsEntries(),
 	"google_apigee_instance":                                                     apigee.ResourceApigeeInstance(),
 	"google_apigee_instance_attachment":                                          apigee.ResourceApigeeInstanceAttachment(),
 	"google_apigee_keystores_aliases_self_signed_cert":                           apigee.ResourceApigeeKeystoresAliasesSelfSignedCert(),
@@ -734,6 +738,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_compute_region_target_tcp_proxy":                                     compute.ResourceComputeRegionTargetTcpProxy(),
 	"google_compute_region_url_map":                                              compute.ResourceComputeRegionUrlMap(),
 	"google_compute_reservation":                                                 compute.ResourceComputeReservation(),
+	"google_compute_resize_request":                                              compute.ResourceComputeResizeRequest(),
 	"google_compute_resource_policy":                                             compute.ResourceComputeResourcePolicy(),
 	"google_compute_route":                                                       compute.ResourceComputeRoute(),
 	"google_compute_router":                                                      compute.ResourceComputeRouter(),
@@ -1041,6 +1046,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_netapp_backup_vault":                                                 netapp.ResourceNetappbackupVault(),
 	"google_netapp_kmsconfig":                                                    netapp.ResourceNetappkmsconfig(),
 	"google_netapp_storage_pool":                                                 netapp.ResourceNetappstoragePool(),
+	"google_network_connectivity_hub":                                            networkconnectivity.ResourceNetworkConnectivityHub(),
 	"google_network_connectivity_internal_range":                                 networkconnectivity.ResourceNetworkConnectivityInternalRange(),
 	"google_network_connectivity_policy_based_route":                             networkconnectivity.ResourceNetworkConnectivityPolicyBasedRoute(),
 	"google_network_connectivity_regional_endpoint":                              networkconnectivity.ResourceNetworkConnectivityRegionalEndpoint(),
@@ -1140,6 +1146,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_scc_notification_config":                                             securitycenter.ResourceSecurityCenterNotificationConfig(),
 	"google_scc_organization_custom_module":                                      securitycenter.ResourceSecurityCenterOrganizationCustomModule(),
 	"google_scc_project_custom_module":                                           securitycenter.ResourceSecurityCenterProjectCustomModule(),
+	"google_scc_project_notification_config":                                     securitycenter.ResourceSecurityCenterProjectNotificationConfig(),
 	"google_scc_source":                                                          securitycenter.ResourceSecurityCenterSource(),
 	"google_scc_source_iam_binding":                                              tpgiamresource.ResourceIamBinding(securitycenter.SecurityCenterSourceIamSchema, securitycenter.SecurityCenterSourceIamUpdaterProducer, securitycenter.SecurityCenterSourceIdParseFunc),
 	"google_scc_source_iam_member":                                               tpgiamresource.ResourceIamMember(securitycenter.SecurityCenterSourceIamSchema, securitycenter.SecurityCenterSourceIamUpdaterProducer, securitycenter.SecurityCenterSourceIdParseFunc),

@@ -1600,7 +1600,7 @@ func TestAccBigQueryTable_ResourceTags(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckBigQueryTableDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -4078,28 +4078,20 @@ resource "time_sleep" "wait_10_seconds_last" {
 func testAccBigQueryTableWithResourceTags(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_tags_tag_key" "key1" {
-  provider = google-beta
-
   parent = "projects/%{project_id}"
   short_name = "%{tag_key_name1}"
 }
 
 resource "google_tags_tag_value" "value1" {
-  provider = google-beta
-
   parent = "tagKeys/${google_tags_tag_key.key1.name}"
   short_name = "%{tag_value_name1}"
 }
 
 resource "google_bigquery_dataset" "test" {
-  provider = google-beta
-
   dataset_id = "%{dataset_id}"
 }
 
 resource "google_bigquery_table" "test" {
-  provider = google-beta
-
   deletion_protection = false
   allow_resource_tags_on_deletion = true
   dataset_id = "${google_bigquery_dataset.test.dataset_id}"
@@ -4114,42 +4106,30 @@ resource "google_bigquery_table" "test" {
 func testAccBigQueryTableWithResourceTagsUpdate(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_tags_tag_key" "key1" {
-  provider = google-beta
-
   parent = "projects/%{project_id}"
   short_name = "%{tag_key_name1}"
 }
 
 resource "google_tags_tag_value" "value1" {
-  provider = google-beta
-
   parent = "tagKeys/${google_tags_tag_key.key1.name}"
   short_name = "%{tag_value_name1}"
 }
 
 resource "google_tags_tag_key" "key2" {
-  provider = google-beta
-
   parent = "projects/%{project_id}"
   short_name = "%{tag_key_name2}"
 }
 
 resource "google_tags_tag_value" "value2" {
-  provider = google-beta
-
   parent = "tagKeys/${google_tags_tag_key.key2.name}"
   short_name = "%{tag_value_name2}"
 }
 
 resource "google_bigquery_dataset" "test" {
-  provider = google-beta
-
   dataset_id = "%{dataset_id}"
 }
 
 resource "google_bigquery_table" "test" {
-  provider = google-beta
-
   deletion_protection = false
   allow_resource_tags_on_deletion = true
   dataset_id = "${google_bigquery_dataset.test.dataset_id}"
@@ -4165,42 +4145,30 @@ resource "google_bigquery_table" "test" {
 func testAccBigQueryTableWithResourceTagsDestroy(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_tags_tag_key" "key1" {
-  provider = google-beta
-
   parent = "projects/%{project_id}"
   short_name = "%{tag_key_name1}"
 }
 
 resource "google_tags_tag_value" "value1" {
-  provider = google-beta
-
   parent = "tagKeys/${google_tags_tag_key.key1.name}"
   short_name = "%{tag_value_name1}"
 }
 
 resource "google_tags_tag_key" "key2" {
-  provider = google-beta
-
   parent = "projects/%{project_id}"
   short_name = "%{tag_key_name2}"
 }
 
 resource "google_tags_tag_value" "value2" {
-  provider = google-beta
-
   parent = "tagKeys/${google_tags_tag_key.key2.name}"
   short_name = "%{tag_value_name2}"
 }
 
 resource "google_bigquery_dataset" "test" {
-  provider = google-beta
-
   dataset_id = "%{dataset_id}"
 }
 
 resource "google_bigquery_table" "test" {
-  provider = google-beta
-
   deletion_protection = false
   allow_resource_tags_on_deletion = true
   dataset_id = "${google_bigquery_dataset.test.dataset_id}"
