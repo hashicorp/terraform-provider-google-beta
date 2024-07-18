@@ -69,12 +69,6 @@ var GKEHubFeatureEndpointEntry = &schema.Schema{
 	Optional: true,
 }
 
-var NetworkConnectivityEndpointEntryKey = "network_connectivity_custom_endpoint"
-var NetworkConnectivityEndpointEntry = &schema.Schema{
-	Type:     schema.TypeString,
-	Optional: true,
-}
-
 var RecaptchaEnterpriseEndpointEntryKey = "recaptcha_enterprise_custom_endpoint"
 var RecaptchaEnterpriseEndpointEntry = &schema.Schema{
 	Type:     schema.TypeString,
@@ -89,7 +83,6 @@ type DCLConfig struct {
 	EventarcBasePath             string
 	FirebaserulesBasePath        string
 	GKEHubFeatureBasePath        string
-	NetworkConnectivityBasePath  string
 	RecaptchaEnterpriseBasePath  string
 }
 
@@ -101,7 +94,6 @@ func ConfigureDCLProvider(provider *schema.Provider) {
 	provider.Schema[EventarcEndpointEntryKey] = EventarcEndpointEntry
 	provider.Schema[FirebaserulesEndpointEntryKey] = FirebaserulesEndpointEntry
 	provider.Schema[GKEHubFeatureEndpointEntryKey] = GKEHubFeatureEndpointEntry
-	provider.Schema[NetworkConnectivityEndpointEntryKey] = NetworkConnectivityEndpointEntry
 	provider.Schema[RecaptchaEnterpriseEndpointEntryKey] = RecaptchaEnterpriseEndpointEntry
 }
 
@@ -139,11 +131,6 @@ func HandleDCLCustomEndpointDefaults(d *schema.ResourceData) {
 	if d.Get(GKEHubFeatureEndpointEntryKey) == "" {
 		d.Set(GKEHubFeatureEndpointEntryKey, MultiEnvDefault([]string{
 			"GOOGLE_GKEHUB_FEATURE_CUSTOM_ENDPOINT",
-		}, ""))
-	}
-	if d.Get(NetworkConnectivityEndpointEntryKey) == "" {
-		d.Set(NetworkConnectivityEndpointEntryKey, MultiEnvDefault([]string{
-			"GOOGLE_NETWORK_CONNECTIVITY_CUSTOM_ENDPOINT",
 		}, ""))
 	}
 	if d.Get(RecaptchaEnterpriseEndpointEntryKey) == "" {
@@ -192,12 +179,6 @@ func ConfigureDCLCustomEndpointAttributesFramework(frameworkSchema *framework_sc
 		},
 	}
 	frameworkSchema.Attributes["gkehub_feature_custom_endpoint"] = framework_schema.StringAttribute{
-		Optional: true,
-		Validators: []validator.String{
-			CustomEndpointValidator(),
-		},
-	}
-	frameworkSchema.Attributes["network_connectivity_custom_endpoint"] = framework_schema.StringAttribute{
 		Optional: true,
 		Validators: []validator.String{
 			CustomEndpointValidator(),
