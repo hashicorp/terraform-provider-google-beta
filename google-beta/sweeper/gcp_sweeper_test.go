@@ -5,7 +5,7 @@ package sweeper_test
 import (
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/accessapproval"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/accesscontextmanager"
