@@ -263,6 +263,14 @@ func TestAccComputeRegionBackendService_withBackendAndIAP(t *testing.T) {
 		CheckDestroy:             testAccCheckComputeRegionBackendServiceDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
+				Config: testAccComputeRegionBackendService_ilbBasic(backendName, checkName),
+			},
+			{
+				ResourceName:      "google_compute_region_backend_service.foobar",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+			{
 				Config: testAccComputeRegionBackendService_ilbBasicwithIAP(backendName, checkName),
 			},
 			{
@@ -270,14 +278,6 @@ func TestAccComputeRegionBackendService_withBackendAndIAP(t *testing.T) {
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"iap.0.oauth2_client_secret"},
-			},
-			{
-				Config: testAccComputeRegionBackendService_ilbBasic(backendName, checkName),
-			},
-			{
-				ResourceName:      "google_compute_region_backend_service.foobar",
-				ImportState:       true,
-				ImportStateVerify: true,
 			},
 		},
 	})
@@ -1036,6 +1036,7 @@ resource "google_compute_region_backend_service" "foobar" {
   }
 
   iap {
+    enabled              = true
     oauth2_client_id     = "test"
     oauth2_client_secret = "test"
   }
