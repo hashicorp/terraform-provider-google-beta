@@ -1883,6 +1883,8 @@ func TestAccComputeInstanceConfidentialInstanceConfigMain(t *testing.T) {
 
 	var instance compute.Instance
 	var instance2 compute.Instance
+	var instance3 compute.Instance
+	var instance4 compute.Instance
 	instanceName := fmt.Sprintf("tf-test-%s", acctest.RandString(t, 10))
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -1897,14 +1899,18 @@ func TestAccComputeInstanceConfidentialInstanceConfigMain(t *testing.T) {
 					testAccCheckComputeInstanceHasConfidentialInstanceConfig(&instance, true, "SEV"),
 					testAccCheckComputeInstanceExists(t, "google_compute_instance.foobar2", &instance2),
 					testAccCheckComputeInstanceHasConfidentialInstanceConfig(&instance2, true, ""),
+					testAccCheckComputeInstanceExists(t, "google_compute_instance.foobar3", &instance3),
+					testAccCheckComputeInstanceHasConfidentialInstanceConfig(&instance3, true, "SEV"),
+					testAccCheckComputeInstanceExists(t, "google_compute_instance.foobar4", &instance4),
+					testAccCheckComputeInstanceHasConfidentialInstanceConfig(&instance4, true, ""),
 				),
 			},
 			{
 				Config: testAccComputeInstanceConfidentialInstanceConfigNoEnable(instanceName, "AMD Milan", "SEV_SNP"),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckComputeInstanceExists(t, "google_compute_instance.foobar3", &instance),
+					testAccCheckComputeInstanceExists(t, "google_compute_instance.foobar5", &instance),
 					testAccCheckComputeInstanceHasConfidentialInstanceConfig(&instance, false, "SEV_SNP"),
-					testAccCheckComputeInstanceExists(t, "google_compute_instance.foobar4", &instance2),
+					testAccCheckComputeInstanceExists(t, "google_compute_instance.foobar6", &instance2),
 					testAccCheckComputeInstanceHasConfidentialInstanceConfig(&instance2, false, "SEV_SNP"),
 				),
 			},
@@ -7674,7 +7680,58 @@ resource "google_compute_instance" "foobar2" {
   }
 
 }
-`, instance, confidentialInstanceType, instance)
+
+resource "google_compute_instance" "foobar3" {
+  name         = "%s3"
+  machine_type = "c3d-standard-4"
+  zone         = "us-central1-a"
+
+  boot_disk {
+    initialize_params {
+      image = data.google_compute_image.my_image.self_link
+    }
+  }
+
+  network_interface {
+    network = "default"
+  }
+
+  confidential_instance_config {
+    enable_confidential_compute       = true
+    confidential_instance_type        = %q
+  }
+
+  scheduling {
+	  on_host_maintenance = "TERMINATE"
+  }
+
+}
+
+resource "google_compute_instance" "foobar4" {
+  name         = "%s4"
+  machine_type = "c3d-standard-4"
+  zone         = "us-central1-a"
+
+  boot_disk {
+    initialize_params {
+      image = data.google_compute_image.my_image.self_link
+    }
+  }
+
+  network_interface {
+    network = "default"
+  }
+
+  confidential_instance_config {
+    enable_confidential_compute       = true
+  }
+
+  scheduling {
+    on_host_maintenance = "TERMINATE"
+  }
+
+}
+`, instance, confidentialInstanceType, instance, instance, confidentialInstanceType, instance)
 }
 
 func testAccComputeInstanceConfidentialInstanceConfigNoEnable(instance string, minCpuPlatform, confidentialInstanceType string) string {
@@ -7684,8 +7741,8 @@ data "google_compute_image" "my_image2" {
   project   = "ubuntu-os-cloud"
 }
 
-resource "google_compute_instance" "foobar3" {
-  name         = "%s3"
+resource "google_compute_instance" "foobar5" {
+  name         = "%s5"
   machine_type = "n2d-standard-2"
   zone         = "us-central1-a"
 
@@ -7711,8 +7768,8 @@ resource "google_compute_instance" "foobar3" {
   }
 
 }
-resource "google_compute_instance" "foobar4" {
-  name         = "%s4"
+resource "google_compute_instance" "foobar6" {
+  name         = "%s6"
   machine_type = "n2d-standard-2"
   zone         = "us-central1-a"
 
