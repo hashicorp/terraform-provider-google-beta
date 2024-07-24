@@ -76,8 +76,8 @@ domain name label.`,
 			"name": {
 				Type:     schema.TypeString,
 				Computed: true,
-				Description: `Output only. The fully-qualified resource name of the Hosting site, in the
-format: projects/PROJECT_IDENTIFIER/sites/SITE_ID PROJECT_IDENTIFIER: the
+				Description: `Output only. The fully-qualified resource name of the Hosting site, in
+the format: projects/PROJECT_IDENTIFIER/sites/SITE_ID PROJECT_IDENTIFIER: the
 Firebase project's
 ['ProjectNumber'](https://firebase.google.com/docs/reference/firebase-management/rest/v1beta1/projects#FirebaseProject.FIELDS.project_number) ***(recommended)*** or its
 ['ProjectId'](https://firebase.google.com/docs/reference/firebase-management/rest/v1beta1/projects#FirebaseProject.FIELDS.project_id).

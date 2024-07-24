@@ -37,7 +37,6 @@ import (
 	eventarc "github.com/GoogleCloudPlatform/declarative-resource-client-library/services/google/eventarc/beta"
 	firebaserules "github.com/GoogleCloudPlatform/declarative-resource-client-library/services/google/firebaserules/beta"
 	gkehub "github.com/GoogleCloudPlatform/declarative-resource-client-library/services/google/gkehub/beta"
-	networkconnectivity "github.com/GoogleCloudPlatform/declarative-resource-client-library/services/google/networkconnectivity/beta"
 	recaptchaenterprise "github.com/GoogleCloudPlatform/declarative-resource-client-library/services/google/recaptchaenterprise/beta"
 )
 
@@ -338,29 +337,6 @@ func NewDCLGkeHubClient(config *Config, userAgent, billingProject string, timeou
 
 	dclConfig := dcl.NewConfig(configOptions...)
 	return gkehub.NewClient(dclConfig)
-}
-
-func NewDCLNetworkConnectivityClient(config *Config, userAgent, billingProject string, timeout time.Duration) *networkconnectivity.Client {
-	configOptions := []dcl.ConfigOption{
-		dcl.WithHTTPClient(config.Client),
-		dcl.WithUserAgent(userAgent),
-		dcl.WithLogger(dclLogger{}),
-		dcl.WithBasePath(config.NetworkConnectivityBasePath),
-	}
-
-	if timeout != 0 {
-		configOptions = append(configOptions, dcl.WithTimeout(timeout))
-	}
-
-	if config.UserProjectOverride {
-		configOptions = append(configOptions, dcl.WithUserProjectOverride())
-		if billingProject != "" {
-			configOptions = append(configOptions, dcl.WithBillingProject(billingProject))
-		}
-	}
-
-	dclConfig := dcl.NewConfig(configOptions...)
-	return networkconnectivity.NewClient(dclConfig)
 }
 
 func NewDCLRecaptchaEnterpriseClient(config *Config, userAgent, billingProject string, timeout time.Duration) *recaptchaenterprise.Client {
