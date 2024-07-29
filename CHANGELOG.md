@@ -27,7 +27,6 @@ IMPROVEMENTS:
 * compute: added `shared_secret` field to `google_compute_public_advertised_prefix` resource ([#7767](https://github.com/hashicorp/terraform-provider-google-beta/pull/7767))
 * compute: added `storage_pool` under `boot_disk.initialize_params` to `google_compute_instance` resource ([#7787](https://github.com/hashicorp/terraform-provider-google-beta/pull/7787))
 * compute: changed `target_service` field on the `google_compute_service_attachment` resource to accept a `ForwardingRule` or `Gateway` URL. ([#7736](https://github.com/hashicorp/terraform-provider-google-beta/pull/7736))
-* container: added documentation for `reservation_affinity` field of `google_container_node_pool` resource ([#7741](https://github.com/hashicorp/terraform-provider-google-beta/pull/7741))
 * container: added field `ray_operator_config` for `resource_container_cluster` ([#7795](https://github.com/hashicorp/terraform-provider-google-beta/pull/7795))
 * datastream: added `merge` and `appendOnly` fields to `google_datastream_stream` resource ([#7726](https://github.com/hashicorp/terraform-provider-google-beta/pull/7726))
 * datastream: promoted `source_config.sql_server_source_config` and `backfill_all.sql_server_excluded_objects` fields in `google_datastream_stream` resource from beta to GA ([#7729](https://github.com/hashicorp/terraform-provider-google-beta/pull/7729))
