@@ -30,7 +30,6 @@ IMPROVEMENTS:
 * container: added field `ray_operator_config` for `google_container_cluster` ([#7795](https://github.com/hashicorp/terraform-provider-google-beta/pull/7795))
 * datastream: added `merge` and `append_only` fields to `google_datastream_stream` resource ([#7726](https://github.com/hashicorp/terraform-provider-google-beta/pull/7726))
 * dlp: added `cloud_storage_target` field to `google_data_loss_prevention_discovery_config` resource ([#7734](https://github.com/hashicorp/terraform-provider-google-beta/pull/7734))
-* netapp: added `default_from_api = true` attribute to `smb_settings` field of `google_netapp_volume` ([#7770](https://github.com/hashicorp/terraform-provider-google-beta/pull/7770))
 * resourcemanager: added `check_if_service_has_usage_on_destroy` field to `google_project_service` resource ([#7745](https://github.com/hashicorp/terraform-provider-google-beta/pull/7745))
 * resourcemanager: added the `member` property to `google_project_service_identity` ([#7708](https://github.com/hashicorp/terraform-provider-google-beta/pull/7708))
 * vmwareengine: added `deletion_delay_hours` field to `google_vmwareengine_private_cloud` resource ([#7710](https://github.com/hashicorp/terraform-provider-google-beta/pull/7710))
@@ -42,6 +41,7 @@ BUG FIXES:
 * dialogflowcx: fixed intermittent issues with retrieving resource state soon after creating `google_dialogflow_cx_security_settings` resources ([#7772](https://github.com/hashicorp/terraform-provider-google-beta/pull/7772))
 * firestore: fixed missing import of `field` for `google_firestore_field`. ([#7757](https://github.com/hashicorp/terraform-provider-google-beta/pull/7757))
 * firestore: fixed bug where fields `database`, `collection`, `document_id`, and `field` could not be updated on `google_firestore_document` and `google_firestore_field` resources. ([#7791](https://github.com/hashicorp/terraform-provider-google-beta/pull/7791))
+* netapp: made the `smb_settings` field on the `google_netapp_volume` resource default to the value returned from the API. This solves permadiffs when the field is unset. ([#7770](https://github.com/hashicorp/terraform-provider-google-beta/pull/7770))
 * networksecurity: added recreate functionality on update for `client_validation_mode` and `client_validation_trust_config` in  `google_network_security_server_tls_policy` ([#7756](https://github.com/hashicorp/terraform-provider-google-beta/pull/7756))
 
 ## 5.38.0 (July 15, 2024)
