@@ -18,7 +18,6 @@ FEATURES:
 
 IMPROVEMENTS:
 * alloydb: added `observability_config` field to `google_alloydb_instance` resource ([#7737](https://github.com/hashicorp/terraform-provider-google-beta/pull/7737))
-* bigquery: added `resource_tags` field to `google_bigquery_dataset` resource (ga) ([#7718](https://github.com/hashicorp/terraform-provider-google-beta/pull/7718))
 * bigquery: added `resource_tags` field to `google_bigquery_table` resource ([#7735](https://github.com/hashicorp/terraform-provider-google-beta/pull/7735))
 * bigtable: added `data_boost_isolation_read_only` and `data_boost_isolation_read_only.compute_billing_owner` fields to `google_bigtable_app_profile` resource ([#7789](https://github.com/hashicorp/terraform-provider-google-beta/pull/7789))
 * cloudfunctions: added `build_service_account` field to `google_cloudfunctions_function` resource ([#7713](https://github.com/hashicorp/terraform-provider-google-beta/pull/7713))
