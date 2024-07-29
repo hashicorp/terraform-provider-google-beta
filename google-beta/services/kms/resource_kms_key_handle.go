@@ -69,7 +69,7 @@ A full list of valid locations can be found by running 'gcloud kms locations lis
 				Required: true,
 				ForceNew: true,
 				Description: `Selector of the resource type where we want to protect resources.
-For example, 'storage.googleapis.com/Bucket OR compute.googleapis.com/*'`,
+For example, 'storage.googleapis.com/Bucket'.`,
 			},
 			"kms_key": {
 				Type:     schema.TypeString,
