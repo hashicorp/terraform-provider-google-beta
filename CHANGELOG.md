@@ -1,7 +1,7 @@
 ## 5.39.1 (Unreleased)
 
 BUG FIXES:
-* datastream: removed a breaking change in `google_datastream_stream` that made one of `destination_config.0.bigquery_destination_config.0.merge` or `destination_config.0.bigquery_destination_config.0.append_only` required ([#7835](https://github.com/hashicorp/terraform-provider-google-beta/pull/7835))
+* datastream: fixed a breaking change in 5.39.0 `google_datastream_stream` that made one of `destination_config.0.bigquery_destination_config.0.merge` or `destination_config.0.bigquery_destination_config.0.append_only` required ([#7835](https://github.com/hashicorp/terraform-provider-google-beta/pull/7835))
 
 ## 5.39.0 (July 29, 2024)
 
