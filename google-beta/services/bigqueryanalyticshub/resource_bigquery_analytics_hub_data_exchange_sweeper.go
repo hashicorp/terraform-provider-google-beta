@@ -64,7 +64,7 @@ func testSweepBigqueryAnalyticsHubDataExchange(region string) error {
 		},
 	}
 
-	listTemplate := strings.Split("https://analyticshub.googleapis.com/v1beta1/projects/{{project}}/locations/{{location}}/dataExchanges", "?")[0]
+	listTemplate := strings.Split("https://analyticshub.googleapis.com/v1/projects/{{project}}/locations/{{location}}/dataExchanges", "?")[0]
 	listUrl, err := tpgresource.ReplaceVars(d, config, listTemplate)
 	if err != nil {
 		log.Printf("[INFO][SWEEPER_LOG] error preparing sweeper list url: %s", err)
@@ -112,7 +112,7 @@ func testSweepBigqueryAnalyticsHubDataExchange(region string) error {
 			continue
 		}
 
-		deleteTemplate := "https://analyticshub.googleapis.com/v1beta1/projects/{{project}}/locations/{{location}}/dataExchanges/{{data_exchange_id}}"
+		deleteTemplate := "https://analyticshub.googleapis.com/v1/projects/{{project}}/locations/{{location}}/dataExchanges/{{data_exchange_id}}"
 		deleteUrl, err := tpgresource.ReplaceVars(d, config, deleteTemplate)
 		if err != nil {
 			log.Printf("[INFO][SWEEPER_LOG] error preparing delete url: %s", err)
