@@ -505,7 +505,7 @@ var DefaultBasePaths = map[string]string{
 	BeyondcorpBasePathKey:               "https://beyondcorp.googleapis.com/v1/",
 	BiglakeBasePathKey:                  "https://biglake.googleapis.com/v1/",
 	BigQueryBasePathKey:                 "https://bigquery.googleapis.com/bigquery/v2/",
-	BigqueryAnalyticsHubBasePathKey:     "https://analyticshub.googleapis.com/v1beta1/",
+	BigqueryAnalyticsHubBasePathKey:     "https://analyticshub.googleapis.com/v1/",
 	BigqueryConnectionBasePathKey:       "https://bigqueryconnection.googleapis.com/v1/",
 	BigqueryDatapolicyBasePathKey:       "https://bigquerydatapolicy.googleapis.com/v1/",
 	BigqueryDataTransferBasePathKey:     "https://bigquerydatatransfer.googleapis.com/v1/",
