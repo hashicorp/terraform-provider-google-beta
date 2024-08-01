@@ -1,7 +1,7 @@
 ## 5.40.0 (Unreleased)
 
 DEPRECATIONS:
-* deprecated `skip_delete` field in the `google_project` resource. Instead use the new field `deletion_policy` in the next major release ([#7817](https://github.com/hashicorp/terraform-provider-google-beta/pull/7817))
+* resourcemanager: deprecated `skip_delete` field in the `google_project` resource. Instead use the new field `deletion_policy` in the next major release ([#7817](https://github.com/hashicorp/terraform-provider-google-beta/pull/7817))
 
 IMPROVEMENTS:
 * bigquery: added support for value `DELTA_LAKE` to `source_format` in `google_bigquery_table` resource ([#7841](https://github.com/hashicorp/terraform-provider-google-beta/pull/7841))
