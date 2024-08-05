@@ -15,7 +15,7 @@
 //
 // ----------------------------------------------------------------------------
 
-package bigqueryanalyticshub
+package securitycenterv2
 
 import (
 	"context"
@@ -30,12 +30,12 @@ import (
 )
 
 func init() {
-	sweeper.AddTestSweepers("BigqueryAnalyticsHubDataExchange", testSweepBigqueryAnalyticsHubDataExchange)
+	sweeper.AddTestSweepers("SecurityCenterV2FolderMuteConfig", testSweepSecurityCenterV2FolderMuteConfig)
 }
 
 // At the time of writing, the CI only passes us-central1 as the region
-func testSweepBigqueryAnalyticsHubDataExchange(region string) error {
-	resourceName := "BigqueryAnalyticsHubDataExchange"
+func testSweepSecurityCenterV2FolderMuteConfig(region string) error {
+	resourceName := "SecurityCenterV2FolderMuteConfig"
 	log.Printf("[INFO][SWEEPER_LOG] Starting sweeper for %s", resourceName)
 
 	config, err := sweeper.SharedConfigForRegion(region)
@@ -64,7 +64,7 @@ func testSweepBigqueryAnalyticsHubDataExchange(region string) error {
 		},
 	}
 
-	listTemplate := strings.Split("https://analyticshub.googleapis.com/v1/projects/{{project}}/locations/{{location}}/dataExchanges", "?")[0]
+	listTemplate := strings.Split("https://securitycenter.googleapis.com/v2/folders/{{folder}}/locations/{{location}}/muteConfigs", "?")[0]
 	listUrl, err := tpgresource.ReplaceVars(d, config, listTemplate)
 	if err != nil {
 		log.Printf("[INFO][SWEEPER_LOG] error preparing sweeper list url: %s", err)
@@ -83,7 +83,7 @@ func testSweepBigqueryAnalyticsHubDataExchange(region string) error {
 		return nil
 	}
 
-	resourceList, ok := res["dataExchanges"]
+	resourceList, ok := res["folderMuteConfigs"]
 	if !ok {
 		log.Printf("[INFO][SWEEPER_LOG] Nothing found in response.")
 		return nil
@@ -112,7 +112,7 @@ func testSweepBigqueryAnalyticsHubDataExchange(region string) error {
 			continue
 		}
 
-		deleteTemplate := "https://analyticshub.googleapis.com/v1/projects/{{project}}/locations/{{location}}/dataExchanges/{{data_exchange_id}}"
+		deleteTemplate := "https://securitycenter.googleapis.com/v2/folders/{{folder}}/locations/{{location}}/muteConfigs/{{mute_config_id}}"
 		deleteUrl, err := tpgresource.ReplaceVars(d, config, deleteTemplate)
 		if err != nil {
 			log.Printf("[INFO][SWEEPER_LOG] error preparing delete url: %s", err)
