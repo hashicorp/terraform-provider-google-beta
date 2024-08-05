@@ -471,9 +471,9 @@ var handwrittenIAMDatasources = map[string]*schema.Resource{
 }
 
 // Resources
-// Generated resources: 499
+// Generated resources: 498
 // Generated IAM resources: 282
-// Total generated resources: 781
+// Total generated resources: 780
 var generatedResources = map[string]*schema.Resource{
 	"google_folder_access_approval_settings":                                     accessapproval.ResourceAccessApprovalFolderSettings(),
 	"google_organization_access_approval_settings":                               accessapproval.ResourceAccessApprovalOrganizationSettings(),
@@ -996,7 +996,6 @@ var generatedResources = map[string]*schema.Resource{
 	"google_identity_platform_default_supported_idp_config":                      identityplatform.ResourceIdentityPlatformDefaultSupportedIdpConfig(),
 	"google_identity_platform_inbound_saml_config":                               identityplatform.ResourceIdentityPlatformInboundSamlConfig(),
 	"google_identity_platform_oauth_idp_config":                                  identityplatform.ResourceIdentityPlatformOauthIdpConfig(),
-	"google_identity_platform_project_default_config":                            identityplatform.ResourceIdentityPlatformProjectDefaultConfig(),
 	"google_identity_platform_tenant":                                            identityplatform.ResourceIdentityPlatformTenant(),
 	"google_identity_platform_tenant_default_supported_idp_config":               identityplatform.ResourceIdentityPlatformTenantDefaultSupportedIdpConfig(),
 	"google_identity_platform_tenant_inbound_saml_config":                        identityplatform.ResourceIdentityPlatformTenantInboundSamlConfig(),
