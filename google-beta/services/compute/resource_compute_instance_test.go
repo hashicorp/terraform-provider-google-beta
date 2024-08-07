@@ -2015,6 +2015,13 @@ func TestAccComputeInstanceConfidentialInstanceConfigMain(t *testing.T) {
 					testAccCheckComputeInstanceHasConfidentialInstanceConfig(&instance2, false, "SEV_SNP"),
 				),
 			},
+			{
+				Config: testAccComputeInstanceConfidentialInstanceConfigEnableTdx(instanceName, "TDX"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckComputeInstanceExists(t, "google_compute_instance.foobar5", &instance),
+					testAccCheckComputeInstanceHasConfidentialInstanceConfig(&instance, false, "TDX"),
+				),
+			},
 		},
 	})
 }
@@ -8054,6 +8061,40 @@ resource "google_compute_instance" "foobar6" {
 `, instance, minCpuPlatform, confidentialInstanceType, instance, minCpuPlatform, confidentialInstanceType)
 }
 
+func testAccComputeInstanceConfidentialInstanceConfigEnableTdx(instance string, confidentialInstanceType string) string {
+	return fmt.Sprintf(`
+data "google_compute_image" "my_image3" {
+  family    = "ubuntu-2204-lts"
+  project   = "tdx-guest-images"
+}
+
+resource "google_compute_instance" "foobar5" {
+  name         = "%s"
+  machine_type = "c3-standard-4"
+  zone         = "us-central1-a"
+
+  boot_disk {
+    initialize_params {
+      image = data.google_compute_image.my_image3.self_link
+    }
+  }
+
+  network_interface {
+    network = "default"
+  }
+
+  confidential_instance_config {
+    confidential_instance_type = %q
+  }
+
+  scheduling {
+    on_host_maintenance = "TERMINATE"
+  }
+
+}
+`, instance, confidentialInstanceType)
+}
+
 func testAccComputeInstance_attributionLabelCreate(instance, add, strategy string) string {
 	return fmt.Sprintf(`
 provider "google" {
@@ -8853,7 +8894,7 @@ resource "google_compute_instance" "foobar" {
   }
 
   partner_metadata = {
-  	"test.compute.googleapis.com" = jsonencode({ 
+  	"test.compute.googleapis.com" = jsonencode({
   		entries = {
   			key1 = "value1"
   			key2 = 2
@@ -9204,7 +9245,7 @@ resource "google_compute_subnetwork" "subnet2" {
   stack_type                 = "IPV4_ONLY"
   network                    = google_compute_network.net2.id
 }
-  
+
 resource "google_compute_subnetwork" "subnet-ipv62" {
   region                     = "europe-west1"
   name                       = "tf-test-subnet-ip62-%s"
@@ -9219,7 +9260,7 @@ resource "google_compute_address" "normal-address2" {
   region   = "europe-west1"
   name     = "tf-test-addr-normal2-%s"
 }
-  
+
 resource "google_compute_address" "ipv6-address2" {
   region             = "europe-west1"
   name               = "tf-test-addr-ipv62-%s"
@@ -9376,7 +9417,7 @@ resource "google_compute_subnetwork" "subnet2" {
   stack_type                 = "IPV4_ONLY"
   network                    = google_compute_network.net2.id
 }
-  
+
 resource "google_compute_subnetwork" "subnet-ipv62" {
   region                     = "europe-west1"
   name                       = "tf-test-subnet-ip62-%s"
@@ -9391,7 +9432,7 @@ resource "google_compute_address" "normal-address2" {
   region   = "europe-west1"
   name     = "tf-test-addr-normal2-%s"
 }
-  
+
 resource "google_compute_address" "ipv6-address2" {
   region             = "europe-west1"
   name               = "tf-test-addr-ipv62-%s"
