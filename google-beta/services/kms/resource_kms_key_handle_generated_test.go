@@ -63,6 +63,7 @@ resource "google_folder" "autokms_folder" {
   provider     = google-beta
   display_name = "folder-example"
   parent       = "organizations/%{org_id}"
+  deletion_protection = false
 }
 
 # Create the key project
