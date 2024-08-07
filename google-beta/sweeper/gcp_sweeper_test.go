@@ -5,7 +5,7 @@ package sweeper_test
 import (
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/accessapproval"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/accesscontextmanager"
@@ -120,12 +120,14 @@ import (
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/securesourcemanager"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/securitycenter"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/securitycentermanagement"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/securitycenterv2"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/securityposture"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/securityscanner"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/servicedirectory"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/servicemanagement"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/servicenetworking"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/serviceusage"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/siteverification"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/sourcerepo"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/spanner"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/sql"

@@ -8,10 +8,11 @@ import (
 	"regexp"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/container"
 )
 
 func TestAccContainerCluster_basic(t *testing.T) {
@@ -590,6 +591,49 @@ func TestAccContainerCluster_withAuthenticatorGroupsConfig(t *testing.T) {
 			},
 		},
 	})
+}
+
+func TestUnitContainerCluster_Rfc3339TimeDiffSuppress(t *testing.T) {
+	cases := map[string]struct {
+		Old, New           string
+		ExpectDiffSuppress bool
+	}{
+		"same time, format changed to have leading zero": {
+			Old:                "2:00",
+			New:                "02:00",
+			ExpectDiffSuppress: true,
+		},
+		"same time, format changed not to have leading zero": {
+			Old:                "02:00",
+			New:                "2:00",
+			ExpectDiffSuppress: true,
+		},
+		"different time, both without leading zero": {
+			Old:                "2:00",
+			New:                "3:00",
+			ExpectDiffSuppress: false,
+		},
+		"different time, old with leading zero, new without": {
+			Old:                "02:00",
+			New:                "3:00",
+			ExpectDiffSuppress: false,
+		},
+		"different time, new with leading zero, oldwithout": {
+			Old:                "2:00",
+			New:                "03:00",
+			ExpectDiffSuppress: false,
+		},
+		"different time, both with leading zero": {
+			Old:                "02:00",
+			New:                "03:00",
+			ExpectDiffSuppress: false,
+		},
+	}
+	for tn, tc := range cases {
+		if container.Rfc3339TimeDiffSuppress("time", tc.Old, tc.New, nil) != tc.ExpectDiffSuppress {
+			t.Errorf("bad: %s, '%s' => '%s' expect DiffSuppress to return %t", tn, tc.Old, tc.New, tc.ExpectDiffSuppress)
+		}
+	}
 }
 
 func testAccContainerCluster_enableMultiNetworking(clusterName string) string {
@@ -3892,6 +3936,60 @@ func TestAccContainerCluster_autoprovisioningDefaultsManagement(t *testing.T) {
 	})
 }
 
+func TestAccContainerCluster_autoprovisioningLocations(t *testing.T) {
+	t.Parallel()
+
+	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
+	networkName := acctest.BootstrapSharedTestNetwork(t, "gke-cluster")
+	subnetworkName := acctest.BootstrapSubnet(t, "gke-cluster", networkName)
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckContainerClusterDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccContainerCluster_autoprovisioningLocations(clusterName, networkName, subnetworkName, []string{"us-central1-a", "us-central1-f"}),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("google_container_cluster.with_autoprovisioning_locations",
+						"cluster_autoscaling.0.enabled", "true"),
+
+					resource.TestCheckResourceAttr("google_container_cluster.with_autoprovisioning_locations",
+						"cluster_autoscaling.0.auto_provisioning_locations.0", "us-central1-a"),
+
+					resource.TestCheckResourceAttr("google_container_cluster.with_autoprovisioning_locations",
+						"cluster_autoscaling.0.auto_provisioning_locations.1", "us-central1-f"),
+				),
+			},
+			{
+				ResourceName:            "google_container_cluster.with_autoprovisioning_locations",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"min_master_version", "deletion_protection"},
+			},
+			{
+				Config: testAccContainerCluster_autoprovisioningLocations(clusterName, networkName, subnetworkName, []string{"us-central1-b", "us-central1-c"}),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("google_container_cluster.with_autoprovisioning_locations",
+						"cluster_autoscaling.0.enabled", "true"),
+
+					resource.TestCheckResourceAttr("google_container_cluster.with_autoprovisioning_locations",
+						"cluster_autoscaling.0.auto_provisioning_locations.0", "us-central1-b"),
+
+					resource.TestCheckResourceAttr("google_container_cluster.with_autoprovisioning_locations",
+						"cluster_autoscaling.0.auto_provisioning_locations.1", "us-central1-c"),
+				),
+			},
+			{
+				ResourceName:            "google_container_cluster.with_autoprovisioning_locations",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"min_master_version", "deletion_protection"},
+			},
+		},
+	})
+}
+
 // This resource originally cleaned up the dangling cluster directly, but now
 // taints it, having Terraform clean it up during the next apply. This test
 // name is now inexact, but is being preserved to maintain the test history.
@@ -5165,6 +5263,9 @@ resource "google_container_cluster" "primary" {
   initial_node_count = 1
 
   min_master_version = "latest"
+  release_channel {
+    channel = "RAPID"
+  }
 
   workload_identity_config {
     workload_pool = "${data.google_project.project.project_id}.svc.id.goog"
@@ -5202,6 +5303,9 @@ resource "google_container_cluster" "primary" {
       enabled = false
     }
     stateful_ha_config {
+      enabled = false
+    }
+    ray_operator_config {
       enabled = false
     }
     istio_config {
@@ -5271,6 +5375,15 @@ resource "google_container_cluster" "primary" {
     }
     stateful_ha_config {
       enabled = true
+    }
+    ray_operator_config {
+      enabled = true
+      ray_cluster_logging_config {
+        enabled = true
+      }
+      ray_cluster_monitoring_config {
+        enabled = true
+      }
     }
     istio_config {
       disabled = false
@@ -6849,6 +6962,46 @@ resource "google_container_cluster" "with_autoprovisioning_management" {
   subnetwork    = "%s"
 }
 `, clusterName, autoUpgrade, autoRepair, networkName, subnetworkName)
+}
+
+func testAccContainerCluster_autoprovisioningLocations(clusterName, networkName, subnetworkName string, locations []string) string {
+	var autoprovisionLocationsStr string
+	for i := 0; i < len(locations); i++ {
+		autoprovisionLocationsStr += fmt.Sprintf("\"%s\",", locations[i])
+	}
+	var apl string
+	if len(autoprovisionLocationsStr) > 0 {
+		apl = fmt.Sprintf(`
+			auto_provisioning_locations = [%s]
+		`, autoprovisionLocationsStr)
+	}
+
+	return fmt.Sprintf(`
+resource "google_container_cluster" "with_autoprovisioning_locations" {
+  name               = "%s"
+  location           = "us-central1-f"
+  initial_node_count = 1
+
+  cluster_autoscaling {
+    enabled = true
+
+	resource_limits {
+	  resource_type = "cpu"
+	  maximum       = 2
+	}
+
+	resource_limits {
+	  resource_type = "memory"
+	  maximum       = 2048
+	}
+
+    %s
+  }
+  deletion_protection = false
+  network    = "%s"
+  subnetwork    = "%s"
+}
+`, clusterName, apl, networkName, subnetworkName)
 }
 
 func testAccContainerCluster_backendRef(cluster, networkName, subnetworkName string) string {

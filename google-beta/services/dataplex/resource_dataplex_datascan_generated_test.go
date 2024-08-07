@@ -22,8 +22,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
@@ -342,6 +342,13 @@ resource "google_dataplex_datascan" "full_quality" {
       dimension = "VALIDITY"
       table_condition_expectation {
         sql_expression = "COUNT(*) > 0"
+      }
+    }
+
+    rules {
+      dimension = "VALIDITY"
+      sql_assertion {
+        sql_statement = "select * from bigquery-public-data.austin_bikeshare.bikeshare_stations where station_id is null"
       }
     }
   }

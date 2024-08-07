@@ -22,8 +22,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
@@ -652,7 +652,7 @@ func TestAccDataprocMetastoreService_dataprocMetastoreServiceAutoscalingNoLimitC
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
 		CheckDestroy:             testAccCheckDataprocMetastoreServiceDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -671,6 +671,7 @@ func TestAccDataprocMetastoreService_dataprocMetastoreServiceAutoscalingNoLimitC
 func testAccDataprocMetastoreService_dataprocMetastoreServiceAutoscalingNoLimitConfigExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_dataproc_metastore_service" "test_resource" {
+  provider = google-beta  
   service_id = "tf-test-test-service%{random_suffix}"
   location   = "us-central1"
 

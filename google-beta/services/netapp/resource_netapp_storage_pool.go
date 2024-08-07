@@ -65,13 +65,13 @@ func ResourceNetappstoragePool() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
-				Description: `Name of the location. Usually a region name, expect for some FLEX service level pools which require a zone name.`,
+				Description: `Name of the location. For zonal Flex pools specify a zone name, in all other cases a region name.`,
 			},
 			"name": {
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
-				Description: `The resource name of the storage pool. Needs to be unique per location.`,
+				Description: `The resource name of the storage pool. Needs to be unique per location/region.`,
 			},
 			"network": {
 				Type:             schema.TypeString,
@@ -121,6 +121,19 @@ Please refer to the field 'effective_labels' for all of the labels present on th
 				ForceNew: true,
 				Description: `When enabled, the volumes uses Active Directory as LDAP name service for UID/GID lookups. Required to enable extended group support for NFSv3,
 using security identifiers for NFSv4.1 or principal names for kerberized NFSv4.1.`,
+			},
+			"replica_zone": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Description: `Specifies the replica zone for regional Flex pools. 'zone' and 'replica_zone' values can be swapped to initiate a
+[zone switch](https://cloud.google.com/netapp/volumes/docs/configure-and-use/storage-pools/edit-or-delete-storage-pool#switch_active_and_replica_zones).`,
+			},
+			"zone": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Description: `Specifies the active zone for regional Flex pools. 'zone' and 'replica_zone' values can be swapped to initiate a
+[zone switch](https://cloud.google.com/netapp/volumes/docs/configure-and-use/storage-pools/edit-or-delete-storage-pool#switch_active_and_replica_zones).
+If you want to create a zonal Flex pool, specify a zone name for 'location' and omit 'zone'.`,
 			},
 			"effective_labels": {
 				Type:        schema.TypeMap,
@@ -210,6 +223,18 @@ func resourceNetappstoragePoolCreate(d *schema.ResourceData, meta interface{}) e
 		return err
 	} else if v, ok := d.GetOkExists("ldap_enabled"); !tpgresource.IsEmptyValue(reflect.ValueOf(ldapEnabledProp)) && (ok || !reflect.DeepEqual(v, ldapEnabledProp)) {
 		obj["ldapEnabled"] = ldapEnabledProp
+	}
+	zoneProp, err := expandNetappstoragePoolZone(d.Get("zone"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("zone"); !tpgresource.IsEmptyValue(reflect.ValueOf(zoneProp)) && (ok || !reflect.DeepEqual(v, zoneProp)) {
+		obj["zone"] = zoneProp
+	}
+	replicaZoneProp, err := expandNetappstoragePoolReplicaZone(d.Get("replica_zone"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("replica_zone"); !tpgresource.IsEmptyValue(reflect.ValueOf(replicaZoneProp)) && (ok || !reflect.DeepEqual(v, replicaZoneProp)) {
+		obj["replicaZone"] = replicaZoneProp
 	}
 	labelsProp, err := expandNetappstoragePoolEffectiveLabels(d.Get("effective_labels"), d, config)
 	if err != nil {
@@ -349,6 +374,12 @@ func resourceNetappstoragePoolRead(d *schema.ResourceData, meta interface{}) err
 	if err := d.Set("encryption_type", flattenNetappstoragePoolEncryptionType(res["encryptionType"], d, config)); err != nil {
 		return fmt.Errorf("Error reading storagePool: %s", err)
 	}
+	if err := d.Set("zone", flattenNetappstoragePoolZone(res["zone"], d, config)); err != nil {
+		return fmt.Errorf("Error reading storagePool: %s", err)
+	}
+	if err := d.Set("replica_zone", flattenNetappstoragePoolReplicaZone(res["replicaZone"], d, config)); err != nil {
+		return fmt.Errorf("Error reading storagePool: %s", err)
+	}
 	if err := d.Set("terraform_labels", flattenNetappstoragePoolTerraformLabels(res["labels"], d, config)); err != nil {
 		return fmt.Errorf("Error reading storagePool: %s", err)
 	}
@@ -393,6 +424,18 @@ func resourceNetappstoragePoolUpdate(d *schema.ResourceData, meta interface{}) e
 	} else if v, ok := d.GetOkExists("active_directory"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, activeDirectoryProp)) {
 		obj["activeDirectory"] = activeDirectoryProp
 	}
+	zoneProp, err := expandNetappstoragePoolZone(d.Get("zone"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("zone"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, zoneProp)) {
+		obj["zone"] = zoneProp
+	}
+	replicaZoneProp, err := expandNetappstoragePoolReplicaZone(d.Get("replica_zone"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("replica_zone"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, replicaZoneProp)) {
+		obj["replicaZone"] = replicaZoneProp
+	}
 	labelsProp, err := expandNetappstoragePoolEffectiveLabels(d.Get("effective_labels"), d, config)
 	if err != nil {
 		return err
@@ -421,6 +464,14 @@ func resourceNetappstoragePoolUpdate(d *schema.ResourceData, meta interface{}) e
 		updateMask = append(updateMask, "activeDirectory")
 	}
 
+	if d.HasChange("zone") {
+		updateMask = append(updateMask, "zone")
+	}
+
+	if d.HasChange("replica_zone") {
+		updateMask = append(updateMask, "replicaZone")
+	}
+
 	if d.HasChange("effective_labels") {
 		updateMask = append(updateMask, "labels")
 	}
@@ -429,6 +480,71 @@ func resourceNetappstoragePoolUpdate(d *schema.ResourceData, meta interface{}) e
 	url, err = transport_tpg.AddQueryParams(url, map[string]string{"updateMask": strings.Join(updateMask, ",")})
 	if err != nil {
 		return err
+	}
+	// detect manual zone switches for service level FLEX
+
+	if d.Get("service_level").(string) == "FLEX" {
+		// Check if this is zonal or regional Flex. Only continue for regional pool
+		_, hasZone := d.GetOk("zone")
+		_, hasReplicaZone := d.GetOk("replica_zone")
+		if hasZone && hasReplicaZone {
+			// For a zone switch, user needs to swap zone and replica_zone. Other changes are not allowed
+			if d.HasChange("zone") && d.HasChange("replica_zone") {
+				oldZone, newZone := d.GetChange("zone")
+				oldReplicaZone, newReplicaZone := d.GetChange("replica_zone")
+				if newZone == oldReplicaZone && newReplicaZone == oldZone {
+					rawurl, err := tpgresource.ReplaceVars(d, config, "{{NetappBasePath}}projects/{{project}}/locations/{{location}}/storagePools/{{name}}:switch")
+					if err != nil {
+						return err
+					}
+
+					reso, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
+						Config:    config,
+						Method:    "POST",
+						Project:   billingProject,
+						RawURL:    rawurl,
+						UserAgent: userAgent,
+						Timeout:   d.Timeout(schema.TimeoutUpdate),
+					})
+					if err != nil {
+						return fmt.Errorf("Error switching active zone for pool: %s, %v", d.Id(), err)
+					}
+
+					err = NetappOperationWaitTime(
+						config, reso, project, "Switching active pool zone", userAgent,
+						d.Timeout(schema.TimeoutUpdate))
+					if err != nil {
+						return err
+					}
+
+					//remove zone and replicaZone from updateMask
+					n := 0
+					for _, v := range updateMask {
+						if v != "zone" && v != "replicaZone" {
+							updateMask[n] = v
+							n++
+						}
+					}
+					updateMask = updateMask[:n]
+
+					// delete from payload too
+					delete(obj, "zone")
+					delete(obj, "replicaZone")
+
+					// PATCH URL was already build prior to this code. We need to rebuild it to catch our changes
+					url, err = tpgresource.ReplaceVars(d, config, "{{NetappBasePath}}projects/{{project}}/locations/{{location}}/storagePools/{{name}}")
+					if err != nil {
+						return err
+					}
+					url, err = transport_tpg.AddQueryParams(url, map[string]string{"updateMask": strings.Join(updateMask, ",")})
+					if err != nil {
+						return err
+					}
+				} else {
+					return fmt.Errorf("Incorrect zone change for pool: %s. Supported zone, replica_zone are : %s, %s", d.Id(), oldZone, oldReplicaZone)
+				}
+			}
+		}
 	}
 
 	// err == nil indicates that the billing_project value was found
@@ -611,6 +727,14 @@ func flattenNetappstoragePoolEncryptionType(v interface{}, d *schema.ResourceDat
 	return v
 }
 
+func flattenNetappstoragePoolZone(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenNetappstoragePoolReplicaZone(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
 func flattenNetappstoragePoolTerraformLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return v
@@ -655,6 +779,14 @@ func expandNetappstoragePoolKmsConfig(v interface{}, d tpgresource.TerraformReso
 }
 
 func expandNetappstoragePoolLdapEnabled(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandNetappstoragePoolZone(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandNetappstoragePoolReplicaZone(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 

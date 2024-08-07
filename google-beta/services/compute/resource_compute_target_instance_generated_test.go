@@ -22,8 +22,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
@@ -126,7 +126,7 @@ data "google_compute_network" "target-vm" {
 
 data "google_compute_image" "vmimage" {
   provider = google-beta
-  family  = "debian-10"
+  family  = "debian-12"
   project = "debian-cloud"
 }
 

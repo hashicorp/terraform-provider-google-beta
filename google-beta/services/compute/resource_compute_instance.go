@@ -26,6 +26,30 @@ import (
 	compute "google.golang.org/api/compute/v0.beta"
 )
 
+func IpCidrRangeDiffSuppress(k, old, new string, d *schema.ResourceData) bool {
+	// The range may be a:
+	// A) single IP address (e.g. 10.2.3.4)
+	// B) CIDR format string (e.g. 10.1.2.0/24)
+	// C) netmask (e.g. /24)
+	//
+	// For A) and B), no diff to suppress, they have to match completely.
+	// For C), The API picks a network IP address and this creates a diff of the form:
+	// network_interface.0.alias_ip_range.0.ip_cidr_range: "10.128.1.0/24" => "/24"
+	// We should only compare the mask portion for this case.
+	if len(new) > 0 && new[0] == '/' {
+		oldNetmaskStartPos := strings.LastIndex(old, "/")
+
+		if oldNetmaskStartPos != -1 {
+			oldNetmask := old[strings.LastIndex(old, "/"):]
+			if oldNetmask == new {
+				return true
+			}
+		}
+	}
+
+	return false
+}
+
 var (
 	bootDiskKeys = []string{
 		"boot_disk.0.auto_delete",
@@ -46,6 +70,7 @@ var (
 		"boot_disk.0.initialize_params.0.provisioned_iops",
 		"boot_disk.0.initialize_params.0.provisioned_throughput",
 		"boot_disk.0.initialize_params.0.enable_confidential_compute",
+		"boot_disk.0.initialize_params.0.storage_pool",
 	}
 
 	schedulingKeys = []string{
@@ -57,8 +82,8 @@ var (
 		"scheduling.0.provisioning_model",
 		"scheduling.0.instance_termination_action",
 		"scheduling.0.max_run_duration",
-		"scheduling.0.maintenance_interval",
 		"scheduling.0.on_instance_stop_action",
+		"scheduling.0.maintenance_interval",
 		"scheduling.0.local_ssd_recovery_timeout",
 	}
 
@@ -266,6 +291,15 @@ func ResourceComputeInstance() *schema.Resource {
 										ForceNew:     true,
 										Description:  `A flag to enable confidential compute mode on boot disk`,
 									},
+
+									"storage_pool": {
+										Type:             schema.TypeString,
+										Optional:         true,
+										AtLeastOneOf:     initializeParamsKeys,
+										ForceNew:         true,
+										DiffSuppressFunc: tpgresource.CompareResourceNames,
+										Description:      `The URL of the storage pool in which the new disk is created`,
+									},
 								},
 							},
 						},
@@ -409,7 +443,7 @@ func ResourceComputeInstance() *schema.Resource {
 									"ip_cidr_range": {
 										Type:             schema.TypeString,
 										Required:         true,
-										DiffSuppressFunc: tpgresource.IpCidrRangeDiffSuppress,
+										DiffSuppressFunc: IpCidrRangeDiffSuppress,
 										Description:      `The IP CIDR range represented by this alias IP range.`,
 									},
 									"subnetwork_range_name": {
@@ -2072,6 +2106,9 @@ func resourceComputeInstanceUpdate(d *schema.ResourceData, meta interface{}) err
 					Fingerprint:     instNetworkInterface.Fingerprint,
 					ForceSendFields: []string{"AliasIpRanges"},
 				}
+				if commonAliasIpRanges := CheckForCommonAliasIp(instNetworkInterface, networkInterface); len(commonAliasIpRanges) > 0 {
+					ni.AliasIpRanges = commonAliasIpRanges
+				}
 				op, err := config.NewComputeClient(userAgent).Instances.UpdateNetworkInterface(project, zone, instance.Name, networkName, ni).Do()
 				if err != nil {
 					return errwrap.Wrapf("Error removing alias_ip_range: {{err}}", err)
@@ -2923,6 +2960,10 @@ func expandBootDisk(d *schema.ResourceData, config *transport_tpg.Config, projec
 		if _, ok := d.GetOk("boot_disk.0.initialize_params.0.resource_manager_tags"); ok {
 			disk.InitializeParams.ResourceManagerTags = tpgresource.ExpandStringMap(d, "boot_disk.0.initialize_params.0.resource_manager_tags")
 		}
+
+		if v, ok := d.GetOk("boot_disk.0.initialize_params.0.storage_pool"); ok {
+			disk.InitializeParams.StoragePool = v.(string)
+		}
 	}
 
 	if v, ok := d.GetOk("boot_disk.0.mode"); ok {
@@ -2965,6 +3006,7 @@ func flattenBootDisk(d *schema.ResourceData, disk *compute.AttachedDisk, config 
 			"provisioned_iops":            diskDetails.ProvisionedIops,
 			"provisioned_throughput":      diskDetails.ProvisionedThroughput,
 			"enable_confidential_compute": diskDetails.EnableConfidentialCompute,
+			"storage_pool":                tpgresource.GetResourceNameFromSelfLink(diskDetails.StoragePool),
 		}}
 	}
 
@@ -3095,4 +3137,21 @@ func isEmptyServiceAccountBlock(d *schema.ResourceData) bool {
 		return true
 	}
 	return false
+}
+
+// Alias ip ranges cannot be removed and created at the same time. This checks if there are any unchanged alias ip ranges
+// to be kept in between the PATCH operations on Network Interface
+func CheckForCommonAliasIp(old, new *compute.NetworkInterface) []*compute.AliasIpRange {
+	newAliasIpMap := make(map[string]bool)
+	for _, ipRange := range new.AliasIpRanges {
+		newAliasIpMap[ipRange.IpCidrRange] = true
+	}
+
+	resultAliasIpRanges := make([]*compute.AliasIpRange, 0)
+	for _, val := range old.AliasIpRanges {
+		if newAliasIpMap[val.IpCidrRange] {
+			resultAliasIpRanges = append(resultAliasIpRanges, val)
+		}
+	}
+	return resultAliasIpRanges
 }

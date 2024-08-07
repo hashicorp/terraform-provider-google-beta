@@ -51,15 +51,28 @@ func expandAliasIpRanges(ranges []interface{}) []*compute.AliasIpRange {
 	return ipRanges
 }
 
-func flattenAliasIpRange(ranges []*compute.AliasIpRange) []map[string]interface{} {
-	rangesSchema := make([]map[string]interface{}, 0, len(ranges))
+func flattenAliasIpRange(d *schema.ResourceData, ranges []*compute.AliasIpRange, i int) []map[string]interface{} {
+	prefix := fmt.Sprintf("network_interface.%d", i)
+
+	configData := []map[string]interface{}{}
+	for _, item := range d.Get(prefix + ".alias_ip_range").([]interface{}) {
+		configData = append(configData, item.(map[string]interface{}))
+	}
+
+	apiData := make([]map[string]interface{}, 0, len(ranges))
 	for _, ipRange := range ranges {
-		rangesSchema = append(rangesSchema, map[string]interface{}{
+		apiData = append(apiData, map[string]interface{}{
 			"ip_cidr_range":         ipRange.IpCidrRange,
 			"subnetwork_range_name": ipRange.SubnetworkRangeName,
 		})
 	}
-	return rangesSchema
+
+	//permadiff fix
+	sorted, err := tpgresource.SortMapsByConfigOrder(configData, apiData, "ip_cidr_range")
+	if err != nil {
+		return apiData
+	}
+	return sorted
 }
 
 func expandScheduling(v interface{}) (*compute.Scheduling, error) {
@@ -139,9 +152,6 @@ func expandScheduling(v interface{}) (*compute.Scheduling, error) {
 		scheduling.MaxRunDuration = transformedMaxRunDuration
 		scheduling.ForceSendFields = append(scheduling.ForceSendFields, "MaxRunDuration")
 	}
-	if v, ok := original["maintenance_interval"]; ok {
-		scheduling.MaintenanceInterval = v.(string)
-	}
 
 	if v, ok := original["on_instance_stop_action"]; ok {
 		transformedOnInstanceStopAction, err := expandComputeOnInstanceStopAction(v)
@@ -150,6 +160,9 @@ func expandScheduling(v interface{}) (*compute.Scheduling, error) {
 		}
 		scheduling.OnInstanceStopAction = transformedOnInstanceStopAction
 		scheduling.ForceSendFields = append(scheduling.ForceSendFields, "OnInstanceStopAction")
+	}
+	if v, ok := original["maintenance_interval"]; ok {
+		scheduling.MaintenanceInterval = v.(string)
 	}
 	if v, ok := original["local_ssd_recovery_timeout"]; ok {
 		transformedLocalSsdRecoveryTimeout, err := expandComputeLocalSsdRecoveryTimeout(v)
@@ -263,11 +276,13 @@ func flattenScheduling(resp *compute.Scheduling) []map[string]interface{} {
 	if resp.MaxRunDuration != nil {
 		schedulingMap["max_run_duration"] = flattenComputeMaxRunDuration(resp.MaxRunDuration)
 	}
-	if resp.MaintenanceInterval != "" {
-		schedulingMap["maintenance_interval"] = resp.MaintenanceInterval
-	}
+
 	if resp.OnInstanceStopAction != nil {
 		schedulingMap["on_instance_stop_action"] = flattenOnInstanceStopAction(resp.OnInstanceStopAction)
+	}
+
+	if resp.MaintenanceInterval != "" {
+		schedulingMap["maintenance_interval"] = resp.MaintenanceInterval
 	}
 
 	if resp.LocalSsdRecoveryTimeout != nil {
@@ -374,7 +389,7 @@ func flattenNetworkInterfaces(d *schema.ResourceData, config *transport_tpg.Conf
 			"subnetwork":         tpgresource.ConvertSelfLinkToV1(iface.Subnetwork),
 			"subnetwork_project": subnet.Project,
 			"access_config":      ac,
-			"alias_ip_range":     flattenAliasIpRange(iface.AliasIpRanges),
+			"alias_ip_range":     flattenAliasIpRange(d, iface.AliasIpRanges, i),
 			"nic_type":           iface.NicType,
 			"stack_type":         iface.StackType,
 			"ipv6_access_config": flattenIpv6AccessConfigs(iface.Ipv6AccessConfigs),

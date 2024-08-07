@@ -11,10 +11,11 @@ import (
 	"testing"
 	"time"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
+	tpgcompute "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/compute"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 
@@ -1589,7 +1590,7 @@ func testAccCheckComputeRegionInstanceTemplateHasAliasIpRange(instanceTemplate *
 	return func(s *terraform.State) error {
 		for _, networkInterface := range instanceTemplate.Properties.NetworkInterfaces {
 			for _, aliasIpRange := range networkInterface.AliasIpRanges {
-				if aliasIpRange.SubnetworkRangeName == subnetworkRangeName && (aliasIpRange.IpCidrRange == iPCidrRange || tpgresource.IpCidrRangeDiffSuppress("ip_cidr_range", aliasIpRange.IpCidrRange, iPCidrRange, nil)) {
+				if aliasIpRange.SubnetworkRangeName == subnetworkRangeName && (aliasIpRange.IpCidrRange == iPCidrRange || tpgcompute.IpCidrRangeDiffSuppress("ip_cidr_range", aliasIpRange.IpCidrRange, iPCidrRange, nil)) {
 					return nil
 				}
 			}
@@ -2090,8 +2091,8 @@ resource "google_compute_region_instance_template" "foobar" {
 func testAccComputeRegionInstanceTemplate_with375GbScratchDisk(suffix string) string {
 	return fmt.Sprintf(`
 data "google_compute_image" "my_image" {
-	family  = "centos-7"
-	project = "centos-cloud"
+	family  = "debian-12"
+	project = "debian-cloud"
 }
 resource "google_compute_region_instance_template" "foobar" {
   name           = "tf-test-instance-template-%s"
@@ -2119,8 +2120,8 @@ resource "google_compute_region_instance_template" "foobar" {
 func testAccComputeRegionInstanceTemplate_with18TbScratchDisk(suffix string) string {
 	return fmt.Sprintf(`
 data "google_compute_image" "my_image" {
-	family  = "centos-7"
-	project = "centos-cloud"
+	family  ="debian-12"
+	project = "debian-cloud"
 }
 
 resource "google_compute_region_instance_template" "foobar" {
@@ -2796,8 +2797,8 @@ resource "google_compute_region_instance_template" "foobar" {
 func testAccComputeRegionInstanceTemplate_shieldedVmConfig(suffix string, enableSecureBoot bool, enableVtpm bool, enableIntegrityMonitoring bool) string {
 	return fmt.Sprintf(`
 data "google_compute_image" "my_image" {
-  family  = "centos-7"
-  project = "centos-cloud"
+  family  = "debian-12"
+  project = "debian-cloud"
 }
 
 resource "google_compute_region_instance_template" "foobar" {
@@ -2987,8 +2988,8 @@ resource "google_compute_region_instance_template" "foobar" {
 func testAccComputeRegionInstanceTemplate_enableDisplay(suffix string) string {
 	return fmt.Sprintf(`
 data "google_compute_image" "my_image" {
-  family  = "centos-7"
-  project = "centos-cloud"
+  family  = "debian-12"
+  project = "debian-cloud"
 }
 
 resource "google_compute_region_instance_template" "foobar" {
@@ -3361,7 +3362,6 @@ resource "google_compute_region_instance_template" "foobar" {
 	nanos = 123
 	seconds = 60
     }
-
   }
 
   metadata = {

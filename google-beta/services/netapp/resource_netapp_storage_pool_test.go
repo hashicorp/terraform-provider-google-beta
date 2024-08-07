@@ -3,9 +3,11 @@
 package netapp_test
 
 import (
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"testing"
+	"time"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 )
 
@@ -122,6 +124,135 @@ resource "google_netapp_storage_pool" "test_pool" {
   }
   ldap_enabled          = false
 
+}
+`, context)
+}
+
+func TestAccNetappstoragePool_FlexRegionalStoragePoolCreateExample_update(t *testing.T) {
+	context := map[string]interface{}{
+		"network_name":  acctest.BootstrapSharedServiceNetworkingConnection(t, "gcnv-network-config-1", acctest.ServiceNetworkWithParentService("netapp.servicenetworking.goog")),
+		"random_suffix": acctest.RandString(t, 10),
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckNetappstoragePoolDestroyProducer(t),
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
+		Steps: []resource.TestStep{
+			{
+				Config: testAccNetappstoragePool_FlexRegionalStoragePoolCreateExample_full(context),
+			},
+			{
+				ResourceName:            "google_netapp_storage_pool.test_pool",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"location", "name", "labels", "terraform_labels"},
+			},
+			{
+				Config: testAccNetappstoragePool_FlexRegionalStoragePoolCreateExample_switchZone(context),
+				Check:  testAccNetappstoragePool_FlexRegionalStoragePoolCreateExample_sleep_5_mins(),
+			},
+			{
+				ResourceName:            "google_netapp_storage_pool.test_pool",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"location", "name", "labels", "terraform_labels"},
+			},
+			{
+				Config: testAccNetappstoragePool_FlexRegionalStoragePoolCreateExample_switchBackZone(context),
+			},
+			{
+				ResourceName:            "google_netapp_storage_pool.test_pool",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"location", "name", "labels", "terraform_labels"},
+			},
+		},
+	})
+}
+
+func testAccNetappstoragePool_FlexRegionalStoragePoolCreateExample_full(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_netapp_storage_pool" "test_pool" {
+  provider = google-beta
+  name = "tf-test-pool%{random_suffix}"
+  location = "us-east1"
+  service_level = "FLEX"
+  capacity_gib = "2048"
+  network = data.google_compute_network.default.id
+  zone = "us-east1-c"
+  replica_zone = "us-east1-b"
+}
+
+resource "time_sleep" "wait_5_minutes" {
+    depends_on = [google_netapp_storage_pool.test_pool]
+    destroy_duration = "5m"
+}
+
+data "google_compute_network" "default" {
+    provider = google-beta
+    name = "%{network_name}"
+}
+`, context)
+}
+
+func testAccNetappstoragePool_FlexRegionalStoragePoolCreateExample_switchZone(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_netapp_storage_pool" "test_pool" {
+  provider = google-beta
+  name = "tf-test-pool%{random_suffix}"
+  location = "us-east1"
+  service_level = "FLEX"
+  capacity_gib = "2048"
+  network = data.google_compute_network.default.id
+  zone = "us-east1-b"
+  replica_zone = "us-east1-c"
+}
+
+resource "time_sleep" "wait_5_minutes" {
+    depends_on = [google_netapp_storage_pool.test_pool]
+    destroy_duration = "5m"
+}
+
+data "google_compute_network" "default" {
+    provider = google-beta
+    name = "%{network_name}"
+}
+`, context)
+}
+
+func testAccNetappstoragePool_FlexRegionalStoragePoolCreateExample_sleep_5_mins() resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		// wait 5 minutes before executing the switchback due to api zone switch issues
+		time.Sleep(5 * time.Minute)
+		return nil
+	}
+}
+
+func testAccNetappstoragePool_FlexRegionalStoragePoolCreateExample_switchBackZone(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_netapp_storage_pool" "test_pool" {
+  provider = google-beta
+  name = "tf-test-pool%{random_suffix}"
+  location = "us-east1"
+  service_level = "FLEX"
+  capacity_gib = "2048"
+  network = data.google_compute_network.default.id
+  zone = "us-east1-c"
+  replica_zone = "us-east1-b"
+}
+
+resource "time_sleep" "wait_5_minutes" {
+    depends_on = [google_netapp_storage_pool.test_pool]
+    destroy_duration = "5m"
+}
+
+data "google_compute_network" "default" {
+    provider = google-beta
+    name = "%{network_name}"
 }
 `, context)
 }

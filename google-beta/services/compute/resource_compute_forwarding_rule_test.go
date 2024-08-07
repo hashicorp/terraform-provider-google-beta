@@ -7,7 +7,7 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
 
 func TestAccComputeForwardingRule_update(t *testing.T) {
@@ -186,17 +186,19 @@ func TestAccComputeForwardingRule_forwardingRuleVpcPscExampleUpdate(t *testing.T
 				Config: testAccComputeForwardingRule_forwardingRuleVpcPscExampleUpdate(context, true),
 			},
 			{
-				ResourceName:      "google_compute_forwarding_rule.default",
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            "google_compute_forwarding_rule.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"labels", "terraform_labels"},
 			},
 			{
 				Config: testAccComputeForwardingRule_forwardingRuleVpcPscExampleUpdate(context, false),
 			},
 			{
-				ResourceName:      "google_compute_forwarding_rule.default",
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            "google_compute_forwarding_rule.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"labels", "terraform_labels"},
 			},
 		},
 	})
@@ -440,7 +442,7 @@ resource "google_compute_instance_template" "instance_template" {
     }
   }
   disk {
-    source_image = "debian-cloud/debian-10"
+    source_image = "debian-cloud/debian-12"
     auto_delete  = true
     boot         = true
   }
@@ -553,7 +555,7 @@ resource "google_compute_instance" "vm_test" {
   }
   boot_disk {
     initialize_params {
-      image = "debian-cloud/debian-10"
+      image = "debian-cloud/debian-12"
     }
   }
 }
@@ -638,6 +640,9 @@ resource "google_compute_forwarding_rule" "default" {
   ip_address              = google_compute_address.consumer_address.id
   allow_psc_global_access = false
   %{lifecycle_block}
+  labels = {
+    "foo" = "bar"
+  }
 }
 
 // Consumer service endpoint

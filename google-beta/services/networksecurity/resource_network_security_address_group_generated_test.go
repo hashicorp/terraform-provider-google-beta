@@ -22,8 +22,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
@@ -144,6 +144,47 @@ resource "google_network_security_address_group" "default" {
   description = "my description"
   type        = "IPV4"
   capacity    = "100"
+  items       = ["208.80.154.224/32"]
+}
+`, context)
+}
+
+func TestAccNetworkSecurityAddressGroup_networkSecurityAddressGroupsCloudArmorExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"project":       envvar.GetTestProjectFromEnv(),
+		"random_suffix": acctest.RandString(t, 10),
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckNetworkSecurityAddressGroupDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccNetworkSecurityAddressGroup_networkSecurityAddressGroupsCloudArmorExample(context),
+			},
+			{
+				ResourceName:            "google_network_security_address_group.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"labels", "location", "name", "parent", "terraform_labels"},
+			},
+		},
+	})
+}
+
+func testAccNetworkSecurityAddressGroup_networkSecurityAddressGroupsCloudArmorExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_network_security_address_group" "default" {
+  provider    = google-beta
+  name        = "tf-test-my-address-groups%{random_suffix}"
+  parent      = "projects/%{project}"
+  location    = "global"
+  type        = "IPV4"
+  capacity    = "100"
+  purpose     = ["CLOUD_ARMOR"]
   items       = ["208.80.154.224/32"]
 }
 `, context)

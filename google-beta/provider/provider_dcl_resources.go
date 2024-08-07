@@ -22,7 +22,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/apikeys"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/assuredworkloads"
-	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/bigqueryreservation"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/cloudbuild"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/clouddeploy"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/compute"
@@ -33,15 +32,12 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/eventarc"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/firebaserules"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/gkehub"
-	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/networkconnectivity"
-	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/orgpolicy"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/recaptchaenterprise"
 )
 
 var dclResources = map[string]*schema.Resource{
 	"google_apikeys_key":                                        apikeys.ResourceApikeysKey(),
 	"google_assured_workloads_workload":                         assuredworkloads.ResourceAssuredWorkloadsWorkload(),
-	"google_bigquery_reservation_assignment":                    bigqueryreservation.ResourceBigqueryReservationAssignment(),
 	"google_cloudbuild_worker_pool":                             cloudbuild.ResourceCloudbuildWorkerPool(),
 	"google_clouddeploy_delivery_pipeline":                      clouddeploy.ResourceClouddeployDeliveryPipeline(),
 	"google_clouddeploy_target":                                 clouddeploy.ResourceClouddeployTarget(),
@@ -67,8 +63,5 @@ var dclResources = map[string]*schema.Resource{
 	"google_firebaserules_release":                              firebaserules.ResourceFirebaserulesRelease(),
 	"google_firebaserules_ruleset":                              firebaserules.ResourceFirebaserulesRuleset(),
 	"google_gke_hub_feature_membership":                         gkehub.ResourceGkeHubFeatureMembership(),
-	"google_network_connectivity_hub":                           networkconnectivity.ResourceNetworkConnectivityHub(),
-	"google_network_connectivity_spoke":                         networkconnectivity.ResourceNetworkConnectivitySpoke(),
-	"google_org_policy_policy":                                  orgpolicy.ResourceOrgPolicyPolicy(),
 	"google_recaptcha_enterprise_key":                           recaptchaenterprise.ResourceRecaptchaEnterpriseKey(),
 }

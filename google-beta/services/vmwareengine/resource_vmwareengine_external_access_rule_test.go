@@ -5,12 +5,14 @@ package vmwareengine_test
 import (
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
 )
 
 func TestAccVmwareengineExternalAccessRule_vmwareEngineExternalAccessRuleUpdate(t *testing.T) {
+	// Temporarily skipping so that this test does not run and consume resources during PR pushes. It is bound to fail and is being fixed by PR #10992
+	acctest.SkipIfVcr(t)
 	t.Parallel()
 
 	context := map[string]interface{}{

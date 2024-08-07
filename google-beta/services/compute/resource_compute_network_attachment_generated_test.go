@@ -22,8 +22,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
@@ -117,7 +117,7 @@ func TestAccComputeNetworkAttachment_networkAttachmentInstanceUsageExample(t *te
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
 		CheckDestroy:             testAccCheckComputeNetworkAttachmentDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -136,11 +136,13 @@ func TestAccComputeNetworkAttachment_networkAttachmentInstanceUsageExample(t *te
 func testAccComputeNetworkAttachment_networkAttachmentInstanceUsageExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_network" "default" {
+    provider = google-beta
     name = "tf-test-basic-network%{random_suffix}"
     auto_create_subnetworks = false
 }
 
 resource "google_compute_subnetwork" "default" {
+    provider = google-beta
     name   = "tf-test-basic-subnetwork%{random_suffix}"
     region = "us-central1"
 
@@ -149,6 +151,7 @@ resource "google_compute_subnetwork" "default" {
 }
 
 resource "google_compute_network_attachment" "default" {
+    provider = google-beta
     name   = "tf-test-basic-network-attachment%{random_suffix}"
     region = "us-central1"
     description = "my basic network attachment"
@@ -158,6 +161,7 @@ resource "google_compute_network_attachment" "default" {
 }
 
 resource "google_compute_instance" "default" {
+    provider = google-beta
     name         = "tf-test-basic-instance%{random_suffix}"
     zone         = "us-central1-a"
     machine_type = "e2-micro"

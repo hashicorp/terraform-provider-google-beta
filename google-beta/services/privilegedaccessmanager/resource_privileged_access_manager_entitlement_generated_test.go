@@ -22,8 +22,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
@@ -41,7 +41,7 @@ func TestAccPrivilegedAccessManagerEntitlement_privilegedAccessManagerEntitlemen
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckPrivilegedAccessManagerEntitlementDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -60,7 +60,6 @@ func TestAccPrivilegedAccessManagerEntitlement_privilegedAccessManagerEntitlemen
 func testAccPrivilegedAccessManagerEntitlement_privilegedAccessManagerEntitlementBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_privileged_access_manager_entitlement" "tfentitlement" {
-    provider =  google-beta
     entitlement_id = "tf-test-example-entitlement%{random_suffix}"
     location = "global"
     max_request_duration = "43200s"
@@ -69,7 +68,9 @@ resource "google_privileged_access_manager_entitlement" "tfentitlement" {
         unstructured{}
     }
     eligible_users {
-        principals = ["group:test@google.com"]
+        principals = [
+          "group:test@google.com"
+        ]
     }
     privileged_access{
         gcp_iam_access{
@@ -82,17 +83,25 @@ resource "google_privileged_access_manager_entitlement" "tfentitlement" {
         }
     }
     additional_notification_targets {
-    admin_email_recipients     = ["user@example.com"]
-    requester_email_recipients = ["user@example.com"]
+      admin_email_recipients     = [
+        "user@example.com",
+      ]
+      requester_email_recipients = [
+        "user@example.com"
+      ]
     }
     approval_workflow {
     manual_approvals {
       require_approver_justification = true
       steps {
         approvals_needed          = 1
-        approver_email_recipients = ["user@example.com"]
+        approver_email_recipients = [
+          "user@example.com"
+        ]
         approvers {
-          principals = ["group:test@google.com"]
+          principals = [
+            "group:test@google.com"
+          ]
         }
       }
     }

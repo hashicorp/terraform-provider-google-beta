@@ -5,7 +5,7 @@ package privilegedaccessmanager_test
 import (
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
@@ -21,7 +21,7 @@ func TestAccPrivilegedAccessManagerEntitlement_privilegedAccessManagerEntitlemen
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckPrivilegedAccessManagerEntitlementDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -49,7 +49,6 @@ func TestAccPrivilegedAccessManagerEntitlement_privilegedAccessManagerEntitlemen
 func testAccPrivilegedAccessManagerEntitlement_privilegedAccessManagerEntitlementBasicExample_basic(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_privileged_access_manager_entitlement" "tfentitlement" {
-    provider =  google-beta
     entitlement_id = "tf-test-example-entitlement%{random_suffix}"
     location = "global"
     max_request_duration = "43200s"
@@ -93,7 +92,6 @@ resource "google_privileged_access_manager_entitlement" "tfentitlement" {
 func testAccPrivilegedAccessManagerEntitlement_privilegedAccessManagerEntitlementBasicExample_update(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_privileged_access_manager_entitlement" "tfentitlement" {
-    provider =  google-beta
     entitlement_id = "tf-test-example-entitlement%{random_suffix}"
     location = "global"
     max_request_duration = "4300s"

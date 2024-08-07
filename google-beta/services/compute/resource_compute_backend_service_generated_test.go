@@ -22,8 +22,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
@@ -49,7 +49,7 @@ func TestAccComputeBackendService_backendServiceBasicExample(t *testing.T) {
 				ResourceName:            "google_compute_backend_service.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"iap.0.oauth2_client_secret"},
+				ImportStateVerifyIgnore: []string{"iap.0.oauth2_client_secret", "security_settings.0.aws_v4_authentication.0.access_key"},
 			},
 		},
 	})
@@ -90,7 +90,7 @@ func TestAccComputeBackendService_backendServiceExternalIapExample(t *testing.T)
 				ResourceName:            "google_compute_backend_service.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"iap.0.oauth2_client_secret"},
+				ImportStateVerifyIgnore: []string{"iap.0.oauth2_client_secret", "security_settings.0.aws_v4_authentication.0.access_key"},
 			},
 		},
 	})
@@ -129,7 +129,7 @@ func TestAccComputeBackendService_backendServiceCacheSimpleExample(t *testing.T)
 				ResourceName:            "google_compute_backend_service.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"iap.0.oauth2_client_secret"},
+				ImportStateVerifyIgnore: []string{"iap.0.oauth2_client_secret", "security_settings.0.aws_v4_authentication.0.access_key"},
 			},
 		},
 	})
@@ -174,7 +174,7 @@ func TestAccComputeBackendService_backendServiceCacheIncludeHttpHeadersExample(t
 				ResourceName:            "google_compute_backend_service.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"iap.0.oauth2_client_secret"},
+				ImportStateVerifyIgnore: []string{"iap.0.oauth2_client_secret", "security_settings.0.aws_v4_authentication.0.access_key"},
 			},
 		},
 	})
@@ -217,7 +217,7 @@ func TestAccComputeBackendService_backendServiceCacheIncludeNamedCookiesExample(
 				ResourceName:            "google_compute_backend_service.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"iap.0.oauth2_client_secret"},
+				ImportStateVerifyIgnore: []string{"iap.0.oauth2_client_secret", "security_settings.0.aws_v4_authentication.0.access_key"},
 			},
 		},
 	})
@@ -263,7 +263,7 @@ func TestAccComputeBackendService_backendServiceCacheExample(t *testing.T) {
 				ResourceName:            "google_compute_backend_service.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"iap.0.oauth2_client_secret"},
+				ImportStateVerifyIgnore: []string{"iap.0.oauth2_client_secret", "security_settings.0.aws_v4_authentication.0.access_key"},
 			},
 		},
 	})
@@ -313,7 +313,7 @@ func TestAccComputeBackendService_backendServiceCacheBypassCacheOnRequestHeaders
 				ResourceName:            "google_compute_backend_service.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"iap.0.oauth2_client_secret"},
+				ImportStateVerifyIgnore: []string{"iap.0.oauth2_client_secret", "security_settings.0.aws_v4_authentication.0.access_key"},
 			},
 		},
 	})
@@ -371,7 +371,7 @@ func TestAccComputeBackendService_backendServiceTrafficDirectorRoundRobinExample
 				ResourceName:            "google_compute_backend_service.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"iap.0.oauth2_client_secret"},
+				ImportStateVerifyIgnore: []string{"iap.0.oauth2_client_secret", "security_settings.0.aws_v4_authentication.0.access_key"},
 			},
 		},
 	})
@@ -418,7 +418,7 @@ func TestAccComputeBackendService_backendServiceTrafficDirectorRingHashExample(t
 				ResourceName:            "google_compute_backend_service.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"iap.0.oauth2_client_secret"},
+				ImportStateVerifyIgnore: []string{"iap.0.oauth2_client_secret", "security_settings.0.aws_v4_authentication.0.access_key"},
 			},
 		},
 	})
@@ -481,7 +481,7 @@ func TestAccComputeBackendService_backendServiceNetworkEndpointExample(t *testin
 				ResourceName:            "google_compute_backend_service.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"iap.0.oauth2_client_secret"},
+				ImportStateVerifyIgnore: []string{"iap.0.oauth2_client_secret", "security_settings.0.aws_v4_authentication.0.access_key"},
 			},
 		},
 	})
@@ -539,7 +539,7 @@ func TestAccComputeBackendService_backendServiceExternalManagedExample(t *testin
 				ResourceName:            "google_compute_backend_service.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"iap.0.oauth2_client_secret"},
+				ImportStateVerifyIgnore: []string{"iap.0.oauth2_client_secret", "security_settings.0.aws_v4_authentication.0.access_key"},
 			},
 		},
 	})

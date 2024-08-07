@@ -301,12 +301,14 @@ type Config struct {
 	SecureSourceManagerBasePath      string
 	SecurityCenterBasePath           string
 	SecurityCenterManagementBasePath string
+	SecurityCenterV2BasePath         string
 	SecuritypostureBasePath          string
 	SecurityScannerBasePath          string
 	ServiceDirectoryBasePath         string
 	ServiceManagementBasePath        string
 	ServiceNetworkingBasePath        string
 	ServiceUsageBasePath             string
+	SiteVerificationBasePath         string
 	SourceRepoBasePath               string
 	SpannerBasePath                  string
 	SQLBasePath                      string
@@ -454,12 +456,14 @@ const SecretManagerBasePathKey = "SecretManager"
 const SecureSourceManagerBasePathKey = "SecureSourceManager"
 const SecurityCenterBasePathKey = "SecurityCenter"
 const SecurityCenterManagementBasePathKey = "SecurityCenterManagement"
+const SecurityCenterV2BasePathKey = "SecurityCenterV2"
 const SecuritypostureBasePathKey = "Securityposture"
 const SecurityScannerBasePathKey = "SecurityScanner"
 const ServiceDirectoryBasePathKey = "ServiceDirectory"
 const ServiceManagementBasePathKey = "ServiceManagement"
 const ServiceNetworkingBasePathKey = "ServiceNetworking"
 const ServiceUsageBasePathKey = "ServiceUsage"
+const SiteVerificationBasePathKey = "SiteVerification"
 const SourceRepoBasePathKey = "SourceRepo"
 const SpannerBasePathKey = "Spanner"
 const SQLBasePathKey = "SQL"
@@ -501,7 +505,7 @@ var DefaultBasePaths = map[string]string{
 	BeyondcorpBasePathKey:               "https://beyondcorp.googleapis.com/v1/",
 	BiglakeBasePathKey:                  "https://biglake.googleapis.com/v1/",
 	BigQueryBasePathKey:                 "https://bigquery.googleapis.com/bigquery/v2/",
-	BigqueryAnalyticsHubBasePathKey:     "https://analyticshub.googleapis.com/v1beta1/",
+	BigqueryAnalyticsHubBasePathKey:     "https://analyticshub.googleapis.com/v1/",
 	BigqueryConnectionBasePathKey:       "https://bigqueryconnection.googleapis.com/v1/",
 	BigqueryDatapolicyBasePathKey:       "https://bigquerydatapolicy.googleapis.com/v1/",
 	BigqueryDataTransferBasePathKey:     "https://bigquerydatatransfer.googleapis.com/v1/",
@@ -601,12 +605,14 @@ var DefaultBasePaths = map[string]string{
 	SecureSourceManagerBasePathKey:      "https://securesourcemanager.googleapis.com/v1/",
 	SecurityCenterBasePathKey:           "https://securitycenter.googleapis.com/v1/",
 	SecurityCenterManagementBasePathKey: "https://securitycentermanagement.googleapis.com/v1/",
+	SecurityCenterV2BasePathKey:         "https://securitycenter.googleapis.com/v2/",
 	SecuritypostureBasePathKey:          "https://securityposture.googleapis.com/v1/",
 	SecurityScannerBasePathKey:          "https://websecurityscanner.googleapis.com/v1beta/",
 	ServiceDirectoryBasePathKey:         "https://servicedirectory.googleapis.com/v1beta1/",
 	ServiceManagementBasePathKey:        "https://servicemanagement.googleapis.com/v1/",
 	ServiceNetworkingBasePathKey:        "https://servicenetworking.googleapis.com/v1/",
 	ServiceUsageBasePathKey:             "https://serviceusage.googleapis.com/v1beta1/",
+	SiteVerificationBasePathKey:         "https://www.googleapis.com/siteVerification/v1/",
 	SourceRepoBasePathKey:               "https://sourcerepo.googleapis.com/v1/",
 	SpannerBasePathKey:                  "https://spanner.googleapis.com/v1/",
 	SQLBasePathKey:                      "https://sqladmin.googleapis.com/sql/v1beta4/",
@@ -1271,6 +1277,11 @@ func SetEndpointDefaults(d *schema.ResourceData) error {
 			"GOOGLE_SECURITY_CENTER_MANAGEMENT_CUSTOM_ENDPOINT",
 		}, DefaultBasePaths[SecurityCenterManagementBasePathKey]))
 	}
+	if d.Get("security_center_v2_custom_endpoint") == "" {
+		d.Set("security_center_v2_custom_endpoint", MultiEnvDefault([]string{
+			"GOOGLE_SECURITY_CENTER_V2_CUSTOM_ENDPOINT",
+		}, DefaultBasePaths[SecurityCenterV2BasePathKey]))
+	}
 	if d.Get("securityposture_custom_endpoint") == "" {
 		d.Set("securityposture_custom_endpoint", MultiEnvDefault([]string{
 			"GOOGLE_SECURITYPOSTURE_CUSTOM_ENDPOINT",
@@ -1300,6 +1311,11 @@ func SetEndpointDefaults(d *schema.ResourceData) error {
 		d.Set("service_usage_custom_endpoint", MultiEnvDefault([]string{
 			"GOOGLE_SERVICE_USAGE_CUSTOM_ENDPOINT",
 		}, DefaultBasePaths[ServiceUsageBasePathKey]))
+	}
+	if d.Get("site_verification_custom_endpoint") == "" {
+		d.Set("site_verification_custom_endpoint", MultiEnvDefault([]string{
+			"GOOGLE_SITE_VERIFICATION_CUSTOM_ENDPOINT",
+		}, DefaultBasePaths[SiteVerificationBasePathKey]))
 	}
 	if d.Get("source_repo_custom_endpoint") == "" {
 		d.Set("source_repo_custom_endpoint", MultiEnvDefault([]string{
@@ -2402,12 +2418,14 @@ func ConfigureBasePaths(c *Config) {
 	c.SecureSourceManagerBasePath = DefaultBasePaths[SecureSourceManagerBasePathKey]
 	c.SecurityCenterBasePath = DefaultBasePaths[SecurityCenterBasePathKey]
 	c.SecurityCenterManagementBasePath = DefaultBasePaths[SecurityCenterManagementBasePathKey]
+	c.SecurityCenterV2BasePath = DefaultBasePaths[SecurityCenterV2BasePathKey]
 	c.SecuritypostureBasePath = DefaultBasePaths[SecuritypostureBasePathKey]
 	c.SecurityScannerBasePath = DefaultBasePaths[SecurityScannerBasePathKey]
 	c.ServiceDirectoryBasePath = DefaultBasePaths[ServiceDirectoryBasePathKey]
 	c.ServiceManagementBasePath = DefaultBasePaths[ServiceManagementBasePathKey]
 	c.ServiceNetworkingBasePath = DefaultBasePaths[ServiceNetworkingBasePathKey]
 	c.ServiceUsageBasePath = DefaultBasePaths[ServiceUsageBasePathKey]
+	c.SiteVerificationBasePath = DefaultBasePaths[SiteVerificationBasePathKey]
 	c.SourceRepoBasePath = DefaultBasePaths[SourceRepoBasePathKey]
 	c.SpannerBasePath = DefaultBasePaths[SpannerBasePathKey]
 	c.SQLBasePath = DefaultBasePaths[SQLBasePathKey]

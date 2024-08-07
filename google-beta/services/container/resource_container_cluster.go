@@ -25,6 +25,15 @@ import (
 	container "google.golang.org/api/container/v1beta1"
 )
 
+// Single-digit hour is equivalent to hour with leading zero e.g. suppress diff 1:00 => 01:00.
+// Assume either value could be in either format.
+func Rfc3339TimeDiffSuppress(k, old, new string, d *schema.ResourceData) bool {
+	if (len(old) == 4 && "0"+old == new) || (len(new) == 4 && "0"+new == old) {
+		return true
+	}
+	return false
+}
+
 var (
 	instanceGroupManagerURL = regexp.MustCompile(fmt.Sprintf("projects/(%s)/zones/([a-z0-9-]*)/instanceGroupManagers/([^/]*)", verify.ProjectRegex))
 
@@ -78,6 +87,7 @@ var (
 		"addons_config.0.config_connector_config",
 		"addons_config.0.gcs_fuse_csi_driver_config",
 		"addons_config.0.stateful_ha_config",
+		"addons_config.0.ray_operator_config",
 		"addons_config.0.istio_config",
 		"addons_config.0.kalm_config",
 	}
@@ -513,6 +523,52 @@ func ResourceContainerCluster() *schema.Resource {
 								},
 							},
 						},
+						"ray_operator_config": {
+							Type:         schema.TypeList,
+							Optional:     true,
+							Computed:     true,
+							AtLeastOneOf: addonsConfigKeys,
+							MaxItems:     3,
+							Description:  `The status of the Ray Operator addon, which enabled management of Ray AI/ML jobs on GKE. Defaults to disabled; set enabled = true to enable.`,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"enabled": {
+										Type:     schema.TypeBool,
+										Required: true,
+									},
+									"ray_cluster_logging_config": {
+										Type:        schema.TypeList,
+										Optional:    true,
+										Computed:    true,
+										MaxItems:    1,
+										Description: `The status of Ray Logging, which scrapes Ray cluster logs to Cloud Logging. Defaults to disabled; set enabled = true to enable.`,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"enabled": {
+													Type:     schema.TypeBool,
+													Required: true,
+												},
+											},
+										},
+									},
+									"ray_cluster_monitoring_config": {
+										Type:        schema.TypeList,
+										Optional:    true,
+										Computed:    true,
+										MaxItems:    1,
+										Description: `The status of Ray Cluster monitoring, which shows Ray cluster metrics in Cloud Console. Defaults to disabled; set enabled = true to enable.`,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"enabled": {
+													Type:     schema.TypeBool,
+													Required: true,
+												},
+											},
+										},
+									},
+								},
+							},
+						},
 					},
 				},
 			},
@@ -780,6 +836,13 @@ func ResourceContainerCluster() *schema.Resource {
 								},
 							},
 						},
+						"auto_provisioning_locations": {
+							Type:        schema.TypeList,
+							Optional:    true,
+							Computed:    true,
+							Elem:        &schema.Schema{Type: schema.TypeString},
+							Description: `The list of Google Compute Engine zones in which the NodePool's nodes can be created by NAP.`,
+						},
 						"autoscaling_profile": {
 							Type:             schema.TypeString,
 							Default:          "BALANCED",
@@ -1006,7 +1069,7 @@ func ResourceContainerCluster() *schema.Resource {
 										Type:             schema.TypeString,
 										Required:         true,
 										ValidateFunc:     verify.ValidateRFC3339Time,
-										DiffSuppressFunc: tpgresource.Rfc3339TimeDiffSuppress,
+										DiffSuppressFunc: Rfc3339TimeDiffSuppress,
 									},
 									"duration": {
 										Type:     schema.TypeString,
@@ -1169,7 +1232,7 @@ func ResourceContainerCluster() *schema.Resource {
 							Type:        schema.TypeList,
 							Optional:    true,
 							Computed:    true,
-							Description: `GKE components exposing metrics. Valid values include SYSTEM_COMPONENTS, APISERVER, SCHEDULER, CONTROLLER_MANAGER, STORAGE, HPA, POD, DAEMONSET, DEPLOYMENT, STATEFULSET, WORKLOADS, KUBELET and CADVISOR.`,
+							Description: `GKE components exposing metrics. Valid values include SYSTEM_COMPONENTS, APISERVER, SCHEDULER, CONTROLLER_MANAGER, STORAGE, HPA, POD, DAEMONSET, DEPLOYMENT, STATEFULSET, WORKLOADS, KUBELET, CADVISOR and DCGM.`,
 							Elem: &schema.Schema{
 								Type: schema.TypeString,
 							},
@@ -4512,6 +4575,28 @@ func expandClusterAddonsConfig(configured interface{}) *container.AddonsConfig {
 		}
 	}
 
+	if v, ok := config["ray_operator_config"]; ok && len(v.([]interface{})) > 0 {
+		addon := v.([]interface{})[0].(map[string]interface{})
+		ac.RayOperatorConfig = &container.RayOperatorConfig{
+			Enabled:         addon["enabled"].(bool),
+			ForceSendFields: []string{"Enabled"},
+		}
+		if v, ok := addon["ray_cluster_logging_config"]; ok && len(v.([]interface{})) > 0 {
+			loggingConfig := v.([]interface{})[0].(map[string]interface{})
+			ac.RayOperatorConfig.RayClusterLoggingConfig = &container.RayClusterLoggingConfig{
+				Enabled:         loggingConfig["enabled"].(bool),
+				ForceSendFields: []string{"Enabled"},
+			}
+		}
+		if v, ok := addon["ray_cluster_monitoring_config"]; ok && len(v.([]interface{})) > 0 {
+			loggingConfig := v.([]interface{})[0].(map[string]interface{})
+			ac.RayOperatorConfig.RayClusterMonitoringConfig = &container.RayClusterMonitoringConfig{
+				Enabled:         loggingConfig["enabled"].(bool),
+				ForceSendFields: []string{"Enabled"},
+			}
+		}
+	}
+
 	if v, ok := config["istio_config"]; ok && len(v.([]interface{})) > 0 {
 		addon := v.([]interface{})[0].(map[string]interface{})
 		ac.IstioConfig = &container.IstioConfig{
@@ -4719,6 +4804,7 @@ func expandClusterAutoscaling(configured interface{}, d *schema.ResourceData) *c
 		ResourceLimits:                   resourceLimits,
 		AutoscalingProfile:               config["autoscaling_profile"].(string),
 		AutoprovisioningNodePoolDefaults: expandAutoProvisioningDefaults(config["auto_provisioning_defaults"], d),
+		AutoprovisioningLocations:        tpgresource.ConvertStringArr(config["auto_provisioning_locations"].([]interface{})),
 	}
 }
 
@@ -5696,6 +5782,24 @@ func flattenClusterAddonsConfig(c *container.AddonsConfig) []map[string]interfac
 			},
 		}
 	}
+	if c.RayOperatorConfig != nil {
+		rayConfig := c.RayOperatorConfig
+		result["ray_operator_config"] = []map[string]interface{}{
+			{
+				"enabled": rayConfig.Enabled,
+			},
+		}
+		if rayConfig.RayClusterLoggingConfig != nil {
+			result["ray_operator_config"].([]map[string]any)[0]["ray_cluster_logging_config"] = []map[string]interface{}{{
+				"enabled": rayConfig.RayClusterLoggingConfig.Enabled,
+			}}
+		}
+		if rayConfig.RayClusterMonitoringConfig != nil {
+			result["ray_operator_config"].([]map[string]any)[0]["ray_cluster_monitoring_config"] = []map[string]interface{}{{
+				"enabled": rayConfig.RayClusterMonitoringConfig.Enabled,
+			}}
+		}
+	}
 
 	if c.IstioConfig != nil {
 		result["istio_config"] = []map[string]interface{}{
@@ -5993,6 +6097,7 @@ func flattenClusterAutoscaling(a *container.ClusterAutoscaling) []map[string]int
 		r["resource_limits"] = resourceLimits
 		r["enabled"] = true
 		r["auto_provisioning_defaults"] = flattenAutoProvisioningDefaults(a.AutoprovisioningNodePoolDefaults)
+		r["auto_provisioning_locations"] = a.AutoprovisioningLocations
 	} else {
 		r["enabled"] = false
 	}

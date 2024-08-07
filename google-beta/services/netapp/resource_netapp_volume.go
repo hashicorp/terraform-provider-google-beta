@@ -269,6 +269,7 @@ Use NTFS to use NTFS ACLs for file permissions. Can only be set for volumes whic
 			},
 			"smb_settings": {
 				Type:        schema.TypeList,
+				Computed:    true,
 				Optional:    true,
 				Description: `Settings for volumes with SMB access. Possible values: ["ENCRYPT_DATA", "BROWSABLE", "CHANGE_NOTIFY", "NON_BROWSABLE", "OPLOCKS", "SHOW_SNAPSHOT", "SHOW_PREVIOUS_VERSIONS", "ACCESS_BASED_ENUMERATION", "CONTINUOUSLY_AVAILABLE"]`,
 				Elem: &schema.Schema{
@@ -498,6 +499,11 @@ Format for SMB volumes: '\\\\netbios_prefix-four_random_hex_letters.domain_name\
 				Computed:    true,
 				Description: `Name of the Private Service Access allocated range. Inherited from storage pool.`,
 			},
+			"replica_zone": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: `Specifies the replica zone for regional volume.`,
+			},
 			"service_level": {
 				Type:        schema.TypeString,
 				Computed:    true,
@@ -524,6 +530,11 @@ Format for SMB volumes: '\\\\netbios_prefix-four_random_hex_letters.domain_name\
 				Type:        schema.TypeString,
 				Computed:    true,
 				Description: `Used capacity of the volume (in GiB). This is computed periodically and it does not represent the realtime usage.`,
+			},
+			"zone": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: `Specifies the active zone for regional volume.`,
 			},
 			"deletion_policy": {
 				Type:     schema.TypeString,
@@ -835,6 +846,12 @@ func resourceNetappVolumeRead(d *schema.ResourceData, meta interface{}) error {
 		return fmt.Errorf("Error reading Volume: %s", err)
 	}
 	if err := d.Set("backup_config", flattenNetappVolumeBackupConfig(res["backupConfig"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Volume: %s", err)
+	}
+	if err := d.Set("zone", flattenNetappVolumeZone(res["zone"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Volume: %s", err)
+	}
+	if err := d.Set("replica_zone", flattenNetappVolumeReplicaZone(res["replicaZone"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Volume: %s", err)
 	}
 	if err := d.Set("terraform_labels", flattenNetappVolumeTerraformLabels(res["labels"], d, config)); err != nil {
@@ -1657,6 +1674,14 @@ func flattenNetappVolumeBackupConfigBackupVault(v interface{}, d *schema.Resourc
 }
 
 func flattenNetappVolumeBackupConfigScheduledBackupEnabled(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenNetappVolumeZone(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenNetappVolumeReplicaZone(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 

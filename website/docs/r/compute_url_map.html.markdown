@@ -463,7 +463,6 @@ resource "google_compute_health_check" "default" {
     port = 80
   }
 }
-
 ```
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
   <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=url_map_header_based_routing&open_in_editor=main.tf" target="_blank">
@@ -1401,7 +1400,7 @@ The following arguments are supported:
   Specifies one or more conditions when this retry rule applies. Valid values are:
   * 5xx: Loadbalancer will attempt a retry if the backend service responds with
   any 5xx response code, or if the backend service does not respond at all,
-  example: disconnects, reset, read timeout, connection failure, and refused
+  for example: disconnects, reset, read timeout, connection failure, and refused
   streams.
   * gateway-error: Similar to 5xx, but only applies to response codes
   502, 503 or 504.
@@ -2082,7 +2081,7 @@ The following arguments are supported:
   Specfies one or more conditions when this retry rule applies. Valid values are:
   * 5xx: Loadbalancer will attempt a retry if the backend service responds with
     any 5xx response code, or if the backend service does not respond at all,
-    example: disconnects, reset, read timeout, connection failure, and refused
+    for example: disconnects, reset, read timeout, connection failure, and refused
     streams.
   * gateway-error: Similar to 5xx, but only applies to response codes
     502, 503 or 504.

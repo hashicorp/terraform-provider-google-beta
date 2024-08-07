@@ -32,8 +32,8 @@ var (
 		"scheduling.0.provisioning_model",
 		"scheduling.0.instance_termination_action",
 		"scheduling.0.max_run_duration",
-		"scheduling.0.maintenance_interval",
 		"scheduling.0.on_instance_stop_action",
+		"scheduling.0.maintenance_interval",
 		"scheduling.0.local_ssd_recovery_timeout",
 	}
 
@@ -512,7 +512,7 @@ Google Cloud KMS.`,
 										Type:             schema.TypeString,
 										Required:         true,
 										ForceNew:         true,
-										DiffSuppressFunc: tpgresource.IpCidrRangeDiffSuppress,
+										DiffSuppressFunc: IpCidrRangeDiffSuppress,
 										Description:      `The IP CIDR range represented by this alias IP range. This IP CIDR range must belong to the specified subnetwork and cannot contain IP addresses reserved by system or used by other network interfaces. At the time of writing only a netmask (e.g. /24) may be supplied, with a CIDR format resulting in an API error.`,
 									},
 									"subnetwork_range_name": {
