@@ -23,6 +23,7 @@ import (
 	tpgcompute "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/compute"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
+	"github.com/stretchr/testify/assert"
 
 	compute "google.golang.org/api/compute/v0.beta"
 )
@@ -92,6 +93,60 @@ func TestMinCpuPlatformDiffSuppress(t *testing.T) {
 		if tpgcompute.ComputeInstanceMinCpuPlatformEmptyOrAutomaticDiffSuppress("min_cpu_platform", tc.Old, tc.New, nil) != tc.ExpectDiffSuppress {
 			t.Errorf("bad: %s, %q => %q expect DiffSuppress to return %t", tn, tc.Old, tc.New, tc.ExpectDiffSuppress)
 		}
+	}
+}
+
+func TestCheckForCommonAliasIp(t *testing.T) {
+	type testCase struct {
+		old, new []*compute.AliasIpRange
+		expected []*compute.AliasIpRange
+	}
+
+	testCases := []testCase{
+		{
+			old: []*compute.AliasIpRange{
+				{IpCidrRange: "10.0.0.0/24"},
+				{IpCidrRange: "10.0.1.0/24"},
+			},
+			new: []*compute.AliasIpRange{
+				{IpCidrRange: "10.0.0.0/24"},
+				{IpCidrRange: "10.0.2.0/24"},
+			},
+			expected: []*compute.AliasIpRange{
+				{IpCidrRange: "10.0.0.0/24"},
+			},
+		},
+		{
+			old: []*compute.AliasIpRange{
+				{IpCidrRange: "172.16.0.0/24"},
+				{IpCidrRange: "10.0.1.0/24"},
+			},
+			new: []*compute.AliasIpRange{
+				{IpCidrRange: "172.16.0.0/24"},
+				{IpCidrRange: "10.0.2.0/24"},
+			},
+			expected: []*compute.AliasIpRange{
+				{IpCidrRange: "172.16.0.0/24"},
+			},
+		},
+		{
+			old: []*compute.AliasIpRange{
+				{IpCidrRange: "10.0.0.0/24"},
+				{IpCidrRange: "10.0.1.0/24"},
+			},
+			new: []*compute.AliasIpRange{
+				{IpCidrRange: "192.168.0.0/24"},
+				{IpCidrRange: "172.17.0.0/24"},
+			},
+			expected: []*compute.AliasIpRange{},
+		},
+	}
+
+	for _, tc := range testCases {
+		oldInterface := &compute.NetworkInterface{AliasIpRanges: tc.old}
+		newInterface := &compute.NetworkInterface{AliasIpRanges: tc.new}
+		result := tpgcompute.CheckForCommonAliasIp(oldInterface, newInterface)
+		assert.Equal(t, tc.expected, result)
 	}
 }
 
@@ -1813,7 +1868,7 @@ func TestAccComputeInstance_secondaryAliasIpRange(t *testing.T) {
 					testAccCheckComputeInstanceHasAliasIpRange(&instance, "inst-test-secondary", "172.16.0.0/24"),
 				),
 			},
-			computeInstanceImportStep("us-east1-d", instanceName, []string{}),
+			computeInstanceImportStep("us-east1-d", instanceName, []string{"network_interface.0.alias_ip_range.0.ip_cidr_range", "network_interface.0.alias_ip_range.0.subnetwork_range_name", "network_interface.0.alias_ip_range.1.ip_cidr_range", "network_interface.0.alias_ip_range.1.subnetwork_range_name"}),
 			{
 				Config: testAccComputeInstance_secondaryAliasIpRangeUpdate(networkName, subnetName, instanceName),
 				Check: resource.ComposeTestCheckFunc(
@@ -1821,7 +1876,51 @@ func TestAccComputeInstance_secondaryAliasIpRange(t *testing.T) {
 					testAccCheckComputeInstanceHasAliasIpRange(&instance, "", "10.0.1.0/24"),
 				),
 			},
+			computeInstanceImportStep("us-east1-d", instanceName, []string{"network_interface.0.alias_ip_range.0.ip_cidr_range", "network_interface.0.alias_ip_range.0.subnetwork_range_name", "network_interface.0.alias_ip_range.1.ip_cidr_range", "network_interface.0.alias_ip_range.1.subnetwork_range_name"}),
+		},
+	})
+}
+
+func TestAccComputeInstance_aliasIpRangeCommonAddresses(t *testing.T) {
+	t.Parallel()
+
+	var instance compute.Instance
+	instanceName := fmt.Sprintf("tf-test-%s", acctest.RandString(t, 10))
+	networkName := fmt.Sprintf("tf-test-%s", acctest.RandString(t, 10))
+	subnetName := fmt.Sprintf("tf-test-%s", acctest.RandString(t, 10))
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckComputeInstanceDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeInstance_secondaryAliasIpRangeTwoAliasIps(networkName, subnetName, instanceName),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckComputeInstanceExists(t, "google_compute_instance.foobar", &instance),
+					testAccCheckComputeInstanceHasAliasIpRange(&instance, "inst-test-tertiary", "10.1.1.0/24"),
+					testAccCheckComputeInstanceHasAliasIpRange(&instance, "inst-test-tertiary", "10.1.2.0/24"),
+				),
+			},
 			computeInstanceImportStep("us-east1-d", instanceName, []string{}),
+			{
+				Config: testAccComputeInstance_secondaryAliasIpRangeUpdateWithCommonAddress(networkName, subnetName, instanceName),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckComputeInstanceExists(t, "google_compute_instance.foobar", &instance),
+					testAccCheckComputeInstanceHasAliasIpRange(&instance, "inst-test-tertiary", "10.1.1.0/24"),
+					testAccCheckComputeInstanceHasAliasIpRange(&instance, "inst-test-tertiary", "10.1.3.0/24"),
+				),
+			},
+			computeInstanceImportStep("us-east1-d", instanceName, []string{}),
+			{
+				Config: testAccComputeInstance_secondaryAliasIpRangeUpdateWithCommonAddressDifferentRanges(networkName, subnetName, instanceName),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckComputeInstanceExists(t, "google_compute_instance.foobar", &instance),
+					testAccCheckComputeInstanceHasAliasIpRange(&instance, "inst-test-secondary", "172.16.1.0/24"),
+					testAccCheckComputeInstanceHasAliasIpRange(&instance, "inst-test-tertiary", "10.1.3.0/24"),
+				),
+			},
+			computeInstanceImportStep("us-east1-d", instanceName, []string{"network_interface.0.alias_ip_range.0.ip_cidr_range", "network_interface.0.alias_ip_range.0.subnetwork_range_name", "network_interface.0.alias_ip_range.1.ip_cidr_range", "network_interface.0.alias_ip_range.1.subnetwork_range_name"}),
 		},
 	})
 }
@@ -1914,6 +2013,13 @@ func TestAccComputeInstanceConfidentialInstanceConfigMain(t *testing.T) {
 					testAccCheckComputeInstanceHasConfidentialInstanceConfig(&instance, false, "SEV_SNP"),
 					testAccCheckComputeInstanceExists(t, "google_compute_instance.foobar6", &instance2),
 					testAccCheckComputeInstanceHasConfidentialInstanceConfig(&instance2, false, "SEV_SNP"),
+				),
+			},
+			{
+				Config: testAccComputeInstanceConfidentialInstanceConfigEnableTdx(instanceName, "TDX"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckComputeInstanceExists(t, "google_compute_instance.foobar5", &instance),
+					testAccCheckComputeInstanceHasConfidentialInstanceConfig(&instance, false, "TDX"),
 				),
 			},
 		},
@@ -2550,15 +2656,15 @@ func TestAccComputeInstance_subnetworkUpdate(t *testing.T) {
 			{
 				Config: testAccComputeInstance_subnetworkUpdate(suffix, instanceName),
 			},
-			computeInstanceImportStep("us-east1-d", instanceName, []string{"allow_stopping_for_update"}),
+			computeInstanceImportStep("us-east1-d", instanceName, []string{"allow_stopping_for_update", "network_interface.0.alias_ip_range.0.ip_cidr_range", "network_interface.0.alias_ip_range.0.subnetwork_range_name", "network_interface.0.alias_ip_range.1.ip_cidr_range", "network_interface.0.alias_ip_range.1.subnetwork_range_name"}),
 			{
 				Config: testAccComputeInstance_subnetworkUpdateTwo(suffix, instanceName),
 			},
-			computeInstanceImportStep("us-east1-d", instanceName, []string{"allow_stopping_for_update"}),
+			computeInstanceImportStep("us-east1-d", instanceName, []string{"allow_stopping_for_update", "network_interface.0.alias_ip_range.0.ip_cidr_range", "network_interface.0.alias_ip_range.0.subnetwork_range_name", "network_interface.0.alias_ip_range.1.ip_cidr_range", "network_interface.0.alias_ip_range.1.subnetwork_range_name"}),
 			{
 				Config: testAccComputeInstance_subnetworkUpdate(suffix, instanceName),
 			},
-			computeInstanceImportStep("us-east1-d", instanceName, []string{"allow_stopping_for_update"}),
+			computeInstanceImportStep("us-east1-d", instanceName, []string{"allow_stopping_for_update", "network_interface.0.alias_ip_range.0.ip_cidr_range", "network_interface.0.alias_ip_range.0.subnetwork_range_name", "network_interface.0.alias_ip_range.1.ip_cidr_range", "network_interface.0.alias_ip_range.1.subnetwork_range_name"}),
 		},
 	})
 }
@@ -7141,6 +7247,162 @@ resource "google_compute_instance" "foobar" {
 `, network, subnet, instance)
 }
 
+func testAccComputeInstance_secondaryAliasIpRangeTwoAliasIps(network, subnet, instance string) string {
+	return fmt.Sprintf(`
+data "google_compute_image" "my_image" {
+  family  = "debian-11"
+  project = "debian-cloud"
+}
+
+resource "google_compute_network" "inst-test-network" {
+  name = "%s"
+}
+
+resource "google_compute_subnetwork" "inst-test-subnetwork" {
+  name          = "%s"
+  ip_cidr_range = "10.0.0.0/16"
+  region        = "us-east1"
+  network       = google_compute_network.inst-test-network.self_link
+  secondary_ip_range {
+    range_name    = "inst-test-secondary"
+    ip_cidr_range = "172.16.0.0/20"
+  }
+  secondary_ip_range {
+    range_name    = "inst-test-tertiary"
+    ip_cidr_range = "10.1.0.0/16"
+  }
+}
+
+resource "google_compute_instance" "foobar" {
+  name         = "%s"
+  machine_type = "e2-medium"
+  zone         = "us-east1-d"
+
+  boot_disk {
+    initialize_params {
+      image = data.google_compute_image.my_image.self_link
+    }
+  }
+
+  network_interface {
+    subnetwork = google_compute_subnetwork.inst-test-subnetwork.self_link
+    alias_ip_range {
+      subnetwork_range_name = "inst-test-tertiary"
+      ip_cidr_range = "10.1.1.0/24"
+    }
+    alias_ip_range {
+      subnetwork_range_name = "inst-test-tertiary"
+      ip_cidr_range = "10.1.2.0/24"
+    }
+  }
+}
+`, network, subnet, instance)
+}
+
+func testAccComputeInstance_secondaryAliasIpRangeUpdateWithCommonAddress(network, subnet, instance string) string {
+	return fmt.Sprintf(`
+data "google_compute_image" "my_image" {
+  family  = "debian-11"
+  project = "debian-cloud"
+}
+
+resource "google_compute_network" "inst-test-network" {
+  name = "%s"
+}
+
+resource "google_compute_subnetwork" "inst-test-subnetwork" {
+  name          = "%s"
+  ip_cidr_range = "10.0.0.0/16"
+  region        = "us-east1"
+  network       = google_compute_network.inst-test-network.self_link
+  secondary_ip_range {
+    range_name    = "inst-test-secondary"
+    ip_cidr_range = "172.16.0.0/20"
+  }
+  secondary_ip_range {
+    range_name    = "inst-test-tertiary"
+    ip_cidr_range = "10.1.0.0/16"
+  }
+}
+
+resource "google_compute_instance" "foobar" {
+  name         = "%s"
+  machine_type = "e2-medium"
+  zone         = "us-east1-d"
+
+  boot_disk {
+    initialize_params {
+      image = data.google_compute_image.my_image.self_link
+    }
+  }
+
+  network_interface {
+    subnetwork = google_compute_subnetwork.inst-test-subnetwork.self_link
+    alias_ip_range {
+      subnetwork_range_name = "inst-test-tertiary"
+      ip_cidr_range = "10.1.1.0/24"
+    }
+    alias_ip_range {
+      subnetwork_range_name = "inst-test-tertiary"
+      ip_cidr_range = "10.1.3.0/24"
+    }
+  }
+}
+`, network, subnet, instance)
+}
+
+func testAccComputeInstance_secondaryAliasIpRangeUpdateWithCommonAddressDifferentRanges(network, subnet, instance string) string {
+	return fmt.Sprintf(`
+data "google_compute_image" "my_image" {
+  family  = "debian-11"
+  project = "debian-cloud"
+}
+
+resource "google_compute_network" "inst-test-network" {
+  name = "%s"
+}
+
+resource "google_compute_subnetwork" "inst-test-subnetwork" {
+  name          = "%s"
+  ip_cidr_range = "10.0.0.0/16"
+  region        = "us-east1"
+  network       = google_compute_network.inst-test-network.self_link
+  secondary_ip_range {
+    range_name    = "inst-test-secondary"
+    ip_cidr_range = "172.16.0.0/20"
+  }
+  secondary_ip_range {
+    range_name    = "inst-test-tertiary"
+    ip_cidr_range = "10.1.0.0/16"
+  }
+}
+
+resource "google_compute_instance" "foobar" {
+  name         = "%s"
+  machine_type = "e2-medium"
+  zone         = "us-east1-d"
+
+  boot_disk {
+    initialize_params {
+      image = data.google_compute_image.my_image.self_link
+    }
+  }
+
+  network_interface {
+    subnetwork = google_compute_subnetwork.inst-test-subnetwork.self_link
+    alias_ip_range {
+      subnetwork_range_name = "inst-test-secondary"  
+      ip_cidr_range = "172.16.1.0/24"
+    }
+    alias_ip_range {
+      subnetwork_range_name = "inst-test-tertiary"
+      ip_cidr_range = "10.1.3.0/24"
+    }
+  }
+}
+`, network, subnet, instance)
+}
+
 func testAccComputeInstance_hostname(instance string) string {
 	return fmt.Sprintf(`
 data "google_compute_image" "my_image" {
@@ -7797,6 +8059,40 @@ resource "google_compute_instance" "foobar6" {
 
 }
 `, instance, minCpuPlatform, confidentialInstanceType, instance, minCpuPlatform, confidentialInstanceType)
+}
+
+func testAccComputeInstanceConfidentialInstanceConfigEnableTdx(instance string, confidentialInstanceType string) string {
+	return fmt.Sprintf(`
+data "google_compute_image" "my_image3" {
+  family    = "ubuntu-2204-lts"
+  project   = "tdx-guest-images"
+}
+
+resource "google_compute_instance" "foobar5" {
+  name         = "%s"
+  machine_type = "c3-standard-4"
+  zone         = "us-central1-a"
+
+  boot_disk {
+    initialize_params {
+      image = data.google_compute_image.my_image3.self_link
+    }
+  }
+
+  network_interface {
+    network = "default"
+  }
+
+  confidential_instance_config {
+    confidential_instance_type = %q
+  }
+
+  scheduling {
+    on_host_maintenance = "TERMINATE"
+  }
+
+}
+`, instance, confidentialInstanceType)
 }
 
 func testAccComputeInstance_attributionLabelCreate(instance, add, strategy string) string {
@@ -8598,7 +8894,7 @@ resource "google_compute_instance" "foobar" {
   }
 
   partner_metadata = {
-  	"test.compute.googleapis.com" = jsonencode({ 
+  	"test.compute.googleapis.com" = jsonencode({
   		entries = {
   			key1 = "value1"
   			key2 = 2
@@ -8949,7 +9245,7 @@ resource "google_compute_subnetwork" "subnet2" {
   stack_type                 = "IPV4_ONLY"
   network                    = google_compute_network.net2.id
 }
-  
+
 resource "google_compute_subnetwork" "subnet-ipv62" {
   region                     = "europe-west1"
   name                       = "tf-test-subnet-ip62-%s"
@@ -8964,7 +9260,7 @@ resource "google_compute_address" "normal-address2" {
   region   = "europe-west1"
   name     = "tf-test-addr-normal2-%s"
 }
-  
+
 resource "google_compute_address" "ipv6-address2" {
   region             = "europe-west1"
   name               = "tf-test-addr-ipv62-%s"
@@ -9121,7 +9417,7 @@ resource "google_compute_subnetwork" "subnet2" {
   stack_type                 = "IPV4_ONLY"
   network                    = google_compute_network.net2.id
 }
-  
+
 resource "google_compute_subnetwork" "subnet-ipv62" {
   region                     = "europe-west1"
   name                       = "tf-test-subnet-ip62-%s"
@@ -9136,7 +9432,7 @@ resource "google_compute_address" "normal-address2" {
   region   = "europe-west1"
   name     = "tf-test-addr-normal2-%s"
 }
-  
+
 resource "google_compute_address" "ipv6-address2" {
   region             = "europe-west1"
   name               = "tf-test-addr-ipv62-%s"
