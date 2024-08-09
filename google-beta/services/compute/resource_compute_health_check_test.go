@@ -387,7 +387,7 @@ func TestAccComputeHealthCheck_srcRegions_update(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckComputeHealthCheckDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -413,7 +413,6 @@ func TestAccComputeHealthCheck_srcRegions_update(t *testing.T) {
 func testAccComputeHealthCheck_srcRegions(hckName string) string {
 	return fmt.Sprintf(`
 resource "google_compute_health_check" "src_region" {
-  provider            = "google-beta"
   name                = "%s"
   description         = "Resource created for Terraform acceptance testing"
   check_interval_sec  = 30
@@ -428,7 +427,6 @@ resource "google_compute_health_check" "src_region" {
 func testAccComputeHealthCheck_srcRegions_update(hckName string) string {
 	return fmt.Sprintf(`
 resource "google_compute_health_check" "src_region" {
-  provider            = "google-beta"
   name                = "%s"
   description         = "Resource updated for Terraform acceptance testing"
   check_interval_sec  = 30
