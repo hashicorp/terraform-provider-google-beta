@@ -64,7 +64,7 @@ func ResourceManagedKafkaTopic() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
-				Description: `ID of the location of the Apache Kafka for BigQuery resource. See https://cloud.google.com/managed-kafka/docs/locations for a list of supported locations.`,
+				Description: `ID of the location of the Kafka resource. See https://cloud.google.com/managed-kafka/docs/locations for a list of supported locations.`,
 			},
 			"replication_factor": {
 				Type:        schema.TypeInt,
