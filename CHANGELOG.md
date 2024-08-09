@@ -1,10 +1,7 @@
 ## 5.41.0 (Unreleased)
 
-BREAKING CHANGES:
-* storage: added `send_age_if_zero` field with default value `true` and deprecated `no_age` field. ([#7851](https://github.com/hashicorp/terraform-provider-google-beta/pull/7851))
-
 DEPRECATIONS:
-* resourcemanager: deprecated `skip_delete` field in the `google_project` resource. Instead use the new field `deletion_policy` in the next major release ([#7817](https://github.com/hashicorp/terraform-provider-google-beta/pull/7817))
+* resourcemanager: deprecated `skip_delete` field in the `google_project` resource. Use `deletion_policy` instead. ([#7817](https://github.com/hashicorp/terraform-provider-google-beta/pull/7817))
 
 FEATURES:
 * **New Data Source:** `google_scc_v2_organization_source_iam_policy` ([#7888](https://github.com/hashicorp/terraform-provider-google-beta/pull/7888))
