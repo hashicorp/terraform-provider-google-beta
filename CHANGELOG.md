@@ -26,7 +26,6 @@ IMPROVEMENTS:
 * gkehub: added `configmanagement.management` and `configmanagement.config_sync.enabled` fields to `google_gkehub_feature_membership` ([#7899](https://github.com/hashicorp/terraform-provider-google-beta/pull/7899))
 * gkehub: added `management` field to `google_gke_hub_feature.fleet_default_member_config.configmanagement` ([#7862](https://github.com/hashicorp/terraform-provider-google-beta/pull/7862))
 * resourcemanager: added `deletion_policy` field to the `google_project` resource. Setting `deletion_policy` to `PREVENT` will protect the project against any destroy actions caused by a terraform apply or terraform destroy. Setting `deletion_policy` to `ABANDON` allows the resource to be abandoned rather than deleted and it behaves the same with `skip_delete = true`. Default value is `DELETE`. `skip_delete = true` takes precedence over `deletion_policy = "DELETE"`.
-* sql: added `server_ca_mode` field to `google_sql_database_instance` resource ([#7886](https://github.com/hashicorp/terraform-provider-google-beta/pull/7886))
 * storage: added `force_destroy` field to `google_storage_managed_folder` resource ([#7867](https://github.com/hashicorp/terraform-provider-google-beta/pull/7867))
 * storage: added `generation` field to `google_storage_bucket_object` resource ([#7866](https://github.com/hashicorp/terraform-provider-google-beta/pull/7866))
 
