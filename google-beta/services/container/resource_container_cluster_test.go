@@ -10533,7 +10533,7 @@ data "google_container_engine_versions" "uscentral1a" {
 resource "google_container_cluster" "with_autopilot" {
   name = "%[3]s"
   location = "us-central1"
-  min_master_version = data.google_container_engine_versions.uscentral1a.release_channel_latest_version["STABLE"]
+  min_master_version = data.google_container_engine_versions.uscentral1a.release_channel_latest_version["REGULAR"]
   enable_autopilot = true
 
   deletion_protection = false
@@ -10676,7 +10676,7 @@ data "google_container_engine_versions" "uscentral1a" {
 resource "google_container_cluster" "with_autopilot" {
   name = "%[3]s"
   location = "us-central1"
-  min_master_version = data.google_container_engine_versions.uscentral1a.release_channel_latest_version["STABLE"]
+  min_master_version = data.google_container_engine_versions.uscentral1a.release_channel_latest_version["REGULAR"]
   enable_autopilot = true
 
   deletion_protection = false
@@ -10820,7 +10820,7 @@ data "google_container_engine_versions" "uscentral1a" {
 resource "google_container_cluster" "with_autopilot" {
   name = "%[3]s"
   location = "us-central1"
-  min_master_version = data.google_container_engine_versions.uscentral1a.release_channel_latest_version["STABLE"]
+  min_master_version = data.google_container_engine_versions.uscentral1a.release_channel_latest_version["REGULAR"]
   enable_autopilot = true
 
   deletion_protection = false
