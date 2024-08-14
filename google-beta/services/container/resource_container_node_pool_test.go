@@ -1317,6 +1317,12 @@ func TestAccContainerNodePool_012_ConfigModeAttr(t *testing.T) {
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
+			{
+				// Test guest_accelerator.count = 0 is the same as guest_accelerator = []
+				Config:             testAccContainerNodePool_EmptyGuestAccelerator(cluster, np, networkName, subnetworkName),
+				ExpectNonEmptyPlan: false,
+				PlanOnly:           true,
+			},
 		},
 	})
 }
@@ -3784,6 +3790,7 @@ resource "google_container_node_pool" "np" {
 
   node_config {
     guest_accelerator = []
+	machine_type = "n1-highmem-4"
   }
 }
 `, cluster, networkName, subnetworkName, np)
@@ -4305,6 +4312,9 @@ resource "google_container_node_pool" "with_confidential_boot_disk" {
   cluster            = google_container_cluster.cluster.name
 
   node_config {
+    confidential_nodes {
+      enabled = true
+    }
     image_type = "COS_CONTAINERD"
     boot_disk_kms_key = "%s"
     oauth_scopes = [
@@ -4312,7 +4322,7 @@ resource "google_container_node_pool" "with_confidential_boot_disk" {
       "https://www.googleapis.com/auth/monitoring",
     ]
     enable_confidential_storage = true
-    machine_type = "n2-standard-2"
+    machine_type = "n2d-standard-2"
     disk_type = "hyperdisk-balanced"
   }
 }

@@ -159,6 +159,7 @@ var handwrittenDatasources = map[string]*schema.Resource{
 	"google_alloydb_locations":                            alloydb.DataSourceAlloydbLocations(),
 	"google_alloydb_supported_database_flags":             alloydb.DataSourceAlloydbSupportedDatabaseFlags(),
 	"google_artifact_registry_docker_image":               artifactregistry.DataSourceArtifactRegistryDockerImage(),
+	"google_artifact_registry_locations":                  artifactregistry.DataSourceGoogleArtifactRegistryLocations(),
 	"google_artifact_registry_repository":                 artifactregistry.DataSourceArtifactRegistryRepository(),
 	"google_apphub_discovered_workload":                   apphub.DataSourceApphubDiscoveredWorkload(),
 	"google_app_engine_default_service_account":           appengine.DataSourceGoogleAppEngineDefaultServiceAccount(),
@@ -179,6 +180,7 @@ var handwrittenDatasources = map[string]*schema.Resource{
 	"google_cloud_asset_search_all_resources":             cloudasset.DataSourceGoogleCloudAssetSearchAllResources(),
 	"google_cloud_identity_groups":                        cloudidentity.DataSourceGoogleCloudIdentityGroups(),
 	"google_cloud_identity_group_memberships":             cloudidentity.DataSourceGoogleCloudIdentityGroupMemberships(),
+	"google_cloud_identity_group_transitive_memberships":  cloudidentity.DataSourceGoogleCloudIdentityGroupTransitiveMemberships(),
 	"google_cloud_identity_group_lookup":                  cloudidentity.DataSourceGoogleCloudIdentityGroupLookup(),
 	"google_cloud_quotas_quota_info":                      cloudquotas.DataSourceGoogleCloudQuotasQuotaInfo(),
 	"google_cloud_quotas_quota_infos":                     cloudquotas.DataSourceGoogleCloudQuotasQuotaInfos(),
@@ -472,9 +474,9 @@ var handwrittenIAMDatasources = map[string]*schema.Resource{
 }
 
 // Resources
-// Generated resources: 504
+// Generated resources: 508
 // Generated IAM resources: 285
-// Total generated resources: 789
+// Total generated resources: 793
 var generatedResources = map[string]*schema.Resource{
 	"google_folder_access_approval_settings":                                     accessapproval.ResourceAccessApprovalFolderSettings(),
 	"google_organization_access_approval_settings":                               accessapproval.ResourceAccessApprovalOrganizationSettings(),
@@ -873,6 +875,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_dialogflow_cx_webhook":                                               dialogflowcx.ResourceDialogflowCXWebhook(),
 	"google_discovery_engine_chat_engine":                                        discoveryengine.ResourceDiscoveryEngineChatEngine(),
 	"google_discovery_engine_data_store":                                         discoveryengine.ResourceDiscoveryEngineDataStore(),
+	"google_discovery_engine_schema":                                             discoveryengine.ResourceDiscoveryEngineSchema(),
 	"google_discovery_engine_search_engine":                                      discoveryengine.ResourceDiscoveryEngineSearchEngine(),
 	"google_dns_managed_zone":                                                    dns.ResourceDNSManagedZone(),
 	"google_dns_managed_zone_iam_binding":                                        tpgiamresource.ResourceIamBinding(dns.DNSManagedZoneIamSchema, dns.DNSManagedZoneIamUpdaterProducer, dns.DNSManagedZoneIdParseFunc),
@@ -1147,6 +1150,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_secure_source_manager_repository_iam_policy":                         tpgiamresource.ResourceIamPolicy(securesourcemanager.SecureSourceManagerRepositoryIamSchema, securesourcemanager.SecureSourceManagerRepositoryIamUpdaterProducer, securesourcemanager.SecureSourceManagerRepositoryIdParseFunc),
 	"google_scc_event_threat_detection_custom_module":                            securitycenter.ResourceSecurityCenterEventThreatDetectionCustomModule(),
 	"google_scc_folder_custom_module":                                            securitycenter.ResourceSecurityCenterFolderCustomModule(),
+	"google_scc_folder_notification_config":                                      securitycenter.ResourceSecurityCenterFolderNotificationConfig(),
 	"google_scc_mute_config":                                                     securitycenter.ResourceSecurityCenterMuteConfig(),
 	"google_scc_notification_config":                                             securitycenter.ResourceSecurityCenterNotificationConfig(),
 	"google_scc_organization_custom_module":                                      securitycenter.ResourceSecurityCenterOrganizationCustomModule(),
@@ -1161,6 +1165,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_scc_management_organization_security_health_analytics_custom_module": securitycentermanagement.ResourceSecurityCenterManagementOrganizationSecurityHealthAnalyticsCustomModule(),
 	"google_scc_management_project_security_health_analytics_custom_module":      securitycentermanagement.ResourceSecurityCenterManagementProjectSecurityHealthAnalyticsCustomModule(),
 	"google_scc_v2_folder_mute_config":                                           securitycenterv2.ResourceSecurityCenterV2FolderMuteConfig(),
+	"google_scc_v2_folder_notification_config":                                   securitycenterv2.ResourceSecurityCenterV2FolderNotificationConfig(),
 	"google_scc_v2_organization_mute_config":                                     securitycenterv2.ResourceSecurityCenterV2OrganizationMuteConfig(),
 	"google_scc_v2_organization_notification_config":                             securitycenterv2.ResourceSecurityCenterV2OrganizationNotificationConfig(),
 	"google_scc_v2_organization_source":                                          securitycenterv2.ResourceSecurityCenterV2OrganizationSource(),
@@ -1240,6 +1245,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_vertex_ai_featurestore_entitytype_feature":                           vertexai.ResourceVertexAIFeaturestoreEntitytypeFeature(),
 	"google_vertex_ai_index":                                                     vertexai.ResourceVertexAIIndex(),
 	"google_vertex_ai_index_endpoint":                                            vertexai.ResourceVertexAIIndexEndpoint(),
+	"google_vertex_ai_index_endpoint_deployed_index":                             vertexai.ResourceVertexAIIndexEndpointDeployedIndex(),
 	"google_vertex_ai_metadata_store":                                            vertexai.ResourceVertexAIMetadataStore(),
 	"google_vertex_ai_tensorboard":                                               vertexai.ResourceVertexAITensorboard(),
 	"google_vmwareengine_cluster":                                                vmwareengine.ResourceVmwareengineCluster(),
@@ -1368,7 +1374,7 @@ var handwrittenIAMResources = map[string]*schema.Resource{
 	"google_bigtable_table_iam_member":           tpgiamresource.ResourceIamMember(bigtable.IamBigtableTableSchema, bigtable.NewBigtableTableUpdater, bigtable.BigtableTableIdParseFunc),
 	"google_bigtable_table_iam_policy":           tpgiamresource.ResourceIamPolicy(bigtable.IamBigtableTableSchema, bigtable.NewBigtableTableUpdater, bigtable.BigtableTableIdParseFunc),
 	"google_bigquery_dataset_iam_binding":        tpgiamresource.ResourceIamBinding(bigquery.IamBigqueryDatasetSchema, bigquery.NewBigqueryDatasetIamUpdater, bigquery.BigqueryDatasetIdParseFunc),
-	"google_bigquery_dataset_iam_member":         tpgiamresource.ResourceIamMember(bigquery.IamBigqueryDatasetSchema, bigquery.NewBigqueryDatasetIamUpdater, bigquery.BigqueryDatasetIdParseFunc),
+	"google_bigquery_dataset_iam_member":         tpgiamresource.ResourceIamMember(bigquery.IamMemberBigqueryDatasetSchema, bigquery.NewBigqueryDatasetIamMemberUpdater, bigquery.BigqueryDatasetIdParseFunc),
 	"google_bigquery_dataset_iam_policy":         tpgiamresource.ResourceIamPolicy(bigquery.IamBigqueryDatasetSchema, bigquery.NewBigqueryDatasetIamUpdater, bigquery.BigqueryDatasetIdParseFunc),
 	"google_billing_account_iam_binding":         tpgiamresource.ResourceIamBinding(billing.IamBillingAccountSchema, billing.NewBillingAccountIamUpdater, billing.BillingAccountIdParseFunc),
 	"google_billing_account_iam_member":          tpgiamresource.ResourceIamMember(billing.IamBillingAccountSchema, billing.NewBillingAccountIamUpdater, billing.BillingAccountIdParseFunc),
