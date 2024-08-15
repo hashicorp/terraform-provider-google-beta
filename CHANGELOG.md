@@ -2,13 +2,11 @@
 
 UNKNOWN CHANGELOG TYPE:
 *  ([#7947](https://github.com/hashicorp/terraform-provider-google-beta/pull/7947))
-* Update CHANGELOG.md ([#7957](https://github.com/hashicorp/terraform-provider-google-beta/pull/7957))
-* Update CHANGELOG.md for 5.40.0 ([#7920](https://github.com/hashicorp/terraform-provider-google-beta/pull/7920))
-* update teamcity-nightly workflows to use nightly-test in description ([#7907](https://github.com/hashicorp/terraform-provider-google-beta/pull/7907))
+
 DEPRECATIONS:
 * compute: setting `google_compute_subnetwork.secondary_ip_range = []` to explicitly set a list of empty objects is deprecated and will produce an error in the upcoming major release. Use `send_secondary_ip_range_if_empty` while removing `secondary_ip_range` from config instead. ([#7961](https://github.com/hashicorp/terraform-provider-google-beta/pull/7961))
 BREAKING CHANGES:
-* storage: added `send_age_if_zero` field with default value `true` and deprecated `no_age` field. (revert) ([#7926](https://github.com/hashicorp/terraform-provider-google-beta/pull/7926))
+
 
 FEATURES:
 * **New Data Source:** `google_artifact_registry_locations` ([#7922](https://github.com/hashicorp/terraform-provider-google-beta/pull/7922))
@@ -19,27 +17,23 @@ FEATURES:
 * **New Resource:** `google_vertex_ai_index_endpoint_deployed_index` ([#7931](https://github.com/hashicorp/terraform-provider-google-beta/pull/7931))
 
 IMPROVEMENTS:
-* ancestrymanager: Prefer project number over project id to align with CAI format. ([#7938](https://github.com/hashicorp/terraform-provider-google-beta/pull/7938))
 * clouddeploy: added `serial_pipeline.stages.strategy.canary.runtime_config.kubernetes.gateway_service_mesh.pod_selector_label` and `serial_pipeline.stages.strategy.canary.runtime_config.kubernetes.service_networking.pod_selector_label` fields to `google_clouddeploy_delivery_pipeline` resource ([#7945](https://github.com/hashicorp/terraform-provider-google-beta/pull/7945))
 * compute: added `TDX` instance option to `confidential_instance_type` instance in `google_compute_instance` ([#7913](https://github.com/hashicorp/terraform-provider-google-beta/pull/7913))
 * compute: added `send_secondary_ip_range_if_empty` to `google_compute_subnetwork` ([#7961](https://github.com/hashicorp/terraform-provider-google-beta/pull/7961))
 * dataflow: made provider return more descriptive errors when the `parameters` field of `google_dataflow_flex_template_job` contains Dataflow options ([#7943](https://github.com/hashicorp/terraform-provider-google-beta/pull/7943))
 * discoveryengine: added `skip_default_schema_creation` field to `google_data_store` resource ([#7900](https://github.com/hashicorp/terraform-provider-google-beta/pull/7900))
 * dns: changed `load_balancer_type` field from required to optional in `google_dns_record_set` ([#7925](https://github.com/hashicorp/terraform-provider-google-beta/pull/7925))
-* firestore: added `cmek_config` field to `google_firestore_database` resource (GA) ([#7952](https://github.com/hashicorp/terraform-provider-google-beta/pull/7952))
 * logging: changed enable_analytics parsing to "no preference" in analytics if omitted, instead of explicitly disabling analytics. ([#7964](https://github.com/hashicorp/terraform-provider-google-beta/pull/7964))
 * parallelstore: added `file_stripe_level`, `directory_stripe_level` fields to `google_parallelstore_instance` resource ([#7942](https://github.com/hashicorp/terraform-provider-google-beta/pull/7942))
-* resourcemanager: added `deletion_policy` field to replace `skip_delete` field in `google_project` resource. Setting `deletion_policy` to `PREVENT` will protect the project against any destroy actions caused by a terraform apply or terraform destroy. Setting `deletion_policy` to `ABANDON` allows the resource to be abandoned rather than deleted and it behaves the same with `skip_delete = true`. Default value is `DELETE`. ([#7908](https://github.com/hashicorp/terraform-provider-google-beta/pull/7908))
 * servicenetworking: added `update_on_creation_fail` field to `google_service_networking_connection` resource. When it is set to true, enforce an update of the reserved peering ranges on the existing service networking connection in case of a new connection creation failure. ([#7915](https://github.com/hashicorp/terraform-provider-google-beta/pull/7915))
+* sql: added `server_ca_mode` field to `google_sql_database_instance` resource ([#7886](https://github.com/hashicorp/terraform-provider-google-beta/pull/7886))
 
 BUG FIXES:
 * bigquery: made `google_bigquery_dataset_iam_member` non-authoritative. To remove a bigquery dataset iam member, use an authoritative resource like `google_bigquery_dataset_iam_policy` ([#7960](https://github.com/hashicorp/terraform-provider-google-beta/pull/7960))
-* cloudfunctions2: fixed a "Provider produced inconsistent final plan" bug affecting the `service_config.environment_variables` field in `google_cloudfunctions2_function` resource ([#7905](https://github.com/hashicorp/terraform-provider-google-beta/pull/7905))
+* cloudfunctions2: fixed a permadiff on `storage_source.generation` in `google_cloudfunctions2_function` resource ([#7905](https://github.com/hashicorp/terraform-provider-google-beta/pull/7905))
 * cloudfunctions2: fixed an issue with `google_cloudfunctions2_function` where `storage_source.generation` would always show a diff ([#7912](https://github.com/hashicorp/terraform-provider-google-beta/pull/7912))
-* compute:  fixed issue where sub-resources managed by `google_compute_forwarding_rule` prevented resource deletion ([#7958](https://github.com/hashicorp/terraform-provider-google-beta/pull/7958))
-* dataflow: Fix broken TestAccDataflowFlexTemplateJob_withKmsKey ([#7954](https://github.com/hashicorp/terraform-provider-google-beta/pull/7954))
-* kms: restrict beta-only field test to beta environment ([#7953](https://github.com/hashicorp/terraform-provider-google-beta/pull/7953))
-* workbench: fixed a bug with workbench instance metadata drifting when using custom containers. ([#7959](https://github.com/hashicorp/terraform-provider-google-beta/pull/7959))
+* compute: fixed issue where sub-resources managed by `google_compute_forwarding_rule` prevented resource deletion ([#7958](https://github.com/hashicorp/terraform-provider-google-beta/pull/7958))
+* workbench: fixed a bug with `google_workbench_instance`  metadata drifting when using custom containers. ([#7959](https://github.com/hashicorp/terraform-provider-google-beta/pull/7959))
 
 ## 5.41.0 (August 13, 2024)
 
@@ -68,7 +62,7 @@ IMPROVEMENTS:
 * discoveryengine: added `skip_default_schema_creation` field to `google_discovery_engine_data_store` resource ([#7900](https://github.com/hashicorp/terraform-provider-google-beta/pull/7900))
 * gkehub: added `configmanagement.management` and `configmanagement.config_sync.enabled` fields to `google_gkehub_feature_membership` ([#7899](https://github.com/hashicorp/terraform-provider-google-beta/pull/7899))
 * gkehub: added `management` field to `google_gke_hub_feature.fleet_default_member_config.configmanagement` ([#7862](https://github.com/hashicorp/terraform-provider-google-beta/pull/7862))
-* resourcemanager: added `deletion_policy` field to the `google_project` resource. Setting `deletion_policy` to `PREVENT` will protect the project against any destroy actions caused by a terraform apply or terraform destroy. Setting `deletion_policy` to `ABANDON` allows the resource to be abandoned rather than deleted and it behaves the same with `skip_delete = true`. Default value is `DELETE`. `skip_delete = true` takes precedence over `deletion_policy = "DELETE"`.
+* resourcemanager: added `deletion_policy` field to the `google_project` resource. Setting `deletion_policy` to `PREVENT` will protect the project against any destroy actions caused by a terraform apply or terraform destroy. Setting `deletion_policy` to `ABANDON` allows the resource to be abandoned rather than deleted and it behaves the same with `skip_delete = true`. Default value is `DELETE`. `skip_delete = true` takes precedence over `deletion_policy = "DELETE"`. ([#7908](https://github.com/hashicorp/terraform-provider-google-beta/pull/7908))
 * storage: added `force_destroy` field to `google_storage_managed_folder` resource ([#7867](https://github.com/hashicorp/terraform-provider-google-beta/pull/7867))
 * storage: added `generation` field to `google_storage_bucket_object` resource ([#7866](https://github.com/hashicorp/terraform-provider-google-beta/pull/7866))
 
