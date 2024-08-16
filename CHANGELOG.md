@@ -1,8 +1,5 @@
 ## 5.42.0 (Unreleased)
 
-UNKNOWN CHANGELOG TYPE:
-*  ([#7947](https://github.com/hashicorp/terraform-provider-google-beta/pull/7947))
-
 DEPRECATIONS:
 * compute: setting `google_compute_subnetwork.secondary_ip_range = []` to explicitly set a list of empty objects is deprecated and will produce an error in the upcoming major release. Use `send_secondary_ip_range_if_empty` while removing `secondary_ip_range` from config instead. ([#7961](https://github.com/hashicorp/terraform-provider-google-beta/pull/7961))
 BREAKING CHANGES:
