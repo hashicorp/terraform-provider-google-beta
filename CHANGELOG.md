@@ -2,7 +2,6 @@
 
 DEPRECATIONS:
 * compute: setting `google_compute_subnetwork.secondary_ip_range = []` to explicitly set a list of empty objects is deprecated and will produce an error in the upcoming major release. Use `send_secondary_ip_range_if_empty` while removing `secondary_ip_range` from config instead. ([#7961](https://github.com/hashicorp/terraform-provider-google-beta/pull/7961))
-BREAKING CHANGES:
 
 
 FEATURES:
@@ -27,8 +26,8 @@ IMPROVEMENTS:
 
 BUG FIXES:
 * bigquery: made `google_bigquery_dataset_iam_member` non-authoritative. To remove a bigquery dataset iam member, use an authoritative resource like `google_bigquery_dataset_iam_policy` ([#7960](https://github.com/hashicorp/terraform-provider-google-beta/pull/7960))
-* cloudfunctions2: fixed a permadiff on `storage_source.generation` in `google_cloudfunctions2_function` resource ([#7905](https://github.com/hashicorp/terraform-provider-google-beta/pull/7905))
-* cloudfunctions2: fixed an issue with `google_cloudfunctions2_function` where `storage_source.generation` would always show a diff ([#7912](https://github.com/hashicorp/terraform-provider-google-beta/pull/7912))
+* cloudfunctions2: fixed a "Provider produced inconsistent final plan" bug affecting the `service_config.environment_variables` field in `google_cloudfunctions2_function` resource ([#7905](https://github.com/hashicorp/terraform-provider-google-beta/pull/7905))
+* cloudfunctions2: fixed a permadiff on `storage_source.generation` in `google_cloudfunctions2_function` resource ([#7912](https://github.com/hashicorp/terraform-provider-google-beta/pull/7912))
 * compute: fixed issue where sub-resources managed by `google_compute_forwarding_rule` prevented resource deletion ([#7958](https://github.com/hashicorp/terraform-provider-google-beta/pull/7958))
 * workbench: fixed a bug with `google_workbench_instance`  metadata drifting when using custom containers. ([#7959](https://github.com/hashicorp/terraform-provider-google-beta/pull/7959))
 
