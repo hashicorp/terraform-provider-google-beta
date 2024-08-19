@@ -16,7 +16,6 @@ IMPROVEMENTS:
 * clouddeploy: added `serial_pipeline.stages.strategy.canary.runtime_config.kubernetes.gateway_service_mesh.pod_selector_label` and `serial_pipeline.stages.strategy.canary.runtime_config.kubernetes.service_networking.pod_selector_label` fields to `google_clouddeploy_delivery_pipeline` resource ([#7945](https://github.com/hashicorp/terraform-provider-google-beta/pull/7945))
 * compute: added `TDX` instance option to `confidential_instance_type` instance in `google_compute_instance` ([#7913](https://github.com/hashicorp/terraform-provider-google-beta/pull/7913))
 * compute: added `send_secondary_ip_range_if_empty` to `google_compute_subnetwork` ([#7961](https://github.com/hashicorp/terraform-provider-google-beta/pull/7961))
-* dataflow: made provider return more descriptive errors when the `parameters` field of `google_dataflow_flex_template_job` contains Dataflow options ([#7943](https://github.com/hashicorp/terraform-provider-google-beta/pull/7943))
 * discoveryengine: added `skip_default_schema_creation` field to `google_data_store` resource ([#7900](https://github.com/hashicorp/terraform-provider-google-beta/pull/7900))
 * dns: changed `load_balancer_type` field from required to optional in `google_dns_record_set` ([#7925](https://github.com/hashicorp/terraform-provider-google-beta/pull/7925))
 * logging: changed enable_analytics parsing to "no preference" in analytics if omitted, instead of explicitly disabling analytics. ([#7964](https://github.com/hashicorp/terraform-provider-google-beta/pull/7964))
