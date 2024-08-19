@@ -18,7 +18,6 @@ IMPROVEMENTS:
 * compute: added `send_secondary_ip_range_if_empty` to `google_compute_subnetwork` ([#7961](https://github.com/hashicorp/terraform-provider-google-beta/pull/7961))
 * discoveryengine: added `skip_default_schema_creation` field to `google_data_store` resource ([#7900](https://github.com/hashicorp/terraform-provider-google-beta/pull/7900))
 * dns: changed `load_balancer_type` field from required to optional in `google_dns_record_set` ([#7925](https://github.com/hashicorp/terraform-provider-google-beta/pull/7925))
-* logging: changed enable_analytics parsing to "no preference" in analytics if omitted, instead of explicitly disabling analytics. ([#7964](https://github.com/hashicorp/terraform-provider-google-beta/pull/7964))
 * parallelstore: added `file_stripe_level`, `directory_stripe_level` fields to `google_parallelstore_instance` resource ([#7942](https://github.com/hashicorp/terraform-provider-google-beta/pull/7942))
 * servicenetworking: added `update_on_creation_fail` field to `google_service_networking_connection` resource. When it is set to true, enforce an update of the reserved peering ranges on the existing service networking connection in case of a new connection creation failure. ([#7915](https://github.com/hashicorp/terraform-provider-google-beta/pull/7915))
 * sql: added `server_ca_mode` field to `google_sql_database_instance` resource ([#7886](https://github.com/hashicorp/terraform-provider-google-beta/pull/7886))
@@ -28,6 +27,7 @@ BUG FIXES:
 * cloudfunctions2: fixed a "Provider produced inconsistent final plan" bug affecting the `service_config.environment_variables` field in `google_cloudfunctions2_function` resource ([#7905](https://github.com/hashicorp/terraform-provider-google-beta/pull/7905))
 * cloudfunctions2: fixed a permadiff on `storage_source.generation` in `google_cloudfunctions2_function` resource ([#7912](https://github.com/hashicorp/terraform-provider-google-beta/pull/7912))
 * compute: fixed issue where sub-resources managed by `google_compute_forwarding_rule` prevented resource deletion ([#7958](https://github.com/hashicorp/terraform-provider-google-beta/pull/7958))
+* logging: changed `google_logging_project_bucket_config.enable_analytics` behavior to set "no preference" in analytics if omitted, instead of explicitly disabling analytics. ([#19126](https://github.com/hashicorp/terraform-provider-google/pull/19126))
 * workbench: fixed a bug with `google_workbench_instance`  metadata drifting when using custom containers. ([#7959](https://github.com/hashicorp/terraform-provider-google-beta/pull/7959))
 
 ## 5.41.0 (August 13, 2024)
