@@ -30,6 +30,7 @@ import (
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/verify"
 )
 
 func ResourceNetworkServicesTcpRoute() *schema.Resource {
@@ -96,6 +97,14 @@ If weights are unspecified for all services, then, traffic is distributed in equ
 												},
 											},
 										},
+									},
+									"idle_timeout": {
+										Type:         schema.TypeString,
+										Optional:     true,
+										ValidateFunc: verify.ValidateRegexp(`^(0|[1-9][0-9]*)(\.[0-9]{1,9})?s$`),
+										Description: `Specifies the idle timeout for the selected route. The idle timeout is defined as the period in which there are no bytes sent or received on either the upstream or downstream connection. If not set, the default idle timeout is 30 seconds. If set to 0s, the timeout will be disabled.
+
+A duration in seconds with up to nine fractional digits, ending with 's'. Example: "3.5s".`,
 									},
 									"original_destination": {
 										Type:        schema.TypeBool,
@@ -664,6 +673,8 @@ func flattenNetworkServicesTcpRouteRulesAction(v interface{}, d *schema.Resource
 		flattenNetworkServicesTcpRouteRulesActionDestinations(original["destinations"], d, config)
 	transformed["original_destination"] =
 		flattenNetworkServicesTcpRouteRulesActionOriginalDestination(original["originalDestination"], d, config)
+	transformed["idle_timeout"] =
+		flattenNetworkServicesTcpRouteRulesActionIdleTimeout(original["idleTimeout"], d, config)
 	return []interface{}{transformed}
 }
 func flattenNetworkServicesTcpRouteRulesActionDestinations(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -707,6 +718,10 @@ func flattenNetworkServicesTcpRouteRulesActionDestinationsWeight(v interface{}, 
 }
 
 func flattenNetworkServicesTcpRouteRulesActionOriginalDestination(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenNetworkServicesTcpRouteRulesActionIdleTimeout(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
@@ -830,6 +845,13 @@ func expandNetworkServicesTcpRouteRulesAction(v interface{}, d tpgresource.Terra
 		transformed["originalDestination"] = transformedOriginalDestination
 	}
 
+	transformedIdleTimeout, err := expandNetworkServicesTcpRouteRulesActionIdleTimeout(original["idle_timeout"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedIdleTimeout); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["idleTimeout"] = transformedIdleTimeout
+	}
+
 	return transformed, nil
 }
 
@@ -871,6 +893,10 @@ func expandNetworkServicesTcpRouteRulesActionDestinationsWeight(v interface{}, d
 }
 
 func expandNetworkServicesTcpRouteRulesActionOriginalDestination(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandNetworkServicesTcpRouteRulesActionIdleTimeout(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
