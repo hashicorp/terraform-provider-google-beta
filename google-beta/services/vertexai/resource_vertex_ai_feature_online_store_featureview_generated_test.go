@@ -429,6 +429,7 @@ resource "google_vertex_ai_feature_online_store_featureview" "cross_project_feat
 }
 
 func TestAccVertexAIFeatureOnlineStoreFeatureview_vertexAiFeatureonlinestoreFeatureviewWithVectorSearchExample(t *testing.T) {
+	acctest.SkipIfVcr(t)
 	t.Parallel()
 
 	context := map[string]interface{}{
