@@ -85,7 +85,7 @@ func TestAccFirestoreDatabase_firestoreCmekDatabaseExample(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckFirestoreDatabaseDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -104,12 +104,9 @@ func TestAccFirestoreDatabase_firestoreCmekDatabaseExample(t *testing.T) {
 func testAccFirestoreDatabase_firestoreCmekDatabaseExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 data "google_project" "project" {
-  provider = google-beta
 }
 
 resource "google_firestore_database" "database" {
-  provider = google-beta
-
   project                           = "%{project_id}"
   name                              = "tf-test-cmek-database-id%{random_suffix}"
   location_id                       = "nam5"
@@ -129,23 +126,17 @@ resource "google_firestore_database" "database" {
 }
 
 resource "google_kms_crypto_key" "crypto_key" {
-  provider = google-beta
-
   name     = "tf-test-kms-key%{random_suffix}"
   key_ring = google_kms_key_ring.key_ring.id
   purpose  = "ENCRYPT_DECRYPT"
 }
 
 resource "google_kms_key_ring" "key_ring" {
-  provider = google-beta
-
   name     = "tf-test-kms-key-ring%{random_suffix}"
   location = "us"
 }
 
 resource "google_kms_crypto_key_iam_binding" "firestore_cmek_keyuser" {
-  provider = google-beta
-
   crypto_key_id = google_kms_crypto_key.crypto_key.id
   role          = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
 
@@ -210,7 +201,7 @@ func TestAccFirestoreDatabase_firestoreCmekDatabaseInDatastoreModeExample(t *tes
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckFirestoreDatabaseDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -229,12 +220,9 @@ func TestAccFirestoreDatabase_firestoreCmekDatabaseInDatastoreModeExample(t *tes
 func testAccFirestoreDatabase_firestoreCmekDatabaseInDatastoreModeExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 data "google_project" "project" {
-  provider = google-beta
 }
 
 resource "google_firestore_database" "database" {
-  provider = google-beta
-
   project                           = "%{project_id}"
   name                              = "tf-test-cmek-database-id%{random_suffix}"
   location_id                       = "nam5"
@@ -254,23 +242,17 @@ resource "google_firestore_database" "database" {
 }
 
 resource "google_kms_crypto_key" "crypto_key" {
-  provider = google-beta
-
   name     = "tf-test-kms-key%{random_suffix}"
   key_ring = google_kms_key_ring.key_ring.id
   purpose  = "ENCRYPT_DECRYPT"
 }
 
 resource "google_kms_key_ring" "key_ring" {
-  provider = google-beta
-
   name     = "tf-test-kms-key-ring%{random_suffix}"
   location = "us"
 }
 
 resource "google_kms_crypto_key_iam_binding" "firestore_cmek_keyuser" {
-  provider = google-beta
-
   crypto_key_id = google_kms_crypto_key.crypto_key.id
   role          = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
 

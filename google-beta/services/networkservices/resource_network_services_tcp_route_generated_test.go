@@ -150,6 +150,7 @@ resource "google_network_services_tcp_route" "default" {
         weight = 1
       }
       original_destination = false
+      idle_timeout = "60s"
     }
   }
 }

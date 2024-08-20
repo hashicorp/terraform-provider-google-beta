@@ -63,7 +63,8 @@ resource "google_parallelstore_instance" "instance" {
   description = "test instance"
   capacity_gib = 12000
   network = google_compute_network.network.name
-
+  file_stripe_level = "FILE_STRIPE_LEVEL_MIN"
+  directory_stripe_level = "DIRECTORY_STRIPE_LEVEL_MIN"
   labels = {
     test = "value"
   }
@@ -77,8 +78,6 @@ resource "google_compute_network" "network" {
   mtu = 8896
   provider = google-beta
 }
-
-
 
 # Create an IP address
 resource "google_compute_global_address" "private_ip_alloc" {

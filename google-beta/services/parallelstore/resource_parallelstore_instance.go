@@ -59,7 +59,7 @@ func ResourceParallelstoreInstance() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
-				Description: `Immutable. Storage capacity of Parallelstore instance in Gibibytes (GiB).`,
+				Description: `Required. Immutable. Storage capacity of Parallelstore instance in Gibibytes (GiB).`,
 			},
 			"instance_id": {
 				Type:     schema.TypeString,
@@ -83,6 +83,30 @@ func ResourceParallelstoreInstance() *schema.Resource {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: `The description of the instance. 2048 characters or less.`,
+			},
+			"directory_stripe_level": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Description: `Stripe level for directories.
+MIN when directory has a small number of files.
+MAX when directory has a large number of files. 
+ Possible values:
+ DIRECTORY_STRIPE_LEVEL_UNSPECIFIED
+DIRECTORY_STRIPE_LEVEL_MIN
+DIRECTORY_STRIPE_LEVEL_BALANCED
+DIRECTORY_STRIPE_LEVEL_MAX`,
+			},
+			"file_stripe_level": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Description: `Stripe level for files.
+MIN better suited for small size files.
+MAX higher throughput performance for larger files. 
+ Possible values:
+ FILE_STRIPE_LEVEL_UNSPECIFIED
+FILE_STRIPE_LEVEL_MIN
+FILE_STRIPE_LEVEL_BALANCED
+FILE_STRIPE_LEVEL_MAX`,
 			},
 			"labels": {
 				Type:     schema.TypeMap,
@@ -133,7 +157,7 @@ considered.`,
 			"access_points": {
 				Type:     schema.TypeList,
 				Computed: true,
-				Description: `List of access_points.
+				Description: `Output only. List of access_points.
 Contains a list of IPv4 addresses used for client side configuration.`,
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
@@ -166,7 +190,7 @@ and contains the value currently used by the service.`,
 			"name": {
 				Type:     schema.TypeString,
 				Computed: true,
-				Description: `The resource name of the instance, in the format
+				Description: `Identifier. The resource name of the instance, in the format
 'projects/{project}/locations/{location}/instances/{instance_id}'`,
 			},
 			"state": {
@@ -178,7 +202,8 @@ and contains the value currently used by the service.`,
 CREATING
 ACTIVE
 DELETING
-FAILED`,
+FAILED
+UPGRADING`,
 			},
 			"terraform_labels": {
 				Type:     schema.TypeMap,
@@ -234,6 +259,18 @@ func resourceParallelstoreInstanceCreate(d *schema.ResourceData, meta interface{
 		return err
 	} else if v, ok := d.GetOkExists("reserved_ip_range"); !tpgresource.IsEmptyValue(reflect.ValueOf(reservedIpRangeProp)) && (ok || !reflect.DeepEqual(v, reservedIpRangeProp)) {
 		obj["reservedIpRange"] = reservedIpRangeProp
+	}
+	fileStripeLevelProp, err := expandParallelstoreInstanceFileStripeLevel(d.Get("file_stripe_level"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("file_stripe_level"); !tpgresource.IsEmptyValue(reflect.ValueOf(fileStripeLevelProp)) && (ok || !reflect.DeepEqual(v, fileStripeLevelProp)) {
+		obj["fileStripeLevel"] = fileStripeLevelProp
+	}
+	directoryStripeLevelProp, err := expandParallelstoreInstanceDirectoryStripeLevel(d.Get("directory_stripe_level"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("directory_stripe_level"); !tpgresource.IsEmptyValue(reflect.ValueOf(directoryStripeLevelProp)) && (ok || !reflect.DeepEqual(v, directoryStripeLevelProp)) {
+		obj["directoryStripeLevel"] = directoryStripeLevelProp
 	}
 	labelsProp, err := expandParallelstoreInstanceEffectiveLabels(d.Get("effective_labels"), d, config)
 	if err != nil {
@@ -390,6 +427,12 @@ func resourceParallelstoreInstanceRead(d *schema.ResourceData, meta interface{})
 	if err := d.Set("effective_reserved_ip_range", flattenParallelstoreInstanceEffectiveReservedIpRange(res["effectiveReservedIpRange"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Instance: %s", err)
 	}
+	if err := d.Set("file_stripe_level", flattenParallelstoreInstanceFileStripeLevel(res["fileStripeLevel"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Instance: %s", err)
+	}
+	if err := d.Set("directory_stripe_level", flattenParallelstoreInstanceDirectoryStripeLevel(res["directoryStripeLevel"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Instance: %s", err)
+	}
 	if err := d.Set("terraform_labels", flattenParallelstoreInstanceTerraformLabels(res["labels"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Instance: %s", err)
 	}
@@ -422,6 +465,18 @@ func resourceParallelstoreInstanceUpdate(d *schema.ResourceData, meta interface{
 	} else if v, ok := d.GetOkExists("description"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, descriptionProp)) {
 		obj["description"] = descriptionProp
 	}
+	fileStripeLevelProp, err := expandParallelstoreInstanceFileStripeLevel(d.Get("file_stripe_level"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("file_stripe_level"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, fileStripeLevelProp)) {
+		obj["fileStripeLevel"] = fileStripeLevelProp
+	}
+	directoryStripeLevelProp, err := expandParallelstoreInstanceDirectoryStripeLevel(d.Get("directory_stripe_level"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("directory_stripe_level"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, directoryStripeLevelProp)) {
+		obj["directoryStripeLevel"] = directoryStripeLevelProp
+	}
 	labelsProp, err := expandParallelstoreInstanceEffectiveLabels(d.Get("effective_labels"), d, config)
 	if err != nil {
 		return err
@@ -440,6 +495,14 @@ func resourceParallelstoreInstanceUpdate(d *schema.ResourceData, meta interface{
 
 	if d.HasChange("description") {
 		updateMask = append(updateMask, "description")
+	}
+
+	if d.HasChange("file_stripe_level") {
+		updateMask = append(updateMask, "fileStripeLevel")
+	}
+
+	if d.HasChange("directory_stripe_level") {
+		updateMask = append(updateMask, "directoryStripeLevel")
 	}
 
 	if d.HasChange("effective_labels") {
@@ -623,6 +686,14 @@ func flattenParallelstoreInstanceEffectiveReservedIpRange(v interface{}, d *sche
 	return v
 }
 
+func flattenParallelstoreInstanceFileStripeLevel(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenParallelstoreInstanceDirectoryStripeLevel(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
 func flattenParallelstoreInstanceTerraformLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return v
@@ -655,6 +726,14 @@ func expandParallelstoreInstanceNetwork(v interface{}, d tpgresource.TerraformRe
 }
 
 func expandParallelstoreInstanceReservedIpRange(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandParallelstoreInstanceFileStripeLevel(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandParallelstoreInstanceDirectoryStripeLevel(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 

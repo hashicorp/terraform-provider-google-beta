@@ -98,14 +98,14 @@ func ResourceManagedKafkaCluster() *schema.Resource {
 									"network_configs": {
 										Type:        schema.TypeList,
 										Required:    true,
-										Description: `Virtual Private Cloud (VPC) networks that must be granted direct access to the Kafka cluster. Minimum of 1 network is required. Maximum of 10 networks can be specified.`,
+										Description: `Virtual Private Cloud (VPC) subnets where IP addresses for the Kafka cluster are allocated. To make the cluster available in a VPC, you must specify at least one subnet per network. You must specify between 1 and 10 subnets. Additional subnets may be specified with additional 'network_configs' blocks.`,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"subnet": {
 													Type:             schema.TypeString,
 													Required:         true,
 													DiffSuppressFunc: tpgresource.ProjectNumberDiffSuppress,
-													Description:      `Name of the VPC subnet from which the cluster is accessible. Both broker and bootstrap server IP addresses and DNS entries are automatically created in the subnet. The subnet must be located in the same region as the cluster. The project may differ. A minimum of 1 subnet is required. A maximum of 10 subnets can be specified. The name of the subnet must be in the format 'projects/PROJECT_ID/regions/REGION/subnetworks/SUBNET'.`,
+													Description:      `Name of the VPC subnet from which the cluster is accessible. Both broker and bootstrap server IP addresses and DNS entries are automatically created in the subnet. The subnet must be located in the same region as the cluster. The project may differ. The name of the subnet must be in the format 'projects/PROJECT_ID/regions/REGION/subnetworks/SUBNET'.`,
 												},
 											},
 										},
@@ -127,7 +127,7 @@ func ResourceManagedKafkaCluster() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
-				Description: `ID of the location of the Apache Kafka for BigQuery resource. See https://cloud.google.com/managed-kafka/docs/locations for a list of supported locations.`,
+				Description: `ID of the location of the Kafka resource. See https://cloud.google.com/managed-kafka/docs/locations for a list of supported locations.`,
 			},
 			"labels": {
 				Type:     schema.TypeMap,
