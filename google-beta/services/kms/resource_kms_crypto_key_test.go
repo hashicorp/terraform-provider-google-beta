@@ -333,7 +333,7 @@ func TestAccKmsCryptoKey_keyAccessJustificationsPolicy(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testGoogleKmsCryptoKey_keyAccessJustificationsPolicy(projectId, projectOrg, projectBillingAccount, keyRingName, cryptoKeyName, allowedAccessReason),
@@ -355,7 +355,7 @@ func TestAccKmsCryptoKey_keyAccessJustificationsPolicy(t *testing.T) {
 			},
 			// Use a separate TestStep rather than a CheckDestroy because we need the project to still exist.
 			{
-				Config: testGoogleKmsCryptoKey_removed(projectId, projectOrg, projectBillingAccount, keyRingName),
+				Config: testGoogleKmsCryptoKey_removedBeta(projectId, projectOrg, projectBillingAccount, keyRingName),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckGoogleKmsCryptoKeyWasRemovedFromState("google_kms_crypto_key.crypto_key"),
 					testAccCheckGoogleKmsCryptoKeyVersionsDestroyed(t, projectId, location, keyRingName, cryptoKeyName),
@@ -812,6 +812,31 @@ resource "google_kms_key_ring" "key_ring" {
 `, projectId, projectId, projectOrg, projectBillingAccount, keyRingName)
 }
 
+func testGoogleKmsCryptoKey_removedBeta(projectId, projectOrg, projectBillingAccount, keyRingName string) string {
+	return fmt.Sprintf(`
+resource "google_project" "acceptance" {
+  provider        = google-beta
+  name            = "%s"
+  project_id      = "%s"
+  org_id          = "%s"
+  billing_account = "%s"
+}
+
+resource "google_project_service" "acceptance" {
+  provider = google-beta
+  project  = google_project.acceptance.project_id
+  service  = "cloudkms.googleapis.com"
+}
+
+resource "google_kms_key_ring" "key_ring" {
+  provider = google-beta
+  project  = google_project_service.acceptance.project
+  name     = "%s"
+  location = "us-central1"
+}
+`, projectId, projectId, projectOrg, projectBillingAccount, keyRingName)
+}
+
 func testGoogleKmsCryptoKey_destroyDuration(projectId, projectOrg, projectBillingAccount, keyRingName, cryptoKeyName string) string {
 	return fmt.Sprintf(`
 resource "google_project" "acceptance" {
@@ -847,6 +872,7 @@ resource "google_kms_crypto_key" "crypto_key" {
 func testGoogleKmsCryptoKey_keyAccessJustificationsPolicy(projectId, projectOrg, projectBillingAccount, keyRingName, cryptoKeyName, allowed_access_reason string) string {
 	return fmt.Sprintf(`
 resource "google_project" "acceptance" {
+  provider        = google-beta
   name            = "%s"
   project_id      = "%s"
   org_id          = "%s"
@@ -855,17 +881,20 @@ resource "google_project" "acceptance" {
 }
 
 resource "google_project_service" "acceptance" {
-  project = google_project.acceptance.project_id
-  service = "cloudkms.googleapis.com"
+  provider = google-beta
+  project  = google_project.acceptance.project_id
+  service  = "cloudkms.googleapis.com"
 }
 
 resource "google_kms_key_ring" "key_ring" {
+  provider = google-beta
   project  = google_project_service.acceptance.project
   name     = "%s"
   location = "us-central1"
 }
 
 resource "google_kms_crypto_key" "crypto_key" {
+  provider = google-beta
   name     = "%s"
   key_ring = google_kms_key_ring.key_ring.id
   labels = {

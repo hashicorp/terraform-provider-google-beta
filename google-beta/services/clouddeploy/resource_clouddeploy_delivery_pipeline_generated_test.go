@@ -289,9 +289,10 @@ resource "google_clouddeploy_delivery_pipeline" "primary" {
           runtime_config {
             kubernetes {
               gateway_service_mesh {
-                deployment = "example-deployment"
-                http_route = "example-http-route"
-                service    = "example-service"
+                deployment         = "example-deployment"
+                http_route         = "example-http-route"
+                service            = "example-service"
+                pod_selector_label = "example.com/app-name"
               }
             }
           }
@@ -314,9 +315,10 @@ resource "google_clouddeploy_delivery_pipeline" "primary" {
           runtime_config {
             kubernetes {
               gateway_service_mesh {
-                deployment = "example-deployment"
-                http_route = "example-http-route"
-                service    = "example-service"
+                deployment         = "example-deployment"
+                http_route         = "example-http-route"
+                service            = "example-service"
+                pod_selector_label = "example.com/app-name"
               }
             }
           }
@@ -411,8 +413,9 @@ resource "google_clouddeploy_delivery_pipeline" "primary" {
           runtime_config {
             kubernetes {
               service_networking {
-                deployment = "example-deployment"
-                service    = "example-service"
+                deployment         = "example-deployment"
+                service            = "example-service"
+                pod_selector_label = "example.com/app-name"
               }
             }
           }
