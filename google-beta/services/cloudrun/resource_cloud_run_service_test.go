@@ -631,6 +631,7 @@ provider "google" {
   default_labels = {
     default_key1 = "default_value1"
   }
+  add_terraform_attribution_label = false
 }
 
 resource "google_cloud_run_service" "default" {
@@ -670,6 +671,7 @@ provider "google" {
   default_labels = {
     default_key1 = "default_value1"
   }
+  add_terraform_attribution_label = false
 }
 
 resource "google_cloud_run_service" "default" {
@@ -711,6 +713,7 @@ provider "google" {
     default_key1 = "default_value1"
     env          = "foo"
   }
+  add_terraform_attribution_label = false
 }
 
 resource "google_cloud_run_service" "default" {
@@ -1308,6 +1311,7 @@ resource "google_cloud_run_service" "default" {
 }
 
 func TestAccCloudRunService_csiVolume(t *testing.T) {
+	acctest.SkipIfVcr(t)
 	t.Parallel()
 
 	project := envvar.GetTestProjectFromEnv()
