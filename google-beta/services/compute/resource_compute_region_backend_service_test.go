@@ -263,6 +263,14 @@ func TestAccComputeRegionBackendService_withBackendAndIAP(t *testing.T) {
 		CheckDestroy:             testAccCheckComputeRegionBackendServiceDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
+				Config: testAccComputeRegionBackendService_ilbBasic(backendName, checkName),
+			},
+			{
+				ResourceName:      "google_compute_region_backend_service.foobar",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+			{
 				Config: testAccComputeRegionBackendService_ilbBasicwithIAP(backendName, checkName),
 			},
 			{
@@ -270,14 +278,6 @@ func TestAccComputeRegionBackendService_withBackendAndIAP(t *testing.T) {
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"iap.0.oauth2_client_secret"},
-			},
-			{
-				Config: testAccComputeRegionBackendService_ilbBasic(backendName, checkName),
-			},
-			{
-				ResourceName:      "google_compute_region_backend_service.foobar",
-				ImportState:       true,
-				ImportStateVerify: true,
 			},
 		},
 	})
@@ -583,7 +583,8 @@ resource "google_compute_region_backend_service" "foobar" {
   health_checks = [google_compute_health_check.zero.self_link]
   region        = "us-central1"
 
-  protocol = "%s"
+  protocol                        = "%s"
+  connection_draining_timeout_sec = 0
   failover_policy {
       # Disable connection drain on failover cannot be set when the protocol is UDP
       drop_traffic_if_unhealthy = "%s"
@@ -609,7 +610,8 @@ resource "google_compute_region_backend_service" "foobar" {
   health_checks = [google_compute_health_check.zero.self_link]
   region        = "us-central1"
 
-  protocol = "%s"
+  protocol                        = "%s"
+  connection_draining_timeout_sec = 0
   failover_policy {
       # Disable connection drain on failover cannot be set when the protocol is UDP
       drop_traffic_if_unhealthy = "%s"
@@ -696,6 +698,7 @@ resource "google_compute_region_backend_service" "lipsum" {
 
   backend {
     group    = google_compute_instance_group_manager.foobar.instance_group
+    balancing_mode = "CONNECTION"
     failover = true
   }
 
@@ -763,6 +766,7 @@ resource "google_compute_region_backend_service" "lipsum" {
 
   backend {
     group = google_compute_instance_group_manager.foobar.instance_group
+    balancing_mode = "CONNECTION"
     failover = true
   }
 
@@ -863,6 +867,7 @@ resource "google_compute_region_backend_service" "lipsum" {
   backend {
     group    = google_compute_instance_group_manager.foobar.instance_group
     capacity_scaler = 1.0
+    balancing_mode = "CONNECTION"
   }
 
   health_checks = [google_compute_health_check.default.self_link]
@@ -1031,6 +1036,7 @@ resource "google_compute_region_backend_service" "foobar" {
   }
 
   iap {
+    enabled              = true
     oauth2_client_id     = "test"
     oauth2_client_secret = "test"
   }

@@ -355,6 +355,7 @@ See https://cloud.google.com/workstations/docs/reference/rest/v1beta/projects.lo
 										Type:        schema.TypeBool,
 										Optional:    true,
 										Description: `Whether to disable SSH access to the VM.`,
+										Default:     true,
 									},
 									"enable_nested_virtualization": {
 										Type:     schema.TypeBool,
@@ -2008,7 +2009,7 @@ func expandWorkstationsWorkstationConfigHostGceInstance(v interface{}, d tpgreso
 	transformedDisableSsh, err := expandWorkstationsWorkstationConfigHostGceInstanceDisableSsh(original["disable_ssh"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedDisableSsh); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+	} else {
 		transformed["disableSsh"] = transformedDisableSsh
 	}
 
