@@ -126,9 +126,10 @@ func TestAccFirebaseHostingCustomDomain_firebasehostingCustomdomainCloudRunExamp
 	t.Parallel()
 
 	context := map[string]interface{}{
-		"project_id":    envvar.GetTestProjectFromEnv(),
-		"custom_domain": "run.custom.domain.com",
-		"random_suffix": acctest.RandString(t, 10),
+		"project_id":          envvar.GetTestProjectFromEnv(),
+		"custom_domain":       "run.custom.domain.com",
+		"deletion_protection": false,
+		"random_suffix":       acctest.RandString(t, 10),
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -143,7 +144,7 @@ func TestAccFirebaseHostingCustomDomain_firebasehostingCustomdomainCloudRunExamp
 				ResourceName:            "google_firebase_hosting_custom_domain.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"custom_domain", "site_id"},
+				ImportStateVerifyIgnore: []string{"custom_domain", "deletion_protection", "site_id"},
 			},
 		},
 	})
@@ -171,6 +172,8 @@ resource "google_cloud_run_v2_service" "default" {
       image = "us-docker.pkg.dev/cloudrun/container/hello"
     }
   }
+
+  deletion_protection = "%{deletion_protection}"
 }
 
 resource "google_firebase_hosting_version" "default" {

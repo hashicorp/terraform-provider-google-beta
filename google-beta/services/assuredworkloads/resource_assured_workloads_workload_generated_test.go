@@ -210,6 +210,7 @@ resource "google_assured_workloads_workload" "primary" {
 resource "google_folder" "folder1" {
   display_name = "tf-test-name%{random_suffix}"
   parent       = "organizations/%{org_id}"
+  deletion_protection = false
 }
 `, context)
 }
@@ -236,6 +237,7 @@ resource "google_assured_workloads_workload" "primary" {
 resource "google_folder" "folder1" {
   display_name = "tf-test-name%{random_suffix}"
   parent       = "organizations/%{org_id}"
+  deletion_protection = false
 }
 `, context)
 }
@@ -258,6 +260,7 @@ resource "google_assured_workloads_workload" "primary" {
 resource "google_folder" "folder1" {
   display_name = "tf-test-name%{random_suffix}"
   parent       = "organizations/%{org_id}"
+  deletion_protection = false
 }
 
 `, context)

@@ -292,6 +292,7 @@ resource "google_project" "project" {
   name            = "tf-test%{random_suffix}"
   org_id          = "%{org_id}"
   billing_account = "%{billing_account}"
+  deletion_policy = "DELETE"
 }
 
 resource "time_sleep" "wait_60_seconds" {
@@ -428,6 +429,7 @@ resource "google_vertex_ai_feature_online_store_featureview" "cross_project_feat
 }
 
 func TestAccVertexAIFeatureOnlineStoreFeatureview_vertexAiFeatureonlinestoreFeatureviewWithVectorSearchExample(t *testing.T) {
+	acctest.SkipIfVcr(t)
 	t.Parallel()
 
 	context := map[string]interface{}{

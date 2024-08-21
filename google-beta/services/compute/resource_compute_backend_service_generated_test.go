@@ -103,6 +103,7 @@ resource "google_compute_backend_service" "default" {
   protocol              = "HTTP"
   load_balancing_scheme = "EXTERNAL"
   iap {
+    enabled              = true
     oauth2_client_id     = "abc"
     oauth2_client_secret = "xyz"
   }
@@ -447,7 +448,15 @@ resource "google_compute_backend_service" "default" {
     }
   }
   outlier_detection {
-    consecutive_errors = 2
+    consecutive_errors                    = 2
+    consecutive_gateway_failure           = 5
+    enforcing_consecutive_errors          = 100
+    enforcing_consecutive_gateway_failure = 0
+    enforcing_success_rate                = 100
+    max_ejection_percent                  = 10
+    success_rate_minimum_hosts            = 5
+    success_rate_request_volume           = 100
+    success_rate_stdev_factor             = 1900
   }
 }
 

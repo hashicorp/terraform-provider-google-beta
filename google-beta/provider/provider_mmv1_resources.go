@@ -56,7 +56,6 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/dataplex"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/dataproc"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/dataprocmetastore"
-	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/datastore"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/datastream"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/deploymentmanager"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/dialogflow"
@@ -475,9 +474,9 @@ var handwrittenIAMDatasources = map[string]*schema.Resource{
 }
 
 // Resources
-// Generated resources: 509
+// Generated resources: 507
 // Generated IAM resources: 288
-// Total generated resources: 797
+// Total generated resources: 795
 var generatedResources = map[string]*schema.Resource{
 	"google_folder_access_approval_settings":                                     accessapproval.ResourceAccessApprovalFolderSettings(),
 	"google_organization_access_approval_settings":                               accessapproval.ResourceAccessApprovalOrganizationSettings(),
@@ -855,7 +854,6 @@ var generatedResources = map[string]*schema.Resource{
 	"google_dataproc_metastore_service_iam_binding":                              tpgiamresource.ResourceIamBinding(dataprocmetastore.DataprocMetastoreServiceIamSchema, dataprocmetastore.DataprocMetastoreServiceIamUpdaterProducer, dataprocmetastore.DataprocMetastoreServiceIdParseFunc),
 	"google_dataproc_metastore_service_iam_member":                               tpgiamresource.ResourceIamMember(dataprocmetastore.DataprocMetastoreServiceIamSchema, dataprocmetastore.DataprocMetastoreServiceIamUpdaterProducer, dataprocmetastore.DataprocMetastoreServiceIdParseFunc),
 	"google_dataproc_metastore_service_iam_policy":                               tpgiamresource.ResourceIamPolicy(dataprocmetastore.DataprocMetastoreServiceIamSchema, dataprocmetastore.DataprocMetastoreServiceIamUpdaterProducer, dataprocmetastore.DataprocMetastoreServiceIdParseFunc),
-	"google_datastore_index":                                                     datastore.ResourceDatastoreIndex(),
 	"google_datastream_connection_profile":                                       datastream.ResourceDatastreamConnectionProfile(),
 	"google_datastream_private_connection":                                       datastream.ResourceDatastreamPrivateConnection(),
 	"google_datastream_stream":                                                   datastream.ResourceDatastreamStream(),
@@ -1003,7 +1001,6 @@ var generatedResources = map[string]*schema.Resource{
 	"google_identity_platform_default_supported_idp_config":                      identityplatform.ResourceIdentityPlatformDefaultSupportedIdpConfig(),
 	"google_identity_platform_inbound_saml_config":                               identityplatform.ResourceIdentityPlatformInboundSamlConfig(),
 	"google_identity_platform_oauth_idp_config":                                  identityplatform.ResourceIdentityPlatformOauthIdpConfig(),
-	"google_identity_platform_project_default_config":                            identityplatform.ResourceIdentityPlatformProjectDefaultConfig(),
 	"google_identity_platform_tenant":                                            identityplatform.ResourceIdentityPlatformTenant(),
 	"google_identity_platform_tenant_default_supported_idp_config":               identityplatform.ResourceIdentityPlatformTenantDefaultSupportedIdpConfig(),
 	"google_identity_platform_tenant_inbound_saml_config":                        identityplatform.ResourceIdentityPlatformTenantInboundSamlConfig(),
