@@ -43,7 +43,7 @@ BREAKING CHANGES:
 * workstation: defaulted `host.gce_instance.disable_ssh` to true for `google_workstations_workstation_config` ([#7946](https://github.com/hashicorp/terraform-provider-google-beta/pull/7946))
 
 IMPROVEMENTS:
-* compute: added fields `reserved_internal_range` and `secondary_ip_ranges[].reserved_internal_range` to `google_compute_subnetwork` resource
+* compute: added fields `reserved_internal_range` and `secondary_ip_ranges[].reserved_internal_range` to `google_compute_subnetwork` resource ([#7980](https://github.com/hashicorp/terraform-provider-google-beta/pull/7980))
 * compute: changed the behavior of `name_prefix` in multiple Compute resources to allow for a longer max length of 54 characters. See the upgrade guide and resource documentation for more details. ([#7980](https://github.com/hashicorp/terraform-provider-google-beta/pull/7980 https://github.com/hashicorp/terraform-provider-google-beta/pull/7980))
 
 BUG FIXES:
