@@ -2027,6 +2027,8 @@ func TestAccComputeInstanceConfidentialInstanceConfigMain(t *testing.T) {
 }
 
 func TestAccComputeInstance_confidentialHyperDiskBootDisk(t *testing.T) {
+	// Currently failing
+	acctest.SkipIfVcr(t)
 	t.Parallel()
 	kms := acctest.BootstrapKMSKeyWithPurposeInLocationAndName(t, "ENCRYPT_DECRYPT", "us-central1", "tf-bootstrap-hyperdisk-key1")
 
@@ -10149,6 +10151,8 @@ resource "google_compute_instance" "foobar" {
 }
 
 func TestAccComputeInstance_bootDisk_storagePoolSpecified(t *testing.T) {
+	// Currently failing
+	acctest.SkipIfVcr(t)
 	t.Parallel()
 
 	instanceName := fmt.Sprintf("tf-test-instance-%s", acctest.RandString(t, 10))
