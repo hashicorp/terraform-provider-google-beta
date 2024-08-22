@@ -39,7 +39,7 @@ BREAKING CHANGES:
 * sql: removed `settings.ip_configuration.require_ssl` within `google_sql_database_instance`. Please use `settings.ip_configuration.ssl_mode` instead. ([#7804](https://github.com/hashicorp/terraform-provider-google-beta/pull/7804))
 * vpcaccess: removed default values for `min_throughput` and `min_instances` fields on `google_vpc_access_connector` and made them default to values returned from the API when not provided by users ([#7709](https://github.com/hashicorp/terraform-provider-google-beta/pull/7709))
 * vpcaccess: added a conflicting fields restriction between `min_throughput` and `min_instances` fields on `google_vpc_access_connector` ([#7709](https://github.com/hashicorp/terraform-provider-google-beta/pull/7709))
-* vpcaccess: added a conflicting fields restriction between `max_throughput` and `max_instances` fields on `google_vpc_access_connector`
+* vpcaccess: added a conflicting fields restriction between `max_throughput` and `max_instances` fields on `google_vpc_access_connector` ([#7709](https://github.com/hashicorp/terraform-provider-google-beta/pull/7709))
 * workstation: defaulted `host.gce_instance.disable_ssh` to true for `google_workstations_workstation_config` ([#7946](https://github.com/hashicorp/terraform-provider-google-beta/pull/7709 https://github.com/hashicorp/terraform-provider-google-beta/pull/7946))
 
 IMPROVEMENTS:
