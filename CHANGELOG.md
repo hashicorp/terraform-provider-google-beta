@@ -44,7 +44,7 @@ BREAKING CHANGES:
 
 IMPROVEMENTS:
 * compute: added fields `reserved_internal_range` and `secondary_ip_ranges[].reserved_internal_range` to `google_compute_subnetwork` resource ([#7980](https://github.com/hashicorp/terraform-provider-google-beta/pull/7980))
-* compute: changed the behavior of `name_prefix` in multiple Compute resources to allow for a longer max length of 54 characters. See the upgrade guide and resource documentation for more details. ([#7980](https://github.com/hashicorp/terraform-provider-google-beta/pull/7980 https://github.com/hashicorp/terraform-provider-google-beta/pull/7980))
+* compute: changed the behavior of `name_prefix` in multiple Compute resources to allow for a longer max length of 54 characters. See the upgrade guide and resource documentation for more details. ([#7981](https://github.com/hashicorp/terraform-provider-google-beta/pull/7981))
 
 BUG FIXES:
 * compute: fixed an issue regarding sending `enabled` field by default for null `iap` message in `google_compute_backend_service` and `google_compute_region_backend_service` ([#7758](https://github.com/hashicorp/terraform-provider-google-beta/pull/7758))
