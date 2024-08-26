@@ -14,7 +14,7 @@ IMPROVEMENTS:
 * container: added EXTENDED as a valid option for `release_channel` field in `google_container_cluster` resource ([#7973](https://github.com/hashicorp/terraform-provider-google-beta/pull/7973))
 * logging: changed `enable_analytics` parsing to "no preference" in analytics if omitted, instead of explicitly disabling analytics in `google_logging_project_bucket_config`. ([#7964](https://github.com/hashicorp/terraform-provider-google-beta/pull/7964))
 * networkservices: added `idle_timeout` field to the `google_network_services_tcp_route` resource ([#7996](https://github.com/hashicorp/terraform-provider-google-beta/pull/7996))
-* pusbub: added validation to `filter` field for `google_pubsub_subscription` ([#7968](https://github.com/hashicorp/terraform-provider-google-beta/pull/7968))
+* pusbub: added validation to `filter` field in resource `google_pubsub_subscription` ([#7968](https://github.com/hashicorp/terraform-provider-google-beta/pull/7968))
 * resourcemanager: added `default_labels` field to `google_client_config` data source ([#7992](https://github.com/hashicorp/terraform-provider-google-beta/pull/7992))
 * vmwareengine: added PC undelete support in `google_vmwareengine_private_cloud` ([#8005](https://github.com/hashicorp/terraform-provider-google-beta/pull/8005))
 
