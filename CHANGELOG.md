@@ -1,4 +1,10 @@
-## 6.0.0 (Unreleased)
+## 6.0.1 (Unreleased)
+
+BREAKING CHANGES:
+
+* sql: removed `settings.ip_configuration.require_ssl` from `google_sql_database_instance` in favor of `settings.ip_configuration.ssl_mode`. This field was intended to be removed in 6.0.0. ([#8043](https://github.com/hashicorp/terraform-provider-google-beta/pull/8043))
+
+## 6.0.0 (August 26, 2024)
 
 [Terraform Google Provider 6.0.0 Upgrade Guide](https://registry.terraform.io/providers/hashicorp/google/latest/docs/guides/version_6_upgrade)
 
