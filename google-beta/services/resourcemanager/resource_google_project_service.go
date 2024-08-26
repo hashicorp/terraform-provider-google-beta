@@ -5,6 +5,7 @@ package resourcemanager
 import (
 	"fmt"
 	"log"
+	"regexp"
 	"strings"
 	"time"
 
@@ -319,6 +320,9 @@ func disableServiceUsageProjectService(service, project string, d *schema.Resour
 		ErrorRetryPredicates: []transport_tpg.RetryErrorPredicateFunc{transport_tpg.ServiceUsageServiceBeingActivated},
 	})
 	if err != nil {
+		if res, _ := regexp.MatchString("COMMON_SU_SERVICE_HAS_USAGE", err.Error()); res {
+			return fmt.Errorf("Error disabling service %q for project %q: %v", service, project, strings.Replace(err.Error(), "check_if_service_has_usage=SKIP", "check_if_service_has_usage_on_destroy=false", -1))
+		}
 		return fmt.Errorf("Error disabling service %q for project %q: %v", service, project, err)
 	}
 	return nil
