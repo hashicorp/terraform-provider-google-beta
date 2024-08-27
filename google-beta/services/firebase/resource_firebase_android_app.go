@@ -111,10 +111,10 @@ projects/projectId/androidApps/appId`,
 			"deletion_policy": {
 				Type:     schema.TypeString,
 				Optional: true,
-				Default:  "DELETE",
 				Description: `(Optional) Set to 'ABANDON' to allow the AndroidApp to be untracked from terraform state
 rather than deleted upon 'terraform destroy'. This is useful because the AndroidApp may be
 serving traffic. Set to 'DELETE' to delete the AndroidApp. Defaults to 'DELETE'.`,
+				Default: "DELETE",
 			},
 			"project": {
 				Type:     schema.TypeString,
