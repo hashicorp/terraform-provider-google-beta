@@ -98,10 +98,10 @@ projects/projectId/iosApps/appId`,
 			"deletion_policy": {
 				Type:     schema.TypeString,
 				Optional: true,
-				Default:  "DELETE",
 				Description: `(Optional) Set to 'ABANDON' to allow the Apple to be untracked from terraform state
 rather than deleted upon 'terraform destroy'. This is useful because the Apple may be
 serving traffic. Set to 'DELETE' to delete the Apple. Defaults to 'DELETE'.`,
+				Default: "DELETE",
 			},
 			"project": {
 				Type:     schema.TypeString,

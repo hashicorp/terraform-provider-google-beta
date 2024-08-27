@@ -143,8 +143,8 @@ Learn more about using project identifiers in Google's [AIP 2510 standard](https
 			"desired_state": {
 				Type:        schema.TypeString,
 				Optional:    true,
+				Description: `The intended database state. Possible values: ACTIVE, DISABLED.`,
 				Default:     "ACTIVE",
-				Description: `The intended database state.`,
 			},
 			"project": {
 				Type:     schema.TypeString,

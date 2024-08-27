@@ -532,10 +532,10 @@ let Hosting serve secure content on its behalf.`,
 				Type:     schema.TypeBool,
 				Optional: true,
 				ForceNew: true,
-				Default:  false,
 				Description: `If true, Terraform will wait for DNS records to be fully resolved on the 'CustomDomain'.
 If false, Terraform will not wait for DNS records on the 'CustomDomain'. Any issues in
 the 'CustomDomain' will be returned and stored in the Terraform state.`,
+				Default: false,
 			},
 			"project": {
 				Type:     schema.TypeString,
