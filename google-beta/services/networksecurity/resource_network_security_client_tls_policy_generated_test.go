@@ -40,7 +40,7 @@ func TestAccNetworkSecurityClientTlsPolicy_networkSecurityClientTlsPolicyBasicEx
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckNetworkSecurityClientTlsPolicyDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -59,7 +59,6 @@ func TestAccNetworkSecurityClientTlsPolicy_networkSecurityClientTlsPolicyBasicEx
 func testAccNetworkSecurityClientTlsPolicy_networkSecurityClientTlsPolicyBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_network_security_client_tls_policy" "default" {
-  provider               = google-beta
   name                   = "tf-test-my-client-tls-policy%{random_suffix}"
   labels                 = {
     foo = "bar"
@@ -80,7 +79,7 @@ func TestAccNetworkSecurityClientTlsPolicy_networkSecurityClientTlsPolicyAdvance
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckNetworkSecurityClientTlsPolicyDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -99,7 +98,6 @@ func TestAccNetworkSecurityClientTlsPolicy_networkSecurityClientTlsPolicyAdvance
 func testAccNetworkSecurityClientTlsPolicy_networkSecurityClientTlsPolicyAdvancedExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_network_security_client_tls_policy" "default" {
-  provider               = google-beta
   name                   = "tf-test-my-client-tls-policy%{random_suffix}"
   labels                 = {
     foo = "bar"
@@ -113,11 +111,6 @@ resource "google_network_security_client_tls_policy" "default" {
   server_validation_ca {
     grpc_endpoint {
       target_uri = "unix:mypath"
-    }
-  }
-  server_validation_ca {
-    grpc_endpoint {
-      target_uri = "unix:mypath1"
     }
   }
 }
