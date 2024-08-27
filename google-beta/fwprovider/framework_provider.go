@@ -21,6 +21,7 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/fwtransport"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/firebase"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/resourcemanager"
+	"github.com/hashicorp/terraform-provider-google-beta/version"
 
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
@@ -32,9 +33,9 @@ var (
 )
 
 // New is a helper function to simplify provider server and testing implementation.
-func New(version string) provider.ProviderWithMetaSchema {
+func New() provider.ProviderWithMetaSchema {
 	return &FrameworkProvider{
-		Version: version,
+		Version: version.ProviderVersion,
 	}
 }
 
