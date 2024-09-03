@@ -11,7 +11,7 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 )
 
-func TestAccNetappstoragePool_storagePoolCreateExample_update(t *testing.T) {
+func TestAccNetappStoragePool_storagePoolCreateExample_update(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
@@ -23,7 +23,7 @@ func TestAccNetappstoragePool_storagePoolCreateExample_update(t *testing.T) {
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccNetappstoragePool_storagePoolCreateExample_full(context),
+				Config: testAccNetappStoragePool_storagePoolCreateExample_full(context),
 			},
 			{
 				ResourceName:            "google_netapp_storage_pool.test_pool",
@@ -32,7 +32,7 @@ func TestAccNetappstoragePool_storagePoolCreateExample_update(t *testing.T) {
 				ImportStateVerifyIgnore: []string{"location", "name", "labels", "terraform_labels"},
 			},
 			{
-				Config: testAccNetappstoragePool_storagePoolCreateExample_update(context),
+				Config: testAccNetappStoragePool_storagePoolCreateExample_update(context),
 			},
 			{
 				ResourceName:            "google_netapp_storage_pool.test_pool",
@@ -44,7 +44,7 @@ func TestAccNetappstoragePool_storagePoolCreateExample_update(t *testing.T) {
 	})
 }
 
-func testAccNetappstoragePool_storagePoolCreateExample_full(context map[string]interface{}) string {
+func testAccNetappStoragePool_storagePoolCreateExample_full(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 
 resource "google_compute_network" "peering_network" {
@@ -86,7 +86,7 @@ resource "google_netapp_storage_pool" "test_pool" {
 `, context)
 }
 
-func testAccNetappstoragePool_storagePoolCreateExample_update(context map[string]interface{}) string {
+func testAccNetappStoragePool_storagePoolCreateExample_update(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 
 resource "google_compute_network" "peering_network" {
@@ -128,7 +128,7 @@ resource "google_netapp_storage_pool" "test_pool" {
 `, context)
 }
 
-func TestAccNetappstoragePool_FlexRegionalStoragePoolCreateExample_update(t *testing.T) {
+func TestAccNetappStoragePool_FlexRegionalStoragePoolCreateExample_update(t *testing.T) {
 	context := map[string]interface{}{
 		"network_name":  acctest.BootstrapSharedServiceNetworkingConnection(t, "gcnv-network-config-1", acctest.ServiceNetworkWithParentService("netapp.servicenetworking.goog")),
 		"random_suffix": acctest.RandString(t, 10),
@@ -137,13 +137,13 @@ func TestAccNetappstoragePool_FlexRegionalStoragePoolCreateExample_update(t *tes
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
-		CheckDestroy:             testAccCheckNetappstoragePoolDestroyProducer(t),
+		CheckDestroy:             testAccCheckNetappStoragePoolDestroyProducer(t),
 		ExternalProviders: map[string]resource.ExternalProvider{
 			"time": {},
 		},
 		Steps: []resource.TestStep{
 			{
-				Config: testAccNetappstoragePool_FlexRegionalStoragePoolCreateExample_full(context),
+				Config: testAccNetappStoragePool_FlexRegionalStoragePoolCreateExample_full(context),
 			},
 			{
 				ResourceName:            "google_netapp_storage_pool.test_pool",
@@ -152,8 +152,8 @@ func TestAccNetappstoragePool_FlexRegionalStoragePoolCreateExample_update(t *tes
 				ImportStateVerifyIgnore: []string{"location", "name", "labels", "terraform_labels"},
 			},
 			{
-				Config: testAccNetappstoragePool_FlexRegionalStoragePoolCreateExample_switchZone(context),
-				Check:  testAccNetappstoragePool_FlexRegionalStoragePoolCreateExample_sleep_5_mins(),
+				Config: testAccNetappStoragePool_FlexRegionalStoragePoolCreateExample_switchZone(context),
+				Check:  testAccNetappStoragePool_FlexRegionalStoragePoolCreateExample_sleep_5_mins(),
 			},
 			{
 				ResourceName:            "google_netapp_storage_pool.test_pool",
@@ -162,7 +162,7 @@ func TestAccNetappstoragePool_FlexRegionalStoragePoolCreateExample_update(t *tes
 				ImportStateVerifyIgnore: []string{"location", "name", "labels", "terraform_labels"},
 			},
 			{
-				Config: testAccNetappstoragePool_FlexRegionalStoragePoolCreateExample_switchBackZone(context),
+				Config: testAccNetappStoragePool_FlexRegionalStoragePoolCreateExample_switchBackZone(context),
 			},
 			{
 				ResourceName:            "google_netapp_storage_pool.test_pool",
@@ -174,7 +174,7 @@ func TestAccNetappstoragePool_FlexRegionalStoragePoolCreateExample_update(t *tes
 	})
 }
 
-func testAccNetappstoragePool_FlexRegionalStoragePoolCreateExample_full(context map[string]interface{}) string {
+func testAccNetappStoragePool_FlexRegionalStoragePoolCreateExample_full(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_netapp_storage_pool" "test_pool" {
   provider = google-beta
@@ -199,7 +199,7 @@ data "google_compute_network" "default" {
 `, context)
 }
 
-func testAccNetappstoragePool_FlexRegionalStoragePoolCreateExample_switchZone(context map[string]interface{}) string {
+func testAccNetappStoragePool_FlexRegionalStoragePoolCreateExample_switchZone(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_netapp_storage_pool" "test_pool" {
   provider = google-beta
@@ -224,7 +224,7 @@ data "google_compute_network" "default" {
 `, context)
 }
 
-func testAccNetappstoragePool_FlexRegionalStoragePoolCreateExample_sleep_5_mins() resource.TestCheckFunc {
+func testAccNetappStoragePool_FlexRegionalStoragePoolCreateExample_sleep_5_mins() resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		// wait 5 minutes before executing the switchback due to api zone switch issues
 		time.Sleep(5 * time.Minute)
@@ -232,7 +232,7 @@ func testAccNetappstoragePool_FlexRegionalStoragePoolCreateExample_sleep_5_mins(
 	}
 }
 
-func testAccNetappstoragePool_FlexRegionalStoragePoolCreateExample_switchBackZone(context map[string]interface{}) string {
+func testAccNetappStoragePool_FlexRegionalStoragePoolCreateExample_switchBackZone(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_netapp_storage_pool" "test_pool" {
   provider = google-beta
