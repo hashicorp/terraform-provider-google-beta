@@ -352,7 +352,6 @@ func testAccCloudRunV2Job_cloudrunv2JobWithNoVolume(context map[string]interface
     name     = "%{job_name}"
     location = "us-central1"
     deletion_protection = false
-    launch_stage = "BETA"
     template {
       template {
         containers {
@@ -376,7 +375,6 @@ func testAccCloudRunV2Job_cloudrunv2JobWithGcsVolume(context map[string]interfac
     name     = "%{job_name}"
     location = "us-central1"
     deletion_protection = false
-    launch_stage = "BETA"
     template {
       template {
         containers {
@@ -394,6 +392,11 @@ func testAccCloudRunV2Job_cloudrunv2JobWithGcsVolume(context map[string]interfac
           }
         }
       }
+    }
+    lifecycle {
+      ignore_changes = [
+        launch_stage,
+      ]
     }
   }
 `, context)
@@ -441,7 +444,6 @@ func testAccCloudRunV2Job_cloudrunv2JobWithNfsVolume(context map[string]interfac
     name     = "%{job_name}"
     location = "us-central1"
     deletion_protection = false
-    launch_stage = "BETA"
     template {
       template {
         containers {
@@ -460,6 +462,11 @@ func testAccCloudRunV2Job_cloudrunv2JobWithNfsVolume(context map[string]interfac
           }
         }
       }
+    }
+    lifecycle {
+      ignore_changes = [
+        launch_stage,
+      ]
     }
   }
 `, context)
