@@ -5,7 +5,7 @@ FEATURES:
 * **New Data Source:** `google_kms_crypto_key_versions` ([#8026](https://github.com/hashicorp/terraform-provider-google-beta/pull/8026))
 
 IMPROVEMENTS:
-* databasemigrationservice: added support for creating DMS connection profiles that link to existing Cloud SQL instances/AlloyDB clusters. ([#8062](https://github.com/hashicorp/terraform-provider-google-beta/pull/8062))
+* databasemigrationservice: added support in `google_database_migration_service_connection_profile` for creating DMS connection profiles that link to existing Cloud SQL instances/AlloyDB clusters. ([#8062](https://github.com/hashicorp/terraform-provider-google-beta/pull/8062))
 * alloydb: added `subscription_type` and `trial_metadata` field to `google_alloydb_cluster` resource ([#8042](https://github.com/hashicorp/terraform-provider-google-beta/pull/8042))
 * bigquery: added `encryption_configuration` field to `google_bigquery_data_transfer_config` resource ([#8045](https://github.com/hashicorp/terraform-provider-google-beta/pull/8045))
 * bigqueryanalyticshub: added `selected_resources`, and `restrict_direct_table_access` to `google_bigquery_analytics_hub_listing` resource ([#8029](https://github.com/hashicorp/terraform-provider-google-beta/pull/8029))
@@ -14,12 +14,11 @@ IMPROVEMENTS:
 * compute: added `accelerators` field to `google_compute_node_template` resource ([#8063](https://github.com/hashicorp/terraform-provider-google-beta/pull/8063))
 * compute: allowed disabling 'server_tls_policy' during update in 'google_compute_target_https_proxy' resources ([#8023](https://github.com/hashicorp/terraform-provider-google-beta/pull/8023))
 * datastream: added `transaction_logs` and `change_tables` to `datastream_stream` resource ([#8031](https://github.com/hashicorp/terraform-provider-google-beta/pull/8031))
-* discoveryengine: Added `chunking_config` and `layout_parsing_config` fields to `google_discovery_engine_data_store` resource ([#8049](https://github.com/hashicorp/terraform-provider-google-beta/pull/8049))
+* discoveryengine: added `chunking_config` and `layout_parsing_config` fields to `google_discovery_engine_data_store` resource ([#8049](https://github.com/hashicorp/terraform-provider-google-beta/pull/8049))
 * dlp: added `inspect_template_modified_cadence` field to `big_query_target` and `cloud_sql_target` in `google_data_loss_prevention_discovery_config` resource ([#8054](https://github.com/hashicorp/terraform-provider-google-beta/pull/8054))
 * dlp: added `tag_resources` field to `google_data_loss_prevention_discovery_config` resource ([#8054](https://github.com/hashicorp/terraform-provider-google-beta/pull/8054))
 
 BUG FIXES:
-* artifactregistry: fixed https://github.com/hashicorp/terraform-provider-google/issues/18955 ([#8036](https://github.com/hashicorp/terraform-provider-google-beta/pull/8036))
 * bigquery: fixed an error which could occur with email field values containing non-lower-case characters in `google_bigquery_dataset_access` resource ([#8039](https://github.com/hashicorp/terraform-provider-google-beta/pull/8039))
 * bigqueryanalyticshub: made `bigquery_dataset` immutable in `google_bigquery_analytics_hub_listing` as it was not updatable in the API. Now modifying the field in Terraform will correctly recreate the resource rather than causing Terraform to report it would attempt an invalid update. ([#8029](https://github.com/hashicorp/terraform-provider-google-beta/pull/8029))
 * container: fixed update inconsistency in `google_container_cluster` resource ([#8030](https://github.com/hashicorp/terraform-provider-google-beta/pull/8030))
