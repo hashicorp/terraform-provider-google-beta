@@ -511,6 +511,21 @@ If not specified or 0, defaults to 80 when requested CPU >= 1 and defaults to 1 
 							Optional:    true,
 							Description: `Email address of the IAM service account associated with the revision of the service. The service account represents the identity of the running revision, and determines what permissions the revision has. If not provided, the revision will use the project's default service account.`,
 						},
+						"service_mesh": {
+							Type:        schema.TypeList,
+							Optional:    true,
+							Description: `Enables Cloud Service Mesh for this Revision.`,
+							MaxItems:    1,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"mesh": {
+										Type:        schema.TypeString,
+										Optional:    true,
+										Description: `The Mesh resource name. For more information see https://cloud.google.com/service-mesh/docs/reference/network-services/rest/v1/projects.locations.meshes#resource:-mesh.`,
+									},
+								},
+							},
+						},
 						"session_affinity": {
 							Type:        schema.TypeBool,
 							Optional:    true,
@@ -1877,6 +1892,8 @@ func flattenCloudRunV2ServiceTemplate(v interface{}, d *schema.ResourceData, con
 		flattenCloudRunV2ServiceTemplateMaxInstanceRequestConcurrency(original["maxInstanceRequestConcurrency"], d, config)
 	transformed["session_affinity"] =
 		flattenCloudRunV2ServiceTemplateSessionAffinity(original["sessionAffinity"], d, config)
+	transformed["service_mesh"] =
+		flattenCloudRunV2ServiceTemplateServiceMesh(original["serviceMesh"], d, config)
 	return []interface{}{transformed}
 }
 func flattenCloudRunV2ServiceTemplateRevision(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -2885,6 +2902,23 @@ func flattenCloudRunV2ServiceTemplateSessionAffinity(v interface{}, d *schema.Re
 	return v
 }
 
+func flattenCloudRunV2ServiceTemplateServiceMesh(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["mesh"] =
+		flattenCloudRunV2ServiceTemplateServiceMeshMesh(original["mesh"], d, config)
+	return []interface{}{transformed}
+}
+func flattenCloudRunV2ServiceTemplateServiceMeshMesh(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
 func flattenCloudRunV2ServiceTraffic(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return v
@@ -3347,6 +3381,13 @@ func expandCloudRunV2ServiceTemplate(v interface{}, d tpgresource.TerraformResou
 		return nil, err
 	} else if val := reflect.ValueOf(transformedSessionAffinity); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["sessionAffinity"] = transformedSessionAffinity
+	}
+
+	transformedServiceMesh, err := expandCloudRunV2ServiceTemplateServiceMesh(original["service_mesh"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedServiceMesh); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["serviceMesh"] = transformedServiceMesh
 	}
 
 	return transformed, nil
@@ -4605,6 +4646,29 @@ func expandCloudRunV2ServiceTemplateMaxInstanceRequestConcurrency(v interface{},
 }
 
 func expandCloudRunV2ServiceTemplateSessionAffinity(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandCloudRunV2ServiceTemplateServiceMesh(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedMesh, err := expandCloudRunV2ServiceTemplateServiceMeshMesh(original["mesh"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedMesh); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["mesh"] = transformedMesh
+	}
+
+	return transformed, nil
+}
+
+func expandCloudRunV2ServiceTemplateServiceMeshMesh(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 

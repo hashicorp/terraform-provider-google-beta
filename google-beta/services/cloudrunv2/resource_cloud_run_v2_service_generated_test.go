@@ -696,6 +696,68 @@ resource "google_filestore_instance" "default" {
 `, context)
 }
 
+func TestAccCloudRunV2Service_cloudrunv2ServiceMeshExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"random_suffix": acctest.RandString(t, 10),
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
+		CheckDestroy: testAccCheckCloudRunV2ServiceDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudRunV2Service_cloudrunv2ServiceMeshExample(context),
+			},
+			{
+				ResourceName:            "google_cloud_run_v2_service.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"annotations", "deletion_protection", "labels", "location", "name", "terraform_labels"},
+			},
+		},
+	})
+}
+
+func testAccCloudRunV2Service_cloudrunv2ServiceMeshExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_cloud_run_v2_service" "default" {
+  provider = google-beta
+  name     = "tf-test-cloudrun-service%{random_suffix}"
+  depends_on = [time_sleep.wait_for_mesh]
+  deletion_protection = false
+
+  location     = "us-central1"
+  launch_stage = "BETA"
+
+  template {
+    containers {
+      image = "us-docker.pkg.dev/cloudrun/container/hello"
+    }
+    service_mesh {
+      mesh = google_network_services_mesh.mesh.id
+    }
+  }
+}
+
+resource "time_sleep" "wait_for_mesh" {
+  depends_on = [google_network_services_mesh.mesh]
+
+  create_duration = "1m"
+}
+
+resource "google_network_services_mesh" "mesh" {
+  provider = google-beta
+  name     = "tf-test-network-services-mesh%{random_suffix}"
+}
+`, context)
+}
+
 func testAccCheckCloudRunV2ServiceDestroyProducer(t *testing.T) func(s *terraform.State) error {
 	return func(s *terraform.State) error {
 		for name, rs := range s.RootModule().Resources {
