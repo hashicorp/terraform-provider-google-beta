@@ -585,7 +585,7 @@ resource "google_cloud_run_v2_service" "default" {
 
   location     = "us-central1"
   deletion_protection = false
-  launch_stage = "BETA"
+
 
   template {
     execution_environment = "EXECUTION_ENVIRONMENT_GEN2"
@@ -649,7 +649,6 @@ resource "google_cloud_run_v2_service" "default" {
   location     = "us-central1"
   deletion_protection = false
   ingress      = "INGRESS_TRAFFIC_ALL"
-  launch_stage = "BETA"
 
   template {
     execution_environment = "EXECUTION_ENVIRONMENT_GEN2"

@@ -276,7 +276,7 @@ A duration in seconds with up to nine fractional digits, ending with 's'. Exampl
 												"gcs": {
 													Type:        schema.TypeList,
 													Optional:    true,
-													Description: `Cloud Storage bucket mounted as a volume using GCSFuse. This feature requires the launch stage to be set to ALPHA or BETA.`,
+													Description: `Cloud Storage bucket mounted as a volume using GCSFuse.`,
 													MaxItems:    1,
 													Elem: &schema.Resource{
 														Schema: map[string]*schema.Schema{
@@ -296,7 +296,7 @@ A duration in seconds with up to nine fractional digits, ending with 's'. Exampl
 												"nfs": {
 													Type:        schema.TypeList,
 													Optional:    true,
-													Description: `NFS share mounted as a volume. This feature requires the launch stage to be set to ALPHA or BETA.`,
+													Description: `NFS share mounted as a volume.`,
 													MaxItems:    1,
 													Elem: &schema.Resource{
 														Schema: map[string]*schema.Schema{
