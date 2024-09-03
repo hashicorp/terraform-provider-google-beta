@@ -1,7 +1,4 @@
 ## 6.1.0 (September 3, 2024)
-BREAKING CHANGES:
-* bigqueryanalyticshub: made `bigquery_dataset` immutable in `google_bigquery_analytics_hub_listing`. Now modifying the field will recreate the resource rather than causing Terraform to report it would attempt an invalid update. ([#8029](https://github.com/hashicorp/terraform-provider-google-beta/pull/8029))
-* sql: removed `settings.ip_configuration.require_ssl` from `google_sql_database_instance` in favor of `settings.ip_configuration.ssl_mode`. This field was intended to be removed in 6.0.0. ([#8043](https://github.com/hashicorp/terraform-provider-google-beta/pull/8043))
 
 FEATURES:
 * **New Data Source:** `google_kms_crypto_key_latest_version` ([#8032](https://github.com/hashicorp/terraform-provider-google-beta/pull/8032))
@@ -17,7 +14,6 @@ IMPROVEMENTS:
 * cloudtasks: added `http_target` field to `google_cloud_tasks_queue` resource ([#8033](https://github.com/hashicorp/terraform-provider-google-beta/pull/8033))
 * compute: added `accelerators` field to `google_compute_node_template` resource ([#8063](https://github.com/hashicorp/terraform-provider-google-beta/pull/8063))
 * compute: allowed disabling 'server_tls_policy' during update in 'google_compute_target_https_proxy' resources ([#8023](https://github.com/hashicorp/terraform-provider-google-beta/pull/8023))
-* container: added `secret_manager_config` field to `google_container_cluster` resource (ga) ([#8059](https://github.com/hashicorp/terraform-provider-google-beta/pull/8059))
 * datastream: added `transaction_logs` and `change_tables` to `datastream_stream` resource ([#8031](https://github.com/hashicorp/terraform-provider-google-beta/pull/8031))
 * discoveryengine: Added `chunking_config` and `layout_parsing_config` fields to `google_discovery_engine_data_store` resource ([#8049](https://github.com/hashicorp/terraform-provider-google-beta/pull/8049))
 * dlp: added `inspect_template_modified_cadence` field to `big_query_target` and `cloud_sql_target` in `google_data_loss_prevention_discovery_config` resource ([#8054](https://github.com/hashicorp/terraform-provider-google-beta/pull/8054))
@@ -27,6 +23,7 @@ IMPROVEMENTS:
 BUG FIXES:
 * artifactregistry: Fixed https://github.com/hashicorp/terraform-provider-google/issues/18955 ([#8036](https://github.com/hashicorp/terraform-provider-google-beta/pull/8036))
 * bigquery: fixed an error which could occur with email field values containing non-lower-case characters in `google_bigquery_dataset_access` resource ([#8039](https://github.com/hashicorp/terraform-provider-google-beta/pull/8039))
+* bigqueryanalyticshub: made `bigquery_dataset` immutable in `google_bigquery_analytics_hub_listing` as it was not updatable in the API. Now modifying the field in Terraform will correctly recreate the resource rather than causing Terraform to report it would attempt an invalid update. ([#8029](https://github.com/hashicorp/terraform-provider-google-beta/pull/8029))
 * container: fixed update inconsistency in `google_container_cluster` resource ([#8030](https://github.com/hashicorp/terraform-provider-google-beta/pull/8030))
 * netapp: Adding sweepers for all resources due to tests being run in multiple regions ([#8056](https://github.com/hashicorp/terraform-provider-google-beta/pull/8056))
 * pubsub: fixed a validation bug that didn't allow empty filter definitions for `google_pubsub_subscription` resources ([#8055](https://github.com/hashicorp/terraform-provider-google-beta/pull/8055))
