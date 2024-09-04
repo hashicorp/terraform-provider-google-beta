@@ -154,7 +154,7 @@ func clusterSchemaNodePoolDefaults() *schema.Schema {
 					Elem: &schema.Resource{
 						Schema: map[string]*schema.Schema{
 							"containerd_config":                      schemaContainerdConfig(),
-							"gcfs_config":                            schemaGcfsConfig(false),
+							"gcfs_config":                            schemaGcfsConfig(),
 							"insecure_kubelet_readonly_port_enabled": schemaInsecureKubeletReadonlyPortEnabled(),
 							"logging_variant":                        schemaLoggingVariant(),
 						},
