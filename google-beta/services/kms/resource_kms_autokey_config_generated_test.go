@@ -131,9 +131,16 @@ resource "time_sleep" "wait_srv_acc_permissions" {
 
 resource "google_kms_autokey_config" "example-autokeyconfig" {
   provider    = google-beta
-  folder      = google_folder.autokms_folder.folder_id
+  folder      = google_folder.autokms_folder.id
   key_project = "projects/${google_project.key_project.project_id}"
   depends_on  = [time_sleep.wait_srv_acc_permissions]
+}
+
+# Wait delay after setting AutokeyConfig, to prevent diffs on reapply,
+# because setting the config takes a little to fully propagate.
+resource "time_sleep" "wait_autokey_propagation" {
+  create_duration = "30s"
+  depends_on      = [google_kms_autokey_config.example-autokeyconfig]
 }
 `, context)
 }
@@ -151,6 +158,7 @@ func testAccCheckKMSAutokeyConfigDestroyProducer(t *testing.T) func(s *terraform
 			config := acctest.GoogleProviderConfig(t)
 
 			url, err := tpgresource.ReplaceVarsForTest(config, rs, "{{KMSBasePath}}folders/{{folder}}/autokeyConfig")
+			url = strings.Replace(url, "folders/folders/", "folders/", 1)
 			if err != nil {
 				return err
 			}

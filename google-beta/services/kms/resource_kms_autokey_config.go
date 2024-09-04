@@ -22,6 +22,7 @@ import (
 	"log"
 	"net/http"
 	"reflect"
+	"strings"
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -29,6 +30,11 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
+
+func folderPrefixSuppress(_, old, new string, d *schema.ResourceData) bool {
+	prefix := "folders/"
+	return prefix+old == new || prefix+new == old
+}
 
 func ResourceKMSAutokeyConfig() *schema.Resource {
 	return &schema.Resource{
@@ -49,10 +55,11 @@ func ResourceKMSAutokeyConfig() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"folder": {
-				Type:        schema.TypeString,
-				Required:    true,
-				ForceNew:    true,
-				Description: `The folder for which to retrieve config.`,
+				Type:             schema.TypeString,
+				Required:         true,
+				ForceNew:         true,
+				DiffSuppressFunc: folderPrefixSuppress,
+				Description:      `The folder for which to retrieve config.`,
 			},
 			"key_project": {
 				Type:     schema.TypeString,
@@ -95,6 +102,10 @@ func resourceKMSAutokeyConfigCreate(d *schema.ResourceData, meta interface{}) er
 	}
 
 	headers := make(http.Header)
+	url = strings.Replace(url, "folders/folders/", "folders/", 1)
+	folderValue := d.Get("folder").(string)
+	folderValue = strings.Replace(folderValue, "folders/", "", 1)
+	d.Set("folder", folderValue)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "PATCH",
@@ -141,6 +152,7 @@ func resourceKMSAutokeyConfigRead(d *schema.ResourceData, meta interface{}) erro
 	}
 
 	headers := make(http.Header)
+	url = strings.Replace(url, "folders/folders/", "folders/", 1)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "GET",
@@ -184,6 +196,7 @@ func resourceKMSAutokeyConfigUpdate(d *schema.ResourceData, meta interface{}) er
 
 	log.Printf("[DEBUG] Updating AutokeyConfig %q: %#v", d.Id(), obj)
 	headers := make(http.Header)
+	url = strings.Replace(url, "folders/folders/", "folders/", 1)
 
 	// err == nil indicates that the billing_project value was found
 	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
@@ -232,6 +245,7 @@ func resourceKMSAutokeyConfigDelete(d *schema.ResourceData, meta interface{}) er
 	}
 
 	headers := make(http.Header)
+	url = strings.Replace(url, "folders/folders/", "folders/", 1)
 
 	log.Printf("[DEBUG] Deleting AutokeyConfig %q", d.Id())
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
