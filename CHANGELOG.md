@@ -1,6 +1,7 @@
 ## 6.2.0 (Unreleased)
 
 ## 6.1.0 (September 4, 2024)
+
 FEATURES:
 * **New Data Source:** `google_kms_crypto_key_latest_version` ([#8032](https://github.com/hashicorp/terraform-provider-google-beta/pull/8032))
 * **New Data Source:** `google_kms_crypto_key_versions` ([#8026](https://github.com/hashicorp/terraform-provider-google-beta/pull/8026))
