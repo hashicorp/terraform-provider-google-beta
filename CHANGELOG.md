@@ -14,8 +14,8 @@ IMPROVEMENTS:
 * container: added `node_pool_auto_config.node_kublet_config.insecure_kubelet_readonly_port_enabled` field to `google_container_cluster`. ([#8076](https://github.com/hashicorp/terraform-provider-google-beta/pull/8076))
 * container: added `insecure_kubelet_readonly_port_enabled` to `node_pool.node_config.kubelet_config` and `node_config.kubelet_config` in `google_container_node_pool` resource. ([#8071](https://github.com/hashicorp/terraform-provider-google-beta/pull/8071))
 * container: added `insecure_kubelet_readonly_port_enabled` to `node_pool_defaults.node_config_defaults`, `node_pool.node_config.kubelet_config`, and `node_config.kubelet_config` in `google_container_cluster` resource. ([#8071](https://github.com/hashicorp/terraform-provider-google-beta/pull/8071))
+* container: Added support for in-place updates for `google_compute_node_pool.node_config.gcfs_config` and `google_container_cluster.node_config.gcfs_cluster` and `google_container_cluster.node_pool.node_config.gcfs_cluster` ([#8101](https://github.com/hashicorp/terraform-provider-google-beta/pull/8101))
 * iambeta: added `x509` field to `google_iam_workload_identity_pool_provider ` resource ([#8110](https://github.com/hashicorp/terraform-provider-google-beta/pull/8110))
-* kms: updated the `google_kms_autokey_config` resource's `folder` field to accept values that are either full resource names (`folders/{folder_id}`) or just the folder id (`{folder_id}` only) ([#8100](https://github.com/hashicorp/terraform-provider-google-beta/pull/8100))
 * networkconnectivity: added `include_export_ranges` to `google_network_connectivity_spoke` ([#8088](https://github.com/hashicorp/terraform-provider-google-beta/pull/8088))
 * pubsub: added `cloud_storage_config.max_messages` and `cloud_storage_config.avro_config.use_topic_schema` fields to `google_pubsub_subscription` resource ([#8086](https://github.com/hashicorp/terraform-provider-google-beta/pull/8086))
 * redis: added the `maintenance_policy` field to the `google_redis_cluster` resource ([#8087](https://github.com/hashicorp/terraform-provider-google-beta/pull/8087))
@@ -27,7 +27,7 @@ BUG FIXES:
 * compute: fixed a bug where `advertised_route_priority` was accidentally set to 0 during updates in `google_compute_router_peer` ([#8102](https://github.com/hashicorp/terraform-provider-google-beta/pull/8102))
 * compute: fixed a permadiff caused by setting `start_time` in an incorrect `H:mm` format in `google_compute_resource_policies` resources ([#8067](https://github.com/hashicorp/terraform-provider-google-beta/pull/8067))
 * compute: fixed `network_interface.subnetwork_project` validation to match with the project in `network_interface.subnetwork` field when `network_interface.subnetwork` has full self_link in `google_compute_instance` resource ([#8089](https://github.com/hashicorp/terraform-provider-google-beta/pull/8089))
-   container: removed unnecessary force replacement in node pool `gcfs_config` ([#8101](https://github.com/hashicorp/terraform-provider-google-beta/pull/8101))
+* kms: updated the `google_kms_autokey_config` resource's `folder` field to accept values that are either full resource names (`folders/{folder_id}`) or just the folder id (`{folder_id}` only) ([#8100](https://github.com/hashicorp/terraform-provider-google-beta/pull/8100))
 * storage: added retry support for 429 errors in `google_storage_bucket` resource ([#8092](https://github.com/hashicorp/terraform-provider-google-beta/pull/8092))
 
 ## 6.1.0 (September 4, 2024)
