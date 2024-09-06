@@ -30,12 +30,12 @@ import (
 )
 
 func init() {
-	sweeper.AddTestSweepers("SecurityCenterV2FolderSccBigQueryExports", testSweepSecurityCenterV2FolderSccBigQueryExports)
+	sweeper.AddTestSweepers("SecurityCenterV2FolderSccBigQueryExport", testSweepSecurityCenterV2FolderSccBigQueryExport)
 }
 
 // At the time of writing, the CI only passes us-central1 as the region
-func testSweepSecurityCenterV2FolderSccBigQueryExports(region string) error {
-	resourceName := "SecurityCenterV2FolderSccBigQueryExports"
+func testSweepSecurityCenterV2FolderSccBigQueryExport(region string) error {
+	resourceName := "SecurityCenterV2FolderSccBigQueryExport"
 	log.Printf("[INFO][SWEEPER_LOG] Starting sweeper for %s", resourceName)
 
 	config, err := sweeper.SharedConfigForRegion(region)
@@ -83,7 +83,7 @@ func testSweepSecurityCenterV2FolderSccBigQueryExports(region string) error {
 		return nil
 	}
 
-	resourceList, ok := res["folderSccBigQueryExportss"]
+	resourceList, ok := res["folderSccBigQueryExports"]
 	if !ok {
 		log.Printf("[INFO][SWEEPER_LOG] Nothing found in response.")
 		return nil
