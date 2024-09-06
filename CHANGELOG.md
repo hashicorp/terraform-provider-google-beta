@@ -14,7 +14,7 @@ IMPROVEMENTS:
 * bigqueryanalyticshub: added `sharing_environment_config` to `google_bigquery_analytics_hub_data_exchange` resource ([#8029](https://github.com/hashicorp/terraform-provider-google-beta/pull/8029))
 * cloudtasks: added `http_target` field to `google_cloud_tasks_queue` resource ([#8033](https://github.com/hashicorp/terraform-provider-google-beta/pull/8033))
 * compute: added `accelerators` field to `google_compute_node_template` resource ([#8063](https://github.com/hashicorp/terraform-provider-google-beta/pull/8063))
-* compute: allowed disabling 'server_tls_policy' during update in 'google_compute_target_https_proxy' resources ([#8023](https://github.com/hashicorp/terraform-provider-google-beta/pull/8023))
+* compute: allowed disabling `server_tls_policy` during update in `google_compute_target_https_proxy` resources ([#8023](https://github.com/hashicorp/terraform-provider-google-beta/pull/8023))
 * datastream: added `transaction_logs` and `change_tables` to `datastream_stream` resource ([#8031](https://github.com/hashicorp/terraform-provider-google-beta/pull/8031))
 * discoveryengine: added `chunking_config` and `layout_parsing_config` fields to `google_discovery_engine_data_store` resource ([#8049](https://github.com/hashicorp/terraform-provider-google-beta/pull/8049))
 * dlp: added `inspect_template_modified_cadence` field to `big_query_target` and `cloud_sql_target` in `google_data_loss_prevention_discovery_config` resource ([#8054](https://github.com/hashicorp/terraform-provider-google-beta/pull/8054))
