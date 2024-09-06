@@ -92,6 +92,7 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/looker"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/managedkafka"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/memcache"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/memorystore"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/migrationcenter"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/mlengine"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/monitoring"
@@ -476,9 +477,9 @@ var handwrittenIAMDatasources = map[string]*schema.Resource{
 }
 
 // Resources
-// Generated resources: 511
+// Generated resources: 512
 // Generated IAM resources: 288
-// Total generated resources: 799
+// Total generated resources: 800
 var generatedResources = map[string]*schema.Resource{
 	"google_folder_access_approval_settings":                                     accessapproval.ResourceAccessApprovalFolderSettings(),
 	"google_organization_access_approval_settings":                               accessapproval.ResourceAccessApprovalOrganizationSettings(),
@@ -1037,6 +1038,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_managed_kafka_cluster":                                               managedkafka.ResourceManagedKafkaCluster(),
 	"google_managed_kafka_topic":                                                 managedkafka.ResourceManagedKafkaTopic(),
 	"google_memcache_instance":                                                   memcache.ResourceMemcacheInstance(),
+	"google_memorystore_instance":                                                memorystore.ResourceMemorystoreInstance(),
 	"google_migration_center_group":                                              migrationcenter.ResourceMigrationCenterGroup(),
 	"google_migration_center_preference_set":                                     migrationcenter.ResourceMigrationCenterPreferenceSet(),
 	"google_ml_engine_model":                                                     mlengine.ResourceMLEngineModel(),
