@@ -1,5 +1,35 @@
 ## 6.2.0 (Unreleased)
 
+FEATURES:
+* **New Data Source:** `google_certificate_manager_certificates` ([#8099](https://github.com/hashicorp/terraform-provider-google-beta/pull/8099))
+* **New Resource:** `google_backup_dr_backup_vault` ([#8083](https://github.com/hashicorp/terraform-provider-google-beta/pull/8083))
+* **New Resource:** `google_scc_v2_folder_scc_big_query_export` ([#8079](https://github.com/hashicorp/terraform-provider-google-beta/pull/8079))
+* **New Resource:** `google_scc_v2_project_scc_big_query_export` ([#8070](https://github.com/hashicorp/terraform-provider-google-beta/pull/8070))
+
+IMPROVEMENTS:
+* assuredworkload: added field `partner_service_billing_account` to `google_assured_workloads_workload` ([#8097](https://github.com/hashicorp/terraform-provider-google-beta/pull/8097))
+* bigtable: added support for `column_family.type` in `google_bigtable_table` ([#8069](https://github.com/hashicorp/terraform-provider-google-beta/pull/8069))
+* cloudrunv2: added `template.service_mesh` to `google_cloud_run_v2_service` ([#8096](https://github.com/hashicorp/terraform-provider-google-beta/pull/8096))
+* compute: added `boot_disk.interface` field to `google_compute_instance` resource ([#8075](https://github.com/hashicorp/terraform-provider-google-beta/pull/8075))
+* container: added `node_pool_auto_config.node_kublet_config.insecure_kubelet_readonly_port_enabled` field to `google_container_cluster`. ([#8076](https://github.com/hashicorp/terraform-provider-google-beta/pull/8076))
+* container: added `insecure_kubelet_readonly_port_enabled` to `node_pool.node_config.kubelet_config` and `node_config.kubelet_config` in `google_container_node_pool` resource. ([#8071](https://github.com/hashicorp/terraform-provider-google-beta/pull/8071))
+* container: added `insecure_kubelet_readonly_port_enabled` to `node_pool_defaults.node_config_defaults`, `node_pool.node_config.kubelet_config`, and `node_config.kubelet_config` in `google_container_cluster` resource. ([#8071](https://github.com/hashicorp/terraform-provider-google-beta/pull/8071))
+* container: added support for in-place updates for `google_compute_node_pool.node_config.gcfs_config` and `google_container_cluster.node_config.gcfs_cluster` and `google_container_cluster.node_pool.node_config.gcfs_cluster` ([#8101](https://github.com/hashicorp/terraform-provider-google-beta/pull/8101))
+* iambeta: added `x509` field to `google_iam_workload_identity_pool_provider ` resource ([#8110](https://github.com/hashicorp/terraform-provider-google-beta/pull/8110))
+* networkconnectivity: added `include_export_ranges` to `google_network_connectivity_spoke` ([#8088](https://github.com/hashicorp/terraform-provider-google-beta/pull/8088))
+* pubsub: added `cloud_storage_config.max_messages` and `cloud_storage_config.avro_config.use_topic_schema` fields to `google_pubsub_subscription` resource ([#8086](https://github.com/hashicorp/terraform-provider-google-beta/pull/8086))
+* redis: added the `maintenance_policy` field to the `google_redis_cluster` resource ([#8087](https://github.com/hashicorp/terraform-provider-google-beta/pull/8087))
+* resourcemanager: added `tags` field to `google_project` to allow setting tags for projects at creation time ([#8091](https://github.com/hashicorp/terraform-provider-google-beta/pull/8091))
+* securitycenter: added support for empty `streaming_config.filter` values in `google_scc_notification_config` resources ([#8105](https://github.com/hashicorp/terraform-provider-google-beta/pull/8105))
+
+BUG FIXES:
+* compute: fixed `google_compute_interconnect` to support correct `available_features` option of `IF_MACSEC` ([#8082](https://github.com/hashicorp/terraform-provider-google-beta/pull/8082))
+* compute: fixed a bug where `advertised_route_priority` was accidentally set to 0 during updates in `google_compute_router_peer` ([#8102](https://github.com/hashicorp/terraform-provider-google-beta/pull/8102))
+* compute: fixed a permadiff caused by setting `start_time` in an incorrect `H:mm` format in `google_compute_resource_policies` resources ([#8067](https://github.com/hashicorp/terraform-provider-google-beta/pull/8067))
+* compute: fixed `network_interface.subnetwork_project` validation to match with the project in `network_interface.subnetwork` field when `network_interface.subnetwork` has full self_link in `google_compute_instance` resource ([#8089](https://github.com/hashicorp/terraform-provider-google-beta/pull/8089))
+* kms: updated the `google_kms_autokey_config` resource's `folder` field to accept values that are either full resource names (`folders/{folder_id}`) or just the folder id (`{folder_id}` only) ([#8100](https://github.com/hashicorp/terraform-provider-google-beta/pull/8100))
+* storage: added retry support for 429 errors in `google_storage_bucket` resource ([#8092](https://github.com/hashicorp/terraform-provider-google-beta/pull/8092))
+
 ## 6.1.0 (September 4, 2024)
 FEATURES:
 * **New Data Source:** `google_kms_crypto_key_latest_version` ([#8032](https://github.com/hashicorp/terraform-provider-google-beta/pull/8032))
