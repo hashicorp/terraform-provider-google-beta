@@ -62,15 +62,6 @@ BUG FIXES:
 * sql: fixed importing `google_sql_user` where `host` is an IPv4 CIDR ([#8028](https://github.com/hashicorp/terraform-provider-google-beta/pull/8028))
 * sql: fixed overwriting of `name` field for IAM Group user for `google_sql_user` resource ([#8024](https://github.com/hashicorp/terraform-provider-google-beta/pull/8024))
 
-## 5.43.1 (August 30, 2024)
-
-NOTES:
-* 5.43.1 is a backport release, and some changes will not appear in 6.X series releases until 6.1.0
-
-BUG FIXES:
-* pubsub: fixed a validation bug that didn't allow empty filter definitions for `google_pubsub_subscription` resources ([#8055](https://github.com/hashicorp/terraform-provider-google-beta/pull/8055))
-
-
 ## 6.0.1 (August 26, 2024)
 
 BREAKING CHANGES:
@@ -127,6 +118,24 @@ IMPROVEMENTS:
 
 BUG FIXES:
 * compute: fixed an issue regarding sending `enabled` field by default for null `iap` message in `google_compute_backend_service` and `google_compute_region_backend_service` ([#7758](https://github.com/hashicorp/terraform-provider-google-beta/pull/7758))
+
+## 5.44.0 (September 9, 2024)
+
+NOTES:
+* 5.44.0 is a backport release, intended to pull in critical container improvements from 6.2.0
+
+IMPROVEMENTS:
+* container: added `insecure_kubelet_readonly_port_enabled` to `node_pool.node_config.kubelet_config` and `node_config.kubelet_config` in `google_container_node_pool` resource. ([#8071](https://github.com/hashicorp/terraform-provider-google-beta/pull/8071))
+* container: added `insecure_kubelet_readonly_port_enabled` to `node_pool_defaults.node_config_defaults`, `node_pool.node_config.kubelet_config`, and `node_config.kubelet_config` in `google_container_cluster` resource. ([#8071](https://github.com/hashicorp/terraform-provider-google-beta/pull/8071))
+* container: added `node_pool_auto_config.node_kublet_config.insecure_kubelet_readonly_port_enabled` field to `google_container_cluster`. ([#8076](https://github.com/hashicorp/terraform-provider-google-beta/pull/8076))
+
+## 5.43.1 (August 30, 2024)
+
+NOTES:
+* 5.43.1 is a backport release, and some changes will not appear in 6.X series releases until 6.1.0
+
+BUG FIXES:
+* pubsub: fixed a validation bug that didn't allow empty filter definitions for `google_pubsub_subscription` resources ([#8055](https://github.com/hashicorp/terraform-provider-google-beta/pull/8055))
 
 ## 5.43.0 (August 26, 2024)
 
