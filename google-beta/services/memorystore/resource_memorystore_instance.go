@@ -87,8 +87,7 @@ This value is subject to the following restrictions:
 				Computed: true,
 				Optional: true,
 				ForceNew: true,
-				Description: `Optional. Immutable. Authorization mode of the instance. 
- Possible values:
+				Description: `Optional. Immutable. Authorization mode of the instance. Possible values:
  AUTH_DISABLED
 IAM_AUTH`,
 			},
