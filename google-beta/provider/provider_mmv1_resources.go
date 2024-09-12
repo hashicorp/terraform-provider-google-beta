@@ -479,9 +479,9 @@ var handwrittenIAMDatasources = map[string]*schema.Resource{
 }
 
 // Resources
-// Generated resources: 514
+// Generated resources: 515
 // Generated IAM resources: 288
-// Total generated resources: 802
+// Total generated resources: 803
 var generatedResources = map[string]*schema.Resource{
 	"google_folder_access_approval_settings":                                     accessapproval.ResourceAccessApprovalFolderSettings(),
 	"google_organization_access_approval_settings":                               accessapproval.ResourceAccessApprovalOrganizationSettings(),
@@ -1212,6 +1212,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_sourcerepo_repository_iam_binding":                                   tpgiamresource.ResourceIamBinding(sourcerepo.SourceRepoRepositoryIamSchema, sourcerepo.SourceRepoRepositoryIamUpdaterProducer, sourcerepo.SourceRepoRepositoryIdParseFunc),
 	"google_sourcerepo_repository_iam_member":                                    tpgiamresource.ResourceIamMember(sourcerepo.SourceRepoRepositoryIamSchema, sourcerepo.SourceRepoRepositoryIamUpdaterProducer, sourcerepo.SourceRepoRepositoryIdParseFunc),
 	"google_sourcerepo_repository_iam_policy":                                    tpgiamresource.ResourceIamPolicy(sourcerepo.SourceRepoRepositoryIamSchema, sourcerepo.SourceRepoRepositoryIamUpdaterProducer, sourcerepo.SourceRepoRepositoryIdParseFunc),
+	"google_spanner_backup_schedule":                                             spanner.ResourceSpannerBackupSchedule(),
 	"google_spanner_database":                                                    spanner.ResourceSpannerDatabase(),
 	"google_spanner_instance":                                                    spanner.ResourceSpannerInstance(),
 	"google_spanner_instance_config":                                             spanner.ResourceSpannerInstanceConfig(),
