@@ -481,9 +481,9 @@ var handwrittenIAMDatasources = map[string]*schema.Resource{
 }
 
 // Resources
-// Generated resources: 517
+// Generated resources: 518
 // Generated IAM resources: 291
-// Total generated resources: 808
+// Total generated resources: 809
 var generatedResources = map[string]*schema.Resource{
 	"google_folder_access_approval_settings":                                     accessapproval.ResourceAccessApprovalFolderSettings(),
 	"google_organization_access_approval_settings":                               accessapproval.ResourceAccessApprovalOrganizationSettings(),
@@ -1171,6 +1171,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_scc_mute_config":                                                     securitycenter.ResourceSecurityCenterMuteConfig(),
 	"google_scc_notification_config":                                             securitycenter.ResourceSecurityCenterNotificationConfig(),
 	"google_scc_organization_custom_module":                                      securitycenter.ResourceSecurityCenterOrganizationCustomModule(),
+	"google_scc_organization_scc_big_query_export":                               securitycenter.ResourceSecurityCenterOrganizationSccBigQueryExport(),
 	"google_scc_project_custom_module":                                           securitycenter.ResourceSecurityCenterProjectCustomModule(),
 	"google_scc_project_notification_config":                                     securitycenter.ResourceSecurityCenterProjectNotificationConfig(),
 	"google_scc_source":                                                          securitycenter.ResourceSecurityCenterSource(),
