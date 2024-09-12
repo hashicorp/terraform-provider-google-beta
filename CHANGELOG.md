@@ -1,5 +1,29 @@
 ## 6.3.0 (Unreleased)
 
+FEATURES:
+* **New Data Source:** `google_bigquery_tables` ([#8130](https://github.com/hashicorp/terraform-provider-google-beta/pull/8130))
+* **New Resource:** `google_compute_network_firewall_policy_with_rules` ([#8118](https://github.com/hashicorp/terraform-provider-google-beta/pull/8118))
+* **New Resource:** `google_developer_connect_connection` ([#8150](https://github.com/hashicorp/terraform-provider-google-beta/pull/8150))
+* **New Resource:** `google_developer_connect_git_repository_link` ([#8150](https://github.com/hashicorp/terraform-provider-google-beta/pull/8150))
+* **New Resource:** `google_memorystore_instance` ([#8126](https://github.com/hashicorp/terraform-provider-google-beta/pull/8126))
+
+IMPROVEMENTS:
+* compute: added `connected_endpoints.consumer_network` and `connected_endpoints.psc_connection_id` fields to `google_compute_service_attachment` resource ([#8148](https://github.com/hashicorp/terraform-provider-google-beta/pull/8148))
+* compute: added `propagated_connection_limit` and `connected_endpoints.propagated_connection_count` fields to `google_compute_service_attachment` resource ([#8148](https://github.com/hashicorp/terraform-provider-google-beta/pull/8148))
+* compute: added field `http_keep_alive_timeout_sec` to resource `google_region_compute_target_http_proxy` ([#8151](https://github.com/hashicorp/terraform-provider-google-beta/pull/8151))
+* compute: added field `http_keep_alive_timeout_sec` to resource `google_region_compute_target_https_proxy` ([#8151](https://github.com/hashicorp/terraform-provider-google-beta/pull/8151))
+* compute: added support for `boot_disk.initialize_params.resource_policies` in `google_compute_instance` and `google_instance_template` ([#8134](https://github.com/hashicorp/terraform-provider-google-beta/pull/8134))
+* compute: setting `network_ip` to "" will no longer cause diff and will be treated the same as `null` ([#8128](https://github.com/hashicorp/terraform-provider-google-beta/pull/8128))
+* container: added `storage_pools` to `node_config` in `google_container_cluster` and `google_container_node_pool` ([#8146](https://github.com/hashicorp/terraform-provider-google-beta/pull/8146))
+* containerattached: added `security_posture_config` field to `google_container_attached_cluster` resource ([#8137](https://github.com/hashicorp/terraform-provider-google-beta/pull/8137))
+* netapp: added `large_capacity` and `multiple_endpoints` to `google_netapp_volume` resource ([#8116](https://github.com/hashicorp/terraform-provider-google-beta/pull/8116))
+* resourcemanager: added `tags` field to `google_folder` to allow setting tags for folders at creation time ([#8113](https://github.com/hashicorp/terraform-provider-google-beta/pull/8113))
+
+BUG FIXES:
+* dataproc: updated `google_dataproc_cluster` to protect against handling nil `kerberos_config` values ([#8129](https://github.com/hashicorp/terraform-provider-google-beta/pull/8129))
+* dns: added a mutex to `google_dns_record_set` to prevent conflicts when multiple resources attempt to operate on the same record set ([#8139](https://github.com/hashicorp/terraform-provider-google-beta/pull/8139))
+* managedkafka: added 5 second wait post `google_managed_kafka_topic` creation to fix eventual consistency errors ([#8149](https://github.com/hashicorp/terraform-provider-google-beta/pull/8149))
+
 ## 6.2.0 (September 9, 2024)
 
 FEATURES:
