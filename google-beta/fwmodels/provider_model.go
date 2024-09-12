@@ -139,6 +139,7 @@ type ProviderModel struct {
 	ResourceManagerCustomEndpoint          types.String `tfsdk:"resource_manager_custom_endpoint"`
 	RuntimeConfigCustomEndpoint            types.String `tfsdk:"runtime_config_custom_endpoint"`
 	SecretManagerCustomEndpoint            types.String `tfsdk:"secret_manager_custom_endpoint"`
+	SecretManagerRegionalCustomEndpoint    types.String `tfsdk:"secret_manager_regional_custom_endpoint"`
 	SecureSourceManagerCustomEndpoint      types.String `tfsdk:"secure_source_manager_custom_endpoint"`
 	SecurityCenterCustomEndpoint           types.String `tfsdk:"security_center_custom_endpoint"`
 	SecurityCenterManagementCustomEndpoint types.String `tfsdk:"security_center_management_custom_endpoint"`

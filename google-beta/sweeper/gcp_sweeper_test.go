@@ -118,6 +118,7 @@ import (
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/resourcemanager"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/runtimeconfig"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/secretmanager"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/secretmanagerregional"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/securesourcemanager"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/securitycenter"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/securitycentermanagement"
