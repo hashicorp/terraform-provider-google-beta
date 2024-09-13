@@ -201,13 +201,8 @@ Empty string if the installation is already complete.`,
 						"stage": {
 							Type:     schema.TypeString,
 							Computed: true,
-							Description: `Output only. Current step of the installation process. 
- Possible values:
- STAGE_UNSPECIFIED
-PENDING_CREATE_APP
-PENDING_USER_OAUTH
-PENDING_INSTALL_APP
-COMPLETE`,
+							Description: `Output only. Current step of the installation process.
+Possible values: 'STAGE_UNSPECIFIED', 'PENDING_CREATE_APP', 'PENDING_USER_OAUTH', 'PENDING_INSTALL_APP', 'COMPLETE'`,
 						},
 					},
 				},
