@@ -60,37 +60,37 @@ func ResourceDeveloperConnectConnection() *schema.Resource {
 				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: true,
-				Description: `Required. Id of the requesting object
-If auto-generating Id server-side, remove this field and
-connection_id from the method_signature of Create RPC`,
+				Description: `Required. Id of the requesting object. If auto-generating Id server-side,
+remove this field and connection_id from the method_signature of Create RPC.`,
 			},
 			"location": {
-				Type:        schema.TypeString,
-				Required:    true,
-				ForceNew:    true,
-				Description: `Resource ID segment making up resource 'name'. It identifies the resource within its parent collection as described in https://google.aip.dev/122. See documentation for resource type 'developerconnect.googleapis.com/GitRepositoryLink'.`,
+				Type:     schema.TypeString,
+				Required: true,
+				ForceNew: true,
+				Description: `Resource ID segment making up resource 'name'. It identifies the resource
+within its parent collection as described in https://google.aip.dev/122. See documentation
+for resource type 'developerconnect.googleapis.com/GitRepositoryLink'.`,
 			},
 			"annotations": {
 				Type:     schema.TypeMap,
 				Optional: true,
-				Description: `Optional. Allows clients to store small amounts of arbitrary data. 
+				Description: `Optional. Allows clients to store small amounts of arbitrary data.
+
 
 **Note**: This field is non-authoritative, and will only manage the annotations present in your configuration.
 Please refer to the field 'effective_annotations' for all of the annotations present on the resource.`,
 				Elem: &schema.Schema{Type: schema.TypeString},
 			},
 			"disabled": {
-				Type:     schema.TypeBool,
-				Optional: true,
-				Description: `Optional. If disabled is set to true, functionality is disabled for this connection.
-Repository based API methods and webhooks processing for repositories in
-this connection will be disabled.`,
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Description: `Optional. If disabled is set to true, functionality is disabled for this connection. Repository based API methods and webhooks processing for repositories in this connection will be disabled.`,
 			},
 			"etag": {
 				Type:     schema.TypeString,
 				Optional: true,
-				Description: `Optional. This checksum is computed by the server based on the value of other
-fields, and may be sent on update and delete requests to ensure the
+				Description: `Optional. This checksum is computed by the server based on the value
+of other fields, and may be sent on update and delete requests to ensure the
 client has an up-to-date value before proceeding.`,
 			},
 			"github_config": {
@@ -104,12 +104,12 @@ client has an up-to-date value before proceeding.`,
 							Type:     schema.TypeString,
 							Required: true,
 							ForceNew: true,
-							Description: `Required. Immutable. The GitHub Application that was installed to the GitHub user or
-organization. 
- Possible values:
- GIT_HUB_APP_UNSPECIFIED
-DEVELOPER_CONNECT
-FIREBASE`,
+							Description: `Required. Immutable. The GitHub Application that was installed to
+the GitHub user or organization.
+Possible values:
+  GIT_HUB_APP_UNSPECIFIED
+  DEVELOPER_CONNECT
+  FIREBASE"`,
 						},
 						"app_installation_id": {
 							Type:        schema.TypeString,
@@ -119,16 +119,17 @@ FIREBASE`,
 						"authorizer_credential": {
 							Type:     schema.TypeList,
 							Optional: true,
-							Description: `Represents an OAuth token of the account that authorized the Connection,
-and associated metadata.`,
+							Description: `Represents an OAuth token of the account that authorized the Connection,and
+associated metadata.`,
 							MaxItems: 1,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"oauth_token_secret_version": {
 										Type:     schema.TypeString,
 										Required: true,
-										Description: `Required. A SecretManager resource containing the OAuth token that authorizes
-the connection. Format: 'projects/*/secrets/*/versions/*'.`,
+										Description: `Required. A SecretManager resource containing the OAuth token
+that authorizes the connection.
+Format: 'projects/*/secrets/*/versions/*'.`,
 									},
 									"username": {
 										Type:        schema.TypeString,
@@ -141,8 +142,8 @@ the connection. Format: 'projects/*/secrets/*/versions/*'.`,
 						"installation_uri": {
 							Type:     schema.TypeString,
 							Computed: true,
-							Description: `Output only. The URI to navigate to in order to manage the installation associated
-with this GitHubConfig.`,
+							Description: `Output only. The URI to navigate to in order to manage the installation
+associated with this GitHubConfig.`,
 						},
 					},
 				},
@@ -150,7 +151,8 @@ with this GitHubConfig.`,
 			"labels": {
 				Type:     schema.TypeMap,
 				Optional: true,
-				Description: `Optional. Labels as key value pairs 
+				Description: `Optional. Labels as key value pairs
+
 
 **Note**: This field is non-authoritative, and will only manage the labels present in your configuration.
 Please refer to the field 'effective_labels' for all of the labels present on the resource.`,
@@ -181,28 +183,32 @@ Please refer to the field 'effective_labels' for all of the labels present on th
 			"installation_state": {
 				Type:     schema.TypeList,
 				Computed: true,
-				Description: `Describes stage and necessary actions to be taken by the
-user to complete the installation. Used for GitHub and GitHub Enterprise
-based connections.`,
+				Description: `Describes stage and necessary actions to be taken by the user to complete the installation.
+Used for GitHub and GitHub Enterprise based connections.`,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"action_uri": {
 							Type:     schema.TypeString,
 							Optional: true,
-							Description: `Output only. Link to follow for next action. Empty string if the installation is already
-complete.`,
+							Description: `Output only. Link to follow for next action. Empty string if the
+installation is already complete.`,
 						},
 						"message": {
 							Type:     schema.TypeString,
 							Optional: true,
-							Description: `Output only. Message of what the user should do next to continue the installation.
-Empty string if the installation is already complete.`,
+							Description: `Output only. Message of what the user should do next to continue
+the installation.Empty string if the installation is already complete.`,
 						},
 						"stage": {
 							Type:     schema.TypeString,
 							Computed: true,
 							Description: `Output only. Current step of the installation process.
-Possible values: 'STAGE_UNSPECIFIED', 'PENDING_CREATE_APP', 'PENDING_USER_OAUTH', 'PENDING_INSTALL_APP', 'COMPLETE'`,
+Possible values:
+  STAGE_UNSPECIFIED
+  PENDING_CREATE_APP
+  PENDING_USER_OAUTH
+  PENDING_INSTALL_APP
+  COMPLETE`,
 						},
 					},
 				},
@@ -216,8 +222,8 @@ Possible values: 'STAGE_UNSPECIFIED', 'PENDING_CREATE_APP', 'PENDING_USER_OAUTH'
 			"reconciling": {
 				Type:     schema.TypeBool,
 				Computed: true,
-				Description: `Output only. Set to true when the connection is being set up or updated in the
-background.`,
+				Description: `Output only. Set to true when the connection is being set up or updated
+in the background.`,
 			},
 			"terraform_labels": {
 				Type:     schema.TypeMap,
