@@ -301,6 +301,7 @@ var handwrittenDatasources = map[string]*schema.Resource{
 	"google_pubsub_topic":                                 pubsub.DataSourceGooglePubsubTopic(),
 	"google_runtimeconfig_config":                         runtimeconfig.DataSourceGoogleRuntimeconfigConfig(),
 	"google_runtimeconfig_variable":                       runtimeconfig.DataSourceGoogleRuntimeconfigVariable(),
+	"google_secret_manager_regional_secret":               secretmanagerregional.DataSourceSecretManagerRegionalRegionalSecret(),
 	"google_secret_manager_secret":                        secretmanager.DataSourceSecretManagerSecret(),
 	"google_secret_manager_secrets":                       secretmanager.DataSourceSecretManagerSecrets(),
 	"google_secret_manager_secret_version":                secretmanager.DataSourceSecretManagerSecretVersion(),
