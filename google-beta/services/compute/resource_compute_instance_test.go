@@ -3341,11 +3341,11 @@ func TestAccComputeInstance_proactiveAttributionLabel(t *testing.T) {
 	})
 }
 
+const errorDeleteAccessConfigWithSecPolicy = "Cannot delete an access config with a security policy set. Please remove the security policy first"
+
 // The tests related to security_policy use network_edge_security_service resource
 // which can only exist one per region. Because of that, all the following tests must run serially.
 func TestAccComputeInstanceNetworkIntefaceWithSecurityPolicy(t *testing.T) {
-	// Consistently failing - https://github.com/hashicorp/terraform-provider-google/issues/17838
-	acctest.SkipIfVcr(t)
 	testCases := map[string]func(t *testing.T){
 		"two_access_config": testAccComputeInstance_nic_securityPolicyCreateWithTwoAccessConfigs,
 		"two_nics_access_config_with_empty_nil_security_policy":   testAccComputeInstance_nic_securityPolicyCreateWithEmptyAndNullSecurityPolicies,
@@ -3527,12 +3527,8 @@ func testAccComputeInstance_nic_securityPolicyCreateWithTwoNicsAndTwoAccessConfi
 				ImportStateVerify: true,
 			},
 			{
-				Config: testAccComputeInstance_nic_securityPolicyCreateWithTwoNicsAndTwoAccessConfigsUpdateTwoPoliciesRemoveAccessConfig(suffix, policyName, policyName2, instanceName, "google_compute_region_security_policy.policyforinstance.self_link", "google_compute_region_security_policy.policyforinstance.self_link"),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckComputeInstanceExists(
-						t, "google_compute_instance.foobar", &instance),
-					testAccCheckComputeInstanceNicAccessConfigHasSecurityPolicy(&instance, policyName),
-				),
+				Config:      testAccComputeInstance_nic_securityPolicyCreateWithTwoNicsAndTwoAccessConfigsUpdateTwoPoliciesRemoveAccessConfig(suffix, policyName, policyName2, instanceName, "google_compute_region_security_policy.policyforinstance.self_link", "google_compute_region_security_policy.policyforinstance.self_link"),
+				ExpectError: regexp.MustCompile(errorDeleteAccessConfigWithSecPolicy),
 			},
 			{
 				ResourceName:      "google_compute_instance.foobar",
@@ -3637,12 +3633,8 @@ func testAccComputeInstance_nic_securityPolicyCreateWithAccessConfigUpdateAccess
 				ImportStateVerify: true,
 			},
 			{
-				Config: testAccComputeInstance_nic_securityPolicyCreateWithTwoAccessConfigsUpdateAccessConfig(suffix, policyName, instanceName),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckComputeInstanceExists(
-						t, "google_compute_instance.foobar", &instance),
-					testAccCheckComputeInstanceNicAccessConfigHasSecurityPolicy(&instance, policyName),
-				),
+				Config:      testAccComputeInstance_nic_securityPolicyCreateWithTwoAccessConfigsUpdateAccessConfig(suffix, policyName, instanceName),
+				ExpectError: regexp.MustCompile(errorDeleteAccessConfigWithSecPolicy),
 			},
 			{
 				ResourceName:      "google_compute_instance.foobar",
