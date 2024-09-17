@@ -652,6 +652,7 @@ or serverless NEG as a backend.`,
 			},
 			"iap": {
 				Type:        schema.TypeList,
+				Computed:    true,
 				Optional:    true,
 				Description: `Settings for enabling Cloud Identity Aware Proxy`,
 				MaxItems:    1,
