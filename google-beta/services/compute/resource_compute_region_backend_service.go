@@ -4276,7 +4276,6 @@ func resourceComputeRegionBackendServiceEncoder(d *schema.ResourceData, meta int
 }
 
 func resourceComputeRegionBackendServiceDecoder(d *schema.ResourceData, meta interface{}, res map[string]interface{}) (map[string]interface{}, error) {
-
 	// Since we add in a NONE subsetting policy, we need to remove it in some
 	// cases for backwards compatibility with the config
 	v, ok := res["subsetting"]
