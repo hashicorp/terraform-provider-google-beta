@@ -6,7 +6,6 @@ import (
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
-
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/accessapproval"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/accesscontextmanager"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/activedirectory"

@@ -4,7 +4,6 @@ package provider
 
 import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/accessapproval"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/accesscontextmanager"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/activedirectory"
