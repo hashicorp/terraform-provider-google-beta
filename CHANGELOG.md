@@ -1,5 +1,44 @@
 ## 6.4.0 (Unreleased)
 
+DEPRECATIONS:
+* securitycenterv2: deprecated `google_scc_v2_organization_scc_big_query_exports`. Use `google_scc_v2_organization_scc_big_query_export` instead. ([#8166](https://github.com/hashicorp/terraform-provider-google-beta/pull/8166))
+
+FEATURES:
+* **New Data Source:** `google_secret_manager_regional_secret_version` ([#8209](https://github.com/hashicorp/terraform-provider-google-beta/pull/8209))
+* **New Data Source:** `google_secret_manager_regional_secret` ([#8189](https://github.com/hashicorp/terraform-provider-google-beta/pull/8189))
+* **New Resource:** `google_compute_firewall_policy_with_rules` ([#8181](https://github.com/hashicorp/terraform-provider-google-beta/pull/8181))
+* **New Resource:** `google_database_migration_service_migration_job` ([#8187](https://github.com/hashicorp/terraform-provider-google-beta/pull/8187))
+* **New Resource:** `google_discovery_engine_target_site` ([#8174](https://github.com/hashicorp/terraform-provider-google-beta/pull/8174))
+* **New Resource:** `google_healthcare_workspace` ([#8179](https://github.com/hashicorp/terraform-provider-google-beta/pull/8179))
+* **New Resource:** `google_scc_folder_scc_big_query_export` ([#8183](https://github.com/hashicorp/terraform-provider-google-beta/pull/8183))
+* **New Resource:** `google_scc_organization_scc_big_query_export` ([#8172](https://github.com/hashicorp/terraform-provider-google-beta/pull/8172))
+* **New Resource:** `google_scc_project_scc_big_query_export` ([#8173](https://github.com/hashicorp/terraform-provider-google-beta/pull/8173))
+* **New Resource:** `google_secret_manager_regional_secret_version` ([#8199](https://github.com/hashicorp/terraform-provider-google-beta/pull/8199))
+* **New Resource:** `google_secret_manager_regional_secret` ([#8170](https://github.com/hashicorp/terraform-provider-google-beta/pull/8170))
+* **New Resource:** `google_site_verification_web_resource` ([#8180](https://github.com/hashicorp/terraform-provider-google-beta/pull/8180))
+* **New Resource:** `google_spanner_backup_schedule` ([#8160](https://github.com/hashicorp/terraform-provider-google-beta/pull/8160))
+
+IMPROVEMENTS:
+* alloydb: added `enable_outbound_public_ip` field to `google_alloydb_instance` resource ([#8156](https://github.com/hashicorp/terraform-provider-google-beta/pull/8156))
+* apigee: added in-place update for `consumer_accept_list` field in `google_apigee_instance` resource ([#8155](https://github.com/hashicorp/terraform-provider-google-beta/pull/8155))
+* compute: added `interface` field to `google_compute_attached_disk` resource ([#8154](https://github.com/hashicorp/terraform-provider-google-beta/pull/8154))
+* compute: added in-place update in `google_compute_interconnect` resource except for `remote_location` and `requested_features` fields ([#8203](https://github.com/hashicorp/terraform-provider-google-beta/pull/8203))
+* filestore: added `deletion_protection_enabled` and `deletion_protection_reason` fields to `google_filestore_instance` resource ([#8158](https://github.com/hashicorp/terraform-provider-google-beta/pull/8158))
+* looker: added `fips_enabled` field to `google_looker_instance` resource ([#8206](https://github.com/hashicorp/terraform-provider-google-beta/pull/8206))
+* metastore: added `deletion_protection` field to `google_dataproc_metastore_service` resource ([#8200](https://github.com/hashicorp/terraform-provider-google-beta/pull/8200))
+* netapp: added `allow_auto_tiering` field to `google_netapp_storage_pool` resource ([#8163](https://github.com/hashicorp/terraform-provider-google-beta/pull/8163))
+* netapp: added `tiering_policy` field to `google_netapp_volume` resource ([#8163](https://github.com/hashicorp/terraform-provider-google-beta/pull/8163))
+* secretmanagerregional: added `version_aliases` field to `google_secret_manager_regional_secret` resource ([#8209](https://github.com/hashicorp/terraform-provider-google-beta/pull/8209))
+* spanner: added `edition` field to `google_spanner_instance` resource ([#8160](https://github.com/hashicorp/terraform-provider-google-beta/pull/8160))
+
+BUG FIXES:
+* compute: fixed a permadiff on `iap` field in `google_compute_backend` and `google_compute_region_backend` resources ([#8204](https://github.com/hashicorp/terraform-provider-google-beta/pull/8204))
+* container: fixed a permadiff on `node_config.gcfs_config` field in `google_container_cluster` and `google_container_node_pool` resources ([#8207](https://github.com/hashicorp/terraform-provider-google-beta/pull/8207))
+* container: fixed the in-place update for `node_config.gcfs_config` in `google_container_cluster` and `google_container_node_pool` resources ([#8207](https://github.com/hashicorp/terraform-provider-google-beta/pull/8207))
+* container: made `node_config.kubelet_config.cpu_manager_policy` field optional to fix its update in `google_container_cluster` resource ([#8171](https://github.com/hashicorp/terraform-provider-google-beta/pull/8171))
+* dns: fixed a permadiff on `dnssec_config` field in `google_dns_managed_zone` resource ([#8165](https://github.com/hashicorp/terraform-provider-google-beta/pull/8165))
+* pubsub: allowed `filter` field to contain line breaks in `google_pubsub_subscription` resource ([#8161](https://github.com/hashicorp/terraform-provider-google-beta/pull/8161))
+
 ## 6.3.0 (September 16, 2024)
 
 FEATURES:
