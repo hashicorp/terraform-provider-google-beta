@@ -617,6 +617,14 @@ might be configured in the container image.`,
 requests per container of the Revision. If not specified or 0, defaults to 80 when
 requested CPU >= 1 and defaults to 1 when requested CPU < 1.`,
 									},
+									"node_selector": {
+										Type:     schema.TypeMap,
+										Optional: true,
+										Description: `Node Selector describes the hardware requirements of the resources.
+Use the following node selector keys to configure features on a Revision:
+  - 'run.googleapis.com/accelerator' sets the [type of GPU](https://cloud.google.com/run/docs/configuring/services/gpu) required by the Revision to run.`,
+										Elem: &schema.Schema{Type: schema.TypeString},
+									},
 									"service_account_name": {
 										Type:     schema.TypeString,
 										Computed: true,
@@ -1776,6 +1784,8 @@ func flattenCloudRunServiceSpecTemplateSpec(v interface{}, d *schema.ResourceDat
 	transformed := make(map[string]interface{})
 	transformed["containers"] =
 		flattenCloudRunServiceSpecTemplateSpecContainers(original["containers"], d, config)
+	transformed["node_selector"] =
+		flattenCloudRunServiceSpecTemplateSpecNodeSelector(original["nodeSelector"], d, config)
 	transformed["container_concurrency"] =
 		flattenCloudRunServiceSpecTemplateSpecContainerConcurrency(original["containerConcurrency"], d, config)
 	transformed["timeout_seconds"] =
@@ -2490,6 +2500,10 @@ func flattenCloudRunServiceSpecTemplateSpecContainersLivenessProbeGrpcPort(v int
 }
 
 func flattenCloudRunServiceSpecTemplateSpecContainersLivenessProbeGrpcService(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenCloudRunServiceSpecTemplateSpecNodeSelector(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
@@ -3239,6 +3253,13 @@ func expandCloudRunServiceSpecTemplateSpec(v interface{}, d tpgresource.Terrafor
 		return nil, err
 	} else if val := reflect.ValueOf(transformedContainers); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["containers"] = transformedContainers
+	}
+
+	transformedNodeSelector, err := expandCloudRunServiceSpecTemplateSpecNodeSelector(original["node_selector"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedNodeSelector); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["nodeSelector"] = transformedNodeSelector
 	}
 
 	transformedContainerConcurrency, err := expandCloudRunServiceSpecTemplateSpecContainerConcurrency(original["container_concurrency"], d, config)
@@ -4192,6 +4213,17 @@ func expandCloudRunServiceSpecTemplateSpecContainersLivenessProbeGrpcPort(v inte
 
 func expandCloudRunServiceSpecTemplateSpecContainersLivenessProbeGrpcService(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
+}
+
+func expandCloudRunServiceSpecTemplateSpecNodeSelector(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
+	if v == nil {
+		return map[string]string{}, nil
+	}
+	m := make(map[string]string)
+	for k, val := range v.(map[string]interface{}) {
+		m[k] = val.(string)
+	}
+	return m, nil
 }
 
 func expandCloudRunServiceSpecTemplateSpecContainerConcurrency(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
