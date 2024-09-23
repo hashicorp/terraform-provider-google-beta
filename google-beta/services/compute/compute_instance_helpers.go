@@ -161,6 +161,10 @@ func expandScheduling(v interface{}) (*compute.Scheduling, error) {
 		scheduling.OnInstanceStopAction = transformedOnInstanceStopAction
 		scheduling.ForceSendFields = append(scheduling.ForceSendFields, "OnInstanceStopAction")
 	}
+	if v, ok := original["host_error_timeout_seconds"]; ok {
+		scheduling.HostErrorTimeoutSeconds = int64(v.(int))
+	}
+
 	if v, ok := original["maintenance_interval"]; ok {
 		scheduling.MaintenanceInterval = v.(string)
 	}
@@ -279,6 +283,10 @@ func flattenScheduling(resp *compute.Scheduling) []map[string]interface{} {
 
 	if resp.OnInstanceStopAction != nil {
 		schedulingMap["on_instance_stop_action"] = flattenOnInstanceStopAction(resp.OnInstanceStopAction)
+	}
+
+	if resp.HostErrorTimeoutSeconds != 0 {
+		schedulingMap["host_error_timeout_seconds"] = resp.HostErrorTimeoutSeconds
 	}
 
 	if resp.MaintenanceInterval != "" {
@@ -706,6 +714,9 @@ func schedulingHasChangeWithoutReboot(d *schema.ResourceData) bool {
 	}
 
 	if oScheduling["instance_termination_action"] != newScheduling["instance_termination_action"] {
+		return true
+	}
+	if oScheduling["host_error_timeout_seconds"] != newScheduling["host_error_timeout_seconds"] {
 		return true
 	}
 
