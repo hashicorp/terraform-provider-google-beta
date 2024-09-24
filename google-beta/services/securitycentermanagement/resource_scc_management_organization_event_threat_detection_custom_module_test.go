@@ -25,10 +25,6 @@ func TestAccSecurityCenterManagement(t *testing.T) {
 	}
 
 	for name, tc := range testCases {
-		// shadow the tc variable into scope so that when
-		// the loop continues, if t.Run hasn't executed tc(t)
-		// yet, we don't have a race condition
-		// see https://github.com/golang/go/wiki/CommonMistakes#using-goroutines-on-loop-iterator-variables
 		tc := tc
 		t.Run(name, func(t *testing.T) {
 			tc(t)
@@ -37,7 +33,6 @@ func TestAccSecurityCenterManagement(t *testing.T) {
 }
 
 func testAccSecurityCenterManagementOrganizationEventThreatDetectionCustomModule(t *testing.T) {
-	// t.Parallel()
 
 	context := map[string]interface{}{
 		"org_id":        envvar.GetTestOrgFromEnv(t),
@@ -47,7 +42,7 @@ func testAccSecurityCenterManagementOrganizationEventThreatDetectionCustomModule
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t), // Ensure beta factory is used
 		CheckDestroy:             testAccSecurityCenterManagementOrganizationEventThreatDetectionCustomModuleDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -75,6 +70,8 @@ func testAccSecurityCenterManagementOrganizationEventThreatDetectionCustomModule
 func testAccSecurityCenterManagementOrganizationEventThreatDetectionCustomModule__sccOrganizationCustomModuleExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_scc_management_organization_event_threat_detection_custom_module" "example" {
+	provider = google-beta
+
 	organization = "%{org_id}"
 	location = "%{location}"
 	display_name = "tf_test_custom_module%{random_suffix}"
@@ -98,6 +95,8 @@ resource "google_scc_management_organization_event_threat_detection_custom_modul
 func testAccSecurityCenterManagementOrganizationEventThreatDetectionCustomModule_sccOrganizationCustomModuleUpdate(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_scc_management_organization_event_threat_detection_custom_module" "example" {
+	provider = google-beta
+	
 	organization = "%{org_id}"
 	location = "%{location}"
 	display_name = "tf_test_custom_module%{random_suffix}_updated"
