@@ -34,8 +34,8 @@ func TestAccWorkstationsWorkstationConfigIamBindingGenerated(t *testing.T) {
 		"random_suffix":    acctest.RandString(t, 10),
 		"role":             "roles/viewer",
 		"key_short_name":   "tf-test-key-" + acctest.RandString(t, 10),
-		"value_short_name": "tf-test-value-" + acctest.RandString(t, 10),
 		"org_id":           envvar.GetTestOrgFromEnv(t),
+		"value_short_name": "tf-test-value-" + acctest.RandString(t, 10),
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -72,8 +72,8 @@ func TestAccWorkstationsWorkstationConfigIamMemberGenerated(t *testing.T) {
 		"random_suffix":    acctest.RandString(t, 10),
 		"role":             "roles/viewer",
 		"key_short_name":   "tf-test-key-" + acctest.RandString(t, 10),
-		"value_short_name": "tf-test-value-" + acctest.RandString(t, 10),
 		"org_id":           envvar.GetTestOrgFromEnv(t),
+		"value_short_name": "tf-test-value-" + acctest.RandString(t, 10),
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -101,8 +101,8 @@ func TestAccWorkstationsWorkstationConfigIamPolicyGenerated(t *testing.T) {
 		"random_suffix":    acctest.RandString(t, 10),
 		"role":             "roles/viewer",
 		"key_short_name":   "tf-test-key-" + acctest.RandString(t, 10),
-		"value_short_name": "tf-test-value-" + acctest.RandString(t, 10),
 		"org_id":           envvar.GetTestOrgFromEnv(t),
+		"value_short_name": "tf-test-value-" + acctest.RandString(t, 10),
 	}
 
 	acctest.VcrTest(t, resource.TestCase{

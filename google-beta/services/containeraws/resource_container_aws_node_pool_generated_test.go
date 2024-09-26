@@ -366,6 +366,13 @@ resource "google_container_aws_node_pool" "primary" {
     auto_repair = true
   }
 
+  kubelet_config {
+    cpu_manager_policy    = "none"
+    cpu_cfs_quota         = true
+    cpu_cfs_quota_period  = "100ms"
+    pod_pids_limit        = 1024
+  }
+
   project = "%{project_name}"
 }
 
@@ -524,6 +531,13 @@ resource "google_container_aws_node_pool" "primary" {
 
   management {
     auto_repair = false
+  }
+
+  kubelet_config {
+    cpu_manager_policy    = "none"
+    cpu_cfs_quota         = true
+    cpu_cfs_quota_period  = "100ms"
+    pod_pids_limit        = 1024
   }
 
   project = "%{project_name}"
@@ -1004,6 +1018,13 @@ resource "google_container_aws_node_pool" "primary" {
   management {
     auto_repair = true
   }
+  
+  kubelet_config {
+    cpu_manager_policy    = "none"
+    cpu_cfs_quota         = true
+    cpu_cfs_quota_period  = "100ms"
+    pod_pids_limit        = 1024
+  }
 
   annotations = {
     label-one = "value-one"
@@ -1179,6 +1200,13 @@ resource "google_container_aws_node_pool" "primary" {
 
   management {
     auto_repair = false
+  }
+
+  kubelet_config {
+    cpu_manager_policy    = "none"
+    cpu_cfs_quota         = true
+    cpu_cfs_quota_period  = "100ms"
+    pod_pids_limit        = 1024
   }
 
   annotations = {

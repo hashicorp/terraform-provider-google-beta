@@ -6920,7 +6920,7 @@ resource "google_container_cluster" "with_node_pool_defaults" {
   }
   deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
 }
 `, clusterName, enabled, networkName, subnetworkName)
 }
