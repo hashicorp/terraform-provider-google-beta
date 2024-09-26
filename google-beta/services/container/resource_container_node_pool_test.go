@@ -4942,11 +4942,7 @@ func TestAccContainerNodePool_storagePools(t *testing.T) {
 	subnetworkName := acctest.BootstrapSubnet(t, "gke-cluster", networkName)
 	location := envvar.GetTestZoneFromEnv()
 
-	storagePoolNameURL := acctest.BootstrapComputeStoragePool(t, "basic-1", "hyperdisk-balanced")
-	storagePoolResourceName, err := extractSPName(storagePoolNameURL)
-	if err != nil {
-		t.Fatal("Failed to extract Storage Pool resource name from URL.")
-	}
+	storagePoolResourceName := acctest.BootstrapComputeStoragePool(t, "basic-1", "hyperdisk-balanced")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -5005,11 +5001,8 @@ func TestAccContainerNodePool_withMachineDiskStoragePoolsUpdate(t *testing.T) {
 	subnetworkName := acctest.BootstrapSubnet(t, "gke-cluster", networkName)
 	location := envvar.GetTestZoneFromEnv()
 
-	storagePoolNameURL := acctest.BootstrapComputeStoragePool(t, "basic-1", "hyperdisk-balanced")
-	storagePoolResourceName, err := extractSPName(storagePoolNameURL)
-	if err != nil {
-		t.Fatal("Failed to extract Storage Pool resource name from URL.")
-	}
+	storagePoolResourceName := acctest.BootstrapComputeStoragePool(t, "basic-1", "hyperdisk-balanced")
+
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
@@ -5065,10 +5058,10 @@ resource "google_container_node_pool" "np" {
   initial_node_count = 2
 
   node_config {
-	machine_type    = "c3-standard-4"
-    disk_size_gb    = 50
-    disk_type       = "hyperdisk-balanced"
-	storage_pools = ["%[5]s"]
+    machine_type  = "c3-standard-4"
+    disk_size_gb  = 50
+    disk_type     = "hyperdisk-balanced"
+    storage_pools = ["%[5]s"]
   }
 }
 `, cluster, np, networkName, subnetworkName, storagePoolResourceName, location)

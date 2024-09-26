@@ -11645,11 +11645,7 @@ func TestAccContainerCluster_storagePoolsWithNodePool(t *testing.T) {
 	subnetworkName := acctest.BootstrapSubnet(t, "gke-cluster", networkName)
 	location := envvar.GetTestZoneFromEnv()
 
-	storagePoolNameURL := acctest.BootstrapComputeStoragePool(t, "basic-1", "hyperdisk-balanced")
-	storagePoolResourceName, err := extractSPName(storagePoolNameURL)
-	if err != nil {
-		t.Fatal("Failed to extract Storage Pool resource name from URL.")
-	}
+	storagePoolResourceName := acctest.BootstrapComputeStoragePool(t, "basic-1", "hyperdisk-balanced")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -11702,11 +11698,7 @@ func TestAccContainerCluster_storagePoolsWithNodeConfig(t *testing.T) {
 	subnetworkName := acctest.BootstrapSubnet(t, "gke-cluster", networkName)
 	location := envvar.GetTestZoneFromEnv()
 
-	storagePoolNameURL := acctest.BootstrapComputeStoragePool(t, "basic-1", "hyperdisk-balanced")
-	storagePoolResourceName, err := extractSPName(storagePoolNameURL)
-	if err != nil {
-		t.Fatal("Failed to extract Storage Pool resource name from URL.")
-	}
+	storagePoolResourceName := acctest.BootstrapComputeStoragePool(t, "basic-1", "hyperdisk-balanced")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -11746,17 +11738,6 @@ resource "google_container_cluster" "storage_pools_with_node_config" {
   }
 }
 `, cluster, location, networkName, subnetworkName, storagePoolResourceName)
-}
-
-func extractSPName(url string) (string, error) {
-	re := regexp.MustCompile(`https://www\.googleapis\.com/compute/beta/(projects/[^"]+)`)
-	matches := re.FindStringSubmatch(url)
-
-	if len(matches) > 1 {
-		return matches[1], nil
-	} else {
-		return "", fmt.Errorf("no match found")
-	}
 }
 
 func TestAccContainerCluster_withAutopilotGcpFilestoreCsiDriver(t *testing.T) {
