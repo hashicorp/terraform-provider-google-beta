@@ -471,6 +471,62 @@ resource "google_compute_health_check" "health_check" {
 `, context)
 }
 
+func TestAccComputeBackendService_backendServiceStatefulSessionAffinityExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"random_suffix": acctest.RandString(t, 10),
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckComputeBackendServiceDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeBackendService_backendServiceStatefulSessionAffinityExample(context),
+			},
+			{
+				ResourceName:            "google_compute_backend_service.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"iap.0.oauth2_client_secret", "security_settings.0.aws_v4_authentication.0.access_key"},
+			},
+		},
+	})
+}
+
+func testAccComputeBackendService_backendServiceStatefulSessionAffinityExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_compute_backend_service" "default" {
+  provider = google-beta
+
+  name                  = "tf-test-backend-service%{random_suffix}"
+  health_checks         = [google_compute_health_check.health_check.id]
+  load_balancing_scheme = "EXTERNAL_MANAGED"
+  locality_lb_policy    = "RING_HASH"
+  session_affinity      = "STRONG_COOKIE_AFFINITY"
+  
+  strong_session_affinity_cookie {
+     ttl {
+       seconds = 11
+       nanos   = 1111
+     }
+     name = "mycookie"
+   }   
+}
+
+resource "google_compute_health_check" "health_check" {
+  provider = google-beta
+
+  name = "tf-test-health-check%{random_suffix}"
+  http_health_check {
+    port = 80
+  }
+}
+`, context)
+}
+
 func TestAccComputeBackendService_backendServiceNetworkEndpointExample(t *testing.T) {
 	t.Parallel()
 

@@ -380,6 +380,63 @@ resource "google_compute_health_check" "health_check" {
 `, context)
 }
 
+func TestAccComputeRegionBackendService_regionBackendServiceIlbStatefulSessionAffinityExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"random_suffix": acctest.RandString(t, 10),
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckComputeRegionBackendServiceDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeRegionBackendService_regionBackendServiceIlbStatefulSessionAffinityExample(context),
+			},
+			{
+				ResourceName:            "google_compute_region_backend_service.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"iap.0.oauth2_client_secret", "network", "region"},
+			},
+		},
+	})
+}
+
+func testAccComputeRegionBackendService_regionBackendServiceIlbStatefulSessionAffinityExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_compute_region_backend_service" "default" {
+  provider = google-beta
+
+  region = "us-central1"
+  name = "tf-test-region-service%{random_suffix}"
+  health_checks = [google_compute_health_check.health_check.id]
+  load_balancing_scheme = "INTERNAL_MANAGED"
+  locality_lb_policy = "RING_HASH"
+  session_affinity = "STRONG_COOKIE_AFFINITY"
+  protocol = "HTTP"
+  
+  strong_session_affinity_cookie {
+    ttl {
+      seconds = 11
+      nanos = 1111
+    }
+    name = "mycookie"
+  }  
+}
+
+resource "google_compute_health_check" "health_check" {
+  provider = google-beta
+  name               = "tf-test-rbs-health-check%{random_suffix}"
+  http_health_check {
+    port = 80
+  }
+}
+`, context)
+}
+
 func TestAccComputeRegionBackendService_regionBackendServiceBalancingModeExample(t *testing.T) {
 	t.Parallel()
 
