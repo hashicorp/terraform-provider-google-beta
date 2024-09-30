@@ -230,6 +230,18 @@ IMPROVEMENTS:
 BUG FIXES:
 * compute: fixed an issue regarding sending `enabled` field by default for null `iap` message in `google_compute_backend_service` and `google_compute_region_backend_service` ([#7758](https://github.com/hashicorp/terraform-provider-google-beta/pull/7758))
 
+## 5.44.1 (September 23, 2024)
+
+NOTES:
+* 5.44.1 is a backport release, intended to pull in critical container improvements and fixes for issues introduced in 5.44.0
+
+IMPROVEMENTS:
+* container: added in-place update support for `gcfs_config` in in `google_container_cluster` and `google_container_node_pool` ([#8101](https://github.com/hashicorp/terraform-provider-google-beta/pull/8101)) ([#8207](https://github.com/hashicorp/terraform-provider-google-beta/pull/8207))
+
+BUG FIXES:
+* container: fixed a permadiff on `gcfs_config` in `google_container_cluster` and `google_container_node_pool` ([#8207](https://github.com/hashicorp/terraform-provider-google-beta/pull/8207))
+* container: fixed a bug where specifying `node_pool_defaults.node_config_defaults` with `enable_autopilot = true` will cause `google_container_cluster` resource creation failure. ([#8223](https://github.com/hashicorp/terraform-provider-google-beta/pull/8223))
+
 ## 5.44.0 (September 9, 2024)
 
 NOTES:
