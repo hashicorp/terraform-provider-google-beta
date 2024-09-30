@@ -11502,11 +11502,12 @@ func TestAccContainerCluster_withProviderDefaultLabels(t *testing.T) {
 					resource.TestCheckResourceAttr("google_container_cluster.primary", "resource_labels.%", "1"),
 					resource.TestCheckResourceAttr("google_container_cluster.primary", "resource_labels.created-by", "terraform"),
 
-					resource.TestCheckResourceAttr("google_container_cluster.primary", "terraform_labels.%", "2"),
+					// goog-terraform-provisioned: true is added
+					resource.TestCheckResourceAttr("google_container_cluster.primary", "terraform_labels.%", "3"),
 					resource.TestCheckResourceAttr("google_container_cluster.primary", "terraform_labels.default_key1", "default_value1"),
 					resource.TestCheckResourceAttr("google_container_cluster.primary", "terraform_labels.created-by", "terraform"),
 
-					resource.TestCheckResourceAttr("google_container_cluster.primary", "effective_labels.%", "2"),
+					resource.TestCheckResourceAttr("google_container_cluster.primary", "effective_labels.%", "3"),
 				),
 			},
 			{
@@ -11522,11 +11523,12 @@ func TestAccContainerCluster_withProviderDefaultLabels(t *testing.T) {
 					resource.TestCheckResourceAttr("google_container_cluster.primary", "resource_labels.created-by", "terraform"),
 					resource.TestCheckResourceAttr("google_container_cluster.primary", "terraform_labels.default_key1", "value1"),
 
-					resource.TestCheckResourceAttr("google_container_cluster.primary", "terraform_labels.%", "2"),
+					// goog-terraform-provisioned: true is added
+					resource.TestCheckResourceAttr("google_container_cluster.primary", "terraform_labels.%", "3"),
 					resource.TestCheckResourceAttr("google_container_cluster.primary", "terraform_labels.default_key1", "value1"),
 					resource.TestCheckResourceAttr("google_container_cluster.primary", "terraform_labels.created-by", "terraform"),
 
-					resource.TestCheckResourceAttr("google_container_cluster.primary", "effective_labels.%", "2"),
+					resource.TestCheckResourceAttr("google_container_cluster.primary", "effective_labels.%", "3"),
 				),
 			},
 			{
@@ -11540,11 +11542,12 @@ func TestAccContainerCluster_withProviderDefaultLabels(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("google_container_cluster.primary", "resource_labels.%", "0"),
 
-					resource.TestCheckResourceAttr("google_container_cluster.primary", "terraform_labels.%", "2"),
+					// goog-terraform-provisioned: true is added
+					resource.TestCheckResourceAttr("google_container_cluster.primary", "terraform_labels.%", "3"),
 					resource.TestCheckResourceAttr("google_container_cluster.primary", "terraform_labels.default_key1", "default_value1"),
 					resource.TestCheckResourceAttr("google_container_cluster.primary", "terraform_labels.created-by", "terraform"),
 
-					resource.TestCheckResourceAttr("google_container_cluster.primary", "effective_labels.%", "2"),
+					resource.TestCheckResourceAttr("google_container_cluster.primary", "effective_labels.%", "3"),
 				),
 			},
 			{
@@ -11557,8 +11560,8 @@ func TestAccContainerCluster_withProviderDefaultLabels(t *testing.T) {
 				Config: testAccContainerCluster_basic(clusterName, networkName, subnetworkName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("google_container_cluster.primary", "resource_labels.%", "0"),
-					resource.TestCheckResourceAttr("google_container_cluster.primary", "terraform_labels.%", "0"),
-					resource.TestCheckResourceAttr("google_container_cluster.primary", "effective_labels.%", "0"),
+					resource.TestCheckResourceAttr("google_container_cluster.primary", "terraform_labels.%", "1"),
+					resource.TestCheckResourceAttr("google_container_cluster.primary", "effective_labels.%", "1"),
 				),
 			},
 			{
