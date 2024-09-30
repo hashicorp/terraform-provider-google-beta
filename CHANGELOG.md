@@ -15,6 +15,7 @@ FEATURES:
 * **New Resource:** `google_scc_folder_scc_big_query_export` ([#8183](https://github.com/hashicorp/terraform-provider-google-beta/pull/8183))
 * **New Resource:** `google_scc_organization_scc_big_query_export` ([#8172](https://github.com/hashicorp/terraform-provider-google-beta/pull/8172))
 * **New Resource:** `google_scc_project_scc_big_query_export` ([#8173](https://github.com/hashicorp/terraform-provider-google-beta/pull/8173))
+* **New Resource:** `google_scc_v2_organization_scc_big_query_export` ([#8166](https://github.com/hashicorp/terraform-provider-google/pull/8166))
 * **New Resource:** `google_secret_manager_regional_secret_version` ([#8199](https://github.com/hashicorp/terraform-provider-google-beta/pull/8199))
 * **New Resource:** `google_secret_manager_regional_secret` ([#8170](https://github.com/hashicorp/terraform-provider-google-beta/pull/8170))
 * **New Resource:** `google_site_verification_web_resource` ([#8180](https://github.com/hashicorp/terraform-provider-google-beta/pull/8180))
@@ -35,7 +36,7 @@ IMPROVEMENTS:
 
 BUG FIXES:
 * compute: fixed a permadiff on `iap` field in `google_compute_backend` and `google_compute_region_backend` resources ([#8204](https://github.com/hashicorp/terraform-provider-google-beta/pull/8204))
-container: fixed a bug where specifying `node_pool_defaults.node_config_defaults` with `enable_autopilot = true` will cause `google_container_cluster` resource creation failure ([#8223](https://github.com/hashicorp/terraform-provider-google-beta/pull/8223))
+* container: fixed a bug where specifying `node_pool_defaults.node_config_defaults` with `enable_autopilot = true` will cause `google_container_cluster` resource creation failure ([#8223](https://github.com/hashicorp/terraform-provider-google-beta/pull/8223))
 * container: fixed a permadiff on `node_config.gcfs_config` field in `google_container_cluster` and `google_container_node_pool` resources ([#8207](https://github.com/hashicorp/terraform-provider-google-beta/pull/8207))
 * container: fixed the in-place update for `node_config.gcfs_config` in `google_container_cluster` and `google_container_node_pool` resources ([#8207](https://github.com/hashicorp/terraform-provider-google-beta/pull/8207))
 * container: made `node_config.kubelet_config.cpu_manager_policy` field optional to fix its update in `google_container_cluster` resource ([#8171](https://github.com/hashicorp/terraform-provider-google-beta/pull/8171))
