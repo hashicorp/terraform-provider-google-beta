@@ -1,4 +1,47 @@
-## 6.5.0 (Unreleased)
+## 6.6.0 (Unreleased)
+
+## 6.5.0 (September 30, 2024)
+DEPRECATIONS:
+* compute: deprecated `macsec.pre_shared_keys.fail_open` field in `google_compute_interconnect` resource. Use the new `macsec.fail_open` field instead ([#8245](https://github.com/hashicorp/terraform-provider-google-beta/pull/8245))
+
+FEATURES:
+* **New Data Source:** `google_compute_region_instance_group_manager` ([#8259](https://github.com/hashicorp/terraform-provider-google-beta/pull/8259))
+* **New Data Source:** `google_privileged_access_manager_entitlement` ([#8253](https://github.com/hashicorp/terraform-provider-google-beta/pull/8253))
+* **New Data Source:** `google_secret_manager_regional_secret_version_access` ([#8220](https://github.com/hashicorp/terraform-provider-google-beta/pull/8220))
+* **New Data Source:** `google_secret_manager_regional_secret_version` ([#8209](https://github.com/hashicorp/terraform-provider-google-beta/pull/8209))
+* **New Data Source:** `google_secret_manager_regional_secrets` ([#8217](https://github.com/hashicorp/terraform-provider-google-beta/pull/8217))
+* **New Resource:** `google_compute_region_network_firewall_policy_with_rules` ([#8225](https://github.com/hashicorp/terraform-provider-google-beta/pull/8225))
+* **New Resource:** `google_compute_router_nat_address` ([#8227](https://github.com/hashicorp/terraform-provider-google-beta/pull/8227))
+* **New Resource:** `google_logging_log_scope` ([#8235](https://github.com/hashicorp/terraform-provider-google-beta/pull/8235))
+
+IMPROVEMENTS:
+* apigee: added `activate` field to `google_apigee_nat_address` resource ([#8261](https://github.com/hashicorp/terraform-provider-google-beta/pull/8261))
+* bigquery: added `biglake_configuration` field to `google_bigquery_table` resource to support BigLake Managed Tables ([#8221](https://github.com/hashicorp/terraform-provider-google-beta/pull/8221))
+* cloudrun: added `node_selector` field to `google_cloud_run_service` resource ([#8216](https://github.com/hashicorp/terraform-provider-google-beta/pull/8216))
+* cloudrunv2: added `node_selector` field to `google_cloud_run_v2_service` resource ([#8216](https://github.com/hashicorp/terraform-provider-google-beta/pull/8216))
+* compute: added `existing_reservations` field to `google_compute_region_commitment` resource ([#8256](https://github.com/hashicorp/terraform-provider-google-beta/pull/8256))
+* compute: added `host_error_timeout_seconds` field to `google_compute_instance` resource ([#8252](https://github.com/hashicorp/terraform-provider-google-beta/pull/8252))
+* compute: added `hostname` field to `google_compute_instance` data source ([#8268](https://github.com/hashicorp/terraform-provider-google-beta/pull/8268))
+* compute: added `initial_nat_ip` field to `google_compute_router_nat` resource ([#8227](https://github.com/hashicorp/terraform-provider-google-beta/pull/8227))
+* compute: added `macsec.fail_open` field to `google_compute_interconnect` resource ([#8245](https://github.com/hashicorp/terraform-provider-google-beta/pull/8245))
+* compute: added `SUSPENDED` as a possible value to `desired_state` field in `google_compute_instance` resource ([#8257](https://github.com/hashicorp/terraform-provider-google-beta/pull/8257))
+* compute: added import support for `projects/{{project}}/meta-data/{{key}}` format for `google_compute_project_metadata_item` resource ([#8274](https://github.com/hashicorp/terraform-provider-google-beta/pull/8274))
+* compute: marked `customer_name` and `location` fields as optional in `google_compute_interconnect` resource to support cross cloud interconnect ([#8279](https://github.com/hashicorp/terraform-provider-google-beta/pull/8279))
+* container: added `linux_node_config.hugepages_config` field to `google_container_node_pool` resource ([#8210](https://github.com/hashicorp/terraform-provider-google-beta/pull/8210))
+* looker: added `psc_enabled` and `psc_config` fields to `google_looker_instance` resource ([#8211](https://github.com/hashicorp/terraform-provider-google-beta/pull/8211))
+* networkconnectivity: added `include_import_ranges` field to `google_network_connectivity_spoke` resource for `linked_vpn_tunnels`, `linked_interconnect_attachments` and `linked_router_appliance_instances` ([#8215](https://github.com/hashicorp/terraform-provider-google-beta/pull/8215))
+* secretmanagerregional: added `version_aliases` field to `google_secret_manager_regional_secret` resource ([#8209](https://github.com/hashicorp/terraform-provider-google-beta/pull/8209))
+* workbench: increased create timeout to 20 minutes for `google_workbench_instance` resource ([#8228](https://github.com/hashicorp/terraform-provider-google-beta/pull/8228))
+
+BUG FIXES:
+* bigquery: fixed in-place update of `google_bigquery_table` resource when `external_data_configuration.schema` field is set ([#8234](https://github.com/hashicorp/terraform-provider-google-beta/pull/8234))
+* bigquerydatapolicy: fixed permadiff on `policy_tag` field in `google_bigquery_datapolicy_data_policy` resource ([#8239](https://github.com/hashicorp/terraform-provider-google-beta/pull/8239))
+* composer: fixed `storage_config.bucket` field to support a bucket name with or without "gs://" prefix ([#8229](https://github.com/hashicorp/terraform-provider-google-beta/pull/8229))
+* container: added support for setting `addons_config.gcp_filestore_csi_driver_config` and `enable_autopilot` in the same `google_container_cluster` ([#8260](https://github.com/hashicorp/terraform-provider-google-beta/pull/8260))
+* container: fixed `node_config.kubelet_config` updates in `google_container_cluster` resource ([#8238](https://github.com/hashicorp/terraform-provider-google-beta/pull/8238))
+* container: fixed a bug where specifying `node_pool_defaults.node_config_defaults` with `enable_autopilot = true` would cause `google_container_cluster` resource creation failure ([#8223](https://github.com/hashicorp/terraform-provider-google-beta/pull/8223))
+* workbench: fixed a bug in the `google_workbench_instance` resource where the removal of `labels` was not functioning as expected ([#8280](https://github.com/hashicorp/terraform-provider-google-beta/pull/8280))
+
 
 ## 6.4.0 (September 23, 2024)
 
