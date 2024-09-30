@@ -30,12 +30,12 @@ import (
 )
 
 func init() {
-	sweeper.AddTestSweepers("DataprocAutoscalingPolicy", testSweepDataprocAutoscalingPolicy)
+	sweeper.AddTestSweepers("DataprocBatch", testSweepDataprocBatch)
 }
 
 // At the time of writing, the CI only passes us-central1 as the region
-func testSweepDataprocAutoscalingPolicy(region string) error {
-	resourceName := "DataprocAutoscalingPolicy"
+func testSweepDataprocBatch(region string) error {
+	resourceName := "DataprocBatch"
 	log.Printf("[INFO][SWEEPER_LOG] Starting sweeper for %s", resourceName)
 
 	config, err := sweeper.SharedConfigForRegion(region)
@@ -64,7 +64,7 @@ func testSweepDataprocAutoscalingPolicy(region string) error {
 		},
 	}
 
-	listTemplate := strings.Split("https://dataproc.googleapis.com/v1/projects/{{project}}/locations/{{location}}/autoscalingPolicies", "?")[0]
+	listTemplate := strings.Split("https://dataproc.googleapis.com/v1/projects/{{project}}/locations/{{location}}/batches", "?")[0]
 	listUrl, err := tpgresource.ReplaceVars(d, config, listTemplate)
 	if err != nil {
 		log.Printf("[INFO][SWEEPER_LOG] error preparing sweeper list url: %s", err)
@@ -83,7 +83,7 @@ func testSweepDataprocAutoscalingPolicy(region string) error {
 		return nil
 	}
 
-	resourceList, ok := res["policies"]
+	resourceList, ok := res["batches"]
 	if !ok {
 		log.Printf("[INFO][SWEEPER_LOG] Nothing found in response.")
 		return nil
@@ -112,7 +112,7 @@ func testSweepDataprocAutoscalingPolicy(region string) error {
 			continue
 		}
 
-		deleteTemplate := "https://dataproc.googleapis.com/v1/projects/{{project}}/locations/{{location}}/autoscalingPolicies/{{policy_id}}"
+		deleteTemplate := "https://dataproc.googleapis.com/v1/projects/{{project}}/locations/{{location}}/batches/{{batch_id}}"
 		deleteUrl, err := tpgresource.ReplaceVars(d, config, deleteTemplate)
 		if err != nil {
 			log.Printf("[INFO][SWEEPER_LOG] error preparing delete url: %s", err)
