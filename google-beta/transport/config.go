@@ -546,7 +546,7 @@ var DefaultBasePaths = map[string]string{
 	DataLossPreventionBasePathKey:       "https://dlp.googleapis.com/v2/",
 	DataPipelineBasePathKey:             "https://datapipelines.googleapis.com/v1/",
 	DataplexBasePathKey:                 "https://dataplex.googleapis.com/v1/",
-	DataprocBasePathKey:                 "https://dataproc.googleapis.com/v1beta2/",
+	DataprocBasePathKey:                 "https://dataproc.googleapis.com/v1/",
 	DataprocMetastoreBasePathKey:        "https://metastore.googleapis.com/v1beta/",
 	DatastreamBasePathKey:               "https://datastream.googleapis.com/v1/",
 	DeploymentManagerBasePathKey:        "https://www.googleapis.com/deploymentmanager/v2/",
