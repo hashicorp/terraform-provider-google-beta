@@ -380,7 +380,6 @@ func resourceComputeRegionNetworkEndpointDelete(d *schema.ResourceData, meta int
 	if fqdnProp != "" {
 		toDelete["fqdn"] = fqdnProp
 	}
-
 	// Instance
 	instanceProp, err := expandNestedComputeRegionNetworkEndpointInstance(d.Get("instance"), d, config)
 	if err != nil {

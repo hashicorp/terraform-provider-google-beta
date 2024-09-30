@@ -518,7 +518,7 @@ func TestAccComputeRegionNetworkEndpointGroup_regionNetworkEndpointGroupPortmapE
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
 		CheckDestroy:             testAccCheckComputeRegionNetworkEndpointGroupDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -543,10 +543,12 @@ resource "google_compute_region_network_endpoint_group" "region_network_endpoint
   subnetwork            = google_compute_subnetwork.default.id
 
   network_endpoint_type = "GCE_VM_IP_PORTMAP"
+  provider              = google-beta
 }
 
 resource "google_compute_network" "default" {
   name                    = "network%{random_suffix}"
+  provider              = google-beta
 }
 
 resource "google_compute_subnetwork" "default" {
@@ -554,6 +556,7 @@ resource "google_compute_subnetwork" "default" {
   ip_cidr_range = "10.0.0.0/16"
   region        = "us-central1"
   network       = google_compute_network.default.id
+  provider              = google-beta
 }
 `, context)
 }
