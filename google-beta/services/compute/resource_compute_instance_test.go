@@ -7857,7 +7857,7 @@ resource "google_compute_instance" "foobar" {
   network_interface {
     subnetwork = google_compute_subnetwork.inst-test-subnetwork.self_link
     alias_ip_range {
-      subnetwork_range_name = "inst-test-secondary"  
+      subnetwork_range_name = "inst-test-secondary"
       ip_cidr_range = "172.16.1.0/24"
     }
     alias_ip_range {
@@ -10705,7 +10705,7 @@ resource "google_compute_instance" "foobar" {
 			storage_pool = "%s"
 		}
 	}
-	
+
 	network_interface {
 		network = "default"
 	}
@@ -10778,7 +10778,7 @@ resource "google_compute_instance" "foobar" {
   	attached_disk {
               source = google_compute_disk.foorbarattach.self_link
   	}
-	
+
 	network_interface {
 		network = "default"
         }
