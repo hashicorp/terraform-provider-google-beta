@@ -536,7 +536,7 @@ FEATURES:
 * **New Resource:** `google_netapp_backup` ([#7479](https://github.com/hashicorp/terraform-provider-google-beta/pull/7479))
 * **New Resource:** `google_network_services_service_lb_policies` ([#7463](https://github.com/hashicorp/terraform-provider-google-beta/pull/7463))
 * **New Resource:** `google_scc_management_folder_security_health_analytics_custom_module` ([#7483](https://github.com/hashicorp/terraform-provider-google-beta/pull/7483))
-* **New Resource:** `google_scc_management_organization_project_security_health_analytics_custom_module` ([#7489](https://github.com/hashicorp/terraform-provider-google-beta/pull/7489))
+* **New Resource:** `google_scc_management_project_security_health_analytics_custom_module` ([#7489](https://github.com/hashicorp/terraform-provider-google-beta/pull/7489))
 * **New Resource:** `google_scc_management_organization_security_health_analytics_custom_module` ([#7493](https://github.com/hashicorp/terraform-provider-google-beta/pull/7493))
 
 IMPROVEMENTS:
