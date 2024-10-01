@@ -1933,7 +1933,7 @@ BUG FIXES:
 
 FEATURES:
 
-* **New Resource:** `google_gkeonprem_bare_metal_admin_cluster ` ([#5858](https://github.com/hashicorp/terraform-provider-google-beta/pull/5858))
+* **New Resource:** `google_gkeonprem_bare_metal_admin_cluster` ([#5858](https://github.com/hashicorp/terraform-provider-google-beta/pull/5858))
 
 IMPROVEMENTS:
 
