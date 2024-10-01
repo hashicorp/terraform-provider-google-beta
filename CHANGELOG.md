@@ -1931,6 +1931,10 @@ BUG FIXES:
 
 ## 4.74.0 (July 18, 2023)
 
+FEATURES:
+
+* **New Resource:** `google_gkeonprem_bare_metal_admin_cluster` ([#5858](https://github.com/hashicorp/terraform-provider-google-beta/pull/5858))
+
 IMPROVEMENTS:
 
 * bigquery: added `storage_billing_model` argument to `google_bigquery_dataset` ([#5868](https://github.com/hashicorp/terraform-provider-google-beta/pull/5868))
