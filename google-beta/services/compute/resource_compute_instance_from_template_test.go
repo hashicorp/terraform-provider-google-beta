@@ -1897,7 +1897,7 @@ data "google_compute_image" "my_image" {
   family  = "debian-11"
   project = "debian-cloud"
 }
-  
+
 resource "google_compute_region_instance_template" "foobar" {
   name         = "%s"
   region = "us-central1"
@@ -1910,7 +1910,7 @@ resource "google_compute_region_instance_template" "foobar" {
       network = "default"
   }
 }
-  
+
 resource "google_compute_instance_from_template" "foobar" {
   name = "%s"
   zone = "us-central1-a"
@@ -1949,11 +1949,11 @@ data "google_compute_image" "my_image" {
   family  = "debian-11"
   project = "debian-cloud"
 }
-  
+
 resource "google_compute_region_instance_template" "foobar" {
   name         = "%s"
   region = "us-central1"
-  machine_type = "n1-standard-1" 
+  machine_type = "n1-standard-1"
   disk {
     resource_policies = [ google_compute_resource_policy.test-snapshot-policy2.name ]
     source_image = data.google_compute_image.my_image.self_link
@@ -1962,7 +1962,7 @@ resource "google_compute_region_instance_template" "foobar" {
       network = "default"
   }
 }
-  
+
 resource "google_compute_instance_from_template" "foobar" {
   name = "%s"
   zone = "us-central1-a"
@@ -2001,11 +2001,11 @@ data "google_compute_image" "my_image" {
   family  = "debian-11"
   project = "debian-cloud"
 }
-  
+
 resource "google_compute_region_instance_template" "foobar" {
   name         = "%s"
   region = "us-central1"
-  machine_type = "n1-standard-1" 
+  machine_type = "n1-standard-1"
   disk {
     resource_policies = [ google_compute_resource_policy.test-snapshot-policy.name, google_compute_resource_policy.test-snapshot-policy2.name ]
     source_image = data.google_compute_image.my_image.self_link
@@ -2014,7 +2014,7 @@ resource "google_compute_region_instance_template" "foobar" {
       network = "default"
   }
 }
-  
+
 resource "google_compute_instance_from_template" "foobar" {
   name = "%s"
   zone = "us-central1-a"
