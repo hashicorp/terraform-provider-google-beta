@@ -1163,8 +1163,8 @@ func flattenAzureFederatedIdentifyConfig(d *schema.ResourceData) []map[string]in
 	}
 	
 	data := map[string]interface{}{
-		"client_id": federatedIdentifyConfig.client_id,
-		"tenant_id": federatedIdentifyConfig.tenant_id,
+		"client_id": d.Get("transfer_spec.0.azure_blob_storage_data_source.0.federated_identity_cfg.0.client_id"),
+		"tenant_id": d.Get("transfer_spec.0.azure_blob_storage_data_source.0.federated_identity_cfg.0.tenant_id"),
 	}
 	return []map[string]interface{}{data}
 }
