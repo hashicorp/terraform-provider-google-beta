@@ -1157,7 +1157,7 @@ func expandAzureFederatedIdentifyConfig(federatedIdentifyConfig []interface{}) *
 	}
 }
 
-func flattenAzureFederatedIdentifyConfig(federatedIdentifyConfig *storagetransfer.FederatedIdentifyConfig, d *schema.ResourceData) []map[string]interface{} {
+func flattenAzureFederatedIdentifyConfig(d *schema.ResourceData) []map[string]interface{} {
 	if ((d.Get("transfer_spec.0.azure_blob_storage_data_source.0.federated_identity_cfg.0.client_id") == "") || (d.Get("transfer_spec.0.azure_blob_storage_data_source.0.federated_identity_cfg.0.tenant_id") == "") ){
 		return []map[string]interface{}{}
 	}
@@ -1192,7 +1192,7 @@ func flattenAzureBlobStorageData(azureBlobStorageData *storagetransfer.AzureBlob
 		"path":               azureBlobStorageData.Path,
 		"storage_account":    azureBlobStorageData.StorageAccount,
 		"azure_credentials":  flattenAzureCredentials(d),
-		"federated_identity_cfg": expandAzureFederatedIdentifyConfig(d),
+		"federated_identity_cfg": flattenAzureFederatedIdentifyConfig(d),
 		"credentials_secret": azureBlobStorageData.CredentialsSecret,
 	}
 
