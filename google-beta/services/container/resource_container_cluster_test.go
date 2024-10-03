@@ -4572,6 +4572,18 @@ func TestAccContainerCluster_enableCiliumPolicies(t *testing.T) {
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"deletion_protection"},
 			},
+			{
+				Config: testAccContainerCluster_enableCiliumPolicies(clusterName, networkName, subnetworkName, false),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("google_container_cluster.primary", "enable_cilium_clusterwide_network_policy", "false"),
+				),
+			},
+			{
+				ResourceName:            "google_container_cluster.primary",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"deletion_protection"},
+			},
 		},
 	})
 }
@@ -11279,30 +11291,30 @@ func TestAccContainerCluster_privateRegistry(t *testing.T) {
 
 func testAccContainerCluster_privateRegistryEnabled(secretID, clusterName, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
-data "google_project" "test_project" { 
+data "google_project" "test_project" {
 	}
 
-resource "google_secret_manager_secret" "secret-basic" { 
+resource "google_secret_manager_secret" "secret-basic" {
 	secret_id     = "%s"
-	replication { 
-		user_managed { 
-		replicas { 
-			location = "us-central1" 
-		} 
-		} 
-	} 
+	replication {
+		user_managed {
+		replicas {
+			location = "us-central1"
+		}
+		}
+	}
 }
 
-resource "google_secret_manager_secret_version" "secret-version-basic" { 
-	secret = google_secret_manager_secret.secret-basic.id 
-	secret_data = "dummypassword" 
-  } 
-   
-resource "google_secret_manager_secret_iam_member" "secret_iam" { 
-	secret_id  = google_secret_manager_secret.secret-basic.id 
-	role       = "roles/secretmanager.admin" 
-	member     = "serviceAccount:${data.google_project.test_project.number}-compute@developer.gserviceaccount.com" 
-	depends_on = [google_secret_manager_secret_version.secret-version-basic]  
+resource "google_secret_manager_secret_version" "secret-version-basic" {
+	secret = google_secret_manager_secret.secret-basic.id
+	secret_data = "dummypassword"
+  }
+
+resource "google_secret_manager_secret_iam_member" "secret_iam" {
+	secret_id  = google_secret_manager_secret.secret-basic.id
+	role       = "roles/secretmanager.admin"
+	member     = "serviceAccount:${data.google_project.test_project.number}-compute@developer.gserviceaccount.com"
+	depends_on = [google_secret_manager_secret_version.secret-version-basic]
   }
 
 resource "google_container_cluster" "primary" {
@@ -11339,7 +11351,7 @@ resource "google_container_cluster" "primary" {
       }
     }
   }
-} 
+}
 `, secretID, clusterName, networkName, subnetworkName)
 }
 
@@ -11368,29 +11380,29 @@ resource "google_container_cluster" "primary" {
 
 func testAccContainerCluster_withNodePoolPrivateRegistry(secretID, clusterName, nodePoolName, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
-data "google_project" "test_project" { 
+data "google_project" "test_project" {
 	}
 
-resource "google_secret_manager_secret" "secret-basic" { 
+resource "google_secret_manager_secret" "secret-basic" {
 	secret_id     = "%s"
-	replication { 
-		user_managed { 
-		replicas { 
-			location = "us-central1" 
-		} 
-		} 
-	} 
+	replication {
+		user_managed {
+		replicas {
+			location = "us-central1"
+		}
+		}
+	}
 }
-resource "google_secret_manager_secret_version" "secret-version-basic" { 
-	secret = google_secret_manager_secret.secret-basic.id 
-	secret_data = "dummypassword" 
-  } 
-   
-resource "google_secret_manager_secret_iam_member" "secret_iam" { 
-	secret_id  = google_secret_manager_secret.secret-basic.id 
-	role       = "roles/secretmanager.admin" 
-	member     = "serviceAccount:${data.google_project.test_project.number}-compute@developer.gserviceaccount.com" 
-	depends_on = [google_secret_manager_secret_version.secret-version-basic] 
+resource "google_secret_manager_secret_version" "secret-version-basic" {
+	secret = google_secret_manager_secret.secret-basic.id
+	secret_data = "dummypassword"
+  }
+
+resource "google_secret_manager_secret_iam_member" "secret_iam" {
+	secret_id  = google_secret_manager_secret.secret-basic.id
+	role       = "roles/secretmanager.admin"
+	member     = "serviceAccount:${data.google_project.test_project.number}-compute@developer.gserviceaccount.com"
+	depends_on = [google_secret_manager_secret_version.secret-version-basic]
   }
 resource "google_container_cluster" "primary" {
   name               = "%s"
@@ -11427,29 +11439,29 @@ resource "google_container_cluster" "primary" {
 
 func testAccContainerCluster_withNodeConfigPrivateRegistry(secretID, clusterName, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
-data "google_project" "test_project" { 
+data "google_project" "test_project" {
 	}
 
 resource "google_secret_manager_secret" "secret-basic" {
 	secret_id     = "%s"
-	replication { 
-		user_managed { 
-		replicas { 
-			location = "us-central1" 
-		} 
-		} 
-	}  
+	replication {
+		user_managed {
+		replicas {
+			location = "us-central1"
+		}
+		}
+	}
 }
-resource "google_secret_manager_secret_version" "secret-version-basic" { 
-	secret = google_secret_manager_secret.secret-basic.id 
-	secret_data = "dummypassword" 
-  } 
-   
-resource "google_secret_manager_secret_iam_member" "secret_iam" { 
-	secret_id  = google_secret_manager_secret.secret-basic.id 
-	role       = "roles/secretmanager.admin" 
-	member     = "serviceAccount:${data.google_project.test_project.number}-compute@developer.gserviceaccount.com" 
-	depends_on = [google_secret_manager_secret_version.secret-version-basic] 
+resource "google_secret_manager_secret_version" "secret-version-basic" {
+	secret = google_secret_manager_secret.secret-basic.id
+	secret_data = "dummypassword"
+  }
+
+resource "google_secret_manager_secret_iam_member" "secret_iam" {
+	secret_id  = google_secret_manager_secret.secret-basic.id
+	role       = "roles/secretmanager.admin"
+	member     = "serviceAccount:${data.google_project.test_project.number}-compute@developer.gserviceaccount.com"
+	depends_on = [google_secret_manager_secret_version.secret-version-basic]
   }
 resource "google_container_cluster" "primary" {
   name               = "%s"
