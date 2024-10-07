@@ -1,4 +1,32 @@
-## 6.6.0 (Unreleased)
+## 6.7.0 (Unreleased)
+
+## 6.6.0 (October 7, 2024)
+
+FEATURES:
+* **New Resource:** `google_dataproc_batch` ([#8306](https://github.com/hashicorp/terraform-provider-google-beta/pull/8306))
+* **New Resource:** `google_healthcare_pipeline_job` ([#8330](https://github.com/hashicorp/terraform-provider-google-beta/pull/8330))
+* **New Resource:** `google_site_verification_owner` ([#8287](https://github.com/hashicorp/terraform-provider-google-beta/pull/8287))
+
+IMPROVEMENTS:
+* assuredworkloads: added `HEALTHCARE_AND_LIFE_SCIENCES_CONTROLS` and `HEALTHCARE_AND_LIFE_SCIENCES_CONTROLS_WITH_US_SUPPORT` enum values to `compliance_regime` in the `google_assured_workloads_workload` resource ([#8326](https://github.com/hashicorp/terraform-provider-google-beta/pull/8326))
+* compute: added `bgp_best_path_selection_mode `,`bgp_bps_always_compare_med` and `bgp_bps_inter_region_cost ` fields to `google_compute_network` resource ([#8321](https://github.com/hashicorp/terraform-provider-google-beta/pull/8321))
+* compute: added `next_hop_origin `,`next_hop_med ` and `next_hop_inter_region_cost ` output fields to `google_compute_route` resource ([#8321](https://github.com/hashicorp/terraform-provider-google-beta/pull/8321))
+* compute: added enum `STATEFUL_COOKIE_AFFINITY` and `strong_session_affinity_cookie` field to `google_compute_backend_service` and `google_compute_region_backend_service` resource ([#8296](https://github.com/hashicorp/terraform-provider-google-beta/pull/8296))
+* compute: added `TDX` instance option for `confidential_instance_type` in `google_compute_instance` ([#8320](https://github.com/hashicorp/terraform-provider-google-beta/pull/8320))
+* containeraws: added `kubelet_config` field group to the `google_container_aws_node_pool` resource ([#8326](https://github.com/hashicorp/terraform-provider-google-beta/pull/8326))
+* dataproc: switched to the v1 API for `google_dataproc_autoscaling_policy` resource ([#8306](https://github.com/hashicorp/terraform-provider-google-beta/pull/8306))
+* pubsub: added GCS ingestion settings and platform log settings to `google_pubsub_topic` resource ([#8298](https://github.com/hashicorp/terraform-provider-google-beta/pull/8298))
+* sourcerepo: added `create_ignore_already_exists` field to `google_sourcerepo_repository` resource ([#8329](https://github.com/hashicorp/terraform-provider-google-beta/pull/8329))
+* sql: added in-place update support for `settings.time_zone` in `google_sql_database_instance` resource ([#8293](https://github.com/hashicorp/terraform-provider-google-beta/pull/8293))
+* tags: increased maximum accepted input length for the `short_name` field in `google_tags_tag_key` and `google_tags_tag_value` resources ([#8324](https://github.com/hashicorp/terraform-provider-google-beta/pull/8324))
+
+BUG FIXES:
+* bigquery: fixed `google_bigquery_dataset_iam_member` to be able to delete itself and overwrite the existing iam members for bigquery dataset keeping the authorized datasets as they are. ([#8304](https://github.com/hashicorp/terraform-provider-google-beta/pull/8304))
+* bigquery: fixed an error which could occur with service account field values containing non-lower-case characters in `google_bigquery_dataset_access` ([#8319](https://github.com/hashicorp/terraform-provider-google-beta/pull/8319))
+* compute: fixed an issue where the `boot_disk.initialize_params.resource_policies` field in `google_compute_instance` forced a resource recreation when used in combination with `google_compute_disk_resource_policy_attachment` ([#8309](https://github.com/hashicorp/terraform-provider-google-beta/pull/8309))
+* compute: fixed the issue that `labels` was not set when creating the resource `google_compute_interconnect` ([#8284](https://github.com/hashicorp/terraform-provider-google-beta/pull/8284))
+* tags:  removed `google_tags_location_tag_binding` resource from the Terraform state when its parent resource has been removed outside of Terraform ([#8310](https://github.com/hashicorp/terraform-provider-google-beta/pull/8310))
+* workbench: fixed a bug in the `google_workbench_instance` resource where the removal of `labels` was not functioning as expected. ([#8280](https://github.com/hashicorp/terraform-provider-google-beta/pull/8280))
 
 ## 6.5.0 (September 30, 2024)
 DEPRECATIONS:
