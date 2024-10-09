@@ -123,6 +123,7 @@ func (d *GoogleFirebaseWebAppConfigDataSource) Schema(ctx context.Context, req d
 				Computed:            true,
 			},
 
+			// This is included for backwards compatibility with the original, SDK-implemented data source.
 			"id": schema.StringAttribute{
 				Description:         "Firebase Web App Config identifier",
 				MarkdownDescription: "Firebase Web App Config identifier",
@@ -164,25 +165,24 @@ func (d *GoogleFirebaseWebAppConfigDataSource) Read(ctx context.Context, req dat
 		return
 	}
 
-	d.client.UserAgent = fwtransport.GenerateFrameworkUserAgentString(metaData, d.client.UserAgent)
-
-	client := firebase.NewProjectsWebAppsService(d.client)
-
 	// Read Terraform configuration data into the model
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
+	// Use provider_meta to set User-Agent
+	d.client.UserAgent = fwtransport.GenerateFrameworkUserAgentString(metaData, d.client.UserAgent)
+
 	data.Project = fwresource.GetProjectFramework(data.Project, d.project, &resp.Diagnostics)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
+	// GET Request
+	service := firebase.NewProjectsWebAppsService(d.client)
 	appName := fmt.Sprintf("projects/%s/webApps/%s/config", data.Project.ValueString(), data.WebAppId.ValueString())
-	data.Id = data.WebAppId
-
-	clientResp, err := client.GetConfig(appName).Do()
+	clientResp, err := service.GetConfig(appName).Do()
 	if err != nil {
 		fwtransport.HandleDatasourceNotFoundError(ctx, err, &resp.State, fmt.Sprintf("dataSourceFirebaseWebAppConfig %q", data.WebAppId.ValueString()), &resp.Diagnostics)
 		if resp.Diagnostics.HasError() {
@@ -192,6 +192,8 @@ func (d *GoogleFirebaseWebAppConfigDataSource) Read(ctx context.Context, req dat
 
 	tflog.Trace(ctx, "read firebase web app config data source")
 
+	// Put data in model
+	data.Id = data.WebAppId
 	data.ApiKey = types.StringValue(clientResp.ApiKey)
 	data.AuthDomain = types.StringValue(clientResp.AuthDomain)
 	data.DatabaseUrl = types.StringValue(clientResp.DatabaseURL)
