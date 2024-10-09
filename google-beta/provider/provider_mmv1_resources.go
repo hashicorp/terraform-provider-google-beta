@@ -102,6 +102,7 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/networksecurity"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/networkservices"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/notebooks"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/oracledatabase"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/orgpolicy"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/osconfig"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/oslogin"
@@ -486,9 +487,9 @@ var handwrittenIAMDatasources = map[string]*schema.Resource{
 }
 
 // Resources
-// Generated resources: 532
+// Generated resources: 533
 // Generated IAM resources: 291
-// Total generated resources: 823
+// Total generated resources: 824
 var generatedResources = map[string]*schema.Resource{
 	"google_folder_access_approval_settings":                                     accessapproval.ResourceAccessApprovalFolderSettings(),
 	"google_organization_access_approval_settings":                               accessapproval.ResourceAccessApprovalOrganizationSettings(),
@@ -1126,6 +1127,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_notebooks_runtime_iam_binding":                                       tpgiamresource.ResourceIamBinding(notebooks.NotebooksRuntimeIamSchema, notebooks.NotebooksRuntimeIamUpdaterProducer, notebooks.NotebooksRuntimeIdParseFunc),
 	"google_notebooks_runtime_iam_member":                                        tpgiamresource.ResourceIamMember(notebooks.NotebooksRuntimeIamSchema, notebooks.NotebooksRuntimeIamUpdaterProducer, notebooks.NotebooksRuntimeIdParseFunc),
 	"google_notebooks_runtime_iam_policy":                                        tpgiamresource.ResourceIamPolicy(notebooks.NotebooksRuntimeIamSchema, notebooks.NotebooksRuntimeIamUpdaterProducer, notebooks.NotebooksRuntimeIdParseFunc),
+	"google_oracle_database_cloud_exadata_infrastructure":                        oracledatabase.ResourceOracleDatabaseCloudExadataInfrastructure(),
 	"google_org_policy_custom_constraint":                                        orgpolicy.ResourceOrgPolicyCustomConstraint(),
 	"google_org_policy_policy":                                                   orgpolicy.ResourceOrgPolicyPolicy(),
 	"google_os_config_guest_policies":                                            osconfig.ResourceOSConfigGuestPolicies(),

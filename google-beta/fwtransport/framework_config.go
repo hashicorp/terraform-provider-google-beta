@@ -161,6 +161,7 @@ type FrameworkProviderConfig struct {
 	NetworkSecurityBasePath          string
 	NetworkServicesBasePath          string
 	NotebooksBasePath                string
+	OracleDatabaseBasePath           string
 	OrgPolicyBasePath                string
 	OSConfigBasePath                 string
 	OSLoginBasePath                  string
@@ -338,6 +339,7 @@ func (p *FrameworkProviderConfig) LoadAndValidateFramework(ctx context.Context, 
 	p.NetworkSecurityBasePath = data.NetworkSecurityCustomEndpoint.ValueString()
 	p.NetworkServicesBasePath = data.NetworkServicesCustomEndpoint.ValueString()
 	p.NotebooksBasePath = data.NotebooksCustomEndpoint.ValueString()
+	p.OracleDatabaseBasePath = data.OracleDatabaseCustomEndpoint.ValueString()
 	p.OrgPolicyBasePath = data.OrgPolicyCustomEndpoint.ValueString()
 	p.OSConfigBasePath = data.OSConfigCustomEndpoint.ValueString()
 	p.OSLoginBasePath = data.OSLoginCustomEndpoint.ValueString()
@@ -1299,6 +1301,14 @@ func (p *FrameworkProviderConfig) HandleDefaults(ctx context.Context, data *fwmo
 		}, transport_tpg.DefaultBasePaths[transport_tpg.NotebooksBasePathKey])
 		if customEndpoint != nil {
 			data.NotebooksCustomEndpoint = types.StringValue(customEndpoint.(string))
+		}
+	}
+	if data.OracleDatabaseCustomEndpoint.IsNull() {
+		customEndpoint := transport_tpg.MultiEnvDefault([]string{
+			"GOOGLE_ORACLE_DATABASE_CUSTOM_ENDPOINT",
+		}, transport_tpg.DefaultBasePaths[transport_tpg.OracleDatabaseBasePathKey])
+		if customEndpoint != nil {
+			data.OracleDatabaseCustomEndpoint = types.StringValue(customEndpoint.(string))
 		}
 	}
 	if data.OrgPolicyCustomEndpoint.IsNull() {
