@@ -33,7 +33,10 @@ func TestAccGKEHubFeatureMembership_gkehubFeatureAcmUpdate(t *testing.T) {
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
-		CheckDestroy:             testAccCheckGKEHubFeatureDestroyProducer(t),
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
+		CheckDestroy: testAccCheckGKEHubFeatureDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccGKEHubFeatureMembership_gkehubFeatureAcmUpdateStart(context),
@@ -99,7 +102,7 @@ resource "google_gke_hub_feature" "feature" {
   labels = {
     foo = "bar"
   }
-  depends_on = [google_project_service.mci, google_project_service.container, google_project_service.container, google_project_service.gkehub]
+  depends_on = [time_sleep.wait_120s]
 }
 
 resource "google_gke_hub_feature_membership" "feature_member_1" {
@@ -150,7 +153,7 @@ resource "google_gke_hub_feature" "feature" {
   labels = {
     foo = "changed"
   }
-  depends_on = [google_project_service.mci, google_project_service.container, google_project_service.container, google_project_service.gkehub]
+  depends_on = [time_sleep.wait_120s]
 }
 
 resource "google_gke_hub_feature_membership" "feature_member_1" {
@@ -208,7 +211,7 @@ resource "google_gke_hub_feature" "feature" {
   labels = {
     foo = "changed"
   }
-  depends_on = [google_project_service.mci, google_project_service.container, google_project_service.container, google_project_service.gkehub]
+  depends_on = [time_sleep.wait_120s]
 }
 
 resource "google_gke_hub_feature_membership" "feature_member_2" {
@@ -230,7 +233,7 @@ resource "google_gke_hub_feature_membership" "feature_member_2" {
       enabled = true
       audit_interval_seconds = "9"
       exemptable_namespaces = ["different", "1234"]
-      template_library_installed = false
+      template_library_installed = true
     }
     hierarchy_controller {
       enable_hierarchical_resource_quota = true
@@ -287,9 +290,6 @@ resource "google_gke_hub_feature_membership" "feature_member_4" {
     }
   }
 }
-
-
-
 `, context)
 }
 
@@ -303,7 +303,7 @@ resource "google_gke_hub_feature" "feature" {
   labels = {
     foo = "changed"
   }
-  depends_on = [google_project_service.mci, google_project_service.container, google_project_service.container, google_project_service.gkehub]
+  depends_on = [time_sleep.wait_120s]
 }
 
 resource "google_gke_hub_feature_membership" "feature_member_3" {
@@ -338,7 +338,10 @@ func TestAccGKEHubFeatureMembership_gkehubFeatureAcmAllFields(t *testing.T) {
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
-		CheckDestroy:             testAccCheckGKEHubFeatureDestroyProducer(t),
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
+		CheckDestroy: testAccCheckGKEHubFeatureDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccGKEHubFeatureMembership_gkehubFeatureAcmFewFields(context),
@@ -396,7 +399,7 @@ resource "google_container_cluster" "primary" {
   location           = "us-central1-a"
   initial_node_count = 1
   deletion_protection = false
-  depends_on = [google_project_service.mci, google_project_service.container, google_project_service.container, google_project_service.gkehub]
+  depends_on = [time_sleep.wait_120s]
 }
 
 resource "google_gke_hub_membership" "membership" {
@@ -418,7 +421,7 @@ resource "google_gke_hub_feature" "feature" {
   labels = {
     foo = "bar"
   }
-  depends_on = [google_project_service.mci, google_project_service.container, google_project_service.container, google_project_service.gkehub]
+  depends_on = [time_sleep.wait_120s]
 }
 
 resource "google_gke_hub_feature_membership" "feature_member" {
@@ -461,7 +464,7 @@ resource "google_container_cluster" "primary" {
   location           = "us-central1-a"
   initial_node_count = 1
   deletion_protection = false
-  depends_on = [google_project_service.mci, google_project_service.container, google_project_service.container, google_project_service.gkehub]
+  depends_on = [time_sleep.wait_120s]
 }
 
 resource "google_gke_hub_membership" "membership" {
@@ -483,7 +486,7 @@ resource "google_gke_hub_feature" "feature" {
   labels = {
     foo = "bar"
   }
-  depends_on = [google_project_service.mci, google_project_service.container, google_project_service.container, google_project_service.gkehub]
+  depends_on = [time_sleep.wait_120s]
 }
 
 resource "google_gke_hub_feature_membership" "feature_member" {
@@ -527,7 +530,7 @@ resource "google_container_cluster" "primary" {
   location           = "us-central1-a"
   initial_node_count = 1
   deletion_protection = false
-  depends_on = [google_project_service.mci, google_project_service.container, google_project_service.container, google_project_service.gkehub, google_project_service.acm]
+  depends_on = [time_sleep.wait_120s]
 }
 
 resource "google_gke_hub_membership" "membership" {
@@ -549,7 +552,7 @@ resource "google_gke_hub_feature" "feature" {
   labels = {
     foo = "bar"
   }
-  depends_on = [google_project_service.mci, google_project_service.container, google_project_service.container, google_project_service.gkehub]
+  depends_on = [time_sleep.wait_120s]
 }
 
 resource "google_service_account" "feature_sa" {
@@ -590,7 +593,10 @@ func TestAccGKEHubFeatureMembership_gkehubFeatureAcmOci(t *testing.T) {
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
-		CheckDestroy:             testAccCheckGKEHubFeatureDestroyProducer(t),
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
+		CheckDestroy: testAccCheckGKEHubFeatureDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccGKEHubFeatureMembership_gkehubFeatureAcmOciStart(context),
@@ -639,7 +645,7 @@ resource "google_gke_hub_feature" "feature" {
   labels = {
     foo = "bar"
   }
-  depends_on = [google_project_service.container, google_project_service.gkehub]
+  depends_on = [time_sleep.wait_120s]
 }
 
 resource "google_service_account" "feature_sa" {
@@ -689,7 +695,7 @@ resource "google_gke_hub_feature" "feature" {
   labels = {
     foo = "bar"
   }
-  depends_on = [google_project_service.container, google_project_service.gkehub]
+  depends_on = [time_sleep.wait_120s]
 }
 
 resource "google_service_account" "feature_sa" {
@@ -739,7 +745,7 @@ resource "google_gke_hub_feature" "feature" {
   labels = {
     foo = "bar"
   }
-  depends_on = [google_project_service.container, google_project_service.gkehub]
+  depends_on = [time_sleep.wait_120s]
 }
 
 resource "google_service_account" "feature_sa" {
@@ -781,7 +787,10 @@ func TestAccGKEHubFeatureMembership_gkehubFeatureMesh(t *testing.T) {
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
-		CheckDestroy:             testAccCheckGKEHubFeatureDestroyProducer(t),
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
+		CheckDestroy: testAccCheckGKEHubFeatureDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccGKEHubFeatureMembership_meshStart(context),
@@ -828,7 +837,7 @@ resource "google_container_cluster" "primary" {
   location           = "us-central1-a"
   initial_node_count = 1
   deletion_protection = false
-  depends_on = [google_project_service.container, google_project_service.gkehub]
+  depends_on = [time_sleep.wait_120s]
 }
 
 resource "google_gke_hub_membership" "membership" {
@@ -850,7 +859,7 @@ resource "google_gke_hub_feature" "feature" {
   labels = {
     foo = "bar"
   }
-  depends_on = [google_project_service.container, google_project_service.gkehub, google_project_service.mesh]
+  depends_on = [time_sleep.wait_120s]
 }
 
 resource "google_service_account" "feature_sa" {
@@ -879,7 +888,7 @@ resource "google_container_cluster" "primary" {
   location           = "us-central1-a"
   initial_node_count = 1
   deletion_protection = false
-  depends_on = [google_project_service.container, google_project_service.gkehub]
+  depends_on = [time_sleep.wait_120s]
 }
 
 resource "google_gke_hub_membership" "membership" {
@@ -901,7 +910,7 @@ resource "google_gke_hub_feature" "feature" {
   labels = {
     foo = "bar"
   }
-  depends_on = [google_project_service.container, google_project_service.gkehub, google_project_service.mesh]
+  depends_on = [time_sleep.wait_120s]
 }
 
 resource "google_service_account" "feature_sa" {
@@ -929,7 +938,7 @@ resource "google_container_cluster" "primary" {
   location           = "us-central1-a"
   initial_node_count = 1
   deletion_protection = false
-  depends_on = [google_project_service.container, google_project_service.gkehub]
+  depends_on = [time_sleep.wait_120s]
 }
 
 resource "google_gke_hub_membership" "membership" {
@@ -951,7 +960,7 @@ resource "google_gke_hub_feature" "feature" {
   labels = {
     foo = "bar"
   }
-  depends_on = [google_project_service.container, google_project_service.gkehub, google_project_service.mesh]
+  depends_on = [time_sleep.wait_120s]
 }
 
 resource "google_service_account" "feature_sa" {
@@ -985,7 +994,10 @@ func TestAccGKEHubFeatureMembership_gkehubFeaturePolicyController(t *testing.T) 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
-		CheckDestroy:             testAccCheckGKEHubFeatureDestroyProducer(t),
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
+		CheckDestroy: testAccCheckGKEHubFeatureDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccGKEHubFeatureMembership_policycontrollerStart(context),
@@ -1030,7 +1042,7 @@ resource "google_gke_hub_feature" "feature" {
   project = google_project.project.project_id
   name = "policycontroller"
   location = "global"
-  depends_on = [google_project_service.container, google_project_service.gkehub, google_project_service.poco]
+  depends_on = [time_sleep.wait_120s]
 }
 
 resource "google_gke_hub_feature_membership" "feature_member" {
@@ -1056,7 +1068,7 @@ resource "google_gke_hub_feature" "feature" {
   project = google_project.project.project_id
   name = "policycontroller"
   location = "global"
-  depends_on = [google_project_service.container, google_project_service.gkehub, google_project_service.poco]
+  depends_on = [time_sleep.wait_120s]
 }
 
 resource "google_gke_hub_feature_membership" "feature_member" {
@@ -1127,7 +1139,7 @@ resource "google_gke_hub_feature" "feature" {
   project = google_project.project.project_id
   name = "policycontroller"
   location = "global"
-  depends_on = [google_project_service.container, google_project_service.gkehub, google_project_service.poco]
+  depends_on = [time_sleep.wait_120s]
 }
 
 resource "google_gke_hub_feature_membership" "feature_member" {
@@ -1179,7 +1191,7 @@ resource "google_container_cluster" "primary" {
   initial_node_count = 1
   project = google_project.project.project_id
   deletion_protection = false
-  depends_on = [google_project_service.container, google_project_service.container, google_project_service.gkehub]
+  depends_on = [time_sleep.wait_120s]
 }
 
 resource "google_container_cluster" "secondary" {
@@ -1188,7 +1200,7 @@ resource "google_container_cluster" "secondary" {
   initial_node_count = 1
   project = google_project.project.project_id
   deletion_protection = false
-  depends_on = [google_project_service.container, google_project_service.container, google_project_service.gkehub]
+  depends_on = [time_sleep.wait_120s]
 }
 
 resource "google_container_cluster" "tertiary" {
@@ -1197,7 +1209,7 @@ resource "google_container_cluster" "tertiary" {
   initial_node_count = 1
   project = google_project.project.project_id
   deletion_protection = false
-  depends_on = [google_project_service.container, google_project_service.container, google_project_service.gkehub]
+  depends_on = [time_sleep.wait_120s]
 }
 
 
@@ -1207,7 +1219,7 @@ resource "google_container_cluster" "quarternary" {
   initial_node_count = 1
   project = google_project.project.project_id
   deletion_protection = false
-  depends_on = [google_project_service.container, google_project_service.container, google_project_service.gkehub]
+  depends_on = [time_sleep.wait_120s]
 }
 
 resource "google_gke_hub_membership" "membership" {
@@ -1263,7 +1275,7 @@ resource "google_compute_network" "testnetwork" {
     project                 = google_project.project.project_id
     name                    = "testnetwork"
     auto_create_subnetworks = true
-    depends_on = [google_project_service.compute]
+    depends_on = [time_sleep.wait_120s]
 }
 
 resource "google_container_cluster" "container_acmoci" {
@@ -1273,7 +1285,7 @@ resource "google_container_cluster" "container_acmoci" {
   network = google_compute_network.testnetwork.self_link
   project = google_project.project.project_id
   deletion_protection = false
-  depends_on = [google_project_service.container, google_project_service.container, google_project_service.gkehub]
+  depends_on = [time_sleep.wait_120s]
 }
 
 resource "google_gke_hub_membership" "membership_acmoci" {
@@ -1386,6 +1398,22 @@ resource "google_project_service" "gkehub" {
   project = google_project.project.project_id
   service = "gkehub.googleapis.com"
   disable_on_destroy = false
+}
+
+// It needs waiting until the API services are really activated.
+resource "time_sleep" "wait_120s" {
+  create_duration = "120s"
+  depends_on = [
+    google_project_service.anthos,
+    google_project_service.mesh,
+    google_project_service.mci,
+    google_project_service.acm,
+    google_project_service.poco,
+    google_project_service.mcsd,
+    google_project_service.compute,
+    google_project_service.container,
+    google_project_service.gkehub,
+  ]
 }
 `, context)
 }
