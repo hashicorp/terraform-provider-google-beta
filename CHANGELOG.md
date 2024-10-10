@@ -1,5 +1,23 @@
 ## 6.7.0 (Unreleased)
 
+FEATURES:
+* **New Resource:** `google_healthcare_pipeline_job` ([#8330](https://github.com/hashicorp/terraform-provider-google-beta/pull/8330))
+* **New Resource:** `google_secure_source_manager_branch_rule` ([#8360](https://github.com/hashicorp/terraform-provider-google-beta/pull/8360))
+
+IMPROVEMENTS:
+* discoveryengine: added `chat_engine_config.dialogflow_agent_to_link` field to `google_discovery_engine_chat_engine` resource ([#8333](https://github.com/hashicorp/terraform-provider-google-beta/pull/8333))
+* networkconnectivity: added field `migration` to resource `google_network_connectivity_internal_range` ([#8350](https://github.com/hashicorp/terraform-provider-google-beta/pull/8350))
+* networkservices: added `routing_mode` field to `google_network_services_gateway` resource ([#8355](https://github.com/hashicorp/terraform-provider-google-beta/pull/8355))
+
+BUG FIXES:
+* bigtable: fixed an error where BigTable IAM resources could be created with conditions but the condition was not stored in state ([#8334](https://github.com/hashicorp/terraform-provider-google-beta/pull/8334))
+* container: fixed issue which caused to not being able to disable `enable_cilium_clusterwide_network_policy` field on `google_container_cluster`. ([#8338](https://github.com/hashicorp/terraform-provider-google-beta/pull/8338))
+* dataproc: fixed a bug in `google_dataproc_cluster` that prevented creation of clusters with `internal_ip_only` set to false ([#8363](https://github.com/hashicorp/terraform-provider-google-beta/pull/8363))
+* iam: addressed `google_service_account` creation issues caused by the eventual consistency of the GCP IAM API by ignoring 403 errors returned on polling the service account after creation. ([#8336](https://github.com/hashicorp/terraform-provider-google-beta/pull/8336))
+* logging: fixed the whitespace permadiff on `exclusions.filter` field in `google_logging_billing_account_sink`, `google_logging_folder_sink`, `google_logging_organization_sink` and `google_logging_project_sink` resources ([#8343](https://github.com/hashicorp/terraform-provider-google-beta/pull/8343))
+* pubsub: fix permadiff with configuring an empty `retry_policy`. ([#8365](https://github.com/hashicorp/terraform-provider-google-beta/pull/8365))
+* secretmanager: fixed the issue of unpopulated fields `labels`, `annotations` and `version_destroy_ttl` in the terraform state for the `google_secret_manager_secrets` datasource ([#8346](https://github.com/hashicorp/terraform-provider-google-beta/pull/8346))
+
 ## 6.6.0 (October 7, 2024)
 
 FEATURES:
