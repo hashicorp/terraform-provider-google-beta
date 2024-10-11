@@ -815,6 +815,51 @@ resource "google_network_services_mesh" "mesh" {
 `, context)
 }
 
+func TestAccCloudRunV2Service_cloudrunv2ServiceInvokeriamExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"random_suffix": acctest.RandString(t, 10),
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckCloudRunV2ServiceDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudRunV2Service_cloudrunv2ServiceInvokeriamExample(context),
+			},
+			{
+				ResourceName:            "google_cloud_run_v2_service.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"annotations", "deletion_protection", "labels", "location", "name", "terraform_labels"},
+			},
+		},
+	})
+}
+
+func testAccCloudRunV2Service_cloudrunv2ServiceInvokeriamExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_cloud_run_v2_service" "default" {
+  provider = google-beta
+  name     = "tf-test-cloudrun-service%{random_suffix}"
+  location = "us-central1"
+  deletion_protection = false
+  invoker_iam_disabled = true
+  description = "The serving URL of this service will not perform any IAM check when invoked"
+  ingress = "INGRESS_TRAFFIC_ALL"
+  
+  template {
+    containers {
+      image = "us-docker.pkg.dev/cloudrun/container/hello"
+    }
+  }
+}
+`, context)
+}
+
 func testAccCheckCloudRunV2ServiceDestroyProducer(t *testing.T) func(s *terraform.State) error {
 	return func(s *terraform.State) error {
 		for name, rs := range s.RootModule().Resources {
