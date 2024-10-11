@@ -5,6 +5,7 @@ FEATURES:
 * **New Resource:** `google_secure_source_manager_branch_rule` ([#8360](https://github.com/hashicorp/terraform-provider-google-beta/pull/8360))
 
 IMPROVEMENTS:
+* container: `google_container_cluster` will now accept server-specified values for `node_pool_auto_config.0.node_kubelet_config` when it is not defined in configuration and will not detect drift. Note that this means that removing the value from configuration will now preserve old settings instead of reverting the old settings. ([#8385](https://github.com/hashicorp/terraform-provider-google-beta/pull/8385))
 * discoveryengine: added `chat_engine_config.dialogflow_agent_to_link` field to `google_discovery_engine_chat_engine` resource ([#8333](https://github.com/hashicorp/terraform-provider-google-beta/pull/8333))
 * networkconnectivity: added field `migration` to resource `google_network_connectivity_internal_range` ([#8350](https://github.com/hashicorp/terraform-provider-google-beta/pull/8350))
 * networkservices: added `routing_mode` field to `google_network_services_gateway` resource ([#8355](https://github.com/hashicorp/terraform-provider-google-beta/pull/8355))
@@ -12,6 +13,7 @@ IMPROVEMENTS:
 BUG FIXES:
 * bigtable: fixed an error where BigTable IAM resources could be created with conditions but the condition was not stored in state ([#8334](https://github.com/hashicorp/terraform-provider-google-beta/pull/8334))
 * container: fixed issue which caused to not being able to disable `enable_cilium_clusterwide_network_policy` field on `google_container_cluster`. ([#8338](https://github.com/hashicorp/terraform-provider-google-beta/pull/8338))
+* container: fixed a diff triggered by a new API-side default value for `node_config.0.kubelet_config.0.insecure_kubelet_readonly_port_enabled`. Terraform will now accept server-specified values for `node_config.0.kubelet_config` when it is not defined in configuration and will not detect drift. Note that this means that removing the value from configuration will now preserve old settings instead of reverting the old settings. ([#8385](https://github.com/hashicorp/terraform-provider-google-beta/pull/8385))
 * dataproc: fixed a bug in `google_dataproc_cluster` that prevented creation of clusters with `internal_ip_only` set to false ([#8363](https://github.com/hashicorp/terraform-provider-google-beta/pull/8363))
 * iam: addressed `google_service_account` creation issues caused by the eventual consistency of the GCP IAM API by ignoring 403 errors returned on polling the service account after creation. ([#8336](https://github.com/hashicorp/terraform-provider-google-beta/pull/8336))
 * logging: fixed the whitespace permadiff on `exclusions.filter` field in `google_logging_billing_account_sink`, `google_logging_folder_sink`, `google_logging_organization_sink` and `google_logging_project_sink` resources ([#8343](https://github.com/hashicorp/terraform-provider-google-beta/pull/8343))
