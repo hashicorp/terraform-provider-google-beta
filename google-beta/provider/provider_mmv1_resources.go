@@ -488,9 +488,9 @@ var handwrittenIAMDatasources = map[string]*schema.Resource{
 }
 
 // Resources
-// Generated resources: 533
+// Generated resources: 534
 // Generated IAM resources: 291
-// Total generated resources: 824
+// Total generated resources: 825
 var generatedResources = map[string]*schema.Resource{
 	"google_folder_access_approval_settings":                                     accessapproval.ResourceAccessApprovalFolderSettings(),
 	"google_organization_access_approval_settings":                               accessapproval.ResourceAccessApprovalOrganizationSettings(),
@@ -1129,6 +1129,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_notebooks_runtime_iam_member":                                        tpgiamresource.ResourceIamMember(notebooks.NotebooksRuntimeIamSchema, notebooks.NotebooksRuntimeIamUpdaterProducer, notebooks.NotebooksRuntimeIdParseFunc),
 	"google_notebooks_runtime_iam_policy":                                        tpgiamresource.ResourceIamPolicy(notebooks.NotebooksRuntimeIamSchema, notebooks.NotebooksRuntimeIamUpdaterProducer, notebooks.NotebooksRuntimeIdParseFunc),
 	"google_oracle_database_cloud_exadata_infrastructure":                        oracledatabase.ResourceOracleDatabaseCloudExadataInfrastructure(),
+	"google_oracle_database_cloud_vm_cluster":                                    oracledatabase.ResourceOracleDatabaseCloudVmCluster(),
 	"google_org_policy_custom_constraint":                                        orgpolicy.ResourceOrgPolicyCustomConstraint(),
 	"google_org_policy_policy":                                                   orgpolicy.ResourceOrgPolicyPolicy(),
 	"google_os_config_guest_policies":                                            osconfig.ResourceOSConfigGuestPolicies(),
