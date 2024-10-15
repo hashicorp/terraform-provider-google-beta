@@ -194,6 +194,8 @@ resource "google_workstations_workstation_config" "default" {
     "label" = "key"
   }
 
+  max_usable_workstations = 1 
+  
   host {
     gce_instance {
       machine_type                = "e2-standard-4"
@@ -281,6 +283,8 @@ resource "google_workstations_workstation_config" "default" {
     "label" = "key"
   }
 
+  max_usable_workstations = 1 
+  
   host {
     gce_instance {
       machine_type                = "e2-standard-4"
@@ -386,6 +390,8 @@ resource "google_workstations_workstation_config" "default" {
     "label" = "key"
   }
 
+  max_usable_workstations = 1 
+  
   host {
     gce_instance {
       machine_type                = "e2-standard-4"
@@ -476,6 +482,8 @@ resource "google_workstations_workstation_config" "default" {
     "label" = "key"
   }
 
+  max_usable_workstations = 1 
+  
   host {
     gce_instance {
       machine_type                = "e2-standard-4"
@@ -563,6 +571,8 @@ resource "google_workstations_workstation_config" "default" {
     "label" = "key"
   }
 
+  max_usable_workstations = 1 
+  
   host {
     gce_instance {
       machine_type                = "e2-standard-4"

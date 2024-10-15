@@ -478,6 +478,12 @@ A duration in seconds with up to nine fractional digits, ending with 's'. Exampl
 Please refer to the field 'effective_labels' for all of the labels present on the resource.`,
 				Elem: &schema.Schema{Type: schema.TypeString},
 			},
+			"max_usable_workstations": {
+				Type:        schema.TypeInt,
+				Computed:    true,
+				Optional:    true,
+				Description: `Maximum number of workstations under this configuration a user can have workstations.workstation.use permission on. Only enforced on CreateWorkstation API calls on the user issuing the API request.`,
+			},
 			"persistent_directories": {
 				Type:        schema.TypeList,
 				Computed:    true,
@@ -745,6 +751,12 @@ func resourceWorkstationsWorkstationConfigCreate(d *schema.ResourceData, meta in
 	} else if v, ok := d.GetOkExists("disable_tcp_connections"); !tpgresource.IsEmptyValue(reflect.ValueOf(disableTcpConnectionsProp)) && (ok || !reflect.DeepEqual(v, disableTcpConnectionsProp)) {
 		obj["disableTcpConnections"] = disableTcpConnectionsProp
 	}
+	maxUsableWorkstationsProp, err := expandWorkstationsWorkstationConfigMaxUsableWorkstations(d.Get("max_usable_workstations"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("max_usable_workstations"); !tpgresource.IsEmptyValue(reflect.ValueOf(maxUsableWorkstationsProp)) && (ok || !reflect.DeepEqual(v, maxUsableWorkstationsProp)) {
+		obj["maxUsableWorkstations"] = maxUsableWorkstationsProp
+	}
 	allowedPortsProp, err := expandWorkstationsWorkstationConfigAllowedPorts(d.Get("allowed_ports"), d, config)
 	if err != nil {
 		return err
@@ -916,6 +928,9 @@ func resourceWorkstationsWorkstationConfigRead(d *schema.ResourceData, meta inte
 	if err := d.Set("disable_tcp_connections", flattenWorkstationsWorkstationConfigDisableTcpConnections(res["disableTcpConnections"], d, config)); err != nil {
 		return fmt.Errorf("Error reading WorkstationConfig: %s", err)
 	}
+	if err := d.Set("max_usable_workstations", flattenWorkstationsWorkstationConfigMaxUsableWorkstations(res["maxUsableWorkstations"], d, config)); err != nil {
+		return fmt.Errorf("Error reading WorkstationConfig: %s", err)
+	}
 	if err := d.Set("allowed_ports", flattenWorkstationsWorkstationConfigAllowedPorts(res["allowedPorts"], d, config)); err != nil {
 		return fmt.Errorf("Error reading WorkstationConfig: %s", err)
 	}
@@ -1017,6 +1032,12 @@ func resourceWorkstationsWorkstationConfigUpdate(d *schema.ResourceData, meta in
 	} else if v, ok := d.GetOkExists("disable_tcp_connections"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, disableTcpConnectionsProp)) {
 		obj["disableTcpConnections"] = disableTcpConnectionsProp
 	}
+	maxUsableWorkstationsProp, err := expandWorkstationsWorkstationConfigMaxUsableWorkstations(d.Get("max_usable_workstations"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("max_usable_workstations"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, maxUsableWorkstationsProp)) {
+		obj["maxUsableWorkstations"] = maxUsableWorkstationsProp
+	}
 	allowedPortsProp, err := expandWorkstationsWorkstationConfigAllowedPorts(d.Get("allowed_ports"), d, config)
 	if err != nil {
 		return err
@@ -1105,6 +1126,10 @@ func resourceWorkstationsWorkstationConfigUpdate(d *schema.ResourceData, meta in
 
 	if d.HasChange("disable_tcp_connections") {
 		updateMask = append(updateMask, "disableTcpConnections")
+	}
+
+	if d.HasChange("max_usable_workstations") {
+		updateMask = append(updateMask, "maxUsableWorkstations")
 	}
 
 	if d.HasChange("allowed_ports") {
@@ -1874,6 +1899,23 @@ func flattenWorkstationsWorkstationConfigDegraded(v interface{}, d *schema.Resou
 
 func flattenWorkstationsWorkstationConfigDisableTcpConnections(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
+}
+
+func flattenWorkstationsWorkstationConfigMaxUsableWorkstations(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	// Handles the string fixed64 format
+	if strVal, ok := v.(string); ok {
+		if intVal, err := tpgresource.StringToFixed64(strVal); err == nil {
+			return intVal
+		}
+	}
+
+	// number values are represented as float64
+	if floatVal, ok := v.(float64); ok {
+		intVal := int(floatVal)
+		return intVal
+	}
+
+	return v // let terraform core handle it otherwise
 }
 
 func flattenWorkstationsWorkstationConfigAllowedPorts(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -2762,6 +2804,10 @@ func expandWorkstationsWorkstationConfigReadinessChecksPort(v interface{}, d tpg
 }
 
 func expandWorkstationsWorkstationConfigDisableTcpConnections(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandWorkstationsWorkstationConfigMaxUsableWorkstations(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
