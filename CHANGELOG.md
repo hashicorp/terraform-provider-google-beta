@@ -14,7 +14,6 @@ FEATURES:
 IMPROVEMENTS:
 * cloudfunctions: increased the timeouts to 20 minutes for `google_cloudfunctions_function` resource ([#8372](https://github.com/hashicorp/terraform-provider-google-beta/pull/8372))
 * cloudrunv2: added `invoker_iam_disabled` field to `google_cloud_run_v2_service` ([#8395](https://github.com/hashicorp/terraform-provider-google-beta/pull/8395))
-* compute: updated `google_compute_instance` documentation to disclose the current state of support on custom machine_types ([#8380](https://github.com/hashicorp/terraform-provider-google-beta/pull/8380))
 * compute: made `google_compute_network_firewall_policy_rule` use MMv1 engine instead of DCL. ([#8412](https://github.com/hashicorp/terraform-provider-google-beta/pull/8412))
 * compute: made `google_compute_region_network_firewall_policy_rule` use MMv1 engine instead of DCL. ([#8412](https://github.com/hashicorp/terraform-provider-google-beta/pull/8412))
 * compute: added `ip_address_selection_policy` field to `google_compute_backend_service` and `google_compute_region_backend_service`. ([#8413](https://github.com/hashicorp/terraform-provider-google-beta/pull/8413))
@@ -25,7 +24,7 @@ IMPROVEMENTS:
 * dialogflowcx: added `advanced_settings.logging_settings` and `advanced_settings.speech_settings` to `google_dialogflow_cx_agent` and `google_dialogflow_cx_flow` ([#8374](https://github.com/hashicorp/terraform-provider-google-beta/pull/8374))
 * networkconnectivity: added `linked_producer_vpc_network` field to `google_network_connectivity_spoke` resource ([#8376](https://github.com/hashicorp/terraform-provider-google-beta/pull/8376))
 * secretmanager: added `is_secret_data_base64` field to `google_secret_manager_secret_version` and `google_secret_manager_secret_version_access` datasources ([#8394](https://github.com/hashicorp/terraform-provider-google-beta/pull/8394))
-* secretmanagerregional: added `is_secret_data_base64` field to `google_secret_manager_regional_secret_version` and `google_secret_manager_regional_secret_version_access` datasources ([#8394](https://github.com/hashicorp/terraform-provider-google-beta/pull/8394))
+* secretmanager: added `is_secret_data_base64` field to `google_secret_manager_regional_secret_version` and `google_secret_manager_regional_secret_version_access` datasources ([#8394](https://github.com/hashicorp/terraform-provider-google-beta/pull/8394))
 * spanner: added `kms_key_names` to `encryption_config` in `google_spanner_database` ([#8403](https://github.com/hashicorp/terraform-provider-google-beta/pull/8403))
 * workstations: added `max_usable_workstations` field to `google_workstations_workstation_config` resource ([#8421](https://github.com/hashicorp/terraform-provider-google-beta/pull/8421))
 * workstations: added field `allowedPorts` to `google_workstations_workstation_config` ([#8402](https://github.com/hashicorp/terraform-provider-google-beta/pull/8402))
@@ -34,7 +33,7 @@ BUG FIXES:
 * bigquery: fixed a regression that caused `google_bigquery_dataset_iam_*` resources to attempt to set deleted IAM members, thereby triggering an API error ([#8408](https://github.com/hashicorp/terraform-provider-google-beta/pull/8408))
 * compute: fixed an issue in `google_compute_backend_service` and `google_compute_region_backend_service` to allow sending `false` for `iap.enabled` ([#8369](https://github.com/hashicorp/terraform-provider-google-beta/pull/8369))
 * container: `node_config.linux_config`, `node_config.workload_metadata_config` and `node_config.kubelet_config` will now successfully send empty messages to the API when `terraform plan` indicates they are being removed, rather than null, which caused an error. The sole reliable case is `node_config.linux_config` when the block is removed, where there will still be a permadiff, but the update request that's triggered will no longer error and other changes displayed in the plan should go through. ([#8400](https://github.com/hashicorp/terraform-provider-google-beta/pull/8400))
-* pubsub: fixed permadiff with configuring an empty `retry_policy`. ([#8365](https://github.com/hashicorp/terraform-provider-google-beta/pull/8365))
+* pubsub: fixed permadiff with configuring an empty `retry_policy` in `google_pubsub_subscription` ([#8365](https://github.com/hashicorp/terraform-provider-google-beta/pull/8365))
 
 ## 5.44.2 (October 14, 2024)
 
