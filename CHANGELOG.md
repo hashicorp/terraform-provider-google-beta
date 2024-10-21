@@ -27,7 +27,7 @@ IMPROVEMENTS:
 * secretmanager: added `is_secret_data_base64` field to `google_secret_manager_regional_secret_version` and `google_secret_manager_regional_secret_version_access` datasources ([#8394](https://github.com/hashicorp/terraform-provider-google-beta/pull/8394))
 * spanner: added `kms_key_names` to `encryption_config` in `google_spanner_database` ([#8403](https://github.com/hashicorp/terraform-provider-google-beta/pull/8403))
 * workstations: added `max_usable_workstations` field to `google_workstations_workstation_config` resource ([#8421](https://github.com/hashicorp/terraform-provider-google-beta/pull/8421))
-* workstations: added field `allowedPorts` to `google_workstations_workstation_config` ([#8402](https://github.com/hashicorp/terraform-provider-google-beta/pull/8402))
+* workstations: added field `allowed_ports` to `google_workstations_workstation_config` ([#8402](https://github.com/hashicorp/terraform-provider-google-beta/pull/8402))
 
 BUG FIXES:
 * bigquery: fixed a regression that caused `google_bigquery_dataset_iam_*` resources to attempt to set deleted IAM members, thereby triggering an API error ([#8408](https://github.com/hashicorp/terraform-provider-google-beta/pull/8408))
