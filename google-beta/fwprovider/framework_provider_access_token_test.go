@@ -263,7 +263,7 @@ func testAccFwProvider_access_token_authInUse(t *testing.T) {
 }
 
 // testAccFwProvider_access_tokenInProviderBlock allows setting the access_token argument in a provider block.
-// This function uses data.google_provider_config_plugin_framework because it is implemented with the SDKv2
+// This function uses data.google_provider_config_plugin_framework because it is implemented with the PF
 func testAccFwProvider_access_tokenInProviderBlock(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 provider "google" {
