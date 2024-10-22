@@ -9427,11 +9427,6 @@ resource "google_container_cluster" "with_autopilot" {
   datapath_provider = "ADVANCED_DATAPATH"
 
   deletion_protection = false
-
-  timeouts {
-    create = "30m"
-    update = "40m"
-  }
 }
 `, clusterName, networkName, subnetworkName)
 }
@@ -9491,11 +9486,6 @@ resource "google_container_cluster" "with_autopilot" {
   enable_cilium_clusterwide_network_policy = true
 
   deletion_protection = false
-
-  timeouts {
-    create = "30m"
-    update = "40m"
-  }
 }
 `, clusterName, networkName, subnetworkName)
 }
@@ -10771,11 +10761,6 @@ resource "google_container_cluster" "primary" {
   network    = "%[4]s"
   subnetwork    = "%[5]s"
 
-  timeouts {
-    create = "30m"
-    update = "40m"
-  }
-
   depends_on = [time_sleep.wait_120_seconds]
 }
 `, projectID, randomSuffix, clusterName, networkName, subnetworkName)
@@ -10912,11 +10897,6 @@ resource "google_container_cluster" "with_autopilot" {
   }
   vertical_pod_autoscaling {
     enabled = true
-  }
-
-  timeouts {
-	create = "30m"
-	update = "40m"
   }
 
   depends_on = [time_sleep.wait_120_seconds]
@@ -11058,11 +11038,6 @@ resource "google_container_cluster" "with_autopilot" {
     enabled = true
   }
 
-  timeouts {
-	create = "30m"
-	update = "40m"
-  }
-
   depends_on = [time_sleep.wait_120_seconds]
 }
 `, projectID, randomSuffix, clusterName, networkName, subnetworkName)
@@ -11193,11 +11168,6 @@ resource "google_container_cluster" "with_autopilot" {
   }
   vertical_pod_autoscaling {
     enabled = true
-  }
-
-  timeouts {
-	create = "30m"
-	update = "40m"
   }
 
   depends_on = [time_sleep.wait_120_seconds]
