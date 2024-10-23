@@ -144,7 +144,7 @@ func TestAccFilestoreInstance_filestoreInstanceProtocolExample(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckFilestoreInstanceDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -163,7 +163,6 @@ func TestAccFilestoreInstance_filestoreInstanceProtocolExample(t *testing.T) {
 func testAccFilestoreInstance_filestoreInstanceProtocolExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_filestore_instance" "instance" {
-  provider = google-beta
   name     = "tf-test-test-instance%{random_suffix}"
   location = "us-central1"
   tier     = "ENTERPRISE"
