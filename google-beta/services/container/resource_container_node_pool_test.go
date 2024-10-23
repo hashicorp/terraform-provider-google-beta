@@ -837,7 +837,6 @@ resource "google_compute_subnetwork" "container_subnetwork" {
 resource "google_container_cluster" "cluster" {
   name               = "%s"
   location           = "us-central1-a"
-  min_master_version = "1.27"
   initial_node_count = 1
 
   network    = google_compute_network.container_network.name
@@ -2552,10 +2551,11 @@ resource "google_container_cluster" "cluster" {
   name               = "%s"
   location           = "us-central1"
   initial_node_count = 3
-  min_master_version = "1.27"
-  deletion_protection = false
-  network    = "%s"
+
+  network       = "%s"
   subnetwork    = "%s"
+
+  deletion_protection = false
 }
 
 resource "google_container_node_pool" "np" {
@@ -2578,10 +2578,11 @@ resource "google_container_cluster" "cluster" {
   name               = "%s"
   location           = "us-central1"
   initial_node_count = 3
-  min_master_version = "1.27"
-  deletion_protection = false
-  network    = "%s"
+
+  network       = "%s"
   subnetwork    = "%s"
+
+  deletion_protection = false
 }
 
 resource "google_container_node_pool" "np" {
@@ -2608,11 +2609,12 @@ resource "google_container_cluster" "cluster" {
   provider           = google.user-project-override
   name               = "%s"
   location           = "us-central1"
-  initial_node_count = 3
-  min_master_version = "1.27"
-  deletion_protection = false
-  network    = "%s"
+
+  network       = "%s"
   subnetwork    = "%s"
+
+  initial_node_count = 3
+  deletion_protection = false
 }
 
 resource "google_container_node_pool" "np" {
