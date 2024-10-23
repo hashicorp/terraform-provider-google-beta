@@ -159,6 +159,7 @@ resource "google_memorystore_instance" "instance-full" {
   }
   engine_version              = "VALKEY_7_2"
   deletion_protection_enabled = false
+  mode = "CLUSTER"
   persistence_config {
     mode = "RDB"
     rdb_config {
