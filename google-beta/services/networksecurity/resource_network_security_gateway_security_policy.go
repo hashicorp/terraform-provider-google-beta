@@ -73,9 +73,10 @@ The default value is 'global'.`,
 				Default: "global",
 			},
 			"tls_inspection_policy": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				Description: `Name of a TlsInspectionPolicy resource that defines how TLS inspection is performed for any rule that enables it.`,
+				Type:     schema.TypeString,
+				Optional: true,
+				Description: `Name of a TlsInspectionPolicy resource that defines how TLS inspection is performed for any rule that enables it.
+Note: google_network_security_tls_inspection_policy resource is still in [Beta](https://terraform.io/docs/providers/google/guides/provider_versions.html) therefore it will need to import the provider.`,
 			},
 			"create_time": {
 				Type:     schema.TypeString,
