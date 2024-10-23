@@ -590,7 +590,7 @@ func TestAccDataprocMetastoreService_dataprocMetastoreServiceAutoscalingMaxScali
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
 		CheckDestroy:             testAccCheckDataprocMetastoreServiceDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -609,6 +609,7 @@ func TestAccDataprocMetastoreService_dataprocMetastoreServiceAutoscalingMaxScali
 func testAccDataprocMetastoreService_dataprocMetastoreServiceAutoscalingMaxScalingFactorExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_dataproc_metastore_service" "test_resource" {
+  provider = google-beta
   service_id = "tf-test-test-service%{random_suffix}"
   location   = "us-central1"
 
@@ -641,7 +642,7 @@ func TestAccDataprocMetastoreService_dataprocMetastoreServiceAutoscalingMinAndMa
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
 		CheckDestroy:             testAccCheckDataprocMetastoreServiceDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -660,6 +661,7 @@ func TestAccDataprocMetastoreService_dataprocMetastoreServiceAutoscalingMinAndMa
 func testAccDataprocMetastoreService_dataprocMetastoreServiceAutoscalingMinAndMaxScalingFactorExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_dataproc_metastore_service" "test_resource" {
+  provider = google-beta
   service_id = "tf-test-test-service%{random_suffix}"
   location   = "us-central1"
 
@@ -693,7 +695,7 @@ func TestAccDataprocMetastoreService_dataprocMetastoreServiceAutoscalingMinScali
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
 		CheckDestroy:             testAccCheckDataprocMetastoreServiceDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -712,6 +714,7 @@ func TestAccDataprocMetastoreService_dataprocMetastoreServiceAutoscalingMinScali
 func testAccDataprocMetastoreService_dataprocMetastoreServiceAutoscalingMinScalingFactorExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_dataproc_metastore_service" "test_resource" {
+  provider = google-beta
   service_id = "tf-test-test-service%{random_suffix}"
   location   = "us-central1"
 
