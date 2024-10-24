@@ -22,10 +22,10 @@ IMPROVEMENTS:
 * compute: added `key_revocation_action_type` to `google_compute_instance` and related resources ([#8473](https://github.com/hashicorp/terraform-provider-google-beta/pull/8473))
 * looker: added `deletion_policy` to `google_looker_instance` to allow force-destroying instances with nested resources by setting `deletion_policy = FORCE` ([#8453](https://github.com/hashicorp/terraform-provider-google-beta/pull/8453))
 * monitoring: added `alert_strategy.notification_prompts` field to `google_monitoring_alert_policy` ([#8457](https://github.com/hashicorp/terraform-provider-google-beta/pull/8457))
-* storage: added 'hierarchical_namespace' to 'google_storage_bucket' resource ([#8428](https://github.com/hashicorp/terraform-provider-google-beta/pull/8428))
+* storage: added `hierarchical_namespace` to `google_storage_bucket` resource ([#8428](https://github.com/hashicorp/terraform-provider-google-beta/pull/8428))
 * sql: removed the client-side default of `ENTERPRISE` for `edition` in `google_sql_database_instance` so that `edition` is determined by the API when unset. This will cause new instances to use `ENTERPRISE_PLUS` as the default for POSTGRES_16. ([#8490](https://github.com/hashicorp/terraform-provider-google-beta/pull/8490))
 * vmwareengine: added `autoscaling_settings` to `google_vmwareengine_cluster` resource ([#8477](https://github.com/hashicorp/terraform-provider-google-beta/pull/8477))
-* workstations: added `max_usable_workstations`  field to `google_workstations_workstation_config` resource. ([#8421](https://github.com/hashicorp/terraform-provider-google-beta/pull/8421))
+* workstations: added `max_usable_workstations` field to `google_workstations_workstation_config` resource. ([#8421](https://github.com/hashicorp/terraform-provider-google-beta/pull/8421))
 
 BUG FIXES:
 * compute: fixed an issue where immutable `distribution_zones` was incorrectly sent to the API when updating `distribution_policy_target_shape` in `google_compute_region_instance_group_manager` resource ([#8470](https://github.com/hashicorp/terraform-provider-google-beta/pull/8470))
