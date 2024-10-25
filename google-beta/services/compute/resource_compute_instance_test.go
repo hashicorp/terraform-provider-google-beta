@@ -5103,8 +5103,8 @@ resource "google_tags_tag_key" "key" {
 }
 
 resource "google_tags_tag_value" "value" {
-  parent = "tagKeys/${google_tags_tag_key.key.name}"
-  short_name = "foo%{random_suffix}"
+  parent      = google_tags_tag_key.key.id
+  short_name  = "foo%{random_suffix}"
   description = "For foo resources."
 }
 
@@ -5122,14 +5122,14 @@ resource "google_compute_instance" "foobar" {
     initialize_params {
       image = data.google_compute_image.my_image.self_link
       resource_manager_tags = {
-        "tagKeys/${google_tags_tag_key.key.name}" = "tagValues/${google_tags_tag_value.value.name}"
+        (google_tags_tag_key.key.id) = google_tags_tag_value.value.id
       }
     }
   }
 
   params {
     resource_manager_tags = {
-      "tagKeys/${google_tags_tag_key.key.name}" = "tagValues/${google_tags_tag_value.value.name}"
+      (google_tags_tag_key.key.id) = google_tags_tag_value.value.id
     }
   }
 
@@ -5149,8 +5149,8 @@ resource "google_tags_tag_key" "key" {
 }
 
 resource "google_tags_tag_value" "value" {
-  parent = "tagKeys/${google_tags_tag_key.key.name}"
-  short_name = "foo%{random_suffix}"
+  parent      = google_tags_tag_key.key.id
+  short_name  = "foo%{random_suffix}"
   description = "For foo resources."
 }
 
@@ -5161,8 +5161,8 @@ resource "google_tags_tag_key" "key_new" {
 }
 
 resource "google_tags_tag_value" "value_new" {
-  parent = "tagKeys/${google_tags_tag_key.key_new.name}"
-  short_name = "foonew%{random_suffix}"
+  parent      = google_tags_tag_key.key_new.id
+  short_name  = "foonew%{random_suffix}"
   description = "New value for foo resources."
 }
 
@@ -5180,15 +5180,15 @@ resource "google_compute_instance" "foobar" {
     initialize_params {
       image = data.google_compute_image.my_image.self_link
       resource_manager_tags = {
-        "tagKeys/${google_tags_tag_key.key.name}" = "tagValues/${google_tags_tag_value.value.name}"
+        (google_tags_tag_key.key.id) = google_tags_tag_value.value.id
       }
     }
   }
 
   params {
     resource_manager_tags = {
-      "tagKeys/${google_tags_tag_key.key.name}"     = "tagValues/${google_tags_tag_value.value.name}"
-      "tagKeys/${google_tags_tag_key.key_new.name}" = "tagValues/${google_tags_tag_value.value_new.name}"
+      (google_tags_tag_key.key.id)     = google_tags_tag_value.value.id
+      (google_tags_tag_key.key_new.id) = google_tags_tag_value.value_new.id
     }
   }
 
