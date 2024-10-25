@@ -1181,7 +1181,7 @@ func resourceContainerClusterResourceV1() *schema.Resource {
 				},
 			},
 
-			"node_config": clusterSchemaNodeConfig(),
+			"node_config": schemaNodeConfig(),
 
 			"node_pool": {
 				Type:     schema.TypeList,
