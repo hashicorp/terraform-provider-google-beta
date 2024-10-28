@@ -211,10 +211,9 @@ func TestAccContainerCluster_withAddons(t *testing.T) {
 				Config: testAccContainerCluster_withAddons(pid, clusterName, networkName, subnetworkName),
 			},
 			{
-				ResourceName:      "google_container_cluster.primary",
-				ImportState:       true,
-				ImportStateVerify: true,
-				// TODO: clean up this list in `4.0.0`, remove both `workload_identity_config` fields (same for below)
+				ResourceName:            "google_container_cluster.primary",
+				ImportState:             true,
+				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"min_master_version", "deletion_protection"},
 			},
 			{
@@ -226,16 +225,15 @@ func TestAccContainerCluster_withAddons(t *testing.T) {
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"min_master_version", "deletion_protection"},
 			},
-			// Issue with cloudrun_config addon: https://github.com/hashicorp/terraform-provider-google/issues/11943
-			// {
-			// 	Config: testAccContainerCluster_withInternalLoadBalancer(pid, clusterName, networkName, subnetworkName),
-			// },
-			// {
-			// 	ResourceName:            "google_container_cluster.primary",
-			// 	ImportState:             true,
-			// 	ImportStateVerify:       true,
-			// 	ImportStateVerifyIgnore: []string{"min_master_version", "deletion_protection"},
-			// },
+			{
+				Config: testAccContainerCluster_withInternalLoadBalancer(pid, clusterName, networkName, subnetworkName),
+			},
+			{
+				ResourceName:            "google_container_cluster.primary",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"min_master_version", "deletion_protection"},
+			},
 		},
 	})
 }
@@ -5766,12 +5764,12 @@ resource "google_container_cluster" "primary" {
     gce_persistent_disk_csi_driver_config {
       enabled = false
     }
-	gke_backup_agent_config {
-	  enabled = false
-	}
-	config_connector_config {
-	  enabled = false
-	}
+    gke_backup_agent_config {
+      enabled = false
+    }
+    config_connector_config {
+      enabled = false
+    }
     gcs_fuse_csi_driver_config {
       enabled = false
     }
@@ -5789,9 +5787,10 @@ resource "google_container_cluster" "primary" {
       enabled = false
     }
   }
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, projectID, clusterName, networkName, subnetworkName)
 }
@@ -5837,12 +5836,12 @@ resource "google_container_cluster" "primary" {
     gce_persistent_disk_csi_driver_config {
       enabled = true
     }
-  gke_backup_agent_config {
-    enabled = true
-  }
-  config_connector_config {
-    enabled = true
-  }
+    gke_backup_agent_config {
+      enabled = true
+    }
+    config_connector_config {
+      enabled = true
+    }
     gcs_fuse_csi_driver_config {
       enabled = true
     }
@@ -5866,52 +5865,53 @@ resource "google_container_cluster" "primary" {
       enabled = true
     }
 	}
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, projectID, clusterName, networkName, subnetworkName)
 }
 
-// Issue with cloudrun_config addon: https://github.com/hashicorp/terraform-provider-google/issues/11943/
-// func testAccContainerCluster_withInternalLoadBalancer(projectID string, clusterName, networkName, subnetworkName string) string {
-// 	return fmt.Sprintf(`
-// data "google_project" "project" {
-//   project_id = "%s"
-// }
+func testAccContainerCluster_withInternalLoadBalancer(projectID string, clusterName, networkName, subnetworkName string) string {
+	return fmt.Sprintf(`
+data "google_project" "project" {
+  project_id = "%s"
+}
 
-// resource "google_container_cluster" "primary" {
-//   name               = "%s"
-//   location           = "us-central1-a"
-//   initial_node_count = 1
+resource "google_container_cluster" "primary" {
+  name               = "%s"
+  location           = "us-central1-a"
+  initial_node_count = 1
 
-//   min_master_version = "latest"
+  min_master_version = "latest"
 
-//   workload_identity_config {
-//     workload_pool = "${data.google_project.project.project_id}.svc.id.goog"
-//   }
+  workload_identity_config {
+    workload_pool = "${data.google_project.project.project_id}.svc.id.goog"
+  }
 
-//   addons_config {
-//     http_load_balancing {
-//       disabled = false
-//     }
-//     horizontal_pod_autoscaling {
-//       disabled = false
-//     }
-//     network_policy_config {
-//       disabled = false
-//     }
-//     cloudrun_config {
-// 	  disabled = false
-// 	  load_balancer_type = "LOAD_BALANCER_TYPE_INTERNAL"
-//     }
-//   }
-//   deletion_protection = false
-//   network    = "%s"
-//   subnetwork    = "%s"
-// }
-// `, projectID, clusterName, networkName, subnetworkName)
-// }
+  addons_config {
+    http_load_balancing {
+      disabled = false
+    }
+    horizontal_pod_autoscaling {
+      disabled = false
+    }
+    network_policy_config {
+      disabled = false
+    }
+    cloudrun_config {
+      disabled = false
+      load_balancer_type = "LOAD_BALANCER_TYPE_INTERNAL"
+    }
+  }
+  network    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
+}
+`, projectID, clusterName, networkName, subnetworkName)
+}
 
 func testAccContainerCluster_withNotificationConfig(clusterName, topic, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
