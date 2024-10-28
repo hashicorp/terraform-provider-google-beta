@@ -157,6 +157,74 @@ resource "google_compute_region_security_policy_rule" "policy_rule_two" {
 `, context)
 }
 
+func TestAccComputeRegionSecurityPolicyRule_regionSecurityPolicyRuleDefaultRuleExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"random_suffix": acctest.RandString(t, 10),
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckComputeRegionSecurityPolicyRuleDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeRegionSecurityPolicyRule_regionSecurityPolicyRuleDefaultRuleExample(context),
+			},
+			{
+				ResourceName:            "google_compute_region_security_policy_rule.policy_rule",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"region", "security_policy"},
+			},
+		},
+	})
+}
+
+func testAccComputeRegionSecurityPolicyRule_regionSecurityPolicyRuleDefaultRuleExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_compute_region_security_policy" "default" {
+  provider    = google-beta
+  region      = "us-west2"
+  name        = "policywithdefaultrule%{random_suffix}"
+  description = "basic region security policy"
+  type        = "CLOUD_ARMOR"
+}
+
+resource "google_compute_region_security_policy_rule" "default_rule" {
+  provider        = google-beta
+  region          = "us-west2"
+  security_policy = google_compute_region_security_policy.default.name
+  description     = "new rule"
+  action          = "deny"
+  priority        = "2147483647"
+  match {
+    versioned_expr = "SRC_IPS_V1"
+    config {
+      src_ip_ranges = ["*"]
+    }
+  }
+}
+
+resource "google_compute_region_security_policy_rule" "policy_rule" {
+  provider        = google-beta
+  region          = "us-west2"
+  security_policy = google_compute_region_security_policy.default.name
+  description     = "new rule"
+  priority        = 100
+  match {
+    versioned_expr = "SRC_IPS_V1"
+    config {
+      src_ip_ranges = ["10.10.0.0/16"]
+    }
+  }
+  action          = "allow"
+  preview         = true
+}
+`, context)
+}
+
 func TestAccComputeRegionSecurityPolicyRule_regionSecurityPolicyRuleWithPreconfiguredWafConfigExample(t *testing.T) {
 	t.Parallel()
 
