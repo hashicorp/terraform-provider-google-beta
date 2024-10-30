@@ -19,7 +19,7 @@ func TestAccMemorystoreInstance_updateReplicaCount(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckMemorystoreInstanceDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -56,7 +56,7 @@ func TestAccMemorystoreInstance_updateShardCount(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckMemorystoreInstanceDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -93,7 +93,7 @@ func TestAccMemorystoreInstance_updateRedisConfigs(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckMemorystoreInstanceDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -153,7 +153,7 @@ func TestAccMemorystoreInstance_updateDeletionProtection(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckMemorystoreInstanceDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -196,7 +196,7 @@ func TestAccMemorystoreInstance_updatePersistence(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckMemorystoreInstanceDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -270,7 +270,6 @@ func createOrUpdateMemorystoreInstance(params *InstanceParams) string {
 	}
 	return fmt.Sprintf(`
 resource "google_memorystore_instance" "test" {
-	provider = google-beta
     instance_id  = "%s"
 	replica_count = %d
 	shard_count = %d
@@ -293,7 +292,6 @@ resource "google_memorystore_instance" "test" {
 }
 
 resource "google_network_connectivity_service_connection_policy" "default" {
-	provider = google-beta
 	name = "%s"
 	location = "europe-west1"
 	service_class = "gcp-memorystore"
@@ -305,7 +303,6 @@ resource "google_network_connectivity_service_connection_policy" "default" {
 }
 
 resource "google_compute_subnetwork" "producer_subnet" {
-	provider      = google-beta
 	name          = "%s"
 	ip_cidr_range = "10.0.0.248/29"
 	region        = "europe-west1"
@@ -313,13 +310,11 @@ resource "google_compute_subnetwork" "producer_subnet" {
 }
 
 resource "google_compute_network" "producer_net" {
-	provider                = google-beta
 	name                    = "%s"
 	auto_create_subnetworks = false
 }
 
 data "google_project" "project" {
-  provider = google-beta
 }
 `, params.name, params.replicaCount, params.shardCount, params.nodeType, params.deletionProtectionEnabled, strBuilder.String(), zoneDistributionConfigBlock, persistenceBlock, lifecycleBlock, params.name, params.name, params.name)
 }
