@@ -69,7 +69,7 @@ resource "google_tags_tag_key" "tag_key1" {
 
 resource "google_tags_tag_value" "tag_value1" {
   provider   = google-beta
-  parent     = "tagKeys/${google_tags_tag_key.tag_key1.name}"
+  parent     = google_tags_tag_key.tag_key1.id
   short_name = "%{value_short_name}"
 }
 
@@ -130,7 +130,7 @@ resource "google_workstations_workstation_config" "default" {
       disable_public_ip_addresses = true
       disable_ssh                 = false
       vm_tags = {
-        "tagKeys/${google_tags_tag_key.tag_key1.name}" = "tagValues/${google_tags_tag_value.tag_value1.name}"
+        (google_tags_tag_key.tag_key1.id) = google_tags_tag_value.tag_value1.id
       }
     }
   }
