@@ -8,6 +8,7 @@ FEATURES:
 IMPROVEMENTS:
 * apphub: added `GLOBAL` enum value to `scope.type` field in `google_apphub_application` resource ([#8504](https://github.com/hashicorp/terraform-provider-google-beta/pull/8504))
 * assuredworkloads: added `workload_options` field to `google_assured_workloads_workload` resource ([#8495](https://github.com/hashicorp/terraform-provider-google-beta/pull/8495))
+* backupdr: marked `networks` field optional in `google_backup_dr_management_server` resource ([#8594](https://github.com/hashicorp/terraform-provider-google-beta/pull/8594))
 * bigquery: added `external_catalog_dataset_options` fields to `google_bigquery_dataset` resource (beta) ([#8558](https://github.com/hashicorp/terraform-provider-google-beta/pull/8558))
 * bigquery: added descriptive validation errors for missing required fields in `google_bigquery_job` destination table configuration ([#8542](https://github.com/hashicorp/terraform-provider-google-beta/pull/8542))
 * compute: `desired_status` on google_compute_instance can now be set to `TERMINATED` or `SUSPENDED` on instance creation ([#8515](https://github.com/hashicorp/terraform-provider-google-beta/pull/8515))
