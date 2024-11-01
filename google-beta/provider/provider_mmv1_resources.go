@@ -170,6 +170,7 @@ var handwrittenDatasources = map[string]*schema.Resource{
 	"google_apphub_application":                            apphub.DataSourceGoogleApphubApplication(),
 	"google_apphub_discovered_service":                     apphub.DataSourceApphubDiscoveredService(),
 	"google_backup_dr_management_server":                   backupdr.DataSourceGoogleCloudBackupDRService(),
+	"google_backup_dr_backup_plan":                         backupdr.DataSourceGoogleCloudBackupDRBackupPlan(),
 	"google_beyondcorp_app_connection":                     beyondcorp.DataSourceGoogleBeyondcorpAppConnection(),
 	"google_beyondcorp_app_connector":                      beyondcorp.DataSourceGoogleBeyondcorpAppConnector(),
 	"google_beyondcorp_app_gateway":                        beyondcorp.DataSourceGoogleBeyondcorpAppGateway(),
@@ -500,9 +501,9 @@ var handwrittenIAMDatasources = map[string]*schema.Resource{
 }
 
 // Resources
-// Generated resources: 547
+// Generated resources: 548
 // Generated IAM resources: 291
-// Total generated resources: 838
+// Total generated resources: 839
 var generatedResources = map[string]*schema.Resource{
 	"google_folder_access_approval_settings":                                     accessapproval.ResourceAccessApprovalFolderSettings(),
 	"google_organization_access_approval_settings":                               accessapproval.ResourceAccessApprovalOrganizationSettings(),
@@ -582,6 +583,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_artifact_registry_repository_iam_member":                             tpgiamresource.ResourceIamMember(artifactregistry.ArtifactRegistryRepositoryIamSchema, artifactregistry.ArtifactRegistryRepositoryIamUpdaterProducer, artifactregistry.ArtifactRegistryRepositoryIdParseFunc),
 	"google_artifact_registry_repository_iam_policy":                             tpgiamresource.ResourceIamPolicy(artifactregistry.ArtifactRegistryRepositoryIamSchema, artifactregistry.ArtifactRegistryRepositoryIamUpdaterProducer, artifactregistry.ArtifactRegistryRepositoryIdParseFunc),
 	"google_artifact_registry_vpcsc_config":                                      artifactregistry.ResourceArtifactRegistryVPCSCConfig(),
+	"google_backup_dr_backup_plan":                                               backupdr.ResourceBackupDRBackupPlan(),
 	"google_backup_dr_backup_vault":                                              backupdr.ResourceBackupDRBackupVault(),
 	"google_backup_dr_management_server":                                         backupdr.ResourceBackupDRManagementServer(),
 	"google_beyondcorp_app_connection":                                           beyondcorp.ResourceBeyondcorpAppConnection(),
