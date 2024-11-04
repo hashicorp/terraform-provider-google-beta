@@ -598,7 +598,7 @@ var DefaultBasePaths = map[string]string{
 	MonitoringBasePathKey:               "https://monitoring.googleapis.com/",
 	NetappBasePathKey:                   "https://netapp.googleapis.com/v1beta1/",
 	NetworkConnectivityBasePathKey:      "https://networkconnectivity.googleapis.com/v1/",
-	NetworkManagementBasePathKey:        "https://networkmanagement.googleapis.com/v1/",
+	NetworkManagementBasePathKey:        "https://networkmanagement.googleapis.com/v1beta1/",
 	NetworkSecurityBasePathKey:          "https://networksecurity.googleapis.com/v1beta1/",
 	NetworkServicesBasePathKey:          "https://networkservices.googleapis.com/v1/",
 	NotebooksBasePathKey:                "https://notebooks.googleapis.com/v1/",
