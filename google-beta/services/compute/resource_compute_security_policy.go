@@ -6,8 +6,8 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"reflect"
 	"strings"
-
 	"time"
 
 	"github.com/hashicorp/errwrap"
@@ -21,6 +21,16 @@ import (
 
 	compute "google.golang.org/api/compute/v0.beta"
 )
+
+// IsEmptyValue does not consider a empty PreconfiguredWafConfig object as empty so we check it's nested values
+func preconfiguredWafConfigIsEmptyValue(config *compute.SecurityPolicyRulePreconfiguredWafConfig) bool {
+	if tpgresource.IsEmptyValue(reflect.ValueOf(config.Exclusions)) &&
+		tpgresource.IsEmptyValue(reflect.ValueOf(config.ForceSendFields)) &&
+		tpgresource.IsEmptyValue(reflect.ValueOf(config.NullFields)) {
+		return true
+	}
+	return false
+}
 
 func ResourceComputeSecurityPolicy() *schema.Resource {
 	return &schema.Resource{
@@ -720,7 +730,7 @@ func resourceComputeSecurityPolicyRead(d *schema.ResourceData, meta interface{})
 	if err := d.Set("type", securityPolicy.Type); err != nil {
 		return fmt.Errorf("Error setting type: %s", err)
 	}
-	if err := d.Set("rule", flattenSecurityPolicyRules(securityPolicy.Rules)); err != nil {
+	if err := d.Set("rule", flattenSecurityPolicyRules(securityPolicy.Rules, d)); err != nil {
 		return err
 	}
 	if err := d.Set("fingerprint", securityPolicy.Fingerprint); err != nil {
@@ -1093,7 +1103,7 @@ func expandSecurityPolicyRulePreconfiguredWafConfigExclusionFieldParam(raw inter
 	}
 }
 
-func flattenSecurityPolicyRules(rules []*compute.SecurityPolicyRule) []map[string]interface{} {
+func flattenSecurityPolicyRules(rules []*compute.SecurityPolicyRule, d *schema.ResourceData) []map[string]interface{} {
 	rulesSchema := make([]map[string]interface{}, 0, len(rules))
 	for _, rule := range rules {
 		data := map[string]interface{}{
@@ -1102,7 +1112,7 @@ func flattenSecurityPolicyRules(rules []*compute.SecurityPolicyRule) []map[strin
 			"action":                   rule.Action,
 			"preview":                  rule.Preview,
 			"match":                    flattenMatch(rule.Match),
-			"preconfigured_waf_config": flattenPreconfiguredWafConfig(rule.PreconfiguredWafConfig),
+			"preconfigured_waf_config": flattenPreconfiguredWafConfig(rule.PreconfiguredWafConfig, d, int(rule.Priority)),
 			"rate_limit_options":       flattenSecurityPolicyRuleRateLimitOptions(rule.RateLimitOptions),
 			"redirect_options":         flattenSecurityPolicyRedirectOptions(rule.RedirectOptions),
 			"header_action":            flattenSecurityPolicyRuleHeaderAction(rule.HeaderAction),
@@ -1180,9 +1190,27 @@ func flattenMatchExpr(match *compute.SecurityPolicyRuleMatcher) []map[string]int
 	return []map[string]interface{}{data}
 }
 
-func flattenPreconfiguredWafConfig(config *compute.SecurityPolicyRulePreconfiguredWafConfig) []map[string]interface{} {
+func flattenPreconfiguredWafConfig(config *compute.SecurityPolicyRulePreconfiguredWafConfig, d *schema.ResourceData, rulePriority int) []map[string]interface{} {
 	if config == nil {
 		return nil
+	}
+
+	// We find the current value for this field in the config and check if its empty, then check if the API is returning a empty non-null value
+	if schemaRules, ok := d.GetOk("rule"); ok {
+		for _, itemRaw := range schemaRules.(*schema.Set).List() {
+			if itemRaw == nil {
+				continue
+			}
+			item := itemRaw.(map[string]interface{})
+
+			schemaPriority := item["priority"].(int)
+			if rulePriority == schemaPriority {
+				if preconfiguredWafConfigIsEmptyValue(config) && tpgresource.IsEmptyValue(reflect.ValueOf(item["preconfigured_waf_config"])) {
+					return nil
+				}
+				break
+			}
+		}
 	}
 
 	data := map[string]interface{}{
