@@ -1428,7 +1428,7 @@ func TestAccCloudRunService_emptyDirVolume(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudRunService_cloudRunServiceWithEmptyDirVolume(name, project),
@@ -1446,7 +1446,6 @@ func TestAccCloudRunService_emptyDirVolume(t *testing.T) {
 func testAccCloudRunService_cloudRunServiceWithEmptyDirVolume(name, project string) string {
 	return fmt.Sprintf(`
 resource "google_cloud_run_service" "default" {
-  provider = google-beta
   name     = "%s"
   location = "us-central1"
 
@@ -1454,7 +1453,6 @@ resource "google_cloud_run_service" "default" {
     namespace = "%s"
     annotations = {
       generated-by = "magic-modules"
-      "run.googleapis.com/launch-stage" = "BETA"
     }
   }
 
