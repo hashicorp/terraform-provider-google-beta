@@ -24,7 +24,7 @@ IMPROVEMENTS:
 * vmwareengine: added `autoscaling_settings` to `google_vmwareengine_private_cloud` resource ([#8529](https://github.com/hashicorp/terraform-provider-google-beta/pull/8529))
 
 BUG FIXES:
-* accesscontextmanager: Fixed permadiff for perimeter ingress / egress rule resources ([#8526](https://github.com/hashicorp/terraform-provider-google-beta/pull/8526))
+* accesscontextmanager: fixed permadiff for perimeter ingress / egress rule resources ([#8526](https://github.com/hashicorp/terraform-provider-google-beta/pull/8526))
 * compute: fixed an error in `google_compute_region_security_policy_rule` that prevented updating the default rule ([#8535](https://github.com/hashicorp/terraform-provider-google-beta/pull/8535))
 * compute: fixed an error in `google_compute_security_policy_rule` that prevented updating the default rule ([#8535](https://github.com/hashicorp/terraform-provider-google-beta/pull/8535))
 * container: fixed missing in-place updates for some `google_container_cluster.node_config` subfields ([#8522](https://github.com/hashicorp/terraform-provider-google-beta/pull/8522))
