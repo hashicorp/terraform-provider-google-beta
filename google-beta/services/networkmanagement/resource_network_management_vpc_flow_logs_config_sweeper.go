@@ -30,12 +30,12 @@ import (
 )
 
 func init() {
-	sweeper.AddTestSweepers("NetworkManagementConnectivityTest", testSweepNetworkManagementConnectivityTest)
+	sweeper.AddTestSweepers("NetworkManagementVpcFlowLogsConfig", testSweepNetworkManagementVpcFlowLogsConfig)
 }
 
 // At the time of writing, the CI only passes us-central1 as the region
-func testSweepNetworkManagementConnectivityTest(region string) error {
-	resourceName := "NetworkManagementConnectivityTest"
+func testSweepNetworkManagementVpcFlowLogsConfig(region string) error {
+	resourceName := "NetworkManagementVpcFlowLogsConfig"
 	log.Printf("[INFO][SWEEPER_LOG] Starting sweeper for %s", resourceName)
 
 	config, err := sweeper.SharedConfigForRegion(region)
@@ -64,7 +64,7 @@ func testSweepNetworkManagementConnectivityTest(region string) error {
 		},
 	}
 
-	listTemplate := strings.Split("https://networkmanagement.googleapis.com/v1beta1/projects/{{project}}/locations/global/connectivityTests", "?")[0]
+	listTemplate := strings.Split("https://networkmanagement.googleapis.com/v1beta1/projects/{{project}}/locations/{{location}}/vpcFlowLogsConfigs", "?")[0]
 	listUrl, err := tpgresource.ReplaceVars(d, config, listTemplate)
 	if err != nil {
 		log.Printf("[INFO][SWEEPER_LOG] error preparing sweeper list url: %s", err)
@@ -83,7 +83,7 @@ func testSweepNetworkManagementConnectivityTest(region string) error {
 		return nil
 	}
 
-	resourceList, ok := res["connectivityTests"]
+	resourceList, ok := res["vpcFlowLogsConfigs"]
 	if !ok {
 		log.Printf("[INFO][SWEEPER_LOG] Nothing found in response.")
 		return nil
@@ -96,19 +96,23 @@ func testSweepNetworkManagementConnectivityTest(region string) error {
 	nonPrefixCount := 0
 	for _, ri := range rl {
 		obj := ri.(map[string]interface{})
-		if obj["name"] == nil {
-			log.Printf("[INFO][SWEEPER_LOG] %s resource name was nil", resourceName)
+		var name string
+		// Id detected in the delete URL, attempt to use id.
+		if obj["id"] != nil {
+			name = tpgresource.GetResourceNameFromSelfLink(obj["id"].(string))
+		} else if obj["name"] != nil {
+			name = tpgresource.GetResourceNameFromSelfLink(obj["name"].(string))
+		} else {
+			log.Printf("[INFO][SWEEPER_LOG] %s resource name and id were nil", resourceName)
 			return nil
 		}
-
-		name := tpgresource.GetResourceNameFromSelfLink(obj["name"].(string))
 		// Skip resources that shouldn't be sweeped
 		if !sweeper.IsSweepableTestResource(name) {
 			nonPrefixCount++
 			continue
 		}
 
-		deleteTemplate := "https://networkmanagement.googleapis.com/v1beta1/projects/{{project}}/locations/global/connectivityTests/{{name}}"
+		deleteTemplate := "https://networkmanagement.googleapis.com/v1beta1/projects/{{project}}/locations/{{location}}/vpcFlowLogsConfigs/{{vpc_flow_logs_config_id}}"
 		deleteUrl, err := tpgresource.ReplaceVars(d, config, deleteTemplate)
 		if err != nil {
 			log.Printf("[INFO][SWEEPER_LOG] error preparing delete url: %s", err)
