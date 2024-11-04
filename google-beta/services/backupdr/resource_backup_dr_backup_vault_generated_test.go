@@ -51,7 +51,7 @@ func TestAccBackupDRBackupVault_backupDrBackupVaultFullExample(t *testing.T) {
 				ResourceName:            "google_backup_dr_backup_vault.backup-vault-test",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"allow_missing", "annotations", "backup_vault_id", "force_delete", "force_update", "labels", "location", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"allow_missing", "annotations", "backup_vault_id", "force_delete", "force_update", "ignore_backup_plan_references", "ignore_inactive_datasources", "labels", "location", "terraform_labels"},
 			},
 		},
 	})
@@ -74,7 +74,8 @@ resource "google_backup_dr_backup_vault" "backup-vault-test" {
     annotations2 = "baz1"
   }
   force_update = "true"
-  force_delete = "true"
+  ignore_inactive_datasources = "true"
+  ignore_backup_plan_references = "true"
   allow_missing = "true"
 }
 `, context)
