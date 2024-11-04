@@ -25,8 +25,8 @@ IMPROVEMENTS:
 
 BUG FIXES:
 * accesscontextmanager: Fixed permadiff for perimeter ingress / egress rule resources ([#8526](https://github.com/hashicorp/terraform-provider-google-beta/pull/8526))
-* compute: compute: fixed an error in `google_compute_region_security_policy_rule` that prevented updating the default rule ([#8535](https://github.com/hashicorp/terraform-provider-google-beta/pull/8535))
-* compute: compute: fixed an error in `google_compute_security_policy_rule` that prevented updating the default rule ([#8535](https://github.com/hashicorp/terraform-provider-google-beta/pull/8535))
+* compute: fixed an error in `google_compute_region_security_policy_rule` that prevented updating the default rule ([#8535](https://github.com/hashicorp/terraform-provider-google-beta/pull/8535))
+* compute: fixed an error in `google_compute_security_policy_rule` that prevented updating the default rule ([#8535](https://github.com/hashicorp/terraform-provider-google-beta/pull/8535))
 * container: fixed missing in-place updates for some `google_container_cluster.node_config` subfields ([#8522](https://github.com/hashicorp/terraform-provider-google-beta/pull/8522))
 
 ## 6.9.0 (October 28, 2024)
