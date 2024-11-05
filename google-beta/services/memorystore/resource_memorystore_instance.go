@@ -119,6 +119,17 @@ IAM_AUTH`,
 Please refer to the field 'effective_labels' for all of the labels present on the resource.`,
 				Elem: &schema.Schema{Type: schema.TypeString},
 			},
+			"mode": {
+				Type:         schema.TypeString,
+				Computed:     true,
+				Optional:     true,
+				ForceNew:     true,
+				ValidateFunc: verify.ValidateEnum([]string{"CLUSTER", "STANDALONE", ""}),
+				Description: `Optional. Standalone or cluster. 
+ Possible values:
+ CLUSTER
+STANDALONE Possible values: ["CLUSTER", "STANDALONE"]`,
+			},
 			"node_type": {
 				Type:     schema.TypeString,
 				Computed: true,
@@ -287,6 +298,14 @@ projects/{network_project}/global/networks/{network_id}.`,
 				Description: `All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.`,
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
+			"endpoints": {
+				Type:        schema.TypeList,
+				Computed:    true,
+				Description: `Endpoints for the instance.`,
+				Elem: &schema.Schema{
+					Type: schema.TypeList,
+				},
+			},
 			"name": {
 				Type:     schema.TypeString,
 				Computed: true,
@@ -313,6 +332,15 @@ Format: projects/{project}/locations/{location}/instances/{instance}`,
 				Description: `Output only. User inputs and resource details of the auto-created PSC connections.`,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
+						"connection_type": {
+							Type:     schema.TypeString,
+							Computed: true,
+							Description: `Output Only. Type of a PSC Connection. 
+ Possible values:
+ CONNECTION_TYPE_DISCOVERY 
+ CONNECTION_TYPE_PRIMARY 
+ CONNECTION_TYPE_READER`,
+						},
 						"forwarding_rule": {
 							Type:     schema.TypeString,
 							Computed: true,
@@ -331,6 +359,11 @@ projects/{project}/regions/{region}/forwardingRules/{forwarding_rule}`,
 							Description: `Output only. The consumer network where the IP address resides, in the form of
 projects/{project_id}/global/networks/{network_id}.`,
 						},
+						"port": {
+							Type:        schema.TypeInt,
+							Computed:    true,
+							Description: `Output only. Ports of the exposed endpoint.`,
+						},
 						"project_id": {
 							Type:        schema.TypeString,
 							Computed:    true,
@@ -341,6 +374,19 @@ projects/{project_id}/global/networks/{network_id}.`,
 							Computed: true,
 							Description: `Output only. The PSC connection id of the forwarding rule connected to the
 service attachment.`,
+						},
+						"psc_connection_status": {
+							Type:     schema.TypeString,
+							Computed: true,
+							Description: `Output Only. The status of the PSC connection: whether a connection exists and ACTIVE or it no longer exists. 
+ Possible values:
+ ACTIVE 
+ NOT_FOUND`,
+						},
+						"service_attachment": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: `Output only. The service attachment which is the target of the PSC connection, in the form of projects/{project-id}/regions/{region}/serviceAttachments/{service-attachment-id}.`,
 						},
 					},
 				},
@@ -499,6 +545,12 @@ func resourceMemorystoreInstanceCreate(d *schema.ResourceData, meta interface{})
 		return err
 	} else if v, ok := d.GetOkExists("deletion_protection_enabled"); !tpgresource.IsEmptyValue(reflect.ValueOf(deletionProtectionEnabledProp)) && (ok || !reflect.DeepEqual(v, deletionProtectionEnabledProp)) {
 		obj["deletionProtectionEnabled"] = deletionProtectionEnabledProp
+	}
+	modeProp, err := expandMemorystoreInstanceMode(d.Get("mode"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("mode"); !tpgresource.IsEmptyValue(reflect.ValueOf(modeProp)) && (ok || !reflect.DeepEqual(v, modeProp)) {
+		obj["mode"] = modeProp
 	}
 	labelsProp, err := expandMemorystoreInstanceEffectiveLabels(d.Get("effective_labels"), d, config)
 	if err != nil {
@@ -700,6 +752,12 @@ func resourceMemorystoreInstanceRead(d *schema.ResourceData, meta interface{}) e
 		return fmt.Errorf("Error reading Instance: %s", err)
 	}
 	if err := d.Set("deletion_protection_enabled", flattenMemorystoreInstanceDeletionProtectionEnabled(res["deletionProtectionEnabled"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Instance: %s", err)
+	}
+	if err := d.Set("endpoints", flattenMemorystoreInstanceEndpoints(res["endpoints"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Instance: %s", err)
+	}
+	if err := d.Set("mode", flattenMemorystoreInstanceMode(res["mode"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Instance: %s", err)
 	}
 	if err := d.Set("psc_auto_connections", flattenMemorystoreInstancePscAutoConnections(res["pscAutoConnections"], d, config)); err != nil {
@@ -1227,6 +1285,14 @@ func flattenMemorystoreInstanceDeletionProtectionEnabled(v interface{}, d *schem
 	return v
 }
 
+func flattenMemorystoreInstanceEndpoints(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenMemorystoreInstanceMode(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
 func flattenMemorystoreInstancePscAutoConnections(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return v
@@ -1240,11 +1306,15 @@ func flattenMemorystoreInstancePscAutoConnections(v interface{}, d *schema.Resou
 			continue
 		}
 		transformed = append(transformed, map[string]interface{}{
-			"psc_connection_id": flattenMemorystoreInstancePscAutoConnectionsPscConnectionId(original["pscConnectionId"], d, config),
-			"ip_address":        flattenMemorystoreInstancePscAutoConnectionsIpAddress(original["ipAddress"], d, config),
-			"forwarding_rule":   flattenMemorystoreInstancePscAutoConnectionsForwardingRule(original["forwardingRule"], d, config),
-			"project_id":        flattenMemorystoreInstancePscAutoConnectionsProjectId(original["projectId"], d, config),
-			"network":           flattenMemorystoreInstancePscAutoConnectionsNetwork(original["network"], d, config),
+			"psc_connection_id":     flattenMemorystoreInstancePscAutoConnectionsPscConnectionId(original["pscConnectionId"], d, config),
+			"ip_address":            flattenMemorystoreInstancePscAutoConnectionsIpAddress(original["ipAddress"], d, config),
+			"forwarding_rule":       flattenMemorystoreInstancePscAutoConnectionsForwardingRule(original["forwardingRule"], d, config),
+			"project_id":            flattenMemorystoreInstancePscAutoConnectionsProjectId(original["projectId"], d, config),
+			"network":               flattenMemorystoreInstancePscAutoConnectionsNetwork(original["network"], d, config),
+			"service_attachment":    flattenMemorystoreInstancePscAutoConnectionsServiceAttachment(original["serviceAttachment"], d, config),
+			"psc_connection_status": flattenMemorystoreInstancePscAutoConnectionsPscConnectionStatus(original["pscConnectionStatus"], d, config),
+			"connection_type":       flattenMemorystoreInstancePscAutoConnectionsConnectionType(original["connectionType"], d, config),
+			"port":                  flattenMemorystoreInstancePscAutoConnectionsPort(original["port"], d, config),
 		})
 	}
 	return transformed
@@ -1267,6 +1337,35 @@ func flattenMemorystoreInstancePscAutoConnectionsProjectId(v interface{}, d *sch
 
 func flattenMemorystoreInstancePscAutoConnectionsNetwork(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
+}
+
+func flattenMemorystoreInstancePscAutoConnectionsServiceAttachment(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenMemorystoreInstancePscAutoConnectionsPscConnectionStatus(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenMemorystoreInstancePscAutoConnectionsConnectionType(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenMemorystoreInstancePscAutoConnectionsPort(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	// Handles the string fixed64 format
+	if strVal, ok := v.(string); ok {
+		if intVal, err := tpgresource.StringToFixed64(strVal); err == nil {
+			return intVal
+		}
+	}
+
+	// number values are represented as float64
+	if floatVal, ok := v.(float64); ok {
+		intVal := int(floatVal)
+		return intVal
+	}
+
+	return v // let terraform core handle it otherwise
 }
 
 func flattenMemorystoreInstanceTerraformLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -1452,6 +1551,10 @@ func expandMemorystoreInstanceZoneDistributionConfigMode(v interface{}, d tpgres
 }
 
 func expandMemorystoreInstanceDeletionProtectionEnabled(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandMemorystoreInstanceMode(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 

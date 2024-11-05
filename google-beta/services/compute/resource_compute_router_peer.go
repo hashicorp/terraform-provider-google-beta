@@ -154,7 +154,7 @@ IP address is provided without a subnet mask, it is interpreted as, for IPv4, a 
 						"range": {
 							Type:     schema.TypeString,
 							Required: true,
-							Description: `The IP range to advertise. The value must be a
+							Description: `The IP range to learn. The value must be a
 CIDR-formatted string.`,
 						},
 					},
@@ -1276,7 +1276,6 @@ func flattenNestedComputeRouterBgpPeerIpv4NexthopAddress(v interface{}, d *schem
 func flattenNestedComputeRouterBgpPeerPeerIpv4NexthopAddress(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
-
 func flattenNestedComputeRouterBgpPeerExportPolicies(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
@@ -1511,7 +1510,6 @@ func expandNestedComputeRouterBgpPeerIpv4NexthopAddress(v interface{}, d tpgreso
 func expandNestedComputeRouterBgpPeerPeerIpv4NexthopAddress(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
-
 func expandNestedComputeRouterBgpPeerExportPolicies(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }

@@ -113,6 +113,15 @@ func TestAccComputeSecurityPolicy_withPreconfiguredWafConfig(t *testing.T) {
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
+			{
+				Config: testAccComputeSecurityPolicy_withPreconfiguredWafConfig_removed(spName),
+			},
+			{
+				ResourceName:            "google_compute_security_policy.policy",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"rule.1.preconfigured_waf_config.#", "rule.1.preconfigured_waf_config.0.%"}, // API will still return a empty object
+			},
 		},
 	})
 }
@@ -155,6 +164,38 @@ func TestAccComputeSecurityPolicy_update(t *testing.T) {
 			},
 			{
 				ResourceName:      "google_compute_security_policy.policy",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
+func TestAccComputeSecurityPolicyRule_securityPolicyDefaultRule(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"random_suffix": acctest.RandString(t, 10),
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckComputeSecurityPolicyRuleDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeSecurityPolicyRule_securityPolicyDefaultRuleDeny(context),
+			},
+			{
+				ResourceName:      "google_compute_security_policy_rule.policy_rule_default",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+			{
+				Config: testAccComputeSecurityPolicyRule_securityPolicyDefaultRuleAllow(context),
+			},
+			{
+				ResourceName:      "google_compute_security_policy_rule.policy_rule_default",
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
@@ -871,6 +912,52 @@ resource "google_compute_security_policy" "policy" {
 `, spName)
 }
 
+func testAccComputeSecurityPolicyRule_securityPolicyDefaultRuleDeny(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_compute_security_policy" "default" {
+  name        = "tf-test%{random_suffix}"
+  description = "basic global security policy"
+  type        = "CLOUD_ARMOR"
+}
+
+resource "google_compute_security_policy_rule" "policy_rule_default" {
+  security_policy = google_compute_security_policy.default.name
+  description     = "default rule"
+  action          = "deny"
+  priority        = "2147483647"
+  match {
+    versioned_expr = "SRC_IPS_V1"
+    config {
+      src_ip_ranges = ["*"]
+    }
+  }
+}
+`, context)
+}
+
+func testAccComputeSecurityPolicyRule_securityPolicyDefaultRuleAllow(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_compute_security_policy" "default" {
+  name        = "tf-test%{random_suffix}"
+  description = "basic global security policy"
+  type        = "CLOUD_ARMOR"
+}
+
+resource "google_compute_security_policy_rule" "policy_rule_default" {
+  security_policy = google_compute_security_policy.default.name
+  description     = "default rule"
+  action          = "allow"
+  priority        = "2147483647"
+  match {
+    versioned_expr = "SRC_IPS_V1"
+    config {
+      src_ip_ranges = ["*"]
+    }
+  }
+}
+`, context)
+}
+
 func testAccComputeSecurityPolicy_withRuleExpr(spName string) string {
 	return fmt.Sprintf(`
 resource "google_compute_security_policy" "policy" {
@@ -1058,6 +1145,38 @@ resource "google_compute_security_policy" "policy" {
 		preconfigured_waf_config {
 			// ensure empty waf config //
 		}
+		preview = false
+	}
+}
+`, spName)
+}
+
+func testAccComputeSecurityPolicy_withPreconfiguredWafConfig_removed(spName string) string {
+	return fmt.Sprintf(`
+resource "google_compute_security_policy" "policy" {
+	name = "%s"
+
+	rule {
+		action   = "allow"
+		priority = "2147483647"
+		match {
+			versioned_expr = "SRC_IPS_V1"
+			config {
+				src_ip_ranges = ["*"]
+			}
+		}
+		description = "default rule"
+	}
+
+	rule {
+		action   = "deny"
+		priority = "1000"
+		match {
+			expr {
+				expression = "evaluatePreconfiguredWaf('rce-stable') || evaluatePreconfiguredWaf('xss-stable')"
+			}
+		}
+		// remove waf config field to test if last step wont cause a permadiff //
 		preview = false
 	}
 }

@@ -40,7 +40,7 @@ func TestAccMemorystoreInstance_memorystoreInstanceBasicExample(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckMemorystoreInstanceDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -59,7 +59,6 @@ func TestAccMemorystoreInstance_memorystoreInstanceBasicExample(t *testing.T) {
 func testAccMemorystoreInstance_memorystoreInstanceBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_memorystore_instance" "instance-basic" {
-  provider    = google-beta
   instance_id = "tf-test-basic-instance%{random_suffix}"
   shard_count = 3
   desired_psc_auto_connections {
@@ -78,7 +77,6 @@ resource "google_memorystore_instance" "instance-basic" {
 }
 
 resource "google_network_connectivity_service_connection_policy" "default" {
-  provider      = google-beta
   name          = "tf-test-my-policy%{random_suffix}"
   location      = "us-central1"
   service_class = "gcp-memorystore"
@@ -90,7 +88,6 @@ resource "google_network_connectivity_service_connection_policy" "default" {
 }
 
 resource "google_compute_subnetwork" "producer_subnet" {
-  provider      = google-beta
   name          = "tf-test-my-subnet%{random_suffix}"
   ip_cidr_range = "10.0.0.248/29"
   region        = "us-central1"
@@ -98,13 +95,11 @@ resource "google_compute_subnetwork" "producer_subnet" {
 }
 
 resource "google_compute_network" "producer_net" {
-  provider                = google-beta
   name                    = "tf-test-my-network%{random_suffix}"
   auto_create_subnetworks = false
 }
 
 data "google_project" "project" {
-  provider = google-beta
 }
 `, context)
 }
@@ -119,7 +114,7 @@ func TestAccMemorystoreInstance_memorystoreInstanceFullExample(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckMemorystoreInstanceDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -138,7 +133,6 @@ func TestAccMemorystoreInstance_memorystoreInstanceFullExample(t *testing.T) {
 func testAccMemorystoreInstance_memorystoreInstanceFullExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_memorystore_instance" "instance-full" {
-  provider    = google-beta
   instance_id = "tf-test-full-instance%{random_suffix}"
   shard_count = 3
   desired_psc_auto_connections {
@@ -159,6 +153,7 @@ resource "google_memorystore_instance" "instance-full" {
   }
   engine_version              = "VALKEY_7_2"
   deletion_protection_enabled = false
+  mode = "CLUSTER"
   persistence_config {
     mode = "RDB"
     rdb_config {
@@ -179,7 +174,6 @@ resource "google_memorystore_instance" "instance-full" {
 }
 
 resource "google_network_connectivity_service_connection_policy" "default" {
-  provider      = google-beta
   name          = "tf-test-my-policy%{random_suffix}"
   location      = "us-central1"
   service_class = "gcp-memorystore"
@@ -191,7 +185,6 @@ resource "google_network_connectivity_service_connection_policy" "default" {
 }
 
 resource "google_compute_subnetwork" "producer_subnet" {
-  provider      = google-beta
   name          = "tf-test-my-subnet%{random_suffix}"
   ip_cidr_range = "10.0.0.248/29"
   region        = "us-central1"
@@ -199,13 +192,11 @@ resource "google_compute_subnetwork" "producer_subnet" {
 }
 
 resource "google_compute_network" "producer_net" {
-  provider                = google-beta
   name                    = "tf-test-my-network%{random_suffix}"
   auto_create_subnetworks = false
 }
 
 data "google_project" "project" {
-  provider = google-beta
 }
 `, context)
 }
@@ -220,7 +211,7 @@ func TestAccMemorystoreInstance_memorystoreInstancePersistenceAofExample(t *test
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckMemorystoreInstanceDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -239,7 +230,6 @@ func TestAccMemorystoreInstance_memorystoreInstancePersistenceAofExample(t *test
 func testAccMemorystoreInstance_memorystoreInstancePersistenceAofExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_memorystore_instance" "instance-persistence-aof" {
-  provider    = google-beta
   instance_id = "tf-test-aof-instance%{random_suffix}"
   shard_count = 3
   desired_psc_auto_connections {
@@ -263,7 +253,6 @@ resource "google_memorystore_instance" "instance-persistence-aof" {
 }
 
 resource "google_network_connectivity_service_connection_policy" "default" {
-  provider      = google-beta
   name          = "tf-test-my-policy%{random_suffix}"
   location      = "us-central1"
   service_class = "gcp-memorystore"
@@ -275,7 +264,6 @@ resource "google_network_connectivity_service_connection_policy" "default" {
 }
 
 resource "google_compute_subnetwork" "producer_subnet" {
-  provider      = google-beta
   name          = "tf-test-my-subnet%{random_suffix}"
   ip_cidr_range = "10.0.0.248/29"
   region        = "us-central1"
@@ -283,13 +271,11 @@ resource "google_compute_subnetwork" "producer_subnet" {
 }
 
 resource "google_compute_network" "producer_net" {
-  provider                = google-beta
   name                    = "tf-test-my-network%{random_suffix}"
   auto_create_subnetworks = false
 }
 
 data "google_project" "project" {
-  provider = google-beta
 }
 `, context)
 }

@@ -14,6 +14,7 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/container"
+	cloudkms "google.golang.org/api/cloudkms/v1"
 )
 
 func TestAccContainerCluster_basic(t *testing.T) {
@@ -70,6 +71,10 @@ func TestAccContainerCluster_resourceManagerTags(t *testing.T) {
 	networkName := acctest.BootstrapSharedTestNetwork(t, "gke-cluster")
 	subnetworkName := acctest.BootstrapSubnet(t, "gke-cluster", networkName)
 
+	if acctest.BootstrapPSARole(t, "service-", "container-engine-robot", "roles/resourcemanager.tagHoldAdmin") {
+		t.Fatal("Stopping the test because a role was added to the policy.")
+	}
+
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
@@ -79,7 +84,31 @@ func TestAccContainerCluster_resourceManagerTags(t *testing.T) {
 		CheckDestroy: testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccContainerCluster_resourceManagerTags(pid, clusterName, networkName, subnetworkName, randomSuffix),
+				Config: testAccContainerCluster_resourceManagerTags(pid, clusterName, networkName, subnetworkName, randomSuffix, 1),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						acctest.ExpectNoDelete(),
+					},
+				},
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttrSet("google_container_cluster.primary", "self_link"),
+					resource.TestCheckResourceAttrSet("google_container_cluster.primary", "node_config.0.resource_manager_tags.%"),
+				),
+			},
+			{
+				ResourceName:            "google_container_cluster.primary",
+				ImportStateId:           fmt.Sprintf("us-central1-a/%s", clusterName),
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"min_master_version", "deletion_protection"},
+			},
+			{
+				Config: testAccContainerCluster_resourceManagerTags(pid, clusterName, networkName, subnetworkName, randomSuffix, 2),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						acctest.ExpectNoDelete(),
+					},
+				},
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttrSet("google_container_cluster.primary", "self_link"),
 					resource.TestCheckResourceAttrSet("google_container_cluster.primary", "node_config.0.resource_manager_tags.%"),
@@ -183,10 +212,9 @@ func TestAccContainerCluster_withAddons(t *testing.T) {
 				Config: testAccContainerCluster_withAddons(pid, clusterName, networkName, subnetworkName),
 			},
 			{
-				ResourceName:      "google_container_cluster.primary",
-				ImportState:       true,
-				ImportStateVerify: true,
-				// TODO: clean up this list in `4.0.0`, remove both `workload_identity_config` fields (same for below)
+				ResourceName:            "google_container_cluster.primary",
+				ImportState:             true,
+				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"min_master_version", "deletion_protection"},
 			},
 			{
@@ -198,16 +226,15 @@ func TestAccContainerCluster_withAddons(t *testing.T) {
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"min_master_version", "deletion_protection"},
 			},
-			// Issue with cloudrun_config addon: https://github.com/hashicorp/terraform-provider-google/issues/11943
-			// {
-			// 	Config: testAccContainerCluster_withInternalLoadBalancer(pid, clusterName, networkName, subnetworkName),
-			// },
-			// {
-			// 	ResourceName:            "google_container_cluster.primary",
-			// 	ImportState:             true,
-			// 	ImportStateVerify:       true,
-			// 	ImportStateVerifyIgnore: []string{"min_master_version", "deletion_protection"},
-			// },
+			{
+				Config: testAccContainerCluster_withInternalLoadBalancer(pid, clusterName, networkName, subnetworkName),
+			},
+			{
+				ResourceName:            "google_container_cluster.primary",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"min_master_version", "deletion_protection"},
+			},
 		},
 	})
 }
@@ -1144,9 +1171,10 @@ resource "google_container_cluster" "with_gcp_public_cidrs_access_enabled" {
   master_authorized_networks_config {
     gcp_public_cidrs_access_enabled = %s
   }
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, clusterName, flag, networkName, subnetworkName)
 }
@@ -1163,9 +1191,11 @@ resource "google_container_cluster" "with_gcp_public_cidrs_access_enabled" {
   location           = "us-central1-a"
   min_master_version = data.google_container_engine_versions.uscentral1a.release_channel_latest_version["STABLE"]
   initial_node_count = 1
-  deletion_protection = false
+
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, clusterName, networkName, subnetworkName)
 }
@@ -1505,6 +1535,11 @@ func TestAccContainerCluster_withNodeConfig(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testAccContainerCluster_withNodeConfig(clusterName, networkName, subnetworkName),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						acctest.ExpectNoDelete(),
+					},
+				},
 			},
 			{
 				ResourceName:            "google_container_cluster.with_node_config",
@@ -1514,12 +1549,144 @@ func TestAccContainerCluster_withNodeConfig(t *testing.T) {
 			},
 			{
 				Config: testAccContainerCluster_withNodeConfigUpdate(clusterName, networkName, subnetworkName),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						acctest.ExpectNoDelete(),
+					},
+				},
 			},
 			{
 				ResourceName:            "google_container_cluster.with_node_config",
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"node_config.0.taint", "deletion_protection"},
+			},
+		},
+	})
+}
+
+func TestAccContainerCluster_withNodeConfigLinuxNodeConfig(t *testing.T) {
+	t.Parallel()
+
+	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
+	networkName := acctest.BootstrapSharedTestNetwork(t, "gke-cluster")
+	subnetworkName := acctest.BootstrapSubnet(t, "gke-cluster", networkName)
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckContainerClusterDestroyProducer(t),
+		Steps: []resource.TestStep{
+			// First test with empty `node_config.linux_node_config` (should result in "CGROUP_MODE_UNSPECIFIED")
+			{
+				Config: testAccContainerCluster_withNodeConfigLinuxNodeConfig(clusterName, networkName, subnetworkName, ""),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						acctest.ExpectNoDelete(),
+					},
+				},
+			},
+			{
+				ResourceName:            "google_container_cluster.with_linux_node_config",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"deletion_protection"},
+			},
+			// Then add a config and make sure it updates.
+			{
+				Config: testAccContainerCluster_withNodeConfigLinuxNodeConfig(clusterName, networkName, subnetworkName, "CGROUP_MODE_V2"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(
+						"google_container_cluster.with_linux_node_config",
+						"node_config.0.linux_node_config.0.cgroup_mode", "CGROUP_MODE_V2",
+					),
+				),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						acctest.ExpectNoDelete(),
+					},
+				},
+			},
+			{
+				ResourceName:            "google_container_cluster.with_linux_node_config",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"deletion_protection"},
+			},
+			// Lastly, update the setting in-place. V1 since UNSPECIFIED is default
+			{
+				Config: testAccContainerCluster_withNodeConfigLinuxNodeConfig(clusterName, networkName, subnetworkName, "CGROUP_MODE_V1"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(
+						"google_container_cluster.with_linux_node_config",
+						"node_config.0.linux_node_config.0.cgroup_mode", "CGROUP_MODE_V1",
+					),
+				),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						acctest.ExpectNoDelete(),
+					},
+				},
+			},
+			{
+				ResourceName:            "google_container_cluster.with_linux_node_config",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"deletion_protection"},
+			},
+		},
+	})
+}
+
+func TestAccContainerCluster_withNodeConfigFastSocket(t *testing.T) {
+	t.Parallel()
+
+	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
+	networkName := acctest.BootstrapSharedTestNetwork(t, "gke-cluster")
+	subnetworkName := acctest.BootstrapSubnet(t, "gke-cluster", networkName)
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckContainerClusterDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccContainerCluster_withNodeConfigFastSocket(clusterName, networkName, subnetworkName, false),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						acctest.ExpectNoDelete(),
+					},
+				},
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("google_container_cluster.with_fast_socket",
+						"node_config.0.fast_socket.0.enabled", "false"),
+					resource.TestCheckResourceAttr("google_container_cluster.with_fast_socket",
+						"node_config.0.gvnic.0.enabled", "true"),
+				),
+			},
+			{
+				ResourceName:            "google_container_cluster.with_fast_socket",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"deletion_protection"},
+			},
+			{
+				Config: testAccContainerCluster_withNodeConfigFastSocket(clusterName, networkName, subnetworkName, true),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						acctest.ExpectNoDelete(),
+					},
+				},
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("google_container_cluster.with_fast_socket",
+						"node_config.0.fast_socket.0.enabled", "true"),
+				),
+			},
+			{
+				ResourceName:            "google_container_cluster.with_fast_socket",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"deletion_protection"},
 			},
 		},
 	})
@@ -2030,10 +2197,33 @@ func TestAccContainerCluster_withWorkloadMetadataConfig(t *testing.T) {
 		CheckDestroy:             testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccContainerCluster_withWorkloadMetadataConfig(clusterName, networkName, subnetworkName),
+				Config: testAccContainerCluster_withWorkloadMetadataConfig(clusterName, "GCE_METADATA", networkName, subnetworkName),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						acctest.ExpectNoDelete(),
+					},
+				},
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("google_container_cluster.with_workload_metadata_config",
 						"node_config.0.workload_metadata_config.0.mode", "GCE_METADATA"),
+				),
+			},
+			{
+				ResourceName:            "google_container_cluster.with_workload_metadata_config",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"min_master_version", "deletion_protection"},
+			},
+			{
+				Config: testAccContainerCluster_withWorkloadMetadataConfig(clusterName, "GKE_METADATA", networkName, subnetworkName),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						acctest.ExpectNoDelete(),
+					},
+				},
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("google_container_cluster.with_workload_metadata_config",
+						"node_config.0.workload_metadata_config.0.mode", "GKE_METADATA"),
 				),
 			},
 			{
@@ -4572,6 +4762,18 @@ func TestAccContainerCluster_enableCiliumPolicies(t *testing.T) {
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"deletion_protection"},
 			},
+			{
+				Config: testAccContainerCluster_enableCiliumPolicies(clusterName, networkName, subnetworkName, false),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("google_container_cluster.primary", "enable_cilium_clusterwide_network_policy", "false"),
+				),
+			},
+			{
+				ResourceName:            "google_container_cluster.primary",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"deletion_protection"},
+			},
 		},
 	})
 }
@@ -5112,12 +5314,13 @@ resource "google_container_cluster" "primary" {
   initial_node_count = 1
 
   fleet {
-	project = "%s"
+    project = "%s"
   }
 
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, name, projectID, networkName, subnetworkName)
 }
@@ -5128,24 +5331,25 @@ resource "google_container_cluster" "primary" {
   name               = "%s"
   location           = "us-central1-a"
   initial_node_count = 1
-  deletion_protection = false
+
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, resource_name, networkName, subnetworkName)
 }
 
 func testAccContainerCluster_withIncompatibleMasterVersionNodeVersion(name string) string {
 	return fmt.Sprintf(`
-	resource "google_container_cluster" "gke_cluster" {
-		name = "%s"
-		location = "us-central1"
+resource "google_container_cluster" "gke_cluster" {
+  name     = "%s"
+  location = "us-central1"
 
-		min_master_version = "1.10.9-gke.5"
-		node_version = "1.10.6-gke.11"
-		initial_node_count = 1
-
-	}
+  min_master_version = "1.10.9-gke.5"
+  node_version       = "1.10.6-gke.11"
+  initial_node_count = 1
+}
 	`, name)
 }
 
@@ -5156,11 +5360,12 @@ resource "google_container_cluster" "with_security_posture_config" {
   location           = "us-central1-a"
   initial_node_count = 1
   security_posture_config {
-	mode = "BASIC"
+    mode = "BASIC"
   }
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, resource_name, networkName, subnetworkName)
 }
@@ -5172,11 +5377,12 @@ resource "google_container_cluster" "with_security_posture_config" {
   location           = "us-central1-a"
   initial_node_count = 1
   security_posture_config {
-	mode = "ENTERPRISE"
+    mode = "ENTERPRISE"
   }
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, resource_name, networkName, subnetworkName)
 }
@@ -5188,11 +5394,12 @@ resource "google_container_cluster" "with_security_posture_config" {
   location           = "us-central1-a"
   initial_node_count = 1
   security_posture_config {
-	vulnerability_mode = "VULNERABILITY_BASIC"
+    vulnerability_mode = "VULNERABILITY_BASIC"
   }
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, resource_name, networkName, subnetworkName)
 }
@@ -5204,11 +5411,12 @@ resource "google_container_cluster" "with_security_posture_config" {
   location           = "us-central1-a"
   initial_node_count = 1
   security_posture_config {
-	vulnerability_mode = "VULNERABILITY_ENTERPRISE"
+    vulnerability_mode = "VULNERABILITY_ENTERPRISE"
   }
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, resource_name, networkName, subnetworkName)
 }
@@ -5220,14 +5428,319 @@ resource "google_container_cluster" "with_security_posture_config" {
   location           = "us-central1-a"
   initial_node_count = 1
   security_posture_config {
-	mode = "DISABLED"
-	vulnerability_mode = "VULNERABILITY_DISABLED"
+    mode               = "DISABLED"
+    vulnerability_mode = "VULNERABILITY_DISABLED"
   }
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, resource_name, networkName, subnetworkName)
+}
+
+func TestAccContainerCluster_WithCPAFeatures(t *testing.T) {
+	t.Parallel()
+
+	suffix := acctest.RandString(t, 10)
+	clusterName := fmt.Sprintf("tf-test-cluster-%s", suffix)
+	networkName := acctest.BootstrapSharedTestNetwork(t, "gke-cluster")
+	subnetworkName := acctest.BootstrapSubnet(t, "gke-cluster", networkName)
+
+	// Bootstrap KMS keys and needed IAM role.
+	diskKey := acctest.BootstrapKMSKeyWithPurposeInLocationAndName(t, "ENCRYPT_DECRYPT", "us-central1", "control-plane-disk-encryption")
+	signingKey := acctest.BootstrapKMSKeyWithPurposeInLocationAndName(t, "ASYMMETRIC_SIGN", "us-central1", "rs256-service-account-signing")
+	backupKey := acctest.BootstrapKMSKeyWithPurposeInLocationAndName(t, "ENCRYPT_DECRYPT", "us-central1", "etcd-backups")
+
+	// Here, we are granting the container engine service agent permissions on
+	// *ALL* Cloud KMS keys in the project.  A more realistic usage would be to
+	// grant the service agent the necessary roles only on the individual keys
+	// we have created.
+	roles := []string{
+		"roles/container.cloudKmsKeyUser",
+		"roles/privateca.certificateManager",
+		"roles/cloudkms.cryptoKeyEncrypterDecrypter",
+	}
+	if acctest.BootstrapPSARoles(t, "service-", "container-engine-robot", roles) {
+		t.Fatal("Stopping the test because a role was added to the policy.")
+	}
+
+	// Find an active cryptoKeyVersion on the signing key.
+	var signingCryptoKeyVersion *cloudkms.CryptoKeyVersion
+	for _, ckv := range signingKey.CryptoKeyVersions {
+		if ckv.State == "ENABLED" && ckv.Algorithm == "RSA_SIGN_PKCS1_4096_SHA256" {
+			signingCryptoKeyVersion = ckv
+		}
+	}
+	if signingCryptoKeyVersion == nil {
+		t.Fatal("Didn't find an appropriate cryptoKeyVersion to use as the service account signing key")
+	}
+
+	context := map[string]interface{}{
+		"resource_name":            clusterName,
+		"networkName":              networkName,
+		"subnetworkName":           subnetworkName,
+		"disk_key":                 diskKey.CryptoKey.Name,
+		"backup_key":               backupKey.CryptoKey.Name,
+		"signing_cryptokeyversion": signingCryptoKeyVersion.Name,
+		"random_suffix":            suffix,
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckContainerClusterDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				// We are only supporting CPA features on create for now.
+				Config: testAccContainerCluster_EnableCPAFeatures(context),
+			},
+			{
+				ResourceName:            "google_container_cluster.with_cpa_features",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"deletion_protection"},
+			},
+		},
+	})
+}
+
+func testAccContainerCluster_EnableCPAFeatures(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_privateca_ca_pool" "cluster_ca" {
+  name = "tf-test-cluster-ca-%{random_suffix}"
+  location = "us-central1"
+  tier = "DEVOPS"
+}
+
+resource "google_privateca_ca_pool" "etcd_api_ca" {
+  name = "tf-test-etcd-api-ca-%{random_suffix}"
+  location = "us-central1"
+  tier = "DEVOPS"
+}
+
+resource "google_privateca_ca_pool" "etcd_peer_ca" {
+  name = "tf-test-etcd-peer-%{random_suffix}"
+  location = "us-central1"
+  tier = "DEVOPS"
+}
+
+resource "google_privateca_ca_pool" "aggregation_ca" {
+  name = "tf-test-aggregation-ca-%{random_suffix}"
+  location = "us-central1"
+  tier = "DEVOPS"
+}
+
+resource "google_privateca_certificate_authority" "cluster_ca" {
+  certificate_authority_id = "my-authority"
+  location                 = "us-central1"
+  pool                     = google_privateca_ca_pool.cluster_ca.name
+  type = "SELF_SIGNED"
+  key_spec {
+    algorithm = "RSA_PKCS1_4096_SHA256"
+  }
+
+  config {
+    subject_config {
+      subject {
+        country_code        = "us"
+        organization        = "google"
+        organizational_unit = "enterprise"
+        locality            = "mountain view"
+        province            = "california"
+        street_address      = "1600 amphitheatre parkway"
+        postal_code         = "94109"
+        common_name         = "my-certificate-authority"
+      }
+    }
+    x509_config {
+      ca_options {
+        is_ca = true
+      }
+      key_usage {
+        base_key_usage {
+          cert_sign = true
+          crl_sign  = true
+        }
+        extended_key_usage {
+          server_auth = true
+          client_auth = true
+        }
+      }
+    }
+  }
+
+  // Disable CA deletion related safe checks for easier cleanup.
+  deletion_protection                    = false
+  skip_grace_period                      = true
+  ignore_active_certificates_on_deletion = true
+}
+
+resource "google_privateca_certificate_authority" "etcd_api_ca" {
+  certificate_authority_id = "my-authority"
+  location                 = "us-central1"
+  pool                     = google_privateca_ca_pool.etcd_api_ca.name
+  type = "SELF_SIGNED"
+  key_spec {
+    algorithm = "RSA_PKCS1_4096_SHA256"
+  }
+
+  config {
+    subject_config {
+      subject {
+        country_code        = "us"
+        organization        = "google"
+        organizational_unit = "enterprise"
+        locality            = "mountain view"
+        province            = "california"
+        street_address      = "1600 amphitheatre parkway"
+        postal_code         = "94109"
+        common_name         = "my-certificate-authority"
+      }
+    }
+    x509_config {
+      ca_options {
+        is_ca = true
+      }
+      key_usage {
+        base_key_usage {
+          cert_sign = true
+          crl_sign  = true
+        }
+        extended_key_usage {
+          server_auth = true
+          client_auth = true
+        }
+      }
+    }
+  }
+  // Disable CA deletion related safe checks for easier cleanup.
+  deletion_protection                    = false
+  skip_grace_period                      = true
+  ignore_active_certificates_on_deletion = true
+}
+
+resource "google_privateca_certificate_authority" "etcd_peer_ca" {
+  certificate_authority_id = "my-authority"
+  location                 = "us-central1"
+  pool                     = google_privateca_ca_pool.etcd_peer_ca.name
+  type = "SELF_SIGNED"
+  key_spec {
+    algorithm = "RSA_PKCS1_4096_SHA256"
+  }
+
+  config {
+    subject_config {
+      subject {
+        country_code        = "us"
+        organization        = "google"
+        organizational_unit = "enterprise"
+        locality            = "mountain view"
+        province            = "california"
+        street_address      = "1600 amphitheatre parkway"
+        postal_code         = "94109"
+        common_name         = "my-certificate-authority"
+      }
+    }
+    x509_config {
+      ca_options {
+        is_ca = true
+      }
+      key_usage {
+        base_key_usage {
+          cert_sign = true
+          crl_sign  = true
+        }
+        extended_key_usage {
+          server_auth = true
+          client_auth = true
+        }
+      }
+    }
+  }
+  // Disable CA deletion related safe checks for easier cleanup.
+  deletion_protection                    = false
+  skip_grace_period                      = true
+  ignore_active_certificates_on_deletion = true
+}
+
+resource "google_privateca_certificate_authority" "aggregation_ca" {
+  certificate_authority_id = "my-authority"
+  location                 = "us-central1"
+  pool                     = google_privateca_ca_pool.aggregation_ca.name
+  type = "SELF_SIGNED"
+  key_spec {
+    algorithm = "RSA_PKCS1_4096_SHA256"
+  }
+  config {
+    subject_config {
+      subject {
+        country_code        = "us"
+        organization        = "google"
+        organizational_unit = "enterprise"
+        locality            = "mountain view"
+        province            = "california"
+        street_address      = "1600 amphitheatre parkway"
+        postal_code         = "94109"
+        common_name         = "my-certificate-authority"
+      }
+    }
+    x509_config {
+      ca_options {
+        is_ca = true
+      }
+      key_usage {
+        base_key_usage {
+          cert_sign = true
+          crl_sign  = true
+        }
+        extended_key_usage {
+          server_auth = true
+          client_auth = true
+        }
+      }
+    }
+  }
+
+  // Disable CA deletion related safe checks for easier cleanup.
+  deletion_protection                    = false
+  skip_grace_period                      = true
+  ignore_active_certificates_on_deletion = true
+}
+
+resource "google_container_cluster" "with_cpa_features" {
+  name               = "%{resource_name}"
+  location           = "us-central1-a"
+  initial_node_count = 1
+  release_channel {
+    channel = "RAPID"
+  }
+  user_managed_keys_config {
+		cluster_ca = google_privateca_ca_pool.cluster_ca.id
+		etcd_api_ca = google_privateca_ca_pool.etcd_api_ca.id
+		etcd_peer_ca = google_privateca_ca_pool.etcd_peer_ca.id
+		aggregation_ca = google_privateca_ca_pool.aggregation_ca.id
+		control_plane_disk_encryption_key = "%{disk_key}"
+		gkeops_etcd_backup_encryption_key = "%{backup_key}"
+
+		service_account_signing_keys = [
+			"%{signing_cryptokeyversion}",
+		]
+		service_account_verification_keys = [
+			"%{signing_cryptokeyversion}",
+		]
+  }
+  deletion_protection = false
+  network    = "%{networkName}"
+  subnetwork    = "%{subnetworkName}"
+	depends_on = [
+		google_privateca_ca_pool.cluster_ca,
+		google_privateca_ca_pool.etcd_api_ca,
+		google_privateca_ca_pool.etcd_peer_ca,
+		google_privateca_ca_pool.aggregation_ca,
+	]
+}
+`, context)
 }
 
 func TestAccContainerCluster_autopilot_minimal(t *testing.T) {
@@ -5426,9 +5939,10 @@ resource "google_container_cluster" "primary" {
   name               = "%s"
   location           = "us-central1-a"
   initial_node_count = 1
+  network            = "%s"
+  subnetwork         = "%s"
+
   deletion_protection = false
-  network    = "%s"
-  subnetwork    = "%s"
 }
 `, name, networkName, subnetworkName)
 }
@@ -5436,20 +5950,20 @@ resource "google_container_cluster" "primary" {
 func testAccContainerCluster_networkingModeRoutes(firstName, secondName string) string {
 	return fmt.Sprintf(`
 resource "google_container_cluster" "primary" {
-  name               = "%s"
-  location           = "us-central1-a"
-  initial_node_count = 1
-  networking_mode    = "ROUTES"
+  name                = "%s"
+  location            = "us-central1-a"
+  initial_node_count  = 1
+  networking_mode     = "ROUTES"
   deletion_protection = false
 }
 
 resource "google_container_cluster" "secondary" {
-	name               = "%s"
-	location           = "us-central1-a"
-	initial_node_count = 1
-	cluster_ipv4_cidr  = "10.96.0.0/14"
-	deletion_protection = false
-  }
+  name                = "%s"
+  location            = "us-central1-a"
+  initial_node_count  = 1
+  cluster_ipv4_cidr   = "10.96.0.0/14"
+  deletion_protection = false
+}
 `, firstName, secondName)
 }
 
@@ -5480,10 +5994,12 @@ resource "google_container_cluster" "primary" {
   binary_authorization {
     evaluation_mode = "PROJECT_SINGLETON_POLICY_ENFORCE"
   }
+
   enable_intranode_visibility = true
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, name, networkName, subnetworkName)
 }
@@ -5516,10 +6032,12 @@ resource "google_container_cluster" "primary" {
   binary_authorization {
     evaluation_mode = "PROJECT_SINGLETON_POLICY_ENFORCE"
   }
+
   enable_intranode_visibility = true
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, name, networkName, subnetworkName)
 }
@@ -5566,12 +6084,12 @@ resource "google_container_cluster" "primary" {
     gce_persistent_disk_csi_driver_config {
       enabled = false
     }
-	gke_backup_agent_config {
-	  enabled = false
-	}
-	config_connector_config {
-	  enabled = false
-	}
+    gke_backup_agent_config {
+      enabled = false
+    }
+    config_connector_config {
+      enabled = false
+    }
     gcs_fuse_csi_driver_config {
       enabled = false
     }
@@ -5579,6 +6097,9 @@ resource "google_container_cluster" "primary" {
       enabled = false
     }
     ray_operator_config {
+      enabled = false
+    }
+	parallelstore_csi_driver_config {
       enabled = false
     }
     istio_config {
@@ -5589,9 +6110,10 @@ resource "google_container_cluster" "primary" {
       enabled = false
     }
   }
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, projectID, clusterName, networkName, subnetworkName)
 }
@@ -5627,9 +6149,7 @@ resource "google_container_cluster" "primary" {
       enabled = true
     }
     cloudrun_config {
-    # https://github.com/hashicorp/terraform-provider-google/issues/11943
-      # disabled = false
-      disabled = true
+      disabled = false
     }
     dns_cache_config {
       enabled = true
@@ -5637,12 +6157,12 @@ resource "google_container_cluster" "primary" {
     gce_persistent_disk_csi_driver_config {
       enabled = true
     }
-  gke_backup_agent_config {
-    enabled = true
-  }
-  config_connector_config {
-    enabled = true
-  }
+    gke_backup_agent_config {
+      enabled = true
+    }
+    config_connector_config {
+      enabled = true
+    }
     gcs_fuse_csi_driver_config {
       enabled = true
     }
@@ -5658,6 +6178,9 @@ resource "google_container_cluster" "primary" {
         enabled = true
       }
     }
+	parallelstore_csi_driver_config {
+      enabled = true
+    }
     istio_config {
       disabled = false
       auth     = "AUTH_NONE"
@@ -5666,52 +6189,53 @@ resource "google_container_cluster" "primary" {
       enabled = true
     }
 	}
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, projectID, clusterName, networkName, subnetworkName)
 }
 
-// Issue with cloudrun_config addon: https://github.com/hashicorp/terraform-provider-google/issues/11943/
-// func testAccContainerCluster_withInternalLoadBalancer(projectID string, clusterName, networkName, subnetworkName string) string {
-// 	return fmt.Sprintf(`
-// data "google_project" "project" {
-//   project_id = "%s"
-// }
+func testAccContainerCluster_withInternalLoadBalancer(projectID string, clusterName, networkName, subnetworkName string) string {
+	return fmt.Sprintf(`
+data "google_project" "project" {
+  project_id = "%s"
+}
 
-// resource "google_container_cluster" "primary" {
-//   name               = "%s"
-//   location           = "us-central1-a"
-//   initial_node_count = 1
+resource "google_container_cluster" "primary" {
+  name               = "%s"
+  location           = "us-central1-a"
+  initial_node_count = 1
 
-//   min_master_version = "latest"
+  min_master_version = "latest"
 
-//   workload_identity_config {
-//     workload_pool = "${data.google_project.project.project_id}.svc.id.goog"
-//   }
+  workload_identity_config {
+    workload_pool = "${data.google_project.project.project_id}.svc.id.goog"
+  }
 
-//   addons_config {
-//     http_load_balancing {
-//       disabled = false
-//     }
-//     horizontal_pod_autoscaling {
-//       disabled = false
-//     }
-//     network_policy_config {
-//       disabled = false
-//     }
-//     cloudrun_config {
-// 	  disabled = false
-// 	  load_balancer_type = "LOAD_BALANCER_TYPE_INTERNAL"
-//     }
-//   }
-//   deletion_protection = false
-//   network    = "%s"
-//   subnetwork    = "%s"
-// }
-// `, projectID, clusterName, networkName, subnetworkName)
-// }
+  addons_config {
+    http_load_balancing {
+      disabled = false
+    }
+    horizontal_pod_autoscaling {
+      disabled = false
+    }
+    network_policy_config {
+      disabled = false
+    }
+    cloudrun_config {
+      disabled           = false
+      load_balancer_type = "LOAD_BALANCER_TYPE_INTERNAL"
+    }
+  }
+  network    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
+}
+`, projectID, clusterName, networkName, subnetworkName)
+}
 
 func testAccContainerCluster_withNotificationConfig(clusterName, topic, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
@@ -5730,9 +6254,10 @@ resource "google_container_cluster" "notification_config" {
       topic   = google_pubsub_topic.%s.id
     }
   }
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, topic, topic, clusterName, topic, networkName, subnetworkName)
 }
@@ -5748,9 +6273,10 @@ resource "google_container_cluster" "notification_config" {
       enabled = false
     }
   }
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, clusterName, networkName, subnetworkName)
 }
@@ -5776,9 +6302,10 @@ resource "google_container_cluster" "filtered_notification_config" {
       }
     }
   }
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, topic, topic, clusterName, topic, networkName, subnetworkName)
 }
@@ -5804,9 +6331,10 @@ resource "google_container_cluster" "filtered_notification_config" {
 	  }
 	}
   }
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, topic, topic, clusterName, topic, networkName, subnetworkName)
 }
@@ -5814,7 +6342,6 @@ resource "google_container_cluster" "filtered_notification_config" {
 func testAccContainerCluster_disableFilteredNotificationConfig(clusterName, topic, networkName, subnetworkName string) string {
 
 	return fmt.Sprintf(`
-
 resource "google_pubsub_topic" "%s" {
   name = "%s"
 }
@@ -5824,14 +6351,15 @@ resource "google_container_cluster" "filtered_notification_config" {
   location           = "us-central1-a"
   initial_node_count = 3
   notification_config {
-	pubsub {
-	  enabled = true
-	  topic   = google_pubsub_topic.%s.id
-	}
+    pubsub {
+      enabled = true
+      topic   = google_pubsub_topic.%s.id
+    }
   }
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, topic, topic, clusterName, topic, networkName, subnetworkName)
 }
@@ -5856,9 +6384,10 @@ resource "google_container_cluster" "confidential_nodes" {
   confidential_nodes {
     enabled = true
   }
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, clusterName, npName, networkName, subnetworkName)
 }
@@ -5883,9 +6412,10 @@ resource "google_container_cluster" "confidential_nodes" {
   confidential_nodes {
     enabled = false
   }
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, clusterName, npName, networkName, subnetworkName)
 }
@@ -5893,14 +6423,14 @@ resource "google_container_cluster" "confidential_nodes" {
 func testAccContainerCluster_withILBSubSetting(clusterName, npName, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 resource "google_container_cluster" "confidential_nodes" {
-  name               = "%s"
-  location           = "us-central1-a"
+  name     = "%s"
+  location = "us-central1-a"
   release_channel {
     channel = "RAPID"
   }
 
   node_pool {
-    name = "%s"
+    name               = "%s"
     initial_node_count = 1
     node_config {
       machine_type = "e2-medium"
@@ -5908,9 +6438,11 @@ resource "google_container_cluster" "confidential_nodes" {
   }
 
   enable_l4_ilb_subsetting = true
-  deletion_protection = false
+
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, clusterName, npName, networkName, subnetworkName)
 }
@@ -5933,9 +6465,10 @@ resource "google_container_cluster" "confidential_nodes" {
   }
 
   enable_l4_ilb_subsetting = false
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, clusterName, npName, networkName, subnetworkName)
 }
@@ -5958,9 +6491,10 @@ resource "google_container_cluster" "with_network_policy_enabled" {
       disabled = false
     }
   }
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, clusterName, networkName, subnetworkName)
 }
@@ -5989,9 +6523,10 @@ resource "google_container_cluster" "with_release_channel" {
   release_channel {
     channel = "%s"
   }
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, clusterName, channel, networkName, subnetworkName)
 }
@@ -6008,9 +6543,10 @@ resource "google_container_cluster" "with_release_channel" {
   location           = "us-central1-a"
   initial_node_count = 1
   min_master_version = data.google_container_engine_versions.central1a.release_channel_default_version["%s"]
+  network            = "%s"
+  subnetwork         = "%s"
+
   deletion_protection = false
-  network    = "%s"
-  subnetwork    = "%s"
 }
 `, clusterName, channel, networkName, subnetworkName)
 }
@@ -6025,9 +6561,10 @@ resource "google_container_cluster" "with_cluster_telemetry" {
   cluster_telemetry {
     type = "%s"
   }
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, clusterName, telemetryType, networkName, subnetworkName)
 }
@@ -6039,9 +6576,11 @@ resource "google_container_cluster" "with_network_policy_enabled" {
   location                 = "us-central1-a"
   initial_node_count       = 1
   remove_default_node_pool = true
-  deletion_protection = false
+
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, clusterName, networkName, subnetworkName)
 }
@@ -6057,9 +6596,10 @@ resource "google_container_cluster" "with_network_policy_enabled" {
   network_policy {
     enabled = false
   }
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, clusterName, networkName, subnetworkName)
 }
@@ -6081,9 +6621,10 @@ resource "google_container_cluster" "with_network_policy_enabled" {
       disabled = true
     }
   }
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, clusterName, networkName, subnetworkName)
 }
@@ -6098,9 +6639,10 @@ resource "google_container_cluster" "primary" {
   authenticator_groups_config {
     security_group = "gke-security-groups@%s"
   }
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, name, orgDomain, networkName, subnetworkName)
 }
@@ -6115,9 +6657,10 @@ resource "google_container_cluster" "primary" {
   authenticator_groups_config {
     security_group = ""
   }
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, name, networkName, subnetworkName)
 }
@@ -6168,9 +6711,11 @@ resource "google_container_cluster" "regional" {
   name               = "%s"
   location           = "us-central1"
   initial_node_count = 1
-  deletion_protection = false
+
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, clusterName, networkName, subnetworkName)
 }
@@ -6437,9 +6982,10 @@ resource "google_container_cluster" "with_enable_private_endpoint" {
   private_cluster_config {
     enable_private_endpoint = %s
   }
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, clusterName, flag, networkName, subnetworkName)
 }
@@ -6453,9 +6999,10 @@ resource "google_container_cluster" "regional" {
   node_pool {
     name = "%s"
   }
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, cluster, nodePool, networkName, subnetworkName)
 }
@@ -6471,9 +7018,10 @@ resource "google_container_cluster" "with_node_locations" {
     "us-central1-f",
     "us-central1-c",
   ]
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, clusterName, networkName, subnetworkName)
 }
@@ -6489,9 +7037,10 @@ resource "google_container_cluster" "with_node_locations" {
     "us-central1-f",
     "us-central1-b",
   ]
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, clusterName, networkName, subnetworkName)
 }
@@ -6558,9 +7107,11 @@ resource "google_container_cluster" "with_intranode_visibility" {
   location                    = "us-central1-a"
   initial_node_count          = 1
   enable_intranode_visibility = true
-  deletion_protection = false
+
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, clusterName, networkName, subnetworkName)
 }
@@ -6573,9 +7124,11 @@ resource "google_container_cluster" "with_intranode_visibility" {
   initial_node_count          = 1
   enable_intranode_visibility = false
   private_ipv6_google_access  = "PRIVATE_IPV6_GOOGLE_ACCESS_BIDIRECTIONAL"
-  deletion_protection = false
+
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, clusterName, networkName, subnetworkName)
 }
@@ -6591,9 +7144,11 @@ resource "google_container_cluster" "with_version" {
   location           = "us-central1-a"
   min_master_version = data.google_container_engine_versions.central1a.latest_master_version
   initial_node_count = 1
-  deletion_protection = false
+
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, clusterName, networkName, subnetworkName)
 }
@@ -6610,9 +7165,11 @@ resource "google_container_cluster" "with_version" {
   min_master_version = data.google_container_engine_versions.central1a.release_channel_default_version["STABLE"]
   node_version       = data.google_container_engine_versions.central1a.release_channel_default_version["STABLE"]
   initial_node_count = 1
-  deletion_protection = false
+
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, clusterName, networkName, subnetworkName)
 }
@@ -6628,9 +7185,10 @@ resource "google_container_cluster" "with_master_auth_no_cert" {
       issue_client_certificate = false
     }
   }
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, clusterName, networkName, subnetworkName)
 }
@@ -6647,9 +7205,11 @@ resource "google_container_cluster" "with_version" {
   min_master_version = data.google_container_engine_versions.central1a.release_channel_latest_version["STABLE"]
   node_version       = data.google_container_engine_versions.central1a.release_channel_latest_version["STABLE"]
   initial_node_count = 1
-  deletion_protection = false
+
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, clusterName, networkName, subnetworkName)
 }
@@ -6662,7 +7222,7 @@ resource "google_container_cluster" "with_node_config" {
   initial_node_count = 1
 
   node_config {
-    machine_type    = "n1-standard-1"  // can't be e2 because of local-ssd
+    machine_type    = "n1-standard-1" // can't be e2 because of local-ssd
     disk_size_gb    = 15
     disk_type       = "pd-ssd"
     local_ssd_count = 1
@@ -6699,11 +7259,35 @@ resource "google_container_cluster" "with_node_config" {
     // Updatable fields
     image_type = "COS_CONTAINERD"
   }
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, clusterName, networkName, subnetworkName)
+}
+
+func testAccContainerCluster_withNodeConfigFastSocket(clusterName, networkName, subnetworkName string, fastSocket bool) string {
+	return fmt.Sprintf(`
+resource "google_container_cluster" "with_fast_socket" {
+  name               = "%s"
+  location           = "us-central1-f"
+  initial_node_count = 1
+
+  node_config {
+    gvnic {
+      enabled = true
+    }
+    fast_socket {
+      enabled = %t
+    }
+  }
+
+  deletion_protection = false
+  network             = "%s"
+  subnetwork          = "%s"
+}
+`, clusterName, fastSocket, networkName, subnetworkName)
 }
 
 func testAccContainerCluster_withNodeConfigGcfsConfig(clusterName, networkName, subnetworkName string, enabled bool) string {
@@ -6718,10 +7302,10 @@ resource "google_container_cluster" "with_node_config_gcfs_config" {
       enabled = %t
     }
   }
+  network    = "%s"
+  subnetwork = "%s"
 
   deletion_protection = false
-  network             = "%s"
-  subnetwork          = "%s"
 }
 `, clusterName, enabled, networkName, subnetworkName)
 }
@@ -6738,9 +7322,10 @@ resource "google_container_cluster" "with_node_config_kubelet_config_settings" {
       pod_pids_limit = 1024
     }
   }
+  network    = "%s"
+  subnetwork = "%s"
+
   deletion_protection = false
-  network             = "%s"
-  subnetwork          = "%s"
 }
 `, clusterName, networkName, subnetworkName)
 }
@@ -6761,9 +7346,10 @@ resource "google_container_cluster" "with_node_config_kubelet_config_settings" {
       pod_pids_limit                         = %v
     }
   }
+  network    = "%s"
+  subnetwork = "%s"
+
   deletion_protection = false
-  network             = "%s"
-  subnetwork          = "%s"
 }
 `, clusterName, cpuManagerPolicy, cpuCfsQuota, cpuCfsQuotaPeriod, insecureKubeletReadonlyPortEnabled, podPidsLimit, networkName, subnetworkName)
 }
@@ -6771,8 +7357,8 @@ resource "google_container_cluster" "with_node_config_kubelet_config_settings" {
 func testAccContainerCluster_withInsecureKubeletReadonlyPortEnabledInNodePool(clusterName, nodePoolName, networkName, subnetworkName, insecureKubeletReadonlyPortEnabled string) string {
 	return fmt.Sprintf(`
 resource "google_container_cluster" "with_insecure_kubelet_readonly_port_enabled_in_node_pool" {
-  name               = "%s"
-  location           = "us-central1-f"
+  name     = "%s"
+  location = "us-central1-f"
 
   node_pool {
     name               = "%s"
@@ -6784,9 +7370,10 @@ resource "google_container_cluster" "with_insecure_kubelet_readonly_port_enabled
       }
     }
   }
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, clusterName, nodePoolName, insecureKubeletReadonlyPortEnabled, networkName, subnetworkName)
 }
@@ -6798,9 +7385,10 @@ resource "google_container_cluster" "with_insecure_kubelet_readonly_port_enabled
   location           = "us-central1-f"
   initial_node_count = 1
 
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, clusterName, networkName, subnetworkName)
 }
@@ -6817,9 +7405,10 @@ resource "google_container_cluster" "with_insecure_kubelet_readonly_port_enabled
       insecure_kubelet_readonly_port_enabled = "%s"
     }
   }
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, clusterName, insecureKubeletReadonlyPortEnabled, networkName, subnetworkName)
 }
@@ -6834,9 +7423,10 @@ resource "google_container_cluster" "with_logging_variant_in_node_config" {
   node_config {
     logging_variant = "%s"
   }
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, clusterName, loggingVariant, networkName, subnetworkName)
 }
@@ -6844,8 +7434,8 @@ resource "google_container_cluster" "with_logging_variant_in_node_config" {
 func testAccContainerCluster_withLoggingVariantInNodePool(clusterName, nodePoolName, loggingVariant, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 resource "google_container_cluster" "with_logging_variant_in_node_pool" {
-  name               = "%s"
-  location           = "us-central1-f"
+  name     = "%s"
+  location = "us-central1-f"
 
   node_pool {
     name               = "%s"
@@ -6854,9 +7444,10 @@ resource "google_container_cluster" "with_logging_variant_in_node_pool" {
       logging_variant = "%s"
     }
   }
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, clusterName, nodePoolName, loggingVariant, networkName, subnetworkName)
 }
@@ -6873,9 +7464,10 @@ resource "google_container_cluster" "with_logging_variant_node_pool_default" {
       logging_variant = "%s"
     }
   }
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, clusterName, loggingVariant, networkName, subnetworkName)
 }
@@ -6883,8 +7475,8 @@ resource "google_container_cluster" "with_logging_variant_node_pool_default" {
 func testAccContainerCluster_withAdvancedMachineFeaturesInNodePool(clusterName, nodePoolName, networkName, subnetworkName string, nvEnabled bool) string {
 	return fmt.Sprintf(`
 resource "google_container_cluster" "with_advanced_machine_features_in_node_pool" {
-  name               = "%s"
-  location           = "us-central1-f"
+  name     = "%s"
+  location = "us-central1-f"
 
   node_pool {
     name               = "%s"
@@ -6892,14 +7484,15 @@ resource "google_container_cluster" "with_advanced_machine_features_in_node_pool
     node_config {
       machine_type = "c2-standard-4"
       advanced_machine_features {
-        threads_per_core = 1
+        threads_per_core             = 1
         enable_nested_virtualization = "%t"
-	    }
+      }
     }
   }
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, clusterName, nodePoolName, nvEnabled, networkName, subnetworkName)
 }
@@ -6918,9 +7511,10 @@ resource "google_container_cluster" "with_node_pool_defaults" {
       }
     }
   }
-  deletion_protection = false
   network    = "%s"
   subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, clusterName, enabled, networkName, subnetworkName)
 }
@@ -6933,9 +7527,11 @@ resource "google_container_cluster" "with_node_config" {
   initial_node_count = 1
 
   node_config {
-    machine_type    = "n1-standard-1"  // can't be e2 because of local-ssd
-    disk_size_gb    = 15
-    disk_type       = "pd-ssd"
+    // Test updates for these fields as well
+    machine_type = "n1-standard-2" // can't be e2 because of local-ssd
+    disk_size_gb = 20
+    disk_type    = "pd-balanced"
+
     local_ssd_count = 1
     oauth_scopes = [
       "https://www.googleapis.com/auth/monitoring",
@@ -6948,33 +7544,67 @@ resource "google_container_cluster" "with_node_config" {
       foo                      = "bar"
       disable-legacy-endpoints = "true"
     }
+
     labels = {
-      foo = "bar"
+      foo = "baz"
+      qux = "zzz"
     }
-    tags             = ["foo", "bar"]
+    tags             = ["baz", "qux"]
     preemptible      = true
     min_cpu_platform = "Intel Broadwell"
 
     taint {
       key    = "taint_key"
       value  = "taint_value"
-      effect = "PREFER_NO_SCHEDULE"
+      effect = "NO_SCHEDULE"
     }
 
     taint {
       key    = "taint_key2"
-      value  = "taint_value2"
+      value  = "taint_value2_updated"
       effect = "NO_EXECUTE"
     }
 
-    // Updatable fields
     image_type = "UBUNTU_CONTAINERD"
   }
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, clusterName, networkName, subnetworkName)
+}
+
+func testAccContainerCluster_withNodeConfigLinuxNodeConfig(clusterName, networkName, subnetworkName, cgroupMode string) string {
+	// Empty block inside node_config if cgroupMode is empty
+	linuxNodeConfig := ""
+
+	if cgroupMode != "" {
+		linuxNodeConfig = fmt.Sprintf(`
+    linux_node_config {
+      cgroup_mode = "%s"
+    }
+`, cgroupMode)
+	}
+
+	return fmt.Sprintf(`
+resource "google_container_cluster" "with_linux_node_config" {
+  name               = "%s"
+  location           = "us-central1-f"
+  initial_node_count = 1
+
+  node_config {
+    disk_size_gb = 15
+
+    %s
+  }
+
+  network    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
+}
+`, clusterName, linuxNodeConfig, networkName, subnetworkName)
 }
 
 func testAccContainerCluster_withNodeConfigScopeAlias(clusterName, networkName, subnetworkName string) string {
@@ -6989,9 +7619,10 @@ resource "google_container_cluster" "with_node_config_scope_alias" {
     disk_size_gb = 15
     oauth_scopes = ["compute-rw", "storage-ro", "logging-write", "monitoring"]
   }
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, clusterName, networkName, subnetworkName)
 }
@@ -7004,9 +7635,9 @@ resource "google_container_cluster" "with_node_config" {
   initial_node_count = 1
 
   node_config {
-    machine_type    = "e2-medium"
-    disk_size_gb    = 15
-    disk_type       = "pd-ssd"
+    machine_type = "e2-medium"
+    disk_size_gb = 15
+    disk_type    = "pd-ssd"
     oauth_scopes = [
       "https://www.googleapis.com/auth/monitoring",
       "https://www.googleapis.com/auth/compute",
@@ -7021,8 +7652,8 @@ resource "google_container_cluster" "with_node_config" {
     labels = {
       foo = "bar"
     }
-    tags             = ["foo", "bar"]
-    preemptible      = true
+    tags        = ["foo", "bar"]
+    preemptible = true
 
     // Updatable fields
     image_type = "COS_CONTAINERD"
@@ -7032,9 +7663,10 @@ resource "google_container_cluster" "with_node_config" {
       enable_integrity_monitoring = true
     }
   }
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, clusterName, networkName, subnetworkName)
 }
@@ -7047,9 +7679,9 @@ resource "google_container_cluster" "with_node_config" {
   initial_node_count = 1
 
   node_config {
-    machine_type    = "e2-medium"
-    disk_size_gb    = 15
-    disk_type       = "pd-ssd"
+    machine_type = "e2-medium"
+    disk_size_gb = 15
+    disk_type    = "pd-ssd"
     oauth_scopes = [
       "https://www.googleapis.com/auth/monitoring",
       "https://www.googleapis.com/auth/compute",
@@ -7064,8 +7696,8 @@ resource "google_container_cluster" "with_node_config" {
     labels = {
       foo = "bar"
     }
-    tags             = ["foo", "bar"]
-    preemptible      = true
+    tags        = ["foo", "bar"]
+    preemptible = true
 
     // Updatable fields
     image_type = "COS_CONTAINERD"
@@ -7074,9 +7706,10 @@ resource "google_container_cluster" "with_node_config" {
       consume_reservation_type = "ANY_RESERVATION"
     }
   }
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, clusterName, networkName, subnetworkName)
 }
@@ -7117,9 +7750,9 @@ resource "google_container_cluster" "with_node_config" {
   initial_node_count = 1
 
   node_config {
-    machine_type    = "n1-standard-1"
-    disk_size_gb    = 15
-    disk_type       = "pd-ssd"
+    machine_type = "n1-standard-1"
+    disk_size_gb = 15
+    disk_type    = "pd-ssd"
     oauth_scopes = [
       "https://www.googleapis.com/auth/monitoring",
       "https://www.googleapis.com/auth/compute",
@@ -7134,38 +7767,45 @@ resource "google_container_cluster" "with_node_config" {
     labels = {
       foo = "bar"
     }
-    tags             = ["foo", "bar"]
+    tags = ["foo", "bar"]
 
     // Updatable fields
     image_type = "COS_CONTAINERD"
 
     reservation_affinity {
       consume_reservation_type = "SPECIFIC_RESERVATION"
-      key = "compute.googleapis.com/reservation-name"
+      key                      = "compute.googleapis.com/reservation-name"
       values = [
         google_compute_reservation.gce_reservation.name
       ]
     }
   }
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
-  depends_on = [google_project_service.container]
+  subnetwork = "%s"
+
+  deletion_protection = false
+  depends_on          = [google_project_service.container]
 }
 `, reservation, clusterName, networkName, subnetworkName)
 }
 
-func testAccContainerCluster_withWorkloadMetadataConfig(clusterName, networkName, subnetworkName string) string {
+func testAccContainerCluster_withWorkloadMetadataConfig(clusterName, workloadMetadataConfigMode, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 data "google_container_engine_versions" "central1a" {
   location = "us-central1-a"
 }
+
+data "google_project" "project" {}
 
 resource "google_container_cluster" "with_workload_metadata_config" {
   name               = "%s"
   location           = "us-central1-a"
   initial_node_count = 1
   min_master_version = data.google_container_engine_versions.central1a.latest_master_version
+
+  workload_identity_config {
+    workload_pool = "${data.google_project.project.project_id}.svc.id.goog"
+  }
 
   node_config {
     oauth_scopes = [
@@ -7174,14 +7814,15 @@ resource "google_container_cluster" "with_workload_metadata_config" {
     ]
 
     workload_metadata_config {
-      mode = "GCE_METADATA"
+      mode = "%s"
     }
   }
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
-`, clusterName, networkName, subnetworkName)
+`, clusterName, workloadMetadataConfigMode, networkName, subnetworkName)
 }
 
 func testAccContainerCluster_withSandboxConfig(clusterName, networkName, subnetworkName string) string {
@@ -7197,7 +7838,7 @@ resource "google_container_cluster" "with_sandbox_config" {
   min_master_version = data.google_container_engine_versions.central1a.latest_master_version
 
   node_config {
-    machine_type = "n1-standard-1"  // can't be e2 because of gvisor
+    machine_type = "n1-standard-1" // can't be e2 because of gvisor
     oauth_scopes = [
       "https://www.googleapis.com/auth/logging.write",
       "https://www.googleapis.com/auth/monitoring",
@@ -7219,9 +7860,10 @@ resource "google_container_cluster" "with_sandbox_config" {
       effect = "NO_SCHEDULE"
     }
   }
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, clusterName, networkName, subnetworkName)
 }
@@ -7239,7 +7881,7 @@ resource "google_container_cluster" "with_sandbox_config" {
   min_master_version = data.google_container_engine_versions.central1a.latest_master_version
 
   node_config {
-    machine_type = "n1-standard-1"  // can't be e2 because of gvisor
+    machine_type = "n1-standard-1" // can't be e2 because of gvisor
     oauth_scopes = [
       "https://www.googleapis.com/auth/logging.write",
       "https://www.googleapis.com/auth/monitoring",
@@ -7252,7 +7894,7 @@ resource "google_container_cluster" "with_sandbox_config" {
     }
 
     labels = {
-      "test.terraform.io/gke-sandbox" = "true"
+      "test.terraform.io/gke-sandbox"         = "true"
       "test.terraform.io/gke-sandbox-amended" = "also-true"
     }
 
@@ -7262,9 +7904,10 @@ resource "google_container_cluster" "with_sandbox_config" {
       effect = "NO_SCHEDULE"
     }
   }
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, clusterName, networkName, subnetworkName)
 }
@@ -7287,9 +7930,10 @@ resource "google_container_cluster" "with_boot_disk_kms_key" {
 
     boot_disk_kms_key = "%s"
   }
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, clusterName, kmsKeyName, networkName, subnetworkName)
 }
@@ -7307,6 +7951,7 @@ resource "google_container_cluster" "with_net_ref_by_url" {
   initial_node_count = 1
 
   network = google_compute_network.container_network.self_link
+
   deletion_protection = false
 }
 
@@ -7316,6 +7961,7 @@ resource "google_container_cluster" "with_net_ref_by_name" {
   initial_node_count = 1
 
   network = google_compute_network.container_network.name
+
   deletion_protection = false
 }
 `, network, cluster, cluster)
@@ -7331,26 +7977,27 @@ resource "google_container_cluster" "with_autoprovisioning_management" {
   cluster_autoscaling {
     enabled = true
 
-	resource_limits {
-	  resource_type = "cpu"
-	  maximum       = 2
-	}
+    resource_limits {
+      resource_type = "cpu"
+      maximum       = 2
+    }
 
-	resource_limits {
-	  resource_type = "memory"
-	  maximum       = 2048
-	}
+    resource_limits {
+      resource_type = "memory"
+      maximum       = 2048
+    }
 
     auto_provisioning_defaults {
       management {
-        auto_upgrade    = %t
-        auto_repair     = %t
+        auto_upgrade = %t
+        auto_repair  = %t
       }
     }
   }
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, clusterName, autoUpgrade, autoRepair, networkName, subnetworkName)
 }
@@ -7376,21 +8023,22 @@ resource "google_container_cluster" "with_autoprovisioning_locations" {
   cluster_autoscaling {
     enabled = true
 
-	resource_limits {
-	  resource_type = "cpu"
-	  maximum       = 2
-	}
+    resource_limits {
+      resource_type = "cpu"
+      maximum       = 2
+    }
 
-	resource_limits {
-	  resource_type = "memory"
-	  maximum       = 2048
-	}
+    resource_limits {
+      resource_type = "memory"
+      maximum       = 2048
+    }
 
     %s
   }
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, clusterName, apl, networkName, subnetworkName)
 }
@@ -7434,9 +8082,10 @@ resource "google_container_cluster" "primary" {
       "https://www.googleapis.com/auth/monitoring",
     ]
   }
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, cluster, cluster, cluster, networkName, subnetworkName)
 }
@@ -7446,7 +8095,6 @@ func testAccContainerCluster_withNodePoolBasic(cluster, nodePool, networkName, s
 resource "google_container_cluster" "with_node_pool" {
   name     = "%s"
   location = "us-central1-a"
-  deletion_protection = false
 
   node_pool {
     name               = "%s"
@@ -7454,7 +8102,9 @@ resource "google_container_cluster" "with_node_pool" {
   }
 
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, cluster, nodePool, networkName, subnetworkName)
 }
@@ -7476,9 +8126,10 @@ resource "google_container_cluster" "with_node_pool" {
     initial_node_count = 2
     version            = data.google_container_engine_versions.central1a.valid_node_versions[2]
   }
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, cluster, nodePool, networkName, subnetworkName)
 }
@@ -7500,9 +8151,10 @@ resource "google_container_cluster" "with_node_pool" {
     initial_node_count = 2
     version            = data.google_container_engine_versions.central1a.valid_node_versions[1]
   }
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, cluster, nodePool, networkName, subnetworkName)
 }
@@ -7522,9 +8174,10 @@ resource "google_container_cluster" "with_node_pool" {
     name       = "%s"
     node_count = 2
   }
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, cluster, nodePool, networkName, subnetworkName)
 }
@@ -7544,9 +8197,10 @@ resource "google_container_cluster" "with_node_pool" {
     name       = "%s"
     node_count = 3
   }
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, cluster, nodePool, networkName, subnetworkName)
 }
@@ -7562,9 +8216,10 @@ resource "google_container_cluster" "autoscaling_with_profile" {
     enabled             = false
     autoscaling_profile = "%s"
   }
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, cluster, autoscalingProfile, networkName, subnetworkName)
 	return config
@@ -7577,13 +8232,15 @@ data "google_container_engine_versions" "central1a" {
 }
 
 resource "google_container_cluster" "with_autoprovisioning" {
-  name               = "%s"
-  location           = "us-central1-a"
-  min_master_version = data.google_container_engine_versions.central1a.latest_master_version
-  initial_node_count = 1
-  deletion_protection = false
+  name                = "%s"
+  location            = "us-central1-a"
+  min_master_version  = data.google_container_engine_versions.central1a.latest_master_version
+  initial_node_count  = 1
+
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 `, cluster, networkName, subnetworkName)
 	if autoprovisioning {
 		config += `
@@ -7628,10 +8285,9 @@ resource "google_container_cluster" "with_autoprovisioning" {
   location           = "us-central1-a"
   min_master_version = data.google_container_engine_versions.central1a.latest_master_version
   initial_node_count = 1
-  deletion_protection = false
 
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
 
   logging_service    = "none"
   monitoring_service = "none"
@@ -7662,6 +8318,7 @@ resource "google_container_cluster" "with_autoprovisioning" {
       ]
     }
   }
+  deletion_protection = false
 }`
 	return config
 }
@@ -7749,9 +8406,10 @@ func testAccContainerCluster_autoprovisioningDefaultsUpgradeSettings(clusterName
           }
         }
       }
-      deletion_protection = false
       network    = "%s"
-      subnetwork    = "%s"
+      subnetwork = "%s"
+
+      deletion_protection = false
     }
   `, clusterName, maxSurge, maxUnavailable, strategy, blueGreenSettings, networkName, subnetworkName)
 }
@@ -7789,9 +8447,10 @@ func testAccContainerCluster_autoprovisioningDefaultsUpgradeSettingsWithBlueGree
             }
           }
         }
-        deletion_protection = false
         network    = "%s"
-        subnetwork    = "%s"
+        subnetwork = "%s"
+
+        deletion_protection = false
       }
     `, clusterName, strategy, duration, duration, networkName, subnetworkName)
 }
@@ -7825,9 +8484,10 @@ resource "google_container_cluster" "with_autoprovisioning" {
       %s
     }
   }
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, cluster, DiskSizeGbCfg, networkName, subnetworkName)
 }
@@ -7861,9 +8521,10 @@ resource "google_container_cluster" "with_autoprovisioning" {
       %s
     }
   }
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, cluster, DiskTypeCfg, networkName, subnetworkName)
 }
@@ -7897,9 +8558,10 @@ resource "google_container_cluster" "with_autoprovisioning" {
       %s
     }
   }
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, cluster, imageTypeCfg, networkName, subnetworkName)
 }
@@ -7924,12 +8586,13 @@ resource "google_container_cluster" "nap_boot_disk_kms_key" {
       maximum       = 2048
     }
     auto_provisioning_defaults {
-	  boot_disk_kms_key = "%s"
+      boot_disk_kms_key = "%s"
     }
   }
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, clusterName, kmsKeyName, networkName, subnetworkName)
 }
@@ -7961,9 +8624,10 @@ resource "google_container_cluster" "nap_shielded_instance" {
       }
     }
   }
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, cluster, networkName, subnetworkName)
 }
@@ -7982,9 +8646,10 @@ resource "google_container_cluster" "with_node_pool" {
       max_node_count = 3
     }
   }
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, cluster, np, networkName, subnetworkName)
 }
@@ -8003,9 +8668,10 @@ resource "google_container_cluster" "with_node_pool" {
       max_node_count = 5
     }
   }
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, cluster, np, networkName, subnetworkName)
 }
@@ -8017,8 +8683,8 @@ data "google_container_engine_versions" "uscentral1a" {
 }
 
 resource "google_container_cluster" "with_node_pool" {
-  name     = "%s"
-  location = "us-central1"
+  name               = "%s"
+  location           = "us-central1"
   min_master_version = data.google_container_engine_versions.uscentral1a.release_channel_latest_version["STABLE"]
 
   node_pool {
@@ -8027,12 +8693,13 @@ resource "google_container_cluster" "with_node_pool" {
     autoscaling {
       total_min_node_count = 3
       total_max_node_count = 21
-      location_policy = "BALANCED"
+      location_policy      = "BALANCED"
     }
   }
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, cluster, np, networkName, subnetworkName)
 }
@@ -8044,8 +8711,8 @@ data "google_container_engine_versions" "uscentral1a" {
 }
 
 resource "google_container_cluster" "with_node_pool" {
-  name     = "%s"
-  location = "us-central1"
+  name               = "%s"
+  location           = "us-central1"
   min_master_version = data.google_container_engine_versions.uscentral1a.release_channel_latest_version["STABLE"]
 
   node_pool {
@@ -8054,12 +8721,13 @@ resource "google_container_cluster" "with_node_pool" {
     autoscaling {
       total_min_node_count = 4
       total_max_node_count = 32
-      location_policy = "ANY"
+      location_policy      = "ANY"
     }
   }
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, cluster, np, networkName, subnetworkName)
 }
@@ -8071,17 +8739,18 @@ data "google_container_engine_versions" "uscentral1a" {
 }
 
 resource "google_container_cluster" "with_node_pool" {
-  name     = "%s"
-  location = "us-central1"
+  name               = "%s"
+  location           = "us-central1"
   min_master_version = data.google_container_engine_versions.uscentral1a.release_channel_latest_version["STABLE"]
 
   node_pool {
     name               = "%s"
     initial_node_count = 2
   }
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, cluster, nodePool, networkName, subnetworkName)
 }
@@ -8096,9 +8765,10 @@ resource "google_container_cluster" "with_node_pool_name_prefix" {
     name_prefix = "%s"
     node_count  = 2
   }
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, cluster, npPrefix, networkName, subnetworkName)
 }
@@ -8118,9 +8788,10 @@ resource "google_container_cluster" "with_node_pool_multiple" {
     name       = "%s-two"
     node_count = 3
   }
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, cluster, npPrefix, npPrefix, networkName, subnetworkName)
 }
@@ -8151,7 +8822,7 @@ resource "google_container_cluster" "with_node_pool_node_config" {
     name       = "%s"
     node_count = 2
     node_config {
-      machine_type    = "n1-standard-1"  // can't be e2 because of local-ssd
+      machine_type    = "n1-standard-1" // can't be e2 because of local-ssd
       disk_size_gb    = 15
       local_ssd_count = 1
       oauth_scopes = [
@@ -8172,9 +8843,10 @@ resource "google_container_cluster" "with_node_pool_node_config" {
       tags = ["foo", "bar"]
     }
   }
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, cluster, np, networkName, subnetworkName)
 }
@@ -8196,9 +8868,11 @@ resource "google_container_cluster" "with_maintenance_window" {
   location           = "us-central1-a"
   initial_node_count = 1
   %s
-  deletion_protection = false
+
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, clusterName, maintenancePolicy, networkName, subnetworkName)
 }
@@ -8222,9 +8896,11 @@ resource "google_container_cluster" "with_recurring_maintenance_window" {
   location           = "us-central1-a"
   initial_node_count = 1
   %s
-  deletion_protection = false
+
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, clusterName, maintenancePolicy, networkName, subnetworkName)
 
@@ -8241,23 +8917,24 @@ resource "google_container_cluster" "with_maintenance_exclusion_window" {
   maintenance_policy {
     recurring_window {
       start_time = "%s"
-      end_time = "%s"
+      end_time   = "%s"
       recurrence = "FREQ=DAILY"
     }
     maintenance_exclusion {
       exclusion_name = "batch job"
-      start_time = "%s"
-      end_time = "%s"
+      start_time     = "%s"
+      end_time       = "%s"
     }
     maintenance_exclusion {
       exclusion_name = "holiday data load"
-      start_time = "%s"
-      end_time = "%s"
+      start_time     = "%s"
+      end_time       = "%s"
     }
   }
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, clusterName, w1startTime, w1endTime, w1startTime, w1endTime, w2startTime, w2endTime, networkName, subnetworkName)
 }
@@ -8273,29 +8950,30 @@ resource "google_container_cluster" "with_maintenance_exclusion_options" {
   maintenance_policy {
     recurring_window {
       start_time = "%s"
-      end_time = "%s"
+      end_time   = "%s"
       recurrence = "FREQ=DAILY"
     }
     maintenance_exclusion {
       exclusion_name = "batch job"
-      start_time = "%s"
-      end_time = "%s"
+      start_time     = "%s"
+      end_time       = "%s"
       exclusion_options {
         scope = "%s"
       }
     }
     maintenance_exclusion {
       exclusion_name = "holiday data load"
-      start_time = "%s"
-      end_time = "%s"
+      start_time     = "%s"
+      end_time       = "%s"
       exclusion_options {
         scope = "%s"
       }
     }
   }
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, cclusterName, w1startTime, w1endTime, w1startTime, w1endTime, scope1, w2startTime, w2endTime, scope2, networkName, subnetworkName)
 }
@@ -8311,23 +8989,24 @@ resource "google_container_cluster" "with_maintenance_exclusion_options" {
   maintenance_policy {
     recurring_window {
       start_time = "%s"
-      end_time = "%s"
+      end_time   = "%s"
       recurrence = "FREQ=DAILY"
     }
     maintenance_exclusion {
       exclusion_name = "batch job"
-      start_time = "%s"
-      end_time = "%s"
+      start_time     = "%s"
+      end_time       = "%s"
     }
     maintenance_exclusion {
       exclusion_name = "holiday data load"
-      start_time = "%s"
-      end_time = "%s"
+      start_time     = "%s"
+      end_time       = "%s"
     }
   }
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, cclusterName, w1startTime, w1endTime, w1startTime, w1endTime, w2startTime, w2endTime, networkName, subnetworkName)
 }
@@ -8339,33 +9018,34 @@ resource "google_container_cluster" "with_maintenance_exclusion_options" {
   name               = "%s"
   location           = "us-central1-a"
   initial_node_count = 1
-  deletion_protection = false
 
   maintenance_policy {
     recurring_window {
       start_time = "%s"
-      end_time = "%s"
+      end_time   = "%s"
       recurrence = "FREQ=DAILY"
     }
     maintenance_exclusion {
       exclusion_name = "batch job"
-      start_time = "%s"
-      end_time = "%s"
+      start_time     = "%s"
+      end_time       = "%s"
       exclusion_options {
         scope = "%s"
       }
     }
     maintenance_exclusion {
       exclusion_name = "holiday data load"
-      start_time = "%s"
-      end_time = "%s"
+      start_time     = "%s"
+      end_time       = "%s"
       exclusion_options {
         scope = "%s"
       }
     }
   }
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, cclusterName, w1startTime, w1endTime, w1startTime, w1endTime, scope1, w2startTime, w2endTime, scope2, networkName, subnetworkName)
 }
@@ -8381,13 +9061,14 @@ resource "google_container_cluster" "with_maintenance_exclusion_window" {
   maintenance_policy {
     recurring_window {
       start_time = "%s"
-      end_time = "%s"
+      end_time   = "%s"
       recurrence = "FREQ=DAILY"
     }
   }
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, clusterName, w1startTime, w1endTime, networkName, subnetworkName)
 }
@@ -8406,13 +9087,14 @@ resource "google_container_cluster" "with_maintenance_exclusion_window" {
     }
     maintenance_exclusion {
       exclusion_name = "batch job"
-      start_time = "%s"
-      end_time = "%s"
+      start_time     = "%s"
+      end_time       = "%s"
     }
   }
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, clusterName, w1startTime, w1endTime, networkName, subnetworkName)
 }
@@ -8528,36 +9210,36 @@ resource "google_container_cluster" "with_ip_allocation_policy" {
 func testAccContainerCluster_stackType_withDualStack(containerNetName string, clusterName string) string {
 	return fmt.Sprintf(`
 resource "google_compute_network" "container_network" {
-    name                    = "%s"
-    auto_create_subnetworks = false
+  name                    = "%s"
+  auto_create_subnetworks = false
 }
 
-    resource "google_compute_subnetwork" "container_subnetwork" {
-    name    = google_compute_network.container_network.name
-    network = google_compute_network.container_network.name
-    region  = "us-central1"
+resource "google_compute_subnetwork" "container_subnetwork" {
+  name    = google_compute_network.container_network.name
+  network = google_compute_network.container_network.name
+  region  = "us-central1"
 
-    ip_cidr_range = "10.2.0.0/16"
-    stack_type = "IPV4_IPV6"
-    ipv6_access_type = "EXTERNAL"
+  ip_cidr_range    = "10.2.0.0/16"
+  stack_type       = "IPV4_IPV6"
+  ipv6_access_type = "EXTERNAL"
 }
 
 resource "google_container_cluster" "with_stack_type" {
-    name       = "%s"
-    location   = "us-central1-a"
-    network    = google_compute_network.container_network.name
-    subnetwork = google_compute_subnetwork.container_subnetwork.name
+  name       = "%s"
+  location   = "us-central1-a"
+  network    = google_compute_network.container_network.name
+  subnetwork = google_compute_subnetwork.container_subnetwork.name
 
-    initial_node_count = 1
-    datapath_provider = "ADVANCED_DATAPATH"
-    enable_l4_ilb_subsetting = true
+  initial_node_count       = 1
+  datapath_provider        = "ADVANCED_DATAPATH"
+  enable_l4_ilb_subsetting = true
 
-    ip_allocation_policy {
-        cluster_ipv4_cidr_block  = "10.0.0.0/16"
-        services_ipv4_cidr_block = "10.1.0.0/16"
-        stack_type = "IPV4_IPV6"
-    }
-	deletion_protection = false
+  ip_allocation_policy {
+    cluster_ipv4_cidr_block  = "10.0.0.0/16"
+    services_ipv4_cidr_block = "10.1.0.0/16"
+    stack_type               = "IPV4_IPV6"
+  }
+  deletion_protection = false
 }
 `, containerNetName, clusterName)
 }
@@ -8565,33 +9247,33 @@ resource "google_container_cluster" "with_stack_type" {
 func testAccContainerCluster_stackType_withSingleStack(containerNetName string, clusterName string) string {
 	return fmt.Sprintf(`
 resource "google_compute_network" "container_network" {
-    name                    = "%s"
-    auto_create_subnetworks = false
+  name                    = "%s"
+  auto_create_subnetworks = false
 }
 
-    resource "google_compute_subnetwork" "container_subnetwork" {
-    name    = google_compute_network.container_network.name
-    network = google_compute_network.container_network.name
-    region  = "us-central1"
+resource "google_compute_subnetwork" "container_subnetwork" {
+  name    = google_compute_network.container_network.name
+  network = google_compute_network.container_network.name
+  region  = "us-central1"
 
-    ip_cidr_range = "10.2.0.0/16"
+  ip_cidr_range = "10.2.0.0/16"
 }
 
 resource "google_container_cluster" "with_stack_type" {
-    name       = "%s"
-    location   = "us-central1-a"
-    network    = google_compute_network.container_network.name
-    subnetwork = google_compute_subnetwork.container_subnetwork.name
+  name       = "%s"
+  location   = "us-central1-a"
+  network    = google_compute_network.container_network.name
+  subnetwork = google_compute_subnetwork.container_subnetwork.name
 
-    initial_node_count = 1
-    enable_l4_ilb_subsetting = true
+  initial_node_count       = 1
+  enable_l4_ilb_subsetting = true
 
-    ip_allocation_policy {
-        cluster_ipv4_cidr_block  = "10.0.0.0/16"
-        services_ipv4_cidr_block = "10.1.0.0/16"
-        stack_type = "IPV4"
-    }
-	deletion_protection = false
+  ip_allocation_policy {
+    cluster_ipv4_cidr_block  = "10.0.0.0/16"
+    services_ipv4_cidr_block = "10.1.0.0/16"
+    stack_type               = "IPV4"
+  }
+  deletion_protection = false
 }
 `, containerNetName, clusterName)
 }
@@ -8599,36 +9281,35 @@ resource "google_container_cluster" "with_stack_type" {
 func testAccContainerCluster_with_PodCIDROverprovisionDisabled(containerNetName string, clusterName string) string {
 	return fmt.Sprintf(`
 resource "google_compute_network" "container_network" {
-    name                    = "%s"
-    auto_create_subnetworks = false
+  name                    = "%s"
+  auto_create_subnetworks = false
 }
 
-    resource "google_compute_subnetwork" "container_subnetwork" {
-    name    = google_compute_network.container_network.name
-    network = google_compute_network.container_network.name
-    region  = "us-central1"
+resource "google_compute_subnetwork" "container_subnetwork" {
+  name    = google_compute_network.container_network.name
+  network = google_compute_network.container_network.name
+  region  = "us-central1"
 
-    ip_cidr_range = "10.0.0.0/16"
+  ip_cidr_range = "10.0.0.0/16"
 }
 
 resource "google_container_cluster" "with_pco_disabled" {
-    name       = "%s"
-    location   = "us-central1-a"
-    network    = google_compute_network.container_network.name
-    subnetwork = google_compute_subnetwork.container_subnetwork.name
+  name       = "%s"
+  location   = "us-central1-a"
+  network    = google_compute_network.container_network.name
+  subnetwork = google_compute_subnetwork.container_subnetwork.name
 
-    min_master_version = "1.27"
-    initial_node_count = 1
-    datapath_provider = "ADVANCED_DATAPATH"
+  initial_node_count = 1
+  datapath_provider  = "ADVANCED_DATAPATH"
 
-    ip_allocation_policy {
-        cluster_ipv4_cidr_block  = "10.1.0.0/16"
-        services_ipv4_cidr_block = "10.2.0.0/16"
-		pod_cidr_overprovision_config {
-			disabled = true
-		}
+  ip_allocation_policy {
+    cluster_ipv4_cidr_block  = "10.1.0.0/16"
+    services_ipv4_cidr_block = "10.2.0.0/16"
+    pod_cidr_overprovision_config {
+      disabled = true
     }
-	deletion_protection = false
+  }
+  deletion_protection = false
 }
 `, containerNetName, clusterName)
 }
@@ -8657,9 +9338,10 @@ resource "google_container_cluster" "with_resource_usage_export_config" {
       dataset_id = google_bigquery_dataset.default.dataset_id
     }
   }
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, datasetId, clusterName, enableMetering, networkName, subnetworkName)
 }
@@ -8676,9 +9358,11 @@ resource "google_container_cluster" "with_resource_usage_export_config" {
   name               = "%s"
   location           = "us-central1-a"
   initial_node_count = 1
-  deletion_protection = false
+
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, datasetId, clusterName, networkName, subnetworkName)
 }
@@ -8778,7 +9462,7 @@ resource "google_container_cluster" "with_private_cluster" {
     master_ipv4_cidr_block  = "10.42.0.0/28"
     master_global_access_config {
       enabled = %t
-	}
+    }
   }
   master_authorized_networks_config {
   }
@@ -8801,11 +9485,12 @@ resource "google_container_cluster" "with_private_cluster" {
     enable_private_endpoint = false
     master_global_access_config {
       enabled = %t
-	}
+    }
   }
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, clusterName, masterGlobalAccessEnabled, networkName, subnetworkName)
 }
@@ -8818,9 +9503,11 @@ resource "google_container_cluster" "with_shielded_nodes" {
   initial_node_count = 1
 
   enable_shielded_nodes = %v
-  deletion_protection = false
+
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection   = false
 }
 `, clusterName, enabled, networkName, subnetworkName)
 }
@@ -8840,9 +9527,11 @@ resource "google_container_cluster" "with_workload_identity_config" {
     workload_pool = "${data.google_project.project.project_id}.svc.id.goog"
   }
   remove_default_node_pool = true
-  deletion_protection = false
+
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, projectID, clusterName, networkName, subnetworkName)
 }
@@ -8861,7 +9550,7 @@ resource "google_container_cluster" "with_workload_identity_config" {
   workload_identity_config {
     workload_pool = "${data.google_project.project.project_id}.svc.id.goog"
   }
-  enable_autopilot = true
+  enable_autopilot    = true
   deletion_protection = false
 }
 `, projectID, clusterName)
@@ -8886,14 +9575,16 @@ data "google_project" "project" {
 }
 
 resource "google_container_cluster" "with_workload_identity_config" {
-  name               = "%s"
-  location           = "us-central1-a"
-  initial_node_count = 1
+  name                     = "%s"
+  location                 = "us-central1-a"
+  initial_node_count       = 1
   remove_default_node_pool = true
   %s
-  deletion_protection = false
+
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, projectID, clusterName, workloadIdentityConfig, networkName, subnetworkName)
 }
@@ -9017,9 +9708,10 @@ resource "google_container_cluster" "with_binary_authorization_enabled_bool" {
   binary_authorization {
     enabled = %v
   }
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, clusterName, enabled, networkName, subnetworkName)
 }
@@ -9037,9 +9729,10 @@ resource "google_container_cluster" "with_binary_authorization_evaluation_mode" 
   binary_authorization {
     evaluation_mode = "%s"
   }
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, clusterName, autopilot_enabled, evaluation_mode, networkName, subnetworkName)
 }
@@ -9203,9 +9896,10 @@ resource "google_container_cluster" "with_external_ips_config" {
   service_external_ips_config {
     enabled = %v
   }
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, projectID, clusterName, enabled, networkName, subnetworkName)
 }
@@ -9217,9 +9911,9 @@ data "google_project" "project" {
 }
 
 resource "google_container_cluster" "with_mesh_certificates_config" {
-  name               = "%s"
-  location           = "us-central1-a"
-  initial_node_count = 1
+  name                     = "%s"
+  location                 = "us-central1-a"
+  initial_node_count       = 1
   remove_default_node_pool = true
   workload_identity_config {
     workload_pool = "${data.google_project.project.project_id}.svc.id.goog"
@@ -9227,9 +9921,10 @@ resource "google_container_cluster" "with_mesh_certificates_config" {
   mesh_certificates {
     enable_certificates = true
   }
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, projectID, clusterName, networkName, subnetworkName)
 }
@@ -9251,9 +9946,10 @@ resource "google_container_cluster" "with_mesh_certificates_config" {
   mesh_certificates {
     enable_certificates = %v
   }
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, projectID, clusterName, enabled, networkName, subnetworkName)
 }
@@ -9271,9 +9967,10 @@ resource "google_container_cluster" "with_cost_management_config" {
   cost_management_config {
     enabled = %v
   }
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, projectID, clusterName, enabled, networkName, subnetworkName)
 }
@@ -9302,9 +9999,10 @@ resource "google_container_cluster" "primary" {
     state    = "ENCRYPTED"
     key_name = "%[2]s"
   }
-  deletion_protection = false
   network    = "%[4]s"
   subnetwork = "%[5]s"
+
+  deletion_protection = false
 }
 `, kmsData.KeyRing.Name, kmsData.CryptoKey.Name, clusterName, networkName, subnetworkName)
 }
@@ -9323,9 +10021,10 @@ resource "google_container_cluster" "primary" {
   release_channel {
     channel = "RAPID"
   }
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, clusterName, datapathProvider, networkName, subnetworkName)
 }
@@ -9415,11 +10114,6 @@ resource "google_container_cluster" "with_autopilot" {
   datapath_provider = "ADVANCED_DATAPATH"
 
   deletion_protection = false
-
-  timeouts {
-    create = "30m"
-    update = "40m"
-  }
 }
 `, clusterName, networkName, subnetworkName)
 }
@@ -9479,11 +10173,6 @@ resource "google_container_cluster" "with_autopilot" {
   enable_cilium_clusterwide_network_policy = true
 
   deletion_protection = false
-
-  timeouts {
-    create = "30m"
-    update = "40m"
-  }
 }
 `, clusterName, networkName, subnetworkName)
 }
@@ -9540,21 +10229,22 @@ resource "google_container_cluster" "with_private_cluster" {
 func testAccContainerCluster_withEnableKubernetesAlpha(cluster, np, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 resource "google_container_cluster" "primary" {
-  name               = "%s"
-  location           = "us-central1-a"
+  name                    = "%s"
+  location                = "us-central1-a"
   enable_kubernetes_alpha = true
 
   node_pool {
-    name = "%s"
-	initial_node_count = 1
-	management {
-		auto_repair = false
-		auto_upgrade = false
-	}
+    name               = "%s"
+    initial_node_count = 1
+    management {
+      auto_repair  = false
+      auto_upgrade = false
+    }
   }
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, cluster, np, networkName, subnetworkName)
 }
@@ -9570,9 +10260,11 @@ resource "google_container_cluster" "primary" {
   location           = "us-central1-a"
   min_master_version = data.google_container_engine_versions.central1a.release_channel_latest_version["STABLE"]
   initial_node_count = 1
-  deletion_protection = false
+
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, clusterName, networkName, subnetworkName)
 }
@@ -9588,7 +10280,6 @@ resource "google_container_cluster" "primary" {
   location           = "us-central1-a"
   min_master_version = data.google_container_engine_versions.uscentral1a.release_channel_latest_version["STABLE"]
   initial_node_count = 1
-  deletion_protection = false
 
   # This feature has been available since GKE 1.27, and currently the only
   # supported Beta API is authentication.k8s.io/v1beta1/selfsubjectreviews.
@@ -9614,7 +10305,9 @@ resource "google_container_cluster" "primary" {
     enabled_apis = ["authentication.k8s.io/v1beta1/selfsubjectreviews"]
   }
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, cluster, networkName, subnetworkName)
 }
@@ -9624,8 +10317,8 @@ func testAccContainerCluster_withIPv4Error(name string) string {
 resource "google_container_cluster" "primary" {
   name               = "%s"
   location           = "us-central1-a"
-	initial_node_count = 1
-	private_cluster_config {
+  initial_node_count = 1
+  private_cluster_config {
     enable_private_endpoint = true
     enable_private_nodes    = false
     master_ipv4_cidr_block  = "10.42.0.0/28"
@@ -9641,86 +10334,88 @@ func testAccContainerCluster_withAutopilot(projectID string, containerNetName st
 	if serviceAccount != "" {
 		config += fmt.Sprintf(`
 resource "google_service_account" "service_account" {
-	account_id   = "%[1]s"
-	project      = "%[2]s"
-	display_name = "Service Account"
+  account_id   = "%[1]s"
+  project      = "%[2]s"
+  display_name = "Service Account"
 }
 
 resource "google_project_iam_member" "project" {
-	project = "%[2]s"
-	role    = "roles/container.nodeServiceAccount"
-	member = "serviceAccount:%[1]s@%[2]s.iam.gserviceaccount.com"
+  project = "%[2]s"
+  role    = "roles/container.nodeServiceAccount"
+  member = "serviceAccount:%[1]s@%[2]s.iam.gserviceaccount.com"
 }`, serviceAccount, projectID)
 
 		clusterAutoscaling = fmt.Sprintf(`
-	cluster_autoscaling {
-		auto_provisioning_defaults {
-			service_account = "%s@%s.iam.gserviceaccount.com"
-			oauth_scopes = ["https://www.googleapis.com/auth/cloud-platform"]
-		}
-	}`, serviceAccount, projectID)
+  cluster_autoscaling {
+    auto_provisioning_defaults {
+      service_account = "%s@%s.iam.gserviceaccount.com"
+      oauth_scopes = ["https://www.googleapis.com/auth/cloud-platform"]
+    }
+  }`, serviceAccount, projectID)
 	}
 
 	config += fmt.Sprintf(`
 
 resource "google_compute_network" "container_network" {
-	name                    = "%s"
-	auto_create_subnetworks = false
+  name                    = "%s"
+  auto_create_subnetworks = false
 }
 
 resource "google_compute_subnetwork" "container_subnetwork" {
-	name                     = google_compute_network.container_network.name
-	network                  = google_compute_network.container_network.name
-	ip_cidr_range            = "10.0.36.0/24"
-	region                   = "us-central1"
-	private_ip_google_access = true
+  name                     = google_compute_network.container_network.name
+  network                  = google_compute_network.container_network.name
+  ip_cidr_range            = "10.0.36.0/24"
+  region                   = "us-central1"
+  private_ip_google_access = true
 
-	secondary_ip_range {
-	  range_name    = "pod"
-	  ip_cidr_range = "10.0.0.0/19"
-	}
+  secondary_ip_range {
+    range_name    = "pod"
+    ip_cidr_range = "10.0.0.0/19"
+  }
 
-	secondary_ip_range {
-	  range_name    = "svc"
-	  ip_cidr_range = "10.0.32.0/22"
-	}
+  secondary_ip_range {
+    range_name    = "svc"
+    ip_cidr_range = "10.0.32.0/22"
+  }
 }
 
 data "google_container_engine_versions" "central1a" {
-	location = "us-central1-a"
+  location = "us-central1-a"
 }
 
 resource "google_container_cluster" "with_autopilot" {
-	name               = "%s"
-	location           = "%s"
-	enable_autopilot   = %v
-	deletion_protection = false
-	min_master_version = "latest"
-	release_channel {
-		channel = "RAPID"
-	}
-	network       = google_compute_network.container_network.name
-	subnetwork    = google_compute_subnetwork.container_subnetwork.name
-	ip_allocation_policy {
-		cluster_secondary_range_name  = google_compute_subnetwork.container_subnetwork.secondary_ip_range[0].range_name
-		services_secondary_range_name = google_compute_subnetwork.container_subnetwork.secondary_ip_range[1].range_name
-	}
-	addons_config {
-		horizontal_pod_autoscaling {
-			disabled = false
-		}
-	}
-	%s
-	vertical_pod_autoscaling {
-		enabled = true
-	}`, containerNetName, clusterName, location, enabled, clusterAutoscaling)
+  name                = "%s"
+  location            = "%s"
+  enable_autopilot    = %v
+  min_master_version  = "latest"
+  release_channel {
+    channel = "RAPID"
+  }
+  network    = google_compute_network.container_network.name
+  subnetwork = google_compute_subnetwork.container_subnetwork.name
+
+  deletion_protection = false
+
+  ip_allocation_policy {
+    cluster_secondary_range_name  = google_compute_subnetwork.container_subnetwork.secondary_ip_range[0].range_name
+    services_secondary_range_name = google_compute_subnetwork.container_subnetwork.secondary_ip_range[1].range_name
+  }
+  addons_config {
+    horizontal_pod_autoscaling {
+      disabled = false
+    }
+  }
+  %s
+  vertical_pod_autoscaling {
+    enabled = true
+  }`, containerNetName, clusterName, location, enabled, clusterAutoscaling)
 	if withNetworkTag {
 		config += `
-	node_pool_auto_config {
-		network_tags {
-			tags = ["test-network-tag"]
-		}
-	}`
+  node_pool_auto_config {
+    network_tags {
+      tags = ["test-network-tag"]
+    }
+  }`
 	}
 	config += `
 }`
@@ -9730,17 +10425,18 @@ resource "google_container_cluster" "with_autopilot" {
 func testAccContainerCluster_withDNSConfig(clusterName, clusterDns, clusterDnsDomain, clusterDnsScope, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 resource "google_container_cluster" "primary" {
-	name               = "%s"
-	location           = "us-central1-a"
+  name               = "%s"
+  location           = "us-central1-a"
   initial_node_count = 1
   dns_config {
-    cluster_dns 	   = "%s"
+    cluster_dns        = "%s"
     cluster_dns_domain = "%s"
     cluster_dns_scope  = "%s"
   }
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, clusterName, clusterDns, clusterDnsDomain, clusterDnsScope, networkName, subnetworkName)
 }
@@ -9873,7 +10569,7 @@ resource "google_container_cluster" "primary" {
   location           = "us-central1-a"
   initial_node_count = 1
   logging_config {
-    enable_components = [ "SYSTEM_COMPONENTS", "APISERVER", "CONTROLLER_MANAGER", "SCHEDULER"]
+    enable_components = [ "SYSTEM_COMPONENTS", "APISERVER", "CONTROLLER_MANAGER", "SCHEDULER", "KCP_CONNECTION", "KCP_SSHD"]
   }
   monitoring_config {
     enable_components = [ "SYSTEM_COMPONENTS" ]
@@ -9912,11 +10608,11 @@ resource "google_container_cluster" "primary" {
   location           = "us-central1-a"
   initial_node_count = 1
   monitoring_config {
-      enable_components = []
+    enable_components = []
   }
   deletion_protection = false
-  network    = "%s"
-  subnetwork    = "%s"
+  network             = "%s"
+  subnetwork          = "%s"
 }
 `, name, networkName, subnetworkName)
 }
@@ -9928,11 +10624,11 @@ resource "google_container_cluster" "primary" {
   location           = "us-central1-a"
   initial_node_count = 1
   monitoring_config {
-         enable_components = [ "SYSTEM_COMPONENTS", "APISERVER", "CONTROLLER_MANAGER" ]
+    enable_components = ["SYSTEM_COMPONENTS", "APISERVER", "CONTROLLER_MANAGER"]
   }
   deletion_protection = false
-  network    = "%s"
-  subnetwork    = "%s"
+  network             = "%s"
+  subnetwork          = "%s"
 }
 `, name, networkName, subnetworkName)
 }
@@ -9944,14 +10640,14 @@ resource "google_container_cluster" "primary" {
   location           = "us-central1-a"
   initial_node_count = 1
   monitoring_config {
-         enable_components = [ "SYSTEM_COMPONENTS", "APISERVER", "CONTROLLER_MANAGER", "SCHEDULER" ]
-         managed_prometheus {
-                 enabled = true
-         }
+    enable_components = ["SYSTEM_COMPONENTS", "APISERVER", "CONTROLLER_MANAGER", "SCHEDULER"]
+    managed_prometheus {
+      enabled = true
+    }
   }
   deletion_protection = false
-  network    = "%s"
-  subnetwork    = "%s"
+  network             = "%s"
+  subnetwork          = "%s"
 }
 `, name, networkName, subnetworkName)
 }
@@ -9963,14 +10659,14 @@ resource "google_container_cluster" "primary" {
   location           = "us-central1-a"
   initial_node_count = 1
   monitoring_config {
-	     enable_components = []
-         managed_prometheus {
-                enabled = true
-         }
+    enable_components = []
+    managed_prometheus {
+      enabled = true
+    }
   }
   deletion_protection = false
-  network    = "%s"
-  subnetwork    = "%s"
+  network             = "%s"
+  subnetwork          = "%s"
 }
 `, name, networkName, subnetworkName)
 }
@@ -9982,13 +10678,13 @@ resource "google_container_cluster" "primary" {
   location           = "us-central1-a"
   initial_node_count = 1
   monitoring_config {
-         managed_prometheus {
-                enabled = true
-         }
+    managed_prometheus {
+      enabled = true
+    }
   }
   deletion_protection = false
-  network    = "%s"
-  subnetwork    = "%s"
+  network             = "%s"
+  subnetwork          = "%s"
 }
 `, name, networkName, subnetworkName)
 }
@@ -10022,7 +10718,7 @@ resource "google_container_cluster" "primary" {
   name               = "%s"
   location           = "us-central1-a"
   initial_node_count = 1
-  datapath_provider = "ADVANCED_DATAPATH"
+  datapath_provider  = "ADVANCED_DATAPATH"
 
   network    = google_compute_network.container_network.name
   subnetwork = google_compute_subnetwork.container_subnetwork.name
@@ -10115,14 +10811,15 @@ resource "google_container_cluster" "primary" {
   location           = "us-central1-f"
   initial_node_count = 1
   node_config {
-    machine_type    = "n1-standard-1"  // can't be e2 because of local-ssd
-    disk_size_gb    = 15
-    disk_type       = "pd-ssd"
-    node_group = google_compute_node_group.group.name
+    machine_type = "n1-standard-1" // can't be e2 because of local-ssd
+    disk_size_gb = 15
+    disk_type    = "pd-ssd"
+    node_group   = google_compute_node_group.group.name
   }
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, name, name, name, networkName, subnetworkName)
 }
@@ -10130,56 +10827,56 @@ resource "google_container_cluster" "primary" {
 func testAccContainerCluster_withTPUConfig(network, cluster string) string {
 	return fmt.Sprintf(`
 resource "google_compute_network" "container_network" {
-	name                    = "%s"
-	auto_create_subnetworks = false
+  name                    = "%s"
+  auto_create_subnetworks = false
 }
 
 resource "google_compute_subnetwork" "container_subnetwork" {
-	name                     = google_compute_network.container_network.name
-	network                  = google_compute_network.container_network.name
-	ip_cidr_range            = "10.0.36.0/24"
-	region                   = "us-central1"
-	private_ip_google_access = true
+  name                     = google_compute_network.container_network.name
+  network                  = google_compute_network.container_network.name
+  ip_cidr_range            = "10.0.36.0/24"
+  region                   = "us-central1"
+  private_ip_google_access = true
 
-	secondary_ip_range {
-		range_name    = "pod"
-		ip_cidr_range = "10.0.0.0/19"
-	}
+  secondary_ip_range {
+    range_name    = "pod"
+    ip_cidr_range = "10.0.0.0/19"
+  }
 
-	secondary_ip_range {
-		range_name    = "svc"
-		ip_cidr_range = "10.0.32.0/22"
-	}
+  secondary_ip_range {
+    range_name    = "svc"
+    ip_cidr_range = "10.0.32.0/22"
+  }
 }
 
 resource "google_container_cluster" "with_tpu_config" {
-	name               = "%s"
-	location           = "us-central1-a"
-	initial_node_count = 1
+  name               = "%s"
+  location           = "us-central1-a"
+  initial_node_count = 1
 
 
-	tpu_config {
-		enabled                = true
-		use_service_networking = true
-	}
+  tpu_config {
+    enabled                = true
+    use_service_networking = true
+  }
 
-	network         = google_compute_network.container_network.name
-	subnetwork      = google_compute_subnetwork.container_subnetwork.name
-	networking_mode = "VPC_NATIVE"
+  network         = google_compute_network.container_network.name
+  subnetwork      = google_compute_subnetwork.container_subnetwork.name
+  networking_mode = "VPC_NATIVE"
 
-	private_cluster_config {
-		enable_private_endpoint = true
-		enable_private_nodes    = true
-		master_ipv4_cidr_block  = "10.42.0.0/28"
-	}
-	master_authorized_networks_config {
-	}
+  private_cluster_config {
+    enable_private_endpoint = true
+    enable_private_nodes    = true
+    master_ipv4_cidr_block  = "10.42.0.0/28"
+  }
+  master_authorized_networks_config {
+  }
 
-	ip_allocation_policy {
-		cluster_secondary_range_name  = google_compute_subnetwork.container_subnetwork.secondary_ip_range[0].range_name
-		services_secondary_range_name = google_compute_subnetwork.container_subnetwork.secondary_ip_range[1].range_name
-	}
-	deletion_protection = false
+  ip_allocation_policy {
+    cluster_secondary_range_name  = google_compute_subnetwork.container_subnetwork.secondary_ip_range[0].range_name
+    services_secondary_range_name = google_compute_subnetwork.container_subnetwork.secondary_ip_range[1].range_name
+  }
+  deletion_protection = false
 }
 `, network, cluster)
 }
@@ -10192,14 +10889,15 @@ resource "google_container_cluster" "primary" {
   initial_node_count = 1
 
   protect_config {
-	workload_config {
-		audit_mode = "BASIC"
-	}
-	workload_vulnerability_mode = "BASIC"
+    workload_config {
+      audit_mode = "BASIC"
+    }
+    workload_vulnerability_mode = "BASIC"
   }
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, name, networkName, subnetworkName)
 }
@@ -10212,14 +10910,15 @@ resource "google_container_cluster" "primary" {
   initial_node_count = 1
 
   protect_config {
-	workload_config {
-		audit_mode = "DISABLED"
-	}
-	workload_vulnerability_mode = "DISABLED"
+    workload_config {
+      audit_mode = "DISABLED"
+    }
+    workload_vulnerability_mode = "DISABLED"
   }
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, name, networkName, subnetworkName)
 }
@@ -10227,9 +10926,9 @@ resource "google_container_cluster" "primary" {
 func testAccContainerCluster_autopilot_minimal(name string) string {
 	return fmt.Sprintf(`
 resource "google_container_cluster" "primary" {
-  name             = "%s"
-  location         = "us-central1"
-  enable_autopilot = true
+  name                = "%s"
+  location            = "us-central1"
+  enable_autopilot    = true
   deletion_protection = false
 }`, name)
 }
@@ -10239,14 +10938,16 @@ func testAccContainerCluster_autopilot_net_admin(name, networkName, subnetworkNa
 resource "google_container_cluster" "primary" {
   name             = "%s"
   location         = "us-central1"
+
+  network          = "%s"
+  subnetwork       = "%s"
+
   enable_autopilot = true
   allow_net_admin  = %t
-  min_master_version = 1.27
+
   deletion_protection = false
-  network    = "%s"
-  subnetwork    = "%s"
 }
-`, name, enabled, networkName, subnetworkName)
+`, name, networkName, subnetworkName, enabled)
 }
 
 func TestAccContainerCluster_customPlacementPolicy(t *testing.T) {
@@ -10283,9 +10984,8 @@ func TestAccContainerCluster_customPlacementPolicy(t *testing.T) {
 
 func testAccContainerCluster_customPlacementPolicy(cluster, np, policyName, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
-
 resource "google_compute_resource_policy" "policy" {
-  name = "%s"
+  name   = "%s"
   region = "us-central1"
   group_placement_policy {
     collocation = "COLLOCATED"
@@ -10293,8 +10993,8 @@ resource "google_compute_resource_policy" "policy" {
 }
 
 resource "google_container_cluster" "cluster" {
-  name               = "%s"
-  location           = "us-central1-a"
+  name     = "%s"
+  location = "us-central1-a"
 
   node_pool {
     name               = "%s"
@@ -10305,13 +11005,14 @@ resource "google_container_cluster" "cluster" {
     }
 
     placement_policy {
-      type = "COMPACT"
+      type        = "COMPACT"
       policy_name = google_compute_resource_policy.policy.name
     }
   }
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, policyName, cluster, np, networkName, subnetworkName)
 }
@@ -10333,66 +11034,66 @@ func testAccContainerCluster_additional_pod_ranges_config(name string, nameCount
 
 	return fmt.Sprintf(`
 	resource "google_compute_network" "main" {
-		name                    = "%s"
-		auto_create_subnetworks = false
+	  name                    = "%s"
+	  auto_create_subnetworks = false
 	}
 	resource "google_compute_subnetwork" "main" {
-		ip_cidr_range = "10.10.0.0/16"
-		name          = "%s"
-		network       = google_compute_network.main.self_link
-		region        = "us-central1"
+	  ip_cidr_range = "10.10.0.0/16"
+	  name          = "%s"
+	  network       = google_compute_network.main.self_link
+	  region        = "us-central1"
 
-		secondary_ip_range {
-			range_name    = "gke-autopilot-services"
-			ip_cidr_range = "10.11.0.0/20"
-		}
+	  secondary_ip_range {
+	    range_name    = "gke-autopilot-services"
+	    ip_cidr_range = "10.11.0.0/20"
+	  }
 
-		secondary_ip_range {
-			range_name    = "gke-autopilot-pods"
-			ip_cidr_range = "10.12.0.0/16"
-		}
+	  secondary_ip_range {
+	    range_name    = "gke-autopilot-pods"
+	    ip_cidr_range = "10.12.0.0/16"
+	  }
 
-		secondary_ip_range {
-			range_name    = "gke-autopilot-pods-add"
-			ip_cidr_range = "10.100.0.0/16"
-		}
-		secondary_ip_range {
-			range_name    = "gke-autopilot-pods-add-2"
-			ip_cidr_range = "100.0.0.0/16"
-		}
+	  secondary_ip_range {
+	    range_name    = "gke-autopilot-pods-add"
+	    ip_cidr_range = "10.100.0.0/16"
+	  }
+	  secondary_ip_range {
+	    range_name    = "gke-autopilot-pods-add-2"
+	    ip_cidr_range = "100.0.0.0/16"
+	  }
 	}
 	resource "google_container_cluster" "primary" {
-		name     = "%s"
-		location = "us-central1"
+	  name     = "%s"
+	  location = "us-central1"
 
-		enable_autopilot = true
+	  enable_autopilot = true
 
-		release_channel {
-			channel = "REGULAR"
-		}
+	  release_channel {
+	    channel = "REGULAR"
+	  }
 
-		network    = google_compute_network.main.name
-		subnetwork = google_compute_subnetwork.main.name
+	  network    = google_compute_network.main.name
+	  subnetwork = google_compute_subnetwork.main.name
 
-		private_cluster_config {
-			enable_private_endpoint = false
-			enable_private_nodes    = true
-			master_ipv4_cidr_block  = "172.16.0.0/28"
-		}
+	  private_cluster_config {
+	    enable_private_endpoint = false
+	    enable_private_nodes    = true
+	    master_ipv4_cidr_block  = "172.16.0.0/28"
+	  }
 
-		# supresses permadiff
-		dns_config {
-			cluster_dns = "CLOUD_DNS"
-			cluster_dns_domain = "cluster.local"
-			cluster_dns_scope = "CLUSTER_SCOPE"
-		}
+	  # supresses permadiff
+	  dns_config {
+	    cluster_dns        = "CLOUD_DNS"
+	    cluster_dns_domain = "cluster.local"
+	    cluster_dns_scope  = "CLUSTER_SCOPE"
+	  }
 
-		ip_allocation_policy {
-			cluster_secondary_range_name  = "gke-autopilot-pods"
-			services_secondary_range_name = "gke-autopilot-services"
-			%s
-		}
-		deletion_protection = false
+	  ip_allocation_policy {
+	    cluster_secondary_range_name  = "gke-autopilot-pods"
+	    services_secondary_range_name = "gke-autopilot-services"
+	    %s
+	  }
+	  deletion_protection = false
 	}
 	`, name, name, name, aprc)
 }
@@ -10431,31 +11132,32 @@ func TestAccContainerCluster_withConfidentialBootDisk(t *testing.T) {
 func testAccContainerCluster_withConfidentialBootDisk(clusterName, npName, kmsKeyName, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 resource "google_container_cluster" "with_confidential_boot_disk" {
-  name               = "%s"
-  location           = "us-central1-a"
+  name     = "%s"
+  location = "us-central1-a"
   confidential_nodes {
-  	enabled = true
+    enabled = true
   }
   release_channel {
     channel = "RAPID"
   }
   node_pool {
-    name = "%s"
+    name               = "%s"
     initial_node_count = 1
     node_config {
       oauth_scopes = [
         "https://www.googleapis.com/auth/cloud-platform",
       ]
-      image_type = "COS_CONTAINERD"
-      boot_disk_kms_key = "%s"
-      machine_type = "n2d-standard-2"
+      image_type                  = "COS_CONTAINERD"
+      boot_disk_kms_key           = "%s"
+      machine_type                = "n2d-standard-2"
       enable_confidential_storage = true
-      disk_type = "hyperdisk-balanced"
+      disk_type                   = "hyperdisk-balanced"
     }
   }
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, clusterName, npName, kmsKeyName, networkName, subnetworkName)
 }
@@ -10493,10 +11195,10 @@ func TestAccContainerCluster_withConfidentialBootDiskNodeConfig(t *testing.T) {
 func testAccContainerCluster_withConfidentialBootDiskNodeConfig(clusterName, kmsKeyName, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 resource "google_container_cluster" "with_confidential_boot_disk_node_config" {
-  name               = "%s"
-  location           = "us-central1-a"
+  name     = "%s"
+  location = "us-central1-a"
   confidential_nodes {
-  	enabled = true
+    enabled = true
   }
   initial_node_count = 1
   release_channel {
@@ -10506,15 +11208,16 @@ resource "google_container_cluster" "with_confidential_boot_disk_node_config" {
     oauth_scopes = [
       "https://www.googleapis.com/auth/cloud-platform",
     ]
-    image_type = "COS_CONTAINERD"
-    boot_disk_kms_key = "%s"
-    machine_type = "n2d-standard-2"
+    image_type                  = "COS_CONTAINERD"
+    boot_disk_kms_key           = "%s"
+    machine_type                = "n2d-standard-2"
     enable_confidential_storage = true
-    disk_type = "hyperdisk-balanced"
+    disk_type                   = "hyperdisk-balanced"
   }
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, clusterName, kmsKeyName, networkName, subnetworkName)
 }
@@ -10547,65 +11250,66 @@ func TestAccContainerCluster_withoutConfidentialBootDisk(t *testing.T) {
 func testAccContainerCluster_withoutConfidentialBootDisk(clusterName, npName, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 resource "google_container_cluster" "without_confidential_boot_disk" {
-  name               = "%s"
-  location           = "us-central1-a"
+  name     = "%s"
+  location = "us-central1-a"
   release_channel {
     channel = "RAPID"
   }
   node_pool {
-    name = "%s"
+    name               = "%s"
     initial_node_count = 1
     node_config {
       oauth_scopes = [
-       "https://www.googleapis.com/auth/cloud-platform",
+        "https://www.googleapis.com/auth/cloud-platform",
       ]
-      image_type = "COS_CONTAINERD"
-      machine_type = "n2-standard-2"
+      image_type                  = "COS_CONTAINERD"
+      machine_type                = "n2-standard-2"
       enable_confidential_storage = false
-      disk_type = "pd-balanced"
+      disk_type                   = "pd-balanced"
     }
   }
-  deletion_protection = false
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, clusterName, npName, networkName, subnetworkName)
 }
 
 func testAccContainerCluster_withWorkloadALTSConfig(projectID, name, networkName, subnetworkName string, enable bool) string {
 	return fmt.Sprintf(`
-  data "google_project" "project" {
-    provider = google-beta
-    project_id = "%s"
+data "google_project" "project" {
+  provider   = google-beta
+  project_id = "%s"
+}
+resource "google_compute_network" "network" {
+  provider                 = google-beta
+  name                     = "%s"
+  auto_create_subnetworks  = false
+  enable_ula_internal_ipv6 = true
+}
+resource "google_compute_subnetwork" "subnet" {
+  provider      = google-beta
+  name          = "%s"
+  network       = google_compute_network.network.id
+  ip_cidr_range = "9.12.22.0/24"
+  region        = "us-central1"
+}
+resource "google_container_cluster" "with_workload_alts_config" {
+  provider           = google-beta
+  name               = "%s"
+  location           = "us-central1-a"
+  initial_node_count = 1
+  network            = google_compute_network.network.name
+  subnetwork         = google_compute_subnetwork.subnet.name
+  workload_alts_config {
+    enable_alts = %v
   }
-  resource "google_compute_network" "network" {
-    provider                 = google-beta
-    name                     = "%s"
-    auto_create_subnetworks  = false
-    enable_ula_internal_ipv6 = true
+  workload_identity_config {
+    workload_pool = "${data.google_project.project.project_id}.svc.id.goog"
   }
-  resource "google_compute_subnetwork" "subnet" {
-    provider         = google-beta
-    name             = "%s"
-    network          = google_compute_network.network.id
-    ip_cidr_range    = "9.12.22.0/24"
-    region           = "us-central1"
-  }
-  resource "google_container_cluster" "with_workload_alts_config" {
-    provider = google-beta
-    name               = "%s"
-    location           = "us-central1-a"
-    initial_node_count = 1
-    network         = google_compute_network.network.name
-    subnetwork      = google_compute_subnetwork.subnet.name
-    workload_alts_config {
-      enable_alts = %v
-    }
-    workload_identity_config {
-      workload_pool = "${data.google_project.project.project_id}.svc.id.goog"
-    }
-    deletion_protection = false
-  }
+  deletion_protection = false
+}
 `, projectID, networkName, subnetworkName, name, enable)
 }
 
@@ -10634,41 +11338,41 @@ func testAccContainerCluster_withWorkloadALTSConfigAutopilot(projectID, name str
 
 func testAccContainerCluster_withAutopilotKubeletConfigBaseline(name string) string {
 	return fmt.Sprintf(`
-  resource "google_container_cluster" "with_autopilot_kubelet_config" {
-    name                = "%s"
-    location            = "us-central1"
-    initial_node_count  = 1
-    enable_autopilot    = true
-    deletion_protection = false
-  }
+resource "google_container_cluster" "with_autopilot_kubelet_config" {
+  name                = "%s"
+  location            = "us-central1"
+  initial_node_count  = 1
+  enable_autopilot    = true
+  deletion_protection = false
+}
 `, name)
 }
 
 func testAccContainerCluster_withAutopilotKubeletConfigUpdates(name, insecureKubeletReadonlyPortEnabled string) string {
 	return fmt.Sprintf(`
-  resource "google_container_cluster" "with_autopilot_kubelet_config" {
-    name               = "%s"
-    location           = "us-central1"
-    initial_node_count = 1
+resource "google_container_cluster" "with_autopilot_kubelet_config" {
+  name               = "%s"
+  location           = "us-central1"
+  initial_node_count = 1
 
-    node_pool_auto_config {
-      node_kubelet_config {
-        insecure_kubelet_readonly_port_enabled = "%s"
-      }
+  node_pool_auto_config {
+    node_kubelet_config {
+      insecure_kubelet_readonly_port_enabled = "%s"
     }
-
-    enable_autopilot    = true
-    deletion_protection = false
   }
+
+  enable_autopilot    = true
+  deletion_protection = false
+}
 `, name, insecureKubeletReadonlyPortEnabled)
 }
 
 func testAccContainerCluster_withAutopilot_withNodePoolDefaults(name, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 resource "google_container_cluster" "primary" {
-  name                = "%s"
-  location            = "us-central1"
-  enable_autopilot    = true
+  name             = "%s"
+  location         = "us-central1"
+  enable_autopilot = true
 
   node_pool_defaults {
     node_config_defaults {
@@ -10676,13 +11380,13 @@ resource "google_container_cluster" "primary" {
   }
 
   deletion_protection = false
-  network    = "%s"
-  subnetwork    = "%s"
- }
+  network             = "%s"
+  subnetwork          = "%s"
+}
 `, name, networkName, subnetworkName)
 }
 
-func testAccContainerCluster_resourceManagerTags(projectID, clusterName, networkName, subnetworkName, randomSuffix string) string {
+func testAccContainerCluster_resourceManagerTags(projectID, clusterName, networkName, subnetworkName, randomSuffix string, tagResourceNumber int) string {
 	return fmt.Sprintf(`
 data "google_project" "project" {
   project_id = "%[1]s"
@@ -10691,13 +11395,13 @@ data "google_project" "project" {
 resource "google_project_iam_member" "tagHoldAdmin" {
   project = "%[1]s"
   role    = "roles/resourcemanager.tagHoldAdmin"
-  member = "serviceAccount:service-${data.google_project.project.number}@container-engine-robot.iam.gserviceaccount.com"
+  member  = "serviceAccount:service-${data.google_project.project.number}@container-engine-robot.iam.gserviceaccount.com"
 }
 
 resource "google_project_iam_member" "tagUser1" {
   project = "%[1]s"
   role    = "roles/resourcemanager.tagUser"
-  member = "serviceAccount:service-${data.google_project.project.number}@container-engine-robot.iam.gserviceaccount.com"
+  member  = "serviceAccount:service-${data.google_project.project.number}@container-engine-robot.iam.gserviceaccount.com"
 
   depends_on = [google_project_iam_member.tagHoldAdmin]
 }
@@ -10705,94 +11409,7 @@ resource "google_project_iam_member" "tagUser1" {
 resource "google_project_iam_member" "tagUser2" {
   project = "%[1]s"
   role    = "roles/resourcemanager.tagUser"
-  member = "serviceAccount:${data.google_project.project.number}@cloudservices.gserviceaccount.com"
-
-  depends_on = [google_project_iam_member.tagHoldAdmin]
-}
-
-resource "time_sleep" "wait_120_seconds" {
-  create_duration = "120s"
-
-  depends_on = [
-    google_project_iam_member.tagHoldAdmin,
-    google_project_iam_member.tagUser1,
-    google_project_iam_member.tagUser2,
-  ]
-}
-
-resource "google_tags_tag_key" "key" {
-  parent = "projects/%[1]s"
-  short_name = "foobarbaz-%[2]s"
-  description = "For foo/bar resources"
-  purpose = "GCE_FIREWALL"
-  purpose_data = {
-    network = "%[1]s/%[4]s"
-  }
-}
-
-resource "google_tags_tag_value" "value" {
-  parent = "tagKeys/${google_tags_tag_key.key.name}"
-  short_name = "foo-%[2]s"
-  description = "For foo resources"
-}
-
-data "google_container_engine_versions" "uscentral1a" {
-  location = "us-central1-a"
-}
-
-resource "google_container_cluster" "primary" {
-  name               = "%[3]s"
-  location           = "us-central1-a"
-  min_master_version = data.google_container_engine_versions.uscentral1a.release_channel_latest_version["STABLE"]
-  initial_node_count = 1
-
-  node_config {
-    machine_type    = "n1-standard-1"  // can't be e2 because of local-ssd
-    disk_size_gb    = 15
-
-    resource_manager_tags = {
-      "tagKeys/${google_tags_tag_key.key.name}" = "tagValues/${google_tags_tag_value.value.name}"
-    }
-  }
-
-  deletion_protection = false
-  network    = "%[4]s"
-  subnetwork    = "%[5]s"
-
-  timeouts {
-    create = "30m"
-    update = "40m"
-  }
-
-  depends_on = [time_sleep.wait_120_seconds]
-}
-`, projectID, randomSuffix, clusterName, networkName, subnetworkName)
-}
-
-func testAccContainerCluster_withAutopilotResourceManagerTags(projectID, clusterName, networkName, subnetworkName, randomSuffix string) string {
-	return fmt.Sprintf(`
-data "google_project" "project" {
-  project_id = "%[1]s"
-}
-
-resource "google_project_iam_member" "tagHoldAdmin" {
-  project = "%[1]s"
-  role    = "roles/resourcemanager.tagHoldAdmin"
-  member = "serviceAccount:service-${data.google_project.project.number}@container-engine-robot.iam.gserviceaccount.com"
-}
-
-resource "google_project_iam_member" "tagUser1" {
-  project = "%[1]s"
-  role    = "roles/resourcemanager.tagUser"
-  member = "serviceAccount:service-${data.google_project.project.number}@container-engine-robot.iam.gserviceaccount.com"
-
-  depends_on = [google_project_iam_member.tagHoldAdmin]
-}
-
-resource "google_project_iam_member" "tagUser2" {
-  project = "%[1]s"
-  role    = "roles/resourcemanager.tagUser"
-  member = "serviceAccount:${data.google_project.project.number}@cloudservices.gserviceaccount.com"
+  member  = "serviceAccount:${data.google_project.project.number}@cloudservices.gserviceaccount.com"
 
   depends_on = [google_project_iam_member.tagHoldAdmin]
 }
@@ -10808,10 +11425,108 @@ resource "time_sleep" "wait_120_seconds" {
 }
 
 resource "google_tags_tag_key" "key1" {
-  parent = "projects/%[1]s"
-  short_name = "foobarbaz1-%[2]s"
+  parent      = data.google_project.project.id
+  short_name  = "foobarbaz-%[2]s"
+  description = "For foo/bar resources"
+  purpose     = "GCE_FIREWALL"
+  purpose_data = {
+    network = "%[1]s/%[4]s"
+  }
+}
+
+resource "google_tags_tag_value" "value1" {
+  parent      = google_tags_tag_key.key1.id
+  short_name  = "foo-%[2]s"
+  description = "For foo resources"
+}
+
+# To test updates: create two key / value sets, and swap them for the update
+resource "google_tags_tag_key" "key2" {
+  parent      = data.google_project.project.id
+  short_name  = "qux-%[2]s"
+  description = "For qux resources"
+  purpose     = "GCE_FIREWALL"
+  purpose_data = {
+    network = "%[1]s/%[4]s"
+  }
+}
+
+resource "google_tags_tag_value" "value2" {
+  parent      = google_tags_tag_key.key2.id
+  short_name  = "qux-%[2]s"
+  description = "For qux resources"
+}
+
+data "google_container_engine_versions" "uscentral1a" {
+  location = "us-central1-a"
+}
+
+resource "google_container_cluster" "primary" {
+  name               = "%[3]s"
+  location           = "us-central1-a"
+  min_master_version = data.google_container_engine_versions.uscentral1a.release_channel_latest_version["STABLE"]
+  initial_node_count = 1
+
+  node_config {
+    disk_size_gb = 15
+
+    resource_manager_tags = {
+      (google_tags_tag_key.key%[6]d.id) = google_tags_tag_value.value%[6]d.id
+    }
+  }
+
+  deletion_protection = false
+  network             = "%[4]s"
+  subnetwork          = "%[5]s"
+
+  depends_on = [time_sleep.wait_120_seconds]
+}
+`, projectID, randomSuffix, clusterName, networkName, subnetworkName, tagResourceNumber)
+}
+
+func testAccContainerCluster_withAutopilotResourceManagerTags(projectID, clusterName, networkName, subnetworkName, randomSuffix string) string {
+	return fmt.Sprintf(`
+data "google_project" "project" {
+  project_id = "%[1]s"
+}
+
+resource "google_project_iam_member" "tagHoldAdmin" {
+  project = "%[1]s"
+  role    = "roles/resourcemanager.tagHoldAdmin"
+  member  = "serviceAccount:service-${data.google_project.project.number}@container-engine-robot.iam.gserviceaccount.com"
+}
+
+resource "google_project_iam_member" "tagUser1" {
+  project = "%[1]s"
+  role    = "roles/resourcemanager.tagUser"
+  member  = "serviceAccount:service-${data.google_project.project.number}@container-engine-robot.iam.gserviceaccount.com"
+
+  depends_on = [google_project_iam_member.tagHoldAdmin]
+}
+
+resource "google_project_iam_member" "tagUser2" {
+  project = "%[1]s"
+  role    = "roles/resourcemanager.tagUser"
+  member  = "serviceAccount:${data.google_project.project.number}@cloudservices.gserviceaccount.com"
+
+  depends_on = [google_project_iam_member.tagHoldAdmin]
+}
+
+resource "time_sleep" "wait_120_seconds" {
+  create_duration = "120s"
+
+  depends_on = [
+    google_project_iam_member.tagHoldAdmin,
+    google_project_iam_member.tagUser1,
+    google_project_iam_member.tagUser2,
+  ]
+}
+
+resource "google_tags_tag_key" "key1" {
+  parent      = "projects/%[1]s"
+  short_name  = "foobarbaz1-%[2]s"
   description = "For foo/bar1 resources"
-  purpose = "GCE_FIREWALL"
+  purpose     = "GCE_FIREWALL"
   purpose_data = {
     network = "%[1]s/%[4]s"
   }
@@ -10820,16 +11535,16 @@ resource "google_tags_tag_key" "key1" {
 }
 
 resource "google_tags_tag_value" "value1" {
-  parent = "tagKeys/${google_tags_tag_key.key1.name}"
-  short_name = "foo1-%[2]s"
+  parent      = google_tags_tag_key.key1.id
+  short_name  = "foo1-%[2]s"
   description = "For foo1 resources"
 }
 
 resource "google_tags_tag_key" "key2" {
-  parent = "projects/%[1]s"
-  short_name = "foobarbaz2-%[2]s"
+  parent      = "projects/%[1]s"
+  short_name  = "foobarbaz2-%[2]s"
   description = "For foo/bar2 resources"
-  purpose = "GCE_FIREWALL"
+  purpose     = "GCE_FIREWALL"
   purpose_data = {
     network = "%[1]s/%[4]s"
   }
@@ -10841,8 +11556,8 @@ resource "google_tags_tag_key" "key2" {
 }
 
 resource "google_tags_tag_value" "value2" {
-  parent = "tagKeys/${google_tags_tag_key.key2.name}"
-  short_name = "foo2-%[2]s"
+  parent      = google_tags_tag_key.key2.id
+  short_name  = "foo2-%[2]s"
   description = "For foo2 resources"
 }
 
@@ -10874,14 +11589,14 @@ data "google_container_engine_versions" "uscentral1a" {
 }
 
 resource "google_container_cluster" "with_autopilot" {
-  name = "%[3]s"
-  location = "us-central1"
+  name               = "%[3]s"
+  location           = "us-central1"
   min_master_version = data.google_container_engine_versions.uscentral1a.release_channel_latest_version["REGULAR"]
-  enable_autopilot = true
+  enable_autopilot   = true
 
   deletion_protection = false
-  network       = google_compute_network.container_network.name
-  subnetwork    = google_compute_subnetwork.container_subnetwork.name
+  network             = google_compute_network.container_network.name
+  subnetwork          = google_compute_subnetwork.container_subnetwork.name
   ip_allocation_policy {
     cluster_secondary_range_name  = google_compute_subnetwork.container_subnetwork.secondary_ip_range[0].range_name
     services_secondary_range_name = google_compute_subnetwork.container_subnetwork.secondary_ip_range[1].range_name
@@ -10889,8 +11604,8 @@ resource "google_container_cluster" "with_autopilot" {
 
   node_pool_auto_config {
     resource_manager_tags = {
-      "tagKeys/${google_tags_tag_key.key1.name}" = "tagValues/${google_tags_tag_value.value1.name}"
-	}
+      (google_tags_tag_key.key1.id) = google_tags_tag_value.value1.id
+    }
   }
 
   addons_config {
@@ -10900,11 +11615,6 @@ resource "google_container_cluster" "with_autopilot" {
   }
   vertical_pod_autoscaling {
     enabled = true
-  }
-
-  timeouts {
-	create = "30m"
-	update = "40m"
   }
 
   depends_on = [time_sleep.wait_120_seconds]
@@ -10921,13 +11631,13 @@ data "google_project" "project" {
 resource "google_project_iam_member" "tagHoldAdmin" {
   project = "%[1]s"
   role    = "roles/resourcemanager.tagHoldAdmin"
-  member = "serviceAccount:service-${data.google_project.project.number}@container-engine-robot.iam.gserviceaccount.com"
+  member  = "serviceAccount:service-${data.google_project.project.number}@container-engine-robot.iam.gserviceaccount.com"
 }
 
 resource "google_project_iam_member" "tagUser1" {
   project = "%[1]s"
   role    = "roles/resourcemanager.tagUser"
-  member = "serviceAccount:service-${data.google_project.project.number}@container-engine-robot.iam.gserviceaccount.com"
+  member  = "serviceAccount:service-${data.google_project.project.number}@container-engine-robot.iam.gserviceaccount.com"
 
   depends_on = [google_project_iam_member.tagHoldAdmin]
 }
@@ -10935,7 +11645,7 @@ resource "google_project_iam_member" "tagUser1" {
 resource "google_project_iam_member" "tagUser2" {
   project = "%[1]s"
   role    = "roles/resourcemanager.tagUser"
-  member = "serviceAccount:${data.google_project.project.number}@cloudservices.gserviceaccount.com"
+  member  = "serviceAccount:${data.google_project.project.number}@cloudservices.gserviceaccount.com"
 
   depends_on = [google_project_iam_member.tagHoldAdmin]
 }
@@ -10951,10 +11661,10 @@ resource "time_sleep" "wait_120_seconds" {
 }
 
 resource "google_tags_tag_key" "key1" {
-  parent = "projects/%[1]s"
-  short_name = "foobarbaz1-%[2]s"
+  parent      = "projects/%[1]s"
+  short_name  = "foobarbaz1-%[2]s"
   description = "For foo/bar1 resources"
-  purpose = "GCE_FIREWALL"
+  purpose     = "GCE_FIREWALL"
   purpose_data = {
     network = "%[1]s/%[4]s"
   }
@@ -10963,16 +11673,16 @@ resource "google_tags_tag_key" "key1" {
 }
 
 resource "google_tags_tag_value" "value1" {
-  parent = "tagKeys/${google_tags_tag_key.key1.name}"
-  short_name = "foo1-%[2]s"
+  parent      = google_tags_tag_key.key1.id
+  short_name  = "foo1-%[2]s"
   description = "For foo1 resources"
 }
 
 resource "google_tags_tag_key" "key2" {
-  parent = "projects/%[1]s"
-  short_name = "foobarbaz2-%[2]s"
+  parent      = "projects/%[1]s"
+  short_name  = "foobarbaz2-%[2]s"
   description = "For foo/bar2 resources"
-  purpose = "GCE_FIREWALL"
+  purpose     = "GCE_FIREWALL"
   purpose_data = {
     network = "%[1]s/%[4]s"
   }
@@ -10984,8 +11694,8 @@ resource "google_tags_tag_key" "key2" {
 }
 
 resource "google_tags_tag_value" "value2" {
-  parent = "tagKeys/${google_tags_tag_key.key2.name}"
-  short_name = "foo2-%[2]s"
+  parent      = google_tags_tag_key.key2.id
+  short_name  = "foo2-%[2]s"
   description = "For foo2 resources"
 }
 
@@ -11017,14 +11727,14 @@ data "google_container_engine_versions" "uscentral1a" {
 }
 
 resource "google_container_cluster" "with_autopilot" {
-  name = "%[3]s"
-  location = "us-central1"
+  name               = "%[3]s"
+  location           = "us-central1"
   min_master_version = data.google_container_engine_versions.uscentral1a.release_channel_latest_version["REGULAR"]
-  enable_autopilot = true
+  enable_autopilot   = true
 
   deletion_protection = false
-  network       = google_compute_network.container_network.name
-  subnetwork    = google_compute_subnetwork.container_subnetwork.name
+  network             = google_compute_network.container_network.name
+  subnetwork          = google_compute_subnetwork.container_subnetwork.name
   ip_allocation_policy {
     cluster_secondary_range_name  = google_compute_subnetwork.container_subnetwork.secondary_ip_range[0].range_name
     services_secondary_range_name = google_compute_subnetwork.container_subnetwork.secondary_ip_range[1].range_name
@@ -11032,9 +11742,9 @@ resource "google_container_cluster" "with_autopilot" {
 
   node_pool_auto_config {
     resource_manager_tags = {
-      "tagKeys/${google_tags_tag_key.key1.name}" = "tagValues/${google_tags_tag_value.value1.name}"
-      "tagKeys/${google_tags_tag_key.key2.name}" = "tagValues/${google_tags_tag_value.value2.name}"
-	}
+      (google_tags_tag_key.key1.id) = google_tags_tag_value.value1.id
+      (google_tags_tag_key.key2.id) = google_tags_tag_value.value2.id
+    }
   }
 
   addons_config {
@@ -11044,11 +11754,6 @@ resource "google_container_cluster" "with_autopilot" {
   }
   vertical_pod_autoscaling {
     enabled = true
-  }
-
-  timeouts {
-	create = "30m"
-	update = "40m"
   }
 
   depends_on = [time_sleep.wait_120_seconds]
@@ -11065,13 +11770,13 @@ data "google_project" "project" {
 resource "google_project_iam_member" "tagHoldAdmin" {
   project = "%[1]s"
   role    = "roles/resourcemanager.tagHoldAdmin"
-  member = "serviceAccount:service-${data.google_project.project.number}@container-engine-robot.iam.gserviceaccount.com"
+  member  = "serviceAccount:service-${data.google_project.project.number}@container-engine-robot.iam.gserviceaccount.com"
 }
 
 resource "google_project_iam_member" "tagUser1" {
   project = "%[1]s"
   role    = "roles/resourcemanager.tagUser"
-  member = "serviceAccount:service-${data.google_project.project.number}@container-engine-robot.iam.gserviceaccount.com"
+  member  = "serviceAccount:service-${data.google_project.project.number}@container-engine-robot.iam.gserviceaccount.com"
 
   depends_on = [google_project_iam_member.tagHoldAdmin]
 }
@@ -11079,7 +11784,7 @@ resource "google_project_iam_member" "tagUser1" {
 resource "google_project_iam_member" "tagUser2" {
   project = "%[1]s"
   role    = "roles/resourcemanager.tagUser"
-  member = "serviceAccount:${data.google_project.project.number}@cloudservices.gserviceaccount.com"
+  member  = "serviceAccount:${data.google_project.project.number}@cloudservices.gserviceaccount.com"
 
   depends_on = [google_project_iam_member.tagHoldAdmin]
 }
@@ -11095,10 +11800,10 @@ resource "time_sleep" "wait_120_seconds" {
 }
 
 resource "google_tags_tag_key" "key1" {
-  parent = "projects/%[1]s"
-  short_name = "foobarbaz1-%[2]s"
+  parent      = "projects/%[1]s"
+  short_name  = "foobarbaz1-%[2]s"
   description = "For foo/bar1 resources"
-  purpose = "GCE_FIREWALL"
+  purpose     = "GCE_FIREWALL"
   purpose_data = {
     network = "%[1]s/%[4]s"
   }
@@ -11107,16 +11812,16 @@ resource "google_tags_tag_key" "key1" {
 }
 
 resource "google_tags_tag_value" "value1" {
-  parent = "tagKeys/${google_tags_tag_key.key1.name}"
-  short_name = "foo1-%[2]s"
+  parent      = google_tags_tag_key.key1.id
+  short_name  = "foo1-%[2]s"
   description = "For foo1 resources"
 }
 
 resource "google_tags_tag_key" "key2" {
-  parent = "projects/%[1]s"
-  short_name = "foobarbaz2-%[2]s"
+  parent      = "projects/%[1]s"
+  short_name  = "foobarbaz2-%[2]s"
   description = "For foo/bar2 resources"
-  purpose = "GCE_FIREWALL"
+  purpose     = "GCE_FIREWALL"
   purpose_data = {
     network = "%[1]s/%[4]s"
   }
@@ -11128,8 +11833,8 @@ resource "google_tags_tag_key" "key2" {
 }
 
 resource "google_tags_tag_value" "value2" {
-  parent = "tagKeys/${google_tags_tag_key.key2.name}"
-  short_name = "foo2-%[2]s"
+  parent      = google_tags_tag_key.key2.id
+  short_name  = "foo2-%[2]s"
   description = "For foo2 resources"
 }
 
@@ -11161,14 +11866,14 @@ data "google_container_engine_versions" "uscentral1a" {
 }
 
 resource "google_container_cluster" "with_autopilot" {
-  name = "%[3]s"
-  location = "us-central1"
+  name               = "%[3]s"
+  location           = "us-central1"
   min_master_version = data.google_container_engine_versions.uscentral1a.release_channel_latest_version["REGULAR"]
-  enable_autopilot = true
+  enable_autopilot   = true
 
   deletion_protection = false
-  network       = google_compute_network.container_network.name
-  subnetwork    = google_compute_subnetwork.container_subnetwork.name
+  network             = google_compute_network.container_network.name
+  subnetwork          = google_compute_subnetwork.container_subnetwork.name
   ip_allocation_policy {
     cluster_secondary_range_name  = google_compute_subnetwork.container_subnetwork.secondary_ip_range[0].range_name
     services_secondary_range_name = google_compute_subnetwork.container_subnetwork.secondary_ip_range[1].range_name
@@ -11183,18 +11888,13 @@ resource "google_container_cluster" "with_autopilot" {
     enabled = true
   }
 
-  timeouts {
-	create = "30m"
-	update = "40m"
-  }
-
   depends_on = [time_sleep.wait_120_seconds]
 }
 `, projectID, randomSuffix, clusterName, networkName, subnetworkName)
 }
 
 func TestAccContainerCluster_privateRegistry(t *testing.T) {
-	acctest.SkipIfVcr(t)
+	// This test also checks containerd_config and its updates
 	t.Parallel()
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
@@ -11224,7 +11924,7 @@ func TestAccContainerCluster_privateRegistry(t *testing.T) {
 					resource.TestCheckResourceAttr(
 						"google_container_cluster.primary",
 						"node_pool_defaults.0.node_config_defaults.0.containerd_config.0.private_registry_access_config.0.certificate_authority_domain_config.0.fqdns.0",
-						"my.custom.domain",
+						"custom.example.com",
 					),
 					// Second CA config
 					resource.TestCheckResourceAttr(
@@ -11242,21 +11942,56 @@ func TestAccContainerCluster_privateRegistry(t *testing.T) {
 			},
 			{
 				Config: testAccContainerCluster_privateRegistryDisabled(clusterName, networkName, subnetworkName),
+				// Don't check for no deletions here, since the secret etc. are getting destroyed.
+				Check: resource.TestCheckResourceAttr(
+					"google_container_cluster.primary",
+					"node_pool_defaults.0.node_config_defaults.0.containerd_config.0.private_registry_access_config.0.enabled",
+					"false",
+				),
+			},
+			// The above tests the default for _new_ node pools; this tests the configuration for default-pool if
+			// defined within the `container_cluster` resource
+			{
+				Config: testAccContainerCluster_withNodeConfigPrivateRegistry(secretID, clusterName, networkName, subnetworkName, "foo.example.com"),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						acctest.ExpectNoDelete(),
+					},
+				},
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr(
 						"google_container_cluster.primary",
-						"node_pool_defaults.0.node_config_defaults.0.containerd_config.0.private_registry_access_config.0.enabled",
-						"false",
+						"node_config.0.containerd_config.0.private_registry_access_config.0.enabled",
+						"true",
 					),
 					resource.TestCheckResourceAttr(
 						"google_container_cluster.primary",
-						"node_pool_defaults.0.node_config_defaults.0.containerd_config.0.private_registry_access_config.0.certificate_authority_domain_config.#",
-						"0",
+						"node_config.0.containerd_config.0.private_registry_access_config.0.certificate_authority_domain_config.#",
+						"1",
 					),
 				),
 			},
+			// We're already testing going from no `node_config` to having one in the previous step, but test updating
+			// anyway.
 			{
-				Config: testAccContainerCluster_withNodePoolPrivateRegistry(secretID, clusterName, nodePoolName, networkName, subnetworkName),
+				Config: testAccContainerCluster_withNodeConfigPrivateRegistry(secretID, clusterName, networkName, subnetworkName, "bar.example.org"),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						acctest.ExpectNoDelete(),
+					},
+				},
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr(
+						"google_container_cluster.primary",
+						"node_config.0.containerd_config.0.private_registry_access_config.0.enabled",
+						"true",
+					),
+					resource.TestCheckResourceAttr(
+						"google_container_cluster.primary",
+						"node_config.0.containerd_config.0.private_registry_access_config.0.certificate_authority_domain_config.#",
+						"1",
+					),
+				),
 			},
 			{
 				ResourceName:            "google_container_cluster.primary",
@@ -11264,8 +11999,10 @@ func TestAccContainerCluster_privateRegistry(t *testing.T) {
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"deletion_protection"},
 			},
+			// This last test *will* force recreation, and tests a (named) node pool defined in
+			// `google_container_cluster.node_pool`. Deletions are expected here too.
 			{
-				Config: testAccContainerCluster_withNodeConfigPrivateRegistry(secretID, clusterName, networkName, subnetworkName),
+				Config: testAccContainerCluster_withNodePoolPrivateRegistry(secretID, clusterName, nodePoolName, networkName, subnetworkName),
 			},
 			{
 				ResourceName:            "google_container_cluster.primary",
@@ -11279,39 +12016,38 @@ func TestAccContainerCluster_privateRegistry(t *testing.T) {
 
 func testAccContainerCluster_privateRegistryEnabled(secretID, clusterName, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
-data "google_project" "test_project" { 
-	}
+data "google_project" "test_project" {}
 
-resource "google_secret_manager_secret" "secret-basic" { 
-	secret_id     = "%s"
-	replication { 
-		user_managed { 
-		replicas { 
-			location = "us-central1" 
-		} 
-		} 
-	} 
+resource "google_secret_manager_secret" "secret_basic" {
+  secret_id = "%s"
+  replication {
+    user_managed {
+      replicas {
+        location = "us-central1"
+      }
+    }
+  }
 }
 
-resource "google_secret_manager_secret_version" "secret-version-basic" { 
-	secret = google_secret_manager_secret.secret-basic.id 
-	secret_data = "dummypassword" 
-  } 
-   
-resource "google_secret_manager_secret_iam_member" "secret_iam" { 
-	secret_id  = google_secret_manager_secret.secret-basic.id 
-	role       = "roles/secretmanager.admin" 
-	member     = "serviceAccount:${data.google_project.test_project.number}-compute@developer.gserviceaccount.com" 
-	depends_on = [google_secret_manager_secret_version.secret-version-basic]  
-  }
+resource "google_secret_manager_secret_version" "secret_version_basic" {
+  secret      = google_secret_manager_secret.secret_basic.id
+  secret_data = "dummypassword"
+}
+
+resource "google_secret_manager_secret_iam_member" "secret_iam" {
+  secret_id  = google_secret_manager_secret.secret_basic.id
+  role       = "roles/secretmanager.admin"
+  member     = "serviceAccount:${data.google_project.test_project.number}-compute@developer.gserviceaccount.com"
+  depends_on = [google_secret_manager_secret_version.secret_version_basic]
+}
 
 resource "google_container_cluster" "primary" {
-  name               = "%s"
-  location           = "us-central1-a"
-  initial_node_count = 1
+  name                = "%s"
+  location            = "us-central1-a"
+  initial_node_count  = 1
   deletion_protection = false
-  network    = "%s"
-  subnetwork    = "%s"
+  network             = "%s"
+  subnetwork          = "%s"
 
   node_config {
     oauth_scopes = [
@@ -11324,22 +12060,22 @@ resource "google_container_cluster" "primary" {
         private_registry_access_config {
           enabled = true
           certificate_authority_domain_config {
-            fqdns = [ "my.custom.domain" ]
+            fqdns = ["custom.example.com"]
             gcp_secret_manager_certificate_config {
-              secret_uri = google_secret_manager_secret_version.secret-version-basic.name
+              secret_uri = google_secret_manager_secret_version.secret_version_basic.name
             }
           }
-		  certificate_authority_domain_config {
-            fqdns = [ "10.1.2.32" ]
+          certificate_authority_domain_config {
+            fqdns = ["10.1.2.32"]
             gcp_secret_manager_certificate_config {
-              secret_uri = google_secret_manager_secret_version.secret-version-basic.name
+              secret_uri = google_secret_manager_secret_version.secret_version_basic.name
             }
           }
         }
       }
     }
   }
-} 
+}
 `, secretID, clusterName, networkName, subnetworkName)
 }
 
@@ -11349,10 +12085,12 @@ resource "google_container_cluster" "primary" {
   name               = "%s"
   location           = "us-central1-a"
   initial_node_count = 1
-  deletion_protection = false
-  network    = "%s"
-  subnetwork    = "%s"
 
+  node_config {
+    oauth_scopes = [
+      "https://www.googleapis.com/auth/cloud-platform",
+    ]
+  }
   node_pool_defaults {
     node_config_defaults {
       containerd_config {
@@ -11362,123 +12100,124 @@ resource "google_container_cluster" "primary" {
       }
     }
   }
+
+  network    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, clusterName, networkName, subnetworkName)
 }
 
 func testAccContainerCluster_withNodePoolPrivateRegistry(secretID, clusterName, nodePoolName, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
-data "google_project" "test_project" { 
-	}
+data "google_project" "test_project" {}
 
-resource "google_secret_manager_secret" "secret-basic" { 
-	secret_id     = "%s"
-	replication { 
-		user_managed { 
-		replicas { 
-			location = "us-central1" 
-		} 
-		} 
-	} 
-}
-resource "google_secret_manager_secret_version" "secret-version-basic" { 
-	secret = google_secret_manager_secret.secret-basic.id 
-	secret_data = "dummypassword" 
-  } 
-   
-resource "google_secret_manager_secret_iam_member" "secret_iam" { 
-	secret_id  = google_secret_manager_secret.secret-basic.id 
-	role       = "roles/secretmanager.admin" 
-	member     = "serviceAccount:${data.google_project.test_project.number}-compute@developer.gserviceaccount.com" 
-	depends_on = [google_secret_manager_secret_version.secret-version-basic] 
+resource "google_secret_manager_secret" "secret_basic" {
+  secret_id = "%s"
+  replication {
+    user_managed {
+      replicas {
+        location = "us-central1"
+      }
+    }
   }
+}
+resource "google_secret_manager_secret_version" "secret_version_basic" {
+  secret      = google_secret_manager_secret.secret_basic.id
+  secret_data = "dummypassword"
+}
+
+resource "google_secret_manager_secret_iam_member" "secret_iam" {
+  secret_id  = google_secret_manager_secret.secret_basic.id
+  role       = "roles/secretmanager.admin"
+  member     = "serviceAccount:${data.google_project.test_project.number}-compute@developer.gserviceaccount.com"
+  depends_on = [google_secret_manager_secret_version.secret_version_basic]
+}
 resource "google_container_cluster" "primary" {
-  name               = "%s"
-  location           = "us-central1-a"
+  name     = "%s"
+  location = "us-central1-a"
 
   node_pool {
-	name               = "%s"
-	initial_node_count = 1
+    name               = "%s"
+    initial_node_count = 1
     node_config {
-		oauth_scopes = [
-      "https://www.googleapis.com/auth/cloud-platform",
-    ]
-	machine_type = "n1-standard-8"
-    image_type = "COS_CONTAINERD"
-    containerd_config {
-    	private_registry_access_config {
-			enabled = true
-			certificate_authority_domain_config {
-			  fqdns = [ "my.custom.domain", "10.0.0.127:8888" ]
-			  gcp_secret_manager_certificate_config {
-				secret_uri = google_secret_manager_secret_version.secret-version-basic.name
-			}
-		}
+      oauth_scopes = [
+        "https://www.googleapis.com/auth/cloud-platform",
+      ]
+      containerd_config {
+        private_registry_access_config {
+          enabled = true
+          certificate_authority_domain_config {
+            fqdns = ["custom.example.com", "10.0.0.127:8888"]
+            gcp_secret_manager_certificate_config {
+              secret_uri = google_secret_manager_secret_version.secret_version_basic.name
+            }
+          }
+        }
+      }
     }
-    }
-}
-}
-  deletion_protection = false
+  }
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, secretID, clusterName, nodePoolName, networkName, subnetworkName)
 }
 
-func testAccContainerCluster_withNodeConfigPrivateRegistry(secretID, clusterName, networkName, subnetworkName string) string {
+func testAccContainerCluster_withNodeConfigPrivateRegistry(secretID, clusterName, networkName, subnetworkName, customDomain string) string {
 	return fmt.Sprintf(`
-data "google_project" "test_project" { 
-	}
+data "google_project" "test_project" {}
 
-resource "google_secret_manager_secret" "secret-basic" {
-	secret_id     = "%s"
-	replication { 
-		user_managed { 
-		replicas { 
-			location = "us-central1" 
-		} 
-		} 
-	}  
-}
-resource "google_secret_manager_secret_version" "secret-version-basic" { 
-	secret = google_secret_manager_secret.secret-basic.id 
-	secret_data = "dummypassword" 
-  } 
-   
-resource "google_secret_manager_secret_iam_member" "secret_iam" { 
-	secret_id  = google_secret_manager_secret.secret-basic.id 
-	role       = "roles/secretmanager.admin" 
-	member     = "serviceAccount:${data.google_project.test_project.number}-compute@developer.gserviceaccount.com" 
-	depends_on = [google_secret_manager_secret_version.secret-version-basic] 
+resource "google_secret_manager_secret" "secret_basic" {
+  secret_id = "%s"
+  replication {
+    user_managed {
+      replicas {
+        location = "us-central1"
+      }
+    }
   }
+}
+resource "google_secret_manager_secret_version" "secret_version_basic" {
+  secret      = google_secret_manager_secret.secret_basic.id
+  secret_data = "dummypassword"
+}
+
+resource "google_secret_manager_secret_iam_member" "secret_iam" {
+  secret_id  = google_secret_manager_secret.secret_basic.id
+  role       = "roles/secretmanager.admin"
+  member     = "serviceAccount:${data.google_project.test_project.number}-compute@developer.gserviceaccount.com"
+  depends_on = [google_secret_manager_secret_version.secret_version_basic]
+}
 resource "google_container_cluster" "primary" {
   name               = "%s"
   location           = "us-central1-a"
   initial_node_count = 1
 
   node_config {
-	  oauth_scopes = [
+    oauth_scopes = [
       "https://www.googleapis.com/auth/cloud-platform",
     ]
-    machine_type = "n1-standard-8"
-    image_type = "COS_CONTAINERD"
     containerd_config {
-    	private_registry_access_config {
-			enabled = true
-			certificate_authority_domain_config {
-			  fqdns = [ "my.custom.domain", "10.0.0.127:8888" ]
-			  gcp_secret_manager_certificate_config {
-				secret_uri = google_secret_manager_secret_version.secret-version-basic.name
-			}
-		}
+      private_registry_access_config {
+        enabled = true
+        certificate_authority_domain_config {
+          fqdns = ["%s", "10.0.0.127:8888"]
+          gcp_secret_manager_certificate_config {
+            secret_uri = google_secret_manager_secret_version.secret_version_basic.name
+          }
+        }
+      }
     }
-    }
-}
-  deletion_protection = false
+  }
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
-`, secretID, clusterName, networkName, subnetworkName)
+`, secretID, clusterName, customDomain, networkName, subnetworkName)
 }
 
 func TestAccContainerCluster_withProviderDefaultLabels(t *testing.T) {
@@ -11502,11 +12241,12 @@ func TestAccContainerCluster_withProviderDefaultLabels(t *testing.T) {
 					resource.TestCheckResourceAttr("google_container_cluster.primary", "resource_labels.%", "1"),
 					resource.TestCheckResourceAttr("google_container_cluster.primary", "resource_labels.created-by", "terraform"),
 
-					resource.TestCheckResourceAttr("google_container_cluster.primary", "terraform_labels.%", "2"),
+					// goog-terraform-provisioned: true is added
+					resource.TestCheckResourceAttr("google_container_cluster.primary", "terraform_labels.%", "3"),
 					resource.TestCheckResourceAttr("google_container_cluster.primary", "terraform_labels.default_key1", "default_value1"),
 					resource.TestCheckResourceAttr("google_container_cluster.primary", "terraform_labels.created-by", "terraform"),
 
-					resource.TestCheckResourceAttr("google_container_cluster.primary", "effective_labels.%", "2"),
+					resource.TestCheckResourceAttr("google_container_cluster.primary", "effective_labels.%", "3"),
 				),
 			},
 			{
@@ -11522,11 +12262,12 @@ func TestAccContainerCluster_withProviderDefaultLabels(t *testing.T) {
 					resource.TestCheckResourceAttr("google_container_cluster.primary", "resource_labels.created-by", "terraform"),
 					resource.TestCheckResourceAttr("google_container_cluster.primary", "terraform_labels.default_key1", "value1"),
 
-					resource.TestCheckResourceAttr("google_container_cluster.primary", "terraform_labels.%", "2"),
+					// goog-terraform-provisioned: true is added
+					resource.TestCheckResourceAttr("google_container_cluster.primary", "terraform_labels.%", "3"),
 					resource.TestCheckResourceAttr("google_container_cluster.primary", "terraform_labels.default_key1", "value1"),
 					resource.TestCheckResourceAttr("google_container_cluster.primary", "terraform_labels.created-by", "terraform"),
 
-					resource.TestCheckResourceAttr("google_container_cluster.primary", "effective_labels.%", "2"),
+					resource.TestCheckResourceAttr("google_container_cluster.primary", "effective_labels.%", "3"),
 				),
 			},
 			{
@@ -11540,11 +12281,12 @@ func TestAccContainerCluster_withProviderDefaultLabels(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("google_container_cluster.primary", "resource_labels.%", "0"),
 
-					resource.TestCheckResourceAttr("google_container_cluster.primary", "terraform_labels.%", "2"),
+					// goog-terraform-provisioned: true is added
+					resource.TestCheckResourceAttr("google_container_cluster.primary", "terraform_labels.%", "3"),
 					resource.TestCheckResourceAttr("google_container_cluster.primary", "terraform_labels.default_key1", "default_value1"),
 					resource.TestCheckResourceAttr("google_container_cluster.primary", "terraform_labels.created-by", "terraform"),
 
-					resource.TestCheckResourceAttr("google_container_cluster.primary", "effective_labels.%", "2"),
+					resource.TestCheckResourceAttr("google_container_cluster.primary", "effective_labels.%", "3"),
 				),
 			},
 			{
@@ -11557,8 +12299,8 @@ func TestAccContainerCluster_withProviderDefaultLabels(t *testing.T) {
 				Config: testAccContainerCluster_basic(clusterName, networkName, subnetworkName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("google_container_cluster.primary", "resource_labels.%", "0"),
-					resource.TestCheckResourceAttr("google_container_cluster.primary", "terraform_labels.%", "0"),
-					resource.TestCheckResourceAttr("google_container_cluster.primary", "effective_labels.%", "0"),
+					resource.TestCheckResourceAttr("google_container_cluster.primary", "terraform_labels.%", "1"),
+					resource.TestCheckResourceAttr("google_container_cluster.primary", "effective_labels.%", "1"),
 				),
 			},
 			{
@@ -11580,15 +12322,17 @@ provider "google" {
 }
 
 resource "google_container_cluster" "primary" {
-  name               = "%s"
-  location           = "us-central1-a"
+  name     = "%s"
+  location = "us-central1-a"
+
   initial_node_count = 1
-  deletion_protection = false
-  network    = "%s"
-  subnetwork    = "%s"
   resource_labels = {
     created-by = "terraform"
   }
+  network    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, name, networkName, subnetworkName)
 }
@@ -11602,16 +12346,18 @@ provider "google" {
 }
 
 resource "google_container_cluster" "primary" {
-  name               = "%s"
-  location           = "us-central1-a"
+  name     = "%s"
+  location = "us-central1-a"
+
   initial_node_count = 1
-  deletion_protection = false
-  network    = "%s"
-  subnetwork    = "%s"
   resource_labels = {
-    created-by = "terraform"
-	default_key1 = "value1"
+    created-by   = "terraform"
+    default_key1 = "value1"
   }
+  network    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, name, networkName, subnetworkName)
 }
@@ -11621,17 +12367,20 @@ func testAccContainerCluster_moveResourceLabelToProviderDefaultLabels(name, netw
 provider "google" {
   default_labels = {
     default_key1 = "default_value1"
-	created-by   = "terraform"
+    created-by   = "terraform"
   }
 }
 
 resource "google_container_cluster" "primary" {
-  name               = "%s"
-  location           = "us-central1-a"
+  name     = "%s"
+  location = "us-central1-a"
+
   initial_node_count = 1
-  deletion_protection = false
+
   network    = "%s"
-  subnetwork    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
 `, name, networkName, subnetworkName)
 }
@@ -11671,23 +12420,26 @@ func TestAccContainerCluster_storagePoolsWithNodePool(t *testing.T) {
 func testAccContainerCluster_storagePoolsWithNodePool(cluster, location, networkName, subnetworkName, np, storagePoolResourceName string) string {
 	return fmt.Sprintf(`
 resource "google_container_cluster" "storage_pools_with_node_pool" {
-  name               = "%s"
-  location           = "%s"
-  deletion_protection = false
-  network    = "%s"
-  subnetwork    = "%s"
+  name     = "%s"
+  location = "%s"
+
   node_pool {
     name = "%s"
+
     initial_node_count = 1
     node_config {
-      machine_type = "c3-standard-4"
-      image_type = "COS_CONTAINERD"
+      machine_type  = "c3-standard-4"
+      image_type    = "COS_CONTAINERD"
       storage_pools = ["%s"]
-	  disk_type = "hyperdisk-balanced"
+      disk_type     = "hyperdisk-balanced"
     }
   }
+  network    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
-`, cluster, location, networkName, subnetworkName, np, storagePoolResourceName)
+`, cluster, location, np, storagePoolResourceName, networkName, subnetworkName)
 }
 
 func TestAccContainerCluster_storagePoolsWithNodeConfig(t *testing.T) {
@@ -11724,20 +12476,23 @@ func TestAccContainerCluster_storagePoolsWithNodeConfig(t *testing.T) {
 func testAccContainerCluster_storagePoolsWithNodeConfig(cluster, location, networkName, subnetworkName, storagePoolResourceName string) string {
 	return fmt.Sprintf(`
 resource "google_container_cluster" "storage_pools_with_node_config" {
-  name               = "%s"
-  location           = "%s"
+  name     = "%s"
+  location = "%s"
+
   initial_node_count = 1
-  deletion_protection = false
-  network    = "%s"
-  subnetwork    = "%s"
   node_config {
-    machine_type = "c3-standard-4"
-    image_type = "COS_CONTAINERD"
+    machine_type  = "c3-standard-4"
+    image_type    = "COS_CONTAINERD"
     storage_pools = ["%s"]
-	disk_type = "hyperdisk-balanced"
+    disk_type     = "hyperdisk-balanced"
   }
+
+  network    = "%s"
+  subnetwork = "%s"
+
+  deletion_protection = false
 }
-`, cluster, location, networkName, subnetworkName, storagePoolResourceName)
+`, cluster, location, storagePoolResourceName, networkName, subnetworkName)
 }
 
 func TestAccContainerCluster_withAutopilotGcpFilestoreCsiDriver(t *testing.T) {

@@ -285,6 +285,15 @@ A duration in seconds with up to nine fractional digits, ending with 's'. Exampl
 																Required:    true,
 																Description: `Name of the cloud storage bucket to back the volume. The resource service account must have permission to access the bucket.`,
 															},
+															"mount_options": {
+																Type:     schema.TypeList,
+																Optional: true,
+																Description: `A list of flags to pass to the gcsfuse command for configuring this volume.
+Flags should be passed without leading dashes.`,
+																Elem: &schema.Schema{
+																	Type: schema.TypeString,
+																},
+															},
 															"read_only": {
 																Type:        schema.TypeBool,
 																Optional:    true,
@@ -1845,6 +1854,8 @@ func flattenCloudRunV2JobTemplateTemplateVolumesGcs(v interface{}, d *schema.Res
 		flattenCloudRunV2JobTemplateTemplateVolumesGcsBucket(original["bucket"], d, config)
 	transformed["read_only"] =
 		flattenCloudRunV2JobTemplateTemplateVolumesGcsReadOnly(original["readOnly"], d, config)
+	transformed["mount_options"] =
+		flattenCloudRunV2JobTemplateTemplateVolumesGcsMountOptions(original["mountOptions"], d, config)
 	return []interface{}{transformed}
 }
 func flattenCloudRunV2JobTemplateTemplateVolumesGcsBucket(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -1852,6 +1863,10 @@ func flattenCloudRunV2JobTemplateTemplateVolumesGcsBucket(v interface{}, d *sche
 }
 
 func flattenCloudRunV2JobTemplateTemplateVolumesGcsReadOnly(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenCloudRunV2JobTemplateTemplateVolumesGcsMountOptions(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
@@ -2911,6 +2926,13 @@ func expandCloudRunV2JobTemplateTemplateVolumesGcs(v interface{}, d tpgresource.
 		transformed["readOnly"] = transformedReadOnly
 	}
 
+	transformedMountOptions, err := expandCloudRunV2JobTemplateTemplateVolumesGcsMountOptions(original["mount_options"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedMountOptions); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["mountOptions"] = transformedMountOptions
+	}
+
 	return transformed, nil
 }
 
@@ -2919,6 +2941,10 @@ func expandCloudRunV2JobTemplateTemplateVolumesGcsBucket(v interface{}, d tpgres
 }
 
 func expandCloudRunV2JobTemplateTemplateVolumesGcsReadOnly(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandCloudRunV2JobTemplateTemplateVolumesGcsMountOptions(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 

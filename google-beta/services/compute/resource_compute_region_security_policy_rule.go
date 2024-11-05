@@ -605,6 +605,17 @@ func resourceComputeRegionSecurityPolicyRuleCreate(d *schema.ResourceData, meta 
 	}
 
 	headers := make(http.Header)
+	// We can't Create a default rule since one is automatically created with the policy
+	rulePriority, ok := d.GetOk("priority")
+
+	if ok && rulePriority.(int) == 2147483647 {
+		log.Printf("[WARN] RegionSecurityPolicyRule represents a default rule, will attempt an Update instead")
+		newUrl, err := tpgresource.ReplaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/regions/{{region}}/securityPolicies/{{security_policy}}/patchRule?priority={{priority}}")
+		if err != nil {
+			return err
+		}
+		url = newUrl
+	}
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "POST",
@@ -901,6 +912,13 @@ func resourceComputeRegionSecurityPolicyRuleDelete(d *schema.ResourceData, meta 
 	}
 
 	headers := make(http.Header)
+	// The default rule of a Security Policy cannot be removed
+	rulePriority, ok := d.GetOk("priority")
+
+	if ok && rulePriority.(int) == 2147483647 {
+		log.Printf("[WARN] RegionSecurityPolicyRule represents a default rule, skipping Delete request")
+		return nil
+	}
 
 	log.Printf("[DEBUG] Deleting RegionSecurityPolicyRule %q", d.Id())
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{

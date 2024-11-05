@@ -3,12 +3,11 @@
 package netapp_test
 
 import (
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"testing"
 	"time"
-
-	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
-	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 )
 
 func TestAccNetappStoragePool_storagePoolCreateExample_update(t *testing.T) {
@@ -204,7 +203,7 @@ func TestAccNetappStoragePool_FlexRegionalStoragePoolCreateExample_update(t *tes
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckNetappStoragePoolDestroyProducer(t),
 		ExternalProviders: map[string]resource.ExternalProvider{
 			"time": {},
@@ -245,7 +244,6 @@ func TestAccNetappStoragePool_FlexRegionalStoragePoolCreateExample_update(t *tes
 func testAccNetappStoragePool_FlexRegionalStoragePoolCreateExample_full(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_netapp_storage_pool" "test_pool" {
-  provider = google-beta
   name = "tf-test-pool%{random_suffix}"
   location = "us-east1"
   service_level = "FLEX"
@@ -261,7 +259,6 @@ resource "time_sleep" "wait_5_minutes" {
 }
 
 data "google_compute_network" "default" {
-    provider = google-beta
     name = "%{network_name}"
 }
 `, context)
@@ -270,7 +267,6 @@ data "google_compute_network" "default" {
 func testAccNetappStoragePool_FlexRegionalStoragePoolCreateExample_switchZone(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_netapp_storage_pool" "test_pool" {
-  provider = google-beta
   name = "tf-test-pool%{random_suffix}"
   location = "us-east1"
   service_level = "FLEX"
@@ -286,7 +282,6 @@ resource "time_sleep" "wait_5_minutes" {
 }
 
 data "google_compute_network" "default" {
-    provider = google-beta
     name = "%{network_name}"
 }
 `, context)
@@ -303,7 +298,6 @@ func testAccNetappStoragePool_FlexRegionalStoragePoolCreateExample_sleep_5_mins(
 func testAccNetappStoragePool_FlexRegionalStoragePoolCreateExample_switchBackZone(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_netapp_storage_pool" "test_pool" {
-  provider = google-beta
   name = "tf-test-pool%{random_suffix}"
   location = "us-east1"
   service_level = "FLEX"
@@ -319,7 +313,6 @@ resource "time_sleep" "wait_5_minutes" {
 }
 
 data "google_compute_network" "default" {
-    provider = google-beta
     name = "%{network_name}"
 }
 `, context)

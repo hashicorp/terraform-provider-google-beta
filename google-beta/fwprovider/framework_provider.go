@@ -29,6 +29,7 @@ import (
 
 // Ensure the implementation satisfies the expected interfaces
 var (
+	_ provider.Provider                       = &FrameworkProvider{}
 	_ provider.ProviderWithMetaSchema         = &FrameworkProvider{}
 	_ provider.ProviderWithFunctions          = &FrameworkProvider{}
 	_ provider.ProviderWithEphemeralResources = &FrameworkProvider{}
@@ -47,7 +48,9 @@ type FrameworkProvider struct {
 	Version string
 }
 
-// Metadata returns the provider type name.
+// Metadata returns
+// - the provider type name : this controls how "google" is present at the start of all resource type names
+// - the provider version   : this is currently unused by Terraform core
 func (p *FrameworkProvider) Metadata(_ context.Context, _ provider.MetadataRequest, resp *provider.MetadataResponse) {
 	resp.TypeName = "google"
 	resp.Version = p.Version
@@ -448,6 +451,12 @@ func (p *FrameworkProvider) Schema(_ context.Context, _ provider.SchemaRequest, 
 					transport_tpg.CustomEndpointValidator(),
 				},
 			},
+			"dataproc_gdc_custom_endpoint": &schema.StringAttribute{
+				Optional: true,
+				Validators: []validator.String{
+					transport_tpg.CustomEndpointValidator(),
+				},
+			},
 			"dataproc_metastore_custom_endpoint": &schema.StringAttribute{
 				Optional: true,
 				Validators: []validator.String{
@@ -736,6 +745,12 @@ func (p *FrameworkProvider) Schema(_ context.Context, _ provider.SchemaRequest, 
 					transport_tpg.CustomEndpointValidator(),
 				},
 			},
+			"oracle_database_custom_endpoint": &schema.StringAttribute{
+				Optional: true,
+				Validators: []validator.String{
+					transport_tpg.CustomEndpointValidator(),
+				},
+			},
 			"org_policy_custom_endpoint": &schema.StringAttribute{
 				Optional: true,
 				Validators: []validator.String{
@@ -940,6 +955,12 @@ func (p *FrameworkProvider) Schema(_ context.Context, _ provider.SchemaRequest, 
 					transport_tpg.CustomEndpointValidator(),
 				},
 			},
+			"transcoder_custom_endpoint": &schema.StringAttribute{
+				Optional: true,
+				Validators: []validator.String{
+					transport_tpg.CustomEndpointValidator(),
+				},
+			},
 			"vertex_ai_custom_endpoint": &schema.StringAttribute{
 				Optional: true,
 				Validators: []validator.String{
@@ -1063,7 +1084,10 @@ func (p *FrameworkProvider) Schema(_ context.Context, _ provider.SchemaRequest, 
 	transport_tpg.ConfigureDCLCustomEndpointAttributesFramework(&resp.Schema)
 }
 
-// Configure prepares an API client for data sources and resources.
+// Configure prepares the metadata/'meta' required for data sources and resources to function.
+// Configuration logic implemented here should take user inputs and use them to populate a struct
+// with that necessary metadata, e.g. default project value, configured client, etc.
+// That prepared 'meta' struct is then returned in the response, and that value will later be supplied to all resources/data sources when they need to configure themselves.
 func (p *FrameworkProvider) Configure(ctx context.Context, req provider.ConfigureRequest, resp *provider.ConfigureResponse) {
 	var data fwmodels.ProviderModel
 

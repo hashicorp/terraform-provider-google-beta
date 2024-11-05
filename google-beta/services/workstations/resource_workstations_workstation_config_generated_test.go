@@ -69,7 +69,7 @@ resource "google_tags_tag_key" "tag_key1" {
 
 resource "google_tags_tag_value" "tag_value1" {
   provider   = google-beta
-  parent     = "tagKeys/${google_tags_tag_key.tag_key1.name}"
+  parent     = google_tags_tag_key.tag_key1.id
   short_name = "%{value_short_name}"
 }
 
@@ -121,6 +121,8 @@ resource "google_workstations_workstation_config" "default" {
     "label" = "key"
   }
 
+  max_usable_workstations = 1 
+  
   host {
     gce_instance {
       machine_type                = "e2-standard-4"
@@ -128,7 +130,7 @@ resource "google_workstations_workstation_config" "default" {
       disable_public_ip_addresses = true
       disable_ssh                 = false
       vm_tags = {
-        "tagKeys/${google_tags_tag_key.tag_key1.name}" = "tagValues/${google_tags_tag_value.tag_value1.name}"
+        (google_tags_tag_key.tag_key1.id) = google_tags_tag_value.tag_value1.id
       }
     }
   }
@@ -737,6 +739,98 @@ resource "google_workstations_workstation_config" "default" {
   encryption_key {
     kms_key                 = google_kms_crypto_key.default.id
     kms_key_service_account = google_service_account.default.email
+  }
+}
+`, context)
+}
+
+func TestAccWorkstationsWorkstationConfig_workstationConfigAllowedPortsExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"random_suffix": acctest.RandString(t, 10),
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckWorkstationsWorkstationConfigDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccWorkstationsWorkstationConfig_workstationConfigAllowedPortsExample(context),
+			},
+			{
+				ResourceName:            "google_workstations_workstation_config.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"annotations", "enable_audit_agent", "labels", "location", "terraform_labels", "workstation_cluster_id", "workstation_config_id"},
+			},
+		},
+	})
+}
+
+func testAccWorkstationsWorkstationConfig_workstationConfigAllowedPortsExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_compute_network" "default" {
+  provider                = google-beta
+  name                    = "tf-test-workstation-cluster%{random_suffix}"
+  auto_create_subnetworks = false
+}
+
+resource "google_compute_subnetwork" "default" {
+  provider      = google-beta
+  name          = "tf-test-workstation-cluster%{random_suffix}"
+  ip_cidr_range = "10.0.0.0/24"
+  region        = "us-central1"
+  network       = google_compute_network.default.name
+}
+
+resource "google_workstations_workstation_cluster" "default" {
+  provider               = google-beta
+  workstation_cluster_id = "tf-test-workstation-cluster%{random_suffix}"
+  network                = google_compute_network.default.id
+  subnetwork             = google_compute_subnetwork.default.id
+  location               = "us-central1"
+  
+  labels = {
+    "label" = "key"
+  }
+
+  annotations = {
+    label-one = "value-one"
+  }
+}
+
+resource "google_workstations_workstation_config" "default" {
+  provider               = google-beta
+  workstation_config_id  = "tf-test-workstation-config%{random_suffix}"
+  workstation_cluster_id = google_workstations_workstation_cluster.default.workstation_cluster_id
+  location               = "us-central1"
+
+  host {
+    gce_instance {
+      machine_type                = "e2-standard-4"
+      boot_disk_size_gb           = 35
+      disable_public_ip_addresses = true
+    }
+  }
+
+  # Allow only port 80 (HTTP)
+  allowed_ports {
+    first = 80
+    last  = 80
+  }
+
+  # Allow only port 22 (SSH)
+  allowed_ports {
+    first = 22
+    last  = 22
+  }
+
+  # Allow port range 1024-65535
+  allowed_ports {
+    first = 1024
+    last  = 65535
   }
 }
 `, context)

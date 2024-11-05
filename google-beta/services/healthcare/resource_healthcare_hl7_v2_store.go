@@ -99,7 +99,7 @@ Please refer to the field 'effective_labels' for all of the labels present on th
 				Type:        schema.TypeList,
 				Optional:    true,
 				Deprecated:  "`notification_config` is deprecated and will be removed in a future major release. Use `notification_configs` instead.",
-				Description: `A nested object resource`,
+				Description: `A nested object resource.`,
 				MaxItems:    1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -158,7 +158,7 @@ Fields/functions available for filtering are:
 				Type:        schema.TypeList,
 				Computed:    true,
 				Optional:    true,
-				Description: `A nested object resource`,
+				Description: `A nested object resource.`,
 				MaxItems:    1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{

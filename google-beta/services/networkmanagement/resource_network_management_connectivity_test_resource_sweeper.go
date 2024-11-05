@@ -64,7 +64,7 @@ func testSweepNetworkManagementConnectivityTest(region string) error {
 		},
 	}
 
-	listTemplate := strings.Split("https://networkmanagement.googleapis.com/v1/projects/{{project}}/locations/global/connectivityTests", "?")[0]
+	listTemplate := strings.Split("https://networkmanagement.googleapis.com/v1beta1/projects/{{project}}/locations/global/connectivityTests", "?")[0]
 	listUrl, err := tpgresource.ReplaceVars(d, config, listTemplate)
 	if err != nil {
 		log.Printf("[INFO][SWEEPER_LOG] error preparing sweeper list url: %s", err)
@@ -108,7 +108,7 @@ func testSweepNetworkManagementConnectivityTest(region string) error {
 			continue
 		}
 
-		deleteTemplate := "https://networkmanagement.googleapis.com/v1/projects/{{project}}/locations/global/connectivityTests/{{name}}"
+		deleteTemplate := "https://networkmanagement.googleapis.com/v1beta1/projects/{{project}}/locations/global/connectivityTests/{{name}}"
 		deleteUrl, err := tpgresource.ReplaceVars(d, config, deleteTemplate)
 		if err != nil {
 			log.Printf("[INFO][SWEEPER_LOG] error preparing delete url: %s", err)
