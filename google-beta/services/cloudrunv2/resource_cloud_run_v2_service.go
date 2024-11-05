@@ -619,6 +619,15 @@ A duration in seconds with up to nine fractional digits, ending with 's'. Exampl
 													Required:    true,
 													Description: `GCS Bucket name`,
 												},
+												"mount_options": {
+													Type:     schema.TypeList,
+													Optional: true,
+													Description: `A list of flags to pass to the gcsfuse command for configuring this volume.
+Flags should be passed without leading dashes.`,
+													Elem: &schema.Schema{
+														Type: schema.TypeString,
+													},
+												},
 												"read_only": {
 													Type:        schema.TypeBool,
 													Optional:    true,
@@ -833,6 +842,11 @@ For more information, see https://cloud.google.com/run/docs/configuring/custom-a
 				Optional:     true,
 				ValidateFunc: verify.ValidateEnum([]string{"INGRESS_TRAFFIC_ALL", "INGRESS_TRAFFIC_INTERNAL_ONLY", "INGRESS_TRAFFIC_INTERNAL_LOAD_BALANCER", ""}),
 				Description:  `Provides the ingress settings for this Service. On output, returns the currently observed ingress settings, or INGRESS_TRAFFIC_UNSPECIFIED if no revision is active. Possible values: ["INGRESS_TRAFFIC_ALL", "INGRESS_TRAFFIC_INTERNAL_ONLY", "INGRESS_TRAFFIC_INTERNAL_LOAD_BALANCER"]`,
+			},
+			"invoker_iam_disabled": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Description: `Disables IAM permission check for run.routes.invoke for callers of this service. This feature is available by invitation only. For more information, visit https://cloud.google.com/run/docs/securing/managing-access#invoker_check.`,
 			},
 			"labels": {
 				Type:     schema.TypeMap,
@@ -1276,6 +1290,12 @@ func resourceCloudRunV2ServiceCreate(d *schema.ResourceData, meta interface{}) e
 	} else if v, ok := d.GetOkExists("traffic"); !tpgresource.IsEmptyValue(reflect.ValueOf(trafficProp)) && (ok || !reflect.DeepEqual(v, trafficProp)) {
 		obj["traffic"] = trafficProp
 	}
+	invokerIamDisabledProp, err := expandCloudRunV2ServiceInvokerIamDisabled(d.Get("invoker_iam_disabled"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("invoker_iam_disabled"); !tpgresource.IsEmptyValue(reflect.ValueOf(invokerIamDisabledProp)) && (ok || !reflect.DeepEqual(v, invokerIamDisabledProp)) {
+		obj["invokerIamDisabled"] = invokerIamDisabledProp
+	}
 	labelsProp, err := expandCloudRunV2ServiceEffectiveLabels(d.Get("effective_labels"), d, config)
 	if err != nil {
 		return err
@@ -1463,6 +1483,9 @@ func resourceCloudRunV2ServiceRead(d *schema.ResourceData, meta interface{}) err
 	if err := d.Set("traffic", flattenCloudRunV2ServiceTraffic(res["traffic"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Service: %s", err)
 	}
+	if err := d.Set("invoker_iam_disabled", flattenCloudRunV2ServiceInvokerIamDisabled(res["invokerIamDisabled"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Service: %s", err)
+	}
 	if err := d.Set("observed_generation", flattenCloudRunV2ServiceObservedGeneration(res["observedGeneration"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Service: %s", err)
 	}
@@ -1584,6 +1607,12 @@ func resourceCloudRunV2ServiceUpdate(d *schema.ResourceData, meta interface{}) e
 		return err
 	} else if v, ok := d.GetOkExists("traffic"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, trafficProp)) {
 		obj["traffic"] = trafficProp
+	}
+	invokerIamDisabledProp, err := expandCloudRunV2ServiceInvokerIamDisabled(d.Get("invoker_iam_disabled"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("invoker_iam_disabled"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, invokerIamDisabledProp)) {
+		obj["invokerIamDisabled"] = invokerIamDisabledProp
 	}
 	labelsProp, err := expandCloudRunV2ServiceEffectiveLabels(d.Get("effective_labels"), d, config)
 	if err != nil {
@@ -2851,6 +2880,8 @@ func flattenCloudRunV2ServiceTemplateVolumesGcs(v interface{}, d *schema.Resourc
 		flattenCloudRunV2ServiceTemplateVolumesGcsBucket(original["bucket"], d, config)
 	transformed["read_only"] =
 		flattenCloudRunV2ServiceTemplateVolumesGcsReadOnly(original["readOnly"], d, config)
+	transformed["mount_options"] =
+		flattenCloudRunV2ServiceTemplateVolumesGcsMountOptions(original["mountOptions"], d, config)
 	return []interface{}{transformed}
 }
 func flattenCloudRunV2ServiceTemplateVolumesGcsBucket(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -2858,6 +2889,10 @@ func flattenCloudRunV2ServiceTemplateVolumesGcsBucket(v interface{}, d *schema.R
 }
 
 func flattenCloudRunV2ServiceTemplateVolumesGcsReadOnly(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenCloudRunV2ServiceTemplateVolumesGcsMountOptions(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
@@ -3000,6 +3035,10 @@ func flattenCloudRunV2ServiceTrafficPercent(v interface{}, d *schema.ResourceDat
 }
 
 func flattenCloudRunV2ServiceTrafficTag(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenCloudRunV2ServiceInvokerIamDisabled(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
@@ -4618,6 +4657,13 @@ func expandCloudRunV2ServiceTemplateVolumesGcs(v interface{}, d tpgresource.Terr
 		transformed["readOnly"] = transformedReadOnly
 	}
 
+	transformedMountOptions, err := expandCloudRunV2ServiceTemplateVolumesGcsMountOptions(original["mount_options"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedMountOptions); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["mountOptions"] = transformedMountOptions
+	}
+
 	return transformed, nil
 }
 
@@ -4626,6 +4672,10 @@ func expandCloudRunV2ServiceTemplateVolumesGcsBucket(v interface{}, d tpgresourc
 }
 
 func expandCloudRunV2ServiceTemplateVolumesGcsReadOnly(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandCloudRunV2ServiceTemplateVolumesGcsMountOptions(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
@@ -4792,6 +4842,10 @@ func expandCloudRunV2ServiceTrafficPercent(v interface{}, d tpgresource.Terrafor
 }
 
 func expandCloudRunV2ServiceTrafficTag(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandCloudRunV2ServiceInvokerIamDisabled(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 

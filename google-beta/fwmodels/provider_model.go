@@ -7,7 +7,9 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-// ProviderModel describes the provider config data model.
+// ProviderModel maps provider schema data to a Go type.
+// When the plugin-framework provider is configured, the Configure function receives data about
+// the provider block in the configuration. That data is used to populate this struct.
 type ProviderModel struct {
 	Credentials                               types.String `tfsdk:"credentials"`
 	AccessToken                               types.String `tfsdk:"access_token"`
@@ -78,6 +80,7 @@ type ProviderModel struct {
 	DataPipelineCustomEndpoint             types.String `tfsdk:"data_pipeline_custom_endpoint"`
 	DataplexCustomEndpoint                 types.String `tfsdk:"dataplex_custom_endpoint"`
 	DataprocCustomEndpoint                 types.String `tfsdk:"dataproc_custom_endpoint"`
+	DataprocGdcCustomEndpoint              types.String `tfsdk:"dataproc_gdc_custom_endpoint"`
 	DataprocMetastoreCustomEndpoint        types.String `tfsdk:"dataproc_metastore_custom_endpoint"`
 	DatastreamCustomEndpoint               types.String `tfsdk:"datastream_custom_endpoint"`
 	DeploymentManagerCustomEndpoint        types.String `tfsdk:"deployment_manager_custom_endpoint"`
@@ -126,6 +129,7 @@ type ProviderModel struct {
 	NetworkSecurityCustomEndpoint          types.String `tfsdk:"network_security_custom_endpoint"`
 	NetworkServicesCustomEndpoint          types.String `tfsdk:"network_services_custom_endpoint"`
 	NotebooksCustomEndpoint                types.String `tfsdk:"notebooks_custom_endpoint"`
+	OracleDatabaseCustomEndpoint           types.String `tfsdk:"oracle_database_custom_endpoint"`
 	OrgPolicyCustomEndpoint                types.String `tfsdk:"org_policy_custom_endpoint"`
 	OSConfigCustomEndpoint                 types.String `tfsdk:"os_config_custom_endpoint"`
 	OSLoginCustomEndpoint                  types.String `tfsdk:"os_login_custom_endpoint"`
@@ -160,6 +164,7 @@ type ProviderModel struct {
 	TagsCustomEndpoint                     types.String `tfsdk:"tags_custom_endpoint"`
 	TPUCustomEndpoint                      types.String `tfsdk:"tpu_custom_endpoint"`
 	TpuV2CustomEndpoint                    types.String `tfsdk:"tpu_v2_custom_endpoint"`
+	TranscoderCustomEndpoint               types.String `tfsdk:"transcoder_custom_endpoint"`
 	VertexAICustomEndpoint                 types.String `tfsdk:"vertex_ai_custom_endpoint"`
 	VmwareengineCustomEndpoint             types.String `tfsdk:"vmwareengine_custom_endpoint"`
 	VPCAccessCustomEndpoint                types.String `tfsdk:"vpc_access_custom_endpoint"`

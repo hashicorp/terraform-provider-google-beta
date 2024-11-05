@@ -64,7 +64,7 @@ func testSweepDataprocAutoscalingPolicy(region string) error {
 		},
 	}
 
-	listTemplate := strings.Split("https://dataproc.googleapis.com/v1beta2/projects/{{project}}/locations/{{location}}/autoscalingPolicies", "?")[0]
+	listTemplate := strings.Split("https://dataproc.googleapis.com/v1/projects/{{project}}/locations/{{location}}/autoscalingPolicies", "?")[0]
 	listUrl, err := tpgresource.ReplaceVars(d, config, listTemplate)
 	if err != nil {
 		log.Printf("[INFO][SWEEPER_LOG] error preparing sweeper list url: %s", err)
@@ -112,7 +112,7 @@ func testSweepDataprocAutoscalingPolicy(region string) error {
 			continue
 		}
 
-		deleteTemplate := "https://dataproc.googleapis.com/v1beta2/projects/{{project}}/locations/{{location}}/autoscalingPolicies/{{policy_id}}"
+		deleteTemplate := "https://dataproc.googleapis.com/v1/projects/{{project}}/locations/{{location}}/autoscalingPolicies/{{policy_id}}"
 		deleteUrl, err := tpgresource.ReplaceVars(d, config, deleteTemplate)
 		if err != nil {
 			log.Printf("[INFO][SWEEPER_LOG] error preparing delete url: %s", err)

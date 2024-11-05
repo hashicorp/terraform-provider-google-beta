@@ -66,7 +66,7 @@ func ResourceBackupDRManagementServer() *schema.Resource {
 			},
 			"networks": {
 				Type:        schema.TypeList,
-				Required:    true,
+				Optional:    true,
 				ForceNew:    true,
 				Description: `Network details to create management server (management console).`,
 				Elem: &schema.Resource{

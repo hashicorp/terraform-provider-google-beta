@@ -457,7 +457,7 @@ resource "google_compute_network" "default" {
 
 resource "google_network_connectivity_internal_range" "reserved" {
   provider          = google-beta
-  name              = "reserved"
+  name              = "tf-test-reserved-primary%{random_suffix}"
   network           = google_compute_network.default.id
   usage             = "FOR_VPC"
   peering           = "FOR_SELF"
@@ -469,7 +469,7 @@ resource "google_network_connectivity_internal_range" "reserved" {
 
 resource "google_network_connectivity_internal_range" "reserved_secondary" {
   provider          = google-beta
-  name              = "reserved-secondary"
+  name              = "tf-test-reserved-secondary%{random_suffix}"
   network           = google_compute_network.default.id
   usage             = "FOR_VPC"
   peering           = "FOR_SELF"

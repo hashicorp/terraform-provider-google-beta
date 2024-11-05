@@ -224,7 +224,7 @@ resource "google_sql_database_instance" "instance" {
     tier = "db-f1-micro"
   }
 
-  deletion_protection  = "%{deletion_protection}"
+  deletion_protection  = %{deletion_protection}
 }
 `, context)
 }
@@ -442,7 +442,7 @@ func TestAccCloudRunV2Job_cloudrunv2JobEmptydirExample(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckCloudRunV2JobDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -461,11 +461,9 @@ func TestAccCloudRunV2Job_cloudrunv2JobEmptydirExample(t *testing.T) {
 func testAccCloudRunV2Job_cloudrunv2JobEmptydirExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_cloud_run_v2_job" "default" {
-  provider = google-beta
   name     = "tf-test-cloudrun-job%{random_suffix}"
   location = "us-central1"
   deletion_protection = false
-  launch_stage = "BETA"
   template {
     template {
       containers {

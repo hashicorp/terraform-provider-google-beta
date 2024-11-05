@@ -75,6 +75,26 @@ func ResourceWorkstationsWorkstationConfig() *schema.Resource {
 				ForceNew:    true,
 				Description: `The ID to be assigned to the workstation cluster config.`,
 			},
+			"allowed_ports": {
+				Type:        schema.TypeList,
+				Computed:    true,
+				Optional:    true,
+				Description: `A list of port ranges specifying single ports or ranges of ports that are externally accessible in the workstation. Allowed ports must be one of 22, 80, or within range 1024-65535. If not specified defaults to ports 22, 80, and ports 1024-65535.`,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"first": {
+							Type:        schema.TypeInt,
+							Optional:    true,
+							Description: `Starting port number for the current range of ports. Valid ports are 22, 80, and ports within the range 1024-65535.`,
+						},
+						"last": {
+							Type:        schema.TypeInt,
+							Optional:    true,
+							Description: `Ending port number for the current range of ports. Valid ports are 22, 80, and ports within the range 1024-65535.`,
+						},
+					},
+				},
+			},
 			"annotations": {
 				Type:     schema.TypeMap,
 				Optional: true,
@@ -458,6 +478,12 @@ A duration in seconds with up to nine fractional digits, ending with 's'. Exampl
 Please refer to the field 'effective_labels' for all of the labels present on the resource.`,
 				Elem: &schema.Schema{Type: schema.TypeString},
 			},
+			"max_usable_workstations": {
+				Type:        schema.TypeInt,
+				Computed:    true,
+				Optional:    true,
+				Description: `Maximum number of workstations under this configuration a user can have workstations.workstation.use permission on. Only enforced on CreateWorkstation API calls on the user issuing the API request.`,
+			},
 			"persistent_directories": {
 				Type:        schema.TypeList,
 				Computed:    true,
@@ -725,6 +751,18 @@ func resourceWorkstationsWorkstationConfigCreate(d *schema.ResourceData, meta in
 	} else if v, ok := d.GetOkExists("disable_tcp_connections"); !tpgresource.IsEmptyValue(reflect.ValueOf(disableTcpConnectionsProp)) && (ok || !reflect.DeepEqual(v, disableTcpConnectionsProp)) {
 		obj["disableTcpConnections"] = disableTcpConnectionsProp
 	}
+	maxUsableWorkstationsProp, err := expandWorkstationsWorkstationConfigMaxUsableWorkstations(d.Get("max_usable_workstations"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("max_usable_workstations"); !tpgresource.IsEmptyValue(reflect.ValueOf(maxUsableWorkstationsProp)) && (ok || !reflect.DeepEqual(v, maxUsableWorkstationsProp)) {
+		obj["maxUsableWorkstations"] = maxUsableWorkstationsProp
+	}
+	allowedPortsProp, err := expandWorkstationsWorkstationConfigAllowedPorts(d.Get("allowed_ports"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("allowed_ports"); !tpgresource.IsEmptyValue(reflect.ValueOf(allowedPortsProp)) && (ok || !reflect.DeepEqual(v, allowedPortsProp)) {
+		obj["allowedPorts"] = allowedPortsProp
+	}
 	labelsProp, err := expandWorkstationsWorkstationConfigEffectiveLabels(d.Get("effective_labels"), d, config)
 	if err != nil {
 		return err
@@ -890,6 +928,12 @@ func resourceWorkstationsWorkstationConfigRead(d *schema.ResourceData, meta inte
 	if err := d.Set("disable_tcp_connections", flattenWorkstationsWorkstationConfigDisableTcpConnections(res["disableTcpConnections"], d, config)); err != nil {
 		return fmt.Errorf("Error reading WorkstationConfig: %s", err)
 	}
+	if err := d.Set("max_usable_workstations", flattenWorkstationsWorkstationConfigMaxUsableWorkstations(res["maxUsableWorkstations"], d, config)); err != nil {
+		return fmt.Errorf("Error reading WorkstationConfig: %s", err)
+	}
+	if err := d.Set("allowed_ports", flattenWorkstationsWorkstationConfigAllowedPorts(res["allowedPorts"], d, config)); err != nil {
+		return fmt.Errorf("Error reading WorkstationConfig: %s", err)
+	}
 	if err := d.Set("conditions", flattenWorkstationsWorkstationConfigConditions(res["conditions"], d, config)); err != nil {
 		return fmt.Errorf("Error reading WorkstationConfig: %s", err)
 	}
@@ -988,6 +1032,18 @@ func resourceWorkstationsWorkstationConfigUpdate(d *schema.ResourceData, meta in
 	} else if v, ok := d.GetOkExists("disable_tcp_connections"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, disableTcpConnectionsProp)) {
 		obj["disableTcpConnections"] = disableTcpConnectionsProp
 	}
+	maxUsableWorkstationsProp, err := expandWorkstationsWorkstationConfigMaxUsableWorkstations(d.Get("max_usable_workstations"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("max_usable_workstations"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, maxUsableWorkstationsProp)) {
+		obj["maxUsableWorkstations"] = maxUsableWorkstationsProp
+	}
+	allowedPortsProp, err := expandWorkstationsWorkstationConfigAllowedPorts(d.Get("allowed_ports"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("allowed_ports"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, allowedPortsProp)) {
+		obj["allowedPorts"] = allowedPortsProp
+	}
 	labelsProp, err := expandWorkstationsWorkstationConfigEffectiveLabels(d.Get("effective_labels"), d, config)
 	if err != nil {
 		return err
@@ -1070,6 +1126,14 @@ func resourceWorkstationsWorkstationConfigUpdate(d *schema.ResourceData, meta in
 
 	if d.HasChange("disable_tcp_connections") {
 		updateMask = append(updateMask, "disableTcpConnections")
+	}
+
+	if d.HasChange("max_usable_workstations") {
+		updateMask = append(updateMask, "maxUsableWorkstations")
+	}
+
+	if d.HasChange("allowed_ports") {
+		updateMask = append(updateMask, "allowedPorts")
 	}
 
 	if d.HasChange("effective_labels") {
@@ -1835,6 +1899,76 @@ func flattenWorkstationsWorkstationConfigDegraded(v interface{}, d *schema.Resou
 
 func flattenWorkstationsWorkstationConfigDisableTcpConnections(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
+}
+
+func flattenWorkstationsWorkstationConfigMaxUsableWorkstations(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	// Handles the string fixed64 format
+	if strVal, ok := v.(string); ok {
+		if intVal, err := tpgresource.StringToFixed64(strVal); err == nil {
+			return intVal
+		}
+	}
+
+	// number values are represented as float64
+	if floatVal, ok := v.(float64); ok {
+		intVal := int(floatVal)
+		return intVal
+	}
+
+	return v // let terraform core handle it otherwise
+}
+
+func flattenWorkstationsWorkstationConfigAllowedPorts(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return v
+	}
+	l := v.([]interface{})
+	transformed := make([]interface{}, 0, len(l))
+	for _, raw := range l {
+		original := raw.(map[string]interface{})
+		if len(original) < 1 {
+			// Do not include empty json objects coming back from the api
+			continue
+		}
+		transformed = append(transformed, map[string]interface{}{
+			"first": flattenWorkstationsWorkstationConfigAllowedPortsFirst(original["first"], d, config),
+			"last":  flattenWorkstationsWorkstationConfigAllowedPortsLast(original["last"], d, config),
+		})
+	}
+	return transformed
+}
+func flattenWorkstationsWorkstationConfigAllowedPortsFirst(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	// Handles the string fixed64 format
+	if strVal, ok := v.(string); ok {
+		if intVal, err := tpgresource.StringToFixed64(strVal); err == nil {
+			return intVal
+		}
+	}
+
+	// number values are represented as float64
+	if floatVal, ok := v.(float64); ok {
+		intVal := int(floatVal)
+		return intVal
+	}
+
+	return v // let terraform core handle it otherwise
+}
+
+func flattenWorkstationsWorkstationConfigAllowedPortsLast(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	// Handles the string fixed64 format
+	if strVal, ok := v.(string); ok {
+		if intVal, err := tpgresource.StringToFixed64(strVal); err == nil {
+			return intVal
+		}
+	}
+
+	// number values are represented as float64
+	if floatVal, ok := v.(float64); ok {
+		intVal := int(floatVal)
+		return intVal
+	}
+
+	return v // let terraform core handle it otherwise
 }
 
 func flattenWorkstationsWorkstationConfigConditions(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -2670,6 +2804,47 @@ func expandWorkstationsWorkstationConfigReadinessChecksPort(v interface{}, d tpg
 }
 
 func expandWorkstationsWorkstationConfigDisableTcpConnections(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandWorkstationsWorkstationConfigMaxUsableWorkstations(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandWorkstationsWorkstationConfigAllowedPorts(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	req := make([]interface{}, 0, len(l))
+	for _, raw := range l {
+		if raw == nil {
+			continue
+		}
+		original := raw.(map[string]interface{})
+		transformed := make(map[string]interface{})
+
+		transformedFirst, err := expandWorkstationsWorkstationConfigAllowedPortsFirst(original["first"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedFirst); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["first"] = transformedFirst
+		}
+
+		transformedLast, err := expandWorkstationsWorkstationConfigAllowedPortsLast(original["last"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedLast); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["last"] = transformedLast
+		}
+
+		req = append(req, transformed)
+	}
+	return req, nil
+}
+
+func expandWorkstationsWorkstationConfigAllowedPortsFirst(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandWorkstationsWorkstationConfigAllowedPortsLast(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 

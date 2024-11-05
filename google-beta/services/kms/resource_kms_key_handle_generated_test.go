@@ -62,7 +62,7 @@ func testAccKMSKeyHandle_kmsKeyHandleBasicExample(context map[string]interface{}
 # Create Folder in GCP Organization
 resource "google_folder" "autokms_folder" {
   provider     = google-beta
-  display_name = "folder-example"
+  display_name = "tf-test-my-folder%{random_suffix}"
   parent       = "organizations/%{org_id}"
   deletion_protection = false
 }
@@ -81,8 +81,8 @@ resource "google_project" "key_project" {
 # Create the resource project
 resource "google_project" "resource_project" {
   provider        = google-beta
-  project_id      = "resources%{random_suffix}"
-  name            = "resources%{random_suffix}"
+  project_id      = "tf-test-res-proj%{random_suffix}"
+  name            = "tf-test-res-proj%{random_suffix}"
   folder_id       = google_folder.autokms_folder.folder_id
   billing_account = "%{billing_account}"
   depends_on      = [google_folder.autokms_folder]
@@ -150,7 +150,7 @@ resource "time_sleep" "wait_autokey_config" {
 resource "google_kms_key_handle" "example-keyhandle" {
   provider               = google-beta
   project                = google_project.resource_project.project_id
-  name                   = "example-key-handle" 
+  name                   = "tf-test-key-handle"
   location               = "global"
   resource_type_selector = "storage.googleapis.com/Bucket"
   depends_on             = [time_sleep.wait_autokey_config]
