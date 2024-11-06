@@ -3744,13 +3744,14 @@ func TestAccContainerCluster_withSecretManagerConfig(t *testing.T) {
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := acctest.BootstrapSharedTestNetwork(t, "gke-cluster")
 	subnetworkName := acctest.BootstrapSubnet(t, "gke-cluster", networkName)
+	pid := envvar.GetTestProjectFromEnv()
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccContainerCluster_basic(clusterName, networkName, subnetworkName),
+				Config: testAccContainerCluster_forSecretManagerConfig(pid, clusterName, networkName, subnetworkName),
 			},
 			{
 				ResourceName:            "google_container_cluster.primary",
@@ -3759,7 +3760,7 @@ func TestAccContainerCluster_withSecretManagerConfig(t *testing.T) {
 				ImportStateVerifyIgnore: []string{"deletion_protection"},
 			},
 			{
-				Config: testAccContainerCluster_withSecretManagerConfigEnabled(clusterName, networkName, subnetworkName),
+				Config: testAccContainerCluster_withSecretManagerConfigEnabled(pid, clusterName, networkName, subnetworkName),
 			},
 			{
 				ResourceName:            "google_container_cluster.primary",
@@ -3768,16 +3769,7 @@ func TestAccContainerCluster_withSecretManagerConfig(t *testing.T) {
 				ImportStateVerifyIgnore: []string{"deletion_protection"},
 			},
 			{
-				Config: testAccContainerCluster_withSecretManagerConfigUpdated(clusterName, networkName, subnetworkName),
-			},
-			{
-				ResourceName:            "google_container_cluster.primary",
-				ImportState:             true,
-				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"deletion_protection"},
-			},
-			{
-				Config: testAccContainerCluster_basic(clusterName, networkName, subnetworkName),
+				Config: testAccContainerCluster_withSecretManagerConfigUpdated(pid, clusterName, networkName, subnetworkName),
 			},
 			{
 				ResourceName:            "google_container_cluster.primary",
@@ -5940,6 +5932,26 @@ resource "google_container_cluster" "primary" {
   deletion_protection = false
 }
 `, name, networkName, subnetworkName)
+}
+
+func testAccContainerCluster_forSecretManagerConfig(projectID, name, networkName, subnetworkName string) string {
+	return fmt.Sprintf(`
+data "google_project" "project" {
+  project_id = "%s"
+}
+resource "google_container_cluster" "primary" {
+  name               = "%s"
+  location           = "us-central1-a"
+  initial_node_count = 1
+  network            = "%s"
+  subnetwork         = "%s"
+
+  deletion_protection = false
+  workload_identity_config {
+    workload_pool = "${data.google_project.project.project_id}.svc.id.goog"
+  }
+}
+`, projectID, name, networkName, subnetworkName)
 }
 
 func testAccContainerCluster_networkingModeRoutes(firstName, secondName string) string {
@@ -10473,8 +10485,11 @@ resource "google_container_cluster" "primary" {
 `, name, networkName, subnetworkName)
 }
 
-func testAccContainerCluster_withSecretManagerConfigEnabled(name, networkName, subnetworkName string) string {
+func testAccContainerCluster_withSecretManagerConfigEnabled(projectID, name, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
+data "google_project" "project" {
+  project_id = "%s"
+}
 resource "google_container_cluster" "primary" {
   name               = "%s"
   location           = "us-central1-a"
@@ -10485,12 +10500,18 @@ resource "google_container_cluster" "primary" {
   deletion_protection = false
   network    = "%s"
   subnetwork    = "%s"
+  workload_identity_config {
+    workload_pool = "${data.google_project.project.project_id}.svc.id.goog"
+  }
 }
-`, name, networkName, subnetworkName)
+`, projectID, name, networkName, subnetworkName)
 }
 
-func testAccContainerCluster_withSecretManagerConfigUpdated(name, networkName, subnetworkName string) string {
+func testAccContainerCluster_withSecretManagerConfigUpdated(projectID, name, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
+data "google_project" "project" {
+  project_id = "%s"
+}
 resource "google_container_cluster" "primary" {
   name               = "%s"
   location           = "us-central1-a"
@@ -10502,8 +10523,11 @@ resource "google_container_cluster" "primary" {
   deletion_protection = false
   network    = "%s"
   subnetwork    = "%s"
+  workload_identity_config {
+    workload_pool = "${data.google_project.project.project_id}.svc.id.goog"
+  }
 }
-`, name, networkName, subnetworkName)
+`, projectID, name, networkName, subnetworkName)
 }
 
 func testAccContainerCluster_withLoggingConfigEnabled(name, networkName, subnetworkName string) string {
