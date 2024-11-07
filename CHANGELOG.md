@@ -24,7 +24,6 @@ IMPROVEMENTS:
 * apigee: added in-place update support for `google_apigee_env_references` ([#8621](https://github.com/hashicorp/terraform-provider-google-beta/pull/8621))
 * apigee: added in-place update support for `google_apigee_environment` resource ([#8627](https://github.com/hashicorp/terraform-provider-google-beta/pull/8627))
 * backupdr: added `ignore_inactive_datasources` and `ignore_backup_plan_references` fields to `google_backup_dr_backup_vault` resource ([#8616](https://github.com/hashicorp/terraform-provider-google-beta/pull/8616))
-* backupdr: marked `networks` field optional in `google_backup_dr_management_server` resource ([#8594](https://github.com/hashicorp/terraform-provider-google-beta/pull/8594))
 * bigquery: added `external_catalog_dataset_options` fields to `google_bigquery_dataset` resource ([#8558](https://github.com/hashicorp/terraform-provider-google-beta/pull/8558))
 * cloudrunv2: added `gcs.mount_options` to `google_cloud_run_v2_service` and `google_cloud_run_v2_job` ([#8613](https://github.com/hashicorp/terraform-provider-google-beta/pull/8613))
 * compute: added `rules` property to `google_compute_region_security_policy` resource ([#8574](https://github.com/hashicorp/terraform-provider-google-beta/pull/8574))
