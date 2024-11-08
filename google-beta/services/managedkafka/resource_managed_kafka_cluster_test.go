@@ -18,7 +18,7 @@ func TestAccManagedKafkaCluster_update(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckManagedKafkaClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -65,12 +65,9 @@ resource "google_managed_kafka_cluster" "example" {
   labels = {
     key = "value"
   }
-
-  provider = google-beta
 }
 
 data "google_project" "project" {
-  provider = google-beta
 }
 `, context)
 }
@@ -97,12 +94,9 @@ resource "google_managed_kafka_cluster" "example" {
   labels = {
     key = "new-value"
   }
-
-  provider = google-beta
 }
 
 data "google_project" "project" {
-  provider = google-beta
 }
 `, context)
 }
