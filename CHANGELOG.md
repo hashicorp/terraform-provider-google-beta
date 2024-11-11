@@ -3,6 +3,8 @@
 NOTES:
 * compute: migrated `google_compute_firewall_policy_rule` from DCL engine to MMv1 engine. ([#8604](https://github.com/hashicorp/terraform-provider-google-beta/pull/8604))
 
+BREAKING CHANGES:
+* looker: made `oauth_config` a required field in `google_looker_instance`, as creating this resource without that field always triggers an API error ([#8633](https://github.com/hashicorp/terraform-provider-google-beta/pull/8633))
 
 DEPRECATIONS:
 * backupdr: deprecated `force_delete` on `google_backup_dr_backup_vault`. Use `ignore_inactive_datasources` instead ([#8616](https://github.com/hashicorp/terraform-provider-google-beta/pull/8616))
@@ -44,7 +46,6 @@ BUG FIXES:
 * compute: fixed a diff based on server-side reordering of `match.src_address_groups` and `match.dest_address_groups` in `google_compute_network_firewall_policy_rule` ([#8592](https://github.com/hashicorp/terraform-provider-google-beta/pull/8592))
 * compute: fixed permadiff on the `preconfigured_waf_config` field for `google_compute_security_policy` resource ([#8622](https://github.com/hashicorp/terraform-provider-google-beta/pull/8622))
 * container: fixed in-place updates for `node_config.containerd_config` in `google_container_cluster` and `google_container_node_pool` ([#8566](https://github.com/hashicorp/terraform-provider-google-beta/pull/8566))
-* looker: made `oauth_config` a required field in `google_looker_instance`, as creating this resource without that field always triggers an API error ([#8633](https://github.com/hashicorp/terraform-provider-google-beta/pull/8633))
 
 ## 6.10.0 (November 4, 2024)
 
