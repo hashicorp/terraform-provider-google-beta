@@ -1,4 +1,61 @@
-## 6.11.0 (Unreleased)
+## 6.12.0 (Unreleased)
+
+## 6.11.0 (November 11, 2024)
+
+NOTES:
+* compute: migrated `google_compute_firewall_policy_rule` from DCL engine to MMv1 engine. ([#8604](https://github.com/hashicorp/terraform-provider-google-beta/pull/8604))
+
+BREAKING CHANGES:
+* looker: made `oauth_config` a required field in `google_looker_instance`, as creating this resource without that field always triggers an API error ([#8633](https://github.com/hashicorp/terraform-provider-google-beta/pull/8633))
+
+DEPRECATIONS:
+* backupdr: deprecated `force_delete` on `google_backup_dr_backup_vault`. Use `ignore_inactive_datasources` instead ([#8616](https://github.com/hashicorp/terraform-provider-google-beta/pull/8616))
+
+FEATURES:
+* **New Data Source:** `google_backup_dr_backup_plan_association` ([#8632](https://github.com/hashicorp/terraform-provider-google-beta/pull/8632))
+* **New Data Source:** `google_backup_dr_backup_plan` ([#8603](https://github.com/hashicorp/terraform-provider-google-beta/pull/8603))
+* **New Data Source:** `google_spanner_database` ([#8568](https://github.com/hashicorp/terraform-provider-google-beta/pull/8568))
+* **New Resource:** `google_apigee_api` ([#8567](https://github.com/hashicorp/terraform-provider-google-beta/pull/8567))
+* **New Resource:** `google_backup_dr_backup_plan_association` ([#8632](https://github.com/hashicorp/terraform-provider-google-beta/pull/8632))
+* **New Resource:** `google_backup_dr_backup_plan` ([#8603](https://github.com/hashicorp/terraform-provider-google-beta/pull/8603))
+* **New Resource:** `google_compute_region_resize_request` ([#8588](https://github.com/hashicorp/terraform-provider-google-beta/pull/8588))
+* **New Resource:** `google_dataproc_gdc_application_environment` ([#8609](https://github.com/hashicorp/terraform-provider-google-beta/pull/8609))
+* **New Resource:** `google_dataproc_gdc_service_instance` ([#8591](https://github.com/hashicorp/terraform-provider-google-beta/pull/8591))
+* **New Resource:** `google_iam_principal_access_boundary_policy` ([#8634](https://github.com/hashicorp/terraform-provider-google-beta/pull/8634))
+* **New Resource:** `google_network_management_vpc_flow_logs_config` ([#8623](https://github.com/hashicorp/terraform-provider-google-beta/pull/8623))
+
+IMPROVEMENTS:
+* apigee: added in-place update support for `google_apigee_env_references` ([#8621](https://github.com/hashicorp/terraform-provider-google-beta/pull/8621))
+* apigee: added in-place update support for `google_apigee_environment` resource ([#8627](https://github.com/hashicorp/terraform-provider-google-beta/pull/8627))
+* backupdr: added `ignore_inactive_datasources` and `ignore_backup_plan_references` fields to `google_backup_dr_backup_vault` resource ([#8616](https://github.com/hashicorp/terraform-provider-google-beta/pull/8616))
+* bigquery: added `external_catalog_dataset_options` fields to `google_bigquery_dataset` resource ([#8558](https://github.com/hashicorp/terraform-provider-google-beta/pull/8558))
+* cloudrunv2: added `gcs.mount_options` to `google_cloud_run_v2_service` and `google_cloud_run_v2_job` ([#8613](https://github.com/hashicorp/terraform-provider-google-beta/pull/8613))
+* compute: added `rules` property to `google_compute_region_security_policy` resource ([#8574](https://github.com/hashicorp/terraform-provider-google-beta/pull/8574))
+* compute: added `disks` field to `google_compute_node_template` resource ([#8620](https://github.com/hashicorp/terraform-provider-google-beta/pull/8620))
+* compute: added `replica_names` field to `sql_database_instance` resource ([#8637](https://github.com/hashicorp/terraform-provider-google-beta/pull/8637))
+* compute: added new field `instance_flexibility_policy` to resource `google_compute_region_instance_group_manager` ([#8581](https://github.com/hashicorp/terraform-provider-google-beta/pull/8581))
+* compute: increased `google_compute_security_policy` timeouts from 20 minutes to 30 minutes ([#8589](https://github.com/hashicorp/terraform-provider-google-beta/pull/8589))
+* container: added `control_plane_endpoints_config` field to `google_container_cluster` resource. ([#8630](https://github.com/hashicorp/terraform-provider-google-beta/pull/8630))
+* container: added `parallelstore_csi_driver_config` field to `google_container_cluster` resource. ([#8607](https://github.com/hashicorp/terraform-provider-google-beta/pull/8607))
+* container: added `user_managed_keys_config` field to `google_container_cluster` resource. ([#8562](https://github.com/hashicorp/terraform-provider-google-beta/pull/8562))
+* firestore: allowed single field indexes to support `__name__ DESC` indexes in `google_firestore_index` resources ([#8576](https://github.com/hashicorp/terraform-provider-google-beta/pull/8576))
+* privateca: added support for sub-CA to be activated into STAGED state ([#8560](https://github.com/hashicorp/terraform-provider-google-beta/pull/8560))
+* spanner: added `default_backup_schedule_type` field to  `google_spanner_instance` ([#8644](https://github.com/hashicorp/terraform-provider-google-beta/pull/8644))
+* vertexai: added `traffic_split`, `private_service_connect_config`, `predict_request_response_logging_config`, `dedicated_endpoint_enabled`, and `dedicated_endpoint_dns` fields to `google_vertex_ai_endpoint` resource ([#8619](https://github.com/hashicorp/terraform-provider-google-beta/pull/8619))
+* workflows: added `deletion_protection` field to `google_workflows_workflow` resource ([#8563](https://github.com/hashicorp/terraform-provider-google-beta/pull/8563))
+
+BUG FIXES:
+* compute: fixed a diff based on server-side reordering of `match.src_address_groups` and `match.dest_address_groups` in `google_compute_network_firewall_policy_rule` ([#8592](https://github.com/hashicorp/terraform-provider-google-beta/pull/8592))
+* compute: fixed permadiff on the `preconfigured_waf_config` field for `google_compute_security_policy` resource ([#8622](https://github.com/hashicorp/terraform-provider-google-beta/pull/8622))
+* container: fixed in-place updates for `node_config.containerd_config` in `google_container_cluster` and `google_container_node_pool` ([#8566](https://github.com/hashicorp/terraform-provider-google-beta/pull/8566))
+
+## 5.45.0 (November 11, 2024)
+
+NOTES:
+* 5.45.0 is a backport release, responding to a new Spanner feature that may result in creation of unwanted backups for users. The changes in this release will be available in 6.11.0 and users upgrading to 6.X should upgrade to that version or higher.
+
+IMPROVEMENTS:
+* spanner: added `default_backup_schedule_type` field to  `google_spanner_instance` ([#8644](https://github.com/hashicorp/terraform-provider-google-beta/pull/8644))
 
 ## 6.10.0 (November 4, 2024)
 
