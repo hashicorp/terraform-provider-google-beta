@@ -39,7 +39,7 @@ IMPROVEMENTS:
 * container: added `parallelstore_csi_driver_config` field to `google_container_cluster` resource. ([#8607](https://github.com/hashicorp/terraform-provider-google-beta/pull/8607))
 * container: added `user_managed_keys_config` field to `google_container_cluster` resource. ([#8562](https://github.com/hashicorp/terraform-provider-google-beta/pull/8562))
 * firestore: allowed single field indexes to support `__name__ DESC` indexes in `google_firestore_index` resources ([#8576](https://github.com/hashicorp/terraform-provider-google-beta/pull/8576))
-* privateca: added support for sub-CA to be activated into STAGED state ([#8560](https://github.com/hashicorp/terraform-provider-google-beta/pull/8560))
+* privateca: added support for `google_privateca_certificate_authority` with type = "SUBORDINATE" to be activated into "STAGED" state ([#8560](https://github.com/hashicorp/terraform-provider-google-beta/pull/8560))
 * spanner: added `default_backup_schedule_type` field to  `google_spanner_instance` ([#8644](https://github.com/hashicorp/terraform-provider-google-beta/pull/8644))
 * vertexai: added `traffic_split`, `private_service_connect_config`, `predict_request_response_logging_config`, `dedicated_endpoint_enabled`, and `dedicated_endpoint_dns` fields to `google_vertex_ai_endpoint` resource ([#8619](https://github.com/hashicorp/terraform-provider-google-beta/pull/8619))
 * workflows: added `deletion_protection` field to `google_workflows_workflow` resource ([#8563](https://github.com/hashicorp/terraform-provider-google-beta/pull/8563))
